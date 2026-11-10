@@ -48,17 +48,17 @@ TEST(StackTraceTest, MAYBE(StackTraceWorks))
     StackTracePrinter stackTrace { { samples, static_cast<size_t>(frames) } };
     StringPrintStream out;
     out.print(stackTrace);
-    auto results = out.toString().split(newlineCharacter);
+    auto results = split(out.toString(), newlineCharacter);
     ASSERT_GT(results.size(), 2u);
-    EXPECT_TRUE(results[0].contains("WTFGetBacktrace"_s));
-    EXPECT_TRUE(results[1].contains("StackTraceWorks"_s));
+    EXPECT_TRUE(contains(results[0], "WTFGetBacktrace"_s));
+    EXPECT_TRUE(contains(results[1], "StackTraceWorks"_s));
 }
 
 namespace {
 struct Frame {
     int number;
     void* address;
-    String name;
+    RefPtr<StringImpl> name;
 };
 }
 
@@ -66,11 +66,11 @@ static void expectEqualFrames(std::span<void* const> expectedStack, StackTrace& 
 {
     Vector<Frame> expected;
     StackTraceSymbolResolver { expectedStack }.forEach([&expected](int number, void* address, const char* name) {
-        expected.append({ number, address, String::fromLatin1(name) });
+        expected.append({ number, address, StringImpl::fromLatin1(name) });
     });
     Vector<Frame> tested;
     StackTraceSymbolResolver { testedStack }.forEach([&tested](int number, void* address, const char* name) {
-        tested.append({ number, address, String::fromLatin1(name) });
+        tested.append({ number, address, StringImpl::fromLatin1(name) });
     });
     ASSERT_EQ(expected.size(), tested.size());
 

@@ -40,7 +40,7 @@ namespace WebKit {
 struct BackgroundFetchState {
     WebCore::SecurityOriginData topOrigin;
     URL scope;
-    String identifier;
+    RefPtr<StringImpl> identifier;
     
     WebCore::BackgroundFetchOptions options;
     

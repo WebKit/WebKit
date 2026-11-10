@@ -34,7 +34,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FileMonitor);
 
 #if !PLATFORM(COCOA) && !USE(GLIB)
 
-FileMonitor::FileMonitor(const String&, Ref<WorkQueue>&&, Function<void(FileChangeType)>&&)
+FileMonitor::FileMonitor(StringImpl*, Ref<WorkQueue>&&, Function<void(FileChangeType)>&&)
 {
 }
 

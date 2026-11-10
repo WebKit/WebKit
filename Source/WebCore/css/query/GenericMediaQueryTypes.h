@@ -99,7 +99,7 @@ struct Comparison {
 };
 
 struct Feature {
-    AtomString name;
+    RefPtr<AtomStringImpl> name;
     Syntax syntax;
     Markable<CSSValueID> functionId { };
     Comparison leftComparison { };
@@ -116,8 +116,8 @@ struct Feature {
 static_assert(sizeof(Feature) <= 96, "MQ::Feature should stay small");
 
 struct GeneralEnclosed {
-    String name;
-    String text;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> text;
 };
 
 using QueryInParens = Variant<Condition, Feature, GeneralEnclosed>;
@@ -155,7 +155,7 @@ struct FeatureSchema {
     enum class Type : uint8_t { Discrete, Range };
     enum class ValueType : uint8_t { Integer, Number, Length, Ratio, Resolution, Identifier, CustomProperty };
 
-    AtomString name;
+    RefPtr<AtomStringImpl> name;
     Type type;
     ValueType valueType;
     OptionSet<MediaQueryDynamicDependency> dependencies;
@@ -163,7 +163,7 @@ struct FeatureSchema {
 
     virtual EvaluationResult evaluate(const Feature&, const FeatureEvaluationContext&) const { return EvaluationResult::Unknown; }
 
-    FeatureSchema(const AtomString& name, Type type, ValueType valueType, OptionSet<MediaQueryDynamicDependency> dependencies, FixedVector<CSSValueID>&& valueIdentifiers = { })
+    FeatureSchema(AtomStringImpl* name, Type type, ValueType valueType, OptionSet<MediaQueryDynamicDependency> dependencies, FixedVector<CSSValueID>&& valueIdentifiers = { })
         : name(name)
         , type(type)
         , valueType(valueType)

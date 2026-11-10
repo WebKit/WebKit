@@ -42,7 +42,7 @@ CSSGridTemplateListValue::CSSGridTemplateListValue(CSS::GridTemplateList&& list)
 {
 }
 
-String CSSGridTemplateListValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSGridTemplateListValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_list);
 }

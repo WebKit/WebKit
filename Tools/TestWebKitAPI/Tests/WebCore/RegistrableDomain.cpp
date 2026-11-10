@@ -37,13 +37,13 @@ TEST(RegistrableDomain, StringVsURL)
 {
     URL webkitURL { "https://webkit.org"_str };
     RegistrableDomain webkitDomainFromURL { webkitURL };
-    auto webkitDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("webkit.org"_s);
+    auto webkitDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("webkit.org"_si);
 
     ASSERT_EQ(webkitDomainFromURL, webkitDomainFromString);
 
     URL localhostURL { "https://localhost:8000"_str };
     RegistrableDomain localhostDomainFromURL { localhostURL };
-    auto localhostDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("localhost"_s);
+    auto localhostDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("localhost"_si);
 
     ASSERT_EQ(localhostDomainFromURL, localhostDomainFromString);
 
@@ -55,7 +55,7 @@ TEST(RegistrableDomain, StringVsURL)
 
     URL blobURL { "blob:http://example.com/ABCD"_str };
     RegistrableDomain blobDomainFromURL { blobURL };
-    auto blobDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("example.com"_s);
+    auto blobDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("example.com"_si);
 
     ASSERT_EQ(blobDomainFromURL, blobDomainFromString);
 }
@@ -79,8 +79,8 @@ TEST(RegistrableDomain, MatchesURLs)
     ASSERT_TRUE(webkitSubdomain.matches(webkitOtherSubdomainURL));
     ASSERT_TRUE(webkitSubdomain.matches(webkitDuplicateSubdomainURL));
 
-    URL localhostURL { "http://localhost"_s };
-    URL localhostURLWithPath { "http://localhost/road/to/nowhere/"_s };
+    URL localhostURL { "http://localhost"_si };
+    URL localhostURLWithPath { "http://localhost/road/to/nowhere/"_si };
     RegistrableDomain localhostDomain { localhostURL };
 
     ASSERT_TRUE(localhostDomain.matches(localhostURL));
@@ -91,28 +91,28 @@ TEST(RegistrableDomain, MatchesURLs)
     ASSERT_FALSE(webkitDomain.matches(localhostURL));
     ASSERT_FALSE(webkitDomain.matches(localhostURLWithPath));
 
-    URL ebkitURL { "https://ebkit.org"_s };
+    URL ebkitURL { "https://ebkit.org"_si };
     ASSERT_FALSE(webkitDomain.matches(ebkitURL));
 }
 
 TEST(RegistrableDomain, UncheckedCreateFromHost)
 {
-    auto webkitDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("webkit.org"_s);
+    auto webkitDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("webkit.org"_si);
 
-    auto webkitDomainFromHost = RegistrableDomain::uncheckedCreateFromHost("webkit.org"_s);
+    auto webkitDomainFromHost = RegistrableDomain::uncheckedCreateFromHost("webkit.org"_si);
     ASSERT_EQ(webkitDomainFromHost, webkitDomainFromString);
     // This test is important for matching cookies' domain attributes which often have a leading dot.
-    auto dotWebkitDomainFromHost = RegistrableDomain::uncheckedCreateFromHost(".webkit.org"_s);
+    auto dotWebkitDomainFromHost = RegistrableDomain::uncheckedCreateFromHost(".webkit.org"_si);
     ASSERT_EQ(dotWebkitDomainFromHost, webkitDomainFromString);
 }
 
 TEST(Site, EmptyMapKey)
 {
     Site empty1 { URL() };
-    Site empty2 { URL("!@#$%^&*NotARealURL)(*&^"_s) };
-    Site empty3 { SecurityOriginData(String(), String(), std::nullopt) };
-    Site empty4 { String(), RegistrableDomain::fromRawString(String()) };
-    Site empty5 { String(), RegistrableDomain() };
+    Site empty2 { URL("!@#$%^&*NotARealURL)(*&^"_si) };
+    Site empty3 { SecurityOriginData(nullptr, nullptr, std::nullopt) };
+    Site empty4 { nullptr, RegistrableDomain::fromRawString(nullptr) };
+    Site empty5 { nullptr, RegistrableDomain() };
 
     HashMap<Site, int> map;
     int integer { 1 };

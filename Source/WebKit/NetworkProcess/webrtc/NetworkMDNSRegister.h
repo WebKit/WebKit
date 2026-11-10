@@ -85,7 +85,7 @@ public:
     void closeAndForgetService(DNSServiceRef);
 #endif
 
-    bool hasRegisteredName(const String&) const;
+    bool hasRegisteredName(StringImpl*) const;
 
     NODELETE std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
@@ -94,13 +94,13 @@ public:
 
     struct PendingRegistrationRequest {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(PendingRegistrationRequest);
-        PendingRegistrationRequest(Ref<NetworkConnectionToWebProcess> &&, String &&name, String address, PAL::SessionID, CompletionHandler<void(const String &, std::optional<WebCore::MDNSRegisterError>)> &&);
+        PendingRegistrationRequest(Ref<NetworkConnectionToWebProcess> &&, RefPtr<StringImpl> &&name, RefPtr<StringImpl> address, PAL::SessionID, CompletionHandler<void(StringImpl*, std::optional<WebCore::MDNSRegisterError>)> &&);
 
         Ref<NetworkConnectionToWebProcess> connection;
-        String name;
-        String address;
+        RefPtr<StringImpl> name;
+        RefPtr<StringImpl> address;
         PAL::SessionID sessionID;
-        CompletionHandler<void(const String &, std::optional<WebCore::MDNSRegisterError>)> completionHandler;
+        CompletionHandler<void(StringImpl*, std::optional<WebCore::MDNSRegisterError>)> completionHandler;
 #if USE(GLIB)
         GRefPtr<GCancellable> cancellable;
 #endif
@@ -108,14 +108,14 @@ public:
 
 private:
     void unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier);
-    void registerMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
+    void registerMDNSName(WebCore::ScriptExecutionContextIdentifier, StringImpl* ipAddress, CompletionHandler<void(StringImpl*, std::optional<WebCore::MDNSRegisterError>)>&&);
 
     NODELETE PAL::SessionID sessionID() const;
 
     WeakRef<NetworkConnectionToWebProcess> m_connection;
-    HashSet<String> m_registeredNames;
+    HashSet<RefPtr<StringImpl>> m_registeredNames;
 
-    HashMap<WebCore::ScriptExecutionContextIdentifier, Vector<String>> m_perDocumentRegisteredNames;
+    HashMap<WebCore::ScriptExecutionContextIdentifier, Vector<RefPtr<StringImpl>>> m_perDocumentRegisteredNames;
 
 #if ENABLE_MDNS
     struct DNSServiceDeallocator;

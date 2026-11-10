@@ -45,7 +45,7 @@ public:
         return vm.callbackFunctionSpace<mode>();
     }
 
-    static JSCallbackFunction* create(VM&, JSGlobalObject*, JSObjectCallAsFunctionCallback, const String& name);
+    static JSCallbackFunction* create(VM&, JSGlobalObject*, JSObjectCallAsFunctionCallback, StringImpl* name);
 
     DECLARE_INFO;
     
@@ -58,7 +58,7 @@ public:
 
 private:
     JSCallbackFunction(VM&, Structure*, JSObjectCallAsFunctionCallback);
-    void finishCreation(VM&, const String& name);
+    void finishCreation(VM&, StringImpl* name);
 
     JSObjectCallAsFunctionCallback functionCallback() { return m_callback; }
 

@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-// Needs the WTF.String conversions in StdlibExtras.swift.
+// Needs the WTF.StringImpl conversions in StdlibExtras.swift.
 #if ENABLE_BACK_FORWARD_LIST_SWIFT
 
 import wtf
@@ -207,9 +207,16 @@ struct PortableLogger {
         case .disabled:
             return
         case .log:
-            WTF.logPreformatted(channel, WTF.String(message().output))
+            WTF.logPreformatted(channel, WTF.StringImpl.create(from: message().output))
         case .releaseLog:
-            WTF.releaseLogPreformatted(channel, type, WTF.String(file), line, WTF.String(function), WTF.String(message().output))
+            WTF.releaseLogPreformatted(
+                channel,
+                type,
+                WTF.StringImpl.create(from: file),
+                line,
+                WTF.StringImpl.create(from: function),
+                WTF.StringImpl.create(from: message().output)
+            )
         }
     }
 }

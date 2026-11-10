@@ -33,12 +33,12 @@ namespace WebCore {
 Ref<JSON::Object> GPUShaderModuleDescriptor::toJSON() const
 {
     Ref json = GPUObjectDescriptorBase::toJSON();
-    json->setString("code"_s, code);
+    json->setString("code"_si, code);
     // `sourceMap` is not JSON serializable.
     auto hintsJSON = JSON::Object::create();
     for (auto& hint : hints)
         hintsJSON->setObject(hint.key, hint.value.toJSON());
-    json->setObject("hints"_s, WTF::move(hintsJSON));
+    json->setObject("hints"_si, WTF::move(hintsJSON));
     return json;
 }
 

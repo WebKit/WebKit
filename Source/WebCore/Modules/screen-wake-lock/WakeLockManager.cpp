@@ -70,7 +70,7 @@ void WakeLockManager::addWakeLock(Ref<WakeLockSentinel>&& lock, std::optional<Pa
 
     switch (type) {
     case WakeLockType::Screen:
-        m_screenLockDisabler = makeUnique<SleepDisabler>("Screen Wake Lock"_s, PAL::SleepDisabler::Type::Display, pageID);
+        m_screenLockDisabler = makeUnique<SleepDisabler>("Screen Wake Lock"_si, PAL::SleepDisabler::Type::Display, pageID);
         break;
     }
 }

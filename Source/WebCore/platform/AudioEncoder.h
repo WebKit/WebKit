@@ -79,14 +79,14 @@ public:
         std::optional<uint64_t> duration { };
     };
 
-    using CreatePromise = NativePromise<Ref<AudioEncoder>, String>;
+    using CreatePromise = NativePromise<Ref<AudioEncoder>, RefPtr<StringImpl>>;
 
     using DescriptionCallback = Function<void(ActiveConfiguration&&)>;
     using OutputCallback = Function<void(EncodedFrame&&)>;
 
-    static Ref<CreatePromise> create(const String&, const Config&, DescriptionCallback&&, OutputCallback&&);
+    static Ref<CreatePromise> create(StringImpl*, const Config&, DescriptionCallback&&, OutputCallback&&);
 
-    using EncodePromise = NativePromise<void, String>;
+    using EncodePromise = NativePromise<void, RefPtr<StringImpl>>;
     virtual Ref<EncodePromise> encode(RawFrame&&) = 0;
 
     virtual Ref<GenericPromise> flush() = 0;

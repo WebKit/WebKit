@@ -66,17 +66,17 @@ template<> struct Coder<WebCore::AppHighlightRangeData::NodePathComponent> {
 
     static std::optional<WebCore::AppHighlightRangeData::NodePathComponent> decodeForPersistence(Decoder& decoder)
     {
-        std::optional<String> identifier;
+        std::optional<RefPtr<StringImpl>> identifier;
         decoder >> identifier;
         if (!identifier)
             return std::nullopt;
 
-        std::optional<String> nodeName;
+        std::optional<RefPtr<StringImpl>> nodeName;
         decoder >> nodeName;
         if (!nodeName)
             return std::nullopt;
 
-        std::optional<String> textData;
+        std::optional<RefPtr<StringImpl>> textData;
         decoder >> textData;
         if (!textData)
             return std::nullopt;
@@ -120,7 +120,7 @@ std::optional<WebCore::AppHighlightRangeData> Coder<WebCore::AppHighlightRangeDa
         version = 0;
     }
     
-    std::optional<String> identifier;
+    std::optional<RefPtr<StringImpl>> identifier;
     if (version)
         identifier = nullString();
     else {
@@ -133,7 +133,7 @@ std::optional<WebCore::AppHighlightRangeData> Coder<WebCore::AppHighlightRangeDa
             return std::nullopt;
     }
 
-    std::optional<String> text;
+    std::optional<RefPtr<StringImpl>> text;
     decoder >> text;
     if (!text)
         return std::nullopt;
@@ -174,7 +174,7 @@ std::optional<WebCore::ImportedScriptAttributes> Coder<WebCore::ImportedScriptAt
     if (!responseURL)
         return std::nullopt;
 
-    std::optional<String> mimeType;
+    std::optional<RefPtr<StringImpl>> mimeType;
     decoder >> mimeType;
     if (!mimeType)
         return std::nullopt;
@@ -192,22 +192,22 @@ void Coder<WebCore::ImageResource>::encodeForPersistence(Encoder& encoder, const
 
 std::optional<WebCore::ImageResource> Coder<WebCore::ImageResource>::decodeForPersistence(Decoder& decoder)
 {
-    std::optional<String> src;
+    std::optional<RefPtr<StringImpl>> src;
     decoder >> src;
     if (!src)
         return std::nullopt;
 
-    std::optional<String> sizes;
+    std::optional<RefPtr<StringImpl>> sizes;
     decoder >> sizes;
     if (!sizes)
         return std::nullopt;
 
-    std::optional<String> type;
+    std::optional<RefPtr<StringImpl>> type;
     decoder >> type;
     if (!type)
         return std::nullopt;
 
-    std::optional<String> label;
+    std::optional<RefPtr<StringImpl>> label;
     decoder >> label;
     if (!label)
         return std::nullopt;
@@ -251,12 +251,12 @@ std::optional<WebCore::ResourceRequest> Coder<WebCore::ResourceRequest>::decodeF
     if (!timeoutInterval)
         return std::nullopt;
 
-    std::optional<String> firstPartyForCookies;
+    std::optional<RefPtr<StringImpl>> firstPartyForCookies;
     decoder >> firstPartyForCookies;
     if (!firstPartyForCookies)
         return std::nullopt;
 
-    std::optional<String> httpMethod;
+    std::optional<RefPtr<StringImpl>> httpMethod;
     decoder >> httpMethod;
     if (!httpMethod)
         return std::nullopt;
@@ -266,7 +266,7 @@ std::optional<WebCore::ResourceRequest> Coder<WebCore::ResourceRequest>::decodeF
     if (!fields)
         return std::nullopt;
 
-    std::optional<Vector<String>> array;
+    std::optional<Vector<RefPtr<StringImpl>>> array;
     decoder >> array;
     if (!array)
         return std::nullopt;
@@ -562,7 +562,7 @@ std::optional<WebCore::NavigationPreloadState> Coder<WebCore::NavigationPreloadS
     if (!enabled)
         return { };
 
-    std::optional<String> headerValue;
+    std::optional<RefPtr<StringImpl>> headerValue;
     decoder >> headerValue;
     if (!headerValue)
         return { };
@@ -598,9 +598,9 @@ std::optional<WebCore::ContentSecurityPolicyResponseHeaders> Coder<WebCore::Cont
     if (!headersSize)
         return std::nullopt;
 
-    Vector<std::pair<String, WebCore::ContentSecurityPolicyHeaderType>> headersVector;
+    Vector<std::pair<RefPtr<StringImpl>, WebCore::ContentSecurityPolicyHeaderType>> headersVector;
     for (size_t i = 0; i < *headersSize; ++i) {
-        std::optional<String> header;
+        std::optional<RefPtr<StringImpl>> header;
         decoder >> header;
         if (!header)
             return std::nullopt;
@@ -651,12 +651,12 @@ void Coder<WebCore::SecurityOriginData>::encodeForPersistence(Encoder& encoder, 
 
 std::optional<WebCore::SecurityOriginData> Coder<WebCore::SecurityOriginData>::decodeForPersistence(Decoder& decoder)
 {
-    std::optional<String> protocol;
+    std::optional<RefPtr<StringImpl>> protocol;
     decoder >> protocol;
     if (!protocol)
         return std::nullopt;
 
-    std::optional<String> host;
+    std::optional<RefPtr<StringImpl>> host;
     decoder >> host;
     if (!host)
         return std::nullopt;
@@ -721,7 +721,7 @@ std::optional<WebCore::ResourceResponse> Coder<WebCore::ResourceResponse>::decod
         return std::nullopt;
     response.m_url = WTF::move(*url);
 
-    std::optional<AtomString> mimeType;
+    std::optional<RefPtr<AtomStringImpl>> mimeType;
     decoder >> mimeType;
     if (!mimeType)
         return std::nullopt;
@@ -733,19 +733,19 @@ std::optional<WebCore::ResourceResponse> Coder<WebCore::ResourceResponse>::decod
         return std::nullopt;
     response.m_expectedContentLength = *expectedContentLength;
 
-    std::optional<AtomString> textEncodingName;
+    std::optional<RefPtr<AtomStringImpl>> textEncodingName;
     decoder >> textEncodingName;
     if (!textEncodingName)
         return std::nullopt;
     response.m_textEncodingName = WTF::move(*textEncodingName);
 
-    std::optional<AtomString> httpStatusText;
+    std::optional<RefPtr<AtomStringImpl>> httpStatusText;
     decoder >> httpStatusText;
     if (!httpStatusText)
         return std::nullopt;
     response.m_httpStatusText = WTF::move(*httpStatusText);
 
-    std::optional<AtomString> httpVersion;
+    std::optional<RefPtr<AtomStringImpl>> httpVersion;
     decoder >> httpVersion;
     if (!httpVersion)
         return std::nullopt;
@@ -853,11 +853,11 @@ std::optional<WebCore::HTTPHeaderMap> Coder<WebCore::HTTPHeaderMap>::decodeForPe
 
     WebCore::HTTPHeaderMap headers;
     for (uint64_t i = 0; i < *headersSize; ++i) {
-        std::optional<String> name;
+        std::optional<RefPtr<StringImpl>> name;
         decoder >> name;
         if (!name)
             return std::nullopt;
-        std::optional<String> value;
+        std::optional<RefPtr<StringImpl>> value;
         decoder >> value;
         if (!value)
             return std::nullopt;
@@ -873,7 +873,7 @@ void Coder<WebCore::RouterSourceDict>::encodeForPersistence(Encoder& encoder, co
 
 std::optional<WebCore::RouterSourceDict> Coder<WebCore::RouterSourceDict>::decodeForPersistence(Decoder& decoder)
 {
-    std::optional<String> cacheName;
+    std::optional<RefPtr<StringImpl>> cacheName;
     decoder >> cacheName;
     if (!cacheName)
         return std::nullopt;
@@ -925,7 +925,7 @@ std::optional<WebCore::ServiceWorkerRouteCondition> Coder<WebCore::ServiceWorker
     if (!urlPattern)
         return std::nullopt;
 
-    std::optional<String> requestMethod;
+    std::optional<RefPtr<StringImpl>> requestMethod;
     decoder >> requestMethod;
     if (!requestMethod)
         return std::nullopt;
@@ -987,42 +987,42 @@ std::optional<WebCore::ServiceWorkerRoutePattern> Coder<WebCore::ServiceWorkerRo
     if (!shouldIgnoreCase)
         return std::nullopt;
 
-    std::optional<String> protocol;
+    std::optional<RefPtr<StringImpl>> protocol;
     decoder >> protocol;
     if (!protocol)
         return std::nullopt;
 
-    std::optional<String> username;
+    std::optional<RefPtr<StringImpl>> username;
     decoder >> username;
     if (!username)
         return std::nullopt;
 
-    std::optional<String> password;
+    std::optional<RefPtr<StringImpl>> password;
     decoder >> password;
     if (!password)
         return std::nullopt;
 
-    std::optional<String> hostname;
+    std::optional<RefPtr<StringImpl>> hostname;
     decoder >> hostname;
     if (!hostname)
         return std::nullopt;
 
-    std::optional<String> port;
+    std::optional<RefPtr<StringImpl>> port;
     decoder >> port;
     if (!port)
         return std::nullopt;
 
-    std::optional<String> pathname;
+    std::optional<RefPtr<StringImpl>> pathname;
     decoder >> pathname;
     if (!pathname)
         return std::nullopt;
 
-    std::optional<String> search;
+    std::optional<RefPtr<StringImpl>> search;
     decoder >> search;
     if (!search)
         return std::nullopt;
 
-    std::optional<String> hash;
+    std::optional<RefPtr<StringImpl>> hash;
     decoder >> hash;
     if (!hash)
         return std::nullopt;

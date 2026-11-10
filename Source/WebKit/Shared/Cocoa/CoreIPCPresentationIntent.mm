@@ -52,7 +52,7 @@ CoreIPCPresentationIntent::CoreIPCPresentationIntent(NSPresentationIntent *inten
         m_ordinal = intent.ordinal;
         break;
     case NSPresentationIntentKindCodeBlock:
-        m_languageHint = { intent.languageHint };
+        m_languageHint = { StringImpl::create(intent.languageHint) };
         break;
     case NSPresentationIntentKindTable:
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -91,7 +91,7 @@ RetainPtr<id> CoreIPCPresentationIntent::toID() const
     case NSPresentationIntentKindListItem:
         return [NSPresentationIntent listItemIntentWithIdentity:m_identity ordinal:m_ordinal nestedInsideIntent:parent.get()];
     case NSPresentationIntentKindCodeBlock:
-        return [NSPresentationIntent codeBlockIntentWithIdentity:m_identity languageHint:m_languageHint.createNSString().get() nestedInsideIntent:parent.get()];
+        return [NSPresentationIntent codeBlockIntentWithIdentity:m_identity languageHint:createNSString(m_languageHint).get() nestedInsideIntent:parent.get()];
     case NSPresentationIntentKindBlockQuote:
         return [NSPresentationIntent blockQuoteIntentWithIdentity:m_identity nestedInsideIntent:parent.get()];
     case NSPresentationIntentKindThematicBreak:

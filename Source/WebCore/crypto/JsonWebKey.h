@@ -57,26 +57,26 @@ struct JsonWebKey {
         };
     }
 
-    String kty;
-    String use;
+    RefPtr<StringImpl> kty;
+    RefPtr<StringImpl> use;
     std::optional<Vector<CryptoKeyUsage>> key_ops;
-    String alg;
+    RefPtr<StringImpl> alg;
 
     std::optional<bool> ext;
 
-    String crv;
-    String x;
-    String y;
-    String d;
-    String n;
-    String e;
-    String p;
-    String q;
-    String dp;
-    String dq;
-    String qi;
+    RefPtr<StringImpl> crv;
+    RefPtr<StringImpl> x;
+    RefPtr<StringImpl> y;
+    RefPtr<StringImpl> d;
+    RefPtr<StringImpl> n;
+    RefPtr<StringImpl> e;
+    RefPtr<StringImpl> p;
+    RefPtr<StringImpl> q;
+    RefPtr<StringImpl> dp;
+    RefPtr<StringImpl> dq;
+    RefPtr<StringImpl> qi;
     std::optional<Vector<RsaOtherPrimesInfo>> oth;
-    String k;
+    RefPtr<StringImpl> k;
 
     // Not part of exposed dictionary.
     CryptoKeyUsageBitmap usages = 0;

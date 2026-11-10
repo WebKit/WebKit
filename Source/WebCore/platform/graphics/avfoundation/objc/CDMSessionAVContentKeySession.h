@@ -66,12 +66,12 @@ public:
 
     // LegacyCDMSession
     LegacyCDMSessionType type() const final { return CDMSessionTypeAVContentKeySession; }
-    RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) final;
+    RefPtr<Uint8Array> generateKeyRequest(StringImpl* mimeType, Uint8Array* initData, RefPtr<StringImpl>& destinationURL, unsigned short& errorCode, uint32_t& systemCode) final;
     void releaseKeys() final;
     bool update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) final;
-    RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const final;
-    const String& sessionId() const LIFETIME_BOUND final { return m_sessionId; }
-    void setSessionId(const String& sessionId) { m_sessionId = sessionId; }
+    RefPtr<ArrayBuffer> cachedKeyForKeyID(StringImpl*) const final;
+    const RefPtr<StringImpl>& sessionId() const LIFETIME_BOUND final { return m_sessionId; }
+    void setSessionId(StringImpl* sessionId) { m_sessionId = sessionId; }
 
     void addRenderer(AudioVideoRenderer&);
     void removeRenderer(AudioVideoRenderer&);
@@ -100,7 +100,7 @@ private:
     ASCIILiteral logClassName() const { return "CDMSessionAVContentKeySession"_s; }
 #endif
 
-    String storagePath() const;
+    RefPtr<StringImpl> storagePath() const;
 
     static RetainPtr<AVContentKeySession> createContentKeySession(NSURL *);
     bool hasContentKeySession() const { return !!m_contentKeySession; }
@@ -127,7 +127,7 @@ private:
     ThreadSafeWeakHashSet<AudioVideoRenderer> m_renderers;
 
     RefPtr<Uint8Array> m_certificate;
-    String m_sessionId;
+    RefPtr<StringImpl> m_sessionId;
     bool m_stopped { false };
 
 #if !RELEASE_LOG_DISABLED

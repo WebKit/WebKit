@@ -41,12 +41,12 @@ public:
     virtual void didBlurFromControl() = 0;
     virtual void didChangeValueFromControl() = 0;
     virtual void didReceiveSpaceKeyFromControl() = 0;
-    virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const = 0;
+    virtual RefPtr<StringImpl> formatDateTimeFieldsState(const DateTimeFieldsState&) const = 0;
     virtual bool isEditControlOwnerDisabled() const = 0;
     virtual bool isEditControlOwnerReadOnly() const = 0;
     virtual bool didEditControlOwnerTransferFocusToPicker() = 0;
     virtual void didSuppressBlurDueToPickerFocusTransfer() = 0;
-    virtual AtomString localeIdentifier() const = 0;
+    virtual RefPtr<AtomStringImpl> localeIdentifier() const = 0;
 };
 
 class DateTimeEditElement final : public HTMLDivElement, public DateTimeFieldElementFieldOwner {
@@ -54,8 +54,8 @@ class DateTimeEditElement final : public HTMLDivElement, public DateTimeFieldEle
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeEditElement);
 public:
     struct LayoutParameters {
-        String dateTimeFormat;
-        String fallbackDateTimeFormat;
+        RefPtr<StringImpl> dateTimeFormat;
+        RefPtr<StringImpl> fallbackDateTimeFormat;
         const CheckedRef<Locale> locale;
         bool shouldHaveMillisecondField { false };
 
@@ -76,8 +76,8 @@ public:
     void resetFields();
     void setEmptyValue(const LayoutParameters&);
     void setValueAsDate(const LayoutParameters&, const DateComponents&);
-    String value() const;
-    String placeholderValue() const;
+    RefPtr<StringImpl> value() const;
+    RefPtr<StringImpl> placeholderValue() const;
     bool editableFieldsHaveValues() const;
 
 private:
@@ -113,7 +113,7 @@ private:
     bool isFieldOwnerHorizontal() const final;
     bool didFieldOwnerTransferFocusToPicker() final;
     void didSuppressBlurDueToPickerFocusTransfer() final;
-    AtomString localeIdentifier() const final;
+    RefPtr<AtomStringImpl> localeIdentifier() const final;
     PlainGregorianDateTime placeholderDate() const final;
 
     Vector<Ref<DateTimeFieldElement>, maximumNumberOfFields> m_fields;

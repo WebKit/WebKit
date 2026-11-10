@@ -49,7 +49,7 @@ RemoteTextureViewProxy::~RemoteTextureViewProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteTextureViewProxy::setLabel(String&& label)
+void RemoteTextureViewProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteTextureView::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

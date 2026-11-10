@@ -860,10 +860,10 @@ NODELETE static inline bool canShowCapsLockIndicator()
 void RenderThemeCocoa::purgeCaches()
 {
 #if ENABLE(VIDEO)
-    m_mediaControlsLocalizedStringsScript.clearImplIfNotShared();
-    m_mediaControlsScript.clearImplIfNotShared();
-    m_mediaControlsStyleSheet.clearImplIfNotShared();
-    m_youTubeCaptionQuirkScript.clearImplIfNotShared();
+    clearImplIfNotShared(m_mediaControlsLocalizedStringsScript);
+    clearImplIfNotShared(m_mediaControlsScript);
+    clearImplIfNotShared(m_mediaControlsStyleSheet);
+    clearImplIfNotShared(m_youTubeCaptionQuirkScript);
 #endif // ENABLE(VIDEO)
 
     RenderTheme::purgeCaches();
@@ -944,9 +944,9 @@ void RenderThemeCocoa::adjustApplePayButtonStyle(Style::ComputedStyle& style, co
 
 #if HAVE(MATERIAL_HOSTING)
 
-static const String& glassMaterialMediaControlsStyleSheet()
+static const RefPtr<StringImpl>& glassMaterialMediaControlsStyleSheet()
 {
-    static NeverDestroyed<String> glassMaterialMediaControlsStyleSheet {
+    static NeverDestroyed<RefPtr<StringImpl>> glassMaterialMediaControlsStyleSheet {
         "@supports (-apple-visual-effect: -apple-system-glass-material) {"
         "    .media-controls.mac * {"
         "        --primary-glyph-color: white;"
@@ -981,9 +981,9 @@ static const String& glassMaterialMediaControlsStyleSheet()
     return glassMaterialMediaControlsStyleSheet;
 }
 
-static const String& macOSInlineMediaControlsStyleSheet()
+static const RefPtr<StringImpl>& macOSInlineMediaControlsStyleSheet()
 {
-    static NeverDestroyed<String> macOSInlineMediaControlsStyleSheet {
+    static NeverDestroyed<RefPtr<StringImpl>> macOSInlineMediaControlsStyleSheet {
         ".media-controls-container.mac.inline:not(.audio) {"
         "    display: flex;"
         "    flex-direction: column;"
@@ -1155,9 +1155,9 @@ static const String& macOSInlineMediaControlsStyleSheet()
     return macOSInlineMediaControlsStyleSheet;
 }
 
-static const String& macOSFullscreenMediaControlsStyleSheet()
+static const RefPtr<StringImpl>& macOSFullscreenMediaControlsStyleSheet()
 {
-    static NeverDestroyed<String> macOSFullscreenMediaControlsStyleSheet {
+    static NeverDestroyed<RefPtr<StringImpl>> macOSFullscreenMediaControlsStyleSheet {
         "/* Controls bar */"
         ".media-controls.mac.fullscreen {"
         "    --controls-bar-width: 458px; /* Keep in sync with `minVideoWidth`. */"
@@ -1263,12 +1263,12 @@ static const String& macOSFullscreenMediaControlsStyleSheet()
 }
 #endif // HAVE(MATERIAL_HOSTING)
 
-Vector<String, 2> RenderThemeCocoa::mediaControlsStyleSheets(const HTMLMediaElement& mediaElement)
+Vector<RefPtr<StringImpl>, 2> RenderThemeCocoa::mediaControlsStyleSheets(const HTMLMediaElement& mediaElement)
 {
-    if (m_mediaControlsStyleSheet.isEmpty())
+    if (isEmpty(m_mediaControlsStyleSheet))
         m_mediaControlsStyleSheet = StringImpl::createWithoutCopying(ModernMediaControlsUserAgentStyleSheet);
 
-    auto mediaControlsStyleSheets = Vector<String, 2>::from(m_mediaControlsStyleSheet);
+    auto mediaControlsStyleSheets = Vector<RefPtr<StringImpl>, 2>::from(m_mediaControlsStyleSheet);
 
 #if HAVE(MATERIAL_HOSTING)
     // FIXME (153018199): Glass material styles can be added directly to ModernMediaControlsUserAgentStyleSheet
@@ -1287,15 +1287,15 @@ Vector<String, 2> RenderThemeCocoa::mediaControlsStyleSheets(const HTMLMediaElem
     return mediaControlsStyleSheets;
 }
 
-Vector<String, 2> RenderThemeCocoa::mediaControlsScripts()
+Vector<RefPtr<StringImpl>, 2> RenderThemeCocoa::mediaControlsScripts()
 {
     // FIXME: Localized strings are not worth having a script. We should make it JSON data etc. instead.
-    if (m_mediaControlsLocalizedStringsScript.isEmpty()) {
+    if (isEmpty(m_mediaControlsLocalizedStringsScript)) {
         NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
-        m_mediaControlsLocalizedStringsScript = [NSString stringWithContentsOfFile:retainPtr([bundle pathForResource:@"modern-media-controls-localized-strings" ofType:@"js"]).get() encoding:NSUTF8StringEncoding error:nil];
+        m_mediaControlsLocalizedStringsScript = StringImpl::create([NSString stringWithContentsOfFile:retainPtr([bundle pathForResource:@"modern-media-controls-localized-strings" ofType:@"js"]).get() encoding:NSUTF8StringEncoding error:nil]);
     }
 
-    if (m_mediaControlsScript.isEmpty())
+    if (isEmpty(m_mediaControlsScript))
         m_mediaControlsScript = StringImpl::createWithoutCopying(ModernMediaControlsJavaScript);
 
     return {
@@ -1304,21 +1304,21 @@ Vector<String, 2> RenderThemeCocoa::mediaControlsScripts()
     };
 }
 
-RefPtr<FragmentedSharedBuffer> RenderThemeCocoa::mediaControlsImageDataForIconNameAndType(const String& iconName, const String& iconType)
+RefPtr<FragmentedSharedBuffer> RenderThemeCocoa::mediaControlsImageDataForIconNameAndType(StringImpl* iconName, StringImpl* iconType)
 {
     NSString *directory = @"modern-media-controls/images";
     NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
-    return SharedBuffer::create([NSData dataWithContentsOfFile:retainPtr([bundle pathForResource:iconName.createNSString().get() ofType:iconType.createNSString().get() inDirectory:directory]).get()]);
+    return SharedBuffer::create([NSData dataWithContentsOfFile:retainPtr([bundle pathForResource:createNSString(iconName).get() ofType:createNSString(iconType).get() inDirectory:directory]).get()]);
 }
 
-String RenderThemeCocoa::mediaControlsBase64StringForIconNameAndType(const String& iconName, const String& iconType)
+RefPtr<StringImpl> RenderThemeCocoa::mediaControlsBase64StringForIconNameAndType(StringImpl* iconName, StringImpl* iconType)
 {
     NSString *directory = @"modern-media-controls/images";
     NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
-    return [[NSData dataWithContentsOfFile:retainPtr([bundle pathForResource:iconName.createNSString().get() ofType:iconType.createNSString().get() inDirectory:directory]).get()] base64EncodedStringWithOptions:0];
+    return StringImpl::create([[NSData dataWithContentsOfFile:retainPtr([bundle pathForResource:createNSString(iconName).get() ofType:createNSString(iconType).get() inDirectory:directory]).get()] base64EncodedStringWithOptions:0]);
 }
 
-String RenderThemeCocoa::mediaControlsFormattedStringForDuration(const double durationInSeconds)
+RefPtr<StringImpl> RenderThemeCocoa::mediaControlsFormattedStringForDuration(const double durationInSeconds)
 {
     if (!std::isfinite(durationInSeconds))
         return WEB_UI_STRING("indefinite time", "accessibility help text for an indefinite media controller time value");
@@ -1331,11 +1331,11 @@ String RenderThemeCocoa::mediaControlsFormattedStringForDuration(const double du
         m_durationFormatter.get().formattingContext = NSFormattingContextStandalone;
         m_durationFormatter.get().maximumUnitCount = 2;
     }
-    return [m_durationFormatter stringFromTimeInterval:durationInSeconds];
+    return StringImpl::create([m_durationFormatter stringFromTimeInterval:durationInSeconds]);
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-String RenderThemeCocoa::youTubeQuirkScript()
+RefPtr<StringImpl> RenderThemeCocoa::youTubeQuirkScript()
 {
     if (!m_youTubeCaptionQuirkScript)
         m_youTubeCaptionQuirkScript = StringImpl::createWithoutCopying(YouTubeCaptionQuirkJavaScript);
@@ -1343,7 +1343,7 @@ String RenderThemeCocoa::youTubeQuirkScript()
     return m_youTubeCaptionQuirkScript;
 }
 
-String RenderThemeCocoa::cnnQuirkScript()
+RefPtr<StringImpl> RenderThemeCocoa::cnnQuirkScript()
 {
     if (!m_cnnCaptionQuirkScript)
         m_cnnCaptionQuirkScript = StringImpl::createWithoutCopying(CNNCaptionQuirkJavaScript);
@@ -3163,7 +3163,7 @@ public:
         , m_style(style)
     {
     }
-    float measureText(const String& string) const override
+    float measureText(StringImpl* string) const override
     {
         TextRun run = RenderBlock::constructTextRun(string, m_style);
         return m_font.width(run);

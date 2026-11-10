@@ -64,25 +64,25 @@ WebExtension::WebExtension(GFile* resourcesFile, RefPtr<API::Error>& outError)
     }
 }
 
-std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForPath(const String& originalPath, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
+std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForPath(StringImpl* originalPath, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
 {
     ASSERT(originalPath);
 
-    String path = originalPath;
+    RefPtr<StringImpl> path = originalPath;
 
     // Remove leading slash to normalize the path for lookup/storage in the cache dictionary.
-    if (path.startsWith('/'))
-        path = path.substring(1);
+    if (startsWith(path, '/'))
+        path = substring(path, 1);
 
-    if (path.startsWith("data:"_s)) {
+    if (startsWith(path, "data:"_s)) {
         if (auto decodedURL = WebCore::DataURLDecoder::decode(URL { path }))
             return API::Data::create(decodedURL.value().data);
-        ASSERT(path == "data:"_s);
+        ASSERT(equal(path, "data:"_s));
         return API::Data::create(std::span<const uint8_t> { });
     }
 
-    if (path == generatedBackgroundPageFilename || path  == generatedBackgroundServiceWorkerFilename)
-        return API::Data::create(generatedBackgroundContent().utf8().span());
+    if (equal(path, generatedBackgroundPageFilename) || equal(path, generatedBackgroundServiceWorkerFilename))
+        return API::Data::create(utf8(generatedBackgroundContent()).span());
 
     auto resourceKey = resourceKeyForPath(originalPath);
 
@@ -90,7 +90,7 @@ std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForP
         return *maybeData;
 
     if (auto maybeString = m_stringResources.getOptional(resourceKey)) {
-        auto data = API::Data::create(maybeString->utf8().span());
+        auto data = API::Data::create(utf8(*maybeString).span());
         m_dataResources.set(resourceKey, data);
         return data;
     }
@@ -98,14 +98,14 @@ std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForP
     auto resourceURL = resourceFileURLForPath(path);
     if (resourceURL.isEmpty()) {
         if (suppressErrors == SuppressNotFoundErrors::No)
-            return makeUnexpected(createError(Error::ResourceNotFound, WEB_UI_FORMAT_STRING("Unable to find “%s” in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", path.utf8())));
+            return makeUnexpected(createError(Error::ResourceNotFound, WEB_UI_FORMAT_STRING("Unable to find “%s” in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", utf8(path))));
         return makeUnexpected(nullptr);
     }
 
     auto rawData = FileSystem::readEntireFile(resourceURL.fileSystemPath());
     if (!rawData.has_value()) {
         if (suppressErrors == SuppressNotFoundErrors::No)
-            return makeUnexpected(createError(Error::ResourceNotFound, WEB_UI_FORMAT_STRING("Unable to find “%s” in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", path.utf8())));
+            return makeUnexpected(createError(Error::ResourceNotFound, WEB_UI_FORMAT_STRING("Unable to find “%s” in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", utf8(path))));
         return makeUnexpected(nullptr);
     }
 
@@ -118,7 +118,7 @@ std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForP
 
 void WebExtension::recordError(Ref<API::Error> error)
 {
-    RELEASE_LOG_ERROR(Extensions, "Error recorded: %s", error->localizedDescription().utf8());
+    RELEASE_LOG_ERROR(Extensions, "Error recorded: %s", utf8(error->localizedDescription()));
 
     // Only the first occurrence of each error is recorded in the array. This prevents duplicate errors,
     // such as repeated "resource not found" errors, from being included multiple times.
@@ -138,7 +138,7 @@ RefPtr<WebCore::Icon> WebExtension::bestIcon(RefPtr<JSON::Object> icons, WebCore
 
     auto pixelSize = idealPointSize * bestScale;
     auto iconPath = pathForBestImage(*icons, pixelSize);
-    if (iconPath.isEmpty())
+    if (isEmpty(iconPath))
         return nullptr;
 
     auto imageValue = iconForPath(iconPath, idealSize);

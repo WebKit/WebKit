@@ -40,19 +40,19 @@ class HTMLOptionElement final : public HTMLElement {
 public:
     static Ref<HTMLOptionElement> create(Document&);
     static Ref<HTMLOptionElement> create(const QualifiedName&, Document&);
-    static ExceptionOr<Ref<HTMLOptionElement>> createForLegacyFactoryFunction(Document&, String&& text, const AtomString& value, bool defaultSelected, bool selected);
+    static ExceptionOr<Ref<HTMLOptionElement>> createForLegacyFactoryFunction(Document&, RefPtr<StringImpl>&& text, AtomStringImpl* value, bool defaultSelected, bool selected);
 
     void finishParsingChildren() final;
 
-    WEBCORE_EXPORT String text() const;
-    void setText(String&&);
+    WEBCORE_EXPORT RefPtr<StringImpl> text() const;
+    void setText(RefPtr<StringImpl>&&);
 
     NODELETE WEBCORE_EXPORT HTMLFormElement* form() const;
     RefPtr<HTMLFormElement> formForBindings() const;
 
     WEBCORE_EXPORT int index() const;
 
-    WEBCORE_EXPORT String value() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> value() const;
 
     WEBCORE_EXPORT bool selected(AllowStyleInvalidation = AllowStyleInvalidation::Yes) const;
     WEBCORE_EXPORT void setSelected(bool);
@@ -64,15 +64,15 @@ public:
     NODELETE WEBCORE_EXPORT HTMLSelectElement* ownerSelectElement() const;
     bool isRenderedWithBaseAppearance() const;
 
-    WEBCORE_EXPORT String label() const;
-    WEBCORE_EXPORT String displayLabel() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> label() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> displayLabel() const;
 
     bool ownElementDisabled() const { return m_disabled; }
 
     WEBCORE_EXPORT bool isDisabledFormControl() const final;
     bool isActuallyDisabled() const final;
 
-    String textIndentedToRespectGroupLabel() const;
+    RefPtr<StringImpl> textIndentedToRespectGroupLabel() const;
 
     void setSelectedState(bool, AllowStyleInvalidation = AllowStyleInvalidation::Yes);
     bool selectedWithoutUpdate() const { return m_isSelected; }
@@ -98,8 +98,8 @@ private:
     bool isFocusable() const final;
     bool matchesDefaultPseudoClass() const final { return m_isDefault; }
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
-    void parseDisabledAttribute(const AtomString&);
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
+    void parseDisabledAttribute(AtomStringImpl*);
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 

@@ -267,8 +267,8 @@ void ArgumentCoder<WebKit::CoreIPCDDScannerResult>::encode(Encoder& encoder, con
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_OptionalNumberKey)>, RetainPtr<NSNumber>>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_ArrayKey)>, Vector<RetainPtr<DDScannerResult>>>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_OptionalArrayKey)>, std::optional<Vector<RetainPtr<DDScannerResult>>>>);
-    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_DictionaryKey)>, Vector<std::pair<String, RetainPtr<Number>>>>);
-    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_OptionalDictionaryKey)>, std::optional<Vector<std::pair<String, RetainPtr<DDScannerResult>>>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_DictionaryKey)>, Vector<std::pair<RefPtr<StringImpl>, RetainPtr<Number>>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_OptionalDictionaryKey)>, std::optional<Vector<std::pair<RefPtr<StringImpl>, RetainPtr<DDScannerResult>>>>>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_DataArrayKey)>, Vector<RetainPtr<NSData>>>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_SecTrustArrayKey)>, Vector<RetainPtr<SecTrustRef>>>);
     struct ShouldBeSameSizeAsDDScannerResult : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::CoreIPCDDScannerResult>, false> {
@@ -277,8 +277,8 @@ void ArgumentCoder<WebKit::CoreIPCDDScannerResult>::encode(Encoder& encoder, con
         RetainPtr<NSNumber> OptionalNumberKey;
         Vector<RetainPtr<DDScannerResult>> ArrayKey;
         std::optional<Vector<RetainPtr<DDScannerResult>>> OptionalArrayKey;
-        Vector<std::pair<String, RetainPtr<Number>>> DictionaryKey;
-        std::optional<Vector<std::pair<String, RetainPtr<DDScannerResult>>>> OptionalDictionaryKey;
+        Vector<std::pair<RefPtr<StringImpl>, RetainPtr<Number>>> DictionaryKey;
+        std::optional<Vector<std::pair<RefPtr<StringImpl>, RetainPtr<DDScannerResult>>>> OptionalDictionaryKey;
         Vector<RetainPtr<NSData>> DataArrayKey;
         Vector<RetainPtr<SecTrustRef>> SecTrustArrayKey;
     };
@@ -328,11 +328,11 @@ std::optional<WebKit::CoreIPCDDScannerResult> ArgumentCoder<WebKit::CoreIPCDDSca
     if (!OptionalArrayKey)
         return std::nullopt;
 
-    auto DictionaryKey = decoder.decode<Vector<std::pair<String, RetainPtr<Number>>>>();
+    auto DictionaryKey = decoder.decode<Vector<std::pair<RefPtr<StringImpl>, RetainPtr<Number>>>>();
     if (!DictionaryKey)
         return std::nullopt;
 
-    auto OptionalDictionaryKey = decoder.decode<std::optional<Vector<std::pair<String, RetainPtr<DDScannerResult>>>>>();
+    auto OptionalDictionaryKey = decoder.decode<std::optional<Vector<std::pair<RefPtr<StringImpl>, RetainPtr<DDScannerResult>>>>>();
     if (!OptionalDictionaryKey)
         return std::nullopt;
 
@@ -366,12 +366,12 @@ std::optional<WebKit::CoreIPCDDScannerResult> ArgumentCoder<WebKit::CoreIPCDDSca
 #if USE(CFSTRING)
 void ArgumentCoder<CFStringRef>::encode(Encoder& encoder, CFStringRef instance)
 {
-    encoder << WTF::String { instance };
+    encoder << StringImpl::create(instance);
 }
 
 void ArgumentCoder<CFStringRef>::encode(StreamConnectionEncoder& encoder, CFStringRef instance)
 {
-    encoder << WTF::String { instance };
+    encoder << StringImpl::create(instance);
 }
 
 void ArgumentCoder<RetainPtr<CFStringRef>>::encode(Encoder& encoder, const RetainPtr<CFStringRef>& retainPtr)
@@ -401,10 +401,10 @@ std::optional<RetainPtr<CFStringRef>> ArgumentCoder<RetainPtr<CFStringRef>>::dec
         return std::nullopt;
     if (!*isEngaged)
         return { nullptr };
-    auto result = decoder.decode<WTF::String>();
+    auto result = decoder.decode<RefPtr<StringImpl>>();
     if (!decoder.isValid()) [[unlikely]]
         return std::nullopt;
-    return result->createCFString();
+    return createCFString(*result);
 }
 
 #endif

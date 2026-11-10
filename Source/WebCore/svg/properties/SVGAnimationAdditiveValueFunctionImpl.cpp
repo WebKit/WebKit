@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-std::optional<float> SVGAnimationColorFunction::calculateDistance(SVGElement& targetElement, const String& from, const String& to) const
+std::optional<float> SVGAnimationColorFunction::calculateDistance(SVGElement& targetElement, StringImpl* from, StringImpl* to) const
 {
     auto simpleFrom = SVGPropertyTraits<Color>::fromString(targetElement, from).toColorTypeLossy<SRGBA<uint8_t>>().resolved();
     auto simpleTo = SVGPropertyTraits<Color>::fromString(targetElement, to).toColorTypeLossy<SRGBA<uint8_t>>().resolved();
@@ -42,7 +42,7 @@ std::optional<float> SVGAnimationColorFunction::calculateDistance(SVGElement& ta
     return std::hypot(red, green, blue);
 }
 
-std::optional<float> SVGAnimationIntegerFunction::calculateDistance(SVGElement&, const String& from, const String& to) const
+std::optional<float> SVGAnimationIntegerFunction::calculateDistance(SVGElement&, StringImpl* from, StringImpl* to) const
 {
     return std::abs(parseInteger<int>(to).value_or(0) - parseInteger<int>(from).value_or(0));
 }

@@ -42,12 +42,12 @@ class ScriptExecutionContext;
 
 class PerformanceMark final : public PerformanceEntry {
 public:
-    static ExceptionOr<Ref<PerformanceMark>> create(JSC::JSGlobalObject&, ScriptExecutionContext&, const String& name, std::optional<PerformanceMarkOptions>&&);
+    static ExceptionOr<Ref<PerformanceMark>> create(JSC::JSGlobalObject&, ScriptExecutionContext&, StringImpl* name, std::optional<PerformanceMarkOptions>&&);
 
     JSC::JSValue detail(JSC::JSGlobalObject&);
 
 private:
-    PerformanceMark(const String& name, double startTime, Ref<SerializedScriptValue>&&);
+    PerformanceMark(StringImpl* name, double startTime, Ref<SerializedScriptValue>&&);
     ~PerformanceMark();
 
     Type performanceEntryType() const final { return Type::Mark; }

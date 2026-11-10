@@ -72,12 +72,12 @@ Ref<Page> createTestPage(const TestPageOptions& options)
     return page;
 }
 
-void loadHTMLIntoTestPage(LocalFrame& frame, const String& html)
+void loadHTMLIntoTestPage(LocalFrame& frame, StringImpl* html)
 {
     RefPtr activeDocumentLoader = frame.loader().activeDocumentLoader();
     ASSERT(activeDocumentLoader);
     auto& writer = activeDocumentLoader->writer();
-    writer.setMIMEType("text/html"_s);
+    writer.setMIMEType("text/html"_si);
     writer.begin();
     writer.insertDataSynchronously(html);
     writer.end();

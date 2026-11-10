@@ -20,224 +20,17 @@
 
 #pragma once
 
+// There is no AtomString class anymore: atoms are RefPtr<AtomStringImpl>, compared by identity, with the
+// null-safe free functions declared in StringFunctions.h. This header provides the shared null and empty atoms.
+
 #include <utility>
 #include <wtf/text/AtomStringImpl.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
 
-class AtomString final {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AtomString);
-public:
-    AtomString();
-    AtomString(std::span<const Latin1Character>);
-    AtomString(std::span<const char16_t>);
-
-    AtomString(AtomStringImpl*);
-    AtomString(RefPtr<AtomStringImpl>&&);
-    AtomString(Ref<AtomStringImpl>&&);
-    AtomString(const StaticStringImpl&);
-    AtomString(StringImpl*);
-    explicit AtomString(const String&);
-    explicit AtomString(String&&);
-    AtomString(StringImpl* baseString, unsigned start, unsigned length);
-
-    // FIXME: AtomString doesn’t always have AtomStringImpl, so one of those two names needs to change.
-    AtomString(UniquedStringImpl* uid);
-
-    AtomString(ASCIILiteral);
-
-    static AtomString lookUp(std::span<const char16_t> characters) { return AtomStringImpl::lookUp(characters); }
-
-    // Hash table deleted values, which are only constructed and never copied or destroyed.
-    AtomString(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
-    bool isHashTableDeletedValue() const { return m_string.isHashTableDeletedValue(); }
-
-    unsigned existingHash() const { return isNull() ? 0 : impl()->existingHash(); }
-
-    operator const String&() const LIFETIME_BOUND { return m_string; }
-    const String& string() const LIFETIME_BOUND { return m_string; }
-    String releaseString() { return WTF::move(m_string); }
-
-    // FIXME: What guarantees this isn't a SymbolImpl rather than an AtomStringImpl?
-    AtomStringImpl* impl() const LIFETIME_BOUND { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<AtomStringImpl*>(m_string.impl()); }
-    RefPtr<AtomStringImpl> releaseImpl() { return uncheckedDowncast<AtomStringImpl>(m_string.releaseImpl()); }
-
-    bool is8Bit() const { return m_string.is8Bit(); }
-    std::span<const Latin1Character> span8() const LIFETIME_BOUND { return m_string.span8(); }
-    std::span<const char16_t> span16() const LIFETIME_BOUND { return m_string.span16(); }
-    unsigned length() const { return m_string.length(); }
-
-    char16_t operator[](unsigned int i) const { return m_string[i]; }
-
-    WTF_EXPORT_PRIVATE static AtomString number(int);
-    WTF_EXPORT_PRIVATE static AtomString number(unsigned);
-    WTF_EXPORT_PRIVATE static AtomString number(unsigned long);
-    WTF_EXPORT_PRIVATE static AtomString number(unsigned long long);
-    WTF_EXPORT_PRIVATE static AtomString number(float);
-    WTF_EXPORT_PRIVATE static AtomString number(double);
-    // If we need more overloads of the number function, we can add all the others that String has, but these seem to do for now.
-
-    bool contains(char16_t character) const { return m_string.contains(character); }
-    bool contains(ASCIILiteral literal) const { return m_string.contains(literal); }
-    NODELETE bool contains(StringView) const;
-    NODELETE bool containsIgnoringASCIICase(StringView) const;
-
-    size_t find(char16_t character, size_t start = 0) const { return m_string.find(character, start); }
-    size_t find(ASCIILiteral literal, size_t start = 0) const { return m_string.find(literal, start); }
-    NODELETE size_t find(StringView, size_t start = 0) const;
-    NODELETE size_t findIgnoringASCIICase(StringView) const;
-    NODELETE size_t findIgnoringASCIICase(StringView, size_t start) const;
-    size_t find(CodeUnitMatchFunction matchFunction, size_t start = 0) const { return m_string.find(matchFunction, start); }
-
-    NODELETE bool startsWith(StringView) const;
-    NODELETE bool startsWithIgnoringASCIICase(StringView) const;
-    bool startsWith(char16_t character) const { return m_string.startsWith(character); }
-
-    NODELETE bool endsWith(StringView) const;
-    NODELETE bool endsWithIgnoringASCIICase(StringView) const;
-    bool endsWith(char16_t character) const { return m_string.endsWith(character); }
-
-    WTF_EXPORT_PRIVATE AtomString convertToASCIILowercase() const;
-    WTF_EXPORT_PRIVATE AtomString convertToASCIIUppercase() const;
-
-    double toDouble(bool* ok = nullptr) const { return m_string.toDouble(ok); }
-    float toFloat(bool* ok = nullptr) const { return m_string.toFloat(ok); }
-
-    bool isNull() const { return m_string.isNull(); }
-    bool isEmpty() const { return m_string.isEmpty(); }
-
-#if USE(CF)
-    AtomString(CFStringRef);
-#endif
-
-#if USE(FOUNDATION) && defined(__OBJC__)
-    AtomString(NSString *);
-    RetainPtr<NSString> createNSString() const { return m_string.createNSString(); }
-#endif
-
-#if OS(WINDOWS)
-    AtomString(const wchar_t* characters, unsigned length)
-        : AtomString({ ucharFrom(characters), length }) { }
-
-    AtomString(const wchar_t* characters)
-        : AtomString(characters, characters ? wcslen(characters) : 0) { }
-#endif
-
-    // AtomString::fromUTF8 will return a null string if the input data contains invalid UTF-8 sequences.
-    static AtomString fromUTF8(std::span<const char>);
-    static AtomString fromUTF8(const char*);
-
-#ifndef NDEBUG
-    void show() const;
-#endif
-
-private:
-    explicit AtomString(const char*);
-
-    enum class CaseConvertType { Upper, Lower };
-    template<CaseConvertType> AtomString convertASCIICase() const;
-
-    WTF_EXPORT_PRIVATE static AtomString fromUTF8Internal(std::span<const char>);
-
-    String m_string;
-};
-
-static_assert(sizeof(AtomString) == sizeof(String), "AtomString and String must be the same size!");
-
-inline bool operator==(const AtomString& a, const AtomString& b) { return a.impl() == b.impl(); }
-inline bool operator==(const AtomString& a, ASCIILiteral b) { return WTF::equal(a.impl(), b); }
-inline bool operator==(const AtomString& a, const Vector<char16_t>& b) { return a.impl() && equal(a.impl(), b.span()); }
-inline bool operator==(const AtomString& a, const String& b) { return equal(a.impl(), b.impl()); }
-
-NODELETE bool equalIgnoringASCIICase(const AtomString&, const AtomString&);
-NODELETE bool equalIgnoringASCIICase(const AtomString&, const String&);
-NODELETE bool equalIgnoringASCIICase(const String&, const AtomString&);
-NODELETE bool equalIgnoringASCIICase(const AtomString&, ASCIILiteral);
-
-bool equalLettersIgnoringASCIICase(const AtomString&, ASCIILiteral);
-bool startsWithLettersIgnoringASCIICase(const AtomString&, ASCIILiteral);
-
-WTF_EXPORT_PRIVATE AtomString replaceUnpairedSurrogatesWithReplacementCharacter(AtomString&&);
-WTF_EXPORT_PRIVATE String replaceUnpairedSurrogatesWithReplacementCharacter(String&&);
-
-inline AtomString::AtomString()
-{
-}
-
-inline AtomString::AtomString(std::span<const Latin1Character> string)
-    : m_string(AtomStringImpl::add(string))
-{
-}
-
-inline AtomString::AtomString(std::span<const char16_t> string)
-    : m_string(AtomStringImpl::add(string))
-{
-}
-
-inline AtomString::AtomString(AtomStringImpl* string)
-    : m_string(string)
-{
-}
-
-inline AtomString::AtomString(RefPtr<AtomStringImpl>&& string)
-    : m_string(WTF::move(string))
-{
-}
-
-inline AtomString::AtomString(Ref<AtomStringImpl>&& string)
-    : m_string(WTF::move(string))
-{
-}
-
-inline AtomString::AtomString(StringImpl* string)
-    : m_string(AtomStringImpl::add(string))
-{
-}
-
-inline AtomString::AtomString(const StaticStringImpl& string)
-    : m_string(AtomStringImpl::add(string))
-{
-}
-
-inline AtomString::AtomString(const String& string)
-    : m_string(AtomStringImpl::add(string.impl()))
-{
-}
-
-inline AtomString::AtomString(String&& string)
-    : m_string(AtomStringImpl::add(string.releaseImpl()))
-{
-}
-
-inline AtomString::AtomString(StringImpl* baseString, unsigned start, unsigned length)
-    : m_string(AtomStringImpl::add(baseString, start, length))
-{
-}
-
-inline AtomString::AtomString(UniquedStringImpl* uid)
-    : m_string(uid)
-{
-}
-
-#if USE(CF)
-
-inline AtomString::AtomString(CFStringRef string)
-    :  m_string(AtomStringImpl::add(string))
-{
-}
-
-#endif
-
-#if USE(FOUNDATION) && defined(__OBJC__)
-
-inline AtomString::AtomString(NSString *string)
-    : m_string(AtomStringImpl::add((__bridge CFStringRef)string))
-{
-}
-
-#endif
-
+// Shared global null and empty atoms, for functions that need to return a reference.
+// These are immortal: the storage is a plain pointer, constant-initialized, never destroyed.
 struct StaticAtomString {
     constexpr StaticAtomString(StringImpl::StaticStringImpl* pointer)
         : m_pointer(pointer)
@@ -246,98 +39,15 @@ struct StaticAtomString {
 
     StringImpl::StaticStringImpl* m_pointer;
 };
-static_assert(sizeof(AtomString) == sizeof(StaticAtomString), "AtomString and StaticAtomString must be the same size!");
+static_assert(sizeof(RefPtr<AtomStringImpl>) == sizeof(StaticAtomString), "RefPtr<AtomStringImpl> and StaticAtomString must be the same size!");
 extern WTF_EXPORT_PRIVATE const StaticAtomString nullAtomData;
 extern WTF_EXPORT_PRIVATE const StaticAtomString emptyAtomData;
 
-inline const AtomString& nullAtom() { SUPPRESS_MEMORY_UNSAFE_CAST return *reinterpret_cast<const AtomString*>(&nullAtomData); }
-inline const AtomString& emptyAtom() { SUPPRESS_MEMORY_UNSAFE_CAST return *reinterpret_cast<const AtomString*>(&emptyAtomData); }
-
-inline AtomString::AtomString(ASCIILiteral literal)
-    : m_string(literal.isNull() ? RefPtr<AtomStringImpl> { } : literal.length() ? AtomStringImpl::add(literal) : Ref { *emptyAtom().impl() })
-{
-}
-
-inline AtomString AtomString::fromUTF8(std::span<const char> characters)
-{
-    if (!characters.data())
-        return nullAtom();
-    if (characters.empty())
-        return emptyAtom();
-    return fromUTF8Internal(characters);
-}
-
-inline AtomString AtomString::fromUTF8(const char* characters)
-{
-    if (!characters)
-        return nullAtom();
-    if (!*characters)
-        return emptyAtom();
-    return fromUTF8Internal(unsafeSpan(characters));
-}
-
-inline AtomString String::toExistingAtomString() const
-{
-    if (isNull())
-        return { };
-    if (impl()->isAtom())
-        return Ref { uncheckedDowncast<AtomStringImpl>(*impl()) };
-    return AtomStringImpl::lookUp(impl());
-}
-
-// AtomStringHash is the default hash for AtomString
-template<typename> struct DefaultHash;
-template<> struct DefaultHash<AtomString>;
-
-inline bool equalLettersIgnoringASCIICase(const AtomString& string, ASCIILiteral literal)
-{
-    return equalLettersIgnoringASCIICase(string.string(), literal);
-}
-
-inline bool startsWithLettersIgnoringASCIICase(const AtomString& string, ASCIILiteral literal)
-{
-    return startsWithLettersIgnoringASCIICase(string.string(), literal);
-}
-
-NODELETE inline bool equalIgnoringASCIICase(const AtomString& a, const AtomString& b)
-{
-    return equalIgnoringASCIICase(a.string(), b.string());
-}
-
-NODELETE inline bool equalIgnoringASCIICase(const AtomString& a, const String& b)
-{
-    return equalIgnoringASCIICase(a.string(), b);
-}
-
-NODELETE inline bool equalIgnoringASCIICase(const String& a, const AtomString& b)
-{
-    return equalIgnoringASCIICase(a, b.string());
-}
-
-NODELETE inline bool equalIgnoringASCIICase(const AtomString& a, ASCIILiteral b)
-{
-    return equalIgnoringASCIICase(a.string(), b);
-}
-
-[[nodiscard]] ALWAYS_INLINE String makeStringByReplacingAll(const AtomString& string, char16_t target, char16_t replacement)
-{
-    return makeStringByReplacingAll(string.string(), target, replacement);
-}
-
-template<> struct IntegerToStringConversionTrait<AtomString> {
-    using ReturnType = AtomString;
-    using AdditionalArgumentType = void;
-    static AtomString flush(std::span<const Latin1Character> characters, void*) { return characters; }
-};
-
-template<> struct MarkableTraits<AtomString> {
-    static bool isEmptyValue(const AtomString& string) { return string.isNull(); }
-    static AtomString emptyValue() { return nullAtom(); }
-};
+inline const RefPtr<AtomStringImpl>& nullAtom() { SUPPRESS_MEMORY_UNSAFE_CAST return *reinterpret_cast<const RefPtr<AtomStringImpl>*>(&nullAtomData); }
+inline const RefPtr<AtomStringImpl>& emptyAtom() { SUPPRESS_MEMORY_UNSAFE_CAST return *reinterpret_cast<const RefPtr<AtomStringImpl>*>(&emptyAtomData); }
 
 } // namespace WTF
 
-using WTF::AtomString;
 using WTF::nullAtom;
 using WTF::emptyAtom;
 

@@ -110,7 +110,7 @@ public:
 
     bool didFirePushEventRecently() const;
 
-    WEBCORE_EXPORT void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) final;
+    WEBCORE_EXPORT void addConsoleMessage(MessageSource, MessageLevel, StringImpl* message, unsigned long requestIdentifier) final;
     void enableConsoleMessageReporting() { m_consoleMessageReportingEnabled = true; }
 
     CookieStore& cookieStore();

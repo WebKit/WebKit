@@ -32,7 +32,7 @@ class XMLSerializer : public RefCounted<XMLSerializer> {
 public:
     static Ref<XMLSerializer> create() { return adoptRef(*new XMLSerializer); }
 
-    static String serializeToString(Node&);
+    static RefPtr<StringImpl> serializeToString(Node&);
 
 private:
     XMLSerializer() = default;

@@ -49,9 +49,9 @@ private:
     CSSMediaRule(StyleRuleMedia&, CSSStyleSheet*);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Media; }
-    String cssText() const final;
-    String cssText(const CSS::SerializationContext&) const final;
-    String conditionText() const final;
+    RefPtr<StringImpl> cssText() const final;
+    RefPtr<StringImpl> cssText(const CSS::SerializationContext&) const final;
+    RefPtr<StringImpl> conditionText() const final;
 
     NODELETE const MQ::MediaQueryList& mediaQueries() const;
     void setMediaQueries(MQ::MediaQueryList&&);

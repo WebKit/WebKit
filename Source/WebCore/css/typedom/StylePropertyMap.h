@@ -33,17 +33,17 @@ class CSSSubstitutionValue;
 
 class StylePropertyMap : public MainThreadStylePropertyMapReadOnly {
 public:
-    ExceptionOr<void> set(Document&, const AtomString& property, FixedVector<Variant<Ref<CSSStyleValue>, String>>&& values);
-    ExceptionOr<void> append(Document&, const AtomString& property, FixedVector<Variant<Ref<CSSStyleValue>, String>>&& values);
-    ExceptionOr<void> remove(Document&, const AtomString& property);
+    ExceptionOr<void> set(Document&, AtomStringImpl* property, FixedVector<Variant<Ref<CSSStyleValue>, RefPtr<StringImpl>>>&& values);
+    ExceptionOr<void> append(Document&, AtomStringImpl* property, FixedVector<Variant<Ref<CSSStyleValue>, RefPtr<StringImpl>>>&& values);
+    ExceptionOr<void> remove(Document&, AtomStringImpl* property);
     virtual void clear() = 0;
 
 protected:
     virtual void removeProperty(CSSPropertyID) = 0;
-    virtual void removeCustomProperty(const AtomString&) = 0;
-    virtual bool setShorthandProperty(CSSPropertyID, const String&) = 0;
+    virtual void removeCustomProperty(AtomStringImpl*) = 0;
+    virtual bool setShorthandProperty(CSSPropertyID, StringImpl*) = 0;
     virtual bool setProperty(CSSPropertyID, Ref<CSSValue>&&) = 0;
-    virtual bool setCustomProperty(Document&, const AtomString&, Ref<CSSSubstitutionValue>&&) = 0;
+    virtual bool setCustomProperty(Document&, AtomStringImpl*, Ref<CSSSubstitutionValue>&&) = 0;
 
 private:
     bool isStylePropertyMap() const final { return true; }

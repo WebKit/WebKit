@@ -91,7 +91,7 @@ void logMessageImpl(const C& connection, MessageName messageName, void* object, 
     if (auto argumentDescriptions = messageArgumentDescriptions(messageName))
         (stream.dumpProperty((*argumentDescriptions)[ArgsIndex].name, ValueOrEllipsis(std::get<ArgsIndex>(args))), ...);
 
-    LOG(IPCMessages, "%s", stream.release().utf8());
+    LOG(IPCMessages, "%s", WTF::utf8(stream.release()));
 #else
     UNUSED_PARAM(connection);
     UNUSED_PARAM(messageName);
@@ -121,7 +121,7 @@ void logReply(const C& connection, MessageName messageName, const T&... args)
     if (auto argumentDescriptions = messageReplyArgumentDescriptions(messageName))
         (stream.dumpProperty((*argumentDescriptions)[argIndex++].name, ValueOrEllipsis(args)), ...);
 
-    LOG(IPCMessages, "%s", stream.release().utf8());
+    LOG(IPCMessages, "%s", WTF::utf8(stream.release()));
 #else
     UNUSED_PARAM(connection);
     UNUSED_PARAM(messageName);
@@ -339,6 +339,19 @@ void callMemberFunctionCoroutineVoid(T* object, MF U::* function, Connection* co
 
 template<typename MessageArgumentTypesTuple, typename MethodArgumentTypesTuple> struct MethodSignatureValidationImpl { };
 
+// Message handler methods take string arguments as raw StringImpl* / AtomStringImpl* pointers,
+// while the message (and reply) argument tuples hold the owning RefPtr<StringImpl> / RefPtr<AtomStringImpl>.
+template<typename T> struct MessageArgumentTypeForMethodArgumentImpl {
+    using Type = T;
+};
+template<> struct MessageArgumentTypeForMethodArgumentImpl<StringImpl*> {
+    using Type = RefPtr<StringImpl>;
+};
+template<> struct MessageArgumentTypeForMethodArgumentImpl<AtomStringImpl*> {
+    using Type = RefPtr<AtomStringImpl>;
+};
+template<typename T> using MessageArgumentTypeForMethodArgument = typename MessageArgumentTypeForMethodArgumentImpl<std::remove_cvref_t<T>>::Type;
+
 template<typename... MessageArgumentTypes, typename MethodArgumentType, typename... MethodArgumentTypes>
 struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<MethodArgumentType, MethodArgumentTypes...>>
     : MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes..., MethodArgumentType>, std::tuple<MethodArgumentTypes...>> { };
@@ -378,7 +391,7 @@ struct MethodSignatureValidationImpl<std::tuple<StreamServerConnection*, Message
 template<typename... MessageArgumentTypes>
 struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
     static constexpr bool expectsConnectionArgument = false;
-    using MessageArguments = std::tuple<std::remove_cvref_t<MessageArgumentTypes>...>;
+    using MessageArguments = std::tuple<MessageArgumentTypeForMethodArgument<MessageArgumentTypes>...>;
     using CompletionHandlerType = void;
     static constexpr std::identity wrapCompletionHandler { };
     static constexpr std::identity unwrapCompletionHandler { };
@@ -388,7 +401,7 @@ struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::t
 template<typename... MessageArgumentTypes, typename... CompletionHandlerArgumentTypes>
 struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<CompletionHandler<void(CompletionHandlerArgumentTypes...)>&&>>
     : MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
-    using CompletionHandlerArguments = std::tuple<std::remove_cvref_t<CompletionHandlerArgumentTypes>...>;
+    using CompletionHandlerArguments = std::tuple<MessageArgumentTypeForMethodArgument<CompletionHandlerArgumentTypes>...>;
     using CompletionHandlerType = CompletionHandler<void(CompletionHandlerArgumentTypes...)>;
     static constexpr std::identity wrapCompletionHandler { };
     static constexpr std::identity unwrapCompletionHandler { };
@@ -399,7 +412,7 @@ struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::t
 template<typename... MessageArgumentTypes, typename... CompletionHandlerArgumentTypes>
 struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<WTF::RefCountable<WTF::CompletionHandler<void(CompletionHandlerArgumentTypes...)>>*>>
     : MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
-    using CompletionHandlerArguments = std::tuple<std::remove_cvref_t<CompletionHandlerArgumentTypes>...>;
+    using CompletionHandlerArguments = std::tuple<MessageArgumentTypeForMethodArgument<CompletionHandlerArgumentTypes>...>;
     using CompletionHandlerType = CompletionHandler<void(CompletionHandlerArgumentTypes...)>;
     template<typename CH>
     static Ref<WTF::RefCountable<WTF::CompletionHandler<CH>>> wrapCompletionHandler(CompletionHandler<CH>&& handler)

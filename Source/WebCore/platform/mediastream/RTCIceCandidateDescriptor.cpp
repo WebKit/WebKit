@@ -36,12 +36,12 @@
 
 namespace WebCore {
 
-Ref<RTCIceCandidateDescriptor> RTCIceCandidateDescriptor::create(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex)
+Ref<RTCIceCandidateDescriptor> RTCIceCandidateDescriptor::create(StringImpl* candidate, StringImpl* sdpMid, unsigned short sdpMLineIndex)
 {
     return adoptRef(*new RTCIceCandidateDescriptor(candidate, sdpMid, sdpMLineIndex));
 }
 
-RTCIceCandidateDescriptor::RTCIceCandidateDescriptor(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex)
+RTCIceCandidateDescriptor::RTCIceCandidateDescriptor(StringImpl* candidate, StringImpl* sdpMid, unsigned short sdpMLineIndex)
     : m_candidate(candidate)
     , m_sdpMid(sdpMid)
     , m_sdpMLineIndex(sdpMLineIndex)

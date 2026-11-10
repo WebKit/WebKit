@@ -762,16 +762,16 @@ public:
     PatternDisjunction* m_body;
     Vector<std::unique_ptr<PatternDisjunction>, 4> m_disjunctions;
     Vector<std::unique_ptr<CharacterClass>> m_userCharacterClasses;
-    Vector<String> m_captureGroupNames;
+    Vector<RefPtr<StringImpl>> m_captureGroupNames;
     // The contents of the RHS Vector of m_namedGroupToParenIndices depends on whether the String is a
     // duplicate named group or not.
     // For a named group that is only used once in the pattern, the vector size is one and the only entry
     // is the subpatterenId for a non-duplicate named group.
     // For a duplicate named group, the size will be greater than 2. The first vector entry it is the
     // duplicateNamedGroupId. Subsequent vector entries are the subpatternId's for that duplicateNamedGroupId.
-    UncheckedKeyHashMap<String, Vector<unsigned>> m_namedGroupToParenIndices;
+    UncheckedKeyHashMap<RefPtr<StringImpl>, Vector<unsigned>> m_namedGroupToParenIndices;
     Vector<unsigned> m_duplicateNamedGroupForSubpatternId;
-    String m_atom;
+    RefPtr<StringImpl> m_atom;
 
 private:
     ErrorCode compile(StringView patternString);

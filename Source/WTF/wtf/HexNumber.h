@@ -72,7 +72,7 @@ template<typename NumberType> HexNumberBuffer hex(NumberType number, HexConversi
 }
 
 WTF_EXPORT_PRIVATE ASCIICString toHexCString(std::span<const uint8_t>);
-WTF_EXPORT_PRIVATE String toHexString(std::span<const uint8_t>);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> toHexString(std::span<const uint8_t>);
 
 class PrintStream;
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, HexNumberBuffer);

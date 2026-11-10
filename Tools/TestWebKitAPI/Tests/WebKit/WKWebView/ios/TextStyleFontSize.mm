@@ -76,7 +76,7 @@ TEST(TextStyleFontSize, AfterCrash)
     auto *preferredContentSizeCategory = [[UIApplication sharedApplication] preferredContentSizeCategory];
     ASSERT_TRUE((!originalContentSizeCategory && !preferredContentSizeCategory) || [originalContentSizeCategory isEqualToString:preferredContentSizeCategory]);
 
-    WebCore::setContentSizeCategory(contentSizeCategory);
+    WebCore::setContentSizeCategory(StringImpl::create(protect(contentSizeCategory).get()).get());
 
     RetainPtr descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(kCTUIFontTextStyleBody, contentSizeCategory, nullptr));
     RetainPtr sizeNumber = adoptCF(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontSizeAttribute));
@@ -92,7 +92,7 @@ TEST(TextStyleFontSize, AfterCrash)
     
     ASSERT_EQ(actual, expected);
 
-    WebCore::setContentSizeCategory(String());
+    WebCore::setContentSizeCategory(nullString());
 }
 
 TEST(TextStyleFontSize, ChangeDuringProvisionalNavigation)
@@ -102,7 +102,7 @@ TEST(TextStyleFontSize, ChangeDuringProvisionalNavigation)
     static NSString *testMarkup = @"<html><head></head><body><div id='target' style='-webkit-text-size-adjust: none; font: -apple-system-body;'>Hello</div></body></html>";
     HTTPServer server({
         { "/first"_s, { "first"_s } },
-        { "/second"_s, { testMarkup } },
+        { "/second"_s, { StringImpl::create(testMarkup) } },
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto originalContentSizeCategory = contentSizeCategory;

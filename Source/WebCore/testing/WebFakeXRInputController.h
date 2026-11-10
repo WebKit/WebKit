@@ -49,7 +49,7 @@ public:
 
     void setHandedness(XRHandedness handedness) { m_handedness = handedness; }
     void setTargetRayMode(XRTargetRayMode mode) { m_targetRayMode = mode; }
-    void setProfiles(Vector<String>&& profiles) { m_profiles = WTF::move(profiles); }
+    void setProfiles(Vector<RefPtr<StringImpl>>&& profiles) { m_profiles = WTF::move(profiles); }
     void setGripOrigin(FakeXRRigidTransformInit gripOrigin, bool emulatedPosition = false);
     void clearGripOrigin() { m_gripOrigin = std::nullopt; }
     void setPointerOrigin(FakeXRRigidTransformInit pointerOrigin, bool emulatedPosition = false);
@@ -80,7 +80,7 @@ private:
     PlatformXR::InputSourceHandle m_handle { 0 };
     XRHandedness m_handedness { XRHandedness::None };
     XRTargetRayMode m_targetRayMode { XRTargetRayMode::Gaze };
-    Vector<String> m_profiles;
+    Vector<RefPtr<StringImpl>> m_profiles;
     PlatformXR::FrameData::InputSourcePose m_pointerOrigin;
     std::optional<PlatformXR::FrameData::InputSourcePose> m_gripOrigin;
     HashMap<FakeXRButtonStateInit::Type, FakeXRButtonStateInit, IntHash<FakeXRButtonStateInit::Type>, WTF::StrongEnumHashTraits<FakeXRButtonStateInit::Type>> m_buttons;

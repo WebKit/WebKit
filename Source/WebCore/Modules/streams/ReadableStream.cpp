@@ -66,7 +66,7 @@ static inline ExceptionOr<double> extractHighWaterMark(const QueuingStrategy& st
         return defaultValue;
     auto highWaterMark = *strategy.highWaterMark;
     if (std::isnan(highWaterMark) || highWaterMark < 0)
-        return Exception { ExceptionCode::RangeError, "highWaterMark value is invalid"_s };
+        return Exception { ExceptionCode::RangeError, "highWaterMark value is invalid"_si };
     return highWaterMark;
 }
 
@@ -120,7 +120,7 @@ ExceptionOr<Ref<ReadableStream>> ReadableStream::create(JSDOMGlobalObject& globa
             auto strategyDict = strategyDictOrException.releaseReturnValue();
 
             if (strategyDict.size)
-                return Exception { ExceptionCode::RangeError, "size should not be present"_s };
+                return Exception { ExceptionCode::RangeError, "size should not be present"_si };
 
             auto highWaterMarkOrException = extractHighWaterMark(strategyDict, 0);
             if (highWaterMarkOrException.hasException())
@@ -205,7 +205,7 @@ private:
             }
 
             if (!value.getObject()) {
-                protectedThis->error(Exception { ExceptionCode::TypeError, "next result is not an object"_s });
+                protectedThis->error(Exception { ExceptionCode::TypeError, "next result is not an object"_si });
                 return;
             }
 
@@ -230,7 +230,7 @@ private:
                 return;
             }
             if (value && !value.getObject()) {
-                protectedThis->cancelFinished(Exception { ExceptionCode::TypeError, "return result is not an object"_s });
+                protectedThis->cancelFinished(Exception { ExceptionCode::TypeError, "return result is not an object"_si });
                 return;
             }
             protectedThis->cancelFinished();
@@ -276,7 +276,7 @@ Ref<DOMPromise> ReadableStream::cancelForBindings(JSDOMGlobalObject& globalObjec
 {
     if (isLocked()) {
         auto [promise, deferred] = createPromiseAndWrapper(globalObject);
-        deferred->reject(Exception { ExceptionCode::TypeError, "ReadableStream is locked"_s });
+        deferred->reject(Exception { ExceptionCode::TypeError, "ReadableStream is locked"_si });
         return promise;
     }
 
@@ -297,7 +297,7 @@ ExceptionOr<ReadableStreamReader> ReadableStream::getReader(JSDOMGlobalObject& c
     ASSERT(*options.mode == ReaderMode::Byob);
 
     if (m_internalReadableStream)
-        return Exception { ExceptionCode::TypeError, "Invalid mode is specified"_s };
+        return Exception { ExceptionCode::TypeError, "Invalid mode is specified"_si };
 
     ASSERT(m_controller);
 
@@ -464,7 +464,7 @@ ExceptionOr<void> ReadableStream::setupReadableByteStreamControllerFromUnderlyin
 {
     // handle start, pull, cancel algorithms.
     if (underlyingSourceDict.autoAllocateChunkSize && !*underlyingSourceDict.autoAllocateChunkSize)
-        return Exception { ExceptionCode::TypeError, "autoAllocateChunkSize is zero"_s };
+        return Exception { ExceptionCode::TypeError, "autoAllocateChunkSize is zero"_si };
 
     // https://streams.spec.whatwg.org/#set-up-readable-byte-stream-controller
     ASSERT(!m_controller);
@@ -608,12 +608,12 @@ void ReadableStream::addReadRequest(Ref<ReadableStreamReadRequest>&& readRequest
 void ReadableStream::pipeTo(JSDOMGlobalObject& globalObject, WritableStream& destination, StreamPipeOptions&& options, Ref<DeferredPromise>&& promise)
 {
     if (isLocked()) {
-        promise->reject(Exception { ExceptionCode::TypeError, "stream is locked"_s }, RejectAsHandled::Yes);
+        promise->reject(Exception { ExceptionCode::TypeError, "stream is locked"_si }, RejectAsHandled::Yes);
         return;
     }
 
     if (destination.locked()) {
-        promise->reject(Exception { ExceptionCode::TypeError, "destination is locked"_s }, RejectAsHandled::Yes);
+        promise->reject(Exception { ExceptionCode::TypeError, "destination is locked"_si }, RejectAsHandled::Yes);
         return;
     }
 
@@ -624,10 +624,10 @@ void ReadableStream::pipeTo(JSDOMGlobalObject& globalObject, WritableStream& des
 ExceptionOr<Ref<ReadableStream>> ReadableStream::pipeThrough(JSDOMGlobalObject& globalObject, WritablePair&& transform, StreamPipeOptions&& options)
 {
     if (isLocked())
-        return Exception { ExceptionCode::TypeError, "stream is locked"_s };
+        return Exception { ExceptionCode::TypeError, "stream is locked"_si };
 
     SUPPRESS_UNCOUNTED_ARG if (transform.writable->locked())
-        return Exception { ExceptionCode::TypeError, "transform writable is locked"_s };
+        return Exception { ExceptionCode::TypeError, "transform writable is locked"_si };
 
     readableStreamPipeTo(globalObject, *this, WTF::move(transform.writable), WTF::move(options), nullptr);
 
@@ -808,7 +808,7 @@ ExceptionOr<Ref<ReadableStream::Iterator>> ReadableStream::createIterator(Script
 {
     auto* globalObject = context ? downcast<JSDOMGlobalObject>(context->globalObject()) : nullptr;
     if (!globalObject)
-        return Exception { ExceptionCode::InvalidStateError, "Context is detached"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Context is detached"_si };
 
     auto readerOrException = ReadableStreamDefaultReader::create(*globalObject, *this);
     if (readerOrException.hasException())

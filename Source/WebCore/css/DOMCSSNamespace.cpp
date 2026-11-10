@@ -46,16 +46,16 @@
 
 namespace WebCore {
 
-bool DOMCSSNamespace::supports(Document& document, const String& property, const String& value)
+bool DOMCSSNamespace::supports(Document& document, StringImpl* property, StringImpl* value)
 {
     CSSParserContext parserContext(document);
     parserContext.mode = HTMLStandardMode;
 
-    auto propertyNameWithoutWhitespace = property;
+    auto propertyNameWithoutWhitespace = RefPtr { property };
     CSSPropertyID propertyID = cssPropertyID(propertyNameWithoutWhitespace);
     if (propertyID == CSSPropertyID::Invalid && isCustomPropertyName(propertyNameWithoutWhitespace)) {
         auto dummyStyle = MutableStyleProperties::create();
-        return CSSParser::parseCustomPropertyValue(dummyStyle, AtomString { propertyNameWithoutWhitespace }, value, IsImportant::No, parserContext) != CSSParser::ParseResult::Error;
+        return CSSParser::parseCustomPropertyValue(dummyStyle, AtomStringImpl::add(propertyNameWithoutWhitespace).get(), value, IsImportant::No, parserContext) != CSSParser::ParseResult::Error;
     }
 
     if (!isExposed(propertyID, &document.settings()))
@@ -67,7 +67,7 @@ bool DOMCSSNamespace::supports(Document& document, const String& property, const
     if (propertyID == CSSPropertyID::Invalid)
         return false;
 
-    if (value.isEmpty())
+    if (isEmpty(value))
         return false;
 
     if (propertyID == CSSPropertyID::MarginTrim && parserContext.marginTrimInlineSupportsQuirkEnabled && CSSSupportsParser::isMarginTrimInlineValue(value))
@@ -77,7 +77,7 @@ bool DOMCSSNamespace::supports(Document& document, const String& property, const
     return CSSParser::parseValue(dummyStyle, propertyID, value, IsImportant::No, parserContext) != CSSParser::ParseResult::Error;
 }
 
-bool DOMCSSNamespace::supports(Document& document, const String& conditionText)
+bool DOMCSSNamespace::supports(Document& document, StringImpl* conditionText)
 {
     CSSParserContext context(document);
     context.mode = HTMLStandardMode;
@@ -85,7 +85,7 @@ bool DOMCSSNamespace::supports(Document& document, const String& conditionText)
     return CSSSupportsParser::supportsCondition(conditionText, context, CSSSupportsParser::ParsingMode::AllowBareDeclarationAndGeneralEnclosed) == CSSSupportsParser::Supported;
 }
 
-String DOMCSSNamespace::escape(const String& ident)
+RefPtr<StringImpl> DOMCSSNamespace::escape(StringImpl* ident)
 {
     StringBuilder builder;
     serializeIdentifier(builder, ident);

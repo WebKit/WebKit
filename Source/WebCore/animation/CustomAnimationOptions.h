@@ -32,7 +32,7 @@
 namespace WebCore {
 
 struct CustomAnimationOptions : EffectTiming {
-    String id;
+    RefPtr<StringImpl> id;
     Variant<FramesPerSecond, AnimationFrameRatePreset> frameRate;
 };
 

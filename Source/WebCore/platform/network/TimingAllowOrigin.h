@@ -36,6 +36,6 @@ class SecurityOrigin;
 WEBCORE_EXPORT bool passesTimingAllowOriginCheck(const ResourceResponse&, const SecurityOrigin& initiatorSecurityOrigin);
 
 // https://fetch.spec.whatwg.org/#navigation-tao-check
-WEBCORE_EXPORT bool passesNavigationTAOCheck(const Vector<Vector<String>>& navigationTimingAllowValuesList, const SecurityOrigin& destinationOrigin);
+WEBCORE_EXPORT bool passesNavigationTAOCheck(const Vector<Vector<RefPtr<StringImpl>>>& navigationTimingAllowValuesList, const SecurityOrigin& destinationOrigin);
 
 }

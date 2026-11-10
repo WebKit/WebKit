@@ -302,7 +302,7 @@ public:
 
     NODELETE RefPtr<ScrollingStateNode> childAtIndex(size_t) const;
 
-    String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const;
+    RefPtr<StringImpl> scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const;
 #if ASSERT_ENABLED
     bool parentPointersAreCorrect() const;
 #endif

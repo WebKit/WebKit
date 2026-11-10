@@ -38,8 +38,8 @@ class AuxiliaryProcess;
 
 bool hasRequestedCrossWebsiteTrackingPermission();
 bool hasProhibitedUsageStrings();
-std::span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(const String&);
-bool isRunningTest(const String& bundleID);
+std::span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(StringImpl*);
+bool isRunningTest(StringImpl* bundleID);
 void determineTrackingPreventionState();
 bool doesAppHaveTrackingPreventionEnabled();
 bool doesParentProcessHaveTrackingPreventionEnabled(AuxiliaryProcess&, bool hasRequestedCrossWebsiteTrackingPermission);

@@ -51,12 +51,12 @@ public:
     void registerURL(const ScriptExecutionContext&, const URL&, URLRegistrable&) final;
     void unregisterURL(const URL&, const SecurityOriginData& topOrigin) final;
     void unregisterURLsForContext(const ScriptExecutionContext&) final;
-    URLRegistrable* lookup(const String&) const final;
+    URLRegistrable* lookup(StringImpl*) const final;
 
 private:
     MediaSourceRegistry();
-    MemoryCompactRobinHoodHashMap<String, std::pair<Ref<MediaSource>, ScriptExecutionContextIdentifier>> m_mediaSources;
-    HashMap<ScriptExecutionContextIdentifier, HashSet<String>> m_urlsPerContext;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, std::pair<Ref<MediaSource>, ScriptExecutionContextIdentifier>> m_mediaSources;
+    HashMap<ScriptExecutionContextIdentifier, HashSet<RefPtr<StringImpl>>> m_urlsPerContext;
 };
 
 } // namespace WebCore

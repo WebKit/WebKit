@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct WindowPostMessageOptions : public StructuredSerializeOptions {
-    String targetOrigin { "/"_s };
+    RefPtr<StringImpl> targetOrigin { "/"_si };
 };
 
 }

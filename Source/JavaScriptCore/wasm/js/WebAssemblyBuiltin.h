@@ -199,7 +199,7 @@ public:
     }
     // Search in the set for a builtin with the given name.
     // Return a pointer to the builtin or nullptr if not found.
-    const WebAssemblyBuiltin* findBuiltin(const String& name) const;
+    const WebAssemblyBuiltin* findBuiltin(StringImpl* name) const;
 
 private:
     // Create and return the `wasm:js-string` builtin set.
@@ -217,7 +217,7 @@ private:
 
     ASCIILiteral m_qualifiedName;
     Vector<WebAssemblyBuiltin> m_builtins;
-    UncheckedKeyHashMap<String, WebAssemblyBuiltin*> m_builtinsByName;
+    UncheckedKeyHashMap<RefPtr<StringImpl>, WebAssemblyBuiltin*> m_builtinsByName;
     // Simulates a name section of a module so builtin callees have a name to report in a stack dump.
     Ref<Wasm::NameSection> m_nameSection;
 };
@@ -234,7 +234,7 @@ public:
 
     // Look for a builtin set with the specified qualified name.
     // Return a pointer to the set, or nullptr if not found.
-    const WebAssemblyBuiltinSet* findByQualifiedName(const String&) const;
+    const WebAssemblyBuiltinSet* findByQualifiedName(StringImpl*) const;
 
 private:
     WebAssemblyBuiltinRegistry(WebAssemblyBuiltinRegistry&&) = default;

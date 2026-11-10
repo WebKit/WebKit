@@ -2889,7 +2889,7 @@ RefPtr<WebGPU::Texture> Device::createTexture(const WebGPU::TextureDescriptor& d
 
     textureDescriptor.pixelFormat = Texture::pixelFormat(format);
     if (textureDescriptor.pixelFormat == MTLPixelFormatInvalid) {
-        generateAValidationError("GPUDevice.createTexture: invalid texture format"_s);
+        generateAValidationError("GPUDevice.createTexture: invalid texture format"_si);
         return Texture::createInvalid(*this);
     }
 
@@ -2905,12 +2905,12 @@ RefPtr<WebGPU::Texture> Device::createTexture(const WebGPU::TextureDescriptor& d
     id<MTLTexture> texture = [m_device newTextureWithDescriptor:textureDescriptor];
 
     if (!texture) {
-        generateAnOutOfMemoryError("out of memory"_s);
+        generateAnOutOfMemoryError("out of memory"_si);
         return Texture::createInvalid(*this);
     }
 
     setOwnerWithIdentity(texture);
-    texture.label = descriptor.label.createNSString().get();
+    texture.label = createNSString(descriptor.label).get();
 
     Ref result = Texture::create(texture, descriptor, Vector<WebGPU::TextureFormat> { descriptor.viewFormats }, *this);
     addTexture(result);
@@ -3253,7 +3253,7 @@ RefPtr<WebGPU::TextureView> Texture::createView(const std::optional<WebGPU::Text
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-createview
 
     if (!isValid()) {
-        device->generateAValidationError("GPUTexture.createView: texture is not valid"_s);
+        device->generateAValidationError("GPUTexture.createView: texture is not valid"_si);
         return TextureView::createInvalid(*this, device.get());
     }
 
@@ -3262,7 +3262,7 @@ RefPtr<WebGPU::TextureView> Texture::createView(const std::optional<WebGPU::Text
 
     auto descriptor = resolveTextureViewDescriptorDefaults(inputDescriptor);
     if (!descriptor) {
-        device->generateAValidationError("Validation failure in GPUTexture.createView: descriptor could not be resolved"_s);
+        device->generateAValidationError("Validation failure in GPUTexture.createView: descriptor could not be resolved"_si);
         return TextureView::createInvalid(*this, device.get());
     }
 
@@ -3273,7 +3273,7 @@ RefPtr<WebGPU::TextureView> Texture::createView(const std::optional<WebGPU::Text
 
     auto pixelFormat = Texture::pixelFormat(descriptor->format);
     if (pixelFormat == MTLPixelFormatInvalid) {
-        device->generateAValidationError("GPUTexture.createView: invalid texture format"_s);
+        device->generateAValidationError("GPUTexture.createView: invalid texture format"_si);
         return TextureView::createInvalid(*this, device.get());
     }
 
@@ -3325,7 +3325,7 @@ RefPtr<WebGPU::TextureView> Texture::createView(const std::optional<WebGPU::Text
     if (!texture)
         return TextureView::createInvalid(*this, device.get());
 
-    texture.label = inputDescriptor.label.createNSString().get();
+    texture.label = createNSString(inputDescriptor.label).get();
     if (!texture.label.length)
         texture.label = m_texture.label;
 
@@ -3667,9 +3667,9 @@ void Texture::addResourceHolder(const RenderBundle& renderBundle) const
     m_renderBundles.add(renderBundle);
 }
 
-void Texture::setLabel(String&& label)
+void Texture::setLabel(RefPtr<StringImpl>&& label)
 {
-    m_texture.label = label.createNSString().get();
+    m_texture.label = createNSString(label).get();
 }
 
 WebGPU::Extent3D Texture::logicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
@@ -4277,7 +4277,7 @@ WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureView
             apiDescriptor = WebGPU::Metal::fromAPI(*descriptor);
             if (!apiDescriptor) {
                 Ref device = protectedTexture->device();
-                device->generateAValidationError("GPUTextureViewDescriptor has an invalid enum value or usage bit"_s);
+                device->generateAValidationError("GPUTextureViewDescriptor has an invalid enum value or usage bit"_si);
                 return WebGPU::Metal::releaseToAPI(WebGPU::Metal::TextureView::createInvalid(protectedTexture, device));
             }
         }

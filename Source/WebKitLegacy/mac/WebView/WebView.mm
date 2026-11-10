@@ -1073,7 +1073,7 @@ static const NSUInteger orderedListSegment = 2;
 
     _webView = webView;
 
-    RetainPtr insertListControl = [NSSegmentedControl segmentedControlWithLabels:@[ WebCore::insertListTypeNone().createNSString().get(), WebCore::insertListTypeBulleted().createNSString().get(), WebCore::insertListTypeNumbered().createNSString().get() ] trackingMode:NSSegmentSwitchTrackingSelectOne target:self action:@selector(_selectList:)];
+    RetainPtr insertListControl = [NSSegmentedControl segmentedControlWithLabels:@[ createNSString(WebCore::insertListTypeNone()).get(), createNSString(WebCore::insertListTypeBulleted()).get(), createNSString(WebCore::insertListTypeNumbered()).get() ] trackingMode:NSSegmentSwitchTrackingSelectOne target:self action:@selector(_selectList:)];
     [insertListControl setWidth:listControlSegmentWidth forSegment:noListSegment];
     [insertListControl setWidth:listControlSegmentWidth forSegment:unorderedListSegment];
     [insertListControl setWidth:listControlSegmentWidth forSegment:orderedListSegment];
@@ -1083,9 +1083,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<id> segmentElement = NSAccessibilityUnignoredDescendant(insertListControl.get());
     NSArray *segments = [segmentElement.get() accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
     ASSERT(segments.count == 3);
-    [segments[noListSegment] accessibilitySetOverrideValue:WebCore::insertListTypeNone().createNSString().get() forAttribute:NSAccessibilityDescriptionAttribute];
-    [segments[unorderedListSegment] accessibilitySetOverrideValue:WebCore::insertListTypeBulletedAccessibilityTitle().createNSString().get() forAttribute:NSAccessibilityDescriptionAttribute];
-    [segments[orderedListSegment] accessibilitySetOverrideValue:WebCore::insertListTypeNumberedAccessibilityTitle().createNSString().get() forAttribute:NSAccessibilityDescriptionAttribute];
+    [segments[noListSegment] accessibilitySetOverrideValue:createNSString(WebCore::insertListTypeNone()).get() forAttribute:NSAccessibilityDescriptionAttribute];
+    [segments[unorderedListSegment] accessibilitySetOverrideValue:createNSString(WebCore::insertListTypeBulletedAccessibilityTitle()).get() forAttribute:NSAccessibilityDescriptionAttribute];
+    [segments[orderedListSegment] accessibilitySetOverrideValue:createNSString(WebCore::insertListTypeNumberedAccessibilityTitle()).get() forAttribute:NSAccessibilityDescriptionAttribute];
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     self.view = insertListControl.get();
@@ -1296,7 +1296,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_webChangeColor:(id)sender
 {
     _textColor = self.colorPickerItem.color;
-    [protect(_webView) _executeCoreCommandByName:@"ForeColor" value:WebCore::serializationForHTML(WebCore::colorFromCocoaColor(_textColor.get())).createNSString().get()];
+    [protect(_webView) _executeCoreCommandByName:@"ForeColor" value:createNSString(WebCore::serializationForHTML(WebCore::colorFromCocoaColor(_textColor.get()))).get()];
 }
 
 - (NSViewController *)textListViewController
@@ -1364,7 +1364,7 @@ NODELETE static RetainPtr<CFMutableSetRef>& allWebViewsSet()
 
 + (NSString *)_standardUserAgentWithApplicationName:(NSString *)applicationName
 {
-    return WebCore::standardUserAgentWithApplicationName(applicationName).createNSString().autorelease();
+    return createNSString(WebCore::standardUserAgentWithApplicationName(StringImpl::create(applicationName).get())).autorelease();
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -1522,12 +1522,12 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 
 #if ENABLE(VIDEO)
-        WebCore::HTMLMediaElement::setMediaCacheDirectory(FileSystem::pathByAppendingComponent(String(NSTemporaryDirectory()), "MediaCache/"_s));
+        WebCore::HTMLMediaElement::setMediaCacheDirectory(FileSystem::pathByAppendingComponent(StringImpl::create(protect(NSTemporaryDirectory()).get()).get(), "MediaCache/"_s));
 #endif
         didOneTimeInitialization = true;
     }
 
-    _private->group = WebViewGroup::getOrCreate(groupName, [_private->preferences _localStorageDatabasePath]);
+    _private->group = WebViewGroup::getOrCreate(StringImpl::create(groupName).get(), StringImpl::create([_private->preferences _localStorageDatabasePath]).get());
     Ref group = *_private->group;
     group->addWebView(self);
 
@@ -1593,7 +1593,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     Ref page = *_private->page;
     storageProvider->setPage(page);
 
-    page->setGroupName(groupName);
+    page->setGroupName(StringImpl::create(groupName).get());
 
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(_private->page.get(), WebGeolocationClient::create(self));
@@ -1614,7 +1614,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 
     page->setCanStartMedia([self window]);
-    protect(_private->page->settings())->setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
+    protect(_private->page->settings())->setLocalStorageDatabasePath(StringImpl::create([[self preferences] _localStorageDatabasePath]).get());
 
 #if PLATFORM(IOS_FAMILY)
     // Preserve the behavior we had before <rdar://problem/7580867>
@@ -1633,7 +1633,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     if ([[NSUserDefaults standardUserDefaults] objectForKey:WebSmartInsertDeleteEnabled])
         [self setSmartInsertDeleteEnabled:[[NSUserDefaults standardUserDefaults] boolForKey:WebSmartInsertDeleteEnabled]];
 
-    [WebFrame _createMainFrameWithPage:_private->page.get() frameName:frameName frameView:frameView.get()];
+    [WebFrame _createMainFrameWithPage:_private->page.get() frameName:AtomStringImpl::add((__bridge CFStringRef)frameName) frameView:frameView.get()];
 
 #if PLATFORM(IOS_FAMILY)
     RetainPtr runLoop = WebThreadNSRunLoop();
@@ -1795,7 +1795,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     [frameView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [self addSubview:frameView.get()];
 
-    _private->group = WebViewGroup::getOrCreate(groupName, [_private->preferences _localStorageDatabasePath]);
+    _private->group = WebViewGroup::getOrCreate(StringImpl::create(groupName).get(), StringImpl::create([_private->preferences _localStorageDatabasePath]).get());
     Ref group = *_private->group;
     group->addWebView(self);
 
@@ -1862,13 +1862,13 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->page->settings().setAcceleratedDrawingEnabled([preferences acceleratedDrawingEnabled]);
 
     settings->setFontFallbackPrefersPictographs(true);
-    settings->setPictographFontFamily("AppleColorEmoji"_s);
+    settings->setPictographFontFamily("AppleColorEmoji"_si);
 
     _private->page->settings().setScriptMarkupEnabled(false);
     settings->setScriptEnabled(true);
 
     // FIXME: this is a workaround for <rdar://problem/11518688> REGRESSION: Quoted text font changes when replying to certain email
-    settings->setStandardFontFamily([_private->preferences standardFontFamily]);
+    settings->setStandardFontFamily(StringImpl::create([_private->preferences standardFontFamily]).get());
 
     // FIXME: this is a workaround for <rdar://problem/11820090> Quoted text changes in size when replying to certain email
     settings->setMinimumFontSize([_private->preferences minimumFontSize]);
@@ -1877,7 +1877,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->page->settings().setHttpEquivEnabled([_private->preferences httpEquivEnabled]);
 
     Ref page = *_private->page;
-    page->setGroupName(groupName);
+    page->setGroupName(StringImpl::create(groupName).get());
 
     _private->inspectorController = LegacyWebPageInspectorController::create(page);
 #if ENABLE(REMOTE_INSPECTOR)
@@ -1979,7 +1979,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     else
         _private->textIndicatorData = adoptNS([[WebUITextIndicatorData alloc] initWithImage:image scale:_private->page->deviceScaleFactor()]);
     _private->draggedLinkURL = dragItem.url.isEmpty() ? RetainPtr<NSURL>() : dragItem.url.createNSURL();
-    _private->draggedLinkTitle = dragItem.title.isEmpty() ? nil : dragItem.title.createNSString().get();
+    _private->draggedLinkTitle = isEmpty(dragItem.title) ? nil : createNSString(dragItem.title).get();
     _private->dragPreviewFrameInRootViewCoordinates = dragItem.dragPreviewFrameInRootViewCoordinates;
     _private->dragSourceAction = kit(dragItem.sourceAction);
 }
@@ -2954,7 +2954,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 #endif
 
-    WebCore::setAdditionalSupportedImageTypes(makeVector<String>([preferences additionalSupportedImageTypes]));
+    WebCore::setAdditionalSupportedImageTypes(makeVector<RefPtr<StringImpl>>([preferences additionalSupportedImageTypes]));
 
     [self _preferencesChangedGenerated:preferences];
 
@@ -2984,7 +2984,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     DeprecatedGlobalSettings::setWebSQLEnabled([preferences webSQLEnabled]);
     DatabaseManager::singleton().setIsAvailable([preferences databasesEnabled]);
-    settings.setLocalStorageDatabasePath([preferences _localStorageDatabasePath]);
+    settings.setLocalStorageDatabasePath(StringImpl::create([preferences _localStorageDatabasePath]).get());
     Ref page = *_private->page;
     page->setSessionID([preferences privateBrowsingEnabled] ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID());
     page->setBroadcastChannelRegistry(WebBroadcastChannelRegistry::getOrCreate([preferences privateBrowsingEnabled]));
@@ -3001,11 +3001,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if PLATFORM(IOS_FAMILY)
     WebCore::DeprecatedGlobalSettings::setAudioSessionCategoryOverride([preferences audioSessionCategoryOverride]);
-    WebCore::DeprecatedGlobalSettings::setNetworkInterfaceName([preferences networkInterfaceName]);
+    WebCore::DeprecatedGlobalSettings::setNetworkInterfaceName(StringImpl::create([preferences networkInterfaceName]).get());
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    page->setMediaKeysStorageDirectory([preferences mediaKeysStorageDirectory]);
+    page->setMediaKeysStorageDirectory(StringImpl::create([preferences mediaKeysStorageDirectory]).get());
 #endif
 
     // FIXME: Is this relevent to WebKitLegacy? If not, we should remove it.
@@ -3256,7 +3256,7 @@ IGNORE_WARNINGS_END
     // FIXME: We also need to maintain MIMEType registrations (which can be dynamically changed)
     // in the WebCore MIMEType registry.  For now we're doing this in a safe, limited manner
     // to fix <rdar://problem/5372989> - a future revamping of the entire system is neccesary for future robustness
-    WebCore::MIMETypeRegistry::supportedNonImageMIMETypes().remove(MIMEType);
+    WebCore::MIMETypeRegistry::supportedNonImageMIMETypes().remove(StringImpl::create(MIMEType).get());
 }
 
 + (void)_registerViewClass:(Class)viewClass representationClass:(Class)representationClass forURLScheme:(NSString *)URLScheme
@@ -3268,7 +3268,7 @@ IGNORE_WARNINGS_END
     // in the WebCore MIMEType registry.  For now we're doing this in a safe, limited manner
     // to fix <rdar://problem/5372989> - a future revamping of the entire system is neccesary for future robustness
     if ([viewClass class] == [WebHTMLView class])
-        WebCore::MIMETypeRegistry::supportedNonImageMIMETypes().add(MIMEType);
+        WebCore::MIMETypeRegistry::supportedNonImageMIMETypes().add(StringImpl::create(MIMEType));
 
     // This is used to make _representationExistsForURLScheme faster.
     // Without this set, we'd have to create the MIME type each time.
@@ -3320,7 +3320,7 @@ IGNORE_WARNINGS_END
 + (NSString *)_decodeData:(NSData *)data
 {
     WebCore::HTMLNames::init(); // this method is used for importing bookmarks at startup, so HTMLNames are likely to be uninitialized yet
-    return WebCore::TextResourceDecoder::create(WebCore::TextResourceDecoder::ContentType::HTML)->decodeAndFlush(span(data)).createNSString().autorelease(); // bookmark files are HTML
+    return createNSString(WebCore::TextResourceDecoder::create(WebCore::TextResourceDecoder::ContentType::HTML)->decodeAndFlush(span(data))).autorelease(); // bookmark files are HTML
 }
 
 - (void)_pushPerformingProgrammaticFocus
@@ -4126,7 +4126,7 @@ IGNORE_WARNINGS_END
     RefPtr focusedOrMainFrame = page->focusController().focusedOrMainFrame();
     if (!focusedOrMainFrame)
         return;
-    protect(focusedOrMainFrame->editor())->command(name).execute(value);
+    protect(focusedOrMainFrame->editor())->command(StringImpl::create(name).get()).execute(StringImpl::create(value).get());
 }
 
 - (void)_clearMainFrameName
@@ -4211,9 +4211,9 @@ IGNORE_WARNINGS_END
 {
     if ([userInterfaceItem isEqualToString:@"validationBubble"]) {
         RefPtr validationBubble = _private->formValidationBubble;
-        String message = validationBubble ? validationBubble->message() : emptyString();
+        RefPtr<StringImpl> message = validationBubble ? validationBubble->message() : emptyString();
         double fontSize = validationBubble ? validationBubble->fontSize() : 0;
-        return @{ userInterfaceItem: @{ @"message": message.createNSString().get(), @"fontSize": @(fontSize) } };
+        return @{ userInterfaceItem: @{ @"message": createNSString(message).get(), @"fontSize": @(fontSize) } };
     }
 
     return nil;
@@ -4283,12 +4283,12 @@ IGNORE_WARNINGS_END
 
 + (void)_addOriginAccessAllowListEntryWithSourceOrigin:(NSString *)sourceOrigin destinationProtocol:(NSString *)destinationProtocol destinationHost:(NSString *)destinationHost allowDestinationSubdomains:(BOOL)allowDestinationSubdomains
 {
-    WebCore::SecurityPolicy::addOriginAccessAllowlistEntry(WebCore::SecurityOrigin::createFromString(sourceOrigin).get(), destinationProtocol, destinationHost, allowDestinationSubdomains);
+    WebCore::SecurityPolicy::addOriginAccessAllowlistEntry(WebCore::SecurityOrigin::createFromString(StringImpl::create(sourceOrigin).get()).get(), StringImpl::create(destinationProtocol).get(), StringImpl::create(destinationHost).get(), allowDestinationSubdomains);
 }
 
 + (void)_removeOriginAccessAllowListEntryWithSourceOrigin:(NSString *)sourceOrigin destinationProtocol:(NSString *)destinationProtocol destinationHost:(NSString *)destinationHost allowDestinationSubdomains:(BOOL)allowDestinationSubdomains
 {
-    WebCore::SecurityPolicy::removeOriginAccessAllowlistEntry(WebCore::SecurityOrigin::createFromString(sourceOrigin).get(), destinationProtocol, destinationHost, allowDestinationSubdomains);
+    WebCore::SecurityPolicy::removeOriginAccessAllowlistEntry(WebCore::SecurityOrigin::createFromString(StringImpl::create(sourceOrigin).get()).get(), StringImpl::create(destinationProtocol).get(), StringImpl::create(destinationHost).get(), allowDestinationSubdomains);
 }
 
 + (void)_resetOriginAccessAllowLists
@@ -4334,38 +4334,38 @@ IGNORE_WARNINGS_END
 
 + (void)_addUserScriptToGroup:(NSString *)groupName world:(WebScriptWorld *)world source:(NSString *)source url:(NSURL *)url includeMatchPatternStrings:(NSArray *)includeMatchPatternStrings excludeMatchPatternStrings:(NSArray *)excludeMatchPatternStrings injectionTime:(WebUserScriptInjectionTime)injectionTime injectedFrames:(WebUserContentInjectedFrames)injectedFrames
 {
-    String group(groupName);
-    if (group.isEmpty())
+    RefPtr<StringImpl> group(StringImpl::create(groupName));
+    if (isEmpty(group))
         return;
 
-    auto viewGroup = WebViewGroup::getOrCreate(groupName, String());
+    auto viewGroup = WebViewGroup::getOrCreate(StringImpl::create(groupName).get(), nullString());
 
     if (!world)
         return;
 
-    auto userScript = makeUnique<WebCore::UserScript>(source, url, makeVector<String>(includeMatchPatternStrings), makeVector<String>(excludeMatchPatternStrings), injectionTime == WebInjectAtDocumentStart ? WebCore::UserScriptInjectionTime::DocumentStart : WebCore::UserScriptInjectionTime::DocumentEnd, injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly);
+    auto userScript = makeUnique<WebCore::UserScript>(StringImpl::create(source), url, makeVector<RefPtr<StringImpl>>(includeMatchPatternStrings), makeVector<RefPtr<StringImpl>>(excludeMatchPatternStrings), injectionTime == WebInjectAtDocumentStart ? WebCore::UserScriptInjectionTime::DocumentStart : WebCore::UserScriptInjectionTime::DocumentEnd, injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly);
     viewGroup->userContentController().addUserScript(protect(*core(world)), WTF::move(userScript));
 }
 
 + (void)_addUserStyleSheetToGroup:(NSString *)groupName world:(WebScriptWorld *)world source:(NSString *)source url:(NSURL *)url includeMatchPatternStrings:(NSArray *)includeMatchPatternStrings excludeMatchPatternStrings:(NSArray *)excludeMatchPatternStrings injectedFrames:(WebUserContentInjectedFrames)injectedFrames
 {
-    String group(groupName);
-    if (group.isEmpty())
+    RefPtr<StringImpl> group(StringImpl::create(groupName));
+    if (isEmpty(group))
         return;
 
-    auto viewGroup = WebViewGroup::getOrCreate(groupName, String());
+    auto viewGroup = WebViewGroup::getOrCreate(StringImpl::create(groupName).get(), nullString());
 
     if (!world)
         return;
 
-    auto styleSheet = makeUnique<WebCore::UserStyleSheet>(source, url, makeVector<String>(includeMatchPatternStrings), makeVector<String>(excludeMatchPatternStrings), injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly);
+    auto styleSheet = makeUnique<WebCore::UserStyleSheet>(StringImpl::create(source).get(), url, makeVector<RefPtr<StringImpl>>(includeMatchPatternStrings), makeVector<RefPtr<StringImpl>>(excludeMatchPatternStrings), injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly);
     viewGroup->userContentController().addUserStyleSheet(protect(*core(world)), WTF::move(styleSheet), WebCore::InjectInExistingDocuments);
 }
 
 + (void)_removeUserScriptFromGroup:(NSString *)groupName world:(WebScriptWorld *)world url:(NSURL *)url
 {
-    String group(groupName);
-    if (group.isEmpty())
+    RefPtr<StringImpl> group(StringImpl::create(groupName));
+    if (isEmpty(group))
         return;
 
     RefPtr viewGroup = WebViewGroup::get(group);
@@ -4380,8 +4380,8 @@ IGNORE_WARNINGS_END
 
 + (void)_removeUserStyleSheetFromGroup:(NSString *)groupName world:(WebScriptWorld *)world url:(NSURL *)url
 {
-    String group(groupName);
-    if (group.isEmpty())
+    RefPtr<StringImpl> group(StringImpl::create(groupName));
+    if (isEmpty(group))
         return;
 
     RefPtr viewGroup = WebViewGroup::get(group);
@@ -4396,8 +4396,8 @@ IGNORE_WARNINGS_END
 
 + (void)_removeUserScriptsFromGroup:(NSString *)groupName world:(WebScriptWorld *)world
 {
-    String group(groupName);
-    if (group.isEmpty())
+    RefPtr<StringImpl> group(StringImpl::create(groupName));
+    if (isEmpty(group))
         return;
 
     RefPtr viewGroup = WebViewGroup::get(group);
@@ -4412,8 +4412,8 @@ IGNORE_WARNINGS_END
 
 + (void)_removeUserStyleSheetsFromGroup:(NSString *)groupName world:(WebScriptWorld *)world
 {
-    String group(groupName);
-    if (group.isEmpty())
+    RefPtr<StringImpl> group(StringImpl::create(groupName));
+    if (isEmpty(group))
         return;
 
     RefPtr viewGroup = WebViewGroup::get(group);
@@ -4428,8 +4428,8 @@ IGNORE_WARNINGS_END
 
 + (void)_removeAllUserContentFromGroup:(NSString *)groupName
 {
-    String group(groupName);
-    if (group.isEmpty())
+    RefPtr<StringImpl> group(StringImpl::create(groupName));
+    if (isEmpty(group))
         return;
 
     RefPtr viewGroup = WebViewGroup::get(group);
@@ -4448,12 +4448,12 @@ IGNORE_WARNINGS_END
 
 + (void)_setDomainRelaxationForbidden:(BOOL)forbidden forURLScheme:(NSString *)scheme
 {
-    WebCore::LegacySchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, scheme);
+    WebCore::LegacySchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, StringImpl::create(scheme).get());
 }
 
 + (void)_registerURLSchemeAsSecure:(NSString *)scheme
 {
-    WebCore::LegacySchemeRegistry::registerURLSchemeAsSecure(scheme);
+    WebCore::LegacySchemeRegistry::registerURLSchemeAsSecure(StringImpl::create(scheme).get());
 }
 
 + (void)_registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing:(NSString *)scheme
@@ -4462,7 +4462,7 @@ IGNORE_WARNINGS_END
 
 + (void)_registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing:(NSString *)scheme
 {
-    WebCore::LegacySchemeRegistry::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(scheme);
+    WebCore::LegacySchemeRegistry::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(StringImpl::create(scheme).get());
 }
 
 - (void)_scaleWebView:(float)scale atOrigin:(NSPoint)origin
@@ -5319,7 +5319,7 @@ IGNORE_WARNINGS_END
 
 + (void)registerURLSchemeAsLocal:(NSString *)protocol
 {
-    WebCore::LegacySchemeRegistry::registerURLSchemeAsLocal(protocol);
+    WebCore::LegacySchemeRegistry::registerURLSchemeAsLocal(StringImpl::create(protocol).get());
 }
 
 - (id)_initWithArguments:(NSDictionary *) arguments
@@ -6159,10 +6159,10 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (void)_invalidateUserAgentCache
 {
-    if (_private->userAgent.isNull())
+    if (!_private->userAgent)
         return;
 
-    _private->userAgent = String();
+    _private->userAgent = nullptr;
     if (_private->page)
         protect(_private->page)->userAgentChanged();
 }
@@ -6176,7 +6176,7 @@ static bool needsWebViewInitThreadWorkaround()
 - (void)setCustomUserAgent:(NSString *)userAgentString
 {
     [self _invalidateUserAgentCache];
-    _private->userAgent = userAgentString;
+    _private->userAgent = StringImpl::create(userAgentString);
     _private->userAgentOverridden = userAgentString != nil;
 }
 
@@ -6184,7 +6184,7 @@ static bool needsWebViewInitThreadWorkaround()
 {
     if (!_private->userAgentOverridden)
         return nil;
-    return _private->userAgent.createNSString().autorelease();
+    return createNSString(_private->userAgent).autorelease();
 }
 
 - (void)setMediaStyle:(NSString *)mediaStyle
@@ -6214,7 +6214,7 @@ static bool needsWebViewInitThreadWorkaround()
     if (encoding == oldEncoding || [encoding isEqualToString:oldEncoding])
         return;
     if (RefPtr mainFrame = [self _mainCoreFrame])
-        mainFrame->loader().reloadWithOverrideEncoding(encoding);
+        mainFrame->loader().reloadWithOverrideEncoding(StringImpl::create(encoding).get());
 }
 
 - (NSString *)_mainFrameOverrideEncoding
@@ -6266,10 +6266,10 @@ static bool needsWebViewInitThreadWorkaround()
     return protect(coreFrame->script())->windowScriptObject();
 }
 
-- (String)_userAgentString
+- (RefPtr<StringImpl>)_userAgentString
 {
-    if (_private->userAgent.isNull())
-        _private->userAgent = [[self class] _standardUserAgentWithApplicationName:_private->applicationNameForUserAgent.get()];
+    if (!_private->userAgent)
+        _private->userAgent = StringImpl::create([[self class] _standardUserAgentWithApplicationName:_private->applicationNameForUserAgent.get()]);
 
     return _private->userAgent;
 }
@@ -6277,7 +6277,7 @@ static bool needsWebViewInitThreadWorkaround()
 // Get the appropriate user-agent string for a particular URL.
 - (NSString *)userAgentForURL:(NSURL *)url
 {
-    return [self _userAgentString].createNSString().autorelease();
+    return createNSString([self _userAgentString]).autorelease();
 }
 
 - (void)setHostWindow:(NSWindow *)hostWindow
@@ -6457,7 +6457,7 @@ static bool needsWebViewInitThreadWorkaround()
         }
 
         size_t fileCount = files.count;
-        Vector<String> *fileNames = new Vector<String>;
+        Vector<RefPtr<StringImpl>> *fileNames = new Vector<RefPtr<StringImpl>>;
         NSURL *dropDestination = [NSURL fileURLWithPath:dropDestinationPath.get() isDirectory:YES];
         [draggingInfo enumerateDraggingItemsWithOptions:0 forView:self classes:@[[NSFilePromiseReceiver class]] searchOptions:@{ } usingBlock:^(NSDraggingItem * __nonnull draggingItem, NSInteger idx, BOOL * __nonnull stop) {
             NSFilePromiseReceiver *item = draggingItem.item;
@@ -6469,7 +6469,7 @@ static bool needsWebViewInitThreadWorkaround()
                     return;
 
                 RunLoop::mainSingleton().dispatch([strongSelf = protect(self), path = RetainPtr<NSString>(fileURL.path), fileNames, fileCount, dragData] {
-                    fileNames->append(path.get());
+                    fileNames->append(StringImpl::create(path.get()));
                     if (fileNames->size() == fileCount) {
                         dragData->setFileNames(*fileNames);
                         core(strongSelf)->dragController().performDragOperation(WebCore::DragData { *dragData }, *protect(dynamicDowncast<WebCore::LocalFrame>(strongSelf->_private->page->mainFrame())));
@@ -6598,7 +6598,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
     // in the WebCore MIMEType registry.  For now we're doing this in a safe, limited manner
     // to fix <rdar://problem/5372989> - a future revamping of the entire system is neccesary for future robustness
     if ([viewClass class] == [WebHTMLView class])
-        WebCore::MIMETypeRegistry::supportedNonImageMIMETypes().add(MIMEType);
+        WebCore::MIMETypeRegistry::supportedNonImageMIMETypes().add(StringImpl::create(MIMEType));
 }
 
 - (void)setGroupName:(NSString *)groupName
@@ -6608,7 +6608,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
     if (_private->group)
         protect(_private->group)->removeWebView(self);
 
-    _private->group = WebViewGroup::getOrCreate(groupName, [_private->preferences _localStorageDatabasePath]);
+    _private->group = WebViewGroup::getOrCreate(StringImpl::create(groupName).get(), StringImpl::create([_private->preferences _localStorageDatabasePath]).get());
     Ref group = *_private->group;
     group->addWebView(self);
 
@@ -6618,14 +6618,14 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
     Ref page = *_private->page;
     page->setUserContentProviderForWebKitLegacy(_private->group->userContentController());
     page->setVisitedLinkStore(_private->group->visitedLinkStore());
-    page->setGroupName(groupName);
+    page->setGroupName(StringImpl::create(groupName).get());
 }
 
 - (NSString *)groupName
 {
     if (!_private->page)
         return nil;
-    return _private->page->groupName().createNSString().autorelease();
+    return createNSString(_private->page->groupName()).autorelease();
 }
 
 - (double)estimatedProgress
@@ -6901,7 +6901,7 @@ static WebCore::TextCheckingResult textCheckingResultFromNSTextCheckingResult(NS
     WebCore::TextCheckingResult result;
     result.type = coreTextCheckingType(nsResult.resultType);
     result.range = nsResult.range;
-    result.replacement = nsResult.replacementString;
+    result.replacement = StringImpl::create(nsResult.replacementString);
     return result;
 }
 
@@ -7431,7 +7431,7 @@ static BOOL findString(NSView <WebDocumentSearching> *searchView, NSString *stri
 {
     if (!_private->page)
         return nil;
-    return kit(protect(_private->page)->rangeOfString(string, makeSimpleRange(protect(core(previousRange))), coreOptions(options)));
+    return kit(protect(_private->page)->rangeOfString(StringImpl::create(string).get(), makeSimpleRange(protect(core(previousRange))), coreOptions(options)));
 }
 
 - (void)setMainFrameDocumentReady:(BOOL)mainFrameDocumentReady
@@ -7507,7 +7507,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
     if (jsValue.isBoolean())
         return [NSAppleEventDescriptor descriptorWithBoolean:jsValue.asBoolean()];
     if (jsValue.isString())
-        return [NSAppleEventDescriptor descriptorWithString:asString(jsValue)->value(lexicalGlobalObject).data.createNSString().get()];
+        return [NSAppleEventDescriptor descriptorWithString:createNSString(asString(jsValue)->value(lexicalGlobalObject).data).get()];
     if (jsValue.isNumber()) {
         double value = jsValue.asNumber();
         int intValue = value;
@@ -7559,7 +7559,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
     if (!coreFrame->document())
         return nil;
     CheckedRef scriptController = coreFrame->script();
-    JSC::JSValue result = scriptController->executeScriptIgnoringException(script, JSC::SourceTaintedOrigin::Untainted, true);
+    JSC::JSValue result = scriptController->executeScriptIgnoringException(StringImpl::create(script).get(), JSC::SourceTaintedOrigin::Untainted, true);
     if (!result) // FIXME: pass errors
         return 0;
     JSC::JSLockHolder lock(scriptController->globalObject(WebCore::mainThreadNormalWorldSingleton()));
@@ -7779,7 +7779,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
 #if PLATFORM(IOS_FAMILY)
 - (void)removeVisitedLink:(NSURL *)url
 {
-    protect(_private->group->visitedLinkStore())->removeVisitedLink(URL(url).string().createNSString().get());
+    protect(_private->group->visitedLinkStore())->removeVisitedLink(createNSString(URL(url).string()).get());
 }
 #endif
 
@@ -9063,7 +9063,7 @@ FORWARD(toggleUnderline)
     WebFrame *webFrame = [self _selectedOrMainFrame];
     RefPtr coreFrame = core(webFrame);
     if (coreFrame)
-        protect(coreFrame->editor())->handleAlternativeTextUIResult(text);
+        protect(coreFrame->editor())->handleAlternativeTextUIResult(StringImpl::create(text).get());
 }
 #endif
 
@@ -9089,9 +9089,9 @@ FORWARD(toggleUnderline)
     _private->m_alternativeTextUIController->removeAlternatives(dictationContext);
 }
 
-- (Vector<String>)_dictationAlternatives:(WebCore::DictationContext)dictationContext
+- (Vector<RefPtr<StringImpl>>)_dictationAlternatives:(WebCore::DictationContext)dictationContext
 {
-    return makeVector<String>([protect(_private->m_alternativeTextUIController->alternativesForContext(dictationContext)) alternativeStrings]);
+    return makeVector<RefPtr<StringImpl>>([protect(_private->m_alternativeTextUIController->alternativesForContext(dictationContext)) alternativeStrings]);
 }
 
 #if ENABLE(SERVICE_CONTROLS)
@@ -9231,7 +9231,7 @@ FORWARD(toggleUnderline)
     // FIXME: We should enable this on iOS as well.
 #if PLATFORM(MAC)
     double minimumFontSize = _private->page ? _private->page->settings().minimumFontSize() : 0;
-    _private->formValidationBubble = WebCore::ValidationBubble::create(self, message, { minimumFontSize });
+    _private->formValidationBubble = WebCore::ValidationBubble::create(self, StringImpl::create(message), { minimumFontSize });
     protect(_private->formValidationBubble)->showRelativeTo(WebCore::enclosingIntRect([self _convertRectFromRootView:anchorRect]));
 #else
     UNUSED_PARAM(message);
@@ -9284,7 +9284,7 @@ FORWARD(toggleUnderline)
 
 - (void)_setMockMediaPlaybackTargetPickerName:(NSString *)name state:(WebCore::MediaPlaybackTargetMockState)state
 {
-    [self _devicePicker]->setMockMediaPlaybackTargetPickerState(name, state);
+    [self _devicePicker]->setMockMediaPlaybackTargetPickerState(StringImpl::create(name).get(), state);
 }
 
 - (void)_mockMediaPlaybackTargetPickerDismissPopup
@@ -9534,8 +9534,8 @@ NODELETE static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::St
 
                 RefPtr<EditingStyle> typingStyle = coreFrame->selection().typingStyle();
                 if (typingStyle && typingStyle->style()) {
-                    String value = protect(typingStyle->style())->getPropertyValue(CSSPropertyID::WebkitTextDecorationsInEffect);
-                    [_private->_textTouchBarItemController setTextIsUnderlined:value.contains("underline"_s)];
+                    RefPtr<StringImpl> value = protect(typingStyle->style())->getPropertyValue(CSSPropertyID::WebkitTextDecorationsInEffect);
+                    [_private->_textTouchBarItemController setTextIsUnderlined:contains(value, "underline"_s)];
                 } else
                     [_private->_textTouchBarItemController setTextIsUnderlined:style->textDecorationLineInEffectOutOfLine().hasUnderline()];
 
@@ -9690,7 +9690,7 @@ NODELETE static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::St
     }
 
     auto translationViewController = adoptNS([PAL::allocLTUITranslationViewControllerInstance() init]);
-    [translationViewController setText:adoptNS([[NSAttributedString alloc] initWithString:info.text.createNSString().get()]).get()];
+    [translationViewController setText:adoptNS([[NSAttributedString alloc] initWithString:createNSString(info.text).get()]).get()];
     if (info.mode == WebCore::TranslationContextMenuMode::Editable) {
         [translationViewController setIsSourceEditable:YES];
         [translationViewController setReplacementHandler:[weakSelf = WeakObjCPtr<WebView>(self)](NSAttributedString *string) {
@@ -9788,7 +9788,7 @@ NODELETE static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::St
 {
 #if ENABLE(GEOLOCATION)
     if (_private && _private->page) {
-        auto geolocatioError = WebCore::GeolocationError::create(WebCore::GeolocationError::PositionUnavailable, errorMessage);
+        auto geolocatioError = WebCore::GeolocationError::create(WebCore::GeolocationError::PositionUnavailable, StringImpl::create(errorMessage).get());
         protect(WebCore::GeolocationController::from(_private->page.get()))->errorOccurred(geolocatioError.get());
     }
 #endif // ENABLE(GEOLOCATION)
@@ -9846,7 +9846,7 @@ NODELETE static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::St
         return 0;
     JSContextRef context = [[self mainFrame] globalContext];
     RefPtr notification = WebCore::JSNotification::toWrapped(toJS(context)->vm(), toJS(toJS(context), jsNotification));
-    return notification->identifier().toString().createNSString().autorelease();
+    return createNSString(notification->identifier().toString()).autorelease();
 #else
     return nil;
 #endif
@@ -9869,7 +9869,7 @@ NODELETE static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::St
 #if !PLATFORM(MAC)
     UNUSED_PARAM(allowList);
 #else
-    WebCore::FontCache::setFontAllowlist(makeVector<String>(allowList));
+    WebCore::FontCache::setFontAllowlist(makeVector<RefPtr<StringImpl>>(allowList));
 #endif
 }
 

@@ -246,7 +246,7 @@ const Style::ComputedStyle* Extractor::computeStyleForCustomProperty(std::unique
     return style;
 }
 
-RefPtr<CSSValue> Extractor::customPropertyValue(const AtomString& propertyName) const
+RefPtr<CSSValue> Extractor::customPropertyValue(AtomStringImpl* propertyName) const
 {
     std::unique_ptr<Style::ComputedStyle> ownedStyle;
     auto* style = computeStyleForCustomProperty(ownedStyle);
@@ -260,7 +260,7 @@ RefPtr<CSSValue> Extractor::customPropertyValue(const AtomString& propertyName) 
     return value->propertyValue(CSSValuePool::singleton(), *style);
 }
 
-RefPtr<DeprecatedCSSOMValue> Extractor::customPropertyValueDeprecatedCSSOMValue(const AtomString& propertyName, CSSStyleDeclaration& owner) const
+RefPtr<DeprecatedCSSOMValue> Extractor::customPropertyValueDeprecatedCSSOMValue(AtomStringImpl* propertyName, CSSStyleDeclaration& owner) const
 {
     std::unique_ptr<Style::ComputedStyle> ownedStyle;
     auto* style = computeStyleForCustomProperty(ownedStyle);
@@ -274,7 +274,7 @@ RefPtr<DeprecatedCSSOMValue> Extractor::customPropertyValueDeprecatedCSSOMValue(
     return value->propertyValueDeprecatedCSSOMWrapper(CSSValuePool::singleton(), owner, *style);
 }
 
-WTF::String Extractor::customPropertyValueSerialization(const AtomString& propertyName, const CSS::SerializationContext& serializationContext) const
+RefPtr<StringImpl> Extractor::customPropertyValueSerialization(AtomStringImpl* propertyName, const CSS::SerializationContext& serializationContext) const
 {
     std::unique_ptr<Style::ComputedStyle> ownedStyle;
     if (auto* style = computeStyleForCustomProperty(ownedStyle))
@@ -282,7 +282,7 @@ WTF::String Extractor::customPropertyValueSerialization(const AtomString& proper
     return emptyString();
 }
 
-WTF::String Extractor::customPropertyValueSerializationInStyle(const Style::ComputedStyle& style, const AtomString& propertyName, const CSS::SerializationContext& serializationContext) const
+RefPtr<StringImpl> Extractor::customPropertyValueSerializationInStyle(const Style::ComputedStyle& style, AtomStringImpl* propertyName, const CSS::SerializationContext& serializationContext) const
 {
     if (RefPtr value = style.customPropertyValue(propertyName))
         return value->propertyValueSerialization(serializationContext, style);
@@ -492,7 +492,7 @@ RefPtr<DeprecatedCSSOMValue> Extractor::propertyValueDeprecatedCSSOMValue(CSSPro
     return value->createDeprecatedCSSOMWrapper(owner);
 }
 
-WTF::String Extractor::propertyValueSerialization(CSSPropertyID propertyID, const CSS::SerializationContext& serializationContext, UpdateLayout updateLayout, ExtractorState::PropertyValueType valueType) const
+RefPtr<StringImpl> Extractor::propertyValueSerialization(CSSPropertyID propertyID, const CSS::SerializationContext& serializationContext, UpdateLayout updateLayout, ExtractorState::PropertyValueType valueType) const
 {
     std::unique_ptr<Style::ComputedStyle> ownedStyle;
     auto style = computeStyle(propertyID, updateLayout, ownedStyle);
@@ -540,7 +540,7 @@ RefPtr<CSSValue> Extractor::propertyValueInStyle(const Style::ComputedStyle& sty
     return ExtractorGenerated::extractValue(state, propertyID);
 }
 
-WTF::String Extractor::propertyValueSerializationInStyle(const Style::ComputedStyle& style, CSSPropertyID propertyID, const CSS::SerializationContext& serializationContext, CSSValuePool& cssValuePool, const RenderElement* renderer, ExtractorState::PropertyValueType valueType) const
+RefPtr<StringImpl> Extractor::propertyValueSerializationInStyle(const Style::ComputedStyle& style, CSSPropertyID propertyID, const CSS::SerializationContext& serializationContext, CSSValuePool& cssValuePool, const RenderElement* renderer, ExtractorState::PropertyValueType valueType) const
 {
     ASSERT(isExposed(propertyID, m_element->document().settings()));
 
@@ -615,7 +615,7 @@ Ref<MutableStyleProperties> Extractor::copyProperties() const
     }).span());
 }
 
-WTF::String Extractor::appleColorFilterSerializationForTesting(Element& element)
+RefPtr<StringImpl> Extractor::appleColorFilterSerializationForTesting(Element& element)
 {
     updateStyleIfNeededForProperty(element, std::nullopt, CSSPropertyID::AppleColorFilter);
 

@@ -509,7 +509,7 @@ void PageLoadStateObserver::didChangeIsLoading()
 
 void PageLoadStateObserver::didChangeTitle()
 {
-    m_webView->priv->title = getPage(m_webView).pageLoadState().title().utf8();
+    m_webView->priv->title = utf8(getPage(m_webView).pageLoadState().title());
     g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_TITLE]);
     g_object_thaw_notify(G_OBJECT(m_webView));
 }
@@ -525,7 +525,7 @@ void PageLoadStateObserver::didChangeActiveURL()
 {
     if (m_webView->priv->isActiveURIChangeBlocked)
         return;
-    m_webView->priv->activeURI = getPage(m_webView).pageLoadState().activeURL().string().utf8();
+    m_webView->priv->activeURI = utf8(getPage(m_webView).pageLoadState().activeURL().string());
     g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_URI]);
     g_object_thaw_notify(G_OBJECT(m_webView));
 }
@@ -721,7 +721,7 @@ static void zoomTextOnlyChanged(WebKitSettings* settings, GParamSpec*, WebKitWeb
 
 static void userAgentChanged(WebKitSettings* settings, GParamSpec*, WebKitWebView* webView)
 {
-    getPage(webView).setCustomUserAgent(String::fromUTF8(webkit_settings_get_user_agent(settings)));
+    getPage(webView).setCustomUserAgent(StringImpl::fromUTF8(webkit_settings_get_user_agent(settings)));
 }
 
 static gboolean webkitWebViewIsEphemeral(WebKitWebView* webView)
@@ -859,7 +859,7 @@ static void webkitWebViewUpdateSettings(WebKitWebView* webView)
     WebKitSettings* settings = webView->priv->settings.get();
     page->setPreferences(*webkitSettingsGetPreferences(settings));
     page->setCanRunModal(webkit_settings_get_allow_modal_dialogs(settings));
-    page->setCustomUserAgent(String::fromUTF8(webkit_settings_get_user_agent(settings)));
+    page->setCustomUserAgent(StringImpl::fromUTF8(webkit_settings_get_user_agent(settings)));
 #if PLATFORM(GTK)
     enableBackForwardNavigationGesturesChanged(settings, nullptr, webView);
 #endif
@@ -939,7 +939,7 @@ static Ref<API::PageConfiguration> webkitWebViewCreatePageConfiguration(WebKitWe
 #endif
 
     if (!priv->defaultContentSecurityPolicy.isNull())
-        pageConfiguration->setOverrideContentSecurityPolicy(String { priv->defaultContentSecurityPolicy });
+        pageConfiguration->setOverrideContentSecurityPolicy(StringImpl::fromUTF8(priv->defaultContentSecurityPolicy.span()).get());
 
 #if ENABLE(2022_GLIB_API)
     auto* manager = webkit_network_session_get_website_data_manager(priv->networkSession.get());
@@ -2823,7 +2823,7 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent,
         webView->priv->isActiveURIChangeBlocked = false;
         break;
     case WEBKIT_LOAD_COMMITTED: {
-        auto activeURL = getPage(webView).pageLoadState().activeURL().string().utf8();
+        auto activeURL = utf8(getPage(webView).pageLoadState().activeURL().string());
         // Active URL is trusted now. If it's different to our active URI, due to the
         // update block before WEBKIT_LOAD_STARTED, we update it here to be in sync
         // again with the page load state.
@@ -2849,16 +2849,16 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent,
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, loadEvent);
 }
 
-void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, const String& failingURI, GError *error)
+void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, StringImpl* failingURI, GError *error)
 {
     webkitWebViewCompleteAuthenticationRequest(webView);
 
     gboolean returnValue;
-    gSignalEmit(webView, signals[LOAD_FAILED], 0, loadEvent, failingURI.utf8(), error, &returnValue);
+    gSignalEmit(webView, signals[LOAD_FAILED], 0, loadEvent, utf8(failingURI), error, &returnValue);
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
 }
 
-void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const String& failingURI, GError* error, GTlsCertificateFlags tlsErrors, GTlsCertificate* certificate)
+void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, StringImpl* failingURI, GError* error, GTlsCertificateFlags tlsErrors, GTlsCertificate* certificate)
 {
     webkitWebViewCompleteAuthenticationRequest(webView);
 
@@ -2869,7 +2869,7 @@ void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const String& 
     WebKitTLSErrorsPolicy tlsErrorsPolicy = webkit_website_data_manager_get_tls_errors_policy(websiteDataManager);
 #endif
     if (tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_FAIL) {
-        auto failingURIUTF8 = failingURI.utf8();
+        auto failingURIUTF8 = utf8(failingURI);
         gboolean returnValue;
         gSignalEmit(webView, signals[LOAD_FAILED_WITH_TLS_ERRORS], 0, failingURIUTF8, certificate, tlsErrors, &returnValue);
         if (!returnValue)
@@ -2925,7 +2925,7 @@ void webkitWebViewUpdatePageIcons(WebKitWebView *webView)
         return;
 
     auto cancellable = adoptGRef(g_cancellable_new());
-    webkit_favicon_database_get_page_icons(database, getPage(webView).pageLoadState().activeURL().string().utf8().legacyCStringPointer(), cancellable.get(), [](GObject* database, GAsyncResult* result, gpointer userData) {
+    webkit_favicon_database_get_page_icons(database, utf8(getPage(webView).pageLoadState().activeURL().string()).legacyCStringPointer(), cancellable.get(), [](GObject* database, GAsyncResult* result, gpointer userData) {
         auto webView = adoptGRef(WEBKIT_WEB_VIEW(userData));
 
         GUniqueOutPtr<GError> error;
@@ -3006,7 +3006,7 @@ void webkitWebViewClosePage(WebKitWebView* webView)
 void webkitWebViewRunJavaScriptAlert(WebKitWebView* webView, const UTF8CString& message, Function<void()>&& completionHandler)
 {
     ASSERT(!webView->priv->currentScriptDialog);
-    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_ALERT, message, { }, [webView, completionHandler = WTF::move(completionHandler)](bool, const String&) {
+    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_ALERT, message, { }, [webView, completionHandler = WTF::move(completionHandler)](bool, StringImpl*) {
         completionHandler();
         webView->priv->currentScriptDialog = nullptr;
     });
@@ -3018,7 +3018,7 @@ void webkitWebViewRunJavaScriptAlert(WebKitWebView* webView, const UTF8CString& 
 void webkitWebViewRunJavaScriptConfirm(WebKitWebView* webView, const UTF8CString& message, Function<void(bool)>&& completionHandler)
 {
     ASSERT(!webView->priv->currentScriptDialog);
-    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_CONFIRM, message, { }, [webView, completionHandler = WTF::move(completionHandler)](bool result, const String&) {
+    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_CONFIRM, message, { }, [webView, completionHandler = WTF::move(completionHandler)](bool result, StringImpl*) {
         completionHandler(result);
         webView->priv->currentScriptDialog = nullptr;
     });
@@ -3027,10 +3027,10 @@ void webkitWebViewRunJavaScriptConfirm(WebKitWebView* webView, const UTF8CString
     webkit_script_dialog_unref(webView->priv->currentScriptDialog);
 }
 
-void webkitWebViewRunJavaScriptPrompt(WebKitWebView* webView, const UTF8CString& message, const UTF8CString& defaultText, Function<void(const String&)>&& completionHandler)
+void webkitWebViewRunJavaScriptPrompt(WebKitWebView* webView, const UTF8CString& message, const UTF8CString& defaultText, Function<void(StringImpl*)>&& completionHandler)
 {
     ASSERT(!webView->priv->currentScriptDialog);
-    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_PROMPT, message, defaultText, [webView, completionHandler = WTF::move(completionHandler)](bool, const String& result) {
+    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_PROMPT, message, defaultText, [webView, completionHandler = WTF::move(completionHandler)](bool, StringImpl* result) {
         completionHandler(result);
         webView->priv->currentScriptDialog = nullptr;
     });
@@ -3042,7 +3042,7 @@ void webkitWebViewRunJavaScriptPrompt(WebKitWebView* webView, const UTF8CString&
 void webkitWebViewRunJavaScriptBeforeUnloadConfirm(WebKitWebView* webView, const UTF8CString& message, Function<void(bool)>&& completionHandler)
 {
     ASSERT(!webView->priv->currentScriptDialog);
-    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM, message, { }, [webView, completionHandler = WTF::move(completionHandler)](bool result, const String&) {
+    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM, message, { }, [webView, completionHandler = WTF::move(completionHandler)](bool result, StringImpl*) {
         completionHandler(result);
         webView->priv->currentScriptDialog = nullptr;
     });
@@ -3060,15 +3060,15 @@ bool webkitWebViewIsShowingScriptDialog(WebKitWebView* webView)
     return webkitScriptDialogIsRunning(webView->priv->currentScriptDialog);
 }
 
-String webkitWebViewGetCurrentScriptDialogMessage(WebKitWebView* webView)
+RefPtr<StringImpl> webkitWebViewGetCurrentScriptDialogMessage(WebKitWebView* webView)
 {
     if (!webView->priv->currentScriptDialog)
         return { };
 
-    return String::fromUTF8(webView->priv->currentScriptDialog->message.span());
+    return StringImpl::fromUTF8(webView->priv->currentScriptDialog->message.span());
 }
 
-void webkitWebViewSetCurrentScriptDialogUserInput(WebKitWebView* webView, const String& userInput)
+void webkitWebViewSetCurrentScriptDialogUserInput(WebKitWebView* webView, StringImpl* userInput)
 {
     if (!webView->priv->currentScriptDialog)
         return;
@@ -3379,7 +3379,7 @@ void webkitWebViewDidLosePointerLock(WebKitWebView* webView)
 }
 #endif // ENABLE(POINTER_LOCK)
 
-static void webkitWebViewSynthesizeCompositionKeyPress(WebKitWebView* webView, const String& text, std::optional<Vector<CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
+static void webkitWebViewSynthesizeCompositionKeyPress(WebKitWebView* webView, StringImpl* text, std::optional<Vector<CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {
 #if PLATFORM(GTK)
     webkitWebViewBaseSynthesizeCompositionKeyPress(WEBKIT_WEB_VIEW_BASE(webView), text, WTF::move(underlines), WTF::move(selectionRange));
@@ -3388,17 +3388,17 @@ static void webkitWebViewSynthesizeCompositionKeyPress(WebKitWebView* webView, c
 #endif
 }
 
-void webkitWebViewSetComposition(WebKitWebView* webView, const String& text, const Vector<CompositionUnderline>& underlines, EditingRange&& selectionRange)
+void webkitWebViewSetComposition(WebKitWebView* webView, StringImpl* text, const Vector<CompositionUnderline>& underlines, EditingRange&& selectionRange)
 {
     webkitWebViewSynthesizeCompositionKeyPress(webView, text, underlines, WTF::move(selectionRange));
 }
 
-void webkitWebViewConfirmComposition(WebKitWebView* webView, const String& text)
+void webkitWebViewConfirmComposition(WebKitWebView* webView, StringImpl* text)
 {
     webkitWebViewSynthesizeCompositionKeyPress(webView, text, std::nullopt, std::nullopt);
 }
 
-void webkitWebViewCancelComposition(WebKitWebView* webView, const String& text)
+void webkitWebViewCancelComposition(WebKitWebView* webView, StringImpl* text)
 {
     getPage(webView).cancelComposition(text);
 }
@@ -3668,7 +3668,7 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(uri);
 
-    getPage(webView).loadRequest(URL({ }, String::fromUTF8(uri)));
+    getPage(webView).loadRequest(URL({ }, StringImpl::fromUTF8(uri)));
 }
 
 /**
@@ -3694,7 +3694,7 @@ void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, con
     g_return_if_fail(content);
 
     auto contentData = spanReinterpretCast<const uint8_t>(UTF8CStringView::unsafeFromUTF8(content).span());
-    getPage(webView).loadData(WebCore::SharedBuffer::create(WTF::move(contentData)), "text/html"_s, "UTF-8"_s, String::fromUTF8(baseURI));
+    getPage(webView).loadData(WebCore::SharedBuffer::create(WTF::move(contentData)), "text/html"_si, "UTF-8"_si, StringImpl::fromUTF8(baseURI).get());
 }
 
 /**
@@ -3718,7 +3718,7 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
     g_return_if_fail(contentURI);
 
     Vector contentData(spanReinterpretCast<const uint8_t>(UTF8CStringView::unsafeFromUTF8(content).span()));
-    getPage(webView).loadAlternateHTML(WebCore::DataSegment::create(WTF::move(contentData)), "UTF-8"_s, URL { String::fromUTF8(baseURI) }, URL { String::fromUTF8(contentURI) }, nullptr);
+    getPage(webView).loadAlternateHTML(WebCore::DataSegment::create(WTF::move(contentData)), "UTF-8"_si, URL { StringImpl::fromUTF8(baseURI) }, URL { StringImpl::fromUTF8(contentURI) }, nullptr);
 }
 
 /**
@@ -3736,7 +3736,7 @@ void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainT
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(plainText);
 
-    getPage(webView).loadData(WebCore::SharedBuffer::create(byteCast<uint8_t>(unsafeSpan(plainText))), "text/plain"_s, "UTF-8"_s, aboutBlankURL().string());
+    getPage(webView).loadData(WebCore::SharedBuffer::create(byteCast<uint8_t>(unsafeSpan(plainText))), "text/plain"_si, "UTF-8"_si, aboutBlankURL().string());
 }
 
 /**
@@ -3764,8 +3764,8 @@ void webkit_web_view_load_bytes(WebKitWebView* webView, GBytes* bytes, const cha
     auto bytesData = span(bytes);
     g_return_if_fail(bytesData.size());
 
-    getPage(webView).loadData(WebCore::SharedBuffer::create(bytesData), mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
-        encoding ? String::fromUTF8(encoding) : String::fromUTF8("UTF-8"), String::fromUTF8(baseURI));
+    getPage(webView).loadData(WebCore::SharedBuffer::create(bytesData), mimeType ? StringImpl::fromUTF8(mimeType) : StringImpl::fromUTF8("text/html"),
+        encoding ? StringImpl::fromUTF8(encoding) : StringImpl::fromUTF8("UTF-8"), StringImpl::fromUTF8(baseURI));
 }
 
 /**
@@ -4112,11 +4112,11 @@ const gchar* webkit_web_view_get_custom_charset(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
-    String customTextEncoding = getPage(webView).customTextEncodingName();
-    if (customTextEncoding.isEmpty())
+    RefPtr<StringImpl> customTextEncoding = getPage(webView).customTextEncodingName();
+    if (isEmpty(customTextEncoding))
         return 0;
 
-    webView->priv->customTextEncoding = customTextEncoding.utf8();
+    webView->priv->customTextEncoding = utf8(customTextEncoding);
     return webView->priv->customTextEncoding.legacyCStringPointer();
 }
 
@@ -4136,7 +4136,7 @@ void webkit_web_view_set_custom_charset(WebKitWebView* webView, const gchar* cha
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    getPage(webView).setCustomTextEncodingName(String::fromUTF8(charset));
+    getPage(webView).setCustomTextEncodingName(StringImpl::fromUTF8(charset));
 }
 
 /**
@@ -4397,7 +4397,7 @@ void webkit_web_view_can_execute_editing_command(WebKitWebView* webView, const c
     g_return_if_fail(command);
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
-    getPage(webView).validateCommand(String::fromUTF8(command), [task = WTF::move(task)](bool isEnabled, int32_t) {
+    getPage(webView).validateCommand(StringImpl::fromUTF8(command), [task = WTF::move(task)](bool isEnabled, int32_t) {
         g_task_return_boolean(task.get(), isEnabled);
     });
 }
@@ -4435,7 +4435,7 @@ void webkit_web_view_execute_editing_command(WebKitWebView* webView, const char*
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(command);
 
-    getPage(webView).executeEditCommand(String::fromUTF8(command));
+    getPage(webView).executeEditCommand(StringImpl::fromUTF8(command));
 }
 
 /**
@@ -4458,7 +4458,7 @@ void webkit_web_view_execute_editing_command_with_argument(WebKitWebView* webVie
     g_return_if_fail(command);
     g_return_if_fail(argument);
 
-    getPage(webView).executeEditCommand(String::fromUTF8(command), String::fromUTF8(argument));
+    getPage(webView).executeEditCommand(StringImpl::fromUTF8(command), StringImpl::fromUTF8(argument));
 }
 
 /**
@@ -4519,7 +4519,7 @@ enum class RunJavascriptReturnType {
 
 static void webkitWebViewRunJavaScriptWithParams(WebKitWebView* webView, WebKit::RunJavaScriptParameters&& params, const char* worldName, RunJavascriptReturnType returnType, GRefPtr<GTask>&& task)
 {
-    auto world = worldName ? API::ContentWorld::sharedWorldWithName(String::fromUTF8(worldName)) : Ref<API::ContentWorld> { API::ContentWorld::pageContentWorldSingleton() };
+    auto world = worldName ? API::ContentWorld::sharedWorldWithName(StringImpl::fromUTF8(worldName)) : Ref<API::ContentWorld> { API::ContentWorld::pageContentWorldSingleton() };
     constexpr bool wantsResult = true;
     getPage(webView).runJavaScriptInFrameInScriptWorld(WTF::move(params), std::nullopt, world.get(), wantsResult, [task = WTF::move(task), returnType] (auto&& result) {
         if (g_task_return_error_if_cancelled(task.get()))
@@ -4547,7 +4547,7 @@ static void webkitWebViewRunJavaScriptWithParams(WebKitWebView* webView, WebKit:
             }
             ExceptionDetails exceptionDetails = WTF::move(*result.error());
             StringBuilder builder;
-            if (!exceptionDetails.sourceURL.isEmpty()) {
+            if (!isEmpty(exceptionDetails.sourceURL)) {
                 builder.append(exceptionDetails.sourceURL);
                 if (exceptionDetails.lineNumber > 0) {
                     builder.append(':', exceptionDetails.lineNumber);
@@ -4558,7 +4558,7 @@ static void webkitWebViewRunJavaScriptWithParams(WebKitWebView* webView, WebKit:
             }
             builder.append(exceptionDetails.message);
             SAFE_G_TASK_RETURN_NEW_ERROR(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED,
-                "%s", builder.toString().utf8());
+                "%s", utf8(builder.toString()));
         }
     });
 }
@@ -4568,7 +4568,7 @@ void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView* webView,
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
     GRefPtr task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
-    auto string = IPC::TransferString::create(String::fromUTF8(script));
+    auto string = IPC::TransferString::create(StringImpl::fromUTF8(script).get());
     if (!string) {
         g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED, "Out of memory");
         return;
@@ -4590,7 +4590,7 @@ static void webkitWebViewEvaluateJavascriptInternal(WebKitWebView* webView, cons
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
     GRefPtr task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
-    auto string = IPC::TransferString::create(length < 0 ? String::fromUTF8(script) : String::fromUTF8(unsafeMakeSpan(script, length)));
+    auto string = IPC::TransferString::create((length < 0 ? StringImpl::fromUTF8(script) : StringImpl::fromUTF8(unsafeMakeSpan(script, length))).get());
     if (!string) {
         g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED, "Out of memory");
         return;
@@ -4598,7 +4598,7 @@ static void webkitWebViewEvaluateJavascriptInternal(WebKitWebView* webView, cons
     WebKit::RunJavaScriptParameters params {
         WTF::move(*string),
         JSC::SourceTaintedOrigin::Untainted,
-        URL({ }, String::fromUTF8(sourceURI)),
+        URL({ }, StringImpl::fromUTF8(sourceURI)),
         RunAsAsyncFunction::No,
         std::nullopt,
         ForceUserGesture::Yes,
@@ -4701,12 +4701,12 @@ JSCValue* webkit_web_view_evaluate_javascript_finish(WebKitWebView* webView, GAs
     return static_cast<JSCValue*>(g_task_propagate_pointer(G_TASK(result), error));
 }
 
-static Vector<std::pair<String, JavaScriptEvaluationResult>> parseAsyncFunctionArguments(GVariant* arguments, GError** error)
+static Vector<std::pair<RefPtr<StringImpl>, JavaScriptEvaluationResult>> parseAsyncFunctionArguments(GVariant* arguments, GError** error)
 {
     if (!arguments)
         return { };
 
-    Vector<std::pair<String, JavaScriptEvaluationResult>> argumentsVector;
+    Vector<std::pair<RefPtr<StringImpl>, JavaScriptEvaluationResult>> argumentsVector;
 
     GUniquePtr<GVariantIter> iter(g_variant_iter_new(arguments));
     const char* key;
@@ -4720,7 +4720,7 @@ static Vector<std::pair<String, JavaScriptEvaluationResult>> parseAsyncFunctionA
             *error = g_error_new(WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_INVALID_PARAMETER, "Invalid parameter %s passed as argument of async function call", key);
             return argumentsVector;
         }
-        argumentsVector.append({ String::fromUTF8(key), WTF::move(*parameter) });
+        argumentsVector.append({ StringImpl::fromUTF8(key), WTF::move(*parameter) });
     }
 
     return argumentsVector;
@@ -4738,7 +4738,7 @@ static void webkitWebViewCallAsyncJavascriptFunctionInternal(WebKitWebView* webV
         g_task_return_error(task.get(), error);
         return;
     }
-    auto string = IPC::TransferString::create(length < 0 ? String::fromUTF8(body) : String::fromUTF8(unsafeMakeSpan(body, length)));
+    auto string = IPC::TransferString::create((length < 0 ? StringImpl::fromUTF8(body) : StringImpl::fromUTF8(unsafeMakeSpan(body, length))).get());
     if (!string) {
         g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED, "Out of memory");
         return;
@@ -4746,7 +4746,7 @@ static void webkitWebViewCallAsyncJavascriptFunctionInternal(WebKitWebView* webV
     WebKit::RunJavaScriptParameters params {
         WTF::move(*string),
         JSC::SourceTaintedOrigin::Untainted,
-        URL({ }, String::fromUTF8(sourceURI)),
+        URL({ }, StringImpl::fromUTF8(sourceURI)),
         RunAsAsyncFunction::Yes,
         WTF::move(argumentsVector),
         ForceUserGesture::Yes,
@@ -5011,7 +5011,7 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
     gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
-    auto string = IPC::TransferString::create(String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)));
+    auto string = IPC::TransferString::create(StringImpl::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)).get());
     if (!string) {
         g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED, "Out of memory");
         return;
@@ -5140,7 +5140,7 @@ gboolean webkit_web_view_can_show_mime_type(WebKitWebView* webView, const char* 
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
     g_return_val_if_fail(mimeType, FALSE);
 
-    return getPage(webView).canShowMIMEType(String::fromUTF8(mimeType));
+    return getPage(webView).canShowMIMEType(StringImpl::fromUTF8(mimeType));
 }
 
 #if ENABLE(MHTML)
@@ -5335,7 +5335,7 @@ WebKitDownload* webkit_web_view_download_uri(WebKitWebView* webView, const char*
     g_return_val_if_fail(uri, nullptr);
 
     Ref page = getPage(webView);
-    auto downloadProxy = page->configuration().processPool().download(page->websiteDataStore(), page.ptr(), ResourceRequest { String::fromUTF8(uri) }, { });
+    auto downloadProxy = page->configuration().processPool().download(page->websiteDataStore(), page.ptr(), ResourceRequest { StringImpl::fromUTF8(uri) }, { });
     auto download = webkitDownloadCreate(downloadProxy, webView);
 #if ENABLE(2022_GLIB_API)
     downloadProxy->setDidStartCallback([session = GRefPtr<WebKitNetworkSession> { webView->priv->networkSession }, download = download.get()](auto* downloadProxy) {
@@ -5919,8 +5919,8 @@ void webkit_web_view_set_cors_allowlist(WebKitWebView* webView, const gchar* con
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     const auto allowListSpan = span(allowList);
-    Vector<String> allowListVector { allowListSpan.size(), [&allowListSpan](size_t i) {
-        return String::fromUTF8(allowListSpan[i]);
+    Vector<RefPtr<StringImpl>> allowListVector { allowListSpan.size(), [&allowListSpan](size_t i) {
+        return StringImpl::fromUTF8(allowListSpan[i]);
     }};
 
     getPage(webView).setCORSDisablingPatterns(WTF::move(allowListVector));

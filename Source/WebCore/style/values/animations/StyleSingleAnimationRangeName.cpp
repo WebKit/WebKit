@@ -83,48 +83,48 @@ CSSValueID convertSingleAnimationRangeNameToCSSValueID(SingleAnimationRangeName 
     return CSSValueID::Normal;
 }
 
-WTF::String convertSingleAnimationRangeNameToRangeString(SingleAnimationRangeName rangeName)
+RefPtr<StringImpl> convertSingleAnimationRangeNameToRangeString(SingleAnimationRangeName rangeName)
 {
     switch (rangeName) {
     case SingleAnimationRangeName::Normal:
-        return "normal"_s;
+        return "normal"_si;
     case SingleAnimationRangeName::Omitted:
-        return "omitted"_s;
+        return "omitted"_si;
     case SingleAnimationRangeName::Cover:
-        return "cover"_s;
+        return "cover"_si;
     case SingleAnimationRangeName::Contain:
-        return "contain"_s;
+        return "contain"_si;
     case SingleAnimationRangeName::Entry:
-        return "entry"_s;
+        return "entry"_si;
     case SingleAnimationRangeName::Exit:
-        return "exit"_s;
+        return "exit"_si;
     case SingleAnimationRangeName::EntryCrossing:
-        return "entry-crossing"_s;
+        return "entry-crossing"_si;
     case SingleAnimationRangeName::ExitCrossing:
-        return "exit-crossing"_s;
+        return "exit-crossing"_si;
     case SingleAnimationRangeName::Scroll:
-        return "scroll"_s;
+        return "scroll"_si;
     }
     ASSERT_NOT_REACHED();
-    return "normal"_s;
+    return "normal"_si;
 }
 
 
-SingleAnimationRangeName convertRangeStringToSingleTimelineRangeName(const WTF::String& rangeString)
+SingleAnimationRangeName convertRangeStringToSingleTimelineRangeName(StringImpl* rangeString)
 {
-    if (rangeString == "cover"_s)
+    if (equal(rangeString, "cover"_s))
         return Style::SingleAnimationRangeName::Cover;
-    if (rangeString == "contain"_s)
+    if (equal(rangeString, "contain"_s))
         return Style::SingleAnimationRangeName::Contain;
-    if (rangeString == "entry"_s)
+    if (equal(rangeString, "entry"_s))
         return Style::SingleAnimationRangeName::Entry;
-    if (rangeString == "exit"_s)
+    if (equal(rangeString, "exit"_s))
         return Style::SingleAnimationRangeName::Exit;
-    if (rangeString == "entry-crossing"_s)
+    if (equal(rangeString, "entry-crossing"_s))
         return Style::SingleAnimationRangeName::EntryCrossing;
-    if (rangeString == "exit-crossing"_s)
+    if (equal(rangeString, "exit-crossing"_s))
         return Style::SingleAnimationRangeName::ExitCrossing;
-    if (rangeString == "scroll"_s)
+    if (equal(rangeString, "scroll"_s))
         return Style::SingleAnimationRangeName::Scroll;
     return Style::SingleAnimationRangeName::Normal;
 }

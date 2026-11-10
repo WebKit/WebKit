@@ -31,7 +31,7 @@ class GraphicsLayerAnimationValue;
 
 class AcceleratedAnimation : public ThreadSafeRefCounted<AcceleratedAnimation> {
 public:
-    static Ref<AcceleratedAnimation> create(const String& name, const GraphicsLayerKeyframeValueList& keyframes, const GraphicsLayerAnimation& animation)
+    static Ref<AcceleratedAnimation> create(StringImpl* name, const GraphicsLayerKeyframeValueList& keyframes, const GraphicsLayerAnimation& animation)
     {
         return adoptRef(*new AcceleratedAnimation(name, keyframes, animation));
     }
@@ -65,17 +65,17 @@ public:
 
     void apply(ApplyResult&, const Playback&, MonotonicTime) const;
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     const GraphicsLayerKeyframeValueList& keyframes() const LIFETIME_BOUND { return m_keyframes; }
     bool isTransformAnimation() const;
 
 private:
-    AcceleratedAnimation(const String&, const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation&);
+    AcceleratedAnimation(StringImpl*, const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation&);
 
     void applyInternal(ApplyResult&, const GraphicsLayerAnimationValue& from, const GraphicsLayerAnimationValue& to, float progress) const;
     const TimingFunction& timingFunctionForKeyframe(const GraphicsLayerAnimationValue&) const;
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
     GraphicsLayerKeyframeValueList m_keyframes;
     const Ref<TimingFunction> m_timingFunction;
     const RefPtr<TimingFunction> m_defaultTimingFunctionForKeyframes;

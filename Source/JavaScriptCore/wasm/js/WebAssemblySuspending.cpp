@@ -70,7 +70,7 @@ constexpr SlicingStrategy slicingStrategy = SlicingStrategy::Slab; // currently 
 template<typename T>
 struct SlicerDriver {
 
-    static SlicingOutcome slice(VM& vm, CallFrame* callFrame, String& errorMessage, Vector<std::unique_ptr<EvacuatedStackSlice>>& slices, CallFrame*& teleportFrame)
+    static SlicingOutcome slice(VM& vm, CallFrame* callFrame, RefPtr<StringImpl>& errorMessage, Vector<std::unique_ptr<EvacuatedStackSlice>>& slices, CallFrame*& teleportFrame)
     {
         T slicer;
         StackSlicerFunctor<T> functor(vm, slicer);
@@ -108,7 +108,7 @@ void* runWebAssemblySuspendingFunction(JSGlobalObject* globalObject, CallFrame* 
     // If the topJSPIContext frame was not the entry frame then there could be interleaved C++ or something else.
     JSPIContext* context = vm.topJSPIContext;
     if (!context || vmEntryRecord(vm.topEntryFrame)->prevTopCallFrame() != context->limitFrame) {
-        throwException(globalObject, scope, createJSWebAssemblySuspendError(globalObject, vm, "Suspending function called outside of a promising() context"_s));
+        throwException(globalObject, scope, createJSWebAssemblySuspendError(globalObject, vm, "Suspending function called outside of a promising() context"_si));
         return { };
     }
 
@@ -144,7 +144,7 @@ void* runWebAssemblySuspendingFunction(JSGlobalObject* globalObject, CallFrame* 
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-    String errorMessage;
+    RefPtr<StringImpl> errorMessage;
     Vector<std::unique_ptr<EvacuatedStackSlice>> slices;
     CallFrame* returnOutOfFrame = nullptr;
     SlicingOutcome outcome = SlicingOutcome::None;
@@ -170,7 +170,7 @@ void* runWebAssemblySuspendingFunction(JSGlobalObject* globalObject, CallFrame* 
     }
 
     if (outcome == SlicingOutcome::Overrun) {
-        auto* error = createJSWebAssemblySuspendError(globalObject, vm, "JavaScript frames found between WebAssembly.Suspending and WebAssembly.promising"_s);
+        auto* error = createJSWebAssemblySuspendError(globalObject, vm, "JavaScript frames found between WebAssembly.Suspending and WebAssembly.promising"_si);
         throwException(globalObject, scope, error);
         return { };
     }
@@ -193,7 +193,7 @@ void* runWebAssemblySuspendingFunction(JSGlobalObject* globalObject, CallFrame* 
 
 JSFunctionWithFields* createWebAssemblySuspendingFunction(VM& vm, JSGlobalObject* globalObject, JSObject* wrappedFunction)
 {
-    const String name = "WebAssembly.Suspending"_s;
+    const RefPtr<StringImpl> name = "WebAssembly.Suspending"_si;
     NativeExecutable* executable = vm.getHostFunction(enterWebAssemblySuspendingFunction, ImplementationVisibility::Private, NoIntrinsic, callHostFunctionAsConstructor, nullptr, 0, name);
     JSFunctionWithFields* function = JSFunctionWithFields::create(vm, globalObject, executable);
     function->setField(vm, JSFunctionWithFields::Field::WebAssemblySuspendingWrappedFunction, wrappedFunction);

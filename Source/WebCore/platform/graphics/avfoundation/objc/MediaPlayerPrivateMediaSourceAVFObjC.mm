@@ -161,7 +161,7 @@ private:
         return adoptRef(*new MediaPlayerPrivateMediaSourceAVFObjC(player));
     }
 
-    void getSupportedTypes(HashSet<String>& types) const final
+    void getSupportedTypes(HashSet<RefPtr<StringImpl>>& types) const final
     {
         return MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(types);
     }
@@ -199,7 +199,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
         && class_getInstanceMethod(PAL::getAVSampleBufferAudioRendererClassSingleton(), @selector(setMuted:));
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(HashSet<String>& types)
+void MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(HashSet<RefPtr<StringImpl>>& types)
 {
     types.clear();
 }
@@ -233,7 +233,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndC
 #pragma mark -
 #pragma mark MediaPlayerPrivateInterface Overrides
 
-void MediaPlayerPrivateMediaSourceAVFObjC::load(const String&)
+void MediaPlayerPrivateMediaSourceAVFObjC::load(StringImpl*)
 {
     assertIsMainThread();
     // This media engine only supports MediaSource URLs.
@@ -1009,13 +1009,13 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateMediaSourceAVFObjC::movieLoadType()
     return MediaPlayer::MovieLoadType::StoredStream;
 }
 
-String MediaPlayerPrivateMediaSourceAVFObjC::engineDescription() const
+RefPtr<StringImpl> MediaPlayerPrivateMediaSourceAVFObjC::engineDescription() const
 {
-    static NeverDestroyed<String> description(MAKE_STATIC_STRING_IMPL("AVFoundation MediaSource Engine"));
+    static NeverDestroyed<RefPtr<StringImpl>> description(MAKE_STATIC_STRING_IMPL("AVFoundation MediaSource Engine"));
     return description;
 }
 
-String MediaPlayerPrivateMediaSourceAVFObjC::languageOfPrimaryAudioTrack() const
+RefPtr<StringImpl> MediaPlayerPrivateMediaSourceAVFObjC::languageOfPrimaryAudioTrack() const
 {
     // FIXME(125158): implement languageOfPrimaryAudioTrack()
     return emptyString();
@@ -1184,7 +1184,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::waitingForKeyChanged()
         player->waitingForKeyChanged();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::initializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
+void MediaPlayerPrivateMediaSourceAVFObjC::initializationDataEncountered(StringImpl* initDataType, RefPtr<ArrayBuffer>&& initData)
 {
     ALWAYS_LOG(LOGIDENTIFIER, initDataType);
     if (RefPtr player = m_player.get())
@@ -1479,31 +1479,31 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setShouldMaintainAspectRatio(bool sho
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-String MediaPlayerPrivateMediaSourceAVFObjC::defaultSpatialTrackingLabel() const
+RefPtr<StringImpl> MediaPlayerPrivateMediaSourceAVFObjC::defaultSpatialTrackingLabel() const
 {
     assertIsMainThread();
     return m_defaultSpatialTrackingLabel;
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::setDefaultSpatialTrackingLabel(const String& defaultSpatialTrackingLabel)
+void MediaPlayerPrivateMediaSourceAVFObjC::setDefaultSpatialTrackingLabel(StringImpl* defaultSpatialTrackingLabel)
 {
     assertIsMainThread();
-    if (m_defaultSpatialTrackingLabel == defaultSpatialTrackingLabel)
+    if (equal(m_defaultSpatialTrackingLabel, defaultSpatialTrackingLabel))
         return;
     m_defaultSpatialTrackingLabel = defaultSpatialTrackingLabel;
     updateSpatialTrackingLabel();
 }
 
-String MediaPlayerPrivateMediaSourceAVFObjC::spatialTrackingLabel() const
+RefPtr<StringImpl> MediaPlayerPrivateMediaSourceAVFObjC::spatialTrackingLabel() const
 {
     assertIsMainThread();
     return m_spatialTrackingLabel;
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::setSpatialTrackingLabel(const String& spatialTrackingLabel)
+void MediaPlayerPrivateMediaSourceAVFObjC::setSpatialTrackingLabel(StringImpl* spatialTrackingLabel)
 {
     assertIsMainThread();
-    if (m_spatialTrackingLabel == spatialTrackingLabel)
+    if (equal(m_spatialTrackingLabel, spatialTrackingLabel))
         return;
     m_spatialTrackingLabel = spatialTrackingLabel;
     updateSpatialTrackingLabel();
@@ -1514,9 +1514,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateSpatialTrackingLabel()
     assertIsMainThread();
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
     RefPtr player = m_player.get();
-    m_renderer->setSpatialTrackingInfo(player && player->prefersSpatialAudioExperience(), player ? player->soundStageSize() : MediaPlayer::SoundStageSize::Auto, player ? player->sceneIdentifier() : emptyString(), m_defaultSpatialTrackingLabel, m_spatialTrackingLabel);
+    RefPtr sceneIdentifier = player ? player->sceneIdentifier() : emptyString();
+    m_renderer->setSpatialTrackingInfo(player && player->prefersSpatialAudioExperience(), player ? player->soundStageSize() : MediaPlayer::SoundStageSize::Auto, sceneIdentifier.get(), protect(m_defaultSpatialTrackingLabel).get(), protect(m_spatialTrackingLabel).get());
 #else
-    m_renderer->setSpatialTrackingInfo(false, MediaPlayer::SoundStageSize::Auto, { }, m_defaultSpatialTrackingLabel, m_spatialTrackingLabel);
+    m_renderer->setSpatialTrackingInfo(false, MediaPlayer::SoundStageSize::Auto, nullptr, protect(m_defaultSpatialTrackingLabel).get(), protect(m_spatialTrackingLabel).get());
 #endif
 }
 #endif

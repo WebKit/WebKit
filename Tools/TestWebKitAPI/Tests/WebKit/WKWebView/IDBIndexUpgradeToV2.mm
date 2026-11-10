@@ -54,7 +54,7 @@
 
 static RetainPtr<NSURL> createEmptyIndexUpgradeTestDatabaseDirectory(WKWebsiteDataStore *dataStore)
 {
-    String hash = WebCore::SQLiteFileSystem::computeHashForFileName("index-upgrade-test"_s);
+    RefPtr<StringImpl> hash = WebCore::SQLiteFileSystem::computeHashForFileName("index-upgrade-test"_s);
     RetainPtr originURL = [NSURL URLWithString:@"file://"];
     __block RetainPtr<NSString> originDirectoryString;
     done = false;
@@ -63,7 +63,7 @@ static RetainPtr<NSURL> createEmptyIndexUpgradeTestDatabaseDirectory(WKWebsiteDa
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
-    RetainPtr databaseDirectory = [[NSURL fileURLWithPath:originDirectoryString.get() isDirectory:YES] URLByAppendingPathComponent:hash.createNSString().get()];
+    RetainPtr databaseDirectory = [[NSURL fileURLWithPath:originDirectoryString.get() isDirectory:YES] URLByAppendingPathComponent:createNSString(hash).get()];
     [[NSFileManager defaultManager] removeItemAtURL:databaseDirectory.get() error:nil];
     [[NSFileManager defaultManager] createDirectoryAtURL:databaseDirectory.get() withIntermediateDirectories:YES attributes:nil error:nil];
     return databaseDirectory;

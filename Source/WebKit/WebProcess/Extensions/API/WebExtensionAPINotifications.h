@@ -42,9 +42,9 @@ class WebExtensionAPINotifications : public WebExtensionAPIObject, public JSWebE
 public:
 #if PLATFORM(COCOA)
 #if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
-    void createNotification(const String& identifier, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void update(const String& identifier, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void clear(const String& identifier, Ref<WebExtensionCallbackHandler>&&);
+    void createNotification(NSString *identifier, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void update(NSString *identifier, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void clear(NSString *identifier, Ref<WebExtensionCallbackHandler>&&);
     void getAll(Ref<WebExtensionCallbackHandler>&&);
     void getPermissionLevel(Ref<WebExtensionCallbackHandler>&&);
 #endif

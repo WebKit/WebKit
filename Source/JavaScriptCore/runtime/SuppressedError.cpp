@@ -37,7 +37,7 @@ ErrorInstance* createSuppressedError(JSGlobalObject* globalObject, VM& vm, Struc
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String messageString = message.isUndefined() ? String() : message.toWTFString(globalObject);
+    RefPtr<StringImpl> messageString = message.isUndefined() ? nullptr : message.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     auto* suppressedError = ErrorInstance::create(vm, structure, messageString, JSValue(), appender, type, ErrorType::SuppressedError, useCurrentFrame);

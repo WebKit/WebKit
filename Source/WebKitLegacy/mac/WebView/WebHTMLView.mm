@@ -672,7 +672,7 @@ NODELETE static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action
         [[NSApplication sharedApplication] orderFrontColorPanel:nil];
         break;
     default:
-        _menuController->contextMenuItemSelected(*action, [sender title]);
+        _menuController->contextMenuItemSelected(*action, StringImpl::create([sender title]).get());
         break;
     }
 }
@@ -2307,7 +2307,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (DOMDocumentFragment *)_web_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard pasteboardType:(NSString *)pasteboardType imageMIMEType:(NSString *)imageMIMEType
 {
-    String filename = [imageMIMEType stringByReplacingOccurrencesOfString:@"/" withString:@"."];
+    RefPtr<StringImpl> filename = StringImpl::create([imageMIMEType stringByReplacingOccurrencesOfString:@"/" withString:@"."]);
     auto resource = adoptNS([[WebResource alloc] initWithData:[pasteboard dataForType:pasteboardType]
         URL:URL::fakeURLWithRelativePart(filename).createNSURL().get() MIMEType:imageMIMEType textEncodingName:nil frameName:nil]);
     return [[self _dataSource] _documentFragmentWithImageResource:resource.get()];
@@ -2406,7 +2406,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if (!context)
             return nil;
         auto string = [[pasteboard stringForType:WebCore::legacyStringPasteboardTypeSingleton()] precomposedStringWithCanonicalMapping];
-        return kit(createFragmentFromText(makeSimpleRange(*protect(core(context))), string).ptr());
+        return kit(createFragmentFromText(makeSimpleRange(*protect(core(context))), StringImpl::create(string).get()).ptr());
     }
 
     return nil;
@@ -2649,13 +2649,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return [[webView _editingDelegateForwarder] webView:webView doCommandBySelector:selector];
 }
 
-typedef HashMap<SEL, String> SelectorNameMap;
+typedef HashMap<SEL, RefPtr<StringImpl>> SelectorNameMap;
 
 // Map selectors into Editor command names.
 // This is not needed for any selectors that have the same name as the Editor command.
 static const SelectorNameMap* createSelectorExceptionMap()
 {
-    SelectorNameMap* map = new HashMap<SEL, String>;
+    SelectorNameMap* map = new HashMap<SEL, RefPtr<StringImpl>>;
 
     map->add(@selector(insertNewlineIgnoringFieldEditor:), "InsertNewline"_s);
     map->add(@selector(insertParagraphSeparator:), "InsertNewline"_s);
@@ -2668,7 +2668,7 @@ static const SelectorNameMap* createSelectorExceptionMap()
     return map;
 }
 
-static String commandNameForSelector(SEL selector)
+static RefPtr<StringImpl> commandNameForSelector(SEL selector)
 {
     // Check the exception map first.
     static const SelectorNameMap* exceptionMap = createSelectorExceptionMap();
@@ -2682,8 +2682,8 @@ static String commandNameForSelector(SEL selector)
     const char* selectorName = sel_getName(selector);
     size_t selectorNameLength = strlen(selectorName);
     if (selectorNameLength < 2 || selectorName[selectorNameLength - 1] != ':')
-        return String();
-    return String::fromLatin1(unsafeMakeSpan(selectorName, selectorNameLength - 1));
+        return nullptr;
+    return StringImpl::fromLatin1(unsafeMakeSpan(selectorName, selectorNameLength - 1));
 }
 
 - (WebCore::Editor::Command)coreCommandBySelector:(SEL)selector
@@ -2699,7 +2699,7 @@ static String commandNameForSelector(SEL selector)
     RefPtr coreFrame = core([self _frame]);
     if (!coreFrame)
         return WebCore::Editor::Command();
-    return protect(coreFrame->editor())->command(String::fromLatin1(name));
+    return protect(coreFrame->editor())->command(StringImpl::fromLatin1(name));
 }
 
 - (void)executeCoreCommandBySelector:(SEL)selector
@@ -2937,7 +2937,7 @@ IGNORE_WARNINGS_END
 
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
-            String direction = writingDirection == NSWritingDirectionLeftToRight ? "ltr"_s : "rtl"_s;
+            RefPtr<StringImpl> direction = writingDirection == NSWritingDirectionLeftToRight ? "ltr"_s : "rtl"_s;
             [menuItem setState:(protect(frame->editor())->selectionHasStyle(WebCore::CSSPropertyID::Direction, direction) != TriState::False)];
         }
         return [self _canEdit];
@@ -2955,7 +2955,7 @@ IGNORE_WARNINGS_END
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             // Take control of the title of the menu item instead of just checking/unchecking it because
             // a check would be ambiguous.
-            [menuItem setTitle:protect((protect(frame->editor())->selectionHasStyle(WebCore::CSSPropertyID::Direction, "rtl"_s) != TriState::False)
+            [menuItem setTitle:protect((protect(frame->editor())->selectionHasStyle(WebCore::CSSPropertyID::Direction, "rtl"_si) != TriState::False)
                 ? UI_STRING_INTERNAL("Left to Right", "Left to Right context menu item")
                 : UI_STRING_INTERNAL("Right to Left", "Right to Left context menu item"))];
         }
@@ -3482,75 +3482,75 @@ static RetainPtr<NSArray> fixMenusReceivedFromOldClients(NSArray *delegateSuppli
         if (tag == WebMenuItemTagOther) {
             // Restore the specific tag for items on which we temporarily set WebMenuItemTagOther to match old behavior.
             NSString *title = [item title];
-            if ([title isEqualToString:contextMenuItemTagOpenLink().createNSString().get()])
+            if ([title isEqualToString:createNSString(contextMenuItemTagOpenLink()).get()])
                 modernTag = WebMenuItemTagOpenLink;
-            else if ([title isEqualToString:contextMenuItemTagIgnoreGrammar().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagIgnoreGrammar()).get()])
                 modernTag = WebMenuItemTagIgnoreGrammar;
-            else if ([title isEqualToString:contextMenuItemTagSpellingMenu().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagSpellingMenu()).get()])
                 modernTag = WebMenuItemTagSpellingMenu;
-            else if ([title isEqualToString:contextMenuItemTagShowSpellingPanel(true).createNSString().get()] || [title isEqualToString:contextMenuItemTagShowSpellingPanel(false).createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagShowSpellingPanel(true)).get()] || [title isEqualToString:createNSString(contextMenuItemTagShowSpellingPanel(false)).get()])
                 modernTag = WebMenuItemTagShowSpellingPanel;
-            else if ([title isEqualToString:contextMenuItemTagCheckSpelling().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagCheckSpelling()).get()])
                 modernTag = WebMenuItemTagCheckSpelling;
-            else if ([title isEqualToString:contextMenuItemTagCheckSpellingWhileTyping().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagCheckSpellingWhileTyping()).get()])
                 modernTag = WebMenuItemTagCheckSpellingWhileTyping;
-            else if ([title isEqualToString:contextMenuItemTagCheckGrammarWithSpelling().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagCheckGrammarWithSpelling()).get()])
                 modernTag = WebMenuItemTagCheckGrammarWithSpelling;
-            else if ([title isEqualToString:contextMenuItemTagFontMenu().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagFontMenu()).get()])
                 modernTag = WebMenuItemTagFontMenu;
-            else if ([title isEqualToString:contextMenuItemTagShowFonts().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagShowFonts()).get()])
                 modernTag = WebMenuItemTagShowFonts;
-            else if ([title isEqualToString:contextMenuItemTagBold().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagBold()).get()])
                 modernTag = WebMenuItemTagBold;
-            else if ([title isEqualToString:contextMenuItemTagItalic().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagItalic()).get()])
                 modernTag = WebMenuItemTagItalic;
-            else if ([title isEqualToString:contextMenuItemTagUnderline().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagUnderline()).get()])
                 modernTag = WebMenuItemTagUnderline;
-            else if ([title isEqualToString:contextMenuItemTagOutline().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagOutline()).get()])
                 modernTag = WebMenuItemTagOutline;
-            else if ([title isEqualToString:contextMenuItemTagStyles().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagStyles()).get()])
                 modernTag = WebMenuItemTagStyles;
-            else if ([title isEqualToString:contextMenuItemTagShowColors().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagShowColors()).get()])
                 modernTag = WebMenuItemTagShowColors;
-            else if ([title isEqualToString:contextMenuItemTagSpeechMenu().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagSpeechMenu()).get()])
                 modernTag = WebMenuItemTagSpeechMenu;
-            else if ([title isEqualToString:contextMenuItemTagStartSpeaking().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagStartSpeaking()).get()])
                 modernTag = WebMenuItemTagStartSpeaking;
-            else if ([title isEqualToString:contextMenuItemTagStopSpeaking().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagStopSpeaking()).get()])
                 modernTag = WebMenuItemTagStopSpeaking;
-            else if ([title isEqualToString:contextMenuItemTagWritingDirectionMenu().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagWritingDirectionMenu()).get()])
                 modernTag = WebMenuItemTagWritingDirectionMenu;
-            else if ([title isEqualToString:contextMenuItemTagDefaultDirection().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagDefaultDirection()).get()])
                 modernTag = WebMenuItemTagDefaultDirection;
-            else if ([title isEqualToString:contextMenuItemTagLeftToRight().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagLeftToRight()).get()])
                 modernTag = WebMenuItemTagLeftToRight;
-            else if ([title isEqualToString:contextMenuItemTagRightToLeft().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagRightToLeft()).get()])
                 modernTag = WebMenuItemTagRightToLeft;
-            else if ([title isEqualToString:contextMenuItemTagInspectElement().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagInspectElement()).get()])
                 modernTag = WebMenuItemTagInspectElement;
-            else if ([title isEqualToString:contextMenuItemTagCorrectSpellingAutomatically().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagCorrectSpellingAutomatically()).get()])
                 modernTag = WebMenuItemTagCorrectSpellingAutomatically;
-            else if ([title isEqualToString:contextMenuItemTagSubstitutionsMenu().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagSubstitutionsMenu()).get()])
                 modernTag = WebMenuItemTagSubstitutionsMenu;
-            else if ([title isEqualToString:contextMenuItemTagShowSubstitutions(true).createNSString().get()] || [title isEqualToString:contextMenuItemTagShowSubstitutions(false).createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagShowSubstitutions(true)).get()] || [title isEqualToString:createNSString(contextMenuItemTagShowSubstitutions(false)).get()])
                 modernTag = WebMenuItemTagShowSubstitutions;
-            else if ([title isEqualToString:contextMenuItemTagSmartCopyPaste().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagSmartCopyPaste()).get()])
                 modernTag = WebMenuItemTagSmartCopyPaste;
-            else if ([title isEqualToString:contextMenuItemTagSmartQuotes().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagSmartQuotes()).get()])
                 modernTag = WebMenuItemTagSmartQuotes;
-            else if ([title isEqualToString:contextMenuItemTagSmartDashes().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagSmartDashes()).get()])
                 modernTag = WebMenuItemTagSmartDashes;
-            else if ([title isEqualToString:contextMenuItemTagSmartLinks().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagSmartLinks()).get()])
                 modernTag = WebMenuItemTagSmartLinks;
-            else if ([title isEqualToString:contextMenuItemTagTextReplacement().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagTextReplacement()).get()])
                 modernTag = WebMenuItemTagTextReplacement;
-            else if ([title isEqualToString:contextMenuItemTagTransformationsMenu().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagTransformationsMenu()).get()])
                 modernTag = WebMenuItemTagTransformationsMenu;
-            else if ([title isEqualToString:contextMenuItemTagMakeUpperCase().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagMakeUpperCase()).get()])
                 modernTag = WebMenuItemTagMakeUpperCase;
-            else if ([title isEqualToString:contextMenuItemTagMakeLowerCase().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagMakeLowerCase()).get()])
                 modernTag = WebMenuItemTagMakeLowerCase;
-            else if ([title isEqualToString:contextMenuItemTagCapitalize().createNSString().get()])
+            else if ([title isEqualToString:createNSString(contextMenuItemTagCapitalize()).get()])
                 modernTag = WebMenuItemTagCapitalize;
             else {
             // We don't expect WebMenuItemTagOther for any items other than the ones we explicitly handle.
@@ -3603,8 +3603,8 @@ static RetainPtr<NSMenuItem> createShareMenuItem(const WebCore::HitTestResult& h
             [items addObject:adoptNS([[NSImage alloc] initWithData:buffer->makeContiguous()->createNSData().get()]).get()];
     }
 
-    if (!hitTestResult.selectedText().isEmpty()) {
-        RetainPtr selectedText = hitTestResult.selectedText().createNSString();
+    if (!isEmpty(hitTestResult.selectedText())) {
+        RetainPtr selectedText = createNSString(hitTestResult.selectedText());
         [items addObject:selectedText.get()];
     }
 
@@ -3639,7 +3639,7 @@ static RetainPtr<NSMenuItem> createMenuItem(const WebCore::HitTestResult& hitTes
     switch (item.type()) {
     case WebCore::ContextMenuItemType::Action:
     case WebCore::ContextMenuItemType::CheckableAction: {
-        RetainPtr menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title().createNSString().get() action:@selector(forwardContextMenuAction:) keyEquivalent:@""]);
+        RetainPtr menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:createNSString(item.title()).get() action:@selector(forwardContextMenuAction:) keyEquivalent:@""]);
 
         if (auto tag = toTag(item.action()))
             [menuItem setTag:*tag];
@@ -3662,7 +3662,7 @@ static RetainPtr<NSMenuItem> createMenuItem(const WebCore::HitTestResult& hitTes
                 [menu addItem:menuItem];
         }
 
-        RetainPtr menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title().createNSString().get() action:nullptr keyEquivalent:@""]);
+        RetainPtr menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:createNSString(item.title()).get() action:nullptr keyEquivalent:@""]);
 
         if (auto tag = toTag(item.action()))
             [menuItem setTag:*tag];
@@ -4377,7 +4377,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             draggingElementURL = [response URL];
             wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:buffer->makeContiguous()->createNSData().get()]);
             NSString* filename = [response suggestedFilename];
-            RetainPtr trueExtension = protect(tiffResource->image())->filenameExtension().createNSString();
+            RetainPtr trueExtension = createNSString(protect(tiffResource->image())->filenameExtension());
             if (!matchesExtensionOrEquivalent(filename, trueExtension.get()))
                 filename = [[filename stringByAppendingString:@"."] stringByAppendingString:trueExtension.get()];
             [wrapper setPreferredFilename:filename];
@@ -5973,12 +5973,12 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
     for (size_t i = 0; i < commands.size(); ++i) {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if (commands[i].commandName == "insertText:"_s)
-            [self insertText:commands[i].text.createNSString().get()];
-        else if (commands[i].commandName == "noop:"_s)
+        if (equal(commands[i].commandName, "insertText:"_s))
+            [self insertText:createNSString(commands[i].text).get()];
+        else if (equal(commands[i].commandName, "noop:"_s))
             ; // Do nothing. This case can be removed once <rdar://problem/9025012> is fixed.
         else
-            [self doCommandBySelector:NSSelectorFromString(commands[i].commandName.createNSString().get())];
+            [self doCommandBySelector:NSSelectorFromString(createNSString(commands[i].commandName).get())];
 ALLOW_DEPRECATED_DECLARATIONS_END
     }
     parameters->event->keypressCommands().clear();
@@ -6034,7 +6034,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // (e.g. Tab that inserts a Tab character, or Enter).
         bool haveTextInsertionCommands = false;
         for (size_t i = 0; i < commands.size(); ++i) {
-            if ([self coreCommandBySelector:NSSelectorFromString(commands[i].commandName.createNSString().get())].isTextInsertion())
+            if ([self coreCommandBySelector:NSSelectorFromString(createNSString(commands[i].commandName).get())].isTextInsertion())
                 haveTextInsertionCommands = true;
         }
         // If there are no text insertion commands, default keydown handler is the right time to execute the commands.
@@ -6595,7 +6595,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (replacementRange.location != NSNotFound)
         [[self _frame] _selectNSRange:replacementRange];
 
-    protect(coreFrame->editor())->setComposition(text.get(), underlines, { }, { }, newSelRange.location, NSMaxRange(newSelRange));
+    protect(coreFrame->editor())->setComposition(StringImpl::create(text.get()).get(), underlines, { }, { }, newSelRange.location, NSMaxRange(newSelRange));
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -6618,7 +6618,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     bool isFromInputMethod = coreFrame && coreFrame->editor().hasComposition();
 
     if (event && shouldSaveCommand && !isFromInputMethod)
-        event->keypressCommands().append(WebCore::KeypressCommand(NSStringFromSelector(selector)));
+        event->keypressCommands().append(WebCore::KeypressCommand(StringImpl::create(NSStringFromSelector(selector)).get()));
     else {
         // Make sure that only direct calls to doCommandBySelector: see the parameters by setting to 0.
         _private->interpretKeyEventsParameters = 0;
@@ -6733,7 +6733,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         })();
 
         if (!isFunctionKeyCommandWithMatchingMenuItem)
-            event->keypressCommands().append(WebCore::KeypressCommand("insertText:"_s, text.get()));
+            event->keypressCommands().append(WebCore::KeypressCommand("insertText:"_si, StringImpl::create(text.get()).get()));
         return;
     }
 
@@ -6764,7 +6764,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     bool eventHandled = false;
-    String eventText = makeStringByReplacingAll(text.get(), NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
+    RefPtr<StringImpl> eventText = makeStringByReplacingAll(StringImpl::create(text.get()).get(), NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
     if (!editor->hasComposition()) {
         // An insertText: might be handled by other responders in the chain if we don't handle it.
         // One example is space bar that results in scrolling down the page.
@@ -7119,7 +7119,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     if (!coreFrame)
         return 0;
 
-    return protect(coreFrame->editor())->countMatchesForText(string, makeSimpleRange(protect(core(range))), coreOptions(options), limit, markMatches, 0);
+    return protect(coreFrame->editor())->countMatchesForText(StringImpl::create(string).get(), makeSimpleRange(protect(core(range))), coreOptions(options), limit, markMatches, 0);
 }
 
 - (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue
@@ -7164,7 +7164,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     if (![string length])
         return NO;
     RefPtr coreFrame = core([self _frame]);
-    return coreFrame && protect(coreFrame->editor())->findString(string, coreOptions(options));
+    return coreFrame && protect(coreFrame->editor())->findString(StringImpl::create(string).get(), coreOptions(options));
 }
 
 #if ENABLE(WRITING_TOOLS)

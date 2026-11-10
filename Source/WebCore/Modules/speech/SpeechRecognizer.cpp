@@ -137,7 +137,7 @@ void SpeechRecognizer::dataCaptured(const MediaTime&, const PlatformAudioData&, 
 {
 }
 
-bool SpeechRecognizer::startRecognition(bool, SpeechRecognitionConnectionClientIdentifier, const String&, bool, bool, uint64_t)
+bool SpeechRecognizer::startRecognition(bool, SpeechRecognitionConnectionClientIdentifier, StringImpl*, bool, bool, uint64_t)
 {
     return true;
 }

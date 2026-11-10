@@ -66,8 +66,8 @@ public:
     WEBCORE_EXPORT static void setAudioSessionCategoryOverride(unsigned);
     static unsigned audioSessionCategoryOverride();
 
-    WEBCORE_EXPORT static void setNetworkInterfaceName(const String&);
-    static const String& networkInterfaceName() { return singleton().m_networkInterfaceName; }
+    WEBCORE_EXPORT static void setNetworkInterfaceName(StringImpl*);
+    static const RefPtr<StringImpl>& networkInterfaceName() { return singleton().m_networkInterfaceName; }
 
     static void setDisableScreenSizeOverride(bool flag) { singleton().m_disableScreenSizeOverride = flag; }
     static bool disableScreenSizeOverride() { return singleton().m_disableScreenSizeOverride; }
@@ -150,7 +150,7 @@ private:
     bool m_usesOverlayScrollbars { false };
 
 #if PLATFORM(IOS_FAMILY)
-    String m_networkInterfaceName;
+    RefPtr<StringImpl> m_networkInterfaceName;
     bool m_shouldOptOutOfNetworkStateObservation { false };
     bool m_disableScreenSizeOverride { false };
 #endif

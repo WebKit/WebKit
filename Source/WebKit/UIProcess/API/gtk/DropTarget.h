@@ -67,7 +67,7 @@ private:
 
 #if USE(GTK4)
     void loadData(const char* mimeType, CompletionHandler<void(GRefPtr<GBytes>&&)>&&);
-    void loadData(CompletionHandler<void(Vector<String>&&)>&&);
+    void loadData(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&);
     void didLoadData();
 #else
     void dataReceived(WebCore::IntPoint&&, GtkSelectionData*, unsigned, unsigned);

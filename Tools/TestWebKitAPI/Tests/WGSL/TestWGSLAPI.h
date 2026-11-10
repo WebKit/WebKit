@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Helpers/Test.h"
 #include "WGSLShaderModule.h"
 #include <JavaScriptCore/RegularExpression.h>
 #include <wtf/FileSystem.h>
@@ -50,18 +51,18 @@ namespace TestWGSLAPI {
 
 void logCompilationError(WGSL::FailedCheck& error);
 
-inline String fn(const String& test)
+inline RefPtr<StringImpl> fn(StringImpl* test)
 {
     return makeString("@compute @workgroup_size(1) fn test() {\n"_s, test, "\n}"_s);
 }
 
-inline String enableF16(const String& test)
+inline RefPtr<StringImpl> enableF16(StringImpl* test)
 {
     return makeString("enable f16;\n\n"_s, test);
 }
 
 #ifdef __OBJC__
-inline String file(const String& filePath)
+inline RefPtr<StringImpl> file(StringImpl* filePath)
 {
     static NSString *shadersPath = nil;
     static std::once_flag onceFlag;
@@ -69,38 +70,38 @@ inline String file(const String& filePath)
         shadersPath = [NSBundle.mainBundle.resourcePath stringByAppendingPathComponent:@"shaders"];
     });
 
-    auto cfFilePath = filePath.createCFString();
+    auto cfFilePath = createCFString(filePath);
     EXPECT_TRUE(cfFilePath);
     auto path = [shadersPath stringByAppendingPathComponent:(__bridge NSString *)cfFilePath.get()];
-    auto readResult = FileSystem::readEntireFile(path);
+    auto readResult = FileSystem::readEntireFile(StringImpl::create(path).get());
     EXPECT_TRUE(readResult.has_value());
-    return String::fromUTF8WithLatin1Fallback(readResult->span());
+    return StringImpl::fromUTF8WithLatin1Fallback(readResult->span());
 }
 #endif
 
-using Check = Function<unsigned(const String&, unsigned offset)>;
+using Check = Function<unsigned(StringImpl*, unsigned offset)>;
 
-inline Check checkLiteral(const String& pattern)
+inline Check checkLiteral(RefPtr<StringImpl>&& pattern)
 {
-    return [&](const String& msl, unsigned offset) -> unsigned {
-        auto result = msl.find(pattern, offset);
+    return [pattern = WTF::move(pattern)](StringImpl* msl, unsigned offset) -> unsigned {
+        auto result = find(msl, pattern, offset);
         EXPECT_TRUE(result != notFound);
         return result;
     };
 }
 
-inline Check checkNotLiteral(const String& pattern)
+inline Check checkNotLiteral(RefPtr<StringImpl>&& pattern)
 {
-    return [&](const String& msl, unsigned offset) -> unsigned {
-        auto result = msl.find(pattern, offset);
+    return [pattern = WTF::move(pattern)](StringImpl* msl, unsigned offset) -> unsigned {
+        auto result = find(msl, pattern, offset);
         EXPECT_TRUE(result == notFound);
         return offset;
     };
 }
 
-inline Check checkNot(const String& pattern)
+inline Check checkNot(RefPtr<StringImpl>&& pattern)
 {
-    return [&](const String& msl, unsigned offset) -> unsigned {
+    return [pattern = WTF::move(pattern)](StringImpl* msl, unsigned offset) -> unsigned {
         JSC::Yarr::RegularExpression test(pattern);
         auto result = test.match(msl, offset);
         EXPECT_EQ(result, -1);
@@ -108,9 +109,9 @@ inline Check checkNot(const String& pattern)
     };
 }
 
-inline Check check(const String& pattern)
+inline Check check(RefPtr<StringImpl>&& pattern)
 {
-    return [&](const String& msl, unsigned offset) -> unsigned {
+    return [pattern = WTF::move(pattern)](StringImpl* msl, unsigned offset) -> unsigned {
         JSC::Yarr::RegularExpression test(pattern);
         auto result = test.match(msl, offset);
         if (result == -1)
@@ -120,7 +121,7 @@ inline Check check(const String& pattern)
     };
 }
 
-inline Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck> staticCheck(const String& wgsl)
+inline Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck> staticCheck(StringImpl* wgsl)
 {
     return WGSL::staticCheck(wgsl, std::nullopt, {
         .maxBuffersPlusVertexBuffersForVertexStage = 8,
@@ -134,27 +135,27 @@ inline Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck> staticCheck(const Strin
 inline Variant<WGSL::PrepareResult, WGSL::Error> prepare(const WGSL::SuccessfulCheck& staticCheckResult)
 {
     auto& shaderModule = staticCheckResult.ast;
-    HashMap<String, WGSL::PipelineLayout*> pipelineLayouts;
+    HashMap<RefPtr<StringImpl>, WGSL::PipelineLayout*> pipelineLayouts;
     for (auto& entryPoint : shaderModule->callGraph().entrypoints())
         pipelineLayouts.add(entryPoint.originalName, nullptr);
     return WGSL::prepare(shaderModule, pipelineLayouts);
 }
 
-inline Variant<String, WGSL::Error> generate(const WGSL::SuccessfulCheck& staticCheckResult, WGSL::PrepareResult& prepareResult, WGSL::DeviceState&& deviceState = { })
+inline Variant<RefPtr<StringImpl>, WGSL::Error> generate(const WGSL::SuccessfulCheck& staticCheckResult, WGSL::PrepareResult& prepareResult, WGSL::DeviceState&& deviceState = { })
 {
     auto& shaderModule = staticCheckResult.ast;
-    HashMap<String, WGSL::ConstantValue> constantValues;
+    HashMap<RefPtr<StringImpl>, WGSL::ConstantValue> constantValues;
     return WGSL::generate(shaderModule, prepareResult, constantValues, WTF::move(deviceState));
 }
 
 #ifdef __OBJC__
-inline Variant<id<MTLLibrary>, NSError *> metalCompile(const String& msl, unsigned appleGPUFamily = 8)
+inline Variant<id<MTLLibrary>, NSError *> metalCompile(StringImpl* msl, unsigned appleGPUFamily = 8)
 {
     auto device = MTLCreateSystemDefaultDevice();
     auto options = [MTLCompileOptions new];
     options.preprocessorMacros = @{ @"__wgslMetalAppleGPUFamily" : [NSString stringWithFormat:@"%u", appleGPUFamily] };
     NSError *error = nil;
-    RetainPtr library = [device newLibraryWithSource:msl.createNSString().get() options:options error:&error];
+    RetainPtr library = [device newLibraryWithSource:createNSString(msl).get() options:options error:&error];
     if (error != nil)
         return { error };
     return { library.get() };
@@ -162,7 +163,7 @@ inline Variant<id<MTLLibrary>, NSError *> metalCompile(const String& msl, unsign
 #endif
 
 template<typename... Checks>
-inline void performChecks(const String& input, Checks&&... checks)
+inline void performChecks(StringImpl* input, Checks&&... checks)
 {
     unsigned offset = 0;
     for (const auto& check : std::initializer_list<Check> { std::forward<Checks>(checks)... })

@@ -135,7 +135,7 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
             } else {
                 auto code = globalObject->globalObjectMethodTable()->codeForEval(globalObject, program);
                 RETURN_IF_EXCEPTION(scope, { });
-                if (!code.isNull()) {
+                if (code) {
                     programString = jsString(vm, code);
                     isTrusted = true;
                 }
@@ -152,7 +152,7 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
         bool canCompileStrings = globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::DirectEval, programSource.data, *vm.emptyList);
         RETURN_IF_EXCEPTION(scope, { });
         if (!canCompileStrings) [[unlikely]] {
-            throwException(globalObject, scope, createEvalError(globalObject, "Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment."_s));
+            throwException(globalObject, scope, createEvalError(globalObject, "Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment."_si));
             return { };
         }
     }
@@ -168,7 +168,7 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
 
     auto programStr = programString->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    auto cacheKey = DirectEvalCodeCache::CacheLookupKey(programStr.data.impl(), bytecodeIndex);
+    auto cacheKey = DirectEvalCodeCache::CacheLookupKey(programStr.data.get(), bytecodeIndex);
     DirectEvalExecutable* eval = callerBaselineCodeBlock->directEvalCodeCache().get(cacheKey);
     if (!eval) {
         // GC needs to be deferred as it's possible cacheKey holds one of programString's fibers'
@@ -186,11 +186,11 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
 
         if (!(lexicallyScopedFeatures & StrictModeLexicallyScopedFeature)) {
             JSValue parsedValue;
-            if (programSource.is8Bit()) {
-                LiteralParser<Latin1Character, JSONReviverMode::Disabled> preparser(globalObject, programSource.span8(), SloppyJSON, callerBaselineCodeBlock);
+            if (is8Bit(programSource)) {
+                LiteralParser<Latin1Character, JSONReviverMode::Disabled> preparser(globalObject, span8(programSource), SloppyJSON, callerBaselineCodeBlock);
                 parsedValue = preparser.tryEval();
             } else {
-                LiteralParser<char16_t, JSONReviverMode::Disabled> preparser(globalObject, programSource.span16(), SloppyJSON, callerBaselineCodeBlock);
+                LiteralParser<char16_t, JSONReviverMode::Disabled> preparser(globalObject, span16(programSource), SloppyJSON, callerBaselineCodeBlock);
                 parsedValue = preparser.tryEval();
 
             }
@@ -803,7 +803,7 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
     }
 }
 
-String Interpreter::stackTraceAsString(VM& vm, const Vector<StackFrame>& stackTrace)
+RefPtr<StringImpl> Interpreter::stackTraceAsString(VM& vm, const Vector<StackFrame>& stackTrace)
 {
     StringBuilder builder;
     for (unsigned i = 0; i < stackTrace.size(); i++) {

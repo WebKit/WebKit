@@ -44,7 +44,7 @@ public:
 
     // Returns a copy of any characters buffered internally by the tokenizer.
     // The tokenizer buffers characters when searching for the </script> token that terminates a script element.
-    String bufferedCharacters() const;
+    RefPtr<StringImpl> bufferedCharacters() const;
     size_t numberOfBufferedCharacters() const;
 
     // Updates the tokenizer's state according to the given tag name. This is an approximation of how the tree
@@ -59,7 +59,7 @@ public:
     //
     // This approximation is also the algorithm called for when parsing an HTML fragment.
     // https://html.spec.whatwg.org/multipage/syntax.html#parsing-html-fragments
-    NODELETE void updateStateFor(const AtomString& tagName);
+    NODELETE void updateStateFor(AtomStringImpl* tagName);
 
     void setForceNullCharacterReplacement(bool);
 

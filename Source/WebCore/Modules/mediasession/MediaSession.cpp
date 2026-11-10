@@ -649,18 +649,18 @@ void MediaSession::updateCaptureState(bool isActive, DOMPromiseDeferred<void>&& 
 {
     RefPtr document = this->document();
     if (!document || !document->isFullyActive()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active or does not have focus"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active or does not have focus"_si });
         return;
     }
 
     if (isActive && (document->hidden() || !UserGestureIndicator::currentUserGesture())) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Activating capture must be called from a user gesture handler."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Activating capture must be called from a user gesture handler."_si });
         return;
     }
 
     auto* controller = UserMediaController::from(protect(document->page()));
     if (!controller) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Unable to proceed with the request."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Unable to proceed with the request."_si });
         return;
     }
 
@@ -694,13 +694,13 @@ void MediaSession::notifyReadyStateObservers()
 }
 #endif
 
-String MediaPositionState::toJSONString() const
+RefPtr<StringImpl> MediaPositionState::toJSONString() const
 {
     auto object = JSON::Object::create();
 
-    object->setDouble("duration"_s, duration);
-    object->setDouble("playbackRate"_s, playbackRate);
-    object->setDouble("position"_s, position);
+    object->setDouble("duration"_si, duration);
+    object->setDouble("playbackRate"_si, playbackRate);
+    object->setDouble("position"_si, position);
 
     return object->toJSONString();
 }

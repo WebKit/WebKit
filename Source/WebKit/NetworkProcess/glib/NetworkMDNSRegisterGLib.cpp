@@ -70,11 +70,11 @@ NetworkMDNSRegister::~NetworkMDNSRegister()
     g_cancellable_cancel(m_cancellable.get());
 }
 
-void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdentifier documentIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&& completionHandler)
+void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdentifier documentIdentifier, StringImpl* ipAddress, CompletionHandler<void(StringImpl*, std::optional<WebCore::MDNSRegisterError>)>&& completionHandler)
 {
     auto name = makeString(WTF::UUID::createVersion4(), ".local"_s);
 
-    if (ipAddress == "0.0.0.0"_s || ipAddress == "::"_s) {
+    if (equal(ipAddress, "0.0.0.0"_s) || equal(ipAddress, "::"_s)) {
         completionHandler(name, WebCore::MDNSRegisterError::BadParameter);
         return;
     }
@@ -86,7 +86,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
 
     m_registeredNames.add(name);
     m_perDocumentRegisteredNames.ensure(documentIdentifier, [] {
-        return Vector<String>();
+        return Vector<RefPtr<StringImpl>>();
     }).iterator->value.append(name);
 
     Ref connection = m_connection.get();
@@ -133,8 +133,8 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
             uint32_t flags = 16; // AVAHI_PUBLISH_NO_REVERSE
 
             auto* cancellable = request->cancellable.get();
-            auto requestName = request->name.ascii();
-            auto requestAddress = request->address.ascii();
+            auto requestName = ascii(request->name);
+            auto requestAddress = ascii(request->address);
             g_dbus_proxy_call(dbusProxy.get(), "AddAddress", gVariantNew("(iiuss)", interface, protocol, flags, requestName, requestAddress), G_DBUS_CALL_FLAGS_NONE, -1, cancellable, [](GObject* object, GAsyncResult* result, gpointer userData) {
                 std::unique_ptr<PendingRegistrationRequest> request;
                 request.reset(reinterpret_cast<PendingRegistrationRequest*>(userData));
@@ -144,7 +144,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
                 auto finalResult = adoptGRef(g_dbus_proxy_call_finish(proxy, result, &error.outPtr()));
                 if (!finalResult) {
                     if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                        LOG_ERROR("Unable to register MDNS address %s to Avahi: %s", request->name.utf8(), error->message);
+                        LOG_ERROR("Unable to register MDNS address %s to Avahi: %s", utf8(request->name), error->message);
                     request->completionHandler(request->name, WebCore::MDNSRegisterError::Internal);
                     return;
                 }
@@ -158,7 +158,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
                     auto finalResult = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(object), result, &error.outPtr()));
                     if (!finalResult) {
                         if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                            LOG_ERROR("Unable to commit MDNS address %s to Avahi: %s", request->name.utf8(), error->message);
+                            LOG_ERROR("Unable to commit MDNS address %s to Avahi: %s", utf8(request->name), error->message);
                         request->completionHandler(request->name, WebCore::MDNSRegisterError::Internal);
                         return;
                     }

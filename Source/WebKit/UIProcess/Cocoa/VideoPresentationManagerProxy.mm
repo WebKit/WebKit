@@ -328,7 +328,7 @@ void VideoPresentationModelContext::audioSessionCategoryChanged(WebCore::AudioSe
     });
 }
 
-void VideoPresentationModelContext::routingContextUIDChanged(const String& routingContextUID)
+void VideoPresentationModelContext::routingContextUIDChanged(StringImpl* routingContextUID)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, routingContextUID);
     m_clients.forEach([&](auto& client) {
@@ -515,7 +515,7 @@ void VideoPresentationModelContext::didExitExternalPlayback()
 }
 #endif
 
-void VideoPresentationModelContext::requestRouteSharingPolicyAndContextUID(CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&& completionHandler)
+void VideoPresentationModelContext::requestRouteSharingPolicyAndContextUID(CompletionHandler<void(WebCore::RouteSharingPolicy, RefPtr<StringImpl>)>&& completionHandler)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (RefPtr manager = m_manager.get())
@@ -575,7 +575,7 @@ void VideoPresentationModelContext::setTextTrackRepresentationBounds(const IntRe
 }
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-void VideoPresentationModelContext::requestShowCaptionDisplaySettingsPreview(const String& profileID)
+void VideoPresentationModelContext::requestShowCaptionDisplaySettingsPreview(StringImpl* profileID)
 {
     if (RefPtr manager = m_manager.get())
         manager->requestShowCaptionDisplaySettingsPreview(m_contextId, profileID);
@@ -726,7 +726,7 @@ void VideoPresentationManagerProxy::applicationDidBecomeActive()
         interface->applicationDidBecomeActive();
 }
 
-void VideoPresentationManagerProxy::requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier contextId, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&& callback)
+void VideoPresentationManagerProxy::requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier contextId, CompletionHandler<void(WebCore::RouteSharingPolicy, RefPtr<StringImpl>)>&& callback)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -1192,7 +1192,7 @@ void VideoPresentationManagerProxy::audioSessionCategoryChanged(IPC::Connection&
     ensureModel(connection, identifier)->audioSessionCategoryChanged(category, mode, policy);
 }
 
-void VideoPresentationManagerProxy::routingContextUIDChanged(IPC::Connection& connection, HTMLMediaElementIdentifier identifier, const String& routingContextUID)
+void VideoPresentationManagerProxy::routingContextUIDChanged(IPC::Connection& connection, HTMLMediaElementIdentifier identifier, StringImpl* routingContextUID)
 {
     ensureModel(connection, identifier)->routingContextUIDChanged(routingContextUID);
 }
@@ -1424,7 +1424,7 @@ void VideoPresentationManagerProxy::setTextTrackRepresentationBounds(PlaybackSes
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
-void VideoPresentationManagerProxy::requestShowCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier contextId, const String& profileID)
+void VideoPresentationManagerProxy::requestShowCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier contextId, StringImpl* profileID)
 {
     RefPtr page = m_page.get();
     RefPtr process = WebProcessProxy::processForIdentifier(contextId.processIdentifier());

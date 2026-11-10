@@ -36,7 +36,7 @@ namespace FormDataBuilder {
 Vector<uint8_t> generateUniqueBoundaryString();
 void beginMultiPartHeader(Vector<uint8_t>&, std::span<const uint8_t> boundary, const Vector<uint8_t>& name);
 void addBoundaryToMultiPartHeader(Vector<uint8_t>&, std::span<const uint8_t> boundary, bool isLastBoundary = false);
-void addFilenameToMultiPartHeader(Vector<uint8_t>&, const PAL::TextEncoding&, const String& filename);
+void addFilenameToMultiPartHeader(Vector<uint8_t>&, const PAL::TextEncoding&, StringImpl* filename);
 void addContentTypeToMultiPartHeader(Vector<uint8_t>&, const ASCIICString& mimeType);
 void finishMultiPartHeader(Vector<uint8_t>&);
 

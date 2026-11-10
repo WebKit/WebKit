@@ -81,7 +81,7 @@ void HTMLDataListElement::descendantsChanged()
 
 void HTMLDataListElement::optionElementChildrenChanged()
 {
-    if (auto& id = getIdAttribute(); !id.isEmpty()) {
+    if (auto& id = getIdAttribute(); !isEmpty(id)) {
         if (CheckedPtr observerRegistry = treeScope().idTargetObserverRegistryIfExists())
             observerRegistry->notifyObservers(*this, id);
     }
@@ -94,7 +94,7 @@ auto HTMLDataListElement::suggestions() const -> SuggestionRange
 
 bool HTMLDataListElement::isSuggestion(const HTMLOptionElement& descendant)
 {
-    return !descendant.isDisabledFormControl() && !descendant.value().isEmpty();
+    return !descendant.isDisabledFormControl() && !isEmpty(descendant.value());
 }
 
 } // namespace WebCore

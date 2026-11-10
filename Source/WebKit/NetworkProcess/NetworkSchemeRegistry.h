@@ -38,11 +38,11 @@ public:
     static Ref<NetworkSchemeRegistry> create() { return adoptRef(*new NetworkSchemeRegistry); }
 
     // Allow non-HTTP schemes to be registered to allow CORS requests.
-    void registerURLSchemeAsCORSEnabled(IPC::Connection&, String&& scheme);
+    void registerURLSchemeAsCORSEnabled(IPC::Connection&, RefPtr<StringImpl>&& scheme);
     bool shouldTreatURLSchemeAsCORSEnabled(StringView scheme);
 
 private:
-    using URLSchemes = HashSet<String, ASCIICaseInsensitiveHash>;
+    using URLSchemes = HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash>;
     URLSchemes m_corsEnabledSchemes;
 };
 

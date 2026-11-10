@@ -82,8 +82,8 @@ public:
 
     bool isSkippedContentAnimation() const;
 
-    const String& id() const LIFETIME_BOUND { return m_id; }
-    void setId(String&&);
+    const RefPtr<StringImpl>& id() const LIFETIME_BOUND { return m_id; }
+    void setId(RefPtr<StringImpl>&&);
 
     AnimationEffect* bindingsEffect() const { return effect(); }
     virtual void setBindingsEffect(RefPtr<AnimationEffect>&&);
@@ -178,7 +178,7 @@ public:
     bool isSuspended() const { return m_isSuspended; }
     bool isReplaceable() const;
     void remove();
-    void enqueueAnimationPlaybackEvent(const AtomString&, std::optional<WebAnimationTime> currentTime, std::optional<WebAnimationTime> scheduledTime);
+    void enqueueAnimationPlaybackEvent(AtomStringImpl*, std::optional<WebAnimationTime> currentTime, std::optional<WebAnimationTime> scheduledTime);
 
     uint64_t globalPosition() const { return m_globalPosition; }
     void setGlobalPosition(uint64_t globalPosition) { m_globalPosition = globalPosition; }
@@ -256,7 +256,7 @@ private:
     double m_playbackRate { 1 };
     Variant<FramesPerSecond, AnimationFrameRatePreset> m_bindingsFrameRate { AnimationFrameRatePreset::Auto };
     std::optional<FramesPerSecond> m_effectiveFrameRate;
-    String m_id;
+    RefPtr<StringImpl> m_id;
 
     int m_suspendCount { 0 };
 

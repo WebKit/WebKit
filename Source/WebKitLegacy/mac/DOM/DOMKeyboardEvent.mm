@@ -44,7 +44,7 @@
 - (NSString *)keyIdentifier
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->keyIdentifier().createNSString().autorelease();
+    return createNSString(IMPL->keyIdentifier()).autorelease();
 }
 
 - (unsigned)location
@@ -103,31 +103,31 @@
 - (BOOL)getModifierState:(NSString *)keyIdentifierArg
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getModifierState(keyIdentifierArg);
+    return IMPL->getModifierState(StringImpl::create(keyIdentifierArg).get());
 }
 
 - (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)inKeyIdentifier location:(unsigned)inLocation ctrlKey:(BOOL)inCtrlKey altKey:(BOOL)inAltKey shiftKey:(BOOL)inShiftKey metaKey:(BOOL)inMetaKey altGraphKey:(BOOL)inAltGraphKey
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->initKeyboardEvent(type, canBubble, cancelable, toWindowProxy(view), inKeyIdentifier, inLocation, inCtrlKey, inAltKey, inShiftKey, inMetaKey);
+    IMPL->initKeyboardEvent(AtomStringImpl::add((__bridge CFStringRef)type).get(), canBubble, cancelable, toWindowProxy(view), AtomStringImpl::add((__bridge CFStringRef)inKeyIdentifier).get(), inLocation, inCtrlKey, inAltKey, inShiftKey, inMetaKey);
 }
 
 - (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)inKeyIdentifier location:(unsigned)inLocation ctrlKey:(BOOL)inCtrlKey altKey:(BOOL)inAltKey shiftKey:(BOOL)inShiftKey metaKey:(BOOL)inMetaKey
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->initKeyboardEvent(type, canBubble, cancelable, toWindowProxy(view), inKeyIdentifier, inLocation, inCtrlKey, inAltKey, inShiftKey, inMetaKey);
+    IMPL->initKeyboardEvent(AtomStringImpl::add((__bridge CFStringRef)type).get(), canBubble, cancelable, toWindowProxy(view), AtomStringImpl::add((__bridge CFStringRef)inKeyIdentifier).get(), inLocation, inCtrlKey, inAltKey, inShiftKey, inMetaKey);
 }
 
 - (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)inKeyIdentifier keyLocation:(unsigned)inKeyLocation ctrlKey:(BOOL)inCtrlKey altKey:(BOOL)inAltKey shiftKey:(BOOL)inShiftKey metaKey:(BOOL)inMetaKey altGraphKey:(BOOL)inAltGraphKey
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->initKeyboardEvent(type, canBubble, cancelable, toWindowProxy(view), inKeyIdentifier, inKeyLocation, inCtrlKey, inAltKey, inShiftKey, inMetaKey);
+    IMPL->initKeyboardEvent(AtomStringImpl::add((__bridge CFStringRef)type).get(), canBubble, cancelable, toWindowProxy(view), AtomStringImpl::add((__bridge CFStringRef)inKeyIdentifier).get(), inKeyLocation, inCtrlKey, inAltKey, inShiftKey, inMetaKey);
 }
 
 - (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)inKeyIdentifier keyLocation:(unsigned)inKeyLocation ctrlKey:(BOOL)inCtrlKey altKey:(BOOL)inAltKey shiftKey:(BOOL)inShiftKey metaKey:(BOOL)inMetaKey
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->initKeyboardEvent(type, canBubble, cancelable, toWindowProxy(view), inKeyIdentifier, inKeyLocation, inCtrlKey, inAltKey, inShiftKey, inMetaKey);
+    IMPL->initKeyboardEvent(AtomStringImpl::add((__bridge CFStringRef)type).get(), canBubble, cancelable, toWindowProxy(view), AtomStringImpl::add((__bridge CFStringRef)inKeyIdentifier).get(), inKeyLocation, inCtrlKey, inAltKey, inShiftKey, inMetaKey);
 }
 
 @end

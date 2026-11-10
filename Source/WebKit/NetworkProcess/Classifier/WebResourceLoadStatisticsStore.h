@@ -119,7 +119,7 @@ public:
     using IsLoggedIn = WebCore::IsLoggedIn;
     using LoginStatus = WebCore::LoginStatus;
 
-    static Ref<WebResourceLoadStatisticsStore> create(NetworkSession&, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost, ResourceLoadStatistics::IsEphemeral);
+    static Ref<WebResourceLoadStatisticsStore> create(NetworkSession&, StringImpl* resourceLoadStatisticsDirectory, ShouldIncludeLocalhost, ResourceLoadStatistics::IsEphemeral);
 
     ~WebResourceLoadStatisticsStore();
 
@@ -159,7 +159,7 @@ public:
     void isRelationshipOnlyInDatabaseOnce(RegistrableDomain&& subDomain, RegistrableDomain&& topDomain, CompletionHandler<void(bool)>&&);
     void setPrevalentResource(RegistrableDomain&&, CompletionHandler<void()>&&);
     void setVeryPrevalentResource(RegistrableDomain&&, CompletionHandler<void()>&&);
-    void dumpResourceLoadStatistics(CompletionHandler<void(String&&)>&&);
+    void dumpResourceLoadStatistics(CompletionHandler<void(RefPtr<StringImpl>&&)>&&);
     void setMostRecentWebPushInteractionTime(RegistrableDomain&&, CompletionHandler<void()>&&);
     void isPrevalentResource(RegistrableDomain&&, CompletionHandler<void(bool)>&&);
     void isVeryPrevalentResource(RegistrableDomain&&, CompletionHandler<void(bool)>&&);
@@ -197,7 +197,7 @@ public:
     void setResourceLoadStatisticsDebugMode(bool, CompletionHandler<void()>&&);
     void setPrevalentResourceForDebugMode(RegistrableDomain&&, CompletionHandler<void()>&&);
 
-    void logTestingEvent(const String&);
+    void logTestingEvent(StringImpl*);
     void callGrantStorageAccessHandler(const SubFrameDomain&, const TopFrameDomain&, std::optional<WebCore::FrameIdentifier>, WebPageProxyIdentifier, StorageAccessScope, CompletionHandler<void(StorageAccessWasGranted)>&&);
     void removeAllStorageAccess(CompletionHandler<void()>&&);
     bool needsUserInteractionQuirk(const RegistrableDomain&) const;
@@ -241,7 +241,7 @@ public:
     void stopListeningForStorageAccessPermissionChanges(StorageAccessPermissionChangeObserver&);
 
 private:
-    explicit WebResourceLoadStatisticsStore(NetworkSession&, const String&, ShouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral);
+    explicit WebResourceLoadStatisticsStore(NetworkSession&, StringImpl*, ShouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral);
 
     void postTask(WTF::Function<void(WebResourceLoadStatisticsStore&)>&&);
     static void postTaskReply(WTF::Function<void()>&&);
@@ -257,7 +257,7 @@ private:
     void clearUserInteractionEphemeral(const RegistrableDomain&, CompletionHandler<void()>&&);
     void hasHadUserInteractionEphemeral(const RegistrableDomain&, CompletionHandler<void(bool)>&&);
 
-    StorageAccessStatus storageAccessStatus(const String& subFramePrimaryDomain, const String& topFramePrimaryDomain);
+    StorageAccessStatus storageAccessStatus(StringImpl* subFramePrimaryDomain, StringImpl* topFramePrimaryDomain);
 
     void destroyResourceLoadStatisticsStore(CompletionHandler<void()>&&);
     StorageAccessWasGranted storageAccessWasGrantedValueForFrame(WebCore::FrameIdentifier, const WebCore::RegistrableDomain&);

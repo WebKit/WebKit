@@ -40,7 +40,7 @@ public:
     NODELETE static Ref<CSSImageSetOptionValue> create(Ref<CSSValue>&&, std::optional<CSS::Resolution<>>&&, std::optional<FunctionNotation<CSSValueID::Type, CSS::String>>&&);
 
     bool equals(const CSSImageSetOptionValue&) const;
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
 
     const CSSValue& image() const LIFETIME_BOUND { return m_image; }
     const CSS::Resolution<>& resolution() const LIFETIME_BOUND { return m_resolution; }

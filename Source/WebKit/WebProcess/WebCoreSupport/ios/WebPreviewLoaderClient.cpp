@@ -40,7 +40,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-WebPreviewLoaderClient::WebPreviewLoaderClient(const String& fileName, const String& uti, PageIdentifier pageID)
+WebPreviewLoaderClient::WebPreviewLoaderClient(StringImpl* fileName, StringImpl* uti, PageIdentifier pageID)
     : m_fileName { fileName }
     , m_uti { uti }
     , m_pageID { pageID }
@@ -75,11 +75,11 @@ void WebPreviewLoaderClient::didFail()
     m_buffer.reset();
 }
 
-void WebPreviewLoaderClient::didRequestPassword(Function<void(const String&)>&& completionHandler)
+void WebPreviewLoaderClient::didRequestPassword(Function<void(StringImpl*)>&& completionHandler)
 {
     RefPtr webPage = WebProcess::singleton().webPage(m_pageID);
     if (!webPage) {
-        completionHandler({ });
+        completionHandler(nullptr);
         return;
     }
 

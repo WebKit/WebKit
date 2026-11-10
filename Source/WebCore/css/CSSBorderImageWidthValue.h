@@ -37,7 +37,7 @@ public:
 
     const CSS::BorderImageWidth& widths() const LIFETIME_BOUND { return m_widths; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSBorderImageWidthValue&) const;
 
 private:

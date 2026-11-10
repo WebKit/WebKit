@@ -35,18 +35,18 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCPeerConnectionIceEvent);
 
-Ref<RTCPeerConnectionIceEvent> RTCPeerConnectionIceEvent::create(CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCIceCandidate>&& candidate, String&& serverURL)
+Ref<RTCPeerConnectionIceEvent> RTCPeerConnectionIceEvent::create(CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCIceCandidate>&& candidate, RefPtr<StringImpl>&& serverURL)
 {
     return adoptRef(*new RTCPeerConnectionIceEvent(eventNames().icecandidateEvent, canBubble, cancelable, WTF::move(candidate), WTF::move(serverURL)));
 }
 
-Ref<RTCPeerConnectionIceEvent> RTCPeerConnectionIceEvent::create(const AtomString& type, Init&& init)
+Ref<RTCPeerConnectionIceEvent> RTCPeerConnectionIceEvent::create(AtomStringImpl* type, Init&& init)
 {
     return adoptRef(*new RTCPeerConnectionIceEvent(type, init.bubbles ? CanBubble::Yes : CanBubble::No,
-        init.cancelable ? IsCancelable::Yes : IsCancelable::No, WTF::move(init.candidate).value_or(RefPtr<RTCIceCandidate> { }), WTF::move(init.url).value_or(String { })));
+        init.cancelable ? IsCancelable::Yes : IsCancelable::No, WTF::move(init.candidate).value_or(RefPtr<RTCIceCandidate> { }), WTF::move(init.url).value_or(nullString())));
 }
 
-RTCPeerConnectionIceEvent::RTCPeerConnectionIceEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCIceCandidate>&& candidate, String&& serverURL)
+RTCPeerConnectionIceEvent::RTCPeerConnectionIceEvent(AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCIceCandidate>&& candidate, RefPtr<StringImpl>&& serverURL)
     : Event(EventInterfaceType::RTCPeerConnectionIceEvent, type, canBubble, cancelable)
     , m_candidate(WTF::move(candidate))
     , m_url(WTF::move(serverURL))

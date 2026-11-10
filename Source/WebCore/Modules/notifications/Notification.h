@@ -67,9 +67,9 @@ public:
     using Options = NotificationOptions;
 
     // For JS constructor only.
-    static ExceptionOr<Ref<Notification>> create(ScriptExecutionContext&, String&& title, Options&&);
+    static ExceptionOr<Ref<Notification>> create(ScriptExecutionContext&, RefPtr<StringImpl>&& title, Options&&);
 
-    static ExceptionOr<Ref<Notification>> createForServiceWorker(ScriptExecutionContext&, String&& title, Options&&, const URL&);
+    static ExceptionOr<Ref<Notification>> createForServiceWorker(ScriptExecutionContext&, RefPtr<StringImpl>&& title, Options&&, const URL&);
     static Ref<Notification> create(ScriptExecutionContext&, NotificationData&&);
     static Ref<Notification> create(ScriptExecutionContext&, const URL& registrationURL, const NotificationPayload&);
 
@@ -86,11 +86,11 @@ public:
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     const URL& navigate() const LIFETIME_BOUND { return m_navigate; }
 #endif
-    const String& title() const LIFETIME_BOUND { return m_title; }
+    const RefPtr<StringImpl>& title() const LIFETIME_BOUND { return m_title; }
     Direction dir() const { return m_direction; }
-    const String& body() const LIFETIME_BOUND { return m_body; }
-    const String& lang() const LIFETIME_BOUND { return m_lang; }
-    const String& tag() const LIFETIME_BOUND { return m_tag; }
+    const RefPtr<StringImpl>& body() const LIFETIME_BOUND { return m_body; }
+    const RefPtr<StringImpl>& lang() const LIFETIME_BOUND { return m_lang; }
+    const RefPtr<StringImpl>& tag() const LIFETIME_BOUND { return m_tag; }
     const URL& icon() const LIFETIME_BOUND { return m_icon; }
     JSC::JSValue dataForBindings(JSC::JSGlobalObject&);
     std::optional<bool> silent() const { return m_silent; }
@@ -125,7 +125,7 @@ public:
     WEBCORE_EXPORT static void ensureOnNotificationThread(const NotificationData&, Function<void(Notification*)>&&);
 
 private:
-    Notification(ScriptExecutionContext&, WTF::UUID, const String& title, Options&&, Ref<SerializedScriptValue>&&);
+    Notification(ScriptExecutionContext&, WTF::UUID, StringImpl* title, Options&&, Ref<SerializedScriptValue>&&);
 
     NotificationClient* clientFromContext();
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::Notification; }
@@ -147,11 +147,11 @@ private:
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     URL m_navigate;
 #endif
-    String m_title;
+    RefPtr<StringImpl> m_title;
     Direction m_direction;
-    String m_lang;
-    String m_body;
-    String m_tag;
+    RefPtr<StringImpl> m_lang;
+    RefPtr<StringImpl> m_body;
+    RefPtr<StringImpl> m_tag;
     URL m_icon;
     const Ref<SerializedScriptValue> m_dataForBindings;
     std::optional<bool> m_silent;

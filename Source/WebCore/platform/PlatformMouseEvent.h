@@ -74,7 +74,7 @@ public:
     double force() const { return m_force; }
     SyntheticClickType syntheticClickType() const { return m_syntheticClickType; }
     PointerID pointerId() const { return m_pointerId; }
-    const String& pointerType() const LIFETIME_BOUND { return m_pointerType; }
+    const RefPtr<StringImpl>& pointerType() const LIFETIME_BOUND { return m_pointerType; }
     MouseEventInputSource inputSource() const { return m_inputSource; }
     CanInitiateDrag canInitiateDrag() const { return m_canInitiateDrag; }
 
@@ -111,7 +111,7 @@ protected:
     DoublePoint m_unadjustedMovementDelta;
     double m_force { 0 };
     PointerID m_pointerId { mousePointerID };
-    String m_pointerType { mousePointerEventType() };
+    RefPtr<StringImpl> m_pointerType { mousePointerEventType() };
     int m_clickCount { 0 };
     unsigned short m_buttons { 0 };
     Vector<PlatformMouseEvent> m_coalescedEvents;

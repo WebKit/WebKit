@@ -88,17 +88,17 @@ TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysis *analysis)
         RetainPtr<NSArray<VKWKTextInfo *>> vkChildren = line.children;
         Vector<TextRecognitionWordData> children(ReserveCapacityTag { }, vkChildren.get().count);
 
-        String lineText = line.string;
+        RefPtr<StringImpl> lineText = StringImpl::create(line.string);
         unsigned searchLocation = 0;
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL VKWKTextInfo *child in vkChildren.get()) {
-            if (searchLocation >= lineText.length()) {
+            if (searchLocation >= length(lineText)) {
                 ASSERT_NOT_REACHED();
                 continue;
             }
 
-            String childText = child.string;
-            auto matchLocation = lineText.find(childText, searchLocation);
+            RefPtr<StringImpl> childText = StringImpl::create(child.string);
+            auto matchLocation = find(lineText, childText, searchLocation);
             if (matchLocation == notFound) {
                 ASSERT_NOT_REACHED();
                 continue;
@@ -112,7 +112,7 @@ TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysis *analysis)
                 return !textBeforeMatch.isEmpty() && deprecatedIsSpaceOrNewline(textBeforeMatch[0]);
             })();
 
-            searchLocation = matchLocation + childText.length();
+            searchLocation = matchLocation + length(childText);
             children.append({ WTF::move(childText), floatQuad(retainPtr(child.quad).get()), hasLeadingWhitespace });
         }
         RetainPtr<VKWKLineInfo> nextLine = nextLineIndex < allLines.get().count ? allLines.get()[nextLineIndex] : nil;
@@ -140,22 +140,22 @@ TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysis *analysis)
     return result;
 }
 
-static String languageCodeForLocale(NSString *localeIdentifier)
+static RefPtr<StringImpl> languageCodeForLocale(NSString *localeIdentifier)
 {
-    return [NSLocale localeWithLocaleIdentifier:localeIdentifier].languageCode;
+    return StringImpl::create([NSLocale localeWithLocaleIdentifier:localeIdentifier].languageCode);
 }
 
 bool languageIdentifierSupportsLiveText(NSString *languageIdentifier)
 {
     auto languageCode = languageCodeForLocale(languageIdentifier);
-    if (languageCode.isEmpty())
+    if (isEmpty(languageCode))
         return true;
 
-    static NeverDestroyed<MemoryCompactRobinHoodHashSet<String>> supportedLanguages = [] {
-        MemoryCompactRobinHoodHashSet<String> set;
+    static NeverDestroyed<MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>>> supportedLanguages = [] {
+        MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>> set;
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL NSString *identifier in [PAL::getVKCImageAnalyzerClassSingleton() supportedRecognitionLanguages]) {
-            if (auto code = languageCodeForLocale(identifier); !code.isEmpty())
+            if (auto code = languageCodeForLocale(identifier); !isEmpty(code))
                 set.add(WTF::move(code));
         }
         return set;
@@ -173,7 +173,7 @@ static TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysisTranslati
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL VKCTranslatedParagraph *paragraph in paragraphs.get()) {
         if (!paragraph.text.length) {
-            RELEASE_LOG(Translation, "[#%{public}s] Skipping empty translation paragraph", transactionID.loggingString().utf8());
+            RELEASE_LOG(Translation, "[#%{public}s] Skipping empty translation paragraph", utf8(transactionID.loggingString()));
             continue;
         }
 
@@ -190,7 +190,7 @@ static TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysisTranslati
             quad.setP3({ quad.p3().x(), 1 - quad.p3().y() });
             quad.setP4({ quad.p4().x(), 1 - quad.p4().y() });
         }
-        result.blocks.append({ paragraph.text, WTF::move(quad) });
+        result.blocks.append({ StringImpl::create(paragraph.text).get(), WTF::move(quad) });
     }
 
     return result;
@@ -202,26 +202,26 @@ static bool shouldLogFullImageTranslationResults()
     return shouldLog;
 }
 
-void requestVisualTranslation(VKCImageAnalyzer *analyzer, NSURL *imageURL, const String& sourceLocale, const String& targetLocale, CGImageRef image, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
+void requestVisualTranslation(VKCImageAnalyzer *analyzer, NSURL *imageURL, StringImpl* sourceLocale, StringImpl* targetLocale, CGImageRef image, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
 {
     auto startTime = MonotonicTime::now();
     static auto imageAnalysisRequestID = TransactionID::generateMonotonic();
     auto currentRequestID = imageAnalysisRequestID.increment();
     if (shouldLogFullImageTranslationResults())
-        RELEASE_LOG(Translation, "[#%{public}s] Image translation started for %{private}@", currentRequestID.loggingString().utf8(), imageURL);
+        RELEASE_LOG(Translation, "[#%{public}s] Image translation started for %{private}@", utf8(currentRequestID.loggingString()), imageURL);
     else
-        RELEASE_LOG(Translation, "[#%{public}s] Image translation started", currentRequestID.loggingString().utf8());
+        RELEASE_LOG(Translation, "[#%{public}s] Image translation started", utf8(currentRequestID.loggingString()));
     auto request = createImageAnalyzerRequest(image, VKAnalysisTypeText);
-    [analyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTF::move(completion), sourceLocale, targetLocale, currentRequestID, startTime] (VKCImageAnalysis *analysis, NSError *analysisError) mutable {
-        callOnMainRunLoop([completion = WTF::move(completion), analysis = RetainPtr { analysis }, analysisError = RetainPtr { analysisError }, sourceLocale, targetLocale, currentRequestID, startTime] () mutable {
+    [analyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTF::move(completion), sourceLocale = RefPtr { sourceLocale }, targetLocale = RefPtr { targetLocale }, currentRequestID, startTime] (VKCImageAnalysis *analysis, NSError *analysisError) mutable {
+        callOnMainRunLoop([completion = WTF::move(completion), analysis = RetainPtr { analysis }, analysisError = RetainPtr { analysisError }, sourceLocale = RefPtr { sourceLocale }, targetLocale = RefPtr { targetLocale }, currentRequestID, startTime] () mutable {
             auto imageAnalysisDelay = MonotonicTime::now() - startTime;
             if (!analysis) {
-                RELEASE_LOG(Translation, "[#%{public}s] Image translation failed in %.3f sec. (error: %{public}@)", currentRequestID.loggingString().utf8(), imageAnalysisDelay.seconds(), analysisError.get());
+                RELEASE_LOG(Translation, "[#%{public}s] Image translation failed in %.3f sec. (error: %{public}@)", utf8(currentRequestID.loggingString()), imageAnalysisDelay.seconds(), analysisError.get());
                 return completion({ });
             }
 
             if (![analysis hasResultsForAnalysisTypes:VKAnalysisTypeText]) {
-                RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (no text)", currentRequestID.loggingString().utf8(), imageAnalysisDelay.seconds());
+                RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (no text)", utf8(currentRequestID.loggingString()), imageAnalysisDelay.seconds());
                 return completion({ });
             }
 
@@ -233,18 +233,18 @@ void requestVisualTranslation(VKCImageAnalyzer *analyzer, NSURL *imageURL, const
                 for (SUPPRESS_UNRETAINED_LOCAL VKWKLineInfo *info in allLines.get()) {
                     if (!firstLine)
                         stringToLog.append("\\n"_s);
-                    stringToLog.append(String { info.string });
+                    stringToLog.append(StringImpl::create(info.string).get());
                     firstLine = false;
                 }
-                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu): \"%{private}s\"", currentRequestID.loggingString().utf8(), imageAnalysisDelay.seconds(), allLines.get().count, stringToLog.toString().utf8());
+                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu): \"%{private}s\"", utf8(currentRequestID.loggingString()), imageAnalysisDelay.seconds(), allLines.get().count, utf8(stringToLog.toString()));
             } else
-                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu)", currentRequestID.loggingString().utf8(), imageAnalysisDelay.seconds(), allLines.get().count);
+                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu)", utf8(currentRequestID.loggingString()), imageAnalysisDelay.seconds(), allLines.get().count);
 
             auto translationStartTime = MonotonicTime::now();
             auto completionBlock = makeBlockPtr([completion = WTF::move(completion), currentRequestID, translationStartTime](VKCImageAnalysisTranslation *translation, NSError *error) mutable {
                 auto translationDelay = MonotonicTime::now() - translationStartTime;
                 if (error) {
-                    RELEASE_LOG(Translation, "[#%{public}s] Image translation failed in %.3f sec. (error: %{public}@)", currentRequestID.loggingString().utf8(), translationDelay.seconds(), error);
+                    RELEASE_LOG(Translation, "[#%{public}s] Image translation failed in %.3f sec. (error: %{public}@)", utf8(currentRequestID.loggingString()), translationDelay.seconds(), error);
                     return completion({ });
                 }
 
@@ -255,20 +255,20 @@ void requestVisualTranslation(VKCImageAnalyzer *analyzer, NSURL *imageURL, const
                     for (SUPPRESS_UNRETAINED_LOCAL VKCTranslatedParagraph *paragraph in translation.paragraphs) {
                         if (!firstLine)
                             stringToLog.append("\\n"_s);
-                        stringToLog.append(String { paragraph.text });
+                        stringToLog.append(StringImpl::create(paragraph.text).get());
                         firstLine = false;
                     }
-                    RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (paragraph count: %zu): \"%{private}s\"", currentRequestID.loggingString().utf8(), translationDelay.seconds(), translation.paragraphs.count, stringToLog.toString().utf8());
+                    RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (paragraph count: %zu): \"%{private}s\"", utf8(currentRequestID.loggingString()), translationDelay.seconds(), translation.paragraphs.count, utf8(stringToLog.toString()));
                 } else
-                    RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (paragraph count: %zu)", currentRequestID.loggingString().utf8(), translationDelay.seconds(), translation.paragraphs.count);
+                    RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (paragraph count: %zu)", utf8(currentRequestID.loggingString()), translationDelay.seconds(), translation.paragraphs.count);
 
                 completion(makeTextRecognitionResult(translation, currentRequestID));
             });
 
             if ([analysis respondsToSelector:@selector(translateFrom:to:withCompletion:)])
-                [analysis translateFrom:sourceLocale.createNSString().get() to:targetLocale.createNSString().get() withCompletion:completionBlock.get()];
+                [analysis translateFrom:createNSString(sourceLocale).get() to:createNSString(targetLocale).get() withCompletion:completionBlock.get()];
             else
-                [analysis translateTo:targetLocale.createNSString().get() withCompletion:completionBlock.get()];
+                [analysis translateTo:createNSString(targetLocale).get() withCompletion:completionBlock.get()];
         });
     }).get()];
 }
@@ -335,19 +335,19 @@ bool isLiveTextAvailableAndEnabled()
     return PAL::isVisionKitCoreFrameworkAvailable();
 }
 
-std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForRemoveBackground(CGImageRef image, const String& sourceMIMEType)
+std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForRemoveBackground(CGImageRef image, StringImpl* sourceMIMEType)
 {
     static NeverDestroyed allowedMIMETypesForTranscoding = [] {
         static constexpr std::array types { "image/png"_s, "image/tiff"_s, "image/gif"_s, "image/bmp"_s };
-        MemoryCompactLookupOnlyRobinHoodHashSet<String> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>> set;
         set.reserveInitialCapacity(std::size(types));
         for (auto type : types)
             set.add(type);
         return set;
     }();
 
-    if (!sourceMIMEType.isEmpty() && allowedMIMETypesForTranscoding->contains(sourceMIMEType))
-        return transcodeWithPreferredMIMEType(image, sourceMIMEType.createCFString().get());
+    if (!isEmpty(sourceMIMEType) && allowedMIMETypesForTranscoding->contains(sourceMIMEType))
+        return transcodeWithPreferredMIMEType(image, createCFString(sourceMIMEType).get());
 
     return transcodeWithPreferredMIMEType(image, CFSTR("image/png"));
 }

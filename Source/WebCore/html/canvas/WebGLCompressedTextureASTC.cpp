@@ -76,9 +76,9 @@ WebGLCompressedTextureASTC::WebGLCompressedTextureASTC(WebGLRenderingContextBase
 
 WebGLCompressedTextureASTC::~WebGLCompressedTextureASTC() = default;
     
-Vector<String> WebGLCompressedTextureASTC::getSupportedProfiles()
+Vector<RefPtr<StringImpl>> WebGLCompressedTextureASTC::getSupportedProfiles()
 {
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
     
     if (m_isHDRSupported)
         result.append("hdr"_s);

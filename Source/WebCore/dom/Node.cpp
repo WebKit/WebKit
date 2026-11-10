@@ -109,7 +109,7 @@
 #include "ContentChangeObserver.h"
 #endif
 
-template class mpark::variant<WTF::Ref<WebCore::Node>, WTF::String>;
+template class mpark::variant<WTF::Ref<WebCore::Node>, RefPtr<StringImpl>>;
 
 namespace WebCore {
 
@@ -231,7 +231,7 @@ void Node::dumpStatistics()
     size_t fragmentNodes = 0;
     size_t shadowRootNodes = 0;
 
-    HashMap<String, size_t> perTagCount;
+    HashMap<RefPtr<StringImpl>, size_t> perTagCount;
 
     size_t attributes = 0;
     size_t attributesWithAttr = 0;
@@ -343,7 +343,7 @@ void Node::dumpStatistics()
 
     printf("Element tag name distibution:\n");
     for (auto& stringSizePair : perTagCount)
-        SAFE_PRINTF("  Number of <%s> tags: %zu\n", stringSizePair.key.utf8(), stringSizePair.value);
+        SAFE_PRINTF("  Number of <%s> tags: %zu\n", utf8(stringSizePair.key), stringSizePair.value);
 
     printf("Attributes:\n");
     printf("  Number of Attributes (non-Node and Node): %zu [%zu]\n", attributes, sizeof(Attribute));
@@ -488,12 +488,12 @@ void Node::clearRareData()
     m_rareDataWithBitfields.setPointer(nullptr);
 }
 
-String Node::nodeValue() const
+RefPtr<StringImpl> Node::nodeValue() const
 {
-    return String();
+    return nullptr;
 }
 
-ExceptionOr<void> Node::setNodeValue(const String&)
+ExceptionOr<void> Node::setNodeValue(StringImpl*)
 {
     // By default, setting nodeValue has no effect.
     return { };
@@ -566,7 +566,7 @@ static HashSet<Ref<Node>> nodeSetPreTransformedFromNodeOrStringVector(const Fixe
     for (const auto& variant : vector) {
         WTF::switchOn(variant,
             [&](const Ref<Node>& node) { nodeSet.add(const_cast<Ref<Node>&>(node)); },
-            [](const String&) { }
+            [](StringImpl*) { }
         );
     }
     return nodeSet;
@@ -600,7 +600,7 @@ ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(FixedVector<NodeOr
     auto nodes = WTF::map(WTF::move(nodeOrStringVector), [&](auto&& variant) -> Ref<Node> {
         return WTF::switchOn(WTF::move(variant),
             [&](Ref<Node>&& node) { return node; },
-            [&](String&& string) -> Ref<Node> { return Text::create(document, WTF::move(string)); }
+            [&](RefPtr<StringImpl>&& string) -> Ref<Node> { return Text::create(document, WTF::move(string)); }
         );
     });
 
@@ -625,8 +625,8 @@ ExceptionOr<NodeVector> Node::convertNodesOrStringsIntoNodeVector(FixedVector<No
     Ref document = this->document();
     NodeVector nodeVector(ReserveCapacityTag { }, nodeOrStringVector.size());
     for (auto& variant : nodeOrStringVector) {
-        if (std::holds_alternative<String>(variant)) {
-            nodeVector.append(Text::create(document, WTF::move(std::get<String>(variant))));
+        if (std::holds_alternative<RefPtr<StringImpl>>(variant)) {
+            nodeVector.append(Text::create(document, WTF::move(std::get<RefPtr<StringImpl>>(variant))));
             continue;
         }
 
@@ -784,7 +784,7 @@ ExceptionOr<void> Node::normalize()
 
             if (nextText->length() > StringImpl::MaxLength - offset) {
                 return Exception { ExceptionCode::InvalidModificationError,
-                    "Normalized Node String representation exceeds implementation maximum length."_s };
+                    "Normalized Node String representation exceeds implementation maximum length."_si };
             }
 
             // Update start/end for any affected Ranges before appendData since modifying contents might trigger mutation events that modify ordering.
@@ -816,18 +816,18 @@ ExceptionOr<Ref<Node>> Node::cloneNodeForBindings(bool subtree) const
     return cloneNode(subtree ? CloneSubtree::Yes : CloneSubtree::No);
 }
 
-const AtomString& Node::prefix() const
+const RefPtr<AtomStringImpl>& Node::prefix() const
 {
     // For nodes other than elements and attributes, the prefix is always null
     return nullAtom();
 }
 
-const AtomString& Node::localName() const
+const RefPtr<AtomStringImpl>& Node::localName() const
 {
     return nullAtom();
 }
 
-const AtomString& Node::namespaceURI() const
+const RefPtr<AtomStringImpl>& Node::namespaceURI() const
 {
     return nullAtom();
 }
@@ -1588,11 +1588,11 @@ bool Node::isEqualNode(Node* other) const
     case NodeType::DocumentType: {
         auto& thisDocType = uncheckedDowncast<DocumentType>(*this);
         auto& otherDocType = uncheckedDowncast<DocumentType>(*other);
-        if (thisDocType.name() != otherDocType.name())
+        if (!equal(thisDocType.name(), otherDocType.name()))
             return false;
-        if (thisDocType.publicId() != otherDocType.publicId())
+        if (!equal(thisDocType.publicId(), otherDocType.publicId()))
             return false;
-        if (thisDocType.systemId() != otherDocType.systemId())
+        if (!equal(thisDocType.systemId(), otherDocType.systemId()))
             return false;
         break;
         }
@@ -1608,9 +1608,9 @@ bool Node::isEqualNode(Node* other) const
     case NodeType::ProcessingInstruction: {
         auto& thisProcessingInstruction = uncheckedDowncast<ProcessingInstruction>(*this);
         auto& otherProcessingInstruction = uncheckedDowncast<ProcessingInstruction>(*other);
-        if (thisProcessingInstruction.target() != otherProcessingInstruction.target())
+        if (!equal(thisProcessingInstruction.target(), otherProcessingInstruction.target()))
             return false;
-        if (thisProcessingInstruction.data() != otherProcessingInstruction.data())
+        if (!equal(thisProcessingInstruction.data(), otherProcessingInstruction.data()))
             return false;
         break;
         }
@@ -1619,7 +1619,7 @@ bool Node::isEqualNode(Node* other) const
     case NodeType::Comment: {
         auto& thisCharacterData = uncheckedDowncast<CharacterData>(*this);
         auto& otherCharacterData = uncheckedDowncast<CharacterData>(*other);
-        if (thisCharacterData.data() != otherCharacterData.data())
+        if (!equal(thisCharacterData.data(), otherCharacterData.data()))
             return false;
         break;
         }
@@ -1655,7 +1655,7 @@ bool Node::isEqualNode(Node* other) const
 }
 
 // https://dom.spec.whatwg.org/#locate-a-namespace
-static const AtomString& locateDefaultNamespace(const Node& node, const AtomString& prefix)
+static const RefPtr<AtomStringImpl>& locateDefaultNamespace(const Node& node, AtomStringImpl* prefix)
 {
     switch (node.nodeType()) {
     case NodeType::Element: {
@@ -1666,7 +1666,7 @@ static const AtomString& locateDefaultNamespace(const Node& node, const AtomStri
 
         auto& element = uncheckedDowncast<Element>(node);
         auto& namespaceURI = element.namespaceURI();
-        if (!namespaceURI.isNull() && element.prefix() == prefix)
+        if (namespaceURI && element.prefix() == prefix)
             return namespaceURI;
 
         if (element.hasAttributes()) {
@@ -1674,9 +1674,9 @@ static const AtomString& locateDefaultNamespace(const Node& node, const AtomStri
                 if (attribute.namespaceURI() != XMLNSNames::xmlnsNamespaceURI)
                     continue;
 
-                if ((prefix.isNull() && attribute.prefix().isNull() && attribute.localName() == xmlnsAtom()) || (attribute.prefix() == xmlnsAtom() && attribute.localName() == prefix)) {
+                if ((!prefix && !attribute.prefix() && attribute.localName() == xmlnsAtom()) || (attribute.prefix() == xmlnsAtom() && attribute.localName() == prefix)) {
                     auto& result = attribute.value();
-                    return result.isEmpty() ? nullAtom() : result;
+                    return isEmpty(result) ? nullAtom() : result;
                 }
             }
         }
@@ -1702,21 +1702,21 @@ static const AtomString& locateDefaultNamespace(const Node& node, const AtomStri
 }
 
 // https://dom.spec.whatwg.org/#dom-node-isdefaultnamespace
-bool Node::isDefaultNamespace(const AtomString& potentiallyEmptyNamespace) const
+bool Node::isDefaultNamespace(AtomStringImpl* potentiallyEmptyNamespace) const
 {
-    const AtomString& namespaceURI = potentiallyEmptyNamespace.isEmpty() ? nullAtom() : potentiallyEmptyNamespace;
+    AtomStringImpl* namespaceURI = isEmpty(potentiallyEmptyNamespace) ? nullptr : potentiallyEmptyNamespace;
     return locateDefaultNamespace(*this, nullAtom()) == namespaceURI;
 }
 
 // https://dom.spec.whatwg.org/#dom-node-lookupnamespaceuri
-const AtomString& Node::lookupNamespaceURI(const AtomString& potentiallyEmptyPrefix) const
+const RefPtr<AtomStringImpl>& Node::lookupNamespaceURI(AtomStringImpl* potentiallyEmptyPrefix) const
 {
-    const AtomString& prefix = potentiallyEmptyPrefix.isEmpty() ? nullAtom() : potentiallyEmptyPrefix;
+    AtomStringImpl* prefix = isEmpty(potentiallyEmptyPrefix) ? nullptr : potentiallyEmptyPrefix;
     return locateDefaultNamespace(*this, prefix);
 }
 
 // https://dom.spec.whatwg.org/#locate-a-namespace-prefix
-static const AtomString& locateNamespacePrefix(const Element& element, const AtomString& namespaceURI)
+static const RefPtr<AtomStringImpl>& locateNamespacePrefix(const Element& element, AtomStringImpl* namespaceURI)
 {
     if (element.namespaceURI() == namespaceURI)
         return element.prefix();
@@ -1732,9 +1732,9 @@ static const AtomString& locateNamespacePrefix(const Element& element, const Ato
 }
 
 // https://dom.spec.whatwg.org/#dom-node-lookupprefix
-const AtomString& Node::lookupPrefix(const AtomString& namespaceURI) const
+const RefPtr<AtomStringImpl>& Node::lookupPrefix(AtomStringImpl* namespaceURI) const
 {
-    if (namespaceURI.isEmpty())
+    if (isEmpty(namespaceURI))
         return nullAtom();
     
     switch (nodeType()) {
@@ -1800,15 +1800,15 @@ static void appendTextContent(const Node* node, bool convertBRsToNewlines, bool&
     }
 }
 
-String Node::textContent(bool convertBRsToNewlines) const
+RefPtr<StringImpl> Node::textContent(bool convertBRsToNewlines) const
 {
     StringBuilder content;
     bool isNullString = true;
     appendTextContent(this, convertBRsToNewlines, isNullString, content);
-    return isNullString ? String() : content.toString();
+    return isNullString ? nullptr : content.toString();
 }
 
-ExceptionOr<void> Node::setTextContent(String&& text)
+ExceptionOr<void> Node::setTextContent(RefPtr<StringImpl>&& text)
 {
     switch (nodeType()) {
     case NodeType::Attribute:
@@ -1943,16 +1943,16 @@ FloatPoint Node::convertFromPage(const FloatPoint& p) const
     return p;
 }
 
-String Node::description() const
+RefPtr<StringImpl> Node::description() const
 {
     auto name = nodeName();
-    return makeString(name.isEmpty() ? "<none>"_s : ""_s, name);
+    return makeString(isEmpty(name) ? "<none>"_s : ""_s, name);
 }
 
-String Node::debugDescription() const
+RefPtr<StringImpl> Node::debugDescription() const
 {
     auto name = nodeName();
-    return makeString(name.isEmpty() ? "<none>"_s : ""_s, name, " 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+    return makeString(isEmpty(name) ? "<none>"_s : ""_s, name, " 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
 }
 
 #if ENABLE(TREE_DEBUGGING)
@@ -1963,8 +1963,8 @@ static void appendAttributeDesc(const Node* node, StringBuilder& stringBuilder, 
     if (!element)
         return;
 
-    const AtomString& attr = element->getAttribute(name);
-    if (attr.isEmpty())
+    const RefPtr<AtomStringImpl>& attr = element->getAttribute(name);
+    if (isEmpty(attr))
         return;
 
     stringBuilder.append(attrDesc);
@@ -1976,14 +1976,14 @@ void Node::showNode(ASCIILiteral prefix) const
     if (prefix.isNull())
         prefix = ""_s;
     if (isTextNode()) {
-        String value = makeStringByReplacingAll(nodeValue(), '\\', "\\\\"_s);
+        RefPtr<StringImpl> value = makeStringByReplacingAll(nodeValue(), '\\', "\\\\"_s);
         value = makeStringByReplacingAll(value, '\n', "\\n"_s);
-        SAFE_FPRINTF(stderr, "%s%s\t%p \"%s\"\n", prefix, nodeName().utf8(), this, value.utf8());
+        SAFE_FPRINTF(stderr, "%s%s\t%p \"%s\"\n", prefix, utf8(nodeName()), this, utf8(value));
     } else {
         StringBuilder attrs;
         appendAttributeDesc(this, attrs, classAttr, " CLASS="_s);
         appendAttributeDesc(this, attrs, styleAttr, " STYLE="_s);
-        SAFE_FPRINTF(stderr, "%s%s\t%p (renderer %p) %s%s%s\n", prefix, nodeName().utf8(), this, renderer(), attrs.toString().utf8(), needsStyleRecalc() ? " (needs style recalc)"_s : ""_s, childNeedsStyleRecalc() ? " (child needs style recalc)"_s : ""_s);
+        SAFE_FPRINTF(stderr, "%s%s\t%p (renderer %p) %s%s%s\n", prefix, utf8(nodeName()), this, renderer(), utf8(attrs.toString()), needsStyleRecalc() ? " (needs style recalc)"_s : ""_s, childNeedsStyleRecalc() ? " (child needs style recalc)"_s : ""_s);
     }
 }
 
@@ -2012,29 +2012,29 @@ void Node::showNodePathForThis() const
 
         switch (node->nodeType()) {
         case NodeType::Element: {
-            SAFE_FPRINTF(stderr, "/%s", node->nodeName().utf8());
+            SAFE_FPRINTF(stderr, "/%s", utf8(node->nodeName()));
 
             const Element& element = uncheckedDowncast<Element>(*node);
-            const AtomString& idattr = element.getIdAttribute();
-            bool hasIdAttr = !idattr.isNull() && !idattr.isEmpty();
+            const RefPtr<AtomStringImpl>& idattr = element.getIdAttribute();
+            bool hasIdAttr = !!idattr && !isEmpty(idattr);
             if (node->previousSibling() || node->nextSibling()) {
                 int count = 0;
                 for (Node* previous = node->previousSibling(); previous; previous = previous->previousSibling())
-                    if (previous->nodeName() == node->nodeName())
+                    if (equal(previous->nodeName(), node->nodeName()))
                         ++count;
                 if (hasIdAttr)
-                    SAFE_FPRINTF(stderr, "[@id=\"%s\" and position()=%d]", idattr.string().utf8(), count);
+                    SAFE_FPRINTF(stderr, "[@id=\"%s\" and position()=%d]", utf8(idattr), count);
                 else
                     fprintf(stderr, "[%d]", count);
             } else if (hasIdAttr)
-                SAFE_FPRINTF(stderr, "[@id=\"%s\"]", idattr.string().utf8());
+                SAFE_FPRINTF(stderr, "[@id=\"%s\"]", utf8(idattr));
             break;
         }
         case NodeType::Text:
             fprintf(stderr, "/text()");
             break;
         case NodeType::Attribute:
-            SAFE_FPRINTF(stderr, "/@%s", node->nodeName().utf8());
+            SAFE_FPRINTF(stderr, "/@%s", utf8(node->nodeName()));
             break;
         default:
             break;
@@ -2043,7 +2043,7 @@ void Node::showNodePathForThis() const
     fprintf(stderr, "\n");
 }
 
-static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, const Node* markedNode1, ASCIILiteral markedLabel1, const Node* markedNode2, ASCIILiteral markedLabel2)
+static void traverseTreeAndMark(StringImpl* baseIndent, const Node* rootNode, const Node* markedNode1, ASCIILiteral markedLabel1, const Node* markedNode2, ASCIILiteral markedLabel2)
 {
     for (const Node* node = rootNode; node; node = NodeTraversal::next(*node)) {
         if (node == markedNode1)
@@ -2055,7 +2055,7 @@ static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, 
         indent.append(baseIndent);
         for (const Node* tmpNode = node; tmpNode && tmpNode != rootNode; tmpNode = tmpNode->parentOrShadowHostNode())
             indent.append('\t');
-        SAFE_FPRINTF(stderr, "%s", indent.toString().utf8());
+        SAFE_FPRINTF(stderr, "%s", utf8(indent.toString()));
         node->showNode();
         indent.append('\t');
         if (!node->isShadowRoot()) {
@@ -2072,7 +2072,7 @@ void Node::showTreeAndMark(const Node* markedNode1, ASCIILiteral markedLabel1, c
         node = node->parentOrShadowHostNode();
     RefPtr rootNode = node;
 
-    String startingIndent;
+    RefPtr<StringImpl> startingIndent;
     traverseTreeAndMark(startingIndent, rootNode.get(), markedNode1, markedLabel1, markedNode2, markedLabel2);
 }
 
@@ -2084,11 +2084,11 @@ static ContainerNode* parentOrShadowHostOrFrameOwner(const Node* node)
     return parent;
 }
 
-static void showSubTreeAcrossFrame(const Node* node, const Node* markedNode, const String& indent)
+static void showSubTreeAcrossFrame(const Node* node, const Node* markedNode, StringImpl* indent)
 {
     if (node == markedNode)
         SAFE_FPRINTF(stderr, "*");
-    SAFE_FPRINTF(stderr, "%s\n", indent.utf8());
+    SAFE_FPRINTF(stderr, "%s\n", utf8(indent));
     node->showNode();
     if (!node->isShadowRoot()) {
         if (auto* frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(node))
@@ -2466,7 +2466,7 @@ bool isTouchRelatedEventType(const EventTypeInfo& eventType, const EventTarget& 
     return eventType.isInCategory(EventCategory::TouchRelated);
 }
 
-static inline bool tryAddEventListener(Node* targetNode, const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+static inline bool tryAddEventListener(Node* targetNode, AtomStringImpl* eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     if (!targetNode->EventTarget::addEventListener(eventType, listener.copyRef(), options))
         return false;
@@ -2524,12 +2524,12 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
     return true;
 }
 
-bool Node::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool Node::addEventListener(AtomStringImpl* eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     return tryAddEventListener(this, eventType, WTF::move(listener), options);
 }
 
-static void didRemoveEventListenersOfType(Node& targetNode, const AtomString& eventType, uint16_t capturingCount, uint16_t bubblingCount, EventHandlerRemoval removal)
+static void didRemoveEventListenersOfType(Node& targetNode, AtomStringImpl* eventType, uint16_t capturingCount, uint16_t bubblingCount, EventHandlerRemoval removal)
 {
     Ref document = targetNode.document();
     if (capturingCount)
@@ -2579,7 +2579,7 @@ static void didRemoveEventListenersOfType(Node& targetNode, const AtomString& ev
         cache->onEventListenerRemoved(targetNode, eventType);
 }
 
-bool Node::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
+bool Node::removeEventListener(AtomStringImpl* eventType, EventListener& listener, const EventListenerOptions& options)
 {
     if (!EventTarget::removeEventListener(eventType, listener, options))
         return false;
@@ -2591,7 +2591,7 @@ bool Node::removeEventListener(const AtomString& eventType, EventListener& liste
 
 void Node::removeAllEventListeners()
 {
-    enumerateEventListenerTypes([&](const AtomString& type, uint16_t capturingCount, uint16_t bubblingCount) {
+    enumerateEventListenerTypes([&](AtomStringImpl* type, uint16_t capturingCount, uint16_t bubblingCount) {
         didRemoveEventListenersOfType(*this, type, capturingCount, bubblingCount, EventHandlerRemoval::All);
     });
     EventTarget::removeAllEventListeners();
@@ -2645,7 +2645,7 @@ HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> Node::registeredMu
     return observers;
 }
 
-void Node::registerMutationObserver(MutationObserver& observer, MutationObserverOptions options, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter)
+void Node::registerMutationObserver(MutationObserver& observer, MutationObserverOptions options, const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>>& attributeFilter)
 {
     RefPtr<MutationObserverRegistration> registration;
     auto& registry = ensureRareData().mutationObserverData().registry;
@@ -2728,7 +2728,7 @@ void Node::dispatchSubtreeModifiedEvent()
 
     if (!document().hasListenerType(Document::ListenerType::DOMSubtreeModified))
         return;
-    const AtomString& subtreeModifiedEventName = eventNames().DOMSubtreeModifiedEvent;
+    const RefPtr<AtomStringImpl>& subtreeModifiedEventName = eventNames().DOMSubtreeModifiedEvent;
     if (!parentNode() && !hasEventListeners(subtreeModifiedEventName))
         return;
 

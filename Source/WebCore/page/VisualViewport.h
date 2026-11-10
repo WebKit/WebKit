@@ -41,7 +41,7 @@ public:
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
-    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
+    bool addEventListener(AtomStringImpl* eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
     using EventTarget::addEventListener;
 
     double offsetLeft() const;

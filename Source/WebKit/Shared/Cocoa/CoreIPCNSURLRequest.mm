@@ -165,22 +165,22 @@ static void populateAppProperties(NSDictionary *protocolPropertiesDict, Protocol
         RetainPtr<id> value = [protocolPropertiesDict objectForKey:key.get()];
         if (RetainPtr number = dynamic_objc_cast<NSNumber>(value.get())) {
             if (CFGetTypeID((__bridge CFTypeRef)number.get()) == CFBooleanGetTypeID()) {
-                props.appProperties.set(String(key.get()), ProtocolProperties::AppPropertyValue { static_cast<bool>([number boolValue]) });
+                props.appProperties.set(StringImpl::create(key.get()), ProtocolProperties::AppPropertyValue { static_cast<bool>([number boolValue]) });
                 continue;
             }
-            props.appProperties.set(String(key.get()), ProtocolProperties::AppPropertyValue { CoreIPCNumber(number.get()) });
+            props.appProperties.set(StringImpl::create(key.get()), ProtocolProperties::AppPropertyValue { CoreIPCNumber(number.get()) });
             continue;
         }
         if (RetainPtr string = dynamic_objc_cast<NSString>(value.get())) {
             if ([string length] > maxAppPropertyStringLength)
                 continue;
-            props.appProperties.set(String(key.get()), ProtocolProperties::AppPropertyValue { CoreIPCString(string.get()) });
+            props.appProperties.set(StringImpl::create(key.get()), ProtocolProperties::AppPropertyValue { CoreIPCString(string.get()) });
             continue;
         }
         if (RetainPtr data = dynamic_objc_cast<NSData>(value.get())) {
             if ([data length] > maxAppPropertyDataLength)
                 continue;
-            props.appProperties.set(String(key.get()), ProtocolProperties::AppPropertyValue { CoreIPCData(data.get()) });
+            props.appProperties.set(StringImpl::create(key.get()), ProtocolProperties::AppPropertyValue { CoreIPCData(data.get()) });
             continue;
         }
 
@@ -264,16 +264,16 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
         for (SUPPRESS_UNRETAINED_LOCAL id key in headerFields.get()) {
             RetainPtr<id> value = [headerFields objectForKey:key];
             if (RetainPtr valueArray = dynamic_objc_cast<NSArray>(value.get())) {
-                Vector<String> valueVector(ReserveCapacityTag { }, valueArray.get().count);
+                Vector<RefPtr<StringImpl>> valueVector(ReserveCapacityTag { }, valueArray.get().count);
                 // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
                 for (SUPPRESS_UNRETAINED_LOCAL id item in valueArray.get()) {
                     if (RetainPtr nsString = dynamic_objc_cast<NSString>(item))
-                        valueVector.append(nsString.get());
+                        valueVector.append(StringImpl::create(nsString.get()));
                 }
-                vector.append({ key, valueVector });
+                vector.append({ StringImpl::create(checked_objc_cast<NSString>(key)), valueVector });
             }
             if (RetainPtr nsString = dynamic_objc_cast<NSString>(value.get()))
-                vector.append({ key, nsString.get() });
+                vector.append({ StringImpl::create(checked_objc_cast<NSString>(key)), StringImpl::create(nsString.get()) });
         }
         vector.shrinkToFit();
         m_data.headerFields = WTF::move(vector);
@@ -367,7 +367,7 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
             [protocolPropertiesDict setObject:[NSNumber numberWithInteger:static_cast<NSInteger>(*m_data.protocolProperties->requestType)] forKey:@"requestType"];
 
         for (auto& entry : m_data.protocolProperties->appProperties) {
-            RetainPtr key = entry.key.createNSString();
+            RetainPtr key = createNSString(entry.key);
             if (!key)
                 continue;
 
@@ -420,19 +420,19 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
         auto headerFields = adoptNS([[NSMutableDictionary alloc] initWithCapacity:(*m_data.headerFields).size()]);
         for (auto& headerPair : borrow(*m_data.headerFields)) {
             WTF::switchOn(headerPair.second,
-                [&] (const String& string) {
+                [&] (StringImpl* string) {
                     auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:1]);
-                    if (!string.isNull() && !headerPair.first.isNull()) {
-                        [array addObject:string.createNSString().get()];
-                        [headerFields setObject:array.get() forKey:headerPair.first.createNSString().get()];
+                    if (string && headerPair.first) {
+                        [array addObject:createNSString(string).get()];
+                        [headerFields setObject:array.get() forKey:createNSString(headerPair.first).get()];
                     }
                 },
-                [&] (const Vector<String>& vector) {
+                [&] (const Vector<RefPtr<StringImpl>>& vector) {
                     auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:vector.size()]);
                     for (auto& item : borrow(vector))
-                        [array addObject:item.createNSString().get()];
-                    if (!headerPair.first.isNull())
-                        [headerFields setObject:array.get() forKey:headerPair.first.createNSString().get()];
+                        [array addObject:createNSString(item).get()];
+                    if (headerPair.first)
+                        [headerFields setObject:array.get() forKey:createNSString(headerPair.first).get()];
                 }
             );
         }

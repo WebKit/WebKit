@@ -40,37 +40,37 @@ class Attr final : public Node {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Attr);
 public:
     static Ref<Attr> create(Element&, const QualifiedName&);
-    static Ref<Attr> create(Document&, const QualifiedName&, const AtomString& value);
+    static Ref<Attr> create(Document&, const QualifiedName&, AtomStringImpl* value);
     virtual ~Attr();
 
-    String name() const { return qualifiedName().toString(); }
+    RefPtr<StringImpl> name() const { return qualifiedName().toString(); }
     bool specified() const { return true; }
     Element* ownerElement() const { assertIsOwnerThread(); return m_element.get(); }
 
-    WEBCORE_EXPORT AtomString value() const;
-    WEBCORE_EXPORT ExceptionOr<void> setValue(const AtomString&);
+    WEBCORE_EXPORT RefPtr<AtomStringImpl> value() const;
+    WEBCORE_EXPORT ExceptionOr<void> setValue(AtomStringImpl*);
 
     const QualifiedName& qualifiedName() const LIFETIME_BOUND { return m_name; }
 
     WEBCORE_EXPORT CSSStyleProperties* style();
 
     void attachToElement(Element&);
-    void detachFromElementWithValue(const AtomString&);
+    void detachFromElementWithValue(AtomStringImpl*);
     
     template<typename Visitor> void visitOwnerElementInGCThread(Visitor&);
 
-    NODELETE const AtomString& namespaceURI() const LIFETIME_BOUND final { return m_name.namespaceURI(); }
-    NODELETE const AtomString& localName() const LIFETIME_BOUND final { return m_name.localName(); }
-    NODELETE const AtomString& prefix() const LIFETIME_BOUND final { return m_name.prefix(); }
+    NODELETE const RefPtr<AtomStringImpl>& namespaceURI() const LIFETIME_BOUND final { return m_name.namespaceURI(); }
+    NODELETE const RefPtr<AtomStringImpl>& localName() const LIFETIME_BOUND final { return m_name.localName(); }
+    NODELETE const RefPtr<AtomStringImpl>& prefix() const LIFETIME_BOUND final { return m_name.prefix(); }
 
 private:
     Attr(Element&, const QualifiedName&);
-    Attr(Document&, const QualifiedName&, const AtomString& value);
+    Attr(Document&, const QualifiedName&, AtomStringImpl* value);
 
-    String nodeName() const final { return name(); }
+    RefPtr<StringImpl> nodeName() const final { return name(); }
 
-    String nodeValue() const final { return value(); }
-    ExceptionOr<void> setNodeValue(const String&) final;
+    RefPtr<StringImpl> nodeValue() const final { return value(); }
+    ExceptionOr<void> setNodeValue(StringImpl*) final;
 
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const final;
     SerializedNode serializeNode(CloningOperation) const final;
@@ -84,7 +84,7 @@ private:
     CheckedPtr<Element> m_element WTF_GUARDED_BY_LOCK(m_elementLockForGC);
     WTF_DECLARE_OWNER_THREAD_ASSERTIONS(m_elementLockForGC, mainThreadLike);
     QualifiedName m_name;
-    AtomString m_standaloneValue;
+    RefPtr<AtomStringImpl> m_standaloneValue;
     RefPtr<MutableStyleProperties> m_style;
     mutable Lock m_elementLockForGC;
 };

@@ -38,11 +38,11 @@ struct PipeWireNodeData {
     }
 
     uint32_t objectId;
-    String persistentId;
+    RefPtr<StringImpl> persistentId;
     int fd;
     GRefPtr<GstCaps> caps;
-    String path;
-    String label;
+    RefPtr<StringImpl> path;
+    RefPtr<StringImpl> label;
 };
 
 } // namespace WebCore

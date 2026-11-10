@@ -128,7 +128,7 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, Resou
         return;
 #endif
 
-    String oldRequestURL = request.url().string();
+    RefPtr<StringImpl> oldRequestURL = request.url().string();
 
     Ref frame = m_frame;
     ASSERT(frame->loader().documentLoader());
@@ -138,7 +138,7 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, Resou
     frame->loader().client().dispatchWillSendRequest(loader, identifier, request, redirectResponse);
 
     // If the URL changed, then we want to put that new URL in the "did tell client" set too.
-    if (!request.isNull() && oldRequestURL != request.url().string()) {
+    if (!request.isNull() && !equal(oldRequestURL, request.url().string())) {
         if (RefPtr documentLoader = frame->loader().documentLoader())
             documentLoader->didTellClientAboutLoad(request.url().string());
     }

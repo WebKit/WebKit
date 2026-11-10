@@ -53,7 +53,7 @@ class IDBServer final : public UniqueIDBDatabaseManager {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBServer);
 public:
     using SpaceRequester = Function<bool(const ClientOrigin&, uint64_t spaceRequested)>;
-    WEBCORE_EXPORT IDBServer(const String& databaseDirectoryPath, SpaceRequester&&);
+    WEBCORE_EXPORT IDBServer(StringImpl* databaseDirectoryPath, SpaceRequester&&);
     WEBCORE_EXPORT ~IDBServer();
 
     WEBCORE_EXPORT void registerConnection(IDBConnectionToClient&);
@@ -66,12 +66,12 @@ public:
     WEBCORE_EXPORT void commitTransaction(const IDBResourceIdentifier&, uint64_t handledRequestResultsCount);
     WEBCORE_EXPORT void didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier&);
     WEBCORE_EXPORT void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
-    WEBCORE_EXPORT void renameObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier, const String& newName);
-    WEBCORE_EXPORT void deleteObjectStore(const IDBRequestData&, const String& objectStoreName);
+    WEBCORE_EXPORT void renameObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier, StringImpl* newName);
+    WEBCORE_EXPORT void deleteObjectStore(const IDBRequestData&, StringImpl* objectStoreName);
     WEBCORE_EXPORT void clearObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier);
     WEBCORE_EXPORT void createIndex(const IDBRequestData&, const IDBIndexInfo&);
-    WEBCORE_EXPORT void deleteIndex(const IDBRequestData&, IDBObjectStoreIdentifier, const String& indexName);
-    WEBCORE_EXPORT void renameIndex(const IDBRequestData&, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String& newName);
+    WEBCORE_EXPORT void deleteIndex(const IDBRequestData&, IDBObjectStoreIdentifier, StringImpl* indexName);
+    WEBCORE_EXPORT void renameIndex(const IDBRequestData&, IDBObjectStoreIdentifier, IDBIndexIdentifier, StringImpl* newName);
     WEBCORE_EXPORT void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, const IndexIDToIndexKeyMap&, IndexedDB::ObjectStoreOverwriteMode);
     WEBCORE_EXPORT void getRecord(const IDBRequestData&, const IDBGetRecordData&);
     WEBCORE_EXPORT void getAllRecords(const IDBRequestData&, const IDBGetAllRecordsData&);
@@ -104,16 +104,16 @@ public:
     void closeDatabasesForOrigins(const Vector<SecurityOriginData>&, NOESCAPE const Function<bool(const SecurityOriginData&, const ClientOrigin&)>&);
     WEBCORE_EXPORT void renameOrigin(const WebCore::SecurityOriginData&, const WebCore::SecurityOriginData&);
 
-    WEBCORE_EXPORT static uint64_t diskUsage(const String& rootDirectory, const ClientOrigin&);
+    WEBCORE_EXPORT static uint64_t diskUsage(StringImpl* rootDirectory, const ClientOrigin&);
 
 private:
     UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier&);
     NODELETE RefPtr<UniqueIDBDatabaseTransaction> idbTransaction(const IDBRequestData&) const;
 
     void upgradeFilesIfNecessary();
-    String upgradedDatabaseDirectory(const WebCore::IDBDatabaseIdentifier&);
-    void removeDatabasesModifiedSinceForVersion(WallTime, const String&);
-    void removeDatabasesWithOriginsForVersion(const Vector<SecurityOriginData>&, const String&);
+    RefPtr<StringImpl> upgradedDatabaseDirectory(const WebCore::IDBDatabaseIdentifier&);
+    void removeDatabasesModifiedSinceForVersion(WallTime, StringImpl*);
+    void removeDatabasesWithOriginsForVersion(const Vector<SecurityOriginData>&, StringImpl*);
 
     HashMap<IDBConnectionIdentifier, Ref<IDBConnectionToClient>> m_connectionMap;
     HashMap<IDBDatabaseIdentifier, std::unique_ptr<UniqueIDBDatabase>> m_uniqueIDBDatabaseMap;
@@ -121,7 +121,7 @@ private:
     HashMap<IDBDatabaseConnectionIdentifier, WeakPtr<UniqueIDBDatabaseConnection>> m_databaseConnections;
     HashMap<IDBResourceIdentifier, WeakPtr<UniqueIDBDatabaseTransaction>> m_transactions;
 
-    String m_databaseDirectoryPath;
+    RefPtr<StringImpl> m_databaseDirectoryPath;
 
     SpaceRequester m_spaceRequester;
 };

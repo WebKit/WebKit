@@ -81,7 +81,7 @@ private:
     void updateTimelinesRegistration(WebCore::ProcessIdentifier, const WebCore::AcceleratedTimelinesUpdate&, MonotonicTime) override;
     void removeTimelines(WebCore::ProcessIdentifier) override;
     RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&) const override;
-    String animationStackJSONForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const override;
+    RefPtr<StringImpl> animationStackJSONForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const override;
     HashSet<Ref<RemoteProgressBasedTimeline>> timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID) const override;
     HashSet<Ref<RemoteMonotonicTimeline>> monotonicTimelinesForProcessForTesting(WebCore::ProcessIdentifier) const override;
 #else

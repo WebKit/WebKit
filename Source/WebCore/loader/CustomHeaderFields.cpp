@@ -36,13 +36,13 @@ bool CustomHeaderFields::thirdPartyDomainsMatch(const URL& url) const
     if (thirdPartyDomains.isEmpty())
         return false;
 
-    auto registrableDomainLength = RegistrableDomain(url).string().length();
+    auto registrableDomainLength = length(RegistrableDomain(url).string());
     for (const auto& domainOrPattern : thirdPartyDomains) {
         if (domainOrPattern == url.host())
             return true;
-        if (domainOrPattern.startsWith("*."_s)
+        if (startsWith(domainOrPattern, "*."_s)
             && url.host().endsWith(StringView(domainOrPattern).substring(1))
-            && domainOrPattern.length() > registrableDomainLength)
+            && length(domainOrPattern) > registrableDomainLength)
             return true;
     }
 

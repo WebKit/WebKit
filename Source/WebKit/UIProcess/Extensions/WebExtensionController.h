@@ -97,12 +97,12 @@ public:
     explicit WebExtensionController(Ref<WebExtensionControllerConfiguration>);
     ~WebExtensionController();
 
-    using UniqueIdentifier = String;
+    using UniqueIdentifier = RefPtr<StringImpl>;
 
     using WebExtensionContextSet = HashSet<Ref<WebExtensionContext>>;
     using WebExtensionSet = HashSet<Ref<WebExtension>>;
-    using WebExtensionContextBaseURLMap = HashMap<String, Ref<WebExtensionContext>>;
-    using WebExtensionURLSchemeHandlerMap = HashMap<String, Ref<WebExtensionURLSchemeHandler>>;
+    using WebExtensionContextBaseURLMap = HashMap<RefPtr<StringImpl>, Ref<WebExtensionContext>>;
+    using WebExtensionURLSchemeHandlerMap = HashMap<RefPtr<StringImpl>, Ref<WebExtensionURLSchemeHandler>>;
 
     using WebProcessProxySet = HashSet<Ref<WebProcessProxy>>;
     using WebProcessPoolSet = WeakHashSet<WebProcessPool>;
@@ -166,7 +166,7 @@ public:
     template<typename T>
     void sendToAllProcesses(const T& message, const ObjectIdentifierGenericBase& destinationID);
 
-    bool isFeatureEnabled(const String& featureName) const;
+    bool isFeatureEnabled(StringImpl* featureName) const;
 
 #if PLATFORM(MAC)
     void addItemsToContextMenu(WebPageProxy&, const ContextMenuContextData&, NSMenu *);
@@ -199,7 +199,7 @@ public:
     void setShowingActionPopup(bool isOpen) { m_showingActionPopup = isOpen; };
 
     bool markDidRemoveStaleExtensionWebsiteData();
-    HashSet<String> activeExtensionURLs() const;
+    HashSet<RefPtr<StringImpl>> activeExtensionURLs() const;
 
 #ifdef __OBJC__
     WKWebExtensionController *wrapper() const { return (WKWebExtensionController *)API::ObjectImpl<API::Object::Type::WebExtensionController>::wrapper(); }
@@ -223,11 +223,11 @@ private:
     void addWebsiteDataStore(WebsiteDataStore&);
     void removeWebsiteDataStore(WebsiteDataStore&);
 
-    String storageDirectory(const String& uniqueIdentifier) const;
-    String storageDirectory(WebExtensionContext&) const;
+    RefPtr<StringImpl> storageDirectory(StringImpl* uniqueIdentifier) const;
+    RefPtr<StringImpl> storageDirectory(WebExtensionContext&) const;
 
-    String stateFilePath(const String& uniqueIdentifier) const;
-    RefPtr<WebExtensionStorageSQLiteStore> sqliteStore(const String& storageDirectory, WebExtensionDataType, RefPtr<WebExtensionContext>);
+    RefPtr<StringImpl> stateFilePath(StringImpl* uniqueIdentifier) const;
+    RefPtr<WebExtensionStorageSQLiteStore> sqliteStore(StringImpl* storageDirectory, WebExtensionDataType, RefPtr<WebExtensionContext>);
 
     void didStartProvisionalLoadForFrame(WebPageProxyIdentifier, const WebExtensionFrameParameters&, WallTime);
     void didCommitLoadForFrame(WebPageProxyIdentifier, const WebExtensionFrameParameters&, WallTime);
@@ -237,13 +237,13 @@ private:
     void purgeOldMatchedRules();
 
     // Test APIs
-    void testResult(bool result, String message, String sourceURL, unsigned lineNumber);
-    void testEqual(bool result, String expected, String actual, String message, String sourceURL, unsigned lineNumber);
-    void testLogMessage(String message, String sourceURL, unsigned lineNumber);
-    void testSentMessage(String message, String argument, String sourceURL, unsigned lineNumber);
-    void testAdded(String testName, String sourceURL, unsigned lineNumber);
-    void testStarted(String testName, String sourceURL, unsigned lineNumber);
-    void testFinished(String testName, bool result, String message, String sourceURL, unsigned lineNumber);
+    void testResult(bool result, RefPtr<StringImpl> message, RefPtr<StringImpl> sourceURL, unsigned lineNumber);
+    void testEqual(bool result, RefPtr<StringImpl> expected, RefPtr<StringImpl> actual, RefPtr<StringImpl> message, RefPtr<StringImpl> sourceURL, unsigned lineNumber);
+    void testLogMessage(RefPtr<StringImpl> message, RefPtr<StringImpl> sourceURL, unsigned lineNumber);
+    void testSentMessage(RefPtr<StringImpl> message, RefPtr<StringImpl> argument, RefPtr<StringImpl> sourceURL, unsigned lineNumber);
+    void testAdded(RefPtr<StringImpl> testName, RefPtr<StringImpl> sourceURL, unsigned lineNumber);
+    void testStarted(RefPtr<StringImpl> testName, RefPtr<StringImpl> sourceURL, unsigned lineNumber);
+    void testFinished(RefPtr<StringImpl> testName, bool result, RefPtr<StringImpl> message, RefPtr<StringImpl> sourceURL, unsigned lineNumber);
 
     class HTTPCookieStoreObserver : public API::HTTPCookieStoreObserver {
         WTF_MAKE_TZONE_ALLOCATED_INLINE(HTTPCookieStoreObserver);

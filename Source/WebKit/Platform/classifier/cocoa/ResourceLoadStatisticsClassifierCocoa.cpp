@@ -62,7 +62,7 @@ bool ResourceLoadStatisticsClassifierCocoa::classify(unsigned subresourceUnderTo
     return classification < 0;
 }
 
-String ResourceLoadStatisticsClassifierCocoa::storagePath()
+RefPtr<StringImpl> ResourceLoadStatisticsClassifierCocoa::storagePath()
 {
     RetainPtr<CFBundleRef> webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
     RetainPtr<CFURLRef> resourceURL = adoptCF(CFBundleCopyResourcesDirectoryURL(webKitBundle.get()));
@@ -71,10 +71,10 @@ String ResourceLoadStatisticsClassifierCocoa::storagePath()
     resourceURL = adoptCF(CFURLCreateFilePathURL(nullptr, resourceURL.get(), &error));
 
     if (error || !resourceURL)
-        return String();
+        return nullptr;
 
     RetainPtr<CFStringRef> resourceURLString = adoptCF(CFURLCopyFileSystemPath(resourceURL.get(), kCFURLPOSIXPathStyle));
-    return String(resourceURLString.get());
+    return StringImpl::create(resourceURLString.get());
 }
 
 bool ResourceLoadStatisticsClassifierCocoa::canUseCorePrediction()
@@ -90,8 +90,8 @@ bool ResourceLoadStatisticsClassifierCocoa::canUseCorePrediction()
         return false;
     }
 
-    String storagePathStr = storagePath();
-    if (storagePathStr.isNull() || storagePathStr.isEmpty()) {
+    RefPtr<StringImpl> storagePathStr = storagePath();
+    if (!storagePathStr || isEmpty(storagePathStr)) {
         m_useCorePrediction = false;
         return false;
     }
@@ -108,15 +108,15 @@ bool ResourceLoadStatisticsClassifierCocoa::canUseCorePrediction()
 const struct svm_model* ResourceLoadStatisticsClassifierCocoa::singletonPredictionModel()
 {
     static std::optional<struct svm_model*> corePredictionModel = [&]() -> std::optional<struct svm_model*> {
-        if (auto path = storagePath(); !path.isEmpty())
-            return svm_load_model(path.utf8().legacyCStringPointer());
+        if (auto path = storagePath(); !isEmpty(path))
+            return svm_load_model(utf8(path).legacyCStringPointer());
         return std::nullopt;
     }();
 
     if (corePredictionModel && corePredictionModel.value())
         return corePredictionModel.value();
 
-    SAFE_WTFLOGALWAYS("ResourceLoadStatisticsClassifierCocoa::singletonPredictionModel(): Couldn't load model file at path %s.", storagePath().utf8());
+    SAFE_WTFLOGALWAYS("ResourceLoadStatisticsClassifierCocoa::singletonPredictionModel(): Couldn't load model file at path %s.", utf8(storagePath()));
     m_useCorePrediction = false;
     return nullptr;
 }

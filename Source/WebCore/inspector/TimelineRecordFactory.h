@@ -47,20 +47,20 @@ class TimelineRecordFactory {
 public:
     static Ref<JSON::Object> createGenericRecord(double startTime, int maxCallStackDepth);
 
-    static Ref<JSON::Object> createRenderingFrameData(const String& name);
-    static Ref<JSON::Object> createFunctionCallData(const String& scriptName, int scriptLine, int scriptColumn);
-    static Ref<JSON::Object> createConsoleProfileData(const String& title);
+    static Ref<JSON::Object> createRenderingFrameData(StringImpl* name);
+    static Ref<JSON::Object> createFunctionCallData(StringImpl* scriptName, int scriptLine, int scriptColumn);
+    static Ref<JSON::Object> createConsoleProfileData(StringImpl* title);
     static Ref<JSON::Object> createProbeSampleData(JSC::BreakpointActionID, unsigned sampleId);
     static Ref<JSON::Object> createEventDispatchData(const Event&);
     static Ref<JSON::Object> createGenericTimerData(int timerId);
     static Ref<JSON::Object> createTimerInstallData(int timerId, Seconds timeout, bool singleShot);
-    static Ref<JSON::Object> createEvaluateScriptData(const String&, int lineNumber, int columnNumber);
-    static Ref<JSON::Object> createTimeStampData(const String&);
+    static Ref<JSON::Object> createEvaluateScriptData(StringImpl*, int lineNumber, int columnNumber);
+    static Ref<JSON::Object> createTimeStampData(StringImpl*);
     static Ref<JSON::Object> createLargestContentfulPaintData(Inspector::Protocol::DOM::NodeId, unsigned area);
     static Ref<JSON::Object> createAnimationFrameData(int callbackId);
-    static Ref<JSON::Object> createObserverCallbackData(const String& callbackType);
+    static Ref<JSON::Object> createObserverCallbackData(StringImpl* callbackType);
     static Ref<JSON::Object> createPaintData(const FloatQuad&);
-    static Ref<JSON::Object> createScreenshotData(const String& imageData);
+    static Ref<JSON::Object> createScreenshotData(StringImpl* imageData);
 
     static void appendLayoutRoot(JSON::Object& data, const FloatQuad&);
     static void appendNodeId(JSON::Object& data, Inspector::Protocol::DOM::NodeId);

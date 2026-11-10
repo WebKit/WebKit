@@ -52,7 +52,7 @@ public:
 
     ~XRView();
 
-    NODELETE void setLabel(String&&) final;
+    NODELETE void setLabel(RefPtr<StringImpl>&&) final;
 
     bool isValid() const final { return true; }
     Device& device() { return m_device; }

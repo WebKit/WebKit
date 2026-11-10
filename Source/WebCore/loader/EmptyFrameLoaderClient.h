@@ -97,12 +97,12 @@ private:
     NODELETE void dispatchDidReachLayoutMilestone(OptionSet<LayoutMilestone>) final;
     NODELETE void dispatchDidReachVisuallyNonEmptyState() final;
 
-    NODELETE LocalFrame* dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy, const String&) final;
+    NODELETE LocalFrame* dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy, StringImpl*) final;
     NODELETE void dispatchShow() final;
 
-    NODELETE void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, const String&, FramePolicyFunction&&) final;
-    NODELETE void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, std::optional<HitTestResult>&&, FramePolicyFunction&&) final;
-    NODELETE void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, const String&, std::optional<NavigationIdentifier>, std::optional<HitTestResult>&&, bool, NavigationUpgradeToHTTPSBehavior, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&) final;
+    NODELETE void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, StringImpl*, FramePolicyFunction&&) final;
+    NODELETE void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, StringImpl*, std::optional<HitTestResult>&&, FramePolicyFunction&&) final;
+    NODELETE void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, StringImpl*, std::optional<NavigationIdentifier>, std::optional<HitTestResult>&&, bool, NavigationUpgradeToHTTPSBehavior, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&) final;
     NODELETE void updateSandboxFlags(SandboxFlags) final;
     NODELETE void updateOpener(std::optional<FrameIdentifier>) final;
     void setPrinting(bool, FloatSize, FloatSize, float, AdjustViewSize) final;
@@ -111,14 +111,14 @@ private:
     NODELETE void dispatchUnableToImplementPolicy(const ResourceError&) final;
 
     NODELETE void dispatchWillSendSubmitEvent(Ref<FormState>&&) final;
-    void dispatchWillSubmitForm(FormState&, URL&& requestURL, String&& method, CompletionHandler<void()>&&) final;
+    void dispatchWillSubmitForm(FormState&, URL&& requestURL, RefPtr<StringImpl>&& method, CompletionHandler<void()>&&) final;
 
     NODELETE void revertToProvisionalState(DocumentLoader*) final;
     NODELETE void setMainDocumentError(DocumentLoader*, const ResourceError&) final;
 
     NODELETE void setMainFrameDocumentReady(bool) final;
 
-    NODELETE void startDownload(const ResourceRequest&, const String&, FromDownloadAttribute = FromDownloadAttribute::No) final;
+    NODELETE void startDownload(const ResourceRequest&, StringImpl*, FromDownloadAttribute = FromDownloadAttribute::No) final;
 
     NODELETE void willChangeTitle(DocumentLoader*) final;
     NODELETE void didChangeTitle(DocumentLoader*) final;
@@ -134,10 +134,10 @@ private:
     NODELETE bool shouldFallBack(const ResourceError&) const final;
 
     NODELETE bool canHandleRequest(const ResourceRequest&) const final;
-    NODELETE bool canShowMIMEType(const String&) const final;
-    NODELETE bool canShowMIMETypeAsHTML(const String&) const final;
+    NODELETE bool canShowMIMEType(StringImpl*) const final;
+    NODELETE bool canShowMIMETypeAsHTML(StringImpl*) const final;
     NODELETE bool representationExistsForURLScheme(StringView) const final;
-    NODELETE String generatedMIMETypeForURLScheme(StringView) const final;
+    NODELETE RefPtr<StringImpl> generatedMIMETypeForURLScheme(StringView) const final;
 
     NODELETE void frameLoadCompleted() final;
     NODELETE void restoreViewState() final;
@@ -148,7 +148,7 @@ private:
     NODELETE void updateCachedDocumentLoader(DocumentLoader&) final;
     NODELETE void setTitle(const StringWithDirection&, const URL&) final;
 
-    NODELETE String userAgent(const URL&) const override;
+    NODELETE RefPtr<StringImpl> userAgent(const URL&) const override;
 
     NODELETE void savePlatformDataToCachedFrame(CachedFrame*) final;
     NODELETE void transitionToCommittedFromCachedFrame(CachedFrame*) final;
@@ -170,11 +170,11 @@ private:
 
     NODELETE void saveViewStateToItem(HistoryItem&) final;
     NODELETE bool canCachePage() const final;
-    RefPtr<LocalFrame> createFrame(const AtomString&, HTMLFrameOwnerElement&) final;
-    RefPtr<Widget> createPlugin(HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool) final;
+    RefPtr<LocalFrame> createFrame(AtomStringImpl*, HTMLFrameOwnerElement&) final;
+    RefPtr<Widget> createPlugin(HTMLPlugInElement&, const URL&, const Vector<RefPtr<AtomStringImpl>>&, const Vector<RefPtr<AtomStringImpl>>&, StringImpl*, bool) final;
 
-    NODELETE ObjectContentType objectContentType(const URL&, const String&) final;
-    NODELETE AtomString overrideMediaType() const final;
+    NODELETE ObjectContentType objectContentType(const URL&, StringImpl*) final;
+    NODELETE RefPtr<AtomStringImpl> overrideMediaType() const final;
 
     NODELETE void redirectDataToPlugin(Widget&) final;
     NODELETE void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) final;
@@ -192,11 +192,11 @@ private:
     Ref<FrameNetworkingContext> createNetworkingContext() final;
 
     NODELETE bool isEmptyFrameLoaderClient() const override;
-    NODELETE void prefetchDNS(const String&) final;
+    NODELETE void prefetchDNS(StringImpl*) final;
     void sendH2Ping(const URL&, CompletionHandler<void(std::expected<Seconds, ResourceError>&&)>&&) final;
 
 #if USE(QUICK_LOOK)
-    RefPtr<LegacyPreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) final;
+    RefPtr<LegacyPreviewLoaderClient> createPreviewLoaderClient(StringImpl*, StringImpl*) final;
 #endif
 
     NODELETE bool hasFrameSpecificStorageAccess() final;

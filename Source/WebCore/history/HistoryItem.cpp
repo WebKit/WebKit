@@ -54,7 +54,7 @@ int64_t HistoryItem::generateSequenceNumber()
     return ++next;
 }
 
-HistoryItem::HistoryItem(Client& client, const String& urlString, const String& title, const String& alternateTitle, std::optional<BackForwardItemIdentifier> itemID, std::optional<BackForwardFrameItemIdentifier> frameItemID)
+HistoryItem::HistoryItem(Client& client, StringImpl* urlString, StringImpl* title, StringImpl* alternateTitle, std::optional<BackForwardItemIdentifier> itemID, std::optional<BackForwardFrameItemIdentifier> frameItemID)
     : m_urlString(urlString)
     , m_originalURLString(urlString)
     , m_title(title)
@@ -103,13 +103,13 @@ Ref<HistoryItem> HistoryItem::copy() const
 
 void HistoryItem::reset()
 {
-    m_urlString = String();
-    m_originalURLString = String();
-    m_referrer = String();
+    m_urlString = nullptr;
+    m_originalURLString = nullptr;
+    m_referrer = nullptr;
     m_target = nullAtom();
     m_frameID = std::nullopt;
-    m_title = String();
-    m_displayTitle = String();
+    m_title = nullptr;
+    m_displayTitle = nullptr;
 
     m_lastVisitWasFailure = false;
     m_isTargetItem = false;
@@ -123,29 +123,29 @@ void HistoryItem::reset()
     m_navigationAPIKey = WTF::UUID::createVersion4();
 
     m_formData = nullptr;
-    m_formContentType = String();
+    m_formContentType = nullptr;
 
     clearChildren();
 }
 
-const String& HistoryItem::urlString() const
+const RefPtr<StringImpl>& HistoryItem::urlString() const
 {
     return m_urlString;
 }
 
 // The first URL we loaded to get to where this history item points.  Includes both client
 // and server redirects.
-const String& HistoryItem::originalURLString() const
+const RefPtr<StringImpl>& HistoryItem::originalURLString() const
 {
     return m_originalURLString;
 }
 
-const String& HistoryItem::title() const
+const RefPtr<StringImpl>& HistoryItem::title() const
 {
     return m_title;
 }
 
-const String& HistoryItem::alternateTitle() const
+const RefPtr<StringImpl>& HistoryItem::alternateTitle() const
 {
     return m_displayTitle;
 }
@@ -170,23 +170,23 @@ URL HistoryItem::originalURL() const
     return URL({ }, m_originalURLString);
 }
 
-const String& HistoryItem::referrer() const
+const RefPtr<StringImpl>& HistoryItem::referrer() const
 {
     return m_referrer;
 }
 
-const AtomString& HistoryItem::target() const
+const RefPtr<AtomStringImpl>& HistoryItem::target() const
 {
     return m_target;
 }
 
-void HistoryItem::setAlternateTitle(const String& alternateTitle)
+void HistoryItem::setAlternateTitle(StringImpl* alternateTitle)
 {
     m_displayTitle = alternateTitle;
     notifyChanged();
 }
 
-void HistoryItem::setURLString(const String& urlString)
+void HistoryItem::setURLString(StringImpl* urlString)
 {
     m_urlString = urlString;
     notifyChanged();
@@ -199,25 +199,25 @@ void HistoryItem::setURL(const URL& url)
     clearDocumentState();
 }
 
-void HistoryItem::setOriginalURLString(const String& urlString)
+void HistoryItem::setOriginalURLString(StringImpl* urlString)
 {
     m_originalURLString = urlString;
     notifyChanged();
 }
 
-void HistoryItem::setReferrer(String&& referrer)
+void HistoryItem::setReferrer(RefPtr<StringImpl>&& referrer)
 {
     m_referrer = WTF::move(referrer);
     notifyChanged();
 }
 
-void HistoryItem::setTitle(String&& title)
+void HistoryItem::setTitle(RefPtr<StringImpl>&& title)
 {
     m_title = WTF::move(title);
     notifyChanged();
 }
 
-void HistoryItem::setTarget(const AtomString& target)
+void HistoryItem::setTarget(AtomStringImpl* target)
 {
     m_target = target;
     notifyChanged();
@@ -265,13 +265,13 @@ void HistoryItem::setPageScaleFactor(float scaleFactor)
     m_pageScaleFactor = scaleFactor;
 }
 
-void HistoryItem::setDocumentState(const Vector<AtomString>& state)
+void HistoryItem::setDocumentState(const Vector<RefPtr<AtomStringImpl>>& state)
 {
     m_documentState = state;
     notifyChanged();
 }
 
-const Vector<AtomString>& HistoryItem::documentState() const
+const Vector<RefPtr<AtomStringImpl>>& HistoryItem::documentState() const
 {
     return m_documentState;
 }
@@ -323,7 +323,7 @@ void HistoryItem::setChildItem(Ref<HistoryItem>&& child)
     m_children.append(WTF::move(child));
 }
 
-HistoryItem* HistoryItem::childItemWithTarget(const AtomString& target)
+HistoryItem* HistoryItem::childItemWithTarget(AtomStringImpl* target)
 {
     unsigned size = m_children.size();
     for (unsigned i = 0; i < size; ++i) {
@@ -363,7 +363,7 @@ bool HistoryItem::shouldDoSameDocumentNavigationTo(HistoryItem& otherItem) const
     return documentSequenceNumber() == otherItem.documentSequenceNumber();
 }
 
-String HistoryItem::formContentType() const
+RefPtr<StringImpl> HistoryItem::formContentType() const
 {
     return m_formContentType;
 }
@@ -379,7 +379,7 @@ void HistoryItem::setFormInfoFromRequest(const ResourceRequest& request)
         m_formContentType = request.httpContentType();
     } else {
         m_formData = nullptr;
-        m_formContentType = String();
+        m_formContentType = nullptr;
     }
 }
 
@@ -388,7 +388,7 @@ void HistoryItem::setFormData(RefPtr<FormData>&& formData)
     m_formData = WTF::move(formData);
 }
 
-void HistoryItem::setFormContentType(const String& formContentType)
+void HistoryItem::setFormContentType(StringImpl* formContentType)
 {
     m_formContentType = formContentType;
 }
@@ -431,7 +431,7 @@ int HistoryItem::showTreeWithIndent(unsigned indentLevel) const
     for (unsigned i = 0; i < indentLevel; ++i)
         prefix.append("  "_s);
 
-    SAFE_FPRINTF(stderr, "%s+-%s (%p)\n", prefix.toString().utf8(), m_urlString.utf8(), this);
+    SAFE_FPRINTF(stderr, "%s+-%s (%p)\n", utf8(prefix.toString()), utf8(m_urlString), this);
     
     int totalSubItems = 0;
     for (unsigned i = 0; i < m_children.size(); ++i)
@@ -442,7 +442,7 @@ int HistoryItem::showTreeWithIndent(unsigned indentLevel) const
 #endif
 
 #if !LOG_DISABLED
-String HistoryItem::logString() const
+RefPtr<StringImpl> HistoryItem::logString() const
 {
     return makeString("HistoryItem current URL "_s, urlString(), ", identifier "_s, m_itemID.toString());
 }

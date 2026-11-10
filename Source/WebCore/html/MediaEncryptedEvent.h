@@ -44,20 +44,20 @@ class MediaEncryptedEvent final : public Event {
 public:
     using Init = MediaEncryptedEventInit;
 
-    static Ref<MediaEncryptedEvent> create(const AtomString& type, const MediaEncryptedEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<MediaEncryptedEvent> create(AtomStringImpl* type, const MediaEncryptedEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new MediaEncryptedEvent(type, initializer, isTrusted));
     }
 
     virtual ~MediaEncryptedEvent();
 
-    String initDataType() { return m_initDataType; }
+    RefPtr<StringImpl> initDataType() { return m_initDataType; }
     JSC::ArrayBuffer* initData() { return m_initData.get(); }
 
 private:
-    MediaEncryptedEvent(const AtomString&, const MediaEncryptedEventInit&, IsTrusted);
+    MediaEncryptedEvent(AtomStringImpl*, const MediaEncryptedEventInit&, IsTrusted);
 
-    String m_initDataType;
+    RefPtr<StringImpl> m_initDataType;
     const RefPtr<JSC::ArrayBuffer> m_initData;
 };
 

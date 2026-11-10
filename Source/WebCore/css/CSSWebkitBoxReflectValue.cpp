@@ -42,7 +42,7 @@ Ref<CSSWebkitBoxReflectValue> CSSWebkitBoxReflectValue::create(CSS::WebkitBoxRef
     return adoptRef(*new CSSWebkitBoxReflectValue(WTF::move(reflect)));
 }
 
-String CSSWebkitBoxReflectValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSWebkitBoxReflectValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_reflect);
 }

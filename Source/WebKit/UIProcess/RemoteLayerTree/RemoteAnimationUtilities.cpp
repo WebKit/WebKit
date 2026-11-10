@@ -51,33 +51,33 @@
 
 namespace WebKit {
 
-String toStringForTesting(WebCore::AcceleratedEffectProperty property)
+RefPtr<StringImpl> toStringForTesting(WebCore::AcceleratedEffectProperty property)
 {
     switch (property) {
     case WebCore::AcceleratedEffectProperty::Opacity:
-        return "opacity"_s;
+        return "opacity"_si;
     case WebCore::AcceleratedEffectProperty::Transform:
-        return "transform"_s;
+        return "transform"_si;
     case WebCore::AcceleratedEffectProperty::Translate:
-        return "translate"_s;
+        return "translate"_si;
     case WebCore::AcceleratedEffectProperty::Rotate:
-        return "rotate"_s;
+        return "rotate"_si;
     case WebCore::AcceleratedEffectProperty::Scale:
-        return "scale"_s;
+        return "scale"_si;
     case WebCore::AcceleratedEffectProperty::OffsetPath:
-        return "offsetPath"_s;
+        return "offsetPath"_si;
     case WebCore::AcceleratedEffectProperty::OffsetDistance:
-        return "offsetDistance"_s;
+        return "offsetDistance"_si;
     case WebCore::AcceleratedEffectProperty::OffsetPosition:
-        return "offsetPosition"_s;
+        return "offsetPosition"_si;
     case WebCore::AcceleratedEffectProperty::OffsetAnchor:
-        return "offsetAnchor"_s;
+        return "offsetAnchor"_si;
     case WebCore::AcceleratedEffectProperty::OffsetRotate:
-        return "offsetRotate"_s;
+        return "offsetRotate"_si;
     case WebCore::AcceleratedEffectProperty::Filter:
-        return "filter"_s;
+        return "filter"_si;
     case WebCore::AcceleratedEffectProperty::BackdropFilter:
-        return "backdropFilter"_s;
+        return "backdropFilter"_si;
     default:
         ASSERT_NOT_REACHED();
         return emptyString();
@@ -156,8 +156,8 @@ Ref<JSON::Object> toJSONForTesting(const WebCore::AcceleratedEffectValues& value
 
     auto convertFloatPoint = [](const WebCore::FloatPoint& point) {
         Ref object = JSON::Object::create();
-        object->setDouble("x"_s, point.x());
-        object->setDouble("y"_s, point.y());
+        object->setDouble("x"_si, point.x());
+        object->setDouble("y"_si, point.y());
         return object;
     };
 
@@ -171,10 +171,10 @@ Ref<JSON::Object> toJSONForTesting(const WebCore::AcceleratedEffectValues& value
         case WebCore::AcceleratedEffectProperty::Rotate: {
             if (RefPtr rotate = dynamicDowncast<WebCore::RotateTransformOperation>(values.rotate)) {
                 Ref object = JSON::Object::create();
-                object->setDouble("x"_s, rotate->x());
-                object->setDouble("y"_s, rotate->y());
-                object->setDouble("z"_s, rotate->z());
-                object->setDouble("angle"_s, rotate->angle());
+                object->setDouble("x"_si, rotate->x());
+                object->setDouble("y"_si, rotate->y());
+                object->setDouble("z"_si, rotate->z());
+                object->setDouble("angle"_si, rotate->angle());
                 convertedValues->setObject(propertyName, WTF::move(object));
             } else
                 convertedValues->setValue(propertyName, JSON::Value::null());
@@ -183,9 +183,9 @@ Ref<JSON::Object> toJSONForTesting(const WebCore::AcceleratedEffectValues& value
         case WebCore::AcceleratedEffectProperty::Scale: {
             if (RefPtr scale = downcast<WebCore::ScaleTransformOperation>(values.scale)) {
                 Ref object = JSON::Object::create();
-                object->setDouble("x"_s, scale->x());
-                object->setDouble("y"_s, scale->y());
-                object->setDouble("z"_s, scale->z());
+                object->setDouble("x"_si, scale->x());
+                object->setDouble("y"_si, scale->y());
+                object->setDouble("z"_si, scale->z());
                 convertedValues->setObject(propertyName, WTF::move(object));
             } else
                 convertedValues->setValue(propertyName, JSON::Value::null());
@@ -205,9 +205,9 @@ Ref<JSON::Object> toJSONForTesting(const WebCore::AcceleratedEffectValues& value
         case WebCore::AcceleratedEffectProperty::Translate: {
             if (RefPtr translate = downcast<WebCore::TranslateTransformOperation>(values.translate)) {
                 Ref object = JSON::Object::create();
-                object->setDouble("x"_s, translate->x());
-                object->setDouble("y"_s, translate->y());
-                object->setDouble("z"_s, translate->z());
+                object->setDouble("x"_si, translate->x());
+                object->setDouble("y"_si, translate->y());
+                object->setDouble("z"_si, translate->z());
                 convertedValues->setObject(propertyName, WTF::move(object));
             } else
                 convertedValues->setValue(propertyName, JSON::Value::null());
@@ -218,8 +218,8 @@ Ref<JSON::Object> toJSONForTesting(const WebCore::AcceleratedEffectValues& value
             break;
         case WebCore::AcceleratedEffectProperty::OffsetPosition:
             WTF::switchOn(values.offsetPosition.value,
-                [&](const WebCore::AcceleratedEffectOffsetPosition::Normal&) { convertedValues->setString(propertyName, "normal"_s); },
-                [&](const WebCore::AcceleratedEffectOffsetPosition::Auto&) { convertedValues->setString(propertyName, "auto"_s); },
+                [&](const WebCore::AcceleratedEffectOffsetPosition::Normal&) { convertedValues->setString(propertyName, "normal"_si); },
+                [&](const WebCore::AcceleratedEffectOffsetPosition::Auto&) { convertedValues->setString(propertyName, "auto"_si); },
                 [&](const WebCore::FloatPoint& point) { convertedValues->setObject(propertyName, convertFloatPoint(point)); }
             );
             break;
@@ -231,7 +231,7 @@ Ref<JSON::Object> toJSONForTesting(const WebCore::AcceleratedEffectValues& value
             break;
         case WebCore::AcceleratedEffectProperty::OffsetRotate:
             if (values.offsetRotate.hasAuto)
-                convertedValues->setString(propertyName, "auto"_s);
+                convertedValues->setString(propertyName, "auto"_si);
             else
                 convertedValues->setDouble(propertyName, values.offsetRotate.angle);
             break;
@@ -285,16 +285,16 @@ Ref<JSON::Object> toJSONForTesting(const WebCore::AnimationEffectTiming& timing)
     };
 
     Ref object = JSON::Object::create();
-    object->setString("direction"_s, convertDirection(timing.direction));
-    object->setValue("easing"_s, toJSONForTesting(timing.timingFunction));
-    object->setString("fill"_s, convertFill(timing.fill));
-    object->setDouble("iterationStart"_s, timing.iterationStart);
-    object->setDouble("iterations"_s, timing.iterations);
-    object->setValue("startDelay"_s, WebKit::toJSONForTesting(timing.startDelay));
-    object->setValue("endDelay"_s, WebKit::toJSONForTesting(timing.endDelay));
-    object->setValue("iterationDuration"_s, WebKit::toJSONForTesting(timing.iterationDuration));
-    object->setValue("activeDuration"_s, WebKit::toJSONForTesting(timing.activeDuration));
-    object->setValue("endTime"_s, WebKit::toJSONForTesting(timing.endTime));
+    object->setString("direction"_si, StringImpl::create(convertDirection(timing.direction)).ptr());
+    object->setValue("easing"_si, toJSONForTesting(timing.timingFunction));
+    object->setString("fill"_si, StringImpl::create(convertFill(timing.fill)).ptr());
+    object->setDouble("iterationStart"_si, timing.iterationStart);
+    object->setDouble("iterations"_si, timing.iterations);
+    object->setValue("startDelay"_si, WebKit::toJSONForTesting(timing.startDelay));
+    object->setValue("endDelay"_si, WebKit::toJSONForTesting(timing.endDelay));
+    object->setValue("iterationDuration"_si, WebKit::toJSONForTesting(timing.iterationDuration));
+    object->setValue("activeDuration"_si, WebKit::toJSONForTesting(timing.activeDuration));
+    object->setValue("endTime"_si, WebKit::toJSONForTesting(timing.endTime));
     return object;
 }
 

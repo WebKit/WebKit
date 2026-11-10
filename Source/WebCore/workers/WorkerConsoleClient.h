@@ -47,14 +47,14 @@ public:
 
 private:
     void messageWithTypeAndLevel(JSC::MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
-    void count(JSC::JSGlobalObject*, const String& label) override;
-    void countReset(JSC::JSGlobalObject*, const String& label) override;
-    void profile(JSC::JSGlobalObject*, const String& title) override;
-    void profileEnd(JSC::JSGlobalObject*, const String& title) override;
-    void takeHeapSnapshot(JSC::JSGlobalObject*, const String& title) override;
-    void time(JSC::JSGlobalObject*, const String& label) override;
-    void timeLog(JSC::JSGlobalObject*, const String& label, Ref<Inspector::ScriptArguments>&&) override;
-    void timeEnd(JSC::JSGlobalObject*, const String& label) override;
+    void count(JSC::JSGlobalObject*, StringImpl* label) override;
+    void countReset(JSC::JSGlobalObject*, StringImpl* label) override;
+    void profile(JSC::JSGlobalObject*, StringImpl* title) override;
+    void profileEnd(JSC::JSGlobalObject*, StringImpl* title) override;
+    void takeHeapSnapshot(JSC::JSGlobalObject*, StringImpl* title) override;
+    void time(JSC::JSGlobalObject*, StringImpl* label) override;
+    void timeLog(JSC::JSGlobalObject*, StringImpl* label, Ref<Inspector::ScriptArguments>&&) override;
+    void timeEnd(JSC::JSGlobalObject*, StringImpl* label) override;
     void timeStamp(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
     void record(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
     void recordEnd(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;

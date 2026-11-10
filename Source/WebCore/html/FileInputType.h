@@ -55,33 +55,33 @@ public:
 
     virtual ~FileInputType();
 
-    String firstElementPathForInputValue() const; // Checked first, before internal storage or the value attribute.
+    RefPtr<StringImpl> firstElementPathForInputValue() const; // Checked first, before internal storage or the value attribute.
     FileList& files() const { return m_fileList; }
     void setFiles(RefPtr<FileList>&&, WasSetByJavaScript);
 
-    static std::pair<Vector<FileChooserFileInfo>, String> filesFromFormControlState(const FormControlState&);
+    static std::pair<Vector<FileChooserFileInfo>, RefPtr<StringImpl>> filesFromFormControlState(const FormControlState&);
     bool canSetStringValue() const final;
     bool valueMissing(StringView) const final;
 
 private:
     explicit FileInputType(HTMLInputElement&);
 
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
     bool appendFormData(DOMFormData&) const final;
-    String valueMissingText() const final;
+    RefPtr<StringImpl> valueMissingText() const final;
     void handleDOMActivateEvent(Event&) final;
     RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) final;
     enum class RequestIcon : bool { No, Yes };
     void setFiles(RefPtr<FileList>&&, RequestIcon, WasSetByJavaScript);
-    NODELETE String displayString() const final;
-    void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
+    NODELETE RefPtr<StringImpl> displayString() const final;
+    void setValue(StringImpl*, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
     void showPicker() final;
     bool allowsShowPickerAcrossFrames() final;
 
 #if ENABLE(DRAG_SUPPORT)
-    bool receiveDroppedFilesWithImageTranscoding(const Vector<String>& paths);
+    bool receiveDroppedFilesWithImageTranscoding(const Vector<RefPtr<StringImpl>>& paths);
     bool receiveDroppedFiles(const DragData&) final;
 #endif
 
@@ -89,10 +89,10 @@ private:
     void createShadowSubtree() final;
     void disabledStateChanged() final;
     void attributeChanged(const QualifiedName&) final;
-    String defaultToolTip() const final;
+    RefPtr<StringImpl> defaultToolTip() const final;
 
-    void filesChosen(const Vector<FileChooserFileInfo>&, const String& displayString = { }, Icon* = nullptr) final;
-    void filesChosen(const Vector<String>& paths, const Vector<String>& replacementPaths = { });
+    void filesChosen(const Vector<FileChooserFileInfo>&, StringImpl* displayString = nullptr, Icon* = nullptr) final;
+    void filesChosen(const Vector<RefPtr<StringImpl>>& paths, const Vector<RefPtr<StringImpl>>& replacementPaths = { });
     void fileChoosingCancelled();
 
     // FileIconLoaderClient implementation.
@@ -101,7 +101,7 @@ private:
     FileChooserSettings fileChooserSettings() const;
     void applyFileChooserSettings();
     void didCreateFileList(Ref<FileList>&&, RefPtr<Icon>&&);
-    void requestIcon(const Vector<String>&);
+    void requestIcon(const Vector<RefPtr<StringImpl>>&);
 
     NODELETE bool allowsDirectories() const;
 
@@ -113,7 +113,7 @@ private:
     Ref<FileList> m_fileList;
     RefPtr<DirectoryFileListCreator> m_directoryFileListCreator;
     RefPtr<Icon> m_icon;
-    String m_displayString;
+    RefPtr<StringImpl> m_displayString;
 };
 
 } // namespace WebCore

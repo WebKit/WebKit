@@ -140,7 +140,7 @@ Ref<DeprecatedCSSOMValue> CustomProperty::propertyValueDeprecatedCSSOMWrapper(CS
     );
 }
 
-WTF::String CustomProperty::propertyValueSerialization(const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
+RefPtr<StringImpl> CustomProperty::propertyValueSerialization(const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
 {
     StringBuilder builder;
     propertyValueSerialization(builder, context, style);
@@ -177,7 +177,7 @@ void CustomProperty::propertyValueSerialization(StringBuilder& builder, const CS
     );
 }
 
-WTF::String CustomProperty::propertyValueSerializationForTokenization(const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
+RefPtr<StringImpl> CustomProperty::propertyValueSerializationForTokenization(const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
 {
     StringBuilder builder;
     propertyValueSerializationForTokenization(builder, context, style);

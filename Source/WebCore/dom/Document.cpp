@@ -701,7 +701,7 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
 #if ENABLE(XSLT)
     , m_applyPendingXSLTransformsTimer(*this, &Document::applyPendingXSLTransformsTimerFired)
 #endif
-    , m_xmlVersion("1.0"_s)
+    , m_xmlVersion("1.0"_si)
     , m_intersectionObserversInitialUpdateTimer(*this, &Document::intersectionObserversInitialUpdateTimerFired)
     , m_loadEventDelayTimer(*this, &Document::loadEventDelayTimerFired)
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
@@ -1262,17 +1262,17 @@ ReportingScope& Document::ensureReportingScope()
     return *m_reportingScope;
 }
 
-void Document::setMarkupUnsafe(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
+void Document::setMarkupUnsafe(StringImpl* markup, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     ASSERT(!hasChildNodes());
     auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent } | parserContentPolicy;
     setParserContentPolicy(policy);
-    if (this->contentType() == textHTMLContentTypeAtom()) {
+    if (equal(this->contentType(), textHTMLContentTypeAtom())) {
         Ref html = HTMLHtmlElement::create(*this);
         Ref body = HTMLBodyElement::create(*this);
         html->appendChild(body);
         body->beginParsingChildren();
-        if (tryFastParsingHTMLFragment(StringView { markup }.substring(markup.find(isNotASCIIWhitespace<char16_t>)), *this, body, body, policy)) [[likely]] {
+        if (tryFastParsingHTMLFragment(StringView { markup }.substring(find(markup, isNotASCIIWhitespace<char16_t>)), *this, body, body, policy)) [[likely]] {
             body->finishParsingChildren();
             Ref head = HTMLHeadElement::create(*this);
             html->insertBefore(head, body.ptr());
@@ -1281,13 +1281,13 @@ void Document::setMarkupUnsafe(const String& markup, OptionSet<ParserContentPoli
         }
     }
     open();
-    protect(parser())->appendSynchronously(markup.impl());
+    protect(parser())->appendSynchronously(markup);
     close();
 }
 
-ExceptionOr<Ref<Document>> Document::parseHTMLUnsafe(Document& context, Variant<Ref<TrustedHTML>, String>&& html)
+ExceptionOr<Ref<Document>> Document::parseHTMLUnsafe(Document& context, Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&& html)
 {
-    auto stringValueHolder = trustedTypeCompliantString(protect(context.contextDocument()), WTF::move(html), "Document parseHTMLUnsafe"_s);
+    auto stringValueHolder = trustedTypeCompliantString(protect(context.contextDocument()), WTF::move(html), "Document parseHTMLUnsafe"_si);
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
 
@@ -1298,9 +1298,9 @@ ExceptionOr<Ref<Document>> Document::parseHTMLUnsafe(Document& context, Variant<
     return { document };
 }
 
-Element* Document::elementForAccessKey(const String& key)
+Element* Document::elementForAccessKey(StringImpl* key)
 {
-    if (key.isEmpty())
+    if (isEmpty(key))
         return nullptr;
     if (!m_accessKeyCache)
         buildAccessKeyCache();
@@ -1310,13 +1310,13 @@ Element* Document::elementForAccessKey(const String& key)
 void Document::buildAccessKeyCache()
 {
     m_accessKeyCache = [this] {
-        HashMap<String, WeakPtr<Element, WeakPtrImplWithEventTargetData>, ASCIICaseInsensitiveHash> map;
+        HashMap<RefPtr<StringImpl>, WeakPtr<Element, WeakPtrImplWithEventTargetData>, ASCIICaseInsensitiveHash> map;
         for (CheckedRef node : composedTreeDescendants(*this)) {
             CheckedPtr element = dynamicDowncast<Element>(node);
             if (!element)
                 continue;
             auto& key = element->attributeWithoutSynchronization(accesskeyAttr);
-            if (key.isEmpty())
+            if (isEmpty(key))
                 continue;
             map.add(key, *element);
         }
@@ -1335,15 +1335,15 @@ public:
     static constexpr unsigned maxSize = 8;
 
     struct Entry {
-        String selector;
+        RefPtr<StringImpl> selector;
         Variant<Ref<NodeList>, RefPtr<Element>> result;
-        AtomString classNameToMatch;
+        RefPtr<AtomStringImpl> classNameToMatch;
     };
 
-    Entry* find(const String& selector)
+    Entry* find(StringImpl* selector)
     {
         auto index = entries.findIf([&](auto& entry) {
-            return entry.selector == selector;
+            return equal(entry.selector, selector);
         });
         return index == notFound ? nullptr : &entries[index];
     }
@@ -1374,7 +1374,7 @@ QuerySelectorResults& Document::ensureQuerySelectorResults(ContainerNode& contex
     }).iterator->value;
 }
 
-RefPtr<NodeList> Document::resultForSelectorAll(ContainerNode& context, const String& selectorString)
+RefPtr<NodeList> Document::resultForSelectorAll(ContainerNode& context, StringImpl* selectorString)
 {
     auto* results = querySelectorResults(context);
     if (!results)
@@ -1387,7 +1387,7 @@ RefPtr<NodeList> Document::resultForSelectorAll(ContainerNode& context, const St
     return nullptr;
 }
 
-void Document::addResultForSelectorAll(ContainerNode& context, const String& selectorString, NodeList& nodeList, const AtomString& classNameToMatch)
+void Document::addResultForSelectorAll(ContainerNode& context, StringImpl* selectorString, NodeList& nodeList, AtomStringImpl* classNameToMatch)
 {
     auto& results = ensureQuerySelectorResults(context);
     if (auto* entry = results.find(selectorString)) {
@@ -1397,7 +1397,7 @@ void Document::addResultForSelectorAll(ContainerNode& context, const String& sel
     results.add({ selectorString, nodeList, classNameToMatch });
 }
 
-std::optional<Element*> Document::resultForSelector(ContainerNode& context, const String& selectorString)
+std::optional<Element*> Document::resultForSelector(ContainerNode& context, StringImpl* selectorString)
 {
     auto* results = querySelectorResults(context);
     if (!results)
@@ -1412,7 +1412,7 @@ std::optional<Element*> Document::resultForSelector(ContainerNode& context, cons
     });
 }
 
-void Document::addResultForSelector(ContainerNode& context, const String& selectorString, Element* firstElement, const AtomString& classNameToMatch)
+void Document::addResultForSelector(ContainerNode& context, StringImpl* selectorString, Element* firstElement, AtomStringImpl* classNameToMatch)
 {
     auto& results = ensureQuerySelectorResults(context);
     ASSERT(!results.find(selectorString));
@@ -1446,7 +1446,7 @@ void Document::invalidateQuerySelectorResultsForClassAttributeChange(Node& start
         unsigned index = 0;
         while (index < entries.size()) {
             auto& entry = entries[index];
-            if (!entry.classNameToMatch.isNull() && oldClasses.contains(entry.classNameToMatch) != newClasses.contains(entry.classNameToMatch))
+            if (entry.classNameToMatch && oldClasses.contains(entry.classNameToMatch) != newClasses.contains(entry.classNameToMatch))
                 entries.removeAt(index);
             else
                 ++index;
@@ -1468,9 +1468,9 @@ void Document::clearQuerySelectorResults()
     m_querySelectorResults.clear();
 }
 
-ExceptionOr<SelectorQuery&> Document::selectorQueryForString(const String& selectorString)
+ExceptionOr<SelectorQuery&> Document::selectorQueryForString(StringImpl* selectorString)
 {
-    if (selectorString.isEmpty())
+    if (isEmpty(selectorString))
         return Exception { ExceptionCode::SyntaxError, makeString('\'', selectorString, "' is not a valid selector."_s) };
 
     auto* query = SelectorQueryCache::singleton().add(selectorString, *this);
@@ -1509,7 +1509,7 @@ void Document::setCompatibilityMode(DocumentCompatibilityMode mode)
     invalidateCachedCSSParserContext();
 }
 
-String Document::compatMode() const
+RefPtr<StringImpl> Document::compatMode() const
 {
     return inQuirksMode() ? "BackCompat"_s : "CSS1Compat"_s;
 }
@@ -1607,8 +1607,8 @@ void Document::childrenChanged(const ChildChange& change)
     styleScope().clearResolver();
 }
 
-static ALWAYS_INLINE CustomElementNameValidationStatus validateCustomElementNameWithoutCheckingStandardElementNames(const AtomString&);
-static ALWAYS_INLINE bool isStandardElementName(const AtomString& localName);
+static ALWAYS_INLINE CustomElementNameValidationStatus validateCustomElementNameWithoutCheckingStandardElementNames(AtomStringImpl*);
+static ALWAYS_INLINE bool isStandardElementName(AtomStringImpl* localName);
 
 static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, CustomElementRegistry* registry, const QualifiedName& name)
 {
@@ -1627,7 +1627,7 @@ static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& do
     return element;
 }
 
-static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, CustomElementRegistry* registry, const AtomString& localName)
+static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, CustomElementRegistry* registry, AtomStringImpl* localName)
 {
     return createUpgradeCandidateElement(document, registry, QualifiedName { nullAtom(), localName, xhtmlNamespaceURI });
 }
@@ -1653,7 +1653,7 @@ static ExceptionOr<Ref<Element>> createHTMLElementWithNameValidation(Document& d
     return Ref<Element> { createUpgradeCandidateElement(document, registry, name) };
 }
 
-ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& name, Variant<String, ElementCreationOptions>&& argument)
+ExceptionOr<Ref<Element>> Document::createElementForBindings(AtomStringImpl* name, Variant<RefPtr<StringImpl>, ElementCreationOptions>&& argument)
 {
     Ref document = *this;
     RefPtr<CustomElementRegistry> registry;
@@ -1670,7 +1670,7 @@ ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& n
 
     auto result = [&]() -> ExceptionOr<Ref<Element>> {
         if (document->isHTMLDocument())
-            return createHTMLElementWithNameValidation(document, name.convertToASCIILowercase(), registry.get());
+            return createHTMLElementWithNameValidation(document, convertToASCIILowercase(name), registry.get());
 
         if (document->isXHTMLDocument())
             return createHTMLElementWithNameValidation(document, name, registry.get());
@@ -1693,7 +1693,7 @@ ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& n
     return element;
 }
 
-ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& name)
+ExceptionOr<Ref<Element>> Document::createElementForBindings(AtomStringImpl* name)
 {
     return createElementForBindings(name, { });
 }
@@ -1703,39 +1703,39 @@ Ref<DocumentFragment> Document::createDocumentFragment()
     return DocumentFragment::create(*this);
 }
 
-Ref<Text> Document::createTextNode(String&& data)
+Ref<Text> Document::createTextNode(RefPtr<StringImpl>&& data)
 {
     return Text::create(*this, WTF::move(data));
 }
 
-Ref<Comment> Document::createComment(String&& data)
+Ref<Comment> Document::createComment(RefPtr<StringImpl>&& data)
 {
     return Comment::create(*this, WTF::move(data));
 }
 
-ExceptionOr<Ref<CDATASection>> Document::createCDATASection(String&& data)
+ExceptionOr<Ref<CDATASection>> Document::createCDATASection(RefPtr<StringImpl>&& data)
 {
     if (isHTMLDocument())
         return Exception { ExceptionCode::NotSupportedError };
 
-    if (data.contains("]]>"_s))
+    if (WTF::contains(data, "]]>"_s))
         return Exception { ExceptionCode::InvalidCharacterError };
 
     return CDATASection::create(*this, WTF::move(data));
 }
 
-ExceptionOr<Ref<ProcessingInstruction>> Document::createProcessingInstruction(String&& target, String&& data)
+ExceptionOr<Ref<ProcessingInstruction>> Document::createProcessingInstruction(RefPtr<StringImpl>&& target, RefPtr<StringImpl>&& data)
 {
     if (!NameValidation::isValidXMLName(target))
         return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid processing instruction target: '"_s, target, '\'') };
 
-    if (data.contains("?>"_s))
+    if (WTF::contains(data, "?>"_s))
         return Exception { ExceptionCode::InvalidCharacterError };
 
-    return ProcessingInstruction::create(*this, AtomString { WTF::move(target) }, WTF::move(data));
+    return ProcessingInstruction::create(*this, AtomStringImpl::add(WTF::move(target)), WTF::move(data));
 }
 
-Ref<Text> Document::createEditingTextNode(String&& text)
+Ref<Text> Document::createEditingTextNode(RefPtr<StringImpl>&& text)
 {
     return Text::createEditingText(*this, WTF::move(text));
 }
@@ -1985,14 +1985,14 @@ NODELETE static ALWAYS_INLINE CustomElementNameCharacterKind customElementNameCh
     return table[character];
 }
 
-NODELETE static ALWAYS_INLINE CustomElementNameValidationStatus validateCustomElementNameWithoutCheckingStandardElementNames(const AtomString& localName)
+NODELETE static ALWAYS_INLINE CustomElementNameValidationStatus validateCustomElementNameWithoutCheckingStandardElementNames(AtomStringImpl* localName)
 {
-    if (!isASCIILower(localName[0]))
+    if (!isASCIILower(codeUnitAt(localName, 0)))
         return CustomElementNameValidationStatus::FirstCharacterIsNotLowercaseASCIILetter;
 
     bool containsHyphen = false;
-    if (localName.is8Bit()) [[likely]] {
-        for (auto character : localName.string().span8()) {
+    if (is8Bit(localName)) [[likely]] {
+        for (auto character : span8(localName)) {
             switch (customElementNameCharacterKind(character)) {
             case CustomElementNameCharacterKind::Invalid:
                 return CustomElementNameValidationStatus::ContainsDisallowedCharacter;
@@ -2022,14 +2022,14 @@ NODELETE static ALWAYS_INLINE CustomElementNameValidationStatus validateCustomEl
     return CustomElementNameValidationStatus::Valid;
 }
 
-static ALWAYS_INLINE bool isStandardElementName(const AtomString& localName)
+static ALWAYS_INLINE bool isStandardElementName(AtomStringImpl* localName)
 {
 #if ENABLE(MATHML)
     const auto& annotationXmlLocalName = MathMLNames::annotation_xmlTag->localName();
 #else
-    static MainThreadNeverDestroyed<const AtomString> annotationXmlLocalName("annotation-xml"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> annotationXmlLocalName("annotation-xml"_s);
 #endif
-    static MainThreadNeverDestroyed<const AtomString> colorProfileLocalName("color-profile"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> colorProfileLocalName("color-profile"_s);
 
     return localName == SVGNames::font_faceTag->localName()
         || localName == SVGNames::font_face_formatTag->localName()
@@ -2041,7 +2041,7 @@ static ALWAYS_INLINE bool isStandardElementName(const AtomString& localName)
         || localName == colorProfileLocalName;
 }
 
-CustomElementNameValidationStatus Document::validateCustomElementName(const AtomString& localName)
+CustomElementNameValidationStatus Document::validateCustomElementName(AtomStringImpl* localName)
 {
     auto result = validateCustomElementNameWithoutCheckingStandardElementNames(localName);
     if (result != CustomElementNameValidationStatus::Valid)
@@ -2068,7 +2068,7 @@ void Document::removeFromActiveCustomElementConstructorMap(JSC::JSObject* constr
     m_activeCustomElementConstructorMap.remove(reinterpret_cast<uintptr_t>(constructor));
 }
 
-ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceURI, const AtomString& qualifiedName, Variant<String, ElementCreationOptions>&& argument)
+ExceptionOr<Ref<Element>> Document::createElementNS(AtomStringImpl* namespaceURI, AtomStringImpl* qualifiedName, Variant<RefPtr<StringImpl>, ElementCreationOptions>&& argument)
 {
     Ref document = *this;
     RefPtr<CustomElementRegistry> registry;
@@ -2124,7 +2124,7 @@ ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceU
     return element;
 }
 
-ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceURI, const AtomString& qualifiedName)
+ExceptionOr<Ref<Element>> Document::createElementNS(AtomStringImpl* namespaceURI, AtomStringImpl* qualifiedName)
 {
     return createElementNS(namespaceURI, qualifiedName, { });
 }
@@ -2153,7 +2153,7 @@ void Document::setReadyState(ReadyState readyState)
                 eventTiming->domLoading = now;
             // We do this here instead of in the Document constructor because monotonicTimestamp() is 0 when the Document constructor is running.
             if (!url().isEmpty())
-                WTFBeginSignpostWithTimeDelta(this, NavigationAndPaintTiming, -Seconds(monotonicTimestamp()), "Loading %" PRIVATE_LOG_STRING " | isMainFrame: %d", url().string().utf8(), frame() && frame()->isMainFrame());
+                WTFBeginSignpostWithTimeDelta(this, NavigationAndPaintTiming, -Seconds(monotonicTimestamp()), "Loading %" PRIVATE_LOG_STRING " | isMainFrame: %d", utf8(url().string()), frame() && frame()->isMainFrame());
             WTFEmitSignpost(this, NavigationAndPaintTiming, "domLoading");
         }
         break;
@@ -2268,20 +2268,20 @@ ASCIILiteral Document::characterSetWithUTF8Fallback() const
     return "UTF-8"_s;
 }
 
-String Document::defaultCharsetForLegacyBindings() const
+RefPtr<StringImpl> Document::defaultCharsetForLegacyBindings() const
 {
     if (!frame())
-        return "UTF-8"_s;
+        return "UTF-8"_si;
     return settings().defaultTextEncodingName();
 }
 
-void Document::setCharset(const String& charset)
+void Document::setCharset(StringImpl* charset)
 {
     if (RefPtr decoder = this->decoder())
         decoder->setEncoding(charset, TextResourceDecoder::EncodingSource::UserChosen);
 }
 
-void Document::setContentLanguage(const AtomString& language)
+void Document::setContentLanguage(AtomStringImpl* language)
 {
     if (m_contentLanguage == language)
         return;
@@ -2291,14 +2291,14 @@ void Document::setContentLanguage(const AtomString& language)
     m_styleScope->didChangeStyleSheetEnvironment();
 }
 
-const AtomString& Document::effectiveDocumentElementLanguage() const
+const RefPtr<AtomStringImpl>& Document::effectiveDocumentElementLanguage() const
 {
-    if (!m_documentElementLanguage.isNull())
+    if (m_documentElementLanguage)
         return m_documentElementLanguage;
     return m_contentLanguage;
 }
 
-void Document::setDocumentElementLanguage(const AtomString& language)
+void Document::setDocumentElementLanguage(AtomStringImpl* language)
 {
     if (m_documentElementLanguage == language)
         return;
@@ -2318,7 +2318,7 @@ void Document::setDocumentElementLanguage(const AtomString& language)
     m_styleScope->didChangeStyleSheetEnvironment();
 }
 
-ExceptionOr<void> Document::setXMLVersion(const String& version)
+ExceptionOr<void> Document::setXMLVersion(StringImpl* version)
 {
     if (!XMLDocumentParser::supportsXMLVersion(version))
         return Exception { ExceptionCode::NotSupportedError };
@@ -2332,14 +2332,14 @@ void Document::setXMLStandalone(bool standalone)
     m_xmlStandalone = standalone ? StandaloneStatus::Standalone : StandaloneStatus::NotStandalone;
 }
 
-void Document::setDocumentURI(const String& uri)
+void Document::setDocumentURI(StringImpl* uri)
 {
     // This property is read-only from JavaScript, but writable from Objective-C.
     m_documentURI = uri;
     updateBaseURL();
 }
 
-String Document::suggestedMIMEType() const
+RefPtr<StringImpl> Document::suggestedMIMEType() const
 {
     if (isXHTMLDocument())
         return applicationXHTMLContentTypeAtom();
@@ -2351,27 +2351,27 @@ String Document::suggestedMIMEType() const
         return textHTMLContentTypeAtom();
     if (RefPtr loader = this->loader())
         return loader->responseMIMEType();
-    return String();
+    return nullptr;
 }
 
-void Document::overrideMIMEType(const String& mimeType)
+void Document::overrideMIMEType(StringImpl* mimeType)
 {
     m_overriddenMIMEType = mimeType;
 }
 
-String Document::contentType() const
+RefPtr<StringImpl> Document::contentType() const
 {
-    if (!m_overriddenMIMEType.isNull())
+    if (m_overriddenMIMEType)
         return m_overriddenMIMEType;
 
     if (auto* documentLoader = loader())
         return documentLoader->currentContentType();
 
-    String mimeType = suggestedMIMEType();
-    if (!mimeType.isNull())
+    RefPtr<StringImpl> mimeType = suggestedMIMEType();
+    if (mimeType)
         return mimeType;
 
-    return "application/xml"_s;
+    return "application/xml"_si;
 }
 
 RefPtr<Range> Document::caretRangeFromPoint(int x, int y, HitTestSource source)
@@ -2503,7 +2503,7 @@ RefPtr<Element> Document::scrollingElement()
     return documentElement();
 }
 
-static String canonicalizedTitle(Document& document, const String& title)
+static RefPtr<StringImpl> canonicalizedTitle(Document& document, StringImpl* title)
 {
     // Collapse runs of HTML spaces into single space characters.
     // Strip leading and trailing spaces.
@@ -2528,7 +2528,7 @@ static String canonicalizedTitle(Document& document, const String& title)
         }
     }
 
-    return builder == title ? title : builder.toString();
+    return builder == title ? RefPtr { title } : builder.toString();
 }
 
 void Document::updateTitle(const StringWithDirection& title)
@@ -2569,7 +2569,7 @@ void Document::updateTitleFromTitleElement()
     }
 }
 
-void Document::setTitle(String&& title)
+void Document::setTitle(RefPtr<StringImpl>&& title)
 {
     RefPtr element = documentElement();
     if (RefPtr svgElement = dynamicDowncast<SVGSVGElement>(element.get())) {
@@ -2582,7 +2582,7 @@ void Document::setTitle(String&& title)
         if (RefPtr titleElement = m_titleElement)
             titleElement->setTextContent(WTF::move(title));
     } else if (is<HTMLElement>(element)) {
-        std::optional<String> oldTitle;
+        std::optional<RefPtr<StringImpl>> oldTitle;
         if (!m_titleElement) {
             RefPtr headElement = head();
             if (!headElement)
@@ -2598,12 +2598,12 @@ void Document::setTitle(String&& title)
             return;
 
         Ref titleElement = *m_titleElement;
-        titleElement->setTextContent(String { title });
+        titleElement->setTextContent(RefPtr<StringImpl> { title });
         CheckedPtr textManipulationController = textManipulationControllerIfExists();
         if (textManipulationController) [[unlikely]] {
             if (!oldTitle)
                 textManipulationController->didAddOrCreateRendererForNode(titleElement);
-            else if (*oldTitle != title)
+            else if (!equal(*oldTitle, title))
                 textManipulationController->didUpdateContentForNode(titleElement);
         }
     }
@@ -2771,12 +2771,12 @@ void Document::forEachMediaElement(NOESCAPE const Function<void(HTMLMediaElement
     });
 }
 
-Vector<CueMatch> Document::findCueMatches(const String& target, FindOptions options)
+Vector<CueMatch> Document::findCueMatches(StringImpl* target, FindOptions options)
 {
     Vector<CueMatch> results;
     if (!settings().findInVideoEnabled())
         return results;
-    if (target.isEmpty())
+    if (isEmpty(target))
         return results;
 
     Vector<Ref<HTMLMediaElement>> elements;
@@ -2798,9 +2798,9 @@ Vector<CueMatch> Document::findCueMatches(const String& target, FindOptions opti
 
 #endif
 
-String Document::nodeName() const
+RefPtr<StringImpl> Document::nodeName() const
 {
-    return "#document"_s;
+    return "#document"_si;
 }
 
 WakeLockManager& Document::wakeLockManager()
@@ -2817,14 +2817,14 @@ FormController& Document::formController()
     return *m_formController;
 }
 
-Vector<AtomString> Document::formElementsState() const
+Vector<RefPtr<AtomStringImpl>> Document::formElementsState() const
 {
     if (!m_formController)
         return { };
     return m_formController->formElementsState(*this);
 }
 
-void Document::setStateForNewFormElements(const Vector<AtomString>& stateVector)
+void Document::setStateForNewFormElements(const Vector<RefPtr<AtomStringImpl>>& stateVector)
 {
     if (!stateVector.size() && !m_formController)
         return;
@@ -4196,7 +4196,7 @@ HTMLDocumentParser* Document::htmlDocumentParser() const
     return parser ? parser->asHTMLDocumentParser() : nullptr;
 }
 
-ExceptionOr<RefPtr<WindowProxy>> Document::openForBindings(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& url, const AtomString& name, const String& features)
+ExceptionOr<RefPtr<WindowProxy>> Document::openForBindings(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, StringImpl* url, AtomStringImpl* name, StringImpl* features)
 {
     if (!m_domWindow)
         return Exception { ExceptionCode::InvalidAccessError };
@@ -4204,7 +4204,7 @@ ExceptionOr<RefPtr<WindowProxy>> Document::openForBindings(LocalDOMWindow& activ
     return protect(window())->open(activeWindow, firstWindow, url, name, features);
 }
 
-ExceptionOr<Document&> Document::openForBindings(Document* entryDocument, const String&, const String&)
+ExceptionOr<Document&> Document::openForBindings(Document* entryDocument, StringImpl*, StringImpl*)
 {
     if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
         return Exception { ExceptionCode::InvalidStateError };
@@ -4370,7 +4370,7 @@ void Document::implicitOpen()
     setReadyState(ReadyState::Loading);
 }
 
-RefPtr<FontLoadRequest> Document::fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource loadedFromOpaqueSource)
+RefPtr<FontLoadRequest> Document::fontLoadRequest(StringImpl* url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
     RefPtr cachedFont = protect(fontLoader())->cachedFont(encodingParseURL(url), isSVG, isInitiatingElementInUserAgentShadowTree, loadedFromOpaqueSource);
     if (!cachedFont)
@@ -4721,13 +4721,13 @@ ExceptionOr<void> Document::write(Document* entryDocument, SegmentedString&& tex
     return { };
 }
 
-ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<Variant<Ref<TrustedHTML>, String>>&& strings, ASCIILiteral lineFeed)
+ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>>&& strings, ASCIILiteral lineFeed)
 {
     auto isTrusted = true;
     SegmentedString text;
     for (auto& entry : strings) {
         text.append(WTF::switchOn(WTF::move(entry),
-            [&isTrusted](const String& string) {
+            [&isTrusted](StringImpl* string) -> RefPtr<StringImpl> {
                 isTrusted = false;
                 return string;
             },
@@ -4742,8 +4742,8 @@ ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<Variant<R
         return write(entryDocument, WTF::move(text));
     }
 
-    String textString = text.toString();
-    auto stringValueHolder = trustedTypeCompliantString(TrustedType::TrustedHTML, protect(contextDocument()), textString, lineFeed.isEmpty() ? "Document write"_s : "Document writeln"_s);
+    RefPtr<StringImpl> textString = text.toString();
+    auto stringValueHolder = trustedTypeCompliantString(TrustedType::TrustedHTML, protect(contextDocument()), textString, StringImpl::create(lineFeed.isEmpty() ? "Document write"_s : "Document writeln"_s).ptr());
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
     SegmentedString trustedText(stringValueHolder.releaseReturnValue());
@@ -4751,12 +4751,12 @@ ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<Variant<R
     return write(entryDocument, WTF::move(trustedText));
 }
 
-ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<Variant<Ref<TrustedHTML>, String>>&& strings)
+ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>>&& strings)
 {
     return write(entryDocument, WTF::move(strings), ""_s);
 }
 
-ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<String>&& strings)
+ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<RefPtr<StringImpl>>&& strings)
 {
     SegmentedString text;
     for (auto& string : strings)
@@ -4764,17 +4764,17 @@ ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<String>&&
     return write(entryDocument, WTF::move(text));
 }
 
-ExceptionOr<void> Document::writeln(Document* entryDocument, FixedVector<Variant<Ref<TrustedHTML>, String>>&& strings)
+ExceptionOr<void> Document::writeln(Document* entryDocument, FixedVector<Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>>&& strings)
 {
     return write(entryDocument, WTF::move(strings), "\n"_s);
 }
 
-ExceptionOr<void> Document::writeln(Document* entryDocument, FixedVector<String>&& strings)
+ExceptionOr<void> Document::writeln(Document* entryDocument, FixedVector<RefPtr<StringImpl>>&& strings)
 {
     SegmentedString text;
     for (auto& string : strings)
         text.append(WTF::move(string));
-    text.append("\n"_s);
+    text.append("\n"_si);
     return write(entryDocument, WTF::move(text));
 }
 
@@ -4836,15 +4836,15 @@ EventTarget* Document::errorEventTarget()
     return m_domWindow.get();
 }
 
-void Document::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&& callStack)
+void Document::logExceptionToConsole(StringImpl* errorMessage, StringImpl* sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&& callStack)
 {
     addMessage(MessageSource::JS, MessageLevel::Error, errorMessage, sourceURL, lineNumber, columnNumber, WTF::move(callStack));
 }
 
-String Document::documentURI() const
+RefPtr<StringImpl> Document::documentURI() const
 {
     return switchOn(m_documentURI,
-        [](const String& string) { return string; },
+        [](StringImpl* string) -> RefPtr<StringImpl> { return string; },
         [](const URL& url) { return url.string(); }
     );
 }
@@ -4858,7 +4858,7 @@ void Document::setURL(URL&& url)
     if (RefPtr page = this->page())
         m_fragmentDirective = page->mainFrameURLFragment();
 
-    if (m_fragmentDirective.isEmpty())
+    if (isEmpty(m_fragmentDirective))
         m_fragmentDirective = newURL.consumeFragmentDirective();
 
     if (SecurityOrigin::shouldIgnoreHost(newURL))
@@ -4904,14 +4904,14 @@ const URL& Document::urlForBindings()
             auto& publicSuffixStore = PublicSuffixStore::singleton();
             auto domainString = publicSuffixStore.topPrivatelyControlledDomain(domain);
             auto otherDomainString = publicSuffixStore.topPrivatelyControlledDomain(otherDomain);
-            auto substringToSeparator = [](const String& string) -> String {
-                auto indexOfFirstSeparator = string.find('.');
+            auto substringToSeparator = [](StringImpl* string) -> RefPtr<StringImpl> {
+                auto indexOfFirstSeparator = find(string, '.');
                 if (indexOfFirstSeparator == notFound)
                     return { };
-                return string.left(indexOfFirstSeparator);
+                return left(string, indexOfFirstSeparator);
             };
             auto firstSubstring = substringToSeparator(domainString);
-            return !firstSubstring.isEmpty() && firstSubstring == substringToSeparator(otherDomainString);
+            return !isEmpty(firstSubstring) && equal(firstSubstring, substringToSeparator(otherDomainString));
         };
 
         auto shouldApplyBaselineProtections = [&] {
@@ -4968,7 +4968,7 @@ URL Document::fallbackBaseURL() const
     // this fallback behavior. We use a null base URL, since the documentURI attribute is an arbitrary string
     // and DOM 3 Core does not specify how it should be resolved.
     auto documentURL = switchOn(m_documentURI,
-        [](const String& string) { return URL({ }, string); },
+        [](StringImpl* string) { return URL({ }, string); },
         [](const URL& url) { return url; }
     );
 
@@ -5055,7 +5055,7 @@ void Document::processSpeculationRules()
     constexpr bool lowPriority { true };
 
     struct PrefetchCandidate {
-        Vector<Vector<String>> tagSets;
+        Vector<Vector<RefPtr<StringImpl>>> tagSets;
         std::optional<ReferrerPolicy> referrerPolicy;
     };
 
@@ -5080,11 +5080,11 @@ void Document::processSpeculationRules()
     for (auto& [url, group] : urlGroups) {
         // 7.2 Let tagsToSend be the result of collecting tags from speculative load candidates given group.
         // https://html.spec.whatwg.org/C#collect-tags-from-speculative-load-candidates
-        HashSet<String> uniqueTags;
+        HashSet<RefPtr<StringImpl>> uniqueTags;
         bool hasNullTag = false;
         for (const auto& tags : group.tagSets) {
             for (const auto& tag : tags) {
-                if (tag.isNull()) {
+                if (!tag) {
                     hasNullTag = true;
                     continue;
                 }
@@ -5092,7 +5092,7 @@ void Document::processSpeculationRules()
             }
         }
 
-        Vector<String> tagsToSend;
+        Vector<RefPtr<StringImpl>> tagsToSend;
         tagsToSend.reserveCapacity(uniqueTags.size() + (hasNullTag ? 1 : 0));
         if (hasNullTag)
             tagsToSend.append(nullAtom());
@@ -5124,34 +5124,34 @@ HTMLBaseElement* Document::firstBaseElement() const
 void Document::processBaseElement()
 {
     // Find the first href attribute in a base element and the first target attribute in a base element.
-    AtomString href;
-    AtomString target;
+    RefPtr<AtomStringImpl> href;
+    RefPtr<AtomStringImpl> target;
     RefPtr<HTMLBaseElement> baseElement;
     auto baseDescendants = descendantsOfType<HTMLBaseElement>(*this);
     for (CheckedRef base : baseDescendants) {
         if (!baseElement)
             baseElement = base.get();
 
-        if (href.isNull()) {
+        if (!href) {
             auto& value = base->attributeWithoutSynchronization(hrefAttr);
-            if (!value.isNull()) {
+            if (value) {
                 href = value;
-                if (!target.isNull())
+                if (target)
                     break;
             }
         }
-        if (target.isNull()) {
+        if (!target) {
             auto& value = base->attributeWithoutSynchronization(targetAttr);
-            if (!value.isNull()) {
+            if (value) {
                 target = value;
-                if (!href.isNull())
+                if (href)
                     break;
             }
         }
     }
 
     URL baseElementURL;
-    if (!href.isNull())
+    if (href)
         baseElementURL = encodingParseURL(href, fallbackBaseURL());
     if (m_baseElementURL != baseElementURL) {
         if (settings().shouldRestrictBaseURLSchemes() && !baseElementURL.isEmpty() && !baseElementURL.isValid()) {
@@ -5171,19 +5171,19 @@ void Document::processBaseElement()
     m_firstBaseElement = WTF::move(baseElement);
 }
 
-String Document::userAgent(const URL& url) const
+RefPtr<StringImpl> Document::userAgent(const URL& url) const
 {
     RefPtr frame = this->frame();
-    return frame ? frame->loader().userAgent(url) : String();
+    return frame ? frame->loader().userAgent(url) : nullptr;
 }
 
-String Document::navigatorPlatform() const
+RefPtr<StringImpl> Document::navigatorPlatform() const
 {
     RefPtr frame = this->frame();
-    return frame ? frame->loader().navigatorPlatform() : String();
+    return frame ? frame->loader().navigatorPlatform() : nullptr;
 }
 
-void Document::disableEval(const String& errorMessage)
+void Document::disableEval(StringImpl* errorMessage)
 {
     RefPtr frame = this->frame();
     if (!frame)
@@ -5192,7 +5192,7 @@ void Document::disableEval(const String& errorMessage)
     protect(frame->script())->setEvalEnabled(false, errorMessage);
 }
 
-void Document::disableWebAssembly(const String& errorMessage)
+void Document::disableWebAssembly(StringImpl* errorMessage)
 {
     RefPtr frame = this->frame();
     if (!frame)
@@ -5469,10 +5469,10 @@ void Document::setHasElementUsingStyleBasedEditability()
     m_hasElementUsingStyleBasedEditability = true;
 }
 
-void Document::processMetaHttpEquiv(const String& equiv, const AtomString& content, bool isInDocumentHead)
+void Document::processMetaHttpEquiv(StringImpl* equiv, AtomStringImpl* content, bool isInDocumentHead)
 {
-    ASSERT(!equiv.isNull());
-    ASSERT(!content.isNull());
+    ASSERT(equiv);
+    ASSERT(content);
 
     HttpEquivPolicy policy = httpEquivPolicy();
     if (policy != HttpEquivPolicy::Enabled) {
@@ -5488,7 +5488,7 @@ void Document::processMetaHttpEquiv(const String& equiv, const AtomString& conte
             reason = "for documents with Content-Disposition: attachment."_s;
             break;
         }
-        String message = makeString("http-equiv '"_s, equiv, "' is disabled "_s, reason);
+        RefPtr<StringImpl> message = makeString("http-equiv '"_s, equiv, "' is disabled "_s, reason);
         addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
         return;
     }
@@ -5520,7 +5520,7 @@ void Document::processMetaHttpEquiv(const String& equiv, const AtomString& conte
 
     case HTTPHeaderName::SetCookie:
         if (isHTMLDocument())
-            addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The Set-Cookie meta tag is obsolete and was ignored. Use the HTTP header Set-Cookie or document.cookie instead."_s);
+            addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The Set-Cookie meta tag is obsolete and was ignored. Use the HTTP header Set-Cookie or document.cookie instead."_si);
         break;
 
     case HTTPHeaderName::ContentLanguage:
@@ -5553,7 +5553,7 @@ void Document::processMetaHttpEquiv(const String& equiv, const AtomString& conte
     }
 }
 
-void Document::processDisabledAdaptations(const String& disabledAdaptationsString)
+void Document::processDisabledAdaptations(StringImpl* disabledAdaptationsString)
 {
     auto disabledAdaptations = parseDisabledAdaptations(disabledAdaptationsString);
     if (m_disabledAdaptations == disabledAdaptations)
@@ -5575,9 +5575,9 @@ void Document::dispatchDisabledAdaptationsDidChangeForMainFrame()
     page->chrome().dispatchDisabledAdaptationsDidChange(m_disabledAdaptations);
 }
 
-void Document::processViewport(const String& features, ViewportArguments::Type origin)
+void Document::processViewport(StringImpl* features, ViewportArguments::Type origin)
 {
-    ASSERT(!features.isNull());
+    ASSERT(features);
 
     LOG_WITH_STREAM(Viewports, stream << "Document::processViewport " << features);
 
@@ -5720,7 +5720,7 @@ static void processColorSchemeString(StringView colorScheme, NOESCAPE const Func
     }
 }
 
-void Document::processColorScheme(const String& colorSchemeString)
+void Document::processColorScheme(StringImpl* colorSchemeString)
 {
     OptionSet<ColorScheme> colorScheme;
     bool allowsTransformations = true;
@@ -5761,7 +5761,7 @@ void Document::metaElementColorSchemeChanged()
     auto& context = this->cssParserContext();
 
     auto parseColorScheme = [&](const auto& metaElement) -> std::optional<CSS::ColorScheme> {
-        const AtomString& nameValue = metaElement->attributeWithoutSynchronization(nameAttr);
+        const RefPtr<AtomStringImpl>& nameValue = metaElement->attributeWithoutSynchronization(nameAttr);
         if (!equalLettersIgnoringASCIICase(nameValue, "color-scheme"_s) && !equalLettersIgnoringASCIICase(nameValue, "supported-color-schemes"_s))
             return { };
         return CSSPropertyParserHelpers::parseUnresolvedColorScheme(metaElement->attributeWithoutSynchronization(contentAttr), context);
@@ -5852,7 +5852,7 @@ void Document::updateStyleAfterChangeInEnvironment()
 
 #if PLATFORM(IOS_FAMILY)
 
-void Document::processFormatDetection(const String& features)
+void Document::processFormatDetection(StringImpl* features)
 {
     // FIXME: Find a better place for this function.
     processFeaturesString(features, FeatureMode::Viewport, [this](StringView key, StringView value) {
@@ -5869,9 +5869,9 @@ void Document::processWebAppOrientations()
 
 #endif
 
-void Document::processReferrerPolicy(const String& policy, ReferrerPolicySource source)
+void Document::processReferrerPolicy(StringImpl* policy, ReferrerPolicySource source)
 {
-    ASSERT(!policy.isNull());
+    ASSERT(policy);
 
     // Documents in a Content-Disposition: attachment sandbox should never send a Referer header,
     // even if the document has a meta tag saying otherwise.
@@ -6098,7 +6098,7 @@ SerializedNode Document::serializeNode(CloningOperation type) const
     };
 }
 
-Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, const Settings& settings, const URL& url, const URL& baseURL, const URL& aboutBaseURL, const Variant<String, URL>& documentURI, DocumentCompatibilityMode compatibilityMode, OptionSet<ParserContentPolicy> parserContentPolicy, Document& contextDocument, SecurityOriginPolicy* securityOriginPolicy, const String& contentType, TextResourceDecoder* decoder)
+Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, const Settings& settings, const URL& url, const URL& baseURL, const URL& aboutBaseURL, const Variant<RefPtr<StringImpl>, URL>& documentURI, DocumentCompatibilityMode compatibilityMode, OptionSet<ParserContentPolicy> parserContentPolicy, Document& contextDocument, SecurityOriginPolicy* securityOriginPolicy, StringImpl* contentType, TextResourceDecoder* decoder)
 {
     Ref clone = [&] -> Ref<Document> {
         switch (clonedDocumentType) {
@@ -7393,12 +7393,12 @@ Document& Document::contextDocument() const
     return const_cast<Document&>(*this);
 }
 
-void Document::setAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& attributeValue, DOMWrapperWorld& isolatedWorld)
+void Document::setAttributeEventListener(AtomStringImpl* eventType, const QualifiedName& attributeName, AtomStringImpl* attributeValue, DOMWrapperWorld& isolatedWorld)
 {
     setAttributeEventListener(eventType, JSLazyEventListener::create(*this, attributeName, attributeValue), isolatedWorld);
 }
 
-void Document::setWindowAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& attributeValue, DOMWrapperWorld& isolatedWorld)
+void Document::setWindowAttributeEventListener(AtomStringImpl* eventType, const QualifiedName& attributeName, AtomStringImpl* attributeValue, DOMWrapperWorld& isolatedWorld)
 {
     RefPtr window = m_domWindow;
     if (!window)
@@ -7497,7 +7497,7 @@ void Document::queueTaskToDispatchDeferredLifecycleEvent(Node& node, Function<vo
     });
 }
 
-ExceptionOr<Ref<Event>> Document::createEvent(const String& type)
+ExceptionOr<Ref<Event>> Document::createEvent(StringImpl* type)
 {
     // Please do *not* add new event classes to this function unless they are required
     // for compatibility with the DOM specification or some actual legacy web content.
@@ -7581,7 +7581,7 @@ bool Document::hasListenerTypeForEventType(PlatformEvent::Type eventType) const
     }
 }
 
-void Document::addListenerTypeIfNeeded(const AtomString& eventType)
+void Document::addListenerTypeIfNeeded(AtomStringImpl* eventType)
 {
     auto& eventNames = WebCore::eventNames();
     auto typeInfo = eventNames.typeInfoForEvent(eventType);
@@ -7631,7 +7631,7 @@ void Document::addListenerTypeIfNeeded(const AtomString& eventType)
     }
 }
 
-void Document::didAddEventListenersOfType(const AtomString& eventType, IsCapture isCapture, uint16_t count)
+void Document::didAddEventListenersOfType(AtomStringImpl* eventType, IsCapture isCapture, uint16_t count)
 {
     ASSERT(count);
     addListenerTypeIfNeeded(eventType);
@@ -7640,7 +7640,7 @@ void Document::didAddEventListenersOfType(const AtomString& eventType, IsCapture
     field = std::min<uint32_t>(field + count, std::numeric_limits<uint16_t>::max());
 }
 
-void Document::didRemoveEventListenersOfType(const AtomString& eventType, IsCapture isCapture, uint16_t count)
+void Document::didRemoveEventListenersOfType(AtomStringImpl* eventType, IsCapture isCapture, uint16_t count)
 {
     ASSERT(count);
     ASSERT(m_eventListenerCounts.contains(eventType));
@@ -7685,28 +7685,28 @@ bool Document::isCookieAverse() const
     return !cookieURL.protocolIsInHTTPFamily() && !cookieURL.protocolIs("ftp"_s);
 }
 
-ExceptionOr<String> Document::cookie()
+ExceptionOr<RefPtr<StringImpl>> Document::cookie()
 {
     if (page() && !page()->settings().cookieEnabled())
-        return String();
+        return nullptr;
 
     if (isCookieAverse())
-        return String();
+        return nullptr;
 
     if (canAccessResource(ScriptExecutionContext::ResourceType::Cookies) == ScriptExecutionContext::HasResourceAccess::No)
         return Exception { ExceptionCode::SecurityError };
 
     URL cookieURL = this->cookieURL();
     if (cookieURL.isEmpty())
-        return String();
+        return nullptr;
 
     if (!isDOMCookieCacheValid() && page())
         setCachedDOMCookies(page()->cookieJar().cookies(*this, cookieURL));
 
-    return String { cachedDOMCookies() };
+    return RefPtr<StringImpl> { cachedDOMCookies() };
 }
 
-ExceptionOr<void> Document::setCookie(const String& value)
+ExceptionOr<void> Document::setCookie(StringImpl* value)
 {
     if (page() && !page()->settings().cookieEnabled())
         return { };
@@ -7727,13 +7727,13 @@ ExceptionOr<void> Document::setCookie(const String& value)
     return { };
 }
 
-String Document::referrer()
+RefPtr<StringImpl> Document::referrer()
 {
-    if (!m_referrerOverride.isEmpty())
+    if (!isEmpty(m_referrerOverride))
         return m_referrerOverride;
     if (DeprecatedGlobalSettings::trackingPreventionEnabled() && frame()) {
         auto referrerStr = frame()->loader().referrer();
-        if (!referrerStr.isEmpty()) {
+        if (!isEmpty(referrerStr)) {
             URL referrerURL { referrerStr };
             RegistrableDomain referrerRegistrableDomain { referrerURL };
             if (!referrerRegistrableDomain.matches(securityOrigin().data())) {
@@ -7744,10 +7744,10 @@ String Document::referrer()
     }
     if (frame())
         return frame()->loader().referrer();
-    return String();
+    return nullptr;
 }
 
-String Document::referrerForBindings()
+RefPtr<StringImpl> Document::referrerForBindings()
 {
     bool shouldHideFromBindings = [&] {
         RefPtr loader = this->loader();
@@ -7774,18 +7774,18 @@ String Document::referrerForBindings()
 }
 
 // https://html.spec.whatwg.org/multipage/origin.html#dom-document-domain
-String Document::domain() const
+RefPtr<StringImpl> Document::domain() const
 {
     return securityOrigin().domain();
 }
 
-ExceptionOr<void> Document::setDomain(const String& newDomain)
+ExceptionOr<void> Document::setDomain(StringImpl* newDomain)
 {
     if (!frame())
-        return Exception { ExceptionCode::SecurityError, "A browsing context is required to set a domain."_s };
+        return Exception { ExceptionCode::SecurityError, "A browsing context is required to set a domain."_si };
 
     if (isSandboxed(SandboxFlag::DocumentDomain))
-        return Exception { ExceptionCode::SecurityError, "Assignment is forbidden for sandboxed iframes."_s };
+        return Exception { ExceptionCode::SecurityError, "Assignment is forbidden for sandboxed iframes."_si };
 
     Ref securityOrigin = this->securityOrigin();
     if (LegacySchemeRegistry::isDomainRelaxationForbiddenForURLScheme(securityOrigin->protocol()))
@@ -7793,12 +7793,12 @@ ExceptionOr<void> Document::setDomain(const String& newDomain)
 
     // FIXME: We should add logging indicating why a domain was not allowed.
 
-    const String& effectiveDomain = domain();
-    if (effectiveDomain.isEmpty())
-        return Exception { ExceptionCode::SecurityError, "The document has a null effectiveDomain."_s };
+    const RefPtr<StringImpl>& effectiveDomain = domain();
+    if (isEmpty(effectiveDomain))
+        return Exception { ExceptionCode::SecurityError, "The document has a null effectiveDomain."_si };
 
     if (!securityOrigin->isMatchingRegistrableDomainSuffix(newDomain, settings().treatIPAddressAsDomain()))
-        return Exception { ExceptionCode::SecurityError, "Attempted to use a non-registrable domain."_s };
+        return Exception { ExceptionCode::SecurityError, "Attempted to use a non-registrable domain."_si };
 
     if (originAgentCluster())
         return { };
@@ -7813,7 +7813,7 @@ void Document::overrideLastModified(const std::optional<WallTime>& lastModified)
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/#dom-document-lastmodified
-String Document::lastModified() const
+RefPtr<StringImpl> Document::lastModified() const
 {
     std::optional<WallTime> dateTime;
     if (m_overrideLastModified)
@@ -7880,13 +7880,13 @@ URL Document::baseURLForComplete(const URL& baseURLOverride) const
 }
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#encoding-parsing-a-url
-URL Document::encodingParseURL(const String& url, const URL& baseURLOverride) const
+URL Document::encodingParseURL(StringImpl* url, const URL& baseURLOverride) const
 {
     // See also CSS::completeURL().
 
     // Always return a null URL when passed a null string.
     // FIXME: Should we change the URL constructor to have this behavior?
-    if (url.isNull())
+    if (!url)
         return URL();
 
     URL baseURL = baseURLForComplete(baseURLOverride);
@@ -7898,15 +7898,15 @@ URL Document::encodingParseURL(const String& url, const URL& baseURLOverride) co
 }
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#encoding-parsing-a-url
-URL Document::encodingParseURL(const String& url) const
+URL Document::encodingParseURL(StringImpl* url) const
 {
     return encodingParseURL(url, m_baseURL);
 }
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#parse-a-url
-URL Document::parseURL(const String& url) const
+URL Document::parseURL(StringImpl* url) const
 {
-    if (url.isNull())
+    if (!url)
         return URL();
     return URL(baseURLForComplete(m_baseURL), url);
 }
@@ -7938,8 +7938,8 @@ const URL& Document::maskedURLForBindings()
 {
     // This function can be called from GC heap thread, thus we need to use StaticStringImpl as a source of URL.
     // StaticStringImpl is never converted to AtomString, and it is safe to be used in any threads.
-    static NeverDestroyed<URL> url { maskedURLStringForBindings() };
-    ASSERT(url->string().impl() == &static_cast<StringImpl&>(maskedURLStringForBindings()));
+    static NeverDestroyed<URL> url { &static_cast<StringImpl&>(maskedURLStringForBindings()) };
+    ASSERT(url->string().get() == &static_cast<StringImpl&>(maskedURLStringForBindings()));
     return url;
 }
 
@@ -8202,7 +8202,7 @@ void Document::setShouldCreateRenderers(bool f)
 
 // Support for Javascript execCommand, and related methods
 
-static Editor::Command command(Document* document, const String& commandName, bool userInterface = false)
+static Editor::Command command(Document* document, StringImpl* commandName, bool userInterface = false)
 {
     Ref protectedDocument { *document };
 
@@ -8217,18 +8217,18 @@ static Editor::Command command(Document* document, const String& commandName, bo
         userInterface ? EditorCommandSource::DOMWithUserInterface : EditorCommandSource::DOM);
 }
 
-ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInterface, const Variant<String, Ref<TrustedHTML>>& value)
+ExceptionOr<bool> Document::execCommand(StringImpl* commandName, bool userInterface, const Variant<RefPtr<StringImpl>, Ref<TrustedHTML>>& value)
 {
     if (!isHTMLDocument() && !isXHTMLDocument()) [[unlikely]]
-        return Exception { ExceptionCode::InvalidStateError, "execCommand is only supported on HTML documents."_s };
+        return Exception { ExceptionCode::InvalidStateError, "execCommand is only supported on HTML documents."_si };
 
     auto stringValueHolder = WTF::switchOn(value,
-        [&commandName, this](const String& str) -> ExceptionOr<String> {
+        [&commandName, this](StringImpl* str) -> ExceptionOr<RefPtr<StringImpl>> {
             if (!equalIgnoringASCIICase(commandName, "insertHTML"_s))
-                return String(str);
-            return trustedTypeCompliantString(TrustedType::TrustedHTML, protect(contextDocument()), str, "Document execCommand"_s);
+                return RefPtr<StringImpl>(str);
+            return trustedTypeCompliantString(TrustedType::TrustedHTML, protect(contextDocument()), str, "Document execCommand"_si);
         },
-        [](const Ref<TrustedHTML>& trustedHtml) -> ExceptionOr<String> {
+        [](const Ref<TrustedHTML>& trustedHtml) -> ExceptionOr<RefPtr<StringImpl>> {
             return trustedHtml->toString();
         }
     );
@@ -8240,38 +8240,38 @@ ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInte
     return command(this, commandName, userInterface).execute(stringValueHolder.releaseReturnValue());
 }
 
-ExceptionOr<bool> Document::queryCommandEnabled(const String& commandName)
+ExceptionOr<bool> Document::queryCommandEnabled(StringImpl* commandName)
 {
     if (!isHTMLDocument() && !isXHTMLDocument()) [[unlikely]]
-        return Exception { ExceptionCode::InvalidStateError, "queryCommandEnabled is only supported on HTML documents."_s };
+        return Exception { ExceptionCode::InvalidStateError, "queryCommandEnabled is only supported on HTML documents."_si };
     return command(this, commandName).isEnabled();
 }
 
-ExceptionOr<bool> Document::queryCommandIndeterm(const String& commandName)
+ExceptionOr<bool> Document::queryCommandIndeterm(StringImpl* commandName)
 {
     if (!isHTMLDocument() && !isXHTMLDocument()) [[unlikely]]
-        return Exception { ExceptionCode::InvalidStateError, "queryCommandIndeterm is only supported on HTML documents."_s };
+        return Exception { ExceptionCode::InvalidStateError, "queryCommandIndeterm is only supported on HTML documents."_si };
     return command(this, commandName).state() == TriState::Indeterminate;
 }
 
-ExceptionOr<bool> Document::queryCommandState(const String& commandName)
+ExceptionOr<bool> Document::queryCommandState(StringImpl* commandName)
 {
     if (!isHTMLDocument() && !isXHTMLDocument()) [[unlikely]]
-        return Exception { ExceptionCode::InvalidStateError, "queryCommandState is only supported on HTML documents."_s };
+        return Exception { ExceptionCode::InvalidStateError, "queryCommandState is only supported on HTML documents."_si };
     return command(this, commandName).state() == TriState::True;
 }
 
-ExceptionOr<bool> Document::queryCommandSupported(const String& commandName)
+ExceptionOr<bool> Document::queryCommandSupported(StringImpl* commandName)
 {
     if (!isHTMLDocument() && !isXHTMLDocument()) [[unlikely]]
-        return Exception { ExceptionCode::InvalidStateError, "queryCommandSupported is only supported on HTML documents."_s };
+        return Exception { ExceptionCode::InvalidStateError, "queryCommandSupported is only supported on HTML documents."_si };
     return command(this, commandName).isSupported();
 }
 
-ExceptionOr<String> Document::queryCommandValue(const String& commandName)
+ExceptionOr<RefPtr<StringImpl>> Document::queryCommandValue(StringImpl* commandName)
 {
     if (!isHTMLDocument() && !isXHTMLDocument()) [[unlikely]]
-        return Exception { ExceptionCode::InvalidStateError, "queryCommandValue is only supported on HTML documents."_s };
+        return Exception { ExceptionCode::InvalidStateError, "queryCommandValue is only supported on HTML documents."_si };
     return command(this, commandName).value();
 }
 
@@ -8318,7 +8318,7 @@ void Document::logXSLTDeprecationWarningIfNeeded()
     if (m_hasLoggedXSLTDeprecationWarning)
         return;
     m_hasLoggedXSLTDeprecationWarning = true;
-    addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "XSLT is deprecated and will be removed in a future version of WebKit."_s);
+    addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "XSLT is deprecated and will be removed in a future version of WebKit."_si);
 }
 
 void Document::applyPendingXSLTransformsTimerFired()
@@ -8352,9 +8352,9 @@ void Document::applyPendingXSLTransformsTimerFired()
 
         Ref processor = XSLTProcessor::create();
         processor->setXSLStyleSheet(downcast<XSLStyleSheet>(processingInstruction->sheet()));
-        String resultMIMEType;
-        String newSource;
-        String resultEncoding;
+        RefPtr<StringImpl> resultMIMEType;
+        RefPtr<StringImpl> newSource;
+        RefPtr<StringImpl> resultEncoding;
         if (!processor->transformToString(*this, resultMIMEType, newSource, resultEncoding))
             continue;
         // FIXME: If the transform failed we should probably report an error (like Mozilla does).
@@ -8378,15 +8378,15 @@ void Document::logXMLExternalEntityDeprecationWarningIfNeeded()
     if (document->m_hasLoggedXMLExternalEntityDeprecationWarning)
         return;
     document->m_hasLoggedXMLExternalEntityDeprecationWarning = true;
-    document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "XML external entities are deprecated and will be removed in a future version of WebKit."_s);
+    document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "XML external entities are deprecated and will be removed in a future version of WebKit."_si);
 }
 
-String Document::designMode() const
+RefPtr<StringImpl> Document::designMode() const
 {
     return inDesignMode() ? onAtom() : offAtom();
 }
 
-void Document::setDesignMode(const String& value)
+void Document::setDesignMode(StringImpl* value)
 {
     DesignMode mode = equalLettersIgnoringASCIICase(value, "on"_s) ? DesignMode::On : DesignMode::Off;
     m_designMode = mode;
@@ -8480,14 +8480,14 @@ ScriptModuleLoader& Document::ensureModuleLoader()
     return *m_moduleLoader;
 }
 
-ExceptionOr<Ref<Attr>> Document::createAttribute(const AtomString& localName)
+ExceptionOr<Ref<Attr>> Document::createAttribute(AtomStringImpl* localName)
 {
     if (!NameValidation::isValidAttributeName(localName))
         return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid attribute name: '"_s, localName, '\'') };
-    return Attr::create(*this, QualifiedName { nullAtom(), isHTMLDocument() ? localName.convertToASCIILowercase() : localName, nullAtom() }, emptyAtom());
+    return Attr::create(*this, QualifiedName { nullAtom(), isHTMLDocument() ? convertToASCIILowercase(localName) : RefPtr { localName }, nullAtom() }, emptyAtom());
 }
 
-ExceptionOr<Ref<Attr>> Document::createAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, bool shouldIgnoreNamespaceChecks)
+ExceptionOr<Ref<Attr>> Document::createAttributeNS(AtomStringImpl* namespaceURI, AtomStringImpl* qualifiedName, bool shouldIgnoreNamespaceChecks)
 {
     auto parseResult = NameValidation::parseQualifiedAttributeName(namespaceURI, qualifiedName);
     if (parseResult.hasException())
@@ -8584,22 +8584,22 @@ Ref<HTMLAllCollection> Document::all()
     return ensureRareData().ensureNodeLists().addCachedCollection<HTMLAllCollection>(*this);
 }
 
-Ref<HTMLCollection> Document::allFilteredByName(const AtomString& name)
+Ref<HTMLCollection> Document::allFilteredByName(AtomStringImpl* name)
 {
     return ensureRareData().ensureNodeLists().addCachedCollection<HTMLAllNamedSubCollection>(*this, name);
 }
 
-Ref<HTMLCollection> Document::windowNamedItems(const AtomString& name)
+Ref<HTMLCollection> Document::windowNamedItems(AtomStringImpl* name)
 {
     return ensureRareData().ensureNodeLists().addCachedCollection<WindowNameCollection>(*this, name);
 }
 
-Ref<HTMLCollection> Document::documentNamedItems(const AtomString& name)
+Ref<HTMLCollection> Document::documentNamedItems(AtomStringImpl* name)
 {
     return ensureRareData().ensureNodeLists().addCachedCollection<DocumentNameCollection>(*this, name);
 }
 
-Ref<NodeList> Document::getElementsByName(const AtomString& elementName)
+Ref<NodeList> Document::getElementsByName(AtomStringImpl* elementName)
 {
     return ensureRareData().ensureNodeLists().addCacheWithAtomName<NameNodeList>(*this, elementName);
 }
@@ -8625,7 +8625,7 @@ void Document::flushPendingCompressionDictionaryLoads()
 
     if (RefPtr documentLoader = loader()) {
         auto linkHeader = documentLoader->response().httpHeaderField(HTTPHeaderName::Link);
-        if (!linkHeader.isEmpty()) {
+        if (!isEmpty(linkHeader)) {
             m_pendingCompressionDictionaryLoads.append([document = Ref { *this }, linkHeader = WTF::move(linkHeader)] {
                 LinkLoader::loadCompressionDictionariesFromHeader(linkHeader, document->url(), document);
             });
@@ -8733,18 +8733,18 @@ bool Document::isTelephoneNumberParsingEnabled() const
 
 #endif
 
-String Document::originIdentifierForPasteboard() const
+RefPtr<StringImpl> Document::originIdentifierForPasteboard() const
 {
     ASSERT(m_constructionDidFinish);
     auto origin = protect(securityOrigin())->toString();
-    if (origin != "null"_s)
+    if (!equal(origin, "null"_s))
         return origin;
     if (!m_uniqueIdentifier)
         m_uniqueIdentifier = makeString("null:"_s, WTF::UUID::createVersion4Weak());
     return m_uniqueIdentifier;
 }
 
-ExceptionOr<Ref<XPathExpression>> Document::createExpression(const String& expression, RefPtr<XPathNSResolver>&& resolver)
+ExceptionOr<Ref<XPathExpression>> Document::createExpression(StringImpl* expression, RefPtr<XPathNSResolver>&& resolver)
 {
     if (!m_xpathEvaluator)
         lazyInitialize(m_xpathEvaluator, XPathEvaluator::create());
@@ -8758,7 +8758,7 @@ Ref<XPathNSResolver> Document::createNSResolver(Node& nodeResolver)
     return m_xpathEvaluator->createNSResolver(nodeResolver);
 }
 
-ExceptionOr<Ref<XPathResult>> Document::evaluate(const String& expression, Node& contextNode, RefPtr<XPathNSResolver>&& resolver, unsigned short type, XPathResult* result)
+ExceptionOr<Ref<XPathResult>> Document::evaluate(StringImpl* expression, Node& contextNode, RefPtr<XPathNSResolver>&& resolver, unsigned short type, XPathResult* result)
 {
     if (!m_xpathEvaluator)
         lazyInitialize(m_xpathEvaluator, XPathEvaluator::create());
@@ -8799,8 +8799,8 @@ void Document::initSecurityContext()
     setSecurityOriginPolicy(SecurityOriginPolicy::create(isOpaqueResponse ? SecurityOrigin::createOpaque() : SecurityPolicy::determineOrigin(m_url, sandboxFlags(), nullptr)));
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
 
-    String overrideContentSecurityPolicy = m_frame->loader().client().overrideContentSecurityPolicy();
-    if (!overrideContentSecurityPolicy.isNull())
+    RefPtr<StringImpl> overrideContentSecurityPolicy = m_frame->loader().client().overrideContentSecurityPolicy();
+    if (overrideContentSecurityPolicy)
         protect(contentSecurityPolicy())->didReceiveHeader(overrideContentSecurityPolicy, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::API, referrer(), documentLoader ? documentLoader->response().httpStatusCode() : 0);
 
 #if USE(QUICK_LOOK)
@@ -9017,14 +9017,14 @@ bool Document::crossOriginIsolated() const
     return PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::CrossOriginIsolated, *this, PermissionsPolicy::ShouldReportViolation::No);
 }
 
-String Document::agentClusterID() const
+RefPtr<StringImpl> Document::agentClusterID() const
 {
     Ref origin = securityOrigin();
     auto& data = origin->data();
     // FIXME: The UI process should know when a document ends up with an opaque origin, so its identifier can account for that.
     if (origin->isOpaque()) {
         auto opaqueID = data.opaqueOriginIdentifier();
-        return makeString("opaque-"_s, opaqueID ? opaqueID->toString() : String { });
+        return makeString("opaque-"_s, opaqueID ? opaqueID->toString() : nullptr);
     }
     if (m_agentClusterIdentifier)
         return makeString("agent-cluster-"_s, m_agentClusterIdentifier->toUInt64());
@@ -9076,7 +9076,7 @@ void Document::detachRange(Range& range)
     m_ranges.remove(range);
 }
 
-std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type, const String& name, int width, int height)
+std::optional<RenderingContext> Document::getCSSCanvasContext(StringImpl* type, StringImpl* name, int width, int height)
 {
     Ref element = getCSSCanvasElement(name);
     element->setSizeForControllingContext({ width, height });
@@ -9101,20 +9101,20 @@ std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type
     return RenderingContext { downcast<CanvasRenderingContext2D>(*context) };
 }
 
-HTMLCanvasElement& Document::getCSSCanvasElement(const String& name)
+HTMLCanvasElement& Document::getCSSCanvasElement(StringImpl* name)
 {
     return m_cssCanvasElements.ensure(name, [&] {
         return HTMLCanvasElement::create(*this);
     }).iterator->value;
 }
 
-String Document::nameForCSSCanvasElement(const HTMLCanvasElement& canvasElement) const
+RefPtr<StringImpl> Document::nameForCSSCanvasElement(const HTMLCanvasElement& canvasElement) const
 {
     for (const auto& entry : m_cssCanvasElements) {
         if (entry.value.ptr() == &canvasElement)
             return entry.key;
     }
-    return String();
+    return nullptr;
 }
 
 TextAutoSizing& Document::textAutoSizing()
@@ -9124,7 +9124,7 @@ TextAutoSizing& Document::textAutoSizing()
     return *m_textAutoSizing;
 }
 
-void Document::getParserLocation(String& completedURL, unsigned& line, unsigned& column) const
+void Document::getParserLocation(RefPtr<StringImpl>& completedURL, unsigned& line, unsigned& column) const
 {
     // We definitely cannot associate the message with a location being parsed if we are not even parsing.
     if (!parsing())
@@ -9155,7 +9155,7 @@ void Document::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& co
         frame->console().addMessage(WTF::move(consoleMessage));
 }
 
-void Document::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
+void Document::addConsoleMessage(MessageSource source, MessageLevel level, StringImpl* message, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
         postTask(AddConsoleMessageTask(source, level, message));
@@ -9166,7 +9166,7 @@ void Document::addConsoleMessage(MessageSource source, MessageLevel level, const
         frame->console().addMessage(source, level, message, requestIdentifier, this);
 }
 
-void Document::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&& callStack, JSC::JSGlobalObject* state, unsigned long requestIdentifier)
+void Document::addMessage(MessageSource source, MessageLevel level, StringImpl* message, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&& callStack, JSC::JSGlobalObject* state, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
         postTask(AddConsoleMessageTask(source, level, message));
@@ -9343,7 +9343,7 @@ void Document::screenPropertiesDidChange(PlatformDisplayID displayID)
     }
 }
 
-String Document::displayStringModifiedByEncoding(const String& string) const
+RefPtr<StringImpl> Document::displayStringModifiedByEncoding(StringImpl* string) const
 {
     if (!m_decoder)
         return string;
@@ -9376,7 +9376,7 @@ void Document::dispatchPagehideEvent(PageshowEventPersistence persisted)
 }
 
 // https://www.w3.org/TR/css-view-transitions-2/#vt-rule-algo
-Variant<Document::SkipTransition, Vector<AtomString>> Document::resolveViewTransitionRule()
+Variant<Document::SkipTransition, Vector<RefPtr<AtomStringImpl>>> Document::resolveViewTransitionRule()
 {
     if (hidden())
         return SkipTransition { };
@@ -9467,7 +9467,7 @@ void Document::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventI
     queueTaskToDispatchEvent(TaskSource::DOMManipulation, SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, WTF::move(eventInit), Event::IsTrusted::Yes));
 }
 
-void Document::enqueueHashchangeEvent(const String& oldURL, const String& newURL)
+void Document::enqueueHashchangeEvent(StringImpl* oldURL, StringImpl* newURL)
 {
     // FIXME: popstate event and hashchange event are supposed to fire in a single task.
     if (RefPtr window = m_domWindow)
@@ -9512,14 +9512,14 @@ void Document::addScreenPropertiesChangedObserver(const ScreenPropertiesChangedO
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-String Document::defaultSpatialTrackingLabel() const
+RefPtr<StringImpl> Document::defaultSpatialTrackingLabel() const
 {
     if (RefPtr page = this->page())
         return page->defaultSpatialTrackingLabel();
     return emptyString();
 }
 
-void Document::defaultSpatialTrackingLabelChanged(const String& defaultSpatialTrackingLabel)
+void Document::defaultSpatialTrackingLabelChanged(StringImpl* defaultSpatialTrackingLabel)
 {
     for (auto& observer : copyToVector(m_defaultSpatialTrackingLabelChangedObservers)) {
         if (observer)
@@ -9716,7 +9716,7 @@ void Document::clearScriptedAnimationController()
 // https://html.spec.whatwg.org/multipage/dom.html#render-blocking-mechanism
 bool Document::allowsAddingRenderBlockedElements() const
 {
-    return contentType() == "text/html"_s && !body();
+    return equal(contentType(), "text/html"_s) && !body();
 }
 
 bool Document::isRenderBlocked() const
@@ -10422,11 +10422,11 @@ bool Document::haveStylesheetsLoaded() const
     return !styleScope().hasPendingSheets() || m_ignorePendingStylesheets;
 }
 
-Locale& Document::getCachedLocale(const AtomString& locale)
+Locale& Document::getCachedLocale(AtomStringImpl* locale)
 {
-    AtomString localeKey = locale;
-    if (locale.isEmpty() || !settings().langAttributeAwareFormControlUIEnabled())
-        localeKey = AtomString { defaultLanguage() };
+    RefPtr<AtomStringImpl> localeKey = locale;
+    if (isEmpty(locale) || !settings().langAttributeAwareFormControlUIEnabled())
+        localeKey = AtomStringImpl::add(defaultLanguage());
     LocaleIdentifierToLocaleMap::AddResult result = m_localeCache.add(localeKey, nullptr);
     if (result.isNewEntry)
         result.iterator->value = Locale::create(localeKey);
@@ -10651,7 +10651,7 @@ void Document::didAssociateFormControlsTimerFired()
     }
 }
 
-void Document::setCachedDOMCookies(const String& cookies)
+void Document::setCachedDOMCookies(StringImpl* cookies)
 {
     ASSERT(!isDOMCookieCacheValid());
     m_cachedDOMCookies = cookies;
@@ -10662,7 +10662,7 @@ void Document::setCachedDOMCookies(const String& cookies)
 void Document::invalidateDOMCookieCache()
 {
     m_cookieCacheExpiryTimer.stop();
-    m_cachedDOMCookies = String();
+    m_cachedDOMCookies = nullptr;
 }
 
 void Document::didLoadResourceSynchronously(const URL& url)
@@ -10746,7 +10746,7 @@ void Document::removePlaybackTargetPickerClient(MediaPlaybackTargetClient& clien
         page->removePlaybackTargetPickerClient(clientId);
 }
 
-void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool isVideo, RouteSharingPolicy routeSharingPolicy, const String& routingContextUID)
+void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool isVideo, RouteSharingPolicy routeSharingPolicy, StringImpl* routingContextUID)
 {
     RefPtr page = this->page();
     if (!page)
@@ -10862,10 +10862,10 @@ void Document::applyQuickLookSandbox()
     auto securityOrigin = SecurityOrigin::createNonLocalWithAllowedFilePath(responseURL, documentURL.fileSystemPath());
     setSecurityOriginPolicy(SecurityOriginPolicy::create(WTF::move(securityOrigin)));
 
-    static NeverDestroyed<String> quickLookCSP = makeString("default-src "_s, QLPreviewProtocol, ": 'unsafe-inline'; base-uri 'none'; sandbox allow-same-origin allow-scripts"_s);
+    static NeverDestroyed<RefPtr<StringImpl>> quickLookCSP = makeString("default-src "_s, QLPreviewProtocol, ": 'unsafe-inline'; base-uri 'none'; sandbox allow-same-origin allow-scripts"_s);
     RELEASE_ASSERT(contentSecurityPolicy());
     // The sandbox directive is only allowed if the policy is from an HTTP header.
-    protect(contentSecurityPolicy())->didReceiveHeader(quickLookCSP, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPHeader, referrer());
+    protect(contentSecurityPolicy())->didReceiveHeader(quickLookCSP.get(), ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPHeader, referrer());
 
     SandboxFlags sandboxFlagsToDisable { SandboxFlag::Navigation };
     if (isPluginDocument())
@@ -11134,7 +11134,7 @@ void Document::setHasSkippedResizeObservations(bool skipped)
 void Document::updateResizeObservations(Page& page)
 {
     if (quirks().shouldSilenceResizeObservers()) {
-        addConsoleMessage(MessageSource::Other, MessageLevel::Info, "ResizeObservers silenced due to: http://webkit.org/b/258597"_s);
+        addConsoleMessage(MessageSource::Other, MessageLevel::Info, "ResizeObservers silenced due to: http://webkit.org/b/258597"_si);
         return;
     }
 
@@ -11169,19 +11169,19 @@ void Document::updateResizeObservations(Page& page)
 
     if (hasSkippedResizeObservations()) {
         setHasSkippedResizeObservations(false);
-        reportException("ResizeObserver loop completed with undelivered notifications."_s, 0, 0, url().string(), nullptr, nullptr);
+        reportException("ResizeObserver loop completed with undelivered notifications."_si, 0, 0, url().string(), nullptr, nullptr);
         // Starting a new schedule the next round of notify.
         scheduleRenderingUpdate(RenderingUpdateStep::ResizeObservations);
     }
 }
 
-const AtomString& Document::dir() const
+const RefPtr<AtomStringImpl>& Document::dir() const
 {
     CheckedPtr documentElement = dynamicDowncast<HTMLHtmlElement>(this->documentElement());
     return documentElement ? documentElement->dir() : nullAtom();
 }
 
-void Document::setDir(const AtomString& value)
+void Document::setDir(AtomStringImpl* value)
 {
     if (RefPtr documentElement = dynamicDowncast<HTMLHtmlElement>(this->documentElement()))
         documentElement->setAttributeWithoutSynchronization(dirAttr, value);
@@ -11289,7 +11289,7 @@ void Document::updateVideoCaptureStateForMicrophoneInterruption(bool isMicrophon
 }
 #endif // ENABLE(MEDIA_STREAM)
 
-const AtomString& Document::bgColor() const
+const RefPtr<AtomStringImpl>& Document::bgColor() const
 {
     auto* bodyElement = body();
     if (!bodyElement)
@@ -11297,55 +11297,55 @@ const AtomString& Document::bgColor() const
     return bodyElement->attributeWithoutSynchronization(bgcolorAttr);
 }
 
-void Document::setBgColor(const AtomString& value)
+void Document::setBgColor(AtomStringImpl* value)
 {
     if (RefPtr bodyElement = body())
         bodyElement->setAttributeWithoutSynchronization(bgcolorAttr, value);
 }
 
-const AtomString& Document::fgColor() const
+const RefPtr<AtomStringImpl>& Document::fgColor() const
 {
     auto* bodyElement = body();
     return bodyElement ? bodyElement->attributeWithoutSynchronization(textAttr) : emptyAtom();
 }
 
-void Document::setFgColor(const AtomString& value)
+void Document::setFgColor(AtomStringImpl* value)
 {
     if (RefPtr bodyElement = body())
         bodyElement->setAttributeWithoutSynchronization(textAttr, value);
 }
 
-const AtomString& Document::alinkColor() const
+const RefPtr<AtomStringImpl>& Document::alinkColor() const
 {
     auto* bodyElement = body();
     return bodyElement ? bodyElement->attributeWithoutSynchronization(alinkAttr) : emptyAtom();
 }
 
-void Document::setAlinkColor(const AtomString& value)
+void Document::setAlinkColor(AtomStringImpl* value)
 {
     if (RefPtr bodyElement = body())
         bodyElement->setAttributeWithoutSynchronization(alinkAttr, value);
 }
 
-const AtomString& Document::linkColorForBindings() const
+const RefPtr<AtomStringImpl>& Document::linkColorForBindings() const
 {
     auto* bodyElement = body();
     return bodyElement ? bodyElement->attributeWithoutSynchronization(linkAttr) : emptyAtom();
 }
 
-void Document::setLinkColorForBindings(const AtomString& value)
+void Document::setLinkColorForBindings(AtomStringImpl* value)
 {
     if (RefPtr bodyElement = body())
         bodyElement->setAttributeWithoutSynchronization(linkAttr, value);
 }
 
-const AtomString& Document::vlinkColor() const
+const RefPtr<AtomStringImpl>& Document::vlinkColor() const
 {
     auto* bodyElement = body();
     return bodyElement ? bodyElement->attributeWithoutSynchronization(vlinkAttr) : emptyAtom();
 }
 
-void Document::setVlinkColor(const AtomString& value)
+void Document::setVlinkColor(AtomStringImpl* value)
 {
     if (RefPtr bodyElement = body())
         bodyElement->setAttributeWithoutSynchronization(vlinkAttr, value);
@@ -11462,7 +11462,7 @@ void Document::downgradeReferrerToRegistrableDomain()
         return;
 
     auto domainString = RegistrableDomain { referrerURL }.string();
-    if (domainString.isEmpty())
+    if (isEmpty(domainString))
         return;
 
     if (auto port = referrerURL.port())
@@ -11564,14 +11564,14 @@ Vector<Ref<WebAnimation>> Document::matchingAnimations(NOESCAPE const Function<b
     return animations;
 }
 
-void Document::keyframesRuleDidChange(const String& name)
+void Document::keyframesRuleDidChange(StringImpl* name)
 {
     for (auto& animation : WebAnimation::instances()) {
         CheckedPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation.get());
         if (!cssAnimation || !cssAnimation->isRelevant())
             continue;
 
-        if (cssAnimation->animationName() != name)
+        if (!equal(cssAnimation->animationName(), name))
             continue;
 
         auto owningElement = cssAnimation->owningElement();
@@ -11931,7 +11931,7 @@ void Document::handleDialogLightDismiss(const PointerEvent& event, Node& target)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void Document::registerAttachmentIdentifier(const String& identifier, const AttachmentAssociatedElement& element)
+void Document::registerAttachmentIdentifier(StringImpl* identifier, const AttachmentAssociatedElement& element)
 {
     protect(editor())->registerAttachmentIdentifier(identifier, element);
 }
@@ -11940,8 +11940,8 @@ void Document::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
 {
     auto identifier = attachment.uniqueIdentifier();
     auto previousIdentifier = identifier;
-    bool previousIdentifierIsNotUnique = !previousIdentifier.isEmpty() && m_attachmentIdentifierToElementMap.contains(previousIdentifier);
-    if (identifier.isEmpty() || previousIdentifierIsNotUnique) {
+    bool previousIdentifierIsNotUnique = !isEmpty(previousIdentifier) && m_attachmentIdentifierToElementMap.contains(previousIdentifier);
+    if (isEmpty(identifier) || previousIdentifierIsNotUnique) {
         previousIdentifier = identifier;
         identifier = createVersion4UUIDStringWeak();
         attachment.setUniqueIdentifier(identifier);
@@ -11971,7 +11971,7 @@ void Document::didRemoveAttachmentElement(HTMLAttachmentElement& attachment)
         protect(editor())->didRemoveAttachmentElement(attachment);
 }
 
-RefPtr<HTMLAttachmentElement> Document::attachmentForIdentifier(const String& identifier) const
+RefPtr<HTMLAttachmentElement> Document::attachmentForIdentifier(StringImpl* identifier) const
 {
     return m_attachmentIdentifierToElementMap.get(identifier);
 }
@@ -12241,12 +12241,12 @@ PaintWorklet& Document::ensurePaintWorklet()
     return *m_paintWorklet;
 }
 
-PaintWorkletGlobalScope* Document::paintWorkletGlobalScopeForName(const String& name)
+PaintWorkletGlobalScope* Document::paintWorkletGlobalScopeForName(StringImpl* name)
 {
     return m_paintWorkletGlobalScopes.get(name);
 }
 
-void Document::setPaintWorkletGlobalScopeForName(const String& name, Ref<PaintWorkletGlobalScope>&& scope)
+void Document::setPaintWorkletGlobalScopeForName(StringImpl* name, Ref<PaintWorkletGlobalScope>&& scope)
 {
     auto addResult = m_paintWorkletGlobalScopes.add(name, WTF::move(scope));
     ASSERT_UNUSED(addResult, addResult);
@@ -12295,7 +12295,7 @@ MessagePortChannelProvider& Document::messagePortChannelProvider()
 }
 
 #if USE(SYSTEM_PREVIEW)
-void Document::dispatchSystemPreviewActionEvent(const SystemPreviewInfo& systemPreviewInfo, const String& message)
+void Document::dispatchSystemPreviewActionEvent(const SystemPreviewInfo& systemPreviewInfo, StringImpl* message)
 {
     RefPtr node = systemPreviewInfo.element.nodeIdentifier ? Node::fromIdentifier(*systemPreviewInfo.element.nodeIdentifier) : nullptr;
     if (!is<HTMLAnchorElement>(node))
@@ -12447,7 +12447,7 @@ void Document::updateSleepDisablerIfNeeded()
 {
     MediaProducerMediaStateFlags activeVideoCaptureMask { MediaProducerMediaState::HasActiveVideoCaptureDevice, MediaProducerMediaState::HasActiveScreenCaptureDevice, MediaProducerMediaState::HasActiveWindowCaptureDevice };
     if (m_mediaState & activeVideoCaptureMask) {
-        m_sleepDisabler = makeUnique<SleepDisabler>("com.apple.WebCore: Document doing camera, screen or window capture"_s, PAL::SleepDisabler::Type::Display, pageID());
+        m_sleepDisabler = makeUnique<SleepDisabler>("com.apple.WebCore: Document doing camera, screen or window capture"_si, PAL::SleepDisabler::Type::Display, pageID());
         return;
     }
     m_sleepDisabler = nullptr;
@@ -12463,7 +12463,7 @@ JSC::VM* Document::vmIfExists() const
     return commonVMOrNull();
 }
 
-String Document::debugDescription() const
+RefPtr<StringImpl> Document::debugDescription() const
 {
     StringBuilder builder;
 
@@ -12566,23 +12566,23 @@ void Document::notifyReportObservers(Ref<Report>&& reports)
     protect(reportingScope())->notifyReportObservers(WTF::move(reports));
 }
 
-String Document::endpointURIForToken(const String& token) const
+RefPtr<StringImpl> Document::endpointURIForToken(StringImpl* token) const
 {
     return protect(reportingScope())->endpointURIForToken(token);
 }
 
-String Document::httpUserAgent() const
+RefPtr<StringImpl> Document::httpUserAgent() const
 {
     return userAgent(url());
 }
 
-void Document::sendReportToEndpoints(const URL& baseURL, std::span<const String> endpointURIs, std::span<const String> endpointTokens, Ref<FormData>&& report, ViolationReportType reportType)
+void Document::sendReportToEndpoints(const URL& baseURL, std::span<const RefPtr<StringImpl>> endpointURIs, std::span<const RefPtr<StringImpl>> endpointTokens, Ref<FormData>&& report, ViolationReportType reportType)
 {
     RefPtr frame = this->frame();
     for (auto& url : endpointURIs)
         PingLoader::sendViolationReport(*frame, URL { baseURL, url }, report.copyRef(), reportType);
     for (auto& token : endpointTokens) {
-        if (auto url = endpointURIForToken(token); !url.isEmpty())
+        if (auto url = endpointURIForToken(token); !isEmpty(url))
             PingLoader::sendViolationReport(*frame, URL { baseURL, url }, report.copyRef(), reportType);
     }
 }
@@ -12768,17 +12768,17 @@ RefPtr<ViewTransition> Document::startViewTransition(StartViewTransitionCallback
             return ViewTransition::createSamePage(*this, WTF::move(callback), { });
         },
         [&](StartViewTransitionOptions&& options) {
-            return ViewTransition::createSamePage(*this, WTF::move(options.update), WTF::move(options.types).value_or(Vector<AtomString> { }));
+            return ViewTransition::createSamePage(*this, WTF::move(options.update), WTF::move(options.types).value_or(Vector<RefPtr<AtomStringImpl>> { }));
         }
     );
 
     if (hidden()) {
-        viewTransition->skipViewTransition(Exception { ExceptionCode::InvalidStateError, "View transition was skipped because document visibility state is hidden."_s });
+        viewTransition->skipViewTransition(Exception { ExceptionCode::InvalidStateError, "View transition was skipped because document visibility state is hidden."_si });
         return viewTransition;
     }
 
     if (RefPtr activeViewTransition = m_activeViewTransition)
-        activeViewTransition->skipViewTransition(Exception { ExceptionCode::AbortError, "Old view transition aborted by new view transition."_s });
+        activeViewTransition->skipViewTransition(Exception { ExceptionCode::AbortError, "Old view transition aborted by new view transition."_si });
 
     setActiveViewTransition(WTF::move(viewTransition));
     scheduleRenderingUpdate(RenderingUpdateStep::PerformPendingViewTransitions);
@@ -12805,7 +12805,7 @@ void Document::performPendingViewTransitions()
         scheduleRenderingUpdate(RenderingUpdateStep::PerformPendingViewTransitions);
 }
 
-String Document::mediaKeysStorageDirectory()
+RefPtr<StringImpl> Document::mediaKeysStorageDirectory()
 {
     RefPtr currentPage = page();
     return currentPage ? currentPage->ensureMediaKeysStorageDirectoryForOrigin(securityOrigin().data()) : emptyString();
@@ -12907,7 +12907,7 @@ double Document::lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey& key) 
     return protect(m_randomCachingKeyMap)->lookupCSSRandomBaseValue(key);
 }
 
-void Document::prefetch(const URL& url, const Vector<String>& tags, std::optional<ReferrerPolicy> referrerPolicy, bool lowPriority)
+void Document::prefetch(const URL& url, const Vector<RefPtr<StringImpl>>& tags, std::optional<ReferrerPolicy> referrerPolicy, bool lowPriority)
 {
     RefPtr frame = this->frame();
     if (!frame)
@@ -12917,7 +12917,7 @@ void Document::prefetch(const URL& url, const Vector<String>& tags, std::optiona
 }
 
 // https://html.spec.whatwg.org/C#process-the-speculation-rules-header
-void Document::processSpeculationRulesHeader(const String& headerValue, const URL& baseURL)
+void Document::processSpeculationRulesHeader(StringImpl* headerValue, const URL& baseURL)
 {
     if (!settings().speculationRulesPrefetchEnabled())
         return;
@@ -12935,8 +12935,8 @@ void Document::processSpeculationRulesHeader(const String& headerValue, const UR
         if (!bareItem)
             continue;
 
-        const auto* urlString = std::get_if<String>(bareItem);
-        if (!urlString || urlString->isEmpty())
+        const auto* urlString = std::get_if<RefPtr<StringImpl>>(bareItem);
+        if (!urlString || isEmpty(*urlString))
             continue;
 
         // 3.2. Let url be the result of URL parsing item with document's document base URL.
@@ -12954,7 +12954,7 @@ void Document::processSpeculationRulesHeader(const String& headerValue, const UR
     }
 }
 
-void Document::ariaNotify(const String& announcement)
+void Document::ariaNotify(StringImpl* announcement)
 {
     if (!settings().isARIANotifyEnabled())
         return;
@@ -12963,7 +12963,7 @@ void Document::ariaNotify(const String& announcement)
         cache->postARIANotifyNotification(*this, announcement, { });
 }
 
-void Document::ariaNotify(const String& announcement, const AriaNotifyOptions& options)
+void Document::ariaNotify(StringImpl* announcement, const AriaNotifyOptions& options)
 {
     if (!settings().isARIANotifyEnabled())
         return;
@@ -12977,14 +12977,14 @@ void Document::invalidateCachedSetInnerHTML()
     auto& cache = cachedSetInnerHTML();
     if (cache.cachedContainer)
         cache.cachedContainer->setDidMutateSubtreeAfterSetInnerHTML();
-    cache.source = String();
+    cache.source = nullptr;
 }
 
-void Document::updateCachedSetInnerHTML(const String& sourceString, ContainerNode& container, Element& contextElement)
+void Document::updateCachedSetInnerHTML(StringImpl* sourceString, ContainerNode& container, Element& contextElement)
 {
     auto& cache = cachedSetInnerHTML();
 
-    if (sourceString.length() < cache.source.length() || sourceString.length() > maxCachedSetInnerHTMLStringSize())
+    if (WTF::length(sourceString) < WTF::length(cache.source) || WTF::length(sourceString) > maxCachedSetInnerHTMLStringSize())
         return;
 
     cache.source = sourceString;

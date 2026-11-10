@@ -250,29 +250,29 @@ class GenerationContext:
                 return valueDataForSerialization[std::to_underlying(id)].literal();
             }
 
-            const AtomString& nameString(CSSValueID id)
+            const RefPtr<AtomStringImpl>& nameString(CSSValueID id)
             {
                 if (std::to_underlying(id) >= numCSSValueKeywords)
                     return nullAtom();
 
-                static NeverDestroyed<std::array<AtomString, numCSSValueKeywords>> strings;
+                static NeverDestroyed<std::array<RefPtr<AtomStringImpl>, numCSSValueKeywords>> strings;
                 auto& string = strings.get()[std::to_underlying(id)];
-                if (string.isNull())
-                    string = valueData[std::to_underlying(id)];
+                if (!string)
+                    string = AtomStringImpl::add(valueData[std::to_underlying(id)]);
                 return string;
             }
 
             // When serializing a CSS keyword, it should be converted to ASCII lowercase.
             // https://drafts.csswg.org/cssom/#serialize-a-css-component-value
-            const AtomString& nameStringForSerialization(CSSValueID id)
+            const RefPtr<AtomStringImpl>& nameStringForSerialization(CSSValueID id)
             {
                 if (std::to_underlying(id) >= numCSSValueKeywords)
                     return nullAtom();
 
-                static NeverDestroyed<std::array<AtomString, numCSSValueKeywords>> strings;
+                static NeverDestroyed<std::array<RefPtr<AtomStringImpl>, numCSSValueKeywords>> strings;
                 auto& string = strings.get()[std::to_underlying(id)];
-                if (string.isNull())
-                    string = valueDataForSerialization[std::to_underlying(id)];
+                if (!string)
+                    string = AtomStringImpl::add(valueDataForSerialization[std::to_underlying(id)]);
                 return string;
             }
 
@@ -342,8 +342,8 @@ class GenerationContext:
             CSSValueID findCSSValueKeyword(std::span<const char> characters);
             ASCIILiteral nameLiteral(CSSValueID);
             ASCIILiteral nameLiteralForSerialization(CSSValueID); // Lowercase.
-            WEBCORE_EXPORT const AtomString& nameString(CSSValueID);
-            const AtomString& nameStringForSerialization(CSSValueID); // Lowercase.
+            WEBCORE_EXPORT const RefPtr<AtomStringImpl>& nameString(CSSValueID);
+            const RefPtr<AtomStringImpl>& nameStringForSerialization(CSSValueID); // Lowercase.
 
             struct AllCSSValueKeywordsRange {
                 struct Iterator {

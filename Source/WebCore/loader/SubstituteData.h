@@ -52,8 +52,8 @@ public:
 
     FragmentedSharedBuffer* content() const { return m_content.get(); }
     RefPtr<FragmentedSharedBuffer> contentForSerialization() const { return m_content; }
-    const String& mimeType() const LIFETIME_BOUND { return m_response.mimeType(); }
-    const String& textEncoding() const LIFETIME_BOUND { return m_response.textEncodingName(); }
+    const RefPtr<StringImpl>& mimeType() const LIFETIME_BOUND { return m_response.mimeType(); }
+    const RefPtr<StringImpl>& textEncoding() const LIFETIME_BOUND { return m_response.textEncodingName(); }
     const URL& failingURL() const LIFETIME_BOUND { return m_failingURL; }
     const ResourceResponse& response() const LIFETIME_BOUND { return m_response; }
 

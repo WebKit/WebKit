@@ -77,7 +77,7 @@ public:
     virtual void configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) { }
     virtual std::optional<bool> isHardwareAccelerated(GstElementFactory*) { return std::nullopt; }
     virtual std::optional<GstElementFactoryListType> audioVideoDecoderFactoryListType() const { return std::nullopt; }
-    virtual Vector<String> disallowedWebAudioDecoders() const { return { }; }
+    virtual Vector<RefPtr<StringImpl>> disallowedWebAudioDecoders() const { return { }; }
     virtual unsigned getAdditionalPlaybinFlags() const { return 0; }
 
     virtual bool needsBufferingPercentageCorrection() const { return false; }
@@ -130,11 +130,11 @@ public:
     bool isEnabled() const;
 
     GstElement* createAudioSink();
-    GstElement* createWebAudioSink(const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
+    GstElement* createWebAudioSink(StringImpl* deviceId = nullptr, const GRefPtr<GstDevice>& = { });
     void configureElement(GstElement*, OptionSet<ElementRuntimeCharacteristics>&&);
     std::optional<bool> isHardwareAccelerated(GstElementFactory*) const;
     GstElementFactoryListType audioVideoDecoderFactoryListType() const;
-    Vector<String> disallowedWebAudioDecoders() const;
+    Vector<RefPtr<StringImpl>> disallowedWebAudioDecoders() const;
 
     [[nodiscard]] GRefPtr<GstCaps> videoSinkGLCapsFormat() const;
     bool isVideoCapsGLCompatible(const GRefPtr<GstCaps>&) const;

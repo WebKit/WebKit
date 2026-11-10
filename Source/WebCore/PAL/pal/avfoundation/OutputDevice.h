@@ -37,7 +37,7 @@ namespace PAL {
 
 class OutputDevice {
 public:
-    String name() const;
+    RefPtr<StringImpl> name() const;
 
     enum class DeviceFeatures : uint8_t {
         Audio = 1 << 0,

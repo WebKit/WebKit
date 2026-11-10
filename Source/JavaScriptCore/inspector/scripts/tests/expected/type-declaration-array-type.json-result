@@ -373,7 +373,7 @@ using BreakpointId = int;
 namespace Runtime {
 using ObjectId = int;
 using LuckyNumbers = JSON::ArrayOf<int>;
-using BabyNames = JSON::ArrayOf<String>;
+using BabyNames = JSON::ArrayOf<RefPtr<StringImpl>>;
 using NewObjects = JSON::ArrayOf<int>;
 using OldObjects = JSON::ArrayOf<int>;
 using StopReasons = JSON::ArrayOf<Protocol::Debugger::Reason>;
@@ -382,9 +382,9 @@ using StopReasons = JSON::ArrayOf<Protocol::Debugger::Reason>;
 
 namespace TestHelpers {
 
-String getEnumConstantValue(int code);
+RefPtr<StringImpl> getEnumConstantValue(int code);
 
-template<typename T> String getEnumConstantValue(T enumValue)
+template<typename T> RefPtr<StringImpl> getEnumConstantValue(T enumValue)
 {
     return getEnumConstantValue(static_cast<int>(enumValue));
 }
@@ -406,11 +406,11 @@ enum class Reason {
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+std::optional<ProtocolEnumType> parseEnumValueFromString(StringImpl*);
 
 // Enums in the 'Debugger' Domain
 template<>
-std::optional<Protocol::Debugger::Reason> parseEnumValueFromString<Protocol::Debugger::Reason>(const String&);
+std::optional<Protocol::Debugger::Reason> parseEnumValueFromString<Protocol::Debugger::Reason>(StringImpl*);
 
 } // namespace TestHelpers
 
@@ -476,13 +476,13 @@ static const auto enum_constant_values = WTF::toArray<ASCIILiteral>({
     "Hungry"_s,
 });
 
-String getEnumConstantValue(int code) {
-    return enum_constant_values[code];
+RefPtr<StringImpl> getEnumConstantValue(int code) {
+    return StringImpl::create(enum_constant_values[code]);
 }
 
 // Enums in the 'Debugger' Domain
 
-template<> std::optional<Protocol::Debugger::Reason> parseEnumValueFromString<Protocol::Debugger::Reason>(const String& protocolString)
+template<> std::optional<Protocol::Debugger::Reason> parseEnumValueFromString<Protocol::Debugger::Reason>(StringImpl* protocolString)
 {
     static const auto constantValues = WTF::toArray<size_t>({
         (size_t)Protocol::Debugger::Reason::Died,
@@ -490,7 +490,7 @@ template<> std::optional<Protocol::Debugger::Reason> parseEnumValueFromString<Pr
         (size_t)Protocol::Debugger::Reason::Hungry,
     });
     for (size_t i = 0; i < 3; ++i)
-        if (protocolString == enum_constant_values[constantValues[i]])
+        if (equal(protocolString, enum_constant_values[constantValues[i]]))
             return (Protocol::Debugger::Reason)constantValues[i];
 
     return std::nullopt;
@@ -860,22 +860,22 @@ typedef NS_ENUM(NSInteger, TestProtocolDebuggerReason) {
 namespace Inspector {
 
 template<typename ObjCEnumType>
-std::optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(StringImpl* value);
 
-inline String toProtocolString(TestProtocolDebuggerReason value)
+inline RefPtr<StringImpl> toProtocolString(TestProtocolDebuggerReason value)
 {
     switch(value) {
     case TestProtocolDebuggerReasonDied:
-        return "Died"_s;
+        return "Died"_si;
     case TestProtocolDebuggerReasonFainted:
-        return "Fainted"_s;
+        return "Fainted"_si;
     case TestProtocolDebuggerReasonHungry:
-        return "Hungry"_s;
+        return "Hungry"_si;
     }
 }
 
 template<>
-inline std::optional<TestProtocolDebuggerReason> fromProtocolString(const String& value)
+inline std::optional<TestProtocolDebuggerReason> fromProtocolString(StringImpl* value)
 {
     static constexpr SortedArrayMap map { WTF::toArray<std::pair<ComparableASCIILiteral, TestProtocolDebuggerReason>>({
         { "Died"_s, TestProtocolDebuggerReasonDied },
@@ -959,7 +959,7 @@ using namespace Inspector;
 + (void)_parseReason:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    auto result = Inspector::fromProtocolString<TestProtocolDebuggerReason>((__bridge CFStringRef)payload);
+    auto result = Inspector::fromProtocolString<TestProtocolDebuggerReason>(StringImpl::create((__bridge CFStringRef)payload).get());
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"Reason");
     *outValue = @(result.value());
 }

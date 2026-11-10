@@ -79,11 +79,11 @@ public:
 
     int index() const;
     TrackID id() const;
-    String label() const;
-    String language() const;
+    RefPtr<StringImpl> label() const;
+    RefPtr<StringImpl> language() const;
 
-    static String languageForAVAssetTrack(const AVAssetTrack *);
-    static String languageForAVMediaSelectionOption(const AVMediaSelectionOption *);
+    static RefPtr<StringImpl> languageForAVAssetTrack(const AVAssetTrack *);
+    static RefPtr<StringImpl> languageForAVMediaSelectionOption(const AVMediaSelectionOption *);
 
     PlatformVideoTrackConfiguration videoTrackConfiguration() const;
     using VideoTrackConfigurationObserver = Observer<void()>;
@@ -101,7 +101,7 @@ private:
     void initializeAssetTrack();
     void initializationCompleted();
 
-    String codec() const;
+    RefPtr<StringImpl> codec() const;
     uint32_t width() const;
     uint32_t height() const;
     PlatformVideoColorSpace colorSpace() const;

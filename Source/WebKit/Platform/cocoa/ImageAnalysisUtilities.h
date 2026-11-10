@@ -50,7 +50,7 @@ WebCore::TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysis *);
 RetainPtr<VKCImageAnalyzer> createImageAnalyzer();
 RetainPtr<VKCImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef, VKAnalysisTypes);
 
-void requestVisualTranslation(VKCImageAnalyzer *, NSURL *, const String& source, const String& target, CGImageRef, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+void requestVisualTranslation(VKCImageAnalyzer *, NSURL *, StringImpl* source, StringImpl* target, CGImageRef, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
 void requestBackgroundRemoval(CGImageRef, CompletionHandler<void(CGImageRef)>&&);
 
 constexpr VKAnalysisTypes analysisTypesForElementFullscreenVideo()
@@ -70,7 +70,7 @@ constexpr VKAnalysisTypes analysisTypesForFullscreenVideo()
     return analysisTypesForElementFullscreenVideo() | VKAnalysisTypeVisualSearch;
 }
 
-std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForRemoveBackground(CGImageRef, const String& sourceMIMEType);
+std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForRemoveBackground(CGImageRef, StringImpl* sourceMIMEType);
 
 #if PLATFORM(IOS_FAMILY)
 using PlatformImageAnalysisObject = VKCImageAnalysisInteraction;

@@ -126,7 +126,7 @@ public:
     virtual void dispatchEvent(Event&) = 0;
 
     bool postProcessPixelBufferResults(PixelBuffer&) const;
-    void recordLastFillText(const String&);
+    void recordLastFillText(StringImpl*);
 
     void setNoiseInjectionSalt(NoiseInjectionHashSalt salt) { m_canvasNoiseHashSalt = salt; }
     bool havePendingCanvasNoiseInjection() const { return m_canvasNoiseInjection.haveDirtyRects(); }
@@ -141,7 +141,7 @@ protected:
 
     void setSize(const IntSize&);
 
-    String lastFillText() const { return m_lastFillText; }
+    RefPtr<StringImpl> lastFillText() const { return m_lastFillText; }
     void addCanvasNeedingPreparationForDisplayOrFlush();
     void removeCanvasNeedingPreparationForDisplayOrFlush();
     void setPendingEntireContentsUpdate(ShouldApplyPostProcessingToDirtyRect);
@@ -152,7 +152,7 @@ private:
     mutable IntSize m_size;
     mutable std::unique_ptr<CSSParserContext> m_cssParserContext;
 
-    String m_lastFillText;
+    RefPtr<StringImpl> m_lastFillText;
 
     WeakHashSet<CanvasObserver> m_observers;
     WeakHashSet<CanvasDisplayBufferObserver> m_displayBufferObservers;

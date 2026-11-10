@@ -103,9 +103,9 @@ public:
 
     bool hasSolidColor() const;
 
-    virtual String uti() const { return String(); }
-    virtual String filenameExtension() const { return String(); }
-    virtual String accessibilityDescription() const { return String(); }
+    virtual RefPtr<StringImpl> uti() const { return nullptr; }
+    virtual RefPtr<StringImpl> filenameExtension() const { return nullptr; }
+    virtual RefPtr<StringImpl> accessibilityDescription() const { return nullptr; }
     virtual std::optional<IntPoint> hotSpot() const { return { }; }
 
     virtual SubsamplingLevel subsamplingLevelForScaleFactor(GraphicsContext&, const FloatSize&, AllowImageSubsampling) { return SubsamplingLevel::Default; }

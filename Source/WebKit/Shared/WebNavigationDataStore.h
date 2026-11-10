@@ -34,8 +34,8 @@ namespace WebKit {
 
 struct WebNavigationDataStore {
     // FIXME: Add the remaining items we want to track for history.
-    String url;
-    String title;
+    RefPtr<StringImpl> url;
+    RefPtr<StringImpl> title;
     WebCore::ResourceRequest originalRequest;
     WebCore::ResourceResponse response;
 };

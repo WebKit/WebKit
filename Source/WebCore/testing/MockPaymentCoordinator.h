@@ -61,10 +61,10 @@ public:
     void setCanMakePayments(bool canMakePayments) { m_canMakePayments = canMakePayments; }
     void setCanMakePaymentsWithActiveCard(bool canMakePaymentsWithActiveCard) { m_canMakePaymentsWithActiveCard = canMakePaymentsWithActiveCard; }
     void setShippingAddress(MockPaymentAddress&& shippingAddress) { m_shippingAddress = WTF::move(shippingAddress); }
-    void changeShippingOption(String&& shippingOption);
+    void changeShippingOption(RefPtr<StringImpl>&& shippingOption);
     void changePaymentMethod(ApplePayPaymentMethod&&);
 #if ENABLE(APPLE_PAY_COUPON_CODE)
-    void changeCouponCode(String&& couponCode);
+    void changeCouponCode(RefPtr<StringImpl>&& couponCode);
 #endif
     void acceptPayment();
     void cancelPayment();
@@ -76,7 +76,7 @@ public:
     const Vector<ApplePayLineItem>& lineItems() const LIFETIME_BOUND { return m_lineItems; }
     const Vector<MockPaymentError>& errors() const LIFETIME_BOUND { return m_errors; }
     const Vector<ApplePayShippingMethod>& shippingMethods() const LIFETIME_BOUND { return m_shippingMethods; }
-    const Vector<String>& supportedCountries() const LIFETIME_BOUND { return m_supportedCountries; }
+    const Vector<RefPtr<StringImpl>>& supportedCountries() const LIFETIME_BOUND { return m_supportedCountries; }
     const MockPaymentContactFields& requiredBillingContactFields() const LIFETIME_BOUND { return m_requiredBillingContactFields; }
     const MockPaymentContactFields& requiredShippingContactFields() const LIFETIME_BOUND { return m_requiredShippingContactFields; }
 
@@ -86,7 +86,7 @@ public:
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     std::optional<bool> supportsCouponCode() const { return m_supportsCouponCode; }
-    const String& couponCode() const LIFETIME_BOUND { return m_couponCode; }
+    const RefPtr<StringImpl>& couponCode() const LIFETIME_BOUND { return m_couponCode; }
 #endif
 
 #if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
@@ -118,7 +118,7 @@ public:
 #endif
 
 #if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
-    const String& merchantCategoryCode() const LIFETIME_BOUND { return m_merchantCategoryCode; }
+    const RefPtr<StringImpl>& merchantCategoryCode() const LIFETIME_BOUND { return m_merchantCategoryCode; }
 #endif
 
 #if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
@@ -130,10 +130,10 @@ public:
 private:
     explicit MockPaymentCoordinator(Page&);
 
-    std::optional<String> validatedPaymentNetwork(const String&) const final;
+    std::optional<RefPtr<StringImpl>> validatedPaymentNetwork(StringImpl*) const final;
     bool canMakePayments() final;
-    void canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&&) final;
-    void openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&&) final;
+    void canMakePaymentsWithActiveCard(StringImpl*, StringImpl*, CompletionHandler<void(bool)>&&) final;
+    void openPaymentSetup(StringImpl*, StringImpl*, CompletionHandler<void(bool)>&&) final;
     bool showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final;
     void completeMerchantValidation(const PaymentMerchantSession&) final;
     void completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&&) final;
@@ -164,8 +164,8 @@ private:
     Vector<ApplePayLineItem> m_lineItems;
     Vector<MockPaymentError> m_errors;
     Vector<ApplePayShippingMethod> m_shippingMethods;
-    Vector<String> m_supportedCountries;
-    HashSet<String, ASCIICaseInsensitiveHash> m_availablePaymentNetworks;
+    Vector<RefPtr<StringImpl>> m_supportedCountries;
+    HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash> m_availablePaymentNetworks;
     MockPaymentContactFields m_requiredBillingContactFields;
     MockPaymentContactFields m_requiredShippingContactFields;
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
@@ -173,7 +173,7 @@ private:
 #endif
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     std::optional<bool> m_supportsCouponCode;
-    String m_couponCode;
+    RefPtr<StringImpl> m_couponCode;
 #endif
 #if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
     std::optional<ApplePayShippingContactEditingMode> m_shippingContactEditingMode;
@@ -206,7 +206,7 @@ private:
 #endif
 
 #if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
-    String m_merchantCategoryCode;
+    RefPtr<StringImpl> m_merchantCategoryCode;
 #endif
 
 #if ENABLE(APPLE_PAY_DELEGATED_REQUEST)

@@ -37,7 +37,7 @@ Vector<PseudoClassInvalidationKey, 4> makePseudoClassInvalidationKeys(CSSSelecto
 {
     Vector<PseudoClassInvalidationKey, 4> keys;
 
-    if (!element.idForStyleResolution().isEmpty())
+    if (!isEmpty(element.idForStyleResolution()))
         keys.append(makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Id, element.idForStyleResolution()));
 
     if (element.hasClass()) {

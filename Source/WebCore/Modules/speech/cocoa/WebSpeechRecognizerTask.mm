@@ -121,7 +121,7 @@ NS_ASSUME_NONNULL_BEGIN
             double confidence = [segment confidence];
             maxConfidence = maxConfidence < confidence ? confidence : maxConfidence;
         }
-        alternatives.append(WebCore::SpeechRecognitionAlternativeData { [transcription formattedString], maxConfidence });
+        alternatives.append(WebCore::SpeechRecognitionAlternativeData { StringImpl::create([transcription formattedString]), maxConfidence });
         if (alternatives.size() == _maxAlternatives)
             break;
     }
@@ -244,7 +244,7 @@ NS_ASSUME_NONNULL_BEGIN
     ASSERT(isMainThread());
 
     if (!successfully) {
-        auto error = WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::Aborted, task.error.localizedDescription };
+        auto error = WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::Aborted, StringImpl::create(task.error.localizedDescription) };
         _delegateCallback(WebCore::SpeechRecognitionUpdate::createError(*_identifier, WTF::move(error)));
     }
     

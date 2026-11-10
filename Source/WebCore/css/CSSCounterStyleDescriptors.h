@@ -37,16 +37,20 @@ class StyleProperties;
 enum class CSSValueID : uint16_t;
 
 struct CSSCounterStyleDescriptors {
-    using Name = AtomString;
+    using Name = RefPtr<AtomStringImpl>;
     using Ranges = Vector<std::pair<int, int>>;
     using SystemData = std::pair<CSSCounterStyleDescriptors::Name, int>;
     // The keywords that can be used as values for the counter-style `system` descriptor.
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-system
     struct Symbol {
         bool isCustomIdent { false };
-        String text;
-        friend bool operator==(const Symbol&, const Symbol&) = default;
-        String cssText() const;
+        RefPtr<StringImpl> text;
+        friend bool operator==(const Symbol& a, const Symbol& b)
+        {
+            return a.isCustomIdent == b.isCustomIdent
+                && contentEquals(a.text, b.text);
+        }
+        RefPtr<StringImpl> cssText() const;
     };
     using AdditiveSymbols = Vector<std::pair<Symbol, unsigned>>;
     enum class System : uint8_t {
@@ -82,7 +86,7 @@ struct CSSCounterStyleDescriptors {
         unsigned m_padMinimumLength = 0;
         Symbol m_padSymbol;
         friend bool operator==(const Pad&, const Pad&) = default;
-        String cssText() const;
+        RefPtr<StringImpl> cssText() const;
     };
     struct NegativeSymbols {
         Symbol m_prefix = { false, "-"_s };
@@ -103,7 +107,7 @@ struct CSSCounterStyleDescriptors {
     };
 
     // create() is prefered here rather than a custom constructor, so that the Struct still classifies as an aggregate.
-    static CSSCounterStyleDescriptors create(AtomString name, const StyleProperties&);
+    static CSSCounterStyleDescriptors create(RefPtr<AtomStringImpl> name, const StyleProperties&);
     static CSSCounterStyleDescriptors createForSymbolsFunction(System, Vector<Symbol>&&);
 
     bool operator==(const CSSCounterStyleDescriptors& other) const
@@ -140,16 +144,16 @@ struct CSSCounterStyleDescriptors {
     void setSymbols(Vector<Symbol>);
     void setAdditiveSymbols(AdditiveSymbols);
 
-    NODELETE String nameCSSText() const;
-    String systemCSSText() const;
-    String negativeCSSText() const;
-    String prefixCSSText() const;
-    String suffixCSSText() const;
-    String rangesCSSText() const;
-    String padCSSText() const;
-    String fallbackCSSText() const;
-    String symbolsCSSText() const;
-    String additiveSymbolsCSSText() const;
+    NODELETE RefPtr<StringImpl> nameCSSText() const;
+    RefPtr<StringImpl> systemCSSText() const;
+    RefPtr<StringImpl> negativeCSSText() const;
+    RefPtr<StringImpl> prefixCSSText() const;
+    RefPtr<StringImpl> suffixCSSText() const;
+    RefPtr<StringImpl> rangesCSSText() const;
+    RefPtr<StringImpl> padCSSText() const;
+    RefPtr<StringImpl> fallbackCSSText() const;
+    RefPtr<StringImpl> symbolsCSSText() const;
+    RefPtr<StringImpl> additiveSymbolsCSSText() const;
 
     Name m_name;
     System m_system;

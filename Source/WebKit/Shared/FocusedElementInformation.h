@@ -97,7 +97,7 @@ inline bool isSingleLineInputType(InputType type)
 struct OptionItem {
     OptionItem() = default;
 
-    OptionItem(const String& text, bool isGroup, bool selected, bool disabled, int parentID)
+    OptionItem(StringImpl* text, bool isGroup, bool selected, bool disabled, int parentID)
         : text(text)
         , isGroup(isGroup)
         , isSelected(selected)
@@ -106,7 +106,7 @@ struct OptionItem {
     {
     }
 
-    String text;
+    RefPtr<StringImpl> text;
     bool isGroup { false };
     bool isSelected { false };
     bool disabled { false };
@@ -138,20 +138,20 @@ struct FocusedElementInformation {
     InputType elementType { InputType::None };
     WebCore::InputMode inputMode { WebCore::InputMode::Unspecified };
     WebCore::EnterKeyHint enterKeyHint { WebCore::EnterKeyHint::Unspecified };
-    String formAction;
+    RefPtr<StringImpl> formAction;
     Vector<OptionItem> selectOptions;
     int selectedIndex { -1 };
-    String value;
+    RefPtr<StringImpl> value;
     double valueAsNumber { 0 };
-    String title;
+    RefPtr<StringImpl> title;
     bool acceptsAutofilledLoginCredentials { false };
     bool isAutofillableUsernameField { false };
     URL representingPageURL;
     WebCore::AutofillFieldName autofillFieldName { WebCore::AutofillFieldName::None };
     WebCore::NonAutofillCredentialType nonAutofillCredentialType { WebCore::NonAutofillCredentialType::None };
-    String placeholder;
-    String label;
-    String ariaLabel;
+    RefPtr<StringImpl> placeholder;
+    RefPtr<StringImpl> label;
+    RefPtr<StringImpl> ariaLabel;
     bool hasSuggestions { false };
     bool isFocusingWithDataListDropdown { false };
     WebCore::Color colorValue;

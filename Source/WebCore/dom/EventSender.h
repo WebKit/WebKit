@@ -43,9 +43,9 @@ template<typename T, typename WeakPtrImpl> class EventSender : public CanMakeChe
 public:
     EventSender();
 
-    void dispatchEventSoon(T&, const AtomString& eventType);
+    void dispatchEventSoon(T&, AtomStringImpl* eventType);
     void cancelEvent(T&);
-    void cancelEvent(T&, const AtomString& eventType);
+    void cancelEvent(T&, AtomStringImpl* eventType);
     void dispatchPendingEvents(Page*);
 
 #if ASSERT_ENABLED
@@ -62,7 +62,7 @@ private:
     Timer m_timer;
     struct DispatchTask {
         WeakPtr<T, WeakPtrImpl> sender;
-        AtomString eventType;
+        RefPtr<AtomStringImpl> eventType;
     };
     Vector<DispatchTask> m_dispatchSoonList;
     Vector<DispatchTask> m_dispatchingList;
@@ -82,7 +82,7 @@ template<typename T, typename WeakPtrImpl> EventSender<T, WeakPtrImpl>::EventSen
 {
 }
 
-template<typename T, typename WeakPtrImpl> void EventSender<T, WeakPtrImpl>::dispatchEventSoon(T& sender, const AtomString& eventType)
+template<typename T, typename WeakPtrImpl> void EventSender<T, WeakPtrImpl>::dispatchEventSoon(T& sender, AtomStringImpl* eventType)
 {
     m_dispatchSoonList.append(DispatchTask { sender, eventType });
     if (!m_timer.isActive())
@@ -103,7 +103,7 @@ template<typename T, typename WeakPtrImpl> void EventSender<T, WeakPtrImpl>::can
     }
 }
 
-template<typename T, typename WeakPtrImpl> void EventSender<T, WeakPtrImpl>::cancelEvent(T& senderToCancel, const AtomString& eventTypeToCancel)
+template<typename T, typename WeakPtrImpl> void EventSender<T, WeakPtrImpl>::cancelEvent(T& senderToCancel, AtomStringImpl* eventTypeToCancel)
 {
     // Remove instances of this sender from both lists.
     // Use loops because we allow multiple instances to get into the lists.
@@ -135,9 +135,9 @@ template<typename T, typename WeakPtrImpl> void EventSender<T, WeakPtrImpl>::dis
             continue;
         RefPtr sender = std::exchange(weakSender, nullptr);
         if (!page || sender->document().page() == page)
-            sender->dispatchPendingEvent(this, eventType);
+            sender->dispatchPendingEvent(this, RefPtr<AtomStringImpl> { eventType }.get());
         else
-            dispatchEventSoon(*sender, eventType);
+            dispatchEventSoon(*sender, RefPtr<AtomStringImpl> { eventType }.get());
     }
     m_dispatchingList.clear();
 }

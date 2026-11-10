@@ -43,7 +43,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCSessionDescription);
 
-inline RTCSessionDescription::RTCSessionDescription(RTCSdpType type, String&& sdp)
+inline RTCSessionDescription::RTCSessionDescription(RTCSdpType type, RefPtr<StringImpl>&& sdp)
     : m_type(type)
     , m_sdp(WTF::move(sdp))
 {
@@ -54,7 +54,7 @@ Ref<RTCSessionDescription> RTCSessionDescription::create(RTCSessionDescriptionIn
     return create(dictionary.type, WTF::move(dictionary.sdp));
 }
 
-Ref<RTCSessionDescription> RTCSessionDescription::create(RTCSdpType type, String&& sdp)
+Ref<RTCSessionDescription> RTCSessionDescription::create(RTCSdpType type, RefPtr<StringImpl>&& sdp)
 {
     return adoptRef(*new RTCSessionDescription(type, WTF::move(sdp)));
 }

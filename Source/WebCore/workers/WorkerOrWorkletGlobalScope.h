@@ -77,7 +77,7 @@ public:
 
     // Defined specifically for WorkerOrWorkletGlobalScope for cooperation with
     // WorkerEventLoop and WorkerRunLoop, not part of ScriptExecutionContext.
-    void postTaskForMode(Task&&, const String&);
+    void postTaskForMode(Task&&, StringImpl*);
 
     virtual void prepareForDestruction();
 
@@ -105,8 +105,8 @@ protected:
 
 private:
     // ScriptExecutionContext.
-    void disableEval(const String& errorMessage) final;
-    void disableWebAssembly(const String& errorMessage) final;
+    void disableEval(StringImpl* errorMessage) final;
+    void disableWebAssembly(StringImpl* errorMessage) final;
     void setTrustedTypesEnforcement(JSC::TrustedTypesEnforcement) final;
 
     // EventTarget.

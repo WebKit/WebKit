@@ -36,16 +36,16 @@ public:
     virtual ~StyleOriginatedAnimationEvent();
 
     double elapsedTime() const { return m_elapsedTime; }
-    const String& pseudoElement();
+    const RefPtr<StringImpl>& pseudoElement();
     const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier() const LIFETIME_BOUND { return m_pseudoElementIdentifier; }
 
 protected:
-    StyleOriginatedAnimationEvent(enum EventInterfaceType, const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double, const std::optional<Style::PseudoElementIdentifier>&);
-    StyleOriginatedAnimationEvent(enum EventInterfaceType, const AtomString&, EventInit&&, IsTrusted, double, String&&, RefPtr<WebAnimation>&&);
+    StyleOriginatedAnimationEvent(enum EventInterfaceType, AtomStringImpl* type, WebAnimation*, std::optional<Seconds> scheduledTime, double, const std::optional<Style::PseudoElementIdentifier>&);
+    StyleOriginatedAnimationEvent(enum EventInterfaceType, AtomStringImpl*, EventInit&&, IsTrusted, double, RefPtr<StringImpl>&&, RefPtr<WebAnimation>&&);
 
 private:
     double m_elapsedTime;
-    String m_pseudoElement;
+    RefPtr<StringImpl> m_pseudoElement;
     std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier { };
 };
 

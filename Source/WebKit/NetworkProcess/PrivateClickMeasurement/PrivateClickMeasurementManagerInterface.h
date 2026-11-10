@@ -53,7 +53,7 @@ public:
     using PrivateClickMeasurement = WebCore::PrivateClickMeasurement;
     using RegistrableDomain = WebCore::RegistrableDomain;
     using SourceSite = WebCore::PCM::SourceSite;
-    using ApplicationBundleIdentifier = String;
+    using ApplicationBundleIdentifier = RefPtr<StringImpl>;
 
     virtual void storeUnattributed(PrivateClickMeasurement&&, CompletionHandler<void()>&&) = 0;
     virtual void handleAttribution(AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier&) = 0;
@@ -64,14 +64,14 @@ public:
     virtual void setDebugModeIsEnabled(bool) = 0;
     virtual void setPrivateRelayEnforcementIsEnabled(bool) = 0;
 
-    virtual void toStringForTesting(CompletionHandler<void(String)>&&) const = 0;
+    virtual void toStringForTesting(CompletionHandler<void(RefPtr<StringImpl>)>&&) const = 0;
     virtual void setOverrideTimerForTesting(bool value) = 0;
     virtual void setTokenPublicKeyURLForTesting(URL&&) = 0;
     virtual void setTokenSignatureURLForTesting(URL&&) = 0;
     virtual void setAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL) = 0;
     virtual void markAllUnattributedAsExpiredForTesting() = 0;
     virtual void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&) = 0;
-    virtual void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID) = 0;
+    virtual void setPCMFraudPreventionValuesForTesting(RefPtr<StringImpl>&& unlinkableToken, RefPtr<StringImpl>&& secretToken, RefPtr<StringImpl>&& signature, RefPtr<StringImpl>&& keyID) = 0;
     virtual void startTimerImmediatelyForTesting() = 0;
     virtual void setPrivateClickMeasurementAppBundleIDForTesting(ApplicationBundleIdentifier&&) = 0;
     virtual void destroyStoreForTesting(CompletionHandler<void()>&&) = 0;
@@ -116,7 +116,7 @@ void decodeMessageAndSendToManager(const Daemon::Connection&, MessageType, std::
 void doDailyActivityInManager();
 NODELETE bool messageTypeSendsReply(MessageType);
 
-void initializePCMStorageInDirectory(const String& storageDirectory, const String& applicationBundleIdentifier, const String& secondaryApplicationBundleIdentifier);
+void initializePCMStorageInDirectory(StringImpl* storageDirectory, StringImpl* applicationBundleIdentifier, StringImpl* secondaryApplicationBundleIdentifier);
 
 } // namespace PCM
 

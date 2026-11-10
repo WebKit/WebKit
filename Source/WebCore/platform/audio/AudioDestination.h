@@ -48,16 +48,16 @@ namespace WebCore {
 
 struct AudioDestinationCreationOptions {
     AudioIOCallback& callback;
-    const String& inputDeviceId;
+    const RefPtr<StringImpl>& inputDeviceId;
     unsigned numberOfInputChannels;
     unsigned numberOfOutputChannels;
     float sampleRate;
 #if PLATFORM(IOS_FAMILY)
-    const String& sceneIdentifier;
+    const RefPtr<StringImpl>& sceneIdentifier;
 #endif
     // Output device id (empty means the default device) and silent-sink selection. Only honored by
     // the GStreamer port. See AudioContext.setSinkId().
-    String outputDeviceId { };
+    RefPtr<StringImpl> outputDeviceId { };
     bool isSilent { false };
 };
 
@@ -80,7 +80,7 @@ public:
     // means the default device); isSilent requests a sink that drops audio. The completion handler
     // reports whether the device was acquired; on failure the previous routing stays in effect.
     // Only the GStreamer port implements this; other ports report success without switching.
-    virtual void setSinkId(const String& persistentDeviceId, bool isSilent, CompletionHandler<void(bool)>&& completionHandler)
+    virtual void setSinkId(StringImpl* persistentDeviceId, bool isSilent, CompletionHandler<void(bool)>&& completionHandler)
     {
         UNUSED_PARAM(persistentDeviceId);
         UNUSED_PARAM(isSilent);
@@ -104,22 +104,22 @@ public:
 
     void callRenderCallback(AudioBus& destinationBus, size_t framesToProcess, const AudioIOPosition& outputPosition);
 
-    const String& inputDeviceId() const LIFETIME_BOUND { return m_inputDeviceId; }
+    const RefPtr<StringImpl>& inputDeviceId() const LIFETIME_BOUND { return m_inputDeviceId; }
     unsigned numberOfInputChannels() const { return m_numberOfInputChannels; }
     unsigned numberOfOutputChannels() const { return m_numberOfOutputChannels; }
     // Output device id in effect (empty means the default device) and silent-sink selection.
-    const String& outputDeviceId() const LIFETIME_BOUND { return m_outputDeviceId; }
+    const RefPtr<StringImpl>& outputDeviceId() const LIFETIME_BOUND { return m_outputDeviceId; }
     bool isSilent() const { return m_isSilent; }
 
 #if PLATFORM(IOS_FAMILY)
-    const String& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
-    virtual void setSceneIdentifier(const String& identifier) { m_sceneIdentifier = identifier; }
+    const RefPtr<StringImpl>& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
+    virtual void setSceneIdentifier(StringImpl* identifier) { m_sceneIdentifier = identifier; }
 #endif
 
 protected:
     explicit AudioDestination(const CreationOptions&);
 
-    void setSinkSelection(const String& outputDeviceId, bool isSilent)
+    void setSinkSelection(StringImpl* outputDeviceId, bool isSilent)
     {
         m_outputDeviceId = outputDeviceId;
         m_isSilent = isSilent;
@@ -129,14 +129,14 @@ protected:
     AudioIOCallback* m_callback WTF_GUARDED_BY_LOCK(m_callbackLock) { nullptr };
 
 private:
-    String m_inputDeviceId;
+    RefPtr<StringImpl> m_inputDeviceId;
     unsigned m_numberOfInputChannels;
     unsigned m_numberOfOutputChannels;
     float m_sampleRate;
 #if PLATFORM(IOS_FAMILY)
-    String m_sceneIdentifier;
+    RefPtr<StringImpl> m_sceneIdentifier;
 #endif
-    String m_outputDeviceId;
+    RefPtr<StringImpl> m_outputDeviceId;
     bool m_isSilent { false };
 };
 

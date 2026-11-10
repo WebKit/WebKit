@@ -37,12 +37,12 @@ namespace WebCore {
 Ref<JSON::Object> GPUPrimitiveState::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setString("topology"_s, convertEnumerationToString(topology));
+    json->setString("topology"_si, convertEnumerationToString(topology));
     if (stripIndexFormat)
-        json->setString("stripIndexFormat"_s, convertEnumerationToString(*stripIndexFormat));
-    json->setString("frontFace"_s, convertEnumerationToString(frontFace));
-    json->setString("cullMode"_s, convertEnumerationToString(cullMode));
-    json->setBoolean("unclippedDepth"_s, unclippedDepth);
+        json->setString("stripIndexFormat"_si, convertEnumerationToString(*stripIndexFormat));
+    json->setString("frontFace"_si, convertEnumerationToString(frontFace));
+    json->setString("cullMode"_si, convertEnumerationToString(cullMode));
+    json->setBoolean("unclippedDepth"_si, unclippedDepth);
     return json;
 }
 

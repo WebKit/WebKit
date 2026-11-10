@@ -95,12 +95,12 @@ static ProtectionSpace::AuthenticationScheme scheme(NSURLProtectionSpace *space)
 }
 
 ProtectionSpace::ProtectionSpace(NSURLProtectionSpace *space)
-    : ProtectionSpace(space.host, space.port, type(space), space.realm, scheme(space))
+    : ProtectionSpace(StringImpl::create(space.host).get(), space.port, type(space), StringImpl::create(space.realm).get(), scheme(space))
 {
     lazyInitialize(m_nsSpace, RetainPtr { space });
 }
 
-ProtectionSpace::ProtectionSpace(const String& host, int port, ServerType serverType, const String& realm, AuthenticationScheme authenticationScheme, std::optional<PlatformData> platformData)
+ProtectionSpace::ProtectionSpace(StringImpl* host, int port, ServerType serverType, StringImpl* realm, AuthenticationScheme authenticationScheme, std::optional<PlatformData> platformData)
     : ProtectionSpaceBase(host, port, serverType, realm, authenticationScheme)
 {
     if (platformData)
@@ -182,9 +182,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     if (proxyType)
-        lazyInitialize(m_nsSpace, adoptNS([[NSURLProtectionSpace alloc] initWithProxyHost:host().createNSString().get() port:port() type:proxyType.get() realm:realm().createNSString().get() authenticationMethod:method]));
+        lazyInitialize(m_nsSpace, adoptNS([[NSURLProtectionSpace alloc] initWithProxyHost:createNSString(host()).get() port:port() type:proxyType.get() realm:createNSString(realm()).get() authenticationMethod:method]));
     else
-        lazyInitialize(m_nsSpace, adoptNS([[NSURLProtectionSpace alloc] initWithHost:host().createNSString().get() port:port() protocol:protocol.get() realm:realm().createNSString().get() authenticationMethod:method]));
+        lazyInitialize(m_nsSpace, adoptNS([[NSURLProtectionSpace alloc] initWithHost:createNSString(host()).get() port:port() protocol:protocol.get() realm:createNSString(realm()).get() authenticationMethod:method]));
 
     return m_nsSpace.get();
 }

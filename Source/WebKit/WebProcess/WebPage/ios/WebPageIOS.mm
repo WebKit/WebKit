@@ -218,7 +218,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static void adjustCandidateAutocorrectionInFrame(const String& correction, LocalFrame& frame)
+static void adjustCandidateAutocorrectionInFrame(StringImpl* correction, LocalFrame& frame)
 {
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
     auto startPosition = frame.selection().selection().start();
@@ -274,7 +274,7 @@ RetainPtr<NSData> WebPage::accessibilityRemoteTokenData() const
     return [[[NSUUID UUID] UUIDString] dataUsingEncoding:NSUTF8StringEncoding];
 }
 
-void WebPage::relayAccessibilityNotification(String&& notificationName, RetainPtr<NSData>&& notificationData)
+void WebPage::relayAccessibilityNotification(RefPtr<StringImpl>&& notificationName, RetainPtr<NSData>&& notificationData)
 {
     send(Messages::WebPageProxy::RelayAccessibilityNotification(WTF::move(notificationName), span(notificationData.get())));
 }
@@ -289,7 +289,7 @@ void WebPage::relayLiveRegionNotification(WebCore::LiveRegionAnnouncementData&& 
     send(Messages::WebPageProxy::RelayLiveRegionNotification(WTF::move(notificationData)));
 }
 
-void WebPage::didDisplayCaptions(Vector<String>&& captions)
+void WebPage::didDisplayCaptions(Vector<RefPtr<StringImpl>>&& captions)
 {
     send(Messages::WebPageProxy::DidDisplayCaptions(WTF::move(captions)));
 }
@@ -421,12 +421,12 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
             charactersAroundPosition(selection.start(), postLayoutData.characterAfterSelection, postLayoutData.characterBeforeSelection, postLayoutData.twoCharacterBeforeSelection);
     } else if (selection.isRange()) {
         selectedRange = selection.toNormalizedRange();
-        String selectedText;
+        RefPtr<StringImpl> selectedText;
         if (selectedRange) {
             selectedText = plainTextForDisplay(*selectedRange);
-            postLayoutData.selectedTextLength = selectedText.length();
+            postLayoutData.selectedTextLength = length(selectedText);
             const int maxSelectedTextLength = 200;
-            postLayoutData.wordAtSelection = selectedText.left(maxSelectedTextLength);
+            postLayoutData.wordAtSelection = left(selectedText, maxSelectedTextLength);
             auto findSelectedEditableImageElement = [&] {
                 RefPtr<HTMLImageElement> foundImage;
                 if (!result.isContentEditable)
@@ -451,7 +451,7 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
                 postLayoutData.selectedEditableImage = contextForElement(*imageElement);
         }
         // FIXME: We should disallow replace when the string contains only CJ characters.
-        postLayoutData.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.containsOnly<isASCIIWhitespace>();
+        postLayoutData.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !containsOnly<isASCIIWhitespace>(selectedText);
     }
 
 #if USE(DICTATION_ALTERNATIVES)
@@ -748,13 +748,13 @@ void WebPage::clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&& 
     completionHandler();
 }
 
-bool WebPage::performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*)
+bool WebPage::performNonEditingBehaviorForSelector(StringImpl*, WebCore::KeyboardEvent*)
 {
     notImplemented();
     return false;
 }
 
-void WebPage::getSelectionContext(CompletionHandler<void(const String&, const String&, const String&)>&& completionHandler)
+void WebPage::getSelectionContext(CompletionHandler<void(StringImpl*, StringImpl*, StringImpl*)>&& completionHandler)
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
@@ -770,12 +770,12 @@ void WebPage::getSelectionContext(CompletionHandler<void(const String&, const St
 #endif
 
     if (!frame->selection().isRange())
-        return completionHandler({ }, { }, { });
+        return completionHandler(nullptr, nullptr, nullptr);
 
     auto& selection = frame->selection().selection();
-    String selectedText = plainTextForContext(selection.firstRange());
-    String textBefore = plainTextForDisplay(rangeExpandedByCharactersInDirectionAtWordBoundary(selection.start(), selectionExtendedContextLength, SelectionDirection::Backward));
-    String textAfter = plainTextForDisplay(rangeExpandedByCharactersInDirectionAtWordBoundary(selection.end(), selectionExtendedContextLength, SelectionDirection::Forward));
+    RefPtr<StringImpl> selectedText = plainTextForContext(selection.firstRange());
+    RefPtr<StringImpl> textBefore = plainTextForDisplay(rangeExpandedByCharactersInDirectionAtWordBoundary(selection.start(), selectionExtendedContextLength, SelectionDirection::Backward));
+    RefPtr<StringImpl> textAfter = plainTextForDisplay(rangeExpandedByCharactersInDirectionAtWordBoundary(selection.end(), selectionExtendedContextLength, SelectionDirection::Forward));
 
     completionHandler(selectedText, textBefore, textAfter);
 }
@@ -827,13 +827,13 @@ void WebPage::registerUIProcessAccessibilityTokens(WebCore::AccessibilityRemoteT
         [m_mockAccessibilityElement setRemoteTokenDictionary:createAccessibillityTokenDictionary(elementToken).get()];
 }
 
-void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&& completionHandler)
+void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
 {
     notImplemented();
     completionHandler({ });
 }
 
-void WebPage::getDataSelectionForPasteboard(const String, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
+void WebPage::getDataSelectionForPasteboard(const RefPtr<StringImpl>, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
 {
     notImplemented();
     completionHandler({ });
@@ -915,29 +915,29 @@ void WebPage::generateSyntheticEditingCommand(SyntheticEditingCommandType comman
     
     switch (command) {
     case SyntheticEditingCommandType::Undo:
-        keyEvent = PlatformKeyboardEvent(PlatformEvent::Type::KeyDown, "z"_s, "z"_s,
-        "z"_s, "KeyZ"_s,
-        "U+005A"_s, 90, false, false, false, modifiers, MonotonicTime::now());
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::Type::KeyDown, "z"_si, "z"_si,
+        "z"_si, "KeyZ"_si,
+        "U+005A"_si, 90, false, false, false, modifiers, MonotonicTime::now());
         break;
     case SyntheticEditingCommandType::Redo:
-        keyEvent = PlatformKeyboardEvent(PlatformEvent::Type::KeyDown, "y"_s, "y"_s,
-        "y"_s, "KeyY"_s,
-        "U+0059"_s, 89, false, false, false, modifiers, MonotonicTime::now());
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::Type::KeyDown, "y"_si, "y"_si,
+        "y"_si, "KeyY"_si,
+        "U+0059"_si, 89, false, false, false, modifiers, MonotonicTime::now());
         break;
     case SyntheticEditingCommandType::ToggleBoldface:
-        keyEvent = PlatformKeyboardEvent(PlatformEvent::Type::KeyDown, "b"_s, "b"_s,
-        "b"_s, "KeyB"_s,
-        "U+0042"_s, 66, false, false, false, modifiers, MonotonicTime::now());
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::Type::KeyDown, "b"_si, "b"_si,
+        "b"_si, "KeyB"_si,
+        "U+0042"_si, 66, false, false, false, modifiers, MonotonicTime::now());
         break;
     case SyntheticEditingCommandType::ToggleItalic:
-        keyEvent = PlatformKeyboardEvent(PlatformEvent::Type::KeyDown, "i"_s, "i"_s,
-        "i"_s, "KeyI"_s,
-        "U+0049"_s, 73, false, false, false, modifiers, MonotonicTime::now());
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::Type::KeyDown, "i"_si, "i"_si,
+        "i"_si, "KeyI"_si,
+        "U+0049"_si, 73, false, false, false, modifiers, MonotonicTime::now());
         break;
     case SyntheticEditingCommandType::ToggleUnderline:
-        keyEvent = PlatformKeyboardEvent(PlatformEvent::Type::KeyDown, "u"_s, "u"_s,
-        "u"_s, "KeyU"_s,
-        "U+0055"_s, 85, false, false, false, modifiers, MonotonicTime::now());
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::Type::KeyDown, "u"_si, "u"_si,
+        "u"_si, "KeyU"_si,
+        "U+0055"_si, 85, false, false, false, modifiers, MonotonicTime::now());
         break;
     default:
         break;
@@ -1247,7 +1247,7 @@ void WebPage::blurFocusedElement()
     protect(m_focusedElement)->blur();
 }
 
-void WebPage::setFocusedElementValue(const WebCore::ElementContext& context, const String& value)
+void WebPage::setFocusedElementValue(const WebCore::ElementContext& context, StringImpl* value)
 {
     // FIXME: should also handle the case of HTMLSelectElement.
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(elementForContext(context)))
@@ -2068,7 +2068,7 @@ void WebPage::storeSelectionForAccessibility(bool shouldStore)
     }
 }
 
-static std::optional<SimpleRange> rangeNearPositionMatchesText(const VisiblePosition& position, const String& matchText, const VisibleSelection& selection)
+static std::optional<SimpleRange> rangeNearPositionMatchesText(const VisiblePosition& position, StringImpl* matchText, const VisibleSelection& selection)
 {
     auto liveRange = selection.firstRange();
     if (!liveRange)
@@ -2080,20 +2080,20 @@ static std::optional<SimpleRange> rangeNearPositionMatchesText(const VisiblePosi
     return findClosestPlainText(range, matchText, { }, characterCount({ range.start, *boundaryPoint }, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions));
 }
 
-void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& completionHandler)
+void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, StringImpl* text, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& completionHandler)
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return completionHandler({ });
     auto& selection = m_internals->storedSelectionForAccessibility.isNone() ? frame->selection().selection() : m_internals->storedSelectionForAccessibility;
     auto startPosition = visiblePositionForPositionWithOffset(selection.visibleStart(), offset);
-    auto range = makeSimpleRange(startPosition, visiblePositionForPositionWithOffset(startPosition, text.length()));
+    auto range = makeSimpleRange(startPosition, visiblePositionForPositionWithOffset(startPosition, length(text)));
     if (!range || range->collapsed()) {
         completionHandler({ });
         return;
     }
 
-    if (plainTextForDisplay(*range) != text) {
+    if (!equal(plainTextForDisplay(*range), text)) {
         // Try to search for a range which is the closest to the position within the selection range that matches the passed in text.
         if (auto wordRange = rangeNearPositionMatchesText(startPosition, text, selection)) {
             if (!wordRange->collapsed())
@@ -2179,7 +2179,7 @@ RevealItem WebPage::revealItemForCurrentSelection()
             
             if (fullCharacterRange) {
                 auto selectionRange = NSMakeRange(characterCount(*makeSimpleRange(fullCharacterRange->start, selectionStart)), characterCount(*makeSimpleRange(selectionStart, selectionEnd)));
-                String itemString = plainText(*fullCharacterRange);
+                RefPtr<StringImpl> itemString = plainText(*fullCharacterRange);
                 return { itemString, selectionRange };
             }
         }
@@ -2235,14 +2235,14 @@ void WebPage::prepareSelectionForContextMenuWithLocationInView(std::optional<Web
 }
 #endif
 
-void WebPage::replaceSelectedText(const String& oldText, const String& newText)
+void WebPage::replaceSelectedText(StringImpl* oldText, StringImpl* newText)
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
 
     auto wordRange = frame->selection().isCaret() ? wordRangeFromPosition(frame->selection().selection().start()) : frame->selection().selection().toNormalizedRange();
-    if (plainTextForContext(wordRange) != oldText)
+    if (!equal(plainTextForContext(wordRange), oldText))
         return;
 
     IgnoreSelectionChangeForScope ignoreSelectionChanges { *frame };
@@ -2250,7 +2250,7 @@ void WebPage::replaceSelectedText(const String& oldText, const String& newText)
     protect(frame->editor())->insertText(newText, 0);
 }
 
-void WebPage::replaceDictatedText(const String& oldText, const String& newText)
+void WebPage::replaceDictatedText(StringImpl* oldText, StringImpl* newText)
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
@@ -2297,7 +2297,7 @@ void WebPage::didInsertFinalDictationResult()
     scheduleFullEditorStateUpdate();
 }
 
-void WebPage::requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& reply)
+void WebPage::requestAutocorrectionData(StringImpl* textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& reply)
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
@@ -2316,7 +2316,7 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Com
 
     auto textForRange = plainTextForContext(range);
     const unsigned maxSearchAttempts = 5;
-    for (size_t i = 0;  i < maxSearchAttempts && textForRange != textForAutocorrection; ++i) {
+    for (size_t i = 0;  i < maxSearchAttempts && !equal(textForRange, textForAutocorrection); ++i) {
         auto position = makeDeprecatedLegacyPosition(range->start).previous();
         if (position.isNull() || position == makeDeprecatedLegacyPosition(range->start))
             break;
@@ -2328,7 +2328,7 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Com
     }
 
     Vector<SelectionGeometry> selectionGeometries;
-    if (textForRange == textForAutocorrection)
+    if (equal(textForRange, textForAutocorrection))
         selectionGeometries = RenderObject::collectSelectionGeometries(*range).geometries;
 
     auto rootViewSelectionRects = selectionGeometries.map([&](const auto& selectionGeometry) -> FloatRect {
@@ -2343,9 +2343,9 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Com
     reply({ WTF::move(rootViewSelectionRects) , (__bridge UIFont *)font });
 }
 
-void WebPage::applyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(const String&)>&& callback)
+void WebPage::applyAutocorrection(StringImpl* correction, StringImpl* originalText, bool isCandidate, CompletionHandler<void(StringImpl*)>&& callback)
 {
-    callback(applyAutocorrectionInternal(correction, originalText, isCandidate) ? correction : String());
+    callback(applyAutocorrectionInternal(correction, originalText, isCandidate) ? correction : nullptr);
 }
 
 Seconds WebPage::eventThrottlingDelay() const
@@ -2366,12 +2366,12 @@ Seconds WebPage::eventThrottlingDelay() const
     return std::min(m_estimatedLatency * 2, 1_s);
 }
 
-void WebPage::syncApplyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(bool)>&& reply)
+void WebPage::syncApplyAutocorrection(StringImpl* correction, StringImpl* originalText, bool isCandidate, CompletionHandler<void(bool)>&& reply)
 {
     reply(applyAutocorrectionInternal(correction, originalText, isCandidate));
 }
 
-bool WebPage::applyAutocorrectionInternal(const String& correction, const String& originalText, bool isCandidate)
+bool WebPage::applyAutocorrectionInternal(StringImpl* correction, StringImpl* originalText, bool isCandidate)
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
@@ -2380,11 +2380,11 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
     if (!frame->selection().isCaretOrRange())
         return false;
 
-    if (correction == originalText)
+    if (equal(correction, originalText))
         return false;
 
     std::optional<SimpleRange> range;
-    String textForRange;
+    RefPtr<StringImpl> textForRange;
     auto originalTextWithFoldedQuoteMarks = foldQuoteMarks(originalText);
 
     if (frame->selection().isCaret()) {
@@ -2394,7 +2394,7 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
         
         // If 'originalText' is not the same as 'textForRange' we need to move 'range'
         // forward such that it matches the original selection as much as possible.
-        if (foldQuoteMarks(textForRange) != originalTextWithFoldedQuoteMarks) {
+        if (!equal(foldQuoteMarks(textForRange), originalTextWithFoldedQuoteMarks)) {
             // Search for the original text near the selection caret.
             auto characterCount = numGraphemeClusters(originalText);
             if (!characterCount) {
@@ -2406,7 +2406,7 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
                     range = foundRange;
                 }
             }
-        } else if (textForRange.isEmpty() && range && !range->collapsed()) {
+        } else if (isEmpty(textForRange) && range && !range->collapsed()) {
             // If 'range' does not include any text but it is not collapsed, we need to set
             // 'range' to match the selection. Otherwise non-text nodes will be removed.
             range = makeSimpleRange(position);
@@ -2422,7 +2422,7 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
         textForRange = plainTextForContext(range);
     }
 
-    if (foldQuoteMarks(textForRange) != originalTextWithFoldedQuoteMarks)
+    if (!equal(foldQuoteMarks(textForRange), originalTextWithFoldedQuoteMarks))
         return false;
     
     // Correctly determine affinity, using logic currently only present in VisiblePosition
@@ -2432,11 +2432,11 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
     
     protect(frame->selection())->setSelectedRange(range, affinity, WebCore::FrameSelection::ShouldCloseTyping::Yes);
     Ref editor = frame->editor();
-    if (correction.length()) {
-        editor->insertText(correction, 0, originalText.isEmpty() ? TextEventInputKeyboard : TextEventInputAutocompletion);
+    if (length(correction)) {
+        editor->insertText(correction, 0, isEmpty(originalText) ? TextEventInputKeyboard : TextEventInputAutocompletion);
         if (isCandidate)
             adjustCandidateAutocorrectionInFrame(correction, *frame);
-    } else if (originalText.length())
+    } else if (length(originalText))
         editor->deleteWithDirection(SelectionDirection::Backward, TextGranularity::CharacterGranularity, false, true);
     return true;
 }
@@ -2453,10 +2453,10 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
     if (!m_focusedElement || !frame->selection().selection().hasEditableStyle())
         return correction;
 
-    String contextBefore;
-    String markedText;
-    String selectedText;
-    String contextAfter;
+    RefPtr<StringImpl> contextBefore;
+    RefPtr<StringImpl> markedText;
+    RefPtr<StringImpl> selectedText;
+    RefPtr<StringImpl> contextAfter;
     EditingRange selectedRangeInMarkedText;
 
     VisiblePosition startPosition = frame->selection().selection().start();
@@ -2472,9 +2472,9 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
         auto markedTextBefore = plainTextForContext(makeSimpleRange(compositionRange->start, startPosition));
         auto markedTextAfter = plainTextForContext(makeSimpleRange(endPosition, compositionRange->end));
         markedText = makeString(markedTextBefore, selectedText, markedTextAfter);
-        if (!markedText.isEmpty()) {
-            selectedRangeInMarkedText.location = markedTextBefore.length();
-            selectedRangeInMarkedText.length = selectedText.length();
+        if (!isEmpty(markedText)) {
+            selectedRangeInMarkedText.location = length(markedTextBefore);
+            selectedRangeInMarkedText.length = length(selectedText);
         }
     } else {
         auto firstPositionInEditableContent = startOfEditableContent(startPosition);
@@ -2483,13 +2483,13 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
             VisiblePosition previousPosition;
             unsigned totalContextLength = 0;
             for (unsigned i = 0; i < minContextWordCount; ++i) {
-                if (contextBefore.length() >= minContextLength)
+                if (length(contextBefore) >= minContextLength)
                     break;
                 previousPosition = startOfWord(positionOfNextBoundaryOfGranularity(contextStartPosition, TextGranularity::WordGranularity, SelectionDirection::Backward));
                 if (previousPosition.isNull())
                     break;
-                String currentWord = plainTextForContext(makeSimpleRange(previousPosition, contextStartPosition));
-                totalContextLength += currentWord.length();
+                RefPtr<StringImpl> currentWord = plainTextForContext(makeSimpleRange(previousPosition, contextStartPosition));
+                totalContextLength += length(currentWord);
                 if (totalContextLength >= maxContextLength)
                     break;
                 contextStartPosition = previousPosition;
@@ -2597,7 +2597,7 @@ static void handleAnimationActions(Element& element, uint32_t action)
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 }
 
-void WebPage::performActionOnElement(uint32_t action, const String& authorizationToken, CompletionHandler<void()>&& completionHandler)
+void WebPage::performActionOnElement(uint32_t action, StringImpl* authorizationToken, CompletionHandler<void()>&& completionHandler)
 {
     CompletionHandlerCallingScope callCompletionHandler(WTF::move(completionHandler));
 
@@ -2610,14 +2610,14 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
         Ref elementDocument = element->document();
         if (is<RenderImage>(*element->renderer())) {
             URL urlToCopy;
-            String titleToCopy;
+            RefPtr<StringImpl> titleToCopy;
             if (RefPtr linkElement = containingLinkAnchorElement(*element)) {
                 if (auto url = linkElement->href(); !url.isEmpty() && !url.protocolIsJavaScript()) {
                     urlToCopy = url;
                     titleToCopy = linkElement->attributeWithoutSynchronization(HTMLNames::titleAttr);
-                    if (!titleToCopy.length())
+                    if (!length(titleToCopy))
                         titleToCopy = linkElement->textContent();
-                    titleToCopy = titleToCopy.trim(isASCIIWhitespace);
+                    titleToCopy = trim(titleToCopy, isASCIIWhitespace);
                 }
             }
             interactionNodeEditor->writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(elementDocument->pageID())), *element, urlToCopy, titleToCopy);
@@ -2788,7 +2788,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformationWitho
             }
             for (auto& labelElement : associatedLabels) {
                 auto text = labelElement->innerText();
-                if (!text.isEmpty()) {
+                if (!isEmpty(text)) {
                     information.label = WTF::move(text);
                     break;
                 }
@@ -2837,8 +2837,8 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformationWitho
         information.autocapitalizeType = element->autocapitalizeType();
         information.isAutocorrect = element->shouldAutocorrect();
         information.isReadOnly = element->isReadOnly();
-        information.value = element->value();
-        information.hasPlainText = !information.value.isEmpty();
+        information.value = element->value().get();
+        information.hasPlainText = !isEmpty(information.value);
         information.autofillFieldName = WebCore::toAutofillFieldName(element->autofillData().fieldName);
         information.nonAutofillCredentialType = element->autofillData().nonAutofillCredentialType;
         information.placeholder = element->attributeWithoutSynchronization(HTMLNames::placeholderAttr);
@@ -2868,8 +2868,8 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformationWitho
         information.inputMode = element->canonicalInputMode();
         information.enterKeyHint = element->canonicalEnterKeyHint();
         information.isReadOnly = element->isReadOnly();
-        information.value = element->value();
-        information.hasPlainText = !information.value.isEmpty();
+        information.value = element->value().get();
+        information.hasPlainText = !isEmpty(information.value);
         information.valueAsNumber = element->valueAsNumber();
         information.autofillFieldName = WebCore::toAutofillFieldName(element->autofillData().fieldName);
         information.nonAutofillCredentialType = element->autofillData().nonAutofillCredentialType;
@@ -2934,7 +2934,7 @@ void WebPage::flushPendingFocusedElementUpdateIfNeeded()
     emitDeferredFocusedElementUpdate(WTF::move(*pendingUpdate));
 }
 
-void WebPage::autofillLoginCredentials(const String& username, const String& password)
+void WebPage::autofillLoginCredentials(StringImpl* username, StringImpl* password)
 {
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(m_focusedElement)) {
         if (auto autofillElements = AutofillElements::computeAutofillElements(*input))
@@ -3424,9 +3424,9 @@ void WebPage::shrinkToFitContent(ZoomToInitialScale zoomToInitialScale)
             changeMinimumEffectiveDeviceWidth(originalMinimumDeviceWidth);
             m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(false);
             if (hasResponsiveMetaViewportTag && m_viewportConfiguration.layoutWidth() != m_lastShrinkToFitLayoutWidth)
-                mainDocument->addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, "This page has a responsive meta viewport tag. The page content is wider than the viewport but resizing causes the page overflow to be worse."_s);
+                mainDocument->addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, "This page has a responsive meta viewport tag. The page content is wider than the viewport but resizing causes the page overflow to be worse."_si);
         } else if (hasResponsiveMetaViewportTag && m_viewportConfiguration.layoutWidth() != m_lastShrinkToFitLayoutWidth)
-            mainDocument->addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, "This page has a responsive meta viewport tag. The page content is wider than the viewport. The page will be scaled to fit."_s);
+            mainDocument->addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, "This page has a responsive meta viewport tag. The page content is wider than the viewport. The page will be scaled to fit."_si);
     }
 
     m_lastShrinkToFitLayoutWidth = m_viewportConfiguration.layoutWidth();
@@ -4010,17 +4010,17 @@ void WebPage::drawPrintingPagesToSnapshotiOS(RemoteSnapshotIdentifier snapshotId
     });
 }
 
-void WebPage::contentSizeCategoryDidChange(const String& contentSizeCategory)
+void WebPage::contentSizeCategoryDidChange(StringImpl* contentSizeCategory)
 {
-    if (contentSizeCategory == String { WebCore::contentSizeCategory() })
+    if (equal(contentSizeCategory, StringImpl::create(protect(WebCore::contentSizeCategory()).get()).get()))
         return;
     setContentSizeCategory(contentSizeCategory);
     FontCache::invalidateAllFontCaches();
 }
 
-String WebPage::platformUserAgent(const URL&) const
+RefPtr<StringImpl> WebPage::platformUserAgent(const URL&) const
 {
-    return String();
+    return nullptr;
 }
 
 static bool isMousePrimaryPointingDevice()
@@ -4091,7 +4091,7 @@ void WebPage::hardwareKeyboardAvailabilityChanged(HardwareKeyboardState state)
         focusedFrame->eventHandler().capsLockStateMayHaveChanged();
 }
 
-void WebPage::updateStringForFind(const String& findString)
+void WebPage::updateStringForFind(StringImpl* findString)
 {
     send(Messages::WebPageProxy::UpdateStringForFind(findString));
 }
@@ -4231,7 +4231,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& requ
             rangeOfInterest.end = closestEditablePositionInElementForAbsolutePoint(*element, roundedIntPoint(request.rect.maxXMaxYCorner()));
         } else if (RefPtr textFormControlElement = dynamicDowncast<HTMLTextFormControlElement>(element)) {
             rangeOfInterest.start = textFormControlElement->visiblePositionForIndex(0);
-            rangeOfInterest.end = textFormControlElement->visiblePositionForIndex(textFormControlElement->value()->length());
+            rangeOfInterest.end = textFormControlElement->visiblePositionForIndex(length(textFormControlElement->value().get()));
         } else {
             rangeOfInterest.start = firstPositionInOrBeforeNode(element.get());
             rangeOfInterest.end = lastPositionInOrAfterNode(element.get());
@@ -4358,7 +4358,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& requ
         if (wantsAttributedText)
             return editingAttributedStringReplacingNoBreakSpace(*range, textBehaviors, { IncludedElement::Images, IncludedElement::Attachments });
 
-        return AttributedString::fromNSAttributedString(adoptNS([[NSAttributedString alloc] initWithString:plainTextReplacingNoBreakSpace(*range, textBehaviors).createNSString().get()]));
+        return AttributedString::fromNSAttributedString(adoptNS([[NSAttributedString alloc] initWithString:createNSString(plainTextReplacingNoBreakSpace(*range, textBehaviors)).get()]));
     };
 
     DocumentEditingContext context;
@@ -4367,10 +4367,10 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& requ
     context.contextAfter = makeString(rangeOfInterestInSelection.end, contextAfterEnd);
     if (auto compositionVisiblePositionRange = makeVisiblePositionRange(compositionRange); intersects(rangeOfInterest, compositionVisiblePositionRange)) {
         context.markedText = makeString(compositionVisiblePositionRange.start, compositionVisiblePositionRange.end);
-        auto markedTextLength = context.markedText.string.length();
+        auto markedTextLength = length(context.markedText.string);
 
         ptrdiff_t distanceToSelectionStart = distanceBetweenPositions(rangeOfInterestInSelection.start, compositionVisiblePositionRange.start);
-        ptrdiff_t distanceToSelectionEnd = distanceToSelectionStart + [context.selectedText.string.createNSString() length];
+        ptrdiff_t distanceToSelectionEnd = distanceToSelectionStart + [createNSString(context.selectedText.string) length];
 
         distanceToSelectionStart = clampTo<ptrdiff_t>(distanceToSelectionStart, 0, markedTextLength);
         distanceToSelectionEnd = clampTo<ptrdiff_t>(distanceToSelectionEnd, 0, markedTextLength);
@@ -4381,8 +4381,8 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& requ
             static_cast<uint64_t>(distanceToSelectionEnd - distanceToSelectionStart)
         };
     } else if (auto* suggestion = frame->editor().writingSuggestionData()) {
-        if (auto suffix = suggestion->content(); !suffix.isEmpty()) {
-            context.markedText = AttributedString::fromNSAttributedString(adoptNS([[NSAttributedString alloc] initWithString:suffix.createNSString().get()]));
+        if (auto suffix = suggestion->content(); !isEmpty(suffix)) {
+            context.markedText = AttributedString::fromNSAttributedString(adoptNS([[NSAttributedString alloc] initWithString:createNSString(suffix).get()]));
             context.selectedRangeInMarkedText = { 0, 0 };
         }
     }
@@ -4537,7 +4537,7 @@ void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementCo
 
 #if USE(QUICK_LOOK)
 
-void WebPage::didStartLoadForQuickLookDocumentInMainFrame(const String& fileName, const String& uti)
+void WebPage::didStartLoadForQuickLookDocumentInMainFrame(StringImpl* fileName, StringImpl* uti)
 {
     send(Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame(fileName, uti));
 }
@@ -4565,7 +4565,7 @@ void WebPage::didFinishLoadForQuickLookDocumentInMainFrame(const FragmentedShare
     send(Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame(WTF::move(*handle)));
 }
 
-void WebPage::requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)
+void WebPage::requestPasswordForQuickLookDocumentInMainFrame(StringImpl* fileName, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebPageProxy::RequestPasswordForQuickLookDocumentInMainFrame(fileName), WTF::move(completionHandler));
 }

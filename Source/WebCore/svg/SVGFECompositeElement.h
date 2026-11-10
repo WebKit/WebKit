@@ -33,32 +33,32 @@ template<>
 struct SVGPropertyTraits<CompositeOperationType> {
     static unsigned highestEnumValue() { return std::to_underlying(CompositeOperationType::FECOMPOSITE_OPERATOR_LIGHTER); }
 
-    static String toString(CompositeOperationType type)
+    static RefPtr<StringImpl> toString(CompositeOperationType type)
     {
         switch (type) {
         case CompositeOperationType::FECOMPOSITE_OPERATOR_UNKNOWN:
             return emptyString();
         case CompositeOperationType::FECOMPOSITE_OPERATOR_OVER:
-            return "over"_s;
+            return "over"_si;
         case CompositeOperationType::FECOMPOSITE_OPERATOR_IN:
-            return "in"_s;
+            return "in"_si;
         case CompositeOperationType::FECOMPOSITE_OPERATOR_OUT:
-            return "out"_s;
+            return "out"_si;
         case CompositeOperationType::FECOMPOSITE_OPERATOR_ATOP:
-            return "atop"_s;
+            return "atop"_si;
         case CompositeOperationType::FECOMPOSITE_OPERATOR_XOR:
-            return "xor"_s;
+            return "xor"_si;
         case CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC:
-            return "arithmetic"_s;
+            return "arithmetic"_si;
         case CompositeOperationType::FECOMPOSITE_OPERATOR_LIGHTER:
-            return "lighter"_s;
+            return "lighter"_si;
         }
 
         ASSERT_NOT_REACHED();
         return emptyString();
     }
 
-    static CompositeOperationType fromString(SVGElement&, const String& value)
+    static CompositeOperationType fromString(SVGElement&, StringImpl* value)
     {
         static constexpr SortedArrayMap map { WTF::toArray<std::pair<ComparableASCIILiteral, CompositeOperationType>>({
             { "arithmetic"_s, CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC },
@@ -79,8 +79,8 @@ class SVGFECompositeElement final : public SVGFilterPrimitiveStandardAttributes 
 public:
     static Ref<SVGFECompositeElement> create(const QualifiedName&, Document&);
 
-    String in1() const { return m_in1->currentValue(); }
-    String in2() const { return m_in2->currentValue(); }
+    RefPtr<StringImpl> in1() const { return m_in1->currentValue(); }
+    RefPtr<StringImpl> in2() const { return m_in2->currentValue(); }
     CompositeOperationType svgOperator() const { return m_svgOperator->currentValue<CompositeOperationType>(); }
     float k1() const { return m_k1->currentValue(); }
     float k2() const { return m_k2->currentValue(); }
@@ -100,11 +100,11 @@ public:
 private:
     SVGFECompositeElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool setFilterEffectAttribute(FilterEffect&, const QualifiedName&) override;
-    Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() }, AtomString { in2() } }; }
+    Vector<RefPtr<AtomStringImpl>> filterEffectInputsNames() const override { return { AtomStringImpl::add(in1()), AtomStringImpl::add(in2()) }; }
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };

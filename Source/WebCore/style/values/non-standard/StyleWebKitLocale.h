@@ -36,11 +36,11 @@ namespace Style {
 // <'-webkit-locale'> = auto | <string>
 // NOTE: There is no standard associated with this property.
 struct WebkitLocale {
-    using Platform = AtomString;
+    using Platform = RefPtr<AtomStringImpl>;
 
     WebkitLocale(CSS::Keyword::Auto) : m_platform { nullAtom() } { }
-    WebkitLocale(const String& value) : m_platform { value.value } { }
-    WebkitLocale(String&& value) : m_platform { WTF::move(value.value) } { }
+    WebkitLocale(const String& value) : m_platform { AtomStringImpl::add(value.value) } { }
+    WebkitLocale(String&& value) : m_platform { AtomStringImpl::add(WTF::move(value.value)) } { }
 
     WebkitLocale(const Platform& value) : m_platform { value } { }
     WebkitLocale(Platform&& value) : m_platform { WTF::move(value) } { }
@@ -48,7 +48,7 @@ struct WebkitLocale {
     const Platform& platform() const LIFETIME_BOUND { return m_platform; }
     Platform takePlatform() { return WTF::move(m_platform); }
 
-    bool isAuto() const { return m_platform.isNull(); }
+    bool isAuto() const { return !m_platform; }
 
     template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
@@ -74,7 +74,7 @@ template<> struct CSSValueConversion<WebkitLocale> { auto operator()(BuilderStat
 // MARK: - Platform
 
 template<> struct ToPlatform<WebkitLocale> {
-    auto operator()(const WebkitLocale& value LIFETIME_BOUND) -> const AtomString&
+    auto operator()(const WebkitLocale& value LIFETIME_BOUND) -> const RefPtr<AtomStringImpl>&
     {
         return value.platform();
     }

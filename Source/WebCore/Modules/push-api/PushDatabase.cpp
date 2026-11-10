@@ -54,8 +54,8 @@
 // constraint. Since all NULL values are treated as distinct by SQLite, this would render the unique
 // index constraint meaningless. 
 #define bindSubscriptionSetParameters(ss) \
-    !(ss).bundleIdentifier.isNull() ? (ss).bundleIdentifier : emptyString(), \
-    !(ss).pushPartition.isNull() ? (ss).pushPartition : emptyString(), \
+    (ss).bundleIdentifier ? (ss).bundleIdentifier : emptyString(), \
+    (ss).pushPartition ? (ss).pushPartition : emptyString(), \
     uuidToSpan((ss).dataStoreIdentifier)
 
 namespace WebCore {
@@ -132,10 +132,10 @@ PushRecord PushRecord::isolatedCopy() const &
     return {
         identifier,
         subscriptionSetIdentifier.isolatedCopy(),
-        securityOrigin.isolatedCopy(),
-        scope.isolatedCopy(),
-        endpoint.isolatedCopy(),
-        topic.isolatedCopy(),
+        WTF::isolatedCopy(securityOrigin),
+        WTF::isolatedCopy(scope),
+        WTF::isolatedCopy(endpoint),
+        WTF::isolatedCopy(topic),
         serverVAPIDPublicKey,
         clientPublicKey,
         clientPrivateKey,
@@ -149,10 +149,10 @@ PushRecord PushRecord::isolatedCopy() &&
     return {
         identifier,
         WTF::move(subscriptionSetIdentifier).isolatedCopy(),
-        WTF::move(securityOrigin).isolatedCopy(),
-        WTF::move(scope).isolatedCopy(),
-        WTF::move(endpoint).isolatedCopy(),
-        WTF::move(topic).isolatedCopy(),
+        WTF::isolatedCopy(WTF::move(securityOrigin)),
+        WTF::isolatedCopy(WTF::move(scope)),
+        WTF::isolatedCopy(WTF::move(endpoint)),
+        WTF::isolatedCopy(WTF::move(topic)),
         WTF::move(serverVAPIDPublicKey),
         WTF::move(clientPublicKey),
         WTF::move(clientPrivateKey),
@@ -163,22 +163,22 @@ PushRecord PushRecord::isolatedCopy() &&
 
 RemovedPushRecord RemovedPushRecord::isolatedCopy() const &
 {
-    return { identifier, topic.isolatedCopy(), serverVAPIDPublicKey };
+    return { identifier, WTF::isolatedCopy(topic), serverVAPIDPublicKey };
 }
 
 RemovedPushRecord RemovedPushRecord::isolatedCopy() &&
 {
-    return { identifier, WTF::move(topic).isolatedCopy(), WTF::move(serverVAPIDPublicKey) };
+    return { identifier, WTF::isolatedCopy(WTF::move(topic)), WTF::move(serverVAPIDPublicKey) };
 }
 
 PushSubscriptionSetRecord PushSubscriptionSetRecord::isolatedCopy() const &
 {
-    return { identifier.isolatedCopy(), securityOrigin.isolatedCopy(), enabled };
+    return { identifier.isolatedCopy(), WTF::isolatedCopy(securityOrigin), enabled };
 }
 
 PushSubscriptionSetRecord PushSubscriptionSetRecord::isolatedCopy() &&
 {
-    return { WTF::move(identifier).isolatedCopy(), WTF::move(securityOrigin).isolatedCopy(), enabled };
+    return { WTF::move(identifier).isolatedCopy(), WTF::isolatedCopy(WTF::move(securityOrigin)), enabled };
 }
 
 PushTopics PushTopics::isolatedCopy() const &
@@ -193,12 +193,12 @@ PushTopics PushTopics::isolatedCopy() &&
 
 enum class ShouldDeleteAndRetry : bool { No, Yes };
 
-static std::expected<UniqueRef<SQLiteDatabase>, ShouldDeleteAndRetry> openAndMigrateDatabaseImpl(const String& path)
+static std::expected<UniqueRef<SQLiteDatabase>, ShouldDeleteAndRetry> openAndMigrateDatabaseImpl(StringImpl* path)
 {
     ASSERT(!RunLoop::isMain());
 
-    if (path != ":memory:"_s && !FileSystem::fileExists(path) && !FileSystem::makeAllDirectories(FileSystem::parentPath(path))) {
-        RELEASE_LOG_ERROR(Push, "Couldn't create PushDatabase parent directories for path %s", path.utf8());
+    if (!equal(path, ":memory:"_s) && !FileSystem::fileExists(path) && !FileSystem::makeAllDirectories(FileSystem::parentPath(path))) {
+        RELEASE_LOG_ERROR(Push, "Couldn't create PushDatabase parent directories for path %s", utf8(path));
         return makeUnexpected(ShouldDeleteAndRetry::No);
     }
 
@@ -206,7 +206,7 @@ static std::expected<UniqueRef<SQLiteDatabase>, ShouldDeleteAndRetry> openAndMig
     db->disableThreadingChecks();
 
     if (!db->open(path)) {
-        RELEASE_LOG_ERROR(Push, "Couldn't open PushDatabase at path %s", path.utf8());
+        RELEASE_LOG_ERROR(Push, "Couldn't open PushDatabase at path %s", utf8(path));
         return makeUnexpected(ShouldDeleteAndRetry::Yes);
     }
 
@@ -214,14 +214,14 @@ static std::expected<UniqueRef<SQLiteDatabase>, ShouldDeleteAndRetry> openAndMig
     {
         auto sql = db->prepareStatement("PRAGMA user_version"_s);
         if (!sql || sql->step() != SQLITE_ROW) {
-            RELEASE_LOG_ERROR(Push, "Couldn't get PushDatabase version at path %s", path.utf8());
+            RELEASE_LOG_ERROR(Push, "Couldn't get PushDatabase version at path %s", utf8(path));
             return makeUnexpected(ShouldDeleteAndRetry::Yes);
         }
         version = sql->columnInt(0);
     }
 
     if (version < 0 || version > currentPushDatabaseVersion) {
-        RELEASE_LOG_ERROR(Push, "Found unexpected PushDatabase version: %d (expected: %d) at path: %s", version, currentPushDatabaseVersion, path.utf8());
+        RELEASE_LOG_ERROR(Push, "Found unexpected PushDatabase version: %d (expected: %d) at path: %s", version, currentPushDatabaseVersion, utf8(path));
         return makeUnexpected(ShouldDeleteAndRetry::Yes);
     }
 
@@ -234,14 +234,14 @@ static std::expected<UniqueRef<SQLiteDatabase>, ShouldDeleteAndRetry> openAndMig
         for (auto i = version; i < currentPushDatabaseVersion; i++) {
             for (auto statement : pushDatabaseSchemaStatements[i]) {
                 if (!db->executeCommand(statement)) {
-                    RELEASE_LOG_ERROR(Push, "Error executing PushDatabase DDL statement %s at path %s: %d", statement.characters(), path.utf8(), db->lastError());
+                    RELEASE_LOG_ERROR(Push, "Error executing PushDatabase DDL statement %s at path %s: %d", statement.characters(), utf8(path), db->lastError());
                     return makeUnexpected(ShouldDeleteAndRetry::Yes);
                 }
             }
         }
 
         if (!db->executeCommandSlow(makeString("PRAGMA user_version = "_s, currentPushDatabaseVersion)))
-            RELEASE_LOG_ERROR(Push, "Error setting user version for PushDatabase at path %s: %d", path.utf8(), db->lastError());
+            RELEASE_LOG_ERROR(Push, "Error setting user version for PushDatabase at path %s: %d", utf8(path), db->lastError());
 
         transaction.commit();
     }
@@ -249,18 +249,18 @@ static std::expected<UniqueRef<SQLiteDatabase>, ShouldDeleteAndRetry> openAndMig
     return db;
 }
 
-static std::unique_ptr<SQLiteDatabase> openAndMigrateDatabase(const String& path)
+static std::unique_ptr<SQLiteDatabase> openAndMigrateDatabase(StringImpl* path)
 {
     ASSERT(!RunLoop::isMain());
 
     auto result = openAndMigrateDatabaseImpl(path);
     if (!result && result.error() == ShouldDeleteAndRetry::Yes) {
-        if (path == SQLiteDatabase::inMemoryPath() || !SQLiteFileSystem::deleteDatabaseFile(path)) {
-            RELEASE_LOG_ERROR(Push, "Failed to delete PushDatabase at path %s; bailing on recreating from scratch", path.utf8());
+        if (equal(path, SQLiteDatabase::inMemoryPath()) || !SQLiteFileSystem::deleteDatabaseFile(path)) {
+            RELEASE_LOG_ERROR(Push, "Failed to delete PushDatabase at path %s; bailing on recreating from scratch", utf8(path));
             return nullptr;
         }
 
-        RELEASE_LOG_ERROR(Push, "Deleted PushDatabase at path %s and recreating from scratch", path.utf8());
+        RELEASE_LOG_ERROR(Push, "Deleted PushDatabase at path %s and recreating from scratch", utf8(path));
         result = openAndMigrateDatabaseImpl(path);
     }
 
@@ -333,7 +333,7 @@ SQLiteStatementAutoResetScope PushDatabase::Storage::bindStatement(ASCIILiteral 
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PushDatabase);
 
-void PushDatabase::create(const String& path, CreationHandler&& completionHandler)
+void PushDatabase::create(StringImpl* path, CreationHandler&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
@@ -609,7 +609,7 @@ static PushRecord makePushRecordFromRow(SQLiteStatementAutoResetScope& sql, int 
     };
 }
 
-void PushDatabase::getRecordByTopic(const String& topic, CompletionHandler<void(std::optional<PushRecord>&&)>&& completionHandler)
+void PushDatabase::getRecordByTopic(StringImpl* topic, CompletionHandler<void(std::optional<PushRecord>&&)>&& completionHandler)
 {
     dispatchOnWorkQueue([storage = m_storage, topic = crossThreadCopy(topic), completionHandler = WTF::move(completionHandler)]() mutable {
         // Force SQLite to consult the Subscriptions(scope) index first via CROSS JOIN.
@@ -626,7 +626,7 @@ void PushDatabase::getRecordByTopic(const String& topic, CompletionHandler<void(
     });
 }
 
-void PushDatabase::getRecordBySubscriptionSetAndScope(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, const String& scope, CompletionHandler<void(std::optional<PushRecord>&&)>&& completionHandler)
+void PushDatabase::getRecordBySubscriptionSetAndScope(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, StringImpl* scope, CompletionHandler<void(std::optional<PushRecord>&&)>&& completionHandler)
 {
     dispatchOnWorkQueue([storage = m_storage, subscriptionSetIdentifier = crossThreadCopy(subscriptionSetIdentifier), scope = crossThreadCopy(scope), completionHandler = WTF::move(completionHandler)]() mutable {
         // Force SQLite to consult the Subscriptions(scope) index first via CROSS JOIN.
@@ -700,7 +700,7 @@ void PushDatabase::getPushSubscriptionSetRecords(CompletionHandler<void(Vector<P
                 .pushPartition = sql->columnText(1),
                 .dataStoreIdentifier = WTF::UUID::tryCreate(sql->columnBlobAsSpan(2))
             };
-            String securityOrigin = sql->columnText(3);
+            RefPtr<StringImpl> securityOrigin = sql->columnText(3);
             bool enabled = static_cast<SubscriptionSetsStateColumn>(sql->columnInt(4)) == SubscriptionSetsStateColumn::Enabled;
             result.append(PushSubscriptionSetRecord { WTF::move(identifier), WTF::move(securityOrigin), enabled });
         }
@@ -709,10 +709,10 @@ void PushDatabase::getPushSubscriptionSetRecords(CompletionHandler<void(Vector<P
     });
 }
 
-void PushDatabase::getAllPushSubscriptionOrigins(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void PushDatabase::getAllPushSubscriptionOrigins(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completionHandler)
 {
     dispatchOnWorkQueue([storage = m_storage, completionHandler = WTF::move(completionHandler)]() mutable {
-        Vector<String> origins;
+        Vector<RefPtr<StringImpl>> origins;
 
         auto sql = storage->cachedStatement("SELECT DISTINCT securityOrigin FROM SubscriptionSets WHERE state = 0"_s);
         if (!sql)
@@ -725,7 +725,7 @@ void PushDatabase::getAllPushSubscriptionOrigins(CompletionHandler<void(Vector<S
     });
 }
 
-void PushDatabase::incrementSilentPushCount(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, const String& securityOrigin, CompletionHandler<void(unsigned)>&& completionHandler)
+void PushDatabase::incrementSilentPushCount(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, StringImpl* securityOrigin, CompletionHandler<void(unsigned)>&& completionHandler)
 {
     dispatchOnWorkQueue([storage = m_storage, subscriptionSetIdentifier = crossThreadCopy(subscriptionSetIdentifier), securityOrigin = crossThreadCopy(securityOrigin), completionHandler = WTF::move(completionHandler)]() mutable {
         int silentPushCount = 0;
@@ -822,7 +822,7 @@ void PushDatabase::removeRecordsBySubscriptionSet(const PushSubscriptionSetIdent
 }
 
 
-void PushDatabase::removeRecordsBySubscriptionSetAndSecurityOrigin(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, const String& securityOrigin, CompletionHandler<void(Vector<RemovedPushRecord>&&)>&& completionHandler)
+void PushDatabase::removeRecordsBySubscriptionSetAndSecurityOrigin(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, StringImpl* securityOrigin, CompletionHandler<void(Vector<RemovedPushRecord>&&)>&& completionHandler)
 {
     dispatchOnWorkQueue([storage = m_storage, subscriptionSetIdentifier = crossThreadCopy(subscriptionSetIdentifier), securityOrigin = crossThreadCopy(securityOrigin), completionHandler = WTF::move(completionHandler)]() mutable {
         auto scope = makeScopeExit([&completionHandler] {
@@ -875,7 +875,7 @@ void PushDatabase::removeRecordsBySubscriptionSetAndSecurityOrigin(const PushSub
     });
 }
 
-void PushDatabase::removeRecordsByBundleIdentifierAndDataStore(const String& bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, CompletionHandler<void(Vector<RemovedPushRecord>&&)>&& completionHandler)
+void PushDatabase::removeRecordsByBundleIdentifierAndDataStore(StringImpl* bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, CompletionHandler<void(Vector<RemovedPushRecord>&&)>&& completionHandler)
 {
     dispatchOnWorkQueue([storage = m_storage, bundleIdentifier = crossThreadCopy(bundleIdentifier), dataStoreIdentifier, completionHandler = WTF::move(completionHandler)]() mutable {
         auto scope = makeScopeExit([&completionHandler] {
@@ -893,7 +893,7 @@ void PushDatabase::removeRecordsByBundleIdentifierAndDataStore(const String& bun
                 "JOIN Subscriptions sub "
                 "ON ss.rowid = sub.subscriptionSetID "
                 "WHERE ss.bundleID = ? AND ss.dataStoreUUID = ?"_s,
-                !bundleIdentifier.isNull() ? bundleIdentifier : emptyString(),
+                !!bundleIdentifier ? bundleIdentifier : emptyString(),
                 uuidToSpan(dataStoreIdentifier));
             if (!sql)
                 return;
@@ -913,7 +913,7 @@ void PushDatabase::removeRecordsByBundleIdentifierAndDataStore(const String& bun
                 "    SELECT rowid FROM SubscriptionSets "
                 "    WHERE bundleID = ? AND dataStoreUUID = ? "
                 ")"_s,
-                !bundleIdentifier.isNull() ? bundleIdentifier : emptyString(),
+                !!bundleIdentifier ? bundleIdentifier : emptyString(),
                 uuidToSpan(dataStoreIdentifier));
             if (!sql || sql->step() != SQLITE_DONE)
                 return;
@@ -923,7 +923,7 @@ void PushDatabase::removeRecordsByBundleIdentifierAndDataStore(const String& bun
             auto sql = storage->bindStatement(
                 "DELETE FROM SubscriptionSets "
                 "WHERE bundleID = ? AND dataStoreUUID = ?"_s,
-                !bundleIdentifier.isNull() ? bundleIdentifier : emptyString(),
+                !!bundleIdentifier ? bundleIdentifier : emptyString(),
                 uuidToSpan(dataStoreIdentifier));
             if (!sql || sql->step() != SQLITE_DONE)
                 return;
@@ -981,7 +981,7 @@ void PushDatabase::setPushesEnabled(const PushSubscriptionSetIdentifier& subscri
     });
 }
 
-void PushDatabase::setPushesEnabledForOrigin(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, const String& securityOrigin, bool enabled, CompletionHandler<void(bool recordsChanged)>&& completionHandler)
+void PushDatabase::setPushesEnabledForOrigin(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, StringImpl* securityOrigin, bool enabled, CompletionHandler<void(bool recordsChanged)>&& completionHandler)
 {
     dispatchOnWorkQueue([storage = m_storage, subscriptionSetIdentifier = crossThreadCopy(subscriptionSetIdentifier), securityOrigin = crossThreadCopy(securityOrigin), enabled, completionHandler = WTF::move(completionHandler)]() mutable {
         auto scope = makeScopeExit([&completionHandler] {

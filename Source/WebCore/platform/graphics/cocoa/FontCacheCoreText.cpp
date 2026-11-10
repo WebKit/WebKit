@@ -87,7 +87,7 @@ VariationDefaultsMap defaultVariationValues(CTFontRef font, ShouldLocalizeAxisNa
     for (CFIndex i = 0; i < size; ++i) {
         RetainPtr axis = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(axes.get(), i));
         RetainPtr axisIdentifier = static_cast<CFNumberRef>(CFDictionaryGetValue(axis.get(), kCTFontVariationAxisIdentifierKey));
-        String axisName = static_cast<CFStringRef>(CFDictionaryGetValue(axis.get(), kCTFontVariationAxisNameKey));
+        RefPtr<StringImpl> axisName = StringImpl::create(protect(static_cast<CFStringRef>(CFDictionaryGetValue(axis.get(), kCTFontVariationAxisNameKey))).get());
         RetainPtr defaultValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis.get(), kCTFontVariationAxisDefaultValueKey));
         RetainPtr minimumValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis.get(), kCTFontVariationAxisMinimumValueKey));
         RetainPtr maximumValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis.get(), kCTFontVariationAxisMaximumValueKey));
@@ -143,28 +143,28 @@ RetainPtr<CTFontRef> preparePlatformFont(UnrealizedCoreTextFont&& originalFont, 
     return originalFont.realize();
 }
 
-RefPtr<Font> FontCache::similarFont(const FontDescription& description, const String& family)
+RefPtr<Font> FontCache::similarFont(const FontDescription& description, StringImpl* family)
 {
     // Attempt to find an appropriate font using a match based on the presence of keywords in
     // the requested names. For example, we'll match any name that contains "Arabic" to Geeza Pro.
-    if (family.isEmpty())
+    if (isEmpty(family))
         return nullptr;
 
 #if PLATFORM(IOS_FAMILY)
     // Substitute the default monospace font for well-known monospace fonts.
     if (equalLettersIgnoringASCIICase(family, "monaco"_s) || equalLettersIgnoringASCIICase(family, "menlo"_s))
-        return fontForFamily(description, "courier"_s);
+        return fontForFamily(description, "courier"_si);
 
     // Substitute Verdana for Lucida Grande.
     if (equalLettersIgnoringASCIICase(family, "lucida grande"_s))
-        return fontForFamily(description, "verdana"_s);
+        return fontForFamily(description, "verdana"_si);
 #endif
 
     static constexpr auto matchWords = WTF::toArray<ASCIILiteral>({ "Arabic"_s, "Pashto"_s, "Urdu"_s });
     auto familyMatcher = StringView(family);
     for (auto matchWord : matchWords) {
         if (equalIgnoringASCIICase(familyMatcher, matchWord))
-            return fontForFamily(description, isFontWeightBold(description.weight()) ? "GeezaPro-Bold"_s : "GeezaPro"_s);
+            return fontForFamily(description, StringImpl::create(isFontWeightBold(description.weight()) ? "GeezaPro-Bold"_s : "GeezaPro"_s).ptr());
     }
     return nullptr;
 }
@@ -198,9 +198,9 @@ void FontCache::platformInit()
     CFNotificationCenterAddObserver(center, this, &fontCacheRegisteredFontsChangedNotificationCallback, notificationName, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
 }
 
-Vector<String> FontCache::systemFontFamilies()
+Vector<RefPtr<StringImpl>> FontCache::systemFontFamilies()
 {
-    Vector<String> fontFamilies;
+    Vector<RefPtr<StringImpl>> fontFamilies;
 
     auto availableFontFamilies = adoptCF(CTFontManagerCopyAvailableFontFamilyNames());
     CFIndex count = CFArrayGetCount(availableFontFamilies.get());
@@ -214,19 +214,19 @@ Vector<String> FontCache::systemFontFamilies()
         if (fontNameIsSystemFont(fontName.get()))
             continue;
 
-        fontFamilies.append(fontName.get());
+        fontFamilies.append(StringImpl::create(fontName.get()));
     }
 
     return fontFamilies;
 }
 
-NODELETE static inline bool isSystemFont(const String& family)
+NODELETE static inline bool isSystemFont(StringImpl* family)
 {
     // String's operator[] handles out-of-bounds by returning 0.
-    return family[0] == '.';
+    return codeUnitAt(family, 0) == '.';
 }
 
-bool FontCache::isSystemFontForbiddenForEditing(const String& fontFamily)
+bool FontCache::isSystemFontForbiddenForEditing(StringImpl* fontFamily)
 {
     return isSystemFont(fontFamily);
 }
@@ -279,14 +279,14 @@ public:
         return allowlist;
     }
 
-    void set(const Vector<String>& inputAllowlist) WTF_REQUIRES_LOCK(lock)
+    void set(const Vector<RefPtr<StringImpl>>& inputAllowlist) WTF_REQUIRES_LOCK(lock)
     {
         m_families.clear();
         for (auto& item : inputAllowlist)
             m_families.add(item);
     }
 
-    bool allows(const AtomString& family) const WTF_REQUIRES_LOCK(lock)
+    bool allows(AtomStringImpl* family) const WTF_REQUIRES_LOCK(lock)
     {
         return m_families.isEmpty() || m_families.contains(family);
     }
@@ -294,12 +294,12 @@ public:
     static Lock lock;
 
 private:
-    HashSet<String, ASCIICaseInsensitiveHash> m_families;
+    HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash> m_families;
 };
 
 Lock FontCacheAllowlist::lock;
 
-void FontCache::setFontAllowlist(const Vector<String>& inputAllowlist)
+void FontCache::setFontAllowlist(const Vector<RefPtr<StringImpl>>& inputAllowlist)
 {
     Locker locker { FontCacheAllowlist::lock };
     FontCacheAllowlist::singleton().set(inputAllowlist);
@@ -460,10 +460,10 @@ FontDatabase& FontCache::database(AllowUserInstalledFonts allowUserInstalledFont
     return allowUserInstalledFonts == AllowUserInstalledFonts::Yes ? m_databaseAllowingUserInstalledFonts : m_databaseDisallowingUserInstalledFonts;
 }
 
-Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(const AtomString& familyName, AllowUserInstalledFonts allowUserInstalledFonts)
+Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(AtomStringImpl* familyName, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     auto& fontDatabase = database(allowUserInstalledFonts);
-    const auto& fonts = fontDatabase.collectionForFamily(familyName.string());
+    const auto& fonts = fontDatabase.collectionForFamily(familyName);
     return fonts.installedFonts.map([](auto& font) {
         return font.capabilities;
     });
@@ -474,10 +474,10 @@ struct FontLookup {
     bool createdFromPostScriptName { false };
 };
 
-static bool isDotPrefixedForbiddenFont(const AtomString& family)
+static bool isDotPrefixedForbiddenFont(AtomStringImpl* family)
 {
     if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ForbidsDotPrefixedFonts))
-        return family.startsWith('.');
+        return startsWith(family, '.');
     return equalLettersIgnoringASCIICase(family, ".applesystemuifontserif"_s)
         || equalLettersIgnoringASCIICase(family, ".sf ns mono"_s)
         || equalLettersIgnoringASCIICase(family, ".sf ui mono"_s)
@@ -485,16 +485,16 @@ static bool isDotPrefixedForbiddenFont(const AtomString& family)
         || equalLettersIgnoringASCIICase(family, ".applesystemuifontrounded"_s);
 }
 
-static bool isAllowlistedFamily(const AtomString& family)
+static bool isAllowlistedFamily(AtomStringImpl* family)
 {
-    if (isSystemFont(family.string()))
+    if (isSystemFont(family))
         return true;
 
     Locker locker { FontCacheAllowlist::lock };
     return FontCacheAllowlist::singleton().allows(family);
 }
 
-static FontLookup platformFontLookupWithFamily(FontDatabase& fontDatabase, const AtomString& family, FontSelectionRequest request, OptionSet<FontLookupOptions> options)
+static FontLookup platformFontLookupWithFamily(FontDatabase& fontDatabase, AtomStringImpl* family, FontSelectionRequest request, OptionSet<FontLookupOptions> options)
 {
     if (!isAllowlistedFamily(family))
         return { nullptr };
@@ -504,7 +504,7 @@ static FontLookup platformFontLookupWithFamily(FontDatabase& fontDatabase, const
         return { nullptr };
     }
 
-    const auto& familyFonts = fontDatabase.collectionForFamily(family.string());
+    const auto& familyFonts = fontDatabase.collectionForFamily(family);
     if (familyFonts.isEmpty()) {
         // The CSS spec states that font-family only accepts a name of an actual font family. However, in WebKit, we claim to also
         // support supplying a PostScript name instead. However, this creates problems when the other properties (font-weight,
@@ -522,7 +522,7 @@ static FontLookup platformFontLookupWithFamily(FontDatabase& fontDatabase, const
             auto postScriptFamilyName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(postScriptFont.fontDescriptor.get(), kCTFontFamilyNameAttribute)));
             if (!postScriptFamilyName)
                 return { nullptr };
-            const auto& familyFonts = fontDatabase.collectionForFamily(String(postScriptFamilyName.get()));
+            const auto& familyFonts = fontDatabase.collectionForFamily(StringImpl::create(postScriptFamilyName.get()).get());
             if (familyFonts.isEmpty())
                 return { nullptr };
             if (const auto* installedFont = findClosestFont(familyFonts, request)) {
@@ -555,7 +555,7 @@ struct SpecialCaseFontLookupResult {
     FontTypeForPreparation fontTypeForPreparation;
 };
 
-static std::optional<SpecialCaseFontLookupResult> fontDescriptorWithFamilySpecialCase(const AtomString& family, const FontDescription& fontDescription, float size, AllowUserInstalledFonts allowUserInstalledFonts)
+static std::optional<SpecialCaseFontLookupResult> fontDescriptorWithFamilySpecialCase(AtomStringImpl* family, const FontDescription& fontDescription, float size, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     // FIXME: See comment in FontCascadeDescription::effectiveFamilyAt() in FontDescriptionCocoa.cpp
     std::optional<SystemFontKind> systemDesign;
@@ -579,10 +579,10 @@ static std::optional<SpecialCaseFontLookupResult> fontDescriptorWithFamilySpecia
         return { { RetainPtr { cascadeList[0] }, FontTypeForPreparation::SystemFont } };
     }
 
-    if (family.startsWith("UICTFontTextStyle"_s)) {
+    if (startsWith(family, "UICTFontTextStyle"_s)) {
         const auto& request = fontDescription.fontSelectionRequest();
         CTFontSymbolicTraits traits = (isFontWeightBold(request.weight) ? kCTFontTraitBold : 0) | (isItalic(request.slope) ? kCTFontTraitItalic : 0);
-        auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(family.string().createCFString().get(), protect(contentSizeCategory()).get(), fontDescription.usedLocale().string().createCFString().get()));
+        auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(createCFString(family).get(), protect(contentSizeCategory()).get(), createCFString(fontDescription.usedLocale()).get()));
         if (traits) {
             // FIXME: rdar://105369379 As far as I can tell, there's no modification to the attributes dictionary that has the same effect as CTFontDescriptorCreateCopyWithSymbolicTraits(),
             // because there doesn't seem to be a place to specify the bitmask. That's the reason we're creating the derived CTFontDescriptor here, rather than in UnrealizedCoreTextFont::realize().
@@ -592,16 +592,16 @@ static std::optional<SpecialCaseFontLookupResult> fontDescriptorWithFamilySpecia
     }
 
     if (equalLettersIgnoringASCIICase(family, "-apple-menu"_s))
-        return { { adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontMenuItem, size, fontDescription.usedLocale().string().createCFString().get())), FontTypeForPreparation::SystemFont } };
+        return { { adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontMenuItem, size, createCFString(fontDescription.usedLocale()).get())), FontTypeForPreparation::SystemFont } };
 
     if (equalLettersIgnoringASCIICase(family, "-apple-status-bar"_s))
-        return { { adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, fontDescription.usedLocale().string().createCFString().get())), FontTypeForPreparation::SystemFont } };
+        return { { adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, createCFString(fontDescription.usedLocale()).get())), FontTypeForPreparation::SystemFont } };
 
     if (equalLettersIgnoringASCIICase(family, "lastresort"_s))
         return { { adoptCF(CTFontDescriptorCreateLastResort()), FontTypeForPreparation::NonSystemFont } };
 
     if (equalLettersIgnoringASCIICase(family, "-apple-system-monospaced-numbers"_s)) {
-        auto systemFontDescriptor = UnrealizedCoreTextFont { adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, fontDescription.usedLocale().string().createCFString().get())) };
+        auto systemFontDescriptor = UnrealizedCoreTextFont { adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, createCFString(fontDescription.usedLocale()).get())) };
         systemFontDescriptor.modify([](CFMutableDictionaryRef attributes) {
             int numberSpacingType = kNumberSpacingType;
             int monospacedNumbersSelector = kMonospacedNumbersSelector;
@@ -621,11 +621,11 @@ static std::optional<SpecialCaseFontLookupResult> fontDescriptorWithFamilySpecia
     return std::nullopt;
 }
 
-static RetainPtr<CTFontRef> fontWithFamily(FontDatabase& fontDatabase, const AtomString& family, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, float size, OptionSet<FontLookupOptions> options)
+static RetainPtr<CTFontRef> fontWithFamily(FontDatabase& fontDatabase, AtomStringImpl* family, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, float size, OptionSet<FontLookupOptions> options)
 {
     ASSERT(fontDatabase.allowUserInstalledFonts() == fontDescription.shouldAllowUserInstalledFonts());
 
-    if (family.isEmpty())
+    if (isEmpty(family))
         return nullptr;
 
     if (auto lookupResult = fontDescriptorWithFamilySpecialCase(family, fontDescription, size, fontDescription.shouldAllowUserInstalledFonts())) {
@@ -643,9 +643,9 @@ static RetainPtr<CTFontRef> fontWithFamily(FontDatabase& fontDatabase, const Ato
 }
 
 #if PLATFORM(MAC)
-bool FontCache::shouldAutoActivateFontIfNeeded(const AtomString& family)
+bool FontCache::shouldAutoActivateFontIfNeeded(AtomStringImpl* family)
 {
-    if (family.isEmpty())
+    if (isEmpty(family))
         return false;
 
     static const unsigned maxCacheSize = 128;
@@ -657,9 +657,9 @@ bool FontCache::shouldAutoActivateFontIfNeeded(const AtomString& family)
     return m_knownFamilies.add(family).isNewEntry;
 }
 
-static void autoActivateFont(const String& name, CGFloat size)
+static void autoActivateFont(StringImpl* name, CGFloat size)
 {
-    auto fontName = name.createCFString();
+    auto fontName = createCFString(name);
     CFTypeRef keys[] = { kCTFontNameAttribute, kCTFontEnabledAttribute };
     CFTypeRef values[] = { fontName.get(), kCFBooleanTrue };
     auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
@@ -668,18 +668,18 @@ static void autoActivateFont(const String& name, CGFloat size)
 }
 #endif
 
-static void registerFontIfNeeded(const String& family) WTF_REQUIRES_LOCK(userInstalledFontMapLock())
+static void registerFontIfNeeded(StringImpl* family) WTF_REQUIRES_LOCK(userInstalledFontMapLock())
 {
     if (auto fontURL = userInstalledFontMap().getOptional(family)) {
-        RELEASE_LOG_FORWARDABLE(Fonts, FontCacheCoreTextRegisterFont, family.utf8(), fontURL->string().utf8());
+        RELEASE_LOG_FORWARDABLE(Fonts, FontCacheCoreTextRegisterFont, utf8(family), utf8(fontURL->string()));
         RetainPtr cfURL = fontURL->createCFURL();
 
         CFErrorRef error = nullptr;
         if (!CTFontManagerRegisterFontsForURL(cfURL.get(), kCTFontManagerScopeProcess, &error)) {
             SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr adoptedError = adoptCF(error);
             RetainPtr descriptionCF = adoptCF(CFErrorCopyDescription(adoptedError.get()));
-            String errorDescription(descriptionCF.get());
-            RELEASE_LOG_FORWARDABLE(Fonts, FontCacheCoreTextRegisterError, family.utf8(), errorDescription.utf8());
+            RefPtr<StringImpl> errorDescription(StringImpl::create(descriptionCF.get()));
+            RELEASE_LOG_FORWARDABLE(Fonts, FontCacheCoreTextRegisterError, utf8(family), utf8(errorDescription));
         }
 
         userInstalledFontMap().removeIf([&](auto& keyAndValue) {
@@ -688,7 +688,7 @@ static void registerFontIfNeeded(const String& family) WTF_REQUIRES_LOCK(userIns
     }
 }
 
-static void registerFontsInFamilyIfNeeded(const String& family)
+static void registerFontsInFamilyIfNeeded(StringImpl* family)
 {
     Locker locker(userInstalledFontMapLock());
     if (!userInstalledFontMap().isEmpty()) {
@@ -698,7 +698,7 @@ static void registerFontsInFamilyIfNeeded(const String& family)
             return;
         }
 
-        auto fontFamily = family.convertToASCIILowercase();
+        auto fontFamily = convertToASCIILowercase(family);
 
         registerFontIfNeeded(fontFamily);
         auto fontNames = userInstalledFontFamilyMap().find(fontFamily);
@@ -710,7 +710,7 @@ static void registerFontsInFamilyIfNeeded(const String& family)
     }
 }
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, AtomStringImpl* family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
 {
     registerFontsInFamilyIfNeeded(family);
 
@@ -725,7 +725,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
         // Auto activate the font before looking for it a second time.
         // Ignore the result because we want to use our own algorithm to actually find the font.
-        autoActivateFont(family.string(), size);
+        autoActivateFont(family, size);
 
         font = fontWithFamily(fontDatabase, family, fontDescription, fontCreationContext, size, options);
     }
@@ -769,13 +769,13 @@ static bool isUserInstalledFont(CTFontRef font)
 }
 #endif
 
-static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValue fontWeight, const AtomString& locale, AllowUserInstalledFonts allowUserInstalledFonts, StringView characterCluster)
+static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValue fontWeight, AtomStringImpl* locale, AllowUserInstalledFonts allowUserInstalledFonts, StringView characterCluster)
 {
     ASSERT(characterCluster.length() > 0);
 
     RetainPtr<CFStringRef> localeString;
-    if (!locale.isNull())
-        localeString = locale.string().createCFString();
+    if (locale)
+        localeString = createCFString(locale);
 
     CFIndex coveredLength = 0;
     auto upconvertedCharacters = characterCluster.upconvertedCharacters();
@@ -812,8 +812,8 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     const FontPlatformData& platformData = originalFontData.platformData();
     RetainPtr ctFont = platformData.ctFont();
 
-    auto postScriptName = String(adoptCF(CTFontCopyPostScriptName(ctFont.get())).get());
-    if (!postScriptName.isEmpty())
+    auto postScriptName = StringImpl::create(adoptCF(CTFontCopyPostScriptName(ctFont.get())).get());
+    if (!isEmpty(postScriptName))
         m_fontNamesRequiringSystemFallbackForPrewarming.add(postScriptName);
 
     auto result = lookupFallbackFont(ctFont.get(), description.weight(), description.usedLocale(), description.shouldAllowUserInstalledFonts(), characterCluster);
@@ -837,7 +837,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     return fontForPlatformData(alternateFont);
 }
 
-ASCIILiteral FontCache::platformAlternateFamilyName(const String& familyName)
+ASCIILiteral FontCache::platformAlternateFamilyName(StringImpl* familyName)
 {
     static const char16_t heitiString[] = { 0x9ed1, 0x4f53 };
     static const char16_t songtiString[] = { 0x5b8b, 0x4f53 };
@@ -850,7 +850,7 @@ ASCIILiteral FontCache::platformAlternateFamilyName(const String& familyName)
     static constexpr ASCIILiteral heitiSCReplacement = "PingFang SC"_s;
     static constexpr ASCIILiteral heitiTCReplacement = "PingFang TC"_s;
 
-    switch (familyName.length()) {
+    switch (length(familyName)) {
     case 2:
         if (equal(familyName, songtiString))
             return songtiSC;
@@ -956,7 +956,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
 {
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
-    if (auto result = fontForFamily(fontDescription, AtomString("Times"_s)))
+    if (auto result = fontForFamily(fontDescription, "Times"_atom))
         return *result;
 
     // LastResort is guaranteed to be non-null.
@@ -985,7 +985,7 @@ void FontCache::prewarm(PrewarmInformation&& prewarmInformation)
             database.collectionForFamily(family);
 
         for (auto& fontName : prewarmInformation.fontNamesRequiringSystemFallback) {
-            auto cfFontName = fontName.createCFString();
+            auto cfFontName = createCFString(fontName);
             if (auto warmingFont = adoptCF(CTFontCreateWithName(cfFontName.get(), 0, nullptr))) {
                 // This is sufficient to warm CoreText caches for language and character specific fallbacks.
                 CFIndex coveredLength = 0;
@@ -1003,7 +1003,7 @@ void FontCache::prewarmGlobally()
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
         return;
 
-    Vector<String> families {
+    Vector<RefPtr<StringImpl>> families {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         ".SF NS Text"_s,
         ".SF NS Display"_s,
@@ -1033,15 +1033,15 @@ void FontCache::platformReleaseNoncriticalMemory()
 #endif
 }
 
-HashMap<String, URL>& userInstalledFontMap()
+HashMap<RefPtr<StringImpl>, URL>& userInstalledFontMap()
 {
-    static NeverDestroyed<HashMap<String, URL>> fontMap;
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, URL>> fontMap;
     return fontMap.get();
 }
 
-HashMap<String, Vector<String>>& userInstalledFontFamilyMap()
+HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>& userInstalledFontFamilyMap()
 {
-    static NeverDestroyed<HashMap<String, Vector<String>>> fontFamilyMap;
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>> fontFamilyMap;
     return fontFamilyMap.get();
 }
 

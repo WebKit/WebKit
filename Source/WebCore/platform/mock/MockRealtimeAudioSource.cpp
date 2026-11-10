@@ -53,7 +53,7 @@
 namespace WebCore {
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY) && !USE(GSTREAMER)
-CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier>)
+CaptureSourceOrError MockRealtimeAudioSource::create(RefPtr<StringImpl>&& deviceID, RefPtr<StringImpl>&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier>)
 {
 #ifndef NDEBUG
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
@@ -72,7 +72,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&&
 }
 #endif
 
-MockRealtimeAudioSource::MockRealtimeAudioSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
+MockRealtimeAudioSource::MockRealtimeAudioSource(RefPtr<StringImpl>&& deviceID, RefPtr<AtomStringImpl>&& name, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
     : RealtimeMediaSource(CaptureDevice { WTF::move(deviceID), CaptureDevice::DeviceType::Microphone, WTF::move(name) }, WTF::move(hashSalts), pageIdentifier)
     , m_workQueue(WorkQueue::create("MockRealtimeAudioSource Render Queue"_s))
     , m_timer(RunLoop::currentSingleton(), "MockRealtimeAudioSource::Timer"_s, this, &MockRealtimeAudioSource::tick)
@@ -96,7 +96,7 @@ const RealtimeMediaSourceSettings& MockRealtimeAudioSource::settings()
         settings.setVolume(volume());
         settings.setEchoCancellation(echoCancellation());
         settings.setSampleRate(sampleRate());
-        settings.setLabel(AtomString { name() });
+        settings.setLabel(AtomStringImpl::add(name()));
 
         RealtimeMediaSourceSupportedConstraints supportedConstraints;
         supportedConstraints.setSupportsDeviceId(true);

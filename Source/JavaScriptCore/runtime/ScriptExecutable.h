@@ -57,9 +57,9 @@ public:
     SourceID sourceID() const { return m_source.providerID(); }
     const SourceOrigin& sourceOrigin() const LIFETIME_BOUND { return m_source.provider()->sourceOrigin(); }
     // This is NOT the path that should be used for computing relative paths from a script. Use SourceOrigin's URL for that, the values may or may not be the same... This should only be used for `error.sourceURL` and stack traces.
-    const String& sourceURL() const LIFETIME_BOUND { return m_source.provider()->sourceURL(); }
-    const String& sourceURLStripped() const LIFETIME_BOUND { return m_source.provider()->sourceURLStripped(); }
-    const String& preRedirectURL() const LIFETIME_BOUND { return m_source.provider()->preRedirectURL(); }
+    const RefPtr<StringImpl>& sourceURL() const LIFETIME_BOUND { return m_source.provider()->sourceURL(); }
+    const RefPtr<StringImpl>& sourceURLStripped() const LIFETIME_BOUND { return m_source.provider()->sourceURLStripped(); }
+    const RefPtr<StringImpl>& preRedirectURL() const LIFETIME_BOUND { return m_source.provider()->preRedirectURL(); }
     int firstLine() const { return m_source.firstLine().oneBasedInt(); }
     JS_EXPORT_PRIVATE int lastLine() const;
     unsigned startColumn() const { return m_source.startColumn().oneBasedInt(); }

@@ -40,11 +40,11 @@ class WebContextMenuItemData {
 public:
     WebContextMenuItemData();
     WebContextMenuItemData(const WebCore::ContextMenuItem&);
-    WebContextMenuItemData(WebCore::ContextMenuItemType, WebCore::ContextMenuAction, String&& title, bool enabled, bool checked, unsigned indentationLevel = 0, Vector<WebContextMenuItemData>&& submenu = { });
+    WebContextMenuItemData(WebCore::ContextMenuItemType, WebCore::ContextMenuAction, RefPtr<StringImpl>&& title, bool enabled, bool checked, unsigned indentationLevel = 0, Vector<WebContextMenuItemData>&& submenu = { });
 
     WebCore::ContextMenuItemType type() const { return m_type; }
     WebCore::ContextMenuAction action() const { return m_action; }
-    const String& title() const LIFETIME_BOUND { return m_title; }
+    const RefPtr<StringImpl>& title() const LIFETIME_BOUND { return m_title; }
     bool enabled() const { return m_enabled; }
     void setEnabled(bool enabled) { m_enabled = enabled; }
     bool checked() const { return m_checked; }
@@ -59,7 +59,7 @@ public:
 private:
     WebCore::ContextMenuItemType m_type;
     WebCore::ContextMenuAction m_action;
-    String m_title;
+    RefPtr<StringImpl> m_title;
     bool m_enabled;
     bool m_checked;
     unsigned m_indentationLevel;

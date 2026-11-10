@@ -51,7 +51,7 @@ Ref<HTMLParagraphElement> HTMLParagraphElement::create(const QualifiedName& tagN
     return adoptRef(*new HTMLParagraphElement(tagName, document));
 }
 
-void HTMLParagraphElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLParagraphElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == alignAttr) {
         if (equalLettersIgnoringASCIICase(value, "middle"_s) || equalLettersIgnoringASCIICase(value, "center"_s))

@@ -42,7 +42,7 @@ class FormClient {
 public:
     virtual ~FormClient() { }
 
-    virtual void willSubmitForm(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebFrameProxy&, WebKit::FrameInfoData&&, WebKit::FrameInfoData&&, const Vector<std::pair<WTF::String, WTF::String>>&, API::Object*, const WTF::URL&, const WTF::String&, CompletionHandler<void()>&& completionHandler)
+    virtual void willSubmitForm(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebFrameProxy&, WebKit::FrameInfoData&&, WebKit::FrameInfoData&&, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&, API::Object*, const WTF::URL&, StringImpl*, CompletionHandler<void()>&& completionHandler)
     {
         completionHandler();
     }

@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-Ref<AudioEncoder::CreatePromise> AudioEncoder::create(const String& codecName, const Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
+Ref<AudioEncoder::CreatePromise> AudioEncoder::create(StringImpl* codecName, const Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
 #if USE(GSTREAMER)
     return GStreamerAudioEncoder::create(codecName, config, WTF::move(descriptionCallback), WTF::move(outputCallback));

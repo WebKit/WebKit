@@ -87,7 +87,7 @@ public:
 
     bool apply(NOESCAPE const Function<bool(std::span<const uint8_t>)>&) const;
 
-    Data mapToFile(const String& path) const;
+    Data mapToFile(StringImpl* path) const;
 
 #if PLATFORM(COCOA)
     dispatch_data_t dispatchData() const { return m_dispatchData.get(); }
@@ -114,7 +114,7 @@ private:
 
 Data concatenate(const Data&, const Data&);
 bool bytesEqual(const Data&, const Data&);
-Data mapFile(const String& path);
+Data mapFile(StringImpl* path);
 
 using Salt = FileSystem::Salt;
 SHA1::Digest computeSHA1(const Data&, const Salt&);

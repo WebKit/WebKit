@@ -49,14 +49,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WindowEventLoop);
 
-NODELETE static MemoryCompactRobinHoodHashMap<String, CheckedPtr<WindowEventLoop>>& windowEventLoopMap()
+NODELETE static MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, CheckedPtr<WindowEventLoop>>& windowEventLoopMap()
 {
     RELEASE_ASSERT(isMainThread());
-    static NeverDestroyed<MemoryCompactRobinHoodHashMap<String, CheckedPtr<WindowEventLoop>>> map;
+    static NeverDestroyed<MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, CheckedPtr<WindowEventLoop>>> map;
     return map.get();
 }
 
-static String agentClusterKeyOrNullIfUnique(const SecurityOrigin& origin)
+static RefPtr<StringImpl> agentClusterKeyOrNullIfUnique(const SecurityOrigin& origin)
 {
     auto computeKey = [&] {
         // https://html.spec.whatwg.org/multipage/webappapis.html#obtain-agent-cluster-key
@@ -68,7 +68,7 @@ static String agentClusterKeyOrNullIfUnique(const SecurityOrigin& origin)
         return makeString(origin.protocol(), "://"_s, registrableDomain.string());
     };
     auto key = computeKey();
-    if (key.isEmpty() || key == "null"_s)
+    if (isEmpty(key) || equal(key, "null"_s))
         return { };
     return key;
 }
@@ -76,8 +76,8 @@ static String agentClusterKeyOrNullIfUnique(const SecurityOrigin& origin)
 Ref<WindowEventLoop> WindowEventLoop::eventLoopForSecurityOrigin(const SecurityOrigin& origin)
 {
     auto key = agentClusterKeyOrNullIfUnique(origin);
-    if (key.isNull())
-        return create({ });
+    if (!key)
+        return create(nullptr);
 
     auto addResult = windowEventLoopMap().add(key, nullptr);
     if (addResult.isNewEntry) [[unlikely]] {
@@ -88,12 +88,12 @@ Ref<WindowEventLoop> WindowEventLoop::eventLoopForSecurityOrigin(const SecurityO
     return *addResult.iterator->value;
 }
 
-inline Ref<WindowEventLoop> WindowEventLoop::create(const String& agentClusterKey)
+inline Ref<WindowEventLoop> WindowEventLoop::create(StringImpl* agentClusterKey)
 {
     return adoptRef(*new WindowEventLoop(agentClusterKey));
 }
 
-inline WindowEventLoop::WindowEventLoop(const String& agentClusterKey)
+inline WindowEventLoop::WindowEventLoop(StringImpl* agentClusterKey)
     : m_agentClusterKey(agentClusterKey)
     , m_timer(*this, &WindowEventLoop::didReachTimeToRun)
     , m_idleTimer(*this, &WindowEventLoop::didFireIdleTimer)
@@ -103,7 +103,7 @@ inline WindowEventLoop::WindowEventLoop(const String& agentClusterKey)
 
 WindowEventLoop::~WindowEventLoop()
 {
-    if (m_agentClusterKey.isNull())
+    if (!m_agentClusterKey)
         return;
     auto didRemove = windowEventLoopMap().remove(m_agentClusterKey);
     RELEASE_ASSERT(didRemove);

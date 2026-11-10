@@ -40,14 +40,14 @@ class ContentSecurityPolicy;
 
 class ContentSecurityPolicySourceList {
 public:
-    ContentSecurityPolicySourceList(const ContentSecurityPolicy&, const String& directiveName);
+    ContentSecurityPolicySourceList(const ContentSecurityPolicy&, StringImpl* directiveName);
 
-    void parse(const String&);
+    void parse(StringImpl*);
 
     bool matches(const URL&, bool didReceiveRedirectResponse) const;
     bool matches(const Vector<ContentSecurityPolicyHash>&) const;
     bool matchesAll(const Vector<ContentSecurityPolicyHash>&) const;
-    bool matches(const String& nonce) const;
+    bool matches(StringImpl* nonce) const;
 
     OptionSet<ContentSecurityPolicyHashAlgorithm> hashAlgorithmsUsed() const { return m_hashAlgorithmsUsed; }
 
@@ -76,7 +76,7 @@ private:
         StringView scheme;
         Host host;
         Port port;
-        String path;
+        RefPtr<StringImpl> path;
     };
 
     bool isProtocolAllowedByStar(const URL&) const;
@@ -86,16 +86,16 @@ private:
     template<typename CharacterType> NODELETE StringView parseScheme(StringParsingBuffer<CharacterType>);
     template<typename CharacterType> NODELETE std::optional<Host> parseHost(std::span<const CharacterType>);
     template<typename CharacterType> std::optional<Port> parsePort(std::span<const CharacterType>);
-    template<typename CharacterType> String parsePath(std::span<const CharacterType>);
+    template<typename CharacterType> RefPtr<StringImpl> parsePath(std::span<const CharacterType>);
     template<typename CharacterType> bool parseNonceSource(StringParsingBuffer<CharacterType>);
     template<typename CharacterType> bool parseHashSource(StringParsingBuffer<CharacterType>);
 
     const CheckedRef<const ContentSecurityPolicy> m_policy;
     Vector<ContentSecurityPolicySource> m_list;
-    MemoryCompactLookupOnlyRobinHoodHashSet<String> m_nonces;
+    MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>> m_nonces;
     HashSet<ContentSecurityPolicyHash> m_hashes;
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsUsed;
-    String m_directiveName;
+    RefPtr<StringImpl> m_directiveName;
     ContentSecurityPolicyModeForExtension m_contentSecurityPolicyModeForExtension { ContentSecurityPolicyModeForExtension::None };
     bool m_allowSelf { false };
     bool m_allowStar { false };

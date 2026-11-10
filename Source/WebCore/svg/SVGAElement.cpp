@@ -72,18 +72,18 @@ Ref<SVGAElement> SVGAElement::create(const QualifiedName& tagName, Document& doc
     return adoptRef(*new SVGAElement(tagName, document));
 }
 
-String SVGAElement::title() const
+RefPtr<StringImpl> SVGAElement::title() const
 {
     // If the xlink:title is set (non-empty string), use it.
-    const AtomString& title = attributeWithoutSynchronization(XLinkNames::titleAttr);
-    if (!title.isEmpty())
+    const RefPtr<AtomStringImpl>& title = attributeWithoutSynchronization(XLinkNames::titleAttr);
+    if (!isEmpty(title))
         return title;
 
     // Otherwise, use the title of this element.
     return SVGElement::title();
 }
 
-void SVGAElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGAElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::targetAttr) {
         Ref { m_target }->setBaseValInternal(newValue);
@@ -101,7 +101,7 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (SVGURIReference::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        setIsLink(!href().isNull() && !shouldProhibitLinks(this));
+        setIsLink(!!href() && !shouldProhibitLinks(this));
         return;
     }
 
@@ -135,10 +135,10 @@ void SVGAElement::defaultEventHandler(Event& event)
         }
 
         if (MouseEvent::canTriggerActivationBehavior(event)) {
-            auto url = href().trim(isASCIIWhitespace);
+            auto url = trim(href(), isASCIIWhitespace);
 
-            if (url[0] == '#') {
-                if (RefPtr targetElement = dynamicDowncast<SVGSMILElement>(protect(treeScope())->getElementById(url.substringSharingImpl(1)))) {
+            if (codeUnitAt(url, 0) == '#') {
+                if (RefPtr targetElement = dynamicDowncast<SVGSMILElement>(protect(treeScope())->getElementById(substringSharingImpl(url, 1)))) {
                     targetElement->beginByLinkActivation();
                     event.setDefaultHandled();
                     return;
@@ -149,8 +149,8 @@ void SVGAElement::defaultEventHandler(Event& event)
             URL completedURL = document->encodingParseURL(url);
 
             auto target = this->target();
-            if (target.isEmpty() && attributeWithoutSynchronization(XLinkNames::showAttr) == "new"_s)
-                target = blankTargetFrameName();
+            if (isEmpty(target) && equal(attributeWithoutSynchronization(XLinkNames::showAttr), "new"_s))
+                target = AtomStringImpl::add(blankTargetFrameName());
             event.setDefaultHandled();
 
             auto referrerPolicy = effectiveReferrerPolicy(m_linkRelations, this->referrerPolicy());
@@ -267,7 +267,7 @@ DOMTokenList& SVGAElement::relList()
     return *m_relList;
 }
 
-String SVGAElement::referrerPolicyForBindings() const
+RefPtr<StringImpl> SVGAElement::referrerPolicyForBindings() const
 {
     return referrerPolicyToString(referrerPolicy());
 }

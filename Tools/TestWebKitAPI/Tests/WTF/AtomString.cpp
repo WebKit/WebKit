@@ -32,51 +32,51 @@ namespace TestWebKitAPI {
 
 TEST(WTF, AtomStringCreationFromLiteral)
 {
-    AtomString stringWithTemplate("Template Literal"_s);
-    ASSERT_EQ(strlen("Template Literal"), stringWithTemplate.length());
-    ASSERT_TRUE(stringWithTemplate == "Template Literal"_s);
-    ASSERT_TRUE(stringWithTemplate.string().is8Bit());
+    RefPtr<AtomStringImpl> stringWithTemplate("Template Literal"_atom);
+    ASSERT_EQ(strlen("Template Literal"), length(stringWithTemplate));
+    ASSERT_TRUE(equal(stringWithTemplate, "Template Literal"_s));
+    ASSERT_TRUE(is8Bit(stringWithTemplate));
 
     ASCIILiteral literal("Source literal");
-    AtomString stringFromLiteral(literal);
-    ASSERT_EQ(strlen("Source literal"), stringFromLiteral.length());
-    ASSERT_TRUE(stringFromLiteral == "Source literal"_s);
-    ASSERT_TRUE(stringFromLiteral.string().is8Bit());
-    ASSERT_TRUE(std::bit_cast<uintptr_t>(stringFromLiteral.impl()->span8().data()) == std::bit_cast<uintptr_t>(literal.span().data()));
+    RefPtr<AtomStringImpl> stringFromLiteral(AtomStringImpl::add(literal));
+    ASSERT_EQ(strlen("Source literal"), length(stringFromLiteral));
+    ASSERT_TRUE(equal(stringFromLiteral, "Source literal"_s));
+    ASSERT_TRUE(is8Bit(stringFromLiteral));
+    ASSERT_TRUE(std::bit_cast<uintptr_t>(stringFromLiteral.get()->span8().data()) == std::bit_cast<uintptr_t>(literal.span().data()));
 }
 
 TEST(WTF, AtomStringCreationFromLiteralUniqueness)
 {
-    AtomString string1("Template Literal"_s);
-    AtomString string2("Template Literal"_s);
-    ASSERT_EQ(string1.impl(), string2.impl());
+    RefPtr<AtomStringImpl> string1("Template Literal"_atom);
+    RefPtr<AtomStringImpl> string2("Template Literal"_atom);
+    ASSERT_EQ(string1.get(), string2.get());
 
-    AtomString string3("Template Literal"_s);
-    ASSERT_EQ(string1.impl(), string3.impl());
+    RefPtr<AtomStringImpl> string3("Template Literal"_atom);
+    ASSERT_EQ(string1.get(), string3.get());
 }
 
 TEST(WTF, AtomStringExistingHash)
 {
-    AtomString string1("Template Literal"_s);
-    ASSERT_EQ(string1.existingHash(), string1.impl()->existingHash());
-    AtomString string2;
-    ASSERT_EQ(string2.existingHash(), 0u);
+    RefPtr<AtomStringImpl> string1("Template Literal"_atom);
+    ASSERT_EQ(existingHash(string1), string1.get()->existingHash());
+    RefPtr<AtomStringImpl> string2;
+    ASSERT_EQ(existingHash(string2), 0u);
 }
 
 static inline UTF8CString testAtomStringNumber(double number)
 {
-    return AtomString::number(number).string().utf8();
+    return utf8(AtomStringImpl::number(number));
 }
 
 TEST(WTF, AtomStringCreationFromNullASCIILiteral)
 {
-    AtomString stringFromNull { ASCIILiteral() };
-    ASSERT_TRUE(stringFromNull.isNull());
-    ASSERT_TRUE(stringFromNull.isEmpty());
+    RefPtr<AtomStringImpl> stringFromNull { ASCIILiteral() };
+    ASSERT_TRUE(!stringFromNull);
+    ASSERT_TRUE(isEmpty(stringFromNull));
 
-    AtomString stringFromEmpty(""_s);
-    ASSERT_FALSE(stringFromEmpty.isNull());
-    ASSERT_TRUE(stringFromEmpty.isEmpty());
+    RefPtr<AtomStringImpl> stringFromEmpty(""_atom);
+    ASSERT_FALSE(!stringFromEmpty);
+    ASSERT_TRUE(isEmpty(stringFromEmpty));
 }
 
 TEST(WTF, AtomStringNumberDouble)

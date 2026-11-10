@@ -43,7 +43,7 @@
 - (NSString *)target
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->target().createNSString().autorelease();
+    return createNSString(IMPL->target()).autorelease();
 }
 
 - (DOMStyleSheet *)sheet

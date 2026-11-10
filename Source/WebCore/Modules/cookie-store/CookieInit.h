@@ -33,14 +33,14 @@
 namespace WebCore {
 
 struct CookieInit {
-    CookieInit isolatedCopy() const & { return { name.isolatedCopy(), value.isolatedCopy(), expires, domain.isolatedCopy(), path.isolatedCopy(), sameSite, maxAge }; }
-    CookieInit isolatedCopy() && { return { WTF::move(name).isolatedCopy(), WTF::move(value).isolatedCopy(), expires, WTF::move(domain).isolatedCopy(), WTF::move(path).isolatedCopy(), sameSite, maxAge }; }
+    CookieInit isolatedCopy() const & { return { WTF::isolatedCopy(name), WTF::isolatedCopy(value), expires, WTF::isolatedCopy(domain), WTF::isolatedCopy(path), sameSite, maxAge }; }
+    CookieInit isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(name)), WTF::isolatedCopy(WTF::move(value)), expires, WTF::isolatedCopy(WTF::move(domain)), WTF::isolatedCopy(WTF::move(path)), sameSite, maxAge }; }
 
-    String name;
-    String value;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> value;
     std::optional<DOMHighResTimeStamp> expires { }; // Milliseconds
-    String domain { };
-    String path { "/"_s };
+    RefPtr<StringImpl> domain { };
+    RefPtr<StringImpl> path { "/"_si };
     CookieSameSite sameSite { CookieSameSite::Strict };
     std::optional<int64_t> maxAge { }; // Seconds
 };

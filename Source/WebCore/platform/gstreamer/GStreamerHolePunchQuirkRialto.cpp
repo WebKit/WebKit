@@ -36,8 +36,8 @@ namespace WebCore {
 
 GstElement* GStreamerHolePunchQuirkRialto::createHolePunchVideoSink(bool isLegacyPlaybin, const MediaPlayer* player)
 {
-    AtomString value;
-    bool isPIPRequested = player && player->doesHaveAttribute("pip"_s, &value) && equalLettersIgnoringASCIICase(value, "true"_s);
+    RefPtr<AtomStringImpl> value;
+    bool isPIPRequested = player && player->doesHaveAttribute("pip"_atom, &value) && equalLettersIgnoringASCIICase(value, "true"_s);
     if (isLegacyPlaybin && !isPIPRequested)
         return nullptr;
 
@@ -54,7 +54,7 @@ bool GStreamerHolePunchQuirkRialto::setHolePunchVideoRectangle(GstElement* video
         return false;
 
     auto rectString = makeString(rect.x(), ',', rect.y(), ',', rect.width(), ',', rect.height());
-    g_object_set(videoSink, "rectangle", rectString.ascii().data(), nullptr);
+    g_object_set(videoSink, "rectangle", ascii(rectString).data(), nullptr);
     return true;
 }
 

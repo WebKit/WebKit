@@ -53,7 +53,7 @@ using namespace WebCore;
 
 - (void)setIsAllowed:(BOOL)allowed
 {
-    protect(_geolocation)->setIsAllowed(allowed, { });
+    protect(_geolocation)->setIsAllowed(allowed, nullptr);
 }
 
 @end

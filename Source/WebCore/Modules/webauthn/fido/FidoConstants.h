@@ -51,7 +51,7 @@ enum class ProtocolVersion {
 
 NODELETE WEBCORE_EXPORT bool isCtap2Protocol(ProtocolVersion);
 
-WEBCORE_EXPORT String toString(ProtocolVersion);
+WEBCORE_EXPORT RefPtr<StringImpl> toString(ProtocolVersion);
 
 // Length of the U2F challenge/application parameter:
 // https://fidoalliance.org/specs/fido-u2f-v1.2-ps-20170411/fido-u2f-raw-message-formats-v1.2-ps-20170411.html#registration-request-message---u2f_register

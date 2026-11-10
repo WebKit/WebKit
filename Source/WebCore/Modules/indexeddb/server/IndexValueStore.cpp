@@ -435,7 +435,7 @@ const IDBKeyData& IndexValueStore::Iterator::primaryKey()
 }
 
 #if !LOG_DISABLED
-String IndexValueStore::loggingString() const
+RefPtr<StringImpl> IndexValueStore::loggingString() const
 {
     StringBuilder builder;
     for (auto& key : m_orderedKeys)

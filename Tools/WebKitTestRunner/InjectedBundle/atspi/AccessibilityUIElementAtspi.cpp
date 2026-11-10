@@ -281,7 +281,7 @@ RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::attributesOfDocumentLinks()
     return adoptRef(JSStringCreateWithCharacters(nullptr, 0));
 }
 
-static String attributesOfElement(AccessibilityUIElement& element)
+static RefPtr<StringImpl> attributesOfElement(AccessibilityUIElement& element)
 {
     StringBuilder builder;
 
@@ -289,9 +289,9 @@ static String attributesOfElement(AccessibilityUIElement& element)
 
     builder.append("AXParent: "_s);
     if (auto parent = element.parentElement()) {
-        builder.append(parent->role()->string().substring(8));
-        auto parentName = parent->title()->string().substring(9);
-        if (!parentName.isEmpty())
+        builder.append(substring(parent->role()->string(), 8));
+        auto parentName = substring(parent->title()->string(), 9);
+        if (!isEmpty(parentName))
             builder.append(": "_s, parentName);
     } else
         builder.append("(null)"_s);
@@ -307,18 +307,18 @@ static String attributesOfElement(AccessibilityUIElement& element)
     builder.append(", "_s, FormattedNumber::fixedPrecision(element.height(), 6, TrailingZerosPolicy::Keep));
     builder.append(" }\n"_s);
 
-    String title = element.title()->string();
-    if (!title.isEmpty()) {
+    RefPtr<StringImpl> title = element.title()->string();
+    if (!isEmpty(title)) {
         builder.append(title);
         builder.append('\n');
     }
 
-    String description = element.description()->string();
-    if (!description.isEmpty())
+    RefPtr<StringImpl> description = element.description()->string();
+    if (!isEmpty(description))
         builder.append(description, '\n');
 
-    String value = element.stringValue()->string();
-    if (!value.isEmpty())
+    RefPtr<StringImpl> value = element.stringValue()->string();
+    if (!isEmpty(value))
         builder.append(value, '\n');
 
     builder.append("AXFocusable: "_s, element.isFocusable(), '\n');
@@ -331,8 +331,8 @@ static String attributesOfElement(AccessibilityUIElement& element)
     builder.append("AXRequired: "_s, element.isRequired(), '\n');
     builder.append("AXChecked: "_s, element.isChecked(), '\n');
 
-    String url = element.url()->string();
-    if (!url.isEmpty())
+    RefPtr<StringImpl> url = element.url()->string();
+    if (!isEmpty(url))
         builder.append(url, '\n');
 
     // We append the platform attributes as a single line at the end.
@@ -343,7 +343,7 @@ static String attributesOfElement(AccessibilityUIElement& element)
 
     bool isFirst = true;
     for (const auto& key : keys) {
-        if (key == "id"_s || key == "toolkit"_s)
+        if (equal(key, "id"_s) || equal(key, "toolkit"_s))
             continue;
 
         if (!isFirst)
@@ -355,7 +355,7 @@ static String attributesOfElement(AccessibilityUIElement& element)
     return builder.toString();
 }
 
-static String attributesOfElements(Vector<Ref<AccessibilityUIElement>>& elements)
+static RefPtr<StringImpl> attributesOfElements(Vector<Ref<AccessibilityUIElement>>& elements)
 {
     StringBuilder builder;
     for (auto& element : elements)
@@ -371,7 +371,7 @@ static Vector<Ref<AccessibilityUIElement>> elementsVector(const Vector<Ref<WebCo
     return elements;
 }
 
-static String attributesOfElements(const Vector<Ref<WebCore::AccessibilityObjectAtspi>>& wrappers)
+static RefPtr<StringImpl> attributesOfElements(const Vector<Ref<WebCore::AccessibilityObjectAtspi>>& wrappers)
 {
     auto elements = elementsVector(wrappers);
     return attributesOfElements(elements);
@@ -400,41 +400,41 @@ static bool checkElementState(WebCore::AccessibilityObjectAtspi* element, WebCor
 
 RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::stringAttributeValue(JSStringRef attribute)
 {
-    String attributeName = toWTFString(attribute);
-    if (attributeName == "AXSelectedText"_s) {
+    RefPtr<StringImpl> attributeName = toWTFString(attribute);
+    if (equal(attributeName, "AXSelectedText"_s)) {
         if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Text))
             return adoptRef(JSStringCreateWithCharacters(nullptr, 0));
 
         m_element->updateBackingStore();
         auto text = m_element->text();
         auto offset = m_element->selectedRange();
-        return OpaqueJSString::tryCreate(text.substring(offset.x(), offset.y() - offset.x()));
+        return OpaqueJSString::tryCreate(substring(text, offset.x(), offset.y() - offset.x()));
     }
 
     m_element->updateBackingStore();
     auto attributes = m_element->attributes();
 
-    if (attributeName == "AXPlaceholderValue"_s)
+    if (equal(attributeName, "AXPlaceholderValue"_s))
         return OpaqueJSString::tryCreate(attributes.get("placeholder-text"_s));
 
-    if (attributeName == "AXInvalid"_s) {
+    if (equal(attributeName, "AXInvalid"_s)) {
         auto textAttributes = m_element->textAttributes();
         auto value = textAttributes.attributes.get("invalid"_s);
-        if (value.isEmpty())
-            value = checkElementState(m_element.get(), WebCore::Atspi::State::InvalidEntry) ? "true"_s : "false"_s;
+        if (isEmpty(value))
+            value = checkElementState(m_element.get(), WebCore::Atspi::State::InvalidEntry) ? "true"_si : "false"_si;
         return OpaqueJSString::tryCreate(value);
     }
 
-    if (attributeName == "AXARIALive"_s)
+    if (equal(attributeName, "AXARIALive"_s))
         return OpaqueJSString::tryCreate(attributes.get("live"_s));
 
-    if (attributeName == "AXARIARelevant"_s)
+    if (equal(attributeName, "AXARIARelevant"_s))
         return OpaqueJSString::tryCreate(attributes.get("relevant"_s));
 
-    if (attributeName == "AXAutocompleteValue"_s)
+    if (equal(attributeName, "AXAutocompleteValue"_s))
         return OpaqueJSString::tryCreate(attributes.get("autocomplete"_s));
 
-    if (attributeName == "AXKeyShortcutsValue"_s)
+    if (equal(attributeName, "AXKeyShortcutsValue"_s))
         return OpaqueJSString::tryCreate(attributes.get("keyshortcuts"_s));
 
     return adoptRef(JSStringCreateWithCharacters(nullptr, 0));
@@ -442,25 +442,25 @@ RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::stringAttributeValue(JSStrin
 
 double AccessibilityUIElementAtspi::numberAttributeValue(JSStringRef attribute)
 {
-    String attributeName = toWTFString(attribute);
+    RefPtr<StringImpl> attributeName = toWTFString(attribute);
     m_element->updateBackingStore();
     auto attributes = m_element->attributes();
-    if (attributeName == "AXARIASetSize"_s)
-        return attributes.get("setsize"_s).toDouble();
-    if (attributeName == "AXARIAPosInSet"_s)
-        return attributes.get("posinset"_s).toDouble();
-    if (attributeName == "AXARIAColumnCount"_s)
-        return attributes.get("colcount"_s).toDouble();
-    if (attributeName == "AXARIARowCount"_s)
-        return attributes.get("rowcount"_s).toDouble();
-    if (attributeName == "AXARIAColumnIndex"_s)
-        return attributes.get("colindex"_s).toDouble();
-    if (attributeName == "AXARIARowIndex"_s)
-        return attributes.get("rowindex"_s).toDouble();
-    if (attributeName == "AXARIAColumnSpan"_s)
-        return attributes.get("colspan"_s).toDouble();
-    if (attributeName == "AXARIARowSpan"_s)
-        return attributes.get("rowspan"_s).toDouble();
+    if (equal(attributeName, "AXARIASetSize"_s))
+        return toDouble(attributes.get("setsize"_s));
+    if (equal(attributeName, "AXARIAPosInSet"_s))
+        return toDouble(attributes.get("posinset"_s));
+    if (equal(attributeName, "AXARIAColumnCount"_s))
+        return toDouble(attributes.get("colcount"_s));
+    if (equal(attributeName, "AXARIARowCount"_s))
+        return toDouble(attributes.get("rowcount"_s));
+    if (equal(attributeName, "AXARIAColumnIndex"_s))
+        return toDouble(attributes.get("colindex"_s));
+    if (equal(attributeName, "AXARIARowIndex"_s))
+        return toDouble(attributes.get("rowindex"_s));
+    if (equal(attributeName, "AXARIAColumnSpan"_s))
+        return toDouble(attributes.get("colspan"_s));
+    if (equal(attributeName, "AXARIARowSpan"_s))
+        return toDouble(attributes.get("rowspan"_s));
 
     return 0;
 }
@@ -469,7 +469,7 @@ RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::currentStateValue() const
 {
     m_element->updateBackingStore();
     auto value = m_element->attributes().get("current"_s);
-    return OpaqueJSString::tryCreate(!value.isNull() ? value : "false"_s);
+    return OpaqueJSString::tryCreate(value ? value : "false"_si);
 }
 
 RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::sortDirection() const
@@ -477,11 +477,11 @@ RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::sortDirection() const
     m_element->updateBackingStore();
     auto sort = m_element->attributes().get("sort"_s);
 
-    if (sort == "ascending"_s)
+    if (equal(sort, "ascending"_s))
         return OpaqueJSString::tryCreate("AXAscendingSortDirection"_s);
-    if (sort == "descending"_s)
+    if (equal(sort, "descending"_s))
         return OpaqueJSString::tryCreate("AXDescendingSortDirection"_s);
-    if (sort == "other"_s)
+    if (equal(sort, "other"_s))
         return OpaqueJSString::tryCreate("AXUnknownSortDirection"_s);
 
     return nullptr;
@@ -571,30 +571,30 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElementAtspi::uiElementAttributeVa
 
 bool AccessibilityUIElementAtspi::boolAttributeValue(JSStringRef attribute)
 {
-    String attributeName = toWTFString(attribute);
+    RefPtr<StringImpl> attributeName = toWTFString(attribute);
     m_element->updateBackingStore();
-    if (attributeName == "AXElementBusy"_s)
+    if (equal(attributeName, "AXElementBusy"_s))
         return checkElementState(m_element.get(), WebCore::Atspi::State::Busy);
-    if (attributeName == "AXModal"_s)
+    if (equal(attributeName, "AXModal"_s))
         return checkElementState(m_element.get(), WebCore::Atspi::State::Modal);
-    if (attributeName == "AXSupportsAutoCompletion"_s)
+    if (equal(attributeName, "AXSupportsAutoCompletion"_s))
         return checkElementState(m_element.get(), WebCore::Atspi::State::SupportsAutocompletion);
-    if (attributeName == "AXVisited"_s)
+    if (equal(attributeName, "AXVisited"_s))
         return checkElementState(m_element.get(), WebCore::Atspi::State::Visited);
-    if (attributeName == "AXInterfaceTable"_s)
+    if (equal(attributeName, "AXInterfaceTable"_s))
         return m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Table);
-    if (attributeName == "AXInterfaceTableCell"_s)
+    if (equal(attributeName, "AXInterfaceTableCell"_s))
         return m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::TableCell);
-    if (attributeName == "AXARIAAtomic"_s)
-        return m_element->attributes().get("atomic"_s) == "true"_s;
+    if (equal(attributeName, "AXARIAAtomic"_s))
+        return equal(m_element->attributes().get("atomic"_s), "true"_s);
 
     return false;
 }
 
 bool AccessibilityUIElementAtspi::isAttributeSettable(JSStringRef attribute)
 {
-    String attributeName = toWTFString(attribute);
-    if (attributeName != "AXValue"_s)
+    RefPtr<StringImpl> attributeName = toWTFString(attribute);
+    if (!equal(attributeName, "AXValue"_s))
         return false;
 
     m_element->updateBackingStore();
@@ -608,9 +608,9 @@ bool AccessibilityUIElementAtspi::isAttributeSettable(JSStringRef attribute)
         return true;
 
     auto attributes = m_element->attributes();
-    String isReadOnly = attributes.get("readonly"_s);
-    if (!isReadOnly.isEmpty())
-        return isReadOnly == "true"_s ? false : true;
+    RefPtr<StringImpl> isReadOnly = attributes.get("readonly"_s);
+    if (!isEmpty(isReadOnly))
+        return equal(isReadOnly, "true"_s) ? false : true;
 
     // If we have a listbox or combobox and the value can be set, the options should be selectable.
     auto elementRole = m_element->role();
@@ -641,22 +641,22 @@ bool AccessibilityUIElementAtspi::isAttributeSettable(JSStringRef attribute)
 
 bool AccessibilityUIElementAtspi::isAttributeSupported(JSStringRef attribute)
 {
-    String attributeName = toWTFString(attribute);
+    RefPtr<StringImpl> attributeName = toWTFString(attribute);
     m_element->updateBackingStore();
     auto attributes = m_element->attributes();
-    if (attributeName == "AXARIASetSize"_s)
+    if (equal(attributeName, "AXARIASetSize"_s))
         return attributes.contains("setsize"_s);
-    if (attributeName == "AXARIAPosInSet"_s)
+    if (equal(attributeName, "AXARIAPosInSet"_s))
         return attributes.contains("posinset"_s);
-    if (attributeName == "AXARIALive"_s) {
+    if (equal(attributeName, "AXARIALive"_s)) {
         auto value = attributes.get("live"_s);
-        return !value.isEmpty() && value != "off"_s;
+        return !isEmpty(value) && !equal(value, "off"_s);
     }
-    if (attributeName == "AXARIARelevant"_s)
+    if (equal(attributeName, "AXARIARelevant"_s))
         return attributes.contains("relevant"_s);
-    if (attributeName == "AXARIAAtomic"_s)
+    if (equal(attributeName, "AXARIAAtomic"_s))
         return attributes.contains("atomic"_s);
-    if (attributeName == "AXElementBusy"_s)
+    if (equal(attributeName, "AXElementBusy"_s))
         return true;
 
     return false;
@@ -667,217 +667,217 @@ RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::parameterizedAttributeNames(
     return adoptRef(JSStringCreateWithCharacters(nullptr, 0));
 }
 
-static String xmlRoleValueString(const String& xmlRoles)
+static RefPtr<StringImpl> xmlRoleValueString(StringImpl* xmlRoles)
 {
-    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> regionRoles = HashSet<String, ASCIICaseInsensitiveHash>({
-        "doc-acknowledgments"_s,
-        "doc-afterword"_s,
-        "doc-appendix"_s,
-        "doc-bibliography"_s,
-        "doc-chapter"_s,
-        "doc-conclusion"_s,
-        "doc-credits"_s,
-        "doc-endnotes"_s,
-        "doc-epilogue"_s,
-        "doc-errata"_s,
-        "doc-foreword"_s,
-        "doc-glossary"_s,
-        "doc-glossref"_s,
-        "doc-index"_s,
-        "doc-introduction"_s,
-        "doc-pagelist"_s,
-        "doc-part"_s,
-        "doc-preface"_s,
-        "doc-prologue"_s,
-        "doc-toc"_s,
-        "region"_s
+    static NeverDestroyed<HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash>> regionRoles = HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash>({
+        "doc-acknowledgments"_si,
+        "doc-afterword"_si,
+        "doc-appendix"_si,
+        "doc-bibliography"_si,
+        "doc-chapter"_si,
+        "doc-conclusion"_si,
+        "doc-credits"_si,
+        "doc-endnotes"_si,
+        "doc-epilogue"_si,
+        "doc-errata"_si,
+        "doc-foreword"_si,
+        "doc-glossary"_si,
+        "doc-glossref"_si,
+        "doc-index"_si,
+        "doc-introduction"_si,
+        "doc-pagelist"_si,
+        "doc-part"_si,
+        "doc-preface"_si,
+        "doc-prologue"_si,
+        "doc-toc"_si,
+        "region"_si
     });
 
     if (regionRoles->contains(xmlRoles))
-        return "AXLandmarkRegion"_s;
+        return "AXLandmarkRegion"_si;
     if (equalLettersIgnoringASCIICase(xmlRoles, "banner"_s))
-        return "AXLandmarkBanner"_s;
+        return "AXLandmarkBanner"_si;
     if (equalLettersIgnoringASCIICase(xmlRoles, "complementary"_s))
-        return "AXLandmarkComplementary"_s;
+        return "AXLandmarkComplementary"_si;
     if (equalLettersIgnoringASCIICase(xmlRoles, "contentinfo"_s))
-        return "AXLandmarkContentInfo"_s;
+        return "AXLandmarkContentInfo"_si;
     if (equalLettersIgnoringASCIICase(xmlRoles, "form"_s))
-        return "AXLandmarkForm"_s;
+        return "AXLandmarkForm"_si;
     if (equalLettersIgnoringASCIICase(xmlRoles, "main"_s))
-        return "AXLandmarkMain"_s;
+        return "AXLandmarkMain"_si;
     if (equalLettersIgnoringASCIICase(xmlRoles, "navigation"_s))
-        return "AXLandmarkNavigation"_s;
+        return "AXLandmarkNavigation"_si;
     if (equalLettersIgnoringASCIICase(xmlRoles, "search"_s))
-        return "AXLandmarkSearch"_s;
+        return "AXLandmarkSearch"_si;
 
     return { };
 }
 
-static String roleValueToString(WebCore::Atspi::Role roleValue)
+static RefPtr<StringImpl> roleValueToString(WebCore::Atspi::Role roleValue)
 {
     switch (roleValue) {
     case WebCore::Atspi::Role::Alert:
-        return "AXAlert"_s;
+        return "AXAlert"_si;
     case WebCore::Atspi::Role::Article:
-        return "AXArticle"_s;
+        return "AXArticle"_si;
     case WebCore::Atspi::Role::Audio:
-        return "AXAudio"_s;
+        return "AXAudio"_si;
     case WebCore::Atspi::Role::BlockQuote:
-        return "AXBlockquote"_s;
+        return "AXBlockquote"_si;
     case WebCore::Atspi::Role::Canvas:
-        return "AXCanvas"_s;
+        return "AXCanvas"_si;
     case WebCore::Atspi::Role::Caption:
-        return "AXCaption"_s;
+        return "AXCaption"_si;
     case WebCore::Atspi::Role::CheckBox:
-        return "AXCheckBox"_s;
+        return "AXCheckBox"_si;
     case WebCore::Atspi::Role::CheckMenuItem:
-        return "AXCheckMenuItem"_s;
+        return "AXCheckMenuItem"_si;
     case WebCore::Atspi::Role::ColorChooser:
-        return "AXColorWell"_s;
+        return "AXColorWell"_si;
     case WebCore::Atspi::Role::ColumnHeader:
     case WebCore::Atspi::Role::TableColumnHeader:
-        return "AXColumnHeader"_s;
+        return "AXColumnHeader"_si;
     case WebCore::Atspi::Role::ComboBox:
-        return "AXComboBox"_s;
+        return "AXComboBox"_si;
     case WebCore::Atspi::Role::Comment:
-        return "AXComment"_s;
+        return "AXComment"_si;
     case WebCore::Atspi::Role::ContentDeletion:
-        return "AXDeletion"_s;
+        return "AXDeletion"_si;
     case WebCore::Atspi::Role::ContentInsertion:
-        return "AXInsertion"_s;
+        return "AXInsertion"_si;
     case WebCore::Atspi::Role::Definition:
-        return "AXDefinition"_s;
+        return "AXDefinition"_si;
     case WebCore::Atspi::Role::DescriptionList:
-        return "AXDescriptionList"_s;
+        return "AXDescriptionList"_si;
     case WebCore::Atspi::Role::DescriptionTerm:
-        return "AXDescriptionTerm"_s;
+        return "AXDescriptionTerm"_si;
     case WebCore::Atspi::Role::DescriptionValue:
-        return "AXDescriptionValue"_s;
+        return "AXDescriptionValue"_si;
     case WebCore::Atspi::Role::Dialog:
-        return "AXDialog"_s;
+        return "AXDialog"_si;
     case WebCore::Atspi::Role::DocumentFrame:
-        return "AXDocument"_s;
+        return "AXDocument"_si;
     case WebCore::Atspi::Role::DocumentWeb:
-        return "AXWebArea"_s;
+        return "AXWebArea"_si;
     case WebCore::Atspi::Role::Embedded:
-        return "AXEmbedded"_s;
+        return "AXEmbedded"_si;
     case WebCore::Atspi::Role::Entry:
-        return "AXTextField"_s;
+        return "AXTextField"_si;
     case WebCore::Atspi::Role::Footer:
-        return "AXFooter"_s;
+        return "AXFooter"_si;
     case WebCore::Atspi::Role::Footnote:
-        return "AXFootnote"_s;
+        return "AXFootnote"_si;
     case WebCore::Atspi::Role::Form:
-        return "AXForm"_s;
+        return "AXForm"_si;
     case WebCore::Atspi::Role::Grouping:
     case WebCore::Atspi::Role::Panel:
-        return "AXGroup"_s;
+        return "AXGroup"_si;
     case WebCore::Atspi::Role::Heading:
-        return "AXHeading"_s;
+        return "AXHeading"_si;
     case WebCore::Atspi::Role::Image:
-        return "AXImage"_s;
+        return "AXImage"_si;
     case WebCore::Atspi::Role::ImageMap:
-        return "AXImageMap"_s;
+        return "AXImageMap"_si;
     case WebCore::Atspi::Role::InvalidRole:
-        return "AXInvalid"_s;
+        return "AXInvalid"_si;
     case WebCore::Atspi::Role::Label:
-        return "AXLabel"_s;
+        return "AXLabel"_si;
     case WebCore::Atspi::Role::LevelBar:
-        return "AXLevelIndicator"_s;
+        return "AXLevelIndicator"_si;
     case WebCore::Atspi::Role::Link:
-        return "AXLink"_s;
+        return "AXLink"_si;
     case WebCore::Atspi::Role::ListBox:
-        return "AXListBox"_s;
+        return "AXListBox"_si;
     case WebCore::Atspi::Role::List:
-        return "AXList"_s;
+        return "AXList"_si;
     case WebCore::Atspi::Role::ListItem:
-        return "AXListItem"_s;
+        return "AXListItem"_si;
     case WebCore::Atspi::Role::Log:
-        return "AXLog"_s;
+        return "AXLog"_si;
     case WebCore::Atspi::Role::Marquee:
-        return "AXMarquee"_s;
+        return "AXMarquee"_si;
     case WebCore::Atspi::Role::Math:
-        return "AXMath"_s;
+        return "AXMath"_si;
     case WebCore::Atspi::Role::MathFraction:
-        return "AXMathFraction"_s;
+        return "AXMathFraction"_si;
     case WebCore::Atspi::Role::MathRoot:
-        return "AXMathRoot"_s;
+        return "AXMathRoot"_si;
     case WebCore::Atspi::Role::Menu:
-        return "AXMenu"_s;
+        return "AXMenu"_si;
     case WebCore::Atspi::Role::MenuBar:
-        return "AXMenuBar"_s;
+        return "AXMenuBar"_si;
     case WebCore::Atspi::Role::MenuItem:
-        return "AXMenuItem"_s;
+        return "AXMenuItem"_si;
     case WebCore::Atspi::Role::Notification:
-        return "AXNotification"_s;
+        return "AXNotification"_si;
     case WebCore::Atspi::Role::PageTab:
-        return "AXTab"_s;
+        return "AXTab"_si;
     case WebCore::Atspi::Role::PageTabList:
-        return "AXTabGroup"_s;
+        return "AXTabGroup"_si;
     case WebCore::Atspi::Role::Paragraph:
-        return "AXParagraph"_s;
+        return "AXParagraph"_si;
     case WebCore::Atspi::Role::PasswordText:
-        return "AXPasswordField"_s;
+        return "AXPasswordField"_si;
     case WebCore::Atspi::Role::ProgressBar:
-        return "AXProgressIndicator"_s;
+        return "AXProgressIndicator"_si;
     case WebCore::Atspi::Role::PushButton:
-        return "AXButton"_s;
+        return "AXButton"_si;
     case WebCore::Atspi::Role::RadioButton:
-        return "AXRadioButton"_s;
+        return "AXRadioButton"_si;
     case WebCore::Atspi::Role::RadioMenuItem:
-        return "AXRadioMenuItem"_s;
+        return "AXRadioMenuItem"_si;
     case WebCore::Atspi::Role::RowHeader:
     case WebCore::Atspi::Role::TableRowHeader:
-        return "AXRowHeader"_s;
+        return "AXRowHeader"_si;
     case WebCore::Atspi::Role::Ruler:
-        return "AXRuler"_s;
+        return "AXRuler"_si;
     case WebCore::Atspi::Role::ScrollBar:
-        return "AXScrollBar"_s;
+        return "AXScrollBar"_si;
     case WebCore::Atspi::Role::ScrollPane:
-        return "AXScrollArea"_s;
+        return "AXScrollArea"_si;
     case WebCore::Atspi::Role::Section:
-        return "AXSection"_s;
+        return "AXSection"_si;
     case WebCore::Atspi::Role::Separator:
-        return "AXSeparator"_s;
+        return "AXSeparator"_si;
     case WebCore::Atspi::Role::Slider:
-        return "AXSlider"_s;
+        return "AXSlider"_si;
     case WebCore::Atspi::Role::SpinButton:
-        return "AXSpinButton"_s;
+        return "AXSpinButton"_si;
     case WebCore::Atspi::Role::Static:
     case WebCore::Atspi::Role::Text:
-        return "AXStatic"_s;
+        return "AXStatic"_si;
     case WebCore::Atspi::Role::StatusBar:
-        return "AXStatusBar"_s;
+        return "AXStatusBar"_si;
     case WebCore::Atspi::Role::Subscript:
-        return "AXSubscript"_s;
+        return "AXSubscript"_si;
     case WebCore::Atspi::Role::Superscript:
-        return "AXSuperscript"_s;
+        return "AXSuperscript"_si;
     case WebCore::Atspi::Role::Table:
-        return "AXTable"_s;
+        return "AXTable"_si;
     case WebCore::Atspi::Role::TableCell:
-        return "AXCell"_s;
+        return "AXCell"_si;
     case WebCore::Atspi::Role::TableRow:
-        return "AXRow"_s;
+        return "AXRow"_si;
     case WebCore::Atspi::Role::Timer:
-        return "AXTimer"_s;
+        return "AXTimer"_si;
     case WebCore::Atspi::Role::ToggleButton:
-        return "AXToggleButton"_s;
+        return "AXToggleButton"_si;
     case WebCore::Atspi::Role::ToolBar:
-        return "AXToolbar"_s;
+        return "AXToolbar"_si;
     case WebCore::Atspi::Role::ToolTip:
-        return "AXUserInterfaceTooltip"_s;
+        return "AXUserInterfaceTooltip"_si;
     case WebCore::Atspi::Role::Tree:
-        return "AXTree"_s;
+        return "AXTree"_si;
     case WebCore::Atspi::Role::TreeTable:
-        return "AXTreeGrid"_s;
+        return "AXTreeGrid"_si;
     case WebCore::Atspi::Role::TreeItem:
-        return "AXTreeItem"_s;
+        return "AXTreeItem"_si;
     case WebCore::Atspi::Role::Unknown:
-        return "AXUnknown"_s;
+        return "AXUnknown"_si;
     case WebCore::Atspi::Role::Video:
-        return "AXVideo"_s;
+        return "AXVideo"_si;
     case WebCore::Atspi::Role::Window:
-        return "AXWindow"_s;
+        return "AXWindow"_si;
     default:
         break;
     }
@@ -890,7 +890,7 @@ RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::role()
     m_element->updateBackingStore();
     auto roleValue = m_element->role();
     auto roleValueString = roleValue == WebCore::Atspi::Role::Landmark ? xmlRoleValueString(m_element->attributes().get("xml-roles"_s)) : roleValueToString(roleValue);
-    if (roleValueString.isEmpty())
+    if (isEmpty(roleValueString))
         return adoptRef(JSStringCreateWithCharacters(nullptr, 0));
 
     return OpaqueJSString::tryCreate(makeString("AXRole: "_s, roleValueString));
@@ -912,7 +912,7 @@ RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::computedRoleString()
 {
     m_element->updateBackingStore();
     auto computedRole = m_element->attributes().get("computed-role"_s);
-    if (computedRole.isEmpty())
+    if (isEmpty(computedRole))
         return adoptRef(JSStringCreateWithCharacters(nullptr, 0));
 
     return OpaqueJSString::tryCreate(computedRole);
@@ -984,7 +984,7 @@ RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::language()
 {
     m_element->updateBackingStore();
     auto locale = m_element->locale();
-    if (locale.isEmpty())
+    if (isEmpty(locale))
         return adoptRef(JSStringCreateWithCharacters(nullptr, 0));
 
     return OpaqueJSString::tryCreate(makeString("AXLanguage: "_s, locale));
@@ -1069,7 +1069,7 @@ double AccessibilityUIElementAtspi::intValue() const
 
     // Consider headings as an special case when returning the int value.
     if (m_element->role() == WebCore::Atspi::Role::Heading)
-        return m_element->attributes().get("level"_s).toDouble();
+        return toDouble(m_element->attributes().get("level"_s));
 
     return 0;
 }
@@ -1109,7 +1109,7 @@ bool AccessibilityUIElementAtspi::isPressActionSupported()
 {
     m_element->updateBackingStore();
     auto name = m_element->actionName();
-    return name == "press"_s || name == "jump"_s;
+    return equal(name, "press"_s) || equal(name, "jump"_s);
 }
 
 bool AccessibilityUIElementAtspi::isIncrementActionSupported()
@@ -1180,7 +1180,7 @@ int AccessibilityUIElementAtspi::hierarchicalLevel() const
 {
     m_element->updateBackingStore();
     auto level = m_element->attributes().get("level"_s);
-    if (level.isEmpty())
+    if (isEmpty(level))
         return 0;
 
     return parseIntegerAllowingTrailingJunk<int>(level).value_or(0);
@@ -1194,14 +1194,14 @@ RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::speakAs()
 bool AccessibilityUIElementAtspi::isGrabbed() const
 {
     m_element->updateBackingStore();
-    return m_element->attributes().get("grabbed"_s) == "true"_s;
+    return equal(m_element->attributes().get("grabbed"_s), "true"_s);
 }
 
 RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::ariaDropEffects() const
 {
     m_element->updateBackingStore();
     auto dropEffects = m_element->attributes().get("dropeffect"_s);
-    if (dropEffects.isEmpty())
+    if (isEmpty(dropEffects))
         return adoptRef(JSStringCreateWithCharacters(nullptr, 0));
     return OpaqueJSString::tryCreate(dropEffects);
 }
@@ -1213,12 +1213,12 @@ int AccessibilityUIElementAtspi::lineForIndex(int index)
 
     m_element->updateBackingStore();
     auto text = m_element->text();
-    if (index < 0 || index > static_cast<int>(text.length()))
+    if (index < 0 || index > static_cast<int>(length(text)))
         return -1;
 
     int lineNumber = 0;
     for (int i = 0; i < index; ++i) {
-        if (text[i] == '\n')
+        if (codeUnitAt(text, i) == '\n')
             lineNumber++;
     }
 
@@ -1261,7 +1261,7 @@ RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::stringForRange(unsigned loca
         return adoptRef(JSStringCreateWithCharacters(nullptr, 0));
 
     m_element->updateBackingStore();
-    return OpaqueJSString::tryCreate(m_element->text().substring(location, length));
+    return OpaqueJSString::tryCreate(substring(m_element->text(), location, length));
 }
 
 RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::attributedStringForRange(unsigned location, unsigned length)
@@ -1273,7 +1273,7 @@ RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::attributedStringForRange(uns
     auto text = m_element->text();
     auto limit = location + length;
 
-    if (limit > text.length())
+    if (limit > WTF::length(text))
         return adoptRef(JSStringCreateWithCharacters(nullptr, 0));
 
     StringBuilder builder;
@@ -1294,7 +1294,7 @@ RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::attributedStringForRange(uns
         auto attributes = m_element->textAttributes(i);
         auto rangeStart = std::max<int>(location, attributes.startOffset);
         auto rangeEnd = std::min<int>(limit, attributes.endOffset);
-        builder.append("\n\tRange attributes for '"_s, makeStringByReplacingAll(makeStringByReplacingAll(text.substring(rangeStart, rangeEnd - rangeStart), '\n', "<\\n>"_s), objectReplacementCharacter, "<obj>"_s), "':"_s);
+        builder.append("\n\tRange attributes for '"_s, makeStringByReplacingAll(makeStringByReplacingAll(substring(text, rangeStart, rangeEnd - rangeStart), '\n', "<\\n>"_s), objectReplacementCharacter, "<obj>"_s), "':"_s);
         buildAttributes(attributes);
         endOffset = attributes.endOffset;
     }
@@ -1467,7 +1467,7 @@ bool AccessibilityUIElementAtspi::setSelectedTextRange(unsigned location, unsign
         return false;
 
     m_element->updateBackingStore();
-    auto textLength = m_element->text().length();
+    auto textLength = WTF::length(m_element->text());
     m_element->setSelectedRange(std::min(location, textLength), std::min(length, textLength));
     return true;
 }
@@ -1577,9 +1577,9 @@ RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::url()
     auto stringURL = axURL.string();
     if (axURL.protocolIsFile()) {
         // Do not expose absolute paths.
-        auto index = stringURL.find("LayoutTests"_s);
+        auto index = find(stringURL, "LayoutTests"_s);
         if (index != notFound)
-            stringURL = stringURL.substring(index);
+            stringURL = substring(stringURL, index);
     }
     return OpaqueJSString::tryCreate(makeString("AXURL: "_s, stringURL));
 }
@@ -1848,20 +1848,20 @@ RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::classList() const
     return nullptr;
 }
 
-static String stringAtOffset(WebCore::AccessibilityObjectAtspi* element, int offset, WebCore::AccessibilityObjectAtspi::TextGranularity granularity)
+static RefPtr<StringImpl> stringAtOffset(WebCore::AccessibilityObjectAtspi* element, int offset, WebCore::AccessibilityObjectAtspi::TextGranularity granularity)
 {
     if (!element || !element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Text))
         return { };
 
     element->updateBackingStore();
     auto text = element->text();
-    if (offset < 0 || offset > static_cast<int>(text.length()))
+    if (offset < 0 || offset > static_cast<int>(length(text)))
         return { };
 
     auto bounds = element->boundaryOffset(offset, granularity);
     unsigned startOffset = std::max<int>(bounds.x(), 0);
-    unsigned endOffset = std::min<int>(bounds.y(), text.length());
-    return makeString(text.substring(startOffset, endOffset - startOffset), ", "_s, startOffset, ", "_s, endOffset);
+    unsigned endOffset = std::min<int>(bounds.y(), length(text));
+    return makeString(substring(text, startOffset, endOffset - startOffset), ", "_s, startOffset, ", "_s, endOffset);
 }
 
 RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::characterAtOffset(int offset)
@@ -1871,10 +1871,10 @@ RefPtr<OpaqueJSString> AccessibilityUIElementAtspi::characterAtOffset(int offset
 
     m_element->updateBackingStore();
     auto text = m_element->text();
-    if (offset < 0 || offset > static_cast<int>(text.length()))
+    if (offset < 0 || offset > static_cast<int>(length(text)))
         return adoptRef(JSStringCreateWithCharacters(nullptr, 0));
 
-    auto string = makeString(text.substring(offset, 1), ", "_s, offset, ", "_s, offset + 1);
+    auto string = makeString(substring(text, offset, 1), ", "_s, offset, ", "_s, offset + 1);
     return OpaqueJSString::tryCreate(string);
 }
 

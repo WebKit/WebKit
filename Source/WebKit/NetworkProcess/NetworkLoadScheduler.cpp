@@ -161,14 +161,14 @@ void NetworkLoadScheduler::unscheduleLoad(NetworkLoad& load)
 
 // We add User-Agent to the preconnect key since it part of the HTTP connection cache key used for
 // coalescing sockets in CFNetwork when using an HTTPS proxy (<rdar://problem/59434166>).
-static std::tuple<String, String> mainResourceLoadKey(const String& protocolHostAndPort, const String& userAgent)
+static std::tuple<RefPtr<StringImpl>, RefPtr<StringImpl>> mainResourceLoadKey(StringImpl* protocolHostAndPort, StringImpl* userAgent)
 {
-    return std::make_tuple(protocolHostAndPort.isNull() ? emptyString() : protocolHostAndPort, userAgent.isNull() ? emptyString() : userAgent);
+    return std::make_tuple(!protocolHostAndPort ? emptyString() : RefPtr { protocolHostAndPort }, !userAgent ? emptyString() : RefPtr { userAgent });
 }
 
 void NetworkLoadScheduler::scheduleMainResourceLoad(NetworkLoad& load)
 {
-    String protocolHostAndPort = load.url().protocolHostAndPort();
+    RefPtr<StringImpl> protocolHostAndPort = load.url().protocolHostAndPort();
     if (!isOriginHTTP1X(protocolHostAndPort)) {
         load.start();
         return;
@@ -193,7 +193,7 @@ void NetworkLoadScheduler::scheduleMainResourceLoad(NetworkLoad& load)
 
 void NetworkLoadScheduler::unscheduleMainResourceLoad(NetworkLoad& load, const WebCore::NetworkLoadMetrics* metrics)
 {
-    String protocolHostAndPort = load.url().protocolHostAndPort();
+    RefPtr<StringImpl> protocolHostAndPort = load.url().protocolHostAndPort();
 
     if (metrics)
         updateOriginProtocolInfo(protocolHostAndPort, metrics->protocol);
@@ -207,7 +207,7 @@ void NetworkLoadScheduler::unscheduleMainResourceLoad(NetworkLoad& load, const W
         maybePrunePreconnectInfo(iter);
 }
 
-void NetworkLoadScheduler::startedPreconnectForMainResource(const URL& url, const String& userAgent)
+void NetworkLoadScheduler::startedPreconnectForMainResource(const URL& url, StringImpl* userAgent)
 {
     auto key = mainResourceLoadKey(url.protocolHostAndPort(), userAgent);
     auto iter = m_pendingMainResourcePreconnects.find(key);
@@ -221,7 +221,7 @@ void NetworkLoadScheduler::startedPreconnectForMainResource(const URL& url, cons
     m_pendingMainResourcePreconnects.add(key, WTF::move(info));
 }
 
-void NetworkLoadScheduler::finishedPreconnectForMainResource(const URL& url, const String& userAgent, const WebCore::ResourceError& error)
+void NetworkLoadScheduler::finishedPreconnectForMainResource(const URL& url, StringImpl* userAgent, const WebCore::ResourceError& error)
 {
     auto iter = m_pendingMainResourcePreconnects.find(mainResourceLoadKey(url.protocolHostAndPort(), userAgent));
     if (iter == m_pendingMainResourcePreconnects.end())
@@ -246,14 +246,14 @@ void NetworkLoadScheduler::maybePrunePreconnectInfo(PendingPreconnectMap::iterat
 }
 
 
-bool NetworkLoadScheduler::isOriginHTTP1X(const String& protocolHostAndPort)
+bool NetworkLoadScheduler::isOriginHTTP1X(StringImpl* protocolHostAndPort)
 {
     return m_http1XOrigins.contains(protocolHostAndPort);
 }
 
-void NetworkLoadScheduler::updateOriginProtocolInfo(const String& protocolHostAndPort, const String& alpnProtocolID)
+void NetworkLoadScheduler::updateOriginProtocolInfo(StringImpl* protocolHostAndPort, StringImpl* alpnProtocolID)
 {
-    if (alpnProtocolID != "http/1.1"_s) {
+    if (!equal(alpnProtocolID, "http/1.1"_s)) {
         m_http1XOrigins.remove(protocolHostAndPort);
         return;
     }

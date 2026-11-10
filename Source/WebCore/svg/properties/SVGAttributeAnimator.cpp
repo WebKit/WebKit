@@ -47,7 +47,7 @@ void SVGAttributeAnimator::invalidateStyle(SVGElement& targetElement)
     targetElement.setPresentationalHintStyleIsDirty();
 }
 
-void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement& element, CSSPropertyID id, const String& value)
+void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement& element, CSSPropertyID id, StringImpl* value)
 {
     ASSERT(!element.deletionHasBegun());
     ASSERT(id != CSSPropertyID::Invalid);
@@ -57,7 +57,7 @@ void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement& element,
     element.invalidateStyle();
 }
 
-void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement& targetElement, const String& value)
+void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement& targetElement, StringImpl* value)
 {
     ASSERT(m_attributeName != anyQName());
     

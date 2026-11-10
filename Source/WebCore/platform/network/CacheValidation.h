@@ -85,17 +85,17 @@ WEBCORE_EXPORT CacheControlDirectives parseCacheControlDirectives(const HTTPHead
 
 // The salt stops a process holding a digest from recovering the header by hashing candidates.
 // std::nullopt means there was no Cookie header, which is distinct from an empty one.
-WEBCORE_EXPORT std::optional<SHA1::Digest> computeCookieHeaderDigestForVary(const String& cookieHeader, uint64_t salt = 0);
+WEBCORE_EXPORT std::optional<SHA1::Digest> computeCookieHeaderDigestForVary(StringImpl* cookieHeader, uint64_t salt = 0);
 
 // Varying header values are stored and compared as strings.
-WEBCORE_EXPORT String encodeCookieHeaderDigestForVary(const std::optional<SHA1::Digest>&);
+WEBCORE_EXPORT RefPtr<StringImpl> encodeCookieHeaderDigestForVary(const std::optional<SHA1::Digest>&);
 
-WEBCORE_EXPORT String headerValueForVary(const ResourceRequest&, StringView headerName, NOESCAPE const Function<String()>& cookieRequestHeaderFieldValueFunction);
+WEBCORE_EXPORT RefPtr<StringImpl> headerValueForVary(const ResourceRequest&, StringView headerName, NOESCAPE const Function<RefPtr<StringImpl>()>& cookieRequestHeaderFieldValueFunction);
 
-WEBCORE_EXPORT Vector<std::pair<String, String>> collectVaryingRequestHeaders(const ResourceResponse&, NOESCAPE const Function<String(StringView headerName)>& headerValueForVaryFunction);
-WEBCORE_EXPORT Vector<std::pair<String, String>> collectVaryingRequestHeaders(const CookieJar*, const ResourceRequest&, const ResourceResponse&);
-WEBCORE_EXPORT bool verifyVaryingRequestHeaders(const Vector<std::pair<String, String>>& varyingRequestHeaders, NOESCAPE const Function<String(const String& headerName)>& headerValueForVaryFunction);
-WEBCORE_EXPORT bool verifyVaryingRequestHeaders(const CookieJar*, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest&);
+WEBCORE_EXPORT Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> collectVaryingRequestHeaders(const ResourceResponse&, NOESCAPE const Function<RefPtr<StringImpl>(StringView headerName)>& headerValueForVaryFunction);
+WEBCORE_EXPORT Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> collectVaryingRequestHeaders(const CookieJar*, const ResourceRequest&, const ResourceResponse&);
+WEBCORE_EXPORT bool verifyVaryingRequestHeaders(const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& varyingRequestHeaders, NOESCAPE const Function<RefPtr<StringImpl>(StringImpl* headerName)>& headerValueForVaryFunction);
+WEBCORE_EXPORT bool verifyVaryingRequestHeaders(const CookieJar*, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& varyingRequestHeaders, const ResourceRequest&);
 
 NODELETE WEBCORE_EXPORT bool isStatusCodeCacheableByDefault(int statusCode);
 

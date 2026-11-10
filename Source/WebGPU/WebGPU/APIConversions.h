@@ -372,9 +372,9 @@ inline WGPUStringView toAPI(const UTF8CString& string LIFETIME_BOUND)
 
 // A string that the caller of the C API frees, with fastFree() of its data. The *FreeMembers
 // functions free the strings of the structs they are for.
-inline WGPUStringView toAPIAllocated(const String& string)
+inline WGPUStringView toAPIAllocated(StringImpl* string)
 {
-    auto utf8 = string.utf8();
+    auto utf8 = WTF::utf8(string);
     auto source = utf8.spanIncludingNullTerminator();
     auto* data = static_cast<char*>(fastMalloc(source.size()));
     memcpySpan(unsafeMakeSpan(data, source.size()), source);

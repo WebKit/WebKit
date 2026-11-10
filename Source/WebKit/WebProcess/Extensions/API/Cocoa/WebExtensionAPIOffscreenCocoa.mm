@@ -57,13 +57,13 @@ void WebExtensionAPIOffscreen::createDocument(NSDictionary *details, Ref<WebExte
         return;
 
     WebExtensionOffscreenDocumentParameters parameters;
-    parameters.justification = checked_objc_cast<NSString>(details[justificationKey]);
-    parameters.url = checked_objc_cast<NSString>(details[urlKey]);
-    parameters.reasons = makeVector<String>(checked_objc_cast<NSArray>(details[reasonsKey]));
+    parameters.justification = StringImpl::create(checked_objc_cast<NSString>(details[justificationKey]));
+    parameters.url = StringImpl::create(checked_objc_cast<NSString>(details[urlKey]));
+    parameters.reasons = makeVector<RefPtr<StringImpl>>(checked_objc_cast<NSArray>(details[reasonsKey]));
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::OffscreenCreateDocument(parameters), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -77,7 +77,7 @@ void WebExtensionAPIOffscreen::closeDocument(Ref<WebExtensionCallbackHandler>&& 
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::OffscreenCloseDocument(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -91,7 +91,7 @@ void WebExtensionAPIOffscreen::hasDocument(Ref<WebExtensionCallbackHandler>&& ca
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::OffscreenHasDocument(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<bool, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 

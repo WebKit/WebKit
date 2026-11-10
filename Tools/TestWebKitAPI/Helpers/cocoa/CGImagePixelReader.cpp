@@ -53,7 +53,7 @@ bool CGImagePixelReader::isTransparentBlack(unsigned x, unsigned y) const
     return at(x, y) == Color::transparentBlack;
 }
 
-String CGImagePixelReader::cssColorAt(unsigned x, unsigned y) const
+RefPtr<StringImpl> CGImagePixelReader::cssColorAt(unsigned x, unsigned y) const
 {
     return WebCore::serializationForCSS(at(x, y));
 }

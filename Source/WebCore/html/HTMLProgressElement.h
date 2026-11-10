@@ -57,7 +57,7 @@ private:
     NODELETE RenderProgress* renderProgress() const;
     bool childShouldCreateRenderer(const Node&) const final;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     void didAttachRenderers() final;
 
     void updateDeterminateState();

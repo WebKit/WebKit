@@ -35,7 +35,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorPassthroughChannel);
 
-InspectorPassthroughChannel::InspectorPassthroughChannel(WebAutomationSession& session, const String& browsingContextHandle)
+InspectorPassthroughChannel::InspectorPassthroughChannel(WebAutomationSession& session, StringImpl* browsingContextHandle)
     : m_session(session)
     , m_browsingContextHandle(browsingContextHandle)
 {
@@ -43,7 +43,7 @@ InspectorPassthroughChannel::InspectorPassthroughChannel(WebAutomationSession& s
 
 InspectorPassthroughChannel::~InspectorPassthroughChannel() = default;
 
-void InspectorPassthroughChannel::sendMessageToFrontend(const String& message)
+void InspectorPassthroughChannel::sendMessageToFrontend(StringImpl* message)
 {
     if (RefPtr session = m_session.get())
         session->sendInspectorMessageToClient(m_browsingContextHandle, message);

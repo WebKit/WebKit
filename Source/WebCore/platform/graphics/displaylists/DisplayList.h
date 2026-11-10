@@ -56,7 +56,7 @@ public:
 
     std::span<const Item> items() const LIFETIME_BOUND { return m_items.span(); }
 
-    WEBCORE_EXPORT String asText(OptionSet<AsTextFlag>) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> asText(OptionSet<AsTextFlag>) const;
     void dump(WTF::TextStream&) const;
 
     void addObserver(WeakRef<RenderingResourceObserver>&& observer) const

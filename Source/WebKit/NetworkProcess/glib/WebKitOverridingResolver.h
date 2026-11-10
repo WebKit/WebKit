@@ -42,6 +42,6 @@ typedef struct _WebKitOverridingResolverClass WebKitOverridingResolverClass;
 
 GType webkit_overriding_resolver_get_type(void);
 
-GResolver* webkitOverridingResolverNew(GRefPtr<GResolver>&& wrappedResolver, const HashSet<String>& localhostAliases);
+GResolver* webkitOverridingResolverNew(GRefPtr<GResolver>&& wrappedResolver, const HashSet<RefPtr<StringImpl>>& localhostAliases);
 
 G_END_DECLS

@@ -48,8 +48,8 @@ public:
         return adoptRef(*new GPUShaderModule(WTF::move(backing), WTF::move(descriptor), device));
     }
 
-    NODELETE String label() const;
-    void setLabel(String&&);
+    NODELETE RefPtr<StringImpl> label() const;
+    void setLabel(RefPtr<StringImpl>&&);
 
     using CompilationInfoPromise = DOMPromiseDeferred<IDLInterface<GPUCompilationInfo>>;
     void getCompilationInfo(CompilationInfoPromise&&);

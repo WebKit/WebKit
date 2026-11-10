@@ -2655,15 +2655,15 @@ sub GenerateEnumerationImplementationContent
     my $result = "";
     $result .= "#if ${conditionalString}\n\n" if $conditionalString;
 
-    $result .= "String convertEnumerationToString($className enumerationValue)\n";
+    $result .= "RefPtr<StringImpl> convertEnumerationToString($className enumerationValue)\n";
     $result .= "{\n";
     AddToImplIncludes("<wtf/NeverDestroyed.h>");
-    $result .= "    static const std::array<NeverDestroyed<String>, " . scalar(@{$enumeration->values}) . "> values {\n";
+    $result .= "    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, " . scalar(@{$enumeration->values}) . "> values {\n";
     foreach my $value (@{$enumeration->values}) {
         if ($value eq "") {
             $result .= "        emptyString(),\n";
         } else {
-            $result .= "        MAKE_STATIC_STRING_IMPL(\"$value\"),\n";
+            $result .= "        \"$value\"_si,\n";
         }
     }
     $result .= "    };\n";
@@ -2685,11 +2685,11 @@ sub GenerateEnumerationImplementationContent
 
     # FIXME: Consider using toStringOrNull to make exception checking faster.
     # FIXME: Consider finding a more efficient way to match against all the strings quickly.
-    $result .= "template<> std::optional<$className> parseEnumerationFromString<${className}>(const String& stringValue)\n";
+    $result .= "template<> std::optional<$className> parseEnumerationFromString<${className}>(StringImpl* stringValue)\n";
     $result .= "{\n";
     my @sortedEnumerationValues = sort @{$enumeration->values};
     if ($sortedEnumerationValues[0] eq "") {
-        $result .= "    if (stringValue.isEmpty())\n";
+        $result .= "    if (isEmpty(stringValue))\n";
         my $enumerationValueName = GetEnumerationValueName(shift(@sortedEnumerationValues));
         $result .= "        return ${className}::$enumerationValueName;\n";
     }
@@ -2745,9 +2745,9 @@ sub GenerateEnumerationHeaderContent
 
     my $exportMacro = GetExportMacroForJSClass($enumeration);
 
-    $result .= "${exportMacro}String convertEnumerationToString($className);\n";
+    $result .= "${exportMacro}RefPtr<StringImpl> convertEnumerationToString($className);\n";
     $result .= "template<> ${exportMacro}JSC::JSString* convertEnumerationToJS(JSC::VM&, $className);\n\n";
-    $result .= "template<> ${exportMacro}std::optional<$className> parseEnumerationFromString<${className}>(const String&);\n";
+    $result .= "template<> ${exportMacro}std::optional<$className> parseEnumerationFromString<${className}>(StringImpl*);\n";
     $result .= "template<> ${exportMacro}std::optional<$className> parseEnumeration<$className>(JSC::JSGlobalObject&, JSC::JSValue);\n";
 
     $result .= "template<> ${exportMacro}ASCIILiteral expectedEnumerationValues<$className>();\n\n";
@@ -2804,7 +2804,7 @@ sub GenerateDefaultValue
         return "typename Converter<${IDLType}>::ReturnType { nullptr }" if $codeGenerator->IsWrapperType($type) || $codeGenerator->IsBufferSourceType($type);
         if ($codeGenerator->IsStringType($type)) {
             my $useAtomString = $type->extendedAttributes->{AtomString};
-            return $useAtomString ? "typename Converter<${IDLType}>::ReturnType { nullAtom() }" : "typename Converter<${IDLType}>::ReturnType { String() }";
+            return $useAtomString ? "typename Converter<${IDLType}>::ReturnType { nullAtom() }" : "typename Converter<${IDLType}>::ReturnType { nullptr }";
         }
         return "typename Converter<${IDLType}>::ReturnType { }" if $type->name eq "object";
         return "typename Converter<${IDLType}>::ReturnType { std::nullopt }";
@@ -2829,7 +2829,7 @@ sub GenerateDefaultValue
             if ($defaultValue eq "\"\"") {
                 return $useAtomString ? "Converter<${IDLType}>::ReturnType { emptyAtom() }" : "Converter<${IDLType}>::ReturnType { emptyString() }";
             } else {
-                return $useAtomString ? "Converter<${IDLType}>::ReturnType { AtomString(${defaultValue}_s) }" : "Converter<${IDLType}>::ReturnType { ${defaultValue}_s }";
+                return $useAtomString ? "Converter<${IDLType}>::ReturnType { ${defaultValue}_atom }" : "Converter<${IDLType}>::ReturnType { ${defaultValue}_si }";
             }
         }
 
@@ -3484,10 +3484,10 @@ sub GenerateHeader
     }
 
     if ($interface->extendedAttributes->{GenerateForEachEventHandlerContentAttribute}) {
-        push(@headerContent, "    static void forEachEventHandlerContentAttribute(NOESCAPE const Function<void(const AtomString& attributeName, const AtomString& eventName)>&);\n\n");
+        push(@headerContent, "    static void forEachEventHandlerContentAttribute(NOESCAPE const Function<void(AtomStringImpl* attributeName, AtomStringImpl* eventName)>&);\n\n");
     }
     if ($interface->extendedAttributes->{GenerateForEachWindowEventHandlerContentAttribute}) {
-        push(@headerContent, "    static void forEachWindowEventHandlerContentAttribute(NOESCAPE const Function<void(const AtomString& attributeName, const AtomString& eventName)>&);\n\n");
+        push(@headerContent, "    static void forEachWindowEventHandlerContentAttribute(NOESCAPE const Function<void(AtomStringImpl* attributeName, AtomStringImpl* eventName)>&);\n\n");
     }
 
     my $numCustomOperations = 0;
@@ -5149,7 +5149,7 @@ sub GenerateImplementation
             AddToImplIncludes("WebCoreJSClientData.h");
             my $conditionalString = $codeGenerator->GenerateConditionalString($operation);
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-            push(@implContent, "    putDirect(vm, builtinNames(vm)." . $operation->name . "PrivateName(), JSFunction::create(vm, realm(), 0, String(), " . GetFunctionName($interface, $className, $operation) . ", ImplementationVisibility::Public), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
+            push(@implContent, "    putDirect(vm, builtinNames(vm)." . $operation->name . "PrivateName(), JSFunction::create(vm, realm(), 0, nullptr, " . GetFunctionName($interface, $className, $operation) . ", ImplementationVisibility::Public), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
             push(@implContent, "#endif\n") if $conditionalString;
         }
 
@@ -5963,14 +5963,14 @@ sub GenerateForEachEventHandlerContentAttribute
 {
     my ($outputArray, $interface, $className, $functionName, $eventHandlerExtendedAttributeName) = @_;
     AddToImplIncludes("HTMLNames.h");
-    push(@$outputArray, "void ${className}::${functionName}(NOESCAPE const Function<void(const AtomString& attributeName, const AtomString& eventName)>& function)\n");
+    push(@$outputArray, "void ${className}::${functionName}(NOESCAPE const Function<void(AtomStringImpl* attributeName, AtomStringImpl* eventName)>& function)\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "    static constexpr std::array table {\n");
     foreach my $attribute (@{$interface->attributes}) {
         if ($codeGenerator->IsEventHandlerType($attribute->type) && (!defined $eventHandlerExtendedAttributeName || $attribute->extendedAttributes->{$eventHandlerExtendedAttributeName})) {
             my $attributeName = $attribute->name;
             my $eventName = EventHandlerAttributeShortEventName($attribute);
-            push(@$outputArray, "        std::pair<const decltype(HTMLNames::altAttr)&, const AtomString EventNames::*> { HTMLNames::${attributeName}Attr, &EventNames::${eventName} },\n");
+            push(@$outputArray, "        std::pair<const decltype(HTMLNames::altAttr)&, const RefPtr<AtomStringImpl> EventNames::*> { HTMLNames::${attributeName}Attr, &EventNames::${eventName} },\n");
         }
     }
     push(@$outputArray, "    };\n");
@@ -6113,21 +6113,21 @@ sub GenerateAttributeGetterBodyDefinition
                     $invalidValueDefault = $attributes->{'InvalidValueDefault'};
                     undef $invalidValueDefault if ($invalidValueDefault // '') eq "VALUE_IS_MISSING";
 
-                    push(@$outputArray, "    const AtomString& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::${attributeName}Attr);\n");
-                    push(@$outputArray, "    AtomString result;\n");
-                    push(@$outputArray, "    if (contentAttributeValue.isNull())\n");
+                    push(@$outputArray, "    const RefPtr<AtomStringImpl>& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::${attributeName}Attr);\n");
+                    push(@$outputArray, "    RefPtr<AtomStringImpl> result;\n");
+                    push(@$outputArray, "    if (!contentAttributeValue)\n");
                     if (defined $missingValueDefault) {
                         $missingValueDefault =~ s/^"(.*)"$/$1/;
-                        push(@$outputArray, "        result = AtomString(\"$missingValueDefault\"_s);\n");
+                        push(@$outputArray, "        result = \"$missingValueDefault\"_atom;\n");
                     } else {
                         push(@$outputArray, "        { }\n");
                     }
-                    push(@$outputArray, "    else if (auto value = parseEnumerationFromString<${className}>(contentAttributeValue.convertToASCIILowercase()); value) [[likely]]\n");
-                    push(@$outputArray, "        result = AtomString(convertEnumerationToString(*value));\n");
+                    push(@$outputArray, "    else if (auto value = parseEnumerationFromString<${className}>(convertToASCIILowercase(contentAttributeValue)); value) [[likely]]\n");
+                    push(@$outputArray, "        result = AtomStringImpl::add(convertEnumerationToString(*value));\n");
                     push(@$outputArray, "    else\n");
                     if (defined $invalidValueDefault) {
                         $invalidValueDefault =~ s/^"(.*)"$/$1/;
-                        push(@$outputArray, "        result = AtomString(\"$invalidValueDefault\"_s);\n");
+                        push(@$outputArray, "        result = \"$invalidValueDefault\"_atom;\n");
                     } else {
                         push(@$outputArray, "        { }\n");
                     }
@@ -8300,10 +8300,10 @@ sub JSValueToNative
     if ($type->name eq "ScheduledAction") {
         my $interfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
         if ($functionName) {
-            push(@conversionArguments, "\"$interfaceName $functionName\"_s");
+            push(@conversionArguments, "\"$interfaceName $functionName\"_si");
         } else {
             my $contextName = $context->name;
-            push(@conversionArguments, "\"$interfaceName $contextName\"_s");
+            push(@conversionArguments, "\"$interfaceName $contextName\"_si");
         }
     }
 
@@ -9189,7 +9189,7 @@ sub GenerateConstructorHelperMethods
             push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
         }
 
-        push(@$outputArray, "    JSString* nameString = jsNontrivialString(vm, \"$visibleInterfaceName\"_s);\n");
+        push(@$outputArray, "    JSString* nameString = jsNontrivialString(vm, \"$visibleInterfaceName\"_si);\n");
         push(@$outputArray, "    m_originalName.set(vm, this, nameString);\n");
         push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, nameString, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
 
@@ -9413,7 +9413,7 @@ sub GenerateCallTracer()
     AddToImplIncludes($callTracer . ".h");
 
     push(@$outputArray, $indent . "if (impl.hasActive" . $callTracer . "()) [[unlikely]]\n");
-    push(@$outputArray, $indent . "    " . $callTracer . "::recordAction(impl, \"" . $name . "\"_s");
+    push(@$outputArray, $indent . "    " . $callTracer . "::recordAction(impl, \"" . $name . "\"_si");
     if (scalar(@$arguments)) {
         push(@$outputArray, ", { " . join(", ", map {
             my ($idlType, @processArguments) = @$_;

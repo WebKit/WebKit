@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-String ServiceWorkerInternals::processName() const
+RefPtr<StringImpl> ServiceWorkerInternals::processName() const
 {
-    return adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, protect(_LSGetCurrentApplicationASN()), _kLSDisplayNameKey)).get();
+    return StringImpl::create(adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, protect(_LSGetCurrentApplicationASN()), _kLSDisplayNameKey)).get());
 }
 
 } // namespace WebCore

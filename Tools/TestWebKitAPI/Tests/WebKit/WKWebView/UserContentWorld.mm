@@ -186,7 +186,7 @@ TEST(UserContentWorld, IsolatedWorldPlugIn)
     TestWebKitAPI::Util::run(&didObserveSubframe);
 }
 
-static Vector<String> userContentWorldReceivedMessages;
+static Vector<RefPtr<StringImpl>> userContentWorldReceivedMessages;
 
 @interface UserContentWorldMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -195,7 +195,7 @@ static Vector<String> userContentWorldReceivedMessages;
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    userContentWorldReceivedMessages.append(String((NSString*)message.body));
+    userContentWorldReceivedMessages.append(StringImpl::create((NSString*)message.body));
 }
 
 @end

@@ -49,7 +49,7 @@ public:
     RemoteGPUProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() const { return m_parent; }
 
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
 
 private:

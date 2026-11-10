@@ -189,7 +189,7 @@ static void didReceiveServerTrustChallenge(NetworkConnectionToWebProcess& connec
     protect(NetworkProcess::singleton().authenticationManager())->didReceiveAuthenticationChallenge(connectionToWebProcess.sessionID(), pageID, &clientOrigin.topOrigin, challenge.get(), NegotiatedLegacyTLS::No, WTF::move(challengeCompletionHandler));
 }
 
-static String joinProtocolStrings(const Vector<String>& protocols)
+static RefPtr<StringImpl> joinProtocolStrings(const Vector<RefPtr<StringImpl>>& protocols)
 {
     StringBuilder builder;
     for (size_t i = 0; i < protocols.size(); ++i) {
@@ -200,7 +200,7 @@ static String joinProtocolStrings(const Vector<String>& protocols)
     return builder.toString();
 }
 
-static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess& connectionToWebProcess, URL&& url, WebCore::WebTransportOptions& options, Vector<KeyValuePair<String, String>>&& additionalHeaders, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin)
+static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess& connectionToWebProcess, URL&& url, WebCore::WebTransportOptions& options, Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&& additionalHeaders, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin)
 {
     // https://www.w3.org/TR/webtransport/#web-transport-configuration
     auto configureWebTransport = [
@@ -212,13 +212,13 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
     ](nw_protocol_options_t options) {
         MAYBE_SOFT_LINK(nw_webtransport_options_set_is_unidirectional)(options, false);
         MAYBE_SOFT_LINK(nw_webtransport_options_set_is_datagram)(options, true);
-        MAYBE_SOFT_LINK(nw_webtransport_options_add_connect_request_header)(options, "origin", clientOrigin.utf8().legacyCStringPointer());
+        MAYBE_SOFT_LINK(nw_webtransport_options_add_connect_request_header)(options, "origin", utf8(clientOrigin).legacyCStringPointer());
         MAYBE_SOFT_LINK(nw_webtransport_options_set_allow_joining_before_ready)(options, true);
         MAYBE_SOFT_LINK(nw_webtransport_options_set_initial_max_streams_uni)(options, maxStreamsUni);
         MAYBE_SOFT_LINK(nw_webtransport_options_set_initial_max_streams_bidi)(options, maxStreamsBidi);
         for (auto& header : borrow(additionalHeaders))
-            MAYBE_SOFT_LINK(nw_webtransport_options_add_connect_request_header)(options, header.key.utf8().legacyCStringPointer(), header.value.utf8().legacyCStringPointer());
-        MAYBE_SOFT_LINK(nw_webtransport_options_add_connect_request_header)(options, "wt-available-protocols", protocols.utf8().legacyCStringPointer());
+            MAYBE_SOFT_LINK(nw_webtransport_options_add_connect_request_header)(options, utf8(header.key).legacyCStringPointer(), utf8(header.value).legacyCStringPointer());
+        MAYBE_SOFT_LINK(nw_webtransport_options_add_connect_request_header)(options, "wt-available-protocols", utf8(protocols).legacyCStringPointer());
     };
 
     auto configureTLS = [
@@ -266,16 +266,16 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
     bool isSafari = false;
 #endif
     if (isSafari)
-        setNWParametersApplicationIdentifiers(parameters.get(), NetworkProcess::singleton().uiProcessBundleIdentifier().utf8(), NetworkProcess::singleton().sourceApplicationAuditToken(), emptyString());
+        setNWParametersApplicationIdentifiers(parameters.get(), utf8(NetworkProcess::singleton().uiProcessBundleIdentifier()), NetworkProcess::singleton().sourceApplicationAuditToken(), emptyString());
     bool isTracker = isKnownTracker(WebCore::RegistrableDomain { url });
     bool isFirstParty = WebCore::RegistrableDomain { clientOrigin.clientOrigin } == WebCore::RegistrableDomain { clientOrigin.topOrigin };
     setNWParametersTrackerOptions(parameters.get(), false, isFirstParty, isTracker, IsRTC::No);
     return parameters;
 }
 
-RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectionToWebProcess& connectionToWebProcess, WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, Vector<KeyValuePair<String, String>>&& additionalHeaders, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin)
+RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectionToWebProcess& connectionToWebProcess, WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&& additionalHeaders, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin)
 {
-    RetainPtr endpoint = adoptNS(nw_endpoint_create_url(url.string().utf8().legacyCStringPointer()));
+    RetainPtr endpoint = adoptNS(nw_endpoint_create_url(utf8(url.string()).legacyCStringPointer()));
     if (!endpoint) {
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -322,8 +322,8 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
         case nw_connection_group_state_waiting:
             return; // We will get another callback with another state change.
         case nw_connection_group_state_ready: {
-            __block String protocol;
-            __block Vector<KeyValuePair<String, String>> responseHeaders;
+            __block RefPtr<StringImpl> protocol;
+            __block Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> responseHeaders;
             WebCore::WebTransportReliabilityMode reliabilityMode = WebCore::WebTransportReliabilityMode::Pending;
             if (RefPtr protectedThis = weakThis.get()) {
                 protectedThis->m_sessionMetadata = nw_connection_group_copy_protocol_metadata(protectedThis->m_connectionGroup.get(), adoptNS(MAYBE_SOFT_LINK(nw_protocol_copy_webtransport_definition)()).get());
@@ -336,19 +336,19 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
                     }).get(), mainDispatchQueueSingleton());
                     RetainPtr response = adoptNS(MAYBE_SOFT_LINK(nw_webtransport_metadata_copy_connect_response)(metadata.get()));
                     MAYBE_SOFT_LINK(nw_http_fields_access_value_by_name)(response.get(), "wt-protocol", ^void(const char *value) {
-                        if (auto parsedItem = RFC8941::parseItemStructuredFieldValue(String::fromUTF8(unsafeSpan(value)))) {
-                            if (auto* stringValue = std::get_if<String>(&parsedItem->first)) {
-                                if (protectedThis->m_options.protocols.contains(*stringValue))
+                        if (auto parsedItem = RFC8941::parseItemStructuredFieldValue(StringImpl::fromUTF8(unsafeSpan(value)))) {
+                            if (auto* stringValue = std::get_if<RefPtr<StringImpl>>(&parsedItem->first)) {
+                                if (protectedThis->m_options.protocols.containsIf([&](auto& item) { return equal(item, *stringValue); }))
                                     protocol = *stringValue;
                             }
                         }
                     });
                     nw_http_fields_enumerate(response.get(), ^bool(const char *name, size_t nameLength, const char *value, size_t valueLength) {
-                        auto headerName = String::fromLatin1(unsafeMakeSpan(name, nameLength)).convertToASCIILowercase();
+                        auto headerName = convertToASCIILowercase(StringImpl::fromLatin1(unsafeMakeSpan(name, nameLength)));
                         // Forbidden response header names must never reach WebContent.
                         // https://fetch.spec.whatwg.org/#forbidden-response-header-name
-                        if (headerName != "wt-protocol"_s && !WebCore::isForbiddenResponseHeaderName(headerName)) {
-                            KeyValuePair<String, String> pair(WTF::move(headerName), String::fromLatin1(unsafeMakeSpan(value, valueLength)));
+                        if (!equal(headerName, "wt-protocol"_s) && !WebCore::isForbiddenResponseHeaderName(headerName)) {
+                            KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>> pair(WTF::move(headerName), StringImpl::fromLatin1(unsafeMakeSpan(value, valueLength)));
                             responseHeaders.append(WTF::move(pair));
                         }
                         return true;
@@ -366,11 +366,11 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
             if (RefPtr protectedThis = weakThis.get()) {
                 if (RetainPtr metadata = protectedThis->m_sessionMetadata) {
                     std::optional<unsigned> sessionErrorCode;
-                    String sessionErrorMessage;
+                    RefPtr<StringImpl> sessionErrorMessage;
                     if (MAYBE_SOFT_LINK(nw_webtransport_metadata_get_session_closed)(metadata.get())) {
                         sessionErrorCode = MAYBE_SOFT_LINK(nw_webtransport_metadata_get_session_error_code)(metadata.get());
                         if (const char* errorMessage = MAYBE_SOFT_LINK(nw_webtransport_metadata_get_session_error_message)(metadata.get()))
-                            sessionErrorMessage = String::fromUTF8(unsafeSpan(errorMessage));
+                            sessionErrorMessage = StringImpl::fromUTF8(unsafeSpan(errorMessage));
                     }
                     protectedThis->send(Messages::WebTransportSession::DidFail(WTF::move(sessionErrorCode), WTF::move(sessionErrorMessage)));
                     return;

@@ -63,7 +63,7 @@ private:
 
     bool isPDFDocumentImage() const override { return true; }
 
-    String filenameExtension() const override;
+    RefPtr<StringImpl> filenameExtension() const override;
 
     EncodedDataStatus dataChanged(bool allDataReceived) override;
 

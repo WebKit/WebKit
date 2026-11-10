@@ -86,17 +86,17 @@ public:
 
     bool isActionCommand() const;
 
-    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
-    const String& description() const LIFETIME_BOUND { return m_description; }
+    const RefPtr<StringImpl>& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const RefPtr<StringImpl>& description() const LIFETIME_BOUND { return m_description; }
 
-    const String& activationKey() const LIFETIME_BOUND { return m_modifierFlags ? m_activationKey : nullString(); }
-    bool setActivationKey(String, SuppressEvents = SuppressEvents::No);
+    const RefPtr<StringImpl>& activationKey() const LIFETIME_BOUND { return m_modifierFlags ? m_activationKey : nullString(); }
+    bool setActivationKey(RefPtr<StringImpl>, SuppressEvents = SuppressEvents::No);
 
-    OptionSet<ModifierFlags> modifierFlags() const { return !m_activationKey.isEmpty() ? m_modifierFlags : OptionSet<ModifierFlags> { }; }
+    OptionSet<ModifierFlags> modifierFlags() const { return !isEmpty(m_activationKey) ? m_modifierFlags : OptionSet<ModifierFlags> { }; }
     void setModifierFlags(OptionSet<ModifierFlags> modifierFlags) { dispatchChangedEventSoonIfNeeded(); m_modifierFlags = modifierFlags; }
 
-    String shortcutString() const;
-    String userVisibleShortcut() const;
+    RefPtr<StringImpl> shortcutString() const;
+    RefPtr<StringImpl> userVisibleShortcut() const;
 
     CocoaMenuItem *platformMenuItem() const;
 
@@ -117,11 +117,11 @@ private:
     void dispatchChangedEventSoonIfNeeded();
 
     WeakPtr<WebExtensionContext> m_extensionContext;
-    String m_identifier;
-    String m_description;
-    String m_activationKey;
+    RefPtr<StringImpl> m_identifier;
+    RefPtr<StringImpl> m_description;
+    RefPtr<StringImpl> m_activationKey;
     OptionSet<ModifierFlags> m_modifierFlags;
-    String m_oldShortcut;
+    RefPtr<StringImpl> m_oldShortcut;
 };
 
 } // namespace WebKit

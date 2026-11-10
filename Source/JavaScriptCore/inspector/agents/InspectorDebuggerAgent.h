@@ -79,11 +79,11 @@ public:
     Protocol::ErrorStringOr<void> disable() final;
     Protocol::ErrorStringOr<void> setAsyncStackTraceDepth(int) final;
     Protocol::ErrorStringOr<void> setBreakpointsActive(bool) final;
-    Protocol::ErrorStringOr<std::tuple<Protocol::Debugger::BreakpointId, Ref<JSON::ArrayOf<Protocol::Debugger::Location>>>> setBreakpointByUrl(int lineNumber, const String& url, const String& urlRegex, std::optional<int>&& columnNumber, RefPtr<JSON::Object>&& options) final;
+    Protocol::ErrorStringOr<std::tuple<Protocol::Debugger::BreakpointId, Ref<JSON::ArrayOf<Protocol::Debugger::Location>>>> setBreakpointByUrl(int lineNumber, StringImpl* url, StringImpl* urlRegex, std::optional<int>&& columnNumber, RefPtr<JSON::Object>&& options) final;
     Protocol::ErrorStringOr<std::tuple<Protocol::Debugger::BreakpointId, Ref<Protocol::Debugger::Location>>> setBreakpoint(Ref<JSON::Object>&& location, RefPtr<JSON::Object>&& options) final;
-    Protocol::ErrorStringOr<void> removeBreakpoint(const Protocol::Debugger::BreakpointId&) final;
-    Protocol::ErrorStringOr<void> addSymbolicBreakpoint(const String& symbol, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options) final;
-    Protocol::ErrorStringOr<void> removeSymbolicBreakpoint(const String& symbol, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
+    Protocol::ErrorStringOr<void> removeBreakpoint(StringImpl*) final;
+    Protocol::ErrorStringOr<void> addSymbolicBreakpoint(StringImpl* symbol, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options) final;
+    Protocol::ErrorStringOr<void> removeSymbolicBreakpoint(StringImpl* symbol, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
     Protocol::ErrorStringOr<void> continueUntilNextRunLoop() final;
     Protocol::ErrorStringOr<void> continueToLocation(Ref<JSON::Object>&& location) final;
     Protocol::ErrorStringOr<void> stepNext() final;
@@ -92,17 +92,17 @@ public:
     Protocol::ErrorStringOr<void> stepOut() final;
     Protocol::ErrorStringOr<void> pause() final;
     Protocol::ErrorStringOr<void> resume() final;
-    Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>> searchInContent(const Protocol::Debugger::ScriptId&, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
-    Protocol::ErrorStringOr<String> getScriptSource(const Protocol::Debugger::ScriptId&) final;
-    Protocol::ErrorStringOr<Ref<Protocol::Debugger::FunctionDetails>> getFunctionDetails(const String& functionId) final;
+    Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>> searchInContent(StringImpl*, StringImpl* query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
+    Protocol::ErrorStringOr<RefPtr<StringImpl>> getScriptSource(StringImpl*) final;
+    Protocol::ErrorStringOr<Ref<Protocol::Debugger::FunctionDetails>> getFunctionDetails(StringImpl* functionId) final;
     Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Debugger::Location>>> getBreakpointLocations(Ref<JSON::Object>&& start, Ref<JSON::Object>&& end) final;
     Protocol::ErrorStringOr<void> setPauseOnDebuggerStatements(bool enabled, RefPtr<JSON::Object>&& options) final;
-    Protocol::ErrorStringOr<void> setPauseOnExceptions(const String& state, RefPtr<JSON::Object>&& options) final;
+    Protocol::ErrorStringOr<void> setPauseOnExceptions(StringImpl* state, RefPtr<JSON::Object>&& options) final;
     Protocol::ErrorStringOr<void> setPauseOnAssertions(bool enabled, RefPtr<JSON::Object>&& options) final;
     Protocol::ErrorStringOr<void> setPauseOnMicrotasks(bool enabled, RefPtr<JSON::Object>&& options) final;
     Protocol::ErrorStringOr<void> setPauseForInternalScripts(bool shouldPause) final;
-    Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> evaluateOnCallFrame(const Protocol::Debugger::CallFrameId&, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture) override;
-    Protocol::ErrorStringOr<void> setShouldBlackboxURL(const String& url, bool shouldBlackbox, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Array>&& sourceRanges) final;
+    Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> evaluateOnCallFrame(StringImpl*, StringImpl* expression, StringImpl* objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture) override;
+    Protocol::ErrorStringOr<void> setShouldBlackboxURL(StringImpl* url, bool shouldBlackbox, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Array>&& sourceRanges) final;
     Protocol::ErrorStringOr<void> setBlackboxBreakpointEvaluations(bool) final;
 
     // JSC::Debugger::Client
@@ -111,7 +111,7 @@ public:
 
     // JSC::Debugger::Observer
     void didParseSource(JSC::JSGlobalObject*, JSC::SourceID, const JSC::Debugger::Script&) final;
-    void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) final;
+    void failedToParseSource(StringImpl* url, StringImpl* data, int firstLine, int errorLine, StringImpl* errorMessage) final;
     void didCreateNativeExecutable(JSC::NativeExecutable&) final;
     void willCallNativeExecutable(JSC::CallFrame*) final;
     void didCreateInternalFunction(JSC::InternalFunction&) final;
@@ -132,7 +132,7 @@ public:
 
     NODELETE void setSuppressAllPauses(bool);
 
-    void handleConsoleAssert(const String& message);
+    void handleConsoleAssert(StringImpl* message);
 
     enum class AsyncCallType {
         DOMTimer,
@@ -156,7 +156,7 @@ public:
     bool cancelPauseForSpecialBreakpoint(JSC::Breakpoint&);
 
     void breakProgram(DebuggerFrontendDispatcher::Reason, RefPtr<JSON::Object>&& data = nullptr, RefPtr<JSC::Breakpoint>&& specialBreakpoint = nullptr);
-    void scriptExecutionBlockedByCSP(const String& directiveText);
+    void scriptExecutionBlockedByCSP(StringImpl* directiveText);
 
     class Listener {
     public:
@@ -172,7 +172,7 @@ protected:
     virtual void internalEnable();
     virtual void internalDisable(bool isBeingDestroyed);
 
-    Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> evaluateOnCallFrame(InjectedScript&, const Protocol::Debugger::CallFrameId&, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture);
+    Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> evaluateOnCallFrame(InjectedScript&, StringImpl*, StringImpl* expression, StringImpl* objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture);
 
     InjectedScriptManager& injectedScriptManager() const { return m_injectedScriptManager; }
     virtual InjectedScript injectedScriptForEval(Protocol::ErrorString&, std::optional<Protocol::Runtime::ExecutionContextId>&&) = 0;
@@ -182,8 +182,8 @@ protected:
     virtual void muteConsole() = 0;
     virtual void unmuteConsole() = 0;
 
-    virtual String sourceMapURLForScript(const JSC::Debugger::Script&);
-    virtual String requestIdForScript(JSC::JSGlobalObject*, const JSC::Debugger::Script&);
+    virtual RefPtr<StringImpl> sourceMapURLForScript(const JSC::Debugger::Script&);
+    virtual RefPtr<StringImpl> requestIdForScript(JSC::JSGlobalObject*, const JSC::Debugger::Script&);
 
     void didClearGlobalObject();
     virtual void didClearAsyncStackTraceData();
@@ -197,17 +197,17 @@ private:
         WTF_MAKE_TZONE_ALLOCATED(ProtocolBreakpoint);
     public:
         static std::optional<ProtocolBreakpoint> fromPayload(Protocol::ErrorString&, JSC::SourceID, unsigned lineNumber, unsigned columnNumber, RefPtr<JSON::Object>&& options = nullptr);
-        static std::optional<ProtocolBreakpoint> fromPayload(Protocol::ErrorString&, const String& url, bool isRegex, unsigned lineNumber, unsigned columnNumber, RefPtr<JSON::Object>&& options = nullptr);
+        static std::optional<ProtocolBreakpoint> fromPayload(Protocol::ErrorString&, StringImpl* url, bool isRegex, unsigned lineNumber, unsigned columnNumber, RefPtr<JSON::Object>&& options = nullptr);
 
         ProtocolBreakpoint();
-        ProtocolBreakpoint(JSC::SourceID, unsigned lineNumber, unsigned columnNumber, const String& condition = nullString(), JSC::Breakpoint::ActionsVector&& actions = { }, bool autoContinue = false, size_t ignoreCount = 0);
-        ProtocolBreakpoint(const String& url, bool isRegex, unsigned lineNumber, unsigned columnNumber, const String& condition = nullString(), JSC::Breakpoint::ActionsVector&& actions = { }, bool autoContinue = false, size_t ignoreCount = 0);
+        ProtocolBreakpoint(JSC::SourceID, unsigned lineNumber, unsigned columnNumber, StringImpl* condition = nullString(), JSC::Breakpoint::ActionsVector&& actions = { }, bool autoContinue = false, size_t ignoreCount = 0);
+        ProtocolBreakpoint(StringImpl* url, bool isRegex, unsigned lineNumber, unsigned columnNumber, StringImpl* condition = nullString(), JSC::Breakpoint::ActionsVector&& actions = { }, bool autoContinue = false, size_t ignoreCount = 0);
 
         Ref<JSC::Breakpoint> createDebuggerBreakpoint(JSC::BreakpointID, JSC::SourceID) const;
 
         const Protocol::Debugger::BreakpointId& id() const LIFETIME_BOUND { return m_id; }
 
-        bool matchesScriptURL(const String&) const;
+        bool matchesScriptURL(StringImpl*) const;
 
     private:
         Protocol::Debugger::BreakpointId m_id;
@@ -215,14 +215,14 @@ private:
 #if ASSERT_ENABLED
         JSC::SourceID m_sourceID { JSC::noSourceID };
 #endif
-        String m_url;
+        RefPtr<StringImpl> m_url;
         bool m_isRegex { false };
 
         // FIXME: <https://webkit.org/b/162771> Web Inspector: Adopt TextPosition in Inspector to avoid oneBasedInt/zeroBasedInt ambiguity
         unsigned m_lineNumber { 0 };
         unsigned m_columnNumber { 0 };
 
-        String m_condition;
+        RefPtr<StringImpl> m_condition;
         JSC::Breakpoint::ActionsVector m_actions;
         bool m_autoContinue { false };
         size_t m_ignoreCount { 0 };
@@ -260,7 +260,7 @@ private:
     UncheckedKeyHashMap<JSC::SourceID, JSC::Debugger::Script> m_scripts;
 
     struct BlackboxedScript {
-        String url;
+        RefPtr<StringImpl> url;
         bool caseSensitive { true };
         bool isRegex { false };
 
@@ -270,12 +270,12 @@ private:
 
         NODELETE inline bool operator==(const BlackboxedScript& other) const
         {
-            return url == other.url
+            return equal(url, other.url)
                 && caseSensitive == other.caseSensitive
                 && isRegex == other.isRegex;
         }
 
-        bool matches(const String& url);
+        bool matches(StringImpl* url);
 
     private:
         std::optional<ContentSearchUtilities::Searcher> m_urlSearcher;
@@ -309,7 +309,7 @@ private:
     RefPtr<JSC::Breakpoint> m_pauseOnMicrotasksBreakpoint;
 
     struct SymbolicBreakpoint {
-        String symbol;
+        RefPtr<StringImpl> symbol;
         bool caseSensitive { true };
         bool isRegex { false };
 
@@ -317,16 +317,16 @@ private:
         RefPtr<JSC::Breakpoint> specialBreakpoint;
 
         // Avoid having to (re)match the searcher each time a function as called.
-        UncheckedKeyHashSet<String> knownMatchingSymbols;
+        UncheckedKeyHashSet<RefPtr<StringImpl>> knownMatchingSymbols;
 
         inline bool operator==(const SymbolicBreakpoint& other) const
         {
-            return symbol == other.symbol
+            return equal(symbol, other.symbol)
                 && caseSensitive == other.caseSensitive
                 && isRegex == other.isRegex;
         }
 
-        bool matches(const String&);
+        bool matches(StringImpl*);
 
     private:
         std::optional<ContentSearchUtilities::Searcher> m_symbolSearcher;

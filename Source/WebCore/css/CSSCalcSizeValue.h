@@ -35,7 +35,7 @@ public:
 
     const CSS::CalcSizeFunction& calcSize() const LIFETIME_BOUND { return m_calcSize; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSCalcSizeValue&) const;
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
 

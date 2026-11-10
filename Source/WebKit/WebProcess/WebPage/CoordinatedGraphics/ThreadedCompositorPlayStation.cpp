@@ -466,9 +466,9 @@ void ThreadedCompositor::initializeFPSCounter()
 {
     // When the envvar is set, the FPS is logged to the console, so it may be necessary to enable the
     // 'LogsPageMessagesToSystemConsole' runtime preference to see it.
-    const auto showFPSEnvironment = String::fromLatin1(getenv("WEBKIT_SHOW_FPS"));
+    const auto showFPSEnvironment = StringImpl::fromLatin1(getenv("WEBKIT_SHOW_FPS"));
     bool ok = false;
-    Seconds interval(showFPSEnvironment.toDouble(&ok));
+    Seconds interval(toDouble(showFPSEnvironment, &ok));
     if (ok && interval) {
         m_fpsCounter.exposesFPS = true;
         m_fpsCounter.calculationInterval = interval;

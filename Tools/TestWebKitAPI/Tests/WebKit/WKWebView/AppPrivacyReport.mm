@@ -630,7 +630,7 @@ async function queryAppPrivacyReportValue(event, haveSentInitialMessage)
 )SWRESOURCE"_s;
 
 
-static String expectedMessage;
+static RefPtr<StringImpl> expectedMessage;
 static bool receivedMessage = false;
 
 @interface SWAppInitiatedRequestMessageHandler : NSObject <WKScriptMessageHandler>
@@ -678,13 +678,13 @@ TEST(AppPrivacyReport, RegisterServiceWorkerClientUpdatesAppInitiatedValue)
     });
 
     // Load WebView with an app initiated request. We expect the ServiceWorkerThreadProxy to be app initiated.
-    expectedMessage = "app initiated";
+    expectedMessage = "app initiated"_s;
     [webView1 loadRequest:server.request("/main.html")];
     TestWebKitAPI::Util::run(&receivedMessage);
 
     // Load WebView with a non app initiated request. We expect the ServiceWorkerThreadProxy to be app initiated
     // at first, but then become non app initiated once the second webView is closed and its client is unregistered.
-    expectedMessage = "starts app initiated";
+    expectedMessage = "starts app initiated"_s;
     receivedMessage = false;
     NSMutableURLRequest *nonAppInitiatedRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/main.html", server.port()]]];
     nonAppInitiatedRequest.attribution = NSURLRequestAttributionUser;
@@ -694,7 +694,7 @@ TEST(AppPrivacyReport, RegisterServiceWorkerClientUpdatesAppInitiatedValue)
 
     // Close the app initiated view. We expect that the existing worker will become non app initiated
     // now that all app initiated clients have been removed.
-    expectedMessage = "non app initiated";
+    expectedMessage = "non app initiated"_s;
     receivedMessage = false;
     [webView1 _close];
     webView1 = nullptr;

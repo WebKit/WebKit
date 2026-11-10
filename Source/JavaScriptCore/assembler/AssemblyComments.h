@@ -45,7 +45,7 @@ public:
 
     Lock& getLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
-    using CommentMap = UncheckedKeyHashMap<uintptr_t, String>;
+    using CommentMap = UncheckedKeyHashMap<uintptr_t, RefPtr<StringImpl>>;
 
     void registerCodeRange(void* start, void* end, CommentMap&& map)
     {
@@ -90,7 +90,7 @@ public:
         m_comments.erase(it);
     }
 
-    inline std::optional<String> comment(void* in)
+    inline std::optional<RefPtr<StringImpl>> comment(void* in)
     {
         if (!Options::needDisassemblySupport()) [[likely]]
             return { };
@@ -109,7 +109,7 @@ public:
         if (it2 == map.end())
             return { };
 
-        return { it2->value.isolatedCopy() };
+        return { isolatedCopy(it2->value) };
     }
 
     AssemblyCommentRegistry() = default;

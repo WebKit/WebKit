@@ -51,9 +51,9 @@ public:
     virtual ~WebOpenPanelResultListenerProxy();
 
 #if PLATFORM(IOS_FAMILY)
-    void chooseFiles(const Vector<String>& filenames, const String& displayString, const API::Data* iconImageData);
+    void chooseFiles(const Vector<RefPtr<StringImpl>>& filenames, StringImpl* displayString, const API::Data* iconImageData);
 #endif
-    void chooseFiles(const Vector<String>& filenames, const Vector<String>& allowedMIMETypes = { });
+    void chooseFiles(const Vector<RefPtr<StringImpl>>& filenames, const Vector<RefPtr<StringImpl>>& allowedMIMETypes = { });
     void cancel();
 
     void invalidate();

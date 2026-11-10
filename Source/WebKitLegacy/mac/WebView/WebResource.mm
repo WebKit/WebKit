@@ -152,7 +152,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return nil;
     }
 
-    auto coreResource = WebCore::ArchiveResource::create(WebCore::SharedBuffer::create(data.get()), url.get(), mimeType.get(), textEncoding.get(), frameName.get(), response.get());
+    auto coreResource = WebCore::ArchiveResource::create(WebCore::SharedBuffer::create(data.get()), url.get(), StringImpl::create(mimeType.get()).get(), StringImpl::create(textEncoding.get()).get(), StringImpl::create(frameName.get()).get(), response.get());
     if (!coreResource) {
         [self release];
         return nil;
@@ -176,9 +176,9 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     if (resource) {
         data = protect(resource->data())->makeContiguous()->createNSData();
         url = resource->url().createNSURL();
-        mimeType = resource->mimeType().createNSString();
-        textEncoding = resource->textEncoding().createNSString();
-        frameName = resource->frameName().createNSString();
+        mimeType = createNSString(resource->mimeType());
+        textEncoding = createNSString(resource->textEncoding());
+        frameName = createNSString(resource->frameName());
         response = resource->response().nsURLResponse();
     }
     [encoder encodeObject:data.get() forKey:WebResourceDataKey];
@@ -218,7 +218,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
     if (!_private->coreResource)
         return nil;
-    return _private->coreResource->mimeType().createNSString().autorelease();
+    return createNSString(_private->coreResource->mimeType()).autorelease();
 }
 
 - (NSString *)textEncodingName
@@ -227,7 +227,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
     if (!_private->coreResource)
         return nil;
-    return _private->coreResource->textEncoding().createNSString().autorelease();
+    return createNSString(_private->coreResource->textEncoding()).autorelease();
 }
 
 - (NSString *)frameName
@@ -236,7 +236,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
     if (!_private->coreResource)
         return nil;
-    return _private->coreResource->frameName().createNSString().autorelease();
+    return createNSString(_private->coreResource->frameName()).autorelease();
 }
 
 - (NSString *)description
@@ -297,7 +297,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return nil;
     }
 
-    auto coreResource = WebCore::ArchiveResource::create(WebCore::SharedBuffer::create(copyData ? checked_objc_cast<NSData>(adoptNS([data copy]).get()) : data), URL, MIMEType, textEncodingName, frameName, response);
+    auto coreResource = WebCore::ArchiveResource::create(WebCore::SharedBuffer::create(copyData ? checked_objc_cast<NSData>(adoptNS([data copy]).get()) : data), URL, StringImpl::create(MIMEType).get(), StringImpl::create(textEncodingName).get(), StringImpl::create(frameName).get(), response);
     if (!coreResource) {
         [self release];
         return nil;
@@ -326,7 +326,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
     if (!_private->coreResource)
         return nil;
-    return _private->coreResource->response().suggestedFilename().createNSString().autorelease();
+    return createNSString(_private->coreResource->response().suggestedFilename()).autorelease();
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -357,14 +357,14 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
     PAL::TextEncoding encoding;
     if (_private->coreResource)
-        encoding = _private->coreResource->textEncoding();
+        encoding = _private->coreResource->textEncoding().get();
     if (!encoding.isValid())
         encoding = PAL::WindowsLatin1Encoding();
     
     RefPtr coreData = _private->coreResource ? &protect(_private->coreResource)->data() : nullptr;
     if (!coreData)
         return @"";
-    return encoding.decode(coreData->makeContiguous()->span()).createNSString().autorelease();
+    return createNSString(encoding.decode(coreData->makeContiguous()->span())).autorelease();
 }
 
 @end

@@ -35,25 +35,25 @@
 
 namespace WebDriver {
 
-static bool soupServerListen(SoupServer* server, const std::optional<String>& host, unsigned port, GError** error)
+static bool soupServerListen(SoupServer* server, const std::optional<RefPtr<StringImpl>>& host, unsigned port, GError** error)
 {
     static const auto options = static_cast<SoupServerListenOptions>(0);
-    if (!host || host.value() == "local"_s)
+    if (!host || equal(host.value(), "local"_s))
         return soup_server_listen_local(server, port, options, error);
 
-    if (host.value() == "all"_s)
+    if (equal(host.value(), "all"_s))
         return soup_server_listen_all(server, port, options, error);
 
-    GRefPtr<GSocketAddress> address = adoptGRef(g_inet_socket_address_new_from_string(host.value().utf8().legacyCStringPointer(), port));
+    GRefPtr<GSocketAddress> address = adoptGRef(g_inet_socket_address_new_from_string(utf8(host.value()).legacyCStringPointer(), port));
     if (!address) {
-        SAFE_G_SET_ERROR(error, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT, "Invalid host IP address '%s'", host.value().utf8());
+        SAFE_G_SET_ERROR(error, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT, "Invalid host IP address '%s'", utf8(host.value()));
         return false;
     }
 
     return soup_server_listen(server, address.get(), options, error);
 }
 
-bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
+bool HTTPServer::listen(const std::optional<RefPtr<StringImpl>>& host, unsigned port)
 {
     m_soupServer = adoptGRef(soup_server_new("server-header", "WebKitWebDriver", nullptr));
     GUniqueOutPtr<GError> error;
@@ -65,17 +65,17 @@ bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
     soup_server_add_handler(m_soupServer.get(), nullptr, [](SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer userData) {
         auto& httpServer = *static_cast<HTTPServer*>(userData);
         auto* requestHeaders = soup_server_message_get_request_headers(message);
-        auto hostHeader = String::fromLatin1(soup_message_headers_get_one(requestHeaders, "Host"));
-        auto originHeader = String::fromLatin1(soup_message_headers_get_one(requestHeaders, "Origin"));
-        auto contentTypeHeader = String::fromLatin1(soup_message_headers_get_one(requestHeaders, "Content-Type"));
-        auto method = String::fromUTF8(soup_server_message_get_method(message));
-        auto result = httpServer.m_requestHandler.validateRequestHeaders(hostHeader, originHeader, method, contentTypeHeader);
+        auto hostHeader = StringImpl::fromLatin1(soup_message_headers_get_one(requestHeaders, "Host"));
+        auto originHeader = StringImpl::fromLatin1(soup_message_headers_get_one(requestHeaders, "Origin"));
+        auto contentTypeHeader = StringImpl::fromLatin1(soup_message_headers_get_one(requestHeaders, "Content-Type"));
+        auto method = StringImpl::fromUTF8(soup_server_message_get_method(message));
+        auto result = httpServer.m_requestHandler.validateRequestHeaders(hostHeader.get(), originHeader.get(), method.get(), contentTypeHeader.get());
         if (!result) {
-            RELEASE_LOG_ERROR(WebDriverClassic, "Rejected HTTP request: %s", result.error().utf8());
-            auto response = HTTPRequestHandler::rejectedRequestResponse(result.error());
+            RELEASE_LOG_ERROR(WebDriverClassic, "Rejected HTTP request: %s", utf8(result.error()));
+            auto response = HTTPRequestHandler::rejectedRequestResponse(result.error().get());
             auto responseCharacters = byteCast<char>(response.data.span());
             soup_server_message_set_status(message, response.statusCode, nullptr);
-            soup_server_message_set_response(message, response.contentType.utf8().legacyCStringPointer(), SOUP_MEMORY_COPY, responseCharacters.data(), responseCharacters.size());
+            soup_server_message_set_response(message, utf8(response.contentType).legacyCStringPointer(), SOUP_MEMORY_COPY, responseCharacters.data(), responseCharacters.size());
             return;
         }
 
@@ -83,19 +83,19 @@ bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
         soup_server_pause_message(server, message);
         auto* requestBody = soup_server_message_get_request_body(message);
 
-        if (httpServer.m_visibleHost.isEmpty()) {
+        if (isEmpty(httpServer.m_visibleHost)) {
             URL visibleURL { makeString("http://"_s, hostHeader) };
-            httpServer.m_visibleHost = visibleURL.isValid() ? visibleURL.host().toString() : "localhost"_s;
+            httpServer.m_visibleHost = visibleURL.isValid() ? visibleURL.host().toString() : "localhost"_si;
         }
 
-        httpServer.m_requestHandler.handleRequest({ WTF::move(method), String::fromUTF8(path), requestBody->data, static_cast<size_t>(requestBody->length) },
+        httpServer.m_requestHandler.handleRequest({ WTF::move(method), StringImpl::fromUTF8(path), requestBody->data, static_cast<size_t>(requestBody->length) },
             [server, message = WTF::move(protectedMessage)](HTTPRequestHandler::Response&& response) {
                 soup_server_message_set_status(message.get(), response.statusCode, nullptr);
                 if (!response.data.isNull()) {
                     // §6.3 Processing Model.
                     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-send-a-response
                     auto* responseHeaders = soup_server_message_get_response_headers(message.get());
-                    soup_message_headers_append(responseHeaders, "Content-Type", response.contentType.utf8().legacyCStringPointer());
+                    soup_message_headers_append(responseHeaders, "Content-Type", utf8(response.contentType).legacyCStringPointer());
                     soup_message_headers_append(responseHeaders, "Cache-Control", "no-cache");
                     auto* responseBody = soup_server_message_get_response_body(message.get());
                     soup_message_body_append(responseBody, SOUP_MEMORY_COPY, response.data.data(), response.data.length());

@@ -59,7 +59,7 @@ void WebValidationMessageClient::documentDetached(Document& document)
         hideValidationMessage(*anchor);
 }
 
-void WebValidationMessageClient::showValidationMessage(const Element& anchor, String&& message)
+void WebValidationMessageClient::showValidationMessage(const Element& anchor, RefPtr<StringImpl>&& message)
 {
     if (RefPtr currentAnchor = m_currentAnchor.get())
         hideValidationMessage(*currentAnchor);

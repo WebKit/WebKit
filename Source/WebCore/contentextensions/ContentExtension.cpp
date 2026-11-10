@@ -38,12 +38,12 @@
 
 namespace WebCore::ContentExtensions {
 
-Ref<ContentExtension> ContentExtension::create(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, URL&& extensionBaseURL, ShouldCompileCSS shouldCompileCSS)
+Ref<ContentExtension> ContentExtension::create(StringImpl* identifier, Ref<CompiledContentExtension>&& compiledExtension, URL&& extensionBaseURL, ShouldCompileCSS shouldCompileCSS)
 {
     return adoptRef(*new ContentExtension(identifier, WTF::move(compiledExtension), WTF::move(extensionBaseURL), shouldCompileCSS));
 }
 
-ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, URL&& extensionBaseURL, ShouldCompileCSS shouldCompileCSS)
+ContentExtension::ContentExtension(StringImpl* identifier, Ref<CompiledContentExtension>&& compiledExtension, URL&& extensionBaseURL, ShouldCompileCSS shouldCompileCSS)
     : m_identifier(identifier)
     , m_compiledExtension(WTF::move(compiledExtension))
     , m_extensionBaseURL(WTF::move(extensionBaseURL))
@@ -57,7 +57,7 @@ ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContent
     m_universalActions.shrinkToFit();
 }
 
-DFABytecodeInterpreter::Actions ContentExtension::interpretURLFilters(const String& url, ResourceFlags flags) const
+DFABytecodeInterpreter::Actions ContentExtension::interpretURLFilters(StringImpl* url, ResourceFlags flags) const
 {
     return m_urlFiltersInterpreter.interpret(url, flags);
 }

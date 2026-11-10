@@ -81,7 +81,7 @@ public:
     WEBCORE_EXPORT void optionSelectedByUser(int index, bool dispatchChangeEvent, bool allowMultipleSelection = false);
     void pickOrToggleOption(HTMLOptionElement&);
 
-    String validationMessage() const final;
+    RefPtr<StringImpl> validationMessage() const final;
     bool valueMissing() const final;
 
     WEBCORE_EXPORT unsigned length() const;
@@ -108,11 +108,11 @@ public:
     using Node::remove;
     WEBCORE_EXPORT void remove(int);
 
-    WEBCORE_EXPORT String value() const;
-    WEBCORE_EXPORT void setValue(const String&);
+    WEBCORE_EXPORT RefPtr<StringImpl> value() const;
+    WEBCORE_EXPORT void setValue(StringImpl*);
 
     enum class EmitNewlineForEmptyItems : bool { No, Yes };
-    String collectOptionInnerText(EmitNewlineForEmptyItems = EmitNewlineForEmptyItems::No) const;
+    RefPtr<StringImpl> collectOptionInnerText(EmitNewlineForEmptyItems = EmitNewlineForEmptyItems::No) const;
 
     WEBCORE_EXPORT Ref<HTMLOptionsCollection> options();
     Ref<HTMLCollection> selectedOptions();
@@ -149,9 +149,9 @@ public:
 
     // PopupMenuClient methods
     void valueChanged(unsigned listIndex, bool fireOnChange = true) override;
-    String itemText(unsigned listIndex) const override;
-    String itemToolTip(unsigned listIndex) const override;
-    String itemAccessibilityText(unsigned listIndex) const override;
+    RefPtr<StringImpl> itemText(unsigned listIndex) const override;
+    RefPtr<StringImpl> itemToolTip(unsigned listIndex) const override;
+    RefPtr<StringImpl> itemAccessibilityText(unsigned listIndex) const override;
     bool itemIsEnabled(unsigned listIndex) const override;
     PopupMenuStyle itemStyle(unsigned listIndex) const override;
     PopupMenuStyle menuStyle() const override;
@@ -176,7 +176,7 @@ public:
     HostWindow* hostWindow() const override;
 #endif
 
-    WEBCORE_EXPORT HTMLOptionElement* namedItem(const AtomString& name);
+    WEBCORE_EXPORT HTMLOptionElement* namedItem(AtomStringImpl* name);
     WEBCORE_EXPORT HTMLOptionElement* item(unsigned index);
     bool isSupportedPropertyIndex(unsigned index);
 
@@ -224,9 +224,9 @@ public:
     NODELETE Element* optionContainer() const;
     NODELETE SelectPopoverElement* pickerPopoverElement() const;
     NODELETE Element* buttonElement() const;
-    String buttonLabelText(StringView selectedContentText) const;
+    RefPtr<StringImpl> buttonLabelText(StringView selectedContentText) const;
     enum class ForAccessibility : bool { No, Yes };
-    String buttonText(ForAccessibility, HTMLOptionElement* selectedOption = nullptr, int optionIndex = -1) const;
+    RefPtr<StringImpl> buttonText(ForAccessibility, HTMLOptionElement* selectedOption = nullptr, int optionIndex = -1) const;
     void openPickerForUserInteraction(std::optional<bool> focusVisible = std::nullopt);
     void hidePickerPopoverElement();
     void clearPickerOpeningMouseLocation() { m_pickerOpeningMouseLocation = { }; }
@@ -239,7 +239,7 @@ public:
         WritingMode writingMode { };
     };
     NavigationKeyIdentifiers optionNavigationKeyIdentifiers() const;
-    int computeNavigationIndex(const String& keyIdentifier, int currentListIndex, NavigationKeyIdentifiers) const;
+    int computeNavigationIndex(StringImpl* keyIdentifier, int currentListIndex, NavigationKeyIdentifiers) const;
     bool handleNavigationKeydown(KeyboardEvent&, int currentListIndex);
     bool handleTypeAheadKeypress(KeyboardEvent&);
     void focusOptionAtIndex(int listIndex, std::optional<bool> focusVisible = std::nullopt, OptionScrollMode = OptionScrollMode::Nearest);
@@ -249,7 +249,7 @@ protected:
     HTMLSelectElement(const QualifiedName&, Document&);
 
 private:
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
 
     int defaultTabIndex() const final;
     bool isKeyboardFocusable(const FocusEventData&) const final;
@@ -269,7 +269,7 @@ private:
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
 
     void setDisabledInternal(bool disabled, bool disabledByAncestorFieldset) final;
 
@@ -309,7 +309,7 @@ private:
     };
     void selectOption(int optionIndex, OptionSet<SelectOptionFlag> = { });
     void deselectItemsWithoutValidation(HTMLElement* elementToExclude = nullptr);
-    void parseMultipleAttribute(const AtomString&);
+    void parseMultipleAttribute(AtomStringImpl*);
     int lastSelectedListIndex() const;
     void setActiveSelectionAnchorIndex(int);
     void updateSelectedState(int listIndex, bool multi, bool shift);
@@ -319,7 +319,7 @@ private:
     void cloneOptionsIntoSelectedContent();
     void cloneOptionsIntoSelectedContent(HTMLSelectedContentElement&);
     RefPtr<HTMLOptionElement> firstSelectedOption() const;
-    String selectedOptionsText(ForAccessibility, HTMLOptionElement* selectedOption, int optionIndex) const;
+    RefPtr<StringImpl> selectedOptionsText(ForAccessibility, HTMLOptionElement* selectedOption, int optionIndex) const;
     void setSizeAndMultiple(unsigned size, bool multiple);
     enum class PickerCloseReason : bool { Appearance, PickerSupport };
     void queuePickerClose(PickerCloseReason);
@@ -328,7 +328,7 @@ private:
     bool platformHandleKeydownEvent(KeyboardEvent*);
     void listBoxDefaultEventHandler(Event&);
     void setOptionsChangedOnRenderer();
-    size_t searchOptionsForValue(const String&, size_t listIndexStart, size_t listIndexEnd) const;
+    size_t searchOptionsForValue(StringImpl*, size_t listIndexStart, size_t listIndexEnd) const;
 
     enum class SkipDirection : bool { Backwards, Forwards };
     int nextValidIndex(int listIndex, SkipDirection, int skip) const;
@@ -360,7 +360,7 @@ private:
     // TypeAheadDataSource functions.
     int indexOfSelectedOption() const final;
     int optionCount() const final;
-    String optionAtIndex(int index) const final;
+    RefPtr<StringImpl> optionAtIndex(int index) const final;
 
     // m_listItems contains HTMLOptionElement, HTMLOptGroupElement, and HTMLHRElement objects.
     mutable Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>> m_listItems;

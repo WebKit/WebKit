@@ -34,14 +34,14 @@ struct MediaQuery;
 using MediaQueryList = Vector<MediaQuery>;
 
 struct MediaQueryParser : public GenericMediaQueryParser<MediaQueryParser>  {
-    static MediaQueryList parse(const String&, const CSSParserContext&);
+    static MediaQueryList parse(StringImpl*, const CSSParserContext&);
     static MediaQueryList parse(CSSParserTokenRange, const CSSParserContext&);
     static std::optional<MediaQuery> parseCondition(CSSParserTokenRange, const CSSParserContext&);
 
     static MediaQueryList consumeMediaQueryList(CSSParserTokenRange&, const CSSParserContext&);
     static std::optional<MediaQuery> consumeMediaQuery(CSSParserTokenRange&, const CSSParserContext&);
 
-    static const FeatureSchema* schemaForFeatureName(const AtomString&, const CSSParserContext&, State&);
+    static const FeatureSchema* schemaForFeatureName(AtomStringImpl*, const CSSParserContext&, State&);
     static Vector<const FeatureSchema*> featureSchemas();
 };
 

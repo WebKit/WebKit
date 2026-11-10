@@ -57,9 +57,9 @@ static cairo_status_t writeFunction(void* output, const unsigned char* data, uns
     return CAIRO_STATUS_SUCCESS;
 }
 
-Vector<uint8_t> platformEncodeData(const NativeImage& nativeImage, const String& mimeType, std::optional<double>)
+Vector<uint8_t> platformEncodeData(const NativeImage& nativeImage, StringImpl* mimeType, std::optional<double>)
 {
-    ASSERT_UNUSED(mimeType, mimeType == "image/png"_s); // Only PNG output is supported for now.
+    ASSERT_UNUSED(mimeType, equal(mimeType, "image/png"_s)); // Only PNG output is supported for now.
     auto platformImage = nativeImage.platformImage();
     if (!platformImage)
         return { };
@@ -71,7 +71,7 @@ Vector<uint8_t> platformEncodeData(const NativeImage& nativeImage, const String&
 
 #else
 
-Vector<uint8_t> platformEncodeData(const NativeImage& image, const String& mimeType, std::optional<double> quality)
+Vector<uint8_t> platformEncodeData(const NativeImage& image, StringImpl* mimeType, std::optional<double> quality)
 {
     auto* surface = image.platformImage().get();
     if (!surface)
@@ -83,8 +83,8 @@ Vector<uint8_t> platformEncodeData(const NativeImage& image, const String& mimeT
     GUniqueOutPtr<gchar> buffer;
     gsize bufferSize;
 
-    String type = mimeType.substring(sizeof "image");
-    if (type != "jpeg"_s && type != "png"_s && type != "tiff"_s && type != "ico"_s && type != "bmp"_s)
+    RefPtr<StringImpl> type = substring(mimeType, sizeof "image");
+    if (!equal(type, "jpeg"_s) && !equal(type, "png"_s) && !equal(type, "tiff"_s) && !equal(type, "ico"_s) && !equal(type, "bmp"_s))
         return false;
 
     IntSize size = cairoSurfaceSize(surface);
@@ -93,11 +93,11 @@ Vector<uint8_t> platformEncodeData(const NativeImage& image, const String& mimeT
         return false;
 
     GUniqueOutPtr<GError> error;
-    if (type == "jpeg"_s && quality && *quality >= 0.0 && *quality <= 1.0) {
-        String qualityString = String::number(static_cast<int>(*quality * 100.0 + 0.5));
-        gdk_pixbuf_save_to_buffer(pixbuf.get(), &buffer.outPtr(), &bufferSize, type.utf8().legacyCStringPointer(), &error.outPtr(), "quality", qualityString.utf8().legacyCStringPointer(), NULL);
+    if (equal(type, "jpeg"_s) && quality && *quality >= 0.0 && *quality <= 1.0) {
+        RefPtr<StringImpl> qualityString = makeString(static_cast<int>(*quality * 100.0 + 0.5));
+        gdk_pixbuf_save_to_buffer(pixbuf.get(), &buffer.outPtr(), &bufferSize, utf8(type).legacyCStringPointer(), &error.outPtr(), "quality", utf8(qualityString).legacyCStringPointer(), NULL);
     } else
-        gdk_pixbuf_save_to_buffer(pixbuf.get(), &buffer.outPtr(), &bufferSize, type.utf8().legacyCStringPointer(), &error.outPtr(), NULL);
+        gdk_pixbuf_save_to_buffer(pixbuf.get(), &buffer.outPtr(), &bufferSize, utf8(type).legacyCStringPointer(), &error.outPtr(), NULL);
     if (error)
         return { };
     return std::span { reinterpret_cast<const uint8_t*>(buffer.get()), bufferSize };

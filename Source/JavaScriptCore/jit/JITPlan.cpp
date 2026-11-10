@@ -210,7 +210,7 @@ void JITPlan::beginSignpostImpl()
     ASSERT(Options::useCompilerSignpost() && !m_signpostMessage.isNull());
     auto id = signpostId(*this);
     UNUSED_VARIABLE(id); // WTFBeginSignpost not always defined
-    String detalString;
+    RefPtr<StringImpl> detalString;
     switch (m_stage) {
     case JITPlanStage::Preparing:
         WTFBeginSignpost(id, JSCJITPlanQueued, "%" PUBLIC_LOG_STRING, m_signpostMessage);
@@ -227,7 +227,7 @@ void JITPlan::beginSignpostImpl()
     case JITPlanStage::Canceled:
         RELEASE_ASSERT_NOT_REACHED();
     };
-    ProfilerSupport::markStart(id, ProfilerSupport::Category::JSGlobalObjectSignpost, detalString.utf8());
+    ProfilerSupport::markStart(id, ProfilerSupport::Category::JSGlobalObjectSignpost, utf8(detalString));
 }
 
 void JITPlan::endSignpostImpl(JITPlan::SignpostDetail detail)
@@ -239,7 +239,7 @@ void JITPlan::endSignpostImpl(JITPlan::SignpostDetail detail)
         detailStr = "Canceled"_s;
     UNUSED_VARIABLE(id); // WTFEndSignpost not always defined
     UNUSED_VARIABLE(detailStr);
-    String detalString;
+    RefPtr<StringImpl> detalString;
     switch (m_stage) {
     case JITPlanStage::Preparing:
         WTFEndSignpost(id, JSCJITPlanQueued, "%" PUBLIC_LOG_STRING " %" PUBLIC_LOG_STRING, m_signpostMessage, detailStr.characters());
@@ -256,7 +256,7 @@ void JITPlan::endSignpostImpl(JITPlan::SignpostDetail detail)
     case JITPlanStage::Canceled:
         RELEASE_ASSERT_NOT_REACHED();
     };
-    ProfilerSupport::markEnd(id, ProfilerSupport::Category::JSGlobalObjectSignpost, detalString.utf8());
+    ProfilerSupport::markEnd(id, ProfilerSupport::Category::JSGlobalObjectSignpost, utf8(detalString));
 }
 
 void JITPlan::compileInThread(JITWorklistThread* thread)

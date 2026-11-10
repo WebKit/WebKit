@@ -55,11 +55,11 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     LegacyCDMSessionType type() const override { return CDMSessionTypeAVFoundationObjC; }
-    const String& sessionId() const LIFETIME_BOUND override { return m_sessionId; }
-    RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
+    const RefPtr<StringImpl>& sessionId() const LIFETIME_BOUND override { return m_sessionId; }
+    RefPtr<Uint8Array> generateKeyRequest(StringImpl* mimeType, Uint8Array* initData, RefPtr<StringImpl>& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
     void releaseKeys() override;
     bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) override;
-    RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override;
+    RefPtr<ArrayBuffer> cachedKeyForKeyID(StringImpl*) const override;
 
     void playerDidReceiveError(NSError *);
 
@@ -75,7 +75,7 @@ private:
 
     ThreadSafeWeakPtr<MediaPlayerPrivateAVFoundationObjC> m_parent;
     WeakPtr<LegacyCDMSessionClient> m_client;
-    String m_sessionId;
+    RefPtr<StringImpl> m_sessionId;
     RetainPtr<AVAssetResourceLoadingRequest> m_request;
 
 #if !RELEASE_LOG_DISABLED

@@ -70,9 +70,9 @@ std::optional<WebPushMessage> WebPushMessage::fromDictionary(NSDictionary *dicti
             return std::nullopt;
     }
 
-    WebPushMessage message { { }, String { pushPartition.get() }, URL { url.get() }, WTF::move(payload) };
+    WebPushMessage message { { }, StringImpl::create(pushPartition.get()), URL { url.get() }, WTF::move(payload) };
 #else
-    WebPushMessage message { { }, String { pushPartition.get() }, URL { url.get() }, { } };
+    WebPushMessage message { { }, StringImpl::create(pushPartition.get()), URL { url.get() }, { } };
 #endif
 
     if (isData)
@@ -96,7 +96,7 @@ RetainPtr<NSDictionary> WebPushMessage::toDictionary() const
     return @{
         WebKitPushDataKey : nsData ? nsData.get() : [NSNull null],
         WebKitPushRegistrationURLKey : registrationURL.createNSURL().get(),
-        WebKitPushPartitionKey : pushPartitionString.createNSString().get(),
+        WebKitPushPartitionKey : createNSString(pushPartitionString).get(),
         WebKitNotificationPayloadKey : nsPayload ? nsPayload.get() : [NSNull null]
     };
 }

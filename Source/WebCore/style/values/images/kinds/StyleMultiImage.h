@@ -88,7 +88,7 @@ private:
     bool containsCurrentColor() const final;
     bool canDrawAtSize(const RenderElement&, const FloatSize&) const final;
     bool drawsSVGImage() const final;
-    WTF::String accessibilityDescription() const final;
+    RefPtr<StringImpl> accessibilityDescription() const final;
     bool isAnimated() const final;
     void startAnimation() final;
     void stopAnimation() final;

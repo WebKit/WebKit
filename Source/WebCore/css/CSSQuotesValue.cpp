@@ -44,7 +44,7 @@ Ref<CSSQuotesValue> CSSQuotesValue::create(CSS::Quotes&& quotes)
     return adoptRef(*new CSSQuotesValue(WTF::move(quotes)));
 }
 
-String CSSQuotesValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSQuotesValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_quotes);
 }

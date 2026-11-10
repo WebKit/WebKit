@@ -177,15 +177,15 @@ TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspection
         return nullptr;
 
     return gVariantNew("(tsssb)", static_cast<guint64>(target.targetIdentifier()),
-        targetDebuggableType(target.type()), target.name().utf8(),
-        target.type() == RemoteInspectionTarget::Type::JavaScript ? "null"_s : target.url().utf8(),
+        targetDebuggableType(target.type()), utf8(target.name()),
+        target.type() == RemoteInspectionTarget::Type::JavaScript ? "null"_s : utf8(target.url()),
         target.hasLocalDebugger());
 }
 
 TargetListing RemoteInspector::listingForAutomationTarget(const RemoteAutomationTarget& target) const
 {
     return gVariantNew("(tsssb)", static_cast<guint64>(target.targetIdentifier()),
-        "Automation", target.name().utf8(), "null", target.isPaired());
+        "Automation", utf8(target.name()), "null", target.isPaired());
 }
 
 void RemoteInspector::pushListingsNow()
@@ -230,13 +230,13 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage(TargetID)
     // FIXME: Implement automatic inspection.
 }
 
-void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const String& message)
+void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, StringImpl* message)
 {
     Locker locker { m_mutex };
     if (!m_socketConnection)
         return;
 
-    m_socketConnection->sendMessage("SendMessageToFrontend"_s, gVariantNew("(ts)", static_cast<guint64>(targetIdentifier), message.utf8()));
+    m_socketConnection->sendMessage("SendMessageToFrontend"_s, gVariantNew("(ts)", static_cast<guint64>(targetIdentifier), utf8(message)));
 }
 
 void RemoteInspector::receivedGetTargetListMessage()
@@ -259,7 +259,7 @@ void RemoteInspector::receivedDataMessage(TargetID targetIdentifier, const char*
         if (!connectionToTarget)
             return;
     }
-    connectionToTarget->sendMessageToTarget(String::fromUTF8(message));
+    connectionToTarget->sendMessageToTarget(StringImpl::fromUTF8(message));
 }
 
 void RemoteInspector::receivedCloseMessage(TargetID targetIdentifier)
@@ -308,7 +308,7 @@ void RemoteInspector::setup(TargetID targetIdentifier)
 void RemoteInspector::sendMessageToTarget(TargetID targetIdentifier, const char* message)
 {
     if (RefPtr connectionToTarget = m_targetConnectionMap.get(targetIdentifier))
-        connectionToTarget->sendMessageToTarget(String::fromUTF8(message));
+        connectionToTarget->sendMessageToTarget(StringImpl::fromUTF8(message));
 }
 
 void RemoteInspector::requestAutomationSession(const char* sessionID, const Client::SessionCapabilities& capabilities)
@@ -322,7 +322,7 @@ void RemoteInspector::requestAutomationSession(const char* sessionID, const Clie
     if (!sessionID || !sessionID[0])
         return;
 
-    m_client->requestAutomationSession(String::fromUTF8(sessionID), capabilities);
+    m_client->requestAutomationSession(StringImpl::fromUTF8(sessionID), capabilities);
     updateClientCapabilities();
 }
 

@@ -152,13 +152,13 @@ struct ScrollToOptions;
 struct SecurityPolicyViolationEventInit;
 struct ShadowRootInit;
 
-using AnimatableCSSProperty = Variant<CSSPropertyID, AtomString>;
+using AnimatableCSSProperty = Variant<CSSPropertyID, RefPtr<AtomStringImpl>>;
 using AnimatableCSSPropertyToTransitionMap = HashMap<AnimatableCSSProperty, Ref<CSSTransition>>;
 using AnimationCollection = OrderedHashSet<Ref<WebAnimation>>;
 using CSSAnimationCollection = OrderedHashSet<Ref<CSSAnimation>>;
 using ElementName = NodeName;
 using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>>;
-using TrustedTypeOrString = Variant<Ref<TrustedHTML>, Ref<TrustedScript>, Ref<TrustedScriptURL>, AtomString>;
+using TrustedTypeOrString = Variant<Ref<TrustedHTML>, Ref<TrustedScript>, Ref<TrustedScriptURL>, RefPtr<AtomStringImpl>>;
 
 // https://drafts.csswg.org/css-contain/#relevant-to-the-user
 enum class ContentRelevancy : uint8_t {
@@ -194,16 +194,16 @@ public:
     WEBCORE_EXPORT virtual ~Element();
 
     WEBCORE_EXPORT bool hasAttribute(const QualifiedName&) const;
-    WEBCORE_EXPORT const AtomString& getAttribute(const QualifiedName&) const;
-    AtomString getAttributeForBindings(const QualifiedName&, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
+    WEBCORE_EXPORT const RefPtr<AtomStringImpl>& getAttribute(const QualifiedName&) const;
+    RefPtr<AtomStringImpl> getAttributeForBindings(const QualifiedName&, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
     template<typename... QualifiedNames>
-    inline const AtomString& getAttribute(const QualifiedName&, const QualifiedNames&...) const;
-    WEBCORE_EXPORT void setAttribute(const QualifiedName&, const AtomString& value);
-    void setAttributeWithoutOverwriting(const QualifiedName&, const AtomString& value);
-    WEBCORE_EXPORT void setAttributeWithoutSynchronization(const QualifiedName&, const AtomString& value);
-    void setSynchronizedLazyAttribute(const QualifiedName&, const AtomString& value);
+    inline const RefPtr<AtomStringImpl>& getAttribute(const QualifiedName&, const QualifiedNames&...) const;
+    WEBCORE_EXPORT void setAttribute(const QualifiedName&, AtomStringImpl* value);
+    void setAttributeWithoutOverwriting(const QualifiedName&, AtomStringImpl* value);
+    WEBCORE_EXPORT void setAttributeWithoutSynchronization(const QualifiedName&, AtomStringImpl* value);
+    void setSynchronizedLazyAttribute(const QualifiedName&, AtomStringImpl* value);
     bool removeAttribute(const QualifiedName&);
-    Vector<String> getAttributeNames() const;
+    Vector<RefPtr<StringImpl>> getAttributeNames() const;
 
     // Typed getters and setters for language bindings.
     NODELETE WEBCORE_EXPORT int integralAttribute(const QualifiedName& attributeName) const;
@@ -220,14 +220,14 @@ public:
     NODELETE static bool isElementsArrayReflectionAttribute(const QualifiedName&);
 
     WEBCORE_EXPORT void setUserInfo(JSC::JSGlobalObject&, JSC::JSValue);
-    NODELETE WEBCORE_EXPORT String userInfo() const;
+    NODELETE WEBCORE_EXPORT RefPtr<StringImpl> userInfo() const;
 
     // Call this to get the value of an attribute that is known not to be the style
     // attribute or one of the SVG animatable attributes.
     NODELETE inline bool hasAttributeWithoutSynchronization(const QualifiedName&) const;
-    inline const AtomString& attributeWithoutSynchronization(const QualifiedName&) const;
-    inline const AtomString& attributeWithDefaultARIA(const QualifiedName&) const;
-    inline String attributeTrimmedWithDefaultARIA(const QualifiedName&) const;
+    inline const RefPtr<AtomStringImpl>& attributeWithoutSynchronization(const QualifiedName&) const;
+    inline const RefPtr<AtomStringImpl>& attributeWithDefaultARIA(const QualifiedName&) const;
+    inline RefPtr<StringImpl> attributeTrimmedWithDefaultARIA(const QualifiedName&) const;
 
     inline bool isDrawable() const;
     bool isInsideDrawableCanvas() const;
@@ -239,29 +239,29 @@ public:
     // https://github.com/w3c/aria/pull/2484
     // These ARIA attributes will become enumerated. Currently, they use [ReflectSetter] with custom getters
     // rather than [Reflect, Enumerated] to facilitate testing behind the EnumeratedARIAAttributeReflectionEnabled flag.
-    const AtomString& ariaAtomic() const;
-    const AtomString& ariaAutoComplete() const;
-    const AtomString& ariaBusy() const;
-    const AtomString& ariaChecked() const;
-    const AtomString& ariaCurrent() const;
-    const AtomString& ariaDisabled() const;
-    const AtomString& ariaExpanded() const;
-    const AtomString& ariaHasPopup() const;
-    const AtomString& ariaHidden() const;
-    const AtomString& ariaInvalid() const;
-    const AtomString& ariaLive() const;
-    const AtomString& ariaModal() const;
-    const AtomString& ariaMultiLine() const;
-    const AtomString& ariaMultiSelectable() const;
-    const AtomString& ariaOrientation() const;
-    const AtomString& ariaPressed() const;
-    const AtomString& ariaReadOnly() const;
-    const AtomString& ariaRequired() const;
-    const AtomString& ariaSelected() const;
-    const AtomString& ariaSort() const;
+    const RefPtr<AtomStringImpl>& ariaAtomic() const;
+    const RefPtr<AtomStringImpl>& ariaAutoComplete() const;
+    const RefPtr<AtomStringImpl>& ariaBusy() const;
+    const RefPtr<AtomStringImpl>& ariaChecked() const;
+    const RefPtr<AtomStringImpl>& ariaCurrent() const;
+    const RefPtr<AtomStringImpl>& ariaDisabled() const;
+    const RefPtr<AtomStringImpl>& ariaExpanded() const;
+    const RefPtr<AtomStringImpl>& ariaHasPopup() const;
+    const RefPtr<AtomStringImpl>& ariaHidden() const;
+    const RefPtr<AtomStringImpl>& ariaInvalid() const;
+    const RefPtr<AtomStringImpl>& ariaLive() const;
+    const RefPtr<AtomStringImpl>& ariaModal() const;
+    const RefPtr<AtomStringImpl>& ariaMultiLine() const;
+    const RefPtr<AtomStringImpl>& ariaMultiSelectable() const;
+    const RefPtr<AtomStringImpl>& ariaOrientation() const;
+    const RefPtr<AtomStringImpl>& ariaPressed() const;
+    const RefPtr<AtomStringImpl>& ariaReadOnly() const;
+    const RefPtr<AtomStringImpl>& ariaRequired() const;
+    const RefPtr<AtomStringImpl>& ariaSelected() const;
+    const RefPtr<AtomStringImpl>& ariaSort() const;
 
-    WEBCORE_EXPORT void ariaNotify(const String&);
-    WEBCORE_EXPORT void ariaNotify(const String&, const AriaNotifyOptions&);
+    WEBCORE_EXPORT void ariaNotify(StringImpl*);
+    WEBCORE_EXPORT void ariaNotify(StringImpl*, const AriaNotifyOptions&);
 
 #if DUMP_NODE_STATISTICS
     bool hasNamedNodeMap() const;
@@ -273,33 +273,33 @@ public:
     // in style attribute or one of the SVG animation attributes.
     bool hasAttributesWithoutUpdate() const;
 
-    WEBCORE_EXPORT bool hasAttribute(const AtomString& qualifiedName) const;
-    WEBCORE_EXPORT bool hasAttributeNS(const AtomString& namespaceURI, const AtomString& localName) const;
+    WEBCORE_EXPORT bool hasAttribute(AtomStringImpl* qualifiedName) const;
+    WEBCORE_EXPORT bool hasAttributeNS(AtomStringImpl* namespaceURI, AtomStringImpl* localName) const;
 
-    WEBCORE_EXPORT const AtomString& getAttribute(const AtomString& qualifiedName) const;
-    WEBCORE_EXPORT const AtomString& getAttributeNS(const AtomString& namespaceURI, const AtomString& localName) const;
-    AtomString getAttributeForBindings(const AtomString& qualifiedName, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
-    inline AtomString getAttributeNSForBindings(const AtomString& namespaceURI, const AtomString& localName, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
+    WEBCORE_EXPORT const RefPtr<AtomStringImpl>& getAttribute(AtomStringImpl* qualifiedName) const;
+    WEBCORE_EXPORT const RefPtr<AtomStringImpl>& getAttributeNS(AtomStringImpl* namespaceURI, AtomStringImpl* localName) const;
+    RefPtr<AtomStringImpl> getAttributeForBindings(AtomStringImpl* qualifiedName, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
+    inline RefPtr<AtomStringImpl> getAttributeNSForBindings(AtomStringImpl* namespaceURI, AtomStringImpl* localName, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
     RefPtr<Element> elementForAttributeInternal(const QualifiedName& attributeName) const;
     std::optional<Vector<Ref<Element>>> elementsArrayForAttributeInternal(const QualifiedName& attributeName) const;
 
-    WEBCORE_EXPORT ExceptionOr<void> setAttribute(const AtomString& qualifiedName, const AtomString& value);
-    ExceptionOr<void> setAttribute(const AtomString& qualifiedName, const TrustedTypeOrString& value);
+    WEBCORE_EXPORT ExceptionOr<void> setAttribute(AtomStringImpl* qualifiedName, AtomStringImpl* value);
+    ExceptionOr<void> setAttribute(AtomStringImpl* qualifiedName, const TrustedTypeOrString& value);
     unsigned validateAttributeIndex(unsigned index, const QualifiedName& qname) const;
-    WEBCORE_EXPORT ExceptionOr<void> setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const AtomString& value);
-    ExceptionOr<void> setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const TrustedTypeOrString& value);
+    WEBCORE_EXPORT ExceptionOr<void> setAttributeNS(AtomStringImpl* namespaceURI, AtomStringImpl* qualifiedName, AtomStringImpl* value);
+    ExceptionOr<void> setAttributeNS(AtomStringImpl* namespaceURI, AtomStringImpl* qualifiedName, const TrustedTypeOrString& value);
 
-    ExceptionOr<bool> toggleAttribute(const AtomString& qualifiedName, std::optional<bool> force);
+    ExceptionOr<bool> toggleAttribute(AtomStringImpl* qualifiedName, std::optional<bool> force);
 
-    inline const AtomString& getIdAttribute() const;
-    inline void setIdAttribute(const AtomString&);
+    inline const RefPtr<AtomStringImpl>& getIdAttribute() const;
+    inline void setIdAttribute(AtomStringImpl*);
 
-    inline const AtomString& getNameAttribute() const;
+    inline const RefPtr<AtomStringImpl>& getNameAttribute() const;
 
     // Call this to get the value of the id attribute for style resolution purposes.
     // The value will already be lowercased if the document is in compatibility mode,
     // so this function is not suitable for non-style uses.
-    inline const AtomString& idForStyleResolution() const;
+    inline const RefPtr<AtomStringImpl>& idForStyleResolution() const;
 
     // Internal methods that assume the existence of attribute storage, one should use hasAttributes()
     // before calling them.
@@ -308,7 +308,7 @@ public:
     NODELETE inline const Attribute& attributeAt(unsigned index) const;
     NODELETE inline const Attribute* findAttributeByName(const QualifiedName&) const;
     NODELETE inline unsigned findAttributeIndexByName(const QualifiedName&) const;
-    NODELETE inline unsigned findAttributeIndexByName(const AtomString&, bool shouldIgnoreAttributeCase) const;
+    NODELETE inline unsigned findAttributeIndexByName(AtomStringImpl*, bool shouldIgnoreAttributeCase) const;
 
     bool checkVisibility(const CheckVisibilityOptions&);
 
@@ -367,15 +367,15 @@ public:
     // Returns the absolute bounding box translated into screen coordinates.
     WEBCORE_EXPORT IntRect screenRect() const;
 
-    WEBCORE_EXPORT bool removeAttribute(const AtomString& qualifiedName);
-    WEBCORE_EXPORT bool removeAttributeNS(const AtomString& namespaceURI, const AtomString& localName);
-    void removeAttributeForBindings(const AtomString& qualifiedName) { removeAttribute(qualifiedName); }
-    void removeAttributeNSForBindings(const AtomString& namespaceURI, const AtomString& localName) { removeAttributeNS(namespaceURI, localName); }
+    WEBCORE_EXPORT bool removeAttribute(AtomStringImpl* qualifiedName);
+    WEBCORE_EXPORT bool removeAttributeNS(AtomStringImpl* namespaceURI, AtomStringImpl* localName);
+    void removeAttributeForBindings(AtomStringImpl* qualifiedName) { removeAttribute(qualifiedName); }
+    void removeAttributeNSForBindings(AtomStringImpl* namespaceURI, AtomStringImpl* localName) { removeAttributeNS(namespaceURI, localName); }
 
     Ref<Attr> detachAttribute(unsigned index);
 
-    WEBCORE_EXPORT RefPtr<Attr> getAttributeNode(const AtomString& qualifiedName);
-    WEBCORE_EXPORT RefPtr<Attr> getAttributeNodeNS(const AtomString& namespaceURI, const AtomString& localName);
+    WEBCORE_EXPORT RefPtr<Attr> getAttributeNode(AtomStringImpl* qualifiedName);
+    WEBCORE_EXPORT RefPtr<Attr> getAttributeNodeNS(AtomStringImpl* namespaceURI, AtomStringImpl* localName);
     WEBCORE_EXPORT ExceptionOr<RefPtr<Attr>> setAttributeNode(Attr&);
     WEBCORE_EXPORT ExceptionOr<RefPtr<Attr>> setAttributeNodeNS(Attr&);
     WEBCORE_EXPORT ExceptionOr<Ref<Attr>> removeAttributeNode(Attr&);
@@ -389,26 +389,26 @@ public:
 #if ENABLE(JIT)
     static constexpr ptrdiff_t tagQNameMemoryOffset() { return OBJECT_OFFSETOF(Element, m_tagName); }
 #endif
-    String tagName() const { return nodeName(); }
+    RefPtr<StringImpl> tagName() const { return nodeName(); }
     bool hasTagName(const QualifiedName& tagName) const { return m_tagName.matches(tagName); }
     bool hasTagName(const HTMLQualifiedName& tagName) const { return ContainerNode::hasTagName(tagName); }
     inline bool hasTagName(const MathMLQualifiedName& tagName) const;
     inline bool hasTagName(const SVGQualifiedName& tagName) const;
 
-    bool hasLocalName(const AtomString& other) const { return m_tagName.localName() == other; }
+    bool hasLocalName(AtomStringImpl* other) const { return m_tagName.localName() == other; }
 
-    NODELETE const AtomString& localName() const LIFETIME_BOUND final { return m_tagName.localName(); }
-    NODELETE const AtomString& prefix() const LIFETIME_BOUND final { return m_tagName.prefix(); }
-    NODELETE const AtomString& namespaceURI() const LIFETIME_BOUND final { return m_tagName.namespaceURI(); }
+    NODELETE const RefPtr<AtomStringImpl>& localName() const LIFETIME_BOUND final { return m_tagName.localName(); }
+    NODELETE const RefPtr<AtomStringImpl>& prefix() const LIFETIME_BOUND final { return m_tagName.prefix(); }
+    NODELETE const RefPtr<AtomStringImpl>& namespaceURI() const LIFETIME_BOUND final { return m_tagName.namespaceURI(); }
 
-    const AtomString& localNameLowercase() const LIFETIME_BOUND { return m_tagName.localNameLowercase(); }
+    const RefPtr<AtomStringImpl>& localNameLowercase() const LIFETIME_BOUND { return m_tagName.localNameLowercase(); }
 
     ElementName elementName() const { return m_tagName.nodeName(); }
     Namespace nodeNamespace() const { return m_tagName.nodeNamespace(); }
 
-    void setPrefixForCustomElementUpgrade(const AtomString&);
+    void setPrefixForCustomElementUpgrade(AtomStringImpl*);
 
-    String nodeName() const override;
+    RefPtr<StringImpl> nodeName() const override;
 
     Ref<Element> cloneElementWithChildren(Document&, CustomElementRegistry*) const;
     Ref<Element> cloneElementWithoutChildren(Document&, CustomElementRegistry*) const;
@@ -422,7 +422,7 @@ public:
     // This function is called whenever an attribute is added, changed or removed.
     // Do not call this function directly. notifyAttributeChanged() should be used instead
     // in order to update state dependent on attribute changes.
-    virtual void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly);
+    virtual void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason = AttributeModificationReason::Directly);
 
     // Only called by the parser immediately after element construction.
     void parserSetAttributes(std::span<const Attribute>, AttributeModificationReason = AttributeModificationReason::Parser);
@@ -473,7 +473,7 @@ public:
     enum class CustomElementRegistryKind : bool { Window, Null };
 
     WEBCORE_EXPORT ExceptionOr<ShadowRoot&> attachShadow(const ShadowRootInit&, std::optional<CustomElementRegistryKind> = std::nullopt);
-    ExceptionOr<ShadowRoot&> attachDeclarativeShadow(ShadowRootMode, ShadowRootDelegatesFocus, ShadowRootClonable, ShadowRootSerializable, SlotAssignmentMode, String referenceTarget, CustomElementRegistryKind);
+    ExceptionOr<ShadowRoot&> attachDeclarativeShadow(ShadowRootMode, ShadowRootDelegatesFocus, ShadowRootClonable, ShadowRootSerializable, SlotAssignmentMode, RefPtr<StringImpl> referenceTarget, CustomElementRegistryKind);
 
     NODELETE WEBCORE_EXPORT ShadowRoot* userAgentShadowRoot() const;
     WEBCORE_EXPORT ShadowRoot& ensureUserAgentShadowRoot();
@@ -528,15 +528,15 @@ public:
     WEBCORE_EXPORT void setTabIndexForBindings(int);
 
     // Used by the HTMLElement and SVGElement IDLs.
-    WEBCORE_EXPORT const AtomString& nonce() const;
-    WEBCORE_EXPORT void setNonce(const AtomString&);
+    WEBCORE_EXPORT const RefPtr<AtomStringImpl>& nonce() const;
+    WEBCORE_EXPORT void setNonce(AtomStringImpl*);
     inline void hideNonce(); // Defined in ElementInlines.h.
 
-    ExceptionOr<void> insertAdjacentHTML(const String& where, const String& html, NodeVector* addedNodes);
+    ExceptionOr<void> insertAdjacentHTML(StringImpl* where, StringImpl* html, NodeVector* addedNodes);
 
-    WEBCORE_EXPORT ExceptionOr<Element*> insertAdjacentElement(const String& where, Element& newChild);
-    WEBCORE_EXPORT ExceptionOr<void> insertAdjacentHTML(const String& where, Variant<Ref<TrustedHTML>, String>&&);
-    WEBCORE_EXPORT ExceptionOr<void> insertAdjacentText(const String& where, String&& text);
+    WEBCORE_EXPORT ExceptionOr<Element*> insertAdjacentElement(StringImpl* where, Element& newChild);
+    WEBCORE_EXPORT ExceptionOr<void> insertAdjacentHTML(StringImpl* where, Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&&);
+    WEBCORE_EXPORT ExceptionOr<void> insertAdjacentText(StringImpl* where, RefPtr<StringImpl>&& text);
 
     using Node::computedStyle;
     const Style::ComputedStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&) override;
@@ -577,8 +577,8 @@ public:
     void setAffectedByHasWithAdjacentSiblingRelationship() { setStyleFlag(NodeStyleFlag::AffectedByHasWithAdjacentSiblingRelationship); }
     void setChildIndex(unsigned);
 
-    const AtomString& effectiveLang() const;
-    const AtomString& langFromAttribute() const;
+    const RefPtr<AtomStringImpl>& effectiveLang() const;
+    const RefPtr<AtomStringImpl>& langFromAttribute() const;
     Locale& locale() const;
     bool effectiveLangKnownToMatchDocumentElement() const { return hasStateFlag(StateFlag::EffectiveLangKnownToMatchDocumentElement); }
 
@@ -588,8 +588,8 @@ public:
 
     NODELETE virtual bool isURLAttribute(const Attribute&) const { return false; }
     NODELETE virtual bool attributeContainsURL(const Attribute& attribute) const { return isURLAttribute(attribute); }
-    String resolveURLStringIfNeeded(const String& urlString, ResolveURLs = ResolveURLs::YesExcludingURLsForPrivacy, const URL& base = URL()) const;
-    virtual String completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::YesExcludingURLsForPrivacy) const;
+    RefPtr<StringImpl> resolveURLStringIfNeeded(StringImpl* urlString, ResolveURLs = ResolveURLs::YesExcludingURLsForPrivacy, const URL& base = URL()) const;
+    virtual RefPtr<StringImpl> completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::YesExcludingURLsForPrivacy) const;
     virtual Attribute replaceURLsInAttributeValue(const Attribute&, const CSS::SerializationContext&) const;
     NODELETE virtual bool isHTMLContentAttribute(const Attribute&) const { return false; }
 
@@ -597,8 +597,8 @@ public:
     inline URL getURLAttributeForBindings(const QualifiedName&) const;
     URL getNonEmptyURLAttribute(const QualifiedName&) const;
 
-    virtual String imageSourceURL() const;
-    virtual AtomString target() const { return nullAtom(); }
+    virtual RefPtr<StringImpl> imageSourceURL() const;
+    virtual RefPtr<AtomStringImpl> target() const { return nullAtom(); }
 
     static RefPtr<Element> findFocusDelegateForTarget(ContainerNode&, FocusTrigger);
     RefPtr<Element> findFocusDelegate(FocusTrigger = FocusTrigger::Other);
@@ -613,20 +613,20 @@ public:
     virtual void blur();
     virtual void runFocusingStepsForAutofocus();
 
-    ExceptionOr<void> setHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&&);
-    String getHTML(GetHTMLOptions&&) const;
+    ExceptionOr<void> setHTMLUnsafe(Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&&);
+    RefPtr<StringImpl> getHTML(GetHTMLOptions&&) const;
 
-    WEBCORE_EXPORT String innerHTML() const;
-    WEBCORE_EXPORT String outerHTML() const;
-    WEBCORE_EXPORT ExceptionOr<void> setInnerHTML(Variant<Ref<TrustedHTML>, String>&&);
-    WEBCORE_EXPORT ExceptionOr<void> setOuterHTML(Variant<Ref<TrustedHTML>, String>&&);
-    WEBCORE_EXPORT String innerText();
-    WEBCORE_EXPORT String outerText();
+    WEBCORE_EXPORT RefPtr<StringImpl> innerHTML() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> outerHTML() const;
+    WEBCORE_EXPORT ExceptionOr<void> setInnerHTML(Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&&);
+    WEBCORE_EXPORT ExceptionOr<void> setOuterHTML(Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&&);
+    WEBCORE_EXPORT RefPtr<StringImpl> innerText();
+    WEBCORE_EXPORT RefPtr<StringImpl> outerText();
 
-    virtual String title() const;
+    virtual RefPtr<StringImpl> title() const;
 
-    NODELETE WEBCORE_EXPORT const AtomString& userAgentPart() const;
-    WEBCORE_EXPORT void setUserAgentPart(const AtomString&);
+    NODELETE WEBCORE_EXPORT const RefPtr<AtomStringImpl>& userAgentPart() const;
+    WEBCORE_EXPORT void setUserAgentPart(AtomStringImpl*);
 
     // Use Document::registerForDocumentActivationCallbacks() to subscribe to these
     virtual void prepareForDocumentSuspension() { }
@@ -663,8 +663,8 @@ public:
     virtual bool matchesReadWritePseudoClass() const;
     virtual bool matchesIndeterminatePseudoClass() const;
     virtual bool matchesDefaultPseudoClass() const;
-    WEBCORE_EXPORT ExceptionOr<bool> matches(const String& selectors);
-    WEBCORE_EXPORT ExceptionOr<RefPtr<Element>> closest(const String& selectors);
+    WEBCORE_EXPORT ExceptionOr<bool> matches(StringImpl* selectors);
+    WEBCORE_EXPORT ExceptionOr<RefPtr<Element>> closest(StringImpl* selectors);
 
     WEBCORE_EXPORT DOMTokenList& classList();
 
@@ -779,7 +779,7 @@ public:
     inline bool hasClass() const;
     inline bool hasName() const;
     inline const SpaceSplitString& classNames() const;
-    inline bool hasClassName(const AtomString& className) const;
+    inline bool hasClassName(AtomStringImpl* className) const;
     inline bool hasClassNamePrefix(StringView prefix) const;
 
     NODELETE ScrollPosition savedLayerScrollPosition() const;
@@ -789,7 +789,7 @@ public:
     enum class EventIsDispatched : bool { No, Yes };
     enum class ShouldDispatchPointerEvent : bool { No, Yes };
     using DispatchMouseEventResult = std::pair<EventIsDispatched, EventIsDefaultPrevented>;
-    DispatchMouseEventResult dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomString& eventType, int clickCount = 0, Element* relatedTarget = nullptr, IsSyntheticClick = IsSyntheticClick::No, ShouldDispatchPointerEvent = ShouldDispatchPointerEvent::Yes);
+    DispatchMouseEventResult dispatchMouseEvent(const PlatformMouseEvent& platformEvent, AtomStringImpl* eventType, int clickCount = 0, Element* relatedTarget = nullptr, IsSyntheticClick = IsSyntheticClick::No, ShouldDispatchPointerEvent = ShouldDispatchPointerEvent::Yes);
     bool dispatchWheelEvent(const PlatformWheelEvent&, OptionSet<EventHandling>&, EventIsCancelable = EventIsCancelable::Yes);
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     bool dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions = SendNoEvents, SimulatedClickVisualOptions = ShowPressedLook);
@@ -878,7 +878,7 @@ public:
     void clearDisplayContentsOrNoneStyle();
 
     using ContainerNode::setAttributeEventListener;
-    void setAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& value);
+    void setAttributeEventListener(AtomStringImpl* eventType, const QualifiedName& attributeName, AtomStringImpl* value);
 
     virtual IntersectionObserverData& ensureIntersectionObserverData() LIFETIME_BOUND;
     NODELETE virtual IntersectionObserverData* intersectionObserverDataIfExists() const LIFETIME_BOUND;
@@ -896,14 +896,14 @@ public:
     void setLastRememberedLogicalHeight(LayoutUnit);
     NODELETE void clearLastRememberedLogicalHeight();
 
-    RefPtr<Element> findAnchorElementForLink(String& outAnchorName);
+    RefPtr<Element> findAnchorElementForLink(RefPtr<StringImpl>& outAnchorName);
 
     ExceptionOr<Ref<WebAnimation>> animate(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&, Variant<double, KeyframeAnimationOptions>&&);
     Vector<Ref<WebAnimation>> getAnimations(std::optional<GetAnimationsOptions>);
 
-    String description() const override;
-    String debugDescription() const override;
-    String attributesForDescription() const;
+    RefPtr<StringImpl> description() const override;
+    RefPtr<StringImpl> debugDescription() const override;
+    RefPtr<StringImpl> attributesForDescription() const;
 
     NODELETE bool hasDuplicateAttribute() const;
     NODELETE void setHasDuplicateAttribute(bool);
@@ -920,7 +920,7 @@ public:
     NODELETE std::optional<OptionSet<ContentRelevancy>> contentRelevancy() const;
     void setContentRelevancy(OptionSet<ContentRelevancy>);
 
-    NODELETE bool hasCustomState(const AtomString& state) const;
+    NODELETE bool hasCustomState(AtomStringImpl* state) const;
     CustomStateSet& ensureCustomStateSet();
 
     bool hasValidTextDirectionState() const;
@@ -929,8 +929,8 @@ public:
     void updateEffectiveTextDirection();
     void updateEffectiveTextDirectionIfNeeded();
 
-    NODELETE AtomString viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&) const;
-    void setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&, AtomString);
+    NODELETE AtomStringImpl* viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&) const;
+    void setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&, RefPtr<AtomStringImpl>);
 
     double lookupCSSRandomBaseValue(const std::optional<Style::PseudoElementIdentifier>&, const CSSCalc::RandomCachingKey&) const;
     NODELETE bool hasRandomCachingKeyMap() const;
@@ -960,10 +960,10 @@ protected:
 
     void setTabIndexExplicitly(std::optional<int>);
 
-    void classAttributeChanged(const AtomString& newClassString, AttributeModificationReason);
-    void partAttributeChanged(const AtomString& newValue);
+    void classAttributeChanged(AtomStringImpl* newClassString, AttributeModificationReason);
+    void partAttributeChanged(AtomStringImpl* newValue);
 
-    ExceptionOr<void> replaceChildrenWithMarkup(const String&, OptionSet<ParserContentPolicy>);
+    ExceptionOr<void> replaceChildrenWithMarkup(StringImpl*, OptionSet<ParserContentPolicy>);
 
     static ExceptionOr<void> mergeWithNextTextNode(Text&);
 
@@ -974,7 +974,7 @@ protected:
     void ensureFormAssociatedCustomElement();
 
     void disconnectFromIntersectionObservers();
-    static AtomString makeTargetBlankIfHasDanglingMarkup(const AtomString& target);
+    static RefPtr<AtomStringImpl> makeTargetBlankIfHasDanglingMarkup(AtomStringImpl* target);
 
     template<typename ShadowRoot> std::optional<ShadowRoot> serializeShadowRoot() const;
     template<typename Attribute> Vector<Attribute> serializeAttributes() const;
@@ -1003,41 +1003,41 @@ private:
 
     virtual void didAddUserAgentShadowRoot(ShadowRoot&) { }
 
-    void didAddAttribute(const QualifiedName&, const AtomString&);
-    void willModifyAttribute(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue);
-    void didModifyAttribute(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue);
-    void didRemoveAttribute(const QualifiedName&, const AtomString& oldValue);
+    void didAddAttribute(const QualifiedName&, AtomStringImpl*);
+    void willModifyAttribute(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue);
+    void didModifyAttribute(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue);
+    void didRemoveAttribute(const QualifiedName&, AtomStringImpl* oldValue);
 
     void synchronizeAttribute(const QualifiedName&) const;
-    void synchronizeAttribute(const AtomString& localName) const;
+    void synchronizeAttribute(AtomStringImpl* localName) const;
 
     inline const Attribute* getAttributeInternal(const QualifiedName&) const;
-    inline const Attribute* getAttributeInternal(const AtomString& qualifiedName) const;
+    inline const Attribute* getAttributeInternal(AtomStringImpl* qualifiedName) const;
 
-    void updateName(const AtomString& oldName, const AtomString& newName);
-    void updateNameForTreeScope(TreeScope&, const AtomString& oldName, const AtomString& newName);
-    void updateNameForDocument(HTMLDocument&, const AtomString& oldName, const AtomString& newName);
+    void updateName(AtomStringImpl* oldName, AtomStringImpl* newName);
+    void updateNameForTreeScope(TreeScope&, AtomStringImpl* oldName, AtomStringImpl* newName);
+    void updateNameForDocument(HTMLDocument&, AtomStringImpl* oldName, AtomStringImpl* newName);
 
     enum class NotifyObservers : bool { No, Yes };
-    void updateId(const AtomString& oldId, const AtomString& newId, NotifyObservers = NotifyObservers::Yes);
-    void updateIdForTreeScope(TreeScope&, const AtomString& oldId, const AtomString& newId, NotifyObservers = NotifyObservers::Yes);
+    void updateId(AtomStringImpl* oldId, AtomStringImpl* newId, NotifyObservers = NotifyObservers::Yes);
+    void updateIdForTreeScope(TreeScope&, AtomStringImpl* oldId, AtomStringImpl* newId, NotifyObservers = NotifyObservers::Yes);
 
     enum class HTMLDocumentNamedItemMapsUpdatingCondition : bool { Always, UpdateOnlyIfDiffersFromNameAttribute };
-    void updateIdForDocument(HTMLDocument&, const AtomString& oldId, const AtomString& newId, HTMLDocumentNamedItemMapsUpdatingCondition);
+    void updateIdForDocument(HTMLDocument&, AtomStringImpl* oldId, AtomStringImpl* newId, HTMLDocumentNamedItemMapsUpdatingCondition);
 
     void addToIdAndNameMaps(TreeScope&, HTMLDocument*);
     void removeFromIdAndNameMaps(TreeScope&, HTMLDocument*);
 
-    ExceptionOr<Node*> insertAdjacent(const String& where, Ref<Node>&& newChild);
+    ExceptionOr<Node*> insertAdjacent(StringImpl* where, Ref<Node>&& newChild);
 
     NODELETE bool childTypeAllowed(NodeType) const final;
 
-    void notifyAttributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly);
-    void parserNotifyAttributeAdded(const QualifiedName&, const AtomString& value, AttributeModificationReason = AttributeModificationReason::Directly);
-    void notifyAttributeChangedCommon(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason);
+    void notifyAttributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason = AttributeModificationReason::Directly);
+    void parserNotifyAttributeAdded(const QualifiedName&, AtomStringImpl* value, AttributeModificationReason = AttributeModificationReason::Directly);
+    void notifyAttributeChangedCommon(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason);
     enum class InSynchronizationOfLazyAttribute : bool { No, Yes };
-    void setAttributeInternal(unsigned index, const QualifiedName&, const AtomString& value, InSynchronizationOfLazyAttribute);
-    void addAttributeInternal(const QualifiedName&, const AtomString& value, InSynchronizationOfLazyAttribute);
+    void setAttributeInternal(unsigned index, const QualifiedName&, AtomStringImpl* value, InSynchronizationOfLazyAttribute);
+    void addAttributeInternal(const QualifiedName&, AtomStringImpl* value, InSynchronizationOfLazyAttribute);
     void removeAttributeInternal(unsigned index, InSynchronizationOfLazyAttribute);
 
     void setSavedLayerScrollPositionSlow(const ScrollPosition&);
@@ -1078,7 +1078,7 @@ private:
     virtual int defaultTabIndex() const;
 
     void detachAllAttrNodesFromElement();
-    void detachAttrNodeFromElementWithValue(Attr*, const AtomString& value);
+    void detachAttrNodeFromElementWithValue(Attr*, AtomStringImpl* value);
 
     // Anyone thinking of using this should call document instead of ownerDocument.
     void ownerDocument() const = delete;
@@ -1089,7 +1089,7 @@ private:
     WEBCORE_EXPORT bool fastAttributeLookupAllowed(const QualifiedName&) const;
 #endif
 
-    void dirAttributeChanged(const AtomString& newValue);
+    void dirAttributeChanged(AtomStringImpl* newValue);
 
     NODELETE bool hasEffectiveLangState() const;
     void updateEffectiveLangState();
@@ -1145,4 +1145,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Element)
     }
 SPECIALIZE_TYPE_TRAITS_END()
 
-extern template class mpark::variant<WebCore::CSSPropertyID, WTF::AtomString>;
+extern template class mpark::variant<WebCore::CSSPropertyID, RefPtr<AtomStringImpl>>;

@@ -98,16 +98,16 @@ static inline NSDictionary *toWebAPI(const WebExtensionCookieParameters& cookieP
     auto& cookie = cookieParameters.cookie;
 
     NSMutableDictionary *result = [@{
-        domainKey: cookie.domain.createNSString().get(),
-        hostOnlyKey: @(!cookie.domain.startsWith('.')),
+        domainKey: createNSString(cookie.domain).get(),
+        hostOnlyKey: @(!startsWith(cookie.domain, '.')),
         httpOnlyKey: @(cookie.httpOnly),
-        @"name": cookie.name.createNSString().get(),
-        pathKey: cookie.path.createNSString().get(),
+        @"name": createNSString(cookie.name).get(),
+        pathKey: createNSString(cookie.path).get(),
         sameSiteKey: toWebAPI(cookie.sameSite),
         secureKey: @(cookie.secure),
         sessionKey: @(cookie.session),
         storeIdKey: toWebAPI(cookieParameters.sessionIdentifier.value()),
-        valueKey: cookie.value.createNSString().get(),
+        valueKey: createNSString(cookie.value).get(),
     } mutableCopy];
 
     if (cookie.expires)
@@ -143,22 +143,22 @@ std::optional<WebExtensionAPICookies::ParsedDetails> WebExtensionAPICookies::par
     if (!validateDictionary(details, @"details", requiredKeys, types, outExceptionString))
         return std::nullopt;
 
-    String name = dynamic_objc_cast<NSString>(details[@"name"]);
-    if (!name.isNull() && name.isEmpty()) {
-        *outExceptionString = toErrorString(nullString(), @"name", @"it must not be empty").createNSString().autorelease();
+    RefPtr<StringImpl> name = StringImpl::create(dynamic_objc_cast<NSString>(details[@"name"]));
+    if (name && isEmpty(name)) {
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"name").get(), StringImpl::create(@"it must not be empty").get())).autorelease();
         return std::nullopt;
     }
 
     URL url;
     if (NSString *urlString = details[urlKey]) {
         if (!urlString.length) {
-            *outExceptionString = toErrorString(nullString(), urlKey, @"it must not be empty").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(urlKey).get(), StringImpl::create(@"it must not be empty").get())).autorelease();
             return std::nullopt;
         }
 
-        url = URL { urlString };
+        url = URL { StringImpl::create(urlString) };
         if (!url.isValid()) {
-            *outExceptionString = toErrorString(nullString(), urlKey, makeString("'"_s, String(urlString), "' is not a valid URL"_s)).createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(urlKey).get(), makeString("'"_s, StringImpl::create(urlString), "' is not a valid URL"_s))).autorelease();
             return std::nullopt;
         }
     }
@@ -166,13 +166,13 @@ std::optional<WebExtensionAPICookies::ParsedDetails> WebExtensionAPICookies::par
     std::optional<PAL::SessionID> sessionID;
     if (NSString *storeID = details[storeIdKey]) {
         if (!storeID.length) {
-            *outExceptionString = toErrorString(nullString(), storeIdKey, @"it must not be empty").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(storeIdKey).get(), StringImpl::create(@"it must not be empty").get())).autorelease();
             return std::nullopt;
         }
 
         sessionID = toImpl(storeID);
         if (!sessionID) {
-            *outExceptionString = toErrorString(nullString(), storeIdKey, makeString("'"_s, String(storeID), "' is not a valid cookie store identifier"_s)).createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(storeIdKey).get(), makeString("'"_s, StringImpl::create(storeID), "' is not a valid cookie store identifier"_s))).autorelease();
             return std::nullopt;
         }
     }
@@ -205,7 +205,7 @@ void WebExtensionAPICookies::get(NSDictionary *details, Ref<WebExtensionCallback
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesGet(sessionID, name, url), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -213,17 +213,17 @@ void WebExtensionAPICookies::get(NSDictionary *details, Ref<WebExtensionCallback
     }, extensionContext().identifier());
 }
 
-static inline String normalizeDomain(const String& domain)
+static inline RefPtr<StringImpl> normalizeDomain(StringImpl* domain)
 {
-    auto normalizedDomain = domain;
+    auto normalizedDomain = RefPtr { domain };
 
     // Remove leading dot, subdomain matching is assumed.
-    if (normalizedDomain.startsWith('.'))
-        normalizedDomain = normalizedDomain.substring(1);
+    if (startsWith(normalizedDomain, '.'))
+        normalizedDomain = substring(normalizedDomain, 1);
 
     // Remove IPv6 brackets.
-    if (normalizedDomain.contains(':') && normalizedDomain.startsWith('[') && normalizedDomain.endsWith(']'))
-        normalizedDomain = normalizedDomain.substring(1, normalizedDomain.length() - 2);
+    if (contains(normalizedDomain, ':') && startsWith(normalizedDomain, '[') && endsWith(normalizedDomain, ']'))
+        normalizedDomain = substring(normalizedDomain, 1, length(normalizedDomain) - 2);
 
     return normalizedDomain;
 }
@@ -250,14 +250,14 @@ void WebExtensionAPICookies::getAll(NSDictionary *details, Ref<WebExtensionCallb
 
     WebExtensionCookieFilterParameters filterParameters;
 
-    if (!name.isNull())
+    if (name)
         filterParameters.name = name;
 
     if (details[domainKey])
-        filterParameters.domain = normalizeDomain(dynamic_objc_cast<NSString>(details[domainKey]));
+        filterParameters.domain = normalizeDomain(StringImpl::create(dynamic_objc_cast<NSString>(details[domainKey])).get());
 
     if (details[pathKey])
-        filterParameters.path = dynamic_objc_cast<NSString>(details[pathKey]);
+        filterParameters.path = StringImpl::create(dynamic_objc_cast<NSString>(details[pathKey]));
 
     if (details[secureKey])
         filterParameters.secure = objectForKey<NSNumber>(details, secureKey).boolValue;
@@ -267,7 +267,7 @@ void WebExtensionAPICookies::getAll(NSDictionary *details, Ref<WebExtensionCallb
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesGetAll(sessionID, url, WTF::move(filterParameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -301,13 +301,13 @@ void WebExtensionAPICookies::set(NSDictionary *details, Ref<WebExtensionCallback
     auto cookieParameters = WebExtensionCookieParameters { sessionID, { } };
     auto& cookie = cookieParameters.cookie;
 
-    cookie.name = dynamic_objc_cast<NSString>(details[@"name"]) ?: @"";
-    cookie.value = dynamic_objc_cast<NSString>(details[valueKey]) ?: @"";
+    cookie.name = StringImpl::create(dynamic_objc_cast<NSString>(details[@"name"]) ?: @"");
+    cookie.value = StringImpl::create(dynamic_objc_cast<NSString>(details[valueKey]) ?: @"");
     cookie.secure = details[secureKey] && objectForKey<NSNumber>(details, secureKey).boolValue;
     auto *domain = dynamic_objc_cast<NSString>(details[domainKey]);
-    cookie.domain = domain ? String(domain) : normalizeDomain(url.host().toString());
+    cookie.domain = domain ? StringImpl::create(domain) : normalizeDomain(url.host().toString());
     auto *path = dynamic_objc_cast<NSString>(details[pathKey]);
-    cookie.path = path ? String(path) : url.path().toString();
+    cookie.path = path ? StringImpl::create(path) : url.path().toString();
     cookie.httpOnly = objectForKey<NSNumber>(details, httpOnlyKey).boolValue;
     cookie.created = WallTime::now().secondsSinceEpoch().milliseconds();
 
@@ -324,14 +324,14 @@ void WebExtensionAPICookies::set(NSDictionary *details, Ref<WebExtensionCallback
         else if ([sameSiteString isEqualToString:strictKey])
             cookie.sameSite = WebCore::Cookie::SameSitePolicy::Strict;
         else {
-            *outExceptionString = toErrorString(nullString(), sameSiteKey, @"it must specify either 'no_restriction', 'lax', or 'strict'").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(sameSiteKey).get(), StringImpl::create(@"it must specify either 'no_restriction', 'lax', or 'strict'").get())).autorelease();
             return;
         }
     }
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesSet(sessionID, cookieParameters), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -351,7 +351,7 @@ void WebExtensionAPICookies::remove(NSDictionary *details, Ref<WebExtensionCallb
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesRemove(sessionID, name, url), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -365,7 +365,7 @@ void WebExtensionAPICookies::getAllCookieStores(Ref<WebExtensionCallbackHandler>
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesGetAllCookieStores(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 

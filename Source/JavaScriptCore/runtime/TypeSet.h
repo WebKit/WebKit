@@ -55,19 +55,19 @@ public:
     JS_EXPORT_PRIVATE StructureShape();
 
     static Ref<StructureShape> create() { return adoptRef(*new StructureShape); }
-    String propertyHash();
+    RefPtr<StringImpl> propertyHash();
     NODELETE void markAsFinal();
     void addProperty(UniquedStringImpl&);
-    String stringRepresentation();
-    String toJSONString() const;
+    RefPtr<StringImpl> stringRepresentation();
+    RefPtr<StringImpl> toJSONString() const;
     Ref<Inspector::Protocol::Runtime::StructureDescription> inspectorRepresentation();
-    void setConstructorName(String name) { m_constructorName = (name.isEmpty() ? "Object"_s : name); }
-    String constructorName() { return m_constructorName; }
+    void setConstructorName(RefPtr<StringImpl> name) { m_constructorName = (isEmpty(name) ? "Object"_si : name); }
+    RefPtr<StringImpl> constructorName() { return m_constructorName; }
     void setProto(Ref<StructureShape>&& shape) { m_proto = WTF::move(shape); }
     NODELETE void enterDictionaryMode();
 
 private:
-    static String leastCommonAncestor(const Vector<Ref<StructureShape>>&);
+    static RefPtr<StringImpl> leastCommonAncestor(const Vector<Ref<StructureShape>>&);
     static Ref<StructureShape> merge(Ref<StructureShape>&&, Ref<StructureShape>&&);
     NODELETE bool hasSamePrototypeChain(const StructureShape&);
 
@@ -76,8 +76,8 @@ private:
     UncheckedKeyHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> m_fields;
     UncheckedKeyHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> m_optionalFields;
     RefPtr<StructureShape> m_proto;
-    std::unique_ptr<String> m_propertyHash;
-    String m_constructorName;
+    RefPtr<StringImpl> m_propertyHash;
+    RefPtr<StringImpl> m_constructorName;
 };
 
 class TypeSet : public ThreadSafeRefCounted<TypeSet> {
@@ -87,12 +87,12 @@ public:
     JS_EXPORT_PRIVATE TypeSet();
     void addTypeInformation(RuntimeType, RefPtr<StructureShape>&&, Structure*, bool sawPolyProtoStructure);
     void invalidateCache(VM&);
-    String dumpTypes() const;
-    String displayName() const;
+    RefPtr<StringImpl> dumpTypes() const;
+    RefPtr<StringImpl> displayName() const;
     Ref<JSON::ArrayOf<Inspector::Protocol::Runtime::StructureDescription>> allStructureRepresentations() const;
-    String toJSONString() const;
+    RefPtr<StringImpl> toJSONString() const;
     bool isOverflown() const { return m_isOverflown; }
-    String leastCommonAncestor() const;
+    RefPtr<StringImpl> leastCommonAncestor() const;
     Ref<Inspector::Protocol::Runtime::TypeSet> inspectorTypeSet() const;
     bool isEmpty() const { return m_seenTypes == TypeNothing; }
     NODELETE bool doesTypeConformTo(RuntimeTypeMask test) const;

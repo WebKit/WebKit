@@ -34,7 +34,7 @@
 
 typedef struct {
     GRefPtr<GResolver> wrappedResolver;
-    HashSet<String> localhostAliases;
+    HashSet<RefPtr<StringImpl>> localhostAliases;
 
     GRefPtr<GInetAddress> ipv4LoopbackAddress;
     GRefPtr<GInetAddress> ipv6LoopbackAddress;
@@ -64,7 +64,7 @@ static GList* webkitOverridingResolverLookupByName(GResolver* resolver, const ch
 {
     auto* self = WEBKIT_OVERRIDING_RESOLVER(resolver);
 
-    if (self->priv->localhostAliases.contains(String::fromUTF8(hostname)))
+    if (self->priv->localhostAliases.contains(StringImpl::fromUTF8(hostname)))
         return createLoobackAddressList(self);
 
     return g_resolver_lookup_by_name(self->priv->wrappedResolver.get(), hostname, cancellable, error);
@@ -74,7 +74,7 @@ static void webkitOverridingResolverLookupByNameAsync(GResolver* resolver, const
 {
     auto* self = WEBKIT_OVERRIDING_RESOLVER(resolver);
 
-    if (self->priv->localhostAliases.contains(String::fromUTF8(hostname))) {
+    if (self->priv->localhostAliases.contains(StringImpl::fromUTF8(hostname))) {
         GRefPtr<GTask> task = adoptGRef(g_task_new(resolver, cancellable, callback, userData));
         g_task_return_pointer(task.get(), createLoobackAddressList(self), reinterpret_cast<GDestroyNotify>(g_resolver_free_addresses));
         return;
@@ -104,7 +104,7 @@ static GList* webkitOverridingResolverLookupByNameWithFlags(GResolver* resolver,
 {
     auto* self = WEBKIT_OVERRIDING_RESOLVER(resolver);
 
-    if (self->priv->localhostAliases.contains(String::fromUTF8(hostname)))
+    if (self->priv->localhostAliases.contains(StringImpl::fromUTF8(hostname)))
         return createLoobackAddressList(self, flags);
 
     return g_resolver_lookup_by_name_with_flags(self->priv->wrappedResolver.get(), hostname, flags, cancellable, error);
@@ -114,7 +114,7 @@ static void webkitOverridingResolverLookupByNameWithFlagsAsync(GResolver* resolv
 {
     auto* self = WEBKIT_OVERRIDING_RESOLVER(resolver);
 
-    if (self->priv->localhostAliases.contains(String::fromUTF8(hostname))) {
+    if (self->priv->localhostAliases.contains(StringImpl::fromUTF8(hostname))) {
         GRefPtr<GTask> task = adoptGRef(g_task_new(resolver, cancellable, callback, userData));
         g_task_return_pointer(task.get(), createLoobackAddressList(self, flags), reinterpret_cast<GDestroyNotify>(g_resolver_free_addresses));
         return;
@@ -177,7 +177,7 @@ static void webkit_overriding_resolver_class_init(WebKitOverridingResolverClass*
     resolverClass->lookup_records_finish = webkitOverridingResolverLookupRecordsFinish;
 }
 
-GResolver* webkitOverridingResolverNew(GRefPtr<GResolver>&& wrappedResolver, const HashSet<String>& localhostAliases)
+GResolver* webkitOverridingResolverNew(GRefPtr<GResolver>&& wrappedResolver, const HashSet<RefPtr<StringImpl>>& localhostAliases)
 {
     g_return_val_if_fail(wrappedResolver, nullptr);
 

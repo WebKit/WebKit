@@ -578,7 +578,7 @@ RetainPtr<NSObject<NSSecureCoding>> Object::toNSObject()
         auto result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:dictionary.size()]);
         for (auto& pair : dictionary.map()) {
             if (auto nsObject = pair.value ? Ref { *pair.value }->toNSObject() : RetainPtr<NSObject<NSSecureCoding>>())
-                [result setObject:nsObject.get() forKey:pair.key.createNSString().get()];
+                [result setObject:nsObject.get() forKey:createNSString(pair.key).get()];
         }
         return result;
     }
@@ -602,7 +602,7 @@ RetainPtr<NSObject<NSSecureCoding>> Object::toNSObject()
     case Object::Type::Data:
         return API::wrapper(downcast<API::Data>(*this));
     case Object::Type::String:
-        return downcast<API::String>(*this).string().createNSString();
+        return createNSString(downcast<API::String>(*this).string());
     default:
         // Other API::Object::Types are intentionally not supported.
         break;
@@ -613,7 +613,7 @@ RetainPtr<NSObject<NSSecureCoding>> Object::toNSObject()
 RefPtr<API::Object> Object::fromNSObject(id object)
 {
     if (auto *str = dynamic_objc_cast<NSString>(object))
-        return API::String::create(str);
+        return API::String::create(StringImpl::create(str));
     if (auto *data = dynamic_objc_cast<NSData>(object))
         return API::Data::createWithoutCopying(data);
     if (auto *number = dynamic_objc_cast<NSNumber>(object))
@@ -628,10 +628,10 @@ RefPtr<API::Object> Object::fromNSObject(id object)
         return API::Array::create(WTF::move(result));
     }
     if (auto *dictionary = dynamic_objc_cast<NSDictionary>(object)) {
-        __block HashMap<WTF::String, RefPtr<API::Object>> result;
+        __block HashMap<RefPtr<StringImpl>, RefPtr<API::Object>> result;
         [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
             if (auto valueObject = fromNSObject(value); valueObject && [key isKindOfClass:NSString.class])
-                result.add(key, WTF::move(valueObject));
+                result.add(StringImpl::create(key), WTF::move(valueObject));
         }];
         return API::Dictionary::create(WTF::move(result));
     }

@@ -71,14 +71,14 @@ void ServiceWorkerInternals::terminate()
     });
 }
 
-void ServiceWorkerInternals::schedulePushEvent(const String& message, Ref<DeferredPromise>&& promise)
+void ServiceWorkerInternals::schedulePushEvent(StringImpl* message, Ref<DeferredPromise>&& promise)
 {
     auto counter = ++m_pushEventCounter;
     m_pushEventPromises.add(counter, WTF::move(promise));
 
     std::optional<Vector<uint8_t>> data;
-    if (!message.isNull())
-        data = Vector(byteCast<uint8_t>(message.utf8().span()));
+    if (message)
+        data = Vector(byteCast<uint8_t>(utf8(message).span()));
     callOnMainThread([identifier = m_identifier, data = WTF::move(data), weakThis = WeakPtr { *this }, counter]() mutable {
         SWContextManager::singleton().firePushEvent(identifier, WTF::move(data), std::nullopt, [identifier, weakThis = WTF::move(weakThis), counter](bool result, std::optional<NotificationPayload>&&) mutable {
             if (RefPtr proxy = SWContextManager::singleton().serviceWorkerThreadProxy(identifier)) {
@@ -112,7 +112,7 @@ void ServiceWorkerInternals::waitForFetchEventToFinish(FetchEvent& event, DOMPro
 {
     event.onResponse([promise = WTF::move(promise), event = Ref { event }] (std::expected<Ref<FetchResponse>, std::optional<ResourceError>>&& result) mutable {
         if (!result.has_value()) {
-            String description;
+            RefPtr<StringImpl> description;
             if (auto& error = result.error())
                 description = error->localizedDescription();
             promise.reject(ExceptionCode::TypeError, description);
@@ -143,7 +143,7 @@ Ref<FetchResponse> ServiceWorkerInternals::createOpaqueWithBlobBodyResponse(Scri
     return fetchResponse;
 }
 
-Vector<String> ServiceWorkerInternals::fetchResponseHeaderList(FetchResponse& response)
+Vector<RefPtr<StringImpl>> ServiceWorkerInternals::fetchResponseHeaderList(FetchResponse& response)
 {
     return WTF::map(response.internalResponseHeaders(), [](auto& keyValue) {
         return keyValue.key;
@@ -151,9 +151,9 @@ Vector<String> ServiceWorkerInternals::fetchResponseHeaderList(FetchResponse& re
 }
 
 #if !PLATFORM(MAC)
-String ServiceWorkerInternals::processName() const
+RefPtr<StringImpl> ServiceWorkerInternals::processName() const
 {
-    return "none"_s;
+    return "none"_si;
 }
 #endif
 
@@ -186,7 +186,7 @@ void ServiceWorkerInternals::lastNavigationWasAppInitiated(Ref<DeferredPromise>&
     });
 }
 
-RefPtr<PushSubscription> ServiceWorkerInternals::createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth)
+RefPtr<PushSubscription> ServiceWorkerInternals::createPushSubscription(StringImpl* endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth)
 {
     return PushSubscription::create(PushSubscriptionData { std::nullopt, { endpoint }, expirationTime, serverVAPIDPublicKey.toVector(), clientECDHPublicKey.toVector(), auth.toVector() });
 }
@@ -196,7 +196,7 @@ bool ServiceWorkerInternals::fetchEventIsSameSite(FetchEvent& event)
     return event.request().internalRequest().isSameSite();
 }
 
-String ServiceWorkerInternals::serviceWorkerClientInternalIdentifier(const ServiceWorkerClient& client)
+RefPtr<StringImpl> ServiceWorkerInternals::serviceWorkerClientInternalIdentifier(const ServiceWorkerClient& client)
 {
     return client.identifier().toString();
 }
@@ -211,27 +211,27 @@ void ServiceWorkerInternals::enableConsoleMessageReporting(ScriptExecutionContex
     downcast<ServiceWorkerGlobalScope>(context).enableConsoleMessageReporting();
 }
 
-void ServiceWorkerInternals:: logReportedConsoleMessage(ScriptExecutionContext& context, const String& value)
+void ServiceWorkerInternals:: logReportedConsoleMessage(ScriptExecutionContext& context, StringImpl* value)
 {
     downcast<ServiceWorkerGlobalScope>(context).addConsoleMessage(MessageSource::Storage, MessageLevel::Info, value, 0);
 }
 
-String ServiceWorkerInternals::effectiveRenderingModeOfNewlyCreatedAcceleratedCanvasBuffer(ScriptExecutionContext& context)
+RefPtr<StringImpl> ServiceWorkerInternals::effectiveRenderingModeOfNewlyCreatedAcceleratedCanvasBuffer(ScriptExecutionContext& context)
 {
     // Mirrors Internals::getEffectiveRenderingModeOfNewlyCreatedAcceleratedImageBuffer, but uses the worker's
     // own GraphicsClient and RenderingPurpose::Canvas.
     auto* graphicsClient = context.graphicsClient();
     if (!graphicsClient)
-        return "no-client"_s;
+        return "no-client"_si;
 
     RefPtr imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingMode::Accelerated, RenderingPurpose::Canvas, 1, ColorSpace::SRGB(), PixelFormat::BGRA8, graphicsClient);
     if (!imageBuffer)
-        return "none"_s;
+        return "none"_si;
     auto renderingMode = imageBuffer->getEffectiveRenderingModeForTesting();
     if (!renderingMode)
-        return "none"_s;
+        return "none"_si;
     if (*renderingMode != RenderingMode::Accelerated)
-        return "unaccelerated"_s;
+        return "unaccelerated"_si;
     return imageBuffer->isRemoteImageBufferProxy() ? "remote"_s : "local-iosurface"_s;
 }
 

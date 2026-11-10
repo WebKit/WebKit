@@ -58,15 +58,15 @@ private:
     SystemSettingsManagerProxy();
 
     void settingsDidChange();
-    void updateFontProperties(const String&, WebCore::SystemSettingsState&);
+    void updateFontProperties(StringImpl*, WebCore::SystemSettingsState&);
 
-    String themeName() const;
+    RefPtr<StringImpl> themeName() const;
     bool darkMode() const;
-    String fontName() const;
+    RefPtr<StringImpl> fontName() const;
     int xftAntialias() const;
     int xftHinting() const;
-    String xftHintStyle() const;
-    String xftRGBA() const;
+    RefPtr<StringImpl> xftHintStyle() const;
+    RefPtr<StringImpl> xftRGBA() const;
     int xftDPI() const;
     bool followFontSystemSettings() const;
     bool cursorBlink() const;

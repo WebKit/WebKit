@@ -496,7 +496,7 @@ void Connection::dispatchMessageReceiverMessage(MessageReceiverType& messageRece
 
 #if ENABLE(IPC_TESTING_API)
     if (decoder->hasErrorString())
-        setErrorString(decoder->takeErrorString());
+        setErrorString(StringImpl::create(decoder->takeErrorString()).ptr());
 
     if (m_ignoreInvalidMessageForTesting)
         return;
@@ -1637,7 +1637,7 @@ void Connection::dispatchMessage(Decoder& decoder)
     // when decoding. It's possible we failed before we reached the message
     // receiver.
     if (!hasErrorString() && decoder.hasErrorString())
-        setErrorString(decoder.takeErrorString());
+        setErrorString(StringImpl::create(decoder.takeErrorString()).ptr());
 #endif
 }
 
@@ -1955,9 +1955,9 @@ void Connection::setShouldCrashOnMessageCheckFailure(bool shouldCrash)
     s_shouldCrashOnMessageCheckFailure = shouldCrash;
 }
 
-void Connection::logFailedMessageCheck(const String& reason, const String& function, const String& file, unsigned line)
+void Connection::logFailedMessageCheck(StringImpl* reason, StringImpl* function, StringImpl* file, unsigned line)
 {
-    RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, "%s %u: Invalid message dispatched %s: %s", file.utf8(), line, function.utf8(), reason.utf8());
+    RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, "%s %u: Invalid message dispatched %s: %s", utf8(file), line, utf8(function), utf8(reason));
     CRASH_IF_TESTING
 }
 

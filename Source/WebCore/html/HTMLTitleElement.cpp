@@ -91,7 +91,7 @@ void HTMLTitleElement::childrenChanged(const ChildChange& change)
     }
 }
 
-String HTMLTitleElement::text() const
+RefPtr<StringImpl> HTMLTitleElement::text() const
 {
     return TextNodeTraversal::childTextContent(*this);
 }
@@ -107,7 +107,7 @@ StringWithDirection HTMLTitleElement::computedTextWithDirection()
     return { text(), direction };
 }
 
-void HTMLTitleElement::setText(String&& value)
+void HTMLTitleElement::setText(RefPtr<StringImpl>&& value)
 {
     setTextContent(WTF::move(value));
 }

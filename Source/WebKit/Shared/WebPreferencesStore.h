@@ -39,34 +39,34 @@ namespace WebKit {
 // FIXME: WebPreferencesStore should be RefCounted. See usage in WebProcessPool.cpp.
 
 struct WebPreferencesStore {
-    using Value = Variant<String, bool, uint32_t, double>;
-    using ValueMap = MemoryCompactRobinHoodHashMap<String, Value>;
+    using Value = Variant<RefPtr<StringImpl>, bool, uint32_t, double>;
+    using ValueMap = MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Value>;
 
     // NOTE: The getters in this class have non-standard names to aid in the use of the preference macros.
 
-    bool setStringValueForKey(const String& key, const String& value);
-    NODELETE String getStringValueForKey(const String& key) const;
+    bool setStringValueForKey(StringImpl* key, StringImpl* value);
+    RefPtr<StringImpl> getStringValueForKey(StringImpl* key) const;
 
-    bool setBoolValueForKey(const String& key, bool value);
-    NODELETE bool getBoolValueForKey(const String& key) const;
+    bool setBoolValueForKey(StringImpl* key, bool value);
+    NODELETE bool getBoolValueForKey(StringImpl* key) const;
 
-    bool setUInt32ValueForKey(const String& key, uint32_t value);
-    NODELETE uint32_t getUInt32ValueForKey(const String& key) const;
+    bool setUInt32ValueForKey(StringImpl* key, uint32_t value);
+    NODELETE uint32_t getUInt32ValueForKey(StringImpl* key) const;
 
-    bool setDoubleValueForKey(const String& key, double value);
-    NODELETE double getDoubleValueForKey(const String& key) const;
+    bool setDoubleValueForKey(StringImpl* key, double value);
+    NODELETE double getDoubleValueForKey(StringImpl* key) const;
 
-    void setOverrideDefaultsStringValueForKey(const String& key, String value);
-    void setOverrideDefaultsBoolValueForKey(const String& key, bool value);
-    void setOverrideDefaultsUInt32ValueForKey(const String& key, uint32_t value);
-    void setOverrideDefaultsDoubleValueForKey(const String& key, double value);
+    void setOverrideDefaultsStringValueForKey(StringImpl* key, RefPtr<StringImpl> value);
+    void setOverrideDefaultsBoolValueForKey(StringImpl* key, bool value);
+    void setOverrideDefaultsUInt32ValueForKey(StringImpl* key, uint32_t value);
+    void setOverrideDefaultsDoubleValueForKey(StringImpl* key, double value);
 
-    void deleteKey(const String& key);
+    void deleteKey(StringImpl* key);
 
     void logNonDefaultValues() const;
 
     // For WebKitTestRunner usage.
-    static void overrideBoolValueForKey(const String& key, bool value);
+    static void overrideBoolValueForKey(StringImpl* key, bool value);
     static void removeTestRunnerOverrides();
 
     ValueMap m_values { };

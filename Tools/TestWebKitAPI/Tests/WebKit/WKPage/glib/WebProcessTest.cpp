@@ -27,19 +27,19 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GUniquePtr.h>
 
-typedef HashMap<String, std::function<std::unique_ptr<WebProcessTest> ()>> TestsMap;
+typedef HashMap<RefPtr<StringImpl>, std::function<std::unique_ptr<WebProcessTest> ()>> TestsMap;
 static TestsMap& testsMap()
 {
     static NeverDestroyed<TestsMap> s_testsMap;
     return s_testsMap;
 }
 
-void WebProcessTest::add(const String& testName, std::function<std::unique_ptr<WebProcessTest> ()> closure)
+void WebProcessTest::add(StringImpl* testName, std::function<std::unique_ptr<WebProcessTest> ()> closure)
 {
     testsMap().add(testName, WTF::move(closure));
 }
 
-std::unique_ptr<WebProcessTest> WebProcessTest::create(const String& testName)
+std::unique_ptr<WebProcessTest> WebProcessTest::create(StringImpl* testName)
 {
     g_assert_true(testsMap().contains(testName));
     return testsMap().get(testName)();
@@ -51,7 +51,7 @@ static gboolean runTest(WebKitWebPage* webPage, const char* testPath)
     s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webPage));
     g_assert_nonnull(testPath);
 
-    std::unique_ptr<WebProcessTest> test = WebProcessTest::create(String::fromUTF8(testPath));
+    std::unique_ptr<WebProcessTest> test = WebProcessTest::create(StringImpl::fromUTF8(testPath));
     return test->runTest(g_strrstr(testPath, "/") + 1, webPage);
 }
 

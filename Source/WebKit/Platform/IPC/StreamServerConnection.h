@@ -111,7 +111,7 @@ public:
     };
     DispatchResult dispatchStreamMessages(size_t messageLimit);
     NODELETE void markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral error);
-    NODELETE void markCurrentlyDispatchedMessageAsInvalid(const String&);
+    NODELETE void markCurrentlyDispatchedMessageAsInvalid(StringImpl*);
 
     // Called from a stream message handler. True if the handler can defer the message, i.e. the message is
     // an asynchronous message without a reply or attachments.

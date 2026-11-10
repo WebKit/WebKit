@@ -85,7 +85,7 @@ using namespace WebCore;
 {
     callOnMainRunLoop([strongSelf = RetainPtr { self }, error = RetainPtr { error }]() mutable {
         if (RefPtr callback = strongSelf->_callback.get())
-            callback->sessionFailedWithError(WTF::move(error), "-[SCStreamDelegate stream:didStopWithError:] called"_s);
+            callback->sessionFailedWithError(WTF::move(error), "-[SCStreamDelegate stream:didStopWithError:] called"_si);
     });
 }
 
@@ -143,7 +143,7 @@ std::expected<uint32_t, CaptureSourceError> ScreenCaptureKitCaptureSource::compu
 
     auto deviceID = parseInteger<uint32_t>(device.persistentId());
     if (!deviceID)
-        return makeUnexpected(CaptureSourceError { "Invalid display device ID"_s, MediaAccessDenialReason::PermissionDenied });
+        return makeUnexpected(CaptureSourceError { "Invalid display device ID"_si, MediaAccessDenialReason::PermissionDenied });
 
     return *deviceID;
 }
@@ -162,7 +162,7 @@ ScreenCaptureKitCaptureSource::~ScreenCaptureKitCaptureSource()
 
     if (auto callback = std::exchange(m_whenReadyCallback, { })) {
         callOnMainRunLoop([callback = WTF::move(callback)]() mutable {
-            callback({ "Source no longer needed"_s , MediaAccessDenialReason::InvalidAccess });
+            callback({ "Source no longer needed"_si , MediaAccessDenialReason::InvalidAccess });
         });
     }
 }
@@ -220,7 +220,7 @@ void ScreenCaptureKitCaptureSource::stop()
                 return;
 
             if (RefPtr protectedThis = weakThis.get())
-                protectedThis->sessionFailedWithError(WTF::move(error), "-[SCStream stopCaptureWithCompletionHandler:] failed"_s);
+                protectedThis->sessionFailedWithError(WTF::move(error), "-[SCStream stopCaptureWithCompletionHandler:] failed"_si);
         });
     });
     [protect(contentStream()) stopCaptureWithCompletionHandler:stopHandler.get()];
@@ -235,7 +235,7 @@ void ScreenCaptureKitCaptureSource::end()
     stop();
 }
 
-void ScreenCaptureKitCaptureSource::sessionFailedWithError(RetainPtr<NSError>&& error, const String& message)
+void ScreenCaptureKitCaptureSource::sessionFailedWithError(RetainPtr<NSError>&& error, StringImpl* message)
 {
     ASSERT(isMainThread());
 
@@ -265,7 +265,7 @@ void ScreenCaptureKitCaptureSource::sessionFilterDidChange(SCContentFilter* cont
             return;
 
         RetainPtr window = retainPtr(windows.get()[0]);
-        device = CaptureDevice(String::number([window windowID]), CaptureDevice::DeviceType::Window, [window title], emptyString(), true);
+        device = CaptureDevice(makeString([window windowID]), CaptureDevice::DeviceType::Window, StringImpl::create([window title]).get(), emptyString(), true);
         m_content = window;
         break;
     }
@@ -276,7 +276,7 @@ void ScreenCaptureKitCaptureSource::sessionFilterDidChange(SCContentFilter* cont
             return;
 
         RetainPtr display = retainPtr(displays.get()[0]);
-        device = CaptureDevice(String::number([display displayID]), CaptureDevice::DeviceType::Screen, "Screen"_str, emptyString(), true);
+        device = CaptureDevice(makeString([display displayID]), CaptureDevice::DeviceType::Screen, "Screen"_str, emptyString(), true);
         m_content = display;
         break;
     }
@@ -287,7 +287,7 @@ void ScreenCaptureKitCaptureSource::sessionFilterDidChange(SCContentFilter* cont
         return;
     }
     if (!device) {
-        sessionFailedWithError(nil, "Unknown CaptureDevice after content changed"_s);
+        sessionFailedWithError(nil, "Unknown CaptureDevice after content changed"_si);
         return;
     }
 
@@ -300,7 +300,7 @@ void ScreenCaptureKitCaptureSource::sessionFilterDidChange(SCContentFilter* cont
 
             callOnMainRunLoop([weakThis = WTF::move(weakThis), error = RetainPtr { error }]() mutable {
                 if (RefPtr protectedThis = weakThis.get())
-                    protectedThis->sessionFailedWithError(WTF::move(error), "-[SCStream updateContentFilter:completionHandler:] failed"_s);
+                    protectedThis->sessionFailedWithError(WTF::move(error), "-[SCStream updateContentFilter:completionHandler:] failed"_si);
             });
         });
 
@@ -316,7 +316,7 @@ void ScreenCaptureKitCaptureSource::sessionFilterDidChange(SCContentFilter* cont
 void ScreenCaptureKitCaptureSource::sessionStreamDidEnd(SCStream* stream)
 {
     ASSERT_UNUSED(stream, stream == contentStream());
-    sessionFailedWithError(nil, "sessionDidEnd"_s);
+    sessionFailedWithError(nil, "sessionDidEnd"_si);
 }
 
 DisplayCaptureSourceCocoa::DisplayFrameType ScreenCaptureKitCaptureSource::generateFrame()
@@ -384,13 +384,13 @@ void ScreenCaptureKitCaptureSource::startContentStream()
     }
 
     if (!m_contentFilter) {
-        sessionFailedWithError(nil, "Unknown display device - no content filter"_s);
+        sessionFailedWithError(nil, "Unknown display device - no content filter"_si);
         return;
     }
 
     m_sessionSource = ScreenCaptureKitSharingSessionManager::singleton().createSessionSourceForDevice(*this, m_contentFilter.get(), streamConfiguration().get(), (SCStreamDelegate*)m_captureHelper.get());
     if (!m_sessionSource) {
-        sessionFailedWithError(nil, "Failed to allocate stream"_s);
+        sessionFailedWithError(nil, "Failed to allocate stream"_si);
         return;
     }
 
@@ -427,7 +427,7 @@ void ScreenCaptureKitCaptureSource::startContentStream()
     RetainPtr contentStream = this->contentStream();
     NSError *error = nil;
     if (![contentStream addStreamOutput:m_captureHelper.get() type:SCStreamOutputTypeScreen sampleHandlerQueue:protect(captureQueue()) error:&error]) {
-        sessionFailedWithError(WTF::move(error), "-[SCStream addStreamOutput:type:sampleHandlerQueue:error:] failed"_s);
+        sessionFailedWithError(WTF::move(error), "-[SCStream addStreamOutput:type:sampleHandlerQueue:error:] failed"_si);
         return;
     }
 
@@ -438,7 +438,7 @@ void ScreenCaptureKitCaptureSource::startContentStream()
                 return;
 
             if (error) {
-                protectedThis->sessionFailedWithError(WTF::move(error), "-[SCStream startCaptureWithCompletionHandler:] failed"_s);
+                protectedThis->sessionFailedWithError(WTF::move(error), "-[SCStream startCaptureWithCompletionHandler:] failed"_si);
                 return;
             }
 
@@ -496,7 +496,7 @@ void ScreenCaptureKitCaptureSource::updateStreamConfiguration()
 
         callOnMainRunLoop([weakThis = WTF::move(weakThis), error = RetainPtr { error }]() mutable {
             if (RefPtr protectedThis = weakThis.get())
-                protectedThis->sessionFailedWithError(WTF::move(error), "-[SCStream updateConfiguration:completionHandler:] failed"_s);
+                protectedThis->sessionFailedWithError(WTF::move(error), "-[SCStream updateConfiguration:completionHandler:] failed"_si);
         });
     });
 
@@ -657,7 +657,7 @@ DisplaySurfaceType ScreenCaptureKitCaptureSource::surfaceType() const
     return m_captureDevice.type() == CaptureDevice::DeviceType::Screen ? DisplaySurfaceType::Monitor : DisplaySurfaceType::Window;
 }
 
-std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::screenCaptureDeviceWithPersistentID(const String& displayIDString)
+std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::screenCaptureDeviceWithPersistentID(StringImpl* displayIDString)
 {
     if (!isAvailable()) {
         RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitCaptureSource::screenCaptureDeviceWithPersistentID: screen capture unavailable");
@@ -670,10 +670,10 @@ std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::screenCaptureDeviceW
         return std::nullopt;
     }
 
-    return CaptureDevice(String::number(displayID.value()), CaptureDevice::DeviceType::Screen, "ScreenCaptureDevice"_s, emptyString(), true);
+    return CaptureDevice(makeString(displayID.value()), CaptureDevice::DeviceType::Screen, "ScreenCaptureDevice"_si, emptyString(), true);
 }
 
-std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::windowCaptureDeviceWithPersistentID(const String& windowIDString)
+std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::windowCaptureDeviceWithPersistentID(StringImpl* windowIDString)
 {
     auto windowID = parseInteger<uint32_t>(windowIDString);
     if (!windowID) {
@@ -681,7 +681,7 @@ std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::windowCaptureDeviceW
         return std::nullopt;
     }
 
-    return CaptureDevice(String::number(windowID.value()), CaptureDevice::DeviceType::Window, emptyString(), emptyString(), true);
+    return CaptureDevice(makeString(windowID.value()), CaptureDevice::DeviceType::Window, emptyString(), emptyString(), true);
 }
 
 ALLOW_NEW_API_WITHOUT_GUARDS_END

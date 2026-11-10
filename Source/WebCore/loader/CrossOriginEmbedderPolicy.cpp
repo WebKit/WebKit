@@ -68,11 +68,11 @@ CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse
         if (!coepParsingResult)
             return;
         auto* policyString = std::get_if<RFC8941::Token>(&coepParsingResult->first);
-        if (!policyString || policyString->string() != coepRequireCORPToken)
+        if (!policyString || !equal(policyString->string(), coepRequireCORPToken))
             return;
 
         value = CrossOriginEmbedderPolicyValue::RequireCORP;
-        if (auto* reportToString = coepParsingResult->second.getIf<String>("report-to"_s))
+        if (auto* reportToString = coepParsingResult->second.getIf<RefPtr<StringImpl>>("report-to"_s))
             reportingEndpoint = *reportToString;
     };
 
@@ -92,8 +92,8 @@ CrossOriginEmbedderPolicy CrossOriginEmbedderPolicy::isolatedCopy() const &
     return {
         value,
         reportOnlyValue,
-        reportingEndpoint.isolatedCopy(),
-        reportOnlyReportingEndpoint.isolatedCopy()
+        WTF::isolatedCopy(reportingEndpoint),
+        WTF::isolatedCopy(reportOnlyReportingEndpoint)
     };
 }
 
@@ -102,8 +102,8 @@ CrossOriginEmbedderPolicy CrossOriginEmbedderPolicy::isolatedCopy() &&
     return {
         value,
         reportOnlyValue,
-        WTF::move(reportingEndpoint).isolatedCopy(),
-        WTF::move(reportOnlyReportingEndpoint).isolatedCopy()
+        WTF::isolatedCopy(WTF::move(reportingEndpoint)),
+        WTF::isolatedCopy(WTF::move(reportOnlyReportingEndpoint))
     };
 }
 
@@ -111,40 +111,41 @@ void CrossOriginEmbedderPolicy::addPolicyHeadersTo(ResourceResponse& response) c
 {
     if (value != CrossOriginEmbedderPolicyValue::UnsafeNone) {
         ASSERT(value == CrossOriginEmbedderPolicyValue::RequireCORP);
-        if (reportingEndpoint.isEmpty())
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicy, "require-corp"_s);
+        if (isEmpty(reportingEndpoint))
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicy, "require-corp"_si);
         else
             response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicy, makeString("require-corp; report-to=\""_s, reportingEndpoint, '\"'));
     }
     if (reportOnlyValue != CrossOriginEmbedderPolicyValue::UnsafeNone) {
         ASSERT(reportOnlyValue == CrossOriginEmbedderPolicyValue::RequireCORP);
-        if (reportOnlyReportingEndpoint.isEmpty())
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicyReportOnly, "require-corp"_s);
+        if (isEmpty(reportOnlyReportingEndpoint))
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicyReportOnly, "require-corp"_si);
         else
             response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicyReportOnly, makeString("require-corp; report-to=\""_s, reportOnlyReportingEndpoint, '\"'));
     }
 }
 
 // https://html.spec.whatwg.org/multipage/origin.html#queue-a-cross-origin-embedder-policy-inheritance-violation
-void sendCOEPInheritenceViolation(ReportingClient& reportingClient, const URL& embedderURL, const String& endpoint, COEPDisposition disposition, const String& type, const URL& blockedURL)
+void sendCOEPInheritenceViolation(ReportingClient& reportingClient, const URL& embedderURL, StringImpl* endpoint, COEPDisposition disposition, StringImpl* type, const URL& blockedURL)
 {
-    Ref reportBody = COEPInheritenceViolationReportBody::create(disposition, blockedURL, AtomString { type });
-    Ref report = Report::create("coep"_s, embedderURL.string(), WTF::move(reportBody));
+    Ref reportBody = COEPInheritenceViolationReportBody::create(disposition, blockedURL, AtomStringImpl::add(type));
+    Ref report = Report::create("coep"_si, embedderURL.string(), WTF::move(reportBody));
     reportingClient.notifyReportObservers(WTF::move(report));
 
-    if (endpoint.isEmpty())
+    if (isEmpty(endpoint))
         return;
 
-    Ref reportFormData = Report::createReportFormDataForViolation("coep"_s, embedderURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
-        body.setString("disposition"_s, disposition == COEPDisposition::Reporting ? "reporting"_s : "enforce"_s);
-        body.setString("type"_s, type);
-        body.setString("blockedURL"_s, PingLoader::sanitizeURLForReport(blockedURL));
+    Ref reportFormData = Report::createReportFormDataForViolation("coep"_si, embedderURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
+        body.setString("disposition"_si, disposition == COEPDisposition::Reporting ? "reporting"_si : "enforce"_si);
+        body.setString("type"_si, type);
+        body.setString("blockedURL"_si, PingLoader::sanitizeURLForReport(blockedURL));
     });
-    reportingClient.sendReportToEndpoints(embedderURL, { }, singleElementSpan(endpoint), WTF::move(reportFormData), ViolationReportType::COEPInheritenceViolation);
+    RefPtr<StringImpl> endpointToken { endpoint };
+    reportingClient.sendReportToEndpoints(embedderURL, { }, singleElementSpan(endpointToken), WTF::move(reportFormData), ViolationReportType::COEPInheritenceViolation);
 }
 
 // https://fetch.spec.whatwg.org/#queue-a-cross-origin-embedder-policy-corp-violation-report
-void sendCOEPCORPViolation(ReportingClient& reportingClient, const URL& embedderURL, const String& endpoint, COEPDisposition disposition, FetchOptions::Destination destination, const URL& blockedURL)
+void sendCOEPCORPViolation(ReportingClient& reportingClient, const URL& embedderURL, StringImpl* endpoint, COEPDisposition disposition, FetchOptions::Destination destination, const URL& blockedURL)
 {
     // https://fetch.spec.whatwg.org/#serialize-a-response-url-for-reporting
     URL serializedBlockedURL = blockedURL;
@@ -152,19 +153,20 @@ void sendCOEPCORPViolation(ReportingClient& reportingClient, const URL& embedder
     serializedBlockedURL.removeFragmentIdentifier();
 
     Ref reportBody = CORPViolationReportBody::create(disposition, serializedBlockedURL, destination);
-    Ref report = Report::create("coep"_s, embedderURL.string(), WTF::move(reportBody));
+    Ref report = Report::create("coep"_si, embedderURL.string(), WTF::move(reportBody));
     reportingClient.notifyReportObservers(WTF::move(report));
 
-    if (endpoint.isEmpty())
+    if (isEmpty(endpoint))
         return;
 
-    Ref reportFormData = Report::createReportFormDataForViolation("coep"_s, embedderURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
-        body.setString("disposition"_s, disposition == COEPDisposition::Reporting ? "reporting"_s : "enforce"_s);
-        body.setString("type"_s, "corp"_s);
-        body.setString("blockedURL"_s, serializedBlockedURL.string());
-        body.setString("destination"_s, convertEnumerationToString(destination));
+    Ref reportFormData = Report::createReportFormDataForViolation("coep"_si, embedderURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
+        body.setString("disposition"_si, disposition == COEPDisposition::Reporting ? "reporting"_si : "enforce"_si);
+        body.setString("type"_si, "corp"_si);
+        body.setString("blockedURL"_si, serializedBlockedURL.string());
+        body.setString("destination"_si, convertEnumerationToString(destination));
     });
-    reportingClient.sendReportToEndpoints(embedderURL, { }, singleElementSpan(endpoint), WTF::move(reportFormData), ViolationReportType::CORPViolation);
+    RefPtr<StringImpl> endpointToken { endpoint };
+    reportingClient.sendReportToEndpoints(embedderURL, { }, singleElementSpan(endpointToken), WTF::move(reportFormData), ViolationReportType::CORPViolation);
 }
 
 void CrossOriginEmbedderPolicy::encode(WTF::Persistence::Encoder& encoder) const
@@ -179,7 +181,7 @@ std::optional<CrossOriginEmbedderPolicy> CrossOriginEmbedderPolicy::decode(WTF::
     if (!value)
         return std::nullopt;
 
-    std::optional<String> reportingEndpoint;
+    std::optional<RefPtr<StringImpl>> reportingEndpoint;
     decoder >> reportingEndpoint;
     if (!reportingEndpoint)
         return std::nullopt;
@@ -189,7 +191,7 @@ std::optional<CrossOriginEmbedderPolicy> CrossOriginEmbedderPolicy::decode(WTF::
     if (!reportOnlyValue)
         return std::nullopt;
 
-    std::optional<String> reportOnlyReportingEndpoint;
+    std::optional<RefPtr<StringImpl>> reportOnlyReportingEndpoint;
     decoder >> reportOnlyReportingEndpoint;
     if (!reportOnlyReportingEndpoint)
         return std::nullopt;

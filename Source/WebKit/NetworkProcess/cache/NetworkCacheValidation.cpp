@@ -40,13 +40,13 @@ namespace WebKit::NetworkCache {
 using namespace WebCore;
 
 // Each helper is used on both sides of its own collect/verify pair, so the two need not agree.
-static String cookieRequestHeaderFieldValueForVary(const NetworkStorageSession& session, const ResourceRequest& request)
+static RefPtr<StringImpl> cookieRequestHeaderFieldValueForVary(const NetworkStorageSession& session, const ResourceRequest& request)
 {
     auto cookieHeader = session.cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, CookieJar::shouldIncludeSecureCookies(request.url()), ApplyTrackingPrevention::Yes, ShouldRelaxThirdPartyCookieBlocking::No, IsKnownCrossSiteTracker::No).first;
     return encodeCookieHeaderDigestForVary(computeCookieHeaderDigestForVary(cookieHeader));
 }
 
-Vector<std::pair<String, String>> collectVaryingRequestHeaders(NetworkStorageSession* storageSession, const ResourceRequest& request, const ResourceResponse& response)
+Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> collectVaryingRequestHeaders(NetworkStorageSession* storageSession, const ResourceRequest& request, const ResourceResponse& response)
 {
     if (!storageSession)
         return { };
@@ -57,11 +57,11 @@ Vector<std::pair<String, String>> collectVaryingRequestHeaders(NetworkStorageSes
     });
 }
 
-bool verifyVaryingRequestHeaders(NetworkStorageSession* storageSession, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest& request)
+bool verifyVaryingRequestHeaders(NetworkStorageSession* storageSession, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& varyingRequestHeaders, const ResourceRequest& request)
 {
     if (!storageSession)
         return false;
-    return WebCore::verifyVaryingRequestHeaders(varyingRequestHeaders, [&] (const String& headerName) {
+    return WebCore::verifyVaryingRequestHeaders(varyingRequestHeaders, [&] (StringImpl* headerName) {
         return headerValueForVary(request, headerName, [&] {
             return cookieRequestHeaderFieldValueForVary(*storageSession, request);
         });

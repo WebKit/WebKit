@@ -59,7 +59,7 @@ static constexpr auto predefinedMessageValueTextEdgeRight = "right"_s;
 WebExtensionLocalization::WebExtensionLocalization(WebExtension& webExtension)
 {
     auto defaultLocaleString = webExtension.defaultLocale();
-    if (defaultLocaleString.isEmpty()) {
+    if (isEmpty(defaultLocaleString)) {
         RELEASE_LOG_DEBUG(Extensions, "No default locale provided");
         loadRegionalLocalization(nullptr, nullptr, nullptr, emptyString(), emptyString());
         return;
@@ -67,57 +67,57 @@ WebExtensionLocalization::WebExtensionLocalization(WebExtension& webExtension)
 
     RefPtr defaultLocaleJSON = localizationJSONForWebExtension(webExtension, defaultLocaleString);
     if (!defaultLocaleJSON) {
-        RELEASE_LOG_DEBUG(Extensions, "No localization found for default locale %s", defaultLocaleString.utf8());
+        RELEASE_LOG_DEBUG(Extensions, "No localization found for default locale %s", utf8(defaultLocaleString));
         loadRegionalLocalization(nullptr, nullptr, nullptr, emptyString(), emptyString());
         return;
     }
 
-    RELEASE_LOG_DEBUG(Extensions, "Loaded default locale %s", defaultLocaleString.utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Loaded default locale %s", utf8(defaultLocaleString));
 
     auto bestLocaleString = webExtension.bestMatchLocale();
     auto defaultLocaleComponents = parseLocale(defaultLocaleString);
     auto bestLocaleComponents = parseLocale(bestLocaleString);
     auto bestLocaleLanguageOnlyString = bestLocaleComponents.languageCode;
 
-    RELEASE_LOG_DEBUG(Extensions, "Best locale is %s", bestLocaleString.utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Best locale is %s", utf8(bestLocaleString));
 
     RefPtr<JSON::Object> languageJSON;
-    if (!bestLocaleLanguageOnlyString.isEmpty() && bestLocaleLanguageOnlyString != defaultLocaleString) {
+    if (!isEmpty(bestLocaleLanguageOnlyString) && !equal(bestLocaleLanguageOnlyString, defaultLocaleString)) {
         languageJSON = localizationJSONForWebExtension(webExtension, bestLocaleLanguageOnlyString);
         if (languageJSON)
-            RELEASE_LOG_DEBUG(Extensions, "Loaded language-only locale %s", bestLocaleLanguageOnlyString.utf8());
+            RELEASE_LOG_DEBUG(Extensions, "Loaded language-only locale %s", utf8(bestLocaleLanguageOnlyString));
     }
 
     RefPtr<JSON::Object> regionalJSON;
-    if (bestLocaleString != bestLocaleLanguageOnlyString && bestLocaleString != defaultLocaleString) {
+    if (!equal(bestLocaleString, bestLocaleLanguageOnlyString) && !equal(bestLocaleString, defaultLocaleString)) {
         regionalJSON = localizationJSONForWebExtension(webExtension, bestLocaleString);
         if (regionalJSON)
-            RELEASE_LOG_DEBUG(Extensions, "Loaded regional locale %s", bestLocaleString.utf8());
+            RELEASE_LOG_DEBUG(Extensions, "Loaded regional locale %s", utf8(bestLocaleString));
     }
 
     loadRegionalLocalization(regionalJSON, languageJSON, defaultLocaleJSON, bestLocaleString);
 }
 
-WebExtensionLocalization::WebExtensionLocalization(RefPtr<JSON::Object> localizedJSON, const String& uniqueIdentifier)
+WebExtensionLocalization::WebExtensionLocalization(RefPtr<JSON::Object> localizedJSON, StringImpl* uniqueIdentifier)
 {
-    ASSERT(!uniqueIdentifier.isEmpty());
+    ASSERT(!isEmpty(uniqueIdentifier));
     ASSERT(localizedJSON);
 
     auto localeString = emptyString();
-    if (RefPtr predefinedMessages = localizedJSON->getObject(predefinedMessageUILocale))
-        localeString = predefinedMessages->getString(messageKey);
+    if (RefPtr predefinedMessages = localizedJSON->getObject(StringImpl::create(predefinedMessageUILocale).ptr()))
+        localeString = predefinedMessages->getString(StringImpl::create(messageKey).ptr());
 
     loadRegionalLocalization(localizedJSON, nullptr, nullptr, localeString, uniqueIdentifier);
 }
 
-WebExtensionLocalization::WebExtensionLocalization(RefPtr<JSON::Object> regionalLocalization, RefPtr<JSON::Object> languageLocalization, RefPtr<JSON::Object> defaultLocalization, const String& bestLocale, const String& uniqueIdentifier)
+WebExtensionLocalization::WebExtensionLocalization(RefPtr<JSON::Object> regionalLocalization, RefPtr<JSON::Object> languageLocalization, RefPtr<JSON::Object> defaultLocalization, StringImpl* bestLocale, StringImpl* uniqueIdentifier)
 {
     loadRegionalLocalization(regionalLocalization, languageLocalization, defaultLocalization, bestLocale, uniqueIdentifier);
 }
 
-void WebExtensionLocalization::loadRegionalLocalization(RefPtr<JSON::Object> regionalLocalization, RefPtr<JSON::Object> languageLocalization, RefPtr<JSON::Object> defaultLocalization, const String& bestLocale, const String& uniqueIdentifier)
+void WebExtensionLocalization::loadRegionalLocalization(RefPtr<JSON::Object> regionalLocalization, RefPtr<JSON::Object> languageLocalization, RefPtr<JSON::Object> defaultLocalization, StringImpl* bestLocale, StringImpl* uniqueIdentifier)
 {
-    m_locale = WebCore::Locale::create(AtomString { bestLocale });
+    m_locale = WebCore::Locale::create(AtomStringImpl::add(bestLocale).get());
     m_localeString = bestLocale;
     m_uniqueIdentifier = uniqueIdentifier;
 
@@ -156,7 +156,7 @@ RefPtr<JSON::Object> WebExtensionLocalization::localizedJSONforJSON(RefPtr<JSON:
     return newObject;
 }
 
-String WebExtensionLocalization::localizedStringForKey(String key, Vector<String> placeholders)
+RefPtr<StringImpl> WebExtensionLocalization::localizedStringForKey(RefPtr<StringImpl> key, Vector<RefPtr<StringImpl>> placeholders)
 {
     if (placeholders.size() > 9)
         return emptyString();
@@ -164,29 +164,29 @@ String WebExtensionLocalization::localizedStringForKey(String key, Vector<String
     if (!m_localizationJSON || !m_localizationJSON->size())
         return emptyString();
 
-    if (key.contains("__MSG_"_s)) {
-        key = key.substring(6, key.length());
-        key = key.substring(0, key.length() - 2);
+    if (contains(key, "__MSG_"_s)) {
+        key = substring(key, 6, length(key));
+        key = substring(key, 0, length(key) - 2);
     }
 
     RefPtr localizationJSON = m_localizationJSON;
     if (!localizationJSON)
         return emptyString();
 
-    RefPtr stringJSON = localizationJSON->getObject(key.convertToASCIILowercase());
+    RefPtr stringJSON = localizationJSON->getObject(convertToASCIILowercase(key));
     if (!stringJSON)
         return emptyString();
 
-    auto localizedString = stringJSON->getString(messageKey);
-    if (!localizedString.length())
+    auto localizedString = stringJSON->getString(StringImpl::create(messageKey).ptr());
+    if (!length(localizedString))
         return emptyString();
 
-    RefPtr namedPlaceholders = jsonWithLowercaseKeys(stringJSON->getObject(placeholdersKey));
+    RefPtr namedPlaceholders = jsonWithLowercaseKeys(stringJSON->getObject(StringImpl::create(placeholdersKey).ptr()));
 
     localizedString = stringByReplacingNamedPlaceholdersInString(localizedString, namedPlaceholders);
     localizedString = stringByReplacingPositionalPlaceholdersInString(localizedString, placeholders);
 
-    localizedString = localizedString.impl()->replace("$$"_s, "$"_s);
+    localizedString = localizedString.get()->replace("$$"_s, "$"_s);
 
     return localizedString;
 }
@@ -214,31 +214,31 @@ RefPtr<JSON::Array> WebExtensionLocalization::localizedArrayForArray(RefPtr<JSON
     return newArray;
 }
 
-String WebExtensionLocalization::localizedStringForString(String sourceString)
+RefPtr<StringImpl> WebExtensionLocalization::localizedStringForString(RefPtr<StringImpl> sourceString)
 {
-    String localizedString = sourceString;
+    RefPtr<StringImpl> localizedString = sourceString;
 
     auto localizableStringRegularExpression = JSC::Yarr::RegularExpression("__MSG_([A-Za-z0-9_@]+)__"_s, { });
 
     int index = 0;
-    while (index < static_cast<int>(localizedString.length())) {
+    while (index < static_cast<int>(length(localizedString))) {
         int matchLength;
         index = localizableStringRegularExpression.match(localizedString, index, &matchLength);
         if (index < 0)
             break;
 
-        auto key = localizedString.substring(index, matchLength);
+        auto key = substring(localizedString, index, matchLength);
         auto localizedReplacement = localizedStringForKey(key);
 
         localizedString = makeStringByReplacingAll(localizedString, key, localizedReplacement);
 
-        index += localizedReplacement.length();
+        index += length(localizedReplacement);
     }
 
     return localizedString;
 }
 
-RefPtr<JSON::Object> WebExtensionLocalization::localizationJSONForWebExtension(WebExtension& webExtension, const String& locale)
+RefPtr<JSON::Object> WebExtensionLocalization::localizationJSONForWebExtension(WebExtension& webExtension, StringImpl* locale)
 {
     StringBuilder pathBuilder;
     pathBuilder.append("_locales/"_s);
@@ -261,86 +261,86 @@ Ref<JSON::Object> WebExtensionLocalization::predefinedMessages()
 {
     Ref predefinedMessages = JSON::Object::create();
 
-    auto createMessageKey = [](String messageValue) {
+    auto createMessageKey = [](RefPtr<StringImpl> messageValue) {
         Ref object = JSON::Object::create();
-        object->setString(messageKey, messageValue);
+        object->setString(StringImpl::create(messageKey).ptr(), messageValue);
         return object;
     };
 
-    if (CheckedPtr locale = m_locale.get(); locale && !m_localeString.isEmpty()) {
+    if (CheckedPtr locale = m_locale.get(); locale && !isEmpty(m_localeString)) {
         if (locale->defaultWritingDirection() == WebCore::Locale::WritingDirection::LeftToRight) {
-            predefinedMessages->setObject(predefinedMessageLanguageDirection, createMessageKey(predefinedMessageValueLeftToRight));
-            predefinedMessages->setObject(predefinedMessageLanguageDirectionReversed, createMessageKey(predefinedMessageValueRightToLeft));
-            predefinedMessages->setObject(predefinedMessageTextLeadingEdge, createMessageKey(predefinedMessageValueTextEdgeLeft));
-            predefinedMessages->setObject(predefinedMessageTextTrailingEdge, createMessageKey(predefinedMessageValueTextEdgeRight));
+            predefinedMessages->setObject(StringImpl::create(predefinedMessageLanguageDirection).ptr(), createMessageKey(predefinedMessageValueLeftToRight));
+            predefinedMessages->setObject(StringImpl::create(predefinedMessageLanguageDirectionReversed).ptr(), createMessageKey(predefinedMessageValueRightToLeft));
+            predefinedMessages->setObject(StringImpl::create(predefinedMessageTextLeadingEdge).ptr(), createMessageKey(predefinedMessageValueTextEdgeLeft));
+            predefinedMessages->setObject(StringImpl::create(predefinedMessageTextTrailingEdge).ptr(), createMessageKey(predefinedMessageValueTextEdgeRight));
         } else {
-            predefinedMessages->setObject(predefinedMessageLanguageDirection, createMessageKey(predefinedMessageValueRightToLeft));
-            predefinedMessages->setObject(predefinedMessageLanguageDirectionReversed, createMessageKey(predefinedMessageValueLeftToRight));
-            predefinedMessages->setObject(predefinedMessageTextLeadingEdge, createMessageKey(predefinedMessageValueTextEdgeRight));
-            predefinedMessages->setObject(predefinedMessageTextTrailingEdge, createMessageKey(predefinedMessageValueTextEdgeLeft));
+            predefinedMessages->setObject(StringImpl::create(predefinedMessageLanguageDirection).ptr(), createMessageKey(predefinedMessageValueRightToLeft));
+            predefinedMessages->setObject(StringImpl::create(predefinedMessageLanguageDirectionReversed).ptr(), createMessageKey(predefinedMessageValueLeftToRight));
+            predefinedMessages->setObject(StringImpl::create(predefinedMessageTextLeadingEdge).ptr(), createMessageKey(predefinedMessageValueTextEdgeRight));
+            predefinedMessages->setObject(StringImpl::create(predefinedMessageTextTrailingEdge).ptr(), createMessageKey(predefinedMessageValueTextEdgeLeft));
         }
     }
 
-    if (!m_localeString.isNull())
-        predefinedMessages->setObject(predefinedMessageUILocale, createMessageKey(m_localeString));
+    if (m_localeString)
+        predefinedMessages->setObject(StringImpl::create(predefinedMessageUILocale).ptr(), createMessageKey(m_localeString));
 
-    if (!m_uniqueIdentifier.isNull())
-        predefinedMessages->setObject(predefinedMessageExtensionID, createMessageKey(m_uniqueIdentifier));
+    if (m_uniqueIdentifier)
+        predefinedMessages->setObject(StringImpl::create(predefinedMessageExtensionID).ptr(), createMessageKey(m_uniqueIdentifier));
 
     return predefinedMessages;
 }
 
-String WebExtensionLocalization::stringByReplacingNamedPlaceholdersInString(String sourceString, RefPtr<JSON::Object> placeholders)
+RefPtr<StringImpl> WebExtensionLocalization::stringByReplacingNamedPlaceholdersInString(RefPtr<StringImpl> sourceString, RefPtr<JSON::Object> placeholders)
 {
-    String localizedString = sourceString;
+    RefPtr<StringImpl> localizedString = sourceString;
 
     auto localizableStringRegularExpression = JSC::Yarr::RegularExpression("(?:[^$]|^)(\\$([A-Za-z0-9_@]+)\\$)"_s, { });
 
     int index = 0;
-    while (index < static_cast<int>(localizedString.length())) {
+    while (index < static_cast<int>(length(localizedString))) {
         int matchLength;
         index = localizableStringRegularExpression.match(localizedString, index, &matchLength);
         if (index < 0)
             break;
 
-        auto originalKey = localizedString.substring(index, matchLength);
+        auto originalKey = substring(localizedString, index, matchLength);
 
-        if (!originalKey.startsWith('$'))
-            originalKey = localizedString.substring(index + 1, matchLength - 1);
+        if (!startsWith(originalKey, '$'))
+            originalKey = substring(localizedString, index + 1, matchLength - 1);
 
-        auto key = originalKey.substring(1, originalKey.length() - 2).convertToASCIILowercase();
+        auto key = convertToASCIILowercase(substring(originalKey, 1, length(originalKey) - 2));
 
-        auto localizedReplacement = (placeholders && placeholders->getObject(key)) ? placeholders->getObject(key)->getString(placeholderDictionaryContentKey) : emptyString();
+        auto localizedReplacement = (placeholders && placeholders->getObject(key)) ? placeholders->getObject(key)->getString(StringImpl::create(placeholderDictionaryContentKey).ptr()) : emptyString();
 
         localizedString = makeStringByReplacingAll(localizedString, originalKey, localizedReplacement);
 
-        index += std::max(0, static_cast<int>(localizedReplacement.length()) - 1);
+        index += std::max(0, static_cast<int>(length(localizedReplacement)) - 1);
     }
 
     return localizedString;
 }
 
-String WebExtensionLocalization::stringByReplacingPositionalPlaceholdersInString(String sourceString, Vector<String> placeholders)
+RefPtr<StringImpl> WebExtensionLocalization::stringByReplacingPositionalPlaceholdersInString(RefPtr<StringImpl> sourceString, Vector<RefPtr<StringImpl>> placeholders)
 {
     auto localizedString = sourceString;
 
     auto localizableStringRegularExpression = JSC::Yarr::RegularExpression("(?:[^$]|^)(\\$([0-9]))"_s, { });
 
     int index = 0;
-    while (index < static_cast<int>(localizedString.length())) {
+    while (index < static_cast<int>(length(localizedString))) {
         int matchLength;
         index = localizableStringRegularExpression.match(localizedString, index, &matchLength);
         if (index < 0)
             break;
 
-        auto originalKey = localizedString.substring(index, matchLength);
+        auto originalKey = substring(localizedString, index, matchLength);
 
-        if (!originalKey.startsWith('$'))
-            originalKey = localizedString.substring(index + 1, matchLength - 1);
+        if (!startsWith(originalKey, '$'))
+            originalKey = substring(localizedString, index + 1, matchLength - 1);
 
-        auto keyInteger = parseInteger<size_t>(originalKey.substring(1, originalKey.length() - 1));
+        auto keyInteger = parseInteger<size_t>(substring(originalKey, 1, length(originalKey) - 1));
 
-        String replacement;
+        RefPtr<StringImpl> replacement;
         if (keyInteger && placeholders.size() && *keyInteger <= placeholders.size() && keyInteger > 0)
             replacement = borrow(placeholders)[*keyInteger - 1];
         else
@@ -351,7 +351,7 @@ String WebExtensionLocalization::stringByReplacingPositionalPlaceholdersInString
         if (!matchLength)
             break;
 
-        index += std::max(0, static_cast<int>(replacement.length()) - 1);
+        index += std::max(0, static_cast<int>(length(replacement)) - 1);
     }
 
     return localizedString;

@@ -53,18 +53,18 @@ public:
 
     // TargetBackendDispatcherHandler
     Protocol::ErrorStringOr<void> setPauseOnStart(bool) final;
-    Protocol::ErrorStringOr<void> resume(const String& targetId) final;
-    Protocol::ErrorStringOr<void> sendMessageToTarget(const String& targetId, const String& message) final;
+    Protocol::ErrorStringOr<void> resume(StringImpl* targetId) final;
+    Protocol::ErrorStringOr<void> sendMessageToTarget(StringImpl* targetId, StringImpl* message) final;
 
     // Target lifecycle.
     void targetCreated(InspectorTarget&);
     void targetDestroyed(InspectorTarget&);
-    void didCommitProvisionalTarget(const String& oldTargetID, const String& committedTargetID);
+    void didCommitProvisionalTarget(StringImpl* oldTargetID, StringImpl* committedTargetID);
 
-    void debuggerPauseSessionChanged(const String& sessionID, bool isPaused, const Vector<String>& stoppingTargetIDs);
+    void debuggerPauseSessionChanged(StringImpl* sessionID, bool isPaused, const Vector<RefPtr<StringImpl>>& stoppingTargetIDs);
 
     // Target messages.
-    void sendMessageFromTargetToFrontend(const String& targetId, const String& message);
+    void sendMessageFromTargetToFrontend(StringImpl* targetId, StringImpl* message);
 
 private:
     // FrontendChannel
@@ -75,7 +75,7 @@ private:
     const CheckedRef<Inspector::FrontendRouter> m_router;
     const UniqueRef<TargetFrontendDispatcher> m_frontendDispatcher;
     const Ref<TargetBackendDispatcher> m_backendDispatcher;
-    UncheckedKeyHashMap<String, InspectorTarget*> m_targets;
+    UncheckedKeyHashMap<RefPtr<StringImpl>, InspectorTarget*> m_targets;
     bool m_isConnected { false };
     bool m_shouldPauseOnStart { false };
 };

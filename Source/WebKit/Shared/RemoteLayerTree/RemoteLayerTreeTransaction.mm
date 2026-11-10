@@ -260,10 +260,10 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
 
 void RemoteLayerTreeTransaction::dump() const
 {
-    SAFE_WTFLOGALWAYS("%s", description().utf8());
+    SAFE_WTFLOGALWAYS("%s", utf8(description()));
 }
 
-String RemoteLayerTreeTransaction::description() const
+RefPtr<StringImpl> RemoteLayerTreeTransaction::description() const
 {
     TextStream ts;
 

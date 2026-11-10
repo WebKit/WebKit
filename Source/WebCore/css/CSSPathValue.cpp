@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-String CSSPathValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSPathValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_path);
 }

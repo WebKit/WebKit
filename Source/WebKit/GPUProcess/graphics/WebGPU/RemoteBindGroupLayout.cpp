@@ -60,7 +60,7 @@ void RemoteBindGroupLayout::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteBindGroupLayout::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteBindGroupLayout::setLabel(String&& label)
+void RemoteBindGroupLayout::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

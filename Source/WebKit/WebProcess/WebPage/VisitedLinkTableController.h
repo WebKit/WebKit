@@ -45,7 +45,7 @@ private:
     explicit VisitedLinkTableController(VisitedLinkTableIdentifier);
 
     // WebCore::VisitedLinkStore.
-    bool isLinkVisited(WebCore::Page&, WebCore::SharedStringHash, const URL& baseURL, const AtomString& attributeURL) override;
+    bool isLinkVisited(WebCore::Page&, WebCore::SharedStringHash, const URL& baseURL, AtomStringImpl* attributeURL) override;
     void addVisitedLink(WebCore::Page&, WebCore::SharedStringHash) override;
 
     // IPC::MessageReceiver.

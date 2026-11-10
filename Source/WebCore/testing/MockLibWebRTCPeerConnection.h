@@ -49,7 +49,7 @@ namespace WebCore {
 class LibWebRTCProvider;
 class MockRtpSender;
 
-void useMockRTCPeerConnectionFactory(LibWebRTCProvider*, const String&);
+void useMockRTCPeerConnectionFactory(LibWebRTCProvider*, StringImpl*);
 void useRealRTCPeerConnectionFactory(LibWebRTCProvider&);
 
 class MockLibWebRTCAudioTrack : public webrtc::AudioTrackInterface {
@@ -333,10 +333,10 @@ protected:
 
 class MockLibWebRTCPeerConnectionFactory : public webrtc::PeerConnectionFactoryInterface {
 public:
-    static webrtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> create(const String& testCase) { return webrtc::make_ref_counted<MockLibWebRTCPeerConnectionFactory>(testCase); }
+    static webrtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> create(StringImpl* testCase) { return webrtc::make_ref_counted<MockLibWebRTCPeerConnectionFactory>(testCase); }
 
 protected:
-    explicit MockLibWebRTCPeerConnectionFactory(const String&);
+    explicit MockLibWebRTCPeerConnectionFactory(StringImpl*);
 
 private:
     webrtc::RTCErrorOr<webrtc::scoped_refptr<webrtc::PeerConnectionInterface>> CreatePeerConnectionOrError(const webrtc::PeerConnectionInterface::RTCConfiguration&, webrtc::PeerConnectionDependencies) final;
@@ -354,7 +354,7 @@ private:
     void StopAecDump() final { }
 
 private:
-    String m_testCase;
+    RefPtr<StringImpl> m_testCase;
 };
 
 } // namespace WebCore

@@ -63,7 +63,7 @@ public:
         CanSuspendWhileLocked = 1 << 0,
     };
 
-    WEBCORE_EXPORT bool open(const String& filename, OpenMode = OpenMode::ReadWriteCreate, OptionSet<OpenOptions> = { });
+    WEBCORE_EXPORT bool open(StringImpl* filename, OpenMode = OpenMode::ReadWriteCreate, OptionSet<OpenOptions> = { });
     bool isOpen() const { return m_db; }
     WEBCORE_EXPORT void close();
 
@@ -74,8 +74,8 @@ public:
     
     WEBCORE_EXPORT bool tableExists(StringView);
     WEBCORE_EXPORT bool indexExists(StringView);
-    WEBCORE_EXPORT String tableSQL(StringView);
-    WEBCORE_EXPORT String indexSQL(StringView);
+    WEBCORE_EXPORT RefPtr<StringImpl> tableSQL(StringView);
+    WEBCORE_EXPORT RefPtr<StringImpl> indexSQL(StringView);
     WEBCORE_EXPORT void clearAllTables();
     WEBCORE_EXPORT int runVacuumCommand();
     WEBCORE_EXPORT int runIncrementalVacuumCommand();
@@ -152,7 +152,7 @@ public:
     enum AutoVacuumPragma { AutoVacuumNone = 0, AutoVacuumFull = 1, AutoVacuumIncremental = 2 };
     WEBCORE_EXPORT bool turnOnIncrementalAutoVacuum();
 
-    WEBCORE_EXPORT void setCollationFunction(const String& collationName, Function<int(int, const void*, int, const void*)>&&);
+    WEBCORE_EXPORT void setCollationFunction(StringImpl* collationName, Function<int(int, const void*, int, const void*)>&&);
 
     // Set this flag to allow access from multiple threads.  Not all multi-threaded accesses are safe!
     // See http://www.sqlite.org/cvstrac/wiki?p=MultiThreading for more info.

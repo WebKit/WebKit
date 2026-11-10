@@ -159,7 +159,7 @@ void LibWebRTCNetwork::signalClose(WebCore::LibWebRTCSocketIdentifier identifier
         socket->signalClose(error);
 }
 
-void LibWebRTCNetwork::signalUsedInterface(WebCore::LibWebRTCSocketIdentifier identifier, String&& interfaceName)
+void LibWebRTCNetwork::signalUsedInterface(WebCore::LibWebRTCSocketIdentifier identifier, RefPtr<StringImpl>&& interfaceName)
 {
     ASSERT(!WTF::isMainRunLoop());
     if (CheckedPtr socket = m_socketFactory.socket(identifier))

@@ -37,7 +37,7 @@
 
 namespace WebCoreTestSupport {
 
-String serializationForCSS(WebCore::CocoaColor *color)
+RefPtr<StringImpl> serializationForCSS(WebCore::CocoaColor *color)
 {
     return WebCore::serializationForCSS([color = RetainPtr { color }] -> WebCore::Color {
         RetainPtr cgColor = [color CGColor];

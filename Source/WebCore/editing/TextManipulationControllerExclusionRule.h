@@ -33,16 +33,16 @@ struct TextManipulationControllerExclusionRule {
     enum class Type : uint8_t { Exclude, Include };
 
     struct ElementRule {
-        AtomString localName;
+        RefPtr<AtomStringImpl> localName;
     };
 
     struct AttributeRule {
-        AtomString name;
-        String value;
+        RefPtr<AtomStringImpl> name;
+        RefPtr<StringImpl> value;
     };
 
     struct ClassRule {
-        AtomString className;
+        RefPtr<AtomStringImpl> className;
     };
 
     Type type;

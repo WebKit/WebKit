@@ -37,10 +37,10 @@
 
 namespace WebCore {
 
-static ExceptionOr<void> validateCountryCode(const String&);
-static ExceptionOr<void> validateCurrencyCode(const String&);
+static ExceptionOr<void> validateCountryCode(StringImpl*);
+static ExceptionOr<void> validateCurrencyCode(StringImpl*);
 static ExceptionOr<void> validateMerchantCapabilities(const ApplePaySessionPaymentRequest::MerchantCapabilities&);
-static ExceptionOr<void> validateSupportedNetworks(const Vector<String>&);
+static ExceptionOr<void> validateSupportedNetworks(const Vector<RefPtr<StringImpl>>&);
 static ExceptionOr<void> validateShippingMethods(const Vector<ApplePayShippingMethod>&);
 static ExceptionOr<void> validateShippingMethod(const ApplePayShippingMethod&);
 
@@ -96,15 +96,15 @@ ExceptionOr<void> PaymentRequestValidator::validate(const ApplePaySessionPayment
 ExceptionOr<void> PaymentRequestValidator::validateTotal(const ApplePayLineItem& total)
 {
     if (!total.label)
-        return Exception { ExceptionCode::TypeError, "Missing total label."_s };
+        return Exception { ExceptionCode::TypeError, "Missing total label."_si };
 
     if (!total.amount)
-        return Exception { ExceptionCode::TypeError, "Missing total amount."_s };
+        return Exception { ExceptionCode::TypeError, "Missing total amount."_si };
 
-    double amount = [NSDecimalNumber decimalNumberWithString:total.amount.createNSString().get() locale:@{ NSLocaleDecimalSeparator : @"." }].doubleValue;
+    double amount = [NSDecimalNumber decimalNumberWithString:createNSString(total.amount).get() locale:@{ NSLocaleDecimalSeparator : @"." }].doubleValue;
 
     if (amount < 0)
-        return Exception { ExceptionCode::TypeError, "Total amount must not be negative."_s };
+        return Exception { ExceptionCode::TypeError, "Total amount must not be negative."_si };
 
     // We can safely defer a maximum amount check to the underlying payment system, instead.
     // The downside is we lose an informative error mode and get an opaque payment sheet error for too large total amounts.
@@ -113,10 +113,10 @@ ExceptionOr<void> PaymentRequestValidator::validateTotal(const ApplePayLineItem&
     return { };
 }
 
-static ExceptionOr<void> validateCountryCode(const String& countryCode)
+static ExceptionOr<void> validateCountryCode(StringImpl* countryCode)
 {
     if (!countryCode)
-        return Exception { ExceptionCode::TypeError, "Missing country code."_s };
+        return Exception { ExceptionCode::TypeError, "Missing country code."_si };
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     for (auto* countryCodePtr = uloc_getISOCountries(); *countryCodePtr; ++countryCodePtr) {
@@ -128,10 +128,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return Exception { ExceptionCode::TypeError, makeString("\""_s, countryCode, "\" is not a valid country code."_s) };
 }
 
-static ExceptionOr<void> validateCurrencyCode(const String& currencyCode)
+static ExceptionOr<void> validateCurrencyCode(StringImpl* currencyCode)
 {
     if (!currencyCode)
-        return Exception { ExceptionCode::TypeError, "Missing currency code."_s };
+        return Exception { ExceptionCode::TypeError, "Missing currency code."_si };
 
     UErrorCode errorCode = U_ZERO_ERROR;
     auto currencyCodes = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucurr_openISOCurrencies(UCURR_ALL, &errorCode));
@@ -148,24 +148,24 @@ static ExceptionOr<void> validateCurrencyCode(const String& currencyCode)
 static ExceptionOr<void> validateMerchantCapabilities(const ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
 {
     if (!merchantCapabilities.supports3DS && !merchantCapabilities.supportsEMV && !merchantCapabilities.supportsCredit && !merchantCapabilities.supportsDebit)
-        return Exception { ExceptionCode::TypeError, "Missing merchant capabilities."_s };
+        return Exception { ExceptionCode::TypeError, "Missing merchant capabilities."_si };
 
     return { };
 }
 
-static ExceptionOr<void> validateSupportedNetworks(const Vector<String>& supportedNetworks)
+static ExceptionOr<void> validateSupportedNetworks(const Vector<RefPtr<StringImpl>>& supportedNetworks)
 {
     if (supportedNetworks.isEmpty())
-        return Exception { ExceptionCode::TypeError, "Missing supported networks."_s };
+        return Exception { ExceptionCode::TypeError, "Missing supported networks."_si };
 
     return { };
 }
 
 static ExceptionOr<void> validateShippingMethod(const ApplePayShippingMethod& shippingMethod)
 {
-    RetainPtr amount = [NSDecimalNumber decimalNumberWithString:shippingMethod.amount.createNSString().get() locale:@{ NSLocaleDecimalSeparator : @"." }];
+    RetainPtr amount = [NSDecimalNumber decimalNumberWithString:createNSString(shippingMethod.amount).get() locale:@{ NSLocaleDecimalSeparator : @"." }];
     if (amount.get().integerValue < 0)
-        return Exception { ExceptionCode::TypeError, "Shipping method amount must be greater than or equal to zero."_s };
+        return Exception { ExceptionCode::TypeError, "Shipping method amount must be greater than or equal to zero."_si };
 
     return { };
 }

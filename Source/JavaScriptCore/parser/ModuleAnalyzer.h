@@ -43,7 +43,7 @@ class ModuleAnalyzer {
 public:
     ModuleAnalyzer(JSGlobalObject*, const Identifier& moduleKey, const SourceCode&, CodeFeatures);
 
-    std::expected<JSModuleRecord*, std::tuple<ErrorType, String>> analyze(ModuleProgramNode&);
+    std::expected<JSModuleRecord*, std::tuple<ErrorType, RefPtr<StringImpl>>> analyze(ModuleProgramNode&);
 
     VM& vm() { return m_vm; }
 
@@ -51,7 +51,7 @@ public:
 
     void appendRequestedModule(const Identifier&, RefPtr<ScriptFetchParameters>&&, AbstractModuleRecord::ModulePhase = AbstractModuleRecord::ModulePhase::Evaluation);
 
-    void fail(std::tuple<ErrorType, String>&& errorMessage) { m_errorMessage = errorMessage; }
+    void fail(std::tuple<ErrorType, RefPtr<StringImpl>>&& errorMessage) { m_errorMessage = errorMessage; }
 
 private:
     void exportVariable(ModuleProgramNode&, const RefPtr<UniquedStringImpl>&, const VariableEnvironmentEntry&);
@@ -59,7 +59,7 @@ private:
     VM& m_vm;
     JSModuleRecord* m_moduleRecord;
     EnumeratedArray<AbstractModuleRecord::ModulePhase, UncheckedKeyHashSet<ModuleMapKey, ModuleMapHash>, AbstractModuleRecord::ModulePhase::Defer> m_requestedModules;
-    std::tuple<ErrorType, String> m_errorMessage;
+    std::tuple<ErrorType, RefPtr<StringImpl>> m_errorMessage;
 };
 
 } // namespace JSC

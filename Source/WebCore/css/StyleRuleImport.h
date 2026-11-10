@@ -38,11 +38,11 @@ class StyleRuleImport final : public StyleRuleBase, public CanMakeWeakPtr<StyleR
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleImport, StyleRuleImport);
 public:
     struct SupportsCondition {
-        String text;
+        RefPtr<StringImpl> text;
         bool conditionMatches { true };
     };
 
-    NODELETE static Ref<StyleRuleImport> create(const String& href, MQ::MediaQueryList&&, std::optional<CascadeLayerName>&&, SupportsCondition&&);
+    NODELETE static Ref<StyleRuleImport> create(StringImpl* href, MQ::MediaQueryList&&, std::optional<CascadeLayerName>&&, SupportsCondition&&);
     ~StyleRuleImport();
 
     Ref<StyleRuleImport> copy() const { RELEASE_ASSERT_NOT_REACHED(); }
@@ -52,7 +52,7 @@ public:
     void clearParentStyleSheet() { m_parentStyleSheet = nullptr; }
     void cancelLoad();
 
-    String href() const { return m_strHref; }
+    const RefPtr<StringImpl>& href() const LIFETIME_BOUND { return m_strHref; }
     StyleSheetContents* styleSheet() const { return m_styleSheet.get(); }
 
     NODELETE bool isLoading() const;
@@ -64,7 +64,7 @@ public:
     const CachedCSSStyleSheet* cachedCSSStyleSheet() const { return m_cachedSheet.get(); }
 
     const std::optional<CascadeLayerName>& cascadeLayerName() const LIFETIME_BOUND { return m_cascadeLayerName; }
-    const String& supportsText() const LIFETIME_BOUND { return m_supportsCondition.text; }
+    const RefPtr<StringImpl>& supportsText() const LIFETIME_BOUND { return m_supportsCondition.text; }
     bool supportsMatches() const { return m_supportsCondition.conditionMatches; }
 
 private:
@@ -76,7 +76,7 @@ private:
             : m_ownerRule(ownerRule)
         { }
         virtual ~ImportedStyleSheetClient() = default;
-        void setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet& sheet) final
+        void setCSSStyleSheet(StringImpl* href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet& sheet) final
         {
             protect(m_ownerRule)->setCSSStyleSheet(href, baseURL, charset, sheet);
         }
@@ -89,15 +89,15 @@ private:
         WeakRef<StyleRuleImport> m_ownerRule;
     };
 
-    void setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet&);
+    void setCSSStyleSheet(StringImpl* href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet&);
     friend class ImportedStyleSheetClient;
 
-    StyleRuleImport(const String& href, MQ::MediaQueryList&&, std::optional<CascadeLayerName>&&, SupportsCondition&&);
+    StyleRuleImport(StringImpl* href, MQ::MediaQueryList&&, std::optional<CascadeLayerName>&&, SupportsCondition&&);
 
     WeakPtr<StyleSheetContents> m_parentStyleSheet;
 
     ImportedStyleSheetClient m_styleSheetClient;
-    String m_strHref;
+    RefPtr<StringImpl> m_strHref;
     MQ::MediaQueryList m_mediaQueries;
     RefPtr<StyleSheetContents> m_styleSheet;
     std::optional<CascadeLayerName> m_cascadeLayerName;

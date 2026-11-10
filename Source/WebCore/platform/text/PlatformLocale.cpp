@@ -48,15 +48,15 @@ public:
     // The argument objects must be alive until this object dies.
     DateTimeStringBuilder(Locale&, const DateComponents&);
 
-    bool build(const String&);
-    String toString();
+    bool build(StringImpl*);
+    RefPtr<StringImpl> toString();
 
 private:
     // DateTimeFormat::TokenHandler functions.
     void visitField(DateTimeFormat::FieldType, int) final;
-    void visitLiteral(const String&) final;
+    void visitLiteral(StringImpl*) final;
 
-    String zeroPadString(const String&, size_t width);
+    RefPtr<StringImpl> zeroPadString(StringImpl*, size_t width);
     void appendNumber(int number, size_t width);
 
     StringBuilder m_builder;
@@ -70,19 +70,19 @@ DateTimeStringBuilder::DateTimeStringBuilder(Locale& localizer, const DateCompon
 {
 }
 
-bool DateTimeStringBuilder::build(const String& formatString)
+bool DateTimeStringBuilder::build(StringImpl* formatString)
 {
-    m_builder.reserveCapacity(formatString.length());
+    m_builder.reserveCapacity(length(formatString));
     return DateTimeFormat::parse(formatString, *this);
 }
 
-String DateTimeStringBuilder::zeroPadString(const String& string, size_t width)
+RefPtr<StringImpl> DateTimeStringBuilder::zeroPadString(StringImpl* string, size_t width)
 {
-    if (string.length() >= width)
+    if (length(string) >= width)
         return string;
     StringBuilder zeroPaddedStringBuilder;
     zeroPaddedStringBuilder.reserveCapacity(width);
-    for (size_t i = string.length(); i < width; ++i)
+    for (size_t i = length(string); i < width; ++i)
         zeroPaddedStringBuilder.append('0');
     zeroPaddedStringBuilder.append(string);
     return zeroPaddedStringBuilder.toString();
@@ -90,7 +90,7 @@ String DateTimeStringBuilder::zeroPadString(const String& string, size_t width)
 
 void DateTimeStringBuilder::appendNumber(int number, size_t width)
 {
-    String zeroPaddedNumberString = zeroPadString(String::number(number), width);
+    RefPtr<StringImpl> zeroPaddedNumberString = zeroPadString(makeString(number), width);
     m_builder.append(m_localizer->convertToLocalizedNumber(zeroPaddedNumberString));
 }
 
@@ -160,7 +160,7 @@ void DateTimeStringBuilder::visitField(DateTimeFormat::FieldType fieldType, int 
             appendNumber(m_date.second(), numberOfPatternCharacters);
         else {
             double second = m_date.second() + m_date.millisecond() / 1000.0;
-            String zeroPaddedSecondString = zeroPadString(String::numberToStringFixedWidth(second, 3), numberOfPatternCharacters + 4);
+            RefPtr<StringImpl> zeroPaddedSecondString = zeroPadString(StringImpl::numberToStringFixedWidth(second, 3), numberOfPatternCharacters + 4);
             m_builder.append(m_localizer->convertToLocalizedNumber(zeroPaddedSecondString));
         }
         return;
@@ -169,53 +169,53 @@ void DateTimeStringBuilder::visitField(DateTimeFormat::FieldType fieldType, int 
     }
 }
 
-void DateTimeStringBuilder::visitLiteral(const String& text)
+void DateTimeStringBuilder::visitLiteral(StringImpl* text)
 {
-    ASSERT(text.length());
+    ASSERT(length(text));
     m_builder.append(text);
 }
 
-String DateTimeStringBuilder::toString()
+RefPtr<StringImpl> DateTimeStringBuilder::toString()
 {
     return m_builder.toString();
 }
 
 Locale::~Locale() = default;
 
-void Locale::setLocaleData(const Vector<String, DecimalSymbolsSize>& symbols, const String& positivePrefix, const String& positiveSuffix, const String& negativePrefix, const String& negativeSuffix)
+void Locale::setLocaleData(const Vector<RefPtr<StringImpl>, DecimalSymbolsSize>& symbols, StringImpl* positivePrefix, StringImpl* positiveSuffix, StringImpl* negativePrefix, StringImpl* negativeSuffix)
 {
     for (size_t i = 0; i < symbols.size(); ++i) {
-        ASSERT(!symbols[i].isEmpty());
+        ASSERT(!isEmpty(symbols[i]));
         m_decimalSymbols[i] = symbols[i];
     }
     m_positivePrefix = positivePrefix;
     m_positiveSuffix = positiveSuffix;
     m_negativePrefix = negativePrefix;
     m_negativeSuffix = negativeSuffix;
-    ASSERT(!m_positivePrefix.isEmpty() || !m_positiveSuffix.isEmpty() || !m_negativePrefix.isEmpty() || !m_negativeSuffix.isEmpty());
+    ASSERT(!isEmpty(m_positivePrefix) || !isEmpty(m_positiveSuffix) || !isEmpty(m_negativePrefix) || !isEmpty(m_negativeSuffix));
     m_hasLocaleData = true;
 }
 
-String Locale::convertToLocalizedNumber(const String& input)
+RefPtr<StringImpl> Locale::convertToLocalizedNumber(StringImpl* input)
 {
     initializeLocaleData();
-    if (!m_hasLocaleData || input.isEmpty())
+    if (!m_hasLocaleData || isEmpty(input))
         return input;
 
     unsigned i = 0;
     bool isNegative = false;
     StringBuilder builder;
-    builder.reserveCapacity(input.length());
+    builder.reserveCapacity(length(input));
 
-    if (input[0] == '-') {
+    if (codeUnitAt(input, 0) == '-') {
         ++i;
         isNegative = true;
         builder.append(m_negativePrefix);
     } else
         builder.append(m_positivePrefix);
 
-    for (; i < input.length(); ++i) {
-        switch (input[i]) {
+    for (; i < length(input); ++i) {
+        switch (codeUnitAt(input, i)) {
         case '0':
         case '1':
         case '2':
@@ -226,7 +226,7 @@ String Locale::convertToLocalizedNumber(const String& input)
         case '7':
         case '8':
         case '9':
-            builder.append(m_decimalSymbols[input[i] - '0']);
+            builder.append(m_decimalSymbols[codeUnitAt(input, i) - '0']);
             break;
         case '.':
             builder.append(m_decimalSymbols[DecimalSeparatorIndex]);
@@ -241,40 +241,40 @@ String Locale::convertToLocalizedNumber(const String& input)
     return builder.toString();
 }
 
-NODELETE static bool matches(const String& text, unsigned position, const String& part)
+NODELETE static bool matches(StringImpl* text, unsigned position, StringImpl* part)
 {
-    if (part.isEmpty())
+    if (isEmpty(part))
         return true;
-    if (position + part.length() > text.length())
+    if (position + length(part) > length(text))
         return false;
-    for (unsigned i = 0; i < part.length(); ++i) {
-        if (text[position + i] != part[i])
+    for (unsigned i = 0; i < length(part); ++i) {
+        if (codeUnitAt(text, position + i) != codeUnitAt(part, i))
             return false;
     }
     return true;
 }
 
-bool Locale::detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex)
+bool Locale::detectSignAndGetDigitRange(StringImpl* input, bool& isNegative, unsigned& startIndex, unsigned& endIndex)
 {
     startIndex = 0;
-    endIndex = input.length();
-    if (m_negativePrefix.isEmpty() && m_negativeSuffix.isEmpty()) {
-        if (input.startsWith(m_positivePrefix) && input.endsWith(m_positiveSuffix)) {
+    endIndex = length(input);
+    if (isEmpty(m_negativePrefix) && isEmpty(m_negativeSuffix)) {
+        if (startsWith(input, m_positivePrefix) && endsWith(input, m_positiveSuffix)) {
             isNegative = false;
-            startIndex = m_positivePrefix.length();
-            endIndex -= m_positiveSuffix.length();
+            startIndex = length(m_positivePrefix);
+            endIndex -= length(m_positiveSuffix);
         } else
             isNegative = true;
     } else {
-        if (input.startsWith(m_negativePrefix) && input.endsWith(m_negativeSuffix)) {
+        if (startsWith(input, m_negativePrefix) && endsWith(input, m_negativeSuffix)) {
             isNegative = true;
-            startIndex = m_negativePrefix.length();
-            endIndex -= m_negativeSuffix.length();
+            startIndex = length(m_negativePrefix);
+            endIndex -= length(m_negativeSuffix);
         } else {
             isNegative = false;
-            if (input.startsWith(m_positivePrefix) && input.endsWith(m_positiveSuffix)) {
-                startIndex = m_positivePrefix.length();
-                endIndex -= m_positiveSuffix.length();
+            if (startsWith(input, m_positivePrefix) && endsWith(input, m_positiveSuffix)) {
+                startIndex = length(m_positivePrefix);
+                endIndex -= length(m_positiveSuffix);
             } else
                 return false;
         }
@@ -282,22 +282,22 @@ bool Locale::detectSignAndGetDigitRange(const String& input, bool& isNegative, u
     return true;
 }
 
-unsigned Locale::matchedDecimalSymbolIndex(const String& input, unsigned& position)
+unsigned Locale::matchedDecimalSymbolIndex(StringImpl* input, unsigned& position)
 {
     for (unsigned symbolIndex = 0; symbolIndex < DecimalSymbolsSize; ++symbolIndex) {
-        if (m_decimalSymbols[symbolIndex].length() && matches(input, position, m_decimalSymbols[symbolIndex])) {
-            position += m_decimalSymbols[symbolIndex].length();
+        if (length(m_decimalSymbols[symbolIndex]) && matches(input, position, m_decimalSymbols[symbolIndex])) {
+            position += length(m_decimalSymbols[symbolIndex]);
             return symbolIndex;
         }
     }
     return DecimalSymbolsSize;
 }
 
-String Locale::convertFromLocalizedNumber(const String& localized)
+RefPtr<StringImpl> Locale::convertFromLocalizedNumber(StringImpl* localized)
 {
     initializeLocaleData();
-    auto input = localized.trim(deprecatedIsSpaceOrNewline);
-    if (!m_hasLocaleData || input.isEmpty())
+    auto input = trim(localized, deprecatedIsSpaceOrNewline);
+    if (!m_hasLocaleData || isEmpty(input))
         return input;
 
     bool isNegative;
@@ -307,11 +307,11 @@ String Locale::convertFromLocalizedNumber(const String& localized)
         return input;
 
     // Ignore leading '+', but will reject '+'-only string later.
-    if (!isNegative && endIndex - startIndex >= 2 && input[startIndex] == '+')
+    if (!isNegative && endIndex - startIndex >= 2 && codeUnitAt(input, startIndex) == '+')
         ++startIndex;
 
     StringBuilder builder;
-    builder.reserveCapacity(input.length());
+    builder.reserveCapacity(length(input));
     if (isNegative)
         builder.append('-');
     for (unsigned i = startIndex; i < endIndex;) {
@@ -325,10 +325,10 @@ String Locale::convertFromLocalizedNumber(const String& localized)
         else
             builder.append(static_cast<char16_t>('0' + symbolIndex));
     }
-    String converted = builder.toString();
+    RefPtr<StringImpl> converted = builder.toString();
     // Ignore trailing '.', but will reject '.'-only string later.
-    if (converted.length() >= 2 && converted[converted.length() - 1] == '.')
-        converted = converted.left(converted.length() - 1);
+    if (length(converted) >= 2 && codeUnitAt(converted, length(converted) - 1) == '.')
+        converted = left(converted, length(converted) - 1);
     return converted;
 }
 
@@ -337,10 +337,10 @@ Locale::WritingDirection Locale::defaultWritingDirection() const
     return WritingDirection::Default;
 }
 
-String Locale::formatDateTime(const DateComponents& date, FormatType formatType)
+RefPtr<StringImpl> Locale::formatDateTime(const DateComponents& date, FormatType formatType)
 {
     if (date.type() == DateComponentsType::Invalid)
-        return String();
+        return nullptr;
 
     DateTimeStringBuilder builder(*this, date);
     switch (date.type()) {
@@ -366,22 +366,22 @@ String Locale::formatDateTime(const DateComponents& date, FormatType formatType)
     return builder.toString();
 }
 
-const String& Locale::localizedDecimalSeparator()
+const RefPtr<StringImpl>& Locale::localizedDecimalSeparator()
 {
     initializeLocaleData();
     return m_decimalSymbols[DecimalSeparatorIndex];
 }
 
-String Locale::localizeNumberCharacters(const String& input)
+RefPtr<StringImpl> Locale::localizeNumberCharacters(StringImpl* input)
 {
     initializeLocaleData();
-    if (!m_hasLocaleData || input.isEmpty())
+    if (!m_hasLocaleData || isEmpty(input))
         return input;
 
     StringBuilder builder;
-    builder.reserveCapacity(input.length());
-    for (unsigned i = 0; i < input.length(); ++i) {
-        auto character = input[i];
+    builder.reserveCapacity(length(input));
+    for (unsigned i = 0; i < length(input); ++i) {
+        auto character = codeUnitAt(input, i);
         if (character >= '0' && character <= '9')
             builder.append(m_decimalSymbols[character - '0']);
         else if (character == '.')

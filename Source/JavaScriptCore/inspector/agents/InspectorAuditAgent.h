@@ -54,7 +54,7 @@ public:
 
     // AuditBackendDispatcherHandler
     Protocol::ErrorStringOr<void> setup(std::optional<Protocol::Runtime::ExecutionContextId>&&) final;
-    Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */>> run(const String& test, std::optional<Protocol::Runtime::ExecutionContextId>&&) final;
+    Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */>> run(StringImpl* test, std::optional<Protocol::Runtime::ExecutionContextId>&&) final;
     Protocol::ErrorStringOr<void> teardown() final;
 
     NODELETE bool hasActiveAudit() const;

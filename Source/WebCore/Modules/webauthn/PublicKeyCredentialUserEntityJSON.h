@@ -30,9 +30,9 @@
 namespace WebCore {
 
 struct PublicKeyCredentialUserEntityJSON {
-    String id;
-    String name;
-    String displayName;
+    RefPtr<StringImpl> id;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> displayName;
 };
 
 }

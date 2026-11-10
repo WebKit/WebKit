@@ -65,12 +65,12 @@ public:
         return adoptRef(*new DictationMarkerSupplier(WTF::move(alternatives)));
     }
 
-    void addMarkersToTextNode(Text& textNode, unsigned offsetOfInsertion, const String& textToBeInserted) override
+    void addMarkersToTextNode(Text& textNode, unsigned offsetOfInsertion, StringImpl* textToBeInserted) override
     {
         Ref document = textNode.document();
         CheckedRef markerController = document->markers();
         for (auto& alternative : m_alternatives) {
-            DocumentMarker::DictationData data { alternative.context, textToBeInserted.substring(alternative.range.location, alternative.range.length) };
+            DocumentMarker::DictationData data { alternative.context, substring(textToBeInserted, alternative.range.location, alternative.range.length) };
             markerController->addMarker(textNode, alternative.range.location + offsetOfInsertion, alternative.range.length, DocumentMarkerType::DictationAlternatives, WTF::move(data));
             markerController->addMarker(textNode, alternative.range.location + offsetOfInsertion, alternative.range.length, DocumentMarkerType::SpellCheckingExemption);
         }
@@ -85,24 +85,24 @@ private:
     Vector<DictationAlternative> m_alternatives;
 };
 
-DictationCommand::DictationCommand(Ref<Document>&& document, const String& text, const Vector<DictationAlternative>& alternatives)
+DictationCommand::DictationCommand(Ref<Document>&& document, StringImpl* text, const Vector<DictationAlternative>& alternatives)
     : TextInsertionBaseCommand(WTF::move(document))
     , m_textToInsert(text)
     , m_alternatives(alternatives)
 {
 }
 
-void DictationCommand::insertText(Ref<Document>&& document, const String& text, const Vector<DictationAlternative>& alternatives, const VisibleSelection& selectionForInsertion)
+void DictationCommand::insertText(Ref<Document>&& document, StringImpl* text, const Vector<DictationAlternative>& alternatives, const VisibleSelection& selectionForInsertion)
 {
     RefPtr frame { document->frame() };
     ASSERT(frame);
 
     VisibleSelection currentSelection = frame->selection().selection();
 
-    String newText = dispatchBeforeTextInsertedEvent(text, selectionForInsertion, false);
+    RefPtr<StringImpl> newText = dispatchBeforeTextInsertedEvent(text, selectionForInsertion, false);
 
     RefPtr<DictationCommand> cmd;
-    if (newText == text)
+    if (equal(newText, text))
         cmd = DictationCommand::create(WTF::move(document), newText, alternatives);
     else {
         // If the text was modified before insertion, the location of dictation alternatives
@@ -123,7 +123,7 @@ void DictationCommand::insertTextRunWithoutNewlines(size_t lineStart, size_t lin
 {
     Vector<DictationAlternative> alternativesInLine;
     collectDictationAlternativesInRange(lineStart, lineLength, alternativesInLine);
-    auto command = InsertTextCommand::createWithMarkerSupplier(document(), m_textToInsert.substring(lineStart, lineLength), DictationMarkerSupplier::create(WTF::move(alternativesInLine)), EditAction::Dictation);
+    auto command = InsertTextCommand::createWithMarkerSupplier(document(), substring(m_textToInsert, lineStart, lineLength), DictationMarkerSupplier::create(WTF::move(alternativesInLine)), EditAction::Dictation);
     applyCommandToComposite(WTF::move(command), endingSelection());
 }
 

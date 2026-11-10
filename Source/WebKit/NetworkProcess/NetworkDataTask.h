@@ -131,24 +131,24 @@ public:
     }
     NODELETE void setPendingDownload(PendingDownload&);
 
-    virtual void setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&&, bool /*allowOverwrite*/) { m_pendingDownloadLocation = filename; }
-    const String& pendingDownloadLocation() const LIFETIME_BOUND { return m_pendingDownloadLocation; }
+    virtual void setPendingDownloadLocation(StringImpl* filename, SandboxExtension::Handle&&, bool /*allowOverwrite*/) { m_pendingDownloadLocation = filename; }
+    const RefPtr<StringImpl>& pendingDownloadLocation() const LIFETIME_BOUND { return m_pendingDownloadLocation; }
     bool isDownload() const { return !!m_pendingDownloadID; }
 
     const WebCore::ResourceRequest& firstRequest() const LIFETIME_BOUND { return m_firstRequest; }
-    virtual String suggestedFilename() const { return String(); }
-    void setSuggestedFilename(const String& suggestedName) { m_suggestedFilename = suggestedName; }
-    const String& partition() LIFETIME_BOUND { return m_partition; }
+    virtual RefPtr<StringImpl> suggestedFilename() const { return nullptr; }
+    void setSuggestedFilename(StringImpl* suggestedName) { m_suggestedFilename = suggestedName; }
+    const RefPtr<StringImpl>& partition() LIFETIME_BOUND { return m_partition; }
 
     bool isTopLevelNavigation() const { return m_dataTaskIsForMainFrameNavigation; }
 
     bool isInitiatedByWorker() const { return m_isInitiatedByWorker; }
 
-    virtual String description() const;
+    virtual RefPtr<StringImpl> description() const;
     virtual void setH2PingCallback(const URL&, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
 
     virtual void setPriority(WebCore::ResourceLoadPriority) { }
-    String attributedBundleIdentifier(WebPageProxyIdentifier);
+    RefPtr<StringImpl> attributedBundleIdentifier(WebPageProxyIdentifier);
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     void notifyEmulatedConditionsChanged();
@@ -182,16 +182,16 @@ protected:
     WeakPtr<NetworkDataTaskClient> m_client;
     WeakPtr<PendingDownload> m_pendingDownload;
     Markable<DownloadID> m_pendingDownloadID;
-    String m_user;
-    String m_password;
-    String m_partition;
+    RefPtr<StringImpl> m_user;
+    RefPtr<StringImpl> m_password;
+    RefPtr<StringImpl> m_partition;
     WebCore::Credential m_initialCredential;
     WebCore::StoredCredentialsPolicy m_storedCredentialsPolicy { WebCore::StoredCredentialsPolicy::DoNotUse };
-    String m_lastHTTPMethod;
-    String m_pendingDownloadLocation;
+    RefPtr<StringImpl> m_lastHTTPMethod;
+    RefPtr<StringImpl> m_pendingDownloadLocation;
     WebCore::ResourceRequest m_firstRequest;
     WebCore::ResourceRequest m_previousRequest;
-    String m_suggestedFilename;
+    RefPtr<StringImpl> m_suggestedFilename;
     size_t m_bytesTransferredOverNetwork { 0 };
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect { true };
     bool m_dataTaskIsForMainFrameNavigation { false };

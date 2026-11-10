@@ -129,18 +129,18 @@ void SVGDocumentExtensions::dispatchLoadEventToOutermostSVGElements()
     }
 }
 
-static void reportMessage(Document& document, MessageLevel level, const String& message)
+static void reportMessage(Document& document, MessageLevel level, StringImpl* message)
 {
     if (document.frame())
         document.addConsoleMessage(MessageSource::Rendering, level, message);
 }
 
-void SVGDocumentExtensions::reportWarning(const String& message)
+void SVGDocumentExtensions::reportWarning(StringImpl* message)
 {
     reportMessage(protect(m_document), MessageLevel::Warning, makeString("Warning: "_s, message));
 }
 
-void SVGDocumentExtensions::reportError(const String& message)
+void SVGDocumentExtensions::reportError(StringImpl* message)
 {
     reportMessage(protect(m_document), MessageLevel::Error, makeString("Error: "_s, message));
 }

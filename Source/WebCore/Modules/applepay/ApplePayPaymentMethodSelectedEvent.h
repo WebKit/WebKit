@@ -37,7 +37,7 @@ class PaymentMethod;
 class ApplePayPaymentMethodSelectedEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(ApplePayPaymentMethodSelectedEvent);
 public:
-    static Ref<ApplePayPaymentMethodSelectedEvent> create(const AtomString& type, const PaymentMethod& paymentMethod)
+    static Ref<ApplePayPaymentMethodSelectedEvent> create(AtomStringImpl* type, const PaymentMethod& paymentMethod)
     {
         return adoptRef(*new ApplePayPaymentMethodSelectedEvent(type, paymentMethod));
     }
@@ -47,7 +47,7 @@ public:
     const ApplePayPaymentMethod& paymentMethod() LIFETIME_BOUND { return m_paymentMethod; }
 
 private:
-    ApplePayPaymentMethodSelectedEvent(const AtomString& type, const PaymentMethod&);
+    ApplePayPaymentMethodSelectedEvent(AtomStringImpl* type, const PaymentMethod&);
 
     const ApplePayPaymentMethod m_paymentMethod;
 };

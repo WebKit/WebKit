@@ -32,26 +32,26 @@ namespace WebCore {
 
 class DeprecatedCSSOMCounter final : public RefCounted<DeprecatedCSSOMCounter> {
 public:
-    static Ref<DeprecatedCSSOMCounter> create(String identifier, String separator, String listStyleType)
+    static Ref<DeprecatedCSSOMCounter> create(RefPtr<StringImpl> identifier, RefPtr<StringImpl> separator, RefPtr<StringImpl> listStyleType)
     {
         return adoptRef(*new DeprecatedCSSOMCounter(WTF::move(identifier), WTF::move(separator), WTF::move(listStyleType)));
     }
 
-    String identifier() const { return m_identifier; }
-    String separator() const { return m_separator; }
-    String listStyle() const { return m_listStyleType; }
+    RefPtr<StringImpl> identifier() const { return m_identifier; }
+    RefPtr<StringImpl> separator() const { return m_separator; }
+    RefPtr<StringImpl> listStyle() const { return m_listStyleType; }
 
 private:
-    DeprecatedCSSOMCounter(String identifier, String separator, String listStyleType)
+    DeprecatedCSSOMCounter(RefPtr<StringImpl> identifier, RefPtr<StringImpl> separator, RefPtr<StringImpl> listStyleType)
         : m_identifier(WTF::move(identifier))
         , m_separator(WTF::move(separator))
         , m_listStyleType(listStyleType)
     {
     }
 
-    String m_identifier;
-    String m_separator;
-    String m_listStyleType;
+    RefPtr<StringImpl> m_identifier;
+    RefPtr<StringImpl> m_separator;
+    RefPtr<StringImpl> m_listStyleType;
 };
 
 } // namespace WebCore

@@ -241,7 +241,7 @@ WebWheelEventInit WebEventFactory::createWebWheelEvent(WPEEvent* event, WebWheel
     };
 }
 
-WebKeyboardEventInit WebEventFactory::createWebKeyboardEvent(WPEEvent* event, const String& text, bool isAutoRepeat)
+WebKeyboardEventInit WebEventFactory::createWebKeyboardEvent(WPEEvent* event, StringImpl* text, bool isAutoRepeat)
 {
     auto type = wpe_event_get_event_type(event) == WPE_EVENT_KEYBOARD_KEY_DOWN ? WebEventType::KeyDown : WebEventType::KeyUp;
     auto keyval = wpe_event_keyboard_get_keyval(event);
@@ -249,7 +249,7 @@ WebKeyboardEventInit WebEventFactory::createWebKeyboardEvent(WPEEvent* event, co
     return {
         { type, modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), monotonicTimeForEvent(event) },
         {
-            .text = text.isNull() ? WebKeyboardEvent::singleCharacterStringForWPEKeyval(keyval) : text,
+            .text = !text ? WebKeyboardEvent::singleCharacterStringForWPEKeyval(keyval) : RefPtr<StringImpl> { text },
             .key = WebKeyboardEvent::keyValueStringForWPEKeyval(keyval),
             .code = WebKeyboardEvent::keyCodeStringForWPEKeycode(keycode),
             .keyIdentifier = WebKeyboardEvent::keyIdentifierForWPEKeyval(keyval),

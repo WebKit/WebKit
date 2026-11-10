@@ -43,7 +43,7 @@ public:
     bool attached() const { return m_object; }
     AccessibilityObject* accessibilityObject() const { return m_object; }
 
-    WEBCORE_EXPORT void accessibilityAttributeValue(const AtomString&, VARIANT*);
+    WEBCORE_EXPORT void accessibilityAttributeValue(AtomStringImpl*, VARIANT*);
 
 protected:
     AccessibilityObjectWrapper(AccessibilityObject* obj)

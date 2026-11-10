@@ -641,21 +641,21 @@ TEST(WebpagePreferences, WebsitePoliciesWithBridgingCast)
 }
 
 struct ParsedRange {
-    ParsedRange(String string)
+    ParsedRange(RefPtr<StringImpl> string)
     {
         // This is a strict and unsafe Range header parser adequate only for tests.
         bool parsingMin = true;
         size_t min = 0;
         size_t max = 0;
-        ASSERT(string.length() > 6);
-        ASSERT(string.startsWith("bytes="_s));
-        for (size_t i = 6; i < string.length(); ++i) {
-            if (isASCIIDigit(string[i])) {
+        ASSERT(length(string) > 6);
+        ASSERT(startsWith(string, "bytes="_s));
+        for (size_t i = 6; i < length(string); ++i) {
+            if (isASCIIDigit(codeUnitAt(string, i))) {
                 if (parsingMin)
-                    min = min * 10 + string[i] - '0';
+                    min = min * 10 + codeUnitAt(string, i) - '0';
                 else
-                    max = max * 10 + string[i] - '0';
-            } else if (string[i] == '-') {
+                    max = max * 10 + codeUnitAt(string, i) - '0';
+            } else if (codeUnitAt(string, i) == '-') {
                 if (parsingMin)
                     parsingMin = false;
                 else
@@ -701,7 +701,7 @@ struct ParsedRange {
     }
     
     ASSERT_TRUE([task.request.URL.path isEqualToString:@"/test.mp4"]);
-    ParsedRange parsedRange([task.request valueForHTTPHeaderField:@"Range"]);
+    ParsedRange parsedRange(StringImpl::create([task.request valueForHTTPHeaderField:@"Range"]));
     ASSERT_TRUE(!!parsedRange.range);
     auto& range = *parsedRange.range;
     
@@ -1166,7 +1166,7 @@ TEST(WebpagePreferences, CustomHeaderFields)
 static unsigned loadCount;
 
 @interface DataMappingSchemeHandler : NSObject <WKURLSchemeHandler> {
-    HashMap<String, RetainPtr<NSData>> _dataMappings;
+    HashMap<RefPtr<StringImpl>, RetainPtr<NSData>> _dataMappings;
     Function<void(id <WKURLSchemeTask>)> _taskHandler;
 }
 - (void)addMappingFromURLString:(NSString *)urlString toData:(ASCIILiteral)data;
@@ -1177,7 +1177,7 @@ static unsigned loadCount;
 
 - (void)addMappingFromURLString:(NSString *)urlString toData:(ASCIILiteral)data
 {
-    _dataMappings.set(urlString, toNSData(data.span8()));
+    _dataMappings.set(StringImpl::create(urlString), toNSData(data.span8()));
 }
 
 - (void)setTaskHandler:(Function<void(id <WKURLSchemeTask>)>&&)handler
@@ -1196,7 +1196,7 @@ static unsigned loadCount;
     RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:finalURL MIMEType:@"text/html" expectedContentLength:1 textEncodingName:nil]);
     [task didReceiveResponse:response.get()];
 
-    if (RetainPtr data = _dataMappings.get([finalURL absoluteString]))
+    if (RetainPtr data = _dataMappings.get(StringImpl::create([finalURL absoluteString]).get()))
         [task didReceiveData:data.get()];
     else
         [task didReceiveData:[@"Hello" dataUsingEncoding:NSUTF8StringEncoding]];
@@ -2197,7 +2197,7 @@ TEST(WebpagePreferences, ExtensionPageAdvancedPrivacyProtectionsReferrer)
         { "/subframe2.html"_s, { "<script>window.top.postMessage(document.referrer, '*');</script>"_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    server.addResponse("/subframe1.html"_s, { makeString("<iframe src='http://127.0.0.1:"_s, server.port(), "/subframe2.html'></iframe>"_s) });
+    server.addResponse("/subframe1.html"_si, { makeString("<iframe src='http://127.0.0.1:"_s, server.port(), "/subframe2.html'></iframe>"_s) });
 
     __block auto port = server.port();
     RetainPtr handler = adoptNS([TestURLSchemeHandler new]);
@@ -2388,22 +2388,22 @@ TEST(WebpagePreferences, GlobalPrivacyControlRequestHeader)
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         bool hasGPCHeader = !!strnstr(request.span().data(), "\r\nSec-GPC: 1\r\n", request.size());
-        if (path == "/main"_s) {
+        if (equal(path, "/main"_s)) {
             EXPECT_TRUE(hasGPCHeader);
             sawMainResourceRequest = true;
-            co_await connection.awaitableSend(HTTPResponse("<script>fetch('/sub').then(() => {});</script>"_s).serialize());
+            co_await connection.awaitableSend(HTTPResponse("<script>fetch('/sub').then(() => {});</script>"_si).serialize());
             continue;
         }
-        if (path == "/sub"_s) {
+        if (equal(path, "/sub"_s)) {
             EXPECT_TRUE(hasGPCHeader);
             sawSubresourceRequest = true;
-            co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
+            co_await connection.awaitableSend(HTTPResponse(""_si).serialize());
             continue;
         }
-        if (path == "/no-override"_s) {
+        if (equal(path, "/no-override"_s)) {
             EXPECT_FALSE(hasGPCHeader);
             sawNoOverrideRequest = true;
-            co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
+            co_await connection.awaitableSend(HTTPResponse(""_si).serialize());
             continue;
         }
         EXPECT_FALSE(true);
@@ -2459,22 +2459,22 @@ TEST(WebpagePreferences, GlobalPrivacyControlRequestHeaderInSubframe)
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         bool hasGPCHeader = !!strnstr(request.span().data(), "\r\nSec-GPC: 1\r\n", request.size());
-        if (path == "/main"_s) {
+        if (equal(path, "/main"_s)) {
             EXPECT_TRUE(hasGPCHeader);
             sawMainResourceRequest = true;
-            co_await connection.awaitableSend(HTTPResponse("<iframe src='/subframe'></iframe>"_s).serialize());
+            co_await connection.awaitableSend(HTTPResponse("<iframe src='/subframe'></iframe>"_si).serialize());
             continue;
         }
-        if (path == "/subframe"_s) {
+        if (equal(path, "/subframe"_s)) {
             EXPECT_TRUE(hasGPCHeader);
             sawSubframeMainResourceRequest = true;
-            co_await connection.awaitableSend(HTTPResponse("<script>fetch('/subframe-subresource').then(() => {});</script>"_s).serialize());
+            co_await connection.awaitableSend(HTTPResponse("<script>fetch('/subframe-subresource').then(() => {});</script>"_si).serialize());
             continue;
         }
-        if (path == "/subframe-subresource"_s) {
+        if (equal(path, "/subframe-subresource"_s)) {
             EXPECT_TRUE(hasGPCHeader);
             sawSubframeSubresourceRequest = true;
-            co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
+            co_await connection.awaitableSend(HTTPResponse(""_si).serialize());
             continue;
         }
         EXPECT_FALSE(true);

@@ -108,8 +108,8 @@ struct AttachmentLayout {
     CGFloat contentYOrigin { 0 };
     void layOutSubtitle(const RenderAttachment&);
     void layOutTitle(const RenderAttachment&);
-    void buildWrappedLines(String&, CTFontRef, NSDictionary*, unsigned);
-    void buildSingleLine(const String&, CTFontRef, NSDictionary*);
+    void buildWrappedLines(RefPtr<StringImpl>&, CTFontRef, NSDictionary*, unsigned);
+    void buildSingleLine(StringImpl*, CTFontRef, NSDictionary*);
     void addLine(CTFontRef, CTLineRef, bool);
 };
 

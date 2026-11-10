@@ -48,16 +48,16 @@ NODELETE static WebPageGroupMap& webPageGroupMap()
     return map;
 }
 
-Ref<WebPageGroup> WebPageGroup::create(const String& identifier)
+Ref<WebPageGroup> WebPageGroup::create(StringImpl* identifier)
 {
     return adoptRef(*new WebPageGroup(identifier));
 }
 
-static WebPageGroupData pageGroupData(const String& identifier)
+static WebPageGroupData pageGroupData(StringImpl* identifier)
 {
-    static NeverDestroyed<HashMap<String, PageGroupIdentifier>> map;
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, PageGroupIdentifier>> map;
     auto pageGroupID = [&] {
-        if (HashMap<String, PageGroupIdentifier>::isValidKey(identifier)) {
+        if (HashMap<RefPtr<StringImpl>, PageGroupIdentifier>::isValidKey(identifier)) {
             return map.get().ensure(identifier, [] {
                 return PageGroupIdentifier::generate();
             }).iterator->value;
@@ -65,8 +65,8 @@ static WebPageGroupData pageGroupData(const String& identifier)
         return PageGroupIdentifier::generate();
     }();
 
-    String validIdentifier;
-    if (!identifier.isEmpty())
+    RefPtr<StringImpl> validIdentifier;
+    if (!isEmpty(identifier))
         validIdentifier = identifier;
     else
         validIdentifier = makeString("__uniquePageGroupID-"_s, pageGroupID.toUInt64());
@@ -79,9 +79,9 @@ static WebPageGroupData pageGroupData(const String& identifier)
 
 // FIXME: Why does the WebPreferences object here use ".WebKit2" instead of "WebKit2." which all the other constructors use.
 // If it turns out that it's wrong, we can change it to to "WebKit2." and get rid of the globalDebugKeyPrefix from WebPreferences.
-WebPageGroup::WebPageGroup(const String& identifier)
+WebPageGroup::WebPageGroup(StringImpl* identifier)
     : m_data(pageGroupData(identifier))
-    , m_preferences(WebPreferences::createWithLegacyDefaults(m_data.identifier, ".WebKit2"_s, "WebKit2."_s))
+    , m_preferences(WebPreferences::createWithLegacyDefaults(m_data.identifier, ".WebKit2"_si, "WebKit2."_si))
 {
     webPageGroupMap().set(m_data.pageGroupID, *this);
 }

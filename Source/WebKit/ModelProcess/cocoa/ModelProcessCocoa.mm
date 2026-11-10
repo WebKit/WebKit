@@ -41,7 +41,7 @@ namespace WebKit {
 using namespace WebCore;
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-void ModelProcess::dispatchSimulatedNotificationsForPreferenceChange(const String& key)
+void ModelProcess::dispatchSimulatedNotificationsForPreferenceChange(StringImpl* key)
 {
 }
 #endif // ENABLE(CFPREFS_DIRECT_MODE)

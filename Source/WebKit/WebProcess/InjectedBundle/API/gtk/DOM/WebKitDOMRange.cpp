@@ -477,7 +477,7 @@ WebKitDOMDocumentFragment* webkit_dom_range_create_contextual_fragment(WebKitDOM
     g_return_val_if_fail(html, 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::Range* item = WebKit::core(self);
-    WTF::String convertedHtml = WTF::String::fromUTF8(html);
+    RefPtr<StringImpl> convertedHtml = StringImpl::fromUTF8(html);
     auto result = item->createContextualFragment(convertedHtml);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
@@ -554,7 +554,7 @@ void webkit_dom_range_expand(WebKitDOMRange* self, const gchar* unit, GError** e
     g_return_if_fail(unit);
     g_return_if_fail(!error || !*error);
     WebCore::Range* item = WebKit::core(self);
-    WTF::String convertedUnit = WTF::String::fromUTF8(unit);
+    RefPtr<StringImpl> convertedUnit = StringImpl::fromUTF8(unit);
     auto result = item->expand(convertedUnit);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());

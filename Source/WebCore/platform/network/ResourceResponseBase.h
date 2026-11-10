@@ -94,24 +94,24 @@ public:
     WEBCORE_EXPORT const URL& url() const LIFETIME_BOUND;
     WEBCORE_EXPORT void setURL(URL&&);
 
-    WEBCORE_EXPORT const String& mimeType() const LIFETIME_BOUND;
-    WEBCORE_EXPORT void setMimeType(String&&);
+    WEBCORE_EXPORT const RefPtr<StringImpl>& mimeType() const LIFETIME_BOUND;
+    WEBCORE_EXPORT void setMimeType(RefPtr<StringImpl>&&);
 
     WEBCORE_EXPORT long long expectedContentLength() const;
     WEBCORE_EXPORT void setExpectedContentLength(long long expectedContentLength);
 
-    WEBCORE_EXPORT const String& textEncodingName() const LIFETIME_BOUND;
-    WEBCORE_EXPORT void setTextEncodingName(String&&);
+    WEBCORE_EXPORT const RefPtr<StringImpl>& textEncodingName() const LIFETIME_BOUND;
+    WEBCORE_EXPORT void setTextEncodingName(RefPtr<StringImpl>&&);
 
     WEBCORE_EXPORT int httpStatusCode() const;
     WEBCORE_EXPORT void setHTTPStatusCode(int);
     NODELETE WEBCORE_EXPORT bool isRedirection() const;
 
-    WEBCORE_EXPORT const String& httpStatusText() const LIFETIME_BOUND;
-    WEBCORE_EXPORT void setHTTPStatusText(String&&);
+    WEBCORE_EXPORT const RefPtr<StringImpl>& httpStatusText() const LIFETIME_BOUND;
+    WEBCORE_EXPORT void setHTTPStatusText(RefPtr<StringImpl>&&);
 
-    WEBCORE_EXPORT const String& httpVersion() const LIFETIME_BOUND;
-    WEBCORE_EXPORT void setHTTPVersion(String&&);
+    WEBCORE_EXPORT const RefPtr<StringImpl>& httpVersion() const LIFETIME_BOUND;
+    WEBCORE_EXPORT void setHTTPVersion(RefPtr<StringImpl>&&);
     WEBCORE_EXPORT bool isHTTP09() const;
 
     WEBCORE_EXPORT const HTTPHeaderMap& httpHeaderFields() const LIFETIME_BOUND;
@@ -120,29 +120,29 @@ public:
     enum class SanitizationType { Redirection, RemoveCookies, CrossOriginSafe };
     WEBCORE_EXPORT void sanitizeHTTPHeaderFields(SanitizationType);
 
-    String httpHeaderField(StringView name) const;
-    WEBCORE_EXPORT String httpHeaderField(HTTPHeaderName) const;
-    WEBCORE_EXPORT void setHTTPHeaderField(const String& name, const String& value);
-    WEBCORE_EXPORT void setUncommonHTTPHeaderField(const String& name, const String& value);
-    WEBCORE_EXPORT void setHTTPHeaderField(HTTPHeaderName, const String& value);
+    RefPtr<StringImpl> httpHeaderField(StringView name) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> httpHeaderField(HTTPHeaderName) const;
+    WEBCORE_EXPORT void setHTTPHeaderField(StringImpl* name, StringImpl* value);
+    WEBCORE_EXPORT void setUncommonHTTPHeaderField(StringImpl* name, StringImpl* value);
+    WEBCORE_EXPORT void setHTTPHeaderField(HTTPHeaderName, StringImpl* value);
 
-    WEBCORE_EXPORT void addHTTPHeaderField(HTTPHeaderName, const String& value);
-    WEBCORE_EXPORT void addHTTPHeaderField(const String& name, const String& value);
-    WEBCORE_EXPORT void addUncommonHTTPHeaderField(const String& name, const String& value);
+    WEBCORE_EXPORT void addHTTPHeaderField(HTTPHeaderName, StringImpl* value);
+    WEBCORE_EXPORT void addHTTPHeaderField(StringImpl* name, StringImpl* value);
+    WEBCORE_EXPORT void addUncommonHTTPHeaderField(StringImpl* name, StringImpl* value);
 
     WEBCORE_EXPORT void removeHTTPHeaderField(HTTPHeaderName);
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
-    template<size_t length> String httpHeaderField(ASCIILiteral) const = delete;
-    template<size_t length> void setHTTPHeaderField(ASCIILiteral, const String&) = delete;
-    template<size_t length> void addHTTPHeaderField(ASCIILiteral, const String&) = delete;
+    template<size_t length> RefPtr<StringImpl> httpHeaderField(ASCIILiteral) const = delete;
+    template<size_t length> void setHTTPHeaderField(ASCIILiteral, StringImpl*) = delete;
+    template<size_t length> void addHTTPHeaderField(ASCIILiteral, StringImpl*) = delete;
 
-    bool isMultipart() const { return mimeType() == "multipart/x-mixed-replace"_s; }
+    bool isMultipart() const { return equal(mimeType(), "multipart/x-mixed-replace"_s); }
 
     WEBCORE_EXPORT bool isAttachment() const;
     WEBCORE_EXPORT bool isAttachmentWithFilename() const;
-    WEBCORE_EXPORT String suggestedFilename() const;
-    WEBCORE_EXPORT static String sanitizeSuggestedFilename(const String&);
+    WEBCORE_EXPORT RefPtr<StringImpl> suggestedFilename() const;
+    WEBCORE_EXPORT static RefPtr<StringImpl> sanitizeSuggestedFilename(StringImpl*);
 
     bool isNosniff() const;
 
@@ -153,8 +153,8 @@ public:
     void setUsedLegacyTLS(UsedLegacyTLS used) { m_usedLegacyTLS = used; }
     bool wasPrivateRelayed() const { return m_wasPrivateRelayed == WasPrivateRelayed::Yes; }
     void setWasPrivateRelayed(WasPrivateRelayed privateRelayed) { m_wasPrivateRelayed = privateRelayed; }
-    void setProxyName(String&& proxyName) { m_proxyName = WTF::move(proxyName); }
-    const String& proxyName() const LIFETIME_BOUND { return m_proxyName; }
+    void setProxyName(RefPtr<StringImpl>&& proxyName) { m_proxyName = WTF::move(proxyName); }
+    const RefPtr<StringImpl>& proxyName() const LIFETIME_BOUND { return m_proxyName; }
 
     IPAddressSpace ipAddressSpace() const { return m_ipAddressSpace; }
     void setIPAddressSpace(IPAddressSpace ipAddressSpace) { m_ipAddressSpace = ipAddressSpace; }
@@ -233,7 +233,7 @@ public:
     WEBCORE_EXPORT bool containsInvalidHTTPHeaders() const;
 
     WEBCORE_EXPORT static ResourceResponse dataURLResponse(const URL&, const DataURLDecoder::Result&);
-    WEBCORE_EXPORT static ResourceResponse responseForMIMEType(URL&&, const String& mimeType, long long expectedLength, const String& textEncodingName);
+    WEBCORE_EXPORT static ResourceResponse responseForMIMEType(URL&&, StringImpl* mimeType, long long expectedLength, StringImpl* textEncodingName);
     
     WEBCORE_EXPORT ResourceResponseBase(std::optional<ResourceResponseData>&&);
     
@@ -247,14 +247,14 @@ protected:
     };
 
     NODELETE WEBCORE_EXPORT ResourceResponseBase();
-    WEBCORE_EXPORT ResourceResponseBase(URL&&, String&& mimeType, long long expectedLength, String&& textEncodingName);
+    WEBCORE_EXPORT ResourceResponseBase(URL&&, RefPtr<StringImpl>&& mimeType, long long expectedLength, RefPtr<StringImpl>&& textEncodingName);
 
     WEBCORE_EXPORT void lazyInit(InitLevel) const;
 
     // The ResourceResponse subclass should shadow these functions to lazily initialize platform specific fields
     void platformLazyInit(InitLevel) { }
     CertificateInfo platformCertificateInfo(std::span<const std::byte>) const { return CertificateInfo(); };
-    String platformSuggestedFileName() const { return String(); }
+    RefPtr<StringImpl> platformSuggestedFileName() const { return nullptr; }
 
     static bool platformCompare(const ResourceResponse&, const ResourceResponse&) { return true; }
 
@@ -265,11 +265,11 @@ private:
 
 protected:
     URL m_url;
-    String m_mimeType;
+    RefPtr<StringImpl> m_mimeType;
     long long m_expectedContentLength { 0 };
-    String m_textEncodingName;
-    String m_httpStatusText;
-    String m_httpVersion;
+    RefPtr<StringImpl> m_textEncodingName;
+    RefPtr<StringImpl> m_httpStatusText;
+    RefPtr<StringImpl> m_httpVersion;
     HTTPHeaderMap m_httpHeaderFields;
     Box<NetworkLoadMetrics> m_networkLoadMetrics;
 
@@ -281,7 +281,7 @@ protected:
     unsigned m_initLevel : 3; // Controlled by ResourceResponse.
     mutable UsedLegacyTLS m_usedLegacyTLS : bitWidthOfUsedLegacyTLS { UsedLegacyTLS::No };
     mutable WasPrivateRelayed m_wasPrivateRelayed : bitWidthOfWasPrivateRelayed { WasPrivateRelayed::No };
-    String m_proxyName;
+    RefPtr<StringImpl> m_proxyName;
 
 private:
     friend struct WTF::Persistence::Coder<ResourceResponse>;
@@ -315,7 +315,7 @@ struct ResourceResponseData {
     ResourceResponseData() = default;
     ResourceResponseData(ResourceResponseData&&) = default;
     ResourceResponseData& operator=(ResourceResponseData&&) = default;
-    ResourceResponseData(URL&& url, String&& mimeType, long long expectedContentLength, String&& textEncodingName, int httpStatusCode, String&& httpStatusText, String&& httpVersion, HTTPHeaderMap&& httpHeaderFields, std::optional<NetworkLoadMetrics>&& networkLoadMetrics, ResourceResponseSource source, ResourceResponseBaseType type, ResourceResponseBaseTainting tainting, bool isRedirected, UsedLegacyTLS usedLegacyTLS, WasPrivateRelayed wasPrivateRelayed, String&& proxyName, bool isRangeRequested, std::optional<CertificateInfo>&& certificateInfo, IPAddressSpace ipAddressSpace, bool isFromPrevalentDomain)
+    ResourceResponseData(URL&& url, RefPtr<StringImpl>&& mimeType, long long expectedContentLength, RefPtr<StringImpl>&& textEncodingName, int httpStatusCode, RefPtr<StringImpl>&& httpStatusText, RefPtr<StringImpl>&& httpVersion, HTTPHeaderMap&& httpHeaderFields, std::optional<NetworkLoadMetrics>&& networkLoadMetrics, ResourceResponseSource source, ResourceResponseBaseType type, ResourceResponseBaseTainting tainting, bool isRedirected, UsedLegacyTLS usedLegacyTLS, WasPrivateRelayed wasPrivateRelayed, RefPtr<StringImpl>&& proxyName, bool isRangeRequested, std::optional<CertificateInfo>&& certificateInfo, IPAddressSpace ipAddressSpace, bool isFromPrevalentDomain)
         : url(WTF::move(url))
         , mimeType(WTF::move(mimeType))
         , expectedContentLength(expectedContentLength)
@@ -342,12 +342,12 @@ struct ResourceResponseData {
     WEBCORE_EXPORT ResourceResponseData isolatedCopy() const;
 
     URL url;
-    String mimeType;
+    RefPtr<StringImpl> mimeType;
     long long expectedContentLength;
-    String textEncodingName;
+    RefPtr<StringImpl> textEncodingName;
     short httpStatusCode;
-    String httpStatusText;
-    String httpVersion;
+    RefPtr<StringImpl> httpStatusText;
+    RefPtr<StringImpl> httpVersion;
     HTTPHeaderMap httpHeaderFields;
     std::optional<NetworkLoadMetrics> networkLoadMetrics;
     ResourceResponseBase::Source source;
@@ -356,7 +356,7 @@ struct ResourceResponseData {
     bool isRedirected;
     UsedLegacyTLS usedLegacyTLS;
     WasPrivateRelayed wasPrivateRelayed;
-    String proxyName;
+    RefPtr<StringImpl> proxyName;
     bool isRangeRequested;
     std::optional<CertificateInfo> certificateInfo;
     IPAddressSpace ipAddressSpace;

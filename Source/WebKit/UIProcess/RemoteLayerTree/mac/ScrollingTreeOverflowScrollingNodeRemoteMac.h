@@ -43,7 +43,7 @@ private:
 
     void handleWheelEventPhase(const WebCore::PlatformWheelEventPhase) override;
     void repositionRelatedLayers() override;
-    String scrollbarStateForOrientation(WebCore::ScrollbarOrientation) const override;
+    RefPtr<StringImpl> scrollbarStateForOrientation(WebCore::ScrollbarOrientation) const override;
 };
 
 }

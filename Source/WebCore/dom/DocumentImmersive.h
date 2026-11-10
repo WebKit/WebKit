@@ -99,7 +99,7 @@ private:
     void dismissClientImmersivePresentation(CompletionHandler<void()>&&);
 
     enum class EmitErrorEvent : bool { No, Yes };
-    void handleImmersiveError(ImmersiveElement*, const String& message, EmitErrorEvent, ExceptionCode, CompletionHandler<void(ExceptionOr<void>)>&&);
+    void handleImmersiveError(ImmersiveElement*, StringImpl* message, EmitErrorEvent, ExceptionCode, CompletionHandler<void(ExceptionOr<void>)>&&);
 
     Deque<std::pair<EventType, GCReachableRef<Element>>> m_pendingEvents;
 };

@@ -217,7 +217,7 @@ bool PointerCaptureController::preventsCompatibilityMouseEventsForIdentifier(Poi
     return capturingData && capturingData->preventsCompatibilityMouseEvents;
 }
 
-bool PointerCaptureController::hierarchyHasCapturingEventListeners(Element* target, const AtomString& eventName)
+bool PointerCaptureController::hierarchyHasCapturingEventListeners(Element* target, AtomStringImpl* eventName)
 {
     for (RefPtr<ContainerNode> currentNode = target; currentNode; currentNode = currentNode->parentInComposedTree()) {
         if (currentNode->hasCapturingEventListeners(eventName))
@@ -226,7 +226,7 @@ bool PointerCaptureController::hierarchyHasCapturingEventListeners(Element* targ
     return false;
 }
 
-void PointerCaptureController::dispatchBoundaryEvents(Element* previousTarget, Element* currentTarget, NOESCAPE const Function<Ref<PointerEvent>(const AtomString& eventType)>& createEvent)
+void PointerCaptureController::dispatchBoundaryEvents(Element* previousTarget, Element* currentTarget, NOESCAPE const Function<Ref<PointerEvent>(AtomStringImpl* eventType)>& createEvent)
 {
     // The pointerenter and pointerleave events are only dispatched if there is a capturing event listener on an ancestor
     // or a normal event listener on the element itself since those events do not bubble.
@@ -271,12 +271,12 @@ void PointerCaptureController::dispatchBoundaryEvents(Element* previousTarget, E
 }
 
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE) || PLATFORM(GTK))
-void PointerCaptureController::dispatchOverOrOutEvent(const AtomString& type, EventTarget* target, const PlatformTouchEvent& event, unsigned index, bool isPrimary, WindowProxy& view, DoublePoint touchDelta)
+void PointerCaptureController::dispatchOverOrOutEvent(AtomStringImpl* type, EventTarget* target, const PlatformTouchEvent& event, unsigned index, bool isPrimary, WindowProxy& view, DoublePoint touchDelta)
 {
     dispatchEvent(PointerEvent::create(type, event, { }, { }, index, isPrimary, view, touchDelta), target);
 }
 
-void PointerCaptureController::dispatchEnterOrLeaveEvent(const AtomString& type, Element& targetElement, const PlatformTouchEvent& event, unsigned index, bool isPrimary, WindowProxy& view, DoublePoint touchDelta)
+void PointerCaptureController::dispatchEnterOrLeaveEvent(AtomStringImpl* type, Element& targetElement, const PlatformTouchEvent& event, unsigned index, bool isPrimary, WindowProxy& view, DoublePoint touchDelta)
 {
     bool hasCapturingListenerInHierarchy = false;
     for (RefPtr<ContainerNode> currentNode = targetElement; currentNode; currentNode = currentNode->parentInComposedTree()) {
@@ -332,7 +332,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
     capturingData->previousTarget = currentTarget;
 
     if (pointerEvent->type() == eventNames().pointermoveEvent && previousTarget != currentTarget) {
-        dispatchBoundaryEvents(previousTarget.get(), currentTarget.get(), [&](const AtomString& eventType) {
+        dispatchBoundaryEvents(previousTarget.get(), currentTarget.get(), [&](AtomStringImpl* eventType) {
             if (eventType == eventNames().pointeroverEvent || eventType == eventNames().pointeroutEvent)
                 return PointerEvent::create(eventType, platformTouchEvent, { }, { }, index, isPrimary, view, touchDelta);
             return PointerEvent::create(eventType, platformTouchEvent, coalescedEvents, predictedEvents, index, isPrimary, view, touchDelta);
@@ -400,7 +400,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
 
 #if PLATFORM(MAC)
 
-bool PointerCaptureController::dispatchEventForTrackedPointer(Element& target, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+bool PointerCaptureController::dispatchEventForTrackedPointer(Element& target, const MouseEvent& mouseEvent, PointerID pointerId, StringImpl* pointerType)
 {
     auto& names = eventNames();
     auto type = PointerEvent::typeFromMouseEventType(mouseEvent.type());
@@ -417,7 +417,7 @@ bool PointerCaptureController::dispatchEventForTrackedPointer(Element& target, c
         RefPtr previousTarget = std::exchange(capturingData->previousTarget, &target);
         if (previousTarget && (!previousTarget->isConnected() || !previousTarget->document().frame()))
             previousTarget = nullptr;
-        dispatchBoundaryEvents(previousTarget.get(), &target, [&](const AtomString& eventType) {
+        dispatchBoundaryEvents(previousTarget.get(), &target, [&](AtomStringImpl* eventType) {
             return PointerEvent::create(eventType, std::unexpected { MouseButtonState::PointerHasNotChanged }, mouseEvent, pointerId, pointerType);
         });
     }
@@ -529,12 +529,12 @@ void PointerCaptureController::clearUnmatchedMouseDown(PointerID pointerID)
         capturingData->pointerIsPressed = false;
 }
 
-RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const MouseEvent& mouseEvent, PointerID pointerId, StringImpl* pointerType)
 {
     // If we already have known touches then we cannot dispatch a mouse event,
     // for instance in the case of a long press to initiate a system drag.
     for (auto& capturingData : m_activePointerIdsToCapturingData.values()) {
-        if (capturingData->pointerType == touchPointerEventType() && capturingData->state == CapturingData::State::Ready)
+        if (equal(capturingData->pointerType, touchPointerEventType()) && capturingData->state == CapturingData::State::Ready)
             return nullptr;
     }
 
@@ -590,7 +590,7 @@ void PointerCaptureController::dispatchEvent(PointerEvent& event, EventTarget* t
     // https://w3c.github.io/pointerevents/#firing-events-using-the-pointerevent-interface
     // If the event is not gotpointercapture or lostpointercapture, run Process Pending Pointer Capture steps for this PointerEvent.
     // We only need to do this for non-mouse type since for mouse events this method will be called in Document::prepareMouseEvent().
-    if (event.pointerType() != mousePointerEventType())
+    if (!equal(event.pointerType(), mousePointerEventType()))
         processPendingPointerCapture(event.pointerId());
 
     pointerEventWillBeDispatched(event, target);
@@ -622,7 +622,7 @@ void PointerCaptureController::pointerEventWillBeDispatched(const PointerEvent& 
 
     capturingData->pointerIsPressed = isPointerdown;
 
-    if (event.pointerType() == touchPointerEventType() && isPointerdown) {
+    if (equal(event.pointerType(), touchPointerEventType()) && isPointerdown) {
         // https://w3c.github.io/pointerevents/#implicit-pointer-capture
 
         // Some input devices (such as touchscreens) implement a "direct manipulation" metaphor where a pointer is intended to act primarily on the UI
@@ -667,7 +667,7 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
 
     // If a mouse pointer has moved while it isn't pressed, make sure we reset the preventsCompatibilityMouseEvents flag since
     // we could otherwise prevent compatibility mouse events while those are only supposed to be prevented while the pointer is pressed.
-    if (event.type() == eventNames().pointermoveEvent && capturingData->pointerType == mousePointerEventType() && !capturingData->pointerIsPressed)
+    if (event.type() == eventNames().pointermoveEvent && equal(capturingData->pointerType, mousePointerEventType()) && !capturingData->pointerIsPressed)
         capturingData->preventsCompatibilityMouseEvents = false;
 
     // If the pointer event dispatched was pointerdown and the event was canceled, then set the PREVENT MOUSE EVENT flag for this pointerType.
@@ -675,7 +675,7 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
     if (event.type() == eventNames().pointerdownEvent) {
         capturingData->preventsCompatibilityMouseEvents = event.defaultPrevented();
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
-        if (event.isPrimary() && event.pointerType() == touchPointerEventType())
+        if (event.isPrimary() && equal(event.pointerType(), touchPointerEventType()))
             m_preventsCompatibilityMouseEventsForPrimaryTouch = event.defaultPrevented();
 #endif
     }
@@ -766,7 +766,7 @@ void PointerCaptureController::processPendingPointerCapture(PointerID pointerId)
     if (auto targetOverride = capturingData->targetOverride; targetOverride && targetOverride != pendingTargetOverride) {
         if (capturingData->targetOverride->isConnected())
             protect(capturingData->targetOverride)->dispatchEvent(PointerEvent::createForPointerCapture(eventNames().lostpointercaptureEvent, pointerId, capturingData->isPrimary, capturingData->pointerType));
-        if (capturingData->pointerType == mousePointerEventType()) {
+        if (equal(capturingData->pointerType, mousePointerEventType())) {
             if (RefPtr frame = capturingData->targetOverride->document().frame())
                 frame->eventHandler().pointerCaptureElementDidChange(nullptr);
         }
@@ -775,7 +775,7 @@ void PointerCaptureController::processPendingPointerCapture(PointerID pointerId)
     // 2. If the pending pointer capture target override for this pointer is set and is not equal to the pointer capture target override,
     // then fire a pointer event named gotpointercapture at the pending pointer capture target override.
     if (capturingData->pendingTargetOverride && capturingData->targetOverride != pendingTargetOverride) {
-        if (capturingData->pointerType == mousePointerEventType()) {
+        if (equal(capturingData->pointerType, mousePointerEventType())) {
             if (RefPtr frame = pendingTargetOverride->document().frame())
                 frame->eventHandler().pointerCaptureElementDidChange(pendingTargetOverride.get());
         }

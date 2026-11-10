@@ -35,12 +35,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(XRSessionEvent);
 
-Ref<XRSessionEvent> XRSessionEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+Ref<XRSessionEvent> XRSessionEvent::create(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
 {
     return adoptRef(*new XRSessionEvent(type, WTF::move(initializer), isTrusted));
 }
 
-XRSessionEvent::XRSessionEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+XRSessionEvent::XRSessionEvent(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::XRSessionEvent, type, WTF::move(initializer), isTrusted)
     , m_session(WTF::move(initializer.session))
 {

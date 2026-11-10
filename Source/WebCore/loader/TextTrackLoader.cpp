@@ -123,9 +123,9 @@ void TextTrackLoader::deprecatedDidReceiveCachedResource(CachedResource& resourc
 
 void TextTrackLoader::corsPolicyPreventedLoad()
 {
-    static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Cross-origin text track load denied by Cross-Origin Resource Sharing policy."));
+    static NeverDestroyed<RefPtr<StringImpl>> consoleMessage(MAKE_STATIC_STRING_IMPL("Cross-origin text track load denied by Cross-Origin Resource Sharing policy."));
     if (RefPtr document = m_document)
-        document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
+        document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
     m_state = Failed;
 }
 

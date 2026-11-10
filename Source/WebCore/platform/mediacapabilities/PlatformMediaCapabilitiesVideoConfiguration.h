@@ -33,7 +33,7 @@
 namespace WebCore {
 
 struct PlatformMediaCapabilitiesVideoConfiguration {
-    String contentType;
+    RefPtr<StringImpl> contentType;
     uint32_t width { };
     uint32_t height { };
     uint64_t bitrate { };
@@ -50,7 +50,7 @@ struct PlatformMediaCapabilitiesVideoConfiguration {
 inline PlatformMediaCapabilitiesVideoConfiguration PlatformMediaCapabilitiesVideoConfiguration::isolatedCopy() const &
 {
     return {
-        contentType.isolatedCopy(),
+        WTF::isolatedCopy(contentType),
         width,
         height,
         bitrate,
@@ -65,7 +65,7 @@ inline PlatformMediaCapabilitiesVideoConfiguration PlatformMediaCapabilitiesVide
 inline PlatformMediaCapabilitiesVideoConfiguration PlatformMediaCapabilitiesVideoConfiguration::isolatedCopy() &&
 {
     return {
-        WTF::move(contentType).isolatedCopy(),
+        WTF::isolatedCopy(WTF::move(contentType)),
         width,
         height,
         bitrate,

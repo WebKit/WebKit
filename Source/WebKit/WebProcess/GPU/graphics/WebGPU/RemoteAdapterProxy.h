@@ -58,7 +58,7 @@ public:
     ::WebGPU::AdapterInfo info() final { return m_info; }
     bool isXRCompatible() const final { return m_xrCompatible; }
     void requestDevice(const ::WebGPU::DeviceDescriptor&, CompletionHandler<void(RefPtr<::WebGPU::Device>&&)>&&) final;
-    void setLabel(String&&) final { }
+    void setLabel(RefPtr<StringImpl>&&) final { }
     bool isValid() const final;
 
 private:

@@ -789,7 +789,7 @@ public:
             SymbolImpl* symbol;
             VM& vm = decoder.vm();
             if (m_isRegistered) {
-                String str(buffer);
+                RefPtr<StringImpl> str = StringImpl::create(buffer);
                 if (m_isPrivate)
                     symbol = static_cast<SymbolImpl*>(&protect(vm.privateSymbolRegistry())->symbolForKey(str).leakRef());
                 else
@@ -799,8 +799,8 @@ public:
             else
                 symbol = vm.propertyNames->builtinNames().lookUpPrivateName(buffer);
             RELEASE_ASSERT(symbol);
-            String str = symbol;
-            StringImpl* impl = str.releaseImpl().unsafeGet();
+            RefPtr<StringImpl> str = symbol;
+            StringImpl* impl = WTF::move(str).unsafeGet();
             ASSERT(impl->isSymbol());
             if (m_isWellKnownSymbol)
                 ASSERT(!static_cast<SymbolImpl*>(impl)->isPrivate());
@@ -812,7 +812,7 @@ public:
         if (!m_length) {
             if (m_isSymbol)
                 return &SymbolImpl::createNullSymbol().leakRef();
-            return RefPtr { emptyAtom().impl() }.leakRef();
+            return RefPtr { emptyAtom() }.leakRef();
         }
 
         return m_is8Bit ? create(span8()) : create(span16());
@@ -834,19 +834,20 @@ private:
 class CachedUniquedStringImpl : public CachedUniquedStringImplBase<UniquedStringImpl> { };
 class CachedStringImpl : public CachedUniquedStringImplBase<StringImpl> { };
 
-class CachedString : public VariableLengthObject<String> {
+class CachedString : public VariableLengthObject<RefPtr<StringImpl>> {
 public:
-    void encode(Encoder& encoder, const String& string)
+    void encode(Encoder& encoder, StringImpl* string)
     {
-        m_impl.encode(encoder, static_cast<UniquedStringImpl*>(string.impl()));
+        m_impl.encode(encoder, static_cast<UniquedStringImpl*>(string));
     }
 
-    String decode(Decoder& decoder) const
+    RefPtr<StringImpl> decode(Decoder& decoder) const
     {
-        return String(static_cast<RefPtr<StringImpl>>(m_impl.decode(decoder)));
+        return m_impl.decode(decoder);
+
     }
 
-    void decode(Decoder& decoder, String& dst) const
+    void decode(Decoder& decoder, RefPtr<StringImpl>& dst) const
     {
         dst = decode(decoder);
     }
@@ -864,11 +865,11 @@ public:
 
     Identifier decode(Decoder& decoder) const
     {
-        String str = m_string.decode(decoder);
-        if (str.isNull())
+        RefPtr<StringImpl> str = m_string.decode(decoder);
+        if (!str)
             return Identifier();
 
-        return Identifier::fromUid(decoder.vm(), (UniquedStringImpl*)str.impl());
+        return Identifier::fromUid(decoder.vm(), (UniquedStringImpl*)str.get());
     }
 
     void decode(Decoder& decoder, Identifier& ident) const
@@ -1348,7 +1349,7 @@ public:
 
     RegExp* decode(Decoder& decoder) const
     {
-        String pattern { m_patternString.decode(decoder) };
+        RefPtr<StringImpl> pattern { m_patternString.decode(decoder) };
         return RegExp::create(decoder.vm(), pattern, m_flags);
     }
 
@@ -1438,7 +1439,7 @@ public:
             m_type = EncodedType::String;
             // TODO: This seems wrong? What if this fails.
             auto str = string->tryGetValue();
-            this->allocate<CachedUniquedStringImpl>(encoder)->encode(encoder, *str.data.impl());
+            this->allocate<CachedUniquedStringImpl>(encoder)->encode(encoder, *str.data.get());
             return;
         }
 
@@ -1620,18 +1621,20 @@ public:
     void encode(Encoder& encoder, const SourceProvider& sourceProvider)
     {
         m_sourceOrigin.encode(encoder, sourceProvider.sourceOrigin());
-        m_sourceURL.encode(encoder, sourceProvider.sourceURL());
-        m_preRedirectURL.encode(encoder, sourceProvider.preRedirectURL());
-        m_sourceURLDirective.encode(encoder, sourceProvider.sourceURLDirective());
-        m_sourceMappingURLDirective.encode(encoder, sourceProvider.sourceMappingURLDirective());
+        m_sourceURL.encode(encoder, protect(sourceProvider.sourceURL()));
+        m_preRedirectURL.encode(encoder, protect(sourceProvider.preRedirectURL()));
+        m_sourceURLDirective.encode(encoder, protect(sourceProvider.sourceURLDirective()));
+        m_sourceMappingURLDirective.encode(encoder, protect(sourceProvider.sourceMappingURLDirective()));
         m_startPosition.encode(encoder, sourceProvider.startPosition());
         m_sourceTaintedOrigin = sourceProvider.sourceTaintedOrigin(SourceTaintKind::ScriptTrackingPrivacy);
     }
 
     void decode(Decoder& decoder, SourceProvider& sourceProvider) const
     {
-        sourceProvider.setSourceURLDirective(m_sourceURLDirective.decode(decoder));
-        sourceProvider.setSourceMappingURLDirective(m_sourceMappingURLDirective.decode(decoder));
+        auto sourceURLDirective = m_sourceURLDirective.decode(decoder);
+        sourceProvider.setSourceURLDirective(sourceURLDirective);
+        auto sourceMappingURLDirective = m_sourceMappingURLDirective.decode(decoder);
+        sourceProvider.setSourceMappingURLDirective(sourceMappingURLDirective);
         sourceProvider.setSourceTaintedOrigin(SourceTaintKind::ScriptTrackingPrivacy, m_sourceTaintedOrigin);
     }
 
@@ -1657,9 +1660,9 @@ public:
 
     StringSourceProvider* decode(Decoder& decoder, SourceProviderSourceType sourceType) const
     {
-        String decodedSource = m_source.decode(decoder);
+        RefPtr<StringImpl> decodedSource = m_source.decode(decoder);
         SourceOrigin decodedSourceOrigin = m_sourceOrigin.decode(decoder);
-        String decodedSourceURL = m_sourceURL.decode(decoder);
+        RefPtr<StringImpl> decodedSourceURL = m_sourceURL.decode(decoder);
         TextPosition decodedStartPosition = m_startPosition.decode(decoder);
 
         Ref<StringSourceProvider> sourceProvider = StringSourceProvider::create(decodedSource, decodedSourceOrigin, decodedSourceURL, m_sourceTaintedOrigin, decodedStartPosition, sourceType);
@@ -1686,7 +1689,7 @@ public:
     {
         Vector<uint8_t> decodedData;
         SourceOrigin decodedSourceOrigin = m_sourceOrigin.decode(decoder);
-        String decodedSourceURL = m_sourceURL.decode(decoder);
+        RefPtr<StringImpl> decodedSourceURL = m_sourceURL.decode(decoder);
 
         m_data.decode(decoder, decodedData);
 
@@ -2520,7 +2523,7 @@ protected:
     {
         if (m_cacheVersion != computeJSCBytecodeCacheVersion())
             return false;
-        if (m_bootSessionUUID.decode(decoder) != bootSessionUUIDString())
+        if (!equal(m_bootSessionUUID.decode(decoder), bootSessionUUIDString()))
             return false;
         return true;
     }

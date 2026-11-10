@@ -51,21 +51,21 @@ void SpeechSynthesisUtterance::deref() const
     RefCounted::deref();
 }
 
-Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, const String& text)
+Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, StringImpl* text)
 {
     auto utterance = adoptRef(*new SpeechSynthesisUtterance(context, text, { }));
     utterance->suspendIfNeeded();
     return utterance;
 }
 
-Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, const String& text, SpeechSynthesisUtterance::UtteranceCompletionHandler&& completion)
+Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, StringImpl* text, SpeechSynthesisUtterance::UtteranceCompletionHandler&& completion)
 {
     auto utterance = adoptRef(*new SpeechSynthesisUtterance(context, text, WTF::move(completion)));
     utterance->suspendIfNeeded();
     return utterance;
 }
 
-SpeechSynthesisUtterance::SpeechSynthesisUtterance(ScriptExecutionContext& context, const String& text, UtteranceCompletionHandler&& completion)
+SpeechSynthesisUtterance::SpeechSynthesisUtterance(ScriptExecutionContext& context, StringImpl* text, UtteranceCompletionHandler&& completion)
     : ActiveDOMObject(&context)
     , m_platformUtterance(PlatformSpeechSynthesisUtterance::create(this))
     , m_completionHandler(WTF::move(completion))
@@ -93,7 +93,7 @@ void SpeechSynthesisUtterance::setVoice(SpeechSynthesisVoice* voice)
         m_platformUtterance->setVoice(&voice->platformVoice());
 }
 
-void SpeechSynthesisUtterance::eventOccurred(const AtomString& type, uint32_t charIndex, uint32_t charLength, const String& name)
+void SpeechSynthesisUtterance::eventOccurred(AtomStringImpl* type, uint32_t charIndex, uint32_t charLength, StringImpl* name)
 {
     if (m_completionHandler) {
         if (type == eventNames().endEvent)
@@ -116,7 +116,7 @@ void SpeechSynthesisUtterance::eventOccurred(const AtomString& type, uint32_t ch
     dispatchEvent(SpeechSynthesisEvent::create(type, WTF::move(init)));
 }
 
-void SpeechSynthesisUtterance::errorEventOccurred(const AtomString& type, SpeechSynthesisErrorCode errorCode)
+void SpeechSynthesisUtterance::errorEventOccurred(AtomStringImpl* type, SpeechSynthesisErrorCode errorCode)
 {
     if (m_completionHandler) {
         m_completionHandler(*this);

@@ -84,7 +84,7 @@ AccessibilityObject* AccessibilitySVGObject::targetForUseElement() const
         return nullptr;
 
     auto href = use->href();
-    if (href.isEmpty())
+    if (isEmpty(href))
         href = getAttribute(HTMLNames::hrefAttr);
 
     auto target = SVGURIReference::targetElementFromIRIString(href, Ref { use->treeScopeForSVGReferences() });
@@ -98,12 +98,12 @@ void AccessibilitySVGObject::accessibilityText(Vector<AccessibilityText>& textOr
     // matching, which showed up on samples taken on Speedometer 3.1.
     auto [titleChild, descChild] = matchingTitleAndDescChildren();
 
-    String descriptionText = descriptionFromTitleChild(titleChild.get());
-    if (!descriptionText.isEmpty())
+    RefPtr<StringImpl> descriptionText = descriptionFromTitleChild(titleChild.get());
+    if (!isEmpty(descriptionText))
         textOrder.append(AccessibilityText(descriptionText, AccessibilityTextSource::Alternative));
 
-    String helptext = helpTextFromChildren(titleChild.get(), descChild.get(), descriptionText);
-    if (!helptext.isEmpty())
+    RefPtr<StringImpl> helptext = helpTextFromChildren(titleChild.get(), descChild.get(), descriptionText);
+    if (!isEmpty(helptext))
         textOrder.append(AccessibilityText(WTF::move(helptext), AccessibilityTextSource::Help));
 }
 
@@ -114,8 +114,8 @@ void AccessibilitySVGObject::alternativeText(Vector<AccessibilityText>& textOrde
     // a <title> child, xlink:title (on <a>), the <use> target, or alt (on <image>).
     // Expose this as Alternative text so host-language parents (e.g. <a> or <button>)
     // pick it up via textUnderElement when deriving their own accname.
-    String descriptionText = description();
-    if (!descriptionText.isEmpty())
+    RefPtr<StringImpl> descriptionText = description();
+    if (!isEmpty(descriptionText))
         textOrder.append(AccessibilityText(WTF::move(descriptionText), AccessibilityTextSource::Alternative));
 }
 
@@ -128,11 +128,11 @@ auto AccessibilitySVGObject::matchingTitleAndDescChildren() const -> MatchingLan
     // Iterate over SVG children once, bucketing <title> and <desc> elements,
     // then do language matching with a single languageIncludingAncestors() call.
     // This is an optimization based on a profile taken on Speedometer.
-    Vector<String> titleLangs;
+    Vector<RefPtr<StringImpl>> titleLangs;
     Vector<Element*> titleElements;
     RefPtr<Element> titleFallback;
     bool hasTitleWithLang = false;
-    Vector<String> descLangs;
+    Vector<RefPtr<StringImpl>> descLangs;
     Vector<Element*> descElements;
     RefPtr<Element> descFallback;
     bool hasDescWithLang = false;
@@ -142,7 +142,7 @@ auto AccessibilitySVGObject::matchingTitleAndDescChildren() const -> MatchingLan
         if (is<SVGTitleElement>(child.get())) {
             titleLangs.append(lang);
             titleElements.append(const_cast<Element*>(static_cast<const Element*>(child.ptr())));
-            if (lang.isEmpty()) {
+            if (isEmpty(lang)) {
                 if (!titleFallback)
                     titleFallback = child.ptr();
             } else
@@ -150,7 +150,7 @@ auto AccessibilitySVGObject::matchingTitleAndDescChildren() const -> MatchingLan
         } else if (is<SVGDescElement>(child.get())) {
             descLangs.append(lang);
             descElements.append(const_cast<Element*>(static_cast<const Element*>(child.ptr())));
-            if (lang.isEmpty()) {
+            if (isEmpty(lang)) {
                 if (!descFallback)
                     descFallback = child.ptr();
             } else
@@ -163,11 +163,11 @@ auto AccessibilitySVGObject::matchingTitleAndDescChildren() const -> MatchingLan
     if (!hasTitleWithLang && !hasDescWithLang)
         return { WTF::move(titleFallback), WTF::move(descFallback) };
 
-    String languageCode = languageIncludingAncestors();
-    if (languageCode.isEmpty())
+    RefPtr<StringImpl> languageCode = languageIncludingAncestors();
+    if (isEmpty(languageCode))
         languageCode = defaultLanguage();
 
-    auto matchInList = [&](Vector<String>& langs, Vector<Element*>& elements, RefPtr<Element>& fallback) -> RefPtr<Element> {
+    auto matchInList = [&](Vector<RefPtr<StringImpl>>& langs, Vector<Element*>& elements, RefPtr<Element>& fallback) -> RefPtr<Element> {
         bool exactMatch;
         size_t index = indexOfBestMatchingLanguageInList(languageCode, langs, exactMatch);
         if (index < langs.size())
@@ -180,23 +180,23 @@ auto AccessibilitySVGObject::matchingTitleAndDescChildren() const -> MatchingLan
     return { WTF::move(titleChild), WTF::move(descChild) };
 }
 
-String AccessibilitySVGObject::descriptionFromTitleChild(Element* titleChild) const
+RefPtr<StringImpl> AccessibilitySVGObject::descriptionFromTitleChild(Element* titleChild) const
 {
     // Priority per SVG AAM: aria-labelledby/label, title child, xlink:title, use target, alt.
-    String result = ariaAccessibilityDescription();
-    if (!result.isEmpty())
+    RefPtr<StringImpl> result = ariaAccessibilityDescription();
+    if (!isEmpty(result))
         return result;
 
     if (titleChild) {
         result = titleChild->textContent();
-        if (!result.isEmpty())
+        if (!isEmpty(result))
             return result;
     }
 
     RefPtr element = this->element();
     if (is<SVGAElement>(element.get())) {
         const auto& xlinkTitle = element->attributeWithoutSynchronization(XLinkNames::titleAttr);
-        if (!xlinkTitle.isEmpty())
+        if (!isEmpty(xlinkTitle))
             return xlinkTitle;
     }
 
@@ -212,27 +212,27 @@ String AccessibilitySVGObject::descriptionFromTitleChild(Element* titleChild) co
 
     if (m_renderer && m_renderer->isRenderOrLegacyRenderSVGImage()) {
         const auto& alt = getAttribute(HTMLNames::altAttr);
-        if (!alt.isNull())
+        if (alt)
             return alt;
     }
 
     return { };
 }
 
-String AccessibilitySVGObject::helpTextFromChildren(Element* titleChild, Element* descChild, const String& descriptionText) const
+RefPtr<StringImpl> AccessibilitySVGObject::helpTextFromChildren(Element* titleChild, Element* descChild, StringImpl* descriptionText) const
 {
     // Priority per SVG AAM: aria-describedby, desc child, use target, title child (if != description).
     RefPtr element = this->element();
     if (!element)
         return { };
 
-    String result = ariaDescribedByAttribute();
-    if (!result.isEmpty())
+    RefPtr<StringImpl> result = ariaDescribedByAttribute();
+    if (!isEmpty(result))
         return result;
 
     if (descChild) {
         result = descChild->textContent();
-        if (!result.isEmpty())
+        if (!isEmpty(result))
             return result;
     }
 
@@ -248,23 +248,23 @@ String AccessibilitySVGObject::helpTextFromChildren(Element* titleChild, Element
 
     if (titleChild) {
         auto titleText = titleChild->textContent();
-        if (titleText != descriptionText)
+        if (!equal(titleText, descriptionText))
             return titleText;
     }
 
     return { };
 }
 
-String AccessibilitySVGObject::description() const
+RefPtr<StringImpl> AccessibilitySVGObject::description() const
 {
     auto [titleChild, descChild] = matchingTitleAndDescChildren();
     return descriptionFromTitleChild(titleChild.get());
 }
 
-String AccessibilitySVGObject::helpText() const
+RefPtr<StringImpl> AccessibilitySVGObject::helpText() const
 {
     auto [titleChild, descChild] = matchingTitleAndDescChildren();
-    String descriptionText = descriptionFromTitleChild(titleChild.get());
+    RefPtr<StringImpl> descriptionText = descriptionFromTitleChild(titleChild.get());
     return helpTextFromChildren(titleChild.get(), descChild.get(), descriptionText);
 }
 
@@ -433,8 +433,8 @@ bool AccessibilitySVGObject::isRootWithAccessibleContent() const
             return true;
 
         // If the role or aria-label attributes are specified, this is accessible.
-        if (!element.attributeWithoutSynchronization(HTMLNames::roleAttr).isEmpty()
-            || !element.attributeWithoutSynchronization(HTMLNames::aria_labelAttr).isEmpty())
+        if (!isEmpty(element.attributeWithoutSynchronization(HTMLNames::roleAttr))
+            || !isEmpty(element.attributeWithoutSynchronization(HTMLNames::aria_labelAttr)))
             return true;
 
         return false;

@@ -32,6 +32,6 @@
 
 namespace WebCore {
 
-using SQLValue = Variant<std::nullptr_t, String, double>;
+using SQLValue = Variant<std::nullptr_t, RefPtr<StringImpl>, double>;
 
 };

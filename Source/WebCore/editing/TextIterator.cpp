@@ -109,7 +109,7 @@ using namespace HTMLNames;
 class SearchBuffer {
     WTF_MAKE_NONCOPYABLE(SearchBuffer);
 public:
-    SearchBuffer(const String& target, FindOptions);
+    SearchBuffer(StringImpl* target, FindOptions);
 
     // Returns number of characters appended; guaranteed to be in the range [1, length].
     size_t append(StringView);
@@ -125,7 +125,7 @@ public:
 #if !UCONFIG_NO_COLLATION
 
 private:
-    const String m_target;
+    const RefPtr<StringImpl> m_target;
     const StringView::UpconvertedCharacters m_targetCharacters;
     FindOptions m_options;
 
@@ -146,7 +146,7 @@ private:
     void append(char16_t, bool isCharacterStart);
     size_t length() const;
 
-    String m_target;
+    RefPtr<StringImpl> m_target;
     FindOptions m_options;
 
     Vector<char16_t> m_buffer;
@@ -316,24 +316,24 @@ bool isRendererReplacedElement(RenderObject* renderer, TextIteratorBehaviors beh
 inline void TextIteratorCopyableText::reset()
 {
     m_singleCharacter = 0;
-    m_string = String();
+    m_string = nullptr;
     m_offset = 0;
     m_length = 0;
 }
 
-inline void TextIteratorCopyableText::set(String&& string)
+inline void TextIteratorCopyableText::set(RefPtr<StringImpl>&& string)
 {
     m_singleCharacter = 0;
     m_string = WTF::move(string);
     m_offset = 0;
-    m_length = m_string.length();
+    m_length = length(m_string);
 }
 
-inline void TextIteratorCopyableText::set(String&& string, unsigned offset, unsigned length)
+inline void TextIteratorCopyableText::set(RefPtr<StringImpl>&& string, unsigned offset, unsigned length)
 {
-    ASSERT(offset < string.length());
+    ASSERT(offset < WTF::length(string));
     ASSERT(length);
-    ASSERT(length <= string.length() - offset);
+    ASSERT(length <= WTF::length(string) - offset);
 
     m_singleCharacter = 0;
     m_string = WTF::move(string);
@@ -344,7 +344,7 @@ inline void TextIteratorCopyableText::set(String&& string, unsigned offset, unsi
 inline void TextIteratorCopyableText::set(char16_t singleCharacter)
 {
     m_singleCharacter = singleCharacter;
-    m_string = String();
+    m_string = nullptr;
     m_offset = 0;
     m_length = 0;
 }
@@ -629,8 +629,8 @@ bool TextIterator::handleTextNode()
         if (textFragmentWithRemainingTextAfterFirstLetter && !m_handledFirstLetter && !m_offset) {
             handleTextNodeFirstLetter(*textFragmentWithRemainingTextAfterFirstLetter);
             if (m_firstLetterText) {
-                String firstLetter = m_firstLetterText->text();
-                emitText(textNode, *protect(m_firstLetterText), m_offset, m_offset + firstLetter.length());
+                RefPtr<StringImpl> firstLetter = m_firstLetterText->text();
+                emitText(textNode, *protect(m_firstLetterText), m_offset, m_offset + length(firstLetter));
                 m_firstLetterText = nullptr;
                 m_textRun = { };
                 return false;
@@ -638,7 +638,7 @@ bool TextIterator::handleTextNode()
         }
         if (renderer->style().visibility() != Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility))
             return false;
-        int rendererTextLength = rendererText.length();
+        int rendererTextLength = length(rendererText);
         int end = (textNode.ptr() == m_endContainer) ? m_endOffset : INT_MAX;
         if (textFragmentWithRemainingTextAfterFirstLetter && textFragmentWithRemainingTextAfterFirstLetter->firstLetter()) {
             runStart = convertNodeOffsetToOffsetInTextFragment(*textFragmentWithRemainingTextAfterFirstLetter, std::max(0, runStart));
@@ -657,7 +657,7 @@ bool TextIterator::handleTextNode()
 
     if (textFragmentWithRemainingTextAfterFirstLetter && !m_handledFirstLetter && !m_offset)
         handleTextNodeFirstLetter(*textFragmentWithRemainingTextAfterFirstLetter);
-    else if (!m_textRun && rendererText.length()) {
+    else if (!m_textRun && length(rendererText)) {
         if (renderer->style().visibility() != Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility))
             return false;
         m_lastTextNodeEndedWithCollapsedSpace = true; // entire block is collapsed space
@@ -707,9 +707,9 @@ void TextIterator::handleTextRun()
         auto hasPrecedingCollapsedWhitespace = m_lastTextNodeEndedWithCollapsedSpace || (m_textRun == firstTextRun && textRunStart == runStart && runStart);
         auto shouldEmitWhitespace = !isAfterRangeEnd && hasPrecedingCollapsedWhitespace && m_lastCharacter && !renderer->style().isCollapsibleWhiteSpace(m_lastCharacter);
         if (shouldEmitWhitespace) {
-            if (m_lastTextNode == textNode.ptr() && runStart && renderer->style().isCollapsibleWhiteSpace(rendererText[runStart - 1])) {
+            if (m_lastTextNode == textNode.ptr() && runStart && renderer->style().isCollapsibleWhiteSpace(codeUnitAt(rendererText, runStart - 1))) {
                 unsigned spaceRunStart = runStart - 1;
-                while (spaceRunStart && renderer->style().isCollapsibleWhiteSpace(rendererText[spaceRunStart - 1]))
+                while (spaceRunStart && renderer->style().isCollapsibleWhiteSpace(codeUnitAt(rendererText, spaceRunStart - 1)))
                     --spaceRunStart;
                 emitCharacter(' ', WTF::move(textNode), nullptr, spaceRunStart, spaceRunStart + 1);
             } else
@@ -728,17 +728,17 @@ void TextIterator::handleTextRun()
             // or a run of characters that does not include such characters.
             // This effectively translates collapsible newlines and tabs to spaces without copying the text.
             // For white-space:pre-line, newlines are preserved rather than collapsed to spaces.
-            if (isCollapsibleNewlineOrTab(rendererText[runStart])) {
+            if (isCollapsibleNewlineOrTab(codeUnitAt(rendererText, runStart))) {
                 emitCharacter(' ', textNode.copyRef(), nullptr, runStart, runStart + 1);
                 m_offset = toNodeOffset(runStart + 1);
             } else {
                 auto subrunEnd = runStart + 1;
                 for (; subrunEnd < runEnd; ++subrunEnd) {
-                    if (isCollapsibleNewlineOrTab(rendererText[subrunEnd]))
+                    if (isCollapsibleNewlineOrTab(codeUnitAt(rendererText, subrunEnd)))
                         break;
                 }
                 if (subrunEnd == runEnd && m_behaviors.contains(TextIteratorBehavior::BehavesAsIfNodesFollowing)) {
-                    bool lastSpaceCollapsedByNextNonTextRun = !nextTextRun && rendererText.length() > subrunEnd && rendererText[subrunEnd] == ' ';
+                    bool lastSpaceCollapsedByNextNonTextRun = !nextTextRun && length(rendererText) > subrunEnd && codeUnitAt(rendererText, subrunEnd) == ' ';
                     if (lastSpaceCollapsedByNextNonTextRun)
                         ++subrunEnd; // runEnd stopped before last space. Increment by one to restore the space.
                 }
@@ -752,7 +752,7 @@ void TextIterator::handleTextRun()
                 return;
 
             // Advance and return
-            unsigned nextRunStart = nextTextRun ? nextTextRun->start() : rendererText.length();
+            unsigned nextRunStart = nextTextRun ? nextTextRun->start() : length(rendererText);
             if (nextRunStart > runEnd)
                 m_lastTextNodeEndedWithCollapsedSpace = true; // collapsed space between runs or at the end
             m_textRun = nextTextRun;
@@ -889,9 +889,9 @@ bool TextIterator::handleReplacedElement()
 
     if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(*renderer); renderImage && m_behaviors.contains(TextIteratorBehavior::EmitsImageAltText)) {
         auto altText = renderImage->altText();
-        if (unsigned length = altText.length()) {
+        if (unsigned length = WTF::length(altText)) {
             m_hasEmitted = true;
-            m_lastCharacter = altText[length - 1];
+            m_lastCharacter = codeUnitAt(altText, length - 1);
             m_copyableText.set(WTF::move(altText));
             m_text = m_copyableText.text();
             return true;
@@ -901,9 +901,9 @@ bool TextIterator::handleReplacedElement()
     if (m_behaviors.contains(TextIteratorBehavior::EmitsNewlinesPerInnerTextSpec)) {
         if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(m_currentNode)) {
             m_handledChildren = true;
-            if (String selectText = selectElement->collectOptionInnerText(HTMLSelectElement::EmitNewlineForEmptyItems::Yes); !selectText.isEmpty()) {
+            if (RefPtr<StringImpl> selectText = selectElement->collectOptionInnerText(HTMLSelectElement::EmitNewlineForEmptyItems::Yes); !isEmpty(selectText)) {
                 m_hasEmitted = true;
-                m_lastCharacter = selectText[selectText.length() - 1];
+                m_lastCharacter = codeUnitAt(selectText, WTF::length(selectText) - 1);
                 m_copyableText.set(WTF::move(selectText));
                 m_text = m_copyableText.text();
                 return true;
@@ -1057,9 +1057,9 @@ static bool shouldEmitExtraNewlineForNode(Node& node, bool emitsNewlinesPerInner
 static int collapsedSpaceLength(RenderText& renderer, int textEnd)
 {
     auto text = renderer.text();
-    unsigned length = text.length();
+    unsigned length = WTF::length(text);
     for (unsigned i = textEnd; i < length; ++i) {
-        if (!renderer.style().isCollapsibleWhiteSpace(text[i]))
+        if (!renderer.style().isCollapsibleWhiteSpace(codeUnitAt(text, i)))
             return i - textEnd;
     }
     return length - textEnd;
@@ -1323,7 +1323,7 @@ void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartO
         || (m_behaviors.contains(TextIteratorBehavior::IgnoresFullSizeKana) && renderer.style().textTransform().contains(Style::TextTransformValue::FullSizeKana));
 
     // FIXME: This probably yields the wrong offsets when text-transform: lowercase turns a single character into two characters.
-    String string = [&]() -> String {
+    RefPtr<StringImpl> string = [&]() -> RefPtr<StringImpl> {
         if (shouldEmitOriginalText)
             return renderer.originalText();
         // If this text is on the first line and ::first-line has a different text-transform
@@ -1338,9 +1338,9 @@ void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartO
         return renderer.text();
     }();
 
-    ASSERT(shouldEmitOriginalText || string.length() >= static_cast<unsigned>(textEndOffset));
+    ASSERT(shouldEmitOriginalText || length(string) >= static_cast<unsigned>(textEndOffset));
 
-    textEndOffset = std::min(string.length(), static_cast<unsigned>(textEndOffset));
+    textEndOffset = std::min(length(string), static_cast<unsigned>(textEndOffset));
 
     m_positionNode = textNode;
     m_positionOffsetBaseNode = nullptr;
@@ -1350,7 +1350,7 @@ void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartO
     m_positionStartOffset = convertOffsetInTextFragmentToNodeOffset(renderer, textStartOffset);
     m_positionEndOffset = convertOffsetInTextFragmentToNodeOffset(renderer, textEndOffset);
 
-    m_lastCharacter = string[textEndOffset - 1];
+    m_lastCharacter = codeUnitAt(string, textEndOffset - 1);
     // Reset to 0 even if the text ends with '\n', because content newlines
     // (e.g. inside <pre>) are distinct from block-boundary newlines and should
     // not suppress the extra newline required before <p> elements.
@@ -1523,8 +1523,8 @@ bool SimplifiedBackwardsTextIterator::handleTextNode()
     if (!renderer)
         return true;
 
-    String text = renderer->text();
-    if (!renderer->hasRenderedText() && text.length())
+    RefPtr<StringImpl> text = renderer->text();
+    if (!renderer->hasRenderedText() && length(text))
         return true;
 
     if (startOffset + offsetInNode == m_offset) {
@@ -1540,9 +1540,9 @@ bool SimplifiedBackwardsTextIterator::handleTextNode()
     ASSERT(m_positionStartOffset < m_positionEndOffset);
     ASSERT(m_positionStartOffset - offsetInNode >= 0);
     ASSERT(m_positionEndOffset - offsetInNode > 0);
-    ASSERT(m_positionEndOffset - offsetInNode <= static_cast<int>(text.length()));
+    ASSERT(m_positionEndOffset - offsetInNode <= static_cast<int>(length(text)));
 
-    m_lastCharacter = text[m_positionEndOffset - offsetInNode - 1];
+    m_lastCharacter = codeUnitAt(text, m_positionEndOffset - offsetInNode - 1);
     m_copyableText.set(WTF::move(text), m_positionStartOffset - offsetInNode, m_positionEndOffset - m_positionStartOffset);
     m_text = m_copyableText.text();
 
@@ -1857,7 +1857,7 @@ StringView WordAwareIterator::text() const LIFETIME_BOUND
 
 constexpr size_t minimumSearchBufferSize = 8192;
 
-inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
+inline SearchBuffer::SearchBuffer(StringImpl* target, FindOptions options)
     : m_target(foldQuoteMarks(target))
     , m_targetCharacters(StringView(m_target).upconvertedCharacters())
     , m_options(options)
@@ -1867,9 +1867,9 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
     , m_targetRequiresKanaWorkaround(containsKanaLetters(m_target))
     , m_ICUSearcher(m_target, m_options)
 {
-    ASSERT(!m_target.isEmpty());
+    ASSERT(!isEmpty(m_target));
 
-    size_t targetLength = m_target.length();
+    size_t targetLength = length(m_target);
     m_buffer.reserveInitialCapacity(std::max(targetLength * 8, minimumSearchBufferSize));
     m_overlap = m_buffer.capacity() / 4;
 
@@ -2015,15 +2015,15 @@ nextMatch:
 
 #else
 
-inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
-    : m_target(foldQuoteMarks(options & CaseInsensitive ? target.foldCase() : target))
+inline SearchBuffer::SearchBuffer(StringImpl* target, FindOptions options)
+    : m_target(foldQuoteMarks(options & CaseInsensitive ? foldCase(target) : RefPtr<StringImpl> { target }))
     , m_options(options)
-    , m_buffer(m_target.length())
-    , m_isCharacterStartBuffer(m_target.length())
+    , m_buffer(length(m_target))
+    , m_isCharacterStartBuffer(length(m_target))
     , m_isBufferFull(false)
     , m_cursor(0)
 {
-    ASSERT(!m_target.isEmpty());
+    ASSERT(!isEmpty(m_target));
     m_target.replace(noBreakSpace, ' ');
 }
 
@@ -2044,7 +2044,7 @@ inline void SearchBuffer::append(char16_t c, bool isStart)
 {
     m_buffer[m_cursor] = foldQuoteMarkAndReplaceNoBreakSpace(c);
     m_isCharacterStartBuffer[m_cursor] = isStart;
-    if (++m_cursor == m_target.length()) {
+    if (++m_cursor == length(m_target)) {
         m_cursor = 0;
         m_isBufferFull = true;
     }
@@ -2090,7 +2090,7 @@ inline size_t SearchBuffer::search(size_t& start)
     if (!m_isCharacterStartBuffer[m_cursor])
         return 0;
 
-    size_t tailSpace = m_target.length() - m_cursor;
+    size_t tailSpace = length(m_target) - m_cursor;
     if (memcmp(&m_buffer[m_cursor], m_target.characters(), tailSpace * sizeof(char16_t)) != 0)
         return 0;
     if (memcmp(&m_buffer[0], m_target.characters() + tailSpace, m_cursor * sizeof(char16_t)) != 0)
@@ -2113,7 +2113,7 @@ inline size_t SearchBuffer::search(size_t& start)
 // can make two strings match even though they're not the same length.
 size_t SearchBuffer::length() const
 {
-    size_t bufferSize = m_target.length();
+    size_t bufferSize = length(m_target);
     size_t length = 0;
     for (size_t i = 0; i < bufferSize; ++i)
         length += m_isCharacterStartBuffer[i];
@@ -2223,7 +2223,7 @@ bool hasAnyPlainText(const SimpleRange& range, TextIteratorBehaviors behaviors, 
     return false;
 }
 
-String plainText(const SimpleRange& range, TextIteratorBehaviors defaultBehavior, bool isDisplayString)
+RefPtr<StringImpl> plainText(const SimpleRange& range, TextIteratorBehaviors defaultBehavior, bool isDisplayString)
 {
     // The initial buffer size can be critical for performance: https://bugs.webkit.org/show_bug.cgi?id=81192
     constexpr unsigned initialCapacity = 1 << 15;
@@ -2259,7 +2259,7 @@ String plainText(const SimpleRange& range, TextIteratorBehaviors defaultBehavior
     if (builder.isEmpty())
         return emptyString();
 
-    String result = builder.toString();
+    RefPtr<StringImpl> result = builder.toString();
 
     if (isDisplayString)
         document->displayStringModifiedByEncoding(result);
@@ -2267,12 +2267,12 @@ String plainText(const SimpleRange& range, TextIteratorBehaviors defaultBehavior
     return result;
 }
 
-String plainTextReplacingNoBreakSpace(const SimpleRange& range, TextIteratorBehaviors defaultBehaviors, bool isDisplayString)
+RefPtr<StringImpl> plainTextReplacingNoBreakSpace(const SimpleRange& range, TextIteratorBehaviors defaultBehaviors, bool isDisplayString)
 {
     return makeStringByReplacingAll(plainText(range, defaultBehaviors, isDisplayString), noBreakSpace, ' ');
 }
 
-static void forEachMatch(const SimpleRange& range, const String& target, FindOptions options, NOESCAPE const Function<bool(CharacterRange)>& match)
+static void forEachMatch(const SimpleRange& range, StringImpl* target, FindOptions options, NOESCAPE const Function<bool(CharacterRange)>& match)
 {
     SearchBuffer buffer(target, options);
     if (buffer.needsMoreContext()) {
@@ -2329,7 +2329,7 @@ static SimpleRange rangeForMatch(const SimpleRange& range, FindOptions options, 
     return { WTF::move(start), it.range().end };
 }
 
-SimpleRange findClosestPlainText(const SimpleRange& range, const String& target, FindOptions options, uint64_t targetOffset)
+SimpleRange findClosestPlainText(const SimpleRange& range, StringImpl* target, FindOptions options, uint64_t targetOffset)
 {
     CharacterRange closestMatch;
     uint64_t closestMatchDistance = std::numeric_limits<uint64_t>::max();
@@ -2351,7 +2351,7 @@ SimpleRange findClosestPlainText(const SimpleRange& range, const String& target,
     return rangeForMatch(range, options, closestMatch);
 }
 
-Vector<SimpleRange> findAllPlainText(const SimpleRange& range, const String& target, FindOptions options, unsigned limit)
+Vector<SimpleRange> findAllPlainText(const SimpleRange& range, StringImpl* target, FindOptions options, unsigned limit)
 {
     Vector<SimpleRange> matches;
     CharacterIterator it(range, findIteratorOptions(options));
@@ -2393,7 +2393,7 @@ Vector<SimpleRange> findAllPlainText(const SimpleRange& range, const String& tar
 }
 
 // FIXME: Do not iterate over the entire range if we are searching backwards.
-SimpleRange findPlainText(const SimpleRange& range, const String& target, FindOptions options)
+SimpleRange findPlainText(const SimpleRange& range, StringImpl* target, FindOptions options)
 {
     // When searching forward stop since we want the first match.
     // When searching backward keep going since we want the last match.
@@ -2406,7 +2406,7 @@ SimpleRange findPlainText(const SimpleRange& range, const String& target, FindOp
     return rangeForMatch(range, options, lastMatchFound);
 }
 
-bool containsPlainText(const String& document, const String& target, FindOptions options)
+bool containsPlainText(StringImpl* document, StringImpl* target, FindOptions options)
 {
     SearchBuffer buffer { target, options };
     StringView remainingText { document };

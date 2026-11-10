@@ -55,46 +55,46 @@ static const char* const gDictionaryDirectories[] = {
     "/usr/local/share/hyphen",
 };
 
-static AtomString extractLocaleFromDictionaryFileName(const String& fileName)
+static RefPtr<AtomStringImpl> extractLocaleFromDictionaryFileName(StringImpl* fileName)
 {
-    if (!fileName.startsWith("hyph_"_s) || !fileName.endsWith(".dic"_s))
+    if (!startsWith(fileName, "hyph_"_s) || !endsWith(fileName, ".dic"_s))
         return nullAtom();
 
     // Dictionary files always have the form "hyph_<locale name>.dic"
     // so we strip everything except the locale.
     constexpr int prefixLength = 5;
     constexpr int suffixLength = 4;
-    return StringView(fileName).substring(prefixLength, fileName.length() - prefixLength - suffixLength).convertToASCIILowercaseAtom();
+    return StringView(fileName).substring(prefixLength, length(fileName) - prefixLength - suffixLength).convertToASCIILowercaseAtom();
 }
 
-static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<AtomString, Vector<String>>& availableLocales)
+static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<RefPtr<AtomStringImpl>, Vector<RefPtr<StringImpl>>>& availableLocales)
 {
-    auto directoryPathString = String::fromUTF8(directoryPath);
+    auto directoryPathString = StringImpl::fromUTF8(directoryPath);
     for (auto& fileName : FileSystem::listDirectory(directoryPathString)) {
         auto locale = extractLocaleFromDictionaryFileName(fileName);
-        if (locale.isEmpty())
+        if (isEmpty(locale))
             continue;
 
         auto fullPath = FileSystem::pathByAppendingComponent(directoryPathString, fileName);
         auto filePath = FileSystem::realPath(fullPath);
 
-        availableLocales.add(locale, Vector<String>()).iterator->value.append(filePath);
+        availableLocales.add(locale, Vector<RefPtr<StringImpl>>()).iterator->value.append(filePath);
 
-        String localeReplacingUnderscores = makeStringByReplacingAll(locale, '_', '-');
-        if (locale != localeReplacingUnderscores)
-            availableLocales.add(AtomString { localeReplacingUnderscores }, Vector<String>()).iterator->value.append(filePath);
+        RefPtr<StringImpl> localeReplacingUnderscores = makeStringByReplacingAll(locale, '_', '-');
+        if (!equal(locale, localeReplacingUnderscores))
+            availableLocales.add(AtomStringImpl::add(localeReplacingUnderscores), Vector<RefPtr<StringImpl>>()).iterator->value.append(filePath);
 
-        size_t dividerPosition = localeReplacingUnderscores.find('-');
+        size_t dividerPosition = find(localeReplacingUnderscores, '-');
         if (dividerPosition != notFound)
-            availableLocales.add(StringView(localeReplacingUnderscores).left(dividerPosition).toAtomString(), Vector<String>()).iterator->value.append(filePath);
+            availableLocales.add(StringView(localeReplacingUnderscores).left(dividerPosition).toAtomString(), Vector<RefPtr<StringImpl>>()).iterator->value.append(filePath);
     }
 }
 
 
-static HashMap<AtomString, Vector<String>>& availableLocales()
+static HashMap<RefPtr<AtomStringImpl>, Vector<RefPtr<StringImpl>>>& availableLocales()
 {
     static bool scannedLocales = false;
-    static HashMap<AtomString, Vector<String>> availableLocales;
+    static HashMap<RefPtr<AtomStringImpl>, Vector<RefPtr<StringImpl>>> availableLocales;
 
     if (!scannedLocales) {
         for (size_t i = 0; i < std::size(gDictionaryDirectories); i++)
@@ -106,11 +106,11 @@ static HashMap<AtomString, Vector<String>>& availableLocales()
     return availableLocales;
 }
 
-bool canHyphenate(const AtomString& localeIdentifier)
+bool canHyphenate(AtomStringImpl* localeIdentifier)
 {
-    if (localeIdentifier.isNull())
+    if (!localeIdentifier)
         return false;
-    return availableLocales().contains(localeIdentifier.convertToASCIILowercase());
+    return availableLocales().contains(convertToASCIILowercase(localeIdentifier));
 }
 
 class HyphenationDictionary : public RefCounted<HyphenationDictionary> {
@@ -155,18 +155,18 @@ private:
 namespace WTF {
 
 template<>
-class TinyLRUCachePolicy<AtomString, RefPtr<WebCore::HyphenationDictionary>>
+class TinyLRUCachePolicy<RefPtr<AtomStringImpl>, RefPtr<WebCore::HyphenationDictionary>>
 {
 public:
-    static TinyLRUCache<AtomString, RefPtr<WebCore::HyphenationDictionary>, 32>& cache()
+    static TinyLRUCache<RefPtr<AtomStringImpl>, RefPtr<WebCore::HyphenationDictionary>, 32>& cache()
     {
-        static NeverDestroyed<TinyLRUCache<AtomString, RefPtr<WebCore::HyphenationDictionary>, 32>> cache;
+        static NeverDestroyed<TinyLRUCache<RefPtr<AtomStringImpl>, RefPtr<WebCore::HyphenationDictionary>, 32>> cache;
         return cache;
     }
 
-    static bool isKeyNull(const AtomString& localeIdentifier)
+    static bool isKeyNull(AtomStringImpl* localeIdentifier)
     {
-        return localeIdentifier.isNull();
+        return !localeIdentifier;
     }
 
     static RefPtr<WebCore::HyphenationDictionary> createValueForNullKey()
@@ -174,12 +174,12 @@ public:
         return WebCore::HyphenationDictionary::createNull();
     }
 
-    static RefPtr<WebCore::HyphenationDictionary> createValueForKey(const AtomString& dictionaryPath)
+    static RefPtr<WebCore::HyphenationDictionary> createValueForKey(AtomStringImpl* dictionaryPath)
     {
-        return WebCore::HyphenationDictionary::create(FileSystem::fileSystemRepresentation(dictionaryPath.string()));
+        return WebCore::HyphenationDictionary::create(FileSystem::fileSystemRepresentation(dictionaryPath));
     }
 
-    static AtomString createKeyForStorage(const AtomString& key) { return key; }
+    static RefPtr<AtomStringImpl> createKeyForStorage(AtomStringImpl* key) { return key; }
 };
 
 } // namespace WTF
@@ -203,7 +203,7 @@ static void countLeadingSpaces(const UTF8CString& utf8String, int32_t& pointerOf
     }
 }
 
-size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomString& localeIdentifier)
+size_t lastHyphenLocation(StringView string, size_t beforeIndex, AtomStringImpl* localeIdentifier)
 {
     // libhyphen accepts strings in UTF-8 format, but WebCore can only provide StringView
     // which stores either UTF-16 or Latin1 data. This is unfortunate for performance
@@ -223,14 +223,14 @@ size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomStrin
     Vector<char> hyphenArray(utf8StringCopy.length() - leadingSpaceBytes + 5);
     char* hyphenArrayData = hyphenArray.mutableSpan().data();
 
-    AtomString lowercaseLocaleIdentifier = localeIdentifier.convertToASCIILowercase();
+    RefPtr<AtomStringImpl> lowercaseLocaleIdentifier = convertToASCIILowercase(localeIdentifier);
 
     // Web content may specify strings for locales which do not exist or that we do not have.
     if (!availableLocales().contains(lowercaseLocaleIdentifier))
         return 0;
 
     for (const auto& dictionaryPath : availableLocales().get(lowercaseLocaleIdentifier)) {
-        RefPtr<HyphenationDictionary> dictionary = TinyLRUCachePolicy<AtomString, RefPtr<HyphenationDictionary>>::cache().get(AtomString(dictionaryPath));
+        RefPtr<HyphenationDictionary> dictionary = TinyLRUCachePolicy<RefPtr<AtomStringImpl>, RefPtr<HyphenationDictionary>>::cache().get(AtomStringImpl::add(dictionaryPath));
 
         if (!dictionary->libhyphenDictionary())
             continue;

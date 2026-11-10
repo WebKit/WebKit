@@ -53,26 +53,26 @@ template<>
 struct SVGPropertyTraits<SVGTextPathMethodType> {
     static unsigned highestEnumValue() { return SVGTextPathMethodStretch; }
 
-    static String toString(SVGTextPathMethodType type)
+    static RefPtr<StringImpl> toString(SVGTextPathMethodType type)
     {
         switch (type) {
         case SVGTextPathMethodUnknown:
             return emptyString();
         case SVGTextPathMethodAlign:
-            return "align"_s;
+            return "align"_si;
         case SVGTextPathMethodStretch:
-            return "stretch"_s;
+            return "stretch"_si;
         }
     
         ASSERT_NOT_REACHED();
         return emptyString();
     }
 
-    static SVGTextPathMethodType fromString(SVGElement&, const String& value)
+    static SVGTextPathMethodType fromString(SVGElement&, StringImpl* value)
     {
-        if (value == "align"_s)
+        if (equal(value, "align"_s))
             return SVGTextPathMethodAlign;
-        if (value == "stretch"_s)
+        if (equal(value, "stretch"_s))
             return SVGTextPathMethodStretch;
         return SVGTextPathMethodUnknown;
     }
@@ -82,7 +82,7 @@ template<>
 struct SVGPropertyTraits<SVGTextPathSpacingType> {
     static unsigned highestEnumValue() { return SVGTextPathSpacingExact; }
 
-    static String toString(SVGTextPathSpacingType type)
+    static RefPtr<StringImpl> toString(SVGTextPathSpacingType type)
     {
         switch (type) {
         case SVGTextPathSpacingUnknown:
@@ -90,18 +90,18 @@ struct SVGPropertyTraits<SVGTextPathSpacingType> {
         case SVGTextPathSpacingAuto:
             return autoAtom();
         case SVGTextPathSpacingExact:
-            return "exact"_s;
+            return "exact"_si;
         }
 
         ASSERT_NOT_REACHED();
         return emptyString();
     }
 
-    static SVGTextPathSpacingType fromString(SVGElement&, const String& value)
+    static SVGTextPathSpacingType fromString(SVGElement&, StringImpl* value)
     {
-        if (value == autoAtom())
+        if (equal(value, autoAtom()))
             return SVGTextPathSpacingAuto;
-        if (value == "exact"_s)
+        if (equal(value, "exact"_s))
             return SVGTextPathSpacingExact;
         return SVGTextPathSpacingUnknown;
     }
@@ -111,26 +111,26 @@ template<>
 struct SVGPropertyTraits<SVGTextPathSideType> {
     static unsigned highestEnumValue() { return SVGTextPathSideRight; }
 
-    static String toString(SVGTextPathSideType type)
+    static RefPtr<StringImpl> toString(SVGTextPathSideType type)
     {
         switch (type) {
         case SVGTextPathSideUnknown:
             return emptyString();
         case SVGTextPathSideLeft:
-            return "left"_s;
+            return "left"_si;
         case SVGTextPathSideRight:
-            return "right"_s;
+            return "right"_si;
         }
 
         ASSERT_NOT_REACHED();
         return emptyString();
     }
 
-    static SVGTextPathSideType fromString(SVGElement&, const String& value)
+    static SVGTextPathSideType fromString(SVGElement&, StringImpl* value)
     {
-        if (value == "left"_s)
+        if (equal(value, "left"_s))
             return SVGTextPathSideLeft;
-        if (value == "right"_s)
+        if (equal(value, "right"_s))
             return SVGTextPathSideRight;
         return SVGTextPathSideUnknown;
     }
@@ -176,7 +176,7 @@ private:
 
     void postConnectionSteps() override;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;

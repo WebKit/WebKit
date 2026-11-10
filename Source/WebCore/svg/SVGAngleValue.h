@@ -50,7 +50,7 @@ public:
     float valueInSpecifiedUnits() const { return m_valueInSpecifiedUnits; }
 
     ExceptionOr<void> setValueAsString(StringView);
-    String valueAsString() const;
+    RefPtr<StringImpl> valueAsString() const;
 
     ExceptionOr<void> newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
     ExceptionOr<void> convertToSpecifiedUnits(unsigned short unitType);

@@ -54,7 +54,7 @@ private:
     void putPixelBuffer(const WebCore::PixelBufferSourceView&, const WebCore::IntRect&, const WebCore::IntPoint&, WebCore::AlphaPremultiplication) final { }
     bool canMapBackingStore() const final { return false; }
     unsigned bytesPerRow() const final { return 0; }
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
     WebCore::NullGraphicsContext m_context;
 };

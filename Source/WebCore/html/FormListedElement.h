@@ -54,7 +54,7 @@ public:
     // Returns the 'name' attribute value. If this element has no name
     // attribute, it returns an empty string instead of null string.
     // Note that the 'name' IDL attribute doesn't use this function.
-    virtual const AtomString& name() const;
+    virtual const RefPtr<AtomStringImpl>& name() const;
 
     // Override in derived classes to get the encoded name=value pair for submitting.
     // Return true for a successful control (see HTML4-17.13.2).
@@ -80,9 +80,9 @@ public:
     virtual bool tooLong() const;
     virtual bool typeMismatch() const;
     virtual bool valueMissing() const;
-    virtual String validationMessage() const;
+    virtual RefPtr<StringImpl> validationMessage() const;
     virtual bool computeValidity() const;
-    virtual void setCustomValidity(const String&);
+    virtual void setCustomValidity(StringImpl*);
 
     void formAttributeTargetChanged();
 
@@ -97,8 +97,8 @@ protected:
     void didMoveToNewDocument();
     void elementInsertedIntoAncestor(Element&, Node::InsertionType) override;
     void elementRemovedFromAncestor(Element&, Node::RemovalType) override;
-    void parseAttribute(const QualifiedName&, const AtomString&);
-    void parseFormAttribute(const AtomString&);
+    void parseAttribute(const QualifiedName&, AtomStringImpl*);
+    void parseFormAttribute(AtomStringImpl*);
 
     // If you add an override of willChangeForm() or didChangeForm() to a class
     // derived from this one, you will need to add a call to setForm(0) to the
@@ -106,7 +106,7 @@ protected:
     virtual void willChangeForm();
     virtual void didChangeForm();
 
-    NODELETE String customValidationMessage() const;
+    NODELETE RefPtr<StringImpl> customValidationMessage() const;
 
 private:
     void setFormInternal(RefPtr<HTMLFormElement>&&) final;
@@ -116,7 +116,7 @@ private:
     void resetFormAttributeTargetObserver();
 
     std::unique_ptr<FormAttributeTargetObserver> m_formAttributeTargetObserver;
-    String m_customValidationMessage;
+    RefPtr<StringImpl> m_customValidationMessage;
 };
 
 } // namespace

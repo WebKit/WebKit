@@ -42,24 +42,24 @@ public:
     struct ReplyInfo {
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(ReplyInfo);
 
-        ReplyInfo(uint64_t replyID, String&& blockSignature)
+        ReplyInfo(uint64_t replyID, RefPtr<StringImpl>&& blockSignature)
             : replyID(replyID)
             , blockSignature(WTF::move(blockSignature))
         {
         }
 
         const uint64_t replyID;
-        const String blockSignature;
+        const RefPtr<StringImpl> blockSignature;
     };
     RemoteObjectInvocation();
-    RemoteObjectInvocation(const String& interfaceIdentifier, RefPtr<API::Dictionary>&& encodedInvocation, std::unique_ptr<ReplyInfo>&&);
+    RemoteObjectInvocation(StringImpl* interfaceIdentifier, RefPtr<API::Dictionary>&& encodedInvocation, std::unique_ptr<ReplyInfo>&&);
 
-    const String& interfaceIdentifier() const LIFETIME_BOUND { return m_interfaceIdentifier; }
+    const RefPtr<StringImpl>& interfaceIdentifier() const LIFETIME_BOUND { return m_interfaceIdentifier; }
     const RefPtr<API::Dictionary>& encodedInvocation() const LIFETIME_BOUND { return m_encodedInvocation; }
     const std::unique_ptr<ReplyInfo>& replyInfo() const LIFETIME_BOUND { return m_replyInfo; }
 
 private:
-    String m_interfaceIdentifier;
+    RefPtr<StringImpl> m_interfaceIdentifier;
     const RefPtr<API::Dictionary> m_encodedInvocation;
     std::unique_ptr<ReplyInfo> m_replyInfo;
 };

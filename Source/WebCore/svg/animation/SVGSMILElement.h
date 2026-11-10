@@ -49,7 +49,7 @@ public:
     SVGSMILElement(const QualifiedName&, Document&, const SVGPropertyRegistry&);
     virtual ~SVGSMILElement();
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
     void removingSteps(RemovalType, ContainerNode&) override;
@@ -107,7 +107,7 @@ public:
     void connectConditions();
     bool hasConditionsConnected() const { return m_conditionsConnected; }
     
-    void dispatchPendingEvent(SMILEventSender*, const AtomString& eventType);
+    void dispatchPendingEvent(SMILEventSender*, AtomStringImpl* eventType);
 
     unsigned lastDispatchedRepeatIteration() const { return m_lastDispatchedRepeatIteration; }
 
@@ -157,11 +157,11 @@ private:
     // for example <animate begin="otherElement.begin + 8s; button.click" ... />
     struct Condition {
         enum Type { EventBase, Syncbase, AccessKey };
-        NODELETE Condition(Type, BeginOrEnd, const String& baseID, const AtomString& name, SMILTime offset, int repeats = -1);
+        NODELETE Condition(Type, BeginOrEnd, StringImpl* baseID, AtomStringImpl* name, SMILTime offset, int repeats = -1);
         Type m_type;
         BeginOrEnd m_beginOrEnd;
-        String m_baseID;
-        AtomString m_name;
+        RefPtr<StringImpl> m_baseID;
+        RefPtr<AtomStringImpl> m_name;
         SMILTime m_offset;
         int m_repeats { -1 };
         RefPtr<Element> m_syncbase;

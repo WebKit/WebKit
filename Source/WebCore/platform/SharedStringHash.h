@@ -42,13 +42,13 @@ struct SharedStringHashHash {
 };
 
 // Returns the hash of the string that will be used for visited link coloring.
-NODELETE WEBCORE_EXPORT SharedStringHash computeSharedStringHash(const String& url);
+NODELETE WEBCORE_EXPORT SharedStringHash computeSharedStringHash(StringImpl* url);
 NODELETE WEBCORE_EXPORT SharedStringHash computeSharedStringHash(std::span<const char16_t> url);
 
 // Resolves the potentially relative URL "attributeURL" relative to the given
 // base URL, and returns the hash of the string that will be used for visited
 // link coloring. It will return the special value of 0 if attributeURL does not
 // look like a relative URL.
-SharedStringHash computeVisitedLinkHash(const URL& base, const AtomString& attributeURL);
+SharedStringHash computeVisitedLinkHash(const URL& base, AtomStringImpl* attributeURL);
 
 } // namespace WebCore

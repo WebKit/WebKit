@@ -422,7 +422,7 @@ bool Options::overrideAliasedOptionWithHeuristic(const char* name)
         return false;
 
     auto aliasedOption = makeString(unsafeSpan(&name[4]), '=', unsafeSpan(stringValue));
-    if (Options::setOption(aliasedOption.utf8().legacyCStringPointer()))
+    if (Options::setOption(utf8(aliasedOption).legacyCStringPointer()))
         return true;
 
     fprintf(stderr, "WARNING: failed to parse %s=%s\n", name, stringValue);
@@ -1331,17 +1331,17 @@ bool Options::setAliasedOption(const char* arg, bool verify)
 #define FOR_EACH_OPTION(aliasedName_, unaliasedName_, equivalence) \
     if (strlen(#aliasedName_) == static_cast<size_t>(equalStr - arg)    \
         && !strncasecmp(arg, #aliasedName_, equalStr - arg)) {          \
-        auto unaliasedOption = String::fromLatin1(#unaliasedName_);     \
+        RefPtr<StringImpl> unaliasedOption = StringImpl::fromLatin1(#unaliasedName_); \
         if (equivalence == SameOption)                                  \
             unaliasedOption = makeString(unaliasedOption, unsafeSpan(equalStr)); \
         else {                                                          \
             ASSERT(equivalence == InvertedOption);                      \
             auto invertedValueStr = invertBoolOptionValue(equalStr + 1); \
-            if (invertedValueStr.isNull())                                      \
+            if (invertedValueStr.isNull())                              \
                 return false;                                           \
             unaliasedOption = makeString(unaliasedOption, '=', invertedValueStr); \
         }                                                               \
-        return setOptionWithoutAlias(unaliasedOption.utf8().legacyCStringPointer(), verify);    \
+        return setOptionWithoutAlias(utf8(unaliasedOption).legacyCStringPointer(), verify); \
     }
 
     FOR_EACH_JSC_ALIASED_OPTION(FOR_EACH_OPTION)

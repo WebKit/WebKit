@@ -41,26 +41,26 @@ class URLSearchParams;
 
 class DOMURL final : public RefCountedAndCanMakeWeakPtr<DOMURL>, public URLDecomposition {
 public:
-    static ExceptionOr<Ref<DOMURL>> create(const String& url, const String& base);
+    static ExceptionOr<Ref<DOMURL>> create(StringImpl* url, StringImpl* base);
     WEBCORE_EXPORT ~DOMURL();
 
-    static RefPtr<DOMURL> parse(const String& url, const String& base);
-    static bool canParse(const String& url, const String& base);
+    static RefPtr<DOMURL> parse(StringImpl* url, StringImpl* base);
+    static bool canParse(StringImpl* url, StringImpl* base);
 
     const URL& href() const LIFETIME_BOUND { return m_url; }
-    ExceptionOr<void> setHref(const String&);
+    ExceptionOr<void> setHref(StringImpl*);
 
     URLSearchParams& searchParams();
 
-    const String& toJSON() const LIFETIME_BOUND { return m_url.string(); }
+    const RefPtr<StringImpl>& toJSON() const LIFETIME_BOUND { return m_url.string(); }
 
-    static String createObjectURL(ScriptExecutionContext&, Blob&);
-    static void revokeObjectURL(ScriptExecutionContext&, const String&);
+    static RefPtr<StringImpl> createObjectURL(ScriptExecutionContext&, Blob&);
+    static void revokeObjectURL(ScriptExecutionContext&, StringImpl*);
 
-    static String createPublicURL(ScriptExecutionContext&, URLRegistrable&);
+    static RefPtr<StringImpl> createPublicURL(ScriptExecutionContext&, URLRegistrable&);
 
 private:
-    static ExceptionOr<Ref<DOMURL>> create(const String& url, const URL& base);
+    static ExceptionOr<Ref<DOMURL>> create(StringImpl* url, const URL& base);
     DOMURL(URL&& completeURL);
 
     URL fullURL() const final { return m_url; }

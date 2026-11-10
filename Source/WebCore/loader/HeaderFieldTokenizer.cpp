@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-HeaderFieldTokenizer::HeaderFieldTokenizer(const String& headerField)
+HeaderFieldTokenizer::HeaderFieldTokenizer(StringImpl* headerField)
     : m_input(headerField)
 {
     skipSpaces();
@@ -42,7 +42,7 @@ bool HeaderFieldTokenizer::consume(char16_t c)
 {
     ASSERT(!isTabOrSpace(c));
 
-    if (isConsumed() || m_input[m_index] != c)
+    if (isConsumed() || codeUnitAt(m_input, m_index) != c)
         return false;
 
     ++m_index;
@@ -50,51 +50,51 @@ bool HeaderFieldTokenizer::consume(char16_t c)
     return true;
 }
 
-String HeaderFieldTokenizer::consumeQuotedString()
+RefPtr<StringImpl> HeaderFieldTokenizer::consumeQuotedString()
 {
     StringBuilder builder;
 
-    ASSERT(m_input[m_index] == '"');
+    ASSERT(codeUnitAt(m_input, m_index) == '"');
     ++m_index;
 
     while (!isConsumed()) {
-        if (m_input[m_index] == '"') {
-            String output = builder.toString();
+        if (codeUnitAt(m_input, m_index) == '"') {
+            RefPtr<StringImpl> output = builder.toString();
             ++m_index;
             skipSpaces();
             return output;
         }
-        if (m_input[m_index] == '\\') {
+        if (codeUnitAt(m_input, m_index) == '\\') {
             ++m_index;
             if (isConsumed())
-                return String();
+                return nullptr;
         }
-        builder.append(m_input[m_index]);
+        builder.append(codeUnitAt(m_input, m_index));
         ++m_index;
     }
-    return String();
+    return nullptr;
 }
 
-String HeaderFieldTokenizer::consumeToken()
+RefPtr<StringImpl> HeaderFieldTokenizer::consumeToken()
 {
     auto start = m_index;
-    while (!isConsumed() && RFC7230::isTokenCharacter(m_input[m_index]))
+    while (!isConsumed() && RFC7230::isTokenCharacter(codeUnitAt(m_input, m_index)))
         ++m_index;
 
     if (start == m_index)
-        return String();
+        return nullptr;
 
-    String output = m_input.substring(start, m_index - start);
+    RefPtr<StringImpl> output = substring(m_input, start, m_index - start);
     skipSpaces();
     return output;
 }
 
-String HeaderFieldTokenizer::consumeTokenOrQuotedString()
+RefPtr<StringImpl> HeaderFieldTokenizer::consumeTokenOrQuotedString()
 {
     if (isConsumed())
-        return String();
+        return nullptr;
 
-    if (m_input[m_index] == '"')
+    if (codeUnitAt(m_input, m_index) == '"')
         return consumeQuotedString();
 
     return consumeToken();
@@ -102,7 +102,7 @@ String HeaderFieldTokenizer::consumeTokenOrQuotedString()
 
 void HeaderFieldTokenizer::skipSpaces()
 {
-    while (!isConsumed() && isTabOrSpace(m_input[m_index]))
+    while (!isConsumed() && isTabOrSpace(codeUnitAt(m_input, m_index)))
         ++m_index;
 }
 
@@ -112,7 +112,7 @@ void HeaderFieldTokenizer::consumeBeforeAnyCharMatch(const Vector<char16_t>& cha
 
     while (!isConsumed()) {
         for (const auto& c : chars) {
-            if (c == m_input[m_index])
+            if (c == codeUnitAt(m_input, m_index))
                 return;
         }
 

@@ -25,7 +25,7 @@
 
 typedef char gchar;
 
-gchar* convertToUTF8String(WTF::String const& s);
+gchar* convertToUTF8String(StringImpl* s);
 gchar* convertToUTF8String(URL const& s);
 
 #endif /* ConvertToUTF8String_h */

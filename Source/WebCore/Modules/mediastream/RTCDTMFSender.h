@@ -52,9 +52,9 @@ public:
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     bool canInsertDTMF() const;
-    NODELETE String toneBuffer() const;
+    NODELETE RefPtr<StringImpl> toneBuffer() const;
 
-    ExceptionOr<void> insertDTMF(const String& tones, size_t duration, size_t interToneGap);
+    ExceptionOr<void> insertDTMF(StringImpl* tones, size_t duration, size_t interToneGap);
 
 private:
     RTCDTMFSender(ScriptExecutionContext&, RTCRtpSender&, std::unique_ptr<RTCDTMFSenderBackend>&&);
@@ -78,7 +78,7 @@ private:
     Timer m_toneTimer;
     WeakPtr<RTCRtpSender> m_sender;
     std::unique_ptr<RTCDTMFSenderBackend> m_backend;
-    String m_tones;
+    RefPtr<StringImpl> m_tones;
     size_t m_duration;
     size_t m_interToneGap;
     bool m_isPendingPlayoutTask { false };

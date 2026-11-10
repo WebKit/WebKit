@@ -123,7 +123,7 @@ void RemoteBufferProxy::generateAValidationError()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteBufferProxy::setLabel(String&& label)
+void RemoteBufferProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteBuffer::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

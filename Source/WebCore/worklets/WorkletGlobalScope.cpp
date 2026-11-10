@@ -58,7 +58,7 @@ WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, Ref<JSC::V
     , m_url(parameters.windowURL.isolatedCopy())
     , m_jsRuntimeFlags(parameters.jsRuntimeFlags)
     , m_settingsValues(parameters.settingsValues.isolatedCopy())
-    , m_agentClusterID(parameters.agentClusterID.isolatedCopy())
+    , m_agentClusterID(isolatedCopy(parameters.agentClusterID))
     , m_canBeCrossOriginIsolated(parameters.canBeCrossOriginIsolated)
     , m_networkLoadPolicy(parameters.networkLoadPolicy.isolatedCopy())
 {
@@ -113,7 +113,7 @@ void WorkletGlobalScope::prepareForDestruction()
     }
 }
 
-String WorkletGlobalScope::userAgent(const URL& url) const
+RefPtr<StringImpl> WorkletGlobalScope::userAgent(const URL& url) const
 {
     if (!m_document)
         return emptyString();
@@ -127,14 +127,14 @@ void WorkletGlobalScope::evaluate()
 }
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#parse-a-url
-URL WorkletGlobalScope::parseURL(const String& url) const
+URL WorkletGlobalScope::parseURL(StringImpl* url) const
 {
-    if (url.isNull())
+    if (!url)
         return URL();
     return URL(this->url(), url);
 }
 
-void WorkletGlobalScope::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<ScriptCallStack>&& stack)
+void WorkletGlobalScope::logExceptionToConsole(StringImpl* errorMessage, StringImpl* sourceURL, int lineNumber, int columnNumber, RefPtr<ScriptCallStack>&& stack)
 {
     if (settingsValues().logsPageMessagesToSystemConsoleEnabled) [[unlikely]] {
         if (stack) {
@@ -161,14 +161,14 @@ void WorkletGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMes
     protect(m_document)->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(message->source(), message->type(), message->level(), message->message(), 0));
 }
 
-void WorkletGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
+void WorkletGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, StringImpl* message, unsigned long requestIdentifier)
 {
     if (!m_document || isJSExecutionForbidden())
         return;
     protect(m_document)->addConsoleMessage(source, level, message, requestIdentifier);
 }
 
-void WorkletGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& messageText, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::JSGlobalObject*, unsigned long requestIdentifier)
+void WorkletGlobalScope::addMessage(MessageSource source, MessageLevel level, StringImpl* messageText, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::JSGlobalObject*, unsigned long requestIdentifier)
 {
     if (!m_document || isJSExecutionForbidden())
         return;

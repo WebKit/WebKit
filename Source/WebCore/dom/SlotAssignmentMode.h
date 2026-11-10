@@ -46,10 +46,10 @@ inline SlotAssignmentMode parseSlotAssignmentMode(StringView value)
     return SlotAssignmentMode::Named;
 }
 
-inline const AtomString& serializeSlotAssignmentMode(SlotAssignmentMode mode)
+inline const RefPtr<AtomStringImpl>& serializeSlotAssignmentMode(SlotAssignmentMode mode)
 {
-    static MainThreadNeverDestroyed<const AtomString> named(slotAssignmentModeNamedLiteral);
-    static MainThreadNeverDestroyed<const AtomString> manual(slotAssignmentModeManualLiteral);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> named(slotAssignmentModeNamedLiteral);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> manual(slotAssignmentModeManualLiteral);
     switch (mode) {
     case SlotAssignmentMode::Manual:
         return manual;

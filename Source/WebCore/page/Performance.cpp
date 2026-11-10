@@ -147,13 +147,13 @@ bool Performance::addToEntryBuffer(PerformanceEntry& entry)
     return true;
 }
 
-void Performance::clearEntryBuffer(PerformanceEntry::Type type, const String& name)
+void Performance::clearEntryBuffer(PerformanceEntry::Type type, StringImpl* name)
 {
     auto& buffer = entryBufferTuple(type).buffer;
-    if (name.isNull())
+    if (!name)
         buffer.clear();
     else
-        buffer.removeAllMatching([&](auto& entry) { return entry->name() == name; });
+        buffer.removeAllMatching([&](auto& entry) { return equal(entry->name(), name); });
 }
 
 DOMHighResTimeStamp Performance::now() const
@@ -265,7 +265,7 @@ Vector<Ref<PerformanceEntry>> Performance::getEntries() const
     return entries;
 }
 
-Vector<Ref<PerformanceEntry>> Performance::getEntriesByType(const String& entryType) const
+Vector<Ref<PerformanceEntry>> Performance::getEntriesByType(StringImpl* entryType) const
 {
     // https://w3c.github.io/performance-timeline/#dfn-filter-buffer-map-by-name-and-type
     auto type = PerformanceEntry::parseEntryTypeString(entryType);
@@ -282,7 +282,7 @@ Vector<Ref<PerformanceEntry>> Performance::getEntriesByType(const String& entryT
     return entries;
 }
 
-Vector<Ref<PerformanceEntry>> Performance::getEntriesByName(const String& name, const String& entryType) const
+Vector<Ref<PerformanceEntry>> Performance::getEntriesByName(StringImpl* name, StringImpl* entryType) const
 {
     // https://w3c.github.io/performance-timeline/#dfn-filter-buffer-map-by-name-and-type
     Vector<Ref<PerformanceEntry>> entries;
@@ -291,12 +291,12 @@ Vector<Ref<PerformanceEntry>> Performance::getEntriesByName(const String& name, 
         if (!tuple.availableFromTimeline)
             return;
         for (auto& entry : tuple.buffer) {
-            if (entry->name() == name)
+            if (equal(entry->name(), name))
                 entries.append(entry);
         }
     };
 
-    if (!entryType.isNull()) {
+    if (entryType) {
         auto type = PerformanceEntry::parseEntryTypeString(entryType);
         if (!type)
             return entries;
@@ -310,7 +310,7 @@ Vector<Ref<PerformanceEntry>> Performance::getEntriesByName(const String& name, 
     return entries;
 }
 
-void Performance::appendBufferedEntriesByType(const String& entryType, Vector<Ref<PerformanceEntry>>& entries, PerformanceObserver& observer) const
+void Performance::appendBufferedEntriesByType(StringImpl* entryType, Vector<Ref<PerformanceEntry>>& entries, PerformanceObserver& observer) const
 {
     // https://w3c.github.io/performance-timeline/#observe-method (step 8c)
     // No availableFromTimeline check — buffered observers see all entry types.
@@ -512,7 +512,7 @@ void Performance::resourceTimingBufferFullTimerFired()
     m_waitingForBackupBufferToBeProcessed = false;
 }
 
-ExceptionOr<Ref<PerformanceMark>> Performance::mark(JSC::JSGlobalObject& globalObject, const String& markName, std::optional<PerformanceMarkOptions>&& markOptions)
+ExceptionOr<Ref<PerformanceMark>> Performance::mark(JSC::JSGlobalObject& globalObject, StringImpl* markName, std::optional<PerformanceMarkOptions>&& markOptions)
 {
     if (!m_userTiming)
         lazyInitialize(m_userTiming, makeUnique<PerformanceUserTiming>(*this));
@@ -526,7 +526,7 @@ ExceptionOr<Ref<PerformanceMark>> Performance::mark(JSC::JSGlobalObject& globalO
     return mark.releaseReturnValue();
 }
 
-void Performance::clearMarks(const String& markName)
+void Performance::clearMarks(StringImpl* markName)
 {
     if (!m_userTiming)
         lazyInitialize(m_userTiming, makeUnique<PerformanceUserTiming>(*this));
@@ -534,7 +534,7 @@ void Performance::clearMarks(const String& markName)
     clearEntryBuffer(PerformanceEntry::Type::Mark, markName);
 }
 
-ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& globalObject, const String& measureName, StartOrMeasureOptions&& startOrMeasureOptions, const String& endMark)
+ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& globalObject, StringImpl* measureName, StartOrMeasureOptions&& startOrMeasureOptions, StringImpl* endMark)
 {
     if (!m_userTiming)
         lazyInitialize(m_userTiming, makeUnique<PerformanceUserTiming>(*this));
@@ -545,7 +545,7 @@ ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& g
 
     if (isSignpostEnabled()) {
         Ref entry { measure.returnValue() };
-        auto message = measureName.utf8();
+        auto message = utf8(measureName);
 #if OS(DARWIN)
         {
             auto startTime = m_continuousTimeOrigin + Seconds::fromMilliseconds(entry->startTime());
@@ -575,7 +575,7 @@ ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& g
     return measure.releaseReturnValue();
 }
 
-void Performance::clearMeasures(const String& measureName)
+void Performance::clearMeasures(StringImpl* measureName)
 {
     if (!m_userTiming)
         lazyInitialize(m_userTiming, makeUnique<PerformanceUserTiming>(*this));

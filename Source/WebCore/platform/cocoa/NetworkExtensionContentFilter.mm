@@ -74,7 +74,7 @@ void NetworkExtensionContentFilter::initialize(const URL* url)
     m_queue = adoptOSObject(dispatch_queue_create("WebKit NetworkExtension Filtering", serialQueueWithAutoreleasePoolAttrSingleton()));
     ASSERT_UNUSED(url, !url);
     m_neFilterSource = adoptNS([[NEFilterSource alloc] initWithDecisionQueue:m_queue.get()]);
-    [m_neFilterSource setSourceAppIdentifier:applicationBundleIdentifier().createNSString().get()];
+    [m_neFilterSource setSourceAppIdentifier:createNSString(applicationBundleIdentifier()).get()];
     [m_neFilterSource setSourceAppPid:legacyPresentingApplicationPID()];
 }
 
@@ -111,7 +111,7 @@ void NetworkExtensionContentFilter::willSendRequest(ResourceRequest& request, co
     if (!modifiedRequestURLString)
         return;
 
-    URL modifiedRequestURL { modifiedRequestURLString.get() };
+    URL modifiedRequestURL { StringImpl::create(modifiedRequestURLString.get()) };
     if (!modifiedRequestURL.isValid()) {
         LOG(ContentFiltering, "NetworkExtensionContentFilter failed to convert modified URL string %@ to a URL.\n", modifiedRequestURLString.get());
         return;
@@ -120,7 +120,7 @@ void NetworkExtensionContentFilter::willSendRequest(ResourceRequest& request, co
     request.setURL(WTF::move(modifiedRequestURL));
 }
 
-void NetworkExtensionContentFilter::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(String&&)>&& completionHandler)
+void NetworkExtensionContentFilter::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(!request.isNull());
@@ -156,14 +156,14 @@ void NetworkExtensionContentFilter::willSendRequest(ResourceRequest&& request, c
                 return;
             }
 
-            URL modifiedRequestURL { modifiedRequestURLString.get() };
+            URL modifiedRequestURL { StringImpl::create(modifiedRequestURLString.get()) };
             if (!modifiedRequestURL.isValid()) {
                 RELEASE_LOG_ERROR(ContentFiltering, "NetworkExtensionContentFilter failed to convert modified URL string %s to a URL.\n", modifiedRequestURLString.get().UTF8String);
                 completionHandler({ });
                 return;
             }
 
-            completionHandler(String { modifiedRequestURLString.get() });
+            completionHandler(StringImpl::create(modifiedRequestURLString.get()));
         });
     });
 
@@ -231,7 +231,7 @@ ContentFilterUnblockHandler NetworkExtensionContentFilter::unblockHandler() cons
 
     RetainPtr<NEFilterSource> neFilterSource { m_neFilterSource };
     return ContentFilterUnblockHandler {
-        "nefilter-unblock"_s, [neFilterSource](DecisionHandlerFunction decisionHandler) {
+        "nefilter-unblock"_si, [neFilterSource](DecisionHandlerFunction decisionHandler) {
             [neFilterSource remediateWithDecisionHandler:[decisionHandler](NEFilterSourceStatus status, NSDictionary *) {
                 LOG(ContentFiltering, "NEFilterSource %s the unblock request.\n", status == NEFilterSourceStatusPass ? "allowed" : "did not allow");
                 decisionHandler(status == NEFilterSourceStatusPass);

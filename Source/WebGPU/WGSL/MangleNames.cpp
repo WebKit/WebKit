@@ -50,9 +50,9 @@ struct MangledName {
 
     Kind kind;
     uint32_t index;
-    String originalName;
+    RefPtr<StringImpl> originalName;
 
-    String toString() const
+    RefPtr<StringImpl> toString() const
     {
         static const auto prefixes = WTF::toArray<ASCIILiteral>({
             "type"_s,
@@ -62,7 +62,7 @@ struct MangledName {
             "function"_s,
             "field"_s,
         });
-        return makeString(prefixes[std::to_underlying(kind)], String::number(index));
+        return makeString(prefixes[std::to_underlying(kind)], makeString(index));
     }
 };
 
@@ -92,7 +92,7 @@ private:
     void introduceVariable(AST::Identifier&, MangledName::Kind);
     void readVariable(AST::Identifier&) const;
 
-    NODELETE MangledName makeMangledName(const String&, MangledName::Kind);
+    NODELETE MangledName makeMangledName(StringImpl*, MangledName::Kind);
 
     void visitVariableDeclaration(AST::Variable&, MangledName::Kind);
 
@@ -108,7 +108,7 @@ void NameManglerVisitor::run()
 
 void NameManglerVisitor::visit(AST::Function& function)
 {
-    String originalName = function.name();
+    RefPtr<StringImpl> originalName = function.name();
     introduceVariable(function.name(), MangledName::Function);
     Base::visit(function);
 }
@@ -178,12 +178,12 @@ void NameManglerVisitor::visit(AST::FieldAccessExpression& access)
 
 void NameManglerVisitor::introduceVariable(AST::Identifier& name, MangledName::Kind kind)
 {
-    const auto* mangledName = ContextProvider::introduceVariable(name, makeMangledName(name, kind));
+    const auto* mangledName = ContextProvider::introduceVariable(protect(name.id()), makeMangledName(name, kind));
     ASSERT(mangledName);
     m_shaderModule.replace(&name, AST::Identifier::makeWithSpan(name.span(), mangledName->toString()));
 }
 
-MangledName NameManglerVisitor::makeMangledName(const String& name, MangledName::Kind kind)
+MangledName NameManglerVisitor::makeMangledName(StringImpl* name, MangledName::Kind kind)
 {
     return MangledName {
         kind,
@@ -194,7 +194,7 @@ MangledName NameManglerVisitor::makeMangledName(const String& name, MangledName:
 
 void NameManglerVisitor::readVariable(AST::Identifier& name) const
 {
-    if (const auto* mangledName = ContextProvider::readVariable(name))
+    if (const auto* mangledName = ContextProvider::readVariable(protect(name.id())))
         m_shaderModule.replace(&name, AST::Identifier::makeWithSpan(name.span(), mangledName->toString()));
 }
 

@@ -568,7 +568,7 @@ void MediaPlayerPrivateRemote::renderingModeChanged()
         player->renderingModeChanged();
 }
 
-String MediaPlayerPrivateRemote::engineDescription() const
+RefPtr<StringImpl> MediaPlayerPrivateRemote::engineDescription() const
 {
     return m_configuration.engineDescription;
 }
@@ -811,7 +811,7 @@ void MediaPlayerPrivateRemote::remoteTextTrackConfigurationChanged(TrackID track
     }
 }
 
-void MediaPlayerPrivateRemote::parseWebVTTFileHeader(TrackID trackID, String&& header)
+void MediaPlayerPrivateRemote::parseWebVTTFileHeader(TrackID trackID, RefPtr<StringImpl>&& header)
 {
     assertIsMainRunLoop();
     Locker locker { m_lock };
@@ -856,7 +856,7 @@ void MediaPlayerPrivateRemote::addDataCue(TrackID trackID, MediaTime&& start, Me
 }
 
 #if ENABLE(DATACUE_VALUE)
-void MediaPlayerPrivateRemote::addDataCueWithType(TrackID trackID, MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&& data, String&& type)
+void MediaPlayerPrivateRemote::addDataCueWithType(TrackID trackID, MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&& data, RefPtr<StringImpl>&& type)
 {
     assertIsMainRunLoop();
     Locker locker { m_lock };
@@ -1070,14 +1070,14 @@ NSArray* MediaPlayerPrivateRemote::timedMetadata() const
     return nullptr;
 }
 
-String MediaPlayerPrivateRemote::accessLog() const
+RefPtr<StringImpl> MediaPlayerPrivateRemote::accessLog() const
 {
     auto sendResult = protect(connection())->sendSync(Messages::RemoteMediaPlayerProxy::AccessLog(), m_id);
     auto [log] = sendResult.takeReplyOr(emptyString());
     return log;
 }
 
-String MediaPlayerPrivateRemote::errorLog() const
+RefPtr<StringImpl> MediaPlayerPrivateRemote::errorLog() const
 {
     auto sendResult = protect(connection())->sendSync(Messages::RemoteMediaPlayerProxy::ErrorLog(), m_id);
     auto [log] = sendResult.takeReplyOr(emptyString());
@@ -1233,12 +1233,12 @@ bool MediaPlayerPrivateRemote::hasAvailableVideoFrame() const
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-String MediaPlayerPrivateRemote::wirelessPlaybackTargetName() const
+RefPtr<StringImpl> MediaPlayerPrivateRemote::wirelessPlaybackTargetName() const
 {
     return m_cachedState.wirelessPlaybackTargetName;
 }
 
-String MediaPlayerPrivateRemote::wirelessPlaybackRouteName() const
+RefPtr<StringImpl> MediaPlayerPrivateRemote::wirelessPlaybackRouteName() const
 {
     return m_cachedState.wirelessPlaybackRouteName;
 }
@@ -1350,7 +1350,7 @@ AudioSourceProvider* MediaPlayerPrivateRemote::audioSourceProvider()
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-RefPtr<LegacyCDMSession> MediaPlayerPrivateRemote::createSession(const String&, LegacyCDMSessionClient&)
+RefPtr<LegacyCDMSession> MediaPlayerPrivateRemote::createSession(StringImpl*, LegacyCDMSessionClient&)
 {
     notImplemented();
     return nullptr;
@@ -1414,7 +1414,7 @@ void MediaPlayerPrivateRemote::waitingForKeyChanged(bool waitingForKey)
         player->waitingForKeyChanged();
 }
 
-void MediaPlayerPrivateRemote::initializationDataEncountered(const String& initDataType, std::span<const uint8_t> initData)
+void MediaPlayerPrivateRemote::initializationDataEncountered(StringImpl* initDataType, std::span<const uint8_t> initData)
 {
     auto initDataBuffer = ArrayBuffer::create(initData);
     if (RefPtr player = m_player)
@@ -1453,7 +1453,7 @@ void MediaPlayerPrivateRemote::tracksChanged()
     protect(connection())->send(Messages::RemoteMediaPlayerProxy::TracksChanged(), m_id);
 }
 
-String MediaPlayerPrivateRemote::languageOfPrimaryAudioTrack() const
+RefPtr<StringImpl> MediaPlayerPrivateRemote::languageOfPrimaryAudioTrack() const
 {
     return m_cachedState.languageOfPrimaryAudioTrack;
 }
@@ -1674,28 +1674,28 @@ void MediaPlayerPrivateRemote::setShouldCheckHardwareSupport(bool value)
 
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-String MediaPlayerPrivateRemote::defaultSpatialTrackingLabel() const
+RefPtr<StringImpl> MediaPlayerPrivateRemote::defaultSpatialTrackingLabel() const
 {
     return m_defaultSpatialTrackingLabel;
 }
 
-void MediaPlayerPrivateRemote::setDefaultSpatialTrackingLabel(const String& defaultSpatialTrackingLabel)
+void MediaPlayerPrivateRemote::setDefaultSpatialTrackingLabel(StringImpl* defaultSpatialTrackingLabel)
 {
-    if (defaultSpatialTrackingLabel == m_defaultSpatialTrackingLabel)
+    if (equal(defaultSpatialTrackingLabel, m_defaultSpatialTrackingLabel))
         return;
 
     m_defaultSpatialTrackingLabel = defaultSpatialTrackingLabel;
     protect(connection())->send(Messages::RemoteMediaPlayerProxy::SetDefaultSpatialTrackingLabel(m_defaultSpatialTrackingLabel), m_id);
 }
 
-String MediaPlayerPrivateRemote::spatialTrackingLabel() const
+RefPtr<StringImpl> MediaPlayerPrivateRemote::spatialTrackingLabel() const
 {
     return m_spatialTrackingLabel;
 }
 
-void MediaPlayerPrivateRemote::setSpatialTrackingLabel(const String& spatialTrackingLabel)
+void MediaPlayerPrivateRemote::setSpatialTrackingLabel(StringImpl* spatialTrackingLabel)
 {
-    if (spatialTrackingLabel == m_spatialTrackingLabel)
+    if (equal(spatialTrackingLabel, m_spatialTrackingLabel))
         return;
 
     m_spatialTrackingLabel = spatialTrackingLabel;

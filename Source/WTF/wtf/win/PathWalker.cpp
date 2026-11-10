@@ -31,10 +31,10 @@
 
 namespace WTF {
 
-PathWalker::PathWalker(const String& directory, const String& pattern)
+PathWalker::PathWalker(StringImpl* directory, StringImpl* pattern)
 {
-    String path = makeString(directory, '\\', pattern);
-    m_handle = ::FindFirstFileW(path.wideCharacters().span().data(), &m_data);
+    auto path = makeString(directory, '\\', pattern);
+    m_handle = ::FindFirstFileW(wideCharacters(path).span().data(), &m_data);
 }
 
 PathWalker::~PathWalker()

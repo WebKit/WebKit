@@ -71,7 +71,7 @@ static void dumpMetalCodeIfNeeded(StringBuilder& stringBuilder)
 }
 #endif
 
-String generateMetalCode(ShaderModule& shaderModule, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues, DeviceState&& deviceState)
+RefPtr<StringImpl> generateMetalCode(ShaderModule& shaderModule, PrepareResult& prepareResult, const HashMap<RefPtr<StringImpl>, ConstantValue>& constantValues, DeviceState&& deviceState)
 {
     StringBuilder stringBuilder;
     stringBuilder.append(metalCodePrologue());

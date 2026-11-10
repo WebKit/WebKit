@@ -231,26 +231,26 @@ static Vector<StyledMarkedText> coalesceAdjacentWithSameRanges(Vector<StyledMark
             if (previousStyledMarkedText.highlightName != text.highlightName
                 && (!previousStyledMarkedText.style.backgroundColor.isOpaque()
                     || !text.style.backgroundColor.isOpaque()
-                    || (text.highlightName.isNull() && text.style.backgroundColor.isVisible())))
+                    || (!text.highlightName && text.style.backgroundColor.isVisible())))
                         previousStyledMarkedText.style.backgroundColor = blendSourceOver(previousStyledMarkedText.style.backgroundColor, text.style.backgroundColor);
             // Take text color of StyledMarkedText, maintaining insertion and priority order.
             if (text.type != MarkedText::Type::Unmarked && text.style.textStyles.hasExplicitlySetFillColor)
                 previousStyledMarkedText.style.textStyles.fillColor = text.style.textStyles.fillColor;
             // Take the text-shadow and stroke of the frontmost highlight.
-            if (!text.highlightName.isNull()) {
+            if (text.highlightName) {
                 previousStyledMarkedText.style.textShadow = text.style.textShadow;
                 previousStyledMarkedText.style.textStyles.strokeColor = text.style.textStyles.strokeColor;
                 previousStyledMarkedText.style.textStyles.strokeWidth = text.style.textStyles.strokeWidth;
             }
             // Take the highlightName of the latest StyledMarkedText, regardless of priority.
-            if (!text.highlightName.isNull())
+            if (text.highlightName)
                 previousStyledMarkedText.highlightName = text.highlightName;
 
             if (previousStyledMarkedText.priority <= text.priority) {
                 previousStyledMarkedText.priority = text.priority;
                 // If highlight or selection, combine textDecorationStyles accordingly.
                 // FIXME: Check for taking textDecorationStyles needs to accommodate other MarkedText type.
-                if (!text.highlightName.isNull() || text.type == MarkedText::Type::Selection)
+                if (text.highlightName || text.type == MarkedText::Type::Selection)
                     previousStyledMarkedText.style.textDecorationStyles = computeStylesForTextDecorations(previousStyledMarkedText.style.textDecorationStyles, text.style.textDecorationStyles);
                 // If higher or same priority and opaque, override background color.
                 if (text.style.backgroundColor.isOpaque())
@@ -263,12 +263,12 @@ static Vector<StyledMarkedText> coalesceAdjacentWithSameRanges(Vector<StyledMark
     return frontmostMarkedTexts;
 }
 
-static void orderHighlights(const OrderedHashSet<AtomString>& markedTextsNames, Vector<MarkedText>& markedTexts)
+static void orderHighlights(const OrderedHashSet<RefPtr<AtomStringImpl>>& markedTextsNames, Vector<MarkedText>& markedTexts)
 {
     if (markedTexts.isEmpty())
         return;
 
-    HashMap<AtomString, int> markedTextsNamesPriority;
+    HashMap<RefPtr<AtomStringImpl>, int> markedTextsNamesPriority;
     int index = 0;
     for (auto& highlightName : markedTextsNames) {
         markedTextsNamesPriority.add(highlightName, index);
@@ -278,8 +278,8 @@ static void orderHighlights(const OrderedHashSet<AtomString>& markedTextsNames, 
     index = 0;
     while (index < static_cast<int>(markedTexts.size() - 1)) {
         // If two adjacent highlights with same ranges are not in correct priority order, swap them and move on.
-        if (!markedTexts[index].highlightName.isNull()
-            && !markedTexts[index + 1].highlightName.isNull()
+        if (!!markedTexts[index].highlightName
+            && !!markedTexts[index + 1].highlightName
             && markedTextsNamesPriority.get(markedTexts[index].highlightName) > markedTextsNamesPriority.get(markedTexts[index + 1].highlightName)
             && markedTexts[index].startOffset == markedTexts[index + 1].startOffset
             && markedTexts[index].endOffset == markedTexts[index + 1].endOffset) {
@@ -295,9 +295,9 @@ Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<Mark
         return { };
 
     // Keep track of original order of highlights.
-    OrderedHashSet<AtomString> markedTextsNames;
+    OrderedHashSet<RefPtr<AtomStringImpl>> markedTextsNames;
     for (auto& markedText : textsToSubdivide) {
-        if (!markedText.highlightName.isNull())
+        if (markedText.highlightName)
             markedTextsNames.add(markedText.highlightName);
     }
 

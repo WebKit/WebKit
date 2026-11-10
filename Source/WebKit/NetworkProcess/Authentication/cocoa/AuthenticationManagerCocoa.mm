@@ -101,7 +101,7 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
             if (!protectedThis)
                 return;
 
-            if (type != XPC_TYPE_DICTIONARY || xpcDictionaryGetString(event.get(), ClientCertificateAuthentication::XPCMessageNameKey) != ClientCertificateAuthentication::XPCMessageNameValue) {
+            if (type != XPC_TYPE_DICTIONARY || !equal(xpcDictionaryGetString(event.get(), ClientCertificateAuthentication::XPCMessageNameKey), ClientCertificateAuthentication::XPCMessageNameValue)) {
                 ASSERT_NOT_REACHED();
                 return;
             }

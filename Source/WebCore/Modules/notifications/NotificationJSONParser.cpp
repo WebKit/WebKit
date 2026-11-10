@@ -49,7 +49,7 @@ static constexpr ASCIILiteral dataKey { "data"_s };
 static constexpr ASCIILiteral appBadgeKey { "app_badge"_s };
 static constexpr ASCIILiteral mutableKey { "mutable"_s };
 
-static std::optional<unsigned long long> parseAppBadgeString(const String& badgeString)
+static std::optional<unsigned long long> parseAppBadgeString(StringImpl* badgeString)
 {
     // A valid app badge string contains only ASCII digits and represents a value equal to or less than std::numeric_limits<uint64_t>::max()
 
@@ -74,7 +74,7 @@ static std::optional<unsigned long long> parseAppBadgeString(const String& badge
 static bool hasDeclarativeMessageJSONValues(const JSON::Object& outerObject)
 {
     std::optional<int> declarativeWebPushValue;
-    if (auto value = outerObject.getValue(declarativeWebPushKey)) {
+    if (auto value = outerObject.getValue(StringImpl::create(declarativeWebPushKey).ptr())) {
         if (value->type() == JSON::Value::Type::Integer || value->type() == JSON::Value::Type::Double)
             declarativeWebPushValue = value->asInteger();
     }
@@ -84,7 +84,7 @@ static bool hasDeclarativeMessageJSONValues(const JSON::Object& outerObject)
     return *declarativeWebPushValue == expectedDeclarativeWebPushValue;
 }
 
-bool NotificationJSONParser::hasDeclarativeMessageHeader(const String& json)
+bool NotificationJSONParser::hasDeclarativeMessageHeader(StringImpl* json)
 {
     auto value = JSON::Value::parseJSON(json);
     if (!value)
@@ -102,7 +102,7 @@ ExceptionOr<NotificationPayload> NotificationJSONParser::parseNotificationPayloa
     if (!hasDeclarativeMessageJSONValues(outerObject))
         return Exception { ExceptionCode::SyntaxError, makeString("Push message doesn't have valid declarative web push JSON values"_s) };
 
-    auto notificationObject = outerObject.getValue(notificationKey);
+    auto notificationObject = outerObject.getValue(StringImpl::create(notificationKey).ptr());
     if (!notificationObject)
         return Exception { ExceptionCode::SyntaxError, makeString("Push message does not have '"_s, notificationKey, "' value"_s) };
 
@@ -113,7 +113,7 @@ ExceptionOr<NotificationPayload> NotificationJSONParser::parseNotificationPayloa
     RELEASE_ASSERT(protectedObject);
 
     URL navigationURL;
-    if (auto value = protectedObject->getValue(navigationURLKey)) {
+    if (auto value = protectedObject->getValue(StringImpl::create(navigationURLKey).ptr())) {
         if (value->type() != JSON::Value::Type::String)
             return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, navigationURLKey, "' member is specified but is not a string"_s) };
 
@@ -123,14 +123,14 @@ ExceptionOr<NotificationPayload> NotificationJSONParser::parseNotificationPayloa
     if (!navigationURL.isValid())
         return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, navigationURLKey, "' member is specified but does not represent a valid URL"_s) };
 
-    String title;
-    if (auto value = protectedObject->getValue(titleKey)) {
+    RefPtr<StringImpl> title;
+    if (auto value = protectedObject->getValue(StringImpl::create(titleKey).ptr())) {
         if (value->type() != JSON::Value::Type::String)
             return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, titleKey, "' member is specified but is not a string"_s) };
         title = value->asString();
     }
 
-    if (title.isEmpty())
+    if (isEmpty(title))
         return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, titleKey, "' member is missing or is an empty string"_s) };
 
     auto optionsOrException = parseNotificationOptions(*protectedObject);
@@ -140,19 +140,19 @@ ExceptionOr<NotificationPayload> NotificationJSONParser::parseNotificationPayloa
     std::optional<NotificationOptionsPayload> notificationOptions = optionsOrException.releaseReturnValue();
 
     bool isMutable = false;
-    if (auto value = outerObject.getValue(mutableKey)) {
+    if (auto value = outerObject.getValue(StringImpl::create(mutableKey).ptr())) {
         if (value->type() != JSON::Value::Type::Boolean)
             return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, mutableKey, "' member is specified but is not a boolean"_s) };
         isMutable = *(value->asBoolean());
     // FIXME: Eventually we should remove this branch as supporting mutable inside the notification object is non-standard (webkit.org/b/297389).
-    } else if (auto value = protectedObject->getValue(mutableKey)) {
+    } else if (auto value = protectedObject->getValue(StringImpl::create(mutableKey).ptr())) {
         if (value->type() != JSON::Value::Type::Boolean)
             return Exception { ExceptionCode::SyntaxError, makeString("Push message with Notification disposition: '"_s, mutableKey, "' member is specified but is not a boolean"_s) };
         isMutable = *(value->asBoolean());
     }
 
     std::optional<unsigned long long> appBadge;
-    if (auto value = outerObject.getValue(appBadgeKey)) {
+    if (auto value = outerObject.getValue(StringImpl::create(appBadgeKey).ptr())) {
         if (value->type() == JSON::Value::Type::String) {
             appBadge = parseAppBadgeString(value->asString());
             if (!appBadge)
@@ -173,39 +173,39 @@ ExceptionOr<NotificationPayload> NotificationJSONParser::parseNotificationPayloa
 ExceptionOr<NotificationOptionsPayload> NotificationJSONParser::parseNotificationOptions(const JSON::Object& object)
 {
     NotificationDirection direction = NotificationDirection::Auto;
-    if (auto value = object.getValue(dirKey)) {
+    if (auto value = object.getValue(StringImpl::create(dirKey).ptr())) {
         if (value->type() != JSON::Value::Type::String)
             return Exception { ExceptionCode::SyntaxError, makeString('\'', dirKey, "' member is specified but is not a string"_s) };
-        auto directionString = object.getString(dirKey);
+        auto directionString = object.getString(StringImpl::create(dirKey).ptr());
         auto parsedDirection = parseEnumerationFromString<NotificationDirection>(directionString);
         if (parsedDirection == std::nullopt)
             return Exception { ExceptionCode::SyntaxError, makeString('\'', dirKey, "' member is specified but is not a valid NotificationDirection"_s) };
         direction = *parsedDirection;
     }
 
-    String lang;
-    if (auto value = object.getValue(langKey)) {
+    RefPtr<StringImpl> lang;
+    if (auto value = object.getValue(StringImpl::create(langKey).ptr())) {
         if (value->type() != JSON::Value::Type::String)
             return Exception { ExceptionCode::SyntaxError, makeString('\'', langKey, "' member is specified but is not a string"_s) };
         lang = value->asString();
     }
 
-    String body;
-    if (auto value = object.getValue(bodyKey)) {
+    RefPtr<StringImpl> body;
+    if (auto value = object.getValue(StringImpl::create(bodyKey).ptr())) {
         if (value->type() != JSON::Value::Type::String)
             return Exception { ExceptionCode::SyntaxError, makeString('\'', bodyKey, "' member is specified but is not a string"_s) };
         body = value->asString();
     }
 
-    String tag;
-    if (auto value = object.getValue(tagKey)) {
+    RefPtr<StringImpl> tag;
+    if (auto value = object.getValue(StringImpl::create(tagKey).ptr())) {
         if (value->type() != JSON::Value::Type::String)
             return Exception { ExceptionCode::SyntaxError, makeString('\'', tagKey, "' member is specified but is not a string"_s) };
         tag = value->asString();
     }
 
     URL iconURL;
-    if (auto value = object.getValue(iconKey)) {
+    if (auto value = object.getValue(StringImpl::create(iconKey).ptr())) {
         if (value->type() != JSON::Value::Type::String)
             return Exception { ExceptionCode::SyntaxError, makeString('\'', iconKey, "' member is specified but is not a string"_s) };
 
@@ -215,14 +215,14 @@ ExceptionOr<NotificationOptionsPayload> NotificationJSONParser::parseNotificatio
     }
 
     std::optional<bool> silent;
-    if (auto value = object.getValue(silentKey)) {
+    if (auto value = object.getValue(StringImpl::create(silentKey).ptr())) {
         if (value->type() != JSON::Value::Type::Boolean)
             return Exception { ExceptionCode::SyntaxError, makeString('\'', silentKey, "' member is specified but is not a boolean"_s) };
         silent = value->asBoolean();
     }
 
-    RefPtr<JSON::Value> dataValue = object.getValue(dataKey);
-    String dataString = dataValue ? dataValue->toJSONString() : nullString();
+    RefPtr<JSON::Value> dataValue = object.getValue(StringImpl::create(dataKey).ptr());
+    RefPtr<StringImpl> dataString = dataValue ? dataValue->toJSONString() : nullString();
 
     return NotificationOptionsPayload { direction, WTF::move(lang), WTF::move(body), WTF::move(tag), iconURL.string(), WTF::move(dataString), WTF::move(silent) };
 }

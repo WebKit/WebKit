@@ -47,7 +47,7 @@ public:
     NODELETE void ref() const;
     void deref() const;
 
-    static Vector<String> supportedContentEncodings();
+    static Vector<RefPtr<StringImpl>> supportedContentEncodings();
 
     void subscribe(ScriptExecutionContext&, std::optional<PushSubscriptionOptionsInit>&&, DOMPromiseDeferred<IDLInterface<PushSubscription>>&&);
     void getSubscription(ScriptExecutionContext&, DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&&);

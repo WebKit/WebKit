@@ -72,13 +72,13 @@
 
 - (void)createTabWithName:(NSString *)tabName tabIconURL:(NSURL *)tabIconURL sourceURL:(NSURL *)sourceURL completionHandler:(void(^)(NSError *, NSString *))completionHandler
 {
-    protect(*_extension)->createTab(tabName, { tabIconURL.baseURL, tabIconURL.relativeString }, { tabIconURL.baseURL, sourceURL.relativeString }, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (std::expected<Inspector::ExtensionTabID, Inspector::ExtensionError> result) mutable {
+    protect(*_extension)->createTab(StringImpl::create(tabName).get(), { tabIconURL.baseURL, StringImpl::create(tabIconURL.relativeString).get() }, { tabIconURL.baseURL, StringImpl::create(sourceURL.relativeString).get() }, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (std::expected<Inspector::ExtensionTabID, Inspector::ExtensionError> result) mutable {
         if (!result) {
-            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get(), nil);
+            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: createNSString(Inspector::extensionErrorToString(result.error())).get() }]).get(), nil);
             return;
         }
 
-        capturedBlock(nil, result.value().createNSString().get());
+        capturedBlock(nil, createNSString(result.value()).get());
     });
 }
 
@@ -86,9 +86,9 @@
 {
     std::optional<URL> optionalFrameURL = frameURL ? std::make_optional(URL(frameURL)) : std::nullopt;
     std::optional<URL> optionalContextSecurityOrigin = contextSecurityOrigin ? std::make_optional(URL(contextSecurityOrigin)) : std::nullopt;
-    protect(*_extension)->evaluateScript(scriptSource, optionalFrameURL, optionalContextSecurityOrigin, useContentScriptContext, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTF::move(completionHandler))] (Inspector::ExtensionEvaluationResult&& result) mutable {
+    protect(*_extension)->evaluateScript(StringImpl::create(scriptSource).get(), optionalFrameURL, optionalContextSecurityOrigin, useContentScriptContext, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTF::move(completionHandler))] (Inspector::ExtensionEvaluationResult&& result) mutable {
         if (!result) {
-            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get(), nil);
+            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: createNSString(Inspector::extensionErrorToString(result.error())).get() }]).get(), nil);
             return;
         }
         
@@ -104,9 +104,9 @@
 
 - (void)evaluateScript:(NSString *)scriptSource inTabWithIdentifier:(NSString *)extensionTabIdentifier completionHandler:(void(^)(NSError *, id))completionHandler
 {
-    protect(*_extension)->evaluateScriptInExtensionTab(extensionTabIdentifier, scriptSource, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTF::move(completionHandler))] (Inspector::ExtensionEvaluationResult&& result) mutable {
+    protect(*_extension)->evaluateScriptInExtensionTab(StringImpl::create(extensionTabIdentifier).get(), StringImpl::create(scriptSource).get(), [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTF::move(completionHandler))] (Inspector::ExtensionEvaluationResult&& result) mutable {
         if (!result) {
-            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get(), nil);
+            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: createNSString(Inspector::extensionErrorToString(result.error())).get() }]).get(), nil);
             return;
         }
         
@@ -122,9 +122,9 @@
 
 - (void)navigateToURL:(NSURL *)url inTabWithIdentifier:(NSString *)extensionTabIdentifier completionHandler:(void(^)(NSError *))completionHandler
 {
-    protect(*_extension)->navigateTab(extensionTabIdentifier, url, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTF::move(completionHandler))] (const std::optional<Inspector::ExtensionError> result) mutable {
+    protect(*_extension)->navigateTab(StringImpl::create(extensionTabIdentifier).get(), url, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTF::move(completionHandler))] (const std::optional<Inspector::ExtensionError> result) mutable {
         if (result) {
-            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.value()).createNSString().get() }]).get());
+            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: createNSString(Inspector::extensionErrorToString(result.value())).get() }]).get());
             return;
         }
 
@@ -134,11 +134,11 @@
 
 - (void)reloadIgnoringCache:(BOOL)ignoreCache userAgent:(NSString *)userAgent injectedScript:(NSString *)injectedScript completionHandler:(void(^)(NSError *))completionHandler
 {
-    std::optional<String> optionalUserAgent = userAgent ? std::make_optional(String(userAgent)) : std::nullopt;
-    std::optional<String> optionalInjectedScript = injectedScript ? std::make_optional(String(injectedScript)) : std::nullopt;
+    std::optional<RefPtr<StringImpl>> optionalUserAgent = userAgent ? std::make_optional(StringImpl::create(userAgent)) : std::nullopt;
+    std::optional<RefPtr<StringImpl>> optionalInjectedScript = injectedScript ? std::make_optional(StringImpl::create(injectedScript)) : std::nullopt;
     protect(*_extension)->reloadIgnoringCache(ignoreCache, optionalUserAgent, optionalInjectedScript, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTF::move(completionHandler))] (Inspector::ExtensionVoidResult&& result) mutable {
         if (!result) {
-            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get());
+            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: createNSString(Inspector::extensionErrorToString(result.error())).get() }]).get());
             return;
         }
 
@@ -150,7 +150,7 @@
 
 - (NSString *)extensionID
 {
-    return _extension->identifier().createNSString().autorelease();
+    return createNSString(_extension->identifier()).autorelease();
 }
 
 @end

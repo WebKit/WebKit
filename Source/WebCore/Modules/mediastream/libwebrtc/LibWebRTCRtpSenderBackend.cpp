@@ -149,14 +149,14 @@ RTCRtpSendParameters LibWebRTCRtpSenderBackend::getParameters() const
 
 NODELETE static bool validateModifiedParameters(const RTCRtpSendParameters& newParameters, const RTCRtpSendParameters& oldParameters)
 {
-    if (oldParameters.transactionId != newParameters.transactionId)
+    if (!equal(oldParameters.transactionId, newParameters.transactionId))
         return false;
 
     if (oldParameters.encodings.size() != newParameters.encodings.size())
         return false;
 
     for (size_t i = 0; i < oldParameters.encodings.size(); ++i) {
-        if (oldParameters.encodings[i].rid != newParameters.encodings[i].rid)
+        if (!equal(oldParameters.encodings[i].rid, newParameters.encodings[i].rid))
             return false;
     }
 
@@ -166,11 +166,11 @@ NODELETE static bool validateModifiedParameters(const RTCRtpSendParameters& newP
     for (size_t i = 0; i < oldParameters.headerExtensions.size(); ++i) {
         const auto& oldExtension = oldParameters.headerExtensions[i];
         const auto& newExtension = newParameters.headerExtensions[i];
-        if (oldExtension.uri != newExtension.uri || oldExtension.id != newExtension.id)
+        if (!equal(oldExtension.uri, newExtension.uri) || oldExtension.id != newExtension.id)
             return false;
     }
 
-    if (oldParameters.rtcp.cname != newParameters.rtcp.cname)
+    if (!equal(oldParameters.rtcp.cname, newParameters.rtcp.cname))
         return false;
 
     if (!!oldParameters.rtcp.reducedSize != !!newParameters.rtcp.reducedSize)
@@ -186,10 +186,10 @@ NODELETE static bool validateModifiedParameters(const RTCRtpSendParameters& newP
         const auto& oldCodec = oldParameters.codecs[i];
         const auto& newCodec = newParameters.codecs[i];
         if (oldCodec.payloadType != newCodec.payloadType
-            || oldCodec.mimeType != newCodec.mimeType
+            || !equal(oldCodec.mimeType, newCodec.mimeType)
             || oldCodec.clockRate != newCodec.clockRate
             || oldCodec.channels != newCodec.channels
-            || oldCodec.sdpFmtpLine != newCodec.sdpFmtpLine)
+            || !equal(oldCodec.sdpFmtpLine, newCodec.sdpFmtpLine))
             return false;
     }
 
@@ -204,7 +204,7 @@ void LibWebRTCRtpSenderBackend::setParameters(const RTCRtpSendParameters& parame
     }
 
     if (!m_currentParameters) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "getParameters must be called before setParameters"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "getParameters must be called before setParameters"_si });
         return;
     }
 
@@ -242,11 +242,11 @@ std::unique_ptr<RTCDtlsTransportBackend> LibWebRTCRtpSenderBackend::dtlsTranspor
     return backend ? makeUnique<LibWebRTCDtlsTransportBackend>(backend.releaseNonNull()) : nullptr;
 }
 
-void LibWebRTCRtpSenderBackend::setMediaStreamIds(const FixedVector<String>& streamIds)
+void LibWebRTCRtpSenderBackend::setMediaStreamIds(const FixedVector<RefPtr<StringImpl>>& streamIds)
 {
     std::vector<std::string> ids;
     for (auto& id : streamIds)
-        ids.push_back(id.utf8().toStdString());
+        ids.push_back(utf8(id).toStdString());
     m_rtcSender->SetStreams(ids);
 }
 

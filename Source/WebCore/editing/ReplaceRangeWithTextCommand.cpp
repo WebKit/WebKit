@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-ReplaceRangeWithTextCommand::ReplaceRangeWithTextCommand(const SimpleRange& rangeToBeReplaced, const String& text)
+ReplaceRangeWithTextCommand::ReplaceRangeWithTextCommand(const SimpleRange& rangeToBeReplaced, StringImpl* text)
     : CompositeEditCommand(rangeToBeReplaced.start.document(), EditAction::InsertReplacement)
     , m_rangeToBeReplaced(rangeToBeReplaced)
     , m_text(text)
@@ -68,7 +68,7 @@ void ReplaceRangeWithTextCommand::doApply()
     applyCommandToComposite(ReplaceSelectionCommand::create(document(), m_textFragment.copyRef(), ReplaceSelectionCommand::MatchStyle, EditAction::Paste));
 }
 
-String ReplaceRangeWithTextCommand::inputEventData() const
+RefPtr<StringImpl> ReplaceRangeWithTextCommand::inputEventData() const
 {
     if (isEditingTextAreaOrTextInput())
         return m_text;

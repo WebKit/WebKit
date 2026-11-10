@@ -35,7 +35,7 @@ class CSSColorSchemeValue final : public CSSValue {
 public:
     static Ref<CSSColorSchemeValue> create(CSS::ColorScheme);
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     NODELETE bool equals(const CSSColorSchemeValue&) const;
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 

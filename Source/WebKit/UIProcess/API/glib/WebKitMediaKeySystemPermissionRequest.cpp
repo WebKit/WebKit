@@ -129,6 +129,6 @@ webkit_media_key_system_permission_get_name(WebKitMediaKeySystemPermissionReques
 {
     auto* priv = request->priv;
     if (priv->keySystem.isNull())
-        priv->keySystem = priv->request->keySystem().utf8();
+        priv->keySystem = utf8(priv->request->keySystem());
     return priv->keySystem.legacyCStringPointer();
 }

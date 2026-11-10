@@ -90,7 +90,7 @@ void RTCRtpReceiver::getStats(Ref<DeferredPromise>&& promise)
     protect(m_connection)->getStats(*this, WTF::move(promise));
 }
 
-std::optional<RTCRtpCapabilities> RTCRtpReceiver::getCapabilities(ScriptExecutionContext& context, const String& kind)
+std::optional<RTCRtpCapabilities> RTCRtpReceiver::getCapabilities(ScriptExecutionContext& context, StringImpl* kind)
 {
     return PeerConnectionBackend::receiverCapabilities(context, kind);
 }
@@ -110,7 +110,7 @@ ExceptionOr<void> RTCRtpReceiver::setTransform(std::unique_ptr<RTCRtpTransform>&
     }
 
     if (transform->isAttached())
-        return Exception { ExceptionCode::InvalidStateError, "transform is already in use"_s };
+        return Exception { ExceptionCode::InvalidStateError, "transform is already in use"_si };
 
     transform->attachToReceiver(*this, m_transform.get());
     m_transform = WTF::move(transform);
@@ -155,7 +155,7 @@ Ref<RTCRtpTransformBackend> RTCRtpReceiver::rtcRtpTransformBackend()
 ExceptionOr<void> RTCRtpReceiver::setJitterBufferTarget(std::optional<double> valueInMillisecond)
 {
     if (valueInMillisecond && (*valueInMillisecond < 0 || *valueInMillisecond > 4000))
-        return Exception { ExceptionCode::RangeError, "jitterBufferTarget is invalid"_s };
+        return Exception { ExceptionCode::RangeError, "jitterBufferTarget is invalid"_si };
 
     m_jitterBufferTarget = valueInMillisecond;
     m_backend->setJitterBufferTarget(valueInMillisecond);

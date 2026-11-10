@@ -58,9 +58,9 @@ public:
     public:
         Settings() = default;
         virtual ~Settings() = default;
-        virtual String getProperty(const String& name);
-        virtual void setProperty(const String& name, const String& value);
-        virtual void deleteProperty(const String& name);
+        virtual RefPtr<StringImpl> getProperty(StringImpl* name);
+        virtual void setProperty(StringImpl* name, StringImpl* value);
+        virtual void deleteProperty(StringImpl* name);
     };
 
     enum class DispatchBackendTarget { Page, MainFrame };
@@ -84,12 +84,12 @@ public:
     WEBCORE_EXPORT void changeAttachedWindowHeight(unsigned) final;
     WEBCORE_EXPORT void changeAttachedWindowWidth(unsigned) final;
     WEBCORE_EXPORT void changeSheetRect(const FloatRect&) final;
-    WEBCORE_EXPORT void openURLExternally(const String& url) final;
-    void revealFileExternally(const String&) override { }
+    WEBCORE_EXPORT void openURLExternally(StringImpl* url) final;
+    void revealFileExternally(StringImpl*) override { }
     bool canSave(InspectorFrontendClient::SaveMode) override { return false; }
     void save(Vector<InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */) override { }
     bool canLoad()  override { return false; }
-    void load(const String&, CompletionHandler<void(const String&)>&& completionHandler) override { completionHandler(nullString()); }
+    void load(StringImpl*, CompletionHandler<void(StringImpl*)>&& completionHandler) override { completionHandler(nullString()); }
 
     bool canPickColorFromScreen() override { return false; }
     void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler) override { completionHandler({ }); }
@@ -99,12 +99,12 @@ public:
     virtual void attachWindow(DockSide) = 0;
     virtual void detachWindow() = 0;
 
-    WEBCORE_EXPORT void sendMessageToBackend(const String& message) override;
+    WEBCORE_EXPORT void sendMessageToBackend(StringImpl* message) override;
 
     WEBCORE_EXPORT bool isUnderTest() final;
     bool isRemote() const final { return false; }
     WEBCORE_EXPORT unsigned inspectionLevel() const final;
-    String backendCommandsURL() const final { return String(); };
+    RefPtr<StringImpl> backendCommandsURL() const final { return nullptr; };
 
     InspectorFrontendAPIDispatcher& frontendAPIDispatcher() final { return m_frontendAPIDispatcher; }
     NODELETE WEBCORE_EXPORT Page* frontendPage() final;

@@ -117,7 +117,7 @@ TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject* glob
         double d = val.toIntegerWithTruncation(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
         if (!std::isfinite(d)) [[unlikely]] {
-            throwRangeError(globalObject, scope, "Temporal time properties must be finite"_s);
+            throwRangeError(globalObject, scope, "Temporal time properties must be finite"_si);
             return;
         }
         target = d;
@@ -131,7 +131,7 @@ TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject* glob
             double d = dayProp.toIntegerWithTruncation(globalObject);
             RETURN_IF_EXCEPTION(scope, fields);
             if (!(d > 0 && std::isfinite(d))) [[unlikely]] {
-                throwRangeError(globalObject, scope, "day must be positive and finite"_s);
+                throwRangeError(globalObject, scope, "day must be positive and finite"_si);
                 return fields;
             }
             fields.day = clampTo<uint8_t>(d);
@@ -152,7 +152,7 @@ TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject* glob
             double ey = eraYearProp.toIntegerWithTruncation(globalObject);
             RETURN_IF_EXCEPTION(scope, fields);
             if (!std::isfinite(ey)) [[unlikely]] {
-                throwRangeError(globalObject, scope, "eraYear must be finite"_s);
+                throwRangeError(globalObject, scope, "eraYear must be finite"_si);
                 return fields;
             }
             fields.eraYear = clampTo<int32_t>(ey);
@@ -191,7 +191,7 @@ TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject* glob
             double m = monthProp.toIntegerWithTruncation(globalObject);
             RETURN_IF_EXCEPTION(scope, fields);
             if (!std::isfinite(m) || m < 1) [[unlikely]] {
-                throwRangeError(globalObject, scope, "month must be positive and finite"_s);
+                throwRangeError(globalObject, scope, "month must be positive and finite"_si);
                 return fields;
             }
             fields.month = clampTo<uint32_t>(m);
@@ -229,7 +229,7 @@ TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject* glob
             double y = yearProp.toIntegerWithTruncation(globalObject);
             RETURN_IF_EXCEPTION(scope, fields);
             if (!std::isfinite(y)) [[unlikely]] {
-                throwRangeError(globalObject, scope, "year must be finite"_s);
+                throwRangeError(globalObject, scope, "year must be finite"_si);
                 return fields;
             }
             fields.year = clampTo<int32_t>(y);
@@ -270,7 +270,7 @@ ZonedDateTimeFields readZonedDateTimeFieldsFromObject(JSGlobalObject* globalObje
             double d = v.toIntegerWithTruncation(globalObject);
             RETURN_IF_EXCEPTION(scope, result);
             if (!(d > 0 && std::isfinite(d))) [[unlikely]] {
-                throwRangeError(globalObject, scope, "day property must be positive and finite"_s);
+                throwRangeError(globalObject, scope, "day property must be positive and finite"_si);
                 return result;
             }
             result.dateFields.day = clampTo<uint8_t>(d);
@@ -295,7 +295,7 @@ ZonedDateTimeFields readZonedDateTimeFieldsFromObject(JSGlobalObject* globalObje
             double ey = eraYearVal.toIntegerWithTruncation(globalObject);
             RETURN_IF_EXCEPTION(scope, result);
             if (!std::isfinite(ey)) [[unlikely]] {
-                throwRangeError(globalObject, scope, "eraYear property must be finite"_s);
+                throwRangeError(globalObject, scope, "eraYear property must be finite"_si);
                 return result;
             }
             result.dateFields.eraYear = clampTo<int32_t>(ey);
@@ -312,7 +312,7 @@ ZonedDateTimeFields readZonedDateTimeFieldsFromObject(JSGlobalObject* globalObje
         double val = v.toIntegerWithTruncation(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
         if (!std::isfinite(val)) [[unlikely]] {
-            throwRangeError(globalObject, scope, "Temporal time properties must be finite"_s);
+            throwRangeError(globalObject, scope, "Temporal time properties must be finite"_si);
             return;
         }
         field = val;
@@ -337,7 +337,7 @@ ZonedDateTimeFields readZonedDateTimeFieldsFromObject(JSGlobalObject* globalObje
             double m = v.toIntegerWithTruncation(globalObject);
             RETURN_IF_EXCEPTION(scope, result);
             if (!std::isfinite(m) || m <= 0) [[unlikely]] {
-                throwRangeError(globalObject, scope, "month property must be a positive finite integer"_s);
+                throwRangeError(globalObject, scope, "month property must be a positive finite integer"_si);
                 return result;
             }
             result.dateFields.month = clampTo<uint32_t>(m);
@@ -374,7 +374,7 @@ ZonedDateTimeFields readZonedDateTimeFieldsFromObject(JSGlobalObject* globalObje
                 throwTypeError(globalObject, scope, "offset must be a string"_s);
                 return result;
             }
-            String offsetStr = asString(prim)->value(globalObject);
+            RefPtr<StringImpl> offsetStr = asString(prim)->value(globalObject);
             RETURN_IF_EXCEPTION(scope, result);
             auto parsed = ISO8601::parseUTCOffset(offsetStr);
             if (!parsed) [[unlikely]] {
@@ -420,7 +420,7 @@ ZonedDateTimeFields readZonedDateTimeFieldsFromObject(JSGlobalObject* globalObje
             double y = v.toIntegerWithTruncation(globalObject);
             RETURN_IF_EXCEPTION(scope, result);
             if (!std::isfinite(y)) [[unlikely]] {
-                throwRangeError(globalObject, scope, "year property must be finite"_s);
+                throwRangeError(globalObject, scope, "year property must be finite"_si);
                 return result;
             }
             result.dateFields.year = clampTo<int32_t>(y);
@@ -461,7 +461,7 @@ std::optional<ParsedMonthCode> parseMonthCode(JSGlobalObject* globalObject, JSVa
     //            Returns nullopt if the string does not match the grammar (step 3 RangeError below).
     auto parsed = ISO8601::parseMonthCode(string);
     if (!parsed) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Invalid monthCode"_s);
+        throwRangeError(globalObject, scope, "Invalid monthCode"_si);
         return { };
     }
     return parsed;
@@ -479,9 +479,9 @@ ISO8601::PlainDateTime interpretTemporalDateTimeFields(JSGlobalObject* globalObj
     auto dateResult = TemporalCore::dateFromFields(calendarId, dateFields, overflow);
     if (!dateResult) [[unlikely]] {
         if (dateResult.error().kind == TemporalErrorKind::TypeError)
-            throwTypeError(globalObject, scope, String(dateResult.error().message));
+            throwTypeError(globalObject, scope, RefPtr<StringImpl>(dateResult.error().message));
         else
-            throwRangeError(globalObject, scope, String(dateResult.error().message));
+            throwRangeError(globalObject, scope, RefPtr<StringImpl>(dateResult.error().message));
         return { };
     }
 

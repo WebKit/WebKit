@@ -35,23 +35,23 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDTMFToneChangeEvent);
 
-Ref<RTCDTMFToneChangeEvent> RTCDTMFToneChangeEvent::create(const String& tone)
+Ref<RTCDTMFToneChangeEvent> RTCDTMFToneChangeEvent::create(StringImpl* tone)
 {
     return adoptRef(*new RTCDTMFToneChangeEvent(tone));
 }
 
-Ref<RTCDTMFToneChangeEvent> RTCDTMFToneChangeEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+Ref<RTCDTMFToneChangeEvent> RTCDTMFToneChangeEvent::create(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
 {
     return adoptRef(*new RTCDTMFToneChangeEvent(type, WTF::move(initializer), isTrusted));
 }
 
-RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent(const String& tone)
+RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent(StringImpl* tone)
     : Event(EventInterfaceType::RTCDTMFToneChangeEvent, eventNames().tonechangeEvent, CanBubble::No, IsCancelable::No)
     , m_tone(tone)
 {
 }
 
-RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::RTCDTMFToneChangeEvent, type, WTF::move(initializer), isTrusted)
     , m_tone(WTF::move(initializer.tone))
 {
@@ -59,7 +59,7 @@ RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent(const AtomString& type, Init&& in
 
 RTCDTMFToneChangeEvent::~RTCDTMFToneChangeEvent() = default;
 
-const String& RTCDTMFToneChangeEvent::tone() const
+const RefPtr<StringImpl>& RTCDTMFToneChangeEvent::tone() const
 {
     return m_tone;
 }

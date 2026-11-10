@@ -41,15 +41,15 @@ public:
         return adoptRef(*new BeforeUnloadEvent { ForBindings });
     }
 
-    String returnValue() const { return m_returnValue; }
-    void setReturnValue(const String& returnValue) { m_returnValue = returnValue; }
+    const RefPtr<StringImpl>& returnValue() const LIFETIME_BOUND { return m_returnValue; }
+    void setReturnValue(StringImpl* returnValue) { m_returnValue = returnValue; }
 
 private:
     enum ForBindingsFlag { ForBindings };
     BeforeUnloadEvent();
     explicit BeforeUnloadEvent(ForBindingsFlag);
 
-    String m_returnValue;
+    RefPtr<StringImpl> m_returnValue;
 };
 
 } // namespace WebCore

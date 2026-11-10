@@ -75,12 +75,12 @@
 
     _boundingRect = information.bounds;
     _hasSaveableImage = information.hasSaveableImage;
-    _ID = information.idAttribute.createNSString();
-    _imageMIMEType = information.imageMIMEType.createNSString();
+    _ID = createNSString(information.idAttribute);
+    _imageMIMEType = createNSString(information.imageMIMEType);
     _interactionLocation = information.request.point;
     _isAnimatedImage = information.isAnimatedImage;
     _isAnimating = information.isAnimating;
-    _title = information.title.createNSString();
+    _title = createNSString(information.title);
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     _animationsUnderElement = information.animationsAtPoint;

@@ -37,7 +37,7 @@ struct SpeechSynthesisEventInit : EventInit {
     uint32_t charIndex;
     uint32_t charLength;
     float elapsedTime;
-    String name;
+    RefPtr<StringImpl> name;
 };
 
 } // namespace WebCore

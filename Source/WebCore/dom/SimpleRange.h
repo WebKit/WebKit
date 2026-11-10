@@ -61,7 +61,7 @@ struct SimpleRange {
     WEBCORE_EXPORT SimpleRange(const BoundaryPoint&, const BoundaryPoint&);
     WEBCORE_EXPORT SimpleRange(BoundaryPoint&&, BoundaryPoint&&);
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 };
 
 SimpleRange makeSimpleRangeHelper(BoundaryPoint&&, BoundaryPoint&&);

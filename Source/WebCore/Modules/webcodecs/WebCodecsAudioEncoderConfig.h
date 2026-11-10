@@ -38,7 +38,7 @@
 namespace WebCore {
 
 struct WebCodecsAudioEncoderConfig {
-    String codec;
+    RefPtr<StringImpl> codec;
     size_t sampleRate;
     size_t numberOfChannels;
     std::optional<uint64_t> bitrate;
@@ -47,8 +47,8 @@ struct WebCodecsAudioEncoderConfig {
     std::optional<AacEncoderConfig> aac;
     std::optional<FlacEncoderConfig> flac;
 
-    WebCodecsAudioEncoderConfig isolatedCopy() && { return { WTF::move(codec).isolatedCopy(), sampleRate, numberOfChannels, bitrate, bitrateMode, opus, aac, flac }; }
-    WebCodecsAudioEncoderConfig isolatedCopy() const & { return { codec.isolatedCopy(), sampleRate, numberOfChannels, bitrate, bitrateMode, opus, aac, flac }; }
+    WebCodecsAudioEncoderConfig isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(codec)), sampleRate, numberOfChannels, bitrate, bitrateMode, opus, aac, flac }; }
+    WebCodecsAudioEncoderConfig isolatedCopy() const & { return { WTF::isolatedCopy(codec), sampleRate, numberOfChannels, bitrate, bitrateMode, opus, aac, flac }; }
 };
 
 }

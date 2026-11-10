@@ -47,7 +47,7 @@
 
 static bool navigationComplete = false;
 static bool navigationFail = false;
-static String finalURL;
+static RefPtr<StringImpl> finalURL;
 static id<WKNavigationDelegate> gDelegate;
 static RetainPtr<WKWebView> newWebView;
 
@@ -59,13 +59,13 @@ static RetainPtr<WKWebView> newWebView;
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     navigationComplete = true;
-    finalURL = navigation._request.URL.lastPathComponent;
+    finalURL = StringImpl::create(navigation._request.URL.lastPathComponent);
 }
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
     navigationFail = true;
-    finalURL = navigation._request.URL.lastPathComponent;
+    finalURL = StringImpl::create(navigation._request.URL.lastPathComponent);
 }
 
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures

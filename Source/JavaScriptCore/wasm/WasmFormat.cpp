@@ -57,7 +57,7 @@ std::unique_ptr<Segment> Segment::tryCreate(std::optional<I32InitExpr> offset, u
     return std::unique_ptr<Segment>(new (memory) Segment(sizeInBytes, kind, WTF::move(offset), memoryIndex));
 }
 
-String makeString(const Name& characters)
+RefPtr<StringImpl> makeString(const Name& characters)
 {
     return WTF::makeString(characters);
 }

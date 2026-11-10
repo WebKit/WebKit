@@ -89,7 +89,7 @@ void RegisteredEventListener::removeAbortAlgorithm(const EventTarget* ownerBeing
 
 EventListenerMap::EventListenerMap() = default;
 
-bool EventListenerMap::containsCapturing(const AtomString& eventType) const
+bool EventListenerMap::containsCapturing(AtomStringImpl* eventType) const
 {
     auto* listeners = find(eventType);
     if (!listeners)
@@ -102,7 +102,7 @@ bool EventListenerMap::containsCapturing(const AtomString& eventType) const
     return false;
 }
 
-bool EventListenerMap::containsActive(const AtomString& eventType) const
+bool EventListenerMap::containsActive(AtomStringImpl* eventType) const
 {
     auto* listeners = find(eventType);
     if (!listeners)
@@ -142,7 +142,7 @@ void EventListenerMap::clearEntriesForTearDown(const EventTarget& owner)
     m_entries.clear();
 }
 
-Vector<AtomString> EventListenerMap::eventTypes() const
+Vector<RefPtr<AtomStringImpl>> EventListenerMap::eventTypes() const
 {
     return m_entries.map([](auto& entry) {
         return entry.first;
@@ -159,7 +159,7 @@ static inline size_t findListener(const EventListenerVector& listeners, EventLis
     return notFound;
 }
 
-void EventListenerMap::replacePreservingOptions(const AtomString& eventType, EventListener& oldListener, Ref<EventListener>&& newListener, bool useCapture)
+void EventListenerMap::replacePreservingOptions(AtomStringImpl* eventType, EventListener& oldListener, Ref<EventListener>&& newListener, bool useCapture)
 {
     releaseAssertOrSetThreadUID();
     Locker locker { m_lock };
@@ -174,7 +174,7 @@ void EventListenerMap::replacePreservingOptions(const AtomString& eventType, Eve
     registeredListener = RegisteredEventListener::create(WTF::move(newListener), existingOptions);
 }
 
-RefPtr<RegisteredEventListener> EventListenerMap::add(const AtomString& eventType, Ref<EventListener>&& listener, const RegisteredEventListener::Options& options)
+RefPtr<RegisteredEventListener> EventListenerMap::add(AtomStringImpl* eventType, Ref<EventListener>&& listener, const RegisteredEventListener::Options& options)
 {
     releaseAssertOrSetThreadUID();
     Locker locker { m_lock };
@@ -201,7 +201,7 @@ static bool removeListenerFromVector(EventListenerVector& listeners, EventListen
     return true;
 }
 
-bool EventListenerMap::remove(const AtomString& eventType, EventListener& listener, bool useCapture)
+bool EventListenerMap::remove(AtomStringImpl* eventType, EventListener& listener, bool useCapture)
 {
     releaseAssertOrSetThreadUID();
     Locker locker { m_lock };
@@ -218,7 +218,7 @@ bool EventListenerMap::remove(const AtomString& eventType, EventListener& listen
     return false;
 }
 
-EventListenerVector* EventListenerMap::find(const AtomString& eventType)
+EventListenerVector* EventListenerMap::find(AtomStringImpl* eventType)
 {
     for (auto& entry : m_entries) {
         if (entry.first == eventType)
@@ -240,7 +240,7 @@ static void removeFirstListenerCreatedFromMarkup(EventListenerVector& listenerVe
     ASSERT_UNUSED(foundListener, foundListener);
 }
 
-void EventListenerMap::removeFirstEventListenerCreatedFromMarkup(const AtomString& eventType)
+void EventListenerMap::removeFirstEventListenerCreatedFromMarkup(AtomStringImpl* eventType)
 {
     releaseAssertOrSetThreadUID();
     Locker locker { m_lock };
@@ -255,7 +255,7 @@ void EventListenerMap::removeFirstEventListenerCreatedFromMarkup(const AtomStrin
     }
 }
 
-static void copyListenersNotCreatedFromMarkupToTarget(const AtomString& eventType, EventListenerVector& listenerVector, EventTarget* target)
+static void copyListenersNotCreatedFromMarkupToTarget(AtomStringImpl* eventType, EventListenerVector& listenerVector, EventTarget* target)
 {
     for (auto& registeredListener : listenerVector) {
         // Event listeners created from markup have already been transfered to the shadow tree during cloning.

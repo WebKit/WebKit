@@ -94,7 +94,7 @@ JSFunction* JSFunction::create(VM& vm, JSGlobalObject*, FunctionExecutable* exec
     return result;
 }
 
-JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, NativeFunction nativeFunction, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, NativeFunction nativeConstructor, const DOMJIT::Signature* signature)
+JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned length, StringImpl* name, NativeFunction nativeFunction, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, NativeFunction nativeConstructor, const DOMJIT::Signature* signature)
 {
     NativeExecutable* executable = vm.getHostFunction(nativeFunction, implementationVisibility, intrinsic, nativeConstructor, signature, length, name);
     Structure* structure = globalObject->hostFunctionStructure();
@@ -185,7 +185,7 @@ FunctionRareData* JSFunction::initializeRareData(JSGlobalObject* globalObject, s
     return rareData;
 }
 
-String JSFunction::name(VM& vm)
+RefPtr<StringImpl> JSFunction::name(VM& vm)
 {
     if (isHostFunction()) {
         if (this->inherits<JSBoundFunction>())
@@ -199,7 +199,7 @@ String JSFunction::name(VM& vm)
     return identifier.string();
 }
 
-String JSFunction::nameWithoutGC(VM& vm)
+RefPtr<StringImpl> JSFunction::nameWithoutGC(VM& vm)
 {
     AssertNoGC assertNoGC;
     if (isHostFunction()) {
@@ -214,25 +214,25 @@ String JSFunction::nameWithoutGC(VM& vm)
     return identifier.string();
 }
 
-String JSFunction::displayName(VM& vm)
+RefPtr<StringImpl> JSFunction::displayName(VM& vm)
 {
     JSValue displayName = getDirect(vm, vm.propertyNames->displayName);
     
     if (displayName && isJSString(displayName))
         return asString(displayName)->tryGetValue();
     
-    return String();
+    return nullptr;
 }
 
-const String JSFunction::calculatedDisplayName(VM& vm)
+const RefPtr<StringImpl> JSFunction::calculatedDisplayName(VM& vm)
 {
-    const String explicitName = displayName(vm);
+    const RefPtr<StringImpl> explicitName = displayName(vm);
     
-    if (!explicitName.isEmpty())
+    if (!isEmpty(explicitName))
         return explicitName;
     
-    const String actualName = name(vm);
-    if (!actualName.isEmpty() || isHostOrBuiltinFunction())
+    const RefPtr<StringImpl> actualName = name(vm);
+    if (!isEmpty(actualName) || isHostOrBuiltinFunction())
         return actualName;
 
     return jsExecutable()->ecmaName().string();
@@ -448,7 +448,7 @@ CallData JSFunction::getConstructData(JSCell* cell)
     return getConstructDataInline(cell);
 }
 
-String getCalculatedDisplayName(VM& vm, JSObject* object)
+RefPtr<StringImpl> getCalculatedDisplayName(VM& vm, JSObject* object)
 {
     if (!is<JSFunction>(object) && !is<InternalFunction>(object))
         return emptyString();
@@ -464,8 +464,8 @@ String getCalculatedDisplayName(VM& vm, JSObject* object)
     }
 
     if (auto* function = dynamicDowncast<JSFunction>(object)) {
-        String actualName = function->nameWithoutGC(vm);
-        if (!actualName.isEmpty() || function->isHostOrBuiltinFunction())
+        RefPtr<StringImpl> actualName = function->nameWithoutGC(vm);
+        if (!isEmpty(actualName) || function->isHostOrBuiltinFunction())
             return actualName;
 
         return function->jsExecutable()->ecmaName().string();
@@ -488,14 +488,14 @@ void JSFunction::setFunctionName(JSGlobalObject* globalObject, JSValue value)
 
     ASSERT(!isHostFunction());
     ASSERT(jsExecutable()->ecmaName().isNull());
-    String name;
+    RefPtr<StringImpl> name;
     if (value.isSymbol()) {
         PrivateName privateName = asSymbol(value)->privateName();
         SymbolImpl& uid = privateName.uid();
         if (uid.isNullSymbol())
             name = emptyString();
         else {
-            name = makeNameWithOutOfMemoryCheck(globalObject, scope, "Function "_s, '[', String(&uid), ']');
+            name = makeNameWithOutOfMemoryCheck(globalObject, scope, "Function "_s, '[', RefPtr<StringImpl>(&uid), ']');
             RETURN_IF_EXCEPTION(scope, void());
         }
     } else {
@@ -522,7 +522,7 @@ void JSFunction::reifyLength(VM& vm)
 JSFunction::PropertyStatus JSFunction::reifyName(VM& vm, JSGlobalObject* globalObject)
 {
     const Identifier& ecmaName = jsExecutable()->ecmaName();
-    String name;
+    RefPtr<StringImpl> name;
     // https://tc39.github.io/ecma262/#sec-exports-runtime-semantics-evaluation
     // When the ident is "*default*", we need to set "default" for the ecma name.
     // This "*default*" name is never shown to users.
@@ -533,7 +533,7 @@ JSFunction::PropertyStatus JSFunction::reifyName(VM& vm, JSGlobalObject* globalO
     return reifyName(vm, globalObject, name);
 }
 
-JSFunction::PropertyStatus JSFunction::reifyName(VM& vm, JSGlobalObject* globalObject, String name)
+JSFunction::PropertyStatus JSFunction::reifyName(VM& vm, JSGlobalObject* globalObject, RefPtr<StringImpl> name)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     FunctionRareData* rareData = this->ensureRareData(vm);

@@ -72,9 +72,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface _WKTextExtractionResult ()
 
 #if !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
-- (instancetype)initWithWebView:(nullable WKWebView *)webView origin:(nullable WKSecurityOrigin *)origin textContent:(NSString *)textContent filteredOutAnyText:(BOOL)filteredOutAnyText shortenedURLs:(NSDictionary<NSString *, NSURL *> *)shortenedURLs textToContainerMap:(HashMap<String, Vector<WebKit::ExtractedNodeInfo>>&&)textToContainerMap;
+- (instancetype)initWithWebView:(nullable WKWebView *)webView origin:(nullable WKSecurityOrigin *)origin textContent:(NSString *)textContent filteredOutAnyText:(BOOL)filteredOutAnyText shortenedURLs:(NSDictionary<NSString *, NSURL *> *)shortenedURLs textToContainerMap:(HashMap<RefPtr<StringImpl>, Vector<WebKit::ExtractedNodeInfo>>&&)textToContainerMap;
 // FIXME(rdar://189512757): NS_DIRECT avoids emitting an ObjC type encoding for std::expected, which crashes clang. Remove when resolved.
-- (std::expected<std::optional<WebKit::ExtractedNodeInfo>, String>)resolveContainerForSearchText:(NSString *)searchText NS_DIRECT;
+- (std::expected<std::optional<WebKit::ExtractedNodeInfo>, RefPtr<StringImpl>>)resolveContainerForSearchText:(NSString *)searchText NS_DIRECT;
 #endif
 
 @end

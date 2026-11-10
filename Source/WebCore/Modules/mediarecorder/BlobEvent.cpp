@@ -35,12 +35,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BlobEvent);
 
-Ref<BlobEvent> BlobEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
+Ref<BlobEvent> BlobEvent::create(AtomStringImpl* type, Init&& init, IsTrusted isTrusted)
 {
     return adoptRef(*new BlobEvent(type, WTF::move(init), isTrusted));
 }
 
-BlobEvent::BlobEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
+BlobEvent::BlobEvent(AtomStringImpl* type, Init&& init, IsTrusted isTrusted)
     : Event(EventInterfaceType::BlobEvent, type, WTF::move(init), isTrusted)
     , m_blob(WTF::move(init.data))
     , m_timecode(init.timecode.value_or(0))

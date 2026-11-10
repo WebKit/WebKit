@@ -63,8 +63,8 @@ public:
     bool areAnimationsPaused() const { return m_areAnimationsPaused; }
     bool hasActiveSMILAnimations() const;
 
-    void reportWarning(const String&);
-    void reportError(const String&);
+    void reportWarning(StringImpl*);
+    void reportError(StringImpl*);
 
     SVGResourcesCache& resourcesCache() LIFETIME_BOUND { return m_resourcesCache; }
 

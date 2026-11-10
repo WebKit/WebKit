@@ -55,7 +55,7 @@ const PushSubscriptionData& PushSubscription::data() const
     return m_data;
 }
 
-const String& PushSubscription::endpoint() const
+const RefPtr<StringImpl>& PushSubscription::endpoint() const
 {
     return m_data.endpoint;
 }
@@ -119,7 +119,7 @@ PushSubscriptionJSON PushSubscription::toJSON() const
     return PushSubscriptionJSON {
         endpoint(),
         expirationTime(),
-        Vector<KeyValuePair<String, String>> {
+        Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> {
             { "p256dh"_s, base64URLEncodeToString(clientECDHPublicKey()) },
             { "auth"_s, base64URLEncodeToString(sharedAuthenticationSecret()) }
         }

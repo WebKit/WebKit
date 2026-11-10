@@ -42,8 +42,8 @@ public:
     virtual ~AudioTrackPrivateWebM() = default;
 
     TrackID id() const final;
-    String label() const final;
-    String language() const final;
+    RefPtr<StringImpl> label() const final;
+    RefPtr<StringImpl> language() const final;
     int trackIndex() const final;
     std::optional<bool> defaultEnabled() const final;
     NODELETE std::optional<MediaTime> codecDelay() const;
@@ -53,7 +53,7 @@ public:
 private:
     AudioTrackPrivateWebM(webm::TrackEntry&&);
 
-    String codec() const;
+    RefPtr<StringImpl> codec() const;
     NODELETE uint32_t sampleRate() const;
     NODELETE uint32_t numberOfChannels() const;
     void setFormatDescription(Ref<AudioInfo>&&) final;
@@ -62,8 +62,8 @@ private:
     webm::TrackEntry m_track;
     RefPtr<AudioInfo> m_formatDescription;
     MediaTime m_discardPadding { MediaTime::invalidTime() };
-    mutable String m_label;
-    mutable String m_language;
+    mutable RefPtr<StringImpl> m_label;
+    mutable RefPtr<StringImpl> m_language;
 };
 
 }

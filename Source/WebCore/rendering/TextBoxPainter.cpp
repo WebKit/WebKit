@@ -760,7 +760,7 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
     float emphasisMarkOffset = 0;
     auto emphasisExistsAndIsAbove = emphasisMarkExistsAndIsAbove(m_renderer, m_style);
     auto& emphasisMark = emphasisExistsAndIsAbove ? m_style->textEmphasisStyle().markString() : nullAtom();
-    if (!emphasisMark.isEmpty())
+    if (!isEmpty(emphasisMark))
         emphasisMarkOffset = *emphasisExistsAndIsAbove ? -font.metricsOfPrimaryFont().ascent()  - font.emphasisMarkDescent(emphasisMark) : font.metricsOfPrimaryFont().descent() + font.emphasisMarkAscent(emphasisMark);
 
     TextPainter textPainter {

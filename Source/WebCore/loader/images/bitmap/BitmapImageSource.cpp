@@ -766,7 +766,7 @@ RefPtr<ImageObserver> BitmapImageSource::imageObserver() const
     return m_bitmapImage ? m_bitmapImage->imageObserver() : nullptr;
 }
 
-String BitmapImageSource::mimeType() const
+RefPtr<StringImpl> BitmapImageSource::mimeType() const
 {
     return m_bitmapImage ? protect(m_bitmapImage)->mimeType() : emptyString();
 }

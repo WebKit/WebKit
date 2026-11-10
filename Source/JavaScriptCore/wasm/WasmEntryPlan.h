@@ -99,7 +99,7 @@ public:
 
     virtual void completeInStreaming() = 0;
     virtual void didCompileFunctionInStreaming() = 0;
-    virtual void didFailInStreaming(String&&) = 0;
+    virtual void didFailInStreaming(RefPtr<StringImpl>&&) = 0;
 
 private:
     class ThreadCountHolder;
@@ -121,7 +121,7 @@ protected:
     // Records a function validation error (lowest index wins) and stops assigning more work.
     // Completion is deferred to ThreadCountHolder / completeInStreaming so concurrent
     // workers can still report a lower-index failure.
-    void failFunctionCompilation(FunctionCodeIndex, String&& errorMessage, CompilationError = CompilationError::Default) WTF_REQUIRES_LOCK(m_lock);
+    void failFunctionCompilation(FunctionCodeIndex, RefPtr<StringImpl>&& errorMessage, CompilationError = CompilationError::Default) WTF_REQUIRES_LOCK(m_lock);
 
     virtual bool prepareImpl() = 0;
     virtual void compileFunction(FunctionCodeIndex functionIndex) = 0;

@@ -86,7 +86,7 @@ public:
     State addBytes(std::span<const uint8_t> bytes) { return addBytes(bytes, IsEndOfStream::No); }
     State finalize();
 
-    String errorMessage() const { return crossThreadCopy(m_errorMessage); }
+    RefPtr<StringImpl> errorMessage() const { return crossThreadCopy(m_errorMessage); }
 
     void reportError() { moveToStateIfNotFailed(failOnState(State::FatalError)); }
 
@@ -116,7 +116,7 @@ private:
     const Ref<ModuleInformation> m_info;
     StreamingParserClient& m_client;
     Vector<uint8_t> m_remaining;
-    String m_errorMessage;
+    RefPtr<StringImpl> m_errorMessage;
 
     CheckedSize m_totalSize { 0 };
     size_t m_offset { 0 };

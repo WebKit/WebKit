@@ -186,7 +186,7 @@ public:
         m_matrix->value().skewY(angle);
     }
 
-    String valueAsString() const
+    RefPtr<StringImpl> valueAsString() const
     {
         StringBuilder builder;
         builder.append(prefixForTransformType(m_type));

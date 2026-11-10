@@ -102,7 +102,7 @@ static std::optional<PlatformMediaCapabilitiesInfo> computeMediaCapabilitiesInfo
             if (!parsedInfo)
                 return std::nullopt;
             info = *parsedInfo;
-        } else if (codec.startsWith("dvh1"_s) || codec.startsWith("dvhe"_s)) {
+        } else if (startsWith(codec, "dvh1"_s) || startsWith(codec, "dvhe"_s)) {
             auto parameters = parseDoViCodecParameters(codec);
             if (!parameters)
                 return std::nullopt;
@@ -121,7 +121,7 @@ static std::optional<PlatformMediaCapabilitiesInfo> computeMediaCapabilitiesInfo
             if (!parsedInfo)
                 return std::nullopt;
             info = *parsedInfo;
-        } else if (codec.startsWith("vp8"_s) || codec.startsWith("vp08"_s)) {
+        } else if (startsWith(codec, "vp8"_s) || startsWith(codec, "vp08"_s)) {
             if (!isVP8DecoderAvailable())
                 return std::nullopt;
             auto parameters = parseVPCodecParameters(codec);
@@ -136,7 +136,7 @@ static std::optional<PlatformMediaCapabilitiesInfo> computeMediaCapabilitiesInfo
             info.smooth = isVPSoftwareDecoderSmooth(videoConfiguration);
 #endif
 #if ENABLE(AV1)
-        } else if (codec.startsWith("av01"_s)) {
+        } else if (startsWith(codec, "av01"_s)) {
             auto parameters = parseAV1CodecParameters(codec);
             if (!parameters)
                 return std::nullopt;

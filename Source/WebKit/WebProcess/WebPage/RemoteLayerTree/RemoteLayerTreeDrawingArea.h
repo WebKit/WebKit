@@ -113,8 +113,8 @@ private:
     void setViewExposedRect(std::optional<WebCore::FloatRect>) final;
     std::optional<WebCore::FloatRect> viewExposedRect() const final { return m_viewExposedRect; }
 
-    void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime) final;
-    void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& key) final;
+    void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, StringImpl* key, MonotonicTime startTime) final;
+    void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, StringImpl* key) final;
 
     WebCore::FloatRect exposedContentRect() const final;
     void setExposedContentRect(const WebCore::FloatRect&) final;

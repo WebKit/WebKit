@@ -110,7 +110,7 @@ void SVGFEImageElement::requestImageResource()
     updateImageResource();
 }
 
-String SVGFEImageElement::imageSourceURL() const
+RefPtr<StringImpl> SVGFEImageElement::imageSourceURL() const
 {
     return href();
 }
@@ -155,8 +155,8 @@ void SVGFEImageElement::buildPendingResource()
     if (!target.element) {
         // A fragment in another resource's URL, such as an SVG image's svgView(), does not name an element here.
         Ref document = this->document();
-        bool referencesThisDocument = href().startsWith('#') || equalIgnoringFragmentIdentifier(document->encodingParseURL(href()), document->url());
-        if (target.identifier.isEmpty() || !referencesThisDocument)
+        bool referencesThisDocument = startsWith(href(), '#') || equalIgnoringFragmentIdentifier(document->encodingParseURL(href()), document->url());
+        if (isEmpty(target.identifier) || !referencesThisDocument)
             requestImageResource();
         else {
             treeScopeForReferences->addPendingSVGResource(target.identifier, *this);
@@ -168,7 +168,7 @@ void SVGFEImageElement::buildPendingResource()
     updateSVGRendererForElementChange();
 }
 
-void SVGFEImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGFEImageElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::preserveAspectRatioAttr)
         m_preserveAspectRatio->setBaseValInternal(SVGPreserveAspectRatioValue { newValue });

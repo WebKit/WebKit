@@ -36,9 +36,9 @@ class MathMLSelectElement final : public MathMLRowElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLSelectElement);
 public:
     static Ref<MathMLSelectElement> create(const QualifiedName& tagName, Document&);
-    static bool isMathMLEncoding(const AtomString& value);
-    static bool isSVGEncoding(const AtomString& value);
-    NODELETE static bool isHTMLEncoding(const AtomString& value);
+    static bool isMathMLEncoding(AtomStringImpl* value);
+    static bool isSVGEncoding(AtomStringImpl* value);
+    NODELETE static bool isHTMLEncoding(AtomStringImpl* value);
 
 private:
     MathMLSelectElement(const QualifiedName& tagName, Document&);
@@ -48,7 +48,7 @@ private:
 
     void finishParsingChildren() final;
     void childrenChanged(const ChildChange&) final;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason = AttributeModificationReason::Directly) final;
     void defaultEventHandler(Event&) final;
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 

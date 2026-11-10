@@ -28,8 +28,8 @@
 
 namespace WebCore {
 
-GPUPipelineError::GPUPipelineError(String&& message, GPUPipelineErrorInit reason)
-    : DOMException(0, "GPUPipelineError"_s, WTF::move(message), Type::GPUPipelineError)
+GPUPipelineError::GPUPipelineError(RefPtr<StringImpl>&& message, GPUPipelineErrorInit reason)
+    : DOMException(0, "GPUPipelineError"_si, WTF::move(message), Type::GPUPipelineError)
     , m_reason(reason)
 {
 }

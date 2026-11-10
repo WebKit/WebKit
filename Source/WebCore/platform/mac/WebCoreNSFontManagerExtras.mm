@@ -77,8 +77,8 @@ static FontChanges computedFontChanges(NSFontManager *fontManager, NSFont *origi
 
     FontChanges changes;
     if ([convertedFamilyNameA isEqualToString:convertedFamilyNameB.get()]) {
-        changes.setFontName(convertedFontA.fontName);
-        changes.setFontFamily(convertedFamilyNameA.get());
+        changes.setFontName(StringImpl::create(convertedFontA.fontName).get());
+        changes.setFontFamily(StringImpl::create(convertedFamilyNameA.get()).get());
     }
 
     int originalPointSizeA = originalFontA.pointSize;

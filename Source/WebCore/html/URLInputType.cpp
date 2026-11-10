@@ -42,7 +42,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(URLInputType);
 
-const AtomString& URLInputType::formControlType() const
+const RefPtr<AtomStringImpl>& URLInputType::formControlType() const
 {
     return InputTypeNames::url();
 }
@@ -58,14 +58,14 @@ bool URLInputType::typeMismatch() const
     return typeMismatchFor(protect(element())->value());
 }
 
-String URLInputType::typeMismatchText() const
+RefPtr<StringImpl> URLInputType::typeMismatchText() const
 {
     return validationMessageTypeMismatchForURLText();
 }
 
-ValueOrReference<String> URLInputType::sanitizeValue(const String& proposedValue LIFETIME_BOUND) const
+ValueOrReference<RefPtr<StringImpl>> URLInputType::sanitizeValue(StringImpl* proposedValue LIFETIME_BOUND) const
 {
-    return BaseTextInputType::sanitizeValue(proposedValue)->trim(isASCIIWhitespace);
+    return trim(BaseTextInputType::sanitizeValue(proposedValue).get(), isASCIIWhitespace);
 }
 
 } // namespace WebCore

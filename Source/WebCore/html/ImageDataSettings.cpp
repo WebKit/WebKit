@@ -36,8 +36,8 @@ Ref<JSON::Object> ImageDataSettings::toJSON() const
 {
     Ref json = JSON::Object::create();
     if (colorSpace)
-        json->setString("colorSpace"_s, convertEnumerationToString(*colorSpace));
-    json->setString("pixelFormat"_s, convertEnumerationToString(pixelFormat));
+        json->setString("colorSpace"_si, convertEnumerationToString(*colorSpace));
+    json->setString("pixelFormat"_si, convertEnumerationToString(pixelFormat));
     return json;
 }
 

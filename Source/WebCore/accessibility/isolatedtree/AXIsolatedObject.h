@@ -62,7 +62,7 @@ public:
     RefPtr<AXCoreObject> accessibilityHitTestForScreenPoint(const IntPoint&) const;
 
     std::optional<AXTreeID> treeID() const final { return tree().treeID(); }
-    String debugDescriptionInternal(bool, std::optional<OptionSet<AXDebugStringOption>> = std::nullopt) const final;
+    RefPtr<StringImpl> debugDescriptionInternal(bool, std::optional<OptionSet<AXDebugStringOption>> = std::nullopt) const final;
 
     void updateFromData(IsolatedObjectData&&);
 
@@ -115,10 +115,10 @@ public:
     bool isReplacedElementForTextEmission() const final { return boolAttributeValue(AXProperty::IsReplacedElementForTextEmission); }
     bool isInUserAgentShadowTree() const final { return boolAttributeValue(AXProperty::IsInUserAgentShadowTree); }
     bool isInsideNativeTextControl() const final { return boolAttributeValue(AXProperty::IsInsideNativeTextControl); }
-    String listMarkerText() const final { return stringAttributeValue(AXProperty::ListMarkerText); }
+    RefPtr<StringImpl> listMarkerText() const final { return stringAttributeValue(AXProperty::ListMarkerText); }
     FontOrientation fontOrientation() const final { return propertyValue<FontOrientation>(AXProperty::FontOrientation); }
 
-    String description() const final { return stringAttributeValue(AXProperty::Description); }
+    RefPtr<StringImpl> description() const final { return stringAttributeValue(AXProperty::Description); }
 
     bool isIgnored() const final { return boolAttributeValue(AXProperty::IsIgnored); }
     std::optional<bool> cachedIsIgnored() const final { return isIgnored(); }
@@ -179,8 +179,8 @@ private:
 
     // FIXME: consolidate all AttributeValue retrieval in a single template method.
     bool boolAttributeValue(AXProperty) const;
-    String stringAttributeValue(AXProperty) const;
-    String stringAttributeValueNullIfMissing(AXProperty) const;
+    RefPtr<StringImpl> stringAttributeValue(AXProperty) const;
+    RefPtr<StringImpl> stringAttributeValueNullIfMissing(AXProperty) const;
     int intAttributeValue(AXProperty) const;
     unsigned unsignedAttributeValue(AXProperty) const;
     double doubleAttributeValue(AXProperty) const;
@@ -267,11 +267,11 @@ private:
     std::pair<unsigned, unsigned> columnIndexRange() const final { return indexRangePairAttributeValue(AXProperty::ColumnIndexRange); }
     std::optional<unsigned> axColumnIndex() const final { return optionalAttributeValue<unsigned>(AXProperty::AXColumnIndex); }
     std::optional<unsigned> axRowIndex() const final { return optionalAttributeValue<unsigned>(AXProperty::AXRowIndex); }
-    String axColumnIndexText() const final { return stringAttributeValueNullIfMissing(AXProperty::AXColumnIndexText); }
-    String axRowIndexText() const final { return stringAttributeValueNullIfMissing(AXProperty::AXRowIndexText); }
+    RefPtr<StringImpl> axColumnIndexText() const final { return stringAttributeValueNullIfMissing(AXProperty::AXColumnIndexText); }
+    RefPtr<StringImpl> axRowIndexText() const final { return stringAttributeValueNullIfMissing(AXProperty::AXRowIndexText); }
     bool isColumnHeader() const final { return boolAttributeValue(AXProperty::IsColumnHeader); }
     bool isRowHeader() const final { return boolAttributeValue(AXProperty::IsRowHeader); }
-    String cellScope() const final { return stringAttributeValue(AXProperty::CellScope); }
+    RefPtr<StringImpl> cellScope() const final { return stringAttributeValue(AXProperty::CellScope); }
 
     // Table column support.
     unsigned columnIndex() const final { return unsignedAttributeValue(AXProperty::ColumnIndex); }
@@ -293,7 +293,7 @@ private:
     bool isChecked() const final { return boolAttributeValue(AXProperty::IsChecked); }
     bool isEnabled() const final { return boolAttributeValue(AXProperty::IsEnabled); }
     bool isSelected() const final { return boolAttributeValue(AXProperty::IsSelected); }
-    String selectedOptionCheckmark() const final { return stringAttributeValue(AXProperty::SelectedOptionCheckmark); }
+    RefPtr<StringImpl> selectedOptionCheckmark() const final { return stringAttributeValue(AXProperty::SelectedOptionCheckmark); }
     bool isFocused() const final;
     bool isMultiSelectable() const final { return boolAttributeValue(AXProperty::IsMultiSelectable); }
     bool isVisited() const final { return boolAttributeValue(AXProperty::IsVisited); }
@@ -316,11 +316,11 @@ private:
     FloatRect relativeFrameFromChildren() const;
     WallTime dateTimeValue() const final { return propertyValue<WallTime>(AXProperty::DateTimeValue); }
     DateComponentsType dateTimeComponentsType() const final { return propertyValue<DateComponentsType>(AXProperty::DateTimeComponentsType); }
-    String datetimeAttributeValue() const final { return stringAttributeValue(AXProperty::DatetimeAttributeValue); }
+    RefPtr<StringImpl> datetimeAttributeValue() const final { return stringAttributeValue(AXProperty::DatetimeAttributeValue); }
     bool canSetValueAttribute() const final { return boolAttributeValue(AXProperty::CanSetValueAttribute); }
     bool canSetSelectedAttribute() const final { return boolAttributeValue(AXProperty::CanSetSelectedAttribute); }
     AccessibilityButtonState checkboxOrRadioValue() const final { return propertyValue<AccessibilityButtonState>(AXProperty::ButtonState); }
-    String valueDescription() const final { return stringAttributeValue(AXProperty::ValueDescription); }
+    RefPtr<StringImpl> valueDescription() const final { return stringAttributeValue(AXProperty::ValueDescription); }
     float valueForRange() const final { return floatAttributeValue(AXProperty::ValueForRange); }
     float maxValueForRange() const final { return floatAttributeValue(AXProperty::MaxValueForRange); }
     float minValueForRange() const final { return floatAttributeValue(AXProperty::MinValueForRange); }
@@ -329,20 +329,20 @@ private:
     bool supportsARIAOwns() const final { return boolAttributeValue(AXProperty::SupportsARIAOwns); }
     AccessibilityPopupValue popupValue() const final { return static_cast<AccessibilityPopupValue>(intAttributeValue(AXProperty::PopupValue)); }
     bool pressedIsPresent() const final;
-    String invalidStatusIncludingInferred() const final
+    RefPtr<StringImpl> invalidStatusIncludingInferred() const final
     {
         auto value = stringAttributeValue(AXProperty::InvalidStatus);
-        return value.isEmpty() ? "false"_s : value;
+        return isEmpty(value) ? "false"_si : value;
     }
     bool supportsExpanded() const final { return boolAttributeValue(AXProperty::SupportsExpanded); }
     AccessibilitySortDirection sortDirection() const final { return static_cast<AccessibilitySortDirection>(intAttributeValue(AXProperty::SortDirection)); }
-    String identifierAttribute() const final;
-    String linkRelValue() const final;
-    Vector<String> classList() const final;
+    RefPtr<StringImpl> identifierAttribute() const final;
+    RefPtr<StringImpl> linkRelValue() const final;
+    Vector<RefPtr<StringImpl>> classList() const final;
     AccessibilityCurrentState currentState() const final { return static_cast<AccessibilityCurrentState>(intAttributeValue(AXProperty::CurrentState)); }
     bool supportsCurrent() const final { return boolAttributeValue(AXProperty::SupportsCurrent); }
     bool supportsKeyShortcuts() const final { return boolAttributeValue(AXProperty::SupportsKeyShortcuts); }
-    String keyShortcuts() const final { return stringAttributeValue(AXProperty::KeyShortcuts); }
+    RefPtr<StringImpl> keyShortcuts() const final { return stringAttributeValue(AXProperty::KeyShortcuts); }
     bool supportsSetSize() const final { return boolAttributeValue(AXProperty::SupportsSetSize); }
     bool supportsPosInSet() const final { return boolAttributeValue(AXProperty::SupportsPosInSet); }
     int setSize() const final { return intAttributeValue(AXProperty::SetSize); }
@@ -351,7 +351,7 @@ private:
     bool supportsDragging() const final { return boolAttributeValue(AXProperty::SupportsDragging); }
     bool isGrabbed() final { return boolAttributeValue(AXProperty::IsGrabbed); }
     bool isHiddenUntilFoundContainer() const final { return boolAttributeValue(AXProperty::IsHiddenUntilFoundContainer); }
-    Vector<String> determineDropEffects() const final;
+    Vector<RefPtr<StringImpl>> determineDropEffects() const final;
 
     RefPtr<AXCoreObject> accessibilityHitTest(const IntPoint&) const final;
 
@@ -363,29 +363,29 @@ private:
     AXIsolatedObject* internalLinkElement() const final { return objectAttributeValue(AXProperty::InternalLinkElement); }
     AccessibilityChildrenVector radioButtonGroup() const final { return tree().objectsForIDs(vectorAttributeValue<AXID>(AXProperty::RadioButtonGroupMembers)); }
     AXIsolatedObject* scrollBar(AccessibilityOrientation) final;
-    const String placeholderValue() const final { return stringAttributeValue(AXProperty::PlaceholderValue); }
-    String abbreviation() const final { return stringAttributeValue(AXProperty::Abbreviation); }
+    const RefPtr<StringImpl> placeholderValue() const final { return stringAttributeValue(AXProperty::PlaceholderValue); }
+    RefPtr<StringImpl> abbreviation() const final { return stringAttributeValue(AXProperty::Abbreviation); }
     SRGBA<uint8_t> colorValue() const final;
-    String subrolePlatformString() const final { return stringAttributeValue(AXProperty::SubrolePlatformString); }
-    String ariaRoleDescription() const final { return stringAttributeValue(AXProperty::ARIARoleDescription); };
+    RefPtr<StringImpl> subrolePlatformString() const final { return stringAttributeValue(AXProperty::SubrolePlatformString); }
+    RefPtr<StringImpl> ariaRoleDescription() const final { return stringAttributeValue(AXProperty::ARIARoleDescription); };
     LayoutRect elementRect() const final;
     IntPoint clickPoint() final;
     void accessibilityText(Vector<AccessibilityText>& texts) const final;
-    String brailleLabel() const final { return stringAttributeValue(AXProperty::BrailleLabel); }
-    String brailleRoleDescription() const final { return stringAttributeValue(AXProperty::BrailleRoleDescription); }
-    String embeddedImageDescription() const final { return stringAttributeValue(AXProperty::EmbeddedImageDescription); }
+    RefPtr<StringImpl> brailleLabel() const final { return stringAttributeValue(AXProperty::BrailleLabel); }
+    RefPtr<StringImpl> brailleRoleDescription() const final { return stringAttributeValue(AXProperty::BrailleRoleDescription); }
+    RefPtr<StringImpl> embeddedImageDescription() const final { return stringAttributeValue(AXProperty::EmbeddedImageDescription); }
     std::optional<AccessibilityChildrenVector> imageOverlayElements() final { return std::nullopt; }
     FloatSize imageDataSize() const final;
     RefPtr<SharedBuffer> imageData(const AXImageDataParameters&) const final;
-    String extendedDescription() const final { return stringAttributeValue(AXProperty::ExtendedDescription); }
-    String computedRoleString() const final;
+    RefPtr<StringImpl> extendedDescription() const final { return stringAttributeValue(AXProperty::ExtendedDescription); }
+    RefPtr<StringImpl> computedRoleString() const final;
     bool isValueAutofillAvailable() const final { return boolAttributeValue(AXProperty::IsValueAutofillAvailable); }
     AutoFillButtonType valueAutofillButtonType() const final { return static_cast<AutoFillButtonType>(intAttributeValue(AXProperty::ValueAutofillButtonType)); }
     URL url() const final { return urlAttributeValue(AXProperty::URL); }
-    String accessKey() const final { return stringAttributeValueNullIfMissing(AXProperty::AccessKey); }
-    String localizedActionVerb() const final { return stringAttributeValue(AXProperty::LocalizedActionVerb); }
-    String actionVerb() const final { return stringAttributeValue(AXProperty::ActionVerb); }
-    String explicitAutoCompleteValue() const final { return stringAttributeValue(AXProperty::ExplicitAutoCompleteValue); }
+    RefPtr<StringImpl> accessKey() const final { return stringAttributeValueNullIfMissing(AXProperty::AccessKey); }
+    RefPtr<StringImpl> localizedActionVerb() const final { return stringAttributeValue(AXProperty::LocalizedActionVerb); }
+    RefPtr<StringImpl> actionVerb() const final { return stringAttributeValue(AXProperty::ActionVerb); }
+    RefPtr<StringImpl> explicitAutoCompleteValue() const final { return stringAttributeValue(AXProperty::ExplicitAutoCompleteValue); }
     bool isMathElement() const final { return boolAttributeValue(AXProperty::IsMathElement); }
     bool isMathFraction() const final { return boolAttributeValue(AXProperty::IsMathFraction); }
     bool isMathFenced() const final { return boolAttributeValue(AXProperty::IsMathFenced); }
@@ -409,8 +409,8 @@ private:
     AXIsolatedObject* mathBaseObject() final { return objectAttributeValue(AXProperty::MathBaseObject); }
     AXIsolatedObject* mathSubscriptObject() final { return objectAttributeValue(AXProperty::MathSubscriptObject); }
     AXIsolatedObject* mathSuperscriptObject() final { return objectAttributeValue(AXProperty::MathSuperscriptObject); }
-    String mathFencedOpenString() const final { return stringAttributeValue(AXProperty::MathFencedOpenString); }
-    String mathFencedCloseString() const final { return stringAttributeValue(AXProperty::MathFencedCloseString); }
+    RefPtr<StringImpl> mathFencedOpenString() const final { return stringAttributeValue(AXProperty::MathFencedOpenString); }
+    RefPtr<StringImpl> mathFencedCloseString() const final { return stringAttributeValue(AXProperty::MathFencedCloseString); }
     int mathLineThickness() const final { return intAttributeValue(AXProperty::MathLineThickness); }
     void mathPrescripts(AccessibilityMathMultiscriptPairs&) final;
     void mathPostscripts(AccessibilityMathMultiscriptPairs&) final;
@@ -426,12 +426,12 @@ private:
     unsigned ariaLevel() const final { return unsignedAttributeValue(AXProperty::ARIALevel); }
     bool hasExplicitGroupRole() const final { return boolAttributeValue(AXProperty::HasExplicitGroupRole); }
     unsigned computedHeadingLevel() const final { return unsignedAttributeValue(AXProperty::HeadingLevel); }
-    String language() const final { return stringAttributeValue(AXProperty::Language); }
+    RefPtr<StringImpl> language() const final { return stringAttributeValue(AXProperty::Language); }
     void setSelectedChildren(const AccessibilityChildrenVector&) final;
     AccessibilityChildrenVector visibleChildren() final;
     void setChildrenIDs(Vector<AXID>&&);
-    const String explicitLiveRegionStatus() const final { return stringAttributeValue(AXProperty::ExplicitLiveRegionStatus); }
-    const String explicitLiveRegionRelevant() const final { return stringAttributeValue(AXProperty::ExplicitLiveRegionRelevant); }
+    const RefPtr<StringImpl> explicitLiveRegionStatus() const final { return stringAttributeValue(AXProperty::ExplicitLiveRegionStatus); }
+    const RefPtr<StringImpl> explicitLiveRegionRelevant() const final { return stringAttributeValue(AXProperty::ExplicitLiveRegionRelevant); }
     bool liveRegionAtomic() const final { return boolAttributeValue(AXProperty::LiveRegionAtomic); }
     bool isBusy() const final { return boolAttributeValue(AXProperty::IsBusy); }
     bool isInlineText() const final { return boolAttributeValue(AXProperty::IsInlineText); }
@@ -441,12 +441,12 @@ private:
     AccessibilityChildrenVector documentLinks() final { return tree().objectsForIDs(vectorAttributeValue<AXID>(AXProperty::DocumentLinks)); }
     bool supportsCheckedState() const final { return boolAttributeValue(AXProperty::SupportsCheckedState); }
 
-    String stringValue() const final;
-    std::optional<String> platformStringValue() const;
+    RefPtr<StringImpl> stringValue() const final;
+    std::optional<RefPtr<StringImpl>> platformStringValue() const;
 
     // Parameterized attribute retrieval.
     Vector<SimpleRange> findTextRanges(const AccessibilitySearchTextCriteria&) const final;
-    Vector<String> performTextOperation(const AccessibilityTextOperation&) final;
+    Vector<RefPtr<StringImpl>> performTextOperation(const AccessibilityTextOperation&) final;
 
 #if PLATFORM(COCOA)
     bool preventKeyboardDOMEventDispatch() const final { return boolAttributeValue(AXProperty::PreventKeyboardDOMEventDispatch); }
@@ -459,7 +459,7 @@ private:
     bool writingToolsAvailable() const final { return tree().writingToolsAvailable(); }
 #endif // ENABLE(WRITING_TOOLS)
     CharacterRange doAXRangeForLine(unsigned) const final;
-    String doAXStringForRange(const CharacterRange&) const final;
+    RefPtr<StringImpl> doAXStringForRange(const CharacterRange&) const final;
     CharacterRange characterRangeForPoint(const IntPoint&) const final;
     CharacterRange doAXRangeForIndex(unsigned) const final;
     CharacterRange doAXStyleRangeForIndex(unsigned) const final;
@@ -473,7 +473,7 @@ private:
     std::optional<SimpleRange> simpleRange() const final;
     VisiblePositionRange visiblePositionRange() const final;
 
-    String selectedText() const final;
+    RefPtr<StringImpl> selectedText() const final;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const final;
     VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const final;
     VisiblePositionRange leftLineVisiblePositionRange(const VisiblePosition&) const final;
@@ -504,10 +504,10 @@ private:
     void setSelected(bool) final;
     void setSelectedRows(AccessibilityChildrenVector&&) final;
     void setFocused(bool) final;
-    void setSelectedText(const String&) final;
+    void setSelectedText(StringImpl*) final;
     void setSelectedTextRange(CharacterRange&&) final;
-    bool setValue(const String&) final;
-    void setValueIgnoringResult(const String&) final;
+    bool setValue(StringImpl*) final;
+    void setValueIgnoringResult(StringImpl*) final;
 #if PLATFORM(MAC)
     void setCaretBrowsingEnabled(bool) final;
 #endif
@@ -516,7 +516,7 @@ private:
     std::optional<NSRange> visibleCharacterRange() const final;
 #endif
 
-    String textUnderElement(TextUnderElementMode = { }) const final;
+    RefPtr<StringImpl> textUnderElement(TextUnderElementMode = { }) const final;
     std::optional<SimpleRange> misspellingRange(const SimpleRange&, AccessibilitySearchDirection) const final;
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const final;
     void increment() final;
@@ -528,8 +528,8 @@ private:
     void scrollToMakeVisible() const final;
     void scrollToMakeVisibleWithSubFocus(IntRect&&) const final;
     void scrollToGlobalPoint(IntPoint&&) const final;
-    bool replaceTextInRange(const String&, const CharacterRange&) final;
-    bool insertText(const String&) final;
+    bool replaceTextInRange(StringImpl*, const CharacterRange&) final;
+    bool insertText(StringImpl*) final;
     bool press() final;
     bool syncPress() final;
 
@@ -572,19 +572,19 @@ private:
     bool isModalNode() const final;
     bool isDescendantOfRole(AccessibilityRole) const final;
     bool inheritsPresentationalRole() const final;
-    void setAccessibleName(const AtomString&) final;
+    void setAccessibleName(AtomStringImpl*) final;
 
-    String textContentPrefixFromListMarker() const final;
-    String webAreaTitle() const final { return stringAttributeValue(AXProperty::WebAreaTitle); }
-    String titleAttribute() const final { return stringAttributeValue(AXProperty::TitleAttribute); }
+    RefPtr<StringImpl> textContentPrefixFromListMarker() const final;
+    RefPtr<StringImpl> webAreaTitle() const final { return stringAttributeValue(AXProperty::WebAreaTitle); }
+    RefPtr<StringImpl> titleAttribute() const final { return stringAttributeValue(AXProperty::TitleAttribute); }
 
-    std::optional<String> textContent() const final;
+    std::optional<RefPtr<StringImpl>> textContent() const final;
     std::optional<AXStitchGroup> stitchGroup(IncludeGroupMembers = IncludeGroupMembers::Yes) const final;
     const Vector<AXStitchGroup>* stitchGroupsView() const;
 
-    String text() const final;
+    RefPtr<StringImpl> text() const final;
     unsigned textLength() const final;
-    String revealableText() const final { return stringAttributeValue(AXProperty::RevealableText); }
+    RefPtr<StringImpl> revealableText() const final { return stringAttributeValue(AXProperty::RevealableText); }
 #if PLATFORM(COCOA)
     RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck) const final;
 #endif
@@ -614,7 +614,7 @@ private:
 
     bool isInDescriptionListTerm() const final;
 
-    String nameAttribute() const final { return stringAttributeValue(AXProperty::NameAttribute); }
+    RefPtr<StringImpl> nameAttribute() const final { return stringAttributeValue(AXProperty::NameAttribute); }
     bool hasElementName(ElementName name) const final { return elementName() == name; };
     ElementName elementName() const final { return propertyValue<ElementName>(AXProperty::ElementName); }
 #if PLATFORM(COCOA)
@@ -631,8 +631,8 @@ private:
 
     void updateBackingStore() final;
 
-    String innerHTML() const final;
-    String outerHTML() const final;
+    RefPtr<StringImpl> innerHTML() const final;
+    RefPtr<StringImpl> outerHTML() const final;
 
 #if ASSERT_ENABLED
     void verifyChildrenIndexInParent() const final { return AXCoreObject::verifyChildrenIndexInParent(m_children); }

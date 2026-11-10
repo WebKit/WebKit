@@ -253,9 +253,9 @@ void RemoteAudioDestinationProxy::renderAudio(unsigned frameCount)
 }
 
 #if PLATFORM(IOS_FAMILY)
-void RemoteAudioDestinationProxy::setSceneIdentifier(const String& sceneIdentifier)
+void RemoteAudioDestinationProxy::setSceneIdentifier(StringImpl* sceneIdentifier)
 {
-    if (sceneIdentifier == m_sceneIdentifier)
+    if (equal(sceneIdentifier, m_sceneIdentifier))
         return;
     m_sceneIdentifier = sceneIdentifier;
 

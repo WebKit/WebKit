@@ -72,7 +72,7 @@ void IntlRelativeTimeFormat::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(IntlRelativeTimeFormat);
 
-Vector<String> IntlRelativeTimeFormat::localeData(const String& locale, RelevantExtensionKey key)
+Vector<RefPtr<StringImpl>> IntlRelativeTimeFormat::localeData(StringImpl* locale, RelevantExtensionKey key)
 {
     ASSERT_UNUSED(key, key == RelevantExtensionKey::Nu);
     return numberingSystemsForLocale(locale);
@@ -84,7 +84,7 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, locales);
+    Vector<RefPtr<StringImpl>> requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
     JSObject* options = intlCoerceOptionsToObject(globalObject, optionsValue);
@@ -94,11 +94,11 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
 
-    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
+    RefPtr<StringImpl> numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!numberingSystem.isNull()) {
+    if (numberingSystem) {
         if (!isUnicodeLocaleIdentifierType(numberingSystem)) {
-            throwRangeError(globalObject, scope, "numberingSystem is not a well-formed numbering system value"_s);
+            throwRangeError(globalObject, scope, "numberingSystem is not a well-formed numbering system value"_si);
             return;
         }
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Nu)] = numberingSystem;
@@ -107,14 +107,14 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
     const auto& availableLocales = intlRelativeTimeFormatAvailableLocales();
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { RelevantExtensionKey::Nu }, localeData);
     m_locale = resolved.locale;
-    if (m_locale.isEmpty()) {
+    if (isEmpty(m_locale)) {
         throwTypeError(globalObject, scope, "failed to initialize RelativeTimeFormat due to invalid locale"_s);
         return;
     }
 
     m_numberingSystem = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Nu)];
     m_dataLocale = resolved.dataLocale;
-    auto dataLocaleWithExtensions = m_numberingSystem.isNull() ? m_dataLocale.ascii() : makeString(m_dataLocale, "-u-nu-"_s, m_numberingSystem).ascii();
+    auto dataLocaleWithExtensions = !m_numberingSystem ? ascii(m_dataLocale) : ascii(makeString(m_dataLocale, "-u-nu-"_s, m_numberingSystem));
 
     m_style = intlOption<Style>(globalObject, options, vm.propertyNames->style, { { "long"_s, Style::Long }, { "short"_s, Style::Short }, { "narrow"_s, Style::Narrow } }, "style must be either \"long\", \"short\", or \"narrow\""_s, Style::Long);
     RETURN_IF_EXCEPTION(scope, void());
@@ -202,7 +202,7 @@ JSObject* IntlRelativeTimeFormat::resolvedOptions(JSGlobalObject* globalObject) 
     options->putDirect(vm, vm.propertyNames->locale, jsNontrivialString(vm, m_locale));
     options->putDirect(vm, vm.propertyNames->style, jsNontrivialString(vm, styleString(m_style)));
     options->putDirect(vm, vm.propertyNames->numeric, jsNontrivialString(vm, m_numeric ? "always"_s : "auto"_s));
-    if (m_numberingSystem.isNull())
+    if (!m_numberingSystem)
         m_numberingSystem = defaultNumberingSystemForLocale(m_dataLocale);
     options->putDirect(vm, vm.propertyNames->numberingSystem, jsNontrivialString(vm, m_numberingSystem));
     return options;
@@ -239,7 +239,7 @@ static std::optional<URelativeDateTimeUnit> relativeTimeUnitType(StringView unit
     return std::nullopt;
 }
 
-String IntlRelativeTimeFormat::formatInternal(JSGlobalObject* globalObject, double value, StringView unit) const
+RefPtr<StringImpl> IntlRelativeTimeFormat::formatInternal(JSGlobalObject* globalObject, double value, StringView unit) const
 {
     ASSERT(m_relativeDateTimeFormatter);
 
@@ -247,14 +247,14 @@ String IntlRelativeTimeFormat::formatInternal(JSGlobalObject* globalObject, doub
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!std::isfinite(value)) {
-        throwRangeError(globalObject, scope, "number argument must be finite"_s);
-        return String();
+        throwRangeError(globalObject, scope, "number argument must be finite"_si);
+        return nullptr;
     }
 
     auto unitType = relativeTimeUnitType(unit);
     if (!unitType) {
-        throwRangeError(globalObject, scope, "unit argument is not a recognized unit type"_s);
-        return String();
+        throwRangeError(globalObject, scope, "unit argument is not a recognized unit type"_si);
+        return nullptr;
     }
 
     auto formatRelativeTime = m_numeric ? ureldatefmt_formatNumeric : ureldatefmt_format;
@@ -263,10 +263,10 @@ String IntlRelativeTimeFormat::formatInternal(JSGlobalObject* globalObject, doub
     auto status = callBufferProducingFunction(formatRelativeTime, m_relativeDateTimeFormatter.get(), value, unitType.value(), result);
     if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "failed to format relative time"_s);
-        return String();
+        return nullptr;
     }
 
-    return String(WTF::move(result));
+    return StringImpl::create(Vector { WTF::move(result) });
 }
 
 // https://tc39.es/ecma402/#sec-FormatRelativeTime
@@ -275,7 +275,7 @@ JSValue IntlRelativeTimeFormat::format(JSGlobalObject* globalObject, double valu
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String result = formatInternal(globalObject, value, unit);
+    RefPtr<StringImpl> result = formatInternal(globalObject, value, unit);
     RETURN_IF_EXCEPTION(scope, { });
 
     return jsString(vm, WTF::move(result));
@@ -292,13 +292,13 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!std::isfinite(value)) {
-        throwRangeError(globalObject, scope, "number argument must be finite"_s);
+        throwRangeError(globalObject, scope, "number argument must be finite"_si);
         return { };
     }
 
     auto unitType = relativeTimeUnitType(unit);
     if (!unitType) {
-        throwRangeError(globalObject, scope, "unit argument is not a recognized unit type"_s);
+        throwRangeError(globalObject, scope, "unit argument is not a recognized unit type"_si);
         return { };
     }
 
@@ -321,7 +321,7 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
     if (U_FAILURE(status)) [[unlikely]]
         return throwTypeError(globalObject, scope, "failed to format relative time"_s);
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    String formattedRelativeTime(std::span(formattedStringPointer, formattedStringLength));
+    RefPtr<StringImpl> formattedRelativeTime(StringImpl::create(std::span(formattedStringPointer, formattedStringLength)));
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     // Iterate all fields from the UFormattedValue in a single pass.
@@ -361,7 +361,7 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
     if (!parts) [[unlikely]]
         return throwOutOfMemoryError(globalObject, scope);
 
-    JSString* literalString = jsNontrivialString(vm, "literal"_s);
+    JSString* literalString = jsNontrivialString(vm, "literal"_si);
 
     if (numberStart >= 0) {
         if (numberStart > 0) {
@@ -371,7 +371,7 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
         }
 
         // Adjust field positions to be relative to the numeric substring.
-        auto numberPartString = formattedRelativeTime.substring(numberStart, numberEnd - numberStart);
+        auto numberPartString = substring(formattedRelativeTime, numberStart, numberEnd - numberStart);
         for (auto& field : numberFields)
             field.m_range = { field.m_range.begin() - numberStart, field.m_range.end() - numberStart };
 
@@ -380,7 +380,7 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
         IntlNumberFormat::formatToPartsInternal(globalObject, IntlNumberFormat::Style::Decimal, std::signbit(absValue), IntlMathematicalValue::numberTypeFromDouble(absValue), numberPartString, fieldIterator, parts, nullptr, jsString(vm, singularUnit(unit)));
         RETURN_IF_EXCEPTION(scope, { });
 
-        auto stringLength = formattedRelativeTime.length();
+        auto stringLength = length(formattedRelativeTime);
         if (static_cast<unsigned>(numberEnd) < stringLength) {
             JSObject* part = createIntlPartObject(globalObject, literalString, jsSubstring(vm, formattedRelativeTime, numberEnd, stringLength - numberEnd));
             parts->putDirectIndex(globalObject, parts->length(), part);

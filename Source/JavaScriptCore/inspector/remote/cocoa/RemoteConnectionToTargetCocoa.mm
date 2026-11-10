@@ -242,11 +242,11 @@ void RemoteConnectionToTarget::sendMessageToTarget(NSString *message)
             target = m_target.get();
         }
         if (target)
-            target->dispatchMessageFromRemote(strongMessage.get());
+            target->dispatchMessageFromRemote(StringImpl::create(strongMessage.get()));
     });
 }
 
-void RemoteConnectionToTarget::sendMessageToFrontend(const String& message)
+void RemoteConnectionToTarget::sendMessageToFrontend(StringImpl* message)
 {
     if (m_connectionState == ConnectionState::Closed)
         return;

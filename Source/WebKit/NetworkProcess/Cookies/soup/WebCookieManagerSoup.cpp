@@ -45,7 +45,7 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(PAL::SessionID sessionI
     completionHandler();
 }
 
-void WebCookieManager::setCookiePersistentStorage(PAL::SessionID sessionID, const String& storagePath, SoupCookiePersistentStorageType storageType)
+void WebCookieManager::setCookiePersistentStorage(PAL::SessionID sessionID, StringImpl* storagePath, SoupCookiePersistentStorageType storageType)
 {
     if (CheckedPtr networkSession = protect(m_process)->networkSession(sessionID))
         static_cast<NetworkSessionSoup&>(*networkSession).setCookiePersistentStorage(storagePath, storageType);

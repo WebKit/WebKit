@@ -77,7 +77,7 @@ static void consumeAndAppendOptionalQuestionMarks(StringBuilder& builder, CSSPar
     while (consumeAndAppendOptionalDelimiter(builder, range, '?')) { }
 }
 
-static String consumeUnicodeRangeString(CSSParserTokenRange& range)
+static RefPtr<StringImpl> consumeUnicodeRangeString(CSSParserTokenRange& range)
 {
     if (!equalLettersIgnoringASCIICase(consumeIdentifier(range), "u"_s))
         return { };

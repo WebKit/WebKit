@@ -46,19 +46,19 @@ ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 
-Ref<RealtimeIncomingVideoSource> RealtimeIncomingVideoSource::create(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
+Ref<RealtimeIncomingVideoSource> RealtimeIncomingVideoSource::create(Ref<webrtc::VideoTrackInterface>&& videoTrack, RefPtr<StringImpl>&& trackId)
 {
     auto source = RealtimeIncomingVideoSourceCocoa::create(WTF::move(videoTrack), WTF::move(trackId));
     source->start();
     return WTF::move(source);
 }
 
-Ref<RealtimeIncomingVideoSourceCocoa> RealtimeIncomingVideoSourceCocoa::create(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
+Ref<RealtimeIncomingVideoSourceCocoa> RealtimeIncomingVideoSourceCocoa::create(Ref<webrtc::VideoTrackInterface>&& videoTrack, RefPtr<StringImpl>&& trackId)
 {
     return adoptRef(*new RealtimeIncomingVideoSourceCocoa(WTF::move(videoTrack), WTF::move(trackId)));
 }
 
-RealtimeIncomingVideoSourceCocoa::RealtimeIncomingVideoSourceCocoa(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& videoTrackId)
+RealtimeIncomingVideoSourceCocoa::RealtimeIncomingVideoSourceCocoa(Ref<webrtc::VideoTrackInterface>&& videoTrack, RefPtr<StringImpl>&& videoTrackId)
     : RealtimeIncomingVideoSource(WTF::move(videoTrack), WTF::move(videoTrackId))
 {
 }

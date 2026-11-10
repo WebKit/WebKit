@@ -42,8 +42,8 @@ class InjectedBundleClient {
 public:
     virtual ~InjectedBundleClient() = default;
 
-    virtual void didReceiveMessageFromInjectedBundle(WebKit::WebProcessPool&, const WTF::String&, API::Object*) { }
-    virtual void didReceiveSynchronousMessageFromInjectedBundle(WebKit::WebProcessPool&, const WTF::String&, API::Object*, CompletionHandler<void(RefPtr<API::Object>)>&& completionHandler) { completionHandler(nullptr); }
+    virtual void didReceiveMessageFromInjectedBundle(WebKit::WebProcessPool&, StringImpl*, API::Object*) { }
+    virtual void didReceiveSynchronousMessageFromInjectedBundle(WebKit::WebProcessPool&, StringImpl*, API::Object*, CompletionHandler<void(RefPtr<API::Object>)>&& completionHandler) { completionHandler(nullptr); }
     virtual RefPtr<API::Object> getInjectedBundleInitializationUserData(WebKit::WebProcessPool&) { return nullptr; }
 };
 

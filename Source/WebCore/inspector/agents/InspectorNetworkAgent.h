@@ -91,20 +91,20 @@ public:
     Inspector::Protocol::ErrorStringOr<void> enable() override;
     Inspector::Protocol::ErrorStringOr<void> disable() final;
     Inspector::Protocol::ErrorStringOr<void> setExtraHTTPHeaders(Ref<JSON::Object>&&) final;
-    void getResponseBody(const Inspector::Protocol::Network::RequestId&, Ref<GetResponseBodyCallback>&&) final;
+    void getResponseBody(StringImpl*, Ref<GetResponseBodyCallback>&&) final;
     Inspector::Protocol::ErrorStringOr<void> setResourceCachingDisabled(bool) final;
     Inspector::Protocol::ErrorStringOr<void> setClearResourceDataOnNavigate(bool) final;
-    void loadResource(const Inspector::Protocol::Network::FrameId&, const String& url, Ref<LoadResourceCallback>&&) final;
-    void getSerializedCertificate(const Inspector::Protocol::Network::RequestId&, Ref<GetSerializedCertificateCallback>&&) final;
-    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveWebSocket(const Inspector::Protocol::Network::RequestId&, const String& objectGroup) final;
+    void loadResource(StringImpl*, StringImpl* url, Ref<LoadResourceCallback>&&) final;
+    void getSerializedCertificate(StringImpl*, Ref<GetSerializedCertificateCallback>&&) final;
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveWebSocket(StringImpl*, StringImpl* objectGroup) final;
     Inspector::Protocol::ErrorStringOr<void> setInterceptionEnabled(bool) final;
-    Inspector::Protocol::ErrorStringOr<void> addInterception(const String& url, Inspector::Protocol::Network::NetworkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
-    Inspector::Protocol::ErrorStringOr<void> removeInterception(const String& url, Inspector::Protocol::Network::NetworkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
-    Inspector::Protocol::ErrorStringOr<void> interceptContinue(const Inspector::Protocol::Network::RequestId&, Inspector::Protocol::Network::NetworkStage) final;
-    Inspector::Protocol::ErrorStringOr<void> interceptWithRequest(const Inspector::Protocol::Network::RequestId&, const String& url, const String& method, RefPtr<JSON::Object>&& headers, const String& postData) final;
-    Inspector::Protocol::ErrorStringOr<void> interceptWithResponse(const Inspector::Protocol::Network::RequestId&, const String& content, bool base64Encoded, const String& mimeType, std::optional<int>&& status, const String& statusText, RefPtr<JSON::Object>&& headers) final;
-    Inspector::Protocol::ErrorStringOr<void> interceptRequestWithResponse(const Inspector::Protocol::Network::RequestId&, const String& content, bool base64Encoded, const String& mimeType, int status, const String& statusText, Ref<JSON::Object>&& headers) final;
-    Inspector::Protocol::ErrorStringOr<void> interceptRequestWithError(const Inspector::Protocol::Network::RequestId&, Inspector::Protocol::Network::ResourceErrorType) final;
+    Inspector::Protocol::ErrorStringOr<void> addInterception(StringImpl* url, Inspector::Protocol::Network::NetworkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
+    Inspector::Protocol::ErrorStringOr<void> removeInterception(StringImpl* url, Inspector::Protocol::Network::NetworkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
+    Inspector::Protocol::ErrorStringOr<void> interceptContinue(StringImpl*, Inspector::Protocol::Network::NetworkStage) final;
+    Inspector::Protocol::ErrorStringOr<void> interceptWithRequest(StringImpl*, StringImpl* url, StringImpl* method, RefPtr<JSON::Object>&& headers, StringImpl* postData) final;
+    Inspector::Protocol::ErrorStringOr<void> interceptWithResponse(StringImpl*, StringImpl* content, bool base64Encoded, StringImpl* mimeType, std::optional<int>&& status, StringImpl* statusText, RefPtr<JSON::Object>&& headers) final;
+    Inspector::Protocol::ErrorStringOr<void> interceptRequestWithResponse(StringImpl*, StringImpl* content, bool base64Encoded, StringImpl* mimeType, int status, StringImpl* statusText, Ref<JSON::Object>&& headers) final;
+    Inspector::Protocol::ErrorStringOr<void> interceptRequestWithError(StringImpl*, Inspector::Protocol::Network::ResourceErrorType) final;
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     Inspector::Protocol::ErrorStringOr<void> setEmulatedConditions(std::optional<int>&& bandwidth, std::optional<int>&& latency) final;
 #endif
@@ -131,9 +131,9 @@ public:
     void didCloseWebSocket(WebSocketChannelIdentifier);
     void didReceiveWebSocketFrame(WebSocketChannelIdentifier, const WebSocketFrame&);
     void didSendWebSocketFrame(WebSocketChannelIdentifier, const WebSocketFrame&);
-    void didReceiveWebSocketFrameError(WebSocketChannelIdentifier, const String&);
+    void didReceiveWebSocketFrameError(WebSocketChannelIdentifier, StringImpl*);
     void mainFrameNavigated(DocumentLoader&) override;
-    void setInitialScriptContent(ResourceLoaderIdentifier, const String& sourceString) override;
+    void setInitialScriptContent(ResourceLoaderIdentifier, StringImpl* sourceString) override;
     void didScheduleStyleRecalculation(Document&);
     bool willIntercept(const ResourceRequest&) override;
     bool shouldInterceptRequest(const ResourceLoader&) override;
@@ -141,8 +141,8 @@ public:
     void interceptResponse(const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&&) override;
     void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&) override;
 
-    void searchOtherRequests(const JSC::Yarr::RegularExpression&, Ref<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>&, const HashSet<String>& alreadySearchedURLs);
-    void searchInRequest(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::RequestId&, const String& query, bool caseSensitive, bool isRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>&);
+    void searchOtherRequests(const JSC::Yarr::RegularExpression&, Ref<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>&, const HashSet<RefPtr<StringImpl>>& alreadySearchedURLs);
+    void searchInRequest(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::RequestId&, StringImpl* query, bool caseSensitive, bool isRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>&);
 
 protected:
     InspectorNetworkAgent(WebAgentContext&, const NetworkResourcesData::Settings&);
@@ -180,12 +180,12 @@ private:
 
     const UniqueRef<NetworkResourcesData> m_resourcesData;
 
-    MemoryCompactRobinHoodHashMap<String, String> m_extraRequestHeaders;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> m_extraRequestHeaders;
     HashSet<ResourceLoaderIdentifier> m_hiddenRequestIdentifiers;
 
     Vector<Inspector::Intercept> m_intercepts;
-    MemoryCompactRobinHoodHashMap<String, std::unique_ptr<Inspector::PendingInterceptRequest>> m_pendingInterceptRequests;
-    MemoryCompactRobinHoodHashMap<String, std::unique_ptr<Inspector::PendingInterceptResponse>> m_pendingInterceptResponses;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, std::unique_ptr<Inspector::PendingInterceptRequest>> m_pendingInterceptRequests;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, std::unique_ptr<Inspector::PendingInterceptResponse>> m_pendingInterceptResponses;
 
     // FIXME: InspectorNetworkAgent should not be aware of style recalculation.
     RefPtr<Inspector::Protocol::Network::Initiator> m_styleRecalculationInitiator;

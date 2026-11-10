@@ -41,11 +41,11 @@ public:
     { }
 
     // The registration for a name, from this function or an enclosing one.
-    const CSSRegisteredCustomProperty* get(const AtomString&) const;
+    const CSSRegisteredCustomProperty* get(AtomStringImpl*) const;
     // Whether this function declares the name itself. A name declared by an enclosing function has its
     // value inherited from the calling context rather than resolving to a registered value here.
-    NODELETE bool declares(const AtomString&) const;
-    bool isInherited(const AtomString&) const;
+    NODELETE bool declares(AtomStringImpl*) const;
+    bool isInherited(AtomStringImpl*) const;
 
     void add(CSSRegisteredCustomProperty&&);
 
@@ -53,7 +53,7 @@ private:
     // The registry of the function this one was invoked from, so a typed parameter keeps its type across
     // frames. https://github.com/w3c/csswg-drafts/issues/12315
     const LocalPropertyRegistry* m_enclosing { nullptr };
-    UncheckedKeyHashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_properties;
+    UncheckedKeyHashMap<RefPtr<AtomStringImpl>, UniqueRef<CSSRegisteredCustomProperty>> m_properties;
 };
 
 } // namespace Style

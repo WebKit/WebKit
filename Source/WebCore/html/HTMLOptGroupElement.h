@@ -41,7 +41,7 @@ public:
     bool isActuallyDisabled() const final;
     NODELETE WEBCORE_EXPORT HTMLSelectElement* ownerSelectElement() const;
 
-    WEBCORE_EXPORT String groupLabelText() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> groupLabelText() const;
     NODELETE static HTMLOptGroupElement* optGroupForLabel(const Element&);
     void legendElementChanged();
 
@@ -54,10 +54,10 @@ private:
     void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
     void movingSteps(MovingType, ContainerNode& oldParent) final;
 
-    const AtomString& formControlType() const;
+    const RefPtr<AtomStringImpl>& formControlType() const;
     bool isFocusable() const final;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
-    void parseDisabledAttribute(const AtomString&);
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
+    void parseDisabledAttribute(AtomStringImpl*);
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 

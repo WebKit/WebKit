@@ -38,18 +38,17 @@ class JSSourceCode;
 };
 
 namespace WTF {
-class String;
 };
 
 @interface JSScript(Internal)
 
 - (instancetype)init;
 - (unsigned)hash;
-- (const WTF::String&)source;
+- (const RefPtr<StringImpl>&)source;
 - (RefPtr<JSC::CachedBytecode>)cachedBytecode;
 - (JSC::JSSourceCode*)jsSourceCode;
 - (JSC::SourceCode)sourceCode;
-- (BOOL)writeCache:(String&)error;
+- (BOOL)writeCache:(RefPtr<StringImpl>&)error;
 
 @end
 

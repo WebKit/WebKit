@@ -351,10 +351,10 @@ void ViewLegacy::handleKeyboardEvent(struct wpe_input_keyboard_event* event)
     if (filterResult.handled)
         return;
 
-    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent::create(event, event->pressed ? filterResult.keyText : String(), isAutoRepeat, NativeWebKeyboardEvent::HandledByInputMethod::No, std::nullopt, std::nullopt));
+    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent::create(event, event->pressed ? filterResult.keyText : nullptr, isAutoRepeat, NativeWebKeyboardEvent::HandledByInputMethod::No, std::nullopt, std::nullopt));
 }
 
-void ViewLegacy::synthesizeCompositionKeyPress(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
+void ViewLegacy::synthesizeCompositionKeyPress(StringImpl* text, std::optional<Vector<WebCore::CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {
     // The Windows composition key event code is 299 or VK_PROCESSKEY. We need to
     // emit this code for web compatibility reasons when key events trigger

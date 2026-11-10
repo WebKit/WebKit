@@ -55,9 +55,9 @@ public:
     ExceptionOr<Vector<uint8_t>> exportSpki() const;
     ExceptionOr<Vector<uint8_t>> exportPkcs8() const;
 
-    NODELETE static std::optional<NamedCurve> namedCurveFromString(const String&);
+    NODELETE static std::optional<NamedCurve> namedCurveFromString(StringImpl*);
     NamedCurve namedCurve() const { return m_curve; }
-    String namedCurveString() const;
+    RefPtr<StringImpl> namedCurveString() const;
 
     NODELETE static bool isValidOKPAlgorithm(CryptoAlgorithmIdentifier);
 
@@ -72,8 +72,8 @@ private:
     KeyAlgorithm algorithm() const final;
     CryptoKey::Data data() const final;
 
-    String generateJwkD() const;
-    String generateJwkX() const;
+    RefPtr<StringImpl> generateJwkD() const;
+    RefPtr<StringImpl> generateJwkX() const;
 
     NODELETE static bool supportsNamedCurve();
     static std::optional<CryptoKeyPair> platformGeneratePair(CryptoAlgorithmIdentifier, NamedCurve, bool extractable, CryptoKeyUsageBitmap);

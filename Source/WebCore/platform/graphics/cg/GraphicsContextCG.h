@@ -133,8 +133,8 @@ public:
 
     void setURLForRect(const URL&, const FloatRect&) final;
 
-    void setDestinationForRect(const String& name, const FloatRect&) final;
-    void addDestinationAtPoint(const String& name, const FloatPoint&) final;
+    void setDestinationForRect(StringImpl* name, const FloatRect&) final;
+    void addDestinationAtPoint(StringImpl* name, const FloatPoint&) final;
 
     bool supportsInternalLinks() const final;
 

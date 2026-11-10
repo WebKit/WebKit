@@ -55,16 +55,16 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLDetailsElement);
 
 using namespace HTMLNames;
 
-static const AtomString& summarySlotName()
+static const RefPtr<AtomStringImpl>& summarySlotName()
 {
-    static MainThreadNeverDestroyed<const AtomString> summarySlot("summarySlot"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> summarySlot("summarySlot"_s);
     return summarySlot;
 }
 
 class DetailsSlotAssignment final : public NamedSlotAssignment {
 private:
     void hostChildElementDidChange(const Element&, ShadowRoot&) override;
-    NODELETE const AtomString& slotNameForHostChild(const Node&) const override;
+    NODELETE const RefPtr<AtomStringImpl>& slotNameForHostChild(const Node&) const override;
 };
 
 void DetailsSlotAssignment::hostChildElementDidChange(const Element& childElement, ShadowRoot& shadowRoot)
@@ -82,7 +82,7 @@ void DetailsSlotAssignment::hostChildElementDidChange(const Element& childElemen
         didChangeSlot(NamedSlotAssignment::defaultSlotName(), shadowRoot);
 }
 
-NODELETE SUPPRESS_NODELETE const AtomString& DetailsSlotAssignment::slotNameForHostChild(const Node& child) const
+NODELETE SUPPRESS_NODELETE const RefPtr<AtomStringImpl>& DetailsSlotAssignment::slotNameForHostChild(const Node& child) const
 {
     Ref details = downcast<HTMLDetailsElement>(*child.parentNode());
 
@@ -135,10 +135,10 @@ void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     root.appendChild(defaultSlot);
     lazyInitialize(m_defaultSlot, WTF::move(defaultSlot));
 
-    static MainThreadNeverDestroyed<const String> stylesheet(StringImpl::createWithoutCopying(detailsElementShadowUserAgentStyleSheet));
+    static MainThreadNeverDestroyed<const RefPtr<StringImpl>> stylesheet(StringImpl::createWithoutCopying(detailsElementShadowUserAgentStyleSheet));
     Ref style = HTMLStyleElement::create(document);
     ScriptDisallowedScope::EventAllowedScope styleScope { style };
-    style->setTextContent(String { stylesheet });
+    style->setTextContent(RefPtr<StringImpl> { stylesheet.get() });
     root.appendChild(WTF::move(style));
 }
 
@@ -163,7 +163,7 @@ void HTMLDetailsElement::queueDetailsToggleEventTask(ToggleState oldState, Toggl
     RefPtr { m_toggleEventTask }->queue(oldState, newState, nullptr);
 }
 
-void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLDetailsElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
     if (name == openAttr) {
@@ -171,13 +171,13 @@ void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomS
             RefPtr root = shadowRoot();
             RefPtr defaultSlot = m_defaultSlot;
             ASSERT(root);
-            auto isOpen = !newValue.isNull();
+            auto isOpen = !!newValue;
             Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Open, isOpen);
             m_isOpen = isOpen;
-            if (!newValue.isNull()) {
+            if (newValue) {
                 defaultSlot->removeInlineStyleProperty(CSSPropertyID::ContentVisibility);
                 queueDetailsToggleEventTask(ToggleState::Closed, ToggleState::Open);
-                if (!attributeWithoutSynchronization(nameAttr).isEmpty()) {
+                if (!isEmpty(attributeWithoutSynchronization(nameAttr))) {
                     ShouldNotFireMutationEventsScope scope(document());
                     for (auto& otherDetailsElement : otherElementsInNameGroup())
                         otherDetailsElement->removeAttribute(openAttr);
@@ -235,7 +235,7 @@ void HTMLDetailsElement::ensureDetailsExclusivityAfterMutation()
 bool HTMLDetailsElement::shouldClose() const
 {
     const auto& detailElementName = attributeWithoutSynchronization(nameAttr);
-    if (hasAttributeWithoutSynchronization(openAttr) && !detailElementName.isEmpty()) {
+    if (hasAttributeWithoutSynchronization(openAttr) && !isEmpty(detailElementName)) {
         for (auto& otherElement : otherElementsInNameGroup()) {
             if (otherElement->hasAttributeWithoutSynchronization(openAttr))
                 return true;

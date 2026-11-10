@@ -116,7 +116,7 @@ public:
         m_source->whenReady([weakThis = WeakPtr { *this }, createCallback = WTF::move(createCallback)] (auto&& sourceError) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis) {
-                createCallback(CaptureSourceError { "Source is no longer needed"_s, MediaAccessDenialReason::InvalidAccess }, { }, { });
+                createCallback(CaptureSourceError { "Source is no longer needed"_si, MediaAccessDenialReason::InvalidAccess }, { }, { });
                 return;
             }
             createCallback(sourceError, protectedThis->settings(), protectedThis->source().capabilities());
@@ -517,7 +517,7 @@ CaptureSourceOrError UserMediaCaptureManagerProxy::createMicrophoneSource(const 
 
     // FIXME: Support multiple microphones simultaneously.
     if (RefPtr microphoneSource = perPageSources.microphoneSource.get()) {
-        if (microphoneSource->persistentID() != device.persistentId() && !microphoneSource->isEnded()) {
+        if (!equal(microphoneSource->persistentID(), device.persistentId()) && !microphoneSource->isEnded()) {
             RELEASE_LOG_ERROR(WebRTC, "Ending microphone source as new source is using a different device.");
             // FIXME: We should probably fail the capture in a way that shows a specific console log message.
             microphoneSource->endImmediatly();
@@ -546,7 +546,7 @@ CaptureSourceOrError UserMediaCaptureManagerProxy::createCameraSource(const Capt
     }).iterator->value;
     for (Ref cameraSource : perPageSources.cameraSources) {
         // FIXME: Optimize multiple concurrent cameras.
-        if (cameraSource->persistentID() == device.persistentId() && !cameraSource->isEnded()) {
+        if (equal(cameraSource->persistentID(), device.persistentId()) && !cameraSource->isEnded()) {
             // We can reuse the source, let's do it.
             auto source = cameraSource->clone();
             perPageSources.cameraSources.add(source.get());
@@ -576,7 +576,7 @@ CaptureSourceOrError UserMediaCaptureManagerProxy::createCameraSource(const Capt
 void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(RealtimeMediaSourceIdentifier id, const CaptureDevice& device, WebCore::MediaDeviceHashSalts&& hashSalts, MediaConstraints&& mediaConstraints, bool shouldUseGPUProcessRemoteFrames, PageIdentifier pageIdentifier, CreateSourceCallback&& completionHandler)
 {
     if (!m_connectionProxy->willStartCapture(device.type(), pageIdentifier)) {
-        completionHandler({ "Request is not allowed"_s, WebCore::MediaAccessDenialReason::PermissionDenied }, { }, { });
+        completionHandler({ "Request is not allowed"_si, WebCore::MediaAccessDenialReason::PermissionDenied }, { }, { });
         return;
     }
 
@@ -634,9 +634,9 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         return;
     }
 
-    MESSAGE_CHECK_COMPLETION(constraints->mandatoryConstraints.isValid(), completionHandler({ "Invalid mandatoryConstraints"_s, WebCore::MediaAccessDenialReason::InvalidConstraint }, { }, { }));
+    MESSAGE_CHECK_COMPLETION(constraints->mandatoryConstraints.isValid(), completionHandler({ "Invalid mandatoryConstraints"_si, WebCore::MediaAccessDenialReason::InvalidConstraint }, { }, { }));
     for (const auto& advancedConstraint : borrow(constraints->advancedConstraints))
-        MESSAGE_CHECK_COMPLETION(advancedConstraint.isValid(), completionHandler({ "Invalid advancedConstraints"_s, WebCore::MediaAccessDenialReason::InvalidConstraint }, { }, { }));
+        MESSAGE_CHECK_COMPLETION(advancedConstraint.isValid(), completionHandler({ "Invalid advancedConstraints"_si, WebCore::MediaAccessDenialReason::InvalidConstraint }, { }, { }));
 
     proxy->applyConstraints(WTF::move(mediaConstraints), [weakProxy = WeakPtr { proxy }, completionHandler = WTF::move(completionHandler), completeSetup = WTF::move(completeSetup)](auto&& error) mutable {
         RefPtr protectedProxy = weakProxy.get();
@@ -737,7 +737,7 @@ void UserMediaCaptureManagerProxy::removeSource(RealtimeMediaSourceIdentifier id
                 if (pageSources.cameraSources.remove(source.get())) {
                     bool shouldContinueMonitoring = false;
                     pageSources.cameraSources.forEach([&] (auto& cameraSource) {
-                        shouldContinueMonitoring |= cameraSource.persistentID() == source->persistentID() && !cameraSource.isEnded();
+                        shouldContinueMonitoring |= equal(cameraSource.persistentID(), source->persistentID()) && !cameraSource.isEnded();
                     });
                     if (!shouldContinueMonitoring)
                         m_connectionProxy->stopMonitoringCaptureDeviceRotation(*pageIdentifier, source->persistentID());
@@ -764,7 +764,7 @@ void UserMediaCaptureManagerProxy::applyConstraints(RealtimeMediaSourceIdentifie
 {
     RefPtr proxy = m_proxies.get(id);
     if (!proxy) {
-        protect(m_connectionProxy->connection())->send(Messages::UserMediaCaptureManager::ApplyConstraintsFailed(id, { }, "Unknown source"_s), 0);
+        protect(m_connectionProxy->connection())->send(Messages::UserMediaCaptureManager::ApplyConstraintsFailed(id, { }, "Unknown source"_si), 0);
         return;
     }
 
@@ -814,7 +814,7 @@ void UserMediaCaptureManagerProxy::takePhoto(RealtimeMediaSourceIdentifier sourc
 {
     RefPtr proxy = m_proxies.get(sourceID);
     if (!proxy) {
-        handler(std::unexpected<String>("Device not available"_s));
+        handler(std::unexpected<RefPtr<StringImpl>>("Device not available"_si));
         return;
     }
 
@@ -827,7 +827,7 @@ void UserMediaCaptureManagerProxy::getPhotoCapabilities(RealtimeMediaSourceIdent
 {
     RefPtr proxy = m_proxies.get(sourceID);
     if (!proxy) {
-        handler(std::unexpected<String>("Device not available"_s));
+        handler(std::unexpected<RefPtr<StringImpl>>("Device not available"_si));
         return;
     }
 
@@ -838,7 +838,7 @@ void UserMediaCaptureManagerProxy::getPhotoSettings(RealtimeMediaSourceIdentifie
 {
     RefPtr proxy = m_proxies.get(sourceID);
     if (!proxy) {
-        handler(std::unexpected<String>("Device not available"_s));
+        handler(std::unexpected<RefPtr<StringImpl>>("Device not available"_si));
         return;
     }
 
@@ -888,7 +888,7 @@ void UserMediaCaptureManagerProxy::setOrientation(WebCore::IntDegrees orientatio
     m_orientationNotifier.orientationChanged(orientation);
 }
 
-void UserMediaCaptureManagerProxy::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)
+void UserMediaCaptureManagerProxy::rotationAngleForCaptureDeviceChanged(StringImpl* persistentId, WebCore::VideoFrameRotation rotation)
 {
     m_orientationNotifier.rotationAngleForCaptureDeviceChanged(persistentId, rotation);
 }

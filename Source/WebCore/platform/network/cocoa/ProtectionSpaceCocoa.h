@@ -39,7 +39,7 @@ public:
     };
 
     ProtectionSpace() : ProtectionSpaceBase() { }
-    WEBCORE_EXPORT ProtectionSpace(const String& host, int port, ServerType, const String& realm, AuthenticationScheme, std::optional<PlatformData> = std::nullopt);
+    WEBCORE_EXPORT ProtectionSpace(StringImpl* host, int port, ServerType, StringImpl* realm, AuthenticationScheme, std::optional<PlatformData> = std::nullopt);
     ProtectionSpace(WTF::HashTableDeletedValueType deletedValue) : ProtectionSpaceBase(deletedValue) { }
 
     WEBCORE_EXPORT explicit ProtectionSpace(NSURLProtectionSpace *);

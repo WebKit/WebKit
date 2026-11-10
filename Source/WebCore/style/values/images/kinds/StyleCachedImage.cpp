@@ -138,7 +138,7 @@ RefPtr<SVGSVGElement> CachedImage::svgImageRootElement(const RenderElement& rend
     return image->rootElement(descriptorForRenderer(renderer, ImageDrawDescriptor { DefaultSizing { }.resolve(image->naturalDimensions()) }));
 }
 
-LegacyRenderSVGResourceContainer* CachedImage::uncheckedRenderSVGResource(TreeScope& treeScope, const AtomString& fragment) const
+LegacyRenderSVGResourceContainer* CachedImage::uncheckedRenderSVGResource(TreeScope& treeScope, AtomStringImpl* fragment) const
 {
     CheckedPtr renderSVGResource = ReferencedSVGResources::referencedRenderResource(treeScope, fragment);
     m_isRenderSVGResource = !!renderSVGResource;
@@ -150,7 +150,7 @@ LegacyRenderSVGResourceContainer* CachedImage::uncheckedRenderSVGResource(const 
     if (!renderer)
         return nullptr;
 
-    if (!m_referencingModes.contains(SVGReferencingMode::ResourceDocument) || !m_url.resolved.string().contains('#')) {
+    if (!m_referencingModes.contains(SVGReferencingMode::ResourceDocument) || !contains(m_url.resolved.string(), '#')) {
         m_isRenderSVGResource = false;
         return nullptr;
     }
@@ -182,7 +182,7 @@ RenderSVGResourceContainer* CachedImage::renderSVGResource(const RenderElement* 
     if (!renderer)
         return nullptr;
 
-    if (!m_referencingModes.contains(SVGReferencingMode::ResourceDocument) || !m_url.resolved.string().contains('#'))
+    if (!m_referencingModes.contains(SVGReferencingMode::ResourceDocument) || !contains(m_url.resolved.string(), '#'))
         return nullptr;
 
     if (!m_cachedImage) {
@@ -537,9 +537,9 @@ bool CachedImage::drawsSVGImage() const
     return image && image->drawsSVGImage();
 }
 
-WTF::String CachedImage::accessibilityDescription() const
+RefPtr<StringImpl> CachedImage::accessibilityDescription() const
 {
-    return m_cachedImage ? protect(m_cachedImage)->accessibilityDescription() : WTF::String();
+    return m_cachedImage ? protect(m_cachedImage)->accessibilityDescription() : nullptr;
 }
 
 bool CachedImage::isAnimated() const

@@ -75,9 +75,9 @@ bool CSSSubstitutionValue::equals(const CSSSubstitutionValue& other) const
     return arePointingToEqualData(m_data, other.m_data);
 }
 
-String CSSSubstitutionValue::customCSSText(const CSS::SerializationContext&) const
+RefPtr<StringImpl> CSSSubstitutionValue::customCSSText(const CSS::SerializationContext&) const
 {
-    if (m_stringValue.isNull())
+    if (!m_stringValue)
         m_stringValue = m_data->serialize();
     return m_stringValue;
 }

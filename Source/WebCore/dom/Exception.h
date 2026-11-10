@@ -33,21 +33,21 @@ namespace WebCore {
 
 class Exception {
 public:
-    explicit Exception(ExceptionCode, String = { });
+    explicit Exception(ExceptionCode, RefPtr<StringImpl> = { });
 
     ExceptionCode code() const { return m_code; }
-    const String& message() const LIFETIME_BOUND { return m_message; }
-    String&& releaseMessage() { return WTF::move(m_message); }
+    const RefPtr<StringImpl>& message() const LIFETIME_BOUND { return m_message; }
+    RefPtr<StringImpl>&& releaseMessage() { return WTF::move(m_message); }
 
-    Exception isolatedCopy() const & { return Exception { m_code, m_message.isolatedCopy() }; }
-    Exception isolatedCopy() && { return Exception { m_code, WTF::move(m_message).isolatedCopy() }; }
+    Exception isolatedCopy() const & { return Exception { m_code, WTF::isolatedCopy(m_message) }; }
+    Exception isolatedCopy() && { return Exception { m_code, WTF::isolatedCopy(WTF::move(m_message)) }; }
     
 private:
     ExceptionCode m_code;
-    String m_message;
+    RefPtr<StringImpl> m_message;
 };
 
-inline Exception::Exception(ExceptionCode code, String message)
+inline Exception::Exception(ExceptionCode code, RefPtr<StringImpl> message)
     : m_code { code }
     , m_message { WTF::move(message) }
 {

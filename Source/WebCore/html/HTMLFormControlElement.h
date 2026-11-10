@@ -52,10 +52,10 @@ public:
     NODELETE bool isDisabledFormControl() const override { return isDisabled(); }
     bool supportsFocus() const override { return !isDisabled(); }
 
-    WEBCORE_EXPORT String formEnctype() const;
-    WEBCORE_EXPORT String formMethod() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> formEnctype() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> formMethod() const;
     NODELETE bool formNoValidate() const;
-    WEBCORE_EXPORT String formAction() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> formAction() const;
 
     bool formControlValueMatchesRenderer() const { return m_valueMatchesRenderer; }
     void setFormControlValueMatchesRenderer(bool b) { m_valueMatchesRenderer = b; }
@@ -71,7 +71,7 @@ public:
 
     bool isRequired() const { return m_isRequired; }
 
-    const AtomString& type() const { return formControlType(); }
+    const RefPtr<AtomStringImpl>& type() const { return formControlType(); }
 
     virtual bool canTriggerImplicitSubmission() const { return false; }
 
@@ -88,7 +88,7 @@ public:
     WEBCORE_EXPORT AutocapitalizeType autocapitalizeType() const final;
 #endif
 
-    WEBCORE_EXPORT String autocomplete() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> autocomplete() const;
 
     NODELETE AutofillMantle autofillMantle() const;
 
@@ -96,10 +96,10 @@ public:
 
     virtual bool isSubmitButton() const { return false; }
 
-    virtual String resultForDialogSubmit() const;
+    virtual RefPtr<StringImpl> resultForDialogSubmit() const;
 
     RefPtr<HTMLElement> popoverTargetElement() const;
-    const AtomString& popoverTargetAction() const;
+    const RefPtr<AtomStringImpl>& popoverTargetAction() const;
 
     bool isKeyboardFocusable(const FocusEventData&) const override;
 
@@ -114,7 +114,7 @@ protected:
     void didAttachRenderers() override;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
     void removingSteps(RemovalType, ContainerNode&) override;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
 
     void disabledStateChanged() override;
     virtual void requiredStateChanged();

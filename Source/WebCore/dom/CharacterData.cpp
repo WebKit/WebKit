@@ -56,12 +56,12 @@ NODELETE static bool canUseSetDataOptimization(const CharacterData& node)
         && !document.hasListenerType(Document::ListenerType::DOMSubtreeModified) && !is<HTMLStyleElement>(node.parentNode());
 }
 
-void CharacterData::setData(const String& data)
+void CharacterData::setData(StringImpl* data)
 {
-    const String& nonNullData = !data.isNull() ? data : emptyString();
+    RefPtr<StringImpl> nonNullData = data ? data : emptyString().get();
     unsigned oldLength = length();
 
-    if (m_data == nonNullData && canUseSetDataOptimization(*this)) {
+    if (equal(m_data, nonNullData) && canUseSetDataOptimization(*this)) {
         Ref document = this->document();
         document->textRemoved(*this, 0, oldLength);
         if (RefPtr frame = document->frame())
@@ -70,15 +70,15 @@ void CharacterData::setData(const String& data)
     }
 
     Ref protectedThis { *this };
-    setDataAndUpdate(nonNullData, 0, oldLength, nonNullData.length());
+    setDataAndUpdate(nonNullData, 0, oldLength, WTF::length(nonNullData));
 }
 
-ExceptionOr<String> CharacterData::substringData(unsigned offset, unsigned count) const
+ExceptionOr<RefPtr<StringImpl>> CharacterData::substringData(unsigned offset, unsigned count) const
 {
     if (offset > length())
         return Exception { ExceptionCode::IndexSizeError };
 
-    return m_data.substring(offset, count);
+    return substring(m_data, offset, count);
 }
 
 NODELETE static ContainerNode::ChildChange::Type textChildChangeType(unsigned oldLength, bool toEmpty)
@@ -110,7 +110,7 @@ void CharacterData::parserAppendData(StringView string, StringBuilder& buffer)
 
     unsigned oldLength = length();
 
-    if (buffer.isEmpty() && !m_data.isEmpty())
+    if (buffer.isEmpty() && !isEmpty(m_data))
         buffer.append(m_data);
 
     buffer.append(string);
@@ -126,21 +126,21 @@ void CharacterData::parserAppendData(StringView string, StringBuilder& buffer)
 
     auto mutationRecipients = MutationObserverInterestGroup::createForCharacterDataMutation(*this);
     if (mutationRecipients) [[unlikely]]
-        mutationRecipients->enqueueMutationRecord(MutationRecord::createCharacterData(*this, m_data.left(oldLength)));
+        mutationRecipients->enqueueMutationRecord(MutationRecord::createCharacterData(*this, left(m_data, oldLength)));
 }
 
-void CharacterData::appendData(const String& data)
+void CharacterData::appendData(StringImpl* data)
 {
-    setDataAndUpdate(makeString(m_data, data), m_data.length(), 0, data.length(), UpdateLiveRanges::No);
+    setDataAndUpdate(makeString(m_data, data), WTF::length(m_data), 0, WTF::length(data), UpdateLiveRanges::No);
 }
 
-ExceptionOr<void> CharacterData::insertData(unsigned offset, const String& data)
+ExceptionOr<void> CharacterData::insertData(unsigned offset, StringImpl* data)
 {
     if (offset > length())
         return Exception { ExceptionCode::IndexSizeError };
 
     auto newData = makeStringByInserting(m_data, data, offset);
-    setDataAndUpdate(WTF::move(newData), offset, 0, data.length());
+    setDataAndUpdate(WTF::move(newData), offset, 0, WTF::length(data));
 
     return { };
 }
@@ -158,7 +158,7 @@ ExceptionOr<void> CharacterData::deleteData(unsigned offset, unsigned count)
     return { };
 }
 
-ExceptionOr<void> CharacterData::replaceData(unsigned offset, unsigned count, const String& data)
+ExceptionOr<void> CharacterData::replaceData(unsigned offset, unsigned count, StringImpl* data)
 {
     if (offset > length())
         return Exception { ExceptionCode::IndexSizeError };
@@ -167,34 +167,34 @@ ExceptionOr<void> CharacterData::replaceData(unsigned offset, unsigned count, co
 
     StringView oldDataView { m_data };
     auto newData = makeString(oldDataView.left(offset), data, oldDataView.substring(offset + count));
-    setDataAndUpdate(WTF::move(newData), offset, count, data.length());
+    setDataAndUpdate(WTF::move(newData), offset, count, WTF::length(data));
 
     return { };
 }
 
-String CharacterData::nodeValue() const
+RefPtr<StringImpl> CharacterData::nodeValue() const
 {
     return m_data;
 }
 
-ExceptionOr<void> CharacterData::setNodeValue(const String& nodeValue)
+ExceptionOr<void> CharacterData::setNodeValue(StringImpl* nodeValue)
 {
     setData(nodeValue);
     return { };
 }
 
-void CharacterData::setDataWithoutUpdate(const String& data)
+void CharacterData::setDataWithoutUpdate(StringImpl* data)
 {
-    ASSERT(!data.isNull());
+    ASSERT(data);
     m_data = data;
     clearStateFlag(StateFlag::ContainsOnlyASCIIWhitespaceIsValid);
 }
 
-void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges shouldUpdateLiveRanges)
+void CharacterData::setDataAndUpdate(StringImpl* newData, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges shouldUpdateLiveRanges)
 {
-    auto childChange = makeChildChange(*this, !newData.length(), ContainerNode::ChildChange::Source::API);
+    auto childChange = makeChildChange(*this, !WTF::length(newData), ContainerNode::ChildChange::Source::API);
 
-    String oldData;
+    RefPtr<StringImpl> oldData;
     {
         std::optional<Style::ChildChangeInvalidation> styleInvalidation;
         if (RefPtr parent = parentNode())
@@ -237,7 +237,7 @@ void CharacterData::notifyParentAfterChange(const ContainerNode::ChildChange& ch
     parentNode->childrenChanged(childChange);
 }
 
-void CharacterData::dispatchModifiedEvent(const String& oldData)
+void CharacterData::dispatchModifiedEvent(StringImpl* oldData)
 {
     if (auto mutationRecipients = MutationObserverInterestGroup::createForCharacterDataMutation(*this))
         mutationRecipients->enqueueMutationRecord(MutationRecord::createCharacterData(*this, oldData));
@@ -256,7 +256,7 @@ bool CharacterData::containsOnlyASCIIWhitespace() const
     if (hasStateFlag(StateFlag::ContainsOnlyASCIIWhitespaceIsValid))
         return hasStateFlag(StateFlag::ContainsOnlyASCIIWhitespace);
 
-    bool hasOnlyWhitespace = m_data.containsOnly<isASCIIWhitespace>();
+    bool hasOnlyWhitespace = containsOnly<isASCIIWhitespace>(m_data);
     const_cast<CharacterData*>(this)->setStateFlag(StateFlag::ContainsOnlyASCIIWhitespace, hasOnlyWhitespace);
     const_cast<CharacterData*>(this)->setStateFlag(StateFlag::ContainsOnlyASCIIWhitespaceIsValid);
     return hasOnlyWhitespace;

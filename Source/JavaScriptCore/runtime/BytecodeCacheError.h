@@ -39,7 +39,7 @@ public:
         }
 
         NODELETE bool isValid() const;
-        String message() const;
+        RefPtr<StringImpl> message() const;
 
     private:
         int m_errno;
@@ -54,7 +54,7 @@ public:
         }
 
         bool isValid() const;
-        String message() const;
+        RefPtr<StringImpl> message() const;
 
     private:
         size_t m_written;
@@ -66,7 +66,7 @@ public:
     JS_EXPORT_PRIVATE BytecodeCacheError& operator=(const WriteError&);
 
     JS_EXPORT_PRIVATE bool isValid() const;
-    JS_EXPORT_PRIVATE String message() const;
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> message() const;
 
 private:
     Variant<ParserError, StandardError, WriteError> m_error;

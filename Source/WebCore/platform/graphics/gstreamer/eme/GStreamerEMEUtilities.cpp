@@ -45,7 +45,7 @@ ProtectionSystemEvents::ProtectionSystemEvents(GstMessage* message)
     const GValue* streamEncryptionAllowedSystemsValue = gst_structure_get_value(structure, "available-stream-encryption-systems");
     auto systemsArray = g_value_get_boxed(streamEncryptionAllowedSystemsValue);
     for (const auto system : span(static_cast<char**>(systemsArray)))
-        m_availableSystems.append(String::fromLatin1(system));
+        m_availableSystems.append(StringImpl::fromLatin1(system));
 }
 
 struct GMarkupParseContextUserData {

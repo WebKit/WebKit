@@ -35,18 +35,18 @@
 namespace WTF {
 
 template<>
-class TinyLRUCachePolicy<AtomString, RetainPtr<CFLocaleRef>>
+class TinyLRUCachePolicy<RefPtr<AtomStringImpl>, RetainPtr<CFLocaleRef>>
 {
 public:
-    NODELETE static TinyLRUCache<AtomString, RetainPtr<CFLocaleRef>>& cache()
+    NODELETE static TinyLRUCache<RefPtr<AtomStringImpl>, RetainPtr<CFLocaleRef>>& cache()
     {
-        static NeverDestroyed<TinyLRUCache<AtomString, RetainPtr<CFLocaleRef>>> cache;
+        static NeverDestroyed<TinyLRUCache<RefPtr<AtomStringImpl>, RetainPtr<CFLocaleRef>>> cache;
         return cache;
     }
 
-    NODELETE static bool isKeyNull(const AtomString& localeIdentifier)
+    NODELETE static bool isKeyNull(AtomStringImpl* localeIdentifier)
     {
-        return localeIdentifier.isNull();
+        return !localeIdentifier;
     }
 
     static RetainPtr<CFLocaleRef> createValueForNullKey()
@@ -54,29 +54,29 @@ public:
         return nullptr;
     }
 
-    static RetainPtr<CFLocaleRef> createValueForKey(const AtomString& localeIdentifier)
+    static RetainPtr<CFLocaleRef> createValueForKey(AtomStringImpl* localeIdentifier)
     {
-        RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, localeIdentifier.string().createCFString().get()));
+        RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, createCFString(localeIdentifier).get()));
 
         return CFStringIsHyphenationAvailableForLocale(locale.get()) ? locale : nullptr;
     }
 
-    NODELETE static AtomString createKeyForStorage(const AtomString& key) { return key; }
+    NODELETE static RefPtr<AtomStringImpl> createKeyForStorage(AtomStringImpl* key) { return key; }
 };
 }
 
 namespace WebCore {
 
-bool canHyphenate(const AtomString& localeIdentifier)
+bool canHyphenate(AtomStringImpl* localeIdentifier)
 {
-    if (localeIdentifier.isNull())
+    if (!localeIdentifier)
         return false;
-    return !!TinyLRUCachePolicy<AtomString, RetainPtr<CFLocaleRef>>::cache().get(localeIdentifier);
+    return !!TinyLRUCachePolicy<RefPtr<AtomStringImpl>, RetainPtr<CFLocaleRef>>::cache().get(localeIdentifier);
 }
 
-size_t lastHyphenLocation(StringView text, size_t beforeIndex, const AtomString& localeIdentifier)
+size_t lastHyphenLocation(StringView text, size_t beforeIndex, AtomStringImpl* localeIdentifier)
 {
-    RetainPtr<CFLocaleRef> locale = TinyLRUCachePolicy<AtomString, RetainPtr<CFLocaleRef>>::cache().get(localeIdentifier);
+    RetainPtr<CFLocaleRef> locale = TinyLRUCachePolicy<RefPtr<AtomStringImpl>, RetainPtr<CFLocaleRef>>::cache().get(localeIdentifier);
 
     CFOptionFlags searchAcrossWordBoundaries = 1;
     CFIndex result = CFStringGetHyphenationLocationBeforeIndex(text.createCFStringWithoutCopying().get(), beforeIndex, CFRangeMake(0, text.length()), searchAcrossWordBoundaries, locale.get(), nullptr);

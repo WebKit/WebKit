@@ -107,7 +107,7 @@ static void testDefaultLocaleParsing(Test*, gconstpointer)
 {
     GUniqueOutPtr<GError> error;
     auto parse = [&](const gchar* manifestString, const gchar* localeFile) {
-        return adoptGRef(webkitWebExtensionCreate({ { "manifest.json"_s, createGBytes(manifestString) }, { String::fromUTF8(localeFile), createGBytes("{}") } }, &error.outPtr()));
+        return adoptGRef(webkitWebExtensionCreate({ { "manifest.json"_s, createGBytes(manifestString) }, { StringImpl::fromUTF8(localeFile), createGBytes("{}") } }, &error.outPtr()));
     };
 
     // Test no default locale
@@ -180,7 +180,7 @@ static void testDisplayStringParsingWithLocalization(Test*, gconstpointer)
         "}"
         "}";
 
-    HashMap<String, GRefPtr<GBytes>> resources = {
+    HashMap<RefPtr<StringImpl>, GRefPtr<GBytes>> resources = {
         { "manifest.json"_s, createGBytes(manifest) },
         { "_locales/en/messages.json"_s, createGBytes(defaultMessages) },
         { "_locales/en_US/messages.json"_s, createGBytes(regionalMessages) }

@@ -44,8 +44,8 @@ using namespace HTMLNames;
 
 auto BaseClickableWithKeyInputType::handleKeydownEvent(HTMLInputElement& element, KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
-    const String& key = event.keyIdentifier();
-    if (key == "U+0020"_s) {
+    const RefPtr<StringImpl>& key = event.keyIdentifier();
+    if (equal(key, "U+0020"_s)) {
         element.setActive(true);
         // No setDefaultHandled(), because IE dispatches a keypress in this case
         // and the caller will only dispatch a keypress if we don't call setDefaultHandled().
@@ -70,8 +70,8 @@ void BaseClickableWithKeyInputType::handleKeypressEvent(HTMLInputElement& elemen
 
 void BaseClickableWithKeyInputType::handleKeyupEvent(InputType& inputType, KeyboardEvent& event)
 {
-    const String& key = event.keyIdentifier();
-    if (key != "U+0020"_s)
+    const RefPtr<StringImpl>& key = event.keyIdentifier();
+    if (!equal(key, "U+0020"_s))
         return;
     // Simulate mouse click for spacebar for button types.
     inputType.dispatchSimulatedClickIfActive(event);

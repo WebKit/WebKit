@@ -88,7 +88,7 @@ ValidationMessageClient* ValidationMessage::validationMessageClient() const
     return 0;
 }
 
-void ValidationMessage::updateValidationMessage(HTMLElement& element, const String& message)
+void ValidationMessage::updateValidationMessage(HTMLElement& element, StringImpl* message)
 {
     // We want to hide the validation message as soon as the user starts
     // typing, even if a constraint is still violated. Thefore, we hide the message instead
@@ -98,19 +98,19 @@ void ValidationMessage::updateValidationMessage(HTMLElement& element, const Stri
         return;
     }
 
-    String updatedMessage = message;
+    RefPtr<StringImpl> updatedMessage = message;
     if (!validationMessageClient()) {
         // HTML5 specification doesn't ask UA to show the title attribute value
         // with the validationMessage. However, this behavior is same as Opera
         // and the specification describes such behavior as an example.
-        if (!updatedMessage.isEmpty()) {
-            const AtomString& title = m_element->attributeWithoutSynchronization(titleAttr);
-            if (!title.isEmpty())
+        if (!isEmpty(updatedMessage)) {
+            const RefPtr<AtomStringImpl>& title = m_element->attributeWithoutSynchronization(titleAttr);
+            if (!isEmpty(title))
                 updatedMessage = makeString(updatedMessage, '\n', title);
         }
     }
 
-    if (updatedMessage.isEmpty()) {
+    if (isEmpty(updatedMessage)) {
         requestToHideMessage();
         return;
     }
@@ -119,7 +119,7 @@ void ValidationMessage::updateValidationMessage(HTMLElement& element, const Stri
     setMessage(WTF::move(updatedMessage));
 }
 
-void ValidationMessage::setMessage(String&& message)
+void ValidationMessage::setMessage(RefPtr<StringImpl>&& message)
 {
     if (ValidationMessageClient* client = validationMessageClient()) {
         client->showValidationMessage(protect(*m_element), WTF::move(message));
@@ -128,7 +128,7 @@ void ValidationMessage::setMessage(String&& message)
 
     // Don't modify the DOM tree in this context.
     // If so, an assertion in Element::isFocusable() fails.
-    ASSERT(!message.isEmpty());
+    ASSERT(!isEmpty(message));
     m_message = WTF::move(message);
     if (!m_bubble)
         m_timer = makeUnique<Timer>(*this, &ValidationMessage::buildBubbleTree);
@@ -163,7 +163,7 @@ void ValidationMessage::setMessageDOMAndStartTimer()
         m_timer = nullptr;
     else {
         m_timer = makeUnique<Timer>(*this, &ValidationMessage::deleteBubbleTree);
-        m_timer->startOneShot(std::max(5_s, 1_ms * static_cast<double>(m_message.length()) * magnification));
+        m_timer->startOneShot(std::max(5_s, 1_ms * static_cast<double>(length(m_message)) * magnification));
     }
 }
 
@@ -274,14 +274,14 @@ void ValidationMessage::deleteBubbleTree()
         shadowRoot->removeChild(*bubble);
         m_bubble = nullptr;
     }
-    m_message = String();
+    m_message = nullptr;
 }
 
 bool ValidationMessage::isVisible() const
 {
     if (ValidationMessageClient* client = validationMessageClient())
         return client->isValidationMessageVisible(protect(*m_element));
-    return !m_message.isEmpty();
+    return !isEmpty(m_message);
 }
 
 } // namespace WebCore

@@ -55,16 +55,16 @@ const SpeculationRules::DocumentPredicate::PredicateVariant& SpeculationRules::D
     return m_value;
 }
 
-static std::optional<Vector<String>> parseStringOrStringList(JSON::Object& object, const String& key)
+static std::optional<Vector<RefPtr<StringImpl>>> parseStringOrStringList(JSON::Object& object, StringImpl* key)
 {
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
     auto value = object.getValue(key);
     if (!value)
-        return Vector<String> { };
+        return Vector<RefPtr<StringImpl>> { };
 
     if (value->type() == JSON::Value::Type::String) {
-        String stringValue = value->asString();
-        if (!stringValue.isNull()) {
+        RefPtr<StringImpl> stringValue = value->asString();
+        if (stringValue) {
             result.append(stringValue);
             return result;
         }
@@ -73,8 +73,8 @@ static std::optional<Vector<String>> parseStringOrStringList(JSON::Object& objec
     if (RefPtr arrayValue = value->asArray()) {
         for (auto& item : *arrayValue) {
             if (item->type() == JSON::Value::Type::String) {
-                String element = item->asString();
-                if (element.isNull())
+                RefPtr<StringImpl> element = item->asString();
+                if (!element)
                     return std::nullopt;
                 result.append(element);
             } else
@@ -83,7 +83,7 @@ static std::optional<Vector<String>> parseStringOrStringList(JSON::Object& objec
         return result;
     }
 
-    return Vector<String> { };
+    return Vector<RefPtr<StringImpl>> { };
 }
 
 static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate(JSON::Object&);
@@ -91,7 +91,7 @@ static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate
 // https://html.spec.whatwg.org/C#document-rule-predicate
 static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate(JSON::Object& object)
 {
-    auto andValue = object.getValue("and"_s);
+    auto andValue = object.getValue("and"_si);
     if (andValue && andValue->type() == JSON::Value::Type::Array) {
         if (auto array = andValue->asArray()) {
             SpeculationRules::Conjunction conjunction;
@@ -108,7 +108,7 @@ static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate
         }
     }
 
-    auto orValue = object.getValue("or"_s);
+    auto orValue = object.getValue("or"_si);
     if (orValue && orValue->type() == JSON::Value::Type::Array) {
         if (auto array = orValue->asArray()) {
             SpeculationRules::Disjunction disjunction;
@@ -125,7 +125,7 @@ static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate
         }
     }
 
-    auto notValue = object.getValue("not"_s);
+    auto notValue = object.getValue("not"_si);
     if (notValue && notValue->type() == JSON::Value::Type::Object) {
         if (auto clauseObject = notValue->asObject()) {
             auto predicate = parseDocumentPredicate(*clauseObject);
@@ -137,15 +137,15 @@ static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate
     }
 
     SpeculationRules::URLPatternPredicate urlPredicate;
-    auto urlMatches = parseStringOrStringList(object, "url_matches"_s);
+    auto urlMatches = parseStringOrStringList(object, "url_matches"_si);
     if (urlMatches)
         urlPredicate.patterns.appendVector(*urlMatches);
-    auto hrefMatches = parseStringOrStringList(object, "href_matches"_s);
+    auto hrefMatches = parseStringOrStringList(object, "href_matches"_si);
     if (hrefMatches)
         urlPredicate.patterns.appendVector(*hrefMatches);
 
     SpeculationRules::CSSSelectorPredicate selectorPredicate;
-    auto selectorMatches = parseStringOrStringList(object, "selector_matches"_s);
+    auto selectorMatches = parseStringOrStringList(object, "selector_matches"_si);
     if (selectorMatches)
         selectorPredicate.selectors.appendVector(*selectorMatches);
 
@@ -169,41 +169,41 @@ static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate
 }
 
 // https://html.spec.whatwg.org/C#parse-a-speculation-rule
-static std::optional<SpeculationRules::Rule> parseSingleRule(const JSON::Object& input, const String& rulesetLevelTag, const URL& rulesetBaseURL, const URL& documentBaseURL)
+static std::optional<SpeculationRules::Rule> parseSingleRule(const JSON::Object& input, StringImpl* rulesetLevelTag, const URL& rulesetBaseURL, const URL& documentBaseURL)
 {
-    static NeverDestroyed<HashSet<String>> allowedKeys = std::initializer_list<String> {
-        "source"_s, "urls"_s, "where"_s, "requires"_s, "target_hint"_s,
-        "referrer_policy"_s, "relative_to"_s, "eagerness"_s,
-        "expects_no_vary_search"_s, "tag"_s
+    static NeverDestroyed<HashSet<RefPtr<StringImpl>>> allowedKeys = std::initializer_list<RefPtr<StringImpl>> {
+        "source"_si, "urls"_si, "where"_si, "requires"_si, "target_hint"_si,
+        "referrer_policy"_si, "relative_to"_si, "eagerness"_si,
+        "expects_no_vary_search"_si, "tag"_si
     };
     for (const auto& key : input.keys()) {
         if (!allowedKeys->contains(key))
             return std::nullopt;
     }
 
-    String source;
-    auto sourceValue = input.getValue("source"_s);
+    RefPtr<StringImpl> source;
+    auto sourceValue = input.getValue("source"_si);
     if (sourceValue && sourceValue->type() == JSON::Value::Type::String)
         source = sourceValue->asString();
 
-    if (source.isEmpty()) {
-        bool hasURLs = !!input.getValue("urls"_s);
-        bool hasWhere = !!input.getValue("where"_s);
+    if (isEmpty(source)) {
+        bool hasURLs = !!input.getValue("urls"_si);
+        bool hasWhere = !!input.getValue("where"_si);
         if (hasURLs && !hasWhere)
-            source = "list"_s;
+            source = "list"_si;
         else if (hasWhere && !hasURLs)
-            source = "document"_s;
+            source = "document"_si;
         else
             return std::nullopt;
     }
 
     SpeculationRules::Rule rule;
 
-    if (source == "list"_s) {
-        if (input.getValue("where"_s))
+    if (equal(source, "list"_s)) {
+        if (input.getValue("where"_si))
             return std::nullopt;
 
-        auto urlsValue = input.getValue("urls"_s);
+        auto urlsValue = input.getValue("urls"_si);
         if (!urlsValue || urlsValue->type() != JSON::Value::Type::Array)
             return std::nullopt;
         auto urlsArray = urlsValue->asArray();
@@ -211,30 +211,30 @@ static std::optional<SpeculationRules::Rule> parseSingleRule(const JSON::Object&
             return std::nullopt;
 
         URL currentBaseURL = rulesetBaseURL;
-        auto relativeToValue = input.getValue("relative_to"_s);
+        auto relativeToValue = input.getValue("relative_to"_si);
         if (relativeToValue && relativeToValue->type() == JSON::Value::Type::String) {
-            String relativeTo = relativeToValue->asString();
-            if (relativeTo != "ruleset"_s && relativeTo != "document"_s)
+            RefPtr<StringImpl> relativeTo = relativeToValue->asString();
+            if (!equal(relativeTo, "ruleset"_s) && !equal(relativeTo, "document"_s))
                 return std::nullopt;
-            if (relativeTo == "document"_s)
+            if (equal(relativeTo, "document"_s))
                 currentBaseURL = documentBaseURL;
         }
 
         for (const auto& urlValue : *urlsArray) {
             if (urlValue->type() != JSON::Value::Type::String)
                 return std::nullopt;
-            String urlString = urlValue->asString();
+            RefPtr<StringImpl> urlString = urlValue->asString();
             URL parsedURL(currentBaseURL, urlString);
             if (parsedURL.isValid() && (parsedURL.protocolIs("http"_s) || parsedURL.protocolIs("https"_s)))
                 rule.urls.append(parsedURL);
         }
         rule.eagerness = SpeculationRules::Eagerness::Immediate;
 
-    } else if (source == "document"_s) {
-        if (input.getValue("urls"_s) || input.getValue("relative_to"_s))
+    } else if (equal(source, "document"_s)) {
+        if (input.getValue("urls"_si) || input.getValue("relative_to"_si))
             return std::nullopt;
 
-        auto whereValue = input.getValue("where"_s);
+        auto whereValue = input.getValue("where"_si);
         if (whereValue && whereValue->type() == JSON::Value::Type::Object) {
             if (auto whereObject = whereValue->asObject()) {
                 auto predicate = parseDocumentPredicate(*whereObject);
@@ -250,24 +250,24 @@ static std::optional<SpeculationRules::Rule> parseSingleRule(const JSON::Object&
     } else
         return std::nullopt;
 
-    auto requiresValue = input.getValue("requires"_s);
+    auto requiresValue = input.getValue("requires"_si);
     if (requiresValue && requiresValue->type() == JSON::Value::Type::Array) {
         if (auto requiresArray = requiresValue->asArray()) {
             for (const auto& reqValue : *requiresArray) {
                 if (reqValue->type() != JSON::Value::Type::String)
                     return std::nullopt;
-                String requirement = reqValue->asString();
-                if (requirement != "anonymous-client-ip-when-cross-origin"_s)
+                RefPtr<StringImpl> requirement = reqValue->asString();
+                if (!equal(requirement, "anonymous-client-ip-when-cross-origin"_s))
                     return std::nullopt;
                 rule.requirements.append(requirement);
             }
         }
     }
 
-    auto referrerPolicyValue = input.getValue("referrer_policy"_s);
+    auto referrerPolicyValue = input.getValue("referrer_policy"_si);
     if (referrerPolicyValue && referrerPolicyValue->type() == JSON::Value::Type::String) {
-        String referrerPolicyString = referrerPolicyValue->asString();
-        if (!referrerPolicyString.isEmpty()) {
+        RefPtr<StringImpl> referrerPolicyString = referrerPolicyValue->asString();
+        if (!isEmpty(referrerPolicyString)) {
             rule.referrerPolicy = parseReferrerPolicy(referrerPolicyString, ReferrerPolicySource::SpeculationRules);
             // 15.1. If input["referrer_policy"] is not a referrer policy... Return null.
             if (!rule.referrerPolicy)
@@ -275,42 +275,42 @@ static std::optional<SpeculationRules::Rule> parseSingleRule(const JSON::Object&
         }
     }
 
-    auto eagernessValue = input.getValue("eagerness"_s);
+    auto eagernessValue = input.getValue("eagerness"_si);
     if (eagernessValue && eagernessValue->type() == JSON::Value::Type::String) {
-        String eagernessString = eagernessValue->asString();
-        if (eagernessString == "immediate"_s)
+        RefPtr<StringImpl> eagernessString = eagernessValue->asString();
+        if (equal(eagernessString, "immediate"_s))
             rule.eagerness = SpeculationRules::Eagerness::Immediate;
-        else if (eagernessString == "eager"_s)
+        else if (equal(eagernessString, "eager"_s))
             rule.eagerness = SpeculationRules::Eagerness::Eager;
-        else if (eagernessString == "moderate"_s)
+        else if (equal(eagernessString, "moderate"_s))
             rule.eagerness = SpeculationRules::Eagerness::Moderate;
-        else if (eagernessString == "conservative"_s)
+        else if (equal(eagernessString, "conservative"_s))
             rule.eagerness = SpeculationRules::Eagerness::Conservative;
         else
             return std::nullopt;
     }
 
-    auto noVarySearchValue = input.getValue("expects_no_vary_search"_s);
+    auto noVarySearchValue = input.getValue("expects_no_vary_search"_si);
     if (noVarySearchValue && noVarySearchValue->type() == JSON::Value::Type::String)
         rule.noVarySearchHint = noVarySearchValue->asString();
 
-    if (!rulesetLevelTag.isNull())
+    if (rulesetLevelTag)
         rule.tags.append(rulesetLevelTag);
 
     // 18. If input["tag"] exists:
-    auto tagValue = input.getValue("tag"_s);
+    auto tagValue = input.getValue("tag"_si);
     if (tagValue) {
         // 18.1. If input["tag"] is not a speculation rule tag... return null.
         if (tagValue->type() != JSON::Value::Type::String)
             return std::nullopt;
-        String ruleTag = tagValue->asString();
-        if (!ruleTag.containsOnlyASCII() || !ruleTag.containsOnly<isASCIIPrintable>())
+        RefPtr<StringImpl> ruleTag = tagValue->asString();
+        if (!containsOnlyASCII(ruleTag) || !containsOnly<isASCIIPrintable>(ruleTag))
             return std::nullopt;
         StringBuilder ruleTagBuilder;
         ruleTagBuilder.appendQuotedJSONString(ruleTag);
-        String processedRuleTag = ruleTagBuilder.toString();
+        RefPtr<StringImpl> processedRuleTag = ruleTagBuilder.toString();
         // 18.2 Append input["tag"] to tags if it's different from ruleset tag.
-        if (processedRuleTag != rulesetLevelTag)
+        if (!equal(processedRuleTag, rulesetLevelTag))
             rule.tags.append(processedRuleTag);
     }
 
@@ -322,7 +322,7 @@ static std::optional<SpeculationRules::Rule> parseSingleRule(const JSON::Object&
 }
 
 // https://html.spec.whatwg.org/C#parse-a-speculation-rule-set-string step 8
-static std::optional<Vector<SpeculationRules::Rule>> parseRules(const JSON::Object& object, const String& key, const String& rulesetLevelTag, const URL& rulesetBaseURL, const URL& documentBaseURL)
+static std::optional<Vector<SpeculationRules::Rule>> parseRules(const JSON::Object& object, StringImpl* key, StringImpl* rulesetLevelTag, const URL& rulesetBaseURL, const URL& documentBaseURL)
 {
     auto value = object.getValue(key);
     // 8.1 If parsed[type] exists:
@@ -359,15 +359,15 @@ bool SpeculationRules::parseSpeculationRules(Node& sourceNode, const StringView&
     if (!jsonObject)
         return false;
 
-    String rulesetLevelTag;
-    auto tagValue = jsonObject->getValue("tag"_s);
+    RefPtr<StringImpl> rulesetLevelTag;
+    auto tagValue = jsonObject->getValue("tag"_si);
     // 5. If parsed["tag"] exists:
     if (tagValue) {
         // 5.1. If parsed["tag"] is not a speculation rule tag, then throw a TypeError indicating that the speculation rule tag is invalid.
         if (tagValue->type() != JSON::Value::Type::String)
             return false;
-        String candidateTag = tagValue->asString();
-        if (!candidateTag.containsOnlyASCII() || !candidateTag.containsOnly<isASCIIPrintable>())
+        RefPtr<StringImpl> candidateTag = tagValue->asString();
+        if (!containsOnlyASCII(candidateTag) || !containsOnly<isASCIIPrintable>(candidateTag))
             return false;
         StringBuilder ruleTagBuilder;
         ruleTagBuilder.appendQuotedJSONString(candidateTag);
@@ -375,7 +375,7 @@ bool SpeculationRules::parseSpeculationRules(Node& sourceNode, const StringView&
         rulesetLevelTag = ruleTagBuilder.toString();
     }
 
-    auto prefetch = parseRules(*jsonObject, "prefetch"_s, rulesetLevelTag, rulesetBaseURL, documentBaseURL);
+    auto prefetch = parseRules(*jsonObject, "prefetch"_si, rulesetLevelTag, rulesetBaseURL, documentBaseURL);
     if (prefetch) {
         auto& nodeRules = m_prefetchRulesByNode.ensure(sourceNode, [] {
             return Vector<Rule>();

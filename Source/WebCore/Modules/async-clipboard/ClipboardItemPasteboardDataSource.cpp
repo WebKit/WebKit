@@ -45,12 +45,12 @@ ClipboardItemPasteboardDataSource::ClipboardItemPasteboardDataSource(ClipboardIt
 
 ClipboardItemPasteboardDataSource::~ClipboardItemPasteboardDataSource() = default;
 
-Vector<String> ClipboardItemPasteboardDataSource::types() const
+Vector<RefPtr<StringImpl>> ClipboardItemPasteboardDataSource::types() const
 {
     return m_types;
 }
 
-void ClipboardItemPasteboardDataSource::getType(const String& type, Ref<DeferredPromise>&& promise)
+void ClipboardItemPasteboardDataSource::getType(StringImpl* type, Ref<DeferredPromise>&& promise)
 {
     if (RefPtr clipboard = m_item->clipboard())
         clipboard->getType(Ref { m_item.get() }, type, WTF::move(promise));

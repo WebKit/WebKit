@@ -47,8 +47,8 @@ private:
     Element* element() const { return m_element.get(); }
 
     RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
-    String shorthandPropertySerialization(CSSPropertyID) const final;
-    RefPtr<CSSValue> customPropertyValue(const AtomString&) const final;
+    RefPtr<StringImpl> shorthandPropertySerialization(CSSPropertyID) const final;
+    RefPtr<CSSValue> customPropertyValue(AtomStringImpl*) const final;
     unsigned size() const final;
     Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> entries(ScriptExecutionContext*) const final;
 

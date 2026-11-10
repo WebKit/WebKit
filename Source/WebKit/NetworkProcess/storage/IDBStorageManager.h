@@ -49,14 +49,14 @@ class IDBStorageManager final : public WebCore::IDBServer::UniqueIDBDatabaseMana
     WTF_MAKE_TZONE_ALLOCATED(IDBStorageManager);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBStorageManager);
 public:
-    static void createVersionDirectoryIfNeeded(const String& rootDirectory);
-    static String idbStorageOriginDirectory(const String& rootDirectory, const WebCore::ClientOrigin&);
-    static uint64_t idbStorageSize(const String& originDirectory);
-    static HashSet<WebCore::ClientOrigin> originsOfIDBStorageData(const String& rootDirectory);
-    static bool migrateOriginData(const String& oldOriginDirectory, const String& newOriginDirectory);
+    static void createVersionDirectoryIfNeeded(StringImpl* rootDirectory);
+    static RefPtr<StringImpl> idbStorageOriginDirectory(StringImpl* rootDirectory, const WebCore::ClientOrigin&);
+    static uint64_t idbStorageSize(StringImpl* originDirectory);
+    static HashSet<WebCore::ClientOrigin> originsOfIDBStorageData(StringImpl* rootDirectory);
+    static bool migrateOriginData(StringImpl* oldOriginDirectory, StringImpl* newOriginDirectory);
 
     using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
-    IDBStorageManager(const String& path, IDBStorageRegistry&, QuotaCheckFunction&&, bool useSQLiteMemoryBackingStore);
+    IDBStorageManager(StringImpl* path, IDBStorageRegistry&, QuotaCheckFunction&&, bool useSQLiteMemoryBackingStore);
     ~IDBStorageManager();
     NODELETE bool isActive() const;
     bool hasDataInMemory() const;
@@ -81,7 +81,7 @@ private:
     std::unique_ptr<WebCore::IDBServer::IDBBackingStore> createBackingStore(const WebCore::IDBDatabaseIdentifier&) final;
     void requestSpace(const WebCore::ClientOrigin&, uint64_t size, CompletionHandler<void(bool)>&&) final;
 
-    String m_path;
+    RefPtr<StringImpl> m_path;
     const CheckedRef<IDBStorageRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
     HashMap<WebCore::IDBDatabaseIdentifier, std::unique_ptr<WebCore::IDBServer::UniqueIDBDatabase>> m_databases;

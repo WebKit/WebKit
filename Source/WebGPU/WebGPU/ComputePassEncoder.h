@@ -72,9 +72,9 @@ public:
     void dispatch(uint32_t x, uint32_t y, uint32_t z) final;
     void dispatchIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
     void endPass();
-    void insertDebugMarker(String&& markerLabel) final;
+    void insertDebugMarker(RefPtr<StringImpl>&& markerLabel) final;
     void popDebugGroup() final;
-    void pushDebugGroup(String&& groupLabel) final;
+    void pushDebugGroup(RefPtr<StringImpl>&& groupLabel) final;
 
     // std::nullopt dynamic offsets are not validated against the bind group layout.
     void setBindGroup(uint32_t groupIndex, const BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets);
@@ -86,7 +86,7 @@ public:
     void dispatchIndirect(const WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset) final;
     void end() final { endPass(); }
     void setBindGroup(uint32_t groupIndex, const WebGPU::BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) final;
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
 
     Device& device() const { return m_device; }
 

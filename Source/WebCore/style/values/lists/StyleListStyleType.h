@@ -50,7 +50,7 @@ struct ListStyleType {
 
     ListStyleType(String&& string)
         : m_type { Type::String }
-        , m_identifier { WTF::move(string.value) }
+        , m_identifier { AtomStringImpl::add(WTF::move(string.value)) }
     {
     }
 
@@ -116,7 +116,7 @@ struct ListStyleType {
         return isSymbolsFunction() ? std::make_optional(m_symbolsFunction) : std::nullopt;
     }
 
-    std::optional<AtomString> tryString() const
+    std::optional<RefPtr<AtomStringImpl>> tryString() const
     {
         return isString() ? std::make_optional(m_identifier) : std::nullopt;
     }
@@ -142,12 +142,16 @@ struct ListStyleType {
 
     // IPC-specific representation.
     struct NoneData { };
-    struct StringData { AtomString identifier; };
-    struct CounterStyleData { AtomString identifier; };
+    struct StringData { RefPtr<AtomStringImpl> identifier; };
+    struct CounterStyleData { RefPtr<AtomStringImpl> identifier; };
     struct SymbolsFunctionData {
         CSSCounterStyleDescriptors::System system { CSSCounterStyleDescriptors::System::Symbolic };
-        Vector<WTF::String> symbols;
-        friend bool operator==(const SymbolsFunctionData&, const SymbolsFunctionData&) = default;
+        Vector<RefPtr<StringImpl>> symbols;
+        friend bool operator==(const SymbolsFunctionData& a, const SymbolsFunctionData& b)
+        {
+            return a.system == b.system
+                && contentEquals(a.symbols, b.symbols);
+        }
     };
     using IPCData = Variant<NoneData, StringData, CounterStyleData, SymbolsFunctionData>;
 
@@ -164,7 +168,7 @@ private:
 
     Type m_type { Type::None };
     // The identifier is the string when the type is String and is the @counter-style name when the type is CounterStyle.
-    AtomString m_identifier { nullAtom() };
+    RefPtr<AtomStringImpl> m_identifier { nullAtom() };
     // Only engaged when the type is Symbols.
     SymbolsFunction m_symbolsFunction;
 };

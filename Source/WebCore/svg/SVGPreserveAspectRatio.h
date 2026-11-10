@@ -80,7 +80,7 @@ public:
         return result;
     }
 
-    String valueAsString() const override
+    RefPtr<StringImpl> valueAsString() const override
     {
         return m_value.valueAsString();
     }

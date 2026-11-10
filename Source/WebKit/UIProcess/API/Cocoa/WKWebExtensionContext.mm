@@ -128,9 +128,9 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionContext, WebExtensionContext
 - (void)setBaseURL:(NSURL *)baseURL
 {
     NSParameterAssert([baseURL isKindOfClass:NSURL.class]);
-    NSAssert1(WTF::URLParser::maybeCanonicalizeScheme(String(baseURL.scheme)), @"Invalid parameter: '%@' is not a valid URL scheme", baseURL.scheme);
+    NSAssert1(WTF::URLParser::maybeCanonicalizeScheme(StringImpl::create(baseURL.scheme).get()), @"Invalid parameter: '%@' is not a valid URL scheme", baseURL.scheme);
     NSAssert1(![WKWebView handlesURLScheme:baseURL.scheme], @"Invalid parameter: '%@' is a URL scheme that WKWebView handles natively and cannot be used for extensions", baseURL.scheme);
-    NSAssert1(WebKit::WebExtensionMatchPattern::extensionSchemes().contains(baseURL.scheme), @"Invalid parameter: '%@' is not a registered custom scheme with WKWebExtensionMatchPattern", baseURL.scheme);
+    NSAssert1(WebKit::WebExtensionMatchPattern::extensionSchemes().contains(StringImpl::create(baseURL.scheme).get()), @"Invalid parameter: '%@' is not a registered custom scheme with WKWebExtensionMatchPattern", baseURL.scheme);
     NSAssert(!baseURL.path.length || [baseURL.path isEqualToString:@"/"], @"Invalid parameter: a URL with a path cannot be used");
 
     Ref { *_webExtensionContext }->setBaseURL(baseURL);
@@ -138,14 +138,14 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionContext, WebExtensionContext
 
 - (NSString *)uniqueIdentifier
 {
-    return _webExtensionContext->uniqueIdentifier().createNSString().autorelease();
+    return createNSString(_webExtensionContext->uniqueIdentifier()).autorelease();
 }
 
 - (void)setUniqueIdentifier:(NSString *)uniqueIdentifier
 {
     NSParameterAssert([uniqueIdentifier isKindOfClass:NSString.class]);
 
-    Ref { *_webExtensionContext }->setUniqueIdentifier(uniqueIdentifier);
+    Ref { *_webExtensionContext }->setUniqueIdentifier(StringImpl::create(uniqueIdentifier));
 }
 
 - (BOOL)isInspectable
@@ -160,12 +160,12 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionContext, WebExtensionContext
 
 - (NSString *)inspectionName
 {
-    return Ref { *_webExtensionContext }->backgroundWebViewInspectionName().createNSString().get();
+    return createNSString(Ref { *_webExtensionContext }->backgroundWebViewInspectionName()).get();
 }
 
 - (void)setInspectionName:(NSString *)name
 {
-    Ref { *_webExtensionContext }->setBackgroundWebViewInspectionName(name);
+    Ref { *_webExtensionContext }->setBackgroundWebViewInspectionName(StringImpl::create(name).get());
 }
 
 - (NSSet<NSString *> *)unsupportedAPIs
@@ -206,7 +206,7 @@ static inline NSDictionary<WKWebExtensionPermission, NSDate *> *toAPI(const WebK
     NSMutableDictionary<WKWebExtensionPermission, NSDate *> *result = [NSMutableDictionary dictionaryWithCapacity:permissions.size()];
 
     for (auto& entry : permissions)
-        [result setObject:WebKit::toAPI(entry.value) forKey:entry.key.createNSString().get()];
+        [result setObject:WebKit::toAPI(entry.value) forKey:createNSString(entry.key).get()];
 
     return [result copy];
 }
@@ -229,7 +229,7 @@ static inline WebKit::WebExtensionContext::PermissionsMap toImpl(NSDictionary<WK
     [permissions enumerateKeysAndObjectsUsingBlock:^(WKWebExtensionPermission permission, NSDate *date, BOOL *) {
         NSCParameterAssert([permission isKindOfClass:NSString.class]);
         NSCParameterAssert([date isKindOfClass:NSDate.class]);
-        result.set(permission, toExpirationTime(date));
+        result.set(StringImpl::create(permission), toExpirationTime(date));
     }];
 
     return result;
@@ -335,7 +335,7 @@ static inline NSSet<WKWebExtensionPermission> *toAPI(const WebKit::WebExtensionC
     NSMutableSet<WKWebExtensionPermission> *result = [NSMutableSet setWithCapacity:permissions.size()];
 
     for (auto& permission : permissions)
-        [result addObject:permission.createNSString().get()];
+        [result addObject:createNSString(permission).get()];
 
     return [result copy];
 }
@@ -375,7 +375,7 @@ static inline NSSet<WKWebExtensionMatchPattern *> *toAPI(const WebKit::WebExtens
     NSParameterAssert([permission isKindOfClass:NSString.class]);
 
     Ref extensionContext { *_webExtensionContext };
-    return extensionContext->hasPermission(permission, toImplNullable(tab, extensionContext.get()).get());
+    return extensionContext->hasPermission(StringImpl::create(permission).get(), toImplNullable(tab, extensionContext.get()).get());
 }
 
 - (BOOL)hasAccessToURL:(NSURL *)url
@@ -448,7 +448,7 @@ NODELETE static inline WebKit::WebExtensionContext::PermissionState toImpl(WKWeb
     NSParameterAssert([permission isKindOfClass:NSString.class]);
 
     Ref extensionContext { *_webExtensionContext };
-    return toAPI(extensionContext->permissionState(permission, toImplNullable(tab, extensionContext.get()).get()));
+    return toAPI(extensionContext->permissionState(StringImpl::create(permission).get(), toImplNullable(tab, extensionContext.get()).get()));
 }
 
 - (void)setPermissionStatus:(WKWebExtensionContextPermissionStatus)status forPermission:(WKWebExtensionPermission)permission
@@ -464,7 +464,7 @@ NODELETE static inline WebKit::WebExtensionContext::PermissionState toImpl(WKWeb
     NSParameterAssert(status == WKWebExtensionContextPermissionStatusDeniedExplicitly || status == WKWebExtensionContextPermissionStatusUnknown || status == WKWebExtensionContextPermissionStatusGrantedExplicitly);
     NSParameterAssert([permission isKindOfClass:NSString.class]);
 
-    Ref { *_webExtensionContext }->setPermissionState(toImpl(status), permission, toExpirationTime(expirationDate));
+    Ref { *_webExtensionContext }->setPermissionState(toImpl(status), StringImpl::create(permission).get(), toExpirationTime(expirationDate));
 }
 
 - (WKWebExtensionContextPermissionStatus)permissionStatusForURL:(NSURL *)url
@@ -870,19 +870,19 @@ NODELETE static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toI
 {
     NSParameterAssert([message isKindOfClass:NSString.class]);
 
-    String argumentJSON = encodeJSONString(argument, WebKit::JSONOptions::FragmentsAllowed);
-    protect(*_webExtensionContext)->sendTestMessage(message, argumentJSON);
+    RefPtr<StringImpl> argumentJSON = StringImpl::create(encodeJSONString(argument, WebKit::JSONOptions::FragmentsAllowed));
+    protect(*_webExtensionContext)->sendTestMessage(StringImpl::create(message).get(), argumentJSON);
 }
 
 - (void)_sendTestStartedWithArgument:(id)argument
 {
-    String argumentJSON = encodeJSONString(argument, WebKit::JSONOptions::FragmentsAllowed);
+    RefPtr<StringImpl> argumentJSON = StringImpl::create(encodeJSONString(argument, WebKit::JSONOptions::FragmentsAllowed));
     protect(*_webExtensionContext)->sendTestStarted(argumentJSON);
 }
 
 - (void)_sendTestFinishedWithArgument:(id)argument
 {
-    String argumentJSON = encodeJSONString(argument, WebKit::JSONOptions::FragmentsAllowed);
+    RefPtr<StringImpl> argumentJSON = StringImpl::create(encodeJSONString(argument, WebKit::JSONOptions::FragmentsAllowed));
     protect(*_webExtensionContext)->sendTestFinished(argumentJSON);
 }
 
@@ -922,21 +922,21 @@ NODELETE static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toI
 {
     NSParameterAssert([identifier isKindOfClass:NSString.class]);
 
-    protect(*_webExtensionContext)->fireNotificationsClickedEventIfNeeded(identifier);
+    protect(*_webExtensionContext)->fireNotificationsClickedEventIfNeeded(StringImpl::create(identifier).get());
 }
 
 - (void)_didClickButtonAtIndex:(NSUInteger)buttonIndex forNotificationWithIdentifier:(NSString *)identifier
 {
     NSParameterAssert([identifier isKindOfClass:NSString.class]);
 
-    protect(*_webExtensionContext)->fireNotificationsButtonClickedEventIfNeeded(identifier, buttonIndex);
+    protect(*_webExtensionContext)->fireNotificationsButtonClickedEventIfNeeded(StringImpl::create(identifier).get(), buttonIndex);
 }
 
 - (void)_didCloseNotificationWithIdentifier:(NSString *)identifier byUser:(BOOL)byUser
 {
     NSParameterAssert([identifier isKindOfClass:NSString.class]);
 
-    protect(*_webExtensionContext)->fireNotificationsClosedEventIfNeeded(identifier, byUser ? WebKit::WebExtensionContext::UserTriggered::Yes : WebKit::WebExtensionContext::UserTriggered::No);
+    protect(*_webExtensionContext)->fireNotificationsClosedEventIfNeeded(StringImpl::create(identifier).get(), byUser ? WebKit::WebExtensionContext::UserTriggered::Yes : WebKit::WebExtensionContext::UserTriggered::No);
 }
 #else
 - (void)_didClickNotificationWithIdentifier:(NSString *)identifier

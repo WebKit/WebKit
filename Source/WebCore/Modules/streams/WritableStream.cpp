@@ -124,9 +124,9 @@ WritableStream::State WritableStream::state() const
         return State::Errored;
 
     auto state = m_internalWritableStream->state(*globalObject);
-    if (state == "writable"_s)
+    if (equal(state, "writable"_s))
         return State::Writable;
-    if (state == "closed"_s)
+    if (equal(state, "closed"_s))
         return State::Closed;
     return State::Errored;
 }

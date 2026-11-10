@@ -45,22 +45,22 @@
 
 namespace WebCore {
 
-String MIMETypeFromUTI(const String& uti)
+RefPtr<StringImpl> MIMETypeFromUTI(StringImpl* uti)
 {
-    RetainPtr type = [UTType typeWithIdentifier:uti.createNSString().get()];
-    return type.get().preferredMIMEType;
+    RetainPtr type = [UTType typeWithIdentifier:createNSString(uti).get()];
+    return StringImpl::create(type.get().preferredMIMEType);
 }
 
-HashSet<String> RequiredMIMETypesFromUTI(const String& uti)
+HashSet<RefPtr<StringImpl>> RequiredMIMETypesFromUTI(StringImpl* uti)
 {
-    HashSet<String> mimeTypes;
+    HashSet<RefPtr<StringImpl>> mimeTypes;
 
     auto mainMIMEType = MIMETypeFromUTI(uti);
-    if (!mainMIMEType.isEmpty())
+    if (!isEmpty(mainMIMEType))
         mimeTypes.add(mainMIMEType);
 
     if (equalLettersIgnoringASCIICase(uti, "com.adobe.photoshop-image"_s))
-        mimeTypes.add("application/x-photoshop"_s);
+        mimeTypes.add("application/x-photoshop"_si);
 
     return mimeTypes;
 }
@@ -113,42 +113,42 @@ static NSString *UTIFromPotentiallyUnknownMIMEType(StringView mimeType)
     return typesMap.get(mimeType, nil);
 }
 
-struct UTIFromMIMETypeCachePolicy : TinyLRUCachePolicy<String, RetainPtr<NSString>> {
+struct UTIFromMIMETypeCachePolicy : TinyLRUCachePolicy<RefPtr<StringImpl>, RetainPtr<NSString>> {
 public:
-    static RetainPtr<NSString> createValueForKey(const String& mimeType)
+    static RetainPtr<NSString> createValueForKey(StringImpl* mimeType)
     {
         if (RetainPtr type = UTIFromPotentiallyUnknownMIMEType(mimeType))
             return type;
 
-        if (RetainPtr type = [UTType typeWithMIMEType:mimeType.createNSString().get()])
+        if (RetainPtr type = [UTType typeWithMIMEType:createNSString(mimeType).get()])
             return type.get().identifier;
 
         return @"";
     }
 
-    static String createKeyForStorage(const String& key) { return key.isolatedCopy(); }
+    static RefPtr<StringImpl> createKeyForStorage(StringImpl* key) { return isolatedCopy(key); }
 };
 
 static Lock cacheUTIFromMIMETypeLock;
-NODELETE static TinyLRUCache<String, RetainPtr<NSString>, 16, UTIFromMIMETypeCachePolicy>& cacheUTIFromMIMEType() WTF_REQUIRES_LOCK(cacheUTIFromMIMETypeLock)
+NODELETE static TinyLRUCache<RefPtr<StringImpl>, RetainPtr<NSString>, 16, UTIFromMIMETypeCachePolicy>& cacheUTIFromMIMEType() WTF_REQUIRES_LOCK(cacheUTIFromMIMETypeLock)
 {
-    static NeverDestroyed<TinyLRUCache<String, RetainPtr<NSString>, 16, UTIFromMIMETypeCachePolicy>> cache;
+    static NeverDestroyed<TinyLRUCache<RefPtr<StringImpl>, RetainPtr<NSString>, 16, UTIFromMIMETypeCachePolicy>> cache;
     return cache;
 }
 
-String UTIFromMIMEType(const String& mimeType)
+RefPtr<StringImpl> UTIFromMIMEType(StringImpl* mimeType)
 {
     Locker locker { cacheUTIFromMIMETypeLock };
-    return cacheUTIFromMIMEType().get(mimeType).get();
+    return StringImpl::create(cacheUTIFromMIMEType().get(mimeType).get());
 }
 
-bool isDeclaredUTI(const String& uti)
+bool isDeclaredUTI(StringImpl* uti)
 {
-    RetainPtr type = [UTType typeWithIdentifier:uti.createNSString().get()];
+    RetainPtr type = [UTType typeWithIdentifier:createNSString(uti).get()];
     return type.get().isDeclared;
 }
 
-void setImageSourceAllowableTypes(const Vector<String>& supportedImageTypes)
+void setImageSourceAllowableTypes(const Vector<RefPtr<StringImpl>>& supportedImageTypes)
 {
     // A WebPage might be reinitialized. So restrict ImageIO to the default and
     // the additional supported image formats only once.

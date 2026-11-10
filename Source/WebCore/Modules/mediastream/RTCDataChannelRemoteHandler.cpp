@@ -59,7 +59,7 @@ void RTCDataChannelRemoteHandler::didChangeReadyState(RTCDataChannelState state)
         client->didChangeReadyState(state);
 }
 
-void RTCDataChannelRemoteHandler::didReceiveStringData(String&& text)
+void RTCDataChannelRemoteHandler::didReceiveStringData(RefPtr<StringImpl>&& text)
 {
     if (RefPtr client = m_client.get())
         client->didReceiveStringData(text);

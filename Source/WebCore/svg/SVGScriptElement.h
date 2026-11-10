@@ -46,7 +46,7 @@ public:
 private:
     SVGScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
@@ -63,10 +63,10 @@ private:
     bool supportsFocus() const final { return false; }
 
     // ScriptElement
-    String sourceAttributeValue() const final { return href(); }
-    AtomString charsetAttributeValue() const final { return nullAtom(); }
-    String typeAttributeValue() const final { return getAttribute(SVGNames::typeAttr).string(); }
-    String languageAttributeValue() const final { return String(); }
+    RefPtr<StringImpl> sourceAttributeValue() const final { return href(); }
+    RefPtr<AtomStringImpl> charsetAttributeValue() const final { return nullAtom(); }
+    RefPtr<StringImpl> typeAttributeValue() const final { return getAttribute(SVGNames::typeAttr); }
+    RefPtr<StringImpl> languageAttributeValue() const final { return nullptr; }
     bool hasAsyncAttribute() const final;
     bool hasDeferAttribute() const final { return false; }
     bool hasNoModuleAttribute() const final { return false; }

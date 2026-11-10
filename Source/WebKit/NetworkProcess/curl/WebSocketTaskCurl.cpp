@@ -40,12 +40,12 @@
 namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketTask);
 
-Ref<WebSocketTask> WebSocketTask::create(NetworkSocketChannel& channel, WebPageProxyIdentifier webProxyPageID, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin)
+Ref<WebSocketTask> WebSocketTask::create(NetworkSocketChannel& channel, WebPageProxyIdentifier webProxyPageID, const WebCore::ResourceRequest& request, StringImpl* protocol, const WebCore::ClientOrigin& clientOrigin)
 {
     return adoptRef(*new WebSocketTask(channel, webProxyPageID, request, protocol, clientOrigin));
 }
 
-WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifier webProxyPageID, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin)
+WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifier webProxyPageID, const WebCore::ResourceRequest& request, StringImpl* protocol, const WebCore::ClientOrigin& clientOrigin)
     : m_channel(channel)
     , m_webProxyPageID(webProxyPageID)
     , m_request(request.isolatedCopy())
@@ -87,7 +87,7 @@ void WebSocketTask::sendData(std::span<const uint8_t> data, CompletionHandler<vo
     callback();
 }
 
-void WebSocketTask::close(int32_t code, const String& reason)
+void WebSocketTask::close(int32_t code, StringImpl* reason)
 {
     if (m_state == State::Closed)
         return;
@@ -127,7 +127,7 @@ void WebSocketTask::didOpen(WebCore::CurlStreamID)
     m_handshake->addExtensionProcessor(m_deflateFramer.createExtensionProcessor());
     m_handshake->setClientHandshakeRequestHeaders(m_request.httpHeaderFields());
 
-    String cookieHeaderField;
+    RefPtr<StringImpl> cookieHeaderField;
     if (m_request.allowCookies()) {
         if (CheckedPtr storageSession = networkSession() ? networkSession()->networkStorageSession() : nullptr) {
             auto includeSecureCookies = m_request.url().protocolIs("wss"_s) ? WebCore::IncludeSecureCookies::Yes : WebCore::IncludeSecureCookies::No;
@@ -136,8 +136,8 @@ void WebSocketTask::didOpen(WebCore::CurlStreamID)
     }
 
     UTF8CString cookieHeader;
-    if (!cookieHeaderField.isEmpty())
-        cookieHeader = makeString("Cookie: "_s, cookieHeaderField, "\r\n"_s).utf8();
+    if (!isEmpty(cookieHeaderField))
+        cookieHeader = utf8(makeString("Cookie: "_s, cookieHeaderField, "\r\n"_s));
 
     auto originalMessage = m_handshake->clientHandshakeMessage();
     auto handshakeMessageLength = originalMessage.length() + cookieHeader.length();
@@ -181,7 +181,7 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
 
     auto validateResult = validateOpeningHandshake();
     if (!validateResult.has_value()) {
-        didFail(String(validateResult.error()));
+        didFail(RefPtr { validateResult.error() });
         return;
     }
     if (!validateResult.value())
@@ -195,8 +195,8 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
         switch (opCode) {
         case WebCore::WebSocketFrame::OpCodeText:
             {
-                String message = data.size() ? String::fromUTF8(data) : emptyString();
-                if (!message.isNull())
+                RefPtr<StringImpl> message = data.size() ? StringImpl::fromUTF8(data) : emptyString();
+                if (message)
                     protect(m_channel)->didReceiveText(message);
                 else
                     didFail("Could not decode a text frame as UTF-8."_s);
@@ -227,7 +227,7 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
                 }
             }
             if (data.size() >= 3)
-                m_closeEventReason = String::fromUTF8({ &data[2], data.size() - 2 });
+                m_closeEventReason = StringImpl::fromUTF8({ &data[2], data.size() - 2 });
             else
                 m_closeEventReason = emptyString();
 
@@ -249,7 +249,7 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
     });
 
     if (frameResult) {
-        didFail(String(*frameResult));
+        didFail(RefPtr { *frameResult });
         return;
     }
 }
@@ -269,7 +269,7 @@ void WebSocketTask::didFail(WebCore::CurlStreamID, CURLcode errorCode, WebCore::
     didFail(WTF::move(reason));
 }
 
-void WebSocketTask::tryServerTrustEvaluation(WebCore::AuthenticationChallenge&& challenge, String&& errorReason)
+void WebSocketTask::tryServerTrustEvaluation(WebCore::AuthenticationChallenge&& challenge, RefPtr<StringImpl>&& errorReason)
 {
     networkSession()->didReceiveChallenge(*this, WTF::move(challenge), [this, errorReason = WTF::move(errorReason)](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {
         if (disposition == AuthenticationChallengeDisposition::UseCredential && !credential.isEmpty()) {
@@ -299,7 +299,7 @@ void WebSocketTask::skipReceivedBuffer(size_t length)
     m_receiveBuffer.shrink(m_receiveBuffer.size() - length);
 }
 
-std::expected<bool, String> WebSocketTask::validateOpeningHandshake()
+std::expected<bool, RefPtr<StringImpl>> WebSocketTask::validateOpeningHandshake()
 {
     if (m_didCompleteOpeningHandshake)
         return true;
@@ -326,7 +326,7 @@ std::expected<bool, String> WebSocketTask::validateOpeningHandshake()
     }
 
     auto serverSetCookie = m_handshake->serverSetCookie();
-    if (!serverSetCookie.isEmpty()) {
+    if (!isEmpty(serverSetCookie)) {
         if (CheckedPtr storageSession = networkSession() ? networkSession()->networkStorageSession() : nullptr)
             storageSession->setCookiesFromHTTPResponse(m_request.firstPartyForCookies(), m_request.url(), serverSetCookie);
     }
@@ -342,7 +342,7 @@ std::expected<bool, String> WebSocketTask::validateOpeningHandshake()
     return true;
 }
 
-std::optional<String> WebSocketTask::receiveFrames(NOESCAPE const Function<void(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t>)>& callback)
+std::optional<RefPtr<StringImpl>> WebSocketTask::receiveFrames(NOESCAPE const Function<void(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t>)>& callback)
 {
     if (m_state != State::Opened && m_state != State::Closing)
         return std::nullopt;
@@ -350,7 +350,7 @@ std::optional<String> WebSocketTask::receiveFrames(NOESCAPE const Function<void(
     while (m_receiveBuffer.size() && !m_shouldDiscardReceivedData && !m_receivedClosingHandshake) {
         WebCore::WebSocketFrame frame;
         const uint8_t* frameEnd;
-        String errorString;
+        RefPtr<StringImpl> errorString;
         auto parseResult = WebCore::WebSocketFrame::parseFrame(m_receiveBuffer.mutableSpan(), frame, frameEnd, errorString);
         if (parseResult == WebCore::WebSocketFrame::FrameIncomplete)
             return std::nullopt;
@@ -387,7 +387,7 @@ std::optional<String> WebSocketTask::receiveFrames(NOESCAPE const Function<void(
     return std::nullopt;
 }
 
-std::optional<String> WebSocketTask::validateFrame(const WebCore::WebSocketFrame& frame)
+std::optional<RefPtr<StringImpl>> WebSocketTask::validateFrame(const WebCore::WebSocketFrame& frame)
 {
     if (WebCore::WebSocketFrame::isReservedOpCode(frame.opCode))
         return makeString("Unrecognized frame opcode: "_s, static_cast<unsigned>(frame.opCode));
@@ -419,7 +419,7 @@ std::optional<String> WebSocketTask::validateFrame(const WebCore::WebSocketFrame
     return std::nullopt;
 }
 
-void WebSocketTask::sendClosingHandshakeIfNeeded(int32_t code, const String& reason)
+void WebSocketTask::sendClosingHandshakeIfNeeded(int32_t code, StringImpl* reason)
 {
     if (m_didSendClosingHandshake)
         return;
@@ -430,7 +430,7 @@ void WebSocketTask::sendClosingHandshakeIfNeeded(int32_t code, const String& rea
         unsigned char lowByte = static_cast<unsigned short>(code);
         buf.append(static_cast<char>(highByte));
         buf.append(static_cast<char>(lowByte));
-        buf.append(reason.utf8().span());
+        buf.append(utf8(reason).span());
     }
 
     if (!sendFrame(WebCore::WebSocketFrame::OpCodeClose, buf.span()))
@@ -463,7 +463,7 @@ bool WebSocketTask::sendFrame(WebCore::WebSocketFrame::OpCode opCode, std::span<
     return true;
 }
 
-void WebSocketTask::didFail(String&& reason)
+void WebSocketTask::didFail(RefPtr<StringImpl>&& reason)
 {
     if (m_receivedDidFail)
         return;
@@ -483,7 +483,7 @@ void WebSocketTask::didFail(String&& reason)
     didClose(WebCore::ThreadableWebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure, { });
 }
 
-void WebSocketTask::didClose(int32_t code, const String& reason)
+void WebSocketTask::didClose(int32_t code, StringImpl* reason)
 {
     destructStream();
 
@@ -492,7 +492,7 @@ void WebSocketTask::didClose(int32_t code, const String& reason)
 
     m_state = State::Closed;
 
-    callOnMainRunLoop([weakThis = ThreadSafeWeakPtr { *this }, code, reason] {
+    callOnMainRunLoop([weakThis = ThreadSafeWeakPtr { *this }, code, reason = RefPtr { reason }] {
         if (RefPtr protectedThis = weakThis.get())
             protect(protectedThis->m_channel)->didClose(code, reason);
     });

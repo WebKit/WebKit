@@ -44,7 +44,7 @@ public:
 
     const CSS::BasicShape& shape() const LIFETIME_BOUND { return m_shape; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSBasicShapeValue&) const;
 
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;

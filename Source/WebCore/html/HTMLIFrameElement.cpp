@@ -99,7 +99,7 @@ bool HTMLIFrameElement::hasPresentationalHintsForAttribute(const QualifiedName& 
     return HTMLFrameElementBase::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLIFrameElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLIFrameElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     switch (name.nodeName()) {
     case AttributeNames::widthAttr:
@@ -125,16 +125,16 @@ void HTMLIFrameElement::collectPresentationalHintsForAttribute(const QualifiedNa
     }
 }
 
-void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLIFrameElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::sandboxAttr: {
         if (m_sandbox)
             m_sandbox->associatedAttributeValueChanged();
 
-        String invalidTokens;
-        setSandboxFlags(newValue.isNull() ? SandboxFlags { } : SecurityContext::parseSandboxPolicy(newValue, invalidTokens));
-        if (!invalidTokens.isNull())
+        RefPtr<StringImpl> invalidTokens;
+        setSandboxFlags(!newValue ? SandboxFlags { } : SecurityContext::parseSandboxPolicy(newValue, invalidTokens));
+        if (invalidTokens)
             protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Error, makeString("Error while parsing the 'sandbox' attribute: "_s, invalidTokens));
         break;
     }
@@ -169,7 +169,7 @@ RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(Style::Compute
     return createRenderer<RenderIFrame>(*this, WTF::move(style));
 }
 
-String HTMLIFrameElement::referrerPolicyForBindings() const
+RefPtr<StringImpl> HTMLIFrameElement::referrerPolicyForBindings() const
 {
     return referrerPolicyToString(referrerPolicy());
 }
@@ -181,19 +181,19 @@ ReferrerPolicy HTMLIFrameElement::referrerPolicy() const
     return referrerPolicyFromAttribute();
 }
 
-String HTMLIFrameElement::srcdoc() const
+RefPtr<StringImpl> HTMLIFrameElement::srcdoc() const
 {
     return attributeWithoutSynchronization(srcdocAttr);
 }
 
-ExceptionOr<void> HTMLIFrameElement::setSrcdoc(Variant<Ref<TrustedHTML>, String>&& value, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility)
+ExceptionOr<void> HTMLIFrameElement::setSrcdoc(Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&& value, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility)
 {
-    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(value), "HTMLIFrameElement srcdoc"_s);
+    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(value), "HTMLIFrameElement srcdoc"_si);
 
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
 
-    setAttributeWithoutSynchronization(srcdocAttr, AtomString { stringValueHolder.releaseReturnValue() });
+    setAttributeWithoutSynchronization(srcdocAttr, AtomStringImpl::add(stringValueHolder.releaseReturnValue()).get());
     m_srcdocSessionHistoryVisibility = sessionHistoryVisibility;
     return { };
 }
@@ -220,14 +220,14 @@ bool HTMLIFrameElement::shouldLoadFrameLazily()
     auto referrerPolicy = referrerPolicyFromAttribute();
     if (!m_isLazyLoading) {
         if (isFrameLazyLoadable(*this, completeURL)) {
-            m_deferredFrameURL = AtomString { completeURL.string() };
+            m_deferredFrameURL = AtomStringImpl::add(completeURL.string());
             m_deferredReferrerPolicy = referrerPolicy;
             m_isLazyLoading = true;
             LazyLoadElementObserver::observe(*this);
             return true;
         }
     } else {
-        m_deferredFrameURL = AtomString { completeURL.string() };
+        m_deferredFrameURL = AtomStringImpl::add(completeURL.string());
         m_deferredReferrerPolicy = referrerPolicy;
     }
     return false;
@@ -240,7 +240,7 @@ bool HTMLIFrameElement::isLazyLoadObserverActive() const
 
 void HTMLIFrameElement::loadDeferredFrame()
 {
-    AtomString currentURL = frameURL();
+    RefPtr<AtomStringImpl> currentURL = frameURL();
     setFrameURL(m_deferredFrameURL);
     if (isConnected())
         openURL();

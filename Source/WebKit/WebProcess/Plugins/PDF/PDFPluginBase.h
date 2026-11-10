@@ -125,7 +125,7 @@ struct PDFPluginTextExtractionLink {
 };
 
 struct PDFPluginTextExtractionContent {
-    String text;
+    RefPtr<StringImpl> text;
     Vector<PDFPluginTextExtractionLink> links;
 };
 
@@ -201,33 +201,33 @@ public:
     virtual bool handleMouseLeaveEvent(const WebMouseEvent&) = 0;
     virtual bool handleContextMenuEvent(const WebMouseEvent&) = 0;
     virtual bool handleKeyboardEvent(const WebKeyboardEvent&) = 0;
-    virtual bool handleEditingCommand(const String& commandName, const String& argument) = 0;
-    virtual bool isEditingCommandEnabled(const String& commandName) = 0;
+    virtual bool handleEditingCommand(StringImpl* commandName, StringImpl* argument) = 0;
+    virtual bool isEditingCommandEnabled(StringImpl* commandName) = 0;
 
-    virtual String fullDocumentString() const { return { }; }
+    virtual RefPtr<StringImpl> fullDocumentString() const { return { }; }
     virtual PDFPluginTextExtractionContent textExtractionContent() const { return { }; }
-    virtual String selectionString() const = 0;
-    virtual std::pair<String, String> stringsBeforeAndAfterSelection(int /* characterCount */) const { return { }; }
+    virtual RefPtr<StringImpl> selectionString() const = 0;
+    virtual std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>> stringsBeforeAndAfterSelection(int /* characterCount */) const { return { }; }
     virtual bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const = 0;
     virtual WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const = 0;
 
-    unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount);
-    virtual bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) = 0;
+    unsigned countFindMatches(StringImpl* target, WebCore::FindOptions, unsigned maxMatchCount);
+    virtual bool findString(StringImpl* target, WebCore::FindOptions, unsigned maxMatchCount) = 0;
     virtual Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const WebCore::IntRect&) const { return { }; }
     virtual bool drawsFindOverlay() const = 0;
     virtual RefPtr<WebCore::TextIndicator> textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition) { return { }; }
     virtual WebCore::DictionaryPopupInfo dictionaryPopupInfoForSelection(PDFSelection *, WebCore::TextIndicatorPresentationTransition) = 0;
 
-    virtual Vector<WebFoundTextRange::PDFData> findTextMatches(const String& target, WebCore::FindOptions) = 0;
+    virtual Vector<WebFoundTextRange::PDFData> findTextMatches(StringImpl* target, WebCore::FindOptions) = 0;
     virtual Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const Vector<WebFoundTextRange::PDFData>&, const WebCore::IntRect&) = 0;
     virtual RefPtr<WebCore::TextIndicator> textIndicatorForTextMatch(const WebFoundTextRange::PDFData&, WebCore::TextIndicatorPresentationTransition) { return { }; }
     virtual void scrollToRevealTextMatch(const WebFoundTextRange::PDFData&) { }
 
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
-    void performWebSearch(const String& query);
+    void performWebSearch(StringImpl* query);
 
     bool performImmediateActionHitTestAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&);
-    virtual std::pair<String, RetainPtr<PDFSelection>> textForImmediateActionHitTestAtPoint(const WebCore::FloatPoint&, WebHitTestResultData&) = 0;
+    virtual std::pair<RefPtr<StringImpl>, RetainPtr<PDFSelection>> textForImmediateActionHitTestAtPoint(const WebCore::FloatPoint&, WebHitTestResultData&) = 0;
 
     virtual id accessibilityHitTest(const WebCore::IntPoint&) const = 0;
     virtual id accessibilityObject() const = 0;
@@ -296,9 +296,9 @@ public:
 
     virtual void toggleAccessibilityDisplayMode() { }
 
-    void save(CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&&);
+    void save(CompletionHandler<void(StringImpl*, const URL&, std::span<const uint8_t>)>&&);
     void updateHUDLocation();
-    void openWithPreview(CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&&);
+    void openWithPreview(CompletionHandler<void(StringImpl*, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&&);
 #endif
 
     void notifyCursorChanged(WebCore::PlatformCursorType);
@@ -324,14 +324,14 @@ public:
     virtual void focusPreviousAnnotation() = 0;
 
     virtual Vector<WebCore::FloatRect> annotationRectsForTesting() const { return { }; }
-    virtual void setTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, const String& value) { }
-    virtual void setPDFDisplayModeForTesting(const String&) { }
-    virtual Vector<String> contextMenuItemTitlesForTesting(const WebCore::IntPoint&) const { return { }; }
+    virtual void setTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, StringImpl* value) { }
+    virtual void setPDFDisplayModeForTesting(StringImpl*) { }
+    virtual Vector<RefPtr<StringImpl>> contextMenuItemTitlesForTesting(const WebCore::IntPoint&) const { return { }; }
     void registerPDFTest(RefPtr<WebCore::VoidCallback>&&);
 
     void navigateToURL(const URL&, std::optional<WebCore::PlatformMouseEvent>&& = std::nullopt);
 
-    virtual void attemptToUnlockPDF(const String& password) = 0;
+    virtual void attemptToUnlockPDF(StringImpl* password) = 0;
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     bool incrementalPDFLoadingEnabled() const { return m_incrementalPDFLoadingEnabled; }
@@ -408,7 +408,7 @@ private:
 
 #if !LOG_DISABLED
     std::optional<uint64_t> streamedBytesForDebugLogging() const;
-    void incrementalLoaderLogWithBytes(const String&, std::optional<uint64_t>&& streamedBytes);
+    void incrementalLoaderLogWithBytes(StringImpl*, std::optional<uint64_t>&& streamedBytes);
 #endif
 
 protected:
@@ -470,7 +470,7 @@ protected:
     WebCore::IntRect viewRelativeHorizontalScrollbarRect() const;
     WebCore::IntRect viewRelativeScrollCornerRect() const;
 
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
     // Scrolling, but not ScrollableArea:
     virtual void didChangeScrollOffset() = 0;
@@ -492,12 +492,12 @@ protected:
 #endif
 
 #if !LOG_DISABLED
-    void incrementalLoaderLog(const String&);
+    void incrementalLoaderLog(StringImpl*);
 #endif
 
     virtual void teardownPasswordEntryForm() = 0;
 
-    String annotationStyle() const;
+    RefPtr<StringImpl> annotationStyle() const;
 
     NODELETE static NSString *htmlPasteboardType();
     NODELETE static NSString *rtfPasteboardType();
@@ -505,7 +505,7 @@ protected:
     NODELETE static NSString *urlPasteboardType();
 
 #if PLATFORM(MAC)
-    void writeStringToFindPasteboard(const String&) const;
+    void writeStringToFindPasteboard(StringImpl*) const;
 #endif
 
     NODELETE std::optional<WebCore::PageIdentifier> pageIdentifier() const;
@@ -529,9 +529,9 @@ protected:
 
     const RetainPtr<WKAccessibilityPDFDocumentObject> m_accessibilityDocumentObject;
 
-    String m_suggestedFilename;
+    RefPtr<StringImpl> m_suggestedFilename;
 
-    String m_lastFindString;
+    RefPtr<StringImpl> m_lastFindString;
 
     WebCore::IntSize m_size;
     WebCore::AffineTransform m_rootViewToPluginTransform;
@@ -562,8 +562,8 @@ protected:
     RefPtr<WebCore::VoidCallback> m_pdfTestCallback;
 
 #if ENABLE(PDF_HUD)
-    CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)> m_pendingSaveCompletionHandler;
-    CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)> m_pendingOpenCompletionHandler;
+    CompletionHandler<void(StringImpl*, const URL&, std::span<const uint8_t>)> m_pendingSaveCompletionHandler;
+    CompletionHandler<void(StringImpl*, std::optional<FrameInfoData>&&, std::span<const uint8_t>)> m_pendingOpenCompletionHandler;
 #endif
 
     mutable std::optional<bool> m_cachedIsFullFramePlugin;

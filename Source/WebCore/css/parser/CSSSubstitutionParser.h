@@ -47,8 +47,8 @@ class CSSSubstitutionParser {
 public:
     static bool containsSubstitutionFunctions(CSSParserTokenRange, const CSSParserContext&);
 
-    static RefPtr<CSSCustomPropertyValue> parseDeclarationValue(const AtomString&, CSSParserTokenRange, const CSSParserContext&, const CSSNamespacePrefixMap& = { });
-    static RefPtr<const Style::CustomProperty> parseInitialValueForUniversalSyntax(const AtomString&, CSSParserTokenRange);
+    static RefPtr<CSSCustomPropertyValue> parseDeclarationValue(AtomStringImpl*, CSSParserTokenRange, const CSSParserContext&, const CSSNamespacePrefixMap& = { });
+    static RefPtr<const Style::CustomProperty> parseInitialValueForUniversalSyntax(AtomStringImpl*, CSSParserTokenRange);
 
     NODELETE static bool isValidCustomPropertyName(const CSSParserToken&);
 };

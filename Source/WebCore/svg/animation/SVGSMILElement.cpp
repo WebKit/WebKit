@@ -67,9 +67,9 @@ static SMILEventSender& smilEventSenderSingleton()
     return sender;
 }
 
-static const AtomString& indefiniteAtom()
+static const RefPtr<AtomStringImpl>& indefiniteAtom()
 {
-    static MainThreadNeverDestroyed<const AtomString> indefiniteValue("indefinite"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> indefiniteValue("indefinite"_s);
     return indefiniteValue;
 }
 
@@ -123,7 +123,7 @@ void ConditionEventListener::handleEvent(ScriptExecutionContext&, Event& event)
     animation->addInstanceTime(m_condition->m_beginOrEnd, animation->elapsed() + m_condition->m_offset);
 }
 
-SVGSMILElement::Condition::Condition(Type type, BeginOrEnd beginOrEnd, const String& baseID, const AtomString& name, SMILTime offset, int repeats)
+SVGSMILElement::Condition::Condition(Type type, BeginOrEnd beginOrEnd, StringImpl* baseID, AtomStringImpl* name, SMILTime offset, int repeats)
     : m_type(type)
     , m_beginOrEnd(beginOrEnd)
     , m_baseID(baseID)
@@ -169,13 +169,13 @@ void SVGSMILElement::buildPendingResource()
     }
 
     Ref treeScopeForReferences = treeScopeForSVGReferences();
-    AtomString id;
+    RefPtr<AtomStringImpl> id;
     RefPtr<Element> target;
     auto& href = getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
-    if (href.isEmpty())
+    if (isEmpty(href))
         target = parentElement();
     else {
-        auto result = SVGURIReference::targetElementFromIRIString(href.string(), treeScopeForReferences);
+        auto result = SVGURIReference::targetElementFromIRIString(href, treeScopeForReferences);
         target = WTF::move(result.element);
         id = WTF::move(result.identifier);
     }
@@ -189,7 +189,7 @@ void SVGSMILElement::buildPendingResource()
         if (treeScopeForReferences->isPendingSVGResource(*this, id))
             return;
 
-        if (!id.isEmpty()) {
+        if (!isEmpty(id)) {
             treeScopeForReferences->addPendingSVGResource(id, *this);
             ASSERT(hasPendingResources());
         }
@@ -213,11 +213,11 @@ inline QualifiedName SVGSMILElement::constructAttributeName() const
 
     auto [prefix, localName] = parseResult.releaseReturnValue();
 
-    if (prefix.isNull())
+    if (!prefix)
         return { nullAtom(), localName, nullAtom() };
 
     auto namespaceURI = lookupNamespaceURI(prefix);
-    if (namespaceURI.isEmpty())
+    if (isEmpty(namespaceURI))
         return anyQName();
 
     return { nullAtom(), localName, namespaceURI };
@@ -428,7 +428,7 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
     if (nameView.isEmpty())
         return false;
 
-    AtomString nameString;
+    RefPtr<AtomStringImpl> nameString;
     Condition::Type type;
     int repeats = -1;
     if (nameView.startsWith("repeat("_s) && nameView.endsWith(')')) {
@@ -456,8 +456,8 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
     
     // Remove backslash escapes from the element ID (e.g., "my\.anim" → "my.anim").
     auto resolvedBaseID = baseID.toString();
-    if (resolvedBaseID.contains('\\'))
-        resolvedBaseID = resolvedBaseID.impl()->replace("\\."_s, "."_s);
+    if (WTF::contains(resolvedBaseID, '\\'))
+        resolvedBaseID = resolvedBaseID.get()->replace("\\."_s, "."_s);
 
     m_conditions.append(Condition(type, beginOrEnd, WTF::move(resolvedBaseID), WTF::move(nameString), offset, repeats));
 
@@ -502,7 +502,7 @@ bool SVGSMILElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGSMILElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGSMILElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
@@ -589,7 +589,7 @@ void SVGSMILElement::svgAttributeChanged(const QualifiedName& attrName)
 
 inline RefPtr<Element> SVGSMILElement::eventBaseFor(const Condition& condition)
 {
-    return condition.m_baseID.isEmpty() ? RefPtr<Element> { targetElement() } : protect(treeScope())->getElementById(condition.m_baseID);
+    return isEmpty(condition.m_baseID) ? RefPtr<Element> { targetElement() } : protect(treeScope())->getElementById(condition.m_baseID);
 }
 
 void SVGSMILElement::connectConditions()
@@ -607,7 +607,7 @@ void SVGSMILElement::connectConditions()
             condition.m_eventListener = ConditionEventListener::create(this, &condition);
             eventBase->addEventListener(condition.m_name, *condition.m_eventListener);
         } else if (condition.m_type == Condition::Syncbase) {
-            ASSERT(!condition.m_baseID.isEmpty());
+            ASSERT(!isEmpty(condition.m_baseID));
             condition.m_syncbase = protect(treeScope())->getElementById(condition.m_baseID);
             if (!condition.m_syncbase)
                 continue;
@@ -699,9 +699,9 @@ bool SVGSMILElement::isFrozen() const
     
 SVGSMILElement::Restart SVGSMILElement::restart() const
 {    
-    static MainThreadNeverDestroyed<const AtomString> never("never"_s);
-    static MainThreadNeverDestroyed<const AtomString> whenNotActive("whenNotActive"_s);
-    const AtomString& value = attributeWithoutSynchronization(SVGNames::restartAttr);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> never("never"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> whenNotActive("whenNotActive"_s);
+    const RefPtr<AtomStringImpl>& value = attributeWithoutSynchronization(SVGNames::restartAttr);
     if (value == never)
         return RestartNever;
     if (value == whenNotActive)
@@ -711,8 +711,8 @@ SVGSMILElement::Restart SVGSMILElement::restart() const
     
 SVGSMILElement::FillMode SVGSMILElement::fill() const
 {   
-    static MainThreadNeverDestroyed<const AtomString> freeze("freeze"_s);
-    const AtomString& value = attributeWithoutSynchronization(SVGNames::fillAttr);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> freeze("freeze"_s);
+    const RefPtr<AtomStringImpl>& value = attributeWithoutSynchronization(SVGNames::fillAttr);
     return value == freeze ? FillFreeze : FillRemove;
 }
     
@@ -720,7 +720,7 @@ SMILTime SVGSMILElement::dur() const
 {   
     if (m_cachedDur != invalidCachedTime)
         return m_cachedDur;
-    const AtomString& value = attributeWithoutSynchronization(SVGNames::durAttr);
+    const RefPtr<AtomStringImpl>& value = attributeWithoutSynchronization(SVGNames::durAttr);
     SMILTime clockValue = parseClockValue(value);
     return m_cachedDur = clockValue <= 0 ? SMILTime::unresolved() : clockValue;
 }
@@ -729,7 +729,7 @@ SMILTime SVGSMILElement::repeatDur() const
 {    
     if (m_cachedRepeatDur != invalidCachedTime)
         return m_cachedRepeatDur;
-    const AtomString& value = attributeWithoutSynchronization(SVGNames::repeatDurAttr);
+    const RefPtr<AtomStringImpl>& value = attributeWithoutSynchronization(SVGNames::repeatDurAttr);
     SMILTime clockValue = parseClockValue(value);
     m_cachedRepeatDur = clockValue <= 0 ? SMILTime::unresolved() : clockValue;
     return m_cachedRepeatDur;
@@ -740,14 +740,14 @@ SMILTime SVGSMILElement::repeatCount() const
 {    
     if (m_cachedRepeatCount != invalidCachedTime)
         return m_cachedRepeatCount;
-    const AtomString& value = attributeWithoutSynchronization(SVGNames::repeatCountAttr);
-    if (value.isNull())
+    const RefPtr<AtomStringImpl>& value = attributeWithoutSynchronization(SVGNames::repeatCountAttr);
+    if (!value)
         return SMILTime::unresolved();
 
     if (value == indefiniteAtom())
         return SMILTime::indefinite();
     bool ok;
-    double result = value.string().toDouble(&ok);
+    double result = toDouble(value, &ok);
     return m_cachedRepeatCount = (ok && result > 0 && std::isfinite(result)) ? result : SMILTime::unresolved();
 }
 
@@ -755,7 +755,7 @@ SMILTime SVGSMILElement::maxValue() const
 {    
     if (m_cachedMax != invalidCachedTime)
         return m_cachedMax;
-    const AtomString& value = attributeWithoutSynchronization(SVGNames::maxAttr);
+    const RefPtr<AtomStringImpl>& value = attributeWithoutSynchronization(SVGNames::maxAttr);
     SMILTime result = parseClockValue(value);
     return m_cachedMax = (result.isUnresolved() || result <= 0) ? SMILTime::indefinite() : result;
 }
@@ -764,7 +764,7 @@ SMILTime SVGSMILElement::minValue() const
 {    
     if (m_cachedMin != invalidCachedTime)
         return m_cachedMin;
-    const AtomString& value = attributeWithoutSynchronization(SVGNames::minAttr);
+    const RefPtr<AtomStringImpl>& value = attributeWithoutSynchronization(SVGNames::minAttr);
     SMILTime result = parseClockValue(value);
     return m_cachedMin = (result.isUnresolved() || result < 0) ? 0 : result;
 }
@@ -1296,10 +1296,10 @@ void SVGSMILElement::createInstanceTimesFromSyncbase(SVGSMILElement* syncbase)
     // the associated times instead of creating new ones.
     for (auto& condition : m_conditions) {
         if (condition.m_type == Condition::Syncbase && condition.m_syncbase == syncbase) {
-            ASSERT(condition.m_name == "begin"_s || condition.m_name == "end"_s);
+            ASSERT(equal(condition.m_name, "begin"_s) || equal(condition.m_name, "end"_s));
             // No nested time containers in SVG, no need for crazy time space conversions. Phew!
             SMILTime time = 0;
-            if (condition.m_name == "begin"_s)
+            if (equal(condition.m_name, "begin"_s))
                 time = syncbase->m_intervalBegin + condition.m_offset;
             else
                 time = syncbase->m_intervalEnd + condition.m_offset;
@@ -1333,7 +1333,7 @@ void SVGSMILElement::endedActiveInterval()
     clearTimesWithDynamicOrigins(m_endTimes);
 }
 
-void SVGSMILElement::dispatchPendingEvent(SMILEventSender* eventSender, const AtomString& eventType)
+void SVGSMILElement::dispatchPendingEvent(SMILEventSender* eventSender, AtomStringImpl* eventType)
 {
     ASSERT_UNUSED(eventSender, eventSender == &smilEventSenderSingleton());
     if (eventType == eventNames().repeatEventEvent && !m_pendingRepeatIterations.isEmpty())

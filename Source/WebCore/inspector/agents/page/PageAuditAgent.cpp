@@ -74,9 +74,9 @@ InjectedScript PageAuditAgent::injectedScriptForEval(Inspector::Protocol::ErrorS
     InjectedScript injectedScript = injectedScriptForEval(WTF::move(executionContextId));
     if (injectedScript.hasNoValue()) {
         if (executionContextId)
-            errorString = "Missing injected script for given executionContextId"_s;
+            errorString = "Missing injected script for given executionContextId"_si;
         else
-            errorString = "Internal error: main world execution context not found"_s;
+            errorString = "Internal error: main world execution context not found"_si;
     }
     return injectedScript;
 }

@@ -270,7 +270,7 @@ void WebChromeClient::focusedFrameChanged(WebCore::Frame*)
 {
 }
 
-RefPtr<WebCore::Page> WebChromeClient::createWindow(WebCore::LocalFrame& frame, const String& openedMainFrameName, const WebCore::WindowFeatures& features, const WebCore::NavigationAction&)
+RefPtr<WebCore::Page> WebChromeClient::createWindow(WebCore::LocalFrame& frame, StringImpl* openedMainFrameName, const WebCore::WindowFeatures& features, const WebCore::NavigationAction&)
 {
     RetainPtr webView = m_webView;
     RetainPtr<id> delegate = [webView UIDelegate];
@@ -339,7 +339,7 @@ RefPtr<WebCore::Page> WebChromeClient::createWindow(WebCore::LocalFrame& frame, 
         auto effectiveReferrerPolicy = frame.document()->referrerPolicy();
         mainFrame->updateReferrerPolicy(effectiveReferrerPolicy);
         newPage->chrome().show();
-        mainFrame->tree().setSpecifiedName(AtomString(openedMainFrameName));
+        mainFrame->tree().setSpecifiedName(AtomStringImpl::add(openedMainFrameName).get());
     }
 
     return newPage;
@@ -432,7 +432,7 @@ inline static NSString *stringForMessageLevel(MessageLevel level)
     return @"";
 }
 
-void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceURL)
+void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, StringImpl* message, unsigned lineNumber, unsigned columnNumber, StringImpl* sourceURL)
 {
     RetainPtr webView = m_webView;
 #if !PLATFORM(IOS_FAMILY)
@@ -463,10 +463,10 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel lev
 
     RetainPtr messageSource = stringForMessageSource(source);
     RetainPtr dictionary = @{
-        @"message": message.createNSString().get(),
+        @"message": createNSString(message).get(),
         @"lineNumber": @(lineNumber),
         @"columnNumber": @(columnNumber),
-        @"sourceURL": sourceURL.createNSString().get(),
+        @"sourceURL": createNSString(sourceURL).get(),
         @"MessageSource": messageSource.get(),
         @"MessageLevel": stringForMessageLevel(level),
     };
@@ -487,9 +487,9 @@ bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
     return [[protect(m_webView) UIDelegate] respondsToSelector:@selector(webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:)];
 }
 
-bool WebChromeClient::runBeforeUnloadConfirmPanel(String&& message, WebCore::LocalFrame& frame)
+bool WebChromeClient::runBeforeUnloadConfirmPanel(RefPtr<StringImpl>&& message, WebCore::LocalFrame& frame)
 {
-    return CallUIDelegateReturningBoolean(true, protect(m_webView), @selector(webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:), message.createNSString().get(), protect(kit(&frame)));
+    return CallUIDelegateReturningBoolean(true, protect(m_webView), @selector(webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:), createNSString(message).get(), protect(kit(&frame)));
 }
 
 void WebChromeClient::closeWindow()
@@ -513,61 +513,61 @@ void WebChromeClient::closeWindow()
     [webView _closeWindow];
 }
 
-void WebChromeClient::runJavaScriptAlert(WebCore::LocalFrame& frame, const String& message)
+void WebChromeClient::runJavaScriptAlert(WebCore::LocalFrame& frame, StringImpl* message)
 {
     RetainPtr webView = m_webView;
     RetainPtr<id> delegate = [webView UIDelegate];
     SEL selector = @selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:);
     if ([delegate.get() respondsToSelector:selector]) {
-        CallUIDelegate(webView, selector, message.createNSString().get(), protect(kit(&frame)));
+        CallUIDelegate(webView, selector, createNSString(message).get(), protect(kit(&frame)));
         return;
     }
 
     // Call the old version of the delegate method if it is implemented.
     selector = @selector(webView:runJavaScriptAlertPanelWithMessage:);
     if ([delegate.get() respondsToSelector:selector]) {
-        CallUIDelegate(webView, selector, message.createNSString().get());
+        CallUIDelegate(webView, selector, createNSString(message).get());
         return;
     }
 }
 
-bool WebChromeClient::runJavaScriptConfirm(WebCore::LocalFrame& frame, const String& message)
+bool WebChromeClient::runJavaScriptConfirm(WebCore::LocalFrame& frame, StringImpl* message)
 {
     RetainPtr webView = m_webView;
     RetainPtr<id> delegate = [webView UIDelegate];
     SEL selector = @selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:);
     if ([delegate.get() respondsToSelector:selector])
-        return CallUIDelegateReturningBoolean(NO, webView, selector, message.createNSString().get(), protect(kit(&frame)));
+        return CallUIDelegateReturningBoolean(NO, webView, selector, createNSString(message).get(), protect(kit(&frame)));
 
     // Call the old version of the delegate method if it is implemented.
     selector = @selector(webView:runJavaScriptConfirmPanelWithMessage:);
     if ([delegate.get() respondsToSelector:selector])
-        return CallUIDelegateReturningBoolean(NO, webView, selector, message.createNSString().get());
+        return CallUIDelegateReturningBoolean(NO, webView, selector, createNSString(message).get());
 
     return NO;
 }
 
-bool WebChromeClient::runJavaScriptPrompt(WebCore::LocalFrame& frame, const String& prompt, const String& defaultText, String& result)
+bool WebChromeClient::runJavaScriptPrompt(WebCore::LocalFrame& frame, StringImpl* prompt, StringImpl* defaultText, RefPtr<StringImpl>& result)
 {
     RetainPtr webView = m_webView;
     RetainPtr webFrame = kit(&frame);
     RetainPtr<id> delegate = [webView UIDelegate];
     SEL selector = @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:);
-    RetainPtr defaultString = defaultText.createNSString();
+    RetainPtr defaultString = createNSString(defaultText);
     if ([delegate.get() respondsToSelector:selector]) {
-        result = (NSString *)CallUIDelegate(webView, selector, prompt.createNSString().get(), defaultString.get(), webFrame);
-        return !result.isNull();
+        result = StringImpl::create(protect((NSString *)CallUIDelegate(webView, selector, createNSString(prompt).get(), defaultString.get(), webFrame)).get());
+        return !!result;
     }
 
     // Call the old version of the delegate method if it is implemented.
     selector = @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:);
     if ([delegate.get() respondsToSelector:selector]) {
-        result = (NSString *)CallUIDelegate(webView, selector, prompt.createNSString().get(), defaultString.get());
-        return !result.isNull();
+        result = StringImpl::create(protect((NSString *)CallUIDelegate(webView, selector, createNSString(prompt).get(), defaultString.get())).get());
+        return !!result;
     }
 
-    result = [[WebDefaultUIDelegate sharedUIDelegate] webView:webView runJavaScriptTextInputPanelWithPrompt:prompt.createNSString().get() defaultText:defaultString.get() initiatedByFrame:webFrame];
-    return !result.isNull();
+    result = StringImpl::create([[WebDefaultUIDelegate sharedUIDelegate] webView:webView runJavaScriptTextInputPanelWithPrompt:createNSString(prompt).get() defaultText:defaultString.get() initiatedByFrame:webFrame]);
+    return !!result;
 }
 
 void WebChromeClient::invalidateRootView(const WebCore::IntRect&)
@@ -661,18 +661,18 @@ void WebChromeClient::unavailablePluginButtonClicked(WebCore::Element& element, 
     CallUIDelegate(protect(m_webView), @selector(webView:didPressMissingPluginButton:), protect(kit(&element)));
 }
 
-void WebChromeClient::mouseDidMoveOverElement(const WebCore::HitTestResult& result, OptionSet<WebCore::PlatformEventModifier> modifiers, const String& toolTip, WebCore::TextDirection)
+void WebChromeClient::mouseDidMoveOverElement(const WebCore::HitTestResult& result, OptionSet<WebCore::PlatformEventModifier> modifiers, StringImpl* toolTip, WebCore::TextDirection)
 {
     auto element = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:result]);
     [protect(m_webView) _mouseDidMoveOverElement:element.get() modifierFlags:modifiers.toRaw()];
     setToolTip(toolTip);
 }
 
-void WebChromeClient::setToolTip(const String& toolTip)
+void WebChromeClient::setToolTip(StringImpl* toolTip)
 {
     RetainPtr documentView = [[[protect(m_webView) _selectedOrMainFrame] frameView] documentView];
     if ([documentView.get() isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView.get() _setToolTip:toolTip.createNSString().get()];
+        [(WebHTMLView *)documentView.get() _setToolTip:createNSString(toolTip).get()];
 }
 
 void WebChromeClient::print(WebCore::LocalFrame& frame, const WebCore::StringWithDirection&)
@@ -685,12 +685,12 @@ void WebChromeClient::print(WebCore::LocalFrame& frame, const WebCore::StringWit
         CallUIDelegate(webView, @selector(webView:printFrameView:), [webFrame.get() frameView]);
 }
 
-void WebChromeClient::exceededDatabaseQuota(WebCore::LocalFrame& frame, const String& databaseName, WebCore::DatabaseDetails)
+void WebChromeClient::exceededDatabaseQuota(WebCore::LocalFrame& frame, StringImpl* databaseName, WebCore::DatabaseDetails)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     RetainPtr webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:protect(protect(frame.document())->securityOrigin()).ptr()]);
-    CallUIDelegate(protect(m_webView), @selector(webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:), protect(kit(&frame)), webOrigin.get(), databaseName.createNSString().get());
+    CallUIDelegate(protect(m_webView), @selector(webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:), protect(kit(&frame)), webOrigin.get(), createNSString(databaseName).get());
 
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -778,12 +778,12 @@ void WebChromeClient::showShareSheet(WebCore::ShareDataWithParsedURL&&, Completi
 {
 }
 
-void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, WebCore::FileIconLoader& iconLoader)
+void WebChromeClient::loadIconForFiles(const Vector<RefPtr<StringImpl>>& filenames, WebCore::FileIconLoader& iconLoader)
 {
     iconLoader.iconLoaded(createIconForFiles(filenames));
 }
 
-RefPtr<WebCore::Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames)
+RefPtr<WebCore::Icon> WebChromeClient::createIconForFiles(const Vector<RefPtr<StringImpl>>& filenames)
 {
     return WebCore::Icon::createIconForFiles(filenames);
 }
@@ -1082,7 +1082,7 @@ void WebChromeClient::exitFullScreenForElement(WebCore::Element* element, Comple
 
 #if ENABLE(SERVICE_CONTROLS)
 
-void WebChromeClient::handleSelectionServiceClick(WebCore::FrameIdentifier, WebCore::FrameSelection& selection, const Vector<String>& telephoneNumbers, const WebCore::IntPoint& point)
+void WebChromeClient::handleSelectionServiceClick(WebCore::FrameIdentifier, WebCore::FrameSelection& selection, const Vector<RefPtr<StringImpl>>& telephoneNumbers, const WebCore::IntPoint& point)
 {
     [protect(m_webView) _selectionServiceController].handleSelectionServiceClick(selection, telephoneNumbers, point);
 }
@@ -1121,9 +1121,9 @@ void WebChromeClient::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
     [protect(m_webView) _setMockMediaPlaybackTargetPickerEnabled:enabled];
 }
 
-void WebChromeClient::setMockMediaPlaybackTargetPickerState(const String& name, WebCore::MediaPlaybackTargetMockState state)
+void WebChromeClient::setMockMediaPlaybackTargetPickerState(StringImpl* name, WebCore::MediaPlaybackTargetMockState state)
 {
-    [protect(m_webView) _setMockMediaPlaybackTargetPickerName:name.createNSString().get() state:state];
+    [protect(m_webView) _setMockMediaPlaybackTargetPickerName:createNSString(name).get() state:state];
 }
 
 void WebChromeClient::mockMediaPlaybackTargetPickerDismissPopup()
@@ -1182,7 +1182,7 @@ RefPtr<WebCore::ShapeDetection::TextDetector> WebChromeClient::createTextDetecto
 #endif
 }
 
-void WebChromeClient::registerBlobPathForTesting(const String&, CompletionHandler<void()>&& completion)
+void WebChromeClient::registerBlobPathForTesting(StringImpl*, CompletionHandler<void()>&& completion)
 {
     completion();
 }

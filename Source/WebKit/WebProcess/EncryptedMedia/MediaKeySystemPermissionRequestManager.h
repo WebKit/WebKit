@@ -51,8 +51,8 @@ public:
 
     void startMediaKeySystemRequest(WebCore::MediaKeySystemRequest&);
     void cancelMediaKeySystemRequest(WebCore::MediaKeySystemRequest&);
-    void mediaKeySystemWasGranted(WebCore::MediaKeySystemRequestIdentifier, String&& mediaKeysHashSalt);
-    void mediaKeySystemWasDenied(WebCore::MediaKeySystemRequestIdentifier, String&&);
+    void mediaKeySystemWasGranted(WebCore::MediaKeySystemRequestIdentifier, RefPtr<StringImpl>&& mediaKeysHashSalt);
+    void mediaKeySystemWasDenied(WebCore::MediaKeySystemRequestIdentifier, RefPtr<StringImpl>&&);
 
 private:
     void sendMediaKeySystemRequest(WebCore::MediaKeySystemRequest&);

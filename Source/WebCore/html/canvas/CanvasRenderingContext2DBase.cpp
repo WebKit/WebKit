@@ -262,7 +262,7 @@ NODELETE static TextBaseline fromCanvasTextBaseline(CanvasTextBaseline canvasTex
     return TopTextBaseline;
 }
 
-static Color parseColorWithOverrideAlpha(const String& colorString, float alpha, CanvasBase& canvasBase)
+static Color parseColorWithOverrideAlpha(StringImpl* colorString, float alpha, CanvasBase& canvasBase)
 {
     auto color = parseColor(colorString, canvasBase);
     if (!color.isValid())
@@ -409,11 +409,11 @@ CanvasRenderingContext2DBase::State::State()
     , textBaseline(AlphabeticTextBaseline)
     , direction(Direction::Inherit)
     , imageSmoothingEnabled(true)
-    , filterString("none"_s)
+    , filterString("none"_si)
     , filter { CSS::Keyword::None { } }
-    , letterSpacing("0px"_s)
-    , wordSpacing("0px"_s)
-    , lang("inherit"_s)
+    , letterSpacing("0px"_si)
+    , wordSpacing("0px"_si)
+    , lang("inherit"_si)
     , unparsedFont(DefaultFont)
     , font(FontProxy::create())
 {
@@ -429,7 +429,7 @@ auto CanvasRenderingContext2DBase::State::clone() const -> State
     return cloned;
 }
 
-String CanvasRenderingContext2DBase::State::fontString() const
+RefPtr<StringImpl> CanvasRenderingContext2DBase::State::fontString() const
 {
     Ref fontProxy = this->font;
     if (!fontProxy->realized())
@@ -669,12 +669,12 @@ CanvasFontVariantCaps CanvasRenderingContext2DBase::State::canvasFontVariantCaps
     return toCanvasFontVariantCaps(font->fontDescription().variantCaps());
 }
 
-String CanvasRenderingContext2DBase::State::globalCompositeOperationString() const
+RefPtr<StringImpl> CanvasRenderingContext2DBase::State::globalCompositeOperationString() const
 {
     return compositeOperatorName(globalComposite, globalBlend);
 }
 
-String CanvasRenderingContext2DBase::State::shadowColorString() const
+RefPtr<StringImpl> CanvasRenderingContext2DBase::State::shadowColorString() const
 {
     return serializationForHTML(shadowColor);
 }
@@ -784,9 +784,9 @@ void CanvasRenderingContext2DBase::realizeSaves()
         realizeSavesLoop();
 
     if (m_unrealizedSaveCount) {
-        static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("CanvasRenderingContext2D.save() has been called without a matching restore() too many times. Ignoring save()."));
+        static NeverDestroyed<RefPtr<StringImpl>> consoleMessage(MAKE_STATIC_STRING_IMPL("CanvasRenderingContext2D.save() has been called without a matching restore() too many times. Ignoring save()."));
 
-        protect(protect(canvasBase())->scriptExecutionContext())->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, consoleMessage);
+        protect(protect(canvasBase())->scriptExecutionContext())->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, consoleMessage.get());
     }
 }
 
@@ -848,7 +848,7 @@ void CanvasRenderingContext2DBase::beginLayer()
     state.shadowOffset = { };
     state.shadowBlur = 0;
     state.shadowColor = Color::transparentBlack;
-    state.filterString = "none"_s;
+    state.filterString = "none"_si;
     state.filter = Style::Filter { CSS::Keyword::None { } };
 
     if (auto* c = effectiveDrawingContext()) {
@@ -868,7 +868,7 @@ void CanvasRenderingContext2DBase::endLayer()
     restore();
 }
 
-void CanvasRenderingContext2DBase::setStrokeColorImpl(Color&& color, String&& unparsedColor)
+void CanvasRenderingContext2DBase::setStrokeColorImpl(Color&& color, RefPtr<StringImpl>&& unparsedColor)
 {
     ASSERT(color.isValid());
     if (state().strokeStyle.color() == color)
@@ -882,7 +882,7 @@ void CanvasRenderingContext2DBase::setStrokeColorImpl(Color&& color, String&& un
     state.unparsedStrokeColor = WTF::move(unparsedColor);
 }
 
-void CanvasRenderingContext2DBase::setFillColorImpl(Color&& color, String&& unparsedColor)
+void CanvasRenderingContext2DBase::setFillColorImpl(Color&& color, RefPtr<StringImpl>&& unparsedColor)
 {
     ASSERT(color.isValid());
     if (state().fillStyle.color() == color)
@@ -923,14 +923,14 @@ void CanvasRenderingContext2DBase::setLineCap(CanvasLineCap canvasLineCap)
     c->setLineCap(lineCap);
 }
 
-void CanvasRenderingContext2DBase::setLineCap(const String& stringValue)
+void CanvasRenderingContext2DBase::setLineCap(StringImpl* stringValue)
 {
     CanvasLineCap cap;
-    if (stringValue == "butt"_s)
+    if (equal(stringValue, "butt"_s))
         cap = CanvasLineCap::Butt;
-    else if (stringValue == "round"_s)
+    else if (equal(stringValue, "round"_s))
         cap = CanvasLineCap::Round;
-    else if (stringValue == "square"_s)
+    else if (equal(stringValue, "square"_s))
         cap = CanvasLineCap::Square;
     else
         return;
@@ -951,14 +951,14 @@ void CanvasRenderingContext2DBase::setLineJoin(CanvasLineJoin canvasLineJoin)
     c->setLineJoin(lineJoin);
 }
 
-void CanvasRenderingContext2DBase::setLineJoin(const String& stringValue)
+void CanvasRenderingContext2DBase::setLineJoin(StringImpl* stringValue)
 {
     CanvasLineJoin join;
-    if (stringValue == "round"_s)
+    if (equal(stringValue, "round"_s))
         join = CanvasLineJoin::Round;
-    else if (stringValue == "bevel"_s)
+    else if (equal(stringValue, "bevel"_s))
         join = CanvasLineJoin::Bevel;
-    else if (stringValue == "miter"_s)
+    else if (equal(stringValue, "miter"_s))
         join = CanvasLineJoin::Miter;
     else
         return;
@@ -1013,7 +1013,7 @@ void CanvasRenderingContext2DBase::setShadowBlur(float blur)
     applyShadow();
 }
 
-void CanvasRenderingContext2DBase::setShadowColor(const String& colorString)
+void CanvasRenderingContext2DBase::setShadowColor(StringImpl* colorString)
 {
     Color color = parseColor(colorString, protect(canvasBase()));
     if (!color.isValid())
@@ -1097,7 +1097,7 @@ void CanvasRenderingContext2DBase::setGlobalAlpha(double alpha)
     c->setAlpha(alpha);
 }
 
-void CanvasRenderingContext2DBase::setGlobalCompositeOperation(const String& operation)
+void CanvasRenderingContext2DBase::setGlobalCompositeOperation(StringImpl* operation)
 {
     CompositeOperator op = CompositeOperator::SourceOver;
     BlendMode blendMode = BlendMode::Normal;
@@ -1114,17 +1114,17 @@ void CanvasRenderingContext2DBase::setGlobalCompositeOperation(const String& ope
     c->setCompositeOperation(op, blendMode);
 }
 
-void CanvasRenderingContext2DBase::setFilterString(const String& filterString)
+void CanvasRenderingContext2DBase::setFilterString(StringImpl* filterString)
 {
-    if (state().filterString == filterString)
+    if (equal(state().filterString, filterString))
         return;
 
     // Spec: context.filter = "" should leave the current filter unchanged.
-    if (filterString.isEmpty())
+    if (isEmpty(filterString))
         return;
 
     // Spec: context.filter = null or context.filter = undefined should leave the current filter unchanged.
-    if (filterString == "null"_s || filterString == "undefined"_s)
+    if (equal(filterString, "null"_s) || equal(filterString, "undefined"_s))
         return;
 
     auto filter = setFilterStringWithoutUpdatingStyle(filterString);
@@ -1268,7 +1268,7 @@ void CanvasRenderingContext2DBase::resetTransform()
     updateStateTransform({ });
 }
 
-void CanvasRenderingContext2DBase::setStrokeColor(String&& colorString, std::optional<float> alpha)
+void CanvasRenderingContext2DBase::setStrokeColor(RefPtr<StringImpl>&& colorString, std::optional<float> alpha)
 {
     if (alpha) {
         if (std::isnan(*alpha))
@@ -1280,7 +1280,7 @@ void CanvasRenderingContext2DBase::setStrokeColor(String&& colorString, std::opt
         setStrokeColorImpl(WTF::move(color));
         return;
     }
-    if (colorString == state().unparsedStrokeColor)
+    if (equal(colorString, state().unparsedStrokeColor))
         return;
     auto color = parseColor(colorString, protect(canvasBase()));
     if (!color.isValid())
@@ -1304,7 +1304,7 @@ void CanvasRenderingContext2DBase::setStrokeColor(float r, float g, float b, flo
     setStrokeColorImpl(convertColor<SRGBA<uint8_t>>(makeFromComponentsClamping<SRGBA<float>>(r, g, b, a)));
 }
 
-void CanvasRenderingContext2DBase::setFillColor(String&& colorString, std::optional<float> alpha)
+void CanvasRenderingContext2DBase::setFillColor(RefPtr<StringImpl>&& colorString, std::optional<float> alpha)
 {
     if (alpha) {
         if (std::isnan(*alpha))
@@ -1315,7 +1315,7 @@ void CanvasRenderingContext2DBase::setFillColor(String&& colorString, std::optio
         setFillColorImpl(WTF::move(color));
         return;
     }
-    if (colorString == state().unparsedFillColor)
+    if (equal(colorString, state().unparsedFillColor))
         return;
     auto color = parseColor(colorString, protect(canvasBase()));
     if (!color.isValid())
@@ -1719,13 +1719,13 @@ void CanvasRenderingContext2DBase::strokeRect(double x, double y, double width, 
     }
 }
 
-void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, const String& colorString, std::optional<float> alpha)
+void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, StringImpl* colorString, std::optional<float> alpha)
 {
     if (alpha && std::isnan(*alpha))
         return;
 
     Color color = Color::transparentBlack;
-    if (!colorString.isNull()) {
+    if (colorString) {
         color = parseColor(colorString, protect(canvasBase()));
         if (!color.isValid())
             return;
@@ -2458,7 +2458,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawElementImage(CanvasElementIm
                 if (auto snapshot = canvasElement->canvasDrawableSnapshot(element))
                     return drawSnapshot(*snapshot, srcRect, dstRect, options);
             }
-            return Exception { ExceptionCode::InvalidStateError, "CanvasRenderingContext2DBase failed to get a snapshot for a drawableElement."_s };
+            return Exception { ExceptionCode::InvalidStateError, "CanvasRenderingContext2DBase failed to get a snapshot for a drawableElement."_si };
         },
         [&](Ref<CanvasElementImage>& elementImage) -> ExceptionOr<void> {
             return drawSnapshot(elementImage->snapshot(), srcRect, dstRect, options);
@@ -2470,7 +2470,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawSnapshot(const CanvasElement
 {
     auto* c = effectiveDrawingContext();
     if (!c)
-        return Exception { ExceptionCode::InvalidStateError, "CanvasRenderingContext2DBase failed to create a drawing context."_s };
+        return Exception { ExceptionCode::InvalidStateError, "CanvasRenderingContext2DBase failed to create a drawing context."_si };
 
     if (!std::isfinite(dstRect.x()) || !std::isfinite(dstRect.y()) || !std::isfinite(dstRect.width()) || !std::isfinite(dstRect.height())
         || !std::isfinite(srcRect.x()) || !std::isfinite(srcRect.y()) || !std::isfinite(srcRect.width()) || !std::isfinite(srcRect.height()))
@@ -2610,7 +2610,7 @@ void CanvasRenderingContext2DBase::fullCanvasCompositedDraw(const FloatRect& des
 static CanvasRenderingContext2DBase::StyleVariant toStyleVariant(const CanvasStyle& style)
 {
     return style.visit(
-        [](const String& string) -> CanvasRenderingContext2DBase::StyleVariant { return string; },
+        [](StringImpl* string) -> CanvasRenderingContext2DBase::StyleVariant { return string; },
         [](const Ref<CanvasGradient>& gradient) -> CanvasRenderingContext2DBase::StyleVariant { return gradient; },
         [](const Ref<CanvasPattern>& pattern) -> CanvasRenderingContext2DBase::StyleVariant { return pattern; }
     );
@@ -2621,9 +2621,9 @@ CanvasRenderingContext2DBase::StyleVariant CanvasRenderingContext2DBase::strokeS
     return toStyleVariant(state().strokeStyle);
 }
 
-void CanvasRenderingContext2DBase::setStrokeStyle(String&& colorString)
+void CanvasRenderingContext2DBase::setStrokeStyle(RefPtr<StringImpl>&& colorString)
 {
-    if (colorString == state().unparsedStrokeColor)
+    if (equal(colorString, state().unparsedStrokeColor))
         return;
 
     auto color = parseColor(colorString, protect(canvasBase()));
@@ -2640,7 +2640,7 @@ void CanvasRenderingContext2DBase::setStrokeStyle(Ref<CanvasGradient>&& gradient
         c->setStrokeGradient(gradient->gradient());
     auto& state = modifiableState();
     state.strokeStyle = WTF::move(gradient);
-    state.unparsedStrokeColor = String();
+    state.unparsedStrokeColor = nullptr;
 }
 
 void CanvasRenderingContext2DBase::setStrokeStyle(Ref<CanvasPattern>&& pattern)
@@ -2651,7 +2651,7 @@ void CanvasRenderingContext2DBase::setStrokeStyle(Ref<CanvasPattern>&& pattern)
         c->setStrokePattern(pattern->pattern());
     auto& state = modifiableState();
     state.strokeStyle = WTF::move(pattern);
-    state.unparsedStrokeColor = String();
+    state.unparsedStrokeColor = nullptr;
 }
 
 CanvasRenderingContext2DBase::StyleVariant CanvasRenderingContext2DBase::fillStyle() const
@@ -2659,9 +2659,9 @@ CanvasRenderingContext2DBase::StyleVariant CanvasRenderingContext2DBase::fillSty
     return toStyleVariant(state().fillStyle);
 }
 
-void CanvasRenderingContext2DBase::setFillStyle(String&& colorString)
+void CanvasRenderingContext2DBase::setFillStyle(RefPtr<StringImpl>&& colorString)
 {
-    if (colorString == state().unparsedFillColor)
+    if (equal(colorString, state().unparsedFillColor))
         return;
 
     auto color = parseColor(colorString, protect(canvasBase()));
@@ -2678,7 +2678,7 @@ void CanvasRenderingContext2DBase::setFillStyle(Ref<CanvasGradient>&& gradient)
         c->setFillGradient(gradient->gradient());
     auto& state = modifiableState();
     state.fillStyle = WTF::move(gradient);
-    state.unparsedFillColor = String();
+    state.unparsedFillColor = nullptr;
 }
 
 void CanvasRenderingContext2DBase::setFillStyle(Ref<CanvasPattern>&& pattern)
@@ -2689,7 +2689,7 @@ void CanvasRenderingContext2DBase::setFillStyle(Ref<CanvasPattern>&& pattern)
         c->setFillPattern(pattern->pattern());
     auto& state = modifiableState();
     state.fillStyle = WTF::move(pattern);
-    state.unparsedFillColor = String();
+    state.unparsedFillColor = nullptr;
 }
 
 ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createLinearGradient(float x0, float y0, float x1, float y1)
@@ -2721,7 +2721,7 @@ ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createConicGradie
     return CanvasGradient::create(FloatPoint(x, y), angleInRadians);
 }
 
-ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CanvasImageSource&& image, const String& repetition)
+ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CanvasImageSource&& image, StringImpl* repetition)
 {
     bool repeatX, repeatY;
     if (!CanvasPattern::parseRepetitionType(repetition, repeatX, repeatY))
@@ -3165,8 +3165,8 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
 
     RefPtr scriptContext = protect(canvasBase())->scriptExecutionContext();
     if (!canvasBase().originClean()) {
-        static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Unable to get image data from canvas because the canvas has been tainted by cross-origin data."));
-        scriptContext->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
+        static NeverDestroyed<RefPtr<StringImpl>> consoleMessage(MAKE_STATIC_STRING_IMPL("Unable to get image data from canvas because the canvas has been tainted by cross-origin data."));
+        scriptContext->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
         return Exception { ExceptionCode::SecurityError };
     }
 
@@ -3396,12 +3396,12 @@ NODELETE static inline bool isSpaceThatNeedsReplacing(char16_t c)
 }
 
 template<typename CharacterType>
-static inline String createStringByNormalizingSpaces(std::span<const CharacterType> characters, size_t indexOfFirstSpace)
+static inline RefPtr<StringImpl> createStringByNormalizingSpaces(std::span<const CharacterType> characters, size_t indexOfFirstSpace)
 {
     ASSERT(indexOfFirstSpace < characters.size());
 
     std::span<CharacterType> normalized;
-    auto result = String::createUninitialized(characters.size(), normalized);
+    auto result = StringImpl::createUninitialized(characters.size(), normalized);
 
     memcpySpan(normalized, characters.first(indexOfFirstSpace));
     for (size_t i = indexOfFirstSpace; i != characters.size(); ++i) {
@@ -3411,15 +3411,15 @@ static inline String createStringByNormalizingSpaces(std::span<const CharacterTy
     return result;
 }
 
-String CanvasRenderingContext2DBase::normalizeSpaces(const String& text)
+RefPtr<StringImpl> CanvasRenderingContext2DBase::normalizeSpaces(StringImpl* text)
 {
-    size_t indexOfFirstSpace = text.find(isSpaceThatNeedsReplacing);
+    size_t indexOfFirstSpace = find(text, isSpaceThatNeedsReplacing);
     if (indexOfFirstSpace == notFound)
         return text;
 
-    if (text.is8Bit())
-        return createStringByNormalizingSpaces(text.span8(), indexOfFirstSpace);
-    return createStringByNormalizingSpaces(text.span16(), indexOfFirstSpace);
+    if (is8Bit(text))
+        return createStringByNormalizingSpaces(span8(text), indexOfFirstSpace);
+    return createStringByNormalizingSpaces(span16(text), indexOfFirstSpace);
 }
 
 static bool canUseCachedShapedText(const TextRun& textRun)
@@ -3889,9 +3889,9 @@ NODELETE static bool unitAllowedForSpacing(CSS::LengthUnit lenghtUnit)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void CanvasRenderingContext2DBase::setLetterSpacing(const String& letterSpacing)
+void CanvasRenderingContext2DBase::setLetterSpacing(StringImpl* letterSpacing)
 {
-    if (state().letterSpacing == letterSpacing)
+    if (equal(state().letterSpacing, letterSpacing))
         return;
     realizeSaves();
     CSSTokenizer tokenizer(letterSpacing);
@@ -3921,9 +3921,9 @@ void CanvasRenderingContext2DBase::setLetterSpacing(const String& letterSpacing)
     protect(modifiableState().font)->setLetterSpacing(pixels);
 }
 
-void CanvasRenderingContext2DBase::setWordSpacing(const String& wordSpacing)
+void CanvasRenderingContext2DBase::setWordSpacing(StringImpl* wordSpacing)
 {
-    if (state().wordSpacing == wordSpacing)
+    if (equal(state().wordSpacing, wordSpacing))
         return;
     realizeSaves();
     CSSTokenizer tokenizer(wordSpacing);
@@ -3959,14 +3959,14 @@ void CanvasRenderingContext2DBase::carryOverKerningAndTextRendering(FontCascadeD
     description.setTextRenderingMode(toTextRenderingMode(state().canvasTextRendering()));
 }
 
-AtomString CanvasRenderingContext2DBase::effectiveLanguage() const
+RefPtr<AtomStringImpl> CanvasRenderingContext2DBase::effectiveLanguage() const
 {
-    return state().lang == "inherit"_s ? inheritedLanguage() : AtomString { state().lang };
+    return equal(state().lang, "inherit"_s) ? inheritedLanguage() : AtomStringImpl::add(state().lang);
 }
 
-void CanvasRenderingContext2DBase::setLang(const String& lang)
+void CanvasRenderingContext2DBase::setLang(StringImpl* lang)
 {
-    if (state().lang == lang)
+    if (equal(state().lang, lang))
         return;
 
     realizeSaves();

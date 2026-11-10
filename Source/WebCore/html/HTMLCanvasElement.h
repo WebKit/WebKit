@@ -81,7 +81,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> setWidth(unsigned);
     WEBCORE_EXPORT ExceptionOr<void> setHeight(unsigned);
 
-    NODELETE const AtomString& canvasContentForBindings() const;
+    NODELETE const RefPtr<AtomStringImpl>& canvasContentForBindings() const;
     CanvasContent canvasContent() const;
     bool hasDrawableContent() const;
 
@@ -97,32 +97,32 @@ public:
     ExceptionOr<Ref<DOMMatrix>> getElementTransform(const Element&);
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
-    ExceptionOr<std::optional<RenderingContext>> getContext(JSC::JSGlobalObject&, const String& contextId, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
+    ExceptionOr<std::optional<RenderingContext>> getContext(JSC::JSGlobalObject&, StringImpl* contextId, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
 
-    RefPtr<CanvasRenderingContext> getContext(const String&);
+    RefPtr<CanvasRenderingContext> getContext(StringImpl*);
 
-    static bool is2dType(const String&);
-    CanvasRenderingContext2D* createContext2d(const String&, CanvasRenderingContext2DSettings&&);
-    CanvasRenderingContext2D* getContext2d(const String&, CanvasRenderingContext2DSettings&&);
+    static bool is2dType(StringImpl*);
+    CanvasRenderingContext2D* createContext2d(StringImpl*, CanvasRenderingContext2DSettings&&);
+    CanvasRenderingContext2D* getContext2d(StringImpl*, CanvasRenderingContext2DSettings&&);
 
 #if ENABLE(WEBGL)
-    static bool isWebGLType(const String&);
-    static WebGLVersion toWebGLVersion(const String&);
+    static bool isWebGLType(StringImpl*);
+    static WebGLVersion toWebGLVersion(StringImpl*);
     WebGLRenderingContextBase* createContextWebGL(WebGLVersion type, WebGLContextAttributes&& = { });
     RefPtr<WebGLRenderingContextBase> getContextWebGL(WebGLVersion type, WebGLContextAttributes&& = { });
 #endif
 
-    static bool isBitmapRendererType(const String&);
-    ImageBitmapRenderingContext* createContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&&);
-    ImageBitmapRenderingContext* getContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&&);
+    static bool isBitmapRendererType(StringImpl*);
+    ImageBitmapRenderingContext* createContextBitmapRenderer(StringImpl*, ImageBitmapRenderingContextSettings&&);
+    ImageBitmapRenderingContext* getContextBitmapRenderer(StringImpl*, ImageBitmapRenderingContextSettings&&);
 
-    static bool isWebGPUType(const String&);
-    GPUCanvasContext* createContextWebGPU(const String&, GPU*);
-    GPUCanvasContext* getContextWebGPU(const String&, GPU*);
+    static bool isWebGPUType(StringImpl*);
+    GPUCanvasContext* createContextWebGPU(StringImpl*, GPU*);
+    GPUCanvasContext* getContextWebGPU(StringImpl*, GPU*);
 
-    WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType, JSC::JSValue quality);
-    WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType);
-    ExceptionOr<void> toBlob(Ref<BlobCallback>&&, const String& mimeType, JSC::JSValue quality);
+    WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(StringImpl* mimeType, JSC::JSValue quality);
+    WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(StringImpl* mimeType);
+    ExceptionOr<void> toBlob(Ref<BlobCallback>&&, StringImpl* mimeType, JSC::JSValue quality);
 #if ENABLE(OFFSCREEN_CANVAS)
     ExceptionOr<Ref<OffscreenCanvas>> transferControlToOffscreen();
 #endif
@@ -180,9 +180,9 @@ private:
     // EventTarget.
     void eventListenersDidChange() final;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) final;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
 

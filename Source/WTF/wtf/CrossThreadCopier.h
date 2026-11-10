@@ -144,6 +144,9 @@ template<typename T> struct CrossThreadCopierBase<false, true, T> {
 
 // Can only be moved
 template<typename T> struct CrossThreadCopierBase<false, false, Ref<T>> {
+    // Strings are not thread-safe ref-counted, and atoms are tied to their thread's AtomStringTable,
+    // so they must never be moved across threads by pointer. See the specializations below.
+    static_assert(!std::is_convertible_v<T*, const StringImpl*>, "StringImpl smart pointers must be isolated-copied, not moved, across threads");
     using Type = Ref<T>;
     static constexpr bool IsNeeded = false;
     static Type copy(Type&& ref)
@@ -154,6 +157,7 @@ template<typename T> struct CrossThreadCopierBase<false, false, Ref<T>> {
 
 // Can only be moved
 template<typename T> struct CrossThreadCopierBase<false, false, RefPtr<T>> {
+    static_assert(!std::is_convertible_v<T*, const StringImpl*>, "StringImpl smart pointers must be isolated-copied, not moved, across threads");
     using Type = RefPtr<T>;
     static constexpr bool IsNeeded = false;
     static Type copy(Type&& ref)
@@ -161,6 +165,70 @@ template<typename T> struct CrossThreadCopierBase<false, false, RefPtr<T>> {
         return WTF::move(ref);
     }
 };
+
+// An isolated copy, stealing the StringImpl when it is safe to do so. Null stays null.
+template<> struct CrossThreadCopierBase<false, false, RefPtr<StringImpl>> {
+    using Type = RefPtr<StringImpl>;
+    static constexpr bool IsNeeded = true;
+    static Type copy(const Type& source)
+    {
+        return isolatedCopy(source);
+    }
+    static Type copy(Type&& source)
+    {
+        return isolatedCopy(WTF::move(source));
+    }
+};
+
+template<> struct CrossThreadCopierBase<false, false, Ref<StringImpl>> {
+    using Type = Ref<StringImpl>;
+    static constexpr bool IsNeeded = true;
+    static Type copy(const Type& source)
+    {
+        return source->isolatedCopy();
+    }
+    static Type copy(Type&& source)
+    {
+        if (isSafeToSendToAnotherThread(source))
+            return WTF::move(source);
+        return source->isolatedCopy();
+    }
+};
+
+// Atoms become isolated non-atom strings.
+template<> struct CrossThreadCopierBase<false, false, RefPtr<AtomStringImpl>> {
+    using Type = RefPtr<StringImpl>;
+    static constexpr bool IsNeeded = true;
+    static Type copy(const RefPtr<AtomStringImpl>& source)
+    {
+        return isolatedCopy(source);
+    }
+};
+
+// Raw string pointers (former const String& parameters) become isolated owning copies. Null stays null.
+template<> struct CrossThreadCopierBase<false, false, StringImpl*> {
+    using Type = RefPtr<StringImpl>;
+    static constexpr bool IsNeeded = true;
+    static Type copy(StringImpl* source)
+    {
+        return isolatedCopy(source);
+    }
+};
+
+template<> struct CrossThreadCopierBase<false, false, AtomStringImpl*> {
+    using Type = RefPtr<StringImpl>;
+    static constexpr bool IsNeeded = true;
+    static Type copy(AtomStringImpl* source)
+    {
+        return isolatedCopy(source);
+    }
+};
+
+// The copiers above return an owning RefPtr<StringImpl>. Storing that into a container element of raw pointer
+// type would leave the element pointing to a freed string, so containers copied across threads must hold RefPtr.
+template<typename... Types> inline constexpr bool hasRawStringImplPointer = ((std::is_same_v<std::remove_cv_t<Types>, StringImpl*> || std::is_same_v<std::remove_cv_t<Types>, AtomStringImpl*>) || ...);
+#define STATIC_ASSERT_NO_RAW_STRING_IMPL_POINTERS(...) \
+    static_assert(!hasRawStringImplPointer<__VA_ARGS__>, "Containers copied across threads must hold RefPtr<StringImpl>, not raw string pointers")
 
 template<typename T> struct CrossThreadCopierBase<false, true, Ref<T>> {
     static_assert(std::is_convertible<T*, ThreadSafeRefCountedBase*>::value, "T is not convertible to ThreadSafeRefCounted!");
@@ -174,20 +242,6 @@ template<typename T> struct CrossThreadCopierBase<false, true, Ref<T>> {
     static Type copy(Type&& ref)
     {
         return WTF::move(ref);
-    }
-};
-
-// Default specialization for AtomString of CrossThreadCopyable classes.
-template<> struct CrossThreadCopierBase<false, false, AtomString> {
-    using Type = String;
-    static constexpr bool IsNeeded = true;
-    static Type copy(const AtomString& source)
-    {
-        return source.string().isolatedCopy();
-    }
-    static Type copy(AtomString&& source)
-    {
-        return source.releaseString().isolatedCopy();
     }
 };
 
@@ -215,6 +269,7 @@ struct CrossThreadCopier : public CrossThreadCopierBase<CrossThreadCopierBaseHel
 
 // Default specialization for Vectors of CrossThreadCopyable classes.
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct CrossThreadCopierBase<false, false, Vector<T, inlineCapacity, OverflowHandler, minCapacity>> {
+    STATIC_ASSERT_NO_RAW_STRING_IMPL_POINTERS(T);
     using Type = Vector<T, inlineCapacity, OverflowHandler, minCapacity>;
     static constexpr bool IsNeeded = CrossThreadCopier<T>::IsNeeded;
     static Type copy(const Type& source)
@@ -233,6 +288,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 
 // Default specialization for HashSets of CrossThreadCopyable classes
 template<typename T, typename HashFunctions, typename Traits, typename TableTraits, ShouldValidateKey shouldValidateKey> struct CrossThreadCopierBase<false, false, HashSet<T, HashFunctions, Traits, TableTraits, shouldValidateKey>> {
+    STATIC_ASSERT_NO_RAW_STRING_IMPL_POINTERS(T);
     using Type = HashSet<T, HashFunctions, Traits, TableTraits, shouldValidateKey>;
     static constexpr bool IsNeeded = CrossThreadCopier<T>::IsNeeded;
     static Type copy(const Type& source)
@@ -263,6 +319,7 @@ struct CrossThreadCopierBase<false, false, HashSet<ObjectIdentifierGeneric<T, U>
 // Default specialization for HashMaps of CrossThreadCopyable classes
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg, ShouldValidateKey shouldValidateKey>
 struct CrossThreadCopierBase<false, false, HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, shouldValidateKey>> {
+    STATIC_ASSERT_NO_RAW_STRING_IMPL_POINTERS(KeyArg, MappedArg);
     using Type = HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, shouldValidateKey>;
     static constexpr bool IsNeeded = CrossThreadCopier<KeyArg>::IsNeeded || CrossThreadCopier<MappedArg>::IsNeeded;
     static Type copy(const Type& source)
@@ -284,6 +341,7 @@ struct CrossThreadCopierBase<false, false, HashMap<KeyArg, MappedArg, HashArg, K
 
 // Default specialization for pairs of CrossThreadCopyable classes
 template<typename F, typename S> struct CrossThreadCopierBase<false, false, std::pair<F, S> > {
+    STATIC_ASSERT_NO_RAW_STRING_IMPL_POINTERS(F, S);
     using Type = std::pair<F, S>;
     static constexpr bool IsNeeded = CrossThreadCopier<F>::IsNeeded || CrossThreadCopier<S>::IsNeeded;
     template<typename U> static Type copy(U&& source)
@@ -294,6 +352,7 @@ template<typename F, typename S> struct CrossThreadCopierBase<false, false, std:
 
 // Default specialization for std::optional of CrossThreadCopyable class.
 template<typename T> struct CrossThreadCopierBase<false, false, std::optional<T>> {
+    STATIC_ASSERT_NO_RAW_STRING_IMPL_POINTERS(T);
     using Type = std::optional<T>;
     static constexpr bool IsNeeded = CrossThreadCopier<T>::IsNeeded;
     template<typename U> static std::optional<T> copy(U&& source)
@@ -306,6 +365,7 @@ template<typename T> struct CrossThreadCopierBase<false, false, std::optional<T>
 
 // Default specialization for Markable of CrossThreadCopyable class.
 template<typename T, typename U> struct CrossThreadCopierBase<false, false, Markable<T, U>> {
+    STATIC_ASSERT_NO_RAW_STRING_IMPL_POINTERS(T);
     using Type = Markable<T, U>;
     static constexpr bool IsNeeded = CrossThreadCopier<T>::IsNeeded;
     template<typename V> static Type copy(V&& source)
@@ -323,6 +383,7 @@ template<> struct CrossThreadCopierBase<false, false, std::nullptr_t> {
 
 // Default specialization for Variant of CrossThreadCopyable classes.
 template<typename... Types> struct CrossThreadCopierBase<false, false, Variant<Types...>> {
+    STATIC_ASSERT_NO_RAW_STRING_IMPL_POINTERS(std::remove_cvref_t<Types>...);
     using Type = Variant<Types...>;
     static constexpr bool IsNeeded = (CrossThreadCopier<std::remove_cvref_t<Types>>::IsNeeded || ...);
     static Variant<Types...> copy(const Type& source)
@@ -346,6 +407,7 @@ struct CrossThreadCopierBase<false, false, void> {
 };
 
 template<typename T, typename U> struct CrossThreadCopierBase<false, false, std::expected<T, U> > {
+    STATIC_ASSERT_NO_RAW_STRING_IMPL_POINTERS(std::remove_cvref_t<T>, std::remove_cvref_t<U>);
     using Type = std::expected<T, U>;
     static constexpr bool IsNeeded = CrossThreadCopier<std::remove_cvref_t<T>>::IsNeeded || CrossThreadCopier<std::remove_cvref_t<U>>::IsNeeded;
     static Type copy(const Type& source)
@@ -373,6 +435,7 @@ template<typename T, typename U> struct CrossThreadCopierBase<false, false, std:
 
 // Default specialization for std::tuple of CrossThreadCopyable classes.
 template<typename... Types> struct CrossThreadCopierBase<false, false, std::tuple<Types...>> {
+    STATIC_ASSERT_NO_RAW_STRING_IMPL_POINTERS(std::remove_cvref_t<Types>...);
     using Type = std::tuple<Types...>;
     static constexpr bool IsNeeded = (CrossThreadCopier<std::remove_cvref_t<Types>>::IsNeeded || ...);
     static Type copy(const Type& source)

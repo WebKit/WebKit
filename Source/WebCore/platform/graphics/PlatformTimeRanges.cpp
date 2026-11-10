@@ -402,7 +402,7 @@ void PlatformTimeRanges::dump(PrintStream& out) const
         out.print("[", start(i), "..", end(i), "] ");
 }
 
-String PlatformTimeRanges::toString() const
+RefPtr<StringImpl> PlatformTimeRanges::toString() const
 {
     StringBuilder result;
 

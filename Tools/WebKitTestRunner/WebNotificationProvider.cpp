@@ -174,7 +174,7 @@ std::optional<bool> WebNotificationProvider::permissionState(WKSecurityOriginRef
     return std::nullopt;
 }
 
-void WebNotificationProvider::setPermission(const String& origin, bool allowed)
+void WebNotificationProvider::setPermission(StringImpl* origin, bool allowed)
 {
     auto wkAllowed = adoptWK(WKBooleanCreate(allowed));
     WKDictionarySetItem(m_permissions.get(), toWK(origin).get(), wkAllowed.get());

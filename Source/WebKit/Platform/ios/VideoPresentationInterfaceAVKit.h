@@ -42,7 +42,7 @@ public:
     static Ref<VideoPresentationInterfaceAVKit> create(WebCore::PlaybackSessionInterfaceCocoa&);
     ~VideoPresentationInterfaceAVKit();
 
-    void didToggleCaptionStylePreviewID(const String&);
+    void didToggleCaptionStylePreviewID(StringImpl*);
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const { return "VideoPresentationInterfaceAVKit"_s; };

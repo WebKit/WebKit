@@ -60,7 +60,7 @@ AudioMediaStreamTrackRendererUnit::AudioMediaStreamTrackRendererUnit()
 
 AudioMediaStreamTrackRendererUnit::~AudioMediaStreamTrackRendererUnit() = default;
 
-void AudioMediaStreamTrackRendererUnit::setLastDeviceUsed(const String& deviceID)
+void AudioMediaStreamTrackRendererUnit::setLastDeviceUsed(StringImpl* deviceID)
 {
     if (supportsPerDeviceRendering())
         return;
@@ -84,9 +84,9 @@ void AudioMediaStreamTrackRendererUnit::deleteUnitsIfPossible()
     });
 }
 
-Ref<AudioMediaStreamTrackRendererUnit::Unit> AudioMediaStreamTrackRendererUnit::ensureDeviceUnit(const String& identifier)
+Ref<AudioMediaStreamTrackRendererUnit::Unit> AudioMediaStreamTrackRendererUnit::ensureDeviceUnit(StringImpl* identifier)
 {
-    String deviceID = supportsPerDeviceRendering() ? identifier : AudioMediaStreamTrackRenderer::defaultDeviceID();
+    RefPtr<StringImpl> deviceID = supportsPerDeviceRendering() ? RefPtr { identifier } : AudioMediaStreamTrackRenderer::defaultDeviceID();
 
     assertIsMainThread();
 
@@ -95,9 +95,9 @@ Ref<AudioMediaStreamTrackRendererUnit::Unit> AudioMediaStreamTrackRendererUnit::
     }).iterator->value;
 }
 
-RefPtr<AudioMediaStreamTrackRendererUnit::Unit> AudioMediaStreamTrackRendererUnit::getDeviceUnit(const String& identifier)
+RefPtr<AudioMediaStreamTrackRendererUnit::Unit> AudioMediaStreamTrackRendererUnit::getDeviceUnit(StringImpl* identifier)
 {
-    String deviceID = supportsPerDeviceRendering() ? identifier : AudioMediaStreamTrackRenderer::defaultDeviceID();
+    RefPtr<StringImpl> deviceID = supportsPerDeviceRendering() ? RefPtr { identifier } : AudioMediaStreamTrackRenderer::defaultDeviceID();
 
     assertIsMainThread();
 
@@ -107,13 +107,13 @@ RefPtr<AudioMediaStreamTrackRendererUnit::Unit> AudioMediaStreamTrackRendererUni
     return iterator->value.ptr();
 }
 
-void AudioMediaStreamTrackRendererUnit::addSource(const String& deviceID, Ref<AudioSampleDataSource>&& source)
+void AudioMediaStreamTrackRendererUnit::addSource(StringImpl* deviceID, Ref<AudioSampleDataSource>&& source)
 {
     Ref unit = ensureDeviceUnit(deviceID);
     unit->addSource(WTF::move(source));
 }
 
-void AudioMediaStreamTrackRendererUnit::removeSource(const String& deviceID, AudioSampleDataSource& source)
+void AudioMediaStreamTrackRendererUnit::removeSource(StringImpl* deviceID, AudioSampleDataSource& source)
 {
     assertIsMainThread();
 
@@ -126,7 +126,7 @@ void AudioMediaStreamTrackRendererUnit::removeSource(const String& deviceID, Aud
         m_deleteUnitsTimer.startOneShot(deleteUnitDelay);
 }
 
-void AudioMediaStreamTrackRendererUnit::addResetObserver(const String& deviceID, ResetObserver& observer)
+void AudioMediaStreamTrackRendererUnit::addResetObserver(StringImpl* deviceID, ResetObserver& observer)
 {
     Ref unit = ensureDeviceUnit(deviceID);
     unit->addResetObserver(observer);
@@ -148,9 +148,9 @@ void AudioMediaStreamTrackRendererUnit::deleteUnitForTesting()
     unit->deleteUnitForTesting();
 }
 
-AudioMediaStreamTrackRendererUnit::Unit::Unit(const String& deviceID)
+AudioMediaStreamTrackRendererUnit::Unit::Unit(StringImpl* deviceID)
     : m_internalUnit(AudioMediaStreamTrackRendererInternalUnit::create(deviceID, *this))
-    , m_isDefaultUnit(deviceID == AudioMediaStreamTrackRenderer::defaultDeviceID())
+    , m_isDefaultUnit(equal(deviceID, AudioMediaStreamTrackRenderer::defaultDeviceID()))
 {
 }
 
@@ -214,7 +214,7 @@ void AudioMediaStreamTrackRendererUnit::Unit::addResetObserver(ResetObserver& ob
     m_resetObservers.add(observer);
 }
 
-void AudioMediaStreamTrackRendererUnit::Unit::setLastDeviceUsed(const String& deviceID)
+void AudioMediaStreamTrackRendererUnit::Unit::setLastDeviceUsed(StringImpl* deviceID)
 {
     assertIsMainThread();
     m_internalUnit->setLastDeviceUsed(deviceID);

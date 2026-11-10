@@ -85,7 +85,7 @@ void WebPageTesting::preferredRenderingUpdateIntervalInMilliseconds(CompletionHa
     completionHandler(page ? page->preferredRenderingUpdateInterval().milliseconds() : 0);
 }
 
-void WebPageTesting::setPermissionLevel(const String& origin, bool allowed)
+void WebPageTesting::setPermissionLevel(StringImpl* origin, bool allowed)
 {
 #if ENABLE(NOTIFICATIONS)
     RefPtr page = m_page.get();
@@ -97,7 +97,7 @@ void WebPageTesting::setPermissionLevel(const String& origin, bool allowed)
 #endif
 }
 
-void WebPageTesting::isEditingCommandEnabled(const String& commandName, CompletionHandler<void(bool)>&& completionHandler)
+void WebPageTesting::isEditingCommandEnabled(StringImpl* commandName, CompletionHandler<void(bool)>&& completionHandler)
 {
     RefPtr page = m_page.get();
     if (!page)

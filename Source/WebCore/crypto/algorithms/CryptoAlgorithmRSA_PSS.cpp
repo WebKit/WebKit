@@ -112,11 +112,11 @@ void CryptoAlgorithmRSA_PSS::importKey(CryptoKeyFormat format, KeyData&& data, c
     case CryptoKeyFormat::Jwk: {
         JsonWebKey key = WTF::move(std::get<JsonWebKey>(data));
 
-        if (usages && ((!key.d.isNull() && (usages ^ CryptoKeyUsageSign)) || (key.d.isNull() && (usages ^ CryptoKeyUsageVerify)))) {
+        if (usages && ((!!key.d && (usages ^ CryptoKeyUsageSign)) || (!key.d && (usages ^ CryptoKeyUsageVerify)))) {
             exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
-        if (usages && !key.use.isNull() && key.use != "sig"_s) {
+        if (usages && !!key.use && !equal(key.use, "sig"_s)) {
             exceptionCallback(ExceptionCode::DataError);
             return;
         }
@@ -124,19 +124,19 @@ void CryptoAlgorithmRSA_PSS::importKey(CryptoKeyFormat format, KeyData&& data, c
         bool isMatched = false;
         switch (rsaParameters.hashIdentifier) {
         case CryptoAlgorithmIdentifier::SHA_1:
-            isMatched = key.alg.isNull() || key.alg == ALG1;
+            isMatched = !key.alg || equal(key.alg, ALG1);
             break;
         case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
             break;
         case CryptoAlgorithmIdentifier::SHA_256:
-            isMatched = key.alg.isNull() || key.alg == ALG256;
+            isMatched = !key.alg || equal(key.alg, ALG256);
             break;
         case CryptoAlgorithmIdentifier::SHA_384:
-            isMatched = key.alg.isNull() || key.alg == ALG384;
+            isMatched = !key.alg || equal(key.alg, ALG384);
             break;
         case CryptoAlgorithmIdentifier::SHA_512:
-            isMatched = key.alg.isNull() || key.alg == ALG512;
+            isMatched = !key.alg || equal(key.alg, ALG512);
             break;
         default:
             break;
@@ -195,19 +195,19 @@ void CryptoAlgorithmRSA_PSS::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& 
         JsonWebKey jwk = rsaKey.exportJwk();
         switch (rsaKey.hashAlgorithmIdentifier()) {
         case CryptoAlgorithmIdentifier::SHA_1:
-            jwk.alg = String(ALG1);
+            jwk.alg = StringImpl::create(ALG1);
             break;
         case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
             break;
         case CryptoAlgorithmIdentifier::SHA_256:
-            jwk.alg = String(ALG256);
+            jwk.alg = StringImpl::create(ALG256);
             break;
         case CryptoAlgorithmIdentifier::SHA_384:
-            jwk.alg = String(ALG384);
+            jwk.alg = StringImpl::create(ALG384);
             break;
         case CryptoAlgorithmIdentifier::SHA_512:
-            jwk.alg = String(ALG512);
+            jwk.alg = StringImpl::create(ALG512);
             break;
         default:
             ASSERT_NOT_REACHED();

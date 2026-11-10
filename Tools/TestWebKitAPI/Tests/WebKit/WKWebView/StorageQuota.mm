@@ -116,7 +116,7 @@ static bool storageQuotaReceivedMessage;
 @end
 
 @implementation QuotaMessageHandler {
-    Deque<String> _expectedMessages;
+    Deque<RefPtr<StringImpl>> _expectedMessages;
 }
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
@@ -139,7 +139,7 @@ static bool storageQuotaReceivedMessage;
 {
     EXPECT_TRUE(_expectedMessages.isEmpty());
     for (NSString *message in messages)
-        _expectedMessages.append({ message });
+        _expectedMessages.append({ StringImpl::create(message) });
 }
 
 @end

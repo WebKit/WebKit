@@ -161,7 +161,7 @@ auto ToCSS<GridPosition::Explicit>::operator()(const GridPosition::Explicit& val
 {
     return CSS::GridLineExplicit {
         toCSS(value.position, style),
-        !value.name.value.isNull() ? std::optional { toCSS(value.name, style) } : std::nullopt,
+        !!value.name.value ? std::optional { toCSS(value.name, style) } : std::nullopt,
     };
 }
 
@@ -177,7 +177,7 @@ auto ToCSS<GridPosition::Span>::operator()(const GridPosition::Span& value, cons
 {
     return CSS::GridLineSpan {
         toCSS(value.position, style),
-        !value.name.value.isNull() ? std::optional { toCSS(value.name, style) } : std::nullopt,
+        !!value.name.value ? std::optional { toCSS(value.name, style) } : std::nullopt,
     };
 }
 

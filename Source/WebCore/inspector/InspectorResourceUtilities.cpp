@@ -140,7 +140,7 @@ NODELETE static Inspector::Protocol::Network::ReferrerPolicy referrerPolicyToPro
     return Inspector::Protocol::Network::ReferrerPolicy::EmptyString;
 }
 
-[[nodiscard]] static bool decodeBuffer(std::span<const uint8_t> buffer, const String& textEncodingName, String* result)
+[[nodiscard]] static bool decodeBuffer(std::span<const uint8_t> buffer, StringImpl* textEncodingName, RefPtr<StringImpl>* result)
 {
     if (buffer.data()) {
         PAL::TextEncoding encoding(textEncodingName);
@@ -152,7 +152,7 @@ NODELETE static Inspector::Protocol::Network::ReferrerPolicy referrerPolicyToPro
     return false;
 }
 
-static bool dataContent(std::span<const uint8_t> data, const String& textEncodingName, bool withBase64Encode, String* result)
+static bool dataContent(std::span<const uint8_t> data, StringImpl* textEncodingName, bool withBase64Encode, RefPtr<StringImpl>* result)
 {
     if (withBase64Encode) {
         *result = base64EncodeToString(data);
@@ -162,7 +162,7 @@ static bool dataContent(std::span<const uint8_t> data, const String& textEncodin
     return decodeBuffer(data, textEncodingName, result);
 }
 
-bool sharedBufferContent(RefPtr<FragmentedSharedBuffer>&& buffer, const String& textEncodingName, bool withBase64Encode, String* result)
+bool sharedBufferContent(RefPtr<FragmentedSharedBuffer>&& buffer, StringImpl* textEncodingName, bool withBase64Encode, RefPtr<StringImpl>* result)
 {
     return dataContent(buffer ? buffer->makeContiguous()->span() : std::span<const uint8_t> { }, textEncodingName, withBase64Encode, result);
 }
@@ -237,15 +237,15 @@ void collectRawCookiesForFrame(LocalFrame& frame, ListHashSet<Cookie>& cookies, 
     }
 }
 
-bool mainResourceContent(LocalFrame* frame, bool withBase64Encode, String* result)
+bool mainResourceContent(LocalFrame* frame, bool withBase64Encode, RefPtr<StringImpl>* result)
 {
     RefPtr<FragmentedSharedBuffer> buffer = protect(frame->loader().documentLoader())->mainResourceData();
     if (!buffer)
         return false;
-    return dataContent(buffer->makeContiguous()->span(), protect(frame->document())->encoding(), withBase64Encode, result);
+    return dataContent(buffer->makeContiguous()->span(), StringImpl::createOrNull(protect(frame->document())->encoding()).get(), withBase64Encode, result);
 }
 
-void resourceContent(Inspector::Protocol::ErrorString& errorString, LocalFrame* frame, const URL& url, String* result, bool* base64Encoded)
+void resourceContent(Inspector::Protocol::ErrorString& errorString, LocalFrame* frame, const URL& url, RefPtr<StringImpl>* result, bool* base64Encoded)
 {
     RefPtr<DocumentLoader> loader = assertDocumentLoader(errorString, frame);
     if (!loader)
@@ -264,7 +264,7 @@ void resourceContent(Inspector::Protocol::ErrorString& errorString, LocalFrame* 
     }
 
     if (!success)
-        errorString = "Missing resource for given url"_s;
+        errorString = "Missing resource for given url"_si;
 }
 
 Ref<JSON::ArrayOf<Inspector::Protocol::Page::FrameResource>> buildResourceObjectsForFrame(LocalFrame& frame)
@@ -306,36 +306,36 @@ Ref<Inspector::Protocol::Page::FrameResource> buildResourceObject(const Inspecto
         resourceObject->setCanceled(true);
     else if (resource.failed)
         resourceObject->setFailed(true);
-    if (!resource.sourceMapURL.isEmpty())
+    if (!isEmpty(resource.sourceMapURL))
         resourceObject->setSourceMapURL(resource.sourceMapURL);
-    if (!resource.targetId.isEmpty())
+    if (!isEmpty(resource.targetId))
         resourceObject->setTargetId(resource.targetId);
     return resourceObject;
 }
 
-String sourceMapURLForResource(CachedResource* cachedResource)
+RefPtr<StringImpl> sourceMapURLForResource(CachedResource* cachedResource)
 {
     if (!cachedResource)
-        return String();
+        return nullptr;
 
     // Scripts are handled in a separate path.
     if (cachedResource->type() != CachedResource::Type::CSSStyleSheet)
-        return String();
+        return nullptr;
 
-    String sourceMapHeader = cachedResource->response().httpHeaderField(HTTPHeaderName::SourceMap);
-    if (!sourceMapHeader.isEmpty())
+    RefPtr<StringImpl> sourceMapHeader = cachedResource->response().httpHeaderField(HTTPHeaderName::SourceMap);
+    if (!isEmpty(sourceMapHeader))
         return sourceMapHeader;
 
     sourceMapHeader = cachedResource->response().httpHeaderField(HTTPHeaderName::XSourceMap);
-    if (!sourceMapHeader.isEmpty())
+    if (!isEmpty(sourceMapHeader))
         return sourceMapHeader;
 
-    String content;
+    RefPtr<StringImpl> content;
     bool base64Encoded;
     if (cachedResourceContent(*cachedResource, &content, &base64Encoded) && !base64Encoded)
         return ContentSearchUtilities::findStylesheetSourceMapURL(content);
 
-    return String();
+    return nullptr;
 }
 
 RefPtr<CachedResource> cachedResource(const LocalFrame* frame, const URL& url)
@@ -421,14 +421,14 @@ Inspector::Protocol::Page::ResourceType cachedResourceTypeToProtocol(const Cache
     return resourceTypeToProtocol(inspectorResourceType(cachedResource));
 }
 
-LocalFrame* findFrameWithSecurityOrigin(Page& page, const String& originRawString)
+LocalFrame* findFrameWithSecurityOrigin(Page& page, StringImpl* originRawString)
 {
     // FIXME: this frame tree traversal needs to be redesigned for Site Isolation.
     for (SUPPRESS_UNCOUNTED_LOCAL auto* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         SUPPRESS_UNCOUNTED_LOCAL auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        if (protect(protect(localFrame->document())->securityOrigin())->toRawString() == originRawString)
+        if (equal(protect(protect(localFrame->document())->securityOrigin())->toRawString(), originRawString))
             return localFrame;
     }
     return nullptr;
@@ -439,11 +439,11 @@ DocumentLoader* assertDocumentLoader(Inspector::Protocol::ErrorString& errorStri
     FrameLoader& frameLoader = frame->loader();
     SUPPRESS_UNCOUNTED_LOCAL auto* documentLoader = frameLoader.documentLoader();
     if (!documentLoader)
-        errorString = "Missing document loader for given frame"_s;
+        errorString = "Missing document loader for given frame"_si;
     return documentLoader;
 }
 
-bool shouldTreatAsText(const String& mimeType)
+bool shouldTreatAsText(StringImpl* mimeType)
 {
     return startsWithLettersIgnoringASCIICase(mimeType, "text/"_s)
         || MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType)
@@ -452,9 +452,9 @@ bool shouldTreatAsText(const String& mimeType)
         || MIMETypeRegistry::isTextMediaPlaylistMIMEType(mimeType);
 }
 
-Ref<TextResourceDecoder> createTextDecoder(const String& mimeType, const String& textEncodingName)
+Ref<TextResourceDecoder> createTextDecoder(StringImpl* mimeType, StringImpl* textEncodingName)
 {
-    if (!textEncodingName.isEmpty())
+    if (!isEmpty(textEncodingName))
         return TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, textEncodingName);
 
     if (MIMETypeRegistry::isTextMIMEType(mimeType))
@@ -469,12 +469,12 @@ Ref<TextResourceDecoder> createTextDecoder(const String& mimeType, const String&
     return TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, PAL::UTF8Encoding());
 }
 
-std::optional<String> textContentForCachedResource(CachedResource& cachedResource)
+std::optional<RefPtr<StringImpl>> textContentForCachedResource(CachedResource& cachedResource)
 {
     if (!shouldTreatAsText(cachedResource.mimeType()))
         return std::nullopt;
 
-    String result;
+    RefPtr<StringImpl> result;
     bool base64Encoded;
     if (cachedResourceContent(cachedResource, &result, &base64Encoded)) {
         ASSERT(!base64Encoded);
@@ -484,14 +484,14 @@ std::optional<String> textContentForCachedResource(CachedResource& cachedResourc
     return std::nullopt;
 }
 
-bool cachedResourceContent(CachedResource& resource, String* result, bool* base64Encoded)
+bool cachedResourceContent(CachedResource& resource, RefPtr<StringImpl>* result, bool* base64Encoded)
 {
     ASSERT(result);
     ASSERT(base64Encoded);
 
     if (!resource.encodedSize()) {
         *base64Encoded = false;
-        *result = String();
+        *result = nullptr;
         return true;
     }
 
@@ -530,13 +530,13 @@ bool cachedResourceContent(CachedResource& resource, String* result, bool* base6
     }
 }
 
-void loadResource(ScriptExecutionContext& context, const String& urlString, LoadResourceCompletionHandler&& completionHandler)
+void loadResource(ScriptExecutionContext& context, StringImpl* urlString, LoadResourceCompletionHandler&& completionHandler)
 {
     // Backs Network.loadResource: load a URL in a document's context on behalf of the inspector,
     // bypassing cross-origin checks (e.g. to fetch a source map).
     URL url = context.encodingParseURL(urlString);
     ResourceRequest request(WTF::move(url));
-    request.setHTTPMethod("GET"_s);
+    request.setHTTPMethod("GET"_si);
     request.setHiddenFromInspector(true);
 
     ThreadableLoaderOptions options;
@@ -549,7 +549,7 @@ void loadResource(ScriptExecutionContext& context, const String& urlString, Load
     Ref client = InspectorThreadableLoaderClient::create(WTF::move(completionHandler));
     RefPtr loader = ThreadableLoader::create(context, client.get(), WTF::move(request), options);
     if (!loader) {
-        client->failWithMessage("Could not load requested resource."_s);
+        client->failWithMessage("Could not load requested resource."_si);
         return;
     }
 
@@ -589,7 +589,7 @@ Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLo
 {
     auto metrics = Inspector::Protocol::Network::Metrics::create().release();
 
-    if (!networkLoadMetrics.protocol.isNull())
+    if (networkLoadMetrics.protocol)
         metrics->setProtocol(networkLoadMetrics.protocol);
 
     // The additional metrics are only captured while an inspector is attached
@@ -597,9 +597,9 @@ Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLo
     if (RefPtr additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
         if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
             metrics->setPriority(toProtocol(additionalMetrics->priority));
-        if (!additionalMetrics->remoteAddress.isNull())
+        if (additionalMetrics->remoteAddress)
             metrics->setRemoteAddress(additionalMetrics->remoteAddress);
-        if (!additionalMetrics->connectionIdentifier.isNull())
+        if (additionalMetrics->connectionIdentifier)
             metrics->setConnectionIdentifier(additionalMetrics->connectionIdentifier);
         if (!additionalMetrics->requestHeaders.isEmpty())
             metrics->setRequestHeaders(buildObjectForHeaders(additionalMetrics->requestHeaders));
@@ -620,9 +620,9 @@ Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLo
     auto connectionPayload = Inspector::Protocol::Security::Connection::create().release();
 
     if (RefPtr additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
-        if (!additionalMetrics->tlsProtocol.isEmpty())
+        if (!isEmpty(additionalMetrics->tlsProtocol))
             connectionPayload->setProtocol(additionalMetrics->tlsProtocol);
-        if (!additionalMetrics->tlsCipher.isEmpty())
+        if (!isEmpty(additionalMetrics->tlsCipher))
             connectionPayload->setCipher(additionalMetrics->tlsCipher);
     }
 
@@ -672,13 +672,13 @@ Ref<Inspector::Protocol::Security::Security> buildObjectForSecurity(const Certif
         if (auto validUntil = certificateSummaryInfo.value().validUntil)
             certificatePayload->setValidUntil(validUntil.seconds());
 
-        auto dnsNamesPayload = JSON::ArrayOf<String>::create();
+        auto dnsNamesPayload = JSON::ArrayOf<RefPtr<StringImpl>>::create();
         for (auto& dnsName : certificateSummaryInfo.value().dnsNames)
             dnsNamesPayload->addItem(dnsName);
         if (dnsNamesPayload->length())
             certificatePayload->setDnsNames(WTF::move(dnsNamesPayload));
 
-        auto ipAddressesPayload = JSON::ArrayOf<String>::create();
+        auto ipAddressesPayload = JSON::ArrayOf<RefPtr<StringImpl>>::create();
         for (auto& ipAddress : certificateSummaryInfo.value().ipAddresses)
             ipAddressesPayload->addItem(ipAddress);
         if (ipAddressesPayload->length())
@@ -784,7 +784,7 @@ static Ref<Inspector::Protocol::Console::StackTrace> buildStackTraceObject(const
             callFrames->addItem(Inspector::Protocol::Console::CallFrame::create()
                 .setFunctionName(frame.functionName)
                 .setUrl(frame.sourceURL)
-                .setScriptId(String::number(frame.sourceID))
+                .setScriptId(makeString(frame.sourceID))
                 .setLineNumber(frame.lineNumber)
                 .setColumnNumber(frame.columnNumber)
                 .release());
@@ -840,7 +840,7 @@ RequestExtras copyRequestExtras(const ResourceRequest& request, const ResourceLo
         // FIXME: <https://webkit.org/b/326621> Cap the size of postData.
         // flatten() omits files, so a non-empty body can yield no bytes. Keep postData non-null for it.
         auto bytes = body->flatten();
-        requestExtras.postData = bytes.isEmpty() ? emptyString() : String::fromUTF8WithLatin1Fallback(bytes.span());
+        requestExtras.postData = bytes.isEmpty() ? emptyString() : StringImpl::fromUTF8WithLatin1Fallback(bytes.span());
     }
 
     if (resourceLoader) {
@@ -859,13 +859,13 @@ Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(const R
         .setHeaders(buildObjectForHeaders(request.httpHeaderFields()))
         .release();
 
-    if (!requestExtras.postData.isNull())
+    if (requestExtras.postData)
         requestObject->setPostData(requestExtras.postData);
 
     if (requestExtras.referrerPolicy)
         requestObject->setReferrerPolicy(referrerPolicyToProtocol(*requestExtras.referrerPolicy));
 
-    if (!requestExtras.integrity.isEmpty())
+    if (!isEmpty(requestExtras.integrity))
         requestObject->setIntegrity(requestExtras.integrity);
 
     return requestObject;

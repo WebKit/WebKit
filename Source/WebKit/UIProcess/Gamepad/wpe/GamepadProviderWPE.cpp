@@ -138,23 +138,23 @@ void GamepadProviderWPE::stopMonitoringGamepads(GamepadProviderClient& client)
     }
 }
 
-void GamepadProviderWPE::playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType type, const GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
+void GamepadProviderWPE::playEffect(unsigned gamepadIndex, StringImpl* gamepadID, GamepadHapticEffectType type, const GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (gamepadIndex >= m_gamepadVector.size())
         return completionHandler(false);
     auto gamepad = m_gamepadVector[gamepadIndex];
-    if (!gamepad || gamepad->id() != gamepadID)
+    if (!gamepad || !equal(gamepad->id(), gamepadID))
         return completionHandler(false);
 
     gamepad->playEffect(type, parameters, WTF::move(completionHandler));
 }
 
-void GamepadProviderWPE::stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&& completionHandler)
+void GamepadProviderWPE::stopEffects(unsigned gamepadIndex, StringImpl* gamepadID, CompletionHandler<void()>&& completionHandler)
 {
     if (gamepadIndex >= m_gamepadVector.size())
         return completionHandler();
     auto gamepad = m_gamepadVector[gamepadIndex];
-    if (!gamepad || gamepad->id() != gamepadID)
+    if (!gamepad || !equal(gamepad->id(), gamepadID))
         return completionHandler();
 
     gamepad->stopEffects(WTF::move(completionHandler));

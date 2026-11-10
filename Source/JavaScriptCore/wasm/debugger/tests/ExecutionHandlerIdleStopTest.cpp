@@ -135,8 +135,8 @@ static void simpleVMTask()
         // Execute simple script - VM becomes active (calls notifyVMActivation)
         {
             JSC::JSLockHolder locker(vm);
-            JSC::SourceOrigin origin(URL({ }, "test"_s));
-            JSC::SourceCode sourceCode = JSC::makeSource("1 + 1"_s, origin, JSC::SourceTaintedOrigin::Untainted);
+            JSC::SourceOrigin origin(URL({ }, "test"_si));
+            JSC::SourceCode sourceCode = JSC::makeSource("1 + 1"_si, origin, JSC::SourceTaintedOrigin::Untainted);
 
             NakedPtr<JSC::Exception> exception;
             JSC::evaluate(globalObject, sourceCode, JSC::JSValue(), exception);
@@ -512,9 +512,9 @@ static void activeVMTask()
         // Execute script - VM becomes active
         {
             JSC::JSLockHolder locker(vm);
-            JSC::SourceOrigin origin(URL({ }, "active-vm"_s));
+            JSC::SourceOrigin origin(URL({ }, "active-vm"_si));
             // Tight loop that checks traps frequently
-            JSC::SourceCode sourceCode = JSC::makeSource("for (var i = 0; i < 1000000; i++) {}"_s, origin, JSC::SourceTaintedOrigin::Untainted);
+            JSC::SourceCode sourceCode = JSC::makeSource("for (var i = 0; i < 1000000; i++) {}"_si, origin, JSC::SourceTaintedOrigin::Untainted);
 
             NakedPtr<JSC::Exception> exception;
             JSC::evaluate(globalObject, sourceCode, JSC::JSValue(), exception);

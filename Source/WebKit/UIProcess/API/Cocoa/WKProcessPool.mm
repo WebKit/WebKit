@@ -231,22 +231,22 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)_registerURLSchemeAsCanDisplayOnlyIfCanRequest:(NSString *)scheme
 {
-    protect(*_processPool)->registerURLSchemeAsCanDisplayOnlyIfCanRequest(scheme);
+    protect(*_processPool)->registerURLSchemeAsCanDisplayOnlyIfCanRequest(StringImpl::create(scheme).get());
 }
 
 - (void)_registerURLSchemeAsSecure:(NSString *)scheme
 {
-    protect(*_processPool)->registerURLSchemeAsSecure(scheme);
+    protect(*_processPool)->registerURLSchemeAsSecure(StringImpl::create(scheme).get());
 }
 
 - (void)_registerURLSchemeAsBypassingContentSecurityPolicy:(NSString *)scheme
 {
-    protect(*_processPool)->registerURLSchemeAsBypassingContentSecurityPolicy(scheme);
+    protect(*_processPool)->registerURLSchemeAsBypassingContentSecurityPolicy(StringImpl::create(scheme).get());
 }
 
 - (void)_setDomainRelaxationForbiddenForURLScheme:(NSString *)scheme
 {
-    protect(*_processPool)->setDomainRelaxationForbiddenForURLScheme(scheme);
+    protect(*_processPool)->setDomainRelaxationForbiddenForURLScheme(StringImpl::create(scheme).get());
 }
 
 - (void)_setCanHandleHTTPSServerTrustEvaluation:(BOOL)value
@@ -277,7 +277,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [protect(processPool->ensureBundleParameters()) removeObjectForKey:parameter];
 
     RetainPtr<NSData> data = keyedArchiver.get().encodedData;
-    processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(parameter, span(data.get())));
+    processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(StringImpl::create(parameter).get(), span(data.get())));
 }
 
 - (void)_setObjectsForBundleParametersWithDictionary:(NSDictionary *)dictionary
@@ -352,28 +352,28 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSURL *)_javaScriptConfigurationDirectory
 {
-    return [NSURL fileURLWithPath:_processPool->javaScriptConfigurationDirectory().createNSString().get() isDirectory:YES];
+    return [NSURL fileURLWithPath:createNSString(_processPool->javaScriptConfigurationDirectory()).get() isDirectory:YES];
 }
 
 - (void)_setJavaScriptConfigurationDirectory:(NSURL *)directory
 {
     if (directory && ![directory isFileURL])
         [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", directory];
-    protect(*_processPool)->setJavaScriptConfigurationDirectory(directory.path);
+    protect(*_processPool)->setJavaScriptConfigurationDirectory(StringImpl::create(directory.path));
 }
 
 - (void)_addSupportedPlugin:(NSString *) domain named:(NSString *) name withMimeTypes: (NSSet<NSString *> *) nsMimeTypes withExtensions: (NSSet<NSString *> *) nsExtensions
 {
-    HashSet<String> mimeTypes;
+    HashSet<RefPtr<StringImpl>> mimeTypes;
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString *mimeType in nsMimeTypes)
-        mimeTypes.add(mimeType);
-    HashSet<String> extensions;
+        mimeTypes.add(StringImpl::create(mimeType));
+    HashSet<RefPtr<StringImpl>> extensions;
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString *extension in nsExtensions)
-        extensions.add(extension);
+        extensions.add(StringImpl::create(extension));
 
-    protect(*_processPool)->addSupportedPlugin(domain, name, WTF::move(mimeTypes), WTF::move(extensions));
+    protect(*_processPool)->addSupportedPlugin(StringImpl::create(domain), StringImpl::create(name), WTF::move(mimeTypes), WTF::move(extensions));
 }
 
 - (void)_clearSupportedPlugins
@@ -664,7 +664,7 @@ static WebKit::WebProcessPool::AXAuthenticationTestingMode toAXAuthenticationTes
 
 - (void)_getActivePagesOriginsInWebProcessForTesting:(pid_t)pid completionHandler:(void(^)(NSArray<NSString *> *))completionHandler
 {
-    protect(*_processPool)->activePagesOriginsInWebProcessForTesting(pid, [completionHandler = makeBlockPtr(completionHandler)] (Vector<String>&& activePagesOrigins) {
+    protect(*_processPool)->activePagesOriginsInWebProcessForTesting(pid, [completionHandler = makeBlockPtr(completionHandler)] (Vector<RefPtr<StringImpl>>&& activePagesOrigins) {
         completionHandler(createNSArray(activePagesOrigins).get());
     });
 }

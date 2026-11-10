@@ -34,19 +34,19 @@ namespace WebCore {
 
 class WebLock : public RefCounted<WebLock> {
 public:
-    NODELETE static Ref<WebLock> create(WebLockIdentifier, const String& name, WebLockMode);
+    NODELETE static Ref<WebLock> create(WebLockIdentifier, StringImpl* name, WebLockMode);
 
     static constexpr unsigned maxNameLength = { 1024 };
 
     WebLockIdentifier identifier() const { return m_identifier; }
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     WebLockMode mode() const { return m_mode; }
 
 private:
-    WebLock(WebLockIdentifier, const String& name, WebLockMode);
+    WebLock(WebLockIdentifier, StringImpl* name, WebLockMode);
 
     WebLockIdentifier m_identifier;
-    String m_name;
+    RefPtr<StringImpl> m_name;
     WebLockMode m_mode;
 };
 

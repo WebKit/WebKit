@@ -96,9 +96,9 @@ void RenderMenuList::updateOptionsWidth()
     Ref select = selectElement();
 
     CheckedRef style = this->style();
-    auto measure = [&](const String& text) {
+    auto measure = [&](StringImpl* text) {
         auto transformed = applyTextTransform(style, text);
-        if (transformed.isEmpty())
+        if (isEmpty(transformed))
             return;
         CheckedRef font = style->fontCascade();
         auto run = RenderBlock::constructTextRun(transformed, style);

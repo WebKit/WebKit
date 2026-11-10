@@ -583,7 +583,7 @@ void ImageBuffer::transferToNewContext(const ImageBufferCreationContext& context
         backend->transferToNewContext(context);
 }
 
-String ImageBuffer::debugDescription() const
+RefPtr<StringImpl> ImageBuffer::debugDescription() const
 {
     TextStream stream;
     stream << "ImageBuffer " << this << " " << renderingResourceIdentifier() << " " << logicalSize() << " " << resolutionScale() << "x " << renderingMode() << " backend " << ValueOrNull(m_backend.get());

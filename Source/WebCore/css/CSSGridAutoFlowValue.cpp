@@ -42,7 +42,7 @@ CSSGridAutoFlowValue::CSSGridAutoFlowValue(CSS::GridAutoFlow&& autoFlow)
 {
 }
 
-String CSSGridAutoFlowValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSGridAutoFlowValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_autoFlow);
 }

@@ -129,24 +129,24 @@ static RefPtr<WebCore::CachedImage> cachedImage(Element& element)
     return image;
 }
 
-void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, LocalFrame*)
+void WebDragClient::declareAndWriteDragImage(StringImpl* pasteboardName, Element& element, const URL& url, StringImpl* label, LocalFrame*)
 {
-    ASSERT(pasteboardName == String(NSPasteboardNameDrag));
+    ASSERT(equal(pasteboardName, StringImpl::create(NSPasteboardNameDrag).get()));
 
     RefPtr image = cachedImage(element);
 
-    String extension;
+    RefPtr<StringImpl> extension;
     if (image) {
         extension = protect(image->image())->filenameExtension();
-        if (extension.isEmpty())
+        if (isEmpty(extension))
             return;
     }
 
-    String title = label;
-    if (title.isEmpty()) {
+    RefPtr<StringImpl> title = label;
+    if (isEmpty(title)) {
         title = url.lastPathComponent().toString();
-        if (title.isEmpty())
-            title = WTF::userVisibleString(url.createNSURL().get());
+        if (isEmpty(title))
+            title = StringImpl::create(protect(WTF::userVisibleString(url.createNSURL().get())).get());
     }
 
     auto archive = LegacyWebArchive::create(element);
@@ -176,19 +176,19 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
             return;
     }
 
-    String filename = String([response suggestedFilename]);
+    RefPtr<StringImpl> filename = StringImpl::create([response suggestedFilename]);
     if (m_page->isInspectorPage()) {
-        String downloadFilename = ResourceResponseBase::sanitizeSuggestedFilename(element.attributeWithoutSynchronization(HTMLNames::filenameAttr));
-        if (!downloadFilename.isEmpty())
+        RefPtr<StringImpl> downloadFilename = ResourceResponseBase::sanitizeSuggestedFilename(element.attributeWithoutSynchronization(HTMLNames::filenameAttr));
+        if (!isEmpty(downloadFilename))
             filename = downloadFilename;
     }
 
-    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, WTF::move(*imageHandle), filename, extension, title, String([[response URL] absoluteString]), WTF::userVisibleString(url.createNSURL().get()), WTF::move(*archiveHandle), protect(element.document())->originIdentifierForPasteboard()));
+    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, WTF::move(*imageHandle), filename, extension, title, StringImpl::create([[response URL] absoluteString]).get(), StringImpl::create(protect(WTF::userVisibleString(url.createNSURL().get())).get()).get(), WTF::move(*archiveHandle), protect(element.document())->originIdentifierForPasteboard()));
 }
 
 #else
 
-void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, LocalFrame*)
+void WebDragClient::declareAndWriteDragImage(StringImpl* pasteboardName, Element& element, const URL& url, StringImpl* label, LocalFrame*)
 {
     if (RefPtr frame = element.document().frame())
         protect(frame->editor())->writeImageToPasteboard(*Pasteboard::createForDragAndDrop(PagePasteboardContext::create(frame->pageID())), element, url, label);

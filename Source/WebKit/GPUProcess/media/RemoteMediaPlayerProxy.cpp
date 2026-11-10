@@ -400,17 +400,17 @@ void RemoteMediaPlayerProxy::setBufferingPolicy(MediaPlayer::BufferingPolicy pol
 }
 
 #if PLATFORM(IOS_FAMILY)
-void RemoteMediaPlayerProxy::accessLog(CompletionHandler<void(String)>&& completionHandler)
+void RemoteMediaPlayerProxy::accessLog(CompletionHandler<void(RefPtr<StringImpl>)>&& completionHandler)
 {
     completionHandler(m_player->accessLog());
 }
 
-void RemoteMediaPlayerProxy::errorLog(CompletionHandler<void(String)>&& completionHandler)
+void RemoteMediaPlayerProxy::errorLog(CompletionHandler<void(RefPtr<StringImpl>)>&& completionHandler)
 {
     completionHandler(m_player->errorLog());
 }
 
-void RemoteMediaPlayerProxy::setSceneIdentifier(String&& identifier)
+void RemoteMediaPlayerProxy::setSceneIdentifier(RefPtr<StringImpl>&& identifier)
 {
     m_player->setSceneIdentifier(identifier);
 }
@@ -503,7 +503,7 @@ void RemoteMediaPlayerProxy::mediaPlayerEngineFailedToLoad()
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
-String RemoteMediaPlayerProxy::mediaPlayerMediaKeysStorageDirectory() const
+RefPtr<StringImpl> RemoteMediaPlayerProxy::mediaPlayerMediaKeysStorageDirectory() const
 {
     RefPtr manager = m_manager.get();
     ASSERT(manager && manager->gpuConnectionToWebProcess());
@@ -514,23 +514,23 @@ String RemoteMediaPlayerProxy::mediaPlayerMediaKeysStorageDirectory() const
 }
 #endif
 
-String RemoteMediaPlayerProxy::mediaPlayerReferrer() const
+RefPtr<StringImpl> RemoteMediaPlayerProxy::mediaPlayerReferrer() const
 {
     return m_configuration.referrer;
 }
 
-String RemoteMediaPlayerProxy::mediaPlayerUserAgent() const
+RefPtr<StringImpl> RemoteMediaPlayerProxy::mediaPlayerUserAgent() const
 {
     return m_configuration.userAgent;
 }
 
-String RemoteMediaPlayerProxy::mediaPlayerSourceApplicationIdentifier() const
+RefPtr<StringImpl> RemoteMediaPlayerProxy::mediaPlayerSourceApplicationIdentifier() const
 {
     return m_configuration.sourceApplicationIdentifier;
 }
 
 #if PLATFORM(IOS_FAMILY)
-String RemoteMediaPlayerProxy::mediaPlayerNetworkInterfaceName() const
+RefPtr<StringImpl> RemoteMediaPlayerProxy::mediaPlayerNetworkInterfaceName() const
 {
     return m_configuration.networkInterfaceName;
 }
@@ -541,7 +541,7 @@ void RemoteMediaPlayerProxy::mediaPlayerGetRawCookies(const URL& url, WebCore::M
 }
 #endif
 
-String RemoteMediaPlayerProxy::mediaPlayerMediaCacheDirectory() const
+RefPtr<StringImpl> RemoteMediaPlayerProxy::mediaPlayerMediaCacheDirectory() const
 {
     RefPtr manager = m_manager.get();
     ASSERT(manager && manager->gpuConnectionToWebProcess());
@@ -561,7 +561,7 @@ const Vector<WebCore::ContentType>& RemoteMediaPlayerProxy::mediaContentTypesReq
     return m_typesRequiringHardwareSupport;
 }
 
-Vector<String> RemoteMediaPlayerProxy::mediaPlayerPreferredAudioCharacteristics() const
+Vector<RefPtr<StringImpl>> RemoteMediaPlayerProxy::mediaPlayerPreferredAudioCharacteristics() const
 {
     return m_configuration.preferredAudioCharacteristics;
 }
@@ -787,7 +787,7 @@ void RemoteMediaPlayerProxy::mediaPlayerSizeChanged()
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-RefPtr<ArrayBuffer> RemoteMediaPlayerProxy::mediaPlayerCachedKeyForKeyId(const String& keyId) const
+RefPtr<ArrayBuffer> RemoteMediaPlayerProxy::mediaPlayerCachedKeyForKeyId(StringImpl* keyId) const
 {
     RefPtr manager = m_manager.get();
     ASSERT(manager && manager->gpuConnectionToWebProcess());
@@ -809,7 +809,7 @@ void RemoteMediaPlayerProxy::mediaPlayerKeyNeeded(const SharedBuffer& message)
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-void RemoteMediaPlayerProxy::mediaPlayerInitializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
+void RemoteMediaPlayerProxy::mediaPlayerInitializationDataEncountered(StringImpl* initDataType, RefPtr<ArrayBuffer>&& initData)
 {
     protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::InitializationDataEncountered(initDataType, initData->mutableSpan()), m_id);
 }
@@ -897,7 +897,7 @@ void RemoteMediaPlayerProxy::destroyResourceLoader(RemoteMediaResourceLoaderIden
     protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::DestroyResourceLoader(loaderIdentifier), m_id);
 }
 
-bool RemoteMediaPlayerProxy::doesHaveAttribute(const AtomString&, AtomString*) const
+bool RemoteMediaPlayerProxy::doesHaveAttribute(AtomStringImpl*, RefPtr<AtomStringImpl>*) const
 {
     notImplemented();
     return false;
@@ -1284,12 +1284,12 @@ void RemoteMediaPlayerProxy::setShouldCheckHardwareSupport(bool value)
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-void RemoteMediaPlayerProxy::setDefaultSpatialTrackingLabel(const String& defaultSpatialTrackingLabel)
+void RemoteMediaPlayerProxy::setDefaultSpatialTrackingLabel(StringImpl* defaultSpatialTrackingLabel)
 {
     m_player->setDefaultSpatialTrackingLabel(defaultSpatialTrackingLabel);
 }
 
-void RemoteMediaPlayerProxy::setSpatialTrackingLabel(const String& spatialTrackingLabel)
+void RemoteMediaPlayerProxy::setSpatialTrackingLabel(StringImpl* spatialTrackingLabel)
 {
     m_player->setSpatialTrackingLabel(spatialTrackingLabel);
 }
@@ -1328,7 +1328,7 @@ std::optional<SharedPreferencesForWebProcess> RemoteMediaPlayerProxy::sharedPref
     return gpuProcessConnectionToWebProcess->sharedPreferencesForWebProcess();
 }
 
-void RemoteMediaPlayerProxy::audioOutputDeviceChanged(String&& deviceId)
+void RemoteMediaPlayerProxy::audioOutputDeviceChanged(RefPtr<StringImpl>&& deviceId)
 {
     m_configuration.audioOutputDeviceId = WTF::move(deviceId);
     if (m_player)

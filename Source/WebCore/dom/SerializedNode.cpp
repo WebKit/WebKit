@@ -55,7 +55,7 @@ WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(SerializedNode);
 static void setAttributes(Element& element, Vector<SerializedNode::Element::Attribute>&& attributes)
 {
     element.parserSetAttributes(WTF::map(WTF::move(attributes), [] (auto&& attribute) {
-        return Attribute(WTF::move(attribute.name).qualifiedName(), AtomString(WTF::move(attribute.value)));
+        return Attribute(WTF::move(attribute.name).qualifiedName(), AtomStringImpl::add(WTF::move(attribute.value)));
     }).span());
 }
 
@@ -88,7 +88,7 @@ Ref<Node> SerializedNode::deserialize(SerializedNode&& serializedNode, WebCore::
     Ref node = WTF::switchOn(WTF::move(serializedNode.data), [&] (SerializedNode::Text&& text) -> Ref<Node> {
         return WebCore::Text::create(document, WTF::move(text.data));
     }, [&] (SerializedNode::ProcessingInstruction&& instruction) -> Ref<Node> {
-        return WebCore::ProcessingInstruction::create(document, AtomString { WTF::move(instruction.target) }, WTF::move(instruction.data));
+        return WebCore::ProcessingInstruction::create(document, AtomStringImpl::add(WTF::move(instruction.target)), WTF::move(instruction.data));
     }, [&] (SerializedNode::DocumentType&& type) -> Ref<Node> {
         return WebCore::DocumentType::create(document, type.name, type.publicId, type.systemId);
     }, [&] (SerializedNode::Comment&& comment) -> Ref<Node> {
@@ -96,7 +96,7 @@ Ref<Node> SerializedNode::deserialize(SerializedNode&& serializedNode, WebCore::
     }, [&] (SerializedNode::CDATASection&& section) -> Ref<Node> {
         return WebCore::CDATASection::create(document, WTF::move(section.data));
     }, [&] (SerializedNode::Attr&& attr) -> Ref<Node> {
-        return WebCore::Attr::create(document, WTF::move(attr.name).qualifiedName(), AtomString(WTF::move(attr.value)));
+        return WebCore::Attr::create(document, WTF::move(attr.name).qualifiedName(), AtomStringImpl::add(WTF::move(attr.value)).get());
     }, [&] (SerializedNode::Document&& serializedDocument) -> Ref<Node> {
         return WebCore::Document::createCloned(
             serializedDocument.type,
@@ -162,7 +162,7 @@ SerializedNode::QualifiedName::QualifiedName(const WebCore::QualifiedName& name)
 {
 }
 
-SerializedNode::QualifiedName::QualifiedName(String&& prefix, String&& localName, String&& namespaceURI)
+SerializedNode::QualifiedName::QualifiedName(RefPtr<StringImpl>&& prefix, RefPtr<StringImpl>&& localName, RefPtr<StringImpl>&& namespaceURI)
     : prefix(WTF::move(prefix))
     , localName(WTF::move(localName))
     , namespaceURI(WTF::move(namespaceURI))
@@ -171,7 +171,7 @@ SerializedNode::QualifiedName::QualifiedName(String&& prefix, String&& localName
 
 QualifiedName SerializedNode::QualifiedName::qualifiedName() &&
 {
-    return WebCore::QualifiedName(AtomString(WTF::move(prefix)), AtomString(WTF::move(localName)), AtomString(WTF::move(namespaceURI)));
+    return WebCore::QualifiedName(AtomStringImpl::add(WTF::move(prefix)).get(), AtomStringImpl::add(WTF::move(localName)).get(), AtomStringImpl::add(WTF::move(namespaceURI)).get());
 }
 
 }

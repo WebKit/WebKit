@@ -157,8 +157,8 @@ SecurityOrigin::SecurityOrigin()
 
 SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     : m_data { other->m_data.isolatedCopy() }
-    , m_domain { other->m_domain.isolatedCopy() }
-    , m_filePath { other->m_filePath.isolatedCopy() }
+    , m_domain { WTF::isolatedCopy(other->m_domain) }
+    , m_filePath { WTF::isolatedCopy(other->m_filePath) }
     , m_universalAccess { other->m_universalAccess }
     , m_domainWasSetInDOM { other->m_domainWasSetInDOM }
     , m_canLoadLocalResources { other->m_canLoadLocalResources }
@@ -225,7 +225,7 @@ SecurityOrigin& SecurityOrigin::opaqueOrigin()
     return origin.get();
 }
 
-Ref<SecurityOrigin> SecurityOrigin::createNonLocalWithAllowedFilePath(const URL& url, const String& filePath)
+Ref<SecurityOrigin> SecurityOrigin::createNonLocalWithAllowedFilePath(const URL& url, StringImpl* filePath)
 {
     ASSERT(!url.protocolIsFile());
     auto securityOrigin = SecurityOrigin::create(url);
@@ -238,10 +238,10 @@ Ref<SecurityOrigin> SecurityOrigin::isolatedCopy() const
     return adoptRef(*new SecurityOrigin(this));
 }
 
-void SecurityOrigin::setDomainFromDOM(const String& newDomain)
+void SecurityOrigin::setDomainFromDOM(StringImpl* newDomain)
 {
     m_domainWasSetInDOM = true;
-    m_domain = newDomain.convertToASCIILowercase();
+    m_domain = convertToASCIILowercase(newDomain);
 }
 
 bool SecurityOrigin::isSecure(const URL& url)
@@ -288,12 +288,12 @@ bool SecurityOrigin::isSameOriginDomain(const SecurityOrigin& other) const
     // this is a security vulnerability.
 
     bool canAccess = false;
-    if (m_data.protocol() == other.m_data.protocol()) {
+    if (WTF::equal(m_data.protocol(), other.m_data.protocol())) {
         if (!m_domainWasSetInDOM && !other.m_domainWasSetInDOM) {
-            if (m_data.host() == other.m_data.host() && m_data.port() == other.m_data.port())
+            if (WTF::equal(m_data.host(), other.m_data.host()) && m_data.port() == other.m_data.port())
                 canAccess = true;
         } else if (m_domainWasSetInDOM && other.m_domainWasSetInDOM) {
-            if (m_domain == other.m_domain)
+            if (WTF::equal(m_domain, other.m_domain))
                 canAccess = true;
         }
     }
@@ -360,7 +360,7 @@ bool SecurityOrigin::canReceiveDragData(const SecurityOrigin& dragInitiator) con
 // This function should be removed as an outcome of https://bugs.webkit.org/show_bug.cgi?id=69196
 static bool isFeedWithNestedProtocolInHTTPFamily(const URL& url)
 {
-    const String& string = url.string();
+    const RefPtr<StringImpl>& string = url.string();
     if (!startsWithLettersIgnoringASCIICase(string, "feed"_s))
         return false;
     return startsWithLettersIgnoringASCIICase(string, "feed://"_s)
@@ -376,7 +376,7 @@ bool SecurityOrigin::canDisplay(const URL& url, const OriginAccessPatterns& patt
 {
     ASSERT(!isInNetworkProcess());
 
-    if (url.string().length() > maximumURLSize)
+    if (length(url.string()) > maximumURLSize)
         return false;
 
     if (url.fragmentIdentifier().length() > maximumFragmentIdentifierSize)
@@ -386,7 +386,7 @@ bool SecurityOrigin::canDisplay(const URL& url, const OriginAccessPatterns& patt
         return true;
 
 #if !PLATFORM(IOS_FAMILY) && !ENABLE(BUBBLEWRAP_SANDBOX)
-    if (m_data.protocol() == "file"_s && url.protocolIsFile() && !FileSystem::filesHaveSameVolume(m_filePath, url.fileSystemPath()))
+    if (WTF::equal(m_data.protocol(), "file"_s) && url.protocolIsFile() && !FileSystem::filesHaveSameVolume(m_filePath, url.fileSystemPath()))
         return false;
 #endif
 
@@ -404,7 +404,7 @@ bool SecurityOrigin::canDisplay(const URL& url, const OriginAccessPatterns& patt
     if (!SecurityPolicy::restrictAccessToLocal())
         return true;
 
-    if (url.protocolIsFile() && url.fileSystemPath() == m_filePath)
+    if (url.protocolIsFile() && WTF::equal(url.fileSystemPath(), m_filePath))
         return true;
 
     if (LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(protocol))
@@ -438,22 +438,22 @@ bool SecurityOrigin::isSameSiteAs(const SecurityOrigin& other) const
     // https://html.spec.whatwg.org/#same-site
     if (isOpaque() != other.isOpaque())
         return false;
-    if (!isOpaque() && protocol() != other.protocol())
+    if (!isOpaque() && !WTF::equal(protocol(), other.protocol()))
         return false;
 
     if (isOpaque())
         return isSameOriginAs(other);
 
     auto topDomain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(domain());
-    if (topDomain.isEmpty())
-        return host() == other.host();
+    if (isEmpty(topDomain))
+        return WTF::equal(host(), other.host());
 
-    return topDomain == PublicSuffixStore::singleton().topPrivatelyControlledDomain(other.domain());
+    return WTF::equal(topDomain, PublicSuffixStore::singleton().topPrivatelyControlledDomain(other.domain()));
 }
 
-bool SecurityOrigin::isMatchingRegistrableDomainSuffix(const String& domainSuffix, bool treatIPAddressAsDomain) const
+bool SecurityOrigin::isMatchingRegistrableDomainSuffix(StringImpl* domainSuffix, bool treatIPAddressAsDomain) const
 {
-    if (domainSuffix.isEmpty())
+    if (isEmpty(domainSuffix))
         return false;
 
     auto ipAddressSetting = treatIPAddressAsDomain ? OriginAccessEntry::TreatIPAddressAsDomain : OriginAccessEntry::TreatIPAddressAsIPAddress;
@@ -462,7 +462,7 @@ bool SecurityOrigin::isMatchingRegistrableDomainSuffix(const String& domainSuffi
         return false;
 
     // Always return true if it is an exact match.
-    if (domainSuffix.length() == host().length())
+    if (length(domainSuffix) == length(host()))
         return true;
 
     return !PublicSuffixStore::singleton().isPublicSuffix(domainSuffix);
@@ -494,7 +494,7 @@ void SecurityOrigin::grantStorageAccessFromFileURLsQuirk()
     m_needsStorageAccessFromFileURLsQuirk = true;
 }
 
-String SecurityOrigin::domainForCachePartition() const
+RefPtr<StringImpl> SecurityOrigin::domainForCachePartition() const
 {
     if (isHTTPFamily())
         return host();
@@ -511,16 +511,16 @@ void SecurityOrigin::setEnforcesFilePathSeparation()
     m_enforcesFilePathSeparation = true;
 }
 
-String SecurityOrigin::toString() const
+RefPtr<StringImpl> SecurityOrigin::toString() const
 {
     if (isOpaque())
-        return "null"_s;
-    if (m_data.protocol() == "file"_s && m_enforcesFilePathSeparation)
-        return "null"_s;
+        return "null"_si;
+    if (WTF::equal(m_data.protocol(), "file"_s) && m_enforcesFilePathSeparation)
+        return "null"_si;
     return toRawString();
 }
 
-String SecurityOrigin::toRawString() const
+RefPtr<StringImpl> SecurityOrigin::toRawString() const
 {
     return m_data.toString();
 }
@@ -537,13 +537,13 @@ static inline bool areOriginsMatching(const SecurityOrigin& origin1, const Secur
     if (origin1.isOpaque() || origin2.isOpaque())
         return origin1.isOpaque() == origin2.isOpaque();
 
-    if (origin1.protocol() != origin2.protocol())
+    if (!equal(origin1.protocol(), origin2.protocol()))
         return false;
 
-    if (origin1.protocol() == "file"_s)
+    if (equal(origin1.protocol(), "file"_s))
         return origin1.enforcesFilePathSeparation() == origin2.enforcesFilePathSeparation();
 
-    if (origin1.host() != origin2.host())
+    if (!equal(origin1.host(), origin2.host()))
         return false;
 
     return origin1.port() == origin2.port();
@@ -555,7 +555,7 @@ bool serializedOriginsMatch(const SecurityOrigin& origin1, const SecurityOrigin&
     if (&origin1 == &origin2)
         return true;
 
-    ASSERT(!areOriginsMatching(origin1, origin2) || (origin1.toString() == origin2.toString()));
+    ASSERT(!areOriginsMatching(origin1, origin2) || (equal(origin1.toString(), origin2.toString())));
     return areOriginsMatching(origin1, origin2);
 }
 
@@ -567,12 +567,12 @@ bool serializedOriginsMatch(const SecurityOrigin* origin1, const SecurityOrigin*
     return serializedOriginsMatch(*origin1, *origin2);
 }
 
-Ref<SecurityOrigin> SecurityOrigin::createFromString(const String& originString)
+Ref<SecurityOrigin> SecurityOrigin::createFromString(StringImpl* originString)
 {
     return SecurityOrigin::create(URL { originString });
 }
 
-Ref<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String& host, std::optional<uint16_t> port)
+Ref<SecurityOrigin> SecurityOrigin::create(StringImpl* protocol, StringImpl* host, std::optional<uint16_t> port)
 {
     auto origin = create(URL { makeString(protocol, "://"_s, host, '/') });
     if (port && !WTF::isDefaultPortForProtocol(*port, protocol))
@@ -585,7 +585,7 @@ Ref<SecurityOrigin> SecurityOrigin::create(SecurityOriginData&& data)
     return adoptRef(*new SecurityOrigin(WTF::move(data)));
 }
 
-Ref<SecurityOrigin> SecurityOrigin::create(WebCore::SecurityOriginData&& data, String&& domain, String&& filePath, bool universalAccess, bool domainWasSetInDOM, bool canLoadLocalResources, bool enforcesFilePathSeparation, bool needsStorageAccessFromFileURLsQuirk, std::optional<bool> isPotentiallyTrustworthy, bool isLocal)
+Ref<SecurityOrigin> SecurityOrigin::create(WebCore::SecurityOriginData&& data, RefPtr<StringImpl>&& domain, RefPtr<StringImpl>&& filePath, bool universalAccess, bool domainWasSetInDOM, bool canLoadLocalResources, bool enforcesFilePathSeparation, bool needsStorageAccessFromFileURLsQuirk, std::optional<bool> isPotentiallyTrustworthy, bool isLocal)
 {
     auto origin = adoptRef(*new SecurityOrigin);
     origin->m_data = WTF::move(data);
@@ -615,7 +615,7 @@ bool SecurityOrigin::equal(const SecurityOrigin& other) const
     if (m_domainWasSetInDOM != other.m_domainWasSetInDOM)
         return false;
 
-    if (m_domainWasSetInDOM && m_domain != other.m_domain)
+    if (m_domainWasSetInDOM && !WTF::equal(m_domain, other.m_domain))
         return false;
 
     return true;

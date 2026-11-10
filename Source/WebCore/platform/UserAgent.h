@@ -42,16 +42,16 @@ enum class UserAgentType {
 #endif
 
 #if PLATFORM(COCOA)
-WEBCORE_EXPORT String standardUserAgentWithApplicationName(const String& applicationName, const String& userAgentOSVersion = emptyString(), UserAgentType = UserAgentType::Default);
+WEBCORE_EXPORT RefPtr<StringImpl> standardUserAgentWithApplicationName(StringImpl* applicationName, StringImpl* userAgentOSVersion = emptyString(), UserAgentType = UserAgentType::Default);
 
 WEBCORE_EXPORT ASCIILiteral osNameForUserAgent();
-WEBCORE_EXPORT String systemMarketingVersionForUserAgentString();
+WEBCORE_EXPORT RefPtr<StringImpl> systemMarketingVersionForUserAgentString();
 #elif USE(GLIB)
-WEBCORE_EXPORT String standardUserAgent(const String& applicationName = emptyString(), const String& applicationVersion = emptyString(), UserAgentType = UserAgentType::Default);
-WEBCORE_EXPORT String standardUserAgentForURL(const URL&, UserAgentType = UserAgentType::Default);
+WEBCORE_EXPORT RefPtr<StringImpl> standardUserAgent(StringImpl* applicationName = emptyString(), StringImpl* applicationVersion = emptyString(), UserAgentType = UserAgentType::Default);
+WEBCORE_EXPORT RefPtr<StringImpl> standardUserAgentForURL(const URL&, UserAgentType = UserAgentType::Default);
 #else
-WEBCORE_EXPORT String standardUserAgent(const String& applicationName = emptyString(), const String& applicationVersion = emptyString());
-WEBCORE_EXPORT String standardUserAgentForURL(const URL&);
+WEBCORE_EXPORT RefPtr<StringImpl> standardUserAgent(StringImpl* applicationName = emptyString(), StringImpl* applicationVersion = emptyString());
+WEBCORE_EXPORT RefPtr<StringImpl> standardUserAgentForURL(const URL&);
 #endif
 
 }

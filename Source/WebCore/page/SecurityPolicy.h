@@ -46,14 +46,14 @@ public:
 
     // Returns the referrer's security origin plus a / to make it a canonical URL
     // and thus useable as referrer.
-    static String referrerToOriginString(const URL& referrer);
+    static RefPtr<StringImpl> referrerToOriginString(const URL& referrer);
 
     // Returns the referrer modified according to the referrer policy for a
     // navigation to a given URL. If the referrer returned is empty, the
     // referrer header should be omitted.
-    WEBCORE_EXPORT static String generateReferrerHeader(ReferrerPolicy, const URL&, const URL& referrer, const OriginAccessPatterns&);
+    WEBCORE_EXPORT static RefPtr<StringImpl> generateReferrerHeader(ReferrerPolicy, const URL&, const URL& referrer, const OriginAccessPatterns&);
 
-    static String generateOriginHeader(ReferrerPolicy, const URL&, const SecurityOrigin&, const OriginAccessPatterns&);
+    static RefPtr<StringImpl> generateOriginHeader(ReferrerPolicy, const URL&, const SecurityOrigin&, const OriginAccessPatterns&);
 
     WEBCORE_EXPORT static bool shouldInheritSecurityOriginFromOwner(const URL&);
 
@@ -71,8 +71,8 @@ public:
     NODELETE static bool restrictAccessToLocal();
     NODELETE static bool allowSubstituteDataAccessToLocal();
 
-    WEBCORE_EXPORT static void addOriginAccessAllowlistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
-    WEBCORE_EXPORT static void removeOriginAccessAllowlistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
+    WEBCORE_EXPORT static void addOriginAccessAllowlistEntry(const SecurityOrigin& sourceOrigin, StringImpl* destinationProtocol, StringImpl* destinationDomain, bool allowDestinationSubdomains);
+    WEBCORE_EXPORT static void removeOriginAccessAllowlistEntry(const SecurityOrigin& sourceOrigin, StringImpl* destinationProtocol, StringImpl* destinationDomain, bool allowDestinationSubdomains);
     WEBCORE_EXPORT static void resetOriginAccessAllowlists();
 
     static bool isAccessAllowed(const SecurityOrigin& activeOrigin, const SecurityOrigin& targetOrigin, const URL& targetURL, const OriginAccessPatterns&);

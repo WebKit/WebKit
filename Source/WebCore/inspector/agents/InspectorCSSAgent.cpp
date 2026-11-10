@@ -98,7 +98,7 @@ using namespace Inspector;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorCSSAgent);
 
 InspectorCSSAgent::InspectorCSSAgent(PageAgentContext& context)
-    : InspectorAgentBase("CSS"_s, context)
+    : InspectorAgentBase("CSS"_si, context)
     , m_frontendDispatcher(makeUniqueRef<CSSFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(CSSBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_inspectedPage(context.inspectedPage)
@@ -302,11 +302,11 @@ std::optional<Inspector::Protocol::CSS::PseudoId> InspectorCSSAgent::protocolVal
     }
 }
 
-static std::optional<Inspector::Protocol::CSS::PseudoId> protocolValueForUserAgentPartName(const AtomString& partName)
+static std::optional<Inspector::Protocol::CSS::PseudoId> protocolValueForUserAgentPartName(AtomStringImpl* partName)
 {
-    if (partName == "placeholder"_s)
+    if (equal(partName, "placeholder"_s))
         return Inspector::Protocol::CSS::PseudoId::Placeholder;
-    if (partName == "file-selector-button"_s)
+    if (equal(partName, "file-selector-button"_s))
         return Inspector::Protocol::CSS::PseudoId::FileSelectorButton;
     return std::nullopt;
 }
@@ -374,10 +374,10 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
             }
 
             if (RefPtr userAgentShadowRoot = element->userAgentShadowRoot()) {
-                HashSet<AtomString> seenUserAgentParts;
+                HashSet<RefPtr<AtomStringImpl>> seenUserAgentParts;
                 for (Ref descendant : descendantsOfType<Element>(*userAgentShadowRoot)) {
                     auto& partName = descendant->userAgentPart();
-                    if (partName.isEmpty() || !seenUserAgentParts.add(partName).isNewEntry)
+                    if (isEmpty(partName) || !seenUserAgentParts.add(partName).isNewEntry)
                         continue;
 
                     auto protocolPseudoId = protocolValueForUserAgentPartName(partName);
@@ -519,7 +519,7 @@ void InspectorCSSAgent::collectStyleSheets(CSSStyleSheet* styleSheet, Vector<CSS
     }
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyleSheetBody>> InspectorCSSAgent::getStyleSheet(const Inspector::Protocol::CSS::StyleSheetId& styleSheetId)
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyleSheetBody>> InspectorCSSAgent::getStyleSheet(StringImpl* styleSheetId)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -534,7 +534,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyleSheetBo
     return styleSheet.releaseNonNull();
 }
 
-Inspector::Protocol::ErrorStringOr<String> InspectorCSSAgent::getStyleSheetText(const Inspector::Protocol::CSS::StyleSheetId& styleSheetId)
+Inspector::Protocol::ErrorStringOr<RefPtr<StringImpl>> InspectorCSSAgent::getStyleSheetText(StringImpl* styleSheetId)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -549,7 +549,7 @@ Inspector::Protocol::ErrorStringOr<String> InspectorCSSAgent::getStyleSheetText(
     return text.releaseReturnValue();
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::setStyleSheetText(const Inspector::Protocol::CSS::StyleSheetId& styleSheetId, const String& text)
+Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::setStyleSheetText(StringImpl* styleSheetId, StringImpl* text)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -568,7 +568,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::setStyleSheetText(co
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyle>> InspectorCSSAgent::setStyleText(Ref<JSON::Object>&& styleId, const String& text)
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyle>> InspectorCSSAgent::setStyleText(Ref<JSON::Object>&& styleId, StringImpl* text)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -590,7 +590,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyle>> Insp
     return inspectorStyleSheet->buildObjectForStyle(protect(inspectorStyleSheet->styleForId(compoundId)));
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> InspectorCSSAgent::setRuleSelector(Ref<JSON::Object>&& ruleId, const String& selector)
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> InspectorCSSAgent::setRuleSelector(Ref<JSON::Object>&& ruleId, StringImpl* selector)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -616,7 +616,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> Inspe
     return rule.releaseNonNull();
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::Grouping>> InspectorCSSAgent::setGroupingHeaderText(Ref<JSON::Object>&& ruleId, const String& headerText)
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::Grouping>> InspectorCSSAgent::setGroupingHeaderText(Ref<JSON::Object>&& ruleId, StringImpl* headerText)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -643,7 +643,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::Grouping>> Insp
 }
 
 
-Inspector::Protocol::ErrorStringOr<Inspector::Protocol::CSS::StyleSheetId> InspectorCSSAgent::createStyleSheet(const Inspector::Protocol::Network::FrameId& frameId)
+Inspector::Protocol::ErrorStringOr<Inspector::Protocol::CSS::StyleSheetId> InspectorCSSAgent::createStyleSheet(StringImpl* frameId)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -703,7 +703,7 @@ InspectorStyleSheet* InspectorCSSAgent::createInspectorStyleSheetForDocument(Doc
     return inspectorStyleSheetsForDocument.last().ptr();
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> InspectorCSSAgent::addRule(const Inspector::Protocol::CSS::StyleSheetId& styleSheetId, const String& selector)
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> InspectorCSSAgent::addRule(StringImpl* styleSheetId, StringImpl* selector)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -746,7 +746,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::C
 
         auto aliases = CSSProperty::aliasesForProperty(propertyID);
         if (!aliases.isEmpty()) {
-            auto aliasesArray = JSON::ArrayOf<String>::create();
+            auto aliasesArray = JSON::ArrayOf<RefPtr<StringImpl>>::create();
             for (auto& alias : aliases)
                 aliasesArray->addItem(alias);
             property->setAliases(WTF::move(aliasesArray));
@@ -754,7 +754,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::C
 
         auto shorthand = shorthandForProperty(propertyID);
         if (shorthand.length()) {
-            auto longhands = JSON::ArrayOf<String>::create();
+            auto longhands = JSON::ArrayOf<RefPtr<StringImpl>>::create();
             for (auto longhand : shorthand) {
                 if (isExposed(longhand, &settings))
                     longhands->addItem(nameString(longhand));
@@ -767,7 +767,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::C
             auto propertyParserState = CSS::PropertyParserState {
                 .context = parserContext,
             };
-            auto values = JSON::ArrayOf<String>::create();
+            auto values = JSON::ArrayOf<RefPtr<StringImpl>>::create();
             for (auto valueID : allCSSValueKeywords()) {
                 if (CSSPropertyParsing::isKeywordValidForStyleProperty(propertyID, valueID, propertyParserState))
                     values->addItem(nameString(valueID));
@@ -779,7 +779,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::C
             // use the values from CSSProperties.json if available, filtered by settings.
             auto validKeywords = CSSProperty::validKeywordsForProperty(propertyID);
             if (!validKeywords.empty()) {
-                auto values = JSON::ArrayOf<String>::create();
+                auto values = JSON::ArrayOf<RefPtr<StringImpl>>::create();
                 for (auto valueID : validKeywords) {
                     if (CSSProperty::isKeywordValidForPropertyValues(propertyID, valueID, parserContext))
                         values->addItem(nameString(valueID));
@@ -798,11 +798,11 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::C
     return cssProperties;
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent::getSupportedSystemFontFamilyNames()
+Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<RefPtr<StringImpl>>>> InspectorCSSAgent::getSupportedSystemFontFamilyNames()
 {
-    auto fontFamilyNames = JSON::ArrayOf<String>::create();
+    auto fontFamilyNames = JSON::ArrayOf<RefPtr<StringImpl>>::create();
 
-    Vector<String> systemFontFamilies = protect(FontCache::forCurrentThread())->systemFontFamilies();
+    Vector<RefPtr<StringImpl>> systemFontFamilies = protect(FontCache::forCurrentThread())->systemFontFamilies();
     for (const auto& familyName : systemFontFamilies)
         fontFamilyNames->addItem(familyName);
 
@@ -972,12 +972,12 @@ OptionSet<InspectorCSSAgent::LayoutFlag> InspectorCSSAgent::layoutFlagsForNode(N
     return layoutFlags;
 }
 
-RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> InspectorCSSAgent::protocolLayoutFlags(OptionSet<LayoutFlag> layoutFlags)
+RefPtr<JSON::ArrayOf<RefPtr<StringImpl> /* Inspector::Protocol::CSS::LayoutFlag */>> InspectorCSSAgent::protocolLayoutFlags(OptionSet<LayoutFlag> layoutFlags)
 {
     if (layoutFlags.isEmpty())
         return nullptr;
 
-    auto protocolLayoutFlags = JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>::create();
+    auto protocolLayoutFlags = JSON::ArrayOf<RefPtr<StringImpl> /* Inspector::Protocol::CSS::LayoutFlag */>::create();
     if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::Rendered))
         protocolLayoutFlags->addItem(Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::CSS::LayoutFlag::Rendered));
     if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::Scrollable))
@@ -999,7 +999,7 @@ RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> Inspect
     return protocolLayoutFlags;
 }
 
-RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> InspectorCSSAgent::protocolLayoutFlagsForNode(Node& node)
+RefPtr<JSON::ArrayOf<RefPtr<StringImpl> /* Inspector::Protocol::CSS::LayoutFlag */>> InspectorCSSAgent::protocolLayoutFlagsForNode(Node& node)
 {
     auto layoutFlags = layoutFlagsForNode(node);
     if (!layoutFlags.isEmpty())
@@ -1111,7 +1111,7 @@ InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(Styl
     if (it != m_nodeToInspectorStyleSheet.end())
         return it->value;
 
-    String newStyleSheetId = String::number(m_lastStyleSheetId);
+    RefPtr<StringImpl> newStyleSheetId = makeString(m_lastStyleSheetId);
     ++m_lastStyleSheetId;
     auto inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(protect(m_inspectedPage->inspectorController().identifierRegistry()), newStyleSheetId, element, Inspector::Protocol::CSS::StyleSheetOrigin::Author, this);
     m_idToInspectorStyleSheet.set(newStyleSheetId, inspectorStyleSheet.copyRef());
@@ -1123,7 +1123,7 @@ Element* InspectorCSSAgent::elementForId(Inspector::Protocol::ErrorString& error
     Ref agents = m_instrumentingAgents.get();
     CheckedPtr domAgent = agents->persistentDOMAgent();
     if (!domAgent) {
-        errorString = "DOM domain must be enabled"_s;
+        errorString = "DOM domain must be enabled"_si;
         return nullptr;
     }
 
@@ -1135,16 +1135,16 @@ Node* InspectorCSSAgent::nodeForId(Inspector::Protocol::ErrorString& errorString
     Ref agents = m_instrumentingAgents.get();
     CheckedPtr domAgent = agents->persistentDOMAgent();
     if (!domAgent) {
-        errorString = "DOM domain must be enabled"_s;
+        errorString = "DOM domain must be enabled"_si;
         return nullptr;
     }
 
     return domAgent->assertNode(errorString, nodeId);
 }
 
-String InspectorCSSAgent::unbindStyleSheet(InspectorStyleSheet* inspectorStyleSheet)
+RefPtr<StringImpl> InspectorCSSAgent::unbindStyleSheet(InspectorStyleSheet* inspectorStyleSheet)
 {
-    String id = inspectorStyleSheet->id();
+    RefPtr<StringImpl> id = inspectorStyleSheet->id();
     m_idToInspectorStyleSheet.remove(id);
     if (inspectorStyleSheet->pageStyleSheet())
         m_cssStyleSheetToInspectorStyleSheet.remove(inspectorStyleSheet->pageStyleSheet());
@@ -1157,7 +1157,7 @@ InspectorStyleSheet& InspectorCSSAgent::bindStyleSheet(CSSStyleSheet* styleSheet
     if (it != m_cssStyleSheetToInspectorStyleSheet.end())
         return it->value;
 
-    auto id = String::number(m_lastStyleSheetId++);
+    auto id = makeString(m_lastStyleSheetId++);
     RefPtr document = styleSheet->ownerDocument();
     Ref inspectorStyleSheet = InspectorStyleSheet::create(protect(m_inspectedPage->inspectorController().identifierRegistry()), id, styleSheet, detectOrigin(styleSheet, document), InspectorDOMAgent::documentURLString(document), this);
     m_idToInspectorStyleSheet.set(id, inspectorStyleSheet);
@@ -1166,11 +1166,11 @@ InspectorStyleSheet& InspectorCSSAgent::bindStyleSheet(CSSStyleSheet* styleSheet
     return m_cssStyleSheetToInspectorStyleSheet.set(styleSheet, WTF::move(inspectorStyleSheet)).iterator->value;
 }
 
-InspectorStyleSheet* InspectorCSSAgent::assertStyleSheetForId(Inspector::Protocol::ErrorString& errorString, const String& styleSheetId)
+InspectorStyleSheet* InspectorCSSAgent::assertStyleSheetForId(Inspector::Protocol::ErrorString& errorString, StringImpl* styleSheetId)
 {
     auto it = m_idToInspectorStyleSheet.find(styleSheetId);
     if (it == m_idToInspectorStyleSheet.end()) {
-        errorString = "Missing style sheet for given styleSheetId"_s;
+        errorString = "Missing style sheet for given styleSheetId"_si;
         return nullptr;
     }
     return it->value.ptr();
@@ -1188,7 +1188,7 @@ Inspector::Protocol::CSS::StyleSheetOrigin InspectorCSSAgent::detectOrigin(CSSSt
         if (pageStyleSheet->wasConstructedByJS())
             return Inspector::Protocol::CSS::StyleSheetOrigin::Author;
 
-        if (!pageStyleSheet->ownerNode() && pageStyleSheet->href().isEmpty())
+        if (!pageStyleSheet->ownerNode() && isEmpty(pageStyleSheet->contents().originalURL()))
             return Inspector::Protocol::CSS::StyleSheetOrigin::UserAgent;
 
         if (pageStyleSheet->contents().isUserStyleSheet())
@@ -1294,7 +1294,7 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>> InspectorCSSAgent::buildAr
     HashSet<CSSKeyframesRule*> seenKeyframesRules;
     for (auto& animation : computedStyle.animations().usedValues()) {
         auto keyframesName = animation.name().tryKeyframesName();
-        if (!keyframesName || keyframesName->name.isEmpty())
+        if (!keyframesName || isEmpty(keyframesName->name))
             continue;
 
         CheckedPtr styleScope = Style::Scope::forOrdinal(element, keyframesName->scopeOrdinal);

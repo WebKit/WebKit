@@ -40,7 +40,7 @@ public:
         JSC::JSValue reason;
     };
 
-    static Ref<PromiseRejectionEvent> create(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<PromiseRejectionEvent> create(JSC::JSGlobalObject& globalObject, AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new PromiseRejectionEvent(globalObject, type, WTF::move(initializer), isTrusted));
     }
@@ -51,7 +51,7 @@ public:
     const JSValueInWrappedObject& reason() const LIFETIME_BOUND { return m_reason; }
 
 private:
-    PromiseRejectionEvent(JSC::JSGlobalObject&, const AtomString&, Init&&, IsTrusted);
+    PromiseRejectionEvent(JSC::JSGlobalObject&, AtomStringImpl*, Init&&, IsTrusted);
 
     const Ref<DOMPromise> m_promise;
     JSValueInWrappedObject m_reason;

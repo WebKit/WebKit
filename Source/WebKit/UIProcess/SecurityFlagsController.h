@@ -47,10 +47,10 @@ public:
 
     // The list is the whole truth: every flag it does not name is enforced, so an empty list resets everything.
     // Flags named by the user default stay disabled regardless.
-    void setDisabledFlagsNamed(const Vector<String>&);
+    void setDisabledFlagsNamed(const Vector<RefPtr<StringImpl>>&);
 
     // Ignores the user default, so a test gets the state it asked for on a device that has one set.
-    void setDisabledFlagsNamedForTesting(const Vector<String>&);
+    void setDisabledFlagsNamedForTesting(const Vector<RefPtr<StringImpl>>&);
 
     // Asks the platform's list service for the list. Done once while the UIProcess initializes, and again whenever
     // that service says the list changed.
@@ -65,12 +65,12 @@ private:
     SecurityFlagsController();
 
     enum class IncludePersistentNames : bool { No, Yes };
-    SecurityFlags::Storage flagsWithNamesDisabled(const Vector<String>&, IncludePersistentNames) const;
+    SecurityFlags::Storage flagsWithNamesDisabled(const Vector<RefPtr<StringImpl>>&, IncludePersistentNames) const;
     void apply(SecurityFlags::Storage&&);
     void propagateToChildProcesses();
 
     // Nullopt is no answer at all, which leaves the flags as they are rather than resetting them to the list.
-    void didReceiveRemoteList(uint64_t generation, std::optional<Vector<String>>&&);
+    void didReceiveRemoteList(uint64_t generation, std::optional<Vector<RefPtr<StringImpl>>>&&);
     void remoteListRequestTimedOut(uint64_t generation);
     void scheduleRemoteListRetry();
 
@@ -78,13 +78,13 @@ private:
     bool platformRequestRemoteList(uint64_t generation);
     void platformObserveRemoteListChanges();
 
-    static Vector<String> platformPersistentlyDisabledFlagNames();
+    static Vector<RefPtr<StringImpl>> platformPersistentlyDisabledFlagNames();
 
     // One request at a time, so that an older list cannot be applied after a newer one. Stale means a change was
     // announced after the request went out, which that request may be too early to carry.
     enum class RemoteListState : uint8_t { Idle, Requested, RequestedAndStale };
 
-    Vector<String> m_persistentlyDisabledNames;
+    Vector<RefPtr<StringImpl>> m_persistentlyDisabledNames;
     RemoteListState m_remoteListState { RemoteListState::Idle };
 
     // Tells a reply, or a watchdog, from the request that replaced the one it belongs to.

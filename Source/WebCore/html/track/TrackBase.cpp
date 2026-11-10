@@ -53,7 +53,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaTrackBase);
 
 static int s_uniqueId = 0;
 
-static bool isValidBCP47LanguageTag(const String&);
+static bool isValidBCP47LanguageTag(StringImpl*);
 
 #if !RELEASE_LOG_DISABLED
 static Ref<Logger> nullLogger(TrackBase& track)
@@ -67,10 +67,10 @@ static Ref<Logger> nullLogger(TrackBase& track)
 }
 #endif
 
-TrackBase::TrackBase(ScriptExecutionContext* context, Type type, const std::optional<AtomString>& id, TrackID trackId, const AtomString& label, const AtomString& language)
+TrackBase::TrackBase(ScriptExecutionContext* context, Type type, const std::optional<RefPtr<AtomStringImpl>>& id, TrackID trackId, AtomStringImpl* label, AtomStringImpl* language)
     : ContextDestructionObserver(context)
     , m_uniqueId(++s_uniqueId)
-    , m_id(id ? *id : AtomString::number(trackId))
+    , m_id(id ? *id : AtomStringImpl::number(trackId))
     , m_trackId(trackId)
     , m_label(label)
     , m_language(language)
@@ -135,21 +135,21 @@ TrackListBase* TrackBase::trackList() const
 }
 
 // See: https://tools.ietf.org/html/bcp47#section-2.1
-NODELETE static bool isValidBCP47LanguageTag(const String& languageTag)
+NODELETE static bool isValidBCP47LanguageTag(StringImpl* languageTag)
 {
-    auto const length = languageTag.length();
+    auto const length = WTF::length(languageTag);
 
     // Max length picked as double the longest example tag in spec which is 49 characters:
     // https://tools.ietf.org/html/bcp47#section-4.4.2
     if (length < 2 || length > 100)
         return false;
 
-    char16_t firstChar = languageTag[0];
+    char16_t firstChar = codeUnitAt(languageTag, 0);
 
     if (!isASCIIAlpha(firstChar))
         return false;
 
-    char16_t secondChar = languageTag[1];
+    char16_t secondChar = codeUnitAt(languageTag, 1);
 
     if (length == 2)
         return isASCIIAlpha(secondChar);
@@ -162,14 +162,14 @@ NODELETE static bool isValidBCP47LanguageTag(const String& languageTag)
             return false;
 
         if (length == 3)
-            return isASCIIAlpha(languageTag[2]);
+            return isASCIIAlpha(codeUnitAt(languageTag, 2));
 
-        if (isASCIIAlpha(languageTag[2])) {
-            if (languageTag[3] == '-')
+        if (isASCIIAlpha(codeUnitAt(languageTag, 2))) {
+            if (codeUnitAt(languageTag, 3) == '-')
                 nextCharIndexToCheck = 4;
             else
                 return false;
-        } else if (languageTag[2] == '-')
+        } else if (codeUnitAt(languageTag, 2) == '-')
             nextCharIndexToCheck = 3;
         else
             return false;
@@ -177,7 +177,7 @@ NODELETE static bool isValidBCP47LanguageTag(const String& languageTag)
         nextCharIndexToCheck = 2;
 
     for (; nextCharIndexToCheck < length; ++nextCharIndexToCheck) {
-        char16_t c = languageTag[nextCharIndexToCheck];
+        char16_t c = codeUnitAt(languageTag, nextCharIndexToCheck);
         if (isASCIIAlphanumeric(c) || c == '-')
             continue;
         return false;
@@ -185,10 +185,10 @@ NODELETE static bool isValidBCP47LanguageTag(const String& languageTag)
     return true;
 }
     
-void TrackBase::setLanguage(const AtomString& language)
+void TrackBase::setLanguage(AtomStringImpl* language)
 {
     m_language = language;
-    if (language.isEmpty() || isValidBCP47LanguageTag(language)) {
+    if (isEmpty(language) || isValidBCP47LanguageTag(language)) {
         m_validBCP47Language = language;
         return;
     }
@@ -199,9 +199,9 @@ void TrackBase::setLanguage(const AtomString& language)
     if (!context)
         return;
 
-    String message;
-    if (language.contains((char16_t)'\0'))
-        message = "The language contains a null character and is not a valid BCP 47 language tag."_s;
+    RefPtr<StringImpl> message;
+    if (contains(language, (char16_t)'\0'))
+        message = "The language contains a null character and is not a valid BCP 47 language tag."_si;
     else
         message = makeString("The language '"_s, language, "' is not a valid BCP 47 language tag."_s);
 
@@ -235,24 +235,24 @@ void TrackBase::removeClientFromTrackPrivateBase(TrackPrivateBase& track)
     track.removeClient(m_clientRegistrationId);
 }
 
-static std::optional<AtomString> trackUID(const std::optional<String>& id)
+static std::optional<RefPtr<AtomStringImpl>> trackUID(const std::optional<RefPtr<StringImpl>>& id)
 {
     if (!id)
         return { };
-    return AtomString { *id };
+    return AtomStringImpl::add(*id);
 }
 
-MediaTrackBase::MediaTrackBase(ScriptExecutionContext* context, Type type, const std::optional<String>& id, TrackID trackId, const String& label, const String& language)
-    : TrackBase(context, type, trackUID(id), trackId, AtomString { label.isolatedCopy() }, AtomString { language.isolatedCopy() })
+MediaTrackBase::MediaTrackBase(ScriptExecutionContext* context, Type type, const std::optional<RefPtr<StringImpl>>& id, TrackID trackId, StringImpl* label, StringImpl* language)
+    : TrackBase(context, type, trackUID(id), trackId, AtomStringImpl::add(isolatedCopy(label)).get(), AtomStringImpl::add(isolatedCopy(language)).get())
 {
 }
 
-void MediaTrackBase::setKind(const AtomString& kind)
+void MediaTrackBase::setKind(AtomStringImpl* kind)
 {
     setKindInternal(kind);
 }
 
-void MediaTrackBase::setKindInternal(const AtomString& kind)
+void MediaTrackBase::setKindInternal(AtomStringImpl* kind)
 {
     if (isValidKind(kind))
         m_kind = kind;

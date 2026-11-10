@@ -100,14 +100,14 @@ static inline void convertJSMethodNameToObjc(const ASCIICString& jsName, JSNameC
 
 Method* ObjcClass::methodNamed(PropertyName propertyName, Instance*) const
 {
-    String name(propertyName.publicName());
-    if (name.isNull())
+    RefPtr<StringImpl> name(propertyName.publicName());
+    if (!name)
         return nullptr;
 
-    if (Method* method = m_methodCache.get(name.impl()))
+    if (Method* method = m_methodCache.get(name.get()))
         return method;
 
-    auto jsName = name.ascii();
+    auto jsName = ascii(name);
     JSNameConversionBuffer buffer;
     convertJSMethodNameToObjc(jsName, buffer);
     RetainPtr<NSString> methodName = adoptNS([[NSString alloc] initWithCString:buffer.span().data() encoding:NSASCIIStringEncoding]);
@@ -136,7 +136,7 @@ Method* ObjcClass::methodNamed(PropertyName propertyName, Instance*) const
             if ((mappedName && [mappedName isEqual:methodName.get()]) || equalSpans(objcMethodSelectorName, unsafeSpan(buffer.span().data()))) {
                 auto method = makeUnique<ObjcMethod>(thisClass.get(), objcMethodSelector);
                 methodPtr = method.get();
-                m_methodCache.add(name.impl(), WTF::move(method));
+                m_methodCache.add(name.get(), WTF::move(method));
                 break;
             }
         }
@@ -148,17 +148,17 @@ Method* ObjcClass::methodNamed(PropertyName propertyName, Instance*) const
 
 Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) const
 {
-    String name(propertyName.publicName());
-    if (name.isNull())
+    RefPtr<StringImpl> name(propertyName.publicName());
+    if (!name)
         return nullptr;
 
-    Field* field = m_fieldCache.get(name.impl());
+    Field* field = m_fieldCache.get(name.get());
     if (field)
         return field;
 
     RetainPtr thisClass = _isa;
 
-    auto jsName = name.ascii();
+    auto jsName = ascii(name);
     RetainPtr<NSString> fieldName = adoptNS([[NSString alloc] initWithCString:jsName.data() encoding:NSASCIIStringEncoding]);
     RetainPtr<id> targetObject = (downcast<ObjcInstance>(instance))->getObject();
 #if PLATFORM(IOS_FAMILY)
@@ -189,7 +189,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
             if ((mappedName && [mappedName isEqual:fieldName.get()]) || [keyName isEqual:fieldName.get()]) {
                 auto newField = makeUnique<ObjcField>((__bridge CFStringRef)keyName);
                 field = newField.get();
-                m_fieldCache.add(name.impl(), WTF::move(newField));
+                m_fieldCache.add(name.get(), WTF::move(newField));
                 break;
             }
         }
@@ -217,7 +217,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
                 if ((mappedName && [mappedName isEqual:fieldName.get()]) || equalSpans(unsafeSpan(objcIvarName), jsName.span())) {
                     auto newField = makeUnique<ObjcField>(objcIVar);
                     field = newField.get();
-                    m_fieldCache.add(name.impl(), WTF::move(newField));
+                    m_fieldCache.add(name.get(), WTF::move(newField));
                     break;
                 }
             }
@@ -238,7 +238,7 @@ JSValue ObjcClass::fallbackObject(JSGlobalObject* lexicalGlobalObject, Instance*
     if (!propertyName.publicName())
         return jsUndefined();
 
-    return ObjcFallbackObjectImp::create(lexicalGlobalObject, lexicalGlobalObject, objcInstance, propertyName.publicName());
+    return ObjcFallbackObjectImp::create(lexicalGlobalObject, lexicalGlobalObject, objcInstance, protect(propertyName.publicName()));
 }
 
 }

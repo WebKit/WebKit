@@ -56,13 +56,13 @@ class WebDataListSuggestionsDropdownIOS : public WebDataListSuggestionsDropdown 
 public:
     static Ref<WebDataListSuggestionsDropdownIOS> create(WebPageProxy&, WKContentView *);
 
-    void didSelectOption(const String&);
+    void didSelectOption(StringImpl*);
 
 private:
     WebDataListSuggestionsDropdownIOS(WebPageProxy&, WKContentView *);
 
     void platformShow(WebCore::DataListSuggestionInformation&&) final;
-    void handleKeydownWithIdentifier(const String&) final;
+    void handleKeydownWithIdentifier(StringImpl*) final;
     void close() final;
 
     WeakObjCPtr<WKContentView> m_contentView;

@@ -37,7 +37,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-Ref<FindStringCallbackAggregator> FindStringCallbackAggregator::create(WebPageProxy& page, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& completionHandler)
+Ref<FindStringCallbackAggregator> FindStringCallbackAggregator::create(WebPageProxy& page, StringImpl* string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& completionHandler)
 {
     return adoptRef(*new FindStringCallbackAggregator(page, string, options, maxMatchCount, WTF::move(completionHandler)));
 }
@@ -134,7 +134,7 @@ FindStringCallbackAggregator::~FindStringCallbackAggregator()
         protectedPage->clearSelection(focusedFrame->frameID());
 }
 
-FindStringCallbackAggregator::FindStringCallbackAggregator(WebPageProxy& page, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& completionHandler)
+FindStringCallbackAggregator::FindStringCallbackAggregator(WebPageProxy& page, StringImpl* string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& completionHandler)
     : m_page(page)
     , m_string(string)
     , m_options(options)

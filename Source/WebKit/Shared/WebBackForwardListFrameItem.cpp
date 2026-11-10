@@ -81,7 +81,7 @@ std::optional<FrameIdentifier> WebBackForwardListFrameItem::frameID() const
     return m_frameState->frameID;
 }
 
-const String& WebBackForwardListFrameItem::url() const
+const RefPtr<StringImpl>& WebBackForwardListFrameItem::url() const
 {
     return m_frameState->urlString;
 }
@@ -126,12 +126,12 @@ WebBackForwardListFrameItem* WebBackForwardListFrameItem::childItemAtIndex(uint6
     return m_children[index].ptr();
 }
 
-WebBackForwardListFrameItem* WebBackForwardListFrameItem::childItemForFrameName(const String& frameName)
+WebBackForwardListFrameItem* WebBackForwardListFrameItem::childItemForFrameName(StringImpl* frameName)
 {
-    if (frameName.isEmpty())
+    if (isEmpty(frameName))
         return nullptr;
     for (auto& child : m_children) {
-        if (child->frameState().target == frameName)
+        if (equal(child->frameState().target, frameName))
             return child.ptr();
     }
     return nullptr;
@@ -274,24 +274,24 @@ bool WebBackForwardListFrameItem::sharesAncestor(WebBackForwardListFrameItem& fr
     return false;
 }
 
-String WebBackForwardListFrameItem::loggingString()
+RefPtr<StringImpl> WebBackForwardListFrameItem::loggingString()
 {
     return loggingStringAtIndent(1);
 }
 
-String WebBackForwardListFrameItem::loggingStringAtIndent(size_t indent)
+RefPtr<StringImpl> WebBackForwardListFrameItem::loggingStringAtIndent(size_t indent)
 {
     StringBuilder indentBuilder;
     for (size_t j = 0; j < indent; ++j)
         indentBuilder.append("   "_s);
-    String indentString = indentBuilder.toString();
+    RefPtr<StringImpl> indentString = indentBuilder.toString();
 
     StringBuilder builder;
     {
-        String frameIDString = String::number(frameID() ? frameID()->toUInt64() : 0);
-        String frameItemIDString = m_identifier.loggingString();
+        RefPtr<StringImpl> frameIDString = makeString(frameID() ? frameID()->toUInt64() : 0);
+        RefPtr<StringImpl> frameItemIDString = m_identifier.loggingString();
         builder.append("FrameItemID:"_s, frameItemIDString, ", URL:"_s, url(), ", FrameID:"_s, frameIDString);
-        if (!m_frameState->target.isEmpty())
+        if (!isEmpty(m_frameState->target))
             builder.append(", FrameUniqueName:"_s, m_frameState->target);
         if (m_frameState->wasCreatedByJSWithoutUserInteraction)
             builder.append(" (no user gesture)"_s);
@@ -303,7 +303,7 @@ String WebBackForwardListFrameItem::loggingStringAtIndent(size_t indent)
     for (size_t i = 0; i < m_children.size(); ++i) {
         Ref child = m_children[i];
         auto childString = child->loggingStringAtIndent(indent + 1);
-        builder.append(indentString, String::number(i), " - "_s, childString);
+        builder.append(indentString, makeString(i), " - "_s, childString);
     }
 
     return builder.toString();

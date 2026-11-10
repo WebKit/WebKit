@@ -47,13 +47,13 @@ class ImageTransferSessionVT;
 
 class MockRealtimeVideoSourceMac final : public MockRealtimeVideoSource {
 public:
-    NODELETE static Ref<MockRealtimeVideoSource> createForMockDisplayCapturer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
-    static Ref<MockRealtimeVideoSource> create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& salt, std::optional<PageIdentifier> pageIdentifier) { return adoptRef(*new MockRealtimeVideoSourceMac(WTF::move(deviceID), WTF::move(name), WTF::move(salt), WTF::move(pageIdentifier))); }
+    NODELETE static Ref<MockRealtimeVideoSource> createForMockDisplayCapturer(RefPtr<StringImpl>&& deviceID, RefPtr<AtomStringImpl>&& name, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
+    static Ref<MockRealtimeVideoSource> create(RefPtr<StringImpl>&& deviceID, RefPtr<AtomStringImpl>&& name, MediaDeviceHashSalts&& salt, std::optional<PageIdentifier> pageIdentifier) { return adoptRef(*new MockRealtimeVideoSourceMac(WTF::move(deviceID), WTF::move(name), WTF::move(salt), WTF::move(pageIdentifier))); }
 
     ~MockRealtimeVideoSourceMac();
 
 private:
-    MockRealtimeVideoSourceMac(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
+    MockRealtimeVideoSourceMac(RefPtr<StringImpl>&& deviceID, RefPtr<AtomStringImpl>&& name, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
 
     PlatformLayer* platformLayer() const;
     void updateSampleBuffer() final;

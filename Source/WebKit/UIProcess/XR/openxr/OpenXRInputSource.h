@@ -48,7 +48,7 @@ public:
     XrActionSet actionSet() const { return m_actionSet; }
     XrResult updateInteractionProfile();
 
-    const Vector<String>& profiles() const LIFETIME_BOUND { return m_profiles; }
+    const Vector<RefPtr<StringImpl>>& profiles() const LIFETIME_BOUND { return m_profiles; }
     XrSpace aimSpace() const { return m_aimSpace; }
     XrSpace gripSpace() const { return m_gripSpace; }
     PlatformXR::InputSourceHandle handle() const { return m_handle; }
@@ -63,10 +63,10 @@ private:
     };
 
     XrResult initialize(OpenXRSystemProperties&&);
-    XrResult createAction(XrActionType, const String& name, XrAction&) const;
+    XrResult createAction(XrActionType, StringImpl* name, XrAction&) const;
     XrResult createActionSpace(XrAction, XrSpace&) const;
-    XrResult createBinding(const char* profilePath, XrAction, const String& bindingPath, SuggestedBindings&) const;
-    XrResult createButtonActions(OpenXRButtonType, const String& prefix, OpenXRButtonActions&) const;
+    XrResult createBinding(const char* profilePath, XrAction, StringImpl* bindingPath, SuggestedBindings&) const;
+    XrResult createButtonActions(OpenXRButtonType, StringImpl* prefix, OpenXRButtonActions&) const;
 
     XrResult getPose(XrSpace, XrSpace, const XrFrameState&, PlatformXR::FrameData::InputSourcePose&) const;
     std::optional<PlatformXR::FrameData::InputSourceButton> collectButton(OpenXRButtonType) const;
@@ -82,7 +82,7 @@ private:
     XrSession m_session { XR_NULL_HANDLE };
     PlatformXR::XRHandedness m_handedness { PlatformXR::XRHandedness::Left };
     PlatformXR::InputSourceHandle m_handle { 0 };
-    String m_subactionPathName;
+    RefPtr<StringImpl> m_subactionPathName;
     XrPath m_subactionPath { XR_NULL_PATH };
     XrActionSet m_actionSet { XR_NULL_HANDLE };
     XrAction m_gripAction { XR_NULL_HANDLE };
@@ -99,7 +99,7 @@ private:
     OpenXRButtonActionsMap m_buttonActions;
     using OpenXRAxesMap = HashMap<OpenXRAxisType, XrAction, IntHash<OpenXRAxisType>, WTF::StrongEnumHashTraits<OpenXRAxisType>>;
     OpenXRAxesMap m_axisActions;
-    Vector<String> m_profiles;
+    Vector<RefPtr<StringImpl>> m_profiles;
 #if defined(XR_EXT_hand_tracking)
     XrHandTrackerEXT m_handTracker { XR_NULL_HANDLE };
 #endif

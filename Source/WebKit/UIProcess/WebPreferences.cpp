@@ -52,12 +52,12 @@ bool WebPreferences::forcedSiteIsolationAlwaysOnForTesting()
     return WebKit::forceSiteIsolationAlwaysOnForTesting;
 }
 
-Ref<WebPreferences> WebPreferences::create(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
+Ref<WebPreferences> WebPreferences::create(StringImpl* identifier, StringImpl* keyPrefix, StringImpl* globalDebugKeyPrefix)
 {
     return adoptRef(*new WebPreferences(identifier, keyPrefix, globalDebugKeyPrefix));
 }
 
-Ref<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
+Ref<WebPreferences> WebPreferences::createWithLegacyDefaults(StringImpl* identifier, StringImpl* keyPrefix, StringImpl* globalDebugKeyPrefix)
 {
     auto preferences = WebPreferences::create(identifier, keyPrefix, globalDebugKeyPrefix);
     // FIXME: The registerDefault...ValueForKey machinery is unnecessarily heavyweight and complicated.
@@ -66,7 +66,7 @@ Ref<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& ident
     return preferences;
 }
 
-WebPreferences::WebPreferences(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
+WebPreferences::WebPreferences(StringImpl* identifier, StringImpl* keyPrefix, StringImpl* globalDebugKeyPrefix)
     : m_identifier(identifier)
     , m_keyPrefix(keyPrefix)
     , m_globalDebugKeyPrefix(globalDebugKeyPrefix)
@@ -178,53 +178,53 @@ void WebPreferences::endBatchingUpdates()
         update();
 }
 
-void WebPreferences::setBoolValueForKey(const String& key, bool value, bool ephemeral)
+void WebPreferences::setBoolValueForKey(StringImpl* key, bool value, bool ephemeral)
 {
     if (!m_store.setBoolValueForKey(key, value))
         return;
     updateBoolValueForKey(key, value, ephemeral);
 }
 
-void WebPreferences::setDoubleValueForKey(const String& key, double value, bool ephemeral)
+void WebPreferences::setDoubleValueForKey(StringImpl* key, double value, bool ephemeral)
 {
     if (!m_store.setDoubleValueForKey(key, value))
         return;
     updateDoubleValueForKey(key, value, ephemeral);
 }
 
-void WebPreferences::setUInt32ValueForKey(const String& key, uint32_t value, bool ephemeral)
+void WebPreferences::setUInt32ValueForKey(StringImpl* key, uint32_t value, bool ephemeral)
 {
     if (!m_store.setUInt32ValueForKey(key, value))
         return;
     updateUInt32ValueForKey(key, value, ephemeral);
 }
 
-void WebPreferences::setStringValueForKey(const String& key, const String& value, bool ephemeral)
+void WebPreferences::setStringValueForKey(StringImpl* key, StringImpl* value, bool ephemeral)
 {
     if (!m_store.setStringValueForKey(key, value))
         return;
     updateStringValueForKey(key, value, ephemeral);
 }
 
-void WebPreferences::updateStringValueForKey(const String& key, const String& value, bool ephemeral)
+void WebPreferences::updateStringValueForKey(StringImpl* key, StringImpl* value, bool ephemeral)
 {
     platformUpdateStringValueForKey(key, value);
     update(); // FIXME: Only send over the changed key and value.
 }
 
-void WebPreferences::updateBoolValueForKey(const String& key, bool value, bool ephemeral)
+void WebPreferences::updateBoolValueForKey(StringImpl* key, bool value, bool ephemeral)
 {
     if (!ephemeral)
         platformUpdateBoolValueForKey(key, value);
     
-    if (key == WebPreferencesKey::processSwapOnCrossSiteNavigationEnabledKey()) {
+    if (equal(key, WebPreferencesKey::processSwapOnCrossSiteNavigationEnabledKey())) {
         for (Ref page : m_pages)
             page->configuration().processPool().configuration().setProcessSwapsOnNavigation(value);
 
         return;
     }
 
-    if (key == WebPreferencesKey::exemptAllowlistedCookiesFromItpKey()) {
+    if (equal(key, WebPreferencesKey::exemptAllowlistedCookiesFromItpKey())) {
         WebsiteDataStore::forEachWebsiteDataStore([value](WebsiteDataStore& dataStore) {
             dataStore.setExemptAllowlistedCookiesFromITP(value);
         });
@@ -233,32 +233,32 @@ void WebPreferences::updateBoolValueForKey(const String& key, bool value, bool e
     update(); // FIXME: Only send over the changed key and value.
 }
 
-void WebPreferences::updateUInt32ValueForKey(const String& key, uint32_t value, bool ephemeral)
+void WebPreferences::updateUInt32ValueForKey(StringImpl* key, uint32_t value, bool ephemeral)
 {
     platformUpdateUInt32ValueForKey(key, value);
     update(); // FIXME: Only send over the changed key and value.
 }
 
-void WebPreferences::updateDoubleValueForKey(const String& key, double value, bool ephemeral)
+void WebPreferences::updateDoubleValueForKey(StringImpl* key, double value, bool ephemeral)
 {
     platformUpdateDoubleValueForKey(key, value);
     update(); // FIXME: Only send over the changed key and value.
 }
 
-void WebPreferences::updateFloatValueForKey(const String& key, float value, bool ephemeral)
+void WebPreferences::updateFloatValueForKey(StringImpl* key, float value, bool ephemeral)
 {
     platformUpdateFloatValueForKey(key, value);
     update(); // FIXME: Only send over the changed key and value.
 }
 
-void WebPreferences::deleteKey(const String& key)
+void WebPreferences::deleteKey(StringImpl* key)
 {
     m_store.deleteKey(key);
     platformDeleteKey(key);
     update(); // FIXME: Only send over the changed key and value.
 }
 
-void WebPreferences::registerDefaultBoolValueForKey(const String& key, bool value)
+void WebPreferences::registerDefaultBoolValueForKey(StringImpl* key, bool value)
 {
     m_store.setOverrideDefaultsBoolValueForKey(key, value);
     bool userValue;
@@ -266,7 +266,7 @@ void WebPreferences::registerDefaultBoolValueForKey(const String& key, bool valu
         m_store.setBoolValueForKey(key, userValue);
 }
 
-void WebPreferences::registerDefaultUInt32ValueForKey(const String& key, uint32_t value)
+void WebPreferences::registerDefaultUInt32ValueForKey(StringImpl* key, uint32_t value)
 {
     m_store.setOverrideDefaultsUInt32ValueForKey(key, value);
     uint32_t userValue;
@@ -282,55 +282,55 @@ void WebPreferences::platformInitializeStore()
 #endif
 
 #if !PLATFORM(COCOA)
-void WebPreferences::platformUpdateStringValueForKey(const String&, const String&)
+void WebPreferences::platformUpdateStringValueForKey(StringImpl*, StringImpl*)
 {
     notImplemented();
 }
 
-void WebPreferences::platformUpdateBoolValueForKey(const String&, bool)
+void WebPreferences::platformUpdateBoolValueForKey(StringImpl*, bool)
 {
     notImplemented();
 }
 
-void WebPreferences::platformUpdateUInt32ValueForKey(const String&, uint32_t)
+void WebPreferences::platformUpdateUInt32ValueForKey(StringImpl*, uint32_t)
 {
     notImplemented();
 }
 
-void WebPreferences::platformUpdateDoubleValueForKey(const String&, double)
+void WebPreferences::platformUpdateDoubleValueForKey(StringImpl*, double)
 {
     notImplemented();
 }
 
-void WebPreferences::platformUpdateFloatValueForKey(const String&, float)
+void WebPreferences::platformUpdateFloatValueForKey(StringImpl*, float)
 {
     notImplemented();
 }
 
-void WebPreferences::platformDeleteKey(const String&)
+void WebPreferences::platformDeleteKey(StringImpl*)
 {
     notImplemented();
 }
 
-bool WebPreferences::platformGetStringUserValueForKey(const String&, String&)
-{
-    notImplemented();
-    return false;
-}
-
-bool WebPreferences::platformGetBoolUserValueForKey(const String&, bool&)
+bool WebPreferences::platformGetStringUserValueForKey(StringImpl*, RefPtr<StringImpl>&)
 {
     notImplemented();
     return false;
 }
 
-bool WebPreferences::platformGetUInt32UserValueForKey(const String&, uint32_t&)
+bool WebPreferences::platformGetBoolUserValueForKey(StringImpl*, bool&)
 {
     notImplemented();
     return false;
 }
 
-bool WebPreferences::platformGetDoubleUserValueForKey(const String&, double&)
+bool WebPreferences::platformGetUInt32UserValueForKey(StringImpl*, uint32_t&)
+{
+    notImplemented();
+    return false;
+}
+
+bool WebPreferences::platformGetDoubleUserValueForKey(StringImpl*, double&)
 {
     notImplemented();
     return false;

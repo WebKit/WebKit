@@ -294,27 +294,27 @@ bool StringView::GraphemeClusters::Iterator::operator==(const Iterator& other) c
 enum class ASCIICase { Lower, Upper };
 
 template<ASCIICase type, typename CharacterType>
-String convertASCIICase(std::span<const CharacterType> input)
+RefPtr<StringImpl> convertASCIICase(std::span<const CharacterType> input)
 {
-    if (!input)
-        return { };
+    if (!input.data())
+        return nullptr;
 
     std::span<CharacterType> characters;
-    auto result = String::createUninitialized(input.size(), characters);
+    auto result = StringImpl::createUninitialized(input.size(), characters);
     size_t i = 0;
     for (auto character : input)
         characters[i++] = type == ASCIICase::Lower ? toASCIILower(character) : toASCIIUpper(character);
     return result;
 }
 
-String StringView::convertToASCIILowercase() const
+RefPtr<StringImpl> StringView::convertToASCIILowercase() const
 {
     if (m_is8Bit)
         return convertASCIICase<ASCIICase::Lower>(span8());
     return convertASCIICase<ASCIICase::Lower>(span16());
 }
 
-String StringView::convertToASCIIUppercase() const
+RefPtr<StringImpl> StringView::convertToASCIIUppercase() const
 {
     if (m_is8Bit)
         return convertASCIICase<ASCIICase::Upper>(span8());
@@ -322,17 +322,17 @@ String StringView::convertToASCIIUppercase() const
 }
 
 template<typename CharacterType>
-static AtomString convertASCIILowercaseAtom(std::span<const CharacterType> input)
+static RefPtr<AtomStringImpl> convertASCIILowercaseAtom(std::span<const CharacterType> input)
 {
     for (auto character : input) {
         if (isASCIIUpper(character)) [[unlikely]]
             return makeAtomString(asASCIILowercase(input));
     }
     // Fast path when the StringView is already all lowercase.
-    return input;
+    return AtomStringImpl::add(input);
 }
 
-AtomString StringView::convertToASCIILowercaseAtom() const
+RefPtr<AtomStringImpl> StringView::convertToASCIILowercaseAtom() const
 {
     if (m_is8Bit)
         return convertASCIILowercaseAtom(span8());
@@ -418,7 +418,7 @@ StringViewWithUnderlyingString normalizedNFC(StringView string)
     ASSERT(needsToGrowToProduceBuffer(status));
 
     std::span<char16_t> characters;
-    String result = String::createUninitialized(normalizedLength, characters);
+    RefPtr<StringImpl> result = StringImpl::createUninitialized(normalizedLength, characters);
 
     status = U_ZERO_ERROR;
     unorm2_normalize(normalizer, span.data(), span.size(), characters.data(), characters.size(), &status);
@@ -428,10 +428,10 @@ StringViewWithUnderlyingString normalizedNFC(StringView string)
     return { view, WTF::move(result) };
 }
 
-String normalizedNFC(const String& string)
+RefPtr<StringImpl> Detail::normalizedNFC(StringImpl* string)
 {
     auto result = normalizedNFC(StringView { string });
-    if (result.underlyingString.isNull())
+    if (!result.underlyingString)
         return string;
     return result.underlyingString;
 }
@@ -472,9 +472,9 @@ SUPPRESS_NODELETE size_t StringView::reverseFind(StringView matchString, unsigne
     return reverseFindInner(span16(), matchString.span16(), start);
 }
 
-String makeStringByReplacingAll(StringView string, char16_t target, char16_t replacement)
+RefPtr<StringImpl> makeStringByReplacingAll(StringView string, char16_t target, char16_t replacement)
 {
-    auto replaceAll = [&](auto characters) -> String {
+    auto replaceAll = [&](auto characters) -> RefPtr<StringImpl> {
         // find() is SIMD-accelerated, and its Latin1 overload returns notFound for a
         // non-Latin1 target, so an 8-bit string with a 16-bit target is handled here too.
         size_t i = find(characters, target);
@@ -502,13 +502,13 @@ SUPPRESS_NODELETE std::strong_ordering codePointCompare(StringView lhs, StringVi
     return codePointCompare(lhs.span16(), rhs.span16());
 }
 
-template<typename CharacterType> static String makeStringBySimplifyingNewLinesSlowCase(const String& string, unsigned firstCarriageReturn)
+template<typename CharacterType> static RefPtr<StringImpl> makeStringBySimplifyingNewLinesSlowCase(StringImpl* string, unsigned firstCarriageReturn)
 {
-    unsigned length = string.length();
+    unsigned length = WTF::length(string);
     unsigned resultLength = firstCarriageReturn;
-    auto characters = string.span<CharacterType>();
+    auto characters = span<CharacterType>(string);
     std::span<CharacterType> resultCharacters;
-    auto result = String::createUninitialized(length, resultCharacters);
+    Ref result = StringImpl::createUninitialized(length, resultCharacters);
     memcpySpan(resultCharacters, characters.first(firstCarriageReturn));
     for (unsigned i = firstCarriageReturn; i < length; ++i) {
         if (characters[i] != '\r')
@@ -520,13 +520,13 @@ template<typename CharacterType> static String makeStringBySimplifyingNewLinesSl
         }
     }
     if (resultLength < length)
-        result = StringImpl::createSubstringSharingImpl(Ref { *result.impl() }, 0, resultLength);
+        result = StringImpl::createSubstringSharingImpl(result, 0, resultLength);
     return result;
 }
 
-String makeStringBySimplifyingNewLinesSlowCase(const String& string, unsigned firstCarriageReturn)
+RefPtr<StringImpl> makeStringBySimplifyingNewLinesSlowCase(StringImpl* string, unsigned firstCarriageReturn)
 {
-    if (string.is8Bit())
+    if (is8Bit(string))
         return makeStringBySimplifyingNewLinesSlowCase<Latin1Character>(string, firstCarriageReturn);
     return makeStringBySimplifyingNewLinesSlowCase<char16_t>(string, firstCarriageReturn);
 }
@@ -639,7 +639,7 @@ void StringView::setUnderlyingStringImpl(const StringView&)
 #ifndef NDEBUG
 void StringView::show() const
 {
-    toStringWithoutCopying().show();
+    WTF::show(toStringWithoutCopying());
 }
 #endif
 

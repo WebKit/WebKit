@@ -62,29 +62,29 @@ WorkQueue& sharedImageTranscodingQueueSingleton()
     return queue.get();
 }
 
-static String transcodeImage(const String& path, const String& destinationUTI, const String& destinationExtension)
+static RefPtr<StringImpl> transcodeImage(StringImpl* path, StringImpl* destinationUTI, StringImpl* destinationExtension)
 {
-    auto sourceURL = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, path.createCFString().get(), kCFURLPOSIXPathStyle, false));
+    auto sourceURL = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, createCFString(path).get(), kCFURLPOSIXPathStyle, false));
     auto source = adoptCF(CGImageSourceCreateWithURL(sourceURL.get(), nullptr));
     if (!source)
         return nullString();
 
-    auto sourceUTI = String(CGImageSourceGetType(source.get()));
-    if (!sourceUTI || sourceUTI == destinationUTI)
+    auto sourceUTI = StringImpl::create(protect(CGImageSourceGetType(source.get())).get());
+    if (!sourceUTI || equal(sourceUTI, destinationUTI))
         return nullString();
 
     // It is important to add the appropriate file extension to the temporary file path.
     // The File object depends solely on the extension to know the MIME type of the file.
     // Extract the original filename (without extension) to preserve it in the transcoded file.
     auto originalFilename = FileSystem::pathFileName(path);
-    auto dotPosition = originalFilename.reverseFind('.');
-    auto baseName = (dotPosition != notFound) ? originalFilename.left(dotPosition) : originalFilename;
-    if (baseName.isEmpty())
-        baseName = "image"_s;
+    auto dotPosition = reverseFind(originalFilename, '.');
+    auto baseName = (dotPosition != notFound) ? left(originalFilename, dotPosition) : originalFilename;
+    if (isEmpty(baseName))
+        baseName = "image"_si;
     auto suffix = makeString('.', destinationExtension);
     auto [destinationPath, destinationFileHandle] = FileSystem::openTemporaryFile(baseName, suffix);
     if (!destinationFileHandle) {
-        RELEASE_LOG_ERROR(Images, "transcodeImage: Destination image could not be created: %s %s\n", path.utf8(), destinationUTI.utf8());
+        RELEASE_LOG_ERROR(Images, "transcodeImage: Destination image could not be created: %s %s\n", utf8(path), utf8(destinationUTI));
         return nullString();
     }
 
@@ -97,12 +97,12 @@ static String transcodeImage(const String& path, const String& destinationUTI, c
     };
 
     auto consumer = adoptCF(CGDataConsumerCreate(&destinationFileHandle, &callbacks));
-    auto destination = adoptCF(CGImageDestinationCreateWithDataConsumer(consumer.get(), destinationUTI.createCFString().get(), 1, nullptr));
+    auto destination = adoptCF(CGImageDestinationCreateWithDataConsumer(consumer.get(), createCFString(destinationUTI).get(), 1, nullptr));
 
     CGImageDestinationAddImageFromSource(destination.get(), source.get(), 0, nullptr);
 
     if (!CGImageDestinationFinalize(destination.get())) {
-        RELEASE_LOG_ERROR(Images, "transcodeImage: Image transcoding fails: %s %s\n", path.utf8(), destinationUTI.utf8());
+        RELEASE_LOG_ERROR(Images, "transcodeImage: Image transcoding fails: %s %s\n", utf8(path), utf8(destinationUTI));
         destinationFileHandle = { };
         FileSystem::deleteFile(destinationPath);
         return nullString();
@@ -111,18 +111,20 @@ static String transcodeImage(const String& path, const String& destinationUTI, c
     return destinationPath;
 }
 
-Vector<String> findImagesForTranscoding(const Vector<String>& paths, const Vector<String>& allowedMIMETypes)
+Vector<RefPtr<StringImpl>> findImagesForTranscoding(const Vector<RefPtr<StringImpl>>& paths, const Vector<RefPtr<StringImpl>>& allowedMIMETypes)
 {
-    bool allowAllImages = allowedMIMETypes.contains("image/*"_s);
+    bool allowAllImages = allowedMIMETypes.containsIf([&](auto& item) {
+        return equal(item, "image/*"_s);
+    });
 
     bool needsTranscoding = false;
     auto transcodingPaths = paths.map([&](auto& path) {
         auto mimeType = WebCore::MIMETypeRegistry::mimeTypeForPath(path);
 
-        if (allowAllImages && mimeType.startsWith("image/"_s))
+        if (allowAllImages && startsWith(mimeType, "image/"_s))
             return nullString();
 
-        if (!allowedMIMETypes.contains(mimeType)) {
+        if (!allowedMIMETypes.containsIf([&](auto& item) { return equal(item, mimeType); })) {
             needsTranscoding = true;
             return path;
         }
@@ -130,24 +132,24 @@ Vector<String> findImagesForTranscoding(const Vector<String>& paths, const Vecto
     });
 
     // If none of the files needs image transcoding, return an empty Vector.
-    return needsTranscoding ? transcodingPaths : Vector<String>();
+    return needsTranscoding ? transcodingPaths : Vector<RefPtr<StringImpl>>();
 }
 
-Vector<String> transcodeImages(const Vector<String>& paths, const String& destinationUTI, const String& destinationExtension)
+Vector<RefPtr<StringImpl>> transcodeImages(const Vector<RefPtr<StringImpl>>& paths, StringImpl* destinationUTI, StringImpl* destinationExtension)
 {
-    ASSERT(!destinationUTI.isNull());
-    ASSERT(!destinationExtension.isNull());
+    ASSERT(destinationUTI);
+    ASSERT(destinationExtension);
 
     return paths.map([&](auto& path) {
         // Append the transcoded path if the image needs transcoding. Otherwise append a null string.
-        return path.isNull() ? nullString() : transcodeImage(path, destinationUTI, destinationExtension);
+        return !path ? nullString() : transcodeImage(path, destinationUTI, destinationExtension);
     });
 }
 
-void transcodeImagesInBackgroundQueue(Vector<String>&& paths, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&& completion)
+void transcodeImagesInBackgroundQueue(Vector<RefPtr<StringImpl>>&& paths, RefPtr<StringImpl>&& destinationUTI, RefPtr<StringImpl>&& destinationExtension, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completion)
 {
     ASSERT(isMainThread());
-    sharedImageTranscodingQueueSingleton().dispatch([paths = crossThreadCopy(WTF::move(paths)), destinationUTI = WTF::move(destinationUTI).isolatedCopy(), destinationExtension = WTF::move(destinationExtension).isolatedCopy(), completion = WTF::move(completion)]() mutable {
+    sharedImageTranscodingQueueSingleton().dispatch([paths = crossThreadCopy(WTF::move(paths)), destinationUTI = isolatedCopy(WTF::move(destinationUTI)), destinationExtension = isolatedCopy(WTF::move(destinationExtension)), completion = WTF::move(completion)]() mutable {
         ASSERT(!isMainThread());
 
         auto replacementPaths = transcodeImages(paths, destinationUTI, destinationExtension);
@@ -159,21 +161,21 @@ void transcodeImagesInBackgroundQueue(Vector<String>&& paths, String&& destinati
     });
 }
 
-String descriptionString(ImageDecodingError error)
+RefPtr<StringImpl> descriptionString(ImageDecodingError error)
 {
     switch (error) {
     case ImageDecodingError::Internal:
-        return "Internal error"_s;
+        return "Internal error"_si;
     case ImageDecodingError::BadData:
-        return "Bad data"_s;
+        return "Bad data"_si;
     case ImageDecodingError::UnsupportedType:
-        return "Unsupported image type"_s;
+        return "Unsupported image type"_si;
     }
 
-    return "Unkown error"_s;
+    return "Unkown error"_si;
 }
 
-std::expected<std::pair<String, Vector<IntSize>>, ImageDecodingError> utiAndAvailableSizesFromImageData(std::span<const uint8_t> data)
+std::expected<std::pair<RefPtr<StringImpl>, Vector<IntSize>>, ImageDecodingError> utiAndAvailableSizesFromImageData(std::span<const uint8_t> data)
 {
     Ref buffer = SharedBuffer::create(data);
     Ref imageDecoder = ImageDecoderCG::create(buffer.get(), AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
@@ -197,10 +199,10 @@ std::expected<std::pair<String, Vector<IntSize>>, ImageDecodingError> utiAndAvai
     return std::make_pair(WTF::move(uti), WTF::move(sizes));
 }
 
-std::expected<Vector<std::pair<String, float>>, ImageDecodingError> imageMetadataFromImageData(std::span<const uint8_t> data)
+std::expected<Vector<std::pair<RefPtr<StringImpl>, float>>, ImageDecodingError> imageMetadataFromImageData(std::span<const uint8_t> data)
 {
     Ref buffer = SharedBuffer::create(data);
-    RefPtr imageDecoder = ImageDecoder::create(buffer.get(), { }, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
+    RefPtr imageDecoder = ImageDecoder::create(buffer.get(), nullptr, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
     if (!imageDecoder)
         return makeUnexpected(ImageDecodingError::UnsupportedType);
 
@@ -214,20 +216,20 @@ std::expected<Vector<std::pair<String, float>>, ImageDecodingError> imageMetadat
 
     auto primaryFrameIndex = imageDecoder->primaryFrameIndex();
 
-    Vector<std::pair<String, float>> metadata;
+    Vector<std::pair<RefPtr<StringImpl>, float>> metadata;
 
     auto size = imageDecoder->frameDensityCorrectedSizeAtIndex(primaryFrameIndex).value_or(imageDecoder->frameSizeAtIndex(primaryFrameIndex));
     if (imageDecoder->frameOrientationAtIndex(primaryFrameIndex).usesWidthAsHeight())
         size = size.transposedSize();
-    metadata.append({ kCGImagePropertyPixelWidth, size.width() });
-    metadata.append({ kCGImagePropertyPixelHeight, size.height() });
+    metadata.append({ StringImpl::create(kCGImagePropertyPixelWidth), size.width() });
+    metadata.append({ StringImpl::create(kCGImagePropertyPixelHeight), size.height() });
 
     auto density = imageDecoder->frameDensityAtIndex(primaryFrameIndex);
-    metadata.append({ kCGImagePropertyDPIWidth, density.width() });
-    metadata.append({ kCGImagePropertyDPIHeight, density.height() });
+    metadata.append({ StringImpl::create(kCGImagePropertyDPIWidth), density.width() });
+    metadata.append({ StringImpl::create(kCGImagePropertyDPIHeight), density.height() });
 
     auto frameCount = imageDecoder->frameCount();
-    metadata.append({ kCGImagePropertyImageCount, frameCount });
+    metadata.append({ StringImpl::create(kCGImagePropertyImageCount), frameCount });
 
     return WTF::move(metadata);
 }
@@ -282,12 +284,12 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-RetainPtr<CFStringRef> utiFromImageBufferMIMEType(const String& mimeType)
+RetainPtr<CFStringRef> utiFromImageBufferMIMEType(StringImpl* mimeType)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // FIXME: Why doesn't iOS use the CoreServices version?
 #if PLATFORM(MAC)
-    return UTIFromMIMEType(mimeType).createCFString();
+    return createCFString(UTIFromMIMEType(mimeType));
 #else
     // FIXME: Add Windows support for all the supported UTIs when a way to convert from MIMEType to UTI reliably is found.
     // For now, only support PNG, JPEG, and GIF. See <rdar://problem/6095286>.
@@ -319,7 +321,7 @@ static RetainPtr<CFDictionaryRef> imagePropertiesForDestinationUTIAndQuality(CFS
     // in the calling functions, but it doesn't seem to work.
 }
 
-static bool encode(CGImageRef image, const String& mimeType, std::optional<double> quality, NOESCAPE const ScopedLambda<PutBytesCallback>& function)
+static bool encode(CGImageRef image, StringImpl* mimeType, std::optional<double> quality, NOESCAPE const ScopedLambda<PutBytesCallback>& function)
 {
     if (!image)
         return false;
@@ -345,7 +347,7 @@ static bool encode(CGImageRef image, const String& mimeType, std::optional<doubl
     return CGImageDestinationFinalize(destination.get());
 }
 
-static bool encode(const PixelBuffer& source, const String& mimeType, std::optional<double> quality, NOESCAPE const ScopedLambda<PutBytesCallback>& function)
+static bool encode(const PixelBuffer& source, StringImpl* mimeType, std::optional<double> quality, NOESCAPE const ScopedLambda<PutBytesCallback>& function)
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
@@ -395,7 +397,7 @@ static bool encode(const PixelBuffer& source, const String& mimeType, std::optio
     return encode(image.get(), mimeType, quality, function);
 }
 
-template<typename Source> static Vector<uint8_t> encodeToVector(Source&& source, const String& mimeType, std::optional<double> quality)
+template<typename Source> static Vector<uint8_t> encodeToVector(Source&& source, StringImpl* mimeType, std::optional<double> quality)
 {
     Vector<uint8_t> result;
 
@@ -409,34 +411,34 @@ template<typename Source> static Vector<uint8_t> encodeToVector(Source&& source,
     return result;
 }
 
-Vector<uint8_t> encodeData(CGImageRef image, const String& mimeType, std::optional<double> quality)
+Vector<uint8_t> encodeData(CGImageRef image, StringImpl* mimeType, std::optional<double> quality)
 {
     // FIXME(https://bugs.webkit.org/show_bug.cgi?id=308704): The encoding should take in background color and not use drawing,
     // so we would not need to create the temp NativeImage.
     return encodeData(NativeImage::create(image), mimeType, quality);
 }
 
-Vector<uint8_t> encodeData(const PixelBuffer& pixelBuffer, const String& mimeType, std::optional<double> quality)
+Vector<uint8_t> encodeData(const PixelBuffer& pixelBuffer, StringImpl* mimeType, std::optional<double> quality)
 {
     return encodeToVector(pixelBuffer, mimeType, quality);
 }
 
-String encodeDataURL(CGImageRef image, const String& mimeType, std::optional<double> quality)
+RefPtr<StringImpl> encodeDataURL(CGImageRef image, StringImpl* mimeType, std::optional<double> quality)
 {
     // FIXME(https://bugs.webkit.org/show_bug.cgi?id=308704): The encoding should take in background color and not use drawing,
     // so we would not need to create the temp NativeImage.
     return encodeDataURL(NativeImage::create(image), mimeType, quality);
 }
 
-String encodeDataURL(const PixelBuffer& pixelBuffer, const String& mimeType, std::optional<double> quality)
+RefPtr<StringImpl> encodeDataURL(const PixelBuffer& pixelBuffer, StringImpl* mimeType, std::optional<double> quality)
 {
     auto encodedData = encodeToVector(pixelBuffer, mimeType, quality);
     if (encodedData.isEmpty())
-        return "data:,"_s;
+        return "data:,"_si;
     return makeString("data:"_s, mimeType, ";base64,"_s, base64Encoded(encodedData));
 }
 
-Vector<uint8_t> platformEncodeData(const NativeImage& image, const String& mimeType, std::optional<double> quality)
+Vector<uint8_t> platformEncodeData(const NativeImage& image, StringImpl* mimeType, std::optional<double> quality)
 {
     return encodeToVector(image.platformImage().get(), mimeType, quality);
 }

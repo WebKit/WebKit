@@ -49,7 +49,7 @@ struct AVCParameters {
 
 WEBCORE_EXPORT std::optional<AVCParameters> parseAVCCodecParameters(StringView);
 WEBCORE_EXPORT std::optional<AVCParameters> parseAVCDecoderConfigurationRecord(const SharedBuffer&);
-WEBCORE_EXPORT String createAVCCodecParametersString(const AVCParameters&);
+WEBCORE_EXPORT RefPtr<StringImpl> createAVCCodecParametersString(const AVCParameters&);
 
 struct HEVCParameters {
     enum class Codec { Hev1, Hvc1 } codec { Codec::Hvc1 };
@@ -63,7 +63,7 @@ struct HEVCParameters {
 
 WEBCORE_EXPORT std::optional<HEVCParameters> parseHEVCCodecParameters(StringView);
 WEBCORE_EXPORT std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(FourCC, const SharedBuffer&);
-WEBCORE_EXPORT String createHEVCCodecParametersString(const HEVCParameters&);
+WEBCORE_EXPORT RefPtr<StringImpl> createHEVCCodecParametersString(const HEVCParameters&);
 
 struct DoViParameters {
     enum class Codec { AVC1, AVC3, HEV1, HVC1 } codec { Codec::HVC1 };
@@ -73,7 +73,7 @@ struct DoViParameters {
 
 WEBCORE_EXPORT std::optional<DoViParameters> parseDoViCodecParameters(StringView);
 WEBCORE_EXPORT std::optional<DoViParameters> parseDoViDecoderConfigurationRecord(const SharedBuffer&);
-WEBCORE_EXPORT String createDoViCodecParametersString(const DoViParameters&);
+WEBCORE_EXPORT RefPtr<StringImpl> createDoViCodecParametersString(const DoViParameters&);
 
 // Type values 0-40 are defined in Table 7-1, 48-49 in RFC 7798 sections 4.4.2/4.4.3.
 enum class HEVCNaluType : uint8_t {

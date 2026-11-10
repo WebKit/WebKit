@@ -44,7 +44,7 @@ void Serialize<Path>::operator()(StringBuilder& builder, const SerializationCont
     }
 
     // FIXME: Add version of `buildStringFromByteStream` that takes a `StringBuilder`.
-    WTF::String pathString;
+    RefPtr<StringImpl> pathString;
     buildStringFromByteStream(value.data.byteStream, pathString, UnalteredParsing);
     serializeString(builder, pathString);
 }

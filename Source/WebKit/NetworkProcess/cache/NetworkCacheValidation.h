@@ -40,8 +40,8 @@ class NetworkStorageSession;
 
 namespace NetworkCache {
 
-Vector<std::pair<String, String>> collectVaryingRequestHeaders(NetworkStorageSession*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
-bool verifyVaryingRequestHeaders(NetworkStorageSession*, const Vector<std::pair<String, String>>& varyingRequestHeaders, const WebCore::ResourceRequest&);
+Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> collectVaryingRequestHeaders(NetworkStorageSession*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+bool verifyVaryingRequestHeaders(NetworkStorageSession*, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& varyingRequestHeaders, const WebCore::ResourceRequest&);
 
 } // namespace NetworkCache
 } // namespace WebKit

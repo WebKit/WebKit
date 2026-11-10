@@ -60,11 +60,11 @@ const Vector<CaptureDevice>& CoreAudioCaptureDeviceManager::captureDevices()
     return m_captureDevices;
 }
 
-std::optional<CaptureDevice> CoreAudioCaptureDeviceManager::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& deviceID)
+std::optional<CaptureDevice> CoreAudioCaptureDeviceManager::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, StringImpl* deviceID)
 {
     ASSERT_UNUSED(type, type == CaptureDevice::DeviceType::Microphone);
     for (auto& device : captureDevices()) {
-        if (device.persistentId() == deviceID)
+        if (equal(device.persistentId(), deviceID))
             return device;
     }
     return std::nullopt;
@@ -104,9 +104,9 @@ static bool deviceHasOutputStreams(AudioObjectID deviceID)
     return deviceHasStreams(deviceID, address);
 }
 
-static bool isVirtualDeviceFromLabel(const String& label)
+static bool isVirtualDeviceFromLabel(StringImpl* label)
 {
-    return label.contains("WebexMediaAudioDevice"_s) || label.contains("Microsoft Teams Audio"_s);
+    return contains(label, "WebexMediaAudioDevice"_s) || contains(label, "Microsoft Teams Audio"_s);
 }
 
 static bool isValidMicrophoneDevice(const CoreAudioCaptureDevice& device, bool filterTapEnabledDevices)
@@ -140,7 +140,7 @@ static bool isValidMicrophoneDevice(const CoreAudioCaptureDevice& device, bool f
     CFStringRef name = nullptr;
     dataSize = sizeof(name);
     AudioObjectGetPropertyData(device.deviceID(), &address, 0, nullptr, &dataSize, &name);
-    bool isNonAggregable = !name || !String(name).startsWith("com.apple.audio.CoreAudio"_s);
+    bool isNonAggregable = !name || !startsWith(StringImpl::create(name), "com.apple.audio.CoreAudio"_s);
     if (name)
         CFRelease(name);
     if (isNonAggregable) {
@@ -149,19 +149,19 @@ static bool isValidMicrophoneDevice(const CoreAudioCaptureDevice& device, bool f
     }
 
     // Ignore unnamed devices and aggregate devices created by VPIO.
-    if (device.label().isEmpty()) {
+    if (isEmpty(device.label())) {
         RELEASE_LOG(WebRTC, "Ignoring output device that is unnamed");
         return false;
     }
 
-    if (device.label().startsWith("VPAUAggregateAudioDevice"_s)) {
+    if (startsWith(device.label(), "VPAUAggregateAudioDevice"_s)) {
         RELEASE_LOG(WebRTC, "Ignoring output VPAUAggregateAudioDevice device");
         return false;
     }
 
     // FIXME: We might want to use properties like whether a device can be selected as default once we move device enumeration to GPUProcess.
     if (isVirtualDeviceFromLabel(device.label())) {
-        RELEASE_LOG(WebRTC, "Ignoring virtual microphone device '%s'", device.label().utf8());
+        RELEASE_LOG(WebRTC, "Ignoring virtual microphone device '%s'", utf8(device.label()));
         return false;
     }
 
@@ -238,10 +238,10 @@ Vector<CoreAudioCaptureDevice>& CoreAudioCaptureDeviceManager::coreAudioCaptureD
     return m_coreAudioCaptureDevices;
 }
 
-std::optional<CoreAudioCaptureDevice> CoreAudioCaptureDeviceManager::coreAudioDeviceWithUID(const String& deviceID)
+std::optional<CoreAudioCaptureDevice> CoreAudioCaptureDeviceManager::coreAudioDeviceWithUID(StringImpl* deviceID)
 {
     for (auto& device : coreAudioCaptureDevices()) {
-        if (device.persistentId() == deviceID && device.enabled())
+        if (equal(device.persistentId(), deviceID) && device.enabled())
             return device;
     }
     return std::nullopt;
@@ -285,7 +285,7 @@ static inline Vector<CoreAudioCaptureDevice> computeAudioDeviceList(bool filterT
         if (!deviceHasInputStreams(deviceID) || hasDevice(audioDevices, deviceID, CaptureDevice::DeviceType::Microphone))
             continue;
 
-        auto microphoneDevice = CoreAudioCaptureDevice::create(deviceID, CaptureDevice::DeviceType::Microphone, { });
+        auto microphoneDevice = CoreAudioCaptureDevice::create(deviceID, CaptureDevice::DeviceType::Microphone, nullptr);
         if (microphoneDevice && isValidMicrophoneDevice(microphoneDevice.value(), filterTapEnabledDevices))
             audioDevices.append(WTF::move(microphoneDevice.value()));
     }
@@ -297,7 +297,7 @@ static inline Vector<CoreAudioCaptureDevice> computeAudioDeviceList(bool filterT
         if (!deviceHasOutputStreams(deviceID) || hasDevice(audioDevices, deviceID, CaptureDevice::DeviceType::Speaker))
             continue;
 
-        String groupID;
+        RefPtr<StringImpl> groupID;
         for (auto relatedDeviceID : CoreAudioCaptureDevice::relatedAudioDeviceIDs(deviceID)) {
             for (auto& device : audioDevices) {
                 if (device.deviceID() == relatedDeviceID && device.type() == CaptureDevice::DeviceType::Microphone) {
@@ -310,9 +310,9 @@ static inline Vector<CoreAudioCaptureDevice> computeAudioDeviceList(bool filterT
         auto device = CoreAudioCaptureDevice::create(deviceID, CaptureDevice::DeviceType::Speaker, groupID);
         if (device) {
             // If there is no groupID, relate devices if the label is matching.
-            if (groupID.isNull()) {
+            if (!groupID) {
                 for (auto& existingDevice : audioDevices) {
-                    if (existingDevice.label() == device->label() && existingDevice.type() == CaptureDevice::DeviceType::Microphone) {
+                    if (equal(existingDevice.label(), device->label()) && existingDevice.type() == CaptureDevice::DeviceType::Microphone) {
                         device->setGroupId(existingDevice.persistentId());
                         break;
                     }
@@ -335,7 +335,7 @@ void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices(NotifyIfDevicesHa
         for (size_t cptr = 0; cptr < audioDevices.size(); ++cptr) {
             auto& oldDevice = m_coreAudioCaptureDevices[cptr];
             auto& newDevice = audioDevices[cptr];
-            if (newDevice.type() != oldDevice.type() || newDevice.deviceID() != oldDevice.deviceID() || newDevice.isDefault() != oldDevice.isDefault() || newDevice.enabled() != oldDevice.enabled() || newDevice.label() != oldDevice.label() || newDevice.groupId() != oldDevice.groupId())
+            if (newDevice.type() != oldDevice.type() || newDevice.deviceID() != oldDevice.deviceID() || newDevice.isDefault() != oldDevice.isDefault() || newDevice.enabled() != oldDevice.enabled() || !equal(newDevice.label(), oldDevice.label()) || !equal(newDevice.groupId(), oldDevice.groupId()))
                 haveDeviceChanges = true;
         }
     }

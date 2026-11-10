@@ -58,7 +58,7 @@ namespace WebCore {
 class TagCollection final : public CachedHTMLCollection<TagCollection> {
     WTF_MAKE_TZONE_ALLOCATED(TagCollection);
 public:
-    static Ref<TagCollection> create(ContainerNode& rootNode, CollectionType type, const AtomString& qualifiedName)
+    static Ref<TagCollection> create(ContainerNode& rootNode, CollectionType type, AtomStringImpl* qualifiedName)
     {
         ASSERT_UNUSED(type, type == CollectionType::ByTag);
         return adoptRef(*new TagCollection(rootNode, qualifiedName));
@@ -68,15 +68,15 @@ public:
     bool elementMatches(Element&) const;
 
 private:
-    TagCollection(ContainerNode& rootNode, const AtomString& qualifiedName);
+    TagCollection(ContainerNode& rootNode, AtomStringImpl* qualifiedName);
 
-    AtomString m_qualifiedName;
+    RefPtr<AtomStringImpl> m_qualifiedName;
 };
 
 class TagCollectionNS final : public CachedHTMLCollection<TagCollectionNS> {
     WTF_MAKE_TZONE_ALLOCATED(TagCollectionNS);
 public:
-    static Ref<TagCollectionNS> create(ContainerNode& rootNode, const AtomString& namespaceURI, const AtomString& localName)
+    static Ref<TagCollectionNS> create(ContainerNode& rootNode, AtomStringImpl* namespaceURI, AtomStringImpl* localName)
     {
         return adoptRef(*new TagCollectionNS(rootNode, namespaceURI, localName));
     }
@@ -85,16 +85,16 @@ public:
     bool elementMatches(Element&) const;
 
 private:
-    TagCollectionNS(ContainerNode& rootNode, const AtomString& namespaceURI, const AtomString& localName);
+    TagCollectionNS(ContainerNode& rootNode, AtomStringImpl* namespaceURI, AtomStringImpl* localName);
 
-    AtomString m_namespaceURI;
-    AtomString m_localName;
+    RefPtr<AtomStringImpl> m_namespaceURI;
+    RefPtr<AtomStringImpl> m_localName;
 };
 
 class HTMLTagCollection final : public CachedHTMLCollection<HTMLTagCollection> {
     WTF_MAKE_TZONE_ALLOCATED(HTMLTagCollection);
 public:
-    static Ref<HTMLTagCollection> create(ContainerNode& rootNode, CollectionType type, const AtomString& qualifiedName)
+    static Ref<HTMLTagCollection> create(ContainerNode& rootNode, CollectionType type, AtomStringImpl* qualifiedName)
     {
         ASSERT_UNUSED(type, type == CollectionType::ByHTMLTag);
         return adoptRef(*new HTMLTagCollection(rootNode, qualifiedName));
@@ -104,15 +104,15 @@ public:
     bool elementMatches(Element&) const;
 
 private:
-    HTMLTagCollection(ContainerNode& rootNode, const AtomString& qualifiedName);
+    HTMLTagCollection(ContainerNode& rootNode, AtomStringImpl* qualifiedName);
 
-    AtomString m_qualifiedName;
-    AtomString m_loweredQualifiedName;
+    RefPtr<AtomStringImpl> m_qualifiedName;
+    RefPtr<AtomStringImpl> m_loweredQualifiedName;
 };
 
 inline bool TagCollection::elementMatches(Element& element) const
 {
-    return m_qualifiedName == element.tagQName().toString();
+    return equal(m_qualifiedName, element.tagQName().toString());
 }
 
 inline bool TagCollectionNS::elementMatches(Element& element) const
@@ -125,8 +125,8 @@ inline bool TagCollectionNS::elementMatches(Element& element) const
 inline bool HTMLTagCollection::elementMatches(Element& element) const
 {
     if (element.isHTMLElement())
-        return m_loweredQualifiedName == element.tagQName().toString();
-    return m_qualifiedName == element.tagQName().toString();
+        return equal(m_loweredQualifiedName, element.tagQName().toString());
+    return equal(m_qualifiedName, element.tagQName().toString());
 }
 
 } // namespace WebCore

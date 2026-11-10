@@ -55,12 +55,12 @@ public:
 
     WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, CSSValueID identifier, IsImportant = IsImportant::No);
     WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, double value, CSSUnitType, IsImportant = IsImportant::No);
-    WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, const String& value, IsImportant = IsImportant::No, bool* didFailParsing = nullptr);
-    bool setInlineStyleCustomProperty(const AtomString& property, const String& value, IsImportant = IsImportant::No);
+    WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, StringImpl* value, IsImportant = IsImportant::No, bool* didFailParsing = nullptr);
+    bool setInlineStyleCustomProperty(AtomStringImpl* property, StringImpl* value, IsImportant = IsImportant::No);
     bool setInlineStyleCustomProperty(Ref<CSSValue>&&, IsImportant = IsImportant::No);
     bool setInlineStyleProperty(CSSPropertyID, Ref<CSSValue>&&, IsImportant = IsImportant::No);
     WEBCORE_EXPORT bool removeInlineStyleProperty(CSSPropertyID);
-    bool removeInlineStyleCustomProperty(const AtomString&);
+    bool removeInlineStyleCustomProperty(AtomStringImpl*);
     void removeAllInlineStyleProperties();
 
     void synchronizeStyleAttributeInternal() const { const_cast<StyledElement*>(this)->synchronizeStyleAttributeInternalImpl(); }
@@ -70,7 +70,7 @@ public:
 
     // https://html.spec.whatwg.org/#presentational-hints
     const ImmutableStyleProperties* presentationalHintStyle() const;
-    virtual void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) { }
+    virtual void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) { }
     virtual const MutableStyleProperties* additionalPresentationalHintStyle() const { return nullptr; }
     virtual void collectExtraStyleForPresentationalHints(MutableStyleProperties&) { }
 
@@ -80,16 +80,16 @@ protected:
     {
     }
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason = AttributeModificationReason::Directly) override;
 
     virtual bool hasPresentationalHintsForAttribute(const QualifiedName&) const { return false; }
 
     void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, CSSValueID identifier);
     void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, double value, CSSUnitType);
-    void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, const String& value);
+    void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, StringImpl* value);
     void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, Ref<CSSValue>&&);
 
-    void mapLanguageAttributeToLocale(const AtomString& value, MutableStyleProperties&);
+    void mapLanguageAttributeToLocale(AtomStringImpl* value, MutableStyleProperties&);
 
     void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const override;
     Attribute replaceURLsInAttributeValue(const Attribute&, const CSS::SerializationContext&) const override;
@@ -97,14 +97,14 @@ protected:
 private:
     StyledElement(ClangVTableWorkaroundTag, const QualifiedName&, Document&);
 
-    void styleAttributeChanged(const AtomString& newStyleString, AttributeModificationReason);
+    void styleAttributeChanged(AtomStringImpl* newStyleString, AttributeModificationReason);
     void synchronizeStyleAttributeInternalImpl();
     void synchronizeStyleAttributeForSelectorInvalidation();
-    bool isStyleAttributeAllowedByContentSecurityPolicy(const AtomString& styleString, OrdinalNumber startLineNumber);
+    bool isStyleAttributeAllowedByContentSecurityPolicy(AtomStringImpl* styleString, OrdinalNumber startLineNumber);
 
     void inlineStyleChanged();
     CSSStyleProperties* inlineStyleCSSOMWrapper();
-    void setInlineStyleFromString(const AtomString&);
+    void setInlineStyleFromString(AtomStringImpl*);
     Ref<MutableStyleProperties> ensureMutableInlineStyle();
 
     void rebuildPresentationalHintStyle();

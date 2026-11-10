@@ -48,7 +48,7 @@ enum class CharacterClassSetOp : uint8_t {
     Subtraction
 };
 
-template <class T> concept YarrSyntaxCheckable = requires (T& checker, Vector<Vector<char32_t>>& disjunctionStrings, const String& subpatternName) {
+template <class T> concept YarrSyntaxCheckable = requires (T& checker, Vector<Vector<char32_t>>& disjunctionStrings, StringImpl* subpatternName) {
     { checker.assertionBOL() } -> std::same_as<void>;
     { checker.assertionEOL() } -> std::same_as<void>;
     { checker.assertionBOI() } -> std::same_as<void>;
@@ -68,7 +68,7 @@ template <class T> concept YarrSyntaxCheckable = requires (T& checker, Vector<Ve
     { checker.atomCharacterClassPopNested(bool { }) } -> std::same_as<void>;
     { checker.atomCharacterClassEnd() } -> std::same_as<void>;
     { checker.atomParenthesesSubpatternBegin(bool { }) } -> std::same_as<void>;
-    { checker.atomParenthesesSubpatternBegin(bool { }, std::optional<String> { }) } -> std::same_as<void>;
+    { checker.atomParenthesesSubpatternBegin(bool { }, std::optional<RefPtr<StringImpl>> { }) } -> std::same_as<void>;
     { checker.atomParentheticalAssertionBegin(bool { }, MatchDirection { }) } -> std::same_as<void>;
     { checker.atomParentheticalModifierBegin(OptionSet<Flags> { }, OptionSet<Flags> { }) } -> std::same_as<void>;
     { checker.atomParenthesesEnd() } -> std::same_as<void>;
@@ -137,7 +137,7 @@ private:
     };
 
     class NamedCaptureGroups {
-        typedef UncheckedKeyHashSet<String> GroupNameHashSet;
+        typedef UncheckedKeyHashSet<RefPtr<StringImpl>> GroupNameHashSet;
 
     public:
         NamedCaptureGroups()
@@ -146,7 +146,7 @@ private:
             m_activeCaptureGroupNames.grow(1);
         }
 
-        bool contains(String name)
+        bool contains(RefPtr<StringImpl> name)
         {
             return m_captureGroupNames.contains(name);
         }
@@ -195,7 +195,7 @@ private:
             m_activeCaptureGroupNames.removeLast();
         }
 
-        GroupNameHashSet::AddResult add(String name)
+        GroupNameHashSet::AddResult add(RefPtr<StringImpl> name)
         {
             m_captureGroupNames.add(name);
 
@@ -370,8 +370,8 @@ private:
         NO_RETURN_DUE_TO_ASSERT void assertionEOI(bool) { RELEASE_ASSERT_NOT_REACHED(); }
         NO_RETURN_DUE_TO_ASSERT void assertionWordBoundary(bool) { RELEASE_ASSERT_NOT_REACHED(); }
         NO_RETURN_DUE_TO_ASSERT void atomBackReference(unsigned) { RELEASE_ASSERT_NOT_REACHED(); }
-        NO_RETURN_DUE_TO_ASSERT void atomNamedBackReference(const String&) { RELEASE_ASSERT_NOT_REACHED(); }
-        NO_RETURN_DUE_TO_ASSERT void atomNamedForwardReference(const String&) { RELEASE_ASSERT_NOT_REACHED(); }
+        NO_RETURN_DUE_TO_ASSERT void atomNamedBackReference(StringImpl*) { RELEASE_ASSERT_NOT_REACHED(); }
+        NO_RETURN_DUE_TO_ASSERT void atomNamedForwardReference(StringImpl*) { RELEASE_ASSERT_NOT_REACHED(); }
 
     private:
         Delegate& m_delegate;
@@ -782,8 +782,8 @@ private:
         NO_RETURN_DUE_TO_ASSERT void assertionEOI(bool) { RELEASE_ASSERT_NOT_REACHED(); }
         NO_RETURN_DUE_TO_ASSERT void assertionWordBoundary(bool) { RELEASE_ASSERT_NOT_REACHED(); }
         NO_RETURN_DUE_TO_ASSERT void atomBackReference(unsigned) { RELEASE_ASSERT_NOT_REACHED(); }
-        NO_RETURN_DUE_TO_ASSERT void atomNamedBackReference(const String&) { RELEASE_ASSERT_NOT_REACHED(); }
-        NO_RETURN_DUE_TO_ASSERT void atomNamedForwardReference(const String&) { RELEASE_ASSERT_NOT_REACHED(); }
+        NO_RETURN_DUE_TO_ASSERT void atomNamedBackReference(StringImpl*) { RELEASE_ASSERT_NOT_REACHED(); }
+        NO_RETURN_DUE_TO_ASSERT void atomNamedForwardReference(StringImpl*) { RELEASE_ASSERT_NOT_REACHED(); }
 
     private:
         Delegate& m_delegate;
@@ -854,8 +854,8 @@ private:
         NO_RETURN_DUE_TO_ASSERT void assertionEOI(bool) { RELEASE_ASSERT_NOT_REACHED(); }
         NO_RETURN_DUE_TO_ASSERT void assertionWordBoundary(bool) { RELEASE_ASSERT_NOT_REACHED(); }
         NO_RETURN_DUE_TO_ASSERT void atomBackReference(unsigned) { RELEASE_ASSERT_NOT_REACHED(); }
-        NO_RETURN_DUE_TO_ASSERT void atomNamedBackReference(const String&) { RELEASE_ASSERT_NOT_REACHED(); }
-        NO_RETURN_DUE_TO_ASSERT void atomNamedForwardReference(const String&) { RELEASE_ASSERT_NOT_REACHED(); }
+        NO_RETURN_DUE_TO_ASSERT void atomNamedBackReference(StringImpl*) { RELEASE_ASSERT_NOT_REACHED(); }
+        NO_RETURN_DUE_TO_ASSERT void atomNamedForwardReference(StringImpl*) { RELEASE_ASSERT_NOT_REACHED(); }
         NO_RETURN_DUE_TO_ASSERT void atomBuiltInCharacterClass(BuiltInCharacterClassID, bool) { RELEASE_ASSERT_NOT_REACHED(); }
 
     private:
@@ -2141,7 +2141,7 @@ private:
         return n;
     }
 
-    std::optional<String> tryConsumeGroupName()
+    std::optional<RefPtr<StringImpl>> tryConsumeGroupName()
     {
         if (atEndOfPattern())
             return std::nullopt;
@@ -2179,7 +2179,7 @@ private:
         }
 
         StringBuilder expressionBuilder;
-        String unicodePropertyName;
+        RefPtr<StringImpl> unicodePropertyName;
         bool foundEquals = false;
         unsigned errors = 0;
 
@@ -2253,7 +2253,7 @@ private:
     bool m_kIdentityEscapeSeen { false };
     Vector<ParenthesesType, 16> m_parenthesesStack;
     NamedCaptureGroups m_namedCaptureGroups;
-    UncheckedKeyHashSet<String> m_forwardReferenceNames;
+    UncheckedKeyHashSet<RefPtr<StringImpl>> m_forwardReferenceNames;
 
     static constexpr unsigned maxPatternSize = 1024 * 1024; // Derived by empirical testing of compile time in PCRE and WREC.
     static constexpr unsigned maxCapturesCount = (1 << 16) / 2; // Derived from V8's configuration.

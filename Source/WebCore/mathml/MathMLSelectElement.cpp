@@ -72,17 +72,17 @@ RenderPtr<RenderElement> MathMLSelectElement::createElementRenderer(Style::Compu
 // - Other MIME Content-Types for MathML, SVG and HTML.
 //
 // We exclude "application/mathml+xml" which is ambiguous about whether it is Presentation or Content MathML. Authors must use a more explicit encoding value.
-bool MathMLSelectElement::isMathMLEncoding(const AtomString& value)
+bool MathMLSelectElement::isMathMLEncoding(AtomStringImpl* value)
 {
-    return value == "application/mathml-presentation+xml"_s || value == "MathML-Presentation"_s;
+    return equal(value, "application/mathml-presentation+xml"_s) || equal(value, "MathML-Presentation"_s);
 }
 
-bool MathMLSelectElement::isSVGEncoding(const AtomString& value)
+bool MathMLSelectElement::isSVGEncoding(AtomStringImpl* value)
 {
-    return value == imageSVGContentTypeAtom() || value == "SVG1.1"_s;
+    return value == imageSVGContentTypeAtom() || equal(value, "SVG1.1"_s);
 }
 
-bool MathMLSelectElement::isHTMLEncoding(const AtomString& value)
+bool MathMLSelectElement::isHTMLEncoding(AtomStringImpl* value)
 {
     return value == applicationXHTMLContentTypeAtom() || value == textHTMLContentTypeAtom();
 }
@@ -104,7 +104,7 @@ void MathMLSelectElement::childrenChanged(const ChildChange& change)
     MathMLRowElement::childrenChanged(change);
 }
 
-void MathMLSelectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+void MathMLSelectElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason reason)
 {
     if (hasTagName(mactionTag) && (name == MathMLNames::actiontypeAttr || name == MathMLNames::selectionAttr))
         updateSelectedChild();
@@ -143,10 +143,10 @@ RefPtr<Element> MathMLSelectElement::getSelectedActionChild()
 
     // The value of the actiontype attribute is case-sensitive.
     auto& actiontype = attributeWithoutSynchronization(MathMLNames::actiontypeAttr);
-    if (actiontype == "statusline"_s) {
+    if (equal(actiontype, "statusline"_s)) {
         // FIXME: implement user interaction for the "statusline" action type (http://wkbug/124922).
         { }
-    } else if (actiontype == "tooltip"_s) {
+    } else if (equal(actiontype, "tooltip"_s)) {
         // FIXME: implement user interaction for the "tooltip" action type (http://wkbug/124921).
         { }
     } else {
@@ -221,7 +221,7 @@ void MathMLSelectElement::updateSelectedChild()
 void MathMLSelectElement::defaultEventHandler(Event& event)
 {
     if (!document().settings().coreMathMLEnabled() && isAnyClick(event)) {
-        if (attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle"_s) {
+        if (equal(attributeWithoutSynchronization(MathMLNames::actiontypeAttr), "toggle"_s)) {
             toggle();
             event.setDefaultHandled();
             return;
@@ -233,7 +233,7 @@ void MathMLSelectElement::defaultEventHandler(Event& event)
 
 bool MathMLSelectElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
-    return (!document().settings().coreMathMLEnabled() && attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle"_s) || MathMLRowElement::willRespondToMouseClickEventsWithEditability(editability);
+    return (!document().settings().coreMathMLEnabled() && equal(attributeWithoutSynchronization(MathMLNames::actiontypeAttr), "toggle"_s)) || MathMLRowElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 
 void MathMLSelectElement::toggle()
@@ -247,7 +247,7 @@ void MathMLSelectElement::toggle()
 
     // We update the attribute value of the selection attribute.
     // This will also call MathMLSelectElement::attributeChanged to update the selected child.
-    setAttributeWithoutSynchronization(MathMLNames::selectionAttr, AtomString::number(newSelectedChildIndex));
+    setAttributeWithoutSynchronization(MathMLNames::selectionAttr, AtomStringImpl::number(newSelectedChildIndex));
 }
 
 }

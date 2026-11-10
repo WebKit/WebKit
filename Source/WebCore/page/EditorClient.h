@@ -87,7 +87,7 @@ public:
     virtual bool shouldBeginEditing(const SimpleRange&) = 0;
     virtual bool shouldEndEditing(const SimpleRange&) = 0;
     virtual bool shouldInsertNode(Node&, const std::optional<SimpleRange>&, EditorInsertAction) = 0;
-    virtual bool shouldInsertText(const String&, const std::optional<SimpleRange>&, EditorInsertAction) = 0;
+    virtual bool shouldInsertText(StringImpl*, const std::optional<SimpleRange>&, EditorInsertAction) = 0;
     virtual bool shouldChangeSelectedRange(const std::optional<SimpleRange>& fromRange, const std::optional<SimpleRange>& toRange, Affinity, bool stillSelecting) = 0;
     virtual bool shouldRevealCurrentSelectionAfterInsertion() const { return true; };
     virtual bool shouldSuppressPasswordEcho() const { return false; };
@@ -98,15 +98,15 @@ public:
     virtual bool shouldMoveRangeAfterDelete(const SimpleRange&, const SimpleRange&) = 0;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    virtual void registerAttachmentIdentifier(const String& /* identifier */, const String& /* contentType */, const String& /* preferredFileName */, Ref<FragmentedSharedBuffer>&&) { }
-    virtual void registerAttachmentIdentifier(const String& /* identifier */, const String& /* contentType */, const String& /* filePath */) { }
+    virtual void registerAttachmentIdentifier(StringImpl* /* identifier */, StringImpl* /* contentType */, StringImpl* /* preferredFileName */, Ref<FragmentedSharedBuffer>&&) { }
+    virtual void registerAttachmentIdentifier(StringImpl* /* identifier */, StringImpl* /* contentType */, StringImpl* /* filePath */) { }
     virtual void registerAttachments(Vector<SerializedAttachmentData>&&) { }
-    virtual void registerAttachmentIdentifier(const String& /* identifier */) { }
-    virtual void cloneAttachmentData(const String& /* fromIdentifier */, const String& /* toIdentifier */) { }
-    virtual void didInsertAttachmentWithIdentifier(const String& /* identifier */, const String& /* source */, AttachmentAssociatedElementType /* associatedElementType */) { }
-    virtual void didRemoveAttachmentWithIdentifier(const String&) { }
+    virtual void registerAttachmentIdentifier(StringImpl* /* identifier */) { }
+    virtual void cloneAttachmentData(StringImpl* /* fromIdentifier */, StringImpl* /* toIdentifier */) { }
+    virtual void didInsertAttachmentWithIdentifier(StringImpl* /* identifier */, StringImpl* /* source */, AttachmentAssociatedElementType /* associatedElementType */) { }
+    virtual void didRemoveAttachmentWithIdentifier(StringImpl*) { }
     virtual bool supportsClientSideAttachmentData() const { return false; }
-    virtual Vector<SerializedAttachmentData> serializedAttachmentDataForIdentifiers(const Vector<String>&) { return { }; }
+    virtual Vector<SerializedAttachmentData> serializedAttachmentDataForIdentifiers(const Vector<RefPtr<StringImpl>>&) { return { }; }
 #endif
 
     virtual void didBeginEditing() = 0;
@@ -117,14 +117,14 @@ public:
     virtual void didEndEditing() = 0;
     virtual void willWriteSelectionToPasteboard(const std::optional<SimpleRange>&) = 0;
     virtual void didWriteSelectionToPasteboard() = 0;
-    virtual void getClientPasteboardData(const std::optional<SimpleRange>&, Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>>& pasteboardTypesAndData) = 0;
+    virtual void getClientPasteboardData(const std::optional<SimpleRange>&, Vector<std::pair<RefPtr<StringImpl>, RefPtr<WebCore::SharedBuffer>>>& pasteboardTypesAndData) = 0;
 #if PLATFORM(COCOA)
     virtual HashMap<FrameIdentifier, AttributedString> collectAttributedStringsForRemoteFrames(FrameIdentifier rootFrameIdentifier, const Vector<FrameIdentifier>&) = 0;
 #endif
     virtual void requestCandidatesForSelection(const VisibleSelection&) { }
     virtual void handleAcceptedCandidateWithSoftSpaces(const TextCheckingResult&) { }
 
-    virtual DOMPasteAccessResponse requestDOMPasteAccess(DOMPasteAccessCategory, FrameIdentifier, const String& originIdentifier) = 0;
+    virtual DOMPasteAccessResponse requestDOMPasteAccess(DOMPasteAccessCategory, FrameIdentifier, StringImpl* originIdentifier) = 0;
 
     // Notify an input method that a composition was voluntarily discarded by WebCore, so that it could clean up too.
     // This function is not called when a composition is closed per a request from an input method.
@@ -164,20 +164,20 @@ public:
     virtual int getPasteboardItemsCount() = 0;
     virtual RefPtr<DocumentFragment> documentFragmentFromDelegate(int index) = 0;
     virtual bool performsTwoStepPaste(DocumentFragment*) = 0;
-    virtual void updateStringForFind(const String&) = 0;
+    virtual void updateStringForFind(StringImpl*) = 0;
 #endif
 
 #if PLATFORM(COCOA)
-    virtual void setInsertionPasteboard(const String& pasteboardName) = 0;
+    virtual void setInsertionPasteboard(StringImpl* pasteboardName) = 0;
 #endif
 
 #if USE(APPKIT)
     virtual void uppercaseWord() = 0;
     virtual void lowercaseWord() = 0;
     virtual void capitalizeWord() = 0;
-    virtual bool canApplyCaseTransformations(const String&) = 0;
-    virtual bool canConvertToTraditionalChinese(const String&) = 0;
-    virtual bool canConvertToSimplifiedChinese(const String&) = 0;
+    virtual bool canApplyCaseTransformations(StringImpl*) = 0;
+    virtual bool canConvertToTraditionalChinese(StringImpl*) = 0;
+    virtual bool canConvertToSimplifiedChinese(StringImpl*) = 0;
     virtual void convertToTraditionalChinese() = 0;
     virtual void convertToSimplifiedChinese() = 0;
 #endif
@@ -206,8 +206,8 @@ public:
 
     virtual TextCheckerClient* textChecker() = 0;
 
-    virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail& detail) = 0;
-    virtual void updateSpellingUIWithMisspelledWord(const String&) = 0;
+    virtual void updateSpellingUIWithGrammarString(StringImpl*, const GrammarDetail& detail) = 0;
+    virtual void updateSpellingUIWithMisspelledWord(StringImpl*) = 0;
     virtual void showSpellingUI(bool show) = 0;
     virtual bool spellingUIIsShowing() = 0;
     virtual void setInputMethodState(Element*) = 0;

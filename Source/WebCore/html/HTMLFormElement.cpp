@@ -168,7 +168,7 @@ HTMLElement* HTMLFormElement::item(unsigned index)
     return elements()->item(index);
 }
 
-std::optional<Variant<Ref<RadioNodeList>, Ref<Element>>> HTMLFormElement::namedItem(const AtomString& name)
+std::optional<Variant<Ref<RadioNodeList>, Ref<Element>>> HTMLFormElement::namedItem(AtomStringImpl* name)
 {
     auto namedItems = namedElements(name);
 
@@ -180,7 +180,7 @@ std::optional<Variant<Ref<RadioNodeList>, Ref<Element>>> HTMLFormElement::namedI
     return Variant<Ref<RadioNodeList>, Ref<Element>> { radioNodeList(name) };
 }
 
-Vector<AtomString> HTMLFormElement::supportedPropertyNames() const
+Vector<RefPtr<AtomStringImpl>> HTMLFormElement::supportedPropertyNames() const
 {
     // FIXME: Should be implemented (only needed for enumeration with includeDontEnumProperties mode
     // since this class is annotated with LegacyUnenumerableNamedProperties).
@@ -351,9 +351,9 @@ ExceptionOr<void> HTMLFormElement::requestSubmit(HTMLElement* submitter)
         // https://html.spec.whatwg.org/multipage/forms.html#dom-form-requestsubmit
         control = dynamicDowncast<HTMLFormControlElement>(*submitter);
         if (!control || !control->isSubmitButton())
-            return Exception { ExceptionCode::TypeError, "The specified element is not a submit button."_s };
+            return Exception { ExceptionCode::TypeError, "The specified element is not a submit button."_si };
         if (control->form() != this)
-            return Exception { ExceptionCode::NotFoundError, "The specified element is not owned by this form element."_s };
+            return Exception { ExceptionCode::NotFoundError, "The specified element is not owned by this form element."_si };
     }
 
     submitIfPossible(nullptr, control.get(), SubmittedByJavaScript);
@@ -362,11 +362,11 @@ ExceptionOr<void> HTMLFormElement::requestSubmit(HTMLElement* submitter)
 
 StringPairVector HTMLFormElement::textFieldValues() const
 {
-    return WTF::compactMap(m_listedElements, [](auto& weakElement) -> std::optional<std::pair<String, String>> {
+    return WTF::compactMap(m_listedElements, [](auto& weakElement) -> std::optional<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> {
         RefPtr input = dynamicDowncast<HTMLInputElement>(weakElement.get());
         if (!input || !input->isTextField())
             return std::nullopt;
-        return std::pair { input->name().string(), input->value() };
+        return std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>> { input->name(), input->value().get() };
     });
 }
 
@@ -490,7 +490,7 @@ void HTMLFormElement::resetListedFormControlElements()
         control->reset();
 }
 
-void HTMLFormElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLFormElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::actionAttr:
@@ -698,7 +698,7 @@ Ref<HTMLCollection> HTMLFormElement::elementsForNativeBindings()
     return elements();
 }
 
-String HTMLFormElement::name() const
+RefPtr<StringImpl> HTMLFormElement::name() const
 {
     return getNameAttribute();
 }
@@ -708,15 +708,15 @@ bool HTMLFormElement::noValidate() const
     return hasAttributeWithoutSynchronization(novalidateAttr);
 }
 
-String HTMLFormElement::action() const
+RefPtr<StringImpl> HTMLFormElement::action() const
 {
     auto& value = attributeWithoutSynchronization(actionAttr);
-    if (value.isEmpty())
+    if (isEmpty(value))
         return protect(document())->url().string();
     return protect(document())->encodingParseURL(value).string();
 }
 
-String HTMLFormElement::method() const
+RefPtr<StringImpl> HTMLFormElement::method() const
 {
     return FormSubmission::Attributes::methodString(m_attributes.method());
 }
@@ -731,21 +731,21 @@ DOMTokenList& HTMLFormElement::relList()
     return *m_relList;
 }
 
-AtomString HTMLFormElement::target() const
+RefPtr<AtomStringImpl> HTMLFormElement::target() const
 {
     return attributeWithoutSynchronization(targetAttr);
 }
 
-AtomString HTMLFormElement::effectiveTarget(const Event* event, HTMLFormControlElement* overrideSubmitter) const
+RefPtr<AtomStringImpl> HTMLFormElement::effectiveTarget(const Event* event, HTMLFormControlElement* overrideSubmitter) const
 {
     if (RefPtr submitter = overrideSubmitter ? overrideSubmitter : findSubmitter(event)) {
         auto& targetValue = submitter->attributeWithoutSynchronization(formtargetAttr);
-        if (!targetValue.isNull())
+        if (targetValue)
             return makeTargetBlankIfHasDanglingMarkup(targetValue);
     }
 
     auto targetValue = target();
-    if (!targetValue.isNull())
+    if (targetValue)
         return makeTargetBlankIfHasDanglingMarkup(targetValue);
 
     return document().baseTarget();
@@ -849,9 +849,9 @@ void HTMLFormElement::assertItemCanBeInPastNamesMap(FormAssociatedElement& item)
 }
 #endif
 
-RefPtr<HTMLElement> HTMLFormElement::elementFromPastNamesMap(const AtomString& pastName) const
+RefPtr<HTMLElement> HTMLFormElement::elementFromPastNamesMap(AtomStringImpl* pastName) const
 {
-    if (pastName.isEmpty() || m_pastNamesMap.isEmpty())
+    if (isEmpty(pastName) || m_pastNamesMap.isEmpty())
         return nullptr;
     auto element = m_pastNamesMap.get(pastName);
     if (!element)
@@ -862,14 +862,14 @@ RefPtr<HTMLElement> HTMLFormElement::elementFromPastNamesMap(const AtomString& p
     return element;
 }
 
-void HTMLFormElement::addToPastNamesMap(FormAssociatedElement& item, const AtomString& pastName)
+void HTMLFormElement::addToPastNamesMap(FormAssociatedElement& item, AtomStringImpl* pastName)
 {
 #if ASSERT_ENABLED
     assertItemCanBeInPastNamesMap(item);
 #endif
-    if (pastName.isEmpty())
+    if (isEmpty(pastName))
         return;
-    m_pastNamesMap.set(pastName.impl(), protect(item.asHTMLElement()));
+    m_pastNamesMap.set(pastName, protect(item.asHTMLElement()));
 }
 
 void HTMLFormElement::removeFromPastNamesMap(FormAssociatedElement& item)
@@ -893,9 +893,9 @@ bool HTMLFormElement::matchesInvalidPseudoClass() const
 }
 
 // FIXME: Use Ref<HTMLElement> for the function result since there are no non-HTML elements returned here.
-Vector<Ref<Element>> HTMLFormElement::namedElements(const AtomString& name)
+Vector<Ref<Element>> HTMLFormElement::namedElements(AtomStringImpl* name)
 {
-    if (name.isEmpty())
+    if (isEmpty(name))
         return { };
 
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#dom-form-nameditem
@@ -913,9 +913,9 @@ Vector<Ref<Element>> HTMLFormElement::namedElements(const AtomString& name)
     return namedItems;
 }
 
-bool HTMLFormElement::isSupportedPropertyName(const AtomString& name)
+bool HTMLFormElement::isSupportedPropertyName(AtomStringImpl* name)
 {
-    return !name.isEmpty() && elements()->isSupportedPropertyName(name);
+    return !isEmpty(name) && elements()->isSupportedPropertyName(name);
 }
 
 void HTMLFormElement::resumeFromDocumentSuspension()
@@ -976,7 +976,7 @@ HTMLFormElement* HTMLFormElement::findClosestFormAncestor(const Element& startEl
     return const_cast<HTMLFormElement*>(ancestorsOfType<HTMLFormElement>(startElement).first());
 }
 
-const AtomString& HTMLFormElement::autocomplete() const
+const RefPtr<AtomStringImpl>& HTMLFormElement::autocomplete() const
 {
     return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(autocompleteAttr), "off"_s) ? offAtom() : onAtom();
 }

@@ -57,7 +57,7 @@ using namespace Inspector;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorLayerTreeAgent);
 
 InspectorLayerTreeAgent::InspectorLayerTreeAgent(WebAgentContext& context)
-    : InspectorAgentBase("LayerTree"_s, context)
+    : InspectorAgentBase("LayerTree"_si, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::LayerTreeFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::LayerTreeBackendDispatcher::create(protect(context.backendDispatcher), this))
 {
@@ -204,9 +204,9 @@ Ref<Inspector::Protocol::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectF
         layerObject->setIsGeneratedContent(true);
         layerObject->setPseudoElementId(bindPseudoElement(RefPtr { downcast<PseudoElement>(renderer->element()) }.get()));
         if (renderer->isBeforeContent())
-            layerObject->setPseudoElement("before"_s);
+            layerObject->setPseudoElement("before"_si);
         else if (renderer->isAfterContent())
-            layerObject->setPseudoElement("after"_s);
+            layerObject->setPseudoElement("after"_si);
     }
 
     // FIXME: RenderView is now really anonymous but don't tell about it to the frontend before making sure it can handle it.
@@ -214,9 +214,9 @@ Ref<Inspector::Protocol::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectF
         layerObject->setIsAnonymous(true);
         CheckedRef style = renderer->style();
         if (style->pseudoElementType() == PseudoElementType::FirstLetter)
-            layerObject->setPseudoElement("first-letter"_s);
+            layerObject->setPseudoElement("first-letter"_si);
         else if (style->pseudoElementType() == PseudoElementType::FirstLine)
-            layerObject->setPseudoElement("first-line"_s);
+            layerObject->setPseudoElement("first-line"_si);
     }
 
     return layerObject;
@@ -249,7 +249,7 @@ Ref<Inspector::Protocol::LayerTree::IntRect> InspectorLayerTreeAgent::buildObjec
         .release();
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> InspectorLayerTreeAgent::reasonsForCompositingLayer(const Inspector::Protocol::LayerTree::LayerId& layerId)
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> InspectorLayerTreeAgent::reasonsForCompositingLayer(StringImpl* layerId)
 {
     const CheckedPtr renderLayer = m_idToLayer.get(layerId);
 
@@ -344,7 +344,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::LayerTree::Compositi
     return compositingReasons;
 }
 
-Inspector::CommandResult<String> InspectorLayerTreeAgent::requestContent(const Inspector::Protocol::LayerTree::LayerId& layerId)
+Inspector::CommandResult<RefPtr<StringImpl>> InspectorLayerTreeAgent::requestContent(StringImpl* layerId)
 {
     CheckedPtr renderLayer = m_idToLayer.get(layerId);
     if (!renderLayer)
@@ -377,11 +377,11 @@ Inspector::CommandResult<String> InspectorLayerTreeAgent::requestContent(const I
 
     graphicsLayer->paintGraphicsLayerContents(imageBuffer->context(), { { }, layerSize });
 
-    return encodeDataURL(WTF::move(imageBuffer), "image/png"_s);
+    return encodeDataURL(WTF::move(imageBuffer), "image/png"_si);
 }
 
 
-String InspectorLayerTreeAgent::bind(const RenderLayer* layer)
+RefPtr<StringImpl> InspectorLayerTreeAgent::bind(const RenderLayer* layer)
 {
     if (!layer)
         return emptyString();
@@ -395,12 +395,12 @@ String InspectorLayerTreeAgent::bind(const RenderLayer* layer)
 void InspectorLayerTreeAgent::unbind(const RenderLayer* layer)
 {
     auto identifier = m_documentLayerToIdMap.take(layer);
-    if (identifier.isNull())
+    if (!identifier)
         return;
     m_idToLayer.remove(identifier);
 }
 
-String InspectorLayerTreeAgent::bindPseudoElement(PseudoElement* pseudoElement)
+RefPtr<StringImpl> InspectorLayerTreeAgent::bindPseudoElement(PseudoElement* pseudoElement)
 {
     if (!pseudoElement)
         return emptyString();
@@ -416,7 +416,7 @@ void InspectorLayerTreeAgent::unbindPseudoElement(PseudoElement* pseudoElement)
     if (!pseudoElement)
         return;
     auto identifier = m_pseudoElementToIdMap.take(*pseudoElement);
-    if (identifier.isNull())
+    if (!identifier)
         return;
     m_idToPseudoElement.remove(identifier);
 }

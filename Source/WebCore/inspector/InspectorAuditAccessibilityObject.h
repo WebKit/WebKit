@@ -44,12 +44,12 @@ public:
         return adoptRef(*new InspectorAuditAccessibilityObject(auditAgent));
     }
 
-    ExceptionOr<Vector<Ref<Node>>> getElementsByComputedRole(Document&, const String& role, Node* container);
+    ExceptionOr<Vector<Ref<Node>>> getElementsByComputedRole(Document&, StringImpl* role, Node* container);
 
     struct ComputedProperties {
         std::optional<bool> busy;
-        String checked;
-        String currentState;
+        RefPtr<StringImpl> checked;
+        RefPtr<StringImpl> currentState;
         std::optional<bool> disabled;
         std::optional<bool> expanded;
         std::optional<bool> focused;
@@ -58,16 +58,16 @@ public:
         std::optional<int> hierarchicalLevel;
         std::optional<bool> ignored;
         std::optional<bool> ignoredByDefault;
-        String invalidStatus;
+        RefPtr<StringImpl> invalidStatus;
         std::optional<bool> isPopUpButton;
-        String label;
+        RefPtr<StringImpl> label;
         std::optional<bool> liveRegionAtomic;
-        std::optional<Vector<String>> liveRegionRelevant;
-        String liveRegionStatus;
+        std::optional<Vector<RefPtr<StringImpl>>> liveRegionRelevant;
+        RefPtr<StringImpl> liveRegionStatus;
         std::optional<bool> pressed;
         std::optional<bool> readonly;
         std::optional<bool> required;
-        String role;
+        RefPtr<StringImpl> role;
         std::optional<bool> selected;
     };
 

@@ -76,10 +76,10 @@ public:
     void didDeleteDatabase(const IDBResultData&);
 
     void createObjectStore(TransactionOperation&, const IDBObjectStoreInfo&);
-    void deleteObjectStore(TransactionOperation&, const String& objectStoreName);
+    void deleteObjectStore(TransactionOperation&, StringImpl* objectStoreName);
     void clearObjectStore(TransactionOperation&, IDBObjectStoreIdentifier);
     void createIndex(TransactionOperation&, const IDBIndexInfo&);
-    void deleteIndex(TransactionOperation&, IDBObjectStoreIdentifier, const String& indexName);
+    void deleteIndex(TransactionOperation&, IDBObjectStoreIdentifier, StringImpl* indexName);
     void putOrAdd(TransactionOperation&, IDBKeyData&&, const IDBValue&, const IndexIDToIndexKeyMap&, const IndexedDB::ObjectStoreOverwriteMode);
     void getRecord(TransactionOperation&, const IDBGetRecordData&);
     void getAllRecords(TransactionOperation&, const IDBGetAllRecordsData&);
@@ -87,8 +87,8 @@ public:
     void deleteRecord(TransactionOperation&, const IDBKeyRangeData&);
     void openCursor(TransactionOperation&, const IDBCursorInfo&);
     void iterateCursor(TransactionOperation&, const IDBIterateCursorData&);
-    void renameObjectStore(TransactionOperation&, IDBObjectStoreIdentifier, const String& newName);
-    void renameIndex(TransactionOperation&, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String& newName);
+    void renameObjectStore(TransactionOperation&, IDBObjectStoreIdentifier, StringImpl* newName);
+    void renameIndex(TransactionOperation&, IDBObjectStoreIdentifier, IDBIndexIdentifier, StringImpl* newName);
 
     void fireVersionChangeEvent(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
     void didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer = IndexedDB::ConnectionClosedOnBehalfOfServer::No);

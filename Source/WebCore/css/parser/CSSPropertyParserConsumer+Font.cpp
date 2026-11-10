@@ -207,7 +207,7 @@ RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange& range, [[maybe_unused]] C
 
 // MARK: - 'font-family'
 
-const AtomString& genericFontFamily(CSSValueID ident)
+const RefPtr<AtomStringImpl>& genericFontFamily(CSSValueID ident)
 {
     switch (ident) {
     case CSSValueID::Serif:
@@ -256,7 +256,7 @@ WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID ident)
     }
 }
 
-static AtomString concatenateFamilyName(CSSParserTokenRange& range, bool allowNumericTokens = false)
+static RefPtr<AtomStringImpl> concatenateFamilyName(CSSParserTokenRange& range, bool allowNumericTokens = false)
 {
     StringBuilder builder;
     bool addedSpace = false;
@@ -271,12 +271,12 @@ static AtomString concatenateFamilyName(CSSParserTokenRange& range, bool allowNu
         builder.append(range.consumeIncludingWhitespace().value());
     }
     // <family-name> can't contain unquoted generic families
-    if (!addedSpace && (!isValidCustomIdentifier(firstToken.id()) || !genericFontFamily(firstToken.id()).isNull()))
+    if (!addedSpace && (!isValidCustomIdentifier(firstToken.id()) || !!genericFontFamily(firstToken.id())))
         return nullAtom();
     return builder.toAtomString();
 }
 
-static AtomString consumeFamilyNameUnresolved(CSSParserTokenRange& range, bool allowNumericTokens = false)
+static RefPtr<AtomStringImpl> consumeFamilyNameUnresolved(CSSParserTokenRange& range, bool allowNumericTokens = false)
 {
     if (range.peek().type() == StringToken)
         return range.consumeIncludingWhitespace().value().toAtomString();
@@ -295,7 +295,7 @@ static RefPtr<CSSValue> consumeGenericFamily(CSSParserTokenRange& range, CSS::Pr
     if (auto familyName = consumeGenericFamilyUnresolved(range)) {
         // FIXME: Remove special case for system-ui.
         if (*familyName == CSSValueID::SystemUi)
-            return state.pool.createFontFamilyNameValue(nameLiteral(*familyName));
+            return state.pool.createFontFamilyNameValue(AtomStringImpl::add(nameLiteral(*familyName)).ptr());
         return CSSKeywordValue::create(*familyName);
     }
     return nullptr;
@@ -312,7 +312,7 @@ static std::optional<UnresolvedFontFamily> consumeFontFamilyUnresolved(CSSParser
             list.append({ *ident });
         else {
             auto familyName = consumeFamilyNameUnresolved(range);
-            if (familyName.isNull())
+            if (!familyName)
                 return std::nullopt;
             list.append({ familyName });
         }
@@ -325,7 +325,7 @@ RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange& range, CSS::PropertyPars
     // https://drafts.csswg.org/css-fonts-4/#family-name-syntax
 
     auto familyName = consumeFamilyNameUnresolved(range, state.context.legacyFontFaceAttributeMode);
-    if (familyName.isNull())
+    if (!familyName)
         return nullptr;
     return state.pool.createFontFamilyNameValue(familyName);
 }
@@ -640,7 +640,7 @@ NODELETE static bool isFontFormatKeywordValid(CSSValueID id)
     }
 }
 
-String consumeFontFormat(CSSParserTokenRange& range, CSS::PropertyParserState&, bool rejectStringValues)
+RefPtr<StringImpl> consumeFontFormat(CSSParserTokenRange& range, CSS::PropertyParserState&, bool rejectStringValues)
 {
     // https://drafts.csswg.org/css-fonts/#descdef-font-face-src
     // FIXME: We allow any identifier here and convert to strings; specification calls for certain keywords and legacy compatibility strings.
@@ -670,11 +670,11 @@ static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenR
     if (!location)
         return nullptr;
 
-    String format;
+    RefPtr<StringImpl> format;
     Vector<FontTechnology> technologies;
     if (range.peek().functionId() == CSSValueID::Format) {
         format = consumeFontFormat(range, state);
-        if (format.isNull())
+        if (!format)
             return nullptr;
     }
     if (range.peek().functionId() == CSSValueID::Tech) {
@@ -701,8 +701,8 @@ static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range, CSS:
         return CSSFontFaceSrcLocalValue::create(arg.value().toAtomString());
     }
     if (args.peek().type() == IdentToken) {
-        AtomString familyName = concatenateFamilyName(args);
-        if (familyName.isNull() || !args.atEnd() || !range.atEnd())
+        RefPtr<AtomStringImpl> familyName = concatenateFamilyName(args);
+        if (!familyName || !args.atEnd() || !range.atEnd())
             return nullptr;
         return CSSFontFaceSrcLocalValue::create(WTF::move(familyName));
     }
@@ -1126,15 +1126,15 @@ RefPtr<CSSValue> parseFontFaceFontWeight(StringView string, ScriptExecutionConte
 
 // MARK: @font-feature-values 'prelude family name list'
 
-Vector<AtomString> consumeFontFeatureValuesPreludeFamilyNameList(CSSParserTokenRange& range, const CSSParserContext&)
+Vector<RefPtr<AtomStringImpl>> consumeFontFeatureValuesPreludeFamilyNameList(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // <prelude-family-name-list> = <family-name>#
     // https://drafts.csswg.org/css-fonts/#font-feature-values-syntax
 
-    Vector<AtomString> result;
+    Vector<RefPtr<AtomStringImpl>> result;
     do {
         auto name = consumeFamilyNameUnresolved(range);
-        if (name.isNull())
+        if (!name)
             return { };
 
         result.append(name);

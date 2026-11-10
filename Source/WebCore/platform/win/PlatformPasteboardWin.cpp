@@ -58,7 +58,7 @@ static HWND clipboardOwner()
     return owner;
 }
 
-PlatformPasteboard::PlatformPasteboard(const String&)
+PlatformPasteboard::PlatformPasteboard(StringImpl*)
 {
 }
 
@@ -72,23 +72,23 @@ int64_t PlatformPasteboard::changeCount() const
     return ::GetClipboardSequenceNumber();
 }
 
-void PlatformPasteboard::getTypes(Vector<String>& types) const
+void PlatformPasteboard::getTypes(Vector<RefPtr<StringImpl>>& types) const
 {
     if (::IsClipboardFormatAvailable(CF_UNICODETEXT) || ::IsClipboardFormatAvailable(CF_TEXT))
         types.append(textPlainContentTypeAtom());
 }
 
-static String readClipboardString(UINT format)
+static RefPtr<StringImpl> readClipboardString(UINT format)
 {
     if (!::IsClipboardFormatAvailable(format) || !::OpenClipboard(clipboardOwner()))
         return { };
 
-    String string;
+    RefPtr<StringImpl> string;
     if (HANDLE data = ::GetClipboardData(format)) {
         if (auto* characters = ::GlobalLock(data)) {
             if (format == CF_TEXT) {
                 // FIXME: This treats the characters as Latin-1, not UTF-8 or even Windows Latin-1. Is that the right encoding?
-                string = String::fromLatin1(static_cast<const char*>(characters));
+                string = StringImpl::fromLatin1(static_cast<const char*>(characters));
             } else
                 string = static_cast<const wchar_t*>(characters);
             ::GlobalUnlock(data);
@@ -116,22 +116,22 @@ std::optional<PasteboardCustomData> PlatformPasteboard::readCustomData() const
     return customData;
 }
 
-String PlatformPasteboard::readString(size_t index, const String& type) const
+RefPtr<StringImpl> PlatformPasteboard::readString(size_t index, StringImpl* type) const
 {
     // The clipboard holds a single item.
     if (index)
         return { };
 
-    if (!type.startsWith(textPlainContentTypeAtom()))
+    if (!startsWith(type, textPlainContentTypeAtom()))
         return { };
 
     auto text = readClipboardString(CF_UNICODETEXT);
-    return text.isNull() ? readClipboardString(CF_TEXT) : text;
+    return !text ? readClipboardString(CF_TEXT) : text;
 }
 
-Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& origin) const
+Vector<RefPtr<StringImpl>> PlatformPasteboard::typesSafeForDOMToReadAndWrite(StringImpl* origin) const
 {
-    ListHashSet<String> domTypes;
+    ListHashSet<RefPtr<StringImpl>> domTypes;
 
     if (auto customData = readCustomData(); customData && customData->origin() == origin) {
         for (auto& type : customData->orderedTypes())
@@ -170,7 +170,7 @@ std::optional<Vector<PasteboardItemInfo>> PlatformPasteboard::allPasteboardItemI
 
 int PlatformPasteboard::count() const
 {
-    Vector<String> types;
+    Vector<RefPtr<StringImpl>> types;
     getTypes(types);
     return types.isEmpty() ? 0 : 1;
 }
@@ -186,13 +186,13 @@ static void setClipboardData(UINT format, HGLOBAL data)
 
 int64_t PlatformPasteboard::write(const PasteboardCustomData& data, PasteboardDataLifetime)
 {
-    String text;
-    data.forEachPlatformStringOrBuffer([&](auto& type, auto& value) {
-        if (type != textPlainContentTypeAtom() || !std::holds_alternative<String>(value))
+    RefPtr<StringImpl> text;
+    data.forEachPlatformStringOrBuffer([&](auto* type, auto& value) {
+        if (!equal(type, textPlainContentTypeAtom()) || !std::holds_alternative<RefPtr<StringImpl>>(value))
             return;
-        text = std::get<String>(value);
+        text = std::get<RefPtr<StringImpl>>(value);
     });
-    if (text.isNull())
+    if (!text)
         return changeCount();
 
     // A failed write leaves the clipboard, and so its change count, alone.
@@ -207,7 +207,7 @@ int64_t PlatformPasteboard::write(const PasteboardCustomData& data, PasteboardDa
     replaceNewlinesWithWindowsStyleNewlines(text);
     setClipboardData(CF_UNICODETEXT, createGlobalData(text));
 
-    if (data.hasSameOriginCustomData() || !data.origin().isEmpty())
+    if (data.hasSameOriginCustomData() || !isEmpty(data.origin()))
         setClipboardData(customDataClipboardFormat(), createGlobalData(data.createSharedBuffer()->span()));
 
     ::CloseClipboard();

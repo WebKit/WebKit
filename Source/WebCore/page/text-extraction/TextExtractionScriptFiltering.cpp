@@ -59,7 +59,7 @@ Ref<Page> createScriptFilteringPage()
     ASSERT(isMainThread());
 
     auto configuration = pageConfigurationWithEmptyClients(std::nullopt, PAL::SessionID::defaultSessionID());
-    configuration.allowedNetworkHosts = MemoryCompactLookupOnlyRobinHoodHashSet<String> { };
+    configuration.allowedNetworkHosts = MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>> { };
 
     if (auto* mainFrameParameters = std::get_if<PageConfiguration::LocalMainFrameCreationParameters>(&configuration.mainFrameCreationParameters))
         mainFrameParameters->effectiveSandboxFlags.remove(SandboxFlag::Scripts);
@@ -69,7 +69,7 @@ Ref<Page> createScriptFilteringPage()
     return page;
 }
 
-void applyScriptFilteringRules(const String& input, const URL& documentURL, const Vector<FilterRule>& rules, Page& filterPage, CompletionHandler<void(const String&)>&& completion)
+void applyScriptFilteringRules(StringImpl* input, const URL& documentURL, const Vector<FilterRule>& rules, Page& filterPage, CompletionHandler<void(StringImpl*)>&& completion)
 {
     ASSERT(isMainThread());
 
@@ -81,13 +81,13 @@ void applyScriptFilteringRules(const String& input, const URL& documentURL, cons
     if (!frame || !document)
         return completion(input);
 
-    auto filteredStrings = Box<Vector<String>>::create();
-    auto aggregator = MainRunLoopCallbackAggregator::create([completion = WTF::move(completion), input, filteredStrings] mutable {
+    auto filteredStrings = Box<Vector<RefPtr<StringImpl>>>::create();
+    auto aggregator = MainRunLoopCallbackAggregator::create([completion = WTF::move(completion), input = RefPtr { input }, filteredStrings] mutable {
         if (filteredStrings->isEmpty())
             return completion(input);
 
         auto shortestFilteredString = std::ranges::min(*filteredStrings, { }, [](auto& string) {
-            return string.length();
+            return length(string);
         });
         completion(WTF::move(shortestFilteredString));
     });
@@ -107,7 +107,7 @@ void applyScriptFilteringRules(const String& input, const URL& documentURL, cons
 
         ArgumentMap argumentMap;
         argumentMap.reserveInitialCapacity(1);
-        argumentMap.add("input"_s, [input](auto& lexicalGlobalObject) {
+        argumentMap.add("input"_si, [input = RefPtr { input }](auto& lexicalGlobalObject) {
             JSLockHolder lock { &lexicalGlobalObject };
             return JSValue { jsString(commonVM(), input) };
         });

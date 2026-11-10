@@ -96,9 +96,9 @@ public:
     FinalizeRenderCommand encodeDrawIndexedIndirect(Buffer& indirectBuffer, uint64_t indirectOffset);
     FinalizeRenderCommand encodeDrawIndirect(Buffer& indirectBuffer, uint64_t indirectOffset);
     RefPtr<WebGPU::RenderBundle> finish(const WebGPU::RenderBundleDescriptor&) final;
-    void insertDebugMarker(String&& markerLabel) final;
+    void insertDebugMarker(RefPtr<StringImpl>&& markerLabel) final;
     void popDebugGroup() final;
-    void pushDebugGroup(String&& groupLabel) final;
+    void pushDebugGroup(RefPtr<StringImpl>&& groupLabel) final;
     // std::nullopt dynamic offsets are not validated against the bind group layout.
     void setBindGroup(uint32_t groupIndex, const BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets);
     // A std::nullopt size is the rest of the buffer after the offset.
@@ -117,7 +117,7 @@ public:
     void setVertexBuffer(uint32_t slot, WebGPU::Buffer*, uint64_t offset, std::optional<uint64_t> size) final;
     void setBindGroup(uint32_t groupIndex, const WebGPU::BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) final;
     void makeInvalid(NSString* = nil);
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
 
     NODELETE bool isValid() const final;
     void replayCommands(RenderPassEncoder&);

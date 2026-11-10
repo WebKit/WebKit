@@ -47,7 +47,7 @@ Ref<Array> Array::createWithCapacity(size_t capacity)
     return array;
 }
 
-Ref<Array> Array::createStringArray(const Vector<WTF::String>& strings)
+Ref<Array> Array::createStringArray(const Vector<RefPtr<StringImpl>>& strings)
 {
     auto elements = strings.map([](auto& string) -> RefPtr<Object> {
         return API::String::create(string);
@@ -55,16 +55,16 @@ Ref<Array> Array::createStringArray(const Vector<WTF::String>& strings)
     return create(WTF::move(elements));
 }
 
-Ref<Array> Array::createStringArray(const std::span<const WTF::String> strings)
+Ref<Array> Array::createStringArray(const std::span<const RefPtr<StringImpl>> strings)
 {
     return create(WTF::map(strings, [] (auto string) -> RefPtr<Object> {
         return API::String::create(string);
     }));
 }
 
-Vector<WTF::String> Array::toStringVector()
+Vector<RefPtr<StringImpl>> Array::toStringVector()
 {
-    Vector<WTF::String> patternsVector;
+    Vector<RefPtr<StringImpl>> patternsVector;
 
     size_t size = this->size();
     if (!size)

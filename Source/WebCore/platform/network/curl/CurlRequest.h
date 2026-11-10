@@ -62,7 +62,7 @@ public:
 
     WEBCORE_EXPORT void invalidateClient();
     WEBCORE_EXPORT void setAuthenticationScheme(ProtectionSpace::AuthenticationScheme);
-    WEBCORE_EXPORT void setUserPass(const String&, const String&);
+    WEBCORE_EXPORT void setUserPass(StringImpl*, StringImpl*);
     bool isServerTrustEvaluationDisabled() { return m_shouldDisableServerTrustEvaluation; }
     void disableServerTrustEvaluation() { m_shouldDisableServerTrustEvaluation = true; }
     void enableLocalhostAlias() { m_localhostAlias = CurlHandle::LocalhostAlias::Enable; }
@@ -75,8 +75,8 @@ public:
     bool isCompletedOrCancelled();
     Seconds timeoutInterval() const;
 
-    const String& user() const LIFETIME_BOUND { return m_user; }
-    const String& password() const LIFETIME_BOUND { return m_password; }
+    const RefPtr<StringImpl>& user() const LIFETIME_BOUND { return m_user; }
+    const RefPtr<StringImpl>& password() const LIFETIME_BOUND { return m_password; }
 
     // Processing for DidReceiveResponse
     WEBCORE_EXPORT void completeDidReceiveResponse();
@@ -105,9 +105,9 @@ private:
     // Called by worker thread in case of async, main thread in case of sync.
     CURL* setupTransfer() override;
     size_t willSendData(char*, size_t, size_t);
-    size_t didReceiveHeader(String&&);
+    size_t didReceiveHeader(RefPtr<StringImpl>&&);
     size_t didReceiveData(std::span<const uint8_t>);
-    void didReceiveHeaderFromMultipart(Vector<String>&&) override;
+    void didReceiveHeaderFromMultipart(Vector<RefPtr<StringImpl>>&&) override;
     void didReceiveDataFromMultipart(std::span<const uint8_t>) override;
     void didCompleteFromMultipart() override;
     void didCompleteTransfer(CURLcode) override;
@@ -143,8 +143,8 @@ private:
     bool m_completed { false };
 
     ResourceRequest m_request;
-    String m_user;
-    String m_password;
+    RefPtr<StringImpl> m_user;
+    RefPtr<StringImpl> m_password;
     unsigned long m_authType { CURLAUTH_ANY };
     bool m_shouldDisableServerTrustEvaluation { false };
     CurlHandle::LocalhostAlias m_localhostAlias { CurlHandle::LocalhostAlias::Disable };

@@ -60,27 +60,27 @@ unsigned StorageAreaImpl::length()
     return storageAreaMap ? storageAreaMap->length() : 0;
 }
 
-String StorageAreaImpl::key(unsigned index)
+RefPtr<StringImpl> StorageAreaImpl::key(unsigned index)
 {
     RefPtr storageAreaMap = m_storageAreaMap.get();
     return storageAreaMap ? storageAreaMap->key(index) : nullString();
 }
 
-String StorageAreaImpl::item(const String& key)
+RefPtr<StringImpl> StorageAreaImpl::item(StringImpl* key)
 {
     RefPtr storageAreaMap = m_storageAreaMap.get();
     return storageAreaMap ? storageAreaMap->item(key) : nullString();
 }
 
-void StorageAreaImpl::setItem(LocalFrame& sourceFrame, const String& key, const String& value, bool& quotaException)
+void StorageAreaImpl::setItem(LocalFrame& sourceFrame, StringImpl* key, StringImpl* value, bool& quotaException)
 {
-    ASSERT(!value.isNull());
+    ASSERT(value);
 
     if (RefPtr storageAreaMap = m_storageAreaMap.get())
         storageAreaMap->setItem(sourceFrame, this, key, value, quotaException);
 }
 
-void StorageAreaImpl::removeItem(LocalFrame& sourceFrame, const String& key)
+void StorageAreaImpl::removeItem(LocalFrame& sourceFrame, StringImpl* key)
 {
     if (RefPtr storageAreaMap = m_storageAreaMap.get())
         storageAreaMap->removeItem(sourceFrame, this, key);
@@ -92,7 +92,7 @@ void StorageAreaImpl::clear(LocalFrame& sourceFrame)
         storageAreaMap->clear(sourceFrame, this);
 }
 
-bool StorageAreaImpl::contains(const String& key)
+bool StorageAreaImpl::contains(StringImpl* key)
 {
     if (RefPtr storageAreaMap = m_storageAreaMap.get())
         return storageAreaMap->contains(key);

@@ -45,10 +45,10 @@ ResourceError ResourceErrorBase::isolatedCopy() const
     lazyInit();
 
     ResourceError errorCopy;
-    errorCopy.m_domain = m_domain.isolatedCopy();
+    errorCopy.m_domain = WTF::isolatedCopy(m_domain);
     errorCopy.m_errorCode = m_errorCode;
     errorCopy.m_failingURL = m_failingURL.isolatedCopy();
-    errorCopy.m_localizedDescription = m_localizedDescription.isolatedCopy();
+    errorCopy.m_localizedDescription = WTF::isolatedCopy(m_localizedDescription);
     errorCopy.m_type = m_type;
 
     errorCopy.doPlatformIsolatedCopy(asResourceError());
@@ -76,7 +76,7 @@ bool ResourceErrorBase::compare(const ResourceError& a, const ResourceError& b)
     if (a.type() != b.type())
         return false;
 
-    if (a.domain() != b.domain())
+    if (!equal(a.domain(), b.domain()))
         return false;
 
     if (a.errorCode() != b.errorCode())
@@ -85,7 +85,7 @@ bool ResourceErrorBase::compare(const ResourceError& a, const ResourceError& b)
     if (a.failingURL() != b.failingURL())
         return false;
 
-    if (a.localizedDescription() != b.localizedDescription())
+    if (!equal(a.localizedDescription(), b.localizedDescription()))
         return false;
 
     return ResourceError::platformCompare(a, b);
@@ -104,12 +104,12 @@ ResourceError internalError(const URL& url, std::source_location location)
     // to record them.
     WTFReportError(location.file_name(), location.line(), location.function_name(), "WebKit encountered an internal error. This is a WebKit bug.");
 
-    return ResourceError("WebKitErrorDomain"_s, 300, url, WEB_UI_STRING("WebKit encountered an internal error", "WebKitErrorInternal description"));
+    return ResourceError("WebKitErrorDomain"_si, 300, url, WEB_UI_STRING("WebKit encountered an internal error", "WebKitErrorInternal description"));
 }
 
 ResourceError badResponseHeadersError(const URL& url)
 {
-    return { errorDomainWebKitInternal, 0, url, "Response contained invalid HTTP headers"_s, ResourceError::Type::General };
+    return { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, url, "Response contained invalid HTTP headers"_si, ResourceError::Type::General };
 }
 
 } // namespace WebCore

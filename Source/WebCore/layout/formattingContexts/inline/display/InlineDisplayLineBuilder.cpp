@@ -329,7 +329,7 @@ static float truncateOverflowingDisplayBoxes(std::span<InlineDisplay::Box> boxes
     return truncateLeft.value_or(left(boxes.front())) - ellipsisWidth;
 }
 
-static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEndingTruncationPolicy lineEndingTruncationPolicy, String ellipsisText, const InlineDisplay::Line& displayLine, std::span<InlineDisplay::Box> displayBoxes)
+static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEndingTruncationPolicy lineEndingTruncationPolicy, RefPtr<StringImpl> ellipsisText, const InlineDisplay::Line& displayLine, std::span<InlineDisplay::Box> displayBoxes)
 {
     ASSERT(lineEndingTruncationPolicy != LineEndingTruncationPolicy::NoTruncation);
     if (displayBoxes.empty())
@@ -533,16 +533,16 @@ NODELETE static InlineDisplay::Line::Ellipsis trailingBlockEllipsis(const BlockO
     return { InlineDisplay::Line::Ellipsis::Type::Block, visualRect, blockEllipsis.text };
 }
 
-static AtomString textOverflowEllipsisText(const Style::ComputedStyle& style)
+static RefPtr<AtomStringImpl> textOverflowEllipsisText(const Style::ComputedStyle& style)
 {
     return WTF::switchOn(style.textOverflow(),
-        [&](const CSS::Keyword::Clip&) -> AtomString {
+        [&](const CSS::Keyword::Clip&) -> RefPtr<AtomStringImpl> {
             return nullAtom();
         },
-        [&](const CSS::Keyword::Ellipsis&) -> AtomString {
+        [&](const CSS::Keyword::Ellipsis&) -> RefPtr<AtomStringImpl> {
             return TextUtil::ellipsisText();
         },
-        [&](const Style::String& string) -> AtomString {
+        [&](const Style::String& string) -> RefPtr<AtomStringImpl> {
             // https://drafts.csswg.org/css-overflow-4/#overflow-string
             return TextUtil::ellipsisStringWithCollapsedForcedLineBreaks(string.value);
         }
@@ -579,7 +579,7 @@ static void truncateBlockEllipsisForTextOverflow(InlineDisplay::Line::Ellipsis& 
         return;
     auto isHorizontal = displayLine.isHorizontal();
     auto textOverflowText = textOverflowEllipsisText(styleForTruncation);
-    if (textOverflowText.isEmpty())
+    if (isEmpty(textOverflowText))
         return;
 
     // 2. Check whether the block ellipsis overflows the line box at its end edge (the right edge in left-to-right, the left edge in right-to-left).
@@ -662,14 +662,14 @@ std::optional<InlineDisplay::Line::Ellipsis> InlineDisplayLineBuilder::placeTrai
     if (truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection && !isLegacyLineClamp)
         return { };
 
-    auto ellipsisText = [&] -> AtomString {
+    auto ellipsisText = [&] -> RefPtr<AtomStringImpl> {
         if (truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection)
             return textOverflowEllipsisText(styleForTruncation);
         // Legacy line clamp always uses ...
         return TextUtil::ellipsisText();
     }();
 
-    if (ellipsisText.isEmpty())
+    if (isEmpty(ellipsisText))
         return { };
 
     auto ellipsisRect = trailingEllipsisVisualRectAfterTruncation(truncationPolicy, ellipsisText, displayLine, displayBoxes);

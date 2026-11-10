@@ -31,9 +31,9 @@
 
 namespace WebCore {
 
-void SVGFilterPrimitiveGraph::addNamedNode(const AtomString& name, Ref<SVGFilterPrimitiveStandardAttributes>&& node)
+void SVGFilterPrimitiveGraph::addNamedNode(AtomStringImpl* name, Ref<SVGFilterPrimitiveStandardAttributes>&& node)
 {
-    if (name.isEmpty()) {
+    if (isEmpty(name)) {
         m_lastNode = WTF::move(node);
         return;
     }

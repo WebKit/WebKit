@@ -44,15 +44,15 @@ class FileSystemStorageManager final : public RefCountedAndCanMakeWeakPtr<FileSy
     WTF_MAKE_TZONE_ALLOCATED(FileSystemStorageManager);
 public:
     using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
-    static Ref<FileSystemStorageManager> create(String&& path, FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&, QuotaCheckFunction&&);
+    static Ref<FileSystemStorageManager> create(RefPtr<StringImpl>&& path, FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&, QuotaCheckFunction&&);
     ~FileSystemStorageManager();
     const WebCore::ClientOrigin& origin() const { return m_origin; }
 
     NODELETE bool isActive() const;
     uint64_t allocatedUnusedCapacity() const;
-    std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> createHandle(IPC::Connection::UniqueID, FileSystemStorageHandle::Type, String&& path, String&& name, bool createIfNecessary);
-    NODELETE const String& getPath(WebCore::FileSystemHandleIdentifier);
-    const String& rootPath() const LIFETIME_BOUND { return m_path; }
+    std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> createHandle(IPC::Connection::UniqueID, FileSystemStorageHandle::Type, RefPtr<StringImpl>&& path, RefPtr<StringImpl>&& name, bool createIfNecessary);
+    NODELETE const RefPtr<StringImpl>& getPath(WebCore::FileSystemHandleIdentifier);
+    const RefPtr<StringImpl>& rootPath() const LIFETIME_BOUND { return m_path; }
     NODELETE FileSystemStorageHandle::Type getType(WebCore::FileSystemHandleIdentifier);
     void closeHandle(FileSystemStorageHandle&);
     void connectionClosed(IPC::Connection::UniqueID);
@@ -60,8 +60,8 @@ public:
 
     struct GlobalIdentifierEntry {
         WebCore::FileSystemHandleKind kind;
-        String path;
-        String name;
+        RefPtr<StringImpl> path;
+        RefPtr<StringImpl> name;
         CheckedUint32 refcount { 0 };
     };
 
@@ -71,30 +71,30 @@ public:
 
     std::optional<WebCore::FileSystemHandleRecord> lookupHandle(WebCore::FileSystemHandleGlobalIdentifier);
     std::optional<Vector<WebCore::FileSystemHandleRecord>> lookupHandles(std::span<const WebCore::FileSystemHandleGlobalIdentifier>);
-    void registerPersistedHandle(WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleKind, String&& path, String&& name);
+    void registerPersistedHandle(WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleKind, RefPtr<StringImpl>&& path, RefPtr<StringImpl>&& name);
     void registerPersistedHandlesAndAddReferences(const Vector<WebCore::FileSystemHandleRecord>&);
 
     enum class LockType : bool { Exclusive, Shared };
-    bool acquireLockForFile(const String& path, LockType);
-    bool releaseLockForFile(const String& path);
-    bool hasActiveLock(const String& path) const;
+    bool acquireLockForFile(StringImpl* path, LockType);
+    bool releaseLockForFile(StringImpl* path);
+    bool hasActiveLock(StringImpl* path) const;
     void requestSpace(uint64_t spaceRequested, CompletionHandler<void(bool)>&&);
 
 private:
-    FileSystemStorageManager(String&& path, FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&, QuotaCheckFunction&&);
+    FileSystemStorageManager(RefPtr<StringImpl>&& path, FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&, QuotaCheckFunction&&);
 
     void close();
     void removeGlobalIdentifierReference(WebCore::FileSystemHandleGlobalIdentifier);
 
     using Lock = FileSystemStorageManagerLock;
 
-    String m_path;
+    RefPtr<StringImpl> m_path;
     WebCore::ClientOrigin m_origin;
     WeakPtr<FileSystemStorageHandleRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
     HashMap<IPC::Connection::UniqueID, HashSet<WebCore::FileSystemHandleIdentifier>> m_handlesByConnection;
     HashMap<WebCore::FileSystemHandleIdentifier, Ref<FileSystemStorageHandle>> m_handles;
-    HashMap<String, Lock> m_lockMap;
+    HashMap<RefPtr<StringImpl>, Lock> m_lockMap;
     HashMap<WebCore::FileSystemHandleGlobalIdentifier, GlobalIdentifierEntry> m_globalIdentifierRegistry;
 };
 

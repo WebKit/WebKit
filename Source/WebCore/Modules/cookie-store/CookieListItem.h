@@ -31,8 +31,8 @@
 namespace WebCore {
 
 struct CookieListItem {
-    String name;
-    String value;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> value;
 
     static CookieListItem fromCookie(Cookie&& cookie)
     {

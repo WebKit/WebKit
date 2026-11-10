@@ -154,14 +154,14 @@ Vector<RendererBufferFormat> AcceleratedBackingStore::preferredBufferFormats()
     auto& display = Display::singleton();
     const char* formatString = getenv("WEBKIT_DMABUF_RENDERER_BUFFER_FORMAT");
     if (formatString && *formatString) {
-        auto tokens = String::fromUTF8(formatString).split(':');
-        if (!tokens.isEmpty() && tokens[0].length() >= 2 && tokens[0].length() <= 4) {
+        auto tokens = split(StringImpl::fromUTF8(formatString), ':');
+        if (!tokens.isEmpty() && length(tokens[0]) >= 2 && length(tokens[0]) <= 4) {
             RendererBufferFormat format;
             format.usage = display.glDisplayIsSharedWithGtk() ? RendererBufferFormat::Usage::Rendering : RendererBufferFormat::Usage::Mapping;
             format.drmDevice = drmMainDevice();
-            uint32_t fourcc = fourcc_code(tokens[0][0], tokens[0][1], tokens[0].length() > 2 ? tokens[0][2] : ' ', tokens[0].length() > 3 ? tokens[0][3] : ' ');
+            uint32_t fourcc = fourcc_code(codeUnitAt(tokens[0], 0), codeUnitAt(tokens[0], 1), length(tokens[0]) > 2 ? codeUnitAt(tokens[0], 2) : ' ', length(tokens[0]) > 3 ? codeUnitAt(tokens[0], 3) : ' ');
             char* endptr = nullptr;
-            uint64_t modifier = tokens.size() > 1 ? g_ascii_strtoull(tokens[1].ascii().data(), &endptr, 16) : DRM_FORMAT_MOD_INVALID;
+            uint64_t modifier = tokens.size() > 1 ? g_ascii_strtoull(ascii(tokens[1]).data(), &endptr, 16) : DRM_FORMAT_MOD_INVALID;
             if (!(modifier == G_MAXUINT64 && errno == ERANGE) && !(!modifier && !endptr)) {
                 format.formats.append({ fourcc, { modifier } });
                 return { WTF::move(format) };

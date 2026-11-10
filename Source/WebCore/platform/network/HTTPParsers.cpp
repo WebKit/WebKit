@@ -55,34 +55,34 @@ namespace WebCore {
 // True if characters which satisfy the predicate are present, incrementing
 // "pos" to the next character which does not satisfy the predicate.
 // Note: might return pos == str.length().
-static inline bool skipWhile(const String& str, unsigned& pos, NOESCAPE const Function<bool(const char16_t)>& predicate)
+static inline bool skipWhile(StringImpl* str, unsigned& pos, NOESCAPE const Function<bool(const char16_t)>& predicate)
 {
     const unsigned start = pos;
-    const unsigned len = str.length();
-    while (pos < len && predicate(str[pos]))
+    const unsigned len = length(str);
+    while (pos < len && predicate(codeUnitAt(str, pos)))
         ++pos;
     return pos != start;
 }
 
 // true if there is more to parse, after incrementing pos past whitespace.
 // Note: Might return pos == str.length()
-static inline bool skipWhiteSpace(const String& str, unsigned& pos)
+static inline bool skipWhiteSpace(StringImpl* str, unsigned& pos)
 {
     skipWhile(str, pos, isTabOrSpace<char16_t>);
-    return pos < str.length();
+    return pos < length(str);
 }
 
 // Returns true if the function can match the whole token (case insensitive)
 // incrementing pos on match, otherwise leaving pos unchanged.
 // Note: Might return pos == str.length()
-NODELETE static inline bool skipToken(const String& str, unsigned& pos, ASCIILiteral token)
+NODELETE static inline bool skipToken(StringImpl* str, unsigned& pos, ASCIILiteral token)
 {
-    if (token.length() > str.length())
+    if (token.length() > length(str))
         return false;
 
     unsigned current = pos;
     for (auto character : token.span8()) {
-        if (toASCIILower(str[current]) != character)
+        if (toASCIILower(codeUnitAt(str, current)) != character)
             return false;
         ++current;
     }
@@ -92,19 +92,19 @@ NODELETE static inline bool skipToken(const String& str, unsigned& pos, ASCIILit
 }
 
 // True if the expected equals sign is seen and there is more to follow.
-static inline bool skipEquals(const String& str, unsigned &pos)
+static inline bool skipEquals(StringImpl* str, unsigned &pos)
 {
-    return skipWhiteSpace(str, pos) && str[pos++] == '=' && skipWhiteSpace(str, pos);
+    return skipWhiteSpace(str, pos) && codeUnitAt(str, pos++) == '=' && skipWhiteSpace(str, pos);
 }
 
 // True if a value present, incrementing pos to next space or semicolon, if any.
 // Note: might return pos == str.length().
-NODELETE static inline bool skipValue(const String& str, unsigned& pos)
+NODELETE static inline bool skipValue(StringImpl* str, unsigned& pos)
 {
     unsigned start = pos;
-    unsigned len = str.length();
+    unsigned len = length(str);
     while (pos < len) {
-        if (isTabOrSpace(str[pos]) || str[pos] == ';')
+        if (isTabOrSpace(codeUnitAt(str, pos)) || codeUnitAt(str, pos) == ';')
             break;
         ++pos;
     }
@@ -112,10 +112,10 @@ NODELETE static inline bool skipValue(const String& str, unsigned& pos)
 }
 
 // See RFC 7230, Section 3.1.2.
-bool isValidReasonPhrase(const String& value)
+bool isValidReasonPhrase(StringImpl* value)
 {
-    for (unsigned i = 0; i < value.length(); ++i) {
-        char16_t c = value[i];
+    for (unsigned i = 0; i < length(value); ++i) {
+        char16_t c = codeUnitAt(value, i);
         if (c == 0x7F || !isLatin1(c) || (c < 0x20 && c != '\t'))
             return false;
     }
@@ -123,16 +123,16 @@ bool isValidReasonPhrase(const String& value)
 }
 
 // See https://fetch.spec.whatwg.org/#concept-header
-bool isValidHTTPHeaderValue(const String& value)
+bool isValidHTTPHeaderValue(StringImpl* value)
 {
-    char16_t c = value[0];
+    char16_t c = codeUnitAt(value, 0);
     if (isTabOrSpace(c))
         return false;
-    c = value[value.length() - 1];
+    c = codeUnitAt(value, length(value) - 1);
     if (isTabOrSpace(c))
         return false;
-    for (unsigned i = 0; i < value.length(); ++i) {
-        c = value[i];
+    for (unsigned i = 0; i < length(value); ++i) {
+        c = codeUnitAt(value, i);
         if (c == 0x00 || c == 0x0A || c == 0x0D)
             return false;
     }
@@ -140,10 +140,10 @@ bool isValidHTTPHeaderValue(const String& value)
 }
 
 // See RFC 7231, Section 5.3.2.
-bool isValidAcceptHeaderValue(const String& value)
+bool isValidAcceptHeaderValue(StringImpl* value)
 {
-    for (unsigned i = 0; i < value.length(); ++i) {
-        char16_t c = value[i];
+    for (unsigned i = 0; i < length(value); ++i) {
+        char16_t c = codeUnitAt(value, i);
 
         // First check for alphanumeric for performance reasons then allowlist four delimiter characters.
         if (isASCIIAlphanumeric(c) || c == ',' || c == '/' || c == ';' || c == '=')
@@ -160,10 +160,10 @@ bool isValidAcceptHeaderValue(const String& value)
     return true;
 }
 
-NODELETE static bool containsCORSUnsafeRequestHeaderBytes(const String& value)
+NODELETE static bool containsCORSUnsafeRequestHeaderBytes(StringImpl* value)
 {
-    for (unsigned i = 0; i < value.length(); ++i) {
-        char16_t c = value[i];
+    for (unsigned i = 0; i < length(value); ++i) {
+        char16_t c = codeUnitAt(value, i);
         // https://fetch.spec.whatwg.org/#cors-unsafe-request-header-byte
         if ((c < 0x20 && c != '\t') || (c == '"' || c == '(' || c == ')' || c == ':' || c == '<' || c == '>' || c == '?'
             || c == '@' || c == '[' || c == '\\' || c == ']' || c == 0x7B || c == '{' || c == '}' || c == 0x7F))
@@ -175,10 +175,10 @@ NODELETE static bool containsCORSUnsafeRequestHeaderBytes(const String& value)
 
 // See RFC 7231, Section 5.3.5 and 3.1.3.2.
 // https://fetch.spec.whatwg.org/#cors-safelisted-request-header
-bool isValidLanguageHeaderValue(const String& value)
+bool isValidLanguageHeaderValue(StringImpl* value)
 {
-    for (unsigned i = 0; i < value.length(); ++i) {
-        char16_t c = value[i];
+    for (unsigned i = 0; i < length(value); ++i) {
+        char16_t c = codeUnitAt(value, i);
         if (isASCIIAlphanumeric(c) || c == ' ' || c == '*' || c == ',' || c == '-' || c == '.' || c == ';' || c == '=')
             continue;
         return false;
@@ -198,7 +198,7 @@ bool isValidHTTPToken(StringView value)
     return true;
 }
 
-bool isValidHTTPToken(const String& value)
+bool isValidHTTPToken(StringImpl* value)
 {
     return isValidHTTPToken(StringView(value));
 }
@@ -206,9 +206,9 @@ bool isValidHTTPToken(const String& value)
 #if USE(GLIB)
 // True if the character at the given position satisifies a predicate, incrementing "pos" by one.
 // Note: Might return pos == str.length()
-static inline bool skipCharacter(const String& value, unsigned& pos, NOESCAPE const Function<bool(const char16_t)>& predicate)
+static inline bool skipCharacter(StringImpl* value, unsigned& pos, NOESCAPE const Function<bool(const char16_t)>& predicate)
 {
-    if (pos < value.length() && predicate(value[pos])) {
+    if (pos < length(value) && predicate(codeUnitAt(value, pos))) {
         ++pos;
         return true;
     }
@@ -217,7 +217,7 @@ static inline bool skipCharacter(const String& value, unsigned& pos, NOESCAPE co
 
 // True if the "expected" character is at the given position, incrementing "pos" by one.
 // Note: Might return pos == str.length()
-static inline bool skipCharacter(const String& value, unsigned& pos, const char16_t expected)
+static inline bool skipCharacter(StringImpl* value, unsigned& pos, const char16_t expected)
 {
     return skipCharacter(value, pos, [expected](const char16_t c) {
         return c == expected;
@@ -228,7 +228,7 @@ static inline bool skipCharacter(const String& value, unsigned& pos, const char1
 // Note: Might return pos == str.length()
 // See RFC 7230, Section 3.2.6.
 static constexpr auto QuotedPairStartCharacter = '\\';
-static bool skipQuotedPair(const String& value, unsigned& pos)
+static bool skipQuotedPair(StringImpl* value, unsigned& pos)
 {
     // quoted-pair = "\" ( HTAB / SP / VCHAR / obs-text )
     return skipCharacter(value, pos, QuotedPairStartCharacter)
@@ -240,16 +240,16 @@ static bool skipQuotedPair(const String& value, unsigned& pos)
 // See RFC 7230, Section 3.2.6.
 static constexpr auto CommentStartCharacter = '(';
 static constexpr auto CommentEndCharacter = ')';
-static bool skipComment(const String& value, unsigned& pos)
+static bool skipComment(StringImpl* value, unsigned& pos)
 {
     // comment = "(" *( ctext / quoted-pair / comment ) ")"
     // ctext   = HTAB / SP / %x21-27 / %x2A-5B / %x5D-7E / obs-text
     if (!skipCharacter(value, pos, CommentStartCharacter))
         return false;
 
-    const unsigned end = value.length();
-    while (pos < end && value[pos] != CommentEndCharacter) {
-        switch (value[pos]) {
+    const unsigned end = length(value);
+    while (pos < end && codeUnitAt(value, pos) != CommentEndCharacter) {
+        switch (codeUnitAt(value, pos)) {
         case CommentStartCharacter:
             if (!skipComment(value, pos))
                 return false;
@@ -269,7 +269,7 @@ static bool skipComment(const String& value, unsigned& pos)
 // True if an HTTP header token is present, incrementing "pos" to the position after it.
 // Note: Might return pos == str.length()
 // See RFC 7230, Section 3.2.6.
-static bool skipHTTPToken(const String& value, unsigned& pos)
+static bool skipHTTPToken(StringImpl* value, unsigned& pos)
 {
     return skipWhile(value, pos, RFC7230::isTokenCharacter);
 }
@@ -277,7 +277,7 @@ static bool skipHTTPToken(const String& value, unsigned& pos)
 // True if a product specifier (as in an User-Agent header) is present, incrementing "pos" to the position after it.
 // Note: Might return pos == str.length()
 // See RFC 7231, Section 5.5.3.
-static bool skipUserAgentProduct(const String& value, unsigned& pos)
+static bool skipUserAgentProduct(StringImpl* value, unsigned& pos)
 {
     // product         = token ["/" product-version]
     // product-version = token
@@ -289,17 +289,17 @@ static bool skipUserAgentProduct(const String& value, unsigned& pos)
 }
 
 // See RFC 7231, Section 5.5.3
-bool isValidUserAgentHeaderValue(const String& value)
+bool isValidUserAgentHeaderValue(StringImpl* value)
 {
     // User-Agent = product *( RWS ( product / comment ) )
     unsigned pos = 0;
     if (!skipUserAgentProduct(value, pos))
         return false;
 
-    while (pos < value.length()) {
+    while (pos < length(value)) {
         if (!skipWhiteSpace(value, pos))
             return false;
-        if (value[pos] == CommentStartCharacter) {
+        if (codeUnitAt(value, pos) == CommentStartCharacter) {
             if (!skipComment(value, pos))
                 return false;
         } else {
@@ -308,28 +308,28 @@ bool isValidUserAgentHeaderValue(const String& value)
         }
     }
 
-    return pos == value.length();
+    return pos == length(value);
 }
 #endif
 
 static constexpr size_t maxInputSampleSize = 128;
 template<typename CharType>
-static String trimInputSample(std::span<const CharType> input)
+static RefPtr<StringImpl> trimInputSample(std::span<const CharType> input)
 {
     if (input.size() <= maxInputSampleSize)
-        return input;
+        return StringImpl::create(input);
     return makeString(input.first(maxInputSampleSize), horizontalEllipsis);
 }
 
-static String trimInputSample(std::span<const uint8_t> input)
+static RefPtr<StringImpl> trimInputSample(std::span<const uint8_t> input)
 {
     return trimInputSample(byteCast<Latin1Character>(input));
 }
 
-std::optional<WallTime> parseHTTPDate(const String& value)
+std::optional<WallTime> parseHTTPDate(StringImpl* value)
 {
     // FIXME: parseDate() requires Latin1, but we're passing it UTF-8.
-    double dateInMillisecondsSinceEpoch = parseDate(byteCast<Latin1Character>(value.utf8().span()));
+    double dateInMillisecondsSinceEpoch = parseDate(byteCast<Latin1Character>(utf8(value).span()));
     if (!std::isfinite(dateInMillisecondsSinceEpoch))
         return std::nullopt;
     // This assumes system_clock epoch equals Unix epoch which is true for all implementations but unspecified.
@@ -366,13 +366,13 @@ StringView filenameFromHTTPContentDisposition(StringView value LIFETIME_BOUND)
     return { };
 }
 
-String extractMIMETypeFromMediaType(const String& mediaType)
+RefPtr<StringImpl> extractMIMETypeFromMediaType(StringImpl* mediaType)
 {
     unsigned position = 0;
-    unsigned length = mediaType.length();
+    unsigned length = WTF::length(mediaType);
 
     for (; position < length; ++position) {
-        char16_t c = mediaType[position];
+        char16_t c = codeUnitAt(mediaType, position);
         if (!isTabOrSpace(c))
             break;
     }
@@ -384,7 +384,7 @@ String extractMIMETypeFromMediaType(const String& mediaType)
 
     unsigned typeEnd = position;
     for (; position < length; ++position) {
-        char16_t c = mediaType[position];
+        char16_t c = codeUnitAt(mediaType, position);
 
         // While RFC 2616 does not allow it, other browsers allow multiple values in the HTTP media
         // type header field, Content-Type. In such cases, the media type string passed here may contain
@@ -401,7 +401,7 @@ String extractMIMETypeFromMediaType(const String& mediaType)
         typeEnd = position + 1;
     }
 
-    return mediaType.substring(typeStart, typeEnd - typeStart).convertToASCIILowercase();
+    return convertToASCIILowercase(substring(mediaType, typeStart, typeEnd - typeStart));
 }
 
 StringView extractCharsetFromMediaType(StringView mediaType LIFETIME_BOUND)
@@ -450,27 +450,27 @@ StringView extractCharsetFromMediaType(StringView mediaType LIFETIME_BOUND)
     return mediaType.substring(charsetPos, charsetLen);
 }
 
-XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& failureReason, unsigned& failurePosition, String& reportURL)
+XSSProtectionDisposition parseXSSProtectionHeader(StringImpl* header, RefPtr<StringImpl>& failureReason, unsigned& failurePosition, RefPtr<StringImpl>& reportURL)
 {
-    static NeverDestroyed<String> failureReasonInvalidToggle(MAKE_STATIC_STRING_IMPL("expected 0 or 1"));
-    static NeverDestroyed<String> failureReasonInvalidSeparator(MAKE_STATIC_STRING_IMPL("expected semicolon"));
-    static NeverDestroyed<String> failureReasonInvalidEquals(MAKE_STATIC_STRING_IMPL("expected equals sign"));
-    static NeverDestroyed<String> failureReasonInvalidMode(MAKE_STATIC_STRING_IMPL("invalid mode directive"));
-    static NeverDestroyed<String> failureReasonInvalidReport(MAKE_STATIC_STRING_IMPL("invalid report directive"));
-    static NeverDestroyed<String> failureReasonDuplicateMode(MAKE_STATIC_STRING_IMPL("duplicate mode directive"));
-    static NeverDestroyed<String> failureReasonDuplicateReport(MAKE_STATIC_STRING_IMPL("duplicate report directive"));
-    static NeverDestroyed<String> failureReasonInvalidDirective(MAKE_STATIC_STRING_IMPL("unrecognized directive"));
+    static NeverDestroyed<RefPtr<StringImpl>> failureReasonInvalidToggle(MAKE_STATIC_STRING_IMPL("expected 0 or 1"));
+    static NeverDestroyed<RefPtr<StringImpl>> failureReasonInvalidSeparator(MAKE_STATIC_STRING_IMPL("expected semicolon"));
+    static NeverDestroyed<RefPtr<StringImpl>> failureReasonInvalidEquals(MAKE_STATIC_STRING_IMPL("expected equals sign"));
+    static NeverDestroyed<RefPtr<StringImpl>> failureReasonInvalidMode(MAKE_STATIC_STRING_IMPL("invalid mode directive"));
+    static NeverDestroyed<RefPtr<StringImpl>> failureReasonInvalidReport(MAKE_STATIC_STRING_IMPL("invalid report directive"));
+    static NeverDestroyed<RefPtr<StringImpl>> failureReasonDuplicateMode(MAKE_STATIC_STRING_IMPL("duplicate mode directive"));
+    static NeverDestroyed<RefPtr<StringImpl>> failureReasonDuplicateReport(MAKE_STATIC_STRING_IMPL("duplicate report directive"));
+    static NeverDestroyed<RefPtr<StringImpl>> failureReasonInvalidDirective(MAKE_STATIC_STRING_IMPL("unrecognized directive"));
 
     unsigned pos = 0;
 
     if (!skipWhiteSpace(header, pos))
         return XSSProtectionDisposition::Enabled;
 
-    if (header[pos] == '0')
+    if (codeUnitAt(header, pos) == '0')
         return XSSProtectionDisposition::Disabled;
 
-    if (header[pos++] != '1') {
-        failureReason = failureReasonInvalidToggle;
+    if (codeUnitAt(header, pos++) != '1') {
+        failureReason = failureReasonInvalidToggle.get();
         return XSSProtectionDisposition::Invalid;
     }
 
@@ -483,8 +483,8 @@ XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& 
         if (!skipWhiteSpace(header, pos))
             return result;
 
-        if (header[pos++] != ';') {
-            failureReason = failureReasonInvalidSeparator;
+        if (codeUnitAt(header, pos++) != ';') {
+            failureReason = failureReasonInvalidSeparator.get();
             failurePosition = pos;
             return XSSProtectionDisposition::Invalid;
         }
@@ -495,44 +495,44 @@ XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& 
         // At start of next directive.
         if (skipToken(header, pos, "mode"_s)) {
             if (modeDirectiveSeen) {
-                failureReason = failureReasonDuplicateMode;
+                failureReason = failureReasonDuplicateMode.get();
                 failurePosition = pos;
                 return XSSProtectionDisposition::Invalid;
             }
             modeDirectiveSeen = true;
             if (!skipEquals(header, pos)) {
-                failureReason = failureReasonInvalidEquals;
+                failureReason = failureReasonInvalidEquals.get();
                 failurePosition = pos;
                 return XSSProtectionDisposition::Invalid;
             }
             if (!skipToken(header, pos, "block"_s)) {
-                failureReason = failureReasonInvalidMode;
+                failureReason = failureReasonInvalidMode.get();
                 failurePosition = pos;
                 return XSSProtectionDisposition::Invalid;
             }
             result = XSSProtectionDisposition::BlockEnabled;
         } else if (skipToken(header, pos, "report"_s)) {
             if (reportDirectiveSeen) {
-                failureReason = failureReasonDuplicateReport;
+                failureReason = failureReasonDuplicateReport.get();
                 failurePosition = pos;
                 return XSSProtectionDisposition::Invalid;
             }
             reportDirectiveSeen = true;
             if (!skipEquals(header, pos)) {
-                failureReason = failureReasonInvalidEquals;
+                failureReason = failureReasonInvalidEquals.get();
                 failurePosition = pos;
                 return XSSProtectionDisposition::Invalid;
             }
             size_t startPos = pos;
             if (!skipValue(header, pos)) {
-                failureReason = failureReasonInvalidReport;
+                failureReason = failureReasonInvalidReport.get();
                 failurePosition = pos;
                 return XSSProtectionDisposition::Invalid;
             }
-            reportURL = header.substring(startPos, pos - startPos);
+            reportURL = substring(header, startPos, pos - startPos);
             failurePosition = startPos; // If later semantic check deems unacceptable.
         } else {
-            failureReason = failureReasonInvalidDirective;
+            failureReason = failureReasonInvalidDirective.get();
             failurePosition = pos;
             return XSSProtectionDisposition::Invalid;
         }
@@ -549,7 +549,7 @@ ContentTypeOptionsDisposition parseContentTypeOptionsHeader(StringView header)
 
 // For example: "HTTP/1.1 200 OK" => "OK".
 // Note that HTTP/2 does not include a reason phrase, so we return the empty atom.
-AtomString extractReasonPhraseFromHTTPStatusLine(const String& statusLine)
+RefPtr<AtomStringImpl> extractReasonPhraseFromHTTPStatusLine(StringImpl* statusLine)
 {
     StringView view = statusLine;
     size_t spacePos = view.find(' ');
@@ -594,7 +594,7 @@ OptionSet<ClearSiteDataValue> parseClearSiteDataHeader(const ResourceResponse& r
     OptionSet<ClearSiteDataValue> result;
 
     auto headerValue = response.httpHeaderField(HTTPHeaderName::ClearSiteData);
-    if (headerValue.isEmpty())
+    if (isEmpty(headerValue))
         return result;
 
     if (!WebCore::shouldTreatAsPotentiallyTrustworthy(response.url()))
@@ -701,7 +701,7 @@ NODELETE static inline bool isValidHeaderNameCharacter(CharacterType character)
     }
 }
 
-size_t parseHTTPHeader(std::span<const uint8_t> data, String& failureReason, StringView& nameStr, String& valueStr, bool strict)
+size_t parseHTTPHeader(std::span<const uint8_t> data, RefPtr<StringImpl>& failureReason, StringView& nameStr, RefPtr<StringImpl>& valueStr, bool strict)
 {
     auto p = data;
 
@@ -713,7 +713,7 @@ size_t parseHTTPHeader(std::span<const uint8_t> data, String& failureReason, Str
     size_t nameSize = 0;
 
     nameStr = StringView();
-    valueStr = String();
+    valueStr = nullptr;
 
     for (; !p.empty(); skip(p, 1)) {
         switch (p[0]) {
@@ -734,7 +734,7 @@ size_t parseHTTPHeader(std::span<const uint8_t> data, String& failureReason, Str
         default:
             if (!isValidHeaderNameCharacter(p[0])) {
                 if (name.size() < 1)
-                    failureReason = "Unexpected start character in header name"_s;
+                    failureReason = "Unexpected start character in header name"_si;
                 else
                     failureReason = makeString("Unexpected character in header name at "_s, trimInputSample(name.span()));
                 return 0;
@@ -777,9 +777,9 @@ size_t parseHTTPHeader(std::span<const uint8_t> data, String& failureReason, Str
         failureReason = makeString("CR doesn't follow LF after header value at "_s, trimInputSample(p));
         return 0;
     }
-    valueStr = String::fromUTF8(value.span());
-    if (valueStr.isNull()) {
-        failureReason = "Invalid UTF-8 sequence in header value"_s;
+    valueStr = StringImpl::fromUTF8(value.span());
+    if (!valueStr) {
+        failureReason = "Invalid UTF-8 sequence in header value"_si;
         return 0;
     }
     return p.data() - data.data();
@@ -809,7 +809,7 @@ std::optional<uint64_t> parseContentLength(StringView contentLengthValue)
 }
 
 // Implements <https://fetch.spec.whatwg.org/#forbidden-header-name>.
-bool isForbiddenHeaderName(const String& name)
+bool isForbiddenHeaderName(StringImpl* name)
 {
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName)) {
@@ -843,7 +843,7 @@ bool isForbiddenHeaderName(const String& name)
     return startsWithLettersIgnoringASCIICase(name, "sec-"_s) || startsWithLettersIgnoringASCIICase(name, "proxy-"_s);
 }
 
-static bool isForbiddenMethodOverrideHeader(const String& name, StringView value)
+static bool isForbiddenMethodOverrideHeader(StringImpl* name, StringView value)
 {
     if (!equalLettersIgnoringASCIICase(name, "x-http-method-override"_s) && !equalLettersIgnoringASCIICase(name, "x-http-method"_s) && !equalLettersIgnoringASCIICase(name, "x-method-override"_s))
         return false;
@@ -857,13 +857,13 @@ static bool isForbiddenMethodOverrideHeader(const String& name, StringView value
     return false;
 }
 
-bool isForbiddenHeader(const String& name, StringView value)
+bool isForbiddenHeader(StringImpl* name, StringView value)
 {
     return isForbiddenHeaderName(name) || isForbiddenMethodOverrideHeader(name, value);
 }
 
 // Implements <https://fetch.spec.whatwg.org/#no-cors-safelisted-request-header-name>.
-bool isNoCORSSafelistedRequestHeaderName(const String& name)
+bool isNoCORSSafelistedRequestHeaderName(StringImpl* name)
 {
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName)) {
@@ -881,13 +881,13 @@ bool isNoCORSSafelistedRequestHeaderName(const String& name)
 }
 
 // Implements <https://fetch.spec.whatwg.org/#privileged-no-cors-request-header-name>.
-bool isPriviledgedNoCORSRequestHeaderName(const String& name)
+bool isPriviledgedNoCORSRequestHeaderName(StringImpl* name)
 {
     return equalLettersIgnoringASCIICase(name, "range"_s);
 }
 
 // Implements <https://fetch.spec.whatwg.org/#forbidden-response-header-name>.
-bool isForbiddenResponseHeaderName(const String& name)
+bool isForbiddenResponseHeaderName(StringImpl* name)
 {
     return equalLettersIgnoringASCIICase(name, "set-cookie"_s) || equalLettersIgnoringASCIICase(name, "set-cookie2"_s);
 }
@@ -898,7 +898,7 @@ bool isForbiddenMethod(StringView name)
     return equalLettersIgnoringASCIICase(name, "connect"_s) || equalLettersIgnoringASCIICase(name, "trace"_s) || equalLettersIgnoringASCIICase(name, "track"_s);
 }
 
-bool isSimpleHeader(const String& name, const String& value)
+bool isSimpleHeader(StringImpl* name, StringImpl* value)
 {
     HTTPHeaderName headerName;
     if (!findHTTPHeaderName(name, headerName))
@@ -927,7 +927,7 @@ bool isCrossOriginSafeHeader(HTTPHeaderName name, const HTTPHeaderSet& accessCon
     return accessControlExposeHeaderSet.contains<HashTranslatorASCIILiteralCaseInsensitive>(httpHeaderNameString(name));
 }
 
-bool isCrossOriginSafeHeader(const String& name, const HTTPHeaderSet& accessControlExposeHeaderSet)
+bool isCrossOriginSafeHeader(StringImpl* name, const HTTPHeaderSet& accessControlExposeHeaderSet)
 {
 #if ASSERT_ENABLED
     HTTPHeaderName headerName;
@@ -937,9 +937,9 @@ bool isCrossOriginSafeHeader(const String& name, const HTTPHeaderSet& accessCont
 }
 
 // Implements https://fetch.spec.whatwg.org/#cors-safelisted-request-header
-bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
+bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, StringImpl* value)
 {
-    if (value.length() > 128)
+    if (length(value) > 128)
         return false;
 
     switch (name) {
@@ -959,7 +959,7 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
         auto parsedContentType = ParsedContentType::create(value);
         if (!parsedContentType)
             return false;
-        String mimeType = parsedContentType->mimeType();
+        RefPtr<StringImpl> mimeType = parsedContentType->mimeType();
         if (!(equalLettersIgnoringASCIICase(mimeType, "application/x-www-form-urlencoded"_s) || equalLettersIgnoringASCIICase(mimeType, "multipart/form-data"_s) || equalLettersIgnoringASCIICase(mimeType, "text/plain"_s)))
             return false;
         break;
@@ -977,13 +977,13 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
 }
 
 // Implements <https://fetch.spec.whatwg.org/#concept-method-normalize>.
-String normalizeHTTPMethod(const String& method)
+RefPtr<StringImpl> normalizeHTTPMethod(StringImpl* method)
 {
     constexpr std::array methods { "DELETE"_s, "GET"_s, "HEAD"_s, "OPTIONS"_s, "POST"_s, "PUT"_s };
     for (auto value : methods) {
         if (equalIgnoringASCIICase(method, value)) {
             // Don't bother allocating a new string if it's already all uppercase.
-            if (method == value)
+            if (equal(method, value))
                 break;
             return value;
         }
@@ -992,7 +992,7 @@ String normalizeHTTPMethod(const String& method)
 }
 
 // Defined by https://tools.ietf.org/html/rfc7231#section-4.2.1
-bool isSafeMethod(const String& method)
+bool isSafeMethod(StringImpl* method)
 {
     constexpr std::array safeMethods { "GET"_s, "HEAD"_s, "OPTIONS"_s, "TRACE"_s };
     for (auto value : safeMethods) {
@@ -1022,7 +1022,7 @@ CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView header
 }
 
 // Request headers that can be appended to, and the delimiter placed between values.
-std::optional<ASCIILiteral> requestHeaderAppendDelimiter(const String& header)
+std::optional<ASCIILiteral> requestHeaderAppendDelimiter(StringImpl* header)
 {
     static constexpr std::pair<ASCIILiteral, ASCIILiteral> appendableHeaders[] {
         { "accept"_s, ", "_s },
@@ -1056,7 +1056,7 @@ std::optional<ASCIILiteral> requestHeaderAppendDelimiter(const String& header)
     return std::nullopt;
 }
 
-bool isRequestHeaderUnsafeToModify(const String& header, StringView value)
+bool isRequestHeaderUnsafeToModify(StringImpl* header, StringView value)
 {
     static constexpr ASCIILiteral unsafeHeaders[] {
         "available-dictionary"_s,

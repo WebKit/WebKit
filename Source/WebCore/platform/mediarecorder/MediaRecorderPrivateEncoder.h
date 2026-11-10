@@ -70,7 +70,7 @@ public:
     void stopRecording();
     void close();
 
-    NODELETE String mimeType() const;
+    NODELETE RefPtr<StringImpl> mimeType() const;
     NODELETE unsigned audioBitRate() const;
     NODELETE unsigned videoBitRate() const;
 
@@ -142,10 +142,10 @@ private:
     size_t m_pendingFlush WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { 0 };
     Ref<GenericPromise> m_currentFlushOperations WTF_GUARDED_BY_CAPABILITY(mainThread) { GenericPromise::createAndResolve() };
 
-    String m_mimeType WTF_GUARDED_BY_CAPABILITY(mainThread);
+    RefPtr<StringImpl> m_mimeType WTF_GUARDED_BY_CAPABILITY(mainThread);
 
     FourCharCode m_audioCodec { 0 }; // set on creation. const after
-    String m_audioCodecMimeType WTF_GUARDED_BY_CAPABILITY(mainThread);
+    RefPtr<StringImpl> m_audioCodecMimeType WTF_GUARDED_BY_CAPABILITY(mainThread);
     std::optional<uint8_t> m_audioTrackIndex WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     RetainPtr<CMFormatDescriptionRef> m_audioFormatDescription WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     RefPtr<AudioInfo> m_audioCompressedAudioInfo WTF_GUARDED_BY_CAPABILITY(queueSingleton());
@@ -169,7 +169,7 @@ private:
     uint64_t m_currentAudioSampleCount { 0 };
 
     FourCharCode m_videoCodec { 0 }; // set on creation. const after
-    String m_videoCodecMimeType WTF_GUARDED_BY_CAPABILITY(mainThread);
+    RefPtr<StringImpl> m_videoCodecMimeType WTF_GUARDED_BY_CAPABILITY(mainThread);
     std::optional<uint8_t> m_videoTrackIndex WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     RefPtr<VideoInfo> m_videoTrackInfo WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     RetainPtr<CMFormatDescriptionRef> m_videoFormatDescription WTF_GUARDED_BY_CAPABILITY(queueSingleton());

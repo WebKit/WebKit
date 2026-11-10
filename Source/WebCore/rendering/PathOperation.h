@@ -88,13 +88,13 @@ protected:
 
 class ReferencePathOperation final : public PathOperation {
 public:
-    static Ref<ReferencePathOperation> create(const Style::URL&, const AtomString& fragment, const RefPtr<SVGElement>);
+    static Ref<ReferencePathOperation> create(const Style::URL&, AtomStringImpl* fragment, const RefPtr<SVGElement>);
     NODELETE WEBCORE_EXPORT static Ref<ReferencePathOperation> create(std::optional<Path>&&);
 
     Ref<PathOperation> clone() const final;
 
     const Style::URL& url() const LIFETIME_BOUND { return m_url; }
-    const AtomString& fragment() const LIFETIME_BOUND { return m_fragment; }
+    const RefPtr<AtomStringImpl>& fragment() const LIFETIME_BOUND { return m_fragment; }
     const std::optional<Path>& path() const LIFETIME_BOUND { return m_path; }
 
     std::optional<Path> getPath(const TransformOperationData&, Style::ZoomFactor) const final { return m_path; }
@@ -112,11 +112,11 @@ private:
         return *this == uncheckedDowncast<ReferencePathOperation>(other);
     }
 
-    ReferencePathOperation(const Style::URL&, const AtomString& fragment, const RefPtr<SVGElement>);
+    ReferencePathOperation(const Style::URL&, AtomStringImpl* fragment, const RefPtr<SVGElement>);
     ReferencePathOperation(std::optional<Path>&&);
 
     Style::URL m_url;
-    AtomString m_fragment;
+    RefPtr<AtomStringImpl> m_fragment;
     std::optional<Path> m_path;
 };
 

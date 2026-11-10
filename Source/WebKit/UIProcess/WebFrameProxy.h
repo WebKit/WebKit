@@ -169,9 +169,9 @@ public:
 
     void navigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, const URL&, CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)>&&);
 
-    void loadURL(const URL&, const String& referrer = String());
+    void loadURL(const URL&, StringImpl* referrer = nullptr);
     // Sub frames only. For main frames, use WebPageProxy::loadData.
-    void loadData(std::span<const uint8_t>, const String& MIMEType, const String& encodingName, const URL& baseURL);
+    void loadData(std::span<const uint8_t>, StringImpl* MIMEType, StringImpl* encodingName, const URL& baseURL);
 
     const URL& url() const LIFETIME_BOUND { return m_frameLoadState.url(); }
     const URL& provisionalURL() const LIFETIME_BOUND { return m_frameLoadState.provisionalURL(); }
@@ -179,13 +179,13 @@ public:
     void setUnreachableURL(const URL&);
     const URL& unreachableURL() const LIFETIME_BOUND { return m_frameLoadState.unreachableURL(); }
 
-    const String& mimeType() const LIFETIME_BOUND { return m_MIMEType; }
+    const RefPtr<StringImpl>& mimeType() const LIFETIME_BOUND { return m_MIMEType; }
     bool containsPluginDocument() const { return m_containsPluginDocument; }
 
-    const String& title() const LIFETIME_BOUND { return m_title; }
+    const RefPtr<StringImpl>& title() const LIFETIME_BOUND { return m_title; }
 
-    void setSpecifiedName(const String& name) { m_frameName = name; }
-    const String& frameName() const LIFETIME_BOUND { return m_frameName; }
+    void setSpecifiedName(StringImpl* name) { m_frameName = name; }
+    const RefPtr<StringImpl>& frameName() const LIFETIME_BOUND { return m_frameName; }
     const ListHashSet<Ref<WebFrameProxy>>& childFrames() const LIFETIME_BOUND { return m_childFrames; }
     WebCore::SecurityOriginData documentSecurityOriginData() const;
 
@@ -193,7 +193,7 @@ public:
     WebCore::CertificateInfo provisionalCertificateInfoFromNetworkProcess(const URL&) const;
 
     void commitCertificateInfo(const URL&, bool hasCertificateInfo);
-    void receivedMainResourceResponseWithCertificateInfo(String&&, WebCore::CertificateInfo&&);
+    void receivedMainResourceResponseWithCertificateInfo(RefPtr<StringImpl>&&, WebCore::CertificateInfo&&);
     void setCertificateInfoForProcessSwapOnNavigationResponse(const URL&, WebCore::CertificateInfo&&);
 
     bool canProvideSource() const;
@@ -214,14 +214,14 @@ public:
     void getResourceData(API::URL*, CompletionHandler<void(API::Data*)>&&);
 
     void didStartProvisionalLoad(URL&&);
-    void didExplicitOpen(URL&&, String&& mimeType, ShouldClearProvisionalURL);
+    void didExplicitOpen(URL&&, RefPtr<StringImpl>&& mimeType, ShouldClearProvisionalURL);
     void didReceiveServerRedirectForProvisionalLoad(URL&&);
     void didFailProvisionalLoad();
-    void didCommitLoad(const String& contentType, bool containsPluginDocument, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const WebCore::SecurityOriginData& originReportedByWebProcess, LoadedWebArchive);
+    void didCommitLoad(StringImpl* contentType, bool containsPluginDocument, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const WebCore::SecurityOriginData& originReportedByWebProcess, LoadedWebArchive);
     void didFinishLoad();
     void didFailLoad();
     void didSameDocumentNavigation(URL&&); // eg. anchor navigation, session state change.
-    void didChangeTitle(String&&);
+    void didChangeTitle(RefPtr<StringImpl>&&);
 
     // A frame has at most one navigation check outstanding, so a new one displaces the previous. A check that
     // does not navigate it, for a new window or a download attribute activation, is independent instead.
@@ -242,14 +242,14 @@ public:
 
     void disconnect();
     bool isConnected() const;
-    void didCreateSubframe(WebCore::FrameIdentifier, String&& frameName, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode);
+    void didCreateSubframe(WebCore::FrameIdentifier, RefPtr<StringImpl>&& frameName, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode);
 
     Vector<Ref<WebFrameProxy>> takeChildFrames();
     void adoptChildFrames(Vector<Ref<WebFrameProxy>>&&);
     NODELETE ProcessID processID() const;
     void prepareForProvisionalLoadInProcess(WebProcessProxy&, API::Navigation&, BrowsingContextGroup&, std::optional<WebCore::Site>, CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&&);
 
-    void commitProvisionalFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const UserData&, WebCore::RestoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState);
+    void commitProvisionalFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, RefPtr<StringImpl>&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, RefPtr<StringImpl>&& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const UserData&, WebCore::RestoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState);
 
     void getFrameTree(CompletionHandler<void(std::optional<FrameTreeNodeData>&&)>&&);
     void getFrameInfo(CompletionHandler<void(std::optional<FrameInfoData>&&)>&&);
@@ -346,20 +346,20 @@ public:
     template<typename M, typename C> void sendWithAsyncReply(M&&, C&&);
     template<typename M> void send(M&&);
 
-    void sendMessageToInspectorFrontend(const String& targetId, const String& message);
+    void sendMessageToInspectorFrontend(StringImpl* targetId, StringImpl* message);
 
     void requestTextExtraction(WebCore::TextExtraction::Request&&, CompletionHandler<void(WebCore::TextExtraction::Result&&)>&&);
-    void handleTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(bool, String&&, Vector<String>&&, WebCore::FloatRect)>&&);
+    void handleTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(bool, RefPtr<StringImpl>&&, Vector<RefPtr<StringImpl>>&&, WebCore::FloatRect)>&&);
     void describeTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(WebCore::TextExtraction::InteractionDescription&&)>&&);
     void takeSnapshotOfExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
     void requestJSHandleForExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
     void requestContainerJSHandleForExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
-    void requestContainerJSHandleForSearchTexts(Vector<String>&&, std::optional<WebCore::NodeIdentifier>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
+    void requestContainerJSHandleForSearchTexts(Vector<RefPtr<StringImpl>>&&, std::optional<WebCore::NodeIdentifier>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
     void requestContentFrameIdentifierForNode(WebCore::NodeIdentifier, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>&&)>&&);
     void findFirstConnectedNode(Vector<WebCore::NodeIdentifier>&&, CompletionHandler<void(std::optional<WebCore::NodeIdentifier>)>&&);
 
-    void getSelectorPathsForNode(JSHandleInfo&&, CompletionHandler<void(Vector<HashSet<String>>&&)>&&);
-    void getNodeForSelectorPaths(Vector<HashSet<String>>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
+    void getSelectorPathsForNode(JSHandleInfo&&, CompletionHandler<void(Vector<HashSet<RefPtr<StringImpl>>>&&)>&&);
+    void getNodeForSelectorPaths(Vector<HashSet<RefPtr<StringImpl>>>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
 
     NODELETE ProvisionalFrameCreationParameters provisionalFrameCreationParameters(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::LayerHostingContextIdentifier>, CommitTiming);
 
@@ -388,15 +388,15 @@ private:
 
     FrameLoadState m_frameLoadState;
 
-    String m_MIMEType;
-    String m_title;
-    String m_frameName;
+    RefPtr<StringImpl> m_MIMEType;
+    RefPtr<StringImpl> m_title;
+    RefPtr<StringImpl> m_frameName;
     bool m_containsPluginDocument { false };
 #if ENABLE(PDF_PLUGIN)
     bool m_hasPDFPlugin { false };
 #endif
     WebCore::CertificateInfo m_certificateInfo;
-    HashMap<String, WebCore::CertificateInfo> m_hostAndPortToCertificateInfo;
+    HashMap<RefPtr<StringImpl>, WebCore::CertificateInfo> m_hostAndPortToCertificateInfo;
     RefPtr<WebFramePolicyListenerProxy> m_activeListener;
     HashMap<uint64_t, Ref<WebFramePolicyListenerProxy>> m_activeNonNavigationListeners;
     uint64_t m_nextNonNavigationListenerID { 0 };

@@ -384,7 +384,7 @@ void CSSAnimation::effectTimingWasUpdatedUsingBindings(const OptionalEffectTimin
     if (timing.delay)
         m_overriddenProperties.add(Property::Delay);
 
-    if (!timing.easing.isNull())
+    if (timing.easing)
         m_overriddenProperties.add(Property::TimingFunction);
 
     if (timing.fill)
@@ -440,7 +440,7 @@ void CSSAnimation::updateKeyframesIfNeeded(const Style::ComputedStyle* oldStyle,
         keyframeEffect->computeStyleOriginatedAnimationBlendingKeyframes(oldStyle, newStyle, resolutionContext);
 }
 
-Ref<StyleOriginatedAnimationEvent> CSSAnimation::createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+Ref<StyleOriginatedAnimationEvent> CSSAnimation::createEvent(AtomStringImpl* eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     return CSSAnimationEvent::create(eventType, this, scheduledTime, elapsedTime, pseudoElementIdentifier, m_animationName.name);
 }

@@ -70,7 +70,7 @@ RefPtr<WebCompiledContentRuleList> createCompiledContentRuleList(WKContentRuleLi
 - (NSString *)identifier
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return _contentRuleList->name().createNSString().autorelease();
+    return createNSString(_contentRuleList->name()).autorelease();
 #else
     return nil;
 #endif
@@ -83,7 +83,7 @@ RefPtr<WebCompiledContentRuleList> createCompiledContentRuleList(WKContentRuleLi
 + (BOOL)_supportsRegularExpression:(NSString *)regex
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return API::ContentRuleList::supportsRegularExpression(regex);
+    return API::ContentRuleList::supportsRegularExpression(StringImpl::create(regex).get());
 #else
     return NO;
 #endif
@@ -92,7 +92,7 @@ RefPtr<WebCompiledContentRuleList> createCompiledContentRuleList(WKContentRuleLi
 + (NSError *)_parseRuleList:(NSString *)ruleList
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    std::error_code error = API::ContentRuleList::parseRuleList(ruleList, WebCore::ContentExtensions::CSSSelectorsAllowed::Yes);
+    std::error_code error = API::ContentRuleList::parseRuleList(StringImpl::create(ruleList).get(), WebCore::ContentExtensions::CSSSelectorsAllowed::Yes);
     if (!error)
         return nil;
 

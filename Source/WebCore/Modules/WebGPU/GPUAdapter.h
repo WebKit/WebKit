@@ -48,7 +48,7 @@ public:
         return adoptRef(*new GPUAdapter(WTF::move(backing), WTF::move(gpu)));
     }
 
-    NODELETE String name() const;
+    NODELETE RefPtr<StringImpl> name() const;
     NODELETE Ref<GPUSupportedFeatures> features() const;
     NODELETE Ref<GPUSupportedLimits> limits() const;
     NODELETE bool isFallbackAdapter() const;

@@ -53,7 +53,7 @@ enum class MediaPlaybackDenialReason {
 
 struct MediaPlaybackDenialExplanation {
     MediaPlaybackDenialReason reason { MediaPlaybackDenialReason::Unknown };
-    String description;
+    RefPtr<StringImpl> description;
 };
 
 class AudioTrack;
@@ -197,9 +197,9 @@ public:
     std::optional<MediaUsageInfo> mediaUsageInfo() const { return m_mediaUsageInfo; }
 
 #if !RELEASE_LOG_DISABLED
-    static String descriptionForTrack(const VideoTrack&);
-    static String descriptionForTrack(const AudioTrack&);
-    String description() const final;
+    static RefPtr<StringImpl> descriptionForTrack(const VideoTrack&);
+    static RefPtr<StringImpl> descriptionForTrack(const AudioTrack&);
+    RefPtr<StringImpl> description() const final;
     ASCIILiteral logClassName() const final { return "MediaElementSession"_s; }
 #endif
 
@@ -285,7 +285,7 @@ private:
 #endif
 };
 
-String convertEnumerationToString(const MediaPlaybackDenialReason);
+RefPtr<StringImpl> convertEnumerationToString(const MediaPlaybackDenialReason);
 
 } // namespace WebCore
 
@@ -296,7 +296,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::MediaPlaybackDenialReason> {
-    static String toString(const WebCore::MediaPlaybackDenialReason reason)
+    static RefPtr<StringImpl> toString(const WebCore::MediaPlaybackDenialReason reason)
     {
         return convertEnumerationToString(reason);
     }
@@ -304,7 +304,7 @@ struct LogArgument<WebCore::MediaPlaybackDenialReason> {
 
 template <>
 struct LogArgument<WebCore::MediaPlaybackDenialExplanation> {
-    static String toString(const WebCore::MediaPlaybackDenialExplanation explanation)
+    static RefPtr<StringImpl> toString(const WebCore::MediaPlaybackDenialExplanation explanation)
     {
         return makeString(convertEnumerationToString(explanation.reason), ": "_s, explanation.description);
     }

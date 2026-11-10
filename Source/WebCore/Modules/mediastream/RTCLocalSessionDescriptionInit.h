@@ -32,7 +32,7 @@ namespace WebCore {
 
 struct RTCLocalSessionDescriptionInit {
     std::optional<RTCSdpType> type;
-    String sdp;
+    RefPtr<StringImpl> sdp;
 };
 
 } // namespace WebCore

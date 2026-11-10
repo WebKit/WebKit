@@ -53,7 +53,7 @@ void WebGeolocationClient::geolocationDestroyed()
         protect(WebProcess::singleton().geolocationManager())->unregisterWebPage(*page);
 }
 
-void WebGeolocationClient::startUpdating(const String& authorizationToken, bool needsHighAccuracy)
+void WebGeolocationClient::startUpdating(StringImpl* authorizationToken, bool needsHighAccuracy)
 {
     if (RefPtr page = m_page.get())
         protect(WebProcess::singleton().geolocationManager())->registerWebPage(*page, authorizationToken, needsHighAccuracy);
@@ -82,7 +82,7 @@ void WebGeolocationClient::requestPermission(Geolocation& geolocation)
         protect(m_page->geolocationPermissionRequestManager())->startRequestForGeolocation(geolocation);
 }
 
-void WebGeolocationClient::revokeAuthorizationToken(const String& authorizationToken)
+void WebGeolocationClient::revokeAuthorizationToken(StringImpl* authorizationToken)
 {
     if (m_page)
         protect(m_page->geolocationPermissionRequestManager())->revokeAuthorizationToken(authorizationToken);

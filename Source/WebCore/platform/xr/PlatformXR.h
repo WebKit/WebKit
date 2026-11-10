@@ -210,40 +210,40 @@ inline std::optional<SessionFeature> parseSessionFeatureDescriptor(StringView st
     return std::nullopt;
 }
 
-inline String sessionFeatureDescriptor(SessionFeature sessionFeature)
+inline RefPtr<StringImpl> sessionFeatureDescriptor(SessionFeature sessionFeature)
 {
     switch (sessionFeature) {
     case SessionFeature::ReferenceSpaceTypeViewer:
-        return "viewer"_s;
+        return "viewer"_si;
     case SessionFeature::ReferenceSpaceTypeLocal:
-        return "local"_s;
+        return "local"_si;
     case SessionFeature::ReferenceSpaceTypeLocalFloor:
-        return "local-floor"_s;
+        return "local-floor"_si;
     case SessionFeature::ReferenceSpaceTypeBoundedFloor:
-        return "bounded-floor"_s;
+        return "bounded-floor"_si;
     case SessionFeature::ReferenceSpaceTypeUnbounded:
-        return "unbounded"_s;
+        return "unbounded"_si;
 #if ENABLE(WEBXR_HANDS)
     case SessionFeature::HandTracking:
-        return "hand-tracking"_s;
+        return "hand-tracking"_si;
 #endif
 #if ENABLE(WEBXR_HIT_TEST)
     case SessionFeature::HitTest:
-        return "hit-test"_s;
+        return "hit-test"_si;
 #endif
 #if ENABLE(WEBXR_PLANE_DETECTION)
     case SessionFeature::PlaneDetection:
-        return "plane-detection"_s;
+        return "plane-detection"_si;
 #endif
     case SessionFeature::WebGPU:
-        return "webgpu"_s;
+        return "webgpu"_si;
 #if ENABLE(WEBXR_LAYERS)
     case SessionFeature::Layers:
-        return "layers"_s;
+        return "layers"_si;
 #endif
     default:
         ASSERT_NOT_REACHED();
-        return ""_s;
+        return ""_si;
     }
 }
 
@@ -333,7 +333,7 @@ struct HitTestOptions {
 };
 struct TransientInputHitTestOptions {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(TransientInputHitTestOptions);
-    String profile;
+    RefPtr<StringImpl> profile;
     Vector<WebCore::XRHitTestTrackableType> entityTypes;
     Ray offsetRay;
 };
@@ -465,7 +465,7 @@ struct FrameData {
         InputSourceHandle handle { 0 };
         XRHandedness handedness { XRHandedness::None };
         XRTargetRayMode targetRayMode { XRTargetRayMode::Gaze };
-        Vector<String> profiles;
+        Vector<RefPtr<StringImpl>> profiles;
         InputSourcePose pointerOrigin;
         std::optional<InputSourcePose> gripOrigin;
         Vector<InputSourceButton> buttons;

@@ -30,33 +30,33 @@
 namespace WebCore {
 namespace Style {
 
-const WTF::String& Quotes::openQuote(unsigned index) const
+const RefPtr<StringImpl>& Quotes::openQuote(unsigned index) const
 {
     return WTF::switchOn(m_value,
-        [&](const Data& data) -> const WTF::String& {
+        [&](const Data& data) -> const RefPtr<StringImpl>& {
             auto i = index * 2;
 
             if (i < data.size())
                 return data[i].value;
             return data[data.size() - 2].value;
         },
-        [&](const auto&) -> const WTF::String& {
+        [&](const auto&) -> const RefPtr<StringImpl>& {
             return emptyString();
         }
     );
 }
 
-const WTF::String& Quotes::closeQuote(unsigned index) const
+const RefPtr<StringImpl>& Quotes::closeQuote(unsigned index) const
 {
     return WTF::switchOn(m_value,
-        [&](const Data& data) -> const WTF::String& {
+        [&](const Data& data) -> const RefPtr<StringImpl>& {
             auto i = (index * 2) + 1;
 
             if (i < data.size())
                 return data[i].value;
             return data[data.size() - 1].value;
         },
-        [&](const auto&) -> const WTF::String& {
+        [&](const auto&) -> const RefPtr<StringImpl>& {
             return emptyString();
         }
     );

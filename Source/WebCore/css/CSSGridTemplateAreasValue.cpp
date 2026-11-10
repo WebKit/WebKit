@@ -62,9 +62,9 @@ Ref<CSSGridTemplateAreasValue> CSSGridTemplateAreasValue::create(const CSS::Grid
     return adoptRef(*new CSSGridTemplateAreasValue(areas));
 }
 
-String CSSGridTemplateAreasValue::stringForRow(size_t row) const
+RefPtr<StringImpl> CSSGridTemplateAreasValue::stringForRow(size_t row) const
 {
-    FixedVector<String> columns(m_areas.map.columnCount);
+    FixedVector<RefPtr<StringImpl>> columns(m_areas.map.columnCount);
     for (auto& it : m_areas.map.map) {
         auto& area = it.value;
         if (row >= area.rows.startLine() && row < area.rows.endLine()) {
@@ -78,7 +78,7 @@ String CSSGridTemplateAreasValue::stringForRow(size_t row) const
         if (!first)
             builder.append(' ');
         first = false;
-        if (name.isNull())
+        if (!name)
             builder.append('.');
         else
             builder.append(name);
@@ -86,7 +86,7 @@ String CSSGridTemplateAreasValue::stringForRow(size_t row) const
     return builder.toString();
 }
 
-String CSSGridTemplateAreasValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSGridTemplateAreasValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_areas);
 }

@@ -52,7 +52,7 @@ public:
     RemoteGPUProxy& root() { return m_parent->root(); }
 
     Ref<::WebGPU::BindGroupLayout> getBindGroupLayout(uint32_t index) final;
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
 
 private:

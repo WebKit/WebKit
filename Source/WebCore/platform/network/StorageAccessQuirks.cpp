@@ -44,13 +44,13 @@ const HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& storageAccessQuirk
 {
     static NeverDestroyed<HashMap<RegistrableDomain, HashSet<RegistrableDomain>>> map = [] {
         HashMap<RegistrableDomain, HashSet<RegistrableDomain>> map;
-        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoft.com"_s),
-            HashSet { RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoftonline.com"_s) });
-        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("playstation.com"_s), HashSet {
-            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sonyentertainmentnetwork.com"_s),
-            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_s) });
-        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("bbc.co.uk"_s), HashSet {
-            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("radioplayer.co.uk"_s) });
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoft.com"_si),
+            HashSet { RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoftonline.com"_si) });
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("playstation.com"_si), HashSet {
+            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sonyentertainmentnetwork.com"_si),
+            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_si) });
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("bbc.co.uk"_si), HashSet {
+            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("radioplayer.co.uk"_si) });
         return map;
     }();
     return map.get();
@@ -86,11 +86,11 @@ std::optional<HashSet<RegistrableDomain>> subResourceDomainsInNeedOfStorageAcces
 
 std::optional<RegistrableDomain> findAdditionalLoginDomain(const RegistrableDomain& topDomain, const RegistrableDomain& subDomain)
 {
-    if (subDomain.string() == "sony.com"_s && topDomain.string() == "playstation.com"_s)
-        return RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sonyentertainmentnetwork.com"_s);
+    if (equal(subDomain.string(), "sony.com"_s) && equal(topDomain.string(), "playstation.com"_s))
+        return RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sonyentertainmentnetwork.com"_si);
 
-    if (subDomain.string() == "sonyentertainmentnetwork.com"_s && topDomain.string() == "playstation.com"_s)
-        return RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_s);
+    if (equal(subDomain.string(), "sonyentertainmentnetwork.com"_s) && equal(topDomain.string(), "playstation.com"_s))
+        return RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_si);
 
     return std::nullopt;
 }

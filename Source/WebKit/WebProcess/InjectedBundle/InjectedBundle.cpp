@@ -119,13 +119,13 @@ void InjectedBundle::setServiceWorkerProxyCreationCallback(void (*callback)(uint
     SWContextManager::singleton().setServiceWorkerCreationCallback(callback);
 }
 
-void InjectedBundle::postMessage(const String& messageName, API::Object* messageBody)
+void InjectedBundle::postMessage(StringImpl* messageName, API::Object* messageBody)
 {
     auto& webProcess = WebProcess::singleton();
     protect(webProcess.parentProcessConnection())->send(Messages::WebProcessPool::HandleMessage(messageName, UserData(webProcess.transformObjectsToHandles(messageBody))), 0);
 }
 
-void InjectedBundle::postSynchronousMessage(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
+void InjectedBundle::postSynchronousMessage(StringImpl* messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
 {
     auto& webProcess = WebProcess::singleton();
     auto sendResult = protect(webProcess.parentProcessConnection())->sendSync(Messages::WebProcessPool::HandleSynchronousMessage(messageName, UserData(webProcess.transformObjectsToHandles(messageBody))), 0);
@@ -136,13 +136,13 @@ void InjectedBundle::postSynchronousMessage(const String& messageName, API::Obje
         returnData = nullptr;
 }
 
-void InjectedBundle::addOriginAccessAllowListEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains)
+void InjectedBundle::addOriginAccessAllowListEntry(StringImpl* sourceOrigin, StringImpl* destinationProtocol, StringImpl* destinationHost, bool allowDestinationSubdomains)
 {
     SecurityPolicy::addOriginAccessAllowlistEntry(SecurityOrigin::createFromString(sourceOrigin).get(), destinationProtocol, destinationHost, allowDestinationSubdomains);
     protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->send(Messages::NetworkConnectionToWebProcess::AddOriginAccessAllowListEntry { sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains }, 0);
 }
 
-void InjectedBundle::removeOriginAccessAllowListEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains)
+void InjectedBundle::removeOriginAccessAllowListEntry(StringImpl* sourceOrigin, StringImpl* destinationProtocol, StringImpl* destinationHost, bool allowDestinationSubdomains)
 {
     SecurityPolicy::removeOriginAccessAllowlistEntry(SecurityOrigin::createFromString(sourceOrigin).get(), destinationProtocol, destinationHost, allowDestinationSubdomains);
     protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->send(Messages::NetworkConnectionToWebProcess::RemoveOriginAccessAllowListEntry { sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains }, 0);
@@ -174,7 +174,7 @@ int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, dou
     return PrintContext::numberOfPages(*coreFrame, FloatSize(pageWidthInPixels, pageHeightInPixels));
 }
 
-int InjectedBundle::pageNumberForElementById(WebFrame* frame, const String& id, double pageWidthInPixels, double pageHeightInPixels)
+int InjectedBundle::pageNumberForElementById(WebFrame* frame, StringImpl* id, double pageWidthInPixels, double pageHeightInPixels)
 {
     RefPtr coreFrame = frame ? frame->coreLocalFrame() : nullptr;
     if (!coreFrame)
@@ -192,11 +192,11 @@ int InjectedBundle::pageNumberForElementById(WebFrame* frame, const String& id, 
     return PrintContext::pageNumberForElement(element.get(), FloatSize(pageWidthInPixels, pageHeightInPixels));
 }
 
-String InjectedBundle::pageSizeAndMarginsInPixels(WebFrame* frame, int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
+RefPtr<StringImpl> InjectedBundle::pageSizeAndMarginsInPixels(WebFrame* frame, int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
 {
     RefPtr coreFrame = frame ? frame->coreLocalFrame() : nullptr;
     if (!coreFrame)
-        return String();
+        return nullptr;
 
     return PrintContext::pageSizeAndMarginsInPixels(coreFrame.get(), pageIndex, width, height, marginTop, marginRight, marginBottom, marginLeft);
 }
@@ -247,19 +247,19 @@ void InjectedBundle::willDestroyPage(WebPage& page)
     m_client->willDestroyPage(*this, page);
 }
 
-void InjectedBundle::didReceiveMessage(const String& messageName, RefPtr<API::Object>&& messageBody)
+void InjectedBundle::didReceiveMessage(StringImpl* messageName, RefPtr<API::Object>&& messageBody)
 {
     m_client->didReceiveMessage(*this, messageName, WTF::move(messageBody));
 }
 
-void InjectedBundle::didReceiveMessageToPage(WebPage& page, const String& messageName, RefPtr<API::Object>&& messageBody)
+void InjectedBundle::didReceiveMessageToPage(WebPage& page, StringImpl* messageName, RefPtr<API::Object>&& messageBody)
 {
     m_client->didReceiveMessageToPage(Ref { *this }, page, messageName, WTF::move(messageBody));
 }
 
-void InjectedBundle::setUserStyleSheetLocation(const String& location)
+void InjectedBundle::setUserStyleSheetLocation(StringImpl* location)
 {
-    Page::forEachPage([location](Page& page) {
+    Page::forEachPage([location = RefPtr { location }](Page& page) {
         page.settings().setUserStyleSheetLocation(URL { location });
     });
 }

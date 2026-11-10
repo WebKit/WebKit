@@ -37,17 +37,17 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void AXImageMapHelpers::accessibilityText(const HTMLAreaElement& areaElement, String&& description, Vector<AccessibilityText>& textOrder)
+void AXImageMapHelpers::accessibilityText(const HTMLAreaElement& areaElement, RefPtr<StringImpl>&& description, Vector<AccessibilityText>& textOrder)
 {
-    if (!description.isEmpty())
+    if (!isEmpty(description))
         textOrder.append(AccessibilityText(WTF::move(description), AccessibilityTextSource::Alternative));
 
-    const AtomString& titleText = areaElement.getAttribute(titleAttr);
-    if (!titleText.isEmpty())
+    const RefPtr<AtomStringImpl>& titleText = areaElement.getAttribute(titleAttr);
+    if (!isEmpty(titleText))
         textOrder.append(AccessibilityText(titleText, AccessibilityTextSource::TitleTag));
 
-    const AtomString& summary = areaElement.getAttribute(summaryAttr);
-    if (!summary.isEmpty())
+    const RefPtr<AtomStringImpl>& summary = areaElement.getAttribute(summaryAttr);
+    if (!isEmpty(summary))
         textOrder.append(AccessibilityText(summary, AccessibilityTextSource::Summary));
 }
 

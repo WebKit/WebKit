@@ -84,7 +84,7 @@ struct CharacterOffset {
     int remaining() const { return remainingOffset; }
     bool isNull() const { return !node; }
     inline bool isEqual(const CharacterOffset& other) const;
-    inline String debugDescription();
+    inline RefPtr<StringImpl> debugDescription();
 };
 
 struct VisiblePositionIndex {
@@ -105,17 +105,23 @@ struct InheritedFrameState {
     bool isInert { false };
     bool isRenderHidden { false };
     // The accessible name of the hosting element, which takes precedence over the frame's document title.
-    String hostingFrameName;
+    RefPtr<StringImpl> hostingFrameName;
 
-    bool operator==(const InheritedFrameState&) const = default;
+    bool operator==(const InheritedFrameState& other) const
+    {
+        return isAXHidden == other.isAXHidden
+            && isInert == other.isInert
+            && isRenderHidden == other.isRenderHidden
+            && contentEquals(hostingFrameName, other.hostingFrameName);
+    }
 };
 
 // When this is updated, WebCoreArgumentCoders.serialization.in must be updated as well.
 struct AXDebugInfo {
     AccessibilityMode accessibilityMode;
-    String liveTree;
-    String isolatedTree;
-    Vector<String> warnings;
+    RefPtr<StringImpl> liveTree;
+    RefPtr<StringImpl> isolatedTree;
+    Vector<RefPtr<StringImpl>> warnings;
     uint64_t remoteTokenHash;
     uint64_t webProcessLocalTokenHash;
 };

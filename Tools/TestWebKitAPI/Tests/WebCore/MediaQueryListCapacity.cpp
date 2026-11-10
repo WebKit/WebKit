@@ -76,7 +76,7 @@ static const MQ::MediaQueryList* firstMediaRuleQueries(const StyleSheetContents&
 TEST_F(MediaQueryListCapacity, SingleQueryListIsTightlySized)
 {
     auto contents = StyleSheetContents::create(strictCSSParserContext());
-    EXPECT_TRUE(contents->parseString("@media (min-resolution: 2dppx) { body { color: red } }"_s));
+    EXPECT_TRUE(contents->parseString("@media (min-resolution: 2dppx) { body { color: red } }"_si));
 
     auto* queries = firstMediaRuleQueries(contents);
     ASSERT_TRUE(queries);
@@ -87,36 +87,36 @@ TEST_F(MediaQueryListCapacity, SingleQueryListIsTightlySized)
 TEST_F(MediaQueryListCapacity, BareMediaTypeListIsTightlySized)
 {
     auto contents = StyleSheetContents::create(strictCSSParserContext());
-    EXPECT_TRUE(contents->parseString("@media screen { body { color: red } }"_s));
+    EXPECT_TRUE(contents->parseString("@media screen { body { color: red } }"_si));
 
     auto* queries = firstMediaRuleQueries(contents);
     ASSERT_TRUE(queries);
     EXPECT_EQ(queries->size(), static_cast<size_t>(1));
     EXPECT_EQ(queries->capacity(), static_cast<size_t>(1));
-    EXPECT_EQ((*queries)[0].mediaType, AtomString { "screen"_s });
+    EXPECT_EQ((*queries)[0].mediaType, "screen"_atom);
 }
 
 TEST_F(MediaQueryListCapacity, MultipleQueryListIsTightlySized)
 {
     auto contents = StyleSheetContents::create(strictCSSParserContext());
-    EXPECT_TRUE(contents->parseString("@media screen, print, (min-resolution: 2dppx) { body { color: red } }"_s));
+    EXPECT_TRUE(contents->parseString("@media screen, print, (min-resolution: 2dppx) { body { color: red } }"_si));
 
     auto* queries = firstMediaRuleQueries(contents);
     ASSERT_TRUE(queries);
     EXPECT_EQ(queries->size(), static_cast<size_t>(3));
     EXPECT_EQ(queries->capacity(), static_cast<size_t>(3));
 
-    EXPECT_EQ((*queries)[0].mediaType, AtomString { "screen"_s });
-    EXPECT_EQ((*queries)[1].mediaType, AtomString { "print"_s });
+    EXPECT_EQ((*queries)[0].mediaType, "screen"_atom);
+    EXPECT_EQ((*queries)[1].mediaType, "print"_atom);
     // A bare <media-condition> carries no media type.
-    EXPECT_TRUE((*queries)[2].mediaType.isNull());
+    EXPECT_TRUE(!(*queries)[2].mediaType);
     EXPECT_TRUE((*queries)[2].condition);
 }
 
 TEST_F(MediaQueryListCapacity, CommasInsideBlocksDoNotInflateCapacity)
 {
     auto contents = StyleSheetContents::create(strictCSSParserContext());
-    EXPECT_TRUE(contents->parseString("@media (min-width: clamp(1px, 2px, 3px)) { body { color: red } }"_s));
+    EXPECT_TRUE(contents->parseString("@media (min-width: clamp(1px, 2px, 3px)) { body { color: red } }"_si));
 
     auto* queries = firstMediaRuleQueries(contents);
     ASSERT_TRUE(queries);
@@ -149,7 +149,7 @@ TEST_F(MediaQueryListCapacity, ListWiderThanSixteenElementFloorIsSizedExactly)
 TEST_F(MediaQueryListCapacity, InvalidComponentsAreStillCountedExactly)
 {
     auto contents = StyleSheetContents::create(strictCSSParserContext());
-    EXPECT_TRUE(contents->parseString("@media screen,,print, { body { color: red } }"_s));
+    EXPECT_TRUE(contents->parseString("@media screen,,print, { body { color: red } }"_si));
 
     auto* queries = firstMediaRuleQueries(contents);
     ASSERT_TRUE(queries);
@@ -157,11 +157,11 @@ TEST_F(MediaQueryListCapacity, InvalidComponentsAreStillCountedExactly)
     EXPECT_EQ(queries->size(), static_cast<size_t>(4));
     EXPECT_EQ(queries->capacity(), static_cast<size_t>(4));
 
-    EXPECT_EQ((*queries)[0].mediaType, AtomString { "screen"_s });
-    EXPECT_EQ((*queries)[1].mediaType, AtomString { "all"_s });
+    EXPECT_EQ((*queries)[0].mediaType, "screen"_atom);
+    EXPECT_EQ((*queries)[1].mediaType, "all"_atom);
     EXPECT_TRUE((*queries)[1].prefix);
-    EXPECT_EQ((*queries)[2].mediaType, AtomString { "print"_s });
-    EXPECT_EQ((*queries)[3].mediaType, AtomString { "all"_s });
+    EXPECT_EQ((*queries)[2].mediaType, "print"_atom);
+    EXPECT_EQ((*queries)[3].mediaType, "all"_atom);
     EXPECT_TRUE((*queries)[3].prefix);
 }
 

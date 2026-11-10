@@ -86,7 +86,7 @@ IndexedDB::KeyType IDBKeyData::type() const
         return IndexedDB::KeyType::Invalid;
     case WTF::alternativeIndexV<Vector<IDBKeyData>, ValueVariant>:
         return IndexedDB::KeyType::Array;
-    case WTF::alternativeIndexV<String, ValueVariant>:
+    case WTF::alternativeIndexV<RefPtr<StringImpl>, ValueVariant>:
         return IndexedDB::KeyType::String;
     case WTF::alternativeIndexV<double, ValueVariant>:
         return IndexedDB::KeyType::Number;
@@ -119,7 +119,7 @@ RefPtr<IDBKey> IDBKeyData::maybeCreateIDBKey() const
     case IndexedDB::KeyType::Binary:
         return IDBKey::createBinary(std::get<ThreadSafeDataBuffer>(m_value));
     case IndexedDB::KeyType::String:
-        return IDBKey::createString(std::get<String>(m_value));
+        return IDBKey::createString(std::get<RefPtr<StringImpl>>(m_value));
     case IndexedDB::KeyType::Date:
         return IDBKey::createDate(std::get<Date>(m_value).value);
     case IndexedDB::KeyType::Number:
@@ -141,35 +141,35 @@ IDBKeyData IDBKeyData::isolatedCopy() const
 
 void IDBKeyData::encode(KeyedEncoder& encoder) const
 {
-    encoder.encodeBool("null"_s, isNull());
+    encoder.encodeBool("null"_si, isNull());
     if (isNull())
         return;
 
-    encoder.encodeEnum("type"_s, type());
+    encoder.encodeEnum("type"_si, type());
 
     switch (type()) {
     case IndexedDB::KeyType::Invalid:
         return;
     case IndexedDB::KeyType::Array: {
         auto& array = std::get<Vector<IDBKeyData>>(m_value);
-        encoder.encodeObjects("array"_s, array, [](KeyedEncoder& encoder, const IDBKeyData& key) {
+        encoder.encodeObjects("array"_si, array, [](KeyedEncoder& encoder, const IDBKeyData& key) {
             key.encode(encoder);
         });
         return;
     }
     case IndexedDB::KeyType::Binary: {
         auto* data = std::get<ThreadSafeDataBuffer>(m_value).data();
-        encoder.encodeBool("hasBinary"_s, !!data);
+        encoder.encodeBool("hasBinary"_si, !!data);
         if (data)
-            encoder.encodeBytes("binary"_s, data->span());
+            encoder.encodeBytes("binary"_si, data->span());
         return;
     }
     case IndexedDB::KeyType::String:
-        encoder.encodeString("string"_s, std::get<String>(m_value));
+        encoder.encodeString("string"_si, std::get<RefPtr<StringImpl>>(m_value));
         return;
     case IndexedDB::KeyType::Date:
     case IndexedDB::KeyType::Number:
-        encoder.encodeDouble("number"_s, std::get<double>(m_value));
+        encoder.encodeDouble("number"_si, std::get<double>(m_value));
         return;
     case IndexedDB::KeyType::Max:
     case IndexedDB::KeyType::Min:
@@ -182,7 +182,7 @@ void IDBKeyData::encode(KeyedEncoder& encoder) const
 bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
 {
     bool isNull;
-    if (!decoder.decodeBool("null"_s, isNull))
+    if (!decoder.decodeBool("null"_si, isNull))
         return false;
 
     if (isNull)
@@ -199,7 +199,7 @@ bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
             || value == IndexedDB::KeyType::Min;
     };
     IndexedDB::KeyType type;
-    if (!decoder.decodeEnum("type"_s, type, enumFunction))
+    if (!decoder.decodeEnum("type"_si, type, enumFunction))
         return false;
 
     switch (type) {
@@ -212,26 +212,26 @@ bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
         result.m_value = Min { };
         return true;
     case IndexedDB::KeyType::String:
-        result.m_value = String();
-        return decoder.decodeString("string"_s, std::get<String>(result.m_value));
+        result.m_value = nullptr;
+        return decoder.decodeString("string"_si, std::get<RefPtr<StringImpl>>(result.m_value));
     case IndexedDB::KeyType::Number:
         result.m_value = 0.0;
-        return decoder.decodeDouble("number"_s, std::get<double>(result.m_value));
+        return decoder.decodeDouble("number"_si, std::get<double>(result.m_value));
     case IndexedDB::KeyType::Date:
         result.m_value = Date { };
-        return decoder.decodeDouble("number"_s, std::get<Date>(result.m_value).value);
+        return decoder.decodeDouble("number"_si, std::get<Date>(result.m_value).value);
     case IndexedDB::KeyType::Binary: {
         result.m_value = ThreadSafeDataBuffer();
 
         bool hasBinaryData;
-        if (!decoder.decodeBool("hasBinary"_s, hasBinaryData))
+        if (!decoder.decodeBool("hasBinary"_si, hasBinaryData))
             return false;
 
         if (!hasBinaryData)
             return true;
 
         Vector<uint8_t> bytes;
-        if (!decoder.decodeBytes("binary"_s, bytes))
+        if (!decoder.decodeBytes("binary"_si, bytes))
             return false;
 
         result.m_value = ThreadSafeDataBuffer::create(WTF::move(bytes));
@@ -243,7 +243,7 @@ bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
         };
 
         result.m_value = Vector<IDBKeyData>();
-        return decoder.decodeObjects("array"_s, std::get<Vector<IDBKeyData>>(result.m_value), arrayFunction);
+        return decoder.decodeObjects("array"_si, std::get<Vector<IDBKeyData>>(result.m_value), arrayFunction);
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -285,12 +285,12 @@ std::weak_ordering operator<=>(const IDBKeyData& a, const IDBKeyData& b)
     case IndexedDB::KeyType::Binary:
         return compareBinaryKeyData(std::get<ThreadSafeDataBuffer>(a.m_value), std::get<ThreadSafeDataBuffer>(b.m_value));
     case IndexedDB::KeyType::String: {
-        auto& aStr = std::get<String>(a.m_value);
-        auto& bStr = std::get<String>(b.m_value);
+        auto& aStr = std::get<RefPtr<StringImpl>>(a.m_value);
+        auto& bStr = std::get<RefPtr<StringImpl>>(b.m_value);
         // Distinguish null String from empty String to match operator==;
         // codePointCompare treats them as equivalent.
-        if (aStr.isNull() != bStr.isNull())
-            return aStr.isNull() ? std::weak_ordering::less : std::weak_ordering::greater;
+        if (!aStr != !bStr)
+            return !aStr ? std::weak_ordering::less : std::weak_ordering::greater;
         return codePointCompare(aStr, bStr);
     } case IndexedDB::KeyType::Date:
         return weakOrderingCast(std::get<IDBKeyData::Date>(a.m_value).value <=> std::get<IDBKeyData::Date>(b.m_value).value);
@@ -305,16 +305,16 @@ std::weak_ordering operator<=>(const IDBKeyData& a, const IDBKeyData& b)
     return std::weak_ordering::equivalent;
 }
 
-String IDBKeyData::loggingString() const
+RefPtr<StringImpl> IDBKeyData::loggingString() const
 {
     if (isNull())
-        return "<null>"_s;
+        return "<null>"_si;
 
-    String result;
+    RefPtr<StringImpl> result;
 
     switch (type()) {
     case IndexedDB::KeyType::Invalid:
-        return "<invalid>"_s;
+        return "<invalid>"_si;
     case IndexedDB::KeyType::Array:
         result = makeString("<array> - { "_s, interleave(std::get<Vector<IDBKeyData>>(m_value), [](auto& builder, auto& item) { builder.append(item.loggingString()); }, ", "_s), " }"_s);
         break;
@@ -344,19 +344,19 @@ String IDBKeyData::loggingString() const
         break;
     }
     case IndexedDB::KeyType::String:
-        result = makeString("<string> - "_s, std::get<String>(m_value));
+        result = makeString("<string> - "_s, std::get<RefPtr<StringImpl>>(m_value));
         break;
     case IndexedDB::KeyType::Date:
         return makeString("<date> - "_s, std::get<Date>(m_value).value);
     case IndexedDB::KeyType::Number:
         return makeString("<number> - "_s, std::get<double>(m_value));
     case IndexedDB::KeyType::Max:
-        return "<maximum>"_s;
+        return "<maximum>"_si;
     case IndexedDB::KeyType::Min:
-        return "<minimum>"_s;
+        return "<minimum>"_si;
     }
 
-    if (result.length() > 150)
+    if (length(result) > 150)
         result = makeString(StringView(result).left(147), "..."_s);
 
     return result;
@@ -372,7 +372,7 @@ void IDBKeyData::setBinaryValue(const ThreadSafeDataBuffer& value)
     m_value = value;
 }
 
-void IDBKeyData::setStringValue(const String& value)
+void IDBKeyData::setStringValue(StringImpl* value)
 {
     m_value = value;
 }
@@ -430,7 +430,7 @@ bool IDBKeyData::operator==(const IDBKeyData& other) const
     case IndexedDB::KeyType::Date:
         return std::get<Date>(m_value).value == std::get<Date>(other.m_value).value;
     case IndexedDB::KeyType::String:
-        return std::get<String>(m_value) == std::get<String>(other.m_value);
+        return equal(std::get<RefPtr<StringImpl>>(m_value), std::get<RefPtr<StringImpl>>(other.m_value));
     case IndexedDB::KeyType::Binary:
         return std::get<ThreadSafeDataBuffer>(m_value) == std::get<ThreadSafeDataBuffer>(other.m_value);
     case IndexedDB::KeyType::Array:
@@ -456,7 +456,7 @@ size_t IDBKeyData::size() const
     case IndexedDB::KeyType::Binary:
         return std::get<ThreadSafeDataBuffer>(m_value).size();
     case IndexedDB::KeyType::String:
-        return std::get<String>(m_value).sizeInBytes();
+        return sizeInBytes(std::get<RefPtr<StringImpl>>(m_value));
     case IndexedDB::KeyType::Date:
         return sizeof(Date);
     case IndexedDB::KeyType::Number:

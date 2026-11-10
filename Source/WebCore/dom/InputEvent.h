@@ -39,34 +39,34 @@ class InputEvent final : public UIEvent {
     WTF_MAKE_TZONE_ALLOCATED(InputEvent);
 public:
     struct Init : UIEventInit {
-        String data;
+        RefPtr<StringImpl> data;
         bool isComposing { false }; // input method
-        String inputType;
+        RefPtr<StringImpl> inputType;
     };
 
     virtual ~InputEvent();
 
-    NODELETE static Ref<InputEvent> create(const AtomString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&& view,
-        const String& data, RefPtr<DataTransfer>&&, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing);
+    NODELETE static Ref<InputEvent> create(AtomStringImpl* eventType, StringImpl* inputType, IsCancelable, RefPtr<WindowProxy>&& view,
+        StringImpl* data, RefPtr<DataTransfer>&&, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing);
 
-    static Ref<InputEvent> create(const AtomString& type, const Init& initializer)
+    static Ref<InputEvent> create(AtomStringImpl* type, const Init& initializer)
     {
         return adoptRef(*new InputEvent(type, initializer));
     }
 
-    const String& inputType() const LIFETIME_BOUND { return m_inputType; }
-    const String& data() const LIFETIME_BOUND { return m_data; }
+    const RefPtr<StringImpl>& inputType() const LIFETIME_BOUND { return m_inputType; }
+    const RefPtr<StringImpl>& data() const LIFETIME_BOUND { return m_data; }
     NODELETE DataTransfer* dataTransfer() const;
     const Vector<Ref<StaticRange>>& getTargetRanges() LIFETIME_BOUND { return m_targetRanges; }
     bool isInputMethodComposing() const { return m_isInputMethodComposing; }
 
 private:
-    InputEvent(const AtomString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&&,
-        const String& data, RefPtr<DataTransfer>&&, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing);
-    InputEvent(const AtomString& eventType, const Init&);
+    InputEvent(AtomStringImpl* eventType, StringImpl* inputType, IsCancelable, RefPtr<WindowProxy>&&,
+        StringImpl* data, RefPtr<DataTransfer>&&, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing);
+    InputEvent(AtomStringImpl* eventType, const Init&);
 
-    String m_inputType;
-    String m_data;
+    RefPtr<StringImpl> m_inputType;
+    RefPtr<StringImpl> m_data;
     const RefPtr<DataTransfer> m_dataTransfer;
     Vector<Ref<StaticRange>> m_targetRanges;
     bool m_isInputMethodComposing;

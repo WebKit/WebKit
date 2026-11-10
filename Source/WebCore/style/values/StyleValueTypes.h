@@ -645,7 +645,7 @@ struct SerializeInvoker {
         Serialize<StyleType>{}(builder, context, style, value, std::forward<Rest>(rest)...);
     }
 
-    template<typename StyleType, typename... Rest> [[nodiscard]] WTF::String operator()(const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest) const
+    template<typename StyleType, typename... Rest> [[nodiscard]] RefPtr<StringImpl> operator()(const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest) const
     {
         StringBuilder builder;
         this->operator()(builder, context, style, value, std::forward<Rest>(rest)...);
@@ -1592,6 +1592,21 @@ struct IsEmptyInvoker {
     }
 };
 inline constexpr IsEmptyInvoker isEmpty{};
+
+// Specialization for strings (`RefPtr<StringImpl>`, `RefPtr<AtomStringImpl>`, `StringImpl*`, `AtomStringImpl*`).
+template<typename T> requires std::derived_from<T, StringImpl> struct IsEmpty<RefPtr<T>> {
+    bool operator()(const RefPtr<T>& value)
+    {
+        return WTF::isEmpty(value);
+    }
+};
+
+template<typename T> requires std::derived_from<T, StringImpl> struct IsEmpty<T*> {
+    bool operator()(T* value)
+    {
+        return WTF::isEmpty(value);
+    }
+};
 
 // Specialization for `SpaceSeparatedSize`.
 template<typename T> struct IsEmpty<SpaceSeparatedSize<T>> {

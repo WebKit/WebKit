@@ -90,9 +90,9 @@ public:
     // out overlap: they are pointers into the mapping, not ArrayBuffers that are detached on unmap.
     std::span<uint8_t> mappedRangeForCAPI(uint64_t offset, std::optional<uint64_t> size);
     void unmap() final;
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     void generateAValidationError() final;
-    void generateAValidationError(String&&);
+    void generateAValidationError(RefPtr<StringImpl>&&);
 
     NODELETE bool isValid() const final;
 

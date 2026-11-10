@@ -51,7 +51,7 @@ private:
     void getPixelBuffer(const IntRect&, PixelBuffer&) final { RELEASE_ASSERT_NOT_REACHED(); }
     void putPixelBuffer(const PixelBufferSourceView&, const IntRect&, const IntPoint&, AlphaPremultiplication) final { RELEASE_ASSERT_NOT_REACHED(); }
 
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
     const Ref<WebCore::ControlFactory> m_controlFactory;
     const Ref<DisplayList::RecorderImpl> m_drawingContext;

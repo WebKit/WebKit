@@ -43,8 +43,8 @@ class CryptoAlgorithmRegistry {
 public:
     static CryptoAlgorithmRegistry& singleton();
 
-    std::optional<CryptoAlgorithmIdentifier> identifier(const String&);
-    String name(CryptoAlgorithmIdentifier);
+    std::optional<CryptoAlgorithmIdentifier> identifier(StringImpl*);
+    RefPtr<StringImpl> name(CryptoAlgorithmIdentifier);
 
     RefPtr<CryptoAlgorithm> create(CryptoAlgorithmIdentifier);
 
@@ -59,11 +59,11 @@ private:
         registerAlgorithm(AlgorithmClass::s_name, AlgorithmClass::s_identifier, AlgorithmClass::create);
     }
 
-    void registerAlgorithm(const String& name, CryptoAlgorithmIdentifier, CryptoAlgorithmConstructor);
+    void registerAlgorithm(ASCIILiteral name, CryptoAlgorithmIdentifier, CryptoAlgorithmConstructor);
 
     Lock m_lock;
-    HashMap<String, CryptoAlgorithmIdentifier, ASCIICaseInsensitiveHash> m_identifiers WTF_GUARDED_BY_LOCK(m_lock);
-    HashMap<unsigned, std::pair<String, CryptoAlgorithmConstructor>> m_constructors WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<RefPtr<StringImpl>, CryptoAlgorithmIdentifier, ASCIICaseInsensitiveHash> m_identifiers WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<unsigned, std::pair<RefPtr<StringImpl>, CryptoAlgorithmConstructor>> m_constructors WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace WebCore

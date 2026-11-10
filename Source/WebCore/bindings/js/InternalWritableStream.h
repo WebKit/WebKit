@@ -52,7 +52,7 @@ public:
     void errorIfPossible(JSC::JSGlobalObject&, JSC::JSValue);
 
     ExceptionOr<JSC::JSValue> abort(JSC::JSGlobalObject&, JSC::JSValue);
-    String state(JSC::JSGlobalObject& globalObject) const;
+    RefPtr<StringImpl> state(JSC::JSGlobalObject& globalObject) const;
     bool closeQueuedOrInFlight();
 
     JSC::JSValue storedError() const;

@@ -202,7 +202,7 @@ TEST(ObjectSizeNegotiation, BitmapImageNaturalDimensions)
 
     RefPtr imageBuffer = ImageBuffer::create({ 20, 10 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     ASSERT_TRUE(imageBuffer);
-    auto data = encodeData(WTF::move(imageBuffer), "image/png"_s);
+    auto data = encodeData(WTF::move(imageBuffer), "image/png"_si);
     ASSERT_FALSE(data.isEmpty());
 
     Ref image = BitmapImage::create();

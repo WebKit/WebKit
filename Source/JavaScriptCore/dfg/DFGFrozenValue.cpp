@@ -39,7 +39,7 @@ FrozenValue* FrozenValue::emptySingleton()
     return &empty;
 }
 
-String FrozenValue::tryGetString(Graph& graph)
+RefPtr<StringImpl> FrozenValue::tryGetString(Graph& graph)
 {
     return LazyJSValue(this).tryGetString(graph);
 }

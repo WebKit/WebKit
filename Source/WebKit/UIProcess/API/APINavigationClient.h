@@ -82,8 +82,8 @@ public:
     virtual void didStartProvisionalNavigation(WebKit::WebPageProxy&, const WebCore::ResourceRequest&, Navigation*, Object*) { }
     virtual void didStartProvisionalLoadForFrame(WebKit::WebPageProxy&, WebCore::ResourceRequest&&, WebKit::FrameInfoData&&) { }
     virtual void didReceiveServerRedirectForProvisionalNavigation(WebKit::WebPageProxy&, Navigation*, Object*) { }
-    virtual void willPerformClientRedirect(WebKit::WebPageProxy&, WTF::String&& destinationURL, double) { }
-    virtual void didPerformClientRedirect(WebKit::WebPageProxy&, const WTF::String& sourceURL, const WTF::String& destinationURL) { }
+    virtual void willPerformClientRedirect(WebKit::WebPageProxy&, RefPtr<StringImpl>&& destinationURL, double) { }
+    virtual void didPerformClientRedirect(WebKit::WebPageProxy&, StringImpl* sourceURL, StringImpl* destinationURL) { }
     virtual void didCancelClientRedirect(WebKit::WebPageProxy&) { }
     virtual void didFailProvisionalNavigationWithError(WebKit::WebPageProxy&, WebKit::FrameInfoData&&, Navigation*, const WTF::URL&, const WebCore::ResourceError&, Object*) { }
     virtual void didFailProvisionalLoadWithErrorForFrame(WebKit::WebPageProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceError&, WebKit::FrameInfoData&&) { }
@@ -97,7 +97,7 @@ public:
     virtual void didFailLoadWithErrorForFrame(WebKit::WebPageProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceError&, WebKit::FrameInfoData&&) { }
     virtual void didSameDocumentNavigation(WebKit::WebPageProxy&, Navigation*, WebKit::SameDocumentNavigationType, Object*) { }
     virtual void didApplyLinkDecorationFiltering(WebKit::WebPageProxy&, const WTF::URL&, const WTF::URL&) { }
-    virtual void didPromptForStorageAccess(WebKit::WebPageProxy&, const WTF::String& topFrameDomain, const WTF::String& subFrameDomain, bool hasQuirk) { }
+    virtual void didPromptForStorageAccess(WebKit::WebPageProxy&, StringImpl* topFrameDomain, StringImpl* subFrameDomain, bool hasQuirk) { }
 
     virtual void didDisplayInsecureContent(WebKit::WebPageProxy&, API::Object*) { }
     virtual void didRunInsecureContent(WebKit::WebPageProxy&, API::Object*) { }
@@ -121,7 +121,7 @@ public:
     virtual void legacyWebCryptoMasterKey(WebKit::WebPageProxy&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler) { completionHandler(std::nullopt); }
 
 #if USE(QUICK_LOOK)
-    virtual void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) { }
+    virtual void didStartLoadForQuickLookDocumentInMainFrame(StringImpl* fileName, StringImpl* uti) { }
     virtual void didFinishLoadForQuickLookDocumentInMainFrame(const WebCore::FragmentedSharedBuffer&) { }
 #endif
 
@@ -150,7 +150,7 @@ public:
     virtual bool didChangeBackForwardList(WebKit::WebPageProxy&, WebKit::WebBackForwardListItem*, const Vector<Ref<WebKit::WebBackForwardListItem>>&) { return false; }
 
 #if HAVE(APP_SSO)
-    virtual void decidePolicyForSOAuthorizationLoad(WebKit::WebPageProxy&, WebKit::SOAuthorizationLoadPolicy currentSOAuthorizationLoadPolicy, const WTF::String&, CompletionHandler<void(WebKit::SOAuthorizationLoadPolicy)>&& completionHandler)
+    virtual void decidePolicyForSOAuthorizationLoad(WebKit::WebPageProxy&, WebKit::SOAuthorizationLoadPolicy currentSOAuthorizationLoadPolicy, StringImpl*, CompletionHandler<void(WebKit::SOAuthorizationLoadPolicy)>&& completionHandler)
     {
         completionHandler(currentSOAuthorizationLoadPolicy);
     }

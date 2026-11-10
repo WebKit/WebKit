@@ -163,12 +163,12 @@ std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView code
     ++nextElement;
 
     // Support the legacy identifiers (with no parameters) for VP8 and VP9.
-    if (configuration.codecName == "vp8"_s || configuration.codecName == "vp9"_s) {
+    if (equal(configuration.codecName, "vp8"_s) || equal(configuration.codecName, "vp9"_s)) {
         if (nextElement == codecSplit.end())
             return configuration;
 
         auto codecString = codecView.toStringWithoutCopying();
-        if (codecString == "vp8.0"_s || codecString == "vp9.0"_s)
+        if (equal(codecString, "vp8.0"_s) || equal(codecString, "vp9.0"_s))
             return configuration;
     }
 
@@ -179,7 +179,7 @@ std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView code
     // within their allowed range, the processing device SHALL treat it as an error."
 
     // Codec identifier: legal values are 'vp08' or 'vp09'.
-    if (configuration.codecName != "vp08"_s && configuration.codecName != "vp09"_s)
+    if (!equal(configuration.codecName, "vp08"_s) && !equal(configuration.codecName, "vp09"_s))
         return std::nullopt;
 
     if (nextElement == codecSplit.end())
@@ -298,7 +298,7 @@ std::optional<VPCodecConfigurationRecord> parseVPCodecParametersIgnoringColorFie
     return configuration;
 }
 
-String createVPCodecParametersString(const VPCodecConfigurationRecord& configuration)
+RefPtr<StringImpl> createVPCodecParametersString(const VPCodecConfigurationRecord& configuration)
 {
     // The format of the 'vp09' codec string is specified in the webm GitHub repo:
     // <https://github.com/webmproject/vp9-dash/blob/master/VPCodecISOMediaFileFormatBinding.md#codecs-parameter-string>
@@ -325,10 +325,10 @@ String createVPCodecParametersString(const VPCodecConfigurationRecord& configura
         || !isValidRange(configuration.videoFullRangeFlag))
         return resultBuilder.toString();
 
-    resultBuilder.append(".0"_s, numberToStringUnsigned<String>(configuration.profile), '.', numberToStringUnsigned<String>(configuration.level), '.');
+    resultBuilder.append(".0"_s, numberToStringUnsigned<RefPtr<StringImpl>>(configuration.profile), '.', numberToStringUnsigned<RefPtr<StringImpl>>(configuration.level), '.');
     if (configuration.bitDepth < 10)
         resultBuilder.append('0');
-    resultBuilder.append(numberToStringUnsigned<String>(configuration.bitDepth));
+    resultBuilder.append(numberToStringUnsigned<RefPtr<StringImpl>>(configuration.bitDepth));
 
     static NeverDestroyed<VPCodecConfigurationRecord> defaultConfiguration { };
 
@@ -342,16 +342,16 @@ String createVPCodecParametersString(const VPCodecConfigurationRecord& configura
         && configuration.matrixCoefficients == defaultConfiguration->matrixCoefficients)
         return resultBuilder.toString();
 
-    resultBuilder.append(".0"_s, numberToStringUnsigned<String>(configuration.chromaSubsampling), '.');
+    resultBuilder.append(".0"_s, numberToStringUnsigned<RefPtr<StringImpl>>(configuration.chromaSubsampling), '.');
     if (configuration.colorPrimaries < 10)
         resultBuilder.append('0');
-    resultBuilder.append(numberToStringUnsigned<String>(configuration.colorPrimaries), '.');
+    resultBuilder.append(numberToStringUnsigned<RefPtr<StringImpl>>(configuration.colorPrimaries), '.');
     if (configuration.transferCharacteristics < 10)
         resultBuilder.append('0');
-    resultBuilder.append(numberToStringUnsigned<String>(configuration.transferCharacteristics), '.');
+    resultBuilder.append(numberToStringUnsigned<RefPtr<StringImpl>>(configuration.transferCharacteristics), '.');
     if (configuration.matrixCoefficients < 10)
         resultBuilder.append('0');
-    resultBuilder.append(numberToStringUnsigned<String>(configuration.matrixCoefficients), ".0"_s, numberToStringUnsigned<String>(configuration.videoFullRangeFlag));
+    resultBuilder.append(numberToStringUnsigned<RefPtr<StringImpl>>(configuration.matrixCoefficients), ".0"_s, numberToStringUnsigned<RefPtr<StringImpl>>(configuration.videoFullRangeFlag));
 
     return resultBuilder.toString();
 }
@@ -545,7 +545,7 @@ std::optional<VPCodecConfigurationRecord> vpCodecConfigurationRecordFromVPXByteS
         bool colorSpace = colorSpaceAndClampingField & 0x80;
 
         VPCodecConfigurationRecord record;
-        record.codecName = "vp08"_s;
+        record.codecName = "vp08"_si;
         record.profile = 0;
         record.level = 10;
         record.bitDepth = 8;
@@ -585,7 +585,7 @@ std::optional<VPCodecConfigurationRecord> vpCodecConfigurationRecordFromVPXByteS
         return { };
 
     VPCodecConfigurationRecord record;
-    record.codecName = "vp09"_s;
+    record.codecName = "vp09"_si;
     record.profile = profile;
 
     if (profile >= 2)

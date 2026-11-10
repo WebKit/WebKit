@@ -43,7 +43,7 @@ public:
         TokenError
     };
 
-    explicit IDBKeyPathLexer(const String& s)
+    explicit IDBKeyPathLexer(StringImpl* s)
         : m_string(s)
         , m_remainingText(s)
         , m_currentTokenType(TokenError)
@@ -58,19 +58,19 @@ public:
         return m_currentTokenType;
     }
 
-    NODELETE const String& currentElement() { return m_currentElement; }
+    NODELETE const RefPtr<StringImpl>& currentElement() { return m_currentElement; }
 
 private:
-    TokenType lex(String&);
-    TokenType lexIdentifier(String&);
+    TokenType lex(RefPtr<StringImpl>&);
+    TokenType lexIdentifier(RefPtr<StringImpl>&);
 
-    String m_currentElement;
-    const String m_string;
+    RefPtr<StringImpl> m_currentElement;
+    const RefPtr<StringImpl> m_string;
     StringView m_remainingText;
     TokenType m_currentTokenType;
 };
 
-IDBKeyPathLexer::TokenType IDBKeyPathLexer::lex(String& element)
+IDBKeyPathLexer::TokenType IDBKeyPathLexer::lex(RefPtr<StringImpl>& element)
 {
     if (m_remainingText.isEmpty())
         return TokenEnd;
@@ -105,7 +105,7 @@ static inline bool isIdentifierCharacter(char16_t c)
 
 } // namespace
 
-IDBKeyPathLexer::TokenType IDBKeyPathLexer::lexIdentifier(String& element)
+IDBKeyPathLexer::TokenType IDBKeyPathLexer::lexIdentifier(RefPtr<StringImpl>& element)
 {
     StringView start = m_remainingText;
     if (!m_remainingText.isEmpty() && isIdentifierStartCharacter(m_remainingText[0]))
@@ -120,15 +120,15 @@ IDBKeyPathLexer::TokenType IDBKeyPathLexer::lexIdentifier(String& element)
     return TokenIdentifier;
 }
 
-static bool IDBIsValidKeyPath(const String& keyPath)
+static bool IDBIsValidKeyPath(StringImpl* keyPath)
 {
     IDBKeyPathParseError error;
-    Vector<String> keyPathElements;
+    Vector<RefPtr<StringImpl>> keyPathElements;
     IDBParseKeyPath(keyPath, keyPathElements, error);
     return error == IDBKeyPathParseError::None;
 }
 
-void IDBParseKeyPath(const String& keyPath, Vector<String>& elements, IDBKeyPathParseError& error)
+void IDBParseKeyPath(StringImpl* keyPath, Vector<RefPtr<StringImpl>>& elements, IDBKeyPathParseError& error)
 {
     // IDBKeyPath ::= EMPTY_STRING | identifier ('.' identifier)*
     // The basic state machine is:
@@ -156,7 +156,7 @@ void IDBParseKeyPath(const String& keyPath, Vector<String>& elements, IDBKeyPath
             IDBKeyPathLexer::TokenType tokenType = lexer.currentTokenType();
             ASSERT(tokenType == IDBKeyPathLexer::TokenIdentifier);
 
-            String element = lexer.currentElement();
+            RefPtr<StringImpl> element = lexer.currentElement();
             elements.append(element);
 
             tokenType = lexer.nextTokenType();
@@ -193,9 +193,9 @@ void IDBParseKeyPath(const String& keyPath, Vector<String>& elements, IDBKeyPath
 
 bool isIDBKeyPathValid(const IDBKeyPath& keyPath)
 {
-    auto visitor = WTF::makeVisitor([](const String& string) {
+    auto visitor = WTF::makeVisitor([](StringImpl* string) {
         return IDBIsValidKeyPath(string);
-    }, [](const Vector<String>& vector) {
+    }, [](const Vector<RefPtr<StringImpl>>& vector) {
         if (vector.isEmpty())
             return false;
         for (auto& key : vector) {
@@ -208,11 +208,11 @@ bool isIDBKeyPathValid(const IDBKeyPath& keyPath)
 }
 
 #if !LOG_DISABLED
-String loggingString(const IDBKeyPath& path)
+RefPtr<StringImpl> loggingString(const IDBKeyPath& path)
 {
-    auto visitor = WTF::makeVisitor([](const String& string) {
+    auto visitor = WTF::makeVisitor([](StringImpl* string) {
         return makeString("< "_s, string, " >"_s);
-    }, [](const Vector<String>& strings) {
+    }, [](const Vector<RefPtr<StringImpl>>& strings) {
         if (strings.isEmpty())
             return "< >"_str;
 

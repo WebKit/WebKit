@@ -67,7 +67,7 @@ public:
 
     const IDBIndexInfo& info() const LIFETIME_BOUND { return m_info; }
 
-    void rename(const String& newName) { m_info.rename(newName); }
+    void rename(StringImpl* newName) { m_info.rename(newName); }
 
     IDBGetResult getResultForKeyRange(IndexedDB::IndexRecordType, const IDBKeyRangeData&) const;
     uint64_t countForKeyRange(const IDBKeyRangeData&);

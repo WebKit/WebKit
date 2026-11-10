@@ -30,8 +30,8 @@
 namespace WebCore {
 
 struct OpenID4VPSignature {
-    String protectedHeader;
-    String signature;
+    RefPtr<StringImpl> protectedHeader;
+    RefPtr<StringImpl> signature;
 };
 
 } // namespace WebCore

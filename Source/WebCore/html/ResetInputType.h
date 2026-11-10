@@ -49,9 +49,9 @@ private:
     {
     }
 
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
     void handleDOMActivateEvent(Event&) final;
-    String defaultValue() const final;
+    RefPtr<StringImpl> defaultValue() const final;
 };
 
 } // namespace WebCore

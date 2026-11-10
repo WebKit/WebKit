@@ -60,7 +60,7 @@ private:
         if (ASSERT_ENABLED && Options::crashOnFailedWasmValidate()) [[unlikely]]
             CRASH();
 
-        return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, String::number(m_offset + m_offsetInSource), ": "_s, makeString(args)...));
+        return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, makeString(m_offset + m_offsetInSource), ": "_s, makeString(args)...));
     }
 
     [[nodiscard]] PartialResult parseGlobalType(GlobalInformation&);

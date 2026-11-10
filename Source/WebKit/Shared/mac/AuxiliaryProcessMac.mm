@@ -127,7 +127,7 @@ struct CachedSandboxHeader {
 // byte N
 
 struct SandboxInfo {
-    SandboxInfo(const String& parentDirectoryPath, const String& directoryPath, const String& filePath, const SandboxParametersPtr& sandboxParameters, const ASCIICString& header, const WTF::AuxiliaryProcessType& processType, const SandboxInitializationParameters& initializationParameters, const String& profileOrProfilePath, bool isProfilePath)
+    SandboxInfo(StringImpl* parentDirectoryPath, StringImpl* directoryPath, StringImpl* filePath, const SandboxParametersPtr& sandboxParameters, const ASCIICString& header, const WTF::AuxiliaryProcessType& processType, const SandboxInitializationParameters& initializationParameters, StringImpl* profileOrProfilePath, bool isProfilePath)
         : parentDirectoryPath { parentDirectoryPath }
         , directoryPath { directoryPath }
         , filePath { filePath }
@@ -140,14 +140,14 @@ struct SandboxInfo {
     {
     }
 
-    const String& parentDirectoryPath;
-    const String& directoryPath;
-    const String& filePath;
+    const RefPtr<StringImpl> parentDirectoryPath;
+    const RefPtr<StringImpl> directoryPath;
+    const RefPtr<StringImpl> filePath;
     const SandboxParametersPtr& sandboxParameters;
     const ASCIICString& header;
     const WTF::AuxiliaryProcessType& processType;
     const SandboxInitializationParameters& initializationParameters;
-    const String& profileOrProfilePath;
+    const RefPtr<StringImpl> profileOrProfilePath;
     const bool isProfilePath;
 };
 
@@ -191,7 +191,7 @@ static OSStatus enableSandboxStyleFileQuarantine()
 }
 
 #if USE(CACHE_COMPILED_SANDBOX)
-static std::optional<Vector<uint8_t>> fileContents(const String& path)
+static std::optional<Vector<uint8_t>> fileContents(StringImpl* path)
 {
     auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
     if (!fileHandle)
@@ -224,7 +224,7 @@ constexpr ASCIILiteral processStorageClass(WTF::AuxiliaryProcessType type)
     }
 }
 
-static std::optional<ASCIICString> setAndSerializeSandboxParameters(const SandboxInitializationParameters& initializationParameters, const SandboxParametersPtr& sandboxParameters, const String& profileOrProfilePath, bool isProfilePath)
+static std::optional<ASCIICString> setAndSerializeSandboxParameters(const SandboxInitializationParameters& initializationParameters, const SandboxParametersPtr& sandboxParameters, StringImpl* profileOrProfilePath, bool isProfilePath)
 {
     StringBuilder builder;
     for (size_t i = 0; i < initializationParameters.count(); ++i) {
@@ -243,15 +243,15 @@ static std::optional<ASCIICString> setAndSerializeSandboxParameters(const Sandbo
         builder.append(*contents);
     } else
         builder.append(profileOrProfilePath);
-    return builder.toString().ascii();
+    return ascii(builder.toString());
 }
 
-static String sandboxDataVaultParentDirectory()
+static RefPtr<StringImpl> sandboxDataVaultParentDirectory()
 {
     return WTF::FileSystemImpl::darwinCacheDirectory();
 }
 
-static String sandboxDirectory(WTF::AuxiliaryProcessType processType, const String& parentDirectory)
+static RefPtr<StringImpl> sandboxDirectory(WTF::AuxiliaryProcessType processType, StringImpl* parentDirectory)
 {
     StringBuilder directory;
     directory.append("/.nofollow"_s);
@@ -282,7 +282,7 @@ static String sandboxDirectory(WTF::AuxiliaryProcessType processType, const Stri
     return directory.toString();
 }
 
-static String sandboxFilePath(const String& directoryPath)
+static RefPtr<StringImpl> sandboxFilePath(StringImpl* directoryPath)
 {
     return makeString(directoryPath, "/CompiledSandbox"_s);
 }
@@ -379,7 +379,7 @@ static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
         return nullptr;
 
     char* error = nullptr;
-    auto profileOrProfilePath = info.isProfilePath ? FileSystem::fileSystemRepresentation(info.profileOrProfilePath) : info.profileOrProfilePath.utf8();
+    auto profileOrProfilePath = info.isProfilePath ? FileSystem::fileSystemRepresentation(info.profileOrProfilePath) : utf8(info.profileOrProfilePath);
     if (profileOrProfilePath.isNull())
         return nullptr;
     SandboxProfilePtr sandboxProfile { info.isProfilePath ? sandboxCompileFile(profileOrProfilePath, info.sandboxParameters.get(), &error) : sandboxCompileString(profileOrProfilePath, info.sandboxParameters.get(), &error) };
@@ -391,7 +391,7 @@ static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
     const bool haveBuiltin = sandboxProfile->builtin;
     int32_t libsandboxVersion = NSVersionOfRunTimeLibrary("sandbox");
     RELEASE_ASSERT(libsandboxVersion > 0);
-    String osVersion = systemMarketingVersionSingleton();
+    RefPtr<StringImpl> osVersion = StringImpl::create(systemMarketingVersionSingleton());
 
     CachedSandboxHeader cachedHeader {
         CachedSandboxVersionNumber,
@@ -406,7 +406,7 @@ static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
     auto sandboxBuildID = unsafeSpanIncludingNullTerminator(SANDBOX_BUILD_ID);
     memcpySpan(std::span { cachedHeader.sandboxBuildID }, sandboxBuildID);
 
-    auto osVersionUTF8 = osVersion.utf8();
+    auto osVersionUTF8 = utf8(osVersion);
     memcpySpan(std::span { cachedHeader.osVersion }, osVersionUTF8.spanIncludingNullTerminator());
 
     const size_t expectedFileSize = sizeof(cachedHeader) + cachedHeader.headerSize + (haveBuiltin ? cachedHeader.builtinSize : 0) + cachedHeader.dataSize;
@@ -444,7 +444,7 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
     memcpySpan(asMutableByteSpan(cachedSandboxHeader), cachedSandboxContents.span().first(sizeof(CachedSandboxHeader)));
     int32_t libsandboxVersion = NSVersionOfRunTimeLibrary("sandbox");
     RELEASE_ASSERT(libsandboxVersion > 0);
-    String osVersion = systemMarketingVersionSingleton();
+    RefPtr<StringImpl> osVersion = StringImpl::create(systemMarketingVersionSingleton());
 
     if (cachedSandboxHeader.versionNumber != CachedSandboxVersionNumber)
         return false;
@@ -504,11 +504,11 @@ static inline const NSBundle *webKit2BundleSingleton()
     return bundle.get().get();
 }
 
-static void getSandboxProfileOrProfilePath(const SandboxInitializationParameters& parameters, String& profileOrProfilePath, bool& isProfilePath)
+static void getSandboxProfileOrProfilePath(const SandboxInitializationParameters& parameters, RefPtr<StringImpl>& profileOrProfilePath, bool& isProfilePath)
 {
     switch (parameters.mode()) {
     case SandboxInitializationParameters::ProfileSelectionMode::UseDefaultSandboxProfilePath:
-        profileOrProfilePath = [webKit2BundleSingleton() pathForResource:protect([[NSBundle mainBundle] bundleIdentifier]).get() ofType:@"sb"];
+        profileOrProfilePath = StringImpl::create([webKit2BundleSingleton() pathForResource:protect([[NSBundle mainBundle] bundleIdentifier]).get() ofType:@"sb"]);
         isProfilePath = true;
         return;
     case SandboxInitializationParameters::ProfileSelectionMode::UseOverrideSandboxProfilePath:
@@ -522,10 +522,10 @@ static void getSandboxProfileOrProfilePath(const SandboxInitializationParameters
     }
 }
 
-static bool compileAndApplySandboxSlowCase(const String& profileOrProfilePath, bool isProfilePath, const SandboxInitializationParameters& parameters)
+static bool compileAndApplySandboxSlowCase(StringImpl* profileOrProfilePath, bool isProfilePath, const SandboxInitializationParameters& parameters)
 {
     char* errorBuf;
-    auto temp = isProfilePath ? FileSystem::fileSystemRepresentation(profileOrProfilePath) : profileOrProfilePath.utf8();
+    auto temp = isProfilePath ? FileSystem::fileSystemRepresentation(profileOrProfilePath) : utf8(profileOrProfilePath);
     uint64_t flags = isProfilePath ? SANDBOX_NAMED_EXTERNAL : 0;
 
     if (sandboxInitWithParameters(temp, flags, parameters.namedParameterVector().span().data(), &errorBuf)) {
@@ -538,12 +538,12 @@ static bool compileAndApplySandboxSlowCase(const String& profileOrProfilePath, b
     return true;
 }
 
-static bool applySandbox(const AuxiliaryProcessInitializationParameters& parameters, const SandboxInitializationParameters& sandboxInitializationParameters, const String& dataVaultParentDirectory)
+static bool applySandbox(const AuxiliaryProcessInitializationParameters& parameters, const SandboxInitializationParameters& sandboxInitializationParameters, StringImpl* dataVaultParentDirectory)
 {
-    String profileOrProfilePath;
+    RefPtr<StringImpl> profileOrProfilePath;
     bool isProfilePath;
     getSandboxProfileOrProfilePath(sandboxInitializationParameters, profileOrProfilePath, isProfilePath);
-    if (profileOrProfilePath.isEmpty()) {
+    if (isEmpty(profileOrProfilePath)) {
         SAFE_WTFLOGALWAYS("%s: Profile path is invalid\n", FileSystem::currentExecutableName());
         CRASH();
     }
@@ -569,8 +569,8 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
         return compileAndApplySandboxSlowCase(profileOrProfilePath, isProfilePath, sandboxInitializationParameters);
     }
 
-    String directoryPath { sandboxDirectory(parameters.processType, dataVaultParentDirectory) };
-    String filePath = sandboxFilePath(directoryPath);
+    RefPtr<StringImpl> directoryPath { sandboxDirectory(parameters.processType, dataVaultParentDirectory) };
+    RefPtr<StringImpl> filePath = sandboxFilePath(directoryPath);
     SandboxInfo info {
         dataVaultParentDirectory,
         directoryPath,
@@ -603,16 +603,16 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
 #endif // USE(CACHE_COMPILED_SANDBOX)
 }
 
-static String getUserDirectorySuffix(const AuxiliaryProcessInitializationParameters& parameters)
+static RefPtr<StringImpl> getUserDirectorySuffix(const AuxiliaryProcessInitializationParameters& parameters)
 {
     auto userDirectorySuffix = parameters.extraInitializationData.find<HashTranslatorASCIILiteral>("user-directory-suffix"_s);
     if (userDirectorySuffix != parameters.extraInitializationData.end()) {
-        String suffix = userDirectorySuffix->value;
-        return suffix.left(suffix.find('/'));
+        RefPtr<StringImpl> suffix = userDirectorySuffix->value;
+        return left(suffix, find(suffix, '/'));
     }
 
-    String clientIdentifier = codeSigningIdentifier(OSObjectPtr { parameters.connectionIdentifier.xpcConnection }.get());
-    if (clientIdentifier.isNull())
+    RefPtr<StringImpl> clientIdentifier = codeSigningIdentifier(OSObjectPtr { parameters.connectionIdentifier.xpcConnection }.get());
+    if (!clientIdentifier)
         clientIdentifier = parameters.clientIdentifier;
     return makeString(protect([[NSBundle mainBundle] bundleIdentifier]).get(), '+', clientIdentifier);
 }
@@ -627,7 +627,7 @@ static void closeOpenDirectoryConnections()
 
 static void populateSandboxInitializationParameters(SandboxInitializationParameters& sandboxParameters)
 {
-    RELEASE_ASSERT(!sandboxParameters.userDirectorySuffix().isNull());
+    RELEASE_ASSERT(sandboxParameters.userDirectorySuffix());
 
     // Use private temporary and cache directories.
     auto userDirectorySuffixString = FileSystem::fileSystemRepresentation(sandboxParameters.userDirectorySuffix());
@@ -640,26 +640,26 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
         exitProcess(EX_NOPERM);
     }
 
-    String bundlePath = webKit2BundleSingleton().bundlePath;
+    RefPtr<StringImpl> bundlePath = StringImpl::create(webKit2BundleSingleton().bundlePath);
     // A WebKit framework installed outside /System/Library/Frameworks (e.g. relocated into an
     // app bundle by a spade Performance build, or a development install) is not covered by the
     // system-framework or Cryptex file-map-executable sandbox grants, so the soft-linked
     // libWebKitSwift.dylib cannot be mapped. Signal this relocated case to the sandbox so it can
     // allow mapping that one dylib; shipping root and Cryptex installs are unaffected.
-    bool isRelocatedFramework = !bundlePath.startsWith("/System/Library/Frameworks"_s);
+    bool isRelocatedFramework = !startsWith(bundlePath, "/System/Library/Frameworks"_s);
     if (isRelocatedFramework)
-        bundlePath = webKit2BundleSingleton().bundlePath.stringByDeletingLastPathComponent;
+        bundlePath = StringImpl::create(webKit2BundleSingleton().bundlePath.stringByDeletingLastPathComponent);
 
-    sandboxParameters.addPathParameter("WEBKIT2_FRAMEWORK_DIR"_s, bundlePath.utf8());
+    sandboxParameters.addPathParameter("WEBKIT2_FRAMEWORK_DIR"_s, utf8(bundlePath));
     sandboxParameters.addParameter("WK_FRAMEWORKS_ARE_RELOCATED"_s, isRelocatedFramework ? "YES"_s : "NO"_s);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_TEMP_DIR"_s, _CS_DARWIN_USER_TEMP_DIR);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_CACHE_DIR"_s, _CS_DARWIN_USER_CACHE_DIR);
 
-    std::optional<String> homeDirectory = FileSystem::homeDirectory();
+    std::optional<RefPtr<StringImpl>> homeDirectory = FileSystem::homeDirectory();
     RELEASE_ASSERT(homeDirectory);
     
-    sandboxParameters.addPathParameter("HOME_DIR"_s, homeDirectory->utf8());
-    String path = FileSystem::pathByAppendingComponents(*homeDirectory, std::initializer_list<StringView>({ "Library"_s, "Preferences"_s }));
+    sandboxParameters.addPathParameter("HOME_DIR"_s, utf8(*homeDirectory));
+    RefPtr<StringImpl> path = FileSystem::pathByAppendingComponents(*homeDirectory, std::initializer_list<StringView>({ "Library"_s, "Preferences"_s }));
     sandboxParameters.addPathParameter("HOME_LIBRARY_PREFERENCES_DIR"_s, FileSystem::fileSystemRepresentation(path));
 
 #if CPU(X86_64)
@@ -683,9 +683,9 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
 #if USE(CACHE_COMPILED_SANDBOX)
     // This must be called before populateSandboxInitializationParameters so that the path does not include the user directory suffix.
     // We don't want the user directory suffix because we want all processes of the same type to use the same cache directory.
-    String dataVaultParentDirectory { sandboxDataVaultParentDirectory() };
+    RefPtr<StringImpl> dataVaultParentDirectory { sandboxDataVaultParentDirectory() };
 #else
-    String dataVaultParentDirectory;
+    RefPtr<StringImpl> dataVaultParentDirectory;
 #endif
 
     bool enableMessageFilter = false;
@@ -694,7 +694,7 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
 #endif
     sandboxParameters.addParameter("ENABLE_SANDBOX_MESSAGE_FILTER"_s, enableMessageFilter ? "YES"_s : "NO"_s);
 
-    if (sandboxParameters.userDirectorySuffix().isNull())
+    if (!sandboxParameters.userDirectorySuffix())
         sandboxParameters.setUserDirectorySuffix(getUserDirectorySuffix(parameters));
 
     populateSandboxInitializationParameters(sandboxParameters);
@@ -714,7 +714,7 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
     }
 }
 
-void AuxiliaryProcess::applySandboxProfileForDaemon(const String& profilePath, const String& userDirectorySuffix)
+void AuxiliaryProcess::applySandboxProfileForDaemon(StringImpl* profilePath, StringImpl* userDirectorySuffix)
 {
     TraceScope traceScope(InitializeSandboxStart, InitializeSandboxEnd);
 
@@ -723,10 +723,10 @@ void AuxiliaryProcess::applySandboxProfileForDaemon(const String& profilePath, c
     parameters.setUserDirectorySuffix(userDirectorySuffix);
     populateSandboxInitializationParameters(parameters);
 
-    String profileOrProfilePath;
+    RefPtr<StringImpl> profileOrProfilePath;
     bool isProfilePath;
     getSandboxProfileOrProfilePath(parameters, profileOrProfilePath, isProfilePath);
-    RELEASE_ASSERT(!profileOrProfilePath.isEmpty());
+    RELEASE_ASSERT(!isEmpty(profileOrProfilePath));
 
     bool success = compileAndApplySandboxSlowCase(profileOrProfilePath, isProfilePath, parameters);
     RELEASE_ASSERT(success);

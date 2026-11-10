@@ -48,21 +48,21 @@ static std::optional<Latin1CString> extractBoundary(const CurlResponse& response
     static const auto contentTypeLength = strlen("content-type:");
 
     for (auto header : response.headers) {
-        if (!header.startsWithIgnoringASCIICase("content-type:"_s))
+        if (!startsWithIgnoringASCIICase(header, "content-type:"_s))
             continue;
 
-        auto contentType = ParsedContentType::create(header.substring(contentTypeLength));
+        auto contentType = ParsedContentType::create(substring(header, contentTypeLength));
         if (!contentType)
             return std::nullopt;
 
         if (!equalLettersIgnoringASCIICase(contentType->mimeType(), "multipart/x-mixed-replace"_s))
             return std::nullopt;
 
-        auto boundary = contentType->parameterValueForName("boundary"_s);
-        if (boundary.isEmpty())
+        auto boundary = contentType->parameterValueForName("boundary"_si);
+        if (isEmpty(boundary))
             return std::nullopt;
 
-        return makeString("--"_s, boundary).latin1();
+        return latin1(makeString("--"_s, boundary));
     }
 
     return std::nullopt;
@@ -304,9 +304,9 @@ CurlMultipartHandle::ParseHeadersResult CurlMultipartHandle::parseHeadersIfPossi
         return ParseHeadersResult::HeaderSizeTooLarge;
 
     // Parse the HTTP headers.
-    String failureReason;
+    RefPtr<StringImpl> failureReason;
     StringView name;
-    String value;
+    RefPtr<StringImpl> value;
 
     for (auto p = contentStartPtr; p < end; ++p) {
         size_t consumedLength = parseHTTPHeader(std::span { p, static_cast<size_t>(end - p) }, failureReason, name, value, false);

@@ -58,17 +58,17 @@ public:
     WebCore::SoupNetworkSession& soupNetworkSession() const { return *m_networkSession; }
     SoupSession* soupSession() const;
 
-    void setCookiePersistentStorage(const String& storagePath, SoupCookiePersistentStorageType);
+    void setCookiePersistentStorage(StringImpl* storagePath, SoupCookiePersistentStorageType);
 
     void setPersistentCredentialStorageEnabled(bool enabled) { m_persistentCredentialStorageEnabled = enabled; }
     bool persistentCredentialStorageEnabled() const { return m_persistentCredentialStorageEnabled; }
 
     void setIgnoreTLSErrors(bool);
-    void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String&);
+    void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, StringImpl*);
     void setProxySettings(const WebCore::SoupNetworkProxySettings&);
 
 private:
-    RefPtr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByWorker) final;
+    RefPtr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, StringImpl* protocol, const WebCore::ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByWorker) final;
     void clearCredentials(WallTime) final;
 
     const std::unique_ptr<WebCore::SoupNetworkSession> m_networkSession;

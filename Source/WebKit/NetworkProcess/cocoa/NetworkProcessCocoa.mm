@@ -101,8 +101,8 @@ static void blockNetworkAccessIfNeeded(IPC::Connection* parentProcessConnection)
 
     OSObjectPtr xpcConnection = protect(parentProcessConnection)->xpcConnection();
     auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(xpcConnection.get());
-    if (isPlatformBinary && signingIdentifier != "com.apple.textkit.nsattributedstringagent"_s) {
-        RELEASE_LOG(Process, "Not blocking network access since parent process %s is a platform binary", signingIdentifier.utf8());
+    if (isPlatformBinary && !equal(signingIdentifier, "com.apple.textkit.nsattributedstringagent"_s)) {
+        RELEASE_LOG(Process, "Not blocking network access since parent process %s is a platform binary", utf8(signingIdentifier));
         return;
     }
 
@@ -165,7 +165,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 #if ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
     // See TestController::cocoaPlatformInitialize for supporting a local DNS resolver when !ENABLE(TEST_DNS_SERVER_IN_NETWORKING_PROCESS).
     auto webPlatformTestDomain = "web-platform.test"_s;
-    if (parameters.localhostAliasesForTesting.contains(webPlatformTestDomain)) {
+    if (parameters.localhostAliasesForTesting.contains(StringImpl::create(webPlatformTestDomain).ptr())) {
         m_resolverConfig = adoptOSObject(nw_resolver_config_create());
         if (auto resolverConfig = m_resolverConfig) {
             nw_resolver_config_set_protocol(resolverConfig.get(), nw_resolver_protocol_dns53);
@@ -206,22 +206,22 @@ std::optional<audit_token_t> NetworkProcess::sourceApplicationAuditToken() const
 #endif
 }
 
-HashSet<String> NetworkProcess::hostNamesWithHSTSCache(PAL::SessionID sessionID) const
+HashSet<RefPtr<StringImpl>> NetworkProcess::hostNamesWithHSTSCache(PAL::SessionID sessionID) const
 {
-    HashSet<String> hostNames;
+    HashSet<RefPtr<StringImpl>> hostNames;
     if (CheckedPtr networkSession = downcast<NetworkSessionCocoa>(this->networkSession(sessionID))) {
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL NSString *host in protect(networkSession->hstsStorage()).get().nonPreloadedHosts)
-            hostNames.add(host);
+            hostNames.add(StringImpl::create(host));
     }
     return hostNames;
 }
 
-void NetworkProcess::deleteHSTSCacheForHostNames(PAL::SessionID sessionID, const Vector<String>& hostNames)
+void NetworkProcess::deleteHSTSCacheForHostNames(PAL::SessionID sessionID, const Vector<RefPtr<StringImpl>>& hostNames)
 {
     if (CheckedPtr networkSession = downcast<NetworkSessionCocoa>(this->networkSession(sessionID))) {
         for (auto& hostName : borrow(hostNames))
-            [protect(networkSession->hstsStorage()).get() resetHSTSForHost:hostName.createNSString().get()];
+            [protect(networkSession->hstsStorage()).get() resetHSTSForHost:createNSString(hostName).get()];
     }
 }
 
@@ -282,10 +282,10 @@ void NetworkProcess::platformFlushCookies(PAL::SessionID sessionID, CompletionHa
     saveCookies(cookieStorage.get(), WTF::move(completionHandler));
 }
 
-const String& NetworkProcess::uiProcessBundleIdentifier() const
+const RefPtr<StringImpl>& NetworkProcess::uiProcessBundleIdentifier() const
 {
-    if (m_uiProcessBundleIdentifier.isNull())
-        m_uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+    if (!m_uiProcessBundleIdentifier)
+        m_uiProcessBundleIdentifier = StringImpl::create([[NSBundle mainBundle] bundleIdentifier]);
 
     return m_uiProcessBundleIdentifier;
 }

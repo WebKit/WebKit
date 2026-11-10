@@ -50,7 +50,7 @@ struct TextEmphasisStyle {
         bool operator==(const Shape&) const = default;
     };
     struct CustomMark {
-        AtomString value;
+        RefPtr<AtomStringImpl> value;
 
         template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
         {
@@ -81,7 +81,7 @@ struct TextEmphasisStyle {
     bool isNone() const { return WTF::holdsAlternative<CSS::Keyword::None>(value); }
 
     // String representation of the mark.
-    const AtomString& markString() const;
+    const RefPtr<AtomStringImpl>& markString() const;
 
     template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {

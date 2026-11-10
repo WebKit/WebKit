@@ -38,11 +38,11 @@ namespace WebKit {
 
 class RemoteWorkerFrameLoaderClient final : public WebCore::EmptyFrameLoaderClient {
 public:
-    RemoteWorkerFrameLoaderClient(WebCore::FrameLoader&, WebPageProxyIdentifier, WebCore::PageIdentifier, const String& userAgent);
+    RemoteWorkerFrameLoaderClient(WebCore::FrameLoader&, WebPageProxyIdentifier, WebCore::PageIdentifier, StringImpl* userAgent);
 
     WebPageProxyIdentifier webPageProxyID() const { return m_webPageProxyID; }
 
-    void setUserAgent(String&& userAgent) { m_userAgent = WTF::move(userAgent); }
+    void setUserAgent(RefPtr<StringImpl>&& userAgent) { m_userAgent = WTF::move(userAgent); }
 
     void setServiceWorkerPageIdentifier(WebCore::ScriptExecutionContextIdentifier serviceWorkerPageIdentifier) { m_serviceWorkerPageIdentifier = serviceWorkerPageIdentifier; }
     std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier() const { return m_serviceWorkerPageIdentifier; }
@@ -54,10 +54,10 @@ private:
     bool shouldUseCredentialStorage(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier) final { return true; }
     bool isRemoteWorkerFrameLoaderClient() const final { return true; }
 
-    String userAgent(const URL&) const final { return m_userAgent; }
+    RefPtr<StringImpl> userAgent(const URL&) const final { return m_userAgent; }
 
     WebPageProxyIdentifier m_webPageProxyID;
-    String m_userAgent;
+    RefPtr<StringImpl> m_userAgent;
     std::optional<WebCore::ScriptExecutionContextIdentifier> m_serviceWorkerPageIdentifier;
 };
 

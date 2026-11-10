@@ -78,8 +78,8 @@ bool AXListHelpers::childHasPseudoVisibleListItemMarkers(const Node& node)
     // Platforms which expose rendered text content through the parent element will treat
     // those renderers as "ignored" objects.
 #if USE(ATSPI)
-    String text = axBeforePseudo->textUnderElement();
-    return !text.isEmpty() && !text.containsOnly<isASCIIWhitespace>();
+    RefPtr text = axBeforePseudo->textUnderElement();
+    return !isEmpty(text) && !containsOnly<isASCIIWhitespace>(text);
 #else
     return false;
 #endif

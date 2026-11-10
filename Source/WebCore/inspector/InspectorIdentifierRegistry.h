@@ -90,34 +90,34 @@ public:
     // an explicit hosting process. The 1-arg version extracts the process from the
     // FrameIdentifier's upper bits (its creating process), which is incorrect for
     // provisional frames where the identifier is preserved across process swaps.
-    static inline String protocolFrameId(WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier processID)
+    static inline RefPtr<StringImpl> protocolFrameId(WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier processID)
     {
         return makeString("frame-"_s, processID.toUInt64(), '.', frameID.toUInt64());
     }
 
-    static String protocolFrameId(const WebCore::Frame&);
+    static RefPtr<StringImpl> protocolFrameId(const WebCore::Frame&);
 
     // FIXME: <https://webkit.org/b/310164> Callers that receive FrameIdentifier via IPC
     // without a separate ProcessIdentifier should be updated to pass one explicitly.
     // This qualifies by the process encoded in the FrameIdentifier's upper bits (its
     // creating process), which equals the hosting process for frames that have not moved
     // across processes, so both forms agree in the common case.
-    static inline String protocolFrameId(WebCore::FrameIdentifier frameID)
+    static inline RefPtr<StringImpl> protocolFrameId(WebCore::FrameIdentifier frameID)
     {
         return protocolFrameId(frameID, ObjectIdentifier<WebCore::ProcessIdentifierType>(frameID.toUInt64() >> 32));
     }
 
-    static inline String protocolRequestId(WebCore::ProcessIdentifier pid, WebCore::ResourceLoaderIdentifier resourceID)
+    static inline RefPtr<StringImpl> protocolRequestId(WebCore::ProcessIdentifier pid, WebCore::ResourceLoaderIdentifier resourceID)
     {
         return makeString("request-"_s, pid.toUInt64(), '.', resourceID.toUInt64());
     }
 
     // Reverse-parse a protocol requestId string back into its components.
     // Returns nullopt if the string doesn't match the expected "request-processID.resourceID" format.
-    static inline std::optional<std::pair<WebCore::ProcessIdentifier, WebCore::ResourceLoaderIdentifier>> parseProtocolRequestId(const String& requestId)
+    static inline std::optional<std::pair<WebCore::ProcessIdentifier, WebCore::ResourceLoaderIdentifier>> parseProtocolRequestId(StringImpl* requestId)
     {
         // Format: "request-processID.resourceID"
-        if (!requestId.startsWith("request-"_s))
+        if (!startsWith(requestId, "request-"_s))
             return std::nullopt;
 
         auto rest = StringView(requestId).substring(8); // skip "request-"
@@ -149,10 +149,10 @@ public:
     // on an invalid raw value (see ObjectIdentifier.h), so a malformed or hostile id arriving from
     // the frontend would crash the UIProcess; validating with isValidIdentifier() first keeps this
     // a clean parse failure. The 2-arg protocolFrameId(frameID, processID) is the inverse.
-    static inline std::optional<std::pair<WebCore::ProcessIdentifier, WebCore::FrameIdentifier>> parseProtocolFrameId(const String& frameId)
+    static inline std::optional<std::pair<WebCore::ProcessIdentifier, WebCore::FrameIdentifier>> parseProtocolFrameId(StringImpl* frameId)
     {
         // Format: "frame-processID.frameID"
-        if (!frameId.startsWith("frame-"_s))
+        if (!startsWith(frameId, "frame-"_s))
             return std::nullopt;
 
         auto rest = StringView(frameId).substring(6); // skip "frame-"
@@ -181,7 +181,7 @@ private:
     // FIXME: DocumentLoader should use a smart pointer key (CheckedPtr or RefPtr).
     // It currently holds raw DocumentLoader* which prevents making loaderId/takeLoader
     // parameters const. See webkit.org/b/310162 for follow-up.
-    HashMap<WebCore::DocumentLoader*, String> m_loaderToIdentifier;
+    HashMap<WebCore::DocumentLoader*, RefPtr<StringImpl>> m_loaderToIdentifier;
 };
 
 // Default implementation. IDs are opaque process-qualified strings
@@ -200,8 +200,8 @@ public:
 
 private:
     LegacyIdentifierRegistry();
-    WeakHashMap<WebCore::Frame, String> m_frameToIdentifier;
-    MemoryCompactRobinHoodHashMap<String, WeakPtr<WebCore::Frame>> m_identifierToFrame;
+    WeakHashMap<WebCore::Frame, RefPtr<StringImpl>> m_frameToIdentifier;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, WeakPtr<WebCore::Frame>> m_identifierToFrame;
 };
 
 // Deterministic implementation for Site Isolation. Produces type-prefixed IDs
@@ -223,7 +223,7 @@ private:
     BackendIdentifierRegistry();
 
     // Reverse map for frameForId() lookups. Populated by frameId().
-    MemoryCompactRobinHoodHashMap<String, WeakPtr<WebCore::Frame>> m_identifierToFrame;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, WeakPtr<WebCore::Frame>> m_identifierToFrame;
 };
 
 } // namespace Inspector

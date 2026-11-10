@@ -158,7 +158,7 @@ void PageSerializer::SerializerMarkupAccumulator::appendCustomAttributes(StringB
 
     // We need to give a fake location to blank frames so they can be referenced by the serialized frame.
     url = m_serializer.urlForBlankFrame(frame.get());
-    appendAttribute(out, element, Attribute(frameOwnerURLAttributeName(*frameOwner), AtomString { url.string() }), namespaces);
+    appendAttribute(out, element, Attribute(frameOwnerURLAttributeName(*frameOwner), AtomStringImpl::add(url.string()).get()), namespaces);
 }
 
 void PageSerializer::SerializerMarkupAccumulator::appendEndTag(StringBuilder& out, const Element& element)
@@ -202,7 +202,7 @@ void PageSerializer::serializeFrame(LocalFrame* frame)
 
     Vector<Ref<Node>> serializedNodes;
     SerializerMarkupAccumulator accumulator(*this, *document, &serializedNodes);
-    String text = accumulator.serializeNodes(*protect(document->documentElement()), SerializedNodes::SubtreeIncludingNode);
+    RefPtr<StringImpl> text = accumulator.serializeNodes(*protect(document->documentElement()), SerializedNodes::SubtreeIncludingNode);
     m_resources.append({ url, document->suggestedMIMEType(), SharedBuffer::create(textEncoding.encode(text, PAL::UnencodableHandling::Entities)) });
     m_resourceURLs.add(url);
 
@@ -243,8 +243,8 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL
     StringBuilder cssText;
     for (unsigned i = 0; i < styleSheet->length(); ++i) {
         RefPtr rule = styleSheet->item(i);
-        String itemText = rule->cssText();
-        if (!itemText.isEmpty()) {
+        RefPtr<StringImpl> itemText = rule->cssText();
+        if (!isEmpty(itemText)) {
             cssText.append(itemText);
             if (i < styleSheet->length() - 1)
                 cssText.append("\n\n"_s);
@@ -285,7 +285,7 @@ void PageSerializer::addImageToResources(CachedImage* image, RenderElement* imag
         data = image->image()->data();
 
     if (!data) {
-        LOG_ERROR("No data for image %s", url.string().utf8());
+        LOG_ERROR("No data for image %s", utf8(url.string()));
         return;
     }
 

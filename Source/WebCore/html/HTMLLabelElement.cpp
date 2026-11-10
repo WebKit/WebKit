@@ -247,7 +247,7 @@ auto HTMLLabelElement::insertionSteps(InsertionType insertionType, ContainerNode
     return result;
 }
 
-void HTMLLabelElement::updateLabel(TreeScope& scope, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue)
+void HTMLLabelElement::updateLabel(TreeScope& scope, AtomStringImpl* oldForAttributeValue, AtomStringImpl* newForAttributeValue)
 {
     if (!isConnected())
         return;
@@ -255,9 +255,9 @@ void HTMLLabelElement::updateLabel(TreeScope& scope, const AtomString& oldForAtt
     if (oldForAttributeValue == newForAttributeValue)
         return;
 
-    if (!oldForAttributeValue.isEmpty())
+    if (!isEmpty(oldForAttributeValue))
         scope.removeLabel(oldForAttributeValue, *this);
-    if (!newForAttributeValue.isEmpty())
+    if (!isEmpty(newForAttributeValue))
         scope.addLabel(newForAttributeValue, *this);
 }
 

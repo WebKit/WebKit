@@ -160,7 +160,7 @@ void HTMLCollection::invalidateNamedElementCache(Document& document) const
     }
 }
 
-Element* HTMLCollection::namedItemSlow(const AtomString& name) const
+Element* HTMLCollection::namedItemSlow(AtomStringImpl* name) const
 {
     assertIsOwnerThread();
     // The pathological case. We need to walk the entire subtree.
@@ -181,7 +181,7 @@ Element* HTMLCollection::namedItemSlow(const AtomString& name) const
 }
 
 // Documented in https://dom.spec.whatwg.org/#interface-htmlcollection.
-const Vector<AtomString>& HTMLCollection::supportedPropertyNames()
+const Vector<RefPtr<AtomStringImpl>>& HTMLCollection::supportedPropertyNames()
 {
     assertIsOwnerThread();
     updateNamedElementCache();
@@ -190,7 +190,7 @@ const Vector<AtomString>& HTMLCollection::supportedPropertyNames()
     return m_namedElementCache->propertyNames();
 }
 
-bool HTMLCollection::isSupportedPropertyName(const AtomString& name)
+bool HTMLCollection::isSupportedPropertyName(AtomStringImpl* name)
 {
     assertIsOwnerThread();
     updateNamedElementCache();
@@ -215,20 +215,20 @@ void HTMLCollection::updateNamedElementCache() const
     for (unsigned i = 0; i < size; ++i) {
         Ref element = *item(i);
         auto& id = element->getIdAttribute();
-        if (!id.isEmpty())
+        if (!isEmpty(id))
             cache->appendToIdCache(id, element.get());
         RefPtr htmlElement = dynamicDowncast<HTMLElement>(element);
         if (!htmlElement)
             continue;
         auto& name = htmlElement->getNameAttribute();
-        if (!name.isEmpty() && id != name && (type() != CollectionType::DocAll || nameShouldBeVisibleInDocumentAll(*htmlElement)))
+        if (!isEmpty(name) && id != name && (type() != CollectionType::DocAll || nameShouldBeVisibleInDocumentAll(*htmlElement)))
             cache->appendToNameCache(name, *htmlElement);
     }
 
     setNamedItemCache(WTF::move(cache));
 }
 
-Vector<Ref<Element>> HTMLCollection::namedItems(const AtomString& name) const
+Vector<Ref<Element>> HTMLCollection::namedItems(AtomStringImpl* name) const
 {
     assertIsOwnerThread();
     // FIXME: This non-virtual function can't possibly be doing the correct thing for
@@ -236,7 +236,7 @@ Vector<Ref<Element>> HTMLCollection::namedItems(const AtomString& name) const
 
     Vector<Ref<Element>> elements;
 
-    if (name.isEmpty())
+    if (isEmpty(name))
         return elements;
 
     updateNamedElementCache();

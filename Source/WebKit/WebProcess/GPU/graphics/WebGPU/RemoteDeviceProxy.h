@@ -93,9 +93,9 @@ public:
     void pushErrorScope(::WebGPU::ErrorFilter) final;
     void popErrorScope(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&) final;
     void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&) final;
-    void resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, String&&)>&&) final;
+    void resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, RefPtr<StringImpl>&&)>&&) final;
     void pauseAllErrorReporting(bool pause) final;
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
 
 private:

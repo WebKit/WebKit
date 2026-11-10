@@ -43,11 +43,11 @@
 
 namespace WebKit {
 
-String CacheStorageCache::computeKeyURL(const URL& url)
+RefPtr<StringImpl> CacheStorageCache::computeKeyURL(const URL& url)
 {
     RELEASE_ASSERT(url.isValid());
     RELEASE_ASSERT(!url.isEmpty());
-    auto keyURLString = url.string().left(url.pathEnd());
+    auto keyURLString = left(url.string(), url.pathEnd());
     RELEASE_ASSERT(RecordsMap::isValidKey(keyURLString));
     return keyURLString;
 }
@@ -58,21 +58,21 @@ static uint64_t nextRecordIdentifier()
     return ++currentRecordIdentifier;
 }
 
-static Ref<CacheStorageStore> createStore(const String& uniqueName, const String& path, Ref<WorkQueue>&& queue)
+static Ref<CacheStorageStore> createStore(StringImpl* uniqueName, StringImpl* path, Ref<WorkQueue>&& queue)
 {
-    if (path.isEmpty())
+    if (isEmpty(path))
         return CacheStorageMemoryStore::create();
     return CacheStorageDiskStore::create(uniqueName, path, WTF::move(queue));
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CacheStorageCache);
 
-Ref<CacheStorageCache> CacheStorageCache::create(CacheStorageManager& manager, const String& name, const String& uniqueName, const String& path, Ref<WorkQueue>&& queue)
+Ref<CacheStorageCache> CacheStorageCache::create(CacheStorageManager& manager, StringImpl* name, StringImpl* uniqueName, StringImpl* path, Ref<WorkQueue>&& queue)
 {
     return adoptRef(*new CacheStorageCache(manager, name, uniqueName, path, WTF::move(queue)));
 }
 
-CacheStorageCache::CacheStorageCache(CacheStorageManager& manager, const String& name, const String& uniqueName, const String& path, Ref<WorkQueue>&& queue)
+CacheStorageCache::CacheStorageCache(CacheStorageManager& manager, StringImpl* name, StringImpl* uniqueName, StringImpl* path, Ref<WorkQueue>&& queue)
     : m_manager(manager)
     , m_name(name)
     , m_uniqueName(uniqueName)
@@ -159,10 +159,10 @@ void CacheStorageCache::open(WebCore::DOMCacheEngine::CacheIdentifierCallback&& 
     });
 }
 
-static CacheStorageRecord toCacheStorageRecord(WebCore::DOMCacheEngine::CrossThreadRecord&& record, FileSystem::Salt salt, const String& uniqueName)
+static CacheStorageRecord toCacheStorageRecord(WebCore::DOMCacheEngine::CrossThreadRecord&& record, FileSystem::Salt salt, StringImpl* uniqueName)
 {
-    NetworkCache::Key key { "record"_s, uniqueName, { }, createVersion4UUIDString(), salt };
-    CacheStorageRecordInformation recordInfo { WTF::move(key), MonotonicTime::now().secondsSinceEpoch().milliseconds(), record.identifier, 0 , record.responseBodySize, URL { record.request.url() }, false, HashMap<String, String> { } };
+    NetworkCache::Key key { "record"_si, uniqueName, nullptr, createVersion4UUIDString(), salt };
+    CacheStorageRecordInformation recordInfo { WTF::move(key), MonotonicTime::now().secondsSinceEpoch().milliseconds(), record.identifier, 0 , record.responseBodySize, URL { record.request.url() }, false, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> { } };
     recordInfo.updateVaryHeaders(record.request, record.response);
 
     return CacheStorageRecord { WTF::move(recordInfo), record.requestHeadersGuard, WTF::move(record.request), record.options, WTF::move(record.referrer), record.responseHeadersGuard, WTF::move(record.response), record.responseBodySize, WTF::move(record.responseBody) };
@@ -189,7 +189,7 @@ Vector<CacheStorageRecordInformation> CacheStorageCache::findRecords(const WebCo
             targetRecordInfos.appendVector(WTF::move(newTargetRecordInfos));
         }
     } else {
-        if (!options.ignoreMethod && options.request.httpMethod() != "GET"_s)
+        if (!options.ignoreMethod && !equal(options.request.httpMethod(), "GET"_s))
             return { };
 
         auto iterator = m_records.find(computeKeyURL(url));
@@ -261,7 +261,7 @@ void CacheStorageCache::removeRecords(WebCore::ResourceRequest&& request, WebCor
     ASSERT(m_isInitialized);
     assertIsOnCorrectQueue();
     
-    if (!options.ignoreMethod && request.httpMethod() != "GET"_s)
+    if (!options.ignoreMethod && !equal(request.httpMethod(), "GET"_s))
         return callback({ });
 
     auto iterator = m_records.find(computeKeyURL(request.url()));

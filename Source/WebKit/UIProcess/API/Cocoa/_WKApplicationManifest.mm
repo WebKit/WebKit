@@ -71,8 +71,8 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
 
     return WebCore::ApplicationManifest::Icon {
         icon.src,
-        makeVector<String>(icon.sizes),
-        icon.type,
+        makeVector<RefPtr<StringImpl>>(icon.sizes),
+        StringImpl::create(icon.type),
         fromPurposes(icon.purposes)
     };
 }
@@ -84,7 +84,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
         return std::nullopt;
 
     return WebCore::ApplicationManifest::Shortcut {
-        shortcut.name,
+        StringImpl::create(shortcut.name),
         shortcut.url,
         makeVector<WebCore::ApplicationManifest::Icon>(shortcut.icons)
     };
@@ -123,9 +123,9 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     if (icon) {
         _src = icon->src.createNSURL();
         _sizes = createNSArray(icon->sizes, [] (auto& size) {
-            return size.createNSString();
+            return createNSString(size);
         });
-        _type = icon->type.createNSString();
+        _type = createNSString(icon->type);
         _purposes = fromPurposes(icon->purposes);
     }
 
@@ -214,7 +214,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
         return nil;
 
     if (shortcut) {
-        _name = shortcut->name.createNSString();
+        _name = createNSString(shortcut->name);
         _url = shortcut->url.createNSURL();
         _icons = createNSArray(shortcut->icons, [] (auto& icon) {
             return adoptNS([[_WKApplicationManifestIcon alloc] initWithCoreIcon:&icon]);
@@ -252,7 +252,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     if (!jsonString)
         return nil;
 
-    auto manifest = WebCore::ApplicationManifestParser::parseWithValidation(jsonString.get(), URL(manifestURL), URL(documentURL));
+    auto manifest = WebCore::ApplicationManifestParser::parseWithValidation(StringImpl::create(jsonString.get()).get(), URL(manifestURL), URL(documentURL));
     if (!manifest)
         return nil;
 
@@ -268,14 +268,14 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
-    String rawJSON = checked_objc_cast<NSString>([aDecoder decodeObjectOfClass:[NSString class] forKey:@"raw_json"]);
+    RefPtr<StringImpl> rawJSON = StringImpl::create(checked_objc_cast<NSString>([aDecoder decodeObjectOfClass:[NSString class] forKey:@"raw_json"]));
     NSInteger dir = [aDecoder decodeIntegerForKey:@"dir"];
     // FIXME: <https://webkit.org/b/278619> Remove this assert after further manifest IPC hardening.
     RELEASE_ASSERT(dir >= 0 && dir <= 2);
-    String lang = checked_objc_cast<NSString>([aDecoder decodeObjectOfClass:[NSString class] forKey:@"lang"]);
-    String name = checked_objc_cast<NSString>([aDecoder decodeObjectOfClass:[NSString class] forKey:@"name"]);
-    String shortName = checked_objc_cast<NSString>([aDecoder decodeObjectOfClass:[NSString class] forKey:@"short_name"]);
-    String description = checked_objc_cast<NSString>([aDecoder decodeObjectOfClass:[NSString class] forKey:@"description"]);
+    RefPtr<StringImpl> lang = StringImpl::create(checked_objc_cast<NSString>([aDecoder decodeObjectOfClass:[NSString class] forKey:@"lang"]));
+    RefPtr<StringImpl> name = StringImpl::create(checked_objc_cast<NSString>([aDecoder decodeObjectOfClass:[NSString class] forKey:@"name"]));
+    RefPtr<StringImpl> shortName = StringImpl::create(checked_objc_cast<NSString>([aDecoder decodeObjectOfClass:[NSString class] forKey:@"short_name"]));
+    RefPtr<StringImpl> description = StringImpl::create(checked_objc_cast<NSString>([aDecoder decodeObjectOfClass:[NSString class] forKey:@"description"]));
     URL scopeURL = checked_objc_cast<NSURL>([aDecoder decodeObjectOfClass:[NSURL class] forKey:@"scope"]);
     bool isDefaultScope = [aDecoder decodeBoolForKey:@"is_default_scope"];
     NSInteger display = [aDecoder decodeIntegerForKey:@"display"];
@@ -312,7 +312,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
         WebCore::roundAndClampToSRGBALossy(protect(backgroundColorDark.get().CGColor)),
         WebCore::roundAndClampToSRGBALossy(protect(themeColorLight.get().CGColor)),
         WebCore::roundAndClampToSRGBALossy(protect(themeColorDark.get().CGColor)),
-        makeVector<String>(categories.get()),
+        makeVector<RefPtr<StringImpl>>(categories.get()),
         makeVector<WebCore::ApplicationManifest::Icon>(icons.get()),
         makeVector<WebCore::ApplicationManifest::Shortcut>(shortcuts.get()),
     };
@@ -373,7 +373,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
 
 + (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
 {
-    auto manifest = WebCore::ApplicationManifestParser::parse(WTF::String(json), URL(manifestURL), URL(documentURL));
+    auto manifest = WebCore::ApplicationManifestParser::parse(StringImpl::create(json).get(), URL(manifestURL), URL(documentURL));
     return wrapper(API::ApplicationManifest::create(manifest)).autorelease();
 }
 
@@ -382,9 +382,9 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     return *_applicationManifest;
 }
 
-static RetainPtr<NSString> nullableNSString(const WTF::String& string)
+static RetainPtr<NSString> nullableNSString(StringImpl* string)
 {
-    return !string.isNull() ? string.createNSString() : nil;
+    return !!string ? createNSString(string) : nil;
 }
 
 - (NSString *)rawJSON
@@ -531,7 +531,7 @@ static RetainPtr<NSString> nullableNSString(const WTF::String& string)
 - (NSArray<NSString *> *)categories
 {
     return createNSArray(_applicationManifest->applicationManifest().categories, [] (auto& category) {
-        return category.createNSString();
+        return createNSString(category);
     }).autorelease();
 }
 

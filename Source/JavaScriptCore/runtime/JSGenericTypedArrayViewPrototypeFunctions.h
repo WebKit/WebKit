@@ -284,7 +284,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSet(VM& vm, JSGlobalO
         double offsetNumber = callFrame->uncheckedArgument(1).toIntegerOrInfinity(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         if (offsetNumber < 0) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "Offset should not be negative"_s);
+            return throwVMRangeError(globalObject, scope, "Offset should not be negative"_si);
         if (offsetNumber <= maxSafeInteger() && offsetNumber <= static_cast<double>(std::numeric_limits<size_t>::max()))
             offset = offsetNumber;
         else
@@ -2028,18 +2028,18 @@ static inline void validateIntegerIndex(JSGlobalObject* globalObject, ViewClass*
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
 
     if (!isInteger(index)) [[unlikely]] {
-        throwVMRangeError(globalObject, scope, "index should be integer"_s);
+        throwVMRangeError(globalObject, scope, "index should be integer"_si);
         return;
     }
     if (!index && std::signbit(index)) [[unlikely]] {
-        throwVMRangeError(globalObject, scope, "index should not be negative zero"_s);
+        throwVMRangeError(globalObject, scope, "index should not be negative zero"_si);
         return;
     }
 
     IdempotentArrayBufferByteLengthGetter<std::memory_order_relaxed> getter;
     auto length = integerIndexedObjectLength(thisObject, getter);
     if (!length || index < 0 || index >= length.value()) [[unlikely]] {
-        throwVMRangeError(globalObject, scope, "index is out of range"_s);
+        throwVMRangeError(globalObject, scope, "index is out of range"_si);
         return;
     }
 }

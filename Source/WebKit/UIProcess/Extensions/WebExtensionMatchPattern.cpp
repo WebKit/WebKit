@@ -50,19 +50,19 @@ static constexpr ASCIILiteral allHostsAndSchemesPattern = "*://*/*"_s;
 
 WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::extensionSchemes()
 {
-    static MainRunLoopNeverDestroyed<URLSchemeSet> schemes = std::initializer_list<String> { "webkit-extension"_s };
+    static MainRunLoopNeverDestroyed<URLSchemeSet> schemes = std::initializer_list<RefPtr<StringImpl>> { "webkit-extension"_si };
     return schemes;
 }
 
 WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::validSchemes()
 {
-    static MainRunLoopNeverDestroyed<URLSchemeSet> schemes = std::initializer_list<String> { "*"_s, "http"_s, "https"_s, "file"_s, "ftp"_s, "webkit-extension"_s };
+    static MainRunLoopNeverDestroyed<URLSchemeSet> schemes = std::initializer_list<RefPtr<StringImpl>> { "*"_si, "http"_si, "https"_si, "file"_si, "ftp"_si, "webkit-extension"_si };
     return schemes;
 }
 
 WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::supportedSchemes()
 {
-    static MainRunLoopNeverDestroyed<URLSchemeSet> schemes = std::initializer_list<String> { "*"_s, "http"_s, "https"_s, "webkit-extension"_s };
+    static MainRunLoopNeverDestroyed<URLSchemeSet> schemes = std::initializer_list<RefPtr<StringImpl>> { "*"_si, "http"_si, "https"_si, "webkit-extension"_si };
     return schemes;
 }
 
@@ -86,15 +86,15 @@ bool WebExtensionMatchPattern::patternsMatchPattern(const MatchPatternSet& match
     return false;
 }
 
-NODELETE static HashMap<String, RefPtr<WebExtensionMatchPattern>>& patternCache()
+NODELETE static HashMap<RefPtr<StringImpl>, RefPtr<WebExtensionMatchPattern>>& patternCache()
 {
-    static MainRunLoopNeverDestroyed<HashMap<String, RefPtr<WebExtensionMatchPattern>>> cache;
+    static MainRunLoopNeverDestroyed<HashMap<RefPtr<StringImpl>, RefPtr<WebExtensionMatchPattern>>> cache;
     return cache;
 }
 
-void WebExtensionMatchPattern::registerCustomURLScheme(String urlScheme)
+void WebExtensionMatchPattern::registerCustomURLScheme(RefPtr<StringImpl> urlScheme)
 {
-    auto canonicalScheme = URLParser::maybeCanonicalizeScheme(String(urlScheme));
+    auto canonicalScheme = URLParser::maybeCanonicalizeScheme(RefPtr<StringImpl>(urlScheme));
     ASSERT(canonicalScheme);
 
     extensionSchemes().addVoid(canonicalScheme.value());
@@ -114,9 +114,9 @@ bool WebExtensionMatchPattern::isWebExtensionURL(const URL& url)
     return extensionSchemes().contains(url.protocol().toString());
 }
 
-RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const String& pattern)
+RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(StringImpl* pattern)
 {
-    ASSERT(!pattern.isEmpty());
+    ASSERT(!isEmpty(pattern));
 
     return patternCache().ensure(pattern, [&] {
         RefPtr<API::Error> error;
@@ -124,13 +124,13 @@ RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const Str
     }).iterator->value;
 }
 
-RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const String& scheme, const String& host, const String& path)
+RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(StringImpl* scheme, StringImpl* host, StringImpl* path)
 {
-    String resolvedScheme = !scheme.isEmpty() ? scheme : "*"_s;
-    String resolvedHost = !host.isEmpty() || equalLettersIgnoringASCIICase(scheme, "file"_s) ? host : "*"_s;
-    String resolvedPath = !path.isEmpty() ? path : "/*"_s;
+    RefPtr<StringImpl> resolvedScheme = !isEmpty(scheme) ? RefPtr { scheme } : "*"_si;
+    RefPtr<StringImpl> resolvedHost = !isEmpty(host) || equalLettersIgnoringASCIICase(scheme, "file"_s) ? RefPtr { host } : "*"_si;
+    RefPtr<StringImpl> resolvedPath = !isEmpty(path) ? RefPtr { path } : "/*"_si;
 
-    String pattern = makeString(resolvedScheme, "://"_s, resolvedHost, resolvedPath);
+    RefPtr<StringImpl> pattern = makeString(resolvedScheme, "://"_s, resolvedHost, resolvedPath);
 
     return patternCache().ensure(pattern, [&] {
         RefPtr<API::Error> error;
@@ -142,29 +142,29 @@ RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const URL
 {
     ASSERT(!url.isEmpty());
 
-    String scheme = "*"_s;
+    RefPtr<StringImpl> scheme = "*"_si;
     if (options.contains(CreateOptions::MatchExactScheme) || !url.protocolIsInHTTPFamily())
         scheme = url.protocol().toString();
 
-    String host = url.host().toString();
-    if (options.contains(CreateOptions::MatchSubdomains) && !host.isEmpty())
+    RefPtr<StringImpl> host = url.host().toString();
+    if (options.contains(CreateOptions::MatchSubdomains) && !isEmpty(host))
         host = makeString("*."_s, host);
 
-    String path = "/*"_s;
+    RefPtr<StringImpl> path = "/*"_si;
     if (!options.contains(CreateOptions::MatchAllPaths))
-        path = url.hasPath() ? url.path().toString() : "/"_s;
+        path = url.hasPath() ? url.path().toString() : "/"_si;
 
     return getOrCreate(scheme, host, path);
 }
 
 Ref<WebExtensionMatchPattern> WebExtensionMatchPattern::allURLsMatchPattern()
 {
-    return getOrCreate(allURLsPattern).releaseNonNull();
+    return getOrCreate(StringImpl::create(allURLsPattern).ptr()).releaseNonNull();
 }
 
 Ref<WebExtensionMatchPattern> WebExtensionMatchPattern::allHostsAndSchemesMatchPattern()
 {
-    return getOrCreate(allHostsAndSchemesPattern).releaseNonNull();
+    return getOrCreate(StringImpl::create(allHostsAndSchemesPattern).ptr()).releaseNonNull();
 }
 
 bool WebExtensionMatchPattern::patternsMatchAllHosts(const MatchPatternSet& patterns)
@@ -177,31 +177,31 @@ bool WebExtensionMatchPattern::patternsMatchAllHosts(const MatchPatternSet& patt
     return false;
 }
 
-Ref<API::Error> WebExtensionMatchPattern::createError(Error error, const String& localizedDescription)
+Ref<API::Error> WebExtensionMatchPattern::createError(Error error, StringImpl* localizedDescription)
 {
-    return API::Error::create({ "WKWebExtensionMatchPatternErrorDomain"_s, static_cast<int>(error), { }, localizedDescription });
+    return API::Error::create({ "WKWebExtensionMatchPatternErrorDomain"_si, static_cast<int>(error), { }, localizedDescription });
 }
 
-WebExtensionMatchPattern::WebExtensionMatchPattern(const String& patternString, RefPtr<API::Error>& outError)
+WebExtensionMatchPattern::WebExtensionMatchPattern(StringImpl* patternString, RefPtr<API::Error>& outError)
 {
-    ASSERT(!patternString.isNull());
+    ASSERT(patternString);
 
     ASSERT(!m_valid);
     ASSERT(!m_hash);
 
     outError = nullptr;
 
-    m_matchesAllURLs = patternString == allURLsPattern;
+    m_matchesAllURLs = equal(patternString, allURLsPattern);
     if (m_matchesAllURLs) {
         m_valid = true;
-        m_hash = patternString.hash();
+        m_hash = WTF::hash(patternString);
         return;
     }
 
     UserContentURLPattern pattern { patternString };
 
-    if (!pattern.scheme().isEmpty() && !isValidScheme(pattern.scheme())) {
-        outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because the scheme \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme in the pattern", patternString.utf8(), pattern.scheme().utf8()));
+    if (!isEmpty(pattern.scheme()) && !isValidScheme(pattern.scheme())) {
+        outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because the scheme \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme in the pattern", utf8(patternString), utf8(pattern.scheme())));
         return;
     }
 
@@ -213,19 +213,19 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& patternString, 
             break;
 
         case UserContentURLPattern::Error::MissingScheme:
-            outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because it doesn't have a scheme.", "WKWebExtensionMatchPatternErrorInvalidScheme description for missing scheme in the pattern", patternString.utf8()));
+            outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because it doesn't have a scheme.", "WKWebExtensionMatchPatternErrorInvalidScheme description for missing scheme in the pattern", utf8(patternString)));
             break;
 
         case UserContentURLPattern::Error::MissingHost:
-            outError = createError(Error::InvalidHost, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because it doesn't have a host.", "WKWebExtensionMatchPatternErrorInvalidHost description for missing host in the pattern", patternString.utf8()));
+            outError = createError(Error::InvalidHost, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because it doesn't have a host.", "WKWebExtensionMatchPatternErrorInvalidHost description for missing host in the pattern", utf8(patternString)));
             break;
 
         case UserContentURLPattern::Error::InvalidHost:
-            outError = createError(Error::InvalidHost, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because the host \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidHost description for invalid host in the pattern", patternString.utf8(), pattern.host().utf8()));
+            outError = createError(Error::InvalidHost, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because the host \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidHost description for invalid host in the pattern", utf8(patternString), utf8(pattern.host())));
             break;
 
         case UserContentURLPattern::Error::MissingPath:
-            outError = createError(Error::InvalidPath, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because it doesn't have a path.", "WKWebExtensionMatchPatternErrorInvalidPath description for missing path in the pattern", patternString.utf8()));
+            outError = createError(Error::InvalidPath, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because it doesn't have a path.", "WKWebExtensionMatchPatternErrorInvalidPath description for missing path in the pattern", utf8(patternString)));
             break;
         }
 
@@ -234,14 +234,14 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& patternString, 
 
     m_pattern = WTF::move(pattern);
     m_valid = true;
-    m_hash = patternString.hash();
+    m_hash = WTF::hash(patternString);
 }
 
-WebExtensionMatchPattern::WebExtensionMatchPattern(const String& scheme, const String& host, const String& path, RefPtr<API::Error>& outError)
+WebExtensionMatchPattern::WebExtensionMatchPattern(StringImpl* scheme, StringImpl* host, StringImpl* path, RefPtr<API::Error>& outError)
 {
-    ASSERT(!scheme.isNull());
-    ASSERT(!host.isNull());
-    ASSERT(!path.isNull());
+    ASSERT(scheme);
+    ASSERT(host);
+    ASSERT(path);
 
     ASSERT(!m_valid);
     ASSERT(!m_hash);
@@ -250,7 +250,7 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& scheme, const S
     outError = nullptr;
 
     if (!isValidScheme(scheme)) {
-        outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("Scheme \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme", scheme.utf8()));
+        outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("Scheme \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme", utf8(scheme)));
         return;
     }
 
@@ -264,16 +264,16 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& scheme, const S
             break;
 
         case UserContentURLPattern::Error::MissingScheme:
-            outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("Scheme \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidScheme description for missing scheme", scheme.utf8()));
+            outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("Scheme \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidScheme description for missing scheme", utf8(scheme)));
             break;
 
         case UserContentURLPattern::Error::MissingHost:
         case UserContentURLPattern::Error::InvalidHost:
-            outError = createError(Error::InvalidHost, WEB_UI_FORMAT_STRING("Host \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidHost description for invalid or missing host", host.utf8()));
+            outError = createError(Error::InvalidHost, WEB_UI_FORMAT_STRING("Host \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidHost description for invalid or missing host", utf8(host)));
             break;
 
         case UserContentURLPattern::Error::MissingPath:
-            outError = createError(Error::InvalidPath, WEB_UI_FORMAT_STRING("Path \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidPath description for missing path", path.utf8()));
+            outError = createError(Error::InvalidPath, WEB_UI_FORMAT_STRING("Path \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidPath description for missing path", utf8(path)));
             break;
         }
 
@@ -282,12 +282,12 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& scheme, const S
 
     m_pattern = WTF::move(pattern);
     m_valid = true;
-    m_hash = string().hash();
+    m_hash = WTF::hash(string());
 }
 
 bool WebExtensionMatchPattern::isSupported() const
 {
-    return isValid() && (m_matchesAllURLs || supportedSchemes().contains(scheme()) || scheme() == "file"_s);
+    return isValid() && (m_matchesAllURLs || supportedSchemes().contains(scheme()) || equal(scheme(), "file"_s));
 }
 
 bool WebExtensionMatchPattern::operator==(const WebExtensionMatchPattern& other) const
@@ -295,21 +295,21 @@ bool WebExtensionMatchPattern::operator==(const WebExtensionMatchPattern& other)
     return this == &other || (m_valid == other.m_valid && m_matchesAllURLs == other.m_matchesAllURLs && m_hash == other.m_hash && m_pattern == other.m_pattern);
 }
 
-String WebExtensionMatchPattern::scheme() const
+RefPtr<StringImpl> WebExtensionMatchPattern::scheme() const
 {
     if (!isValid() || matchesAllURLs())
         return nullString();
     return pattern().scheme();
 }
 
-String WebExtensionMatchPattern::host() const
+RefPtr<StringImpl> WebExtensionMatchPattern::host() const
 {
     if (!isValid() || matchesAllURLs())
         return nullString();
     return pattern().originalHost();
 }
 
-String WebExtensionMatchPattern::path() const
+RefPtr<StringImpl> WebExtensionMatchPattern::path() const
 {
     if (!isValid() || matchesAllURLs())
         return nullString();
@@ -319,31 +319,31 @@ String WebExtensionMatchPattern::path() const
 bool WebExtensionMatchPattern::hostIsPublicSuffix() const
 {
     auto host = pattern().host();
-    if (host.startsWith("*."_s))
-        host = host.substring(2);
+    if (startsWith(host, "*."_s))
+        host = substring(host, 2);
 
     return WebCore::PublicSuffixStore::singleton().isPublicSuffix(host);
 }
 
-String WebExtensionMatchPattern::stringWithScheme(const String& differentScheme) const
+RefPtr<StringImpl> WebExtensionMatchPattern::stringWithScheme(StringImpl* differentScheme) const
 {
     if (!isValid())
         return nullString();
 
-    ASSERT(!m_matchesAllURLs || (m_matchesAllURLs && differentScheme.isEmpty()));
+    ASSERT(!m_matchesAllURLs || (m_matchesAllURLs && isEmpty(differentScheme)));
 
     if (m_matchesAllURLs)
         return allURLsPattern;
-    return makeString(differentScheme.isEmpty() ? scheme() : differentScheme, "://"_s, host(), path());
+    return makeString(isEmpty(differentScheme) ? scheme() : RefPtr { differentScheme }, "://"_s, host(), path());
 }
 
-Vector<String> WebExtensionMatchPattern::expandedStrings(OptionSet<Options> options) const
+Vector<RefPtr<StringImpl>> WebExtensionMatchPattern::expandedStrings(OptionSet<Options> options) const
 {
     if (!isValid())
         return { };
 
     if (m_matchesAllURLs) {
-        auto strings = compactMap(supportedSchemes(), [&](auto& scheme) -> std::optional<String> {
+        auto strings = compactMap(supportedSchemes(), [&](auto& scheme) -> std::optional<RefPtr<StringImpl>> {
             if (scheme == "*"_s)
                 return std::nullopt;
             return makeString(scheme, "://*/*"_s);
@@ -363,9 +363,9 @@ bool WebExtensionMatchPattern::matchesAllHosts() const
     return isValid() && (m_matchesAllURLs || pattern().matchAllHosts());
 }
 
-bool WebExtensionMatchPattern::isValidScheme(String scheme)
+bool WebExtensionMatchPattern::isValidScheme(RefPtr<StringImpl> scheme)
 {
-    return !scheme.isEmpty() && validSchemes().contains(scheme);
+    return !isEmpty(scheme) && validSchemes().contains(scheme);
 }
 
 bool WebExtensionMatchPattern::matchesURL(const URL& urlToMatch, OptionSet<Options> options) const
@@ -406,7 +406,7 @@ bool WebExtensionMatchPattern::matchesPattern(const WebExtensionMatchPattern& pa
             return false;
         if (b.matchesAllURLs() || supportedSchemes().contains(b.scheme()))
             return true;
-        return options.contains(Options::AllowFileScheme) && b.scheme() == "file"_s;
+        return options.contains(Options::AllowFileScheme) && equal(b.scheme(), "file"_s);
     };
 
     if (compareAllURLs(*this, patternToMatch))
@@ -463,9 +463,9 @@ bool WebExtensionMatchPattern::pathMatches(const WebExtensionMatchPattern& other
     return false;
 }
 
-HashSet<String> toStrings(const WebExtensionMatchPattern::MatchPatternSet& matchPatterns)
+HashSet<RefPtr<StringImpl>> toStrings(const WebExtensionMatchPattern::MatchPatternSet& matchPatterns)
 {
-    HashSet<String> stringsToReturn;
+    HashSet<RefPtr<StringImpl>> stringsToReturn;
     stringsToReturn.reserveInitialCapacity(matchPatterns.size());
 
     for (auto& pattern : matchPatterns)
@@ -474,7 +474,7 @@ HashSet<String> toStrings(const WebExtensionMatchPattern::MatchPatternSet& match
     return stringsToReturn;
 }
 
-WebExtensionMatchPattern::MatchPatternSet toPatterns(const HashSet<String>& domains)
+WebExtensionMatchPattern::MatchPatternSet toPatterns(const HashSet<RefPtr<StringImpl>>& domains)
 {
     WebExtensionMatchPattern::MatchPatternSet matchPatterns;
     matchPatterns.reserveInitialCapacity(domains.size());

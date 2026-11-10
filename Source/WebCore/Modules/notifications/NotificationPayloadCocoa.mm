@@ -78,7 +78,7 @@ std::optional<NotificationPayload> NotificationPayload::fromDictionary(NSDiction
     if (!isMutable)
         return std::nullopt;
 
-    return NotificationPayload { defaultAction.get(), title.get(), WTF::move(rawAppBadge), WTF::move(rawOptions), !![isMutable boolValue] };
+    return NotificationPayload { defaultAction.get(), StringImpl::create(title.get()), WTF::move(rawAppBadge), WTF::move(rawOptions), !![isMutable boolValue] };
 }
 
 NSDictionary *NotificationPayload::dictionaryRepresentation() const
@@ -90,7 +90,7 @@ NSDictionary *NotificationPayload::dictionaryRepresentation() const
 
     return @{
         WebNotificationDefaultActionKey : defaultActionURL.createNSURL().get(),
-        WebNotificationTitleKey : title.createNSString().get(),
+        WebNotificationTitleKey : createNSString(title).get(),
         WebNotificationAppBadgeKey : nsAppBadge.get(),
         WebNotificationOptionsKey : nsOptions.get(),
         WebNotificationMutableKey : @(isMutable),

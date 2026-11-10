@@ -46,33 +46,33 @@ public:
     explicit WebSocketExtensionDeflateFrame(WebSocketDeflateFramer&);
 
 private:
-    String handshakeString() final;
-    bool processResponse(const HashMap<String, String>&) final;
-    NODELETE String failureReason() final { return m_failureReason; }
+    RefPtr<StringImpl> handshakeString() final;
+    bool processResponse(const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&) final;
+    NODELETE RefPtr<StringImpl> failureReason() final { return m_failureReason; }
 
     WebSocketDeflateFramer& m_framer;
     bool m_responseProcessed { false };
-    String m_failureReason;
+    RefPtr<StringImpl> m_failureReason;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketExtensionDeflateFrame);
 
 // FXIME: Remove vendor prefix after the specification matured.
 WebSocketExtensionDeflateFrame::WebSocketExtensionDeflateFrame(WebSocketDeflateFramer& framer)
-    : WebSocketExtensionProcessor("x-webkit-deflate-frame"_s)
+    : WebSocketExtensionProcessor("x-webkit-deflate-frame"_si)
     , m_framer(framer)
 {
 }
 
-NODELETE String WebSocketExtensionDeflateFrame::handshakeString()
+NODELETE RefPtr<StringImpl> WebSocketExtensionDeflateFrame::handshakeString()
 {
     return extensionToken(); // No parameter
 }
 
-bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, String>& serverParameters)
+bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& serverParameters)
 {
     if (m_responseProcessed) {
-        m_failureReason = "Received duplicate deflate-frame response"_s;
+        m_failureReason = "Received duplicate deflate-frame response"_si;
         return false;
     }
     m_responseProcessed = true;
@@ -83,7 +83,7 @@ bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, Strin
     if (parameter != serverParameters.end()) {
         windowBits = parseIntegerAllowingTrailingJunk<int>(parameter->value).value_or(0);
         if (windowBits < 8 || windowBits > 15) {
-            m_failureReason = "Received invalid max_window_bits parameter"_s;
+            m_failureReason = "Received invalid max_window_bits parameter"_si;
             return false;
         }
         expectedNumParameters++;
@@ -92,8 +92,8 @@ bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, Strin
     WebSocketDeflater::ContextTakeOverMode mode = WebSocketDeflater::TakeOverContext;
     parameter = serverParameters.find<HashTranslatorASCIILiteral>("no_context_takeover"_s);
     if (parameter != serverParameters.end()) {
-        if (!parameter->value.isNull()) {
-            m_failureReason = "Received invalid no_context_takeover parameter"_s;
+        if (parameter->value) {
+            m_failureReason = "Received invalid no_context_takeover parameter"_si;
             return false;
         }
         mode = WebSocketDeflater::DoNotTakeOverContext;
@@ -101,7 +101,7 @@ bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, Strin
     }
 
     if (expectedNumParameters != serverParameters.size()) {
-        m_failureReason = "Received unexpected deflate-frame parameter"_s;
+        m_failureReason = "Received unexpected deflate-frame parameter"_si;
         return false;
     }
 
@@ -121,7 +121,7 @@ DeflateResultHolder::~DeflateResultHolder()
     m_framer.resetDeflateContext();
 }
 
-void DeflateResultHolder::fail(const String& failureReason)
+void DeflateResultHolder::fail(StringImpl* failureReason)
 {
     m_succeeded = false;
     m_failureReason = failureReason;
@@ -139,7 +139,7 @@ InflateResultHolder::~InflateResultHolder()
     m_framer.resetInflateContext();
 }
 
-void InflateResultHolder::fail(const String& failureReason)
+void InflateResultHolder::fail(StringImpl* failureReason)
 {
     m_succeeded = false;
     m_failureReason = failureReason;
@@ -168,7 +168,7 @@ std::unique_ptr<DeflateResultHolder> WebSocketDeflateFramer::deflate(WebSocketFr
     if (!enabled() || !WebSocketFrame::isNonControlOpCode(frame.opCode) || !frame.payload.size())
         return result;
     if (!m_deflater->addBytes(frame.payload) || !m_deflater->finish()) {
-        result->fail("Failed to compress frame"_s);
+        result->fail("Failed to compress frame"_si);
         return result;
     }
     frame.compress = true;
@@ -186,17 +186,17 @@ std::unique_ptr<InflateResultHolder> WebSocketDeflateFramer::inflate(WebSocketFr
 {
     auto result = makeUnique<InflateResultHolder>(*this);
     if (!enabled() && frame.compress) {
-        result->fail("Compressed bit must be 0 if no negotiated deflate-frame extension"_s);
+        result->fail("Compressed bit must be 0 if no negotiated deflate-frame extension"_si);
         return result;
     }
     if (!frame.compress)
         return result;
     if (!WebSocketFrame::isNonControlOpCode(frame.opCode)) {
-        result->fail("Received unexpected compressed frame"_s);
+        result->fail("Received unexpected compressed frame"_si);
         return result;
     }
     if (!m_inflater->addBytes(frame.payload) || !m_inflater->finish()) {
-        result->fail("Failed to decompress frame"_s);
+        result->fail("Failed to decompress frame"_si);
         return result;
     }
     frame.compress = false;

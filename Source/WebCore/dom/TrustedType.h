@@ -45,7 +45,7 @@ class ScriptExecutionContext;
 class QualifiedName;
 template<typename> class ExceptionOr;
 
-using TrustedTypeOrString = Variant<Ref<TrustedHTML>, Ref<TrustedScript>, Ref<TrustedScriptURL>, AtomString>;
+using TrustedTypeOrString = Variant<Ref<TrustedHTML>, Ref<TrustedScript>, Ref<TrustedScriptURL>, RefPtr<AtomStringImpl>>;
 
 enum class TrustedType : int8_t {
     TrustedHTML,
@@ -54,32 +54,32 @@ enum class TrustedType : int8_t {
 };
 
 struct AttributeTypeAndSink {
-    String attributeType;
-    String sink;
+    RefPtr<StringImpl> attributeType;
+    RefPtr<StringImpl> sink;
 };
 
 ASCIILiteral trustedTypeToString(TrustedType);
-TrustedType stringToTrustedType(String);
+TrustedType stringToTrustedType(RefPtr<StringImpl>);
 ASCIILiteral trustedTypeToCallbackName(TrustedType);
 
-WEBCORE_EXPORT Variant<std::monostate, Exception, Ref<TrustedHTML>, Ref<TrustedScript>, Ref<TrustedScriptURL>> processValueWithDefaultPolicy(ScriptExecutionContext&, TrustedType, const String& input, const String& sink);
+WEBCORE_EXPORT Variant<std::monostate, Exception, Ref<TrustedHTML>, Ref<TrustedScript>, Ref<TrustedScriptURL>> processValueWithDefaultPolicy(ScriptExecutionContext&, TrustedType, StringImpl* input, StringImpl* sink);
 
-WEBCORE_EXPORT ExceptionOr<String> trustedTypeCompliantString(TrustedType, ScriptExecutionContext&, const String& input, const String& sink);
+WEBCORE_EXPORT ExceptionOr<RefPtr<StringImpl>> trustedTypeCompliantString(TrustedType, ScriptExecutionContext&, StringImpl* input, StringImpl* sink);
 
-WEBCORE_EXPORT ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecutionContext&, const String& urlString);
+WEBCORE_EXPORT ExceptionOr<RefPtr<StringImpl>> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecutionContext&, StringImpl* urlString);
 
-ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, Variant<Ref<TrustedHTML>, String>&&, const String& sink);
+ExceptionOr<RefPtr<StringImpl>> trustedTypeCompliantString(ScriptExecutionContext&, Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&&, StringImpl* sink);
 
-ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, Variant<Ref<TrustedScript>, String>&&, const String& sink);
+ExceptionOr<RefPtr<StringImpl>> trustedTypeCompliantString(ScriptExecutionContext&, Variant<Ref<TrustedScript>, RefPtr<StringImpl>>&&, StringImpl* sink);
 
-ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, Variant<Ref<TrustedScriptURL>, String>&&, const String& sink);
+ExceptionOr<RefPtr<StringImpl>> trustedTypeCompliantString(ScriptExecutionContext&, Variant<Ref<TrustedScriptURL>, RefPtr<StringImpl>>&&, StringImpl* sink);
 
-WEBCORE_EXPORT AttributeTypeAndSink trustedTypeForAttribute(const String& elementName, const String& attributeName, const String& elementNamespace, const String& attributeNamespace);
+WEBCORE_EXPORT AttributeTypeAndSink trustedTypeForAttribute(StringImpl* elementName, StringImpl* attributeName, StringImpl* elementNamespace, StringImpl* attributeNamespace);
 
-ExceptionOr<bool> canCompile(ScriptExecutionContext&, JSC::CompilationType, String codeString, const JSC::ArgList& args);
+ExceptionOr<bool> canCompile(ScriptExecutionContext&, JSC::CompilationType, RefPtr<StringImpl> codeString, const JSC::ArgList& args);
 
 bool isEventHandlerAttribute(const QualifiedName& attributeName);
 
-ExceptionOr<AtomString> trustedTypesCompliantAttributeValue(ScriptExecutionContext&, const String& attributeType, const TrustedTypeOrString& value, const String& sink);
+ExceptionOr<RefPtr<AtomStringImpl>> trustedTypesCompliantAttributeValue(ScriptExecutionContext&, StringImpl* attributeType, const TrustedTypeOrString& value, StringImpl* sink);
 
 } // namespace WebCore

@@ -48,7 +48,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SubmitInputType);
 
 using namespace HTMLNames;
 
-const AtomString& SubmitInputType::formControlType() const
+const RefPtr<AtomStringImpl>& SubmitInputType::formControlType() const
 {
     return InputTypeNames::submit();
 }
@@ -60,7 +60,7 @@ bool SubmitInputType::appendFormData(DOMFormData& formData) const
     if (!element->isActivatedSubmit())
         return false;
     formData.append(element->name(), element->valueWithDefault());
-    if (auto& dirname = element->attributeWithoutSynchronization(HTMLNames::dirnameAttr); !dirname.isNull())
+    if (auto& dirname = element->attributeWithoutSynchronization(HTMLNames::dirnameAttr); dirname)
         formData.append(dirname, element->directionForFormData());
     return true;
 }
@@ -93,7 +93,7 @@ bool SubmitInputType::canBeSuccessfulSubmitButton()
     return true;
 }
 
-String SubmitInputType::defaultValue() const
+RefPtr<StringImpl> SubmitInputType::defaultValue() const
 {
     return submitButtonDefaultLabel();
 }

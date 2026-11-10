@@ -53,12 +53,12 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Download);
 
-Ref<Download> Download::create(DownloadManager& downloadManager, DownloadID downloadID, NetworkDataTask& download, NetworkSession& session, const String& suggestedName)
+Ref<Download> Download::create(DownloadManager& downloadManager, DownloadID downloadID, NetworkDataTask& download, NetworkSession& session, StringImpl* suggestedName)
 {
     return adoptRef(*new Download(downloadManager, downloadID, download, session, suggestedName));
 }
 
-Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NetworkDataTask& download, NetworkSession& session, const String& suggestedName)
+Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NetworkDataTask& download, NetworkSession& session, StringImpl* suggestedName)
     : m_downloadManager(downloadManager)
     , m_downloadID(downloadID)
     , m_client(downloadManager.client())
@@ -70,12 +70,12 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, Netw
 }
 
 #if PLATFORM(COCOA)
-Ref<Download> Download::create(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, NetworkSession& session, const String& suggestedName, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections)
+Ref<Download> Download::create(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, NetworkSession& session, StringImpl* suggestedName, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections)
 {
     return adoptRef(*new Download(downloadManager, downloadID, download, session, suggestedName, advancedPrivacyProtections));
 }
 
-Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, NetworkSession& session, const String& suggestedName, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections)
+Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, NetworkSession& session, StringImpl* suggestedName, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections)
     : m_downloadManager(downloadManager)
     , m_downloadID(downloadID)
     , m_client(downloadManager.client())
@@ -134,7 +134,7 @@ void Download::didReceiveChallenge(const WebCore::AuthenticationChallenge& chall
     protect(m_client->downloadsAuthenticationManager())->didReceiveAuthenticationChallenge(*this, challenge, WTF::move(completionHandler));
 }
 
-void Download::didCreateDestination(const String& path)
+void Download::didCreateDestination(StringImpl* path)
 {
     send(Messages::DownloadProxy::DidCreateDestination(path));
 }

@@ -361,27 +361,27 @@ bool noExtendedTextEncodingNameUsed()
     return !didExtendTextCodecMaps;
 }
 
-String defaultTextEncodingNameForSystemLanguage()
+RefPtr<StringImpl> defaultTextEncodingNameForSystemLanguage()
 {
 #if PLATFORM(COCOA)
-    String systemEncodingName = CFStringConvertEncodingToIANACharSetName(webDefaultCFStringEncoding());
+    RefPtr<StringImpl> systemEncodingName = StringImpl::create(protect(CFStringConvertEncodingToIANACharSetName(webDefaultCFStringEncoding())).get());
 
     // CFStringConvertEncodingToIANACharSetName() returns cp949 for kTextEncodingDOSKorean AKA "extended EUC-KR" AKA windows-949.
     // ICU uses this name for a different encoding, so we need to change the name to a value that actually gives us windows-949.
     // In addition, this value must match what is used in Safari, see <rdar://problem/5579292>.
     // On some OS versions, the result is CP949 (uppercase).
     if (equalLettersIgnoringASCIICase(systemEncodingName, "cp949"_s))
-        systemEncodingName = "ks_c_5601-1987"_s;
+        systemEncodingName = "ks_c_5601-1987"_si;
 
     // CFStringConvertEncodingToIANACharSetName() returns cp874 for kTextEncodingDOSThai, AKA windows-874.
     // Since "cp874" alias is not standard (https://encoding.spec.whatwg.org/#names-and-labels), map to
     // "dos-874" instead.
     if (equalLettersIgnoringASCIICase(systemEncodingName, "cp874"_s))
-        systemEncodingName = "dos-874"_s;
+        systemEncodingName = "dos-874"_si;
 
     return systemEncodingName;
 #else
-    return "ISO-8859-1"_s;
+    return "ISO-8859-1"_si;
 #endif
 }
 

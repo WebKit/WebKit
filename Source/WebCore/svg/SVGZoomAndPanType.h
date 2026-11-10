@@ -38,12 +38,12 @@ enum SVGZoomAndPanType {
 template<>
 struct SVGPropertyTraits<SVGZoomAndPanType> {
     static SVGZoomAndPanType initialValue() { return SVGZoomAndPanMagnify; }
-    static String toString(SVGZoomAndPanType) { return emptyString(); }
-    static SVGZoomAndPanType fromString(SVGElement&, const String& value)
+    static RefPtr<StringImpl> toString(SVGZoomAndPanType) { return emptyString(); }
+    static SVGZoomAndPanType fromString(SVGElement&, StringImpl* value)
     {
-        if (value == "disable"_s)
+        if (equal(value, "disable"_s))
             return SVGZoomAndPanDisable;
-        if (value == "magnify"_s)
+        if (equal(value, "magnify"_s))
             return SVGZoomAndPanMagnify;
         return SVGZoomAndPanUnknown;
     }

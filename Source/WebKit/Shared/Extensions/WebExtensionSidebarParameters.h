@@ -36,7 +36,7 @@ enum class WebExtensionSidebarSide : uint8_t {
 
 struct WebExtensionSidebarParameters {
     bool enabled { true };
-    String panelPath { emptyString() };
+    RefPtr<StringImpl> panelPath { emptyString() };
     std::optional<WebExtensionTabIdentifier> tabIdentifier;
 };
 

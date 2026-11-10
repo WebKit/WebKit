@@ -74,7 +74,7 @@ HTMLOptionElement* HTMLOptionsCollection::item(unsigned offset) const
     return downcast<HTMLOptionElement>(Base::item(offset));
 }
 
-HTMLOptionElement* HTMLOptionsCollection::namedItem(const AtomString& name) const
+HTMLOptionElement* HTMLOptionsCollection::namedItem(AtomStringImpl* name) const
 {
     return downcast<HTMLOptionElement>(Base::namedItem(name));
 }

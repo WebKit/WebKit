@@ -45,15 +45,15 @@ namespace fido {
 using namespace WebCore;
 using CBOR = cbor::CBORValue;
 
-NODELETE static ProtocolVersion convertStringToProtocolVersion(const String& version)
+NODELETE static ProtocolVersion convertStringToProtocolVersion(StringImpl* version)
 {
-    if (version == kCtap21Version)
+    if (equal(version, kCtap21Version))
         return ProtocolVersion::kCtap21;
-    if (version == kCtap21PreVersion)
+    if (equal(version, kCtap21PreVersion))
         return ProtocolVersion::kCtap21Pre;
-    if (version == kCtap2Version)
+    if (equal(version, kCtap2Version))
         return ProtocolVersion::kCtap2;
-    if (version == kU2fVersion)
+    if (equal(version, kU2fVersion))
         return ProtocolVersion::kU2f;
 
     return ProtocolVersion::kUnknown;
@@ -213,7 +213,7 @@ RefPtr<AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Ve
 
     std::optional<Vector<uint8_t>> attestationObject;
     if (attestation == AttestationConveyancePreference::None) {
-        attestationObject = buildAttestationObject(Vector<uint8_t>(authDataBytes), String { emptyString() }, { }, attestation, ShouldZeroAAGUID::Yes);
+        attestationObject = buildAttestationObject(Vector<uint8_t>(authDataBytes), RefPtr<StringImpl> { emptyString() }, { }, attestation, ShouldZeroAAGUID::Yes);
     } else {
         CBOR::MapValue attestationObjectMap;
         attestationObjectMap[CBOR("authData")] = WTF::move(authenticatorData);
@@ -328,7 +328,7 @@ std::optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector
         if (!it->second.isArray())
             return std::nullopt;
 
-        Vector<String> extensions;
+        Vector<RefPtr<StringImpl>> extensions;
         for (const auto& extension : it->second.getArray()) {
             if (!extension.isString())
                 return std::nullopt;

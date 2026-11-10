@@ -63,7 +63,7 @@ enum class ScriptTrackingPrivacyFlag : uint16_t {
 
 using ScriptTrackingPrivacyFlags = OptionSet<ScriptTrackingPrivacyFlag>;
 
-String makeLogMessage(const URL&, ScriptTrackingPrivacyCategory);
+RefPtr<StringImpl> makeLogMessage(const URL&, ScriptTrackingPrivacyCategory);
 ASCIILiteral description(ScriptTrackingPrivacyCategory);
 NODELETE WEBCORE_EXPORT ScriptTrackingPrivacyFlag scriptCategoryAsFlag(ScriptTrackingPrivacyCategory);
 

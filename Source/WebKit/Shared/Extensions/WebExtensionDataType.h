@@ -48,28 +48,28 @@ static constexpr OptionSet<WebExtensionDataType> allWebExtensionDataTypes()
     };
 }
 
-inline String toAPIString(WebExtensionDataType dataType)
+inline RefPtr<StringImpl> toAPIString(WebExtensionDataType dataType)
 {
     switch (dataType) {
     case WebExtensionDataType::Local:
-        return "local"_s;
+        return "local"_si;
     case WebExtensionDataType::Session:
-        return "session"_s;
+        return "session"_si;
     case WebExtensionDataType::Sync:
-        return "sync"_s;
+        return "sync"_si;
     }
 
     ASSERT_NOT_REACHED();
     return { };
 }
 
-inline WebExtensionDataType toWebExtensionDataType(const String& storageAreaName)
+inline WebExtensionDataType toWebExtensionDataType(StringImpl* storageAreaName)
 {
-    if (storageAreaName == "local"_s)
+    if (equal(storageAreaName, "local"_s))
         return WebExtensionDataType::Local;
-    if (storageAreaName == "session"_s)
+    if (equal(storageAreaName, "session"_s))
         return WebExtensionDataType::Session;
-    if (storageAreaName == "sync"_s)
+    if (equal(storageAreaName, "sync"_s))
         return WebExtensionDataType::Sync;
 
     ASSERT_NOT_REACHED();

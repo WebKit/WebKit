@@ -95,10 +95,10 @@ inline std::optional<Ref<T>> toOptional(RefPtr<T> maybeNull)
     return std::nullopt;
 }
 
-inline std::optional<String> toOptional(NSString *maybeNil)
+inline std::optional<RefPtr<StringImpl>> toOptional(NSString *maybeNil)
 {
     if (maybeNil)
-        return maybeNil;
+        return StringImpl::create(maybeNil);
     return std::nullopt;
 }
 
@@ -138,11 +138,11 @@ WallTime toImpl(NSDate *);
 
 NSSet *toAPI(const HashSet<URL>&);
 
-NSSet *toAPI(const HashSet<String>&);
-NSArray *toAPIArray(const HashSet<String>&);
-HashSet<String> toImpl(NSSet *);
+NSSet *toAPI(const HashSet<RefPtr<StringImpl>>&);
+NSArray *toAPIArray(const HashSet<RefPtr<StringImpl>>&);
+HashSet<RefPtr<StringImpl>> toImpl(NSSet *);
 
-using DataMap = HashMap<String, Variant<String, Ref<API::Data>>>;
+using DataMap = HashMap<RefPtr<StringImpl>, Variant<RefPtr<StringImpl>, Ref<API::Data>>>;
 DataMap toDataMap(NSDictionary *);
 
 } // namespace WebKit

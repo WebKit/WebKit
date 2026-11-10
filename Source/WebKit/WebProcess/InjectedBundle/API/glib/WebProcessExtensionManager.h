@@ -52,7 +52,7 @@ public:
 private:
     WebProcessExtensionManager() = default;
 
-    void scanModules(const String&, Vector<String>&);
+    void scanModules(StringImpl*, Vector<RefPtr<StringImpl>>&);
     bool initializeWebProcessExtension(Module* extensionModule, GVariant* userData);
 
     Vector<Module*> m_extensionModules;

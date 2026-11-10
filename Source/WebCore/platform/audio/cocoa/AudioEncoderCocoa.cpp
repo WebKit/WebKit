@@ -75,7 +75,7 @@ public:
         std::optional<unsigned> packetlossperc { };
         std::optional<bool> useinbandfec { };
     };
-    static std::expected<InternalConfig, String> checkConfiguration(const String&, const Config&);
+    static std::expected<InternalConfig, RefPtr<StringImpl>> checkConfiguration(StringImpl*, const Config&);
 
     NODELETE static Ref<InternalAudioEncoderCocoa> create(const Config& config, InternalConfig&& internalConfig, AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback)
     {
@@ -110,7 +110,7 @@ private:
     OSStatus m_lastError WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { noErr };
 };
 
-std::expected<InternalAudioEncoderCocoa::InternalConfig, String> InternalAudioEncoderCocoa::checkConfiguration(const String& codecName, const AudioEncoder::Config& config)
+std::expected<InternalAudioEncoderCocoa::InternalConfig, RefPtr<StringImpl>> InternalAudioEncoderCocoa::checkConfiguration(StringImpl* codecName, const AudioEncoder::Config& config)
 {
     auto result = AudioDecoderCocoa::isCodecSupported(codecName);
     if (!result)
@@ -158,7 +158,7 @@ std::expected<InternalAudioEncoderCocoa::InternalConfig, String> InternalAudioEn
     return internalConfig;
 }
 
-Ref<AudioEncoder::CreatePromise> AudioEncoderCocoa::create(const String& codecName, const AudioEncoder::Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
+Ref<AudioEncoder::CreatePromise> AudioEncoderCocoa::create(StringImpl* codecName, const AudioEncoder::Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
     auto result = InternalAudioEncoderCocoa::checkConfiguration(codecName, config);
     if (!result)

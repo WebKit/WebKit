@@ -75,7 +75,7 @@ private:
     uint64_t sourceBufferLogIdentifier() final { return logIdentifier(); }
 #endif
 
-    Vector<String> m_enqueuedSamples;
+    Vector<RefPtr<StringImpl>> m_enqueuedSamples;
     std::optional<uint64_t> m_maxQueueDepth;
     Vector<uint8_t> m_inputBuffer;
 

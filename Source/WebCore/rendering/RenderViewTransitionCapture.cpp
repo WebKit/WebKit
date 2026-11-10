@@ -216,7 +216,7 @@ bool RenderViewTransitionCapture::paintsContent() const
     return !canUseExistingLayers();
 }
 
-String RenderViewTransitionCapture::debugDescription() const
+RefPtr<StringImpl> RenderViewTransitionCapture::debugDescription() const
 {
     StringBuilder builder;
 

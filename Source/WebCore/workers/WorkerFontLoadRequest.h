@@ -73,7 +73,7 @@ private:
     void didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&) final;
     void didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&) final;
 
-    RefPtr<FontCustomPlatformData> loadCustomFont(SharedBuffer&, const String&);
+    RefPtr<FontCustomPlatformData> loadCustomFont(SharedBuffer&, StringImpl*);
 
     URL m_url;
     LoadedFromOpaqueSource m_loadedFromOpaqueSource;

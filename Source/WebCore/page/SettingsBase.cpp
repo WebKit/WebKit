@@ -111,96 +111,96 @@ uint64_t SettingsBase::defaultMaximumSourceBufferSize()
 
 #endif
 
-const String& SettingsBase::standardFontFamily(UScriptCode script) const
+const RefPtr<StringImpl>& SettingsBase::standardFontFamily(UScriptCode script) const
 {
     return fontGenericFamilies().standardFontFamily(script);
 }
 
-void SettingsBase::setStandardFontFamily(const String& family, UScriptCode script)
+void SettingsBase::setStandardFontFamily(StringImpl* family, UScriptCode script)
 {
     bool changes = fontGenericFamilies().setStandardFontFamily(family, script);
     if (changes)
         invalidateAfterGenericFamilyChange(protect(m_page).get());
 }
 
-const String& SettingsBase::fixedFontFamily(UScriptCode script) const
+const RefPtr<StringImpl>& SettingsBase::fixedFontFamily(UScriptCode script) const
 {
     return fontGenericFamilies().fixedFontFamily(script);
 }
 
-void SettingsBase::setFixedFontFamily(const String& family, UScriptCode script)
+void SettingsBase::setFixedFontFamily(StringImpl* family, UScriptCode script)
 {
     bool changes = fontGenericFamilies().setFixedFontFamily(family, script);
     if (changes)
         invalidateAfterGenericFamilyChange(protect(m_page).get());
 }
 
-const String& SettingsBase::serifFontFamily(UScriptCode script) const
+const RefPtr<StringImpl>& SettingsBase::serifFontFamily(UScriptCode script) const
 {
     return fontGenericFamilies().serifFontFamily(script);
 }
 
-void SettingsBase::setSerifFontFamily(const String& family, UScriptCode script)
+void SettingsBase::setSerifFontFamily(StringImpl* family, UScriptCode script)
 {
     bool changes = fontGenericFamilies().setSerifFontFamily(family, script);
     if (changes)
         invalidateAfterGenericFamilyChange(protect(m_page).get());
 }
 
-const String& SettingsBase::sansSerifFontFamily(UScriptCode script) const
+const RefPtr<StringImpl>& SettingsBase::sansSerifFontFamily(UScriptCode script) const
 {
     return fontGenericFamilies().sansSerifFontFamily(script);
 }
 
-void SettingsBase::setSansSerifFontFamily(const String& family, UScriptCode script)
+void SettingsBase::setSansSerifFontFamily(StringImpl* family, UScriptCode script)
 {
     bool changes = fontGenericFamilies().setSansSerifFontFamily(family, script);
     if (changes)
         invalidateAfterGenericFamilyChange(protect(m_page).get());
 }
 
-const String& SettingsBase::cursiveFontFamily(UScriptCode script) const
+const RefPtr<StringImpl>& SettingsBase::cursiveFontFamily(UScriptCode script) const
 {
     return fontGenericFamilies().cursiveFontFamily(script);
 }
 
-void SettingsBase::setCursiveFontFamily(const String& family, UScriptCode script)
+void SettingsBase::setCursiveFontFamily(StringImpl* family, UScriptCode script)
 {
     bool changes = fontGenericFamilies().setCursiveFontFamily(family, script);
     if (changes)
         invalidateAfterGenericFamilyChange(protect(m_page).get());
 }
 
-const String& SettingsBase::fantasyFontFamily(UScriptCode script) const
+const RefPtr<StringImpl>& SettingsBase::fantasyFontFamily(UScriptCode script) const
 {
     return fontGenericFamilies().fantasyFontFamily(script);
 }
 
-void SettingsBase::setFantasyFontFamily(const String& family, UScriptCode script)
+void SettingsBase::setFantasyFontFamily(StringImpl* family, UScriptCode script)
 {
     bool changes = fontGenericFamilies().setFantasyFontFamily(family, script);
     if (changes)
         invalidateAfterGenericFamilyChange(protect(m_page).get());
 }
 
-const String& SettingsBase::pictographFontFamily(UScriptCode script) const
+const RefPtr<StringImpl>& SettingsBase::pictographFontFamily(UScriptCode script) const
 {
     return fontGenericFamilies().pictographFontFamily(script);
 }
 
-void SettingsBase::setPictographFontFamily(const String& family, UScriptCode script)
+void SettingsBase::setPictographFontFamily(StringImpl* family, UScriptCode script)
 {
     bool changes = fontGenericFamilies().setPictographFontFamily(family, script);
     if (changes)
         invalidateAfterGenericFamilyChange(protect(m_page).get());
 }
 
-const String& SettingsBase::mathFontFamily(UScriptCode script) const
+const RefPtr<StringImpl>& SettingsBase::mathFontFamily(UScriptCode script) const
 {
     return fontGenericFamilies().mathFontFamily(script);
 }
 
-void SettingsBase::setMathFontFamily(const String& family, UScriptCode script)
+void SettingsBase::setMathFontFamily(StringImpl* family, UScriptCode script)
 {
     bool changes = fontGenericFamilies().setMathFontFamily(family, script);
     if (changes)
@@ -228,7 +228,7 @@ void SettingsBase::setMinimumDOMTimerInterval(Seconds interval)
     }
 }
 
-void SettingsBase::setMediaContentTypesRequiringHardwareSupport(const String& contentTypes)
+void SettingsBase::setMediaContentTypesRequiringHardwareSupport(StringImpl* contentTypes)
 {
     m_mediaContentTypesRequiringHardwareSupport.shrink(0);
     for (auto type : StringView(contentTypes).split(':'))
@@ -240,37 +240,37 @@ void SettingsBase::setMediaContentTypesRequiringHardwareSupport(const Vector<Con
     m_mediaContentTypesRequiringHardwareSupport = contentTypes;
 }
 
-void SettingsBase::setAllowedMediaContainerTypes(const String& types)
+void SettingsBase::setAllowedMediaContainerTypes(StringImpl* types)
 {
-    if (types.isNull()) {
+    if (!types) {
         m_allowedMediaContainerTypes = std::nullopt;
         return;
     }
 
-    Vector<String> newTypes;
+    Vector<RefPtr<StringImpl>> newTypes;
     for (auto type : StringView(types).split(','))
         newTypes.append(type.toString());
 
     m_allowedMediaContainerTypes = WTF::move(newTypes);
 }
 
-void SettingsBase::setAllowedMediaCodecTypes(const String& types)
+void SettingsBase::setAllowedMediaCodecTypes(StringImpl* types)
 {
-    if (types.isNull()) {
+    if (!types) {
         m_allowedMediaCodecTypes = std::nullopt;
         return;
     }
 
-    Vector<String> newTypes;
+    Vector<RefPtr<StringImpl>> newTypes;
     for (auto type : StringView(types).split(','))
         newTypes.append(type.toString());
 
     m_allowedMediaCodecTypes = WTF::move(newTypes);
 }
 
-void SettingsBase::setAllowedMediaVideoCodecIDs(const String& types)
+void SettingsBase::setAllowedMediaVideoCodecIDs(StringImpl* types)
 {
-    if (types.isNull()) {
+    if (!types) {
         m_allowedMediaVideoCodecIDs = std::nullopt;
         return;
     }
@@ -284,9 +284,9 @@ void SettingsBase::setAllowedMediaVideoCodecIDs(const String& types)
     m_allowedMediaVideoCodecIDs = WTF::move(newTypes);
 }
 
-void SettingsBase::setAllowedMediaAudioCodecIDs(const String& types)
+void SettingsBase::setAllowedMediaAudioCodecIDs(StringImpl* types)
 {
-    if (types.isNull()) {
+    if (!types) {
         m_allowedMediaAudioCodecIDs = std::nullopt;
         return;
     }
@@ -300,9 +300,9 @@ void SettingsBase::setAllowedMediaAudioCodecIDs(const String& types)
     m_allowedMediaAudioCodecIDs = WTF::move(newTypes);
 }
 
-void SettingsBase::setAllowedMediaCaptionFormatTypes(const String& types)
+void SettingsBase::setAllowedMediaCaptionFormatTypes(StringImpl* types)
 {
-    if (types.isNull()) {
+    if (!types) {
         m_allowedMediaCaptionFormatTypes = std::nullopt;
         return;
     }
@@ -372,7 +372,7 @@ void SettingsBase::mediaTypeOverrideChanged()
         return;
 
     if (RefPtr view = localMainFrame->view())
-        view->setMediaType(AtomString(page->settings().mediaTypeOverride()));
+        view->setMediaType(AtomStringImpl::add(page->settings().mediaTypeOverride()).get());
 
     page->setNeedsRecalcStyleInAllFrames();
 }

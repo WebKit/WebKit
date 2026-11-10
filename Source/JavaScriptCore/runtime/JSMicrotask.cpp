@@ -524,7 +524,7 @@ static void runPromiseAnyResolveJob(JSGlobalObject*, VM& vm, InternalMicrotask, 
         globalContext->setRemainingElementsCount(count);
         if (!count) {
             auto* promise = uncheckedDowncast<JSPromise>(globalContext->promise());
-            auto* aggregateError = createAggregateError(vm, globalObject->errorStructure(ErrorType::AggregateError), errors, String(), jsUndefined());
+            auto* aggregateError = createAggregateError(vm, globalObject->errorStructure(ErrorType::AggregateError), errors, nullString(), jsUndefined());
             scope.release();
             promise->reject(vm, aggregateError);
         }

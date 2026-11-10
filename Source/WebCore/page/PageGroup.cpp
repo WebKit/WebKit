@@ -57,7 +57,7 @@ NODELETE static unsigned getUniqueIdentifier()
 
 // --------
 
-UniqueRef<PageGroup> PageGroup::create(const String& name)
+UniqueRef<PageGroup> PageGroup::create(StringImpl* name)
 {
     return UniqueRef<PageGroup>(*new PageGroup(name));
 }
@@ -67,7 +67,7 @@ UniqueRef<PageGroup> PageGroup::create(Page& page)
     return UniqueRef<PageGroup>(*new PageGroup(page));
 }
 
-PageGroup::PageGroup(const String& name)
+PageGroup::PageGroup(StringImpl* name)
     : m_name(name)
     , m_identifier(getUniqueIdentifier())
 {
@@ -81,7 +81,7 @@ PageGroup::PageGroup(Page& page)
 
 PageGroup::~PageGroup() = default;
 
-using PageGroupMap = HashMap<String, UniqueRef<PageGroup>>;
+using PageGroupMap = HashMap<RefPtr<StringImpl>, UniqueRef<PageGroup>>;
 
 NODELETE static PageGroupMap& pageGroups()
 {
@@ -89,9 +89,9 @@ NODELETE static PageGroupMap& pageGroups()
     return pageGroupsMap;
 }
 
-PageGroup* PageGroup::pageGroup(const String& groupName)
+PageGroup* PageGroup::pageGroup(StringImpl* groupName)
 {
-    ASSERT(!groupName.isEmpty());
+    ASSERT(!isEmpty(groupName));
 
     return pageGroups().ensure(groupName, [&] {
         return PageGroup::create(groupName);

@@ -126,18 +126,18 @@ static bool parseFontSize(std::span<const CharacterType> characters, int& size)
     return true;
 }
 
-static bool parseFontSize(const String& input, int& size)
+static bool parseFontSize(StringImpl* input, int& size)
 {
-    if (input.isEmpty())
+    if (isEmpty(input))
         return false;
 
-    if (input.is8Bit())
-        return parseFontSize(input.span8(), size);
+    if (is8Bit(input))
+        return parseFontSize(span8(input), size);
 
-    return parseFontSize(input.span16(), size);
+    return parseFontSize(span16(input), size);
 }
 
-bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, CSSValueID& size)
+bool HTMLFontElement::cssValueFromFontSizeNumber(StringImpl* s, CSSValueID& size)
 {
     int num = 0;
     if (!parseFontSize(s, num))
@@ -185,7 +185,7 @@ bool HTMLFontElement::hasPresentationalHintsForAttribute(const QualifiedName& na
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLFontElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLFontElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     switch (name.nodeName()) {
     case AttributeNames::sizeAttr: {
@@ -198,7 +198,7 @@ void HTMLFontElement::collectPresentationalHintsForAttribute(const QualifiedName
         addHTMLColorToStyle(style, CSSPropertyID::Color, value);
         break;
     case AttributeNames::faceAttr:
-        if (!value.isEmpty()) {
+        if (!isEmpty(value)) {
             if (auto fontFaceValue = CSSValuePool::singleton().createFontFaceValue(value))
                 style.setProperty(CSSProperty(CSSPropertyID::FontFamily, fontFaceValue.releaseNonNull()));
         }

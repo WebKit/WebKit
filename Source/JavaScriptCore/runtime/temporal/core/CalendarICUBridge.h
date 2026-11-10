@@ -47,9 +47,9 @@ struct CalendarFields {
     uint8_t month { 1 };
     uint8_t day { 1 };
     bool isLeapMonth { false };
-    std::optional<String> era;
+    std::optional<RefPtr<StringImpl>> era;
     std::optional<int32_t> eraYear;
-    String monthCode;
+    RefPtr<StringImpl> monthCode;
 };
 
 JS_EXPORT_PRIVATE CalendarID calendarIDFromString(StringView);
@@ -85,7 +85,7 @@ JS_EXPORT_PRIVATE TemporalResult<int32_t> calendarYear(CalendarID, const ISO8601
 
 JS_EXPORT_PRIVATE TemporalResult<uint8_t> calendarMonth(CalendarID, const ISO8601::PlainDate& isoDate);
 
-JS_EXPORT_PRIVATE TemporalResult<String> calendarMonthCode(CalendarID, const ISO8601::PlainDate& isoDate);
+JS_EXPORT_PRIVATE TemporalResult<RefPtr<StringImpl>> calendarMonthCode(CalendarID, const ISO8601::PlainDate& isoDate);
 
 JS_EXPORT_PRIVATE TemporalResult<uint8_t> calendarDay(CalendarID, const ISO8601::PlainDate& isoDate);
 
@@ -105,7 +105,7 @@ JS_EXPORT_PRIVATE TemporalResult<ParsedMonthCode> constrainMonthCode(CalendarID,
 
 JS_EXPORT_PRIVATE TemporalResult<int32_t> monthCodeOrdinalInYear(CalendarID, ParsedMonthCode, int32_t year);
 
-JS_EXPORT_PRIVATE TemporalResult<std::optional<String>> calendarEra(CalendarID, const ISO8601::PlainDate& isoDate);
+JS_EXPORT_PRIVATE TemporalResult<std::optional<RefPtr<StringImpl>>> calendarEra(CalendarID, const ISO8601::PlainDate& isoDate);
 
 JS_EXPORT_PRIVATE TemporalResult<std::optional<int32_t>> calendarEraYear(CalendarID, const ISO8601::PlainDate& isoDate);
 

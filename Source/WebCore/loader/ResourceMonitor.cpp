@@ -76,7 +76,7 @@ void ResourceMonitor::setEligibility(Eligibility eligibility)
     m_eligibility = eligibility;
 
     if (isEligible()) {
-        RESOURCEMONITOR_RELEASE_LOG("Frame (%" SENSITIVE_LOG_STRING ") was set as eligible.", m_frameURL.string().utf8());
+        RESOURCEMONITOR_RELEASE_LOG("Frame (%" SENSITIVE_LOG_STRING ") was set as eligible.", utf8(m_frameURL.string()));
 
         if (RefPtr resourceMonitor = parentResourceMonitorIfExists(); !resourceMonitor || !resourceMonitor->isEligible())
             checkNetworkUsageExcessIfNecessary();
@@ -139,9 +139,9 @@ void ResourceMonitor::continueAfterDidReceiveEligibility(Eligibility eligibility
         return;
 
     RESOURCEMONITOR_RELEASE_LOG("resourceURL %" SENSITIVE_LOG_STRING " mainDocumentURL %" SENSITIVE_LOG_STRING " frameURL %" SENSITIVE_LOG_STRING " (%" PUBLIC_LOG_STRING ") is set as %" PUBLIC_LOG_STRING ".",
-        url.string().utf8(),
-        page->mainFrameURL().string().utf8(),
-        m_frameURL.string().utf8(),
+        utf8(url.string()),
+        utf8(page->mainFrameURL().string()),
+        utf8(m_frameURL.string()),
         ContentExtensions::resourceTypeToString(resourceType).characters(),
         eligibilityToString(eligibility).characters()
     );
@@ -226,7 +226,7 @@ void ResourceMonitor::checkNetworkUsageExcessIfNecessary()
         // If the frame has sticky user activation, don't do offloading.
         if (RefPtr protectedWindow = frame->window(); protectedWindow && protectedWindow->hasStickyActivation()) {
             if (RefPtr page = frame->page())
-                protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::iframeResourceMonitoringKey(), "IFrame ResourceMonitoring Throttled"_s, diagnosticValues(), ShouldSample::No);
+                protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::iframeResourceMonitoringKey(), "IFrame ResourceMonitoring Throttled"_si, diagnosticValues(), ShouldSample::No);
 
             RESOURCEMONITOR_RELEASE_LOG("But the frame has sticky user activation so ignoring.");
             return;

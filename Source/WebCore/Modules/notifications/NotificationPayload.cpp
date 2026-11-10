@@ -36,20 +36,20 @@
 
 namespace WebCore {
 
-bool NotificationPayload::hasDeclarativeMessageHeader(const String& json)
+bool NotificationPayload::hasDeclarativeMessageHeader(StringImpl* json)
 {
     return NotificationJSONParser::hasDeclarativeMessageHeader(json);
 }
 
-ExceptionOr<NotificationPayload> NotificationPayload::parseJSON(const String& json)
+ExceptionOr<NotificationPayload> NotificationPayload::parseJSON(StringImpl* json)
 {
     auto value = JSON::Value::parseJSON(json);
     if (!value)
-        return Exception { ExceptionCode::SyntaxError, "Push message with Notification disposition: does not contain valid JSON"_s };
+        return Exception { ExceptionCode::SyntaxError, "Push message with Notification disposition: does not contain valid JSON"_si };
 
     auto object = value->asObject();
     if (!object)
-        return Exception { ExceptionCode::SyntaxError, "Push message with Notification disposition: top level JSON value is not an object"_s };
+        return Exception { ExceptionCode::SyntaxError, "Push message with Notification disposition: top level JSON value is not an object"_si };
 
     return NotificationJSONParser::parseNotificationPayload(*object);
 }

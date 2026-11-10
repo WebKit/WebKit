@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-using PushMessageDataInit = Variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, String>;
+using PushMessageDataInit = Variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, RefPtr<StringImpl>>;
 
 struct PushEventInit : ExtendableEventInit {
     std::optional<PushMessageDataInit> data;

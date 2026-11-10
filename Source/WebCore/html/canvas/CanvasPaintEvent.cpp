@@ -33,12 +33,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CanvasPaintEvent);
 
-Ref<CanvasPaintEvent> CanvasPaintEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+Ref<CanvasPaintEvent> CanvasPaintEvent::create(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
 {
     return adoptRef(*new CanvasPaintEvent(type, WTF::move(initializer), isTrusted));
 }
 
-CanvasPaintEvent::CanvasPaintEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+CanvasPaintEvent::CanvasPaintEvent(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::CanvasPaintEvent, type, initializer, isTrusted)
     , m_changedElements(WTF::move(initializer.changedElements))
 {

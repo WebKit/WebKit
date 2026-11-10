@@ -38,9 +38,9 @@ struct WEBCORE_EXPORT ReportingClient {
     virtual ~ReportingClient() = default;
 
     virtual void notifyReportObservers(Ref<Report>&&) = 0;
-    virtual String endpointURIForToken(const String&) const = 0;
-    virtual void sendReportToEndpoints(const URL& baseURL, std::span<const String> endpointURIs, std::span<const String> endpointTokens, Ref<FormData>&& report, ViolationReportType) = 0;
-    virtual String httpUserAgent() const = 0;
+    virtual RefPtr<StringImpl> endpointURIForToken(StringImpl*) const = 0;
+    virtual void sendReportToEndpoints(const URL& baseURL, std::span<const RefPtr<StringImpl>> endpointURIs, std::span<const RefPtr<StringImpl>> endpointTokens, Ref<FormData>&& report, ViolationReportType) = 0;
+    virtual RefPtr<StringImpl> httpUserAgent() const = 0;
 };
 
 } // namespace WebCore

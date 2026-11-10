@@ -63,10 +63,10 @@ static SoupSameSitePolicy soupSameSitePolicy(Cookie::SameSitePolicy policy)
 }
 
 Cookie::Cookie(SoupCookie* cookie)
-    : name(String::fromUTF8(soup_cookie_get_name(cookie)))
-    , value(String::fromUTF8(soup_cookie_get_value(cookie)))
-    , domain(String::fromUTF8(soup_cookie_get_domain(cookie)))
-    , path(String::fromUTF8(soup_cookie_get_path(cookie)))
+    : name(StringImpl::fromUTF8(soup_cookie_get_name(cookie)))
+    , value(StringImpl::fromUTF8(soup_cookie_get_value(cookie)))
+    , domain(StringImpl::fromUTF8(soup_cookie_get_domain(cookie)))
+    , path(StringImpl::fromUTF8(soup_cookie_get_path(cookie)))
     , expires(soup_cookie_get_expires(cookie) ? std::make_optional(static_cast<double>(g_date_time_to_unix(soup_cookie_get_expires(cookie))) * 1000) : std::nullopt)
     , httpOnly(soup_cookie_get_http_only(cookie))
     , secure(soup_cookie_get_secure(cookie))
@@ -77,11 +77,11 @@ Cookie::Cookie(SoupCookie* cookie)
 
 SoupCookie* Cookie::toSoupCookie() const
 {
-    if (name.isNull() || value.isNull() || domain.isNull() || path.isNull())
+    if (!name || !value || !domain || !path)
         return nullptr;
 
-    SoupCookie* soupCookie = soup_cookie_new(name.utf8().legacyCStringPointer(), value.utf8().legacyCStringPointer(),
-        domain.utf8().legacyCStringPointer(), path.utf8().legacyCStringPointer(), -1);
+    SoupCookie* soupCookie = soup_cookie_new(utf8(name).legacyCStringPointer(), utf8(value).legacyCStringPointer(),
+        utf8(domain).legacyCStringPointer(), utf8(path).legacyCStringPointer(), -1);
 
     soup_cookie_set_http_only(soupCookie, httpOnly);
     soup_cookie_set_secure(soupCookie, secure);

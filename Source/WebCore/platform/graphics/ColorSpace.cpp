@@ -258,7 +258,7 @@ TextStream& operator<<(TextStream& ts, const ColorSpace& colorSpace)
 #endif
 #if USE(CG)
     else if (RetainPtr description = adoptCF(CGColorSpaceCopyICCProfileDescription(protect(colorSpace.platformColorSpace()).get())))
-        ts << String(description.get());
+        ts << StringImpl::create(description.get());
 #endif
 
     return ts;

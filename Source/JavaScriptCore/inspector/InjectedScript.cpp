@@ -42,7 +42,7 @@
 namespace Inspector {
 
 InjectedScript::InjectedScript()
-    : InjectedScriptBase("InjectedScript"_s)
+    : InjectedScriptBase("InjectedScript"_si)
 {
 }
 
@@ -51,15 +51,15 @@ InjectedScript::InjectedScript(const InjectedScript&) = default;
 InjectedScript& InjectedScript::operator=(const InjectedScript&) = default;
 
 InjectedScript::InjectedScript(JSC::JSGlobalObject* globalObject, JSC::JSObject* injectedScriptObject, InspectorEnvironment* environment)
-    : InjectedScriptBase("InjectedScript"_s, globalObject, injectedScriptObject, environment)
+    : InjectedScriptBase("InjectedScript"_si, globalObject, injectedScriptObject, environment)
 {
 }
 
 InjectedScript::~InjectedScript() = default;
 
-void InjectedScript::execute(Protocol::ErrorString& errorString, const String& functionString, ExecuteOptions&& options, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
+void InjectedScript::execute(Protocol::ErrorString& errorString, StringImpl* functionString, ExecuteOptions&& options, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
 {
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "execute"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "execute"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(functionString);
     function.appendArgument(options.objectGroup);
     function.appendArgument(options.includeCommandLineAPI);
@@ -70,9 +70,9 @@ void InjectedScript::execute(Protocol::ErrorString& errorString, const String& f
     makeEvalCall(errorString, function, result, wasThrown, savedResultIndex);
 }
 
-void InjectedScript::evaluate(Protocol::ErrorString& errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
+void InjectedScript::evaluate(Protocol::ErrorString& errorString, StringImpl* expression, StringImpl* objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
 {
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "evaluate"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "evaluate"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(expression);
     function.appendArgument(objectGroup);
     function.appendArgument(includeCommandLineAPI);
@@ -82,9 +82,9 @@ void InjectedScript::evaluate(Protocol::ErrorString& errorString, const String& 
     makeEvalCall(errorString, function, result, wasThrown, savedResultIndex);
 }
 
-void InjectedScript::awaitPromise(const String& promiseObjectId, bool returnByValue, bool generatePreview, bool saveResult, AsyncCallCallback&& callback)
+void InjectedScript::awaitPromise(StringImpl* promiseObjectId, bool returnByValue, bool generatePreview, bool saveResult, AsyncCallCallback&& callback)
 {
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "awaitPromise"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "awaitPromise"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(promiseObjectId);
     function.appendArgument(returnByValue);
     function.appendArgument(generatePreview);
@@ -92,9 +92,9 @@ void InjectedScript::awaitPromise(const String& promiseObjectId, bool returnByVa
     makeAsyncCall(function, WTF::move(callback));
 }
 
-void InjectedScript::callFunctionOn(const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, bool awaitPromise, AsyncCallCallback&& callback)
+void InjectedScript::callFunctionOn(StringImpl* objectId, StringImpl* expression, StringImpl* arguments, bool returnByValue, bool generatePreview, bool awaitPromise, AsyncCallCallback&& callback)
 {
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "callFunctionOn"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "callFunctionOn"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(objectId);
     function.appendArgument(expression);
     function.appendArgument(arguments);
@@ -104,9 +104,9 @@ void InjectedScript::callFunctionOn(const String& objectId, const String& expres
     makeAsyncCall(function, WTF::move(callback));
 }
 
-void InjectedScript::evaluateOnCallFrame(Protocol::ErrorString& errorString, JSC::JSValue callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
+void InjectedScript::evaluateOnCallFrame(Protocol::ErrorString& errorString, JSC::JSValue callFrames, StringImpl* callFrameId, StringImpl* expression, StringImpl* objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
 {
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "evaluateOnCallFrame"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "evaluateOnCallFrame"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(callFrames);
     function.appendArgument(callFrameId);
     function.appendArgument(expression);
@@ -118,16 +118,16 @@ void InjectedScript::evaluateOnCallFrame(Protocol::ErrorString& errorString, JSC
     makeEvalCall(errorString, function, result, wasThrown, savedResultIndex);
 }
 
-void InjectedScript::getFunctionDetails(Protocol::ErrorString& errorString, const String& functionId, RefPtr<Protocol::Debugger::FunctionDetails>& result)
+void InjectedScript::getFunctionDetails(Protocol::ErrorString& errorString, StringImpl* functionId, RefPtr<Protocol::Debugger::FunctionDetails>& result)
 {
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "getFunctionDetails"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "getFunctionDetails"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(functionId);
 
     RefPtr<JSON::Value> resultValue = makeCall(function);
     if (!resultValue || resultValue->type() != JSON::Value::Type::Object) {
         errorString = resultValue->asString();
         if (!errorString)
-            errorString = "Internal error"_s;
+            errorString = "Internal error"_si;
         return;
     }
 
@@ -136,42 +136,42 @@ void InjectedScript::getFunctionDetails(Protocol::ErrorString& errorString, cons
 
 void InjectedScript::functionDetails(Protocol::ErrorString& errorString, JSC::JSValue value, RefPtr<Protocol::Debugger::FunctionDetails>& result)
 {
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "functionDetails"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "functionDetails"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(value);
 
     RefPtr<JSON::Value> resultValue = makeCall(function);
     if (!resultValue || resultValue->type() != JSON::Value::Type::Object) {
         errorString = resultValue->asString();
         if (!errorString)
-            errorString = "Internal error"_s;
+            errorString = "Internal error"_si;
         return;
     }
 
     result = Protocol::BindingTraits<Protocol::Debugger::FunctionDetails>::runtimeCast(resultValue.releaseNonNull());
 }
 
-void InjectedScript::getPreview(Protocol::ErrorString& errorString, const String& objectId, RefPtr<Protocol::Runtime::ObjectPreview>& result)
+void InjectedScript::getPreview(Protocol::ErrorString& errorString, StringImpl* objectId, RefPtr<Protocol::Runtime::ObjectPreview>& result)
 {
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "getPreview"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "getPreview"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(objectId);
 
     RefPtr<JSON::Value> resultValue = makeCall(function);
     if (!resultValue || resultValue->type() != JSON::Value::Type::Object) {
         errorString = resultValue->asString();
         if (!errorString)
-            errorString = "Internal error"_s;
+            errorString = "Internal error"_si;
         return;
     }
 
     result = Protocol::BindingTraits<Protocol::Runtime::ObjectPreview>::runtimeCast(resultValue.releaseNonNull());
 }
 
-void InjectedScript::getProperties(Protocol::ErrorString& errorString, const String& objectId, bool ownProperties, int fetchStart, int fetchCount, bool generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>& properties)
+void InjectedScript::getProperties(Protocol::ErrorString& errorString, StringImpl* objectId, bool ownProperties, int fetchStart, int fetchCount, bool generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>& properties)
 {
     ASSERT(fetchStart >= 0);
     ASSERT(fetchCount >= 0);
 
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "getProperties"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "getProperties"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(objectId);
     function.appendArgument(ownProperties);
     function.appendArgument(fetchStart);
@@ -180,19 +180,19 @@ void InjectedScript::getProperties(Protocol::ErrorString& errorString, const Str
 
     RefPtr<JSON::Value> result = makeCall(function);
     if (!result || result->type() != JSON::Value::Type::Array) {
-        errorString = "Internal error"_s;
+        errorString = "Internal error"_si;
         return;
     }
 
     properties = Protocol::BindingTraits<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>::runtimeCast(result.releaseNonNull());
 }
 
-void InjectedScript::getDisplayableProperties(Protocol::ErrorString& errorString, const String& objectId, int fetchStart, int fetchCount, bool generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>& properties)
+void InjectedScript::getDisplayableProperties(Protocol::ErrorString& errorString, StringImpl* objectId, int fetchStart, int fetchCount, bool generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>& properties)
 {
     ASSERT(fetchStart >= 0);
     ASSERT(fetchCount >= 0);
 
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "getDisplayableProperties"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "getDisplayableProperties"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(objectId);
     function.appendArgument(fetchStart);
     function.appendArgument(fetchCount);
@@ -200,22 +200,22 @@ void InjectedScript::getDisplayableProperties(Protocol::ErrorString& errorString
 
     RefPtr<JSON::Value> result = makeCall(function);
     if (!result || result->type() != JSON::Value::Type::Array) {
-        errorString = "Internal error"_s;
+        errorString = "Internal error"_si;
         return;
     }
 
     properties = Protocol::BindingTraits<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>::runtimeCast(result.releaseNonNull());
 }
 
-void InjectedScript::getInternalProperties(Protocol::ErrorString& errorString, const String& objectId, bool generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::InternalPropertyDescriptor>>& properties)
+void InjectedScript::getInternalProperties(Protocol::ErrorString& errorString, StringImpl* objectId, bool generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::InternalPropertyDescriptor>>& properties)
 {
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "getInternalProperties"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "getInternalProperties"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(objectId);
     function.appendArgument(generatePreview);
 
     RefPtr<JSON::Value> result = makeCall(function);
     if (!result || result->type() != JSON::Value::Type::Array) {
-        errorString = "Internal error"_s;
+        errorString = "Internal error"_si;
         return;
     }
 
@@ -224,12 +224,12 @@ void InjectedScript::getInternalProperties(Protocol::ErrorString& errorString, c
         properties = WTF::move(array);
 }
 
-void InjectedScript::getCollectionEntries(Protocol::ErrorString& errorString, const String& objectId, const String& objectGroup, int fetchStart, int fetchCount, RefPtr<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>& entries)
+void InjectedScript::getCollectionEntries(Protocol::ErrorString& errorString, StringImpl* objectId, StringImpl* objectGroup, int fetchStart, int fetchCount, RefPtr<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>& entries)
 {
     ASSERT(fetchStart >= 0);
     ASSERT(fetchCount >= 0);
 
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "getCollectionEntries"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "getCollectionEntries"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(objectId);
     function.appendArgument(objectGroup);
     function.appendArgument(fetchStart);
@@ -237,21 +237,21 @@ void InjectedScript::getCollectionEntries(Protocol::ErrorString& errorString, co
 
     RefPtr<JSON::Value> result = makeCall(function);
     if (!result || result->type() != JSON::Value::Type::Array) {
-        errorString = "Internal error"_s;
+        errorString = "Internal error"_si;
         return;
     }
 
     entries = Protocol::BindingTraits<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>::runtimeCast(result.releaseNonNull());
 }
 
-void InjectedScript::saveResult(Protocol::ErrorString& errorString, const String& callArgumentJSON, std::optional<int>& savedResultIndex)
+void InjectedScript::saveResult(Protocol::ErrorString& errorString, StringImpl* callArgumentJSON, std::optional<int>& savedResultIndex)
 {
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "saveResult"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "saveResult"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(callArgumentJSON);
 
     RefPtr<JSON::Value> result = makeCall(function);
     if (!result || result->type() != JSON::Value::Type::Integer) {
-        errorString = "Internal error"_s;
+        errorString = "Internal error"_si;
         return;
     }
 
@@ -261,7 +261,7 @@ void InjectedScript::saveResult(Protocol::ErrorString& errorString, const String
 Ref<JSON::ArrayOf<Protocol::Debugger::CallFrame>> InjectedScript::wrapCallFrames(JSC::JSValue callFrames) const
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "wrapCallFrames"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "wrapCallFrames"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(callFrames);
 
     auto callResult = callFunctionWithEvalEnabled(function);
@@ -276,15 +276,15 @@ Ref<JSON::ArrayOf<Protocol::Debugger::CallFrame>> InjectedScript::wrapCallFrames
     return JSON::ArrayOf<Protocol::Debugger::CallFrame>::create();
 }
 
-RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapObject(JSC::JSValue value, const String& groupName, bool generatePreview, const String& descriptionHint) const
+RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapObject(JSC::JSValue value, StringImpl* groupName, bool generatePreview, StringImpl* descriptionHint) const
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall wrapFunction(globalObject(), injectedScriptObject(), "wrapObject"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall wrapFunction(globalObject(), injectedScriptObject(), "wrapObject"_si, protect(inspectorEnvironment())->functionCallHandler());
     wrapFunction.appendArgument(value);
     wrapFunction.appendArgument(groupName);
     wrapFunction.appendArgument(hasAccessToInspectedScriptState());
     wrapFunction.appendArgument(generatePreview);
-    if (!descriptionHint.isNull())
+    if (descriptionHint)
         wrapFunction.appendArgument(descriptionHint);
 
     auto callResult = callFunctionWithEvalEnabled(wrapFunction);
@@ -302,10 +302,10 @@ RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapObject(JSC::JSValue 
     return Protocol::BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(resultObject.releaseNonNull());
 }
 
-RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapJSONString(const String& json, const String& groupName, bool generatePreview) const
+RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapJSONString(StringImpl* json, StringImpl* groupName, bool generatePreview) const
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall wrapFunction(globalObject(), injectedScriptObject(), "wrapJSONString"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall wrapFunction(globalObject(), injectedScriptObject(), "wrapJSONString"_si, protect(inspectorEnvironment())->functionCallHandler());
     wrapFunction.appendArgument(json);
     wrapFunction.appendArgument(groupName);
     wrapFunction.appendArgument(generatePreview);
@@ -331,7 +331,7 @@ RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapJSONString(const Str
 RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapTable(JSC::JSValue table, JSC::JSValue columns) const
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall wrapFunction(globalObject(), injectedScriptObject(), "wrapTable"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall wrapFunction(globalObject(), injectedScriptObject(), "wrapTable"_si, protect(inspectorEnvironment())->functionCallHandler());
     wrapFunction.appendArgument(hasAccessToInspectedScriptState());
     wrapFunction.appendArgument(table);
     if (!columns)
@@ -357,7 +357,7 @@ RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapTable(JSC::JSValue t
 RefPtr<Protocol::Runtime::ObjectPreview> InjectedScript::previewValue(JSC::JSValue value) const
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall wrapFunction(globalObject(), injectedScriptObject(), "previewValue"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall wrapFunction(globalObject(), injectedScriptObject(), "previewValue"_si, protect(inspectorEnvironment())->functionCallHandler());
     wrapFunction.appendArgument(value);
 
     auto callResult = callFunctionWithEvalEnabled(wrapFunction);
@@ -378,7 +378,7 @@ RefPtr<Protocol::Runtime::ObjectPreview> InjectedScript::previewValue(JSC::JSVal
 void InjectedScript::setEventValue(JSC::JSValue value)
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "setEventValue"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "setEventValue"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(value);
     makeCall(function);
 }
@@ -386,14 +386,14 @@ void InjectedScript::setEventValue(JSC::JSValue value)
 void InjectedScript::clearEventValue()
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "clearEventValue"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "clearEventValue"_si, protect(inspectorEnvironment())->functionCallHandler());
     makeCall(function);
 }
 
 void InjectedScript::setExceptionValue(JSC::JSValue value)
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "setExceptionValue"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "setExceptionValue"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(value);
     makeCall(function);
 }
@@ -401,14 +401,14 @@ void InjectedScript::setExceptionValue(JSC::JSValue value)
 void InjectedScript::clearExceptionValue()
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "clearExceptionValue"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "clearExceptionValue"_si, protect(inspectorEnvironment())->functionCallHandler());
     makeCall(function);
 }
 
-JSC::JSValue InjectedScript::findObjectById(const String& objectId) const
+JSC::JSValue InjectedScript::findObjectById(StringImpl* objectId) const
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "findObjectById"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "findObjectById"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(objectId);
 
     auto callResult = callFunctionWithEvalEnabled(function);
@@ -421,22 +421,22 @@ JSC::JSValue InjectedScript::findObjectById(const String& objectId) const
 void InjectedScript::inspectObject(JSC::JSValue value)
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "inspectObject"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "inspectObject"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(value);
     makeCall(function);
 }
 
-void InjectedScript::releaseObject(const String& objectId)
+void InjectedScript::releaseObject(StringImpl* objectId)
 {
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "releaseObject"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "releaseObject"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(objectId);
     makeCall(function);
 }
 
-void InjectedScript::releaseObjectGroup(const String& objectGroup)
+void InjectedScript::releaseObjectGroup(StringImpl* objectGroup)
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall releaseFunction(globalObject(), injectedScriptObject(), "releaseObjectGroup"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall releaseFunction(globalObject(), injectedScriptObject(), "releaseObjectGroup"_si, protect(inspectorEnvironment())->functionCallHandler());
     releaseFunction.appendArgument(objectGroup);
 
     auto callResult = callFunctionWithEvalEnabled(releaseFunction);
@@ -446,7 +446,7 @@ void InjectedScript::releaseObjectGroup(const String& objectGroup)
 JSC::JSObject* InjectedScript::createCommandLineAPIObject(JSC::JSValue callFrame) const
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "createCommandLineAPIObject"_s, protect(inspectorEnvironment())->functionCallHandler());
+    ScriptFunctionCall function(globalObject(), injectedScriptObject(), "createCommandLineAPIObject"_si, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(callFrame);
 
     auto callResult = callFunctionWithEvalEnabled(function);

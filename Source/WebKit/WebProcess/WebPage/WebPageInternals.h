@@ -72,10 +72,10 @@ struct WebPage::Internals {
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     struct LinkDecorationFilteringConditionals {
         HashSet<WebCore::RegistrableDomain> domains;
-        Vector<String> paths;
+        Vector<RefPtr<StringImpl>> paths;
     };
-    HashMap<String, LinkDecorationFilteringConditionals> linkDecorationFilteringData;
-    HashMap<WebCore::RegistrableDomain, HashSet<String>> allowedQueryParametersForAdvancedPrivacyProtections;
+    HashMap<RefPtr<StringImpl>, LinkDecorationFilteringConditionals> linkDecorationFilteringData;
+    HashMap<WebCore::RegistrableDomain, HashSet<RefPtr<StringImpl>>> allowedQueryParametersForAdvancedPrivacyProtections;
 #endif
 };
 

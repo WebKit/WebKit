@@ -32,17 +32,20 @@ class SpaceSplitStringData {
     WTF_MAKE_TZONE_ALLOCATED(SpaceSplitStringData);
     WTF_MAKE_NONCOPYABLE(SpaceSplitStringData);
 public:
-    static RefPtr<SpaceSplitStringData> create(const AtomString&);
+    static RefPtr<SpaceSplitStringData> create(AtomStringImpl*);
 
     auto begin() const LIFETIME_BOUND { return std::to_address(tokenArray().begin()); }
     auto end() const LIFETIME_BOUND { return std::to_address(tokenArray().end()); }
     auto begin() LIFETIME_BOUND { return std::to_address(tokenArray().begin()); }
     auto end() LIFETIME_BOUND { return std::to_address(tokenArray().end()); }
 
-    bool contains(const AtomString& string) const
+    NODELETE bool contains(AtomStringImpl* string) const
     {
-        auto tokens = tokenArray();
-        return std::ranges::find(tokens, string) != tokens.end();
+        for (auto& token : tokenArray()) {
+            if (token == string)
+                return true;
+        }
+        return false;
     }
 
     NODELETE bool containsAll(const SpaceSplitStringData&) const;
@@ -50,7 +53,7 @@ public:
     unsigned size() const { return m_size; }
     static constexpr ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(SpaceSplitStringData, m_size); }
 
-    const AtomString& operator[](unsigned i) LIFETIME_BOUND { return tokenArray()[i]; }
+    const RefPtr<AtomStringImpl>& operator[](unsigned i) LIFETIME_BOUND { return tokenArray()[i]; }
 
     void ref()
     {
@@ -71,31 +74,31 @@ public:
         m_refCount = tempRefCount;
     }
 
-    const AtomString& keyString() const LIFETIME_BOUND { return m_keyString; }
+    const RefPtr<AtomStringImpl>& keyString() const LIFETIME_BOUND { return m_keyString; }
 
     static constexpr ptrdiff_t tokensMemoryOffset() { return sizeof(SpaceSplitStringData); }
 
 private:
-    static Ref<SpaceSplitStringData> create(const AtomString&, unsigned tokenCount);
-    SpaceSplitStringData(const AtomString& string, unsigned size)
+    static Ref<SpaceSplitStringData> create(AtomStringImpl*, unsigned tokenCount);
+    SpaceSplitStringData(AtomStringImpl* string, unsigned size)
         : m_keyString(string)
         , m_refCount(1)
         , m_size(size)
     {
-        ASSERT(!string.isEmpty());
+        ASSERT(!isEmpty(string));
         ASSERT_WITH_MESSAGE(m_size, "SpaceSplitStringData should never be empty by definition. There is no difference between empty and null.");
     }
 
     ~SpaceSplitStringData() = default;
     static void destroy(SpaceSplitStringData*);
 
-    std::span<AtomString> tokenArray() LIFETIME_BOUND { return unsafeMakeSpan(m_tokens, m_size); }
-    std::span<const AtomString> tokenArray() const LIFETIME_BOUND { return unsafeMakeSpan(m_tokens, m_size); }
+    std::span<RefPtr<AtomStringImpl>> tokenArray() LIFETIME_BOUND { return unsafeMakeSpan(m_tokens, m_size); }
+    std::span<const RefPtr<AtomStringImpl>> tokenArray() const LIFETIME_BOUND { return unsafeMakeSpan(m_tokens, m_size); }
 
-    AtomString m_keyString;
+    RefPtr<AtomStringImpl> m_keyString;
     unsigned m_refCount;
     unsigned m_size;
-    AtomString m_tokens[0];
+    RefPtr<AtomStringImpl> m_tokens[0];
 };
 
 class SpaceSplitString {
@@ -103,9 +106,9 @@ public:
     SpaceSplitString() = default;
 
     enum class ShouldFoldCase : bool { No, Yes };
-    SpaceSplitString(const AtomString&, ShouldFoldCase);
+    SpaceSplitString(AtomStringImpl*, ShouldFoldCase);
 
-    const AtomString& keyString() const LIFETIME_BOUND
+    const RefPtr<AtomStringImpl>& keyString() const LIFETIME_BOUND
     {
         if (m_data)
             return m_data->keyString();
@@ -113,15 +116,15 @@ public:
     }
 
     friend bool operator==(const SpaceSplitString&, const SpaceSplitString&) = default;
-    void set(const AtomString&, ShouldFoldCase);
+    void set(AtomStringImpl*, ShouldFoldCase);
     void clear() { m_data = nullptr; }
 
-    bool contains(const AtomString& string) const { return m_data && m_data->contains(string); }
+    NODELETE bool contains(AtomStringImpl* string) const { return m_data && m_data->contains(string); }
     bool containsAll(const SpaceSplitString& names) const { return !names.m_data || (m_data && m_data->containsAll(*names.m_data)); }
 
     unsigned size() const { return m_data ? m_data->size() : 0; }
     bool isEmpty() const { return !m_data; }
-    const AtomString& operator[](unsigned i) const LIFETIME_BOUND
+    const RefPtr<AtomStringImpl>& operator[](unsigned i) const LIFETIME_BOUND
     {
         ASSERT_WITH_SECURITY_IMPLICATION(m_data);
         return (*m_data)[i];
@@ -138,8 +141,8 @@ private:
     RefPtr<SpaceSplitStringData> m_data;
 };
 
-inline SpaceSplitString::SpaceSplitString(const AtomString& string, ShouldFoldCase shouldFoldCase)
-    : m_data(!string.isEmpty() ? SpaceSplitStringData::create(shouldFoldCase == ShouldFoldCase::Yes ? string.convertToASCIILowercase() : string) : nullptr)
+inline SpaceSplitString::SpaceSplitString(AtomStringImpl* string, ShouldFoldCase shouldFoldCase)
+    : m_data(!WTF::isEmpty(string) ? SpaceSplitStringData::create(shouldFoldCase == ShouldFoldCase::Yes ? convertToASCIILowercase(string) : RefPtr { string }) : nullptr)
 {
 }
 

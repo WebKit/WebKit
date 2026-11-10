@@ -388,7 +388,7 @@ static void* progressObservingContext = &progressObservingContext;
 {
     EXPECT_EQ(download, m_download.get());
 
-    RetainPtr path = FileSystem::createTemporaryFile("TestWebKitAPI"_s).createNSString();
+    RetainPtr path = createNSString(FileSystem::createTemporaryFile("TestWebKitAPI"_s));
     EXPECT_TRUE(path && [path.get() length]);
 
     completionHandler(YES, path.get());

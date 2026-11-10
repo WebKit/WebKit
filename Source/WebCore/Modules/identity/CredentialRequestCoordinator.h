@@ -66,7 +66,7 @@ public:
     void sessionDidFinish(const DigitalCredentialsSession&);
     void dismissChooser();
 
-    ExceptionOr<JSC::JSObject*> parseDigitalCredentialsResponseData(const String&) const;
+    ExceptionOr<JSC::JSObject*> parseDigitalCredentialsResponseData(StringImpl*) const;
 
 private:
     void rejectTheCredentialRequestWith(Exception&&);

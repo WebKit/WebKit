@@ -58,16 +58,16 @@ constexpr ASCIILiteral s_pathActionClick { "/click"_s };
 constexpr ASCIILiteral s_pathActionTouch { "/touch"_s };
 constexpr ASCIILiteral s_pathActionValue { "/value"_s };
 
-inline String buttonTypeToString(OpenXRButtonType type)
+inline RefPtr<StringImpl> buttonTypeToString(OpenXRButtonType type)
 {
     switch (type) {
-    case OpenXRButtonType::Trigger: return "trigger"_s;
-    case OpenXRButtonType::Squeeze: return "squeeze"_s;
-    case OpenXRButtonType::Touchpad: return "touchpad"_s;
-    case OpenXRButtonType::Thumbstick: return "thumbstick"_s;
-    case OpenXRButtonType::Thumbrest: return "thumbrest"_s;
-    case OpenXRButtonType::ButtonA: return "buttona"_s;
-    case OpenXRButtonType::ButtonB: return "buttonb"_s;
+    case OpenXRButtonType::Trigger: return "trigger"_si;
+    case OpenXRButtonType::Squeeze: return "squeeze"_si;
+    case OpenXRButtonType::Touchpad: return "touchpad"_si;
+    case OpenXRButtonType::Thumbstick: return "thumbstick"_si;
+    case OpenXRButtonType::Thumbrest: return "thumbrest"_si;
+    case OpenXRButtonType::ButtonA: return "buttona"_si;
+    case OpenXRButtonType::ButtonB: return "buttonb"_si;
 
     default:
         ASSERT_NOT_REACHED();
@@ -103,11 +103,11 @@ constexpr std::array<OpenXRAxisType, 2> openXRAxisTypes {
     OpenXRAxisType::Touchpad, OpenXRAxisType::Thumbstick
 };
 
-inline String axisTypetoString(OpenXRAxisType type)
+inline RefPtr<StringImpl> axisTypetoString(OpenXRAxisType type)
 {
     switch (type) {
-    case OpenXRAxisType::Touchpad: return "touchpad"_s;
-    case OpenXRAxisType::Thumbstick: return "thumbstick"_s;
+    case OpenXRAxisType::Touchpad: return "touchpad"_si;
+    case OpenXRAxisType::Thumbstick: return "thumbstick"_si;
     default:
         ASSERT_NOT_REACHED();
         return emptyString();

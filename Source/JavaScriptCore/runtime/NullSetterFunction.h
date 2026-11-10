@@ -37,7 +37,7 @@ public:
     static NullSetterFunction* create(VM& vm, Structure* structure, ECMAMode ecmaMode)
     {
         NullSetterFunction* function = new (NotNull, allocateCell<NullSetterFunction>(vm))  NullSetterFunction(vm, structure, ecmaMode);
-        function->finishCreation(vm, 0, String());
+        function->finishCreation(vm, 0, nullString());
         return function;
     }
 

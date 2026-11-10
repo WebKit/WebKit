@@ -36,8 +36,8 @@ namespace WebCore {
 std::optional<Color> parseInspectorColor(RefPtr<JSON::Object>&&);
 bool parseInspectorQuad(Ref<JSON::Array>&&, FloatQuad*);
 
-std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfigFromInspectorObject(String& errorString, RefPtr<JSON::Object>&&);
-std::optional<InspectorOverlay::Grid::Config> gridOverlayConfigFromInspectorObject(String& errorString, RefPtr<JSON::Object>&&);
-std::optional<InspectorOverlay::Flex::Config> flexOverlayConfigFromInspectorObject(String& errorString, RefPtr<JSON::Object>&&);
+std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfigFromInspectorObject(RefPtr<StringImpl>& errorString, RefPtr<JSON::Object>&&);
+std::optional<InspectorOverlay::Grid::Config> gridOverlayConfigFromInspectorObject(RefPtr<StringImpl>& errorString, RefPtr<JSON::Object>&&);
+std::optional<InspectorOverlay::Flex::Config> flexOverlayConfigFromInspectorObject(RefPtr<StringImpl>& errorString, RefPtr<JSON::Object>&&);
 
 } // namespace WebCore

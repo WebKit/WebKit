@@ -95,7 +95,7 @@ public:
     bool containsCurrentColor() const final { return false; }
     bool canDrawAtSize(const RenderElement&, const FloatSize&) const final;
     bool drawsSVGImage() const final;
-    WTF::String accessibilityDescription() const final;
+    RefPtr<StringImpl> accessibilityDescription() const final;
     bool isAnimated() const final;
     void startAnimation() final;
     void stopAnimation() final;
@@ -126,7 +126,7 @@ private:
     };
     ReferencedSVGResource referencedSVGResource(const RenderElement&) const;
     RefPtr<SVGSVGElement> svgImageRootElement(const RenderElement&) const;
-    LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(TreeScope&, const AtomString& fragment) const;
+    LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(TreeScope&, AtomStringImpl* fragment) const;
     LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(const RenderElement*) const;
     LegacyRenderSVGResourceContainer* legacyRenderSVGResource(const RenderElement*) const;
     RenderSVGResourceContainer* renderSVGResource(const RenderElement*) const;

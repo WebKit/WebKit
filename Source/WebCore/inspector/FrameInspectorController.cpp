@@ -289,7 +289,7 @@ void FrameInspectorController::inspectedFrameDestroyed(LocalFrame& frame)
     m_agents.discardValues();
 }
 
-void FrameInspectorController::dispatchMessageFromFrontend(const String& message)
+void FrameInspectorController::dispatchMessageFromFrontend(StringImpl* message)
 {
     m_backendDispatcher->dispatch(message);
 }

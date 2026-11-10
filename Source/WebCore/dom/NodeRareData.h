@@ -96,20 +96,20 @@ public:
     }
 
     struct NodeListCacheMapEntryHash {
-        static unsigned hash(const std::pair<unsigned char, AtomString>& entry)
+        static unsigned hash(const std::pair<unsigned char, RefPtr<AtomStringImpl>>& entry)
         {
-            return DefaultHash<AtomString>::hash(entry.second) + entry.first;
+            return DefaultHash<RefPtr<AtomStringImpl>>::hash(entry.second) + entry.first;
         }
-        static bool equal(const std::pair<unsigned char, AtomString>& a, const std::pair<unsigned char, AtomString>& b) { return a.first == b.first && DefaultHash<AtomString>::equal(a.second, b.second); }
-        static const bool safeToCompareToEmptyOrDeleted = DefaultHash<AtomString>::safeToCompareToEmptyOrDeleted;
+        static bool equal(const std::pair<unsigned char, RefPtr<AtomStringImpl>>& a, const std::pair<unsigned char, RefPtr<AtomStringImpl>>& b) { return a.first == b.first && DefaultHash<RefPtr<AtomStringImpl>>::equal(a.second, b.second); }
+        static const bool safeToCompareToEmptyOrDeleted = DefaultHash<RefPtr<AtomStringImpl>>::safeToCompareToEmptyOrDeleted;
     };
 
-    using NodeListCacheMap = HashMap<std::pair<unsigned char, AtomString>, LiveNodeList*, NodeListCacheMapEntryHash>;
-    using CollectionCacheMap = HashMap<std::pair<std::underlying_type_t<CollectionType>, AtomString>, HTMLCollection*, NodeListCacheMapEntryHash>;
+    using NodeListCacheMap = HashMap<std::pair<unsigned char, RefPtr<AtomStringImpl>>, LiveNodeList*, NodeListCacheMapEntryHash>;
+    using CollectionCacheMap = HashMap<std::pair<std::underlying_type_t<CollectionType>, RefPtr<AtomStringImpl>>, HTMLCollection*, NodeListCacheMapEntryHash>;
     using TagCollectionNSCache = HashMap<QualifiedName, TagCollectionNS*>;
 
     template<typename T, typename ContainerType>
-    ALWAYS_INLINE Ref<T> addCacheWithAtomName(ContainerType& container, const AtomString& name)
+    ALWAYS_INLINE Ref<T> addCacheWithAtomName(ContainerType& container, AtomStringImpl* name)
     {
         auto result = m_atomNameCaches.fastAdd(namedNodeListKey<T>(name), nullptr);
         if (!result.isNewEntry)
@@ -119,7 +119,7 @@ public:
         return list;
     }
 
-    ALWAYS_INLINE Ref<TagCollectionNS> addCachedTagCollectionNS(ContainerNode& node, const AtomString& namespaceURI, const AtomString& localName)
+    ALWAYS_INLINE Ref<TagCollectionNS> addCachedTagCollectionNS(ContainerNode& node, AtomStringImpl* namespaceURI, AtomStringImpl* localName)
     {
         auto result = m_tagCollectionNSCache.fastAdd(QualifiedName { nullAtom(), localName, namespaceURI }, nullptr);
         if (!result.isNewEntry)
@@ -131,7 +131,7 @@ public:
     }
 
     template<typename T, typename ContainerType>
-    ALWAYS_INLINE Ref<T> addCachedCollection(ContainerType& container, const AtomString& name)
+    ALWAYS_INLINE Ref<T> addCachedCollection(ContainerType& container, AtomStringImpl* name)
     {
         auto result = m_cachedCollections.fastAdd(namedCollectionKey(CollectionClassTraits<T>::collectionType, name), nullptr);
         if (!result.isNewEntry)
@@ -164,7 +164,7 @@ public:
     }
 
     template<typename NodeListType>
-    void removeCacheWithAtomName(NodeListType& list, const AtomString& name)
+    void removeCacheWithAtomName(NodeListType& list, AtomStringImpl* name)
     {
         ASSERT(&list == m_atomNameCaches.get(namedNodeListKey<NodeListType>(name)));
         Ref<Node> ownerNode = list.ownerNode();
@@ -173,7 +173,7 @@ public:
         m_atomNameCaches.remove(namedNodeListKey<NodeListType>(name));
     }
 
-    void removeCachedTagCollectionNS(HTMLCollection& collection, const AtomString& namespaceURI, const AtomString& localName)
+    void removeCachedTagCollectionNS(HTMLCollection& collection, AtomStringImpl* namespaceURI, AtomStringImpl* localName)
     {
         QualifiedName name(nullAtom(), localName, namespaceURI);
         ASSERT(&collection == m_tagCollectionNSCache.get(name));
@@ -182,7 +182,7 @@ public:
         m_tagCollectionNSCache.remove(name);
     }
 
-    inline void removeCachedCollection(HTMLCollection*, const AtomString& = starAtom());
+    inline void removeCachedCollection(HTMLCollection*, AtomStringImpl* = starAtom());
 
     void invalidateCaches();
     void invalidateCachesForAttribute(const QualifiedName& attrName);
@@ -195,15 +195,15 @@ public:
     inline void adoptDocument(Document& oldDocument, Document& newDocument);
 
 private:
-    std::pair<std::underlying_type_t<CollectionType>, AtomString> namedCollectionKey(CollectionType type, const AtomString& name)
+    std::pair<std::underlying_type_t<CollectionType>, RefPtr<AtomStringImpl>> namedCollectionKey(CollectionType type, AtomStringImpl* name)
     {
         return { std::to_underlying(type), name };
     }
 
     template<typename NodeListType>
-    std::pair<unsigned char, AtomString> namedNodeListKey(const AtomString& name)
+    std::pair<unsigned char, RefPtr<AtomStringImpl>> namedNodeListKey(AtomStringImpl* name)
     {
-        return std::pair<unsigned char, AtomString>(NodeListTypeIdentifier<NodeListType>::value(), name);
+        return std::pair<unsigned char, RefPtr<AtomStringImpl>>(NodeListTypeIdentifier<NodeListType>::value(), name);
     }
 
     bool deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(Node&);

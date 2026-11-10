@@ -355,7 +355,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
     UNUSED_PARAM(scope);
 
-    JSC::JSValue function = [self _imp]->get(lexicalGlobalObject, Identifier::fromString(vm, String(name)));
+    JSC::JSValue function = [self _imp]->get(lexicalGlobalObject, Identifier::fromString(vm, StringImpl::create(name).get()));
     auto callData = JSC::getCallData(function);
     if (callData.type == CallData::Type::None)
         return nil;
@@ -392,7 +392,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     UNUSED_PARAM(scope);
 
-    JSC::JSValue returnValue = JSExecState::profiledEvaluate(globalObject, JSC::ProfilingReason::Other, makeSource(String(script), { }, JSC::SourceTaintedOrigin::Untainted), JSC::JSValue());
+    JSC::JSValue returnValue = JSExecState::profiledEvaluate(globalObject, JSC::ProfilingReason::Other, makeSource(StringImpl::create(script).get(), { }, JSC::SourceTaintedOrigin::Untainted), JSC::JSValue());
 
     RetainPtr<id> resultObj = [WebScriptObject _convertValueToObjcValue:returnValue originRootObject:protect([self _originRootObject]) rootObject:protect([self _rootObject])];
 
@@ -412,7 +412,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
 
     JSObject* object = [self _imp];
     PutPropertySlot slot(object);
-    object->methodTable()->put(object, lexicalGlobalObject, Identifier::fromString(vm, String(key)), convertObjcValueToValue(lexicalGlobalObject, value, protect([self _rootObject])), slot);
+    object->methodTable()->put(object, lexicalGlobalObject, Identifier::fromString(vm, StringImpl::create(key).get()), convertObjcValueToValue(lexicalGlobalObject, value, protect([self _rootObject])), slot);
 
     if (scope.exception()) [[unlikely]] {
         addExceptionToConsole(lexicalGlobalObject);
@@ -438,7 +438,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
         auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
-        JSC::JSValue result = [self _imp]->get(lexicalGlobalObject, Identifier::fromString(vm, String(key)));
+        JSC::JSValue result = [self _imp]->get(lexicalGlobalObject, Identifier::fromString(vm, StringImpl::create(key).get()));
         
         if (scope.exception()) [[unlikely]] {
             addExceptionToConsole(lexicalGlobalObject);
@@ -466,7 +466,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
-    JSC::JSCell::deleteProperty([self _imp], lexicalGlobalObject, Identifier::fromString(vm, String(key)));
+    JSC::JSCell::deleteProperty([self _imp], lexicalGlobalObject, Identifier::fromString(vm, StringImpl::create(key).get()));
 
     if (scope.exception()) [[unlikely]] {
         addExceptionToConsole(lexicalGlobalObject);
@@ -485,7 +485,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
-    BOOL result = [self _imp]->hasProperty(lexicalGlobalObject, Identifier::fromString(vm, String(key)));
+    BOOL result = [self _imp]->hasProperty(lexicalGlobalObject, Identifier::fromString(vm, StringImpl::create(key).get()));
 
     if (scope.exception()) [[unlikely]] {
         addExceptionToConsole(lexicalGlobalObject);
@@ -587,7 +587,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     }
 
     if (value.isString())
-        return asString(value)->value(rootObject->globalObject()).data.createNSString().autorelease();
+        return createNSString(asString(value)->value(rootObject->globalObject()).data).autorelease();
 
     if (value.isNumber())
         return @(value.asNumber());

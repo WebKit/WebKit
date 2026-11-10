@@ -162,7 +162,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToPlainMonthDay, (JSGloba
     if (!TemporalCore::calendarIsISO(temporalDate->calendarID())) {
         auto resolved = TemporalCore::plainMonthDayFromISODate(temporalDate->calendarID(), temporalDate->plainDate(), TemporalOverflow::Constrain);
         if (!resolved) [[unlikely]] {
-            throwRangeError(globalObject, scope, String(resolved.error().message));
+            throwRangeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
             return { };
         }
         auto* result = createTemporalMonthDay(globalObject, WTF::move(resolved->isoDate), resolved->calendarId);
@@ -192,7 +192,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToPlainYearMonth, (JSGlob
     if (!TemporalCore::calendarIsISO(temporalDate->calendarID())) {
         auto resolved = TemporalCore::plainYearMonthFromISODate(temporalDate->calendarID(), temporalDate->plainDate());
         if (!resolved) [[unlikely]] {
-            throwRangeError(globalObject, scope, String(resolved.error().message));
+            throwRangeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
             return { };
         }
         auto* result = TemporalPlainYearMonth::create(vm, globalObject->plainYearMonthStructure(), ISO8601::PlainYearMonth(WTF::move(resolved->isoDate)));
@@ -301,9 +301,9 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncWith, (JSGlobalObject* gl
     auto resolved = TemporalCore::plainDateWith(calendarId, plainDate->plainDate(), partialFields, overflow);
     if (!resolved) [[unlikely]] {
         if (resolved.error().kind == TemporalErrorKind::TypeError)
-            throwTypeError(globalObject, scope, String(resolved.error().message));
+            throwTypeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
         else
-            throwRangeError(globalObject, scope, String(resolved.error().message));
+            throwRangeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
         return { };
     }
 
@@ -447,7 +447,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToZonedDateTime, (JSGloba
             plainTime.hour(), plainTime.minute(), plainTime.second(),
             plainTime.millisecond(), plainTime.microsecond(), plainTime.nanosecond());
         if (!withinLimits) [[unlikely]] {
-            throwRangeError(globalObject, scope, "date-time combination is outside the valid range"_s);
+            throwRangeError(globalObject, scope, "date-time combination is outside the valid range"_si);
             return { };
         }
         // Step 6.d: epochNs = ? GetEpochNanosecondsFor(timeZone, isoDateTime, ~compatible~).
@@ -505,19 +505,19 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToString, (JSGlobalObject
         RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, plainDate->toString())));
 
     // Step 4: showCalendar = ? GetTemporalShowCalendarNameOption(resolvedOptions).
-    String calOpt = temporalShowCalendarName(globalObject, options);
+    RefPtr<StringImpl> calOpt = temporalShowCalendarName(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
 
     // Step 5: Return TemporalDateToString(plainDate, showCalendar). Inlined:
     //   never    → bare ISO; always → [u-ca=<id>]; critical → [!u-ca=<id>]; auto → annotate iff non-ISO.
     auto base = ISO8601::temporalDateToString(plainDate->plainDate());
     auto calId = plainDate->calendarIDAsString();
-    String result;
-    if (calOpt == "never"_s)
+    RefPtr<StringImpl> result;
+    if (equal(calOpt, "never"_s))
         result = base;
-    else if (calOpt == "always"_s)
+    else if (equal(calOpt, "always"_s))
         result = makeString(base, "[u-ca="_s, calId, ']');
-    else if (calOpt == "critical"_s)
+    else if (equal(calOpt, "critical"_s))
         result = makeString(base, "[!u-ca="_s, calId, ']');
     else if (plainDate->calendarID() != iso8601CalendarID())
         result = makeString(base, "[u-ca="_s, calId, ']');
@@ -695,7 +695,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDatePrototypeGetterDayOfYear, (JSGlobalObj
 
     auto result = TemporalCore::calendarDayOfYear(plainDate->calendarID(), plainDate->plainDate());
     if (!result) [[unlikely]]
-        return throwVMRangeError(globalObject, scope, String(result.error().message));
+        return throwVMRangeError(globalObject, scope, RefPtr<StringImpl>(result.error().message));
     return JSValue::encode(jsNumber(*result));
 }
 

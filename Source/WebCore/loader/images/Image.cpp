@@ -92,9 +92,9 @@ Image& Image::nullImage()
     return BitmapImage::nullImage();
 }
 
-static bool isPDFResource(const String& mimeType, const URL& url)
+static bool isPDFResource(StringImpl* mimeType, const URL& url)
 {
-    if (mimeType.isEmpty())
+    if (isEmpty(mimeType))
         return url.path().endsWithIgnoringASCIICase(".pdf"_s);
     return MIMETypeRegistry::isPDFMIMEType(mimeType);
 }
@@ -106,7 +106,7 @@ RefPtr<Image> Image::create(ImageObserver& observer)
     ASSERT(isMainThread());
 
     auto mimeType = observer.mimeType();
-    if (mimeType == "image/svg+xml"_s)
+    if (equal(mimeType, "image/svg+xml"_s))
         return SVGImage::create(&observer);
 
     auto url = observer.sourceUrl();
@@ -123,7 +123,7 @@ RefPtr<Image> Image::create(ImageObserver& observer)
     return BitmapImage::create(&observer);
 }
 
-bool Image::supportsType(const String& type)
+bool Image::supportsType(StringImpl* type)
 {
     return MIMETypeRegistry::isSupportedImageMIMEType(type);
 }
@@ -131,7 +131,7 @@ bool Image::supportsType(const String& type)
 static RefPtr<NativeImage> tryCreateNativeImageFromBitmapImageData(std::span<const uint8_t> data, std::optional<FloatSize> preferredSize)
 {
     Ref buffer = SharedBuffer::create(data);
-    RefPtr imageDecoder = ImageDecoder::create(buffer.get(), { }, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
+    RefPtr imageDecoder = ImageDecoder::create(buffer.get(), nullptr, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
     if (!imageDecoder)
         return nullptr;
 
@@ -301,7 +301,7 @@ URL Image::sourceURL() const
     return imageObserver() ? imageObserver()->sourceUrl() : URL();
 }
 
-String Image::mimeType() const
+RefPtr<StringImpl> Image::mimeType() const
 {
     return imageObserver() ? imageObserver()->mimeType() : emptyString();
 }

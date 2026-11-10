@@ -310,7 +310,7 @@ TEST(WebKit, UploadFileFromIndexedDB)
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
             if (path == "/"_s) {
-                co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: "_s, mainBytes.length(), "\r\n\r\n"_s, mainBytes));
+                co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: "_s, length(mainBytes), "\r\n\r\n"_s, mainBytes));
                 continue;
             }
             if (path == "/upload"_s) {
@@ -359,7 +359,7 @@ registerServiceWorkerAndRunTest();
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
             if (path == "/"_s) {
-                co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: "_s, mainBytes.length(), "\r\n\r\n"_s, mainBytes));
+                co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: "_s, length(mainBytes), "\r\n\r\n"_s, mainBytes));
                 continue;
             }
             if (path == "/sw.js"_s) {

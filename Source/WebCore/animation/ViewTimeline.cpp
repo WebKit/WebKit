@@ -551,7 +551,7 @@ Ref<CSSNumericValue> ViewTimeline::endOffset() const
 bool ViewTimeline::matchesAnonymousViewFunctionForSubject(const Style::ViewFunction& viewFunction, const Style::ZoomFactor& usedZoomForLength, const Styleable& subject) const
 {
     return isStyleOriginated()
-        && name().name.isEmpty()
+        && isEmpty(name().name)
         && m_insets.insets == viewFunction->insets
         && m_insets.zoom == usedZoomForLength
         && axis() == viewFunction->axis

@@ -49,7 +49,7 @@ DummyModelPlayer::~DummyModelPlayer() = default;
 void DummyModelPlayer::load(NodeIdentifier nodeIdentifier, Model& model, LayoutSize, bool)
 {
     if (RefPtr client = m_client)
-        client->didFailLoading(*this, nodeIdentifier, ResourceError { errorDomainWebKitInternal, 0, model.url(), "Trying to load model via DummyModelPlayer"_s });
+        client->didFailLoading(*this, nodeIdentifier, ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, model.url(), "Trying to load model via DummyModelPlayer"_si });
 }
 
 void DummyModelPlayer::configureGraphicsLayer(GraphicsLayer&, ModelPlayerGraphicsLayerConfiguration&&)

@@ -55,7 +55,7 @@ DeviceMotionEvent::DeviceMotionEvent()
 {
 }
 
-DeviceMotionEvent::DeviceMotionEvent(const AtomString& eventType, DeviceMotionData* deviceMotionData)
+DeviceMotionEvent::DeviceMotionEvent(AtomStringImpl* eventType, DeviceMotionData* deviceMotionData)
 #if ENABLE(DEVICE_ORIENTATION)
     : Event(EventInterfaceType::DeviceMotionEvent, eventType, CanBubble::No, IsCancelable::No)
 #else
@@ -129,7 +129,7 @@ std::optional<double> DeviceMotionEvent::interval() const
     return m_deviceMotionData->interval();
 }
 
-void DeviceMotionEvent::initDeviceMotionEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<DeviceMotionEvent::Acceleration>&& acceleration, std::optional<DeviceMotionEvent::Acceleration>&& accelerationIncludingGravity, std::optional<DeviceMotionEvent::RotationRate>&& rotationRate, std::optional<double> interval)
+void DeviceMotionEvent::initDeviceMotionEvent(AtomStringImpl* type, bool bubbles, bool cancelable, std::optional<DeviceMotionEvent::Acceleration>&& acceleration, std::optional<DeviceMotionEvent::Acceleration>&& accelerationIncludingGravity, std::optional<DeviceMotionEvent::RotationRate>&& rotationRate, std::optional<double> interval)
 {
     if (isBeingDispatched())
         return;
@@ -143,9 +143,9 @@ void DeviceMotionEvent::requestPermission(Document& document, PermissionPromise&
 {
     RefPtr window = document.window();
     if (!window || !document.page())
-        return promise.reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_s });
+        return promise.reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_si });
 
-    String errorMessage;
+    RefPtr<StringImpl> errorMessage;
     if (!window->isAllowedToUseDeviceMotion(errorMessage)) {
         document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("Call to requestPermission() failed, reason: "_s, errorMessage, '.'));
         return promise.resolve(PermissionState::Denied);
@@ -153,7 +153,7 @@ void DeviceMotionEvent::requestPermission(Document& document, PermissionPromise&
 
     protect(protect(document.page())->deviceOrientationAndMotionAccessController())->shouldAllowAccess(protect(document), [promise = WTF::move(promise)](auto permissionState) mutable {
         if (permissionState == PermissionState::Prompt)
-            return promise.reject(Exception { ExceptionCode::NotAllowedError, "Requesting device motion access requires a user gesture to prompt"_s });
+            return promise.reject(Exception { ExceptionCode::NotAllowedError, "Requesting device motion access requires a user gesture to prompt"_si });
         promise.resolve(permissionState);
     });
 }

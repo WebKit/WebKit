@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-static inline Vector<RetainPtr<CTFontDescriptorRef>> systemFontCascadeList(const FontDescription& description, const AtomString& cssFamily, SystemFontKind systemFontKind, AllowUserInstalledFonts allowUserInstalledFonts)
+static inline Vector<RetainPtr<CTFontDescriptorRef>> systemFontCascadeList(const FontDescription& description, AtomStringImpl* cssFamily, SystemFontKind systemFontKind, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     return SystemFontDatabaseCoreText::forCurrentThread().cascadeList(description, cssFamily, systemFontKind, allowUserInstalledFonts);
 }
@@ -76,24 +76,24 @@ FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned index
     return FontFamily { nullAtom(), FontFamilyKind::Specified };
 }
 
-AtomString FontDescription::platformResolveGenericFamily(UScriptCode script, const AtomString& locale, const AtomString& familyName)
+RefPtr<AtomStringImpl> FontDescription::platformResolveGenericFamily(UScriptCode script, AtomStringImpl* locale, AtomStringImpl* familyName)
 {
-    ASSERT((locale.isNull() && script == USCRIPT_COMMON) || !locale.isNull());
+    ASSERT((!locale && script == USCRIPT_COMMON) || locale);
     if (script == USCRIPT_COMMON)
         return nullAtom();
 
-    String result;
+    RefPtr<StringImpl> result;
     // FIXME: Use the system font database to handle standardFamily
     if (familyName == serifFamily)
-        result = SystemFontDatabaseCoreText::forCurrentThread().serifFamily(locale.string());
+        result = SystemFontDatabaseCoreText::forCurrentThread().serifFamily(locale);
     else if (familyName == sansSerifFamily)
-        result = SystemFontDatabaseCoreText::forCurrentThread().sansSerifFamily(locale.string());
+        result = SystemFontDatabaseCoreText::forCurrentThread().sansSerifFamily(locale);
     else if (familyName == cursiveFamily)
-        result = SystemFontDatabaseCoreText::forCurrentThread().cursiveFamily(locale.string());
+        result = SystemFontDatabaseCoreText::forCurrentThread().cursiveFamily(locale);
     else if (familyName == fantasyFamily)
-        result = SystemFontDatabaseCoreText::forCurrentThread().fantasyFamily(locale.string());
+        result = SystemFontDatabaseCoreText::forCurrentThread().fantasyFamily(locale);
     else if (familyName == monospaceFamily)
-        result = SystemFontDatabaseCoreText::forCurrentThread().monospaceFamily(locale.string());
+        result = SystemFontDatabaseCoreText::forCurrentThread().monospaceFamily(locale);
     else
         return nullAtom();
 
@@ -103,10 +103,10 @@ AtomString FontDescription::platformResolveGenericFamily(UScriptCode script, con
     // resolving CSS generic families for certain locales (rdar://139338599). Since WebKit's font
     // lookup cannot properly handle these reserved names, we reject them and fall back to
     // settings-based resolution instead.
-    auto isValidFontName = [](const String& fontName) {
-        if (fontName.isEmpty())
+    auto isValidFontName = [](StringImpl* fontName) {
+        if (isEmpty(fontName))
             return false;
-        if (fontName.startsWith('.')) {
+        if (startsWith(fontName, '.')) {
             LOG_WITH_STREAM(Fonts, stream << "CoreText returned reserved font name '"_s << fontName << "'; using settings-based font resolution instead"_s);
             return false;
         }
@@ -116,7 +116,7 @@ AtomString FontDescription::platformResolveGenericFamily(UScriptCode script, con
     if (!isValidFontName(result))
         return nullAtom();
 
-    return AtomString { result };
+    return AtomStringImpl::add(result);
 }
 
 }

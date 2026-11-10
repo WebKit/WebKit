@@ -51,16 +51,16 @@ public:
     CalendarID calendarID() const { return m_calendarID; }
     void setCalendarId(WTF::StringView id) { m_calendarID = TemporalCore::calendarIDFromString(id); }
     void setCalendarID(CalendarID id) { m_calendarID = id; }
-    String calendarIDAsString() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
+    RefPtr<StringImpl> calendarIDAsString() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
 
 #define JSC_DEFINE_TEMPORAL_PLAIN_MONTH_DAY_FIELD(name, capitalizedName) \
     decltype(auto) name() const { return m_plainMonthDay.name(); }
     JSC_TEMPORAL_PLAIN_MONTH_DAY_UNITS(JSC_DEFINE_TEMPORAL_PLAIN_MONTH_DAY_FIELD);
 #undef JSC_DEFINE_TEMPORAL_PLAIN_MONTH_DAY_FIELD
 
-    String monthCode() const { return ISO8601::monthCode(m_plainMonthDay.month()); }
+    RefPtr<StringImpl> monthCode() const { return ISO8601::monthCode(m_plainMonthDay.month()); }
 
-    String toString() const
+    RefPtr<StringImpl> toString() const
     {
         return ISO8601::temporalMonthDayToString(m_plainMonthDay, "auto"_s, m_calendarID);
     }

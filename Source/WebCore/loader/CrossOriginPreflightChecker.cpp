@@ -91,7 +91,7 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
     auto result = WebCore::validatePreflightResponse(page->sessionID(), request, response, loader.options().storedCredentialsPolicy, loader.topOrigin(), protect(loader.securityOrigin()), &CrossOriginAccessControlCheckDisabler::singleton());
     if (!result) {
         loaderDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, result.error());
-        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), result.error(), ResourceError::Type::AccessControl));
+        loader.preflightFailure(identifier, ResourceError(StringImpl::create(errorDomainWebKitInternal).ptr(), 0, request.url(), result.error(), ResourceError::Type::AccessControl));
         return;
     }
 
@@ -122,7 +122,7 @@ void CrossOriginPreflightChecker::notifyFinished(CachedResource& resource, const
 
         if (!preflightError.isTimeout()) {
             if (RefPtr loaderDocument = loader->document())
-                loaderDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "CORS-preflight request was blocked"_s);
+                loaderDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "CORS-preflight request was blocked"_si);
         }
         loader->preflightFailure(m_resource->resourceLoaderIdentifier(), preflightError);
         return;
@@ -153,7 +153,7 @@ void CrossOriginPreflightChecker::startPreflight()
 
     bool includeFetchMetadata = !loaderDocument->quirks().shouldDisableFetchMetadata();
     CachedResourceRequest preflightRequest(createAccessControlPreflightRequest(m_request, protect(loader->securityOrigin()), loader->referrer(), includeFetchMetadata), options);
-    preflightRequest.setInitiatorType(AtomString { loader->options().initiatorType });
+    preflightRequest.setInitiatorType(AtomStringImpl::add(loader->options().initiatorType).get());
 
     ASSERT(!m_resource);
     if (auto result = protect(loaderDocument->cachedResourceLoader())->requestRawResource(WTF::move(preflightRequest)))
@@ -188,19 +188,19 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
             error.setType(ResourceError::Type::AccessControl);
 
         if (!error.isTimeout())
-            loaderDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "CORS-preflight request was blocked"_s);
+            loaderDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "CORS-preflight request was blocked"_si);
 
         loader.preflightFailure(identifier, error);
         return;
     }
 
     // FIXME: Ideally, we should ask platformLoadResourceSynchronously to set ResourceResponse isRedirected and use it here.
-    bool isRedirect = preflightRequest.url().strippedForUseAsReferrer().string != response.url().strippedForUseAsReferrer().string;
+    bool isRedirect = !equal(preflightRequest.url().strippedForUseAsReferrer().string, response.url().strippedForUseAsReferrer().string);
     if (isRedirect || !response.isSuccessful()) {
         auto errorMessage = makeString("Preflight response is not successful. Status code: "_s, response.httpStatusCode());
         loaderDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
 
-        loader.preflightFailure(identifier, ResourceError { errorDomainWebKitInternal, 0, request.url(), errorMessage, ResourceError::Type::AccessControl });
+        loader.preflightFailure(identifier, ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, request.url(), errorMessage, ResourceError::Type::AccessControl });
         return;
     }
 

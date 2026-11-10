@@ -435,7 +435,7 @@ static WebCore::Cursor::Type toWebCoreCursorType(PDFLayerControllerCursorType cu
 
 - (void)performWebSearch:(NSString *)string
 {
-    _pdfPlugin->performWebSearch({ string });
+    _pdfPlugin->performWebSearch(StringImpl::create(string).get());
 }
 
 - (void)performSpotlightSearch:(NSString *)string
@@ -537,7 +537,7 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
 
     if (supportsForms()) {
         RefPtr annotationContainer = m_annotationContainer = document->createElement(divTag, false);
-        annotationContainer->setAttributeWithoutSynchronization(idAttr, "annotationContainer"_s);
+        annotationContainer->setAttributeWithoutSynchronization(idAttr, "annotationContainer"_atom);
 
         auto annotationStyleElement = document->createElement(styleTag, false);
         annotationStyleElement->setTextContent(annotationStyle());
@@ -678,9 +678,9 @@ void PDFPlugin::teardownPasswordEntryForm()
     m_passwordField = nullptr;
 }
 
-void PDFPlugin::attemptToUnlockPDF(const String& password)
+void PDFPlugin::attemptToUnlockPDF(StringImpl* password)
 {
-    [m_pdfLayerController attemptToUnlockWithPassword:password.createNSString().get()];
+    [m_pdfLayerController attemptToUnlockWithPassword:createNSString(password).get()];
 
     if (!isLocked()) {
         m_passwordField = nullptr;
@@ -1130,7 +1130,7 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
             continue;
         if ([NSStringFromSelector(item.action) isEqualToString:@"openWithPreview"])
             openInPreviewTag = i;
-        PDFContextMenuItem menuItem { String([item title]), static_cast<int>([item state]), i, ContextMenuItemTagNoAction,
+        PDFContextMenuItem menuItem { StringImpl::create([item title]), static_cast<int>([item state]), i, ContextMenuItemTagNoAction,
             [item isEnabled] ? ContextMenuItemEnablement::Enabled : ContextMenuItemEnablement::Disabled,
             [item action] ? ContextMenuItemHasAction::Yes : ContextMenuItemHasAction::No,
             [item isSeparatorItem] ? ContextMenuItemIsSeparator::Yes : ContextMenuItemIsSeparator::No
@@ -1158,7 +1158,7 @@ bool PDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
 
     NSUInteger modifierFlags = modifierFlagsFromWebEvent(event);
     
-    NSEvent *fakeEvent = [NSEvent keyEventWithType:eventType location:NSZeroPoint modifierFlags:modifierFlags timestamp:0 windowNumber:0 context:0 characters:event.text().createNSString().get() charactersIgnoringModifiers:event.unmodifiedText().createNSString().get() isARepeat:event.isAutoRepeat() keyCode:event.nativeVirtualKeyCode()];
+    NSEvent *fakeEvent = [NSEvent keyEventWithType:eventType location:NSZeroPoint modifierFlags:modifierFlags timestamp:0 windowNumber:0 context:0 characters:createNSString(event.text()).get() charactersIgnoringModifiers:createNSString(event.unmodifiedText()).get() isARepeat:event.isAutoRepeat() keyCode:event.nativeVirtualKeyCode()];
     
     if (event.type() == WebEventType::KeyDown)
         return [m_pdfLayerController keyDown:fakeEvent];
@@ -1166,27 +1166,27 @@ bool PDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
     return false;
 }
     
-bool PDFPlugin::handleEditingCommand(const String& commandName, const String&)
+bool PDFPlugin::handleEditingCommand(StringImpl* commandName, StringImpl*)
 {
-    if (commandName == "copy"_s)
+    if (equal(commandName, "copy"_s))
         [m_pdfLayerController copySelection];
-    else if (commandName == "selectAll"_s)
+    else if (equal(commandName, "selectAll"_s))
         [m_pdfLayerController selectAll];
-    else if (commandName == "takeFindStringFromSelection"_s) {
+    else if (equal(commandName, "takeFindStringFromSelection"_s)) {
         NSString *string = [m_pdfLayerController currentSelection].string;
         if (string.length)
-            writeStringToFindPasteboard(string);
+            writeStringToFindPasteboard(StringImpl::create(string).get());
     }
 
     return true;
 }
 
-bool PDFPlugin::isEditingCommandEnabled(const String& commandName)
+bool PDFPlugin::isEditingCommandEnabled(StringImpl* commandName)
 {
-    if (commandName == "copy"_s || commandName == "takeFindStringFromSelection"_s)
+    if (equal(commandName, "copy"_s) || equal(commandName, "takeFindStringFromSelection"_s))
         return [m_pdfLayerController currentSelection];
 
-    if (commandName == "selectAll"_s)
+    if (equal(commandName, "selectAll"_s))
         return true;
 
     return false;
@@ -1298,9 +1298,9 @@ void PDFPlugin::showDefinitionForAttributedString(NSAttributedString *string, CG
     }
 }
 
-PDFSelection *PDFPlugin::nextMatchForString(const String& target, bool searchForward, bool caseSensitive, bool wrapSearch, PDFSelection *initialSelection, bool startInSelection)
+PDFSelection *PDFPlugin::nextMatchForString(StringImpl* target, bool searchForward, bool caseSensitive, bool wrapSearch, PDFSelection *initialSelection, bool startInSelection)
 {
-    if (!target.length())
+    if (!length(target))
         return nil;
 
     NSStringCompareOptions options = 0;
@@ -1324,7 +1324,7 @@ PDFSelection *PDFPlugin::nextMatchForString(const String& target, bool searchFor
         }
     }
 
-    RetainPtr nsTarget = target.createNSString();
+    RetainPtr nsTarget = createNSString(target);
     PDFSelection *foundSelection = [m_pdfDocument findString:nsTarget.get() fromSelection:selectionForInitialSearch.get() withOptions:options];
 
     // If we first searched in the selection, and we found the selection, search again from just past the selection.
@@ -1339,7 +1339,7 @@ PDFSelection *PDFPlugin::nextMatchForString(const String& target, bool searchFor
     return foundSelection;
 }
 
-bool PDFPlugin::findString(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)
+bool PDFPlugin::findString(StringImpl* target, WebCore::FindOptions options, unsigned maxMatchCount)
 {
     bool searchForward = !options.contains(FindOption::Backwards);
     bool caseSensitive = !options.contains(FindOption::CaseInsensitive);
@@ -1350,24 +1350,24 @@ bool PDFPlugin::findString(const String& target, WebCore::FindOptions options, u
     // Even if it is right, why not put that special case inside countFindMatches instead of here?
     bool foundMatch = !maxMatchCount || countFindMatches(target, options, maxMatchCount);
     if (options.contains(FindOption::DoNotSetSelection))
-        return foundMatch && !target.isEmpty();
+        return foundMatch && !isEmpty(target);
 
-    if (target.isEmpty()) {
+    if (isEmpty(target)) {
         auto searchSelection = [m_pdfLayerController searchSelection];
-        [m_pdfLayerController findString:target.createNSString().get() caseSensitive:caseSensitive highlightMatches:YES];
+        [m_pdfLayerController findString:createNSString(target).get() caseSensitive:caseSensitive highlightMatches:YES];
         [m_pdfLayerController setSearchSelection:searchSelection];
         m_lastFindString = emptyString();
         return false;
     }
 
-    if (m_lastFindString == target) {
+    if (equal(m_lastFindString, target)) {
         auto selection = nextMatchForString(target, searchForward, caseSensitive, wrapSearch, [m_pdfLayerController searchSelection], NO);
         if (!selection)
             return false;
         [m_pdfLayerController setSearchSelection:selection];
         [m_pdfLayerController gotoSelection:selection];
     } else {
-        [m_pdfLayerController findString:target.createNSString().get() caseSensitive:caseSensitive highlightMatches:YES];
+        [m_pdfLayerController findString:createNSString(target).get() caseSensitive:caseSensitive highlightMatches:YES];
         m_lastFindString = target;
     }
 
@@ -1456,9 +1456,9 @@ void PDFPlugin::focusPreviousAnnotation()
     [m_pdfLayerController activateNextAnnotation:true];
 }
 
-String PDFPlugin::selectionString() const
+RefPtr<StringImpl> PDFPlugin::selectionString() const
 {
-    return [[m_pdfLayerController currentSelection] string];
+    return StringImpl::create([[m_pdfLayerController currentSelection] string]);
 }
 
 bool PDFPlugin::existingSelectionContainsPoint(const WebCore::FloatPoint& locationInViewCoordinates) const
@@ -1505,11 +1505,11 @@ static NSPoint pointInLayoutSpaceForPointInWindowSpace(PDFLayerController* pdfLa
     return NSPointFromCGPoint(newPoint);
 }
 
-std::pair<String, RetainPtr<PDFSelection>> PDFPlugin::textForImmediateActionHitTestAtPoint(const WebCore::FloatPoint& locationInViewCoordinates, WebHitTestResultData& data)
+std::pair<RefPtr<StringImpl>, RetainPtr<PDFSelection>> PDFPlugin::textForImmediateActionHitTestAtPoint(const WebCore::FloatPoint& locationInViewCoordinates, WebHitTestResultData& data)
 {
     auto selection = [m_pdfLayerController currentSelection];
     if (existingSelectionContainsPoint(locationInViewCoordinates))
-        return { selection.string, selection };
+        return { StringImpl::create(selection.string), selection };
 
     IntPoint pointInPDFView = convertFromPluginToPDFView(convertFromRootViewToPlugin(roundedIntPoint(locationInViewCoordinates)));
     selection = [m_pdfLayerController getSelectionForWordAtPoint:pointInPDFView];
@@ -1532,9 +1532,9 @@ std::pair<String, RetainPtr<PDFSelection>> PDFPlugin::textForImmediateActionHitT
         if (!url)
             continue;
 
-        data.absoluteLinkURL = url.absoluteString;
-        data.linkLabel = selection.string;
-        return { selection.string, selection };
+        data.absoluteLinkURL = StringImpl::create(url.absoluteString);
+        data.linkLabel = StringImpl::create(selection.string);
+        return { StringImpl::create(selection.string), selection };
     }
 
     NSString *lookupText = DictionaryLookup::stringForPDFSelection(selection);
@@ -1542,7 +1542,7 @@ std::pair<String, RetainPtr<PDFSelection>> PDFPlugin::textForImmediateActionHitT
         return { emptyString(), selection };
 
     [m_pdfLayerController setCurrentSelection:selection];
-    return { lookupText, selection };
+    return { StringImpl::create(lookupText), selection };
 }
 
 static NSRect rectInViewSpaceForRectInLayoutSpace(PDFLayerController* pdfLayerController, NSRect layoutSpaceRect)

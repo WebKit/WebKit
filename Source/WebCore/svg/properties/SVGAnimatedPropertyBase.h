@@ -49,13 +49,13 @@ public:
     void detach() { m_contextElement = nullptr; }
     NODELETE SVGElement* contextElement() const;
 
-    virtual String baseValAsString() const { return emptyString(); }
-    virtual String animValAsString() const { return emptyString(); }
+    virtual RefPtr<StringImpl> baseValAsString() const { return emptyString(); }
+    virtual RefPtr<StringImpl> animValAsString() const { return emptyString(); }
 
     // Control the synchronization between the attribute and its reflection in baseVal.
     virtual bool isDirty() const { return false; }
     virtual void setDirty() { }
-    virtual std::optional<String> synchronize() { return std::nullopt; }
+    virtual std::optional<RefPtr<StringImpl>> synchronize() { return std::nullopt; }
 
     // Control the animation life cycle.
     bool isAnimating() const { return !m_animators.isEmptyIgnoringNullReferences(); }

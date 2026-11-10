@@ -58,9 +58,9 @@ PushManager::PushManager(PushSubscriptionOwner& pushSubscriptionOwner)
 
 PushManager::~PushManager() = default;
 
-Vector<String> PushManager::supportedContentEncodings()
+Vector<RefPtr<StringImpl>> PushManager::supportedContentEncodings()
 {
-    return Vector<String> { "aesgcm"_s, "aes128gcm"_s };
+    return Vector<RefPtr<StringImpl>> { "aesgcm"_s, "aes128gcm"_s };
 }
 
 void PushManager::ref() const
@@ -79,12 +79,12 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
 
     protect(context.eventLoop())->queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, context = protect(context), options = WTF::move(options), promise = WTF::move(promise)]() mutable {
         if (!options || !options->userVisibleOnly) {
-            promise.reject(Exception { ExceptionCode::NotAllowedError, "Subscribing for push requires userVisibleOnly to be true"_s });
+            promise.reject(Exception { ExceptionCode::NotAllowedError, "Subscribing for push requires userVisibleOnly to be true"_si });
             return;
         }
 
         if (!options || !options->applicationServerKey) {
-            promise.reject(Exception { ExceptionCode::NotSupportedError, "Subscribing for push requires an applicationServerKey"_s });
+            promise.reject(Exception { ExceptionCode::NotSupportedError, "Subscribing for push requires an applicationServerKey"_si });
             return;
         }
 
@@ -96,10 +96,10 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
             [](Ref<JSC::ArrayBufferView>& value) -> KeyDataResult {
                 return value->toVector();
             },
-            [](String& value) -> KeyDataResult {
+            [](RefPtr<StringImpl>& value) -> KeyDataResult {
                 auto decoded = base64URLDecode(value);
                 if (!decoded)
-                    return Exception { ExceptionCode::InvalidCharacterError, "applicationServerKey is not properly base64url-encoded"_s };
+                    return Exception { ExceptionCode::InvalidCharacterError, "applicationServerKey is not properly base64url-encoded"_si };
                 return WTF::move(decoded.value());
             }
         );
@@ -110,14 +110,14 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
         }
 
         if (!PushCrypto::validateP256DHPublicKey(keyDataResult.returnValue())) {
-            promise.reject(Exception { ExceptionCode::InvalidAccessError, "applicationServerKey must contain a valid P-256 public key"_s });
+            promise.reject(Exception { ExceptionCode::InvalidAccessError, "applicationServerKey must contain a valid P-256 public key"_si });
             return;
         }
 
         if (!protect(m_pushSubscriptionOwner)->isActive()) {
             // Only PushSubscriptionOwner objects related to service workers will ever return `false` for isActive(),
             // so this error message is correct.
-            promise.reject(Exception { ExceptionCode::InvalidStateError, "Subscribing for push requires an active service worker"_s });
+            promise.reject(Exception { ExceptionCode::InvalidStateError, "Subscribing for push requires an active service worker"_si });
             return;
         }
 
@@ -125,12 +125,12 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
         auto permission = client ? client->checkPermission(context.ptr()) : NotificationPermission::Denied;
 
         if (permission == NotificationPermission::Denied) {
-            promise.reject(Exception { ExceptionCode::NotAllowedError, "User denied push permission"_s });
+            promise.reject(Exception { ExceptionCode::NotAllowedError, "User denied push permission"_si });
             return;
         }
 
         if (permission == NotificationPermission::Default && !context->isDocument()) {
-            promise.reject(Exception { ExceptionCode::NotAllowedError, "User denied push permission"_s });
+            promise.reject(Exception { ExceptionCode::NotAllowedError, "User denied push permission"_si });
             return;
         }
 
@@ -140,7 +140,7 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
 
             Ref document = downcast<Document>(context);
             if (!document->isSameOriginAsTopDocument()) {
-                promise.reject(Exception { ExceptionCode::NotAllowedError, "Cannot request permission from cross-origin iframe"_s });
+                promise.reject(Exception { ExceptionCode::NotAllowedError, "Cannot request permission from cross-origin iframe"_si });
                 return;
             }
 
@@ -152,14 +152,14 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
 #endif
 
                 auto errorMessage = "Push notification prompting can only be done from a user gesture."_s;
-                document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
+                document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, StringImpl::create(errorMessage).ptr());
                 promise.reject(Exception { ExceptionCode::NotAllowedError, errorMessage });
                 return;
             }
 
             client->requestPermission(context, [protectedThis = WTF::move(protectedThis), keyData = keyDataResult.releaseReturnValue(), promise = WTF::move(promise)](auto permission) mutable {
                 if (permission != NotificationPermission::Granted) {
-                    promise.reject(Exception { ExceptionCode::NotAllowedError, "User denied push permission"_s });
+                    promise.reject(Exception { ExceptionCode::NotAllowedError, "User denied push permission"_si });
                     return;
                 }
 

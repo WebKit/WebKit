@@ -45,7 +45,7 @@ public:
     Ref<MockPageOverlay> installOverlay(Page&, PageOverlay::OverlayType);
     void uninstallAllOverlays();
 
-    String layerTreeAsText(Page&, OptionSet<LayerTreeAsTextOptions>);
+    RefPtr<StringImpl> layerTreeAsText(Page&, OptionSet<LayerTreeAsTextOptions>);
 
     virtual ~MockPageOverlayClient() = default;
 
@@ -56,9 +56,9 @@ private:
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
     void didScrollFrame(PageOverlay&, LocalFrame&) override;
 
-    bool copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, String&) override;
-    bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&) override;
-    NODELETE Vector<String> copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */) override;
+    bool copyAccessibilityAttributeStringValueForPoint(PageOverlay&, RefPtr<StringImpl> /* attribute */, FloatPoint, RefPtr<StringImpl>&) override;
+    bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, RefPtr<StringImpl> /* attribute */, FloatPoint, bool&) override;
+    NODELETE Vector<RefPtr<StringImpl>> copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */) override;
 
     HashSet<Ref<MockPageOverlay>> m_overlays;
 };

@@ -39,7 +39,7 @@ GPUDeviceLostReason GPUDeviceLostInfo::reason() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-const String& GPUDeviceLostInfo::message() const
+const RefPtr<StringImpl>& GPUDeviceLostInfo::message() const
 {
     return m_backing->message();
 }

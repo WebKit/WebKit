@@ -502,7 +502,7 @@ static void testUpgradeToHTTPSPolicy(PolicyClientTest* test, gconstpointer)
     // Route http through server and https to a port nothing listens on, so that
     // the upgraded navigation fails and falls back to http.
     WebKitNetworkProxySettings* proxySettings = webkit_network_proxy_settings_new(nullptr, nullptr);
-    webkit_network_proxy_settings_add_proxy_for_scheme(proxySettings, "http", kServer->baseURL().string().utf8().legacyCStringPointer());
+    webkit_network_proxy_settings_add_proxy_for_scheme(proxySettings, "http", utf8(kServer->baseURL().string()).legacyCStringPointer());
     webkit_network_proxy_settings_add_proxy_for_scheme(proxySettings, "https", "http://127.0.0.1:1/");
     setProxySettings(test, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, proxySettings);
 
@@ -571,7 +571,7 @@ static void testHTTPSByDefaultSetting(PolicyClientTest* test, gconstpointer)
     webkit_settings_set_feature_enabled(webkit_web_view_get_settings(test->m_webView.get()), httpsByDefault, TRUE);
 
     WebKitNetworkProxySettings* proxySettings = webkit_network_proxy_settings_new(nullptr, nullptr);
-    webkit_network_proxy_settings_add_proxy_for_scheme(proxySettings, "http", kServer->baseURL().string().utf8().legacyCStringPointer());
+    webkit_network_proxy_settings_add_proxy_for_scheme(proxySettings, "http", utf8(kServer->baseURL().string()).legacyCStringPointer());
     webkit_network_proxy_settings_add_proxy_for_scheme(proxySettings, "https", "http://127.0.0.1:1/");
     setProxySettings(test, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, proxySettings);
 

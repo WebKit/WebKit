@@ -92,7 +92,7 @@ public:
     ~ScriptController();
 
     enum class WorldType { User, Internal };
-    WEBCORE_EXPORT static Ref<DOMWrapperWorld> createWorld(const String& name, WorldType = WorldType::Internal);
+    WEBCORE_EXPORT static Ref<DOMWrapperWorld> createWorld(StringImpl* name, WorldType = WorldType::Internal);
 
     JSDOMGlobalObject* globalObject(DOMWrapperWorld& world)
     {
@@ -103,10 +103,10 @@ public:
 
     using ResolveFunction = CompletionHandler<void(ValueOrException)>;
 
-    WEBCORE_EXPORT JSC::JSValue executeScriptIgnoringException(const String& script, JSC::SourceTaintedness, bool forceUserGesture = false);
-    WEBCORE_EXPORT JSC::JSValue executeScriptInWorldIgnoringException(DOMWrapperWorld&, const String& script, JSC::SourceTaintedness, bool forceUserGesture = false);
-    WEBCORE_EXPORT JSC::JSValue executeUserAgentScriptInWorldIgnoringException(DOMWrapperWorld&, const String& script, bool forceUserGesture);
-    WEBCORE_EXPORT ValueOrException executeUserAgentScriptInWorld(DOMWrapperWorld&, const String& script, bool forceUserGesture);
+    WEBCORE_EXPORT JSC::JSValue executeScriptIgnoringException(StringImpl* script, JSC::SourceTaintedness, bool forceUserGesture = false);
+    WEBCORE_EXPORT JSC::JSValue executeScriptInWorldIgnoringException(DOMWrapperWorld&, StringImpl* script, JSC::SourceTaintedness, bool forceUserGesture = false);
+    WEBCORE_EXPORT JSC::JSValue executeUserAgentScriptInWorldIgnoringException(DOMWrapperWorld&, StringImpl* script, bool forceUserGesture);
+    WEBCORE_EXPORT ValueOrException executeUserAgentScriptInWorld(DOMWrapperWorld&, StringImpl* script, bool forceUserGesture);
     WEBCORE_EXPORT void executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld&, RunJavaScriptParameters&&, ResolveFunction&&);
     ValueOrException evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld&);
     JSC::JSValue evaluateIgnoringException(const ScriptSourceCode&);
@@ -132,8 +132,8 @@ public:
 
     TextPosition eventHandlerPosition() const;
 
-    void setEvalEnabled(bool, const String& errorMessage = String());
-    void setWebAssemblyEnabled(bool, const String& errorMessage = String());
+    void setEvalEnabled(bool, StringImpl* errorMessage = nullptr);
+    void setWebAssemblyEnabled(bool, StringImpl* errorMessage = nullptr);
     void setTrustedTypesEnforcement(JSC::TrustedTypesEnforcement);
 
     static bool canAccessFromCurrentOrigin(Frame*, Document& accessingDocument);
@@ -150,8 +150,8 @@ public:
     // after the prototype may already have been created, and removes any that are no longer enabled.
     void reevaluateQuirkDependentProperties();
 
-    void namedItemAdded(HTMLDocument*, const AtomString&) { }
-    void namedItemRemoved(HTMLDocument*, const AtomString&) { }
+    void namedItemAdded(HTMLDocument*, AtomStringImpl*) { }
+    void namedItemRemoved(HTMLDocument*, AtomStringImpl*) { }
 
     void clearScriptObjects();
     WEBCORE_EXPORT void cleanupScriptObjectsForPlugin(void*);

@@ -98,8 +98,8 @@ void NavigatorBeacon::logError(const ResourceError& error)
         return;
 
     ASCIILiteral messageMiddle { ". "_s };
-    String description = error.localizedDescription();
-    if (description.isEmpty()) {
+    RefPtr<StringImpl> description = error.localizedDescription();
+    if (isEmpty(description)) {
         if (error.isAccessControl())
             messageMiddle = " due to access control checks."_s;
         else
@@ -109,16 +109,16 @@ void NavigatorBeacon::logError(const ResourceError& error)
     document->addConsoleMessage(MessageSource::Network, MessageLevel::Error, makeString("Beacon API cannot load "_s, error.failingURL().string(), messageMiddle, description));
 }
 
-ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& url, std::optional<FetchBody::Init>&& body)
+ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, StringImpl* url, std::optional<FetchBody::Init>&& body)
 {
     URL parsedURL = document.parseURL(url);
 
     // Set parsedURL to the result of the URL parser steps with url and base. If the algorithm returns an error, or if
     // parsedURL's scheme is not "http" or "https", throw a "TypeError" exception and terminate these steps.
     if (!parsedURL.isValid())
-        return Exception { ExceptionCode::TypeError, "This URL is invalid"_s };
+        return Exception { ExceptionCode::TypeError, "This URL is invalid"_si };
     if (!parsedURL.protocolIsInHTTPFamily())
-        return Exception { ExceptionCode::TypeError, "Beacons can only be sent over HTTP(S)"_s };
+        return Exception { ExceptionCode::TypeError, "Beacons can only be sent over HTTP(S)"_si };
 
     if (!document.frame())
         return false;
@@ -129,7 +129,7 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
     }
 
     ResourceRequest request(WTF::move(parsedURL));
-    request.setHTTPMethod("POST"_s);
+    request.setHTTPMethod("POST"_si);
     request.setRequester(ResourceRequestRequester::Beacon);
     if (RefPtr documentLoader = document.loader())
         request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
@@ -142,16 +142,16 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
 
     if (body) {
         options.mode = FetchOptions::Mode::NoCors;
-        String mimeType;
+        RefPtr<StringImpl> mimeType;
         auto result = FetchBody::extract(WTF::move(body.value()), mimeType);
         if (result.hasException())
             return result.releaseException();
         auto fetchBody = result.releaseReturnValue();
         if (fetchBody.isReadableStream())
-            return Exception { ExceptionCode::TypeError, "Beacons cannot send ReadableStream body"_s };
+            return Exception { ExceptionCode::TypeError, "Beacons cannot send ReadableStream body"_si };
 
         request.setHTTPBody(fetchBody.bodyAsFormData());
-        if (!mimeType.isEmpty()) {
+        if (!isEmpty(mimeType)) {
             request.setHTTPContentType(mimeType);
             if (!isCrossOriginSafeRequestHeader(HTTPHeaderName::ContentType, mimeType)) {
                 options.mode = FetchOptions::Mode::Cors;
@@ -172,7 +172,7 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
     return true;
 }
 
-ExceptionOr<bool> NavigatorBeacon::sendBeacon(Navigator& navigator, Document& document, const String& url, std::optional<FetchBody::Init>&& body)
+ExceptionOr<bool> NavigatorBeacon::sendBeacon(Navigator& navigator, Document& document, StringImpl* url, std::optional<FetchBody::Init>&& body)
 {
     return NavigatorBeacon::from(navigator)->sendBeacon(document, url, WTF::move(body));
 }

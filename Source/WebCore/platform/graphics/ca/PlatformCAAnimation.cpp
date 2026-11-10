@@ -84,12 +84,12 @@ static constexpr auto backgroundColorKeyPath = "backgroundColor"_s;
 static constexpr auto filterKeyPathPrefix = "filters.filter_"_s;
 static constexpr auto backdropFiltersKeyPath = "backdropFilters"_s;
 
-String PlatformCAAnimation::makeGroupKeyPath()
+RefPtr<StringImpl> PlatformCAAnimation::makeGroupKeyPath()
 {
     return emptyString();
 }
 
-String PlatformCAAnimation::makeKeyPath(AnimatedProperty animatedProperty, FilterOperation::Type filterOperationType, int index)
+RefPtr<StringImpl> PlatformCAAnimation::makeKeyPath(AnimatedProperty animatedProperty, FilterOperation::Type filterOperationType, int index)
 {
     switch (animatedProperty) {
     case AnimatedProperty::Translate:
@@ -113,36 +113,36 @@ String PlatformCAAnimation::makeKeyPath(AnimatedProperty animatedProperty, Filte
     return emptyString();
 }
 
-static bool isValidFilterKeyPath(const String& keyPath)
+static bool isValidFilterKeyPath(StringImpl* keyPath)
 {
-    if (!keyPath.startsWith(filterKeyPathPrefix))
+    if (!startsWith(keyPath, filterKeyPathPrefix))
         return false;
 
     size_t underscoreIndex = filterKeyPathPrefix.length();
-    auto dotIndex = keyPath.find('.', underscoreIndex);
+    auto dotIndex = find(keyPath, '.', underscoreIndex);
     if (dotIndex == notFound || dotIndex <= underscoreIndex)
         return false;
 
-    auto indexString = keyPath.substring(underscoreIndex, dotIndex - underscoreIndex);
+    auto indexString = substring(keyPath, underscoreIndex, dotIndex - underscoreIndex);
     auto parsedIndex = parseInteger<unsigned>(indexString);
     if (!parsedIndex)
         return false;
 
-    auto filterOperationTypeString = keyPath.substring(dotIndex + 1);
+    auto filterOperationTypeString = substring(keyPath, dotIndex + 1);
     return PlatformCAFilters::isValidAnimatedFilterPropertyName(filterOperationTypeString);
 }
 
-bool PlatformCAAnimation::isValidKeyPath(const String& keyPath, AnimationType type)
+bool PlatformCAAnimation::isValidKeyPath(StringImpl* keyPath, AnimationType type)
 {
     if (type == AnimationType::Group)
-        return keyPath.isEmpty();
+        return isEmpty(keyPath);
 
-    if (keyPath == transformKeyPath
-        || keyPath == opacityKeyPath
-        || keyPath == backgroundColorKeyPath)
+    if (equal(keyPath, transformKeyPath)
+        || equal(keyPath, opacityKeyPath)
+        || equal(keyPath, backgroundColorKeyPath))
         return true;
 
-    if (keyPath == backdropFiltersKeyPath)
+    if (equal(keyPath, backdropFiltersKeyPath))
         return true;
 
     if (isValidFilterKeyPath(keyPath))

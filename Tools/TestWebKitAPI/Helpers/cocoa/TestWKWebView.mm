@@ -383,10 +383,10 @@ static NSString *overrideBundleIdentifier(id, SEL)
             if (auto seContext = dynamic_objc_cast<WKBETextDocumentContext>(context))
                 uiContext = seContext._uikitDocumentContext;
             result = {
-                dynamic_objc_cast<NSString>(uiContext.contextBefore),
-                dynamic_objc_cast<NSString>(uiContext.selectedText),
-                dynamic_objc_cast<NSString>(uiContext.contextAfter),
-                dynamic_objc_cast<NSString>(uiContext.markedText),
+                StringImpl::create(dynamic_objc_cast<NSString>(uiContext.contextBefore)),
+                StringImpl::create(dynamic_objc_cast<NSString>(uiContext.selectedText)),
+                StringImpl::create(dynamic_objc_cast<NSString>(uiContext.contextAfter)),
+                StringImpl::create(dynamic_objc_cast<NSString>(uiContext.markedText)),
                 uiContext.selectedRangeInMarkedText,
             };
             done = true;
@@ -395,7 +395,7 @@ static NSString *overrideBundleIdentifier(id, SEL)
 #endif // USE(BROWSERENGINEKIT)
     {
         [self.textInputContentView requestAutocorrectionContextWithCompletionHandler:[&](UIWKAutocorrectionContext *context) {
-            result = { context.contextBeforeSelection, context.selectedText, context.contextAfterSelection, context.markedText, context.rangeInMarkedText };
+            result = { StringImpl::create(context.contextBeforeSelection), StringImpl::create(context.selectedText), StringImpl::create(context.contextAfterSelection), StringImpl::create(context.markedText), context.rangeInMarkedText };
             done = true;
         }];
     }

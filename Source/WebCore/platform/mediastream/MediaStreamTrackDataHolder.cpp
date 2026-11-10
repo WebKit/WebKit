@@ -94,8 +94,8 @@ MediaStreamTrackDataHolder::~MediaStreamTrackDataHolder() = default;
 MediaStreamTrackData MediaStreamTrackData::isolatedCopy(ShouldUpdateId shouldUpdateId) const
 {
     return {
-        .trackId = shouldUpdateId == ShouldUpdateId::Yes ? createVersion4UUIDString() : trackId.isolatedCopy(),
-        .label = label.isolatedCopy(),
+        .trackId = shouldUpdateId == ShouldUpdateId::Yes ? createVersion4UUIDString() : WTF::isolatedCopy(trackId),
+        .label = WTF::isolatedCopy(label),
         .type = type,
         .deviceType = deviceType,
         .isEnabled = isEnabled,

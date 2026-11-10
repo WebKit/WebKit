@@ -51,7 +51,7 @@ void GStreamerDisplayCaptureDeviceManager::computeCaptureDevices(CompletionHandl
 {
     m_devices.clear();
 
-    CaptureDevice screenCaptureDevice(createVersion4UUIDString(), CaptureDevice::DeviceType::Screen, "Capture Screen"_s);
+    CaptureDevice screenCaptureDevice(createVersion4UUIDString(), CaptureDevice::DeviceType::Screen, "Capture Screen"_si);
     screenCaptureDevice.setEnabled(true);
     m_devices.append(WTF::move(screenCaptureDevice));
     callback();
@@ -147,7 +147,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     return GStreamerVideoCaptureSource::createPipewireSource(WTF::move(pipewireCaptureDevice), WTF::move(hashSalts), constraints);
 }
 
-void GStreamerDisplayCaptureDeviceManager::stopSource(const String& persistentID)
+void GStreamerDisplayCaptureDeviceManager::stopSource(StringImpl* persistentID)
 {
     if (!m_portal) [[unlikely]]
         return;

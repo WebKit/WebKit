@@ -249,7 +249,7 @@ constexpr auto createUniqueIndexOperatingDates = "CREATE UNIQUE INDEX IF NOT EXI
 // Add one to the count of the above index queries to account for the ObservedDomains table, which has an index automatically created by SQLite because of its primary key.
 constexpr int expectedIndexCount = 13;
 
-static String domainsToString(const Vector<RegistrableDomain>& domains)
+static RefPtr<StringImpl> domainsToString(const Vector<RegistrableDomain>& domains)
 {
     StringBuilder builder;
     for (auto& domain : borrow(domains))
@@ -257,7 +257,7 @@ static String domainsToString(const Vector<RegistrableDomain>& domains)
     return builder.toString();
 }
 
-static String domainsToString(const RegistrableDomainsToDeleteOrRestrictWebsiteDataFor& domainsToRemoveOrRestrictWebsiteDataFor)
+static RefPtr<StringImpl> domainsToString(const RegistrableDomainsToDeleteOrRestrictWebsiteDataFor& domainsToRemoveOrRestrictWebsiteDataFor)
 {
     StringBuilder builder;
     for (auto& domain : borrow(domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllCookiesFor))
@@ -269,20 +269,20 @@ static String domainsToString(const RegistrableDomainsToDeleteOrRestrictWebsiteD
     return builder.toString();
 }
 
-static String dataRemovalFrequencyToString(DataRemovalFrequency dataRemovalFrequency)
+static RefPtr<StringImpl> dataRemovalFrequencyToString(DataRemovalFrequency dataRemovalFrequency)
 {
     switch (dataRemovalFrequency) {
-    case DataRemovalFrequency::Never: return "Never"_s;
-    case DataRemovalFrequency::Short: return "Short"_s;
-    case DataRemovalFrequency::Long: return "Long"_s;
+    case DataRemovalFrequency::Never: return "Never"_si;
+    case DataRemovalFrequency::Short: return "Short"_si;
+    case DataRemovalFrequency::Long: return "Long"_si;
     }
     ASSERT_NOT_REACHED();
-    return "Unknown"_s;
+    return "Unknown"_si;
 }
 
-static bool needsNewCreateTableSchema(const String& schema)
+static bool needsNewCreateTableSchema(StringImpl* schema)
 {
-    return schema.contains("REFERENCES TopLevelDomains"_s);
+    return contains(schema, "REFERENCES TopLevelDomains"_s);
 }
 
 static WallTime nowTime(Seconds timeAdvanceForTesting)
@@ -332,7 +332,7 @@ static void appendListItem(StringBuilder& builder, const ValueType& value)
 }
 
 template <typename ContainerType>
-static String buildIntegerList(const ContainerType& values)
+static RefPtr<StringImpl> buildIntegerList(const ContainerType& values)
 {
     using ValueType = std::remove_reference_t<decltype(*std::begin(values))>;
     static_assert(std::is_arithmetic_v<ValueType>, "buildIntegerList() must only be used with integer domain IDs, not domain strings");
@@ -343,7 +343,7 @@ static String buildIntegerList(const ContainerType& values)
 }
 
 template <typename ValueType>
-static String buildIntegerList(const Vector<ValueType>& values)
+static RefPtr<StringImpl> buildIntegerList(const Vector<ValueType>& values)
 {
     static_assert(std::is_arithmetic_v<ValueType>, "buildIntegerList() must only be used with integer domain IDs, not domain strings");
     StringBuilder builder;
@@ -362,7 +362,7 @@ NODELETE static WeakHashSet<ResourceLoadStatisticsStore>& allStores()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceLoadStatisticsStore);
 
-ResourceLoadStatisticsStore::ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore& store, SuspendableWorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
+ResourceLoadStatisticsStore::ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore& store, SuspendableWorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, StringImpl* storageDirectoryPath, PAL::SessionID sessionID)
     : DatabaseUtilities(FileSystem::pathByAppendingComponent(storageDirectoryPath, "observations.db"_s))
     , m_store(store)
     , m_workQueue(workQueue)
@@ -397,7 +397,7 @@ bool ResourceLoadStatisticsStore::shouldSkip(const RegistrableDomain& domain) co
 {
     ASSERT(!RunLoop::isMain());
     return !(parameters().isRunningTest)
-    && m_shouldIncludeLocalhost == ShouldIncludeLocalhost::No && domain.string() == "localhost"_s;
+    && m_shouldIncludeLocalhost == ShouldIncludeLocalhost::No && equal(domain.string(), "localhost"_s);
 }
 
 void ResourceLoadStatisticsStore::setIsRunningTest(bool value)
@@ -428,7 +428,7 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
     }
 
     if (m_debugLoggingEnabled) [[unlikely]] {
-        ITP_DEBUG_MODE_RELEASE_LOG("About to remove data records for %" PUBLIC_LOG_STRING ".", domainsToString(domainsToDeleteOrRestrictWebsiteDataFor).utf8());
+        ITP_DEBUG_MODE_RELEASE_LOG("About to remove data records for %" PUBLIC_LOG_STRING ".", utf8(domainsToString(domainsToDeleteOrRestrictWebsiteDataFor)));
         debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] About to remove data records for: ["_s, domainsToString(domainsToDeleteOrRestrictWebsiteDataFor), "]."_s));
     }
 
@@ -454,7 +454,7 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
 
                 if (protectedThis->m_debugLoggingEnabled) [[unlikely]] {
                     ITP_DEBUG_MODE_RELEASE_LOG("Done removing data records.");
-                    protectedThis->debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Done removing data records"_s);
+                    protectedThis->debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Done removing data records"_si);
                 }
             });
         });
@@ -478,7 +478,7 @@ void ResourceLoadStatisticsStore::processStatisticsAndDataRecords(CompletionHand
 
         protectedThis->pruneStatisticsIfNeeded();
 
-        protectedThis->logTestingEvent("Storage Synced"_s);
+        protectedThis->logTestingEvent("Storage Synced"_si);
         completionHandler();
     });
 }
@@ -514,7 +514,7 @@ void ResourceLoadStatisticsStore::grandfatherExistingWebsiteData(CompletionHandl
                 protectedThis->grandfatherDataForDomains(domainsWithWebsiteData);
                 protectedThis->m_endOfGrandfatheringTimestamp = nowTime(protectedThis->m_timeAdvanceForTesting) + protectedThis->m_parameters.grandfatheringTime;
                 callback();
-                protectedThis->logTestingEvent("Grandfathered"_s);
+                protectedThis->logTestingEvent("Grandfathered"_si);
             });
         });
     });
@@ -532,10 +532,10 @@ void ResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode(bool enable
 
     if (m_debugLoggingEnabled) {
         ITP_DEBUG_MODE_RELEASE_LOG("Turned ITP Debug Mode on.");
-        debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Turned Debug Mode on."_s);
+        debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Turned Debug Mode on."_si);
     } else {
         ITP_DEBUG_MODE_RELEASE_LOG("Turned ITP Debug Mode off.");
-        debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Turned Debug Mode off."_s);
+        debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Turned Debug Mode off."_si);
     }
 
     ensurePrevalentResourcesForDebugMode();
@@ -717,11 +717,11 @@ void ResourceLoadStatisticsStore::resetParametersToDefaultValues()
     m_lastTimeDataRecordsWereRemoved = { };
 }
 
-void ResourceLoadStatisticsStore::logTestingEvent(String&& event)
+void ResourceLoadStatisticsStore::logTestingEvent(RefPtr<StringImpl>&& event)
 {
     ASSERT(!RunLoop::isMain());
 
-    RunLoop::mainSingleton().dispatch([store = Ref { m_store.get() }, event = WTF::move(event).isolatedCopy()] {
+    RunLoop::mainSingleton().dispatch([store = Ref { m_store.get() }, event = isolatedCopy(WTF::move(event))] {
         store->logTestingEvent(event);
     });
 }
@@ -747,7 +747,7 @@ void ResourceLoadStatisticsStore::didCreateNetworkProcess()
     updateClientSideCookiesAgeCap();
 }
 
-void ResourceLoadStatisticsStore::debugBroadcastConsoleMessage(MessageSource source, MessageLevel level, const String& message)
+void ResourceLoadStatisticsStore::debugBroadcastConsoleMessage(MessageSource source, MessageLevel level, StringImpl* message)
 {
     if (!RunLoop::isMain()) {
         RunLoop::mainSingleton().dispatch([store = Ref { store() }, source = crossThreadCopy(source), level = crossThreadCopy(level), message = crossThreadCopy(message)]() {
@@ -779,7 +779,7 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(ASCIILiteral action, 
     static const auto maxNumberOfDomainsInOneLogStatement = 50;
 
     if (domains.size() <= maxNumberOfDomainsInOneLogStatement) {
-        ITP_DEBUG_MODE_RELEASE_LOG("%" PUBLIC_LOG_STRING " to: %" PUBLIC_LOG_STRING ".", action.characters(), domainsToString(domains).utf8());
+        ITP_DEBUG_MODE_RELEASE_LOG("%" PUBLIC_LOG_STRING " to: %" PUBLIC_LOG_STRING ".", action.characters(), utf8(domainsToString(domains)));
         return;
     }
 
@@ -791,7 +791,7 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(ASCIILiteral action, 
 
     for (auto& domain : domains) {
         if (batch.size() == maxNumberOfDomainsInOneLogStatement) {
-            ITP_DEBUG_MODE_RELEASE_LOG("%" PUBLIC_LOG_STRING " to (%d of %u): %" PUBLIC_LOG_STRING ".", action.characters(), batchNumber, numberOfBatches, domainsToString(batch).utf8());
+            ITP_DEBUG_MODE_RELEASE_LOG("%" PUBLIC_LOG_STRING " to (%d of %u): %" PUBLIC_LOG_STRING ".", action.characters(), batchNumber, numberOfBatches, utf8(domainsToString(batch)));
             batch.shrink(0);
 #if !RELEASE_LOG_DISABLED
             ++batchNumber;
@@ -800,7 +800,7 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(ASCIILiteral action, 
         batch.append(domain);
     }
     if (!batch.isEmpty())
-        ITP_DEBUG_MODE_RELEASE_LOG("%" PUBLIC_LOG_STRING " to (%d of %u): %" PUBLIC_LOG_STRING ".", action.characters(), batchNumber, numberOfBatches, domainsToString(batch).utf8());
+        ITP_DEBUG_MODE_RELEASE_LOG("%" PUBLIC_LOG_STRING " to (%d of %u): %" PUBLIC_LOG_STRING ".", action.characters(), batchNumber, numberOfBatches, utf8(domainsToString(batch)));
 }
 
 bool ResourceLoadStatisticsStore::shouldExemptFromWebsiteDataDeletion(const RegistrableDomain& domain) const
@@ -819,22 +819,22 @@ HashSet<RegistrableDomain> ResourceLoadStatisticsStore::domainsExemptFromWebsite
     return result;
 }
 
-const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& ResourceLoadStatisticsStore::expectedTableAndIndexQueries()
+const MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, TableAndIndexPair>& ResourceLoadStatisticsStore::expectedTableAndIndexQueries()
 {
-    static NeverDestroyed expectedTableAndIndexQueries = MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair> {
-        { "ObservedDomains"_s, std::make_pair<String, std::optional<String>>(createObservedDomain, std::nullopt) },
-        { "TopLevelDomains"_s, std::make_pair<String, std::optional<String>>(createTopLevelDomains, std::nullopt) },
-        { "StorageAccessUnderTopFrameDomains"_s, std::make_pair<String, std::optional<String>>(createStorageAccessUnderTopFrameDomains, stripIndexQueryToMatchStoredValue(createUniqueIndexStorageAccessUnderTopFrameDomains)) },
-        { "TopFrameUniqueRedirectsTo"_s, std::make_pair<String, std::optional<String>>(createTopFrameUniqueRedirectsTo, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameUniqueRedirectsTo)) },
-        { "TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement"_s, std::make_pair<String, std::optional<String>>(createTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement)) },
-        { "TopFrameUniqueRedirectsFrom"_s, std::make_pair<String, std::optional<String>>(createTopFrameUniqueRedirectsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameUniqueRedirectsFrom)) },
-        { "TopFrameLinkDecorationsFrom"_s, std::make_pair<String, std::optional<String>>(createTopFrameLinkDecorationsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameLinkDecorationsFrom)) },
-        { "TopFrameLoadedThirdPartyScripts"_s, std::make_pair<String, std::optional<String>>(createTopFrameLoadedThirdPartyScripts, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameLoadedThirdPartyScripts)) },
-        { "SubframeUnderTopFrameDomains"_s, std::make_pair<String, std::optional<String>>(createSubframeUnderTopFrameDomains, stripIndexQueryToMatchStoredValue(createUniqueIndexSubframeUnderTopFrameDomains)) },
-        { "SubresourceUnderTopFrameDomains"_s, std::make_pair<String, std::optional<String>>(createSubresourceUnderTopFrameDomains, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUnderTopFrameDomains)) },
-        { "SubresourceUniqueRedirectsTo"_s, std::make_pair<String, std::optional<String>>(createSubresourceUniqueRedirectsTo, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUniqueRedirectsTo)) },
-        { "SubresourceUniqueRedirectsFrom"_s, std::make_pair<String, std::optional<String>>(createSubresourceUniqueRedirectsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUniqueRedirectsFrom)) },
-        { "OperatingDates"_s, std::make_pair<String, std::optional<String>>(createOperatingDates, stripIndexQueryToMatchStoredValue(createUniqueIndexOperatingDates)) },
+    static NeverDestroyed expectedTableAndIndexQueries = MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, TableAndIndexPair> {
+        { "ObservedDomains"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createObservedDomain, std::nullopt) },
+        { "TopLevelDomains"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createTopLevelDomains, std::nullopt) },
+        { "StorageAccessUnderTopFrameDomains"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createStorageAccessUnderTopFrameDomains, stripIndexQueryToMatchStoredValue(createUniqueIndexStorageAccessUnderTopFrameDomains)) },
+        { "TopFrameUniqueRedirectsTo"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createTopFrameUniqueRedirectsTo, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameUniqueRedirectsTo)) },
+        { "TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement)) },
+        { "TopFrameUniqueRedirectsFrom"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createTopFrameUniqueRedirectsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameUniqueRedirectsFrom)) },
+        { "TopFrameLinkDecorationsFrom"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createTopFrameLinkDecorationsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameLinkDecorationsFrom)) },
+        { "TopFrameLoadedThirdPartyScripts"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createTopFrameLoadedThirdPartyScripts, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameLoadedThirdPartyScripts)) },
+        { "SubframeUnderTopFrameDomains"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createSubframeUnderTopFrameDomains, stripIndexQueryToMatchStoredValue(createUniqueIndexSubframeUnderTopFrameDomains)) },
+        { "SubresourceUnderTopFrameDomains"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createSubresourceUnderTopFrameDomains, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUnderTopFrameDomains)) },
+        { "SubresourceUniqueRedirectsTo"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createSubresourceUniqueRedirectsTo, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUniqueRedirectsTo)) },
+        { "SubresourceUniqueRedirectsFrom"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createSubresourceUniqueRedirectsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUniqueRedirectsFrom)) },
+        { "OperatingDates"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createOperatingDates, stripIndexQueryToMatchStoredValue(createUniqueIndexOperatingDates)) },
     };
     return expectedTableAndIndexQueries;
 }
@@ -860,12 +860,12 @@ std::span<const ASCIILiteral> ResourceLoadStatisticsStore::sortedTables()
     return sortedTables;
 }
 
-std::optional<Vector<String>> ResourceLoadStatisticsStore::checkForMissingTablesInSchema()
+std::optional<Vector<RefPtr<StringImpl>>> ResourceLoadStatisticsStore::checkForMissingTablesInSchema()
 {
-    Vector<String> missingTables;
+    Vector<RefPtr<StringImpl>> missingTables;
     for (auto& table : expectedTableAndIndexQueries().keys()) {
         if (!this->tableExists(table))
-            missingTables.append(String(table));
+            missingTables.append(RefPtr<StringImpl>(table));
     }
     if (missingTables.isEmpty())
         return std::nullopt;
@@ -916,7 +916,7 @@ bool ResourceLoadStatisticsStore::missingUniqueIndices()
 bool ResourceLoadStatisticsStore::missingReferenceToObservedDomains()
 {
     // Check a table for a reference to TopLevelDomains, a sign of the old schema.
-    auto oldSchema = currentTableAndIndexQueries("TopFrameUniqueRedirectsTo"_s).first;
+    auto oldSchema = currentTableAndIndexQueries("TopFrameUniqueRedirectsTo"_si).first;
     return needsNewCreateTableSchema(oldSchema);
 }
 
@@ -929,7 +929,7 @@ bool ResourceLoadStatisticsStore::needsUpdatedSchema()
 
     for (auto& table : expectedTableAndIndexQueries().keys()) {
         UNUSED_PARAM(table);
-        ASSERT(currentTableAndIndexQueries(table) == expectedTableAndIndexQueries().get(table));
+        ASSERT(contentEquals(currentTableAndIndexQueries(table), expectedTableAndIndexQueries().get(table)));
     }
 
     return false;
@@ -1036,7 +1036,7 @@ void ResourceLoadStatisticsStore::openAndUpdateSchemaIfNecessary()
         "isScheduledForAllButCookieDataRemoval"_s
     };
 
-    if (vectorEqualsArray<String, ASCIILiteral, 12>(columns, columnsWithoutMostRecentWebPushInteractionTime)
+    if (vectorEqualsArray<RefPtr<StringImpl>, ASCIILiteral, 12>(columns, columnsWithoutMostRecentWebPushInteractionTime)
         && addMissingColumnToTable("ObservedDomains"_s, "mostRecentWebPushInteractionTime REAL DEFAULT 0.0 NOT NULL"_s))
         columns.append("mostRecentWebPushInteractionTime"_s);
 
@@ -1056,7 +1056,7 @@ void ResourceLoadStatisticsStore::openAndUpdateSchemaIfNecessary()
         "mostRecentWebPushInteractionTime"_s
     };
 
-    if (!vectorEqualsArray<String, ASCIILiteral, 13>(columns, currentSchemaColumns)) {
+    if (!vectorEqualsArray<RefPtr<StringImpl>, ASCIILiteral, 13>(columns, currentSchemaColumns)) {
         close();
         ITP_RELEASE_LOG_ERROR("openAndUpdateSchemaIfNecessary: failed at scheme check, will create new database");
         FileSystem::deleteFile(m_storageFilePath);
@@ -1308,7 +1308,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsStore::ensureAndMakeDomainList(c
     return ensuredDomains;
 }
 
-void ResourceLoadStatisticsStore::insertDomainRelationshipList(const String& statement, const HashSet<RegistrableDomain>& domainList, unsigned domainID)
+void ResourceLoadStatisticsStore::insertDomainRelationshipList(StringImpl* statement, const HashSet<RegistrableDomain>& domainList, unsigned domainID)
 {
     auto ensuredDomains = ensureAndMakeDomainList(domainList);
     if (ensuredDomains.isEmpty())
@@ -1326,7 +1326,7 @@ void ResourceLoadStatisticsStore::insertDomainRelationshipList(const String& sta
     }
 
     int domainBindStart = 2;
-    if (statement.contains("REPLACE"_s)) {
+    if (contains(statement, "REPLACE"_s)) {
         if (insertRelationshipStatement->bindDouble(2, nowTime(m_timeAdvanceForTesting).secondsSinceEpoch().value()) != SQLITE_OK) {
             ITP_RELEASE_LOG_DATABASE_ERROR("insertDomainRelationshipList: failed to bind second parameter");
             return;
@@ -1356,16 +1356,16 @@ void ResourceLoadStatisticsStore::insertDomainRelationships(const ResourceLoadSt
     if (!registrableDomainID)
         return;
 
-    insertDomainRelationshipList(storageAccessUnderTopFrameDomainsQuery, loadStatistics.storageAccessUnderTopFrameDomains, registrableDomainID.value());
-    insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, loadStatistics.topFrameUniqueRedirectsTo, registrableDomainID.value());
-    insertDomainRelationshipList(topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery, loadStatistics.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement, registrableDomainID.value());
-    insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, loadStatistics.topFrameUniqueRedirectsFrom, registrableDomainID.value());
-    insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, loadStatistics.subframeUnderTopFrameDomains, registrableDomainID.value());
-    insertDomainRelationshipList(subresourceUnderTopFrameDomainsQuery, loadStatistics.subresourceUnderTopFrameDomains, registrableDomainID.value());
-    insertDomainRelationshipList(subresourceUniqueRedirectsToQuery, loadStatistics.subresourceUniqueRedirectsTo, registrableDomainID.value());
-    insertDomainRelationshipList(subresourceUniqueRedirectsFromQuery, loadStatistics.subresourceUniqueRedirectsFrom, registrableDomainID.value());
-    insertDomainRelationshipList(topFrameLinkDecorationsFromQuery, loadStatistics.topFrameLinkDecorationsFrom, registrableDomainID.value());
-    insertDomainRelationshipList(topFrameLoadedThirdPartyScriptsQuery, loadStatistics.topFrameLoadedThirdPartyScripts, registrableDomainID.value());
+    insertDomainRelationshipList(StringImpl::create(storageAccessUnderTopFrameDomainsQuery).ptr(), loadStatistics.storageAccessUnderTopFrameDomains, registrableDomainID.value());
+    insertDomainRelationshipList(StringImpl::create(topFrameUniqueRedirectsToQuery).ptr(), loadStatistics.topFrameUniqueRedirectsTo, registrableDomainID.value());
+    insertDomainRelationshipList(StringImpl::create(topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery).ptr(), loadStatistics.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement, registrableDomainID.value());
+    insertDomainRelationshipList(StringImpl::create(topFrameUniqueRedirectsFromQuery).ptr(), loadStatistics.topFrameUniqueRedirectsFrom, registrableDomainID.value());
+    insertDomainRelationshipList(StringImpl::create(subframeUnderTopFrameDomainsQuery).ptr(), loadStatistics.subframeUnderTopFrameDomains, registrableDomainID.value());
+    insertDomainRelationshipList(StringImpl::create(subresourceUnderTopFrameDomainsQuery).ptr(), loadStatistics.subresourceUnderTopFrameDomains, registrableDomainID.value());
+    insertDomainRelationshipList(StringImpl::create(subresourceUniqueRedirectsToQuery).ptr(), loadStatistics.subresourceUniqueRedirectsTo, registrableDomainID.value());
+    insertDomainRelationshipList(StringImpl::create(subresourceUniqueRedirectsFromQuery).ptr(), loadStatistics.subresourceUniqueRedirectsFrom, registrableDomainID.value());
+    insertDomainRelationshipList(StringImpl::create(topFrameLinkDecorationsFromQuery).ptr(), loadStatistics.topFrameLinkDecorationsFrom, registrableDomainID.value());
+    insertDomainRelationshipList(StringImpl::create(topFrameLoadedThirdPartyScriptsQuery).ptr(), loadStatistics.topFrameLoadedThirdPartyScripts, registrableDomainID.value());
 }
 
 void ResourceLoadStatisticsStore::merge(WebCore::SQLiteStatement* current, const ResourceLoadStatistics& other)
@@ -1384,7 +1384,7 @@ void ResourceLoadStatisticsStore::merge(WebCore::SQLiteStatement* current, const
     unsigned currentDataRecordsRemoved = current->columnInt(DataRecordsRemovedIndex);
     bool currentIsScheduledForAllButCookieDataRemoval = current->columnInt(IsScheduledForAllButCookieDataRemovalIndex);
 
-    ASSERT(currentRegistrableDomain == other.registrableDomain.string());
+    ASSERT(equal(currentRegistrableDomain, other.registrableDomain.string()));
 
     if (WallTime::fromRawSeconds(currentLastSeen) < other.lastSeen)
         updateLastSeen(other.registrableDomain, other.lastSeen);
@@ -1789,14 +1789,14 @@ void ResourceLoadStatisticsStore::requestStorageAccess(SubFrameDomain&& subFrame
     switch (cookieAccess(subFrameDomain, topFrameDomain, canRequestStorageAccessWithoutUserInteraction)) {
     case CookieAccess::CannotRequest:
         if (debugLoggingEnabled()) [[unlikely]] {
-            ITP_DEBUG_MODE_RELEASE_LOG("Cannot grant storage access to %" PRIVATE_LOG_STRING " since its cookies are blocked in third-party contexts and it has not received user interaction as first-party.", subFrameDomain.string().utf8());
+            ITP_DEBUG_MODE_RELEASE_LOG("Cannot grant storage access to %" PRIVATE_LOG_STRING " since its cookies are blocked in third-party contexts and it has not received user interaction as first-party.", utf8(subFrameDomain.string()));
             debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Error, makeString("[ITP] Cannot grant storage access to '"_s, subFrameDomain.string(), "' since its cookies are blocked in third-party contexts and it has not received user interaction as first-party."_s));
         }
         completionHandler(StorageAccessStatus::CannotRequestAccess);
         return;
     case CookieAccess::BasedOnCookiePolicy:
         if (debugLoggingEnabled()) [[unlikely]] {
-            ITP_DEBUG_MODE_RELEASE_LOG("No need to grant storage access to %" PRIVATE_LOG_STRING " since its cookies are not blocked in third-party contexts. Note that the underlying cookie policy may still block this third-party from setting cookies.", subFrameDomain.string().utf8());
+            ITP_DEBUG_MODE_RELEASE_LOG("No need to grant storage access to %" PRIVATE_LOG_STRING " since its cookies are not blocked in third-party contexts. Note that the underlying cookie policy may still block this third-party from setting cookies.", utf8(subFrameDomain.string()));
             debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] No need to grant storage access to '"_s, subFrameDomain.string(), "' since its cookies are not blocked in third-party contexts. Note that the underlying cookie policy may still block this third-party from setting cookies."_s));
         }
         completionHandler(StorageAccessStatus::HasAccess);
@@ -1809,7 +1809,7 @@ void ResourceLoadStatisticsStore::requestStorageAccess(SubFrameDomain&& subFrame
     auto userWasPromptedEarlier = hasUserGrantedStorageAccessThroughPrompt(*subFrameStatus.second, topFrameDomain);
     if (userWasPromptedEarlier == StorageAccessPromptWasShown::No) {
         if (debugLoggingEnabled()) [[unlikely]] {
-            ITP_DEBUG_MODE_RELEASE_LOG("About to ask the user whether they want to grant storage access to %" PRIVATE_LOG_STRING " under %" PRIVATE_LOG_STRING " or not.", subFrameDomain.string().utf8(), topFrameDomain.string().utf8());
+            ITP_DEBUG_MODE_RELEASE_LOG("About to ask the user whether they want to grant storage access to %" PRIVATE_LOG_STRING " under %" PRIVATE_LOG_STRING " or not.", utf8(subFrameDomain.string()), utf8(topFrameDomain.string()));
             debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] About to ask the user whether they want to grant storage access to '"_s, subFrameDomain.string(), "' under '"_s, topFrameDomain.string(), "' or not."_s));
         }
         completionHandler(StorageAccessStatus::RequiresUserPrompt);
@@ -1818,7 +1818,7 @@ void ResourceLoadStatisticsStore::requestStorageAccess(SubFrameDomain&& subFrame
 
     if (userWasPromptedEarlier == StorageAccessPromptWasShown::Yes) {
         if (debugLoggingEnabled()) [[unlikely]] {
-            ITP_DEBUG_MODE_RELEASE_LOG("Storage access was granted to %" PRIVATE_LOG_STRING " under %" PRIVATE_LOG_STRING ".", subFrameDomain.string().utf8(), topFrameDomain.string().utf8());
+            ITP_DEBUG_MODE_RELEASE_LOG("Storage access was granted to %" PRIVATE_LOG_STRING " under %" PRIVATE_LOG_STRING ".", utf8(subFrameDomain.string()), utf8(topFrameDomain.string()));
             debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] Storage access was granted to '"_s, subFrameDomain.string(), "' under '"_s, topFrameDomain.string(), "'."_s));
         }
     }
@@ -1861,7 +1861,7 @@ void ResourceLoadStatisticsStore::requestStorageAccessUnderOpener(DomainInNeedOf
         return;
 
     if (debugLoggingEnabled()) [[unlikely]] {
-        ITP_DEBUG_MODE_RELEASE_LOG("[Temporary combatibility fix] Storage access was granted for %" PRIVATE_LOG_STRING " under opener page from %" PRIVATE_LOG_STRING ", with user interaction in the opened window.", domainInNeedOfStorageAccess.string().utf8(), openerDomain.string().utf8());
+        ITP_DEBUG_MODE_RELEASE_LOG("[Temporary combatibility fix] Storage access was granted for %" PRIVATE_LOG_STRING " under opener page from %" PRIVATE_LOG_STRING ", with user interaction in the opened window.", utf8(domainInNeedOfStorageAccess.string()), utf8(openerDomain.string()));
         debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] Storage access was granted for '"_s, domainInNeedOfStorageAccess.string(), "' under opener page from '"_s, openerDomain.string(), "', with user interaction in the opened window."_s));
     }
 
@@ -1876,7 +1876,7 @@ auto ResourceLoadStatisticsStore::grantStorageAccessPermission(const Registrable
     if (!subFrameStatus.second)
         return subFrameStatus;
 
-    insertDomainRelationshipList(storageAccessUnderTopFrameDomainsQuery, { topFrameDomain }, *subFrameStatus.second);
+    insertDomainRelationshipList(StringImpl::create(storageAccessUnderTopFrameDomainsQuery).ptr(), { topFrameDomain }, *subFrameStatus.second);
     return subFrameStatus;
 }
 
@@ -2030,7 +2030,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsStore::ensurePrevalentResourcesF
         primaryDomainsToBlock.append(debugManualPrevalentResource());
 
         if (debugLoggingEnabled()) {
-            ITP_DEBUG_MODE_RELEASE_LOG("Did set %" PRIVATE_LOG_STRING " as prevalent resource for the purposes of ITP Debug Mode.", debugManualPrevalentResource().string().utf8());
+            ITP_DEBUG_MODE_RELEASE_LOG("Did set %" PRIVATE_LOG_STRING " as prevalent resource for the purposes of ITP Debug Mode.", utf8(debugManualPrevalentResource().string()));
             debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] Did set '"_s, debugManualPrevalentResource().string(), "' as prevalent resource for the purposes of ITP Debug Mode."_s));
         }
     }
@@ -2054,7 +2054,7 @@ void ResourceLoadStatisticsStore::logFrameNavigation(const RegistrableDomain& ta
             return;
 
         updateLastSeen(targetDomain, ResourceLoadStatistics::reduceTimeResolution(nowTime(m_timeAdvanceForTesting)));
-        insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *targetResult.second);
+        insertDomainRelationshipList(StringImpl::create(subframeUnderTopFrameDomainsQuery).ptr(), HashSet<RegistrableDomain>({ topFrameDomain }), *targetResult.second);
         statisticsWereUpdated = true;
     }
 
@@ -2067,16 +2067,16 @@ void ResourceLoadStatisticsStore::logFrameNavigation(const RegistrableDomain& ta
                 if (!targetResult.second || !redirectingDomainResult.second)
                     return;
 
-                insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
+                insertDomainRelationshipList(StringImpl::create(topFrameUniqueRedirectsToQuery).ptr(), HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
                 if (isRedirect) {
-                    insertDomainRelationshipList(topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
+                    insertDomainRelationshipList(StringImpl::create(topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery).ptr(), HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
 
                     if (debugLoggingEnabled()) [[unlikely]] {
-                        ITP_DEBUG_MODE_RELEASE_LOG("Did set %" PUBLIC_LOG_STRING " as making a top frame redirect to %" PUBLIC_LOG_STRING ".", sourceDomain.string().utf8(), targetDomain.string().utf8());
+                        ITP_DEBUG_MODE_RELEASE_LOG("Did set %" PUBLIC_LOG_STRING " as making a top frame redirect to %" PUBLIC_LOG_STRING ".", utf8(sourceDomain.string()), utf8(targetDomain.string()));
                         debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("Did set '"_s, sourceDomain.string(), "' as making a top frame redirect to '"_s, targetDomain.string(), "'."_s));
                     }
                 }
-                insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ sourceDomain }), *targetResult.second);
+                insertDomainRelationshipList(StringImpl::create(topFrameUniqueRedirectsFromQuery).ptr(), HashSet<RegistrableDomain>({ sourceDomain }), *targetResult.second);
                 statisticsWereUpdated = true;
             }
         } else if (isRedirect) {
@@ -2085,8 +2085,8 @@ void ResourceLoadStatisticsStore::logFrameNavigation(const RegistrableDomain& ta
             if (!targetResult.second || !redirectingDomainResult.second)
                 return;
 
-            insertDomainRelationshipList(subresourceUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
-            insertDomainRelationshipList(subresourceUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ sourceDomain }), *targetResult.second);
+            insertDomainRelationshipList(StringImpl::create(subresourceUniqueRedirectsToQuery).ptr(), HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
+            insertDomainRelationshipList(StringImpl::create(subresourceUniqueRedirectsFromQuery).ptr(), HashSet<RegistrableDomain>({ sourceDomain }), *targetResult.second);
             statisticsWereUpdated = true;
         }
     }
@@ -2106,7 +2106,7 @@ void ResourceLoadStatisticsStore::logCrossSiteLoadWithLinkDecoration(const Navig
     if (!toDomainResult.second)
         return;
 
-    insertDomainRelationshipList(topFrameLinkDecorationsFromQuery, HashSet<RegistrableDomain>({ fromDomain }), *toDomainResult.second);
+    insertDomainRelationshipList(StringImpl::create(topFrameLinkDecorationsFromQuery).ptr(), HashSet<RegistrableDomain>({ fromDomain }), *toDomainResult.second);
 
     auto currentDataRemovalFrequency = dataRemovalFrequency(toDomain);
     if (currentDataRemovalFrequency == DataRemovalFrequency::Short)
@@ -2275,7 +2275,7 @@ void ResourceLoadStatisticsStore::setDomainsAsPrevalent(StdSet<unsigned>&& domai
         ITP_RELEASE_LOG_DATABASE_ERROR("setDomainsAsPrevalent: failed to step statement");
 }
 
-void ResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&& completionHandler)
+void ResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
     if (m_dataRecordsBeingRemoved) {
@@ -2284,17 +2284,17 @@ void ResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandler<v
             if (protectedThis)
                 protectedThis->dumpResourceLoadStatistics(WTF::move(completionHandler));
             else
-                completionHandler({ });
+                completionHandler(nullptr);
         });
         return;
     }
 
     auto scopedStatement = this->scopedStatement(m_getAllDomainsStatement, getAllDomainsQuery, "dumpResourceLoadStatistics"_s);
     if (!scopedStatement)
-        return completionHandler({ });
+        return completionHandler(nullptr);
 
     const auto domains = [&] {
-        Vector<String> domains;
+        Vector<RefPtr<StringImpl>> domains;
         while (scopedStatement->step() == SQLITE_ROW)
             domains.append(scopedStatement->columnText(0));
         std::ranges::sort(domains, WTF::codePointCompareLessThan);
@@ -2503,7 +2503,7 @@ void ResourceLoadStatisticsStore::setSubframeUnderTopFrameDomain(const SubFrameD
         return;
 
     // For consistency, make sure we also have a statistics entry for the top frame domain.
-    insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *result.second);
+    insertDomainRelationshipList(StringImpl::create(subframeUnderTopFrameDomainsQuery).ptr(), HashSet<RegistrableDomain>({ topFrameDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsStore::setSubresourceUnderTopFrameDomain(const SubResourceDomain& subresourceDomain, const TopFrameDomain& topFrameDomain)
@@ -2517,7 +2517,7 @@ void ResourceLoadStatisticsStore::setSubresourceUnderTopFrameDomain(const SubRes
         return;
 
     // For consistency, make sure we also have a statistics entry for the top frame domain.
-    insertDomainRelationshipList(subresourceUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *result.second);
+    insertDomainRelationshipList(StringImpl::create(subresourceUnderTopFrameDomainsQuery).ptr(), HashSet<RegistrableDomain>({ topFrameDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo(const SubResourceDomain& subresourceDomain, const RedirectDomain& redirectDomain)
@@ -2531,7 +2531,7 @@ void ResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo(const SubResour
         return;
 
     // For consistency, make sure we also have a statistics entry for the redirect domain.
-    insertDomainRelationshipList(subresourceUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
+    insertDomainRelationshipList(StringImpl::create(subresourceUniqueRedirectsToQuery).ptr(), HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom(const SubResourceDomain& subresourceDomain, const RedirectDomain& redirectDomain)
@@ -2545,7 +2545,7 @@ void ResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom(const SubReso
         return;
 
     // For consistency, make sure we also have a statistics entry for the redirect domain.
-    insertDomainRelationshipList(subresourceUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
+    insertDomainRelationshipList(StringImpl::create(subresourceUniqueRedirectsFromQuery).ptr(), HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo(const TopFrameDomain& topFrameDomain, const RedirectDomain& redirectDomain)
@@ -2558,8 +2558,8 @@ void ResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo(const TopFrameDoma
     if (!result.second)
         return;
 
-    insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
-    insertDomainRelationshipList(topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
+    insertDomainRelationshipList(StringImpl::create(topFrameUniqueRedirectsToQuery).ptr(), HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
+    insertDomainRelationshipList(StringImpl::create(topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery).ptr(), HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom(const TopFrameDomain& topFrameDomain, const RedirectDomain& redirectDomain)
@@ -2573,7 +2573,7 @@ void ResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom(const TopFrameDo
         return;
 
     // For consistency, make sure we also have a statistics entry for the redirect domain.
-    insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
+    insertDomainRelationshipList(StringImpl::create(topFrameUniqueRedirectsFromQuery).ptr(), HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
 }
 
 std::pair<ResourceLoadStatisticsStore::AddedRecord, std::optional<unsigned>> ResourceLoadStatisticsStore::ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain& domain, ASCIILiteral reason)
@@ -2823,7 +2823,7 @@ void ResourceLoadStatisticsStore::updateCookieBlocking(CompletionHandler<void()>
 
                 if (protectedThis->debugLoggingEnabled()) [[unlikely]] {
                     ITP_DEBUG_MODE_RELEASE_LOG("Done applying cross-site tracking restrictions.");
-                    protectedThis->debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Done applying cross-site tracking restrictions."_s);
+                    protectedThis->debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Done applying cross-site tracking restrictions."_si);
                 }
             });
         });
@@ -2981,7 +2981,7 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsStore::
                 toDeleteOrRestrictFor.domainsToEnforceSameSiteStrictFor.append(statistic.registrableDomain);
 
                 if (debugLoggingEnabled()) [[unlikely]] {
-                    ITP_DEBUG_MODE_RELEASE_LOG("Scheduled %" PUBLIC_LOG_STRING " to have its cookies set to SameSite=strict.", statistic.registrableDomain.string().utf8());
+                    ITP_DEBUG_MODE_RELEASE_LOG("Scheduled %" PUBLIC_LOG_STRING " to have its cookies set to SameSite=strict.", utf8(statistic.registrableDomain.string()));
                     debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("Scheduled '"_s, statistic.registrableDomain.string(), "' to have its cookies set to SameSite=strict'."_s));
                 }
             }
@@ -3138,12 +3138,12 @@ static void appendBoolean(StringBuilder& builder, ASCIILiteral label, bool flag)
     builder.append("    "_s, label, ": "_s, flag ? "Yes"_s : "No"_s);
 }
 
-static void appendNextEntry(StringBuilder& builder, const String& entry)
+static void appendNextEntry(StringBuilder& builder, StringImpl* entry)
 {
     builder.append("        "_s, entry, '\n');
 }
 
-String ResourceLoadStatisticsStore::getDomainStringFromDomainID(unsigned domainID) const
+RefPtr<StringImpl> ResourceLoadStatisticsStore::getDomainStringFromDomainID(unsigned domainID) const
 {
     auto result = emptyString();
 
@@ -3184,7 +3184,7 @@ ASCIILiteral ResourceLoadStatisticsStore::getSubStatisticStatement(ASCIILiteral 
     return ""_s;
 }
 
-void ResourceLoadStatisticsStore::appendSubStatisticList(StringBuilder& builder, ASCIILiteral tableName, const String& domain) const
+void ResourceLoadStatisticsStore::appendSubStatisticList(StringBuilder& builder, ASCIILiteral tableName, StringImpl* domain) const
 {
     auto query = getSubStatisticStatement(tableName);
 
@@ -3217,7 +3217,7 @@ NODELETE SUPPRESS_NODELETE static bool hasHadRecentUserInteraction(WTF::Seconds 
     return interactionTimeSeconds > Seconds(0) && now.secondsSinceEpoch() - interactionTimeSeconds < 24_h;
 }
 
-void ResourceLoadStatisticsStore::resourceToString(StringBuilder& builder, const String& domain) const
+void ResourceLoadStatisticsStore::resourceToString(StringBuilder& builder, StringImpl* domain) const
 {
     auto scopedStatement = this->scopedStatement(m_getResourceDataByDomainNameStatement, getResourceDataByDomainNameQuery, "resourceToString"_s);
     if (!scopedStatement

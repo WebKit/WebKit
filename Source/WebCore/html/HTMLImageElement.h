@@ -96,11 +96,11 @@ public:
     WEBCORE_EXPORT unsigned naturalHeight() const;
 
     const URL& currentURL() const LIFETIME_BOUND { return m_currentURL; }
-    WEBCORE_EXPORT const AtomString& currentSrc();
+    WEBCORE_EXPORT const RefPtr<AtomStringImpl>& currentSrc();
 
     NODELETE bool isServerMap() const;
 
-    NODELETE const AtomString& altText() const;
+    NODELETE const RefPtr<AtomStringImpl>& altText() const;
 
     NODELETE WEBCORE_EXPORT CachedImage* cachedImage() const;
 
@@ -116,14 +116,14 @@ public:
 
     NODELETE void setLoadManually(bool);
 
-    NODELETE bool matchesUsemap(const AtomString&) const;
+    NODELETE bool matchesUsemap(AtomStringImpl*) const;
     RefPtr<HTMLMapElement> associatedMapElement() const;
 
-    WEBCORE_EXPORT String crossOrigin() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> crossOrigin() const;
     WEBCORE_EXPORT int x() const;
     WEBCORE_EXPORT int y() const;
     NODELETE WEBCORE_EXPORT bool complete() const;
-    String decoding() const;
+    RefPtr<StringImpl> decoding() const;
 
     DecodingMode decodingMode() const;
     
@@ -144,7 +144,7 @@ public:
 
     bool canContainRangeEndPoint() const override { return false; }
 
-    String imageSourceURL() const override;
+    RefPtr<StringImpl> imageSourceURL() const override;
     
 #if ENABLE(SERVICE_CONTROLS)
     bool isImageMenuEnabled() const { return m_isImageMenuEnabled; }
@@ -165,7 +165,7 @@ public:
     void loadDeferredImage();
     void lazyLoadIntersectionCallbackInvoked(bool isIntersecting);
 
-    AtomString srcsetForBindings() const;
+    RefPtr<AtomStringImpl> srcsetForBindings() const;
 
     NODELETE bool usesSrcsetOrPicture() const;
 
@@ -178,7 +178,7 @@ public:
 
     NODELETE bool isDeferred() const;
 
-    static bool isSupportedImageSourceType(const String& typeAttribute);
+    static bool isSupportedImageSourceType(StringImpl* typeAttribute);
 
     bool isDroppedImagePlaceholder() const { return m_isDroppedImagePlaceholder; }
     void setIsDroppedImagePlaceholder() { m_isDroppedImagePlaceholder = true; }
@@ -187,7 +187,7 @@ public:
 
     void evaluateDynamicMediaQueryDependencies();
 
-    String referrerPolicyForBindings() const;
+    RefPtr<StringImpl> referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const;
 
     NODELETE bool allowsOrientationOverride() const;
@@ -199,7 +199,7 @@ public:
     Ref<ImageAnimationTimeline> imageAnimationTimeline() const;
     void clearImageAnimationTimeline();
 
-    String fetchPriorityForBindings() const;
+    RefPtr<StringImpl> fetchPriorityForBindings() const;
     RequestPriority fetchPriority() const;
 
     bool originClean(const SecurityOrigin&) const;
@@ -221,9 +221,9 @@ private:
     void derefFormAssociatedElement() const final { HTMLElement::deref(); }
     void setFormInternal(RefPtr<HTMLFormElement>&&) final;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) override;
     void invalidateAttributeMapping();
     void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;
 
@@ -254,7 +254,7 @@ private:
 
     NODELETE bool isURLAttribute(const Attribute&) const override;
     NODELETE bool attributeContainsURL(const Attribute&) const override;
-    String completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::YesExcludingURLsForPrivacy) const override;
+    RefPtr<StringImpl> completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::YesExcludingURLsForPrivacy) const override;
     Attribute replaceURLsInAttributeValue(const Attribute&, const CSS::SerializationContext&) const override;
 
     bool isDraggableIgnoringAttributes() const final { return true; }
@@ -306,10 +306,10 @@ private:
     const std::unique_ptr<HTMLImageLoader> m_imageLoader;
     const std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
 
-    AtomString m_bestFitImageURL;
+    RefPtr<AtomStringImpl> m_bestFitImageURL;
     URL m_currentURL;
-    AtomString m_currentSrc;
-    AtomString m_parsedUsemap;
+    RefPtr<AtomStringImpl> m_currentSrc;
+    RefPtr<AtomStringImpl> m_parsedUsemap;
     float m_currentPixelDensity;
     RefPtr<ImageAnimationTimeline> m_imageAnimationTimeline;
 #if ENABLE(SERVICE_CONTROLS)

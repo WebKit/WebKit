@@ -39,16 +39,16 @@ public:
     static Ref<InternalsMapLike> create() { return adoptRef(*new InternalsMapLike); }
 
     void initializeMapLike(DOMMapAdapter&);
-    void setFromMapLike(String&&, unsigned);
+    void setFromMapLike(RefPtr<StringImpl>&&, unsigned);
     void clear();
-    bool remove(const String&);
+    bool remove(StringImpl*);
 
-    Vector<String> inspectKeys() const;
+    Vector<RefPtr<StringImpl>> inspectKeys() const;
     Vector<unsigned> inspectValues() const;
 
 private:
     InternalsMapLike();
-    HashMap<String, unsigned> m_values;
+    HashMap<RefPtr<StringImpl>, unsigned> m_values;
 };
 
 } // namespace WebCore

@@ -164,7 +164,7 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
         localFrame->init();
 }
 
-Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const AtomString& frameName, HTMLFrameOwnerElement& ownerElement)
+Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, AtomStringImpl* frameName, HTMLFrameOwnerElement& ownerElement)
 {
     auto effectiveSandboxFlags = ownerElement.sandboxFlags();
     if (RefPtr parentLocalFrame = parent.coreLocalFrame())
@@ -193,7 +193,7 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
     return frame;
 }
 
-Ref<WebFrame> WebFrame::createRemoteSubframe(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID, const String& frameName, std::optional<WebCore::FrameIdentifier> openerFrameID, WebCore::ProcessIdentifier hostingProcessID, Ref<WebCore::FrameTreeSyncData>&& frameTreeSyncData)
+Ref<WebFrame> WebFrame::createRemoteSubframe(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID, StringImpl* frameName, std::optional<WebCore::FrameIdentifier> openerFrameID, WebCore::ProcessIdentifier hostingProcessID, Ref<WebCore::FrameTreeSyncData>&& frameTreeSyncData)
 {
     RefPtr<WebCore::Frame> opener;
     if (openerFrameID) {
@@ -212,7 +212,7 @@ Ref<WebFrame> WebFrame::createRemoteSubframe(WebPage& page, WebFrame& parent, We
     }, frameID, *parentCoreFrame, opener.get(), std::nullopt, WTF::move(frameTreeSyncData), WebCore::Frame::AddToFrameTree::Yes);
     coreFrame->setHostingProcessIdentifier(hostingProcessID);
     frame->m_coreFrame = coreFrame.get();
-    coreFrame->tree().setSpecifiedName(AtomString(frameName));
+    coreFrame->tree().setSpecifiedName(AtomStringImpl::add(frameName).get());
     return frame;
 }
 
@@ -318,7 +318,7 @@ FrameInfoData WebFrame::info() const
         // FIXME: This should use the full request.
         ResourceRequest(url()),
         coreFrame ? SecurityOriginData::fromFrame(*coreFrame) : SecurityOriginData { },
-        coreFrame ? coreFrame->tree().specifiedName().string() : String(),
+        coreFrame ? coreFrame->tree().specifiedName() : nullptr,
         frameID(),
         document ? std::optional { document->identifier() } : std::nullopt,
         isFocused(),
@@ -796,7 +796,7 @@ void WebFrame::didReceivePolicyDecision(PolicyListenerIdentifier listenerID, Pol
     }
 
     if (policyDecision.backForwardFrameState) {
-        RELEASE_LOG(Loading, "didReceivePolicyDecision: Received FrameState for child frame, URL=%" SENSITIVE_LOG_STRING, policyDecision.backForwardFrameState->urlString.utf8());
+        RELEASE_LOG(Loading, "didReceivePolicyDecision: Received FrameState for child frame, URL=%" SENSITIVE_LOG_STRING, utf8(policyDecision.backForwardFrameState->urlString));
         setHistoryItemForBackForwardNavigation(protect(*policyDecision.backForwardFrameState));
     }
 
@@ -827,7 +827,7 @@ void WebFrame::setHistoryItemForBackForwardNavigation(const FrameState& frameSta
     frameLoader->setRequestedHistoryItem(historyItem);
 }
 
-void WebFrame::startDownload(const WebCore::ResourceRequest& request, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute)
+void WebFrame::startDownload(const WebCore::ResourceRequest& request, StringImpl* suggestedName, FromDownloadAttribute fromDownloadAttribute)
 {
     if (!m_policyDownloadID) {
         ASSERT_NOT_REACHED();
@@ -872,7 +872,7 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
     protect(webProcess.ensureNetworkProcessConnection().connection())->send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(mainResourceLoadIdentifier, policyDownloadID, request, topOrigin, response, isAppBound), 0);
 }
 
-void WebFrame::addConsoleMessage(MessageSource messageSource, MessageLevel messageLevel, const String& message, uint64_t requestID)
+void WebFrame::addConsoleMessage(MessageSource messageSource, MessageLevel messageLevel, StringImpl* message, uint64_t requestID)
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame)
@@ -885,31 +885,31 @@ void WebFrame::addConsoleMessage(MessageSource messageSource, MessageLevel messa
         document->addConsoleMessage(messageSource, messageLevel, message, requestID);
 }
 
-String WebFrame::source() const
+RefPtr<StringImpl> WebFrame::source() const
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame)
-        return String();
+        return nullptr;
     RefPtr document = localFrame->document();
     if (!document)
-        return String();
+        return nullptr;
     RefPtr decoder = document->decoder();
     if (!decoder)
-        return String();
+        return nullptr;
     RefPtr documentLoader = localFrame->loader().activeDocumentLoader();
     if (!documentLoader)
-        return String();
+        return nullptr;
     RefPtr<FragmentedSharedBuffer> mainResourceData = documentLoader->mainResourceData();
     if (!mainResourceData)
-        return String();
+        return nullptr;
     return decoder->encoding().decode(mainResourceData->makeContiguous()->span());
 }
 
-String WebFrame::contentsAsString() const 
+RefPtr<StringImpl> WebFrame::contentsAsString() const 
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame)
-        return String();
+        return nullptr;
 
     if (isFrameSet()) {
         StringBuilder builder;
@@ -930,20 +930,20 @@ String WebFrame::contentsAsString() const
 
     RefPtr document = localFrame->document();
     if (!document)
-        return String();
+        return nullptr;
 
     RefPtr documentElement = document->documentElement();
     if (!documentElement)
-        return String();
+        return nullptr;
 
     return plainText(makeRangeSelectingNodeContents(*documentElement));
 }
 
-String WebFrame::selectionAsString() const 
+RefPtr<StringImpl> WebFrame::selectionAsString() const 
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame)
-        return String();
+        return nullptr;
 
     return localFrame->displayStringModifiedByEncoding(protect(localFrame->editor())->selectedText());
 }
@@ -985,11 +985,11 @@ bool WebFrame::isRootFrame() const
     return coreFrame && coreFrame->isRootFrame();
 }
 
-String WebFrame::name() const
+RefPtr<StringImpl> WebFrame::name() const
 {
     RefPtr coreFrame = m_coreFrame.get();
     if (!coreFrame)
-        return String();
+        return nullptr;
 
     return coreFrame->tree().uniqueName();
 }
@@ -1020,14 +1020,14 @@ CertificateInfo WebFrame::certificateInfo() const
     return valueOrCompute(documentLoader->response().certificateInfo(), [] { return CertificateInfo(); });
 }
 
-String WebFrame::innerText() const
+RefPtr<StringImpl> WebFrame::innerText() const
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame)
-        return String();
+        return nullptr;
 
     if (!localFrame->document()->documentElement())
-        return String();
+        return nullptr;
 
     return protect(protect(localFrame->document())->documentElement())->innerText();
 }
@@ -1067,7 +1067,7 @@ Ref<API::Array> WebFrame::childFrames()
     return API::Array::create(WTF::move(vector));
 }
 
-String WebFrame::layerTreeAsText() const
+RefPtr<StringImpl> WebFrame::layerTreeAsText() const
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame)
@@ -1130,7 +1130,7 @@ JSGlobalContextRef WebFrame::jsContextForServiceWorkerWorld(InjectedBundleScript
     return jsContextForServiceWorkerWorld(protect(world->coreWorld()));
 }
 
-void WebFrame::setAccessibleName(const AtomString& accessibleName)
+void WebFrame::setAccessibleName(AtomStringImpl* accessibleName)
 {
     if (!AXObjectCache::accessibilityEnabled())
         return;
@@ -1346,41 +1346,41 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleRangeHandle* rangeHandle, I
     return toRef(globalObject, toJS(globalObject, globalObject, Ref { rangeHandle->coreRange() }.get()));
 }
 
-String WebFrame::counterValue(JSObjectRef element)
+RefPtr<StringImpl> WebFrame::counterValue(JSObjectRef element)
 {
     if (!toJS(element)->inherits<JSElement>())
-        return String();
+        return nullptr;
 
     Ref coreElement = downcast<JSElement>(toJS(element))->wrapped();
     return counterValueForElement(coreElement.ptr());
 }
 
-String WebFrame::provisionalURL() const
+RefPtr<StringImpl> WebFrame::provisionalURL() const
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame)
-        return String();
+        return nullptr;
 
     RefPtr provisionalDocumentLoader = localFrame->loader().provisionalDocumentLoader();
     if (!provisionalDocumentLoader)
-        return String();
+        return nullptr;
 
     return provisionalDocumentLoader->url().string();
 }
 
-String WebFrame::suggestedFilenameForResourceWithURL(const URL& url, ResourceType resourceType) const
+RefPtr<StringImpl> WebFrame::suggestedFilenameForResourceWithURL(const URL& url, ResourceType resourceType) const
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame)
-        return String();
+        return nullptr;
 
     RefPtr loader = localFrame->loader().documentLoader();
     if (!loader)
-        return String();
+        return nullptr;
 
     if (loader->url() == url) {
         const auto& mimeType = loader->response().mimeType();
-        if (resourceType != ResourceType::Image || mimeType.startsWithIgnoringASCIICase("image/"_s))
+        if (resourceType != ResourceType::Image || startsWithIgnoringASCIICase(mimeType, "image/"_s))
             return loader->response().suggestedFilename();
     }
 
@@ -1388,22 +1388,22 @@ String WebFrame::suggestedFilenameForResourceWithURL(const URL& url, ResourceTyp
     if (resource)
         return resource->response().suggestedFilename();
 
-    return String();
+    return nullptr;
 }
 
-String WebFrame::mimeTypeForResourceWithURL(const URL& url, ResourceType resourceType) const
+RefPtr<StringImpl> WebFrame::mimeTypeForResourceWithURL(const URL& url, ResourceType resourceType) const
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame)
-        return String();
+        return nullptr;
 
     RefPtr loader = localFrame->loader().documentLoader();
     if (!loader)
-        return String();
+        return nullptr;
 
     if (loader->url() == url) {
         const auto& mimeType = loader->response().mimeType();
-        if (resourceType != ResourceType::Image || mimeType.startsWithIgnoringASCIICase("image/"_s))
+        if (resourceType != ResourceType::Image || startsWithIgnoringASCIICase(mimeType, "image/"_s))
             return mimeType;
     }
 
@@ -1411,7 +1411,7 @@ String WebFrame::mimeTypeForResourceWithURL(const URL& url, ResourceType resourc
     if (resource)
         return resource->mimeType();
 
-    return String();
+    return nullptr;
 }
 
 void WebFrame::updateFrameRectFromRemote(WebCore::IntRect newRect)
@@ -1463,22 +1463,22 @@ void WebFrame::updateLocalFrameRect(WebCore::LocalFrame& localFrame, WebCore::In
     }
 }
 
-void WebFrame::setTextDirection(const String& direction)
+void WebFrame::setTextDirection(StringImpl* direction)
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame)
         return;
 
-    if (direction == "auto"_s)
+    if (equal(direction, "auto"_s))
         protect(localFrame->editor())->setBaseWritingDirection(WritingDirection::Natural);
-    else if (direction == "ltr"_s)
+    else if (equal(direction, "ltr"_s))
         protect(localFrame->editor())->setBaseWritingDirection(WritingDirection::LeftToRight);
-    else if (direction == "rtl"_s)
+    else if (equal(direction, "rtl"_s))
         protect(localFrame->editor())->setBaseWritingDirection(WritingDirection::RightToLeft);
 }
 
 #if PLATFORM(COCOA)
-RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void* context, const Vector<WebCore::MarkupExclusionRule>& exclusionRules, const String& mainResourceFileName)
+RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void* context, const Vector<WebCore::MarkupExclusionRule>& exclusionRules, StringImpl* mainResourceFileName)
 {
     Ref document = *coreLocalFrame()->document();
     LegacyWebArchive::ArchiveOptions options {
@@ -1696,7 +1696,7 @@ bool WebFrame::isFocused() const
     return m_coreFrame->page()->focusController().focusedFrame() == coreFrame();
 }
 
-String WebFrame::frameTextForTesting(bool includeSubframes)
+RefPtr<StringImpl> WebFrame::frameTextForTesting(bool includeSubframes)
 {
     if (!m_coreFrame)
         return { };
@@ -1712,10 +1712,10 @@ String WebFrame::frameTextForTesting(bool includeSubframes)
     // would require rebaselining hundreds of layout tests.
     Ref documentElement = *protect(protect(localFrame->document())->documentElement());
     protect(localFrame->document())->updateLayoutIgnorePendingStylesheets();
-    String text = documentElement->renderer()
+    RefPtr<StringImpl> text = documentElement->renderer()
         ? plainText(makeRangeSelectingNodeContents(documentElement))
         : documentElement->textContent(true);
-    if (text.isNull())
+    if (!text)
         return { };
 
     // To keep things tidy, strip all trailing spaces: they are not a meaningful part of dumpAsText test output.
@@ -1736,7 +1736,7 @@ String WebFrame::frameTextForTesting(bool includeSubframes)
         auto frameName = makeAtomString("\n--------\nFrame: '"_s, childWebFrame->name(), "'\n--------\n"_s);
         if (is<RemoteFrame>(*child))
             builder.append(frameName, m_page->sendSync(Messages::WebPageProxy::FrameTextForTesting(child->frameID())).takeReplyOr("Sending WebPageProxy::FrameTextForTesting failed\n"_s));
-        else if (!childWebFrame->innerText().isNull())
+        else if (childWebFrame->innerText())
             builder.append(frameName, childWebFrame->frameTextForTesting(includeSubframes));
     }
 
@@ -1947,14 +1947,14 @@ void WebFrame::disconnectInspector()
     ensureInspectorTarget()->disconnect();
 }
 
-void WebFrame::sendMessageToInspectorTarget(const String& message)
+void WebFrame::sendMessageToInspectorTarget(StringImpl* message)
 {
     ensureInspectorTarget()->sendMessageToTargetBackend(message);
 }
 
 #if ENABLE(PDF_PLUGIN)
 
-static Vector<TextExtraction::Item> itemsForPDFTextAndLinks(String&& text, Vector<PDFPluginTextExtractionLink>&& links)
+static Vector<TextExtraction::Item> itemsForPDFTextAndLinks(RefPtr<StringImpl>&& text, Vector<PDFPluginTextExtractionLink>&& links)
 {
     std::ranges::sort(links, [](auto& a, auto& b) {
         return a.rangeInText.location < b.rangeInText.location;
@@ -1970,26 +1970,26 @@ static Vector<TextExtraction::Item> itemsForPDFTextAndLinks(String&& text, Vecto
 
         if (linkLocation > cursor) {
             TextExtraction::Item textItem;
-            textItem.data = TextExtraction::TextItemData { { }, { }, text.substring(cursor, linkLocation - cursor), { } };
+            textItem.data = TextExtraction::TextItemData { { }, { }, substring(text, cursor, linkLocation - cursor), { } };
             items.append(WTF::move(textItem));
         }
 
         TextExtraction::Item linkTextItem;
-        linkTextItem.data = TextExtraction::TextItemData { { }, { }, text.substring(linkLocation, linkLength), { } };
+        linkTextItem.data = TextExtraction::TextItemData { { }, { }, substring(text, linkLocation, linkLength), { } };
 
         TextExtraction::Item linkItem;
         linkItem.data = TextExtraction::LinkItemData { { }, link.url, TextExtraction::shortenedURLString(link.url), false, { } };
         linkItem.rectInRootView = link.rectInRootView;
-        linkItem.nodeName = "a"_s;
+        linkItem.nodeName = "a"_si;
         linkItem.children = { WTF::move(linkTextItem) };
         items.append(WTF::move(linkItem));
 
         cursor = linkLocation + linkLength;
     }
 
-    if (cursor < text.length()) {
+    if (cursor < length(text)) {
         TextExtraction::Item textItem;
-        textItem.data = TextExtraction::TextItemData { { }, { }, text.substring(cursor), { } };
+        textItem.data = TextExtraction::TextItemData { { }, { }, substring(text, cursor), { } };
         items.append(WTF::move(textItem));
     }
 
@@ -2006,7 +2006,7 @@ void WebFrame::requestTextExtraction(TextExtraction::Request&& request, Completi
 
 #if ENABLE(PDF_PLUGIN)
     if (RefPtr pluginView = WebPage::pluginViewForFrame(frame.get())) {
-        if (auto pdfContent = pluginView->textExtractionContent(); !pdfContent.text.isEmpty()) {
+        if (auto pdfContent = pluginView->textExtractionContent(); !isEmpty(pdfContent.text)) {
             TextExtraction::Result result;
             TextExtraction::ScrollableItemData scrollableData;
             if (RefPtr view = frame->view()) {
@@ -2016,7 +2016,7 @@ void WebFrame::requestTextExtraction(TextExtraction::Request&& request, Completi
             scrollableData.isRoot = true;
             result.rootItem.data = WTF::move(scrollableData);
             result.rootItem.frameIdentifier = frame->frameID();
-            result.visibleTextLength = pdfContent.text.length();
+            result.visibleTextLength = length(pdfContent.text);
             result.rootItem.children = itemsForPDFTextAndLinks(WTF::move(pdfContent.text), WTF::move(pdfContent.links));
             return completion(WTF::move(result));
         }
@@ -2070,16 +2070,16 @@ void WebFrame::describeTextExtractionInteraction(TextExtraction::Interaction&& i
     completion(TextExtraction::interactionDescription(resolvedInteraction, *frame));
 }
 
-void WebFrame::handleTextExtractionInteraction(TextExtraction::Interaction&& interaction, CompletionHandler<void(bool, String&&, Vector<String>&&, FloatRect)>&& completion)
+void WebFrame::handleTextExtractionInteraction(TextExtraction::Interaction&& interaction, CompletionHandler<void(bool, RefPtr<StringImpl>&&, Vector<RefPtr<StringImpl>>&&, FloatRect)>&& completion)
 {
     RefPtr frame = coreLocalFrame();
     if (!frame)
-        return completion(false, "Browsing context is unavailable"_s, { }, { });
+        return completion(false, "Browsing context is unavailable"_si, { }, { });
 
     auto resolvedInteraction = interactionWithResolvedTargetNode(WTF::move(interaction));
     auto description = TextExtraction::interactionDescription(resolvedInteraction, *frame, TextExtraction::Tense::Past);
-    TextExtraction::handleInteraction(WTF::move(resolvedInteraction), *frame, [completion = WTF::move(completion), summary = WTF::move(description.description), stringsToValidate = WTF::move(description.stringsToValidate)](bool success, String&& message, Vector<String>&& additionalStringsToValidate, FloatRect interactedElementBounds) mutable {
-        if (success && message.isEmpty())
+    TextExtraction::handleInteraction(WTF::move(resolvedInteraction), *frame, [completion = WTF::move(completion), summary = WTF::move(description.description), stringsToValidate = WTF::move(description.stringsToValidate)](bool success, RefPtr<StringImpl>&& message, Vector<RefPtr<StringImpl>>&& additionalStringsToValidate, FloatRect interactedElementBounds) mutable {
+        if (success && isEmpty(message))
             message = WTF::move(summary);
         stringsToValidate.appendVector(WTF::move(additionalStringsToValidate));
         completion(success, WTF::move(message), WTF::move(stringsToValidate), interactedElementBounds);
@@ -2120,7 +2120,7 @@ void WebFrame::requestContainerJSHandleForExtractedText(TextExtraction::Extracte
     completion({ WTF::move(handleAndInfo->second) });
 }
 
-void WebFrame::requestContainerJSHandleForSearchTexts(Vector<String>&& searchTexts, std::optional<NodeIdentifier>&& targetNodeIdentifier, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
+void WebFrame::requestContainerJSHandleForSearchTexts(Vector<RefPtr<StringImpl>>&& searchTexts, std::optional<NodeIdentifier>&& targetNodeIdentifier, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
 {
     RefPtr frame = coreLocalFrame();
     if (!frame)
@@ -2153,7 +2153,7 @@ void WebFrame::findFirstConnectedNode(Vector<NodeIdentifier>&& candidates, Compl
     completion({ });
 }
 
-void WebFrame::getSelectorPathsForNode(JSHandleInfo&& handle, CompletionHandler<void(Vector<HashSet<String>>&&)>&& completion)
+void WebFrame::getSelectorPathsForNode(JSHandleInfo&& handle, CompletionHandler<void(Vector<HashSet<RefPtr<StringImpl>>>&&)>&& completion)
 {
     RefPtr node = nodeFromJSHandleIdentifier(handle.identifier);
     if (!node)
@@ -2166,7 +2166,7 @@ void WebFrame::getSelectorPathsForNode(JSHandleInfo&& handle, CompletionHandler<
     completion(ElementTargetingController::selectorsForElement(*element));
 }
 
-void WebFrame::getNodeForSelectorPaths(Vector<HashSet<String>>&& selectors, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
+void WebFrame::getNodeForSelectorPaths(Vector<HashSet<RefPtr<StringImpl>>>&& selectors, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
 {
     RefPtr frame = coreLocalFrame();
     if (!frame)

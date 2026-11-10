@@ -77,7 +77,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DetachedOffscreenCanvas);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(OffscreenCanvas);
 
-DetachedOffscreenCanvas::DetachedOffscreenCanvas(const IntSize& size, bool originClean, RefPtr<PlaceholderRenderingContextSource>&& placeholderSource, String&& inheritedLanguage, TextDirection inheritedDirection)
+DetachedOffscreenCanvas::DetachedOffscreenCanvas(const IntSize& size, bool originClean, RefPtr<PlaceholderRenderingContextSource>&& placeholderSource, RefPtr<StringImpl>&& inheritedLanguage, TextDirection inheritedDirection)
     : m_placeholder(WTF::move(placeholderSource))
     , m_size(size)
     , m_originClean(originClean)
@@ -86,7 +86,7 @@ DetachedOffscreenCanvas::DetachedOffscreenCanvas(const IntSize& size, bool origi
 {
 }
 
-DetachedOffscreenCanvas::DetachedOffscreenCanvas(const IntSize& size, bool originClean, std::optional<RemotePlaceholderRenderingContextIdentifier> placeholderIdentifier, String&& inheritedLanguage, TextDirection inheritedDirection)
+DetachedOffscreenCanvas::DetachedOffscreenCanvas(const IntSize& size, bool originClean, std::optional<RemotePlaceholderRenderingContextIdentifier> placeholderIdentifier, RefPtr<StringImpl>&& inheritedLanguage, TextDirection inheritedDirection)
     : m_size(size)
     , m_originClean(originClean)
     , m_inheritedLanguage(WTF::move(inheritedLanguage))
@@ -104,10 +104,10 @@ std::unique_ptr<DetachedOffscreenCanvas> DetachedOffscreenCanvas::clone() const
 {
     return WTF::switchOn(m_placeholder,
         [&](const RefPtr<PlaceholderRenderingContextSource>& source) {
-            return makeUnique<DetachedOffscreenCanvas>(m_size, m_originClean, RefPtr { source }, m_inheritedLanguage.isolatedCopy(), m_inheritedDirection);
+            return makeUnique<DetachedOffscreenCanvas>(m_size, m_originClean, RefPtr { source }, isolatedCopy(m_inheritedLanguage), m_inheritedDirection);
         },
         [&](const RemotePlaceholderRenderingContextIdentifier& identifier) {
-            return makeUnique<DetachedOffscreenCanvas>(m_size, m_originClean, identifier, m_inheritedLanguage.isolatedCopy(), m_inheritedDirection);
+            return makeUnique<DetachedOffscreenCanvas>(m_size, m_originClean, identifier, isolatedCopy(m_inheritedLanguage), m_inheritedDirection);
         });
 }
 
@@ -168,7 +168,7 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecu
     Ref<OffscreenCanvas> clone = adoptRef(*new OffscreenCanvas(scriptExecutionContext, detachedCanvas->size(), detachedCanvas->takePlaceholderSource(scriptExecutionContext)));
     if (!detachedCanvas->originClean())
         clone->setOriginTainted();
-    clone->m_inheritedLanguage = AtomString { detachedCanvas->inheritedLanguage() };
+    clone->m_inheritedLanguage = AtomStringImpl::add(detachedCanvas->inheritedLanguage());
     clone->m_inheritedDirection = detachedCanvas->inheritedDirection();
     clone->suspendIfNeeded();
     return clone;
@@ -371,11 +371,11 @@ ExceptionOr<Ref<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
     return ImageBitmap::create(buffer.releaseNonNull(), bitmapOriginClean);
 }
 
-static String toEncodingMimeType(const String& mimeType)
+static RefPtr<StringImpl> toEncodingMimeType(StringImpl* mimeType)
 {
     if (!MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType))
-        return "image/png"_s;
-    return mimeType.convertToASCIILowercase();
+        return "image/png"_si;
+    return convertToASCIILowercase(mimeType);
 }
 
 NODELETE static std::optional<double> qualityFromDouble(double qualityNumber)
@@ -448,7 +448,7 @@ std::unique_ptr<DetachedOffscreenCanvas> OffscreenCanvas::detach()
 
     m_detached = true;
 
-    auto detached = makeUnique<DetachedOffscreenCanvas>(size(), originClean(), WTF::move(m_placeholderSource), m_inheritedLanguage.string().isolatedCopy(), m_inheritedDirection);
+    auto detached = makeUnique<DetachedOffscreenCanvas>(size(), originClean(), WTF::move(m_placeholderSource), isolatedCopy(m_inheritedLanguage), m_inheritedDirection);
     setSize(IntSize(0, 0));
     return detached;
 }

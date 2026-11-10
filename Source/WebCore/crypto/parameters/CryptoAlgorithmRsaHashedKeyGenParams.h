@@ -35,7 +35,7 @@ namespace WebCore {
 class CryptoAlgorithmRsaHashedKeyGenParams final : public CryptoAlgorithmRsaKeyGenParams {
 public:
     // FIXME: Consider merging hash and hashIdentifier.
-    Variant<JSC::Strong<JSC::JSObject>, String> hash;
+    Variant<JSC::Strong<JSC::JSObject>, RefPtr<StringImpl>> hash;
     CryptoAlgorithmIdentifier hashIdentifier;
 
     CryptoAlgorithmRsaHashedKeyGenParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmRsaHashedKeyGenParamsInit init, CryptoAlgorithmIdentifier hashIdentifier)

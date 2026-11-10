@@ -32,7 +32,7 @@ namespace WebCore {
 
 struct DigitalCredentialsResponseData {
     DigitalCredentialPresentationProtocol protocol;
-    String responseDataJSON;
+    RefPtr<StringImpl> responseDataJSON;
 };
 
 } // namespace WebCore

@@ -52,7 +52,7 @@ public:
 
     RefPtr<FragmentedSharedBuffer> startStreaming();
 
-    void start(ScriptExecutionContext&, const FetchRequest&, const String&);
+    void start(ScriptExecutionContext&, const FetchRequest&, StringImpl*);
     void start(ScriptExecutionContext&, const Blob&);
     void startLoadingBlobURL(ScriptExecutionContext&, const URL& blobURL);
     void stop();

@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "Helpers/Test.h"
 #include <algorithm>
 #include <random>
 #include <wtf/DataLog.h>
@@ -386,8 +387,8 @@ TEST(WTF_IntervalSet, Dump)
     // Test empty tree
     StringPrintStream emptyOutput;
     intervalSet.dump(emptyOutput);
-    String emptyResult = emptyOutput.toString();
-    EXPECT_EQ(emptyResult, String("IntervalSet(height=0, leafOrder=4, innerOrder=4) <empty>"_s));
+    RefPtr<StringImpl> emptyResult = emptyOutput.toString();
+    EXPECT_EQ(emptyResult, "IntervalSet(height=0, leafOrder=4, innerOrder=4) <empty>"_si);
 
     intervalSet.insert({ 10, 20 }, "first");
     intervalSet.insert({ 30, 40 }, "second");
@@ -396,8 +397,8 @@ TEST(WTF_IntervalSet, Dump)
     // Single leaf node
     StringPrintStream basicOutput;
     intervalSet.dump(basicOutput);
-    String basicResult = basicOutput.toString();
-    String expectedBasic = "IntervalSet(height=0, leafOrder=4, innerOrder=4) coverage=10...60\nLeaf(size=3): 10...20=first, 30...40=second, 50...60=third\n"_s;
+    RefPtr<StringImpl> basicResult = basicOutput.toString();
+    RefPtr<StringImpl> expectedBasic = "IntervalSet(height=0, leafOrder=4, innerOrder=4) coverage=10...60\nLeaf(size=3): 10...20=first, 30...40=second, 50...60=third\n"_si;
     EXPECT_EQ(basicResult, expectedBasic);
 
     // Add more intervals to cause split
@@ -407,8 +408,8 @@ TEST(WTF_IntervalSet, Dump)
 
     StringPrintStream fullOutput;
     intervalSet.dump(fullOutput);
-    String fullResult = fullOutput.toString();
-    String expectedFull = "IntervalSet(height=1, leafOrder=4, innerOrder=4) coverage=5...70\nInner(size=2, coverage=5...70):\n  [0] 5...28\n    Leaf(size=3): 5...8=before, 10...20=first, 25...28=middle\n  [1] 30...70\n    Leaf(size=3): 30...40=second, 50...60=third, 65...70=after\n"_s;
+    RefPtr<StringImpl> fullResult = fullOutput.toString();
+    RefPtr<StringImpl> expectedFull = "IntervalSet(height=1, leafOrder=4, innerOrder=4) coverage=5...70\nInner(size=2, coverage=5...70):\n  [0] 5...28\n    Leaf(size=3): 5...8=before, 10...20=first, 25...28=middle\n  [1] 30...70\n    Leaf(size=3): 30...40=second, 50...60=third, 65...70=after\n"_si;
     EXPECT_EQ(fullResult, expectedFull);
 }
 

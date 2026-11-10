@@ -95,10 +95,10 @@ class ModelContext;
 
 #if ENABLE(THREADED_ANIMATIONS)
 struct AcceleratedEffectValues;
-String acceleratedEffectPropertyIDAsString(AcceleratedEffectProperty);
+RefPtr<StringImpl> acceleratedEffectPropertyIDAsString(AcceleratedEffectProperty);
 #endif
 
-String animatedPropertyIDAsString(AnimatedProperty);
+RefPtr<StringImpl> animatedPropertyIDAsString(AnimatedProperty);
 
 namespace DisplayList {
 enum class AsTextFlag : uint8_t;
@@ -147,9 +147,9 @@ public:
     GraphicsLayerClient& client() const { return *m_client; }
 
     // Layer name. Only used to identify layers in debug output
-    const String& name() const LIFETIME_BOUND { return m_name; }
-    virtual void setName(const String& name) { m_name = name; }
-    WEBCORE_EXPORT virtual String debugName() const;
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
+    virtual void setName(StringImpl* name) { m_name = name; }
+    WEBCORE_EXPORT virtual RefPtr<StringImpl> debugName() const;
 
     GraphicsLayer* parent() const { return m_parent; }
     NODELETE void setParent(GraphicsLayer*); // Internal use only.
@@ -372,16 +372,16 @@ public:
     WEBCORE_EXPORT virtual void setEventRegion(EventRegion&&);
 
     // Transitions are identified by a special animation name that cannot clash with a keyframe identifier.
-    static String animationNameForTransition(AnimatedProperty);
+    static RefPtr<StringImpl> animationNameForTransition(AnimatedProperty);
 
     // Return true if the animation is handled by the compositing system.
-    virtual bool addAnimation(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, const String& /*animationName*/, double /*timeOffset*/)  { return false; }
-    virtual void pauseAnimation(const String& /*animationName*/, double /*timeOffset*/) { }
-    virtual void removeAnimation(const String& /*animationName*/, std::optional<AnimatedProperty>) { }
+    virtual bool addAnimation(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, StringImpl* /*animationName*/, double /*timeOffset*/)  { return false; }
+    virtual void pauseAnimation(StringImpl* /*animationName*/, double /*timeOffset*/) { }
+    virtual void removeAnimation(StringImpl* /*animationName*/, std::optional<AnimatedProperty>) { }
     virtual void transformRelatedPropertyDidChange() { }
 
     struct AcceleratedAnimationForTesting {
-        String property;
+        RefPtr<StringImpl> property;
         double speed;
         bool isThreaded;
         bool hasHighImpact;
@@ -505,16 +505,16 @@ public:
 
     // Return a string with a human readable form of the layer tree, If debug is true
     // pointers for the layers and timing data will be included in the returned string.
-    WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }, uint32_t baseIndent = 0) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }, uint32_t baseIndent = 0) const;
 
     // For testing.
-    virtual String displayListAsText(OptionSet<DisplayList::AsTextFlag>) const { return String(); }
+    virtual RefPtr<StringImpl> displayListAsText(OptionSet<DisplayList::AsTextFlag>) const { return nullptr; }
 
-    virtual String platformLayerTreeAsText(OptionSet<PlatformLayerTreeAsTextFlags>) const { return String(); }
+    virtual RefPtr<StringImpl> platformLayerTreeAsText(OptionSet<PlatformLayerTreeAsTextFlags>) const { return nullptr; }
 
     virtual void setIsTrackingDisplayListReplay(bool isTracking) { m_isTrackingDisplayListReplay = isTracking; }
     virtual bool isTrackingDisplayListReplay() const { return m_isTrackingDisplayListReplay; }
-    virtual String replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag>) const { return String(); }
+    virtual RefPtr<StringImpl> replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag>) const { return nullptr; }
 
     // Return an estimate of the backing store memory cost (in bytes). May be incorrect for tiled layers.
     WEBCORE_EXPORT virtual double backingStoreMemoryEstimate() const;
@@ -610,7 +610,7 @@ protected:
 #endif
 
     GraphicsLayerClient* m_client; // Always non-null.
-    String m_name;
+    RefPtr<StringImpl> m_name;
     
     // Offset from the owning renderer
     FloatSize m_offsetFromRenderer;

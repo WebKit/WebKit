@@ -57,7 +57,7 @@ INSTANTIATE_TEST_SUITE_P(FindInPage, FindInteraction, testing::Values(SiteIsolat
 
 TEST_P(FindInteraction, PerformTextSearch)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_si), GetParam() };
     FindInteractionTester find { page.webView() };
 
     EXPECT_EQ([find.performTextSearch(@"hello") count], 3u);
@@ -66,7 +66,7 @@ TEST_P(FindInteraction, PerformTextSearch)
 
 TEST_P(FindInteraction, CaseSensitivity)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>Hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>Hello hello</p>"_si), GetParam() };
     FindInteractionTester find { page.webView() };
 
     EXPECT_EQ([find.performTextSearch(@"hello", searchOptions(UITextSearchMatchMethodContains).get()) count], 2u);
@@ -75,7 +75,7 @@ TEST_P(FindInteraction, CaseSensitivity)
 
 TEST_P(FindInteraction, WordMatchMethods)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello othello helloworld</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello othello helloworld</p>"_si), GetParam() };
     FindInteractionTester find { page.webView() };
 
     EXPECT_EQ([find.performTextSearch(@"hello", searchOptions(UITextSearchMatchMethodContains).get()) count], 3u);
@@ -85,7 +85,7 @@ TEST_P(FindInteraction, WordMatchMethods)
 
 TEST_P(FindInteraction, DecorateShowsOverlay)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_si), GetParam() };
     FindInteractionTester find { page.webView() };
 
     find.didBeginTextSearchOperation();
@@ -99,7 +99,7 @@ TEST_P(FindInteraction, DecorateShowsOverlay)
 
 TEST_P(FindInteraction, HighlightedDecorationWithoutFindSessionSelectsMatch)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_si), GetParam() };
     FindInteractionTester find { page.webView() };
 
     auto ranges = find.performTextSearch(@"hello");
@@ -116,7 +116,7 @@ TEST_P(FindInteraction, HighlightedDecorationWithoutFindSessionSelectsMatch)
 
 TEST_P(FindInteraction, HighlightedDecorationDuringFindSessionDoesNotChangeSelection)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_si), GetParam() };
     FindInteractionTester find { page.webView() };
 
     find.didBeginTextSearchOperation();
@@ -129,7 +129,7 @@ TEST_P(FindInteraction, HighlightedDecorationDuringFindSessionDoesNotChangeSelec
 
 TEST_P(FindInteraction, ScrollRangeToVisible)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>top</p><p style='margin-top: 2000px'>hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>top</p><p style='margin-top: 2000px'>hello</p>"_si), GetParam() };
     FindInteractionTester find { page.webView() };
 
     auto ranges = find.performTextSearch(@"hello");
@@ -139,7 +139,7 @@ TEST_P(FindInteraction, ScrollRangeToVisible)
 
 TEST_P(FindInteraction, ReplaceRequiresEditableWebView)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p id='p'>hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p id='p'>hello</p>"_si), GetParam() };
     FindInteractionTester find { page.webView() };
 
     auto ranges = find.performTextSearch(@"hello");
@@ -154,7 +154,7 @@ TEST_P(FindInteraction, ReplaceRequiresEditableWebView)
 
 TEST_P(FindInteraction, RectForFoundTextRange)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_si), GetParam() };
     FindInteractionTester find { page.webView() };
 
     auto rect = find.rectForFoundTextRange([find.performTextSearch(@"hello") firstObject]);
@@ -243,7 +243,7 @@ TEST_P(FindInteraction, TextControls)
 
 TEST_P(FindInteraction, MatchAddedAfterSearch)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p id='p'>hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p id='p'>hello</p>"_si), GetParam() };
     FindInteractionTester find { page.webView() };
 
     EXPECT_EQ([find.performTextSearch(@"hello") count], 1u);
@@ -270,7 +270,7 @@ TEST_P(FindInteraction, SearchFindsCaptionCueInCrossOriginFrame)
 
 TEST_P(FindInteraction, SearchAndRequestRectInPDF)
 {
-    FindTestPage page { "/test.pdf"_s, GetParam(), configurationForWebViewTestingUnifiedPDF(), FindTestFixtures::pdfResources() };
+    FindTestPage page { "/test.pdf"_si, GetParam(), configurationForWebViewTestingUnifiedPDF(), FindTestFixtures::pdfResources() };
     FindInteractionTester find { page.webView() };
 
     auto ranges = find.performTextSearch(@"555");

@@ -546,7 +546,7 @@ void LinkBuffer::linkComments(MacroAssembler& assembler)
 
         auto& string = comment.second;
         auto addResult = map.ensure(key, [&] {
-            return string.isolatedCopy();
+            return isolatedCopy(string);
         });
         if (!addResult.isNewEntry)
             addResult.iterator->value = makeString(addResult.iterator->value, "\n; "_s, string);

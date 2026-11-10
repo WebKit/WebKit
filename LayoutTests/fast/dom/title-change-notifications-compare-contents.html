@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+// Characterizes which document.title updates reach the loader client (Document::updateTitle() and
+// DocumentLoader::setTitle() skip updates whose StringWithDirection compares equal to the previous one).
+// The equality must compare string contents (not string identity), distinguish null from the empty string,
+// and take the direction into account.
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.dumpTitleChanges();
+}
+
+function nextTask()
+{
+    return new Promise((resolve) => {
+        if (window.internals)
+            internals.queueTask("DOMManipulation", resolve);
+        else
+            setTimeout(resolve, 0);
+    });
+}
+
+function log(message)
+{
+    document.getElementById("log").textContent += message + "\n";
+}
+
+async function step(description, action)
+{
+    log(description);
+    action();
+    await nextTask();
+    await nextTask();
+    log("    document.title = " + JSON.stringify(document.title));
+}
+
+async function runTest()
+{
+    await step("1. Set the title to the empty string (creates a title element)", () => { document.title = ""; });
+    await step("2. Set the title to 'Title A'", () => { document.title = "Title A"; });
+    await step("3. Set the title to a different string with the same contents", () => { document.title = ["Title", "A"].join(" "); });
+    await step("4. Replace the title element's text node with the same contents", () => {
+        const title = document.querySelector("title");
+        title.replaceChildren(document.createTextNode("Title " + String.fromCharCode(65)));
+    });
+    await step("5. Set the title to the same contents with extra whitespace", () => { document.title = "  Title   A "; });
+    await step("6. Set the title to 'Title B'", () => { document.title = "Title B"; });
+    await step("7. Change the title element's direction to rtl", () => { document.querySelector("title").dir = "rtl"; });
+    await step("8. Set the title to the empty string again", () => { document.title = ""; });
+    await step("9. Remove the title element (null title)", () => { document.querySelector("title").remove(); });
+    await step("10. Set the title to the empty string again", () => { document.title = ""; });
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload="runTest()">
+<pre id="log"></pre>
+</body>
+</html>

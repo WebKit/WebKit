@@ -37,7 +37,7 @@ namespace TemporalCore {
 
 // TemporalInstantToString — temporal_rs: Instant::to_ixdtf_string_with_provider (src/builtins/core/instant.rs)
 // https://tc39.es/proposal-temporal/#sec-temporal-temporalinstanttostring
-WTF::String instantToString(ISO8601::ExactTime exactTime, std::optional<int64_t> offsetNs, PrecisionData precision)
+RefPtr<StringImpl> instantToString(ISO8601::ExactTime exactTime, std::optional<int64_t> offsetNs, PrecisionData precision)
 {
     // 1. Let outputTimeZone be timeZone.
     // 2. If outputTimeZone is undefined, set outputTimeZone to "UTC".

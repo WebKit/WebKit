@@ -34,22 +34,22 @@ namespace WebCore {
 
 struct NotificationOptionsPayload {
     NotificationDirection dir;
-    String lang;
-    String body;
-    String tag;
-    String icon;
-    String dataJSONString;
+    RefPtr<StringImpl> lang;
+    RefPtr<StringImpl> body;
+    RefPtr<StringImpl> tag;
+    RefPtr<StringImpl> icon;
+    RefPtr<StringImpl> dataJSONString;
     std::optional<bool> silent;
 
     NotificationOptionsPayload isolatedCopy() &&
     {
         return NotificationOptionsPayload {
             dir,
-            WTF::move(lang).isolatedCopy(),
-            WTF::move(body).isolatedCopy(),
-            WTF::move(tag).isolatedCopy(),
-            WTF::move(icon).isolatedCopy(),
-            WTF::move(dataJSONString).isolatedCopy(),
+            WTF::isolatedCopy(WTF::move(lang)),
+            WTF::isolatedCopy(WTF::move(body)),
+            WTF::isolatedCopy(WTF::move(tag)),
+            WTF::isolatedCopy(WTF::move(icon)),
+            WTF::isolatedCopy(WTF::move(dataJSONString)),
             silent
         };
     }

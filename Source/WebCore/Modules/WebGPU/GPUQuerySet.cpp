@@ -50,12 +50,12 @@ GPUDevice* GPUQuerySet::device() const
     return m_device;
 }
 
-String GPUQuerySet::label() const
+RefPtr<StringImpl> GPUQuerySet::label() const
 {
     return m_label;
 }
 
-void GPUQuerySet::setLabel(String&& label)
+void GPUQuerySet::setLabel(RefPtr<StringImpl>&& label)
 {
     m_label = label;
     m_backing->setLabel(WTF::move(label));

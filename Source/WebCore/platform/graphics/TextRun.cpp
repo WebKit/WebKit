@@ -35,7 +35,7 @@ struct ExpectedTextRunSize final : public CanMakeCheckedPtr<ExpectedTextRunSize>
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ExpectedTextRunSize);
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(ExpectedTextRunSize);
 
-    String text;
+    RefPtr<StringImpl> text;
     TabSize tabSize;
     float float1;
     float float2;

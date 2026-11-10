@@ -52,17 +52,17 @@ public:
     ~BidiBrowsingContextAgent() override;
 
     // Inspector::BidiBrowsingContextDispatcherHandler methods.
-    void activate(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, Inspector::CommandCallback<void>&&) override;
-    void captureScreenshot(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, const String& optionalOrigin, RefPtr<JSON::Object>&& optionalFormat, RefPtr<JSON::Object>&& optionalClip, RefPtr<JSON::Object>&& optionalImageSize, Inspector::CommandCallback<String>&&) override;
-    void close(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, std::optional<bool>&& optionalPromptUnload, Inspector::CommandCallback<void>&&) override;
-    void create(Inspector::Protocol::BidiBrowsingContext::CreateType, const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& optionalReferenceContext, std::optional<bool>&& optionalBackground, const String& optionalUserContext, Inspector::CommandCallback<String>&&) override;
-    void getTree(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& optionalRoot, std::optional<double>&& optionalMaxDepth, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>>&&) override;
-    void handleUserPrompt(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, std::optional<bool>&& optionalShouldAccept, const String& userText, Inspector::CommandCallback<void>&&) override;
-    void locateNodes(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, Ref<JSON::Object>&& locator, std::optional<double>&& optionalMaxNodeCount, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Array>&& optionalStartNodes, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteValue>>>&&) override;
-    void navigate(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, const String& url, const String& /* BidiBrowsingContext.ReadinessState */ optionalWait, Inspector::CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&&) override;
-    void reload(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, std::optional<bool>&& optionalIgnoreCache, std::optional<Inspector::Protocol::BidiBrowsingContext::ReadinessState>&& optionalWait, Inspector::CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&&) override;
-    void traverseHistory(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, double delta, Inspector::CommandCallback<void>&&) override;
-    void setViewport(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, RefPtr<JSON::Object>&&, std::optional<double>&&, RefPtr<JSON::Array>&&, Inspector::CommandCallback<void>&&) override;
+    void activate(StringImpl*, Inspector::CommandCallback<void>&&) override;
+    void captureScreenshot(StringImpl*, StringImpl* optionalOrigin, RefPtr<JSON::Object>&& optionalFormat, RefPtr<JSON::Object>&& optionalClip, RefPtr<JSON::Object>&& optionalImageSize, Inspector::CommandCallback<RefPtr<StringImpl>>&&) override;
+    void close(StringImpl*, std::optional<bool>&& optionalPromptUnload, Inspector::CommandCallback<void>&&) override;
+    void create(Inspector::Protocol::BidiBrowsingContext::CreateType, StringImpl* optionalReferenceContext, std::optional<bool>&& optionalBackground, StringImpl* optionalUserContext, Inspector::CommandCallback<RefPtr<StringImpl>>&&) override;
+    void getTree(StringImpl* optionalRoot, std::optional<double>&& optionalMaxDepth, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>>&&) override;
+    void handleUserPrompt(StringImpl*, std::optional<bool>&& optionalShouldAccept, StringImpl* userText, Inspector::CommandCallback<void>&&) override;
+    void locateNodes(StringImpl*, Ref<JSON::Object>&& locator, std::optional<double>&& optionalMaxNodeCount, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Array>&& optionalStartNodes, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteValue>>>&&) override;
+    void navigate(StringImpl*, StringImpl* url, StringImpl* /* BidiBrowsingContext.ReadinessState */ optionalWait, Inspector::CommandCallbackOf<RefPtr<StringImpl>, Inspector::Protocol::BidiBrowsingContext::NavigationID>&&) override;
+    void reload(StringImpl*, std::optional<bool>&& optionalIgnoreCache, std::optional<Inspector::Protocol::BidiBrowsingContext::ReadinessState>&& optionalWait, Inspector::CommandCallbackOf<RefPtr<StringImpl>, Inspector::Protocol::BidiBrowsingContext::NavigationID>&&) override;
+    void traverseHistory(StringImpl*, double delta, Inspector::CommandCallback<void>&&) override;
+    void setViewport(StringImpl*, RefPtr<JSON::Object>&&, std::optional<double>&&, RefPtr<JSON::Array>&&, Inspector::CommandCallback<void>&&) override;
 
 private:
     BidiBrowsingContextAgent(WebAutomationSession&, Inspector::BackendDispatcher&);

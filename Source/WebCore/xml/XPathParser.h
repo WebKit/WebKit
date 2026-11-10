@@ -32,7 +32,6 @@ union YYSTYPE;
 
 namespace WTF {
 
-class String;
 
 } // namespace WTF
 
@@ -46,14 +45,14 @@ namespace XPath {
 class Parser {
     WTF_MAKE_NONCOPYABLE(Parser);
 public:
-    static ExceptionOr<std::unique_ptr<Expression>> parseStatement(const String& statement, RefPtr<XPathNSResolver>&&);
+    static ExceptionOr<std::unique_ptr<Expression>> parseStatement(StringImpl* statement, RefPtr<XPathNSResolver>&&);
 
     int lex(YYSTYPE&);
-    bool expandQualifiedName(const String& qualifiedName, AtomString& localName, AtomString& namespaceURI);
+    bool expandQualifiedName(StringImpl* qualifiedName, RefPtr<AtomStringImpl>& localName, RefPtr<AtomStringImpl>& namespaceURI);
     void setParseResult(std::unique_ptr<Expression>&& expression) { m_result = WTF::move(expression); }
 
 private:
-    Parser(const String&, RefPtr<XPathNSResolver>&&);
+    Parser(StringImpl*, RefPtr<XPathNSResolver>&&);
 
     struct Token;
 
@@ -68,13 +67,13 @@ private:
 
     Token lexString();
     Token lexNumber();
-    bool lexNCName(String&);
-    bool lexQName(String&);
+    bool lexNCName(RefPtr<StringImpl>&);
+    bool lexQName(RefPtr<StringImpl>&);
 
     Token nextToken();
     Token nextTokenInternal();
 
-    const String& m_data;
+    const RefPtr<StringImpl> m_data;
     const RefPtr<XPathNSResolver> m_resolver;
 
     unsigned m_nextPos { 0 };

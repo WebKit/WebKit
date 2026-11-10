@@ -78,7 +78,7 @@ inline void Client::cancel()
     doCancel();
 }
 
-void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, ResourceRequest&&, String&& referrer, FetchOptions&&, SWServerConnectionIdentifier, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
+void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, ResourceRequest&&, RefPtr<StringImpl>&& referrer, FetchOptions&&, SWServerConnectionIdentifier, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, RefPtr<StringImpl>&& clientIdentifier, RefPtr<StringImpl>&& resultingClientIdentifier);
 
 WEBCORE_EXPORT ResourceError validateResponse(const ResourceResponse&, FetchOptionsMode, FetchOptionsRedirect);
 };

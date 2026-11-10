@@ -94,17 +94,19 @@ void AccessibilityMathMLElement::addChildren()
 #endif
 }
 
-String AccessibilityMathMLElement::textUnderElement(TextUnderElementMode mode) const
+RefPtr<StringImpl> AccessibilityMathMLElement::textUnderElement(TextUnderElementMode mode) const
 {
     if (m_isAnonymousOperator && !mode.isHidden()) {
         char16_t operatorChar = protect(downcast<RenderMathMLOperator>(*m_renderer))->singleCharCodePoint();
-        return operatorChar ? String(span(operatorChar)) : String();
+        if (!operatorChar)
+            return nullptr;
+        return StringImpl::create(span(operatorChar));
     }
 
     return AccessibilityRenderObject::textUnderElement(mode);
 }
 
-String AccessibilityMathMLElement::stringValue() const
+RefPtr<StringImpl> AccessibilityMathMLElement::stringValue() const
 {
     if (m_isAnonymousOperator)
         return textUnderElement();
@@ -387,18 +389,18 @@ AXCoreObject* AccessibilityMathMLElement::mathSuperscriptObject()
     return nullptr;
 }
 
-String AccessibilityMathMLElement::mathFencedOpenString() const
+RefPtr<StringImpl> AccessibilityMathMLElement::mathFencedOpenString() const
 {
     if (!isMathFenced())
-        return String();
+        return nullptr;
 
     return getAttribute(MathMLNames::openAttr);
 }
 
-String AccessibilityMathMLElement::mathFencedCloseString() const
+RefPtr<StringImpl> AccessibilityMathMLElement::mathFencedCloseString() const
 {
     if (!isMathFenced())
-        return String();
+        return nullptr;
 
     return getAttribute(MathMLNames::closeAttr);
 }

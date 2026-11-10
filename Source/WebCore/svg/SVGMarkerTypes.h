@@ -48,25 +48,25 @@ enum SVGMarkerOrientType {
 template<>
 struct SVGPropertyTraits<SVGMarkerUnitsType> {
     static unsigned highestEnumValue() { return std::underlying_type_t<SVGMarkerUnitsType>(SVGMarkerUnitsType::StrokeWidth); }
-    static String toString(SVGMarkerUnitsType type)
+    static RefPtr<StringImpl> toString(SVGMarkerUnitsType type)
     {
         switch (type) {
         case SVGMarkerUnitsType::Unknown:
             return emptyString();
         case SVGMarkerUnitsType::UserSpaceOnUse:
-            return "userSpaceOnUse"_s;
+            return "userSpaceOnUse"_si;
         case SVGMarkerUnitsType::StrokeWidth:
-            return "strokeWidth"_s;
+            return "strokeWidth"_si;
         }
         
         ASSERT_NOT_REACHED();
         return emptyString();
     }
-    static SVGMarkerUnitsType fromString(SVGElement&, const String& value)
+    static SVGMarkerUnitsType fromString(SVGElement&, StringImpl* value)
     {
-        if (value == "userSpaceOnUse"_s)
+        if (equal(value, "userSpaceOnUse"_s))
             return SVGMarkerUnitsType::UserSpaceOnUse;
-        if (value == "strokeWidth"_s)
+        if (equal(value, "strokeWidth"_s))
             return SVGMarkerUnitsType::StrokeWidth;
         return SVGMarkerUnitsType::Unknown;
     }
@@ -74,21 +74,21 @@ struct SVGPropertyTraits<SVGMarkerUnitsType> {
 
 template<>
 struct SVGPropertyTraits<SVGMarkerOrientType> {
-    static const String autoStartReverseString()
+    static const RefPtr<StringImpl> autoStartReverseString()
     {
-        static const NeverDestroyed<String> autoStartReverseString = MAKE_STATIC_STRING_IMPL("auto-start-reverse");
+        static const NeverDestroyed<RefPtr<StringImpl>> autoStartReverseString = MAKE_STATIC_STRING_IMPL("auto-start-reverse");
         return autoStartReverseString;
     }
     static unsigned highestEnumValue() { return SVGMarkerOrientAutoStartReverse; }
-    static SVGMarkerOrientType fromString(SVGElement&, const String& string)
+    static SVGMarkerOrientType fromString(SVGElement&, StringImpl* string)
     {
-        if (string == autoAtom())
+        if (equal(string, autoAtom()))
             return SVGMarkerOrientAuto;
-        if (string == autoStartReverseString())
+        if (equal(string, autoStartReverseString()))
             return SVGMarkerOrientAutoStartReverse;
         return SVGMarkerOrientUnknown;
     }
-    static String toString(SVGMarkerOrientType type)
+    static RefPtr<StringImpl> toString(SVGMarkerOrientType type)
     {
         if (type == SVGMarkerOrientAuto)
             return autoAtom();
@@ -100,7 +100,7 @@ struct SVGPropertyTraits<SVGMarkerOrientType> {
 
 template<>
 struct SVGPropertyTraits<std::pair<SVGAngleValue, SVGMarkerOrientType>> {
-    static std::pair<SVGAngleValue, SVGMarkerOrientType> fromString(SVGElement& targetElement, const String& string)
+    static std::pair<SVGAngleValue, SVGMarkerOrientType> fromString(SVGElement& targetElement, StringImpl* string)
     {
         SVGAngleValue angle;
         SVGMarkerOrientType orientType = SVGPropertyTraits<SVGMarkerOrientType>::fromString(targetElement, string);

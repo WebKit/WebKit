@@ -734,7 +734,7 @@ double Decimal::toDouble() const
 {
     if (isFinite()) {
         bool valid;
-        const double doubleValue = toString().toDouble(&valid);
+        const double doubleValue = WTF::toDouble(toString(), &valid);
         return valid ? doubleValue : std::numeric_limits<double>::quiet_NaN();
     }
 
@@ -744,14 +744,14 @@ double Decimal::toDouble() const
     return std::numeric_limits<double>::quiet_NaN();
 }
 
-String Decimal::toString() const
+RefPtr<StringImpl> Decimal::toString() const
 {
     switch (m_data.formatClass()) {
     case EncodedData::ClassInfinity:
         return sign() ? "-Infinity"_s : "Infinity"_s;
 
     case EncodedData::ClassNaN:
-        return "NaN"_s;
+        return "NaN"_si;
 
     case EncodedData::ClassNormal:
     case EncodedData::ClassZero:
@@ -787,8 +787,8 @@ String Decimal::toString() const
         }
     }
 
-    const String digits = String::number(coefficient);
-    int coefficientLength = static_cast<int>(digits.length());
+    const RefPtr<StringImpl> digits = makeString(coefficient);
+    int coefficientLength = static_cast<int>(length(digits));
     const int adjustedExponent = originalExponent + coefficientLength - 1;
     if (originalExponent <= 0 && adjustedExponent >= -6) {
         if (!originalExponent) {
@@ -798,7 +798,7 @@ String Decimal::toString() const
 
         if (adjustedExponent >= 0) {
             for (int i = 0; i < coefficientLength; ++i) {
-                builder.append(digits[i]);
+                builder.append(codeUnitAt(digits, i));
                 if (i == adjustedExponent)
                     builder.append('.');
             }
@@ -811,13 +811,13 @@ String Decimal::toString() const
 
         builder.append(digits);
     } else {
-        builder.append(digits[0]);
-        while (coefficientLength >= 2 && digits[coefficientLength - 1] == '0')
+        builder.append(codeUnitAt(digits, 0));
+        while (coefficientLength >= 2 && codeUnitAt(digits, coefficientLength - 1) == '0')
             --coefficientLength;
         if (coefficientLength >= 2) {
             builder.append('.');
             for (int i = 1; i < coefficientLength; ++i)
-                builder.append(digits[i]);
+                builder.append(codeUnitAt(digits, i));
         }
 
         if (adjustedExponent)

@@ -144,7 +144,7 @@ void IDBConnectionProxy::completeOpenDBRequest(const IDBResultData& resultData)
         switch (resultData.type()) {
         case IDBResultType::OpenDatabaseUpgradeNeeded: {
             abortOpenAndUpgradeNeeded(resultData.databaseConnectionIdentifier(), resultData.transactionInfo().identifier());
-            auto result = IDBResultData::error(resultData.requestIdentifier(), IDBError { ExceptionCode::UnknownError, "Version change transaction on cached page is aborted to unblock other connections"_s });
+            auto result = IDBResultData::error(resultData.requestIdentifier(), IDBError { ExceptionCode::UnknownError, "Version change transaction on cached page is aborted to unblock other connections"_si });
             performCallbackOnOriginThread(locker, request.releaseNonNull(), &IDBOpenDBRequest::requestCompleted, result);
             return;
         }
@@ -164,7 +164,7 @@ void IDBConnectionProxy::createObjectStore(TransactionOperation& operation, cons
     callConnectionOnMainThread(&IDBConnectionToServer::createObjectStore, requestData, info);
 }
 
-void IDBConnectionProxy::renameObjectStore(TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
+void IDBConnectionProxy::renameObjectStore(TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* newName)
 {
     const IDBRequestData requestData { operation };
     saveOperation(operation);
@@ -172,7 +172,7 @@ void IDBConnectionProxy::renameObjectStore(TransactionOperation& operation, IDBO
     callConnectionOnMainThread(&IDBConnectionToServer::renameObjectStore, requestData, objectStoreIdentifier, newName);
 }
 
-void IDBConnectionProxy::renameIndex(TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, const String& newName)
+void IDBConnectionProxy::renameIndex(TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, StringImpl* newName)
 {
     const IDBRequestData requestData { operation };
     saveOperation(operation);
@@ -180,7 +180,7 @@ void IDBConnectionProxy::renameIndex(TransactionOperation& operation, IDBObjectS
     callConnectionOnMainThread(&IDBConnectionToServer::renameIndex, requestData, objectStoreIdentifier, indexIdentifier, newName);
 }
 
-void IDBConnectionProxy::deleteObjectStore(TransactionOperation& operation, const String& objectStoreName)
+void IDBConnectionProxy::deleteObjectStore(TransactionOperation& operation, StringImpl* objectStoreName)
 {
     const IDBRequestData requestData { operation };
     saveOperation(operation);
@@ -204,7 +204,7 @@ void IDBConnectionProxy::createIndex(TransactionOperation& operation, const IDBI
     callConnectionOnMainThread(&IDBConnectionToServer::createIndex, requestData, info);
 }
 
-void IDBConnectionProxy::deleteIndex(TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
+void IDBConnectionProxy::deleteIndex(TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* indexName)
 {
     const IDBRequestData requestData { operation };
     saveOperation(operation);
@@ -323,7 +323,7 @@ void IDBConnectionProxy::fireVersionChangeEvent(IDBDatabaseConnectionIdentifier 
     ASSERT(contextIdentifier);
     if (database->isContextSuspended()) {
         didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer::Yes);
-        ScriptExecutionContext::ensureOnContextThreadForCrossThreadTask(*contextIdentifier, createCrossThreadTask(*database,  &IDBDatabase::connectionToServerLost, IDBError { ExceptionCode::UnknownError, "Connection on cached page closed to unblock other connections"_s }));
+        ScriptExecutionContext::ensureOnContextThreadForCrossThreadTask(*contextIdentifier, createCrossThreadTask(*database,  &IDBDatabase::connectionToServerLost, IDBError { ExceptionCode::UnknownError, "Connection on cached page closed to unblock other connections"_si }));
         return;
     }
 
@@ -629,19 +629,19 @@ void IDBConnectionProxy::abortActivitiesForCurrentThread()
     {
         Locker locker { m_openDBRequestMapLock };
         removeItemsMatchingCurrentThread(m_openDBRequestMap, [](auto& request) {
-            request->requestCompleted(IDBResultData::error(request->resourceIdentifier(), IDBError { ExceptionCode::InvalidStateError, "Request is removed"_s }));
+            request->requestCompleted(IDBResultData::error(request->resourceIdentifier(), IDBError { ExceptionCode::InvalidStateError, "Request is removed"_si }));
         });
     }
     {
         Locker locker { m_transactionMapLock };
         removeItemsMatchingCurrentThread(m_pendingTransactions, [](auto& transaction) {
-            transaction->didStart(IDBError { ExceptionCode::InvalidStateError, "Transaction is removed"_s });
+            transaction->didStart(IDBError { ExceptionCode::InvalidStateError, "Transaction is removed"_si });
         });
         removeItemsMatchingCurrentThread(m_committingTransactions, [](auto& transaction) {
-            transaction->didCommit(IDBError { ExceptionCode::InvalidStateError, "Transaction is removed"_s });
+            transaction->didCommit(IDBError { ExceptionCode::InvalidStateError, "Transaction is removed"_si });
         });
         removeItemsMatchingCurrentThread(m_abortingTransactions, [](auto& transaction) {
-            transaction->didAbort(IDBError { ExceptionCode::InvalidStateError, "Transaction is removed"_s });
+            transaction->didAbort(IDBError { ExceptionCode::InvalidStateError, "Transaction is removed"_si });
         });
     }
 
@@ -657,7 +657,7 @@ void IDBConnectionProxy::abortActivitiesForCurrentThread()
     }
 
     for (auto& operation : activeOperationsForThread) {
-        auto result = IDBResultData::error(operation->identifier(), IDBError { ExceptionCode::InvalidStateError, "Operation is removed"_s });
+        auto result = IDBResultData::error(operation->identifier(), IDBError { ExceptionCode::InvalidStateError, "Operation is removed"_si });
         operation->transitionToCompleteOnThisThread(result);
     }
 

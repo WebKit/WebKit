@@ -50,10 +50,10 @@ static uint64_t nextUpdateNumber()
     return ++currentUpdateNumber;
 }
 
-static std::optional<Vector<std::pair<String, String>>> readCachesList(const String& cachesListDirectoryPath)
+static std::optional<Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>> readCachesList(StringImpl* cachesListDirectoryPath)
 {
-    Vector<std::pair<String, String>> result;
-    if (cachesListDirectoryPath.isEmpty())
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> result;
+    if (isEmpty(cachesListDirectoryPath))
         return result;
 
     auto cachesListFilePath = FileSystem::pathByAppendingComponent(cachesListDirectoryPath, cachesListFileName);
@@ -72,12 +72,12 @@ static std::optional<Vector<std::pair<String, String>>> readCachesList(const Str
 
     result.reserveInitialCapacity(*count);
     for (size_t index = 0; index < *count; ++index) {
-        std::optional<String> name;
+        std::optional<RefPtr<StringImpl>> name;
         decoder >> name;
         if (!name)
             return std::nullopt;
 
-        std::optional<String> uniqueName;
+        std::optional<RefPtr<StringImpl>> uniqueName;
         decoder >> uniqueName;
         if (!uniqueName)
             return std::nullopt;
@@ -88,9 +88,9 @@ static std::optional<Vector<std::pair<String, String>>> readCachesList(const Str
     return result;
 }
 
-static bool writeCachesList(const String& cachesListDirectoryPath, const Vector<Ref<CacheStorageCache>>& caches, std::optional<size_t> skippedCachesIndex = std::nullopt)
+static bool writeCachesList(StringImpl* cachesListDirectoryPath, const Vector<Ref<CacheStorageCache>>& caches, std::optional<size_t> skippedCachesIndex = std::nullopt)
 {
-    if (cachesListDirectoryPath.isEmpty())
+    if (isEmpty(cachesListDirectoryPath))
         return true;
 
     auto cachesListFilePath = FileSystem::pathByAppendingComponent(cachesListDirectoryPath, cachesListFileName);
@@ -117,9 +117,9 @@ static bool writeCachesList(const String& cachesListDirectoryPath, const Vector<
     return true;
 }
 
-static std::optional<uint64_t> readSizeFile(const String& sizeDirectoryPath)
+static std::optional<uint64_t> readSizeFile(StringImpl* sizeDirectoryPath)
 {
-    if (sizeDirectoryPath.isEmpty())
+    if (isEmpty(sizeDirectoryPath))
         return std::nullopt;
 
     auto sizeFilePath = FileSystem::pathByAppendingComponent(sizeDirectoryPath, sizeFileName);
@@ -133,27 +133,27 @@ static std::optional<uint64_t> readSizeFile(const String& sizeDirectoryPath)
     return parseInteger<uint64_t>(byteCast<Latin1Character>(buffer->span()));
 }
 
-static bool writeSizeFile(const String& sizeDirectoryPath, uint64_t size)
+static bool writeSizeFile(StringImpl* sizeDirectoryPath, uint64_t size)
 {
-    if (sizeDirectoryPath.isEmpty())
+    if (isEmpty(sizeDirectoryPath))
         return true;
 
     auto sizeFilePath = FileSystem::pathByAppendingComponent(sizeDirectoryPath, sizeFileName);
-    auto value = String::number(size).utf8();
+    auto value = utf8(makeString(size));
     return !!FileSystem::overwriteEntireFile(sizeFilePath, byteCast<uint8_t>(value.span()));
 }
 
-static String saltFilePath(const String& saltDirectory)
+static RefPtr<StringImpl> saltFilePath(StringImpl* saltDirectory)
 {
-    if (saltDirectory.isEmpty())
+    if (isEmpty(saltDirectory))
         return emptyString();
 
     return FileSystem::pathByAppendingComponent(saltDirectory, originSaltFileName);
 }
 
-static FileSystem::Salt readOrMakeSalt(const String& saltPath)
+static FileSystem::Salt readOrMakeSalt(StringImpl* saltPath)
 {
-    if (saltPath.isEmpty())
+    if (isEmpty(saltPath))
         return { };
 
     return valueOrDefault(FileSystem::readOrMakeSalt(saltPath));
@@ -161,17 +161,17 @@ static FileSystem::Salt readOrMakeSalt(const String& saltPath)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CacheStorageManager);
 
-String CacheStorageManager::cacheStorageOriginDirectory(const String& rootDirectory, const WebCore::ClientOrigin& origin)
+RefPtr<StringImpl> CacheStorageManager::cacheStorageOriginDirectory(StringImpl* rootDirectory, const WebCore::ClientOrigin& origin)
 {
-    if (rootDirectory.isEmpty())
+    if (isEmpty(rootDirectory))
         return emptyString();
 
     auto salt = readOrMakeSalt(saltFilePath(rootDirectory));
-    NetworkCache::Key key(origin.topOrigin.toString(), origin.clientOrigin.toString(), { }, { }, salt);
+    NetworkCache::Key key(origin.topOrigin.toString(), origin.clientOrigin.toString(), nullptr, nullptr, salt);
     return FileSystem::pathByAppendingComponent(rootDirectory, key.hashAsString());
 }
 
-void CacheStorageManager::copySaltFileToOriginDirectory(const String& rootDirectory, const String& originDirectory)
+void CacheStorageManager::copySaltFileToOriginDirectory(StringImpl* rootDirectory, StringImpl* originDirectory)
 {
     if (!FileSystem::fileExists(originDirectory))
         return;
@@ -184,7 +184,7 @@ void CacheStorageManager::copySaltFileToOriginDirectory(const String& rootDirect
     FileSystem::hardLinkOrCopyFile(sourceFilePath, targetFilePath);
 }
 
-HashSet<WebCore::ClientOrigin> CacheStorageManager::originsOfCacheStorageData(const String& rootDirectory)
+HashSet<WebCore::ClientOrigin> CacheStorageManager::originsOfCacheStorageData(StringImpl* rootDirectory)
 {
     HashSet<WebCore::ClientOrigin> result;
     for (auto& originName : FileSystem::listDirectory(rootDirectory)) {
@@ -196,10 +196,10 @@ HashSet<WebCore::ClientOrigin> CacheStorageManager::originsOfCacheStorageData(co
     return result;
 }
 
-static uint64_t getDirectorySize(const String& originDirectory)
+static uint64_t getDirectorySize(StringImpl* originDirectory)
 {
     uint64_t directorySize = 0;
-    Deque<String> paths;
+    Deque<RefPtr<StringImpl>> paths;
     paths.append(originDirectory);
     while (!paths.isEmpty()) {
         auto path = paths.takeFirst();
@@ -207,7 +207,7 @@ static uint64_t getDirectorySize(const String& originDirectory)
             const auto fileNames = FileSystem::listDirectory(path);
             for (auto& fileName : fileNames) {
                 // Files in /Blobs directory are hard link.
-                if (fileName == "Blobs"_s)
+                if (equal(fileName, "Blobs"_s))
                     continue;
                 paths.append(FileSystem::pathByAppendingComponent(path, fileName));
             }
@@ -218,7 +218,7 @@ static uint64_t getDirectorySize(const String& originDirectory)
     return directorySize;
 }
 
-uint64_t CacheStorageManager::cacheStorageSize(const String& originDirectory)
+uint64_t CacheStorageManager::cacheStorageSize(StringImpl* originDirectory)
 {
     if (auto sizeFromFile = readSizeFile(originDirectory))
         return *sizeFromFile;
@@ -226,7 +226,7 @@ uint64_t CacheStorageManager::cacheStorageSize(const String& originDirectory)
     return getDirectorySize(originDirectory);
 }
 
-bool CacheStorageManager::hasCacheList(const String& cacheStorageDirectory)
+bool CacheStorageManager::hasCacheList(StringImpl* cacheStorageDirectory)
 {
     return FileSystem::fileExists(FileSystem::pathByAppendingComponent(cacheStorageDirectory, cachesListFileName));
 }
@@ -236,12 +236,12 @@ void CacheStorageManager::makeDirty()
     m_updateCounter = nextUpdateNumber();
 }
 
-Ref<CacheStorageManager> CacheStorageManager::create(const String& path, CacheStorageRegistry& registry, const WebCore::ClientOrigin& origin, ShouldWriteOriginFile shouldWriteOriginFile, QuotaCheckFunction&& quotaCheckFunction, Ref<WorkQueue>&& queue)
+Ref<CacheStorageManager> CacheStorageManager::create(StringImpl* path, CacheStorageRegistry& registry, const WebCore::ClientOrigin& origin, ShouldWriteOriginFile shouldWriteOriginFile, QuotaCheckFunction&& quotaCheckFunction, Ref<WorkQueue>&& queue)
 {
     return adoptRef(*new CacheStorageManager(path, registry, origin, shouldWriteOriginFile, WTF::move(quotaCheckFunction), WTF::move(queue)));
 }
 
-CacheStorageManager::CacheStorageManager(const String& path, CacheStorageRegistry& registry, const WebCore::ClientOrigin& origin, ShouldWriteOriginFile shouldWriteOriginFile, QuotaCheckFunction&& quotaCheckFunction, Ref<WorkQueue>&& queue)
+CacheStorageManager::CacheStorageManager(StringImpl* path, CacheStorageRegistry& registry, const WebCore::ClientOrigin& origin, ShouldWriteOriginFile shouldWriteOriginFile, QuotaCheckFunction&& quotaCheckFunction, Ref<WorkQueue>&& queue)
     : m_updateCounter(nextUpdateNumber())
     , m_path(path)
     , m_origin(origin)
@@ -250,7 +250,7 @@ CacheStorageManager::CacheStorageManager(const String& path, CacheStorageRegistr
     , m_quotaCheckFunction(WTF::move(quotaCheckFunction))
     , m_queue(WTF::move(queue))
 {
-    if (m_path.isEmpty() || shouldWriteOriginFile == ShouldWriteOriginFile::No)
+    if (isEmpty(m_path) || shouldWriteOriginFile == ShouldWriteOriginFile::No)
         return;
 
     auto originFile = FileSystem::pathByAppendingComponent(m_path, cachesOriginFileName);
@@ -303,13 +303,13 @@ bool CacheStorageManager::initializeCaches()
     return true;
 }
 
-void CacheStorageManager::openCache(const String& name, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
+void CacheStorageManager::openCache(StringImpl* name, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
 {
     if (!initializeCaches())
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::ReadDisk));
 
     auto index = m_caches.findIf([&](auto& cache) {
-        return cache->name() == name;
+        return equal(cache->name(), name);
     });
     if (index != notFound)
         return Ref { m_caches[index] }->open(WTF::move(callback));
@@ -509,7 +509,7 @@ void CacheStorageManager::removeUnusedCache(WebCore::DOMCacheIdentifier cacheIde
 bool CacheStorageManager::hasDataInMemory()
 {
     // Cache data is stored on disk.
-    if (!m_path.isEmpty())
+    if (!isEmpty(m_path))
         return false;
 
     return !m_caches.isEmpty() || !m_removedCaches.isEmpty();
@@ -520,7 +520,7 @@ bool CacheStorageManager::isActive()
     return !m_cacheRefConnections.isEmpty() || !m_activeConnections.isEmpty();
 }
 
-String CacheStorageManager::representationString()
+RefPtr<StringImpl> CacheStorageManager::representationString()
 {
     StringBuilder builder;
     builder.append("{ \"persistent\": ["_s);
@@ -581,7 +581,7 @@ static void queryCaches(Vector<Ref<CacheStorageCache>>&& caches, size_t index, W
     });
 }
 
-void CacheStorageManager::query(WebCore::RetrieveRecordsOptions&& options, String&& cacheName, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::CrossThreadRecord>&&)>&& callback)
+void CacheStorageManager::query(WebCore::RetrieveRecordsOptions&& options, RefPtr<StringImpl>&& cacheName, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::CrossThreadRecord>&&)>&& callback)
 {
     if (!initializeCaches()) {
         callback({ });
@@ -589,9 +589,9 @@ void CacheStorageManager::query(WebCore::RetrieveRecordsOptions&& options, Strin
     }
 
     size_t index = 0;
-    if (!cacheName.isEmpty()) {
+    if (!isEmpty(cacheName)) {
         index = m_caches.findIf([&](auto& cache) {
-            return cache->name() == cacheName;
+            return equal(cache->name(), cacheName);
         });
         if (index == notFound) {
             callback({ });
@@ -599,7 +599,7 @@ void CacheStorageManager::query(WebCore::RetrieveRecordsOptions&& options, Strin
         }
     }
 
-    queryCaches(Vector<Ref<CacheStorageCache>> { m_caches }, index, WTF::move(options), cacheName.isEmpty(), WTF::move(callback));
+    queryCaches(Vector<Ref<CacheStorageCache>> { m_caches }, index, WTF::move(options), isEmpty(cacheName), WTF::move(callback));
 }
 
 } // namespace WebKit

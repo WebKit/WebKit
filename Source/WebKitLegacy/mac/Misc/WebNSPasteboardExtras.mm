@@ -202,13 +202,13 @@ static NSArray *writableTypesForImageWithArchive()
     if (containsImage && [subresources count] > 0) {
         WebResource *subresource = [subresources objectAtIndex:0];
         NSString *subresourceMIMEType = [subresource MIMEType];
-        if (WebCore::MIMETypeRegistry::isSupportedImageMIMEType(subresourceMIMEType) || WebCore::MIMETypeRegistry::isPDFMIMEType(subresourceMIMEType))
+        if (WebCore::MIMETypeRegistry::isSupportedImageMIMEType(StringImpl::create(subresourceMIMEType).get()) || WebCore::MIMETypeRegistry::isPDFMIMEType(StringImpl::create(subresourceMIMEType).get()))
             resource = subresource;
     }
     ASSERT(resource);
 
-    ASSERT(!containsImage || WebCore::MIMETypeRegistry::isSupportedImageMIMEType([resource.get() MIMEType]) || WebCore::MIMETypeRegistry::isPDFMIMEType([resource.get() MIMEType]));
-    if (!containsImage || WebCore::MIMETypeRegistry::isSupportedImageMIMEType([resource.get() MIMEType]) || WebCore::MIMETypeRegistry::isPDFMIMEType([resource.get() MIMEType]))
+    ASSERT(!containsImage || WebCore::MIMETypeRegistry::isSupportedImageMIMEType(StringImpl::create([resource.get() MIMEType]).get()) || WebCore::MIMETypeRegistry::isPDFMIMEType(StringImpl::create([resource.get() MIMEType]).get()));
+    if (!containsImage || WebCore::MIMETypeRegistry::isSupportedImageMIMEType(StringImpl::create([resource.get() MIMEType]).get()) || WebCore::MIMETypeRegistry::isPDFMIMEType(StringImpl::create([resource.get() MIMEType]).get()))
         [self _web_writeFileWrapperAsRTFDAttachment:[resource.get() _fileWrapperRepresentation]];
     
 }
@@ -273,12 +273,12 @@ static NSArray *writableTypesForImageWithArchive()
     RetainPtr<NSString> extension = @"";
     RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:WebCore::legacyFilesPromisePasteboardTypeSingleton(), nil]);
     RefPtr coreElement = core(element);
-    RetainPtr originIdentifier = protect(coreElement->document())->originIdentifierForPasteboard().createNSString();
+    RetainPtr originIdentifier = createNSString(protect(coreElement->document())->originIdentifierForPasteboard());
     RetainPtr<NSData> customDataBuffer;
     if (originIdentifier.get().length) {
         [types addObject:@(WebCore::PasteboardCustomData::cocoaType().characters())];
         WebCore::PasteboardCustomData customData;
-        customData.setOrigin(originIdentifier.get());
+        customData.setOrigin(StringImpl::create(originIdentifier.get()));
         customDataBuffer = customData.createSharedBuffer()->createNSData();
     }
 
@@ -286,7 +286,7 @@ static NSArray *writableTypesForImageWithArchive()
         if (is<WebCore::RenderImage>(*renderer)) {
             if (RefPtr image = downcast<WebCore::RenderImage>(*renderer).cachedImage()) {
                 // FIXME: This doesn't check errorOccured the way _web_writeImage does.
-                extension = protect(image->image())->filenameExtension().createNSString();
+                extension = createNSString(protect(image->image())->filenameExtension());
                 if (![extension length])
                     return nullptr;
                 [types addObjectsFromArray:[NSPasteboard _web_writableTypesForImageIncludingArchive:(archive != nil)]];

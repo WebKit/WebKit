@@ -425,9 +425,9 @@ private:
 
 static bool externalEntityMimeTypeAllowed(const ResourceResponse& response)
 {
-    String contentType = response.httpHeaderField(HTTPHeaderName::ContentType);
-    String mimeType = extractMIMETypeFromMediaType(contentType);
-    if (mimeType.isEmpty()) {
+    RefPtr<StringImpl> contentType = response.httpHeaderField(HTTPHeaderName::ContentType);
+    RefPtr<StringImpl> mimeType = extractMIMETypeFromMediaType(contentType);
+    if (isEmpty(mimeType)) {
         // Same logic as XMLHttpRequest::responseMIMEType(). Keep them in sync.
         if (response.isInHTTPFamily())
             mimeType = contentType;
@@ -459,14 +459,14 @@ static void switchToUTF16(xmlParserCtxtPtr ctxt)
 
 static bool shouldAllowExternalLoad(const URL& url)
 {
-    String urlString = url.string();
+    RefPtr<StringImpl> urlString = url.string();
 
     // On non-Windows platforms libxml asks for this URL, the "XML_XML_DEFAULT_CATALOG", on initialization.
-    if (urlString == "file:///etc/xml/catalog"_s)
+    if (equal(urlString, "file:///etc/xml/catalog"_s))
         return false;
 
     // On Windows, libxml computes a URL relative to where its DLL resides.
-    if (startsWithLettersIgnoringASCIICase(urlString, "file:///"_s) && urlString.endsWithIgnoringASCIICase("/etc/catalog"_s))
+    if (startsWithLettersIgnoringASCIICase(urlString, "file:///"_s) && endsWithIgnoringASCIICase(urlString, "/etc/catalog"_s))
         return false;
 
     // The most common DTD. There isn't much point in hammering www.w3c.org by requesting this for every XHTML document.
@@ -510,7 +510,7 @@ static void* openFunc(const char* uri)
     RefPtr document = cachedResourceLoader->document();
     // Same logic as Document::completeURL(). Keep them in sync.
     auto* encoding = (document && document->decoder()) ? protect(document->decoder())->encodingForURLParsing() : nullptr;
-    URL url(document ? document->fallbackBaseURL() : URL(), String::fromLatin1(uri), encoding);
+    URL url(document ? document->fallbackBaseURL() : URL(), StringImpl::fromLatin1(uri), encoding);
 
     if (!shouldAllowExternalLoad(url))
         return &globalDescriptor;
@@ -584,7 +584,7 @@ static xmlExternalEntityLoader defaultEntityLoader { nullptr };
 
 xmlParserInputPtr externalEntityLoader(const char* url, const char* id, xmlParserCtxtPtr context)
 {
-    if (!shouldAllowExternalLoad(URL(String::fromUTF8(url))))
+    if (!shouldAllowExternalLoad(URL(StringImpl::fromUTF8(url))))
         return nullptr;
     RELEASE_ASSERT_WITH_MESSAGE(!!defaultEntityLoader, "Missing call to initializeXMLParser()");
     return defaultEntityLoader(url, id, context);
@@ -654,9 +654,9 @@ RefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerPtr h
 
 // --------------------------------
 
-bool XMLDocumentParser::supportsXMLVersion(const String& version)
+bool XMLDocumentParser::supportsXMLVersion(StringImpl* version)
 {
-    return version == "1.0"_s;
+    return equal(version, "1.0"_s);
 }
 
 XMLDocumentParser::XMLDocumentParser(Document& document, IsInFrameView isInFrameView, OptionSet<ParserContentPolicy> policy)
@@ -669,7 +669,7 @@ XMLDocumentParser::XMLDocumentParser(Document& document, IsInFrameView isInFrame
 {
 }
 
-XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, HashMap<AtomString, AtomString>&& prefixToNamespaceMap, const AtomString& defaultNamespaceURI, OptionSet<ParserContentPolicy> parserContentPolicy)
+XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, HashMap<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>&& prefixToNamespaceMap, AtomStringImpl* defaultNamespaceURI, OptionSet<ParserContentPolicy> parserContentPolicy)
     : ScriptableDocumentParser(protect(fragment.document()), parserContentPolicy)
     , m_pendingCallbacks(makeUniqueRef<PendingCallbacks>())
     , m_currentNode(&fragment)
@@ -702,7 +702,7 @@ XMLDocumentParser::~XMLDocumentParser()
     m_scriptWaitingForStylesheets = nullptr;
 }
 
-void XMLDocumentParser::doWrite(String&& parseString)
+void XMLDocumentParser::doWrite(RefPtr<StringImpl>&& parseString)
 {
     ASSERT(!isDetached());
     if (!m_context)
@@ -714,10 +714,10 @@ void XMLDocumentParser::doWrite(String&& parseString)
     // Lone surrogates are not valid XML characters, so libxml2 would reject the
     // whole document. Replace them with U+FFFD to do a best-effort parse instead
     // (matching Firefox and Blink). See https://crbug.com/40814739.
-    String sanitizedString = replaceUnpairedSurrogatesWithReplacementCharacter(WTF::move(parseString));
+    RefPtr<StringImpl> sanitizedString = replaceUnpairedSurrogatesWithReplacementCharacter(WTF::move(parseString));
 
     // libXML throws an error if you try to switch the encoding for an empty string.
-    if (sanitizedString.length()) {
+    if (length(sanitizedString)) {
         // JavaScript may cause the parser to detach during xmlParseChunk
         // keep this alive until this function is done.
         Ref<XMLDocumentParser> protectedThis(*this);
@@ -726,7 +726,7 @@ void XMLDocumentParser::doWrite(String&& parseString)
 
         // FIXME: Can we parse 8-bit strings directly as Latin-1 instead of upconverting to UTF-16?
         switchToUTF16(context->context());
-        xmlParseChunk(context->context(), reinterpret_cast<const char*>(StringView(sanitizedString).upconvertedCharacters().get()), sizeof(char16_t) * sanitizedString.length(), 0);
+        xmlParseChunk(context->context(), reinterpret_cast<const char*>(StringView(sanitizedString).upconvertedCharacters().get()), sizeof(char16_t) * length(sanitizedString), 0);
 
         // JavaScript (which may be run under the xmlParseChunk callstack) may
         // cause the parser to be stopped or detached.
@@ -742,24 +742,24 @@ void XMLDocumentParser::doWrite(String&& parseString)
     }
 }
 
-static inline String toString(std::span<const xmlChar> string)
+static inline RefPtr<StringImpl> toString(std::span<const xmlChar> string)
 {
-    return String::fromUTF8(byteCast<char>(string));
+    return StringImpl::fromUTF8(byteCast<char>(string));
 }
 
-static inline String toString(const xmlChar* string)
+static inline RefPtr<StringImpl> toString(const xmlChar* string)
 {
-    return String::fromUTF8(byteCast<char>(string));
+    return StringImpl::fromUTF8(byteCast<char>(string));
 }
 
-static inline AtomString toAtomString(std::span<const xmlChar> string)
+static inline RefPtr<AtomStringImpl> toAtomString(std::span<const xmlChar> string)
 {
-    return AtomString::fromUTF8(byteCast<char>(string));
+    return AtomStringImpl::fromUTF8(byteCast<char>(string));
 }
 
-static inline AtomString toAtomString(const xmlChar* string)
+static inline RefPtr<AtomStringImpl> toAtomString(const xmlChar* string)
 {
-    return AtomString::fromUTF8(byteCast<char>(string));
+    return AtomStringImpl::fromUTF8(byteCast<char>(string));
 }
 
 struct _xmlSAX2Namespace {
@@ -771,12 +771,12 @@ typedef struct _xmlSAX2Namespace xmlSAX2Namespace;
 static inline bool handleNamespaceAttributes(Vector<Attribute>& prefixedAttributes, std::span<xmlSAX2Namespace> namespaces, bool& shouldUseNullCustomElementRegistry)
 {
     for (auto& xmlNamespace : namespaces) {
-        AtomString namespaceQName = xmlnsAtom();
-        AtomString namespaceURI = toAtomString(xmlNamespace.uri);
+        RefPtr<AtomStringImpl> namespaceQName = xmlnsAtom();
+        RefPtr<AtomStringImpl> namespaceURI = toAtomString(xmlNamespace.uri);
         if (xmlNamespace.prefix)
             namespaceQName = makeAtomString("xmlns:"_s, toString(xmlNamespace.prefix));
 
-        auto parseResult = NameValidation::parseQualifiedAttributeName(XMLNSNames::xmlnsNamespaceURI, namespaceQName);
+        auto parseResult = NameValidation::parseQualifiedAttributeName(XMLNSNames::xmlnsNamespaceURI.get(), namespaceQName);
         if (parseResult.hasException())
             return false;
         QualifiedName attributeName { parseResult.releaseReturnValue() };
@@ -804,10 +804,10 @@ static inline bool handleElementAttributes(Vector<Attribute>& prefixedAttributes
     auto attributes = unsafeMakeSpan(reinterpret_cast<xmlSAX2Attributes*>(libxmlAttributes), numAttributes);
     for (auto& attribute : attributes) {
         size_t valueLength = static_cast<size_t>(attribute.end - attribute.value);
-        AtomString attrValue = toAtomString(unsafeMakeSpan(attribute.value, valueLength));
-        String attrPrefix = toString(attribute.prefix);
-        AtomString attrURI = attrPrefix.isEmpty() ? nullAtom() : toAtomString(attribute.uri);
-        AtomString attrQName = attrPrefix.isEmpty() ? toAtomString(attribute.localname) : makeAtomString(attrPrefix, ':', toString(attribute.localname));
+        RefPtr<AtomStringImpl> attrValue = toAtomString(unsafeMakeSpan(attribute.value, valueLength));
+        RefPtr<StringImpl> attrPrefix = toString(attribute.prefix);
+        RefPtr<AtomStringImpl> attrURI = isEmpty(attrPrefix) ? nullAtom() : toAtomString(attribute.uri);
+        RefPtr<AtomStringImpl> attrQName = isEmpty(attrPrefix) ? toAtomString(attribute.localname) : makeAtomString(attrPrefix, ':', toString(attribute.localname));
 
         auto parseResult = NameValidation::parseQualifiedAttributeName(attrURI, attrQName);
         if (parseResult.hasException())
@@ -836,16 +836,16 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     if (!updateLeafTextNode())
         return;
 
-    AtomString localName = toAtomString(xmlLocalName);
-    AtomString uri = toAtomString(xmlURI);
-    AtomString prefix = toAtomString(xmlPrefix);
+    RefPtr<AtomStringImpl> localName = toAtomString(xmlLocalName);
+    RefPtr<AtomStringImpl> uri = toAtomString(xmlURI);
+    RefPtr<AtomStringImpl> prefix = toAtomString(xmlPrefix);
     RefPtr currentNode = *m_currentNode;
     RefPtr document = currentNode->document();
     auto namespaces = unsafeMakeSpan(reinterpret_cast<xmlSAX2Namespace*>(libxmlNamespaces), numNamespaces);
 
-    if (m_parsingFragment && uri.isNull()) {
-        uri = [&] -> AtomString {
-            if (!prefix.isNull())
+    if (m_parsingFragment && !uri) {
+        uri = [&] -> RefPtr<AtomStringImpl> {
+            if (prefix)
                 return m_prefixToNamespaceMap.get(prefix);
 
             // libxml2 reports null URI both for "no namespace" and explicit xmlns=""; preserve the latter.
@@ -857,11 +857,11 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
             RefPtr<const Node> ancestorNode = currentNode;
             while (ancestorNode) {
                 if (RefPtr ancestor = dynamicDowncast<Element>(ancestorNode)) {
-                    if (!ancestor->namespaceURI().isNull() && ancestor->prefix().isNull())
+                    if (ancestor->namespaceURI() && !ancestor->prefix())
                         return ancestor->namespaceURI();
                     auto& xmlnsValue = ancestor->attributeWithoutSynchronization(XMLNSNames::xmlnsAttr);
-                    if (!xmlnsValue.isNull())
-                        return xmlnsValue.isEmpty() ? nullAtom() : xmlnsValue;
+                    if (xmlnsValue)
+                        return isEmpty(xmlnsValue) ? nullAtom() : xmlnsValue;
                     ancestorNode = ancestor->parentNode();
                 } else if (RefPtr templateContent = dynamicDowncast<TemplateContentDocumentFragment>(ancestorNode))
                     ancestorNode = templateContent->host();
@@ -1368,7 +1368,7 @@ void XMLDocumentParser::entityDecl(const xmlChar* name, int type, const xmlChar*
     }
 
     auto contentString = toString(content);
-    if (type == XML_INTERNAL_GENERAL_ENTITY && contentString.contains('&')) {
+    if (type == XML_INTERNAL_GENERAL_ENTITY && contains(contentString, '&')) {
         m_deferredEntityDeclarations.append({
             toString(name),
             type,
@@ -1390,25 +1390,25 @@ void XMLDocumentParser::flushDeferredEntityDeclarations()
     m_entityTransitiveReferenceCounts.clear();
 
     // Build a map from entity name to content for transitive count computation.
-    HashMap<AtomString, String> entityContents;
+    HashMap<RefPtr<AtomStringImpl>, RefPtr<StringImpl>> entityContents;
     for (auto& decl : m_deferredEntityDeclarations)
-        entityContents.add(AtomString(decl.name), decl.content);
+        entityContents.add(AtomStringImpl::add(decl.name), decl.content);
 
     // Compute transitive reference counts and register only safe entities.
     for (auto& decl : m_deferredEntityDeclarations) {
-        auto entityName = AtomString(decl.name);
-        HashSet<AtomString> visiting;
+        auto entityName = AtomStringImpl::add(decl.name);
+        HashSet<RefPtr<AtomStringImpl>> visiting;
         if (computeTransitiveEntityReferenceCount(entityName, entityContents, visiting) > m_maxEntityExpansionCount) {
             handleError(XMLErrors::Type::Fatal, "Entity reference expansion limit reached", textPosition());
             return;
         }
 
-        auto nameUTF8 = decl.name.utf8();
+        auto nameUTF8 = utf8(decl.name);
         if (xmlGetDocEntity(context()->myDoc, byteCast<xmlChar>(nameUTF8.data())))
             continue;
-        auto publicIdUTF8 = decl.publicId.utf8();
-        auto systemIdUTF8 = decl.systemId.utf8();
-        auto contentUTF8 = decl.content.utf8();
+        auto publicIdUTF8 = utf8(decl.publicId);
+        auto systemIdUTF8 = utf8(decl.systemId);
+        auto contentUTF8 = utf8(decl.content);
         xmlSAX2EntityDecl(context(),
             byteCast<xmlChar>(nameUTF8.data()),
             decl.type,
@@ -1418,9 +1418,9 @@ void XMLDocumentParser::flushDeferredEntityDeclarations()
     }
 }
 
-uint64_t XMLDocumentParser::computeTransitiveEntityReferenceCount(const AtomString& name, const HashMap<AtomString, String>& entityContents, HashSet<AtomString>& visiting)
+uint64_t XMLDocumentParser::computeTransitiveEntityReferenceCount(AtomStringImpl* name, const HashMap<RefPtr<AtomStringImpl>, RefPtr<StringImpl>>& entityContents, HashSet<RefPtr<AtomStringImpl>>& visiting)
 {
-    if (name.isEmpty())
+    if (isEmpty(name))
         return 0;
 
     auto it = m_entityTransitiveReferenceCounts.find(name);
@@ -1439,19 +1439,19 @@ uint64_t XMLDocumentParser::computeTransitiveEntityReferenceCount(const AtomStri
     auto& content = contentIt->value;
     CheckedUint64 count = 0;
     size_t i = 0;
-    while (i < content.length()) {
-        if (content[i] != '&') {
+    while (i < length(content)) {
+        if (codeUnitAt(content, i) != '&') {
             ++i;
             continue;
         }
         size_t nameStart = i + 1;
         size_t nameEnd = nameStart;
-        while (nameEnd < content.length() && content[nameEnd] != ';')
+        while (nameEnd < length(content) && codeUnitAt(content, nameEnd) != ';')
             ++nameEnd;
-        if (nameEnd >= content.length())
+        if (nameEnd >= length(content))
             break;
         ++count;
-        auto referencedName = AtomString(content.substring(nameStart, nameEnd - nameStart));
+        auto referencedName = AtomStringImpl::add(substring(content, nameStart, nameEnd - nameStart));
         count += computeTransitiveEntityReferenceCount(referencedName, entityContents, visiting);
         i = nameEnd + 1;
     }
@@ -1493,18 +1493,18 @@ static void internalSubsetHandler(void* closure, const xmlChar* name, const xmlC
 
 static void externalSubsetHandler(void* closure, const xmlChar*, const xmlChar* externalId, const xmlChar*)
 {
-    String extId = toString(externalId);
-    if ((extId == "-//W3C//DTD XHTML 1.0 Transitional//EN"_s)
-        || (extId == "-//W3C//DTD XHTML 1.1//EN"_s)
-        || (extId == "-//W3C//DTD XHTML 1.0 Strict//EN"_s)
-        || (extId == "-//W3C//DTD XHTML 1.0 Frameset//EN"_s)
-        || (extId == "-//W3C//DTD XHTML Basic 1.0//EN"_s)
-        || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"_s)
-        || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"_s)
-        || (extId == "-//W3C//DTD MathML 2.0//EN"_s)
-        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN"_s)
-        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.1//EN"_s)
-        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.2//EN"_s))
+    RefPtr<StringImpl> extId = toString(externalId);
+    if ((equal(extId, "-//W3C//DTD XHTML 1.0 Transitional//EN"_s))
+        || (equal(extId, "-//W3C//DTD XHTML 1.1//EN"_s))
+        || (equal(extId, "-//W3C//DTD XHTML 1.0 Strict//EN"_s))
+        || (equal(extId, "-//W3C//DTD XHTML 1.0 Frameset//EN"_s))
+        || (equal(extId, "-//W3C//DTD XHTML Basic 1.0//EN"_s))
+        || (equal(extId, "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"_s))
+        || (equal(extId, "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"_s))
+        || (equal(extId, "-//W3C//DTD MathML 2.0//EN"_s))
+        || (equal(extId, "-//WAPFORUM//DTD XHTML Mobile 1.0//EN"_s))
+        || (equal(extId, "-//WAPFORUM//DTD XHTML Mobile 1.1//EN"_s))
+        || (equal(extId, "-//WAPFORUM//DTD XHTML Mobile 1.2//EN"_s)))
         getParser(closure)->setIsXHTMLDocument(true); // controls if we replace entities or not.
 }
 
@@ -1599,25 +1599,25 @@ NODELETE static inline const char* nativeEndianUTF16Encoding()
     return BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE";
 }
 
-xmlDocPtr xmlDocPtrForString(CachedResourceLoader& cachedResourceLoader, const String& source, const String& url)
+xmlDocPtr xmlDocPtrForString(CachedResourceLoader& cachedResourceLoader, StringImpl* source, StringImpl* url)
 {
-    if (source.isEmpty())
+    if (isEmpty(source))
         return nullptr;
 
     // Parse in a single chunk into an xmlDocPtr
     // FIXME: Hook up error handlers so that a failure to parse the main document results in
     // good error messages.
 
-    const bool is8Bit = source.is8Bit();
-    auto characters = is8Bit ? byteCast<char>(source.span8()) : spanReinterpretCast<const char>(source.span16());
-    size_t sizeInBytes = source.length() * (is8Bit ? sizeof(Latin1Character) : sizeof(char16_t));
+    const bool is8Bit = WTF::is8Bit(source);
+    auto characters = is8Bit ? byteCast<char>(span8(source)) : spanReinterpretCast<const char>(span16(source));
+    size_t sizeInBytes = length(source) * (is8Bit ? sizeof(Latin1Character) : sizeof(char16_t));
     const char* encoding = is8Bit ? "iso-8859-1" : nativeEndianUTF16Encoding();
 
     if (sizeInBytes > std::numeric_limits<int>::max())
         return nullptr;
 
     XMLDocumentParserScope scope(&cachedResourceLoader, errorFunc);
-    return xmlReadMemory(characters.data(), static_cast<int>(sizeInBytes), url.utf8().legacyCStringPointer(), encoding, XSLT_PARSE_OPTIONS);
+    return xmlReadMemory(characters.data(), static_cast<int>(sizeInBytes), utf8(url).legacyCStringPointer(), encoding, XSLT_PARSE_OPTIONS);
 }
 #endif
 
@@ -1666,7 +1666,7 @@ void XMLDocumentParser::resumeParsing()
     // the passed string has more than one reference.
     auto rest = m_pendingSrc.toString();
     m_pendingSrc.clear();
-    append(rest.impl());
+    append(rest.get());
 
     // Finally, if finish() has been called and write() didn't result
     // in any further callbacks being queued, call end()
@@ -1674,12 +1674,12 @@ void XMLDocumentParser::resumeParsing()
         end();
 }
 
-bool XMLDocumentParser::appendFragmentSource(const String& chunk)
+bool XMLDocumentParser::appendFragmentSource(StringImpl* chunk)
 {
     ASSERT(!m_context);
     ASSERT(m_parsingFragment);
 
-    auto chunkAsUTF8 = chunk.utf8();
+    auto chunkAsUTF8 = utf8(chunk);
     
     // libxml2 takes an int for a length, and therefore can't handle XML chunks larger than 2 GiB.
     if (chunkAsUTF8.length() > INT_MAX)
@@ -1709,7 +1709,7 @@ bool XMLDocumentParser::appendFragmentSource(const String& chunk)
 
 // --------------------------------
 
-using AttributeParseState = std::optional<HashMap<String, String>>;
+using AttributeParseState = std::optional<HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>>;
 
 static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLocalName, const xmlChar* /*xmlPrefix*/, const xmlChar* /*xmlURI*/, int /*numNamespaces*/, const xmlChar** /*namespaces*/, int numAttributes, int /*numDefaulted*/, const xmlChar** libxmlAttributes)
 {
@@ -1718,21 +1718,21 @@ static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLoc
 
     auto& state = *static_cast<AttributeParseState*>(static_cast<xmlParserCtxtPtr>(closure)->_private);
 
-    state = HashMap<String, String> { };
+    state = HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> { };
 
     auto attributes = unsafeMakeSpan(reinterpret_cast<xmlSAX2Attributes*>(libxmlAttributes), numAttributes);
     for (auto& attribute : attributes) {
-        String attrLocalName = toString(attribute.localname);
+        RefPtr<StringImpl> attrLocalName = toString(attribute.localname);
         size_t valueLength = static_cast<size_t>(attribute.end - attribute.value);
-        String attrValue = toString(unsafeMakeSpan(attribute.value, valueLength));
-        String attrPrefix = toString(attribute.prefix);
-        String attrQName = attrPrefix.isEmpty() ? attrLocalName : makeString(attrPrefix, ':', attrLocalName);
+        RefPtr<StringImpl> attrValue = toString(unsafeMakeSpan(attribute.value, valueLength));
+        RefPtr<StringImpl> attrPrefix = toString(attribute.prefix);
+        RefPtr<StringImpl> attrQName = isEmpty(attrPrefix) ? attrLocalName : makeString(attrPrefix, ':', attrLocalName);
 
         state->set(attrQName, attrValue);
     }
 }
 
-std::optional<HashMap<String, String>> parseAttributes(CachedResourceLoader& cachedResourceLoader, const String& string)
+std::optional<HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>> parseAttributes(CachedResourceLoader& cachedResourceLoader, StringImpl* string)
 {
     auto parseString = makeString("<?xml version=\"1.0\"?><attrs "_s, string, " />"_s);
 
@@ -1747,7 +1747,7 @@ std::optional<HashMap<String, String>> parseAttributes(CachedResourceLoader& cac
 
     XMLDocumentParserScope scope(&cachedResourceLoader);
     // FIXME: Can we parse 8-bit strings directly as Latin-1 instead of upconverting to UTF-16?
-    xmlParseChunk(parser->context(), reinterpret_cast<const char*>(StringView(parseString).upconvertedCharacters().get()), parseString.length() * sizeof(char16_t), 1);
+    xmlParseChunk(parser->context(), reinterpret_cast<const char*>(StringView(parseString).upconvertedCharacters().get()), length(parseString) * sizeof(char16_t), 1);
 
     return attributes;
 }

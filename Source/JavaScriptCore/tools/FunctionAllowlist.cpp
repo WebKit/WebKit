@@ -47,7 +47,7 @@ FunctionAllowlist::FunctionAllowlist(const char8_t* filename)
     if (!f) {
         if (errno == ENOENT) {
             m_hasActiveAllowlist = true;
-            for (auto f : String { filename }.split(','))
+            for (auto f : split(StringImpl::create(unsafeSpan(filename)), ','))
                 m_entries.add(f);
         } else
             dataLogLn("Failed to open file ", filename, ". Did you add the file-read-data entitlement to WebProcess.sb? Error code: ", safeStrerror(errno));
@@ -73,7 +73,7 @@ FunctionAllowlist::FunctionAllowlist(const char8_t* filename)
         if (!length)
             continue;
         
-        m_entries.add(String::fromLatin1(unsafeMakeSpan(line, length)));
+        m_entries.add(StringImpl::fromLatin1(unsafeMakeSpan(line, length)));
     }
 
     int result = fclose(f);
@@ -89,11 +89,11 @@ bool FunctionAllowlist::contains(CodeBlock* codeBlock) const
     if (m_entries.isEmpty())
         return false;
 
-    String name = String::fromUTF8(codeBlock->inferredName().span());
+    RefPtr<StringImpl> name = StringImpl::fromUTF8(codeBlock->inferredName().span());
     if (m_entries.contains(name))
         return true;
 
-    String hash = makeString(codeBlock->hash());
+    RefPtr<StringImpl> hash = makeString(codeBlock->hash());
     if (m_entries.contains(hash))
         return true;
 
@@ -114,7 +114,7 @@ bool FunctionAllowlist::containsWasmFunction(uint32_t index) const
 
     if (m_entries.isEmpty())
         return false;
-    return m_entries.contains(String::number(index));
+    return m_entries.contains(makeString(index));
 }
 
 } // namespace JSC

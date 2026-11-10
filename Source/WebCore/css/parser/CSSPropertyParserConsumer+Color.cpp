@@ -764,7 +764,7 @@ static std::optional<CSS::Color> consumeAColorFunction(CSSParserTokenRange& rang
 
 static std::optional<SRGBA<uint8_t>> consumeHexColor(CSSParserTokenRange& range, ColorParserState& state)
 {
-    String string;
+    RefPtr<StringImpl> string;
     StringView view;
     auto& token = range.peek();
     if (token.type() == HashToken)
@@ -786,13 +786,13 @@ static std::optional<SRGBA<uint8_t>> consumeHexColor(CSSParserTokenRange& range,
                 return std::nullopt;
             auto integerValue = static_cast<int>(token.numericValue());
             if (token.type() == NumberToken)
-                string = String::number(integerValue); // e.g. 112233
+                string = makeString(integerValue); // e.g. 112233
             else
                 string = makeString(integerValue, token.unitString()); // e.g. 0001FF
-            if (string.length() < 6)
-                string = makeString("000000"_span.subspan(string.length()), string);
+            if (length(string) < 6)
+                string = makeString("000000"_span.subspan(length(string)), string);
 
-            if (string.length() != 3 && string.length() != 6)
+            if (length(string) != 3 && length(string) != 6)
                 return std::nullopt;
             view = string;
         } else

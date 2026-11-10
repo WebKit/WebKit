@@ -69,7 +69,7 @@ public:
         bool isLowLatencyEnabled;
         Ref<WorkQueue> queue;
     };
-    WEBCORE_EXPORT static RefPtr<GPUVideoEncoder> create(CreationInfo&&, const Vector<std::pair<String, String>>& parameters, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);
+    WEBCORE_EXPORT static RefPtr<GPUVideoEncoder> create(CreationInfo&&, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& parameters, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);
 
     virtual void initialize(uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate) = 0;
     virtual void encodeFrame(CVPixelBufferRef, int64_t timeStampNs, int64_t timeStamp, std::optional<uint64_t> duration, VideoFrame::Rotation, bool isMirrored, bool isKeyframeRequired) = 0;

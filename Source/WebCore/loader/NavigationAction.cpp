@@ -111,7 +111,7 @@ NODELETE static std::optional<NavigationNavigationType> toNavigationAPIType(Navi
     return { };
 }
 
-NavigationAction::NavigationAction(const NavigationRequester& requester, const ResourceRequest& originalRequest, InitiatedByMainFrame initiatedByMainFrame, bool isRequestFromClientOrUserInput, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomString& downloadAttribute, Element* sourceElement)
+NavigationAction::NavigationAction(const NavigationRequester& requester, const ResourceRequest& originalRequest, InitiatedByMainFrame initiatedByMainFrame, bool isRequestFromClientOrUserInput, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, AtomStringImpl* downloadAttribute, Element* sourceElement)
     : m_requester { requester }
     , m_originalRequest { originalRequest }
     , m_keyStateEventData { keyStateDataForFirstEventWithKeyState(event) }
@@ -125,7 +125,7 @@ NavigationAction::NavigationAction(const NavigationRequester& requester, const R
     setIsRequestFromClientOrUserInput(isRequestFromClientOrUserInput);
 }
 
-NavigationAction::NavigationAction(Document& requester, const ResourceRequest& originalRequest, InitiatedByMainFrame initiatedByMainFrame, bool isRequestFromClientOrUserInput, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, const AtomString& downloadAttribute, Element* sourceElement)
+NavigationAction::NavigationAction(Document& requester, const ResourceRequest& originalRequest, InitiatedByMainFrame initiatedByMainFrame, bool isRequestFromClientOrUserInput, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, AtomStringImpl* downloadAttribute, Element* sourceElement)
     : m_requester { NavigationRequester::from(requester) }
     , m_originalRequest { originalRequest }
     , m_keyStateEventData { keyStateDataForFirstEventWithKeyState(event) }
@@ -139,7 +139,7 @@ NavigationAction::NavigationAction(Document& requester, const ResourceRequest& o
     setIsRequestFromClientOrUserInput(isRequestFromClientOrUserInput);
 }
 
-NavigationAction::NavigationAction(Document& requester, const ResourceRequest& originalRequest, InitiatedByMainFrame initiatedByMainFrame, bool isRequestFromClientOrUserInput, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomString& downloadAttribute, Element* sourceElement)
+NavigationAction::NavigationAction(Document& requester, const ResourceRequest& originalRequest, InitiatedByMainFrame initiatedByMainFrame, bool isRequestFromClientOrUserInput, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, AtomStringImpl* downloadAttribute, Element* sourceElement)
     : NavigationAction(NavigationRequester::from(requester), originalRequest, initiatedByMainFrame, isRequestFromClientOrUserInput, frameLoadType, isFormSubmission, event, shouldOpenExternalURLsPolicy, downloadAttribute, sourceElement)
 { }
 

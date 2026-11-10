@@ -1463,7 +1463,7 @@ void CompositorCoordinator::setUpVisibilityPropagationViews(WebPageProxy& page, 
         auto processID = page.legacyMainFrameProcessID();
         if (processID) {
             auto environmentIdentifier = page.legacyMainFrameProcess().environmentIdentifier();
-            m_visibilityPropagationViewForWebProcess = adoptNS([[_UINonHostingVisibilityPropagationView alloc] initWithFrame:CGRectZero pid:processID environmentIdentifier:environmentIdentifier.createNSString().get()]);
+            m_visibilityPropagationViewForWebProcess = adoptNS([[_UINonHostingVisibilityPropagationView alloc] initWithFrame:CGRectZero pid:processID environmentIdentifier:createNSString(environmentIdentifier).get()]);
             RELEASE_LOG_INFO(XR, "Created visibility propagation view %p from immersive scene to WebContent process with PID=%d", m_visibilityPropagationViewForWebProcess.get(), processID);
             [view addSubview:m_visibilityPropagationViewForWebProcess.get()];
         }

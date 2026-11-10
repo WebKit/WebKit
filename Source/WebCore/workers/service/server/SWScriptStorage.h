@@ -38,20 +38,20 @@ class ScriptBuffer;
 class SWScriptStorage {
     WTF_MAKE_TZONE_ALLOCATED(SWScriptStorage);
 public:
-    explicit SWScriptStorage(const String& directory);
+    explicit SWScriptStorage(StringImpl* directory);
 
     ScriptBuffer store(const ServiceWorkerRegistrationKey&, const URL& scriptURL, const ScriptBuffer&);
     ScriptBuffer retrieve(const ServiceWorkerRegistrationKey&, const URL& scriptURL);
     void clear(const ServiceWorkerRegistrationKey&);
 
 private:
-    String registrationDirectory(const ServiceWorkerRegistrationKey&) const;
-    String scriptPath(const ServiceWorkerRegistrationKey&, const URL& scriptURL) const;
-    String saltPath() const;
-    String sha2Hash(const String&) const;
-    String sha2Hash(const URL&) const;
+    RefPtr<StringImpl> registrationDirectory(const ServiceWorkerRegistrationKey&) const;
+    RefPtr<StringImpl> scriptPath(const ServiceWorkerRegistrationKey&, const URL& scriptURL) const;
+    RefPtr<StringImpl> saltPath() const;
+    RefPtr<StringImpl> sha2Hash(StringImpl*) const;
+    RefPtr<StringImpl> sha2Hash(const URL&) const;
 
-    String m_directory;
+    RefPtr<StringImpl> m_directory;
     FileSystem::Salt m_salt;
 };
 

@@ -158,7 +158,7 @@ public:
     virtual ~HTMLMediaElementClient() = default;
 
     virtual void audioSessionCategoryChanged(AudioSessionCategory, AudioSessionMode, RouteSharingPolicy) { }
-    virtual void routingContextUIDChanged(const String&) { }
+    virtual void routingContextUIDChanged(StringImpl*) { }
 
     virtual void captionTracksChanged() { }
     virtual void captionsEnabledChanged() { }
@@ -225,7 +225,7 @@ public:
 
     bool canSaveMediaData() const;
 
-    bool doesHaveAttribute(const AtomString&, AtomString* value = nullptr) const override;
+    bool doesHaveAttribute(AtomStringImpl*, RefPtr<AtomStringImpl>* value = nullptr) const override;
 
     PlatformLayer* platformLayer() const;
     NODELETE bool isVideoLayerInline();
@@ -272,18 +272,18 @@ public:
     const std::optional<MediaProvider>& srcObject() const LIFETIME_BOUND { return m_mediaProvider; }
     void setSrcObject(std::optional<MediaProvider>&&);
 
-    WEBCORE_EXPORT String crossOrigin() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> crossOrigin() const;
 
 // network state
     using HTMLMediaElementEnums::NetworkState;
     NODELETE WEBCORE_EXPORT NetworkState networkState() const;
 
-    WEBCORE_EXPORT String preload() const;
-    WEBCORE_EXPORT void setPreload(const AtomString&);
+    WEBCORE_EXPORT RefPtr<StringImpl> preload() const;
+    WEBCORE_EXPORT void setPreload(AtomStringImpl*);
 
     Ref<TimeRanges> buffered() const override;
     WEBCORE_EXPORT void load();
-    WEBCORE_EXPORT String canPlayType(const String& mimeType) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> canPlayType(StringImpl* mimeType) const;
 
     void lazyLoadIntersectionCallbackInvoked(bool isIntersecting);
 
@@ -344,8 +344,8 @@ public:
     double maxFastForwardRate() const;
 
 #if ENABLE(MEDIA_STREAM)
-    void setAudioOutputDevice(String&& deviceId, DOMPromiseDeferred<void>&&);
-    String audioOutputHashedDeviceId() const { return m_audioOutputHashedDeviceId; }
+    void setAudioOutputDevice(RefPtr<StringImpl>&& deviceId, DOMPromiseDeferred<void>&&);
+    RefPtr<StringImpl> audioOutputHashedDeviceId() const { return m_audioOutputHashedDeviceId; }
 #endif
 
     using HTMLMediaElementEnums::BufferingPolicy;
@@ -408,7 +408,7 @@ public:
 
     WEBCORE_EXPORT bool shouldForceControlsDisplay() const;
 
-    ExceptionOr<Ref<TextTrack>> addTextTrack(const AtomString& kind, const AtomString& label, const AtomString& language);
+    ExceptionOr<Ref<TextTrack>> addTextTrack(AtomStringImpl* kind, AtomStringImpl* label, AtomStringImpl* language);
     ExceptionOr<void> removeTextTrack(TextTrack&);
 
     AudioTrackList& ensureAudioTracks();
@@ -434,7 +434,7 @@ public:
     void closeCaptionTracksChanged();
     void notifyMediaPlayerOfTextTrackChanges();
 
-    Vector<MediaTime> findCueMatches(const String& target, FindOptions);
+    Vector<MediaTime> findCueMatches(StringImpl* target, FindOptions);
     void clearFindCaptionTrack();
 
     virtual void didAddTextTrack(HTMLTrackElement&);
@@ -501,15 +501,15 @@ public:
     void textTrackReadyStateChanged(TextTrack*);
     void updateTextTrackRepresentationImageIfNeeded();
 #if PLATFORM(IOS_FAMILY)
-    void displayedCaptionsDidChange(Vector<String>&&);
+    void displayedCaptionsDidChange(Vector<RefPtr<StringImpl>>&&);
 #endif
 
     WEBCORE_EXPORT void showCaptionDisplaySettingsPreview();
     WEBCORE_EXPORT void hideCaptionDisplaySettingsPreview();
 
-    WEBCORE_EXPORT bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    WEBCORE_EXPORT bool addEventListener(AtomStringImpl* eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
     using EventTarget::addEventListener;
-    WEBCORE_EXPORT bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) override;
+    WEBCORE_EXPORT bool removeEventListener(AtomStringImpl* eventType, EventListener&, const EventListenerOptions&) override;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void webkitShowPlaybackTargetPicker();
@@ -574,11 +574,11 @@ public:
     void sourceWasAdded(HTMLSourceElement&);
 
     // Media cache management.
-    WEBCORE_EXPORT static void setMediaCacheDirectory(const String&);
-    NODELETE WEBCORE_EXPORT static const String& mediaCacheDirectory();
-    WEBCORE_EXPORT static HashSet<SecurityOriginData> originsInMediaCache(const String&);
-    WEBCORE_EXPORT static void clearMediaCache(const String&, WallTime modifiedSince = { });
-    WEBCORE_EXPORT static void clearMediaCacheForOrigins(const String&, const HashSet<SecurityOriginData>&);
+    WEBCORE_EXPORT static void setMediaCacheDirectory(StringImpl*);
+    NODELETE WEBCORE_EXPORT static const RefPtr<StringImpl>& mediaCacheDirectory();
+    WEBCORE_EXPORT static HashSet<SecurityOriginData> originsInMediaCache(StringImpl*);
+    WEBCORE_EXPORT static void clearMediaCache(StringImpl*, WallTime modifiedSince = { });
+    WEBCORE_EXPORT static void clearMediaCacheForOrigins(StringImpl*, const HashSet<SecurityOriginData>&);
 
     bool isPlaying() const final { return m_playing; }
 
@@ -592,8 +592,8 @@ public:
     using HTMLMediaElementEnums::InvalidURLAction;
     bool isSafeToLoadURL(const URL&, InvalidURLAction, bool shouldLog = true) const;
 
-    NODELETE const String& mediaGroup() const;
-    void setMediaGroup(const String&);
+    NODELETE const RefPtr<StringImpl>& mediaGroup() const;
+    void setMediaGroup(StringImpl*);
 
     NODELETE MediaController* controller() const;
     void setController(RefPtr<MediaController>&&);
@@ -702,8 +702,8 @@ public:
     void applicationDidBecomeActive();
 
     NODELETE MediaUniqueIdentifier mediaUniqueIdentifier() const;
-    String mediaSessionTitle() const;
-    String sourceApplicationIdentifier() const;
+    RefPtr<StringImpl> mediaSessionTitle() const;
+    RefPtr<StringImpl> sourceApplicationIdentifier() const;
 
     WEBCORE_EXPORT void setOverridePreferredDynamicRangeMode(DynamicRangeMode);
     void setPreferredDynamicRangeMode(DynamicRangeMode);
@@ -744,16 +744,16 @@ public:
 
     using SourceType = HTMLMediaElementSourceType;
     std::optional<SourceType> sourceType() const;
-    String localizedSourceType() const;
+    RefPtr<StringImpl> localizedSourceType() const;
 
     LayoutRect contentBoxRect() const { return mediaPlayerContentBoxRect(); }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     void updateSpatialTrackingLabel();
-    void defaultSpatialTrackingLabelChanged(const String&);
+    void defaultSpatialTrackingLabelChanged(StringImpl*);
 
-    String spatialTrackingLabel() const;
-    void setSpatialTrackingLabel(const String&);
+    RefPtr<StringImpl> spatialTrackingLabel() const;
+    void setSpatialTrackingLabel(StringImpl*);
 #endif
 
     void mediaSourceWasDetached();
@@ -802,7 +802,7 @@ protected:
 
     void removeAllEventListeners() final;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void finishParsingChildren() override;
     NODELETE bool isURLAttribute(const Attribute&) const override;
     void willAttachRenderers() override;
@@ -819,13 +819,13 @@ protected:
 
     SecurityOriginData documentSecurityOrigin() const final;
 
-    String audioOutputDeviceId() const final { return m_audioOutputPersistentDeviceId; }
-    String audioOutputDeviceIdOverride() const final { return m_audioOutputPersistentDeviceId; }
+    RefPtr<StringImpl> audioOutputDeviceId() const final { return m_audioOutputPersistentDeviceId; }
+    RefPtr<StringImpl> audioOutputDeviceIdOverride() const final { return m_audioOutputPersistentDeviceId; }
 
     bool mediaControlsDependOnPageScaleFactor() const { return m_mediaControlsDependOnPageScaleFactor; }
     void setMediaControlsDependOnPageScaleFactor(bool);
 
-    void scheduleEvent(const AtomString&);
+    void scheduleEvent(AtomStringImpl*);
     template<typename T> void scheduleEventOn(T& target, Ref<Event>&&);
 
     bool showPosterFlag() const { return m_showPoster; }
@@ -907,13 +907,13 @@ private:
 
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String& keyId) const final;
+    RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(StringImpl* keyId) const final;
     void mediaPlayerKeyNeeded(const SharedBuffer&) final;
-    String mediaPlayerMediaKeysStorageDirectory() const final;
+    RefPtr<StringImpl> mediaPlayerMediaKeysStorageDirectory() const final;
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    void mediaPlayerInitializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&) final;
+    void mediaPlayerInitializationDataEncountered(StringImpl*, RefPtr<ArrayBuffer>&&) final;
     void mediaPlayerWaitingForKeyChanged() final;
 
     void attemptToDecrypt();
@@ -921,7 +921,7 @@ private:
 
     // CDMClient
     void cdmClientAttemptToResumePlaybackIfNecessary() final;
-    void cdmClientUnrequestedInitializationDataReceived(const String&, Ref<SharedBuffer>&&) final;
+    void cdmClientUnrequestedInitializationDataReceived(StringImpl*, Ref<SharedBuffer>&&) final;
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
@@ -935,8 +935,8 @@ private:
     void enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior);
 #endif
 
-    String mediaPlayerReferrer() const override;
-    String mediaPlayerUserAgent() const override;
+    RefPtr<StringImpl> mediaPlayerReferrer() const override;
+    RefPtr<StringImpl> mediaPlayerUserAgent() const override;
 
     bool mediaPlayerIsFullscreen() const override;
     bool mediaPlayerIsFullscreenPermitted() const override;
@@ -948,17 +948,17 @@ private:
     CachedResourceLoader* mediaPlayerCachedResourceLoader() const override;
     Ref<PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() override;
     bool mediaPlayerShouldUsePersistentCache() const override;
-    String mediaPlayerMediaCacheDirectory() const override;
+    RefPtr<StringImpl> mediaPlayerMediaCacheDirectory() const override;
 
     void mediaPlayerActiveSourceBuffersChanged() override;
 
-    String mediaPlayerSourceApplicationIdentifier() const override { return sourceApplicationIdentifier(); }
-    Vector<String> mediaPlayerPreferredAudioCharacteristics() const override;
+    RefPtr<StringImpl> mediaPlayerSourceApplicationIdentifier() const override { return sourceApplicationIdentifier(); }
+    Vector<RefPtr<StringImpl>> mediaPlayerPreferredAudioCharacteristics() const override;
 
-    String mediaPlayerElementId() const override { return m_id; }
+    RefPtr<StringImpl> mediaPlayerElementId() const override { return m_id; }
 
 #if PLATFORM(IOS_FAMILY)
-    String mediaPlayerNetworkInterfaceName() const override;
+    RefPtr<StringImpl> mediaPlayerNetworkInterfaceName() const override;
     void mediaPlayerGetRawCookies(const URL&, MediaPlayerClient::GetRawCookiesCallback&&) const final;
 #endif
 
@@ -970,8 +970,8 @@ private:
     bool mediaPlayerShouldDisableSleep() const final { return shouldDisableSleep() == SleepType::Display; }
     bool mediaPlayerShouldCheckHardwareSupport() const final;
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const final;
-    const std::optional<Vector<String>>& allowedMediaContainerTypes() const final;
-    const std::optional<Vector<String>>& allowedMediaCodecTypes() const final;
+    const std::optional<Vector<RefPtr<StringImpl>>>& allowedMediaContainerTypes() const final;
+    const std::optional<Vector<RefPtr<StringImpl>>>& allowedMediaCodecTypes() const final;
     const std::optional<Vector<FourCC>>& allowedMediaVideoCodecIDs() const final;
     const std::optional<Vector<FourCC>>& allowedMediaAudioCodecIDs() const final;
     const std::optional<Vector<FourCC>>& allowedMediaCaptionFormatTypes() const final;
@@ -1282,8 +1282,8 @@ private:
     TaskCancellationGroup m_updateAcceleratedRenderingStateTaskCancellationGroup;
 #if PLATFORM(IOS_FAMILY)
     TaskCancellationGroup m_displayedCaptionsTaskCancellationGroup;
-    Vector<String> m_pendingDisplayedCaptions;
-    Vector<String> m_lastDisplayedCaptions;
+    Vector<RefPtr<StringImpl>> m_pendingDisplayedCaptions;
+    Vector<RefPtr<StringImpl>> m_lastDisplayedCaptions;
 #endif
     RefPtr<TimeRanges> m_playedTimeRanges;
     TaskCancellationGroup m_asyncEventsCancellationGroup;
@@ -1378,7 +1378,7 @@ private:
 
     MediaTime m_fragmentStartTime;
     MediaTime m_fragmentEndTime;
-    Vector<String> m_fragmentTrackIdentifiers;
+    Vector<RefPtr<StringImpl>> m_fragmentTrackIdentifiers;
 
     using PendingActionFlags = unsigned;
     PendingActionFlags m_pendingActionFlags { 0 };
@@ -1448,14 +1448,14 @@ private:
     IntRect m_textTrackRepresentationBounds;
 
     enum class ControlsState : uint8_t { None, Initializing, Ready, PartiallyDeinitialized };
-    friend String convertEnumerationToString(HTMLMediaElement::ControlsState enumerationValue);
+    friend RefPtr<StringImpl> convertEnumerationToString(HTMLMediaElement::ControlsState enumerationValue);
     ControlsState m_controlsState { ControlsState::None };
 
     AutoplayEventPlaybackState m_autoplayEventPlaybackState { AutoplayEventPlaybackState::None };
     bool m_isDispatchingAutoplayPlayPauseQuirkEvents { false };
 
-    String m_subtitleTrackLanguage;
-    std::optional<String> m_languageOfPrimaryAudioTrack;
+    RefPtr<StringImpl> m_subtitleTrackLanguage;
+    std::optional<RefPtr<StringImpl>> m_languageOfPrimaryAudioTrack;
     MediaTime m_lastTextTrackUpdateTime { -1, 1 };
 
     std::optional<CaptionUserPreferences::CaptionDisplayMode> m_captionDisplayMode;
@@ -1483,7 +1483,7 @@ private:
     WeakPtr<MediaElementAudioSourceNode, WeakPtrImplWithEventTargetData> m_audioSourceNode;
 #endif
 
-    String m_mediaGroup;
+    RefPtr<StringImpl> m_mediaGroup;
     friend class MediaController;
     RefPtr<MediaController> m_mediaController;
 
@@ -1536,11 +1536,11 @@ private:
     bool m_playingOnSecondScreen { false };
     bool m_removedBehaviorRestrictionsAfterFirstUserGesture { false };
 
-    String m_audioOutputPersistentDeviceId;
+    RefPtr<StringImpl> m_audioOutputPersistentDeviceId;
 #if ENABLE(MEDIA_STREAM)
-    String m_audioOutputHashedDeviceId;
+    RefPtr<StringImpl> m_audioOutputHashedDeviceId;
 #endif
-    String m_id;
+    RefPtr<StringImpl> m_id;
 
 #if USE(AUDIO_SESSION)
     AudioSessionCategory m_categoryAtMostRecentPlayback;
@@ -1566,9 +1566,9 @@ private:
     FloatSize m_videoLayerSize { };
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    using DefaultSpatialTrackingLabelChangedObserver = WTF::Observer<void(String&&)>;
+    using DefaultSpatialTrackingLabelChangedObserver = WTF::Observer<void(RefPtr<StringImpl>&&)>;
     const Ref<DefaultSpatialTrackingLabelChangedObserver> m_defaultSpatialTrackingLabelChangedObserver;
-    String m_spatialTrackingLabel;
+    RefPtr<StringImpl> m_spatialTrackingLabel;
 #endif
 
 #if !RELEASE_LOG_DISABLED
@@ -1605,8 +1605,8 @@ private:
 #endif
 };
 
-String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);
-String convertEnumerationToString(HTMLMediaElement::SpeechSynthesisState);
+RefPtr<StringImpl> convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);
+RefPtr<StringImpl> convertEnumerationToString(HTMLMediaElement::SpeechSynthesisState);
 
 inline HTMLMediaElement* MediaElementSession::element() const
 {
@@ -1618,11 +1618,11 @@ inline HTMLMediaElement* MediaElementSession::element() const
 namespace WTF {
 
 template<> struct LogArgument<WebCore::HTMLMediaElement::AutoplayEventPlaybackState> {
-    static String toString(WebCore::HTMLMediaElement::AutoplayEventPlaybackState reason) { return convertEnumerationToString(reason); }
+    static RefPtr<StringImpl> toString(WebCore::HTMLMediaElement::AutoplayEventPlaybackState reason) { return convertEnumerationToString(reason); }
 };
 
 template<> struct LogArgument<WebCore::HTMLMediaElement::SpeechSynthesisState> {
-    static String toString(WebCore::HTMLMediaElement::SpeechSynthesisState state) { return convertEnumerationToString(state); }
+    static RefPtr<StringImpl> toString(WebCore::HTMLMediaElement::SpeechSynthesisState state) { return convertEnumerationToString(state); }
 };
 
 } // namespace WTF

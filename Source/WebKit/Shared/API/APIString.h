@@ -38,14 +38,14 @@ public:
         return adoptRef(*new String);
     }
 
-    static Ref<String> create(WTF::String&& string)
+    static Ref<String> create(RefPtr<StringImpl>&& string)
     {
-        return adoptRef(*new String(string.isNull() ? WTF::String(StringImpl::empty()) : WTF::move(string).isolatedCopy()));
+        return adoptRef(*new String(!string ? RefPtr<StringImpl>(StringImpl::empty()) : isolatedCopy(WTF::move(string))));
     }
 
-    static Ref<String> create(const WTF::String& string)
+    static Ref<String> create(StringImpl* string)
     {
-        return create(string.isolatedCopy());
+        return create(isolatedCopy(string));
     }
 
     virtual ~String()
@@ -53,7 +53,7 @@ public:
     }
 
     WTF::StringView stringView() const { return m_string; }
-    WTF::String string() const { return m_string.isolatedCopy(); }
+    RefPtr<StringImpl> string() const { return isolatedCopy(m_string); }
 
 private:
     String()
@@ -61,14 +61,14 @@ private:
     {
     }
 
-    String(WTF::String&& string)
+    String(RefPtr<StringImpl>&& string)
         : m_string(WTF::move(string))
     {
-        ASSERT(!m_string.isNull());
-        ASSERT(m_string.isSafeToSendToAnotherThread());
+        ASSERT(m_string);
+        ASSERT(isSafeToSendToAnotherThread(m_string));
     }
 
-    const WTF::String m_string;
+    const RefPtr<StringImpl> m_string;
 };
 
 } // namespace WebKit

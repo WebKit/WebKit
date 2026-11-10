@@ -84,71 +84,71 @@ public:
 class TestPasteboardStrategy final : public PasteboardStrategy {
 public:
 #if PLATFORM(IOS_FAMILY)
-    void writeToPasteboard(const PasteboardURL&, const String&, const PasteboardContext*) final { }
-    void writeToPasteboard(const PasteboardWebContent&, const String&, const PasteboardContext*) final { }
-    void writeToPasteboard(const PasteboardImage&, const String&, const PasteboardContext*) final { }
-    void writeToPasteboard(const String&, const String&, const String&, const PasteboardContext*) final { }
-    void updateSupportedTypeIdentifiers(const Vector<String>&, const String&, const PasteboardContext*) final { }
+    void writeToPasteboard(const PasteboardURL&, StringImpl*, const PasteboardContext*) final { }
+    void writeToPasteboard(const PasteboardWebContent&, StringImpl*, const PasteboardContext*) final { }
+    void writeToPasteboard(const PasteboardImage&, StringImpl*, const PasteboardContext*) final { }
+    void writeToPasteboard(StringImpl*, StringImpl*, StringImpl*, const PasteboardContext*) final { }
+    void updateSupportedTypeIdentifiers(const Vector<RefPtr<StringImpl>>&, StringImpl*, const PasteboardContext*) final { }
 #endif
 #if PLATFORM(COCOA)
-    void getTypes(Vector<String>&, const String&, const PasteboardContext*) final { }
-    RefPtr<SharedBuffer> bufferForType(const String&, const String&, const PasteboardContext*) final { return nullptr; }
-    void getPathnamesForType(Vector<String>&, const String&, const String&, const PasteboardContext*) final { }
-    String stringForType(const String&, const String&, const PasteboardContext*) final { return { }; }
-    Vector<String> allStringsForType(const String&, const String&, const PasteboardContext*) final { return { }; }
-    int64_t changeCount(const String&, const PasteboardContext*) final { return 0; }
-    Color color(const String&, const PasteboardContext*) final { return { }; }
-    URL url(const String&, const PasteboardContext*) final { return { }; }
-    int getNumberOfFiles(const String&, const PasteboardContext*) final { return 0; }
-    int64_t addTypes(const Vector<String>&, const String&, const PasteboardContext*) final { return 0; }
-    int64_t setTypes(const Vector<String>&, const String&, const PasteboardContext*) final { return 0; }
-    int64_t setBufferForType(SharedBuffer*, const String&, const String&, const PasteboardContext*) final { return 0; }
-    int64_t setURL(const PasteboardURL&, const String&, const PasteboardContext*) final { return 0; }
-    int64_t setColor(const Color&, const String&, const PasteboardContext*) final { return 0; }
-    int64_t setStringForType(const String&, const String&, const String&, const PasteboardContext*) final { return 0; }
-    int64_t writeWebArchive(LegacyWebArchive&, const String&) final { return 0; }
-    bool containsURLStringSuitableForLoading(const String&, const PasteboardContext*) final { return false; }
-    String urlStringSuitableForLoading(const String&, String&, const PasteboardContext*) final { return { }; }
+    void getTypes(Vector<RefPtr<StringImpl>>&, StringImpl*, const PasteboardContext*) final { }
+    RefPtr<SharedBuffer> bufferForType(StringImpl*, StringImpl*, const PasteboardContext*) final { return nullptr; }
+    void getPathnamesForType(Vector<RefPtr<StringImpl>>&, StringImpl*, StringImpl*, const PasteboardContext*) final { }
+    RefPtr<StringImpl> stringForType(StringImpl*, StringImpl*, const PasteboardContext*) final { return { }; }
+    Vector<RefPtr<StringImpl>> allStringsForType(StringImpl*, StringImpl*, const PasteboardContext*) final { return { }; }
+    int64_t changeCount(StringImpl*, const PasteboardContext*) final { return 0; }
+    Color color(StringImpl*, const PasteboardContext*) final { return { }; }
+    URL url(StringImpl*, const PasteboardContext*) final { return { }; }
+    int getNumberOfFiles(StringImpl*, const PasteboardContext*) final { return 0; }
+    int64_t addTypes(const Vector<RefPtr<StringImpl>>&, StringImpl*, const PasteboardContext*) final { return 0; }
+    int64_t setTypes(const Vector<RefPtr<StringImpl>>&, StringImpl*, const PasteboardContext*) final { return 0; }
+    int64_t setBufferForType(SharedBuffer*, StringImpl*, StringImpl*, const PasteboardContext*) final { return 0; }
+    int64_t setURL(const PasteboardURL&, StringImpl*, const PasteboardContext*) final { return 0; }
+    int64_t setColor(const Color&, StringImpl*, const PasteboardContext*) final { return 0; }
+    int64_t setStringForType(StringImpl*, StringImpl*, StringImpl*, const PasteboardContext*) final { return 0; }
+    int64_t writeWebArchive(LegacyWebArchive&, StringImpl*) final { return 0; }
+    bool containsURLStringSuitableForLoading(StringImpl*, const PasteboardContext*) final { return false; }
+    RefPtr<StringImpl> urlStringSuitableForLoading(StringImpl*, RefPtr<StringImpl>&, const PasteboardContext*) final { return { }; }
 #endif
-    String readStringFromPasteboard(size_t, const String&, const String&, const PasteboardContext*) final { return { }; }
-    RefPtr<SharedBuffer> readBufferFromPasteboard(std::optional<size_t>, const String&, const String&, const PasteboardContext*) final { return nullptr; }
-    URL readURLFromPasteboard(size_t, const String&, String&, const PasteboardContext*) final { return { }; }
-    std::optional<PasteboardItemInfo> informationForItemAtIndex(size_t, const String&, int64_t, const PasteboardContext*) final { return std::nullopt; }
-    std::optional<Vector<PasteboardItemInfo>> allPasteboardItemInfo(const String&, int64_t, const PasteboardContext*) final { return std::nullopt; }
-    int getPasteboardItemsCount(const String&, const PasteboardContext*) final { return 0; }
-    Vector<String> typesSafeForDOMToReadAndWrite(const String&, const String&, const PasteboardContext*) final { return { }; }
-    int64_t writeCustomData(const Vector<PasteboardCustomData>&, const String&, const PasteboardContext*) final { return 0; }
-    bool containsStringSafeForDOMToReadForType(const String&, const String&, const PasteboardContext*) final { return false; }
+    RefPtr<StringImpl> readStringFromPasteboard(size_t, StringImpl*, StringImpl*, const PasteboardContext*) final { return { }; }
+    RefPtr<SharedBuffer> readBufferFromPasteboard(std::optional<size_t>, StringImpl*, StringImpl*, const PasteboardContext*) final { return nullptr; }
+    URL readURLFromPasteboard(size_t, StringImpl*, RefPtr<StringImpl>&, const PasteboardContext*) final { return { }; }
+    std::optional<PasteboardItemInfo> informationForItemAtIndex(size_t, StringImpl*, int64_t, const PasteboardContext*) final { return std::nullopt; }
+    std::optional<Vector<PasteboardItemInfo>> allPasteboardItemInfo(StringImpl*, int64_t, const PasteboardContext*) final { return std::nullopt; }
+    int getPasteboardItemsCount(StringImpl*, const PasteboardContext*) final { return 0; }
+    Vector<RefPtr<StringImpl>> typesSafeForDOMToReadAndWrite(StringImpl*, StringImpl*, const PasteboardContext*) final { return { }; }
+    int64_t writeCustomData(const Vector<PasteboardCustomData>&, StringImpl*, const PasteboardContext*) final { return 0; }
+    bool containsStringSafeForDOMToReadForType(StringImpl*, StringImpl*, const PasteboardContext*) final { return false; }
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    Vector<String> types(const String&) final { return { }; }
-    String readTextFromClipboard(const String&, const String&) final { return { }; }
-    Vector<String> readFilePathsFromClipboard(const String&) final { return { }; }
-    RefPtr<SharedBuffer> readBufferFromClipboard(const String&, const String&) final { return nullptr; }
-    void writeToClipboard(const String&, SelectionData&&) final { }
-    void clearClipboard(const String&) final { }
+    Vector<RefPtr<StringImpl>> types(StringImpl*) final { return { }; }
+    RefPtr<StringImpl> readTextFromClipboard(StringImpl*, StringImpl*) final { return { }; }
+    Vector<RefPtr<StringImpl>> readFilePathsFromClipboard(StringImpl*) final { return { }; }
+    RefPtr<SharedBuffer> readBufferFromClipboard(StringImpl*, StringImpl*) final { return nullptr; }
+    void writeToClipboard(StringImpl*, SelectionData&&) final { }
+    void clearClipboard(StringImpl*) final { }
 #elif USE(LIBWPE)
-    void getTypes(Vector<String>&) final { }
+    void getTypes(Vector<RefPtr<StringImpl>>&) final { }
     void writeToPasteboard(const PasteboardWebContent&) final { }
-    void writeToPasteboard(const String&, const String&) final { }
+    void writeToPasteboard(StringImpl*, StringImpl*) final { }
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
-    int64_t changeCount(const String&) final { return 0; }
+    int64_t changeCount(StringImpl*) final { return 0; }
 #endif
 };
 
 class TestBlobRegistry final : public BlobRegistry {
 public:
-    void registerInternalFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String&, const String&) final { }
-    void registerInternalBlobURL(const URL&, Vector<BlobPart>&&, const String&) final { }
+    void registerInternalFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, StringImpl*, StringImpl*) final { }
+    void registerInternalBlobURL(const URL&, Vector<BlobPart>&&, StringImpl*) final { }
     void registerBlobURL(const URL&, const URL&, const PolicyContainer&, const std::optional<SecurityOriginData>&) final { }
-    void registerInternalBlobURLOptionallyFileBacked(const URL&, const URL&, RefPtr<BlobDataFileReference>&&, const String&) final { }
-    void registerInternalBlobURLForSlice(const URL&, const URL&, long long, long long, const String&) final { }
+    void registerInternalBlobURLOptionallyFileBacked(const URL&, const URL&, RefPtr<BlobDataFileReference>&&, StringImpl*) final { }
+    void registerInternalBlobURLForSlice(const URL&, const URL&, long long, long long, StringImpl*) final { }
     void unregisterBlobURL(const URL&, const std::optional<SecurityOriginData>&) final { }
     void registerBlobURLHandle(const URL&, const std::optional<SecurityOriginData>&) final { }
     void unregisterBlobURLHandle(const URL&, const std::optional<SecurityOriginData>&) final { }
-    String blobType(const URL&) final { return emptyString(); }
+    RefPtr<StringImpl> blobType(const URL&) final { return emptyString(); }
     unsigned long long blobSize(const URL&) final { return 0; }
-    void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>&, CompletionHandler<void(Vector<String>&&)>&&) final { }
+    void writeBlobsToTemporaryFilesForIndexedDB(const Vector<RefPtr<StringImpl>>&, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&) final { }
 };
 
 class TestMediaStrategy final : public MediaStrategy {

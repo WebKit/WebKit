@@ -43,9 +43,9 @@ public:
     NODELETE WEBCORE_EXPORT IDBValue();
     IDBValue(const SerializedScriptValue&);
     NODELETE WEBCORE_EXPORT IDBValue(const ThreadSafeDataBuffer&);
-    IDBValue(const SerializedScriptValue&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths);
-    WEBCORE_EXPORT IDBValue(const ThreadSafeDataBuffer&, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths, Vector<FileSystemHandleGlobalIdentifier>&& fileSystemHandleGlobalIdentifiers = { });
-    IDBValue(const ThreadSafeDataBuffer&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, const Vector<FileSystemHandleGlobalIdentifier>& fileSystemHandleGlobalIdentifiers = { });
+    IDBValue(const SerializedScriptValue&, const Vector<RefPtr<StringImpl>>& blobURLs, const Vector<RefPtr<StringImpl>>& blobFilePaths);
+    WEBCORE_EXPORT IDBValue(const ThreadSafeDataBuffer&, Vector<RefPtr<StringImpl>>&& blobURLs, Vector<RefPtr<StringImpl>>&& blobFilePaths, Vector<FileSystemHandleGlobalIdentifier>&& fileSystemHandleGlobalIdentifiers = { });
+    IDBValue(const ThreadSafeDataBuffer&, const Vector<RefPtr<StringImpl>>& blobURLs, const Vector<RefPtr<StringImpl>>& blobFilePaths, const Vector<FileSystemHandleGlobalIdentifier>& fileSystemHandleGlobalIdentifiers = { });
 
     WEBCORE_EXPORT IDBValue(const IDBValue&);
     WEBCORE_EXPORT IDBValue(IDBValue&&);
@@ -57,8 +57,8 @@ public:
     WEBCORE_EXPORT IDBValue isolatedCopy() const;
 
     const ThreadSafeDataBuffer& data() const LIFETIME_BOUND { return m_data; }
-    const Vector<String>& blobURLs() const LIFETIME_BOUND { return m_blobURLs; }
-    const Vector<String>& blobFilePaths() const LIFETIME_BOUND { return m_blobFilePaths; }
+    const Vector<RefPtr<StringImpl>>& blobURLs() const LIFETIME_BOUND { return m_blobURLs; }
+    const Vector<RefPtr<StringImpl>>& blobFilePaths() const LIFETIME_BOUND { return m_blobFilePaths; }
     const Vector<FileSystemHandleGlobalIdentifier>& fileSystemHandleGlobalIdentifiers() const LIFETIME_BOUND { return m_fileSystemHandleGlobalIdentifiers; }
 
     NODELETE WEBCORE_EXPORT const Vector<FileSystemHandleRecord>& fileSystemHandleRecords() const LIFETIME_BOUND;
@@ -69,8 +69,8 @@ public:
     NODELETE size_t size() const;
 private:
     ThreadSafeDataBuffer m_data;
-    Vector<String> m_blobURLs;
-    Vector<String> m_blobFilePaths;
+    Vector<RefPtr<StringImpl>> m_blobURLs;
+    Vector<RefPtr<StringImpl>> m_blobFilePaths;
     Vector<FileSystemHandleGlobalIdentifier> m_fileSystemHandleGlobalIdentifiers;
     mutable Vector<FileSystemHandleRecord> m_fileSystemHandleRecords;
     mutable RefPtr<FileSystemHandleStorageKeepAlive> m_storageKeepAlive;

@@ -111,10 +111,10 @@ std::optional<ISO8601::ExactTime> bigIntValueToExactTime(JSGlobalObject* globalO
     ISO8601::ExactTime exactTime { total * (bigint->sign() ? -1 : 1) };
 
     if (bigIntTooLong || !exactTime.isValid()) {
-        String argAsString = bigint->toString(globalObject, 10);
+        RefPtr<StringImpl> argAsString = bigint->toString(globalObject, 10);
         if (scope.exception()) {
             TRY_CLEAR_EXCEPTION(scope, std::nullopt);
-            argAsString = "The given number of"_s;
+            argAsString = "The given number of"_si;
         }
         throwRangeError(globalObject, scope, makeString(ellipsizeAt(100, argAsString), " epoch nanoseconds is outside of the supported range for "_s, typeName));
         return std::nullopt;
@@ -148,7 +148,7 @@ TemporalInstant* TemporalInstant::toInstant(JSGlobalObject* globalObject, JSValu
         throwTypeError(globalObject, scope, "can only convert to Instant from object or string values"_s);
         return nullptr;
     }
-    String string = asString(itemValue)->value(globalObject);
+    RefPtr<StringImpl> string = asString(itemValue)->value(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     // Step 3: Let parsed be ? ParseISODateTime(item, « TemporalInstantString »).

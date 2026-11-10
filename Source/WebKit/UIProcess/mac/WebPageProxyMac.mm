@@ -160,12 +160,12 @@ void WebPageProxy::platformInitialize()
     setShouldUseImplicitRubberBandControl(clientExpectsLegacyImplicitRubberBandControl);
 }
 
-String WebPageProxy::userAgentForURL(const URL&)
+RefPtr<StringImpl> WebPageProxy::userAgentForURL(const URL&)
 {
     return userAgent();
 }
 
-String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
+RefPtr<StringImpl> WebPageProxy::standardUserAgent(StringImpl* applicationNameForUserAgent)
 {
     return standardUserAgentWithApplicationName(applicationNameForUserAgent);
 }
@@ -176,10 +176,10 @@ void WebPageProxy::getIsSpeaking(CompletionHandler<void(bool)>&& completionHandl
     completionHandler([NSApp isSpeaking]);
 }
 
-void WebPageProxy::speak(const String& string)
+void WebPageProxy::speak(StringImpl* string)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    [NSApp speakString:string.createNSString().get()];
+    [NSApp speakString:createNSString(string).get()];
 }
 
 void WebPageProxy::stopSpeaking()
@@ -192,14 +192,14 @@ void WebPageProxy::stopSpeaking()
 #pragma clang diagnostic pop
 }
 
-void WebPageProxy::searchTheWeb(const String& string)
+void WebPageProxy::searchTheWeb(StringImpl* string)
 {
     RetainPtr pasteboard = [NSPasteboard pasteboardWithUniqueName];
     [pasteboard clearContents];
     if (sessionID().isEphemeral())
         [pasteboard _setExpirationDate:[NSDate dateWithTimeIntervalSinceNow:pasteboardExpirationDelay.seconds()]];
     [pasteboard addTypes:@[legacyStringPasteboardTypeSingleton()] owner:nil];
-    [pasteboard setString:string.createNSString().get() forType:legacyStringPasteboardTypeSingleton()];
+    [pasteboard setString:createNSString(string).get() forType:legacyStringPasteboardTypeSingleton()];
 
     NSPerformService(@"Search With %WebSearchProvider@", pasteboard.get());
 }
@@ -273,7 +273,7 @@ void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange&
 
 static constexpr auto timeoutForPasteboardSyncIPC = 5_s;
 
-String WebPageProxy::stringSelectionForPasteboard()
+RefPtr<StringImpl> WebPageProxy::stringSelectionForPasteboard()
 {
     if (!hasRunningProcess())
         return { };
@@ -282,11 +282,11 @@ String WebPageProxy::stringSelectionForPasteboard()
         return { };
 
     auto sendResult = sendSyncToFocusedOrMainFrameProcess(Messages::WebPage::GetStringSelectionForPasteboard(), timeoutForPasteboardSyncIPC);
-    auto [value] = sendResult.takeReplyOr(String { });
+    auto [value] = sendResult.takeReplyOr(nullString());
     return value;
 }
 
-RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const String& pasteboardType)
+RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(StringImpl* pasteboardType)
 {
     if (!hasRunningProcess())
         return nullptr;
@@ -299,7 +299,7 @@ RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const Str
     return buffer;
 }
 
-bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
+bool WebPageProxy::readSelectionFromPasteboard(StringImpl* pasteboardName)
 {
     if (!hasRunningProcess())
         return false;
@@ -318,13 +318,13 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
 
 #if ENABLE(DRAG_SUPPORT)
 
-void WebPageProxy::setPromisedDataForImage(IPC::Connection& connection, const String& pasteboardName, SharedMemory::Handle&& imageHandle, const String& filename, const String& extension,
-    const String& title, const String& url, const String& visibleURL, SharedMemory::Handle&& archiveHandle, const String& originIdentifier)
+void WebPageProxy::setPromisedDataForImage(IPC::Connection& connection, StringImpl* pasteboardName, SharedMemory::Handle&& imageHandle, StringImpl* filename, StringImpl* extension,
+    StringImpl* title, StringImpl* url, StringImpl* visibleURL, SharedMemory::Handle&& archiveHandle, StringImpl* originIdentifier)
 {
     Ref process = WebProcessProxy::fromConnection(connection);
     MESSAGE_CHECK_URL(url);
     MESSAGE_CHECK_URL(visibleURL);
-    MESSAGE_CHECK(extension == FileSystem::lastComponentOfPathIgnoringTrailingSlash(extension), connection);
+    MESSAGE_CHECK(equal(extension, FileSystem::lastComponentOfPathIgnoringTrailingSlash(extension)), connection);
 
     auto sharedMemoryImage = SharedMemory::map(WTF::move(imageHandle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryImage)
@@ -413,7 +413,7 @@ void WebPageProxy::registerUIProcessAccessibilityTokens(WebCore::AccessibilityRe
     protect(legacyMainFrameProcess())->send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::executeSavedCommandBySelector(IPC::Connection& connection, const String& selector, CompletionHandler<void(bool)>&& completionHandler)
+void WebPageProxy::executeSavedCommandBySelector(IPC::Connection& connection, StringImpl* selector, CompletionHandler<void(bool)>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(isValidKeypressCommandName(selector), connection, completionHandler(false));
 
@@ -643,7 +643,7 @@ static NSString *temporaryPDFDirectoryPath()
     return path.get().get();
 }
 
-static RetainPtr<NSString> pathToPDFOnDisk(const String& suggestedFilename)
+static RetainPtr<NSString> pathToPDFOnDisk(StringImpl* suggestedFilename)
 {
     RetainPtr pdfDirectoryPath = temporaryPDFDirectoryPath();
     if (!pdfDirectoryPath) {
@@ -651,18 +651,18 @@ static RetainPtr<NSString> pathToPDFOnDisk(const String& suggestedFilename)
         return nil;
     }
 
-    RetainPtr path = [pdfDirectoryPath stringByAppendingPathComponent:suggestedFilename.createNSString().get()];
+    RetainPtr path = [pdfDirectoryPath stringByAppendingPathComponent:createNSString(suggestedFilename).get()];
 
     RetainPtr fileManager = [NSFileManager defaultManager];
     if ([fileManager fileExistsAtPath:path.get()]) {
-        auto [fileHandle, temporaryFilePath] = FileSystem::createTemporaryFileInDirectory(pdfDirectoryPath.get(), makeString('-', suggestedFilename));
+        auto [fileHandle, temporaryFilePath] = FileSystem::createTemporaryFileInDirectory(StringImpl::create(pdfDirectoryPath.get()).get(), makeString('-', suggestedFilename));
         if (!fileHandle) {
-            SAFE_WTFLOGALWAYS("Cannot create PDF file in the temporary directory (%s).", suggestedFilename.utf8());
+            SAFE_WTFLOGALWAYS("Cannot create PDF file in the temporary directory (%s).", utf8(suggestedFilename));
             return nil;
         }
 
         fileHandle = { };
-        path = temporaryFilePath.createNSString();
+        path = createNSString(temporaryFilePath);
     }
 
     // Reject any path that resolves outside the temporary PDF directory.
@@ -672,7 +672,7 @@ static RetainPtr<NSString> pathToPDFOnDisk(const String& suggestedFilename)
     return path;
 }
 
-void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, FrameInfoData&& frameInfo, std::span<const uint8_t> data)
+void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(StringImpl* suggestedFilename, FrameInfoData&& frameInfo, std::span<const uint8_t> data)
 {
     if (data.empty()) {
         WTFLogAlways("Cannot save empty PDF file to the temporary directory.");
@@ -681,17 +681,17 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
 
     // Encoded path separator should get stripped rather than decoded into the assembled path after sanitisation.
     // Otherwise, any encoded slash produces a path traversal on post-join decodes. (rdar://174079512)
-    RetainPtr nsSuggestedFilename = suggestedFilename.createNSString();
+    RetainPtr nsSuggestedFilename = createNSString(suggestedFilename);
     if (RetainPtr decoded = [nsSuggestedFilename stringByRemovingPercentEncoding])
         nsSuggestedFilename = WTF::move(decoded);
 
-    auto sanitizedFilename = ResourceResponseBase::sanitizeSuggestedFilename(nsSuggestedFilename.get());
-    if (!sanitizedFilename.endsWithIgnoringASCIICase(".pdf"_s)) {
+    auto sanitizedFilename = ResourceResponseBase::sanitizeSuggestedFilename(StringImpl::create(nsSuggestedFilename.get()).get());
+    if (!endsWithIgnoringASCIICase(sanitizedFilename, ".pdf"_s)) {
         WTFLogAlways("Cannot save file without .pdf extension to the temporary directory.");
         return;
     }
 
-    if (sanitizedFilename != FileSystem::lastComponentOfPathIgnoringTrailingSlash(sanitizedFilename)) {
+    if (!equal(sanitizedFilename, FileSystem::lastComponentOfPathIgnoringTrailingSlash(sanitizedFilename))) {
         RELEASE_LOG(PDF, "Cannot save PDF whose sanitized filename is not a single path component.");
         return;
     }
@@ -706,13 +706,13 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
     RetainPtr nsData = toNSDataNoCopy(data, FreeWhenDone::No);
 
     if (![[NSFileManager defaultManager] createFileAtPath:nsPath.get() contents:nsData.get() attributes:fileAttributes.get()]) {
-        SAFE_WTFLOGALWAYS("Cannot create PDF file in the temporary directory (%s).", sanitizedFilename.utf8());
+        SAFE_WTFLOGALWAYS("Cannot create PDF file in the temporary directory (%s).", utf8(sanitizedFilename));
         return;
     }
     auto originatingURLString = frameInfo.request.url().string();
-    FileSystem::setMetadataURL(nsPath.get(), originatingURLString);
+    FileSystem::setMetadataURL(StringImpl::create(nsPath.get()).get(), originatingURLString);
 
-    auto pdfFileURL = URL::fileURLWithFileSystemPath(String(nsPath.get()));
+    auto pdfFileURL = URL::fileURLWithFileSystemPath(StringImpl::create(nsPath.get()).get());
     m_uiClient->confirmPDFOpening(*this, pdfFileURL, WTF::move(frameInfo), [pdfFileURL] (bool allowed) {
         if (!allowed)
             return;
@@ -760,15 +760,15 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
             RetainPtr defaultPDFViewerPath = [[[NSWorkspace sharedWorkspace] URLForApplicationToOpenContentType:UTTypePDF] path];
             RetainPtr defaultPDFViewerName = [[NSFileManager defaultManager] displayNameAtPath:defaultPDFViewerPath.get()];
 
-            String itemTitle = contextMenuItemPDFOpenWithDefaultViewer(defaultPDFViewerName.get());
-            [nsItem setTitle:itemTitle.createNSString().get()];
+            RefPtr<StringImpl> itemTitle = contextMenuItemPDFOpenWithDefaultViewer(StringImpl::create(defaultPDFViewerName.get()).get());
+            [nsItem setTitle:createNSString(itemTitle).get()];
 #if ENABLE(CONTEXT_MENU_IMAGES_ON_MAC)
             RetainPtr icon = [[NSWorkspace sharedWorkspace] iconForFile:defaultPDFViewerPath.get()];
             [icon setSize:NSMakeSize(16.f, 16.f)];
             [nsItem _setActionImage:icon.get()];
 #endif
         } else
-            [nsItem setTitle:item.title.createNSString().get()];
+            [nsItem setTitle:createNSString(item.title).get()];
 
         [nsItem setEnabled:item.enabled == ContextMenuItemEnablement::Enabled];
         [nsItem setState:item.state];
@@ -818,7 +818,7 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
 #endif
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-void WebPageProxy::showTelephoneNumberMenu(const String& telephoneNumber, const WebCore::IntPoint& point, const WebCore::IntRect& rect)
+void WebPageProxy::showTelephoneNumberMenu(StringImpl* telephoneNumber, const WebCore::IntPoint& point, const WebCore::IntRect& rect)
 {
     RefPtr pageClient = this->pageClient();
     if (!pageClient)
@@ -910,7 +910,7 @@ RetainPtr<NSEvent> WebPageProxy::createSyntheticEventForContextMenu(FloatPoint l
 void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData& item, std::optional<FrameIdentifier> frameID, CompletionHandler<void()>&& completionHandler)
 {
     if (item.action() == ContextMenuItemTagPaste)
-        grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral, WTF::move(completionHandler), frameID);
+        grantAccessToCurrentPasteboardData(StringImpl::create(NSPasteboardNameGeneral).get(), WTF::move(completionHandler), frameID);
     else
         completionHandler();
 }
@@ -921,9 +921,9 @@ std::optional<IPC::AsyncReplyID> WebPageProxy::willPerformPasteCommand(DOMPasteA
 {
     switch (pasteAccessCategory) {
     case DOMPasteAccessCategory::General:
-        return grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral, WTF::move(completionHandler), frameID);
+        return grantAccessToCurrentPasteboardData(StringImpl::create(NSPasteboardNameGeneral).get(), WTF::move(completionHandler), frameID);
     case DOMPasteAccessCategory::Fonts:
-        return grantAccessToCurrentPasteboardData(NSPasteboardNameFont, WTF::move(completionHandler), frameID);
+        return grantAccessToCurrentPasteboardData(StringImpl::create(NSPasteboardNameFont).get(), WTF::move(completionHandler), frameID);
     }
 }
 
@@ -993,7 +993,7 @@ void WebPageProxy::pdfToggleAccessibilityDisplayMode(PDFPluginIdentifier identif
 
 void WebPageProxy::pdfSaveToPDF(PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID)
 {
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::SavePDF(identifier), Messages::WebPage::SavePDF::Reply { [this, protectedThis = Ref { *this }] (String&& suggestedFilename, URL&& originatingURL, std::span<const uint8_t> dataReference) {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::SavePDF(identifier), Messages::WebPage::SavePDF::Reply { [this, protectedThis = Ref { *this }] (RefPtr<StringImpl>&& suggestedFilename, URL&& originatingURL, std::span<const uint8_t> dataReference) {
         savePDFToFileInDownloadsFolder(WTF::move(suggestedFilename), WTF::move(originatingURL), dataReference);
     } });
 }
@@ -1001,7 +1001,7 @@ void WebPageProxy::pdfSaveToPDF(PDFPluginIdentifier identifier, WebCore::FrameId
 // FIXME: This is a misnomer since we conflate Preview.app with the default PDF viewer. Consider renaming.
 void WebPageProxy::pdfOpenWithPreview(PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID)
 {
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::OpenPDFWithPreview(identifier), Messages::WebPage::OpenPDFWithPreview::Reply { [this, protectedThis = Ref { *this }](String&& suggestedFilename, std::optional<FrameInfoData>&& frameInfo, std::span<const uint8_t> data) {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::OpenPDFWithPreview(identifier), Messages::WebPage::OpenPDFWithPreview::Reply { [this, protectedThis = Ref { *this }](RefPtr<StringImpl>&& suggestedFilename, std::optional<FrameInfoData>&& frameInfo, std::span<const uint8_t> data) {
         if (!frameInfo)
             return;
         savePDFToTemporaryFolderAndOpenWithNativeApplication(WTF::move(suggestedFilename), WTF::move(*frameInfo), data);
@@ -1082,7 +1082,7 @@ void WebPageProxy::handleContextMenuLookUpImage()
     showImageInQuickLookPreviewPanel(*imageBitmap, result.tooltipText, URL { result.absoluteImageURL }, QuickLookPreviewActivity::VisualSearch);
 }
 
-void WebPageProxy::showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap, const String& tooltip, const URL& imageURL, QuickLookPreviewActivity activity)
+void WebPageProxy::showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap, StringImpl* tooltip, const URL& imageURL, QuickLookPreviewActivity activity)
 {
     if (!PAL::isQuickLookUIFrameworkAvailable() || !PAL::getQLPreviewPanelClassSingleton() || ![PAL::getQLItemClassSingleton() instancesRespondToSelector:@selector(initWithDataProvider:contentType:previewTitle:)])
         return;
@@ -1100,7 +1100,7 @@ void WebPageProxy::showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap
     if (!CGImageDestinationFinalize(destination.get()))
         return;
 
-    m_quickLookPreviewController = adoptNS([[WKQuickLookPreviewController alloc] initWithPage:*this imageData:(__bridge NSData *)imageData.get() title:tooltip.createNSString().get() imageURL:imageURL.createNSURL().get() activity:activity]);
+    m_quickLookPreviewController = adoptNS([[WKQuickLookPreviewController alloc] initWithPage:*this imageData:(__bridge NSData *)imageData.get() title:createNSString(tooltip).get() imageURL:imageURL.createNSURL().get() activity:activity]);
 
     // When presenting the shared QLPreviewPanel, QuickLook will search the responder chain for a suitable panel controller.
     // Make sure that we (by default) start the search at the web view, which knows how to vend the Visual Search preview
@@ -1123,7 +1123,7 @@ void WebPageProxy::showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void WebPageProxy::handleContextMenuCopySubject(const String& preferredMIMEType)
+void WebPageProxy::handleContextMenuCopySubject(StringImpl* preferredMIMEType)
 {
     RefPtr activeContextMenu = m_activeContextMenu;
     if (!activeContextMenu)
@@ -1133,7 +1133,7 @@ void WebPageProxy::handleContextMenuCopySubject(const String& preferredMIMEType)
     if (!image)
         return;
 
-    auto [data, type] = imageDataForRemoveBackground(image.get(), preferredMIMEType.createCFString().get());
+    auto [data, type] = imageDataForRemoveBackground(image.get(), StringImpl::create(createCFString(preferredMIMEType).get()).get());
     if (!data)
         return;
 
@@ -1160,7 +1160,7 @@ bool WebPageProxy::shouldEnableWritingToolsRequestedTool(WebCore::WritingTools::
     auto& editorState = this->editorState();
 
     if (editorState.isContentEditable)
-        return editorState.hasPostLayoutData() && !editorState.postLayoutData->paragraphContextForCandidateRequest.isEmpty();
+        return editorState.hasPostLayoutData() && !isEmpty(editorState.postLayoutData->paragraphContextForCandidateRequest);
 
     return true;
 }
@@ -1222,7 +1222,7 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
 {
     Ref preferences = m_preferences;
     if (preferences->needsSiteSpecificQuirks()) {
-        if (policies.customUserAgent().isEmpty()) {
+        if (isEmpty(policies.customUserAgent())) {
             // FIXME (263619): This is done here for adding a UA override to tiktok. Should be in a common location.
             // needsCustomUserAgentOverride() is currently very generic on purpose.
             // In the future we want to pass more parameters for targeting specific domains.
@@ -1230,7 +1230,7 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
             if (auto customUserAgentForQuirk = Quirks::needsCustomUserAgentOverride(request.url(), m_applicationNameForUserAgent, m_userAgent))
                 policies.setCustomUserAgent(WTF::move(*customUserAgentForQuirk));
             const auto& customUserAgentAsSiteSpecificQuirks = policies.customUserAgentAsSiteSpecificQuirks();
-            if (!customUserAgentAsSiteSpecificQuirks.isEmpty()) {
+            if (!isEmpty(customUserAgentAsSiteSpecificQuirks)) {
                 if (auto correctedCustomUserAgentAsSiteSpecificQuirk = Quirks::needsCustomUserAgentOverride(request.url(), m_applicationNameForUserAgent, customUserAgentAsSiteSpecificQuirks))
                     policies.setCustomUserAgentAsSiteSpecificQuirks(WTF::move(*correctedCustomUserAgentAsSiteSpecificQuirk));
             }

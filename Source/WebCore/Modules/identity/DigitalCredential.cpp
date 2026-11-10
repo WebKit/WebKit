@@ -72,7 +72,7 @@ DigitalCredential::DigitalCredential(JSC::Strong<JSC::JSObject>&& data, DigitalC
 {
 }
 
-bool DigitalCredential::userAgentAllowsProtocol(const Document& document, const String& protocol)
+bool DigitalCredential::userAgentAllowsProtocol(const Document& document, StringImpl* protocol)
 {
     auto parsed = digitalCredentialPresentationProtocolFromString(protocol);
     if (!parsed)
@@ -90,7 +90,7 @@ bool DigitalCredential::userAgentAllowsProtocol(const Document& document, const 
     return false;
 }
 
-static std::optional<DigitalCredentialPresentationProtocol> convertProtocolString(const Document& document, const String& protocolString)
+static std::optional<DigitalCredentialPresentationProtocol> convertProtocolString(const Document& document, StringImpl* protocolString)
 {
     auto protocol = digitalCredentialPresentationProtocolFromString(protocolString);
     if (!protocol)
@@ -122,8 +122,8 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
     if (scope.exception()) [[unlikely]]
         return Exception { ExceptionCode::ExistingExceptionError };
 
-    if (isOpenID4VPPresentationProtocol(*protocol) && jsonString.length() > maxOpenID4VPRequestDataLength)
-        return Exception { ExceptionCode::TypeError, "The request is too large."_s };
+    if (isOpenID4VPPresentationProtocol(*protocol) && length(jsonString) > maxOpenID4VPRequestDataLength)
+        return Exception { ExceptionCode::TypeError, "The request is too large."_si };
 
     using enum DigitalCredentialPresentationProtocol;
     switch (*protocol) {
@@ -146,8 +146,8 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
         return std::make_optional<UnvalidatedDigitalCredentialRequest>(result.releaseReturnValue());
     }
     case Openid4vpV1Unsigned:
-        if (jsonString.isNull())
-            return Exception { ExceptionCode::TypeError, "The request is not JSON-serializable."_s };
+        if (!jsonString)
+            return Exception { ExceptionCode::TypeError, "The request is not JSON-serializable."_si };
         return std::make_optional<UnvalidatedDigitalCredentialRequest>(OpenID4VPUnsignedRequest { jsonString });
     }
 }
@@ -166,13 +166,13 @@ ExceptionOr<Vector<UnvalidatedDigitalCredentialRequest>> DigitalCredential::conv
         }
 
         if (RefPtr context = document.scriptExecutionContext()) {
-            String warning = makeString("Ignoring DigitalCredentialGetRequest with unsupported protocol: \""_s, request.protocol, "\""_s);
+            RefPtr<StringImpl> warning = makeString("Ignoring DigitalCredentialGetRequest with unsupported protocol: \""_s, request.protocol, "\""_s);
             context->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, warning);
         }
     }
 
     if (results.isEmpty())
-        return Exception { ExceptionCode::TypeError, "At least one supported DigitalCredentialGetRequest must present"_s };
+        return Exception { ExceptionCode::TypeError, "At least one supported DigitalCredentialGetRequest must present"_si };
 
     return results;
 }
@@ -182,12 +182,12 @@ void DigitalCredential::discoverFromExternalSource(const Document& document, Cre
     ASSERT(options.digital);
 
     if (document.securityOrigin().isOpaque()) {
-        promise.reject(Exception { ExceptionCode::SecurityError, "The credential operation is not allowed in an opaque origin."_s });
+        promise.reject(Exception { ExceptionCode::SecurityError, "The credential operation is not allowed in an opaque origin."_si });
         return;
     }
 
     if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::DigitalCredentialsGetRule, document, PermissionsPolicy::ShouldReportViolation::No)) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "Third-party iframes are not allowed to call .get() unless explicitly allowed via Permissions Policy (digital-credentials-get)"_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "Third-party iframes are not allowed to call .get() unless explicitly allowed via Permissions Policy (digital-credentials-get)"_si });
         return;
     }
 
@@ -207,32 +207,32 @@ void DigitalCredential::discoverFromExternalSource(const Document& document, Cre
     }
 
     if (!document.isFullyActiveAndHasUserAttention()) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document must be focused and visible."_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document must be focused and visible."_si });
         return;
     }
 
     if (options.digital->requests.isEmpty()) {
-        promise.reject(Exception { ExceptionCode::TypeError, "At least one request must present."_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "At least one request must present."_si });
         return;
     }
 
     options.digital->requests.removeAllMatching([&](auto& request) {
-        if (userAgentAllowsProtocol(document, request.protocol))
+        if (userAgentAllowsProtocol(document, RefPtr<StringImpl> { request.protocol }))
             return false;
         if (RefPtr context = document.scriptExecutionContext()) {
-            String warning = makeString("Ignoring DigitalCredentialGetRequest with unsupported protocol: \""_s, request.protocol, "\""_s);
+            RefPtr<StringImpl> warning = makeString("Ignoring DigitalCredentialGetRequest with unsupported protocol: \""_s, request.protocol, "\""_s);
             context->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, warning);
         }
         return true;
     });
 
     if (options.digital->requests.isEmpty()) {
-        promise.reject(Exception { ExceptionCode::TypeError, "At least one supported DigitalCredentialGetRequest must be present."_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "At least one supported DigitalCredentialGetRequest must be present."_si });
         return;
     }
 
     if (!window->consumeTransientActivation()) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "Calling get() needs to be triggered by an activation triggering user event."_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "Calling get() needs to be triggered by an activation triggering user event."_si });
         return;
     }
 

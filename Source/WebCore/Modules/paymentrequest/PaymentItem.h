@@ -33,7 +33,7 @@
 namespace WebCore {
 
 struct PaymentItem {
-    String label;
+    RefPtr<StringImpl> label;
     PaymentCurrencyAmount amount;
     bool pending { false };
 };

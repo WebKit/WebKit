@@ -693,7 +693,7 @@ inline bool HashMap<T, U, V, W, X, Y, shouldValidateKey, M>::isValidKey(const Ke
     if (KeyTraits::isDeletedValue(key))
         return false;
 
-    if (HashFunctions::safeToCompareToEmptyOrDeleted) {
+    if constexpr (HashFunctions::safeToCompareToEmptyOrDeleted) {
         if (key == KeyTraits::emptyValue())
             return false;
     } else {

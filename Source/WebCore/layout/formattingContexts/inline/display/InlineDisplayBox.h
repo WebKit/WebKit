@@ -46,13 +46,13 @@ struct Box {
     public:
         Text() = default;
         enum ShapingBoundary : uint8_t { Start, Inside, End, NotApplicable };
-        Text(size_t position, size_t length, const String& originalContent, String adjustedContentToRender = String(), bool hasHyphen = false, ShapingBoundary = ShapingBoundary::NotApplicable);
+        Text(size_t position, size_t length, StringImpl* originalContent, RefPtr<StringImpl> adjustedContentToRender = nullptr, bool hasHyphen = false, ShapingBoundary = ShapingBoundary::NotApplicable);
 
         size_t start() const { return m_start; }
         size_t end() const { return start() + length(); }
         size_t length() const { return m_length; }
         StringView originalContent() const { return StringView(m_originalContent).substring(m_start, m_length); }
-        StringView renderedContent() const { return m_adjustedContentToRender.isNull() ? originalContent() : m_adjustedContentToRender; }
+        StringView renderedContent() const { return !m_adjustedContentToRender ? originalContent() : m_adjustedContentToRender; }
         bool isAtShapingBoundaryStart() const { return m_shapingBoundary == ShapingBoundary::Start; }
         bool isAtShapingBoundaryEnd() const { return m_shapingBoundary == ShapingBoundary::End; }
         bool isInsideShapingBoundary() const { return m_shapingBoundary == ShapingBoundary::Inside; }
@@ -63,8 +63,8 @@ struct Box {
     private:
         friend struct Box;
 
-        String m_originalContent;
-        String m_adjustedContentToRender;
+        RefPtr<StringImpl> m_originalContent;
+        RefPtr<StringImpl> m_adjustedContentToRender;
 
         unsigned m_start { 0 };
         unsigned m_length { 0 };
@@ -245,7 +245,7 @@ inline Box::~Box()
         removeBoxFromGlyphDisplayListCache(*this);
 }
 
-inline Box::Text::Text(size_t start, size_t length, const String& originalContent, String adjustedContentToRender, bool hasHyphen, ShapingBoundary shapingBoundary)
+inline Box::Text::Text(size_t start, size_t length, StringImpl* originalContent, RefPtr<StringImpl> adjustedContentToRender, bool hasHyphen, ShapingBoundary shapingBoundary)
     : m_originalContent(originalContent)
     , m_adjustedContentToRender(adjustedContentToRender)
     , m_start(start)

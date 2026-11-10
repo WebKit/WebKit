@@ -163,11 +163,11 @@ TEST(WebSocket, CloseCode)
     });
 
     auto htmlWithOnOpen = [&] (const char* onopen) {
-        return [NSString stringWithFormat:@""
+        return StringImpl::create([NSString stringWithFormat:@""
             "<script>"
             "    var ws = new WebSocket('ws://127.0.0.1:%d/');"
             "    ws.onopen = function() { %s };"
-                "</script>", webSocketServer.port(), onopen];
+                "</script>", webSocketServer.port(), onopen]);
     };
 
     HTTPServer httpServer({

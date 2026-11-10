@@ -44,7 +44,7 @@ struct ServiceWorkerRoutePattern {
     ServiceWorkerRoutePattern isolatedCopy() &&;
     ServiceWorkerRoutePattern isolatedCopy() const &;
 
-    using Component = String;
+    using Component = RefPtr<StringImpl>;
 
     bool shouldIgnoreCase { false };
     Component protocol;
@@ -65,7 +65,7 @@ struct ServiceWorkerRouteCondition {
     ServiceWorkerRouteCondition copy() const;
 
     std::optional<ServiceWorkerRoutePattern> urlPattern;
-    String requestMethod;
+    RefPtr<StringImpl> requestMethod;
     std::optional<FetchRequestMode> requestMode;
     std::optional<FetchRequestDestination> requestDestination;
     std::optional<RunningStatus> runningStatus;

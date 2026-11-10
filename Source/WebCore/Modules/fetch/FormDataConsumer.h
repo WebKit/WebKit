@@ -63,7 +63,7 @@ private:
     FormDataConsumer(const FormData&, ScriptExecutionContext&, Callback&&, Mode);
 
     void consumeData(const Vector<uint8_t>&);
-    void consumeFile(const String&);
+    void consumeFile(StringImpl*);
     void consumeBlob(const URL&);
     void consumePendingStream(PendingStreamState&);
     void drainPendingStream();

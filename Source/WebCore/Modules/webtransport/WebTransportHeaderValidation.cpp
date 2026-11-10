@@ -35,25 +35,25 @@ namespace WebCore {
 // wt-available-protocols step of https://w3c.github.io/webtransport/#webtransport-constructor.
 // Unlike the spec, this also normalizes name and value in place to the form sent over the wire,
 // so that receivers can verify a header list is already normalized.
-static ExceptionOr<bool> validateWebTransportHeader(String& name, String& value)
+static ExceptionOr<bool> validateWebTransportHeader(RefPtr<StringImpl>& name, RefPtr<StringImpl>& value)
 {
     if (!isValidHTTPToken(name))
         return Exception { ExceptionCode::TypeError };
-    value = value.trim(isASCIIWhitespaceWithoutFF<char16_t>);
+    value = trim(value, isASCIIWhitespaceWithoutFF<char16_t>);
     if (!isValidHTTPHeaderValue(value))
         return Exception { ExceptionCode::TypeError };
-    name = name.convertToASCIILowercase();
-    if (name == "wt-available-protocols"_s)
-        return Exception { ExceptionCode::TypeError, "The 'wt-available-protocols' header cannot be set."_s };
+    name = convertToASCIILowercase(name);
+    if (equal(name, "wt-available-protocols"_s))
+        return Exception { ExceptionCode::TypeError, "The 'wt-available-protocols' header cannot be set."_si };
     if (isForbiddenHeader(name, value))
         return false;
     return true;
 }
 
-ExceptionOr<Vector<KeyValuePair<String, String>>> validateAndNormalizeWebTransportHeaders(const FetchHeaders::Init& init)
+ExceptionOr<Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>> validateAndNormalizeWebTransportHeaders(const FetchHeaders::Init& init)
 {
-    Vector<KeyValuePair<String, String>> headers;
-    auto validateAndAppend = [&](String name, String value) -> ExceptionOr<void> {
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> headers;
+    auto validateAndAppend = [&](RefPtr<StringImpl> name, RefPtr<StringImpl> value) -> ExceptionOr<void> {
         auto result = validateWebTransportHeader(name, value);
         if (result.hasException())
             return result.releaseException();
@@ -62,16 +62,16 @@ ExceptionOr<Vector<KeyValuePair<String, String>>> validateAndNormalizeWebTranspo
         return { };
     };
 
-    if (std::holds_alternative<Vector<Vector<String>>>(init)) {
-        for (auto& header : std::get<Vector<Vector<String>>>(init)) {
+    if (std::holds_alternative<Vector<Vector<RefPtr<StringImpl>>>>(init)) {
+        for (auto& header : std::get<Vector<Vector<RefPtr<StringImpl>>>>(init)) {
             if (header.size() != 2)
-                return Exception { ExceptionCode::TypeError, "Header sub-sequence must contain exactly two items"_s };
+                return Exception { ExceptionCode::TypeError, "Header sub-sequence must contain exactly two items"_si };
             auto result = validateAndAppend(header[0], header[1]);
             if (result.hasException())
                 return result.releaseException();
         }
     } else {
-        for (auto& header : std::get<Vector<KeyValuePair<String, String>>>(init)) {
+        for (auto& header : std::get<Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>>(init)) {
             auto result = validateAndAppend(header.key, header.value);
             if (result.hasException())
                 return result.releaseException();
@@ -80,7 +80,7 @@ ExceptionOr<Vector<KeyValuePair<String, String>>> validateAndNormalizeWebTranspo
     return headers;
 }
 
-bool areValidWebTransportHeaders(const Vector<KeyValuePair<String, String>>& headers)
+bool areValidWebTransportHeaders(const Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& headers)
 {
     for (auto& header : headers) {
         auto name = header.key;
@@ -88,7 +88,7 @@ bool areValidWebTransportHeaders(const Vector<KeyValuePair<String, String>>& hea
         auto result = validateWebTransportHeader(name, value);
         if (result.hasException() || !result.returnValue())
             return false;
-        if (name != header.key || value != header.value)
+        if (!equal(name, header.key) || !equal(value, header.value))
             return false;
     }
     return true;

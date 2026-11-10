@@ -60,8 +60,8 @@ public:
     // WorkerBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<void> enable();
     Inspector::Protocol::ErrorStringOr<void> disable();
-    Inspector::Protocol::ErrorStringOr<void> initialized(const String& workerId);
-    Inspector::Protocol::ErrorStringOr<void> sendMessageToWorker(const String& workerId, const String& message);
+    Inspector::Protocol::ErrorStringOr<void> initialized(StringImpl* workerId);
+    Inspector::Protocol::ErrorStringOr<void> sendMessageToWorker(StringImpl* workerId, StringImpl* message);
 
     // InspectorInstrumentation
     bool shouldWaitForDebuggerOnStart() const { return m_enabled; }
@@ -87,7 +87,7 @@ private:
         void deref() const final { ThreadSafeRefCounted::deref(); }
 
         void detachFromParentAgent();
-        void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, String&&);
+        void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, RefPtr<StringImpl>&&);
 
     private:
         explicit PageChannel(InspectorWorkerAgent&);
@@ -104,7 +104,7 @@ private:
     const UniqueRef<Inspector::WorkerFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::WorkerBackendDispatcher> m_backendDispatcher;
 
-    MemoryCompactRobinHoodHashMap<String, WeakPtr<WorkerInspectorProxy>> m_connectedProxies;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, WeakPtr<WorkerInspectorProxy>> m_connectedProxies;
     bool m_enabled { false };
 };
 

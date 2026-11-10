@@ -40,6 +40,7 @@
 #include <wtf/Ref.h> // NOLINT
 #include <wtf/RefCounted.h> // NOLINT
 #include <wtf/Vector.h> // NOLINT
+#include <wtf/text/StringView.h> // NOLINT
 #include <wtf/text/WTFString.h> // NOLINT
 
 #if ENABLE(IPC_TESTING_API)

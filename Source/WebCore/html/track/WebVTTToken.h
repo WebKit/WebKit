@@ -56,12 +56,12 @@ public:
     WebVTTToken()
         : m_type(Type::Uninitialized) { }
 
-    static WebVTTToken StringToken(const String& characterData)
+    static WebVTTToken StringToken(StringImpl* characterData)
     {
         return WebVTTToken(Type::Character, characterData);
     }
 
-    static WebVTTToken StartTag(const String& tagName, const AtomString& classes = emptyAtom(), const AtomString& annotation = emptyAtom())
+    static WebVTTToken StartTag(StringImpl* tagName, AtomStringImpl* classes = emptyAtom(), AtomStringImpl* annotation = emptyAtom())
     {
         WebVTTToken token(Type::StartTag, tagName);
         token.m_classes = classes;
@@ -69,31 +69,31 @@ public:
         return token;
     }
 
-    static WebVTTToken EndTag(const String& tagName)
+    static WebVTTToken EndTag(StringImpl* tagName)
     {
         return WebVTTToken(Type::EndTag, tagName);
     }
 
-    static WebVTTToken TimestampTag(const String& timestampData)
+    static WebVTTToken TimestampTag(StringImpl* timestampData)
     {
         return WebVTTToken(Type::TimestampTag, timestampData);
     }
 
     Type::Type type() const { return m_type; }
-    const String& name() const LIFETIME_BOUND { return m_data; }
-    const String& characters() const LIFETIME_BOUND { return m_data; }
-    const AtomString& classes() const LIFETIME_BOUND { return m_classes; }
-    const AtomString& annotation() const LIFETIME_BOUND { return m_annotation; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_data; }
+    const RefPtr<StringImpl>& characters() const LIFETIME_BOUND { return m_data; }
+    const RefPtr<AtomStringImpl>& classes() const LIFETIME_BOUND { return m_classes; }
+    const RefPtr<AtomStringImpl>& annotation() const LIFETIME_BOUND { return m_annotation; }
 
 private:
-    WebVTTToken(Type::Type type, const String& data)
+    WebVTTToken(Type::Type type, StringImpl* data)
         : m_type(type)
         , m_data(data) { }
 
     Type::Type m_type;
-    String m_data;
-    AtomString m_annotation;
-    AtomString m_classes;
+    RefPtr<StringImpl> m_data;
+    RefPtr<AtomStringImpl> m_annotation;
+    RefPtr<AtomStringImpl> m_classes;
 };
 
 } // namespace WebCore

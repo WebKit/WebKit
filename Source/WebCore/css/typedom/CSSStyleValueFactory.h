@@ -48,14 +48,14 @@ public:
     static ExceptionOr<Ref<CSSStyleValue>> reifyValue(Document&, const CSSValue&, AssociatedProperty&&);
 
     // https://drafts.css-houdini.org/css-typed-om-1/#parse-a-cssstylevalue
-    static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseStyleValue(Document&, const AtomString&, const String&, bool parseMultiple);
-    static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseStyleValueForCustomProperty(Document&, const AtomString&, const String&, bool parseMultiple);
-    static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseStyleValueForKnownProperty(Document&, CSSPropertyID, const String&, bool parseMultiple);
+    static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseStyleValue(Document&, AtomStringImpl*, StringImpl*, bool parseMultiple);
+    static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseStyleValueForCustomProperty(Document&, AtomStringImpl*, StringImpl*, bool parseMultiple);
+    static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseStyleValueForKnownProperty(Document&, CSSPropertyID, StringImpl*, bool parseMultiple);
 
-    static RefPtr<CSSStyleValue> constructStyleValueForShorthandSerialization(Document&, const String&, CSSPropertyID);
+    static RefPtr<CSSStyleValue> constructStyleValueForShorthandSerialization(Document&, StringImpl*, CSSPropertyID);
 
-    static ExceptionOr<Vector<Ref<CSSStyleValue>>> vectorFromStyleValuesOrStringsForCustomProperty(Document&, const AtomString& property, FixedVector<Variant<Ref<CSSStyleValue>, String>>&&);
-    static ExceptionOr<Vector<Ref<CSSStyleValue>>> vectorFromStyleValuesOrStringsForKnownProperty(Document&, CSSPropertyID, FixedVector<Variant<Ref<CSSStyleValue>, String>>&&);
+    static ExceptionOr<Vector<Ref<CSSStyleValue>>> vectorFromStyleValuesOrStringsForCustomProperty(Document&, AtomStringImpl* property, FixedVector<Variant<Ref<CSSStyleValue>, RefPtr<StringImpl>>>&&);
+    static ExceptionOr<Vector<Ref<CSSStyleValue>>> vectorFromStyleValuesOrStringsForKnownProperty(Document&, CSSPropertyID, FixedVector<Variant<Ref<CSSStyleValue>, RefPtr<StringImpl>>>&&);
 
     NODELETE ~CSSStyleValueFactory();
 
@@ -63,9 +63,9 @@ protected:
     CSSStyleValueFactory() = delete;
 
 private:
-    static ExceptionOr<RefPtr<CSSValue>> extractCSSValue(Document&, const CSSPropertyID&, const String&);
-    static ExceptionOr<RefPtr<CSSStyleValue>> extractShorthandCSSValues(Document&, const CSSPropertyID&, const String&);
-    static ExceptionOr<Ref<CSSUnparsedValue>> extractCustomCSSValues(const String&);
+    static ExceptionOr<RefPtr<CSSValue>> extractCSSValue(Document&, const CSSPropertyID&, StringImpl*);
+    static ExceptionOr<RefPtr<CSSStyleValue>> extractShorthandCSSValues(Document&, const CSSPropertyID&, StringImpl*);
+    static ExceptionOr<Ref<CSSUnparsedValue>> extractCustomCSSValues(StringImpl*);
 };
 
 } // namespace WebCore

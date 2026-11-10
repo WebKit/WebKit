@@ -42,8 +42,8 @@ bool isHTMLSpaceButNotLineBreak(char16_t);
 static const unsigned maxHTMLNonNegativeInteger = 2147483647;
 
 // An implementation of the HTML specification's algorithm to convert a number to a string for number and range types.
-String serializeForNumberType(const Decimal&);
-String serializeForNumberType(double);
+RefPtr<StringImpl> serializeForNumberType(const Decimal&);
+RefPtr<StringImpl> serializeForNumberType(double);
 
 // Convert the specified string to a decimal/double. If the conversion fails, the return value is fallback value or NaN if not specified.
 // Leading or trailing illegal characters cause failure, as does passing an empty string.
@@ -74,14 +74,14 @@ double parseHTMLFloatingPointNumberValue(StringView, double fallbackValue = std:
 Vector<double> parseHTMLListOfOfFloatingPointNumberValues(StringView);
 
 // https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-http-equiv-refresh
-bool parseMetaHTTPEquivRefresh(StringView, double& delay, String& url);
+bool parseMetaHTTPEquivRefresh(StringView, double& delay, RefPtr<StringImpl>& url);
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#cors-settings-attribute
-String parseCORSSettingsAttribute(const AtomString&);
+RefPtr<StringImpl> parseCORSSettingsAttribute(AtomStringImpl*);
 
 bool threadSafeMatch(const QualifiedName&, const QualifiedName&);
 
-AtomString parseHTMLHashNameReference(StringView);
+RefPtr<AtomStringImpl> parseHTMLHashNameReference(StringView);
 
 // https://html.spec.whatwg.org/#rules-for-parsing-dimension-values
 struct HTMLDimension {

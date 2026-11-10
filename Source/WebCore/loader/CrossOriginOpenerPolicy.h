@@ -58,28 +58,34 @@ struct CrossOriginOpenerPolicy {
     CrossOriginOpenerPolicyValue value { CrossOriginOpenerPolicyValue::UnsafeNone };
     CrossOriginOpenerPolicyValue reportOnlyValue { CrossOriginOpenerPolicyValue::UnsafeNone };
 
-    String reportingEndpoint;
-    String reportOnlyReportingEndpoint;
+    RefPtr<StringImpl> reportingEndpoint;
+    RefPtr<StringImpl> reportOnlyReportingEndpoint;
 
-    const String& reportingEndpointForDisposition(COOPDisposition) const;
+    const RefPtr<StringImpl>& reportingEndpointForDisposition(COOPDisposition) const;
     bool hasReportingEndpoint(COOPDisposition) const;
 
     CrossOriginOpenerPolicy isolatedCopy() const &;
     CrossOriginOpenerPolicy isolatedCopy() &&;
 
-    friend bool operator==(const CrossOriginOpenerPolicy&, const CrossOriginOpenerPolicy&) = default;
+    friend bool operator==(const CrossOriginOpenerPolicy& a, const CrossOriginOpenerPolicy& b)
+    {
+        return a.value == b.value
+            && a.reportOnlyValue == b.reportOnlyValue
+            && contentEquals(a.reportingEndpoint, b.reportingEndpoint)
+            && contentEquals(a.reportOnlyReportingEndpoint, b.reportOnlyReportingEndpoint);
+    }
 
     void addPolicyHeadersTo(ResourceResponse&) const;
 };
 
-inline const String& CrossOriginOpenerPolicy::reportingEndpointForDisposition(COOPDisposition disposition) const
+inline const RefPtr<StringImpl>& CrossOriginOpenerPolicy::reportingEndpointForDisposition(COOPDisposition disposition) const
 {
     return disposition == COOPDisposition::Enforce ? reportingEndpoint : reportOnlyReportingEndpoint;
 }
 
 inline bool CrossOriginOpenerPolicy::hasReportingEndpoint(COOPDisposition disposition) const
 {
-    return !reportingEndpointForDisposition(disposition).isEmpty();
+    return !isEmpty(reportingEndpointForDisposition(disposition));
 }
 
 // https://html.spec.whatwg.org/multipage/origin.html#coop-enforcement-result
@@ -97,7 +103,7 @@ struct CrossOriginOpenerPolicyEnforcementResult {
 bool isRecognizedCrossOriginOpenerPolicyToken(StringView);
 
 WEBCORE_EXPORT CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse&);
-WEBCORE_EXPORT std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(ReportingClient&, const ResourceResponse&, const std::optional<NavigationRequester>&, ContentSecurityPolicy* responseCSP, SandboxFlags effectiveSandboxFlags, const String& referrer, bool isDisplayingInitialEmptyDocument, const CrossOriginOpenerPolicyEnforcementResult& currentCoopEnforcementResult);
+WEBCORE_EXPORT std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(ReportingClient&, const ResourceResponse&, const std::optional<NavigationRequester>&, ContentSecurityPolicy* responseCSP, SandboxFlags effectiveSandboxFlags, StringImpl* referrer, bool isDisplayingInitialEmptyDocument, const CrossOriginOpenerPolicyEnforcementResult& currentCoopEnforcementResult);
 WEBCORE_EXPORT bool coopValuesRequireBrowsingContextGroupSwitch(IsInitialAboutBlank, CrossOriginOpenerPolicyValue activeDocumentCOOPValue, const SecurityOrigin& activeDocumentNavigationOrigin, CrossOriginOpenerPolicyValue responseCOOPValue, const SecurityOrigin& responseOrigin);
 
 } // namespace WebCore

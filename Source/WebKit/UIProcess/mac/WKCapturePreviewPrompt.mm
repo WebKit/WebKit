@@ -97,7 +97,7 @@ static void pinToWidthOfStack(NSView *view, NSStackView *stack)
 
 - (NSString *)accessibilityLabel
 {
-    return WEB_UI_STRING_KEY(@"Microphone level", "Microphone level (usermedia)", @"Accessibility label for the microphone level meter in the user media prompt").createNSString().autorelease();
+    return createNSString(WEB_UI_STRING_KEY(@"Microphone level", "Microphone level (usermedia)", @"Accessibility label for the microphone level meter in the user media prompt")).autorelease();
 }
 
 - (id)accessibilityValue
@@ -229,7 +229,7 @@ static void pinToWidthOfStack(NSView *view, NSStackView *stack)
 
     if (_model.requestNeeds(WebKit::CapturePreviewDeviceType::Camera)) {
         RetainPtr badgeLabel = adoptNS([[NSTextField alloc] initWithFrame:NSZeroRect]);
-        [badgeLabel setStringValue:WEB_UI_STRING_KEY(@"Preview", "Preview (usermedia)", @"Badge label identifying the live camera preview in the user media prompt").createNSString().get()];
+        [badgeLabel setStringValue:createNSString(WEB_UI_STRING_KEY(@"Preview", "Preview (usermedia)", @"Badge label identifying the live camera preview in the user media prompt")).get()];
         [badgeLabel setEditable:NO];
         [badgeLabel setSelectable:NO];
         [badgeLabel setBordered:NO];
@@ -245,7 +245,7 @@ static void pinToWidthOfStack(NSView *view, NSStackView *stack)
         _videoPopUp = adoptNS([[NSPopUpButton alloc] initWithFrame:NSZeroRect pullsDown:NO]);
         [_videoPopUp setTarget:self];
         [_videoPopUp setAction:@selector(_selectedVideoDeviceDidChange:)];
-        [_videoPopUp setAccessibilityLabel:WEB_UI_STRING_KEY(@"Camera", "Camera (usermedia)", @"Accessibility label for the camera menu in the user media prompt").createNSString().get()];
+        [_videoPopUp setAccessibilityLabel:createNSString(WEB_UI_STRING_KEY(@"Camera", "Camera (usermedia)", @"Accessibility label for the camera menu in the user media prompt")).get()];
         [_videoPopUp setTranslatesAutoresizingMaskIntoConstraints:NO];
 
         RetainPtr cameraStack = adoptNS([[NSStackView alloc] init]);
@@ -297,7 +297,7 @@ static void pinToWidthOfStack(NSView *view, NSStackView *stack)
         _audioPopUp = adoptNS([[NSPopUpButton alloc] initWithFrame:NSZeroRect pullsDown:NO]);
         [_audioPopUp setTarget:self];
         [_audioPopUp setAction:@selector(_selectedAudioDeviceDidChange:)];
-        [_audioPopUp setAccessibilityLabel:WEB_UI_STRING_KEY(@"Microphone", "Microphone (usermedia)", @"Accessibility label for the microphone menu in the user media prompt").createNSString().get()];
+        [_audioPopUp setAccessibilityLabel:createNSString(WEB_UI_STRING_KEY(@"Microphone", "Microphone (usermedia)", @"Accessibility label for the microphone menu in the user media prompt")).get()];
         [_audioPopUp setTranslatesAutoresizingMaskIntoConstraints:NO];
 
         RetainPtr microphoneStack = adoptNS([[NSStackView alloc] init]);
@@ -377,7 +377,7 @@ static void pinToWidthOfStack(NSView *view, NSStackView *stack)
     auto& devices = _model.devices(type);
     RetainPtr menu = adoptNS([[NSMenu alloc] init]);
     for (auto& device : devices) {
-        RetainPtr title = device.label().createNSString();
+        RetainPtr title = createNSString(device.label());
         RetainPtr item = adoptNS([[NSMenuItem alloc] initWithTitle:title.get() action:nil keyEquivalent:@""]);
         [item setToolTip:title.get()];
         [menu addItem:item.get()];
@@ -417,12 +417,12 @@ static void pinToWidthOfStack(NSView *view, NSStackView *stack)
     if (_model.hasSameDevices(videoDevices, audioDevices))
         return;
 
-    String previousMicrophoneID = _model.selectedDeviceID(WebKit::CapturePreviewDeviceType::Microphone);
+    RefPtr<StringImpl> previousMicrophoneID = _model.selectedDeviceID(WebKit::CapturePreviewDeviceType::Microphone);
     bool previewNeedsRestart = _model.update(WTF::move(videoDevices), WTF::move(audioDevices));
     [self _rebuildMenus];
     [self _updateAllowButtonEnablement];
 
-    if (_model.selectedDeviceID(WebKit::CapturePreviewDeviceType::Microphone) != previousMicrophoneID)
+    if (!equal(_model.selectedDeviceID(WebKit::CapturePreviewDeviceType::Microphone), previousMicrophoneID))
         [_audioLevelMeter reset];
 
     if (previewNeedsRestart)
@@ -487,9 +487,9 @@ static void pinToWidthOfStack(NSView *view, NSStackView *stack)
     if (index < 0 || static_cast<size_t>(index) >= _model.devices(type).size())
         return;
 
-    String previousDeviceID = _model.selectedDeviceID(type);
+    RefPtr<StringImpl> previousDeviceID = _model.selectedDeviceID(type);
     _model.select(type, index);
-    if (type == WebKit::CapturePreviewDeviceType::Microphone && _model.selectedDeviceID(type) != previousDeviceID)
+    if (type == WebKit::CapturePreviewDeviceType::Microphone && !equal(_model.selectedDeviceID(type), previousDeviceID))
         [_audioLevelMeter reset];
     _model.notifySelectionChanged();
 }

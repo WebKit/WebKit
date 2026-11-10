@@ -50,6 +50,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -145,9 +146,9 @@ template<> void* makeKey<void*>(unsigned i)
     // Multiply to spread bits more like real heap pointers, and avoid 0.
     return std::bit_cast<void*>(static_cast<uintptr_t>((i + 1) * 16));
 }
-template<> WTF::String makeKey<WTF::String>(unsigned i)
+template<> WTF::RefPtr<WTF::StringImpl> makeKey<WTF::RefPtr<WTF::StringImpl>>(unsigned i)
 {
-    return WTF::String::number(i + 1);
+    return WTF::makeString(i + 1);
 }
 
 template<typename T>
@@ -159,7 +160,7 @@ WTF::Vector<T> makeKeys(unsigned n)
     return v;
 }
 
-// To avoid stale-pointer hazards with WTF::String, keep present strings around
+// To avoid stale-pointer hazards with string keys, keep present strings around
 // for the lifetime of "non-present" lookups too. We don't lookup absent keys
 // here, but the scaffold supports it.
 
@@ -233,8 +234,8 @@ NEVER_INLINE void benchIterate(unsigned n, const char* container, const char* ke
     auto before = WTF::MonotonicTime::now();
     for (unsigned r = 0; r < reps; ++r) {
         for (const auto& v : set) {
-            if constexpr (std::is_same_v<T, WTF::String>)
-                sink ^= v.impl() ? v.impl()->hash() : 0u;
+            if constexpr (std::is_same_v<T, WTF::RefPtr<WTF::StringImpl>>)
+                sink ^= v ? v->hash() : 0u;
             else if constexpr (std::is_same_v<T, void*>)
                 sink ^= std::bit_cast<uintptr_t>(v);
             else
@@ -417,10 +418,10 @@ int main(int argc, char** argv)
     runAllOps<OrderedHashSetT, void*>("OrderedHashSet", "void*");
     runAllOps<ListHashSetT, void*>("ListHashSet", "void*");
 
-    runAllOps<HashSetT, WTF::String>("HashSet", "String");
-    runAllOps<UncheckedKeyHashSetT, WTF::String>("UncheckedHashSet", "String");
-    runAllOps<OrderedHashSetT, WTF::String>("OrderedHashSet", "String");
-    runAllOps<ListHashSetT, WTF::String>("ListHashSet", "String");
+    runAllOps<HashSetT, WTF::RefPtr<WTF::StringImpl>>("HashSet", "String");
+    runAllOps<UncheckedKeyHashSetT, WTF::RefPtr<WTF::StringImpl>>("UncheckedHashSet", "String");
+    runAllOps<OrderedHashSetT, WTF::RefPtr<WTF::StringImpl>>("OrderedHashSet", "String");
+    runAllOps<ListHashSetT, WTF::RefPtr<WTF::StringImpl>>("ListHashSet", "String");
 
     auto wallEnd = WTF::MonotonicTime::now();
 

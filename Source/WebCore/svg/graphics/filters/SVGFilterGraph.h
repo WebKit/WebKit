@@ -40,10 +40,10 @@ public:
 
     virtual ~SVGFilterGraph() = default;
 
-    virtual void addNamedNode(const AtomString& id, Ref<NodeType>&&) = 0;
-    virtual RefPtr<NodeType> getNamedNode(const AtomString& id) const = 0;
+    virtual void addNamedNode(AtomStringImpl* id, Ref<NodeType>&&) = 0;
+    virtual RefPtr<NodeType> getNamedNode(AtomStringImpl* id) const = 0;
 
-    std::optional<NodeVector> getNamedNodes(std::span<const AtomString> names) const
+    std::optional<NodeVector> getNamedNodes(std::span<const RefPtr<AtomStringImpl>> names) const
     {
         NodeVector nodes(ReserveCapacityTag { }, names.size());
 
@@ -88,7 +88,7 @@ public:
     }
 
 protected:
-    static bool isSourceName(const AtomString& name)
+    static bool isSourceName(AtomStringImpl* name)
     {
         return name == SourceGraphic::effectName() || name == SourceAlpha::effectName();
     }
@@ -116,7 +116,7 @@ protected:
         return true;
     }
 
-    HashMap<AtomString, Ref<NodeType>> m_namedNodes;
+    HashMap<RefPtr<AtomStringImpl>, Ref<NodeType>> m_namedNodes;
     HashMap<Ref<NodeType>, NodeVector> m_nodeInputs;
     RefPtr<NodeType> m_lastNode;
 };

@@ -109,21 +109,21 @@ public:
     void setUseMockCaptureDevices(bool);
     void enableMicrophoneMuteStatusAPI();
     void setOrientationForMediaCapture(WebCore::IntDegrees);
-    void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
+    void rotationAngleForCaptureDeviceChanged(StringImpl*, WebCore::VideoFrameRotation);
 #if PLATFORM(COCOA)
     void startCapturePreview(std::optional<WebCore::CaptureDevice>&&, std::optional<WebCore::CaptureDevice>&&, WebCore::PageIdentifier, WebCore::IntSize previewSize, WebCore::IntDegrees orientation, const WebCore::SecurityOriginData&, CompletionHandler<void(WebCore::HostingContext)>&&);
     void stopCapturePreview(WebCore::PageIdentifier, CompletionHandler<void()>&&);
     void setCapturePreviewAudioLevelHandler(WebCore::PageIdentifier pageIdentifier, Function<void(float)>&& handler) { m_capturePreviewAudioLevelHandlers.set(pageIdentifier, WTF::move(handler)); }
     void capturePreviewAudioLevelChanged(WebCore::PageIdentifier, float);
 #endif
-    void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&, RotationMonitoringReason);
-    void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&, RotationMonitoringReason);
+    void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, StringImpl*, RotationMonitoringReason);
+    void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, StringImpl*, RotationMonitoringReason);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, bool willUseEchoCancellation, WebCore::ProcessIdentifier, WebPageProxyIdentifier, CompletionHandler<void()>&&);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&, WebCore::ProcessIdentifier);
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
     void clearMockMediaDevices();
-    void removeMockMediaDevice(const String&);
-    void setMockMediaDeviceIsEphemeral(const String&, bool);
+    void removeMockMediaDevice(StringImpl*);
+    void setMockMediaDeviceIsEphemeral(StringImpl*, bool);
     void resetMockMediaDevices();
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
     void triggerMockCaptureConfigurationChange(bool forCamera, bool forMicrophone, bool forDisplay);
@@ -162,7 +162,7 @@ public:
 
     void terminateForTesting();
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
-    void runDisplayListDataTestsForTesting(Vector<Ref<WebCore::SharedBuffer>>&& webFonts, CompletionHandler<void(std::optional<Vector<String>>&&)>&&);
+    void runDisplayListDataTestsForTesting(Vector<Ref<WebCore::SharedBuffer>>&& webFonts, CompletionHandler<void(std::optional<Vector<RefPtr<StringImpl>>>&&)>&&);
 
 #if PLATFORM(COCOA)
     static void setEnableMetalDebugDeviceInNewGPUProcessesForTesting(bool enable) { s_enableMetalDebugDeviceInNewGPUProcessesForTesting = enable; }
@@ -188,8 +188,8 @@ public:
 #endif
 
 #if HAVE(TASK_IDENTITY_TOKEN)
-    void createMemoryAttributionIDForTask(WebCore::ProcessIdentity, CompletionHandler<void(const std::optional<String>&)>&&);
-    void unregisterMemoryAttributionID(const String&, CompletionHandler<void()>&&);
+    void createMemoryAttributionIDForTask(WebCore::ProcessIdentity, CompletionHandler<void(const std::optional<RefPtr<StringImpl>>&)>&&);
+    void unregisterMemoryAttributionID(StringImpl*, CompletionHandler<void()>&&);
 #endif
 #endif
 

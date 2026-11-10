@@ -74,7 +74,7 @@ private:
     friend class PlatformResourceMediaLoader;
 
     // Return true if stopLoading() got called, indicating that no further processing should occur.
-    bool responseReceived(const String&, int, const ParsedContentRange&, size_t);
+    bool responseReceived(StringImpl*, int, const ParsedContentRange&, size_t);
     bool newDataStoredInSharedBuffer(const FragmentedSharedBuffer&);
 
     void startLoadingImpl();

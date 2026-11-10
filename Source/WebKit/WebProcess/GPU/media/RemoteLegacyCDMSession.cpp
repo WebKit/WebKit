@@ -93,7 +93,7 @@ void RemoteLegacyCDMSession::invalidate()
     }
 }
 
-RefPtr<Uint8Array> RemoteLegacyCDMSession::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
+RefPtr<Uint8Array> RemoteLegacyCDMSession::generateKeyRequest(StringImpl* mimeType, Uint8Array* initData, RefPtr<StringImpl>& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
 {
     if (!initData)
         return nullptr;
@@ -152,7 +152,7 @@ bool RemoteLegacyCDMSession::update(Uint8Array* keyData, RefPtr<Uint8Array>& nex
     return succeeded;
 }
 
-RefPtr<ArrayBuffer> RemoteLegacyCDMSession::cachedKeyForKeyID(const String& keyId) const
+RefPtr<ArrayBuffer> RemoteLegacyCDMSession::cachedKeyForKeyID(StringImpl* keyId) const
 {
     RefPtr factory = m_factory.get();
     if (!factory)
@@ -173,7 +173,7 @@ RefPtr<ArrayBuffer> RemoteLegacyCDMSession::cachedKeyForKeyID(const String& keyI
     return ipcKeyBuffer;
 }
 
-void RemoteLegacyCDMSession::sendMessage(RefPtr<SharedBuffer>&& message, const String& destinationURL)
+void RemoteLegacyCDMSession::sendMessage(RefPtr<SharedBuffer>&& message, StringImpl* destinationURL)
 {
     RefPtr client = m_client.get();
     if (!client)

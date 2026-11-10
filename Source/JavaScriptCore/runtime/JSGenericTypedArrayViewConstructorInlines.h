@@ -52,7 +52,7 @@ JSGenericTypedArrayViewConstructor<ViewClass>::JSGenericTypedArrayViewConstructo
 }
 
 template<typename ViewClass>
-void JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation(VM& vm, JSGlobalObject* globalObject, JSObject* prototype, const String& name)
+void JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation(VM& vm, JSGlobalObject* globalObject, JSObject* prototype, StringImpl* name)
 {
     Base::finishCreation(vm, ViewClass::TypedArrayStorageType == TypeDataView ? 1 : 3, name, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
@@ -68,7 +68,7 @@ template<typename ViewClass>
 JSGenericTypedArrayViewConstructor<ViewClass>*
 JSGenericTypedArrayViewConstructor<ViewClass>::create(
     VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* prototype,
-    const String& name)
+    StringImpl* name)
 {
     JSGenericTypedArrayViewConstructor* result =
         new (NotNull, allocateCell<JSGenericTypedArrayViewConstructor>(vm))
@@ -166,12 +166,12 @@ inline JSObject* constructGenericTypedArrayViewWithArrayBuffer(JSGlobalObject* g
         size_t byteLength = buffer->byteLength();
         if (buffer->isResizableOrGrowableShared()) {
             if (offset > byteLength) [[unlikely]] {
-                throwRangeError(globalObject, scope, typedArrayErrorMessageByteOffsetExceedSourceBufferByteLength);
+                throwRangeError(globalObject, scope, StringImpl::create(typedArrayErrorMessageByteOffsetExceedSourceBufferByteLength).ptr());
                 return nullptr;
             }
         } else {
             if ((byteLength - offset) % ViewClass::elementSize) [[unlikely]] {
-                throwRangeError(globalObject, scope, "ArrayBuffer length minus the byteOffset is not a multiple of the element size"_s);
+                throwRangeError(globalObject, scope, "ArrayBuffer length minus the byteOffset is not a multiple of the element size"_si);
                 return nullptr;
             }
             length = (byteLength - offset) / ViewClass::elementSize;
@@ -349,7 +349,7 @@ ALWAYS_INLINE EncodedJSValue constructGenericTypedArrayViewImpl(JSGlobalObject* 
             RETURN_IF_EXCEPTION(scope, { });
 
             if (offset % ViewClass::elementSize) [[unlikely]]
-                return throwVMRangeError(globalObject, scope, "byteOffset modulo TypedArray.BYTES_PER_ELEMENT must be 0"_s);
+                return throwVMRangeError(globalObject, scope, "byteOffset modulo TypedArray.BYTES_PER_ELEMENT must be 0"_si);
         }
 
         if (argCount > 2) {
@@ -412,7 +412,7 @@ static EncodedJSValue constructDataViewImpl(JSGlobalObject* globalObject, CallFr
 
     size_t bufferByteLength = buffer->byteLength();
     if (offset > bufferByteLength) [[unlikely]]
-        return throwVMRangeError(globalObject, scope, typedArrayErrorMessageByteOffsetExceedSourceBufferByteLength);
+        return throwVMRangeError(globalObject, scope, StringImpl::create(typedArrayErrorMessageByteOffsetExceedSourceBufferByteLength).ptr());
 
     std::optional<size_t> length { };
     if (argCount > 2) {
@@ -432,7 +432,7 @@ static EncodedJSValue constructDataViewImpl(JSGlobalObject* globalObject, CallFr
             ASSERT(offset <= maxSafeInteger());
             ASSERT(viewByteLength <= maxSafeInteger());
             if ((offset + viewByteLength) > bufferByteLength) [[unlikely]]
-                return throwVMRangeError(globalObject, scope, arrayBufferViewErrorMessageOutOfRangeOfBuffer);
+                return throwVMRangeError(globalObject, scope, StringImpl::create(arrayBufferViewErrorMessageOutOfRangeOfBuffer).ptr());
 
             length = viewByteLength;
         }

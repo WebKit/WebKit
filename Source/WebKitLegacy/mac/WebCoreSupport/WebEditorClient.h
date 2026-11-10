@@ -70,7 +70,7 @@ private:
     bool shouldBeginEditing(const WebCore::SimpleRange&) final;
     bool shouldEndEditing(const WebCore::SimpleRange&) final;
     bool shouldInsertNode(WebCore::Node&, const std::optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) final;
-    bool shouldInsertText(const String&, const std::optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) final;
+    bool shouldInsertText(StringImpl*, const std::optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) final;
     bool shouldChangeSelectedRange(const std::optional<WebCore::SimpleRange>& fromRange, const std::optional<WebCore::SimpleRange>& toRange, WebCore::Affinity, bool stillSelecting) final;
 
     bool shouldApplyStyle(const WebCore::StyleProperties&, const std::optional<WebCore::SimpleRange>&) final;
@@ -82,22 +82,22 @@ private:
     void didEndEditing() final;
     void willWriteSelectionToPasteboard(const std::optional<WebCore::SimpleRange>&) final;
     void didWriteSelectionToPasteboard() final;
-    void getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>>& pasteboardTypesAndData) final;
+    void getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<std::pair<RefPtr<StringImpl>, RefPtr<WebCore::SharedBuffer>>>& pasteboardTypesAndData) final;
 
 #if PLATFORM(COCOA)
     HashMap<WebCore::FrameIdentifier, WebCore::AttributedString> collectAttributedStringsForRemoteFrames(WebCore::FrameIdentifier, const Vector<WebCore::FrameIdentifier>&) final { return { }; }
 #endif
 
-    void setInsertionPasteboard(const String&) final;
-    WebCore::DOMPasteAccessResponse requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::FrameIdentifier, const String&) final { return WebCore::DOMPasteAccessResponse::DeniedForGesture; }
+    void setInsertionPasteboard(StringImpl*) final;
+    WebCore::DOMPasteAccessResponse requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::FrameIdentifier, StringImpl*) final { return WebCore::DOMPasteAccessResponse::DeniedForGesture; }
 
 #if USE(APPKIT)
     void uppercaseWord() final;
     void lowercaseWord() final;
     void capitalizeWord() final;
-    bool canApplyCaseTransformations(const String&) final;
-    bool canConvertToTraditionalChinese(const String&) final;
-    bool canConvertToSimplifiedChinese(const String&) final;
+    bool canApplyCaseTransformations(StringImpl*) final;
+    bool canConvertToTraditionalChinese(StringImpl*) final;
+    bool canConvertToSimplifiedChinese(StringImpl*) final;
     void convertToTraditionalChinese() final;
     void convertToSimplifiedChinese() final;
 #endif
@@ -161,7 +161,7 @@ private:
     int getPasteboardItemsCount() final;
     RefPtr<WebCore::DocumentFragment> documentFragmentFromDelegate(int index) final;
     bool performsTwoStepPaste(WebCore::DocumentFragment*) final;
-    void updateStringForFind(const String&) final { }
+    void updateStringForFind(StringImpl*) final { }
     bool shouldRevealCurrentSelectionAfterInsertion() const final;
     bool shouldSuppressPasswordEcho() const final;
 #endif
@@ -169,16 +169,16 @@ private:
     bool performTwoStepDrop(WebCore::DocumentFragment&, const WebCore::SimpleRange& destination, bool isMove) final;
     
     bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const final;
-    void ignoreWordInSpellDocument(const String&) final;
-    void learnWord(const String&) final;
+    void ignoreWordInSpellDocument(StringImpl*) final;
+    void learnWord(StringImpl*) final;
     void checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength) final;
     void checkGrammarOfString(StringView, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) final;
     Vector<WebCore::TextCheckingResult> checkTextOfParagraph(StringView, OptionSet<WebCore::TextCheckingType> checkingTypes, const WebCore::VisibleSelection& currentSelection) final;
-    void updateSpellingUIWithGrammarString(const String&, const WebCore::GrammarDetail&) final;
-    void updateSpellingUIWithMisspelledWord(const String&) final;
+    void updateSpellingUIWithGrammarString(StringImpl*, const WebCore::GrammarDetail&) final;
+    void updateSpellingUIWithMisspelledWord(StringImpl*) final;
     void showSpellingUI(bool show) final;
     bool spellingUIIsShowing() final;
-    void getGuessesForWord(const String& word, const String& context, const WebCore::VisibleSelection& currentSelection, Vector<String>& guesses) final;
+    void getGuessesForWord(StringImpl* word, StringImpl* context, const WebCore::VisibleSelection& currentSelection, Vector<RefPtr<StringImpl>>& guesses) final;
 
     void setInputMethodState(WebCore::Element*) final;
     void requestCheckingOfString(WebCore::TextCheckingRequest&, const WebCore::VisibleSelection& currentSelection) final;
@@ -268,11 +268,11 @@ inline bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(WebCore::Tex
     return true;
 }
 
-inline void WebEditorClient::ignoreWordInSpellDocument(const String&)
+inline void WebEditorClient::ignoreWordInSpellDocument(StringImpl*)
 {
 }
 
-inline void WebEditorClient::learnWord(const String&)
+inline void WebEditorClient::learnWord(StringImpl*)
 {
 }
 
@@ -284,11 +284,11 @@ inline void WebEditorClient::checkGrammarOfString(StringView, Vector<WebCore::Gr
 {
 }
 
-inline void WebEditorClient::updateSpellingUIWithGrammarString(const String&, const WebCore::GrammarDetail&)
+inline void WebEditorClient::updateSpellingUIWithGrammarString(StringImpl*, const WebCore::GrammarDetail&)
 {
 }
 
-inline void WebEditorClient::updateSpellingUIWithMisspelledWord(const String&)
+inline void WebEditorClient::updateSpellingUIWithMisspelledWord(StringImpl*)
 {
 }
 
@@ -301,7 +301,7 @@ inline bool WebEditorClient::spellingUIIsShowing()
     return false;
 }
 
-inline void WebEditorClient::getGuessesForWord(const String&, const String&, const WebCore::VisibleSelection&, Vector<String>&)
+inline void WebEditorClient::getGuessesForWord(StringImpl*, StringImpl*, const WebCore::VisibleSelection&, Vector<RefPtr<StringImpl>>&)
 {
 }
 

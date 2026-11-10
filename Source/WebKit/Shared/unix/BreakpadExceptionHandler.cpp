@@ -36,22 +36,22 @@ namespace WebKit {
 
 void installBreakpadExceptionHandler()
 {
-    static String breakpadMinidumpDir = String::fromUTF8(getenv("BREAKPAD_MINIDUMP_DIR"));
+    static RefPtr<StringImpl> breakpadMinidumpDir = StringImpl::fromUTF8(getenv("BREAKPAD_MINIDUMP_DIR"));
 
 #ifdef BREAKPAD_MINIDUMP_DIR
-    if (breakpadMinidumpDir.isEmpty())
-        breakpadMinidumpDir = String::fromUTF8(BREAKPAD_MINIDUMP_DIR);
+    if (isEmpty(breakpadMinidumpDir))
+        breakpadMinidumpDir = StringImpl::fromUTF8(BREAKPAD_MINIDUMP_DIR);
 #endif
 
-    if (breakpadMinidumpDir.isEmpty())
+    if (isEmpty(breakpadMinidumpDir))
         return;
 
     if (FileSystem::fileType(breakpadMinidumpDir) != FileSystem::FileType::Directory) {
-        SAFE_WTFLOGALWAYS("Breakpad dir \"%s\" is not a directory, not installing handler", breakpadMinidumpDir.utf8());
+        SAFE_WTFLOGALWAYS("Breakpad dir \"%s\" is not a directory, not installing handler", utf8(breakpadMinidumpDir));
         return;
     }
 
-    static NeverDestroyed<google_breakpad::ExceptionHandler> exceptionHandler(google_breakpad::MinidumpDescriptor(breakpadMinidumpDir.utf8().legacyCStringPointer()), nullptr,
+    static NeverDestroyed<google_breakpad::ExceptionHandler> exceptionHandler(google_breakpad::MinidumpDescriptor(utf8(breakpadMinidumpDir).legacyCStringPointer()), nullptr,
         [](const google_breakpad::MinidumpDescriptor&, void*, bool succeeded) -> bool {
             return succeeded;
         }, nullptr, true, -1);

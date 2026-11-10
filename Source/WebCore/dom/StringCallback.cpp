@@ -36,9 +36,9 @@
 
 namespace WebCore {
 
-void StringCallback::scheduleCallback(ScriptExecutionContext& context, const String& data)
+void StringCallback::scheduleCallback(ScriptExecutionContext& context, StringImpl* data)
 {
-    context.postTask([protectedThis = Ref { *this }, data] (ScriptExecutionContext&) {
+    context.postTask([protectedThis = Ref { *this }, data = RefPtr { data }] (ScriptExecutionContext&) {
         protectedThis->invoke(data);
     });
 }

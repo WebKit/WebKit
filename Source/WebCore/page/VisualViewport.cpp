@@ -61,7 +61,7 @@ ScriptExecutionContext* VisualViewport::scriptExecutionContext() const
     return window ? window->document() : nullptr;
 }
 
-bool VisualViewport::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool VisualViewport::addEventListener(AtomStringImpl* eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     if (!EventTarget::addEventListener(eventType, WTF::move(listener), options))
         return false;

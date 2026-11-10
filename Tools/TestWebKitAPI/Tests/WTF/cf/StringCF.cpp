@@ -35,23 +35,23 @@ namespace TestWebKitAPI {
 
 TEST(StringCF, ConstructFromNull)
 {
-    String string(static_cast<CFStringRef>(nullptr));
-    EXPECT_TRUE(string.isNull());
+    RefPtr<StringImpl> string(StringImpl::create(static_cast<CFStringRef>(nullptr)));
+    EXPECT_TRUE(!string);
 }
 
 TEST(StringCF, ConstructFromEmpty)
 {
-    String string(CFSTR(""));
-    EXPECT_FALSE(string.isNull());
-    EXPECT_TRUE(string.isEmpty());
-    EXPECT_TRUE(string.is8Bit());
+    RefPtr<StringImpl> string(StringImpl::create(CFSTR("")));
+    EXPECT_FALSE(!string);
+    EXPECT_TRUE(isEmpty(string));
+    EXPECT_TRUE(is8Bit(string));
 }
 
 TEST(StringCF, ConstructFromLatin1)
 {
-    String string(CFSTR("Hello, world!"));
-    EXPECT_EQ(string.length(), 13u);
-    EXPECT_TRUE(string.is8Bit());
+    RefPtr<StringImpl> string(StringImpl::create(CFSTR("Hello, world!")));
+    EXPECT_EQ(length(string), 13u);
+    EXPECT_TRUE(is8Bit(string));
     EXPECT_EQ(string, "Hello, world!"_s);
 }
 
@@ -61,10 +61,10 @@ TEST(StringCF, ConstructFromLatin1WithHighBytes)
     const uint8_t latin1Bytes[] = { 'r', 0xE9, 's', 'u', 'm', 0xE9 }; // "résumé" in Latin-1
     RetainPtr cfString = adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, latin1Bytes, sizeof(latin1Bytes), kCFStringEncodingISOLatin1, false));
 
-    String string(cfString.get());
-    EXPECT_EQ(string.length(), 6u);
-    EXPECT_FALSE(string.isNull());
-    EXPECT_EQ(string, String::fromUTF8("résumé"));
+    RefPtr<StringImpl> string(StringImpl::create(cfString.get()));
+    EXPECT_EQ(length(string), 6u);
+    EXPECT_FALSE(!string);
+    EXPECT_EQ(string, StringImpl::fromUTF8("résumé"));
 }
 
 TEST(StringCF, ConstructFromUTF16WithLatin1Characters)
@@ -75,10 +75,10 @@ TEST(StringCF, ConstructFromUTF16WithLatin1Characters)
     Vector<char16_t> characters(FillWith { }, 4096, 'A');
     RetainPtr cfString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters.span().data()), characters.size()));
 
-    String string(cfString.get());
-    EXPECT_EQ(string.length(), 4096u);
-    EXPECT_TRUE(string.is8Bit());
-    EXPECT_EQ(string, String(Vector<Latin1Character>(FillWith { }, 4096, 'A')));
+    RefPtr<StringImpl> string(StringImpl::create(cfString.get()));
+    EXPECT_EQ(length(string), 4096u);
+    EXPECT_TRUE(is8Bit(string));
+    EXPECT_EQ(string, StringImpl::create(Vector<Latin1Character>(FillWith { }, 4096, 'A')).ptr());
 }
 
 TEST(StringCF, ConstructFromUTF16WithHighLatin1Characters)
@@ -87,10 +87,10 @@ TEST(StringCF, ConstructFromUTF16WithHighLatin1Characters)
     const char16_t characters[] = { 'r', 0x00E9, 's', 'u', 'm', 0x00E9 }; // "résumé"
     RetainPtr cfString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters), std::size(characters)));
 
-    String string(cfString.get());
-    EXPECT_EQ(string.length(), 6u);
-    EXPECT_FALSE(string.isNull());
-    EXPECT_EQ(string, String::fromUTF8("résumé"));
+    RefPtr<StringImpl> string(StringImpl::create(cfString.get()));
+    EXPECT_EQ(length(string), 6u);
+    EXPECT_FALSE(!string);
+    EXPECT_EQ(string, StringImpl::fromUTF8("résumé"));
 }
 
 TEST(StringCF, ConstructFromUTF16WithNonLatin1Characters)
@@ -99,11 +99,11 @@ TEST(StringCF, ConstructFromUTF16WithNonLatin1Characters)
     const char16_t characters[] = { 0x4E16, 0x754C }; // "世界"
     RetainPtr cfString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters), std::size(characters)));
 
-    String string(cfString.get());
-    EXPECT_EQ(string.length(), 2u);
-    EXPECT_FALSE(string.is8Bit());
-    EXPECT_EQ(string[0], 0x4E16);
-    EXPECT_EQ(string[1], 0x754C);
+    RefPtr<StringImpl> string(StringImpl::create(cfString.get()));
+    EXPECT_EQ(length(string), 2u);
+    EXPECT_FALSE(is8Bit(string));
+    EXPECT_EQ(codeUnitAt(string, 0), 0x4E16);
+    EXPECT_EQ(codeUnitAt(string, 1), 0x754C);
 }
 
 TEST(StringCF, ConstructFromUTF16MixedLatin1AndNonLatin1)
@@ -112,21 +112,21 @@ TEST(StringCF, ConstructFromUTF16MixedLatin1AndNonLatin1)
     const char16_t characters[] = { 'H', 'i', 0x4E16 }; // "Hi世"
     RetainPtr cfString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters), std::size(characters)));
 
-    String string(cfString.get());
-    EXPECT_EQ(string.length(), 3u);
-    EXPECT_FALSE(string.is8Bit());
-    EXPECT_EQ(string[0], 'H');
-    EXPECT_EQ(string[1], 'i');
-    EXPECT_EQ(string[2], 0x4E16);
+    RefPtr<StringImpl> string(StringImpl::create(cfString.get()));
+    EXPECT_EQ(length(string), 3u);
+    EXPECT_FALSE(is8Bit(string));
+    EXPECT_EQ(codeUnitAt(string, 0), 'H');
+    EXPECT_EQ(codeUnitAt(string, 1), 'i');
+    EXPECT_EQ(codeUnitAt(string, 2), 0x4E16);
 }
 
 TEST(StringCF, RoundTrip)
 {
-    String original("WebKit"_s);
-    auto cfString = original.createCFString();
-    String roundTripped(cfString.get());
+    RefPtr<StringImpl> original("WebKit"_si);
+    auto cfString = createCFString(original);
+    RefPtr<StringImpl> roundTripped(StringImpl::create(cfString.get()));
     EXPECT_EQ(original, roundTripped);
-    EXPECT_TRUE(roundTripped.is8Bit());
+    EXPECT_TRUE(is8Bit(roundTripped));
 }
 
 } // namespace TestWebKitAPI

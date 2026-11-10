@@ -112,7 +112,7 @@ std::optional<TextList> tryConsumeUnorderedDashTextList(StringParsingBuffer<Char
 
         if (input.atEnd()) {
             std::array marker { static_cast<char16_t>(dashCharacter), WTF::Unicode::noBreakSpace, WTF::Unicode::noBreakSpace };
-            return { { Style::ListStyleType { Style::String { WTF::String { std::span { marker } } } }, 0, false } };
+            return { { Style::ListStyleType { Style::String { StringImpl::create(std::span { marker }) } }, 0, false } };
         }
 
         skipToEnd(input);
@@ -163,7 +163,7 @@ inline std::optional<TextList> consumeTextList(StringParsingBuffer<Character>& i
     return std::nullopt;
 }
 
-static AtomString inlineStyleForListStyleType(const StyledElement& element, Style::ListStyleType styleType)
+static RefPtr<AtomStringImpl> inlineStyleForListStyleType(const StyledElement& element, Style::ListStyleType styleType)
 {
     CheckedPtr renderer = element.renderer();
     if (!renderer) {
@@ -185,21 +185,21 @@ static AtomString inlineStyleForListStyleType(const StyledElement& element, Styl
     return inlineStyle->asTextAtom(CSS::defaultSerializationContext());
 }
 
-static AtomString classNameForSmartList(const TextList& textList)
+static RefPtr<AtomStringImpl> classNameForSmartList(const TextList& textList)
 {
     if (textList.ordered) {
         ASSERT(textList.styleType.isDecimal());
-        return AppleDecimalListClass;
+        return AtomStringImpl::add(AppleDecimalListClass);
     }
 
     if (textList.styleType.isDisc())
-        return AppleDiscListClass;
+        return AtomStringImpl::add(AppleDiscListClass);
 
     ASSERT(textList.styleType.isString());
-    return AppleDashListClass;
+    return AtomStringImpl::add(AppleDashListClass);
 }
 
-static AtomString startingOrdinalForList(const StyledElement& element, const TextList& textList)
+static RefPtr<AtomStringImpl> startingOrdinalForList(const StyledElement& element, const TextList& textList)
 {
     if (!textList.ordered)
         return WTF::nullAtom();
@@ -212,7 +212,7 @@ static AtomString startingOrdinalForList(const StyledElement& element, const Tex
     if (element.hasAttributeWithoutSynchronization(HTMLNames::startAttr))
         return WTF::nullAtom();
 
-    return AtomString::number(textList.startingItemNumber);
+    return AtomStringImpl::number(textList.startingItemNumber);
 }
 
 // MARK: Entry points
@@ -248,23 +248,23 @@ bool areCompatibleListMarkers(const TextList& a, const TextList& b)
     return a.styleType == b.styleType;
 }
 
-Vector<std::pair<const QualifiedName&, AtomString>> nodeAttributesForSmartList(const StyledElement& element, const TextList& list)
+Vector<std::pair<const QualifiedName&, RefPtr<AtomStringImpl>>> nodeAttributesForSmartList(const StyledElement& element, const TextList& list)
 {
-    Vector<std::pair<const QualifiedName&, AtomString>> result;
+    Vector<std::pair<const QualifiedName&, RefPtr<AtomStringImpl>>> result;
 
-    if (auto start = startingOrdinalForList(element, list); !start.isNull())
+    if (auto start = startingOrdinalForList(element, list); start)
         result.append({ HTMLNames::startAttr, start });
 
-    if (auto style = inlineStyleForListStyleType(element, list.styleType); !style.isNull())
+    if (auto style = inlineStyleForListStyleType(element, list.styleType); style)
         result.append({ HTMLNames::styleAttr, style });
 
-    if (auto className = classNameForSmartList(list); !className.isNull())
+    if (auto className = classNameForSmartList(list); className)
         result.append({ HTMLNames::classAttr, className });
 
     return result;
 }
 
-bool selectionAllowsSmartLists(const String& text, const VisibleSelection& selection)
+bool selectionAllowsSmartLists(StringImpl* text, const VisibleSelection& selection)
 {
     RefPtr document = selection.document();
     if (!document)
@@ -273,7 +273,7 @@ bool selectionAllowsSmartLists(const String& text, const VisibleSelection& selec
     if (!protect(document->editor())->isSmartListsEnabled())
         return false;
 
-    if (text != " "_s) {
+    if (!equal(text, " "_s)) {
         // Smart Lists can only be "activated" by a space character.
         return false;
     }

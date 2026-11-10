@@ -305,12 +305,12 @@ static ASCIILiteral snapshotTypeToString(HeapSnapshotBuilder::SnapshotType type)
     return "Inspector"_s;
 }
 
-void HeapSnapshotBuilder::setLabelForCell(JSCell* cell, const String& label)
+void HeapSnapshotBuilder::setLabelForCell(JSCell* cell, StringImpl* label)
 {
     m_cellLabels.set(cell, label);
 }
 
-String HeapSnapshotBuilder::descriptionForNode(const HeapSnapshotNode& node)
+RefPtr<StringImpl> HeapSnapshotBuilder::descriptionForNode(const HeapSnapshotNode& node)
 {
     JSCell* cell = node.cell;
 
@@ -321,7 +321,7 @@ String HeapSnapshotBuilder::descriptionForNode(const HeapSnapshotNode& node)
 
     if (structure->classInfoForCells()->isSubClassOf(Structure::info())) {
         Structure* cellAsStructure = uncheckedDowncast<Structure>(cell);
-        String className = cellAsStructure->classInfoForCells()->className;
+        RefPtr<StringImpl> className = cellAsStructure->classInfoForCells()->className;
         if (m_client)
             className = m_client->heapSnapshotBuilderOverrideClassName(*this, cell, className);
         return className;
@@ -330,13 +330,13 @@ String HeapSnapshotBuilder::descriptionForNode(const HeapSnapshotNode& node)
     return emptyString();
 }
 
-String HeapSnapshotBuilder::json()
+RefPtr<StringImpl> HeapSnapshotBuilder::json()
 {
     StringPrintStream string;
     dumpToStream(string);
     if (m_hasOverflowed)
         return { };
-    return string.tryToString().value_or(String());
+    return string.tryToString().value_or(nullString());
 }
 
 void HeapSnapshotBuilder::dumpToStream(PrintStream& out)
@@ -348,12 +348,12 @@ void HeapSnapshotBuilder::dumpToStream(PrintStream& out)
     UncheckedKeyHashMap<JSCell*, NodeIdentifier> allowedNodeIdentifiers;
 
     // Build a list of used class names.
-    UncheckedKeyHashMap<String, unsigned> classNameIndexes;
-    classNameIndexes.set("<root>"_s, 0);
+    UncheckedKeyHashMap<RefPtr<StringImpl>, unsigned> classNameIndexes;
+    classNameIndexes.set("<root>"_si, 0);
     unsigned nextClassNameIndex = 1;
 
     // Build a list of labels (this is just a string table).
-    UncheckedKeyHashMap<String, unsigned> labelIndexes;
+    UncheckedKeyHashMap<RefPtr<StringImpl>, unsigned> labelIndexes;
     labelIndexes.set(emptyString(), 0);
     unsigned nextLabelIndex = 1;
 
@@ -368,7 +368,7 @@ void HeapSnapshotBuilder::dumpToStream(PrintStream& out)
         if (json.hasOverflowed()) [[unlikely]]
             m_hasOverflowed = true;
         else
-            out.print(json.toString().utf8());
+            out.print(utf8(json.toString()));
     };
 
     auto appendNodeJSON = [&] (const HeapSnapshotNode& node) {
@@ -379,8 +379,8 @@ void HeapSnapshotBuilder::dumpToStream(PrintStream& out)
 
         allowedNodeIdentifiers.set(node.cell, node.identifier);
 
-        String className = node.cell->classInfo()->className;
-        if (node.cell->isObject() && className == JSObject::info()->className) {
+        RefPtr<StringImpl> className = node.cell->classInfo()->className;
+        if (node.cell->isObject() && equal(className, JSObject::info()->className)) {
             flags |= static_cast<unsigned>(NodeFlags::ObjectSubtype);
 
             // Skip calculating a class name if this object has a `constructor` own property.
@@ -422,8 +422,8 @@ void HeapSnapshotBuilder::dumpToStream(PrintStream& out)
                     }
                 }
 
-                String description = descriptionForNode(node);
-                if (description.length()) {
+                RefPtr<StringImpl> description = descriptionForNode(node);
+                if (length(description)) {
                     if (nodeLabel.length())
                         nodeLabel.append(' ');
                     nodeLabel.append(description);
@@ -505,7 +505,7 @@ void HeapSnapshotBuilder::dumpToStream(PrintStream& out)
 
     // node class names
     out.print(",\"nodeClassNames\":["_s);
-    Vector<String> orderedClassNames(classNameIndexes.size());
+    Vector<RefPtr<StringImpl>> orderedClassNames(classNameIndexes.size());
     for (auto& entry : classNameIndexes)
         orderedClassNames[entry.value] = entry.key;
     classNameIndexes.clear();
@@ -632,7 +632,7 @@ void HeapSnapshotBuilder::dumpToStream(PrintStream& out)
         // internal node descriptions
         out.print(",\"labels\":["_s);
 
-        Vector<String> orderedLabels(labelIndexes.size());
+        Vector<RefPtr<StringImpl>> orderedLabels(labelIndexes.size());
         for (auto& entry : labelIndexes)
             orderedLabels[entry.value] = entry.key;
         labelIndexes.clear();

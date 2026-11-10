@@ -68,7 +68,7 @@ public:
     virtual void forEachUserMessageHandler(NOESCAPE const Function<void(const UserMessageHandlerDescriptor&)>&) const = 0;
 #endif
     virtual bool hasBuffersForWorld(const DOMWrapperWorld&) const = 0;
-    virtual WebKitBuffer* buffer(const DOMWrapperWorld&, const String&) const = 0;
+    virtual WebKitBuffer* buffer(const DOMWrapperWorld&, StringImpl*) const = 0;
 #if ENABLE(CONTENT_EXTENSIONS)
     virtual const ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() const = 0;
 #endif

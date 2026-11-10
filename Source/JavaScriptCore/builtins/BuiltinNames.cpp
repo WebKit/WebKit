@@ -111,9 +111,9 @@ struct CharBufferSeacher {
         return buf.hash;
     }
 
-    NODELETE static bool equal(const String& str, const Buffer& buf)
+    NODELETE static bool equal(StringImpl* str, const Buffer& buf)
     {
-        return WTF::equal(str.impl(), buf.characters);
+        return WTF::equal(str, buf.characters);
     }
 };
 
@@ -123,7 +123,7 @@ static PrivateSymbolImpl* lookUpPrivateNameImpl(const BuiltinNames::PrivateNameS
     auto iterator = set.find<CharBufferSeacher<CharacterType>>(buffer);
     if (iterator == set.end())
         return nullptr;
-    StringImpl* impl = iterator->impl();
+    StringImpl* impl = iterator->get();
     ASSERT(impl->isSymbol());
     SymbolImpl* symbol = static_cast<SymbolImpl*>(impl);
     ASSERT(symbol->isPrivate());
@@ -151,13 +151,13 @@ PrivateSymbolImpl* BuiltinNames::lookUpPrivateName(std::span<const char16_t> cha
     return lookUpPrivateNameImpl(m_privateNameSet, buffer);
 }
 
-PrivateSymbolImpl* BuiltinNames::lookUpPrivateName(const String& string) const
+PrivateSymbolImpl* BuiltinNames::lookUpPrivateName(StringImpl* string) const
 {
-    if (string.is8Bit()) {
-        Latin1Buffer buffer { string.span8(), string.hash() };
+    if (is8Bit(string)) {
+        Latin1Buffer buffer { span8(string), hash(string) };
         return lookUpPrivateNameImpl(m_privateNameSet, buffer);
     }
-    UTF16Buffer buffer { string.span16(), string.hash() };
+    UTF16Buffer buffer { span16(string), hash(string) };
     return lookUpPrivateNameImpl(m_privateNameSet, buffer);
 }
 
@@ -173,13 +173,13 @@ SymbolImpl* BuiltinNames::lookUpWellKnownSymbol(std::span<const char16_t> charac
     return lookUpWellKnownSymbolImpl(m_wellKnownSymbolsMap, buffer);
 }
 
-SymbolImpl* BuiltinNames::lookUpWellKnownSymbol(const String& string) const
+SymbolImpl* BuiltinNames::lookUpWellKnownSymbol(StringImpl* string) const
 {
-    if (string.is8Bit()) {
-        Latin1Buffer buffer { string.span8(), string.hash() };
+    if (is8Bit(string)) {
+        Latin1Buffer buffer { span8(string), hash(string) };
         return lookUpWellKnownSymbolImpl(m_wellKnownSymbolsMap, buffer);
     }
-    UTF16Buffer buffer { string.span16(), string.hash() };
+    UTF16Buffer buffer { span16(string), hash(string) };
     return lookUpWellKnownSymbolImpl(m_wellKnownSymbolsMap, buffer);
 }
 

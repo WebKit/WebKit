@@ -39,28 +39,28 @@ class YouTubePluginReplacement final : public PluginReplacement {
 public:
     static void registerPluginReplacement(PluginReplacementRegistrar);
 
-    WEBCORE_EXPORT static AtomString youTubeURLFromAbsoluteURL(const URL& srcURL, const AtomString& srcString);
+    WEBCORE_EXPORT static RefPtr<AtomStringImpl> youTubeURLFromAbsoluteURL(const URL& srcURL, AtomStringImpl* srcString);
 
 private:
-    YouTubePluginReplacement(HTMLPlugInElement&, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);
+    YouTubePluginReplacement(HTMLPlugInElement&, const Vector<RefPtr<AtomStringImpl>>& paramNames, const Vector<RefPtr<AtomStringImpl>>& paramValues);
     virtual ~YouTubePluginReplacement();
 
-    static Ref<PluginReplacement> create(HTMLPlugInElement&, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);
+    static Ref<PluginReplacement> create(HTMLPlugInElement&, const Vector<RefPtr<AtomStringImpl>>& paramNames, const Vector<RefPtr<AtomStringImpl>>& paramValues);
 
-    static bool supportsMIMEType(const String&);
+    static bool supportsMIMEType(StringImpl*);
     static bool supportsFileExtension(StringView);
     static bool supportsURL(const URL&);
 
     void installReplacement(ShadowRoot&) final;
 
-    AtomString youTubeURL(const AtomString& rawURL);
+    RefPtr<AtomStringImpl> youTubeURL(AtomStringImpl* rawURL);
 
     bool willCreateRenderer() final { return m_embedShadowElement; }
     RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Style::ComputedStyle&&, const RenderTreePosition&) final;
 
     WeakPtr<HTMLPlugInElement, WeakPtrImplWithEventTargetData> m_parentElement;
     const RefPtr<YouTubeEmbedShadowElement> m_embedShadowElement;
-    HashMap<AtomString, AtomString> m_attributes;
+    HashMap<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>> m_attributes;
 };
 
 }

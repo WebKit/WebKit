@@ -25,9 +25,9 @@ namespace WebCore {
 
 struct RadialGradientAttributes : GradientAttributes {
     RadialGradientAttributes()
-        : m_cx(SVGLengthMode::Width, "50%"_s)
-        , m_cy(SVGLengthMode::Height, "50%"_s)
-        , m_r(SVGLengthMode::Other, "50%"_s)
+        : m_cx(SVGLengthMode::Width, "50%"_si)
+        , m_cy(SVGLengthMode::Height, "50%"_si)
+        , m_r(SVGLengthMode::Other, "50%"_si)
         , m_cxSet(false)
         , m_cySet(false)
         , m_rSet(false)

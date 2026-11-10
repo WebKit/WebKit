@@ -37,26 +37,26 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextFragment);
 
-RenderTextFragment::RenderTextFragment(Text& textNode, const String& text, int startOffset, int length)
-    : RenderText(Type::TextFragment, textNode, text.substring(startOffset, length))
+RenderTextFragment::RenderTextFragment(Text& textNode, StringImpl* text, int startOffset, int length)
+    : RenderText(Type::TextFragment, textNode, substring(text, startOffset, length))
     , m_start(startOffset)
     , m_end(length)
     , m_firstLetter(nullptr)
 {
 }
 
-RenderTextFragment::RenderTextFragment(Document& document, const String& text, int startOffset, int length)
-    : RenderText(Type::TextFragment, document, text.substring(startOffset, length))
+RenderTextFragment::RenderTextFragment(Document& document, StringImpl* text, int startOffset, int length)
+    : RenderText(Type::TextFragment, document, substring(text, startOffset, length))
     , m_start(startOffset)
     , m_end(length)
     , m_firstLetter(nullptr)
 {
 }
 
-RenderTextFragment::RenderTextFragment(Document& textNode, const String& text)
+RenderTextFragment::RenderTextFragment(Document& textNode, StringImpl* text)
     : RenderText(Type::TextFragment, textNode, text)
     , m_start(0)
-    , m_end(text.length())
+    , m_end(WTF::length(text))
     , m_contentString(text)
     , m_firstLetter(nullptr)
 {
@@ -79,12 +79,12 @@ bool RenderTextFragment::canBeSelectionLeaf() const
     return anonymousInlineWrapper && anonymousInlineWrapper->isInlineBox() && anonymousInlineWrapper->firstLetterRemainingText();
 }
 
-void RenderTextFragment::setTextInternal(const String& newText, bool force)
+void RenderTextFragment::setTextInternal(StringImpl* newText, bool force)
 {
     RenderText::setTextInternal(newText, force);
 
     m_start = 0;
-    m_end = text().length();
+    m_end = WTF::length(text());
     if (!m_firstLetter)
         return;
     if (RenderTreeBuilder::current())
@@ -95,7 +95,7 @@ void RenderTextFragment::setTextInternal(const String& newText, bool force)
     ASSERT(!textNode() || textNode()->renderer() == this);
 }
 
-void RenderTextFragment::setTextWithOffset(const String& newText, unsigned offset)
+void RenderTextFragment::setTextWithOffset(StringImpl* newText, unsigned offset)
 {
     // Edits within the first-letter range invalidate the first-letter split.
     // The base class skips the update when the fragment text matches the new
@@ -121,8 +121,8 @@ Node* RenderTextFragment::nodeForHitTest() const
 char32_t RenderTextFragment::previousCharacter() const
 {
     if (start()) {
-        String original = textNode() ? textNode()->data() : contentString();
-        if (start() <= original.length())
+        RefPtr<StringImpl> original = textNode() ? textNode()->data().get() : contentString();
+        if (start() <= WTF::length(original))
             return StringView(original).codePointBefore(start());
     }
     return RenderText::previousCharacter();
@@ -141,7 +141,7 @@ CheckedPtr<RenderBlock> RenderTextFragment::blockForAccompanyingFirstLetter()
     return nullptr;
 }
 
-void RenderTextFragment::setContentString(const String& text)
+void RenderTextFragment::setContentString(StringImpl* text)
 {
     m_contentString = text;
     setText(text);

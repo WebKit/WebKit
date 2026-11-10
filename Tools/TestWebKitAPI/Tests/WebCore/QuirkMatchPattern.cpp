@@ -208,7 +208,7 @@ TEST(QuirkMatchPatternTest, RejectsInvalidPatterns)
 
 TEST(QuirkMatchPatternTest, KeepsItsSourceString)
 {
-    EXPECT_TRUE(parsePattern("*://*.amazon.*/*"_s).string() == "*://*.amazon.*/*"_s);
+    EXPECT_TRUE(equal(parsePattern("*://*.amazon.*/*"_s).string(), "*://*.amazon.*/*"_s));
     EXPECT_TRUE(parsePattern("*://*.amazon.*/*"_s) == parsePattern("*://*.amazon.*/*"_s));
     EXPECT_FALSE(parsePattern("*://*.amazon.*/*"_s) == parsePattern("*://amazon.*/*"_s));
 }
@@ -273,18 +273,18 @@ TEST(QuirkMatchPatternTest, LastPathComponentNeedsFourPatterns)
 
 TEST(QuirkMatchPatternTest, ContextDerivesValuesFromItsURL)
 {
-    URL url { "https://www.bbc.co.uk/news?live=1#top"_s };
+    URL url { "https://www.bbc.co.uk/news?live=1#top"_si };
     URLMatchContext context { url };
 
     EXPECT_EQ(context.url(), url);
     EXPECT_TRUE(context.host() == "www.bbc.co.uk"_s);
-    EXPECT_TRUE(context.registrableDomain() == "bbc.co.uk"_s);
-    EXPECT_TRUE(context.domainWithoutPublicSuffix() == "bbc"_s);
+    EXPECT_TRUE(equal(context.registrableDomain(), "bbc.co.uk"_s));
+    EXPECT_TRUE(equal(context.domainWithoutPublicSuffix(), "bbc"_s));
 }
 
 TEST(QuirkMatchPatternTest, ContextCachesDerivedValues)
 {
-    URLMatchContext context { URL { "https://www.example.com/"_s } };
+    URLMatchContext context { URL { "https://www.example.com/"_si } };
 
     EXPECT_EQ(&context.registrableDomain(), &context.registrableDomain());
     EXPECT_EQ(&context.domainWithoutPublicSuffix(), &context.domainWithoutPublicSuffix());

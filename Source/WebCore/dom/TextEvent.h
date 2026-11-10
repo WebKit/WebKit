@@ -39,18 +39,18 @@ namespace WebCore {
     class TextEvent final : public UIEvent {
         WTF_MAKE_TZONE_ALLOCATED(TextEvent);
     public:
-        NODELETE static Ref<TextEvent> create(RefPtr<WindowProxy>&&, const String& data, TextEventInputType = TextEventInputKeyboard);
+        NODELETE static Ref<TextEvent> create(RefPtr<WindowProxy>&&, StringImpl* data, TextEventInputType = TextEventInputKeyboard);
         NODELETE static Ref<TextEvent> createForBindings();
-        static Ref<TextEvent> createForPlainTextPaste(RefPtr<WindowProxy>&&, const String& data, bool shouldSmartReplace);
+        static Ref<TextEvent> createForPlainTextPaste(RefPtr<WindowProxy>&&, StringImpl* data, bool shouldSmartReplace);
         NODELETE static Ref<TextEvent> createForFragmentPaste(RefPtr<WindowProxy>&&, RefPtr<DocumentFragment>&& data, TextEventInputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
-        NODELETE static Ref<TextEvent> createForDrop(RefPtr<WindowProxy>&&, const String& data);
-        NODELETE static Ref<TextEvent> createForDictation(RefPtr<WindowProxy>&&, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
+        NODELETE static Ref<TextEvent> createForDrop(RefPtr<WindowProxy>&&, StringImpl* data);
+        NODELETE static Ref<TextEvent> createForDictation(RefPtr<WindowProxy>&&, StringImpl* data, const Vector<DictationAlternative>& dictationAlternatives);
 
         virtual ~TextEvent();
     
-        WEBCORE_EXPORT void initTextEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&, const String& data);
+        WEBCORE_EXPORT void initTextEvent(AtomStringImpl* type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&, StringImpl* data);
     
-        String data() const { return m_data; }
+        RefPtr<StringImpl> data() const { return m_data; }
 
         bool isLineBreak() const { return m_inputType == TextEventInputLineBreak; }
         bool isComposition() const { return m_inputType == TextEventInputComposition; }
@@ -71,12 +71,12 @@ namespace WebCore {
     private:
         TextEvent();
 
-        TextEvent(RefPtr<WindowProxy>&&, const String& data, TextEventInputType = TextEventInputKeyboard);
-        TextEvent(RefPtr<WindowProxy>&&, const String& data, RefPtr<DocumentFragment>&&, TextEventInputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
-        TextEvent(RefPtr<WindowProxy>&&, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
+        TextEvent(RefPtr<WindowProxy>&&, StringImpl* data, TextEventInputType = TextEventInputKeyboard);
+        TextEvent(RefPtr<WindowProxy>&&, StringImpl* data, RefPtr<DocumentFragment>&&, TextEventInputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
+        TextEvent(RefPtr<WindowProxy>&&, StringImpl* data, const Vector<DictationAlternative>& dictationAlternatives);
 
         TextEventInputType m_inputType;
-        String m_data;
+        RefPtr<StringImpl> m_data;
 
         RefPtr<DocumentFragment> m_pastingFragment;
         bool m_shouldSmartReplace;

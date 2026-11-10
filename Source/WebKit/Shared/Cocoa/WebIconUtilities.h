@@ -35,7 +35,7 @@ namespace WebKit {
 RetainPtr<CocoaImage> fallbackIconForFile(NSURL *file);
 RetainPtr<CocoaImage> iconForImageFile(NSURL *file);
 RetainPtr<CocoaImage> iconForVideoFile(NSURL *file);
-RetainPtr<CocoaImage> iconForFiles(const Vector<String>& filenames);
+RetainPtr<CocoaImage> iconForFiles(const Vector<RefPtr<StringImpl>>& filenames);
 
 }
 

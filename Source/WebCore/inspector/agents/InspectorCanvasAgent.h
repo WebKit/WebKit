@@ -83,15 +83,15 @@ public:
     // CanvasBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<void> enable();
     Inspector::Protocol::ErrorStringOr<void> disable();
-    Inspector::Protocol::ErrorStringOr<String> requestContent(const Inspector::Protocol::Canvas::CanvasId&);
-    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveContext(const Inspector::Protocol::Canvas::CanvasId&, const String& objectGroup);
+    Inspector::Protocol::ErrorStringOr<RefPtr<StringImpl>> requestContent(StringImpl*);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveContext(StringImpl*, StringImpl* objectGroup);
     Inspector::Protocol::ErrorStringOr<void> setRecordingAutoCaptureFrameCount(int);
-    Inspector::Protocol::ErrorStringOr<void> startRecording(const Inspector::Protocol::Canvas::CanvasId&, std::optional<int>&& frameCount, std::optional<int>&& memoryLimit);
-    Inspector::Protocol::ErrorStringOr<void> stopRecording(const Inspector::Protocol::Canvas::CanvasId&);
-    Inspector::Protocol::ErrorStringOr<String> requestShaderSource(const Inspector::Protocol::Canvas::ProgramId&, Inspector::Protocol::Canvas::ShaderType);
-    void updateShader(const Inspector::Protocol::Canvas::ProgramId&, Inspector::Protocol::Canvas::ShaderType, const String& source, Ref<UpdateShaderCallback>&&);
-    Inspector::Protocol::ErrorStringOr<void> setShaderProgramDisabled(const Inspector::Protocol::Canvas::ProgramId&, bool disabled);
-    void setShaderProgramHighlighted(const Inspector::Protocol::Canvas::ProgramId&, bool highlighted, Ref<SetShaderProgramHighlightedCallback>&&);
+    Inspector::Protocol::ErrorStringOr<void> startRecording(StringImpl*, std::optional<int>&& frameCount, std::optional<int>&& memoryLimit);
+    Inspector::Protocol::ErrorStringOr<void> stopRecording(StringImpl*);
+    Inspector::Protocol::ErrorStringOr<RefPtr<StringImpl>> requestShaderSource(StringImpl*, Inspector::Protocol::Canvas::ShaderType);
+    void updateShader(StringImpl*, Inspector::Protocol::Canvas::ShaderType, StringImpl* source, Ref<UpdateShaderCallback>&&);
+    Inspector::Protocol::ErrorStringOr<void> setShaderProgramDisabled(StringImpl*, bool disabled);
+    void setShaderProgramHighlighted(StringImpl*, bool highlighted, Ref<SetShaderProgramHighlightedCallback>&&);
 
     // CanvasObserver
     void canvasContentsWillChange(CanvasBase&, const FloatRect&) final;
@@ -108,7 +108,7 @@ public:
     void consoleStopRecordingCanvas(CanvasRenderingContext&);
     void consoleStopRecordingCanvas(GPUDevice&);
 #if ENABLE(WEBGL)
-    void didEnableExtension(WebGLRenderingContextBase&, const String&);
+    void didEnableExtension(WebGLRenderingContextBase&, StringImpl*);
     void didCreateWebGLProgram(WebGLRenderingContextBase&, WebGLProgram&);
     void willDestroyWebGLProgram(WebGLProgram&);
     bool isWebGLProgramDisabled(WebGLProgram&);
@@ -130,14 +130,14 @@ public:
     void didFinishRecordingCanvasFrame(GPUDevice&, bool forceDispatch = false);
     RefPtr<::WebGPU::RenderPipeline> renderPipelineForWebGPUHighlighting(GPURenderPipeline&, unsigned canvasColorAttachmentMask);
 
-    void recordAction(CanvasRenderingContext&, String&&, InspectorCanvasProcessedArguments&& = { });
-    void recordAction(CanvasRenderingContext&, InspectorCanvasProcessedArgument&& receiver, String&&, InspectorCanvasProcessedArguments&& = { });
-    void recordAction(GPUDevice&, String&&, InspectorCanvasProcessedArguments&& = { });
-    void recordAction(GPUDevice&, InspectorCanvasProcessedArgument&& receiver, String&&, InspectorCanvasProcessedArguments&& = { });
+    void recordAction(CanvasRenderingContext&, RefPtr<StringImpl>&&, InspectorCanvasProcessedArguments&& = { });
+    void recordAction(CanvasRenderingContext&, InspectorCanvasProcessedArgument&& receiver, RefPtr<StringImpl>&&, InspectorCanvasProcessedArguments&& = { });
+    void recordAction(GPUDevice&, RefPtr<StringImpl>&&, InspectorCanvasProcessedArguments&& = { });
+    void recordAction(GPUDevice&, InspectorCanvasProcessedArgument&& receiver, RefPtr<StringImpl>&&, InspectorCanvasProcessedArguments&& = { });
     void recordActionResult(CanvasRenderingContext&, InspectorCanvasProcessedArgument&&);
     void recordActionResult(GPUDevice&, InspectorCanvasProcessedArgument&&);
 
-    RefPtr<InspectorCanvas> assertInspectorCanvas(Inspector::Protocol::ErrorString&, const String& canvasId);
+    RefPtr<InspectorCanvas> assertInspectorCanvas(Inspector::Protocol::ErrorString&, StringImpl* canvasId);
     NODELETE RefPtr<InspectorCanvas> findInspectorCanvas(const CanvasRenderingContext&);
     NODELETE RefPtr<InspectorCanvas> findInspectorCanvas(const GPUDevice&);
 
@@ -159,7 +159,7 @@ protected:
 
     const UniqueRef<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
 
-    MemoryCompactRobinHoodHashMap<String, Ref<InspectorCanvas>> m_identifierToInspectorCanvas;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Ref<InspectorCanvas>> m_identifierToInspectorCanvas;
     WeakHashSet<InspectorCanvas> m_pendingNodesChange;
     WeakHashSet<InspectorCanvas> m_pendingCSSCanvasClientNodesChange;
 
@@ -167,7 +167,7 @@ private:
     struct RecordingOptions {
         std::optional<long> frameCount;
         std::optional<long> memoryLimit;
-        std::optional<String> name;
+        std::optional<RefPtr<StringImpl>> name;
     };
     void startRecording(InspectorCanvas&, Inspector::Protocol::Recording::Initiator, RecordingOptions&& = { });
     void consoleStartRecordingCanvas(InspectorCanvas&, JSC::JSGlobalObject&, JSC::JSObject* options);
@@ -182,7 +182,7 @@ private:
     void dispatchCanvasSizeChanged(InspectorCanvas&);
 
     void unbindProgram(InspectorShaderProgram&);
-    RefPtr<InspectorShaderProgram> assertInspectorProgram(Inspector::Protocol::ErrorString&, const String& programId);
+    RefPtr<InspectorShaderProgram> assertInspectorProgram(Inspector::Protocol::ErrorString&, StringImpl* programId);
 #if ENABLE(WEBGL)
     NODELETE RefPtr<InspectorShaderProgram> findInspectorProgram(WebGLProgram&);
 #endif // ENABLE(WEBGL)
@@ -193,14 +193,14 @@ private:
 
     const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
 
-    Vector<String> m_removedCanvasIdentifiers;
+    Vector<RefPtr<StringImpl>> m_removedCanvasIdentifiers;
     Timer m_canvasDestroyedTimer;
 
-    MemoryCompactRobinHoodHashMap<String, Ref<InspectorShaderProgram>> m_identifierToInspectorProgram;
-    Vector<String> m_removedProgramIdentifiers;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Ref<InspectorShaderProgram>> m_identifierToInspectorProgram;
+    Vector<RefPtr<StringImpl>> m_removedProgramIdentifiers;
     Timer m_programDestroyedTimer;
 
-    MemoryCompactRobinHoodHashSet<String> m_recordingCanvasIdentifiers;
+    MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>> m_recordingCanvasIdentifiers;
 
     std::optional<size_t> m_recordingAutoCaptureFrameCount;
 };

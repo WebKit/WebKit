@@ -77,7 +77,7 @@ WebExtension::WebExtension(NSBundle *appExtensionBundle, NSURL *resourceURL, Ref
 
     if (m_resourceBaseURL.isValid()) {
         BOOL isDirectory;
-        if (![NSFileManager.defaultManager fileExistsAtPath:m_resourceBaseURL.fileSystemPath().createNSString().get() isDirectory:&isDirectory]) {
+        if (![NSFileManager.defaultManager fileExistsAtPath:createNSString(m_resourceBaseURL.fileSystemPath()).get() isDirectory:&isDirectory]) {
             outError = createError(Error::Unknown);
             return;
         }
@@ -130,7 +130,7 @@ WebExtension::WebExtension(NSDictionary *manifest, Resources&& resources)
     auto *manifestString = encodeJSONString(manifest);
     RELEASE_ASSERT(manifestString);
 
-    m_stringResources.set("manifest.json"_s, manifestString);
+    m_stringResources.set("manifest.json"_si, StringImpl::create(manifestString));
 }
 
 NSDictionary *WebExtension::manifestDictionary()
@@ -139,7 +139,7 @@ NSDictionary *WebExtension::manifestDictionary()
     if (!manifestObject)
         return nil;
 
-    return parseJSON(manifestObject->toJSONString().createNSString().get());
+    return parseJSON(createNSString(manifestObject->toJSONString()).get());
 }
 
 SecStaticCodeRef WebExtension::bundleStaticCode() const
@@ -213,17 +213,17 @@ bool WebExtension::validateResourceData(NSURL *resourceURL, NSData *resourceData
 }
 #endif // PLATFORM(MAC)
 
-std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForPath(const String& originalPath, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
+std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForPath(StringImpl* originalPath, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
 {
     ASSERT(originalPath);
 
-    String path = originalPath;
+    RefPtr<StringImpl> path = originalPath;
 
     // Remove leading slash to normalize the path for lookup/storage in the cache dictionary.
-    if (path.startsWith('/'))
-        path = path.substring(1);
+    if (startsWith(path, '/'))
+        path = substring(path, 1);
 
-    auto *cocoaPath = path.createNSString().get();
+    auto *cocoaPath = createNSString(path).get();
 
     if ([cocoaPath hasPrefix:@"data:"]) {
         if (auto decodedURL = WebCore::DataURLDecoder::decode(URL { path }))
@@ -241,7 +241,7 @@ std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForP
         cocoaPath = [cocoaPath substringFromIndex:1];
 
     if ([cocoaPath isEqualToString:generatedBackgroundPageFilename] || [cocoaPath isEqualToString:generatedBackgroundServiceWorkerFilename])
-        return API::Data::create(generatedBackgroundContent().utf8().span());
+        return API::Data::create(utf8(generatedBackgroundContent()).span());
 
     auto resourceKey = resourceKeyForPath(originalPath);
 
@@ -249,7 +249,7 @@ std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForP
         return *maybeData;
 
     if (auto maybeString = m_stringResources.getOptional(resourceKey)) {
-        auto data = API::Data::create(maybeString->utf8().span());
+        auto data = API::Data::create(utf8(*maybeString).span());
         m_dataResources.set(resourceKey, data);
         return data;
     }
@@ -289,7 +289,7 @@ void WebExtension::recordError(Ref<API::Error> error)
 
     // Only the first occurrence of each error is recorded in the array. This prevents duplicate errors,
     // such as repeated "resource not found" errors, from being included multiple times.
-    if (m_errors.containsIf([&](auto& existingError) { return existingError->localizedDescription() == error->localizedDescription(); }))
+    if (m_errors.containsIf([&](auto& existingError) { return equal(existingError->localizedDescription(), error->localizedDescription()); }))
         return;
 
     [wrapper() willChangeValueForKey:@"errors"];
@@ -297,24 +297,24 @@ void WebExtension::recordError(Ref<API::Error> error)
     [wrapper() didChangeValueForKey:@"errors"];
 }
 
-std::expected<Ref<WebCore::Icon>, RefPtr<API::Error>> WebExtension::iconForPath(const String& imagePath, WebCore::FloatSize sizeForResizing, std::optional<double> idealDisplayScale)
+std::expected<Ref<WebCore::Icon>, RefPtr<API::Error>> WebExtension::iconForPath(StringImpl* imagePath, WebCore::FloatSize sizeForResizing, std::optional<double> idealDisplayScale)
 {
-    ASSERT(!imagePath.isEmpty());
+    ASSERT(!isEmpty(imagePath));
 
     constexpr auto symbolURLScheme = "symbol:"_s;
-    if (imagePath.startsWith(symbolURLScheme)) {
-        auto symbolName = imagePath.substring(symbolURLScheme.length());
+    if (startsWith(imagePath, symbolURLScheme)) {
+        auto symbolName = substring(imagePath, symbolURLScheme.length());
 
         // Strip off any query string (everything after '?') so we only use
         // the raw symbol name. Query parameters may be handled in the future.
-        auto queryStringPosition = symbolName.find('?');
+        auto queryStringPosition = find(symbolName, '?');
         if (queryStringPosition != notFound)
-            symbolName = symbolName.left(queryStringPosition);
+            symbolName = left(symbolName, queryStringPosition);
 
 #if USE(APPKIT)
-        auto *result = [NSImage imageWithPrivateSystemSymbolName:symbolName.createNSString().get() accessibilityDescription:nil];
+        auto *result = [NSImage imageWithPrivateSystemSymbolName:createNSString(symbolName).get() accessibilityDescription:nil];
 #else
-        auto *result = [UIImage _systemImageNamed:symbolName.createNSString().get()];
+        auto *result = [UIImage _systemImageNamed:createNSString(symbolName).get()];
 #endif
 
         if (RefPtr iconResult = WebCore::Icon::create(result))
@@ -380,7 +380,7 @@ std::expected<Ref<WebCore::Icon>, RefPtr<API::Error>> WebExtension::iconForPath(
     }
 
     if (!result)
-        return makeUnexpected(createError(Error::InvalidIcon, WEB_UI_FORMAT_CFSTRING("Failed to load image for path “%@”. The image is not in a supported format.", "WKWebExtensionErrorInvalidManifestEntry description for icon with unsupported image format", bridge_cast(imagePath.createNSString().get()))));
+        return makeUnexpected(createError(Error::InvalidIcon, WEB_UI_FORMAT_CFSTRING("Failed to load image for path “%@”. The image is not in a supported format.", "WKWebExtensionErrorInvalidManifestEntry description for icon with unsupported image format", bridge_cast(createNSString(imagePath).get()))));
 
 #if USE(APPKIT)
     if (!sizeForResizing.isZero()) {
@@ -429,10 +429,10 @@ RefPtr<WebCore::Icon> WebExtension::bestIcon(RefPtr<JSON::Object> icons, WebCore
     for (double scale : screenScales) {
         auto pixelSize = idealPointSize * scale;
         auto iconPath = pathForBestImage(*icons, pixelSize);
-        if (iconPath.isEmpty())
+        if (isEmpty(iconPath))
             continue;
 
-        RetainPtr nsIconPath = iconPath.createNSString();
+        RetainPtr nsIconPath = createNSString(iconPath);
         [uniquePaths addObject:nsIconPath.get()];
 
 #if PLATFORM(IOS_FAMILY)
@@ -448,7 +448,7 @@ RefPtr<WebCore::Icon> WebExtension::bestIcon(RefPtr<JSON::Object> icons, WebCore
     RefPtr<WebCore::Icon> resultImage;
 
     for (NSString *iconPath in uniquePaths) {
-        auto imageValue = iconForPath(iconPath, idealSize);
+        auto imageValue = iconForPath(StringImpl::create(iconPath).get(), idealSize);
         if (imageValue) {
             if (!resultImage)
                 resultImage = imageValue.value().get();
@@ -461,7 +461,7 @@ RefPtr<WebCore::Icon> WebExtension::bestIcon(RefPtr<JSON::Object> icons, WebCore
     return resultImage;
 #else
     auto *images = mapObjects<NSDictionary>(scalePaths, ^id(NSNumber *scale, NSString *path) {
-        auto imageValue = iconForPath(path, idealSize, scale.doubleValue);
+        auto imageValue = iconForPath(StringImpl::create(path).get(), idealSize, scale.doubleValue);
         if (imageValue)
             return imageValue.value()->image();
 

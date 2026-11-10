@@ -43,7 +43,7 @@ Ref<CSSMaskBorderSliceValue> CSSMaskBorderSliceValue::create(CSS::MaskBorderSlic
     return adoptRef(*new CSSMaskBorderSliceValue(WTF::move(slices)));
 }
 
-String CSSMaskBorderSliceValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSMaskBorderSliceValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_slices);
 }

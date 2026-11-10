@@ -53,9 +53,9 @@ void AccessibilityMediaHelpers::toggleMute(HTMLMediaElement* mediaElement)
         mediaElement->setMuted(!mediaElement->muted());
 }
 
-String AccessibilityMediaHelpers::interactiveVideoDuration(HTMLMediaElement* mediaElement)
+RefPtr<StringImpl> AccessibilityMediaHelpers::interactiveVideoDuration(HTMLMediaElement* mediaElement)
 {
-    return mediaElement ? localizedMediaTimeDescription(mediaElement->duration()) : String();
+    return mediaElement ? localizedMediaTimeDescription(mediaElement->duration()) : nullptr;
 }
 
 bool AccessibilityMediaHelpers::isPlaying(HTMLMediaElement* mediaElement)

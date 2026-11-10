@@ -52,7 +52,7 @@ struct GridPositionExplicit {
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
-        if (name.value.isNull())
+        if (!name.value)
             return visitor(position);
         return visitor(SpaceSeparatedTuple { position, name });
     }
@@ -71,7 +71,7 @@ struct GridPositionSpan {
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
-        if (name.value.isNull())
+        if (!name.value)
             return visitor(SpaceSeparatedTuple { CSS::Keyword::Span { }, position });
         if (position == 1)
             return visitor(SpaceSeparatedTuple { CSS::Keyword::Span { }, name });

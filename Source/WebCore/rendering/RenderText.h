@@ -43,8 +43,8 @@ class RenderText : public RenderObject, private Layout::InlineTextBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderText);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderText);
 public:
-    RenderText(Type, Text&, const String&);
-    RenderText(Type, Document&, const String&);
+    RenderText(Type, Text&, StringImpl*);
+    RenderText(Type, Document&, StringImpl*);
     RenderText(Document&, SynthesizedGlyph);
 
     virtual ~RenderText();
@@ -109,11 +109,11 @@ public:
     const Style::ComputedStyle* grammarErrorPseudoStyle() const LIFETIME_BOUND;
     const Style::ComputedStyle* targetTextPseudoStyle() const LIFETIME_BOUND;
 
-    virtual String originalText() const;
+    virtual RefPtr<StringImpl> originalText() const;
 
 
-    const String& text() const LIFETIME_BOUND { return m_text; }
-    String textWithoutConvertingBackslashToYenSymbol() const;
+    const RefPtr<StringImpl>& text() const LIFETIME_BOUND { return m_text; }
+    RefPtr<StringImpl> textWithoutConvertingBackslashToYenSymbol() const;
 
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
     Vector<IntRect> absoluteRectsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = nullptr) const;
@@ -127,22 +127,22 @@ public:
 
     Position positionForPoint(const LayoutPoint&, HitTestSource) final;
 
-    bool hasEmptyText() const { return m_text.isEmpty(); }
+    bool hasEmptyText() const { return isEmpty(m_text); }
 
     char16_t characterAt(unsigned) const;
-    size_t length() const { return text().length(); }
+    size_t length() const { return WTF::length(text()); }
 
     WEBCORE_EXPORT virtual IntRect linesBoundingBox() const;
     WEBCORE_EXPORT IntPoint firstRunLocation() const;
 
-    void setText(const String&, bool force = false);
-    virtual void setTextWithOffset(const String&, unsigned offset);
+    void setText(StringImpl*, bool force = false);
+    virtual void setTextWithOffset(StringImpl*, unsigned offset);
 
     bool canBeSelectionLeaf() const override { return !layoutBox().contentGlyph(); }
 
     // Alternative description from 'content' that can be used for accessibility instead of the text. Null (unspecified) is distinct from empty string.
-    NODELETE const String& altText() const LIFETIME_BOUND;
-    void setAltText(const String&);
+    NODELETE const RefPtr<StringImpl>& altText() const LIFETIME_BOUND;
+    void setAltText(StringImpl*);
 
     LayoutRect collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>&);
 
@@ -195,19 +195,19 @@ public:
 protected:
     void willBeDestroyed() override;
 
-    virtual void setRenderedText(const String&);
+    virtual void setRenderedText(StringImpl*);
     virtual char32_t previousCharacter() const;
 
-    virtual void setTextInternal(const String&, bool force);
+    virtual void setTextInternal(StringImpl*, bool force);
 
     void layoutBoxContentDidChange();
     void displayContentsParentStyleDidChange(const Style::ComputedStyle& oldStyle, bool didChangeStyleSource);
 
 private:
     void updateRenderedText();
-    void updateRenderedText(const String&);
+    void updateRenderedText(StringImpl*);
 
-    RenderText(Type, Node&, const String&, std::optional<SynthesizedGlyph> = { });
+    RenderText(Type, Node&, StringImpl*, std::optional<SynthesizedGlyph> = { });
 
     ASCIILiteral renderName() const override;
 
@@ -231,7 +231,7 @@ private:
     void container() const = delete; // Use parent() instead.
     void container(const RenderLayerModelObject&, bool&) const = delete; // Use parent() instead.
 
-    String m_text;
+    RefPtr<StringImpl> m_text;
 
     unsigned m_needsVisualReordering : 1 { false };
     unsigned m_containsOnlyASCII : 1 { false };
@@ -246,15 +246,15 @@ private:
     float m_candidateComputedTextSize { 0 };
 };
 
-String applyTextTransform(const Style::ComputedStyle&, const String&, char32_t previousCharacter);
-String applyTextTransform(const Style::ComputedStyle&, const String&);
-String capitalize(const String&, char32_t previousCharacter, const AtomString& locale);
-String capitalize(const String&, const AtomString& locale);
-NODELETE bool isDutchLocale(const AtomString&);
+RefPtr<StringImpl> applyTextTransform(const Style::ComputedStyle&, StringImpl*, char32_t previousCharacter);
+RefPtr<StringImpl> applyTextTransform(const Style::ComputedStyle&, StringImpl*);
+RefPtr<StringImpl> capitalize(StringImpl*, char32_t previousCharacter, AtomStringImpl* locale);
+RefPtr<StringImpl> capitalize(StringImpl*, AtomStringImpl* locale);
+NODELETE bool isDutchLocale(AtomStringImpl*);
 
 inline char16_t RenderText::characterAt(unsigned i) const
 {
-    return i >= length() ? 0 : text()[i];
+    return i >= length() ? 0 : codeUnitAt(text(), i);
 }
 
 inline const Style::ComputedStyle* RenderText::lazyPseudoElementStyle(const Style::PseudoElementIdentifier& pseudoElementIdentifier, const Style::ComputedStyle* parentStyle) const

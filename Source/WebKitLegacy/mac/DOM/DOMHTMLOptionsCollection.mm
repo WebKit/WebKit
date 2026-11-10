@@ -81,7 +81,7 @@
 - (DOMNode *)namedItem:(NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->namedItem(name)));
+    return kit(WTF::getPtr(IMPL->namedItem(AtomStringImpl::add((__bridge CFStringRef)name).get())));
 }
 
 - (void)add:(DOMHTMLOptionElement *)option index:(unsigned)index

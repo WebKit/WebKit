@@ -33,14 +33,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MockGamepad);
 
-MockGamepad::MockGamepad(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected)
+MockGamepad::MockGamepad(unsigned index, StringImpl* gamepadID, StringImpl* mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected)
     : PlatformGamepad(index)
 {
     m_connectTime = m_lastUpdateTime = MonotonicTime::now();
     updateDetails(gamepadID, mapping, axisCount, buttonCount, supportsDualRumble, wasConnected);
 }
 
-void MockGamepad::updateDetails(const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected)
+void MockGamepad::updateDetails(StringImpl* gamepadID, StringImpl* mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected)
 {
     m_id = gamepadID;
     m_mapping = mapping;

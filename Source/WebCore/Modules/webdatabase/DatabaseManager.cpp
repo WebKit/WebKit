@@ -50,7 +50,7 @@ namespace WebCore {
 
 class DatabaseManager::ProposedDatabase {
 public:
-    ProposedDatabase(DatabaseManager&, SecurityOrigin&, const String& name, const String& displayName, unsigned long estimatedSize);
+    ProposedDatabase(DatabaseManager&, SecurityOrigin&, StringImpl* name, StringImpl* displayName, unsigned long estimatedSize);
     ~ProposedDatabase();
 
     NODELETE SecurityOrigin& origin() { return m_origin; }
@@ -62,10 +62,10 @@ private:
     DatabaseDetails m_details;
 };
 
-DatabaseManager::ProposedDatabase::ProposedDatabase(DatabaseManager& manager, SecurityOrigin& origin, const String& name, const String& displayName, unsigned long estimatedSize)
+DatabaseManager::ProposedDatabase::ProposedDatabase(DatabaseManager& manager, SecurityOrigin& origin, StringImpl* name, StringImpl* displayName, unsigned long estimatedSize)
     : m_manager(manager)
     , m_origin(origin.isolatedCopy())
-    , m_details(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0, std::nullopt, std::nullopt)
+    , m_details(isolatedCopy(name), isolatedCopy(displayName), estimatedSize, 0, std::nullopt, std::nullopt)
 {
     m_manager.addProposedDatabase(*this);
 }
@@ -81,7 +81,7 @@ DatabaseManager& DatabaseManager::singleton()
     return instance;
 }
 
-void DatabaseManager::initialize(const String& databasePath)
+void DatabaseManager::initialize(StringImpl* databasePath)
 {
     platformInitialize(databasePath);
     DatabaseTracker::initializeTracker(databasePath);
@@ -114,20 +114,20 @@ Ref<DatabaseContext> DatabaseManager::databaseContext(Document& document)
 
 #if LOG_DISABLED
 
-NODELETE static inline void logOpenDatabaseError(Document&, const String&)
+NODELETE static inline void logOpenDatabaseError(Document&, StringImpl*)
 {
 }
 
 #else
 
-static void logOpenDatabaseError(Document& document, const String& name)
+static void logOpenDatabaseError(Document& document, StringImpl* name)
 {
     LOG_WITH_STREAM(StorageAPI, stream << "Database "_s << name << " for origin "_s << document.securityOrigin().toString() << " not allowed to be established"_s);
 }
 
 #endif
 
-ExceptionOr<Ref<Database>> DatabaseManager::openDatabaseBackend(Document& document, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase)
+ExceptionOr<Ref<Database>> DatabaseManager::openDatabaseBackend(Document& document, StringImpl* name, StringImpl* expectedVersion, StringImpl* displayName, unsigned estimatedSize, bool setVersionInNewDatabase)
 {
     auto backend = tryToOpenDatabaseBackend(document, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, FirstTryToOpenDatabase);
 
@@ -154,7 +154,7 @@ ExceptionOr<Ref<Database>> DatabaseManager::openDatabaseBackend(Document& docume
     return backend;
 }
 
-ExceptionOr<Ref<Database>> DatabaseManager::tryToOpenDatabaseBackend(Document& document, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase,
+ExceptionOr<Ref<Database>> DatabaseManager::tryToOpenDatabaseBackend(Document& document, StringImpl* name, StringImpl* expectedVersion, StringImpl* displayName, unsigned estimatedSize, bool setVersionInNewDatabase,
     OpenAttempt attempt)
 {
     RefPtr page = document.page();
@@ -198,7 +198,7 @@ void DatabaseManager::removeProposedDatabase(ProposedDatabase& database)
     m_proposedDatabases.remove(&database);
 }
 
-ExceptionOr<Ref<Database>> DatabaseManager::openDatabase(Document& document, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback)
+ExceptionOr<Ref<Database>> DatabaseManager::openDatabase(Document& document, StringImpl* name, StringImpl* expectedVersion, StringImpl* displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback)
 {
     ASSERT(isMainThread());
 
@@ -244,24 +244,24 @@ void DatabaseManager::stopDatabases(Document& document, DatabaseTaskSynchronizer
     }
 }
 
-String DatabaseManager::fullPathForDatabase(SecurityOrigin& origin, const String& name, bool createIfDoesNotExist)
+RefPtr<StringImpl> DatabaseManager::fullPathForDatabase(SecurityOrigin& origin, StringImpl* name, bool createIfDoesNotExist)
 {
     {
         Locker locker { m_proposedDatabasesLock };
         for (auto* proposedDatabase : m_proposedDatabases) {
-            if (proposedDatabase->details().name() == name && proposedDatabase->origin().equal(origin))
-                return String();
+            if (equal(proposedDatabase->details().name(), name) && proposedDatabase->origin().equal(origin))
+                return nullptr;
         }
     }
     return DatabaseTracker::singleton().fullPathForDatabase(origin.data(), name, createIfDoesNotExist);
 }
 
-DatabaseDetails DatabaseManager::detailsForNameAndOrigin(const String& name, SecurityOrigin& origin)
+DatabaseDetails DatabaseManager::detailsForNameAndOrigin(StringImpl* name, SecurityOrigin& origin)
 {
     {
         Locker locker { m_proposedDatabasesLock };
         for (auto* proposedDatabase : m_proposedDatabases) {
-            if (proposedDatabase->details().name() == name && proposedDatabase->origin().equal(origin)) {
+            if (equal(proposedDatabase->details().name(), name) && proposedDatabase->origin().equal(origin)) {
                 ASSERT(proposedDatabase->details().threadID() == currentThreadID() || isMainThread());
                 return proposedDatabase->details();
             }
@@ -271,13 +271,13 @@ DatabaseDetails DatabaseManager::detailsForNameAndOrigin(const String& name, Sec
     return DatabaseTracker::singleton().detailsForNameAndOrigin(name, origin.data());
 }
 
-void DatabaseManager::logErrorMessage(Document& document, const String& message)
+void DatabaseManager::logErrorMessage(Document& document, StringImpl* message)
 {
     document.addConsoleMessage(MessageSource::Storage, MessageLevel::Error, message);
 }
 
 #if !PLATFORM(COCOA)
-void DatabaseManager::platformInitialize(const String& databasePath)
+void DatabaseManager::platformInitialize(StringImpl* databasePath)
 {
     UNUSED_PARAM(databasePath);
 }

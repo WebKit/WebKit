@@ -58,7 +58,7 @@ void useRealRTCPeerConnectionFactory(LibWebRTCProvider& provider)
     factory = nullptr;
 }
 
-void useMockRTCPeerConnectionFactory(LibWebRTCProvider* provider, const String& testCase)
+void useMockRTCPeerConnectionFactory(LibWebRTCProvider* provider, StringImpl* testCase)
 {
     if (!provider)
         return;
@@ -212,29 +212,29 @@ private:
     }
 };
 
-MockLibWebRTCPeerConnectionFactory::MockLibWebRTCPeerConnectionFactory(const String& testCase)
-    : m_testCase(testCase.isolatedCopy())
+MockLibWebRTCPeerConnectionFactory::MockLibWebRTCPeerConnectionFactory(StringImpl* testCase)
+    : m_testCase(isolatedCopy(testCase))
 {
 }
 
-static webrtc::scoped_refptr<webrtc::PeerConnectionInterface> createConnection(const String& testCase, webrtc::PeerConnectionObserver& observer)
+static webrtc::scoped_refptr<webrtc::PeerConnectionInterface> createConnection(StringImpl* testCase, webrtc::PeerConnectionObserver& observer)
 {
-    if (testCase == "ICECandidates"_s)
+    if (equal(testCase, "ICECandidates"_s))
         return webrtc::make_ref_counted<MockLibWebRTCPeerConnectionForIceCandidates>(observer);
 
-    if (testCase == "MDNSICECandidatesWithDelay"_s)
+    if (equal(testCase, "MDNSICECandidatesWithDelay"_s))
         return webrtc::make_ref_counted<MockLibWebRTCPeerConnectionForIceCandidates>(observer, 1000);
 
-    if (testCase == "ICEConnectionState"_s)
+    if (equal(testCase, "ICEConnectionState"_s))
         return webrtc::make_ref_counted<MockLibWebRTCPeerConnectionForIceConnectionState>(observer);
 
-    if (testCase == "LibWebRTCReleasingWhileCreatingOffer"_s)
+    if (equal(testCase, "LibWebRTCReleasingWhileCreatingOffer"_s))
         return webrtc::make_ref_counted<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileCreatingOffer>(observer);
 
-    if (testCase == "LibWebRTCReleasingWhileGettingStats"_s)
+    if (equal(testCase, "LibWebRTCReleasingWhileGettingStats"_s))
         return webrtc::make_ref_counted<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileGettingStats>(observer);
 
-    if (testCase == "LibWebRTCReleasingWhileSettingDescription"_s)
+    if (equal(testCase, "LibWebRTCReleasingWhileSettingDescription"_s))
         return webrtc::make_ref_counted<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileSettingDescription>(observer);
 
     return webrtc::make_ref_counted<MockLibWebRTCPeerConnection>(observer);

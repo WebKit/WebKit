@@ -50,17 +50,17 @@ enum class SlotAssignmentMode : bool;
 struct SerializedNode {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(SerializedNode, WEBCORE_EXPORT);
     struct QualifiedName {
-        String prefix;
-        String localName;
-        String namespaceURI;
+        RefPtr<StringImpl> prefix;
+        RefPtr<StringImpl> localName;
+        RefPtr<StringImpl> namespaceURI;
 
         NODELETE QualifiedName(const WebCore::QualifiedName&);
-        NODELETE WEBCORE_EXPORT QualifiedName(String&&, String&&, String&&);
+        NODELETE WEBCORE_EXPORT QualifiedName(RefPtr<StringImpl>&&, RefPtr<StringImpl>&&, RefPtr<StringImpl>&&);
         WebCore::QualifiedName qualifiedName() &&;
     };
     struct Attr {
         QualifiedName name;
-        String value;
+        RefPtr<StringImpl> value;
     };
     struct ContainerNode {
         Vector<SerializedNode> children;
@@ -70,14 +70,14 @@ struct SerializedNode {
         URL url;
         URL baseURL;
         URL aboutBaseURL;
-        Variant<String, URL> documentURI;
-        String contentType;
+        Variant<RefPtr<StringImpl>, URL> documentURI;
+        RefPtr<StringImpl> contentType;
     };
     struct DocumentFragment : public ContainerNode { };
     struct DocumentType {
-        String name;
-        String publicId;
-        String systemId;
+        RefPtr<StringImpl> name;
+        RefPtr<StringImpl> publicId;
+        RefPtr<StringImpl> systemId;
     };
     struct ShadowRoot : public DocumentFragment {
         bool openMode;
@@ -90,7 +90,7 @@ struct SerializedNode {
     struct Element : public ContainerNode {
         struct Attribute {
             QualifiedName name;
-            String value;
+            RefPtr<StringImpl> value;
         };
         QualifiedName name;
         Vector<Attribute> attributes;
@@ -100,13 +100,13 @@ struct SerializedNode {
         std::optional<DocumentFragment> content;
     };
     struct CharacterData {
-        String data;
+        RefPtr<StringImpl> data;
     };
     struct Comment : public CharacterData { };
     struct Text : public CharacterData { };
     struct CDATASection : public Text { };
     struct ProcessingInstruction : public CharacterData {
-        String target;
+        RefPtr<StringImpl> target;
     };
 
     Variant<Attr, CDATASection, Comment, Document, DocumentFragment, DocumentType, Element, ProcessingInstruction, ShadowRoot, Text, HTMLTemplateElement> data;

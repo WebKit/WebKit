@@ -62,7 +62,7 @@ RetainPtr<id <NSPasteboardWriting>> createPasteboardWriter(const PasteboardWrite
     auto pasteboardItem = adoptNS([[NSPasteboardItem alloc] init]);
 
     if (auto& plainText = data.plainText()) {
-        [pasteboardItem setString:plainText->text.createNSString().get() forType:NSPasteboardTypeString];
+        [pasteboardItem setString:createNSString(plainText->text).get() forType:NSPasteboardTypeString];
         if (plainText->canSmartCopyOrDelete) {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             auto smartPasteType = bridge_cast(adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, RetainPtr { bridge_cast(_NXSmartPaste) }.get(), nullptr)));
@@ -73,8 +73,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (auto& urlData = data.urlData()) {
         RetainPtr nsURL = urlData->url.createNSURL();
-        RetainPtr userVisibleString = urlData->userVisibleForm.createNSString();
-        RetainPtr title = urlData->title.createNSString();
+        RetainPtr userVisibleString = createNSString(urlData->userVisibleForm);
+        RetainPtr title = createNSString(urlData->title);
         if (!title.get().length) {
             title = nsURL.get().path.lastPathComponent;
             if (!title.get().length)
@@ -83,7 +83,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         // WebURLsWithTitlesPboardType.
         // FIXME: This could use StringView (the one that creates NSString) to save an allocation
-        auto paths = adoptNS([[NSArray alloc] initWithObjects:@[ @[ nsURL.get().absoluteString ] ], @[ urlData->title.trim(deprecatedIsSpaceOrNewline).createNSString().get() ], nil]);
+        auto paths = adoptNS([[NSArray alloc] initWithObjects:@[ @[ nsURL.get().absoluteString ] ], @[ createNSString(trim(urlData->title, deprecatedIsSpaceOrNewline)).get() ], nil]);
         [pasteboardItem setPropertyList:paths.get() forType:toUTI(@"WebURLsWithTitlesPboardType").get()];
 
         // NSURLPboardType.
@@ -122,13 +122,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             [pasteboardItem setData:dataInRTFDFormat->createNSData().get() forType:NSPasteboardTypeRTFD];
         if (RefPtr dataInRTFFormat = webContent->dataInRTFFormat)
             [pasteboardItem setData:dataInRTFFormat->createNSData().get() forType:NSPasteboardTypeRTF];
-        if (!webContent->dataInHTMLFormat.isNull())
-            [pasteboardItem setString:webContent->dataInHTMLFormat.createNSString().get() forType:NSPasteboardTypeHTML];
-        if (!webContent->dataInStringFormat.isNull())
-            [pasteboardItem setString:webContent->dataInStringFormat.createNSString().get() forType:NSPasteboardTypeString];
+        if (webContent->dataInHTMLFormat)
+            [pasteboardItem setString:createNSString(webContent->dataInHTMLFormat).get() forType:NSPasteboardTypeHTML];
+        if (webContent->dataInStringFormat)
+            [pasteboardItem setString:createNSString(webContent->dataInStringFormat).get() forType:NSPasteboardTypeString];
 
         for (unsigned i = 0; i < webContent->clientTypesAndData.size(); ++i)
-            [pasteboardItem setData:RefPtr { webContent->clientTypesAndData[i].second }->createNSData().get() forType:toUTIUnlessAlreadyUTI(webContent->clientTypesAndData[i].first.createNSString().get()).get()];
+            [pasteboardItem setData:RefPtr { webContent->clientTypesAndData[i].second }->createNSData().get() forType:toUTIUnlessAlreadyUTI(createNSString(webContent->clientTypesAndData[i].first).get()).get()];
 
         PasteboardCustomData customData;
         customData.setOrigin(webContent->contentOrigin);

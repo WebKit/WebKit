@@ -28,12 +28,12 @@
 
 #include <glib.h>
 
-gchar* convertToUTF8String(WTF::String const& s)
+gchar* convertToUTF8String(StringImpl* s)
 {
-    if (s.isNull())
+    if (!s)
         return nullptr;
 
-    return gStrdup(s.utf8());
+    return gStrdup(utf8(s));
 }
 
 gchar* convertToUTF8String(URL const& s)

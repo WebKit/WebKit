@@ -98,8 +98,8 @@ private:
 static Ref<WebsiteDataStore> inspectorWebsiteDataStore()
 {
     static constexpr auto versionedDirectory = "wpewebkit-" WPE_API_VERSION G_DIR_SEPARATOR_S "WebInspector" G_DIR_SEPARATOR_S ""_s;
-    String baseCacheDirectory = FileSystem::pathByAppendingComponent(FileSystem::userCacheDirectory(), versionedDirectory);
-    String baseDataDirectory = FileSystem::pathByAppendingComponent(FileSystem::userDataDirectory(), versionedDirectory);
+    RefPtr<StringImpl> baseCacheDirectory = FileSystem::pathByAppendingComponent(FileSystem::userCacheDirectory(), versionedDirectory);
+    RefPtr<StringImpl> baseDataDirectory = FileSystem::pathByAppendingComponent(FileSystem::userDataDirectory(), versionedDirectory);
 
     auto configuration = WebsiteDataStoreConfiguration::createWithBaseDirectories(baseCacheDirectory, baseDataDirectory);
     return WebsiteDataStore::create(WTF::move(configuration), PAL::SessionID::generatePersistentSessionID());
@@ -114,7 +114,7 @@ RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
     RELEASE_ASSERT(m_inspectedPage);
     RELEASE_ASSERT(!m_inspectorView);
 
-    auto preferences = WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s);
+    auto preferences = WebPreferences::create(nullptr, "WebKit2."_si, "WebKit2."_si);
 #if ENABLE(DEVELOPER_MODE)
     // Allow developers to inspect the Web Inspector in debug builds without changing settings.
     preferences->setDeveloperExtrasEnabled(true);
@@ -215,17 +215,17 @@ void WebInspectorUIProxy::platformSetForcedAppearance(WebCore::InspectorFrontend
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformRevealFileExternally(const String&)
+void WebInspectorUIProxy::platformRevealFileExternally(StringImpl*)
 {
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformInspectedURLChanged(const String& url)
+void WebInspectorUIProxy::platformInspectedURLChanged(StringImpl* url)
 {
     if (!m_inspectorWindow)
         return;
 
-    auto title = makeString(u8"Web Inspector — "_span, url).utf8();
+    auto title = utf8(makeString(u8"Web Inspector — "_span, url));
     wpe_toplevel_set_title(m_inspectorWindow.get(), title.legacyCStringPointer());
 }
 
@@ -234,7 +234,7 @@ void WebInspectorUIProxy::platformShowCertificate(const WebCore::CertificateInfo
     notImplemented();
 }
 
-static String computeContentHash(const String& content, bool base64Encoded)
+static RefPtr<StringImpl> computeContentHash(StringImpl* content, bool base64Encoded)
 {
     GMallocString digest;
     if (base64Encoded) {
@@ -242,12 +242,12 @@ static String computeContentHash(const String& content, bool base64Encoded)
         if (decoded)
             digest = GMallocString::unsafeAdoptFromUTF8(g_compute_checksum_for_data(G_CHECKSUM_SHA256, decoded->span().data(), decoded->size()));
     } else {
-        auto utf8 = content.utf8();
-        auto characters = byteCast<char>(utf8.span());
+        auto utf8Data = utf8(content);
+        auto characters = byteCast<char>(utf8Data.span());
         digest = GMallocString::unsafeAdoptFromUTF8(g_compute_checksum_for_string(G_CHECKSUM_SHA256, characters.data(), characters.size()));
     }
 
-    return String::fromUTF8(digest.span());
+    return StringImpl::fromUTF8(digest.span());
 }
 
 void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
@@ -269,14 +269,14 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
 
     auto hash = computeContentHash(saveDatas[0].content, saveDatas[0].base64Encoded);
 
-    auto updatedFilename = makeString(filename, "-"_s, hash.left(8)).utf8();
+    auto updatedFilename = utf8(makeString(filename, "-"_s, left(hash, 8)));
 
     GRefPtr<GFile> file = adoptGRef(g_file_new_build_filename(downloadsDir, updatedFilename.legacyCStringPointer(), nullptr));
 
     platformSaveDataToFile(WTF::move(file), saveDatas[0].content, saveDatas[0].base64Encoded);
 }
 
-void WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)
+void WebInspectorUIProxy::platformLoad(StringImpl*, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     notImplemented();
     completionHandler(nullString());
@@ -313,14 +313,14 @@ void WebInspectorUIProxy::platformStartWindowDrag()
     notImplemented();
 }
 
-String WebInspectorUIProxy::inspectorPageURL()
+RefPtr<StringImpl> WebInspectorUIProxy::inspectorPageURL()
 {
-    return "resource:///org/webkit/inspector/UserInterface/Main.html"_s;
+    return "resource:///org/webkit/inspector/UserInterface/Main.html"_si;
 }
 
-String WebInspectorUIProxy::inspectorTestPageURL()
+RefPtr<StringImpl> WebInspectorUIProxy::inspectorTestPageURL()
 {
-    return "resource:///org/webkit/inspector/UserInterface/Test.html"_s;
+    return "resource:///org/webkit/inspector/UserInterface/Test.html"_si;
 }
 
 DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()

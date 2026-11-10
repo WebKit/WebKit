@@ -41,17 +41,17 @@ public:
     WEBCORE_EXPORT explicit StorageMap(unsigned quotaSize);
 
     NODELETE WEBCORE_EXPORT unsigned length() const;
-    NODELETE WEBCORE_EXPORT String key(unsigned index);
-    WEBCORE_EXPORT String getItem(const String&) const;
-    WEBCORE_EXPORT void setItem(const String& key, const String& value, String& oldValue, bool& quotaException);
-    WEBCORE_EXPORT void setItemIgnoringQuota(const String& key, const String& value);
-    WEBCORE_EXPORT void removeItem(const String&, String& oldValue);
+    NODELETE WEBCORE_EXPORT RefPtr<StringImpl> key(unsigned index);
+    WEBCORE_EXPORT RefPtr<StringImpl> getItem(StringImpl*) const;
+    WEBCORE_EXPORT void setItem(StringImpl* key, StringImpl* value, RefPtr<StringImpl>& oldValue, bool& quotaException);
+    WEBCORE_EXPORT void setItemIgnoringQuota(StringImpl* key, StringImpl* value);
+    WEBCORE_EXPORT void removeItem(StringImpl*, RefPtr<StringImpl>& oldValue);
     WEBCORE_EXPORT void clear();
 
-    WEBCORE_EXPORT bool contains(const String& key) const;
+    WEBCORE_EXPORT bool contains(StringImpl* key) const;
 
-    WEBCORE_EXPORT void importItems(HashMap<String, String>&&);
-    const HashMap<String, String>& items() const LIFETIME_BOUND { return m_impl->map; }
+    WEBCORE_EXPORT void importItems(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&&);
+    const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& items() const LIFETIME_BOUND { return m_impl->map; }
 
     unsigned quota() const { return m_quotaSize; }
 
@@ -71,8 +71,8 @@ private:
 
         Ref<Impl> copy() const;
 
-        HashMap<String, String> map;
-        HashMap<String, String>::iterator iterator { map.end() };
+        HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> map;
+        HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>::iterator iterator { map.end() };
         unsigned iteratorIndex { std::numeric_limits<unsigned>::max() };
         unsigned currentSize { 0 };
     };

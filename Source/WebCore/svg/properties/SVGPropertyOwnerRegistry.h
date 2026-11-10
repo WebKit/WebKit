@@ -50,7 +50,7 @@ struct SVGAttributeHashTranslator {
     static unsigned hash(const QualifiedName& key)
     {
         if (key.hasPrefix()) {
-            QualifiedNameComponents components = { nullAtom().impl(), key.localName().impl(), key.namespaceURI().impl() };
+            QualifiedNameComponents components = { nullAtom().get(), key.localName().get(), key.namespaceURI().get() };
             return computeHash(components);
         }
         return DefaultHash<QualifiedName>::hash(key);
@@ -359,12 +359,12 @@ public:
 
     // Finds the property whose name is attributeName and returns the synchronize
     // string through the associated SVGMemberAccessor.
-    std::optional<String> synchronize(const SVGElement& element, const QualifiedName& attributeName) const override
+    std::optional<RefPtr<StringImpl>> synchronize(const SVGElement& element, const QualifiedName& attributeName) const override
     {
         if (RefPtr property = fastAnimatedPropertyLookup(owner(element), attributeName))
             return property->synchronize();
 
-        std::optional<String> value;
+        std::optional<RefPtr<StringImpl>> value;
         lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
             value = accessor.synchronize(owner(element));
         });
@@ -373,9 +373,9 @@ public:
 
     // Enumerate recursively the SVGMemberAccessors of the OwnerType and all its BaseTypes.
     // Collect all the pairs <AttributeName, String> only for the dirty properties.
-    HashMap<QualifiedName, String> synchronizeAllAttributes(const SVGElement& element) const override
+    HashMap<QualifiedName, RefPtr<StringImpl>> synchronizeAllAttributes(const SVGElement& element) const override
     {
-        HashMap<QualifiedName, String> map;
+        HashMap<QualifiedName, RefPtr<StringImpl>> map;
         enumerateRecursively([&](const auto& entry) -> bool {
             if (auto string = entry.value->synchronize(owner(element)))
                 map.add(entry.key, *string);

@@ -55,7 +55,7 @@ public:
     Element* queryFirst(ContainerNode& rootNode) const;
 
     bool shouldStoreInDocument() const { return m_matchType == MatchType::TagNameMatch || m_matchType == MatchType::ClassNameMatch; }
-    NODELETE AtomString classNameToMatch() const;
+    NODELETE RefPtr<AtomStringImpl> classNameToMatch() const;
 
 private:
     struct SelectorData {
@@ -112,7 +112,7 @@ public:
     Element* queryFirst(ContainerNode& rootNode) const;
 
     bool shouldStoreInDocument() const { return m_selectors.shouldStoreInDocument(); }
-    AtomString classNameToMatch() const { return m_selectors.classNameToMatch(); }
+    RefPtr<AtomStringImpl> classNameToMatch() const { return m_selectors.classNameToMatch(); }
 
 private:
     CSSSelectorList m_selectorList;
@@ -124,11 +124,11 @@ class SelectorQueryCache {
 public:
     NODELETE static SelectorQueryCache& singleton();
 
-    SelectorQuery* add(const String&, const Document&);
+    SelectorQuery* add(StringImpl*, const Document&);
     void clear();
 
 private:
-    using Key = std::tuple<String, CSSSelectorParserContext, SecurityOriginData>;
+    using Key = std::tuple<RefPtr<StringImpl>, CSSSelectorParserContext, SecurityOriginData>;
     HashMap<Key, std::unique_ptr<SelectorQuery>> m_entries;
 };
 

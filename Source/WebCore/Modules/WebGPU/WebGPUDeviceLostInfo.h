@@ -35,16 +35,16 @@ namespace WebCore {
 
 class WebGPUDeviceLostInfo final : public RefCounted<WebGPUDeviceLostInfo> {
 public:
-    static Ref<WebGPUDeviceLostInfo> create(::WebGPU::DeviceLostReason reason, String&& message)
+    static Ref<WebGPUDeviceLostInfo> create(::WebGPU::DeviceLostReason reason, RefPtr<StringImpl>&& message)
     {
         return adoptRef(*new WebGPUDeviceLostInfo(reason, WTF::move(message)));
     }
 
     ::WebGPU::DeviceLostReason reason() const { return m_reason; }
-    const String& message() const LIFETIME_BOUND { return m_message; }
+    const RefPtr<StringImpl>& message() const LIFETIME_BOUND { return m_message; }
 
 protected:
-    WebGPUDeviceLostInfo(::WebGPU::DeviceLostReason reason, String&& message)
+    WebGPUDeviceLostInfo(::WebGPU::DeviceLostReason reason, RefPtr<StringImpl>&& message)
         : m_reason(reason)
         , m_message(WTF::move(message))
     {
@@ -57,7 +57,7 @@ private:
     WebGPUDeviceLostInfo& operator=(WebGPUDeviceLostInfo&&) = delete;
 
     ::WebGPU::DeviceLostReason m_reason;
-    String m_message;
+    RefPtr<StringImpl> m_message;
 };
 
 } // namespace WebCore

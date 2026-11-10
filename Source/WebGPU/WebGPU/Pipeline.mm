@@ -49,18 +49,18 @@ namespace WebGPU::Metal {
 static bool enablePsoLogging();
 #endif
 
-std::optional<PreparedLibrary> prepareLibrary(const ShaderModule& shaderModule, PipelineLayout* pipelineLayout, const String& entryPoint, NSString *label, std::span<const WebGPU::ConstantEntry> constants, BufferBindingSizesForPipeline& mininumBufferSizes, NSError **error)
+std::optional<PreparedLibrary> prepareLibrary(const ShaderModule& shaderModule, PipelineLayout* pipelineLayout, StringImpl* entryPoint, NSString *label, std::span<const WebGPU::ConstantEntry> constants, BufferBindingSizesForPipeline& mininumBufferSizes, NSError **error)
 {
-    HashMap<String, WGSL::ConstantValue> wgslConstantValues;
+    HashMap<RefPtr<StringImpl>, WGSL::ConstantValue> wgslConstantValues;
 
-    if (!entryPoint.length() || !shaderModule.isValid())
+    if (!length(entryPoint) || !shaderModule.isValid())
         return std::nullopt;
 
     if (shaderModule.library() && pipelineLayout) {
         if (const RefPtr pipelineLayoutHint = shaderModule.pipelineLayoutHint(entryPoint)) {
             if (*pipelineLayoutHint == *pipelineLayout) {
                 if (const auto* entryPointInformation = shaderModule.entryPointInformation(entryPoint))
-                    return { { shaderModule.library(), { }, label, { }, *entryPointInformation, wgslConstantValues } };
+                    return { { shaderModule.library(), { }, StringImpl::create(label), { }, *entryPointInformation, wgslConstantValues } };
             }
         }
     }
@@ -76,7 +76,7 @@ std::optional<PreparedLibrary> prepareLibrary(const ShaderModule& shaderModule, 
     auto prepareResult = WGSL::prepare(*ast, entryPoint, wgslPipelineLayout ? &*wgslPipelineLayout : nullptr);
     if (std::holds_alternative<WGSL::Error>(prepareResult)) {
         auto wgslError = std::get<WGSL::Error>(prepareResult);
-        *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: wgslError.message().createNSString().get() }];
+        *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: createNSString(wgslError.message()).get() }];
         return std::nullopt;
     }
 
@@ -163,12 +163,12 @@ std::optional<PreparedLibrary> prepareLibrary(const ShaderModule& shaderModule, 
         .shaderValidationEnabled = shaderModule.device().isShaderValidationEnabled()
     });
     if (auto* generationError = std::get_if<WGSL::Error>(&generationResult)) {
-        *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: generationError->message().createNSString().get() }];
+        *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: createNSString(generationError->message()).get() }];
         return std::nullopt;
     }
-    auto& msl = std::get<String>(generationResult);
+    auto& msl = std::get<RefPtr<StringImpl>>(generationResult);
 
-    return { { nil, msl, label, WGSL::DeviceState {
+    return { { nil, msl, StringImpl::create(label), WGSL::DeviceState {
         .appleGPUFamily = shaderModule.device().appleGPUFamily(),
         .shaderValidationEnabled = shaderModule.device().isShaderValidationEnabled(),
         .usesInvariant = entryPointInformation.usesInvariant
@@ -179,8 +179,8 @@ LibraryCompileRequest libraryCompileRequest(const PreparedLibrary& preparedLibra
 {
     return {
         preparedLibrary.library,
-        preparedLibrary.msl.createNSString().get(),
-        preparedLibrary.label.createNSString().get(),
+        createNSString(preparedLibrary.msl).get(),
+        createNSString(preparedLibrary.label).get(),
         preparedLibrary.deviceState
     };
 }
@@ -283,7 +283,7 @@ void Device::compileLibrary(const LibraryCompileRequest& request, LibraryCompila
     callback(library, error);
 }
 
-void Device::createComputePipelineState(MTLComputePipelineDescriptor *descriptor, String&& shaderSource, LibraryCompilation libraryCompilation, CompletionHandler<void(id<MTLComputePipelineState>)>&& callback)
+void Device::createComputePipelineState(MTLComputePipelineDescriptor *descriptor, RefPtr<StringImpl>&& shaderSource, LibraryCompilation libraryCompilation, CompletionHandler<void(id<MTLComputePipelineState>)>&& callback)
 {
     auto reportError = [](NSError *error) {
         if (error)
@@ -302,7 +302,7 @@ void Device::createComputePipelineState(MTLComputePipelineDescriptor *descriptor
 
     NSError *error = nil;
 #if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
-    dumpMetalReproCaseComputePSO(WTF::move(shaderSource), descriptor.computeFunction.name);
+    dumpMetalReproCaseComputePSO(WTF::move(shaderSource), StringImpl::create(descriptor.computeFunction.name));
 #else
     UNUSED_PARAM(shaderSource);
 #endif
@@ -317,7 +317,7 @@ void Device::createComputePipelineState(MTLComputePipelineDescriptor *descriptor
 id<MTLFunction> createFunction(id<MTLLibrary> library, const WGSL::Reflection::EntryPointInformation& entryPointInformation, NSString *label)
 {
     auto functionDescriptor = [MTLFunctionDescriptor new];
-    functionDescriptor.name = entryPointInformation.mangledName.createNSString().get();
+    functionDescriptor.name = createNSString(entryPointInformation.mangledName).get();
     NSError *error = nil;
     id<MTLFunction> function = [library newFunctionWithDescriptor:functionDescriptor error:&error];
     if (error)
@@ -392,7 +392,7 @@ static Vector<void (*)(int)>& existingSigabortHandlers()
     return handlers;
 }
 
-static String psoPreamble()
+static RefPtr<StringImpl> psoPreamble()
 {
     return R"(
     // Compile and run with:
@@ -423,7 +423,7 @@ static String psoPreamble()
 static void printPsoOnProgramExit(int sig)
 {
     if (psoReproStringBuilder().length())
-        /* NOLINT */ SAFE_WTFLOGALWAYS("// ------------------------------------------------------------------------\n// Dumping Metal repro case:\n// ------------------------------------------------------------------------\n%s\n// ------------------------------------------------------------------------\n// End of repro case\n// ------------------------------------------------------------------------", psoReproStringBuilder().toString().utf8());
+        /* NOLINT */ SAFE_WTFLOGALWAYS("// ------------------------------------------------------------------------\n// Dumping Metal repro case:\n// ------------------------------------------------------------------------\n%s\n// ------------------------------------------------------------------------\n// End of repro case\n// ------------------------------------------------------------------------", utf8(psoReproStringBuilder().toString()));
 
     if (existingSigabortHandlers()[sig])
         existingSigabortHandlers()[sig](sig);
@@ -468,13 +468,13 @@ static void printToFileForPsoRepro()
     }
 
     outputURL = [outputURL URLByAppendingPathComponent:@"psoRepro.mm"];
-    if (FileSystem::overwriteEntireFile(outputURL.path, byteCast<uint8_t>(psoReproStringBuilder().span<Latin1Character>())))
+    if (FileSystem::overwriteEntireFile(StringImpl::create(outputURL.path).get(), byteCast<uint8_t>(psoReproStringBuilder().span<Latin1Character>())))
         WTFLogAlways("Sucessfully saved repro to %@", outputURL); // NOLINT
     else
         WTFLogAlways("Error saving repro to %@ - %@", outputURL, error); // NOLINT
 }
 
-void dumpMetalReproCaseComputePSO(String&& shaderSource, String&& functionName)
+void dumpMetalReproCaseComputePSO(RefPtr<StringImpl>&& shaderSource, RefPtr<StringImpl>&& functionName)
 {
     if (!enablePsoLogging())
         return;
@@ -544,7 +544,7 @@ void dumpMetalReproCaseComputePSO(String&& shaderSource, String&& functionName)
         printToFileForPsoRepro();
 }
 
-bool dumpMetalReproCaseRenderPSO(String&& vertexShaderSource, String&& vertexFunctionName, String&& fragmentShaderSource, String&& fragmentFunctionName, MTLRenderPipelineDescriptor* descriptor, ShaderModule::VertexStageIn& shaderLocations, const Device& device)
+bool dumpMetalReproCaseRenderPSO(RefPtr<StringImpl>&& vertexShaderSource, RefPtr<StringImpl>&& vertexFunctionName, RefPtr<StringImpl>&& fragmentShaderSource, RefPtr<StringImpl>&& fragmentFunctionName, MTLRenderPipelineDescriptor* descriptor, ShaderModule::VertexStageIn& shaderLocations, const Device& device)
 {
     if (!enablePsoLogging())
         return false;

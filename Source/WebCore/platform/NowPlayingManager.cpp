@@ -91,7 +91,7 @@ bool NowPlayingManager::setNowPlayingInfo(const NowPlayingInfo& nowPlayingInfo, 
         if (m_nowPlayingInfo->fullscreenMode != nowPlayingInfo.fullscreenMode)
             return true;
 
-        if (m_nowPlayingInfo->metadata.sourceApplicationIdentifier != nowPlayingInfo.metadata.sourceApplicationIdentifier)
+        if (!equal(m_nowPlayingInfo->metadata.sourceApplicationIdentifier, nowPlayingInfo.metadata.sourceApplicationIdentifier))
             return true;
 #endif
 
@@ -104,7 +104,7 @@ bool NowPlayingManager::setNowPlayingInfo(const NowPlayingInfo& nowPlayingInfo, 
     // So if present we store it once locally. On the receiving end, a null imageData indicates to use the cached image.
     if (!nowPlayingInfo.metadata.artwork)
         m_nowPlayingInfoArtwork = { };
-    else if (!m_nowPlayingInfoArtwork || nowPlayingInfo.metadata.artwork->src != m_nowPlayingInfoArtwork->src)
+    else if (!m_nowPlayingInfoArtwork || !equal(nowPlayingInfo.metadata.artwork->src, m_nowPlayingInfoArtwork->src))
         m_nowPlayingInfoArtwork = ArtworkCache { nowPlayingInfo.metadata.artwork->src, nowPlayingInfo.metadata.artwork->image };
     else
         m_nowPlayingInfo->metadata.artwork->image = nullptr;

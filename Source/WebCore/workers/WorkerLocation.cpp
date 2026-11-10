@@ -33,49 +33,49 @@
 
 namespace WebCore {
 
-String WorkerLocation::href() const
+RefPtr<StringImpl> WorkerLocation::href() const
 {
     return m_url.string();
 }
 
-String WorkerLocation::protocol() const
+RefPtr<StringImpl> WorkerLocation::protocol() const
 {
     return makeString(m_url.protocol(), ':');
 }
 
-String WorkerLocation::host() const
+RefPtr<StringImpl> WorkerLocation::host() const
 {
     return m_url.hostAndPort();
 }
 
-String WorkerLocation::hostname() const
+RefPtr<StringImpl> WorkerLocation::hostname() const
 {
     return m_url.host().toString();
 }
 
-String WorkerLocation::port() const
+RefPtr<StringImpl> WorkerLocation::port() const
 {
     auto port = m_url.port();
-    return port ? String::number(*port) : emptyString();
+    return port ? makeString(*port) : emptyString();
 }
 
-String WorkerLocation::pathname() const
+RefPtr<StringImpl> WorkerLocation::pathname() const
 {
     auto path = m_url.path();
-    return path.isEmpty() ? "/"_s : path.toString();
+    return path.isEmpty() ? "/"_si : path.toString();
 }
 
-String WorkerLocation::search() const
+RefPtr<StringImpl> WorkerLocation::search() const
 {
     return m_url.query().isEmpty() ? emptyString() : m_url.queryWithLeadingQuestionMark().toString();
 }
 
-String WorkerLocation::hash() const
+RefPtr<StringImpl> WorkerLocation::hash() const
 {
     return m_url.fragmentIdentifier().isEmpty() ? emptyString() : m_url.fragmentIdentifierWithLeadingNumberSign().toString();
 }
 
-String WorkerLocation::origin() const
+RefPtr<StringImpl> WorkerLocation::origin() const
 {
     return m_origin;
 }

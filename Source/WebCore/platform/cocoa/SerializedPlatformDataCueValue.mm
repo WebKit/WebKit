@@ -67,13 +67,13 @@ SerializedPlatformDataCueValue::SerializedPlatformDataCueValue(AVMetadataItem *i
         }
 
         if ([keyString isEqualToString:@"type"])
-            m_data->type = value;
+            m_data->type = StringImpl::create(value);
         else
-            m_data->otherAttributes.add(keyString.get(), value);
+            m_data->otherAttributes.add(StringImpl::create(keyString.get()), StringImpl::create(value));
     }
 
     if (auto *keyString = dynamic_objc_cast<NSString>(item.key))
-        m_data->key = keyString;
+        m_data->key = StringImpl::create(keyString);
 
     if (item.locale)
         m_data->locale = item.locale;
@@ -95,17 +95,17 @@ RetainPtr<NSDictionary> SerializedPlatformDataCueValue::toNSDictionary() const
 
     auto dictionary = adoptNS([NSMutableDictionary new]);
 
-    if (!m_data->type.isNull())
-        [dictionary setObject:m_data->type.createNSString().get() forKey:@"type"];
+    if (m_data->type)
+        [dictionary setObject:createNSString(m_data->type).get() forKey:@"type"];
 
     for (auto& pair : m_data->otherAttributes)
-        [dictionary setObject:pair.value.createNSString().get() forKey:pair.key.createNSString().get()];
+        [dictionary setObject:createNSString(pair.value).get() forKey:createNSString(pair.key).get()];
 
     if (m_data->locale)
         [dictionary setObject:m_data->locale.get() forKey:@"locale"];
 
-    if (!m_data->key.isNull())
-        [dictionary setObject:m_data->key.createNSString().get() forKey:@"key"];
+    if (m_data->key)
+        [dictionary setObject:createNSString(m_data->key).get() forKey:@"key"];
 
     WTF::switchOn(m_data->value, [] (std::nullptr_t) {
     }, [&] (RetainPtr<NSString> string) {
@@ -128,10 +128,10 @@ bool SerializedPlatformDataCueValue::operator==(const SerializedPlatformDataCueV
 
 bool SerializedPlatformDataCueValue::Data::operator==(const Data& other) const
 {
-    return type == other.type
-        && otherAttributes == other.otherAttributes
+    return equal(type, other.type)
+        && contentEquals(otherAttributes, other.otherAttributes)
         && ((!locale && !other.locale) || [locale isEqual:other.locale.get()])
-        && key == other.key
+        && equal(key, other.key)
         && value.index() == other.value.index()
         && WTF::switchOn(value, [] (std::nullptr_t) {
             return true;

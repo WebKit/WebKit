@@ -56,17 +56,17 @@ DOMPlugin::DOMPlugin(Navigator& navigator, const PluginInfo& info)
 
 DOMPlugin::~DOMPlugin() = default;
 
-String DOMPlugin::name() const
+const RefPtr<StringImpl>& DOMPlugin::name() const
 {
     return m_info.name;
 }
 
-String DOMPlugin::filename() const
+RefPtr<StringImpl> DOMPlugin::filename() const
 {
     return m_info.file;
 }
 
-String DOMPlugin::description() const
+RefPtr<StringImpl> DOMPlugin::description() const
 {
     return m_info.desc;
 }
@@ -83,7 +83,7 @@ RefPtr<DOMMimeType> DOMPlugin::item(unsigned index)
     return m_mimeTypes[index].ptr();
 }
 
-RefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomString& propertyName)
+RefPtr<DOMMimeType> DOMPlugin::namedItem(AtomStringImpl* propertyName)
 {
     for (auto& type : m_mimeTypes) {
         if (type->type() == propertyName)
@@ -92,12 +92,12 @@ RefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomString& propertyName)
     return nullptr;
 }
 
-bool DOMPlugin::isSupportedPropertyName(const AtomString& propertyName) const
+bool DOMPlugin::isSupportedPropertyName(AtomStringImpl* propertyName) const
 {
     return m_mimeTypes.containsIf([&](auto& type) { return type->type() == propertyName; });
 }
 
-Vector<AtomString> DOMPlugin::supportedPropertyNames() const
+Vector<RefPtr<AtomStringImpl>> DOMPlugin::supportedPropertyNames() const
 {
     return m_mimeTypes.map([](auto& type) {
         return type->type();

@@ -35,12 +35,12 @@ namespace WebCore {
 
 class WebAuthnOperationException final : public DOMException {
 public:
-    static Ref<WebAuthnOperationException> create(WebAuthnOperationErrorCode, const String& message);
+    static Ref<WebAuthnOperationException> create(WebAuthnOperationErrorCode, StringImpl* message);
 
     WebAuthnOperationErrorCode operationError() const { return m_operationError; }
 
 private:
-    WebAuthnOperationException(WebAuthnOperationErrorCode, const String& message);
+    WebAuthnOperationException(WebAuthnOperationErrorCode, StringImpl* message);
 
     WebAuthnOperationErrorCode m_operationError;
 };

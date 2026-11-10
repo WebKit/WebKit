@@ -61,12 +61,12 @@ public:
     void drawIndirect(::WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset) final;
     void drawIndexedIndirect(::WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset) final;
     void setBindGroup(uint32_t, const ::WebGPU::BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) final;
-    void pushDebugGroup(String&& groupLabel) final;
+    void pushDebugGroup(RefPtr<StringImpl>&& groupLabel) final;
     void popDebugGroup() final;
-    void insertDebugMarker(String&& markerLabel) final;
+    void insertDebugMarker(RefPtr<StringImpl>&& markerLabel) final;
     RefPtr<::WebGPU::RenderBundle> finish(const ::WebGPU::RenderBundleDescriptor&) final;
 
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
 
 private:

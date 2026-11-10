@@ -31,8 +31,8 @@ namespace TestWebKitAPI {
 
 static void testEmptyArtwork(const WebCore::NowPlayingInfoArtwork& artwork)
 {
-    EXPECT_TRUE(artwork.src.isEmpty());
-    EXPECT_TRUE(artwork.mimeType.isEmpty());
+    EXPECT_TRUE(isEmpty(artwork.src));
+    EXPECT_TRUE(isEmpty(artwork.mimeType));
     EXPECT_EQ(nullptr, artwork.image.get());
 }
 

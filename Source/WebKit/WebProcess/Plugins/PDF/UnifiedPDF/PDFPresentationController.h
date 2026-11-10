@@ -133,7 +133,7 @@ public:
 protected:
     virtual void updateLayersForAccessibilityDisplayModeChange() = 0;
 
-    Ref<WebCore::GraphicsLayer> createGraphicsLayer(const String&, WebCore::GraphicsLayerType);
+    Ref<WebCore::GraphicsLayer> createGraphicsLayer(StringImpl*, WebCore::GraphicsLayerType);
     Ref<WebCore::GraphicsLayer> makePageContainerLayer(PDFDocumentLayout::PageIndex);
     struct LayerCoverage {
         Ref<WebCore::GraphicsLayer> layer;

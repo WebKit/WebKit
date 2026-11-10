@@ -204,7 +204,7 @@ private:
     Vector<unsigned, 16> m_runIndices;
     Vector<unsigned, 16> m_glyphCountFromStartToIndex;
 
-    Vector<String> m_stringsFor8BitRuns;
+    Vector<RefPtr<StringImpl>> m_stringsFor8BitRuns;
 
     SingleThreadWeakHashSet<const Font>* m_fallbackFonts { nullptr };
 

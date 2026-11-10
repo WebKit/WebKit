@@ -30,26 +30,26 @@ namespace WebCore {
 class SelectionData {
     WTF_MAKE_TZONE_ALLOCATED(SelectionData);
 public:
-    void setText(const String&);
-    const String& text() const LIFETIME_BOUND { return m_text; }
-    bool hasText() const { return !m_text.isEmpty(); }
+    void setText(StringImpl*);
+    const RefPtr<StringImpl>& text() const LIFETIME_BOUND { return m_text; }
+    bool hasText() const { return !isEmpty(m_text); }
     void clearText() { m_text = emptyString(); }
 
-    void setMarkup(const String& newMarkup) { m_markup = newMarkup; }
-    const String& markup() const LIFETIME_BOUND { return m_markup; }
-    bool hasMarkup() const { return !m_markup.isEmpty(); }
+    void setMarkup(StringImpl* newMarkup) { m_markup = newMarkup; }
+    const RefPtr<StringImpl>& markup() const LIFETIME_BOUND { return m_markup; }
+    bool hasMarkup() const { return !isEmpty(m_markup); }
     void clearMarkup() { m_markup = emptyString(); }
 
-    void setURL(const URL&, const String&);
+    void setURL(const URL&, StringImpl*);
     const URL& url() const LIFETIME_BOUND { return m_url; }
-    const String& urlLabel() const LIFETIME_BOUND;
+    const RefPtr<StringImpl>& urlLabel() const LIFETIME_BOUND;
     bool hasURL() const { return !m_url.isEmpty() && m_url.isValid(); }
     void clearURL() { m_url = URL(); }
 
-    void setURIList(const String&);
-    const String& uriList() const LIFETIME_BOUND { return m_uriList; }
-    const Vector<String>& filenames() const LIFETIME_BOUND { return m_filenames; }
-    bool hasURIList() const { return !m_uriList.isEmpty(); }
+    void setURIList(StringImpl*);
+    const RefPtr<StringImpl>& uriList() const LIFETIME_BOUND { return m_uriList; }
+    const Vector<RefPtr<StringImpl>>& filenames() const LIFETIME_BOUND { return m_filenames; }
+    bool hasURIList() const { return !isEmpty(m_uriList); }
     bool hasFilenames() const { return !m_filenames.isEmpty(); }
     void clearURIList() { m_uriList = emptyString(); }
 
@@ -61,9 +61,9 @@ public:
     void setCanSmartReplace(bool canSmartReplace) { m_canSmartReplace = canSmartReplace; }
     bool canSmartReplace() const { return m_canSmartReplace; }
 
-    void addBuffer(const String& type, const Ref<SharedBuffer>& buffer) { m_buffers.add(type, buffer.get()); }
-    const HashMap<String, Ref<SharedBuffer>>& buffers() const LIFETIME_BOUND { return m_buffers; }
-    SharedBuffer* buffer(const String& type) { return m_buffers.get(type); }
+    void addBuffer(StringImpl* type, const Ref<SharedBuffer>& buffer) { m_buffers.add(type, buffer.get()); }
+    const HashMap<RefPtr<StringImpl>, Ref<SharedBuffer>>& buffers() const LIFETIME_BOUND { return m_buffers; }
+    SharedBuffer* buffer(StringImpl* type) { return m_buffers.get(type); }
     void clearBuffers() { m_buffers.clear(); }
 
     void setCustomData(Ref<SharedBuffer>&& buffer) { m_customData = WTF::move(buffer); }
@@ -74,19 +74,19 @@ public:
     void clearAll();
     void clearAllExceptFilenames();
 
-    SelectionData(const String& text, const String& markup, const URL&, const String& uriList, RefPtr<ShareableBitmap>&&, RefPtr<WebCore::SharedBuffer>&&, bool);
+    SelectionData(StringImpl* text, StringImpl* markup, const URL&, StringImpl* uriList, RefPtr<ShareableBitmap>&&, RefPtr<WebCore::SharedBuffer>&&, bool);
     SelectionData() = default;
 
 private:
-    String m_text;
-    String m_markup;
+    RefPtr<StringImpl> m_text;
+    RefPtr<StringImpl> m_markup;
     URL m_url;
-    String m_uriList;
-    Vector<String> m_filenames;
+    RefPtr<StringImpl> m_uriList;
+    Vector<RefPtr<StringImpl>> m_filenames;
     RefPtr<ShareableBitmap> m_image;
     bool m_canSmartReplace { false };
     RefPtr<SharedBuffer> m_customData;
-    HashMap<String, Ref<SharedBuffer>> m_buffers;
+    HashMap<RefPtr<StringImpl>, Ref<SharedBuffer>> m_buffers;
 };
 
 } // namespace WebCore

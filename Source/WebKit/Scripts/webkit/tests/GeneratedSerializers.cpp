@@ -47,6 +47,7 @@
 #if ENABLE(TEST_FEATURE)
 #include "SecondMemberType.h"
 #endif
+#include "StringMembers.h"
 #if ENABLE(TEST_FEATURE)
 #include "StructHeader.h"
 #endif
@@ -79,6 +80,7 @@
 #include <wtf/CreateUsingClass.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/Seconds.h>
+#include <wtf/text/AtomString.h>
 #if USE(AVFOUNDATION)
 #include <pal/cocoa/AVFoundationSoftLink.h>
 #endif
@@ -882,11 +884,61 @@ std::optional<WebKit::CustomEncoded> ArgumentCoder<WebKit::CustomEncoded>::decod
     };
 }
 
+void ArgumentCoder<WebKit::StringMembers>::encode(Encoder& encoder, const WebKit::StringMembers& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.string)>, RefPtr<StringImpl>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.atom)>, RefPtr<AtomStringImpl>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.optionalString)>, std::optional<RefPtr<StringImpl>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.atoms)>, Vector<RefPtr<AtomStringImpl>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.map)>, HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>>);
+    struct ShouldBeSameSizeAsStringMembers : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::StringMembers>, false> {
+        RefPtr<StringImpl> string;
+        RefPtr<AtomStringImpl> atom;
+        std::optional<RefPtr<StringImpl>> optionalString;
+        Vector<RefPtr<AtomStringImpl>> atoms;
+        HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>> map;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsStringMembers) == sizeof(WebKit::StringMembers));
+    static_assert(IsIncreasing < 0
+        , offsetof(WebKit::StringMembers, string)
+        , offsetof(WebKit::StringMembers, atom)
+        , offsetof(WebKit::StringMembers, optionalString)
+        , offsetof(WebKit::StringMembers, atoms)
+        , offsetof(WebKit::StringMembers, map)
+    >);
+
+    encoder << instance.string;
+    encoder << instance.atom;
+    encoder << instance.optionalString;
+    encoder << instance.atoms;
+    encoder << instance.map;
+}
+
+std::optional<WebKit::StringMembers> ArgumentCoder<WebKit::StringMembers>::decode(Decoder& decoder)
+{
+    auto string = decoder.decode<RefPtr<StringImpl>>();
+    auto atom = decoder.decode<RefPtr<AtomStringImpl>>();
+    auto optionalString = decoder.decode<std::optional<RefPtr<StringImpl>>>();
+    auto atoms = decoder.decode<Vector<RefPtr<AtomStringImpl>>>();
+    auto map = decoder.decode<HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        WebKit::StringMembers {
+            WTF::move(*string),
+            WTF::move(*atom),
+            WTF::move(*optionalString),
+            WTF::move(*atoms),
+            WTF::move(*map)
+        }
+    };
+}
+
 void ArgumentCoder<WebKit::LayerProperties>::encode(Encoder& encoder, const WebKit::LayerProperties& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.changedProperties)>, OptionSet<WebKit::LayerChange>>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.nonSerializedMember)>, int>);
-    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.name)>, String>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.name)>, RefPtr<StringImpl>>);
 #if ENABLE(FEATURE)
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.featureEnabledMember)>, std::unique_ptr<WebCore::TransformationMatrix>>);
 #endif
@@ -894,7 +946,7 @@ void ArgumentCoder<WebKit::LayerProperties>::encode(Encoder& encoder, const WebK
     struct ShouldBeSameSizeAsLayerProperties : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::LayerProperties>, false> {
         OptionSet<WebKit::LayerChange> changedProperties;
         int nonSerializedMember;
-        String name;
+        RefPtr<StringImpl> name;
 #if ENABLE(FEATURE)
         std::unique_ptr<WebCore::TransformationMatrix> featureEnabledMember;
 #endif
@@ -937,7 +989,7 @@ std::optional<WebKit::LayerProperties> ArgumentCoder<WebKit::LayerProperties>::d
         return std::nullopt;
     result.changedProperties = *changedProperties;
     if (*changedProperties & WebKit::LayerChange::NameChanged) {
-        if (auto deserialized = decoder.decode<String>())
+        if (auto deserialized = decoder.decode<RefPtr<StringImpl>>())
             result.name = WTF::move(*deserialized);
         else
             return std::nullopt;

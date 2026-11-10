@@ -64,7 +64,7 @@ static std::optional<std::pair<RTCNetwork::InterfaceAddress, RTCNetwork::IPAddre
     return std::make_pair(RTCNetwork::InterfaceAddress { address, webrtc::IPV6_ADDRESS_FLAG_NONE }, mask);
 }
 
-HashMap<String, RTCNetwork> NetworkRTCMonitor::gatherNetworkMap()
+HashMap<RefPtr<StringImpl>, RTCNetwork> NetworkRTCMonitor::gatherNetworkMap()
 {
     struct ifaddrs* interfaces;
     int error = getifaddrs(&interfaces);
@@ -73,7 +73,7 @@ HashMap<String, RTCNetwork> NetworkRTCMonitor::gatherNetworkMap()
 
     std::unique_ptr<struct ifaddrs, decltype(freeifaddrs)*> toBeFreed(interfaces, freeifaddrs);
 
-    HashMap<String, RTCNetwork> networkMap;
+    HashMap<RefPtr<StringImpl>, RTCNetwork> networkMap;
     for (auto* iterator = interfaces; iterator != nullptr; iterator = iterator->ifa_next) {
         if (!iterator->ifa_addr || !iterator->ifa_netmask)
             continue;
@@ -100,7 +100,7 @@ HashMap<String, RTCNetwork> NetworkRTCMonitor::gatherNetworkMap()
 
         networkMap.ensure(networkKey, [&] {
             auto interfaceType = NetworkRTCSharedMonitor::singleton().adapterTypeFromInterfaceName(iterator->ifa_name);
-            return RTCNetwork { String::fromLatin1(name), String { networkKey }, address->second, prefixLength, interfaceType, 0, 0, true, false, scopeID, { } };
+            return RTCNetwork { StringImpl::fromLatin1(name), RefPtr<StringImpl> { networkKey }, address->second, prefixLength, interfaceType, 0, 0, true, false, scopeID, { } };
         }).iterator->value.ips.append(address->first);
     }
 

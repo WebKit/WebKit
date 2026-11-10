@@ -104,8 +104,8 @@ void QueryHandler::handleProcessInfo()
 
     // WebAssembly Context: Provide WASM process info with simulated PID and WASI target
     // This helps LLDB understand the WebAssembly execution environment
-    String tripleHex = stringToHex("wasm32-webkit-wasi"_s);
-    String processInfo = makeString(
+    RefPtr<StringImpl> tripleHex = stringToHex("wasm32-webkit-wasi"_s);
+    RefPtr<StringImpl> processInfo = makeString(
         "pid:1;"_s, // Process ID (simulated for WASM debugging)
         "parent-pid:1;"_s, // Parent process ID (simulated)
         "vendor:webkit;"_s, // WebKit/JavaScriptCore (identifies JSC's WASM debugger)
@@ -126,8 +126,8 @@ void QueryHandler::handleHostInfo()
 
     // WebAssembly Context: Provide host info for WASM execution environment
     // This tells LLDB about the WebAssembly runtime characteristics
-    String tripleHex = stringToHex("wasm32-webkit-wasi"_s);
-    String hostInfo = makeString(
+    RefPtr<StringImpl> tripleHex = stringToHex("wasm32-webkit-wasi"_s);
+    RefPtr<StringImpl> hostInfo = makeString(
         "vendor:webkit;"_s, // WebKit/JavaScriptCore (identifies JSC's WASM debugger)
         "ostype:wasi;"_s, // WASI (WebAssembly System Interface)
         "arch:wasm32;"_s, // WebAssembly 32-bit architecture
@@ -156,7 +156,7 @@ void QueryHandler::handleRegisterInfo(StringView packet)
 
     if (!regNum) {
         // PC register definition for WebAssembly debugging
-        String registerInfo = makeString(
+        RefPtr<StringImpl> registerInfo = makeString(
             "name:pc;"_s, // Program Counter register name
             "alt-name:pc;"_s, // Alternative name (same as primary)
             "bitsize:64;"_s, // 64-bit register size
@@ -195,29 +195,29 @@ bool QueryHandler::parseLibrariesReadPacket(StringView packet, size_t& offset, s
     return true;
 }
 
-bool QueryHandler::handleChunkedLibrariesResponse(size_t offset, size_t maxSize, String& response)
+bool QueryHandler::handleChunkedLibrariesResponse(size_t offset, size_t maxSize, RefPtr<StringImpl>& response)
 {
-    String xmlData = m_debugServer.m_moduleManager->generateLibrariesXML();
+    RefPtr<StringImpl> xmlData = m_debugServer.m_moduleManager->generateLibrariesXML();
 
     // Handle chunked response according to GDB Remote Protocol
     // 'm' prefix = more data follows
     // 'l' prefix = last chunk
-    if (offset >= xmlData.length()) {
-        response = "l"_s;
+    if (offset >= length(xmlData)) {
+        response = "l"_si;
         return true;
     }
 
-    size_t availableData = xmlData.length() - offset;
+    size_t availableData = length(xmlData) - offset;
     size_t chunkSize = std::min(maxSize, availableData);
 
-    String chunk = xmlData.substring(offset, chunkSize);
-    bool isLastChunk = (offset + chunkSize >= xmlData.length());
+    RefPtr<StringImpl> chunk = substring(xmlData, offset, chunkSize);
+    bool isLastChunk = (offset + chunkSize >= length(xmlData));
 
     StringBuilder result;
     result.append(isLastChunk ? 'l' : 'm');
     result.append(chunk);
     response = result.toString();
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Chunked library response: ", (isLastChunk ? 'l' : 'm'), " offset=", offset, ", chunk_size=", chunkSize, ", total=", xmlData.length());
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Chunked library response: ", (isLastChunk ? 'l' : 'm'), " offset=", offset, ", chunk_size=", chunkSize, ", total=", length(xmlData));
     return true;
 }
 
@@ -240,7 +240,7 @@ void QueryHandler::handleSupported()
 
     // WebAssembly Context: We support qXfer:libraries:read+ to let LLDB discover WASM modules
     // This allows LLDB to see loaded WebAssembly modules as "libraries" for debugging
-    String supportedFeatures = makeString(
+    RefPtr<StringImpl> supportedFeatures = makeString(
         "qXfer:libraries:read+;"_s, // Support library list transfer for WASM modules
         "qWasmInstance+;"_s, // A Wasm query may name the module instance it is about (see [19])
         "PacketSize=1000;"_s // Maximum packet size for data transfer
@@ -296,12 +296,12 @@ void QueryHandler::handleLibrariesRead(StringView packet)
         return;
     }
 
-    String response;
+    RefPtr<StringImpl> response;
     if (handleChunkedLibrariesResponse(offset, maxSize, response)) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Sending library list chunk: offset=", offset, ", maxSize=", maxSize);
         m_debugServer.sendReply(response);
         // The list is only complete on the final chunk ('l' prefix); mark it sent there.
-        if (response[0] == 'l') {
+        if (codeUnitAt(response, 0) == 'l') {
             m_debugServer.m_hasSentLibraryList.store(true, std::memory_order_release);
             m_debugServer.moduleManager().notifyLibraryRequeryComplete();
         }
@@ -333,10 +333,10 @@ void QueryHandler::handleWasmCallStack(StringView packet)
     }
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] qWasmCallStack thread ID: ", *requestedThreadId);
 
-    String response = m_debugServer.execution().callStackStringFor(*requestedThreadId);
+    RefPtr<StringImpl> response = m_debugServer.execution().callStackStringFor(*requestedThreadId);
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] qWasmCallStack response: ", response);
 
-    if (response.isEmpty()) {
+    if (isEmpty(response)) {
         m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);
         return;
     }
@@ -423,7 +423,7 @@ void QueryHandler::handleWasmLocal(StringView packet)
     Type localType = localTypes[localIndex];
     logWasmLocalValue(localIndex, local, localType);
 
-    String response;
+    RefPtr<StringImpl> response;
     uint32_t width = typeKindToWidth(localType.kind());
     switch (width) {
     case 32: {
@@ -513,7 +513,7 @@ void QueryHandler::handleWasmGlobal(StringView packet)
     Type globalType = moduleInfo.global(*globalIndex).type;
     uint32_t width = typeKindToWidth(globalType.kind());
 
-    String response;
+    RefPtr<StringImpl> response;
     switch (width) {
     case 32:
         response = toNativeEndianHex(static_cast<uint32_t>(instance->loadI32Global(*globalIndex)));

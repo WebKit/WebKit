@@ -406,17 +406,17 @@ void ScrollingCoordinator::removeWheelEventTestCompletionDeferralForReason(Scrol
         monitor->removeDeferralForReason(nodeID, reason);
 }
 
-String ScrollingCoordinator::scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const
+RefPtr<StringImpl> ScrollingCoordinator::scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const
 {
     return emptyString();
 }
 
-String ScrollingCoordinator::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const
+RefPtr<StringImpl> ScrollingCoordinator::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const
 {
     return emptyString();
 }
 
-String ScrollingCoordinator::synchronousScrollingReasonsAsText(OptionSet<SynchronousScrollingReason> reasons)
+RefPtr<StringImpl> ScrollingCoordinator::synchronousScrollingReasonsAsText(OptionSet<SynchronousScrollingReason> reasons)
 {
     auto string = makeString(reasons.contains(SynchronousScrollingReason::ForcedOnMainThread) ? "Forced on main thread, "_s : ""_s,
         reasons.contains(SynchronousScrollingReason::HasSlowRepaintObjects) ? "Has slow repaint objects, "_s : ""_s,
@@ -424,10 +424,10 @@ String ScrollingCoordinator::synchronousScrollingReasonsAsText(OptionSet<Synchro
         reasons.contains(SynchronousScrollingReason::HasNonLayerViewportConstrainedObjects) ? "Has non-layer viewport-constrained objects, "_s : ""_s,
         reasons.contains(SynchronousScrollingReason::IsImageDocument) ? "Is image document, "_s : ""_s,
         reasons.contains(SynchronousScrollingReason::DescendantScrollersHaveSynchronousScrolling) ? "Has slow repaint descendant scrollers, "_s : ""_s);
-    return string.isEmpty() ? string : string.left(string.length() - 2);
+    return isEmpty(string) ? string : left(string, length(string) - 2);
 }
 
-String ScrollingCoordinator::synchronousScrollingReasonsAsText() const
+RefPtr<StringImpl> ScrollingCoordinator::synchronousScrollingReasonsAsText() const
 {
     RefPtr localMainFrame = m_page->localMainFrame();
     if (localMainFrame) {
@@ -435,7 +435,7 @@ String ScrollingCoordinator::synchronousScrollingReasonsAsText() const
             return synchronousScrollingReasonsAsText(synchronousScrollingReasons(frameView->scrollingNodeID()));
     }
 
-    return String();
+    return nullptr;
 }
 
 FrameIdentifier ScrollingCoordinator::mainFrameIdentifier() const

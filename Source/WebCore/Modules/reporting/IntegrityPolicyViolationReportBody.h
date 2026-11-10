@@ -37,21 +37,21 @@ class FormData;
 class IntegrityPolicyViolationReportBody final : public ReportBody {
     WTF_MAKE_TZONE_ALLOCATED(IntegrityPolicyViolationReportBody);
 public:
-    NODELETE static Ref<IntegrityPolicyViolationReportBody> create(const String& documentURL, const String& blockedURL, String&& destination, bool reportOnly);
+    NODELETE static Ref<IntegrityPolicyViolationReportBody> create(StringImpl* documentURL, StringImpl* blockedURL, RefPtr<StringImpl>&& destination, bool reportOnly);
 
-    const String& type() const LIFETIME_BOUND final;
+    const RefPtr<StringImpl>& type() const LIFETIME_BOUND final;
 
-    const String& documentURL() const LIFETIME_BOUND
+    const RefPtr<StringImpl>& documentURL() const LIFETIME_BOUND
     {
         return m_documentURL;
     }
 
-    const String& blockedURL() const LIFETIME_BOUND
+    const RefPtr<StringImpl>& blockedURL() const LIFETIME_BOUND
     {
         return m_blockedURL;
     }
 
-    const String& destination() const LIFETIME_BOUND
+    const RefPtr<StringImpl>& destination() const LIFETIME_BOUND
     {
         return m_destination;
     }
@@ -62,13 +62,13 @@ public:
     }
 
 private:
-    IntegrityPolicyViolationReportBody(const String& documentURL, const String& blockedURL, String&& destination, bool reportOnly);
+    IntegrityPolicyViolationReportBody(StringImpl* documentURL, StringImpl* blockedURL, RefPtr<StringImpl>&& destination, bool reportOnly);
 
     ViolationReportType reportBodyType() const final { return ViolationReportType::IntegrityPolicy; }
 
-    const String m_documentURL;
-    const String m_blockedURL;
-    const String m_destination;
+    const RefPtr<StringImpl> m_documentURL;
+    const RefPtr<StringImpl> m_blockedURL;
+    const RefPtr<StringImpl> m_destination;
     bool m_reportOnly;
 };
 

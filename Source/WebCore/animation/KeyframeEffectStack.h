@@ -66,8 +66,8 @@ public:
 
     void clearInvalidCSSAnimationNames();
     NODELETE bool hasInvalidCSSAnimationNames() const;
-    bool containsInvalidCSSAnimationName(const String&) const;
-    void addInvalidCSSAnimationName(const String&);
+    bool containsInvalidCSSAnimationName(StringImpl*) const;
+    void addInvalidCSSAnimationName(StringImpl*);
 
     void lastStyleChangeEventStyleDidChange(const Style::ComputedStyle* previousStyle, const Style::ComputedStyle* currentStyle);
     void cascadeDidOverrideProperties(const HashSet<AnimatableCSSProperty>&, const Document&);
@@ -83,7 +83,7 @@ private:
     void stopAcceleratedAnimations();
 
     Vector<WeakPtr<KeyframeEffect>> m_effects;
-    HashSet<String> m_invalidCSSAnimationNames;
+    HashSet<RefPtr<StringImpl>> m_invalidCSSAnimationNames;
     HashSet<AnimatableCSSProperty> m_acceleratedPropertiesOverriddenByCascade;
     std::optional<Style::Animations> m_cssAnimationList;
     bool m_isSorted { true };

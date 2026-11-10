@@ -36,7 +36,7 @@ struct ExceptionDetails {
         AppBoundDomain,
     };
 
-    String message;
+    RefPtr<StringImpl> message;
     int lineNumber { 0 };
     int columnNumber { 0 };
     Type type { Type::Script };
@@ -44,7 +44,7 @@ struct ExceptionDetails {
     // This bizarre explicit initialization of String is because older compilers (like on High Sierra)
     // don't properly handle partial initialization lists unless every struct member has an explicit default value.
     // Once we stop building on those platforms we can remove this.
-    String sourceURL { };
+    RefPtr<StringImpl> sourceURL { };
 };
 
 } // namespace WebCore

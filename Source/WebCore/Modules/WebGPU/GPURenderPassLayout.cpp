@@ -41,10 +41,10 @@ Ref<JSON::Object> GPURenderPassLayout::toJSON() const
         else
             colorFormatsJSON->pushValue(JSON::Value::null());
     }
-    json->setArray("colorFormats"_s, WTF::move(colorFormatsJSON));
+    json->setArray("colorFormats"_si, WTF::move(colorFormatsJSON));
     if (depthStencilFormat)
-        json->setString("depthStencilFormat"_s, convertEnumerationToString(*depthStencilFormat));
-    json->setDouble("sampleCount"_s, sampleCount);
+        json->setString("depthStencilFormat"_si, convertEnumerationToString(*depthStencilFormat));
+    json->setDouble("sampleCount"_si, sampleCount);
     return json;
 }
 

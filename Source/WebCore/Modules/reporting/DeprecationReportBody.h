@@ -38,27 +38,27 @@ class FormData;
 class DeprecationReportBody final : public ReportBody {
     WTF_MAKE_TZONE_ALLOCATED(DeprecationReportBody);
 public:
-    NODELETE WEBCORE_EXPORT static Ref<DeprecationReportBody> create(String&& id, WallTime anticipatedRemoval, String&& message, String&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber);
+    NODELETE WEBCORE_EXPORT static Ref<DeprecationReportBody> create(RefPtr<StringImpl>&& id, WallTime anticipatedRemoval, RefPtr<StringImpl>&& message, RefPtr<StringImpl>&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber);
 
-    const String& type() const final;
-    const String& id() const LIFETIME_BOUND { return m_id; };
+    const RefPtr<StringImpl>& type() const final;
+    const RefPtr<StringImpl>& id() const LIFETIME_BOUND { return m_id; };
     WallTime anticipatedRemoval() const { return m_anticipatedRemoval; }
-    const String& message() const LIFETIME_BOUND { return m_message; }
-    const String& sourceFile() const LIFETIME_BOUND { return m_sourceFile; }
+    const RefPtr<StringImpl>& message() const LIFETIME_BOUND { return m_message; }
+    const RefPtr<StringImpl>& sourceFile() const LIFETIME_BOUND { return m_sourceFile; }
     std::optional<unsigned> lineNumber() const { return m_lineNumber; }
     std::optional<unsigned> columnNumber() const { return m_columnNumber; }
 
     WEBCORE_EXPORT Ref<FormData> createReportFormDataForViolation() const;
 
 private:
-    DeprecationReportBody(String&& id, WallTime anticipatedRemoval, String&& message, String&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber);
+    DeprecationReportBody(RefPtr<StringImpl>&& id, WallTime anticipatedRemoval, RefPtr<StringImpl>&& message, RefPtr<StringImpl>&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber);
 
     ViolationReportType reportBodyType() const final { return ViolationReportType::Deprecation; }
 
-    const String m_id;
+    const RefPtr<StringImpl> m_id;
     const WallTime m_anticipatedRemoval;
-    const String m_message;
-    const String m_sourceFile;
+    const RefPtr<StringImpl> m_message;
+    const RefPtr<StringImpl> m_sourceFile;
     const std::optional<unsigned> m_lineNumber;
     const std::optional<unsigned> m_columnNumber;
 };

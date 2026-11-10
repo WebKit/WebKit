@@ -44,7 +44,7 @@ extern "C" AXError _AXUIElementNotifyProcessSuspendStatus(AXSuspendStatus);
 namespace WebKit {
 using namespace WebCore;
 
-RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames)
+RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<RefPtr<StringImpl>>& filenames)
 {
     return Icon::create(iconForFiles(filenames).get());
 }
@@ -65,7 +65,7 @@ void AXRelayProcessSuspendedNotification::sendProcessSuspendMessage(bool suspend
 #else
     NSDictionary *message = @{ @"pid" : @(getpid()), @"suspended" : @(suspended) };
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:message requiringSecureCoding:YES error:nil];
-    protect(m_page)->relayAccessibilityNotification("AXProcessSuspended"_s, data);
+    protect(m_page)->relayAccessibilityNotification("AXProcessSuspended"_si, data);
 #endif
 }
 

@@ -43,13 +43,13 @@ class ScriptCallFrame  {
 public:
     using LineColumn = JSC::LineColumn;
 
-    ScriptCallFrame(const String& functionName, const String& scriptName, JSC::SourceID, LineColumn);
-    ScriptCallFrame(const String& functionName, const String& scriptName, const String& preRedirectURL, JSC::SourceID, LineColumn);
+    ScriptCallFrame(StringImpl* functionName, StringImpl* scriptName, JSC::SourceID, LineColumn);
+    ScriptCallFrame(StringImpl* functionName, StringImpl* scriptName, StringImpl* preRedirectURL, JSC::SourceID, LineColumn);
     JS_EXPORT_PRIVATE ~ScriptCallFrame();
 
-    const String& functionName() const LIFETIME_BOUND { return m_functionName; }
-    const String& sourceURL() const LIFETIME_BOUND { return m_scriptName; }
-    const String& preRedirectURL() const LIFETIME_BOUND { return m_preRedirectURL; }
+    const RefPtr<StringImpl>& functionName() const LIFETIME_BOUND { return m_functionName; }
+    const RefPtr<StringImpl>& sourceURL() const LIFETIME_BOUND { return m_scriptName; }
+    const RefPtr<StringImpl>& preRedirectURL() const LIFETIME_BOUND { return m_preRedirectURL; }
     unsigned lineNumber() const { return m_lineColumn.line; }
     unsigned columnNumber() const { return m_lineColumn.column; }
     JSC::SourceID sourceID() const { return m_sourceID; }
@@ -62,9 +62,9 @@ public:
     Ref<Protocol::Console::CallFrame> buildInspectorObject() const;
 
 private:
-    String m_functionName;
-    String m_scriptName;
-    String m_preRedirectURL;
+    RefPtr<StringImpl> m_functionName;
+    RefPtr<StringImpl> m_scriptName;
+    RefPtr<StringImpl> m_preRedirectURL;
     JSC::SourceID m_sourceID;
     LineColumn m_lineColumn;
 };

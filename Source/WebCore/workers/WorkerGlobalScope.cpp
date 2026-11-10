@@ -172,7 +172,7 @@ WorkerGlobalScope::~WorkerGlobalScope()
         workerReportingProxy->workerGlobalScopeDestroyed();
 }
 
-String WorkerGlobalScope::origin() const
+RefPtr<StringImpl> WorkerGlobalScope::origin() const
 {
     RefPtr securityOrigin = this->securityOrigin();
     return securityOrigin ? securityOrigin->toString() : emptyString();
@@ -216,17 +216,17 @@ bool WorkerGlobalScope::isSecureContext() const
 }
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#parse-a-url
-URL WorkerGlobalScope::parseURL(const String& url) const
+URL WorkerGlobalScope::parseURL(StringImpl* url) const
 {
     // Always return a null URL when passed a null string.
     // FIXME: Should we change the URL constructor to have this behavior?
-    if (url.isNull())
+    if (!url)
         return URL();
     // Always use UTF-8 in Workers.
     return URL(m_url, url);
 }
 
-String WorkerGlobalScope::userAgent(const URL&) const
+RefPtr<StringImpl> WorkerGlobalScope::userAgent(const URL&) const
 {
     return m_userAgent;
 }
@@ -407,17 +407,17 @@ void WorkerGlobalScope::clearInterval(int timeoutId)
     DOMTimer::removeById(*this, timeoutId);
 }
 
-ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<Variant<Ref<TrustedScriptURL>, String>>& urls)
+ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<Variant<Ref<TrustedScriptURL>, RefPtr<StringImpl>>>& urls)
 {
     ASSERT(contentSecurityPolicy());
 
-    Vector<String> urlStrings(ReserveCapacityTag { }, urls.size());
+    Vector<RefPtr<StringImpl>> urlStrings(ReserveCapacityTag { }, urls.size());
     for (auto&& entry : urls) {
         auto stringValueHolder = WTF::switchOn(entry,
-            [this](const String& str) -> ExceptionOr<String> {
-                return trustedTypeCompliantString(TrustedType::TrustedScriptURL, *this, str, "WorkerGlobalScope importScripts"_s);
+            [this](StringImpl* str) -> ExceptionOr<RefPtr<StringImpl>> {
+                return trustedTypeCompliantString(TrustedType::TrustedScriptURL, *this, str, "WorkerGlobalScope importScripts"_si);
             },
-            [](const Ref<TrustedScriptURL>& trustedScriptURL) -> ExceptionOr<String> {
+            [](const Ref<TrustedScriptURL>& trustedScriptURL) -> ExceptionOr<RefPtr<StringImpl>> {
                 return trustedScriptURL->toString();
             }
         );
@@ -431,7 +431,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<Variant<Ref
     // https://html.spec.whatwg.org/multipage/workers.html#importing-scripts-and-libraries
     // 1. If worker global scope's type is "module", throw a TypeError exception.
     if (m_workerType == WorkerType::Module)
-        return Exception { ExceptionCode::TypeError, "importScripts cannot be used if worker type is \"module\""_s };
+        return Exception { ExceptionCode::TypeError, "importScripts cannot be used if worker type is \"module\""_si };
 
     Vector<URLKeepingBlobAlive> completedURLs(ReserveCapacityTag { }, urls.size());
     for (auto& entry : urlStrings) {
@@ -474,7 +474,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<Variant<Ref
             protect(script())->evaluate(sourceCode, exception);
             if (exception) {
                 if (mutedErrors)
-                    return Exception { ExceptionCode::NetworkError, "Network response is CORS-cross-origin"_s };
+                    return Exception { ExceptionCode::NetworkError, "Network response is CORS-cross-origin"_si };
                 protect(script())->setException(exception);
                 return { };
             }
@@ -491,7 +491,7 @@ EventTarget* WorkerGlobalScope::errorEventTarget()
     return this;
 }
 
-void WorkerGlobalScope::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<ScriptCallStack>&&)
+void WorkerGlobalScope::logExceptionToConsole(StringImpl* errorMessage, StringImpl* sourceURL, int lineNumber, int columnNumber, RefPtr<ScriptCallStack>&&)
 {
     if (CheckedPtr workerReportingProxy = thread()->workerReportingProxy())
         workerReportingProxy->postExceptionToWorkerObject(errorMessage, lineNumber, columnNumber, sourceURL);
@@ -514,12 +514,12 @@ void WorkerGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMess
     InspectorInstrumentation::addMessageToConsole(*this, WTF::move(message));
 }
 
-void WorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
+void WorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, StringImpl* message, unsigned long requestIdentifier)
 {
-    addMessage(source, level, message, { }, 0, 0, nullptr, nullptr, requestIdentifier);
+    addMessage(source, level, message, nullptr, 0, 0, nullptr, nullptr, requestIdentifier);
 }
 
-void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& messageText, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::JSGlobalObject* state, unsigned long requestIdentifier)
+void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, StringImpl* messageText, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::JSGlobalObject* state, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
         postTask(AddConsoleMessageTask(source, level, messageText));
@@ -653,7 +653,7 @@ Ref<FontFaceSet> WorkerGlobalScope::fonts()
     return cssFontSelector()->fontFaceSet();
 }
 
-RefPtr<FontLoadRequest> WorkerGlobalScope::fontLoadRequest(const String& url, bool, bool, LoadedFromOpaqueSource loadedFromOpaqueSource)
+RefPtr<FontLoadRequest> WorkerGlobalScope::fontLoadRequest(StringImpl* url, bool, bool, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
     return WorkerFontLoadRequest::create(parseURL(url), loadedFromOpaqueSource);
 }
@@ -731,7 +731,7 @@ void WorkerGlobalScope::addImportedScriptSourceProvider(const URL& url, ScriptBu
     }).iterator->value.add(provider);
 }
 
-void WorkerGlobalScope::reportErrorToWorkerObject(const String& errorMessage)
+void WorkerGlobalScope::reportErrorToWorkerObject(StringImpl* errorMessage)
 {
     if (CheckedPtr workerReportingProxy = thread()->workerReportingProxy())
         workerReportingProxy->reportErrorToWorkerObject(errorMessage);
@@ -782,7 +782,7 @@ void WorkerGlobalScope::updateServiceWorkerClientData()
 
     ASSERT(type() == WebCore::WorkerGlobalScope::Type::DedicatedWorker || type() == WebCore::WorkerGlobalScope::Type::SharedWorker);
     auto controllingServiceWorkerRegistrationIdentifier = activeServiceWorker() ? std::make_optional<ServiceWorkerRegistrationIdentifier>(activeServiceWorker()->registrationIdentifier()) : std::nullopt;
-    swClientConnection().registerServiceWorkerClient(storageClientOrigin(), ServiceWorkerClientData::from(*this), controllingServiceWorkerRegistrationIdentifier, String { m_userAgent });
+    swClientConnection().registerServiceWorkerClient(storageClientOrigin(), ServiceWorkerClientData::from(*this), controllingServiceWorkerRegistrationIdentifier, RefPtr<StringImpl> { m_userAgent });
 }
 
 void WorkerGlobalScope::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&& eventInit)
@@ -797,12 +797,12 @@ void WorkerGlobalScope::notifyReportObservers(Ref<Report>&& reports)
     reportingScope().notifyReportObservers(WTF::move(reports));
 }
 
-String WorkerGlobalScope::endpointURIForToken(const String& token) const
+RefPtr<StringImpl> WorkerGlobalScope::endpointURIForToken(StringImpl* token) const
 {
     return reportingScope().endpointURIForToken(token);
 }
 
-void WorkerGlobalScope::sendReportToEndpoints(const URL&, std::span<const String> /*endpointURIs*/, std::span<const String> /*endpointTokens*/, Ref<FormData>&&, ViolationReportType)
+void WorkerGlobalScope::sendReportToEndpoints(const URL&, std::span<const RefPtr<StringImpl>> /*endpointURIs*/, std::span<const RefPtr<StringImpl>> /*endpointTokens*/, Ref<FormData>&&, ViolationReportType)
 {
     // FIXME: Parse Reporting-Endpoints for workers. A policy a worker inherits, such as Document-Isolation-Policy, names its owner's endpoints,
     // which might need specification changes.

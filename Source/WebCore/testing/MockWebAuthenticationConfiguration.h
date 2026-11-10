@@ -73,15 +73,15 @@ struct MockWebAuthenticationConfiguration {
     struct LocalConfiguration {
         UserVerification userVerification { UserVerification::No };
         bool acceptAttestation { false };
-        String privateKeyBase64;
-        String userCertificateBase64;
-        String intermediateCACertificateBase64;
-        String preferredCredentialIdBase64;
+        RefPtr<StringImpl> privateKeyBase64;
+        RefPtr<StringImpl> userCertificateBase64;
+        RefPtr<StringImpl> intermediateCACertificateBase64;
+        RefPtr<StringImpl> preferredCredentialIdBase64;
     };
 
     struct HidConfiguration {
-        Vector<String> payloadBase64;
-        Vector<String> expectedCommandsBase64;
+        Vector<RefPtr<StringImpl>> payloadBase64;
+        Vector<RefPtr<StringImpl>> expectedCommandsBase64;
         bool validateExpectedCommands { false };
         HidStage stage { HidStage::Info };
         HidSubStage subStage { HidSubStage::Init };
@@ -101,15 +101,15 @@ struct MockWebAuthenticationConfiguration {
 
     struct NfcConfiguration {
         NfcError error { NfcError::Success };
-        Vector<String> payloadBase64;
+        Vector<RefPtr<StringImpl>> payloadBase64;
         bool multipleTags { false };
         bool multiplePhysicalTags { false };
     };
 
     struct CcidConfiguration {
-        Vector<String> payloadBase64;
-        String appletSelectionResponseBase64;
-        String u2fVersionResponseBase64;
+        Vector<RefPtr<StringImpl>> payloadBase64;
+        RefPtr<StringImpl> appletSelectionResponseBase64;
+        RefPtr<StringImpl> u2fVersionResponseBase64;
     };
 
     bool silentFailure { false };

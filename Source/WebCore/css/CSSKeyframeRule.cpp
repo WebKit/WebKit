@@ -94,7 +94,7 @@ MutableStyleProperties& StyleRuleKeyframe::mutableProperties()
     return uncheckedDowncast<MutableStyleProperties>(m_properties.get());
 }
 
-String StyleRuleKeyframe::keyText() const
+RefPtr<StringImpl> StyleRuleKeyframe::keyText() const
 {
     StringBuilder keyText;
     for (size_t i = 0; i < m_keys.size(); ++i) {
@@ -105,9 +105,9 @@ String StyleRuleKeyframe::keyText() const
     return keyText.toString();
 }
     
-bool StyleRuleKeyframe::setKeyText(const String& keyText)
+bool StyleRuleKeyframe::setKeyText(StringImpl* keyText)
 {
-    ASSERT(!keyText.isNull());
+    ASSERT(keyText);
     auto keys = CSSPropertyParserHelpers::parseKeyframeKeyList(keyText, strictCSSParserContext());
     if (keys.isEmpty())
         return false;
@@ -117,9 +117,9 @@ bool StyleRuleKeyframe::setKeyText(const String& keyText)
     return true;
 }
 
-String StyleRuleKeyframe::cssText() const
+RefPtr<StringImpl> StyleRuleKeyframe::cssText() const
 {
-    if (auto declarations = protect(m_properties)->asText(CSS::defaultSerializationContext()); !declarations.isEmpty())
+    if (auto declarations = protect(m_properties)->asText(CSS::defaultSerializationContext()); !isEmpty(declarations))
         return makeString(keyText(), " { "_s, declarations, " }"_s);
     return makeString(keyText(), " { }"_s);
 }
@@ -150,7 +150,7 @@ void CSSKeyframeRule::reattach(StyleRuleBase&)
     ASSERT_NOT_REACHED();
 }
 
-void CSSKeyframeRule::setKeyText(const String& text)
+void CSSKeyframeRule::setKeyText(StringImpl* text)
 {
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 

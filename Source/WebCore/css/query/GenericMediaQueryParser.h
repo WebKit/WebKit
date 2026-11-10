@@ -38,7 +38,7 @@ namespace MQ {
 
 // A <style-range-value> that is a bare <custom-property-name> is substituted as if wrapped in var().
 // Returns the referenced property name, or nullAtom() if the tokens are anything else.
-AtomString bareCustomPropertyName(std::span<const CSSParserToken>);
+RefPtr<AtomStringImpl> bareCustomPropertyName(std::span<const CSSParserToken>);
 
 enum class FeatureParserOption : uint8_t {
     // Container query conditions have an element context (the query container), so unlike media
@@ -52,8 +52,8 @@ struct FeatureParser {
     static std::optional<Feature> consumeBooleanOrPlainFeature(CSSParserTokenRange&, const CSSParserContext&, EnumSet<FeatureParserOption>);
     static std::optional<Feature> consumeRangeFeature(CSSParserTokenRange&, const CSSParserContext&, EnumSet<FeatureParserOption>);
 
-    static AtomString consumeFeatureName(CSSParserTokenRange&);
-    static std::optional<Value> consumeCustomPropertyValue(const AtomString& propertyName, CSSParserTokenRange&, const CSSParserContext&);
+    static RefPtr<AtomStringImpl> consumeFeatureName(CSSParserTokenRange&);
+    static std::optional<Value> consumeCustomPropertyValue(AtomStringImpl* propertyName, CSSParserTokenRange&, const CSSParserContext&);
     NODELETE static std::optional<ComparisonOperator> consumeRangeComparisonOperator(CSSParserTokenRange&);
 
     static bool validateFeatureAgainstSchema(Feature&, const FeatureSchema&);
@@ -76,7 +76,7 @@ struct GenericMediaQueryParser  {
     static constexpr EnumSet<FeatureParserOption> featureParserOptions = { };
 
     static bool isValidFunctionId(CSSValueID) { return false; }
-    static const FeatureSchema* schemaForFeatureName(const AtomString&, const CSSParserContext&, State&);
+    static const FeatureSchema* schemaForFeatureName(AtomStringImpl*, const CSSParserContext&, State&);
     static bool validateFeature(Feature&, const CSSParserContext&, State&);
 };
 
@@ -216,9 +216,9 @@ bool GenericMediaQueryParser<ConcreteParser>::validateFeature(Feature& feature, 
 }
 
 template<typename ConcreteParser>
-const FeatureSchema* GenericMediaQueryParser<ConcreteParser>::schemaForFeatureName(const AtomString& name, const CSSParserContext&, State&)
+const FeatureSchema* GenericMediaQueryParser<ConcreteParser>::schemaForFeatureName(AtomStringImpl* name, const CSSParserContext&, State&)
 {
-    using SchemaMap = MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, const FeatureSchema*>;
+    using SchemaMap = MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<AtomStringImpl>, const FeatureSchema*>;
 
     static NeverDestroyed<SchemaMap> schemas = [&] {
         SchemaMap map;

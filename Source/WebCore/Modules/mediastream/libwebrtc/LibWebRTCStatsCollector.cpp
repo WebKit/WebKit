@@ -70,9 +70,9 @@ RTCStatsReport::RtpStreamStats RTCStatsReport::RtpStreamStats::convert(Type type
     return RtpStreamStats {
         Stats::convert(type, rtcStats),
         rtcStats.ssrc ? *rtcStats.ssrc : 0,
-        rtcStats.kind ? fromStdString(*rtcStats.kind) : String(),
-        rtcStats.transport_id ? fromStdString(*rtcStats.transport_id) : String(),
-        rtcStats.codec_id ? fromStdString(*rtcStats.codec_id) : String(),
+        rtcStats.kind ? fromStdString(*rtcStats.kind) : nullptr,
+        rtcStats.transport_id ? fromStdString(*rtcStats.transport_id) : nullptr,
+        rtcStats.codec_id ? fromStdString(*rtcStats.codec_id) : nullptr,
     };
 }
 
@@ -87,21 +87,21 @@ RTCStatsReport::ReceivedRtpStreamStats RTCStatsReport::ReceivedRtpStreamStats::c
     };
 }
 
-RTCStatsReport::InboundRtpStreamStats RTCStatsReport::InboundRtpStreamStats::convert(const webrtc::RTCInboundRtpStreamStats& rtcStats, const HashMap<String, String>& trackIds)
+RTCStatsReport::InboundRtpStreamStats RTCStatsReport::InboundRtpStreamStats::convert(const webrtc::RTCInboundRtpStreamStats& rtcStats, const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& trackIds)
 {
-    String trackId;
+    RefPtr<StringImpl> trackId;
     if (rtcStats.track_identifier) {
         auto rtcTrackId = fromStdString(*rtcStats.track_identifier);
-        ASSERT(!rtcTrackId.isEmpty());
+        ASSERT(!isEmpty(rtcTrackId));
         trackId = trackIds.get(rtcTrackId);
-        ASSERT(!trackId.isEmpty());
+        ASSERT(!isEmpty(trackId));
     }
 
     return InboundRtpStreamStats {
         ReceivedRtpStreamStats::convert(RTCStatsReport::Type::InboundRtp, rtcStats, rtcStats.packets_received ? std::optional { *rtcStats.packets_received } : std::nullopt),
         WTF::move(trackId),
-        rtcStats.mid ? fromStdString(*rtcStats.mid) : String(),
-        rtcStats.remote_id ? fromStdString(*rtcStats.remote_id) : String(),
+        rtcStats.mid ? fromStdString(*rtcStats.mid) : nullptr,
+        rtcStats.remote_id ? fromStdString(*rtcStats.remote_id) : nullptr,
         rtcStats.frames_decoded ? std::optional { *rtcStats.frames_decoded } : std::nullopt,
         rtcStats.key_frames_decoded ? std::optional { *rtcStats.key_frames_decoded } : std::nullopt,
         { }, // FIXME: Support `framesRendered`
@@ -145,7 +145,7 @@ RTCStatsReport::InboundRtpStreamStats RTCStatsReport::InboundRtpStreamStats::con
         rtcStats.frames_received ? std::optional { *rtcStats.frames_received } : std::nullopt,
         // TODO: Restrict Access
         { }, // rtcStats.decoder_implementation ? fromStdString(*rtcStats.decoder_implementation) : String(),
-        rtcStats.playout_id ? fromStdString(*rtcStats.playout_id) : String(),
+        rtcStats.playout_id ? fromStdString(*rtcStats.playout_id) : nullptr,
         // TODO: Restrict Access
         { }, // rtcStats.power_efficient_decoder ? std::optional { *rtcStats.power_efficient_decoder } : std::nullopt,
         rtcStats.frames_assembled_from_multiple_packets ? std::optional { *rtcStats.frames_assembled_from_multiple_packets } : std::nullopt,
@@ -161,7 +161,7 @@ RTCStatsReport::RemoteInboundRtpStreamStats RTCStatsReport::RemoteInboundRtpStre
 {
     return RemoteInboundRtpStreamStats {
         ReceivedRtpStreamStats::convert(RTCStatsReport::Type::RemoteInboundRtp, rtcStats, std::nullopt),
-        rtcStats.local_id ? fromStdString(*rtcStats.local_id) : String(),
+        rtcStats.local_id ? fromStdString(*rtcStats.local_id) : nullptr,
         rtcStats.round_trip_time ? std::optional { *rtcStats.round_trip_time } : std::nullopt,
         rtcStats.total_round_trip_time ? std::optional { *rtcStats.total_round_trip_time } : std::nullopt,
         rtcStats.fraction_lost ? std::optional { *rtcStats.fraction_lost } : std::nullopt,
@@ -189,12 +189,12 @@ static inline std::optional<RTCStatsReport::QualityLimitationReason> convertQual
     return RTCStatsReport::QualityLimitationReason::Other;
 }
 
-static inline std::optional<Vector<KeyValuePair<String, double>>> convertQualityLimitationDurations(const std::map<std::string, double>& durations)
+static inline std::optional<Vector<KeyValuePair<RefPtr<StringImpl>, double>>> convertQualityLimitationDurations(const std::map<std::string, double>& durations)
 {
     auto it = durations.begin();
-    return Vector<KeyValuePair<String, double>>(durations.size(), [&](size_t) {
+    return Vector<KeyValuePair<RefPtr<StringImpl>, double>>(durations.size(), [&](size_t) {
         ASSERT(it != durations.end());
-        auto element = KeyValuePair<String, double> { fromStdString(it->first), it->second };
+        auto element = KeyValuePair<RefPtr<StringImpl>, double> { fromStdString(it->first), it->second };
         ++it;
         return element;
     });
@@ -204,10 +204,10 @@ RTCStatsReport::OutboundRtpStreamStats RTCStatsReport::OutboundRtpStreamStats::c
 {
     return OutboundRtpStreamStats {
         SentRtpStreamStats::convert(RTCStatsReport::Type::OutboundRtp, rtcStats),
-        rtcStats.mid ? fromStdString(*rtcStats.mid) : String(),
-        rtcStats.media_source_id ? fromStdString(*rtcStats.media_source_id) : String(),
-        rtcStats.remote_id ? fromStdString(*rtcStats.remote_id) : String(),
-        rtcStats.rid ? fromStdString(*rtcStats.rid) : String(),
+        rtcStats.mid ? fromStdString(*rtcStats.mid) : nullptr,
+        rtcStats.media_source_id ? fromStdString(*rtcStats.media_source_id) : nullptr,
+        rtcStats.remote_id ? fromStdString(*rtcStats.remote_id) : nullptr,
+        rtcStats.rid ? fromStdString(*rtcStats.rid) : nullptr,
         rtcStats.header_bytes_sent ? std::optional { *rtcStats.header_bytes_sent } : std::nullopt,
         rtcStats.retransmitted_packets_sent ? std::optional { *rtcStats.retransmitted_packets_sent } : std::nullopt,
         rtcStats.retransmitted_bytes_sent ? std::optional { *rtcStats.retransmitted_bytes_sent } : std::nullopt,
@@ -231,7 +231,7 @@ RTCStatsReport::OutboundRtpStreamStats RTCStatsReport::OutboundRtpStreamStats::c
         rtcStats.fir_count ? std::optional { *rtcStats.fir_count } : std::nullopt,
         rtcStats.pli_count ? std::optional { *rtcStats.pli_count } : std::nullopt,
         rtcStats.active ? std::optional { *rtcStats.active } : std::nullopt,
-        rtcStats.scalability_mode ? fromStdString(*rtcStats.scalability_mode) : String(),
+        rtcStats.scalability_mode ? fromStdString(*rtcStats.scalability_mode) : nullptr,
     };
 }
 
@@ -239,7 +239,7 @@ RTCStatsReport::RemoteOutboundRtpStreamStats RTCStatsReport::RemoteOutboundRtpSt
 {
     return RemoteOutboundRtpStreamStats {
         SentRtpStreamStats::convert(RTCStatsReport::Type::RemoteOutboundRtp, rtcStats),
-        rtcStats.local_id ? fromStdString(*rtcStats.local_id) : String(),
+        rtcStats.local_id ? fromStdString(*rtcStats.local_id) : nullptr,
         rtcStats.remote_timestamp ? std::optional { *rtcStats.remote_timestamp } : std::nullopt,
         rtcStats.reports_sent ? std::optional { *rtcStats.reports_sent } : std::nullopt,
         rtcStats.round_trip_time ? std::optional { *rtcStats.round_trip_time } : std::nullopt,
@@ -252,10 +252,10 @@ RTCStatsReport::DataChannelStats RTCStatsReport::DataChannelStats::convert(const
 {
     return DataChannelStats {
         Stats::convert(RTCStatsReport::Type::DataChannel, rtcStats),
-        rtcStats.label ? fromStdString(*rtcStats.label) : String(),
-        rtcStats.protocol ? fromStdString(*rtcStats.protocol) : String(),
+        rtcStats.label ? fromStdString(*rtcStats.label) : nullptr,
+        rtcStats.protocol ? fromStdString(*rtcStats.protocol) : nullptr,
         rtcStats.data_channel_identifier ? std::optional { *rtcStats.data_channel_identifier } : std::nullopt,
-        rtcStats.state ? fromStdString(*rtcStats.state) : String(),
+        rtcStats.state ? fromStdString(*rtcStats.state) : nullptr,
         rtcStats.messages_sent ? std::optional { *rtcStats.messages_sent } : std::nullopt,
         rtcStats.bytes_sent ? std::optional { *rtcStats.bytes_sent } : std::nullopt,
         rtcStats.messages_received ? std::optional { *rtcStats.messages_received } : std::nullopt,
@@ -283,9 +283,9 @@ RTCStatsReport::IceCandidatePairStats RTCStatsReport::IceCandidatePairStats::con
 {
     return IceCandidatePairStats {
         Stats::convert(RTCStatsReport::Type::CandidatePair, rtcStats),
-        rtcStats.transport_id ? fromStdString(*rtcStats.transport_id) : String(),
-        rtcStats.local_candidate_id ? fromStdString(*rtcStats.local_candidate_id) : String(),
-        rtcStats.remote_candidate_id ? fromStdString(*rtcStats.remote_candidate_id) : String(),
+        rtcStats.transport_id ? fromStdString(*rtcStats.transport_id) : nullptr,
+        rtcStats.local_candidate_id ? fromStdString(*rtcStats.local_candidate_id) : nullptr,
+        rtcStats.remote_candidate_id ? fromStdString(*rtcStats.remote_candidate_id) : nullptr,
         rtcStats.state ? iceCandidatePairState(*rtcStats.state) : RTCStatsReport::IceCandidatePairState::Frozen,
         rtcStats.nominated ? std::optional { *rtcStats.nominated } : std::nullopt,
         rtcStats.packets_sent ? std::optional { *rtcStats.packets_sent } : std::nullopt,
@@ -327,23 +327,23 @@ RTCStatsReport::IceCandidateStats RTCStatsReport::IceCandidateStats::convert(con
 {
     auto result = IceCandidateStats {
         Stats::convert(rtcStats.type() == webrtc::RTCRemoteIceCandidateStats::kType ? RTCStatsReport::Type::RemoteCandidate : RTCStatsReport::Type::LocalCandidate, rtcStats),
-        rtcStats.transport_id ? fromStdString(*rtcStats.transport_id) : String(),
+        rtcStats.transport_id ? fromStdString(*rtcStats.transport_id) : nullptr,
         rtcStats.ip ? std::optional { fromStdString(*rtcStats.ip) } : std::nullopt,
         rtcStats.port ? std::optional { *rtcStats.port } : std::nullopt,
-        rtcStats.protocol ? fromStdString(*rtcStats.protocol) : String(),
+        rtcStats.protocol ? fromStdString(*rtcStats.protocol) : nullptr,
         rtcStats.candidate_type ? iceCandidateState(*rtcStats.candidate_type) : RTCIceCandidateType::Host,
         rtcStats.priority ? std::optional { *rtcStats.priority } : std::nullopt,
-        rtcStats.url ? fromStdString(*rtcStats.url) : String(),
+        rtcStats.url ? fromStdString(*rtcStats.url) : nullptr,
         { }, // FIXME: Support `relayProtocol`
-        rtcStats.foundation ? fromStdString(*rtcStats.foundation) : String(),
+        rtcStats.foundation ? fromStdString(*rtcStats.foundation) : nullptr,
         { }, // FIXME: Support `relatedAddress`,
         { }, // FIXME: Support `relatedPort`,
-        rtcStats.username_fragment ? fromStdString(*rtcStats.username_fragment) : String(),
+        rtcStats.username_fragment ? fromStdString(*rtcStats.username_fragment) : nullptr,
         rtcStats.tcp_type ? parseEnumerationFromString<RTCIceTcpCandidateType>(fromStdString(*rtcStats.tcp_type)) : std::nullopt,
     };
 
     if (result.candidateType == RTCIceCandidateType::Prflx || result.candidateType == RTCIceCandidateType::Host)
-        result.address = String { };
+        result.address = nullptr;
 
     return result;
 }
@@ -352,10 +352,10 @@ RTCStatsReport::CertificateStats RTCStatsReport::CertificateStats::convert(const
 {
     return CertificateStats {
         Stats::convert(RTCStatsReport::Type::Certificate, rtcStats),
-        rtcStats.fingerprint ? fromStdString(*rtcStats.fingerprint) : String(),
-        rtcStats.fingerprint_algorithm ? fromStdString(*rtcStats.fingerprint_algorithm) : String(),
-        rtcStats.base64_certificate ? fromStdString(*rtcStats.base64_certificate) : String(),
-        rtcStats.issuer_certificate_id ? fromStdString(*rtcStats.issuer_certificate_id) : String(),
+        rtcStats.fingerprint ? fromStdString(*rtcStats.fingerprint) : nullptr,
+        rtcStats.fingerprint_algorithm ? fromStdString(*rtcStats.fingerprint_algorithm) : nullptr,
+        rtcStats.base64_certificate ? fromStdString(*rtcStats.base64_certificate) : nullptr,
+        rtcStats.issuer_certificate_id ? fromStdString(*rtcStats.issuer_certificate_id) : nullptr,
     };
 }
 
@@ -364,11 +364,11 @@ RTCStatsReport::CodecStats RTCStatsReport::CodecStats::convert(const webrtc::RTC
     return CodecStats {
         Stats::convert(RTCStatsReport::Type::Codec, rtcStats),
         rtcStats.payload_type ? *rtcStats.payload_type : 0,
-        rtcStats.transport_id ? fromStdString(*rtcStats.transport_id) : String(),
-        rtcStats.mime_type ? fromStdString(*rtcStats.mime_type) : String(),
+        rtcStats.transport_id ? fromStdString(*rtcStats.transport_id) : nullptr,
+        rtcStats.mime_type ? fromStdString(*rtcStats.mime_type) : nullptr,
         rtcStats.clock_rate ? std::optional { *rtcStats.clock_rate } : std::nullopt,
         rtcStats.channels ? std::optional { *rtcStats.channels } : std::nullopt,
-        rtcStats.sdp_fmtp_line ? fromStdString(*rtcStats.sdp_fmtp_line) : String(),
+        rtcStats.sdp_fmtp_line ? fromStdString(*rtcStats.sdp_fmtp_line) : nullptr,
     };
 }
 
@@ -442,16 +442,16 @@ RTCStatsReport::TransportStats RTCStatsReport::TransportStats::convert(const web
         rtcStats.bytes_sent ? std::optional { *rtcStats.bytes_sent } : std::nullopt,
         rtcStats.bytes_received ? std::optional { *rtcStats.bytes_received } : std::nullopt,
         rtcStats.ice_role ? convertIceRole(*rtcStats.ice_role) : std::nullopt,
-        rtcStats.ice_local_username_fragment ? fromStdString(*rtcStats.ice_local_username_fragment) : String(),
+        rtcStats.ice_local_username_fragment ? fromStdString(*rtcStats.ice_local_username_fragment) : nullptr,
         rtcStats.dtls_state ? *dtlsTransportState(*rtcStats.dtls_state) : RTCDtlsTransportState::New,
         rtcStats.ice_state ? iceTransportState(*rtcStats.ice_state) : std::nullopt,
-        rtcStats.selected_candidate_pair_id ? fromStdString(*rtcStats.selected_candidate_pair_id) : String(),
-        rtcStats.local_certificate_id ? fromStdString(*rtcStats.local_certificate_id) : String(),
-        rtcStats.remote_certificate_id ? fromStdString(*rtcStats.remote_certificate_id) : String(),
-        rtcStats.tls_version ? fromStdString(*rtcStats.tls_version) : String(),
-        rtcStats.dtls_cipher ? fromStdString(*rtcStats.dtls_cipher) : String(),
+        rtcStats.selected_candidate_pair_id ? fromStdString(*rtcStats.selected_candidate_pair_id) : nullptr,
+        rtcStats.local_certificate_id ? fromStdString(*rtcStats.local_certificate_id) : nullptr,
+        rtcStats.remote_certificate_id ? fromStdString(*rtcStats.remote_certificate_id) : nullptr,
+        rtcStats.tls_version ? fromStdString(*rtcStats.tls_version) : nullptr,
+        rtcStats.dtls_cipher ? fromStdString(*rtcStats.dtls_cipher) : nullptr,
         rtcStats.dtls_role ? convertDtlsRole(*rtcStats.dtls_role) : std::nullopt,
-        rtcStats.srtp_cipher ? fromStdString(*rtcStats.srtp_cipher) : String(),
+        rtcStats.srtp_cipher ? fromStdString(*rtcStats.srtp_cipher) : nullptr,
         rtcStats.selected_candidate_pair_changes ? std::optional { *rtcStats.selected_candidate_pair_changes } : std::nullopt,
     };
 }
@@ -469,8 +469,8 @@ RTCStatsReport::MediaSourceStats RTCStatsReport::MediaSourceStats::convert(Type 
 {
     return MediaSourceStats {
         Stats::convert(type, rtcStats),
-        rtcStats.track_identifier ? fromStdString(*rtcStats.track_identifier) : String(),
-        rtcStats.kind ? fromStdString(*rtcStats.kind) : String(),
+        rtcStats.track_identifier ? fromStdString(*rtcStats.track_identifier) : nullptr,
+        rtcStats.kind ? fromStdString(*rtcStats.kind) : nullptr,
     };
 }
 
@@ -499,7 +499,7 @@ RTCStatsReport::AudioPlayoutStats RTCStatsReport::AudioPlayoutStats::convert(con
 {
     return AudioPlayoutStats {
         Stats::convert(RTCStatsReport::Type::MediaPlayout, rtcStats),
-        rtcStats.kind ? fromStdString(*rtcStats.kind) : String(),
+        rtcStats.kind ? fromStdString(*rtcStats.kind) : nullptr,
         rtcStats.synthesized_samples_duration ? std::optional { *rtcStats.synthesized_samples_duration } : std::nullopt,
         rtcStats.synthesized_samples_events ? std::optional { *rtcStats.synthesized_samples_events } : std::nullopt,
         rtcStats.total_samples_duration ? std::optional { *rtcStats.total_samples_duration } : std::nullopt,
@@ -530,7 +530,7 @@ void addToStatsMap(DOMMapAdapter& report, const webrtc::RTCStats& rtcStats)
 
 
 template<typename T, typename PreciseType>
-void addToStatsMap(DOMMapAdapter& report, const webrtc::RTCStats& rtcStats, const HashMap<String, String>& trackIds)
+void addToStatsMap(DOMMapAdapter& report, const webrtc::RTCStats& rtcStats, const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& trackIds)
 {
     // This is a cast from a webrtc type, not much we can do to make it safe.
     SUPPRESS_MEMORY_UNSAFE_CAST auto stats = T::convert(static_cast<const PreciseType&>(rtcStats), trackIds);
@@ -538,7 +538,7 @@ void addToStatsMap(DOMMapAdapter& report, const webrtc::RTCStats& rtcStats, cons
     report.set<IDLDOMString, IDLDictionary<T>>(WTF::move(statsId), WTF::move(stats));
 }
 
-static inline void initializeRTCStatsReportBackingMap(DOMMapAdapter& report, const webrtc::RTCStatsReport& rtcReport, const HashMap<String, String>& trackIds)
+static inline void initializeRTCStatsReportBackingMap(DOMMapAdapter& report, const webrtc::RTCStatsReport& rtcReport, const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& trackIds)
 {
     for (const auto& rtcStats : rtcReport) {
         if (rtcStats.type() == webrtc::RTCInboundRtpStreamStats::kType)
@@ -579,7 +579,7 @@ void LibWebRTCStatsCollector::OnStatsDelivered(const webrtc::scoped_refptr<const
     });
 }
 
-Ref<RTCStatsReport> LibWebRTCStatsCollector::createReport(webrtc::scoped_refptr<const webrtc::RTCStatsReport>&& rtcReport, HashMap<String, String>&& trackIds)
+Ref<RTCStatsReport> LibWebRTCStatsCollector::createReport(webrtc::scoped_refptr<const webrtc::RTCStatsReport>&& rtcReport, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& trackIds)
 {
     ASSERT(isMainThread());
     return RTCStatsReport::create([rtcReport = WTF::move(rtcReport), trackIds = WTF::move(trackIds)](auto& mapAdapter) {

@@ -74,15 +74,15 @@
 // Delegate class for AVAssetResourceLoader to provide data from memory
 @interface WebCoreAudioFileReaderLoaderDelegate : NSObject<AVAssetResourceLoaderDelegate> {
     std::span<const uint8_t> _data;
-    String _mimeType;
+    RefPtr<StringImpl> _mimeType;
 }
-- (instancetype)initWithData:(std::span<const uint8_t>)data mimeType:(const String&)mimeType;
+- (instancetype)initWithData:(std::span<const uint8_t>)data mimeType:(StringImpl*)mimeType;
 - (void)close;
 @end
 
 @implementation WebCoreAudioFileReaderLoaderDelegate
 
-- (instancetype)initWithData:(std::span<const uint8_t>)data mimeType:(const String&)mimeType
+- (instancetype)initWithData:(std::span<const uint8_t>)data mimeType:(StringImpl*)mimeType
 {
     if (!(self = [super init]))
         return nil;
@@ -104,7 +104,7 @@
         return NO;
 
     if (RetainPtr<AVAssetResourceLoadingContentInformationRequest> contentRequest = loadingRequest.contentInformationRequest) {
-        contentRequest.get().contentType = _mimeType.createNSString().get();
+        contentRequest.get().contentType = createNSString(_mimeType).get();
         contentRequest.get().contentLength = _data.size();
         contentRequest.get().byteRangeAccessSupported = YES;
     }
@@ -197,7 +197,7 @@ NODELETE static SInt64 getSizeProc(void* clientData)
     return static_cast<std::span<const uint8_t>*>(clientData)->size();
 }
 
-static String mimeTypeFor(std::span<const uint8_t> data)
+static RefPtr<StringImpl> mimeTypeFor(std::span<const uint8_t> data)
 {
     AudioFileID audioFileID { nullptr };
     if (PAL::AudioFileOpenWithCallbacks(&data, readProc, 0, getSizeProc, 0, 0, &audioFileID) != noErr)
@@ -215,47 +215,47 @@ static String mimeTypeFor(std::span<const uint8_t> data)
     switch (typeID) {
     // AudioFileStream
     case kAudioFileAMRType:
-        return "audio/amr"_s;
+        return "audio/amr"_si;
     case kAudioFileMP1Type:
     case kAudioFileMP2Type:
     case kAudioFileMP3Type:
-        return "audio/mpeg"_s;
+        return "audio/mpeg"_si;
     case kAudioFileLATMInLOASType:
-        return "audio/aac"_s;
+        return "audio/aac"_si;
     case kAudioFileFLACType:
-        return "audio/flac"_s;
+        return "audio/flac"_si;
     case kAudioFileAC3Type:
-        return "audio/ac3"_s;
+        return "audio/ac3"_si;
     case kAudioFileAAC_ADTSType:
-        return "audio/aac"_s;
+        return "audio/aac"_si;
     // Audio Files
     case kAudioFileAIFFType:
     case kAudioFileAIFCType:
-        return "audio/aiff"_s;
+        return "audio/aiff"_si;
     case kAudioFileWAVEType:
     case kAudioFileRF64Type:
     case kAudioFileBW64Type:
     case kAudioFileWave64Type:
-        return "audio/wav"_s;
+        return "audio/wav"_si;
     case kAudioFileCAFType:
-        return "audio/x-caf"_s;
+        return "audio/x-caf"_si;
     // ISO-BMFF containers. MIMESniffer::getMIMETypeFromContent() only recognizes an MP4 file
     // when a compatible brand begins with "mp4", so files carrying other valid brands (such as
     // an M4A whose brands are "M4A "/"isom"/"iso2") reach here and must be handled.
     case kAudioFileMPEG4Type:
     case kAudioFileM4AType:
     case kAudioFileM4BType:
-        return "audio/mp4"_s;
+        return "audio/mp4"_si;
     case kAudioFile3GPType:
-        return "audio/3gpp"_s;
+        return "audio/3gpp"_si;
     case kAudioFile3GP2Type:
-        return "audio/3gpp2"_s;
+        return "audio/3gpp2"_si;
     case 'MooV': // kAudioFileQTMovieType
-        return "video/quicktime"_s;
+        return "video/quicktime"_si;
     case 'ec-3': // kAudioFileEAC3Type
-        return "audio/eac3"_s;
+        return "audio/eac3"_si;
     case 'Oggf': // kAudioFileOggType
-        return "audio/ogg"_s;
+        return "audio/ogg"_si;
     case kAudioFileNextType:
     default:
         RELEASE_LOG_FAULT(WebAudio, "mimeTypeFor typeID: %u unsupported", static_cast<unsigned>(typeID));
@@ -354,13 +354,13 @@ static std::optional<size_t> framesInSamples(Vector<Ref<MediaSampleAVFObjC>>& sa
 std::unique_ptr<AudioFileReaderData> AudioFileReader::demuxAVFData(std::span<const uint8_t> data) const
 {
     // Determine MIME type from data signature
-    String mimeType = MIMESniffer::getMIMETypeFromContent(data);
-    if (mimeType.isEmpty())
+    RefPtr<StringImpl> mimeType = MIMESniffer::getMIMETypeFromContent(data);
+    if (isEmpty(mimeType))
         mimeType = mimeTypeFor(data);
-    if (mimeType.isEmpty())
+    if (isEmpty(mimeType))
         return nullptr;
-    if (mimeType == "application/ogg"_s)
-        mimeType = "audio/ogg"_s;
+    if (equal(mimeType, "application/ogg"_s))
+        mimeType = "audio/ogg"_si;
 
     // Create a custom URL scheme for in-memory data
     RetainPtr url = adoptNS([[NSURL alloc] initWithString:@"custom-audiofilereader://audio"]);
@@ -378,7 +378,7 @@ std::unique_ptr<AudioFileReaderData> AudioFileReader::demuxAVFData(std::span<con
         AVURLAssetUsesNoPersistentCacheKey: @YES,
         @"AVAssetRequiresInProcessOperationKey": @YES,
         AVURLAssetPreferPreciseDurationAndTimingKey: @YES,
-        AVURLAssetOutOfBandMIMETypeKey: mimeType.createNSString().get()
+        AVURLAssetOutOfBandMIMETypeKey: createNSString(mimeType).get()
     };
     RetainPtr asset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:url.get() options:options]);
     [[asset resourceLoader] setDelegate:loaderDelegate.get() queue:globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
@@ -388,7 +388,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
 ALLOW_DEPRECATED_DECLARATIONS_END
     if (!audioTracks || ![audioTracks count]) {
-        RELEASE_LOG_FAULT(WebAudio, "AudioFileReader: No audio tracks found for '%s' type", mimeType.utf8());
+        RELEASE_LOG_FAULT(WebAudio, "AudioFileReader: No audio tracks found for '%s' type", utf8(mimeType));
         return nullptr;
     }
 
@@ -510,7 +510,7 @@ std::unique_ptr<AudioFileReaderData> AudioFileReader::demuxWebMData(std::span<co
             }
         }
     });
-    parser->setDidProvideMediaDataCallback([&](Ref<MediaSampleAVFObjC>&& sample, uint64_t trackID, const String&) {
+    parser->setDidProvideMediaDataCallback([&](Ref<MediaSampleAVFObjC>&& sample, uint64_t trackID, StringImpl*) {
         if (!audioTrackId || trackID != *audioTrackId)
             return;
         samples.append(WTF::move(sample));

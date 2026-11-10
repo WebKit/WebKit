@@ -16,7 +16,7 @@
 
 namespace WTF {
 
-void StringBuilder::appendQuotedJSONString(const String& string)
+void StringBuilder::appendQuotedJSONString(StringImpl* string)
 {
     if (hasOverflowed())
         return;
@@ -24,7 +24,7 @@ void StringBuilder::appendQuotedJSONString(const String& string)
     // Make sure we have enough buffer space to append this string for worst case without reallocating.
     // The 2 is for the '"' quotes on each end.
     // The 6 is the worst case for a single code unit that could be encoded as \uNNNN.
-    CheckedInt32 stringLength = string.length();
+    CheckedInt32 stringLength = WTF::length(string);
     stringLength *= 6;
     stringLength += 2;
     if (stringLength.hasOverflowed()) {
@@ -49,11 +49,11 @@ void StringBuilder::appendQuotedJSONString(const String& string)
     // For (3), the saturated value of UINT_MAX will be rejected just like (2).
     auto stringLengthValue = static_cast<uint32_t>(stringLength.value());
 
-    if (is8Bit() && string.is8Bit()) {
+    if (is8Bit() && WTF::is8Bit(string)) {
         if (auto output = extendBufferForAppending<Latin1Character>(saturatingSum<uint32_t>(m_length, stringLengthValue)); output.data()) {
             output = output.first(stringLengthValue);
             consume(output) = '"';
-            appendEscapedJSONStringContent(output, string.span8());
+            appendEscapedJSONStringContent(output, WTF::span8(string));
             consume(output) = '"';
             if (!output.empty())
                 shrink(m_length - output.size());
@@ -62,10 +62,10 @@ void StringBuilder::appendQuotedJSONString(const String& string)
         if (auto output = extendBufferForAppendingWithUpconvert(saturatingSum<uint32_t>(m_length, stringLengthValue)); output.data()) {
             output = output.first(stringLengthValue);
             consume(output) = '"';
-            if (string.is8Bit())
-                appendEscapedJSONStringContent(output, string.span8());
+            if (WTF::is8Bit(string))
+                appendEscapedJSONStringContent(output, WTF::span8(string));
             else
-                appendEscapedJSONStringContent(output, string.span16());
+                appendEscapedJSONStringContent(output, WTF::span16(string));
             consume(output) = '"';
             if (!output.empty())
                 shrink(m_length - output.size());

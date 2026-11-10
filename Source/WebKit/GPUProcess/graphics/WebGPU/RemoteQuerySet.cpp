@@ -65,7 +65,7 @@ void RemoteQuerySet::destruct()
     protect(m_objectHeap)->removeObject(m_identifier);
 }
 
-void RemoteQuerySet::setLabel(String&& label)
+void RemoteQuerySet::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

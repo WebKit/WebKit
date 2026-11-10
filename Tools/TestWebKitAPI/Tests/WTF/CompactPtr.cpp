@@ -276,32 +276,32 @@ TEST(WTF_CompactPtr, HashMapRemoveAndAdd)
 
 TEST(WTF_CompactPtr, StringHashSet)
 {
-    Vector<String> vector;
+    Vector<RefPtr<StringImpl>> vector;
     HashSet<CompactPtr<StringImpl>> set;
     vector.reserveCapacity(10000);
     for (unsigned i = 0; i < 10000; ++i)
-        vector.append(String::number(i));
+        vector.append(makeString(i));
 
     for (auto& target : vector)
-        set.add(target.impl());
+        set.add(target.get());
 
     for (unsigned i = 0; i < 4000; ++i) {
         auto& target = vector[i];
-        set.remove(target.impl());
+        set.remove(target.get());
     }
 
     for (unsigned i = 0; i < 4000; ++i) {
         auto& target = vector[i];
-        set.add(target.impl());
+        set.add(target.get());
     }
 
     for (auto& target : vector)
-        set.add(target.impl());
+        set.add(target.get());
 
     EXPECT_EQ(set.size(), vector.size());
 
     for (auto& target : vector)
-        EXPECT_TRUE(set.contains(target.impl()));
+        EXPECT_TRUE(set.contains(target.get()));
 }
 
 } // namespace TestWebKitAPI

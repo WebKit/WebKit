@@ -38,11 +38,11 @@ struct CFMalloc {
 };
 
 HistoryPropertyListWriter::HistoryPropertyListWriter()
-    : m_displayTitleKey("displayTitle"_s)
-    , m_lastVisitWasFailureKey("lastVisitWasFailure"_s)
-    , m_lastVisitedDateKey("lastVisitedDate"_s)
-    , m_redirectURLsKey("redirectURLs"_s)
-    , m_titleKey("title"_s)
+    : m_displayTitleKey("displayTitle"_si)
+    , m_lastVisitWasFailureKey("lastVisitWasFailure"_si)
+    , m_lastVisitedDateKey("lastVisitedDate"_si)
+    , m_redirectURLsKey("redirectURLs"_si)
+    , m_titleKey("title"_si)
     , m_urlKey(emptyString())
 {
 }
@@ -71,8 +71,8 @@ void HistoryPropertyListWriter::writeObjects(BinaryPropertyListObjectStream& str
 {
     size_t outerDictionaryStart = stream.writeDictionaryStart();
 
-    stream.writeString("WebHistoryFileVersion"_s);
-    stream.writeString("WebHistoryDates"_s);
+    stream.writeString("WebHistoryFileVersion"_si);
+    stream.writeString("WebHistoryDates"_si);
 
     stream.writeInteger(currentFileVersion);
     size_t outerDateArrayStart = stream.writeArrayStart();
@@ -88,16 +88,16 @@ void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream&
 
     size_t itemDictionaryStart = stream.writeDictionaryStart();
 
-    const String& title = item->title();
-    const String& displayTitle = item->alternateTitle();
+    const RefPtr<StringImpl>& title = item->title();
+    const RefPtr<StringImpl>& displayTitle = item->alternateTitle();
     double lastVisitedDate = webHistoryItem->_private->_lastVisitedTime;
-    Vector<String>* redirectURLs = webHistoryItem->_private->_redirectURLs.get();
+    Vector<RefPtr<StringImpl>>* redirectURLs = webHistoryItem->_private->_redirectURLs.get();
 
     // keys
     stream.writeString(m_urlKey);
-    if (!title.isEmpty())
+    if (!isEmpty(title))
         stream.writeString(m_titleKey);
-    if (!displayTitle.isEmpty())
+    if (!isEmpty(displayTitle))
         stream.writeString(m_displayTitleKey);
     if (lastVisitedDate)
         stream.writeString(m_lastVisitedDateKey);
@@ -108,9 +108,9 @@ void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream&
 
     // values
     stream.writeUniqueString(item->urlString());
-    if (!title.isEmpty())
+    if (!isEmpty(title))
         stream.writeString(title);
-    if (!displayTitle.isEmpty())
+    if (!isEmpty(displayTitle))
         stream.writeString(displayTitle);
     if (lastVisitedDate) {
         char buffer[32];

@@ -57,14 +57,14 @@ public:
 
     void consumeAsStream(FetchBodyOwner&, FetchBodySource&);
 
-    using Init = Variant<Ref<Blob>, Ref<ArrayBufferView>, Ref<ArrayBuffer>, Ref<DOMFormData>, Ref<URLSearchParams>, Ref<ReadableStream>, String>;
-    static ExceptionOr<FetchBody> extract(Init&&, String&);
+    using Init = Variant<Ref<Blob>, Ref<ArrayBufferView>, Ref<ArrayBuffer>, Ref<DOMFormData>, Ref<URLSearchParams>, Ref<ReadableStream>, RefPtr<StringImpl>>;
+    static ExceptionOr<FetchBody> extract(Init&&, RefPtr<StringImpl>&);
     FetchBody() = default;
     FetchBody(FetchBody&&) = default;
     WEBCORE_EXPORT ~FetchBody();
     FetchBody& operator=(FetchBody&&) = default;
 
-    explicit FetchBody(String&& data)
+    explicit FetchBody(RefPtr<StringImpl>&& data)
         : m_data(WTF::move(data))
     {
     }
@@ -72,7 +72,7 @@ public:
     WEBCORE_EXPORT static std::optional<FetchBody> fromFormData(ScriptExecutionContext&, Ref<FormData>&&);
 
     void loadingFailed(const Exception&);
-    void loadingSucceeded(const String& contentType);
+    void loadingSucceeded(StringImpl* contentType);
 
     RefPtr<FormData> bodyAsFormData() const;
 
@@ -134,25 +134,25 @@ private:
 
     void consumeArrayBuffer(FetchBodyOwner&, Ref<DeferredPromise>&&);
     void consumeArrayBufferView(FetchBodyOwner&, Ref<DeferredPromise>&&);
-    void consumeText(FetchBodyOwner&, Ref<DeferredPromise>&&, const String&);
+    void consumeText(FetchBodyOwner&, Ref<DeferredPromise>&&, StringImpl*);
     void consumeBlob(FetchBodyOwner&, Ref<DeferredPromise>&&);
     void consumeFormData(FetchBodyOwner&, Ref<DeferredPromise>&&);
 
     bool isArrayBuffer() const { return std::holds_alternative<Ref<ArrayBuffer>>(m_data); }
     bool isArrayBufferView() const { return std::holds_alternative<Ref<ArrayBufferView>>(m_data); }
     bool isURLSearchParams() const { return std::holds_alternative<Ref<URLSearchParams>>(m_data); }
-    bool isText() const { return std::holds_alternative<String>(m_data); }
+    bool isText() const { return std::holds_alternative<RefPtr<StringImpl>>(m_data); }
 
     Blob& blobBody() const { return std::get<Ref<Blob>>(m_data).get(); }
     FormData& formDataBody() const { return std::get<Ref<FormData>>(m_data).get(); }
     ArrayBuffer& arrayBufferBody() const { return std::get<Ref<ArrayBuffer>>(m_data).get(); }
     ArrayBufferView& arrayBufferViewBody() const { return std::get<Ref<ArrayBufferView>>(m_data).get(); }
-    String& textBody() LIFETIME_BOUND { return std::get<String>(m_data); }
-    const String& textBody() const LIFETIME_BOUND { return std::get<String>(m_data); }
+    RefPtr<StringImpl>& textBody() LIFETIME_BOUND { return std::get<RefPtr<StringImpl>>(m_data); }
+    const RefPtr<StringImpl>& textBody() const LIFETIME_BOUND { return std::get<RefPtr<StringImpl>>(m_data); }
     URLSearchParams& urlSearchParamsBody() const { return std::get<Ref<URLSearchParams>>(m_data).get(); }
     ReadableStream& readableStreamBody() LIFETIME_BOUND { return std::get<Ref<ReadableStream>>(m_data); }
 
-    using Data = Variant<std::nullptr_t, Ref<Blob>, Ref<FormData>, Ref<ArrayBuffer>, Ref<ArrayBufferView>, Ref<URLSearchParams>, String, Ref<ReadableStream>>;
+    using Data = Variant<std::nullptr_t, Ref<Blob>, Ref<FormData>, Ref<ArrayBuffer>, Ref<ArrayBufferView>, Ref<URLSearchParams>, RefPtr<StringImpl>, Ref<ReadableStream>>;
     Data m_data { nullptr };
 
     std::unique_ptr<FetchBodyConsumer> m_consumer;
@@ -163,7 +163,7 @@ private:
 
 struct FetchBodyWithType {
     FetchBody body;
-    String type;
+    RefPtr<StringImpl> type;
 };
 
 } // namespace WebCore

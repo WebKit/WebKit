@@ -41,13 +41,13 @@
 
 namespace WebCore {
 
-CSSFontFaceSrcLocalValue::CSSFontFaceSrcLocalValue(AtomString&& fontFaceName)
+CSSFontFaceSrcLocalValue::CSSFontFaceSrcLocalValue(RefPtr<AtomStringImpl>&& fontFaceName)
     : CSSValue(ClassType::FontFaceSrcLocal)
     , m_fontFaceName(WTF::move(fontFaceName))
 {
 }
 
-Ref<CSSFontFaceSrcLocalValue> CSSFontFaceSrcLocalValue::create(AtomString fontFaceName)
+Ref<CSSFontFaceSrcLocalValue> CSSFontFaceSrcLocalValue::create(RefPtr<AtomStringImpl> fontFaceName)
 {
     return adoptRef(*new CSSFontFaceSrcLocalValue { WTF::move(fontFaceName) });
 }
@@ -64,7 +64,7 @@ void CSSFontFaceSrcLocalValue::setSVGFontFaceElement(SVGFontFaceElement& element
     m_element = element;
 }
 
-String CSSFontFaceSrcLocalValue::customCSSText(const CSS::SerializationContext&) const
+RefPtr<StringImpl> CSSFontFaceSrcLocalValue::customCSSText(const CSS::SerializationContext&) const
 {
     return makeString("local("_s, serializeString(m_fontFaceName), ')');
 }
@@ -74,7 +74,7 @@ bool CSSFontFaceSrcLocalValue::equals(const CSSFontFaceSrcLocalValue& other) con
     return m_fontFaceName == other.m_fontFaceName;
 }
 
-CSSFontFaceSrcResourceValue::CSSFontFaceSrcResourceValue(CSS::URL&& location, String&& format, Vector<FontTechnology>&& technologies)
+CSSFontFaceSrcResourceValue::CSSFontFaceSrcResourceValue(CSS::URL&& location, RefPtr<StringImpl>&& format, Vector<FontTechnology>&& technologies)
     : CSSValue(ClassType::FontFaceSrcResource)
     , m_location(CSS::resolve(WTF::move(location)))
     , m_format(WTF::move(format))
@@ -82,7 +82,7 @@ CSSFontFaceSrcResourceValue::CSSFontFaceSrcResourceValue(CSS::URL&& location, St
 {
 }
 
-Ref<CSSFontFaceSrcResourceValue> CSSFontFaceSrcResourceValue::create(CSS::URL location, String format, Vector<FontTechnology>&& technologies)
+Ref<CSSFontFaceSrcResourceValue> CSSFontFaceSrcResourceValue::create(CSS::URL location, RefPtr<StringImpl> format, Vector<FontTechnology>&& technologies)
 {
     return adoptRef(*new CSSFontFaceSrcResourceValue { WTF::move(location), WTF::move(format), WTF::move(technologies) });
 }
@@ -93,7 +93,7 @@ RefPtr<FontLoadRequest> CSSFontFaceSrcResourceValue::fontLoadRequest(ScriptExecu
         return CachedFontLoadRequest::create(*cachedFont, context);
 
     bool isFormatSVG;
-    if (m_format.isEmpty()) {
+    if (WTF::isEmpty(m_format)) {
         // In order to avoid conflicts with the old WinIE style of font-face, if there is no format specified,
         // we check to see if the URL ends with .eot. We will not try to load those.
         if (m_location.resolved.lastPathComponent().endsWithIgnoringASCIICase(".eot"_s) && !m_location.resolved.protocolIsData())
@@ -130,13 +130,13 @@ bool CSSFontFaceSrcResourceValue::customMayDependOnBaseURL() const
     return WebCore::CSS::mayDependOnBaseURL(m_location);
 }
 
-String CSSFontFaceSrcResourceValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSFontFaceSrcResourceValue::customCSSText(const CSS::SerializationContext& context) const
 {
     StringBuilder builder;
 
     CSS::serializationForCSS(builder, context, m_location);
 
-    if (!m_format.isEmpty())
+    if (!WTF::isEmpty(m_format))
         builder.append(" format("_s, serializeString(m_format), ')');
     if (!m_technologies.isEmpty()) {
         builder.append(" tech("_s);
@@ -154,7 +154,7 @@ String CSSFontFaceSrcResourceValue::customCSSText(const CSS::SerializationContex
 bool CSSFontFaceSrcResourceValue::equals(const CSSFontFaceSrcResourceValue& other) const
 {
     return m_location == other.m_location
-        && m_format == other.m_format
+        && equal(m_format, other.m_format)
         && m_technologies == other.m_technologies;
 }
 

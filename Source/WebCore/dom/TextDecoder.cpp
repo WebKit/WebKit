@@ -40,7 +40,7 @@ TextDecoder::TextDecoder(StringView label, Options options)
 
 TextDecoder::~TextDecoder() = default;
 
-ExceptionOr<Ref<TextDecoder>> TextDecoder::create(const String& label, Options options)
+ExceptionOr<Ref<TextDecoder>> TextDecoder::create(StringImpl* label, Options options)
 {
     auto trimmedLabel = StringView(label).trim(isASCIIWhitespace);
     const char16_t nullCharacter = '\0';
@@ -52,7 +52,7 @@ ExceptionOr<Ref<TextDecoder>> TextDecoder::create(const String& label, Options o
     return decoder;
 }
 
-ExceptionOr<String> TextDecoder::decode(std::optional<BufferSource> input, DecodeOptions options)
+ExceptionOr<RefPtr<StringImpl>> TextDecoder::decode(std::optional<BufferSource> input, DecodeOptions options)
 {
     std::span<const uint8_t> data;
     if (input)
@@ -65,7 +65,7 @@ ExceptionOr<String> TextDecoder::decode(std::optional<BufferSource> input, Decod
     }
 
     bool sawError = false;
-    String result = m_codec->decode(data, !options.stream, m_options.fatal, sawError);
+    RefPtr<StringImpl> result = m_codec->decode(data, !options.stream, m_options.fatal, sawError);
 
     if (!options.stream && !m_options.ignoreBOM)
         m_codec->stripByteOrderMark();
@@ -75,7 +75,7 @@ ExceptionOr<String> TextDecoder::decode(std::optional<BufferSource> input, Decod
     return result;
 }
 
-String TextDecoder::encoding() const
+RefPtr<StringImpl> TextDecoder::encoding() const
 {
     return StringView(m_textEncoding.name()).convertToASCIILowercase();
 }

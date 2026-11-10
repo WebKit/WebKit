@@ -38,8 +38,8 @@ struct PushSubscriptionIdentifierType;
 using PushSubscriptionIdentifier = ObjectIdentifier<PushSubscriptionIdentifierType>;
 
 struct PushSubscriptionSetIdentifier {
-    String bundleIdentifier;
-    String pushPartition;
+    RefPtr<StringImpl> bundleIdentifier;
+    RefPtr<StringImpl> pushPartition;
     Markable<WTF::UUID> dataStoreIdentifier;
 
     bool operator==(const PushSubscriptionSetIdentifier&) const;
@@ -50,10 +50,10 @@ struct PushSubscriptionSetIdentifier {
     PushSubscriptionSetIdentifier isolatedCopy() const &;
     PushSubscriptionSetIdentifier isolatedCopy() &&;
 
-    WEBCORE_EXPORT String debugDescription() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> debugDescription() const;
 };
 
-WEBCORE_EXPORT String makePushTopic(const PushSubscriptionSetIdentifier&, const String& scope);
+WEBCORE_EXPORT RefPtr<StringImpl> makePushTopic(const PushSubscriptionSetIdentifier&, StringImpl* scope);
 
 inline bool PushSubscriptionSetIdentifier::operator==(const PushSubscriptionSetIdentifier& other) const
 {
@@ -61,18 +61,18 @@ inline bool PushSubscriptionSetIdentifier::operator==(const PushSubscriptionSetI
     // reason for this is that null and empty strings are stored as empty strings in PushDatabase
     // (the columns are marked NOT NULL). We want to be able to compare instances that use null
     // strings with instances deserialized from the database that use empty strings.
-    auto makeNotNull = [](const String& s) -> const String& {
-        return s.isNull() ? emptyString() : s;
+    auto makeNotNull = [](StringImpl* s) -> StringImpl* {
+        return s ? s : emptyString().get();
     };
-    return makeNotNull(bundleIdentifier) == makeNotNull(other.bundleIdentifier) && makeNotNull(pushPartition) == makeNotNull(other.pushPartition) && dataStoreIdentifier == other.dataStoreIdentifier;
+    return equal(makeNotNull(bundleIdentifier), makeNotNull(other.bundleIdentifier)) && equal(makeNotNull(pushPartition), makeNotNull(other.pushPartition)) && dataStoreIdentifier == other.dataStoreIdentifier;
 }
 
 inline void add(Hasher& hasher, const PushSubscriptionSetIdentifier& sub)
 {
     // Treat null and empty strings as empty strings for the purposes of hashing and comparison. See
     // the comment in operator== for more explanation.
-    auto makeNotNull = [](const String& s) -> const String& {
-        return s.isNull() ? emptyString() : s;
+    auto makeNotNull = [](StringImpl* s) -> StringImpl* {
+        return s ? s : emptyString().get();
     };
     if (sub.dataStoreIdentifier)
         return add(hasher, makeNotNull(sub.bundleIdentifier), makeNotNull(sub.pushPartition), sub.dataStoreIdentifier.value());
@@ -86,12 +86,12 @@ inline bool PushSubscriptionSetIdentifier::isHashTableDeletedValue() const
 
 inline PushSubscriptionSetIdentifier PushSubscriptionSetIdentifier::isolatedCopy() const &
 {
-    return { bundleIdentifier.isolatedCopy(), pushPartition.isolatedCopy(), dataStoreIdentifier };
+    return { WTF::isolatedCopy(bundleIdentifier), WTF::isolatedCopy(pushPartition), dataStoreIdentifier };
 }
 
 inline PushSubscriptionSetIdentifier PushSubscriptionSetIdentifier::isolatedCopy() &&
 {
-    return { WTF::move(bundleIdentifier).isolatedCopy(), WTF::move(pushPartition).isolatedCopy(), dataStoreIdentifier };
+    return { WTF::isolatedCopy(WTF::move(bundleIdentifier)), WTF::isolatedCopy(WTF::move(pushPartition)), dataStoreIdentifier };
 }
 
 } // namespace WebCore

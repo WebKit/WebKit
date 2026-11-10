@@ -33,14 +33,14 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebPasteboardProxy::getPasteboardTypes(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void WebPasteboardProxy::getPasteboardTypes(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completionHandler)
 {
-    Vector<String> pasteboardTypes;
+    Vector<RefPtr<StringImpl>> pasteboardTypes;
     PlatformPasteboard().getTypes(pasteboardTypes);
     completionHandler(WTF::move(pasteboardTypes));
 }
 
-void WebPasteboardProxy::readStringFromPasteboard(IPC::Connection&, size_t index, const String& pasteboardType, const String&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(String&&)>&& completionHandler)
+void WebPasteboardProxy::readStringFromPasteboard(IPC::Connection&, size_t index, StringImpl* pasteboardType, StringImpl*, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
 {
     completionHandler(PlatformPasteboard().readString(index, pasteboardType));
 }
@@ -50,7 +50,7 @@ void WebPasteboardProxy::writeWebContentToPasteboard(const WebCore::PasteboardWe
     PlatformPasteboard().write(content);
 }
 
-void WebPasteboardProxy::writeStringToPasteboard(const String& pasteboardType, const String& text)
+void WebPasteboardProxy::writeStringToPasteboard(StringImpl* pasteboardType, StringImpl* text)
 {
     PlatformPasteboard().write(pasteboardType, text);
 }

@@ -38,7 +38,7 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageInjectedBundleClient);
 
-void WebPageInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebPageProxy* page, const String& messageName, API::Object* messageBody)
+void WebPageInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebPageProxy* page, StringImpl* messageName, API::Object* messageBody)
 {
     if (!m_client.didReceiveMessageFromInjectedBundle)
         return;
@@ -46,7 +46,7 @@ void WebPageInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebPagePro
     m_client.didReceiveMessageFromInjectedBundle(toAPI(page), toAPI(messageName), toAPI(messageBody), m_client.base.clientInfo);
 }
 
-void WebPageInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy* page, const String& messageName, API::Object* messageBody, bool fromMainFrameProcess, CompletionHandler<void(RefPtr<API::Object>)>&& completionHandler)
+void WebPageInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy* page, StringImpl* messageName, API::Object* messageBody, bool fromMainFrameProcess, CompletionHandler<void(RefPtr<API::Object>)>&& completionHandler)
 {
     if (!m_client.didReceiveSynchronousMessageFromInjectedBundle
         && !m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener

@@ -47,7 +47,7 @@ ExceptionOr<ApplePaySessionPaymentRequestContactFields> convertAndValidate(unsig
             break;
         case ApplePayContactField::PhoneticName:
             if (version < 3)
-                return Exception { ExceptionCode::TypeError, "\"phoneticName\" is not a valid contact field."_s };
+                return Exception { ExceptionCode::TypeError, "\"phoneticName\" is not a valid contact field."_si };
             result.phoneticName = true;
             break;
         case ApplePayContactField::Phone:

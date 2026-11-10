@@ -204,30 +204,30 @@ void RenderThemeAdwaita::platformColorsDidChange()
     RenderTheme::platformColorsDidChange();
 }
 
-String RenderThemeAdwaita::extraDefaultStyleSheet()
+RefPtr<StringImpl> RenderThemeAdwaita::extraDefaultStyleSheet()
 {
     return StringImpl::createWithoutCopying(themeAdwaitaUserAgentStyleSheet);
 }
 
 #if ENABLE(VIDEO)
 
-Vector<String, 2> RenderThemeAdwaita::mediaControlsScripts()
+Vector<RefPtr<StringImpl>, 2> RenderThemeAdwaita::mediaControlsScripts()
 {
     return { StringImpl::createWithoutCopying(ModernMediaControlsJavaScript) };
 }
 
-Vector<String, 2> RenderThemeAdwaita::mediaControlsStyleSheets(const HTMLMediaElement&)
+Vector<RefPtr<StringImpl>, 2> RenderThemeAdwaita::mediaControlsStyleSheets(const HTMLMediaElement&)
 {
-    if (m_mediaControlsStyleSheet.isEmpty())
+    if (isEmpty(m_mediaControlsStyleSheet))
         m_mediaControlsStyleSheet = StringImpl::createWithoutCopying(ModernMediaControlsUserAgentStyleSheet);
     return { m_mediaControlsStyleSheet };
 }
 
-RefPtr<FragmentedSharedBuffer> RenderThemeAdwaita::mediaControlsImageDataForIconNameAndType(const String& iconName, const String& iconType)
+RefPtr<FragmentedSharedBuffer> RenderThemeAdwaita::mediaControlsImageDataForIconNameAndType(StringImpl* iconName, StringImpl* iconType)
 {
 #if USE(GLIB)
     auto path = makeString("/org/webkit/media-controls/"_s, iconName, '.', iconType);
-    GRefPtr data = adoptGRef(g_resources_lookup_data(path.utf8().legacyCStringPointer(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
+    GRefPtr data = adoptGRef(g_resources_lookup_data(utf8(path).legacyCStringPointer(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     if (!data)
         return nullptr;
     return SharedBuffer::create(span(data));
@@ -242,11 +242,11 @@ RefPtr<FragmentedSharedBuffer> RenderThemeAdwaita::mediaControlsImageDataForIcon
 #endif
 }
 
-String RenderThemeAdwaita::mediaControlsBase64StringForIconNameAndType(const String& iconName, const String& iconType)
+RefPtr<StringImpl> RenderThemeAdwaita::mediaControlsBase64StringForIconNameAndType(StringImpl* iconName, StringImpl* iconType)
 {
 #if USE(GLIB)
     auto path = makeString("/org/webkit/media-controls/"_s, iconName, '.', iconType);
-    GRefPtr data = adoptGRef(g_resources_lookup_data(path.utf8().legacyCStringPointer(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
+    GRefPtr data = adoptGRef(g_resources_lookup_data(utf8(path).legacyCStringPointer(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     if (!data)
         return emptyString();
     return base64EncodeToString(span(data));
@@ -261,7 +261,7 @@ String RenderThemeAdwaita::mediaControlsBase64StringForIconNameAndType(const Str
 #endif
 }
 
-String RenderThemeAdwaita::mediaControlsFormattedStringForDuration(double durationInSeconds)
+RefPtr<StringImpl> RenderThemeAdwaita::mediaControlsFormattedStringForDuration(double durationInSeconds)
 {
     // FIXME: Format this somehow, maybe through GDateTime?
     return makeString(durationInSeconds);

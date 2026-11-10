@@ -41,7 +41,7 @@ Ref<JSON::Object> GPUVertexState::toJSON() const
             else
                 buffersJSON->pushValue(JSON::Value::null());
         }
-        json->setArray("buffers"_s, WTF::move(buffersJSON));
+        json->setArray("buffers"_si, WTF::move(buffersJSON));
     }
     return json;
 }

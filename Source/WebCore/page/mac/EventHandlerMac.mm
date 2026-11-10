@@ -1162,7 +1162,7 @@ IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
     return flooredIntPoint(valueOrDefault(m_lastKnownMousePosition)) + autoscrollAdjustmentFactorForScreenBoundaries(flooredIntPoint(m_lastKnownMouseGlobalPosition), frame);
 }
 
-static const AtomString& mouseEventTypeForTrackedPointerEvent(PlatformEvent::Type type)
+static const RefPtr<AtomStringImpl>& mouseEventTypeForTrackedPointerEvent(PlatformEvent::Type type)
 {
     switch (type) {
     case PlatformEvent::Type::MousePressed:

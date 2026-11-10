@@ -33,25 +33,25 @@
 namespace WebCore {
 
 struct ApplePayPaymentContact {
-    String phoneNumber;
-    String emailAddress;
-    String givenName;
-    String familyName;
-    String phoneticGivenName;
-    String phoneticFamilyName;
-    std::optional<Vector<String>> addressLines;
-    String subLocality;
-    String locality;
-    String postalCode;
-    String subAdministrativeArea;
-    String administrativeArea;
-    String country;
-    String countryCode;
+    RefPtr<StringImpl> phoneNumber;
+    RefPtr<StringImpl> emailAddress;
+    RefPtr<StringImpl> givenName;
+    RefPtr<StringImpl> familyName;
+    RefPtr<StringImpl> phoneticGivenName;
+    RefPtr<StringImpl> phoneticFamilyName;
+    std::optional<Vector<RefPtr<StringImpl>>> addressLines;
+    RefPtr<StringImpl> subLocality;
+    RefPtr<StringImpl> locality;
+    RefPtr<StringImpl> postalCode;
+    RefPtr<StringImpl> subAdministrativeArea;
+    RefPtr<StringImpl> administrativeArea;
+    RefPtr<StringImpl> country;
+    RefPtr<StringImpl> countryCode;
 };
 
 struct LocalizedApplePayPaymentContact : ApplePayPaymentContact {
-    String localizedName;
-    String localizedPhoneticName;
+    RefPtr<StringImpl> localizedName;
+    RefPtr<StringImpl> localizedPhoneticName;
 };
 
 }

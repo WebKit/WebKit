@@ -55,11 +55,11 @@ public:
     Ref<FetchEvent> createBeingDispatchedFetchEvent(ScriptExecutionContext&);
     Ref<FetchResponse> createOpaqueWithBlobBodyResponse(ScriptExecutionContext&);
 
-    void schedulePushEvent(const String&, Ref<DeferredPromise>&&);
+    void schedulePushEvent(StringImpl*, Ref<DeferredPromise>&&);
     void schedulePushSubscriptionChangeEvent(PushSubscription* newSubscription, PushSubscription* oldSubscription);
-    Vector<String> fetchResponseHeaderList(FetchResponse&);
+    Vector<RefPtr<StringImpl>> fetchResponseHeaderList(FetchResponse&);
 
-    String processName() const;
+    RefPtr<StringImpl> processName() const;
 
     bool isThrottleable() const;
 
@@ -67,16 +67,16 @@ public:
 
     void lastNavigationWasAppInitiated(Ref<DeferredPromise>&&);
     
-    RefPtr<PushSubscription> createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth);
+    RefPtr<PushSubscription> createPushSubscription(StringImpl* endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth);
 
     bool fetchEventIsSameSite(FetchEvent&);
 
-    String serviceWorkerClientInternalIdentifier(const ServiceWorkerClient&);
+    RefPtr<StringImpl> serviceWorkerClientInternalIdentifier(const ServiceWorkerClient&);
     void setAsInspected(bool);
     NODELETE void enableConsoleMessageReporting(ScriptExecutionContext&);
-    void logReportedConsoleMessage(ScriptExecutionContext&, const String&);
+    void logReportedConsoleMessage(ScriptExecutionContext&, StringImpl*);
 
-    String effectiveRenderingModeOfNewlyCreatedAcceleratedCanvasBuffer(ScriptExecutionContext&);
+    RefPtr<StringImpl> effectiveRenderingModeOfNewlyCreatedAcceleratedCanvasBuffer(ScriptExecutionContext&);
     bool isIOKitAvailable();
 
 private:

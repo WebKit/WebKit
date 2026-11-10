@@ -39,17 +39,17 @@
 
 namespace WebCore {
 
-static MemoryCompactLookupOnlyRobinHoodHashMap<String, MemoryCompactLookupOnlyRobinHoodHashSet<String>>& extensionsForMIMETypeMap()
+static MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>>& extensionsForMIMETypeMap()
 {
     static NeverDestroyed extensionsForMIMETypeMap = [] {
-        MemoryCompactLookupOnlyRobinHoodHashMap<String, MemoryCompactLookupOnlyRobinHoodHashSet<String>> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>> map;
 
-        auto addExtension = [&](const String& type, const String& extension) {
-            map.add(type, MemoryCompactLookupOnlyRobinHoodHashSet<String>()).iterator->value.add(extension);
+        auto addExtension = [&](StringImpl* type, StringImpl* extension) {
+            map.add(type, MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>()).iterator->value.add(extension);
         };
 
-        auto addExtensions = [&](const String& type, NSArray<NSString *> *extensions) {
-            size_t pos = type.reverseFind('/');
+        auto addExtensions = [&](StringImpl* type, NSArray<NSString *> *extensions) {
+            size_t pos = reverseFind(type, '/');
 
             ASSERT(pos != notFound);
             auto wildcardMIMEType = makeString(StringView(type).left(pos), "/*"_s);
@@ -57,9 +57,9 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, MemoryCompactLookupOnlyRo
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
             for (SUPPRESS_UNRETAINED_LOCAL NSString *extension in extensions) {
                 // Add extension to wildcardMIMEType, for example add "png" to "image/*"
-                addExtension(wildcardMIMEType, extension);
+                addExtension(wildcardMIMEType, StringImpl::create(extension));
                 // Add extension to its mimeType, for example add "png" to "image/png"
-                addExtension(type, extension);
+                addExtension(type, StringImpl::create(extension));
             }
         };
 
@@ -70,7 +70,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, MemoryCompactLookupOnlyRo
             RetainPtr extensions = dynamic_objc_cast<NSArray<NSString *>>(utType.tags[UTTagClassFilenameExtension]);
             if (!extensions || ![extensions count])
                 return;
-            addExtensions(type.get(), extensions.get());
+            addExtensions(StringImpl::create(type.get()), extensions.get());
         }];
 
         return map;
@@ -80,10 +80,10 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, MemoryCompactLookupOnlyRo
 }
 
 // Specify MIME type <-> extension mappings for type identifiers recognized by the system that are missing MIME type values.
-static const HashMap<String, String, ASCIICaseInsensitiveHash>& additionalMimeTypesMap()
+static const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>, ASCIICaseInsensitiveHash>& additionalMimeTypesMap()
 {
-    static NeverDestroyed<HashMap<String, String, ASCIICaseInsensitiveHash>> mimeTypesMap = [] {
-        HashMap<String, String, ASCIICaseInsensitiveHash> map;
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>, ASCIICaseInsensitiveHash>> mimeTypesMap = [] {
+        HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>, ASCIICaseInsensitiveHash> map;
         static constexpr auto additionalTypes = WTF::toArray<TypeExtensionPair>({
             // FIXME: Remove this list once rdar://112044000 (Many camera RAW image type identifiers are missing MIME types) is resolved.
             { "image/x-canon-cr2"_s, "cr2"_s },
@@ -112,13 +112,13 @@ static const HashMap<String, String, ASCIICaseInsensitiveHash>& additionalMimeTy
     return mimeTypesMap;
 }
 
-static const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& additionalExtensionsMap()
+static const HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>, ASCIICaseInsensitiveHash>& additionalExtensionsMap()
 {
-    static NeverDestroyed<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>> extensionsMap = [] {
-        HashMap<String, Vector<String>, ASCIICaseInsensitiveHash> map;
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>, ASCIICaseInsensitiveHash>> extensionsMap = [] {
+        HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>, ASCIICaseInsensitiveHash> map;
         for (auto& [extension, type] : additionalMimeTypesMap()) {
             map.ensure(type, [] {
-                return Vector<String>();
+                return Vector<RefPtr<StringImpl>>();
             }).iterator->value.append(extension);
         }
         return map;
@@ -126,9 +126,9 @@ static const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& addition
     return extensionsMap;
 }
 
-static Vector<String> extensionsForWildcardMIMEType(const String& type)
+static Vector<RefPtr<StringImpl>> extensionsForWildcardMIMEType(StringImpl* type)
 {
-    Vector<String> extensions;
+    Vector<RefPtr<StringImpl>> extensions;
 
     auto iterator = extensionsForMIMETypeMap().find(type);
     if (iterator != extensionsForMIMETypeMap().end())
@@ -137,13 +137,13 @@ static Vector<String> extensionsForWildcardMIMEType(const String& type)
     return extensions;
 }
 
-String MIMETypeRegistry::mimeTypeForExtension(StringView extension)
+RefPtr<StringImpl> MIMETypeRegistry::mimeTypeForExtension(StringView extension)
 {
     auto string = extension.createNSStringWithoutCopying();
 
     RetainPtr<NSString> mimeType = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:string.get()];
     if (mimeType.get().length)
-        return mimeType.get();
+        return StringImpl::create(mimeType.get());
 
     auto mapEntry = additionalMimeTypesMap().find<ASCIICaseInsensitiveStringViewHashTranslator>(extension);
     if (mapEntry != additionalMimeTypesMap().end())
@@ -152,17 +152,17 @@ String MIMETypeRegistry::mimeTypeForExtension(StringView extension)
     return nullString();
 }
 
-Vector<String> MIMETypeRegistry::extensionsForMIMEType(const String& type)
+Vector<RefPtr<StringImpl>> MIMETypeRegistry::extensionsForMIMEType(StringImpl* type)
 {
-    if (type.isNull())
+    if (!type)
         return { };
 
-    if (type.endsWith('*'))
+    if (endsWith(type, '*'))
         return extensionsForWildcardMIMEType(type);
 
-    RetainPtr<NSArray> extensions = [[NSURLFileTypeMappings sharedMappings] extensionsForMIMEType:type.createNSString().get()];
+    RetainPtr<NSArray> extensions = [[NSURLFileTypeMappings sharedMappings] extensionsForMIMEType:createNSString(type).get()];
     if (extensions.get().count)
-        return makeVector<String>(extensions.get());
+        return makeVector<RefPtr<StringImpl>>(extensions.get());
 
     auto mapEntry = additionalExtensionsMap().find(type);
     if (mapEntry != additionalExtensionsMap().end())
@@ -171,19 +171,19 @@ Vector<String> MIMETypeRegistry::extensionsForMIMEType(const String& type)
     return { };
 }
 
-String MIMETypeRegistry::preferredExtensionForMIMEType(const String& type)
+RefPtr<StringImpl> MIMETypeRegistry::preferredExtensionForMIMEType(StringImpl* type)
 {
-    if (type.isNull())
+    if (!type)
         return nullString();
 
     // We accept some non-standard USD MIMETypes, so we can't rely on
     // the file type mappings.
     if (isUSDMIMEType(type))
-        return "usdz"_s;
+        return "usdz"_si;
 
-    RetainPtr preferredExtension = [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:type.createNSString().get()];
+    RetainPtr preferredExtension = [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:createNSString(type).get()];
     if ([preferredExtension length])
-        return preferredExtension.get();
+        return StringImpl::create(preferredExtension.get());
 
     auto mapEntry = additionalExtensionsMap().find(type);
     if (mapEntry != additionalExtensionsMap().end())
@@ -192,7 +192,7 @@ String MIMETypeRegistry::preferredExtensionForMIMEType(const String& type)
     return nullString();
 }
 
-bool MIMETypeRegistry::isApplicationPluginMIMEType(const String& MIMEType)
+bool MIMETypeRegistry::isApplicationPluginMIMEType(StringImpl* MIMEType)
 {
 #if ENABLE(PDF_PLUGIN)
     // FIXME: This should test if we're actually going to use PDFPlugin,

@@ -40,7 +40,7 @@ namespace WebKit {
 class SQLiteStorageArea final : public StorageAreaBase, public RefCounted<SQLiteStorageArea> {
     WTF_MAKE_TZONE_ALLOCATED(SQLiteStorageArea);
 public:
-    static Ref<SQLiteStorageArea> create(unsigned quota, const WebCore::ClientOrigin&, const String& path, Ref<WorkQueue>&&);
+    static Ref<SQLiteStorageArea> create(unsigned quota, const WebCore::ClientOrigin&, StringImpl* path, Ref<WorkQueue>&&);
     ~SQLiteStorageArea();
 
     void close();
@@ -52,16 +52,16 @@ public:
     void deref() const final { RefCounted::deref(); }
 
 private:
-    SQLiteStorageArea(unsigned quota, const WebCore::ClientOrigin&, const String& path, Ref<WorkQueue>&&);
+    SQLiteStorageArea(unsigned quota, const WebCore::ClientOrigin&, StringImpl* path, Ref<WorkQueue>&&);
 
     // StorageAreaBase
     Type type() const final { return StorageAreaBase::Type::SQLite; };
     StorageType storageType() const final { return StorageAreaBase::StorageType::Local; };
     bool isEmpty() final;
-    HashMap<String, String> allItems() final;
-    std::expected<void, StorageError> setItem(std::optional<IPC::Connection::UniqueID>, std::optional<StorageAreaImplIdentifier>, String&& key, String&& value, const String& urlString) final;
-    std::expected<void, StorageError> removeItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& key, const String& urlString) final;
-    std::expected<void, StorageError> clear(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& urlString) final;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> allItems() final;
+    std::expected<void, StorageError> setItem(std::optional<IPC::Connection::UniqueID>, std::optional<StorageAreaImplIdentifier>, RefPtr<StringImpl>&& key, RefPtr<StringImpl>&& value, StringImpl* urlString) final;
+    std::expected<void, StorageError> removeItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, StringImpl* key, StringImpl* urlString) final;
+    std::expected<void, StorageError> clear(IPC::Connection::UniqueID, StorageAreaImplIdentifier, StringImpl* urlString) final;
 
     bool createTableIfNecessary();
     enum class ShouldCreateIfNotExists : bool { No, Yes };
@@ -79,20 +79,20 @@ private:
     };
     ASCIILiteral statementString(StatementType) const;
     WebCore::SQLiteStatementAutoResetScope cachedStatement(StatementType);
-    std::expected<String, StorageError> getItem(const String& key);
-    std::expected<String, StorageError> getItemFromDatabase(const String& key);
+    std::expected<RefPtr<StringImpl>, StorageError> getItem(StringImpl* key);
+    std::expected<RefPtr<StringImpl>, StorageError> getItemFromDatabase(StringImpl* key);
     enum class IsDatabaseDeleted : bool { No, Yes };
     IsDatabaseDeleted handleDatabaseErrorIfNeeded(int databaseError);
-    void updateCacheIfNeeded(const String& key, const String& value);
-    bool requestSpace(const String& key, const String& value);
+    void updateCacheIfNeeded(StringImpl* key, StringImpl* value);
+    bool requestSpace(StringImpl* key, StringImpl* value);
 
-    String m_path;
+    RefPtr<StringImpl> m_path;
     const Ref<WorkQueue> m_queue;
     std::unique_ptr<WebCore::SQLiteDatabase> m_database;
     std::unique_ptr<WebCore::SQLiteTransaction> m_transaction;
     Vector<std::unique_ptr<WebCore::SQLiteStatement>> m_cachedStatements;
-    using Value = Variant<String, unsigned>;
-    std::optional<HashMap<String, Value>> m_cache;
+    using Value = Variant<RefPtr<StringImpl>, unsigned>;
+    std::optional<HashMap<RefPtr<StringImpl>, Value>> m_cache;
     std::optional<unsigned> m_cacheSize;
 };
 

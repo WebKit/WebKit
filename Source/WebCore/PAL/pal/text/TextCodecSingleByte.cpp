@@ -271,7 +271,7 @@ static Vector<uint8_t> encode(const SingleByteEncodeTable& table, StringView str
 }
 
 // https://encoding.spec.whatwg.org/#single-byte-decoder
-static String decode(const SingleByteDecodeTable& table, std::span<const uint8_t> bytes, bool, bool stopOnError, bool& sawError)
+static RefPtr<StringImpl> decode(const SingleByteDecodeTable& table, std::span<const uint8_t> bytes, bool, bool stopOnError, bool& sawError)
 {
     StringBuilder result;
     result.reserveCapacity(bytes.size());
@@ -303,7 +303,7 @@ Vector<uint8_t> TextCodecSingleByte::encode(StringView string, UnencodableHandli
     return PAL::encode(tableForEncoding(m_encoding), string, unencodableHandler(handling));
 }
 
-String TextCodecSingleByte::decode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
+RefPtr<StringImpl> TextCodecSingleByte::decode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
 {
     return PAL::decode(tableForDecoding(m_encoding), bytes, flush, stopOnError, sawError);
 }

@@ -57,7 +57,7 @@ static bool isRadioButtonInDifferentAdhocGroup(Ref<AXCoreObject> axObject, AXCor
     if (!referenceObject || !referenceObject->isRadioButton())
         return true;
 
-    return axObject->nameAttribute() != referenceObject->nameAttribute();
+    return !equal(axObject->nameAttribute(), referenceObject->nameAttribute());
 }
 
 bool AXSearchManager::matchForSearchKeyAtIndex(Ref<AXCoreObject> axObject, const AccessibilitySearchCriteria& criteria, size_t index)
@@ -117,7 +117,7 @@ bool AXSearchManager::matchForSearchKeyAtIndex(Ref<AXCoreObject> axObject, const
     case AccessibilitySearchKey::Highlighted:
         return axObject->hasHighlighting();
     case AccessibilitySearchKey::FormFieldWithError:
-        return axObject->isControl() && axObject->invalidStatusIncludingInferred() != "false"_s;
+        return axObject->isControl() && !equal(axObject->invalidStatusIncludingInferred(), "false"_s);
     case AccessibilitySearchKey::KeyboardFocusable:
         return axObject->isKeyboardFocusable();
     case AccessibilitySearchKey::ItalicFont:
@@ -185,10 +185,10 @@ bool AXSearchManager::match(Ref<AXCoreObject> axObject, const AccessibilitySearc
     return false;
 }
 
-bool AXSearchManager::matchText(Ref<AXCoreObject> axObject, const String& searchText)
+bool AXSearchManager::matchText(Ref<AXCoreObject> axObject, StringImpl* searchText)
 {
     // If text is empty we return true.
-    if (searchText.isEmpty())
+    if (isEmpty(searchText))
         return true;
 
     return containsPlainText(axObject->title(), searchText, FindOption::CaseInsensitive)
@@ -354,7 +354,7 @@ AccessibilitySearchResultStream AXSearchManager::findMatchingObjectsAsStream(Acc
 
 AccessibilitySearchResultStream AXSearchManager::findMatchingObjectsInternalAsStream(const AccessibilitySearchCriteria& criteria, NOESCAPE const RemoteFrameSearchCallback& remoteFrameCallback)
 {
-    AXTRACE("AXSearchManager::findMatchingObjectsInternalAsStream"_s);
+    AXTRACE("AXSearchManager::findMatchingObjectsInternalAsStream"_si);
     AXLOG(criteria);
 
     AccessibilitySearchResultStream stream;
@@ -379,7 +379,7 @@ AccessibilitySearchResultStream AXSearchManager::findMatchingObjectsInternalAsSt
     // Track how many local results we've found to determine when to stop searching.
     unsigned localResultCount = 0;
 
-    bool shouldCheckForRevealableText = !criteria.visibleOnly && !criteria.immediateDescendantsOnly && !criteria.searchText.isEmpty();
+    bool shouldCheckForRevealableText = !criteria.visibleOnly && !criteria.immediateDescendantsOnly && !isEmpty(criteria.searchText);
     auto matchWithinRevealableContainer = [&] (AXCoreObject& object) -> bool {
         if (!shouldCheckForRevealableText)
             return false;
@@ -547,7 +547,7 @@ AccessibilitySearchResultStream AXSearchManager::findMatchingObjectsInternalAsSt
 
 std::optional<AXTextMarkerRange> AXSearchManager::findMatchingRange(AccessibilitySearchCriteria&& criteria)
 {
-    AXTRACE("AXSearchManager::findMatchingRange"_s);
+    AXTRACE("AXSearchManager::findMatchingRange"_si);
 
     // Currently, this method only supports searching for the next/previous misspelling.
     // FIXME: support other types of ranges, like italicized.

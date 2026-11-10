@@ -79,7 +79,7 @@ void FidoService::continueAfterGetInfo(CtapDriver& inputDriver, Vector<uint8_t>&
     if (response.isEmpty())
         return;
 
-    CTAP_RELEASE_LOG("Got response from getInfo: %s", base64EncodeToString(response).utf8());
+    CTAP_RELEASE_LOG("Got response from getInfo: %s", utf8(base64EncodeToString(response)));
 
     auto info = readCTAPGetInfoResponse(response);
     if (info && info->versions().find(ProtocolVersion::kCtap2) != info->versions().end()) {

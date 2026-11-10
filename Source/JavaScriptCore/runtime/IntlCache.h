@@ -44,11 +44,16 @@
 namespace JSC {
 
 struct IntlDateTimeFormatImplKey {
-    std::optional<String> locales;
+    std::optional<RefPtr<StringImpl>> locales;
     IntlDateTimeFormat::RequiredComponent required { IntlDateTimeFormat::RequiredComponent::Any };
     IntlDateTimeFormat::Defaults defaults { IntlDateTimeFormat::Defaults::All };
 
-    friend bool operator==(const IntlDateTimeFormatImplKey&, const IntlDateTimeFormatImplKey&) = default;
+    friend bool operator==(const IntlDateTimeFormatImplKey& a, const IntlDateTimeFormatImplKey& b)
+    {
+        return contentEquals(a.locales, b.locales)
+            && a.required == b.required
+            && a.defaults == b.defaults;
+    }
 };
 
 class IntlCache {
@@ -63,20 +68,20 @@ public:
     Vector<char16_t, 32> getBestDateTimePattern(const ASCIICString& locale, std::span<const char16_t> skeleton, UErrorCode&);
     Vector<char16_t, 32> getFieldDisplayName(const ASCIICString& locale, UDateTimePatternField, UDateTimePGDisplayWidth, UErrorCode&);
 
-    String canonicalizeUnicodeLocaleID(const String& languageTag);
+    RefPtr<StringImpl> canonicalizeUnicodeLocaleID(StringImpl* languageTag);
 
     struct LocaleWithoutOptions {
         ASCIICString localeID;
-        String nonUnicodeExtensions;
+        RefPtr<StringImpl> nonUnicodeExtensions;
     };
-    const LocaleWithoutOptions* findCachedLocaleWithoutOptions(const String& tag) const
+    const LocaleWithoutOptions* findCachedLocaleWithoutOptions(StringImpl* tag) const
     {
         auto iterator = m_cachedLocalesWithoutOptions.find(tag);
         if (iterator == m_cachedLocalesWithoutOptions.end())
             return nullptr;
         return &iterator->value;
     }
-    void cacheLocaleWithoutOptions(const String& tag, const ASCIICString& localeID, const String& nonUnicodeExtensions);
+    void cacheLocaleWithoutOptions(StringImpl* tag, const ASCIICString& localeID, StringImpl* nonUnicodeExtensions);
 
     // The cache is reset only at the VM entry service scope; get and insert never check.
     RefPtr<const IntlDateTimeFormatImpl> findCachedDateTimeFormatImpl(const IntlDateTimeFormatImplKey& key)
@@ -119,8 +124,8 @@ private:
 
     std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>> m_cachedDateTimePatternGenerator;
     ASCIICString m_cachedDateTimePatternGeneratorLocale;
-    UncheckedKeyHashMap<String, String> m_cachedCanonicalizedLocaleIDs;
-    UncheckedKeyHashMap<String, LocaleWithoutOptions> m_cachedLocalesWithoutOptions;
+    UncheckedKeyHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> m_cachedCanonicalizedLocaleIDs;
+    UncheckedKeyHashMap<RefPtr<StringImpl>, LocaleWithoutOptions> m_cachedLocalesWithoutOptions;
 
     static std::atomic<uint64_t> s_languagesEpoch;
 

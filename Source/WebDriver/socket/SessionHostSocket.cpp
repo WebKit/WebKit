@@ -47,23 +47,23 @@ SessionHost::~SessionHost()
 #endif
 }
 
-HashMap<String, Inspector::RemoteInspectorConnectionClient::CallHandler>& SessionHost::dispatchMap()
+HashMap<RefPtr<StringImpl>, Inspector::RemoteInspectorConnectionClient::CallHandler>& SessionHost::dispatchMap()
 {
-    static NeverDestroyed<HashMap<String, CallHandler>> methods = HashMap<String, CallHandler>({
-        {"SetTargetList"_s, static_cast<CallHandler>(&SessionHost::receivedSetTargetList)},
-        {"SendMessageToFrontend"_s, static_cast<CallHandler>(&SessionHost::receivedSendMessageToFrontend)},
-        {"StartAutomationSession_Return"_s, static_cast<CallHandler>(&SessionHost::receivedStartAutomationSessionReturn)},
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, CallHandler>> methods = HashMap<RefPtr<StringImpl>, CallHandler>({
+        {"SetTargetList"_si, static_cast<CallHandler>(&SessionHost::receivedSetTargetList)},
+        {"SendMessageToFrontend"_si, static_cast<CallHandler>(&SessionHost::receivedSendMessageToFrontend)},
+        {"StartAutomationSession_Return"_si, static_cast<CallHandler>(&SessionHost::receivedStartAutomationSessionReturn)},
     });
 
     return methods;
 }
 
-void SessionHost::sendWebInspectorEvent(const String& event)
+void SessionHost::sendWebInspectorEvent(StringImpl* event)
 {
     if (!m_clientID)
         return;
 
-    send(m_clientID.value(), byteCast<uint8_t>(event.utf8().span()));
+    send(m_clientID.value(), byteCast<uint8_t>(utf8(event).span()));
 }
 
 #if PLATFORM(WIN)
@@ -129,17 +129,17 @@ static WTF::Win32Handle launchBrowser()
 }
 #endif
 
-void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&& completionHandler)
+void SessionHost::connectToBrowser(Function<void (std::optional<RefPtr<StringImpl>> error)>&& completionHandler)
 {
     if (m_clientID) {
         completionHandler(makeString("Already connected to the browser."_s));
         return;
     }
 
-    String targetIp;
+    RefPtr<StringImpl> targetIp;
     uint16_t targetPort = 0;
 
-    if (!m_targetIp.isEmpty() && m_targetPort) {
+    if (!isEmpty(m_targetIp) && m_targetPort) {
         targetIp = m_targetIp;
         targetPort = m_targetPort;
     } else if (m_capabilities.targetAddr && m_capabilities.targetPort) {
@@ -147,7 +147,7 @@ void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&
         targetPort = m_capabilities.targetPort.value();
     }
 
-    if (targetIp.isEmpty() || !targetPort) {
+    if (isEmpty(targetIp) || !targetPort) {
 #if !PLATFORM(WIN)
         completionHandler(makeString("Target IP/port is invalid, or not specified."_s));
         return;
@@ -175,9 +175,9 @@ void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&
     } else
         m_isRemoteBrowser = true;
 
-    m_clientID = connectInet(targetIp.utf8(), targetPort);
+    m_clientID = connectInet(utf8(targetIp), targetPort);
     if (!m_clientID)
-        completionHandler(makeString(targetIp.utf8().span(), ':', targetPort, " is not reachable."_s));
+        completionHandler(makeString(utf8(targetIp).span(), ':', targetPort, " is not reachable."_s));
     else
         completionHandler(std::nullopt);
 }
@@ -210,17 +210,17 @@ std::optional<Vector<SessionHost::Target>> SessionHost::parseTargetList(const st
     Vector<SessionHost::Target> targetList;
     for (const auto& itemObject : *result) {
         SessionHost::Target target;
-        String name;
-        String type;
-        auto targetId = itemObject->getInteger("targetID"_s);
+        RefPtr<StringImpl> name;
+        RefPtr<StringImpl> type;
+        auto targetId = itemObject->getInteger("targetID"_si);
         if (!targetId
-            || !itemObject->getString("name"_s, name)
-            || !itemObject->getString("type"_s, type)
-            || type != "automation"_s)
+            || !itemObject->getString("name"_si, name)
+            || !itemObject->getString("type"_si, type)
+            || !equal(type, "automation"_s))
             continue;
 
         target.id = *targetId;
-        target.name = name.utf8();
+        target.name = utf8(name);
         targetList.append(target);
     }
     return targetList;
@@ -253,26 +253,26 @@ void SessionHost::receivedStartAutomationSessionReturn(const struct Event&)
 {
     ASSERT(isMainThread());
 
-    m_capabilities.browserName = String::fromUTF8("TODO/browserName");
-    m_capabilities.browserVersion = String::fromUTF8("TODO/browserVersion");
+    m_capabilities.browserName = StringImpl::fromUTF8("TODO/browserName");
+    m_capabilities.browserVersion = StringImpl::fromUTF8("TODO/browserVersion");
 }
 
-void SessionHost::startAutomationSession(Function<void (bool, std::optional<String>)>&& completionHandler)
+void SessionHost::startAutomationSession(Function<void (bool, std::optional<RefPtr<StringImpl>>)>&& completionHandler)
 {
     ASSERT(!m_startSessionCompletionHandler);
     m_startSessionCompletionHandler = WTF::move(completionHandler);
     m_sessionID = createVersion4UUIDString();
 
     auto capabilitiesObject = JSON::Object::create();
-    capabilitiesObject->setBoolean("acceptInsecureCerts"_s, m_capabilities.acceptInsecureCerts.value_or(false));
+    capabilitiesObject->setBoolean("acceptInsecureCerts"_si, m_capabilities.acceptInsecureCerts.value_or(false));
 
     auto messageObject = JSON::Object::create();
-    messageObject->setString("sessionID"_s, m_sessionID);
-    messageObject->setObject("capabilities"_s, capabilitiesObject);
+    messageObject->setString("sessionID"_si, m_sessionID);
+    messageObject->setObject("capabilities"_si, capabilitiesObject);
 
     auto sendMessageEvent = JSON::Object::create();
-    sendMessageEvent->setString("event"_s, "StartAutomationSession"_s);
-    sendMessageEvent->setString("message"_s, messageObject->toJSONString());
+    sendMessageEvent->setString("event"_si, "StartAutomationSession"_si);
+    sendMessageEvent->setString("message"_si, messageObject->toJSONString());
     sendWebInspectorEvent(sendMessageEvent->toJSONString());
 }
 
@@ -309,22 +309,22 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
     m_connectionID = connectionID;
 
     auto sendEvent = JSON::Object::create();
-    sendEvent->setString("event"_s, "Setup"_s);
-    sendEvent->setInteger("connectionID"_s, m_connectionID);
-    sendEvent->setInteger("targetID"_s, m_target.id);
+    sendEvent->setString("event"_si, "Setup"_si);
+    sendEvent->setInteger("connectionID"_si, m_connectionID);
+    sendEvent->setInteger("targetID"_si, m_target.id);
     sendWebInspectorEvent(sendEvent->toJSONString());
 
     auto startSessionCompletionHandler = std::exchange(m_startSessionCompletionHandler, nullptr);
     startSessionCompletionHandler(true, std::nullopt);
 }
 
-void SessionHost::sendMessageToBackend(const String& message)
+void SessionHost::sendMessageToBackend(StringImpl* message)
 {
     auto sendEvent = JSON::Object::create();
-    sendEvent->setString("event"_s, "SendMessageToBackend"_s);
-    sendEvent->setInteger("connectionID"_s, m_connectionID);
-    sendEvent->setInteger("targetID"_s, m_target.id);
-    sendEvent->setString("message"_s, message);
+    sendEvent->setString("event"_si, "SendMessageToBackend"_si);
+    sendEvent->setInteger("connectionID"_si, m_connectionID);
+    sendEvent->setInteger("targetID"_si, m_target.id);
+    sendEvent->setString("message"_si, message);
     sendWebInspectorEvent(sendEvent->toJSONString());
 }
 

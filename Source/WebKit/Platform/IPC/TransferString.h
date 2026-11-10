@@ -47,7 +47,7 @@ public:
     };
     using IPCData = Variant<std::monostate, std::span<const Latin1Character>, std::span<const char16_t>, SharedSpan8, SharedSpan16>;
 
-    static std::optional<TransferString> create(const String&);
+    static std::optional<TransferString> create(StringImpl*);
     static std::optional<TransferString> create(StringView);
 #if USE(CF)
     static std::optional<TransferString> create(CFStringRef);
@@ -76,10 +76,10 @@ public:
     // Pass maxCopySizeInBytes = transferAsMappingSize - 1 to release without copy, possibly holding the underlying virtual memory mapping.
     // Pass maxCopySizeInBytes = std::numeric_limits<size_t>::max() to release with copy always, avoiding potential virtual memory fragmentation.
     // Fails on out-of-memory (if mapping fails).
-    std::optional<String> release(size_t maxCopySizeInBytes = transferAsMappingSize - 1) &&;
+    std::optional<RefPtr<StringImpl>> release(size_t maxCopySizeInBytes = transferAsMappingSize - 1) &&;
 
     // Release the string via copy.
-    std::optional<String> releaseToCopy() && { return WTF::move(*this).release(std::numeric_limits<size_t>::max()); };
+    std::optional<RefPtr<StringImpl>> releaseToCopy() && { return WTF::move(*this).release(std::numeric_limits<size_t>::max()); };
 
     IPCData toIPCData() const LIFETIME_BOUND;
 
@@ -89,27 +89,27 @@ public:
 private:
     static std::optional<TransferString> createCopy(std::span<const Latin1Character>);
     static std::optional<TransferString> createCopy(std::span<const char16_t>);
-    TransferString(String&&);
+    TransferString(RefPtr<StringImpl>&&);
 #if USE(CF)
     TransferString(CFStringRef);
 #endif
 
 #if USE(CF)
-    using Storage = Variant<String, RetainPtr<CFStringRef>, SharedSpan8, SharedSpan16>;
+    using Storage = Variant<RefPtr<StringImpl>, RetainPtr<CFStringRef>, SharedSpan8, SharedSpan16>;
 #else
-    using Storage = Variant<String, SharedSpan8, SharedSpan16>;
+    using Storage = Variant<RefPtr<StringImpl>, SharedSpan8, SharedSpan16>;
 #endif
     Storage m_storage;
 };
 
-inline std::optional<TransferString> TransferString::create(const String& string)
+inline std::optional<TransferString> TransferString::create(StringImpl* string)
 {
-    if (string.sizeInBytes() >= transferAsMappingSize) {
-        if (string.is8Bit())
-            return createCopy(string.span8());
-        return createCopy(string.span16());
+    if (sizeInBytes(string) >= transferAsMappingSize) {
+        if (is8Bit(string))
+            return createCopy(span8(string));
+        return createCopy(span16(string));
     }
-    return TransferString { String { string } };
+    return TransferString { RefPtr<StringImpl> { string } };
 }
 
 inline std::optional<TransferString> TransferString::create(StringView string)
@@ -122,7 +122,7 @@ inline std::optional<TransferString> TransferString::create(StringView string)
     return TransferString { string.toString() };
 }
 
-inline TransferString::TransferString(String&& string)
+inline TransferString::TransferString(RefPtr<StringImpl>&& string)
     : m_storage(WTF::move(string))
 {
 }
@@ -148,13 +148,13 @@ inline TransferString::TransferString(IPCData&& data)
 {
     WTF::switchOn(WTF::move(data),
         [&](std::monostate) {
-            m_storage = String { };
+            m_storage = RefPtr<StringImpl> { };
         },
         [&](std::span<const Latin1Character> characters) {
-            m_storage = characters.data() ? String { characters } : emptyString();
+            m_storage = characters.data() ? StringImpl::create(characters) : emptyString();
         },
         [&](std::span<const char16_t> characters) {
-            m_storage = characters.data() ? String { characters } : emptyString();
+            m_storage = characters.data() ? StringImpl::create(characters) : emptyString();
         },
         [&](SharedSpan8 handle) {
             m_storage = WTF::move(handle);

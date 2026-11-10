@@ -194,21 +194,21 @@ public:
     void ref() const final { API::ObjectImpl<API::Object::Type::WebExtensionContext>::ref(); }
     void deref() const final { API::ObjectImpl<API::Object::Type::WebExtensionContext>::deref(); }
 
-    static String stateFileName()
+    static RefPtr<StringImpl> stateFileName()
     {
 #if PLATFORM(COCOA)
-        return "State.plist"_s;
+        return "State.plist"_si;
 #else
         return "State.ini"_s;
 #endif
     };
 #if PLATFORM(COCOA)
-    static NSMutableDictionary *readStateFromPath(const String&);
+    static NSMutableDictionary *readStateFromPath(StringImpl*);
 #elif ENABLE(2022_GLIB_API)
-    static GRefPtr<GKeyFile> readStateFromPath(const String&);
+    static GRefPtr<GKeyFile> readStateFromPath(StringImpl*);
 #endif
-    static bool readLastBaseURLFromState(const String& filePath, URL& outLastBaseURL);
-    static bool readDisplayNameFromState(const String& filePath, String& outDisplayName);
+    static bool readLastBaseURLFromState(StringImpl* filePath, URL& outLastBaseURL);
+    static bool readDisplayNameFromState(StringImpl* filePath, RefPtr<StringImpl>& outDisplayName);
 
     static bool isURLForAnyExtension(const URL&);
 
@@ -226,9 +226,9 @@ public:
     using UserScriptVector = Vector<Ref<API::UserScript>>;
     using UserStyleSheetVector = Vector<Ref<API::UserStyleSheet>>;
 
-    using AlarmInfoMap = HashMap<String, double>;
+    using AlarmInfoMap = HashMap<RefPtr<StringImpl>, double>;
 
-    using DynamicInjectedContentsMap = HashMap<String, WebExtension::InjectedContentData>;
+    using DynamicInjectedContentsMap = HashMap<RefPtr<StringImpl>, WebExtension::InjectedContentData>;
 
     using PermissionsSet = WebExtension::PermissionsSet;
     using MatchPatternSet = WebExtension::MatchPatternSet;
@@ -278,7 +278,7 @@ public:
     using CommandsVector = Vector<Ref<WebExtensionCommand>>;
 
     using MenuItemVector = Vector<Ref<WebExtensionMenuItem>>;
-    using MenuItemMap = HashMap<String, Ref<WebExtensionMenuItem>>;
+    using MenuItemMap = HashMap<RefPtr<StringImpl>, Ref<WebExtensionMenuItem>>;
 
     using DeclarativeNetRequestValidatedRulesets = std::expected<WebExtension::DeclarativeNetRequestRulesetVector, WebExtensionError>;
     using DeclarativeNetRequestMatchedRuleVector = Vector<WebExtensionMatchedRuleParameters>;
@@ -379,7 +379,7 @@ public:
 
     bool operator==(const WebExtensionContext& other) const { return (this == &other); }
 
-    Ref<API::Error> createError(Error, const String& customLocalizedDescription = nullString(), RefPtr<API::Error> underlyingError = nullptr);
+    Ref<API::Error> createError(Error, StringImpl* customLocalizedDescription = nullString(), RefPtr<API::Error> underlyingError = nullptr);
     void recordErrorIfNeeded(RefPtr<API::Error> error)
     {
         if (error)
@@ -391,14 +391,14 @@ public:
 
     Vector<Ref<API::Error>> errors();
 
-    bool storageIsPersistent() const { return !m_storageDirectory.isEmpty(); }
-    const String& storageDirectory() const LIFETIME_BOUND { return m_storageDirectory; }
+    bool storageIsPersistent() const { return !isEmpty(m_storageDirectory); }
+    const RefPtr<StringImpl>& storageDirectory() const LIFETIME_BOUND { return m_storageDirectory; }
 
     void invalidateStorage();
 
     Ref<WebExtensionStorageSQLiteStore> storageForType(WebExtensionDataType);
 
-    std::expected<bool, RefPtr<API::Error>> load(WebExtensionController&, String storageDirectory);
+    std::expected<bool, RefPtr<API::Error>> load(WebExtensionController&, RefPtr<StringImpl> storageDirectory);
     std::expected<bool, RefPtr<API::Error>> unload();
     std::expected<bool, RefPtr<API::Error>> reload();
 
@@ -411,25 +411,25 @@ public:
     void setBaseURL(URL&&);
 
     bool isURLForThisExtension(const URL&) const;
-    bool hasResource(const String& path) const;
+    bool hasResource(StringImpl* path) const;
     bool canNavigateToURL(const URL&) const;
-    String unsupportedNavigationURLMessage(const URL&) const;
+    RefPtr<StringImpl> unsupportedNavigationURLMessage(const URL&) const;
 
     bool hasCustomUniqueIdentifier() const { return m_customUniqueIdentifier; }
 
-    const String& uniqueIdentifier() const LIFETIME_BOUND { return m_uniqueIdentifier; }
-    void setUniqueIdentifier(String&&);
+    const RefPtr<StringImpl>& uniqueIdentifier() const LIFETIME_BOUND { return m_uniqueIdentifier; }
+    void setUniqueIdentifier(RefPtr<StringImpl>&&);
 
     RefPtr<WebExtensionLocalization> localization();
 
-    RefPtr<API::Data> localizedResourceData(const RefPtr<API::Data>&, const String& mimeType);
-    String localizedResourceString(const String&, const String& mimeType);
+    RefPtr<API::Data> localizedResourceData(const RefPtr<API::Data>&, StringImpl* mimeType);
+    RefPtr<StringImpl> localizedResourceString(StringImpl*, StringImpl* mimeType);
 
     bool isInspectable() const { return m_inspectable; }
     void setInspectable(bool);
 
-    HashSet<String> unsupportedAPIs() const { return m_unsupportedAPIs; }
-    void setUnsupportedAPIs(HashSet<String>&&);
+    HashSet<RefPtr<StringImpl>> unsupportedAPIs() const { return m_unsupportedAPIs; }
+    void setUnsupportedAPIs(HashSet<RefPtr<StringImpl>>&&);
 
     InjectedContentVector injectedContents() const;
     bool hasInjectedContentForURL(const URL&);
@@ -484,18 +484,18 @@ public:
     bool hasAccessToAllURLs();
     bool hasAccessToAllHosts();
 
-    bool needsPermission(const String&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { });
+    bool needsPermission(StringImpl*, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { });
     bool needsPermission(const URL&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
     bool needsPermission(const WebExtensionMatchPattern&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
 
-    bool hasPermission(const String& permission, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { });
+    bool hasPermission(StringImpl* permission, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { });
     bool hasPermission(const URL&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
     bool hasPermission(const WebExtensionMatchPattern&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
 
     bool hasPermissions(PermissionsSet, MatchPatternSet);
 
-    PermissionState permissionState(const String& permission, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { });
-    void setPermissionState(PermissionState, const String& permission, WallTime expirationDate = WallTime::infinity());
+    PermissionState permissionState(StringImpl* permission, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { });
+    void setPermissionState(PermissionState, StringImpl* permission, WallTime expirationDate = WallTime::infinity());
 
     PermissionState permissionState(const URL&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
     void setPermissionState(PermissionState, const URL&, WallTime expirationDate = WallTime::infinity());
@@ -599,7 +599,7 @@ public:
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
     const CommandsVector& commands();
-    WebExtensionCommand* command(const String& identifier);
+    WebExtensionCommand* command(StringImpl* identifier);
     void performCommand(WebExtensionCommand&, UserTriggered = UserTriggered::No);
     void resetCommands();
 
@@ -615,15 +615,15 @@ public:
     NSArray *platformMenuItems(const WebExtensionTab&) const;
 
     const MenuItemVector& mainMenuItems() const LIFETIME_BOUND { return m_mainMenuItems; }
-    WebExtensionMenuItem* menuItem(const String& identifier) const;
+    WebExtensionMenuItem* menuItem(StringImpl* identifier) const;
     void performMenuItem(WebExtensionMenuItem&, const WebExtensionMenuItemContextParameters&, UserTriggered = UserTriggered::No);
 
     CocoaMenuItem *singleMenuItemOrExtensionItemWithSubmenu(const WebExtensionMenuItemContextParameters&) const;
 
 #if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
-    void fireNotificationsClickedEventIfNeeded(const String& identifier);
-    void fireNotificationsButtonClickedEventIfNeeded(const String& identifier, size_t buttonIndex);
-    void fireNotificationsClosedEventIfNeeded(const String& identifier, UserTriggered);
+    void fireNotificationsClickedEventIfNeeded(StringImpl* identifier);
+    void fireNotificationsButtonClickedEventIfNeeded(StringImpl* identifier, size_t buttonIndex);
+    void fireNotificationsClosedEventIfNeeded(StringImpl* identifier, UserTriggered);
 #endif
 
 #if PLATFORM(MAC)
@@ -636,9 +636,9 @@ public:
 
     NODELETE bool inTestingMode() const;
 
-    void sendTestMessage(const String& message, const String& argument);
-    void sendTestStarted(const String& argument);
-    void sendTestFinished(const String& argument);
+    void sendTestMessage(StringImpl* message, StringImpl* argument);
+    void sendTestStarted(StringImpl* argument);
+    void sendTestFinished(StringImpl* argument);
     void reloadBackgroundContentForTesting();
     void unloadBackgroundContentForTesting();
 
@@ -653,8 +653,8 @@ public:
 
     RefPtr<API::Error> backgroundContentLoadError() const { return m_backgroundContentLoadError; }
 
-    const String& backgroundWebViewInspectionName();
-    void setBackgroundWebViewInspectionName(const String&);
+    const RefPtr<StringImpl>& backgroundWebViewInspectionName();
+    void setBackgroundWebViewInspectionName(StringImpl*);
 
     bool decidePolicyForNavigationAction(WebViewClass *, NavigationPolicyAction *);
     void didFinishDocumentLoad(WebViewClass *);
@@ -667,7 +667,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void sendNativeMessage(const String& applicationID, id message, CompletionHandler<void(std::expected<RetainPtr<id>, WebExtensionError>&&)>&&);
+    void sendNativeMessage(StringImpl* applicationID, id message, CompletionHandler<void(std::expected<RetainPtr<id>, WebExtensionError>&&)>&&);
 #endif
 
     void addInjectedContent(WebUserContentControllerProxy&);
@@ -704,8 +704,8 @@ public:
     void enumerateExtensionPages(NOESCAPE const Function<void(WebPageProxy&, bool& stop)>&);
 
     WebViewClass *relatedWebView();
-    String processDisplayName();
-    Vector<String> corsDisablingPatterns();
+    RefPtr<StringImpl> processDisplayName();
+    Vector<RefPtr<StringImpl>> corsDisablingPatterns();
     void updateCORSDisablingPatternsOnAllExtensionPages();
     WebViewConfiguration webViewConfiguration(WebViewPurpose = WebViewPurpose::Any);
 
@@ -756,7 +756,7 @@ private:
 
     NODELETE int toAPIError(WebExtensionContext::Error);
 
-    String stateFilePath() const;
+    RefPtr<StringImpl> stateFilePath() const;
 #if PLATFORM(COCOA)
     NSDictionary *currentState() const;
     NSDictionary *readStateFromStorage();
@@ -856,7 +856,7 @@ private:
     void loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>&&);
     void compileDeclarativeNetRequestRules(NSDictionary *, CompletionHandler<void(bool)>&&);
     void unloadDeclarativeNetRequestState();
-    String declarativeNetRequestContentRuleListFilePath();
+    RefPtr<StringImpl> declarativeNetRequestContentRuleListFilePath();
 
     // Updating user content controllers with new rules.
     void addDeclarativeNetRequestRulesToPrivateUserContentControllers();
@@ -874,7 +874,7 @@ private:
     // Session and dynamic rules.
     Ref<WebExtensionDeclarativeNetRequestSQLiteStore> declarativeNetRequestDynamicRulesStore();
     Ref<WebExtensionDeclarativeNetRequestSQLiteStore> declarativeNetRequestSessionRulesStore();
-    void updateDeclarativeNetRequestRulesInStorage(RefPtr<WebExtensionDeclarativeNetRequestSQLiteStore>, const String& storageType, const String& apiName, Ref<JSON::Array> rulesToAdd, Vector<double> ruleIDsToRemove, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void updateDeclarativeNetRequestRulesInStorage(RefPtr<WebExtensionDeclarativeNetRequestSQLiteStore>, StringImpl* storageType, StringImpl* apiName, Ref<JSON::Array> rulesToAdd, Vector<double> ruleIDsToRemove, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
     DeclarativeNetRequestMatchedRuleVector matchedRules() { return m_matchedRules; }
 
@@ -897,23 +897,23 @@ private:
 
     // Action APIs
     bool isActionMessageAllowed(IPC::Decoder&);
-    void actionGetTitle(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&&);
-    void actionSetTitle(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, const String& title, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void actionSetIcon(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, const String& iconsJSON, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void actionGetPopup(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&&);
-    void actionSetPopup(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, const String& popupPath, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void actionGetTitle(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<RefPtr<StringImpl>, WebExtensionError>&&)>&&);
+    void actionSetTitle(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, StringImpl* title, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void actionSetIcon(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, StringImpl* iconsJSON, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void actionGetPopup(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<RefPtr<StringImpl>, WebExtensionError>&&)>&&);
+    void actionSetPopup(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, StringImpl* popupPath, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void actionOpenPopup(WebPageProxyIdentifier, std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void actionGetBadgeText(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&&);
-    void actionSetBadgeText(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, const String& text, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void actionGetBadgeText(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<RefPtr<StringImpl>, WebExtensionError>&&)>&&);
+    void actionSetBadgeText(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, StringImpl* text, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void actionGetEnabled(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<bool, WebExtensionError>&&)>&&);
     void actionSetEnabled(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, bool enabled, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void fireActionClickedEventIfNeeded(WebExtensionTab*);
 
     // Alarms APIs
     bool isAlarmsMessageAllowed(IPC::Decoder&);
-    void alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void alarmsGet(const String& name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>&&)>&&);
-    void alarmsClear(const String& name, CompletionHandler<void(bool)>&&);
+    void alarmsCreate(StringImpl* name, Seconds initialInterval, Seconds repeatInterval, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void alarmsGet(StringImpl* name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>&&)>&&);
+    void alarmsClear(StringImpl* name, CompletionHandler<void(bool)>&&);
     void alarmsGetAll(CompletionHandler<void(Vector<WebExtensionAlarmParameters>&&)>&&);
     void alarmsClearAll(CompletionHandler<void()>&&);
     void fireAlarmsEventIfNeeded(const WebExtensionAlarm&);
@@ -921,53 +921,53 @@ private:
     // Bookmarks APIs
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
     bool isBookmarksMessageAllowed(IPC::Decoder&);
-    void bookmarksCreate(const std::optional<String>& parentId, const std::optional<uint64_t>& index, const std::optional<String>& url, const std::optional<String>& title, CompletionHandler<void(std::expected<WebExtensionBookmarksParameters, WebExtensionError>&&)>&&);
+    void bookmarksCreate(const std::optional<RefPtr<StringImpl>>& parentId, const std::optional<uint64_t>& index, const std::optional<RefPtr<StringImpl>>& url, const std::optional<RefPtr<StringImpl>>& title, CompletionHandler<void(std::expected<WebExtensionBookmarksParameters, WebExtensionError>&&)>&&);
     void bookmarksGetTree(CompletionHandler<void(std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&&)>&&);
-    void bookmarksGetSubTree(const String& bookmarkId, CompletionHandler<void(std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&&)>&&);
-    void bookmarksGet(const Vector<String>& bookmarkId, CompletionHandler<void(std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&&)>&&);
-    void bookmarksGetChildren(const String& bookmarkId, CompletionHandler<void(std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&&)>&&);
+    void bookmarksGetSubTree(StringImpl* bookmarkId, CompletionHandler<void(std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&&)>&&);
+    void bookmarksGet(const Vector<RefPtr<StringImpl>>& bookmarkId, CompletionHandler<void(std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&&)>&&);
+    void bookmarksGetChildren(StringImpl* bookmarkId, CompletionHandler<void(std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&&)>&&);
     void bookmarksGetRecent(uint64_t count, CompletionHandler<void(std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&&)>&&);
-    void bookmarksSearch(const std::optional<String>& query, const std::optional<String>& url, const std::optional<String>& title, CompletionHandler<void(std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&&)>&&);
-    void bookmarksUpdate(const String& bookmarkId, const std::optional<String>& url, const std::optional<String>& title, CompletionHandler<void(std::expected<WebExtensionBookmarksParameters, WebExtensionError>&&)>&&);
-    void bookmarksMove(const String& bookmarkId, const std::optional<String>& parentId, const std::optional<uint64_t>& index, CompletionHandler<void(std::expected<WebExtensionBookmarksParameters, WebExtensionError>&&)>&&);
-    void bookmarksRemove(const String& bookmarkId, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void bookmarksRemoveTree(const String& bookmarkId, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void bookmarksSearch(const std::optional<RefPtr<StringImpl>>& query, const std::optional<RefPtr<StringImpl>>& url, const std::optional<RefPtr<StringImpl>>& title, CompletionHandler<void(std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&&)>&&);
+    void bookmarksUpdate(StringImpl* bookmarkId, const std::optional<RefPtr<StringImpl>>& url, const std::optional<RefPtr<StringImpl>>& title, CompletionHandler<void(std::expected<WebExtensionBookmarksParameters, WebExtensionError>&&)>&&);
+    void bookmarksMove(StringImpl* bookmarkId, const std::optional<RefPtr<StringImpl>>& parentId, const std::optional<uint64_t>& index, CompletionHandler<void(std::expected<WebExtensionBookmarksParameters, WebExtensionError>&&)>&&);
+    void bookmarksRemove(StringImpl* bookmarkId, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void bookmarksRemoveTree(StringImpl* bookmarkId, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 #endif
     // Commands APIs
     bool isCommandsMessageAllowed(IPC::Decoder&);
     void commandsGetAll(CompletionHandler<void(Vector<WebExtensionCommandParameters>)>&&);
     void fireCommandEventIfNeeded(const WebExtensionCommand&, WebExtensionTab*);
-    void fireCommandChangedEventIfNeeded(const WebExtensionCommand&, const String& oldShortcut);
+    void fireCommandChangedEventIfNeeded(const WebExtensionCommand&, StringImpl* oldShortcut);
 
     // Cookies APIs
     bool isCookiesMessageAllowed(IPC::Decoder&);
-    void cookiesGet(std::optional<PAL::SessionID>, const String& name, const URL&, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
+    void cookiesGet(std::optional<PAL::SessionID>, StringImpl* name, const URL&, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
     void cookiesGetAll(std::optional<PAL::SessionID>, const URL&, const WebExtensionCookieFilterParameters&, CompletionHandler<void(std::expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
     void cookiesSet(std::optional<PAL::SessionID>, const WebExtensionCookieParameters&, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
-    void cookiesRemove(std::optional<PAL::SessionID>, const String& name, const URL&, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
+    void cookiesRemove(std::optional<PAL::SessionID>, StringImpl* name, const URL&, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
     void cookiesGetAllCookieStores(CompletionHandler<void(std::expected<HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>, WebExtensionError>&&)>&&);
     void fireCookiesChangedEventIfNeeded();
 
     // DeclarativeNetRequest APIs
     bool isDeclarativeNetRequestMessageAllowed(IPC::Decoder&);
-    void declarativeNetRequestGetEnabledRulesets(CompletionHandler<void(Vector<String>&&)>&&);
-    void declarativeNetRequestUpdateEnabledRulesets(const Vector<String>& rulesetIdentifiersToEnable, const Vector<String>& rulesetIdentifiersToDisable, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void declarativeNetRequestGetEnabledRulesets(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&);
+    void declarativeNetRequestUpdateEnabledRulesets(const Vector<RefPtr<StringImpl>>& rulesetIdentifiersToEnable, const Vector<RefPtr<StringImpl>>& rulesetIdentifiersToDisable, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void declarativeNetRequestDisplayActionCountAsBadgeText(bool displayActionCountAsBadgeText, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void declarativeNetRequestIncrementActionCount(WebExtensionTabIdentifier, double increment, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    DeclarativeNetRequestValidatedRulesets declarativeNetRequestValidateRulesetIdentifiers(const Vector<String>&);
+    DeclarativeNetRequestValidatedRulesets declarativeNetRequestValidateRulesetIdentifiers(const Vector<RefPtr<StringImpl>>&);
     size_t declarativeNetRequestEnabledRulesetCount() { return m_enabledStaticRulesetIDs.size(); }
-    void declarativeNetRequestToggleRulesets(const Vector<String>& rulesetIdentifiers, bool newValue, NSMutableDictionary *rulesetIdentifiersToEnabledState);
+    void declarativeNetRequestToggleRulesets(const Vector<RefPtr<StringImpl>>& rulesetIdentifiers, bool newValue, NSMutableDictionary *rulesetIdentifiersToEnabledState);
     void declarativeNetRequestGetMatchedRules(std::optional<WebExtensionTabIdentifier>, std::optional<WallTime> minTimeStamp, CompletionHandler<void(std::expected<Vector<WebExtensionMatchedRuleParameters>, WebExtensionError>&&)>&&);
-    void declarativeNetRequestGetDynamicRules(Vector<double>&& filter, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&&);
-    void declarativeNetRequestUpdateDynamicRules(String&& rulesToAddJSON, Vector<double>&& ruleIDsToDelete, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void declarativeNetRequestGetSessionRules(Vector<double>&& filter, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&&);
-    void declarativeNetRequestUpdateSessionRules(String&& rulesToAddJSON, Vector<double>&& ruleIDsToDelete, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void declarativeNetRequestGetDynamicRules(Vector<double>&& filter, CompletionHandler<void(std::expected<RefPtr<StringImpl>, WebExtensionError>&&)>&&);
+    void declarativeNetRequestUpdateDynamicRules(RefPtr<StringImpl>&& rulesToAddJSON, Vector<double>&& ruleIDsToDelete, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void declarativeNetRequestGetSessionRules(Vector<double>&& filter, CompletionHandler<void(std::expected<RefPtr<StringImpl>, WebExtensionError>&&)>&&);
+    void declarativeNetRequestUpdateSessionRules(RefPtr<StringImpl>&& rulesToAddJSON, Vector<double>&& ruleIDsToDelete, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // DevTools APIs
     bool isDevToolsMessageAllowed(IPC::Decoder&);
-    void devToolsPanelsCreate(WebPageProxyIdentifier, const String& title, const String& iconPath, const String& pagePath, CompletionHandler<void(std::expected<Inspector::ExtensionTabID, WebExtensionError>&&)>&&);
-    void devToolsInspectedWindowEval(WebPageProxyIdentifier, const String& scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(std::expected<RunJavaScriptResult, WebExtensionError>&&)>&&);
+    void devToolsPanelsCreate(WebPageProxyIdentifier, StringImpl* title, StringImpl* iconPath, StringImpl* pagePath, CompletionHandler<void(std::expected<Inspector::ExtensionTabID, WebExtensionError>&&)>&&);
+    void devToolsInspectedWindowEval(WebPageProxyIdentifier, StringImpl* scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(std::expected<RunJavaScriptResult, WebExtensionError>&&)>&&);
     void devToolsInspectedWindowReload(WebPageProxyIdentifier, const std::optional<bool>& ignoreCache);
 #endif
 
@@ -979,13 +979,13 @@ private:
     void extensionIsAllowedIncognitoAccess(CompletionHandler<void(bool)>&&);
 
     // Runtime Error Reporting
-    void didEncounterScriptError(const String& message, const String& sourceURL, uint32_t lineNumber, uint32_t columnNumber, WebExtensionContentWorldType);
+    void didEncounterScriptError(StringImpl* message, StringImpl* sourceURL, uint32_t lineNumber, uint32_t columnNumber, WebExtensionContentWorldType);
 
     // Menus APIs
     bool isMenusMessageAllowed(IPC::Decoder&);
     void menusCreate(const WebExtensionMenuItemParameters&, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void menusUpdate(const String& identifier, const WebExtensionMenuItemParameters&, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void menusRemove(const String& identifier, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void menusUpdate(StringImpl* identifier, const WebExtensionMenuItemParameters&, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void menusRemove(StringImpl* identifier, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void menusRemoveAll(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void fireMenusClickedEventIfNeeded(const WebExtensionMenuItem&, bool wasChecked, const WebExtensionMenuItemContextParameters&);
 
@@ -994,10 +994,10 @@ private:
     bool isNotificationsMessageAllowed(IPC::Decoder&);
 
     void notificationsCreate(const WebExtensionNotificationParameters&, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void notificationsUpdate(const String& identifier, const WebExtensionNotificationParameters&, CompletionHandler<void(std::expected<bool, WebExtensionError>&&)>&&);
-    void notificationsClear(const String& identifier, CompletionHandler<void(std::expected<bool, WebExtensionError>&&)>&&);
-    void notificationsGetAll(CompletionHandler<void(Vector<String>&&)>&&);
-    void notificationsGetPermissionLevel(CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&&);
+    void notificationsUpdate(StringImpl* identifier, const WebExtensionNotificationParameters&, CompletionHandler<void(std::expected<bool, WebExtensionError>&&)>&&);
+    void notificationsClear(StringImpl* identifier, CompletionHandler<void(std::expected<bool, WebExtensionError>&&)>&&);
+    void notificationsGetAll(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&);
+    void notificationsGetPermissionLevel(CompletionHandler<void(std::expected<RefPtr<StringImpl>, WebExtensionError>&&)>&&);
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
@@ -1010,10 +1010,10 @@ private:
 #endif
 
     // Permissions APIs
-    void permissionsGetAll(CompletionHandler<void(Vector<String>&& permissions, Vector<String>&& origins)>&&);
-    void permissionsContains(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&&);
-    void permissionsRequest(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&&);
-    void permissionsRemove(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&&);
+    void permissionsGetAll(CompletionHandler<void(Vector<RefPtr<StringImpl>>&& permissions, Vector<RefPtr<StringImpl>>&& origins)>&&);
+    void permissionsContains(HashSet<RefPtr<StringImpl>> permissions, HashSet<RefPtr<StringImpl>> origins, CompletionHandler<void(bool)>&&);
+    void permissionsRequest(HashSet<RefPtr<StringImpl>> permissions, HashSet<RefPtr<StringImpl>> origins, CompletionHandler<void(bool)>&&);
+    void permissionsRemove(HashSet<RefPtr<StringImpl>> permissions, HashSet<RefPtr<StringImpl>> origins, CompletionHandler<void(bool)>&&);
     void firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType, const PermissionsSet&, const MatchPatternSet&);
 
     // Port APIs
@@ -1038,12 +1038,12 @@ private:
     void runtimeGetBackgroundPage(CompletionHandler<void(std::expected<std::optional<WebCore::PageIdentifier>, WebExtensionError>&&)>&&);
     void runtimeOpenOptionsPage(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void runtimeReload();
-    void runtimeSendMessage(const String& extensionID, const WebExtensionMessage&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(std::expected<WebExtensionMessage, WebExtensionError>&&)>&&);
-    void runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier, const String& name, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void runtimeSendNativeMessage(const String& applicationID, const String& messageJSON, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&&);
-    void runtimeConnectNative(const String& applicationID, WebExtensionPortChannelIdentifier, WebPageProxyIdentifier, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void runtimeWebPageSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&&);
-    void runtimeWebPageConnect(const String& extensionID, WebExtensionPortChannelIdentifier, const String& name, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void runtimeSendMessage(StringImpl* extensionID, const WebExtensionMessage&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(std::expected<WebExtensionMessage, WebExtensionError>&&)>&&);
+    void runtimeConnect(StringImpl* extensionID, WebExtensionPortChannelIdentifier, StringImpl* name, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void runtimeSendNativeMessage(StringImpl* applicationID, StringImpl* messageJSON, CompletionHandler<void(std::expected<RefPtr<StringImpl>, WebExtensionError>&&)>&&);
+    void runtimeConnectNative(StringImpl* applicationID, WebExtensionPortChannelIdentifier, WebPageProxyIdentifier, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void runtimeWebPageSendMessage(StringImpl* extensionID, StringImpl* messageJSON, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::expected<RefPtr<StringImpl>, WebExtensionError>&&)>&&);
+    void runtimeWebPageConnect(StringImpl* extensionID, WebExtensionPortChannelIdentifier, StringImpl* name, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void fireRuntimeStartupEventIfNeeded();
     void fireRuntimeInstalledEventIfNeeded();
 
@@ -1054,8 +1054,8 @@ private:
     void scriptingRemoveCSS(const WebExtensionScriptInjectionParameters&, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void scriptingRegisterContentScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void scriptingUpdateRegisteredScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void scriptingGetRegisteredScripts(const Vector<String>&, CompletionHandler<void(std::expected<Vector<WebExtensionRegisteredScriptParameters>, WebExtensionError>&&)>&&);
-    void scriptingUnregisterContentScripts(const Vector<String>&, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void scriptingGetRegisteredScripts(const Vector<RefPtr<StringImpl>>&, CompletionHandler<void(std::expected<Vector<WebExtensionRegisteredScriptParameters>, WebExtensionError>&&)>&&);
+    void scriptingUnregisterContentScripts(const Vector<RefPtr<StringImpl>>&, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     bool createInjectedContentForScripts(const Vector<WebExtensionRegisteredScriptParameters>&, WebExtensionDynamicScripts::WebExtensionRegisteredScript::FirstTimeRegistration, DynamicInjectedContentsMap&, NSString *callingAPIName, NSString **errorMessage);
 
     // Sidebar APIs
@@ -1067,24 +1067,24 @@ private:
     void sidebarGetLayout(CompletionHandler<void(std::expected<WebExtensionSidebarSide, WebExtensionError>&&)>&&);
     void sidebarToggle(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void sidebarGetOptions(const std::optional<WebExtensionWindowIdentifier>, const std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<WebExtensionSidebarParameters, WebExtensionError>&&)>&&);
-    void sidebarSetOptions(const std::optional<WebExtensionWindowIdentifier>, const std::optional<WebExtensionTabIdentifier>, const std::optional<String>& panelSourcePath, const std::optional<bool> enabled, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void sidebarGetTitle(const std::optional<WebExtensionWindowIdentifier>, const std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&&);
-    void sidebarSetTitle(const std::optional<WebExtensionWindowIdentifier>, const std::optional<WebExtensionTabIdentifier>, const std::optional<String>& title, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void sidebarSetIcon(const std::optional<WebExtensionWindowIdentifier>, const std::optional<WebExtensionTabIdentifier>, const String& iconJSON, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void sidebarSetOptions(const std::optional<WebExtensionWindowIdentifier>, const std::optional<WebExtensionTabIdentifier>, const std::optional<RefPtr<StringImpl>>& panelSourcePath, const std::optional<bool> enabled, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void sidebarGetTitle(const std::optional<WebExtensionWindowIdentifier>, const std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<RefPtr<StringImpl>, WebExtensionError>&&)>&&);
+    void sidebarSetTitle(const std::optional<WebExtensionWindowIdentifier>, const std::optional<WebExtensionTabIdentifier>, const std::optional<RefPtr<StringImpl>>& title, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void sidebarSetIcon(const std::optional<WebExtensionWindowIdentifier>, const std::optional<WebExtensionTabIdentifier>, StringImpl* iconJSON, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void sidebarSetActionClickBehavior(WebExtensionActionClickBehavior, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void sidebarGetActionClickBehavior(CompletionHandler<void(std::expected<WebExtensionActionClickBehavior, WebExtensionError>&&)>&&);
 #endif
 
     // Storage APIs
     bool isStorageMessageAllowed(IPC::Decoder&);
-    void storageGet(WebPageProxyIdentifier, WebExtensionDataType, const Vector<String>& keys, CompletionHandler<void(std::expected<Vector<String>, WebExtensionError>&&)>&&);
-    void storageGetKeys(WebPageProxyIdentifier, WebExtensionDataType, CompletionHandler<void(std::expected<Vector<String>, WebExtensionError>&&)>&&);
-    void storageGetBytesInUse(WebPageProxyIdentifier, WebExtensionDataType, const Vector<String>& keys, CompletionHandler<void(std::expected<uint64_t, WebExtensionError>&&)>&&);
-    void storageSet(WebPageProxyIdentifier, WebExtensionDataType, const String& dataJSON, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void storageRemove(WebPageProxyIdentifier, WebExtensionDataType, const Vector<String>& keys, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void storageGet(WebPageProxyIdentifier, WebExtensionDataType, const Vector<RefPtr<StringImpl>>& keys, CompletionHandler<void(std::expected<Vector<RefPtr<StringImpl>>, WebExtensionError>&&)>&&);
+    void storageGetKeys(WebPageProxyIdentifier, WebExtensionDataType, CompletionHandler<void(std::expected<Vector<RefPtr<StringImpl>>, WebExtensionError>&&)>&&);
+    void storageGetBytesInUse(WebPageProxyIdentifier, WebExtensionDataType, const Vector<RefPtr<StringImpl>>& keys, CompletionHandler<void(std::expected<uint64_t, WebExtensionError>&&)>&&);
+    void storageSet(WebPageProxyIdentifier, WebExtensionDataType, StringImpl* dataJSON, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void storageRemove(WebPageProxyIdentifier, WebExtensionDataType, const Vector<RefPtr<StringImpl>>& keys, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void storageClear(WebPageProxyIdentifier, WebExtensionDataType, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void storageSetAccessLevel(WebPageProxyIdentifier, WebExtensionDataType, WebExtensionStorageAccessLevel, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void fireStorageChangedEventIfNeeded(HashMap<String, String> oldKeysAndValues, HashMap<String, String> newKeysAndValues, WebExtensionDataType);
+    void fireStorageChangedEventIfNeeded(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> oldKeysAndValues, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> newKeysAndValues, WebExtensionDataType);
 
     // Tabs APIs
     void tabsCreate(std::optional<WebPageProxyIdentifier>, const WebExtensionTabParameters&, CompletionHandler<void(std::expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&&)>&&);
@@ -1096,11 +1096,11 @@ private:
     void tabsReload(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, ReloadFromOrigin, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void tabsGoBack(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void tabsGoForward(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void tabsDetectLanguage(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&&);
+    void tabsDetectLanguage(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<RefPtr<StringImpl>, WebExtensionError>&&)>&&);
     void tabsCaptureVisibleTab(WebPageProxyIdentifier, std::optional<WebExtensionWindowIdentifier>, WebExtensionTab::ImageFormat, uint8_t imageQuality, CompletionHandler<void(std::expected<URL, WebExtensionError>&&)>&&);
     void tabsToggleReaderMode(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void tabsSendMessage(WebExtensionTabIdentifier, const WebExtensionMessage&, const WebExtensionMessageTargetParameters&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(std::expected<WebExtensionMessage, WebExtensionError>&&)>&&);
-    void tabsConnect(WebExtensionTabIdentifier, WebExtensionPortChannelIdentifier, String name, const WebExtensionMessageTargetParameters&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void tabsConnect(WebExtensionTabIdentifier, WebExtensionPortChannelIdentifier, RefPtr<StringImpl> name, const WebExtensionMessageTargetParameters&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void tabsGetZoom(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::expected<double, WebExtensionError>&&)>&&);
     void tabsSetZoom(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, double, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void tabsMove(Vector<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>, double, CompletionHandler<void(std::expected<Vector<WebExtensionTabParameters>, WebExtensionError>&&)>&&);
@@ -1147,7 +1147,7 @@ private:
 
     mutable Markable<WebExtensionContextIdentifier> m_privilegedIdentifier;
 
-    String m_storageDirectory;
+    RefPtr<StringImpl> m_storageDirectory;
 
 #if PLATFORM(COCOA)
     RetainPtr<NSMutableDictionary> m_state;
@@ -1160,14 +1160,14 @@ private:
     WeakPtr<WebExtensionController> m_extensionController;
 
     URL m_baseURL;
-    String m_uniqueIdentifier = WTF::UUID::createVersion4().toString();
+    RefPtr<StringImpl> m_uniqueIdentifier = WTF::UUID::createVersion4().toString();
     bool m_customUniqueIdentifier { false };
 
     const RefPtr<WebExtensionLocalization> m_localization;
 
     bool m_inspectable { false };
 
-    HashSet<String> m_unsupportedAPIs;
+    HashSet<RefPtr<StringImpl>> m_unsupportedAPIs;
 
     RefPtr<API::ContentWorld> m_contentScriptWorld;
 
@@ -1198,7 +1198,7 @@ private:
 
     bool m_shouldFireStartupEvent { false };
     InstallReason m_installReason { InstallReason::None };
-    String m_previousVersion;
+    RefPtr<StringImpl> m_previousVersion;
 
 #if PLATFORM(COCOA)
     RetainPtr<WKWebView> m_backgroundWebView;
@@ -1222,7 +1222,7 @@ private:
     Variant<std::monostate, Ref<ProcessThrottlerActivity>, Ref<ProcessActivityGroup>> m_backgroundWebViewActivity;
     RefPtr<API::Error> m_backgroundContentLoadError;
 
-    String m_backgroundWebViewInspectionName;
+    RefPtr<StringImpl> m_backgroundWebViewInspectionName;
 
     std::unique_ptr<RunLoop::Timer> m_unloadBackgroundWebViewTimer;
     MonotonicTime m_lastBackgroundPortActivityTime;
@@ -1239,12 +1239,12 @@ private:
     HashMap<Ref<WebExtensionMatchPattern>, UserScriptVector> m_injectedScriptsPerPatternMap;
     HashMap<Ref<WebExtensionMatchPattern>, UserStyleSheetVector> m_injectedStyleSheetsPerPatternMap;
 
-    HashMap<String, Ref<WebExtensionDynamicScripts::WebExtensionRegisteredScript>> m_registeredScriptsMap;
+    HashMap<RefPtr<StringImpl>, Ref<WebExtensionDynamicScripts::WebExtensionRegisteredScript>> m_registeredScriptsMap;
     RefPtr<WebExtensionRegisteredScriptsSQLiteStore> m_registeredContentScriptsStorage;
 
     UserStyleSheetVector m_dynamicallyInjectedUserStyleSheets;
 
-    HashMap<String, Ref<WebExtensionAlarm>> m_alarmMap;
+    HashMap<RefPtr<StringImpl>, Ref<WebExtensionAlarm>> m_alarmMap;
     WeakHashMap<WebExtensionWindow, Ref<WebExtensionAction>> m_actionWindowMap;
     WeakHashMap<WebExtensionTab, Ref<WebExtensionAction>> m_actionTabMap;
     RefPtr<WebExtensionAction> m_defaultAction;
@@ -1277,11 +1277,11 @@ private:
     CommandsVector m_commands;
     bool m_populatedCommands { false };
 
-    String m_declarativeNetRequestContentRuleListFilePath;
+    RefPtr<StringImpl> m_declarativeNetRequestContentRuleListFilePath;
     DeclarativeNetRequestMatchedRuleVector m_matchedRules;
     RefPtr<WebExtensionDeclarativeNetRequestSQLiteStore> m_declarativeNetRequestDynamicRulesStore;
     RefPtr<WebExtensionDeclarativeNetRequestSQLiteStore> m_declarativeNetRequestSessionRulesStore;
-    HashSet<String> m_enabledStaticRulesetIDs;
+    HashSet<RefPtr<StringImpl>> m_enabledStaticRulesetIDs;
     HashSet<double> m_sessionRulesIDs;
     HashSet<double> m_dynamicRulesIDs;
 
@@ -1289,7 +1289,7 @@ private:
     MenuItemVector m_mainMenuItems;
 
 #if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
-    HashMap<String, WebExtensionNotificationParameters> m_notifications;
+    HashMap<RefPtr<StringImpl>, WebExtensionNotificationParameters> m_notifications;
 #endif
 
     WebExtensionStorageAccessLevelMap m_storageAccessLevels;
@@ -1303,8 +1303,8 @@ private:
 #endif
 
     struct TestMessage {
-        String message;
-        String argument;
+        RefPtr<StringImpl> message;
+        RefPtr<StringImpl> argument;
     };
 
     size_t m_testMessageListenersCount { 0 };
@@ -1317,7 +1317,7 @@ private:
 
     NODELETE bool hasTestEventListeners(WebExtensionEventListenerType);
     void sendQueuedTestMessagesIfNeeded(WebExtensionEventListenerType);
-    void addTestMessageToQueue(const String& message, const String& argument, WebExtensionEventListenerType);
+    void addTestMessageToQueue(StringImpl* message, StringImpl* argument, WebExtensionEventListenerType);
 };
 
 template<typename T>

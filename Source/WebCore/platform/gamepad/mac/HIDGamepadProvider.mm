@@ -330,13 +330,13 @@ std::unique_ptr<HIDGamepad> HIDGamepadProvider::removeGamepadForDevice(IOHIDDevi
     return result;
 }
 
-void HIDGamepadProvider::playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
+void HIDGamepadProvider::playEffect(unsigned, StringImpl*, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
 {
     // Not supported by this provider.
     completionHandler(false);
 }
 
-void HIDGamepadProvider::stopEffects(unsigned, const String&, CompletionHandler<void()>&& completionHandler)
+void HIDGamepadProvider::stopEffects(unsigned, StringImpl*, CompletionHandler<void()>&& completionHandler)
 {
     // Not supported by this provider.
     completionHandler();

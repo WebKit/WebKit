@@ -45,11 +45,11 @@ static StringView hostnameFromHostHeader(StringView hostHeader)
     return colon == notFound ? hostHeader : hostHeader.left(colon);
 }
 
-std::expected<void, String> HTTPRequestHandler::validateRequestHeaders(const String& hostHeader, const String& originHeader, const String& method, const String& contentTypeHeader) const
+std::expected<void, RefPtr<StringImpl>> HTTPRequestHandler::validateRequestHeaders(StringImpl* hostHeader, StringImpl* originHeader, StringImpl* method, StringImpl* contentTypeHeader) const
 {
     // Browsers always send a Host header, so a request without one can't come from a web page.
     // Accepting only localhost and IP addresses by default protects against DNS rebinding attacks.
-    if (!hostHeader.isNull()) {
+    if (!!hostHeader) {
         auto hostname = hostnameFromHostHeader(hostHeader);
         bool isAllowedHost = equalLettersIgnoringASCIICase(hostname, "localhost"_s) || URL::hostIsIPAddress(hostname) || std::ranges::any_of(m_allowedHosts, [&](auto& allowedHost) {
             return equalIgnoringASCIICase(allowedHost, hostname);
@@ -59,7 +59,7 @@ std::expected<void, String> HTTPRequestHandler::validateRequestHeaders(const Str
     }
 
     // WebDriver clients don't send an Origin header, but browsers do for any cross-site POST request.
-    if (!originHeader.isNull()) {
+    if (!!originHeader) {
         URL origin { originHeader };
         bool isAllowedOrigin = origin.isValid() && std::ranges::any_of(m_allowedOrigins, [&](auto& allowedOrigin) {
             return protocolHostAndPortAreEqual(allowedOrigin, origin);
@@ -69,7 +69,7 @@ std::expected<void, String> HTTPRequestHandler::validateRequestHeaders(const Str
     }
 
     // These are the only content types a web page can POST cross-site without a CORS preflight.
-    if (method == "POST"_s && !contentTypeHeader.isNull()) {
+    if (equal(method, "POST"_s) && !!contentTypeHeader) {
         StringView contentType = contentTypeHeader;
         auto semicolon = contentType.find(';');
         auto mimeType = (semicolon == notFound ? contentType : contentType.left(semicolon)).trim(isASCIIWhitespace<char16_t>);
@@ -82,16 +82,16 @@ std::expected<void, String> HTTPRequestHandler::validateRequestHeaders(const Str
     return { };
 }
 
-HTTPRequestHandler::Response HTTPRequestHandler::rejectedRequestResponse(const String& reason)
+HTTPRequestHandler::Response HTTPRequestHandler::rejectedRequestResponse(StringImpl* reason)
 {
     auto result = CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, reason);
     auto errorObject = JSON::Object::create();
-    errorObject->setString("error"_s, result.errorString());
-    errorObject->setString("message"_s, reason);
-    errorObject->setString("stacktrace"_s, emptyString());
+    errorObject->setString("error"_si, result.errorString());
+    errorObject->setString("message"_si, reason);
+    errorObject->setString("stacktrace"_si, emptyString());
     auto responseObject = JSON::Object::create();
-    responseObject->setObject("value"_s, WTF::move(errorObject));
-    return { result.httpStatusCode(), responseObject->toJSONString().utf8(), "application/json; charset=utf-8"_s };
+    responseObject->setObject("value"_si, WTF::move(errorObject));
+    return { result.httpStatusCode(), utf8(responseObject->toJSONString()), "application/json; charset=utf-8"_s };
 }
 
 HTTPServer::HTTPServer(HTTPRequestHandler& requestHandler)

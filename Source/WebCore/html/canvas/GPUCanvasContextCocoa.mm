@@ -580,7 +580,7 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
     }
 
     if (configuration.usage & GPUTextureUsage::TRANSIENT_ATTACHMENT)
-        return Exception { ExceptionCode::TypeError, "GPUCanvasContextCocoa::configure: Can not configure a canvas with a transient backing"_s };
+        return Exception { ExceptionCode::TypeError, "GPUCanvasContextCocoa::configure: Can not configure a canvas with a transient backing"_si };
 
     if (auto error = protect(configuration.device)->errorValidatingSupportedFormat(configuration.format))
         return Exception { ExceptionCode::TypeError, makeString("GPUCanvasContext.configure: Unsupported texture format: "_s, *error) };
@@ -591,7 +591,7 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
     }
 
     if (!isSupportedContextFormat(configuration.format))
-        return Exception { ExceptionCode::TypeError, "GPUCanvasContext.configure: Unsupported context format."_s };
+        return Exception { ExceptionCode::TypeError, "GPUCanvasContext.configure: Unsupported context format."_si };
 
     if (configuration.toneMapping.mode != GPUCanvasToneMappingMode::Standard) {
 #if ENABLE(HDR_FOR_WEBGPU)
@@ -619,7 +619,7 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
 
     bool reportValidationErrors = !dueToReshape;
     if (!m_presentationContext->configure(configuration, m_width, m_height, reportValidationErrors))
-        return Exception { ExceptionCode::InvalidStateError, "GPUCanvasContext.configure: Unable to configure."_s };
+        return Exception { ExceptionCode::InvalidStateError, "GPUCanvasContext.configure: Unable to configure."_si };
 
     m_layerContentsDisplayDelegate->setOpaque(configuration.alphaMode == GPUCanvasAlphaMode::Opaque);
     m_configuration = {
@@ -686,7 +686,7 @@ std::optional<GPUCanvasConfiguration> GPUCanvasContextCocoa::getConfiguration() 
 ExceptionOr<Ref<GPUTexture>> GPUCanvasContextCocoa::getCurrentTexture()
 {
     if (!isConfigured())
-        return Exception { ExceptionCode::InvalidStateError, "GPUCanvasContextCocoa::getCurrentTexture: canvas is not configured"_s };
+        return Exception { ExceptionCode::InvalidStateError, "GPUCanvasContextCocoa::getCurrentTexture: canvas is not configured"_si };
 
     RefPtr currentTexture = m_currentTexture;
     if (currentTexture)

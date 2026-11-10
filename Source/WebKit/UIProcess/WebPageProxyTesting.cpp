@@ -134,14 +134,14 @@ void WebPageProxyTesting::setCrossSiteLoadWithLinkDecorationForTesting(const URL
     protect(protect(protect(page())->websiteDataStore())->networkProcess())->setCrossSiteLoadWithLinkDecorationForTesting(protect(page())->sessionID(), WebCore::RegistrableDomain { fromURL }, WebCore::RegistrableDomain { toURL }, wasFiltered, WTF::move(completionHandler));
 }
 
-void WebPageProxyTesting::setPermissionLevel(const String& origin, bool allowed)
+void WebPageProxyTesting::setPermissionLevel(StringImpl* origin, bool allowed)
 {
     protect(page())->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPageTesting::SetPermissionLevel(origin, allowed), pageID);
     });
 }
 
-bool WebPageProxyTesting::isEditingCommandEnabled(const String& commandName)
+bool WebPageProxyTesting::isEditingCommandEnabled(StringImpl* commandName)
 {
     RefPtr focusedOrMainFrame = m_page->focusedOrMainFrame();
     auto targetFrameID = focusedOrMainFrame ? std::optional(focusedOrMainFrame->frameID()) : std::nullopt;
@@ -161,7 +161,7 @@ void WebPageProxyTesting::screenIsBeingCaptured(FrameIdentifier frameID, Complet
 }
 #endif
 
-void WebPageProxyTesting::dumpPrivateClickMeasurement(CompletionHandler<void(const String&)>&& completionHandler)
+void WebPageProxyTesting::dumpPrivateClickMeasurement(CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     protect(protect(protect(page())->websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::DumpPrivateClickMeasurement(m_page->websiteDataStore().sessionID()), WTF::move(completionHandler));
 }
@@ -211,12 +211,12 @@ void WebPageProxyTesting::markPrivateClickMeasurementsAsExpired(CompletionHandle
     protect(protect(protect(page())->websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::MarkPrivateClickMeasurementsAsExpiredForTesting(m_page->websiteDataStore().sessionID()), WTF::move(completionHandler));
 }
 
-void WebPageProxyTesting::setPCMFraudPreventionValues(const String& unlinkableToken, const String& secretToken, const String& signature, const String& keyID, CompletionHandler<void()>&& completionHandler)
+void WebPageProxyTesting::setPCMFraudPreventionValues(StringImpl* unlinkableToken, StringImpl* secretToken, StringImpl* signature, StringImpl* keyID, CompletionHandler<void()>&& completionHandler)
 {
     protect(protect(protect(page())->websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::SetPCMFraudPreventionValuesForTesting(m_page->websiteDataStore().sessionID(), unlinkableToken, secretToken, signature, keyID), WTF::move(completionHandler));
 }
 
-void WebPageProxyTesting::setPrivateClickMeasurementAppBundleID(const String& appBundleIDForTesting, CompletionHandler<void()>&& completionHandler)
+void WebPageProxyTesting::setPrivateClickMeasurementAppBundleID(StringImpl* appBundleIDForTesting, CompletionHandler<void()>&& completionHandler)
 {
     protect(protect(protect(page())->websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementAppBundleIDForTesting(m_page->websiteDataStore().sessionID(), appBundleIDForTesting), WTF::move(completionHandler));
 }

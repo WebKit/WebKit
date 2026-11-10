@@ -49,13 +49,13 @@ public:
     //
     // path - The directory.
     // fileName - The file name.
-    WEBCORE_EXPORT static String appendDatabaseFileNameToPath(StringView path, StringView fileName);
+    WEBCORE_EXPORT static RefPtr<StringImpl> appendDatabaseFileNameToPath(StringView path, StringView fileName);
 
     // Makes sure the given directory exists, by creating all missing directories
     // on the given path.
     //
     // path - The directory.
-    WEBCORE_EXPORT static bool ensureDatabaseDirectoryExists(const String& path);
+    WEBCORE_EXPORT static bool ensureDatabaseDirectoryExists(StringImpl* path);
 
     // If 'checkPathOnly' is false, then this method only checks if the given file exists.
     // If 'checkPathOnly' is true, then this method makes sure all directories on the
@@ -69,25 +69,25 @@ public:
     // fileName - The file name.
     // checkPathOnly - If true, we only make sure that the given directory exists.
     //                 If false, we only check if the file exists.
-    static bool ensureDatabaseFileExists(const String& fileName, bool checkPathOnly);
+    static bool ensureDatabaseFileExists(StringImpl* fileName, bool checkPathOnly);
 
     // Deletes an empty database directory.
     //
     // path - The directory.
-    static bool deleteEmptyDatabaseDirectory(const String& path);
+    static bool deleteEmptyDatabaseDirectory(StringImpl* path);
 
     // Deletes a database file.
     //
     // fileName - The file name.
-    WEBCORE_EXPORT static bool deleteDatabaseFile(const String& filePath);
+    WEBCORE_EXPORT static bool deleteDatabaseFile(StringImpl* filePath);
 
 #if PLATFORM(COCOA)
-    static void setCanSuspendLockedFileAttribute(const String& filePath);
+    static void setCanSuspendLockedFileAttribute(StringImpl* filePath);
 #endif
 
     // Moves a database file to a new place.
-    WEBCORE_EXPORT static bool moveDatabaseFile(const String& oldFilePath, const String& newFilePath);
-    WEBCORE_EXPORT static String computeHashForFileName(StringView filePath);
+    WEBCORE_EXPORT static bool moveDatabaseFile(StringImpl* oldFilePath, StringImpl* newFilePath);
+    WEBCORE_EXPORT static RefPtr<StringImpl> computeHashForFileName(StringView filePath);
 
 #if PLATFORM(COCOA)
     // Truncates a database file. Used when MobileSafariSettings deletes a database file,
@@ -96,9 +96,9 @@ public:
     static bool truncateDatabaseFile(sqlite3* database);
 #endif
     
-    WEBCORE_EXPORT static uint64_t databaseFileSize(const String& fileName);
-    WEBCORE_EXPORT static std::optional<WallTime> databaseCreationTime(const String& fileName);
-    WEBCORE_EXPORT static std::optional<WallTime> databaseModificationTime(const String& fileName);
+    WEBCORE_EXPORT static uint64_t databaseFileSize(StringImpl* fileName);
+    WEBCORE_EXPORT static std::optional<WallTime> databaseCreationTime(StringImpl* fileName);
+    WEBCORE_EXPORT static std::optional<WallTime> databaseModificationTime(StringImpl* fileName);
 
 private:
     // do not instantiate this class

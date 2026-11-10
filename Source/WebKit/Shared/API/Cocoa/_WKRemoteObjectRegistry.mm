@@ -75,23 +75,23 @@ struct PendingReply {
     RefPtr<WebKit::RemoteObjectRegistry> _remoteObjectRegistry;
 
     RetainPtr<NSMapTable> _remoteObjectProxies;
-    HashMap<String, std::pair<RetainPtr<id>, RetainPtr<_WKRemoteObjectInterface>>> _exportedObjects;
+    HashMap<RefPtr<StringImpl>, std::pair<RetainPtr<id>, RetainPtr<_WKRemoteObjectInterface>>> _exportedObjects;
 
     HashMap<uint64_t, PendingReply> _pendingReplies;
 }
 
 - (void)registerExportedObject:(id)object interface:(_WKRemoteObjectInterface *)interface
 {
-    ASSERT(!_exportedObjects.contains(interface.identifier));
-    _exportedObjects.add(interface.identifier, std::make_pair<RetainPtr<id>, RetainPtr<_WKRemoteObjectInterface>>(object, interface));
+    ASSERT(!_exportedObjects.contains(StringImpl::create(interface.identifier).get()));
+    _exportedObjects.add(StringImpl::create(interface.identifier), std::make_pair<RetainPtr<id>, RetainPtr<_WKRemoteObjectInterface>>(object, interface));
 }
 
 - (void)unregisterExportedObject:(id)object interface:(_WKRemoteObjectInterface *)interface
 {
-    ASSERT(_exportedObjects.get(interface.identifier).first == object);
-    ASSERT(_exportedObjects.get(interface.identifier).second == interface);
+    ASSERT(_exportedObjects.get(StringImpl::create(interface.identifier).get()).first == object);
+    ASSERT(_exportedObjects.get(StringImpl::create(interface.identifier).get()).second == interface);
 
-    _exportedObjects.remove(interface.identifier);
+    _exportedObjects.remove(StringImpl::create(interface.identifier).get());
 }
 
 - (id)remoteObjectProxyWithInterface:(_WKRemoteObjectInterface *)interface
@@ -167,7 +167,7 @@ NODELETE static uint64_t generateReplyIdentifier()
         if (!methodHasReturnType<void>([NSMethodSignature signatureWithObjCTypes:replyBlockSignature]))
             [NSException raise:NSInvalidArgumentException format:@"Return value of block argument must be 'void'. (%s)", sel_getName(invocation.selector)];
 
-        replyInfo = makeUnique<WebKit::RemoteObjectInvocation::ReplyInfo>(generateReplyIdentifier(), String::fromLatin1(replyBlockSignature));
+        replyInfo = makeUnique<WebKit::RemoteObjectInvocation::ReplyInfo>(generateReplyIdentifier(), StringImpl::fromLatin1(replyBlockSignature));
 
         // Replace the block object so we won't try to encode it.
         id null = nullptr;
@@ -185,7 +185,7 @@ NODELETE static uint64_t generateReplyIdentifier()
     if (!remoteObjectRegistry)
         return;
 
-    remoteObjectRegistry->sendInvocation(WebKit::RemoteObjectInvocation(interface.identifier, [encoder rootObjectDictionary], WTF::move(replyInfo)));
+    remoteObjectRegistry->sendInvocation(WebKit::RemoteObjectInvocation(StringImpl::create(interface.identifier).get(), [encoder rootObjectDictionary], WTF::move(replyInfo)));
 }
 
 - (WebKit::RemoteObjectRegistry*)remoteObjectRegistry
@@ -222,7 +222,7 @@ static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUIntege
 
     auto interfaceAndObject = _exportedObjects.get(interfaceIdentifier);
     if (!interfaceAndObject.second) {
-        NSLog(@"Did not find a registered object for the interface \"%@\"", interfaceIdentifier.createNSString().get());
+        NSLog(@"Did not find a registered object for the interface \"%@\"", createNSString(interfaceIdentifier).get());
         return;
     }
 
@@ -249,7 +249,7 @@ static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUIntege
             return;
         }
 
-        RetainPtr<NSString> wireBlockSignature = [NSMethodSignature signatureWithObjCTypes:replyInfo->blockSignature.utf8().legacyCStringPointer()]._typeString;
+        RetainPtr<NSString> wireBlockSignature = [NSMethodSignature signatureWithObjCTypes:utf8(replyInfo->blockSignature).legacyCStringPointer()]._typeString;
         RetainPtr<NSString> expectedBlockSignature = replyBlockSignature(retainPtr([interface protocol]).get(), invocation.get().selector, i);
 
         if (!expectedBlockSignature) {

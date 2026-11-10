@@ -72,12 +72,12 @@ private:
     bool isMouseFocusable() const final;
     bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isPresentingAttachedView() const final { return m_popupIsVisible; }
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
     bool supportsRequired() const final { return false; }
-    ValueOrReference<String> fallbackValue() const final;
-    ValueOrReference<String> sanitizeValue(const String& value LIFETIME_BOUND) const final;
+    ValueOrReference<RefPtr<StringImpl>> fallbackValue() const final;
+    ValueOrReference<RefPtr<StringImpl>> sanitizeValue(StringImpl* value LIFETIME_BOUND) const final;
     void createShadowSubtree() final;
-    void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
+    void setValue(StringImpl*, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
     void attributeChanged(const QualifiedName&) final;
     void handleDOMActivateEvent(Event&) final;
     void showPicker() final;

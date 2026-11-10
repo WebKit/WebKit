@@ -44,7 +44,7 @@ private:
     void start() final;
     void paint(GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&) const final;
 
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
     void setVisible(bool visible) final { setOpacity(visible ? 1.0 : 0.0); }
 

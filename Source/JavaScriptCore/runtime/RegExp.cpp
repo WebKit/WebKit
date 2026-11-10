@@ -152,7 +152,7 @@ void RegExpFunctionalTestCollector::outputEscapedString(StringView s, bool escap
 }
 #endif
 
-RegExp::RegExp(VM& vm, const String& patternString, OptionSet<Yarr::Flags> flags)
+RegExp::RegExp(VM& vm, StringImpl* patternString, OptionSet<Yarr::Flags> flags)
     : JSCell(vm, vm.regExpStructure.get())
     , m_patternString(patternString)
     , m_flags(flags)
@@ -186,8 +186,9 @@ void RegExp::updateMetadataFromPattern(Yarr::YarrPattern& pattern)
     if (!pattern.m_captureGroupNames.isEmpty() || !pattern.m_namedGroupToParenIndices.isEmpty()) {
         auto rareData = makeUnique<RareData>();
         rareData->m_numDuplicateNamedCaptureGroups = pattern.m_numDuplicateNamedCaptureGroups;
-        rareData->m_captureGroupNames = FixedVector<AtomString>::map(pattern.m_captureGroupNames, [](auto& name) {
-            return AtomString { name };
+        rareData->m_captureGroupNames = FixedVector<RefPtr<AtomStringImpl>>::map(pattern.m_captureGroupNames, [](auto& name) {
+            return AtomStringImpl::add(name);
+
         });
         rareData->m_namedGroupToParenIndices.swap(pattern.m_namedGroupToParenIndices);
         // The concurrent GC thread reads m_rareData in visitChildren, so it must observe a fully initialized RareData.
@@ -247,7 +248,7 @@ Structure* RegExp::ensureGroupsStructure(VM& vm, JSGlobalObject* globalObject)
     PropertyOffset offset = invalidOffset;
     PropertyOffset expectedOffset = 0;
     for (auto& name : m_rareData->m_captureGroupNames) {
-        if (name.isEmpty())
+        if (isEmpty(name))
             continue;
         structure = Structure::addPropertyTransition(vm, structure, Identifier::fromString(vm, name), 0, offset);
         // Callers store via putDirectOffset assuming sequential inline offsets.
@@ -260,14 +261,14 @@ Structure* RegExp::ensureGroupsStructure(VM& vm, JSGlobalObject* globalObject)
     return structure;
 }
 
-RegExp* RegExp::createWithoutCaching(VM& vm, const String& patternString, OptionSet<Yarr::Flags> flags)
+RegExp* RegExp::createWithoutCaching(VM& vm, StringImpl* patternString, OptionSet<Yarr::Flags> flags)
 {
     RegExp* regExp = new (NotNull, allocateCell<RegExp>(vm)) RegExp(vm, patternString, flags);
     regExp->finishCreation(vm);
     return regExp;
 }
 
-RegExp* RegExp::create(VM& vm, const String& patternString, OptionSet<Yarr::Flags> flags)
+RegExp* RegExp::create(VM& vm, StringImpl* patternString, OptionSet<Yarr::Flags> flags)
 {
     return vm.regExpCache()->lookupOrCreate(vm, patternString, flags);
 }
@@ -550,11 +551,11 @@ void RegExp::printTraceData()
 {
     UTF8CString formattedRegExp = ""_s;
     char rawPatternBuffer[SameLineFormatedRegExpnWidth + 1];
-    String rawPattern;
+    RefPtr<StringImpl> rawPattern;
 
-    auto patternCStr = pattern().utf8(); // Hold a reference so it doesn't get destroyed.
+    auto patternCStr = utf8(pattern()); // Hold a reference so it doesn't get destroyed.
     auto patternStr = patternCStr.legacyCStringPointer();
-    auto patternLength = pattern().length();
+    auto patternLength = WTF::length(pattern());
 
     auto appendRawPatternBuffer = [&] (size_t& index) {
         if (!index)
@@ -585,10 +586,10 @@ void RegExp::printTraceData()
 
     appendRawPatternBuffer(dstIdx);
 
-    if (rawPattern.length() + Yarr::flagsString(flags()).span().size() + 2 <= SameLineFormatedRegExpnWidth)
-        formattedRegExp = makeString('/', rawPattern, '/', Yarr::flagsString(flags()).span()).utf8();
+    if (WTF::length(rawPattern) + Yarr::flagsString(flags()).span().size() + 2 <= SameLineFormatedRegExpnWidth)
+        formattedRegExp = utf8(makeString('/', rawPattern, '/', Yarr::flagsString(flags()).span()));
     else
-        SAFE_DATALOGF("/%s/%s\n", rawPattern.utf8(), Yarr::flagsString(flags()));
+        SAFE_DATALOGF("/%s/%s\n", utf8(rawPattern), Yarr::flagsString(flags()));
 
     constexpr int addrWidth = 12;
 #if ENABLE(YARR_JIT)
@@ -596,19 +597,19 @@ void RegExp::printTraceData()
     constexpr char fallback[] = "fallback  ";
     constexpr char dashes[] = "----    ";
 
-    String jit8BitMatchOnlyAddr;
-    String jit16BitMatchOnlyAddr;
-    String jit8BitMatchAddr;
-    String jit16BitMatchAddr;
+    RefPtr<StringImpl> jit8BitMatchOnlyAddr;
+    RefPtr<StringImpl> jit16BitMatchOnlyAddr;
+    RefPtr<StringImpl> jit8BitMatchAddr;
+    RefPtr<StringImpl> jit16BitMatchAddr;
 
     auto formatAddress = [&] (void* addr) {
         constexpr int jitAddrSignificantWidth = addrWidth - 2;
         uintptr_t addrAsUint = reinterpret_cast<uintptr_t>(addr);
 
-        String formatResult;
+        RefPtr<StringImpl> formatResult;
         for (int digit = jitAddrSignificantWidth; digit; --digit) {
             auto nibble = (addrAsUint >> ((digit - 1) * 4)) & 0xf;
-            if (!formatResult.length()) {
+            if (!WTF::length(formatResult)) {
                 if (!nibble && digit > 8)
                     continue;
 
@@ -641,18 +642,18 @@ void RegExp::printTraceData()
     }
 #else
     constexpr char jitOff[] = "JIT Off";
-    String jit8BitMatchOnlyAddr = makeString(jitOff);
-    String jit16BitMatchOnlyAddr;
-    String jit8BitMatchAddr = makeString(jitOff);
-    String jit16BitMatchAddr;
+    RefPtr<StringImpl> jit8BitMatchOnlyAddr = makeString(jitOff);
+    RefPtr<StringImpl> jit16BitMatchOnlyAddr;
+    RefPtr<StringImpl> jit8BitMatchAddr = makeString(jitOff);
+    RefPtr<StringImpl> jit16BitMatchAddr;
 #endif
     unsigned averageMatchOnlyStringLen = (unsigned)(m_rtMatchOnlyTotalSubjectStringLen / m_rtMatchOnlyCallCount);
     unsigned averageMatchStringLen = (unsigned)(m_rtMatchTotalSubjectStringLen / m_rtMatchCallCount);
 
-    SAFE_DATALOGF("%-*.*s %*.*s %*.*s %10d %10d %10u\n", SameLineFormatedRegExpnWidth, SameLineFormatedRegExpnWidth, formattedRegExp, addrWidth, addrWidth, jit8BitMatchOnlyAddr.utf8(), addrWidth, addrWidth, jit16BitMatchOnlyAddr.utf8(), m_rtMatchOnlyCallCount, m_rtMatchOnlyFoundCount, averageMatchOnlyStringLen);
+    SAFE_DATALOGF("%-*.*s %*.*s %*.*s %10d %10d %10u\n", SameLineFormatedRegExpnWidth, SameLineFormatedRegExpnWidth, formattedRegExp, addrWidth, addrWidth, utf8(jit8BitMatchOnlyAddr), addrWidth, addrWidth, utf8(jit16BitMatchOnlyAddr), m_rtMatchOnlyCallCount, m_rtMatchOnlyFoundCount, averageMatchOnlyStringLen);
     for (unsigned i = 0; i < SameLineFormatedRegExpnWidth; ++i)
         dataLog(" ");
-    SAFE_DATALOGF(" %*.*s %*.*s %10d %10d %10u\n", addrWidth, addrWidth, jit8BitMatchAddr.utf8(), addrWidth, addrWidth, jit16BitMatchAddr.utf8(), m_rtMatchCallCount, m_rtMatchFoundCount, averageMatchStringLen);
+    SAFE_DATALOGF(" %*.*s %*.*s %10d %10d %10u\n", addrWidth, addrWidth, utf8(jit8BitMatchAddr), addrWidth, addrWidth, utf8(jit16BitMatchAddr), m_rtMatchCallCount, m_rtMatchFoundCount, averageMatchStringLen);
 }
 #endif
 
@@ -660,7 +661,7 @@ void RegExp::dumpToStream(const JSCell* cell, PrintStream& out)
 {
     // This function can be called concurrently. So we must not ref m_pattern.
     auto* regExp = uncheckedDowncast<RegExp>(cell);
-    out.print(toUTF8CString("/", regExp->pattern().impl(), "/", StringView { Yarr::flagsString(regExp->flags()).span() }));
+    out.print(toUTF8CString("/", regExp->pattern().get(), "/", StringView { Yarr::flagsString(regExp->flags()).span() }));
 }
 
 template <typename CharacterType>
@@ -689,7 +690,7 @@ inline void appendLineTerminatorEscape<char16_t>(StringBuilder& builder, char16_
 }
 
 template <typename CharacterType>
-static inline String escapePattern(const String& pattern, std::span<const CharacterType> characters)
+static inline RefPtr<StringImpl> escapePattern(StringImpl* pattern, std::span<const CharacterType> characters)
 {
     bool previousCharacterWasBackslash = false;
     bool inBrackets = false;
@@ -701,7 +702,7 @@ static inline String escapePattern(const String& pattern, std::span<const Charac
     // source cannot ever validly be "". If the source is empty, return a different Pattern
     // that would match the same thing.
     if (characters.empty())
-        return "(?:)"_s;
+        return "(?:)"_si;
 
     // early return for strings that don't contain a forwards slash and LineTerminator
     for (auto ch : characters) {
@@ -767,14 +768,14 @@ static inline String escapePattern(const String& pattern, std::span<const Charac
     return WTF::move(result).toString();
 }
 
-String RegExp::escapedPattern() const
+RefPtr<StringImpl> RegExp::escapedPattern() const
 {
-    if (m_patternString.is8Bit())
-        return escapePattern(m_patternString, m_patternString.span8());
-    return escapePattern(m_patternString, m_patternString.span16());
+    if (is8Bit(m_patternString))
+        return escapePattern(m_patternString, span8(m_patternString));
+    return escapePattern(m_patternString, span16(m_patternString));
 }
 
-String RegExp::toSourceString() const
+RefPtr<StringImpl> RegExp::toSourceString() const
 {
     return makeString('/', escapedPattern(), '/', Yarr::flagsString(flags()).span());
 }

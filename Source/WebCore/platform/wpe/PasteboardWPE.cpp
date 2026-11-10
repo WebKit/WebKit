@@ -44,7 +44,7 @@ bool Pasteboard::canSmartReplace()
 
 void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std::optional<size_t>)
 {
-    text.text = platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name, "text/plain;charset=utf-8"_s);
+    text.text = platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name, "text/plain;charset=utf-8"_si);
 }
 
 } // namespace WebCore

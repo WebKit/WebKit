@@ -78,7 +78,7 @@ DEFINE_VISIT_CHILDREN(IntlLocale);
 
 class LocaleIDBuilder final {
 public:
-    bool initialize(const String&);
+    bool initialize(StringImpl*);
     bool canonicalize();
     ASCIICString toCanonical();
 
@@ -89,12 +89,12 @@ private:
     Vector<char, 32> m_buffer;
 };
 
-bool LocaleIDBuilder::initialize(const String& tag)
+bool LocaleIDBuilder::initialize(StringImpl* tag)
 {
     if (!isStructurallyValidLanguageTag(tag))
         return false;
-    ASSERT(tag.containsOnlyASCII());
-    m_buffer = localeIDBufferForLanguageTagWithNullTerminator(tag.ascii());
+    ASSERT(containsOnlyASCII(tag));
+    m_buffer = localeIDBufferForLanguageTagWithNullTerminator(ascii(tag));
     return m_buffer.size();
 }
 
@@ -223,7 +223,7 @@ bool LocaleIDBuilder::setKeywordValue(ASCIILiteral key, StringView value)
     return U_SUCCESS(status);
 }
 
-String IntlLocale::keywordValue(ASCIILiteral key, bool isBoolean) const
+RefPtr<StringImpl> IntlLocale::keywordValue(ASCIILiteral key, bool isBoolean) const
 {
     UErrorCode status = U_ZERO_ERROR;
     Vector<char, 32> buffer(32);
@@ -235,12 +235,12 @@ String IntlLocale::keywordValue(ASCIILiteral key, bool isBoolean) const
     }
     ASSERT(U_SUCCESS(status));
     if (isBoolean)
-        return String::fromLatin1(buffer.span().data());
+        return StringImpl::fromLatin1(buffer.span().data());
     const char* value = uloc_toUnicodeLocaleType(key.characters(), buffer.span().data());
     if (!value)
         return nullString();
-    auto result = String::fromLatin1(value);
-    if (result == "true"_s)
+    auto result = StringImpl::fromLatin1(value);
+    if (equal(result, "true"_s))
         return emptyString();
     return result;
 }
@@ -306,7 +306,7 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, JSValue tagValue
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String tag = tagValue.inherits<IntlLocale>() ? uncheckedDowncast<IntlLocale>(tagValue)->toString() : tagValue.toWTFString(globalObject);
+    RefPtr<StringImpl> tag = tagValue.inherits<IntlLocale>() ? uncheckedDowncast<IntlLocale>(tagValue)->toString() : tagValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
     scope.release();
     initializeLocale(globalObject, tag, optionsValue);
@@ -335,7 +335,7 @@ static StringView weekdayToString(StringView fw)
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale
-void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& tag, JSValue optionsValue)
+void IntlLocale::initializeLocale(JSGlobalObject* globalObject, StringImpl* tag, JSValue optionsValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -354,7 +354,7 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
 
     LocaleIDBuilder localeID;
     if (!localeID.initialize(tag)) {
-        throwRangeError(globalObject, scope, "invalid language tag"_s);
+        throwRangeError(globalObject, scope, "invalid language tag"_si);
         return;
     }
 
@@ -363,51 +363,51 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
     // Transform (-t-) extensions are handled as ICU keywords and don't need this.
     m_nonUnicodeExtensions = extractNonUnicodeBCP47Extensions(tag);
 
-    String language = intlStringOption(globalObject, options, vm.propertyNames->language, { }, { }, { });
+    RefPtr<StringImpl> language = intlStringOption(globalObject, options, vm.propertyNames->language, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!language.isNull() && !isUnicodeLanguageSubtag(language)) {
-        throwRangeError(globalObject, scope, "language is not a well-formed language value"_s);
+    if (language && !isUnicodeLanguageSubtag(language)) {
+        throwRangeError(globalObject, scope, "language is not a well-formed language value"_si);
         return;
     }
 
-    String script = intlStringOption(globalObject, options, vm.propertyNames->script, { }, { }, { });
+    RefPtr<StringImpl> script = intlStringOption(globalObject, options, vm.propertyNames->script, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!script.isNull() && !isUnicodeScriptSubtag(script)) {
-        throwRangeError(globalObject, scope, "script is not a well-formed script value"_s);
+    if (script && !isUnicodeScriptSubtag(script)) {
+        throwRangeError(globalObject, scope, "script is not a well-formed script value"_si);
         return;
     }
 
-    String region = intlStringOption(globalObject, options, vm.propertyNames->region, { }, { }, { });
+    RefPtr<StringImpl> region = intlStringOption(globalObject, options, vm.propertyNames->region, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!region.isNull() && !isUnicodeRegionSubtag(region)) {
-        throwRangeError(globalObject, scope, "region is not a well-formed region value"_s);
+    if (region && !isUnicodeRegionSubtag(region)) {
+        throwRangeError(globalObject, scope, "region is not a well-formed region value"_si);
         return;
     }
 
-    String variants = intlStringOption(globalObject, options, vm.propertyNames->variants, { }, { }, { });
+    RefPtr<StringImpl> variants = intlStringOption(globalObject, options, vm.propertyNames->variants, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!variants.isNull()) {
+    if (variants) {
         constexpr auto variantsErrorMessage = "variants is not a well-formed variants value"_s;
-        if (variants.isEmpty() || variants.startsWith('-') || variants.endsWith('-') || variants.contains("--")) [[unlikely]] {
-            throwRangeError(globalObject, scope, variantsErrorMessage);
+        if (isEmpty(variants) || startsWith(variants, '-') || endsWith(variants, '-') || contains(variants, "--")) [[unlikely]] {
+            throwRangeError(globalObject, scope, StringImpl::create(variantsErrorMessage).ptr());
             return;
         }
-        auto variantList = variants.split('-');
+        auto variantList = split(variants, '-');
         if (variantList.size() == 1) {
             if (!isUnicodeVariantSubtag(variantList[0])) [[unlikely]] {
-                throwRangeError(globalObject, scope, variantsErrorMessage);
+                throwRangeError(globalObject, scope, StringImpl::create(variantsErrorMessage).ptr());
                 return;
             }
         } else {
-            UncheckedKeyHashSet<String> seenVariants;
+            UncheckedKeyHashSet<RefPtr<StringImpl>> seenVariants;
             for (auto variant : variantList) {
                 if (!isUnicodeVariantSubtag(variant)) [[unlikely]] {
-                    throwRangeError(globalObject, scope, variantsErrorMessage);
+                    throwRangeError(globalObject, scope, StringImpl::create(variantsErrorMessage).ptr());
                     return;
                 }
-                String lowerVariant = variant.convertToASCIILowercase();
+                RefPtr<StringImpl> lowerVariant = convertToASCIILowercase(variant);
                 if (seenVariants.contains(lowerVariant)) [[unlikely]] {
-                    throwRangeError(globalObject, scope, variantsErrorMessage);
+                    throwRangeError(globalObject, scope, StringImpl::create(variantsErrorMessage).ptr());
                     return;
                 }
                 seenVariants.add(lowerVariant);
@@ -415,7 +415,7 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
         }
     }
 
-    if (!language.isNull() || !script.isNull() || !region.isNull() || !variants.isNull()) {
+    if (language || script || region || variants) {
         if (!localeID.canonicalize()) {
             throwTypeError(globalObject, scope, "failed to initialize Locale"_s);
             return;
@@ -423,44 +423,44 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
         localeID.overrideLanguageScriptRegionVariants(language, script, region, variants);
     }
 
-    String calendar = intlStringOption(globalObject, options, vm.propertyNames->calendar, { }, { }, { });
+    RefPtr<StringImpl> calendar = intlStringOption(globalObject, options, vm.propertyNames->calendar, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!calendar.isNull()) {
+    if (calendar) {
         if (!isUnicodeLocaleIdentifierType(calendar) || !localeID.setKeywordValue("calendar"_s, calendar)) {
-            throwRangeError(globalObject, scope, "calendar is not a well-formed calendar value"_s);
+            throwRangeError(globalObject, scope, "calendar is not a well-formed calendar value"_si);
             return;
         }
     }
 
-    String collation = intlStringOption(globalObject, options, vm.propertyNames->collation, { }, { }, { });
+    RefPtr<StringImpl> collation = intlStringOption(globalObject, options, vm.propertyNames->collation, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!collation.isNull()) {
+    if (collation) {
         if (!isUnicodeLocaleIdentifierType(collation) || !localeID.setKeywordValue("collation"_s, collation)) {
-            throwRangeError(globalObject, scope, "collation is not a well-formed collation value"_s);
+            throwRangeError(globalObject, scope, "collation is not a well-formed collation value"_si);
             return;
         }
     }
 
-    String firstDayOfWeek = intlStringOption(globalObject, options, vm.propertyNames->firstDayOfWeek, { }, { }, { });
+    RefPtr<StringImpl> firstDayOfWeek = intlStringOption(globalObject, options, vm.propertyNames->firstDayOfWeek, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!firstDayOfWeek.isNull()) {
+    if (firstDayOfWeek) {
         auto fw = weekdayToString(firstDayOfWeek);
         if (!isUnicodeLocaleIdentifierType(fw) || !localeID.setKeywordValue("fw"_s, fw)) {
-            throwRangeError(globalObject, scope, "firstDayOfWeek is not a well-formed firstDayOfWeek value"_s);
+            throwRangeError(globalObject, scope, "firstDayOfWeek is not a well-formed firstDayOfWeek value"_si);
             return;
         }
     }
 
-    String hourCycle = intlStringOption(globalObject, options, vm.propertyNames->hourCycle, { "h11"_s, "h12"_s, "h23"_s, "h24"_s }, "hourCycle must be \"h11\", \"h12\", \"h23\", or \"h24\""_s, { });
+    RefPtr<StringImpl> hourCycle = intlStringOption(globalObject, options, vm.propertyNames->hourCycle, { "h11"_s, "h12"_s, "h23"_s, "h24"_s }, "hourCycle must be \"h11\", \"h12\", \"h23\", or \"h24\""_s, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!hourCycle.isNull()) {
+    if (hourCycle) {
         bool success = localeID.setKeywordValue("hours"_s, hourCycle);
         ASSERT_UNUSED(success, success);
     }
 
-    String caseFirst = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper"_s, "lower"_s, "false"_s }, "caseFirst must be either \"upper\", \"lower\", or \"false\""_s, { });
+    RefPtr<StringImpl> caseFirst = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper"_s, "lower"_s, "false"_s }, "caseFirst must be either \"upper\", \"lower\", or \"false\""_s, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!caseFirst.isNull()) {
+    if (caseFirst) {
         bool success = localeID.setKeywordValue("colcasefirst"_s, caseFirst);
         ASSERT_UNUSED(success, success);
     }
@@ -472,11 +472,11 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
         ASSERT_UNUSED(success, success);
     }
 
-    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
+    RefPtr<StringImpl> numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!numberingSystem.isNull()) {
+    if (numberingSystem) {
         if (!isUnicodeLocaleIdentifierType(numberingSystem) || !localeID.setKeywordValue("numbers"_s, numberingSystem)) {
-            throwRangeError(globalObject, scope, "numberingSystem is not a well-formed numbering system value"_s);
+            throwRangeError(globalObject, scope, "numberingSystem is not a well-formed numbering system value"_si);
             return;
         }
     }
@@ -492,9 +492,9 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.maximize
-const String& IntlLocale::maximal()
+const RefPtr<StringImpl>& IntlLocale::maximal()
 {
-    if (m_maximal.isNull()) {
+    if (!m_maximal) {
         // Always maximize only the base name (without keywords/extensions), then
         // merge extensions back. This avoids ICU issues with long locale IDs
         // (ULOC_FULLNAME_CAPACITY limitation) and also works around uloc_toLanguageTag
@@ -536,7 +536,7 @@ const String& IntlLocale::maximal()
         auto keywordSepPos = WTF::find(m_localeID.span(), ULOC_KEYWORD_SEPARATOR);
         if (keywordSepPos == notFound) {
             m_maximal = languageTagForLocaleID(maxBase.span().data());
-            if (m_maximal.isNull())
+            if (!m_maximal)
                 m_maximal = toString();
             return m_maximal;
         }
@@ -549,17 +549,17 @@ const String& IntlLocale::maximal()
         merged.append('\0');
 
         m_maximal = languageTagForLocaleID(merged.span().data());
-        if (m_maximal.isNull()) {
+        if (!m_maximal) {
             // uloc_toLanguageTag failed — non-Unicode keywords caused the failure.
             // Strip non-Unicode (single-char) keywords, convert to BCP 47 (preserving
             // Unicode extensions like -u-), then append stored non-Unicode extensions.
             auto cleanID = buildLocaleIDWithUnicodeKeywords(merged.span().data());
             m_maximal = languageTagForLocaleID(cleanID.span().data());
-            if (m_maximal.isNull())
+            if (!m_maximal)
                 m_maximal = languageTagForLocaleID(maxBase.span().data());
-            if (m_maximal.isNull())
+            if (!m_maximal)
                 m_maximal = baseName();
-            if (!m_nonUnicodeExtensions.isNull())
+            if (m_nonUnicodeExtensions)
                 m_maximal = makeString(m_maximal, m_nonUnicodeExtensions);
         }
     }
@@ -567,9 +567,9 @@ const String& IntlLocale::maximal()
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.minimize
-const String& IntlLocale::minimal()
+const RefPtr<StringImpl>& IntlLocale::minimal()
 {
-    if (m_minimal.isNull()) {
+    if (!m_minimal) {
         // Same approach as maximal(): minimize only the base name, then merge extensions.
         // FIXME: ICU tracking bug https://unicode-org.atlassian.net/browse/ICU-21639.
 
@@ -604,7 +604,7 @@ const String& IntlLocale::minimal()
         auto keywordSepPos = WTF::find(m_localeID.span(), ULOC_KEYWORD_SEPARATOR);
         if (keywordSepPos == notFound) {
             m_minimal = languageTagForLocaleID(minBase.span().data());
-            if (m_minimal.isNull())
+            if (!m_minimal)
                 m_minimal = toString();
             return m_minimal;
         }
@@ -616,14 +616,14 @@ const String& IntlLocale::minimal()
         merged.append('\0');
 
         m_minimal = languageTagForLocaleID(merged.span().data());
-        if (m_minimal.isNull()) {
+        if (!m_minimal) {
             auto cleanID = buildLocaleIDWithUnicodeKeywords(merged.span().data());
             m_minimal = languageTagForLocaleID(cleanID.span().data());
-            if (m_minimal.isNull())
+            if (!m_minimal)
                 m_minimal = languageTagForLocaleID(minBase.span().data());
-            if (m_minimal.isNull())
+            if (!m_minimal)
                 m_minimal = baseName();
-            if (!m_nonUnicodeExtensions.isNull())
+            if (m_nonUnicodeExtensions)
                 m_minimal = makeString(m_minimal, m_nonUnicodeExtensions);
         }
     }
@@ -631,18 +631,18 @@ const String& IntlLocale::minimal()
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.toString
-const String& IntlLocale::toString()
+const RefPtr<StringImpl>& IntlLocale::toString()
 {
-    if (m_fullString.isNull()) {
+    if (!m_fullString) {
         m_fullString = languageTagForLocaleID(m_localeID.data());
-        if (m_fullString.isNull()) {
+        if (!m_fullString) {
             // uloc_toLanguageTag failed — strip non-Unicode keywords and retry,
             // then append stored non-Unicode BCP 47 extensions.
             auto cleanID = buildLocaleIDWithUnicodeKeywords(m_localeID.data());
             m_fullString = languageTagForLocaleID(cleanID.span().data());
-            if (m_fullString.isNull())
+            if (!m_fullString)
                 m_fullString = baseName();
-            if (!m_nonUnicodeExtensions.isNull())
+            if (m_nonUnicodeExtensions)
                 m_fullString = makeString(m_fullString, m_nonUnicodeExtensions);
         }
     }
@@ -650,9 +650,9 @@ const String& IntlLocale::toString()
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.baseName
-const String& IntlLocale::baseName()
+const RefPtr<StringImpl>& IntlLocale::baseName()
 {
-    if (m_baseName.isNull()) {
+    if (!m_baseName) {
         UErrorCode status = U_ZERO_ERROR;
         Vector<char, 32> buffer(32);
         auto bufferLength = uloc_getBaseName(m_localeID.data(), buffer.mutableSpan().data(), buffer.size(), &status);
@@ -669,56 +669,56 @@ const String& IntlLocale::baseName()
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.language
-const String& IntlLocale::language()
+const RefPtr<StringImpl>& IntlLocale::language()
 {
-    if (m_language.isNull()) {
+    if (!m_language) {
         Vector<char, 8> buffer;
         auto status = callBufferProducingFunction(uloc_getLanguage, m_localeID.data(), buffer);
         ASSERT_UNUSED(status, U_SUCCESS(status));
         if (!buffer.size())
-            m_language = "und"_s;
+            m_language = "und"_si;
         else
-            m_language = String::fromLatin1(buffer.span());
+            m_language = StringImpl::fromLatin1(buffer.span());
     }
     return m_language;
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.script
-const String& IntlLocale::script()
+const RefPtr<StringImpl>& IntlLocale::script()
 {
-    if (m_script.isNull()) {
+    if (!m_script) {
         Vector<char, 4> buffer;
         auto status = callBufferProducingFunction(uloc_getScript, m_localeID.data(), buffer);
         ASSERT_UNUSED(status, U_SUCCESS(status));
-        m_script = String::fromLatin1(buffer.span());
+        m_script = StringImpl::fromLatin1(buffer.span());
     }
     return m_script;
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.region
-const String& IntlLocale::region()
+const RefPtr<StringImpl>& IntlLocale::region()
 {
-    if (m_region.isNull()) {
+    if (!m_region) {
         Vector<char, 3> buffer;
         auto status = callBufferProducingFunction(uloc_getCountry, m_localeID.data(), buffer);
         ASSERT_UNUSED(status, U_SUCCESS(status));
-        m_region = String::fromLatin1(buffer.span());
+        m_region = StringImpl::fromLatin1(buffer.span());
     }
     return m_region;
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.variants
-const String& IntlLocale::variants()
+const RefPtr<StringImpl>& IntlLocale::variants()
 {
-    if (m_variants.isNull()) {
-        const String& baseNameValue = baseName();
-        Vector<String> variantParts;
-        if (!baseNameValue.isEmpty()) {
-            auto parts = baseNameValue.split('-');
+    if (!m_variants) {
+        const RefPtr<StringImpl>& baseNameValue = baseName();
+        Vector<RefPtr<StringImpl>> variantParts;
+        if (!isEmpty(baseNameValue)) {
+            auto parts = split(baseNameValue, '-');
             for (size_t i = 1; i < parts.size(); i++) {
-                const String& part = parts[i];
+                const RefPtr<StringImpl>& part = parts[i];
                 if (isUnicodeVariantSubtag(part))
-                    variantParts.append(part.convertToASCIILowercase());
+                    variantParts.append(convertToASCIILowercase(part));
             }
         }
         if (variantParts.size() > 0) {
@@ -738,7 +738,7 @@ const String& IntlLocale::variants()
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.calendar
-const String& IntlLocale::calendar()
+const RefPtr<StringImpl>& IntlLocale::calendar()
 {
     if (!m_calendar)
         m_calendar = keywordValue("calendar"_s);
@@ -746,7 +746,7 @@ const String& IntlLocale::calendar()
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.caseFirst
-const String& IntlLocale::caseFirst()
+const RefPtr<StringImpl>& IntlLocale::caseFirst()
 {
     if (!m_caseFirst)
         m_caseFirst = keywordValue("colcasefirst"_s);
@@ -754,7 +754,7 @@ const String& IntlLocale::caseFirst()
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.collation
-const String& IntlLocale::collation()
+const RefPtr<StringImpl>& IntlLocale::collation()
 {
     if (!m_collation)
         m_collation = keywordValue("collation"_s);
@@ -762,7 +762,7 @@ const String& IntlLocale::collation()
 }
 
 // https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.firstDayOfWeek
-const String& IntlLocale::firstDayOfWeek()
+const RefPtr<StringImpl>& IntlLocale::firstDayOfWeek()
 {
     if (!m_firstDayOfWeek)
         m_firstDayOfWeek = keywordValue("fw"_s);
@@ -770,7 +770,7 @@ const String& IntlLocale::firstDayOfWeek()
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.hourCycle
-const String& IntlLocale::hourCycle()
+const RefPtr<StringImpl>& IntlLocale::hourCycle()
 {
     if (!m_hourCycle)
         m_hourCycle = keywordValue("hours"_s);
@@ -778,7 +778,7 @@ const String& IntlLocale::hourCycle()
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.numberingSystem
-const String& IntlLocale::numberingSystem()
+const RefPtr<StringImpl>& IntlLocale::numberingSystem()
 {
     if (!m_numberingSystem)
         m_numberingSystem = keywordValue("numbers"_s);
@@ -790,7 +790,7 @@ TriState IntlLocale::numeric()
 {
     constexpr bool isBoolean = true;
     if (m_numeric == TriState::Indeterminate)
-        m_numeric = triState(keywordValue("colnumeric"_s, isBoolean) == "yes"_s);
+        m_numeric = triState(equal(keywordValue("colnumeric"_s, isBoolean), "yes"_s));
     return m_numeric;
 }
 
@@ -799,10 +799,10 @@ JSArray* IntlLocale::calendars(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Vector<String, 1> elements;
+    Vector<RefPtr<StringImpl>, 1> elements;
 
-    String preferred = calendar();
-    if (!preferred.isEmpty()) {
+    RefPtr<StringImpl> preferred = calendar();
+    if (!isEmpty(preferred)) {
         elements.append(WTF::move(preferred));
         RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
     }
@@ -818,7 +818,7 @@ JSArray* IntlLocale::calendars(JSGlobalObject* globalObject)
     const char* pointer;
     int32_t length = 0;
     while ((pointer = uenum_next(calendars.get(), &length, &status)) && U_SUCCESS(status)) {
-        String calendar = String::fromLatin1(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
+        RefPtr<StringImpl> calendar = StringImpl::fromLatin1(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
         if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
             calendar = WTF::move(mapped.value());
 
@@ -841,10 +841,10 @@ JSArray* IntlLocale::collations(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Vector<String, 1> elements;
+    Vector<RefPtr<StringImpl>, 1> elements;
 
-    String preferred = collation();
-    if (!preferred.isEmpty()) {
+    RefPtr<StringImpl> preferred = collation();
+    if (!isEmpty(preferred)) {
         elements.append(WTF::move(preferred));
         RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
     }
@@ -860,9 +860,9 @@ JSArray* IntlLocale::collations(JSGlobalObject* globalObject)
     const char* pointer;
     int32_t length = 0;
     while ((pointer = uenum_next(enumeration.get(), &length, &status)) && U_SUCCESS(status)) {
-        String collation = String::fromLatin1(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
+        RefPtr<StringImpl> collation = StringImpl::fromLatin1(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
         // 1.1.3 step 4, The values "standard" and "search" must be excluded from list.
-        if (collation == "standard"_s || collation == "search"_s)
+        if (equal(collation, "standard"_s) || equal(collation, "search"_s))
             continue;
         if (auto mapped = mapICUCollationKeywordToBCP47(collation))
             elements.append(WTF::move(mapped.value()));
@@ -875,7 +875,7 @@ JSArray* IntlLocale::collations(JSGlobalObject* globalObject)
     }
 
     std::ranges::sort(elements.mutableSpan(),
-        [](const String& a, const String& b) {
+        [](StringImpl* a, StringImpl* b) {
             return WTF::codePointCompare(a, b) < 0;
         });
 
@@ -887,10 +887,10 @@ JSArray* IntlLocale::hourCycles(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Vector<String, 1> elements;
+    Vector<RefPtr<StringImpl>, 1> elements;
 
-    String preferred = hourCycle();
-    if (!preferred.isEmpty()) {
+    RefPtr<StringImpl> preferred = hourCycle();
+    if (!isEmpty(preferred)) {
         elements.append(WTF::move(preferred));
         RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
     }
@@ -942,9 +942,9 @@ JSArray* IntlLocale::numberingSystems(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Vector<String, 1> elements;
-    String preferred = numberingSystem();
-    if (!preferred.isEmpty()) {
+    Vector<RefPtr<StringImpl>, 1> elements;
+    RefPtr<StringImpl> preferred = numberingSystem();
+    if (!isEmpty(preferred)) {
         elements.append(WTF::move(preferred));
         RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
     }
@@ -955,7 +955,7 @@ JSArray* IntlLocale::numberingSystems(JSGlobalObject* globalObject)
         throwTypeError(globalObject, scope, "invalid locale"_s);
         return nullptr;
     }
-    elements.append(String::fromLatin1(unumsys_getName(numberingSystem.get())));
+    elements.append(StringImpl::fromLatin1(unumsys_getName(numberingSystem.get())));
 
     RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
 }
@@ -965,15 +965,15 @@ JSValue IntlLocale::timeZones(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Vector<String, 1> elements;
+    Vector<RefPtr<StringImpl>, 1> elements;
 
     // 11.6-3 Let region be the substring of locale corresponding to the unicode_region_subtag production of the unicode_language_id.
-    String region = this->region();
-    if (region.isEmpty())
+    RefPtr<StringImpl> region = this->region();
+    if (isEmpty(region))
         return jsUndefined();
 
     UErrorCode status = U_ZERO_ERROR;
-    auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_openTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL, region.ascii().data(), nullptr, &status));
+    auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_openTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL, ascii(region).data(), nullptr, &status));
     if (!U_SUCCESS(status)) {
         throwTypeError(globalObject, scope, "invalid locale"_s);
         return { };
@@ -982,14 +982,14 @@ JSValue IntlLocale::timeZones(JSGlobalObject* globalObject)
     int32_t length;
     const char* collation;
     while ((collation = uenum_next(enumeration.get(), &length, &status)) && U_SUCCESS(status))
-        elements.append(String::fromLatin1(unsafeMakeSpan(collation, static_cast<size_t>(length))));
+        elements.append(StringImpl::fromLatin1(unsafeMakeSpan(collation, static_cast<size_t>(length))));
     if (!U_SUCCESS(status)) {
         throwTypeError(globalObject, scope, "invalid locale"_s);
         return { };
     }
 
     std::ranges::sort(elements.mutableSpan(),
-        [](const String& a, const String& b) {
+        [](StringImpl* a, StringImpl* b) {
             return WTF::codePointCompare(a, b) < 0;
         });
 
@@ -1012,16 +1012,16 @@ JSObject* IntlLocale::textInfo(JSGlobalObject* globalObject)
     switch (layout) {
     default:
     case ULOC_LAYOUT_LTR:
-        layoutString = jsNontrivialString(vm, "ltr"_s);
+        layoutString = jsNontrivialString(vm, "ltr"_si);
         break;
     case ULOC_LAYOUT_RTL:
-        layoutString = jsNontrivialString(vm, "rtl"_s);
+        layoutString = jsNontrivialString(vm, "rtl"_si);
         break;
     case ULOC_LAYOUT_TTB:
-        layoutString = jsNontrivialString(vm, "ttb"_s);
+        layoutString = jsNontrivialString(vm, "ttb"_si);
         break;
     case ULOC_LAYOUT_BTT:
-        layoutString = jsNontrivialString(vm, "btt"_s);
+        layoutString = jsNontrivialString(vm, "btt"_si);
         break;
     }
 

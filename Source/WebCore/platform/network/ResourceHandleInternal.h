@@ -80,12 +80,12 @@ public:
     ResourceHandleClient* m_client;
     ResourceRequest m_firstRequest;
     ResourceRequest m_previousRequest;
-    String m_lastHTTPMethod;
-    String m_partition;
+    RefPtr<StringImpl> m_lastHTTPMethod;
+    RefPtr<StringImpl> m_partition;
 
     // Suggested credentials for the current redirection step.
-    String m_user;
-    String m_password;
+    RefPtr<StringImpl> m_user;
+    RefPtr<StringImpl> m_password;
     
     Credential m_initialCredential;
     

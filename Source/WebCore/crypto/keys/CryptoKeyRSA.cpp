@@ -34,14 +34,14 @@ namespace WebCore {
 
 RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm, std::optional<CryptoAlgorithmIdentifier> hash, JsonWebKey&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
-    if (keyData.kty != "RSA"_s)
+    if (!equal(keyData.kty, "RSA"_s))
         return nullptr;
     if (keyData.key_ops && ((keyData.usages & usages) != usages))
         return nullptr;
     if (keyData.ext && !keyData.ext.value() && extractable)
         return nullptr;
 
-    if (keyData.n.isNull() || keyData.e.isNull())
+    if (!keyData.n || !keyData.e)
         return nullptr;
     auto modulus = base64URLDecode(keyData.n);
     if (!modulus)
@@ -52,7 +52,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
     auto exponent = base64URLDecode(keyData.e);
     if (!exponent)
         return nullptr;
-    if (keyData.d.isNull()) {
+    if (!keyData.d) {
         // import public key
         auto publicKeyComponents = CryptoKeyRSAComponents::createPublic(WTF::move(*modulus), WTF::move(*exponent));
         // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is std::nullopt.
@@ -63,13 +63,13 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
     auto privateExponent = base64URLDecode(keyData.d);
     if (!privateExponent)
         return nullptr;
-    if (keyData.p.isNull() && keyData.q.isNull() && keyData.dp.isNull() && keyData.dp.isNull() && keyData.qi.isNull()) {
+    if (!keyData.p && !keyData.q && !keyData.dp && !keyData.dp && !keyData.qi) {
         auto privateKeyComponents = CryptoKeyRSAComponents::createPrivate(WTF::move(*modulus), WTF::move(*exponent), WTF::move(*privateExponent));
         // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is std::nullopt.
         return CryptoKeyRSA::create(algorithm, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, *privateKeyComponents, extractable, usages);
     }
 
-    if (keyData.p.isNull() || keyData.q.isNull() || keyData.dp.isNull() || keyData.dq.isNull() || keyData.qi.isNull())
+    if (!keyData.p || !keyData.q || !keyData.dp || !keyData.dq || !keyData.qi)
         return nullptr;
     
     auto firstPrimeFactor = base64URLDecode(keyData.p);
@@ -131,7 +131,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
 JsonWebKey CryptoKeyRSA::exportJwk() const
 {
     JsonWebKey result;
-    result.kty = "RSA"_s;
+    result.kty = "RSA"_si;
     result.key_ops = usages();
     result.usages = usagesBitmap();
     result.ext = extractable();

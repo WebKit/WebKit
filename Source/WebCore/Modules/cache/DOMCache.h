@@ -40,7 +40,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    static Ref<DOMCache> create(ScriptExecutionContext&, String&&, DOMCacheIdentifier, Ref<CacheStorageConnection>&&);
+    static Ref<DOMCache> create(ScriptExecutionContext&, RefPtr<StringImpl>&&, DOMCacheIdentifier, Ref<CacheStorageConnection>&&);
     ~DOMCache();
 
     using RequestInfo = FetchRequest::Info;
@@ -58,7 +58,7 @@ public:
     void remove(RequestInfo&&, CacheQueryOptions&&, DOMPromiseDeferred<IDLBoolean>&&);
     void keys(std::optional<RequestInfo>&&, CacheQueryOptions&&, KeysPromise&&);
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     DOMCacheIdentifier identifier() const { return m_identifier; }
 
     using MatchCallback = CompletionHandler<void(ExceptionOr<RefPtr<FetchResponse>>)>;
@@ -67,7 +67,7 @@ public:
     CacheStorageConnection& connection() { return m_connection.get(); }
 
 private:
-    DOMCache(ScriptExecutionContext&, String&& name, DOMCacheIdentifier, Ref<CacheStorageConnection>&&);
+    DOMCache(ScriptExecutionContext&, RefPtr<StringImpl>&& name, DOMCacheIdentifier, Ref<CacheStorageConnection>&&);
 
     ExceptionOr<Ref<FetchRequest>> requestFromInfo(RequestInfo&&, bool ignoreMethod, bool* requestValidationFailed = nullptr);
 
@@ -87,7 +87,7 @@ private:
     Vector<Ref<FetchResponse>> cloneResponses(const Vector<DOMCacheEngine::Record>&, MonotonicTime);
     DOMCacheEngine::Record toConnectionRecord(const FetchRequest&, FetchResponse&, DOMCacheEngine::ResponseBody&&);
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
     DOMCacheIdentifier m_identifier;
     const Ref<CacheStorageConnection> m_connection;
 

@@ -63,34 +63,34 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioWorkletNode);
 
-ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject& globalObject, BaseAudioContext& context, String&& name, AudioWorkletNodeOptions&& options)
+ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject& globalObject, BaseAudioContext& context, RefPtr<StringImpl>&& name, AudioWorkletNodeOptions&& options)
 {
     if (!options.numberOfInputs && !options.numberOfOutputs)
-        return Exception { ExceptionCode::NotSupportedError, "Number of inputs and outputs cannot both be 0"_s };
+        return Exception { ExceptionCode::NotSupportedError, "Number of inputs and outputs cannot both be 0"_si };
 
     if (options.numberOfInputs > UINT16_MAX)
-        return Exception { ExceptionCode::RangeError, "Number of inputs is out of range"_s };
+        return Exception { ExceptionCode::RangeError, "Number of inputs is out of range"_si };
 
     if (options.numberOfOutputs > UINT16_MAX)
-        return Exception { ExceptionCode::RangeError, "Number of outputs is out of range"_s };
+        return Exception { ExceptionCode::RangeError, "Number of outputs is out of range"_si };
 
     if (options.outputChannelCount) {
         if (options.numberOfOutputs != options.outputChannelCount->size())
-            return Exception { ExceptionCode::IndexSizeError, "Length of specified outputChannelCount does not match the given number of outputs"_s };
+            return Exception { ExceptionCode::IndexSizeError, "Length of specified outputChannelCount does not match the given number of outputs"_si };
 
         for (auto& channelCount : *options.outputChannelCount) {
             if (channelCount < 1 || channelCount > AudioContext::maxNumberOfChannels)
-                return Exception { ExceptionCode::NotSupportedError, "Provided number of channels for output is outside supported range"_s };
+                return Exception { ExceptionCode::NotSupportedError, "Provided number of channels for output is outside supported range"_si };
         }
     }
 
     auto it = context.parameterDescriptorMap().find(name);
     if (it == context.parameterDescriptorMap().end())
-        return Exception { ExceptionCode::InvalidStateError, "No ScriptProcessor was registered with this name"_s };
+        return Exception { ExceptionCode::InvalidStateError, "No ScriptProcessor was registered with this name"_si };
     auto& parameterDescriptors = it->value;
 
     if (!context.scriptExecutionContext())
-        return Exception { ExceptionCode::InvalidStateError, "Audio context's frame is detached"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Audio context's frame is detached"_si };
 
     auto messageChannel = MessageChannel::create(*protect(context.scriptExecutionContext()));
     Ref nodeMessagePort = messageChannel->port1();
@@ -131,7 +131,7 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
     return node;
 }
 
-AudioWorkletNode::AudioWorkletNode(BaseAudioContext& context, const String& name, AudioWorkletNodeOptions&& options, Ref<MessagePort>&& port)
+AudioWorkletNode::AudioWorkletNode(BaseAudioContext& context, StringImpl* name, AudioWorkletNodeOptions&& options, Ref<MessagePort>&& port)
     : AudioNode(context, NodeTypeWorklet)
     , ActiveDOMObject(protect(context.scriptExecutionContext()))
     , m_name(name)
@@ -171,7 +171,7 @@ AudioWorkletNode::~AudioWorkletNode()
     uninitialize();
 }
 
-void AudioWorkletNode::initializeAudioParameters(const Vector<AudioParamDescriptor>& descriptors, const std::optional<Vector<KeyValuePair<String, double>>>& paramValues)
+void AudioWorkletNode::initializeAudioParameters(const Vector<AudioParamDescriptor>& descriptors, const std::optional<Vector<KeyValuePair<RefPtr<StringImpl>, double>>>& paramValues)
 {
     ASSERT(isMainThread());
     ASSERT(m_parameters->map().isEmpty());
@@ -344,17 +344,17 @@ void AudioWorkletNode::fireProcessorErrorOnMainThread(ProcessorError error, std:
     // Heap allocations are forbidden on the audio thread for performance reasons so we need to
     // explicitly allow the following allocation(s).
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-    String sourceURL = exceptionDetails ? exceptionDetails->sourceURL.isolatedCopy() : String { };
+    RefPtr<StringImpl> sourceURL = exceptionDetails ? isolatedCopy(exceptionDetails->sourceURL) : nullptr;
     unsigned lineNumber = exceptionDetails ? exceptionDetails->lineNumber : 0;
     unsigned columnNumber = exceptionDetails ? exceptionDetails->columnNumber : 0;
     callOnMainThread([this, protectedThis = Ref { *this }, error, sourceURL = WTF::move(sourceURL), lineNumber, columnNumber]() mutable {
-        String errorMessage;
+        RefPtr<StringImpl> errorMessage;
         switch (error) {
         case ProcessorError::ConstructorError:
-            errorMessage = "An error was thrown from AudioWorkletProcessor constructor"_s;
+            errorMessage = "An error was thrown from AudioWorkletProcessor constructor"_si;
             break;
         case ProcessorError::ProcessError:
-            errorMessage = "An error was thrown from AudioWorkletProcessor::process() method"_s;
+            errorMessage = "An error was thrown from AudioWorkletProcessor::process() method"_si;
             break;
         }
         queueTaskToDispatchEvent(*this, TaskSource::MediaElement, ErrorEvent::create(eventNames().processorerrorEvent, errorMessage, sourceURL, lineNumber, columnNumber));

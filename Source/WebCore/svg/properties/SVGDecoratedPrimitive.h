@@ -45,7 +45,7 @@ protected:
     void setValueInternal(const DecorationType& value) override { m_value = static_cast<PropertyType>(value); }
     DecorationType valueInternal() const override { return static_cast<DecorationType>(m_value); }
 
-    String valueAsString() const override { return SVGPropertyTraits<PropertyType>::toString(m_value); }
+    RefPtr<StringImpl> valueAsString() const override { return SVGPropertyTraits<PropertyType>::toString(m_value); }
 
     PropertyType m_value;
 };

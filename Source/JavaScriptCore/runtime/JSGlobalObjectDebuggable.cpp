@@ -52,11 +52,11 @@ JSGlobalObjectDebuggable::JSGlobalObjectDebuggable(JSGlobalObject& globalObject)
 {
 }
 
-String JSGlobalObjectDebuggable::name() const
+RefPtr<StringImpl> JSGlobalObjectDebuggable::name() const
 {
-    if (m_globalObject && !m_globalObject->name().isEmpty())
+    if (m_globalObject && !isEmpty(m_globalObject->name()))
         return m_globalObject->name();
-    return "JSContext"_s;
+    return "JSContext"_si;
 }
 
 void JSGlobalObjectDebuggable::connect(FrontendChannel& frontendChannel, bool automaticInspection, bool immediatelyPause)
@@ -78,7 +78,7 @@ void JSGlobalObjectDebuggable::disconnect(FrontendChannel& frontendChannel)
     protect(m_globalObject->inspectorController())->disconnectFrontend(frontendChannel);
 }
 
-void JSGlobalObjectDebuggable::dispatchMessageFromRemote(String&& message)
+void JSGlobalObjectDebuggable::dispatchMessageFromRemote(RefPtr<StringImpl>&& message)
 {
     if (!m_globalObject)
         return;

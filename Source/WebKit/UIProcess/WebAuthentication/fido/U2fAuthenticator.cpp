@@ -39,7 +39,7 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
 
-#define U2F_RELEASE_LOG(fmt, ...) RELEASE_LOG(WebAuthn, "%p [transport=%s] - U2fAuthenticator::" fmt, this, transportForDebugging().utf8(), ##__VA_ARGS__)
+#define U2F_RELEASE_LOG(fmt, ...) RELEASE_LOG(WebAuthn, "%p [transport=%s] - U2fAuthenticator::" fmt, this, utf8(transportForDebugging()), ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -90,7 +90,7 @@ void U2fAuthenticator::issueRegisterCommand()
         U2F_RELEASE_LOG("issueRegisterCommand: request not convertible to U2F.");
         return;
     }
-    U2F_RELEASE_LOG("issueRegisterCommand: Sending %s", base64EncodeToString(*u2fCmd).utf8());
+    U2F_RELEASE_LOG("issueRegisterCommand: Sending %s", utf8(base64EncodeToString(*u2fCmd)));
     issueNewCommand(WTF::move(*u2fCmd), CommandType::RegisterCommand);
 }
 
@@ -118,7 +118,7 @@ void U2fAuthenticator::issueSignCommand(size_t index)
         U2F_RELEASE_LOG("issueSignCommand: request not convertible to U2F.");
         return;
     }
-    U2F_RELEASE_LOG("issueSignCommand: index: %lu Sending %s", index, base64EncodeToString(*u2fCmd).utf8());
+    U2F_RELEASE_LOG("issueSignCommand: index: %lu Sending %s", index, utf8(base64EncodeToString(*u2fCmd)));
     issueNewCommand(WTF::move(*u2fCmd), CommandType::SignCommand);
 }
 
@@ -132,7 +132,7 @@ void U2fAuthenticator::issueNewCommand(Vector<uint8_t>&& command, CommandType ty
 
 void U2fAuthenticator::issueCommand(const Vector<uint8_t>& command, CommandType type)
 {
-    U2F_RELEASE_LOG("issueCommand: Sending %s", base64EncodeToString(command).utf8());
+    U2F_RELEASE_LOG("issueCommand: Sending %s", utf8(base64EncodeToString(command)));
     protect(driver())->transact(Vector<uint8_t>(command), [weakThis = WeakPtr { *this }, type](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (RefPtr protectedThis = weakThis)
@@ -253,7 +253,7 @@ void U2fAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& a
         U2F_RELEASE_LOG("continueSignCommandAfterResponseReceived: m_isAppId=%d", m_isAppId);
         RefPtr<AuthenticatorAssertionResponse> response;
         if (m_isAppId) {
-            if (!(requestOptions.extensions && !requestOptions.extensions->appid.isNull())) {
+            if (!(requestOptions.extensions && !!requestOptions.extensions->appid)) {
                 U2F_RELEASE_LOG("continueSignCommandAfterResponseReceived: appid and m_isAppId mismatch");
                 ASSERT(false);
             }
@@ -278,7 +278,7 @@ void U2fAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& a
         return;
     case ApduResponse::Status::SW_WRONG_DATA:
         U2F_RELEASE_LOG("continueSignCommandAfterResponseReceived: SW_WRONG_DATA");
-        if (requestOptions.extensions && !requestOptions.extensions->appid.isNull()) {
+        if (requestOptions.extensions && requestOptions.extensions->appid) {
             if (!m_isAppId) {
                 U2F_RELEASE_LOG("continueSignCommandAfterResponseReceived: trying appID extension.");
                 m_isAppId = true;

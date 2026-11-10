@@ -34,13 +34,13 @@ class WebBroadcastChannelRegistry : public WebCore::BroadcastChannelRegistry, pu
 public:
     static Ref<WebBroadcastChannelRegistry> getOrCreate(bool privateSession);
 
-    void registerChannel(const WebCore::PartitionedSecurityOrigin&, const String& name, WebCore::BroadcastChannelIdentifier) final;
-    void unregisterChannel(const WebCore::PartitionedSecurityOrigin&, const String& name, WebCore::BroadcastChannelIdentifier) final;
-    void postMessage(const WebCore::PartitionedSecurityOrigin&, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&&, CompletionHandler<void()>&&) final;
+    void registerChannel(const WebCore::PartitionedSecurityOrigin&, StringImpl* name, WebCore::BroadcastChannelIdentifier) final;
+    void unregisterChannel(const WebCore::PartitionedSecurityOrigin&, StringImpl* name, WebCore::BroadcastChannelIdentifier) final;
+    void postMessage(const WebCore::PartitionedSecurityOrigin&, StringImpl* name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&&, CompletionHandler<void()>&&) final;
 
 private:
     WebBroadcastChannelRegistry() = default;
 
-    using NameToChannelIdentifiersMap = HashMap<String, Vector<WebCore::BroadcastChannelIdentifier>>;
+    using NameToChannelIdentifiersMap = HashMap<RefPtr<StringImpl>, Vector<WebCore::BroadcastChannelIdentifier>>;
     HashMap<WebCore::PartitionedSecurityOrigin, NameToChannelIdentifiersMap> m_channels;
 };

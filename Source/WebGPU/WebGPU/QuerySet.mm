@@ -46,7 +46,7 @@ RefPtr<WebGPU::QuerySet> Device::createQuerySet(const WebGPU::QuerySetDescriptor
     auto count = descriptor.count;
     constexpr auto maxCountAllowed = 4096;
     if (count > maxCountAllowed || !isValid()) {
-        generateAValidationError("GPUQuerySetDescriptor.count must be <= 4096"_s);
+        generateAValidationError("GPUQuerySetDescriptor.count must be <= 4096"_si);
         return QuerySet::createInvalid(*this);
     }
 
@@ -59,7 +59,7 @@ RefPtr<WebGPU::QuerySet> Device::createQuerySet(const WebGPU::QuerySetDescriptor
         return QuerySet::create(WTF::move(querySetWithOffset), count, WebGPU::QueryType::Timestamp, *this);
     } case WebGPU::QueryType::Occlusion: {
         auto buffer = safeCreateBuffer(sizeof(uint64_t) * count, MTLStorageModePrivate);
-        buffer.label = descriptor.label.createNSString().get();
+        buffer.label = createNSString(descriptor.label).get();
         return QuerySet::create(buffer, count, WebGPU::QueryType::Occlusion, *this);
     }
     }
@@ -114,9 +114,9 @@ void QuerySet::destroy()
     m_device->makeSubmitInvalidClearingEncoders(m_commandEncoders);
 }
 
-void QuerySet::setLabel(String&& label)
+void QuerySet::setLabel(RefPtr<StringImpl>&& label)
 {
-    m_visibilityBuffer.label = label.createNSString().get();
+    m_visibilityBuffer.label = createNSString(label).get();
     // MTLCounterSampleBuffer's label property is read-only.
 }
 

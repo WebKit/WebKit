@@ -30,11 +30,11 @@ namespace WebCore {
 
 namespace HTTPHeaderValues {
 
-const String& textPlainContentType();
-const String& formURLEncodedContentType();
-WEBCORE_EXPORT const String& applicationJSONContentType();
-const String& noCache();
-WEBCORE_EXPORT const String& maxAge0();
+const RefPtr<StringImpl>& textPlainContentType();
+const RefPtr<StringImpl>& formURLEncodedContentType();
+WEBCORE_EXPORT const RefPtr<StringImpl>& applicationJSONContentType();
+const RefPtr<StringImpl>& noCache();
+WEBCORE_EXPORT const RefPtr<StringImpl>& maxAge0();
 }
 
 }

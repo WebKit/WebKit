@@ -59,7 +59,7 @@ public:
     static Ref<GStreamerInternalAudioEncoder> create(AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element) { return adoptRef(*new GStreamerInternalAudioEncoder(WTF::move(descriptionCallback), WTF::move(outputCallback), WTF::move(element))); }
     ~GStreamerInternalAudioEncoder();
 
-    String initialize(const String& codecName, const AudioEncoder::Config&);
+    RefPtr<StringImpl> initialize(StringImpl* codecName, const AudioEncoder::Config&);
     bool encode(AudioEncoder::RawFrame&&);
     void flush();
     void close() { m_isClosed = true; }
@@ -83,7 +83,7 @@ private:
     GRefPtr<GstCaps> m_inputCaps;
 };
 
-Ref<AudioEncoder::CreatePromise> GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
+Ref<AudioEncoder::CreatePromise> GStreamerAudioEncoder::create(StringImpl* codecName, const AudioEncoder::Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
     if (!ensureGStreamerInitialized()) [[unlikely]]
         return CreatePromise::createAndReject("GStreamer initialization failed"_s);
@@ -94,8 +94,8 @@ Ref<AudioEncoder::CreatePromise> GStreamerAudioEncoder::create(const String& cod
     });
 
     GRefPtr<GstElement> element;
-    if (codecName.startsWith("pcm-"_s)) {
-        auto components = codecName.split('-');
+    if (startsWith(codecName, "pcm-"_s)) {
+        auto components = split(codecName, '-');
         if (components.size() != 2)
             return CreatePromise::createAndReject(makeString("Invalid LPCM codec string: "_s, codecName));
         element = gst_element_factory_make("identity", nullptr);
@@ -108,8 +108,8 @@ Ref<AudioEncoder::CreatePromise> GStreamerAudioEncoder::create(const String& cod
     }
     auto internalEncoder = GStreamerInternalAudioEncoder::create(WTF::move(descriptionCallback), WTF::move(outputCallback), WTF::move(element));
     auto error = internalEncoder->initialize(codecName, config);
-    if (!error.isEmpty()) {
-        GST_WARNING("Error creating encoder: %s", error.ascii().data());
+    if (!isEmpty(error)) {
+        GST_WARNING("Error creating encoder: %s", ascii(error).data());
         return CreatePromise::createAndReject(makeString("GStreamer encoding initialization failed with error: "_s, codecName));
     }
     auto encoder = adoptRef(*new GStreamerAudioEncoder(WTF::move(internalEncoder)));
@@ -166,7 +166,7 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::Descr
     static Atomic<uint64_t> counter = 0;
     auto binName = makeString("audio-encoder-"_s, unsafeSpan(GST_OBJECT_NAME(m_encoder.get())), '-', counter.exchangeAdd(1));
 
-    GRefPtr<GstElement> harnessedElement = gst_bin_new(binName.ascii().data());
+    GRefPtr<GstElement> harnessedElement = gst_bin_new(ascii(binName).data());
     auto audioconvert = gst_element_factory_make("audioconvert", nullptr);
     auto audioresample = gst_element_factory_make("audioresample", nullptr);
     m_inputCapsFilter = gst_element_factory_make("capsfilter", nullptr);
@@ -251,17 +251,17 @@ GStreamerInternalAudioEncoder::~GStreamerInternalAudioEncoder()
     g_signal_handlers_disconnect_by_data(pad.get(), this);
 }
 
-String GStreamerInternalAudioEncoder::initialize(const String& codecName, const AudioEncoder::Config& config)
+RefPtr<StringImpl> GStreamerInternalAudioEncoder::initialize(StringImpl* codecName, const AudioEncoder::Config& config)
 {
-    GST_DEBUG_OBJECT(m_harness->element(), "Initializing encoder for codec %s", codecName.ascii().data());
+    GST_DEBUG_OBJECT(m_harness->element(), "Initializing encoder for codec %s", ascii(codecName).data());
 
     auto name = GMallocString::unsafeAdoptFromUTF8(gst_element_get_name(m_encoder.get()));
-    if (codecName.startsWith("mp4a"_s)) {
+    if (startsWith(codecName, "mp4a"_s)) {
         m_outputCaps = adoptGRef(gst_caps_new_simple("audio/mpeg", "mpegversion", G_TYPE_INT, 4,
             "stream-format", G_TYPE_STRING, config.isAacADTS.value_or(false) ? "adts" : "raw", nullptr));
         if (gstObjectHasProperty(m_encoder.get(), "bitrate"_s) && config.bitRate && config.bitRate < std::numeric_limits<int>::max())
             g_object_set(m_encoder.get(), "bitrate", static_cast<int>(config.bitRate), nullptr);
-    } else if (codecName == "mp3"_s) {
+    } else if (equal(codecName, "mp3"_s)) {
         if (gstObjectHasProperty(m_encoder.get(), "cbr"_s)) {
             switch (config.bitRateMode) {
             case BitrateMode::Constant:
@@ -273,7 +273,7 @@ String GStreamerInternalAudioEncoder::initialize(const String& codecName, const 
             };
         }
         m_outputCaps = adoptGRef(gst_caps_new_simple("audio/mpeg", "mpegversion", G_TYPE_INT, 1, "layer", G_TYPE_INT, 3, nullptr));
-    } else if (codecName == "opus"_s && startsWith(name.span(), "opusenc"_s)) {
+    } else if (equal(codecName, "opus"_s) && startsWith(name.span(), "opusenc"_s)) {
         if (config.bitRate && config.bitRate < std::numeric_limits<int>::max()) {
             if (config.bitRate >= 4000 && config.bitRate <= 650000)
                 g_object_set(m_encoder.get(), "bitrate", static_cast<int>(config.bitRate), nullptr);
@@ -302,26 +302,26 @@ String GStreamerInternalAudioEncoder::initialize(const String& codecName, const 
             // The frame-size property is expressed in milli-seconds, the value in parameters is
             // expressed in micro-seconds.
             auto frameSize = makeString(parameters->frameDuration / 1000);
-            gst_util_set_object_arg(G_OBJECT(m_encoder.get()), "frame-size", frameSize.ascii().data());
+            gst_util_set_object_arg(G_OBJECT(m_encoder.get()), "frame-size", ascii(frameSize).data());
         }
         int channelMappingFamily = config.numberOfChannels <= 2 ? 0 : 1;
         m_outputCaps = adoptGRef(gst_caps_new_simple("audio/x-opus", "channel-mapping-family", G_TYPE_INT, channelMappingFamily, nullptr));
-    } else if (codecName == "alaw"_s)
+    } else if (equal(codecName, "alaw"_s))
         m_outputCaps = adoptGRef(gst_caps_new_empty_simple("audio/x-alaw"));
-    else if (codecName == "ulaw"_s)
+    else if (equal(codecName, "ulaw"_s))
         m_outputCaps = adoptGRef(gst_caps_new_empty_simple("audio/x-mulaw"));
-    else if (codecName == "flac"_s) {
+    else if (equal(codecName, "flac"_s)) {
         m_outputCaps = adoptGRef(gst_caps_new_empty_simple("audio/x-flac"));
         if (auto parameters = config.flacConfig) {
             if (startsWith(name.span(), "flacenc"_s))
                 g_object_set(m_encoder.get(), "blocksize", static_cast<unsigned>(parameters->blockSize), "quality", parameters->compressLevel, nullptr);
         }
-    } else if (codecName == "vorbis"_s) {
+    } else if (equal(codecName, "vorbis"_s)) {
         m_outputCaps = adoptGRef(gst_caps_new_empty_simple("audio/x-vorbis"));
         if (config.bitRate && config.bitRate <= 25000)
             g_object_set(m_encoder.get(), "bitrate", static_cast<int>(config.bitRate), nullptr);
-    } else if (codecName.startsWith("pcm-"_s)) {
-        auto components = codecName.split('-');
+    } else if (startsWith(codecName, "pcm-"_s)) {
+        auto components = split(codecName, '-');
         auto& pcmFormat = components[1];
         GstAudioFormat gstPcmFormat = GST_AUDIO_FORMAT_UNKNOWN;
         if (equalLettersIgnoringASCIICase(pcmFormat, "u8"_s))

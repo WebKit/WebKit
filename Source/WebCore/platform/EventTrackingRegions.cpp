@@ -77,7 +77,7 @@ ASCIILiteral EventTrackingRegions::eventName(EventType eventType)
     return ASCIILiteral();
 }
 
-const AtomString& EventTrackingRegions::eventNameAtomString(const EventNames& eventNames, EventType eventType)
+const RefPtr<AtomStringImpl>& EventTrackingRegions::eventNameAtomString(const EventNames& eventNames, EventType eventType)
 {
     switch (eventType) {
     case EventType::Gesturechange:

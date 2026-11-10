@@ -43,7 +43,7 @@ public:
     virtual void unapply() = 0;
     virtual void reapply() = 0;
     virtual EditAction editingAction() const = 0;
-    virtual String label() const = 0;
+    virtual RefPtr<StringImpl> label() const = 0;
     virtual void didRemoveFromUndoManager() = 0;
 };
 

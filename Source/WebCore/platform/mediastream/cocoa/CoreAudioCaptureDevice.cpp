@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static bool getDeviceInfo(uint32_t deviceID, CaptureDevice::DeviceType type, String& persistentID, String& label)
+static bool getDeviceInfo(uint32_t deviceID, CaptureDevice::DeviceType type, RefPtr<StringImpl>& persistentID, RefPtr<StringImpl>& label)
 {
     // This is an out-parameter which is explicitly released below.
     SUPPRESS_UNRETAINED_LOCAL CFStringRef uniqueID;
@@ -51,7 +51,7 @@ static bool getDeviceInfo(uint32_t deviceID, CaptureDevice::DeviceType type, Str
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioCaptureDevice::getDeviceInfo failed to get device unique id with error %d (%.4s)", (int)err, (char*)&err);
         return false;
     }
-    persistentID = uniqueID;
+    persistentID = StringImpl::create(uniqueID);
     CFRelease(uniqueID);
 
     CFStringRef localizedName = nullptr;
@@ -94,24 +94,24 @@ static bool getDeviceInfo(uint32_t deviceID, CaptureDevice::DeviceType type, Str
         return false;
     }
 
-    label = localizedName;
+    label = StringImpl::create(localizedName);
     CFRelease(localizedName);
 
     return true;
 }
 
-std::optional<CoreAudioCaptureDevice> CoreAudioCaptureDevice::create(uint32_t deviceID, DeviceType type, const String& groupID)
+std::optional<CoreAudioCaptureDevice> CoreAudioCaptureDevice::create(uint32_t deviceID, DeviceType type, StringImpl* groupID)
 {
     ASSERT(type == CaptureDevice::DeviceType::Microphone || type == CaptureDevice::DeviceType::Speaker);
-    String persistentID;
-    String label;
+    RefPtr<StringImpl> persistentID;
+    RefPtr<StringImpl> label;
     if (!getDeviceInfo(deviceID, type, persistentID, label))
         return std::nullopt;
 
-    return CoreAudioCaptureDevice(deviceID, persistentID, type, label, groupID.isNull() ? persistentID : groupID);
+    return CoreAudioCaptureDevice(deviceID, persistentID, type, label, !groupID ? persistentID.get() : groupID);
 }
 
-CoreAudioCaptureDevice::CoreAudioCaptureDevice(uint32_t deviceID, const String& persistentID, DeviceType deviceType, const String& label, const String& groupID)
+CoreAudioCaptureDevice::CoreAudioCaptureDevice(uint32_t deviceID, StringImpl* persistentID, DeviceType deviceType, StringImpl* label, StringImpl* groupID)
     : CaptureDevice(persistentID, deviceType, label, groupID)
     , m_deviceID(deviceID)
 {

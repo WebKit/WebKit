@@ -64,13 +64,13 @@ public:
 private:
     RefPtr<CSSVariableData> substituteUsingCache(const CSSSubstitutionValue&);
     RefPtr<CSSVariableData> tryCachedVarSubstitution(const CSSSubstitutionValue&);
-    bool canReuseVarSubstitution(const AtomString&, const CustomProperty*);
+    bool canReuseVarSubstitution(AtomStringImpl*, const CustomProperty*);
 
     std::optional<Vector<CSSParserToken>> substituteTokenRange(CSSParserTokenRange, const CSSParserContext&);
 
     bool substituteVarFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
     bool substituteEnvFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
-    bool substituteNamedValueOrFallback(const std::optional<AtomString>& name, const std::optional<CSSParserTokenRange>& fallbackRange, CSSValueID, Vector<CSSParserToken>&, const CSSParserContext&);
+    bool substituteNamedValueOrFallback(const std::optional<RefPtr<AtomStringImpl>>& name, const std::optional<CSSParserTokenRange>& fallbackRange, CSSValueID, Vector<CSSParserToken>&, const CSSParserContext&);
     bool substituteFirstValid(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
     bool substituteInheritFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
     bool substituteDashedFunction(StringView functionName, CSSParserTokenRange, Vector<CSSParserToken>&);
@@ -84,7 +84,7 @@ private:
 
     struct VarArgumentGrammarSubstitution {
         // An unset name failed to parse as a <custom-property-name> after substitution.
-        std::optional<AtomString> name;
+        std::optional<RefPtr<AtomStringImpl>> name;
         std::optional<CSSParserTokenRange> fallbackRange;
         // Whether resolving the name argument involved attr()-tainted values.
         IsAttrTainted isNameAttrTainted { IsAttrTainted::No };
@@ -110,7 +110,7 @@ private:
     };
     std::optional<Vector<IfBranch>> substituteIfArgumentGrammar(CSSParserTokenRange, const CSSParserContext&);
 
-    RefPtr<const CustomProperty> propertyValueForVariableName(const AtomString&, CSSValueID);
+    RefPtr<const CustomProperty> propertyValueForVariableName(AtomStringImpl*, CSSValueID);
     RefPtr<CSSVariableData> trySimpleSubstitution(const CSSSubstitutionValue&);
     NODELETE bool isBaseAppearance();
     bool isInURLContext() const { return m_urlContextDepth; }
@@ -127,9 +127,9 @@ private:
     // Parameters of the custom functions whose arguments are currently being resolved, innermost last.
     // A parameter appears once resolved, so a default can reference an earlier one. A null value is the
     // guaranteed-invalid value. Present names shadow the calling element's custom properties.
-    using ParameterValues = HashMap<AtomString, RefPtr<const CustomProperty>>;
+    using ParameterValues = HashMap<RefPtr<AtomStringImpl>, RefPtr<const CustomProperty>>;
     Vector<ParameterValues> m_parameterValues;
-    Vector<WTF::String> m_intermediateTokenStrings;
+    Vector<RefPtr<StringImpl>> m_intermediateTokenStrings;
     Vector<RefPtr<const CustomProperty>> m_intermediateCustomProperties;
     unsigned m_urlContextDepth { 0 };
     unsigned m_randomItemAutoIndex { 0 };
@@ -137,7 +137,7 @@ private:
     bool m_hasTaintedURL { false };
     // The custom properties var() substituted, in order. The result can be cached if no other function
     // was substituted.
-    Vector<std::pair<AtomString, RefPtr<const CustomProperty>>> m_varSubstitutions;
+    Vector<std::pair<RefPtr<AtomStringImpl>, RefPtr<const CustomProperty>>> m_varSubstitutions;
     bool m_didSubstituteFunctionOtherThanVar { false };
 };
 

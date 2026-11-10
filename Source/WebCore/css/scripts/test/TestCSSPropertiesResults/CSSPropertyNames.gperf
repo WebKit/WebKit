@@ -327,7 +327,7 @@ ASCIILiteral nameLiteral(CSSPropertyID id)
     return propertyNameData[index].literal();
 }
 
-const AtomString& nameString(CSSPropertyID id)
+const RefPtr<AtomStringImpl>& nameString(CSSPropertyID id)
 {
     if (std::to_underlying(id) < firstCSSProperty)
         return nullAtom();
@@ -335,14 +335,14 @@ const AtomString& nameString(CSSPropertyID id)
     if (index >= numCSSProperties)
         return nullAtom();
 
-    static NeverDestroyed<std::array<AtomString, numCSSProperties>> atomStrings;
+    static NeverDestroyed<std::array<RefPtr<AtomStringImpl>, numCSSProperties>> atomStrings;
     auto& string = atomStrings.get()[index];
-    if (string.isNull())
-        string = propertyNameData[index];
+    if (!string)
+        string = AtomStringImpl::add(propertyNameData[index]);
     return string;
 }
 
-String nameForIDL(CSSPropertyID id)
+RefPtr<StringImpl> nameForIDL(CSSPropertyID id)
 {
     Latin1Character characters[maxCSSPropertyNameLength];
     const char* nameForCSS = nameLiteral(id);
@@ -360,7 +360,7 @@ String nameForIDL(CSSPropertyID id)
         }
         *nextCharacter++ = character;
     }
-    return std::span<const Latin1Character> { characters, nextCharacter };
+    return StringImpl::create(std::span<const Latin1Character> { characters, nextCharacter });
 }
 
 
@@ -572,7 +572,7 @@ CSSPropertyID cascadeAliasProperty(CSSPropertyID id)
     }
 }
 
-Vector<String> CSSProperty::aliasesForProperty(CSSPropertyID id)
+Vector<RefPtr<StringImpl>> CSSProperty::aliasesForProperty(CSSPropertyID id)
 {
     switch (id) {
     default:

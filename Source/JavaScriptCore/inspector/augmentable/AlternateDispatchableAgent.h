@@ -45,7 +45,7 @@ class AlternateDispatchableAgent final : public InspectorAgentBase, public CanMa
 public:
     OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr<AlternateDispatchableAgent>);
 
-    AlternateDispatchableAgent(const String& domainName, AugmentableInspectorController& controller, std::unique_ptr<TAlternateDispatcher> alternateDispatcher)
+    AlternateDispatchableAgent(StringImpl* domainName, AugmentableInspectorController& controller, std::unique_ptr<TAlternateDispatcher> alternateDispatcher)
         : InspectorAgentBase(domainName)
         , m_alternateDispatcher(WTF::move(alternateDispatcher))
         , m_backendDispatcher(TBackendDispatcher::create(controller.backendDispatcher(), nullptr))

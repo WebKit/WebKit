@@ -36,15 +36,15 @@
 
 namespace WebCore {
 
-String MIMETypeForImageType(const String& uti)
+RefPtr<StringImpl> MIMETypeForImageType(StringImpl* uti)
 {
     return MIMETypeFromUTI(uti);
 }
 
-String preferredExtensionForImageType(const String& uti)
+RefPtr<StringImpl> preferredExtensionForImageType(StringImpl* uti)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return adoptCF(UTTypeCopyPreferredTagWithClass(uti.createCFString().get(), kUTTagClassFilenameExtension)).get();
+    return adoptCF(UTTypeCopyPreferredTagWithClass(createCFString(uti).get(), kUTTagClassFilenameExtension)).get();
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 

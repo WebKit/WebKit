@@ -51,7 +51,7 @@ WebKitWebViewBase* webkitWebViewBaseCreate(const API::PageConfiguration&);
 WebKit::WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
 double webkitWebViewBaseGetPageScale(WebKitWebViewBase*);
 void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, Ref<API::PageConfiguration>&&);
-void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const String&);
+void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, StringImpl*);
 void webkitWebViewBaseSetTooltipArea(WebKitWebViewBase*, const WebCore::IntRect&);
 void webkitWebViewBaseSetMouseIsOverScrollbar(WebKitWebViewBase*, WebKit::WebHitTestResultData::IsScrollbar);
 void webkitWebViewBasePropagateKeyEvent(WebKitWebViewBase*, GdkEvent*);
@@ -121,14 +121,14 @@ void webkitWebViewBaseDidFailNavigation(WebKitWebViewBase*, API::Navigation*);
 void webkitWebViewBaseDidSameDocumentNavigationForMainFrame(WebKitWebViewBase*, WebKit::SameDocumentNavigationType);
 void webkitWebViewBaseDidRestoreScrollPosition(WebKitWebViewBase*);
 
-void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase*, const WebCore::IntRect&, CompletionHandler<void(String)>&&);
+void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase*, const WebCore::IntRect&, CompletionHandler<void(RefPtr<StringImpl>)>&&);
 
 void webkitWebViewBaseRequestPointerLock(WebKitWebViewBase*, CompletionHandler<void(bool)>&&);
 void webkitWebViewBaseDidLosePointerLock(WebKitWebViewBase*);
 
 void webkitWebViewBaseSetInputMethodContext(WebKitWebViewBase*, WebKitInputMethodContext*);
 WebKitInputMethodContext* webkitWebViewBaseGetInputMethodContext(WebKitWebViewBase*);
-void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase*, const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<WebKit::EditingRange>&&);
+void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase*, StringImpl* text, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<WebKit::EditingRange>&&);
 void webkitWebViewBaseSynthesizeWheelEvent(WebKitWebViewBase*, const GdkEvent*, double deltaX, double deltaY, int x, int y, WheelEventPhase, WheelEventPhase momentumPhase, bool hasPreciseDeltas);
 
 void webkitWebViewBaseMakeBlank(WebKitWebViewBase*, bool);
@@ -145,7 +145,7 @@ void webkitWebViewBaseToplevelWindowMonitorChanged(WebKitWebViewBase*, GdkMonito
 void webkitWebViewBaseCallAfterNextPresentationUpdate(WebKitWebViewBase*, CompletionHandler<void()>&&);
 
 #if USE(GTK4)
-void webkitWebViewBaseSetPlugID(WebKitWebViewBase*, const String&);
+void webkitWebViewBaseSetPlugID(WebKitWebViewBase*, StringImpl*);
 #endif
 
 WebKit::RendererBufferDescription webkitWebViewBaseGetRendererBufferDescription(WebKitWebViewBase*);

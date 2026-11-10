@@ -70,12 +70,12 @@ public:
     void stopAlternativeTextUITimer() UNLESS_ENABLED({ })
 
     void dismiss(ReasonForDismissingAlternativeText) UNLESS_ENABLED({ })
-    void show(const SimpleRange& rangeToReplace, const String& replacement) UNLESS_ENABLED({ UNUSED_PARAM(rangeToReplace); UNUSED_PARAM(replacement); })
+    void show(const SimpleRange& rangeToReplace, StringImpl* replacement) UNLESS_ENABLED({ UNUSED_PARAM(rangeToReplace); UNUSED_PARAM(replacement); })
 
     // Return true if correction was applied, false otherwise.
     bool applyAutocorrectionBeforeTypingIfAppropriate() UNLESS_ENABLED({ return false; })
 
-    void respondToUnappliedSpellCorrection(const VisibleSelection&, const String& corrected, const String& correction) UNLESS_ENABLED({ UNUSED_PARAM(corrected); UNUSED_PARAM(correction); })
+    void respondToUnappliedSpellCorrection(const VisibleSelection&, StringImpl* corrected, StringImpl* correction) UNLESS_ENABLED({ UNUSED_PARAM(corrected); UNUSED_PARAM(correction); })
     void respondToAppliedEditing(CompositeEditCommand*);
     void respondToUnappliedEditing(EditCommandComposition*) UNLESS_ENABLED({ })
     void respondToChangedSelection(const VisibleSelection& oldSelection) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })
@@ -83,7 +83,7 @@ public:
     void stopPendingCorrection(const VisibleSelection& oldSelection) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })
     void applyPendingCorrection(const VisibleSelection& selectionAfterTyping) UNLESS_ENABLED({ UNUSED_PARAM(selectionAfterTyping); })
 
-    void handleAlternativeTextUIResult(const String& result) UNLESS_ENABLED({ UNUSED_PARAM(result); })
+    void handleAlternativeTextUIResult(StringImpl* result) UNLESS_ENABLED({ UNUSED_PARAM(result); })
     void handleCancelOperation() UNLESS_ENABLED({ })
 
     NODELETE bool hasPendingCorrection() const UNLESS_ENABLED({ return false; })
@@ -93,26 +93,26 @@ public:
     NODELETE bool isAlternativeTextUIActive() const UNLESS_ENABLED({ return false; })
     bool shouldRemoveMarkersUponEditing();
 
-    void recordAutocorrectionResponse(AutocorrectionResponse, const String& replacedString, const SimpleRange& replacementRange) UNLESS_ENABLED({ UNUSED_PARAM(replacedString); UNUSED_PARAM(replacementRange); })
+    void recordAutocorrectionResponse(AutocorrectionResponse, StringImpl* replacedString, const SimpleRange& replacementRange) UNLESS_ENABLED({ UNUSED_PARAM(replacedString); UNUSED_PARAM(replacementRange); })
     void markReversed(const SimpleRange& changedRange) UNLESS_ENABLED({ UNUSED_PARAM(changedRange); })
-    void markCorrection(const SimpleRange& replacedRange, const String& replacedString) UNLESS_ENABLED({ UNUSED_PARAM(replacedRange); UNUSED_PARAM(replacedString); })
+    void markCorrection(const SimpleRange& replacedRange, StringImpl* replacedString) UNLESS_ENABLED({ UNUSED_PARAM(replacedRange); UNUSED_PARAM(replacedString); })
 
     // This function returns false if the replacement should not be carried out.
-    bool processMarkersOnTextToBeReplacedByResult(const TextCheckingResult&, const SimpleRange& rangeToBeReplaced, const String& stringToBeReplaced) UNLESS_ENABLED({ UNUSED_PARAM(rangeToBeReplaced); UNUSED_PARAM(stringToBeReplaced); return true; });
-    void deletedAutocorrectionAtPosition(const Position&, const String& originalString) UNLESS_ENABLED({ UNUSED_PARAM(originalString); })
+    bool processMarkersOnTextToBeReplacedByResult(const TextCheckingResult&, const SimpleRange& rangeToBeReplaced, StringImpl* stringToBeReplaced) UNLESS_ENABLED({ UNUSED_PARAM(rangeToBeReplaced); UNUSED_PARAM(stringToBeReplaced); return true; });
+    void deletedAutocorrectionAtPosition(const Position&, StringImpl* originalString) UNLESS_ENABLED({ UNUSED_PARAM(originalString); })
 
-    bool insertDictatedText(const String&, const Vector<DictationAlternative>&, Event*);
+    bool insertDictatedText(StringImpl*, const Vector<DictationAlternative>&, Event*);
     void removeDictationAlternativesForMarker(const DocumentMarker&);
-    Vector<String> dictationAlternativesForMarker(const DocumentMarker&);
-    void applyDictationAlternative(const String& alternativeString);
+    Vector<RefPtr<StringImpl>> dictationAlternativesForMarker(const DocumentMarker&);
+    void applyDictationAlternative(StringImpl* alternativeString);
 
 private:
 #if USE(AUTOCORRECTION_PANEL)
-    using AutocorrectionReplacement = String;
+    using AutocorrectionReplacement = RefPtr<StringImpl>;
 
-    String dismissSoon(ReasonForDismissingAlternativeText);
+    RefPtr<StringImpl> dismissSoon(ReasonForDismissingAlternativeText);
     void timerFired();
-    void recordSpellcheckerResponseForModifiedCorrection(const SimpleRange& rangeOfCorrection, const String& corrected, const String& correction);
+    void recordSpellcheckerResponseForModifiedCorrection(const SimpleRange& rangeOfCorrection, StringImpl* corrected, StringImpl* correction);
 
     bool shouldStartTimerFor(const DocumentMarker&, int endOffset) const;
     bool respondToMarkerAtEndOfWord(const DocumentMarker&, const Position& endOfWordPosition);
@@ -128,15 +128,15 @@ private:
     bool m_isActive { };
     bool m_isDismissedByEditing { };
     AlternativeTextType m_type;
-    String m_originalText;
+    RefPtr<StringImpl> m_originalText;
     Variant<AutocorrectionReplacement, DictationContext> m_details;
 
-    String m_originalStringForLastDeletedAutocorrection;
+    RefPtr<StringImpl> m_originalStringForLastDeletedAutocorrection;
     Position m_positionForLastDeletedAutocorrection;
 #endif
 #if USE(DICTATION_ALTERNATIVES) || USE(AUTOCORRECTION_PANEL)
-    NODELETE String markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarkerType);
-    void applyAlternativeTextToRange(const SimpleRange&, const String&, AlternativeTextType, OptionSet<DocumentMarkerType>);
+    NODELETE RefPtr<StringImpl> markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarkerType);
+    void applyAlternativeTextToRange(const SimpleRange&, StringImpl*, AlternativeTextType, OptionSet<DocumentMarkerType>);
     NODELETE AlternativeTextClient* alternativeTextClient();
 #endif
     void removeCorrectionIndicatorMarkers();

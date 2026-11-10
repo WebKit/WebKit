@@ -70,7 +70,7 @@ CustomPropertyData::CustomPropertyData(const CustomPropertyData& other)
 #endif
 }
 
-const CustomProperty* CustomPropertyData::get(const AtomString& name) const
+const CustomProperty* CustomPropertyData::get(AtomStringImpl* name) const
 {
     for (auto* propertyData = this; propertyData; propertyData = propertyData->m_parentValues.get()) {
         if (auto* value = propertyData->m_ownValues.get(name))
@@ -79,7 +79,7 @@ const CustomProperty* CustomPropertyData::get(const AtomString& name) const
     return nullptr;
 }
 
-void CustomPropertyData::set(const AtomString& name, Ref<const CustomProperty>&& value)
+void CustomPropertyData::set(AtomStringImpl* name, Ref<const CustomProperty>&& value)
 {
     ASSERT(!m_hasChildren);
     ASSERT([&] {
@@ -116,7 +116,7 @@ bool CustomPropertyData::operator==(const CustomPropertyData& other) const
 
     bool isEqual = true;
     forEachInternal([&](auto& entry) {
-        RefPtr otherValue = other.get(entry.key);
+        RefPtr otherValue = other.get(RefPtr<AtomStringImpl> { entry.key });
         if (!otherValue || entry.value.get() != *otherValue) {
             isEqual = false;
             return IterationStatus::Done;
@@ -156,15 +156,15 @@ void CustomPropertyData::forEachInternal(NOESCAPE const Callback& callback) cons
     }
 }
 
-void CustomPropertyData::forEach(NOESCAPE const Function<IterationStatus(const KeyValuePair<AtomString, Ref<const CustomProperty>>&)>& callback) const
+void CustomPropertyData::forEach(NOESCAPE const Function<IterationStatus(const KeyValuePair<RefPtr<AtomStringImpl>, Ref<const CustomProperty>>&)>& callback) const
 {
     forEachInternal(callback);
 }
 
-AtomString CustomPropertyData::findKeyAtIndex(unsigned index) const
+RefPtr<AtomStringImpl> CustomPropertyData::findKeyAtIndex(unsigned index) const
 {
     unsigned currentIndex = 0;
-    AtomString key;
+    RefPtr<AtomStringImpl> key;
     forEachInternal([&](auto& entry) {
         if (currentIndex == index) {
             key = entry.key;

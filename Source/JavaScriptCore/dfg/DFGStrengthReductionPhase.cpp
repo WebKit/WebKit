@@ -595,30 +595,30 @@ private:
             if (m_node->child1()->isConstant()
                 && m_node->child2()->isConstant()
                 && (!!m_node->child1()->tryGetString(m_graph) || !!m_node->child2()->tryGetString(m_graph))) {
-                auto tryGetConstantString = [&] (Node* node) -> String {
-                    String string = node->tryGetString(m_graph);
-                    if (!string.isEmpty())
+                auto tryGetConstantString = [&] (Node* node) -> RefPtr<StringImpl> {
+                    RefPtr<StringImpl> string = node->tryGetString(m_graph);
+                    if (!isEmpty(string))
                         return string;
                     JSValue value = node->constant()->value();
                     if (!value)
-                        return String();
+                        return nullptr;
                     if (value.isInt32())
-                        return String::number(value.asInt32());
+                        return makeString(value.asInt32());
                     if (value.isNumber())
-                        return String::number(value.asNumber());
+                        return makeString(value.asNumber());
                     if (value.isBoolean())
                         return value.asBoolean() ? "true"_s : "false"_s;
                     if (value.isNull())
-                        return "null"_s;
+                        return "null"_si;
                     if (value.isUndefined())
-                        return "undefined"_s;
-                    return String();
+                        return "undefined"_si;
+                    return nullptr;
                 };
 
-                String leftString = tryGetConstantString(m_node->child1().node());
+                RefPtr<StringImpl> leftString = tryGetConstantString(m_node->child1().node());
                 if (!leftString)
                     break;
-                String rightString = tryGetConstantString(m_node->child2().node());
+                RefPtr<StringImpl> rightString = tryGetConstantString(m_node->child2().node());
                 if (!rightString)
                     break;
 
@@ -640,13 +640,13 @@ private:
         case MakeAtomString:
         case StrCat: {
             // Constant folding.
-            String string0 = m_node->child1()->tryGetString(m_graph);
+            RefPtr<StringImpl> string0 = m_node->child1()->tryGetString(m_graph);
             if (!string0) {
                 if (m_node->child2() && m_node->child3()) {
-                    String string1 = m_node->child2()->tryGetString(m_graph);
+                    RefPtr<StringImpl> string1 = m_node->child2()->tryGetString(m_graph);
                     if (!string1)
                         break;
-                    String string2 = m_node->child3()->tryGetString(m_graph);
+                    RefPtr<StringImpl> string2 = m_node->child3()->tryGetString(m_graph);
                     if (!string2)
                         break;
 
@@ -671,7 +671,7 @@ private:
                 break;
             }
 
-            String string1 = m_node->child2()->tryGetString(m_graph);
+            RefPtr<StringImpl> string1 = m_node->child2()->tryGetString(m_graph);
             if (!string1)
                 break;
 
@@ -686,7 +686,7 @@ private:
                 break;
             }
 
-            String string2 = m_node->child3()->tryGetString(m_graph);
+            RefPtr<StringImpl> string2 = m_node->child3()->tryGetString(m_graph);
             if (!string2) {
                 if (!builder.hasOverflowed()) [[likely]] {
                     LazyJSValue value = LazyJSValue::newString(m_graph, builder.toString());
@@ -717,13 +717,13 @@ private:
                 if (child1->hasConstant()) {
                     JSValue value = child1->constant()->value();
                     if (value) {
-                        String result;
+                        RefPtr<StringImpl> result;
                         if (value.isInt32())
-                            result = String::number(value.asInt32());
+                            result = makeString(value.asInt32());
                         else if (value.isNumber())
-                            result = String::number(value.asNumber());
+                            result = makeString(value.asNumber());
 
-                        if (!result.isNull()) {
+                        if (result) {
                             convertToLazyJSValue(m_node, LazyJSValue::newString(m_graph, result));
                             m_changed = true;
                         }
@@ -772,7 +772,7 @@ private:
             if (child1->hasConstant()) {
                 JSValue value = child1->constant()->value();
                 if (value && value.isNumber()) {
-                    String result = toStringWithRadix(value.asNumber(), m_node->validRadixConstant());
+                    RefPtr<StringImpl> result = toStringWithRadix(value.asNumber(), m_node->validRadixConstant());
                     convertToLazyJSValue(m_node, LazyJSValue::newString(m_graph, result));
                     m_changed = true;
                 }
@@ -782,9 +782,9 @@ private:
 
         case GetArrayLength: {
             if (m_node->arrayMode().type() == Array::Generic || m_node->arrayMode().type() == Array::String) {
-                String string = m_node->child1()->tryGetString(m_graph);
+                RefPtr<StringImpl> string = m_node->child1()->tryGetString(m_graph);
                 if (!!string) {
-                    m_graph.convertToConstant(m_node, jsNumber(string.length()));
+                    m_graph.convertToConstant(m_node, jsNumber(WTF::length(string)));
                     m_changed = true;
                     break;
                 }
@@ -820,11 +820,11 @@ private:
             if (m_node->child1().useKind() != StringUse || m_node->child2().useKind() != StringUse)
                 break;
 
-            String pattern = m_node->child1()->tryGetString(m_graph);
+            RefPtr<StringImpl> pattern = m_node->child1()->tryGetString(m_graph);
             if (!pattern)
                 break;
 
-            String flagsString = m_node->child2()->tryGetString(m_graph);
+            RefPtr<StringImpl> flagsString = m_node->child2()->tryGetString(m_graph);
             if (!flagsString)
                 break;
 
@@ -1017,7 +1017,7 @@ private:
                 // NOTE: This mostly already protects us from having the compiler execute a regexp
                 // operation on a ginormous string by preventing us from getting our hands on ginormous
                 // strings in the first place.
-                String string = stringNode->tryGetString(m_graph);
+                RefPtr<StringImpl> string = stringNode->tryGetString(m_graph);
                 if (!string) {
                     dataLogLnIf(verbose, "Giving up because the string is unknown.");
                     return false;
@@ -1096,15 +1096,15 @@ private:
 
                         // Create an array modeling the JS array that we will try to allocate. This is
                         // basically createRegExpMatchesArray but over C++ strings instead of JSStrings.
-                        Vector<String> resultArray;
-                        resultArray.append(string.substring(result.start, result.end - result.start));
+                        Vector<RefPtr<StringImpl>> resultArray;
+                        resultArray.append(substring(string, result.start, result.end - result.start));
                         for (unsigned i = 1; i <= regExp->numSubpatterns(); ++i) {
                             int start = ovector[2 * i];
                             int end = ovector[2 * i + 1];
                             if (start >= 0 && end >= start)
-                                resultArray.append(string.substring(start, end - start));
+                                resultArray.append(substring(string, start, end - start));
                             else
-                                resultArray.append(String());
+                                resultArray.append(nullString());
                         }
 
                         unsigned publicLength = resultArray.size();
@@ -1152,12 +1152,12 @@ private:
                         data->m_properties.append(
                             PromotedLocationDescriptor(NamedPropertyPLoc, groupsIndex));
 
-                        auto materializeString = [&] (const String& string) -> Node* {
-                            if (string.isNull()) {
+                        auto materializeString = [&] (StringImpl* string) -> Node* {
+                            if (!string) {
                                 return m_insertionSet.insertConstant(
                                     m_nodeIndex, origin, jsUndefined());
                             }
-                            if (string.isEmpty()) {
+                            if (isEmpty(string)) {
                                 return m_insertionSet.insertConstant(
                                     m_nodeIndex, origin, vm().smallStrings.emptyString());
                             }
@@ -1340,11 +1340,11 @@ private:
         case StringReplaceAll:
         case StringReplaceRegExp: {
             Node* stringNode = m_node->child1().node();
-            String string = stringNode->tryGetString(m_graph);
+            RefPtr<StringImpl> string = stringNode->tryGetString(m_graph);
             if (!string)
                 break;
 
-            String replace = m_node->child3()->tryGetString(m_graph);
+            RefPtr<StringImpl> replace = m_node->child3()->tryGetString(m_graph);
             if (!replace)
                 break;
 
@@ -1388,7 +1388,7 @@ private:
                 MatchResult result;
                 Vector<int> ovector(regExp->offsetVectorSize());
                 // Model which version of match() is called by the main thread.
-                if (replace.isEmpty() && regExp->global()) {
+                if (isEmpty(replace) && regExp->global()) {
                     if (!regExp->matchConcurrently(vm(), string, startPosition, result)) {
                         ok = false;
                         break;
@@ -1407,7 +1407,7 @@ private:
                 if (!result)
                     break;
 
-                unsigned replLen = replace.length();
+                unsigned replLen = WTF::length(replace);
                 if (lastIndex < result.start || replLen) {
                     builder.appendSubstring(string, lastIndex, result.start - lastIndex);
                     if (replLen)
@@ -1420,11 +1420,11 @@ private:
                 // special case of empty match
                 if (result.empty()) {
                     startPosition++;
-                    if (startPosition > string.length())
+                    if (startPosition > WTF::length(string))
                         break;
-                    if (regExp->eitherUnicode() && U16_IS_LEAD(string[startPosition - 1]) && U16_IS_TRAIL(string[startPosition])) {
+                    if (regExp->eitherUnicode() && U16_IS_LEAD(codeUnitAt(string, startPosition - 1)) && U16_IS_TRAIL(codeUnitAt(string, startPosition))) {
                         startPosition++;
-                        if (startPosition > string.length())
+                        if (startPosition > WTF::length(string))
                             break;
                     }
                 }
@@ -1469,19 +1469,19 @@ private:
 
         case StringReplaceString: {
             Node* stringNode = m_node->child1().node();
-            String string = stringNode->tryGetString(m_graph);
+            RefPtr<StringImpl> string = stringNode->tryGetString(m_graph);
             if (!string)
                 break;
 
-            String searchString = m_node->child2()->tryGetString(m_graph);
+            RefPtr<StringImpl> searchString = m_node->child2()->tryGetString(m_graph);
             if (!searchString)
                 break;
 
-            String replace = m_node->child3()->tryGetString(m_graph);
+            RefPtr<StringImpl> replace = m_node->child3()->tryGetString(m_graph);
             if (!replace)
                 break;
 
-            size_t matchStart = string.find(searchString);
+            size_t matchStart = find(string, searchString);
             if (matchStart == notFound) {
                 m_changed = true;
                 m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
@@ -1489,9 +1489,9 @@ private:
                 break;
             }
 
-            size_t searchStringLength = searchString.length();
+            size_t searchStringLength = WTF::length(searchString);
             size_t matchEnd = matchStart + searchStringLength;
-            String result = tryMakeReplacedString<StringReplaceSubstitutions::Yes>(string, replace, matchStart, matchEnd);
+            RefPtr<StringImpl> result = tryMakeReplacedString<StringReplaceSubstitutions::Yes>(string, replace, matchStart, matchEnd);
             if (!result) [[unlikely]]
                 break;
 
@@ -1523,11 +1523,11 @@ private:
                 }
             }
 
-            String string = stringNode->tryGetString(m_graph);
+            RefPtr<StringImpl> string = stringNode->tryGetString(m_graph);
             if (!string)
                 break;
 
-            int32_t length = string.length();
+            int32_t length = WTF::length(string);
             int32_t start = 0;
             int32_t end = 0;
             if (m_node->op() == StringSubstring)
@@ -1541,7 +1541,7 @@ private:
                 m_node->convertToIdentityOn(stringNode);
                 break;
             }
-            m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, string.substring(start, end - start)));
+            m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, substring(string, start, end - start)));
             break;
         }
 
@@ -1566,11 +1566,11 @@ private:
                 }
             }
 
-            String string = stringNode->tryGetString(m_graph);
+            RefPtr<StringImpl> string = stringNode->tryGetString(m_graph);
             if (!string)
                 break;
 
-            int32_t length = string.length();
+            int32_t length = WTF::length(string);
             auto [start, span] = extractSubstrOffsets(length, startValue, lengthValue);
 
             m_changed = true;
@@ -1579,7 +1579,7 @@ private:
                 m_node->convertToIdentityOn(stringNode);
                 break;
             }
-            m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, string.substring(start, span)));
+            m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, substring(string, start, span)));
             break;
         }
 
@@ -1596,11 +1596,11 @@ private:
 
         case StringIndexOf: {
             Node* stringNode = m_node->child1().node();
-            String string = stringNode->tryGetString(m_graph);
+            RefPtr<StringImpl> string = stringNode->tryGetString(m_graph);
             if (!string)
                 break;
 
-            String searchString = m_node->child2()->tryGetString(m_graph);
+            RefPtr<StringImpl> searchString = m_node->child2()->tryGetString(m_graph);
             if (!searchString)
                 break;
 
@@ -1612,10 +1612,10 @@ private:
                 if (pos < 0)
                     startPosition = 0;
                 else
-                    startPosition = std::min<unsigned>(pos, string.length());
+                    startPosition = std::min<unsigned>(pos, WTF::length(string));
             }
 
-            size_t result = string.find(searchString, startPosition);
+            size_t result = find(string, searchString, startPosition);
             int32_t indexResult = (result == notFound) ? -1 : static_cast<int32_t>(result);
 
             m_changed = true;
@@ -1626,21 +1626,21 @@ private:
 
         case StringLastIndexOf: {
             Node* stringNode = m_node->child1().node();
-            String string = stringNode->tryGetString(m_graph);
+            RefPtr<StringImpl> string = stringNode->tryGetString(m_graph);
             if (!string)
                 break;
 
-            String searchString = m_node->child2()->tryGetString(m_graph);
+            RefPtr<StringImpl> searchString = m_node->child2()->tryGetString(m_graph);
             if (!searchString)
                 break;
 
-            if (string.length() < searchString.length()) {
+            if (WTF::length(string) < WTF::length(searchString)) {
                 m_changed = true;
                 m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
                 m_graph.convertToConstant(m_node, jsNumber(-1));
                 break;
             }
-            unsigned maxStart = string.length() - searchString.length();
+            unsigned maxStart = WTF::length(string) - WTF::length(searchString);
             unsigned startPosition = maxStart;
             if (m_node->child3()) {
                 if (!m_node->child3()->isInt32Constant())
@@ -1652,7 +1652,7 @@ private:
                     startPosition = std::min<unsigned>(pos, maxStart);
             }
 
-            size_t result = string.reverseFind(searchString, startPosition);
+            size_t result = reverseFind(string, searchString, startPosition);
             int32_t indexResult = (result == notFound) ? -1 : static_cast<int32_t>(result);
 
             m_changed = true;
@@ -1666,15 +1666,15 @@ private:
             bool isStartsWith = m_node->op() == StringStartsWith;
 
             Node* stringNode = m_node->child1().node();
-            String string = stringNode->tryGetString(m_graph);
+            RefPtr<StringImpl> string = stringNode->tryGetString(m_graph);
             if (!string)
                 break;
 
-            String searchString = m_node->child2()->tryGetString(m_graph);
+            RefPtr<StringImpl> searchString = m_node->child2()->tryGetString(m_graph);
             if (!searchString)
                 break;
 
-            unsigned position = isStartsWith ? 0 : string.length();
+            unsigned position = isStartsWith ? 0 : WTF::length(string);
             if (m_node->child3()) {
                 if (!m_node->child3()->isInt32Constant())
                     break;
@@ -1682,20 +1682,20 @@ private:
                 if (pos < 0)
                     position = 0;
                 else
-                    position = std::min<unsigned>(pos, string.length());
+                    position = std::min<unsigned>(pos, WTF::length(string));
             }
 
             bool result;
             if (isStartsWith) {
                 if (!position)
-                    result = string.startsWith(searchString);
+                    result = startsWith(string, searchString);
                 else
-                    result = string.hasInfixStartingAt(searchString, position);
+                    result = hasInfixStartingAt(string, searchString, position);
             } else {
-                if (position == string.length())
-                    result = string.endsWith(searchString);
+                if (position == WTF::length(string))
+                    result = endsWith(string, searchString);
                 else
-                    result = string.hasInfixEndingAt(searchString, position);
+                    result = hasInfixEndingAt(string, searchString, position);
             }
 
             m_changed = true;

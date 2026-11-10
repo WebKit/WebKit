@@ -52,13 +52,13 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Messages
-    void unrequestedInitializationDataReceived(const String&, Ref<WebCore::SharedBuffer>&&);
+    void unrequestedInitializationDataReceived(StringImpl*, Ref<WebCore::SharedBuffer>&&);
 
     ImplementationType implementationType() const final { return ImplementationType::Remote; }
     void initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
     void setServerCertificate(Ref<WebCore::SharedBuffer>&&, SuccessCallback&&) final;
-    void setStorageDirectory(const String&) final;
-    const String& keySystem() const LIFETIME_BOUND final { return m_configuration.keySystem; }
+    void setStorageDirectory(StringImpl*) final;
+    const RefPtr<StringImpl>& keySystem() const LIFETIME_BOUND final { return m_configuration.keySystem; }
     RefPtr<WebCore::CDMInstanceSession> createSession() final;
     void setClient(WeakPtr<WebCore::CDMInstanceClient>&& client) final { m_client = WTF::move(client); }
     void clearClient() final { m_client.clear(); }

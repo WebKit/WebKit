@@ -43,12 +43,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-static String defaultCookieJarPath()
+static RefPtr<StringImpl> defaultCookieJarPath()
 {
     static constexpr auto defaultFileName = "cookie.jar.db"_s;
     char* cookieJarPath = getenv("CURL_COOKIE_JAR_PATH");
     if (cookieJarPath)
-        return String::fromUTF8(cookieJarPath);
+        return StringImpl::fromUTF8(cookieJarPath);
 
 #if PLATFORM(WIN)
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), defaultFileName);
@@ -58,14 +58,14 @@ static String defaultCookieJarPath()
 #endif
 }
 
-static String alternativeServicesStorageFile(const String& alternativeServicesDirectory)
+static RefPtr<StringImpl> alternativeServicesStorageFile(StringImpl* alternativeServicesDirectory)
 {
     static constexpr auto defaultFileName = "altsvc-cache.txt"_s;
 
     return FileSystem::pathByAppendingComponent(alternativeServicesDirectory, defaultFileName);
 }
 
-static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& session, const URL& firstParty, const URL& url, bool forHTTPHeader, IncludeSecureCookies includeSecureCookies)
+static std::pair<RefPtr<StringImpl>, bool> cookiesForSession(const NetworkStorageSession& session, const URL& firstParty, const URL& url, bool forHTTPHeader, IncludeSecureCookies includeSecureCookies)
 {
     StringBuilder cookies;
     bool didAccessSecureCookies = false;
@@ -76,7 +76,7 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
         for (const auto& cookie : *result) {
             if (!cookies.isEmpty())
                 cookies.append("; "_s);
-            if (!cookie.name.isEmpty())
+            if (!isEmpty(cookie.name))
                 cookies.append(cookie.name, '=');
             if (cookie.secure)
                 didAccessSecureCookies = true;
@@ -87,12 +87,12 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
     return { cookies.toString(), didAccessSecureCookies };
 }
 
-NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, const String& alternativeServicesDirectory)
+NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, StringImpl* alternativeServicesDirectory)
     : WebCore::CookieStorageSession(sessionID)
     // :memory: creates in-memory database, see https://www.sqlite.org/inmemorydb.html
     , m_cookieDatabase(makeUniqueRef<CookieJarDB>(sessionID.isEphemeral() ? ":memory:"_s : defaultCookieJarPath()))
 {
-    if (!alternativeServicesDirectory.isEmpty()) {
+    if (!isEmpty(alternativeServicesDirectory)) {
         FileSystem::makeAllDirectories(alternativeServicesDirectory);
         CurlContext::singleton().setAlternativeServicesStorageFile(alternativeServicesStorageFile(alternativeServicesDirectory));
     }
@@ -114,7 +114,7 @@ CookieJarDB& NetworkStorageSession::cookieDatabase() const
     return m_cookieDatabase;
 }
 
-void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<FrameIdentifier>, std::optional<WebPageProxyIdentifier> webPageProxyID, ApplyTrackingPrevention, RequiresScriptTrackingPrivacy requiresScriptTrackingPrivacy, const String& value, ShouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker) const
+void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<FrameIdentifier>, std::optional<WebPageProxyIdentifier> webPageProxyID, ApplyTrackingPrevention, RequiresScriptTrackingPrivacy requiresScriptTrackingPrivacy, StringImpl* value, ShouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker) const
 {
     auto cappedLifetime = clientSideCookieCap(RegistrableDomain { firstParty }, requiresScriptTrackingPrivacy, webPageProxyID);
     cookieDatabase().setCookie(firstParty, url, value, CookieJarDB::Source::Script, cappedLifetime);
@@ -126,7 +126,7 @@ bool NetworkStorageSession::setCookieFromDOM(const URL&, const SameSiteInfo&, co
     return false;
 }
 
-void NetworkStorageSession::setCookiesFromHTTPResponse(const URL& firstParty, const URL& url, const String& value) const
+void NetworkStorageSession::setCookiesFromHTTPResponse(const URL& firstParty, const URL& url, StringImpl* value) const
 {
     cookieDatabase().setCookie(firstParty, url, value, CookieJarDB::Source::Network);
 }
@@ -153,7 +153,7 @@ HTTPCookieAcceptPolicy NetworkStorageSession::cookieAcceptPolicy() const
     return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
 }
 
-std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<FrameIdentifier>, std::optional<WebPageProxyIdentifier>, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker) const
+std::pair<RefPtr<StringImpl>, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<FrameIdentifier>, std::optional<WebPageProxyIdentifier>, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker) const
 {
     return cookiesForSession(*this, firstParty, url, false, includeSecureCookies);
 }
@@ -182,12 +182,12 @@ void NetworkStorageSession::setCookie(const Cookie& cookie, const URL&, const UR
 
 void NetworkStorageSession::deleteCookie(const Cookie& cookie, CompletionHandler<void()>&& completionHandler)
 {
-    String url = makeString(cookie.secure ? "https"_s : "http"_s, "://"_s, cookie.domain, cookie.path);
+    RefPtr<StringImpl> url = makeString(cookie.secure ? "https"_s : "http"_s, "://"_s, cookie.domain, cookie.path);
     cookieDatabase().deleteCookie(url, cookie.name);
     completionHandler();
 }
 
-void NetworkStorageSession::deleteCookie(const URL&, const URL& url, const String& name, CompletionHandler<void()>&& completionHandler) const
+void NetworkStorageSession::deleteCookie(const URL&, const URL& url, StringImpl* name, CompletionHandler<void()>&& completionHandler) const
 {
     cookieDatabase().deleteCookie(url.string(), name);
     completionHandler();
@@ -205,7 +205,7 @@ void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime, CompletionHa
     completionHandler();
 }
 
-void NetworkStorageSession::deleteCookiesForHostnames(std::span<const String> cookieHostNames, IncludeHttpOnlyCookies includeHttpOnlyCookies, ScriptWrittenCookiesOnly, ExemptAllowlistedCookies, CompletionHandler<void()>&& completionHandler)
+void NetworkStorageSession::deleteCookiesForHostnames(std::span<const RefPtr<StringImpl>> cookieHostNames, IncludeHttpOnlyCookies includeHttpOnlyCookies, ScriptWrittenCookiesOnly, ExemptAllowlistedCookies, CompletionHandler<void()>&& completionHandler)
 {
     for (auto hostname : cookieHostNames)
         cookieDatabase().deleteCookiesForHostname(hostname, includeHttpOnlyCookies);
@@ -217,7 +217,7 @@ Vector<Cookie> NetworkStorageSession::getAllCookies()
     return cookieDatabase().getAllCookies();
 }
 
-void NetworkStorageSession::getHostnamesWithCookies(HashSet<String>& hostnames)
+void NetworkStorageSession::getHostnamesWithCookies(HashSet<RefPtr<StringImpl>>& hostnames)
 {
     hostnames = cookieDatabase().allDomains();
 }
@@ -244,7 +244,7 @@ bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteI
     return true;
 }
 
-std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<FrameIdentifier>, std::optional<WebPageProxyIdentifier>, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker) const
+std::pair<RefPtr<StringImpl>, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<FrameIdentifier>, std::optional<WebPageProxyIdentifier>, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker) const
 {
     return cookiesForSession(*this, firstParty, url, true, includeSecureCookies);
 }

@@ -34,12 +34,12 @@ namespace WebCore {
 class CollectionNamedElementCache {
     WTF_MAKE_TZONE_ALLOCATED(CollectionNamedElementCache);
 public:
-    inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* findElementsWithId(const AtomString& id) const;
-    inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* findElementsWithName(const AtomString& name) const;
-    const Vector<AtomString>& propertyNames() const LIFETIME_BOUND { return m_propertyNames; }
+    inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* findElementsWithId(AtomStringImpl* id) const;
+    inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* findElementsWithName(AtomStringImpl* name) const;
+    const Vector<RefPtr<AtomStringImpl>>& propertyNames() const LIFETIME_BOUND { return m_propertyNames; }
     
-    inline void appendToIdCache(const AtomString& id, Element&);
-    inline void appendToNameCache(const AtomString& name, Element&);
+    inline void appendToIdCache(AtomStringImpl* id, Element&);
+    inline void appendToNameCache(AtomStringImpl* name, Element&);
     inline void didPopulate();
 
     inline size_t memoryCost() const;
@@ -47,12 +47,12 @@ public:
 private:
     typedef HashMap<AtomStringImpl*, Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>> StringToElementsMap;
 
-    inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* find(const StringToElementsMap&, const AtomString& key) const;
-    inline void append(StringToElementsMap&, const AtomString& key, Element&);
+    inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* find(const StringToElementsMap&, AtomStringImpl* key) const;
+    inline void append(StringToElementsMap&, AtomStringImpl* key, Element&);
 
     StringToElementsMap m_idMap;
     StringToElementsMap m_nameMap;
-    Vector<AtomString> m_propertyNames;
+    Vector<RefPtr<AtomStringImpl>> m_propertyNames;
 
 #if ASSERT_ENABLED
     bool m_didPopulate { false };
@@ -67,12 +67,12 @@ public:
 
     // DOM API
     Element* item(unsigned index) const override = 0; // Tighten return type from NodeList::item().
-    virtual Element* namedItem(const AtomString& name) const = 0;
-    const Vector<AtomString>& supportedPropertyNames();
-    bool isSupportedPropertyName(const AtomString& name);
+    virtual Element* namedItem(AtomStringImpl* name) const = 0;
+    const Vector<RefPtr<AtomStringImpl>>& supportedPropertyNames();
+    bool isSupportedPropertyName(AtomStringImpl* name);
 
     // Non-DOM API
-    Vector<Ref<Element>> namedItems(const AtomString& name) const;
+    Vector<Ref<Element>> namedItems(AtomStringImpl* name) const;
     size_t memoryCost() const override;
 
     inline bool isRootedAtTreeScope() const;
@@ -90,7 +90,7 @@ protected:
     HTMLCollection(ContainerNode& base, CollectionType);
 
     WEBCORE_EXPORT virtual void updateNamedElementCache() const;
-    WEBCORE_EXPORT Element* namedItemSlow(const AtomString& name) const;
+    WEBCORE_EXPORT Element* namedItemSlow(AtomStringImpl* name) const;
 
     inline void setNamedItemCache(std::unique_ptr<CollectionNamedElementCache>) const;
     inline const CollectionNamedElementCache& namedItemCaches() const;
@@ -122,7 +122,7 @@ inline size_t CollectionNamedElementCache::memoryCost() const
     // memoryCost() may be invoked concurrently from a GC thread. This is safe because
     // the named element cache is immutable after creation and its lifetime is protected
     // by m_namedElementCacheAssignmentLock in HTMLCollection::memoryCost().
-    return m_idMap.byteSize() + m_nameMap.byteSize() + m_propertyNames.capacity() * sizeof(AtomString);
+    return m_idMap.byteSize() + m_nameMap.byteSize() + m_propertyNames.capacity() * sizeof(RefPtr<AtomStringImpl>);
 }
 
 inline CollectionType HTMLCollection::type() const

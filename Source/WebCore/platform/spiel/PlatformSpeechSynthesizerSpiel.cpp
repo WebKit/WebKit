@@ -62,13 +62,13 @@ public:
 
 private:
     void finishSpeakerInitialization();
-    String generateVoiceURI(const GRefPtr<SpielVoice>&, const String& language);
+    RefPtr<StringImpl> generateVoiceURI(const GRefPtr<SpielVoice>&, StringImpl* language);
 
     const PlatformSpeechSynthesizer& m_platformSynthesizer;
     Function<void()> m_speakerCreatedCallback;
     GRefPtr<GstElement> m_sink;
     GRefPtr<SpielSpeaker> m_speaker;
-    HashMap<String, GRefPtr<SpielVoice>> m_voices;
+    HashMap<RefPtr<StringImpl>, GRefPtr<SpielVoice>> m_voices;
     RefPtr<PlatformSpeechSynthesisUtterance> m_utterance;
 };
 
@@ -84,7 +84,7 @@ SpielSpeechWrapper::SpielSpeechWrapper(const PlatformSpeechSynthesizer& synthesi
         GST_DEBUG_CATEGORY_INIT(webkit_spiel_debug, "webkitspiel", 0, "WebKit Spiel");
     });
 
-    m_sink = createPlatformAudioSink("speech"_s);
+    m_sink = createPlatformAudioSink("speech"_si);
     if (!m_sink) {
         GST_ERROR("Failed to create GStreamer audio sink element");
         return;
@@ -158,7 +158,7 @@ SpielSpeechWrapper::~SpielSpeechWrapper()
         g_signal_handlers_disconnect_by_data(m_speaker.get(), this);
 }
 
-String SpielSpeechWrapper::generateVoiceURI(const GRefPtr<SpielVoice>& voice, const String& language)
+RefPtr<StringImpl> SpielSpeechWrapper::generateVoiceURI(const GRefPtr<SpielVoice>& voice, StringImpl* language)
 {
     GRefPtr provider = adoptGRef(spiel_voice_get_provider(voice.get()));
     return makeString(URI_PREFIX, unsafeSpan(spiel_provider_get_well_known_name(provider.get())), '#', unsafeSpan(spiel_voice_get_identifier(voice.get())), '#', language);
@@ -220,15 +220,15 @@ void SpielSpeechWrapper::speakUtterance(RefPtr<PlatformSpeechSynthesisUtterance>
 
     const auto& uri = utterance->voice()->voiceURI();
     if (!m_voices.contains(uri)) {
-        GST_ERROR("Unknown voice URI: %s", uri.utf8());
+        GST_ERROR("Unknown voice URI: %s", utf8(uri));
         ASSERT_NOT_REACHED();
         return;
     }
 
     // TODO: Detect whether the utterance text is XML and enable SSML if that is the case.
     auto voice = m_voices.get(uri);
-    GRefPtr spielUtterance = adoptGRef(spiel_utterance_new(utterance->text().utf8().legacyCStringPointer()));
-    spiel_utterance_set_language(spielUtterance.get(), utterance->lang().utf8().legacyCStringPointer());
+    GRefPtr spielUtterance = adoptGRef(spiel_utterance_new(utf8(utterance->text()).legacyCStringPointer()));
+    spiel_utterance_set_language(spielUtterance.get(), utf8(utterance->lang()).legacyCStringPointer());
     spiel_utterance_set_voice(spielUtterance.get(), voice);
     spiel_utterance_set_volume(spielUtterance.get(), utterance->volume());
     spiel_utterance_set_pitch(spielUtterance.get(), utterance->pitch());

@@ -86,7 +86,7 @@ public:
     void clearClients();
 
     virtual bool hasAudioUnit() const = 0;
-    void setCaptureDevice(String&&, uint32_t, bool isDefault);
+    void setCaptureDevice(RefPtr<StringImpl>&&, uint32_t, bool isDefault);
 
     virtual LongCapabilityRange sampleRateCapacities() const = 0;
     virtual int actualSampleRate() const { return sampleRate(); }
@@ -94,7 +94,7 @@ public:
     bool isRenderingAudio() const { return m_isRenderingAudio; }
     bool hasClients() const { return !m_clients.isEmptyIgnoringNullReferences(); }
 
-    const String& persistentIDForTesting() const { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
+    const RefPtr<StringImpl>& persistentIDForTesting() const { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
 
     void handleNewCurrentMicrophoneDevice(const CaptureDevice&);
 
@@ -122,7 +122,7 @@ protected:
 
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/);
 
-    const String& persistentID() const { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
+    const RefPtr<StringImpl>& persistentID() const { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
 
     void setIsRenderingAudio(bool);
 
@@ -147,11 +147,11 @@ private:
     OSStatus startUnit();
     bool shouldContinueRunning() const { return m_producingCount || m_isRenderingAudio || hasClients(); }
 
-    virtual void willChangeCaptureDeviceTo(const String&) { };
+    virtual void willChangeCaptureDeviceTo(StringImpl*) { };
 
     // RealtimeMediaSourceCenterObserver
     void devicesChanged() final;
-    void deviceWillBeRemoved(const String&) final { }
+    void deviceWillBeRemoved(StringImpl*) final { }
 
     void continueStartProducingData();
     void continueStopProducingData();
@@ -167,7 +167,7 @@ private:
     int32_t m_producingCount { 0 };
 
     uint32_t m_outputDeviceID { 0 };
-    std::optional<std::pair<String, uint32_t>> m_capturingDevice;
+    std::optional<std::pair<RefPtr<StringImpl>, uint32_t>> m_capturingDevice;
 
     ThreadSafeWeakHashSet<CoreAudioCaptureSource> m_clients;
     Vector<ThreadSafeWeakPtr<CoreAudioCaptureSource>> m_audioThreadClients WTF_GUARDED_BY_LOCK(m_audioThreadClientsLock);

@@ -71,7 +71,7 @@ WebCore::Color CSSColorValue::absoluteColor(const CSSValue& value)
     return { };
 }
 
-String CSSColorValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSColorValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_color);
 }

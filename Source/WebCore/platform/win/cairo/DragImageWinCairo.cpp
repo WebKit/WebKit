@@ -214,10 +214,10 @@ void DragImage::dissolveToFraction(float delta)
     m_platformImage = dissolveDragImageToFraction(takePlatformImage(), delta);
 }
 
-static PlatformDragImage createDragImageIconForCachedImageFilename(const String& filename)
+static PlatformDragImage createDragImageIconForCachedImageFilename(StringImpl* filename)
 {
     SHFILEINFO shfi { };
-    auto fname = filename.wideCharacters();
+    auto fname = wideCharacters(filename);
     if (FAILED(SHGetFileInfo(fname.data(), FILE_ATTRIBUTE_NORMAL, &shfi, sizeof(shfi), SHGFI_ICON | SHGFI_USEFILEATTRIBUTES)))
         return 0;
 
@@ -233,7 +233,7 @@ static PlatformDragImage createDragImageIconForCachedImageFilename(const String&
     return iconInfo.hbmColor;
 }
 
-DragImage DragImage::createIconForCachedImageFilename(const String& filename)
+DragImage DragImage::createIconForCachedImageFilename(StringImpl* filename)
 {
     return DragImage { createDragImageIconForCachedImageFilename(filename) };
 }

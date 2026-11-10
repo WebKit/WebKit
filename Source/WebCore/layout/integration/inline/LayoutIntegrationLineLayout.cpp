@@ -1832,7 +1832,7 @@ bool LineLayout::updateTextContent(RenderText& textRenderer, std::optional<size_
         return invalidation.textInserted(inlineTextBox);
     }
 
-    int delta = inlineTextBox->content().length() - oldLength;
+    int delta = length(inlineTextBox->content()) - oldLength;
     return delta >= 0 ? invalidation.textInserted(inlineTextBox, offset) : invalidation.textWillBeRemoved(inlineTextBox, offset);
 }
 

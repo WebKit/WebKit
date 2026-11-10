@@ -97,7 +97,7 @@ std::optional<JSHandleInfo> WebFrameLoaderClient::jsHandleInfoForHitTestResult(c
 }
 #endif
 
-std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, SandboxFlags sandboxFlags) const
+std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, StringImpl* clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, SandboxFlags sandboxFlags) const
 {
     RefPtr webPage = m_frame->page();
     if (!webPage) {
@@ -210,13 +210,13 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         navigationID,
         WTF::move(originalRequest),
         request,
-        request.url().isValid() ? String() : request.url().string(),
+        request.url().isValid() ? nullptr : request.url().string(),
         requester,
         navigationAction.pendingDispatchNavigateEventIdentifier(),
     };
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, FormState*, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
+void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, FormState*, StringImpl* clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
 {
     LOG_WITH_STREAM(Loading, stream << "WebProcess "_s << getCurrentProcessID() << " - dispatchDecidePolicyForNavigationAction to request url "_s << request.url().string());
 
@@ -238,7 +238,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     // redirect response in the NavigationActionData, so the two have to stay in agreement.
     Markable<WebCore::ScriptExecutionContextIdentifier> downloadAttributeInitiatingDocument;
     SingleThreadWeakPtr<WebCore::DocumentLoader> downloadAttributePolicyDocumentLoader;
-    if (!navigationAction.downloadAttribute().isNull() && redirectResponse.isNull()) {
+    if (navigationAction.downloadAttribute() && redirectResponse.isNull()) {
         if (RefPtr localFrame = m_frame->coreLocalFrame()) {
             if (RefPtr document = localFrame->document())
                 downloadAttributeInitiatingDocument = document->identifier();

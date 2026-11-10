@@ -53,10 +53,10 @@ Text* next(const Text&, const Node* stayWithin);
 Text* nextSibling(const Node&);
 
 // Concatenated text contents of a subtree.
-String contentsAsString(const Node&);
-String contentsAsString(const ContainerNode&);
+RefPtr<StringImpl> contentsAsString(const Node&);
+RefPtr<StringImpl> contentsAsString(const ContainerNode&);
 void appendContents(const ContainerNode&, StringBuilder& result);
-String childTextContent(const ContainerNode&);
+RefPtr<StringImpl> childTextContent(const ContainerNode&);
 
 }
 

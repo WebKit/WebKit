@@ -145,7 +145,7 @@ private:
     Timer m_writingToolsTextSuggestionAnimationTimer;
 
 #if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
-    HashSet<String> m_appliedGrammarTextEffectUUIDs;
+    HashSet<RefPtr<StringImpl>> m_appliedGrammarTextEffectUUIDs;
 #endif
 };
 

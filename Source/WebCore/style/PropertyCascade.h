@@ -106,12 +106,13 @@ public:
     const Property& logicalGroupProperty(CSSPropertyID) const LIFETIME_BOUND;
     const Property* lastPropertyResolvingLogicalPropertyPair(CSSPropertyID, WritingMode) const LIFETIME_BOUND;
 
-    bool hasCustomProperty(const AtomString&) const;
-    const Property& customProperty(const AtomString&) const LIFETIME_BOUND;
+    bool hasCustomProperty(AtomStringImpl*) const;
+    bool hasCustomProperty(const RefPtr<AtomStringImpl>&) const;
+    const Property& customProperty(AtomStringImpl*) const LIFETIME_BOUND;
     NODELETE const Property& functionResultProperty() const LIFETIME_BOUND;
 
     std::span<const CSSPropertyID> logicalGroupPropertyIDs() const LIFETIME_BOUND;
-    const OrderedHashMap<AtomString, Property>& customProperties() const LIFETIME_BOUND { return m_customProperties; }
+    const OrderedHashMap<RefPtr<AtomStringImpl>, Property>& customProperties() const LIFETIME_BOUND { return m_customProperties; }
 
     NODELETE ValueOrReference<HashSet<AnimatableCSSProperty>> overriddenAnimatedProperties() const;
 
@@ -167,7 +168,7 @@ private:
         const MatchedProperties& properties;
         Origin origin;
     };
-    HashMap<std::pair<unsigned, AtomString>, Deque<DelayedRollbackProperty>> m_delayedRollbackProperties;
+    HashMap<std::pair<unsigned, RefPtr<AtomStringImpl>>, Deque<DelayedRollbackProperty>> m_delayedRollbackProperties;
 
     // The CSSPropertyID enum is sorted like this:
     // 1. CSSPropertyID::Invalid and CSSPropertyID::Custom.
@@ -189,7 +190,7 @@ private:
     CSSPropertyID m_lowestSeenLogicalGroupProperty { lastLogicalGroupProperty };
     CSSPropertyID m_highestSeenLogicalGroupProperty { firstLogicalGroupProperty };
 
-    OrderedHashMap<AtomString, Property> m_customProperties;
+    OrderedHashMap<RefPtr<AtomStringImpl>, Property> m_customProperties;
 };
 
 inline bool PropertyCascade::hasNormalProperty(CSSPropertyID id) const
@@ -234,12 +235,17 @@ inline std::span<const CSSPropertyID> PropertyCascade::logicalGroupPropertyIDs()
     return std::span { m_logicalGroupPropertyIDs }.first(m_seenLogicalGroupPropertyCount);
 }
 
-inline bool PropertyCascade::hasCustomProperty(const AtomString& name) const
+inline bool PropertyCascade::hasCustomProperty(AtomStringImpl* name) const
 {
     return m_customProperties.contains(name);
 }
 
-inline const PropertyCascade::Property& PropertyCascade::customProperty(const AtomString& name) const
+inline bool PropertyCascade::hasCustomProperty(const RefPtr<AtomStringImpl>& name) const
+{
+    return m_customProperties.contains(name);
+}
+
+inline const PropertyCascade::Property& PropertyCascade::customProperty(AtomStringImpl* name) const
 {
     ASSERT(hasCustomProperty(name));
     return m_customProperties.find(name)->value;

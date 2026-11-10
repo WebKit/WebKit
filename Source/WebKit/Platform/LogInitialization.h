@@ -33,10 +33,10 @@ namespace WebKit {
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 WTF::LogChannels& logChannels();
-String logLevelString();
+RefPtr<StringImpl> logLevelString();
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-WTFLogChannel* getLogChannel(const String& name);
+WTFLogChannel* getLogChannel(StringImpl* name);
 
 } // namespace WebKit

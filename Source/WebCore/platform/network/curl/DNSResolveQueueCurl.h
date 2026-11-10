@@ -34,12 +34,12 @@ class DNSResolveQueueCurl final : public DNSResolveQueue {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DNSResolveQueueCurl);
 public:
     DNSResolveQueueCurl() = default;
-    void resolve(const String& hostname, uint64_t identifier, DNSCompletionHandler&&) final;
+    void resolve(StringImpl* hostname, uint64_t identifier, DNSCompletionHandler&&) final;
     void stopResolve(uint64_t identifier) final;
 
 private:
     void updateIsUsingProxy() final;
-    void platformResolve(const String&) final;
+    void platformResolve(StringImpl*) final;
 };
 
 using DNSResolveQueuePlatform = DNSResolveQueueCurl;

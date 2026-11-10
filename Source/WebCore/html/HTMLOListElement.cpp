@@ -67,24 +67,24 @@ bool HTMLOListElement::hasPresentationalHintsForAttribute(const QualifiedName& n
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLOListElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLOListElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == typeAttr) {
-        if (value == "a"_s)
+        if (equal(value, "a"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::LowerAlpha);
-        else if (value == "A"_s)
+        else if (equal(value, "A"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::UpperAlpha);
-        else if (value == "i"_s)
+        else if (equal(value, "i"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::LowerRoman);
-        else if (value == "I"_s)
+        else if (equal(value, "I"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::UpperRoman);
-        else if (value == "1"_s)
+        else if (equal(value, "1"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::Decimal);
     } else
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLOListElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLOListElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::startAttr: {
@@ -96,7 +96,7 @@ void HTMLOListElement::attributeChanged(const QualifiedName& name, const AtomStr
         break;
     }
     case AttributeNames::reversedAttr: {
-        bool reversed = !newValue.isNull();
+        bool reversed = !!newValue;
         if (reversed == m_isReversed)
             return;
         m_isReversed = reversed;

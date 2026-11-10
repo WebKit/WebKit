@@ -77,7 +77,7 @@ public:
 
     void didShowContextMenu(NSMenu *);
     void didDismissContextMenu(NSMenu *);
-    void captionStyleMenuSetPreviewProfileID(const String&);
+    void captionStyleMenuSetPreviewProfileID(StringImpl*);
     void captionStyleMenuWillOpen();
     void captionStyleMenuDidClose();
 

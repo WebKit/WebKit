@@ -59,7 +59,7 @@ ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(Ref<const CSSFunctionValue> cssFunct
 
     if (cssFunctionValue->size() != 1 || !cssFunctionValue->item(0)) {
         ASSERT_NOT_REACHED();
-        return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
+        return Exception { ExceptionCode::TypeError, "Unexpected number of values."_si };
     }
 
     auto valueOrException = CSSNumericValue::reifyValue(document, protect(*cssFunctionValue->item(0)));

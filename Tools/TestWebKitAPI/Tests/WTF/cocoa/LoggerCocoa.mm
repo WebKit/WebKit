@@ -24,6 +24,8 @@
  */
 
 #import "config.h"
+
+#import "Helpers/Test.h"
 #import <wtf/Logger.h>
 
 #import <Foundation/Foundation.h>
@@ -76,35 +78,35 @@ TEST(WTF_Logger, NSError)
 {
     @autoreleasepool {
         NSError *error = [NSError errorWithDomain:@"TestWTFDomain" code:1 userInfo:@{ NSLocalizedDescriptionKey : @"TestWTF Error" }];
-        EXPECT_EQ(WTF::LogArgument<NSError *>::toString(error), String(error.localizedDescription));
+        EXPECT_EQ(WTF::LogArgument<NSError *>::toString(error), StringImpl::create(error.localizedDescription).get());
     }
 }
 
 TEST(WTF_Logger, NSObject)
 {
     RetainPtr logger = adoptNS([[TestWTFLogger alloc] init]);
-    EXPECT_EQ(WTF::LogArgument<TestWTFLogger *>::toString(logger.get()), String([logger description]));
+    EXPECT_EQ(WTF::LogArgument<TestWTFLogger *>::toString(logger.get()), StringImpl::create([logger description]).get());
 }
 
 TEST(WTF_Logger, NSProxy)
 {
     RetainPtr logger = adoptNS([[TestWTFLogger alloc] init]);
     RetainPtr loggerProxy = adoptNS([[TestWTFLoggerProxy alloc] initWithTarget:logger.get()]);
-    EXPECT_EQ(WTF::LogArgument<TestWTFLoggerProxy *>::toString(loggerProxy.get()), String([loggerProxy description]));
+    EXPECT_EQ(WTF::LogArgument<TestWTFLoggerProxy *>::toString(loggerProxy.get()), StringImpl::create([loggerProxy description]).get());
 }
 
 TEST(WTF_Logger, NSString)
 {
     @autoreleasepool {
         NSString *string = @"TestWTF String";
-        EXPECT_EQ(WTF::LogArgument<NSString *>::toString(string), String(string));
+        EXPECT_EQ(WTF::LogArgument<NSString *>::toString(string), StringImpl::create(string).get());
     }
 }
 
 TEST(WTF_Logger, ObjCIDType)
 {
     RetainPtr logger = adoptNS([[TestWTFLogger alloc] init]);
-    EXPECT_EQ(WTF::LogArgument<id>::toString(logger.get()), String([logger description]));
+    EXPECT_EQ(WTF::LogArgument<id>::toString(logger.get()), StringImpl::create([logger description]).get());
 }
 
 TEST(WTF_Logger, ObjCRootClass)

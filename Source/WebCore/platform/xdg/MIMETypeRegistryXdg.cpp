@@ -34,55 +34,55 @@
 #define MAX_EXTENSION_COUNT 10
 namespace WebCore {
 
-String MIMETypeRegistry::mimeTypeForExtension(StringView string)
+RefPtr<StringImpl> MIMETypeRegistry::mimeTypeForExtension(StringView string)
 {
     if (string.isEmpty())
-        return String();
+        return nullptr;
 
     // Build any filename with the given extension.
     auto filename = makeString("a."_s, string);
-    if (const char* mimeType = xdg_mime_get_mime_type_from_file_name(filename.utf8().legacyCStringPointer())) {
+    if (const char* mimeType = xdg_mime_get_mime_type_from_file_name(utf8(filename).legacyCStringPointer())) {
         if (mimeType != XDG_MIME_TYPE_UNKNOWN)
-            return String::fromUTF8(mimeType);
+            return StringImpl::fromUTF8(mimeType);
     }
 
-    return String();
+    return nullptr;
 }
 
-bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
+bool MIMETypeRegistry::isApplicationPluginMIMEType(StringImpl*)
 {
     return false;
 }
 
-String MIMETypeRegistry::preferredExtensionForMIMEType(const String& mimeType)
+RefPtr<StringImpl> MIMETypeRegistry::preferredExtensionForMIMEType(StringImpl* mimeType)
 {
-    if (mimeType.isEmpty())
-        return String();
+    if (isEmpty(mimeType))
+        return nullptr;
 
-    if (mimeType.startsWith("text/plain"_s))
-        return String();
+    if (startsWith(mimeType, "text/plain"_s))
+        return nullptr;
 
-    String returnValue;
+    RefPtr<StringImpl> returnValue;
     char* extension;
-    if (xdg_mime_get_simple_globs(mimeType.utf8().legacyCStringPointer(), &extension, 1)) {
+    if (xdg_mime_get_simple_globs(utf8(mimeType).legacyCStringPointer(), &extension, 1)) {
         auto view = std::string_view(extension);
         if (view[0] == '.' && view.size() > 1)
-            returnValue = String::fromUTF8(view.substr(1).data());
+            returnValue = StringImpl::fromUTF8(view.substr(1).data());
         free(extension);
     }
     return returnValue;
 }
 
-Vector<String> MIMETypeRegistry::extensionsForMIMEType(const String& mimeType)
+Vector<RefPtr<StringImpl>> MIMETypeRegistry::extensionsForMIMEType(StringImpl* mimeType)
 {
-    if (mimeType.isEmpty())
+    if (isEmpty(mimeType))
         return { };
 
-    Vector<String> returnValue;
+    Vector<RefPtr<StringImpl>> returnValue;
     std::array<char*, MAX_EXTENSION_COUNT> extensions;
-    int n = xdg_mime_get_simple_globs(mimeType.utf8().legacyCStringPointer(), extensions.data(), MAX_EXTENSION_COUNT);
+    int n = xdg_mime_get_simple_globs(utf8(mimeType).legacyCStringPointer(), extensions.data(), MAX_EXTENSION_COUNT);
     for (int i = 0; i < n; ++i) {
-        returnValue.append(String::fromUTF8(extensions[i]));
+        returnValue.append(StringImpl::fromUTF8(extensions[i]));
         free(extensions[i]);
     }
     return returnValue;

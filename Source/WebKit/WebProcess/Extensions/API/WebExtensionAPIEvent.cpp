@@ -49,7 +49,7 @@ void WebExtensionAPIEvent::invokeListeners()
         listener->call();
 }
 
-void WebExtensionAPIEvent::invokeListenersWithJSONArgument(const String& argument)
+void WebExtensionAPIEvent::invokeListenersWithJSONArgument(StringImpl* argument)
 {
     if (m_listeners.isEmpty())
         return;
@@ -58,7 +58,7 @@ void WebExtensionAPIEvent::invokeListenersWithJSONArgument(const String& argumen
     auto listenersCopy = m_listeners;
 
     for (RefPtr listener : listenersCopy)
-        listener->call(!argument.isEmpty() ? JSValueMakeFromJSONString(listener->globalContext(), toJSString(argument).get()) : JSValueMakeUndefined(listener->globalContext()));
+        listener->call(!isEmpty(argument) ? JSValueMakeFromJSONString(listener->globalContext(), toJSString(argument).get()) : JSValueMakeUndefined(listener->globalContext()));
 }
 
 void WebExtensionAPIEvent::invokeListenersWithJSArgument(JSListenerArgument argument1, JSListenerArgument argument2)
@@ -71,7 +71,7 @@ void WebExtensionAPIEvent::invokeListenersWithJSArgument(JSListenerArgument argu
 
     auto argument = [](JSContextRef context, JSListenerArgument argumentValue) {
         if (argumentValue.convertToJSON)
-            return !argumentValue.argument.isEmpty() ? JSValueMakeFromJSONString(context, toJSString(argumentValue.argument).get()) : JSValueMakeUndefined(context);
+            return !isEmpty(argumentValue.argument) ? JSValueMakeFromJSONString(context, toJSString(argumentValue.argument).get()) : JSValueMakeUndefined(context);
         return toJSValueRef(context, argumentValue.argument);
     };
 
@@ -79,7 +79,7 @@ void WebExtensionAPIEvent::invokeListenersWithJSArgument(JSListenerArgument argu
         listener->call(argument(listener->globalContext(), argument1), argument(listener->globalContext(), argument2));
 }
 
-void WebExtensionAPIEvent::invokeListenersWithJSONArgument(const String& argument1, const String& argument2)
+void WebExtensionAPIEvent::invokeListenersWithJSONArgument(StringImpl* argument1, StringImpl* argument2)
 {
     if (m_listeners.isEmpty())
         return;
@@ -90,7 +90,7 @@ void WebExtensionAPIEvent::invokeListenersWithJSONArgument(const String& argumen
     for (RefPtr listener : listenersCopy) {
         listener->call(
             toJSValueRef(listener->globalContext(), argument1),
-            !argument2.isEmpty() ? JSValueMakeFromJSONString(listener->globalContext(), toJSString(argument2).get()) : JSValueMakeUndefined(listener->globalContext())
+            !isEmpty(argument2) ? JSValueMakeFromJSONString(listener->globalContext(), toJSString(argument2).get()) : JSValueMakeUndefined(listener->globalContext())
         );
     }
 }

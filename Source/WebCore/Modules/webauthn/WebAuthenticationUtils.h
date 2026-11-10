@@ -39,7 +39,7 @@
 namespace WebCore {
 
 // Produce a SHA-256 hash of the given RP ID.
-WEBCORE_EXPORT Vector<uint8_t> produceRpIdHash(const String& rpId);
+WEBCORE_EXPORT Vector<uint8_t> produceRpIdHash(StringImpl* rpId);
 
 WEBCORE_EXPORT Vector<uint8_t> encodeES256PublicKeyAsCBOR(Vector<uint8_t>&& x, Vector<uint8_t>&& y);
 
@@ -47,27 +47,27 @@ WEBCORE_EXPORT Vector<uint8_t> encodeES256PublicKeyAsCBOR(Vector<uint8_t>&& x, V
 WEBCORE_EXPORT Vector<uint8_t> buildAttestedCredentialData(const Vector<uint8_t>& aaguid, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& coseKey);
 
 // https://www.w3.org/TR/webauthn/#sec-authenticator-data
-WEBCORE_EXPORT Vector<uint8_t> buildAuthData(const String& rpId, const uint8_t flags, const uint32_t counter, const Vector<uint8_t>& optionalAttestedCredentialData);
+WEBCORE_EXPORT Vector<uint8_t> buildAuthData(StringImpl* rpId, const uint8_t flags, const uint32_t counter, const Vector<uint8_t>& optionalAttestedCredentialData);
 
-WEBCORE_EXPORT cbor::CBORValue::MapValue buildAttestationMap(Vector<uint8_t>&&, String&&, cbor::CBORValue::MapValue&&, const AttestationConveyancePreference&, ShouldZeroAAGUID = ShouldZeroAAGUID::No);
+WEBCORE_EXPORT cbor::CBORValue::MapValue buildAttestationMap(Vector<uint8_t>&&, RefPtr<StringImpl>&&, cbor::CBORValue::MapValue&&, const AttestationConveyancePreference&, ShouldZeroAAGUID = ShouldZeroAAGUID::No);
 
 WEBCORE_EXPORT cbor::CBORValue::MapValue buildCredentialDescriptor(const Vector<uint8_t>& credentialId);
 
 // https://www.w3.org/TR/webauthn/#attestation-object
-WEBCORE_EXPORT Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, String&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference&, ShouldZeroAAGUID = ShouldZeroAAGUID::No);
+WEBCORE_EXPORT Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, RefPtr<StringImpl>&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference&, ShouldZeroAAGUID = ShouldZeroAAGUID::No);
 
-WEBCORE_EXPORT Ref<ArrayBuffer> buildClientDataJson(ClientDataType /*type*/, const BufferSource& challenge, const SecurityOrigin& /*origin*/, WebAuthn::Scope, const String& topOrigin = { });
+WEBCORE_EXPORT Ref<ArrayBuffer> buildClientDataJson(ClientDataType /*type*/, const BufferSource& challenge, const SecurityOrigin& /*origin*/, WebAuthn::Scope, StringImpl* topOrigin = nullptr);
 
 WEBCORE_EXPORT Vector<uint8_t> buildClientDataJsonHash(const ArrayBuffer& clientDataJson);
 
-WEBCORE_EXPORT cbor::CBORValue::MapValue buildUserEntityMap(const Vector<uint8_t>& userId, const String& name, const String& displayName);
+WEBCORE_EXPORT cbor::CBORValue::MapValue buildUserEntityMap(const Vector<uint8_t>& userId, StringImpl* name, StringImpl* displayName);
 
 // encodeRawPublicKey takes X & Y and returns them as a 0x04 || X || Y byte array.
 WEBCORE_EXPORT Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& X, const Vector<uint8_t>& Y);
 
-WEBCORE_EXPORT String toString(AuthenticatorTransport);
+WEBCORE_EXPORT RefPtr<StringImpl> toString(AuthenticatorTransport);
 
-NODELETE WEBCORE_EXPORT std::optional<AuthenticatorTransport> convertStringToAuthenticatorTransport(const String& transport);
+NODELETE WEBCORE_EXPORT std::optional<AuthenticatorTransport> convertStringToAuthenticatorTransport(StringImpl* transport);
 
 // Returns why a URL can't be used as the crossDeviceFallbackUrl extension input, or nullopt if it can.
 WEBCORE_EXPORT std::optional<ASCIILiteral> validateCrossDeviceFallbackURL(const URL&);

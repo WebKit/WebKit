@@ -72,7 +72,7 @@ private:
     SimpleRange m_automaticReplacementRange;
     mutable std::optional<SimpleRange> m_paragraphRange;
     mutable std::optional<SimpleRange> m_offsetAsRange;
-    mutable String m_text;
+    mutable RefPtr<StringImpl> m_text;
     mutable std::optional<uint64_t> m_checkingStart;
     mutable std::optional<uint64_t> m_checkingLength;
     mutable std::optional<uint64_t> m_automaticReplacementStart;
@@ -84,11 +84,11 @@ public:
     TextCheckingHelper(EditorClient&, const SimpleRange&);
 
     struct MisspelledWord {
-        String word;
+        RefPtr<StringImpl> word;
         uint64_t offset { 0 };
     };
     struct UngrammaticalPhrase {
-        String phrase;
+        RefPtr<StringImpl> phrase;
         uint64_t offset { 0 };
         GrammarDetail detail;
     };

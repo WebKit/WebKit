@@ -38,7 +38,7 @@ namespace WebCore {
 class WorkerDebuggerProxy : public AbstractCanMakeCheckedPtr {
 public:
     virtual ~WorkerDebuggerProxy() = default;
-    virtual void postMessageToDebugger(const String&) = 0;
+    virtual void postMessageToDebugger(StringImpl*) = 0;
     virtual void setResourceCachingDisabledByWebInspector(bool) = 0;
 };
 

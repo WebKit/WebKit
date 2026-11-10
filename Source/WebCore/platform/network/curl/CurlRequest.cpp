@@ -87,12 +87,12 @@ void CurlRequest::setAuthenticationScheme(ProtectionSpace::AuthenticationScheme 
     }
 }
 
-void CurlRequest::setUserPass(const String& user, const String& password)
+void CurlRequest::setUserPass(StringImpl* user, StringImpl* password)
 {
     ASSERT(isMainThread());
 
-    m_user = user.isolatedCopy();
-    m_password = password.isolatedCopy();
+    m_user = isolatedCopy(user);
+    m_password = isolatedCopy(password);
 }
 
 void CurlRequest::resume()
@@ -196,20 +196,20 @@ CURL* CurlRequest::setupTransfer()
     m_curlHandle->appendRequestHeaders(httpHeaderFields);
 
     const auto& method = m_request.httpMethod();
-    if (method == "GET"_s)
+    if (equal(method, "GET"_s))
         m_curlHandle->enableHttpGetRequest();
-    else if (method == "POST"_s)
+    else if (equal(method, "POST"_s))
         setupPOST();
-    else if (method == "PUT"_s)
+    else if (equal(method, "PUT"_s))
         setupPUT();
-    else if (method == "HEAD"_s)
+    else if (equal(method, "HEAD"_s))
         m_curlHandle->enableHttpHeadRequest();
     else {
         m_curlHandle->setHttpCustomRequest(method);
         setupPUT();
     }
 
-    if (!m_user.isEmpty() || !m_password.isEmpty())
+    if (!isEmpty(m_user) || !isEmpty(m_password))
         m_curlHandle->setHttpAuthUserPass(m_user, m_password, m_authType);
 
     if (m_shouldDisableServerTrustEvaluation)
@@ -273,7 +273,7 @@ size_t CurlRequest::willSendData(char* buffer, size_t blockSize, size_t numberOf
 // This is being called for each HTTP header in the response. This includes '\r\n'
 // for the last line of the header.
 
-size_t CurlRequest::didReceiveHeader(String&& header)
+size_t CurlRequest::didReceiveHeader(RefPtr<StringImpl>&& header)
 {
     static constexpr auto emptyLineCRLF = "\r\n"_s;
     static constexpr auto emptyLineLF = "\n"_s;
@@ -296,10 +296,10 @@ size_t CurlRequest::didReceiveHeader(String&& header)
         m_multipartHandle = nullptr;
     }
 
-    auto receiveBytes = static_cast<size_t>(header.length());
+    auto receiveBytes = static_cast<size_t>(length(header));
 
     // The HTTP standard requires to use \r\n but for compatibility it recommends to accept also \n.
-    if ((header != emptyLineCRLF) && (header != emptyLineLF)) {
+    if ((!equal(header, emptyLineCRLF)) && (!equal(header, emptyLineLF))) {
         m_response.headers.append(WTF::move(header));
         return receiveBytes;
     }
@@ -396,7 +396,7 @@ size_t CurlRequest::didReceiveData(std::span<const uint8_t> receivedData)
     return receivedData.size();
 }
 
-void CurlRequest::didReceiveHeaderFromMultipart(Vector<String>&& headers)
+void CurlRequest::didReceiveHeaderFromMultipart(Vector<RefPtr<StringImpl>>&& headers)
 {
     if (isCompletedOrCancelled())
         return;
@@ -521,19 +521,19 @@ int CurlRequest::didReceiveDebugInfo(curl_infotype type, std::span<const char> d
         return 0;
 
     if (type == CURLINFO_HEADER_OUT) {
-        String requestHeader = String::fromLatin1(data);
-        auto headerFields = requestHeader.split("\r\n"_s);
+        RefPtr<StringImpl> requestHeader = StringImpl::fromLatin1(data);
+        auto headerFields = split(requestHeader, "\r\n"_s);
         // Remove the request line
         if (headerFields.size())
             headerFields.removeAt(0);
 
-        m_requestHeaderSize = requestHeader.length();
+        m_requestHeaderSize = length(requestHeader);
 
         for (auto& header : headerFields) {
-            auto pos = header.find(':');
+            auto pos = find(header, ':');
             if (pos != notFound) {
-                auto key = header.left(pos).trim(deprecatedIsSpaceOrNewline);
-                auto value = header.substring(pos + 1).trim(deprecatedIsSpaceOrNewline);
+                auto key = trim(left(header, pos), deprecatedIsSpaceOrNewline);
+                auto value = trim(substring(header, pos + 1), deprecatedIsSpaceOrNewline);
                 m_requestHeaders.add(key, value);
             }
         }
@@ -559,7 +559,7 @@ void CurlRequest::setupPUT()
     m_curlHandle->setReadCallbackFunction(willSendDataCallback, this);
 
     // Disable a "Expect: 100-continue" header
-    m_curlHandle->removeRequestHeader("Expect"_s);
+    m_curlHandle->removeRequestHeader("Expect"_si);
 }
 
 void CurlRequest::setupPOST()
@@ -571,10 +571,10 @@ void CurlRequest::setupPOST()
 
     // Override the default POST Content-Type: header
     if (!m_request.hasHTTPHeader(HTTPHeaderName::ContentType) && !totalSize)
-        m_curlHandle->removeRequestHeader("Content-Type"_s);
+        m_curlHandle->removeRequestHeader("Content-Type"_si);
 
     // Disable a "Expect: 100-continue" header
-    m_curlHandle->removeRequestHeader("Expect"_s);
+    m_curlHandle->removeRequestHeader("Expect"_si);
 }
 
 void CurlRequest::invokeDidReceiveResponseForFile(const URL& url)
@@ -656,9 +656,9 @@ NetworkLoadMetrics CurlRequest::networkLoadMetrics()
 std::optional<long long> CurlRequest::getContentLength()
 {
     for (const auto& header : m_response.headers) {
-        if (header.startsWithIgnoringASCIICase("content-length:"_s)) {
-            if (auto splitPosition = header.find(':'); splitPosition != notFound) {
-                auto value = header.substring(splitPosition + 1).trim(deprecatedIsSpaceOrNewline);
+        if (startsWithIgnoringASCIICase(header, "content-length:"_s)) {
+            if (auto splitPosition = find(header, ':'); splitPosition != notFound) {
+                auto value = trim(substring(header, splitPosition + 1), deprecatedIsSpaceOrNewline);
                 if (auto length = parseContentLength(value))
                     return *length;
             }
@@ -675,7 +675,7 @@ size_t CurlRequest::willSendDataCallback(char* ptr, size_t blockSize, size_t num
 
 size_t CurlRequest::didReceiveHeaderCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* userData)
 {
-    return static_cast<CurlRequest*>(userData)->didReceiveHeader(String::fromLatin1(unsafeMakeSpan(ptr, blockSize * numberOfBlocks)));
+    return static_cast<CurlRequest*>(userData)->didReceiveHeader(StringImpl::fromLatin1(unsafeMakeSpan(ptr, blockSize * numberOfBlocks)));
 }
 
 size_t CurlRequest::didReceiveDataCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* userData)

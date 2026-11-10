@@ -53,11 +53,11 @@ CommandResult::CommandResult(RefPtr<JSON::Value>&& result, std::optional<ErrorCo
     if (!errorObject)
         return;
 
-    auto errorMessage = errorObject->getString("message"_s);
+    auto errorMessage = errorObject->getString("message"_si);
     if (!errorMessage)
         return;
 
-    auto error = errorObject->getInteger("code"_s);
+    auto error = errorObject->getInteger("code"_si);
     if (!error) {
         // Locally generated error bodies don't have the error code set,
         // which comes from the InspectorProtocol used to talk to the browser.
@@ -76,49 +76,49 @@ CommandResult::CommandResult(RefPtr<JSON::Value>&& result, std::optional<ErrorCo
         m_errorMessage = errorMessage;
         break;
     case ProtocolErrorCode::ServerError: {
-        String errorName;
-        auto position = errorMessage.find(';');
+        RefPtr<StringImpl> errorName;
+        auto position = find(errorMessage, ';');
         if (position != notFound) {
-            errorName = errorMessage.left(position);
-            m_errorMessage = errorMessage.substring(position + 1);
+            errorName = left(errorMessage, position);
+            m_errorMessage = substring(errorMessage, position + 1);
         } else
             errorName = errorMessage;
 
-        if (errorName == "WindowNotFound"_s)
+        if (equal(errorName, "WindowNotFound"_s))
             m_errorCode = ErrorCode::NoSuchWindow;
-        else if (errorName == "FrameNotFound"_s)
+        else if (equal(errorName, "FrameNotFound"_s))
             m_errorCode = ErrorCode::NoSuchFrame;
-        else if (errorName == "NotImplemented"_s)
+        else if (equal(errorName, "NotImplemented"_s))
             m_errorCode = ErrorCode::UnsupportedOperation;
-        else if (errorName == "ElementNotInteractable"_s)
+        else if (equal(errorName, "ElementNotInteractable"_s))
             m_errorCode = ErrorCode::ElementNotInteractable;
-        else if (errorName == "JavaScriptError"_s)
+        else if (equal(errorName, "JavaScriptError"_s))
             m_errorCode = ErrorCode::JavascriptError;
-        else if (errorName == "JavaScriptTimeout"_s)
+        else if (equal(errorName, "JavaScriptTimeout"_s))
             m_errorCode = ErrorCode::ScriptTimeout;
-        else if (errorName == "NodeNotFound"_s)
+        else if (equal(errorName, "NodeNotFound"_s))
             m_errorCode = ErrorCode::NoSuchElement;
-        else if (errorName == "StaleNode"_s)
+        else if (equal(errorName, "StaleNode"_s))
             m_errorCode = ErrorCode::StaleElementReference;
-        else if (errorName == "InvalidNodeIdentifier"_s)
+        else if (equal(errorName, "InvalidNodeIdentifier"_s))
             m_errorCode = ErrorCode::NoSuchElement;
-        else if (errorName == "MissingParameter"_s || errorName == "InvalidParameter"_s)
+        else if (equal(errorName, "MissingParameter"_s) || equal(errorName, "InvalidParameter"_s))
             m_errorCode = ErrorCode::InvalidArgument;
-        else if (errorName == "InvalidElementState"_s)
+        else if (equal(errorName, "InvalidElementState"_s))
             m_errorCode = ErrorCode::InvalidElementState;
-        else if (errorName == "InvalidSelector"_s)
+        else if (equal(errorName, "InvalidSelector"_s))
             m_errorCode = ErrorCode::InvalidSelector;
-        else if (errorName == "Timeout"_s)
+        else if (equal(errorName, "Timeout"_s))
             m_errorCode = ErrorCode::Timeout;
-        else if (errorName == "NoJavaScriptDialog"_s)
+        else if (equal(errorName, "NoJavaScriptDialog"_s))
             m_errorCode = ErrorCode::NoSuchAlert;
-        else if (errorName == "ElementNotSelectable"_s)
+        else if (equal(errorName, "ElementNotSelectable"_s))
             m_errorCode = ErrorCode::ElementNotSelectable;
-        else if (errorName == "ScreenshotError"_s)
+        else if (equal(errorName, "ScreenshotError"_s))
             m_errorCode = ErrorCode::UnableToCaptureScreen;
-        else if (errorName == "UnexpectedAlertOpen"_s)
+        else if (equal(errorName, "UnexpectedAlertOpen"_s))
             m_errorCode = ErrorCode::UnexpectedAlertOpen;
-        else if (errorName == "TargetOutOfBounds"_s)
+        else if (equal(errorName, "TargetOutOfBounds"_s))
             m_errorCode = ErrorCode::MoveTargetOutOfBounds;
 
         break;
@@ -126,7 +126,7 @@ CommandResult::CommandResult(RefPtr<JSON::Value>&& result, std::optional<ErrorCo
     }
 }
 
-CommandResult::CommandResult(ErrorCode errorCode, std::optional<String> errorMessage)
+CommandResult::CommandResult(ErrorCode errorCode, std::optional<RefPtr<StringImpl>> errorMessage)
     : m_errorCode(errorCode)
     , m_errorMessage(errorMessage)
 {
@@ -179,65 +179,65 @@ unsigned CommandResult::errorCodeToHTTPStatusCode(ErrorCode errorCode)
     return 200;
 }
 
-String CommandResult::errorString() const
+RefPtr<StringImpl> CommandResult::errorString() const
 {
     ASSERT(isError());
     return errorCodeToString(m_errorCode.value_or(ErrorCode::UnknownError));
 }
 
-String CommandResult::errorCodeToString(ErrorCode errorCode)
+RefPtr<StringImpl> CommandResult::errorCodeToString(ErrorCode errorCode)
 {
     switch (errorCode) {
     case ErrorCode::ElementClickIntercepted:
-        return "element click intercepted"_s;
+        return "element click intercepted"_si;
     case ErrorCode::ElementNotSelectable:
-        return "element not selectable"_s;
+        return "element not selectable"_si;
     case ErrorCode::ElementNotInteractable:
-        return "element not interactable"_s;
+        return "element not interactable"_si;
     case ErrorCode::DetachedShadowRoot:
-        return "detached shadow root"_s;
+        return "detached shadow root"_si;
     case ErrorCode::InvalidArgument:
-        return "invalid argument"_s;
+        return "invalid argument"_si;
     case ErrorCode::InvalidElementState:
-        return "invalid element state"_s;
+        return "invalid element state"_si;
     case ErrorCode::InvalidSelector:
-        return "invalid selector"_s;
+        return "invalid selector"_si;
     case ErrorCode::InvalidSessionID:
-        return "invalid session id"_s;
+        return "invalid session id"_si;
     case ErrorCode::JavascriptError:
-        return "javascript error"_s;
+        return "javascript error"_si;
     case ErrorCode::NoSuchAlert:
-        return "no such alert"_s;
+        return "no such alert"_si;
     case ErrorCode::NoSuchCookie:
-        return "no such cookie"_s;
+        return "no such cookie"_si;
     case ErrorCode::NoSuchElement:
-        return "no such element"_s;
+        return "no such element"_si;
     case ErrorCode::NoSuchFrame:
-        return "no such frame"_s;
+        return "no such frame"_si;
     case ErrorCode::NoSuchShadowRoot:
-        return "no such shadow root"_s;
+        return "no such shadow root"_si;
     case ErrorCode::NoSuchWindow:
-        return "no such window"_s;
+        return "no such window"_si;
     case ErrorCode::ScriptTimeout:
-        return "script timeout"_s;
+        return "script timeout"_si;
     case ErrorCode::SessionNotCreated:
-        return "session not created"_s;
+        return "session not created"_si;
     case ErrorCode::StaleElementReference:
-        return "stale element reference"_s;
+        return "stale element reference"_si;
     case ErrorCode::Timeout:
-        return "timeout"_s;
+        return "timeout"_si;
     case ErrorCode::UnableToCaptureScreen:
-        return "unable to capture screen"_s;
+        return "unable to capture screen"_si;
     case ErrorCode::MoveTargetOutOfBounds:
-        return "move target out of bounds"_s;
+        return "move target out of bounds"_si;
     case ErrorCode::UnexpectedAlertOpen:
-        return "unexpected alert open"_s;
+        return "unexpected alert open"_si;
     case ErrorCode::UnknownCommand:
-        return "unknown command"_s;
+        return "unknown command"_si;
     case ErrorCode::UnknownError:
-        return "unknown error"_s;
+        return "unknown error"_si;
     case ErrorCode::UnsupportedOperation:
-        return "unsupported operation"_s;
+        return "unsupported operation"_si;
     }
 
     ASSERT_NOT_REACHED();

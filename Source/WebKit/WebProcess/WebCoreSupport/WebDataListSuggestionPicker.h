@@ -51,13 +51,13 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    void didSelectOption(const String&);
+    void didSelectOption(StringImpl*);
     void didCloseSuggestions();
 
 private:
     WebDataListSuggestionPicker(WebPage&, WebCore::DataListSuggestionsClient&);
 
-    void handleKeydownWithIdentifier(const String&) final;
+    void handleKeydownWithIdentifier(StringImpl*) final;
     void displayWithActivationType(WebCore::DataListSuggestionActivationType) final;
     void close() final;
     void detach() final;

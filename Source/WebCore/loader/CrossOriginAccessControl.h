@@ -57,16 +57,16 @@ enum class CrossOriginEmbedderPolicyValue : bool;
 enum class DocumentIsolationPolicyValue : bool;
 enum class FetchOptionsDestination : uint8_t;
 
-WEBCORE_EXPORT bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&);
-bool isOnAccessControlSimpleRequestMethodAllowlist(const String&);
+WEBCORE_EXPORT bool isSimpleCrossOriginAccessRequest(StringImpl* method, const HTTPHeaderMap&);
+bool isOnAccessControlSimpleRequestMethodAllowlist(StringImpl*);
 
 void updateRequestReferrer(ResourceRequest&, ReferrerPolicy, const URL&, const OriginAccessPatterns&);
     
 WEBCORE_EXPORT void updateRequestForAccessControl(ResourceRequest&, SecurityOrigin&, StoredCredentialsPolicy);
 
-WEBCORE_EXPORT ResourceRequest createAccessControlPreflightRequest(const ResourceRequest&, SecurityOrigin&, const String&, bool includeFetchMetadata);
+WEBCORE_EXPORT ResourceRequest createAccessControlPreflightRequest(const ResourceRequest&, SecurityOrigin&, StringImpl*, bool includeFetchMetadata);
 enum class SameOriginFlag : bool { No, Yes };
-CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&&, ResourceLoaderOptions&&, Document&, const String& crossOriginAttribute, SameOriginFlag = SameOriginFlag::No);
+CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&&, ResourceLoaderOptions&&, Document&, StringImpl* crossOriginAttribute, SameOriginFlag = SameOriginFlag::No);
 
 enum class HTTPHeadersToKeepFromCleaning : uint8_t {
     ContentType = 1 << 0,
@@ -91,12 +91,12 @@ private:
     bool m_accessControlCheckEnabled { true };
 };
 
-WEBCORE_EXPORT std::expected<void, String> passesAccessControlCheck(const ResourceResponse&, StoredCredentialsPolicy, const SecurityOrigin&, const CrossOriginAccessControlCheckDisabler*);
-WEBCORE_EXPORT std::expected<void, String> validatePreflightResponse(PAL::SessionID, const ResourceRequest&, const ResourceResponse&, StoredCredentialsPolicy, const SecurityOrigin& topOrigin, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler*);
+WEBCORE_EXPORT std::expected<void, RefPtr<StringImpl>> passesAccessControlCheck(const ResourceResponse&, StoredCredentialsPolicy, const SecurityOrigin&, const CrossOriginAccessControlCheckDisabler*);
+WEBCORE_EXPORT std::expected<void, RefPtr<StringImpl>> validatePreflightResponse(PAL::SessionID, const ResourceRequest&, const ResourceResponse&, StoredCredentialsPolicy, const SecurityOrigin& topOrigin, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler*);
 
 enum class ForNavigation : bool { No, Yes };
 WEBCORE_EXPORT std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue, DocumentIsolationPolicyValue, const SecurityOrigin&, const URL&, const ResourceResponse&, ForNavigation, const OriginAccessPatterns&);
-WEBCORE_EXPORT std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue, DocumentIsolationPolicyValue, const SecurityOrigin&, const URL&, bool isResponseNull, const URL& responseURL, const String& crossOriginResourcePolicyHeaderValue, ForNavigation, const OriginAccessPatterns&);
+WEBCORE_EXPORT std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue, DocumentIsolationPolicyValue, const SecurityOrigin&, const URL&, bool isResponseNull, const URL& responseURL, StringImpl* crossOriginResourcePolicyHeaderValue, ForNavigation, const OriginAccessPatterns&);
 
 struct CORPViolationReportContext {
     ReportingClient& client;
@@ -108,8 +108,8 @@ struct CORPViolationReportContext {
 // https://fetch.spec.whatwg.org/#cross-origin-resource-policy-check
 // https://wicg.github.io/document-isolation-policy/#dip-corp
 WEBCORE_EXPORT std::optional<ResourceError> performCrossOriginResourcePolicyCheck(const CrossOriginEmbedderPolicy&, const DocumentIsolationPolicy&, const SecurityOrigin&, const URL&, const ResourceResponse&, ForNavigation, const OriginAccessPatterns&, const CORPViolationReportContext*);
-WEBCORE_EXPORT std::optional<ResourceError> performCrossOriginResourcePolicyCheck(const CrossOriginEmbedderPolicy&, const DocumentIsolationPolicy&, const SecurityOrigin&, const URL&, bool isResponseNull, const URL& responseURL, const String& crossOriginResourcePolicyHeaderValue, ForNavigation, const OriginAccessPatterns&, const CORPViolationReportContext*);
+WEBCORE_EXPORT std::optional<ResourceError> performCrossOriginResourcePolicyCheck(const CrossOriginEmbedderPolicy&, const DocumentIsolationPolicy&, const SecurityOrigin&, const URL&, bool isResponseNull, const URL& responseURL, StringImpl* crossOriginResourcePolicyHeaderValue, ForNavigation, const OriginAccessPatterns&, const CORPViolationReportContext*);
 std::optional<ResourceError> validateRangeRequestedFlag(const ResourceRequest&, const ResourceResponse&);
-String validateCrossOriginRedirectionURL(const URL&);
+RefPtr<StringImpl> validateCrossOriginRedirectionURL(const URL&);
 
 } // namespace WebCore

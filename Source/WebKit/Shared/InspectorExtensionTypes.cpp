@@ -32,23 +32,23 @@
 
 namespace Inspector {
 
-WTF::String extensionErrorToString(ExtensionError error)
+RefPtr<StringImpl> extensionErrorToString(ExtensionError error)
 {
     switch (error) {
     case ExtensionError::InternalError:
-        return "InternalError"_s;
+        return "InternalError"_si;
     case ExtensionError::InvalidRequest:
-        return "InvalidRequest"_s;
+        return "InvalidRequest"_si;
     case ExtensionError::ContextDestroyed:
-        return "ContextDestroyed"_s;
+        return "ContextDestroyed"_si;
     case ExtensionError::RegistrationFailed:
-        return "RegistrationFailed"_s;
+        return "RegistrationFailed"_si;
     case ExtensionError::NotImplemented:
-        return "NotImplemented"_s;
+        return "NotImplemented"_si;
     }
 
     ASSERT_NOT_REACHED();
-    return "InternalError"_s;
+    return "InternalError"_si;
 }
 
 } // namespace WebKit

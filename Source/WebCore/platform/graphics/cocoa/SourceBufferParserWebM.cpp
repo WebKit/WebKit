@@ -449,7 +449,7 @@ public:
     NODELETE const webm::TrackEntry& track() { return m_track; }
 
 private:
-    String extractCodec(const webm::TrackEntry& track) const
+    RefPtr<StringImpl> extractCodec(const webm::TrackEntry& track) const
     {
         // From: https://www.matroska.org/technical/codec_specs.html
         // "Each Codec ID MUST include a Major Codec ID immediately following the Codec ID Prefix.
@@ -772,7 +772,7 @@ Status WebMParser::OnTrackEntry(const ElementMetadata&, const TrackEntry& trackE
         return Status(Status::kOkCompleted);
 
     auto trackType = trackEntry.track_type.value();
-    String codecId = String::fromLatin1(std::span { trackEntry.codec_id.value() });
+    RefPtr<StringImpl> codecId = StringImpl::fromLatin1(std::span { trackEntry.codec_id.value() });
 
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, trackType, ", codec ", codecId);
 
@@ -1505,8 +1505,8 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 
     for (auto& codec : codecs) {
 #if ENABLE(VP9)
-        bool isVP9 = codec.startsWith("vp09"_s) || equal(codec, "vp9"_s) || equal(codec, "vp9.0"_s);
-        bool isVP8 = codec.startsWith("vp08"_s) || equal(codec, "vp8"_s) || equal(codec, "vp8.0"_s);
+        bool isVP9 = startsWith(codec, "vp09"_s) || equal(codec, "vp9"_s) || equal(codec, "vp9.0"_s);
+        bool isVP8 = startsWith(codec, "vp08"_s) || equal(codec, "vp8"_s) || equal(codec, "vp8.0"_s);
         if (isVP9 || isVP8) {
 
             if (isVP9 && !isVP9DecoderAvailable())
@@ -1526,7 +1526,7 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 #endif // ENABLE(VP9)
 
 #if ENABLE(VORBIS)
-        if (codec == "vorbis"_s) {
+        if (equal(codec, "vorbis"_s)) {
             if (!isVorbisDecoderAvailable())
                 return MediaPlayerEnums::SupportsType::IsNotSupported;
 
@@ -1535,7 +1535,7 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 #endif // ENABLE(VORBIS)
 
 #if ENABLE(OPUS)
-        if (codec == "opus"_s) {
+        if (equal(codec, "opus"_s)) {
             if (!isOpusDecoderAvailable())
                 return MediaPlayerEnums::SupportsType::IsNotSupported;
 
@@ -1544,11 +1544,11 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 #endif // ENABLE(OPUS)
 
 #if ENABLE(AV1)
-        if (codec.startsWith("av01."_s) && av1HardwareDecoderAvailable())
+        if (startsWith(codec, "av01."_s) && av1HardwareDecoderAvailable())
             continue;
 #endif
 
-        if (supportsLimitedMatroska && (codec.startsWith("avc1."_s) || codec == "pcm"_s))
+        if (supportsLimitedMatroska && (startsWith(codec, "avc1."_s) || equal(codec, "pcm"_s)))
             continue;
 
         return MediaPlayerEnums::SupportsType::IsNotSupported;

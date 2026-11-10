@@ -65,7 +65,7 @@ using namespace WTF;
 
     _menu = adoptNS([[NSMenu alloc] initWithTitle:@""]);
     [_menu setDelegate:self];
-    self.savedActiveProfileID = CaptionUserPreferencesMediaAF::platformActiveProfileID().createNSString().get();
+    self.savedActiveProfileID = createNSString(CaptionUserPreferencesMediaAF::platformActiveProfileID()).get();
 
     [self rebuildMenu];
 
@@ -89,12 +89,12 @@ using namespace WTF;
     // Add Caption Profile items
     for (const auto& profileID : profileIDs) {
         auto title = CaptionUserPreferencesMediaAF::nameForProfileID(profileID);
-        RetainPtr item = adoptNS([[NSMenuItem alloc] initWithTitle:title.createNSString().get() action:@selector(profileMenuItemSelected:) keyEquivalent:@""]);
+        RetainPtr item = adoptNS([[NSMenuItem alloc] initWithTitle:createNSString(title).get() action:@selector(profileMenuItemSelected:) keyEquivalent:@""]);
         [item setTarget:self];
-        [item setRepresentedObject:profileID.createNSString().get()];
+        [item setRepresentedObject:createNSString(profileID).get()];
 
         // Add checkmark for currently selected item
-        if ([profileID.createNSString().get() isEqualToString:self.savedActiveProfileID])
+        if ([createNSString(profileID).get() isEqualToString:self.savedActiveProfileID])
             [item setState:NSControlStateValueOn];
 
         [_menu addItem:item.get()];
@@ -161,7 +161,7 @@ static bool menuHasMenuAncestor(NSMenu *childMenu, NSMenu *ancestorMenu)
         return;
 
     self.savedActiveProfileID = nsProfileID;
-    CaptionUserPreferencesMediaAF::setActiveProfileID(WTF::String(self.savedActiveProfileID));
+    CaptionUserPreferencesMediaAF::setActiveProfileID(StringImpl::create(self.savedActiveProfileID).get());
     [self rebuildMenu];
 
     if (auto delegate = self.delegate; delegate && [delegate respondsToSelector:@selector(captionStyleMenu:didSelectProfile:)])
@@ -208,7 +208,7 @@ static bool menuHasMenuAncestor(NSMenu *childMenu, NSMenu *ancestorMenu)
 - (void)menuDidClose:(NSMenu *)menu
 {
     if (self.savedActiveProfileID && self.savedActiveProfileID.length > 0)
-        CaptionUserPreferencesMediaAF::setActiveProfileID(WTF::String(self.savedActiveProfileID));
+        CaptionUserPreferencesMediaAF::setActiveProfileID(StringImpl::create(self.savedActiveProfileID).get());
     self.savedActiveProfileID = nil;
 
     if (auto delegate = self.delegate)

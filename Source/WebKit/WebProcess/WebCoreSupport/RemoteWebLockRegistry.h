@@ -44,9 +44,9 @@ public:
     void deref() const final { WebCore::WebLockRegistry::deref(); }
 
     // WebCore::WebLockRegistry.
-    void requestLock(PAL::SessionID, const WebCore::ClientOrigin&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, const String& name, WebCore::WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler) final;
-    void releaseLock(PAL::SessionID, const WebCore::ClientOrigin&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, const String& name) final;
-    void abortLockRequest(PAL::SessionID, const WebCore::ClientOrigin&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool)>&&) final;
+    void requestLock(PAL::SessionID, const WebCore::ClientOrigin&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, StringImpl* name, WebCore::WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler) final;
+    void releaseLock(PAL::SessionID, const WebCore::ClientOrigin&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, StringImpl* name) final;
+    void abortLockRequest(PAL::SessionID, const WebCore::ClientOrigin&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, StringImpl* name, CompletionHandler<void(bool)>&&) final;
     void snapshot(PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void(WebCore::WebLockManagerSnapshot&&)>&&) final;
     void clientIsGoingAway(PAL::SessionID, const WebCore::ClientOrigin&, WebCore::ScriptExecutionContextIdentifier) final;
 

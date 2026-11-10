@@ -40,9 +40,9 @@ namespace WebKit {
 namespace UIProcess {
 
 void initializeLoggingIfNecessary();
-String wtfLogLevelString();
-String webCoreLogLevelString();
-String webKitLogLevelString();
+RefPtr<StringImpl> wtfLogLevelString();
+RefPtr<StringImpl> webCoreLogLevelString();
+RefPtr<StringImpl> webKitLogLevelString();
 
 }
 

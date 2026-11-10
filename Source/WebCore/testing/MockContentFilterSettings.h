@@ -58,8 +58,8 @@ public:
     bool enabled() const { return m_enabled; }
     WEBCORE_TESTSUPPORT_EXPORT void setEnabled(bool);
 
-    const String& blockedString() const LIFETIME_BOUND { return m_blockedString; }
-    WEBCORE_TESTSUPPORT_EXPORT void setBlockedString(const String&);
+    const RefPtr<StringImpl>& blockedString() const LIFETIME_BOUND { return m_blockedString; }
+    WEBCORE_TESTSUPPORT_EXPORT void setBlockedString(StringImpl*);
 
     DecisionPoint decisionPoint() const { return m_decisionPoint; }
     WEBCORE_TESTSUPPORT_EXPORT void setDecisionPoint(DecisionPoint);
@@ -70,10 +70,10 @@ public:
     Decision unblockRequestDecision() const { return m_unblockRequestDecision; }
     WEBCORE_TESTSUPPORT_EXPORT void setUnblockRequestDecision(Decision);
 
-    WEBCORE_TESTSUPPORT_EXPORT const String& unblockRequestURL() const LIFETIME_BOUND;
+    WEBCORE_TESTSUPPORT_EXPORT const RefPtr<StringImpl>& unblockRequestURL() const LIFETIME_BOUND;
 
-    const String& modifiedRequestURL() const LIFETIME_BOUND { return m_modifiedRequestURL; }
-    WEBCORE_TESTSUPPORT_EXPORT void setModifiedRequestURL(const String&);
+    const RefPtr<StringImpl>& modifiedRequestURL() const LIFETIME_BOUND { return m_modifiedRequestURL; }
+    WEBCORE_TESTSUPPORT_EXPORT void setModifiedRequestURL(StringImpl*);
 
     double willSendRequestDecisionDelay() const { return m_willSendRequestDecisionDelay.value(); }
     WEBCORE_TESTSUPPORT_EXPORT void setWillSendRequestDecisionDelay(double);
@@ -89,8 +89,8 @@ private:
     DecisionPoint m_decisionPoint { DecisionPoint::AfterResponse };
     Decision m_decision { Decision::Allow };
     Decision m_unblockRequestDecision { Decision::Block };
-    String m_blockedString;
-    String m_modifiedRequestURL;
+    RefPtr<StringImpl> m_blockedString;
+    RefPtr<StringImpl> m_modifiedRequestURL;
     Seconds m_willSendRequestDecisionDelay;
 };
 

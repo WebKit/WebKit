@@ -33,12 +33,12 @@ namespace WebCore {
 
 struct WebLockManagerSnapshot {
     struct Info {
-        String name;
+        RefPtr<StringImpl> name;
         WebLockMode mode { WebLockMode::Exclusive };
-        String clientId;
+        RefPtr<StringImpl> clientId;
 
-        Info isolatedCopy() const & { return { name.isolatedCopy(), mode, clientId.isolatedCopy() }; }
-        Info isolatedCopy() && { return { WTF::move(name).isolatedCopy(), mode, WTF::move(clientId).isolatedCopy() }; }
+        Info isolatedCopy() const & { return { WTF::isolatedCopy(name), mode, WTF::isolatedCopy(clientId) }; }
+        Info isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(name)), mode, WTF::isolatedCopy(WTF::move(clientId)) }; }
     };
 
     Vector<Info> held;

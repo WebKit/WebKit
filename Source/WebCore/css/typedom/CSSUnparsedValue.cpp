@@ -138,7 +138,7 @@ void CSSUnparsedValue::serialize(StringBuilder& builder, OptionSet<Serialization
 {
     for (auto& segment : m_segments) {
         WTF::switchOn(segment,
-            [&](const String& value) {
+            [&](StringImpl* value) {
                 builder.append(value);
             },
             [&](const Ref<CSSOMVariableReferenceValue>& value) {

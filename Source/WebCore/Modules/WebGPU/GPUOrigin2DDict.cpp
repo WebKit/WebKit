@@ -33,8 +33,8 @@ namespace WebCore {
 Ref<JSON::Object> GPUOrigin2DDict::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setDouble("x"_s, x);
-    json->setDouble("y"_s, y);
+    json->setDouble("x"_si, x);
+    json->setDouble("y"_si, y);
     return json;
 }
 

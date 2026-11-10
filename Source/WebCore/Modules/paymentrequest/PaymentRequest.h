@@ -71,9 +71,9 @@ public:
     void abort(AbortPromise&&);
     void canMakePayment(Document&, CanMakePaymentPromise&&);
 
-    NODELETE const String& id() const;
+    NODELETE const RefPtr<StringImpl>& id() const;
     PaymentAddress* shippingAddress() const { return m_shippingAddress.get(); }
-    const String& shippingOption() const LIFETIME_BOUND { return m_shippingOption; }
+    const RefPtr<StringImpl>& shippingOption() const LIFETIME_BOUND { return m_shippingOption; }
     NODELETE std::optional<PaymentShippingType> shippingType() const;
 
     enum class State {
@@ -93,26 +93,26 @@ public:
 
     const PaymentOptions& paymentOptions() const LIFETIME_BOUND { return m_options; }
     const PaymentDetailsInit& paymentDetails() const LIFETIME_BOUND { return m_details; }
-    const Vector<String>& serializedModifierData() const LIFETIME_BOUND { return m_serializedModifierData; }
+    const Vector<RefPtr<StringImpl>>& serializedModifierData() const LIFETIME_BOUND { return m_serializedModifierData; }
 
     void shippingAddressChanged(Ref<PaymentAddress>&&);
-    void shippingOptionChanged(const String& shippingOption);
-    void paymentMethodChanged(const String& methodName, PaymentMethodChangeEvent::MethodDetailsFunction&&);
+    void shippingOptionChanged(StringImpl* shippingOption);
+    void paymentMethodChanged(StringImpl* methodName, PaymentMethodChangeEvent::MethodDetailsFunction&&);
     ExceptionOr<void> updateWith(UpdateReason, Ref<DOMPromise>&&);
     ExceptionOr<void> completeMerchantValidation(Event&, Ref<DOMPromise>&&);
-    void accept(const String& methodName, PaymentResponse::DetailsFunction&&);
-    void accept(const String& methodName, PaymentResponse::DetailsFunction&&, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone);
+    void accept(StringImpl* methodName, PaymentResponse::DetailsFunction&&);
+    void accept(StringImpl* methodName, PaymentResponse::DetailsFunction&&, Ref<PaymentAddress>&& shippingAddress, StringImpl* payerName, StringImpl* payerEmail, StringImpl* payerPhone);
     void reject(Exception&&);
-    ExceptionOr<void> complete(Document&, std::optional<PaymentComplete>&&, String&& serializedData);
+    ExceptionOr<void> complete(Document&, std::optional<PaymentComplete>&&, RefPtr<StringImpl>&& serializedData);
     ExceptionOr<void> retry(PaymentValidationErrors&&);
     void cancel();
 
-    using MethodIdentifier = Variant<String, URL>;
+    using MethodIdentifier = Variant<RefPtr<StringImpl>, URL>;
 
 private:
     struct Method {
         MethodIdentifier identifier;
-        String serializedData;
+        RefPtr<StringImpl> serializedData;
     };
 
     struct PaymentHandlerWithPendingActivity {
@@ -120,7 +120,7 @@ private:
         Ref<PendingActivity<PaymentRequest>> pendingActivity;
     };
 
-    PaymentRequest(Document&, PaymentOptions&&, PaymentDetailsInit&&, Vector<String>&& serializedModifierData, Vector<Method>&& serializedMethodData, String&& selectedShippingOption);
+    PaymentRequest(Document&, PaymentOptions&&, PaymentDetailsInit&&, Vector<RefPtr<StringImpl>>&& serializedModifierData, Vector<Method>&& serializedMethodData, RefPtr<StringImpl>&& selectedShippingOption);
 
     void dispatchAndCheckUpdateEvent(Ref<PaymentRequestUpdateEvent>&&);
     void settleDetailsPromise(UpdateReason);
@@ -143,9 +143,9 @@ private:
 
     PaymentOptions m_options;
     PaymentDetailsInit m_details;
-    Vector<String> m_serializedModifierData;
+    Vector<RefPtr<StringImpl>> m_serializedModifierData;
     Vector<Method> m_serializedMethodData;
-    String m_shippingOption;
+    RefPtr<StringImpl> m_shippingOption;
     RefPtr<PaymentAddress> m_shippingAddress;
     State m_state { State::Created };
     std::unique_ptr<ShowPromise> m_showPromise;
@@ -157,7 +157,7 @@ private:
     bool m_isCancelPending { false };
 };
 
-std::optional<PaymentRequest::MethodIdentifier> convertAndValidatePaymentMethodIdentifier(const String& identifier);
+std::optional<PaymentRequest::MethodIdentifier> convertAndValidatePaymentMethodIdentifier(StringImpl* identifier);
 
 } // namespace WebCore
 

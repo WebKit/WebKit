@@ -45,15 +45,15 @@ void CaptureDeviceManager::computeCaptureDevices(CompletionHandler<void()>&& cal
     callback();
 }
 
-std::optional<CaptureDevice> CaptureDeviceManager::captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&)
+std::optional<CaptureDevice> CaptureDeviceManager::captureDeviceWithPersistentID(CaptureDevice::DeviceType, StringImpl*)
 {
     return std::nullopt;
 }
 
-CaptureDevice CaptureDeviceManager::captureDeviceFromPersistentID(const String& captureDeviceID)
+CaptureDevice CaptureDeviceManager::captureDeviceFromPersistentID(StringImpl* captureDeviceID)
 {
     for (auto& device : captureDevices()) {
-        if (device.persistentId() == captureDeviceID)
+        if (equal(device.persistentId(), captureDeviceID))
             return device;
     }
 

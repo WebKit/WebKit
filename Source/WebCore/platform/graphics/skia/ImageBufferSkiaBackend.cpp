@@ -32,7 +32,7 @@ namespace WebCore {
 
 ImageBufferSkiaBackend::~ImageBufferSkiaBackend() = default;
 
-String ImageBufferSkiaBackend::debugDescription() const
+RefPtr<StringImpl> ImageBufferSkiaBackend::debugDescription() const
 {
     TextStream stream;
     stream << "ImageBufferSkiaBackend " << this;

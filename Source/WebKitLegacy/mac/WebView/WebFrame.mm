@@ -253,16 +253,16 @@ NODELETE WebCore::TextDirectionSubmenuInclusionBehavior core(WebTextDirectionSub
 
 #if PLATFORM(IOS_FAMILY)
 
-Vector<Vector<String>> vectorForDictationPhrasesArray(NSArray *dictationPhrases)
+Vector<Vector<RefPtr<StringImpl>>> vectorForDictationPhrasesArray(NSArray *dictationPhrases)
 {
-    Vector<Vector<String>> result;
+    Vector<Vector<RefPtr<StringImpl>>> result;
 
     for (RetainPtr phrase : makeVector<RetainPtr<NSArray>>(dictationPhrases)) {
-        result.append(makeVector(phrase.get(), [](id interpretation) -> std::optional<String> {
+        result.append(makeVector(phrase.get(), [](id interpretation) -> std::optional<RefPtr<StringImpl>> {
             RetainPtr string = dynamic_objc_cast<NSString>(interpretation);
             if (!string)
                 return std::nullopt;
-            return String { string.get() };
+            return StringImpl::create(string.get());
         }));
     }
     
@@ -314,7 +314,7 @@ WebView *getWebView(WebFrame *webFrame)
     return kit(protect(coreFrame->page()));
 }
 
-+ (Ref<WebCore::LocalFrame>)_createFrameWithPage:(WebCore::Page&)page frameName:(const AtomString&)name frameView:(WebFrameView *)frameView ownerElement:(WebCore::HTMLFrameOwnerElement&)ownerElement
++ (Ref<WebCore::LocalFrame>)_createFrameWithPage:(WebCore::Page&)page frameName:(AtomStringImpl*)name frameView:(WebFrameView *)frameView ownerElement:(WebCore::HTMLFrameOwnerElement&)ownerElement
 {
     RetainPtr webView = kit(&page);
 
@@ -346,7 +346,7 @@ WebView *getWebView(WebFrame *webFrame)
     return coreFrame;
 }
 
-+ (void)_createMainFrameWithPage:(WebCore::Page*)page frameName:(const AtomString&)name frameView:(WebFrameView *)frameView
++ (void)_createMainFrameWithPage:(WebCore::Page*)page frameName:(AtomStringImpl*)name frameView:(WebFrameView *)frameView
 {
     RetainPtr webView = kit(page);
 
@@ -366,7 +366,7 @@ WebView *getWebView(WebFrame *webFrame)
     protect([webView.get() inspectorController])->frameCreated(*localMainFrame);
 }
 
-+ (Ref<WebCore::LocalFrame>)_createSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement&)ownerElement page:(WebCore::Page&)page frameName:(const AtomString&)name frameView:(WebFrameView *)frameView
++ (Ref<WebCore::LocalFrame>)_createSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement&)ownerElement page:(WebCore::Page&)page frameName:(AtomStringImpl*)name frameView:(WebFrameView *)frameView
 {
     return [self _createFrameWithPage:page frameName:name frameView:frameView ownerElement:ownerElement];
 }
@@ -390,7 +390,7 @@ static RetainPtr<NSURL> createUniqueWebDataURL();
     frame->_private->coreFrame = localMainFrame.get();
     downcast<WebFrameLoaderClient>(localMainFrame->loader().client()).setWebFrame(*frame.get());
 
-    protect(frame.get()->_private->coreFrame.get())->initWithSimpleHTMLDocument(style, createUniqueWebDataURL().get());
+    protect(frame.get()->_private->coreFrame.get())->initWithSimpleHTMLDocument(AtomStringImpl::add((__bridge CFStringRef)style).get(), createUniqueWebDataURL().get());
 }
 #endif
 
@@ -623,14 +623,14 @@ static RetainPtr<NSURL> createUniqueWebDataURL();
 - (NSString *)_selectedString
 {
     RefPtr coreFrame = _private->coreFrame.get();
-    return coreFrame->displayStringModifiedByEncoding(protect(coreFrame->editor())->selectedText()).createNSString().autorelease();
+    return createNSString(coreFrame->displayStringModifiedByEncoding(protect(coreFrame->editor())->selectedText())).autorelease();
 }
 
 - (NSString *)_stringForRange:(DOMRange *)range
 {
     if (!range)
         return @"";
-    return plainText(makeSimpleRange(protect(*core(range))), { }, true).createNSString().autorelease();
+    return createNSString(plainText(makeSimpleRange(protect(*core(range))), { }, true)).autorelease();
 }
 
 - (OptionSet<WebCore::PaintBehavior>)_paintBehaviorForDestinationContext:(CGContextRef)context
@@ -730,7 +730,7 @@ static RetainPtr<NSURL> createUniqueWebDataURL();
     JSC::JSLockHolder jscLock(lexicalGlobalObject);
 #endif
 
-    JSC::JSValue result = protect(_private->coreFrame->script())->executeScriptIgnoringException(string, JSC::SourceTaintedOrigin::Untainted, forceUserGesture);
+    JSC::JSValue result = protect(_private->coreFrame->script())->executeScriptIgnoringException(StringImpl::create(string).get(), JSC::SourceTaintedOrigin::Untainted, forceUserGesture);
 
     if (!_private->coreFrame) // In case the script removed our frame from the page.
         return @"";
@@ -745,7 +745,7 @@ static RetainPtr<NSURL> createUniqueWebDataURL();
     auto* lexicalGlobalObject = protect(_private->coreFrame->script())->globalObject(WebCore::mainThreadNormalWorldSingleton());
     JSC::JSLockHolder lock(lexicalGlobalObject);
 #endif
-    return result.toWTFString(lexicalGlobalObject).createNSString().autorelease();
+    return createNSString(result.toWTFString(lexicalGlobalObject)).autorelease();
 }
 
 - (NSRect)_caretRectAtPosition:(const WebCore::Position&)pos affinity:(NSSelectionAffinity)affinity
@@ -898,7 +898,7 @@ static RetainPtr<NSURL> createUniqueWebDataURL();
     if (!document)
         return nil;
 
-    return kit(createFragmentFromMarkup(*document, markupString, baseURLString, { }).ptr());
+    return kit(createFragmentFromMarkup(*document, StringImpl::create(markupString).get(), StringImpl::create(baseURLString).get(), { }).ptr());
 }
 
 - (DOMDocumentFragment *)_documentFragmentWithNodesAsParagraphs:(NSArray *)nodes
@@ -996,7 +996,7 @@ static RetainPtr<NSURL> createUniqueWebDataURL();
 - (BOOL)_canProvideDocumentSource
 {
     auto frame = _private->coreFrame;
-    String mimeType = frame->document()->loader()->writer().mimeType();
+    RefPtr<StringImpl> mimeType = frame->document()->loader()->writer().mimeType();
     RefPtr pluginData = frame->page() ? &protect(frame->page())->pluginData() : nullptr;
 
     if (WebCore::MIMETypeRegistry::isTextMIMEType(mimeType)
@@ -1646,7 +1646,7 @@ NODELETE static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frame
     
     Vector<WebCore::CompositionUnderline> underlines;
     frame->page()->chrome().client().suppressFormNotifications();
-    protect(frame->editor())->setComposition(text, underlines, { }, { }, newSelRange.location, NSMaxRange(newSelRange));
+    protect(frame->editor())->setComposition(StringImpl::create(text).get(), underlines, { }, { }, newSelRange.location, NSMaxRange(newSelRange));
     frame->page()->chrome().client().restoreFormNotifications();
 }
 
@@ -1657,7 +1657,7 @@ NODELETE static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frame
         return;
 
     Vector<WebCore::CompositionUnderline> underlines;
-    protect(frame->editor())->setComposition(text, underlines, { }, { }, 0, [text length]);
+    protect(frame->editor())->setComposition(StringImpl::create(text).get(), underlines, { }, { }, 0, [text length]);
 }
 
 - (void)confirmMarkedText:(NSString *)text
@@ -1672,7 +1672,7 @@ NODELETE static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frame
     
     frame->page()->chrome().client().suppressFormNotifications();
     if (text)
-        editor->confirmComposition(text);
+        editor->confirmComposition(StringImpl::create(text).get());
     else
         editor->confirmMarkedText();
     frame->page()->chrome().client().restoreFormNotifications();
@@ -1687,7 +1687,7 @@ NODELETE static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frame
     if (!frame || !frame->document())
         return;
         
-    protect(frame->editor())->setTextAsChildOfElement(String { text }, protect(*core(element)));
+    protect(frame->editor())->setTextAsChildOfElement(StringImpl::create(text), protect(*core(element)));
 }
 
 - (void)setDictationPhrases:(NSArray *)dictationPhrases metadata:(id)metadata asChildOfElement:(DOMElement *)element
@@ -1801,10 +1801,10 @@ NODELETE static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frame
 
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
-    PAL::TextEncoding encoding(textEncodingName);
+    PAL::TextEncoding encoding(StringImpl::create(textEncodingName).get());
     if (!encoding.isValid())
         encoding = PAL::WindowsLatin1Encoding();
-    return encoding.decode(span(data)).createNSString().autorelease();
+    return createNSString(encoding.decode(span(data))).autorelease();
 }
 
 - (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity
@@ -1883,7 +1883,7 @@ NODELETE static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frame
 - (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {
     auto range = _private->coreFrame->selection().selection().toNormalizedRange();
-    [self _replaceSelectionWithFragment:protect(range ? kit(createFragmentFromText(*range, text).ptr()) : nil) selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:matchStyle];
+    [self _replaceSelectionWithFragment:protect(range ? kit(createFragmentFromText(*range, StringImpl::create(text).get()).ptr()) : nil) selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:matchStyle];
 }
 
 - (void)_replaceSelectionWithWebArchive:(WebArchive *)webArchive selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
@@ -1945,7 +1945,7 @@ NODELETE static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frame
     if (!page)
         return;
     Ref captionPreferences = protect(page->group())->ensureCaptionPreferences();
-    auto displayMode = WTF::EnumTraits<WebCore::CaptionUserPreferences::CaptionDisplayMode>::fromString(mode);
+    auto displayMode = WTF::EnumTraits<WebCore::CaptionUserPreferences::CaptionDisplayMode>::fromString(StringImpl::create(mode).get());
     if (displayMode.has_value())
         captionPreferences->setCaptionDisplayMode(displayMode.value());
 }
@@ -1972,7 +1972,7 @@ NODELETE static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frame
 - (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {
     auto range = _private->coreFrame->selection().selection().toNormalizedRange();
-    RetainPtr<DOMDocumentFragment> fragment = range ? kit(createFragmentFromText(*range, text).ptr()) : nil;
+    RetainPtr<DOMDocumentFragment> fragment = range ? kit(createFragmentFromText(*range, StringImpl::create(text).get()).ptr()) : nil;
     [self _replaceSelectionWithFragment:fragment.get() selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:YES];
 }
 
@@ -2095,7 +2095,7 @@ NODELETE static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frame
     ASSERT(frame->document());
     RetainPtr<WebFrame> webFrame(kit(frame.get())); // Running arbitrary JavaScript can destroy the frame.
 
-    JSC::JSValue result = protect(frame->script())->executeUserAgentScriptInWorldIgnoringException(protect(*core(world)), string, true);
+    JSC::JSValue result = protect(frame->script())->executeUserAgentScriptInWorldIgnoringException(protect(*core(world)), StringImpl::create(string).get(), true);
 
     if (!webFrame->_private->coreFrame) // In case the script removed our frame from the page.
         return @"";
@@ -2108,7 +2108,7 @@ NODELETE static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frame
 
     auto* lexicalGlobalObject = anyWorldGlobalObject;
     JSC::JSLockHolder lock(lexicalGlobalObject);
-    return result.toWTFString(lexicalGlobalObject).createNSString().autorelease();
+    return createNSString(result.toWTFString(lexicalGlobalObject)).autorelease();
 }
 
 - (JSGlobalContextRef)_globalContextForScriptWorld:(WebScriptWorld *)world
@@ -2161,7 +2161,7 @@ NODELETE static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frame
     
     RefPtr rootObject = protect(protect(_private->coreFrame->document())->axObjectCache())->rootObjectForFrame(protect(*_private->coreFrame));
     if (rootObject)
-        rootObject->setAccessibleName(AtomString { name });
+        rootObject->setAccessibleName(AtomStringImpl::add((__bridge CFStringRef)name).get());
 }
 
 - (BOOL)enhancedAccessibilityEnabled
@@ -2180,7 +2180,7 @@ NODELETE static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frame
     if (!coreFrame)
         return @"";
 
-    return protect(protect(coreFrame->contentRenderer())->compositor())->layerTreeAsText().createNSString().autorelease();
+    return createNSString(protect(protect(coreFrame->contentRenderer())->compositor())->layerTreeAsText()).autorelease();
 }
 
 - (id)accessibilityRoot
@@ -2262,7 +2262,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (DOMDocumentFragment *)_documentFragmentForText:(NSString *)text
 {
     auto range = _private->coreFrame->selection().selection().toNormalizedRange();
-    return range ? kit(createFragmentFromText(*range, text).ptr()) : nil;
+    return range ? kit(createFragmentFromText(*range, StringImpl::create(text).get()).ptr()) : nil;
 }
 
 - (DOMDocumentFragment *)_documentFragmentForWebArchive:(WebArchive *)webArchive
@@ -2273,7 +2273,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (DOMDocumentFragment *)_documentFragmentForImageData:(NSData *)data withRelativeURLPart:(NSString *)relativeURLPart andMIMEType:(NSString *)mimeType
 {
     auto resource = adoptNS([[WebResource alloc] initWithData:data
-        URL:URL::fakeURLWithRelativePart(String { relativeURLPart }).createNSURL().get()
+        URL:URL::fakeURLWithRelativePart(StringImpl::create(relativeURLPart).get()).createNSURL().get()
         MIMEType:mimeType textEncodingName:nil frameName:nil]);
     return [[self _dataSource] _documentFragmentWithImageResource:resource.get()];
 }
@@ -2305,7 +2305,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto coreFrame = _private->coreFrame;
     if (!coreFrame)
         return;
-    protect(coreFrame->loader().client())->dispatchDidReceiveTitle({ title, WebCore::TextDirection::LTR });
+    protect(coreFrame->loader().client())->dispatchDidReceiveTitle({ StringImpl::create(title), WebCore::TextDirection::LTR });
 }
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -2350,7 +2350,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     if (RefPtr document = coreFrame->document())
-        protect(document->reportingScope())->generateTestReport(message, group);
+        protect(document->reportingScope())->generateTestReport(StringImpl::create(message), StringImpl::create(group));
 }
 
 - (NSString *)_plainTextForTesting
@@ -2366,8 +2366,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     Ref documentElement = *document->documentElement();
     document->updateLayoutIgnorePendingStylesheets();
     if (!documentElement->renderer())
-        return documentElement->textContent(true).createNSString().autorelease();
-    return plainText(makeRangeSelectingNodeContents(documentElement)).createNSString().autorelease();
+        return createNSString(documentElement->textContent(true)).autorelease();
+    return createNSString(plainText(makeRangeSelectingNodeContents(documentElement))).autorelease();
 }
 
 @end
@@ -2398,7 +2398,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto coreFrame = _private->coreFrame;
     if (!coreFrame)
         return nil;
-    return coreFrame->tree().uniqueName().createNSString().autorelease();
+    return createNSString(coreFrame->tree().uniqueName()).autorelease();
 }
 
 - (WebFrameView *)frameView
@@ -2497,7 +2497,7 @@ static RetainPtr<NSURL> createUniqueWebDataURL()
     }
     
 #if USE(QUICK_LOOK)
-    if (WebCore::shouldUseQuickLookForMIMEType(MIMEType)) {
+    if (WebCore::shouldUseQuickLookForMIMEType(StringImpl::create(MIMEType).get())) {
         RetainPtr quickLookURL = responseURL ? responseURL : absoluteBaseURL;
         if (auto request = WebCore::registerQLPreviewConverterIfNeeded(quickLookURL.get(), MIMEType, data)) {
             RefPtr coreFrame = _private->coreFrame.get();
@@ -2509,7 +2509,7 @@ static RetainPtr<NSURL> createUniqueWebDataURL()
 
     WebCore::ResourceRequest request(absoluteBaseURL.get());
 
-    auto response = WebCore::ResourceResponse::responseForMIMEType(responseURL.get(), MIMEType, [data length], encodingName);
+    auto response = WebCore::ResourceResponse::responseForMIMEType(responseURL.get(), StringImpl::create(MIMEType).get(), [data length], StringImpl::create(encodingName).get());
     WebCore::SubstituteData substituteData(WebCore::SharedBuffer::create(data), [unreachableURL absoluteURL], WTF::move(response), WebCore::SubstituteData::SessionHistoryVisibility::Hidden);
 
     RefPtr coreFrame = _private->coreFrame.get();
@@ -2573,7 +2573,7 @@ static RetainPtr<NSURL> createUniqueWebDataURL()
     RefPtr coreFrame = _private->coreFrame.get();
     if (!coreFrame)
         return nil;
-    return kit(dynamicDowncast<WebCore::LocalFrame>(coreFrame->tree().findByUniqueName(name, *coreFrame).get()));
+    return kit(dynamicDowncast<WebCore::LocalFrame>(coreFrame->tree().findByUniqueName(AtomStringImpl::add((__bridge CFStringRef)name).get(), *coreFrame).get()));
 }
 
 - (WebFrame *)parentFrame

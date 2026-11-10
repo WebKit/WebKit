@@ -53,23 +53,23 @@ public:
     class Client {
     public:
         virtual ~Client() { }
-        virtual void didPostMessage(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&&, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&&) = 0;
+        virtual void didPostMessage(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&&, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, RefPtr<StringImpl>>&&)>&&) = 0;
     };
 
-    static Ref<WebScriptMessageHandler> create(std::unique_ptr<Client>, const String& name, API::ContentWorld&);
+    static Ref<WebScriptMessageHandler> create(std::unique_ptr<Client>, StringImpl* name, API::ContentWorld&);
     virtual ~WebScriptMessageHandler();
 
-    String name() const { return m_name; }
+    RefPtr<StringImpl> name() const { return m_name; }
 
     API::ContentWorld& world() { return m_world.get(); }
 
     Client& client() const LIFETIME_BOUND { return *m_client; }
 
 private:
-    WebScriptMessageHandler(std::unique_ptr<Client>, const String&, API::ContentWorld&);
+    WebScriptMessageHandler(std::unique_ptr<Client>, StringImpl*, API::ContentWorld&);
 
     const std::unique_ptr<Client> m_client;
-    String m_name;
+    RefPtr<StringImpl> m_name;
     const Ref<API::ContentWorld> m_world;
 };
 

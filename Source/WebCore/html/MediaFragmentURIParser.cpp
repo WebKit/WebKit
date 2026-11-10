@@ -43,7 +43,7 @@ namespace WebCore {
 
 constexpr unsigned nptIdentifierLength = 4; // "npt:"
 
-static String collectDigits(std::span<const Latin1Character> input, unsigned& position)
+static RefPtr<StringImpl> collectDigits(std::span<const Latin1Character> input, unsigned& position)
 {
     StringBuilder digits;
 
@@ -93,7 +93,7 @@ MediaTime MediaFragmentURIParser::endTime()
     return m_endTime;
 }
 
-Vector<String> MediaFragmentURIParser::trackIdentifiers()
+Vector<RefPtr<StringImpl>> MediaFragmentURIParser::trackIdentifiers()
 {
     if (!m_url.isValid())
         return { };
@@ -131,21 +131,21 @@ void MediaFragmentURIParser::parseFragments()
         //  a. Decode percent-encoded octets in name and value as defined by RFC 3986. If either
         //     name or value are not valid percent-encoded strings, then remove the name-value pair
         //     from the list.
-        String name = PAL::decodeURLEscapeSequences(fragmentString.substring(parameterStart, equalOffset - parameterStart));
-        String value;
+        RefPtr<StringImpl> name = PAL::decodeURLEscapeSequences(fragmentString.substring(parameterStart, equalOffset - parameterStart));
+        RefPtr<StringImpl> value;
         if (equalOffset != parameterEnd)
             value = PAL::decodeURLEscapeSequences(fragmentString.substring(equalOffset + 1, parameterEnd - equalOffset - 1));
         
         //  b. Convert name and value to Unicode strings by interpreting them as UTF-8. If either
         //     name or value are not valid UTF-8 strings, then remove the name-value pair from the list.
         bool validUTF8 = false;
-        if (!name.isEmpty() && !value.isEmpty()) {
-            name = name.utf8(StrictConversion);
-            validUTF8 = !name.isEmpty();
+        if (!isEmpty(name) && !isEmpty(value)) {
+            name = StringImpl::create((utf8(name, StrictConversion)).span());
+            validUTF8 = !isEmpty(name);
 
             if (validUTF8) {
-                value = value.utf8(StrictConversion);
-                validUTF8 = !value.isEmpty();
+                value = StringImpl::create((utf8(value, StrictConversion)).span());
+                validUTF8 = !isEmpty(value);
             }
         }
         
@@ -166,14 +166,14 @@ void MediaFragmentURIParser::parseTimeFragment()
     m_timeFormat = Invalid;
 
     for (auto& fragment : m_fragments) {
-        ASSERT(fragment.first.is8Bit());
-        ASSERT(fragment.second.is8Bit());
+        ASSERT(is8Bit(fragment.first));
+        ASSERT(is8Bit(fragment.second));
 
         // http://www.w3.org/2008/WebVideo/Fragments/WD-media-fragments-spec/#naming-track
         // Track selection is denoted by the name track. Multiple track dimensions are allowed,
         // so every occurrence is kept (unlike the "last occurrence wins" rule that applies to
         // the temporal dimension below).
-        if (fragment.first == "track"_s) {
+        if (equal(fragment.first, "track"_s)) {
             m_trackIdentifiers.append(fragment.second);
             continue;
         }
@@ -181,7 +181,7 @@ void MediaFragmentURIParser::parseTimeFragment()
         // http://www.w3.org/2008/WebVideo/Fragments/WD-media-fragments-spec/#naming-time
         // Temporal clipping is denoted by the name t, and specified as an interval with a begin
         // time and an end time
-        if (fragment.first != "t"_s)
+        if (!equal(fragment.first, "t"_s))
             continue;
 
         // http://www.w3.org/2008/WebVideo/Fragments/WD-media-fragments-spec/#npt-time
@@ -192,7 +192,7 @@ void MediaFragmentURIParser::parseTimeFragment()
         
         MediaTime start = MediaTime::invalidTime();
         MediaTime end = MediaTime::invalidTime();
-        if (parseNPTFragment(fragment.second.span8(), start, end)) {
+        if (parseNPTFragment(span8(fragment.second), start, end)) {
             m_startTime = start;
             m_endTime = end;
             m_timeFormat = NormalPlayTime;
@@ -274,7 +274,7 @@ bool MediaFragmentURIParser::parseNPTTime(std::span<const Latin1Character> timeS
     // npt-mm        =   2DIGIT      ; 0-59
     // npt-ss        =   2DIGIT      ; 0-59
 
-    String digits1 = collectDigits(timeString, offset);
+    RefPtr<StringImpl> digits1 = collectDigits(timeString, offset);
     auto parsedValue1 = parseInteger<int>(digits1);
     if (!parsedValue1)
         return false;
@@ -298,8 +298,8 @@ bool MediaFragmentURIParser::parseNPTTime(std::span<const Latin1Character> timeS
         return false;
     if (offset >= timeString.size() || !isASCIIDigit(timeString[(offset)]))
         return false;
-    String digits2 = collectDigits(timeString, offset);
-    if (digits2.length() != 2)
+    RefPtr<StringImpl> digits2 = collectDigits(timeString, offset);
+    if (length(digits2) != 2)
         return false;
     int value2 = parseInteger<int>(digits2).value();
 
@@ -307,7 +307,7 @@ bool MediaFragmentURIParser::parseNPTTime(std::span<const Latin1Character> timeS
     if (offset < timeString.size() && timeString[offset] == ':')
         mode = hours;
     if (mode == minutes) {
-        if (digits1.length() != 2)
+        if (length(digits1) != 2)
             return false;
         if (value1 > 59 || value2 > 59)
             return false;
@@ -319,8 +319,8 @@ bool MediaFragmentURIParser::parseNPTTime(std::span<const Latin1Character> timeS
             return false;
         if (offset >= timeString.size() || !isASCIIDigit(timeString[offset]))
             return false;
-        String digits3 = collectDigits(timeString, offset);
-        if (digits3.length() != 2)
+        RefPtr<StringImpl> digits3 = collectDigits(timeString, offset);
+        if (length(digits3) != 2)
             return false;
         value3 = parseInteger<int>(digits3).value();
         if (value2 > 59 || value3 > 59)

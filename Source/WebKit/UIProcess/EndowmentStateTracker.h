@@ -47,7 +47,7 @@ public:
     virtual ~EndowmentStateTrackerClient() = default;
     virtual void isUserFacingChanged(bool) { }
     virtual void isVisibleChanged(bool) { }
-    virtual void visibilityEndowmentEnvironmentsChanged(const HashSet<String>&) { }
+    virtual void visibilityEndowmentEnvironmentsChanged(const HashSet<RefPtr<StringImpl>>&) { }
 };
 
 class EndowmentStateTracker {
@@ -57,7 +57,7 @@ public:
 
     bool isVisible() const { return ensureState().isVisible; }
     bool isUserFacing() const { return ensureState().isUserFacing; }
-    const HashSet<String>& visibilityEndowmentEnvironments() const { return ensureState().visibilityEnvironments; }
+    const HashSet<RefPtr<StringImpl>>& visibilityEndowmentEnvironments() const { return ensureState().visibilityEnvironments; }
 
     void addClient(EndowmentStateTrackerClient&);
     void removeClient(EndowmentStateTrackerClient&);
@@ -77,7 +77,7 @@ private:
     struct State {
         bool isUserFacing { false };
         bool isVisible { false };
-        HashSet<String> visibilityEnvironments;
+        HashSet<RefPtr<StringImpl>> visibilityEnvironments;
     };
     static State stateFromProcessState(RBSProcessState *);
     static State stateForHandle(RBSProcessHandle *);

@@ -56,7 +56,7 @@
     WeakObjCPtr<JSVirtualMachine> m_virtualMachine;
     JSScriptType m_type;
     FileSystem::MappedFileData m_mappedSource;
-    String m_source;
+    RefPtr<StringImpl> m_source;
     RetainPtr<NSURL> m_sourceURL;
     RetainPtr<NSURL> m_cachePath;
     RefPtr<JSC::CachedBytecode> m_cachedBytecode;
@@ -80,29 +80,29 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
         return false;
     }
 
-    String systemPath = cachePathURL.fileSystemPath();
+    RefPtr<StringImpl> systemPath = cachePathURL.fileSystemPath();
 
     if (auto fileType = FileSystem::fileType(systemPath)) {
         if (*fileType != FileSystem::FileType::Regular) {
-            createError([NSString stringWithFormat:@"Cache path `%@` already exists and is not a file", systemPath.createNSString().get()], error);
+            createError([NSString stringWithFormat:@"Cache path `%@` already exists and is not a file", createNSString(systemPath).get()], error);
             return false;
         }
     }
 
-    String directory = FileSystem::parentPath(systemPath);
-    if (directory.isNull()) {
-        createError([NSString stringWithFormat:@"Cache path `%@` does not contain in a valid directory", systemPath.createNSString().get()], error);
+    RefPtr<StringImpl> directory = FileSystem::parentPath(systemPath);
+    if (!directory) {
+        createError([NSString stringWithFormat:@"Cache path `%@` does not contain in a valid directory", createNSString(systemPath).get()], error);
         return false;
     }
 
     if (FileSystem::fileType(directory) != FileSystem::FileType::Directory) {
-        createError([NSString stringWithFormat:@"Cache directory `%@` is not a directory or does not exist", directory.createNSString().get()], error);
+        createError([NSString stringWithFormat:@"Cache directory `%@` is not a directory or does not exist", createNSString(directory).get()], error);
         return false;
     }
 
 #if USE(APPLE_INTERNAL_SDK)
     if (rootlessCheckDatavaultFlag(FileSystem::fileSystemRepresentation(directory), nullptr)) {
-        createError([NSString stringWithFormat:@"Cache directory `%@` is not a data vault", directory.createNSString().get()], error);
+        createError([NSString stringWithFormat:@"Cache directory `%@` is not a data vault", createNSString(directory).get()], error);
         return false;
     }
 #endif
@@ -118,7 +118,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     auto result = adoptNS([[JSScript alloc] init]);
     result->m_virtualMachine = vm;
     result->m_type = type;
-    result->m_source = source;
+    result->m_source = StringImpl::create(source);
     result->m_sourceURL = sourceURL;
     result->m_cachePath = cachePath;
     [result readCache];
@@ -134,13 +134,13 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!filePathURL.protocolIsFile())
         return createError([NSString stringWithFormat:@"File path %@ is not a local file", filePathURL.createNSURL().get()], error);
 
-    String systemPath = filePathURL.fileSystemPath();
+    RefPtr<StringImpl> systemPath = filePathURL.fileSystemPath();
     auto fileData = FileSystem::mapFile(systemPath, FileSystem::MappedFileMode::Shared);
     if (!fileData)
-        return createError([NSString stringWithFormat:@"File at path %@ could not be mapped.", systemPath.createNSString().get()], error);
+        return createError([NSString stringWithFormat:@"File at path %@ could not be mapped.", createNSString(systemPath).get()], error);
 
     if (!charactersAreAllASCII(fileData->span()))
-        return createError([NSString stringWithFormat:@"Not all characters in file at %@ are ASCII.", systemPath.createNSString().get()], error);
+        return createError([NSString stringWithFormat:@"Not all characters in file at %@ are ASCII.", createNSString(systemPath).get()], error);
 
     auto result = adoptNS([[JSScript alloc] init]);
     result->m_virtualMachine = vm;
@@ -158,7 +158,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!m_cachePath)
         return;
 
-    String cacheFilename = [m_cachePath path];
+    RefPtr<StringImpl> cacheFilename = StringImpl::create([m_cachePath path]);
 
     auto handle = FileSystem::openFile(cacheFilename, FileSystem::FileOpenMode::Read, FileSystem::FileAccessPermission::All, { FileSystem::FileLockMode::Exclusive, FileSystem::FileLockMode::Nonblocking });
     if (!handle)
@@ -205,10 +205,10 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
 - (BOOL)cacheBytecodeWithError:(NSError **)error
 {
-    String errorString { };
+    RefPtr<StringImpl> errorString { };
     [self writeCache:errorString];
-    if (!errorString.isNull()) {
-        createError(errorString.createNSString().get(), error);
+    if (errorString) {
+        createError(createNSString(errorString).get(), error);
         return NO;
     }
 
@@ -247,10 +247,10 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
 - (unsigned)hash
 {
-    return m_source.hash();
+    return hash(m_source);
 }
 
-- (const String&)source
+- (const RefPtr<StringImpl>&)source
 {
     return m_source;
 }
@@ -266,11 +266,11 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     JSC::JSLockHolder locker(vm);
 
     TextPosition startPosition { };
-    String filename = String { [[self sourceURL] absoluteString] };
+    RefPtr<StringImpl> filename = StringImpl::create([[self sourceURL] absoluteString]);
     URL url = URL({ }, filename);
     auto type = m_type == kJSScriptTypeModule ? JSC::SourceProviderSourceType::Module : JSC::SourceProviderSourceType::Program;
     JSC::SourceOrigin origin(url);
-    Ref<JSScriptSourceProvider> sourceProvider = JSScriptSourceProvider::create(self, origin, WTF::move(filename), String(), JSC::SourceTaintedOrigin::Untainted, startPosition, type);
+    Ref<JSScriptSourceProvider> sourceProvider = JSScriptSourceProvider::create(self, origin, WTF::move(filename), nullptr, JSC::SourceTaintedOrigin::Untainted, startPosition, type);
     JSC::SourceCode sourceCode(WTF::move(sourceProvider));
     return sourceCode;
 }
@@ -283,15 +283,15 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     return jsSourceCode;
 }
 
-- (BOOL)writeCache:(String&)error
+- (BOOL)writeCache:(RefPtr<StringImpl>&)error
 {
     if (self.isUsingBytecodeCache) {
-        error = "Cache for JSScript is already non-empty. Can not override it."_s;
+        error = "Cache for JSScript is already non-empty. Can not override it."_si;
         return NO;
     }
 
     if (!m_cachePath) {
-        error = "No cache path was provided during construction of this JSScript."_s;
+        error = "No cache path was provided during construction of this JSScript."_si;
         return NO;
     }
 

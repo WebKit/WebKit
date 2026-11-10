@@ -54,7 +54,7 @@ HTMLHeadingElement::~HTMLHeadingElement() = default;
 static unsigned localHeadingOffset(const HTMLElement& element)
 {
     auto& value = element.attributeWithoutSynchronization(HTMLNames::headingoffsetAttr);
-    if (value.isNull())
+    if (!value)
         return 0;
     auto parsed = parseHTMLNonNegativeInteger(value);
     if (!parsed)

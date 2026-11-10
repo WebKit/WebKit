@@ -55,7 +55,7 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
 
 class TextPainter {
 public:
-    TextPainter(GraphicsContext&, const FontCascade&, const Style::ComputedStyle&, const TextPaintStyle&, const Style::TextShadows&, const Style::AppleColorFilter&, const AtomString& emphasisMark, float emphasisMarkOffset, bool isCombinedText);
+    TextPainter(GraphicsContext&, const FontCascade&, const Style::ComputedStyle&, const TextPaintStyle&, const Style::TextShadows&, const Style::AppleColorFilter&, AtomStringImpl* emphasisMark, float emphasisMarkOffset, bool isCombinedText);
 
     void paintRange(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end);
 
@@ -63,14 +63,14 @@ public:
 
     static bool shouldUseGlyphDisplayList(const PaintInfo&, const Style::ComputedStyle&);
     NODELETE WEBCORE_EXPORT static void setForceUseGlyphDisplayListForTesting(bool);
-    WEBCORE_EXPORT static String cachedGlyphDisplayListsForTextNodeAsText(Text&, OptionSet<DisplayList::AsTextFlag>);
+    WEBCORE_EXPORT static RefPtr<StringImpl> cachedGlyphDisplayListsForTextNodeAsText(Text&, OptionSet<DisplayList::AsTextFlag>);
     WEBCORE_EXPORT static void clearGlyphDisplayListCacheForTesting();
 
 private:
-    void paintTextOrEmphasisMarks(const FontCascade&, const TextRun&, const AtomString& emphasisMark, float emphasisMarkOffset,
+    void paintTextOrEmphasisMarks(const FontCascade&, const TextRun&, AtomStringImpl* emphasisMark, float emphasisMarkOffset,
         const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset);
     void paintTextWithShadows(const Style::TextShadows*, const Style::AppleColorFilter&, const FontCascade&, const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin,
-        unsigned startOffset, unsigned endOffset, const AtomString& emphasisMark, float emphasisMarkOffset, bool stroked);
+        unsigned startOffset, unsigned endOffset, AtomStringImpl* emphasisMark, float emphasisMarkOffset, bool stroked);
     void paintTextAndEmphasisMarksIfNeeded(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset,
         const TextPaintStyle&, const Style::TextShadows&, const Style::AppleColorFilter&);
 
@@ -78,7 +78,7 @@ private:
     const CheckedRef<const FontCascade> m_font;
     const CheckedRef<const Style::ComputedStyle> m_renderStyle;
     TextPaintStyle m_style;
-    AtomString m_emphasisMark;
+    RefPtr<AtomStringImpl> m_emphasisMark;
     const Style::TextShadows& m_shadow;
     const Style::AppleColorFilter& m_shadowColorFilter;
     RefPtr<const DisplayList::DisplayList> m_glyphDisplayList { nullptr };

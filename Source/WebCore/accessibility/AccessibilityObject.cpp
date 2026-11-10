@@ -159,7 +159,7 @@ AccessibilityObject::~AccessibilityObject()
     }
 }
 
-String AccessibilityObject::debugDescriptionInternal(bool verbose, std::optional<OptionSet<AXDebugStringOption>> debugOptions) const
+RefPtr<StringImpl> AccessibilityObject::debugDescriptionInternal(bool verbose, std::optional<OptionSet<AXDebugStringOption>> debugOptions) const
 {
     StringBuilder result;
     result.append("{"_s);
@@ -168,7 +168,7 @@ String AccessibilityObject::debugDescriptionInternal(bool verbose, std::optional
 
     if (debugOptions) {
         if (verbose || *debugOptions & AXDebugStringOption::Ignored)
-            result.append(isIgnored() ? ", ignored"_s : emptyString());
+            result.append(isIgnored() ? ", ignored"_si : emptyString());
 
         if (verbose || *debugOptions & AXDebugStringOption::RelativeFrame) {
             FloatRect frame = relativeFrame();
@@ -179,7 +179,7 @@ String AccessibilityObject::debugDescriptionInternal(bool verbose, std::optional
             result.append(", remoteFrameOffset ("_s, remoteFrameOffset().x(), ", "_s, remoteFrameOffset().y(), ")"_s);
 
         if (verbose || *debugOptions & AXDebugStringOption::IsRemoteFrame)
-            result.append(isRemoteFrame() ? ", remote frame"_s : emptyString());
+            result.append(isRemoteFrame() ? ", remote frame"_si : emptyString());
     }
 
     if (auto* renderer = this->renderer())
@@ -187,7 +187,7 @@ String AccessibilityObject::debugDescriptionInternal(bool verbose, std::optional
     else if (auto* node = this->node())
         result.append(", "_s, node->debugDescription());
 
-    if (String extraDebugInfo = this->extraDebugInfo(); !extraDebugInfo.isEmpty()) {
+    if (RefPtr<StringImpl> extraDebugInfo = this->extraDebugInfo(); !isEmpty(extraDebugInfo)) {
         result.append(" ("_s);
         result.append(WTF::move(extraDebugInfo));
         result.append(")"_s);
@@ -379,7 +379,7 @@ bool AccessibilityObject::accessibleNameDerivesFromContent() const
     return true;
 }
 
-String AccessibilityObject::computedLabel()
+RefPtr<StringImpl> AccessibilityObject::computedLabel()
 {
     // This method is being called by WebKit inspector, which may happen at any time, so we need to update our backing store now.
     // Also hold onto this object in case updateBackingStore deletes this node.
@@ -393,20 +393,20 @@ String AccessibilityObject::computedLabel()
 }
 
 // FIXME: We should unify all of the special cases for live regions, textUnderElement, title, description, etc. under one method, similar to computedLabel.
-String AccessibilityObject::announcementText() const
+RefPtr<StringImpl> AccessibilityObject::announcementText() const
 {
     Vector<AccessibilityText> computedText;
     accessibilityText(computedText);
 
 #if PLATFORM(COCOA)
-    String descriptionText = descriptionAttributeValue(&computedText);
-    if (!descriptionText.isEmpty())
+    RefPtr<StringImpl> descriptionText = descriptionAttributeValue(&computedText);
+    if (!isEmpty(descriptionText))
         return descriptionText;
 #endif
 
     if (is<HTMLInputElement>(node())) {
         // Many inputs derive their accessible name from their title.
-        if (String titleText = title(&computedText); !titleText.isEmpty())
+        if (RefPtr<StringImpl> titleText = title(&computedText); !isEmpty(titleText))
             return titleText;
     }
 
@@ -433,7 +433,7 @@ bool AccessibilityObject::isEditableWebArea() const
 
 Vector<AXTextMarkerRange> AccessibilityObject::misspellingRanges() const
 {
-    AXTRACE("AccessibilityObject::misspellingRanges"_s);
+    AXTRACE("AccessibilityObject::misspellingRanges"_si);
 
     RefPtr node = this->node();
     if (!node)
@@ -870,7 +870,7 @@ static std::optional<SimpleRange> rangeClosestToRange(const SimpleRange& referen
     return WTF::move(distanceBefore <= distanceAfter ? beforeRange : afterRange);
 }
 
-std::optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDirection(const SimpleRange& referenceRange, AccessibilitySearchDirection searchDirection, const Vector<String>& searchStrings) const
+std::optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDirection(const SimpleRange& referenceRange, AccessibilitySearchDirection searchDirection, const Vector<RefPtr<StringImpl>>& searchStrings) const
 {
     RefPtr frame = this->frame();
     if (!frame)
@@ -1161,7 +1161,7 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(Si
     return { { startBoundary, endBoundary } };
 }
 
-std::optional<SimpleRange> AccessibilityObject::findTextRange(const Vector<String>& searchStrings, const SimpleRange& startRange, AccessibilitySearchTextDirection direction) const
+std::optional<SimpleRange> AccessibilityObject::findTextRange(const Vector<RefPtr<StringImpl>>& searchStrings, const SimpleRange& startRange, AccessibilitySearchTextDirection direction) const
 {
     auto findRange = [this, &searchStrings, &direction] (const SimpleRange& referenceRange) -> std::optional<SimpleRange> {
         switch (direction) {
@@ -1299,11 +1299,11 @@ static SimpleRange rangeFromTextOperationRange(const TextOperationRange& textOpe
     return resolveCharacterRange(textOperationRange.scope, textOperationRange.characterRange, { });
 }
 
-Vector<String> AccessibilityObject::performTextOperation(const AccessibilityTextOperation& operation)
+Vector<RefPtr<StringImpl>> AccessibilityObject::performTextOperation(const AccessibilityTextOperation& operation)
 {
     Vector<TextOperationRange> textOperationRanges(ReserveCapacityTag { }, operation.textRanges.size());
 
-    Vector<String> result(ReserveCapacityTag { }, operation.textRanges.size());
+    Vector<RefPtr<StringImpl>> result(ReserveCapacityTag { }, operation.textRanges.size());
 
     if (operation.textRanges.isEmpty())
         return result;
@@ -1332,7 +1332,7 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
         const auto& textOperationRange = textOperationRanges[i];
         auto textRange = rangeFromTextOperationRange(textOperationRange);
 
-        String replacementString;
+        RefPtr<StringImpl> replacementString;
         if (useFirstReplacementStringForAllReplacements)
             replacementString = operation.replacementStrings[0];
         else if (i < replacementStringsCount)
@@ -1341,7 +1341,7 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
         if (!protect(frame->selection())->setSelectedRange(textRange, Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes))
             continue;
 
-        String text = plainText(textRange);
+        RefPtr<StringImpl> text = plainText(textRange);
         bool replaceSelection = false;
         switch (operation.type) {
         case AccessibilityTextOperationType::Capitalize:
@@ -1349,24 +1349,24 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
             replaceSelection = true;
             break;
         case AccessibilityTextOperationType::Uppercase:
-            replacementString = text.convertToUppercaseWithoutLocale(); // FIXME: Needs locale to work correctly.
+            replacementString = convertToUppercaseWithoutLocale(text); // FIXME: Needs locale to work correctly.
             replaceSelection = true;
             break;
         case AccessibilityTextOperationType::Lowercase:
-            replacementString = text.convertToLowercaseWithoutLocale(); // FIXME: Needs locale to work correctly.
+            replacementString = convertToLowercaseWithoutLocale(text); // FIXME: Needs locale to work correctly.
             replaceSelection = true;
             break;
         case AccessibilityTextOperationType::Replace: {
             replaceSelection = true;
             // When applying find and replace activities, we want to match the capitalization of the replaced text,
             // (unless we're replacing with an abbreviation.)
-            if (text.length() > 0
-                && replacementString.length() > 2
-                && replacementString != replacementString.convertToUppercaseWithoutLocale()) {
-                if (text[0] == u_toupper(text[0]))
+            if (length(text) > 0
+                && length(replacementString) > 2
+                && !equal(replacementString, convertToUppercaseWithoutLocale(replacementString))) {
+                if (codeUnitAt(text, 0) == u_toupper(codeUnitAt(text, 0)))
                     replacementString = capitalize(replacementString, nullAtom()); // FIXME: Needs locale to work correctly.
                 else
-                    replacementString = replacementString.convertToLowercaseWithoutLocale(); // FIXME: Needs locale to work correctly.
+                    replacementString = convertToLowercaseWithoutLocale(replacementString); // FIXME: Needs locale to work correctly.
             }
             break;
         }
@@ -1397,10 +1397,10 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
     return result;
 }
 
-String AccessibilityObject::altTextFromAttributeOrStyle() const
+RefPtr<StringImpl> AccessibilityObject::altTextFromAttributeOrStyle() const
 {
     const auto& alt = getAttribute(altAttr);
-    if (!alt.isNull()) {
+    if (alt) {
         // Note that !isNull() is explicitly chosen over !isEmpty(), as alt="" is a meaningful value
         // and should be respected.
         return alt;
@@ -1807,10 +1807,10 @@ unsigned AccessibilityObject::computedHeadingLevel() const
     return 0;
 }
 
-String AccessibilityObject::language() const
+RefPtr<StringImpl> AccessibilityObject::language() const
 {
     const auto& lang = getAttribute(langAttr);
-    if (!lang.isEmpty())
+    if (!isEmpty(lang))
         return lang;
 
     if (isScrollArea() && !parentObject()) {
@@ -2140,7 +2140,7 @@ VisiblePositionRange AccessibilityObject::lineRangeForPosition(const VisiblePosi
             break;
         }
 
-        if (stringForVisiblePositionRange({ end, next }).contains("\n"_s)) {
+        if (contains(stringForVisiblePositionRange({ end, next }), "\n"_s)) {
             // Return the range including the line break.
             return { start, next };
         }
@@ -2227,14 +2227,14 @@ NODELETE static RenderListItem* renderListItemContainer(Node* node)
 }
 
 // Returns the text representing a list marker taking into account the position of the text in the line of text.
-static String lineStartListMarkerText(const RenderListItem* listItem, const VisiblePosition& startVisiblePosition, String markerText = { })
+static RefPtr<StringImpl> lineStartListMarkerText(const RenderListItem* listItem, const VisiblePosition& startVisiblePosition, RefPtr<StringImpl> markerText = { })
 {
     if (!listItem)
         return { };
 
-    if (markerText.isNull())
+    if (!markerText)
         markerText = listItem->markerText();
-    if (markerText.isEmpty())
+    if (isEmpty(markerText))
         return { };
 
     // Only include the list marker if the range includes the line start (where the marker would be), and is in the same line as the marker.
@@ -2243,7 +2243,7 @@ static String lineStartListMarkerText(const RenderListItem* listItem, const Visi
     return markerText;
 }
 
-String AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, Position&& startPosition)
+RefPtr<StringImpl> AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, Position&& startPosition)
 {
     CheckedPtr listItem = renderListItemContainer(node);
     if (!listItem)
@@ -2251,12 +2251,12 @@ String AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, Positio
     // Creating a VisiblePosition and determining its relationship to a line of text can be expensive.
     // Thus perform that determination only if we have some text to return.
     auto markerText = listItem->markerText();
-    if (markerText.isEmpty())
+    if (isEmpty(markerText))
         return { };
     return lineStartListMarkerText(listItem.get(), startPosition, WTF::move(markerText));
 }
 
-String AccessibilityObject::textContentPrefixFromListMarker() const
+RefPtr<StringImpl> AccessibilityObject::textContentPrefixFromListMarker() const
 {
     // The code below creates a VisiblePosition, which is very expensive. Only do this if there's
     // any chance we're actually associated with a list marker.
@@ -2267,9 +2267,9 @@ String AccessibilityObject::textContentPrefixFromListMarker() const
     // in order to extract the list marker that was added as a prefix to the text content.
     std::optional<SimpleRange> firstCharacterRange = rangeForCharacterRange({ 0, 1 });
     if (firstCharacterRange) {
-        String firstCharacterText = AXTextMarkerRange { firstCharacterRange }.toString();
-        if (firstCharacterText.length() > 1)
-            return firstCharacterText.left(firstCharacterText.length() - 1);
+        RefPtr<StringImpl> firstCharacterText = AXTextMarkerRange { firstCharacterRange }.toString();
+        if (length(firstCharacterText) > 1)
+            return left(firstCharacterText, length(firstCharacterText) - 1);
     }
     return { };
 }
@@ -2309,7 +2309,7 @@ bool AccessibilityObject::shouldCacheStringValue() const
     return false;
 }
 
-String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange)
+RefPtr<StringImpl> AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange)
 {
     auto range = makeSimpleRange(visiblePositionRange);
     if (!range)
@@ -2470,7 +2470,7 @@ bool AccessibilityObject::supportsReadOnly() const
         || isSecureField();
 }
 
-String AccessibilityObject::readOnlyValue() const
+RefPtr<StringImpl> AccessibilityObject::readOnlyValue() const
 {
     bool hasReadOnlyAttribute = hasAttribute(aria_readonlyAttr);
     if (!hasReadOnlyAttribute && isTableCell()) {
@@ -2481,14 +2481,14 @@ String AccessibilityObject::readOnlyValue() const
     }
 
     if (!hasReadOnlyAttribute)
-        return ariaRoleAttribute() != AccessibilityRole::Unknown && supportsReadOnly() ? "false"_s : String();
+        return ariaRoleAttribute() != AccessibilityRole::Unknown && supportsReadOnly() ? "false"_si : nullptr;
 
-    return getAttribute(aria_readonlyAttr).string().convertToASCIILowercase();
+    return convertToASCIILowercase(getAttribute(aria_readonlyAttr));
 }
 
-String AccessibilityObject::explicitAutoCompleteValue() const
+RefPtr<StringImpl> AccessibilityObject::explicitAutoCompleteValue() const
 {
-    const AtomString& autoComplete = getAttribute(aria_autocompleteAttr);
+    const RefPtr<AtomStringImpl>& autoComplete = getAttribute(aria_autocompleteAttr);
     if (equalLettersIgnoringASCIICase(autoComplete, "inline"_s)
         || equalLettersIgnoringASCIICase(autoComplete, "list"_s)
         || equalLettersIgnoringASCIICase(autoComplete, "both"_s))
@@ -2499,8 +2499,8 @@ String AccessibilityObject::explicitAutoCompleteValue() const
 
 bool AccessibilityObject::contentEditableAttributeIsEnabled(Element& element)
 {
-    const AtomString& contentEditableValue = element.attributeWithoutSynchronization(contenteditableAttr);
-    if (contentEditableValue.isNull())
+    const RefPtr<AtomStringImpl>& contentEditableValue = element.attributeWithoutSynchronization(contenteditableAttr);
+    if (!contentEditableValue)
         return false;
 
     if (auto* htmlElement = dynamicDowncast<HTMLElement>(&element)) {
@@ -2510,7 +2510,7 @@ bool AccessibilityObject::contentEditableAttributeIsEnabled(Element& element)
 
     // All of "true", "plaintext-only", (both case-insensitive) and the empty string count as true for accessibility.
     // This needs to be consistent with contentEditableType(const AtomString&) from HTMLElement.cpp.
-    return contentEditableValue.isEmpty() || equalLettersIgnoringASCIICase(contentEditableValue, "true"_s) || equalLettersIgnoringASCIICase(contentEditableValue, "plaintext-only"_s);
+    return isEmpty(contentEditableValue) || equalLettersIgnoringASCIICase(contentEditableValue, "true"_s) || equalLettersIgnoringASCIICase(contentEditableValue, "plaintext-only"_s);
 }
 
 // How many lines |laterPosition| sits below |earlierPosition|. Answers nothing when they are on
@@ -2766,19 +2766,19 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::disclosedRows()
     return result;
 }
 
-String AccessibilityObject::localizedActionVerb() const
+RefPtr<StringImpl> AccessibilityObject::localizedActionVerb() const
 {
 #if !PLATFORM(IOS_FAMILY)
     // FIXME: Need to add verbs for select elements.
-    static NeverDestroyed<const String> buttonAction(AXButtonActionVerb());
-    static NeverDestroyed<const String> textFieldAction(AXTextFieldActionVerb());
-    static NeverDestroyed<const String> radioButtonAction(AXRadioButtonActionVerb());
-    static NeverDestroyed<const String> checkedCheckboxAction(AXCheckedCheckboxActionVerb());
-    static NeverDestroyed<const String> uncheckedCheckboxAction(AXUncheckedCheckboxActionVerb());
-    static NeverDestroyed<const String> linkAction(AXLinkActionVerb());
-    static NeverDestroyed<const String> menuListAction(AXMenuListActionVerb());
-    static NeverDestroyed<const String> menuListPopupAction(AXMenuListPopupActionVerb());
-    static NeverDestroyed<const String> listItemAction(AXListItemActionVerb());
+    static NeverDestroyed<const RefPtr<StringImpl>> buttonAction(AXButtonActionVerb());
+    static NeverDestroyed<const RefPtr<StringImpl>> textFieldAction(AXTextFieldActionVerb());
+    static NeverDestroyed<const RefPtr<StringImpl>> radioButtonAction(AXRadioButtonActionVerb());
+    static NeverDestroyed<const RefPtr<StringImpl>> checkedCheckboxAction(AXCheckedCheckboxActionVerb());
+    static NeverDestroyed<const RefPtr<StringImpl>> uncheckedCheckboxAction(AXUncheckedCheckboxActionVerb());
+    static NeverDestroyed<const RefPtr<StringImpl>> linkAction(AXLinkActionVerb());
+    static NeverDestroyed<const RefPtr<StringImpl>> menuListAction(AXMenuListActionVerb());
+    static NeverDestroyed<const RefPtr<StringImpl>> menuListPopupAction(AXMenuListPopupActionVerb());
+    static NeverDestroyed<const RefPtr<StringImpl>> listItemAction(AXListItemActionVerb());
 
     switch (role()) {
     case AccessibilityRole::Button:
@@ -2808,28 +2808,28 @@ String AccessibilityObject::localizedActionVerb() const
 #endif
 }
 
-String AccessibilityObject::actionVerb() const
+RefPtr<StringImpl> AccessibilityObject::actionVerb() const
 {
 #if !PLATFORM(IOS_FAMILY)
     // FIXME: Need to add verbs for select elements.
     switch (role()) {
     case AccessibilityRole::Button:
     case AccessibilityRole::ToggleButton:
-        return "press"_s;
+        return "press"_si;
     case AccessibilityRole::TextField:
     case AccessibilityRole::TextArea:
-        return "activate"_s;
+        return "activate"_si;
     case AccessibilityRole::RadioButton:
-        return "select"_s;
+        return "select"_si;
     case AccessibilityRole::Checkbox:
     case AccessibilityRole::Switch:
         return isChecked() ? "uncheck"_s : "check"_s;
     case AccessibilityRole::Link:
-        return "jump"_s;
+        return "jump"_si;
     case AccessibilityRole::PopUpButton:
     case AccessibilityRole::MenuListPopup:
     case AccessibilityRole::ListItem:
-        return "select"_s;
+        return "select"_si;
     default:
         break;
     }
@@ -2848,43 +2848,43 @@ RefPtr<AXCoreObject> AccessibilityObject::formOwnerObject() const
 }
 
 // What an author explicitly noted is the invalid status of the element (e.g. via aria-invalid).
-String AccessibilityObject::explicitInvalidStatus() const
+RefPtr<StringImpl> AccessibilityObject::explicitInvalidStatus() const
 {
-    static NeverDestroyed<String> grammarValue = "grammar"_s;
-    static NeverDestroyed<String> falseValue = "false"_s;
-    static NeverDestroyed<String> spellingValue = "spelling"_s;
-    static NeverDestroyed<String> trueValue = "true"_s;
-    static NeverDestroyed<String> undefinedValue = "undefined"_s;
+    static NeverDestroyed<RefPtr<StringImpl>> grammarValue = "grammar"_s;
+    static NeverDestroyed<RefPtr<StringImpl>> falseValue = "false"_s;
+    static NeverDestroyed<RefPtr<StringImpl>> spellingValue = "spelling"_s;
+    static NeverDestroyed<RefPtr<StringImpl>> trueValue = "true"_s;
+    static NeverDestroyed<RefPtr<StringImpl>> undefinedValue = "undefined"_s;
 
     // aria-invalid can return false (default), grammar, spelling, or true.
     auto ariaInvalid = getAttributeTrimmed(aria_invalidAttr);
-    if (ariaInvalid.isEmpty())
+    if (isEmpty(ariaInvalid))
         return { };
 
     // If "false" or "undefined" [sic, string value], return "false".
-    if (ariaInvalid == falseValue || ariaInvalid == undefinedValue)
+    if (equal(ariaInvalid, falseValue) || equal(ariaInvalid, undefinedValue))
         return falseValue;
     // Besides true/false/undefined, the only tokens defined by WAI-ARIA 1.0...
     // ...for @aria-invalid are "grammar" and "spelling".
-    if (ariaInvalid == grammarValue)
+    if (equal(ariaInvalid, grammarValue))
         return grammarValue;
-    if (ariaInvalid == spellingValue)
+    if (equal(ariaInvalid, spellingValue))
         return spellingValue;
     // Any other non empty string should be treated as "true".
     return trueValue;
 }
 
-String AccessibilityObject::invalidStatusIncludingInferred() const
+RefPtr<StringImpl> AccessibilityObject::invalidStatusIncludingInferred() const
 {
-    static NeverDestroyed<String> falseValue = "false"_s;
-    static NeverDestroyed<String> trueValue = "true"_s;
+    static NeverDestroyed<RefPtr<StringImpl>> falseValue = "false"_s;
+    static NeverDestroyed<RefPtr<StringImpl>> trueValue = "true"_s;
 
     auto explicitStatus = explicitInvalidStatus();
-    if (!explicitStatus.isEmpty() && explicitStatus != falseValue)
+    if (!isEmpty(explicitStatus) && !equal(explicitStatus, falseValue))
         return explicitStatus;
 
     // HTML constraint validation, which the author opted into with required, type or pattern.
-    if (explicitStatus.isEmpty()) {
+    if (isEmpty(explicitStatus)) {
         auto* htmlElement = dynamicDowncast<HTMLElement>(this->node());
         if (RefPtr validatedFormListedElement = htmlElement ? htmlElement->asValidatedFormListedElement() : nullptr) {
             // "willValidate" is true if the element is able to be validated.
@@ -2919,18 +2919,18 @@ AccessibilityCurrentState AccessibilityObject::currentState() const
     auto currentStateValue = getAttributeTrimmed(aria_currentAttr);
 
     // If "false", empty, or missing, return false state.
-    if (currentStateValue.isEmpty() || currentStateValue == "false"_s)
+    if (isEmpty(currentStateValue) || equal(currentStateValue, "false"_s))
         return AccessibilityCurrentState::False;
 
-    if (currentStateValue == "page"_s)
+    if (equal(currentStateValue, "page"_s))
         return AccessibilityCurrentState::Page;
-    if (currentStateValue == "step"_s)
+    if (equal(currentStateValue, "step"_s))
         return AccessibilityCurrentState::Step;
-    if (currentStateValue == "location"_s)
+    if (equal(currentStateValue, "location"_s))
         return AccessibilityCurrentState::Location;
-    if (currentStateValue == "date"_s)
+    if (equal(currentStateValue, "date"_s))
         return AccessibilityCurrentState::Date;
-    if (currentStateValue == "time"_s)
+    if (equal(currentStateValue, "time"_s))
         return AccessibilityCurrentState::Time;
 
     // Any value not included in the list of allowed values should be treated as "true".
@@ -3036,28 +3036,28 @@ bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
         // We do not want to use CustomElementDefaultARIA::hasAttribute here, as it returns true
         // even if the author has set the attribute to null (e.g. this.internals.ariaValueNow = null),
         // which should be treated the same as removing the attribute.
-        return !defaultARIA->valueForAttribute(*element, attribute).isNull();
+        return !!defaultARIA->valueForAttribute(*element, attribute);
     }
 
     return false;
 }
 
-const AtomString& AccessibilityObject::getAttribute(const QualifiedName& attribute) const
+const RefPtr<AtomStringImpl>& AccessibilityObject::getAttribute(const QualifiedName& attribute) const
 {
     RefPtr element = this->element();
     return element ? element->attributeWithDefaultARIA(attribute) : nullAtom();
 }
 
-String AccessibilityObject::getAttributeTrimmed(const QualifiedName& attribute) const
+RefPtr<StringImpl> AccessibilityObject::getAttributeTrimmed(const QualifiedName& attribute) const
 {
     const auto& rawValue = getAttribute(attribute);
-    if (rawValue.isEmpty())
+    if (isEmpty(rawValue))
         return { };
-    auto value = rawValue.string();
-    return value.trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
+    auto value = rawValue;
+    return simplifyWhiteSpace(trim(value, isASCIIWhitespace), isASCIIWhitespace);
 }
 
-bool AccessibilityObject::replaceTextInRange(const String& replacementString, const CharacterRange& range)
+bool AccessibilityObject::replaceTextInRange(StringImpl* replacementString, const CharacterRange& range)
 {
     // If this is being called on the web area, redirect it to be on the body, which will have a renderer associated with it.
     if (RefPtr document = dynamicDowncast<Document>(node())) {
@@ -3109,7 +3109,7 @@ bool AccessibilityObject::replaceTextInRange(const String& replacementString, co
     return false;
 }
 
-bool AccessibilityObject::insertText(const String& text)
+bool AccessibilityObject::insertText(StringImpl* text)
 {
     AXTRACE(makeString("AccessibilityObject::insertText text = "_s, text));
 
@@ -3129,14 +3129,14 @@ bool AccessibilityObject::insertText(const String& text)
     return editor->insertText(text, nullptr);
 }
 
-using ARIARoleMap = HashMap<String, AccessibilityRole, ASCIICaseInsensitiveHash>;
-using ARIAReverseRoleMap = HashMap<AccessibilityRole, String, DefaultHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>>;
+using ARIARoleMap = HashMap<RefPtr<StringImpl>, AccessibilityRole, ASCIICaseInsensitiveHash>;
+using ARIAReverseRoleMap = HashMap<AccessibilityRole, RefPtr<StringImpl>, DefaultHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>>;
 
 static ARIARoleMap* gAriaRoleMap = nullptr;
 static ARIAReverseRoleMap* gAriaReverseRoleMap = nullptr;
 
 struct RoleEntry {
-    String ariaRole;
+    RefPtr<StringImpl> ariaRole;
     AccessibilityRole webcoreRole;
 };
 
@@ -3316,18 +3316,18 @@ static ARIAReverseRoleMap& reverseAriaRoleMap()
     return *gAriaReverseRoleMap;
 }
 
-AccessibilityRole AccessibilityObject::ariaRoleToWebCoreRole(const String& value)
+AccessibilityRole AccessibilityObject::ariaRoleToWebCoreRole(StringImpl* value)
 {
     return ariaRoleToWebCoreRole(value, [] (const AccessibilityRole&) {
         return false;
     });
 }
 
-AccessibilityRole AccessibilityObject::ariaRoleToWebCoreRole(const String& value, NOESCAPE const Function<bool(const AccessibilityRole&)>& skipRole)
+AccessibilityRole AccessibilityObject::ariaRoleToWebCoreRole(StringImpl* value, NOESCAPE const Function<bool(const AccessibilityRole&)>& skipRole)
 {
-    if (value.isNull() || value.isEmpty())
+    if (!value || isEmpty(value))
         return AccessibilityRole::Unknown;
-    auto simplifiedValue = value.simplifyWhiteSpace(isASCIIWhitespace);
+    auto simplifiedValue = simplifyWhiteSpace(value, isASCIIWhitespace);
     for (auto roleName : StringView(simplifiedValue).split(' ')) {
         AccessibilityRole role = ariaRoleMap().get<ASCIICaseInsensitiveStringViewHashTranslator>(roleName);
         if (skipRole(role))
@@ -3339,7 +3339,7 @@ AccessibilityRole AccessibilityObject::ariaRoleToWebCoreRole(const String& value
     return AccessibilityRole::Unknown;
 }
 
-String AccessibilityObject::computedRoleString() const
+RefPtr<StringImpl> AccessibilityObject::computedRoleString() const
 {
     // We only finalize some roles, like a list without markers, after adding children, so add them now.
     const_cast<AccessibilityObject*>(this)->updateChildrenIfNecessary();
@@ -3388,13 +3388,13 @@ void AccessibilityObject::updateRole()
 }
 
 #if !PLATFORM(MAC)
-String AccessibilityObject::subrolePlatformString() const
+RefPtr<StringImpl> AccessibilityObject::subrolePlatformString() const
 {
-    return String();
+    return nullptr;
 }
 #endif
 
-String AccessibilityObject::embeddedImageDescription() const
+RefPtr<StringImpl> AccessibilityObject::embeddedImageDescription() const
 {
     CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer());
     if (!renderImage)
@@ -3552,7 +3552,7 @@ bool AccessibilityObject::isSelected() const
     return false;
 }
 
-String AccessibilityObject::selectedOptionCheckmark() const
+RefPtr<StringImpl> AccessibilityObject::selectedOptionCheckmark() const
 {
     // Options in a base-appearance select render a ::checkmark, which the UA stylesheet hides unless the option is selected.
     RefPtr option = dynamicDowncast<HTMLOptionElement>(node());
@@ -3564,12 +3564,12 @@ String AccessibilityObject::selectedOptionCheckmark() const
     StringBuilder glyph;
     for (CheckedRef text : descendantsOfType<RenderText>(*checkmark))
         glyph.append(text->text());
-    String trimmedGlyph = glyph.toString().trim(isASCIIWhitespace);
-    if (!trimmedGlyph.isEmpty())
+    RefPtr<StringImpl> trimmedGlyph = trim(glyph.toString(), isASCIIWhitespace);
+    if (!isEmpty(trimmedGlyph))
         return trimmedGlyph;
 
     // A checkmark without text is drawn some other way, like with an image or borders.
-    return String { span(checkMarkCharacter) };
+    return StringImpl::create(span(checkMarkCharacter));
 }
 
 bool AccessibilityObject::isTabItemSelected() const
@@ -3614,17 +3614,17 @@ bool AccessibilityObject::isTabItemSelected() const
 unsigned AccessibilityObject::textLength() const
 {
     AX_ASSERT(isTextControl());
-    return text().length();
+    return length(text());
 }
 
-std::optional<String> AccessibilityObject::textContent() const
+std::optional<RefPtr<StringImpl>> AccessibilityObject::textContent() const
 {
     if (!hasTextContent())
         return std::nullopt;
 
     std::optional<SimpleRange> range;
     if (isTextControl())
-        range = rangeForCharacterRange({ 0, text().length() });
+        range = rangeForCharacterRange({ 0, length(text()) });
     else
         range = simpleRange();
     if (range)
@@ -3632,14 +3632,14 @@ std::optional<String> AccessibilityObject::textContent() const
     return std::nullopt;
 }
 
-const String AccessibilityObject::placeholderValue() const
+const RefPtr<StringImpl> AccessibilityObject::placeholderValue() const
 {
-    const AtomString& placeholder = getAttribute(placeholderAttr);
-    if (!placeholder.isEmpty())
+    const RefPtr<AtomStringImpl>& placeholder = getAttribute(placeholderAttr);
+    if (!isEmpty(placeholder))
         return placeholder;
 
-    const AtomString& ariaPlaceholder = getAttribute(aria_placeholderAttr);
-    if (!ariaPlaceholder.isEmpty())
+    const RefPtr<AtomStringImpl>& ariaPlaceholder = getAttribute(aria_placeholderAttr);
+    if (!isEmpty(ariaPlaceholder))
         return ariaPlaceholder;
 
     return nullAtom();
@@ -3805,7 +3805,7 @@ AccessibilitySortDirection AccessibilityObject::sortDirection() const
         return AccessibilitySortDirection::Invalid;
 
     auto& sortAttribute = getAttribute(aria_sortAttr);
-    if (sortAttribute.isNull())
+    if (!sortAttribute)
         return AccessibilitySortDirection::None;
 
     if (equalLettersIgnoringASCIICase(sortAttribute, "ascending"_s))
@@ -3826,7 +3826,7 @@ bool AccessibilityObject::supportsHasPopup() const
 AccessibilityPopupValue AccessibilityObject::popupValue() const
 {
     auto& hasPopup = getAttribute(aria_haspopupAttr);
-    if (hasPopup.isEmpty()) {
+    if (isEmpty(hasPopup)) {
         if (hasDatalist())
             return AccessibilityPopupValue::Listbox;
         if (isComboBox())
@@ -3875,12 +3875,12 @@ int AccessibilityObject::posInSet() const
     return std::max(1, integralAttribute(aria_posinsetAttr));
 }
 
-String AccessibilityObject::identifierAttribute() const
+RefPtr<StringImpl> AccessibilityObject::identifierAttribute() const
 {
     return getAttribute(idAttr);
 }
 
-Vector<String> AccessibilityObject::classList() const
+Vector<RefPtr<StringImpl>> AccessibilityObject::classList() const
 {
     RefPtr element = this->element();
     if (!element)
@@ -3888,16 +3888,16 @@ Vector<String> AccessibilityObject::classList() const
 
     Ref domClassList = element->classList();
     unsigned length = domClassList->length();
-    Vector<String> classList(ReserveCapacityTag { }, length);
+    Vector<RefPtr<StringImpl>> classList(ReserveCapacityTag { }, length);
     for (unsigned k = 0; k < length; k++)
-        classList.append(domClassList->item(k).string());
+        classList.append(domClassList->item(k));
     return classList;
 }
 
-String AccessibilityObject::extendedDescription() const
+RefPtr<StringImpl> AccessibilityObject::extendedDescription() const
 {
     auto describedBy = ariaDescribedByAttribute();
-    if (!describedBy.isEmpty())
+    if (!isEmpty(describedBy))
         return describedBy;
 
     return getAttribute(HTMLNames::aria_descriptionAttr);
@@ -3905,7 +3905,7 @@ String AccessibilityObject::extendedDescription() const
 
 bool AccessibilityObject::supportsPressed() const
 {
-    const AtomString& expanded = getAttribute(aria_pressedAttr);
+    const RefPtr<AtomStringImpl>& expanded = getAttribute(aria_pressedAttr);
     return equalLettersIgnoringASCIICase(expanded, "true"_s) || equalLettersIgnoringASCIICase(expanded, "false"_s);
 }
 
@@ -3940,7 +3940,7 @@ bool AccessibilityObject::supportsExpanded() const
 
     auto hasValidAriaExpandedValue = [this] () -> bool {
         // Undefined values should not result in this attribute being exposed to ATs according to ARIA.
-        const AtomString& expanded = getAttribute(aria_expandedAttr);
+        const RefPtr<AtomStringImpl>& expanded = getAttribute(aria_expandedAttr);
         return equalLettersIgnoringASCIICase(expanded, "true"_s) || equalLettersIgnoringASCIICase(expanded, "false"_s);
     };
 
@@ -4017,7 +4017,7 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
     // If it's a toggle button, the aria-pressed attribute is consulted.
 
     if (isToggleButton()) {
-        const AtomString& ariaPressed = getAttribute(aria_pressedAttr);
+        const RefPtr<AtomStringImpl>& ariaPressed = getAttribute(aria_pressedAttr);
         if (equalLettersIgnoringASCIICase(ariaPressed, "true"_s))
             return AccessibilityButtonState::On;
         if (equalLettersIgnoringASCIICase(ariaPressed, "mixed"_s))
@@ -4025,7 +4025,7 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
         return AccessibilityButtonState::Off;
     }
 
-    const AtomString& result = getAttribute(aria_checkedAttr);
+    const RefPtr<AtomStringImpl>& result = getAttribute(aria_checkedAttr);
     if (equalLettersIgnoringASCIICase(result, "true"_s))
         return AccessibilityButtonState::On;
     if (equalLettersIgnoringASCIICase(result, "mixed"_s)) {
@@ -4039,7 +4039,7 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
     return AccessibilityButtonState::Off;
 }
 
-HashMap<String, AXEditingStyleValueVariant> AccessibilityObject::resolvedEditingStyles() const
+HashMap<RefPtr<StringImpl>, AXEditingStyleValueVariant> AccessibilityObject::resolvedEditingStyles() const
 {
     RefPtr document = this->document();
     if (!document)
@@ -4049,11 +4049,11 @@ HashMap<String, AXEditingStyleValueVariant> AccessibilityObject::resolvedEditing
     if (!selectionStyle)
         return { };
 
-    HashMap<String, AXEditingStyleValueVariant> styles;
-    styles.add("bold"_s, selectionStyle->hasStyle(CSSPropertyID::FontWeight, "bold"_s));
-    styles.add("italic"_s, selectionStyle->hasStyle(CSSPropertyID::FontStyle, "italic"_s));
-    styles.add("underline"_s, selectionStyle->hasStyle(CSSPropertyID::WebkitTextDecorationsInEffect, "underline"_s));
-    styles.add("fontsize"_s, selectionStyle->legacyFontSize(*document));
+    HashMap<RefPtr<StringImpl>, AXEditingStyleValueVariant> styles;
+    styles.add("bold"_si, selectionStyle->hasStyle(CSSPropertyID::FontWeight, "bold"_si));
+    styles.add("italic"_si, selectionStyle->hasStyle(CSSPropertyID::FontStyle, "italic"_si));
+    styles.add("underline"_si, selectionStyle->hasStyle(CSSPropertyID::WebkitTextDecorationsInEffect, "underline"_si));
+    styles.add("fontsize"_si, selectionStyle->legacyFontSize(*document));
     return styles;
 }
 
@@ -4413,7 +4413,7 @@ bool AccessibilityObject::includeIgnoredInCoreTree() const
 
 bool AccessibilityObject::pressedIsPresent() const
 {
-    return !getAttribute(aria_pressedAttr).isEmpty();
+    return !isEmpty(getAttribute(aria_pressedAttr));
 }
 
 TextIteratorBehaviors AccessibilityObject::textIteratorBehaviorForTextRange() const
@@ -4469,7 +4469,7 @@ bool AccessibilityObject::isARIAHidden() const
     if (isFocused())
         return false;
 
-    AtomString tag = element ? element->localName() : nullAtom();
+    RefPtr<AtomStringImpl> tag = element ? element->localName() : nullAtom();
     // https://github.com/w3c/aria/pull/1880
     // To prevent authors from hiding all content from assistive technology users, do not respect
     // aria-hidden on html, body, or document-root svg elements.
@@ -4489,13 +4489,13 @@ bool AccessibilityObject::isShowingValidationMessage() const
     return false;
 }
 
-String AccessibilityObject::validationMessage() const
+RefPtr<StringImpl> AccessibilityObject::validationMessage() const
 {
     if (RefPtr element = this->element()) {
         if (RefPtr listedElement = element->asValidatedFormListedElement())
             return listedElement->validationMessage();
     }
-    return String();
+    return nullptr;
 }
 
 AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
@@ -4835,16 +4835,16 @@ void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject
     child.setIsIgnoredFromParentData(result);
 }
 
-String AccessibilityObject::innerHTML() const
+RefPtr<StringImpl> AccessibilityObject::innerHTML() const
 {
     RefPtr element = this->element();
-    return element ? element->innerHTML() : String();
+    return element ? element->innerHTML() : nullptr;
 }
 
-String AccessibilityObject::outerHTML() const
+RefPtr<StringImpl> AccessibilityObject::outerHTML() const
 {
     RefPtr element = this->element();
-    return element ? element->outerHTML() : String();
+    return element ? element->outerHTML() : nullptr;
 }
 
 bool AccessibilityObject::ignoredByRowAncestor() const

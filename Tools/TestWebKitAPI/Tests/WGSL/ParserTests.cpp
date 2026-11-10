@@ -75,7 +75,7 @@ static void checkVec4F32Type(WGSL::AST::Expression& type)
 
 namespace TestWGSLAPI {
 
-inline std::expected<WGSL::ShaderModule, WGSL::FailedCheck> parse(const String& wgsl)
+inline std::expected<WGSL::ShaderModule, WGSL::FailedCheck> parse(StringImpl* wgsl)
 {
     WGSL::ShaderModule shaderModule(wgsl, { 8 });
     auto maybeError = WGSL::parse(shaderModule);
@@ -108,11 +108,11 @@ std::optional<unsigned> extractInteger(WGSL::AST::Expression& expression)
 }
 
 
-static void testStruct(ASCIILiteral program, const Vector<String>& fieldNames, const Vector<String>& typeNames, const Vector<Vector<StructAttributeTest>>& attributeTests = { })
+static void testStruct(ASCIILiteral program, const Vector<RefPtr<StringImpl>>& fieldNames, const Vector<RefPtr<StringImpl>>& typeNames, const Vector<Vector<StructAttributeTest>>& attributeTests = { })
 {
     ASSERT(fieldNames.size() == typeNames.size());
 
-    auto shader = parse(program);
+    auto shader = parse(StringImpl::create(program).ptr());
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -230,8 +230,8 @@ TEST(WGSLParserTests, Struct)
 TEST(WGSLParserTests, GlobalVariable)
 {
     auto shader = parse(
-        "@group(0) @binding(0)\n"
-        "var<storage, read_write> x: B;\n"_s);
+        StringImpl::create("@group(0) @binding(0)\n"
+        "var<storage, read_write> x: B;\n"_s).ptr());
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -264,10 +264,10 @@ TEST(WGSLParserTests, GlobalVariable)
 TEST(WGSLParserTests, FunctionDecl)
 {
     auto shader = parse(
-        "@compute\n"
+        StringImpl::create("@compute\n"
         "fn main() {\n"
         "    x.a = 42i;\n"
-        "}"_s);
+        "}"_s).ptr());
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -299,14 +299,14 @@ TEST(WGSLParserTests, FunctionDecl)
 TEST(WGSLParserTests, TrivialGraphicsShader)
 {
     auto shader = parse(
-        "@vertex\n"
+        StringImpl::create("@vertex\n"
         "fn vertexShader(@location(0) x: vec4<f32>) -> @builtin(position) vec4<f32> {\n"
         "    return x;\n"
         "}\n\n"
         "@fragment\n"
         "fn fragmentShader() -> @location(0) vec4<f32> {\n"
         "    return vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
-        "}"_s);
+        "}"_s).ptr());
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -381,7 +381,7 @@ TEST(WGSLParserTests, TrivialGraphicsShader)
 
 TEST(WGSLParserTests, GlobalConstant)
 {
-    auto shader = parse("const x: i32 = 1;\n"_s);
+    auto shader = parse("const x: i32 = 1;\n"_si);
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader->directives().isEmpty());
@@ -405,11 +405,11 @@ TEST(WGSLParserTests, GlobalConstant)
 TEST(WGSLParserTests, LocalConstant)
 {
     auto shader = parse(
-        "@vertex\n"
+        StringImpl::create("@vertex\n"
         "fn main() -> vec4<f32> {\n"
         "    const x = vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
         "    return x;\n"
-        "}"_s);
+        "}"_s).ptr());
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader->directives().isEmpty());
@@ -461,11 +461,11 @@ TEST(WGSLParserTests, LocalConstant)
 TEST(WGSLParserTests, LocalLet)
 {
     auto shader = parse(
-        "@vertex\n"
+        StringImpl::create("@vertex\n"
         "fn main() -> vec4<f32> {\n"
         "    let x = vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
         "    return x;\n"
-        "}"_s);
+        "}"_s).ptr());
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -517,7 +517,7 @@ TEST(WGSLParserTests, LocalLet)
 
 TEST(WGSLParserTests, GlobalOverride)
 {
-    auto shader = parse("override x: i32;\n"_s);
+    auto shader = parse("override x: i32;\n"_si);
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader->directives().isEmpty());
@@ -541,11 +541,11 @@ TEST(WGSLParserTests, GlobalOverride)
 TEST(WGSLParserTests, LocalVariable)
 {
     auto shader = parse(
-        "@vertex\n"
+        StringImpl::create("@vertex\n"
         "fn main() -> vec4<f32> {\n"
         "    var x = vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
         "    return x;\n"
-        "}"_s);
+        "}"_s).ptr());
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -601,7 +601,7 @@ TEST(WGSLParserTests, LocalVariable)
 
 TEST(WGSLParserTests, ArrayAccess)
 {
-    auto shader = parse("fn test() { return x[42i]; }"_s);
+    auto shader = parse("fn test() { return x[42i]; }"_si);
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -636,9 +636,9 @@ TEST(WGSLParserTests, ArrayAccess)
 TEST(WGSLParserTests, UnaryExpression)
 {
     auto shader = parse(
-        "fn negate(x: f32) -> f32 {\n"
+        StringImpl::create("fn negate(x: f32) -> f32 {\n"
         "    return -x;\n"
-        "}"_s);
+        "}"_s).ptr());
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -797,9 +797,9 @@ static void testBinaryExpressionXYZ(ASCIILiteral program, const Vector<WGSL::AST
 TEST(WGSLParserTests, BinaryExpression)
 {
     auto shader = parse(
-        "fn add(x: f32, y: f32) -> f32 {\n"
+        StringImpl::create("fn add(x: f32, y: f32) -> f32 {\n"
         "    return x + y;\n"
-        "}"_s);
+        "}"_s).ptr());
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -916,7 +916,7 @@ TEST(WGSLParserTest, ShortCircuitOrExpression)
 TEST(WGSLParserTest, IfStatement)
 {
     auto shader = parse(
-        R"(fn foo() {
+        StringImpl::create(R"(fn foo() {
                if true {
                    return;
                } else if false {
@@ -924,7 +924,7 @@ TEST(WGSLParserTest, IfStatement)
                } else {
                    return;
                }
-        })"_s);
+        })"_s).ptr());
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -950,7 +950,7 @@ TEST(WGSLParserTest, IfStatement)
 TEST(WGSLParserTests, TriangleVert)
 {
     auto shader = parse(
-        "@vertex\n"
+        StringImpl::create("@vertex\n"
         "fn main(\n"
         "    @builtin(vertex_index) VertexIndex : u32\n"
         ") -> @builtin(position) vec4<f32> {\n"
@@ -960,7 +960,7 @@ TEST(WGSLParserTests, TriangleVert)
         "        vec2<f32>(0.5, -0.5)\n"
         "    );\n\n"
         "    return vec4<f32>(pos[VertexIndex], 0.0, 1.0);\n"
-        "}\n"_s);
+        "}\n"_s).ptr());
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -1023,10 +1023,10 @@ TEST(WGSLParserTests, TriangleVert)
 TEST(WGSLParserTests, VectorWithOutComponentType)
 {
     auto shader = parse(
-        "@vertex\n"
+        StringImpl::create("@vertex\n"
         "fn main() {\n"
         "    x = vec4(1.0);\n"
-        "}\n"_s);
+        "}\n"_s).ptr());
 
     EXPECT_SHADER(shader);
     EXPECT_SHADER(shader);
@@ -1053,10 +1053,10 @@ TEST(WGSLParserTests, VectorWithOutComponentType)
 TEST(WGSLParserTests, VectorWithComponentType)
 {
     auto shader = parse(
-        "@vertex\n"
+        StringImpl::create("@vertex\n"
         "fn main() {\n"
         "    x = vec4<f32>(1.0);\n"
-        "}\n"_s);
+        "}\n"_s).ptr());
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader->directives().isEmpty());
@@ -1081,10 +1081,10 @@ TEST(WGSLParserTests, VectorWithComponentType)
 TEST(WGSLParserTests, RedFrag)
 {
     auto shader = parse(
-        "@fragment\n"
+        StringImpl::create("@fragment\n"
         "fn main() -> @location(0) vec4<f32> {\n"
         "    return vec4<f32>(1.0, 0.0, 0.0, 1.0);\n"
-        "}\n"_s);
+        "}\n"_s).ptr());
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -1096,10 +1096,10 @@ TEST(WGSLParserTests, RedFrag)
 TEST(WGSLParserTests, TrailingSemicolon)
 {
     auto shader = parse(
-        "fn f(){\n"
+        StringImpl::create("fn f(){\n"
         "  ;;;\n"
         "}\n"
-        ";;;\n"_s);
+        ";;;\n"_s).ptr());
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -1109,28 +1109,28 @@ TEST(WGSLParserTests, TrailingSemicolon)
 
 TEST(WGSLParserTests, GlobalVarWithoutTypeOrInitializer)
 {
-    auto shader = parse("var x;"_s);
+    auto shader = parse("var x;"_si);
     EXPECT_FALSE(shader.has_value());
     EXPECT_EQ(shader.error().errors.first().message(), "var declaration requires a type or initializer"_s);
 }
 
 TEST(WGSLParserTests, GlobalConstWithoutTypeOrInitializer)
 {
-    auto shader = parse("const x;"_s);
+    auto shader = parse("const x;"_si);
     EXPECT_FALSE(shader.has_value());
     EXPECT_EQ(shader.error().errors.first().message(), "Expected a =, but got a ;"_s);
 }
 
 TEST(WGSLParserTests, GlobalConstWithoutInitializer)
 {
-    auto shader = parse("const x: i32;"_s);
+    auto shader = parse("const x: i32;"_si);
     EXPECT_FALSE(shader.has_value());
     EXPECT_EQ(shader.error().errors.first().message(), "Expected a =, but got a ;"_s);
 }
 
 TEST(WGSLParserTests, GlobalOverrideWithoutTypeOrInitializer)
 {
-    auto shader = parse("override x;"_s);
+    auto shader = parse("override x;"_si);
     EXPECT_FALSE(shader.has_value());
     EXPECT_EQ(shader.error().errors.first().message(), "override declaration requires a type or initializer"_s);
 }
@@ -1138,9 +1138,9 @@ TEST(WGSLParserTests, GlobalOverrideWithoutTypeOrInitializer)
 TEST(WGSLParserTests, LocalVarWithoutTypeOrInitializer)
 {
     auto shader = parse(
-        "fn f() {\n"
+        StringImpl::create("fn f() {\n"
         "   var x;\n"
-        "}"_s);
+        "}"_s).ptr());
     EXPECT_FALSE(shader.has_value());
     EXPECT_EQ(shader.error().errors.first().message(), "var declaration requires a type or initializer"_s);
 }
@@ -1148,9 +1148,9 @@ TEST(WGSLParserTests, LocalVarWithoutTypeOrInitializer)
 TEST(WGSLParserTests, LocalLetWithoutTypeOrInitializer)
 {
     auto shader = parse(
-        "fn f() {\n"
+        StringImpl::create("fn f() {\n"
         "   let x;\n"
-        "}"_s);
+        "}"_s).ptr());
     EXPECT_FALSE(shader.has_value());
     EXPECT_EQ(shader.error().errors.first().message(), "Expected a =, but got a ;"_s);
 }
@@ -1158,9 +1158,9 @@ TEST(WGSLParserTests, LocalLetWithoutTypeOrInitializer)
 TEST(WGSLParserTests, LocalLetWithoutInitializer)
 {
     auto shader = parse(
-        "fn f() {\n"
+        StringImpl::create("fn f() {\n"
         "   let x: i32;\n"
-        "}"_s);
+        "}"_s).ptr());
     EXPECT_FALSE(shader.has_value());
     EXPECT_EQ(shader.error().errors.first().message(), "Expected a =, but got a ;"_s);
 }
@@ -1168,9 +1168,9 @@ TEST(WGSLParserTests, LocalLetWithoutInitializer)
 TEST(WGSLParserTests, LocalConstWithoutTypeOrInitializer)
 {
     auto shader = parse(
-        "fn f() {\n"
+        StringImpl::create("fn f() {\n"
         "   const x;\n"
-        "}"_s);
+        "}"_s).ptr());
     EXPECT_FALSE(shader.has_value());
     EXPECT_EQ(shader.error().errors.first().message(), "Expected a =, but got a ;"_s);
 }
@@ -1178,9 +1178,9 @@ TEST(WGSLParserTests, LocalConstWithoutTypeOrInitializer)
 TEST(WGSLParserTests, LocalConstWithoutInitializer)
 {
     auto shader = parse(
-        "fn f() {\n"
+        StringImpl::create("fn f() {\n"
         "   const x: i32;\n"
-        "}"_s);
+        "}"_s).ptr());
     EXPECT_FALSE(shader.has_value());
     EXPECT_EQ(shader.error().errors.first().message(), "Expected a =, but got a ;"_s);
 }

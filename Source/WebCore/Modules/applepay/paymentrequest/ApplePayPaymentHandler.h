@@ -63,9 +63,9 @@ private:
 
     ExceptionOr<Vector<ApplePayShippingMethod>> computeShippingMethods() const;
     ExceptionOr<std::tuple<ApplePayLineItem, Vector<ApplePayLineItem>>> computeTotalAndLineItems() const;
-    Vector<Ref<ApplePayError>> computeErrors(String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) const;
+    Vector<Ref<ApplePayError>> computeErrors(RefPtr<StringImpl>&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) const;
     Vector<Ref<ApplePayError>> computeErrors(JSC::JSObject* paymentMethodErrors) const;
-    void computeAddressErrors(String&& error, AddressErrors&&, Vector<Ref<ApplePayError>>&) const;
+    void computeAddressErrors(RefPtr<StringImpl>&& error, AddressErrors&&, Vector<Ref<ApplePayError>>&) const;
     void computePayerErrors(PayerErrorFields&&, Vector<Ref<ApplePayError>>&) const;
     ExceptionOr<void> computePaymentMethodErrors(JSC::JSObject* paymentMethodErrors, Vector<Ref<ApplePayError>>&) const;
     ExceptionOr<std::optional<std::tuple<PaymentDetailsModifier, ApplePayModifier>>> firstApplicableModifier() const;
@@ -80,9 +80,9 @@ private:
     bool canAbortSession() final { return true; }
     void hide() final;
     void canMakePayment(Document&, Function<void(bool)>&& completionHandler) final;
-    ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) final;
+    ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, RefPtr<StringImpl>&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) final;
     ExceptionOr<void> merchantValidationCompleted(JSC::JSValue&&) final;
-    ExceptionOr<void> complete(Document&, std::optional<PaymentComplete>&&, String&& serializedData) final;
+    ExceptionOr<void> complete(Document&, std::optional<PaymentComplete>&&, RefPtr<StringImpl>&& serializedData) final;
     ExceptionOr<void> retry(PaymentValidationErrors&&) final;
 
     // PaymentSession
@@ -93,7 +93,7 @@ private:
     void didSelectShippingContact(const PaymentContact&) final;
     void didSelectPaymentMethod(const PaymentMethod&) final;
 #if ENABLE(APPLE_PAY_COUPON_CODE)
-    void didChangeCouponCode(String&& couponCode) final;
+    void didChangeCouponCode(RefPtr<StringImpl>&& couponCode) final;
 #endif
     void didCancelPaymentSession(PaymentSessionError&&) final;
 

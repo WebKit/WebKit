@@ -48,7 +48,7 @@ public:
     virtual ~InspectorTarget() = default;
 
     // State.
-    virtual String identifier() const = 0;
+    virtual RefPtr<StringImpl> identifier() const = 0;
     virtual InspectorTargetType type() const = 0;
 
     virtual bool isProvisional() const { return false; }
@@ -60,7 +60,7 @@ public:
     // Connection management.
     virtual void connect(FrontendChannel::ConnectionType) = 0;
     virtual void disconnect() = 0;
-    virtual void sendMessageToTargetBackend(const String&) = 0;
+    virtual void sendMessageToTargetBackend(StringImpl*) = 0;
 
 private:
     WTF::Function<void()> m_resumeCallback;

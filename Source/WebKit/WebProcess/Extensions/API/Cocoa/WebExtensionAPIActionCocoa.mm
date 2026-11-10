@@ -57,7 +57,7 @@
 
 namespace WebKit {
 
-std::expected<void, String> WebExtensionAPIAction::parseActionDetails(NSDictionary *details, std::optional<WebExtensionWindowIdentifier>& windowIdentifier, std::optional<WebExtensionTabIdentifier>& tabIdentifier)
+std::expected<void, RefPtr<StringImpl>> WebExtensionAPIAction::parseActionDetails(NSDictionary *details, std::optional<WebExtensionWindowIdentifier>& windowIdentifier, std::optional<WebExtensionTabIdentifier>& tabIdentifier)
 {
     static NSDictionary<NSString *, id> *types = @{
         tabIdKey: [NSOrderedSet orderedSetWithObjects:NSNumber.class, NSNull.class, nil],
@@ -67,32 +67,32 @@ std::expected<void, String> WebExtensionAPIAction::parseActionDetails(NSDictiona
     NSString *outExceptionString;
 
     if (!validateDictionary(details, @"details", nil, types, &outExceptionString))
-        return makeUnexpected(String(outExceptionString));
+        return makeUnexpected(StringImpl::create(outExceptionString));
 
     auto *tabID = objectForKey<NSNumber>(details, tabIdKey);
     auto *windowID = objectForKey<NSNumber>(details, windowIdKey);
 
     if (tabID && windowID) {
-        outExceptionString = toErrorString(nullString(), @"details", @"it cannot specify both 'tabId' and 'windowID'").createNSString().autorelease();
-        return makeUnexpected(String(outExceptionString));
+        outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"details").get(), StringImpl::create(@"it cannot specify both 'tabId' and 'windowID'").get())).autorelease();
+        return makeUnexpected(StringImpl::create(outExceptionString));
     }
 
     if (tabID) {
         tabIdentifier = toWebExtensionTabIdentifier(tabID.doubleValue);
         if (!isValid(tabIdentifier, &outExceptionString))
-            return makeUnexpected(String(outExceptionString));
+            return makeUnexpected(StringImpl::create(outExceptionString));
     }
 
     if (windowID) {
         windowIdentifier = toWebExtensionWindowIdentifier(windowID.doubleValue);
         if (!isValid(windowIdentifier, &outExceptionString))
-            return makeUnexpected(String(outExceptionString));
+            return makeUnexpected(StringImpl::create(outExceptionString));
     }
 
     return { };
 }
 
-void WebExtensionAPIAction::getTitle(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
+void WebExtensionAPIAction::getTitle(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, RefPtr<StringImpl>& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/action/getTitle
 
@@ -103,9 +103,9 @@ void WebExtensionAPIAction::getTitle(NSDictionary *details, Ref<WebExtensionCall
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionGetTitle(windowIdentifier, tabIdentifier), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<String, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionGetTitle(windowIdentifier, tabIdentifier), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<RefPtr<StringImpl>, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -113,7 +113,7 @@ void WebExtensionAPIAction::getTitle(NSDictionary *details, Ref<WebExtensionCall
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIAction::setTitle(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
+void WebExtensionAPIAction::setTitle(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, RefPtr<StringImpl>& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/action/setTitle
 
@@ -126,7 +126,7 @@ void WebExtensionAPIAction::setTitle(NSDictionary *details, Ref<WebExtensionCall
     NSString *cocoaExceptionString;
 
     if (!validateDictionary(details, @"details", requiredKeys, types, &cocoaExceptionString)) {
-        outExceptionString = String(cocoaExceptionString);
+        outExceptionString = StringImpl::create(cocoaExceptionString);
         return;
     }
 
@@ -137,13 +137,13 @@ void WebExtensionAPIAction::setTitle(NSDictionary *details, Ref<WebExtensionCall
         return;
     }
 
-    String title = nullString();
+    RefPtr<StringImpl> title = nullString();
     if (NSString *string = objectForKey<NSString>(details, titleKey, false))
-        title = string;
+        title = StringImpl::create(string);
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionSetTitle(windowIdentifier, tabIdentifier, title), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -158,13 +158,13 @@ void WebExtensionAPIAction::getBadgeText(NSDictionary *details, Ref<WebExtension
     std::optional<WebExtensionWindowIdentifier> windowIdentifier;
     std::optional<WebExtensionTabIdentifier> tabIdentifier;
     if (auto actionDetailsResult = parseActionDetails(details, windowIdentifier, tabIdentifier); !actionDetailsResult) {
-        *outExceptionString = actionDetailsResult.error().createNSString().get();
+        *outExceptionString = createNSString(actionDetailsResult.error()).get();
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionGetBadgeText(windowIdentifier, tabIdentifier), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<String, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionGetBadgeText(windowIdentifier, tabIdentifier), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<RefPtr<StringImpl>, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -188,17 +188,17 @@ void WebExtensionAPIAction::setBadgeText(NSDictionary *details, Ref<WebExtension
     std::optional<WebExtensionWindowIdentifier> windowIdentifier;
     std::optional<WebExtensionTabIdentifier> tabIdentifier;
     if (auto actionDetailsResult = parseActionDetails(details, windowIdentifier, tabIdentifier); !actionDetailsResult) {
-        *outExceptionString = actionDetailsResult.error().createNSString().get();
+        *outExceptionString = createNSString(actionDetailsResult.error()).get();
         return;
     }
 
-    String text = nullString();
+    RefPtr<StringImpl> text = nullString();
     if (NSString *string = objectForKey<NSString>(details, textKey, false))
-        text = string;
+        text = StringImpl::create(string);
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionSetBadgeText(windowIdentifier, tabIdentifier, text), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -213,7 +213,7 @@ void WebExtensionAPIAction::getBadgeBackgroundColor(NSDictionary *details, Ref<W
     std::optional<WebExtensionWindowIdentifier> windowIdentifier;
     std::optional<WebExtensionTabIdentifier> tabIdentifier;
     if (auto actionDetailsResult = parseActionDetails(details, windowIdentifier, tabIdentifier); !actionDetailsResult) {
-        *outExceptionString = actionDetailsResult.error().createNSString().get();
+        *outExceptionString = createNSString(actionDetailsResult.error()).get();
         return;
     }
 
@@ -229,7 +229,7 @@ void WebExtensionAPIAction::setBadgeBackgroundColor(NSDictionary *details, Ref<W
     std::optional<WebExtensionWindowIdentifier> windowIdentifier;
     std::optional<WebExtensionTabIdentifier> tabIdentifier;
     if (auto actionDetailsResult = parseActionDetails(details, windowIdentifier, tabIdentifier); !actionDetailsResult) {
-        *outExceptionString = actionDetailsResult.error().createNSString().get();
+        *outExceptionString = createNSString(actionDetailsResult.error()).get();
         return;
     }
 
@@ -261,7 +261,7 @@ bool WebExtensionAPIAction::parseTabIdentifierOrActionDetails(NSObject *details,
 
     if (auto *dictionary = dynamic_objc_cast<NSDictionary>(details)) {
         if (auto actionDetailsResult = parseActionDetails(dictionary, windowIdentifier, tabIdentifier); !actionDetailsResult) {
-            *outExceptionString = actionDetailsResult.error().createNSString().autorelease();
+            *outExceptionString = createNSString(actionDetailsResult.error()).autorelease();
             return false;
         }
 
@@ -269,7 +269,7 @@ bool WebExtensionAPIAction::parseTabIdentifierOrActionDetails(NSObject *details,
     }
 
     if (details) {
-        *outExceptionString = toErrorString(nullString(), @"details", @"a number or an object is expected").createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"details").get(), StringImpl::create(@"a number or an object is expected").get())).autorelease();
         return false;
     }
 
@@ -285,7 +285,7 @@ void WebExtensionAPIAction::setEnabled(NSObject *details, bool enabled, Ref<WebE
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionSetEnabled(windowIdentifier, tabIdentifier, enabled), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -304,7 +304,7 @@ void WebExtensionAPIAction::isEnabled(NSObject *details, Ref<WebExtensionCallbac
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionGetEnabled(windowIdentifier, tabIdentifier), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<bool, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -321,13 +321,13 @@ static NSString *dataURLFromImageData(JSValue *imageData, size_t *outWidth, NSSt
 
     auto *imageDataConstructor = imageData.context[@"ImageData"];
     if (![imageData isInstanceOf:imageDataConstructor]) {
-        *outExceptionString = toErrorString(nullString(), sourceKey, notImageDataError).createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(sourceKey).get(), StringImpl::create(notImageDataError).get())).autorelease();
         return nil;
     }
 
     auto *dataObject = imageData[@"data"];
     if (!dataObject.isObject) {
-        *outExceptionString = toErrorString(nullString(), sourceKey, notImageDataError).createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(sourceKey).get(), StringImpl::create(notImageDataError).get())).autorelease();
         return nil;
     }
 
@@ -336,7 +336,7 @@ static NSString *dataURLFromImageData(JSValue *imageData, size_t *outWidth, NSSt
 
     auto dataArrayType = JSValueGetTypedArrayType(context, dataObjectRef, nullptr);
     if (dataArrayType != kJSTypedArrayTypeUint8ClampedArray) {
-        *outExceptionString = toErrorString(nullString(), sourceKey, notImageDataError).createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(sourceKey).get(), StringImpl::create(notImageDataError).get())).autorelease();
         return nil;
     }
 
@@ -365,7 +365,7 @@ static NSString *dataURLFromImageData(JSValue *imageData, size_t *outWidth, NSSt
     RetainPtr cgImage = adoptCF(CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace.get(), bitmapInfo, dataProvider.get(), decode, shouldInterpolate, renderingIntent));
 
     if (!cgImage) {
-        *outExceptionString = toErrorString(nullString(), sourceKey, notImageDataError).createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(sourceKey).get(), StringImpl::create(notImageDataError).get())).autorelease();
         return nil;
     }
 
@@ -378,13 +378,13 @@ static NSString *dataURLFromImageData(JSValue *imageData, size_t *outWidth, NSSt
 #endif
 
     if (!pngData.length) {
-        *outExceptionString = toErrorString(nullString(), sourceKey, notImageDataError).createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(sourceKey).get(), StringImpl::create(notImageDataError).get())).autorelease();
         return nil;
     }
 
     auto *base64String = [pngData base64EncodedStringWithOptions:0];
     if (!base64String.length) {
-        *outExceptionString = toErrorString(nullString(), sourceKey, notImageDataError).createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(sourceKey).get(), StringImpl::create(notImageDataError).get())).autorelease();
         return nil;
     }
 
@@ -422,7 +422,7 @@ NSString *WebExtensionAPIAction::parseIconPath(NSString *path, const URL& baseUR
     // Resolve paths as relative against the base URL, unless it is a data or symbol URL.
     if ([path hasPrefix:@"data:"] || [path hasPrefix:@"symbol:"])
         return path;
-    return URL { baseURL, path }.path().createNSString().autorelease();
+    return URL { baseURL, StringImpl::create(path).get() }.path().createNSString().autorelease();
 }
 
 NSMutableDictionary *WebExtensionAPIAction::parseIconPathsDictionary(NSDictionary *input, const URL& baseURL, bool forVariants, NSString *inputKey, NSString **outExceptionString)
@@ -437,7 +437,7 @@ NSMutableDictionary *WebExtensionAPIAction::parseIconPathsDictionary(NSDictionar
 
         if (!isValidDimensionKey(key)) {
             if (outExceptionString)
-                *outExceptionString = toErrorString(nullString(), inputKey, makeString("'"_s, String(key), "' is not a valid dimension"_s)).createNSString().autorelease();
+                *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(inputKey).get(), makeString("'"_s, StringImpl::create(key), "' is not a valid dimension"_s))).autorelease();
             return nil;
         }
 
@@ -463,7 +463,7 @@ NSMutableDictionary *WebExtensionAPIAction::parseIconImageDataDictionary(NSDicti
 
         if (!isValidDimensionKey(key)) {
             if (outExceptionString)
-                *outExceptionString = toErrorString(nullString(), inputKey, makeString("'"_s, String(key), "' is not a valid dimension"_s)).createNSString().autorelease();
+                *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(inputKey).get(), makeString("'"_s, StringImpl::create(key), "' is not a valid dimension"_s))).autorelease();
             return nil;
         }
 
@@ -512,7 +512,7 @@ NSArray *WebExtensionAPIAction::parseIconVariants(NSArray *input, const URL& bas
 
             if (![colorSchemes containsObject:lightKey] && ![colorSchemes containsObject:darkKey]) {
                 if (!firstExceptionString)
-                    firstExceptionString = toErrorString(nullString(), colorSchemesCompositeKey, @"it must specify either 'light' or 'dark'").createNSString().autorelease();
+                    firstExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(colorSchemesCompositeKey).get(), StringImpl::create(@"it must specify either 'light' or 'dark'").get())).autorelease();
                 continue;
             }
 
@@ -527,7 +527,7 @@ NSArray *WebExtensionAPIAction::parseIconVariants(NSArray *input, const URL& bas
         // An exception is only set if no valid icon variants were found,
         // maintaining flexibility for future support of different inputs.
         if (!firstExceptionString)
-            firstExceptionString = toErrorString(nullString(), inputKey, @"it didn't contain any valid icon variants").createNSString().autorelease();
+            firstExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(inputKey).get(), StringImpl::create(@"it didn't contain any valid icon variants").get())).autorelease();
         if (outExceptionString)
             *outExceptionString = firstExceptionString;
         return nil;
@@ -545,7 +545,7 @@ void WebExtensionAPIAction::setIcon(WebFrame& frame, NSDictionary *details, Ref<
     std::optional<WebExtensionWindowIdentifier> windowIdentifier;
     std::optional<WebExtensionTabIdentifier> tabIdentifier;
     if (auto actionDetailsResult = parseActionDetails(details, windowIdentifier, tabIdentifier); !actionDetailsResult) {
-        *outExceptionString = actionDetailsResult.error().createNSString().get();
+        *outExceptionString = createNSString(actionDetailsResult.error()).get();
         return;
     }
 
@@ -572,7 +572,7 @@ void WebExtensionAPIAction::setIcon(WebFrame& frame, NSDictionary *details, Ref<
     }
 
     if (details[pathKey] && details[imageDataKey]) {
-        *outExceptionString = toErrorString(nullString(), @"details", @"it cannot specify both 'path' and 'imageData'").createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"details").get(), StringImpl::create(@"it cannot specify both 'path' and 'imageData'").get())).autorelease();
         return;
     }
 
@@ -618,9 +618,9 @@ void WebExtensionAPIAction::setIcon(WebFrame& frame, NSDictionary *details, Ref<
     auto *iconsJSON = encodeJSONString(iconDictionary);
 #endif
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionSetIcon(windowIdentifier, tabIdentifier, iconsJSON), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionSetIcon(windowIdentifier, tabIdentifier, StringImpl::create(iconsJSON).get()), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -635,13 +635,13 @@ void WebExtensionAPIAction::getPopup(NSDictionary *details, Ref<WebExtensionCall
     std::optional<WebExtensionWindowIdentifier> windowIdentifier;
     std::optional<WebExtensionTabIdentifier> tabIdentifier;
     if (auto actionDetailsResult = parseActionDetails(details, windowIdentifier, tabIdentifier); !actionDetailsResult) {
-        *outExceptionString = actionDetailsResult.error().createNSString().get();
+        *outExceptionString = createNSString(actionDetailsResult.error()).get();
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionGetPopup(windowIdentifier, tabIdentifier), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<String, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionGetPopup(windowIdentifier, tabIdentifier), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<RefPtr<StringImpl>, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -665,17 +665,17 @@ void WebExtensionAPIAction::setPopup(NSDictionary *details, Ref<WebExtensionCall
     std::optional<WebExtensionWindowIdentifier> windowIdentifier;
     std::optional<WebExtensionTabIdentifier> tabIdentifier;
     if (auto actionDetailsResult = parseActionDetails(details, windowIdentifier, tabIdentifier); !actionDetailsResult) {
-        *outExceptionString = actionDetailsResult.error().createNSString().get();
+        *outExceptionString = createNSString(actionDetailsResult.error()).get();
         return;
     }
 
-    String popup = nullString();
+    RefPtr<StringImpl> popup = nullString();
     if (NSString *string = objectForKey<NSString>(details, popupKey, false))
-        popup = string;
+        popup = StringImpl::create(string);
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionSetPopup(windowIdentifier, tabIdentifier, popup), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -690,13 +690,13 @@ void WebExtensionAPIAction::openPopup(WebPageProxyIdentifier webPageProxyIdentif
     std::optional<WebExtensionWindowIdentifier> windowIdentifier;
     std::optional<WebExtensionTabIdentifier> tabIdentifier;
     if (auto actionDetailsResult = parseActionDetails(details, windowIdentifier, tabIdentifier); !actionDetailsResult) {
-        *outExceptionString = actionDetailsResult.error().createNSString().get();
+        *outExceptionString = createNSString(actionDetailsResult.error()).get();
         return;
     }
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionOpenPopup(webPageProxyIdentifier, windowIdentifier, tabIdentifier), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 

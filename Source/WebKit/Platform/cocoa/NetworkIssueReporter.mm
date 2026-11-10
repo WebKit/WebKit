@@ -80,7 +80,7 @@ void NetworkIssueReporter::report(const URL& requestURL)
         return;
 
     if (auto createIssue = ne_tracker_create_xcode_issuePtr())
-        createIssue(host.utf8().legacyCStringPointer(), m_stackTrace.get(), m_stackTraceSize);
+        createIssue(utf8(host).legacyCStringPointer(), m_stackTrace.get(), m_stackTraceSize);
 }
 
 } // namespace WebKit

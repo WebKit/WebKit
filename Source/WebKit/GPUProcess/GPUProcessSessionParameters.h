@@ -33,11 +33,11 @@
 namespace WebKit {
 
 struct GPUProcessSessionParameters {
-    String mediaCacheDirectory;
+    RefPtr<StringImpl> mediaCacheDirectory;
     SandboxExtension::Handle mediaCacheDirectorySandboxExtensionHandle;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
-    String mediaKeysStorageDirectory;
+    RefPtr<StringImpl> mediaKeysStorageDirectory;
     SandboxExtension::Handle mediaKeysStorageDirectorySandboxExtensionHandle;
 #endif
 };

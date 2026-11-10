@@ -66,11 +66,11 @@ public:
     enum Type { BaseTrack, TextTrack, AudioTrack, VideoTrack };
     Type type() const { return m_type; }
 
-    virtual AtomString id() const { return m_id; }
+    virtual RefPtr<AtomStringImpl> id() const { return m_id; }
     TrackID trackId() const { return m_trackId; }
-    AtomString label() const { return m_label; }
-    AtomString validBCP47Language() const { return m_validBCP47Language; }
-    AtomString language() const { return m_language; }
+    RefPtr<AtomStringImpl> label() const { return m_label; }
+    const RefPtr<AtomStringImpl>& validBCP47Language() const LIFETIME_BOUND { return m_validBCP47Language; }
+    RefPtr<AtomStringImpl> language() const { return m_language; }
 
     virtual int uniqueId() const { return m_uniqueId; }
 
@@ -97,15 +97,15 @@ public:
 #endif
 
 protected:
-    TrackBase(ScriptExecutionContext*, Type, const std::optional<AtomString>& id, TrackID, const AtomString& label, const AtomString& language);
+    TrackBase(ScriptExecutionContext*, Type, const std::optional<RefPtr<AtomStringImpl>>& id, TrackID, AtomStringImpl* label, AtomStringImpl* language);
 
     virtual void setId(TrackID id)
     {
-        m_id = AtomString::number(id);
+        m_id = AtomStringImpl::number(id);
         m_trackId = id;
     }
-    virtual void setLabel(const AtomString& label) { m_label = label; }
-    virtual void setLanguage(const AtomString&);
+    virtual void setLabel(AtomStringImpl* label) { m_label = label; }
+    virtual void setLanguage(AtomStringImpl*);
 
 #if ENABLE(MEDIA_SOURCE)
     WeakPtr<SourceBuffer> m_sourceBuffer;
@@ -117,11 +117,11 @@ protected:
 private:
     Type m_type;
     int m_uniqueId;
-    AtomString m_id;
+    RefPtr<AtomStringImpl> m_id;
     TrackID m_trackId { 0 };
-    AtomString m_label;
-    AtomString m_language;
-    AtomString m_validBCP47Language;
+    RefPtr<AtomStringImpl> m_label;
+    RefPtr<AtomStringImpl> m_language;
+    RefPtr<AtomStringImpl> m_validBCP47Language;
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;
     uint64_t m_logIdentifier { 0 };
@@ -134,18 +134,18 @@ private:
 class MediaTrackBase : public TrackBase {
     WTF_MAKE_TZONE_ALLOCATED(MediaTrackBase);
 public:
-    const AtomString& kind() const LIFETIME_BOUND { return m_kind; }
-    virtual void setKind(const AtomString&);
+    const RefPtr<AtomStringImpl>& kind() const LIFETIME_BOUND { return m_kind; }
+    virtual void setKind(AtomStringImpl*);
 
 protected:
-    MediaTrackBase(ScriptExecutionContext*, Type, const std::optional<String>& id, TrackID, const String& label, const String& language);
+    MediaTrackBase(ScriptExecutionContext*, Type, const std::optional<RefPtr<StringImpl>>& id, TrackID, StringImpl* label, StringImpl* language);
 
-    void setKindInternal(const AtomString&);
+    void setKindInternal(AtomStringImpl*);
 
 private:
-    virtual bool isValidKind(const AtomString&) const = 0;
+    virtual bool isValidKind(AtomStringImpl*) const = 0;
 
-    AtomString m_kind;
+    RefPtr<AtomStringImpl> m_kind;
 };
 
 inline WebCoreOpaqueRoot root(TrackBase* track)

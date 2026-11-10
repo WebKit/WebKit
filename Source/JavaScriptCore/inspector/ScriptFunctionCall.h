@@ -50,7 +50,7 @@ public:
     ScriptCallArgumentHandler(JSC::JSGlobalObject* globalObject) : m_globalObject(globalObject) { }
 
     void appendArgument(const char*);
-    void appendArgument(const String&);
+    void appendArgument(StringImpl*);
     void appendArgument(JSC::JSValue);
     void appendArgument(long);
     void appendArgument(long long);
@@ -73,14 +73,14 @@ private:
 class ScriptFunctionCall : public ScriptCallArgumentHandler {
 public:
     typedef JSC::JSValue (*ScriptFunctionCallHandler)(JSC::JSGlobalObject*, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>&);
-    JS_EXPORT_PRIVATE ScriptFunctionCall(JSC::JSGlobalObject*, JSC::JSObject* thisObject, const String& name, ScriptFunctionCallHandler = nullptr);
+    JS_EXPORT_PRIVATE ScriptFunctionCall(JSC::JSGlobalObject*, JSC::JSObject* thisObject, StringImpl* name, ScriptFunctionCallHandler = nullptr);
     JS_EXPORT_PRIVATE ~ScriptFunctionCall();
     JS_EXPORT_PRIVATE std::expected<JSC::JSValue, NakedPtr<JSC::Exception>> call();
 
 protected:
     ScriptFunctionCallHandler m_callHandler;
     JSC::Strong<JSC::JSObject> m_thisObject;
-    String m_name;
+    RefPtr<StringImpl> m_name;
 };
 
 } // namespace Inspector

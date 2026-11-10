@@ -89,7 +89,7 @@ public:
 
     void setAttached(bool attached) { m_attached = attached; }
 
-    void evaluateScriptForTest(const String& script);
+    void evaluateScriptForTest(StringImpl* script);
 
     void startPageProfiling();
     void stopPageProfiling();
@@ -107,9 +107,9 @@ public:
 
     void enableNetworkInstrumentation();
     void disableNetworkInstrumentation();
-    void getResponseBody(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(std::expected<std::pair<String, bool>, String>&&)>&&);
-    void getSerializedCertificate(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(std::expected<String, String>&&)>&&);
-    void loadResource(WebCore::FrameIdentifier, const String& url, CompletionHandler<void(std::expected<std::tuple<String, String, int>, String>&&)>&&);
+    void getResponseBody(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(std::expected<std::pair<RefPtr<StringImpl>, bool>, RefPtr<StringImpl>>&&)>&&);
+    void getSerializedCertificate(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(std::expected<RefPtr<StringImpl>, RefPtr<StringImpl>>&&)>&&);
+    void loadResource(WebCore::FrameIdentifier, StringImpl* url, CompletionHandler<void(std::expected<std::tuple<RefPtr<StringImpl>, RefPtr<StringImpl>, int>, RefPtr<StringImpl>>&&)>&&);
 
     void setExtraHTTPHeaders(WebCore::HTTPHeaderMap&&);
     void setResourceCachingDisabled(bool);
@@ -121,17 +121,17 @@ public:
     void resumeFromDebugger(WebCore::DebuggerPauseSessionIdentifier);
     void getFrameResourceData(Vector<WebCore::FrameIdentifier>&& frameIDs, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>>&&)>&&);
     void getFrameCookies(Vector<WebCore::FrameIdentifier>&& frameIDs, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
-    void getFrameResourceContent(WebCore::FrameIdentifier, String url, CompletionHandler<void(String content, bool base64Encoded, String errorString)>&&);
+    void getFrameResourceContent(WebCore::FrameIdentifier, RefPtr<StringImpl> url, CompletionHandler<void(RefPtr<StringImpl> content, bool base64Encoded, RefPtr<StringImpl> errorString)>&&);
 
-    void searchInRequest(WebCore::ResourceLoaderIdentifier, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, String errorString)>&&);
-    void searchInFrameResource(WebCore::FrameIdentifier, const String& url, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, String errorString)>&&);
-    void searchInFramesAndRequests(Vector<WebCore::FrameIdentifier>&& frameIDs, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchResult>&&)>&&);
+    void searchInRequest(WebCore::ResourceLoaderIdentifier, StringImpl* query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, RefPtr<StringImpl> errorString)>&&);
+    void searchInFrameResource(WebCore::FrameIdentifier, StringImpl* url, StringImpl* query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, RefPtr<StringImpl> errorString)>&&);
+    void searchInFramesAndRequests(Vector<WebCore::FrameIdentifier>&& frameIDs, StringImpl* query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchResult>&&)>&&);
 
     // Fan the paint-rects toggle and the bootstrap script out to every per-frame PageAgentProxy this process hosts.
     void setShowPaintRects(bool);
-    void setBootstrapScript(const String&);
+    void setBootstrapScript(StringImpl*);
 
-    void setSettingOverride(const String& setting, std::optional<bool>);
+    void setSettingOverride(StringImpl* setting, std::optional<bool>);
 
     // Set up / tear down every per-frame instrumentation agent for a frame. Callers
     // don't need to know which agents are frame-scoped; each helper no-ops unless its
@@ -186,8 +186,8 @@ private:
     // ensurePageInstrumentationForFrame starts in the correct state (the UIProcess replays state
     // only on the first (process, page) registration).
     bool m_showPaintRects { false };
-    String m_bootstrapScript;
-    HashSet<String> m_overriddenSettings;
+    RefPtr<StringImpl> m_bootstrapScript;
+    HashSet<RefPtr<StringImpl>> m_overriddenSettings;
 };
 
 } // namespace WebKit

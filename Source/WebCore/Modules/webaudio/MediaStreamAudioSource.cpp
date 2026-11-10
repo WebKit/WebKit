@@ -34,7 +34,7 @@
 namespace WebCore {
 
 MediaStreamAudioSource::MediaStreamAudioSource(float sampleRate)
-    : RealtimeMediaSource(CaptureDevice { { }, CaptureDevice::DeviceType::Microphone, "MediaStreamAudioDestinationNode"_s })
+    : RealtimeMediaSource(CaptureDevice { { }, CaptureDevice::DeviceType::Microphone, "MediaStreamAudioDestinationNode"_si })
 {
     m_currentSettings.setSampleRate(sampleRate);
 

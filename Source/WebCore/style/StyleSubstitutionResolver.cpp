@@ -124,7 +124,7 @@ SubstitutionResolver::SubstitutionResolver(Builder& builder, const CSSRegistered
 {
 }
 
-RefPtr<const CustomProperty> SubstitutionResolver::propertyValueForVariableName(const AtomString& variableName, CSSValueID functionId)
+RefPtr<const CustomProperty> SubstitutionResolver::propertyValueForVariableName(AtomStringImpl* variableName, CSSValueID functionId)
 {
     if (functionId == CSSValueID::Env)
         return protect(m_styleBuilder.state().document().styleScope())->environmentVariables().valueForName(variableName);
@@ -165,7 +165,7 @@ auto SubstitutionResolver::substituteVarArgumentGrammar(CSSParserTokenRange rang
         fallbackRange = range;
     }
 
-    auto parseName = [](CSSParserTokenRange nameRange) -> std::optional<AtomString> {
+    auto parseName = [](CSSParserTokenRange nameRange) -> std::optional<RefPtr<AtomStringImpl>> {
         nameRange.consumeWhitespace();
         auto& nameToken = nameRange.consumeIncludingWhitespace();
         if (!CSSSubstitutionParser::isValidCustomPropertyName(nameToken) || !nameRange.atEnd())
@@ -226,7 +226,7 @@ bool SubstitutionResolver::substituteEnvFunction(CSSParserTokenRange range, Vect
 
     // viewport-segment-* env() variables are looked up with composite names of the form
     // "viewport-segment-<prop> <col> <row>" — consume the two integer indices here.
-    if (context.viewportSegmentsAPIEnabled && name.startsWith("viewport-segment-"_s)) {
+    if (context.viewportSegmentsAPIEnabled && startsWith(name, "viewport-segment-"_s)) {
         if (range.peek().type() == NumberToken) {
             int col = static_cast<int>(range.consumeIncludingWhitespace().numericValue());
             if (range.peek().type() == NumberToken) {
@@ -250,7 +250,7 @@ bool SubstitutionResolver::substituteEnvFunction(CSSParserTokenRange range, Vect
     return substituteNamedValueOrFallback(name, fallbackRange, CSSValueID::Env, tokens, context);
 }
 
-bool SubstitutionResolver::substituteNamedValueOrFallback(const std::optional<AtomString>& name, const std::optional<CSSParserTokenRange>& fallbackRange, CSSValueID functionId, Vector<CSSParserToken>& tokens, const CSSParserContext& context)
+bool SubstitutionResolver::substituteNamedValueOrFallback(const std::optional<RefPtr<AtomStringImpl>>& name, const std::optional<CSSParserTokenRange>& fallbackRange, CSSValueID functionId, Vector<CSSParserToken>& tokens, const CSSParserContext& context)
 {
     ASSERT(functionId == CSSValueID::Var || functionId == CSSValueID::Env);
 
@@ -483,7 +483,7 @@ RefPtr<MutableStyleProperties> SubstitutionResolver::resolveAndRegisterDashedFun
         // assigning to its name is computed against it too.
         // https://github.com/w3c/csswg-drafts/issues/12315
         registrations.add({
-            .name = AtomString { parameter.name },
+            .name = RefPtr<AtomStringImpl> { parameter.name },
             .syntax = parameter.type,
             .inherits = true,
             .initialValue = resolvedValue,
@@ -566,7 +566,7 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
     // "If custom function has a return type, create a custom property registration with the name 'result'."
     if (!customFunction->returnType.isUniversal()) {
         registrations.add({
-            .name = "result"_s,
+            .name = "result"_atom,
             .syntax = customFunction->returnType,
             .inherits = false,
         });
@@ -725,7 +725,7 @@ bool SubstitutionResolver::substituteAttrFunction(CSSParserTokenRange argumentsR
 
     // https://drafts.csswg.org/css-values-5/#typedef-attr-name
     // "As with attribute selectors, the case-sensitivity of <attr-name> depends on the document language."
-    auto attributeName = shouldIgnoreAttributeCase(*element) ? parsedName->name.convertToASCIILowercase() : parsedName->name;
+    auto attributeName = shouldIgnoreAttributeCase(*element) ? convertToASCIILowercase(parsedName->name) : parsedName->name;
 
     // Consume optional <attr-type>.
     // https://drafts.csswg.org/css-values-5/#typedef-attr-type
@@ -810,9 +810,9 @@ bool SubstitutionResolver::substituteAttrFunction(CSSParserTokenRange argumentsR
     // trigger AttributeChangeInvalidation against the right rule features.
     protect(m_styleBuilder.state())->registerSubstitutionAttribute(attributeName, protect(Scope::forNode(attributeElement)).ptr());
     // Resolve namespace prefix to URI.
-    auto namespaceURI = [&] -> AtomString {
+    auto namespaceURI = [&] -> RefPtr<AtomStringImpl> {
         auto& prefix = parsedName->namespacePrefix;
-        if (prefix.isEmpty())
+        if (isEmpty(prefix))
             return nullAtom();
         return m_substitutionValue->m_namespacePrefixMap.get(prefix);
     }();
@@ -844,7 +844,7 @@ bool SubstitutionResolver::substituteAttrFunction(CSSParserTokenRange argumentsR
     };
 
     // If a non-empty prefix was given but couldn't be resolved, trigger fallback.
-    if (!parsedName->namespacePrefix.isEmpty() && namespaceURI.isNull())
+    if (!isEmpty(parsedName->namespacePrefix) && !namespaceURI)
         return substituteFailure();
 
     if (guard.isCyclicContext()) {
@@ -855,7 +855,7 @@ bool SubstitutionResolver::substituteAttrFunction(CSSParserTokenRange argumentsR
 
     auto& attributeValue = attributeElement->getAttribute(QualifiedName { nullAtom(), attributeName, namespaceURI });
 
-    if (attributeValue.isNull())
+    if (!attributeValue)
         return substituteFailure();
 
     // "If syntax is null or the keyword raw-string, return a CSS <string> whose value is attr value."
@@ -881,7 +881,7 @@ bool SubstitutionResolver::substituteAttrFunction(CSSParserTokenRange argumentsR
         auto numberToken = tokenRange.consumeIncludingWhitespace();
         if (!tokenRange.atEnd())
             return substituteFailure();
-        m_intermediateTokenStrings.append(attributeValue.string());
+        m_intermediateTokenStrings.append(attributeValue);
         m_intermediateTokenStrings.appendVector(tokenizer.escapedStringsForAdoption());
         tokens.append(CSSParserToken(numberToken.numericValue(), numberToken.numericValueType(), numberToken.numericSign(), numberToken.value()));
         return true;
@@ -909,7 +909,7 @@ bool SubstitutionResolver::substituteAttrFunction(CSSParserTokenRange argumentsR
             token.convertToPercentage();
         else
             token.convertToDimensionWithUnit(parsedAttrType->unitType);
-        m_intermediateTokenStrings.append(attributeValue.string());
+        m_intermediateTokenStrings.append(attributeValue);
         m_intermediateTokenStrings.appendVector(tokenizer.escapedStringsForAdoption());
         tokens.append(token);
         return true;
@@ -919,7 +919,7 @@ bool SubstitutionResolver::substituteAttrFunction(CSSParserTokenRange argumentsR
     //  and substitutes as the resulting tokens. Values that fail to parse according to the syntax
     //  trigger fallback."
     case AttrType::Syntax: {
-        CSSTokenizer tokenizer(attributeValue.string());
+        CSSTokenizer tokenizer(attributeValue);
         m_intermediateTokenStrings.appendVector(tokenizer.escapedStringsForAdoption());
 
         auto substitutedTokens = substituteTokenRange(tokenizer.tokenRange(), context);
@@ -1376,7 +1376,7 @@ RefPtr<CSSVariableData> SubstitutionResolver::substitute(const CSSSubstitutionVa
 // A fallback used for a registered property is checked against the registration, which the cached
 // substitution doesn't record. Values are shared between documents, so the registration may differ.
 // FIXME: Key cached substitutions on a registry version so that these can be reused too.
-bool SubstitutionResolver::canReuseVarSubstitution(const AtomString& name, const CustomProperty* property)
+bool SubstitutionResolver::canReuseVarSubstitution(AtomStringImpl* name, const CustomProperty* property)
 {
     if (property && !property->isGuaranteedInvalid())
         return true;

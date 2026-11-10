@@ -42,7 +42,7 @@ CSSPositionValue::CSSPositionValue(CSS::Position&& position)
 {
 }
 
-String CSSPositionValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSPositionValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_position);
 }
@@ -70,7 +70,7 @@ CSSPositionXValue::CSSPositionXValue(CSS::PositionX&& position)
 {
 }
 
-String CSSPositionXValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSPositionXValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_position);
 }
@@ -98,7 +98,7 @@ CSSPositionYValue::CSSPositionYValue(CSS::PositionY&& position)
 {
 }
 
-String CSSPositionYValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSPositionYValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_position);
 }

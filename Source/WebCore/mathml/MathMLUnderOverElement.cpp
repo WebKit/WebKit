@@ -63,7 +63,7 @@ const MathMLElement::BooleanValue& MathMLUnderOverElement::accentUnder()
     return cachedBooleanAttribute(accentunderAttr, m_accentUnder);
 }
 
-void MathMLUnderOverElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void MathMLUnderOverElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     bool affectsLayout = false;
     switch (name.nodeName()) {

@@ -59,7 +59,7 @@ using namespace Inspector;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorDOMStorageAgent);
 
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(PageAgentContext& context)
-    : InspectorAgentBase("DOMStorage"_s, context)
+    : InspectorAgentBase("DOMStorage"_si, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::DOMStorageFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::DOMStorageBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_inspectedPage(context.inspectedPage)
@@ -108,12 +108,12 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOMSto
     if (!storageArea)
         return makeUnexpected(errorString);
 
-    auto storageItems = JSON::ArrayOf<JSON::ArrayOf<String>>::create();
+    auto storageItems = JSON::ArrayOf<JSON::ArrayOf<RefPtr<StringImpl>>>::create();
     for (unsigned i = 0; i < storageArea->length(); ++i) {
-        String key = storageArea->key(i);
-        String value = storageArea->item(key);
+        RefPtr<StringImpl> key = storageArea->key(i);
+        RefPtr<StringImpl> value = storageArea->item(key);
 
-        auto entry = JSON::ArrayOf<String>::create();
+        auto entry = JSON::ArrayOf<RefPtr<StringImpl>>::create();
         entry->addItem(key);
         entry->addItem(value);
         storageItems->addItem(WTF::move(entry));
@@ -121,7 +121,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOMSto
     return storageItems;
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::setDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key, const String& value)
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::setDOMStorageItem(Ref<JSON::Object>&& storageId, StringImpl* key, StringImpl* value)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -138,7 +138,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::setDOMStorage
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::removeDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key)
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::removeDOMStorageItem(Ref<JSON::Object>&& storageId, StringImpl* key)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -166,7 +166,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::clearDOMStora
     return { };
 }
 
-String InspectorDOMStorageAgent::storageId(Storage& storage)
+RefPtr<StringImpl> InspectorDOMStorageAgent::storageId(Storage& storage)
 {
     RefPtr document = storage.frame()->document();
     ASSERT(document);
@@ -185,15 +185,15 @@ Ref<Inspector::Protocol::DOMStorage::StorageId> InspectorDOMStorageAgent::storag
         .release();
 }
 
-void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, const SecurityOrigin& securityOrigin)
+void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StorageType storageType, const SecurityOrigin& securityOrigin)
 {
     auto id = InspectorDOMStorageAgent::storageId(securityOrigin, storageType == StorageType::Local);
 
-    if (key.isNull())
+    if (!key)
         m_frontendDispatcher->domStorageItemsCleared(WTF::move(id));
-    else if (newValue.isNull())
+    else if (!newValue)
         m_frontendDispatcher->domStorageItemRemoved(WTF::move(id), key);
-    else if (oldValue.isNull())
+    else if (!oldValue)
         m_frontendDispatcher->domStorageItemAdded(WTF::move(id), key, newValue);
     else
         m_frontendDispatcher->domStorageItemUpdated(WTF::move(id), key, oldValue, newValue);
@@ -201,21 +201,21 @@ void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, con
 
 RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(Inspector::Protocol::ErrorString& errorString, Ref<JSON::Object>&& storageId, RefPtr<LocalFrame>& targetFrame)
 {
-    auto securityOrigin = storageId->getString("securityOrigin"_s);
+    auto securityOrigin = storageId->getString("securityOrigin"_si);
     if (!securityOrigin) {
-        errorString = "Missing securityOrigin in given storageId"_s;
+        errorString = "Missing securityOrigin in given storageId"_si;
         return nullptr;
     }
 
-    auto isLocalStorage = storageId->getBoolean("isLocalStorage"_s);
+    auto isLocalStorage = storageId->getBoolean("isLocalStorage"_si);
     if (!isLocalStorage) {
-        errorString = "Missing isLocalStorage in given storageId"_s;
+        errorString = "Missing isLocalStorage in given storageId"_si;
         return nullptr;
     }
 
     targetFrame = ResourceUtilities::findFrameWithSecurityOrigin(protect(m_inspectedPage), securityOrigin);
     if (!targetFrame) {
-        errorString = "Missing frame for given securityOrigin"_s;
+        errorString = "Missing frame for given securityOrigin"_si;
         return nullptr;
     }
 

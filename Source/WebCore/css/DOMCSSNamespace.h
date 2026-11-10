@@ -42,9 +42,9 @@ class Highlight;
 
 class DOMCSSNamespace final : public RefCounted<DOMCSSNamespace>, public Supplementable<DOMCSSNamespace> {
 public:
-    static bool supports(Document&, const String& property, const String& value);
-    static bool supports(Document&, const String& conditionText);
-    static String escape(const String& ident);
+    static bool supports(Document&, StringImpl* property, StringImpl* value);
+    static bool supports(Document&, StringImpl* conditionText);
+    static RefPtr<StringImpl> escape(StringImpl* ident);
     static HighlightRegistry& highlights(Document&);
 };
 

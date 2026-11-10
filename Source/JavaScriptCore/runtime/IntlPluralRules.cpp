@@ -90,7 +90,7 @@ void IntlPluralRules::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(IntlPluralRules);
 
-Vector<String> IntlPluralRules::localeData(const String&, RelevantExtensionKey)
+Vector<RefPtr<StringImpl>> IntlPluralRules::localeData(StringImpl*, RelevantExtensionKey)
 {
     return { };
 }
@@ -101,7 +101,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, locales);
+    Vector<RefPtr<StringImpl>> requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
     JSObject* options = intlCoerceOptionsToObject(globalObject, optionsValue);
@@ -114,7 +114,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
     const auto& availableLocales = intlPluralRulesAvailableLocales();
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { }, localeData);
     m_locale = resolved.locale;
-    if (m_locale.isEmpty()) {
+    if (isEmpty(m_locale)) {
         throwTypeError(globalObject, scope, "failed to initialize PluralRules due to invalid locale"_s);
         return;
     }
@@ -134,7 +134,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
     setNumberFormatDigitOptions(globalObject, this, options, 0, 3, m_notation);
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto locale = m_locale.ascii();
+    auto locale = ascii(m_locale);
     UErrorCode status = U_ZERO_ERROR;
 
     StringBuilder skeletonBuilder;
@@ -215,11 +215,11 @@ JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject) const
     int32_t resultLength;
 
     // Category names are always ASCII, so use char[].
-    UncheckedKeyHashSet<String> categoriesSet;
+    UncheckedKeyHashSet<RefPtr<StringImpl>> categoriesSet;
     unsigned index = 0;
     while (const char* result = uenum_next(keywords.get(), &resultLength, &status)) {
         ASSERT(U_SUCCESS(status));
-        categoriesSet.add(String::fromLatin1(unsafeMakeSpan(result, static_cast<size_t>(resultLength))));
+        categoriesSet.add(StringImpl::fromLatin1(unsafeMakeSpan(result, static_cast<size_t>(resultLength))));
     }
 
     // 4. Let pluralCategories be a List of Strings containing all possible results of PluralRuleSelect for the selected locale pr.[[Locale]],
@@ -229,7 +229,7 @@ JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject) const
     } };
 
     for (auto candidate : candidates) {
-        auto iter = categoriesSet.find(candidate);
+        auto iter = categoriesSet.find(StringImpl::create(candidate).ptr());
         if (iter != categoriesSet.end()) {
             categories->putDirectIndex(globalObject, index++, jsNontrivialString(vm, *iter));
             RETURN_IF_EXCEPTION(scope, { });
@@ -254,7 +254,7 @@ JSValue IntlPluralRules::select(JSGlobalObject* globalObject, double targetValue
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!std::isfinite(targetValue))
-        return jsNontrivialString(vm, "other"_s);
+        return jsNontrivialString(vm, "other"_si);
 
     UErrorCode status = U_ZERO_ERROR;
 
@@ -268,7 +268,7 @@ JSValue IntlPluralRules::select(JSGlobalObject* globalObject, double targetValue
     status = callBufferProducingFunction(uplrules_selectFormatted, m_pluralRules.get(), formattedNumber.get(), buffer);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
-    return jsString(vm, String(WTF::move(buffer)));
+    return jsString(vm, StringImpl::create(Vector { WTF::move(buffer) }));
 }
 
 
@@ -280,7 +280,7 @@ JSValue IntlPluralRules::select(JSGlobalObject* globalObject, IntlMathematicalVa
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (targetValue.numberType() == IntlMathematicalValue::NumberType::NaN || targetValue.numberType() == IntlMathematicalValue::NumberType::Infinity)
-        return jsNontrivialString(vm, "other"_s);
+        return jsNontrivialString(vm, "other"_si);
 
     targetValue.ensureNonDouble();
     const auto& string = targetValue.getString();
@@ -297,7 +297,7 @@ JSValue IntlPluralRules::select(JSGlobalObject* globalObject, IntlMathematicalVa
     status = callBufferProducingFunction(uplrules_selectFormatted, m_pluralRules.get(), formattedNumber.get(), buffer);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
-    return jsString(vm, String(WTF::move(buffer)));
+    return jsString(vm, StringImpl::create(Vector { WTF::move(buffer) }));
 }
 
 JSValue IntlPluralRules::selectRange(JSGlobalObject* globalObject, double start, double end) const
@@ -308,7 +308,7 @@ JSValue IntlPluralRules::selectRange(JSGlobalObject* globalObject, double start,
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (std::isnan(start) || std::isnan(end))
-        return throwRangeError(globalObject, scope, "Passed numbers are out of range"_s);
+        return throwRangeError(globalObject, scope, "Passed numbers are out of range"_si);
 
     UErrorCode status = U_ZERO_ERROR;
     auto range = std::unique_ptr<UFormattedNumberRange, ICUDeleter<unumrf_closeResult>>(unumrf_openResult(&status));
@@ -323,7 +323,7 @@ JSValue IntlPluralRules::selectRange(JSGlobalObject* globalObject, double start,
     status = callBufferProducingFunction(uplrules_selectForRange, m_pluralRules.get(), range.get(), buffer);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
-    return jsString(vm, String(WTF::move(buffer)));
+    return jsString(vm, StringImpl::create(Vector { WTF::move(buffer) }));
 }
 
 JSValue IntlPluralRules::selectRange(JSGlobalObject* globalObject, IntlMathematicalValue&& start, IntlMathematicalValue&& end) const
@@ -334,7 +334,7 @@ JSValue IntlPluralRules::selectRange(JSGlobalObject* globalObject, IntlMathemati
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (start.numberType() == IntlMathematicalValue::NumberType::NaN || end.numberType() == IntlMathematicalValue::NumberType::NaN)
-        return throwRangeError(globalObject, scope, "Passed numbers are out of range"_s);
+        return throwRangeError(globalObject, scope, "Passed numbers are out of range"_si);
 
     start.ensureNonDouble();
     end.ensureNonDouble();
@@ -355,7 +355,7 @@ JSValue IntlPluralRules::selectRange(JSGlobalObject* globalObject, IntlMathemati
     status = callBufferProducingFunction(uplrules_selectForRange, m_pluralRules.get(), range.get(), buffer);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
-    return jsString(vm, String(WTF::move(buffer)));
+    return jsString(vm, StringImpl::create(Vector { WTF::move(buffer) }));
 }
 
 } // namespace JSC

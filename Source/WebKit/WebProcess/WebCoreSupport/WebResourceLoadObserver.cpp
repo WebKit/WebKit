@@ -122,7 +122,7 @@ void WebResourceLoadObserver::updateCentralStatisticsStore(CompletionHandler<voi
 }
 
 
-String WebResourceLoadObserver::statisticsForURL(const URL& url)
+RefPtr<StringImpl> WebResourceLoadObserver::statisticsForURL(const URL& url)
 {
     auto* statistics = m_resourceStatisticsMap.get(RegistrableDomain { url });
     if (!statistics)
@@ -150,7 +150,7 @@ bool WebResourceLoadObserver::hasHadUserInteraction(const RegistrableDomain& dom
     return m_domainsWithUserInteraction.contains(domain);
 }
 
-void WebResourceLoadObserver::logFontLoad(const Document& document, const String& familyName, bool loadStatus)
+void WebResourceLoadObserver::logFontLoad(const Document& document, StringImpl* familyName, bool loadStatus)
 {
     if (isEphemeral())
         return;
@@ -203,7 +203,7 @@ void WebResourceLoadObserver::logCanvasRead(const Document& document)
 #endif
 }
 
-void WebResourceLoadObserver::logCanvasWriteOrMeasure(const Document& document, const String& textWritten)
+void WebResourceLoadObserver::logCanvasWriteOrMeasure(const Document& document, StringImpl* textWritten)
 {
     if (isEphemeral())
         return;
@@ -432,7 +432,7 @@ void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const 
 #define LOCAL_LOG(str, ...) \
         RELEASE_LOG(ResourceLoadStatistics, "ResourceLoadObserver::logUserInteraction: counter=%" PRIu64 ": " str, counter, ##__VA_ARGS__)
 
-        auto escapeForJSON = [](const String& s) {
+        auto escapeForJSON = [](StringImpl* s) {
             auto result = makeStringByReplacingAll(s, '\\', "\\\\"_s);
             result = makeStringByReplacingAll(result, '"', "\\\""_s);
             return result;
@@ -440,8 +440,8 @@ void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const 
         auto escapedURL = escapeForJSON(url.string());
         auto escapedDomain = escapeForJSON(topFrameDomain.string());
 
-        LOCAL_LOG("{ \"url\": \"%" PUBLIC_LOG_STRING "\",", escapedURL.utf8());
-        LOCAL_LOG("  \"domain\" : \"%" PUBLIC_LOG_STRING "\",", escapedDomain.utf8());
+        LOCAL_LOG("{ \"url\": \"%" PUBLIC_LOG_STRING "\",", utf8(escapedURL));
+        LOCAL_LOG("  \"domain\" : \"%" PUBLIC_LOG_STRING "\",", utf8(escapedDomain));
         LOCAL_LOG("  \"until\" : %f }", newTime.secondsSinceEpoch().seconds());
 
 #undef LOCAL_LOG

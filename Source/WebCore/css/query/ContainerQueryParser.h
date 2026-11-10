@@ -47,7 +47,7 @@ struct ContainerQueryParser : MQ::GenericMediaQueryParser<ContainerQueryParser> 
     static constexpr EnumSet<MQ::FeatureParserOption> featureParserOptions = { MQ::FeatureParserOption::TreeCountingFunctionsAllowed };
 
     NODELETE static bool isValidFunctionId(CSSValueID);
-    static const MQ::FeatureSchema* schemaForFeatureName(const AtomString&, const CSSParserContext&, State&);
+    static const MQ::FeatureSchema* schemaForFeatureName(AtomStringImpl*, const CSSParserContext&, State&);
     static std::optional<MQ::Feature> consumeAndValidateFeature(CSSParserTokenRange&, const CSSParserContext&, State&);
     static Vector<const MQ::FeatureSchema*> featureSchemas();
 };

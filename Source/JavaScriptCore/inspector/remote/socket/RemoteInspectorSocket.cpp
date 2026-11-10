@@ -75,12 +75,12 @@ void RemoteInspector::didClose(RemoteInspectorSocketEndpoint&, ConnectionID)
     });
 }
 
-void RemoteInspector::sendWebInspectorEvent(const String& event)
+void RemoteInspector::sendWebInspectorEvent(StringImpl* event)
 {
     if (!m_clientConnection)
         return;
 
-    send(m_clientConnection.value(), byteCast<uint8_t>(event.utf8().span()));
+    send(m_clientConnection.value(), byteCast<uint8_t>(utf8(event).span()));
 }
 
 void RemoteInspector::start()
@@ -125,18 +125,18 @@ TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspection
 
     TargetListing targetListing = JSON::Object::create();
 
-    targetListing->setString("name"_s, target.name());
-    targetListing->setString("url"_s, target.url());
-    targetListing->setInteger("targetID"_s, target.targetIdentifier());
-    targetListing->setBoolean("hasLocalDebugger"_s, target.hasLocalDebugger());
+    targetListing->setString("name"_si, target.name());
+    targetListing->setString("url"_si, target.url());
+    targetListing->setInteger("targetID"_si, target.targetIdentifier());
+    targetListing->setBoolean("hasLocalDebugger"_si, target.hasLocalDebugger());
     if (target.type() == RemoteInspectionTarget::Type::WebPage || target.type() == RemoteInspectionTarget::Type::LegacyWebPage)
-        targetListing->setString("type"_s, "web-page"_s);
+        targetListing->setString("type"_si, "web-page"_si);
     else if (target.type() == RemoteInspectionTarget::Type::JavaScript)
-        targetListing->setString("type"_s, "javascript"_s);
+        targetListing->setString("type"_si, "javascript"_si);
     else if (target.type() == RemoteInspectionTarget::Type::ServiceWorker)
-        targetListing->setString("type"_s, "service-worker"_s);
+        targetListing->setString("type"_si, "service-worker"_si);
     else if (target.type() == RemoteInspectionTarget::Type::WasmDebugger)
-        targetListing->setString("type"_s, "wasm-debugger"_s);
+        targetListing->setString("type"_si, "wasm-debugger"_si);
 
     return targetListing;
 }
@@ -144,10 +144,10 @@ TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspection
 TargetListing RemoteInspector::listingForAutomationTarget(const RemoteAutomationTarget& target) const
 {
     TargetListing targetListing = JSON::Object::create();
-    targetListing->setString("type"_s, "automation"_s);
-    targetListing->setString("name"_s, target.name());
-    targetListing->setInteger("targetID"_s, target.targetIdentifier());
-    targetListing->setBoolean("isPaired"_s, target.isPaired());
+    targetListing->setString("type"_si, "automation"_si);
+    targetListing->setString("name"_si, target.name());
+    targetListing->setInteger("targetID"_si, target.targetIdentifier());
+    targetListing->setBoolean("isPaired"_si, target.isPaired());
     return targetListing;
 }
 
@@ -163,10 +163,10 @@ void RemoteInspector::pushListingsNow()
         targetListJSON->pushObject(*listing);
 
     auto jsonEvent = JSON::Object::create();
-    jsonEvent->setString("event"_s, "SetTargetList"_s);
-    jsonEvent->setString("message"_s, targetListJSON->toJSONString());
-    jsonEvent->setInteger("connectionID"_s, m_clientConnection.value());
-    jsonEvent->setBoolean("remoteAutomationAllowed"_s, m_clientCapabilities && m_clientCapabilities->remoteAutomationAllowed);
+    jsonEvent->setString("event"_si, "SetTargetList"_si);
+    jsonEvent->setString("message"_si, targetListJSON->toJSONString());
+    jsonEvent->setInteger("connectionID"_si, m_clientConnection.value());
+    jsonEvent->setBoolean("remoteAutomationAllowed"_si, m_clientCapabilities && m_clientCapabilities->remoteAutomationAllowed);
     sendWebInspectorEvent(jsonEvent->toJSONString());
 }
 
@@ -194,7 +194,7 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage(TargetID)
     // FIXME: Implement automatic inspection.
 }
 
-void RemoteInspector::requestAutomationSession(String&& sessionID, const Client::SessionCapabilities& capabilities)
+void RemoteInspector::requestAutomationSession(RefPtr<StringImpl>&& sessionID, const Client::SessionCapabilities& capabilities)
 {
     if (!m_client)
         return;
@@ -204,7 +204,7 @@ void RemoteInspector::requestAutomationSession(String&& sessionID, const Client:
         return;
     }
 
-    if (sessionID.isNull()) {
+    if (!sessionID) {
         LOG_ERROR("Client error: SESSION ID cannot be null");
         return;
     }
@@ -213,16 +213,16 @@ void RemoteInspector::requestAutomationSession(String&& sessionID, const Client:
     updateClientCapabilities();
 }
 
-void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const String& message)
+void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, StringImpl* message)
 {
     if (!m_clientConnection)
         return;
 
     auto sendMessageEvent = JSON::Object::create();
-    sendMessageEvent->setInteger("targetID"_s, targetIdentifier);
-    sendMessageEvent->setString("event"_s, "SendMessageToFrontend"_s);
-    sendMessageEvent->setInteger("connectionID"_s, m_clientConnection.value());
-    sendMessageEvent->setString("message"_s, message);
+    sendMessageEvent->setInteger("targetID"_si, targetIdentifier);
+    sendMessageEvent->setString("event"_si, "SendMessageToFrontend"_si);
+    sendMessageEvent->setInteger("connectionID"_si, m_clientConnection.value());
+    sendMessageEvent->setString("message"_si, message);
     sendWebInspectorEvent(sendMessageEvent->toJSONString());
 }
 
@@ -255,29 +255,29 @@ void RemoteInspector::setup(TargetID targetIdentifier)
 void RemoteInspector::sendMessageToTarget(TargetID targetIdentifier, const char* message)
 {
     if (auto connectionToTarget = m_targetConnectionMap.get(targetIdentifier))
-        connectionToTarget->sendMessageToTarget(String::fromUTF8(message));
+        connectionToTarget->sendMessageToTarget(StringImpl::fromUTF8(message));
 }
 
-String RemoteInspector::backendCommands() const
+RefPtr<StringImpl> RemoteInspector::backendCommands() const
 {
-    if (m_backendCommandsPath.isEmpty())
-        return { };
+    if (isEmpty(m_backendCommandsPath))
+        return nullptr;
 
     auto contents = FileSystem::readEntireFile(m_backendCommandsPath);
 
-    return contents ? String { byteCast<Latin1Character>(contents->span()) } : emptyString();
+    return contents ? StringImpl::createOrNull(byteCast<Latin1Character>(contents->span())) : emptyString();
 }
 
 // RemoteInspectorConnectionClient handlers
 
-HashMap<String, RemoteInspectorConnectionClient::CallHandler>& RemoteInspector::dispatchMap()
+HashMap<RefPtr<StringImpl>, RemoteInspectorConnectionClient::CallHandler>& RemoteInspector::dispatchMap()
 {
-    static NeverDestroyed<HashMap<String, CallHandler>> methods = HashMap<String, CallHandler>({
-        { "SetupInspectorClient"_s, static_cast<CallHandler>(&RemoteInspector::setupInspectorClient) },
-        { "Setup"_s, static_cast<CallHandler>(&RemoteInspector::setupTarget) },
-        { "FrontendDidClose"_s, static_cast<CallHandler>(&RemoteInspector::frontendDidClose) },
-        { "SendMessageToBackend"_s, static_cast<CallHandler>(&RemoteInspector::sendMessageToBackend) },
-        { "StartAutomationSession"_s, static_cast<CallHandler>(&RemoteInspector::startAutomationSession) },
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, CallHandler>> methods = HashMap<RefPtr<StringImpl>, CallHandler>({
+        { "SetupInspectorClient"_si, static_cast<CallHandler>(&RemoteInspector::setupInspectorClient) },
+        { "Setup"_si, static_cast<CallHandler>(&RemoteInspector::setupTarget) },
+        { "FrontendDidClose"_si, static_cast<CallHandler>(&RemoteInspector::frontendDidClose) },
+        { "SendMessageToBackend"_si, static_cast<CallHandler>(&RemoteInspector::sendMessageToBackend) },
+        { "StartAutomationSession"_si, static_cast<CallHandler>(&RemoteInspector::startAutomationSession) },
     });
 
     return methods;
@@ -288,8 +288,8 @@ void RemoteInspector::setupInspectorClient(const Event&)
     ASSERT(isMainThread());
 
     auto backendCommandsEvent = JSON::Object::create();
-    backendCommandsEvent->setString("event"_s, "BackendCommands"_s);
-    backendCommandsEvent->setString("message"_s, backendCommands());
+    backendCommandsEvent->setString("event"_si, "BackendCommands"_si);
+    backendCommandsEvent->setString("message"_si, backendCommands());
     sendWebInspectorEvent(backendCommandsEvent->toJSONString());
 
     m_readyToPushListings = true;
@@ -345,7 +345,8 @@ void RemoteInspector::sendMessageToBackend(const Event& event)
             return;
     }
 
-    connectionToTarget->sendMessageToTarget(String { event.message.value() });
+    connectionToTarget->sendMessageToTarget(RefPtr<StringImpl> { event.message.value() });
+
 }
 
 void RemoteInspector::startAutomationSession(const Event& event)
@@ -363,26 +364,26 @@ void RemoteInspector::startAutomationSession(const Event& event)
         return;
 
     auto parsedMessageObject = parsedMessageValue->asObject();
-    auto sessionID = parsedMessageObject->getString("sessionID"_s);
+    auto sessionID = parsedMessageObject->getString("sessionID"_si);
     if (!sessionID)
         return;
 
     RemoteInspector::Client::SessionCapabilities capabilities { };
-    auto capabilitiesObject = parsedMessageObject->getObject("capabilities"_s);
+    auto capabilitiesObject = parsedMessageObject->getObject("capabilities"_si);
     if (capabilitiesObject)
-        capabilities.acceptInsecureCertificates = capabilitiesObject->getBoolean("acceptInsecureCerts"_s).value_or(false);
+        capabilities.acceptInsecureCertificates = capabilitiesObject->getBoolean("acceptInsecureCerts"_si).value_or(false);
 
     requestAutomationSession(WTF::move(sessionID), capabilities);
 
     auto sendEvent = JSON::Object::create();
-    sendEvent->setString("event"_s, "StartAutomationSession_Return"_s);
+    sendEvent->setString("event"_si, "StartAutomationSession_Return"_si);
 
     auto capability = clientCapabilities();
 
     auto message = JSON::Object::create();
-    message->setString("browserName"_s, capability ? capability->browserName : emptyString());
-    message->setString("browserVersion"_s, capability ? capability->browserVersion : emptyString());
-    sendEvent->setString("message"_s, message->toJSONString());
+    message->setString("browserName"_si, capability ? capability->browserName : emptyString());
+    message->setString("browserVersion"_si, capability ? capability->browserVersion : emptyString());
+    sendEvent->setString("message"_si, message->toJSONString());
     sendWebInspectorEvent(sendEvent->toJSONString());
 
     m_readyToPushListings = true;

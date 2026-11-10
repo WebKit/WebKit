@@ -42,7 +42,7 @@ SOFT_LINK_OPTIONAL(CoreServices, _LSApplicationCheckInProxy, Boolean, __cdecl, (
 
 namespace WebKit {
 
-void NetworkConnectionToWebProcess::updateActivePages(String&& overrideDisplayName, const Vector<String>& activePagesOrigins, CoreIPCAuditToken&& auditToken)
+void NetworkConnectionToWebProcess::updateActivePages(RefPtr<StringImpl>&& overrideDisplayName, const Vector<RefPtr<StringImpl>>& activePagesOrigins, CoreIPCAuditToken&& auditToken)
 {
     // Setting and getting the display name of another process requires a private entitlement.
     RELEASE_LOG(Process, "NetworkConnectionToWebProcess::updateActivePages");
@@ -67,7 +67,7 @@ void NetworkConnectionToWebProcess::updateActivePages(String&& overrideDisplayNa
     if (!overrideDisplayName)
         _LSSetApplicationInformationItem(kLSDefaultSessionID, asn.get(), CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)createNSArray(activePagesOrigins).get(), nullptr);
     else
-        _LSSetApplicationInformationItem(kLSDefaultSessionID, asn.get(), _kLSDisplayNameKey, overrideDisplayName.createCFString().get(), nullptr);
+        _LSSetApplicationInformationItem(kLSDefaultSessionID, asn.get(), _kLSDisplayNameKey, createCFString(overrideDisplayName).get(), nullptr);
 #else
     UNUSED_PARAM(overrideDisplayName);
     UNUSED_PARAM(activePagesOrigins);
@@ -75,13 +75,13 @@ void NetworkConnectionToWebProcess::updateActivePages(String&& overrideDisplayNa
 #endif
 }
 
-void NetworkConnectionToWebProcess::getProcessDisplayName(CoreIPCAuditToken&& auditToken, CompletionHandler<void(const String&)>&& completionHandler)
+void NetworkConnectionToWebProcess::getProcessDisplayName(CoreIPCAuditToken&& auditToken, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
 #if USE(APPLE_INTERNAL_SDK)
     auto asn = adoptCF(_LSCopyLSASNForAuditToken(kLSDefaultSessionID, auditToken.auditToken()));
-    return completionHandler(adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, asn.get(), _kLSDisplayNameKey)).get());
+    return completionHandler(StringImpl::create(adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, asn.get(), _kLSDisplayNameKey)).get()));
 #else
-    completionHandler({ });
+    completionHandler(nullptr);
 #endif
 }
 
@@ -138,9 +138,9 @@ void NetworkConnectionToWebProcess::checkInWebProcess(const CoreIPCAuditToken& a
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
-            if (protectedThis->m_pendingDisplayName.isNull())
+            if (!protectedThis->m_pendingDisplayName)
                 return;
-            protectedThis->updateActivePages(std::exchange(protectedThis->m_pendingDisplayName, String()), { }, WTF::move(auditToken));
+            protectedThis->updateActivePages(std::exchange(protectedThis->m_pendingDisplayName, nullString()), { }, WTF::move(auditToken));
         });
     });
 

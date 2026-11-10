@@ -84,17 +84,17 @@ enum XMLHttpRequestSendArrayBufferOrView {
     XMLHttpRequestSendArrayBufferOrViewMax,
 };
 
-static void replaceCharsetInMediaTypeIfNeeded(String& mediaType)
+static void replaceCharsetInMediaTypeIfNeeded(RefPtr<StringImpl>& mediaType)
 {
     auto parsedContentType = ParsedContentType::create(mediaType);
-    if (!parsedContentType || parsedContentType->charset().isEmpty() || equalIgnoringASCIICase(parsedContentType->charset(), "UTF-8"_s))
+    if (!parsedContentType || isEmpty(parsedContentType->charset()) || equalIgnoringASCIICase(parsedContentType->charset(), "UTF-8"_s))
         return;
 
-    parsedContentType->setCharset("UTF-8"_s);
+    parsedContentType->setCharset("UTF-8"_si);
     mediaType = parsedContentType->serialize();
 }
 
-static void logConsoleError(ScriptExecutionContext* context, const String& message)
+static void logConsoleError(ScriptExecutionContext* context, StringImpl* message)
 {
     if (!context)
         return;
@@ -221,7 +221,7 @@ RefPtr<ArrayBuffer> XMLHttpRequest::createResponseArrayBuffer()
 ExceptionOr<void> XMLHttpRequest::setTimeout(unsigned timeout)
 {
     if (Ref context = *scriptExecutionContext(); context->isDocument() && !m_async) {
-        logConsoleError(context.ptr(), "XMLHttpRequest.timeout cannot be set for synchronous HTTP(S) requests made from the window context."_s);
+        logConsoleError(context.ptr(), "XMLHttpRequest.timeout cannot be set for synchronous HTTP(S) requests made from the window context."_si);
         return Exception { ExceptionCode::InvalidAccessError };
     }
     m_timeoutMilliseconds = timeout;
@@ -248,7 +248,7 @@ ExceptionOr<void> XMLHttpRequest::setResponseType(ResponseType type)
     // We'll only disable this functionality for HTTP(S) requests since sync requests for local protocols
     // such as file: and data: still make sense to allow.
     if (!m_async && context->isDocument() && m_url.url().protocolIsInHTTPFamily()) {
-        logConsoleError(context.ptr(), "XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context."_s);
+        logConsoleError(context.ptr(), "XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context."_si);
         return Exception { ExceptionCode::InvalidAccessError };
     }
 
@@ -256,7 +256,7 @@ ExceptionOr<void> XMLHttpRequest::setResponseType(ResponseType type)
     return { };
 }
 
-String XMLHttpRequest::responseURL() const
+RefPtr<StringImpl> XMLHttpRequest::responseURL() const
 {
     URL responseURL(m_response.url());
     responseURL.removeFragmentIdentifier();
@@ -326,18 +326,18 @@ ExceptionOr<void> XMLHttpRequest::setWithCredentials(bool value)
     return { };
 }
 
-ExceptionOr<void> XMLHttpRequest::open(const String& method, const String& url)
+ExceptionOr<void> XMLHttpRequest::open(StringImpl* method, StringImpl* url)
 {
     // If the async argument is omitted, set async to true.
     return open(method, protect(scriptExecutionContext())->encodingParseURL(url), true);
 }
 
-ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, bool async)
+ExceptionOr<void> XMLHttpRequest::open(StringImpl* method, const URL& url, bool async)
 {
     Ref context = *scriptExecutionContext();
     RefPtr contextDocument = dynamicDowncast<Document>(context);
     if (contextDocument && !contextDocument->isFullyActive())
-        return Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_si };
 
     if (!isValidHTTPToken(method))
         return Exception { ExceptionCode::SyntaxError };
@@ -354,13 +354,13 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
         // We'll only disable this functionality for HTTP(S) requests since sync requests for local protocols
         // such as file: and data: still make sense to allow.
         if (url.protocolIsInHTTPFamily() && responseType() != ResponseType::EmptyString) {
-            logConsoleError(contextDocument.get(), "Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set."_s);
+            logConsoleError(contextDocument.get(), "Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set."_si);
             return Exception { ExceptionCode::InvalidAccessError };
         }
 
         // Similarly, timeouts are disabled for synchronous requests as well.
         if (m_timeoutMilliseconds > 0) {
-            logConsoleError(contextDocument.get(), "Synchronous XMLHttpRequests must not have a timeout value set."_s);
+            logConsoleError(contextDocument.get(), "Synchronous XMLHttpRequests must not have a timeout value set."_si);
             return Exception { ExceptionCode::InvalidAccessError };
         }
     }
@@ -391,12 +391,12 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
     return { };
 }
 
-ExceptionOr<void> XMLHttpRequest::open(const String& method, const String& url, bool async, const String& user, const String& password)
+ExceptionOr<void> XMLHttpRequest::open(StringImpl* method, StringImpl* url, bool async, StringImpl* user, StringImpl* password)
 {
     auto urlWithCredentials = protect(scriptExecutionContext())->encodingParseURL(url);
-    if (!user.isNull())
+    if (user)
         urlWithCredentials.setUser(user);
-    if (!password.isNull())
+    if (password)
         urlWithCredentials.setPassword(password);
 
     return open(method, urlWithCredentials, async);
@@ -458,11 +458,11 @@ ExceptionOr<void> XMLHttpRequest::send(Ref<Document>&& document)
     if (auto result = prepareToSend())
         return WTF::move(result.value());
 
-    if (m_method != "GET"_s && m_method != "HEAD"_s) {
+    if (!equal(m_method, "GET"_s) && !equal(m_method, "HEAD"_s)) {
         if (!m_requestHeaders.contains(HTTPHeaderName::ContentType))
-            m_requestHeaders.set(HTTPHeaderName::ContentType, document->isHTMLDocument() ? "text/html;charset=UTF-8"_s : "application/xml;charset=UTF-8"_s);
+            m_requestHeaders.set(HTTPHeaderName::ContentType, StringImpl::create(document->isHTMLDocument() ? "text/html;charset=UTF-8"_s : "application/xml;charset=UTF-8"_s).ptr());
         else {
-            String contentType = m_requestHeaders.get(HTTPHeaderName::ContentType);
+            RefPtr<StringImpl> contentType = m_requestHeaders.get(HTTPHeaderName::ContentType);
             replaceCharsetInMediaTypeIfNeeded(contentType);
             m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);
         }
@@ -483,12 +483,12 @@ ExceptionOr<void> XMLHttpRequest::send(Ref<Document>&& document)
     return createRequest();
 }
 
-ExceptionOr<void> XMLHttpRequest::send(String&& body)
+ExceptionOr<void> XMLHttpRequest::send(RefPtr<StringImpl>&& body)
 {
     if (auto result = prepareToSend())
         return WTF::move(result.value());
 
-    if (body.isNull())
+    if (!body)
         return createRequest();
 
     return sendStringData(WTF::move(body), HTTPHeaderValues::textPlainContentType());
@@ -499,20 +499,20 @@ ExceptionOr<void> XMLHttpRequest::send(Ref<Blob>&& body)
     if (auto result = prepareToSend())
         return WTF::move(result.value());
 
-    if (m_method != "GET"_s && m_method != "HEAD"_s) {
+    if (!equal(m_method, "GET"_s) && !equal(m_method, "HEAD"_s)) {
         if (!m_url.url().protocolIsInHTTPFamily()) {
             // FIXME: We would like to support posting Blobs to non-http URLs (e.g. custom URL schemes)
             // but because of the architecture of blob-handling that will require a fair amount of work.
 
             ASCIILiteral consoleMessage { "POST of a Blob to non-HTTP protocols in XMLHttpRequest.send() is currently unsupported."_s };
-            protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, consoleMessage);
+            protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, StringImpl::create(consoleMessage).ptr());
 
             return createRequest();
         }
 
         if (!m_requestHeaders.contains(HTTPHeaderName::ContentType)) {
-            const String& blobType = body->type();
-            if (!blobType.isEmpty() && isValidContentType(blobType))
+            const RefPtr<StringImpl>& blobType = body->type();
+            if (!isEmpty(blobType) && isValidContentType(blobType))
                 m_requestHeaders.set(HTTPHeaderName::ContentType, blobType);
         }
 
@@ -532,11 +532,11 @@ ExceptionOr<void> XMLHttpRequest::send(Ref<URLSearchParams>&& params)
 }
 
 // https://xhr.spec.whatwg.org/#dom-xmlhttprequest-send steps 3 and 4, for bodies that are serialized to a UTF-8 string.
-ExceptionOr<void> XMLHttpRequest::sendStringData(String&& body, const String& defaultContentType)
+ExceptionOr<void> XMLHttpRequest::sendStringData(RefPtr<StringImpl>&& body, StringImpl* defaultContentType)
 {
-    if (m_method != "GET"_s && m_method != "HEAD"_s) {
-        String contentType = m_requestHeaders.get(HTTPHeaderName::ContentType);
-        if (contentType.isNull())
+    if (!equal(m_method, "GET"_s) && !equal(m_method, "HEAD"_s)) {
+        RefPtr<StringImpl> contentType = m_requestHeaders.get(HTTPHeaderName::ContentType);
+        if (!contentType)
             m_requestHeaders.set(HTTPHeaderName::ContentType, defaultContentType);
         else {
             replaceCharsetInMediaTypeIfNeeded(contentType);
@@ -557,7 +557,7 @@ ExceptionOr<void> XMLHttpRequest::send(Ref<DOMFormData>&& body)
     if (auto result = prepareToSend())
         return WTF::move(result.value());
 
-    if (m_method != "GET"_s && m_method != "HEAD"_s) {
+    if (!equal(m_method, "GET"_s) && !equal(m_method, "HEAD"_s)) {
         m_requestEntityBody = FormData::createMultiPart(body);
         if (!m_requestHeaders.contains(HTTPHeaderName::ContentType))
             m_requestHeaders.set(HTTPHeaderName::ContentType, makeString("multipart/form-data; boundary="_s, m_requestEntityBody->boundary()));
@@ -569,7 +569,7 @@ ExceptionOr<void> XMLHttpRequest::send(Ref<DOMFormData>&& body)
 ExceptionOr<void> XMLHttpRequest::send(Ref<ArrayBuffer>&& body)
 {
     ASCIILiteral consoleMessage { "ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead."_s };
-    protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, consoleMessage);
+    protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, StringImpl::create(consoleMessage).ptr());
     return sendBytesData(body->span());
 }
 
@@ -583,7 +583,7 @@ ExceptionOr<void> XMLHttpRequest::sendBytesData(std::span<const uint8_t> data)
     if (auto result = prepareToSend())
         return WTF::move(result.value());
 
-    if (m_method != "GET"_s && m_method != "HEAD"_s) {
+    if (!equal(m_method, "GET"_s) && !equal(m_method, "HEAD"_s)) {
         m_requestEntityBody = FormData::create(data);
         Locker locker { m_gcLock };
         if (m_upload)
@@ -596,7 +596,7 @@ ExceptionOr<void> XMLHttpRequest::sendBytesData(std::span<const uint8_t> data)
 ExceptionOr<void> XMLHttpRequest::createRequest()
 {
     // Only GET request is supported for blob URL.
-    if (!m_async && m_url.url().protocolIsBlob() && m_method != "GET"_s) {
+    if (!m_async && m_url.url().protocolIsBlob() && !equal(m_method, "GET"_s)) {
         m_url.clear();
         return Exception { ExceptionCode::NetworkError };
     }
@@ -613,8 +613,8 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
     request.setHTTPMethod(m_method);
 
     if (m_requestEntityBody) {
-        ASSERT(m_method != "GET"_s);
-        ASSERT(m_method != "HEAD"_s);
+        ASSERT(!equal(m_method, "GET"_s));
+        ASSERT(!equal(m_method, "HEAD"_s));
         request.setHTTPBody(WTF::move(m_requestEntityBody));
     }
 
@@ -754,7 +754,7 @@ void XMLHttpRequest::clearResponseBuffers()
     }
     m_binaryResponseBuilder.reset();
     m_responseCacheIsValid = false;
-    m_allResponseHeaders = { };
+    m_allResponseHeaders = nullptr;
 }
 
 void XMLHttpRequest::clearRequest()
@@ -798,24 +798,24 @@ size_t XMLHttpRequest::memoryCost() const
     return m_responseBuilder.length() * 2 + m_binaryResponseBuilder.size();
 }
 
-ExceptionOr<void> XMLHttpRequest::overrideMimeType(const String& mimeType)
+ExceptionOr<void> XMLHttpRequest::overrideMimeType(StringImpl* mimeType)
 {
     if (readyState() == LOADING || readyState() == DONE)
         return Exception { ExceptionCode::InvalidStateError };
 
-    m_mimeTypeOverride = "application/octet-stream"_s;
+    m_mimeTypeOverride = "application/octet-stream"_si;
     if (isValidContentType(mimeType))
         m_mimeTypeOverride = mimeType;
 
     return { };
 }
 
-ExceptionOr<void> XMLHttpRequest::setRequestHeader(const String& name, const String& value)
+ExceptionOr<void> XMLHttpRequest::setRequestHeader(StringImpl* name, StringImpl* value)
 {
     if (readyState() != OPENED || m_sendFlag)
         return Exception { ExceptionCode::InvalidStateError };
 
-    String normalizedValue = value.trim(isASCIIWhitespaceWithoutFF<char16_t>);
+    RefPtr<StringImpl> normalizedValue = trim(value, isASCIIWhitespaceWithoutFF<char16_t>);
     if (!isValidHTTPToken(name) || !isValidHTTPHeaderValue(normalizedValue))
         return Exception { ExceptionCode::SyntaxError };
 
@@ -828,7 +828,7 @@ ExceptionOr<void> XMLHttpRequest::setRequestHeader(const String& name, const Str
     return { };
 }
 
-String XMLHttpRequest::getAllResponseHeaders() const
+RefPtr<StringImpl> XMLHttpRequest::getAllResponseHeaders() const
 {
     if (readyState() < HEADERS_RECEIVED || m_error)
         return emptyString();
@@ -839,12 +839,12 @@ String XMLHttpRequest::getAllResponseHeaders() const
         });
 
         std::ranges::sort(headers, [](auto& x, auto& y) {
-            unsigned xLength = x.first.length();
-            unsigned yLength = y.first.length();
+            unsigned xLength = length(x.first);
+            unsigned yLength = length(y.first);
             unsigned commonLength = std::min(xLength, yLength);
             for (unsigned i = 0; i < commonLength; ++i) {
-                auto xCharacter = toASCIIUpper(x.first[i]);
-                auto yCharacter = toASCIIUpper(y.first[i]);
+                auto xCharacter = toASCIIUpper(codeUnitAt(x.first, i));
+                auto yCharacter = toASCIIUpper(codeUnitAt(y.first, i));
                 if (xCharacter != yCharacter)
                     return xCharacter < yCharacter;
             }
@@ -861,18 +861,18 @@ String XMLHttpRequest::getAllResponseHeaders() const
     return m_allResponseHeaders;
 }
 
-String XMLHttpRequest::getResponseHeader(const String& name) const
+RefPtr<StringImpl> XMLHttpRequest::getResponseHeader(StringImpl* name) const
 {
     if (readyState() < HEADERS_RECEIVED || m_error)
-        return String();
+        return nullptr;
 
     return m_response.httpHeaderField(name);
 }
 
-String XMLHttpRequest::responseMIMEType(FinalMIMEType finalMIMEType) const
+RefPtr<StringImpl> XMLHttpRequest::responseMIMEType(FinalMIMEType finalMIMEType) const
 {
-    String contentType = m_mimeTypeOverride;
-    if (contentType.isEmpty()) {
+    RefPtr<StringImpl> contentType = m_mimeTypeOverride;
+    if (isEmpty(contentType)) {
         // Same logic as externalEntityMimeTypeAllowed() in XMLDocumentParserLibxml2.cpp. Keep them in sync.
         if (m_response.isInHTTPFamily())
             contentType = m_response.httpHeaderField(HTTPHeaderName::ContentType);
@@ -881,7 +881,7 @@ String XMLHttpRequest::responseMIMEType(FinalMIMEType finalMIMEType) const
     }
     if (auto parsedContentType = ParsedContentType::create(contentType))
         return finalMIMEType == FinalMIMEType::Yes ? parsedContentType->serialize() : parsedContentType->mimeType();
-    return "text/xml"_s;
+    return "text/xml"_si;
 }
 
 int XMLHttpRequest::status() const
@@ -892,10 +892,10 @@ int XMLHttpRequest::status() const
     return m_response.httpStatusCode();
 }
 
-String XMLHttpRequest::statusText() const
+RefPtr<StringImpl> XMLHttpRequest::statusText() const
 {
     if (readyState() == UNSENT || readyState() == OPENED || m_error)
-        return String();
+        return nullptr;
 
     return m_response.httpStatusText();
 }
@@ -1028,7 +1028,7 @@ PAL::TextEncoding XMLHttpRequest::finalResponseCharset() const
     // The charset of the response MIME type, if any, is overridden by the charset of the override MIME type.
     StringView label = m_response.textEncodingName();
 
-    if (!m_mimeTypeOverride.isEmpty()) {
+    if (!isEmpty(m_mimeTypeOverride)) {
         StringView overrideResponseCharset = extractCharsetFromMediaType(m_mimeTypeOverride);
         if (!overrideResponseCharset.isEmpty())
             label = overrideResponseCharset;
@@ -1130,7 +1130,7 @@ void XMLHttpRequest::dispatchEvent(Event& event)
     EventTarget::dispatchEvent(event);
 }
 
-void XMLHttpRequest::dispatchErrorEvents(const AtomString& type)
+void XMLHttpRequest::dispatchErrorEvents(AtomStringImpl* type)
 {
     if (!m_uploadComplete) {
         m_uploadComplete = true;

@@ -118,20 +118,20 @@ PluginInfo PDFPluginBase::pluginInfo()
     // Note: HTML specification requires that the WebKit built-in PDF name
     // is presented in plain English text.
     // https://html.spec.whatwg.org/multipage/system-state.html#pdf-viewing-support
-    info.name = "WebKit built-in PDF"_s;
+    info.name = "WebKit built-in PDF"_si;
     info.desc = pdfDocumentTypeDescription();
-    info.file = "internal-pdf-viewer"_s;
+    info.file = "internal-pdf-viewer"_si;
     info.isApplicationPlugin = true;
-    info.bundleIdentifier = "com.apple.webkit.builtinpdfplugin"_s;
+    info.bundleIdentifier = "com.apple.webkit.builtinpdfplugin"_si;
 
     MimeClassInfo pdfMimeClassInfo;
-    pdfMimeClassInfo.type = "application/pdf"_s;
+    pdfMimeClassInfo.type = "application/pdf"_atom;
     pdfMimeClassInfo.desc = pdfDocumentTypeDescription();
     pdfMimeClassInfo.extensions.append("pdf"_s);
     info.mimes.append(pdfMimeClassInfo);
 
     MimeClassInfo textPDFMimeClassInfo;
-    textPDFMimeClassInfo.type = "text/pdf"_s;
+    textPDFMimeClassInfo.type = "text/pdf"_atom;
     textPDFMimeClassInfo.desc = pdfDocumentTypeDescription();
     textPDFMimeClassInfo.extensions.append("pdf"_s);
     info.mimes.append(textPDFMimeClassInfo);
@@ -179,14 +179,14 @@ void PDFPluginBase::teardown()
 
 #if ENABLE(PDF_HUD)
     if (auto existingCompletionHandler = std::exchange(m_pendingSaveCompletionHandler, { }))
-        existingCompletionHandler({ }, { }, { });
+        existingCompletionHandler(nullptr, { }, { });
 
     if (auto existingCompletionHandler = std::exchange(m_pendingOpenCompletionHandler, { })) {
         // FrameInfo can't be default-constructed; the receiving process will ASSERT if it is.
         std::optional<FrameInfoData> frameInfo;
         if (RefPtr frame = m_frame.get())
             frameInfo = frame->info();
-        existingCompletionHandler({ }, WTF::move(frameInfo), { });
+        existingCompletionHandler(nullptr, WTF::move(frameInfo), { });
     }
 #endif // ENABLE(PDF_HUD)
 
@@ -475,9 +475,9 @@ void PDFPluginBase::insertRangeRequestData(uint64_t offset, const Vector<uint8_t
 void PDFPluginBase::streamDidReceiveResponse(const ResourceResponse& response)
 {
     m_suggestedFilename = response.suggestedFilename();
-    if (m_suggestedFilename.isEmpty())
-        m_suggestedFilename = suggestedFilenameWithMIMEType(nil, "application/pdf"_s);
-    if (!m_suggestedFilename.endsWithIgnoringASCIICase(".pdf"_s))
+    if (isEmpty(m_suggestedFilename))
+        m_suggestedFilename = StringImpl::create(protect(suggestedFilenameWithMIMEType(nil, "application/pdf"_si)).get());
+    if (!endsWithIgnoringASCIICase(m_suggestedFilename, ".pdf"_s))
         m_suggestedFilename = makeString(m_suggestedFilename, ".pdf"_s);
 }
 
@@ -580,7 +580,7 @@ void PDFPluginBase::adoptBackgroundThreadDocument(RetainPtr<PDFDocument>&& backg
     ASSERT(isMainRunLoop());
 
 #if !LOG_DISABLED
-    incrementalLoaderLog("Adopting PDFDocument from background thread"_s);
+    incrementalLoaderLog("Adopting PDFDocument from background thread"_si);
 #endif
 
     m_pdfDocument = WTF::move(backgroundThreadDocument);
@@ -639,7 +639,7 @@ void PDFPluginBase::receivedNonLinearizedPDFSentinel()
 
     if (!isMainRunLoop()) {
 #if !LOG_DISABLED
-        incrementalLoaderLog("Disabling incremental PDF loading on background thread"_s);
+        incrementalLoaderLog("Disabling incremental PDF loading on background thread"_si);
 #endif
         callOnMainRunLoop([this, protectedThis = Ref { *this }] {
             receivedNonLinearizedPDFSentinel();
@@ -662,7 +662,7 @@ void PDFPluginBase::receivedNonLinearizedPDFSentinel()
 
 #endif // HAVE(INCREMENTAL_PDF_APIS)
 
-void PDFPluginBase::performWebSearch(const String& query)
+void PDFPluginBase::performWebSearch(StringImpl* query)
 {
     if (!query)
         return;
@@ -684,12 +684,12 @@ void PDFPluginBase::addArchiveResource()
 
     // Add just enough data for context menu handling and web archives to work.
     Ref view = *m_view;
-    RetainPtr headers = @{ @"Content-Disposition": m_suggestedFilename.createNSString().get(), @"Content-Type" : @"application/pdf" };
+    RetainPtr headers = @{ @"Content-Disposition": createNSString(m_suggestedFilename).get(), @"Content-Type" : @"application/pdf" };
     RetainPtr response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:view->mainResourceURL().createNSURL().get() statusCode:200 HTTPVersion:(NSString*)kCFHTTPVersion1_1 headerFields:headers.get()]);
     ResourceResponse synthesizedResponse(response.get());
 
     RetainPtr data = originalData();
-    auto resource = ArchiveResource::create(SharedBuffer::create(data.get()), view->mainResourceURL(), "application/pdf"_s, String(), String(), synthesizedResponse);
+    auto resource = ArchiveResource::create(SharedBuffer::create(data.get()), view->mainResourceURL(), "application/pdf"_si, nullString(), nullString(), synthesizedResponse);
     protect(protect(protect(view->frame())->document())->loader())->addArchiveResource(resource.releaseNonNull());
 }
 
@@ -1009,7 +1009,7 @@ IntPoint PDFPluginBase::convertFromContainingViewToScrollbar(const Scrollbar& sc
     return point;
 }
 
-String PDFPluginBase::debugDescription() const
+RefPtr<StringImpl> PDFPluginBase::debugDescription() const
 {
     return makeString("PDFPluginBase 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
 }
@@ -1225,7 +1225,7 @@ SUPPRESS_NODELETE NSString *PDFPluginBase::rtfPasteboardType()
 
 void PDFPluginBase::writeItemsToGeneralPasteboard(Vector<PasteboardItem>&& pasteboardItems) const
 {
-    auto originIdentifier = [frame = m_frame] -> String {
+    auto originIdentifier = [frame = m_frame] -> RefPtr<StringImpl> {
         if (!frame || !frame->coreLocalFrame())
             return { };
         RefPtr document = frame->coreLocalFrame()->document();
@@ -1261,20 +1261,22 @@ void PDFPluginBase::writeItemsToGeneralPasteboard(Vector<PasteboardItem>&& paste
             continue;
         }
 
-        if ([type isEqualToString:RetainPtr { htmlPasteboardType() }.get()])
-            ensureContent(pasteboardContent)->dataInHTMLFormat = String { adoptNS([[NSString alloc] initWithData:data.get() encoding:NSUTF8StringEncoding]).autorelease() };
-        else if ([type isEqualToString:RetainPtr { rtfPasteboardType() }.get()])
+        if ([type isEqualToString:RetainPtr { htmlPasteboardType() }.get()]) {
+            RetainPtr string = adoptNS([[NSString alloc] initWithData:data.get() encoding:NSUTF8StringEncoding]);
+            ensureContent(pasteboardContent)->dataInHTMLFormat = StringImpl::create(string.get());
+        } else if ([type isEqualToString:RetainPtr { rtfPasteboardType() }.get()])
             ensureContent(pasteboardContent)->dataInRTFFormat = SharedBuffer::create(data.get());
-        else if ([type isEqualToString:RetainPtr { stringPasteboardType() }.get()])
-            ensureContent(pasteboardContent)->dataInStringFormat = String { adoptNS([[NSString alloc] initWithData:data.get() encoding:NSUTF8StringEncoding]).autorelease() };
-        else if ([type isEqualToString:RetainPtr { urlPasteboardType() }.get()]) {
+        else if ([type isEqualToString:RetainPtr { stringPasteboardType() }.get()]) {
+            RetainPtr string = adoptNS([[NSString alloc] initWithData:data.get() encoding:NSUTF8StringEncoding]);
+            ensureContent(pasteboardContent)->dataInStringFormat = StringImpl::create(string.get());
+        } else if ([type isEqualToString:RetainPtr { urlPasteboardType() }.get()]) {
             URL url { [NSURL URLWithDataRepresentation:data.get() relativeToURL:nil] };
             URL sanitizedURL { applyLinkDecorationFiltering(url) };
             pasteboardURL = PasteboardURL {
                 .url = sanitizedURL,
                 .title = sanitizedURL.string(),
 #if PLATFORM(MAC)
-                .userVisibleForm = WTF::userVisibleString(sanitizedURL.createNSURL().get()),
+                .userVisibleForm = StringImpl::create(protect(WTF::userVisibleString(sanitizedURL.createNSURL().get())).get()),
 #endif
             };
         }
@@ -1288,11 +1290,11 @@ void PDFPluginBase::writeItemsToGeneralPasteboard(Vector<PasteboardItem>&& paste
 }
 
 #if PLATFORM(MAC)
-void PDFPluginBase::writeStringToFindPasteboard(const String& string) const
+void PDFPluginBase::writeStringToFindPasteboard(StringImpl* string) const
 {
     auto context = PagePasteboardContext::create(pageIdentifier());
-    platformStrategies()->pasteboardStrategy()->setTypes({ NSPasteboardTypeString }, NSPasteboardNameFind, context.get());
-    platformStrategies()->pasteboardStrategy()->setStringForType(string, NSPasteboardTypeString, NSPasteboardNameFind, context.get());
+    platformStrategies()->pasteboardStrategy()->setTypes({ StringImpl::create(NSPasteboardTypeString) }, StringImpl::create(NSPasteboardNameFind).get(), context.get());
+    platformStrategies()->pasteboardStrategy()->setStringForType(string, StringImpl::create(NSPasteboardTypeString).get(), StringImpl::create(NSPasteboardNameFind).get(), context.get());
 }
 #endif
 
@@ -1322,11 +1324,11 @@ bool PDFPluginBase::hudEnabled() const
     return false;
 }
 
-void PDFPluginBase::save(CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&& completionHandler)
+void PDFPluginBase::save(CompletionHandler<void(StringImpl*, const URL&, std::span<const uint8_t>)>&& completionHandler)
 {
     if (!m_documentFinishedLoading) {
         if (auto existingCompletionHandler = std::exchange(m_pendingSaveCompletionHandler, WTF::move(completionHandler)))
-            existingCompletionHandler({ }, { }, { });
+            existingCompletionHandler(nullptr, { }, { });
         return;
     }
 
@@ -1337,7 +1339,7 @@ void PDFPluginBase::save(CompletionHandler<void(const String&, const URL&, std::
     completionHandler(m_suggestedFilename, url, span(data.get()));
 }
 
-void PDFPluginBase::openWithPreview(CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&& completionHandler)
+void PDFPluginBase::openWithPreview(CompletionHandler<void(StringImpl*, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&& completionHandler)
 {
     std::optional<FrameInfoData> frameInfo;
     if (RefPtr frame = m_frame.get())
@@ -1346,7 +1348,7 @@ void PDFPluginBase::openWithPreview(CompletionHandler<void(const String&, std::o
     if (!m_documentFinishedLoading) {
         if (auto existingCompletionHandler = std::exchange(m_pendingOpenCompletionHandler, WTF::move(completionHandler))) {
             // FrameInfo can't be default-constructed; the receiving process will ASSERT if it is.
-            existingCompletionHandler({ }, WTF::move(frameInfo), { });
+            existingCompletionHandler(nullptr, WTF::move(frameInfo), { });
         }
         return;
     }
@@ -1476,7 +1478,7 @@ bool PDFPluginBase::populateEditorStateIfNeeded(EditorState& state) const
         return true;
     }
 
-    if (selectionString().isNull())
+    if (!selectionString())
         return false;
 
     state.selectionType = WebCore::SelectionType::Range;
@@ -1531,14 +1533,14 @@ static void verboseLog(PDFIncrementalLoader* incrementalLoader, std::optional<ui
         stream << " not";
     stream << " complete";
 
-    LOG(IncrementalPDFVerbose, "%s", stream.release().utf8());
+    LOG(IncrementalPDFVerbose, "%s", utf8(stream.release()));
 }
 #endif
 
-void PDFPluginBase::incrementalLoaderLog(const String& message)
+void PDFPluginBase::incrementalLoaderLog(StringImpl* message)
 {
 #if HAVE(INCREMENTAL_PDF_APIS)
-    ensureOnMainRunLoop([this, protectedThis = Ref { *this }, message = message.isolatedCopy(), byteCount = streamedBytesForDebugLogging()] mutable {
+    ensureOnMainRunLoop([this, protectedThis = Ref { *this }, message = isolatedCopy(message), byteCount = streamedBytesForDebugLogging()] mutable {
         // If we failed to acquire the data lock, try again post main thread hop.
         byteCount = byteCount.or_else([&protectedThis] {
             return protectedThis->streamedBytesForDebugLogging();
@@ -1550,7 +1552,7 @@ void PDFPluginBase::incrementalLoaderLog(const String& message)
 #endif
 }
 
-void PDFPluginBase::incrementalLoaderLogWithBytes(const String& message, std::optional<uint64_t>&& streamedBytes)
+void PDFPluginBase::incrementalLoaderLogWithBytes(StringImpl* message, std::optional<uint64_t>&& streamedBytes)
 {
     LOG_WITH_STREAM(IncrementalPDF, stream << message);
     verboseLog(m_incrementalLoader.get(), WTF::move(streamedBytes), m_documentFinishedLoading);
@@ -1575,7 +1577,7 @@ std::optional<FrameIdentifier> PDFPluginBase::rootFrameID() const
 }
 
 // FIXME: Share more of the style sheet between the embed/non-embed case.
-String PDFPluginBase::annotationStyle() const
+RefPtr<StringImpl> PDFPluginBase::annotationStyle() const
 {
     if (!supportsForms()) {
         return
@@ -1703,13 +1705,13 @@ void PDFPluginBase::updateFullFramePluginBackgroundColor()
         body->setInlineStyleProperty(CSSPropertyID::BackgroundColor, serializationForHTML(pluginBackgroundColor()));
 }
 
-unsigned PDFPluginBase::countFindMatches(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)
+unsigned PDFPluginBase::countFindMatches(StringImpl* target, WebCore::FindOptions options, unsigned maxMatchCount)
 {
-    if (!target.length())
+    if (!length(target))
         return 0;
 
     NSStringCompareOptions nsOptions = options.contains(FindOption::CaseInsensitive) ? NSCaseInsensitiveSearch : 0;
-    return [[m_pdfDocument findString:target.createNSString().get() withOptions:nsOptions] count];
+    return [[m_pdfDocument findString:createNSString(target).get() withOptions:nsOptions] count];
 }
 
 } // namespace WebKit

@@ -174,7 +174,7 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, Negotiated
             completionHandler(PolicyAction::Ignore);
             cancel();
             if (RefPtr client = m_client.get())
-                client->didCompleteWithError({ String(), 0, url, makeString("Cancelled load from '"_s, url.stringCenterEllipsizedToLength(), "' because it is using HTTP/0.9."_s) });
+                client->didCompleteWithError({ nullString(), 0, url, makeString("Cancelled load from '"_s, url.stringCenterEllipsizedToLength(), "' because it is using HTTP/0.9."_s) });
             return;
         }
     }
@@ -188,7 +188,7 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, Negotiated
             completionHandler(PolicyAction::Ignore);
             cancel();
             if (RefPtr client = m_client.get())
-                client->didCompleteWithError({ String(), 0, url, makeString("Cancelled load from '"_s, url.stringCenterEllipsizedToLength(), "' because localhost did not resolve to a loopback address."_s) });
+                client->didCompleteWithError({ nullString(), 0, url, makeString("Cancelled load from '"_s, url.stringCenterEllipsizedToLength(), "' because localhost did not resolve to a loopback address."_s) });
             return;
         }
     }
@@ -211,7 +211,7 @@ bool NetworkDataTask::shouldCaptureExtraNetworkLoadMetrics() const
     return client && client->shouldCaptureExtraNetworkLoadMetrics();
 }
 
-String NetworkDataTask::description() const
+RefPtr<StringImpl> NetworkDataTask::description() const
 {
     return emptyString();
 }
@@ -230,9 +230,9 @@ void NetworkDataTask::restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceR
         request.setExistingHTTPReferrerToOriginString();
 }
 
-String NetworkDataTask::attributedBundleIdentifier(WebPageProxyIdentifier pageID)
+RefPtr<StringImpl> NetworkDataTask::attributedBundleIdentifier(WebPageProxyIdentifier pageID)
 {
-    if (auto* session = m_session.get())
+    if (CheckedPtr session = m_session.get())
         return session->attributedBundleIdentifierFromPageIdentifier(pageID);
     return { };
 }

@@ -337,9 +337,9 @@ TEST(LockdownMode, DISABLED_WorkerFontParsedViaSafeFontParser)
         auto canaryFontData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"SafeFontParser-Invalid" withExtension:@"ttf"]];
 
         HTTPServer server { { }, HTTPServer::Protocol::Http };
-        server.addResponse("/SafeFontParserWorker.html"_s, { workerTestPage });
-        server.addResponse("/Ahem.ttf"_s, { ahemFontData });
-        server.addResponse("/SafeFontParser-invalid.ttf"_s, { canaryFontData });
+        server.addResponse("/SafeFontParserWorker.html"_si, { StringImpl::create(workerTestPage).get() });
+        server.addResponse("/Ahem.ttf"_si, { ahemFontData });
+        server.addResponse("/SafeFontParser-invalid.ttf"_si, { canaryFontData });
 
         RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
         webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;

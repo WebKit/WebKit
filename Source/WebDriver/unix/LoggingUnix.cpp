@@ -28,13 +28,13 @@
 
 namespace WebDriver {
 
-String logLevelString()
+RefPtr<StringImpl> logLevelString()
 {
 #if PLATFORM(COCOA)
     // WTF reads the channels from the WTFLogging default on Cocoa. Take them from WEBKIT_DEBUG,
     // like on the other ports, which is what the usage statement documents.
     if (auto* channels = getenv("WEBKIT_DEBUG"))
-        return String::fromUTF8(channels);
+        return StringImpl::fromUTF8(channels);
 #endif
     return WTF::logLevelString();
 }

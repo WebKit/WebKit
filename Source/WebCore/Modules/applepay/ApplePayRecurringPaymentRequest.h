@@ -34,12 +34,12 @@
 namespace WebCore {
 
 struct ApplePayRecurringPaymentRequest final {
-    String paymentDescription; // required
+    RefPtr<StringImpl> paymentDescription; // required
     ApplePayLineItem regularBilling; // required, must be `paymentTiming: "recurring"
     std::optional<ApplePayLineItem> trialBilling; // must be `paymentTiming: "recurring"
-    String billingAgreement;
-    String managementURL; // required
-    String tokenNotificationURL;
+    RefPtr<StringImpl> billingAgreement;
+    RefPtr<StringImpl> managementURL; // required
+    RefPtr<StringImpl> tokenNotificationURL;
 };
 
 } // namespace WebCore

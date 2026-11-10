@@ -129,7 +129,7 @@ Structure* WebAssemblyExceptionConstructor::createStructure(VM& vm, JSGlobalObje
 
 void WebAssemblyExceptionConstructor::finishCreation(VM& vm, WebAssemblyExceptionPrototype* prototype)
 {
-    Base::finishCreation(vm, 2, "Exception"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 2, "Exception"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
 }
 

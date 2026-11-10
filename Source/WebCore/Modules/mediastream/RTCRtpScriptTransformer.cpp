@@ -92,32 +92,32 @@ void RTCRtpScriptTransformer::clear(ClearCallback clearCallback)
     stopPendingActivity();
 }
 
-static std::optional<Exception> validateRid(const String& rid)
+static std::optional<Exception> validateRid(StringImpl* rid)
 {
-    if (rid.isNull())
+    if (!rid)
         return { };
 
-    if (rid.isEmpty())
-        return Exception { ExceptionCode::NotAllowedError, "rid is empty"_s };
+    if (isEmpty(rid))
+        return Exception { ExceptionCode::NotAllowedError, "rid is empty"_si };
 
     constexpr unsigned maxRidLength = 255;
-    if (rid.length() > maxRidLength)
-        return Exception { ExceptionCode::NotAllowedError, "rid is too long"_s };
+    if (length(rid) > maxRidLength)
+        return Exception { ExceptionCode::NotAllowedError, "rid is too long"_si };
 
-    auto foundBadCharacters = rid.find([](auto character) -> bool {
+    auto foundBadCharacters = find(rid, [](auto character) -> bool {
         return !isASCIIDigit(character) && !isASCIIAlpha(character);
     });
     if (foundBadCharacters != notFound)
-        return Exception { ExceptionCode::NotAllowedError, "rid has a character that is not alpha numeric"_s };
+        return Exception { ExceptionCode::NotAllowedError, "rid has a character that is not alpha numeric"_si };
 
     return { };
 }
 
-void RTCRtpScriptTransformer::generateKeyFrame(const String& rid, Ref<DeferredPromise>&& promise)
+void RTCRtpScriptTransformer::generateKeyFrame(StringImpl* rid, Ref<DeferredPromise>&& promise)
 {
     RefPtr context = scriptExecutionContext();
     if (!context || !m_streamProducer->isVideo() || !m_isSender) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "Not attached to a valid video sender"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Not attached to a valid video sender"_si });
         return;
     }
 
@@ -133,7 +133,7 @@ void RTCRtpScriptTransformer::sendKeyFrameRequest(Ref<DeferredPromise>&& promise
 {
     RefPtr context = scriptExecutionContext();
     if (!context || !m_streamProducer->isVideo() || m_isSender) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "Not attached to a valid video receiver"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Not attached to a valid video receiver"_si });
         return;
     }
 

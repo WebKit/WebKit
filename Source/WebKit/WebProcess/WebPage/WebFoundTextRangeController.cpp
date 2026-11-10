@@ -110,7 +110,7 @@ NODELETE static inline bool canConvertToWebFoundTextRange(const SimpleRange& ran
 }
 
 #if ENABLE(PDF_PLUGIN)
-static inline Vector<WebFoundTextRange::PDFData> findPDFMatchesInFrame(Frame* frame, const String& string, OptionSet<FindOptions> options)
+static inline Vector<WebFoundTextRange::PDFData> findPDFMatchesInFrame(Frame* frame, StringImpl* string, OptionSet<FindOptions> options)
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
     if (!localFrame)
@@ -125,7 +125,7 @@ static inline Vector<WebFoundTextRange::PDFData> findPDFMatchesInFrame(Frame* fr
 #endif
 
 #if ENABLE(VIDEO)
-static Vector<WebFoundTextRange::CueData> findCueMatchesInFrame(Frame* frame, const String& string, OptionSet<FindOptions> options)
+static Vector<WebFoundTextRange::CueData> findCueMatchesInFrame(Frame* frame, StringImpl* string, OptionSet<FindOptions> options)
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
     if (!localFrame)
@@ -151,7 +151,7 @@ static Vector<WebFoundTextRange::CueData> findCueMatchesInFrame(Frame* frame, co
 }
 #endif
 
-void WebFoundTextRangeController::findTextRangesForStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount, CompletionHandler<void(HashMap<WebCore::FrameIdentifier, Vector<WebFoundTextRange>>&&)>&& completionHandler)
+void WebFoundTextRangeController::findTextRangesForStringMatches(StringImpl* string, OptionSet<FindOptions> options, uint32_t maxMatchCount, CompletionHandler<void(HashMap<WebCore::FrameIdentifier, Vector<WebFoundTextRange>>&&)>&& completionHandler)
 {
     auto matchingRanges = protect(protect(m_webPage.get())->corePage())->findTextMatches(string, core(options), maxMatchCount, false);
     const Vector findMatches = WTF::move(matchingRanges.ranges);
@@ -199,7 +199,7 @@ void WebFoundTextRangeController::findTextRangesForStringMatches(const String& s
     completionHandler(WTF::move(frameMatches));
 }
 
-void WebFoundTextRangeController::replaceFoundTextRangeWithString(const WebFoundTextRange& range, const String& string)
+void WebFoundTextRangeController::replaceFoundTextRangeWithString(const WebFoundTextRange& range, StringImpl* string)
 {
     auto simpleRange = simpleRangeFromFoundTextRange(range);
     if (!simpleRange)

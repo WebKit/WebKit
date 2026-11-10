@@ -54,7 +54,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DetachedRTCDataChannel);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDataChannel);
 
-Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options, RTCDataChannelState state, std::optional<RTCDataChannelIdentifier> identifier)
+Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler, RefPtr<StringImpl>&& label, RTCDataChannelInit&& options, RTCDataChannelState state, std::optional<RTCDataChannelIdentifier> identifier)
 {
     Ref channel = adoptRef(*new RTCDataChannel(context, identifier.value_or(RTCDataChannelIdentifier::generate()), WTF::move(handler), WTF::move(label), WTF::move(options), state));
     channel->suspendIfNeeded();
@@ -77,13 +77,13 @@ Ref<NetworkSendQueue> RTCDataChannel::createMessageQueue(ScriptExecutionContext&
         if (!channel || !channel->m_handler)
             return;
         if (!channel->m_handler->sendStringData(utf8))
-            protect(channel->scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Error sending string through RTCDataChannel."_s);
+            protect(channel->scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Error sending string through RTCDataChannel."_si);
     }, [weakChannel = WeakPtr { channel }](auto span) {
         RefPtr channel = weakChannel;
         if (!channel || !channel->m_handler)
             return;
         if (!channel->m_handler->sendRawData(span))
-            protect(channel->scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Error sending binary data through RTCDataChannel."_s);
+            protect(channel->scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Error sending binary data through RTCDataChannel."_si);
     }, [weakChannel = WeakPtr { channel }](ExceptionCode errorCode) {
         RefPtr channel = weakChannel;
         if (!channel)
@@ -96,7 +96,7 @@ Ref<NetworkSendQueue> RTCDataChannel::createMessageQueue(ScriptExecutionContext&
     });
 }
 
-RTCDataChannel::RTCDataChannel(ScriptExecutionContext& context, RTCDataChannelIdentifier identifier, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options, RTCDataChannelState readyState)
+RTCDataChannel::RTCDataChannel(ScriptExecutionContext& context, RTCDataChannelIdentifier identifier, std::unique_ptr<RTCDataChannelHandler>&& handler, RefPtr<StringImpl>&& label, RTCDataChannelInit&& options, RTCDataChannelState readyState)
     : ActiveDOMObject(&context)
     , RTCDataChannelHandlerClient(context.identifier(), identifier)
     , m_handler(WTF::move(handler))
@@ -140,17 +140,17 @@ NODELETE static std::optional<size_t> computeNewBufferedAmount(size_t bufferedAm
     return bufferedAmount;
 }
 
-ExceptionOr<void> RTCDataChannel::send(const String& data)
+ExceptionOr<void> RTCDataChannel::send(StringImpl* data)
 {
     if (m_readyState != RTCDataChannelState::Open)
         return Exception { ExceptionCode::InvalidStateError };
 
     // FIXME: We might want to use strict conversion like WebSocket.
-    auto utf8 = data.utf8();
+    auto utf8 = WTF::utf8(data);
 
     auto newBufferedAmount = computeNewBufferedAmount(m_bufferedAmount, utf8.length());
     if (!newBufferedAmount)
-        return Exception { ExceptionCode::OperationError, "Trying to send too much data"_s };
+        return Exception { ExceptionCode::OperationError, "Trying to send too much data"_si };
 
     m_bufferedAmount = *newBufferedAmount;
     m_messageQueue->enqueue(WTF::move(utf8));
@@ -164,7 +164,7 @@ ExceptionOr<void> RTCDataChannel::send(ArrayBuffer& data)
 
     auto newBufferedAmount = computeNewBufferedAmount(m_bufferedAmount, data.byteLength());
     if (!newBufferedAmount)
-        return Exception { ExceptionCode::OperationError, "Trying to send too much data"_s };
+        return Exception { ExceptionCode::OperationError, "Trying to send too much data"_si };
 
     m_bufferedAmount = *newBufferedAmount;
     m_messageQueue->enqueue(data, 0, data.byteLength());
@@ -178,7 +178,7 @@ ExceptionOr<void> RTCDataChannel::send(ArrayBufferView& data)
 
     auto newBufferedAmount = computeNewBufferedAmount(m_bufferedAmount, data.byteLength());
     if (!newBufferedAmount)
-        return Exception { ExceptionCode::OperationError, "Trying to send too much data"_s };
+        return Exception { ExceptionCode::OperationError, "Trying to send too much data"_si };
 
     m_bufferedAmount = *newBufferedAmount;
     m_messageQueue->enqueue(*data.unsharedBuffer(), data.byteOffset(), data.byteLength());
@@ -192,7 +192,7 @@ ExceptionOr<void> RTCDataChannel::send(Blob& blob)
 
     auto newBufferedAmount = computeNewBufferedAmount(m_bufferedAmount, blob.size());
     if (!newBufferedAmount)
-        return Exception { ExceptionCode::OperationError, "Trying to send too much data"_s };
+        return Exception { ExceptionCode::OperationError, "Trying to send too much data"_si };
 
     m_bufferedAmount = *newBufferedAmount;
     m_messageQueue->enqueue(blob);
@@ -252,7 +252,7 @@ void RTCDataChannel::didChangeReadyState(RTCDataChannelState newState)
     });
 }
 
-void RTCDataChannel::didReceiveStringData(const String& text)
+void RTCDataChannel::didReceiveStringData(StringImpl* text)
 {
     scheduleDispatchEvent(MessageEvent::create(text));
 }
@@ -334,7 +334,7 @@ std::unique_ptr<DetachedRTCDataChannel> RTCDataChannel::detach()
     Locker locker { s_rtcDataChannelLocalMapLock };
     rtcDataChannelLocalMap().add(identifier().object(), WTF::move(m_handler));
 
-    return makeUnique<DetachedRTCDataChannel>(identifier(), String { label() }, RTCDataChannelInit { options() }, state);
+    return makeUnique<DetachedRTCDataChannel>(identifier(), RefPtr<StringImpl> { label() }, RTCDataChannelInit { options() }, state);
 }
 
 void RTCDataChannel::removeFromDataChannelLocalMapIfNeeded()
@@ -352,7 +352,7 @@ std::unique_ptr<RTCDataChannelHandler> RTCDataChannel::handlerFromIdentifier(RTC
     return rtcDataChannelLocalMap().take(channelIdentifier);
 }
 
-static Ref<RTCDataChannel> createClosedChannel(ScriptExecutionContext& context, String&& label, RTCDataChannelInit&& options)
+static Ref<RTCDataChannel> createClosedChannel(ScriptExecutionContext& context, RefPtr<StringImpl>&& label, RTCDataChannelInit&& options)
 {
     auto channel = RTCDataChannel::create(context, nullptr, WTF::move(label), WTF::move(options), RTCDataChannelState::Closed);
     return channel;
@@ -364,7 +364,7 @@ void RTCDataChannel::fireOpenEventIfNeeded()
         dispatchEvent(Event::create(eventNames().openEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, RTCDataChannelIdentifier identifier, String&& label, RTCDataChannelInit&& options, RTCDataChannelState state)
+Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, RTCDataChannelIdentifier identifier, RefPtr<StringImpl>&& label, RTCDataChannelInit&& options, RTCDataChannelState state)
 {
     CheckedPtr<RTCDataChannelRemoteHandler> remoteHandlerPtr;
     std::unique_ptr<RTCDataChannelHandler> handler;

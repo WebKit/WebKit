@@ -56,8 +56,8 @@ public:
     NODELETE bool isEnumeratable() const final;
 
     void setFormValue(CustomElementFormValue&& submissionValue, std::optional<CustomElementFormValue>&& state);
-    ExceptionOr<void> setValidity(ValidityStateFlags, String&& message, HTMLElement* validationAnchor);
-    String validationMessage() const final;
+    ExceptionOr<void> setValidity(ValidityStateFlags, RefPtr<StringImpl>&& message, HTMLElement* validationAnchor);
+    RefPtr<StringImpl> validationMessage() const final;
 
     void finishParsingChildren();
 
@@ -67,7 +67,7 @@ public:
     NODELETE void willUpgrade();
     void didUpgrade();
 
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
     bool shouldSaveAndRestoreFormControlState() const final;
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;

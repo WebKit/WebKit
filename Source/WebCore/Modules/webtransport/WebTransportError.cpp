@@ -30,16 +30,16 @@ namespace WebCore {
 
 Ref<WebTransportError> WebTransportError::create(WebTransportErrorOptions&& options)
 {
-    return create(String(emptyString()), WTF::move(options));
+    return create(RefPtr<StringImpl>(emptyString()), WTF::move(options));
 }
 
-Ref<WebTransportError> WebTransportError::create(String&& message, WebTransportErrorOptions&& options)
+Ref<WebTransportError> WebTransportError::create(RefPtr<StringImpl>&& message, WebTransportErrorOptions&& options)
 {
     return adoptRef(*new WebTransportError(WTF::move(message), WTF::move(options)));
 }
 
-WebTransportError::WebTransportError(String&& message, WebTransportErrorOptions&& options)
-    : DOMException(0, "WebTransportError"_s, WTF::move(message), DOMException::Type::WebTransportError)
+WebTransportError::WebTransportError(RefPtr<StringImpl>&& message, WebTransportErrorOptions&& options)
+    : DOMException(0, "WebTransportError"_si, WTF::move(message), DOMException::Type::WebTransportError)
     , m_options(WTF::move(options))
 {
 }

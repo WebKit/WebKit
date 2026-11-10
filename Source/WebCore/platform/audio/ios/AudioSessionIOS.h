@@ -65,7 +65,7 @@ private:
     size_t numberOfOutputChannels() const final;
     size_t maximumNumberOfOutputChannels() const final;
     RouteSharingPolicy routeSharingPolicy() const final;
-    String routingContextUID() const final;
+    RefPtr<StringImpl> routingContextUID() const final;
     size_t preferredBufferSize() const final;
     void setPreferredBufferSize(size_t) final;
     size_t outputLatency() const final;
@@ -74,17 +74,17 @@ private:
 
     void updateSpatialExperience();
 
-    void setSceneIdentifier(const String&) final;
-    const String& sceneIdentifier() const LIFETIME_BOUND final { return m_sceneIdentifier; }
+    void setSceneIdentifier(StringImpl*) final;
+    const RefPtr<StringImpl>& sceneIdentifier() const LIFETIME_BOUND final { return m_sceneIdentifier; }
 
     void setSoundStageSize(SoundStageSize) final;
     SoundStageSize soundStageSize() const final { return m_soundStageSize; }
 
     mutable std::optional<size_t> m_preferredBufferSize;
 
-    String m_lastSetPreferredMicrophoneID;
+    RefPtr<StringImpl> m_lastSetPreferredMicrophoneID;
     const RetainPtr<WebInterruptionObserverHelper> m_interruptionObserverHelper;
-    String m_sceneIdentifier;
+    RefPtr<StringImpl> m_sceneIdentifier;
     SoundStageSize m_soundStageSize { SoundStageSize::Automatic };
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
     bool m_isFakingPlayAndRecordForTesting { false };

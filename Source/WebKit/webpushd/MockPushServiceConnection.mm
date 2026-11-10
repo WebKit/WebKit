@@ -48,7 +48,7 @@ ClientKeys MockPushServiceConnection::generateClientKeys()
     return ClientKeys { P256DHKeyPair { WTF::move(publicKey), WTF::move(privateKey) }, WTF::move(secret) };
 }
 
-void MockPushServiceConnection::subscribe(const String&, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&& handler)
+void MockPushServiceConnection::subscribe(StringImpl*, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&& handler)
 {
     auto alwaysRejectedKey = base64URLDecode("BEAxaUMo1s8tjORxJfnSSvWhYb4u51kg1hWT2s_9gpV7Zxar1pF_2BQ8AncuAdS2BoLhN4qaxzBy2CwHE8BBzWg"_s).value();
     if (vapidPublicKey == alwaysRejectedKey) {
@@ -59,7 +59,7 @@ void MockPushServiceConnection::subscribe(const String&, const Vector<uint8_t>& 
     handler(@"https://webkit.org/push", nil);
 }
 
-void MockPushServiceConnection::unsubscribe(const String&, const Vector<uint8_t>&, UnsubscribeHandler&& handler)
+void MockPushServiceConnection::unsubscribe(StringImpl*, const Vector<uint8_t>&, UnsubscribeHandler&& handler)
 {
     handler(true, nil);
 }

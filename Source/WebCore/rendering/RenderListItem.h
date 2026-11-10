@@ -39,7 +39,7 @@ public:
     int value() const;
     void updateValue();
 
-    WEBCORE_EXPORT String markerText(ListMarkerIncludeSuffix = ListMarkerIncludeSuffix::Yes) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> markerText(ListMarkerIncludeSuffix = ListMarkerIncludeSuffix::Yes) const;
 
     Vector<CheckedRef<RenderListItem>> updateListMarkerNumbers();
 

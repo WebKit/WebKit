@@ -164,9 +164,11 @@ set(TestWTF_SOURCES
     Tests/WTF/StringBuilder.cpp
     Tests/WTF/StringCommon.cpp
     Tests/WTF/StringConcatenate.cpp
+    Tests/WTF/StringFunctions.cpp
     Tests/WTF/StringHasher.cpp
     Tests/WTF/SuperFastHash.cpp
     Tests/WTF/StringImpl.cpp
+    Tests/WTF/StringImplPointerSemantics.cpp
     Tests/WTF/StringParsingBuffer.cpp
     Tests/WTF/StringSearch.cpp
     Tests/WTF/StringToIntegerConversion.cpp

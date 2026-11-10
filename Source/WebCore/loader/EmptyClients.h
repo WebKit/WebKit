@@ -76,7 +76,7 @@ class EmptyChromeClient : public ChromeClient {
     void focusedElementChanged(Element*, LocalFrame*, FocusOptions) final { }
     void focusedFrameChanged(Frame*) final { }
 
-    RefPtr<Page> createWindow(LocalFrame&, const String&, const WindowFeatures&, const NavigationAction&) final;
+    RefPtr<Page> createWindow(LocalFrame&, StringImpl*, const WindowFeatures&, const NavigationAction&) final;
     void show() final { }
 
     bool canRunModal() const final { return false; }
@@ -86,19 +86,19 @@ class EmptyChromeClient : public ChromeClient {
 
     void setResizable(bool) final { }
 
-    void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, const String&, unsigned, unsigned, const String&) final { }
+    void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, StringImpl*, unsigned, unsigned, StringImpl*) final { }
 
     bool canRunBeforeUnloadConfirmPanel() final { return false; }
-    bool runBeforeUnloadConfirmPanel(String&&, LocalFrame&) final { return true; }
+    bool runBeforeUnloadConfirmPanel(RefPtr<StringImpl>&&, LocalFrame&) final { return true; }
 
     void closeWindow() final { }
 
     void rootFrameAdded(const LocalFrame&) final { }
     void rootFrameRemoved(const LocalFrame&) final { }
 
-    void runJavaScriptAlert(LocalFrame&, const String&) final { }
-    bool runJavaScriptConfirm(LocalFrame&, const String&) final { return false; }
-    bool runJavaScriptPrompt(LocalFrame&, const String&, const String&, String&) final { return false; }
+    void runJavaScriptAlert(LocalFrame&, StringImpl*) final { }
+    bool runJavaScriptConfirm(LocalFrame&, StringImpl*) final { return false; }
+    bool runJavaScriptPrompt(LocalFrame&, StringImpl*, StringImpl*, RefPtr<StringImpl>&) final { return false; }
 
     RefPtr<PopupMenu> createPopupMenu(PopupMenuClient&) const final;
     RefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient&) const final;
@@ -122,7 +122,7 @@ class EmptyChromeClient : public ChromeClient {
     IntPoint accessibilityScreenToRootView(const IntPoint& p) const final { return p; };
     IntRect rootViewToAccessibilityScreen(const IntRect& r) const final { return r; };
 #if PLATFORM(IOS_FAMILY)
-    void relayAccessibilityNotification(String&&, RetainPtr<NSData>&&) const final { };
+    void relayAccessibilityNotification(RefPtr<StringImpl>&&, RetainPtr<NSData>&&) const final { };
     void relayAriaNotifyNotification(AriaNotifyData&&) const final { };
     void relayLiveRegionNotification(LiveRegionAnnouncementData&&) const final { };
 #endif
@@ -133,11 +133,11 @@ class EmptyChromeClient : public ChromeClient {
     void contentsSizeChanged(LocalFrame&, const IntSize&) const final { }
     void intrinsicContentsSizeChanged(const IntSize&) const final { }
 
-    void mouseDidMoveOverElement(const HitTestResult&, OptionSet<PlatformEventModifier>, const String&, TextDirection) final { }
+    void mouseDidMoveOverElement(const HitTestResult&, OptionSet<PlatformEventModifier>, StringImpl*, TextDirection) final { }
 
     void print(LocalFrame&, const StringWithDirection&) final { }
 
-    void exceededDatabaseQuota(LocalFrame&, const String&, DatabaseDetails) final { }
+    void exceededDatabaseQuota(LocalFrame&, StringImpl*, DatabaseDetails) final { }
 
     RefPtr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) final;
 
@@ -153,7 +153,7 @@ class EmptyChromeClient : public ChromeClient {
 
     NODELETE void runOpenPanel(LocalFrame&, FileChooser&) final;
     NODELETE void showShareSheet(ShareDataWithParsedURL&&, CompletionHandler<void(bool)>&&) final;
-    void loadIconForFiles(const Vector<String>&, FileIconLoader&) final { }
+    void loadIconForFiles(const Vector<RefPtr<StringImpl>>&, FileIconLoader&) final { }
 
     void elementDidFocus(Element&, const FocusOptions&) final { }
     void elementDidBlur(Element&) final { }
@@ -176,7 +176,7 @@ class EmptyChromeClient : public ChromeClient {
 
 #if PLATFORM(PLAYSTATION) || PLATFORM(HAIKU)
     void postAccessibilityNotification(AccessibilityObject&, AXNotification) final { }
-    void postAccessibilityNodeTextChangeNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) final { }
+    void postAccessibilityNodeTextChangeNotification(AccessibilityObject*, AXTextChange, unsigned, StringImpl*) final { }
     void postAccessibilityFrameLoadingEventNotification(AccessibilityObject*, AXLoadingEvent) final { }
 #endif
 
@@ -199,7 +199,7 @@ class EmptyChromeClient : public ChromeClient {
     void removeScrollingLayer(Node*, PlatformLayer*, PlatformLayer*) final { }
 
     void webAppOrientationsUpdated() final { }
-    void showPlaybackTargetPicker(bool, RouteSharingPolicy, const String&) final { }
+    void showPlaybackTargetPicker(bool, RouteSharingPolicy, StringImpl*) final { }
 
     bool showDataDetectorsUIForElement(const Element&, const Event&) final { return false; }
 #endif // PLATFORM(IOS_FAMILY)
@@ -223,7 +223,7 @@ class EmptyChromeClient : public ChromeClient {
     void didAssociateFormControls(const Vector<Ref<Element>>&, LocalFrame&) final { }
     bool shouldNotifyOnFormChanges() final { return false; }
 
-    RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final;
+    RefPtr<Icon> createIconForFiles(const Vector<RefPtr<StringImpl>>& /* filenames */) final;
 };
 
 WEBCORE_EXPORT Ref<SocketProvider> emptySocketProvider();

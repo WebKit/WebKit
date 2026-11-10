@@ -41,10 +41,10 @@
 
 namespace WebCore {
 
-Vector<uint8_t> produceRpIdHash(const String& rpId)
+Vector<uint8_t> produceRpIdHash(StringImpl* rpId)
 {
     auto crypto = PAL::Crypto::CryptoDigest::create(PAL::Crypto::CryptoDigest::Algorithm::SHA_256);
-    auto rpIdUTF8 = rpId.utf8();
+    auto rpIdUTF8 = utf8(rpId);
     crypto->addBytes(std::as_bytes(rpIdUTF8.span()));
     return crypto->computeHash();
 }
@@ -85,7 +85,7 @@ Vector<uint8_t> buildAttestedCredentialData(const Vector<uint8_t>& aaguid, const
     return attestedCredentialData;
 }
 
-cbor::CBORValue::MapValue buildUserEntityMap(const Vector<uint8_t>& userId, const String& name, const String& displayName)
+cbor::CBORValue::MapValue buildUserEntityMap(const Vector<uint8_t>& userId, StringImpl* name, StringImpl* displayName)
 {
     cbor::CBORValue::MapValue userEntityMap;
     userEntityMap[cbor::CBORValue(fido::kEntityIdMapKey)] = cbor::CBORValue(userId);
@@ -101,7 +101,7 @@ cbor::CBORValue::MapValue buildCredentialDescriptor(const Vector<uint8_t>& crede
     return credential;
 }
 
-Vector<uint8_t> buildAuthData(const String& rpId, const uint8_t flags, const uint32_t counter, const Vector<uint8_t>& optionalAttestedCredentialData)
+Vector<uint8_t> buildAuthData(StringImpl* rpId, const uint8_t flags, const uint32_t counter, const Vector<uint8_t>& optionalAttestedCredentialData)
 {
     Vector<uint8_t> authData(ReserveCapacityTag { }, rpIdHashLength + flagsLength + signCounterLength + optionalAttestedCredentialData.size());
 
@@ -123,7 +123,7 @@ Vector<uint8_t> buildAuthData(const String& rpId, const uint8_t flags, const uin
     return authData;
 }
 
-cbor::CBORValue::MapValue buildAttestationMap(Vector<uint8_t>&& authData, String&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference& attestation, ShouldZeroAAGUID shouldZero)
+cbor::CBORValue::MapValue buildAttestationMap(Vector<uint8_t>&& authData, RefPtr<StringImpl>&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference& attestation, ShouldZeroAAGUID shouldZero)
 {
     cbor::CBORValue::MapValue attestationObjectMap;
     // The following implements Step 20 with regard to AttestationConveyancePreference
@@ -134,7 +134,7 @@ cbor::CBORValue::MapValue buildAttestationMap(Vector<uint8_t>&& authData, String
         const size_t aaguidOffset = rpIdHashLength + flagsLength + signCounterLength;
         if (authData.size() >= aaguidOffset + aaguidLength && shouldZero == ShouldZeroAAGUID::Yes)
             zeroSpan(authData.mutableSpan().subspan(aaguidOffset, aaguidLength));
-        format = String::fromLatin1(noneAttestationValue);
+        format = StringImpl::fromLatin1(noneAttestationValue);
         statementMap.clear();
     }
     attestationObjectMap[cbor::CBORValue("authData")] = cbor::CBORValue(WTF::move(authData));
@@ -143,7 +143,7 @@ cbor::CBORValue::MapValue buildAttestationMap(Vector<uint8_t>&& authData, String
     return attestationObjectMap;
 }
 
-Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, String&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference& attestation, ShouldZeroAAGUID shouldZero)
+Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, RefPtr<StringImpl>&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference& attestation, ShouldZeroAAGUID shouldZero)
 {
     cbor::CBORValue::MapValue attestationObjectMap = buildAttestationMap(WTF::move(authData), WTF::move(format), WTF::move(statementMap), attestation, shouldZero);
 
@@ -152,28 +152,28 @@ Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, String&& form
     return *attestationObject;
 }
 
-Ref<ArrayBuffer> buildClientDataJson(ClientDataType type, const BufferSource& challenge, const SecurityOrigin& origin, WebAuthn::Scope scope, const String& topOrigin)
+Ref<ArrayBuffer> buildClientDataJson(ClientDataType type, const BufferSource& challenge, const SecurityOrigin& origin, WebAuthn::Scope scope, StringImpl* topOrigin)
 {
     // https://www.w3.org/TR/webauthn-2/#clientdatajson-verification
     auto object = JSON::Object::create();
     switch (type) {
     case ClientDataType::Create:
-        object->setString("type"_s, "webauthn.create"_s);
+        object->setString("type"_si, "webauthn.create"_si);
         break;
     case ClientDataType::Get:
-        object->setString("type"_s, "webauthn.get"_s);
+        object->setString("type"_si, "webauthn.get"_si);
         break;
     }
-    object->setString("challenge"_s, base64URLEncodeToString(challenge.span()));
-    object->setString("origin"_s, origin.toRawString());
+    object->setString("challenge"_si, base64URLEncodeToString(challenge.span()));
+    object->setString("origin"_si, origin.toRawString());
 
     if (scope != WebAuthn::Scope::SameOrigin)
-        object->setBoolean("crossOrigin"_s, scope != WebAuthn::Scope::SameOrigin);
+        object->setBoolean("crossOrigin"_si, scope != WebAuthn::Scope::SameOrigin);
 
-    if (!topOrigin.isNull())
-        object->setString("topOrigin"_s, topOrigin);
+    if (topOrigin)
+        object->setString("topOrigin"_si, topOrigin);
 
-    return ArrayBuffer::create(byteCast<uint8_t>(object->toJSONString().utf8().span()));
+    return ArrayBuffer::create(byteCast<uint8_t>(utf8(object->toJSONString()).span()));
 }
 
 Vector<uint8_t> buildClientDataJsonHash(const ArrayBuffer& clientDataJson)
@@ -192,7 +192,7 @@ Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_
     return rawKey;
 }
 
-String toString(AuthenticatorTransport transport)
+RefPtr<StringImpl> toString(AuthenticatorTransport transport)
 {
     switch (transport) {
     case AuthenticatorTransport::Usb:
@@ -220,21 +220,21 @@ String toString(AuthenticatorTransport transport)
     return nullString();
 }
 
-std::optional<AuthenticatorTransport> convertStringToAuthenticatorTransport(const String& transport)
+std::optional<AuthenticatorTransport> convertStringToAuthenticatorTransport(StringImpl* transport)
 {
-    if (transport == authenticatorTransportUsb)
+    if (equal(transport, authenticatorTransportUsb))
         return AuthenticatorTransport::Usb;
-    if (transport == authenticatorTransportNfc)
+    if (equal(transport, authenticatorTransportNfc))
         return AuthenticatorTransport::Nfc;
-    if (transport == authenticatorTransportBle)
+    if (equal(transport, authenticatorTransportBle))
         return AuthenticatorTransport::Ble;
-    if (transport == authenticatorTransportInternal)
+    if (equal(transport, authenticatorTransportInternal))
         return AuthenticatorTransport::Internal;
-    if (transport == authenticatorTransportCable)
+    if (equal(transport, authenticatorTransportCable))
         return AuthenticatorTransport::Cable;
-    if (transport == authenticatorTransportHybrid)
+    if (equal(transport, authenticatorTransportHybrid))
         return AuthenticatorTransport::Hybrid;
-    if (transport == authenticatorTransportSmartCard)
+    if (equal(transport, authenticatorTransportSmartCard))
         return AuthenticatorTransport::SmartCard;
     return std::nullopt;
 }

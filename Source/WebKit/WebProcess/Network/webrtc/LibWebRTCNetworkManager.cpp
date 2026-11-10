@@ -69,9 +69,9 @@ RefPtr<LibWebRTCNetworkManager> LibWebRTCNetworkManager::getOrCreate(WebCore::Sc
     return networkManager;
 }
 
-void LibWebRTCNetworkManager::signalUsedInterface(WebCore::ScriptExecutionContextIdentifier contextIdentifier, String&& name)
+void LibWebRTCNetworkManager::signalUsedInterface(WebCore::ScriptExecutionContextIdentifier contextIdentifier, RefPtr<StringImpl>&& name)
 {
-    callOnMainRunLoop([contextIdentifier, name = WTF::move(name).isolatedCopy()]() mutable {
+    callOnMainRunLoop([contextIdentifier, name = isolatedCopy(WTF::move(name))]() mutable {
         if (RefPtr manager = LibWebRTCNetworkManager::getOrCreate(contextIdentifier))
             manager->signalUsedInterface(WTF::move(name));
     });
@@ -173,7 +173,7 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
                 };
                 protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendWithAsyncReply(Messages::NetworkRTCProvider::GetInterfaceName { document->url(), webPage->webPageProxyIdentifier(), flags, WTF::move(domain) }, [weakThis = WeakPtr { *this }] (auto&& interfaceName) {
                     RefPtr protectedThis = weakThis.get();
-                    if (protectedThis && !interfaceName.isNull())
+                    if (protectedThis && interfaceName)
                         protectedThis->signalUsedInterface(WTF::move(interfaceName));
                 }, 0);
             }
@@ -200,7 +200,7 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
 
 }
 
-const String& LibWebRTCNetworkManager::interfaceNameForTesting() const
+const RefPtr<StringImpl>& LibWebRTCNetworkManager::interfaceNameForTesting() const
 {
     ASSERT(isMainRunLoop());
     for (auto& name : m_allowedInterfaces)
@@ -208,7 +208,7 @@ const String& LibWebRTCNetworkManager::interfaceNameForTesting() const
     return emptyString();
 }
 
-void LibWebRTCNetworkManager::signalUsedInterface(String&& name)
+void LibWebRTCNetworkManager::signalUsedInterface(RefPtr<StringImpl>&& name)
 {
     ASSERT(isMainRunLoop());
     if (!m_allowedInterfaces.add(WTF::move(name)).isNewEntry || m_useMDNSCandidates || !m_enableEnumeratingVisibleNetworkInterfaces)
@@ -238,10 +238,10 @@ void LibWebRTCNetworkManager::CreateNameForAddress(const webrtc::IPAddress& addr
             return;
 
         protect(protect(WebProcess::singleton().libWebRTCNetwork())->mdnsRegister())->registerMDNSName(weakThis->m_documentIdentifier, fromStdString(address.ToString()), [address, callback = WTF::move(callback)](auto name, auto error) mutable {
-            WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([address, callback = WTF::move(callback), name = WTF::move(name).isolatedCopy(), error] {
+            WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([address, callback = WTF::move(callback), name = isolatedCopy(name), error] {
                 RELEASE_LOG_ERROR_IF(error, WebRTC, "MDNS registration of a host candidate failed with error %hhu", std::to_underlying(*error));
                 // In case of error, we provide the name to let gathering complete.
-                callback(address, std::string_view { byteCast<char>(name.utf8().span()) });
+                callback(address, std::string_view { byteCast<char>(utf8(name).span()) });
             });
         });
     });

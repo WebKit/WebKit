@@ -386,7 +386,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 - (NSString *)description
 {
     if (RefPtr<AXCoreObject> backingObject = self.axBackingObject) {
-        RetainPtr<NSString> backingDescription = backingObject->debugDescription().createNSString().autorelease();
+        RetainPtr<NSString> backingDescription = createNSString(backingObject->debugDescription()).autorelease();
         return [NSString stringWithFormat:@"wrapper %p { object %@ }", self, backingDescription.get()];
     }
     return [NSString stringWithFormat:@"%@ (null backing object)", [super description]];
@@ -440,7 +440,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
     RefPtr<AXCoreObject> backingObject = self.axBackingObject;
     if (!backingObject)
         return nil;
-    return [backingObject->speechHint().createNSString() componentsSeparatedByString:@" "];
+    return [createNSString(backingObject->speechHint()) componentsSeparatedByString:@" "];
 }
 
 #if HAVE(ACCESSIBILITY_FRAMEWORK)
@@ -452,10 +452,10 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 
     RetainPtr<NSMutableArray<AXCustomContent *>> accessibilityCustomContent = nil;
     auto extendedDescription = backingObject->extendedDescription();
-    if (extendedDescription.length()) {
+    if (length(extendedDescription)) {
         accessibilityCustomContent = adoptNS([[NSMutableArray alloc] init]);
         Class customContentClass = PAL::getAXCustomContentClassSingleton();
-        RetainPtr contentItem = checked_objc_cast<AXCustomContent>([customContentClass customContentWithLabel:WEB_UI_STRING("description", "description detail").createNSString().get() value:extendedDescription.createNSString().get()]);
+        RetainPtr contentItem = checked_objc_cast<AXCustomContent>([customContentClass customContentWithLabel:createNSString(WEB_UI_STRING("description", "description detail")).get() value:createNSString(extendedDescription).get()]);
         // Set this to high, so that it's always spoken.
         [contentItem setImportance:AXCustomContentImportanceHigh];
         [accessibilityCustomContent addObject:contentItem];
@@ -468,7 +468,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 - (NSString *)baseAccessibilityHelpText
 {
     RefPtr<AXCoreObject> backingObject = self.axBackingObject;
-    return backingObject ? backingObject->helpTextAttributeValue().createNSString().autorelease() : nil;
+    return backingObject ? createNSString(backingObject->helpTextAttributeValue()).autorelease() : nil;
 }
 
 struct PathConversionInfo {
@@ -676,13 +676,13 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
                 RetainPtr<NSString> label;
                 switch (object->role()) {
                 case AccessibilityRole::StaticText:
-                    label = object->stringValue().createNSString();
+                    label = createNSString(object->stringValue());
                     break;
                 case AccessibilityRole::Image: {
-                    String name = object->title();
-                    if (name.isEmpty())
+                    RefPtr<StringImpl> name = object->title();
+                    if (isEmpty(name))
                         name = object->descriptionAttributeValue();
-                    label = name.createNSString();
+                    label = createNSString(name);
                     break;
                 }
                 default:
@@ -729,7 +729,7 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
 - (NSString *)ariaLandmarkRoleDescription
 {
     RefPtr<AXCoreObject> backingObject = self.axBackingObject;
-    return backingObject ? backingObject->ariaLandmarkRoleDescription().createNSString().autorelease() : nil;
+    return backingObject ? createNSString(backingObject->ariaLandmarkRoleDescription()).autorelease() : nil;
 }
 
 - (NSString *)accessibilityPlatformMathSubscriptKey
@@ -778,15 +778,15 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
 
     NSMutableDictionary<NSString *, id> *results = [NSMutableDictionary dictionary];
     auto editingStyles = axObject->resolvedEditingStyles();
-    for (String& key : editingStyles.keys()) {
+    for (RefPtr<StringImpl>& key : editingStyles.keys()) {
         auto value = editingStyles.get(key);
         RetainPtr result = WTF::switchOn(value,
-            [] (String& typedValue) -> RetainPtr<id> { return typedValue.createNSString(); },
+            [] (RefPtr<StringImpl>& typedValue) -> RetainPtr<id> { return createNSString(typedValue); },
             [] (bool& typedValue) -> RetainPtr<id> { return @(typedValue); },
             [] (int& typedValue) -> RetainPtr<id> { return @(typedValue); },
             [] (auto&) { return nil; }
         );
-        results[key.createNSString().get()] = result.get();
+        results[createNSString(key).get()] = result.get();
     }
     return results;
 }
@@ -805,10 +805,10 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
 
     for (Ref actionElement : actionElements) {
         // Per the spec, action targets must have an accessible name.
-        String actionName = actionElement->title();
-        if (actionName.isEmpty())
+        RefPtr<StringImpl> actionName = actionElement->title();
+        if (isEmpty(actionName))
             actionName = actionElement->description();
-        if (actionName.isEmpty())
+        if (isEmpty(actionName))
             continue;
 
         if (std::optional treeID = backingObject->treeID())
@@ -895,23 +895,23 @@ static NSDictionary *dictionaryRemovingNonSupportedTypes(NSDictionary *dictionar
 - (NSString *)innerHTML
 {
     if (RefPtr<AXCoreObject> backingObject = self.axBackingObject)
-        return backingObject->innerHTML().createNSString().autorelease();
+        return createNSString(backingObject->innerHTML()).autorelease();
     return nil;
 }
 
 - (NSString *)outerHTML
 {
     if (RefPtr<AXCoreObject> backingObject = self.axBackingObject)
-        return backingObject->outerHTML().createNSString().autorelease();
+        return createNSString(backingObject->outerHTML()).autorelease();
     return nil;
 }
 
 #pragma mark Search helpers
 
-using AccessibilitySearchKeyMap = HashMap<String, AccessibilitySearchKey>;
+using AccessibilitySearchKeyMap = HashMap<RefPtr<StringImpl>, AccessibilitySearchKey>;
 
 struct SearchKeyEntry {
-    String key;
+    RetainPtr<NSString> key;
     AccessibilitySearchKey value;
 };
 
@@ -964,14 +964,14 @@ static AccessibilitySearchKeyMap* createAccessibilitySearchKeyMap()
 
     AccessibilitySearchKeyMap* searchKeyMap = new AccessibilitySearchKeyMap;
     for (auto& searchKey : searchKeys)
-        searchKeyMap->set(searchKey.key, searchKey.value);
+        searchKeyMap->set(StringImpl::create(searchKey.key.get()), searchKey.value);
 
     return searchKeyMap;
 }
 
-static AccessibilitySearchKey accessibilitySearchKeyForString(const String& value)
+static AccessibilitySearchKey accessibilitySearchKeyForString(StringImpl* value)
 {
-    if (value.isEmpty())
+    if (isEmpty(value))
         return AccessibilitySearchKey::AnyType;
 
     static const AccessibilitySearchKeyMap* searchKeyMap = createAccessibilitySearchKeyMap();
@@ -982,7 +982,7 @@ static AccessibilitySearchKey accessibilitySearchKeyForString(const String& valu
 static std::optional<AccessibilitySearchKey> makeVectorElement(const AccessibilitySearchKey*, id arrayElement)
 {
     if (RetainPtr string = dynamic_objc_cast<NSString>(arrayElement))
-        return { { accessibilitySearchKeyForString(string.get()) } };
+        return { { accessibilitySearchKeyForString(StringImpl::create(string.get()).get()) } };
     return std::nullopt;
 }
 
@@ -1027,13 +1027,13 @@ AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate(AXCore
         criteria.resultsLimit = [resultsLimit unsignedIntValue];
 
     if ([searchText isKindOfClass:[NSString class]])
-        criteria.searchText = searchText;
+        criteria.searchText = StringImpl::create(searchText);
 
     if ([visibleOnly isKindOfClass:[NSNumber class]])
         criteria.visibleOnly = [visibleOnly boolValue];
 
     if (RetainPtr searchKeyString = dynamic_objc_cast<NSString>(searchKey))
-        criteria.searchKeys.append(accessibilitySearchKeyForString(searchKeyString.get()));
+        criteria.searchKeys.append(accessibilitySearchKeyForString(StringImpl::create(searchKeyString.get()).get()));
     else if (RetainPtr searchKeyArray = dynamic_objc_cast<NSArray>(searchKey))
         criteria.searchKeys = makeVector<AccessibilitySearchKey>(searchKeyArray);
 

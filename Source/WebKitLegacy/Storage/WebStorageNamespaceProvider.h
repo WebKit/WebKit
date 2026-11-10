@@ -37,7 +37,7 @@ namespace WebKit {
 
 class WebStorageNamespaceProvider final : public WebCore::StorageNamespaceProvider, public CanMakeWeakPtr<WebStorageNamespaceProvider> {
 public:
-    static Ref<WebStorageNamespaceProvider> create(const String& localStorageDatabasePath);
+    static Ref<WebStorageNamespaceProvider> create(StringImpl* localStorageDatabasePath);
     virtual ~WebStorageNamespaceProvider();
 
     static void closeLocalStorage();
@@ -49,7 +49,7 @@ public:
     static void syncLocalStorage();
 
 private:
-    explicit WebStorageNamespaceProvider(const String& localStorageDatabasePath);
+    explicit WebStorageNamespaceProvider(StringImpl* localStorageDatabasePath);
 
     Ref<WebCore::StorageNamespace> createLocalStorageNamespace(unsigned quota, PAL::SessionID) override;
     Ref<WebCore::StorageNamespace> createTransientLocalStorageNamespace(WebCore::SecurityOrigin&, unsigned quota, PAL::SessionID) override;
@@ -57,7 +57,7 @@ private:
     RefPtr<WebCore::StorageNamespace> sessionStorageNamespace(const WebCore::SecurityOrigin&, WebCore::Page&, ShouldCreateNamespace) final;
     void cloneSessionStorageNamespaceForPage(WebCore::Page&, WebCore::Page&) final;
 
-    const String m_localStorageDatabasePath;
+    const RefPtr<StringImpl> m_localStorageDatabasePath;
     WeakHashMap<WebCore::Page, HashMap<WebCore::SecurityOriginData, RefPtr<WebCore::StorageNamespace>>> m_sessionStorageNamespaces;
 };
 

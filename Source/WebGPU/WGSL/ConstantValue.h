@@ -145,7 +145,7 @@ struct ConstantMatrix {
 };
 
 struct ConstantStruct {
-    HashMap<String, ConstantValue> fields;
+    HashMap<RefPtr<StringImpl>, ConstantValue> fields;
 };
 
 using BaseValue = Variant<float, half, double, int32_t, uint32_t, int64_t, bool, ConstantArray, ConstantVector, ConstantMatrix, ConstantStruct>;
@@ -259,8 +259,8 @@ public:
         m_string = valueString.toString();
     }
 
-    unsigned length() const { return m_string.length(); }
-    bool is8Bit() const { return m_string.is8Bit(); }
+    unsigned length() const { return WTF::length(m_string); }
+    bool is8Bit() const { return WTF::is8Bit(m_string); }
     template<typename CharacterType>
     void writeTo(std::span<CharacterType> destination) const
     {
@@ -269,7 +269,7 @@ public:
     }
 
 private:
-    String m_string;
+    RefPtr<StringImpl> m_string;
 };
 
 } // namespace WTF

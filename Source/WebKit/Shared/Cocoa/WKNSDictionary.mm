@@ -65,7 +65,7 @@
         return nil;
 
     bool exists;
-    RefPtr value = protect(*_dictionary)->get(str.get(), exists);
+    RefPtr value = protect(*_dictionary)->get(StringImpl::create(str.get()).get(), exists);
     if (!exists)
         return nil;
 

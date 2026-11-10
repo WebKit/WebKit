@@ -54,7 +54,7 @@ void WebExtensionContextProxy::dispatchDevToolsNetworkNavigatedEvent(const URL& 
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/network/onNavigated
 
-    RetainPtr urlString = url.string().createNSString();
+    RetainPtr urlString = createNSString(url.string());
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
         protect(protect(protect(namespaceObject.devtools())->network())->onNavigated())->invokeListenersWithArgument(urlString.get());

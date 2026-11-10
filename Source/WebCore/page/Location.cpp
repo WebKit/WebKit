@@ -85,48 +85,48 @@ const URL& Location::url() const
     return url;
 }
 
-String Location::href() const
+RefPtr<StringImpl> Location::href() const
 {
     URL urlWithoutCredentials(url());
     urlWithoutCredentials.removeCredentials();
     return urlWithoutCredentials.string();
 }
 
-String Location::protocol() const
+RefPtr<StringImpl> Location::protocol() const
 {
     return makeString(url().protocol(), ':');
 }
 
-String Location::host() const
+RefPtr<StringImpl> Location::host() const
 {
     // Note: this is the IE spec. The NS spec swaps the two, it says
     // "The hostname property is the concatenation of the host and port properties, separated by a colon."
     return url().hostAndPort();
 }
 
-String Location::hostname() const
+RefPtr<StringImpl> Location::hostname() const
 {
     return url().host().toString();
 }
 
-String Location::port() const
+RefPtr<StringImpl> Location::port() const
 {
     auto port = url().port();
-    return port ? String::number(*port) : emptyString();
+    return port ? makeString(*port) : emptyString();
 }
 
-String Location::pathname() const
+RefPtr<StringImpl> Location::pathname() const
 {
     auto path = url().path();
-    return path.isEmpty() ? "/"_s : path.toString();
+    return path.isEmpty() ? "/"_si : path.toString();
 }
 
-String Location::search() const
+RefPtr<StringImpl> Location::search() const
 {
     return url().query().isEmpty() ? emptyString() : url().queryWithLeadingQuestionMark().toString();
 }
 
-String Location::origin() const
+RefPtr<StringImpl> Location::origin() const
 {
     return SecurityOrigin::create(url())->toString();
 }
@@ -150,20 +150,20 @@ Ref<DOMStringList> Location::ancestorOrigins() const
     return *m_ancestorOrigins;
 }
 
-String Location::hash() const
+RefPtr<StringImpl> Location::hash() const
 {
     RELEASE_LOG_DEBUG(DOMAPI, "Location::hash length=%u frameID=%" PRIu64, url().fragmentIdentifier().length(), frame() ? protect(frame())->frameID().toUInt64() : 0);
     return url().fragmentIdentifier().isEmpty() ? emptyString() : url().fragmentIdentifierWithLeadingNumberSign().toString();
 }
 
-ExceptionOr<void> Location::setHref(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& url)
+ExceptionOr<void> Location::setHref(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl* url)
 {
     if (!frame())
         return { };
     return setLocation(incumbentWindow, firstWindow, url);
 }
 
-ExceptionOr<void> Location::setProtocol(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& protocol)
+ExceptionOr<void> Location::setProtocol(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl* protocol)
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
     if (!localFrame)
@@ -176,7 +176,7 @@ ExceptionOr<void> Location::setProtocol(LocalDOMWindow& incumbentWindow, LocalDO
     return setLocation(incumbentWindow, firstWindow, url.string());
 }
 
-ExceptionOr<void> Location::setHost(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& host)
+ExceptionOr<void> Location::setHost(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl* host)
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
     if (!localFrame)
@@ -186,7 +186,7 @@ ExceptionOr<void> Location::setHost(LocalDOMWindow& incumbentWindow, LocalDOMWin
     return setLocation(incumbentWindow, firstWindow, url.string());
 }
 
-ExceptionOr<void> Location::setHostname(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& hostname)
+ExceptionOr<void> Location::setHostname(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl* hostname)
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
     if (!localFrame)
@@ -196,7 +196,7 @@ ExceptionOr<void> Location::setHostname(LocalDOMWindow& incumbentWindow, LocalDO
     return setLocation(incumbentWindow, firstWindow, url.string());
 }
 
-ExceptionOr<void> Location::setPort(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& portString)
+ExceptionOr<void> Location::setPort(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl* portString)
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
     if (!localFrame)
@@ -206,7 +206,7 @@ ExceptionOr<void> Location::setPort(LocalDOMWindow& incumbentWindow, LocalDOMWin
     return setLocation(incumbentWindow, firstWindow, url.string());
 }
 
-ExceptionOr<void> Location::setPathname(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& pathname)
+ExceptionOr<void> Location::setPathname(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl* pathname)
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
     if (!localFrame)
@@ -216,7 +216,7 @@ ExceptionOr<void> Location::setPathname(LocalDOMWindow& incumbentWindow, LocalDO
     return setLocation(incumbentWindow, firstWindow, url.string());
 }
 
-ExceptionOr<void> Location::setSearch(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& search)
+ExceptionOr<void> Location::setSearch(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl* search)
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
     if (!localFrame)
@@ -226,7 +226,7 @@ ExceptionOr<void> Location::setSearch(LocalDOMWindow& incumbentWindow, LocalDOMW
     return setLocation(incumbentWindow, firstWindow, url.string());
 }
 
-ExceptionOr<void> Location::setHash(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& hash)
+ExceptionOr<void> Location::setHash(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl* hash)
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
     if (!localFrame)
@@ -235,7 +235,7 @@ ExceptionOr<void> Location::setHash(LocalDOMWindow& incumbentWindow, LocalDOMWin
     auto url = protect(localFrame->document())->url();
     auto oldFragmentIdentifier = url.fragmentIdentifier();
     StringView newFragmentIdentifier { hash };
-    if (hash.startsWith('#'))
+    if (startsWith(hash, '#'))
         newFragmentIdentifier = newFragmentIdentifier.substring(1);
     url.setFragmentIdentifier(newFragmentIdentifier);
     // Note that by parsing the URL and *then* comparing fragments, we are 
@@ -246,14 +246,14 @@ ExceptionOr<void> Location::setHash(LocalDOMWindow& incumbentWindow, LocalDOMWin
     return setLocation(incumbentWindow, firstWindow, url.string());
 }
 
-ExceptionOr<void> Location::assign(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& url)
+ExceptionOr<void> Location::assign(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, StringImpl* url)
 {
     if (!frame())
         return { };
     return setLocation(activeWindow, firstWindow, url);
 }
 
-ExceptionOr<void> Location::replace(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& urlString)
+ExceptionOr<void> Location::replace(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, StringImpl* urlString)
 {
     RefPtr frame = this->frame();
     if (!frame)
@@ -314,7 +314,7 @@ void Location::reload(LocalDOMWindow& activeWindow)
     protect(localFrame->navigationScheduler())->scheduleRefresh(activeDocument);
 }
 
-ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& urlString)
+ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl* urlString)
 {
     RefPtr frame = this->frame();
     ASSERT(frame);
@@ -326,7 +326,7 @@ ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDO
     URL completedURL = protect(firstFrame->document())->encodingParseURL(urlString);
 
     if (!completedURL.isValid())
-        return Exception { ExceptionCode::SyntaxError, "Invalid URL"_s };
+        return Exception { ExceptionCode::SyntaxError, "Invalid URL"_si };
 
     auto canNavigateState = protect(incumbentWindow.document())->canNavigate(frame.get(), completedURL);
     if (canNavigateState == CanNavigateState::Unable)

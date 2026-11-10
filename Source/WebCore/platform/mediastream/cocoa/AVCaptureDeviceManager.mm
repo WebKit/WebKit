@@ -149,7 +149,7 @@ void AVCaptureDeviceManager::updateCachedAVCaptureDevices()
 
 static inline CaptureDevice toCaptureDevice(AVCaptureDevice *device, bool isDefault = false)
 {
-    CaptureDevice captureDevice { device.uniqueID, CaptureDevice::DeviceType::Camera, device.localizedName };
+    CaptureDevice captureDevice { StringImpl::create(device.uniqueID).get(), CaptureDevice::DeviceType::Camera, StringImpl::create(device.localizedName).get() };
     captureDevice.setEnabled(deviceIsAvailable(device));
     captureDevice.setIsDefault(isDefault);
 
@@ -237,7 +237,7 @@ void AVCaptureDeviceManager::processRefreshedCaptureDevices(CompletionHandler<vo
     bool deviceHasChanged = m_devices.size() != deviceList.size();
     if (!deviceHasChanged) {
         for (size_t cptr = 0; cptr < deviceList.size(); ++cptr) {
-            if (m_devices[cptr].persistentId() != deviceList[cptr].persistentId() || m_devices[cptr].enabled() != deviceList[cptr].enabled()) {
+            if (!equal(m_devices[cptr].persistentId(), deviceList[cptr].persistentId()) || m_devices[cptr].enabled() != deviceList[cptr].enabled()) {
                 deviceHasChanged = true;
                 break;
             }

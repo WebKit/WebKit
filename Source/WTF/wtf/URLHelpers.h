@@ -37,13 +37,13 @@
 
 namespace WTF::URLHelpers {
 
-using URLDecodeFunction = String(*)(const String&);
+using URLDecodeFunction = RefPtr<StringImpl>(*)(StringImpl*);
 
-WTF_EXPORT_PRIVATE String userVisibleURL(std::span<const char8_t> URL);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> userVisibleURL(std::span<const char8_t> URL);
 void loadIDNAllowedScriptList();
 void addScriptToIDNAllowedScriptList(const char* scriptName);
 NODELETE void initializeDefaultIDNAllowedScriptList();
-std::optional<String> mapHostName(const String&, URLDecodeFunction);
-String mapHostNames(const String&, URLDecodeFunction);
+std::optional<RefPtr<StringImpl>> mapHostName(StringImpl*, URLDecodeFunction);
+RefPtr<StringImpl> mapHostNames(StringImpl*, URLDecodeFunction);
 
 } // namespace WTF::URLHelpers

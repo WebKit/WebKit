@@ -84,26 +84,26 @@ static constexpr std::array<ASCIILiteral, 4> swRegistrationUpdatesV2 {
 
 static constexpr int currentSWRegistrationVersion = 2;
 
-String SWRegistrationDatabase::databaseFilePath(const String& directory)
+RefPtr<StringImpl> SWRegistrationDatabase::databaseFilePath(StringImpl* directory)
 {
-    if (directory.isEmpty())
+    if (isEmpty(directory))
         return emptyString();
 
     return FileSystem::pathByAppendingComponent(directory, makeString("ServiceWorkerRegistrations-"_s, SWRegistrationDatabase::schemaVersion, ".sqlite3"_s));
 }
 
-static String scriptDirectoryPath(const String& directory)
+static RefPtr<StringImpl> scriptDirectoryPath(StringImpl* directory)
 {
-    if (directory.isEmpty())
+    if (isEmpty(directory))
         return emptyString();
 
     return FileSystem::pathByAppendingComponent(directory, "Scripts"_s);
 }
 
-static String scriptVersionDirectoryPath(const String& directory)
+static RefPtr<StringImpl> scriptVersionDirectoryPath(StringImpl* directory)
 {
     auto scriptDirectory = scriptDirectoryPath(directory);
-    if (scriptDirectory.isEmpty())
+    if (isEmpty(scriptDirectory))
         return emptyString();
 
     return FileSystem::pathByAppendingComponent(scriptDirectory, scriptVersion);
@@ -123,13 +123,13 @@ static ASCIILiteral convertUpdateViaCacheToString(ServiceWorkerUpdateViaCache up
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static std::optional<ServiceWorkerUpdateViaCache> convertStringToUpdateViaCache(const String& update)
+static std::optional<ServiceWorkerUpdateViaCache> convertStringToUpdateViaCache(StringImpl* update)
 {
-    if (update == "Imports"_s)
+    if (equal(update, "Imports"_s))
         return ServiceWorkerUpdateViaCache::Imports;
-    if (update == "All"_s)
+    if (equal(update, "All"_s))
         return ServiceWorkerUpdateViaCache::All;
-    if (update == "None"_s)
+    if (equal(update, "None"_s))
         return ServiceWorkerUpdateViaCache::None;
 
     return std::nullopt;
@@ -147,11 +147,11 @@ static ASCIILiteral convertWorkerTypeToString(WorkerType workerType)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static std::optional<WorkerType> convertStringToWorkerType(const String& type)
+static std::optional<WorkerType> convertStringToWorkerType(StringImpl* type)
 {
-    if (type == "Classic"_s)
+    if (equal(type, "Classic"_s))
         return WorkerType::Classic;
-    if (type == "Module"_s)
+    if (equal(type, "Module"_s))
         return WorkerType::Module;
 
     return std::nullopt;
@@ -212,12 +212,12 @@ SQLiteStatementAutoResetScope SWRegistrationDatabase::cachedStatement(StatementT
     return SQLiteStatementAutoResetScope { m_cachedStatements[index].get() };
 }
 
-SWRegistrationDatabase::SWRegistrationDatabase(const String& path)
+SWRegistrationDatabase::SWRegistrationDatabase(StringImpl* path)
     : m_directory(path)
     , m_cachedStatements(static_cast<size_t>(StatementType::Invalid))
 {
     ASSERT(!isMainRunLoop());
-    ASSERT(!m_directory.isEmpty());
+    ASSERT(!isEmpty(m_directory));
 }
 
 SWRegistrationDatabase::~SWRegistrationDatabase()
@@ -248,7 +248,7 @@ bool SWRegistrationDatabase::prepareDatabase(ShouldCreateIfNotExists shouldCreat
     if (auto* database = m_database.get(); database && database->isOpen())
         return true;
 
-    if (m_directory.isEmpty())
+    if (isEmpty(m_directory))
         return false;
 
     auto databasePath = databaseFilePath(m_directory);
@@ -269,7 +269,7 @@ bool SWRegistrationDatabase::prepareDatabase(ShouldCreateIfNotExists shouldCreat
     }
 
     if (!openResult) {
-        RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::prepareDatabase failed to open database at '%s'", m_directory.utf8());
+        RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::prepareDatabase failed to open database at '%s'", utf8(m_directory));
         m_database = nullptr;
         return false;
     }
@@ -284,7 +284,7 @@ bool SWRegistrationDatabase::prepareDatabase(ShouldCreateIfNotExists shouldCreat
     }
 
     if (version < 0 || version > currentSWRegistrationVersion) {
-        RELEASE_LOG_ERROR(ServiceWorker, "Found unexpected SWRegistrationDatabase version: %d (expected: %d) at path: %s", version, currentSWRegistrationVersion, databasePath.utf8());
+        RELEASE_LOG_ERROR(ServiceWorker, "Found unexpected SWRegistrationDatabase version: %d (expected: %d) at path: %s", version, currentSWRegistrationVersion, utf8(databasePath));
         m_database = nullptr;
         return false;
     }
@@ -322,12 +322,12 @@ bool SWRegistrationDatabase::ensureValidRecordsTable()
     if (!database || !database->isOpen())
         return false;
 
-    String statement = database->tableSQL("Records"_s);
-    if (statement == currentRecordsTableSchema() || statement == currentRecordsTableSchemaAlternate())
+    RefPtr<StringImpl> statement = database->tableSQL("Records"_s);
+    if (equal(statement, currentRecordsTableSchema()) || equal(statement, currentRecordsTableSchemaAlternate()))
         return true;
 
     // Table exists but statement is wrong; drop it.
-    if (!statement.isEmpty()) {
+    if (!isEmpty(statement)) {
         if (!database->executeCommand("DROP TABLE Records"_s)) {
             RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::ensureValidRecordsTable failed to drop existing table (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return false;

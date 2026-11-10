@@ -67,7 +67,7 @@ RefPtr<NativeImage> ImageBufferDisplayListBackend::copyNativeImage()
     return ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
 }
 
-String ImageBufferDisplayListBackend::debugDescription() const
+RefPtr<StringImpl> ImageBufferDisplayListBackend::debugDescription() const
 {
     TextStream stream;
     stream << "ImageBufferDisplayListBackend " << this;

@@ -92,7 +92,7 @@ void MediaKeySystemPermissionRequestManager::cancelMediaKeySystemRequest(MediaKe
     m_ongoingMediaKeySystemRequests.take(request.identifier());
 }
 
-void MediaKeySystemPermissionRequestManager::mediaKeySystemWasGranted(MediaKeySystemRequestIdentifier requestID, String&& mediaKeysHashSalt)
+void MediaKeySystemPermissionRequestManager::mediaKeySystemWasGranted(MediaKeySystemRequestIdentifier requestID, RefPtr<StringImpl>&& mediaKeysHashSalt)
 {
     auto request = m_ongoingMediaKeySystemRequests.take(requestID);
     if (!request)
@@ -101,7 +101,7 @@ void MediaKeySystemPermissionRequestManager::mediaKeySystemWasGranted(MediaKeySy
     request->allow(WTF::move(mediaKeysHashSalt));
 }
 
-void MediaKeySystemPermissionRequestManager::mediaKeySystemWasDenied(MediaKeySystemRequestIdentifier requestID, String&& message)
+void MediaKeySystemPermissionRequestManager::mediaKeySystemWasDenied(MediaKeySystemRequestIdentifier requestID, RefPtr<StringImpl>&& message)
 {
     auto request = m_ongoingMediaKeySystemRequests.take(requestID);
     if (!request)

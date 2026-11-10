@@ -495,6 +495,7 @@ set(WTF_PUBLIC_HEADERS
     text/StringCommon.h
     text/StringConcatenate.h
     text/StringConcatenateNumbers.h
+    text/StringFunctions.h
     text/StringHash.h
     text/StringHasher.h
     text/StringHasherInlines.h
@@ -673,6 +674,7 @@ set(WTF_SOURCES
     text/StringBuilder.cpp
     text/StringBuilderJSON.cpp
     text/StringCommon.cpp
+    text/StringFunctions.cpp
     text/StringImpl.cpp
     text/StringView.cpp
     text/SymbolImpl.cpp

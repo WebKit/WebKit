@@ -55,18 +55,18 @@ JSValue WebInjectedScriptHost::subtype(JSGlobalObject* exec, JSValue value)
 {
     VM& vm = exec->vm();
     if (value.inherits<JSNode>())
-        return jsNontrivialString(vm, "node"_s);
+        return jsNontrivialString(vm, "node"_si);
     if (value.inherits<JSNodeList>())
-        return jsNontrivialString(vm, "array"_s);
+        return jsNontrivialString(vm, "array"_si);
     if (value.inherits<JSHTMLCollection>())
-        return jsNontrivialString(vm, "array"_s);
+        return jsNontrivialString(vm, "array"_si);
     if (value.inherits<JSDOMException>())
-        return jsNontrivialString(vm, "error"_s);
+        return jsNontrivialString(vm, "error"_si);
 
     return jsUndefined();
 }
 
-static JSObject* constructInternalProperty(VM& vm, JSGlobalObject* exec, const String& name, JSValue value)
+static JSObject* constructInternalProperty(VM& vm, JSGlobalObject* exec, StringImpl* name, JSValue value)
 {
     auto* object = JSC::constructEmptyObject(exec);
     object->putDirect(vm, Identifier::fromString(vm, "name"_s), jsString(vm, name));
@@ -158,11 +158,11 @@ static JSString* jsStringForPaymentRequestState(VM& vm, PaymentRequest::State st
 {
     switch (state) {
     case PaymentRequest::State::Created:
-        return jsNontrivialString(vm, "created"_s);
+        return jsNontrivialString(vm, "created"_si);
     case PaymentRequest::State::Interactive:
-        return jsNontrivialString(vm, "interactive"_s);
+        return jsNontrivialString(vm, "interactive"_si);
     case PaymentRequest::State::Closed:
-        return jsNontrivialString(vm, "closed"_s);
+        return jsNontrivialString(vm, "closed"_si);
     }
 
     ASSERT_NOT_REACHED();
@@ -220,14 +220,14 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, JSGlobalObject* exe
         unsigned index = 0;
         auto* array = constructEmptyArray(exec, nullptr);
 
-        String name = worker->name();
-        if (!name.isEmpty())
-            array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "name"_s, jsString(vm, WTF::move(name))));
+        RefPtr<StringImpl> name = worker->name();
+        if (!isEmpty(name))
+            array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "name"_si, jsString(vm, WTF::move(name))));
 
-        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "terminated"_s, jsBoolean(worker->wasTerminated())));
+        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "terminated"_si, jsBoolean(worker->wasTerminated())));
 
         if (auto* listeners = objectForEventTargetListeners(vm, exec, worker.get()))
-            array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "listeners"_s, listeners));
+            array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "listeners"_si, listeners));
 
         RETURN_IF_EXCEPTION(scope, { });
         return array;
@@ -238,12 +238,12 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, JSGlobalObject* exe
         unsigned index = 0;
         auto* array = constructEmptyArray(exec, nullptr);
 
-        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "options"_s, objectForPaymentOptions(vm, exec, paymentRequest->paymentOptions())));
-        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "details"_s, objectForPaymentDetails(vm, exec, paymentRequest->paymentDetails())));
-        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "state"_s, jsStringForPaymentRequestState(vm, paymentRequest->state())));
+        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "options"_si, objectForPaymentOptions(vm, exec, paymentRequest->paymentOptions())));
+        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "details"_si, objectForPaymentDetails(vm, exec, paymentRequest->paymentDetails())));
+        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "state"_si, jsStringForPaymentRequestState(vm, paymentRequest->state())));
 
         if (auto* listeners = objectForEventTargetListeners(vm, exec, paymentRequest.get()))
-            array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "listeners"_s, listeners));
+            array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "listeners"_si, listeners));
 
         RETURN_IF_EXCEPTION(scope, { });
         return array;
@@ -255,7 +255,7 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, JSGlobalObject* exe
         auto* array = constructEmptyArray(exec, nullptr);
 
         if (auto* listeners = objectForEventTargetListeners(vm, exec, eventTarget.get()))
-            array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "listeners"_s, listeners));
+            array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "listeners"_si, listeners));
 
         RETURN_IF_EXCEPTION(scope, { });
         return array;

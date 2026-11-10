@@ -396,7 +396,7 @@ static void invokeRemoveBackgroundAction(TestWKWebView *webView)
 
     RetainPtr menuBuilder = adoptNS([[TestUIMenuBuilder alloc] init]);
     [webView buildMenuWithBuilder:menuBuilder.get()];
-    [[menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground().createNSString().get()] performWithSender:nil target:nil];
+    [[menuBuilder actionWithTitle:createNSString(WebCore::contextMenuItemTitleRemoveBackground()).get()] performWithSender:nil target:nil];
     [webView waitForNextPresentationUpdate];
 }
 
@@ -413,7 +413,7 @@ TEST(ImageAnalysisTests, RemoveBackgroundUsingContextMenu)
 
     RetainPtr menuBuilder = adoptNS([[TestUIMenuBuilder alloc] init]);
     [webView buildMenuWithBuilder:menuBuilder.get()];
-    EXPECT_NOT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground().createNSString().get()]);
+    EXPECT_NOT_NULL([menuBuilder actionWithTitle:createNSString(WebCore::contextMenuItemTitleRemoveBackground()).get()]);
 }
 
 TEST(ImageAnalysisTests, MenuControllerItems)
@@ -436,7 +436,7 @@ TEST(ImageAnalysisTests, MenuControllerItems)
 
     RetainPtr menuBuilder = adoptNS([[TestUIMenuBuilder alloc] init]);
     [webView buildMenuWithBuilder:menuBuilder.get()];
-    EXPECT_NOT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground().createNSString().get()]);
+    EXPECT_NOT_NULL([menuBuilder actionWithTitle:createNSString(WebCore::contextMenuItemTitleRemoveBackground()).get()]);
 
     [webView selectAll:nil];
     [webView waitForNextPresentationUpdate];
@@ -444,7 +444,7 @@ TEST(ImageAnalysisTests, MenuControllerItems)
 
     [menuBuilder reset];
     [webView buildMenuWithBuilder:menuBuilder.get()];
-    EXPECT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground().createNSString().get()]);
+    EXPECT_NULL([menuBuilder actionWithTitle:createNSString(WebCore::contextMenuItemTitleRemoveBackground()).get()]);
 
     [webView objectByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(document.body, 0, image.parentNode, nodeIndex + 1);"];
     [webView waitForNextPresentationUpdate];
@@ -452,7 +452,7 @@ TEST(ImageAnalysisTests, MenuControllerItems)
 
     [menuBuilder reset];
     [webView buildMenuWithBuilder:menuBuilder.get()];
-    EXPECT_NOT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground().createNSString().get()]);
+    EXPECT_NOT_NULL([menuBuilder actionWithTitle:createNSString(WebCore::contextMenuItemTitleRemoveBackground()).get()]);
 }
 
 static RetainPtr<TestWKWebView> runMarkupTest(NSString *testPage, NSString *scriptToSelectText, Function<void(TestWKWebView *, NSString *)>&& checkWebView = { })
@@ -517,7 +517,7 @@ TEST(ImageAnalysisTests, AllowRemoveBackgroundOnce)
     RetainPtr menuBuilder = adoptNS([TestUIMenuBuilder new]);
     [webView buildMenuWithBuilder:menuBuilder.get()];
 
-    EXPECT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground().createNSString().get()]);
+    EXPECT_NULL([menuBuilder actionWithTitle:createNSString(WebCore::contextMenuItemTitleRemoveBackground()).get()]);
 }
 
 TEST(ImageAnalysisTests, PerformRemoveBackgroundInCrossOriginIframe)
@@ -661,7 +661,7 @@ public:
     {
         static constexpr auto imageHTML { "<body style='margin:0'><img style='display:block; margin:40px 0 0 30px; width:300px; height:100px' src='large-red-square.png'>"_s };
         static constexpr auto mainFrameImageHTML { "<img style='position:absolute; left:560px; top:120px; width:300px; height:100px' src='large-red-square.png'>"_s };
-        String secondIframeOrigin { GetParam().crossOrigin ? "https://apple.com"_s : "https://example.com"_s };
+        RefPtr<StringImpl> secondIframeOrigin { GetParam().crossOrigin ? "https://apple.com"_s : "https://example.com"_s };
         setUpWebView({
             { "/main"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/image.html"_s)))) },
             { "/main-with-scrollable-iframe"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/tall-image.html"_s)))) },
@@ -670,11 +670,11 @@ public:
             { "/main-with-nested-frame"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/nested.html"_s)))) },
             { "/main-with-nested-main-site-frame"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/nested-main-site.html"_s)))) },
             { "/main-with-nested-main-site-frame-and-image"_s, html(mainHTML(makeString(iframe(iframeLeft, GetParam().subframeURL("/nested-main-site.html"_s)), mainFrameImageHTML))) },
-            { "/nested.html"_s, html(nestedFrameHTML("image.html"_s, nestedFrameWidth, nestedFrameHeight)) },
-            { "/nested-main-site.html"_s, html(nestedFrameHTML("https://example.com/image.html"_s, nestedFrameWidth, nestedFrameHeight)) },
+            { "/nested.html"_s, html(nestedFrameHTML("image.html"_si, nestedFrameWidth, nestedFrameHeight)) },
+            { "/nested-main-site.html"_s, html(nestedFrameHTML("https://example.com/image.html"_si, nestedFrameWidth, nestedFrameHeight)) },
             { "/image.html"_s, html(makeString(imageHTML, "</body>"_s)) },
             { "/tall-image.html"_s, html(makeString(imageHTML, "<div style='height:1000px'></div></body>"_s)) },
-            { "/text.html"_s, html("<body style='margin:0; font:20px Helvetica'><p style='margin:40px'>No image here</p></body>"_s) },
+            { "/text.html"_s, html("<body style='margin:0; font:20px Helvetica'><p style='margin:40px'>No image here</p></body>"_si) },
             { "/large-red-square.png"_s, HTTPResponse { [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"large-red-square" withExtension:@"png"]] } },
         });
     }
@@ -952,7 +952,7 @@ static void clickImageControlsAndWaitForRemoveBackgroundItem(TestWKWebView *webV
     RetainPtr timer = [NSTimer timerWithTimeInterval:0.1 repeats:YES block:^(NSTimer *) {
         NSMenu *menu = [webView _activeMenu];
         for (NSMenuItem *item in menu.itemArray) {
-            if ([item.title isEqualToString:WebCore::contextMenuItemTitleRemoveBackground().createNSString().get()]) {
+            if ([item.title isEqualToString:createNSString(WebCore::contextMenuItemTitleRemoveBackground()).get()]) {
                 foundRemoveBackgroundItem = true;
                 [menu cancelTracking];
                 break;

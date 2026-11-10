@@ -2353,7 +2353,7 @@ OptionSet<HitTestRequest::Type> EventHandler::getHitTypeForMouseMoveEvent(const 
 #endif
 
 #if ENABLE(PENCIL_HOVER)
-    if (platformMouseEvent.pointerType() == WebCore::penPointerEventType())
+    if (equal(platformMouseEvent.pointerType(), WebCore::penPointerEventType()))
         hitType.add(WebCore::HitTestRequest::Type::PenEvent);
 #else
     UNUSED_PARAM(platformMouseEvent);
@@ -2733,14 +2733,14 @@ bool EventHandler::handlePasteGlobalSelection()
     // Do not paste here if the focus was moved somewhere else.
     Ref editor = protect(m_frame)->editor();
     if (m_frame.ptr() == focusFrame.get() && protect(editor->client())->supportsGlobalSelection())
-        return editor->command("PasteGlobalSelection"_s).execute();
+        return editor->command("PasteGlobalSelection"_si).execute();
 
     return false;
 }
 
 #if ENABLE(DRAG_SUPPORT)
 
-bool EventHandler::dispatchDragEvent(const AtomString& eventType, Element& dragTarget, RefPtr<Element>&& relatedTarget, const PlatformMouseEvent& event, DataTransfer& dataTransfer)
+bool EventHandler::dispatchDragEvent(AtomStringImpl* eventType, Element& dragTarget, RefPtr<Element>&& relatedTarget, const PlatformMouseEvent& event, DataTransfer& dataTransfer)
 {
     Ref frame = m_frame.get();
     RefPtr view = frame->view();
@@ -2808,39 +2808,39 @@ NODELETE static std::pair<bool, RefPtr<Frame>> contentFrameForNode(Node* target)
     return { true, frameElement->contentFrame() };
 }
 
-static std::optional<DragOperation> convertDropZoneOperationToDragOperation(const String& dragOperation)
+static std::optional<DragOperation> convertDropZoneOperationToDragOperation(StringImpl* dragOperation)
 {
-    if (dragOperation == "copy"_s)
+    if (equal(dragOperation, "copy"_s))
         return DragOperation::Copy;
-    if (dragOperation == "move"_s)
+    if (equal(dragOperation, "move"_s))
         return DragOperation::Move;
-    if (dragOperation == "link"_s)
+    if (equal(dragOperation, "link"_s))
         return DragOperation::Link;
     return std::nullopt;
 }
 
-static String convertDragOperationToDropZoneOperation(std::optional<DragOperation> operation)
+static RefPtr<StringImpl> convertDragOperationToDropZoneOperation(std::optional<DragOperation> operation)
 {
     if (operation) {
         switch (*operation) {
         case DragOperation::Move:
-            return "move"_s;
+            return "move"_si;
         case DragOperation::Link:
-            return "link"_s;
+            return "link"_si;
         default:
             break;
         }
     }
-    return "copy"_s;
+    return "copy"_si;
 }
 
-static bool hasDropZoneType(Document& document, DataTransfer& dataTransfer, const String& keyword)
+static bool hasDropZoneType(Document& document, DataTransfer& dataTransfer, StringImpl* keyword)
 {
-    if (keyword.startsWith("file:"_s))
-        return dataTransfer.hasFileOfType(keyword.substring(5));
+    if (startsWith(keyword, "file:"_s))
+        return dataTransfer.hasFileOfType(substring(keyword, 5));
 
-    if (keyword.startsWith("string:"_s))
-        return dataTransfer.hasStringOfType(document, keyword.substring(7));
+    if (startsWith(keyword, "string:"_s))
+        return dataTransfer.hasStringOfType(document, substring(keyword, 7));
 
     return false;
 }
@@ -2859,7 +2859,7 @@ static bool findDropZone(Node& target, DataTransfer& dataTransfer)
                 if (!dragOperation)
                     dragOperation = operationFromKeyword;
             } else
-                matched = matched || hasDropZoneType(protect(target.document()), dataTransfer, keyword.string());
+                matched = matched || hasDropZoneType(protect(target.document()), dataTransfer, keyword);
             if (matched && dragOperation)
                 break;
         }
@@ -2871,7 +2871,7 @@ static bool findDropZone(Node& target, DataTransfer& dataTransfer)
     return false;
 }
 
-EventHandler::DragTargetResponse EventHandler::dispatchDragEnterOrDragOverEvent(const AtomString& eventType, Element& target, RefPtr<Element>&& relatedTarget, const PlatformMouseEvent& event, std::unique_ptr<Pasteboard>&& pasteboard, OptionSet<DragOperation> sourceOperationMask, bool draggingFiles)
+EventHandler::DragTargetResponse EventHandler::dispatchDragEnterOrDragOverEvent(AtomStringImpl* eventType, Element& target, RefPtr<Element>&& relatedTarget, const PlatformMouseEvent& event, std::unique_ptr<Pasteboard>&& pasteboard, OptionSet<DragOperation> sourceOperationMask, bool draggingFiles)
 {
     auto dataTransfer = DataTransfer::createForUpdatingDropTarget(protect(target.document()), WTF::move(pasteboard), sourceOperationMask, draggingFiles);
     bool accept = dispatchDragEvent(eventType, target, WTF::move(relatedTarget), event, dataTransfer.get());
@@ -3110,7 +3110,7 @@ MouseEventWithHitTestResults EventHandler::prepareMouseEvent(const HitTestReques
     return protect(frame->document())->prepareMouseEvent(request, documentPointForWindowPoint(frame, mouseEvent.position()), mouseEvent, HoverFollowsMouseCapture::Yes);
 }
 
-NODELETE static bool hierarchyHasCapturingEventListeners(Element* element, const AtomString& pointerEventName, const AtomString& compatibilityMouseEventName)
+NODELETE static bool hierarchyHasCapturingEventListeners(Element* element, AtomStringImpl* pointerEventName, AtomStringImpl* compatibilityMouseEventName)
 {
     for (ContainerNode* curr = element; curr; curr = curr->parentInComposedTree()) {
         if (curr->hasCapturingEventListeners(pointerEventName) || curr->hasCapturingEventListeners(compatibilityMouseEventName))
@@ -3168,7 +3168,7 @@ static RefPtr<Element> getElementOrAncestorElementForNode(Node* targetNode)
     return targetElement;
 }
 
-void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node* targetNode, const PlatformMouseEvent& platformMouseEvent, FireMouseOverOut fireMouseOverOut)
+void EventHandler::updateMouseEventTargetNode(AtomStringImpl* eventType, Node* targetNode, const PlatformMouseEvent& platformMouseEvent, FireMouseOverOut fireMouseOverOut)
 {
     Ref frame = m_frame.get();
     RefPtr<Element> targetElement;
@@ -3378,7 +3378,7 @@ void EventHandler::updateMouseEventTargetAfterLayoutIfNeeded()
     }
 }
 
-void EventHandler::notifyScrollableAreasOfMouseEvents(const AtomString& eventType, Element* lastElementUnderMouse, Element* elementUnderMouse)
+void EventHandler::notifyScrollableAreasOfMouseEvents(AtomStringImpl* eventType, Element* lastElementUnderMouse, Element* elementUnderMouse)
 {
     Ref frame = m_frame.get();
     RefPtr frameView = frame->view();
@@ -3427,7 +3427,7 @@ void EventHandler::notifyScrollableAreasOfMouseEvents(const AtomString& eventTyp
         scrollableAreaForNodeUnderMouse->mouseEnteredContentArea();
 }
 
-bool EventHandler::dispatchAnyClickEvent(const AtomString& eventType, Node* clickNode, int clickCount, const PlatformMouseEvent& platformMouseEvent)
+bool EventHandler::dispatchAnyClickEvent(AtomStringImpl* eventType, Node* clickNode, int clickCount, const PlatformMouseEvent& platformMouseEvent)
 {
     if (clickNode) {
         if (RefPtr node = dynamicDowncast<Element>(*clickNode))
@@ -3436,7 +3436,7 @@ bool EventHandler::dispatchAnyClickEvent(const AtomString& eventType, Node* clic
     return false;
 }
 
-bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetNode, int clickCount, const PlatformMouseEvent& platformMouseEvent, FireMouseOverOut fireMouseOverOut)
+bool EventHandler::dispatchMouseEvent(AtomStringImpl* eventType, Node* targetNode, int clickCount, const PlatformMouseEvent& platformMouseEvent, FireMouseOverOut fireMouseOverOut)
 {
     m_mouseMoveTargetOverride = nullptr;
     Ref frame = m_frame.get();
@@ -4324,9 +4324,9 @@ bool EventHandler::isKeyEventAllowedInFullScreen(const PlatformKeyboardEvent& ke
         return true;
 
     if (keyEvent.type() == PlatformKeyboardEvent::Type::Char) {
-        if (keyEvent.text().length() != 1)
+        if (length(keyEvent.text()) != 1)
             return false;
-        char16_t character = keyEvent.text()[0];
+        char16_t character = codeUnitAt(keyEvent.text(), 0);
         return character == ' ';
     }
 
@@ -4479,7 +4479,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     auto setHasFocusVisibleIfNeeded = [initialKeyEvent, keydown](Element& element) {
         // If the user interacts with the page via the keyboard, the currently focused element should match :focus-visible.
         // Just typing a modifier key is not considered user interaction with the page, but Shift + a (or Caps Lock + a) is considered an interaction.
-        bool userHasInteractedViaKeyword = keydown->modifierKeys().isEmpty() || ((keydown->shiftKey() || keydown->capsLockKey()) && !initialKeyEvent.text().isEmpty());
+        bool userHasInteractedViaKeyword = keydown->modifierKeys().isEmpty() || ((keydown->shiftKey() || keydown->capsLockKey()) && !isEmpty(initialKeyEvent.text()));
 
         if (!userHasInteractedViaKeyword)
             return;
@@ -4549,13 +4549,13 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
 
     PlatformKeyboardEvent keyPressEvent = initialKeyEvent;
     keyPressEvent.disambiguateKeyDownEvent(PlatformEvent::Type::Char, backwardCompatibilityMode);
-    if (keyPressEvent.text().isEmpty())
+    if (isEmpty(keyPressEvent.text()))
         return keydownResult;
 
     // webkit.org/b/305666: Emojis appear as Chinese characters in Google Docs
     auto shouldAvoidDispatchingKeyPressEvent = [&] {
         auto text = keyPressEvent.text();
-        if (!text.isEmpty() && !U_IS_BMP(text.codePointAt(0)))
+        if (!isEmpty(text) && !U_IS_BMP(codePointAt(text, 0)))
             return true;
 
         // Suppress keypress for command shortcuts (Cmd+key, Ctrl+key).
@@ -4587,12 +4587,12 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     return keydownResult || keypress->defaultPrevented() || keypress->defaultHandled();
 }
 
-static FocusDirection focusDirectionForKey(const AtomString& keyIdentifier)
+static FocusDirection focusDirectionForKey(AtomStringImpl* keyIdentifier)
 {
-    static MainThreadNeverDestroyed<const AtomString> Down("Down"_s);
-    static MainThreadNeverDestroyed<const AtomString> Up("Up"_s);
-    static MainThreadNeverDestroyed<const AtomString> Left("Left"_s);
-    static MainThreadNeverDestroyed<const AtomString> Right("Right"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> Down("Down"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> Up("Up"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> Left("Left"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> Right("Right"_s);
 
     FocusDirection retVal = FocusDirection::None;
 
@@ -4647,11 +4647,11 @@ static void handleKeyboardSelectionMovement(LocalFrame& frame, KeyboardEvent& ev
 {
     CheckedRef selection = frame.selection();
 
-    bool isCommanded = event.getModifierState("Meta"_s);
-    bool isOptioned = event.getModifierState("Alt"_s);
+    bool isCommanded = event.getModifierState("Meta"_si);
+    bool isOptioned = event.getModifierState("Alt"_si);
     bool isSelection = !selection->isNone();
 
-    FrameSelection::Alteration alternation = event.getModifierState("Shift"_s) ? FrameSelection::Alteration::Extend : FrameSelection::Alteration::Move;
+    FrameSelection::Alteration alternation = event.getModifierState("Shift"_si) ? FrameSelection::Alteration::Extend : FrameSelection::Alteration::Move;
     SelectionDirection direction = SelectionDirection::Forward;
     TextGranularity granularity = TextGranularity::CharacterGranularity;
 
@@ -4706,7 +4706,7 @@ bool EventHandler::accessibilityPreventsEventPropagation(KeyboardEvent& event)
         return false;
 
     // Check for key events that are relevant to accessibility: tab and arrows keys that change focus
-    if (event.keyIdentifier() == "U+0009"_s)
+    if (equal(event.keyIdentifier(), "U+0009"_s))
         return true;
     FocusDirection direction = focusDirectionForKey(event.keyIdentifier());
     if (direction != FocusDirection::None)
@@ -4729,7 +4729,7 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
         if (event.defaultHandled())
             return;
 
-        if (event.key() == "Escape"_s) {
+        if (equal(event.key(), "Escape"_s)) {
             if (frame->settings().closeWatcherEnabled()) {
                 if (event.isTrusted())
                     protect(protect(protect(frame->document())->window())->closeWatcherManager())->processCloseWatchers();
@@ -4739,13 +4739,13 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
                 if (RefPtr topmostAutoPopover = frame->document()->topmostAutoPopover())
                     topmostAutoPopover->hidePopover();
             }
-        } else if (event.keyIdentifier() == "U+0009"_s)
+        } else if (equal(event.keyIdentifier(), "U+0009"_s))
             defaultTabEventHandler(event);
-        else if (event.keyIdentifier() == "U+0008"_s)
+        else if (equal(event.keyIdentifier(), "U+0008"_s))
             defaultBackspaceEventHandler(event);
-        else if (event.keyIdentifier() == "PageDown"_s || event.keyIdentifier() == "PageUp"_s)
+        else if (equal(event.keyIdentifier(), "PageDown"_s) || equal(event.keyIdentifier(), "PageUp"_s))
             defaultPageUpDownEventHandler(event);
-        else if (event.keyIdentifier() == "Home"_s || event.keyIdentifier() == "End"_s)
+        else if (equal(event.keyIdentifier(), "Home"_s) || equal(event.keyIdentifier(), "End"_s))
             defaultHomeEndEventHandler(event);
         else {
             FocusDirection direction = focusDirectionForKey(event.keyIdentifier());
@@ -4900,7 +4900,7 @@ bool EventHandler::shouldDispatchEventsToDragSourceElement()
     return draggedElement() && dragState().dataTransfer && dragState().shouldDispatchEvents;
 }
 
-void EventHandler::dispatchEventToDragSourceElement(const AtomString& eventType, const PlatformMouseEvent& event)
+void EventHandler::dispatchEventToDragSourceElement(AtomStringImpl* eventType, const PlatformMouseEvent& event)
 {
     if (!shouldDispatchEventsToDragSourceElement())
         return;
@@ -5102,7 +5102,7 @@ bool EventHandler::mouseMovementExceedsThreshold(const FloatPoint& viewportLocat
     return std::abs(delta.width()) >= pointsThreshold || std::abs(delta.height()) >= pointsThreshold;
 }
 
-bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEvent, TextEventInputType inputType)
+bool EventHandler::handleTextInputEvent(StringImpl* text, Event* underlyingEvent, TextEventInputType inputType)
 {
     LOG_WITH_STREAM(Editing, stream << "EventHandler "_s << this << " handleTextInputEvent (text "_s << text << ")"_s);
 
@@ -5132,7 +5132,7 @@ bool EventHandler::isKeyboardOptionTab(const FocusEventData& focusEventData)
     auto& eventNames = WebCore::eventNames();
     return (focusEventData.type == eventNames.keydownEvent || focusEventData.type == eventNames.keypressEvent)
         && focusEventData.altKey
-        && focusEventData.keyIdentifier == "U+0009"_s;
+        && equal(focusEventData.keyIdentifier, "U+0009"_s);
 }
 
 bool EventHandler::eventInvertsTabsToLinksClientCallResult(const FocusEventData& focusEventData)
@@ -5588,7 +5588,7 @@ void EventHandler::updateLastScrollbarUnderMouse(Scrollbar* scrollbar, SetOrClea
 }
 
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
-static const AtomString& eventNameForTouchPointState(PlatformTouchPoint::State state)
+static const RefPtr<AtomStringImpl>& eventNameForTouchPointState(PlatformTouchPoint::State state)
 {
     switch (state) {
     case PlatformTouchPoint::TouchReleased:
@@ -5836,7 +5836,7 @@ std::expected<bool, RemoteFrameGeometryTransformer> EventHandler::handleTouchEve
         // When sending a touch cancel event, use empty touches and targetTouches lists.
         bool isTouchCancelEvent = (state == PlatformTouchPoint::TouchCancelled);
         RefPtr<TouchList>& effectiveTouches(isTouchCancelEvent ? emptyList : touches);
-        const AtomString& stateName(eventNameForTouchPointState(static_cast<PlatformTouchPoint::State>(state)));
+        const RefPtr<AtomStringImpl>& stateName(eventNameForTouchPointState(static_cast<PlatformTouchPoint::State>(state)));
 
         for (auto& target : changedTouches[state].m_targets) {
             ASSERT(is<Node>(target));

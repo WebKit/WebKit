@@ -48,7 +48,7 @@ using ClassChangeVector = Vector<ClassChange, classChangeVectorInlineCapacity>;
 static ClassChangeVector collectClasses(const SpaceSplitString& classes, ClassChangeType changeType)
 {
     return WTF::map<classChangeVectorInlineCapacity>(classes, [changeType](auto& className) {
-        return ClassChange { className.impl(), changeType };
+        return ClassChange { className.get(), changeType };
     });
 }
 
@@ -76,13 +76,13 @@ static ClassChangeVector computeClassChanges(const SpaceSplitString& oldClasses,
         }
         if (foundFromBoth)
             continue;
-        changedClasses.append({ newClass.impl(), ClassChangeType::Add });
+        changedClasses.append({ newClass.get(), ClassChangeType::Add });
     }
     for (unsigned i = 0; i < oldSize; ++i) {
         // If the bit is not set the corresponding class has been removed.
         if (remainingClassBits.quickGet(i))
             continue;
-        changedClasses.append({ oldClasses[i].impl(), ClassChangeType::Remove });
+        changedClasses.append({ oldClasses[i].get(), ClassChangeType::Remove });
     }
 
     return changedClasses;
@@ -147,7 +147,7 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
 
     auto collect = [&](auto& ruleSets, std::optional<MatchElement::Relation> onlyRelation = { }) {
         for (auto& classChange : classChanges) {
-            if (auto* invalidationRuleSets = ruleSets.classInvalidationRuleSets(classChange.className)) {
+            if (auto* invalidationRuleSets = ruleSets.classInvalidationRuleSets(RefPtr { classChange.className }.get())) {
                 for (auto& invalidationRuleSet : *invalidationRuleSets) {
                     if (onlyRelation && invalidationRuleSet.matchElement.relation != onlyRelation)
                         continue;

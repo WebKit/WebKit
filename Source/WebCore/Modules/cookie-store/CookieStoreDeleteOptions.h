@@ -30,9 +30,9 @@
 namespace WebCore {
 
 struct CookieStoreDeleteOptions {
-    String name;
-    String domain;
-    String path { "/"_s };
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> domain;
+    RefPtr<StringImpl> path { "/"_si };
 };
 
 }

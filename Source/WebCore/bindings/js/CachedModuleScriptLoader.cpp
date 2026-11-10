@@ -63,7 +63,7 @@ bool CachedModuleScriptLoader::load(Document& document, URL&& sourceURL, std::op
 {
     ASSERT(m_promise);
     ASSERT(!m_cachedResource);
-    String integrity = m_parameters ? m_parameters->integrity() : String { };
+    RefPtr<StringImpl> integrity = m_parameters ? m_parameters->integrity() : nullptr;
     auto destination = FetchOptionsDestination::Script;
     if (m_parameters) {
         switch (m_parameters->type()) {
@@ -96,7 +96,7 @@ void CachedModuleScriptLoader::notifyFinished(CachedResource& resource, const Ne
     notifyFinishedInternal(resource);
 }
 
-void CachedModuleScriptLoader::setCSSStyleSheet(const String&, const URL&, ASCIILiteral, const CachedCSSStyleSheet& resource)
+void CachedModuleScriptLoader::setCSSStyleSheet(StringImpl*, const URL&, ASCIILiteral, const CachedCSSStyleSheet& resource)
 {
     notifyFinishedInternal(resource);
 }

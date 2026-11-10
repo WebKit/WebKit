@@ -37,11 +37,11 @@ namespace TestWebKitAPI {
 TEST(QuickLook, SupportsMIMEType)
 {
     // FIXME: Expand this to cover all the MIME types we expect to support.
-    EXPECT_FALSE(PreviewConverter::supportsMIMEType(String()));
+    EXPECT_FALSE(PreviewConverter::supportsMIMEType(nullString()));
     EXPECT_FALSE(PreviewConverter::supportsMIMEType(emptyString()));
-    EXPECT_FALSE(PreviewConverter::supportsMIMEType("text/html"_s));
-    EXPECT_FALSE(PreviewConverter::supportsMIMEType("text/plain"_s));
-    EXPECT_TRUE(PreviewConverter::supportsMIMEType("application/vnd.ms-excel.sheet.macroEnabled.12"_s));
+    EXPECT_FALSE(PreviewConverter::supportsMIMEType("text/html"_si));
+    EXPECT_FALSE(PreviewConverter::supportsMIMEType("text/plain"_si));
+    EXPECT_TRUE(PreviewConverter::supportsMIMEType("application/vnd.ms-excel.sheet.macroEnabled.12"_si));
 }
 
 } // namespace TestWebKitAPI

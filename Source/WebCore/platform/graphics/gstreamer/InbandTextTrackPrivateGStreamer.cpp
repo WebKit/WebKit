@@ -59,7 +59,7 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index,
 {
     ensureTextTrackDebugCategoryInitialized();
 
-    GST_INFO("Track %" PRIu64 " got stream start. GStreamer stream-id: %s", m_data->m_id, m_data->m_gstStreamId.utf8());
+    GST_INFO("Track %" PRIu64 " got stream start. GStreamer stream-id: %s", m_data->m_id, utf8(m_data->m_gstStreamId));
 
     GST_DEBUG("Stream %" GST_PTR_FORMAT, m_data->m_stream.get());
     GRefPtr caps = adoptGRef(gst_stream_get_caps(m_data->m_stream.get()));
@@ -130,12 +130,12 @@ TrackID InbandTextTrackPrivateGStreamer::id() const
     return m_data->m_trackID.value_or(m_data->m_id);
 }
 
-String InbandTextTrackPrivateGStreamer::label() const
+RefPtr<StringImpl> InbandTextTrackPrivateGStreamer::label() const
 {
     return m_data->m_label;
 }
 
-String InbandTextTrackPrivateGStreamer::language() const
+RefPtr<StringImpl> InbandTextTrackPrivateGStreamer::language() const
 {
     return m_data->m_language;
 }

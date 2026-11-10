@@ -46,7 +46,7 @@ struct NetworkProcessConnectionParameters {
     HashSet<WebCore::Site> allowedFirstPartiesForCookies;
     Vector<WebPageProxyIdentifier> allowedWebPageProxyIdentifiers;
     std::optional<HashSet<WebCore::RegistrableDomain>> hostedDomains;
-    HashMap<WebCore::PageIdentifier, Vector<String>> corsDisablingPatternsPerPage;
+    HashMap<WebCore::PageIdentifier, Vector<RefPtr<StringImpl>>> corsDisablingPatternsPerPage;
     ProcessCrossOriginIsolation crossOriginIsolation { ProcessCrossOriginIsolation::None };
 };
 

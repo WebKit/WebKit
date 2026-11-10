@@ -45,9 +45,9 @@ void serializationForCSSTokenization(StringBuilder& builder, const CSS::Serializ
     builder.append("currentcolor"_s);
 }
 
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const CurrentColor&)
+RefPtr<StringImpl> serializationForCSSTokenization(const CSS::SerializationContext&, const CurrentColor&)
 {
-    return "currentcolor"_s;
+    return "currentcolor"_si;
 }
 
 // MARK: - TextStream

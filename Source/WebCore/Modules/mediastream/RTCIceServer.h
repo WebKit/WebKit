@@ -33,9 +33,9 @@
 namespace WebCore {
 
 struct RTCIceServer {
-    Variant<String, Vector<String>> urls;
-    String username;
-    String credential;
+    Variant<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>> urls;
+    RefPtr<StringImpl> username;
+    RefPtr<StringImpl> credential;
 };
 
 } // namespace WebCore

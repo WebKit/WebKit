@@ -81,12 +81,12 @@ SOFT_LINK(Bom, BOMCopierCopyWithOptions, int, (BOMCopier copier, const char* fro
 
 namespace WTF::FileSystemImpl {
 
-String createTemporaryZipArchive(const String& path)
+RefPtr<StringImpl> createTemporaryZipArchive(StringImpl* path)
 {
-    String temporaryFile;
+    RefPtr<StringImpl> temporaryFile;
 
     RetainPtr coordinator = adoptNS([[NSFileCoordinator alloc] initWithFilePresenter:nil]);
-    [coordinator coordinateReadingItemAtURL:[NSURL fileURLWithPath:path.createNSString().get()] options:NSFileCoordinatorReadingWithoutChanges error:nullptr byAccessor:[&](NSURL *newURL) mutable {
+    [coordinator coordinateReadingItemAtURL:[NSURL fileURLWithPath:createNSString(path).get()] options:NSFileCoordinatorReadingWithoutChanges error:nullptr byAccessor:[&](NSURL *newURL) mutable {
         auto archivePath = UTF8CString::unsafeFromUTF8([NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitGeneratedFileXXXXXX"].fileSystemRepresentation);
         int fd = mkostemp(byteCast<char>(archivePath.mutableSpanIncludingNullTerminator().data()), O_CLOEXEC);
         if (fd == -1)
@@ -102,21 +102,21 @@ String createTemporaryZipArchive(const String& path)
 
         auto copier = BOMCopierNew();
         if (!BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, archivePath.legacyCStringPointer(), bridge_cast(options)))
-            temporaryFile = String { archivePath };
+            temporaryFile = StringImpl::create(archivePath.span());
         BOMCopierFree(copier);
     }];
 
     return temporaryFile;
 }
 
-String extractTemporaryZipArchive(const String& path)
+RefPtr<StringImpl> extractTemporaryZipArchive(StringImpl* path)
 {
-    String temporaryDirectory = createTemporaryDirectory(@"WebKitExtractedArchive");
+    RefPtr<StringImpl> temporaryDirectory = StringImpl::create(createTemporaryDirectory(@"WebKitExtractedArchive"));
     if (!temporaryDirectory)
         return nullString();
 
     RetainPtr coordinator = adoptNS([[NSFileCoordinator alloc] initWithFilePresenter:nil]);
-    [coordinator coordinateReadingItemAtURL:[NSURL fileURLWithPath:path.createNSString().get()] options:NSFileCoordinatorReadingWithoutChanges error:nullptr byAccessor:[&](NSURL *newURL) mutable {
+    [coordinator coordinateReadingItemAtURL:[NSURL fileURLWithPath:createNSString(path).get()] options:NSFileCoordinatorReadingWithoutChanges error:nullptr byAccessor:[&](NSURL *newURL) mutable {
         auto *options = @{
             bridge_id_cast(kBOMCopierOptionExtractPKZipKey): @YES,
             bridge_id_cast(kBOMCopierOptionSequesterResourcesKey): @YES,
@@ -129,28 +129,28 @@ String extractTemporaryZipArchive(const String& path)
         BOMCopierFree(copier);
     }];
 
-    RetainPtr nsTemporaryDirectory = temporaryDirectory.createNSString();
+    RetainPtr nsTemporaryDirectory = createNSString(temporaryDirectory);
     auto *contentsOfTemporaryDirectory = [NSFileManager.defaultManager contentsOfDirectoryAtPath:nsTemporaryDirectory.get() error:nil];
     if (contentsOfTemporaryDirectory.count == 1) {
         auto *subdirectoryPath = [nsTemporaryDirectory stringByAppendingPathComponent:contentsOfTemporaryDirectory.firstObject];
         BOOL isDirectory;
         if ([NSFileManager.defaultManager fileExistsAtPath:subdirectoryPath isDirectory:&isDirectory] && isDirectory)
-            temporaryDirectory = subdirectoryPath;
+            temporaryDirectory = StringImpl::create(subdirectoryPath);
     }
 
     return temporaryDirectory;
 }
 
-std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView suffix, const String& temporaryDirectory)
+std::pair<RefPtr<StringImpl>, FileHandle> openTemporaryFile(StringView prefix, StringView suffix, StringImpl* temporaryDirectory)
 {
     Vector<char> temporaryFilePath(PATH_MAX);
-    if (temporaryDirectory.isEmpty()) {
+    if (isEmpty(temporaryDirectory)) {
         if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryFilePath.mutableSpan().data(), temporaryFilePath.size()))
-            return { String(), FileHandle() };
+            return { nullString(), FileHandle() };
         // Shrink the vector.
         temporaryFilePath.shrink(strlenSpan(temporaryFilePath.span()));
     } else {
-        const auto temporaryDirectoryUtf8 = temporaryDirectory.utf8();
+        const auto temporaryDirectoryUtf8 = utf8(temporaryDirectory);
         memcpySpan(temporaryFilePath.mutableSpan(), temporaryDirectoryUtf8.span());
         // Shrink the vector.
         temporaryFilePath.shrink(temporaryDirectoryUtf8.length());
@@ -172,7 +172,7 @@ std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView su
     if (!fileHandle)
         return { nullString(), FileHandle() };
 
-    return { String::fromUTF8(temporaryFilePath.span().data()), WTF::move(fileHandle) };
+    return { StringImpl::fromUTF8(temporaryFilePath.span().data()), WTF::move(fileHandle) };
 }
 
 NSString *createTemporaryDirectory(NSString *directoryPrefix)
@@ -203,13 +203,13 @@ NSString *createTemporaryDirectory(NSString *directoryPrefix)
     return [[NSFileManager defaultManager] stringWithFileSystemRepresentation:path.span().data() length:length];
 }
 
-std::pair<FileHandle, String> createTemporaryFileInDirectory(const String& directory, const String& suffix)
+std::pair<FileHandle, RefPtr<StringImpl>> createTemporaryFileInDirectory(StringImpl* directory, StringImpl* suffix)
 {
     auto fsSuffix = fileSystemRepresentation(suffix);
     auto templatePath = pathByAppendingComponents(directory, { { makeString("XXXXXX"_s, suffix) } });
     auto fsTemplatePath = fileSystemRepresentation(templatePath);
     auto fileHandle = FileHandle::adopt(mkstemps(byteCast<char>(fsTemplatePath.mutableSpanIncludingNullTerminator()).data(), fsSuffix.length()));
-    return { WTF::move(fileHandle), String::fromUTF8(fsTemplatePath.span()) };
+    return { WTF::move(fileHandle), StringImpl::fromUTF8(fsTemplatePath.span()) };
 }
 
 #ifdef IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES
@@ -256,10 +256,10 @@ std::optional<bool> allowsMaterializingDatalessFiles(PolicyScope scope)
 }
 
 #if PLATFORM(IOS_FAMILY)
-bool isSafeToUseMemoryMapForPath(const String& path)
+bool isSafeToUseMemoryMapForPath(StringImpl* path)
 {
     NSError *error = nil;
-    NSDictionary<NSFileAttributeKey, id> *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path.createNSString().get() error:&error];
+    NSDictionary<NSFileAttributeKey, id> *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:createNSString(path).get() error:&error];
     if (error) {
         LOG_ERROR("Unable to get path protection class");
         return false;
@@ -271,36 +271,36 @@ bool isSafeToUseMemoryMapForPath(const String& path)
     return true;
 }
 
-bool makeSafeToUseMemoryMapForPath(const String& path)
+bool makeSafeToUseMemoryMapForPath(StringImpl* path)
 {
     if (isSafeToUseMemoryMapForPath(path))
         return true;
     
     NSError *error = nil;
-    BOOL success = [[NSFileManager defaultManager] setAttributes:@{ NSFileProtectionKey: NSFileProtectionCompleteUnlessOpen } ofItemAtPath:path.createNSString().get() error:&error];
+    BOOL success = [[NSFileManager defaultManager] setAttributes:@{ NSFileProtectionKey: NSFileProtectionCompleteUnlessOpen } ofItemAtPath:createNSString(path).get() error:&error];
     if (error || !success) {
-        SAFE_WTFLOGALWAYS("makeSafeToUseMemoryMapForPath(%s) failed with error %@", path.utf8(), error);
+        SAFE_WTFLOGALWAYS("makeSafeToUseMemoryMapForPath(%s) failed with error %@", utf8(path), error);
         return false;
     }
     return true;
 }
 #endif
 
-bool setExcludedFromBackup(const String& path, bool excluded)
+bool setExcludedFromBackup(StringImpl* path, bool excluded)
 {
-    if (path.isEmpty())
+    if (isEmpty(path))
         return false;
 
     NSError *error;
-    if (![[NSURL fileURLWithPath:path.createNSString().get() isDirectory:YES] setResourceValue:[NSNumber numberWithBool:excluded] forKey:NSURLIsExcludedFromBackupKey error:&error]) {
-        LOG_ERROR("Cannot exclude path '%s' from backup with error '%@'", path.utf8(), error.localizedDescription);
+    if (![[NSURL fileURLWithPath:createNSString(path).get() isDirectory:YES] setResourceValue:[NSNumber numberWithBool:excluded] forKey:NSURLIsExcludedFromBackupKey error:&error]) {
+        LOG_ERROR("Cannot exclude path '%s' from backup with error '%@'", utf8(path), error.localizedDescription);
         return false;
     }
 
     return true;
 }
 
-bool markPurgeable(const String& path)
+bool markPurgeable(StringImpl* path)
 {
     auto fileSystemPath = fileSystemRepresentation(path);
     if (fileSystemPath.isNull())
@@ -328,7 +328,7 @@ NSString *systemDirectoryPath()
     return path.get().get();
 }
 
-String darwinCacheDirectory()
+RefPtr<StringImpl> darwinCacheDirectory()
 {
     char temp[PATH_MAX];
     size_t length = confstr(_CS_DARWIN_USER_CACHE_DIR, temp, sizeof(temp));
@@ -342,10 +342,10 @@ String darwinCacheDirectory()
         RELEASE_LOG_ERROR(Process, "Could not canonicalize cache directory path: %s\n", safeStrerror(errno));
         return { };
     }
-    return String::fromUTF8(resolvedPath);
+    return StringImpl::fromUTF8(resolvedPath);
 }
 
-String darwinTempDirectory()
+RefPtr<StringImpl> darwinTempDirectory()
 {
     char temp[PATH_MAX];
     size_t length = confstr(_CS_DARWIN_USER_TEMP_DIR, temp, sizeof(temp));
@@ -359,11 +359,11 @@ String darwinTempDirectory()
         RELEASE_LOG_ERROR(Process, "Could not canonicalize temporary directory path: %s\n", safeStrerror(errno));
         return { };
     }
-    return String::fromUTF8(resolvedPath);
+    return StringImpl::fromUTF8(resolvedPath);
 }
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-std::optional<String> homeDirectory()
+std::optional<RefPtr<StringImpl>> homeDirectory()
 {
     // According to the man page for getpwuid_r, we should use sysconf(_SC_GETPW_R_SIZE_MAX) to determine the size of the buffer.
     // However, a buffer size of 4096 should be sufficient, since PATH_MAX is 1024.
@@ -374,7 +374,7 @@ std::optional<String> homeDirectory()
         RELEASE_LOG_ERROR(Process, "Couldn't find home directory, errno=%d", errno);
         return std::nullopt;
     }
-    return String::fromUTF8(pwd.pw_dir);
+    return StringImpl::fromUTF8(pwd.pw_dir);
 }
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
 

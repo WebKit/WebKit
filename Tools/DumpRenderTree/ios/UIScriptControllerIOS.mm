@@ -131,7 +131,7 @@ JSObjectRef UIScriptControllerIOS::contentVisibleRect() const
 
 void UIScriptControllerIOS::copyText(JSStringRef text)
 {
-    UIPasteboard.generalPasteboard.string = text->string().createNSString().get();
+    UIPasteboard.generalPasteboard.string = createNSString(text->string()).get();
 }
 
 int64_t UIScriptControllerIOS::pasteboardChangeCount() const

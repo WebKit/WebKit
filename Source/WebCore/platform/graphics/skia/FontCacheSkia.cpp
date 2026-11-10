@@ -141,7 +141,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
         bcp47.append("und-Zsye");
     auto typeface = fontManager().matchFamilyStyleCharacter(nullptr, { }, bcp47.mutableSpan().data(), bcp47.size(), baseCharacter);
 #else
-    auto typeface = m_skiaSystemFallbackFontCache.fontForCharacterCluster(isEmoji ? "und-Zsye"_s : description.usedLocale(), stringView);
+    auto typeface = m_skiaSystemFallbackFontCache.fontForCharacterCluster(isEmoji ? "und-Zsye"_si.get() : description.usedLocale().get(), stringView);
 #endif
     if (!typeface)
         return nullptr;
@@ -158,20 +158,20 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     return fontForPlatformData(alternateFontData);
 }
 
-Vector<String> FontCache::systemFontFamilies()
+Vector<RefPtr<StringImpl>> FontCache::systemFontFamilies()
 {
     auto& manager = fontManager();
     int count = manager.countFamilies();
-    Vector<String> fontFamilies(ReserveCapacityTag { }, count);
+    Vector<RefPtr<StringImpl>> fontFamilies(ReserveCapacityTag { }, count);
     for (int i = 0; i < count; ++i) {
         SkString familyName;
         manager.getFamilyName(i, &familyName);
-        fontFamilies.append(String::fromUTF8(familyName.data()));
+        fontFamilies.append(StringImpl::fromUTF8(familyName.data()));
     }
     return fontFamilies;
 }
 
-bool FontCache::isSystemFontForbiddenForEditing(const String&)
+bool FontCache::isSystemFontForbiddenForEditing(StringImpl*)
 {
     return false;
 }
@@ -179,9 +179,9 @@ bool FontCache::isSystemFontForbiddenForEditing(const String&)
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
 #if PLATFORM(WIN)
-    const auto defaultFontName = "Times New Roman"_s;
+    const auto defaultFontName = "Times New Roman"_si;
 #else
-    const auto defaultFontName = "serif"_s;
+    const auto defaultFontName = "serif"_si;
 #endif
     if (RefPtr<Font> font = fontForFamily(fontDescription, defaultFontName))
         return font.releaseNonNull();
@@ -199,23 +199,28 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     return fontForPlatformData(platformData);
 }
 
-Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(const AtomString&, AllowUserInstalledFonts)
+Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(AtomStringImpl*, AllowUserInstalledFonts)
 {
     return { };
 }
 
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
-static bool isSystemUIFamilyFont(const String& family)
+static bool isSystemUIFamilyFont(StringImpl* family)
 {
-    return family == "-webkit-system-font"_s
-        || family == "-webkit-system-ui"_s
-        || family == "system-font"_s
-        || family == "system-ui"_s
-        || family == "ui-sans-serif"_s;
+    return equal(family, "-webkit-system-font"_s)
+        || equal(family, "-webkit-system-ui"_s)
+        || equal(family, "system-font"_s)
+        || equal(family, "system-ui"_s)
+        || equal(family, "ui-sans-serif"_s);
 }
 #endif
 
-static String getFamilyNameStringFromFamily(const String& family)
+static bool equalFamilyName(StringImpl* family, FamilyNamesIndex index)
+{
+    return equal(family, &static_cast<const StringImpl&>(*familyNamesData->at(index)));
+}
+
+static RefPtr<StringImpl> getFamilyNameStringFromFamily(StringImpl* family)
 {
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
     if (isSystemUIFamilyFont(family))
@@ -224,21 +229,21 @@ static String getFamilyNameStringFromFamily(const String& family)
 
     // If we're creating a fallback font (e.g. "-webkit-monospace"), convert the name into
     // the fallback name (like "monospace") that fontconfig understands.
-    if (family.length() && !family.startsWith("-webkit-"_s))
+    if (length(family) && !startsWith(family, "-webkit-"_s))
         return family;
 
-    if (family == *familyNamesData->at(FamilyNamesIndex::StandardFamily) || family == *familyNamesData->at(FamilyNamesIndex::SerifFamily))
-        return "serif"_s;
-    if (family == *familyNamesData->at(FamilyNamesIndex::SansSerifFamily))
-        return "sans-serif"_s;
-    if (family == *familyNamesData->at(FamilyNamesIndex::MonospaceFamily))
-        return "monospace"_s;
-    if (family == *familyNamesData->at(FamilyNamesIndex::CursiveFamily))
-        return "cursive"_s;
-    if (family == *familyNamesData->at(FamilyNamesIndex::FantasyFamily))
-        return "fantasy"_s;
-    if (family == *familyNamesData->at(FamilyNamesIndex::MathFamily))
-        return "math"_s;
+    if (equalFamilyName(family, FamilyNamesIndex::StandardFamily) || equalFamilyName(family, FamilyNamesIndex::SerifFamily))
+        return "serif"_si;
+    if (equalFamilyName(family, FamilyNamesIndex::SansSerifFamily))
+        return "sans-serif"_si;
+    if (equalFamilyName(family, FamilyNamesIndex::MonospaceFamily))
+        return "monospace"_si;
+    if (equalFamilyName(family, FamilyNamesIndex::CursiveFamily))
+        return "cursive"_si;
+    if (equalFamilyName(family, FamilyNamesIndex::FantasyFamily))
+        return "fantasy"_si;
+    if (equalFamilyName(family, FamilyNamesIndex::MathFamily))
+        return "math"_si;
 
     return emptyString();
 }
@@ -403,19 +408,19 @@ Vector<hb_feature_t> FontCache::computeFeatures(const FontDescription& fontDescr
     return features;
 }
 
-static bool isUnsupportedFamilyFont(const AtomString& family)
+static bool isUnsupportedFamilyFont(AtomStringImpl* family)
 {
-    return family == "-apple-system"
-        || family == "-apple-system-font";
+    return equal(family, "-apple-system"_s)
+        || equal(family, "-apple-system-font"_s);
 }
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, AtomStringImpl* family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
 {
     if (isUnsupportedFamilyFont(family))
         return nullptr;
     auto familyName = getFamilyNameStringFromFamily(family);
     auto skFontStyle = skiaFontStyle(fontDescription);
-    auto typeface = fontManager().matchFamilyStyle(familyName.utf8().legacyCStringPointer(), skFontStyle);
+    auto typeface = fontManager().matchFamilyStyle(utf8(familyName).legacyCStringPointer(), skFontStyle);
     if (!typeface)
         return nullptr;
 
@@ -430,7 +435,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     return platformDataUniquePtr;
 }
 
-ASCIILiteral FontCache::platformAlternateFamilyName(const String&)
+ASCIILiteral FontCache::platformAlternateFamilyName(StringImpl*)
 {
     return { };
 }

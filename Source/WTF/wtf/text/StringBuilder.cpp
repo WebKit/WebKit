@@ -32,7 +32,7 @@
 
 namespace WTF {
 
-static constexpr unsigned maxCapacity = String::MaxLength;
+static constexpr unsigned maxCapacity = StringImpl::MaxLength;
 
 unsigned StringBuilder::expandedCapacity(unsigned capacity, unsigned requiredCapacity)
 {
@@ -52,8 +52,8 @@ void StringBuilder::reifyString() const
     RELEASE_ASSERT(!hasOverflowed());
 
     // Check if the string already exists.
-    if (!m_string.isNull()) {
-        ASSERT(m_string.length() == m_length);
+    if (m_string) {
+        ASSERT(WTF::length(m_string) == m_length);
         return;
     }
 
@@ -86,7 +86,7 @@ void StringBuilder::shrink(unsigned newLength)
     m_length = newLength;
 
     if (m_buffer) {
-        m_string = { }; // Clear the string to remove the reference to m_buffer if any before checking the reference count of m_buffer.
+        m_string = nullptr; // Clear the string to remove the reference to m_buffer if any before checking the reference count of m_buffer.
         if (m_buffer->hasOneRef() && !m_buffer->hasHash()) {
             // If the old buffer had only the one ref and no hash, we can just reduce the length and keep using the buffer.
             return;
@@ -100,7 +100,7 @@ void StringBuilder::shrink(unsigned newLength)
     }
 
     // Since the old length was not 0 and m_buffer is null, m_string is guaranteed to be non-null.
-    m_string = StringImpl::createSubstringSharingImpl(*m_string.impl(), 0, newLength);
+    m_string = StringImpl::createSubstringSharingImpl(protect(*m_string), 0, newLength);
 }
 
 void StringBuilder::reallocateBuffer(unsigned requiredCapacity)
@@ -123,10 +123,10 @@ void StringBuilder::reserveCapacity(unsigned newCapacity)
         if (newCapacity > m_length) {
             if (!m_length)
                 allocateBuffer<Latin1Character>(std::span<const Latin1Character> { }, newCapacity);
-            else if (m_string.is8Bit())
-                allocateBuffer<Latin1Character>(m_string.span8(), newCapacity);
+            else if (WTF::is8Bit(m_string))
+                allocateBuffer<Latin1Character>(WTF::span8(m_string), newCapacity);
             else
-                allocateBuffer<char16_t>(m_string.span16(), newCapacity);
+                allocateBuffer<char16_t>(WTF::span16(m_string), newCapacity);
         }
     }
     ASSERT(hasOverflowed() || !newCapacity || m_buffer->length() >= newCapacity);
@@ -179,7 +179,7 @@ void StringBuilder::append(std::span<const Latin1Character> characters)
 NODELETE bool StringBuilder::shouldShrinkToFit() const
 {
     // Shrink the buffer if it's 80% full or less.
-    static_assert(static_cast<size_t>(String::MaxLength) + (String::MaxLength >> 2) <= static_cast<size_t>(std::numeric_limits<unsigned>::max()));
+    static_assert(static_cast<size_t>(StringImpl::MaxLength) + (StringImpl::MaxLength >> 2) <= static_cast<size_t>(std::numeric_limits<unsigned>::max()));
     return !hasOverflowed() && m_buffer && m_buffer->length() > m_length + (m_length >> 2);
 }
 

@@ -98,18 +98,18 @@ static constexpr auto versionKey = "WebKitDatabaseVersionKey"_s;
 static constexpr auto unqualifiedInfoTableName = "__WebKitDatabaseInfoTable__"_s;
 const unsigned long long quotaIncreaseSize = 5 * 1024 * 1024;
 
-static const String& fullyQualifiedInfoTableName()
+static const RefPtr<StringImpl>& fullyQualifiedInfoTableName()
 {
-    static NeverDestroyed<String> qualifiedName { MAKE_STATIC_STRING_IMPL("main.__WebKitDatabaseInfoTable__") };
+    static NeverDestroyed<RefPtr<StringImpl>> qualifiedName { MAKE_STATIC_STRING_IMPL("main.__WebKitDatabaseInfoTable__") };
     return qualifiedName;
 }
 
-static String formatErrorMessage(ASCIILiteral message, int sqliteErrorCode, const char* sqliteErrorMessage)
+static RefPtr<StringImpl> formatErrorMessage(ASCIILiteral message, int sqliteErrorCode, const char* sqliteErrorMessage)
 {
     return makeString(message, " ("_s, sqliteErrorCode, ' ', unsafeSpan(sqliteErrorMessage), ')');
 }
 
-static bool setTextValueInDatabase(SQLiteDatabase& db, StringView query, const String& value)
+static bool setTextValueInDatabase(SQLiteDatabase& db, StringView query, StringImpl* value)
 {
     auto statement = db.prepareStatementSlow(query);
     if (!statement) {
@@ -127,7 +127,7 @@ static bool setTextValueInDatabase(SQLiteDatabase& db, StringView query, const S
     return true;
 }
 
-static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, StringView query, String& resultString)
+static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, StringView query, RefPtr<StringImpl>& resultString)
 {
     auto statement = db.prepareStatementSlow(query);
     if (!statement) {
@@ -141,7 +141,7 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, StringView query,
         return true;
     }
     if (result == SQLITE_DONE) {
-        resultString = String();
+        resultString = nullptr;
         return true;
     }
 
@@ -153,7 +153,7 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, StringView query,
 static Lock guidLock;
 
 struct VersionAndUseCount {
-    String version;
+    RefPtr<StringImpl> version;
     size_t useCount { 0 };
 };
 
@@ -163,39 +163,39 @@ NODELETE static HashMap<DatabaseGUID, VersionAndUseCount>& guidToVersionMap() WT
     return map;
 }
 
-static inline void updateGUIDVersionMap(DatabaseGUID guid, const String& newVersion) WTF_REQUIRES_LOCK(guidLock)
+static inline void updateGUIDVersionMap(DatabaseGUID guid, StringImpl* newVersion) WTF_REQUIRES_LOCK(guidLock)
 {
     // FIXME: This code maps empty string to null string because at one time static strings were not thread-safe.
     // But that time is long gone. So we can remove the mapping now.
 
     auto addResult = guidToVersionMap().ensure(guid, [&] {
-        return VersionAndUseCount { String(), 0 };
+        return VersionAndUseCount { nullString(), 0 };
     });
-    addResult.iterator->value.version = newVersion.isEmpty() ? String() : newVersion.isolatedCopy(); // Map empty string to null string (see comment above).
+    addResult.iterator->value.version = isEmpty(newVersion) ? nullptr : isolatedCopy(newVersion); // Map empty string to null string (see comment above).
     ++addResult.iterator->value.useCount;
 }
 
-static inline DatabaseGUID guidForOriginAndName(const String& origin, const String& name) WTF_REQUIRES_LOCK(guidLock)
+static inline DatabaseGUID guidForOriginAndName(StringImpl* origin, StringImpl* name) WTF_REQUIRES_LOCK(guidLock)
 {
-    static MainThreadNeverDestroyed<MemoryCompactRobinHoodHashMap<String, DatabaseGUID>> map;
+    static MainThreadNeverDestroyed<MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, DatabaseGUID>> map;
     return map.get().ensure(makeString(origin, '/', name), [] {
         static DatabaseGUID lastUsedGUID;
         return ++lastUsedGUID;
     }).iterator->value;
 }
 
-Database::Database(DatabaseContext& context, const String& name, const String& expectedVersion, const String& displayName, unsigned long long estimatedSize)
+Database::Database(DatabaseContext& context, StringImpl* name, StringImpl* expectedVersion, StringImpl* displayName, unsigned long long estimatedSize)
     : m_document(*context.document())
     , m_contextThreadSecurityOrigin(protect(protect(m_document)->securityOrigin())->isolatedCopy())
     , m_databaseThreadSecurityOrigin(protect(protect(m_document)->securityOrigin())->isolatedCopy())
     , m_databaseContext(context)
-    , m_name((name.isNull() ? emptyString() : name).isolatedCopy())
-    , m_expectedVersion(expectedVersion.isolatedCopy())
-    , m_displayName(displayName.isolatedCopy())
+    , m_name(isolatedCopy(!name ? emptyString().get() : name))
+    , m_expectedVersion(isolatedCopy(expectedVersion))
+    , m_displayName(isolatedCopy(displayName))
     , m_estimatedSize(estimatedSize)
     , m_filename(DatabaseManager::singleton().fullPathForDatabase(protect(protect(m_document)->securityOrigin()), m_name))
     , m_sqliteDatabase(makeUniqueRef<SQLiteDatabase>())
-    , m_databaseAuthorizer(DatabaseAuthorizer::create(unqualifiedInfoTableName))
+    , m_databaseAuthorizer(DatabaseAuthorizer::create(StringImpl::create(unqualifiedInfoTableName).ptr()))
 {
     {
         Locker locker { guidLock };
@@ -340,22 +340,22 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
 
     m_sqliteDatabase->setBusyTimeout(maxSqliteBusyWaitTime);
 
-    String currentVersion;
+    RefPtr<StringImpl> currentVersion;
     {
         Locker locker { guidLock };
 
         auto entry = guidToVersionMap().find(m_guid);
         if (entry != guidToVersionMap().end()) {
             // Map null string to empty string (see updateGUIDVersionMap()).
-            currentVersion = entry->value.version.isNull() ? emptyString() : entry->value.version.isolatedCopy();
-            LOG(StorageAPI, "Current cached version for guid %i is %s", m_guid, currentVersion.utf8());
+            currentVersion = !entry->value.version ? emptyString() : isolatedCopy(entry->value.version);
+            LOG(StorageAPI, "Current cached version for guid %i is %s", m_guid, utf8(currentVersion));
         } else {
             LOG(StorageAPI, "No cached version for guid %i", m_guid);
 
             SQLiteTransaction transaction(m_sqliteDatabase.get());
             transaction.begin();
             if (!transaction.inProgress()) {
-                String message = formatErrorMessage("unable to open database, failed to start transaction"_s, m_sqliteDatabase->lastError(), m_sqliteDatabase->lastErrorMsg());
+                RefPtr<StringImpl> message = formatErrorMessage("unable to open database, failed to start transaction"_s, m_sqliteDatabase->lastError(), m_sqliteDatabase->lastErrorMsg());
                 m_sqliteDatabase->close();
                 return Exception { ExceptionCode::InvalidStateError, WTF::move(message) };
             }
@@ -364,24 +364,24 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
                 m_new = true;
 
                 if (!m_sqliteDatabase->executeCommandSlow(makeString("CREATE TABLE "_s, unqualifiedInfoTableName, " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);"_s))) {
-                    String message = formatErrorMessage("unable to open database, failed to create 'info' table"_s, m_sqliteDatabase->lastError(), m_sqliteDatabase->lastErrorMsg());
+                    RefPtr<StringImpl> message = formatErrorMessage("unable to open database, failed to create 'info' table"_s, m_sqliteDatabase->lastError(), m_sqliteDatabase->lastErrorMsg());
                     transaction.rollback();
                     m_sqliteDatabase->close();
                 return Exception { ExceptionCode::InvalidStateError, WTF::move(message) };
                 }
             } else if (!getVersionFromDatabase(currentVersion, false)) {
-                String message = formatErrorMessage("unable to open database, failed to read current version"_s, m_sqliteDatabase->lastError(), m_sqliteDatabase->lastErrorMsg());
+                RefPtr<StringImpl> message = formatErrorMessage("unable to open database, failed to read current version"_s, m_sqliteDatabase->lastError(), m_sqliteDatabase->lastErrorMsg());
                 transaction.rollback();
                 m_sqliteDatabase->close();
                 return Exception { ExceptionCode::InvalidStateError, WTF::move(message) };
             }
 
-            if (currentVersion.length()) {
-                LOG(StorageAPI, "Retrieved current version %s from database %s", currentVersion.utf8(), databaseDebugName().utf8());
+            if (length(currentVersion)) {
+                LOG(StorageAPI, "Retrieved current version %s from database %s", utf8(currentVersion), utf8(databaseDebugName()));
             } else if (!m_new || shouldSetVersionInNewDatabase) {
-                LOG(StorageAPI, "Setting version %s in database %s that was just created", m_expectedVersion.utf8(), databaseDebugName().utf8());
+                LOG(StorageAPI, "Setting version %s in database %s that was just created", utf8(m_expectedVersion), utf8(databaseDebugName()));
                 if (!setVersionInDatabase(m_expectedVersion, false)) {
-                    String message = formatErrorMessage("unable to open database, failed to write current version"_s, m_sqliteDatabase->lastError(), m_sqliteDatabase->lastErrorMsg());
+                    RefPtr<StringImpl> message = formatErrorMessage("unable to open database, failed to write current version"_s, m_sqliteDatabase->lastError(), m_sqliteDatabase->lastErrorMsg());
                     transaction.rollback();
                     m_sqliteDatabase->close();
                     return Exception { ExceptionCode::InvalidStateError, WTF::move(message) };
@@ -393,14 +393,14 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
         }
     }
 
-    if (currentVersion.isNull()) {
-        LOG(StorageAPI, "Database %s does not have its version set", databaseDebugName().utf8());
+    if (!currentVersion) {
+        LOG(StorageAPI, "Database %s does not have its version set", utf8(databaseDebugName()));
         currentVersion = emptyString();
     }
 
     // If the expected version isn't the empty string, ensure that the current database version we have matches that version. Otherwise, set an exception.
     // If the expected version is the empty string, then we always return with whatever version of the database we have.
-    if ((!m_new || shouldSetVersionInNewDatabase) && m_expectedVersion.length() && m_expectedVersion != currentVersion) {
+    if ((!m_new || shouldSetVersionInNewDatabase) && length(m_expectedVersion) && !equal(m_expectedVersion, currentVersion)) {
         m_sqliteDatabase->close();
         return Exception { ExceptionCode::InvalidStateError, makeString("unable to open database, version mismatch, '"_s, m_expectedVersion, "' does not match the currentVersion of '"_s, currentVersion, '\'') };
     }
@@ -440,7 +440,7 @@ void Database::closeDatabase()
     }
 }
 
-bool Database::getVersionFromDatabase(String& version, bool shouldCacheVersion)
+bool Database::getVersionFromDatabase(RefPtr<StringImpl>& version, bool shouldCacheVersion)
 {
     auto query = makeString("SELECT value FROM "_s, fullyQualifiedInfoTableName(),  " WHERE key = '"_s, versionKey, "';"_s);
 
@@ -451,14 +451,14 @@ bool Database::getVersionFromDatabase(String& version, bool shouldCacheVersion)
         if (shouldCacheVersion)
             setCachedVersion(version);
     } else
-        LOG_ERROR("Failed to retrieve version from database %s", databaseDebugName().utf8());
+        LOG_ERROR("Failed to retrieve version from database %s", utf8(databaseDebugName()));
 
     m_databaseAuthorizer->enable();
 
     return result;
 }
 
-bool Database::setVersionInDatabase(const String& version, bool shouldCacheVersion)
+bool Database::setVersionInDatabase(StringImpl* version, bool shouldCacheVersion)
 {
     // The INSERT will replace an existing entry for the database with the new version number, due to the UNIQUE ON CONFLICT REPLACE
     // clause in the CREATE statement (see Database::performOpenAndVerify()).
@@ -471,33 +471,33 @@ bool Database::setVersionInDatabase(const String& version, bool shouldCacheVersi
         if (shouldCacheVersion)
             setCachedVersion(version);
     } else
-        LOG_ERROR("Failed to set version %s in database (%s)", version.utf8(), query.utf8());
+        LOG_ERROR("Failed to set version %s in database (%s)", utf8(version), utf8(query));
 
     m_databaseAuthorizer->enable();
 
     return result;
 }
 
-void Database::setExpectedVersion(const String& version)
+void Database::setExpectedVersion(StringImpl* version)
 {
-    m_expectedVersion = version.isolatedCopy();
+    m_expectedVersion = isolatedCopy(version);
 }
 
-String Database::getCachedVersion() const
+RefPtr<StringImpl> Database::getCachedVersion() const
 {
     Locker locker { guidLock };
 
-    return guidToVersionMap().get(m_guid).version.isolatedCopy();
+    return isolatedCopy(guidToVersionMap().get(m_guid).version);
 }
 
-void Database::setCachedVersion(const String& actualVersion)
+void Database::setCachedVersion(StringImpl* actualVersion)
 {
     Locker locker { guidLock };
 
     updateGUIDVersionMap(m_guid, actualVersion);
 }
 
-bool Database::getActualVersionForTransaction(String &actualVersion)
+bool Database::getActualVersionForTransaction(RefPtr<StringImpl> &actualVersion)
 {
     ASSERT(m_sqliteDatabase->transactionInProgress());
 
@@ -550,10 +550,10 @@ SQLTransactionCoordinator& Database::transactionCoordinator()
     return databaseThread().transactionCoordinator();
 }
 
-String Database::version() const
+RefPtr<StringImpl> Database::version() const
 {
     if (m_deleted)
-        return String();
+        return nullptr;
 
     // Note: In multi-process browsers the cached value may be accurate, but we cannot read the
     // actual version from the database without potentially inducing a deadlock.
@@ -566,13 +566,13 @@ void Database::markAsDeletedAndClose()
     if (m_deleted)
         return;
 
-    LOG(StorageAPI, "Marking %s (%p) as deleted", stringIdentifierIsolatedCopy().utf8(), this);
+    LOG(StorageAPI, "Marking %s (%p) as deleted", utf8(stringIdentifierIsolatedCopy()), this);
     m_deleted = true;
 
     close();
 }
 
-void Database::changeVersion(String&& oldVersion, String&& newVersion, RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback)
+void Database::changeVersion(RefPtr<StringImpl>&& oldVersion, RefPtr<StringImpl>&& newVersion, RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback)
 {
     runTransaction(WTF::move(callback), WTF::move(errorCallback), WTF::move(successCallback), ChangeVersionWrapper::create(WTF::move(oldVersion), WTF::move(newVersion)), false);
 }
@@ -589,22 +589,22 @@ void Database::readTransaction(Ref<SQLTransactionCallback>&& callback, RefPtr<SQ
     runTransaction(WTF::move(callback), WTF::move(errorCallback), WTF::move(successCallback), nullptr, true);
 }
 
-String Database::stringIdentifierIsolatedCopy() const
+RefPtr<StringImpl> Database::stringIdentifierIsolatedCopy() const
 {
     // Return a deep copy for ref counting thread safety
-    return m_name.isolatedCopy();
+    return isolatedCopy(m_name);
 }
 
-String Database::displayNameIsolatedCopy() const
+RefPtr<StringImpl> Database::displayNameIsolatedCopy() const
 {
     // Return a deep copy for ref counting thread safety
-    return m_displayName.isolatedCopy();
+    return isolatedCopy(m_displayName);
 }
 
-String Database::expectedVersionIsolatedCopy() const
+RefPtr<StringImpl> Database::expectedVersionIsolatedCopy() const
 {
     // Return a deep copy for ref counting thread safety
-    return m_expectedVersion.isolatedCopy();
+    return isolatedCopy(m_expectedVersion);
 }
 
 unsigned long long Database::estimatedSize() const
@@ -618,10 +618,10 @@ void Database::setEstimatedSize(unsigned long long estimatedSize)
     DatabaseTracker::singleton().setDatabaseDetails(securityOrigin(), m_name, m_displayName, m_estimatedSize);
 }
 
-String Database::fileNameIsolatedCopy() const
+RefPtr<StringImpl> Database::fileNameIsolatedCopy() const
 {
     // Return a deep copy for ref counting thread safety
-    return m_filename.isolatedCopy();
+    return isolatedCopy(m_filename);
 }
 
 DatabaseDetails Database::details() const
@@ -677,7 +677,7 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
     if (!m_isTransactionQueueEnabled) {
         if (errorCallback) {
             protect(protect(m_document)->eventLoop())->queueTask(TaskSource::Networking, [errorCallback = Ref { *errorCallback }] {
-                errorCallback->invoke(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed"_s));
+                errorCallback->invoke(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed"_si));
             });
         }
         return;
@@ -697,30 +697,30 @@ void Database::scheduleTransactionCallback(SQLTransaction* transaction)
     });
 }
 
-Vector<String> Database::performGetTableNames()
+Vector<RefPtr<StringImpl>> Database::performGetTableNames()
 {
     disableAuthorizer();
 
     auto statement = sqliteDatabase().prepareStatement("SELECT name FROM sqlite_master WHERE type='table';"_s);
     if (!statement) {
-        LOG_ERROR("Unable to retrieve list of tables for database %s", databaseDebugName().utf8());
+        LOG_ERROR("Unable to retrieve list of tables for database %s", utf8(databaseDebugName()));
         enableAuthorizer();
-        return Vector<String>();
+        return Vector<RefPtr<StringImpl>>();
     }
 
-    Vector<String> tableNames;
+    Vector<RefPtr<StringImpl>> tableNames;
     int result;
     while ((result = statement->step()) == SQLITE_ROW) {
-        String name = statement->columnText(0);
-        if (name != unqualifiedInfoTableName)
+        RefPtr<StringImpl> name = statement->columnText(0);
+        if (!equal(name, unqualifiedInfoTableName))
             tableNames.append(name);
     }
 
     enableAuthorizer();
 
     if (result != SQLITE_DONE) {
-        LOG_ERROR("Error getting tables for database %s", databaseDebugName().utf8());
-        return Vector<String>();
+        LOG_ERROR("Error getting tables for database %s", utf8(databaseDebugName()));
+        return Vector<RefPtr<StringImpl>>();
     }
 
     return tableNames;
@@ -739,16 +739,16 @@ void Database::incrementalVacuumIfNeeded()
     }
 }
 
-void Database::logErrorMessage(const String& message)
+void Database::logErrorMessage(StringImpl* message)
 {
     protect(m_document)->addConsoleMessage(MessageSource::Storage, MessageLevel::Error, message);
 }
 
-Vector<String> Database::tableNames()
+Vector<RefPtr<StringImpl>> Database::tableNames()
 {
     // FIXME: Not using isolatedCopy on these strings looks ok since threads take strict turns
     // in dealing with them. However, if the code changes, this may not be true anymore.
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
     DatabaseTaskSynchronizer synchronizer;
     Ref thread = databaseThread();
     if (thread->terminationRequested(&synchronizer))
@@ -796,7 +796,7 @@ bool Database::didExceedQuota()
 
 #if !LOG_DISABLED || !ERROR_DISABLED
 
-String Database::databaseDebugName() const
+RefPtr<StringImpl> Database::databaseDebugName() const
 {
     return makeString(m_contextThreadSecurityOrigin->toString(), "::"_s, m_name);
 }

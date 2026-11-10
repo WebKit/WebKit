@@ -40,23 +40,23 @@ CSSNamespaceRule::CSSNamespaceRule(StyleRuleNamespace& namespaceRule, CSSStyleSh
 
 CSSNamespaceRule::~CSSNamespaceRule() = default;
 
-AtomString CSSNamespaceRule::namespaceURI() const
+RefPtr<AtomStringImpl> CSSNamespaceRule::namespaceURI() const
 {
     return m_namespaceRule->uri();
 }
     
-AtomString CSSNamespaceRule::prefix() const
+RefPtr<AtomStringImpl> CSSNamespaceRule::prefix() const
 {
     return m_namespaceRule->prefix();
 }
 
-String CSSNamespaceRule::cssText() const
+RefPtr<StringImpl> CSSNamespaceRule::cssText() const
 {
     auto prefix = this->prefix();
     StringBuilder result;
     result.append("@namespace "_s);
     serializeIdentifier(result, prefix);
-    result.append(prefix.isEmpty() ? ""_s : " "_s, "url("_s, serializeString(namespaceURI()), ");"_s);
+    result.append(isEmpty(prefix) ? ""_s : " "_s, "url("_s, serializeString(namespaceURI()), ");"_s);
     return result.toString();
 }
 

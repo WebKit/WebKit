@@ -43,8 +43,8 @@ public:
     virtual bool hasCallback() const = 0;
     virtual bool isJSCreateScriptCallback() const { return false; }
 
-    virtual CallbackResult<String> invoke(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments) = 0;
-    virtual CallbackResult<String> invokeRethrowingException(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments) = 0;
+    virtual CallbackResult<RefPtr<StringImpl>> invoke(StringImpl* input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments) = 0;
+    virtual CallbackResult<RefPtr<StringImpl>> invokeRethrowingException(StringImpl* input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments) = 0;
 };
 
 } // namespace WebCore

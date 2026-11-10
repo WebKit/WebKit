@@ -95,7 +95,7 @@ public:
 
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     bool shouldDispatchSimulatedMouseEvents(const EventTarget*) const;
-    bool shouldPreventDispatchOfTouchEvent(const AtomString&, EventTarget*) const;
+    bool shouldPreventDispatchOfTouchEvent(AtomStringImpl*, EventTarget*) const;
 #endif
 #if ENABLE(TOUCH_EVENTS)
     bool shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTarget*) const;
@@ -110,23 +110,23 @@ public:
 
     NODELETE WEBCORE_EXPORT bool needsCaptionMirroringQuirk() const;
 
-    WEBCORE_EXPORT static void updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&&);
-    WEBCORE_EXPORT String storageAccessUserAgentStringQuirkForDomain(const URL&);
+    WEBCORE_EXPORT static void updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, RefPtr<StringImpl>>&&);
+    WEBCORE_EXPORT RefPtr<StringImpl> storageAccessUserAgentStringQuirkForDomain(const URL&);
     NODELETE WEBCORE_EXPORT static bool needsDesktopUserAgent(const URL&);
-    WEBCORE_EXPORT static std::optional<String> needsCustomUserAgentOverride(const URL&, const String& applicationNameForUserAgent, const String& currentUserAgent);
+    WEBCORE_EXPORT static std::optional<RefPtr<StringImpl>> needsCustomUserAgentOverride(const URL&, StringImpl* applicationNameForUserAgent, StringImpl* currentUserAgent);
 
     WEBCORE_EXPORT static bool needsPartitionedCookies(const ResourceRequest&);
-    WEBCORE_EXPORT static Vector<String> cnameCloakingCookieCapExemptTargetPatterns(const URL& firstPartyURL);
-    WEBCORE_EXPORT static bool anyPatternMatchesCNAMETarget(const Vector<String>& patterns, const String& cnameHostName);
-    WEBCORE_EXPORT static bool shouldExemptCookieFromITPDataRemoval(const String& cookieName);
+    WEBCORE_EXPORT static Vector<RefPtr<StringImpl>> cnameCloakingCookieCapExemptTargetPatterns(const URL& firstPartyURL);
+    WEBCORE_EXPORT static bool anyPatternMatchesCNAMETarget(const Vector<RefPtr<StringImpl>>& patterns, StringImpl* cnameHostName);
+    WEBCORE_EXPORT static bool shouldExemptCookieFromITPDataRemoval(StringImpl* cookieName);
 
-    NODELETE WEBCORE_EXPORT static std::optional<Vector<HashSet<String>>> defaultVisibilityAdjustmentSelectors(const URL&);
+    NODELETE WEBCORE_EXPORT static std::optional<Vector<HashSet<RefPtr<StringImpl>>>> defaultVisibilityAdjustmentSelectors(const URL&);
 
     NODELETE WEBCORE_EXPORT bool static shouldDisableBlobFileAccessEnforcement();
 
     bool shouldAllowMixedContentConnectionToLoopback(const URL&);
 
-    bool shouldOpenAsAboutBlank(const String&) const;
+    bool shouldOpenAsAboutBlank(StringImpl*) const;
 
     bool shouldBypassBackForwardCache() const;
 
@@ -141,7 +141,7 @@ public:
     enum ShouldDispatchClick : bool { No, Yes };
 
     void triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, CompletionHandler<void()>&&) const;
-    StorageAccessResult triggerOptionalStorageAccessQuirk(Element&, const PlatformMouseEvent&, const AtomString& eventType, int, Element*, bool isParentProcessAFullWebBrowser, IsSyntheticClick) const;
+    StorageAccessResult triggerOptionalStorageAccessQuirk(Element&, const PlatformMouseEvent&, AtomStringImpl* eventType, int, Element*, bool isParentProcessAFullWebBrowser, IsSyntheticClick) const;
     void setSubFrameDomainsForStorageAccessQuirk(Vector<RegistrableDomain>&& domains) { m_subFrameDomainsForStorageAccessQuirk = WTF::move(domains); }
     const Vector<RegistrableDomain>& subFrameDomainsForStorageAccessQuirk() const LIFETIME_BOUND { return m_subFrameDomainsForStorageAccessQuirk; }
 
@@ -152,8 +152,8 @@ public:
 
     static bool shouldOmitHTMLDocumentSupportedPropertyNames();
 
-    WEBCORE_EXPORT Vector<String> activeQuirks() const;
-    WEBCORE_EXPORT Vector<String> activeQuirkNames() const;
+    WEBCORE_EXPORT Vector<RefPtr<StringImpl>> activeQuirks() const;
+    WEBCORE_EXPORT Vector<RefPtr<StringImpl>> activeQuirkNames() const;
 
     NODELETE bool shouldEnableFontLoadingAPIQuirk() const;
 
@@ -166,20 +166,20 @@ public:
     bool needsToCopyUserSelectNoneQuirk() const { return m_needsToCopyUserSelectNoneQuirk; }
     void setNeedsToCopyUserSelectNoneQuirk() { m_needsToCopyUserSelectNoneQuirk = true; }
 
-    String advancedPrivacyProtectionSubstituteDataURLForScriptWithFeatures(const String& lastDrawnText, int canvasWidth, int canvasHeight) const;
+    RefPtr<StringImpl> advancedPrivacyProtectionSubstituteDataURLForScriptWithFeatures(StringImpl* lastDrawnText, int canvasWidth, int canvasHeight) const;
 
     bool needsDisableDOMPasteAccessQuirk() const;
 
-    bool needsPopupFromMicrosoftOfficeToOneDrive(const String& targetURLString) const;
+    bool needsPopupFromMicrosoftOfficeToOneDrive(StringImpl* targetURLString) const;
 
     bool needsConsistentQueryParameterFilteringQuirk(const URL&) const;
     WEBCORE_EXPORT ConsistentQueryParameterFilteringLevel consistentQueryParameterFilteringLevel(const URL& sourceURL, const URL& destinationURL) const;
     bool mayBenefitFromFingerprintingProtectionQuirk(const URL&) const;
-    static String standardUserAgentWithApplicationNameIncludingCompatOverrides(const String&, const String&, UserAgentType);
+    static RefPtr<StringImpl> standardUserAgentWithApplicationNameIncludingCompatOverrides(StringImpl*, StringImpl*, UserAgentType);
 
-    Vector<String, 1> scriptsToEvaluateBeforeRunningScriptFromURL(const URL&);
+    Vector<RefPtr<StringImpl>, 1> scriptsToEvaluateBeforeRunningScriptFromURL(const URL&);
 
-    Vector<String> styleSheetsToInject();
+    Vector<RefPtr<StringImpl>> styleSheetsToInject();
     void updateInjectedStyleSheets();
 
 #if PLATFORM(IOS_FAMILY)

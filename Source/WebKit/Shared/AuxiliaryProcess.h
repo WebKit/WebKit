@@ -105,7 +105,7 @@ public:
     void setQOS(int latencyQOS, int throughputQOS);
 #endif
 
-    static void applySandboxProfileForDaemon(const String& profilePath, const String& userDirectorySuffix);
+    static void applySandboxProfileForDaemon(StringImpl* profilePath, StringImpl* userDirectorySuffix);
 
     IPC::Connection* parentProcessConnection() const { return m_connection.get(); }
 
@@ -120,7 +120,7 @@ public:
 #endif
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    virtual void preferenceDidUpdate(const String& domain, const String& key, const std::optional<String>& encodedValue);
+    virtual void preferenceDidUpdate(StringImpl* domain, StringImpl* key, const std::optional<RefPtr<StringImpl>>& encodedValue);
 #endif
     static void setNotifyOptions();
 
@@ -171,10 +171,10 @@ protected:
 #endif
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    static RetainPtr<id> decodePreferenceValue(const std::optional<String>& encodedValue);
-    static void setPreferenceValue(const String& domain, const String& key, id value);
-    virtual void handlePreferenceChange(const String& domain, const String& key, id value);
-    virtual void dispatchSimulatedNotificationsForPreferenceChange(const String& key) { }
+    static RetainPtr<id> decodePreferenceValue(const std::optional<RefPtr<StringImpl>>& encodedValue);
+    static void setPreferenceValue(StringImpl* domain, StringImpl* key, id value);
+    virtual void handlePreferenceChange(StringImpl* domain, StringImpl* key, id value);
+    virtual void dispatchSimulatedNotificationsForPreferenceChange(StringImpl* key) { }
     virtual void accessibilitySettingsDidChange() { }
 #endif
 
@@ -196,12 +196,12 @@ protected:
 
 #if PLATFORM(COCOA)
     void increaseFileDescriptorLimit();
-    static const WTF::String& increaseContrastPreferenceKey();
+    static const RefPtr<StringImpl>& increaseContrastPreferenceKey();
 #endif
 
 private:
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    void handleAXPreferenceChange(const String& domain, const String& key, id value);
+    void handleAXPreferenceChange(StringImpl* domain, StringImpl* key, id value);
 #endif
 
     virtual bool shouldOverrideQuarantine() { return true; }
@@ -230,12 +230,12 @@ private:
 };
 
 struct AuxiliaryProcessInitializationParameters {
-    String uiProcessName;
-    String clientIdentifier;
-    String clientBundleIdentifier;
+    RefPtr<StringImpl> uiProcessName;
+    RefPtr<StringImpl> clientIdentifier;
+    RefPtr<StringImpl> clientBundleIdentifier;
     std::optional<WebCore::ProcessIdentifier> processIdentifier;
     IPC::Connection::Identifier connectionIdentifier;
-    HashMap<String, String> extraInitializationData;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> extraInitializationData;
     WTF::AuxiliaryProcessType processType;
 };
 

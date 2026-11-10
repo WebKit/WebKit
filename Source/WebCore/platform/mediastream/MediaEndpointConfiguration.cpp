@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-MediaEndpointConfiguration::IceServerInfo::IceServerInfo(Vector<URL>&& urls, const String& credential, const String& username)
+MediaEndpointConfiguration::IceServerInfo::IceServerInfo(Vector<URL>&& urls, StringImpl* credential, StringImpl* username)
     : urls(WTF::move(urls))
     , credential(credential)
     , username(username)

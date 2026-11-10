@@ -32,11 +32,11 @@
 namespace WebCore {
 
 struct CertificateSummary {
-    String subject;
+    RefPtr<StringImpl> subject;
     Seconds validFrom;
     Seconds validUntil;
-    Vector<String> dnsNames;
-    Vector<String> ipAddresses;
+    Vector<RefPtr<StringImpl>> dnsNames;
+    Vector<RefPtr<StringImpl>> ipAddresses;
 };
 
 } // namespace WebCore

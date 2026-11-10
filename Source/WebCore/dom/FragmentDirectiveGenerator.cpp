@@ -103,7 +103,7 @@ static VisiblePosition endVisiblePositionForRangeRemovingTrailingWhitespace(cons
     return { makeContainerOffsetPosition(characterIterator.range().end) };
 }
 
-static String previousWordsFromPositionInSameBlock(unsigned numberOfWords, VisiblePosition& startPosition)
+static RefPtr<StringImpl> previousWordsFromPositionInSameBlock(unsigned numberOfWords, VisiblePosition& startPosition)
 {
     auto previousPosition = startPosition;
     while (numberOfWords--) {
@@ -123,10 +123,10 @@ static String previousWordsFromPositionInSameBlock(unsigned numberOfWords, Visib
     RefPtr endNode = startPosition.deepEquivalent().containerNode();
     range->setEnd(endNode.releaseNonNull(), startPosition.deepEquivalent().computeOffsetInContainerNode());
 
-    return range->toString().trim(isHTMLSpaceButNotLineBreak).simplifyWhiteSpace(isASCIIWhitespace);
+    return simplifyWhiteSpace(trim(range->toString(), isHTMLSpaceButNotLineBreak), isASCIIWhitespace);
 }
 
-static String nextWordsFromPositionInSameBlock(unsigned numberOfWords, VisiblePosition& startPosition)
+static RefPtr<StringImpl> nextWordsFromPositionInSameBlock(unsigned numberOfWords, VisiblePosition& startPosition)
 {
     auto nextPosition = startPosition;
     while (numberOfWords--) {
@@ -146,7 +146,7 @@ static String nextWordsFromPositionInSameBlock(unsigned numberOfWords, VisiblePo
     RefPtr endNode = nextPosition.deepEquivalent().containerNode();
     range->setEnd(endNode.releaseNonNull(), nextPosition.deepEquivalent().computeOffsetInContainerNode());
 
-    return range->toString().trim(isHTMLSpaceButNotLineBreak).simplifyWhiteSpace(isASCIIWhitespace);
+    return simplifyWhiteSpace(trim(range->toString(), isHTMLSpaceButNotLineBreak), isASCIIWhitespace);
 }
 
 // https://wicg.github.io/scroll-to-text-fragment/#generating-text-fragment-directives
@@ -158,7 +158,7 @@ void FragmentDirectiveGenerator::generateFragmentDirective(const SimpleRange& te
     document->updateLayoutIgnorePendingStylesheets();
 
     auto url = document->url();
-    auto textFromRange = createLiveRange(textFragmentRange)->toString().simplifyWhiteSpace(isASCIIWhitespace);
+    auto textFromRange = simplifyWhiteSpace(createLiveRange(textFragmentRange)->toString(), isASCIIWhitespace);
     VisiblePosition visibleStartPosition = startVisiblePositionForRangeRemovingLeadingWhitespace(textFragmentRange);
     VisiblePosition visibleEndPosition = endVisiblePositionForRangeRemovingTrailingWhitespace(textFragmentRange);
 
@@ -169,7 +169,7 @@ void FragmentDirectiveGenerator::generateFragmentDirective(const SimpleRange& te
     VisiblePosition visibleSuffixStartPosition = afterEndOfCurrentBlock(visibleEndPosition);
     auto generateDirective = [&] (unsigned wordsOfContext, unsigned wordsOfStartAndEndText) {
         ParsedTextDirective directive;
-        if (textFromRange.length() >= maximumInlineStringLength || !positionsHaveSameBlockAncestor(visibleStartPosition, visibleEndPosition)) {
+        if (length(textFromRange) >= maximumInlineStringLength || !positionsHaveSameBlockAncestor(visibleStartPosition, visibleEndPosition)) {
             directive.startText = nextWordsFromPositionInSameBlock(wordsOfStartAndEndText, visibleStartPosition);
             directive.endText = previousWordsFromPositionInSameBlock(wordsOfStartAndEndText, visibleEndPosition);
         } else
@@ -188,7 +188,7 @@ void FragmentDirectiveGenerator::generateFragmentDirective(const SimpleRange& te
 
         return VisiblePosition(makeContainerOffsetPosition(foundRange->start)) == visibleStartPosition && VisiblePosition(makeContainerOffsetPosition(foundRange->end)) == visibleEndPosition;
     };
-    auto wordsOfContext = textFromRange.length() < minimumContextlessStringLength ? defaultWordsOfContext : 0;
+    auto wordsOfContext = length(textFromRange) < minimumContextlessStringLength ? defaultWordsOfContext : 0;
     auto wordsOfStartAndEndText = defaultWordsOfContext;
     auto directive = [&] -> std::optional<ParsedTextDirective> {
         for (unsigned extraWordsOfContext = 0; extraWordsOfContext <= maximumExtraWordsOfContext; extraWordsOfContext++) {
@@ -203,18 +203,18 @@ void FragmentDirectiveGenerator::generateFragmentDirective(const SimpleRange& te
 
     m_urlWithFragment = url;
     if (directive) {
-        Vector<String> components;
-        if (!directive->prefix.isEmpty())
+        Vector<RefPtr<StringImpl>> components;
+        if (!isEmpty(directive->prefix))
             components.append(makeString(percentEncodeFragmentDirectiveSpecialCharacters(directive->prefix), '-'));
-        if (!directive->startText.isEmpty())
+        if (!isEmpty(directive->startText))
             components.append(percentEncodeFragmentDirectiveSpecialCharacters(directive->startText));
-        if (!directive->endText.isEmpty())
+        if (!isEmpty(directive->endText))
             components.append(percentEncodeFragmentDirectiveSpecialCharacters(directive->endText));
-        if (!directive->suffix.isEmpty())
+        if (!isEmpty(directive->suffix))
             components.append(makeString('-', percentEncodeFragmentDirectiveSpecialCharacters(directive->suffix)));
 
         static constexpr auto textDirectivePrefix = ":~:text="_s;
-        m_urlWithFragment.setFragmentIdentifier(makeString(textDirectivePrefix, makeStringByJoining(components, ","_s)));
+        m_urlWithFragment.setFragmentIdentifier(makeString(textDirectivePrefix, makeStringByJoining(components, ","_si)));
         LOG_WITH_STREAM(TextFragment, stream << "    Successfully generated fragment directive: " << m_urlWithFragment);
     } else
         LOG_WITH_STREAM(TextFragment, stream << "    Failed to generate fragment directive");

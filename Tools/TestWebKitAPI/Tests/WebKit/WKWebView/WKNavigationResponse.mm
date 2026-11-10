@@ -215,7 +215,7 @@ TEST(WebKit, WKNavigationResponseDownloadAttribute)
     auto getDownloadResponse = [] (RetainPtr<NSString> body) -> RetainPtr<WKNavigationResponse> {
         using namespace TestWebKitAPI;
         HTTPServer server({
-            { "/"_s, { String(body.get()) } },
+            { "/"_s, { StringImpl::create(body.get()) } },
             { "/fromHref.txt"_s, { { { "Content-Disposition"_s, "attachment; filename=fromHeader.txt;"_s } }, "Hello!"_s } },
         });
         RetainPtr delegate = adoptNS([NavigationResponseTestDelegate new]);

@@ -54,21 +54,21 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    static String appName();
-    String appVersion() const;
-    virtual const String& userAgent() const = 0;
-    virtual String platform() const;
+    static RefPtr<StringImpl> appName();
+    RefPtr<StringImpl> appVersion() const;
+    virtual const RefPtr<StringImpl>& userAgent() const = 0;
+    virtual RefPtr<StringImpl> platform() const;
 
-    static String appCodeName();
-    static String product();
-    static String productSub();
-    static String vendor();
-    NODELETE static String vendorSub();
+    static RefPtr<StringImpl> appCodeName();
+    static RefPtr<StringImpl> product();
+    static RefPtr<StringImpl> productSub();
+    static RefPtr<StringImpl> vendor();
+    NODELETE static RefPtr<StringImpl> vendorSub();
 
     virtual bool onLine() const = 0;
 
-    static String language();
-    static Vector<String> languages();
+    static RefPtr<StringImpl> language();
+    static Vector<RefPtr<StringImpl>> languages();
 
     StorageManager& storage();
     WebLockManager& locks();

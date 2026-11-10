@@ -225,16 +225,16 @@ NODELETE static URLSchemesMap& notAllowingJavascriptURLsSchemes()
     return notAllowingJavascriptURLsSchemes;
 }
 
-void LegacySchemeRegistry::registerURLSchemeAsLocal(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsLocal(StringImpl* scheme)
 {
-    if (scheme.isNull())
+    if (!scheme)
         return;
 
     Locker locker { schemeRegistryLock };
     localURLSchemes().add(scheme);
 }
 
-void LegacySchemeRegistry::removeURLSchemeRegisteredAsLocal(const String& scheme)
+void LegacySchemeRegistry::removeURLSchemeRegisteredAsLocal(StringImpl* scheme)
 {
     Locker locker { schemeRegistryLock };
     if (builtinLocalURLSchemes().contains(scheme))
@@ -243,16 +243,16 @@ void LegacySchemeRegistry::removeURLSchemeRegisteredAsLocal(const String& scheme
     localURLSchemes().remove(scheme);
 }
 
-NODELETE static MemoryCompactRobinHoodHashSet<String>& schemesHandledBySchemeHandler() WTF_REQUIRES_LOCK(schemeRegistryLock)
+NODELETE static MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>>& schemesHandledBySchemeHandler() WTF_REQUIRES_LOCK(schemeRegistryLock)
 {
     ASSERT(schemeRegistryLock.isHeld());
-    static NeverDestroyed<MemoryCompactRobinHoodHashSet<String>> set;
+    static NeverDestroyed<MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>>> set;
     return set.get();
 }
 
-void LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler(StringImpl* scheme)
 {
-    if (scheme == "about"_s)
+    if (equal(scheme, "about"_s))
         return;
 
     Locker locker { schemeRegistryLock };
@@ -328,9 +328,9 @@ bool LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(StringView scheme)
     return localURLSchemes().contains<StringViewHashTranslator>(scheme);
 }
 
-void LegacySchemeRegistry::registerURLSchemeAsNoAccess(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsNoAccess(StringImpl* scheme)
 {
-    if (scheme.isNull())
+    if (!scheme)
         return;
 
     Locker locker { schemeRegistryLock };
@@ -346,9 +346,9 @@ bool LegacySchemeRegistry::shouldTreatURLSchemeAsNoAccess(StringView scheme)
     return schemesWithUniqueOrigins().contains<StringViewHashTranslator>(scheme);
 }
 
-void LegacySchemeRegistry::registerURLSchemeAsDisplayIsolated(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsDisplayIsolated(StringImpl* scheme)
 {
-    if (scheme.isNull())
+    if (!scheme)
         return;
 
     Locker locker { schemeRegistryLock };
@@ -364,9 +364,9 @@ bool LegacySchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated(StringView sche
     return displayIsolatedURLSchemes().contains<StringViewHashTranslator>(scheme);
 }
 
-void LegacySchemeRegistry::registerURLSchemeAsSecure(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsSecure(StringImpl* scheme)
 {
-    if (scheme.isNull())
+    if (!scheme)
         return;
 
     Locker locker { schemeRegistryLock };
@@ -382,10 +382,10 @@ bool LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(StringView scheme)
     return secureSchemes().contains<StringViewHashTranslator>(scheme);
 }
 
-void LegacySchemeRegistry::registerURLSchemeAsAllowingServiceWorkerClients(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsAllowingServiceWorkerClients(StringImpl* scheme)
 {
     ASSERT(isMainThread());
-    if (scheme.isNull())
+    if (!scheme)
         return;
 
     schemesAllowingServiceWorkerClients().add(scheme);
@@ -400,9 +400,9 @@ bool LegacySchemeRegistry::shouldTreatURLSchemeAsAllowingServiceWorkerClients(St
     return schemesAllowingServiceWorkerClients().contains<StringViewHashTranslator>(scheme);
 }
 
-void LegacySchemeRegistry::registerURLSchemeAsEmptyDocument(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsEmptyDocument(StringImpl* scheme)
 {
-    if (scheme.isNull())
+    if (!scheme)
         return;
     emptyDocumentSchemes().add(scheme);
 }
@@ -412,9 +412,9 @@ bool LegacySchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(StringView scheme)
     return !scheme.isNull() && emptyDocumentSchemes().contains<StringViewHashTranslator>(scheme);
 }
 
-void LegacySchemeRegistry::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String& scheme)
+void LegacySchemeRegistry::setDomainRelaxationForbiddenForURLScheme(bool forbidden, StringImpl* scheme)
 {
-    if (scheme.isNull())
+    if (!scheme)
         return;
 
     if (forbidden)
@@ -423,9 +423,9 @@ void LegacySchemeRegistry::setDomainRelaxationForbiddenForURLScheme(bool forbidd
         schemesForbiddenFromDomainRelaxation().remove(scheme);
 }
 
-bool LegacySchemeRegistry::isDomainRelaxationForbiddenForURLScheme(const String& scheme)
+bool LegacySchemeRegistry::isDomainRelaxationForbiddenForURLScheme(StringImpl* scheme)
 {
-    return !scheme.isNull() && schemesForbiddenFromDomainRelaxation().contains(scheme);
+    return !!scheme && schemesForbiddenFromDomainRelaxation().contains(scheme);
 }
 
 bool LegacySchemeRegistry::canDisplayOnlyIfCanRequest(StringView scheme)
@@ -438,47 +438,47 @@ bool LegacySchemeRegistry::canDisplayOnlyIfCanRequest(StringView scheme)
     return canDisplayOnlyIfCanRequestSchemes().contains<StringViewHashTranslator>(scheme);
 }
 
-void LegacySchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(const String& scheme)
+void LegacySchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(StringImpl* scheme)
 {
     ASSERT(!isInNetworkProcess());
-    if (scheme.isNull())
+    if (!scheme)
         return;
 
     Locker locker { schemeRegistryLock };
     canDisplayOnlyIfCanRequestSchemes().add(scheme);
 }
 
-void LegacySchemeRegistry::registerURLSchemeAsNotAllowingJavascriptURLs(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsNotAllowingJavascriptURLs(StringImpl* scheme)
 {
-    if (scheme.isNull())
+    if (!scheme)
         return;
     notAllowingJavascriptURLsSchemes().add(scheme);
 }
 
-bool LegacySchemeRegistry::shouldTreatURLSchemeAsNotAllowingJavascriptURLs(const String& scheme)
+bool LegacySchemeRegistry::shouldTreatURLSchemeAsNotAllowingJavascriptURLs(StringImpl* scheme)
 {
-    return !scheme.isNull() && notAllowingJavascriptURLsSchemes().contains(scheme);
+    return !!scheme && notAllowingJavascriptURLsSchemes().contains(scheme);
 }
 
-void LegacySchemeRegistry::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(StringImpl* scheme)
 {
-    if (scheme.isNull())
+    if (!scheme)
         return;
     schemesAllowingDatabaseAccessInPrivateBrowsing().add(scheme);
 }
 
-bool LegacySchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(const String& scheme)
+bool LegacySchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(StringImpl* scheme)
 {
-    return !scheme.isNull() && schemesAllowingDatabaseAccessInPrivateBrowsing().contains(scheme);
+    return !!scheme && schemesAllowingDatabaseAccessInPrivateBrowsing().contains(scheme);
 }
 
-void LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(StringImpl* scheme)
 {
-    if (scheme == "about"_s)
+    if (equal(scheme, "about"_s))
         return;
 
     ASSERT(!isInNetworkProcess());
-    if (scheme.isNull())
+    if (!scheme)
         return;
     CORSEnabledSchemes().add(scheme);
 }
@@ -489,24 +489,24 @@ bool LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(StringView scheme)
     return !scheme.isNull() && CORSEnabledSchemes().contains<StringViewHashTranslator>(scheme);
 }
 
-Vector<String> LegacySchemeRegistry::allURLSchemesRegisteredAsCORSEnabled()
+Vector<RefPtr<StringImpl>> LegacySchemeRegistry::allURLSchemesRegisteredAsCORSEnabled()
 {
     ASSERT(!isInNetworkProcess());
     return copyToVector(CORSEnabledSchemes());
 }
 
-void LegacySchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(StringImpl* scheme)
 {
-    if (scheme.isNull())
+    if (!scheme)
         return;
 
     Locker locker { schemeRegistryLock };
     ContentSecurityPolicyBypassingSchemes().add(scheme);
 }
 
-void LegacySchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme)
+void LegacySchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(StringImpl* scheme)
 {
-    if (scheme.isNull())
+    if (!scheme)
         return;
 
     Locker locker { schemeRegistryLock };
@@ -522,9 +522,9 @@ bool LegacySchemeRegistry::schemeShouldBypassContentSecurityPolicy(StringView sc
     return ContentSecurityPolicyBypassingSchemes().contains<StringViewHashTranslator>(scheme);
 }
 
-void LegacySchemeRegistry::registerURLSchemeAsAlwaysRevalidated(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsAlwaysRevalidated(StringImpl* scheme)
 {
-    if (scheme.isNull())
+    if (!scheme)
         return;
     alwaysRevalidatedSchemes().add(scheme);
 }
@@ -534,18 +534,18 @@ bool LegacySchemeRegistry::shouldAlwaysRevalidateURLScheme(StringView scheme)
     return !scheme.isNull() && alwaysRevalidatedSchemes().contains<StringViewHashTranslator>(scheme);
 }
 
-void LegacySchemeRegistry::registerURLSchemeAsCachePartitioned(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsCachePartitioned(StringImpl* scheme)
 {
-    if (scheme.isNull())
+    if (!scheme)
         return;
 
     Locker locker { schemeRegistryLock };
     cachePartitioningSchemes().add(scheme);
 }
 
-bool LegacySchemeRegistry::shouldPartitionCacheForURLScheme(const String& scheme)
+bool LegacySchemeRegistry::shouldPartitionCacheForURLScheme(StringImpl* scheme)
 {
-    if (scheme.isNull())
+    if (!scheme)
         return false;
 
     Locker locker { schemeRegistryLock };
@@ -564,9 +564,9 @@ bool LegacySchemeRegistry::isUserExtensionScheme(StringView scheme)
     return false;
 }
 
-bool LegacySchemeRegistry::isBuiltinScheme(const String& scheme)
+bool LegacySchemeRegistry::isBuiltinScheme(StringImpl* scheme)
 {
-    return !scheme.isNull() && (allBuiltinSchemes().contains(scheme) || WTF::URLParser::isSpecialScheme(scheme));
+    return !!scheme && (allBuiltinSchemes().contains(scheme) || WTF::URLParser::isSpecialScheme(scheme));
 }
 
 } // namespace WebCore

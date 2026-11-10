@@ -58,7 +58,7 @@ public:
 
     static ASCIILiteral supplementName();
 
-    void registerWebPage(WebPage&, const String& authorizationToken, bool needsHighAccuracy);
+    void registerWebPage(WebPage&, StringImpl* authorizationToken, bool needsHighAccuracy);
     void unregisterWebPage(WebPage&);
     void setEnableHighAccuracyForPage(WebPage&, bool);
 
@@ -67,7 +67,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void didChangePosition(const WebCore::RegistrableDomain&, const WebCore::GeolocationPositionData&);
-    void didFailToDeterminePosition(const WebCore::RegistrableDomain&, const String& errorMessage);
+    void didFailToDeterminePosition(const WebCore::RegistrableDomain&, StringImpl* errorMessage);
 #if PLATFORM(IOS_FAMILY)
     void resetPermissions(const WebCore::RegistrableDomain&);
 #endif // PLATFORM(IOS_FAMILY)

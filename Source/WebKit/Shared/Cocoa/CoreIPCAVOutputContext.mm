@@ -51,14 +51,14 @@ CoreIPCAVOutputContext::CoreIPCAVOutputContext(AVOutputContext *context)
         RELEASE_LOG_ERROR(IPC, "CoreIPCAVOutputContext 'contextType' value is nil or not an NSString");
         return;
     }
-    m_data = { (String)contextID.get(), (String)contextType.get() };
+    m_data = { StringImpl::create(contextID.get()), StringImpl::create(contextType.get()) };
 }
 
 RetainPtr<id> CoreIPCAVOutputContext::toID() const
 {
     RetainPtr dict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:2]);
-    [dict setObject:m_data.contextID.createNSString().get() forKey:@"contextID"];
-    [dict setObject:m_data.contextType.createNSString().get() forKey:@"contextType"];
+    [dict setObject:createNSString(m_data.contextID).get() forKey:@"contextID"];
+    [dict setObject:createNSString(m_data.contextType).get() forKey:@"contextType"];
     return adoptNS([[PAL::getAVOutputContextClassSingleton() alloc] _initWithWebKitPropertyListData:dict.get()]);
 }
 

@@ -49,13 +49,13 @@ private:
 
     void clear() final;
     RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
-    String shorthandPropertySerialization(CSSPropertyID) const final;
-    RefPtr<CSSValue> customPropertyValue(const AtomString&) const final;
+    RefPtr<StringImpl> shorthandPropertySerialization(CSSPropertyID) const final;
+    RefPtr<CSSValue> customPropertyValue(AtomStringImpl*) const final;
     void removeProperty(CSSPropertyID) final;
-    void removeCustomProperty(const AtomString&) final;
-    bool setShorthandProperty(CSSPropertyID, const String&) final;
+    void removeCustomProperty(AtomStringImpl*) final;
+    bool setShorthandProperty(CSSPropertyID, StringImpl*) final;
     bool setProperty(CSSPropertyID, Ref<CSSValue>&&) final;
-    bool setCustomProperty(Document&, const AtomString&, Ref<CSSSubstitutionValue>&&) final;
+    bool setCustomProperty(Document&, AtomStringImpl*, Ref<CSSSubstitutionValue>&&) final;
 
     WeakPtr<CSSStyleRule> m_ownerRule;
 };

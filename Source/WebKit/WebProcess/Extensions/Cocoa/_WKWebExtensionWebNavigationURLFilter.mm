@@ -151,7 +151,7 @@ static NSString * const portsKey = @"ports";
     case PredicateTypeOriginAndPathMatches: {
         NSString *pattern = checked_objc_cast<NSString>(rawValue);
         if (!(_value = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:nil])) {
-            *outErrorMessage = toErrorString(nullString(), originAndPathMatchesKey, makeString("'"_s, String(pattern), "' is not a valid regular expression"_s)).createNSString().autorelease();
+            *outErrorMessage = createNSString(toErrorString(nullString(), StringImpl::create(originAndPathMatchesKey).get(), makeString("'"_s, StringImpl::create(pattern), "' is not a valid regular expression"_s))).autorelease();
             return nil;
         }
 
@@ -180,21 +180,21 @@ static NSString * const portsKey = @"ports";
             if (NSNumber *number = dynamic_objc_cast<NSNumber>(portOrRange)) {
                 NSInteger integerValue = number.integerValue;
                 if (integerValue < 0 || integerValue > maximumPortNumber) {
-                    *outErrorMessage = toErrorString(nullString(), portsKey, makeString("'"_s, integerValue, "' is not a valid port"_s)).createNSString().autorelease();
+                    *outErrorMessage = createNSString(toErrorString(nullString(), StringImpl::create(portsKey).get(), makeString("'"_s, integerValue, "' is not a valid port"_s))).autorelease();
                     return nil;
                 }
 
                 [ports addIndex:(NSUInteger)integerValue];
             } else if (NSArray<NSNumber *> *rangeArray = dynamic_objc_cast<NSArray>(portOrRange)) {
                 if (rangeArray.count != 2) {
-                    *outErrorMessage = toErrorString(nullString(), portsKey, @"a port range must specify 2 numbers").createNSString().autorelease();
+                    *outErrorMessage = createNSString(toErrorString(nullString(), StringImpl::create(portsKey).get(), StringImpl::create(@"a port range must specify 2 numbers").get())).autorelease();
                     return nil;
                 }
 
                 for (NSNumber *number in rangeArray) {
                     NSInteger integerValue = number.integerValue;
                     if (integerValue < 0 || integerValue > maximumPortNumber) {
-                        *outErrorMessage = toErrorString(nullString(), portsKey, makeString("'"_s, integerValue, "' is not a valid port"_s)).createNSString().autorelease();
+                        *outErrorMessage = createNSString(toErrorString(nullString(), StringImpl::create(portsKey).get(), makeString("'"_s, integerValue, "' is not a valid port"_s))).autorelease();
                         return nil;
                     }
                 }
@@ -202,7 +202,7 @@ static NSString * const portsKey = @"ports";
                 NSUInteger firstPort = rangeArray[0].unsignedIntegerValue;
                 NSUInteger lastPort = rangeArray[1].unsignedIntegerValue;
                 if (firstPort >= lastPort) {
-                    *outErrorMessage = toErrorString(nullString(), portsKey, makeString("'"_s, firstPort, "-"_s, lastPort, "' is not a valid port range"_s)).createNSString().autorelease();
+                    *outErrorMessage = createNSString(toErrorString(nullString(), StringImpl::create(portsKey).get(), makeString("'"_s, firstPort, "-"_s, lastPort, "' is not a valid port range"_s))).autorelease();
                     return nil;
                 }
 

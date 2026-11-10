@@ -30,7 +30,7 @@
 namespace WTF {
 
 WTF_EXPORT_PRIVATE void resetAccumulatedLogs();
-WTF_EXPORT_PRIVATE String getAndResetAccumulatedLogs();
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> getAndResetAccumulatedLogs();
 
 } // namespace WTF
 

@@ -44,15 +44,15 @@
 #import <wtf/URL.h>
 
 @interface WebScriptCallFrame (WebScriptDebugDelegateInternalForDebugger)
-- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj functionName:(String)functionName exceptionValue:(JSC::JSValue)exceptionValue;
+- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj functionName:(RefPtr<StringImpl>)functionName exceptionValue:(JSC::JSValue)exceptionValue;
 @end
 
 static RetainPtr<NSString> toNSString(JSC::SourceProvider* sourceProvider)
 {
-    const String& sourceString = sourceProvider->source().toString();
-    if (sourceString.isEmpty())
+    const RefPtr<StringImpl>& sourceString = sourceProvider->source().toString();
+    if (isEmpty(sourceString))
         return nil;
-    return sourceString.createNSString();
+    return createNSString(sourceString);
 }
 
 static WebFrame *toWebFrame(JSC::JSGlobalObject* globalObject)
@@ -71,7 +71,7 @@ WebScriptDebugger::WebScriptDebugger(JSC::JSGlobalObject* globalObject)
 }
 
 // callbacks - relay to delegate
-void WebScriptDebugger::sourceParsed(JSC::JSGlobalObject* lexicalGlobalObject, JSC::SourceProvider* sourceProvider, int errorLine, const String& errorMsg)
+void WebScriptDebugger::sourceParsed(JSC::JSGlobalObject* lexicalGlobalObject, JSC::SourceProvider* sourceProvider, int errorLine, StringImpl* errorMsg)
 {
     if (m_callingDelegate)
         return;
@@ -96,13 +96,13 @@ void WebScriptDebugger::sourceParsed(JSC::JSGlobalObject* lexicalGlobalObject, J
         }
     } else {
         RetainPtr<NSDictionary> info;
-        if (errorMsg.isEmpty()) {
+        if (isEmpty(errorMsg)) {
             info = @{
                 WebScriptErrorLineNumberKey: @(errorLine),
             };
         } else {
             info = @{
-                WebScriptErrorDescriptionKey: errorMsg.createNSString().get(),
+                WebScriptErrorDescriptionKey: createNSString(errorMsg).get(),
                 WebScriptErrorLineNumberKey: @(errorLine),
             };
         }
@@ -130,7 +130,7 @@ void WebScriptDebugger::handlePause(JSC::JSGlobalObject* globalObject)
     WebView *webView = [webFrame.get() webView];
     Ref debuggerCallFrame = currentDebuggerCallFrame();
     JSC::JSValue exceptionValue = currentException();
-    String functionName = debuggerCallFrame->functionName(vm);
+    RefPtr<StringImpl> functionName = debuggerCallFrame->functionName(vm);
     RetainPtr<WebScriptCallFrame> webCallFrame = adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:protect(protect(core(webFrame.get())->script())->windowScriptObject()) functionName:functionName exceptionValue:exceptionValue]);
 
     WebScriptDebugDelegateImplementationCache* cache = WebViewGetScriptDebugDelegateImplementations(webView);

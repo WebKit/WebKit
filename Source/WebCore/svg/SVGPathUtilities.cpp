@@ -50,7 +50,7 @@ Path buildPathFromString(StringView d)
     return path;
 }
 
-String buildStringFromPath(const Path& path)
+RefPtr<StringImpl> buildStringFromPath(const Path& path)
 {
     StringBuilder builder;
 
@@ -96,7 +96,7 @@ Path buildPathFromByteStream(const SVGPathByteStream& stream)
     return path;
 }
 
-bool buildStringFromByteStream(const SVGPathByteStream& stream, String& result, PathParsingMode parsingMode, bool checkForInitialMoveTo)
+bool buildStringFromByteStream(const SVGPathByteStream& stream, RefPtr<StringImpl>& result, PathParsingMode parsingMode, bool checkForInitialMoveTo)
 {
     if (stream.isEmpty())
         return true;

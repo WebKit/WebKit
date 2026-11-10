@@ -62,14 +62,14 @@ void WebExtensionContext::loadDeclarativeNetRequestRulesetStateFromStorage()
 
     RefPtr extension = m_extension;
     for (NSString *savedIdentifier in savedRulesetState) {
-        auto ruleset = extension->declarativeNetRequestRuleset(savedIdentifier);
+        auto ruleset = extension->declarativeNetRequestRuleset(StringImpl::create(savedIdentifier).get());
         if (!ruleset)
             continue;
 
         if (objectForKey<NSNumber>(savedRulesetState, savedIdentifier).boolValue)
-            m_enabledStaticRulesetIDs.add(savedIdentifier);
+            m_enabledStaticRulesetIDs.add(StringImpl::create(savedIdentifier));
         else
-            m_enabledStaticRulesetIDs.remove(savedIdentifier);
+            m_enabledStaticRulesetIDs.remove(StringImpl::create(savedIdentifier).get());
     }
 }
 
@@ -90,7 +90,7 @@ void WebExtensionContext::clearDeclarativeNetRequestRulesetState()
     m_enabledStaticRulesetIDs.clear();
 }
 
-void WebExtensionContext::declarativeNetRequestToggleRulesets(const Vector<String>& rulesetIdentifiers, bool newValue, NSMutableDictionary *rulesetIdentifiersToEnabledState)
+void WebExtensionContext::declarativeNetRequestToggleRulesets(const Vector<RefPtr<StringImpl>>& rulesetIdentifiers, bool newValue, NSMutableDictionary *rulesetIdentifiersToEnabledState)
 {
     RefPtr extension = m_extension;
     for (auto& identifier : borrow(rulesetIdentifiers)) {
@@ -103,11 +103,11 @@ void WebExtensionContext::declarativeNetRequestToggleRulesets(const Vector<Strin
         else
             m_enabledStaticRulesetIDs.remove(identifier);
 
-        [rulesetIdentifiersToEnabledState setObject:@(newValue) forKey:identifier.createNSString().get()];
+        [rulesetIdentifiersToEnabledState setObject:@(newValue) forKey:createNSString(identifier).get()];
     }
 }
 
-void WebExtensionContext::declarativeNetRequestUpdateEnabledRulesets(const Vector<String>& rulesetIdentifiersToEnable, const Vector<String>& rulesetIdentifiersToDisable, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::declarativeNetRequestUpdateEnabledRulesets(const Vector<RefPtr<StringImpl>>& rulesetIdentifiersToEnable, const Vector<RefPtr<StringImpl>>& rulesetIdentifiersToDisable, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     if (rulesetIdentifiersToEnable.isEmpty() && rulesetIdentifiersToDisable.isEmpty()) {
         completionHandler({ });
@@ -127,7 +127,7 @@ void WebExtensionContext::declarativeNetRequestUpdateEnabledRulesets(const Vecto
     }
 
     if (declarativeNetRequestEnabledRulesetCount() - rulesetIdentifiersToDisable.size() + rulesetIdentifiersToEnable.size() > webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets) {
-        completionHandler(toWebExtensionError(@"declarativeNetRequest.updateEnabledRulesets()", nullString(), makeString("The number of enabled static rulesets exceeds the limit. Only "_s, webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets, " rulesets can be enabled at once."_s)));
+        completionHandler(toWebExtensionError(StringImpl::create(@"declarativeNetRequest.updateEnabledRulesets()").get(), nullString(), makeString("The number of enabled static rulesets exceeds the limit. Only "_s, webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets, " rulesets can be enabled at once."_s)));
         return;
     }
 
@@ -147,7 +147,7 @@ void WebExtensionContext::declarativeNetRequestUpdateEnabledRulesets(const Vecto
         declarativeNetRequestToggleRulesets(rulesetIdentifiersToDisable, true, rulesetIdentifiersToEnabledState.get());
         declarativeNetRequestToggleRulesets(rulesetIdentifiersToEnable, false, rulesetIdentifiersToEnabledState.get());
 
-        completionHandler(toWebExtensionError(@"declarativeNetRequest.updateEnabledRulesets()", nullString(), @"Failed to apply rules."));
+        completionHandler(toWebExtensionError(StringImpl::create(@"declarativeNetRequest.updateEnabledRulesets()").get(), nullString(), StringImpl::create(@"Failed to apply rules.").get()));
     });
 }
 
@@ -191,7 +191,7 @@ void WebExtensionContext::declarativeNetRequestIncrementActionCount(WebExtension
 {
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
-        completionHandler(toWebExtensionError(@"declarativeNetRequest.setExtensionActionOptions()", nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(@"declarativeNetRequest.setExtensionActionOptions()").get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
@@ -205,13 +205,13 @@ void WebExtensionContext::declarativeNetRequestGetMatchedRules(std::optional<Web
 
     static NSString * const apiName = @"declarativeNetRequest.getMatchedRules()";
     if (tabIdentifier && !tab) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
-    if (!hasPermission(WKWebExtensionPermissionDeclarativeNetRequestFeedback)) {
+    if (!hasPermission(StringImpl::create(WKWebExtensionPermissionDeclarativeNetRequestFeedback).get())) {
         if (!tab->extensionHasTemporaryPermission()) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"the 'activeTab' permission has not been granted by the user for the tab"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"the 'activeTab' permission has not been granted by the user for the tab").get()));
             return;
         }
     }

@@ -33,7 +33,7 @@
 
 namespace TestWGSLAPI {
 
-static String toString(WGSL::ShaderModule& shaderModule)
+static RefPtr<StringImpl> toString(WGSL::ShaderModule& shaderModule)
 {
     WGSL::AST::StringDumper dumper;
     dumper.visit(shaderModule);
@@ -54,7 +54,7 @@ TEST(WGSLASTDumperTests, dumpTriangleVert)
         "    );\n\n"
         "    return vec4<f32>(pos[VertexIndex], 0.0, 1.0);\n"
         "}\n"_s;
-    WGSL::ShaderModule shader(source, { 8 });
+    WGSL::ShaderModule shader(StringImpl::create(source).ptr(), { 8 });
     auto maybeError = WGSL::parse(shader);
 
     EXPECT_FALSE(maybeError.has_value());

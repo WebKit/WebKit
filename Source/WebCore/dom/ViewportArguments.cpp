@@ -358,9 +358,9 @@ NODELETE static MessageLevel viewportErrorMessageLevel(ViewportErrorCode errorCo
     return MessageLevel::Error;
 }
 
-static String viewportErrorMessage(ViewportErrorCode errorCode, StringView replacement1, StringView replacement2)
+static RefPtr<StringImpl> viewportErrorMessage(ViewportErrorCode errorCode, StringView replacement1, StringView replacement2)
 {
-    String message = viewportErrorMessageTemplate(errorCode);
+    RefPtr<StringImpl> message = viewportErrorMessageTemplate(errorCode);
     if (!replacement1.isNull())
         message = makeStringByReplacingAll(message, "%replacement1"_s, replacement1);
     // FIXME: This will do the wrong thing if replacement1 contains the substring "%replacement2".
@@ -373,7 +373,7 @@ static String viewportErrorMessage(ViewportErrorCode errorCode, StringView repla
     return message;
 }
 
-static void reportViewportWarning(Document& document, ViewportErrorCode errorCode, const String& message)
+static void reportViewportWarning(Document& document, ViewportErrorCode errorCode, StringImpl* message)
 {
     // FIXME: Why is this null check needed? Can't addConsoleMessage deal with this?
     if (!document.frame())
@@ -420,7 +420,7 @@ void setViewportFeature(ViewportArguments& arguments, StringView key, StringView
 void setViewportFeature(ViewportArguments& arguments, Document& document, StringView key, StringView value)
 {
     bool interactiveWidgetEnabled = document.settings().metaViewportInteractiveWidgetEnabled() && !document.quirks().shouldIgnoreViewportInteractiveWidget();
-    setViewportFeature(arguments, key, value, interactiveWidgetEnabled, [&](ViewportErrorCode errorCode, const String& message) {
+    setViewportFeature(arguments, key, value, interactiveWidgetEnabled, [&](ViewportErrorCode errorCode, StringImpl* message) {
         reportViewportWarning(document, errorCode, message);
     });
 }

@@ -53,7 +53,7 @@ public:
 private:
     SVGFEImageElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
@@ -71,7 +71,7 @@ private:
     void clearResourceReferences();
     void requestImageResource();
 
-    String imageSourceURL() const final;
+    RefPtr<StringImpl> imageSourceURL() const final;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     RenderImageResource* imageResource() const;
     void updateImageResource();

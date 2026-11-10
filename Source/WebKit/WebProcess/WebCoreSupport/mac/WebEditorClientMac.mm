@@ -67,7 +67,7 @@ void WebEditorClient::didDispatchInputMethodKeydown(KeyboardEvent& event)
         page->handleEditingKeyboardEvent(event);
 }
 
-void WebEditorClient::setInsertionPasteboard(const String&)
+void WebEditorClient::setInsertionPasteboard(StringImpl*)
 {
     // This is used only by Mail, no need to implement it now.
     notImplemented();
@@ -83,10 +83,10 @@ static void applyTextTransformation(WebPage& page, NSString *(*transform)(NSStri
     if (!editor->canEdit())
         return;
 
-    editor->command("selectWord"_s).execute();
+    editor->command("selectWord"_si).execute();
 
-    RetainPtr selectedString = frame->displayStringModifiedByEncoding(editor->selectedText()).createNSString();
-    page.replaceSelectionWithText(frame.get(), transform(selectedString.get()), WebCore::EditAction::Insert);
+    RetainPtr selectedString = createNSString(frame->displayStringModifiedByEncoding(editor->selectedText()));
+    page.replaceSelectionWithText(frame.get(), StringImpl::create(protect(transform(selectedString.get())).get()).get(), WebCore::EditAction::Insert);
 }
 
 void WebEditorClient::uppercaseWord()
@@ -119,16 +119,16 @@ void WebEditorClient::capitalizeWord()
     });
 }
 
-bool WebEditorClient::canApplyCaseTransformations(const String& selection)
+bool WebEditorClient::canApplyCaseTransformations(StringImpl* selection)
 {
-    RetainPtr selectedText = selection.createNSString();
+    RetainPtr selectedText = createNSString(selection);
     return [selectedText rangeOfCharacterFromSet:[NSCharacterSet lowercaseLetterCharacterSet]].location != NSNotFound
         || [selectedText rangeOfCharacterFromSet:[NSCharacterSet uppercaseLetterCharacterSet]].location != NSNotFound;
 }
 
-bool WebEditorClient::canConvertToTraditionalChinese(const String& selection)
+bool WebEditorClient::canConvertToTraditionalChinese(StringImpl* selection)
 {
-    RetainPtr untransformed = selection.createNSString();
+    RetainPtr untransformed = createNSString(selection);
     RetainPtr transformed = [untransformed stringByApplyingTransform:@"Hans-Hant" reverse:NO];
     if ([transformed isEqualToString:untransformed.get()])
         return false;
@@ -136,9 +136,9 @@ bool WebEditorClient::canConvertToTraditionalChinese(const String& selection)
     return true;
 }
 
-bool WebEditorClient::canConvertToSimplifiedChinese(const String& selection)
+bool WebEditorClient::canConvertToSimplifiedChinese(StringImpl* selection)
 {
-    RetainPtr untransformed = selection.createNSString();
+    RetainPtr untransformed = createNSString(selection);
     RetainPtr transformed = [untransformed stringByApplyingTransform:@"Hant-Hans" reverse:NO];
     if ([transformed isEqualToString:untransformed.get()])
         return false;

@@ -193,14 +193,14 @@ public:
 
     struct CurrentContent {
         RefPtr<Node> node;
-        Vector<String> text;
+        Vector<RefPtr<StringImpl>> text;
         bool isTextContent { false };
         bool isReplacedContent { false };
     };
 
     CurrentContent currentContent()
     {
-        CurrentContent content = { m_node.copyRef(), m_text ? m_text.value() : Vector<String> { }, !!m_text };
+        CurrentContent content = { m_node.copyRef(), m_text ? m_text.value() : Vector<RefPtr<StringImpl>> { }, !!m_text };
         if (content.node) {
             if (auto* renderer = content.node->renderer()) {
                 if (renderer->isRenderReplaced()) {
@@ -234,7 +234,7 @@ private:
             m_node = m_pastEndNode;
     }
 
-    void appendToText(Vector<String>& text, StringBuilder& stringBuilder)
+    void appendToText(Vector<RefPtr<StringImpl>>& text, StringBuilder& stringBuilder)
     {
         if (!stringBuilder.isEmpty()) {
             text.append(stringBuilder.toString());
@@ -247,7 +247,7 @@ private:
         ASSERT(shouldAdvanceIteratorPastCurrentNode());
 
         StringBuilder stringBuilder;
-        Vector<String> text;
+        Vector<RefPtr<StringImpl>> text;
         while (shouldAdvanceIteratorPastCurrentNode()) {
             auto iteratorText = m_iterator.text();
             if (m_iterator.range().collapsed()) {
@@ -267,7 +267,7 @@ private:
     TextIterator m_iterator;
     RefPtr<Node> m_node;
     const RefPtr<Node> m_pastEndNode;
-    std::optional<Vector<String>> m_text;
+    std::optional<Vector<RefPtr<StringImpl>>> m_text;
 };
 
 NODELETE static bool shouldExtractValueForTextManipulation(const HTMLInputElement& input)
@@ -382,11 +382,11 @@ NODELETE static bool shouldIgnoreNodeInTextField(const Node& node)
     return input->lastChangeWasUserEdit() || input->autofilled();
 }
 
-TextManipulationController::ManipulationUnit TextManipulationController::createUnit(const Vector<String>& text, Node& textNode)
+TextManipulationController::ManipulationUnit TextManipulationController::createUnit(const Vector<RefPtr<StringImpl>>& text, Node& textNode)
 {
     ManipulationUnit unit = { textNode, { } };
     for (auto& textEntry : text) {
-        if (!textEntry.isNull())
+        if (textEntry)
             parse(unit, textEntry, textNode);
         else {
             if (unit.tokens.isEmpty())
@@ -405,7 +405,7 @@ bool TextManipulationController::shouldExcludeNodeBasedOnStyle(const Node& node)
 
     Ref font = protect(style->fontCascade())->primaryFont();
     auto familyName = font->platformData().familyName();
-    if (familyName.isEmpty())
+    if (isEmpty(familyName))
         return false;
 
     auto iter = m_cachedFontFamilyExclusionResults.find(familyName);
@@ -420,28 +420,28 @@ bool TextManipulationController::shouldExcludeNodeBasedOnStyle(const Node& node)
     return result;
 }
 
-void TextManipulationController::parse(ManipulationUnit& unit, const String& text, Node& textNode)
+void TextManipulationController::parse(ManipulationUnit& unit, StringImpl* text, Node& textNode)
 {
     ExclusionRuleMatcher exclusionRuleMatcher(m_exclusionRules);
     bool isNodeExcluded = exclusionRuleMatcher.isExcluded(&textNode) || shouldExcludeNodeBasedOnStyle(textNode);
     size_t positionOfLastNonHTMLSpace = notFound;
     size_t startPositionOfCurrentToken = 0;
     size_t index = 0;
-    for (; index < text.length(); ++index) {
-        auto character = text[index];
+    for (; index < length(text); ++index) {
+        auto character = codeUnitAt(text, index);
         if (isTokenDelimiter(character)) {
             if (positionOfLastNonHTMLSpace != notFound && startPositionOfCurrentToken <= positionOfLastNonHTMLSpace) {
-                auto stringForToken = text.substring(startPositionOfCurrentToken, positionOfLastNonHTMLSpace + 1 - startPositionOfCurrentToken);
+                auto stringForToken = substring(text, startPositionOfCurrentToken, positionOfLastNonHTMLSpace + 1 - startPositionOfCurrentToken);
                 unit.tokens.append(TextManipulationToken { TextManipulationTokenIdentifier::generate(), stringForToken, tokenInfo(&textNode), isNodeExcluded });
                 startPositionOfCurrentToken = positionOfLastNonHTMLSpace + 1;
             }
 
-            while (index < text.length() && (isASCIIWhitespace(text[index]) || isInPrivateUseArea(text[index])))
+            while (index < length(text) && (isASCIIWhitespace(codeUnitAt(text, index)) || isInPrivateUseArea(codeUnitAt(text, index))))
                 ++index;
 
             --index;
 
-            auto stringForToken = text.substring(startPositionOfCurrentToken, index + 1 - startPositionOfCurrentToken);
+            auto stringForToken = substring(text, startPositionOfCurrentToken, index + 1 - startPositionOfCurrentToken);
             if (unit.tokens.isEmpty() && !unit.firstTokenContainsDelimiter)
                 unit.firstTokenContainsDelimiter = true;
             unit.tokens.append(TextManipulationToken { TextManipulationTokenIdentifier::generate(), stringForToken, tokenInfo(&textNode), true });
@@ -454,8 +454,8 @@ void TextManipulationController::parse(ManipulationUnit& unit, const String& tex
         }
     }
 
-    if (startPositionOfCurrentToken < text.length()) {
-        auto stringForToken = text.substring(startPositionOfCurrentToken, index + 1 - startPositionOfCurrentToken);
+    if (startPositionOfCurrentToken < length(text)) {
+        auto stringForToken = substring(text, startPositionOfCurrentToken, index + 1 - startPositionOfCurrentToken);
         unit.tokens.append(TextManipulationToken { TextManipulationTokenIdentifier::generate(), stringForToken, tokenInfo(&textNode), isNodeExcluded });
         unit.lastTokenContainsDelimiter = false;
     }
@@ -776,14 +776,14 @@ TextManipulationController::ManipulationResult TextManipulationController::compl
 
 struct TokenExchangeData {
     RefPtr<Node> node;
-    String originalContent;
+    RefPtr<StringImpl> originalContent;
     bool isExcluded { false };
     bool isConsumed { false };
 };
 
 struct ReplacementData {
     Ref<Node> originalNode;
-    String newData;
+    RefPtr<StringImpl> newData;
 };
 
 Vector<Ref<Node>> TextManipulationController::getPath(Node* ancestor, Node* node)
@@ -842,7 +842,7 @@ static void updateEnclosingBlockDirectionAfterReplacement(Node& replacedContentC
     if (!renderer || renderer->writingMode().bidiDirection() == *newDirection)
         return;
 
-    block->setAttribute(HTMLNames::dirAttr, *newDirection == TextDirection::RTL ? "rtl"_s : "ltr"_s);
+    block->setAttribute(HTMLNames::dirAttr, AtomStringImpl::add(*newDirection == TextDirection::RTL ? "rtl"_s : "ltr"_s).ptr());
 }
 
 auto TextManipulationController::replace(const ManipulationItemData& item, const Vector<TextManipulationToken>& replacementTokens, NodeSet& containersWithoutVisualOverflowBeforeReplacement) -> std::optional<ManipulationFailure::Type>
@@ -867,7 +867,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
             newValue.append(replacementTokens[i].content);
         }
         if (item.attributeName == nullQName())
-            element->setTextContent(String { newValue.toString() });
+            element->setTextContent(RefPtr<StringImpl> { newValue.toString() });
         else if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element); input && item.attributeName == HTMLNames::valueAttr)
             input->setValue(newValue.toString());
         else
@@ -985,7 +985,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
                 return ManipulationFailure::Type::ExclusionViolation;
             exchangeData.isConsumed = true;
 
-            if (!replacementToken.content.isNull() && replacementToken.content != exchangeData.originalContent)
+            if (replacementToken.content && !equal(replacementToken.content, exchangeData.originalContent))
                 return ManipulationFailure::Type::ExclusionViolation;
 
             replacementNode = originalNode;
@@ -1041,7 +1041,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
     if (commonAncestor) {
         StringBuilder replacementText;
         for (auto& token : replacementTokens) {
-            if (token.content.isNull())
+            if (!token.content)
                 continue;
             if (!replacementText.isEmpty())
                 replacementText.append(' ');

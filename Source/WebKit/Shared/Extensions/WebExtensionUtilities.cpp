@@ -53,13 +53,13 @@ Ref<JSON::Array> filterObjects(const JSON::Array& array, NOESCAPE const WTF::Fun
     return result;
 }
 
-Vector<String> makeStringVector(const JSON::Array& array)
+Vector<RefPtr<StringImpl>> makeStringVector(const JSON::Array& array)
 {
     size_t count = array.length();
-    Vector<String> vector(ReserveCapacityTag { }, count);
+    Vector<RefPtr<StringImpl>> vector(ReserveCapacityTag { }, count);
 
     for (Ref value : array) {
-        if (auto string = value->asString(); !string.isNull())
+        if (auto string = value->asString(); string)
             vector.append(WTF::move(string));
     }
 
@@ -86,7 +86,7 @@ RefPtr<JSON::Object> jsonWithLowercaseKeys(RefPtr<JSON::Object> json)
 
     Ref newObject = JSON::Object::create();
     for (auto& key : borrow(json->keys()))
-        newObject->setValue(key.convertToASCIILowercase(), *json->getValue(key));
+        newObject->setValue(convertToASCIILowercase(key), *json->getValue(key));
 
     return newObject;
 }
@@ -105,7 +105,7 @@ RefPtr<JSON::Object> mergeJSON(RefPtr<JSON::Object> jsonA, RefPtr<JSON::Object> 
     return mergedObject;
 }
 
-void serializeToMultipleJSONStrings(Ref<JSON::Object> jsonObject, NOESCAPE const Function<void(String&&)>& chunkCallback)
+void serializeToMultipleJSONStrings(Ref<JSON::Object> jsonObject, NOESCAPE const Function<void(RefPtr<StringImpl>&&)>& chunkCallback)
 {
     // StringBuilder is limited to INT_MAX characters and JSON chars may expand up to 6x to account for escaping (\uNNNN).
     // We can assume memoryCost() ≈ total bytes of string storage, so a threshold cap of INT_MAX / 6
@@ -126,7 +126,7 @@ void serializeToMultipleJSONStrings(Ref<JSON::Object> jsonObject, NOESCAPE const
         if (!value)
             continue;
 
-        size_t entryMemoryCost = key.sizeInBytes() + value->memoryCost();
+        size_t entryMemoryCost = sizeInBytes(key) + value->memoryCost();
 
         // If we've hit the threshold, then create a new JSON string to avoid an overflow.
         if (currentMemoryCost + entryMemoryCost > memoryCostThreshold) {
@@ -148,12 +148,12 @@ size_t storageMaximumBytesPerCall(bool inTestingMode)
     return inTestingMode ? webExtensionStorageAreaMaximumBytesPerCallForTesting : webExtensionStorageAreaMaximumBytesPerCall;
 }
 
-size_t storageSizeOf(const String& keyOrValue)
+size_t storageSizeOf(StringImpl* keyOrValue)
 {
     // The size of a key is the length of the key string.
     // The size of a value is the length of the JSON representation of the value.
     // If keyOrValue represents a value we assume that the string is the JSON representation.
-    return keyOrValue.utf8().length();
+    return utf8(keyOrValue).length();
 }
 
 size_t storageSizeOf(RefPtr<JSON::Object> keysAndValues)
@@ -168,13 +168,13 @@ size_t storageSizeOf(RefPtr<JSON::Object> keysAndValues)
     return storageSize;
 }
 
-bool anyItemsExceedQuota(RefPtr<JSON::Object> items, size_t quota, String& outKeyWithError)
+bool anyItemsExceedQuota(RefPtr<JSON::Object> items, size_t quota, RefPtr<StringImpl>& outKeyWithError)
 {
     if (!items)
         return false;
 
     bool itemExceededQuota = false;
-    String keyWithError = nullString();
+    RefPtr<StringImpl> keyWithError = nullString();
 
     for (const auto& item : *items) {
         size_t sizeOfCurrentItem = storageSizeOf(item.key) + storageSizeOf(item.value->asString());
@@ -185,56 +185,60 @@ bool anyItemsExceedQuota(RefPtr<JSON::Object> items, size_t quota, String& outKe
         }
     }
 
-    ASSERT(!itemExceededQuota || !keyWithError.isNull());
+    ASSERT(!itemExceededQuota || keyWithError);
 
     outKeyWithError = keyWithError;
 
     return itemExceededQuota;
 }
 
-static inline String lowercaseFirst(const String& input)
+static inline RefPtr<StringImpl> lowercaseFirst(StringImpl* input)
 {
-    return !input.isEmpty() ? makeString(input.left(1).convertToASCIILowercase(), input.substring(1, input.length())) : input;
+    if (isEmpty(input))
+        return input;
+    return makeString(convertToASCIILowercase(left(input, 1)), substring(input, 1, length(input)));
 }
 
-static inline String uppercaseFirst(const String& input)
+static inline RefPtr<StringImpl> uppercaseFirst(StringImpl* input)
 {
-    return !input.isEmpty() ? makeString(input.left(1).convertToASCIIUppercase(), input.substring(1, input.length())) : input;
+    if (isEmpty(input))
+        return input;
+    return makeString(convertToASCIIUppercase(left(input, 1)), substring(input, 1, length(input)));
 }
 
-String toErrorString(const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString)
+RefPtr<StringImpl> toErrorString(StringImpl* callingAPIName, StringImpl* sourceKey, StringImpl* underlyingErrorString)
 {
-    ASSERT(!underlyingErrorString.isEmpty());
+    ASSERT(!isEmpty(underlyingErrorString));
 
-    String formattedUnderlyingErrorString = underlyingErrorString.trim([](char16_t character) -> bool {
+    RefPtr<StringImpl> formattedUnderlyingErrorString = trim(underlyingErrorString, [](char16_t character) -> bool {
         return character == '.';
     });
 
-    String source = sourceKey;
+    RefPtr<StringImpl> source = sourceKey;
 
-    if (!callingAPIName.isEmpty() && !sourceKey.isEmpty() && formattedUnderlyingErrorString.contains("value is invalid"_s)) [[unlikely]] {
+    if (!isEmpty(callingAPIName) && !isEmpty(sourceKey) && contains(formattedUnderlyingErrorString, "value is invalid"_s)) [[unlikely]] {
         ASSERT_NOT_REACHED_WITH_MESSAGE("Overly nested error string, use a `nullString()` sourceKey for this call instead.");
         source = nullString();
     }
 
-    if (!callingAPIName.isEmpty() && !source.isEmpty())
+    if (!isEmpty(callingAPIName) && !isEmpty(source))
         return makeString("Invalid call to "_s, callingAPIName, ". The '"_s, source, "' value is invalid, because "_s, lowercaseFirst(formattedUnderlyingErrorString), "."_s);
 
-    if (callingAPIName.isEmpty() && !source.isEmpty())
+    if (isEmpty(callingAPIName) && !isEmpty(source))
         return makeString("The '"_s, source, "' value is invalid, because "_s, lowercaseFirst(formattedUnderlyingErrorString), "."_s);
 
-    if (!callingAPIName.isEmpty())
+    if (!isEmpty(callingAPIName))
         return makeString("Invalid call to "_s, callingAPIName, ". "_s, uppercaseFirst(formattedUnderlyingErrorString), "."_s);
 
     return formattedUnderlyingErrorString;
 }
 
-JSObjectRef toJSError(JSContextRef context, const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString)
+JSObjectRef toJSError(JSContextRef context, StringImpl* callingAPIName, StringImpl* sourceKey, StringImpl* underlyingErrorString)
 {
     return toJSError(context, toErrorString(callingAPIName, sourceKey, underlyingErrorString));
 }
 
-static String classToClassString(JSON::Value::Type classType, bool plural = false)
+static RefPtr<StringImpl> classToClassString(JSON::Value::Type classType, bool plural = false)
 {
     switch (classType) {
     case JSON::Value::Type::Integer:
@@ -255,38 +259,38 @@ static String classToClassString(JSON::Value::Type classType, bool plural = fals
     }
 
     ASSERT_NOT_REACHED();
-    return "unknown"_s;
+    return "unknown"_si;
 }
 
-static String valueToTypeString(RefPtr<JSON::Value> value)
+static RefPtr<StringImpl> valueToTypeString(RefPtr<JSON::Value> value)
 {
     if (auto number = value->asDouble(); (value->type() == JSON::Value::Type::Double || value->type() == JSON::Value::Type::Integer)) {
         if (std::isnan(number.value_or(0)))
-            return "NaN"_s;
+            return "NaN"_si;
 
         if (std::isinf(number.value_or(0)))
-            return "Infinity"_s;
+            return "Infinity"_si;
     }
 
     return classToClassString(value->type());
 }
 
-static String constructExpectedMessage(const String& key, const String& expected, const String& found, bool inArray = false)
+static RefPtr<StringImpl> constructExpectedMessage(StringImpl* key, StringImpl* expected, StringImpl* found, bool inArray = false)
 {
     ASSERT(expected);
     ASSERT(found);
 
-    if (inArray && !key.isEmpty())
+    if (inArray && !isEmpty(key))
         return makeString("'"_s, key, "' is expected to be "_s, expected, " but "_s, found, " was provided in the array"_s);
     if (inArray)
         return makeString(expected, " is expected, but "_s, found, " was provided in the array"_s);
 
-    if (!key.isEmpty())
+    if (!isEmpty(key))
         return makeString("'"_s, key, "' is expected to be "_s, expected, ", but "_s, found, " was provided"_s);
     return makeString(expected, " is expected, but "_s, found, " was provided"_s);
 }
 
-static bool validate(const String& key, RefPtr<JSON::Value> value, JSON::Value::Type expectedValueType, String& outExceptionString)
+static bool validate(StringImpl* key, RefPtr<JSON::Value> value, JSON::Value::Type expectedValueType, RefPtr<StringImpl>& outExceptionString)
 {
     auto number = value->asDouble();
 
@@ -313,7 +317,7 @@ static bool validate(const String& key, RefPtr<JSON::Value> value, JSON::Value::
     return true;
 }
 
-static String formatList(Vector<String>& list)
+static RefPtr<StringImpl> formatList(Vector<RefPtr<StringImpl>>& list)
 {
     auto count = list.size();
     if (!count)
@@ -326,30 +330,30 @@ static String formatList(Vector<String>& list)
         return makeString("'"_s, list.first(), "' and '"_s, list.last(), "'"_s);
 
     const auto allButLast = list.subvector(0, count - 1);
-    auto formattedInitialItems = makeStringByJoining(allButLast, "', '"_s);
+    auto formattedInitialItems = makeStringByJoining(allButLast, "', '"_si);
     return makeString("'"_s, formattedInitialItems, "' and '"_s, list.last(), "'"_s);
 }
 
-bool validateDictionary(RefPtr<JSON::Value> dictionary, const String& sourceKey, Vector<String> requiredKeys, HashMap<String, JSON::Value::Type> keyTypes, String& outExceptionString)
+bool validateDictionary(RefPtr<JSON::Value> dictionary, StringImpl* sourceKey, Vector<RefPtr<StringImpl>> requiredKeys, HashMap<RefPtr<StringImpl>, JSON::Value::Type> keyTypes, RefPtr<StringImpl>& outExceptionString)
 {
     ASSERT(!keyTypes.isEmpty());
 
     RefPtr<JSON::Object> object = dictionary->asObject();
     if (!object) {
-        outExceptionString = toErrorString(nullString(), sourceKey, "an object is expected"_s);
+        outExceptionString = toErrorString(nullString(), sourceKey, "an object is expected"_si);
         return false;
     }
 
-    Vector<String> remainingRequiredKeys = requiredKeys;
-    HashSet<String> requiredKeysSet;
+    Vector<RefPtr<StringImpl>> remainingRequiredKeys = requiredKeys;
+    HashSet<RefPtr<StringImpl>> requiredKeysSet;
     for (auto& key : borrow(requiredKeys))
         requiredKeysSet.addVoid(key);
-    HashSet<String> optionalKeysSet;
+    HashSet<RefPtr<StringImpl>> optionalKeysSet;
     for (auto& key : keyTypes.keys())
         optionalKeysSet.addVoid(key);
     optionalKeysSet.formDifference(requiredKeysSet);
 
-    String errorString;
+    RefPtr<StringImpl> errorString;
 
     for (auto& key : borrow(object->keys())) {
         if (!requiredKeysSet.contains(key) && !optionalKeysSet.contains(key))
@@ -363,23 +367,23 @@ bool validateDictionary(RefPtr<JSON::Value> dictionary, const String& sourceKey,
 
         if (requiredKeysSet.contains(key)) {
             remainingRequiredKeys.removeFirstMatching([&key](auto& k) -> bool {
-                return k == key;
+                return equal(k, key);
             });
         }
     }
 
     // Prioritize type errors over missing required key errors, since the dictionary *might* actually have
     // all the required keys, but we stopped checking. We do know for sure that the type is wrong though.
-    if (!remainingRequiredKeys.isEmpty() && errorString.isEmpty())
+    if (!remainingRequiredKeys.isEmpty() && isEmpty(errorString))
         errorString = makeString("it is missing required keys: "_s, formatList(remainingRequiredKeys));
 
-    if (!errorString.isEmpty())
+    if (!isEmpty(errorString))
         outExceptionString = toErrorString(nullString(), sourceKey, errorString);
 
-    return errorString.isEmpty();
+    return isEmpty(errorString);
 }
 
-static bool validateArray(const String& sourceKey, RefPtr<JSON::Value> value, Vector<JSON::Value::Type> expectedArrayType, String& outExceptionString)
+static bool validateArray(StringImpl* sourceKey, RefPtr<JSON::Value> value, Vector<JSON::Value::Type> expectedArrayType, RefPtr<StringImpl>& outExceptionString)
 {
     ASSERT(expectedArrayType.size() == 1);
 
@@ -390,7 +394,7 @@ static bool validateArray(const String& sourceKey, RefPtr<JSON::Value> value, Ve
 
     RefPtr array = value->asArray();
     for (auto& element : *array) {
-        String errorString;
+        RefPtr<StringImpl> errorString;
         if (!validate(emptyString(), element.get(), expectedArrayType.first(), errorString)) {
             outExceptionString = constructExpectedMessage(sourceKey, makeString("an array of "_s, classToClassString(expectedArrayType.first())), valueToTypeString(element.get()), true);
             return false;
@@ -400,7 +404,7 @@ static bool validateArray(const String& sourceKey, RefPtr<JSON::Value> value, Ve
     return true;
 }
 
-static bool validateSet(const String& sourceKey, RefPtr<JSON::Value> value, Vector<JSON::Value::Type> expectedValueType, Vector<JSON::Value::Type> expectedArrayTypes, String& outExceptionString)
+static bool validateSet(StringImpl* sourceKey, RefPtr<JSON::Value> value, Vector<JSON::Value::Type> expectedValueType, Vector<JSON::Value::Type> expectedArrayTypes, RefPtr<StringImpl>& outExceptionString)
 {
     if (expectedValueType.contains(value->type()) && (value->type() != JSON::Value::Type::Array))
         return true;
@@ -421,7 +425,7 @@ static bool validateSet(const String& sourceKey, RefPtr<JSON::Value> value, Vect
     };
 
     bool arrayIsValid = false;
-    String exception;
+    RefPtr<StringImpl> exception;
     for (auto type : expectedValueType) {
         if (type == JSON::Value::Type::Array) {
             arrayIsValid = true;
@@ -437,23 +441,23 @@ static bool validateSet(const String& sourceKey, RefPtr<JSON::Value> value, Vect
             return true;
     }
 
-    auto foundString = arrayIsValid && value->asArray() ? "an array of other values"_s : valueToTypeString(value);
+    auto foundString = arrayIsValid && value->asArray() ? "an array of other values"_si : valueToTypeString(value);
     outExceptionString = constructExpectedMessage(sourceKey, expectedValuesString.toString(), foundString);
 
     return false;
 }
 
-bool validateObject(RefPtr<JSON::Value> value, const String& sourceKey, Vector<JSON::Value::Type> expectedValueType, Vector<JSON::Value::Type> expectedArrayType, String& outExceptionString)
+bool validateObject(RefPtr<JSON::Value> value, StringImpl* sourceKey, Vector<JSON::Value::Type> expectedValueType, Vector<JSON::Value::Type> expectedArrayType, RefPtr<StringImpl>& outExceptionString)
 {
     ASSERT(!expectedValueType.isEmpty());
 
-    String errorString;
+    RefPtr<StringImpl> errorString;
     validateSet(nullString(), value, expectedValueType, expectedArrayType, errorString);
 
-    if (!errorString.isEmpty())
+    if (!isEmpty(errorString))
         outExceptionString = toErrorString(nullString(), sourceKey, errorString);
 
-    return errorString.isEmpty();
+    return isEmpty(errorString);
 }
 
 void callAfterRandomDelay(Function<void()>&& callback)

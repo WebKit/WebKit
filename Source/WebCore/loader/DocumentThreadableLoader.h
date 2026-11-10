@@ -55,8 +55,8 @@ class CachedRawResource;
         static void loadResourceSynchronously(Document&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
 
         enum class ShouldLogError : bool { No, Yes };
-        static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, ResourceRequest&&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&, std::optional<CrossOriginEmbedderPolicy>&&, String&& referrer, ShouldLogError);
-        static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, ResourceRequest&&, const ThreadableLoaderOptions&, String&& referrer = String());
+        static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, ResourceRequest&&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&, std::optional<CrossOriginEmbedderPolicy>&&, RefPtr<StringImpl>&& referrer, ShouldLogError);
+        static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, ResourceRequest&&, const ThreadableLoaderOptions&, RefPtr<StringImpl>&& referrer = nullptr);
 
         virtual ~DocumentThreadableLoader();
 
@@ -79,7 +79,7 @@ class CachedRawResource;
             LoadAsynchronously
         };
 
-        DocumentThreadableLoader(Document&, ThreadableLoaderClient&, BlockingBehavior, ResourceRequest&&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&, std::optional<CrossOriginEmbedderPolicy>&&, String&&, ShouldLogError);
+        DocumentThreadableLoader(Document&, ThreadableLoaderClient&, BlockingBehavior, ResourceRequest&&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&, std::optional<CrossOriginEmbedderPolicy>&&, RefPtr<StringImpl>&&, ShouldLogError);
 
         void clearResource();
 
@@ -115,13 +115,13 @@ class CachedRawResource;
         Document* document() { return m_document; }
 
         const ThreadableLoaderOptions& options() const LIFETIME_BOUND { return m_options; }
-        const String& referrer() const LIFETIME_BOUND { return m_referrer; }
+        const RefPtr<StringImpl>& referrer() const LIFETIME_BOUND { return m_referrer; }
         bool isLoading() { return m_resource || m_preflightChecker; }
 
         void reportRedirectionWithBadScheme(const URL&);
         void reportContentSecurityPolicyError(const URL&);
         void reportCrossOriginResourceSharingError(const URL&);
-        void reportIntegrityMetadataError(const CachedResource&, const String& expectedMetadata);
+        void reportIntegrityMetadataError(const CachedResource&, StringImpl* expectedMetadata);
         void logErrorAndFail(const ResourceError&);
 
         bool shouldSetHTTPHeadersToKeep() const;
@@ -132,7 +132,7 @@ class CachedRawResource;
         WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
         ThreadableLoaderOptions m_options;
         RefPtr<SecurityOrigin> m_origin;
-        String m_referrer;
+        RefPtr<StringImpl> m_referrer;
         const std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
         std::optional<CrossOriginEmbedderPolicy> m_crossOriginEmbedderPolicy;
         RefPtr<CrossOriginPreflightChecker> m_preflightChecker;

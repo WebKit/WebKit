@@ -381,72 +381,72 @@ const RegisterAtOffsetList* StackVisitor::Frame::calleeSaveRegistersForUnwinding
 }
 #endif // ENABLE(ASSEMBLER)
 
-String StackVisitor::Frame::functionName() const
+RefPtr<StringImpl> StackVisitor::Frame::functionName() const
 {
-    String traceLine;
+    RefPtr<StringImpl> traceLine;
 
     switch (codeType()) {
     case CodeType::Wasm:
         traceLine = makeString(m_wasmFunctionIndexOrName);
         break;
     case CodeType::Eval:
-        traceLine = "eval code"_s;
+        traceLine = "eval code"_si;
         break;
     case CodeType::Module:
-        traceLine = "module code"_s;
+        traceLine = "module code"_si;
         break;
     case CodeType::Native: {
         JSCell* callee = this->callee().asCell();
         if (callee)
-            traceLine = getCalculatedDisplayName(callFrame()->deprecatedVM(), uncheckedDowncast<JSObject>(callee)).impl();
+            traceLine = getCalculatedDisplayName(callFrame()->deprecatedVM(), uncheckedDowncast<JSObject>(callee)).get();
         break;
     }
     case CodeType::Function: 
-        traceLine = getCalculatedDisplayName(callFrame()->deprecatedVM(), uncheckedDowncast<JSObject>(this->callee().asCell())).impl();
+        traceLine = getCalculatedDisplayName(callFrame()->deprecatedVM(), uncheckedDowncast<JSObject>(this->callee().asCell())).get();
         break;
     case CodeType::Global:
-        traceLine = "global code"_s;
+        traceLine = "global code"_si;
         break;
     }
-    return traceLine.isNull() ? emptyString() : traceLine;
+    return !traceLine ? emptyString() : traceLine;
 }
 
-String StackVisitor::Frame::sourceURL() const
+RefPtr<StringImpl> StackVisitor::Frame::sourceURL() const
 {
-    String traceLine;
+    RefPtr<StringImpl> traceLine;
 
     switch (codeType()) {
     case CodeType::Eval:
     case CodeType::Module:
     case CodeType::Function:
     case CodeType::Global: {
-        String sourceURL = codeBlock()->ownerExecutable()->sourceURL();
-        if (!sourceURL.isEmpty())
-            traceLine = sourceURL.impl();
+        RefPtr<StringImpl> sourceURL = codeBlock()->ownerExecutable()->sourceURL();
+        if (!isEmpty(sourceURL))
+            traceLine = sourceURL.get();
         break;
     }
     case CodeType::Native:
-        traceLine = "[native code]"_s;
+        traceLine = "[native code]"_si;
         break;
     case CodeType::Wasm:
-        traceLine = "[wasm code]"_s;
+        traceLine = "[wasm code]"_si;
         break;
     }
-    return traceLine.isNull() ? emptyString() : traceLine;
+    return !traceLine ? emptyString() : traceLine;
 }
 
-String StackVisitor::Frame::preRedirectURL() const
+RefPtr<StringImpl> StackVisitor::Frame::preRedirectURL() const
 {
-    String traceLine;
+    RefPtr<StringImpl> traceLine;
 
     switch (codeType()) {
     case CodeType::Eval:
     case CodeType::Module:
     case CodeType::Function:
     case CodeType::Global: {
-        String preRedirectURL = codeBlock()->ownerExecutable()->preRedirectURL();
-        if (!preRedirectURL.isEmpty())
-            traceLine = preRedirectURL.impl();
+        RefPtr<StringImpl> preRedirectURL = codeBlock()->ownerExecutable()->preRedirectURL();
+        if (!isEmpty(preRedirectURL))
+            traceLine = preRedirectURL.get();
         break;
     }
     case CodeType::Native:
@@ -454,16 +454,16 @@ String StackVisitor::Frame::preRedirectURL() const
         break;
     }
 
-    return traceLine.isNull() ? emptyString() : traceLine;
+    return !traceLine ? emptyString() : traceLine;
 }
 
-String StackVisitor::Frame::toString() const
+RefPtr<StringImpl> StackVisitor::Frame::toString() const
 {
-    String functionName = this->functionName();
-    String sourceURL = this->sourceURL();
-    auto separator = !sourceURL.isEmpty() && !functionName.isEmpty() ? "@"_s : ""_s;
+    RefPtr<StringImpl> functionName = this->functionName();
+    RefPtr<StringImpl> sourceURL = this->sourceURL();
+    auto separator = !isEmpty(sourceURL) && !isEmpty(functionName) ? "@"_s : ""_s;
 
-    if (sourceURL.isEmpty() || !hasLineAndColumnInfo())
+    if (isEmpty(sourceURL) || !hasLineAndColumnInfo())
         return makeString(functionName, separator, sourceURL);
 
     auto lineColumn = computeLineAndColumn();

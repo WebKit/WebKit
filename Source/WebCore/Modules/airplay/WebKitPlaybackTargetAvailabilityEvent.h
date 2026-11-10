@@ -35,27 +35,27 @@ class WebKitPlaybackTargetAvailabilityEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(WebKitPlaybackTargetAvailabilityEvent);
 public:
 
-    static Ref<WebKitPlaybackTargetAvailabilityEvent> create(const AtomString& eventType, bool available)
+    static Ref<WebKitPlaybackTargetAvailabilityEvent> create(AtomStringImpl* eventType, bool available)
     {
         return adoptRef(*new WebKitPlaybackTargetAvailabilityEvent(eventType, available));
     }
 
     struct Init : EventInit {
-        String availability;
+        RefPtr<StringImpl> availability;
     };
 
-    static Ref<WebKitPlaybackTargetAvailabilityEvent> create(const AtomString& eventType, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<WebKitPlaybackTargetAvailabilityEvent> create(AtomStringImpl* eventType, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new WebKitPlaybackTargetAvailabilityEvent(eventType, WTF::move(initializer), isTrusted));
     }
 
-    String availability() const { return m_availability; }
+    RefPtr<StringImpl> availability() const { return m_availability; }
 
 private:
-    explicit WebKitPlaybackTargetAvailabilityEvent(const AtomString& eventType, bool available);
-    WebKitPlaybackTargetAvailabilityEvent(const AtomString& eventType, Init&&, IsTrusted);
+    explicit WebKitPlaybackTargetAvailabilityEvent(AtomStringImpl* eventType, bool available);
+    WebKitPlaybackTargetAvailabilityEvent(AtomStringImpl* eventType, Init&&, IsTrusted);
 
-    String m_availability;
+    RefPtr<StringImpl> m_availability;
 };
 
 } // namespace WebCore

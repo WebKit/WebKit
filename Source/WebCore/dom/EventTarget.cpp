@@ -94,7 +94,7 @@ bool EventTarget::isPaymentRequest() const
     return false;
 }
 
-bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool EventTarget::addEventListener(AtomStringImpl* eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
 #if ASSERT_ENABLED
     listener->checkValidityForEventTarget(*this);
@@ -126,7 +126,7 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
         return false;
 
     if (RefPtr signal = options.signal) {
-        auto abortAlgorithmIdentifier = signal->addAlgorithm([weakThis = WeakPtr { *this }, eventType, registeredListener = Ref { *registeredListener }](JSC::JSValue) {
+        auto abortAlgorithmIdentifier = signal->addAlgorithm([weakThis = WeakPtr { *this }, eventType = RefPtr { eventType }, registeredListener = Ref { *registeredListener }](JSC::JSValue) {
             // The listener may have been removed while the signal runs its abort algorithms, and another one with the
             // same callback and capture added; that one must stay.
             if (weakThis && !registeredListener->wasRemoved())
@@ -142,12 +142,12 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
     return true;
 }
 
-bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener)
+bool EventTarget::addEventListener(AtomStringImpl* eventType, Ref<EventListener>&& listener)
 {
     return addEventListener(eventType, WTF::move(listener), { });
 }
 
-void EventTarget::addEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&& listener, AddEventListenerOptionsOrBoolean&& variant)
+void EventTarget::addEventListenerForBindings(AtomStringImpl* eventType, RefPtr<EventListener>&& listener, AddEventListenerOptionsOrBoolean&& variant)
 {
     if (!listener)
         return;
@@ -163,7 +163,7 @@ void EventTarget::addEventListenerForBindings(const AtomString& eventType, RefPt
     WTF::visit(visitor, variant);
 }
 
-void EventTarget::removeEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&& listener, EventListenerOptionsOrBoolean&& variant)
+void EventTarget::removeEventListenerForBindings(AtomStringImpl* eventType, RefPtr<EventListener>&& listener, EventListenerOptionsOrBoolean&& variant)
 {
     if (!listener)
         return;
@@ -179,7 +179,7 @@ void EventTarget::removeEventListenerForBindings(const AtomString& eventType, Re
     WTF::visit(visitor, variant);
 }
 
-bool EventTarget::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
+bool EventTarget::removeEventListener(AtomStringImpl* eventType, EventListener& listener, const EventListenerOptions& options)
 {
     auto* data = eventTargetData();
     if (!data)
@@ -195,7 +195,7 @@ bool EventTarget::removeEventListener(const AtomString& eventType, EventListener
 }
 
 template<typename JSMaybeErrorEventListener>
-void EventTarget::setAttributeEventListener(const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
+void EventTarget::setAttributeEventListener(AtomStringImpl* eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
 {
     Ref isolatedWorld = worldForDOMObject(jsEventTarget);
     RefPtr existingListener = attributeEventListener(eventType, isolatedWorld);
@@ -212,10 +212,10 @@ void EventTarget::setAttributeEventListener(const AtomString& eventType, JSC::JS
         addEventListener(eventType, JSMaybeErrorEventListener::create(*asObject(listener), jsEventTarget, true, isolatedWorld), { });
 }
 
-template void EventTarget::setAttributeEventListener<JSErrorHandler>(const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget);
-template void EventTarget::setAttributeEventListener<JSEventListener>(const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget);
+template void EventTarget::setAttributeEventListener<JSErrorHandler>(AtomStringImpl* eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget);
+template void EventTarget::setAttributeEventListener<JSEventListener>(AtomStringImpl* eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget);
 
-bool EventTarget::setAttributeEventListener(const AtomString& eventType, RefPtr<EventListener>&& listener, DOMWrapperWorld& isolatedWorld)
+bool EventTarget::setAttributeEventListener(AtomStringImpl* eventType, RefPtr<EventListener>&& listener, DOMWrapperWorld& isolatedWorld)
 {
     RefPtr existingListener = attributeEventListener(eventType, isolatedWorld);
     if (!listener) {
@@ -239,7 +239,7 @@ bool EventTarget::setAttributeEventListener(const AtomString& eventType, RefPtr<
     return addEventListener(eventType, listener.releaseNonNull(), { });
 }
 
-RefPtr<JSEventListener> EventTarget::attributeEventListener(const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
+RefPtr<JSEventListener> EventTarget::attributeEventListener(AtomStringImpl* eventType, DOMWrapperWorld& isolatedWorld)
 {
     for (Ref eventListener : eventListeners(eventType)) {
         RefPtr jsListener = dynamicDowncast<JSEventListener>(eventListener->callback());
@@ -250,7 +250,7 @@ RefPtr<JSEventListener> EventTarget::attributeEventListener(const AtomString& ev
     return nullptr;
 }
 
-bool EventTarget::hasActiveEventListeners(const AtomString& eventType) const
+bool EventTarget::hasActiveEventListeners(AtomStringImpl* eventType) const
 {
     auto* data = eventTargetData();
     return data && data->eventListenerMap.containsActive(eventType);
@@ -291,7 +291,7 @@ void EventTarget::uncaughtExceptionInEventHandler()
 {
 }
 
-const AtomString& EventTarget::legacyTypeForEvent(const Event& event)
+const RefPtr<AtomStringImpl>& EventTarget::legacyTypeForEvent(const Event& event)
 {
     auto& eventNames = WebCore::eventNames();
     if (event.type() == eventNames.animationendEvent)
@@ -337,10 +337,10 @@ void EventTarget::fireEventListeners(Event& event, EventInvokePhase phase)
     if (!event.isTrusted())
         return;
 
-    const AtomString& legacyTypeName = legacyTypeForEvent(event);
-    if (!legacyTypeName.isNull()) {
+    const RefPtr<AtomStringImpl>& legacyTypeName = legacyTypeForEvent(event);
+    if (legacyTypeName) {
         if (auto* legacyListenersVector = data->eventListenerMap.find(legacyTypeName)) {
-            AtomString typeName = event.type();
+            RefPtr<AtomStringImpl> typeName = event.type();
             event.setType(legacyTypeName);
             innerInvokeEventListeners(event, *legacyListenersVector, phase);
             event.setType(typeName);
@@ -414,14 +414,14 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
     InspectorInstrumentation::didDispatchEvent(context, event);
 }
 
-Vector<AtomString> EventTarget::eventTypes() const
+Vector<RefPtr<AtomStringImpl>> EventTarget::eventTypes() const
 {
     if (auto* data = eventTargetData())
         return data->eventListenerMap.eventTypes();
     return { };
 }
 
-const EventListenerVector& EventTarget::eventListeners(const AtomString& eventType)
+const EventListenerVector& EventTarget::eventListeners(AtomStringImpl* eventType)
 {
     auto* data = eventTargetData();
     auto* listenerVector = data ? data->eventListenerMap.find(eventType) : nullptr;
@@ -445,7 +445,7 @@ void EventTarget::removeAllEventListeners()
     threadData->setIsInRemoveAllEventListeners(false);
 }
 
-bool EventTarget::hasAnyEventListeners(std::span<const AtomString> eventTypes) const
+bool EventTarget::hasAnyEventListeners(std::span<const RefPtr<AtomStringImpl>> eventTypes) const
 {
     if (auto* data = eventTargetData()) {
         for (const auto& eventType : eventTypes) {

@@ -40,7 +40,7 @@ public:
 
     static bool supported(GraphicsContextGL&);
 
-    Vector<String> getSupportedProfiles();
+    Vector<RefPtr<StringImpl>> getSupportedProfiles();
 
 private:
     bool m_isHDRSupported : 1;

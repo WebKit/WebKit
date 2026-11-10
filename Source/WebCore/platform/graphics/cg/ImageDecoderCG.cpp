@@ -324,12 +324,12 @@ size_t ImageDecoderCG::bytesDecodedToDetermineProperties() const
     return 13088;
 }
 
-String ImageDecoderCG::filenameExtension() const
+RefPtr<StringImpl> ImageDecoderCG::filenameExtension() const
 {
     return WebCore::preferredExtensionForImageType(uti());
 }
 
-String ImageDecoderCG::accessibilityDescription() const
+RefPtr<StringImpl> ImageDecoderCG::accessibilityDescription() const
 {
     if (!MediaAccessibilityLibrary() || !canLoad_MediaAccessibility_MAImageCaptioningCopyCaptionWithSource())
         return { };
@@ -337,7 +337,7 @@ String ImageDecoderCG::accessibilityDescription() const
     RetainPtr description = adoptCF(MAImageCaptioningCopyCaptionWithSource(m_nativeDecoder.get(), nullptr));
     if (!description)
         return { };
-    return description.get();
+    return StringImpl::create(description.get());
 }
 
 EncodedDataStatus ImageDecoderCG::encodedDataStatus() const
@@ -346,8 +346,8 @@ EncodedDataStatus ImageDecoderCG::encodedDataStatus() const
         return m_encodedDataStatus;
 
     // The image source UTI can be changed while receiving more encoded data.
-    String uti = this->uti();
-    if (uti.isEmpty())
+    RefPtr<StringImpl> uti = this->uti();
+    if (isEmpty(uti))
         return EncodedDataStatus::Unknown;
 
     if (!isSupportedImageType(uti)) {
@@ -502,11 +502,11 @@ std::optional<IntPoint> ImageDecoderCG::hotSpot() const
 
 bool ImageDecoderCG::hasAlpha() const
 {
-    String uti = this->uti();
+    RefPtr<StringImpl> uti = this->uti();
     
     // Return false if there is no image type or the image type is JPEG, because
     // JPEG does not support alpha transparency.
-    if (uti.isEmpty() || uti == "public.jpeg"_s)
+    if (isEmpty(uti) || equal(uti, "public.jpeg"_s))
         return false;
     
     // FIXME: Could return false for other non-transparent image formats.
@@ -713,15 +713,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return maskedImage ? maskedImage : image;
 }
 
-String ImageDecoderCG::decodeUTI(const SharedBuffer& data) const
+RefPtr<StringImpl> ImageDecoderCG::decodeUTI(const SharedBuffer& data) const
 {
     return decodeUTI(m_nativeDecoder.get(), data);
 }
 
-String ImageDecoderCG::decodeUTI(CGImageSourceRef imageSource, const SharedBuffer& data)
+RefPtr<StringImpl> ImageDecoderCG::decodeUTI(CGImageSourceRef imageSource, const SharedBuffer& data)
 {
-    auto uti = String(CGImageSourceGetType(imageSource));
-    if (uti != "public.heif"_s && uti != "public.heic"_s && uti != "public.heics"_s)
+    auto uti = StringImpl::create(protect(CGImageSourceGetType(imageSource)).get());
+    if (!equal(uti, "public.heif"_s) && !equal(uti, "public.heic"_s) && !equal(uti, "public.heics"_s))
         return uti;
 
     if (data.size() < sizeof(unsigned)) {
@@ -740,7 +740,7 @@ String ImageDecoderCG::decodeUTI(CGImageSourceRef imageSource, const SharedBuffe
         return flipBytesIfLittleEndian(value, isLittleEndian);
     };
 
-    auto checkAVIFBrand = [](unsigned brand) -> std::optional<String> {
+    auto checkAVIFBrand = [](unsigned brand) -> std::optional<RefPtr<StringImpl>> {
         if (brand == avifBrand)
             return "public.avif"_s;
         if (brand == avisBrand)
@@ -807,10 +807,10 @@ void ImageDecoderCG::setData(const FragmentedSharedBuffer& data, bool allDataRec
     CGImageSourceUpdateData(m_nativeDecoder.get(), contiguousData->createCFData().get(), allDataReceived);
     
     m_uti = decodeUTI(contiguousData.get());
-    m_isXBitmapImage = m_uti == "public.xbitmap-image"_s;
+    m_isXBitmapImage = equal(m_uti, "public.xbitmap-image"_s);
 }
 
-bool ImageDecoderCG::canDecodeType(const String& mimeType)
+bool ImageDecoderCG::canDecodeType(StringImpl* mimeType)
 {
     return MIMETypeRegistry::isSupportedImageMIMEType(mimeType);
 }

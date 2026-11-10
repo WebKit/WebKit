@@ -58,7 +58,7 @@ Exception convertToException(Error);
 Exception convertToExceptionAndLog(ScriptExecutionContext*, Error);
 
 WEBCORE_EXPORT bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cachedRequest, const ResourceResponse&, const CacheQueryOptions&);
-WEBCORE_EXPORT bool queryCacheMatch(const ResourceRequest&, const URL&, bool hasVaryStar, const HashMap<String, String>& varyHeaders, const CacheQueryOptions&);
+WEBCORE_EXPORT bool queryCacheMatch(const ResourceRequest&, const URL&, bool hasVaryStar, const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& varyHeaders, const CacheQueryOptions&);
 
 using ResponseBody = Variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
 WEBCORE_EXPORT ResponseBody isolatedResponseBody(const ResponseBody&);
@@ -74,7 +74,7 @@ struct Record {
     FetchHeaders::Guard requestHeadersGuard;
     ResourceRequest request;
     FetchOptions options;
-    String referrer;
+    RefPtr<StringImpl> referrer;
 
     FetchHeaders::Guard responseHeadersGuard;
     ResourceResponse response;
@@ -89,7 +89,7 @@ struct CrossThreadRecord {
     CrossThreadRecord() = default;
     CrossThreadRecord(CrossThreadRecord&&) = default;
     CrossThreadRecord& operator=(CrossThreadRecord&&) = default;
-    CrossThreadRecord(uint64_t identifier, uint64_t updateResponseCounter, FetchHeaders::Guard requestHeadersGuard, ResourceRequest&& request, FetchOptions options, String&& referrer, FetchHeaders::Guard responseHeadersGuard, ResourceResponse::CrossThreadData&& response, ResponseBody&& responseBody, uint64_t responseBodySize)
+    CrossThreadRecord(uint64_t identifier, uint64_t updateResponseCounter, FetchHeaders::Guard requestHeadersGuard, ResourceRequest&& request, FetchOptions options, RefPtr<StringImpl>&& referrer, FetchHeaders::Guard responseHeadersGuard, ResourceResponse::CrossThreadData&& response, ResponseBody&& responseBody, uint64_t responseBodySize)
         : identifier(identifier)
         , updateResponseCounter(updateResponseCounter)
         , requestHeadersGuard(requestHeadersGuard)
@@ -109,7 +109,7 @@ struct CrossThreadRecord {
     FetchHeaders::Guard requestHeadersGuard;
     ResourceRequest request;
     FetchOptions options;
-    String referrer;
+    RefPtr<StringImpl> referrer;
     FetchHeaders::Guard responseHeadersGuard;
     ResourceResponse::CrossThreadData response;
     ResponseBody responseBody;
@@ -121,10 +121,10 @@ WEBCORE_EXPORT Record fromCrossThreadRecord(CrossThreadRecord&&);
 
 struct CacheInfo {
     DOMCacheIdentifier identifier;
-    String name;
+    RefPtr<StringImpl> name;
 
-    CacheInfo isolatedCopy() const & { return { identifier, name.isolatedCopy() }; }
-    CacheInfo isolatedCopy() && { return { identifier, WTF::move(name).isolatedCopy() }; }
+    CacheInfo isolatedCopy() const & { return { identifier, WTF::isolatedCopy(name) }; }
+    CacheInfo isolatedCopy() && { return { identifier, WTF::isolatedCopy(WTF::move(name)) }; }
 };
 
 struct CacheInfos {
@@ -162,7 +162,7 @@ using CrossThreadRecordsOrError = std::expected<Vector<CrossThreadRecord>, Error
 struct CORPViolation {
     URL blockedURL;
     URL responseURL;
-    String crossOriginResourcePolicy;
+    RefPtr<StringImpl> crossOriginResourcePolicy;
 };
 
 struct RetrieveRecordsResult {

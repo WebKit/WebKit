@@ -33,10 +33,10 @@ namespace WebCore {
 
 class MediaDescription : public ThreadSafeRefCounted<MediaDescription> {
 public:
-    explicit MediaDescription(String&& codec)
+    explicit MediaDescription(RefPtr<StringImpl>&& codec)
         : m_codec(WTF::move(codec))
     {
-        ASSERT(m_codec.isSafeToSendToAnotherThread());
+        ASSERT(isSafeToSendToAnotherThread(m_codec));
     }
     virtual ~MediaDescription() = default;
 
@@ -45,7 +45,7 @@ public:
     virtual bool isAudio() const = 0;
     virtual bool isText() const = 0;
 protected:
-    const String m_codec;
+    const RefPtr<StringImpl> m_codec;
 };
 
 }

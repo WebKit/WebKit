@@ -34,19 +34,19 @@
 
 namespace WebCore {
 
-IDBDatabaseIdentifier::IDBDatabaseIdentifier(const String& databaseName, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin, bool isTransient)
+IDBDatabaseIdentifier::IDBDatabaseIdentifier(StringImpl* databaseName, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin, bool isTransient)
     : m_databaseName(databaseName)
     , m_origin { WTF::move(mainFrameOrigin), WTF::move(openingOrigin) }
     , m_isTransient(isTransient)
 {
     // The empty string is a valid database name, but a null string is not.
-    ASSERT(!databaseName.isNull());
+    ASSERT(databaseName);
 }
 
 IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() const &
 {
     IDBDatabaseIdentifier identifier;
-    identifier.m_databaseName = m_databaseName.isolatedCopy();
+    identifier.m_databaseName = WTF::isolatedCopy(m_databaseName);
     identifier.m_origin = m_origin.isolatedCopy();
     identifier.m_isTransient = m_isTransient;
     return identifier;
@@ -55,21 +55,21 @@ IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() const &
 IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() &&
 {
     IDBDatabaseIdentifier identifier;
-    identifier.m_databaseName = WTF::move(m_databaseName).isolatedCopy();
+    identifier.m_databaseName = WTF::isolatedCopy(WTF::move(m_databaseName));
     identifier.m_origin = WTF::move(m_origin).isolatedCopy();
     identifier.m_isTransient = m_isTransient;
     return identifier;
 }
 
-String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const String& rootDirectory, ASCIILiteral versionString) const
+RefPtr<StringImpl> IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(StringImpl* rootDirectory, ASCIILiteral versionString) const
 {
     return databaseDirectoryRelativeToRoot(m_origin, rootDirectory, versionString);
 }
 
-String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const ClientOrigin& origin, const String& rootDirectory, ASCIILiteral versionString)
+RefPtr<StringImpl> IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const ClientOrigin& origin, StringImpl* rootDirectory, ASCIILiteral versionString)
 {
-    String versionDirectory = FileSystem::pathByAppendingComponent(rootDirectory, StringView { versionString });
-    String mainFrameDirectory = FileSystem::pathByAppendingComponent(versionDirectory, origin.topOrigin.databaseIdentifier());
+    RefPtr<StringImpl> versionDirectory = FileSystem::pathByAppendingComponent(rootDirectory, StringView { versionString });
+    RefPtr<StringImpl> mainFrameDirectory = FileSystem::pathByAppendingComponent(versionDirectory, origin.topOrigin.databaseIdentifier());
 
     // If the opening origin and main frame origins are the same, there is no partitioning.
     if (origin.topOrigin == origin.clientOrigin)
@@ -78,7 +78,7 @@ String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const ClientOrigin
     return FileSystem::pathByAppendingComponent(mainFrameDirectory, origin.clientOrigin.databaseIdentifier());
 }
 
-String IDBDatabaseIdentifier::optionalDatabaseDirectoryRelativeToRoot(const ClientOrigin& origin, const String& rootDirectory, ASCIILiteral versionString)
+RefPtr<StringImpl> IDBDatabaseIdentifier::optionalDatabaseDirectoryRelativeToRoot(const ClientOrigin& origin, StringImpl* rootDirectory, ASCIILiteral versionString)
 {
     auto topOriginURL = origin.topOrigin.toURL();
     auto clientOriginURL = origin.clientOrigin.toURL();
@@ -89,7 +89,7 @@ String IDBDatabaseIdentifier::optionalDatabaseDirectoryRelativeToRoot(const Clie
 }
 
 #if !LOG_DISABLED
-String IDBDatabaseIdentifier::loggingString() const
+RefPtr<StringImpl> IDBDatabaseIdentifier::loggingString() const
 {
     return makeString(m_databaseName, '@', m_origin.topOrigin.debugString(), ':', m_origin.clientOrigin.debugString(), m_isTransient ? ", transient"_s : ""_s);
 }

@@ -59,21 +59,21 @@ template<typename CharacterType> NODELETE static bool isPolicyNameCharacter(Char
     return isASCIIAlphanumeric(c) || c == '-' || c == '#' || c == '=' || c == '_' || c == '/' || c == '@' || c == '.' || c == '%';
 }
 
-ContentSecurityPolicyTrustedTypesDirective::ContentSecurityPolicyTrustedTypesDirective(const ContentSecurityPolicyDirectiveList& directiveList, const String& name, const String& value)
+ContentSecurityPolicyTrustedTypesDirective::ContentSecurityPolicyTrustedTypesDirective(const ContentSecurityPolicyDirectiveList& directiveList, StringImpl* name, StringImpl* value)
     : ContentSecurityPolicyDirective(directiveList, name, value)
 {
     parse(value);
 }
 
-bool ContentSecurityPolicyTrustedTypesDirective::allows(const String& value, bool isDuplicate, AllowTrustedTypePolicy& details) const
+bool ContentSecurityPolicyTrustedTypesDirective::allows(StringImpl* value, bool isDuplicate, AllowTrustedTypePolicy& details) const
 {
-    auto invalidPolicy = value.find([](char16_t ch) {
+    auto invalidPolicy = find(value, [](char16_t ch) {
         return !isPolicyNameCharacter(ch);
     });
 
     if (isDuplicate && !m_allowDuplicates)
         details = AllowTrustedTypePolicy::DisallowedDuplicateName;
-    else if (isDuplicate && value == "default"_s)
+    else if (isDuplicate && equal(value, "default"_s))
         details = AllowTrustedTypePolicy::DisallowedDuplicateName;
     else if (invalidPolicy != notFound)
         details = AllowTrustedTypePolicy::DisallowedName;
@@ -83,10 +83,10 @@ bool ContentSecurityPolicyTrustedTypesDirective::allows(const String& value, boo
     return details == AllowTrustedTypePolicy::Allowed;
 }
 
-void ContentSecurityPolicyTrustedTypesDirective::parse(const String& value)
+void ContentSecurityPolicyTrustedTypesDirective::parse(StringImpl* value)
 {
     // 'trusted-types;'
-    if (value.isEmpty())
+    if (isEmpty(value))
         return;
 
     CheckedRef contentSecurityPolicy = directiveList().policy();

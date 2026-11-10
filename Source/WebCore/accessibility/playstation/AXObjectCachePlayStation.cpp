@@ -108,7 +108,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
     client.postAccessibilityNotification(*protectedObject, notification);
 }
 
-void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* object, AXTextChange textChange, unsigned offset, const String& text)
+void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* object, AXTextChange textChange, unsigned offset, StringImpl* text)
 {
     if (!document()
         || !object

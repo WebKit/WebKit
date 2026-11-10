@@ -108,11 +108,11 @@ public:
 
     CanvasLineCap lineCap() const { return state().canvasLineCap(); }
     void setLineCap(CanvasLineCap);
-    void setLineCap(const String&);
+    void setLineCap(StringImpl*);
 
     CanvasLineJoin lineJoin() const { return state().canvasLineJoin(); }
     void setLineJoin(CanvasLineJoin);
-    void setLineJoin(const String&);
+    void setLineJoin(StringImpl*);
 
     double miterLimit() const { return state().miterLimit; }
     void setMiterLimit(double);
@@ -135,26 +135,26 @@ public:
     float shadowBlur() const { return state().shadowBlur; }
     void setShadowBlur(float);
 
-    String shadowColor() const { return state().shadowColorString(); }
-    void setShadowColor(const String&);
+    RefPtr<StringImpl> shadowColor() const { return state().shadowColorString(); }
+    void setShadowColor(StringImpl*);
 
     double globalAlpha() const { return state().globalAlpha; }
     void setGlobalAlpha(double);
 
-    String globalCompositeOperation() const { return state().globalCompositeOperationString(); }
-    void setGlobalCompositeOperation(const String&);
+    RefPtr<StringImpl> globalCompositeOperation() const { return state().globalCompositeOperationString(); }
+    void setGlobalCompositeOperation(StringImpl*);
 
-    String filterString() const { return state().filterString; }
-    void setFilterString(const String&);
+    RefPtr<StringImpl> filterString() const { return state().filterString; }
+    void setFilterString(StringImpl*);
 
-    String letterSpacing() const { return state().letterSpacing; }
-    void setLetterSpacing(const String&);
+    RefPtr<StringImpl> letterSpacing() const { return state().letterSpacing; }
+    void setLetterSpacing(StringImpl*);
 
-    String wordSpacing() const { return state().wordSpacing; }
-    void setWordSpacing(const String&);
+    RefPtr<StringImpl> wordSpacing() const { return state().wordSpacing; }
+    void setWordSpacing(StringImpl*);
 
-    String lang() const { return state().lang; }
-    void setLang(const String&);
+    RefPtr<StringImpl> lang() const { return state().lang; }
+    void setLang(StringImpl*);
 
     CanvasFontKerning fontKerning() const { return state().canvasFontKerning(); }
     void setFontKerning(CanvasFontKerning);
@@ -184,11 +184,11 @@ public:
     ExceptionOr<void> setTransform(DOMMatrix2DInit&&);
     void resetTransform();
 
-    void setStrokeColor(String&& color, std::optional<float> alpha = std::nullopt);
+    void setStrokeColor(RefPtr<StringImpl>&& color, std::optional<float> alpha = std::nullopt);
     void setStrokeColor(float grayLevel, float alpha = 1.0);
     void setStrokeColor(float r, float g, float b, float a);
 
-    void setFillColor(String&& color, std::optional<float> alpha = std::nullopt);
+    void setFillColor(RefPtr<StringImpl>&& color, std::optional<float> alpha = std::nullopt);
     void setFillColor(float grayLevel, float alpha = 1.0f);
     void setFillColor(float r, float g, float b, float a);
 
@@ -212,7 +212,7 @@ public:
     void fillRect(double x, double y, double width, double height);
     void strokeRect(double x, double y, double width, double height);
 
-    void setShadow(float width, float height, float blur, const String& color = String(), std::optional<float> alpha = std::nullopt);
+    void setShadow(float width, float height, float blur, StringImpl* color = nullptr, std::optional<float> alpha = std::nullopt);
     void setShadow(float width, float height, float blur, float grayLevel, float alpha = 1.0);
     void setShadow(float width, float height, float blur, float r, float g, float b, float a);
 
@@ -229,20 +229,20 @@ public:
 
     void clearCanvas();
 
-    using StyleVariant = Variant<String, Ref<CanvasGradient>, Ref<CanvasPattern>>;
+    using StyleVariant = Variant<RefPtr<StringImpl>, Ref<CanvasGradient>, Ref<CanvasPattern>>;
     StyleVariant strokeStyle() const;
-    void setStrokeStyle(String&&);
+    void setStrokeStyle(RefPtr<StringImpl>&&);
     void setStrokeStyle(Ref<CanvasGradient>&&);
     void setStrokeStyle(Ref<CanvasPattern>&&);
     StyleVariant fillStyle() const;
-    void setFillStyle(String&&);
+    void setFillStyle(RefPtr<StringImpl>&&);
     void setFillStyle(Ref<CanvasGradient>&&);
     void setFillStyle(Ref<CanvasPattern>&&);
 
     ExceptionOr<Ref<CanvasGradient>> createLinearGradient(float x0, float y0, float x1, float y1);
     ExceptionOr<Ref<CanvasGradient>> createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
     ExceptionOr<Ref<CanvasGradient>> createConicGradient(float angleInRadians, float x, float y);
-    ExceptionOr<RefPtr<CanvasPattern>> createPattern(CanvasImageSource&&, const String& repetition);
+    ExceptionOr<RefPtr<CanvasPattern>> createPattern(CanvasImageSource&&, StringImpl* repetition);
 
     ExceptionOr<Ref<ImageData>> createImageData(ImageData&) const;
     ExceptionOr<Ref<ImageData>> createImageData(int width, int height, std::optional<ImageDataSettings>) const;
@@ -261,7 +261,7 @@ public:
     void setPath(Path2D&);
     Ref<Path2D> getPath() const;
 
-    String font() const { return state().fontString(); }
+    RefPtr<StringImpl> font() const { return state().fontString(); }
 
     CanvasTextAlign textAlign() const { return state().canvasTextAlign(); }
     void setTextAlign(CanvasTextAlign);
@@ -324,8 +324,8 @@ public:
         State(State&&) = default;
         State& operator=(State&&) = default;
 
-        String unparsedStrokeColor;
-        String unparsedFillColor;
+        RefPtr<StringImpl> unparsedStrokeColor;
+        RefPtr<StringImpl> unparsedFillColor;
         CanvasStyle strokeStyle;
         CanvasStyle fillStyle;
         double lineWidth;
@@ -348,14 +348,14 @@ public:
         Direction direction;
         bool imageSmoothingEnabled;
 
-        String filterString;
+        RefPtr<StringImpl> filterString;
         Style::Filter filter;
 
-        String letterSpacing;
-        String wordSpacing;
-        String lang;
+        RefPtr<StringImpl> letterSpacing;
+        RefPtr<StringImpl> wordSpacing;
+        RefPtr<StringImpl> lang;
 
-        String unparsedFont;
+        RefPtr<StringImpl> unparsedFont;
         Ref<FontProxy> font;
         // The font description `unparsedFont` was resolved against. Relative values in the font
         // shorthand depend on it, so `font` is stale once it no longer matches the canvas element.
@@ -373,9 +373,9 @@ public:
         CanvasFontStretch canvasFontStretch() const;
         CanvasFontVariantCaps canvasFontVariantCaps() const;
         CanvasTextRendering canvasTextRendering() const;
-        String fontString() const;
-        String globalCompositeOperationString() const;
-        String shadowColorString() const;
+        RefPtr<StringImpl> fontString() const;
+        RefPtr<StringImpl> globalCompositeOperationString() const;
+        RefPtr<StringImpl> shadowColorString() const;
 
     private:
         // Use clone() to make a copy instead.
@@ -392,7 +392,7 @@ protected:
     State& modifiableState() LIFETIME_BOUND { ASSERT(!m_unrealizedSaveCount || m_stateStack.size() >= MaxSaveCount); return m_stateStack.last(); }
 
     void carryOverKerningAndTextRendering(FontCascadeDescription&) const;
-    AtomString effectiveLanguage() const;
+    RefPtr<AtomStringImpl> effectiveLanguage() const;
 
     GraphicsContext* drawingContext() const;
     GraphicsContext* effectiveDrawingContext() const;
@@ -428,12 +428,12 @@ protected:
     void willUpdateContents(GraphicsContext& effectiveContext, std::optional<FloatRect>, OptionSet<WillUpdateContentsOption> = defaultWillUpdateContentsOptions());
     void willUpdateEntireContents(OptionSet<WillUpdateContentsOption> options = defaultWillUpdateContentsOptions());
 
-    virtual std::optional<Style::Filter> setFilterStringWithoutUpdatingStyle(const String&) { return std::nullopt; }
+    virtual std::optional<Style::Filter> setFilterStringWithoutUpdatingStyle(StringImpl*) { return std::nullopt; }
 
     virtual RefPtr<Filter> createFilter(const FloatRect&) const { return nullptr; }
     virtual IntOutsets calculateFilterOutsets(const FloatRect&) const { return { }; }
 
-    static String normalizeSpaces(const String&);
+    static RefPtr<StringImpl> normalizeSpaces(StringImpl*);
 
     bool canDrawText(double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
     void drawTextUnchecked(const TextRun&, double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
@@ -490,8 +490,8 @@ private:
 #endif
 
     void realizeSavesLoop();
-    void setStrokeColorImpl(Color&& color, String&& unparsedColor = { });
-    void setFillColorImpl(Color&& color, String&& unparsedColor = { });
+    void setStrokeColorImpl(Color&& color, RefPtr<StringImpl>&& unparsedColor = { });
+    void setFillColorImpl(Color&& color, RefPtr<StringImpl>&& unparsedColor = { });
 
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(Image&, ConcreteObjectSize, bool originClean, bool repeatX, bool repeatY);
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLImageElement&, bool repeatX, bool repeatY);
@@ -556,7 +556,7 @@ private:
     // The relationship between FontCascade and CanvasRenderingContext2D::FontProxy must hold certain invariants.
     // Therefore, all font operations must pass through the proxy.
     virtual const FontProxy* fontProxy() { return nullptr; }
-    virtual AtomString inheritedLanguage() const { return nullAtom(); }
+    virtual RefPtr<AtomStringImpl> inheritedLanguage() const { return nullAtom(); }
 
     FloatPoint textOffset(float width, TextDirection);
 

@@ -44,8 +44,8 @@ public:
     WEBCORE_EXPORT static InitDataRegistry& singleton();
     friend class NeverDestroyed<InitDataRegistry>;
 
-    RefPtr<SharedBuffer> sanitizeInitData(const String& initDataType, const SharedBuffer&);
-    WEBCORE_EXPORT std::optional<CDMKeyIDs> extractKeyIDs(const String& initDataType, const SharedBuffer&);
+    RefPtr<SharedBuffer> sanitizeInitData(StringImpl* initDataType, const SharedBuffer&);
+    WEBCORE_EXPORT std::optional<CDMKeyIDs> extractKeyIDs(StringImpl* initDataType, const SharedBuffer&);
 
     struct InitDataTypeCallbacks {
         using SanitizeInitDataCallback = Function<RefPtr<SharedBuffer>(const SharedBuffer&)>;
@@ -54,11 +54,11 @@ public:
         SanitizeInitDataCallback sanitizeInitData;
         ExtractKeyIDsCallback extractKeyIDs;
     };
-    void registerInitDataType(const String& initDataType, InitDataTypeCallbacks&&);
+    void registerInitDataType(StringImpl* initDataType, InitDataTypeCallbacks&&);
 
-    static const String& cencName();
-    static const String& keyidsName();
-    static const String& webmName();
+    static const RefPtr<StringImpl>& cencName();
+    static const RefPtr<StringImpl>& keyidsName();
+    static const RefPtr<StringImpl>& webmName();
 
     static std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> extractPsshBoxesFromCenc(const SharedBuffer&);
     static std::optional<CDMKeyIDs> extractKeyIDsCenc(const SharedBuffer&);
@@ -77,7 +77,7 @@ private:
     InitDataRegistry();
     ~InitDataRegistry();
 
-    MemoryCompactRobinHoodHashMap<String, InitDataTypeCallbacks> m_types;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, InitDataTypeCallbacks> m_types;
 };
 
 }

@@ -35,13 +35,13 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebKitMediaKeyNeededEvent);
 
-WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomString& type, Uint8Array* initData)
+WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(AtomStringImpl* type, Uint8Array* initData)
     : Event(EventInterfaceType::WebKitMediaKeyNeededEvent, type, CanBubble::No, IsCancelable::No)
     , m_initData(initData)
 {
 }
 
-WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::WebKitMediaKeyNeededEvent, type, WTF::move(initializer), isTrusted)
     , m_initData(WTF::move(initializer.initData))
 {

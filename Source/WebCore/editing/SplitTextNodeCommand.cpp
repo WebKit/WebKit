@@ -59,7 +59,7 @@ void SplitTextNodeCommand::doApply()
     if (result.hasException())
         return;
     auto prefixText = result.releaseReturnValue();
-    if (prefixText.isEmpty())
+    if (isEmpty(prefixText))
         return;
 
     lazyInitialize(m_text1, Text::create(document(), WTF::move(prefixText)));
@@ -78,13 +78,13 @@ void SplitTextNodeCommand::doUnapply()
 
     ASSERT(&text1->document() == &document());
 
-    String prefixText = text1->data();
+    RefPtr<StringImpl> prefixText = text1->data();
 
     Ref text2 = m_text2;
     text2->insertData(0, prefixText);
 
     if (CheckedPtr markers = document().markersIfExists())
-        markers->copyMarkers(*text1, { 0, prefixText.length() }, text2);
+        markers->copyMarkers(*text1, { 0, length(prefixText) }, text2);
     text1->remove();
 }
 

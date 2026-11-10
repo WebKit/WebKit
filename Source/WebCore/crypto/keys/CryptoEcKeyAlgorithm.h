@@ -31,7 +31,7 @@ namespace WebCore {
 
 struct CryptoEcKeyAlgorithm : CryptoKeyAlgorithm {
     // The named curve that the key uses
-    String namedCurve;
+    RefPtr<StringImpl> namedCurve;
 };
 
 }

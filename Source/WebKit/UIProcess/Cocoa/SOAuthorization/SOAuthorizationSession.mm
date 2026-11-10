@@ -198,13 +198,13 @@ void SOAuthorizationSession::start()
         }
 
         AUTHORIZATIONSESSION_RELEASE_LOG_WITH_THIS(protectedThis, "start (getAuthorizationHintsWithURL completion handler): Receive SOAuthorizationHints.");
-        protectedThis->continueStartAfterGetAuthorizationHints(authorizationHints.localizedExtensionBundleDisplayName);
+        protectedThis->continueStartAfterGetAuthorizationHints(StringImpl::create(authorizationHints.localizedExtensionBundleDisplayName).get());
     }).get()];
 }
 
-void SOAuthorizationSession::continueStartAfterGetAuthorizationHints(const String& hints)
+void SOAuthorizationSession::continueStartAfterGetAuthorizationHints(StringImpl* hints)
 {
-    AUTHORIZATIONSESSION_RELEASE_LOG("continueStartAfterGetAuthorizationHints: (hints=%s)", hints.utf8());
+    AUTHORIZATIONSESSION_RELEASE_LOG("continueStartAfterGetAuthorizationHints: (hints=%s)", utf8(hints));
 
     ASSERT(m_state == State::Active);
     RefPtr page = m_page.get();
@@ -240,7 +240,7 @@ void SOAuthorizationSession::beginAuthorizationIfReady()
     }
 
     auto initiatorOrigin = emptyString();
-    String initiatingPath = emptyString();
+    RefPtr<StringImpl> initiatingPath = emptyString();
     RefPtr page = m_page.get();
     if (RefPtr mainFrame = page ? page->mainFrame() : nullptr) {
         Ref mainFrameOrigin = WebCore::SecurityOrigin::create(mainFrame->url());
@@ -251,9 +251,9 @@ void SOAuthorizationSession::beginAuthorizationIfReady()
 
     RetainPtr<NSDictionary> authorizationOptions = @{
         SOAuthorizationOptionUserActionInitiated: @(m_navigationAction->isProcessingUserGesture()),
-        SOAuthorizationOptionInitiatorOrigin: initiatorOrigin.createNSString().get(),
+        SOAuthorizationOptionInitiatorOrigin: createNSString(initiatorOrigin).get(),
         SOAuthorizationOptionInitiatingAction: @(static_cast<NSInteger>(m_action)),
-        kSOAuthorizationOptionInitiatingPath: initiatingPath.createNSString().get()
+        kSOAuthorizationOptionInitiatingPath: createNSString(initiatingPath).get()
     };
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<WKWebView> webView = protect(m_page)->cocoaView();
@@ -367,7 +367,7 @@ void SOAuthorizationSession::complete(NSHTTPURLResponse *httpResponse, NSData *d
     if (!cookies.isEmpty()) {
         size_t totalHeaderSize = 0;
         for (const auto& cookie : cookies)
-            totalHeaderSize += cookie.name.length() + cookie.value.length() + 1;
+            totalHeaderSize += length(cookie.name) + length(cookie.value) + 1;
         AUTHORIZATIONSESSION_RELEASE_LOG("complete: Setting %zu cookies with total header size ~%zu bytes in data store %p", cookies.size(), totalHeaderSize, protect(page->websiteDataStore()).ptr());
     }
 

@@ -349,23 +349,23 @@ struct WebCore::MobileDocumentRequest {
 
 header: <WebCore/OpenID4VPUnsignedRequest.h>
 struct WebCore::OpenID4VPUnsignedRequest {
-    [Validator='requestJSON->length() <= WebCore::maxOpenID4VPRequestDataLength'] String requestJSON;
+    [Validator='length(*requestJSON) <= WebCore::maxOpenID4VPRequestDataLength'] String requestJSON;
 };
 
 header: <WebCore/OpenID4VPSignedRequest.h>
 struct WebCore::OpenID4VPSignedRequest {
-    [Validator='request->length() <= WebCore::maxOpenID4VPRequestDataLength'] String request;
+    [Validator='length(*request) <= WebCore::maxOpenID4VPRequestDataLength'] String request;
 };
 
 header: <WebCore/OpenID4VPSignature.h>
 struct WebCore::OpenID4VPSignature {
-    [Validator='protectedHeader->length() <= WebCore::maxOpenID4VPRequestDataLength'] String protectedHeader;
-    [Validator='signature->length() <= WebCore::maxOpenID4VPRequestDataLength'] String signature;
+    [Validator='length(*protectedHeader) <= WebCore::maxOpenID4VPRequestDataLength'] String protectedHeader;
+    [Validator='length(*signature) <= WebCore::maxOpenID4VPRequestDataLength'] String signature;
 };
 
 header: <WebCore/OpenID4VPMultisignedRequest.h>
 struct WebCore::OpenID4VPMultisignedRequest {
-    [Validator='payload->length() <= WebCore::maxOpenID4VPRequestDataLength'] String payload;
+    [Validator='length(*payload) <= WebCore::maxOpenID4VPRequestDataLength'] String payload;
     Vector<WebCore::OpenID4VPSignature> signatures;
 };
 

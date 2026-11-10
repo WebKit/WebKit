@@ -38,7 +38,7 @@ class TextTrackCueGeneric final : public VTTCue {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextTrackCueGeneric, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrackCueGeneric);
 public:
-    WEBCORE_EXPORT static Ref<TextTrackCueGeneric> create(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String& content);
+    WEBCORE_EXPORT static Ref<TextTrackCueGeneric> create(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, StringImpl* content);
     ~TextTrackCueGeneric();
 
     ExceptionOr<void> setPosition(const LineAndPositionSetting&) final;
@@ -51,8 +51,8 @@ public:
     double fontSizeMultiplier() const { return m_fontSizeMultiplier; }
     NODELETE void setFontSizeMultiplier(double);
 
-    const String& fontName() const LIFETIME_BOUND { return m_fontName; }
-    void setFontName(const String& name) { m_fontName = name; }
+    const RefPtr<StringImpl>& fontName() const LIFETIME_BOUND { return m_fontName; }
+    void setFontName(StringImpl* name) { m_fontName = name; }
 
     const Color& foregroundColor() const LIFETIME_BOUND { return m_foregroundColor; }
     void setForegroundColor(const Color& color) { m_foregroundColor = color; }
@@ -67,7 +67,7 @@ public:
     void setPreventLineWrapping(bool preventWrapping) { m_preventLineWrapping = preventWrapping; }
 
 private:
-    TextTrackCueGeneric(Document&, const MediaTime& start, const MediaTime& end, const String&);
+    TextTrackCueGeneric(Document&, const MediaTime& start, const MediaTime& end, StringImpl*);
 
     bool isOrderedBefore(const TextTrackCue*) const final;
     bool isPositionedAbove(const TextTrackCue*) const final;
@@ -85,7 +85,7 @@ private:
     Color m_highlightColor;
     double m_baseFontSizeRelativeToVideoHeight { 0 };
     double m_fontSizeMultiplier { 0 };
-    String m_fontName;
+    RefPtr<StringImpl> m_fontName;
     bool m_useDefaultPosition { true };
     bool m_preventLineWrapping { true };
 };

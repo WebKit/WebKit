@@ -94,7 +94,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globa
     output.grow(maxLengthFromBase64(view));
     auto [shouldThrowError, readLength, writeLength] = fromBase64(view, output.mutableSpan(), alphabet, lastChunkHandling, WTF::OutputSizeIsMaxLength::No);
     if (shouldThrowError == WTF::FromBase64ShouldThrowError::Yes) [[unlikely]]
-        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.fromBase64 requires a valid base64 string"_s));
+        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.fromBase64 requires a valid base64 string"_si));
 
     ASSERT(readLength <= view.length());
     JSUint8Array* uint8Array = JSUint8Array::createUninitialized(globalObject, globalObject->typedArrayStructure(TypeUint8, false), writeLength);
@@ -219,7 +219,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromHex, (JSGlobalObject* globalOb
     if (!jsString) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Uint8Array.fromHex requires a string"_s);
     if (jsString->length() % 2) [[unlikely]]
-        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.fromHex requires a string of even length"_s));
+        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.fromHex requires a string of even length"_si));
 
     auto gcOwnedData = jsString->view(globalObject);
     StringView view = gcOwnedData;
@@ -239,7 +239,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromHex, (JSGlobalObject* globalOb
         success = decodeHex(view.span16(), result) == WTF::notFound;
 
     if (!success) [[unlikely]]
-        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.fromHex requires a string containing only \"0123456789abcdefABCDEF\""_s));
+        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.fromHex requires a string containing only \"0123456789abcdefABCDEF\""_si));
 
     return JSValue::encode(uint8Array);
 }

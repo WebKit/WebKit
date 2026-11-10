@@ -32,23 +32,23 @@
 namespace WebCore {
 namespace Style {
 
-const CSSRegisteredCustomProperty* LocalPropertyRegistry::get(const AtomString& name) const
+const CSSRegisteredCustomProperty* LocalPropertyRegistry::get(AtomStringImpl* name) const
 {
-    ASSERT(isCustomPropertyName(name) || name == "result"_s);
+    ASSERT(isCustomPropertyName(name) || equal(name, "result"_s));
     if (auto* property = m_properties.get(name))
         return property;
     // result belongs to the function being evaluated, not to an enclosing one.
-    if (m_enclosing && name != "result"_s)
+    if (m_enclosing && !equal(name, "result"_s))
         return m_enclosing->get(name);
     return nullptr;
 }
 
-bool LocalPropertyRegistry::declares(const AtomString& name) const
+bool LocalPropertyRegistry::declares(AtomStringImpl* name) const
 {
     return m_properties.contains(name);
 }
 
-bool LocalPropertyRegistry::isInherited(const AtomString& name) const
+bool LocalPropertyRegistry::isInherited(AtomStringImpl* name) const
 {
     auto* registered = get(name);
     return registered ? registered->inherits : true;

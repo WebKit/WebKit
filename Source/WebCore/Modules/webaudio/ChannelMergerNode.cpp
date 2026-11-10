@@ -45,7 +45,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ChannelMergerNode);
 ExceptionOr<Ref<ChannelMergerNode>> ChannelMergerNode::create(BaseAudioContext& context, const ChannelMergerOptions& options)
 {
     if (options.numberOfInputs > AudioContext::maxNumberOfChannels || !options.numberOfInputs)
-        return Exception { ExceptionCode::IndexSizeError, "Number of inputs is not in the allowed range."_s };
+        return Exception { ExceptionCode::IndexSizeError, "Number of inputs is not in the allowed range."_si };
     
     auto merger = adoptRef(*new ChannelMergerNode(context, options.numberOfInputs));
     
@@ -103,7 +103,7 @@ void ChannelMergerNode::process(size_t framesToProcess)
 ExceptionOr<void> ChannelMergerNode::setChannelCount(unsigned channelCount)
 {
     if (channelCount != 1)
-        return Exception { ExceptionCode::InvalidStateError, "Channel count cannot be changed from 1."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Channel count cannot be changed from 1."_si };
     
     return AudioNode::setChannelCount(channelCount);
 }
@@ -111,7 +111,7 @@ ExceptionOr<void> ChannelMergerNode::setChannelCount(unsigned channelCount)
 ExceptionOr<void> ChannelMergerNode::setChannelCountMode(ChannelCountMode mode)
 {
     if (mode != ChannelCountMode::Explicit)
-        return Exception { ExceptionCode::InvalidStateError, "Channel count mode cannot be changed from explicit."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Channel count mode cannot be changed from explicit."_si };
     
     return AudioNode::setChannelCountMode(mode);
 }

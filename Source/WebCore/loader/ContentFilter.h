@@ -98,7 +98,7 @@ private:
 
         ~ContentFilterCallbackAggregator();
 
-        void didReceivePlatformContentFilterDecision(PlatformContentFilter&, String&&);
+        void didReceivePlatformContentFilterDecision(PlatformContentFilter&, RefPtr<StringImpl>&&);
 
     private:
         ContentFilterCallbackAggregator(ContentFilter&, const ResourceRequest&, CompletionHandler<void(ResourceRequest&&)>&&);

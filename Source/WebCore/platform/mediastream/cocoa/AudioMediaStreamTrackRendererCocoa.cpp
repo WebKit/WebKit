@@ -110,9 +110,9 @@ void AudioMediaStreamTrackRendererCocoa::reset()
         source->recomputeSampleOffset();
 }
 
-void AudioMediaStreamTrackRendererCocoa::setAudioOutputDevice(const String& deviceID)
+void AudioMediaStreamTrackRendererCocoa::setAudioOutputDevice(StringImpl* deviceID)
 {
-    if (m_deviceID == deviceID)
+    if (equal(m_deviceID, deviceID))
         return;
 
     auto registeredDataSource = m_registeredDataSource;

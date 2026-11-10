@@ -66,7 +66,7 @@ bool SVGLengthList::parse(StringView value)
     return true;
 }
 
-String SVGLengthList::valueAsString() const
+RefPtr<StringImpl> SVGLengthList::valueAsString() const
 {
     StringBuilder builder;
 

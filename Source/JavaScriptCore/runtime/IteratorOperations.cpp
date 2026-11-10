@@ -226,7 +226,7 @@ bool hasIteratorMethod(JSGlobalObject* globalObject, JSValue value)
 
     JSObject* object = asObject(value);
     CallData callData;
-    JSValue applyMethod = object->getMethod(globalObject, callData, vm.propertyNames->iteratorSymbol, "Symbol.iterator property should be callable"_s);
+    JSValue applyMethod = object->getMethod(globalObject, callData, vm.propertyNames->iteratorSymbol, "Symbol.iterator property should be callable"_si);
     RETURN_IF_EXCEPTION(scope, false);
 
     return !applyMethod.isUndefined();
@@ -238,7 +238,7 @@ JSValue iteratorMethod(JSGlobalObject* globalObject, JSObject* object)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     CallData callData;
-    JSValue method = object->getMethod(globalObject, callData, vm.propertyNames->iteratorSymbol, "Symbol.iterator property should be callable"_s);
+    JSValue method = object->getMethod(globalObject, callData, vm.propertyNames->iteratorSymbol, "Symbol.iterator property should be callable"_si);
     RETURN_IF_EXCEPTION(scope, jsUndefined());
 
     return method;
@@ -407,7 +407,7 @@ static IterationRecord getAsyncIteratorImpl(JSGlobalObject& globalObject, JSValu
     }
 
     CallData callData;
-    auto method = iterableObject->getMethod(&globalObject, callData, vm.propertyNames->asyncIteratorSymbol, "asyncIteratorSymbol property should be callable"_s);
+    auto method = iterableObject->getMethod(&globalObject, callData, vm.propertyNames->asyncIteratorSymbol, "asyncIteratorSymbol property should be callable"_si);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (method.isUndefined())

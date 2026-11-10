@@ -71,20 +71,20 @@ public:
     explicit FindController(WebPage*);
     virtual ~FindController();
 
-    void findString(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
-    void countStringMatchesByFrame(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, uint32_t>>&&)>&&);
-    void selectLastFoundRange(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, int32_t, bool)>&&);
+    void findString(StringImpl*, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
+    void countStringMatchesByFrame(StringImpl*, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, uint32_t>>&&)>&&);
+    void selectLastFoundRange(StringImpl*, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, int32_t, bool)>&&);
 #if ENABLE(IMAGE_ANALYSIS)
-    void findStringIncludingImages(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
+    void findStringIncludingImages(StringImpl*, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
 #endif
-    void scheduleFindUIUpdateAfterFindingAllMatches(bool found, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, bool shouldUpdateFindIndicator = true);
-    void findStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Vector<Vector<WebCore::IntRect>>>>&&, std::optional<WebCore::FindSelectionInFrame>)>&&);
+    void scheduleFindUIUpdateAfterFindingAllMatches(bool found, StringImpl*, OptionSet<FindOptions>, unsigned maxMatchCount, bool shouldUpdateFindIndicator = true);
+    void findStringMatches(StringImpl*, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Vector<Vector<WebCore::IntRect>>>>&&, std::optional<WebCore::FindSelectionInFrame>)>&&);
     void getImageForFindMatch(uint32_t matchIndex, CompletionHandler<void(std::optional<WebCore::ImageBufferParameters>&&, std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
     void selectFindMatch(uint32_t matchIndex);
     void indicateFindMatch(uint32_t matchIndex);
     void hideFindUI();
-    void countStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(uint32_t)>&&);
-    uint32_t replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly);
+    void countStringMatches(StringImpl*, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(uint32_t)>&&);
+    uint32_t replaceMatches(const Vector<uint32_t>& matchIndices, StringImpl* replacementText, bool selectionOnly);
 
     void hideFindIndicator();
     NODELETE void resetMatchIndex();
@@ -106,21 +106,21 @@ private:
 
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(WebCore::IntRect clipRect);
 
-    void updateFindUIAfterFindingAllMatches(bool found, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, bool shouldUpdateFindIndicator);
-    void updateFindUIAfterIncrementalFind(bool found, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, unsigned cueMatchCount, WebCore::DidWrap, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
+    void updateFindUIAfterFindingAllMatches(bool found, StringImpl*, OptionSet<FindOptions>, unsigned maxMatchCount, bool shouldUpdateFindIndicator);
+    void updateFindUIAfterIncrementalFind(bool found, StringImpl*, OptionSet<FindOptions>, unsigned maxMatchCount, unsigned cueMatchCount, WebCore::DidWrap, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
 
     enum class ShouldReuseLastFoundRange : bool { No, Yes };
-    void findString(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, ShouldReuseLastFoundRange, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
+    void findString(StringImpl*, OptionSet<FindOptions>, unsigned maxMatchCount, ShouldReuseLastFoundRange, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
 
     void updateFindPageOverlay(bool shouldShowOverlay);
     void updateFindIndicatorIfNeeded(bool found, OptionSet<FindOptions>, bool shouldShowOverlay);
-    unsigned markMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, unsigned cueMatchCount);
-    unsigned getMatchCount(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, unsigned cueMatchCount);
+    unsigned markMatches(StringImpl*, OptionSet<FindOptions>, unsigned maxMatchCount, unsigned cueMatchCount);
+    unsigned getMatchCount(StringImpl*, OptionSet<FindOptions>, unsigned maxMatchCount, unsigned cueMatchCount);
     NODELETE void updateMatchIndex(unsigned matchCount, OptionSet<FindOptions>);
     void didScrollAffectingFindIndicatorPosition();
 
     RefPtr<WebCore::LocalFrame> frameWithSelection(WebCore::Page*);
-    std::optional<int32_t> indexOfSelectedMatchInFrame(const String&, OptionSet<FindOptions>);
+    std::optional<int32_t> indexOfSelectedMatchInFrame(StringImpl*, OptionSet<FindOptions>);
 
     std::optional<WebCore::FrameIdentifier> applyFindMatch(const FindMatch&, OptionSet<FindOptions>);
 
@@ -135,7 +135,7 @@ private:
     std::optional<FindMatch> m_lastFoundRange;
     bool m_lastFoundRangeDidWrap { false };
     const std::unique_ptr<FindIndicator> m_findIndicator;
-    String m_previousFindString;
+    RefPtr<StringImpl> m_previousFindString;
 };
 
 } // namespace WebKit

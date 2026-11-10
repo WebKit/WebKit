@@ -44,7 +44,7 @@ AutomationClient::~AutomationClient()
     Inspector::RemoteInspector::singleton().setClient(nullptr);
 }
 
-void AutomationClient::requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
+void AutomationClient::requestAutomationSession(StringImpl* sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
 {
     ASSERT(isMainRunLoop());
 

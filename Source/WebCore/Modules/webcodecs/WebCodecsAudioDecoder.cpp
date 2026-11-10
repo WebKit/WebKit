@@ -107,7 +107,7 @@ static bool isValidDecoderConfig(const WebCodecsAudioDecoderConfig& config)
     // FIXME: WPT issue: https://github.com/web-platform-tests/wpt/issues/49636 is causing a test to fail when it shouldn't
     // Opus with more than two channels require a description
     // Extra spec issue: https://github.com/w3c/webcodecs/issues/861 : configure shouldn't throw on invalid config.
-    if (config.codec == "opus"_s && config.numberOfChannels > 2 && descriptionSize < 10)
+    if (equal(config.codec, "opus"_s) && config.numberOfChannels > 2 && descriptionSize < 10)
         return false;
 
     return true;
@@ -116,10 +116,10 @@ static bool isValidDecoderConfig(const WebCodecsAudioDecoderConfig& config)
 ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebCodecsAudioDecoderConfig&& config)
 {
     if (!isValidDecoderConfig(config))
-        return Exception { ExceptionCode::TypeError, "Config is not valid"_s };
+        return Exception { ExceptionCode::TypeError, "Config is not valid"_si };
 
     if (state() == WebCodecsCodecState::Closed || !scriptExecutionContext())
-        return Exception { ExceptionCode::InvalidStateError, "AudioDecoder is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "AudioDecoder is closed"_si };
 
     setState(WebCodecsCodecState::Configured);
     m_isKeyChunkRequired = true;
@@ -130,7 +130,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebC
 
         if (!isSupportedCodec) {
             postTaskToCodec<WebCodecsAudioDecoder>(identifier, *this, [] (auto& decoder) {
-                decoder.closeDecoder(Exception { ExceptionCode::NotSupportedError, "Codec is not supported"_s });
+                decoder.closeDecoder(Exception { ExceptionCode::NotSupportedError, "Codec is not supported"_si });
                 decoder.unblockControlMessageQueue();
             });
             return WebCodecsControlMessageOutcome::Processed;
@@ -175,11 +175,11 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebC
 ExceptionOr<void> WebCodecsAudioDecoder::decode(Ref<WebCodecsEncodedAudioChunk>&& chunk)
 {
     if (state() != WebCodecsCodecState::Configured)
-        return Exception { ExceptionCode::InvalidStateError, "AudioDecoder is not configured"_s };
+        return Exception { ExceptionCode::InvalidStateError, "AudioDecoder is not configured"_si };
 
     if (m_isKeyChunkRequired) {
         if (chunk->type() != WebCodecsEncodedAudioChunkType::Key)
-            return Exception { ExceptionCode::DataError, "Key frame is required"_s };
+            return Exception { ExceptionCode::DataError, "Key frame is required"_si };
         m_isKeyChunkRequired = false;
     }
 
@@ -207,7 +207,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::decode(Ref<WebCodecsEncodedAudioChunk>&
 ExceptionOr<void> WebCodecsAudioDecoder::flush(Ref<DeferredPromise>&& promise)
 {
     if (state() != WebCodecsCodecState::Configured)
-        return Exception { ExceptionCode::InvalidStateError, "AudioDecoder is not configured"_s };
+        return Exception { ExceptionCode::InvalidStateError, "AudioDecoder is not configured"_si };
 
     m_isKeyChunkRequired = true;
     m_pendingFlushPromises.append(promise);
@@ -224,18 +224,18 @@ ExceptionOr<void> WebCodecsAudioDecoder::flush(Ref<DeferredPromise>&& promise)
 
 ExceptionOr<void> WebCodecsAudioDecoder::reset()
 {
-    return resetDecoder(Exception { ExceptionCode::AbortError, "Reset called"_s });
+    return resetDecoder(Exception { ExceptionCode::AbortError, "Reset called"_si });
 }
 
 ExceptionOr<void> WebCodecsAudioDecoder::close()
 {
-    return closeDecoder(Exception { ExceptionCode::AbortError, "Close called"_s });
+    return closeDecoder(Exception { ExceptionCode::AbortError, "Close called"_si });
 }
 
 void WebCodecsAudioDecoder::isConfigSupported(ScriptExecutionContext& context, WebCodecsAudioDecoderConfig&& config, Ref<DeferredPromise>&& promise)
 {
     if (!isValidDecoderConfig(config)) {
-        promise->reject(Exception { ExceptionCode::TypeError, "Config is not valid"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Config is not valid"_si });
         return;
     }
 
@@ -266,7 +266,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::closeDecoder(Exception&& exception)
 ExceptionOr<void> WebCodecsAudioDecoder::resetDecoder(const Exception& exception)
 {
     if (state() == WebCodecsCodecState::Closed)
-        return Exception { ExceptionCode::InvalidStateError, "AudioDecoder is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "AudioDecoder is closed"_si };
 
     setState(WebCodecsCodecState::Unconfigured);
     if (RefPtr internalDecoder = std::exchange(m_internalDecoder, { }))

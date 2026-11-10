@@ -37,7 +37,7 @@ struct ServiceWorkerJobDataIdentifier {
 
     friend bool operator==(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerJobDataIdentifier&) = default;
 
-    String loggingString() const
+    RefPtr<StringImpl> loggingString() const
     {
         return makeString(connectionIdentifier.loggingString(), '-', jobIdentifier.loggingString());
     }

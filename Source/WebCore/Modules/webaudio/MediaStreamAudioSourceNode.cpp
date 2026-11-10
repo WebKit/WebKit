@@ -51,7 +51,7 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(
 
     auto audioTracks = mediaStream->getAudioTracks();
     if (audioTracks.isEmpty())
-        return Exception { ExceptionCode::InvalidStateError, "Media stream has no audio tracks"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Media stream has no audio tracks"_si };
 
     // https://webaudio.github.io/web-audio-api/#mediastreamaudiosourcenode: the input track is the
     // first track in the media stream after sorting the audio tracks by their id using a code unit ordering.
@@ -61,7 +61,7 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(
 
     RefPtr provider = inputTrack->createAudioSourceProvider();
     if (!provider)
-        return Exception { ExceptionCode::InvalidStateError, "Could not find an audio track with an audio source provider"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Could not find an audio track with an audio source provider"_si };
 
     auto node = adoptRef(*new MediaStreamAudioSourceNode(context, WTF::move(mediaStream), provider.releaseNonNull()));
     node->setFormat(2, context.sampleRate());

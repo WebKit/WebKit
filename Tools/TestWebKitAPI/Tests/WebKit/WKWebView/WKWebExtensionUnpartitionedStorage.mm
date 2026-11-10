@@ -239,7 +239,7 @@ TEST(WKWebExtensionUnpartitionedStorage, RedirectOutOfHostPermittedFrameIsPartit
         { "/start"_s, { { { "Content-Type"_s, "text/html"_s } }, navigateToRedirectScript } },
         { "/redirected"_s, { { { "Content-Type"_s, "text/html"_s } }, reportNamedFrameToTopScript } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
-    server.addResponse("/redirect-to-other"_s, { 302, { { "Location"_s, makeString("http://127.0.0.1:"_s, server.port(), "/redirected"_s) } }, "redirecting..."_s });
+    server.addResponse("/redirect-to-other"_si, { 302, { { "Location"_s, makeString("http://127.0.0.1:"_s, server.port(), "/redirected"_s) } }, "redirecting..."_si });
 
     auto *resources = extensionResourcesEmbeddingNamedFrames(@{
         @"redirected": [NSString stringWithFormat:@"http://localhost:%d/start", server.port()],
@@ -270,7 +270,7 @@ TEST(WKWebExtensionUnpartitionedStorage, RedirectOutOfHostPermittedFrameIsPartit
         { "/start"_s, { { { "Content-Type"_s, "text/html"_s } }, navigateToRedirectScript } },
         { "/redirected"_s, { { { "Content-Type"_s, "text/html"_s } }, reportNamedFrameToTopScript } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
-    server.addResponse("/redirect-to-other"_s, { 302, { { "Location"_s, makeString("http://127.0.0.1:"_s, server.port(), "/redirected"_s) } }, "redirecting..."_s });
+    server.addResponse("/redirect-to-other"_si, { 302, { { "Location"_s, makeString("http://127.0.0.1:"_s, server.port(), "/redirected"_s) } }, "redirecting..."_si });
 
     auto *resources = extensionResourcesEmbeddingNamedFrames(@{
         @"redirected": [NSString stringWithFormat:@"http://localhost:%d/start", server.port()],
@@ -302,7 +302,7 @@ static void runRedirectIntoHostPermittedFrameTest(bool siteIsolationEnabled)
         { "/seeded"_s, { { { "Content-Type"_s, "text/plain"_s } }, ""_s } },
         { "/read"_s, { { { "Content-Type"_s, "text/html"_s } }, reportNamedFrameCookieToTopScript } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
-    server.addResponse("/redirect-to-permitted"_s, { 302, { { "Location"_s, makeString("http://localhost:"_s, server.port(), "/read"_s) } }, "redirecting..."_s });
+    server.addResponse("/redirect-to-permitted"_si, { 302, { { "Location"_s, makeString("http://localhost:"_s, server.port(), "/read"_s) } }, "redirecting..."_si });
 
     auto *resources = extensionResourcesEmbeddingNamedFrames(@{
         @"redirected": [NSString stringWithFormat:@"http://127.0.0.1:%d/redirect-to-permitted", server.port()],
@@ -464,7 +464,7 @@ TEST(WKWebExtensionUnpartitionedStorage, NonExtensionPageDoesNotGiveSubframesUnp
         { "/seed"_s, { { { "Content-Type"_s, "text/html"_s }, { "Set-Cookie"_s, "key=lax-cookie; SameSite=Lax; Path=/"_s } }, ""_s } },
         { "/read"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script>top.postMessage(document.cookie, '*')</script>"_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
-    server.addResponse("/main"_s, { { { "Content-Type"_s, "text/html"_s } }, makeString("<script>onmessage = (event) => alert(event.data)</script><iframe src='http://localhost:"_s, server.port(), "/read'></iframe>"_s) });
+    server.addResponse("/main"_si, { { { "Content-Type"_s, "text/html"_s } }, makeString("<script>onmessage = (event) => alert(event.data)</script><iframe src='http://localhost:"_s, server.port(), "/read'></iframe>"_s) });
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setWebsiteDataStore:WKWebsiteDataStore.nonPersistentDataStore];
@@ -634,11 +634,11 @@ static NSString * const readFileSystemScript = @""
 static NSString * const holdWebLockScript = @"await new Promise(resolve => navigator.locks.request('lock', () => { resolve(); return new Promise(() => { }) }))";
 static NSString * const readHeldWebLocksScript = @"return (await navigator.locks.query()).held.map(lock => lock.name).join(', ')";
 
-static String scriptReportingResult(NSString *script, ASCIILiteral report)
+static RefPtr<StringImpl> scriptReportingResult(NSString *script, ASCIILiteral report)
 {
     return makeString("let value;"_s
         "try {"_s
-        "  value = await (async () => { "_s, String(script), " })();"_s
+        "  value = await (async () => { "_s, StringImpl::create(script), " })();"_s
         "} catch (error) {"_s
         "  value = String(error);"_s
         "}"_s, report);
@@ -652,8 +652,8 @@ static TestWebKitAPI::HTTPServer storageTestServer(NSString *frameScript, NSStri
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     if (workerScript) {
-        server.addResponse("/worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, scriptReportingResult(workerScript, "postMessage(value)"_s) });
-        server.addResponse("/shared-worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, makeString("const result = (async () => { "_s, scriptReportingResult(workerScript, "return value;"_s), " })();"_s
+        server.addResponse("/worker.js"_si, { { { "Content-Type"_s, "text/javascript"_s } }, scriptReportingResult(workerScript, "postMessage(value)"_s) });
+        server.addResponse("/shared-worker.js"_si, { { { "Content-Type"_s, "text/javascript"_s } }, makeString("const result = (async () => { "_s, scriptReportingResult(workerScript, "return value;"_s), " })();"_s
             "onconnect = async event => event.ports[0].postMessage(await result);"_s) });
     }
 
@@ -774,14 +774,14 @@ TEST(WKWebExtensionUnpartitionedStorage, ServiceWorkerControlsHostPermittedFrame
         "return [frameValue, workerValue].filter(Boolean).join(', ')", fetchFromServiceWorkerScript];
 
     auto server = storageTestServer(frameScript, fetchFromServiceWorkerScript);
-    server.addResponse("/from-service-worker"_s, { { { "Content-Type"_s, "text/plain"_s } }, ""_s });
-    server.addResponse("/service-worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, ""
+    server.addResponse("/from-service-worker"_si, { { { "Content-Type"_s, "text/plain"_s } }, ""_si });
+    server.addResponse("/service-worker.js"_si, { { { "Content-Type"_s, "text/javascript"_s } }, StringImpl::create(""
         "self.addEventListener('install', () => self.skipWaiting());"
         "self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));"
         "self.addEventListener('fetch', event => {"
         "  if (new URL(event.request.url).pathname === '/from-service-worker')"
         "    event.respondWith(new Response('service-worker-value'));"
-        "});"_s });
+        "});"_s).ptr() });
 
     auto manager = loadStorageTestExtension(server);
 

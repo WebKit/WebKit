@@ -141,16 +141,16 @@ static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
 
     RetainPtr layer = owner->platformLayer();
 
-    String animationKey;
+    RefPtr<StringImpl> animationKey;
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString *key in [layer.get() animationKeys]) {
         if ([layer.get() animationForKey:key] == animation) {
-            animationKey = key;
+            animationKey = StringImpl::create(key);
             break;
         }
     }
 
-    if (!animationKey.isEmpty())
+    if (!isEmpty(animationKey))
         owner->animationStarted(animationKey, startTime);
 }
 
@@ -167,16 +167,16 @@ static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
 
     RetainPtr layer = owner->platformLayer();
 
-    String animationKey;
+    RefPtr<StringImpl> animationKey;
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString *key in [layer.get() animationKeys]) {
         if ([layer.get() animationForKey:key] == animation) {
-            animationKey = key;
+            animationKey = StringImpl::create(key);
             break;
         }
     }
 
-    if (!animationKey.isEmpty())
+    if (!isEmpty(animationKey))
         owner->animationEnded(animationKey);
 }
 
@@ -424,13 +424,13 @@ PlatformCALayerCocoa::~PlatformCALayerCocoa()
         [static_cast<WebTiledBackingLayer *>(m_layer.get()) invalidate];
 }
 
-void PlatformCALayerCocoa::animationStarted(const String& animationKey, MonotonicTime beginTime)
+void PlatformCALayerCocoa::animationStarted(StringImpl* animationKey, MonotonicTime beginTime)
 {
     if (m_owner)
         m_owner->platformCALayerAnimationStarted(animationKey, beginTime);
 }
 
-void PlatformCALayerCocoa::animationEnded(const String& animationKey)
+void PlatformCALayerCocoa::animationEnded(StringImpl* animationKey)
 {
     if (m_owner)
         m_owner->platformCALayerAnimationEnded(animationKey);
@@ -555,7 +555,7 @@ void PlatformCALayerCocoa::adoptSublayers(PlatformCALayer& source)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerCocoa::addAnimationForKey(const String& key, PlatformCAAnimation& animation)
+void PlatformCALayerCocoa::addAnimationForKey(StringImpl* key, PlatformCAAnimation& animation)
 {
     // Add the delegate
     if (!m_delegate) {
@@ -569,20 +569,20 @@ void PlatformCALayerCocoa::addAnimationForKey(const String& key, PlatformCAAnima
         [propertyAnimation.get() setDelegate:static_cast<id>(m_delegate.get())];
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer addAnimation:propertyAnimation.get() forKey:key.createNSString().get()];
+    [m_layer addAnimation:propertyAnimation.get() forKey:createNSString(key).get()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerCocoa::removeAnimationForKey(const String& key)
+void PlatformCALayerCocoa::removeAnimationForKey(StringImpl* key)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer removeAnimationForKey:key.createNSString().get()];
+    [m_layer removeAnimationForKey:createNSString(key).get()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-RefPtr<PlatformCAAnimation> PlatformCALayerCocoa::animationForKey(const String& key)
+RefPtr<PlatformCAAnimation> PlatformCALayerCocoa::animationForKey(StringImpl* key)
 {
-    RetainPtr propertyAnimation = static_cast<CAAnimation *>([m_layer animationForKey:key.createNSString().get()]);
+    RetainPtr propertyAnimation = static_cast<CAAnimation *>([m_layer animationForKey:createNSString(key).get()]);
     if (!propertyAnimation)
         return nullptr;
     return PlatformCAAnimationCocoa::create(propertyAnimation.get());
@@ -955,10 +955,10 @@ void PlatformCALayerCocoa::setBlendMode(BlendMode blendMode)
     PlatformCAFilters::setBlendingFiltersOnLayer(protect(platformLayer()), blendMode);
 }
 
-void PlatformCALayerCocoa::setName(const String& value)
+void PlatformCALayerCocoa::setName(StringImpl* value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer setName:value.createNSString().get()];
+    [m_layer setName:createNSString(value).get()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

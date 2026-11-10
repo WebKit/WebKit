@@ -100,14 +100,14 @@ void HTMLTextAreaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     root.appendChild(TextControlInnerTextElement::create(protect(document()), isInnerTextElementEditable()));
 }
 
-const AtomString& HTMLTextAreaElement::formControlType() const
+const RefPtr<AtomStringImpl>& HTMLTextAreaElement::formControlType() const
 {
     return textareaTag->localName();
 }
 
 FormControlState HTMLTextAreaElement::saveFormControlState() const
 {
-    return m_isDirty ? FormControlState { { AtomString { value() } } } : FormControlState { };
+    return m_isDirty ? FormControlState { { AtomStringImpl::add(protect(value().get())) } } : FormControlState { };
 }
 
 void HTMLTextAreaElement::restoreFormControlState(const FormControlState& state)
@@ -120,7 +120,7 @@ void HTMLTextAreaElement::childrenChanged(const ChildChange& change)
     HTMLElement::childrenChanged(change);
     setLastChangeWasNotUserEdit();
     if (m_isDirty)
-        setInnerTextValue(String { value() });
+        setInnerTextValue(RefPtr<StringImpl> { value().get() });
     else
         setNonDirtyValue(defaultValue(), TextControlSetValueSelection::Clamp);
 }
@@ -137,7 +137,7 @@ bool HTMLTextAreaElement::hasPresentationalHintsForAttribute(const QualifiedName
     return HTMLTextFormControlElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLTextAreaElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLTextAreaElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == wrapAttr) {
         if (m_wrap != NoWrap) {
@@ -153,7 +153,7 @@ void HTMLTextAreaElement::collectPresentationalHintsForAttribute(const Qualified
         HTMLTextFormControlElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLTextAreaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLTextAreaElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
@@ -218,13 +218,13 @@ RenderPtr<RenderElement> HTMLTextAreaElement::createElementRenderer(Style::Compu
 
 bool HTMLTextAreaElement::appendFormData(DOMFormData& formData)
 {
-    if (name().isEmpty())
+    if (isEmpty(name()))
         return false;
 
     protect(document())->updateLayout();
 
     formData.append(name(), m_wrap == HardWrap ? valueWithHardLineBreaks() : value().get());
-    if (auto& dirname = attributeWithoutSynchronization(dirnameAttr); !dirname.isNull())
+    if (auto& dirname = attributeWithoutSynchronization(dirnameAttr); dirname)
         formData.append(dirname, directionForFormData());
     return true;    
 }
@@ -285,7 +285,7 @@ void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&
         return;
     unsigned unsignedMaxLength = static_cast<unsigned>(signedMaxLength);
 
-    const String& currentValue = innerTextValue();
+    const RefPtr<StringImpl>& currentValue = innerTextValue();
     unsigned currentLength = computeLengthForAPIValue(currentValue);
     if (currentLength + computeLengthForAPIValue(event.text()) < unsignedMaxLength)
         return;
@@ -303,12 +303,12 @@ void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&
     event.setText(sanitizeUserInputValue(event.text(), appendableLength));
 }
 
-String HTMLTextAreaElement::sanitizeUserInputValue(const String& proposedValue, unsigned maxLength)
+RefPtr<StringImpl> HTMLTextAreaElement::sanitizeUserInputValue(StringImpl* proposedValue, unsigned maxLength)
 {
     unsigned submissionLength = 0;
     unsigned i = 0;
-    for (; i < proposedValue.length(); ++i) {
-        if (proposedValue[i] == '\r' && i + 1 < proposedValue.length() && proposedValue[i + 1] == '\n')
+    for (; i < WTF::length(proposedValue); ++i) {
+        if (codeUnitAt(proposedValue, i) == '\r' && i + 1 < WTF::length(proposedValue) && codeUnitAt(proposedValue, i + 1) == '\n')
             continue;
         ++submissionLength;
         if (submissionLength == maxLength) {
@@ -318,9 +318,9 @@ String HTMLTextAreaElement::sanitizeUserInputValue(const String& proposedValue, 
         if (submissionLength > maxLength)
             break;
     }
-    if (i > 0 && U16_IS_LEAD(proposedValue[i - 1]))
+    if (i > 0 && U16_IS_LEAD(codeUnitAt(proposedValue, i - 1)))
         --i;
-    return proposedValue.left(i);
+    return left(proposedValue, i);
 }
 
 RefPtr<TextControlInnerTextElement> HTMLTextAreaElement::innerTextElement() const
@@ -347,7 +347,7 @@ void HTMLTextAreaElement::updateValue() const
     const_cast<HTMLTextAreaElement*>(this)->updatePlaceholderVisibility();
 }
 
-ValueOrReference<String> HTMLTextAreaElement::value() const
+ValueOrReference<RefPtr<StringImpl>> HTMLTextAreaElement::value() const
 {
     if (shouldApplyScriptTrackingPrivacyProtection())
         return emptyString();
@@ -355,7 +355,7 @@ ValueOrReference<String> HTMLTextAreaElement::value() const
     return m_value;
 }
 
-ExceptionOr<void> HTMLTextAreaElement::setValue(const String& value, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
+ExceptionOr<void> HTMLTextAreaElement::setValue(StringImpl* value, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
     setValueCommon(value, eventBehavior, selection);
     m_isDirty = true;
@@ -363,32 +363,32 @@ ExceptionOr<void> HTMLTextAreaElement::setValue(const String& value, TextFieldEv
     return { };
 }
 
-void HTMLTextAreaElement::setNonDirtyValue(const String& value, TextControlSetValueSelection selection)
+void HTMLTextAreaElement::setNonDirtyValue(StringImpl* value, TextControlSetValueSelection selection)
 {
     setValueCommon(value, TextFieldEventBehavior::DispatchNoEvent, selection);
     m_isDirty = false;
     updateValidity();
 }
 
-void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
+void HTMLTextAreaElement::setValueCommon(StringImpl* newValue, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
     m_wasModifiedByUser = false;
     // Code elsewhere normalizes line endings added by the user via the keyboard or pasting.
     // We normalize line endings coming from JavaScript here.
-    auto normalizedValue = newValue.isNull() ? emptyString() : makeStringBySimplifyingNewLines(newValue);
+    auto normalizedValue = !newValue ? emptyString() : makeStringBySimplifyingNewLines(newValue);
 
     // Return early because we don't want to move the caret or trigger other side effects
     // when the value isn't changing. This matches Firefox behavior, at least.
-    if (normalizedValue == value())
+    if (equal(normalizedValue, value()))
         return;
 
-    bool valueWasEmpty = m_value.isEmpty();
+    bool valueWasEmpty = isEmpty(m_value);
     bool shouldClamp = selection == TextControlSetValueSelection::Clamp;
     auto selectionStartValue = shouldClamp ? computeSelectionStart() : 0;
     auto selectionEndValue = shouldClamp ? computeSelectionEnd() : 0;
 
     m_value = normalizedValue;
-    setInnerTextValue(String { m_value });
+    setInnerTextValue(RefPtr<StringImpl> { m_value });
     setLastChangeWasNotUserEdit();
     updatePlaceholderVisibility();
     invalidateStyleForSubtree();
@@ -396,7 +396,7 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventB
         updateEffectiveTextDirection();
     setFormControlValueMatchesRenderer(true);
 
-    auto endOfString = m_value.length();
+    auto endOfString = WTF::length(m_value);
     Ref document = this->document();
     if (selection == TextControlSetValueSelection::SetSelectionToEnd) {
         if (document->focusedElement() == this)
@@ -409,31 +409,31 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventB
     } else if (shouldClamp)
         cacheSelection(std::min(endOfString, selectionStartValue), std::min(endOfString, selectionEndValue), normalizeSelectionDirection(SelectionHasNoDirection));
 
-    setTextAsOfLastFormControlChangeEvent(String(normalizedValue));
+    setTextAsOfLastFormControlChangeEvent(RefPtr<StringImpl>(normalizedValue));
 
     if (CheckedPtr cache = document->existingAXObjectCache())
         cache->valueChanged(*this);
 
-    if (eventBehavior == DispatchNoEvent && !valueWasEmpty && normalizedValue.isEmpty()) {
+    if (eventBehavior == DispatchNoEvent && !valueWasEmpty && isEmpty(normalizedValue)) {
         if (RefPtr page = document->page())
             page->chrome().client().didProgrammaticallyClearTextFormControl(*this);
     }
 }
 
-String HTMLTextAreaElement::defaultValue() const
+RefPtr<StringImpl> HTMLTextAreaElement::defaultValue() const
 {
     return TextNodeTraversal::childTextContent(*this);
 }
 
-void HTMLTextAreaElement::setDefaultValue(String&& defaultValue)
+void HTMLTextAreaElement::setDefaultValue(RefPtr<StringImpl>&& defaultValue)
 {
     setTextContent(WTF::move(defaultValue));
 }
 
-String HTMLTextAreaElement::validationMessage() const
+RefPtr<StringImpl> HTMLTextAreaElement::validationMessage() const
 {
     if (!willValidate())
-        return String();
+        return nullptr;
 
     if (customError())
         return customValidationMessage();
@@ -442,15 +442,15 @@ String HTMLTextAreaElement::validationMessage() const
         return validationMessageValueMissingText();
 
     if (tooShort())
-        return validationMessageTooShortText(value()->length(), minLength());
+        return validationMessageTooShortText(WTF::length(value().get()), minLength());
 
     if (tooLong())
-        return validationMessageTooLongText(value()->length(), maxLength());
+        return validationMessageTooLongText(WTF::length(value().get()), maxLength());
 
-    return String();
+    return nullptr;
 }
 
-void HTMLTextAreaElement::setSelectionRangeForBindings(unsigned start, unsigned end, const String& direction)
+void HTMLTextAreaElement::setSelectionRangeForBindings(unsigned start, unsigned end, StringImpl* direction)
 {
     setSelectionRange(start, end, direction, AXTextStateChangeIntent(), ForBindings::Yes);
 }
@@ -475,7 +475,7 @@ bool HTMLTextAreaElement::valueMissing(StringView value) const
     if (!(isRequired() && isMutable()))
         return false;
     if (value.isNull())
-        return this->value()->isEmpty();
+        return isEmpty(this->value().get());
     return value.isEmpty();
 }
 
@@ -496,7 +496,7 @@ bool HTMLTextAreaElement::tooShort(StringView value, NeedsToCheckDirtyFlag check
         return false;
 
     // The empty string is excluded from tooShort validation.
-    unsigned length = value.isNull() ? this->value()->length() : computeLengthForAPIValue(value);
+    unsigned length = value.isNull() ? WTF::length(this->value().get()) : computeLengthForAPIValue(value);
     return length > 0 && length < static_cast<unsigned>(min);
 }
 
@@ -511,7 +511,7 @@ bool HTMLTextAreaElement::tooLong(StringView value, NeedsToCheckDirtyFlag check)
     if (max < 0)
         return false;
 
-    unsigned length = value.isNull() ? this->value()->length() : computeLengthForAPIValue(value);
+    unsigned length = value.isNull() ? WTF::length(this->value().get()) : computeLengthForAPIValue(value);
     return length > static_cast<unsigned>(max);
 }
 
@@ -544,7 +544,7 @@ void HTMLTextAreaElement::updatePlaceholderText()
         m_placeholder = TextControlPlaceholderElement::create(protect(document()));
         protect(userAgentShadowRoot())->insertBefore(*protect(m_placeholder), protect(innerTextElement()->nextSibling()));
     }
-    protect(m_placeholder)->setInnerText(String { attributeWithoutSynchronization(placeholderAttr) });
+    protect(m_placeholder)->setInnerText(RefPtr<StringImpl> { attributeWithoutSynchronization(placeholderAttr) });
 }
 
 Style::ComputedStyle HTMLTextAreaElement::createInnerTextStyle(const Style::ComputedStyle& style)
@@ -560,7 +560,7 @@ void HTMLTextAreaElement::copyNonAttributePropertiesFromElement(const Element& s
 {
     auto& sourceElement = downcast<HTMLTextAreaElement>(source);
 
-    setValueCommon(sourceElement.value(), DispatchNoEvent, TextControlSetValueSelection::DoNotSet);
+    setValueCommon(protect(sourceElement.value().get()), DispatchNoEvent, TextControlSetValueSelection::DoNotSet);
     m_isDirty = sourceElement.m_isDirty;
     m_wasModifiedByUser = sourceElement.m_wasModifiedByUser;
     HTMLTextFormControlElement::copyNonAttributePropertiesFromElement(source);

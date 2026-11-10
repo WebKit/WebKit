@@ -134,7 +134,7 @@ void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context, F
     Ref scriptLoader = WorkerScriptLoader::create();
     m_scriptLoader = scriptLoader.copyRef();
     auto request = scriptResourceRequest(context, m_jobData.scriptURL);
-    request.addHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
+    request.addHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_si);
 
     scriptLoader->loadAsynchronously(context, WTF::move(request), source, scriptFetchOptions(cachePolicy, FetchOptions::Destination::Serviceworker), ContentSecurityPolicyEnforcement::DoNotEnforce, ServiceWorkersMode::None, *this, WorkerRunLoop::defaultMode());
 }
@@ -143,11 +143,11 @@ ResourceError ServiceWorkerJob::validateServiceWorkerResponse(const ServiceWorke
 {
     // Extract a MIME type from the response's header list. If this MIME type (ignoring parameters) is not a JavaScript MIME type, then:
     if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(response.mimeType()))
-        return { errorDomainWebKitInternal, 0, response.url(), "MIME Type is not a JavaScript MIME type"_s };
+        return { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, response.url(), "MIME Type is not a JavaScript MIME type"_si };
 
     auto serviceWorkerAllowed = response.httpHeaderField(HTTPHeaderName::ServiceWorkerAllowed);
-    String maxScopeString;
-    if (serviceWorkerAllowed.isNull()) {
+    RefPtr<StringImpl> maxScopeString;
+    if (!serviceWorkerAllowed) {
         auto path = jobData.scriptURL.path();
         // Last part of the path is the script's filename.
         maxScopeString = path.left(path.reverseFind('/') + 1).toString();
@@ -158,8 +158,8 @@ ResourceError ServiceWorkerJob::validateServiceWorkerResponse(const ServiceWorke
     }
 
     auto scopeString = jobData.scopeURL.path();
-    if (maxScopeString.isNull() || !scopeString.startsWith(maxScopeString))
-        return { errorDomainWebKitInternal, 0, response.url(), "Scope URL should start with the given script URL"_s };
+    if (!maxScopeString || !scopeString.startsWith(maxScopeString))
+        return { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, response.url(), "Scope URL should start with the given script URL"_si };
 
     return { };
 }

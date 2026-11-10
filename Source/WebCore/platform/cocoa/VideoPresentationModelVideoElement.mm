@@ -124,7 +124,7 @@ void VideoPresentationModelVideoElement::setVideoElement(HTMLVideoElement* video
     updateForEventName(eventNameAll());
 }
 
-void VideoPresentationModelVideoElement::updateForEventName(const WTF::AtomString& eventName)
+void VideoPresentationModelVideoElement::updateForEventName(AtomStringImpl* eventName)
 {
     if (m_clients.isEmpty())
         return;
@@ -344,21 +344,21 @@ void VideoPresentationModelVideoElement::setVideoLayerGravity(MediaPlayer::Video
         videoElement->setVideoFullscreenGravity(gravity);
 }
 
-std::span<const AtomString> VideoPresentationModelVideoElement::observedEventNames()
+std::span<const RefPtr<AtomStringImpl>> VideoPresentationModelVideoElement::observedEventNames()
 {
     static NeverDestroyed names = std::array { eventNames().resizeEvent, eventNames().loadstartEvent, eventNames().loadedmetadataEvent, eventNames().playEvent, eventNames().pauseEvent };
     return names.get();
 }
 
-std::span<const AtomString> VideoPresentationModelVideoElement::documentObservedEventNames()
+std::span<const RefPtr<AtomStringImpl>> VideoPresentationModelVideoElement::documentObservedEventNames()
 {
     static NeverDestroyed names = std::array { eventNames().visibilitychangeEvent, eventNames().fullscreenchangeEvent };
     return names.get();
 }
 
-const AtomString& VideoPresentationModelVideoElement::eventNameAll()
+const RefPtr<AtomStringImpl>& VideoPresentationModelVideoElement::eventNameAll()
 {
-    static MainThreadNeverDestroyed<const AtomString> sEventNameAll = "allEvents"_s;
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> sEventNameAll = "allEvents"_s;
     return sEventNameAll;
 }
 
@@ -372,7 +372,7 @@ void VideoPresentationModelVideoElement::fullscreenModeChanged(HTMLMediaElementE
     }
 }
 
-void VideoPresentationModelVideoElement::requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&& completionHandler)
+void VideoPresentationModelVideoElement::requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, RefPtr<StringImpl>)>&& completionHandler)
 {
     completionHandler(AudioSession::singleton().routeSharingPolicy(), AudioSession::singleton().routingContextUID());
 }
@@ -485,7 +485,7 @@ void VideoPresentationModelVideoElement::audioSessionCategoryChanged(AudioSessio
         client->audioSessionCategoryChanged(category, mode, policy);
 }
 
-void VideoPresentationModelVideoElement::routingContextUIDChanged(const String& routingContextUID)
+void VideoPresentationModelVideoElement::routingContextUIDChanged(StringImpl* routingContextUID)
 {
     for (auto& client : copyToVector(m_clients))
         client->routingContextUIDChanged(routingContextUID);

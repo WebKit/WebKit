@@ -96,7 +96,7 @@ void NetworkRTCSharedMonitor::removeListener(NetworkRTCMonitor& monitor)
 webrtc::AdapterType NetworkRTCSharedMonitor::adapterTypeFromInterfaceName(const char* interfaceName) const
 {
 #if PLATFORM(COCOA)
-    auto iterator = m_adapterTypes.find(String::fromUTF8(interfaceName));
+    auto iterator = m_adapterTypes.find(StringImpl::fromUTF8(interfaceName));
     if (iterator != m_adapterTypes.end())
         return iterator->value;
 #endif
@@ -123,7 +123,7 @@ void NetworkRTCSharedMonitor::updateNetworks()
     });
 }
 
-void NetworkRTCSharedMonitor::onGatheredNetworks(RTCNetwork::IPAddress&& ipv4, RTCNetwork::IPAddress&& ipv6, HashMap<String, RTCNetwork>&& networkMap)
+void NetworkRTCSharedMonitor::onGatheredNetworks(RTCNetwork::IPAddress&& ipv4, RTCNetwork::IPAddress&& ipv6, HashMap<RefPtr<StringImpl>, RTCNetwork>&& networkMap)
 {
     if (!m_didReceiveResults) {
         m_didReceiveResults = true;

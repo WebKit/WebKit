@@ -1897,7 +1897,7 @@ std::optional<MediaChannelLayout> mediaChannelLayoutFromChannelLayout(const Audi
     }
 }
 
-String channelLayoutDescription(UInt32 channelLayoutTag)
+RefPtr<StringImpl> channelLayoutDescription(UInt32 channelLayoutTag)
 {
     auto channelLayout = channelLayoutFromChannelLayoutTag(channelLayoutTag);
     if (!channelLayout.first)
@@ -1907,7 +1907,7 @@ String channelLayoutDescription(UInt32 channelLayoutTag)
     UInt32 stringSize = sizeof(channelLayoutName);
     if (PAL::AudioFormatGetProperty(kAudioFormatProperty_ChannelLayoutName, channelLayout.second, channelLayout.first.get(), &stringSize, &channelLayoutName))
         return { };
-    SUPPRESS_RETAINPTR_CTOR_ADOPT return adoptCF(channelLayoutName).get(); // The caller is responsible for releasing the returned string.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return StringImpl::create(adoptCF(channelLayoutName).get()); // The caller is responsible for releasing the returned string.
 }
 
 RetainPtr<CMSampleBufferRef> sampleBufferFromVideoData(std::span<const uint8_t> buffer, CMVideoFormatDescriptionRef videoFormat)

@@ -37,21 +37,21 @@ class CSSUnparsedValue;
 class CSSOMVariableReferenceValue : public RefCounted<CSSOMVariableReferenceValue> {
     WTF_MAKE_TZONE_ALLOCATED(CSSOMVariableReferenceValue);
 public:
-    static ExceptionOr<Ref<CSSOMVariableReferenceValue>> create(String&&, RefPtr<CSSUnparsedValue>&& fallback = { });
+    static ExceptionOr<Ref<CSSOMVariableReferenceValue>> create(RefPtr<StringImpl>&&, RefPtr<CSSUnparsedValue>&& fallback = { });
     
-    ExceptionOr<void> setVariable(String&&);
-    String toString() const;
+    ExceptionOr<void> setVariable(RefPtr<StringImpl>&&);
+    RefPtr<StringImpl> toString() const;
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const;
 
-    const String& variable() const LIFETIME_BOUND { return m_variable; }
+    const RefPtr<StringImpl>& variable() const LIFETIME_BOUND { return m_variable; }
     CSSUnparsedValue* fallback() { return m_fallback.get(); }
     
 private:
-    CSSOMVariableReferenceValue(String&& variable, RefPtr<CSSUnparsedValue>&& fallback)
+    CSSOMVariableReferenceValue(RefPtr<StringImpl>&& variable, RefPtr<CSSUnparsedValue>&& fallback)
         : m_variable(WTF::move(variable))
         , m_fallback(WTF::move(fallback)) { }
     
-    String m_variable;
+    RefPtr<StringImpl> m_variable;
     const RefPtr<CSSUnparsedValue> m_fallback;
 };
 

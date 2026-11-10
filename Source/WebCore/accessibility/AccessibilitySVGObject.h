@@ -52,8 +52,8 @@ protected:
     AccessibilityRole determineAriaRoleAttribute() const final;
 
 private:
-    String description() const final;
-    String helpText() const final;
+    RefPtr<StringImpl> description() const final;
+    RefPtr<StringImpl> helpText() const final;
     void accessibilityText(Vector<AccessibilityText>&) const final;
     void alternativeText(Vector<AccessibilityText>&) const final;
     AccessibilityRole determineAccessibilityRole() override;
@@ -70,8 +70,8 @@ private:
         RefPtr<Element> desc;
     };
     MatchingLanguageChildren matchingTitleAndDescChildren() const;
-    String descriptionFromTitleChild(Element* titleChild) const;
-    String helpTextFromChildren(Element* titleChild, Element* descChild, const String& descriptionText) const;
+    RefPtr<StringImpl> descriptionFromTitleChild(Element* titleChild) const;
+    RefPtr<StringImpl> helpTextFromChildren(Element* titleChild, Element* descChild, StringImpl* descriptionText) const;
 
     // Set for remote SVG resources, on the root.
     WeakPtr<AccessibilityRenderObject> m_parent;

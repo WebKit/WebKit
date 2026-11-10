@@ -206,8 +206,8 @@ static unsigned initializeMSAASampleCount(GrDirectContext* grContext)
 
     std::call_once(onceFlag, [grContext] {
         // Let the user override the default sample count if they want to.
-        String envString = String::fromLatin1(getenv("WEBKIT_SKIA_MSAA_SAMPLE_COUNT"));
-        if (!envString.isEmpty())
+        RefPtr<StringImpl> envString = StringImpl::fromLatin1(getenv("WEBKIT_SKIA_MSAA_SAMPLE_COUNT"));
+        if (!isEmpty(envString))
             sampleCount = parseInteger<unsigned>(envString).value_or(0);
 
         if (sampleCount <= 1) {

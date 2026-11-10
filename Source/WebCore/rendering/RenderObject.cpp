@@ -1351,7 +1351,7 @@ void RenderObject::showRenderTreeForThis() const
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
     outputRenderTreeLegend(stream);
     root->outputRenderSubTreeAndMark(stream, this, 1);
-    SAFE_WTFLOGALWAYS("%s", stream.release().utf8());
+    SAFE_WTFLOGALWAYS("%s", utf8(stream.release()));
 }
 
 void RenderObject::showSubtreeForThis() const
@@ -1359,7 +1359,7 @@ void RenderObject::showSubtreeForThis() const
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
     outputRenderTreeLegend(stream);
     outputRenderSubTreeAndMark(stream, this, 1);
-    SAFE_WTFLOGALWAYS("%s", stream.release().utf8());
+    SAFE_WTFLOGALWAYS("%s", utf8(stream.release()));
 }
 
 void RenderObject::showLineTreeForThis() const
@@ -1371,7 +1371,7 @@ void RenderObject::showLineTreeForThis() const
     outputRenderTreeLegend(stream);
     outputRenderObject(stream, false, 1);
     blockFlow->outputLineTree(stream, 2);
-    SAFE_WTFLOGALWAYS("%s", stream.release().utf8());
+    SAFE_WTFLOGALWAYS("%s", utf8(stream.release()));
 }
 
 static const RenderFragmentedFlow* enclosingFragmentedFlowFromRenderer(const RenderObject* renderer)
@@ -1535,13 +1535,13 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
 
     if (auto* renderText = dynamicDowncast<RenderText>(*this)) {
         auto value = renderText->text();
-        stream << " length->(" << value.length() << ")";
+        stream << " length->(" << length(value) << ")";
 
         value = makeStringByReplacingAll(value, '\\', "\\\\"_s);
         value = makeStringByReplacingAll(value, '\n', "\\n"_s);
 
         const int maxPrintedLength = 80;
-        if (value.length() > maxPrintedLength) {
+        if (length(value) > maxPrintedLength) {
             auto substring = StringView(value).left(maxPrintedLength);
             stream << " \"" << substring << "\"...";
         } else
@@ -2349,9 +2349,9 @@ static Vector<FloatRect> absoluteRectsForRangeInText(const SimpleRange& range, T
 
     auto offsetRange = characterDataOffsetRange(range, node);
     // Move to surrogate pair start for Range start and past surrogate pair end for Range end in case the trailing surrogate is indexed.
-    if (offsetRange.start < node.data().length() && offsetRange.start && U16_IS_TRAIL(node.data()[offsetRange.start]) && U16_IS_LEAD(node.data()[offsetRange.start - 1]))
+    if (offsetRange.start < length(node.data()) && offsetRange.start && U16_IS_TRAIL(codeUnitAt(node.data(), offsetRange.start)) && U16_IS_LEAD(codeUnitAt(node.data(), offsetRange.start - 1)))
         offsetRange.start--;
-    if (offsetRange.end < node.data().length() && offsetRange.end && U16_IS_TRAIL(node.data()[offsetRange.end]) && U16_IS_LEAD(node.data()[offsetRange.end - 1]))
+    if (offsetRange.end < length(node.data()) && offsetRange.end && U16_IS_TRAIL(codeUnitAt(node.data(), offsetRange.end)) && U16_IS_LEAD(codeUnitAt(node.data(), offsetRange.end - 1)))
         offsetRange.end++;
 
     Vector<FloatQuad> textQuads;
@@ -3140,7 +3140,7 @@ auto RenderObject::collectSelectionGeometries(const SimpleRange& range) -> Selec
     return { WTF::move(coalescedGeometries), WTF::move(intersectingLayerIDs) };
 }
 
-String RenderObject::description() const
+RefPtr<StringImpl> RenderObject::description() const
 {
     StringBuilder builder;
 
@@ -3151,7 +3151,7 @@ String RenderObject::description() const
     return builder.toString();
 }
 
-String RenderObject::debugDescription() const
+RefPtr<StringImpl> RenderObject::debugDescription() const
 {
     StringBuilder builder;
 
@@ -3283,7 +3283,7 @@ void printPaintOrderTreeForLiveDocuments()
             continue;
         if (document->frame() && document->frame()->isRootFrame())
             WTFLogAlways("----------------------root frame--------------------------\n");
-        SAFE_WTFLOGALWAYS("%s", document->url().string().utf8());
+        SAFE_WTFLOGALWAYS("%s", utf8(document->url().string()));
         showPaintOrderTree(document->renderView());
     }
 }
@@ -3295,7 +3295,7 @@ void printRenderTreeForLiveDocuments()
             continue;
         if (document->frame() && document->frame()->isRootFrame())
             WTFLogAlways("----------------------root frame--------------------------\n");
-        SAFE_WTFLOGALWAYS("%s", document->url().string().utf8());
+        SAFE_WTFLOGALWAYS("%s", utf8(document->url().string()));
         showRenderTree(document->renderView());
     }
 }
@@ -3307,7 +3307,7 @@ void printLayerTreeForLiveDocuments()
             continue;
         if (document->frame() && document->frame()->isRootFrame())
             WTFLogAlways("----------------------root frame--------------------------\n");
-        SAFE_WTFLOGALWAYS("%s", document->url().string().utf8());
+        SAFE_WTFLOGALWAYS("%s", utf8(document->url().string()));
         showLayerTree(document->renderView());
     }
 }
@@ -3330,9 +3330,9 @@ void printAccessibilityTreeForLiveDocuments()
             continue;
         if (document->frame()) {
             if (document->frame()->isRootFrame())
-                SAFE_WTFLOGALWAYS("\nPID %d: Accessibility tree for root document %p %s", getpid(), document.ptr(), document->url().string().utf8());
+                SAFE_WTFLOGALWAYS("\nPID %d: Accessibility tree for root document %p %s", getpid(), document.ptr(), utf8(document->url().string()));
             else
-                SAFE_WTFLOGALWAYS("\nPID %d: Accessibility tree for non-root document %p %s", getpid(), document.ptr(), document->url().string().utf8());
+                SAFE_WTFLOGALWAYS("\nPID %d: Accessibility tree for non-root document %p %s", getpid(), document.ptr(), utf8(document->url().string()));
             dumpAccessibilityTreeToStderr(document.get());
         }
     }
@@ -3344,7 +3344,7 @@ void printGraphicsLayerTreeForLiveDocuments()
         if (!document->renderView())
             continue;
         if (document->frame() && document->frame()->isRootFrame()) {
-            SAFE_WTFLOGALWAYS("Graphics layer tree for root document %p %s", document.ptr(), document->url().string().utf8());
+            SAFE_WTFLOGALWAYS("Graphics layer tree for root document %p %s", document.ptr(), utf8(document->url().string()));
             showGraphicsLayerTreeForCompositor(protect(document->renderView())->compositor());
         }
     }

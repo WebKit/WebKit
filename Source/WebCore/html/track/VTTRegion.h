@@ -65,8 +65,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    const String& id() const LIFETIME_BOUND { return m_id; }
-    void setId(const String&);
+    const RefPtr<StringImpl>& id() const LIFETIME_BOUND { return m_id; }
+    void setId(StringImpl*);
 
     double width() const { return m_width; }
     ExceptionOr<void> setWidth(double);
@@ -92,8 +92,8 @@ public:
 
     NODELETE void updateParametersFromRegion(const VTTRegion&);
 
-    const String& regionSettings() const LIFETIME_BOUND { return m_settings; }
-    void setRegionSettings(const String&);
+    const RefPtr<StringImpl>& regionSettings() const LIFETIME_BOUND { return m_settings; }
+    void setRegionSettings(StringImpl*);
 
     HTMLDivElement& getDisplayTree();
     
@@ -134,12 +134,12 @@ private:
 
     void parseSettingValue(RegionSetting, VTTScanner&);
 
-    static const AtomString& textTrackCueContainerScrollingClass();
+    static const RefPtr<AtomStringImpl>& textTrackCueContainerScrollingClass();
 
     NODELETE Document* document() const;
 
-    String m_id;
-    String m_settings;
+    RefPtr<StringImpl> m_id;
+    RefPtr<StringImpl> m_settings;
 
     double m_width { 100 };
     unsigned m_lines { 3 };

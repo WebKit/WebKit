@@ -188,7 +188,7 @@ class WebSelectionServiceController;
     BOOL zoomsTextOnly;
 
     RetainPtr<NSString> applicationNameForUserAgent;
-    WTF::String userAgent;
+    RefPtr<StringImpl> userAgent;
     BOOL userAgentOverridden;
     
     RetainPtr<WebPreferences> preferences;

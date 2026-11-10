@@ -756,7 +756,7 @@ using namespace Inspector;
 namespace Inspector {
 
 template<typename ObjCEnumType>
-std::optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(StringImpl* value);
 
 } // namespace Inspector
 

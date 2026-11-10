@@ -39,7 +39,7 @@ static const int32_t kMinInt32 = -kMaxInt32 - 1;
 static const uint32_t kMaxUInt32 = 0xffffffffU;
 static const int64_t kJSMaxInteger = 0x20000000000000LL - 1; // 2^53 - 1, largest integer exactly representable in ECMAScript.
 
-static String rangeErrorString(double value, double min, double max)
+static RefPtr<StringImpl> rangeErrorString(double value, double min, double max)
 {
     return makeString("Value "_s, value, " is outside the range ["_s, min, ", "_s, max, ']');
 }

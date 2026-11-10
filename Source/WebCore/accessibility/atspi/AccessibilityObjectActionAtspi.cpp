@@ -40,15 +40,15 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_actionFunctions = {
         else if (!g_strcmp0(methodName, "GetName")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
-            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", !index ? UTF8CStringView { atspiObject->actionName().utf8() } : ""_s));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", !index ? UTF8CStringView { utf8(atspiObject->actionName()) } : ""_s));
         } else if (!g_strcmp0(methodName, "GetLocalizedName")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
-            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", !index ? UTF8CStringView { atspiObject->localizedActionName().utf8() } : ""_s));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", !index ? UTF8CStringView { utf8(atspiObject->localizedActionName()) } : ""_s));
         } else if (!g_strcmp0(methodName, "GetKeyBinding")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
-            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", !index ? UTF8CStringView { atspiObject->actionKeyBinding().utf8() } : ""_s));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", !index ? UTF8CStringView { utf8(atspiObject->actionKeyBinding()) } : ""_s));
         } else if (!g_strcmp0(methodName, "DoAction")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
@@ -72,19 +72,19 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_actionFunctions = {
     { nullptr }
 };
 
-String AccessibilityObjectAtspi::actionName() const
+RefPtr<StringImpl> AccessibilityObjectAtspi::actionName() const
 {
-    return m_coreObject ? m_coreObject->actionVerb() : String();
+    return m_coreObject ? m_coreObject->actionVerb() : nullptr;
 }
 
-String AccessibilityObjectAtspi::localizedActionName() const
+RefPtr<StringImpl> AccessibilityObjectAtspi::localizedActionName() const
 {
-    return m_coreObject ? m_coreObject->localizedActionVerb() : String();
+    return m_coreObject ? m_coreObject->localizedActionVerb() : nullptr;
 }
 
-String AccessibilityObjectAtspi::actionKeyBinding() const
+RefPtr<StringImpl> AccessibilityObjectAtspi::actionKeyBinding() const
 {
-    return m_coreObject ? m_coreObject->accessKey() : String();
+    return m_coreObject ? m_coreObject->accessKey() : nullptr;
 }
 
 bool AccessibilityObjectAtspi::doAction() const

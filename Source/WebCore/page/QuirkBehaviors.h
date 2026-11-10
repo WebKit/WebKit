@@ -62,18 +62,29 @@ struct QuirkBehavior {
         return secondaryURL.isEmpty() || anyPatternMatches(secondaryURL, context);
     }
 
-    friend bool operator==(const QuirkBehavior&, const QuirkBehavior&) = default;
+    friend bool operator==(const QuirkBehavior& a, const QuirkBehavior& b)
+    {
+        return a.id == b.id
+            && contentEquals(a.script, b.script)
+            && contentEquals(a.userAgent, b.userAgent)
+            && contentEquals(a.chromeCompatibilityVersion, b.chromeCompatibilityVersion)
+            && contentEquals(a.cookieNames, b.cookieNames)
+            && contentEquals(a.styleSheet, b.styleSheet)
+            && contentEquals(a.elementSelector, b.elementSelector)
+            && contentEquals(a.documentSelector, b.documentSelector)
+            && a.secondaryURL == b.secondaryURL;
+    }
 
     QuirkBehaviorID id;
 
-    String script { };
-    String userAgent { };
-    String chromeCompatibilityVersion { };
-    Vector<String> cookieNames { };
-    String styleSheet { };
+    RefPtr<StringImpl> script { };
+    RefPtr<StringImpl> userAgent { };
+    RefPtr<StringImpl> chromeCompatibilityVersion { };
+    Vector<RefPtr<StringImpl>> cookieNames { };
+    RefPtr<StringImpl> styleSheet { };
 
-    String elementSelector { };
-    String documentSelector { };
+    RefPtr<StringImpl> elementSelector { };
+    RefPtr<StringImpl> documentSelector { };
     Vector<QuirkMatchPattern> secondaryURL { };
 };
 

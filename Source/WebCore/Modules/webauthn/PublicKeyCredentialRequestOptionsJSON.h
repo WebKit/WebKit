@@ -34,11 +34,11 @@ namespace WebCore {
 enum class AuthenticatorAttachment : uint8_t;
 
 struct PublicKeyCredentialRequestOptionsJSON {
-    String challenge;
+    RefPtr<StringImpl> challenge;
     std::optional<unsigned> timeout;
-    String rpId;
+    RefPtr<StringImpl> rpId;
     Vector<PublicKeyCredentialDescriptorJSON> allowCredentials;
-    String userVerification;
+    RefPtr<StringImpl> userVerification;
     std::optional<AuthenticationExtensionsClientInputsJSON> extensions;
 };
 

@@ -41,7 +41,7 @@ inline CustomEvent::CustomEvent(IsTrusted isTrusted)
 {
 }
 
-inline CustomEvent::CustomEvent(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+inline CustomEvent::CustomEvent(JSC::JSGlobalObject& globalObject, AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::CustomEvent, type, WTF::move(initializer), isTrusted)
     , m_detail(globalObject, initializer.detail)
 {
@@ -54,12 +54,12 @@ Ref<CustomEvent> CustomEvent::create(IsTrusted isTrusted)
     return adoptRef(*new CustomEvent(isTrusted));
 }
 
-Ref<CustomEvent> CustomEvent::create(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+Ref<CustomEvent> CustomEvent::create(JSC::JSGlobalObject& globalObject, AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
 {
     return adoptRef(*new CustomEvent(globalObject, type, WTF::move(initializer), isTrusted));
 }
 
-void CustomEvent::initCustomEvent(JSC::JSGlobalObject& globalObject, const AtomString& type, bool canBubble, bool cancelable, JSC::JSValue detail)
+void CustomEvent::initCustomEvent(JSC::JSGlobalObject& globalObject, AtomStringImpl* type, bool canBubble, bool cancelable, JSC::JSValue detail)
 {
     if (isBeingDispatched())
         return;

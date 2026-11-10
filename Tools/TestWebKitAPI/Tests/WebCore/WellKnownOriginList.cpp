@@ -45,7 +45,7 @@ public:
     }
 };
 
-static String wellKnownResourceFor(std::initializer_list<ASCIILiteral> origins)
+static RefPtr<StringImpl> wellKnownResourceFor(std::initializer_list<ASCIILiteral> origins)
 {
     StringBuilder builder;
     builder.append("{\"origins\":["_s);
@@ -60,20 +60,20 @@ static String wellKnownResourceFor(std::initializer_list<ASCIILiteral> origins)
     return builder.toString();
 }
 
-static WebCore::WellKnownOriginListResult findIn(ASCIILiteral callerOrigin, const String& resource,
+static WebCore::WellKnownOriginListResult findIn(ASCIILiteral callerOrigin, StringImpl* resource,
     WebCore::WellKnownOriginListPolicy&& policy = { })
 {
     auto origin = WebCore::SecurityOriginData::fromURL(URL { callerOrigin });
-    auto utf8 = resource.utf8();
+    auto utf8 = WTF::utf8(resource);
     return WebCore::findOriginInWellKnownList(origin, byteCast<uint8_t>(utf8.span()), "origins"_s, WTF::move(policy));
 }
 
-static bool isRelated(ASCIILiteral callerOrigin, const String& resource)
+static bool isRelated(ASCIILiteral callerOrigin, StringImpl* resource)
 {
     return findIn(callerOrigin, resource) == WebCore::WellKnownOriginListResult::Found;
 }
 
-static bool isMalformed(ASCIILiteral callerOrigin, const String& resource)
+static bool isMalformed(ASCIILiteral callerOrigin, StringImpl* resource)
 {
     return findIn(callerOrigin, resource) == WebCore::WellKnownOriginListResult::Malformed;
 }
@@ -183,7 +183,7 @@ static constexpr std::array specificationExample {
     "https://examplecars.com"_s,
 };
 
-static String specificationExampleResource()
+static RefPtr<StringImpl> specificationExampleResource()
 {
     StringBuilder builder;
     builder.append("{\"origins\":["_s);
@@ -243,68 +243,68 @@ TEST_F(WellKnownOriginList, EmptyResource)
 
 TEST_F(WellKnownOriginList, ResourceIsNotJSON)
 {
-    EXPECT_TRUE(isMalformed("https://example.com"_s, "not json at all"_s));
+    EXPECT_TRUE(isMalformed("https://example.com"_s, "not json at all"_si));
 }
 
 TEST_F(WellKnownOriginList, ResourceIsNotAnObject)
 {
-    EXPECT_TRUE(isMalformed("https://example.com"_s, "[\"https://example.com\"]"_s));
-    EXPECT_FALSE(isRelated("https://example.com"_s, "123"_s));
-    EXPECT_FALSE(isRelated("https://example.com"_s, "null"_s));
+    EXPECT_TRUE(isMalformed("https://example.com"_s, "[\"https://example.com\"]"_si));
+    EXPECT_FALSE(isRelated("https://example.com"_s, "123"_si));
+    EXPECT_FALSE(isRelated("https://example.com"_s, "null"_si));
 }
 
 TEST_F(WellKnownOriginList, ResourceIsMissingOrigins)
 {
-    EXPECT_TRUE(isMalformed("https://example.com"_s, "{\"other\":1}"_s));
+    EXPECT_TRUE(isMalformed("https://example.com"_s, "{\"other\":1}"_si));
 }
 
 TEST_F(WellKnownOriginList, OriginsIsNotAnArray)
 {
-    EXPECT_TRUE(isMalformed("https://example.com"_s, "{\"origins\":\"https://example.com\"}"_s));
-    EXPECT_FALSE(isRelated("https://example.com"_s, "{\"origins\":{}}"_s));
+    EXPECT_TRUE(isMalformed("https://example.com"_s, "{\"origins\":\"https://example.com\"}"_si));
+    EXPECT_FALSE(isRelated("https://example.com"_s, "{\"origins\":{}}"_si));
 }
 
 TEST_F(WellKnownOriginList, OriginsIsEmpty)
 {
-    EXPECT_FALSE(isRelated("https://example.com"_s, "{\"origins\":[]}"_s));
+    EXPECT_FALSE(isRelated("https://example.com"_s, "{\"origins\":[]}"_si));
 }
 
 TEST_F(WellKnownOriginList, NonStringEntriesRejectTheList)
 {
-    EXPECT_TRUE(isMalformed("https://example.com"_s, "{\"origins\":[123,null,{\"a\":1}]}"_s));
-    EXPECT_TRUE(isMalformed("https://example.com"_s, "{\"origins\":[123,\"https://example.com\"]}"_s));
-    EXPECT_TRUE(isMalformed("https://example.com"_s, "{\"origins\":[\"https://example.com\",true]}"_s));
+    EXPECT_TRUE(isMalformed("https://example.com"_s, "{\"origins\":[123,null,{\"a\":1}]}"_si));
+    EXPECT_TRUE(isMalformed("https://example.com"_s, "{\"origins\":[123,\"https://example.com\"]}"_si));
+    EXPECT_TRUE(isMalformed("https://example.com"_s, "{\"origins\":[\"https://example.com\",true]}"_si));
 }
 
-static bool isValidRelyingPartyIdentifier(ASCIILiteral callerOrigin, const String& relyingPartyIdentifier)
+static bool isValidRelyingPartyIdentifier(ASCIILiteral callerOrigin, StringImpl* relyingPartyIdentifier)
 {
     return WebCore::SecurityOriginData::fromURL(URL { callerOrigin }).securityOrigin()->isMatchingRegistrableDomainSuffix(relyingPartyIdentifier);
 }
 
 TEST_F(WellKnownOriginList, RelyingPartyIdentifierAcceptedForms)
 {
-    EXPECT_TRUE(isValidRelyingPartyIdentifier("https://example.com"_s, "example.com"_s));
-    EXPECT_TRUE(isValidRelyingPartyIdentifier("https://sub.example.com"_s, "example.com"_s));
-    EXPECT_TRUE(isValidRelyingPartyIdentifier("https://a.b.example.com"_s, "example.com"_s));
-    EXPECT_TRUE(isValidRelyingPartyIdentifier("https://example.com"_s, "EXAMPLE.com"_s));
+    EXPECT_TRUE(isValidRelyingPartyIdentifier("https://example.com"_s, "example.com"_si));
+    EXPECT_TRUE(isValidRelyingPartyIdentifier("https://sub.example.com"_s, "example.com"_si));
+    EXPECT_TRUE(isValidRelyingPartyIdentifier("https://a.b.example.com"_s, "example.com"_si));
+    EXPECT_TRUE(isValidRelyingPartyIdentifier("https://example.com"_s, "EXAMPLE.com"_si));
 }
 
 TEST_F(WellKnownOriginList, RelyingPartyIdentifierRejectedForms)
 {
-    EXPECT_FALSE(isValidRelyingPartyIdentifier("https://notexample.com"_s, "example.com"_s));
-    EXPECT_FALSE(isValidRelyingPartyIdentifier("https://example.com"_s, "ample.com"_s));
-    EXPECT_FALSE(isValidRelyingPartyIdentifier("https://example.com"_s, "sub.example.com"_s));
-    EXPECT_FALSE(isValidRelyingPartyIdentifier("https://example.com"_s, "other.com"_s));
+    EXPECT_FALSE(isValidRelyingPartyIdentifier("https://notexample.com"_s, "example.com"_si));
+    EXPECT_FALSE(isValidRelyingPartyIdentifier("https://example.com"_s, "ample.com"_si));
+    EXPECT_FALSE(isValidRelyingPartyIdentifier("https://example.com"_s, "sub.example.com"_si));
+    EXPECT_FALSE(isValidRelyingPartyIdentifier("https://example.com"_s, "other.com"_si));
     EXPECT_FALSE(isValidRelyingPartyIdentifier("https://example.com"_s, emptyString()));
-    EXPECT_FALSE(isValidRelyingPartyIdentifier("https://example.com"_s, "com"_s));
-    EXPECT_FALSE(isValidRelyingPartyIdentifier("https://example.co.uk"_s, "co.uk"_s));
+    EXPECT_FALSE(isValidRelyingPartyIdentifier("https://example.com"_s, "com"_si));
+    EXPECT_FALSE(isValidRelyingPartyIdentifier("https://example.co.uk"_s, "co.uk"_si));
 }
 
 TEST_F(WellKnownOriginList, WellKnownURLFromHost)
 {
     auto url = WebCore::wellKnownURL("example.com"_s, "/.well-known/webauthn"_s);
     EXPECT_TRUE(url.isValid());
-    EXPECT_TRUE(url.string() == "https://example.com/.well-known/webauthn"_s);
+    EXPECT_TRUE(equal(url.string(), "https://example.com/.well-known/webauthn"_s));
 }
 
 TEST_F(WellKnownOriginList, WellKnownURLIsCaseInsensitiveInTheHost)
@@ -350,7 +350,7 @@ TEST_F(WellKnownOriginList, ResponseMustBe200AndJSON)
 
 TEST_F(WellKnownOriginList, RedirectsMustStayHTTPS)
 {
-    EXPECT_TRUE(WebCore::isWellKnownRedirectAllowed(URL { "https://example.com/x"_s }));
+    EXPECT_TRUE(WebCore::isWellKnownRedirectAllowed(URL { "https://example.com/x"_si }));
 
     static constexpr std::array notHTTPS {
         "http://example.com/x"_s, "ftp://example.com/x"_s,

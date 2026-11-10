@@ -31,7 +31,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Module);
 
-Module::Module(const String& path)
+Module::Module(StringImpl* path)
     : m_path(path)
 {
 }

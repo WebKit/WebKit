@@ -59,10 +59,10 @@ void LibWebRTCRtpReceiverTransformBackend::setTransformableFrameCallback(Callbac
     m_rtcReceiver->SetFrameTransformer(webrtc::scoped_refptr<webrtc::FrameTransformerInterface>(this));
 }
 
-bool LibWebRTCRtpReceiverTransformBackend::requestKeyFrame(const String& rid)
+bool LibWebRTCRtpReceiverTransformBackend::requestKeyFrame(StringImpl* rid)
 {
     ASSERT(mediaType() == MediaType::Video);
-    ASSERT_UNUSED(rid, rid.isEmpty());
+    ASSERT_UNUSED(rid, isEmpty(rid));
     m_rtcReceiver->GenerateKeyFrame();
     return true;
 }

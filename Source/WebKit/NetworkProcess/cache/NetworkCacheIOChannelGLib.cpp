@@ -37,7 +37,7 @@
 namespace WebKit {
 namespace NetworkCache {
 
-IOChannel::IOChannel(const String& filePath, Type type, std::optional<WorkQueue::QOS> qos)
+IOChannel::IOChannel(StringImpl* filePath, Type type, std::optional<WorkQueue::QOS> qos)
 {
     auto path = FileSystem::fileSystemRepresentation(filePath);
     GRefPtr<GFile> file = gFileNewForPath(path);

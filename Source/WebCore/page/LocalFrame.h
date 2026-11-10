@@ -145,7 +145,7 @@ public:
     WEBCORE_EXPORT void init();
 #if PLATFORM(IOS_FAMILY)
     // Creates <html><body style="..."></body></html> doing minimal amount of work.
-    WEBCORE_EXPORT void initWithSimpleHTMLDocument(const AtomString& style, const URL&);
+    WEBCORE_EXPORT void initWithSimpleHTMLDocument(AtomStringImpl* style, const URL&);
 #endif
     WEBCORE_EXPORT void setView(RefPtr<LocalFrameView>&&);
     WEBCORE_EXPORT void createView(const IntSize&, const std::optional<Color>& backgroundColor, const IntSize& fixedLayoutSize, bool useFixedLayout = false, ScrollbarMode = ScrollbarMode::Auto, bool horizontalLock = false, ScrollbarMode = ScrollbarMode::Auto, bool verticalLock = false);
@@ -202,7 +202,7 @@ public:
 
     bool requestDOMPasteAccess(DOMPasteAccessCategory = DOMPasteAccessCategory::General);
 
-    String debugDescription() const override;
+    RefPtr<StringImpl> debugDescription() const override;
 
     WEBCORE_EXPORT static LocalFrame* fromJSContext(JSContextRef);
     WEBCORE_EXPORT static LocalFrame* contentFrameFromWindowOrFrameElement(JSContextRef, JSValueRef);
@@ -215,7 +215,7 @@ public:
     NODELETE const UserContentProvider* userContentProvider() const;
     NODELETE WEBCORE_EXPORT bool hasUserContentProvider(const UserContentProvider&);
 
-    WEBCORE_EXPORT String trackedRepaintRectsAsText() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> trackedRepaintRectsAsText() const;
 
     NODELETE WEBCORE_EXPORT static LocalFrame* frameForWidget(const Widget&);
 
@@ -297,16 +297,16 @@ public:
     void clearTimers();
     static void clearTimers(LocalFrameView*, Document*);
 
-    WEBCORE_EXPORT String displayStringModifiedByEncoding(const String&) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> displayStringModifiedByEncoding(StringImpl*) const;
 
     WEBCORE_EXPORT VisiblePosition visiblePositionForPoint(const IntPoint& framePoint) const;
     HitTestResult hitTestResultAtPoint(IntPoint, OptionSet<HitTestRequest::Type>);
     Document* documentAtPoint(const IntPoint& windowPoint);
     WEBCORE_EXPORT std::optional<SimpleRange> rangeForPoint(const IntPoint& framePoint);
 
-    WEBCORE_EXPORT String searchForLabelsAboveCell(const JSC::Yarr::RegularExpression&, HTMLTableCellElement*, size_t* resultDistanceFromStartOfCell);
-    WEBCORE_EXPORT String searchForLabelsBeforeElement(const Vector<String>& labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
-    WEBCORE_EXPORT String matchLabelsAgainstElement(const Vector<String>& labels, Element*);
+    WEBCORE_EXPORT RefPtr<StringImpl> searchForLabelsAboveCell(const JSC::Yarr::RegularExpression&, HTMLTableCellElement*, size_t* resultDistanceFromStartOfCell);
+    WEBCORE_EXPORT RefPtr<StringImpl> searchForLabelsBeforeElement(const Vector<RefPtr<StringImpl>>& labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
+    WEBCORE_EXPORT RefPtr<StringImpl> matchLabelsAgainstElement(const Vector<RefPtr<StringImpl>>& labels, Element*);
 
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT int preferredHeight() const;
@@ -350,9 +350,9 @@ public:
     void storageAccessExceptionReceivedForDomain(const RegistrableDomain&);
     bool requestSkipUserActivationCheckForStorageAccess(const RegistrableDomain&);
 
-    String customUserAgent() const final;
-    String customUserAgentAsSiteSpecificQuirks() const final;
-    String customNavigatorPlatform() const final;
+    RefPtr<StringImpl> customUserAgent() const final;
+    RefPtr<StringImpl> customUserAgentAsSiteSpecificQuirks() const final;
+    RefPtr<StringImpl> customNavigatorPlatform() const final;
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final;
     bool allowPrivacyProxy() const final;
     AutoplayPolicy autoplayPolicy() const final;
@@ -406,7 +406,7 @@ private:
     SecurityOrigin* frameDocumentSecurityOrigin() const final;
     std::optional<DocumentSecurityPolicy> frameDocumentSecurityPolicy() const final;
     std::optional<AgentClusterIdentifier> frameAgentClusterIdentifier() const final;
-    String frameURLProtocol() const final;
+    RefPtr<StringImpl> frameURLProtocol() const final;
 
     void disconnectView() final;
     NODELETE DOMWindow* virtualWindow() const final;

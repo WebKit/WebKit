@@ -160,10 +160,10 @@ bool SVGTextContentElement::hasPresentationalHintsForAttribute(const QualifiedNa
     return SVGGraphicsElement::hasPresentationalHintsForAttribute(name);
 }
 
-void SVGTextContentElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void SVGTextContentElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name.matches(XMLNames::spaceAttr)) {
-        if (value == "preserve"_s)
+        if (equal(value, "preserve"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::WhiteSpaceCollapse, CSSValueID::Preserve);
         else
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::WhiteSpaceCollapse, CSSValueID::Collapse);
@@ -174,7 +174,7 @@ void SVGTextContentElement::collectPresentationalHintsForAttribute(const Qualifi
     SVGGraphicsElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void SVGTextContentElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGTextContentElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     auto parseError = SVGParsingError::None;
 

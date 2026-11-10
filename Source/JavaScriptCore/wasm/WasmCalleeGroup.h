@@ -134,7 +134,7 @@ public:
 
     // Note, we do this copy to ensure it's thread safe to have this
     // called from multiple threads simultaneously.
-    String errorMessage()
+    RefPtr<StringImpl> errorMessage()
     {
         ASSERT(!runnable());
         return crossThreadCopy(m_errorMessage);
@@ -347,7 +347,7 @@ private:
     FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
     RefPtr<EntryPlan> m_plan WTF_GUARDED_BY_LOCK(m_lock);
     std::atomic<bool> m_compilationFinished { false };
-    String m_errorMessage;
+    RefPtr<StringImpl> m_errorMessage;
 public:
     Lock m_lock;
 };

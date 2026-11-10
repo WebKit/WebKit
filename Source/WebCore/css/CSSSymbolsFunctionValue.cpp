@@ -39,7 +39,7 @@ CSSSymbolsFunctionValue::CSSSymbolsFunctionValue(CSS::SymbolsFunction symbolsFun
 {
 }
 
-String CSSSymbolsFunctionValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSSymbolsFunctionValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_symbolsFunction);
 }

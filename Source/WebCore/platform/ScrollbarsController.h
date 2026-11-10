@@ -105,8 +105,8 @@ public:
 
     WEBCORE_EXPORT virtual bool shouldScrollbarParticipateInHitTesting(Scrollbar*) { return true; }
 
-    WEBCORE_EXPORT virtual String horizontalScrollbarStateForTesting() const { return emptyString(); }
-    WEBCORE_EXPORT virtual String verticalScrollbarStateForTesting() const { return emptyString(); }
+    WEBCORE_EXPORT virtual RefPtr<StringImpl> horizontalScrollbarStateForTesting() const { return emptyString(); }
+    WEBCORE_EXPORT virtual RefPtr<StringImpl> verticalScrollbarStateForTesting() const { return emptyString(); }
 
     WEBCORE_EXPORT virtual void setScrollbarVisibilityState(ScrollbarOrientation, bool) { }
 

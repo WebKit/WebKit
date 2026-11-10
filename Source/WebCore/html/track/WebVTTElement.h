@@ -48,7 +48,7 @@ class WebVTTElement final : public Element {
     WTF_MAKE_TZONE_ALLOCATED(WebVTTElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebVTTElement);
 public:
-    static Ref<Element> create(const WebVTTNodeType, AtomString language, Document&);
+    static Ref<Element> create(const WebVTTNodeType, RefPtr<AtomStringImpl> language, Document&);
     Ref<HTMLElement> createEquivalentHTMLElement(Document&);
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) const;
@@ -59,29 +59,29 @@ public:
     bool isPastNode() const { return m_isPastNode; }
     void setIsPastNode(bool value) { m_isPastNode = value; }
 
-    AtomString language() const { return m_language; }
-    void setLanguage(const AtomString& value) { m_language = value; }
+    RefPtr<AtomStringImpl> language() const { return m_language; }
+    void setLanguage(AtomStringImpl* value) { m_language = value; }
 
     static const QualifiedName& voiceAttributeName()
     {
-        static NeverDestroyed<QualifiedName> voiceAttr(nullAtom(), "voice"_s, nullAtom());
+        static NeverDestroyed<QualifiedName> voiceAttr(nullAtom(), "voice"_atom, nullAtom());
         return voiceAttr;
     }
 
     static const QualifiedName& langAttributeName()
     {
-        static NeverDestroyed<QualifiedName> langAttr(nullAtom(), "lang"_s, nullAtom());
+        static NeverDestroyed<QualifiedName> langAttr(nullAtom(), "lang"_atom, nullAtom());
         return langAttr;
     }
 
 protected:
-    WebVTTElement(WebVTTNodeType, AtomString language, Document&);
+    WebVTTElement(WebVTTNodeType, RefPtr<AtomStringImpl> language, Document&);
 
     bool isWebVTTElement() const final { return true; }
 
     bool m_isPastNode { false };
     WebVTTNodeType m_webVTTNodeType;
-    AtomString m_language;
+    RefPtr<AtomStringImpl> m_language;
 };
 
 } // namespace WebCore

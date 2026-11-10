@@ -33,13 +33,13 @@ class HTMLFontElement final : public HTMLElement {
 public:
     static Ref<HTMLFontElement> create(const QualifiedName&, Document&);
     
-    static bool cssValueFromFontSizeNumber(const String&, CSSValueID&);
+    static bool cssValueFromFontSizeNumber(StringImpl*, CSSValueID&);
 
 private:
     HTMLFontElement(const QualifiedName&, Document&);
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) final;
 };
 
 } // namespace WebCore

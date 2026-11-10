@@ -317,14 +317,14 @@ using AudioConnectionRefPtr = RefPtr<T, RawPtrTraits<T>, AudioNodeConnectionRefD
 template<typename T>
 using AudioConnectionRef = Ref<T, RawPtrTraits<T>, AudioNodeConnectionRefDerefTraits<T>>;
 
-String convertEnumerationToString(AudioNode::NodeType);
+RefPtr<StringImpl> convertEnumerationToString(AudioNode::NodeType);
 
 } // namespace WebCore
 
 namespace WTF {
     
 template<> struct LogArgument<WebCore::AudioNode::NodeType> {
-    static String toString(WebCore::AudioNode::NodeType type) { return convertEnumerationToString(type); }
+    static RefPtr<StringImpl> toString(WebCore::AudioNode::NodeType type) { return convertEnumerationToString(type); }
 };
 
 } // namespace WTF

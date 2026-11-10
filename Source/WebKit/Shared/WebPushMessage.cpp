@@ -39,7 +39,7 @@ WebCore::NotificationData WebPushMessage::notificationPayloadToCoreData() const
 
     static NeverDestroyed<WebCore::ScriptExecutionContextIdentifier> sharedScriptIdentifier = WebCore::ScriptExecutionContextIdentifier::generate();
 
-    String body, iconURL, tag, language;
+    RefPtr<StringImpl> body, iconURL, tag, language;
     auto direction = WebCore::NotificationDirection::Auto;
     std::optional<bool> silent;
 
@@ -51,7 +51,7 @@ WebCore::NotificationData WebPushMessage::notificationPayloadToCoreData() const
         iconURL = notificationPayload->options->icon;
         direction = notificationPayload->options->dir;
         silent = notificationPayload->options->silent;
-        dataJSON = notificationPayload->options->dataJSONString.utf8().span();
+        dataJSON = utf8(notificationPayload->options->dataJSONString).span();
     }
 
     return {

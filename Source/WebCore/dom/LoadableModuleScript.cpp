@@ -35,12 +35,12 @@
 
 namespace WebCore {
 
-Ref<LoadableModuleScript> LoadableModuleScript::create(IsInline isInline, const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, RequestPriority fetchPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
+Ref<LoadableModuleScript> LoadableModuleScript::create(IsInline isInline, AtomStringImpl* nonce, AtomStringImpl* integrity, ReferrerPolicy policy, RequestPriority fetchPriority, AtomStringImpl* crossOriginMode, AtomStringImpl* charset, AtomStringImpl* initiatorType, bool isInUserAgentShadowTree)
 {
     return adoptRef(*new LoadableModuleScript(isInline, nonce, integrity, policy, fetchPriority, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree));
 }
 
-LoadableModuleScript::LoadableModuleScript(IsInline isInline, const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, RequestPriority fetchPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
+LoadableModuleScript::LoadableModuleScript(IsInline isInline, AtomStringImpl* nonce, AtomStringImpl* integrity, ReferrerPolicy policy, RequestPriority fetchPriority, AtomStringImpl* crossOriginMode, AtomStringImpl* charset, AtomStringImpl* initiatorType, bool isInUserAgentShadowTree)
     : LoadableScript(nonce, policy, fetchPriority, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree)
     , m_parameters(ModuleFetchParameters::create(JSC::ScriptFetchParameters::Type::JavaScript, integrity, /* isTopLevelModule */ true))
     , m_isInline(isInline == IsInline::Yes)

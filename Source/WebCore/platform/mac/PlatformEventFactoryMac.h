@@ -59,12 +59,12 @@ WEBCORE_EXPORT DoublePoint pointForEvent(NSEvent *, NSView *windowView);
 
 WEBCORE_EXPORT bool isKeyUpEvent(NSEvent *);
 WEBCORE_EXPORT int windowsKeyCodeForKeyEvent(NSEvent *);
-WEBCORE_EXPORT String keyIdentifierForKeyEvent(NSEvent *);
-WEBCORE_EXPORT String keyForKeyEvent(NSEvent *);
-WEBCORE_EXPORT String codeForKeyEvent(NSEvent *);
+WEBCORE_EXPORT RefPtr<StringImpl> keyIdentifierForKeyEvent(NSEvent *);
+WEBCORE_EXPORT RefPtr<StringImpl> keyForKeyEvent(NSEvent *);
+WEBCORE_EXPORT RefPtr<StringImpl> codeForKeyEvent(NSEvent *);
 WEBCORE_EXPORT UInt8 keyCharForEvent(NSEvent *);
-WEBCORE_EXPORT String textFromEvent(NSEvent *, bool replacesSoftSpace = false);
-WEBCORE_EXPORT String unmodifiedTextFromEvent(NSEvent *, bool replacesSoftSpace = false);
+WEBCORE_EXPORT RefPtr<StringImpl> textFromEvent(NSEvent *, bool replacesSoftSpace = false);
+WEBCORE_EXPORT RefPtr<StringImpl> unmodifiedTextFromEvent(NSEvent *, bool replacesSoftSpace = false);
 WEBCORE_EXPORT bool isKeypadEvent(NSEvent *);
 
 WEBCORE_EXPORT DoublePoint unadjustedMovementForEvent(NSEvent *);

@@ -391,7 +391,7 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
     parameters.allowPrivacyProxy = policySourceDocumentLoader ? policySourceDocumentLoader->allowPrivacyProxy() : mainFrame->allowPrivacyProxy();
 
     if (RefPtr framePolicySourceDocumentLoader = frame->loader().loaderForWebsitePolicies(isMainFrameNavigation ? FrameLoader::CanIncludeCurrentDocumentLoader::No : FrameLoader::CanIncludeCurrentDocumentLoader::Yes)) {
-        if (String referrer = framePolicySourceDocumentLoader->preferences().overrideReferrerForAllRequests; !referrer.isNull())
+        if (RefPtr<StringImpl> referrer = framePolicySourceDocumentLoader->preferences().overrideReferrerForAllRequests; referrer)
             parameters.request.setHTTPHeaderField(HTTPHeaderName::Referer, referrer);
     }
 
@@ -548,7 +548,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         loadParameters.sourceOrigin = WTF::move(origin);
     if (!loadParameters.sourceOrigin) {
         auto origin = request.httpOrigin();
-        if (!origin.isNull())
+        if (origin)
             loadParameters.sourceOrigin = SecurityOrigin::createFromString(origin);
     }
     if (isMainFrameNavigation) {
@@ -603,7 +603,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         && webFrame->frameLoaderClient()) {
         auto navigationUpgradeToHTTPSBehavior = frame ? frame->loader().navigationUpgradeToHTTPSBehavior() : NavigationUpgradeToHTTPSBehavior::BasedOnPolicy;
         // FIXME: Gather more parameters here like we have in WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction.
-        loadParameters.mainResourceNavigationDataForAnyFrame = webFrame->frameLoaderClient()->navigationActionData(resourceLoader.documentLoader()->triggeringAction(), request, { }, { }, { }, { }, { }, navigationUpgradeToHTTPSBehavior, { });
+        loadParameters.mainResourceNavigationDataForAnyFrame = webFrame->frameLoaderClient()->navigationActionData(resourceLoader.documentLoader()->triggeringAction(), request, { }, nullptr, { }, { }, { }, navigationUpgradeToHTTPSBehavior, { });
     }
     if (loadParameters.mainResourceNavigationDataForAnyFrame) {
         if (RefPtr documentLoader = resourceLoader.documentLoader()) {
@@ -985,11 +985,11 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
             request.setIsAppInitiated(loader->lastNavigationWasAppInitiated());
     }
 
-    if (request.httpUserAgent().isEmpty()) {
+    if (isEmpty(request.httpUserAgent())) {
         // FIXME: we add user-agent to the preconnect request because otherwise the preconnect
         // gets thrown away by CFNetwork when using an HTTPS proxy (<rdar://problem/59434166>).
-        String webPageUserAgent = webPage.userAgent(request.url());
-        if (!webPageUserAgent.isEmpty())
+        RefPtr<StringImpl> webPageUserAgent = webPage.userAgent(request.url());
+        if (!isEmpty(webPageUserAgent))
             request.setHTTPUserAgent(webPageUserAgent);
     }
 

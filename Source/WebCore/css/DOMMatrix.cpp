@@ -34,13 +34,13 @@
 namespace WebCore {
 
 // https://drafts.fxtf.org/geometry/#dom-dommatrixreadonly-dommatrixreadonly
-ExceptionOr<Ref<DOMMatrix>> DOMMatrix::create(ScriptExecutionContext& scriptExecutionContext, std::optional<Variant<String, Vector<double>>>&& init)
+ExceptionOr<Ref<DOMMatrix>> DOMMatrix::create(ScriptExecutionContext& scriptExecutionContext, std::optional<Variant<RefPtr<StringImpl>, Vector<double>>>&& init)
 {
     if (!init)
         return adoptRef(*new DOMMatrix);
 
     return WTF::switchOn(init.value(),
-        [&scriptExecutionContext](const String& init) -> ExceptionOr<Ref<DOMMatrix>> {
+        [&scriptExecutionContext](StringImpl* init) -> ExceptionOr<Ref<DOMMatrix>> {
             RefPtr document = dynamicDowncast<Document>(scriptExecutionContext);
             if (!document)
                 return Exception { ExceptionCode::TypeError };
@@ -245,7 +245,7 @@ Ref<DOMMatrix> DOMMatrix::invertSelf()
     return Ref<DOMMatrix> { *this };
 }
 
-ExceptionOr<Ref<DOMMatrix>> DOMMatrix::setMatrixValueForBindings(Document& document, const String& string)
+ExceptionOr<Ref<DOMMatrix>> DOMMatrix::setMatrixValueForBindings(Document& document, StringImpl* string)
 {
     auto result = setMatrixValue(document, string);
     if (result.hasException())

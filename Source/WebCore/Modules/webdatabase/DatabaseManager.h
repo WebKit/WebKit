@@ -50,7 +50,7 @@ class DatabaseManager {
 public:
     NODELETE WEBCORE_EXPORT static DatabaseManager& singleton();
 
-    WEBCORE_EXPORT void initialize(const String& databasePath);
+    WEBCORE_EXPORT void initialize(StringImpl* databasePath);
     NODELETE WEBCORE_EXPORT void setClient(DatabaseManagerClient*);
 
     NODELETE bool isAvailable();
@@ -60,30 +60,30 @@ public:
     // If one doesn't already exist, it will create a new one.
     Ref<DatabaseContext> databaseContext(Document&);
 
-    ExceptionOr<Ref<Database>> openDatabase(Document&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&&);
+    ExceptionOr<Ref<Database>> openDatabase(Document&, StringImpl* name, StringImpl* expectedVersion, StringImpl* displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&&);
 
     NODELETE WEBCORE_EXPORT bool hasOpenDatabases(Document&);
     void stopDatabases(Document&, DatabaseTaskSynchronizer*);
 
-    WEBCORE_EXPORT String fullPathForDatabase(SecurityOrigin&, const String& name, bool createIfDoesNotExist = true);
+    WEBCORE_EXPORT RefPtr<StringImpl> fullPathForDatabase(SecurityOrigin&, StringImpl* name, bool createIfDoesNotExist = true);
 
-    WEBCORE_EXPORT DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin&);
+    WEBCORE_EXPORT DatabaseDetails detailsForNameAndOrigin(StringImpl*, SecurityOrigin&);
 
 private:
     DatabaseManager() = default;
     ~DatabaseManager() = delete;
 
-    void platformInitialize(const String& databasePath);
+    void platformInitialize(StringImpl* databasePath);
 
     enum OpenAttempt { FirstTryToOpenDatabase, RetryOpenDatabase };
-    ExceptionOr<Ref<Database>> openDatabaseBackend(Document&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase);
-    ExceptionOr<Ref<Database>> tryToOpenDatabaseBackend(Document&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase, OpenAttempt);
+    ExceptionOr<Ref<Database>> openDatabaseBackend(Document&, StringImpl* name, StringImpl* expectedVersion, StringImpl* displayName, unsigned estimatedSize, bool setVersionInNewDatabase);
+    ExceptionOr<Ref<Database>> tryToOpenDatabaseBackend(Document&, StringImpl* name, StringImpl* expectedVersion, StringImpl* displayName, unsigned estimatedSize, bool setVersionInNewDatabase, OpenAttempt);
 
     class ProposedDatabase;
     void addProposedDatabase(ProposedDatabase&);
     void removeProposedDatabase(ProposedDatabase&);
 
-    static void logErrorMessage(Document&, const String& message);
+    static void logErrorMessage(Document&, StringImpl* message);
 
     WeakPtr<DatabaseManagerClient> m_client;
     bool m_databaseIsAvailable { true };

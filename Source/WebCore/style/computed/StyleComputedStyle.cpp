@@ -403,19 +403,19 @@ bool ComputedStyle::outOfFlowPositionStyleDidChange(const ComputedStyle* other) 
 
 // MARK: - Used Values
 
-const WTF::String& ComputedStyle::hyphenString() const
+const RefPtr<StringImpl>& ComputedStyle::hyphenString() const
 {
     ASSERT(hyphens() != Hyphens::None);
 
     return WTF::switchOn(hyphenateCharacter(),
-        [&](const CSS::Keyword::Auto&) -> const WTF::String& {
+        [&](const CSS::Keyword::Auto&) -> const RefPtr<StringImpl>& {
             // FIXME: This should depend on locale.
-            static MainThreadNeverDestroyed<const WTF::String> hyphenMinusString(span(hyphenMinus));
-            static MainThreadNeverDestroyed<const WTF::String> hyphenString(span(hyphen));
+            static MainThreadNeverDestroyed<const RefPtr<StringImpl>> hyphenMinusString(StringImpl::create(span(hyphenMinus)));
+            static MainThreadNeverDestroyed<const RefPtr<StringImpl>> hyphenString(StringImpl::create(span(hyphen)));
 
             return protect(fontCascade().primaryFont())->glyphForCharacter(hyphen) ? hyphenString : hyphenMinusString;
         },
-        [](const String& string) -> const WTF::String& {
+        [](const String& string) -> const RefPtr<StringImpl>& {
             return string.value;
         }
     );

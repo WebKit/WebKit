@@ -48,14 +48,14 @@ public:
 
     DECLARE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE);
 
-    JS_EXPORT_PRIVATE String name();
-    String displayName(VM&);
-    String calculatedDisplayName(VM&);
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> name();
+    RefPtr<StringImpl> displayName(VM&);
+    RefPtr<StringImpl> calculatedDisplayName(VM&);
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     JS_EXPORT_PRIVATE static Structure* createSubclassStructure(JSGlobalObject*, JSObject* newTarget, Structure*);
-    JS_EXPORT_PRIVATE static InternalFunction* createFunctionThatMasqueradesAsUndefined(VM&, JSGlobalObject*, unsigned length, const String& name, NativeFunction);
+    JS_EXPORT_PRIVATE static InternalFunction* createFunctionThatMasqueradesAsUndefined(VM&, JSGlobalObject*, unsigned length, StringImpl* name, NativeFunction);
 
     TaggedNativeFunction nativeFunctionFor(CodeSpecializationKind kind)
     {
@@ -94,7 +94,7 @@ protected:
     JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*, NativeFunction functionForCall, NativeFunction functionForConstruct = nullptr);
 
     enum class PropertyAdditionMode { WithStructureTransition, WithoutStructureTransition };
-    JS_EXPORT_PRIVATE void finishCreation(VM&, unsigned length, const String& name, PropertyAdditionMode = PropertyAdditionMode::WithStructureTransition);
+    JS_EXPORT_PRIVATE void finishCreation(VM&, unsigned length, StringImpl* name, PropertyAdditionMode = PropertyAdditionMode::WithStructureTransition);
     DECLARE_DEFAULT_FINISH_CREATION;
 
     NODELETE JS_EXPORT_PRIVATE static CallData getConstructData(JSCell*);

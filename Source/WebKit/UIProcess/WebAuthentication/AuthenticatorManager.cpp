@@ -159,7 +159,7 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
     return result;
 }
 
-static String getRpId(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
+static RefPtr<StringImpl> getRpId(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
     if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options)) {
         auto& creationOptions = std::get<PublicKeyCredentialCreationOptions>(options);
@@ -169,7 +169,7 @@ static String getRpId(const Variant<PublicKeyCredentialCreationOptions, PublicKe
     return std::get<PublicKeyCredentialRequestOptions>(options).rpId;
 }
 
-static String getUserName(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
+static RefPtr<StringImpl> getUserName(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
     if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options))
         return std::get<PublicKeyCredentialCreationOptions>(options).user.name;
@@ -343,7 +343,7 @@ void AuthenticatorManager::authenticatorStatusUpdated(WebAuthenticationStatus st
     if (status != WebAuthenticationStatus::PINSuccessful) {
         // Immediately invalidate the cache if the PIN is incorrect. A status update often means
         // an error. We don't really care what kind of error it really is.
-        m_pendingRequest->data.cachedPin = String();
+        m_pendingRequest->data.cachedPin = nullptr;
     }
 
     // This is for the new UI.
@@ -357,7 +357,7 @@ void AuthenticatorManager::authenticatorStatusUpdated(WebAuthenticationStatus st
     });
 }
 
-void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&& completionHandler)
+void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     if (!m_pendingRequest || !m_pendingRequest->completionHandler) {
         completionHandler(nullString());
@@ -367,13 +367,13 @@ void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(c
     // Cache the PIN to improve NFC user experience so that a momentary movement of the NFC key away from the scanner doesn't
     // force the PIN entry to be re-entered.
     // We don't distinguish USB and NFC here becuase there is no harms to have this optimization for USB even though it is useless.
-    if (!m_pendingRequest->data.cachedPin.isNull()) {
+    if (m_pendingRequest->data.cachedPin) {
         completionHandler(m_pendingRequest->data.cachedPin);
-        m_pendingRequest->data.cachedPin = String();
+        m_pendingRequest->data.cachedPin = nullptr;
         return;
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (const WTF::String& pin) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (StringImpl* pin) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !protectedThis->m_pendingRequest) {
             completionHandler(nullString());
@@ -395,14 +395,14 @@ void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(c
     });
 }
 
-void AuthenticatorManager::requestNewPin(uint64_t minLength, CompletionHandler<void(const WTF::String&)>&& completionHandler)
+void AuthenticatorManager::requestNewPin(uint64_t minLength, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     if (!m_pendingRequest || !m_pendingRequest->completionHandler) {
         completionHandler(nullString());
         return;
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (const WTF::String& pin) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (StringImpl* pin) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !protectedThis->m_pendingRequest) {
             completionHandler(nullString());

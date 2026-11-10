@@ -147,17 +147,17 @@ std::optional<CSSNumericType> CSSNumericType::multiplyTypes(const Vector<Ref<CSS
     return typeFromVector(values, multiplyTypes);
 }
 
-String CSSNumericType::debugString() const
+RefPtr<StringImpl> CSSNumericType::debugString() const
 {
     return makeString('{',
-        length ? makeString(" length:"_s, *length) : String(),
-        angle ? makeString(" angle:"_s, *angle) : String(),
-        time ? makeString(" time:"_s, *time) : String(),
-        frequency ? makeString(" frequency:"_s, *frequency) : String(),
-        resolution ? makeString(" resolution:"_s, *resolution) : String(),
-        flex ? makeString(" flex:"_s, *flex) : String(),
-        percent ? makeString(" percent:"_s, *percent) : String(),
-        percentHint ? makeString(" percentHint:"_s, WebCore::debugString(*percentHint)) : String(),
+        length ? makeString(" length:"_s, *length) : nullptr,
+        angle ? makeString(" angle:"_s, *angle) : nullptr,
+        time ? makeString(" time:"_s, *time) : nullptr,
+        frequency ? makeString(" frequency:"_s, *frequency) : nullptr,
+        resolution ? makeString(" resolution:"_s, *resolution) : nullptr,
+        flex ? makeString(" flex:"_s, *flex) : nullptr,
+        percent ? makeString(" percent:"_s, *percent) : nullptr,
+        percentHint ? makeString(" percentHint:"_s, WebCore::debugString(*percentHint)) : nullptr,
     " }"_s);
 }
 

@@ -34,7 +34,7 @@ struct DebugInfo {
 
     struct Message {
         JSC::MessageLevel messageLevel;
-        String message;
+        RefPtr<StringImpl> message;
 
         Message isolatedCopy() const &;
         Message isolatedCopy() &&;

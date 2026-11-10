@@ -71,8 +71,8 @@ public:
     WEBCORE_EXPORT static void breakToAllowRenderingUpdate();
 
 private:
-    NODELETE static Ref<WindowEventLoop> create(const String&);
-    WindowEventLoop(const String&);
+    NODELETE static Ref<WindowEventLoop> create(StringImpl*);
+    WindowEventLoop(StringImpl*);
 
     void scheduleToRun() final;
     bool isContextThread() const final;
@@ -87,7 +87,7 @@ private:
 
     void decayIdleCallbackDuration() { m_expectedIdleCallbackDuration /= 2; }
 
-    String m_agentClusterKey;
+    RefPtr<StringImpl> m_agentClusterKey;
     Timer m_timer;
     Timer m_idleTimer;
     const RefPtr<MicrotaskQueue> m_microtaskQueue;

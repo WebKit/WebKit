@@ -32,36 +32,42 @@
 #include <WebCore/JSDOMConvertBase.h>
 #include <WebCore/StringAdaptors.h>
 #include <WebCore/TrustedType.h>
+#include <wtf/ValueOrReference.h>
 
 namespace WebCore {
 
 class ScriptExecutionContext;
 
-WEBCORE_EXPORT String identifierToString(JSC::JSGlobalObject&, const JSC::Identifier&);
+WEBCORE_EXPORT RefPtr<StringImpl> identifierToString(JSC::JSGlobalObject&, const JSC::Identifier&);
 
-WEBCORE_EXPORT String identifierToByteString(JSC::JSGlobalObject&, const JSC::Identifier&);
+WEBCORE_EXPORT RefPtr<StringImpl> identifierToByteString(JSC::JSGlobalObject&, const JSC::Identifier&);
 WEBCORE_EXPORT ConversionResult<IDLByteString> valueToByteString(JSC::JSGlobalObject&, JSC::JSValue);
 WEBCORE_EXPORT ConversionResult<IDLAtomStringAdaptor<IDLByteString>> valueToByteAtomString(JSC::JSGlobalObject&, JSC::JSValue);
 
-WEBCORE_EXPORT String identifierToUSVString(JSC::JSGlobalObject&, const JSC::Identifier&);
+WEBCORE_EXPORT RefPtr<StringImpl> identifierToUSVString(JSC::JSGlobalObject&, const JSC::Identifier&);
 WEBCORE_EXPORT ConversionResult<IDLUSVString> valueToUSVString(JSC::JSGlobalObject&, JSC::JSValue);
 WEBCORE_EXPORT ConversionResult<IDLAtomStringAdaptor<IDLUSVString>> valueToUSVAtomString(JSC::JSGlobalObject&, JSC::JSValue);
 
-ConversionResult<IDLDOMString> trustedScriptCompliantString(JSC::JSGlobalObject&, JSC::JSValue, const String& sink);
+ConversionResult<IDLDOMString> trustedScriptCompliantString(JSC::JSGlobalObject&, JSC::JSValue, StringImpl* sink);
 
-inline AtomString propertyNameToString(JSC::PropertyName propertyName)
+// Symbols are not atoms, so callers must not pass a symbol property name.
+inline RefPtr<AtomStringImpl> propertyNameToString(JSC::PropertyName propertyName)
 {
     ASSERT(!propertyName.isSymbol());
-    return propertyName.uid() ? propertyName.uid() : propertyName.publicName();
+    return propertyName.publicName();
 }
 
-inline AtomString propertyNameToAtomString(JSC::PropertyName propertyName)
+inline RefPtr<AtomStringImpl> propertyNameToAtomString(JSC::PropertyName propertyName)
 {
-    return AtomString(propertyName.uid() ? propertyName.uid() : propertyName.publicName());
+    ASSERT(!propertyName.isSymbol());
+    return propertyName.publicName();
 }
 
 // MARK: -
 // MARK: String types
+
+// Values that convert to RefPtr<StringImpl> but not to StringImpl*, such as ASCIILiteral.
+template<typename T> concept ConvertibleToStringImplRefPtrOnly = std::is_convertible_v<T, RefPtr<StringImpl>> && !std::is_convertible_v<T, StringImpl*>;
 
 template<> struct Converter<IDLDOMString> : DefaultConverter<IDLDOMString> {
     using Result = ConversionResult<IDLDOMString>;
@@ -73,9 +79,23 @@ template<> struct JSConverter<IDLDOMString> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, StringImpl* value)
     {
         return JSC::jsStringWithCache(JSC::getVM(&lexicalGlobalObject), value);
+    }
+
+    template<WTF::StringImplClass T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const RefPtr<T>& value)
+    {
+        return convert(lexicalGlobalObject, value.get());
+    }
+    template<WTF::StringImplClass T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const ValueOrReference<RefPtr<T>>& value)
+    {
+        return convert(lexicalGlobalObject, value.get());
+    }
+
+    template<ConvertibleToStringImplRefPtrOnly T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, T&& value)
+    {
+        return convert(lexicalGlobalObject, RefPtr<StringImpl> { std::forward<T>(value) }.get());
     }
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const UncachedString& value)
@@ -107,9 +127,14 @@ template<> struct JSConverter<IDLByteString> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, StringImpl* value)
     {
         return JSC::jsStringWithCache(JSC::getVM(&lexicalGlobalObject), value);
+    }
+
+    template<ConvertibleToStringImplRefPtrOnly T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, T&& value)
+    {
+        return convert(lexicalGlobalObject, RefPtr<StringImpl> { std::forward<T>(value) }.get());
     }
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const UncachedString& value)
@@ -125,6 +150,11 @@ template<> struct JSConverter<IDLByteString> {
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const URL& value)
     {
         return JSC::jsOwnedString(JSC::getVM(&lexicalGlobalObject), value.string());
+    }
+
+    template<WTF::StringImplClass T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const RefPtr<T>& value)
+    {
+        return convert(lexicalGlobalObject, value.get());
     }
 };
 
@@ -146,9 +176,14 @@ template<> struct JSConverter<IDLUSVString> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, StringImpl* value)
     {
         return JSC::jsStringWithCache(JSC::getVM(&lexicalGlobalObject), value);
+    }
+
+    template<ConvertibleToStringImplRefPtrOnly T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, T&& value)
+    {
+        return convert(lexicalGlobalObject, RefPtr<StringImpl> { std::forward<T>(value) }.get());
     }
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const UncachedString& value)
@@ -164,6 +199,11 @@ template<> struct JSConverter<IDLUSVString> {
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const URL& value)
     {
         return JSC::jsOwnedString(JSC::getVM(&lexicalGlobalObject), value.string());
+    }
+
+    template<WTF::StringImplClass T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const RefPtr<T>& value)
+    {
+        return convert(lexicalGlobalObject, value.get());
     }
 };
 
@@ -187,7 +227,7 @@ struct TrustedStringConverter : DefaultConverter<IDL> {
         return Converter<IDL>::convert(lexicalGlobalObject, value, emptyString());
     }
 
-    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, const String& sink)
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, StringImpl* sink)
     {
         return trustedScriptCompliantString(lexicalGlobalObject, value, sink);
     }
@@ -198,9 +238,23 @@ struct JSStringAdaptorConverter  {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, StringImpl* value)
     {
         return JSConverter<InnerStringType>::convert(lexicalGlobalObject, value);
+    }
+
+    template<ConvertibleToStringImplRefPtrOnly T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, T&& value)
+    {
+        return JSConverter<InnerStringType>::convert(lexicalGlobalObject, std::forward<T>(value));
+    }
+
+    template<WTF::StringImplClass T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const RefPtr<T>& value)
+    {
+        return convert(lexicalGlobalObject, value.get());
+    }
+    template<WTF::StringImplClass T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const ValueOrReference<RefPtr<T>>& value)
+    {
+        return convert(lexicalGlobalObject, value.get());
     }
 };
 
@@ -209,7 +263,7 @@ struct JSAtomStringAdaptorConverter  {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const AtomString& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, AtomStringImpl* value)
     {
         return JSConverter<InnerStringType>::convert(lexicalGlobalObject, value);
     }
@@ -217,6 +271,11 @@ struct JSAtomStringAdaptorConverter  {
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const URL& value)
     {
         return JSConverter<InnerStringType>::convert(lexicalGlobalObject, value.string());
+    }
+
+    template<WTF::StringImplClass T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const RefPtr<T>& value)
+    {
+        return convert(lexicalGlobalObject, value.get());
     }
 };
 
@@ -289,12 +348,12 @@ template<typename IDL>  struct JSConverter<IDLAtomStringAdaptor<IDL>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const AtomString& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, AtomStringImpl* value)
     {
         return toJS<IDL>(lexicalGlobalObject, value);
     }
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, StringImpl* value)
     {
         return toJS<IDL>(lexicalGlobalObject, value);
     }
@@ -303,18 +362,23 @@ template<typename IDL>  struct JSConverter<IDLAtomStringAdaptor<IDL>> {
     {
         return toJS<IDL>(lexicalGlobalObject, value.string());
     }
+
+    template<WTF::StringImplClass T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const RefPtr<T>& value)
+    {
+        return convert(lexicalGlobalObject, value.get());
+    }
 };
 
 template<>  struct JSConverter<IDLAtomStringAdaptor<IDLUSVString>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const AtomString& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, AtomStringImpl* value)
     {
-        return toJS<IDLUSVString>(lexicalGlobalObject, value.string());
+        return toJS<IDLUSVString>(lexicalGlobalObject, value);
     }
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, StringImpl* value)
     {
         return toJS<IDLUSVString>(lexicalGlobalObject, value);
     }
@@ -323,20 +387,30 @@ template<>  struct JSConverter<IDLAtomStringAdaptor<IDLUSVString>> {
     {
         return toJS<IDLUSVString>(lexicalGlobalObject, value.string());
     }
+
+    template<WTF::StringImplClass T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const RefPtr<T>& value)
+    {
+        return convert(lexicalGlobalObject, value.get());
+    }
 };
 
 template<> struct JSConverter<IDLAtomStringAdaptor<IDLByteString>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const AtomString& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, AtomStringImpl* value)
     {
-        return toJS<IDLByteString>(lexicalGlobalObject, value.string());
+        return toJS<IDLByteString>(lexicalGlobalObject, value);
+    }
+
+    template<WTF::StringImplClass T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const RefPtr<T>& value)
+    {
+        return convert(lexicalGlobalObject, value.get());
     }
 };
 
 template<typename IDL> struct Converter<IDLRequiresExistingAtomStringAdaptor<IDL>> : DefaultConverter<IDLRequiresExistingAtomStringAdaptor<IDL>> {
-    static AtomString convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    static RefPtr<AtomStringImpl> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
         static_assert(std::is_same<IDL, IDLDOMString>::value, "This adaptor is only supported for IDLDOMString at the moment.");
 
@@ -348,11 +422,16 @@ template<typename IDL> struct JSConverter<IDLRequiresExistingAtomStringAdaptor<I
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const AtomString& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, AtomStringImpl* value)
     {
         static_assert(std::is_same<IDL, IDLDOMString>::value, "This adaptor is only supported for IDLDOMString at the moment.");
 
         return toJS<IDL>(lexicalGlobalObject, value);
+    }
+
+    template<WTF::StringImplClass T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const RefPtr<T>& value)
+    {
+        return convert(lexicalGlobalObject, value.get());
     }
 };
 
@@ -361,23 +440,23 @@ template<> struct JSConverter<IDLNullable<IDLDOMString>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, StringImpl* value)
     {
-        if (value.isNull())
+        if (!value)
             return JSC::jsNull();
         return toJS<IDLDOMString>(lexicalGlobalObject, value);
     }
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const UncachedString& value)
     {
-        if (value.string.isNull())
+        if (!value.string)
             return JSC::jsNull();
         return toJS<IDLDOMString>(lexicalGlobalObject, value);
     }
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const OwnedString& value)
     {
-        if (value.string.isNull())
+        if (!value.string)
             return JSC::jsNull();
         return toJS<IDLDOMString>(lexicalGlobalObject, value);
     }
@@ -387,6 +466,11 @@ template<> struct JSConverter<IDLNullable<IDLDOMString>> {
         if (value.isNull())
             return JSC::jsNull();
         return toJS<IDLDOMString>(lexicalGlobalObject, value);
+    }
+
+    template<WTF::StringImplClass T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const RefPtr<T>& value)
+    {
+        return convert(lexicalGlobalObject, value.get());
     }
 };
 
@@ -394,23 +478,23 @@ template<> struct JSConverter<IDLNullable<IDLByteString>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, StringImpl* value)
     {
-        if (value.isNull())
+        if (!value)
             return JSC::jsNull();
         return toJS<IDLByteString>(lexicalGlobalObject, value);
     }
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const UncachedString& value)
     {
-        if (value.string.isNull())
+        if (!value.string)
             return JSC::jsNull();
         return toJS<IDLByteString>(lexicalGlobalObject, value);
     }
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const OwnedString& value)
     {
-        if (value.string.isNull())
+        if (!value.string)
             return JSC::jsNull();
         return toJS<IDLByteString>(lexicalGlobalObject, value);
     }
@@ -420,6 +504,11 @@ template<> struct JSConverter<IDLNullable<IDLByteString>> {
         if (value.isNull())
             return JSC::jsNull();
         return toJS<IDLByteString>(lexicalGlobalObject, value);
+    }
+
+    template<WTF::StringImplClass T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const RefPtr<T>& value)
+    {
+        return convert(lexicalGlobalObject, value.get());
     }
 };
 
@@ -427,23 +516,23 @@ template<> struct JSConverter<IDLNullable<IDLUSVString>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, StringImpl* value)
     {
-        if (value.isNull())
+        if (!value)
             return JSC::jsNull();
         return toJS<IDLUSVString>(lexicalGlobalObject, value);
     }
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const UncachedString& value)
     {
-        if (value.string.isNull())
+        if (!value.string)
             return JSC::jsNull();
         return toJS<IDLUSVString>(lexicalGlobalObject, value);
     }
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const OwnedString& value)
     {
-        if (value.string.isNull())
+        if (!value.string)
             return JSC::jsNull();
         return toJS<IDLUSVString>(lexicalGlobalObject, value);
     }
@@ -454,24 +543,34 @@ template<> struct JSConverter<IDLNullable<IDLUSVString>> {
             return JSC::jsNull();
         return toJS<IDLUSVString>(lexicalGlobalObject, value);
     }
+
+    template<WTF::StringImplClass T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const RefPtr<T>& value)
+    {
+        return convert(lexicalGlobalObject, value.get());
+    }
 };
 
 template<> struct JSConverter<IDLNullable<IDLAtomStringAdaptor<IDLDOMString>>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, StringImpl* value)
     {
-        if (value.isNull())
+        if (!value)
             return JSC::jsNull();
         return toJS<IDLDOMString>(lexicalGlobalObject, value);
     }
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const AtomString& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, AtomStringImpl* value)
     {
-        if (value.isNull())
+        if (!value)
             return JSC::jsNull();
-        return toJS<IDLDOMString>(lexicalGlobalObject, value.string());
+        return toJS<IDLDOMString>(lexicalGlobalObject, value);
+    }
+
+    template<WTF::StringImplClass T> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const RefPtr<T>& value)
+    {
+        return convert(lexicalGlobalObject, value.get());
     }
 };
 

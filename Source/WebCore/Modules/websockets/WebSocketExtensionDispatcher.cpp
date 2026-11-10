@@ -48,66 +48,66 @@ void WebSocketExtensionDispatcher::reset()
 void WebSocketExtensionDispatcher::addProcessor(std::unique_ptr<WebSocketExtensionProcessor> processor)
 {
     for (auto& extensionProcessor : m_processors) {
-        if (extensionProcessor->extensionToken() == processor->extensionToken())
+        if (equal(extensionProcessor->extensionToken(), processor->extensionToken()))
             return;
     }
-    ASSERT(processor->handshakeString().length());
-    ASSERT(!processor->handshakeString().contains('\n'));
-    ASSERT(!processor->handshakeString().contains(static_cast<char16_t>('\0')));
+    ASSERT(length(processor->handshakeString()));
+    ASSERT(!contains(processor->handshakeString(), '\n'));
+    ASSERT(!contains(processor->handshakeString(), static_cast<char16_t>('\0')));
     m_processors.append(WTF::move(processor));
 }
 
-const String WebSocketExtensionDispatcher::createHeaderValue() const
+const RefPtr<StringImpl> WebSocketExtensionDispatcher::createHeaderValue() const
 {
     size_t numProcessors = m_processors.size();
     if (!numProcessors)
-        return String();
+        return nullptr;
 
     return makeString(interleave(m_processors, [](auto& processor) { return processor->handshakeString(); }, ", "_s));
 }
 
-void WebSocketExtensionDispatcher::appendAcceptedExtension(const String& extensionToken, HashMap<String, String>& extensionParameters)
+void WebSocketExtensionDispatcher::appendAcceptedExtension(StringImpl* extensionToken, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& extensionParameters)
 {
     m_acceptedExtensionsBuilder.append(m_acceptedExtensionsBuilder.isEmpty() ? ""_s : ", "_s, extensionToken);
     // FIXME: Should use ListHashSet to keep the order of the parameters.
     for (auto& parameter : extensionParameters) {
         m_acceptedExtensionsBuilder.append("; "_s, parameter.key);
-        if (!parameter.value.isNull())
+        if (parameter.value)
             m_acceptedExtensionsBuilder.append('=', parameter.value);
     }
 }
 
-void WebSocketExtensionDispatcher::fail(const String& reason)
+void WebSocketExtensionDispatcher::fail(StringImpl* reason)
 {
     m_failureReason = reason;
     m_acceptedExtensionsBuilder.clear();
 }
 
-bool WebSocketExtensionDispatcher::processHeaderValue(const String& headerValue)
+bool WebSocketExtensionDispatcher::processHeaderValue(StringImpl* headerValue)
 {
-    if (!headerValue.length())
+    if (!length(headerValue))
         return true;
 
     // If we don't send Sec-WebSocket-Extensions header, the server should not return the header.
     if (!m_processors.size()) {
-        fail("Received unexpected Sec-WebSocket-Extensions header"_s);
+        fail("Received unexpected Sec-WebSocket-Extensions header"_si);
         return false;
     }
 
-    const auto headerValueData = headerValue.utf8();
+    const auto headerValueData = utf8(headerValue);
     // FIXME: Is UTF-8 the encoding that WebSocketExtensionParser expects? It doesn't specify.
     WebSocketExtensionParser parser(byteCast<uint8_t>(headerValueData.span()));
     while (!parser.finished()) {
-        String extensionToken;
-        HashMap<String, String> extensionParameters;
+        RefPtr<StringImpl> extensionToken;
+        HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> extensionParameters;
         if (!parser.parseExtension(extensionToken, extensionParameters)) {
-            fail("Sec-WebSocket-Extensions header is invalid"_s);
+            fail("Sec-WebSocket-Extensions header is invalid"_si);
             return false;
         }
 
         size_t index = 0;
         for (auto& processor : m_processors) {
-            if (extensionToken == processor->extensionToken()) {
+            if (equal(extensionToken, processor->extensionToken())) {
                 if (processor->processResponse(extensionParameters)) {
                     appendAcceptedExtension(extensionToken, extensionParameters);
                     break;
@@ -126,14 +126,14 @@ bool WebSocketExtensionDispatcher::processHeaderValue(const String& headerValue)
     return parser.parsedSuccessfully();
 }
 
-String WebSocketExtensionDispatcher::acceptedExtensions() const
+RefPtr<StringImpl> WebSocketExtensionDispatcher::acceptedExtensions() const
 {
     if (m_acceptedExtensionsBuilder.isEmpty())
-        return String();
+        return nullptr;
     return m_acceptedExtensionsBuilder.toStringPreserveCapacity();
 }
 
-String WebSocketExtensionDispatcher::failureReason() const
+RefPtr<StringImpl> WebSocketExtensionDispatcher::failureReason() const
 {
     return m_failureReason;
 }

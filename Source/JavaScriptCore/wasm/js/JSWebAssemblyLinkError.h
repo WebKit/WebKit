@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-JSObject* createJSWebAssemblyLinkError(JSGlobalObject*, VM&, const String&);
+JSObject* createJSWebAssemblyLinkError(JSGlobalObject*, VM&, StringImpl*);
 
 } // namespace JSC
 

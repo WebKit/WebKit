@@ -122,7 +122,7 @@ public:
     IntRect rootViewToAccessibilityScreen(const IntRect&) const override;
     PlatformPageClient platformPageClient() const override;
 #if PLATFORM(IOS_FAMILY)
-    void relayAccessibilityNotification(String&&, RetainPtr<NSData>&&) const override;
+    void relayAccessibilityNotification(RefPtr<StringImpl>&&, RetainPtr<NSData>&&) const override;
     void relayAriaNotifyNotification(AriaNotifyData&&) const;
     void relayLiveRegionNotification(LiveRegionAnnouncementData&&) const;
 #endif
@@ -180,7 +180,7 @@ public:
     void focusedElementChanged(Element*, LocalFrame*, FocusOptions);
     void focusedFrameChanged(Frame*);
 
-    WEBCORE_EXPORT RefPtr<Page> createWindow(LocalFrame&, const String& openedMainFrameName, const WindowFeatures&, const NavigationAction&);
+    WEBCORE_EXPORT RefPtr<Page> createWindow(LocalFrame&, StringImpl* openedMainFrameName, const WindowFeatures&, const NavigationAction&);
     WEBCORE_EXPORT void show();
 
     bool canRunModal() const;
@@ -191,13 +191,13 @@ public:
     void setResizable(bool);
 
     bool canRunBeforeUnloadConfirmPanel();
-    bool runBeforeUnloadConfirmPanel(String&& message, LocalFrame&);
+    bool runBeforeUnloadConfirmPanel(RefPtr<StringImpl>&& message, LocalFrame&);
 
     void closeWindow();
 
-    void runJavaScriptAlert(LocalFrame&, const String&);
-    bool runJavaScriptConfirm(LocalFrame&, const String&);
-    bool runJavaScriptPrompt(LocalFrame&, const String& message, const String& defaultValue, String& result);
+    void runJavaScriptAlert(LocalFrame&, StringImpl*);
+    bool runJavaScriptConfirm(LocalFrame&, StringImpl*);
+    bool runJavaScriptPrompt(LocalFrame&, StringImpl* message, StringImpl* defaultValue, RefPtr<StringImpl>& result);
 
     void mouseDidMoveOverElement(const HitTestResult&, OptionSet<PlatformEventModifier>);
 
@@ -215,7 +215,7 @@ public:
     std::unique_ptr<WorkerClient> createWorkerClient(SerialFunctionDispatcher&);
 
     void runOpenPanel(LocalFrame&, FileChooser&);
-    void transcodeChosenFiles(Vector<String>&& transcodingPaths, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&&);
+    void transcodeChosenFiles(Vector<RefPtr<StringImpl>>&& transcodingPaths, RefPtr<StringImpl>&& destinationUTI, RefPtr<StringImpl>&& destinationExtension, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&);
     void showShareSheet(ShareDataWithParsedURL&&, CompletionHandler<void(bool)>&&);
     void showContactPicker(ContactsRequestData&&, CompletionHandler<void(std::optional<Vector<ContactInfo>>&&)>&&);
 
@@ -224,7 +224,7 @@ public:
     void dismissDigitalCredentialsChooser(CompletionHandler<void(bool)>&&);
 #endif
 
-    void loadIconForFiles(const Vector<String>&, FileIconLoader&);
+    void loadIconForFiles(const Vector<RefPtr<StringImpl>>&, FileIconLoader&);
 
     void dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>&) const;
     void dispatchViewportPropertiesDidChange(const ViewportArguments&) const;
@@ -248,7 +248,7 @@ public:
     void registerPopupOpeningObserver(PopupOpeningObserver&);
     void unregisterPopupOpeningObserver(PopupOpeningObserver&);
 
-    WEBCORE_EXPORT void getToolTip(const HitTestResult&, String&, TextDirection&);
+    WEBCORE_EXPORT void getToolTip(const HitTestResult&, RefPtr<StringImpl>&, TextDirection&);
 
 private:
     void notifyPopupOpeningObservers() const;

@@ -67,7 +67,7 @@ PublicSuffix PublicSuffixStore::publicSuffix(const URL& url) const
     return { };
 }
 
-String PublicSuffixStore::topPrivatelyControlledDomain(StringView host) const
+RefPtr<StringImpl> PublicSuffixStore::topPrivatelyControlledDomain(StringView host) const
 {
     // FIXME: if host is a URL, we could drop these checks.
     if (host.isEmpty())
@@ -77,13 +77,13 @@ String PublicSuffixStore::topPrivatelyControlledDomain(StringView host) const
         return host.toString();
 
     Locker locker { m_HostTopPrivatelyControlledDomainCacheLock };
-    auto result = m_hostTopPrivatelyControlledDomainCache.ensure<ASCIICaseInsensitiveStringViewHashTranslator>(host, [&] {
+    auto result = isolatedCopy(m_hostTopPrivatelyControlledDomainCache.ensure<ASCIICaseInsensitiveStringViewHashTranslator>(host, [&] {
         const auto lowercaseHost = host.convertToASCIILowercase();
-        if (lowercaseHost == "localhost"_s || URL::hostIsIPAddress(lowercaseHost))
+        if (equal(lowercaseHost, "localhost"_s) || URL::hostIsIPAddress(lowercaseHost))
             return lowercaseHost;
 
         return platformTopPrivatelyControlledDomain(lowercaseHost);
-    }).iterator->value.isolatedCopy();
+    }).iterator->value);
 
     constexpr auto maxHostTopPrivatelyControlledDomainCache = 128;
     if (m_hostTopPrivatelyControlledDomainCache.size() > maxHostTopPrivatelyControlledDomainCache)
@@ -92,16 +92,16 @@ String PublicSuffixStore::topPrivatelyControlledDomain(StringView host) const
     return result;
 }
 
-String PublicSuffixStore::topPrivatelyControlledDomainWithoutPublicSuffix(StringView host) const
+RefPtr<StringImpl> PublicSuffixStore::topPrivatelyControlledDomainWithoutPublicSuffix(StringView host) const
 {
     auto topPrivatelyControlledDomain = this->topPrivatelyControlledDomain(host);
-    if (topPrivatelyControlledDomain.isEmpty())
+    if (isEmpty(topPrivatelyControlledDomain))
         return { };
 
     return domainWithoutPublicSuffix(topPrivatelyControlledDomain);
 }
 
-String PublicSuffixStore::domainWithoutPublicSuffix(StringView domain) const
+RefPtr<StringImpl> PublicSuffixStore::domainWithoutPublicSuffix(StringView domain) const
 {
     if (URL::hostIsIPAddress(domain))
         return domain.toString();

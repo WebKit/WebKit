@@ -32,19 +32,19 @@
 
 namespace WebKit {
 
-String uniqueDatabaseIdentifier(const String& databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin)
+RefPtr<StringImpl> uniqueDatabaseIdentifier(StringImpl* databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin)
 {
     StringBuilder stringBuilder;
 
-    String originString = openingOrigin.toString();
-    if (originString == "null"_s)
-        return String();
+    RefPtr<StringImpl> originString = openingOrigin.toString();
+    if (equal(originString, "null"_s))
+        return nullptr;
     stringBuilder.append(originString);
     stringBuilder.append('_');
 
     originString = mainFrameOrigin.toString();
-    if (originString == "null"_s)
-        return String();
+    if (equal(originString, "null"_s))
+        return nullptr;
     stringBuilder.append(originString);
 
     stringBuilder.append('_');

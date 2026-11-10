@@ -113,11 +113,11 @@ private:
     void modelProcessDidExit() override;
 #endif
     void preferencesDidChange() override;
-    void toolTipChanged(const String&, const String&) override;
+    void toolTipChanged(StringImpl*, StringImpl*) override;
     void decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, const FrameInfoData&, Function<void(bool)>&) override;
     void didStartProvisionalLoadForMainFrame() override;
     void didFailProvisionalLoadForMainFrame() override;
-    void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
+    void didCommitLoadForMainFrame(StringImpl* mimeType, bool useCustomContentProvider) override;
     void didChangeContentSize(const WebCore::IntSize&) override;
     void setCursor(const WebCore::Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
@@ -126,7 +126,7 @@ private:
     bool canUndoRedo(UndoOrRedo) override;
     void executeUndoRedo(UndoOrRedo) override;
     void accessibilityWebProcessTokenReceived(std::span<const uint8_t>, pid_t) override;
-    bool executeSavedCommandBySelector(const String& selector) override;
+    bool executeSavedCommandBySelector(StringImpl* selector) override;
     void updateSecureInputState() override;
     void resetSecureInputState() override;
     void notifyInputContextAboutDiscardedComposition() override;
@@ -139,7 +139,7 @@ private:
     WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) override;
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) override;
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) override;
-    void relayAccessibilityNotification(String&&, RetainPtr<NSData>&&) override;
+    void relayAccessibilityNotification(RefPtr<StringImpl>&&, RetainPtr<NSData>&&) override;
     void relayAriaNotifyNotification(const WebCore::AriaNotifyData&) override;
     void relayLiveRegionNotification(const WebCore::LiveRegionAnnouncementData&) override;
     void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
@@ -155,11 +155,11 @@ private:
     UIScreen *screen() override;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) final;
+    void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, StringImpl* sourceLanguageIdentifier, StringImpl* targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) final;
 #endif
 
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
-    Ref<WebCore::ValidationBubble> createValidationBubble(String&& message, const WebCore::ValidationBubble::Settings&) final;
+    Ref<WebCore::ValidationBubble> createValidationBubble(RefPtr<StringImpl>&& message, const WebCore::ValidationBubble::Settings&) final;
     bool shouldSuppressFormValidationBubble() const final;
 
     RefPtr<WebColorPicker> createColorPicker(WebPageProxy&, const WebCore::Color& initialColor, ColorControlSupportsAlpha, Vector<WebCore::Color>&&, std::optional<WebCore::FrameIdentifier>) final { return nullptr; }
@@ -211,7 +211,7 @@ private:
     bool interpretKeyEvent(const NativeWebKeyboardEvent&, KeyEventInterpretationContext&&) override;
     void positionInformationDidChange(const InteractionInformationAtPosition&, std::optional<WebCore::FrameIdentifier>) override;
     void saveImageToLibrary(const Ref<WebCore::SharedBuffer>&) override;
-    void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&) override;
+    void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, StringImpl*) override;
     void showDataDetectorsUIForPositionInformation(const InteractionInformationAtPosition&) override;
 
     bool canStartNavigationSwipeAtLastInteractionLocation() const final;
@@ -266,9 +266,9 @@ private:
     void unlockFullscreenOrientation() override;
 #endif
 
-    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>) override;
+    void didFinishLoadingDataForCustomContentProvider(StringImpl* suggestedFilename, std::span<const uint8_t>) override;
 
-    Vector<String> mimeTypesWithCustomContentProviders() override;
+    Vector<RefPtr<StringImpl>> mimeTypesWithCustomContentProviders() override;
 
     void navigationGestureDidBegin() override;
     void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&) override;
@@ -296,10 +296,10 @@ private:
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
 #if USE(QUICK_LOOK)
-    void requestPasswordForQuickLookDocument(const String& fileName, WTF::Function<void(const String&)>&&) override;
+    void requestPasswordForQuickLookDocument(StringImpl* fileName, WTF::Function<void(StringImpl*)>&&) override;
 #endif
 
-    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect& elementRect, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
+    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect& elementRect, StringImpl*, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
 
 #if ENABLE(DRAG_SUPPORT)
     void didPerformDragOperation(bool handled) override;
@@ -339,7 +339,7 @@ private:
     WebCore::Color insertionPointColor() final;
     bool isScreenBeingCaptured() final;
 
-    String sceneID() final;
+    RefPtr<StringImpl> sceneID() final;
 
     void beginTextRecognitionForFullscreenVideo(WebCore::ShareableBitmap::Handle&&, AVPlayerViewController *) final;
     void cancelTextRecognitionForFullscreenVideo(AVPlayerViewController *) final;
@@ -372,7 +372,7 @@ private:
 #endif
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    String spatialTrackingLabel() const final;
+    RefPtr<StringImpl> spatialTrackingLabel() const final;
 #endif
 
     void scheduleVisibleContentRectUpdate() final;

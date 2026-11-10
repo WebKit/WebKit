@@ -36,22 +36,22 @@
 
 namespace WebCore {
 
-ResourceTiming ResourceTiming::fromMemoryCache(const URL& url, const String& initiator, const ResourceLoadTiming& loadTiming, const ResourceResponse& response, const NetworkLoadMetrics& networkLoadMetrics, const SecurityOrigin& securityOrigin)
+ResourceTiming ResourceTiming::fromMemoryCache(const URL& url, StringImpl* initiator, const ResourceLoadTiming& loadTiming, const ResourceResponse& response, const NetworkLoadMetrics& networkLoadMetrics, const SecurityOrigin& securityOrigin)
 {
     return ResourceTiming(url, initiator, loadTiming, networkLoadMetrics, response, securityOrigin);
 }
 
-ResourceTiming ResourceTiming::fromLoad(CachedResource& resource, const URL& url, const String& initiator, const ResourceLoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const SecurityOrigin& securityOrigin)
+ResourceTiming ResourceTiming::fromLoad(CachedResource& resource, const URL& url, StringImpl* initiator, const ResourceLoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const SecurityOrigin& securityOrigin)
 {
     return ResourceTiming(url, initiator, loadTiming, networkLoadMetrics, resource.response(), securityOrigin);
 }
 
-ResourceTiming ResourceTiming::fromSynchronousLoad(const URL& url, const String& initiator, const ResourceLoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin& securityOrigin)
+ResourceTiming ResourceTiming::fromSynchronousLoad(const URL& url, StringImpl* initiator, const ResourceLoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin& securityOrigin)
 {
     return ResourceTiming(url, initiator, loadTiming, networkLoadMetrics, response, securityOrigin);
 }
 
-ResourceTiming::ResourceTiming(const URL& url, const String& initiatorType, const ResourceLoadTiming& timing, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin& origin)
+ResourceTiming::ResourceTiming(const URL& url, StringImpl* initiatorType, const ResourceLoadTiming& timing, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin& origin)
     : m_url(url)
     , m_initiatorType(initiatorType)
     , m_resourceLoadTiming(timing)
@@ -65,7 +65,7 @@ ResourceTiming::ResourceTiming(const URL& url, const String& initiatorType, cons
 {
 }
 
-ResourceTiming::ResourceTiming(URL&& url, String&& initiatorType, ResourceLoadTiming&& resourceLoadTiming, NetworkLoadMetrics&& networkLoadMetrics, Vector<ServerTiming>&& serverTiming, bool isLoadedFromServiceWorker, bool isSameOriginRequest)
+ResourceTiming::ResourceTiming(URL&& url, RefPtr<StringImpl>&& initiatorType, ResourceLoadTiming&& resourceLoadTiming, NetworkLoadMetrics&& networkLoadMetrics, Vector<ServerTiming>&& serverTiming, bool isLoadedFromServiceWorker, bool isSameOriginRequest)
     : m_url(WTF::move(url))
     , m_initiatorType(WTF::move(initiatorType))
     , m_resourceLoadTiming(WTF::move(resourceLoadTiming))
@@ -81,12 +81,12 @@ void ResourceTiming::updateExposure(const SecurityOrigin& origin)
     m_isSameOriginRequest = m_isSameOriginRequest && origin.canRequest(m_url, OriginAccessPatternsForWebProcess::singleton());
 }
 
-String ResourceTiming::deliveryType() const
+RefPtr<StringImpl> ResourceTiming::deliveryType() const
 {
     if (m_networkLoadMetrics.fromPrefetch)
-        return "navigational-prefetch"_s;
+        return "navigational-prefetch"_si;
     if (m_networkLoadMetrics.fromCache)
-        return "cache"_s;
+        return "cache"_si;
     return emptyString();
 }
 
@@ -97,7 +97,7 @@ Vector<Ref<PerformanceServerTiming>> ResourceTiming::populateServerTiming() cons
         return { };
 
     return WTF::map(m_serverTiming, [] (auto& entry) {
-        return PerformanceServerTiming::create(String(entry.name), entry.duration, String(entry.description));
+        return PerformanceServerTiming::create(RefPtr { entry.name }, entry.duration, RefPtr { entry.description });
     });
 }
 
@@ -105,7 +105,7 @@ ResourceTiming ResourceTiming::isolatedCopy() const &
 {
     return ResourceTiming {
         m_url.isolatedCopy(),
-        m_initiatorType.isolatedCopy(),
+        WTF::isolatedCopy(m_initiatorType),
         m_resourceLoadTiming.isolatedCopy(),
         m_networkLoadMetrics.isolatedCopy(),
         crossThreadCopy(m_serverTiming),
@@ -118,7 +118,7 @@ ResourceTiming ResourceTiming::isolatedCopy() &&
 {
     return ResourceTiming {
         WTF::move(m_url).isolatedCopy(),
-        WTF::move(m_initiatorType).isolatedCopy(),
+        WTF::isolatedCopy(WTF::move(m_initiatorType)),
         WTF::move(m_resourceLoadTiming).isolatedCopy(),
         WTF::move(m_networkLoadMetrics).isolatedCopy(),
         crossThreadCopy(WTF::move(m_serverTiming)),

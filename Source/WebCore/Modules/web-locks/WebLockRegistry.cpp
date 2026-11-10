@@ -69,9 +69,9 @@ public:
         Function<void()> lockStolenHandler;
     };
 
-    void requestLock(WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler);
-    void releaseLock(WebLockIdentifier, const String& name);
-    void abortLockRequest(WebLockIdentifier, const String& name, CompletionHandler<void(bool)>&&);
+    void requestLock(WebLockIdentifier, ScriptExecutionContextIdentifier, StringImpl* name, WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler);
+    void releaseLock(WebLockIdentifier, StringImpl* name);
+    void abortLockRequest(WebLockIdentifier, StringImpl* name, CompletionHandler<void(bool)>&&);
     void snapshot(CompletionHandler<void(WebLockManagerSnapshot&&)>&&);
     void clientsAreGoingAway(NOESCAPE const Function<bool(const LockInfo&)>& matchClient);
 
@@ -79,18 +79,18 @@ private:
     PerOriginRegistry(LocalWebLockRegistry&, PAL::SessionID, const ClientOrigin&);
 
     struct LockRequest : LockInfo {
-        String name;
+        RefPtr<StringImpl> name;
         Function<void(bool)> grantedHandler;
     };
 
-    void processLockRequestQueue(const String& name, Deque<LockRequest>&);
+    void processLockRequestQueue(StringImpl* name, Deque<LockRequest>&);
     bool isGrantable(const LockRequest&) const;
 
     WeakPtr<LocalWebLockRegistry> m_globalRegistry;
     PAL::SessionID m_sessionID;
     ClientOrigin m_clientOrigin;
-    FastRobinHoodHashMap<String, Deque<LockRequest>> m_lockRequestQueueMap;
-    FastRobinHoodHashMap<String, Vector<LockInfo>> m_heldLocks;
+    FastRobinHoodHashMap<RefPtr<StringImpl>, Deque<LockRequest>> m_lockRequestQueueMap;
+    FastRobinHoodHashMap<RefPtr<StringImpl>, Vector<LockInfo>> m_heldLocks;
 };
 
 LocalWebLockRegistry::LocalWebLockRegistry() = default;
@@ -129,13 +129,13 @@ LocalWebLockRegistry::PerOriginRegistry::~PerOriginRegistry()
         m_globalRegistry->m_perOriginRegistries.remove({ m_sessionID, m_clientOrigin });
 }
 
-void LocalWebLockRegistry::requestLock(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier clientID, const String& name, WebLockMode mode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
+void LocalWebLockRegistry::requestLock(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier clientID, StringImpl* name, WebLockMode mode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
 {
     ensureRegistryForOrigin(sessionID, clientOrigin)->requestLock(lockIdentifier, clientID, name, mode, steal, ifAvailable, WTF::move(grantedHandler), WTF::move(lockStolenHandler));
 }
 
 // https://wicg.github.io/web-locks/#request-a-lock
-void LocalWebLockRegistry::PerOriginRegistry::requestLock(WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier clientID, const String& name, WebLockMode mode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
+void LocalWebLockRegistry::PerOriginRegistry::requestLock(WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier clientID, StringImpl* name, WebLockMode mode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
 {
     LockRequest request { { *this, lockIdentifier, clientID, mode, WTF::move(lockStolenHandler) }, name, WTF::move(grantedHandler) };
 
@@ -158,14 +158,14 @@ void LocalWebLockRegistry::PerOriginRegistry::requestLock(WebLockIdentifier lock
     processLockRequestQueue(name, queue);
 }
 
-void LocalWebLockRegistry::releaseLock(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier, const String& name)
+void LocalWebLockRegistry::releaseLock(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier, StringImpl* name)
 {
     if (auto registry = existingRegistryForOrigin(sessionID, clientOrigin))
         registry->releaseLock(lockIdentifier, name);
 }
 
 // https://wicg.github.io/web-locks/#algorithm-release-lock
-void LocalWebLockRegistry::PerOriginRegistry::releaseLock(WebLockIdentifier lockIdentifier, const String& name)
+void LocalWebLockRegistry::PerOriginRegistry::releaseLock(WebLockIdentifier lockIdentifier, StringImpl* name)
 {
     auto it = m_heldLocks.find(name);
     if (it == m_heldLocks.end())
@@ -181,7 +181,7 @@ void LocalWebLockRegistry::PerOriginRegistry::releaseLock(WebLockIdentifier lock
         processLockRequestQueue(name, queueIterator->value);
 }
 
-void LocalWebLockRegistry::abortLockRequest(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool)>&& completionHandler)
+void LocalWebLockRegistry::abortLockRequest(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier, StringImpl* name, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto registry = existingRegistryForOrigin(sessionID, clientOrigin);
     if (!registry)
@@ -191,7 +191,7 @@ void LocalWebLockRegistry::abortLockRequest(PAL::SessionID sessionID, const Clie
 }
 
 // https://wicg.github.io/web-locks/#abort-the-request
-void LocalWebLockRegistry::PerOriginRegistry::abortLockRequest(WebLockIdentifier lockIdentifier, const String& name, CompletionHandler<void(bool)>&& completionHandler)
+void LocalWebLockRegistry::PerOriginRegistry::abortLockRequest(WebLockIdentifier lockIdentifier, StringImpl* name, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto queueIterator = m_lockRequestQueueMap.find(name);
     if (queueIterator == m_lockRequestQueueMap.end())
@@ -230,7 +230,7 @@ bool LocalWebLockRegistry::PerOriginRegistry::isGrantable(const LockRequest& req
 }
 
 // https://wicg.github.io/web-locks/#process-the-lock-request-queue
-void LocalWebLockRegistry::PerOriginRegistry::processLockRequestQueue(const String& name, Deque<LockRequest>& queue)
+void LocalWebLockRegistry::PerOriginRegistry::processLockRequestQueue(StringImpl* name, Deque<LockRequest>& queue)
 {
     while (!queue.isEmpty()) {
         if (!isGrantable(queue.first()))
@@ -280,7 +280,7 @@ void LocalWebLockRegistry::clientIsGoingAway(PAL::SessionID sessionID, const Cli
 void LocalWebLockRegistry::PerOriginRegistry::clientsAreGoingAway(NOESCAPE const Function<bool(const LockInfo&)>& matchClient)
 {
     // FIXME: This is inefficient. We could optimize this by keeping track of which locks map to which clients.
-    HashSet<String> namesOfQueuesToProcess;
+    HashSet<RefPtr<StringImpl>> namesOfQueuesToProcess;
 
     m_lockRequestQueueMap.removeIf([&](auto& pair) {
         if (!pair.value.removeAllMatching(matchClient))

@@ -34,9 +34,9 @@ namespace WebCore {
 class FormData;
 
 struct CSPInfo {
-    String url;
-    String sourceFile;
-    String sample;
+    RefPtr<StringImpl> url;
+    RefPtr<StringImpl> sourceFile;
+    RefPtr<StringImpl> sample;
     int lineNumber { 0 };
     int columnNumber { 0 };
 };
@@ -46,7 +46,7 @@ struct WEBCORE_EXPORT ContentSecurityPolicyClient {
     // in the class as it results in the vtable being generated as a weak symbol.
     // This hurts performance (in macOS at least, when loading frameworks), so we
     // don't want to do it in WebKit.
-    virtual void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long requestIdentifier = 0) = 0;
+    virtual void addConsoleMessage(MessageSource, MessageLevel, StringImpl*, unsigned long requestIdentifier = 0) = 0;
 
     virtual ~ContentSecurityPolicyClient() = default;
 

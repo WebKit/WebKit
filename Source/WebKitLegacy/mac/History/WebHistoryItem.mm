@@ -138,7 +138,7 @@ void WKNotifyHistoryItemChanged()
 {
     WebCoreThreadViolationCheckRoundOne();
 
-    SUPPRESS_UNRETAINED_LOCAL auto item = [self initWithWebCoreHistoryItem:WebCore::HistoryItem::create(LegacyHistoryItemClient::singleton(), URLString, title)];
+    SUPPRESS_UNRETAINED_LOCAL auto item = [self initWithWebCoreHistoryItem:WebCore::HistoryItem::create(LegacyHistoryItemClient::singleton(), StringImpl::create(URLString).get(), StringImpl::create(title).get())];
     item->_private->_lastVisitedTime = time;
 
     return item;
@@ -186,7 +186,7 @@ void WKNotifyHistoryItemChanged()
 
 - (void)setAlternateTitle:(NSString *)alternateTitle
 {
-    protect(core(_private))->setAlternateTitle(alternateTitle);
+    protect(core(_private))->setAlternateTitle(StringImpl::create(alternateTitle).get());
 }
 
 - (NSString *)alternateTitle
@@ -210,7 +210,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSUInteger)hash
 {
-    return [core(_private)->urlString().createNSString() hash];
+    return [createNSString(core(_private)->urlString()) hash];
 }
 
 - (BOOL)isEqual:(id)anObject
@@ -218,15 +218,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (![anObject isMemberOfClass:[WebHistoryItem class]])
         return NO;
 
-    return core(_private)->urlString() == core(((WebHistoryItem*)anObject)->_private)->urlString();
+    return equal(core(_private)->urlString(), core(((WebHistoryItem*)anObject)->_private)->urlString());
 }
 
 - (NSString *)description
 {
     RefPtr coreItem = core(_private);
-    RetainPtr result = [NSMutableString stringWithFormat:@"%@ %@", [super description], coreItem->urlString().createNSString().get()];
-    if (!coreItem->target().isEmpty())
-        [result appendFormat:@" in \"%@\"", coreItem->target().createNSString().get()];
+    RetainPtr result = [NSMutableString stringWithFormat:@"%@ %@", [super description], createNSString(coreItem->urlString()).get()];
+    if (!isEmpty(coreItem->target()))
+        [result appendFormat:@" in \"%@\"", createNSString(coreItem->target()).get()];
     if (coreItem->isTargetItem())
         [result appendString:@" *target*"];
     if (coreItem->formData()) {
@@ -274,7 +274,7 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
 
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title displayTitle:(NSString *)displayTitle lastVisitedTimeInterval:(NSTimeInterval)time
 {
-    SUPPRESS_UNRETAINED_LOCAL auto item = [self initWithWebCoreHistoryItem:WebCore::HistoryItem::create(LegacyHistoryItemClient::singleton(), URLString, title, displayTitle)];
+    SUPPRESS_UNRETAINED_LOCAL auto item = [self initWithWebCoreHistoryItem:WebCore::HistoryItem::create(LegacyHistoryItemClient::singleton(), StringImpl::create(URLString).get(), StringImpl::create(title).get(), StringImpl::create(displayTitle).get())];
     if (!item)
         return nil;
     item->_private->_lastVisitedTime = time;
@@ -298,7 +298,7 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
 
 - (void)setTitle:(NSString *)title
 {
-    protect(core(_private))->setTitle(title);
+    protect(core(_private))->setTitle(StringImpl::create(title));
 }
 
 - (void)setViewState:(id)statePList
@@ -325,15 +325,15 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
         ASSERT(tempURL);
         NSString *newURLString = [tempURL _web_originalDataAsString];
         Ref historyItem = *core(_private);
-        historyItem->setURLString(newURLString);
-        historyItem->setOriginalURLString(newURLString);
+        historyItem->setURLString(StringImpl::create(newURLString).get());
+        historyItem->setOriginalURLString(StringImpl::create(newURLString).get());
     } 
 
     if ([dict _webkit_boolForKey:lastVisitWasFailureKey])
         core(_private)->setLastVisitWasFailure(true);
     
     if (NSArray *redirectURLs = [dict _webkit_arrayForKey:redirectURLsKey])
-        _private->_redirectURLs = makeUnique<Vector<String>>(makeVector<String>(redirectURLs));
+        _private->_redirectURLs = makeUnique<Vector<RefPtr<StringImpl>>>(makeVector<RefPtr<StringImpl>>(redirectURLs));
 
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL id childDict in [[dict objectForKey:childrenKey] reverseObjectEnumerator]) {
@@ -366,7 +366,7 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
 
 - (void)_visitedWithTitle:(NSString *)title
 {
-    protect(core(_private))->setTitle(title);
+    protect(core(_private))->setTitle(StringImpl::create(title));
     _private->_lastVisitedTime = [NSDate timeIntervalSinceReferenceDate];
 }
 
@@ -395,12 +395,12 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
 
     RefPtr coreItem = core(_private);
     
-    if (!coreItem->urlString().isEmpty())
-        [dict setObject:coreItem->urlString().createNSString().get() forKey:@""];
-    if (!coreItem->title().isEmpty())
-        [dict setObject:coreItem->title().createNSString().get() forKey:titleKey];
-    if (!coreItem->alternateTitle().isEmpty())
-        [dict setObject:coreItem->alternateTitle().createNSString().get() forKey:displayTitleKey];
+    if (!isEmpty(coreItem->urlString()))
+        [dict setObject:createNSString(coreItem->urlString()).get() forKey:@""];
+    if (!isEmpty(coreItem->title()))
+        [dict setObject:createNSString(coreItem->title()).get() forKey:titleKey];
+    if (!isEmpty(coreItem->alternateTitle()))
+        [dict setObject:createNSString(coreItem->alternateTitle()).get() forKey:displayTitleKey];
     if (_private->_lastVisitedTime) {
         // Store as a string to maintain backward compatibility. (See 3245793)
         [dict setObject:[NSString stringWithFormat:@"%.1lf", _private->_lastVisitedTime]
@@ -457,7 +457,7 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
 
 - (void)setRSSFeedReferrer:(NSString *)referrer
 {
-    protect(core(_private))->setReferrer(referrer);
+    protect(core(_private))->setReferrer(StringImpl::create(referrer));
 }
 
 - (NSArray *)children

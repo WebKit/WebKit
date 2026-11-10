@@ -33,7 +33,7 @@ struct PreviewConverterProvider : AbstractRefCountedAndCanMakeWeakPtr<PreviewCon
     virtual ~PreviewConverterProvider() = default;
 
     virtual void provideMainResourceForPreviewConverter(PreviewConverter&, CompletionHandler<void(Ref<FragmentedSharedBuffer>&&)>&&) = 0;
-    virtual void providePasswordForPreviewConverter(PreviewConverter&, Function<void(const String&)>&&) = 0;
+    virtual void providePasswordForPreviewConverter(PreviewConverter&, Function<void(StringImpl*)>&&) = 0;
 };
 
 } // namespace WebCore

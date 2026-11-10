@@ -50,10 +50,10 @@ TEST(WTF_StringSearch, Basic)
     };
 
     for (auto [cstring, cpattern] : tests) {
-        String string = String::fromUTF8(cstring);
-        String pattern = String::fromUTF8(cpattern);
+        RefPtr<StringImpl> string = StringImpl::fromUTF8(cstring);
+        RefPtr<StringImpl> pattern = StringImpl::fromUTF8(cpattern);
         BoyerMooreHorspoolTable<uint8_t> table(pattern);
-        EXPECT_EQ(table.find(string, pattern), string.find(pattern)) << cstring << " " << cpattern;
+        EXPECT_EQ(table.find(string, pattern), find(string, pattern)) << cstring << " " << cpattern;
     }
 }
 

@@ -67,8 +67,8 @@ bool Value::toBoolean() const
         [](double value) {
             return value && !std::isnan(value);
         },
-        [](const String& string) {
-            return !string.isEmpty();
+        [](StringImpl* string) {
+            return !isEmpty(string);
         },
         [](const NodeSet& nodeSet) {
             return !nodeSet.isEmpty();
@@ -85,16 +85,16 @@ double Value::toNumber() const
         [](double value) {
             return value;
         },
-        [](const String& string) -> double {
-            auto simplified = string.simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
+        [](StringImpl* string) -> double {
+            auto simplified = simplifyWhiteSpace(string, deprecatedIsSpaceOrNewline);
 
             // XPath does not allow exponential notation in numbers, so use fixed parsing.
             bool canConvert;
             double value;
-            if (simplified.is8Bit())
-                value = charactersToFixedDouble(simplified.span8(), &canConvert);
+            if (is8Bit(simplified))
+                value = charactersToFixedDouble(span8(simplified), &canConvert);
             else
-                value = charactersToFixedDouble(simplified.span16(), &canConvert);
+                value = charactersToFixedDouble(span16(simplified), &canConvert);
             if (canConvert)
                 return value;
             return std::numeric_limits<double>::quiet_NaN();
@@ -105,25 +105,25 @@ double Value::toNumber() const
     );
 }
 
-String Value::toString() const
+RefPtr<StringImpl> Value::toString() const
 {
     return switchOn(
-        [](bool value) -> String {
+        [](bool value) -> RefPtr<StringImpl> {
             return value ? trueAtom() : falseAtom();
         },
-        [](double value) -> String {
+        [](double value) -> RefPtr<StringImpl> {
             if (std::isnan(value))
-                return "NaN"_s;
+                return "NaN"_si;
             if (!value)
-                return "0"_s;
+                return "0"_si;
             if (std::isinf(value))
                 return std::signbit(value) ? "-Infinity"_s : "Infinity"_s;
-            return String::number(value);
+            return makeString(value);
         },
-        [](const String& string) {
+        [](StringImpl* string) -> RefPtr<StringImpl> {
             return string;
         },
-        [](const NodeSet& nodeSet) -> String {
+        [](const NodeSet& nodeSet) -> RefPtr<StringImpl> {
             if (nodeSet.isEmpty())
                 return emptyString();
             return stringValue(protect(*nodeSet.firstNode()));

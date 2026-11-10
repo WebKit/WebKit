@@ -177,7 +177,7 @@ bool NetworkDataTaskBlob::didReceiveData(std::span<const uint8_t> data)
     return true;
 }
 
-void NetworkDataTaskBlob::setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
+void NetworkDataTaskBlob::setPendingDownloadLocation(StringImpl* filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
 {
     NetworkDataTask::setPendingDownloadLocation(filename, { }, allowOverwrite);
 
@@ -190,7 +190,7 @@ void NetworkDataTaskBlob::setPendingDownloadLocation(const String& filename, San
         FileSystem::deleteFile(m_pendingDownloadLocation);
 }
 
-String NetworkDataTaskBlob::suggestedFilename() const
+RefPtr<StringImpl> NetworkDataTaskBlob::suggestedFilename() const
 {
     return m_suggestedFilename;
 }
@@ -291,7 +291,7 @@ void NetworkDataTaskBlob::didFail(Error errorCode)
 
     Ref<NetworkDataTaskBlob> protectedThis(*this);
     if (isDownload()) {
-        didFailDownload(ResourceError(webKitBlobResourceDomain, static_cast<int>(errorCode), m_firstRequest.url(), String()));
+        didFailDownload(ResourceError(StringImpl::create(webKitBlobResourceDomain).ptr(), static_cast<int>(errorCode), m_firstRequest.url(), nullString()));
         return;
     }
 
@@ -299,7 +299,7 @@ void NetworkDataTaskBlob::didFail(Error errorCode)
 
     clearStream();
     ASSERT(m_client);
-    protect(client())->didCompleteWithError(ResourceError(webKitBlobResourceDomain, static_cast<int>(errorCode), m_firstRequest.url(), String()));
+    protect(client())->didCompleteWithError(ResourceError(StringImpl::create(webKitBlobResourceDomain).ptr(), static_cast<int>(errorCode), m_firstRequest.url(), nullString()));
 }
 
 void NetworkDataTaskBlob::didFinish()

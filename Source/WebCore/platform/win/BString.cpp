@@ -56,12 +56,12 @@ BString::BString(const wchar_t* characters, size_t length)
         m_bstr = SysAllocStringLen(characters, length);
 }
 
-BString::BString(const String& s)
+BString::BString(StringImpl* s)
 {
-    if (s.isNull())
+    if (!s)
         m_bstr = 0;
     else
-        m_bstr = SysAllocStringLen(wcharFrom(StringView(s).upconvertedCharacters()), s.length());
+        m_bstr = SysAllocStringLen(wcharFrom(StringView(s).upconvertedCharacters()), length(s));
 }
 
 BString::BString(const URL& url)
@@ -69,15 +69,15 @@ BString::BString(const URL& url)
     if (url.isNull())
         m_bstr = 0;
     else
-        m_bstr = SysAllocStringLen(wcharFrom(StringView(url.string()).upconvertedCharacters()), url.string().length());
+        m_bstr = SysAllocStringLen(wcharFrom(StringView(url.string()).upconvertedCharacters()), length(url.string()));
 }
 
-BString::BString(const AtomString& s)
+BString::BString(AtomStringImpl* s)
 {
-    if (s.isNull())
+    if (!s)
         m_bstr = 0;
     else
-        m_bstr = SysAllocStringLen(wcharFrom(StringView(s.string()).upconvertedCharacters()), s.length());
+        m_bstr = SysAllocStringLen(wcharFrom(StringView(s).upconvertedCharacters()), length(s));
 }
 
 BString::~BString()

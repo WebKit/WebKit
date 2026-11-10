@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that DOMImplementation.createDocument() picks the document class from the namespace's string content, also when the namespace string is built at runtime.");
+
+function join(parts) { return parts.join("/"); }
+
+var svgNamespace = join(["http://www.w3.org", "2000", "svg"]);
+var xhtmlNamespace = join(["http://www.w3.org", "1999", "xhtml"]);
+var mathmlNamespace = join(["http://www.w3.org", "1998", "Math", "MathML"]);
+var otherNamespace = join(["http://example.com", "namespace"]);
+var upperCaseSVGNamespace = join(["http://www.w3.org", "2000", "SVG"]);
+
+var svgDocument = document.implementation.createDocument(svgNamespace, "svg", null);
+shouldBeEqualToString("svgDocument.contentType", "image/svg+xml");
+shouldBeEqualToString("svgDocument.documentElement.namespaceURI", "http://www.w3.org/2000/svg");
+shouldBeTrue("svgDocument.documentElement instanceof SVGSVGElement");
+
+var xhtmlDocument = document.implementation.createDocument(xhtmlNamespace, "html", null);
+shouldBeEqualToString("xhtmlDocument.contentType", "application/xhtml+xml");
+shouldBeEqualToString("xhtmlDocument.documentElement.namespaceURI", "http://www.w3.org/1999/xhtml");
+shouldBeTrue("xhtmlDocument.documentElement instanceof HTMLHtmlElement");
+
+var mathmlDocument = document.implementation.createDocument(mathmlNamespace, "math", null);
+shouldBeEqualToString("mathmlDocument.contentType", "application/xml");
+
+var otherDocument = document.implementation.createDocument(otherNamespace, "root", null);
+shouldBeEqualToString("otherDocument.contentType", "application/xml");
+
+var upperCaseDocument = document.implementation.createDocument(upperCaseSVGNamespace, "svg", null);
+shouldBeEqualToString("upperCaseDocument.contentType", "application/xml");
+
+var nullNamespaceDocument = document.implementation.createDocument(null, "root", null);
+shouldBeEqualToString("nullNamespaceDocument.contentType", "application/xml");
+
+var noRootDocument = document.implementation.createDocument(svgNamespace, "", null);
+shouldBeEqualToString("noRootDocument.contentType", "image/svg+xml");
+shouldBeNull("noRootDocument.documentElement");
+</script>
+</body>
+</html>

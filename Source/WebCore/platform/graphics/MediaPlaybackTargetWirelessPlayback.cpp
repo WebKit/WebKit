@@ -67,14 +67,14 @@ MediaDeviceRoute* MediaPlaybackTargetWirelessPlayback::route() const
     return m_route.get();
 }
 
-String MediaPlaybackTargetWirelessPlayback::deviceName() const
+RefPtr<StringImpl> MediaPlaybackTargetWirelessPlayback::deviceName() const
 {
     if (RefPtr route = m_route)
         return m_route->deviceName();
     return { };
 }
 
-String MediaPlaybackTargetWirelessPlayback::routeName() const
+RefPtr<StringImpl> MediaPlaybackTargetWirelessPlayback::routeName() const
 {
     if (RefPtr route = m_route)
         return route->routeName();

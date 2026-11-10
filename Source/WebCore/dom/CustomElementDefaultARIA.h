@@ -46,8 +46,8 @@ public:
     ~CustomElementDefaultARIA();
 
     bool hasAttribute(const QualifiedName&) const;
-    const AtomString& valueForAttribute(const Element& thisElement, const QualifiedName&) const;
-    void setValueForAttribute(const QualifiedName&, const AtomString&);
+    const RefPtr<AtomStringImpl>& valueForAttribute(const Element& thisElement, const QualifiedName&) const;
+    void setValueForAttribute(const QualifiedName&, AtomStringImpl*);
     RefPtr<Element> elementForAttribute(const Element& thisElement, const QualifiedName&) const;
     void setElementForAttribute(const QualifiedName&, Element*);
     std::optional<Vector<Ref<Element>>> elementsForAttribute(const Element& thisElement, const QualifiedName&) const;
@@ -55,7 +55,7 @@ public:
 
 private:
     using WeakElementPtr = WeakPtr<Element, WeakPtrImplWithEventTargetData>;
-    HashMap<QualifiedName, Variant<AtomString, WeakElementPtr, Vector<WeakElementPtr>>> m_map;
+    HashMap<QualifiedName, Variant<RefPtr<AtomStringImpl>, WeakElementPtr, Vector<WeakElementPtr>>> m_map;
 };
 
 }; // namespace WebCore

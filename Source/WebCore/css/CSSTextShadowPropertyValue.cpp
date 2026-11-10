@@ -45,7 +45,7 @@ CSSTextShadowPropertyValue::CSSTextShadowPropertyValue(CSS::TextShadowProperty&&
 {
 }
 
-String CSSTextShadowPropertyValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSTextShadowPropertyValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_shadow);
 }

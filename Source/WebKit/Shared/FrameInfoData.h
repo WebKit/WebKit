@@ -46,7 +46,7 @@ struct FrameInfoData {
 
     WebCore::ResourceRequest request;
     WebCore::SecurityOriginData securityOrigin;
-    String frameName;
+    RefPtr<StringImpl> frameName;
     WebCore::FrameIdentifier frameID;
     Markable<WebCore::ScriptExecutionContextIdentifier> documentID;
     bool isFocused { false };

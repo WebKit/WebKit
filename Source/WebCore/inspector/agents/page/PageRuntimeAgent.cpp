@@ -108,7 +108,7 @@ void PageRuntimeAgent::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapper
         return;
 
     auto frameId = protect(m_inspectedPage->inspectorController().identifierRegistry())->frameId(&frame);
-    if (frameId.isEmpty())
+    if (isEmpty(frameId))
         return;
 
     SetForScope ignoreDidClearWindowObject(m_ignoreDidClearWindowObject, true);
@@ -124,13 +124,13 @@ InjectedScript PageRuntimeAgent::injectedScriptForEval(Inspector::Protocol::Erro
 
         auto result = injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(*localMainFrame));
         if (result.hasNoValue())
-            errorString = "Internal error: main world execution context not found"_s;
+            errorString = "Internal error: main world execution context not found"_si;
         return result;
     }
 
     auto injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())
-        errorString = "Missing injected script for given executionContextId"_s;
+        errorString = "Missing injected script for given executionContextId"_si;
     return injectedScript;
 }
 
@@ -176,7 +176,7 @@ void PageRuntimeAgent::notifyContextCreated(const Inspector::Protocol::Network::
         return;
 
     auto name = world.name();
-    if (name.isEmpty() && securityOrigin)
+    if (isEmpty(name) && securityOrigin)
         name = securityOrigin->toRawString();
 
     m_frontendDispatcher->executionContextCreated(Inspector::Protocol::Runtime::ExecutionContextDescription::create()
@@ -187,7 +187,7 @@ void PageRuntimeAgent::notifyContextCreated(const Inspector::Protocol::Network::
         .release());
 }
 
-Inspector::Protocol::ErrorStringOr<std::tuple<Ref<Inspector::Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> PageRuntimeAgent::evaluate(const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&& executionContextId, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture)
+Inspector::Protocol::ErrorStringOr<std::tuple<Ref<Inspector::Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> PageRuntimeAgent::evaluate(StringImpl* expression, StringImpl* objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&& executionContextId, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -199,11 +199,11 @@ Inspector::Protocol::ErrorStringOr<std::tuple<Ref<Inspector::Protocol::Runtime::
     return InspectorRuntimeAgent::evaluate(injectedScript, expression, objectGroup, WTF::move(includeCommandLineAPI), WTF::move(doNotPauseOnExceptionsAndMuteConsole), WTF::move(returnByValue), WTF::move(generatePreview), WTF::move(saveResult), WTF::move(emulateUserGesture));
 }
 
-void PageRuntimeAgent::callFunctionOn(const Inspector::Protocol::Runtime::RemoteObjectId& objectId, const String& expression, RefPtr<JSON::Array>&& optionalArguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& emulateUserGesture, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&& callback)
+void PageRuntimeAgent::callFunctionOn(StringImpl* objectId, StringImpl* expression, RefPtr<JSON::Array>&& optionalArguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& emulateUserGesture, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&& callback)
 {
     auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        callback->sendFailure("Missing injected script for given objectId"_s);
+        callback->sendFailure("Missing injected script for given objectId"_si);
         return;
     }
 

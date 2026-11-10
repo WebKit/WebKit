@@ -74,7 +74,7 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void setLabel(String&&);
+    void setLabel(RefPtr<StringImpl>&&);
     void destruct();
 
     const Ref<::WebGPU::RenderBundle> m_backing;

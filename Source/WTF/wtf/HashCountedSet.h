@@ -310,7 +310,7 @@ inline bool HashCountedSet<Value, HashFunctions, Traits>::isValidValue(const Val
     if (Traits::isDeletedValue(value))
         return false;
 
-    if (HashFunctions::safeToCompareToEmptyOrDeleted) {
+    if constexpr (HashFunctions::safeToCompareToEmptyOrDeleted) {
         if (value == Traits::emptyValue())
             return false;
     } else {

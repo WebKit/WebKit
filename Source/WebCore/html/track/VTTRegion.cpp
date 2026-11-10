@@ -72,7 +72,7 @@ VTTRegion::VTTRegion(ScriptExecutionContext& context)
 
 VTTRegion::~VTTRegion() = default;
 
-void VTTRegion::setId(const String& id)
+void VTTRegion::setId(StringImpl* id)
 {
     m_id = id;
 }
@@ -122,9 +122,9 @@ ExceptionOr<void> VTTRegion::setViewportAnchorY(double value)
     return { };
 }
 
-static const AtomString& upKeyword()
+static const RefPtr<AtomStringImpl>& upKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> upKeyword("up"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> upKeyword("up"_s);
     return upKeyword;
 }
 
@@ -142,7 +142,7 @@ void VTTRegion::updateParametersFromRegion(const VTTRegion& other)
     m_scroll = other.m_scroll;
 }
 
-void VTTRegion::setRegionSettings(const String& inputString)
+void VTTRegion::setRegionSettings(StringImpl* inputString)
 {
     // https://w3c.github.io/webvtt/#region-settings-parsing
     // 6.2. WebVTT region settings parsing
@@ -197,8 +197,8 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
 
     switch (setting) {
     case Id: {
-        String stringValue = input.extractString(valueRun);
-        if (stringValue.find("-->"_s) == notFound)
+        RefPtr<StringImpl> stringValue = input.extractString(valueRun);
+        if (find(stringValue, "-->"_s) == notFound)
             m_id = stringValue;
         break;
     }
@@ -247,9 +247,9 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
     input.skipRun(valueRun);
 }
 
-const AtomString& VTTRegion::textTrackCueContainerScrollingClass()
+const RefPtr<AtomStringImpl>& VTTRegion::textTrackCueContainerScrollingClass()
 {
-    static MainThreadNeverDestroyed<const AtomString> trackRegionCueContainerScrollingClass("scrolling"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trackRegionCueContainerScrollingClass("scrolling"_s);
 
     return trackRegionCueContainerScrollingClass;
 }
@@ -379,7 +379,7 @@ void VTTRegion::prepareRegionDisplayTree()
 
     m_recalculateStyles = false;
 
-    m_regionDisplayTree->setAttributeWithoutSynchronization(HTMLNames::idAttr, AtomString(id()));
+    m_regionDisplayTree->setAttributeWithoutSynchronization(HTMLNames::idAttr, AtomStringImpl::add(id()).get());
 }
 
 void VTTRegion::startTimer()

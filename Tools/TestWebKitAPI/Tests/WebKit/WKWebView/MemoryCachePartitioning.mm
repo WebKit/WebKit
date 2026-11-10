@@ -50,7 +50,7 @@ TEST(MemoryCache, FontFromUserStyleSheetKeepsCachePartition)
 
     [[configuration preferences] _setStorageBlockingPolicy:_WKStorageBlockingPolicyBlockThirdParty];
 
-    RetainPtr styleSheetSource = [NSString stringWithFormat:@"@font-face { font-family: TestFont; src: url(\"%@/font.ttf\"); } body { font-family: TestFont; }", server.origin().createNSString().get()];
+    RetainPtr styleSheetSource = [NSString stringWithFormat:@"@font-face { font-family: TestFont; src: url(\"%@/font.ttf\"); } body { font-family: TestFont; }", createNSString(server.origin()).get()];
     RetainPtr styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource.get() forMainFrameOnly:YES]);
     [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
 

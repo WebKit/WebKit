@@ -43,8 +43,8 @@ namespace TestWebKitAPI {
 struct RecordedMark {
     int64_t begin;
     int64_t end;
-    String name;
-    String message;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> message;
 };
 
 static Lock recordedMarksLock;
@@ -60,7 +60,7 @@ static void recordMark(int64_t time, int64_t duration, const char* name, const c
 {
     Locker locker { recordedMarksLock };
     if (isRecordingMarks)
-        recordedMarks().append({ time, time + duration, String::fromLatin1(name), String::fromLatin1(message) });
+        recordedMarks().append({ time, time + duration, StringImpl::fromLatin1(name), StringImpl::fromLatin1(message) });
 }
 
 class WTF_SysprofAnnotator : public testing::Test {
@@ -87,7 +87,7 @@ static Vector<RecordedMark> marksNamed(ASCIILiteral name)
     Locker locker { recordedMarksLock };
     Vector<RecordedMark> marks;
     for (auto& mark : recordedMarks()) {
-        if (mark.name == name)
+        if (equal(mark.name, name))
             marks.append(mark);
     }
     return marks;
@@ -133,7 +133,7 @@ TEST_F(WTF_SysprofAnnotator, SignpostCarriesTheMessagesOfItsBeginAndEnd)
     auto marks = marksNamed("JSCGarbageCollector"_s);
     ASSERT_EQ(marks.size(), 1u);
     EXPECT_TRUE(ranBetween(marks[0], beforeBegin, beforeEnd, beforeEnd, afterEnd));
-    EXPECT_EQ(marks[0].message, makeString(String::fromLatin1(garbageCollectionMessage), " | "_s, String::fromLatin1(garbageCollectionMessage)));
+    EXPECT_EQ(marks[0].message, makeString(StringImpl::fromLatin1(garbageCollectionMessage), " | "_s, StringImpl::fromLatin1(garbageCollectionMessage)));
 }
 
 TEST_F(WTF_SysprofAnnotator, SignpostsOfDifferentObjectsOverlap)
@@ -234,7 +234,7 @@ TEST_F(WTF_SysprofAnnotator, SignpostEndWithoutBegin)
     ASSERT_EQ(marks.size(), 1u);
     EXPECT_EQ(marks[0].begin, marks[0].end);
     EXPECT_TRUE(ranBetween(marks[0], beforeEnd, afterEnd, beforeEnd, afterEnd));
-    EXPECT_EQ(marks[0].message, String::fromLatin1(garbageCollectionMessage));
+    EXPECT_EQ(marks[0].message, StringImpl::fromLatin1(garbageCollectionMessage));
 }
 
 TEST_F(WTF_SysprofAnnotator, TraceScopeNestedInOneOfItsName)

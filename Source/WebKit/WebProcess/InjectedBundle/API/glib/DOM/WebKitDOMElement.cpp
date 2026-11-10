@@ -172,7 +172,7 @@ void webkit_dom_element_html_input_element_set_editing_value(WebKitDOMElement* e
     if (!is<WebCore::HTMLInputElement>(node))
         return;
 
-    downcast<WebCore::HTMLInputElement>(*node).setValueForUser(String::fromUTF8(value));
+    downcast<WebCore::HTMLInputElement>(*node).setValueForUser(StringImpl::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

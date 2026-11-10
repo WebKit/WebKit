@@ -58,7 +58,7 @@ public:
     Permission permissionLevel(const WebCore::SecurityOriginData&);
 
     // For testing purposes only.
-    void setPermissionLevelForTesting(const String& originString, bool allowed);
+    void setPermissionLevelForTesting(StringImpl* originString, bool allowed);
     void removeAllPermissionsForTesting();
     
 private:

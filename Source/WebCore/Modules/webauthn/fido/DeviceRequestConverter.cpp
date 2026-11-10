@@ -53,9 +53,9 @@ static CBORValue convertRpEntityToCBOR(const PublicKeyCredentialRpEntity& rpEnti
 {
     CBORValue::MapValue rpMap;
     rpMap.emplace(CBORValue(kEntityNameMapKey), CBORValue(rpEntity.name));
-    if (!rpEntity.icon.isEmpty())
+    if (!isEmpty(rpEntity.icon))
         rpMap.emplace(CBORValue(kIconUrlMapKey), CBORValue(rpEntity.icon));
-    if (!rpEntity.id.isEmpty())
+    if (!isEmpty(rpEntity.id))
         rpMap.emplace(CBORValue(kEntityIdMapKey), CBORValue(rpEntity.id));
 
     return CBORValue(WTF::move(rpMap));
@@ -65,7 +65,7 @@ static CBORValue convertUserEntityToCBOR(const PublicKeyCredentialUserEntity& us
 {
     CBORValue::MapValue userMap;
     userMap.emplace(CBORValue(kEntityNameMapKey), CBORValue(userEntity.name));
-    if (!userEntity.icon.isEmpty())
+    if (!isEmpty(userEntity.icon))
         userMap.emplace(CBORValue(kIconUrlMapKey), CBORValue(userEntity.icon));
     userMap.emplace(CBORValue(kEntityIdMapKey), CBORValue(userEntity.id));
     userMap.emplace(CBORValue(kDisplayNameMapKey), CBORValue(userEntity.displayName));
@@ -119,7 +119,7 @@ static Vector<PublicKeyCredentialParameters> trimmedParameters(const Vector<Publ
     return parameters;
 }
 
-Vector<uint8_t> encodeMakeCredentialRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, UVAvailability uvCapability, UserVerificationRequirement effectiveUVRequirement, AuthenticatorSupportedOptions::ResidentKeyAvailability residentKeyAvailability, const Vector<String>& authenticatorSupportedExtensions, std::optional<PinParameters> pin, const std::optional<Vector<WebCore::PublicKeyCredentialParameters>>& authenticatorSupportedParameters, std::optional<Vector<PublicKeyCredentialDescriptor>>&& overrideExcludeCredentials, std::optional<HmacSecretParameters>&& hmacSecretParams)
+Vector<uint8_t> encodeMakeCredentialRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, UVAvailability uvCapability, UserVerificationRequirement effectiveUVRequirement, AuthenticatorSupportedOptions::ResidentKeyAvailability residentKeyAvailability, const Vector<RefPtr<StringImpl>>& authenticatorSupportedExtensions, std::optional<PinParameters> pin, const std::optional<Vector<WebCore::PublicKeyCredentialParameters>>& authenticatorSupportedParameters, std::optional<Vector<PublicKeyCredentialDescriptor>>&& overrideExcludeCredentials, std::optional<HmacSecretParameters>&& hmacSecretParams)
 {
     CBORValue::MapValue cborMap;
     cborMap[CBORValue(kCtapMakeCredentialClientDataHashKey)] = CBORValue(hash);
@@ -145,22 +145,22 @@ Vector<uint8_t> encodeMakeCredentialRequestAsCBOR(const Vector<uint8_t>& hash, c
 
         if (options.extensions) {
             auto largeBlobInputs = options.extensions->largeBlob;
-            if (largeBlobInputs && authenticatorSupportedExtensions.contains("largeBlob"_s)) {
+            if (largeBlobInputs && authenticatorSupportedExtensions.containsIf([&](auto& item) { return equal(item, "largeBlob"_s); })) {
                 CBORValue::MapValue largeBlobMap;
 
-                if (!largeBlobInputs->support.isNull())
+                if (largeBlobInputs->support)
                     largeBlobMap[CBORValue("support"_s)] = CBORValue(largeBlobInputs->support);
 
                 extensionsMap[CBORValue("largeBlob"_s)] = CBORValue(WTF::move(largeBlobMap));
             }
 
             // Convert prf extension to hmac-secret: true for makeCredential
-            if (options.extensions->prf && authenticatorSupportedExtensions.contains(kExtensionHmacSecret))
+            if (options.extensions->prf && authenticatorSupportedExtensions.containsIf([&](auto& item) { return equal(item, kExtensionHmacSecret); }))
                 extensionsMap[CBORValue(kExtensionHmacSecret)] = CBORValue(true);
         }
 
         // Add hmac-secret-mc extension with encrypted parameters
-        if (hmacSecretParams && authenticatorSupportedExtensions.contains(kExtensionHmacSecretMc)) {
+        if (hmacSecretParams && authenticatorSupportedExtensions.containsIf([&](auto& item) { return equal(item, kExtensionHmacSecretMc); })) {
             CBORValue::MapValue hmacSecretMcMap;
             hmacSecretMcMap[CBORValue(kHmacSecretKeyAgreementKey)] = CBORValue(WTF::move(hmacSecretParams->keyAgreement));
             hmacSecretMcMap[CBORValue(kHmacSecretSaltEncKey)] = CBORValue(WTF::move(hmacSecretParams->saltEnc));
@@ -213,7 +213,7 @@ Vector<uint8_t> encodeMakeCredentialRequestAsCBOR(const Vector<uint8_t>& hash, c
     return cborRequest;
 }
 
-Vector<uint8_t> encodeSilentGetAssertion(const String& rpId, const Vector<uint8_t>& hash, const Vector<PublicKeyCredentialDescriptor>& credentials, std::optional<PinParameters> pin)
+Vector<uint8_t> encodeSilentGetAssertion(StringImpl* rpId, const Vector<uint8_t>& hash, const Vector<PublicKeyCredentialDescriptor>& credentials, std::optional<PinParameters> pin)
 {
     CBORValue::MapValue cborMap;
     cborMap[CBORValue(kCtapGetAssertionRpIdKey)] = CBORValue(rpId);
@@ -242,7 +242,7 @@ Vector<uint8_t> encodeSilentGetAssertion(const String& rpId, const Vector<uint8_
     return cborRequest;
 }
 
-Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, UVAvailability uvCapability, UserVerificationRequirement effectiveUVRequirement, const Vector<String>& authenticatorSupportedExtensions, std::optional<PinParameters> pin, std::optional<Vector<PublicKeyCredentialDescriptor>>&& overrideAllowCredentials, std::optional<HmacSecretParameters>&& hmacSecretParams)
+Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, UVAvailability uvCapability, UserVerificationRequirement effectiveUVRequirement, const Vector<RefPtr<StringImpl>>& authenticatorSupportedExtensions, std::optional<PinParameters> pin, std::optional<Vector<PublicKeyCredentialDescriptor>>&& overrideAllowCredentials, std::optional<HmacSecretParameters>&& hmacSecretParams)
 {
     CBORValue::MapValue cborMap;
     cborMap[CBORValue(kCtapGetAssertionRpIdKey)] = CBORValue(options.rpId);
@@ -264,7 +264,7 @@ Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, con
 
         if (options.extensions) {
             auto largeBlobInputs = options.extensions->largeBlob;
-            if (largeBlobInputs && authenticatorSupportedExtensions.contains("largeBlob"_s)) {
+            if (largeBlobInputs && authenticatorSupportedExtensions.containsIf([&](auto& item) { return equal(item, "largeBlob"_s); })) {
                 CBORValue::MapValue largeBlobMap;
 
                 if (largeBlobInputs->read)
@@ -278,7 +278,7 @@ Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, con
         }
 
         // Add hmac-secret extension with encrypted salt parameters
-        if (hmacSecretParams && authenticatorSupportedExtensions.contains(kExtensionHmacSecret)) {
+        if (hmacSecretParams && authenticatorSupportedExtensions.containsIf([&](auto& item) { return equal(item, kExtensionHmacSecret); })) {
             CBORValue::MapValue hmacSecretMap;
             hmacSecretMap[CBORValue(kHmacSecretKeyAgreementKey)] = CBORValue(WTF::move(hmacSecretParams->keyAgreement));
             hmacSecretMap[CBORValue(kHmacSecretSaltEncKey)] = CBORValue(WTF::move(hmacSecretParams->saltEnc));

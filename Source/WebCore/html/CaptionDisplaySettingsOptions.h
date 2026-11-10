@@ -32,7 +32,7 @@ namespace WebCore {
 
 struct CaptionDisplaySettingsOptions {
     RefPtr<Node> anchorNode;
-    String positionArea;
+    RefPtr<StringImpl> positionArea;
 };
 
 }

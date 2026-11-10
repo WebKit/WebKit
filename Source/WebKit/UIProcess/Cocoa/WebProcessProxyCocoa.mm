@@ -106,24 +106,24 @@ void WebProcessProxy::registerNotifyObservers()
     });
 }
 
-const MemoryCompactLookupOnlyRobinHoodHashSet<String>& WebProcessProxy::platformPathsWithAssumedReadAccess()
+const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>& WebProcessProxy::platformPathsWithAssumedReadAccess()
 {
-    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<String>> platformPathsWithAssumedReadAccess(std::initializer_list<String> {
-        [NSBundle bundleWithIdentifier:@"com.apple.WebCore"].resourcePath.stringByStandardizingPath,
-        [NSBundle bundleForClass:NSClassFromString(@"WKWebView")].resourcePath.stringByStandardizingPath
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>> platformPathsWithAssumedReadAccess(std::initializer_list<RefPtr<StringImpl>> {
+        StringImpl::create([NSBundle bundleWithIdentifier:@"com.apple.WebCore"].resourcePath.stringByStandardizingPath),
+        StringImpl::create([NSBundle bundleForClass:NSClassFromString(@"WKWebView")].resourcePath.stringByStandardizingPath)
     });
 
     return platformPathsWithAssumedReadAccess;
 }
 
-NODELETE static Vector<String>& mediaTypeCache()
+NODELETE static Vector<RefPtr<StringImpl>>& mediaTypeCache()
 {
     ASSERT(RunLoop::isMain());
-    static NeverDestroyed<Vector<String>> typeCache;
+    static NeverDestroyed<Vector<RefPtr<StringImpl>>> typeCache;
     return typeCache;
 }
 
-void WebProcessProxy::cacheMediaMIMETypes(const Vector<String>& types)
+void WebProcessProxy::cacheMediaMIMETypes(const Vector<RefPtr<StringImpl>>& types)
 {
     if (!mediaTypeCache().isEmpty())
         return;
@@ -135,12 +135,12 @@ void WebProcessProxy::cacheMediaMIMETypes(const Vector<String>& types)
     }
 }
 
-const Vector<String>& WebProcessProxy::mediaMIMETypes()
+const Vector<RefPtr<StringImpl>>& WebProcessProxy::mediaMIMETypes()
 {
     return mediaTypeCache();
 }
 
-void WebProcessProxy::cacheMediaSourceTypeSupported(const String& type, bool isSupported)
+void WebProcessProxy::cacheMediaSourceTypeSupported(StringImpl* type, bool isSupported)
 {
     protect(processPool())->cacheMediaSourceTypeSupported(type, isSupported);
 }
@@ -194,7 +194,7 @@ void WebProcessProxy::setCaptionDisplayMode(WebCore::CaptionUserPreferences::Cap
     WebCore::CaptionUserPreferencesMediaAF::platformSetCaptionDisplayMode(displayMode);
 }
 
-void WebProcessProxy::setCaptionLanguage(const String& language)
+void WebProcessProxy::setCaptionLanguage(StringImpl* language)
 {
     WebCore::CaptionUserPreferencesMediaAF::platformSetPreferredLanguage(language);
 }
@@ -314,7 +314,7 @@ bool WebProcessProxy::messageSourceIsValidWebContentProcess()
     // Confirm that the connection is from a WebContent process:
     auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(connection().xpcConnection());
 
-    if (!isPlatformBinary || !signingIdentifier.startsWith("com.apple.WebKit.WebContent"_s)) {
+    if (!isPlatformBinary || !startsWith(signingIdentifier, "com.apple.WebKit.WebContent"_s)) {
         RELEASE_LOG_ERROR(Process, "Process is not an entitled WebContent process.");
         return false;
     }
@@ -386,7 +386,7 @@ void WebProcessProxy::deleteServiceWorkerDebuggable(WebCore::ServiceWorkerIdenti
     m_serviceWorkerDebuggableProxies.remove(identifier);
 }
 
-void WebProcessProxy::sendMessageToInspector(WebCore::ServiceWorkerIdentifier identifier, String&& message)
+void WebProcessProxy::sendMessageToInspector(WebCore::ServiceWorkerIdentifier identifier, RefPtr<StringImpl>&& message)
 {
     RELEASE_LOG(Inspector, "WebProcessProxy::sendMessageToInspector");
     if (!shouldEnableRemoteInspector())

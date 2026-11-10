@@ -44,7 +44,7 @@ class RemoteInspectorProtocolHandler final : public RemoteInspectorObserver, pub
 public:
     static Ref<RemoteInspectorProtocolHandler> create(WebPageProxy& page) { return adoptRef(*new RemoteInspectorProtocolHandler(page)); }
 
-    void inspect(const String& hostAndPort, ConnectionID, TargetID, const String& type);
+    void inspect(StringImpl* hostAndPort, ConnectionID, TargetID, StringImpl* type);
 
 private:
     RemoteInspectorProtocolHandler(WebPageProxy& page)
@@ -60,12 +60,12 @@ private:
 
     void updateTargetList();
 
-    void runScript(const String&);
+    void runScript(StringImpl*);
 
     std::unique_ptr<RemoteInspectorClient> m_inspectorClient;
     WeakRef<WebPageProxy> m_page;
     bool m_pageLoaded { false };
-    String m_targetListsHtml;
+    RefPtr<StringImpl> m_targetListsHtml;
 };
 
 } // namespace WebKit

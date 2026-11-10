@@ -41,12 +41,12 @@ struct WebExtensionMenuItemContextParameters {
     std::optional<WebExtensionFrameIdentifier> frameIdentifier;
     URL frameURL;
 
-    String linkText;
+    RefPtr<StringImpl> linkText;
     URL linkURL;
 
     URL sourceURL;
 
-    String selectionString;
+    RefPtr<StringImpl> selectionString;
     bool editable { false };
 };
 

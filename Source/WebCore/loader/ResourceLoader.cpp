@@ -347,7 +347,7 @@ void ResourceLoader::loadDataURL()
             return;
         if (!decodeResult) {
             RESOURCELOADER_RELEASE_LOG("loadDataURL: decoding of data failed");
-            protectedThis->didFail(ResourceError(errorDomainWebKitInternal, 0, url, "Data URL decoding failed"_s));
+            protectedThis->didFail(ResourceError(StringImpl::create(errorDomainWebKitInternal).ptr(), 0, url, "Data URL decoding failed"_si));
             return;
         }
         if (this->wasCancelled()) {
@@ -358,7 +358,7 @@ void ResourceLoader::loadDataURL()
         auto dataSize = decodeResult->data.size();
         ResourceResponse dataResponse = ResourceResponse::dataURLResponse(url, decodeResult.value());
         this->didReceiveResponse(WTF::move(dataResponse), [this, protectedThis = WTF::move(protectedThis), dataSize, data = SharedBuffer::create(WTF::move(decodeResult->data))]() {
-            if (!this->reachedTerminalState() && dataSize && m_request.httpMethod() != "HEAD"_s)
+            if (!this->reachedTerminalState() && dataSize && !equal(m_request.httpMethod(), "HEAD"_s))
                 this->didReceiveBuffer(data, dataSize, DataPayloadWholeResource);
 
             if (!this->reachedTerminalState()) {
@@ -431,7 +431,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
     if (!redirectResponse.isNull() && frameLoader && page && userContentProvider && documentLoader) {
         auto results = userContentProvider->processContentRuleListsForLoad(*page, request.url(), m_resourceType, *documentLoader, redirectResponse.url());
         bool shouldBlock = results.shouldBlock();
-        Vector<String> blockingIdentifiers;
+        Vector<RefPtr<StringImpl>> blockingIdentifiers;
         if (shouldBlock) {
             for (auto& pair : results.results) {
                 if (pair.second.blockedLoad)
@@ -532,7 +532,7 @@ static void logResourceResponseSource(LocalFrame* frame, ResourceResponse::Sourc
     if (!frame || !frame->page())
         return;
 
-    String sourceKey;
+    RefPtr<StringImpl> sourceKey;
     switch (source) {
     case ResourceResponse::Source::Network:
         sourceKey = DiagnosticLoggingKeys::networkKey();

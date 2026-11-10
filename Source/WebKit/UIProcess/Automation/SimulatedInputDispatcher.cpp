@@ -84,14 +84,14 @@ NODELETE VirtualKey normalizedVirtualKey(VirtualKey key)
 }
 
 #if !ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
-std::optional<CharKey> pressedCharKey(const String& pressedCharKeyString)
+std::optional<CharKey> pressedCharKey(StringImpl* pressedCharKeyString)
 {
-    switch (pressedCharKeyString.length()) {
+    switch (length(pressedCharKeyString)) {
     case 1:
-        return pressedCharKeyString.codeUnitAt(0);
+        return codeUnitAt(pressedCharKeyString, 0);
     case 2: {
-        auto lead = pressedCharKeyString.codeUnitAt(0);
-        auto trail = pressedCharKeyString.codeUnitAt(1);
+        auto lead = codeUnitAt(pressedCharKeyString, 0);
+        auto trail = codeUnitAt(pressedCharKeyString, 1);
         if (U16_IS_LEAD(lead) && U16_IS_TRAIL(trail))
             return U16_GET_SUPPLEMENTARY(lead, trail);
     }
@@ -137,7 +137,7 @@ Seconds SimulatedInputKeyFrame::maximumDuration() const
     return result;
 }
 
-SimulatedInputKeyFrame SimulatedInputKeyFrame::keyFrameFromStateOfInputSources(const HashMap<String, Ref<SimulatedInputSource>>& inputSources)
+SimulatedInputKeyFrame SimulatedInputKeyFrame::keyFrameFromStateOfInputSources(const HashMap<RefPtr<StringImpl>, Ref<SimulatedInputSource>>& inputSources)
 {
     // The client of this class is required to intern SimulatedInputSource instances if the last state
     // from the previous command should be used as the inital state for the next command. This is the
@@ -150,7 +150,7 @@ SimulatedInputKeyFrame SimulatedInputKeyFrame::keyFrameFromStateOfInputSources(c
     return SimulatedInputKeyFrame(WTF::move(entries));
 }
 
-SimulatedInputKeyFrame SimulatedInputKeyFrame::keyFrameToResetInputSources(const HashMap<String, Ref<SimulatedInputSource>>& inputSources)
+SimulatedInputKeyFrame SimulatedInputKeyFrame::keyFrameToResetInputSources(const HashMap<RefPtr<StringImpl>, Ref<SimulatedInputSource>>& inputSources)
 {
     auto& values = inputSources.values();
     auto entries = WTF::map(values, [](auto& inputSource) {
@@ -281,7 +281,7 @@ WebCore::IntPoint SimulatedInputDispatcher::currentLocationOfSource(const Simula
     return state.location.value_or(m_options.viewport ? flooredIntPoint(m_options.viewport->originInMainFrameViewport) : WebCore::IntPoint { });
 }
 
-void SimulatedInputDispatcher::resolveLocation(const WebCore::IntPoint& currentLocation, std::optional<WebCore::IntPoint> location, MouseMoveOrigin origin, std::optional<String> nodeHandle, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&& completionHandler)
+void SimulatedInputDispatcher::resolveLocation(const WebCore::IntPoint& currentLocation, std::optional<WebCore::IntPoint> location, MouseMoveOrigin origin, std::optional<RefPtr<StringImpl>> nodeHandle, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&& completionHandler)
 {
     if (!location) {
         completionHandler(currentLocation, std::nullopt);
@@ -362,7 +362,7 @@ static std::optional<TouchInteraction> touchInteractionForMouseInteraction(Mouse
 }
 #endif
 
-static const String& pointerTypeForInputSource(SimulatedInputSourceType type)
+static const RefPtr<StringImpl>& pointerTypeForInputSource(SimulatedInputSourceType type)
 {
     switch (type) {
     case SimulatedInputSourceType::Mouse:
@@ -448,8 +448,8 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
                     auto button = b.mouseInteraction == MouseInteraction::Up && !b.pressedMouseButton ? a.pressedMouseButton : b.pressedMouseButton;
 
 #if !LOG_DISABLED
-                    String interactionName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.mouseInteraction.value());
-                    String mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(button.value_or(MouseButton::None));
+                    RefPtr<StringImpl> interactionName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.mouseInteraction.value());
+                    RefPtr<StringImpl> mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(button.value_or(MouseButton::None));
                     LOG_WITH_STREAM(Automation, stream << "SimulatedInputDispatcher["_s << this << "]: simulating "_s << pointerType << " "_s << interactionName << "[button="_s << mouseButtonName << "] @ ("_s << b.location.value().x() << ", "_s << b.location.value().y() << ") for transition to "_s << m_keyframeIndex << "."_s << m_inputSourceStateIndex);
 #endif
 
@@ -506,7 +506,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
             if (a.pressedVirtualKeys.contains(iter.key))
                 continue;
 #if !LOG_DISABLED
-            String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(iter.value);
+            RefPtr<StringImpl> virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(iter.value);
             LOG_WITH_STREAM(Automation, stream << "SimulatedInputDispatcher["_s << this << "]: simulating KeyPress[key="_s << virtualKeyName << "] for transition to "_s << m_keyframeIndex << "."_s << m_inputSourceStateIndex);
 #endif
             interactions.append({ KeyboardInteraction::KeyPress, iter.value });
@@ -541,7 +541,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
             if (b.pressedVirtualKeys.contains(iter.key))
                 continue;
 #if !LOG_DISABLED
-            String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(iter.value);
+            RefPtr<StringImpl> virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(iter.value);
             LOG_WITH_STREAM(Automation, stream << "SimulatedInputDispatcher["_s << this << "]: simulating KeyRelease[key="_s << virtualKeyName << "] for transition to "_s << m_keyframeIndex << "."_s << m_inputSourceStateIndex);
 #endif
             interactions.append({ KeyboardInteraction::KeyRelease, iter.value });
@@ -618,7 +618,7 @@ void SimulatedInputDispatcher::dispatchKeyboardInteractions(Vector<KeyboardInter
 static constexpr Seconds pointerMoveInterpolationInterval = 16_ms;
 static constexpr unsigned maximumPointerMoveInterpolationSteps = 50;
 
-void SimulatedInputDispatcher::startPointerMoveInterpolation(const WebCore::IntPoint& start, const WebCore::IntPoint& end, MouseButton button, const String& pointerType, Seconds duration, AutomationCompletionHandler&& completionHandler)
+void SimulatedInputDispatcher::startPointerMoveInterpolation(const WebCore::IntPoint& start, const WebCore::IntPoint& end, MouseButton button, StringImpl* pointerType, Seconds duration, AutomationCompletionHandler&& completionHandler)
 {
     ASSERT(!m_pointerMoveInterpolation);
     ASSERT(!m_pointerMoveInterpolationTimer.isActive());
@@ -693,7 +693,7 @@ void SimulatedInputDispatcher::finishPointerMoveInterpolation(std::optional<Auto
 }
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
-void SimulatedInputDispatcher::run(std::optional<WebCore::FrameIdentifier> frameID, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, SimulatedInputRunOptions options, AutomationCompletionHandler&& completionHandler)
+void SimulatedInputDispatcher::run(std::optional<WebCore::FrameIdentifier> frameID, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<RefPtr<StringImpl>, Ref<SimulatedInputSource>>& inputSources, SimulatedInputRunOptions options, AutomationCompletionHandler&& completionHandler)
 {
     ASSERT(!isActive());
     if (isActive()) {

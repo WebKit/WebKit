@@ -30,7 +30,7 @@ class FontDescription;
 
 #if ENABLE(VARIATION_FONTS)
 struct VariationDefaults {
-    String axisName;
+    RefPtr<StringImpl> axisName;
     float defaultValue;
     float minimumValue;
     float maximumValue;
@@ -41,6 +41,6 @@ using VariationsMap = HashMap<FontTag, float, FourCharacterTagHash, FourCharacte
 
 VariationDefaultsMap defaultVariationValues(FT_Face, ShouldLocalizeAxisNames);
 
-String buildVariationSettings(FT_Face, const FontDescription&, const FontCreationContext&);
+RefPtr<StringImpl> buildVariationSettings(FT_Face, const FontDescription&, const FontCreationContext&);
 #endif
 };

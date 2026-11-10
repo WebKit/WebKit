@@ -38,12 +38,12 @@ public:
     void deref() { m_document->deref(); }
     Document& document() { return m_document; }
 
-    WEBCORE_EXPORT ExceptionOr<Ref<DocumentType>> createDocumentType(const AtomString& qualifiedName, const String& publicId, const String& systemId);
-    WEBCORE_EXPORT ExceptionOr<Ref<XMLDocument>> createDocument(const AtomString& namespaceURI, const AtomString& qualifiedName, DocumentType*);
-    WEBCORE_EXPORT Ref<HTMLDocument> createHTMLDocument(String&& title);
+    WEBCORE_EXPORT ExceptionOr<Ref<DocumentType>> createDocumentType(AtomStringImpl* qualifiedName, StringImpl* publicId, StringImpl* systemId);
+    WEBCORE_EXPORT ExceptionOr<Ref<XMLDocument>> createDocument(AtomStringImpl* namespaceURI, AtomStringImpl* qualifiedName, DocumentType*);
+    WEBCORE_EXPORT Ref<HTMLDocument> createHTMLDocument(RefPtr<StringImpl>&& title);
     static bool hasFeature() { return true; }
 
-    static Ref<Document> createDocument(const String& contentType, LocalFrame*, const Settings&, const URL&, std::optional<ScriptExecutionContextIdentifier> = std::nullopt);
+    static Ref<Document> createDocument(StringImpl* contentType, LocalFrame*, const Settings&, const URL&, std::optional<ScriptExecutionContextIdentifier> = std::nullopt);
 
 private:
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;

@@ -359,40 +359,40 @@ static bool applicationBundleIdentifierOverrideWasQueried;
 
 // The application bundle identifier gets set to the UIProcess bundle identifier by the WebProcess and
 // the Networking upon initialization. It is unset otherwise.
-NODELETE static String& bundleIdentifierOverride()
+NODELETE static RefPtr<StringImpl>& bundleIdentifierOverride()
 {
-    static NeverDestroyed<String> identifierOverride;
+    static NeverDestroyed<RefPtr<StringImpl>> identifierOverride;
 #if !ASSERT_MSG_DISABLED
     applicationBundleIdentifierOverrideWasQueried = true;
 #endif
     return identifierOverride;
 }
 
-NODELETE static String& bundleIdentifier()
+NODELETE static RefPtr<StringImpl>& bundleIdentifier()
 {
-    static NeverDestroyed<String> identifier;
+    static NeverDestroyed<RefPtr<StringImpl>> identifier;
     return identifier;
 }
 
-String applicationBundleIdentifier()
+RefPtr<StringImpl> applicationBundleIdentifier()
 {
     // The override only gets set in WebKitTestRunner. If unset, we use the bundle identifier set
     // in WebKit2's WebProcess and NetworkProcess. If that is also unset, we use the main bundle identifier.
     auto identifier = bundleIdentifierOverride();
-    ASSERT(identifier.isNull() || RunLoop::isMain());
-    if (identifier.isNull())
+    ASSERT(!identifier || RunLoop::isMain());
+    if (!identifier)
         identifier = bundleIdentifier();
     ASSERT_WITH_MESSAGE(!isInAuxiliaryProcess() || !!identifier, "applicationBundleIsEqualTo() and applicationBundleStartsWith() must not be called before setApplicationBundleIdentifier() in auxiliary processes");
-    return identifier.isNull() ? String([[NSBundle mainBundle] bundleIdentifier]) : identifier;
+    return !identifier ? StringImpl::create([[NSBundle mainBundle] bundleIdentifier]) : identifier;
 }
 
-void setApplicationBundleIdentifier(const String& identifier)
+void setApplicationBundleIdentifier(StringImpl* identifier)
 {
     ASSERT(RunLoop::isMain());
     bundleIdentifier() = identifier;
 }
 
-void setApplicationBundleIdentifierOverride(const String& identifier)
+void setApplicationBundleIdentifierOverride(StringImpl* identifier)
 {
     ASSERT(RunLoop::isMain());
     ASSERT_WITH_MESSAGE(!applicationBundleIdentifierOverrideWasQueried, "applicationBundleIsEqualTo() and applicationBundleStartsWith() must not be called before setApplicationBundleIdentifierOverride()");
@@ -402,7 +402,7 @@ void setApplicationBundleIdentifierOverride(const String& identifier)
 void clearApplicationBundleIdentifierTestingOverride()
 {
     ASSERT(RunLoop::isMain());
-    bundleIdentifierOverride() = String();
+    bundleIdentifierOverride() = nullptr;
 #if !ASSERT_MSG_DISABLED
     applicationBundleIdentifierOverrideWasQueried = false;
 #endif
@@ -434,36 +434,36 @@ bool isInBaseSystem()
 #endif
 }
 
-static bool applicationBundleIsEqualTo(const String& bundleIdentifierString)
+static bool applicationBundleIsEqualTo(StringImpl* bundleIdentifierString)
 {
-    return applicationBundleIdentifier() == bundleIdentifierString;
+    return equal(applicationBundleIdentifier(), bundleIdentifierString);
 }
 
 bool CocoaApplication::isAppleBooks()
 {
-    static bool isAppleBooks = applicationBundleIsEqualTo("com.apple.iBooksX"_s) || applicationBundleIsEqualTo("com.apple.iBooks"_s);
+    static bool isAppleBooks = applicationBundleIsEqualTo("com.apple.iBooksX"_si) || applicationBundleIsEqualTo("com.apple.iBooks"_si);
     return isAppleBooks;
 }
 
 bool CocoaApplication::isWebkitTestRunner()
 {
-    static bool isWebkitTestRunner = applicationBundleIsEqualTo("com.apple.WebKit.WebKitTestRunner"_s);
+    static bool isWebkitTestRunner = applicationBundleIsEqualTo("com.apple.WebKit.WebKitTestRunner"_si);
     return isWebkitTestRunner;
 }
 
 bool CocoaApplication::isAppleApplication()
 {
-    static bool isAppleApplication = applicationBundleIdentifier().startsWith("com.apple."_s);
+    static bool isAppleApplication = startsWith(applicationBundleIdentifier(), "com.apple."_s);
     return isAppleApplication;
 }
 
 bool CocoaApplication::isDumpRenderTree()
 {
 #if PLATFORM(MAC)
-    static bool isDumpRenderTree = applicationBundleIsEqualTo("com.apple.WebKit.DumpRenderTree"_s);
+    static bool isDumpRenderTree = applicationBundleIsEqualTo("com.apple.WebKit.DumpRenderTree"_si);
     return isDumpRenderTree;
 #else
-    static bool isDumpRenderTree = applicationBundleIsEqualTo("org.webkit.DumpRenderTree"_s);
+    static bool isDumpRenderTree = applicationBundleIsEqualTo("org.webkit.DumpRenderTree"_si);
     return isDumpRenderTree;
 #endif
 }
@@ -478,16 +478,16 @@ bool CocoaApplication::shouldOSFaultLogForAppleApplicationUsingWebKit1()
         if (!isAppleApplication())
             return false;
 
-        String bundleIdentifier = applicationBundleIdentifier();
-        if (bundleIdentifier.startsWith("com.apple.InstallerRemotePluginService."_s))
+        RefPtr<StringImpl> bundleIdentifier = applicationBundleIdentifier();
+        if (startsWith(bundleIdentifier, "com.apple.InstallerRemotePluginService."_s))
             return false;
-        if (applicationBundleIsEqualTo("com.apple.WebKit.TestWebKitAPI"_s))
+        if (applicationBundleIsEqualTo("com.apple.WebKit.TestWebKitAPI"_si))
             return false;
-        if (applicationBundleIsEqualTo("com.apple.dt.Xcode"_s))
+        if (applicationBundleIsEqualTo("com.apple.dt.Xcode"_si))
             return false;
-        if (applicationBundleIsEqualTo("com.apple.ibtool"_s))
+        if (applicationBundleIsEqualTo("com.apple.ibtool"_si))
             return false;
-        if (applicationBundleIsEqualTo("com.apple.xctest"_s))
+        if (applicationBundleIsEqualTo("com.apple.xctest"_si))
             return false;
         if (CocoaApplication::isDumpRenderTree())
             return false;
@@ -502,87 +502,87 @@ bool CocoaApplication::shouldOSFaultLogForAppleApplicationUsingWebKit1()
 
 bool MacApplication::isSafari()
 {
-    static bool isSafari = applicationBundleIsEqualTo("com.apple.Safari"_s)
+    static bool isSafari = applicationBundleIsEqualTo("com.apple.Safari"_si)
         || isSafariTechnologyPreview()
-        || applicationBundleIdentifier().startsWith("com.apple.Safari."_s);
+        || startsWith(applicationBundleIdentifier(), "com.apple.Safari."_s);
     return isSafari;
 }
 
 bool MacApplication::isSafariTechnologyPreview()
 {
-    static bool isSafari = applicationBundleIsEqualTo("com.apple.SafariTechnologyPreview"_s);
+    static bool isSafari = applicationBundleIsEqualTo("com.apple.SafariTechnologyPreview"_si);
     return isSafari;
 }
 
 bool MacApplication::isSafariWebApp()
 {
-    static bool isSafariWebApp = applicationBundleIsEqualTo("com.apple.Safari.WebApp"_s);
+    static bool isSafariWebApp = applicationBundleIsEqualTo("com.apple.Safari.WebApp"_si);
     return isSafariWebApp;
 }
 
 bool MacApplication::isAppleMail()
 {
-    static bool isAppleMail = applicationBundleIsEqualTo("com.apple.mail"_s);
+    static bool isAppleMail = applicationBundleIsEqualTo("com.apple.mail"_si);
     return isAppleMail;
 }
 
 bool MacApplication::isAdobeInstaller()
 {
-    static bool isAdobeInstaller = applicationBundleIsEqualTo("com.adobe.Installers.Setup"_s);
+    static bool isAdobeInstaller = applicationBundleIsEqualTo("com.adobe.Installers.Setup"_si);
     return isAdobeInstaller;
 }
 
 bool MacApplication::isCaptiveNetworkAssistant()
 {
-    static bool isCaptiveNetworkAssistant = applicationBundleIsEqualTo("com.apple.CaptiveNetworkAssistant"_s);
+    static bool isCaptiveNetworkAssistant = applicationBundleIsEqualTo("com.apple.CaptiveNetworkAssistant"_si);
     return isCaptiveNetworkAssistant;
 }
 
 bool MacApplication::isMiniBrowser()
 {
-    static bool isMiniBrowser = applicationBundleIsEqualTo("org.webkit.MiniBrowser"_s) || applicationBundleIsEqualTo("org.webkit.SwiftBrowser"_s);
+    static bool isMiniBrowser = applicationBundleIsEqualTo("org.webkit.MiniBrowser"_si) || applicationBundleIsEqualTo("org.webkit.SwiftBrowser"_si);
     return isMiniBrowser;
 }
 
 bool MacApplication::isQuickenEssentials()
 {
-    static bool isQuickenEssentials = applicationBundleIsEqualTo("com.intuit.QuickenEssentials"_s);
+    static bool isQuickenEssentials = applicationBundleIsEqualTo("com.intuit.QuickenEssentials"_si);
     return isQuickenEssentials;
 }
 
 bool MacApplication::isVersions()
 {
-    static bool isVersions = applicationBundleIsEqualTo("com.blackpixel.versions"_s);
+    static bool isVersions = applicationBundleIsEqualTo("com.blackpixel.versions"_si);
     return isVersions;
 }
 
 bool MacApplication::isHRBlock()
 {
-    static bool isHRBlock = applicationBundleIsEqualTo("com.hrblock.tax.2010"_s);
+    static bool isHRBlock = applicationBundleIsEqualTo("com.hrblock.tax.2010"_si);
     return isHRBlock;
 }
 
 bool MacApplication::isTurboTax()
 {
-    static bool isTurboTax = applicationBundleIdentifier().startsWith("com.intuit.turbotax."_s);
+    static bool isTurboTax = startsWith(applicationBundleIdentifier(), "com.intuit.turbotax."_s);
     return isTurboTax;
 }
 
 bool MacApplication::isEpsonSoftwareUpdater()
 {
-    static bool isEpsonSoftwareUpdater = applicationBundleIsEqualTo("com.epson.EPSON_Software_Updater"_s);
+    static bool isEpsonSoftwareUpdater = applicationBundleIsEqualTo("com.epson.EPSON_Software_Updater"_si);
     return isEpsonSoftwareUpdater;
 }
 
 bool MacApplication::isMimeoPhotoProject()
 {
-    static bool isMimeoPhotoProject = applicationBundleIsEqualTo("com.mimeo.Mimeo.PhotoProject"_s);
+    static bool isMimeoPhotoProject = applicationBundleIsEqualTo("com.mimeo.Mimeo.PhotoProject"_si);
     return isMimeoPhotoProject;
 }
 
 bool MacApplication::isGridLegends()
 {
-    static bool isGridLegends = applicationBundleIsEqualTo("com.feralinteractive.gridlegends"_s);
+    static bool isGridLegends = applicationBundleIsEqualTo("com.feralinteractive.gridlegends"_si);
     return isGridLegends;
 }
 
@@ -592,49 +592,49 @@ bool MacApplication::isGridLegends()
 
 bool IOSApplication::isAppleWebApp()
 {
-    static bool isWebApp = applicationBundleIsEqualTo("com.apple.webapp"_s);
+    static bool isWebApp = applicationBundleIsEqualTo("com.apple.webapp"_si);
     return isWebApp;
 }
 
 bool IOSApplication::isMobileMail()
 {
-    static bool isMobileMail = applicationBundleIsEqualTo("com.apple.mobilemail"_s);
+    static bool isMobileMail = applicationBundleIsEqualTo("com.apple.mobilemail"_si);
     return isMobileMail;
 }
 
 bool IOSApplication::isMaild()
 {
-    static bool isMaild = applicationBundleIsEqualTo("com.apple.email.maild"_s);
+    static bool isMaild = applicationBundleIsEqualTo("com.apple.email.maild"_si);
     return isMaild;
 }
 
 bool IOSApplication::isMailCompositionService()
 {
-    static bool isMailCompositionService = applicationBundleIsEqualTo("com.apple.MailCompositionService"_s);
+    static bool isMailCompositionService = applicationBundleIsEqualTo("com.apple.MailCompositionService"_si);
     return isMailCompositionService;
 }
 
 bool IOSApplication::isMobileSafari()
 {
-    static bool isMobileSafari = applicationBundleIsEqualTo("com.apple.mobilesafari"_s);
+    static bool isMobileSafari = applicationBundleIsEqualTo("com.apple.mobilesafari"_si);
     return isMobileSafari;
 }
 
 bool IOSApplication::isSafariViewService()
 {
-    static bool isSafariViewService = applicationBundleIsEqualTo("com.apple.SafariViewService"_s);
+    static bool isSafariViewService = applicationBundleIsEqualTo("com.apple.SafariViewService"_si);
     return isSafariViewService;
 }
 
 bool IOSApplication::isWebBookmarksD()
 {
-    static bool isWebBookmarksD = applicationBundleIsEqualTo("com.apple.webbookmarksd"_s);
+    static bool isWebBookmarksD = applicationBundleIsEqualTo("com.apple.webbookmarksd"_si);
     return isWebBookmarksD;
 }
 
 bool IOSApplication::isMobileStore()
 {
-    static bool isMobileStore = applicationBundleIsEqualTo("com.apple.MobileStore"_s);
+    static bool isMobileStore = applicationBundleIsEqualTo("com.apple.MobileStore"_si);
     return isMobileStore;
 }
 
@@ -646,103 +646,103 @@ bool IOSApplication::isWebProcess()
 
 bool IOSApplication::isHoYoLAB()
 {
-    static bool isHoYoLAB = applicationBundleIsEqualTo("com.miHoYo.HoYoLAB"_s);
+    static bool isHoYoLAB = applicationBundleIsEqualTo("com.miHoYo.HoYoLAB"_si);
     return isHoYoLAB;
 }
 
 bool IOSApplication::isAmazon()
 {
-    static bool isAmazon = applicationBundleIsEqualTo("com.amazon.Amazon"_s);
+    static bool isAmazon = applicationBundleIsEqualTo("com.amazon.Amazon"_si);
     return isAmazon;
 }
 
 bool IOSApplication::isDataActivation()
 {
-    static bool isDataActivation = applicationBundleIsEqualTo("com.apple.DataActivation"_s);
+    static bool isDataActivation = applicationBundleIsEqualTo("com.apple.DataActivation"_si);
     return isDataActivation;
 }
 
 bool IOSApplication::isMiniBrowser()
 {
-    static bool isMiniBrowser = applicationBundleIsEqualTo("org.webkit.MiniBrowser"_s) || applicationBundleIsEqualTo("org.webkit.SwiftBrowser"_s);
+    static bool isMiniBrowser = applicationBundleIsEqualTo("org.webkit.MiniBrowser"_si) || applicationBundleIsEqualTo("org.webkit.SwiftBrowser"_si);
     return isMiniBrowser;
 }
 
 bool IOSApplication::isNews()
 {
-    static bool isNews = applicationBundleIsEqualTo("com.apple.news"_s);
+    static bool isNews = applicationBundleIsEqualTo("com.apple.news"_si);
     return isNews;
 }
 
 bool IOSApplication::isStocks()
 {
-    static bool isStocks = applicationBundleIsEqualTo("com.apple.stocks"_s);
+    static bool isStocks = applicationBundleIsEqualTo("com.apple.stocks"_si);
     return isStocks;
 }
 
 bool IOSApplication::isFeedly()
 {
-    static bool isFeedly = applicationBundleIsEqualTo("com.devhd.feedly"_s);
+    static bool isFeedly = applicationBundleIsEqualTo("com.devhd.feedly"_si);
     return isFeedly;
 }
 
 bool IOSApplication::isGmail()
 {
-    static bool isGmail = applicationBundleIsEqualTo("com.google.Gmail"_s);
+    static bool isGmail = applicationBundleIsEqualTo("com.google.Gmail"_si);
     return isGmail;
 }
 
 bool IOSApplication::isEssentialSkeleton()
 {
-    static bool isEssentialSkeleton = applicationBundleIsEqualTo("com.3d4medical.EssentialSkeleton"_s);
+    static bool isEssentialSkeleton = applicationBundleIsEqualTo("com.3d4medical.EssentialSkeleton"_si);
     return isEssentialSkeleton;
 }
 
 bool IOSApplication::isUNIQLOApp()
 {
-    static bool isUNIQLO = applicationBundleIdentifier().startsWith("com.uniqlo"_s);
+    static bool isUNIQLO = startsWith(applicationBundleIdentifier(), "com.uniqlo"_s);
     return isUNIQLO;
 }
 
 bool IOSApplication::isDOFUSTouch()
 {
-    static bool isDOFUSTouch = applicationBundleIsEqualTo("com.ankama.dofustouch"_s);
+    static bool isDOFUSTouch = applicationBundleIsEqualTo("com.ankama.dofustouch"_si);
     return isDOFUSTouch;
 }
 
 bool IOSApplication::isMoonPlayer()
 {
-    static bool isMoonPlayer = applicationBundleIsEqualTo("com.innovis.moonplayer"_s);
+    static bool isMoonPlayer = applicationBundleIsEqualTo("com.innovis.moonplayer"_si);
     return isMoonPlayer;
 }
 
 bool IOSApplication::isMyRideK12()
 {
-    static bool isMyRideK12 = applicationBundleIsEqualTo("com.tylertech.myridek12"_s);
+    static bool isMyRideK12 = applicationBundleIsEqualTo("com.tylertech.myridek12"_si);
     return isMyRideK12;
 }
 
 bool IOSApplication::isHimalaya()
 {
-    static bool isHimalayaApp = applicationBundleIsEqualTo("com.gemd.iting"_s);
+    static bool isHimalayaApp = applicationBundleIsEqualTo("com.gemd.iting"_si);
     return isHimalayaApp;
 }
 
 bool IOSApplication::isTableau()
 {
-    static bool isTableau = applicationBundleIdentifier().startsWith("com.tableausoftware"_s);
+    static bool isTableau = startsWith(applicationBundleIdentifier(), "com.tableausoftware"_s);
     return isTableau;
 }
 
 bool IOSApplication::isTubular()
 {
-    static bool isTubular = applicationBundleIdentifier().startsWith("com.aaronbrannan.youtubeAVP"_s);
+    static bool isTubular = startsWith(applicationBundleIdentifier(), "com.aaronbrannan.youtubeAVP"_s);
     return isTubular;
 }
 
 bool IOSApplication::isLensApp()
 {
-    static bool isLensApp = applicationBundleIsEqualTo("com.float.lens"_s);
+    static bool isLensApp = applicationBundleIsEqualTo("com.float.lens"_si);
     return isLensApp;
 }
 

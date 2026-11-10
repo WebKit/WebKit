@@ -64,8 +64,8 @@ public:
     WEBCORE_EXPORT Ref<HTMLCollection> rows();
     WEBCORE_EXPORT Ref<HTMLCollection> tBodies();
 
-    NODELETE const AtomString& rules() const;
-    NODELETE const AtomString& summary() const;
+    NODELETE const RefPtr<AtomStringImpl>& rules() const;
+    NODELETE const RefPtr<AtomStringImpl>& summary() const;
 
     const MutableStyleProperties* additionalCellStyle() const;
     const MutableStyleProperties* additionalGroupStyle(bool rows) const;
@@ -73,9 +73,9 @@ public:
 private:
     HTMLTableElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) final;
     NODELETE bool isURLAttribute(const Attribute&) const final;
 
     // Used to obtain either a solid or outset border decl and to deal with the frame and rules attributes.

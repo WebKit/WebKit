@@ -149,7 +149,7 @@ RefPtr<WebGPU::Buffer> Device::createBuffer(const WebGPU::BufferDescriptor& desc
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createbuffer
 
     if (!validateCreateBuffer(*this, descriptor)) {
-        generateAValidationError("Validation failure."_s);
+        generateAValidationError("Validation failure."_si);
 
         return Buffer::createInvalid(*this);
     }
@@ -159,12 +159,12 @@ RefPtr<WebGPU::Buffer> Device::createBuffer(const WebGPU::BufferDescriptor& desc
     MTLStorageMode storageMode = WebGPU::Metal::storageMode(hasUnifiedMemory(), descriptor.usage, descriptor.mappedAtCreation);
     auto buffer = safeCreateBuffer(static_cast<NSUInteger>(descriptor.size), storageMode);
     if (!buffer) {
-        generateAnOutOfMemoryError("Allocation failure."_s);
+        generateAnOutOfMemoryError("Allocation failure."_si);
 
         return Buffer::createInvalid(*this);
     }
 
-    buffer.label = descriptor.label.createNSString().get();
+    buffer.label = createNSString(descriptor.label).get();
 
     auto initialMapState = Buffer::State::Unmapped;
     auto initialMappingRange = Buffer::MappingRange {
@@ -488,17 +488,17 @@ void Buffer::unmap()
     m_mappedRanges = MappedRanges();
 }
 
-void Buffer::setLabel(String&& label)
+void Buffer::setLabel(RefPtr<StringImpl>&& label)
 {
-    m_buffer.label = label.createNSString().get();
+    m_buffer.label = createNSString(label).get();
 }
 
 void Buffer::generateAValidationError()
 {
-    generateAValidationError("Buffer state was not unmapped"_s);
+    generateAValidationError("Buffer state was not unmapped"_si);
 }
 
-void Buffer::generateAValidationError(String&& message)
+void Buffer::generateAValidationError(RefPtr<StringImpl>&& message)
 {
     m_device->generateAValidationError(WTF::move(message));
 }

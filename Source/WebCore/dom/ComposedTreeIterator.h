@@ -213,8 +213,8 @@ inline ComposedTreeChildAdapter<ContextInlineCapacity> composedTreeChildren(Cont
 }
 
 enum class ComposedTreeAsTextMode { Normal, WithPointers };
-WEBCORE_EXPORT String composedTreeAsText(ContainerNode& root, ComposedTreeAsTextMode = ComposedTreeAsTextMode::Normal);
-WEBCORE_EXPORT String composedTreeAsTextFromNode(ContainerNode& root, Node& startNode);
+WEBCORE_EXPORT RefPtr<StringImpl> composedTreeAsText(ContainerNode& root, ComposedTreeAsTextMode = ComposedTreeAsTextMode::Normal);
+WEBCORE_EXPORT RefPtr<StringImpl> composedTreeAsTextFromNode(ContainerNode& root, Node& startNode);
 
 
 // Helper functions for walking the composed tree.

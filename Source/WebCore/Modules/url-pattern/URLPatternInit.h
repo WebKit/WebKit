@@ -30,15 +30,15 @@
 namespace WebCore {
 
 struct URLPatternInit {
-    String protocol;
-    String username;
-    String password;
-    String hostname;
-    String port;
-    String pathname;
-    String search;
-    String hash;
-    String baseURL;
+    RefPtr<StringImpl> protocol;
+    RefPtr<StringImpl> username;
+    RefPtr<StringImpl> password;
+    RefPtr<StringImpl> hostname;
+    RefPtr<StringImpl> port;
+    RefPtr<StringImpl> pathname;
+    RefPtr<StringImpl> search;
+    RefPtr<StringImpl> hash;
+    RefPtr<StringImpl> baseURL;
 };
 
 }

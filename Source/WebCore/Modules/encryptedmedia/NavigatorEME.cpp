@@ -49,7 +49,7 @@ struct LogArgument;
 
 template<typename T>
 struct LogArgument<Vector<T>> {
-    static String toString(const Vector<T>& value)
+    static RefPtr<StringImpl> toString(const Vector<T>& value)
     {
         StringBuilder builder;
         builder.append('[');
@@ -79,7 +79,7 @@ inline void infoLog(Logger&, const Arguments&...)
 
 static void tryNextSupportedConfiguration(Document&, RefPtr<CDM>&&, Vector<MediaKeySystemConfiguration>&&, RefPtr<DeferredPromise>&&, Ref<Logger>&&, Logger::LogSiteIdentifier&&);
 
-void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& document, const String& keySystem, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, Ref<DeferredPromise>&& promise)
+void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& document, StringImpl* keySystem, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, Ref<DeferredPromise>&& promise)
 {
     // https://w3c.github.io/encrypted-media/#dom-navigator-requestmediakeysystemaccess
     // W3C Editor's Draft 09 November 2016
@@ -91,8 +91,8 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& d
     // When this method is invoked, the user agent must run the following steps:
     // 1. If keySystem is the empty string, return a promise rejected with a newly created TypeError.
     // 2. If supportedConfigurations is empty, return a promise rejected with a newly created TypeError.
-    if (keySystem.isEmpty() || supportedConfigurations.isEmpty()) {
-        infoLog(logger, identifier, "Rejected: empty keySystem(", keySystem.isEmpty(), ") or empty supportedConfigurations(", supportedConfigurations.isEmpty(), ")");
+    if (isEmpty(keySystem) || supportedConfigurations.isEmpty()) {
+        infoLog(logger, identifier, "Rejected: empty keySystem(", isEmpty(keySystem), ") or empty supportedConfigurations(", supportedConfigurations.isEmpty(), ")");
         promise->reject(ExceptionCode::TypeError);
         return;
     }
@@ -110,7 +110,7 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& d
     }
 
     auto request = MediaKeySystemRequest::create(document, keySystem, WTF::move(promise));
-    request->setAllowCallback([keySystem, supportedConfigurations = WTF::move(supportedConfigurations), weakDocument = WeakPtr { document }, logger = WTF::move(logger), identifier = WTF::move(identifier)](String&& mediaKeysHashSalt, RefPtr<DeferredPromise>&& promise) mutable {
+    request->setAllowCallback([keySystem = RefPtr { keySystem }, supportedConfigurations = WTF::move(supportedConfigurations), weakDocument = WeakPtr { document }, logger = WTF::move(logger), identifier = WTF::move(identifier)](RefPtr<StringImpl>&& mediaKeysHashSalt, RefPtr<DeferredPromise>&& promise) mutable {
         RefPtr document = weakDocument.get();
         if (!document) {
             if (promise)
@@ -118,7 +118,7 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& d
             return;
         }
 
-        document->postTask([promise = WTF::move(promise), keySystem, logger = WTF::move(logger), identifier = WTF::move(identifier), supportedConfigurations = WTF::move(supportedConfigurations), mediaKeysHashSalt = WTF::move(mediaKeysHashSalt)] (ScriptExecutionContext& context) mutable {
+        document->postTask([promise = WTF::move(promise), keySystem = RefPtr { keySystem }, logger = WTF::move(logger), identifier = WTF::move(identifier), supportedConfigurations = WTF::move(supportedConfigurations), mediaKeysHashSalt = WTF::move(mediaKeysHashSalt)] (ScriptExecutionContext& context) mutable {
             // 6.2. Let implementation be the implementation of keySystem.
             auto& document = downcast<Document>(context);
             auto implementation = CDM::create(document, keySystem, mediaKeysHashSalt);
@@ -155,7 +155,7 @@ static void tryNextSupportedConfiguration(Document& document, RefPtr<CDM>&& impl
                 // 6.3.3.1.3. Let the cdm implementation value be implementation.
 
                 // Obtain reference to the key system string before the `implementation` RefPtr<> is cleared out.
-                const String& keySystem = implementation->keySystem();
+                const RefPtr<StringImpl>& keySystem = implementation->keySystem();
                 auto access = MediaKeySystemAccess::create(*document, keySystem, WTF::move(supportedConfiguration.value()), implementation.releaseNonNull());
 
                 // 6.3.3.2. Resolve promise with access and abort the parallel steps of this algorithm.

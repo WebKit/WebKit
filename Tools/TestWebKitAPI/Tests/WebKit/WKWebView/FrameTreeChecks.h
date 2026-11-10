@@ -33,7 +33,7 @@ namespace TestWebKitAPI {
 enum RemoteFrameTag { RemoteFrame };
 
 struct ExpectedFrameTree {
-    Variant<RemoteFrameTag, String> remoteOrOrigin;
+    Variant<RemoteFrameTag, RefPtr<StringImpl>> remoteOrOrigin;
     Vector<ExpectedFrameTree> children { };
 };
 

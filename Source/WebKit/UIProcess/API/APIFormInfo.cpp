@@ -30,7 +30,7 @@ namespace API {
 
 class FrameInfo;
 
-FormInfo::FormInfo(API::FrameInfo& frame, API::FrameInfo& sourceFrame, const WTF::URL& submissionURL, const WTF::String& httpMethod, const Vector<std::pair<WTF::String, WTF::String>>& formValues)
+FormInfo::FormInfo(API::FrameInfo& frame, API::FrameInfo& sourceFrame, const WTF::URL& submissionURL, StringImpl* httpMethod, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& formValues)
     : m_targetFrame(frame)
     , m_sourceFrame(sourceFrame)
     , m_submissionURL(submissionURL)
@@ -56,12 +56,12 @@ const WTF::URL& FormInfo::submissionURL() const
     return m_submissionURL;
 }
 
-const WTF::String& FormInfo::httpMethod() const
+const RefPtr<StringImpl>& FormInfo::httpMethod() const
 {
     return m_httpMethod;
 }
 
-const Vector<std::pair<WTF::String, WTF::String>>& FormInfo::formValues() const
+const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& FormInfo::formValues() const
 {
     return m_formValues;
 }

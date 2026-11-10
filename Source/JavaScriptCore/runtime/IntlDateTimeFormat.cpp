@@ -91,10 +91,10 @@ namespace IntlDateTimeFormatInternal {
 static constexpr bool verbose = false;
 }
 
-static std::unique_ptr<UDateFormat, UDateFormatDeleter> openDateFormat(const ASCIICString& dataLocale, const String& timeZone, std::span<const char16_t> pattern, UErrorCode& status)
+static std::unique_ptr<UDateFormat, UDateFormatDeleter> openDateFormat(const ASCIICString& dataLocale, StringImpl* timeZone, std::span<const char16_t> pattern, UErrorCode& status)
 {
     auto timeZoneView = StringView(timeZone).upconvertedCharacters();
-    auto* dateFormat = udat_open(UDAT_PATTERN, UDAT_PATTERN, dataLocale.data(), timeZoneView.get(), timeZone.length(), pattern.data(), pattern.size(), &status);
+    auto* dateFormat = udat_open(UDAT_PATTERN, UDAT_PATTERN, dataLocale.data(), timeZoneView.get(), length(timeZone), pattern.data(), pattern.size(), &status);
     if (U_FAILURE(status))
         return nullptr;
 
@@ -158,52 +158,52 @@ IntlDateTimeFormat::DateTimeStyle IntlDateTimeFormat::dateStyle() const { return
 IntlDateTimeFormat::DateTimeStyle IntlDateTimeFormat::timeStyle() const { return m_impl->m_timeStyle; }
 IntlDateTimeFormat::TimeZoneName IntlDateTimeFormat::timeZoneName() const { return m_impl->m_timeZoneName; }
 
-const String& IntlDateTimeFormat::ensureCalendar() const
+const RefPtr<StringImpl>& IntlDateTimeFormat::ensureCalendar() const
 {
-    if (m_impl->m_calendar.isNull())
+    if (!m_impl->m_calendar)
         m_impl->m_calendar = defaultCalendarForLocale(m_impl->m_dataLocale);
     return m_impl->m_calendar;
 }
 
-const String& IntlDateTimeFormat::ensureNumberingSystem() const
+const RefPtr<StringImpl>& IntlDateTimeFormat::ensureNumberingSystem() const
 {
-    if (m_impl->m_numberingSystem.isNull())
+    if (!m_impl->m_numberingSystem)
         m_impl->m_numberingSystem = defaultNumberingSystemForLocale(m_impl->m_dataLocale);
     return m_impl->m_numberingSystem;
 }
 
-bool IntlDateTimeFormat::calendarMatchesICU(StringView temporalId, const String& icuCalId)
+bool IntlDateTimeFormat::calendarMatchesICU(StringView temporalId, StringImpl* icuCalId)
 {
     if (temporalId == icuCalId)
         return true;
     // Normalize both IDs to their BCP47 canonical form and compare.
     // mapICUCalendarKeywordToBCP47 maps ICU -> BCP47: "gregorian"->"gregory", "ethiopic-amete-alem"->"ethioaa".
     // "islamicc" is a legacy alias for "islamic-civil" not covered by the mapping tables.
-    auto normalize = [](const String& id) -> String {
+    auto normalize = [](StringImpl* id) -> RefPtr<StringImpl> {
         if (auto bcp47 = mapICUCalendarKeywordToBCP47(id))
             return *bcp47;
-        if (id == "islamicc"_s)
-            return "islamic-civil"_s;
+        if (equal(id, "islamicc"_s))
+            return "islamic-civil"_si;
         return id;
     };
-    return normalize(temporalId.toString()) == normalize(icuCalId);
+    return equal(normalize(temporalId.toString()), normalize(icuCalId));
 }
 
-Vector<String> IntlDateTimeFormat::localeData(const String& locale, RelevantExtensionKey key)
+Vector<RefPtr<StringImpl>> IntlDateTimeFormat::localeData(StringImpl* locale, RelevantExtensionKey key)
 {
-    Vector<String> keyLocaleData;
+    Vector<RefPtr<StringImpl>> keyLocaleData;
     switch (key) {
     case RelevantExtensionKey::Ca: {
         UErrorCode status = U_ZERO_ERROR;
-        auto calendars = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_getKeywordValuesForLocale("calendar", locale.ascii().data(), false, &status));
+        auto calendars = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_getKeywordValuesForLocale("calendar", ascii(locale).data(), false, &status));
         ASSERT(U_SUCCESS(status));
 
         int32_t nameLength;
         while (const char* availableName = uenum_next(calendars.get(), &nameLength, &status)) {
             ASSERT(U_SUCCESS(status));
-            String calendar = String::fromLatin1(unsafeMakeSpan(availableName, static_cast<size_t>(nameLength)));
+            RefPtr<StringImpl> calendar = StringImpl::fromLatin1(unsafeMakeSpan(availableName, static_cast<size_t>(nameLength)));
             // Adding "islamicc" candidate for backward compatibility.
-            if (calendar == "islamic-civil"_s)
+            if (equal(calendar, "islamic-civil"_s))
                 keyLocaleData.append("islamicc"_s);
 
             if (auto mapped = mapICUCalendarKeywordToBCP47(calendar)) {
@@ -224,7 +224,7 @@ Vector<String> IntlDateTimeFormat::localeData(const String& locale, RelevantExte
     }
     case RelevantExtensionKey::Hc:
         // Null default so we know to use 'j' in pattern.
-        keyLocaleData.append(String());
+        keyLocaleData.append(nullString());
         keyLocaleData.append("h11"_s);
         keyLocaleData.append("h12"_s);
         keyLocaleData.append("h23"_s);
@@ -406,15 +406,15 @@ void IntlDateTimeFormat::setFormatsFromPattern(IntlDateTimeFormatImpl& impl, Str
     }
 }
 
-IntlDateTimeFormat::HourCycle IntlDateTimeFormat::parseHourCycle(const String& hourCycle)
+IntlDateTimeFormat::HourCycle IntlDateTimeFormat::parseHourCycle(StringImpl* hourCycle)
 {
-    if (hourCycle == "h11"_s)
+    if (equal(hourCycle, "h11"_s))
         return HourCycle::H11;
-    if (hourCycle == "h12"_s)
+    if (equal(hourCycle, "h12"_s))
         return HourCycle::H12;
-    if (hourCycle == "h23"_s)
+    if (equal(hourCycle, "h23"_s))
         return HourCycle::H23;
-    if (hourCycle == "h24"_s)
+    if (equal(hourCycle, "h24"_s))
         return HourCycle::H24;
     return HourCycle::None;
 }
@@ -545,7 +545,7 @@ inline void IntlDateTimeFormat::replaceHourCycleInPattern(Vector<char16_t, 32>& 
     }
 }
 
-String IntlDateTimeFormat::buildSkeleton(Weekday weekday, Era era, Year year, Month month, Day day, TriState hour12, HourCycle hourCycle, Hour hour, DayPeriod dayPeriod, Minute minute, Second second, unsigned fractionalSecondDigits, TimeZoneName timeZoneName)
+RefPtr<StringImpl> IntlDateTimeFormat::buildSkeleton(Weekday weekday, Era era, Year year, Month month, Day day, TriState hour12, HourCycle hourCycle, Hour hour, DayPeriod dayPeriod, Minute minute, Second second, unsigned fractionalSecondDigits, TimeZoneName timeZoneName)
 {
     StringBuilder skeletonBuilder;
 
@@ -755,7 +755,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         cacheKey = WTF::move(key);
     }
 
-    Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, locales);
+    Vector<RefPtr<StringImpl>> requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
     JSObject* options = intlCoerceOptionsToObject(globalObject, originalOptions);
@@ -768,21 +768,21 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
 
-    String calendar = intlStringOption(globalObject, options, vm.propertyNames->calendar, { }, { }, { });
+    RefPtr<StringImpl> calendar = intlStringOption(globalObject, options, vm.propertyNames->calendar, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!calendar.isNull()) {
+    if (calendar) {
         if (!isUnicodeLocaleIdentifierType(calendar)) [[unlikely]] {
-            throwRangeError(globalObject, scope, "calendar is not a well-formed calendar value"_s);
+            throwRangeError(globalObject, scope, "calendar is not a well-formed calendar value"_si);
             return;
         }
-        localeOptions[static_cast<unsigned>(RelevantExtensionKey::Ca)] = calendar.convertToASCIILowercase();
+        localeOptions[static_cast<unsigned>(RelevantExtensionKey::Ca)] = convertToASCIILowercase(calendar);
     }
 
-    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
+    RefPtr<StringImpl> numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!numberingSystem.isNull()) {
+    if (numberingSystem) {
         if (!isUnicodeLocaleIdentifierType(numberingSystem)) [[unlikely]] {
-            throwRangeError(globalObject, scope, "numberingSystem is not a well-formed numbering system value"_s);
+            throwRangeError(globalObject, scope, "numberingSystem is not a well-formed numbering system value"_si);
             return;
         }
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Nu)] = numberingSystem;
@@ -795,33 +795,33 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     RETURN_IF_EXCEPTION(scope, void());
     if (hour12 == TriState::Indeterminate) {
         if (hourCycle != HourCycle::None)
-            localeOptions[static_cast<unsigned>(RelevantExtensionKey::Hc)] = String(hourCycleString(hourCycle));
+            localeOptions[static_cast<unsigned>(RelevantExtensionKey::Hc)] = StringImpl::create(hourCycleString(hourCycle));
     } else {
         // If there is hour12, hourCycle is ignored.
         // We are setting null String explicitly here (localeOptions' entries are std::optional<String>). This leads us to use HourCycle::None later.
-        localeOptions[static_cast<unsigned>(RelevantExtensionKey::Hc)] = String();
+        localeOptions[static_cast<unsigned>(RelevantExtensionKey::Hc)] = nullptr;
     }
 
     const auto& availableLocales = intlDateTimeFormatAvailableLocales();
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { RelevantExtensionKey::Ca, RelevantExtensionKey::Hc, RelevantExtensionKey::Nu }, localeData);
 
     impl->m_locale = resolved.locale;
-    if (impl->m_locale.isEmpty()) [[unlikely]] {
+    if (isEmpty(impl->m_locale)) [[unlikely]] {
         throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat due to invalid locale"_s);
         return;
     }
 
     {
-        String calendar = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Ca)];
-        if (!calendar.isNull()) {
+        RefPtr<StringImpl> calendar = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Ca)];
+        if (calendar) {
             if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
                 calendar = WTF::move(mapped.value());
             // Handling "islamicc" candidate for backward compatibility.
-            if (calendar == "islamicc"_s)
-                calendar = "islamic-civil"_s;
+            if (equal(calendar, "islamicc"_s))
+                calendar = "islamic-civil"_si;
             // https://tc39.es/proposal-intl-era-monthcode/#sec-createdatetimeformat step 9
-            if (calendar == "islamic"_s)
-                calendar = "islamic-tbla"_s;
+            if (equal(calendar, "islamic"_s))
+                calendar = "islamic-tbla"_si;
             // Not a numbered CreateDateTimeFormat step; the spec's [[ca]] slot still permits
             // calendars outside AvailableCalendars() here. Per TG2's resolution closing
             // AvailableCalendars() and ignoring unsupported "ca" values like "islamic-rgsa"
@@ -838,14 +838,14 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
     StringBuilder localeBuilder;
     localeBuilder.append(impl->m_dataLocale);
-    if (!impl->m_calendar.isNull() || !impl->m_numberingSystem.isNull()) {
+    if (impl->m_calendar || impl->m_numberingSystem) {
         localeBuilder.append("-u"_s);
-        if (!impl->m_calendar.isNull())
+        if (impl->m_calendar)
             localeBuilder.append("-ca-"_s, impl->m_calendar);
-        if (!impl->m_numberingSystem.isNull())
+        if (impl->m_numberingSystem)
             localeBuilder.append("-nu-"_s, impl->m_numberingSystem);
     }
-    impl->m_dataLocaleWithExtensions = localeBuilder.toString().ascii();
+    impl->m_dataLocaleWithExtensions = ascii(localeBuilder.toString());
     const ASCIICString& dataLocaleWithExtensions = impl->m_dataLocaleWithExtensions;
 
     JSValue tzValue = jsUndefined();
@@ -863,9 +863,9 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         tzValue = jsString(vm, toLocaleStringTimeZone);
     }
     TimeZone tz;
-    String tzForResolvedOptions;
+    RefPtr<StringImpl> tzForResolvedOptions;
     if (!tzValue.isUndefined()) {
-        String originalTz = tzValue.toWTFString(globalObject);
+        RefPtr<StringImpl> originalTz = tzValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
         if (auto minutesValue = ISO8601::parseUTCOffsetInMinutes(originalTz)) {
             int64_t nanoseconds = minutesValue.value() * 60LL * 1000 * 1000 * 1000;
@@ -875,9 +875,9 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             tz = TimeZone::fromID(resolved->id);
             tzForResolvedOptions = resolved->identifier;
         } else {
-            String message = tryMakeString("invalid time zone: "_s, originalTz);
+            RefPtr<StringImpl> message = tryMakeString("invalid time zone: "_s, originalTz);
             if (!message)
-                message = "invalid time zone"_s;
+                message = "invalid time zone"_si;
             throwRangeError(globalObject, scope, message);
             return;
         }
@@ -974,7 +974,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         // First, we create UDateFormat via dateStyle and timeStyle. And then convert it to pattern string.
         // After updating this pattern string with hourCycle, we create a final UDateFormat with the updated pattern string.
         UErrorCode status = U_ZERO_ERROR;
-        String timeZoneForICU = impl->m_timeZone.toICUString();
+        RefPtr<StringImpl> timeZoneForICU = impl->m_timeZone.toICUString();
         StringView timeZoneView(timeZoneForICU);
         auto dateFormatFromStyle = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_open(parseUDateFormatStyle(impl->m_timeStyle), parseUDateFormatStyle(impl->m_dateStyle), dataLocaleWithExtensions.data(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), nullptr, -1, &status));
         if (U_FAILURE(status)) [[unlikely]] {
@@ -1046,7 +1046,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
         // Save the user's skeleton before defaults are injected; computeGetDateTimeFormat
         // uses this to know exactly which fields the user explicitly set.
-        String userSkeletonStr = buildSkeleton(weekday, era, year, month, day, hour12, hourCycle, hour, dayPeriod, minute, second, fractionalSecondDigits, timeZoneName);
+        RefPtr<StringImpl> userSkeletonStr = buildSkeleton(weekday, era, year, month, day, hour12, hourCycle, hour, dayPeriod, minute, second, fractionalSecondDigits, timeZoneName);
         impl->m_userSkeleton = Vector<char16_t, 32>(StringView(userSkeletonStr).upconvertedCharacters().span());
 
         if (needDefaults && (defaults == Defaults::Date || defaults == Defaults::All || defaults == Defaults::ZonedDateTime)) {
@@ -1068,7 +1068,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         if (needDefaults && defaults == Defaults::ZonedDateTime && timeZoneName == TimeZoneName::None)
             timeZoneName = TimeZoneName::Short;
 
-        String skeleton = buildSkeleton(weekday, era, year, month, day, hour12, hourCycle, hour, dayPeriod, minute, second, fractionalSecondDigits, timeZoneName);
+        RefPtr<StringImpl> skeleton = buildSkeleton(weekday, era, year, month, day, hour12, hourCycle, hour, dayPeriod, minute, second, fractionalSecondDigits, timeZoneName);
         UErrorCode status = U_ZERO_ERROR;
         patternBuffer = vm.intlCache().getBestDateTimePattern(dataLocaleWithExtensions, StringView(skeleton).upconvertedCharacters(), status);
         if (U_FAILURE(status)) [[unlikely]] {
@@ -1087,7 +1087,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     dataLogLnIf(IntlDateTimeFormatInternal::verbose, "locale:(", impl->m_locale, "),dataLocale:(", dataLocaleWithExtensions, "),pattern:(", pattern, ")");
 
     UErrorCode status = U_ZERO_ERROR;
-    String timeZoneForICU = impl->m_timeZone.toICUString();
+    RefPtr<StringImpl> timeZoneForICU = impl->m_timeZone.toICUString();
     impl->m_dateFormat = openDateFormat(dataLocaleWithExtensions, timeZoneForICU, patternBuffer.span(), status);
     if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
@@ -1314,9 +1314,9 @@ JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject) cons
 {
     VM& vm = globalObject->vm();
 
-    if (m_impl->m_calendar.isNull())
+    if (!m_impl->m_calendar)
         m_impl->m_calendar = defaultCalendarForLocale(m_impl->m_dataLocale);
-    if (m_impl->m_numberingSystem.isNull())
+    if (!m_impl->m_numberingSystem)
         m_impl->m_numberingSystem = defaultNumberingSystemForLocale(m_impl->m_dataLocale);
 
     JSObject* options = constructEmptyObject(globalObject);
@@ -1406,21 +1406,21 @@ struct EraOverride {
     ASCIILiteral text;
     bool needsYearFlip { false };
 };
-static std::optional<EraOverride> proposalEraOverrideString(const String& calendar, double epochMs)
+static std::optional<EraOverride> proposalEraOverrideString(StringImpl* calendar, double epochMs)
 {
-    if (calendar == "islamic-civil"_s || calendar == "islamic-umalqura"_s) {
+    if (equal(calendar, "islamic-civil"_s) || equal(calendar, "islamic-umalqura"_s)) {
         constexpr double islamicEpoch = -42521558822000.0; // ISO 622-07-19T07:52:58.000Z
         if (epochMs < islamicEpoch)
             return EraOverride { "Before Hijra"_s, true };
         return std::nullopt;
     }
-    if (calendar == "islamic-tbla"_s) {
+    if (equal(calendar, "islamic-tbla"_s)) {
         constexpr double islamicTblaEpoch = -42521645222000.0; // ISO 622-07-18T07:52:58.000Z
         if (epochMs < islamicTblaEpoch)
             return EraOverride { "Before Hijra"_s, true };
         return std::nullopt;
     }
-    if (calendar == "coptic"_s) {
+    if (equal(calendar, "coptic"_s)) {
         constexpr double copticEpoch = -53184182822000.0; // ISO 284-08-29T07:52:58.000Z
         if (epochMs < copticEpoch)
             return EraOverride { "Anno Martyrum"_s };
@@ -1433,7 +1433,7 @@ static std::optional<EraOverride> proposalEraOverrideString(const String& calend
 // Temporal's eraYear and ICU's native "Before Christ"), read from a clone of the format's own
 // calendar rather than parsed from ICU's rendered text -- under year:"2-digit" that text is
 // already lossily truncated, so flipping it instead of the real value would be wrong.
-static std::optional<String> flippedEraOverrideYear(UDateFormat* format, double value, bool yearIsTwoDigit)
+static std::optional<RefPtr<StringImpl>> flippedEraOverrideYear(UDateFormat* format, double value, bool yearIsTwoDigit)
 {
     UErrorCode status = U_ZERO_ERROR;
     auto calendar = std::unique_ptr<UCalendar, ICUDeleter<ucal_close>>(ucal_clone(udat_getCalendar(format), &status));
@@ -1445,10 +1445,10 @@ static std::optional<String> flippedEraOverrideYear(UDateFormat* format, double 
         return std::nullopt;
     int32_t flipped = 1 - year;
     if (!yearIsTwoDigit)
-        return String::number(flipped);
+        return makeString(flipped);
     int32_t twoDigit = ((flipped % 100) + 100) % 100;
-    auto digits = String::number(twoDigit);
-    return digits.length() < 2 ? makeString('0', digits) : digits;
+    auto digits = makeString(twoDigit);
+    return length(digits) < 2 ? makeString('0', digits) : digits;
 }
 
 // ICU4C-WORKAROUND: rdar://182953351 - see proposalEraOverrideString. Shared by both format() overloads.
@@ -1492,12 +1492,12 @@ static JSValue formatWithEraOverride(JSGlobalObject* globalObject, UDateFormat* 
         builder.append(resultView);
         if (resultView.isEmpty() || !WTF::isUnicodeWhitespace(resultView[resultView.length() - 1]))
             builder.append(' ');
-        builder.append(String(eraOverride.text));
+        builder.append(StringImpl::create(eraOverride.text).ptr());
         return jsString(vm, builder.toString());
     }
 
     // Replace the era field, and the year field too when needsYearFlip (see struct above).
-    String yearReplacement;
+    RefPtr<StringImpl> yearReplacement;
     if (yearBegin >= 0) {
         if (auto flipped = flippedEraOverrideYear(format, value, yearIsTwoDigit))
             yearReplacement = *flipped;
@@ -1506,10 +1506,10 @@ static JSValue formatWithEraOverride(JSGlobalObject* globalObject, UDateFormat* 
     struct ReplacedSpan {
         int32_t begin;
         int32_t end;
-        String replacement;
+        RefPtr<StringImpl> replacement;
     };
-    ReplacedSpan spans[2] = { { eraBegin, eraEnd, String(eraOverride.text) }, { -1, -1, { } } };
-    if (!yearReplacement.isNull())
+    ReplacedSpan spans[2] = { { eraBegin, eraEnd, StringImpl::create(eraOverride.text) }, { -1, -1, { } } };
+    if (yearReplacement)
         spans[1] = { yearBegin, yearEnd, yearReplacement };
     if (spans[1].begin >= 0 && spans[1].begin < spans[0].begin)
         std::swap(spans[0], spans[1]);
@@ -1536,7 +1536,7 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value) c
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!std::isfinite(value))
-        return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat format()"_s);
+        return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat format()"_si);
 
     // ICU4C-WORKAROUND: rdar://182953351 - see proposalEraOverrideString; only when era requested.
     auto eraOverride = m_impl->m_era != Era::None ? proposalEraOverrideString(m_impl->m_calendar, value) : std::nullopt;
@@ -1549,7 +1549,7 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value) c
         return throwTypeError(globalObject, scope, "failed to format date value"_s);
     replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(result);
 
-    return jsString(vm, String(WTF::move(result)));
+    return jsString(vm, StringImpl::create(WTF::move(result)));
 }
 
 static ASCIILiteral partTypeString(UDateFormatField field)
@@ -1621,7 +1621,7 @@ static JSValue buildFormattedDateTimeParts(JSGlobalObject* globalObject, UDateFo
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!std::isfinite(value)) [[unlikely]]
-        return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat formatToParts()"_s);
+        return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat formatToParts()"_si);
 
     UErrorCode status = U_ZERO_ERROR;
     auto fields = std::unique_ptr<UFieldPositionIterator, UFieldPositionIteratorDeleter>(ufieldpositer_open(&status));
@@ -1639,7 +1639,7 @@ static JSValue buildFormattedDateTimeParts(JSGlobalObject* globalObject, UDateFo
         return throwOutOfMemoryError(globalObject, scope);
 
     StringView resultStringView(result.span());
-    auto literalString = jsNontrivialString(vm, "literal"_s);
+    auto literalString = jsNontrivialString(vm, "literal"_si);
 
     int32_t resultLength = result.size();
     int32_t previousEndIndex = 0;
@@ -1667,7 +1667,7 @@ static JSValue buildFormattedDateTimeParts(JSGlobalObject* globalObject, UDateFo
             {
                 // ICU4C-WORKAROUND: rdar://182953351 - replace era field text with override for islamic-* pre-Hijra / coptic pre-AM.
                 if (eraOverride && fieldType == UDAT_ERA_FIELD) {
-                    valueStr = jsNontrivialString(vm, String(eraOverride->text));
+                    valueStr = jsNontrivialString(vm, StringImpl::create(eraOverride->text));
                     sawEra = true;
                 } else if (eraOverride && eraOverride->needsYearFlip && fieldType == UDAT_YEAR_FIELD) {
                     // ICU4C-WORKAROUND: rdar://182953351 - flip the year the same way formatWithEraOverride does.
@@ -1695,8 +1695,8 @@ static JSValue buildFormattedDateTimeParts(JSGlobalObject* globalObject, UDateFo
                 parts->putDirectIndex(globalObject, parts->length(), separatorPart);
                 RETURN_IF_EXCEPTION(scope, { });
             }
-            auto type = jsNontrivialString(vm, "era"_s);
-            auto valueStr = jsNontrivialString(vm, String(eraOverride->text));
+            auto type = jsNontrivialString(vm, "era"_si);
+            auto valueStr = jsNontrivialString(vm, StringImpl::create(eraOverride->text));
             JSObject* part = sourceType
                 ? createIntlPartObjectWithSource(globalObject, type, valueStr, sourceType)
                 : createIntlPartObject(globalObject, type, valueStr);
@@ -1736,25 +1736,25 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
         }
     }
 
-    dataLogLnIf(IntlDateTimeFormatInternal::verbose, "interval format pattern:(", String(pattern), "),skeleton:(", String(skeleton), ")");
+    dataLogLnIf(IntlDateTimeFormatInternal::verbose, "interval format pattern:(", StringImpl::create(pattern).ptr(), "),skeleton:(", StringImpl::create(skeleton).ptr(), ")");
 
     // While the pattern is including right HourCycle patterns, UDateIntervalFormat does not follow.
     // We need to enforce HourCycle by setting "hc" extension if it is specified.
     StringBuilder localeBuilder;
     localeBuilder.append(m_impl->m_dataLocale);
-    if (!m_impl->m_calendar.isNull() || !m_impl->m_numberingSystem.isNull() || m_impl->m_hourCycle != HourCycle::None) {
+    if (m_impl->m_calendar || m_impl->m_numberingSystem || m_impl->m_hourCycle != HourCycle::None) {
         localeBuilder.append("-u"_s);
-        if (!m_impl->m_calendar.isNull())
+        if (m_impl->m_calendar)
             localeBuilder.append("-ca-"_s, m_impl->m_calendar);
-        if (!m_impl->m_numberingSystem.isNull())
+        if (m_impl->m_numberingSystem)
             localeBuilder.append("-nu-"_s, m_impl->m_numberingSystem);
         if (m_impl->m_hourCycle != HourCycle::None)
             localeBuilder.append("-hc-"_s, hourCycleString(m_impl->m_hourCycle));
     }
-    auto dataLocaleWithExtensions = localeBuilder.toString().ascii();
+    auto dataLocaleWithExtensions = ascii(localeBuilder.toString());
 
     UErrorCode status = U_ZERO_ERROR;
-    String timeZoneForICU = m_impl->m_timeZone.toICUString();
+    RefPtr<StringImpl> timeZoneForICU = m_impl->m_timeZone.toICUString();
     StringView timeZoneView(timeZoneForICU);
     m_dateIntervalFormat = std::unique_ptr<UDateIntervalFormat, UDateIntervalFormatDeleter>(udtitvfmt_open(dataLocaleWithExtensions.data(), skeleton.span().data(), skeleton.size(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), &status));
     if (U_FAILURE(status)) [[unlikely]] {
@@ -1855,7 +1855,7 @@ auto IntlDateTimeFormat::prepareDateRange(JSGlobalObject* globalObject, double& 
     startDate = timeClip(startDate);
     endDate = timeClip(endDate);
     if (std::isnan(startDate) || std::isnan(endDate)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Passed date is out of range"_s);
+        throwRangeError(globalObject, scope, "Passed date is out of range"_si);
         return std::nullopt;
     }
 
@@ -2060,10 +2060,10 @@ static JSValue buildFormattedDateIntervalParts(JSGlobalObject* globalObject, con
         return { };
     }
 
-    auto startRangeString = jsNontrivialString(vm, "startRange"_s);
-    auto endRangeString = jsNontrivialString(vm, "endRange"_s);
-    auto sharedString = jsNontrivialString(vm, "shared"_s);
-    auto literalString = jsNontrivialString(vm, "literal"_s);
+    auto startRangeString = jsNontrivialString(vm, "startRange"_si);
+    auto endRangeString = jsNontrivialString(vm, "endRange"_si);
+    auto sharedString = jsNontrivialString(vm, "shared"_si);
+    auto literalString = jsNontrivialString(vm, "literal"_si);
 
     WTF::Range<int32_t> startRange { -1, -1 };
     WTF::Range<int32_t> endRange { -1, -1 };
@@ -2177,12 +2177,12 @@ JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, JSV
             return { };
 
         if (nonTemporalPreamble->equal)
-            RELEASE_AND_RETURN(scope, buildFormattedDateTimeParts(globalObject, m_impl->m_dateFormat.get(), preamble->startMs, jsNontrivialString(vm, "shared"_s)));
+            RELEASE_AND_RETURN(scope, buildFormattedDateTimeParts(globalObject, m_impl->m_dateFormat.get(), preamble->startMs, jsNontrivialString(vm, "shared"_si)));
         RELEASE_AND_RETURN(scope, buildFormattedDateIntervalParts(globalObject, nonTemporalPreamble->formattedValue));
     }
 
     if (preamble->equal)
-        RELEASE_AND_RETURN(scope, buildFormattedDateTimeParts(globalObject, preamble->tempFormat, preamble->startMs, jsNontrivialString(vm, "shared"_s)));
+        RELEASE_AND_RETURN(scope, buildFormattedDateTimeParts(globalObject, preamble->tempFormat, preamble->startMs, jsNontrivialString(vm, "shared"_si)));
     RELEASE_AND_RETURN(scope, buildFormattedDateIntervalParts(globalObject, preamble->formattedValue));
 }
 
@@ -2570,7 +2570,7 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, JSValue x) cons
     ASSERT(record.kind != TemporalFieldKind::ZonedDateTime);
 
     if (!std::isfinite(record.value))
-        return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat format()"_s);
+        return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat format()"_si);
 
     auto tempFormat = getTemporalFormatter(vm, record.kind);
     if (!tempFormat) [[unlikely]]
@@ -2586,7 +2586,7 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, JSValue x) cons
     if (U_FAILURE(fmtStatus)) [[unlikely]]
         return throwTypeError(globalObject, scope, "failed to format date value"_s);
     replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(result);
-    return jsString(vm, String(WTF::move(result)));
+    return jsString(vm, StringImpl::create(WTF::move(result)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-formatdatetimetoparts
@@ -2629,14 +2629,14 @@ IntlDateTimeFormat::createTemporalIntervalFormat(UDateFormat* tempFormat, Tempor
         return nullptr;
 
     bool plain = isPlain(kind);
-    String tzForInterval = plain ? "GMT"_s : m_impl->m_timeZone.toICUString();
+    RefPtr<StringImpl> tzForInterval = plain ? "GMT"_si : m_impl->m_timeZone.toICUString();
     StringView tzView(tzForInterval);
 
     StringBuilder localeBuilder;
     localeBuilder.append(m_impl->m_dataLocale, "-u-ca-"_s, ensureCalendar(), "-nu-"_s, ensureNumberingSystem());
     if (m_impl->m_hourCycle != HourCycle::None)
         localeBuilder.append("-hc-"_s, hourCycleString(m_impl->m_hourCycle));
-    auto localeWithExt = localeBuilder.toString().ascii();
+    auto localeWithExt = ascii(localeBuilder.toString());
 
     return std::unique_ptr<UDateIntervalFormat, UDateIntervalFormatDeleter>(
         udtitvfmt_open(localeWithExt.data(), tempSkeleton.span().data(), tempSkeleton.size(),
@@ -2674,7 +2674,7 @@ JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, JSValue xV
         }
         Vector<char16_t, 32> buffer(std::span<const char16_t> { formattedStringPointer, static_cast<size_t>(formattedStringLength) });
         replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
-        return jsString(vm, String(WTF::move(buffer)));
+        return jsString(vm, StringImpl::create(WTF::move(buffer)));
     }
 
     UErrorCode status = U_ZERO_ERROR;
@@ -2691,12 +2691,12 @@ JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, JSValue xV
         if (U_FAILURE(singleStatus)) [[unlikely]]
             return throwTypeError(globalObject, scope, "failed to format date value"_s);
         replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(singleResult);
-        return jsString(vm, String(WTF::move(singleResult)));
+        return jsString(vm, StringImpl::create(WTF::move(singleResult)));
     }
 
     Vector<char16_t, 32> resultChars(std::span(chars, length));
     replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(resultChars);
-    return jsString(vm, String(WTF::move(resultChars)));
+    return jsString(vm, StringImpl::create(WTF::move(resultChars)));
 }
 
 } // namespace JSC

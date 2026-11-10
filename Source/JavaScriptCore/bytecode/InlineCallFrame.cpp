@@ -56,7 +56,7 @@ UTF8CString InlineCallFrame::inferredName() const
     return uncheckedDowncast<FunctionExecutable>(baselineCodeBlock->ownerExecutable())->ecmaName().utf8();
 }
 
-String InlineCallFrame::inferredNameWithHash() const
+RefPtr<StringImpl> InlineCallFrame::inferredNameWithHash() const
 {
     return makeString(inferredName(), "#"_s, hash());
 }

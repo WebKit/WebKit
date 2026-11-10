@@ -42,17 +42,17 @@ SymbolRegistry::~SymbolRegistry()
         SUPPRESS_UNCOUNTED_ARG downcast<SymbolImpl>(key.get())->asRegisteredSymbolImpl()->clearSymbolRegistry();
 }
 
-Ref<RegisteredSymbolImpl> SymbolRegistry::symbolForKey(const String& rep)
+Ref<RegisteredSymbolImpl> SymbolRegistry::symbolForKey(StringImpl* rep)
 {
-    auto addResult = m_table.add(rep.impl());
+    auto addResult = m_table.add(rep);
     if (!addResult.isNewEntry)
         return *downcast<SymbolImpl>(addResult.iterator->get())->asRegisteredSymbolImpl();
 
     RefPtr<RegisteredSymbolImpl> symbol;
     if (m_symbolType == Type::PrivateSymbol)
-        symbol = RegisteredSymbolImpl::createPrivate(*rep.impl(), *this);
+        symbol = RegisteredSymbolImpl::createPrivate(*rep, *this);
     else
-        symbol = RegisteredSymbolImpl::create(*rep.impl(), *this);
+        symbol = RegisteredSymbolImpl::create(*rep, *this);
 
     *addResult.iterator = symbol;
     return symbol.releaseNonNull();
@@ -61,7 +61,7 @@ Ref<RegisteredSymbolImpl> SymbolRegistry::symbolForKey(const String& rep)
 // When removing a registered symbol from the table, we know it's already the one in the table, so no need for a string equality check.
 struct SymbolRegistryTableRemovalHashTranslator {
     static unsigned hash(const RegisteredSymbolImpl* key) { return key->hash(); }
-    NODELETE static bool equal(const RefPtr<StringImpl>& a, const RegisteredSymbolImpl* b) { return a == b; }
+    NODELETE static bool equal(const RefPtr<StringImpl>& a, const RegisteredSymbolImpl* b) { return isSameImpl(a, b); }
 };
 
 void SymbolRegistry::remove(RegisteredSymbolImpl& uid)

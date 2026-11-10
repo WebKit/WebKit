@@ -38,16 +38,16 @@ enum class AllowTrustedTypePolicy : uint8_t;
 class ContentSecurityPolicyTrustedTypesDirective : public ContentSecurityPolicyDirective {
     WTF_MAKE_TZONE_ALLOCATED(ContentSecurityPolicyTrustedTypesDirective);
 public:
-    ContentSecurityPolicyTrustedTypesDirective(const ContentSecurityPolicyDirectiveList&, const String& name, const String& value);
+    ContentSecurityPolicyTrustedTypesDirective(const ContentSecurityPolicyDirectiveList&, StringImpl* name, StringImpl* value);
 
-    bool allows(const String& value, bool isDuplicate, AllowTrustedTypePolicy&) const;
+    bool allows(StringImpl* value, bool isDuplicate, AllowTrustedTypePolicy&) const;
 
 private:
-    void parse(const String&);
+    void parse(StringImpl*);
 
     bool m_allowDuplicates { false };
     bool m_allowAny { false };
-    HashSet<String> m_list;
+    HashSet<RefPtr<StringImpl>> m_list;
 };
 
 } // namespace WebCore

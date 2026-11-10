@@ -34,17 +34,17 @@
 namespace WebCore {
 struct AuthenticationResponseJSON {
     struct AuthenticatorAssertionResponseJSON {
-        String clientDataJSON;
-        String authenticatorData;
-        String signature;
-        String userHandle;
+        RefPtr<StringImpl> clientDataJSON;
+        RefPtr<StringImpl> authenticatorData;
+        RefPtr<StringImpl> signature;
+        RefPtr<StringImpl> userHandle;
     };
-    String id;
-    String rawId;
+    RefPtr<StringImpl> id;
+    RefPtr<StringImpl> rawId;
     AuthenticatorAssertionResponseJSON response;
-    String authenticatorAttachment;
+    RefPtr<StringImpl> authenticatorAttachment;
     AuthenticationExtensionsClientOutputsJSON clientExtensionResults;
-    String type;
+    RefPtr<StringImpl> type;
 };
 }
 

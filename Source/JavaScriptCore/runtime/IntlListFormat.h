@@ -77,7 +77,7 @@ private:
     static ASCIILiteral styleString(Style);
 
     std::unique_ptr<UListFormatter, UListFormatterDeleter> m_listFormat;
-    String m_locale;
+    RefPtr<StringImpl> m_locale;
     Type m_type { Type::Conjunction };
     Style m_style { Style::Long };
 };

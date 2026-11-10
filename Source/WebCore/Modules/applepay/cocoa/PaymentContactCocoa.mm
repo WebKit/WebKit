@@ -46,18 +46,18 @@ static RetainPtr<PKContact> convert(unsigned version, const ApplePayPaymentConta
 
     RetainPtr<NSString> familyName;
     RetainPtr<NSString> phoneticFamilyName;
-    if (!contact.familyName.isEmpty()) {
-        familyName = contact.familyName.createNSString();
-        if (version >= 3 && !contact.phoneticFamilyName.isEmpty())
-            phoneticFamilyName = contact.phoneticFamilyName.createNSString();
+    if (!isEmpty(contact.familyName)) {
+        familyName = createNSString(contact.familyName);
+        if (version >= 3 && !isEmpty(contact.phoneticFamilyName))
+            phoneticFamilyName = createNSString(contact.phoneticFamilyName);
     }
 
     RetainPtr<NSString> givenName;
     RetainPtr<NSString> phoneticGivenName;
-    if (!contact.givenName.isEmpty()) {
-        givenName = contact.givenName.createNSString();
-        if (version >= 3 && !contact.phoneticGivenName.isEmpty())
-            phoneticGivenName = contact.phoneticGivenName.createNSString();
+    if (!isEmpty(contact.givenName)) {
+        givenName = createNSString(contact.givenName);
+        if (version >= 3 && !isEmpty(contact.phoneticGivenName))
+            phoneticGivenName = createNSString(contact.phoneticGivenName);
     }
 
     if (familyName || givenName) {
@@ -73,11 +73,11 @@ static RetainPtr<PKContact> convert(unsigned version, const ApplePayPaymentConta
         [result setName:name.get()];
     }
 
-    if (!contact.emailAddress.isEmpty())
-        [result setEmailAddress:contact.emailAddress.createNSString().get()];
+    if (!isEmpty(contact.emailAddress))
+        [result setEmailAddress:createNSString(contact.emailAddress).get()];
 
-    if (!contact.phoneNumber.isEmpty())
-        [result setPhoneNumber:adoptNS([allocCNPhoneNumberInstance() initWithStringValue:contact.phoneNumber.createNSString().get()]).get()];
+    if (!isEmpty(contact.phoneNumber))
+        [result setPhoneNumber:adoptNS([allocCNPhoneNumberInstance() initWithStringValue:createNSString(contact.phoneNumber).get()]).get()];
 
     if (contact.addressLines && !contact.addressLines->isEmpty()) {
         RetainPtr address = adoptNS([allocCNMutablePostalAddressInstance() init]);
@@ -91,20 +91,20 @@ static RetainPtr<PKContact> convert(unsigned version, const ApplePayPaymentConta
 
         [address setStreet:builder.createNSString().get()];
 
-        if (!contact.subLocality.isEmpty())
-            [address setSubLocality:contact.subLocality.createNSString().get()];
-        if (!contact.locality.isEmpty())
-            [address setCity:contact.locality.createNSString().get()];
-        if (!contact.postalCode.isEmpty())
-            [address setPostalCode:contact.postalCode.createNSString().get()];
-        if (!contact.subAdministrativeArea.isEmpty())
-            [address setSubAdministrativeArea:contact.subAdministrativeArea.createNSString().get()];
-        if (!contact.administrativeArea.isEmpty())
-            [address setState:contact.administrativeArea.createNSString().get()];
-        if (!contact.country.isEmpty())
-            [address setCountry:contact.country.createNSString().get()];
-        if (!contact.countryCode.isEmpty())
-            [address setISOCountryCode:contact.countryCode.createNSString().get()];
+        if (!isEmpty(contact.subLocality))
+            [address setSubLocality:createNSString(contact.subLocality).get()];
+        if (!isEmpty(contact.locality))
+            [address setCity:createNSString(contact.locality).get()];
+        if (!isEmpty(contact.postalCode))
+            [address setPostalCode:createNSString(contact.postalCode).get()];
+        if (!isEmpty(contact.subAdministrativeArea))
+            [address setSubAdministrativeArea:createNSString(contact.subAdministrativeArea).get()];
+        if (!isEmpty(contact.administrativeArea))
+            [address setState:createNSString(contact.administrativeArea).get()];
+        if (!isEmpty(contact.country))
+            [address setCountry:createNSString(contact.country).get()];
+        if (!isEmpty(contact.countryCode))
+            [address setISOCountryCode:createNSString(contact.countryCode).get()];
 
         [result setPostalAddress:address.get()];
     }
@@ -118,44 +118,44 @@ static ApplePayPaymentContact convert(unsigned version, PKContact *contact)
 
     ApplePayPaymentContact result;
 
-    result.phoneNumber = static_cast<CNPhoneNumber *>(contact.phoneNumber).stringValue;
-    result.emailAddress = contact.emailAddress;
+    result.phoneNumber = StringImpl::create(static_cast<CNPhoneNumber *>(contact.phoneNumber).stringValue);
+    result.emailAddress = StringImpl::create(contact.emailAddress);
 
     RetainPtr<NSPersonNameComponents> name = contact.name;
-    result.givenName = name.get().givenName;
-    result.familyName = name.get().familyName;
+    result.givenName = StringImpl::create(name.get().givenName);
+    result.familyName = StringImpl::create(name.get().familyName);
 
     if (version >= 3) {
         RetainPtr<NSPersonNameComponents> phoneticName = name.get().phoneticRepresentation;
-        result.phoneticGivenName = phoneticName.get().givenName;
-        result.phoneticFamilyName = phoneticName.get().familyName;
+        result.phoneticGivenName = StringImpl::create(phoneticName.get().givenName);
+        result.phoneticFamilyName = StringImpl::create(phoneticName.get().familyName);
     }
 
     RetainPtr<CNPostalAddress> postalAddress = contact.postalAddress;
     if (postalAddress.get().street.length)
-        result.addressLines = String(postalAddress.get().street).split('\n');
-    result.subLocality = postalAddress.get().subLocality;
-    result.locality = postalAddress.get().city;
-    result.postalCode = postalAddress.get().postalCode;
-    result.subAdministrativeArea = postalAddress.get().subAdministrativeArea;
-    result.administrativeArea = postalAddress.get().state;
-    result.country = postalAddress.get().country;
-    result.countryCode = postalAddress.get().ISOCountryCode;
+        result.addressLines = split(StringImpl::create(postalAddress.get().street), '\n');
+    result.subLocality = StringImpl::create(postalAddress.get().subLocality);
+    result.locality = StringImpl::create(postalAddress.get().city);
+    result.postalCode = StringImpl::create(postalAddress.get().postalCode);
+    result.subAdministrativeArea = StringImpl::create(postalAddress.get().subAdministrativeArea);
+    result.administrativeArea = StringImpl::create(postalAddress.get().state);
+    result.country = StringImpl::create(postalAddress.get().country);
+    result.countryCode = StringImpl::create(postalAddress.get().ISOCountryCode);
 
     return result;
 }
 
 static LocalizedApplePayPaymentContact convertLocalized(unsigned version, PKContact *contact)
 {
-    String localizedName;
-    String localizedPhoneticName;
+    RefPtr<StringImpl> localizedName;
+    RefPtr<StringImpl> localizedPhoneticName;
 
     if (RetainPtr<NSPersonNameComponents> name = contact.name) {
-        localizedName = [NSPersonNameComponentsFormatter localizedStringFromPersonNameComponents:name.get() style:NSPersonNameComponentsFormatterStyleDefault options:0];
+        localizedName = StringImpl::create([NSPersonNameComponentsFormatter localizedStringFromPersonNameComponents:name.get() style:NSPersonNameComponentsFormatterStyleDefault options:0]);
 
         if (version >= 3) {
             if (RetainPtr<NSPersonNameComponents> phoneticName = name.get().phoneticRepresentation)
-                localizedPhoneticName = [NSPersonNameComponentsFormatter localizedStringFromPersonNameComponents:name.get() style:NSPersonNameComponentsFormatterStyleDefault options:NSPersonNameComponentsFormatterPhonetic];
+                localizedPhoneticName = StringImpl::create([NSPersonNameComponentsFormatter localizedStringFromPersonNameComponents:name.get() style:NSPersonNameComponentsFormatterStyleDefault options:NSPersonNameComponentsFormatterPhonetic]);
         }
     }
 

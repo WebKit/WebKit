@@ -102,12 +102,12 @@ GPUDevice* GPUComputePipeline::device() const
     return m_device;
 }
 
-String GPUComputePipeline::label() const
+RefPtr<StringImpl> GPUComputePipeline::label() const
 {
     return m_descriptor.label;
 }
 
-void GPUComputePipeline::setLabel(String&& label)
+void GPUComputePipeline::setLabel(RefPtr<StringImpl>&& label)
 {
     m_descriptor.label = label;
     protect(backing())->setLabel(WTF::move(label));
@@ -120,7 +120,7 @@ Ref<GPUBindGroupLayout> GPUComputePipeline::getBindGroupLayout(uint32_t index)
     return GPUBindGroupLayout::create(protect(backing())->getBindGroupLayout(index), { }, m_uniqueId, protect(m_device));
 }
 
-void GPUComputePipeline::updateShader(const String& source, CompletionHandler<void(bool)>&& completionHandler)
+void GPUComputePipeline::updateShader(StringImpl* source, CompletionHandler<void(bool)>&& completionHandler)
 {
     RefPtr device = m_device.get();
     if (!device) {

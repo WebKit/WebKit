@@ -56,9 +56,9 @@ using namespace WebCore;
 static const Seconds preloadedEntryLifetime { 10_s };
 
 #if !LOG_DISABLED
-static HashCountedSet<String>& allSpeculativeLoadingDiagnosticMessages()
+static HashCountedSet<RefPtr<StringImpl>>& allSpeculativeLoadingDiagnosticMessages()
 {
-    static NeverDestroyed<HashCountedSet<String>> messages;
+    static NeverDestroyed<HashCountedSet<RefPtr<StringImpl>>> messages;
     return messages;
 }
 
@@ -70,7 +70,7 @@ static void printSpeculativeLoadingDiagnosticMessageCounts()
 }
 #endif
 
-static void logSpeculativeLoadingDiagnosticMessage(NetworkProcess& networkProcess, const GlobalFrameID& frameID, const String& message)
+static void logSpeculativeLoadingDiagnosticMessage(NetworkProcess& networkProcess, const GlobalFrameID& frameID, StringImpl* message)
 {
 #if !LOG_DISABLED
     if (WebKit2LogNetworkCacheSpeculativePreloading.state == WTFLogChannelState::On)
@@ -79,10 +79,10 @@ static void logSpeculativeLoadingDiagnosticMessage(NetworkProcess& networkProces
     networkProcess.logDiagnosticMessage(frameID.webPageProxyID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), message, WebCore::ShouldSample::Yes);
 }
 
-static const AtomString& subresourcesType()
+static const RefPtr<AtomStringImpl>& subresourcesType()
 {
     ASSERT(RunLoop::isMain());
-    static NeverDestroyed<const AtomString> resource("SubResources"_s);
+    static NeverDestroyed<const RefPtr<AtomStringImpl>> resource("SubResources"_s);
     return resource;
 }
 
@@ -94,23 +94,23 @@ static inline Key makeSubresourcesKey(const Key& resourceKey, const Salt& salt)
 static inline ResourceRequest constructRevalidationRequest(const Key& key, const SubresourceInfo& subResourceInfo, const Entry* entry)
 {
     ResourceRequest revalidationRequest(URL { key.identifier() });
-    revalidationRequest.setShouldBlockThirdPartyStorage(!key.partition().isEmpty());
+    revalidationRequest.setShouldBlockThirdPartyStorage(!isEmpty(key.partition()));
     revalidationRequest.setHTTPHeaderFields(subResourceInfo.requestHeaders());
     revalidationRequest.setFirstPartyForCookies(subResourceInfo.firstPartyForCookies());
     revalidationRequest.setIsSameSite(subResourceInfo.isSameSite());
     revalidationRequest.setIsTopSite(subResourceInfo.isTopSite());
     revalidationRequest.setIsAppInitiated(subResourceInfo.isAppInitiated());
 
-    ASSERT_WITH_MESSAGE(key.range().isEmpty(), "range is not supported");
+    ASSERT_WITH_MESSAGE(isEmpty(key.range()), "range is not supported");
     
     revalidationRequest.makeUnconditional();
     if (entry) {
-        String eTag = entry->response().httpHeaderField(HTTPHeaderName::ETag);
-        if (!eTag.isEmpty())
+        RefPtr<StringImpl> eTag = entry->response().httpHeaderField(HTTPHeaderName::ETag);
+        if (!isEmpty(eTag))
             revalidationRequest.setHTTPHeaderField(HTTPHeaderName::IfNoneMatch, eTag);
 
-        String lastModified = entry->response().httpHeaderField(HTTPHeaderName::LastModified);
-        if (!lastModified.isEmpty())
+        RefPtr<StringImpl> lastModified = entry->response().httpHeaderField(HTTPHeaderName::LastModified);
+        if (!isEmpty(lastModified))
             revalidationRequest.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
     }
     
@@ -352,9 +352,9 @@ void SpeculativeLoadManager::retrieve(const Key& storageKey, RetrieveCompletionH
 
 bool SpeculativeLoadManager::shouldRegisterLoad(const WebCore::ResourceRequest& request)
 {
-    if (request.httpMethod() != "GET"_s)
+    if (!equal(request.httpMethod(), "GET"_s))
         return false;
-    if (!request.httpHeaderField(HTTPHeaderName::Range).isEmpty())
+    if (!isEmpty(request.httpHeaderField(HTTPHeaderName::Range)))
         return false;
     return true;
 }
@@ -517,7 +517,7 @@ void SpeculativeLoadManager::revalidateSubresource(const SubresourceInfo& subres
     auto& key = subresourceInfo.key();
 
     // Range is not supported.
-    if (!key.range().isEmpty())
+    if (!isEmpty(key.range()))
         return;
 
     RefPtr pendingLoad = m_pendingFrameLoads.get(frameID);
@@ -649,7 +649,7 @@ void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& f
 
 void SpeculativeLoadManager::retrieveSubresourcesEntry(const Key& storageKey, WTF::Function<void (std::unique_ptr<SubresourcesEntry>)>&& completionHandler)
 {
-    ASSERT(storageKey.type() == "Resource"_s);
+    ASSERT(equal(storageKey.type(), "Resource"_s));
     Ref storage = m_storage.get();
     auto subresourcesStorageKey = makeSubresourcesKey(storageKey, storage->salt());
     storage->retrieve(subresourcesStorageKey, static_cast<unsigned>(ResourceLoadPriority::Medium), [completionHandler = WTF::move(completionHandler)](auto record, auto timings) {

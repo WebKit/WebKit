@@ -41,20 +41,20 @@ namespace WebCore {
 
 class RTCSessionDescriptionDescriptor : public RefCounted<RTCSessionDescriptionDescriptor> {
 public:
-    NODELETE static Ref<RTCSessionDescriptionDescriptor> create(const String& type, const String& sdp);
+    NODELETE static Ref<RTCSessionDescriptionDescriptor> create(StringImpl* type, StringImpl* sdp);
     virtual ~RTCSessionDescriptionDescriptor();
 
-    const String& type() const LIFETIME_BOUND { return m_type; }
-    void setType(const String& type) { m_type = type; }
+    const RefPtr<StringImpl>& type() const LIFETIME_BOUND { return m_type; }
+    void setType(StringImpl* type) { m_type = type; }
 
-    const String& sdp() const LIFETIME_BOUND { return m_sdp; }
-    void setSdp(const String& sdp) { m_sdp = sdp; }
+    const RefPtr<StringImpl>& sdp() const LIFETIME_BOUND { return m_sdp; }
+    void setSdp(StringImpl* sdp) { m_sdp = sdp; }
 
 private:
-    RTCSessionDescriptionDescriptor(const String& type, const String& sdp);
+    RTCSessionDescriptionDescriptor(StringImpl* type, StringImpl* sdp);
 
-    String m_type;
-    String m_sdp;
+    RefPtr<StringImpl> m_type;
+    RefPtr<StringImpl> m_sdp;
 };
 
 } // namespace WebCore

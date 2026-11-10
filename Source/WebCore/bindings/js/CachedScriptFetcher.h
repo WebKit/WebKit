@@ -46,12 +46,12 @@ class CachedScriptFetcher : public JSC::ScriptFetcher {
 public:
     static constexpr ASCIILiteral defaultCrossOriginModeForModule { "anonymous"_s };
 
-    virtual CachedResourceHandle<CachedResource> requestModuleResource(Document&, const URL& sourceURL, FetchOptionsDestination, String&& integrity, std::optional<ServiceWorkersMode>, const URL& referrer) const;
+    virtual CachedResourceHandle<CachedResource> requestModuleResource(Document&, const URL& sourceURL, FetchOptionsDestination, RefPtr<StringImpl>&& integrity, std::optional<ServiceWorkersMode>, const URL& referrer) const;
 
-    NODELETE static Ref<CachedScriptFetcher> create(const AtomString& charset);
+    NODELETE static Ref<CachedScriptFetcher> create(AtomStringImpl* charset);
 
 protected:
-    CachedScriptFetcher(const String& nonce, ReferrerPolicy referrerPolicy, RequestPriority fetchPriority, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
+    CachedScriptFetcher(StringImpl* nonce, ReferrerPolicy referrerPolicy, RequestPriority fetchPriority, AtomStringImpl* charset, AtomStringImpl* initiatorType, bool isInUserAgentShadowTree)
         : m_nonce(nonce)
         , m_charset(charset)
         , m_initiatorType(initiatorType)
@@ -61,19 +61,19 @@ protected:
     {
     }
 
-    explicit CachedScriptFetcher(const AtomString& charset)
+    explicit CachedScriptFetcher(AtomStringImpl* charset)
         : m_charset(charset)
     {
     }
 
-    RefPtr<CachedResource> requestResourceWithCache(Document&, const URL& sourceURL, FetchOptionsDestination, const String& crossOriginMode, String&& integrity, std::optional<ResourceLoadPriority>, std::optional<ServiceWorkersMode>, const URL& referrer = { }) const;
+    RefPtr<CachedResource> requestResourceWithCache(Document&, const URL& sourceURL, FetchOptionsDestination, StringImpl* crossOriginMode, RefPtr<StringImpl>&& integrity, std::optional<ResourceLoadPriority>, std::optional<ServiceWorkersMode>, const URL& referrer = { }) const;
 
 private:
     bool isCachedScriptFetcher() const final { return true; }
 
-    String m_nonce;
-    AtomString m_charset;
-    AtomString m_initiatorType;
+    RefPtr<StringImpl> m_nonce;
+    RefPtr<AtomStringImpl> m_charset;
+    RefPtr<AtomStringImpl> m_initiatorType;
     bool m_isInUserAgentShadowTree { false };
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
     RequestPriority m_fetchPriority { RequestPriority::Auto };

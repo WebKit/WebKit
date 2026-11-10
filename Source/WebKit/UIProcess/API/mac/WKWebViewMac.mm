@@ -1626,9 +1626,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _impl->endPreviewPanelControl(panel);
 }
 
-- (Vector<String>)_promisedFileMIMETypes:(id<NSDraggingInfo>)info
+- (Vector<RefPtr<StringImpl>>)_promisedFileMIMETypes:(id<NSDraggingInfo>)info
 {
-    __block Vector<String> mimeTypes;
+    __block Vector<RefPtr<StringImpl>> mimeTypes;
     [info enumerateDraggingItemsWithOptions:0 forView:self classes:@[NSFilePromiseReceiver.class] searchOptions:@{ } usingBlock:^(NSDraggingItem *item, NSInteger, BOOL *) {
         RetainPtr receiver = dynamic_objc_cast<NSFilePromiseReceiver>(item.item);
         if (!receiver)
@@ -1641,7 +1641,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 continue;
 
             if (RetainPtr mimeType = [type preferredMIMEType])
-                mimeTypes.append({ mimeType.get() });
+                mimeTypes.append({ StringImpl::create(mimeType.get()) });
         }
     }];
 
@@ -1661,7 +1661,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 continue;
 
             if (RetainPtr mimeType = [type preferredMIMEType])
-                mimeTypes.append({ mimeType.get() });
+                mimeTypes.append({ StringImpl::create(mimeType.get()) });
         }
     }
 

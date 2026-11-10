@@ -58,7 +58,7 @@ public:
 
 private:
     RefPtr<MHTMLArchive> parseArchiveWithHeader(MIMEHeader*);
-    RefPtr<ArchiveResource> parseNextPart(const MIMEHeader&, const String& endOfPartBoundary, const String& endOfDocumentBoundary, bool& endOfArchiveReached);
+    RefPtr<ArchiveResource> parseNextPart(const MIMEHeader&, StringImpl* endOfPartBoundary, StringImpl* endOfDocumentBoundary, bool& endOfArchiveReached);
 
     void addResourceToArchive(ArchiveResource*, MHTMLArchive*);
 

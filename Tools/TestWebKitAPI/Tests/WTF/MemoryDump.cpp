@@ -47,7 +47,7 @@ TEST(WTF, MemoryDumpNullPointer)
     auto result = stream.tryToString();
     EXPECT_TRUE(result.has_value());
 
-    String output = result.value();
+    RefPtr<StringImpl> output = result.value();
     EXPECT_EQ(output, "\n00000000: (not dumping 42 bytes)"_s);
 }
 
@@ -65,9 +65,9 @@ TEST(WTF, MemoryDumpEmptySize)
     auto result = stream.tryToString();
     EXPECT_TRUE(result.has_value());
 
-    String output = result.value();
-    EXPECT_TRUE(output.startsWith('\n'));
-    EXPECT_TRUE(output.contains(": (span is empty)"_s));
+    RefPtr<StringImpl> output = result.value();
+    EXPECT_TRUE(startsWith(output, '\n'));
+    EXPECT_TRUE(contains(output, ": (span is empty)"_s));
 }
 
 TEST(WTF, MemoryDumpSingleByte)
@@ -80,12 +80,12 @@ TEST(WTF, MemoryDumpSingleByte)
     auto result = stream.tryToString();
     EXPECT_TRUE(result.has_value());
 
-    String output = result.value();
-    EXPECT_TRUE(output.startsWith('\n'));
+    RefPtr<StringImpl> output = result.value();
+    EXPECT_TRUE(startsWith(output, '\n'));
 
     // Should contain the address, hex representation, and ASCII
-    EXPECT_TRUE(output.contains("42"_s));
-    EXPECT_TRUE(output.contains("B"_s));
+    EXPECT_TRUE(contains(output, "42"_s));
+    EXPECT_TRUE(contains(output, "B"_s));
 }
 
 TEST(WTF, MemoryDumpExactly16Bytes)
@@ -101,21 +101,21 @@ TEST(WTF, MemoryDumpExactly16Bytes)
     auto result = stream.tryToString();
     EXPECT_TRUE(result.has_value());
 
-    String output = result.value();
-    EXPECT_TRUE(output.startsWith('\n'));
+    RefPtr<StringImpl> output = result.value();
+    EXPECT_TRUE(startsWith(output, '\n'));
 
     // Verify hex formatting: should have space after 8th byte
-    Vector<String> parts = output.split("  "_s); // Split on double space before ASCII
+    Vector<RefPtr<StringImpl>> parts = split(output, "  "_s); // Split on double space before ASCII
     EXPECT_EQ(parts.size(), 2u);
 
-    String hexPart = parts[0];
-    String asciiPart = parts[1];
+    RefPtr<StringImpl> hexPart = parts[0];
+    RefPtr<StringImpl> asciiPart = parts[1];
 
     // Verify ASCII part
     EXPECT_EQ(asciiPart, "ABCDEFGHIJKLMNOP"_s);
 
     // Verify hex part contains proper spacing
-    EXPECT_TRUE(hexPart.contains("41 42 43 44 45 46 47 48 49 4a 4b 4c 4d 4e 4f 50"_s));
+    EXPECT_TRUE(contains(hexPart, "41 42 43 44 45 46 47 48 49 4a 4b 4c 4d 4e 4f 50"_s));
 }
 
 TEST(WTF, MemoryDumpMultipleLines)
@@ -131,22 +131,22 @@ TEST(WTF, MemoryDumpMultipleLines)
     auto result = stream.tryToString();
     EXPECT_TRUE(result.has_value());
 
-    String output = result.value();
-    auto lines = output.split('\n');
+    RefPtr<StringImpl> output = result.value();
+    auto lines = split(output, '\n');
     EXPECT_EQ(lines.size(), 3u);
 
     // First line: 16 bytes (0x00-0x0f)
-    String line1 = lines[0];
-    EXPECT_TRUE(line1.contains("00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f"_s));
+    RefPtr<StringImpl> line1 = lines[0];
+    EXPECT_TRUE(contains(line1, "00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f"_s));
 
     // Second line: 16 bytes (0x10-0x1f)
-    String line2 = lines[1];
-    EXPECT_TRUE(line2.contains("10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f"_s));
+    RefPtr<StringImpl> line2 = lines[1];
+    EXPECT_TRUE(contains(line2, "10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f"_s));
 
     // Third line: 1 byte (0x20) - should be padded
-    String line3 = lines[2];
-    EXPECT_TRUE(line3.contains("20"_s));
-    EXPECT_TRUE(line3.contains(" "_s)); // Should have padding spaces
+    RefPtr<StringImpl> line3 = lines[2];
+    EXPECT_TRUE(contains(line3, "20"_s));
+    EXPECT_TRUE(contains(line3, " "_s)); // Should have padding spaces
 }
 
 TEST(WTF, MemoryDumpASCIIRepresentation)
@@ -164,14 +164,14 @@ TEST(WTF, MemoryDumpASCIIRepresentation)
     auto result = stream.tryToString();
     EXPECT_TRUE(result.has_value());
 
-    String output = result.value();
-    Vector<String> parts = output.split("  "_s);
+    RefPtr<StringImpl> output = result.value();
+    Vector<RefPtr<StringImpl>> parts = split(output, "  "_s);
     EXPECT_EQ(parts.size(), 2u);
 
-    String asciiPart = parts[1];
+    RefPtr<StringImpl> asciiPart = parts[1];
     // Verify ASCII conversion:
     // 31->'.', 32->' ', 65->'A', 90->'Z', 97->'a', 122->'z', 126->'~', 127->'.', 0->'.', 255->'.', 128->'.'
-    EXPECT_TRUE(asciiPart.contains(". AZaz~...."_s));
+    EXPECT_TRUE(contains(asciiPart, ". AZaz~...."_s));
 }
 
 TEST(WTF, MemoryDumpSizeLimitTruncation)
@@ -190,15 +190,15 @@ TEST(WTF, MemoryDumpSizeLimitTruncation)
     auto result = stream.tryToString();
     EXPECT_TRUE(result.has_value());
 
-    String output = result.value();
+    RefPtr<StringImpl> output = result.value();
 
-    auto lines = output.split("\n"_s);
+    auto lines = split(output, "\n"_s);
     EXPECT_EQ(lines.size(), 3u); // two output lines and the truncation message
 
     auto truncation = lines[2];
 
     // Should contain truncation message
-    EXPECT_TRUE(truncation.contains("... (remaining 68 bytes not dumped)"_s));
+    EXPECT_TRUE(contains(truncation, "... (remaining 68 bytes not dumped)"_s));
 }
 
 TEST(WTF, MemoryDumpAddressFormatting)
@@ -211,21 +211,21 @@ TEST(WTF, MemoryDumpAddressFormatting)
     auto result = stream.tryToString();
     EXPECT_TRUE(result.has_value());
 
-    String output = result.value();
-    auto lines = output.split('\n');
+    RefPtr<StringImpl> output = result.value();
+    auto lines = split(output, '\n');
     EXPECT_EQ(lines.size(), 1u);
-    String dataLine = lines[0];
+    RefPtr<StringImpl> dataLine = lines[0];
 
     // Address should be 8 hex digits followed by ": "
-    auto colonPos = dataLine.find(':');
+    auto colonPos = find(dataLine, ':');
     EXPECT_NE(colonPos, notFound);
-    String addressStr = dataLine.left(colonPos);
+    RefPtr<StringImpl> addressStr = left(dataLine, colonPos);
 
     StringPrintStream expectedStream;
     expectedStream.print(hex(reinterpret_cast<uintptr_t>(data), Lowercase));
     auto expectedResult = expectedStream.tryToString();
     EXPECT_TRUE(expectedResult.has_value());
-    String expected = expectedResult.value();
+    RefPtr<StringImpl> expected = expectedResult.value();
 
     EXPECT_EQ(addressStr, expected);
 }
@@ -250,10 +250,10 @@ TEST(WTF, MemoryDumpBasic)
 
     StringBuilder builder;
     builder.append(expectedResult.value());
-    String result = builder.toString();
+    RefPtr<StringImpl> result = builder.toString();
 
     // Should contain some output
-    EXPECT_FALSE(result.isEmpty());
+    EXPECT_FALSE(isEmpty(result));
 
     // Test default size limit
     EXPECT_EQ(dump.sizeLimit(), MemoryDump::DefaultSizeLimit);
@@ -270,7 +270,7 @@ TEST(WTF, MemoryDumpBasic)
     limitedStream.print(spanDump);
     auto limitedResult = limitedStream.tryToString();
     EXPECT_TRUE(limitedResult.has_value());
-    EXPECT_FALSE(limitedResult.value().isEmpty());
+    EXPECT_FALSE(isEmpty(limitedResult.value()));
 }
 
 TEST(WTF, MemoryDumpRange)
@@ -295,7 +295,7 @@ TEST(WTF, MemoryDumpRange)
     stream1.print(dump1);
     auto result1 = stream1.tryToString();
     EXPECT_TRUE(result1.has_value());
-    EXPECT_TRUE(result1.value().contains("ABCDE"_s));
+    EXPECT_TRUE(contains(result1.value(), "ABCDE"_s));
 }
 
 } // namespace TestWebKitAPI

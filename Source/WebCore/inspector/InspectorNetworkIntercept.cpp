@@ -33,12 +33,12 @@ namespace Inspector {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Inspector::PendingInterceptRequest);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Inspector::PendingInterceptResponse);
 
-bool Intercept::matches(const String& url, NetworkStage networkStage)
+bool Intercept::matches(StringImpl* url, NetworkStage networkStage)
 {
     if (this->networkStage != networkStage)
         return false;
 
-    if (this->url.isEmpty())
+    if (isEmpty(this->url))
         return true;
 
     if (m_knownMatchingURLs.contains(url))

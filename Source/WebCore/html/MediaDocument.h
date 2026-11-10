@@ -44,7 +44,7 @@ public:
     virtual ~MediaDocument();
 
     void mediaElementNaturalSizeChanged(const IntSize&);
-    String outgoingReferrer() const { return m_outgoingReferrer; }
+    RefPtr<StringImpl> outgoingReferrer() const { return m_outgoingReferrer; }
 
 private:
     MediaDocument(LocalFrame*, const Settings&, const URL&);
@@ -55,7 +55,7 @@ private:
 
     void replaceMediaElementTimerFired();
 
-    String m_outgoingReferrer;
+    RefPtr<StringImpl> m_outgoingReferrer;
 };
 
 } // namespace WebCore

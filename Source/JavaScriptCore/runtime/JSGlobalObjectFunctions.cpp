@@ -64,7 +64,7 @@ static JSValue encode(JSGlobalObject* globalObject, const WTF::BitSet<256>& doNo
     // https://tc39.github.io/ecma262/#sec-encode
 
     auto throwException = [&scope, globalObject] {
-        return JSC::throwException(globalObject, scope, createURIError(globalObject, "String contained an illegal UTF-16 sequence."_s));
+        return JSC::throwException(globalObject, scope, createURIError(globalObject, "String contained an illegal UTF-16 sequence."_si));
     };
 
     StringBuilder builder(OverflowPolicy::RecordOverflow);
@@ -197,7 +197,7 @@ static JSValue decode(JSGlobalObject* globalObject, std::span<const CharType> ch
             }
             if (charLen == 0) {
                 if (strict)
-                    return throwException(globalObject, scope, createURIError(globalObject, "URI error"_s));
+                    return throwException(globalObject, scope, createURIError(globalObject, "URI error"_si));
                 // The only case where we don't use "strict" mode is the "unescape" function.
                 // For that, it's good to support the wonky "%u" syntax for compatibility with WinIE.
                 if (k + 6 <= characters.size() && p[1] == 'u'
@@ -459,7 +459,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEval, (JSGlobalObject* globalObject, CallFram
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue x = callFrame->argument(0);
-    String programSource;
+    RefPtr<StringImpl> programSource;
     bool isTrusted = false;
     if (x.isString()) [[likely]] {
         programSource = x.toWTFString(globalObject);
@@ -473,21 +473,21 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEval, (JSGlobalObject* globalObject, CallFram
         } else {
             auto code = globalObject->globalObjectMethodTable()->codeForEval(globalObject, x);
             RETURN_IF_EXCEPTION(scope, { });
-            if (!code.isNull()) {
+            if (code) {
                 programSource = code;
                 isTrusted = true;
             }
         }
     }
 
-    if (programSource.isNull())
+    if (!programSource)
         return JSValue::encode(x);
 
     if (globalObject->trustedTypesEnforcement() != TrustedTypesEnforcement::None && !isTrusted) {
         bool canCompileStrings = globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::IndirectEval, programSource, *vm.emptyList);
         RETURN_IF_EXCEPTION(scope, { });
         if (!canCompileStrings) {
-            throwException(globalObject, scope, createEvalError(globalObject, "Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment."_s));
+            throwException(globalObject, scope, createEvalError(globalObject, "Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment."_si));
             return { };
         }
     }
@@ -506,11 +506,11 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEval, (JSGlobalObject* globalObject, CallFram
     }
 
     JSValue parsedValue;
-    if (programSource.is8Bit()) {
-        LiteralParser<Latin1Character, JSONReviverMode::Disabled> preparser(globalObject, programSource.span8(), SloppyJSON, nullptr);
+    if (is8Bit(programSource)) {
+        LiteralParser<Latin1Character, JSONReviverMode::Disabled> preparser(globalObject, span8(programSource), SloppyJSON, nullptr);
         parsedValue = preparser.tryEval();
     } else {
-        LiteralParser<char16_t, JSONReviverMode::Disabled> preparser(globalObject, programSource.span16(), SloppyJSON, nullptr);
+        LiteralParser<char16_t, JSONReviverMode::Disabled> preparser(globalObject, span16(programSource), SloppyJSON, nullptr);
         parsedValue = preparser.tryEval();
     }
     RETURN_IF_EXCEPTION(scope, { });

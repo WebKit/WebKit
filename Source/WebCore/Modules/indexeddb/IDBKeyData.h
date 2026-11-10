@@ -46,7 +46,7 @@ public:
     struct Min { Min isolatedCopy() const { return { }; } };
     struct Max { Max isolatedCopy() const { return { }; } };
     struct Invalid { Invalid isolatedCopy() const { return { }; } };
-    using ValueVariant = Variant<std::nullptr_t, Invalid, Vector<IDBKeyData>, String, double, Date, ThreadSafeDataBuffer, Min, Max>;
+    using ValueVariant = Variant<std::nullptr_t, Invalid, Vector<IDBKeyData>, RefPtr<StringImpl>, double, Date, ThreadSafeDataBuffer, Min, Max>;
 
     enum IsolatedCopyTag { IsolatedCopy };
 
@@ -90,11 +90,11 @@ public:
 
     void setArrayValue(const Vector<IDBKeyData>&);
     void setBinaryValue(const ThreadSafeDataBuffer&);
-    void setStringValue(const String&);
+    void setStringValue(StringImpl*);
     void setDateValue(double);
     WEBCORE_EXPORT void setNumberValue(double);
     
-    WEBCORE_EXPORT String loggingString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> loggingString() const;
 
     bool isNull() const { return std::holds_alternative<std::nullptr_t>(m_value); }
     WEBCORE_EXPORT bool isValid() const;
@@ -105,9 +105,9 @@ public:
 
     WEBCORE_EXPORT bool operator==(const IDBKeyData& other) const;
 
-    String string() const
+    RefPtr<StringImpl> string() const
     {
-        return std::get<String>(m_value);
+        return std::get<RefPtr<StringImpl>>(m_value);
     }
 
     double date() const

@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-String convertEnumerationToString(TrackInfoTrackType type)
+RefPtr<StringImpl> convertEnumerationToString(TrackInfoTrackType type)
 {
-    static const std::array<NeverDestroyed<String>, 4> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 4> values {
         MAKE_STATIC_STRING_IMPL("Unknown"),
         MAKE_STATIC_STRING_IMPL("Audio"),
         MAKE_STATIC_STRING_IMPL("Video"),

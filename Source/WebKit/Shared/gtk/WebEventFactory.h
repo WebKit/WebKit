@@ -47,7 +47,7 @@ public:
     static WebMouseEventInit createWebMouseEvent(const GdkEvent*, int, std::optional<WebCore::FloatSize>);
     static WebMouseEventInit createWebMouseEvent(const GdkEvent*, const WebCore::DoublePoint&, int, std::optional<WebCore::FloatSize>);
     static WebMouseEventInit createWebMouseEvent(const WebCore::DoublePoint&);
-    static WebKeyboardEventInit createWebKeyboardEvent(const GdkEvent*, const String&, bool isAutoRepeat, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&, Vector<String>&& commands);
+    static WebKeyboardEventInit createWebKeyboardEvent(const GdkEvent*, StringImpl*, bool isAutoRepeat, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&, Vector<RefPtr<StringImpl>>&& commands);
 #if ENABLE(TOUCH_EVENTS)
     static WebTouchEventInit createWebTouchEvent(const GdkEvent*, Vector<WebPlatformTouchPoint>&&);
 #endif

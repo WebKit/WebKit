@@ -69,7 +69,7 @@ class VM;
 struct HashTable;
 struct HashTableValue;
 
-JS_EXPORT_PRIVATE Exception* throwTypeError(JSGlobalObject*, ThrowScope&, const String&);
+JS_EXPORT_PRIVATE Exception* throwTypeError(JSGlobalObject*, ThrowScope&, StringImpl*);
 extern JS_EXPORT_PRIVATE const ASCIILiteral NonExtensibleObjectPropertyDefineError;
 extern JS_EXPORT_PRIVATE const ASCIILiteral ReadonlyPropertyWriteError;
 extern JS_EXPORT_PRIVATE const ASCIILiteral ReadonlyPropertyChangeError;
@@ -117,7 +117,7 @@ public:
     JS_EXPORT_PRIVATE static size_t estimatedSize(JSCell*, VM&);
     JS_EXPORT_PRIVATE static void analyzeHeap(JSCell*, HeapAnalyzer&);
 
-    JS_EXPORT_PRIVATE static String calculatedClassName(JSObject*);
+    JS_EXPORT_PRIVATE static RefPtr<StringImpl> calculatedClassName(JSObject*);
 
     // This is the fully virtual [[GetPrototypeOf]] internal function defined
     // in the ECMAScript 6 specification. Use this when doing a [[GetPrototypeOf]] 
@@ -637,7 +637,7 @@ public:
         return std::bit_cast<char*>(this) + butterflyOffset();
     }
 
-    JS_EXPORT_PRIVATE JSValue getMethod(JSGlobalObject*, CallData&, const Identifier&, const String& errorMessage);
+    JS_EXPORT_PRIVATE JSValue getMethod(JSGlobalObject*, CallData&, const Identifier&, StringImpl* errorMessage);
 
     bool canPerformFastPutInline(VM&, PropertyName);
     bool canPerformFastPutInlineExcludingProto();

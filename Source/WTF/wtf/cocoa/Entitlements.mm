@@ -79,8 +79,8 @@ bool hasEntitlementValue(audit_token_t token, ASCIILiteral entitlement, ASCIILit
         return false;
 
     auto string = entitlement.createCFString();
-    String entitlementValue = dynamic_cf_cast<CFStringRef>(adoptCF(SecTaskCopyValueForEntitlement(secTaskForToken.get(), string.get(), nullptr)).get());
-    return entitlementValue == value;
+    RefPtr<StringImpl> entitlementValue = StringImpl::create(dynamic_cf_cast<CFStringRef>(adoptCF(SecTaskCopyValueForEntitlement(secTaskForToken.get(), string.get(), nullptr)).get()));
+    return equal(entitlementValue, value);
 }
 
 bool hasEntitlementValueInArray(audit_token_t token, ASCIILiteral entitlement, ASCIILiteral value)
@@ -98,7 +98,7 @@ bool hasEntitlementValueInArray(audit_token_t token, ASCIILiteral entitlement, A
         RetainPtr element = dynamic_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(array.get(), i));
         if (!element)
             continue;
-        String stringElement = element.get();
+        RefPtr<StringImpl> stringElement = StringImpl::create(element.get());
         if (value == stringElement)
             return true;
     }

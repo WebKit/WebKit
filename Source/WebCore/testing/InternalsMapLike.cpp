@@ -35,7 +35,7 @@ namespace WebCore {
 
 InternalsMapLike::InternalsMapLike()
 {
-    m_values.add("init"_s, 0);
+    m_values.add("init"_si, 0);
 }
 
 void InternalsMapLike::initializeMapLike(DOMMapAdapter& map)
@@ -44,7 +44,7 @@ void InternalsMapLike::initializeMapLike(DOMMapAdapter& map)
         map.set<IDLDOMString, IDLUnsignedLong>(keyValue.key, keyValue.value);
 }
 
-void InternalsMapLike::setFromMapLike(String&& key, unsigned value)
+void InternalsMapLike::setFromMapLike(RefPtr<StringImpl>&& key, unsigned value)
 {
     m_values.set(WTF::move(key), value);
 }
@@ -54,12 +54,12 @@ void InternalsMapLike::clear()
     m_values.clear();
 }
 
-bool InternalsMapLike::remove(const String& key)
+bool InternalsMapLike::remove(StringImpl* key)
 {
     return m_values.remove(key);
 }
 
-Vector<String> InternalsMapLike::inspectKeys() const
+Vector<RefPtr<StringImpl>> InternalsMapLike::inspectKeys() const
 {
     auto result = copyToVector(m_values.keys());
     std::ranges::sort(result, WTF::codePointCompareLessThan);

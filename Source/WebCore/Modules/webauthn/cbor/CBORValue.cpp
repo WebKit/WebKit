@@ -61,7 +61,7 @@ CBORValue::CBORValue(Type type)
         new (&m_byteStringValue) BinaryValue();
         return;
     case Type::String:
-        new (&m_stringValue) String();
+        new (&m_stringValue) RefPtr<StringImpl>();
         return;
     case Type::Array:
         new (&m_arrayValue) ArrayValue();
@@ -108,22 +108,22 @@ CBORValue::CBORValue(const WebCore::BufferSource& bufferSource)
 }
 
 CBORValue::CBORValue(const char* inString)
-    : CBORValue(String::fromLatin1(inString))
+    : CBORValue(StringImpl::fromLatin1(inString))
 {
 }
 
 CBORValue::CBORValue(ASCIILiteral inString)
-    : CBORValue(String { inString })
+    : CBORValue(StringImpl::create(inString))
 {
 }
 
-CBORValue::CBORValue(String&& inString)
+CBORValue::CBORValue(RefPtr<StringImpl>&& inString)
     : m_type(Type::String)
     , m_stringValue(WTF::move(inString))
 {
 }
 
-CBORValue::CBORValue(const String& inString)
+CBORValue::CBORValue(StringImpl* inString)
     : m_type(Type::String)
     , m_stringValue(inString)
 {
@@ -225,7 +225,7 @@ const int64_t& CBORValue::getNegative() const
     return m_integerValue;
 }
 
-const String& CBORValue::getString() const
+const RefPtr<StringImpl>& CBORValue::getString() const
 {
     ASSERT(isString());
     return m_stringValue;
@@ -274,7 +274,7 @@ void CBORValue::internalMoveConstructFrom(CBORValue&& that)
         new (&m_byteStringValue) BinaryValue(WTF::move(that.m_byteStringValue));
         return;
     case Type::String:
-        new (&m_stringValue) String(WTF::move(that.m_stringValue));
+        new (&m_stringValue) RefPtr<StringImpl>(WTF::move(that.m_stringValue));
         return;
     case Type::Array:
         new (&m_arrayValue) ArrayValue(WTF::move(that.m_arrayValue));
@@ -298,7 +298,7 @@ void CBORValue::internalCleanup()
         m_byteStringValue.~BinaryValue();
         break;
     case Type::String:
-        m_stringValue.~String();
+        m_stringValue.~RefPtr();
         break;
     case Type::Array:
         m_arrayValue.~ArrayValue();

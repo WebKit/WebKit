@@ -92,7 +92,7 @@ public:
 
     NODELETE bool canBeCastedTo(Category) const;
 
-    WTF::String serializationForCSS(const SerializationContext&) const;
+    RefPtr<StringImpl> serializationForCSS(const SerializationContext&) const;
     void serializationForCSS(StringBuilder&, const SerializationContext&) const;
 
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;

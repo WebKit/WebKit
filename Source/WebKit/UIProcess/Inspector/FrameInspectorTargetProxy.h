@@ -51,7 +51,7 @@ public:
 
     void connect(Inspector::FrontendChannel::ConnectionType) override;
     void disconnect() override;
-    void sendMessageToTargetBackend(const String&) override;
+    void sendMessageToTargetBackend(StringImpl*) override;
 
 private:
     WeakRef<WebProcessProxy> m_targetProcess;

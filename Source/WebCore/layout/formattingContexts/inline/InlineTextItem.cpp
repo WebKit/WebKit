@@ -84,14 +84,14 @@ InlineTextItem InlineTextItem::split(size_t leftSideLength)
 bool InlineTextItem::isZeroWidthSpaceSeparator() const
 {
     // FIXME: We should check for more zero width content and not just U+200B.
-    return !m_length || (m_length == 1 && inlineTextBox().content()[start()] == zeroWidthSpace); 
+    return !m_length || (m_length == 1 && codeUnitAt(inlineTextBox().content(), start()) == zeroWidthSpace); 
 }
 
 bool InlineTextItem::isQuirkNonBreakingSpace() const
 {
     if (style().nbspMode() != NBSPMode::Space || style().textWrapMode() == TextWrapMode::NoWrap || style().whiteSpaceCollapse() == WhiteSpaceCollapse::BreakSpaces)
         return false;
-    return m_length && inlineTextBox().content()[start()] == noBreakSpace;
+    return m_length && codeUnitAt(inlineTextBox().content(), start()) == noBreakSpace;
 }
 
 bool InlineTextItem::isFullyTrimmable() const

@@ -63,7 +63,7 @@ static inline uint64_t estimateSize(const IDBKeyData& keyData)
     uint64_t size = 4;
     switch (keyData.type()) {
     case IndexedDB::KeyType::String:
-        size += keyData.string().sizeInBytes();
+        size += sizeInBytes(keyData.string());
         break;
     case IndexedDB::KeyType::Binary: {
         size += keyData.binary().size();
@@ -107,20 +107,20 @@ NODELETE static inline uint64_t estimateSize(const IDBValue& value)
     uint64_t size = 4;
     size += value.data().size();
     for (auto& url : value.blobURLs())
-        size += url.sizeInBytes();
+        size += sizeInBytes(url);
     for (auto& path : value.blobFilePaths())
-        size += path.sizeInBytes();
+        size += sizeInBytes(path);
     return size;
 }
 
 static inline uint64_t estimateSize(const IDBKeyPath& keyPath)
 {
-    return WTF::switchOn(keyPath, [](const String& path) {
-        return static_cast<uint64_t>(path.sizeInBytes());
-    }, [](const Vector<String>& paths) {
+    return WTF::switchOn(keyPath, [](StringImpl* path) {
+        return static_cast<uint64_t>(sizeInBytes(path));
+    }, [](const Vector<RefPtr<StringImpl>>& paths) {
         uint64_t size = 0;
         for (auto path : paths)
-            size += path.sizeInBytes();
+            size += sizeInBytes(path);
         return size;
     });
 }
@@ -128,7 +128,7 @@ static inline uint64_t estimateSize(const IDBKeyPath& keyPath)
 static inline uint64_t estimateSize(const IDBIndexInfo& info)
 {
     uint64_t size = 4;
-    size += info.name().sizeInBytes();
+    size += sizeInBytes(info.name());
     size += estimateSize(info.keyPath());
     return size;
 }
@@ -136,7 +136,7 @@ static inline uint64_t estimateSize(const IDBIndexInfo& info)
 static inline uint64_t estimateSize(const IDBObjectStoreInfo& info)
 {
     uint64_t size = 4;
-    size += info.name().sizeInBytes();
+    size += sizeInBytes(info.name());
     if (auto keyPath = info.keyPath())
         size += estimateSize(*keyPath);
     return size;
@@ -188,7 +188,7 @@ void UniqueIDBDatabase::openDatabaseConnection(IDBConnectionToClient& connection
     handleDatabaseOperations();
 }
 
-static inline String quotaErrorMessageName(ASCIILiteral taskName)
+static inline RefPtr<StringImpl> quotaErrorMessageName(ASCIILiteral taskName)
 {
     return makeString("Failed to "_s, taskName, " in database because not enough space for domain"_s);
 }
@@ -243,7 +243,7 @@ void UniqueIDBDatabase::performCurrentOpenOperationAfterSpaceCheck(bool isGrante
             if (!backingStoreOpenError)
                 m_databaseInfo = makeUnique<IDBDatabaseInfo>(databaseInfo);
             else {
-                LOG_ERROR("Failed to get database info '%s'", backingStoreOpenError.message().utf8());
+                LOG_ERROR("Failed to get database info '%s'", utf8(backingStoreOpenError.message()));
                 m_backingStore = nullptr;
             }
         }
@@ -607,7 +607,7 @@ void UniqueIDBDatabase::createObjectStore(UniqueIDBDatabaseTransaction& transact
         manager->requestSpace(m_identifier.origin(), taskSize, [weakThis = WeakPtr { *this }, weakTransaction = WeakPtr { transaction }, info, callback = WTF::move(callback)](bool granted) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!checkedThis || !weakTransaction)
-                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_s });
+                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_si });
             checkedThis->createObjectStore(protect(*weakTransaction), info, WTF::move(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
         });
         return;
@@ -619,7 +619,7 @@ void UniqueIDBDatabase::createObjectStore(UniqueIDBDatabaseTransaction& transact
     }
 
     if (!m_backingStore)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store has closed"_s });
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store has closed"_si });
 
     auto error = protect(m_backingStore)->createObjectStore(transaction.info().identifier(), info);
     if (error.isNull())
@@ -628,7 +628,7 @@ void UniqueIDBDatabase::createObjectStore(UniqueIDBDatabaseTransaction& transact
     callback(error);
 }
 
-void UniqueIDBDatabase::deleteObjectStore(UniqueIDBDatabaseTransaction& transaction, const String& objectStoreName, ErrorCallback&& callback, SpaceCheckResult spaceCheckResult)
+void UniqueIDBDatabase::deleteObjectStore(UniqueIDBDatabaseTransaction& transaction, StringImpl* objectStoreName, ErrorCallback&& callback, SpaceCheckResult spaceCheckResult)
 {
     ASSERT(!isMainThread());
     LOG(IndexedDB, "UniqueIDBDatabase::deleteObjectStore");
@@ -638,10 +638,10 @@ void UniqueIDBDatabase::deleteObjectStore(UniqueIDBDatabaseTransaction& transact
         if (!manager)
             return callback(IDBError { ExceptionCode::InvalidStateError });
 
-        manager->requestSpace(m_identifier.origin(), 0, [weakThis = WeakPtr { *this }, weakTransaction = WeakPtr { transaction }, objectStoreName, callback = WTF::move(callback)](bool granted) mutable {
+        manager->requestSpace(m_identifier.origin(), 0, [weakThis = WeakPtr { *this }, weakTransaction = WeakPtr { transaction }, objectStoreName = RefPtr { objectStoreName }, callback = WTF::move(callback)](bool granted) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!checkedThis || !weakTransaction)
-                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_s });
+                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_si });
 
             checkedThis->deleteObjectStore(protect(*weakTransaction), objectStoreName, WTF::move(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
         });
@@ -651,12 +651,12 @@ void UniqueIDBDatabase::deleteObjectStore(UniqueIDBDatabaseTransaction& transact
     ASSERT(spaceCheckResult == SpaceCheckResult::Pass);
     auto* info = m_databaseInfo->infoForExistingObjectStore(objectStoreName);
     if (!info) {
-        callback(IDBError { ExceptionCode::UnknownError, "Attempt to delete non-existant object store"_s });
+        callback(IDBError { ExceptionCode::UnknownError, "Attempt to delete non-existant object store"_si });
         return;
     }
 
     if (!m_backingStore)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s });
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_si });
 
     auto error = protect(m_backingStore)->deleteObjectStore(transaction.info().identifier(), info->identifier());
     if (error.isNull())
@@ -665,7 +665,7 @@ void UniqueIDBDatabase::deleteObjectStore(UniqueIDBDatabaseTransaction& transact
     callback(error);
 }
 
-void UniqueIDBDatabase::renameObjectStore(UniqueIDBDatabaseTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName, ErrorCallback&& callback, SpaceCheckResult spaceCheckResult)
+void UniqueIDBDatabase::renameObjectStore(UniqueIDBDatabaseTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* newName, ErrorCallback&& callback, SpaceCheckResult spaceCheckResult)
 {
     ASSERT(!isMainThread());
     LOG(IndexedDB, "UniqueIDBDatabase::renameObjectStore");
@@ -675,11 +675,11 @@ void UniqueIDBDatabase::renameObjectStore(UniqueIDBDatabaseTransaction& transact
         if (!manager)
             return callback(IDBError { ExceptionCode::InvalidStateError });
 
-        auto taskSize = defaultWriteOperationCost + newName.sizeInBytes();
-        manager->requestSpace(m_identifier.origin(), taskSize, [weakThis = WeakPtr { *this }, weakTransaction = WeakPtr { transaction }, objectStoreIdentifier, newName, callback = WTF::move(callback)](bool granted) mutable {
+        auto taskSize = defaultWriteOperationCost + sizeInBytes(newName);
+        manager->requestSpace(m_identifier.origin(), taskSize, [weakThis = WeakPtr { *this }, weakTransaction = WeakPtr { transaction }, objectStoreIdentifier, newName = RefPtr { newName }, callback = WTF::move(callback)](bool granted) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!checkedThis || !weakTransaction)
-                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_s });
+                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_si });
 
             checkedThis->renameObjectStore(protect(*weakTransaction), objectStoreIdentifier, newName, WTF::move(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
         });
@@ -693,12 +693,12 @@ void UniqueIDBDatabase::renameObjectStore(UniqueIDBDatabaseTransaction& transact
 
     auto* info = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
     if (!info) {
-        callback(IDBError { ExceptionCode::UnknownError, "Attempt to rename non-existant object store"_s });
+        callback(IDBError { ExceptionCode::UnknownError, "Attempt to rename non-existant object store"_si });
         return;
     }
 
     if (!m_backingStore)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s });
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_si });
 
     auto error = protect(m_backingStore)->renameObjectStore(transaction.info().identifier(), objectStoreIdentifier, newName);
     if (error.isNull())
@@ -720,7 +720,7 @@ void UniqueIDBDatabase::clearObjectStore(UniqueIDBDatabaseTransaction& transacti
         manager->requestSpace(m_identifier.origin(), 0, [weakThis = WeakPtr { *this }, weakTransaction = WeakPtr { transaction }, objectStoreIdentifier, callback = WTF::move(callback)](bool granted) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!checkedThis || !weakTransaction)
-                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_s });
+                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_si });
 
             checkedThis->clearObjectStore(protect(*weakTransaction), objectStoreIdentifier, WTF::move(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
         });
@@ -729,7 +729,7 @@ void UniqueIDBDatabase::clearObjectStore(UniqueIDBDatabaseTransaction& transacti
 
     ASSERT(spaceCheckResult == SpaceCheckResult::Pass);
     if (!m_backingStore)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s });
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_si });
 
     auto error = protect(m_backingStore)->clearObjectStore(transaction.info().identifier(), objectStoreIdentifier);
     callback(error);
@@ -751,7 +751,7 @@ void UniqueIDBDatabase::createIndexAsync(UniqueIDBDatabaseTransaction& transacti
 
         CheckedPtr checkedThis = weakThis.get();
         if (!checkedThis)
-            return protectedTransaction->didCreateIndexAsync(IDBError { ExceptionCode::InvalidStateError, "Database is closed."_s });
+            return protectedTransaction->didCreateIndexAsync(IDBError { ExceptionCode::InvalidStateError, "Database is closed."_si });
 
         checkedThis->createIndexAsyncAfterQuotaCheck(*protectedTransaction, indexInfo, granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
     });
@@ -764,10 +764,10 @@ void UniqueIDBDatabase::createIndexAsyncAfterQuotaCheck(UniqueIDBDatabaseTransac
         return didCreateIndexAsyncForTransaction(transaction, indexInfo, IDBError { ExceptionCode::QuotaExceededError, quotaErrorMessageName("CreateIndex"_s) }, DidCreateIndexInBackingStore::No);
 
     if (!m_backingStore)
-        return didCreateIndexAsyncForTransaction(transaction, indexInfo, IDBError { ExceptionCode::InvalidStateError, "Backing store is closed."_s }, DidCreateIndexInBackingStore::No);
+        return didCreateIndexAsyncForTransaction(transaction, indexInfo, IDBError { ExceptionCode::InvalidStateError, "Backing store is closed."_si }, DidCreateIndexInBackingStore::No);
 
     if (!m_databaseInfo)
-        return didCreateIndexAsyncForTransaction(transaction, indexInfo, IDBError { ExceptionCode::InvalidStateError, "Database info is invalid."_s }, DidCreateIndexInBackingStore::No);
+        return didCreateIndexAsyncForTransaction(transaction, indexInfo, IDBError { ExceptionCode::InvalidStateError, "Database info is invalid."_si }, DidCreateIndexInBackingStore::No);
 
     auto transactionIdentifier = transaction.info().identifier();
     auto createIndexError = protect(m_backingStore)->addIndex(transactionIdentifier, indexInfo);
@@ -776,7 +776,7 @@ void UniqueIDBDatabase::createIndexAsyncAfterQuotaCheck(UniqueIDBDatabaseTransac
 
     auto* objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(indexInfo.objectStoreIdentifier());
     if (!objectStoreInfo)
-        return didCreateIndexAsyncForTransaction(transaction, indexInfo, IDBError { ExceptionCode::InvalidStateError, "Object store does not exist."_s });
+        return didCreateIndexAsyncForTransaction(transaction, indexInfo, IDBError { ExceptionCode::InvalidStateError, "Object store does not exist."_si });
 
     objectStoreInfo->addExistingIndex(indexInfo);
     m_databaseInfo->setMaxIndexID(indexInfo.identifier().toUInt64());
@@ -793,7 +793,7 @@ void UniqueIDBDatabase::createIndexAsyncAfterQuotaCheck(UniqueIDBDatabaseTransac
 
         auto record = recordOrError.value();
         if (!protectedTransaction->generateIndexKeyForRecord(indexInfo, objectStoreInfo->keyPath(), record.key, record.value, record.recordID)) {
-            createIndexError = IDBError { ExceptionCode::UnknownError, "Failed to generate index key for record."_s };
+            createIndexError = IDBError { ExceptionCode::UnknownError, "Failed to generate index key for record."_si };
             return;
         }
         needsToWaitGenerateIndexKey = true;
@@ -807,7 +807,7 @@ void UniqueIDBDatabase::didGenerateIndexKeyForRecord(UniqueIDBDatabaseTransactio
 {
     Ref protectedTransaction = transaction;
     if (!m_backingStore)
-        return didCreateIndexAsyncForTransaction(transaction, indexInfo, IDBError { ExceptionCode::InvalidStateError, "Backing store is closed."_s });
+        return didCreateIndexAsyncForTransaction(transaction, indexInfo, IDBError { ExceptionCode::InvalidStateError, "Backing store is closed."_si });
 
     auto error = protect(m_backingStore)->updateIndexRecordsWithIndexKey(transaction.info().identifier(), indexInfo, key, indexKey, recordID);
     if (!error.isNull())
@@ -826,7 +826,7 @@ void UniqueIDBDatabase::didCreateIndexAsyncForTransaction(UniqueIDBDatabaseTrans
     transaction.didCreateIndexAsync(error);
 }
 
-void UniqueIDBDatabase::deleteIndex(UniqueIDBDatabaseTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName, ErrorCallback&& callback, SpaceCheckResult spaceCheckResult)
+void UniqueIDBDatabase::deleteIndex(UniqueIDBDatabaseTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* indexName, ErrorCallback&& callback, SpaceCheckResult spaceCheckResult)
 {
     ASSERT(!isMainThread());
     LOG(IndexedDB, "UniqueIDBDatabase::deleteIndex");
@@ -836,10 +836,10 @@ void UniqueIDBDatabase::deleteIndex(UniqueIDBDatabaseTransaction& transaction, I
         if (!manager)
             return callback(IDBError { ExceptionCode::InvalidStateError });
 
-        manager->requestSpace(m_identifier.origin(), 0, [weakThis = WeakPtr { *this }, weakTransaction = WeakPtr { transaction }, objectStoreIdentifier, indexName, callback = WTF::move(callback)](bool granted) mutable {
+        manager->requestSpace(m_identifier.origin(), 0, [weakThis = WeakPtr { *this }, weakTransaction = WeakPtr { transaction }, objectStoreIdentifier, indexName = RefPtr { indexName }, callback = WTF::move(callback)](bool granted) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!checkedThis || !weakTransaction)
-                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_s });
+                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_si });
 
             checkedThis->deleteIndex(protect(*weakTransaction), objectStoreIdentifier, indexName, WTF::move(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
         });
@@ -848,17 +848,17 @@ void UniqueIDBDatabase::deleteIndex(UniqueIDBDatabaseTransaction& transaction, I
 
     ASSERT(spaceCheckResult == SpaceCheckResult::Pass);
     if (!m_backingStore)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s });
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_si });
 
     auto* objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
     if (!objectStoreInfo) {
-        callback(IDBError { ExceptionCode::UnknownError, "Attempt to delete index from non-existant object store"_s });
+        callback(IDBError { ExceptionCode::UnknownError, "Attempt to delete index from non-existant object store"_si });
         return;
     }
 
     auto* indexInfo = objectStoreInfo->infoForExistingIndex(indexName);
     if (!indexInfo) {
-        callback(IDBError { ExceptionCode::UnknownError, "Attempt to delete non-existant index"_s });
+        callback(IDBError { ExceptionCode::UnknownError, "Attempt to delete non-existant index"_si });
         return;
     }
 
@@ -870,7 +870,7 @@ void UniqueIDBDatabase::deleteIndex(UniqueIDBDatabaseTransaction& transaction, I
     callback(error);
 }
 
-void UniqueIDBDatabase::renameIndex(UniqueIDBDatabaseTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, const String& newName, ErrorCallback&& callback, SpaceCheckResult spaceCheckResult)
+void UniqueIDBDatabase::renameIndex(UniqueIDBDatabaseTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, StringImpl* newName, ErrorCallback&& callback, SpaceCheckResult spaceCheckResult)
 {
     ASSERT(!isMainThread());
     LOG(IndexedDB, "UniqueIDBDatabase::renameIndex");
@@ -880,11 +880,11 @@ void UniqueIDBDatabase::renameIndex(UniqueIDBDatabaseTransaction& transaction, I
         if (!manager)
             return callback(IDBError { ExceptionCode::InvalidStateError });
 
-        auto taskSize = defaultWriteOperationCost + newName.sizeInBytes();
-        manager->requestSpace(m_identifier.origin(), taskSize, [weakThis = WeakPtr { *this }, weakTransaction = WeakPtr { transaction }, objectStoreIdentifier, indexIdentifier, newName, callback = WTF::move(callback)](bool granted) mutable {
+        auto taskSize = defaultWriteOperationCost + sizeInBytes(newName);
+        manager->requestSpace(m_identifier.origin(), taskSize, [weakThis = WeakPtr { *this }, weakTransaction = WeakPtr { transaction }, objectStoreIdentifier, indexIdentifier, newName = RefPtr { newName }, callback = WTF::move(callback)](bool granted) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!checkedThis || !weakTransaction)
-                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_s });
+                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_si });
 
             checkedThis->renameIndex(protect(*weakTransaction), objectStoreIdentifier, indexIdentifier, newName, WTF::move(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
         });
@@ -897,17 +897,17 @@ void UniqueIDBDatabase::renameIndex(UniqueIDBDatabaseTransaction& transaction, I
     }
 
     if (!m_backingStore)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s });
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_si });
 
     auto* objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
     if (!objectStoreInfo) {
-        callback(IDBError { ExceptionCode::UnknownError, "Attempt to rename index in non-existant object store"_s });
+        callback(IDBError { ExceptionCode::UnknownError, "Attempt to rename index in non-existant object store"_si });
         return;
     }
 
     auto* indexInfo = objectStoreInfo->infoForExistingIndex(indexIdentifier);
     if (!indexInfo) {
-        callback(IDBError { ExceptionCode::UnknownError, "Attempt to rename non-existant index"_s });
+        callback(IDBError { ExceptionCode::UnknownError, "Attempt to rename non-existant index"_si });
         return;
     }
 
@@ -926,12 +926,12 @@ void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKey
     ASSERT(m_databaseInfo);
 
     if (!m_backingStore)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s }, keyData);
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_si }, keyData);
 
     auto objectStoreIdentifier = requestData.objectStoreIdentifier();
     auto* objectStoreInfo = protect(m_backingStore)->infoForObjectStore(objectStoreIdentifier);
     if (!objectStoreInfo)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Object store cannot be found in the backing store"_s }, keyData);
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Object store cannot be found in the backing store"_si }, keyData);
 
     CheckedPtr manager = m_manager.get();
     if (!manager)
@@ -961,7 +961,7 @@ void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKey
         bool keyExists;
         error = protect(m_backingStore)->keyExistsInObjectStore(transactionIdentifier, objectStoreIdentifier, usedKey, keyExists);
         if (!error && keyExists)
-            error = IDBError { ExceptionCode::ConstraintError, "Key already exists in the object store"_s };
+            error = IDBError { ExceptionCode::ConstraintError, "Key already exists in the object store"_si };
 
         if (!!error)
             return callback(error, usedKey);
@@ -984,7 +984,7 @@ void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKey
     manager->requestSpace(m_identifier.origin(), taskSize, [weakThis = WeakPtr { *this }, requestData, usedKey, value, overwriteMode, callback = WTF::move(callback), usedKeyIsGenerated, usedIndexKeys, objectStoreInfo = *objectStoreInfo](bool granted) mutable {
         CheckedPtr checkedThis = weakThis.get();
         if (!checkedThis)
-            return callback(IDBError { ExceptionCode::InvalidStateError, "Database is closed"_s }, usedKey);
+            return callback(IDBError { ExceptionCode::InvalidStateError, "Database is closed"_si }, usedKey);
 
         checkedThis->putOrAddAfterSpaceCheck(requestData, usedKey, value, overwriteMode, WTF::move(callback), usedKeyIsGenerated, usedIndexKeys, objectStoreInfo, granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
     });
@@ -996,7 +996,7 @@ void UniqueIDBDatabase::putOrAddAfterSpaceCheck(const IDBRequestData& requestDat
     ASSERT(m_databaseInfo);
 
     if (!m_backingStore)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s }, keyData);
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_si }, keyData);
 
     uint64_t keyNumber = isKeyGenerated ? keyData.number() : 0;
     auto objectStoreIdentifier = objectStoreInfo.identifier();
@@ -1033,7 +1033,7 @@ void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBGe
         manager->requestSpace(m_identifier.origin(), 0, [weakThis = WeakPtr { *this }, requestData, getRecordData, callback = WTF::move(callback)](bool granted) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!checkedThis)
-                return callback(IDBError { ExceptionCode::InvalidStateError, "Database is closed"_s }, IDBGetResult { });
+                return callback(IDBError { ExceptionCode::InvalidStateError, "Database is closed"_si }, IDBGetResult { });
 
             checkedThis->getRecord(requestData, getRecordData, WTF::move(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
         });
@@ -1042,7 +1042,7 @@ void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBGe
 
     ASSERT(spaceCheckResult == SpaceCheckResult::Pass);
     if (!m_backingStore)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s }, IDBGetResult { });
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_si }, IDBGetResult { });
 
     IDBGetResult result;
     IDBError error;
@@ -1069,7 +1069,7 @@ void UniqueIDBDatabase::getAllRecords(const IDBRequestData& requestData, const I
         manager->requestSpace(m_identifier.origin(), 0, [weakThis = WeakPtr { *this }, requestData, getAllRecordsData, callback = WTF::move(callback)](bool granted) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!checkedThis)
-                return callback(IDBError { ExceptionCode::InvalidStateError, "Database is closed"_s }, IDBGetAllResult { });
+                return callback(IDBError { ExceptionCode::InvalidStateError, "Database is closed"_si }, IDBGetAllResult { });
 
             checkedThis->getAllRecords(requestData, getAllRecordsData, WTF::move(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
         });
@@ -1078,7 +1078,7 @@ void UniqueIDBDatabase::getAllRecords(const IDBRequestData& requestData, const I
 
     ASSERT(spaceCheckResult == SpaceCheckResult::Pass);
     if (!m_backingStore)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s }, IDBGetAllResult { });
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_si }, IDBGetAllResult { });
 
     IDBGetAllResult result;
     auto error = protect(m_backingStore)->getAllRecords(requestData.transactionIdentifier(), getAllRecordsData, result);
@@ -1099,7 +1099,7 @@ void UniqueIDBDatabase::getCount(const IDBRequestData& requestData, const IDBKey
         manager->requestSpace(m_identifier.origin(), 0, [weakThis = WeakPtr { *this }, requestData, range, callback = WTF::move(callback)](bool granted) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!weakThis)
-                return callback(IDBError { ExceptionCode::InvalidStateError, "Database is closed"_s }, 0);
+                return callback(IDBError { ExceptionCode::InvalidStateError, "Database is closed"_si }, 0);
 
             checkedThis->getCount(requestData, range, WTF::move(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
         });
@@ -1108,7 +1108,7 @@ void UniqueIDBDatabase::getCount(const IDBRequestData& requestData, const IDBKey
 
     ASSERT(spaceCheckResult == SpaceCheckResult::Pass);
     if (!m_backingStore)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s }, 0);
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_si }, 0);
 
     uint64_t count = 0;
     auto error = protect(m_backingStore)->getCount(requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), requestData.indexIdentifier(), range, count);
@@ -1129,7 +1129,7 @@ void UniqueIDBDatabase::deleteRecord(const IDBRequestData& requestData, const ID
         manager->requestSpace(m_identifier.origin(), 0, [weakThis = WeakPtr { *this }, requestData, keyRangeData, callback = WTF::move(callback)](bool granted) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!checkedThis)
-                return callback(IDBError { ExceptionCode::InvalidStateError, "Database is closed"_s });
+                return callback(IDBError { ExceptionCode::InvalidStateError, "Database is closed"_si });
 
             checkedThis->deleteRecord(requestData, keyRangeData, WTF::move(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
         });
@@ -1138,7 +1138,7 @@ void UniqueIDBDatabase::deleteRecord(const IDBRequestData& requestData, const ID
 
     ASSERT(spaceCheckResult == SpaceCheckResult::Pass);
     if (!m_backingStore)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s });
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_si });
 
     auto error = protect(m_backingStore)->deleteRange(requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), keyRangeData);
 
@@ -1158,7 +1158,7 @@ void UniqueIDBDatabase::openCursor(const IDBRequestData& requestData, const IDBC
         manager->requestSpace(m_identifier.origin(), 0, [weakThis = WeakPtr { *this }, requestData, info, callback = WTF::move(callback)](bool granted) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!checkedThis)
-                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_s }, IDBGetResult { });
+                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_si }, IDBGetResult { });
 
             checkedThis->openCursor(requestData, info, WTF::move(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
         });
@@ -1167,7 +1167,7 @@ void UniqueIDBDatabase::openCursor(const IDBRequestData& requestData, const IDBC
 
     ASSERT(spaceCheckResult == SpaceCheckResult::Pass);
     if (!m_backingStore)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s }, IDBGetResult { });
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_si }, IDBGetResult { });
 
     IDBGetResult result;
     auto error = protect(m_backingStore)->openCursor(requestData.transactionIdentifier(), info, result);
@@ -1188,7 +1188,7 @@ void UniqueIDBDatabase::iterateCursor(const IDBRequestData& requestData, const I
         manager->requestSpace(m_identifier.origin(), 0, [weakThis = WeakPtr { *this }, requestData, data, callback = WTF::move(callback)](bool granted) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!checkedThis)
-                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_s }, IDBGetResult { });
+                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_si }, IDBGetResult { });
 
             checkedThis->iterateCursor(requestData, data, WTF::move(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
         });
@@ -1197,7 +1197,7 @@ void UniqueIDBDatabase::iterateCursor(const IDBRequestData& requestData, const I
 
     ASSERT(spaceCheckResult == SpaceCheckResult::Pass);
     if (!m_backingStore)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s }, IDBGetResult { });
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_si }, IDBGetResult { });
 
     IDBGetResult result;
     auto cursorIdentifier = requestData.cursorIdentifier();
@@ -1219,7 +1219,7 @@ void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transact
         manager->requestSpace(m_identifier.origin(), 0, [handledRequestResultsCount, weakThis = WeakPtr { *this }, weakTransaction = WeakPtr { transaction }, callback = WTF::move(callback)](bool granted) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!checkedThis || !weakTransaction)
-                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_s });
+                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_si });
 
             checkedThis->commitTransaction(protect(*weakTransaction), handledRequestResultsCount, WTF::move(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
         });
@@ -1234,25 +1234,25 @@ void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transact
             if (!error.isNull())
                 return callback(error);
 
-            callback(IDBError { ExceptionCode::UnknownError, "Transaction is aborted due to unhandled failed request"_s });
+            callback(IDBError { ExceptionCode::UnknownError, "Transaction is aborted due to unhandled failed request"_si });
         }, spaceCheckResult);
         return;
     }
 
     if (!m_backingStore)
-        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s });
+        return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_si });
 
     auto takenTransaction = m_inProgressTransactions.take(transaction.info().identifier());
     if (!takenTransaction) {
         // The transaction may have been aborted and completed on the server while its client
         // process was suspended; fail the commit with that abort result.
         if (auto existingAbortResult = transaction.suspensionAbortResult())
-            return callback(existingAbortResult->isNull() ? IDBError { ExceptionCode::UnknownError, "Transaction was aborted while its process was suspended"_s } : *existingAbortResult);
+            return callback(existingAbortResult->isNull() ? IDBError { ExceptionCode::UnknownError, "Transaction was aborted while its process was suspended"_si } : *existingAbortResult);
 
         if (transaction.databaseConnection() && !m_openDatabaseConnections.contains(transaction.databaseConnection()))
             return;
 
-        callback(IDBError { ExceptionCode::UnknownError, "Attempt to commit transaction that is not running"_s });
+        callback(IDBError { ExceptionCode::UnknownError, "Attempt to commit transaction that is not running"_si });
         return;
     }
 
@@ -1275,7 +1275,7 @@ void UniqueIDBDatabase::abortTransaction(UniqueIDBDatabaseTransaction& transacti
         manager->requestSpace(m_identifier.origin(), 0, [weakThis = WeakPtr { *this }, weakTransaction = WeakPtr { transaction }, callback = WTF::move(callback)](bool granted) mutable {
             CheckedPtr checkedThis = weakThis.get();
             if (!checkedThis || !weakTransaction)
-                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_s });
+                return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_si });
 
             checkedThis->abortTransaction(protect(*weakTransaction), WTF::move(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
         });
@@ -1295,7 +1295,7 @@ void UniqueIDBDatabase::abortTransaction(UniqueIDBDatabaseTransaction& transacti
         if (!m_openDatabaseConnections.contains(transaction.databaseConnection()))
             return;
 
-        callback(IDBError { ExceptionCode::UnknownError, "Attempt to abort transaction that is not running"_s });
+        callback(IDBError { ExceptionCode::UnknownError, "Attempt to abort transaction that is not running"_si });
         return;
     }
 
@@ -1319,7 +1319,7 @@ void UniqueIDBDatabase::abortTransaction(UniqueIDBDatabaseTransaction& transacti
     if (CheckedPtr backingStore = m_backingStore.get())
         error = backingStore->abortTransaction(transactionIdentifier);
     else
-        error = IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s };
+        error = IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_si };
 
     callback(error);
     transactionCompleted(WTF::move(takenTransaction));
@@ -1751,7 +1751,7 @@ RefPtr<ServerOpenDBRequest> UniqueIDBDatabase::takeNextRunnableRequest()
     return nullptr;
 }
 
-String UniqueIDBDatabase::filePath() const
+RefPtr<StringImpl> UniqueIDBDatabase::filePath() const
 {
     return m_backingStore ? protect(m_backingStore)->fullDatabasePath() : nullString();
 }

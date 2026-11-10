@@ -209,7 +209,7 @@ PluginView* FindController::mainFramePlugIn()
 
 #endif
 
-void FindController::countStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(uint32_t)>&& completionHandler)
+void FindController::countStringMatches(StringImpl* string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(uint32_t)>&& completionHandler)
 {
     if (maxMatchCount == std::numeric_limits<unsigned>::max())
         --maxMatchCount;
@@ -245,7 +245,7 @@ void FindController::countStringMatches(const String& string, OptionSet<FindOpti
     completionHandler(matchCount);
 }
 
-uint32_t FindController::replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly)
+uint32_t FindController::replaceMatches(const Vector<uint32_t>& matchIndices, StringImpl* replacementText, bool selectionOnly)
 {
     RefPtr webPage { m_webPage.get() };
     if (matchIndices.isEmpty())
@@ -320,7 +320,7 @@ std::optional<FrameIdentifier> FindController::applyFindMatch(const FindMatch& m
 #endif
 }
 
-void FindController::updateFindUIAfterIncrementalFind(bool found, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, unsigned cueMatchCount, WebCore::DidWrap didWrap, std::optional<FrameIdentifier> idOfFrameContainingString, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
+void FindController::updateFindUIAfterIncrementalFind(bool found, StringImpl* string, OptionSet<FindOptions> options, unsigned maxMatchCount, unsigned cueMatchCount, WebCore::DidWrap didWrap, std::optional<FrameIdentifier> idOfFrameContainingString, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
 {
     RefPtr webPage { m_webPage.get() };
     RefPtr selectedFrame = frameWithSelection(protect(webPage->corePage()).get());
@@ -365,7 +365,7 @@ void FindController::updateFindUIAfterIncrementalFind(bool found, const String& 
     completionHandler(idOfFrameContainingString, WTF::move(matchRects), matchCount, m_foundStringMatchIndex.value_or(0), didWrap == WebCore::DidWrap::Yes);
 }
 
-unsigned FindController::markMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, unsigned cueMatchCount)
+unsigned FindController::markMatches(StringImpl* string, OptionSet<FindOptions> options, unsigned maxMatchCount, unsigned cueMatchCount)
 {
     maxMatchCount = std::min(std::numeric_limits<unsigned>::max() - 1, maxMatchCount);
 
@@ -381,7 +381,7 @@ unsigned FindController::markMatches(const String& string, OptionSet<FindOptions
     return matchCount + cueMatchCount;
 }
 
-unsigned FindController::getMatchCount(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, unsigned cueMatchCount)
+unsigned FindController::getMatchCount(StringImpl* string, OptionSet<FindOptions> options, unsigned maxMatchCount, unsigned cueMatchCount)
 {
 #if ENABLE(PDF_PLUGIN)
     if (RefPtr pluginView = mainFramePlugIn(); pluginView)
@@ -422,7 +422,7 @@ void FindController::updateMatchIndex(unsigned matchCount, OptionSet<FindOptions
     }
 }
 
-void FindController::updateFindUIAfterFindingAllMatches(bool found, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, bool shouldUpdateFindIndicator)
+void FindController::updateFindUIAfterFindingAllMatches(bool found, StringImpl* string, OptionSet<FindOptions> options, unsigned maxMatchCount, bool shouldUpdateFindIndicator)
 {
     RefPtr webPage { m_webPage.get() };
     RefPtr selectedFrame = frameWithSelection(protect(webPage->corePage()).get());
@@ -483,9 +483,9 @@ void FindController::updateFindIndicatorIfNeeded(bool found, OptionSet<FindOptio
 }
 
 #if ENABLE(IMAGE_ANALYSIS)
-void FindController::findStringIncludingImages(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
+void FindController::findStringIncludingImages(StringImpl* string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
 {
-    protect(protect(m_webPage.get())->corePage())->analyzeImagesForFindInPage([weakPage = WeakPtr { m_webPage }, string, options, maxMatchCount, completionHandler = WTF::move(completionHandler)]() mutable {
+    protect(protect(m_webPage.get())->corePage())->analyzeImagesForFindInPage([weakPage = WeakPtr { m_webPage }, string = RefPtr { string }, options, maxMatchCount, completionHandler = WTF::move(completionHandler)]() mutable {
         if (weakPage)
             weakPage->findController().findString(string, options, maxMatchCount, WTF::move(completionHandler));
         else
@@ -494,12 +494,12 @@ void FindController::findStringIncludingImages(const String& string, OptionSet<F
 }
 #endif
 
-void FindController::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
+void FindController::findString(StringImpl* string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
 {
     findString(string, options, maxMatchCount, ShouldReuseLastFoundRange::No, WTF::move(completionHandler));
 }
 
-void FindController::countStringMatchesByFrame(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(Vector<std::pair<FrameIdentifier, uint32_t>>&&)>&& completionHandler)
+void FindController::countStringMatchesByFrame(StringImpl* string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(Vector<std::pair<FrameIdentifier, uint32_t>>&&)>&& completionHandler)
 {
     RefPtr webPage { m_webPage };
     auto result = protect(webPage->corePage())->findTextMatches(string, core(options), maxMatchCount, false);
@@ -514,7 +514,7 @@ void FindController::countStringMatchesByFrame(const String& string, OptionSet<F
     completionHandler(WTF::move(counts));
 }
 
-std::optional<int32_t> FindController::indexOfSelectedMatchInFrame(const String& string, OptionSet<FindOptions> options)
+std::optional<int32_t> FindController::indexOfSelectedMatchInFrame(StringImpl* string, OptionSet<FindOptions> options)
 {
     RefPtr webPage { m_webPage };
     RefPtr selectedFrame = frameWithSelection(protect(webPage->corePage()).get());
@@ -536,9 +536,9 @@ std::optional<int32_t> FindController::indexOfSelectedMatchInFrame(const String&
     return std::nullopt;
 }
 
-void FindController::selectLastFoundRange(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, int32_t, bool)>&& completionHandler)
+void FindController::selectLastFoundRange(StringImpl* string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, int32_t, bool)>&& completionHandler)
 {
-    findString(string, options, maxMatchCount, ShouldReuseLastFoundRange::Yes, [weakPage = m_webPage, string, options, completionHandler = WTF::move(completionHandler)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, uint32_t, int32_t matchIndex, bool didWrap) mutable {
+    findString(string, options, maxMatchCount, ShouldReuseLastFoundRange::Yes, [weakPage = m_webPage, string = RefPtr { string }, options, completionHandler = WTF::move(completionHandler)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, uint32_t, int32_t matchIndex, bool didWrap) mutable {
         if (frameID && options.contains(FindOptions::DetermineMatchIndex)) {
             if (RefPtr webPage = weakPage) {
                 if (auto indexInFrame = webPage->findController().indexOfSelectedMatchInFrame(string, options))
@@ -549,9 +549,9 @@ void FindController::selectLastFoundRange(const String& string, OptionSet<FindOp
     });
 }
 
-void FindController::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, ShouldReuseLastFoundRange shouldReuseLastFoundRange, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
+void FindController::findString(StringImpl* string, OptionSet<FindOptions> options, unsigned maxMatchCount, ShouldReuseLastFoundRange shouldReuseLastFoundRange, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
 {
-    if (m_previousFindString != string) {
+    if (!equal(m_previousFindString, string)) {
         m_foundStringMatchIndex = std::nullopt;
         m_lastFoundRange = std::nullopt;
         m_previousFindString = string;
@@ -699,12 +699,12 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
         }
     }
 
-    protect(webPage->drawingArea())->dispatchAfterEnsuringUpdatedScrollPosition([webPage, found, string, options, maxMatchCount, cueMatchCount, didWrap, idOfFrameContainingString, completionHandler = WTF::move(completionHandler)]() mutable {
+    protect(webPage->drawingArea())->dispatchAfterEnsuringUpdatedScrollPosition([webPage, found, string = RefPtr { string }, options, maxMatchCount, cueMatchCount, didWrap, idOfFrameContainingString, completionHandler = WTF::move(completionHandler)]() mutable {
         webPage->findController().updateFindUIAfterIncrementalFind(found, string, options, maxMatchCount, cueMatchCount, didWrap, idOfFrameContainingString, WTF::move(completionHandler));
     });
 }
 
-void FindController::findStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Vector<Vector<WebCore::IntRect>>>>&&, std::optional<WebCore::FindSelectionInFrame>)>&& completionHandler)
+void FindController::findStringMatches(StringImpl* string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Vector<Vector<WebCore::IntRect>>>>&&, std::optional<WebCore::FindSelectionInFrame>)>&& completionHandler)
 {
     RefPtr webPage { m_webPage.get() };
     auto result = protect(webPage->corePage())->findTextMatches(string, core(options), maxMatchCount);
@@ -726,10 +726,10 @@ void FindController::findStringMatches(const String& string, OptionSet<FindOptio
     scheduleFindUIUpdateAfterFindingAllMatches(!m_findMatches.isEmpty(), string, options, maxMatchCount);
 }
 
-void FindController::scheduleFindUIUpdateAfterFindingAllMatches(bool found, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, bool shouldUpdateFindIndicator)
+void FindController::scheduleFindUIUpdateAfterFindingAllMatches(bool found, StringImpl* string, OptionSet<FindOptions> options, unsigned maxMatchCount, bool shouldUpdateFindIndicator)
 {
     RefPtr webPage { m_webPage.get() };
-    protect(webPage->drawingArea())->dispatchAfterEnsuringUpdatedScrollPosition([webPage, found, string, options, maxMatchCount, shouldUpdateFindIndicator] {
+    protect(webPage->drawingArea())->dispatchAfterEnsuringUpdatedScrollPosition([webPage, found, string = RefPtr { string }, options, maxMatchCount, shouldUpdateFindIndicator] {
         webPage->findController().updateFindUIAfterFindingAllMatches(found, string, options, maxMatchCount, shouldUpdateFindIndicator);
     });
 }
@@ -793,7 +793,7 @@ void FindController::hideFindUI()
 {
     m_findMatches.clear();
     m_lastFoundRange = std::nullopt;
-    m_previousFindString = { };
+    m_previousFindString = nullptr;
 #if ENABLE(VIDEO)
     protect(protect(m_webPage.get())->corePage())->clearFindCaptionTracks();
 #endif

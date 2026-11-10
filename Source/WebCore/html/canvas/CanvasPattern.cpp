@@ -47,24 +47,24 @@ CanvasPattern::CanvasPattern(SourceImage&& image, bool repeatX, bool repeatY, bo
 
 CanvasPattern::~CanvasPattern() = default;
 
-bool CanvasPattern::parseRepetitionType(const String& type, bool& repeatX, bool& repeatY)
+bool CanvasPattern::parseRepetitionType(StringImpl* type, bool& repeatX, bool& repeatY)
 {
-    if (type.isEmpty() || type == "repeat"_s) {
+    if (isEmpty(type) || equal(type, "repeat"_s)) {
         repeatX = true;
         repeatY = true;
         return true;
     }
-    if (type == "no-repeat"_s) {
+    if (equal(type, "no-repeat"_s)) {
         repeatX = false;
         repeatY = false;
         return true;
     }
-    if (type == "repeat-x"_s) {
+    if (equal(type, "repeat-x"_s)) {
         repeatX = true;
         repeatY = false;
         return true;
     }
-    if (type == "repeat-y"_s) {
+    if (equal(type, "repeat-y"_s)) {
         repeatX = false;
         repeatY = true;
         return true;

@@ -49,7 +49,7 @@ ContentExtensionStyleSheet::~ContentExtensionStyleSheet()
     m_styleSheet->clearOwnerNode();
 }
 
-bool ContentExtensionStyleSheet::addDisplayNoneSelector(const String& selector, uint32_t selectorID)
+bool ContentExtensionStyleSheet::addDisplayNoneSelector(StringImpl* selector, uint32_t selectorID)
 {
     ASSERT(selectorID != std::numeric_limits<uint32_t>::max());
 

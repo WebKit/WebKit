@@ -80,7 +80,7 @@ static bool checkCredentialTypeCombinations(const CredentialRequestOptions& opti
         requestedTypes.add(CredentialType::Digital);
 
     if (requestedTypes.isEmpty()) {
-        promise.reject(Exception { ExceptionCode::NotSupportedError, "No credential type was specified."_s });
+        promise.reject(Exception { ExceptionCode::NotSupportedError, "No credential type was specified."_si });
         return false;
     }
 
@@ -103,7 +103,7 @@ static bool checkCredentialTypeCombinations(const CredentialRequestOptions& opti
     for (auto type : requestedTypes) {
         auto others = requestedTypes - type;
         if (!others.isEmpty() && !allowedWith(type).containsAll(others)) {
-            promise.reject(Exception { ExceptionCode::NotSupportedError, "The credential type combination is not supported."_s });
+            promise.reject(Exception { ExceptionCode::NotSupportedError, "The credential type combination is not supported."_si });
             return false;
         }
     }
@@ -114,12 +114,12 @@ template<typename Options>
 static bool performCommonChecks(const Document& document, const Options& options, CredentialPromise& promise)
 {
     if (!document.isFullyActive()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "The document is not fully active."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The document is not fully active."_si });
         return false;
     }
 
     if (!document.page()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_si });
         return false;
     }
 
@@ -175,7 +175,7 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
 
 void CredentialsContainer::store(const BasicCredential&, CredentialPromise&& promise)
 {
-    promise.reject(Exception { ExceptionCode::NotSupportedError, "Not implemented."_s });
+    promise.reject(Exception { ExceptionCode::NotSupportedError, "Not implemented."_si });
 }
 
 void CredentialsContainer::isCreate(CredentialCreationOptions&& options, CredentialPromise&& promise)
@@ -191,7 +191,7 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
 
     // Extra.
     if (!document->hasFocus()) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not focused."_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not focused."_si });
         return;
     }
 
@@ -200,13 +200,13 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
         return;
     }
 
-    promise.reject(Exception { ExceptionCode::NotSupportedError, "No credential type was specified."_s });
+    promise.reject(Exception { ExceptionCode::NotSupportedError, "No credential type was specified."_si });
 }
 
 void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promise) const
 {
     if (RefPtr document = this->document(); !document || !document->isFullyActive()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "The document is not fully active."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The document is not fully active."_si });
         return;
     }
     promise.resolve();

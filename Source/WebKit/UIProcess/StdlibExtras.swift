@@ -24,12 +24,45 @@
 import WebKit_Internal
 import wtf
 
-extension WTF.String {
-    /// Return a `Swift.String` from this `WTF.String`.
-    var description: Swift.String {
-        // We could possibly make this quicker by treating a C++ span as
-        // a Sequence. For now, we want to avoid unsafe as much as possible.
-        Swift.String(utf8(WTF.LenientConversion).toStdString())
+// MARK: Swift.String <-> WTF::StringImpl
+
+// WTF::StringImpl is a Swift shared reference type (retained with ref(), released with deref()), so Swift passes
+// StringImpl* parameters as `WTF.StringImpl?` and gets one from a RefPtr<StringImpl> with `.get()`.
+// These only need wtf, so they are defined outside the ENABLE_BACK_FORWARD_LIST_SWIFT guard below.
+// FIXME (rdar://164119356): Move these into WTF once WTF has Swift sources.
+
+extension WTF.StringImpl {
+    /// Creates a `StringImpl` with the contents of `string`.
+    ///
+    /// Only `nil` if allocation fails; the optional mirrors C++ `RefPtr<StringImpl>`, and passes straight to
+    /// `StringImpl*` parameters.
+    static func create(from string: Swift.String) -> WTF.StringImpl? {
+        // FIXME: Like the WTF.String initializer this replaces, the Swift >= 6.4 branch includes the UTF-8 null
+        // terminator, so the result ends in U+0000 (and an empty Swift string becomes "\0"). Upstream fixed only the
+        // older-compiler branch (326293@main); the other is kept as is to preserve behavior.
+        // Safety: the buffer is valid for the duration of the closure, and fromUTF8() copies it.
+        #if compiler(>=6.4)
+        string.utf8CString.withUnsafeBufferPointer { characters in
+            unsafe characters.withMemoryRebound(to: UInt8.self) { bytes in
+                // swift-format-ignore: NeverForceUnwrap
+                unsafe WTF.StringImpl.fromUTF8(WTF.SpanUInt8(bytes.baseAddress!, bytes.count)).get()
+            }
+        }
+        #else
+        unsafe string.utf8CString.withUnsafeBufferPointer { characters in
+            unsafe characters.withMemoryRebound(to: UInt8.self) { bytes in
+                // swift-format-ignore: NeverForceUnwrap
+                unsafe WTF.StringImpl.fromUTF8(WTF.SpanUInt8(bytes.baseAddress!, bytes.count - 1)).get()
+            }
+        }
+        #endif
+    }
+}
+
+extension Swift.String {
+    /// Creates a `Swift.String` from a `StringImpl`; `nil` (a null WTF string) becomes the empty string.
+    init(_ string: WTF.StringImpl?) {
+        self.init(WTF.utf8StdString(string))
     }
 }
 
@@ -58,41 +91,6 @@ protocol CxxVector {
 
 /// Conform any WTF::Vector<WTF::Ref<T>> to this protocol to get useful extensions and iterators.
 protocol CxxRefVector: CxxVector where Element: CxxRef {
-}
-
-// FIXME(rdar://164119356): conform to LosslessStringConvertible
-// when this moves to WTF (requires members to be public)
-extension WTF.String {
-    /// Construct a `WTF.String` from a `Swift.String`.
-    init(_ string: Swift.String) {
-        // rdar://167712240 prevents us from simply writing
-        // self = WTF.String.fromUTF8(swiftString.utf8CString.span);
-        // Safety - we are guaranteed to get a valid buffer from the Swift
-        // string for the duration that we're using it to construct the WTF::String.
-        // The WTF::String will take a copy.
-        #if compiler(>=6.4)
-        self = string.utf8CString.span.withUnsafeBufferPointer { ptr in
-            // swift-format-ignore: NeverForceUnwrap
-            let cppspan = unsafe SpanConstChar(UnsafeBufferPointer(start: ptr.baseAddress!, count: string.utf8CString.count))
-            return unsafe WTF.String.fromUTF8(cppspan)
-        }
-        #else
-        self = unsafe string.utf8CString.span.withUnsafeBufferPointer { ptr in
-            // swift-format-ignore: NeverForceUnwrap
-            let cppspan = unsafe SpanConstChar(UnsafeBufferPointer(start: ptr.baseAddress!, count: ptr.count - 1))
-            return unsafe WTF.String.fromUTF8(cppspan)
-        }
-        #endif
-    }
-}
-
-// FIXME(rdar://164119356)): conform to ExpressibleByStringLiteral
-// when this moves to WTF (requires members to be public)
-extension WTF.String {
-    /// Construct a `WTF.String` from a string literal.
-    init(stringLiteral: Swift.String) {
-        self.init(stringLiteral)
-    }
 }
 
 extension CxxRefVector {

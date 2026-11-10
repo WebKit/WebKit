@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-CachedResourceRequest::CachedResourceRequest(ResourceRequest&& resourceRequest, const ResourceLoaderOptions& options, std::optional<ResourceLoadPriority> priority, String&& charset)
+CachedResourceRequest::CachedResourceRequest(ResourceRequest&& resourceRequest, const ResourceLoaderOptions& options, std::optional<ResourceLoadPriority> priority, RefPtr<StringImpl>&& charset)
     : m_resourceRequest(WTF::move(resourceRequest))
     , m_charset(WTF::move(charset))
     , m_options(options)
@@ -63,7 +63,7 @@ CachedResourceRequest::CachedResourceRequest(ResourceRequest&& resourceRequest, 
 {
 }
 
-String CachedResourceRequest::splitFragmentIdentifierFromRequestURL(ResourceRequest& request)
+RefPtr<StringImpl> CachedResourceRequest::splitFragmentIdentifierFromRequestURL(ResourceRequest& request)
 {
     if (!MemoryCache::shouldRemoveFragmentIdentifier(request.url()))
         return { };
@@ -77,25 +77,25 @@ String CachedResourceRequest::splitFragmentIdentifierFromRequestURL(ResourceRequ
 void CachedResourceRequest::setInitiator(Element& element)
 {
     ASSERT(!m_initiatorElement);
-    ASSERT(m_initiatorType.isEmpty());
+    ASSERT(isEmpty(m_initiatorType));
     m_initiatorElement = element;
 }
 
-void CachedResourceRequest::setInitiatorType(const AtomString& type)
+void CachedResourceRequest::setInitiatorType(AtomStringImpl* type)
 {
     ASSERT(!m_initiatorElement);
-    ASSERT(m_initiatorType.isEmpty());
+    ASSERT(isEmpty(m_initiatorType));
     m_initiatorType = type;
 }
 
-const AtomString& CachedResourceRequest::initiatorType() const
+const RefPtr<AtomStringImpl>& CachedResourceRequest::initiatorType() const
 {
     if (m_initiatorElement)
         return m_initiatorElement->localName();
-    if (!m_initiatorType.isEmpty())
+    if (!isEmpty(m_initiatorType))
         return m_initiatorType;
 
-    static MainThreadNeverDestroyed<const AtomString> defaultName("other"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> defaultName("other"_s);
     return defaultName;
 }
 
@@ -139,9 +139,9 @@ static inline void appendVideoImageResource(StringBuilder& acceptHeader)
         acceptHeader.append("video/*;q=0.8,"_s);
 }
 
-static String acceptHeaderValueForImageResource(bool usingSecureProtocol)
+static RefPtr<StringImpl> acceptHeaderValueForImageResource(bool usingSecureProtocol)
 {
-    static MainThreadNeverDestroyed<String> staticPrefix = [] {
+    static MainThreadNeverDestroyed<RefPtr<StringImpl>> staticPrefix = [] {
         StringBuilder builder;
         builder.append("image/webp,"_s);
 #if HAVE(AVIF) || USE(AVIF)
@@ -175,26 +175,26 @@ static String acceptHeaderValueForImageResource(bool usingSecureProtocol)
     return builder.toString();
 }
 
-String CachedResourceRequest::acceptHeaderValueFromType(CachedResource::Type type, bool usingSecureProtocol)
+RefPtr<StringImpl> CachedResourceRequest::acceptHeaderValueFromType(CachedResource::Type type, bool usingSecureProtocol)
 {
     switch (type) {
     case CachedResource::Type::MainResource:
-        return "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"_s;
+        return "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"_si;
     case CachedResource::Type::ImageResource:
         return acceptHeaderValueForImageResource(usingSecureProtocol);
     case CachedResource::Type::CSSStyleSheet:
-        return "text/css,*/*;q=0.1"_s;
+        return "text/css,*/*;q=0.1"_si;
     case CachedResource::Type::JSON:
-        return "application/json,*/*;q=0.5"_s;
+        return "application/json,*/*;q=0.5"_si;
     case CachedResource::Type::SVGDocumentResource:
-        return "image/svg+xml"_s;
+        return "image/svg+xml"_si;
 #if ENABLE(XSLT)
     case CachedResource::Type::XSLStyleSheet:
         // FIXME: This should accept more general xml formats */*+xml, image/svg+xml for example.
-        return "text/xml,application/xml,application/xhtml+xml,text/xsl,application/rss+xml,application/atom+xml"_s;
+        return "text/xml,application/xml,application/xhtml+xml,text/xsl,application/rss+xml,application/atom+xml"_si;
 #endif
     default:
-        return "*/*"_s;
+        return "*/*"_si;
     }
 }
 
@@ -260,7 +260,7 @@ void CachedResourceRequest::updateAcceptEncodingHeader()
     // FIXME: rdar://problem/40879225. Media engines triggering the load should not set this Accept-Encoding header.
     ASSERT(!m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::AcceptEncoding) || m_options.destination == FetchOptions::Destination::Audio || m_options.destination == FetchOptions::Destination::Video);
 
-    m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::AcceptEncoding, "identity"_s);
+    m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::AcceptEncoding, "identity"_si);
 }
 
 void CachedResourceRequest::removeFragmentIdentifierIfNeeded()
@@ -295,12 +295,12 @@ void CachedResourceRequest::updateReferrerAndOriginHeaders(FrameLoader& frameLoa
         outgoingReferrerURL = frameLoader.outgoingReferrerURL();
     updateRequestReferrer(m_resourceRequest, m_options.referrerPolicy, outgoingReferrerURL, OriginAccessPatternsForWebProcess::singleton());
 
-    if (!m_resourceRequest.httpOrigin().isEmpty())
+    if (!isEmpty(m_resourceRequest.httpOrigin()))
         return;
 
     RefPtr document = frameLoader.frame().document();
     auto actualOrigin = (document && m_options.destination == FetchOptionsDestination::EmptyString && m_initiatorType == cachedResourceRequestInitiatorTypes().fetch) ? Ref { document->securityOrigin() } : SecurityOrigin::create(outgoingReferrerURL);
-    String outgoingOrigin;
+    RefPtr<StringImpl> outgoingOrigin;
     if (m_options.mode == FetchOptions::Mode::Cors)
         outgoingOrigin = actualOrigin->toString();
     else

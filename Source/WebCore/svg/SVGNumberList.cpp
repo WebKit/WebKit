@@ -70,7 +70,7 @@ bool SVGNumberList::parse(StringView value)
     return true;
 }
 
-String SVGNumberList::valueAsString() const
+RefPtr<StringImpl> SVGNumberList::valueAsString() const
 {
     StringBuilder builder;
 

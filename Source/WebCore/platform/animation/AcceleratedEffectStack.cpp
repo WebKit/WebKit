@@ -96,7 +96,7 @@ TextStream& operator<<(TextStream& ts, const AcceleratedEffectStack& effectStack
         ts << ", " << baseValues.dumpProperty(property);
     ts << ")\n"_s;
 
-    auto dumpEffects = [&](const String label, const AcceleratedEffects& effects) {
+    auto dumpEffects = [&](const RefPtr<StringImpl> label, const AcceleratedEffects& effects) {
         if (effects.isEmpty())
             return;
         ts << indent << "(" << label << "\n";
@@ -108,8 +108,8 @@ TextStream& operator<<(TextStream& ts, const AcceleratedEffectStack& effectStack
         ts << indent << ")\n"_s;
     };
 
-    dumpEffects("effect stack"_s, effectStack.primaryLayerEffects());
-    dumpEffects("backdrop effect stack"_s, effectStack.backdropLayerEffects());
+    dumpEffects("effect stack"_si, effectStack.primaryLayerEffects());
+    dumpEffects("backdrop effect stack"_si, effectStack.backdropLayerEffects());
     return ts;
 }
 

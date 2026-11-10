@@ -41,14 +41,14 @@ Ref<JSON::Object> GPURenderPassDescriptor::toJSON() const
         else
             colorAttachmentsJSON->pushValue(JSON::Value::null());
     }
-    json->setArray("colorAttachments"_s, WTF::move(colorAttachmentsJSON));
+    json->setArray("colorAttachments"_si, WTF::move(colorAttachmentsJSON));
 
     if (depthStencilAttachment)
-        json->setObject("depthStencilAttachment"_s, depthStencilAttachment->toJSON());
+        json->setObject("depthStencilAttachment"_si, depthStencilAttachment->toJSON());
     // `GPUQuerySet` is not JSON serializable.
     if (timestampWrites)
-        json->setObject("timestampWrites"_s, timestampWrites->toJSON());
-    json->setDouble("maxDrawCount"_s, maxDrawCount);
+        json->setObject("timestampWrites"_si, timestampWrites->toJSON());
+    json->setDouble("maxDrawCount"_si, maxDrawCount);
     return json;
 }
 

@@ -74,9 +74,9 @@ private:
         return *m_connection;
     }
 
-    String ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData& origin) final
+    RefPtr<StringImpl> ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData& origin) final
     {
-        if (m_mediaKeysStorageDirectory.isEmpty())
+        if (isEmpty(m_mediaKeysStorageDirectory))
             return emptyString();
 
         auto originDirectory = FileSystem::pathByAppendingComponent(m_mediaKeysStorageDirectory, origin.databaseIdentifier());
@@ -84,13 +84,13 @@ private:
         return originDirectory;
     }
 
-    void setMediaKeysStorageDirectory(const String& directory) final
+    void setMediaKeysStorageDirectory(StringImpl* directory) final
     {
         m_mediaKeysStorageDirectory = directory;
     }
 
     const RefPtr<DummyStorageConnection> m_connection;
-    String m_mediaKeysStorageDirectory;
+    RefPtr<StringImpl> m_mediaKeysStorageDirectory;
 };
 
 } // namespace WebCore

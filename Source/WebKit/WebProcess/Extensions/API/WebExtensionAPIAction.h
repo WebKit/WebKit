@@ -45,8 +45,8 @@ class WebExtensionAPIAction : public WebExtensionAPIObject, public JSWebExtensio
 
 public:
 #if PLATFORM(COCOA)
-    void getTitle(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
-    void setTitle(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
+    void getTitle(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, RefPtr<StringImpl>& outExceptionString);
+    void setTitle(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, RefPtr<StringImpl>& outExceptionString);
 
     void getBadgeText(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void setBadgeText(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
@@ -78,7 +78,7 @@ private:
     static NSArray *parseIconVariants(NSArray *, const URL& baseURL, NSString *inputKey, NSString **outExceptionString);
 #endif
 
-    static std::expected<void, String> parseActionDetails(NSDictionary *, std::optional<WebExtensionWindowIdentifier>&, std::optional<WebExtensionTabIdentifier>&);
+    static std::expected<void, RefPtr<StringImpl>> parseActionDetails(NSDictionary *, std::optional<WebExtensionWindowIdentifier>&, std::optional<WebExtensionTabIdentifier>&);
     static bool parseTabIdentifierOrActionDetails(NSObject *details, std::optional<WebExtensionWindowIdentifier>&, std::optional<WebExtensionTabIdentifier>&, NSString **outExceptionString);
     void setEnabled(NSObject *details, bool enabled, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 

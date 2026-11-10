@@ -45,7 +45,7 @@ RefPtr<ProcessStateMonitor> ProcessStateMonitor::create(Function<void(bool)>&& b
 {
     // FIXME: this bundle ID check is a short term fix; it should eventually check
     // -[RBSProcessHandle isManaged].
-    if (applicationBundleIdentifier() == "com.apple.textunderstandingd"_s)
+    if (equal(applicationBundleIdentifier(), "com.apple.textunderstandingd"_s))
         return nullptr;
 
     return adoptRef(*new ProcessStateMonitor(WTF::move(becomeSuspendedHandler)));

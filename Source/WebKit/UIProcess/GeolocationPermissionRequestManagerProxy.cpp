@@ -65,8 +65,8 @@ void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDe
         return;
 
 #if ENABLE(GEOLOCATION)
-    String authorizationToken = allowed ? createVersion4UUIDString() : String();
-    if (!authorizationToken.isNull())
+    RefPtr<StringImpl> authorizationToken = allowed ? createVersion4UUIDString() : nullptr;
+    if (authorizationToken)
         m_validAuthorizationTokens.add(authorizationToken, it->value->registrableDomain());
     if (RefPtr process = it->value->process())
         process->send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, authorizationToken), page->webPageIDInProcess(*process));
@@ -77,14 +77,14 @@ void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDe
     m_pendingRequests.remove(it);
 }
 
-bool GeolocationPermissionRequestManagerProxy::isValidAuthorizationToken(const String& authorizationToken) const
+bool GeolocationPermissionRequestManagerProxy::isValidAuthorizationToken(StringImpl* authorizationToken) const
 {
-    return !authorizationToken.isNull() && m_validAuthorizationTokens.contains(authorizationToken);
+    return !!authorizationToken && m_validAuthorizationTokens.contains(authorizationToken);
 }
 
-std::optional<WebCore::RegistrableDomain> GeolocationPermissionRequestManagerProxy::registrableDomainForAuthorizationToken(const String& authorizationToken) const
+std::optional<WebCore::RegistrableDomain> GeolocationPermissionRequestManagerProxy::registrableDomainForAuthorizationToken(StringImpl* authorizationToken) const
 {
-    if (authorizationToken.isNull())
+    if (!authorizationToken)
         return std::nullopt;
     auto it = m_validAuthorizationTokens.find(authorizationToken);
     if (it == m_validAuthorizationTokens.end())
@@ -92,7 +92,7 @@ std::optional<WebCore::RegistrableDomain> GeolocationPermissionRequestManagerPro
     return it->value;
 }
 
-void GeolocationPermissionRequestManagerProxy::revokeAuthorizationToken(const String& authorizationToken)
+void GeolocationPermissionRequestManagerProxy::revokeAuthorizationToken(StringImpl* authorizationToken)
 {
     ASSERT(isValidAuthorizationToken(authorizationToken));
     if (!isValidAuthorizationToken(authorizationToken))

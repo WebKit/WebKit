@@ -76,17 +76,17 @@ Navigator::Navigator(ScriptExecutionContext* context, LocalDOMWindow& window)
 
 Navigator::~Navigator() = default;
 
-String Navigator::appVersion() const
+RefPtr<StringImpl> Navigator::appVersion() const
 {
     RefPtr frame = this->frame();
     if (!frame)
-        return String();
+        return nullptr;
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*protect(frame->document()), NavigatorAPIsAccessed::AppVersion);
     return NavigatorBase::appVersion();
 }
 
-const String& Navigator::userAgent() const
+const RefPtr<StringImpl>& Navigator::userAgent() const
 {
     RefPtr frame = this->frame();
     if (!frame || !frame->page())
@@ -96,33 +96,33 @@ const String& Navigator::userAgent() const
 
 #if PLATFORM(IOS_FAMILY)
     if (RefPtr document = frame->document(); document && document->quirks().needsChromeOSNavigatorUserAgentQuirk(*document)) {
-        static NeverDestroyed<String> chromeOSUserAgent = "Mozilla/5.0 (X11; CrOS x86_64 15917.71.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"_s;
+        static NeverDestroyed<RefPtr<StringImpl>> chromeOSUserAgent = "Mozilla/5.0 (X11; CrOS x86_64 15917.71.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"_s;
         return chromeOSUserAgent.get();
     }
 #endif
 
-    if (m_userAgent.isNull())
+    if (!m_userAgent)
         m_userAgent = frame->loader().userAgent(protect(frame->document())->url());
     return m_userAgent;
 }
 
-String Navigator::platform() const
+RefPtr<StringImpl> Navigator::platform() const
 {
     RefPtr frame = this->frame();
     if (!frame || !frame->page())
         return m_platform;
 
-    if (m_platform.isNull())
+    if (!m_platform)
         m_platform = frame->loader().navigatorPlatform();
 
-    if (m_platform.isNull())
+    if (!m_platform)
         m_platform = NavigatorBase::platform();
     return m_platform;
 }
 
 void Navigator::userAgentChanged()
 {
-    m_userAgent = String();
+    m_userAgent = nullptr;
 }
 
 bool Navigator::onLine() const
@@ -132,7 +132,7 @@ bool Navigator::onLine() const
 
 static std::optional<URL> shareableURLForShareData(ScriptExecutionContext& context, const ShareData& data)
 {
-    if (data.url.isNull())
+    if (!data.url)
         return std::nullopt;
 
     auto url = context.encodingParseURL(data.url);
@@ -156,10 +156,10 @@ bool Navigator::canShare(Document& document, const ShareData& data)
 
     bool hasShareableFiles = document.settings().webShareFileAPIEnabled() && !data.files.isEmpty();
 
-    if (data.title.isNull() && data.text.isNull() && data.url.isNull() && !hasShareableFiles)
+    if (!data.title && !data.text && !data.url && !hasShareableFiles)
         return false;
 
-    return data.url.isNull() || shareableURLForShareData(document, data);
+    return !data.url || shareableURLForShareData(document, data);
 }
 
 void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPromise>&& promise)
@@ -170,12 +170,12 @@ void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPro
     }
 
     if (!validateWebSharePolicy(document)) {
-        promise->reject(ExceptionCode::NotAllowedError, "Third-party iframes are not allowed to call share() unless explicitly allowed via Feature-Policy (web-share)"_s);
+        promise->reject(ExceptionCode::NotAllowedError, "Third-party iframes are not allowed to call share() unless explicitly allowed via Feature-Policy (web-share)"_si);
         return;
     }
 
     if (m_hasPendingShare) {
-        promise->reject(ExceptionCode::InvalidStateError, "share() is already in progress"_s);
+        promise->reject(ExceptionCode::InvalidStateError, "share() is already in progress"_si);
         return;
     }
 
@@ -243,7 +243,7 @@ void Navigator::showShareData(ExceptionOr<ShareDataWithParsedURL&> readData, Ref
             promise->resolve();
             return;
         }
-        promise->reject(Exception { ExceptionCode::AbortError, "Abort due to cancellation of share."_s });
+        promise->reject(Exception { ExceptionCode::AbortError, "Abort due to cancellation of share."_si });
     });
 }
 
@@ -252,14 +252,14 @@ void Navigator::showShareData(ExceptionOr<ShareDataWithParsedURL&> readData, Ref
 // of exactly five PDF view plugins, in a particular order.
 constexpr ASCIILiteral genericPDFViewerName { "PDF Viewer"_s };
 
-static const Vector<String>& dummyPDFPluginNames()
+static const Vector<RefPtr<StringImpl>>& dummyPDFPluginNames()
 {
-    static NeverDestroyed<Vector<String>> dummyPluginNames(std::initializer_list<String> {
+    static NeverDestroyed<Vector<RefPtr<StringImpl>>> dummyPluginNames(std::initializer_list<RefPtr<StringImpl>> {
         genericPDFViewerName,
-        "Chrome PDF Viewer"_s,
-        "Chromium PDF Viewer"_s,
-        "Microsoft Edge PDF Viewer"_s,
-        "WebKit built-in PDF"_s,
+        "Chrome PDF Viewer"_si,
+        "Chromium PDF Viewer"_si,
+        "Microsoft Edge PDF Viewer"_si,
+        "WebKit built-in PDF"_si,
     });
     return dummyPluginNames;
 }
@@ -273,13 +273,13 @@ void Navigator::initializePluginAndMimeTypeArrays()
     bool needsEmptyNavigatorPluginsQuirk = frame && frame->document() && protect(frame->document())->quirks().shouldNavigatorPluginsBeEmpty();
     if (!frame || !frame->page() || needsEmptyNavigatorPluginsQuirk) {
         if (needsEmptyNavigatorPluginsQuirk)
-            protect(frame->document())->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "QUIRK: Navigator plugins / mimeTypes empty on marcus.com. More information at https://bugs.webkit.org/show_bug.cgi?id=248798"_s);
+            protect(frame->document())->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "QUIRK: Navigator plugins / mimeTypes empty on marcus.com. More information at https://bugs.webkit.org/show_bug.cgi?id=248798"_si);
         m_plugins = DOMPluginArray::create(*this);
         m_mimeTypes = DOMMimeTypeArray::create(*this);
         return;
     }
 
-    m_pdfViewerEnabled = frame->loader().client().canShowMIMEType("application/pdf"_s);
+    m_pdfViewerEnabled = frame->loader().client().canShowMIMEType("application/pdf"_si);
     if (!m_pdfViewerEnabled) {
         m_plugins = DOMPluginArray::create(*this);
         m_mimeTypes = DOMMimeTypeArray::create(*this);
@@ -305,7 +305,7 @@ void Navigator::initializePluginAndMimeTypeArrays()
 
         // Register the copy of the PluginInfo using the generic 'PDF Viewer' name
         // as the handler for PDF MIME type to match the specification.
-        if (currentDummyName == genericPDFViewerName)
+        if (equal(currentDummyName, genericPDFViewerName))
             domMimeTypes.appendVector(domPlugins.last()->mimeTypes());
     }
 

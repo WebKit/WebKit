@@ -32,12 +32,12 @@ void WebExtensionContextProxy::dispatchActionClickedEvent(const std::optional<We
     notImplemented();
 }
 
-void WebExtensionContextProxy::dispatchCommandsCommandEvent(const String&, const std::optional<WebExtensionTabParameters>&)
+void WebExtensionContextProxy::dispatchCommandsCommandEvent(StringImpl*, const std::optional<WebExtensionTabParameters>&)
 {
     notImplemented();
 }
 
-void WebExtensionContextProxy::dispatchCommandsChangedEvent(const String&, const String&, const String&)
+void WebExtensionContextProxy::dispatchCommandsChangedEvent(StringImpl*, StringImpl*, StringImpl*)
 {
     notImplemented();
 }
@@ -52,7 +52,7 @@ void WebExtensionContextProxy::dispatchMenusClickedEvent(const WebExtensionMenuI
     notImplemented();
 }
 
-void WebExtensionContextProxy::dispatchPermissionsEvent(WebExtensionEventListenerType, HashSet<String>, HashSet<String>)
+void WebExtensionContextProxy::dispatchPermissionsEvent(WebExtensionEventListenerType, HashSet<RefPtr<StringImpl>>, HashSet<RefPtr<StringImpl>>)
 {
     notImplemented();
 }

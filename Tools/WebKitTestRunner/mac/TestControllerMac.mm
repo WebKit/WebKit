@@ -249,7 +249,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
 
 static bool shouldEnableAsyncOverflowScrolling(const std::string& pathOrURL)
 {
-    return isWebPlatformTestURL({ { }, String::fromUTF8(pathOrURL.c_str()) });
+    return isWebPlatformTestURL({ { }, StringImpl::fromUTF8(pathOrURL.c_str()) });
 }
 
 TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand& command) const
@@ -288,8 +288,8 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
 
     RetainPtr<NSURL> tempDir;
     if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
-        String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
-        tempDir = adoptNS([[NSURL alloc] initFileURLWithPath:[temporaryFolder.createNSString() stringByAppendingPathComponent:@"ContentExtensions"] isDirectory:YES]);
+        RefPtr<StringImpl> temporaryFolder = StringImpl::fromUTF8(dumpRenderTreeTemp);
+        tempDir = adoptNS([[NSURL alloc] initFileURLWithPath:[createNSString(temporaryFolder) stringByAppendingPathComponent:@"ContentExtensions"] isDirectory:YES]);
     } else
         tempDir = adoptNS([[NSURL alloc] initFileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentExtensions"] isDirectory:YES]);
 

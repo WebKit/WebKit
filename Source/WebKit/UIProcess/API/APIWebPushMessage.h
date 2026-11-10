@@ -42,7 +42,7 @@ public:
 
     std::optional<Vector<uint8_t>> data() const { return m_message.pushData; };
     WTF::URL scope() const { return m_message.registrationURL; }
-    WTF::String partition() const { return m_message.pushPartitionString; }
+    RefPtr<StringImpl> partition() const { return m_message.pushPartitionString; }
 
 private:
     WebKit::WebPushMessage m_message;

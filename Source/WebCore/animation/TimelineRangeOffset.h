@@ -31,10 +31,14 @@
 namespace WebCore {
 
 struct TimelineRangeOffset {
-    String rangeName;
+    RefPtr<StringImpl> rangeName;
     RefPtr<CSSNumericValue> offset;
 
-    bool operator==(const TimelineRangeOffset&) const = default;
+    bool operator==(const TimelineRangeOffset& other) const
+    {
+        return contentEquals(rangeName, other.rangeName)
+            && offset == other.offset;
+    }
 };
 
 } // namespace WebCore

@@ -129,7 +129,7 @@ static constexpr ASCIILiteral typeStringSuffix(const Position& position)
     return "[invalid]"_s;
 }
 
-static String join(const Vector<String>& vector, ASCIILiteral separator)
+static RefPtr<StringImpl> join(const Vector<RefPtr<StringImpl>>& vector, ASCIILiteral separator)
 {
     StringBuilder builder;
     bool needSeparator = false;
@@ -144,7 +144,7 @@ static String join(const Vector<String>& vector, ASCIILiteral separator)
 
 static UTF8CString allPositionTypeFailures(const Position& a, Node* nodeB, unsigned offsetB, std::partial_ordering expectedResult)
 {
-    Vector<String> failures;
+    Vector<RefPtr<StringImpl>> failures;
     for (auto& b : allPositionTypes(nodeB, offsetB)) {
         auto result = string(a <=> b);
         if (strcmp(result, string(expectedResult)))
@@ -153,12 +153,12 @@ static UTF8CString allPositionTypeFailures(const Position& a, Node* nodeB, unsig
         if (strcmp(result, string(-expectedResult)))
             failures.append(makeString("order(b"_s, typeStringSuffix(b), ")="_s, result, "<expected:"_s, string(-expectedResult), '>'));
     }
-    return join(failures, ", "_s).utf8();
+    return utf8(join(failures, ", "_s));
 }
 
 static UTF8CString allPositionTypeFailures(Node* nodeA, unsigned offsetA, Node* nodeB, unsigned offsetB, std::partial_ordering expectedResult)
 {
-    Vector<String> failures;
+    Vector<RefPtr<StringImpl>> failures;
     for (auto& a : allPositionTypes(nodeA, offsetA)) {
         for (auto& b : allPositionTypes(nodeB, offsetB)) {
             auto result = string(a <=> b);
@@ -169,7 +169,7 @@ static UTF8CString allPositionTypeFailures(Node* nodeA, unsigned offsetA, Node* 
                 failures.append(makeString("order(b"_s, typeStringSuffix(b), ",a"_s, typeStringSuffix(a), ")="_s, result, "<expected:"_s, string(-expectedResult), '>'));
         }
     }
-    return join(failures, " | "_s).utf8();
+    return utf8(join(failures, " | "_s));
 }
 
 static UTF8CString allPositionTypeFailures(Node& nodeA, unsigned offsetA, Node& nodeB, unsigned offsetB, std::partial_ordering expectedResult)

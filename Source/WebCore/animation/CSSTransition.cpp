@@ -87,18 +87,18 @@ void CSSTransition::setTimingProperties(Seconds delay, Seconds duration)
     unsuspendEffectInvalidation();
 }
 
-Ref<StyleOriginatedAnimationEvent> CSSTransition::createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+Ref<StyleOriginatedAnimationEvent> CSSTransition::createEvent(AtomStringImpl* eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     return CSSTransitionEvent::create(eventType, this, scheduledTime, elapsedTime, pseudoElementIdentifier, transitionProperty());
 }
 
-const AtomString CSSTransition::transitionProperty() const
+const RefPtr<AtomStringImpl> CSSTransition::transitionProperty() const
 {
     return WTF::switchOn(m_property,
         [] (CSSPropertyID cssProperty) {
             return nameString(cssProperty);
         },
-        [] (const AtomString& customProperty) {
+        [] (AtomStringImpl* customProperty) -> RefPtr<AtomStringImpl> {
             return customProperty;
         }
     );

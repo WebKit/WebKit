@@ -48,7 +48,7 @@ public:
 
     virtual ~MediaPlaybackTargetPickerMock();
 
-    void setState(const String&, MediaPlaybackTargetMockState);
+    void setState(StringImpl*, MediaPlaybackTargetMockState);
     void dismissPopup();
 
     const FloatRect& lastPickerRect() const { return m_lastPickerRect; }
@@ -62,7 +62,7 @@ private:
     bool externalOutputDeviceAvailable() final;
     Ref<MediaPlaybackTarget> playbackTarget() final;
 
-    String m_deviceName;
+    RefPtr<StringImpl> m_deviceName;
     MediaPlaybackTargetMockState m_state;
     bool m_showingMenu { false };
     FloatRect m_lastPickerRect;

@@ -124,7 +124,7 @@ private:
 
     // OrientationNotifier::Observer API
     void orientationChanged(IntDegrees orientation) final;
-    void rotationAngleForHorizonLevelDisplayChanged(const String&, VideoFrameRotation) final;
+    void rotationAngleForHorizonLevelDisplayChanged(StringImpl*, VideoFrameRotation) final;
 
 
     bool setFrameRateConstraint(double minFrameRate, double maxFrameRate);
@@ -159,8 +159,8 @@ private:
 
     void reconfigureIfNeeded();
 
-    void rejectPendingPhotoRequest(const String&);
-    void resolvePendingPhotoRequest(Vector<uint8_t>&&, const String&);
+    void rejectPendingPhotoRequest(StringImpl*);
+    void resolvePendingPhotoRequest(Vector<uint8_t>&&, StringImpl*);
     RetainPtr<AVCapturePhotoSettings> photoConfiguration(const PhotoSettings&, AVCapturePhotoOutput*);
     IntSize maxPhotoSizeForCurrentPreset(IntSize requestedSize) const;
     AVCapturePhotoOutput* photoOutput();

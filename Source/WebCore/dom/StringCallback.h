@@ -49,11 +49,11 @@ public:
 
     virtual bool isJSStringCallback() const { return false; }
 
-    virtual CallbackResult<void> invoke(const String& data) = 0;
-    virtual CallbackResult<void> invokeRethrowingException(const String& data) = 0;
+    virtual CallbackResult<void> invoke(StringImpl* data) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(StringImpl* data) = 0;
 
     // Helper to post callback task.
-    WEBCORE_EXPORT void scheduleCallback(ScriptExecutionContext&, const String& data);
+    WEBCORE_EXPORT void scheduleCallback(ScriptExecutionContext&, StringImpl* data);
 
 private:
     virtual bool hasCallback() const = 0;

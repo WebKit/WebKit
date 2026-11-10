@@ -143,12 +143,12 @@ bool isProbablyHumanReadable(StringView text)
     return entropyScore(text) >= 0;
 }
 
-String lowEntropyLastPathComponent(const URL& url, const String& fallbackName, const String& mimeType)
+RefPtr<StringImpl> lowEntropyLastPathComponent(const URL& url, StringImpl* fallbackName, StringImpl* mimeType)
 {
     if (url.protocolIsData() || url.protocolIsBlob() || url.protocolIsJavaScript())
         return fallbackName;
 
-    auto result = [&url, &fallbackName] -> String {
+    auto result = [&url, &fallbackName] -> RefPtr<StringImpl> {
         auto component = url.lastPathComponent();
         if (isProbablyHumanReadable(component))
             return component.toString();

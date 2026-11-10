@@ -38,7 +38,7 @@ class StringDumper final : public Visitor {
 public:
     using Visitor::visit;
 
-    String toString();
+    RefPtr<StringImpl> toString();
 
     // Visitor
     void visit(ShaderModule&) override;
@@ -108,7 +108,7 @@ private:
     void visitVector(T&, J);
 
     StringPrintStream m_out;
-    String m_indent;
+    RefPtr<StringImpl> m_indent;
 };
 
 template<typename T>

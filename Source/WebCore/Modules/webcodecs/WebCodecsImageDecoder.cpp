@@ -108,7 +108,7 @@ void WebCodecsImageDecoder::sinkStreamToInternalDecoder(const Ref<ReadableStream
                     protectedThis->setInternalDecoderData(*buffer, false);
             },
             [&](JSC::JSValue) {
-                protectedThis->closeDecoder(Exception { ExceptionCode::AbortError, "ReadableStream cancelled"_s });
+                protectedThis->closeDecoder(Exception { ExceptionCode::AbortError, "ReadableStream cancelled"_si });
             },
             [&](Exception&& exception) {
                 protectedThis->closeDecoder(WTF::move(exception));
@@ -122,7 +122,7 @@ void WebCodecsImageDecoder::setInternalDecoderData(FragmentedSharedBuffer& buffe
 {
     // If type is not supported, run the Close ImageDecoder algorithm with a NotSupportedError.
     if (!isTypeSupported(m_type))
-        closeDecoder(Exception { ExceptionCode::NotSupportedError, "Type not supported"_s });
+        closeDecoder(Exception { ExceptionCode::NotSupportedError, "Type not supported"_si });
 
     if (state() == WebCodecsCodecState::Closed)
         return;
@@ -184,12 +184,12 @@ Ref<WebCodecsImageDecoder::DecodePromise> WebCodecsImageDecoder::createNativeIma
 void WebCodecsImageDecoder::fulfillPendingDecodePromises(size_t frameIndex, RefPtr<NativeImage>&& nativeImage)
 {
     if (state() == WebCodecsCodecState::Closed) {
-        rejectPendingDecodePromises(frameIndex, Exception { ExceptionCode::DataError, "ImageDecoder is closed"_s });
+        rejectPendingDecodePromises(frameIndex, Exception { ExceptionCode::DataError, "ImageDecoder is closed"_si });
         return;
     }
 
     if (!nativeImage) {
-        rejectPendingDecodePromises(frameIndex, Exception { ExceptionCode::DataError, "Decoding error"_s });
+        rejectPendingDecodePromises(frameIndex, Exception { ExceptionCode::DataError, "Decoding error"_si });
         return;
     }
 
@@ -259,13 +259,13 @@ void WebCodecsImageDecoder::queuePendingDecodeRequests()
 void WebCodecsImageDecoder::decode(std::optional<DecodeOptions>&& options, Ref<DeferredPromise>&& promise)
 {
     if (!isTypeSupported(m_type)) {
-        promise->reject(Exception { ExceptionCode::NotSupportedError, "Type not supported"_s });
+        promise->reject(Exception { ExceptionCode::NotSupportedError, "Type not supported"_si });
         return;
     }
 
     // If state is closed, return a Promise rejected.
     if (state() == WebCodecsCodecState::Closed) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "ImageDecoder is closed"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "ImageDecoder is closed"_si });
         return;
     }
 
@@ -293,7 +293,7 @@ void WebCodecsImageDecoder::decode(std::optional<DecodeOptions>&& options, Ref<D
 ExceptionOr<void> WebCodecsImageDecoder::resetDecoder(const Exception& exception)
 {
     if (state() == WebCodecsCodecState::Closed)
-        return Exception { ExceptionCode::InvalidStateError, "ImageDecoder is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "ImageDecoder is closed"_si };
 
     // Abort any active decoding operation.
     clearControlMessageQueue();
@@ -333,15 +333,15 @@ ExceptionOr<void> WebCodecsImageDecoder::closeDecoder(const Exception& exception
 
 ExceptionOr<void> WebCodecsImageDecoder::reset()
 {
-    return resetDecoder(Exception { ExceptionCode::AbortError, "Reset called"_s });
+    return resetDecoder(Exception { ExceptionCode::AbortError, "Reset called"_si });
 }
 
 ExceptionOr<void> WebCodecsImageDecoder::close()
 {
-    return closeDecoder(Exception { ExceptionCode::AbortError, "Close called"_s });
+    return closeDecoder(Exception { ExceptionCode::AbortError, "Close called"_si });
 }
 
-bool WebCodecsImageDecoder::isTypeSupported(const String& type)
+bool WebCodecsImageDecoder::isTypeSupported(StringImpl* type)
 {
 #if USE(CG)
     return isSupportedImageType(UTIFromMIMEType(type));
@@ -350,12 +350,12 @@ bool WebCodecsImageDecoder::isTypeSupported(const String& type)
 #endif
 }
 
-void WebCodecsImageDecoder::isTypeSupported(ScriptExecutionContext&, String&& type, DOMPromiseDeferred<IDLBoolean>&& promise)
+void WebCodecsImageDecoder::isTypeSupported(ScriptExecutionContext&, RefPtr<StringImpl>&& type, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     if (isTypeSupported(type))
         promise.resolve(true);
     else
-        promise.reject(Exception { ExceptionCode::TypeError, "Image type is not supported"_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "Image type is not supported"_si });
 }
 
 void WebCodecsImageDecoder::suspend(ReasonForSuspension)

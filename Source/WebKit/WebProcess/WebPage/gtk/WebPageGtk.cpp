@@ -79,8 +79,8 @@ void WebPage::collapseSelectionInFrame(FrameIdentifier frameID)
 
 void WebPage::showEmojiPicker(LocalFrame& frame)
 {
-    CompletionHandler<void(String)> completionHandler = [frame = protect(frame)](String result) {
-        if (!result.isEmpty())
+    CompletionHandler<void(RefPtr<StringImpl>)> completionHandler = [frame = protect(frame)](RefPtr<StringImpl> result) {
+        if (!isEmpty(result))
             frame->editor().insertText(result, nullptr);
     };
     sendWithAsyncReply(Messages::WebPageProxy::ShowEmojiPicker(frame.view()->contentsToMainFrameView(frame.selection().absoluteCaretBounds())), WTF::move(completionHandler));

@@ -39,14 +39,14 @@ InbandGenericCue::InbandGenericCue()
     m_cueData.m_uniqueId = InbandGenericCueIdentifier::generate();
 }
 
-String InbandGenericCue::toJSONString() const
+RefPtr<StringImpl> InbandGenericCue::toJSONString() const
 {
     auto object = JSON::Object::create();
 
-    object->setString("text"_s, m_cueData.m_content);
-    object->setInteger("identifier"_s, m_cueData.m_uniqueId->toUInt64());
-    object->setDouble("start"_s, m_cueData.m_startTime.toDouble());
-    object->setDouble("end"_s, m_cueData.m_endTime.toDouble());
+    object->setString("text"_si, m_cueData.m_content);
+    object->setInteger("identifier"_si, m_cueData.m_uniqueId->toUInt64());
+    object->setDouble("start"_si, m_cueData.m_startTime.toDouble());
+    object->setDouble("end"_si, m_cueData.m_endTime.toDouble());
 
     ASCIILiteral status = ""_s;
     switch (m_cueData.m_status) {
@@ -60,19 +60,19 @@ String InbandGenericCue::toJSONString() const
         status = "Complete"_s;
         break;
     }
-    object->setString("status"_s, status);
+    object->setString("status"_si, StringImpl::create(status).ptr());
 
-    if (!m_cueData.m_id.isEmpty())
-        object->setString("id"_s, m_cueData.m_id);
+    if (!isEmpty(m_cueData.m_id))
+        object->setString("id"_si, m_cueData.m_id);
 
     if (m_cueData.m_line > 0)
-        object->setDouble("line"_s, m_cueData.m_line);
+        object->setDouble("line"_si, m_cueData.m_line);
 
     if (m_cueData.m_size > 0)
-        object->setDouble("size"_s, m_cueData.m_size);
+        object->setDouble("size"_si, m_cueData.m_size);
 
     if (m_cueData.m_position > 0)
-        object->setDouble("position"_s, m_cueData.m_position);
+        object->setDouble("position"_si, m_cueData.m_position);
 
     if (m_cueData.m_positionAlign != GenericCueData::Alignment::None) {
         ASCIILiteral positionAlign = ""_s;
@@ -90,7 +90,7 @@ String InbandGenericCue::toJSONString() const
             positionAlign = "None"_s;
             break;
         }
-        object->setString("positionAlign"_s, positionAlign);
+        object->setString("positionAlign"_si, StringImpl::create(positionAlign).ptr());
     }
 
     if (m_cueData.m_align != GenericCueData::Alignment::None) {
@@ -109,28 +109,28 @@ String InbandGenericCue::toJSONString() const
             align = "None"_s;
             break;
         }
-        object->setString("align"_s, align);
+        object->setString("align"_si, StringImpl::create(align).ptr());
     }
 
     if (m_cueData.m_foregroundColor.isValid())
-        object->setString("foregroundColor"_s, serializationForHTML(m_cueData.m_foregroundColor));
+        object->setString("foregroundColor"_si, serializationForHTML(m_cueData.m_foregroundColor));
 
     if (m_cueData.m_backgroundColor.isValid())
-        object->setString("backgroundColor"_s, serializationForHTML(m_cueData.m_backgroundColor));
+        object->setString("backgroundColor"_si, serializationForHTML(m_cueData.m_backgroundColor));
 
     if (m_cueData.m_highlightColor.isValid())
-        object->setString("highlightColor"_s, serializationForHTML(m_cueData.m_highlightColor));
+        object->setString("highlightColor"_si, serializationForHTML(m_cueData.m_highlightColor));
 
     if (m_cueData.m_baseFontSize)
-        object->setDouble("baseFontSize"_s, m_cueData.m_baseFontSize);
+        object->setDouble("baseFontSize"_si, m_cueData.m_baseFontSize);
 
     if (m_cueData.m_relativeFontSize)
-        object->setDouble("relativeFontSize"_s, m_cueData.m_relativeFontSize);
+        object->setDouble("relativeFontSize"_si, m_cueData.m_relativeFontSize);
 
-    if (!m_cueData.m_fontName.isEmpty())
-        object->setString("font"_s, m_cueData.m_fontName);
+    if (!isEmpty(m_cueData.m_fontName))
+        object->setString("font"_si, m_cueData.m_fontName);
 
-    object->setString("preventLineWrapping"_s, m_cueData.m_preventLineWrapping ? "true"_s : "false"_s);
+    object->setString("preventLineWrapping"_si, StringImpl::create(m_cueData.m_preventLineWrapping ? "true"_s : "false"_s).ptr());
 
     return object->toJSONString();
 }
@@ -146,9 +146,9 @@ bool GenericCueData::equalNotConsideringTimesOrId(const GenericCueData& other) c
         && m_foregroundColor == other.m_foregroundColor
         && m_backgroundColor == other.m_backgroundColor
         && m_highlightColor == other.m_highlightColor
-        && m_fontName == other.m_fontName
+        && equal(m_fontName, other.m_fontName)
         && m_id == other.m_id
-        && m_content == other.m_content
+        && equal(m_content, other.m_content)
         && m_preventLineWrapping == other.m_preventLineWrapping;
 }
 

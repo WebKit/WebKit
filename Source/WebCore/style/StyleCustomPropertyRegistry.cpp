@@ -51,7 +51,7 @@ CustomPropertyRegistry::CustomPropertyRegistry(Scope& scope)
 {
 }
 
-const CSSRegisteredCustomProperty* CustomPropertyRegistry::get(const AtomString& name) const
+const CSSRegisteredCustomProperty* CustomPropertyRegistry::get(AtomStringImpl* name) const
 {
     ASSERT(isCustomPropertyName(name));
 
@@ -63,7 +63,7 @@ const CSSRegisteredCustomProperty* CustomPropertyRegistry::get(const AtomString&
     return m_propertiesFromStylesheet.get(name);
 }
 
-bool CustomPropertyRegistry::isInherited(const AtomString& name) const
+bool CustomPropertyRegistry::isInherited(AtomStringImpl* name) const
 {
     auto* registered = get(name);
     return registered ? registered->inherits : true;
@@ -119,7 +119,7 @@ void CustomPropertyRegistry::registerFromStylesheet(const StyleRuleProperty::Des
     }
 
     auto property = CSSRegisteredCustomProperty {
-        AtomString { descriptor.name },
+        RefPtr<AtomStringImpl> { descriptor.name },
         *syntax,
         *descriptor.inherits,
         WTF::move(initialValue),
@@ -166,18 +166,18 @@ const Style::ComputedStyle& CustomPropertyRegistry::initialValuePrototypeStyle()
     return *m_initialValuePrototypeStyle;
 }
 
-void CustomPropertyRegistry::invalidate(const AtomString& customProperty)
+void CustomPropertyRegistry::invalidate(AtomStringImpl* customProperty)
 {
     m_hasInvalidPrototypeStyle = true;
     // Changing property registration may affect computed property values in the cache.
     m_scope.invalidateMatchedDeclarationsCache();
 
     // FIXME: Invalidate all?
-    if (!customProperty.isNull())
+    if (customProperty)
         notifyAnimationsOfCustomPropertyRegistration(customProperty);
 }
 
-void CustomPropertyRegistry::notifyAnimationsOfCustomPropertyRegistration(const AtomString& customProperty)
+void CustomPropertyRegistry::notifyAnimationsOfCustomPropertyRegistration(AtomStringImpl* customProperty)
 {
     auto& document = m_scope.document();
     for (auto& animation : WebAnimation::instances()) {
@@ -190,7 +190,7 @@ void CustomPropertyRegistry::notifyAnimationsOfCustomPropertyRegistration(const 
     }
 }
 
-auto CustomPropertyRegistry::parseInitialValue(const Document& document, const AtomString& propertyName, const CSSCustomPropertySyntax& syntax, CSSParserTokenRange tokenRange) -> std::expected<std::pair<RefPtr<const CustomProperty>, ViewportUnitDependency>, ParseInitialValueError>
+auto CustomPropertyRegistry::parseInitialValue(const Document& document, AtomStringImpl* propertyName, const CSSCustomPropertySyntax& syntax, CSSParserTokenRange tokenRange) -> std::expected<std::pair<RefPtr<const CustomProperty>, ViewportUnitDependency>, ParseInitialValueError>
 {
     // FIXME: This parses twice.
     auto dependencies = CSSPropertyParser::collectParsedCustomPropertyValueDependencies(syntax, tokenRange, document.cssParserContext());
@@ -218,7 +218,7 @@ bool CustomPropertyRegistry::invalidatePropertiesWithViewportUnits(Document& doc
                 continue;
 
             auto tokenRange = property->initialValueTokensForViewportUnits->tokenRange();
-            auto parsedInitialValue = parseInitialValue(document, property->name, property->syntax, tokenRange);
+            auto parsedInitialValue = parseInitialValue(document, RefPtr<AtomStringImpl> { property->name }, property->syntax, tokenRange);
             if (!parsedInitialValue) {
                 ASSERT_NOT_REACHED();
                 continue;
@@ -226,7 +226,7 @@ bool CustomPropertyRegistry::invalidatePropertiesWithViewportUnits(Document& doc
             property->initialValue = WTF::move(parsedInitialValue->first);
             ASSERT(parsedInitialValue->second == ViewportUnitDependency::Yes);
 
-            invalidate(property->name);
+            invalidate(RefPtr<AtomStringImpl> { property->name });
             invalidatedAny = true;
         }
     };

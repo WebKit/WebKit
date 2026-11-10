@@ -297,10 +297,10 @@ bool WebEditorClient::shouldEndEditing(const WebCore::SimpleRange& range)
     return [[webView _editingDelegateForwarder] webView:webView shouldEndEditingInDOMRange:protect(kit(range))];
 }
 
-bool WebEditorClient::shouldInsertText(const String& text, const std::optional<WebCore::SimpleRange>& range, WebCore::EditorInsertAction action)
+bool WebEditorClient::shouldInsertText(StringImpl* text, const std::optional<WebCore::SimpleRange>& range, WebCore::EditorInsertAction action)
 {
     RetainPtr webView = m_webView;
-    return [[webView.get() _editingDelegateForwarder] webView:webView.get() shouldInsertText:text.createNSString().get() replacingDOMRange:protect(kit(range)) givenAction:kit(action)];
+    return [[webView.get() _editingDelegateForwarder] webView:webView.get() shouldInsertText:createNSString(text).get() replacingDOMRange:protect(kit(range)) givenAction:kit(action)];
 }
 
 bool WebEditorClient::shouldChangeSelectedRange(const std::optional<WebCore::SimpleRange>& fromRange, const std::optional<WebCore::SimpleRange>& toRange, WebCore::Affinity selectionAffinity, bool stillSelecting)
@@ -427,7 +427,7 @@ void WebEditorClient::willWriteSelectionToPasteboard(const std::optional<WebCore
     // Not implemented WebKit, only WebKit2.
 }
 
-void WebEditorClient::getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>>& pasteboardTypesAndData)
+void WebEditorClient::getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<std::pair<RefPtr<StringImpl>, RefPtr<WebCore::SharedBuffer>>>& pasteboardTypesAndData)
 {
     // Not implemented WebKit, only WebKit2.
 }
@@ -484,10 +484,10 @@ void _WebCreateFragment(WebCore::Document& document, NSAttributedString *string,
 
 #endif
 
-void WebEditorClient::setInsertionPasteboard(const String& pasteboardName)
+void WebEditorClient::setInsertionPasteboard(StringImpl* pasteboardName)
 {
 #if !PLATFORM(IOS_FAMILY)
-    RetainPtr<NSPasteboard> pasteboard = pasteboardName.isEmpty() ? nil : [NSPasteboard pasteboardWithName:pasteboardName.createNSString().get()];
+    RetainPtr<NSPasteboard> pasteboard = isEmpty(pasteboardName) ? nil : [NSPasteboard pasteboardWithName:createNSString(pasteboardName).get()];
     [protect(m_webView) _setInsertionPasteboard:pasteboard.get()];
 #endif
 }
@@ -509,17 +509,17 @@ void WebEditorClient::capitalizeWord()
     [protect(m_webView) capitalizeWord:nil];
 }
 
-bool WebEditorClient::canApplyCaseTransformations(const String&)
+bool WebEditorClient::canApplyCaseTransformations(StringImpl*)
 {
     return true;
 }
 
-bool WebEditorClient::canConvertToTraditionalChinese(const String&)
+bool WebEditorClient::canConvertToTraditionalChinese(StringImpl*)
 {
     return false;
 }
 
-bool WebEditorClient::canConvertToSimplifiedChinese(const String&)
+bool WebEditorClient::canConvertToSimplifiedChinese(StringImpl*)
 {
     return false;
 }
@@ -634,7 +634,7 @@ void WebEditorClient::registerUndoOrRedoStep(WebCore::UndoStep& step, bool isRed
         return;
 #endif
 
-    RetainPtr actionName = step.label().createNSString();
+    RetainPtr actionName = createNSString(step.label());
     [undoManager registerUndoWithTarget:m_undoTarget.get() selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:[WebUndoStep stepWithUndoStep:step]];
     if (actionName)
         [undoManager setActionName:actionName.get()];
@@ -804,20 +804,20 @@ static SEL selectorForKeyEvent(WebCore::KeyboardEvent* event)
     // Eventually, we should move all of the auto-fill code down to WebKit and remove the need for this function by
     // not relying on the selector in the new implementation.
     // The key identifiers are from <http://www.w3.org/TR/DOM-Level-3-Events/keyset.html#KeySet-Set>
-    const String& key = event->keyIdentifier();
-    if (key == "Up"_s)
+    const RefPtr<StringImpl>& key = event->keyIdentifier();
+    if (equal(key, "Up"_s))
         return @selector(moveUp:);
-    if (key == "Down"_s)
+    if (equal(key, "Down"_s))
         return @selector(moveDown:);
 IGNORE_WARNINGS_BEGIN("undeclared-selector")
-    if (key == "U+001B"_s)
+    if (equal(key, "U+001B"_s))
         return @selector(cancel:);
-    if (key == "U+0009"_s) {
+    if (equal(key, "U+0009"_s)) {
         if (event->shiftKey())
             return @selector(insertBacktab:);
         return @selector(insertTab:);
     }
-    if (key == "Enter"_s)
+    if (equal(key, "Enter"_s))
         return @selector(insertNewline:);
 IGNORE_WARNINGS_END
     return 0;
@@ -956,14 +956,14 @@ bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(WebCore::TextChecki
     return type != WebCore::TextCheckingType::Spelling;
 }
 
-void WebEditorClient::ignoreWordInSpellDocument(const String& text)
+void WebEditorClient::ignoreWordInSpellDocument(StringImpl* text)
 {
-    [[NSSpellChecker sharedSpellChecker] ignoreWord:text.createNSString().get() inSpellDocumentWithTag:spellCheckerDocumentTag()];
+    [[NSSpellChecker sharedSpellChecker] ignoreWord:createNSString(text).get() inSpellDocumentWithTag:spellCheckerDocumentTag()];
 }
 
-void WebEditorClient::learnWord(const String& text)
+void WebEditorClient::learnWord(StringImpl* text)
 {
-    [[NSSpellChecker sharedSpellChecker] learnWord:text.createNSString().get()];
+    [[NSSpellChecker sharedSpellChecker] learnWord:createNSString(text).get()];
 }
 
 void WebEditorClient::checkSpellingOfString(StringView text, int* misspellingLocation, int* misspellingLength)
@@ -1001,11 +1001,11 @@ void WebEditorClient::checkGrammarOfString(StringView text, Vector<WebCore::Gram
         ASSERT(detailRangeAsNSValue.rangeValue.location != NSNotFound);
         ASSERT(detailRangeAsNSValue.rangeValue.length > 0);
         grammarDetail.range = detailRangeAsNSValue.rangeValue;
-        grammarDetail.userDescription = dynamic_objc_cast<NSString>([detail objectForKey:NSGrammarUserDescription]);
+        grammarDetail.userDescription = StringImpl::create(dynamic_objc_cast<NSString>([detail objectForKey:NSGrammarUserDescription]));
         NSArray *guesses = [detail objectForKey:NSGrammarCorrections];
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL NSString *guess in guesses)
-            grammarDetail.guesses.append(String(guess));
+            grammarDetail.guesses.append(StringImpl::create(guess));
         details.append(grammarDetail);
     }
 }
@@ -1040,12 +1040,12 @@ static Vector<WebCore::TextCheckingResult> core(NSArray *incomingResults, Option
                 ASSERT(detailNSRange.location != NSNotFound);
                 ASSERT(detailNSRange.length > 0);
                 detail.range = detailNSRange;
-                detail.userDescription = dynamic_objc_cast<NSString>([incomingDetail objectForKey:NSGrammarUserDescription]);
+                detail.userDescription = StringImpl::create(dynamic_objc_cast<NSString>([incomingDetail objectForKey:NSGrammarUserDescription]));
                 NSArray *guesses = [incomingDetail objectForKey:NSGrammarCorrections];
                 // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
                 for (SUPPRESS_UNRETAINED_LOCAL NSString *guess in guesses)
-                    detail.guesses.append(String(guess));
-                detail.uuid = dynamic_objc_cast<NSString>([incomingDetail objectForKey:@"NSGrammarUUID"]);
+                    detail.guesses.append(StringImpl::create(guess));
+                detail.uuid = StringImpl::create(dynamic_objc_cast<NSString>([incomingDetail objectForKey:@"NSGrammarUUID"]));
                 result.details.append(detail);
             }
             results.append(result);
@@ -1053,31 +1053,31 @@ static Vector<WebCore::TextCheckingResult> core(NSArray *incomingResults, Option
             WebCore::TextCheckingResult result;
             result.type = WebCore::TextCheckingType::Link;
             result.range = resultRange;
-            result.replacement = [[incomingResult URL] absoluteString];
+            result.replacement = StringImpl::create([[incomingResult URL] absoluteString]);
             results.append(result);
         } else if (resultType == NSTextCheckingTypeQuote && checkingTypes.contains(WebCore::TextCheckingType::Quote)) {
             WebCore::TextCheckingResult result;
             result.type = WebCore::TextCheckingType::Quote;
             result.range = resultRange;
-            result.replacement = [incomingResult replacementString];
+            result.replacement = StringImpl::create([incomingResult replacementString]);
             results.append(result);
         } else if (resultType == NSTextCheckingTypeDash && checkingTypes.contains(WebCore::TextCheckingType::Dash)) {
             WebCore::TextCheckingResult result;
             result.type = WebCore::TextCheckingType::Dash;
             result.range = resultRange;
-            result.replacement = [incomingResult replacementString];
+            result.replacement = StringImpl::create([incomingResult replacementString]);
             results.append(result);
         } else if (resultType == NSTextCheckingTypeReplacement && checkingTypes.contains(WebCore::TextCheckingType::Replacement)) {
             WebCore::TextCheckingResult result;
             result.type = WebCore::TextCheckingType::Replacement;
             result.range = resultRange;
-            result.replacement = [incomingResult replacementString];
+            result.replacement = StringImpl::create([incomingResult replacementString]);
             results.append(result);
         } else if (resultType == NSTextCheckingTypeCorrection && checkingTypes.contains(WebCore::TextCheckingType::Correction)) {
             WebCore::TextCheckingResult result;
             result.type = WebCore::TextCheckingType::Correction;
             result.range = resultRange;
-            result.replacement = [incomingResult replacementString];
+            result.replacement = StringImpl::create([incomingResult replacementString]);
             results.append(result);
         }
     }
@@ -1100,19 +1100,19 @@ Vector<WebCore::TextCheckingResult> WebEditorClient::checkTextOfParagraph(String
     return core([[NSSpellChecker sharedSpellChecker] checkString:string.createNSStringWithoutCopying().get() range:NSMakeRange(0, string.length()) types:(nsTextCheckingTypes(coreCheckingTypes) | NSTextCheckingTypeOrthography) options:options inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:NULL wordCount:NULL], coreCheckingTypes);
 }
 
-void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const WebCore::GrammarDetail& grammarDetail)
+void WebEditorClient::updateSpellingUIWithGrammarString(StringImpl* badGrammarPhrase, const WebCore::GrammarDetail& grammarDetail)
 {
     RetainPtr dictionary = @{
         NSGrammarRange: [NSValue valueWithRange:grammarDetail.range],
-        NSGrammarUserDescription: grammarDetail.userDescription.createNSString().get(),
+        NSGrammarUserDescription: createNSString(grammarDetail.userDescription).get(),
         NSGrammarCorrections: createNSArray(grammarDetail.guesses).get(),
     };
-    [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase.createNSString().get() detail:dictionary.get()];
+    [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:createNSString(badGrammarPhrase).get() detail:dictionary.get()];
 }
 
-void WebEditorClient::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
+void WebEditorClient::updateSpellingUIWithMisspelledWord(StringImpl* misspelledWord)
 {
-    [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithMisspelledWord:misspelledWord.createNSString().get()];
+    [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithMisspelledWord:createNSString(misspelledWord).get()];
 }
 
 void WebEditorClient::showSpellingUI(bool show)
@@ -1129,21 +1129,21 @@ bool WebEditorClient::spellingUIIsShowing()
     return [[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible];
 }
 
-void WebEditorClient::getGuessesForWord(const String& word, const String& context, const WebCore::VisibleSelection& currentSelection, Vector<String>& guesses)
+void WebEditorClient::getGuessesForWord(StringImpl* word, StringImpl* context, const WebCore::VisibleSelection& currentSelection, Vector<RefPtr<StringImpl>>& guesses)
 {
     guesses.clear();
     RetainPtr<NSString> language;
     NSOrthography* orthography = nil;
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     NSDictionary *options = @{ NSTextCheckingInsertionPointKey : @(insertionPointFromCurrentSelection(currentSelection)) };
-    if (context.length()) {
-        RetainPtr nsContext = context.createNSString();
-        [checker checkString:nsContext.get() range:NSMakeRange(0, context.length()) types:NSTextCheckingTypeOrthography options:options inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:&orthography wordCount:0];
-        language = [checker languageForWordRange:NSMakeRange(0, context.length()) inString:nsContext.get() orthography:orthography];
+    if (length(context)) {
+        RetainPtr nsContext = createNSString(context);
+        [checker checkString:nsContext.get() range:NSMakeRange(0, length(context)) types:NSTextCheckingTypeOrthography options:options inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:&orthography wordCount:0];
+        language = [checker languageForWordRange:NSMakeRange(0, length(context)) inString:nsContext.get() orthography:orthography];
     }
-    RetainPtr stringsArray = [checker guessesForWordRange:NSMakeRange(0, word.length()) inString:word.createNSString().get() language:language.get() inSpellDocumentWithTag:spellCheckerDocumentTag()];
+    RetainPtr stringsArray = [checker guessesForWordRange:NSMakeRange(0, length(word)) inString:createNSString(word).get() language:language.get() inSpellDocumentWithTag:spellCheckerDocumentTag()];
     if (stringsArray.get().count)
-        guesses = makeVector<String>(stringsArray.get());
+        guesses = makeVector<RefPtr<StringImpl>>(stringsArray.get());
 }
 
 #endif // !PLATFORM(IOS_FAMILY)
@@ -1173,10 +1173,10 @@ void WebEditorClient::requestCandidatesForSelection(const WebCore::VisibleSelect
     auto selectionStartOffsetInParagraph = characterCount(*makeSimpleRange(startOfParagraph(selectionStart), selectionStart));
     auto selectionLength = characterCount(*makeSimpleRange(selectionStart, selection.visibleEnd()));
     auto contextRangeForCandidateRequest = protect(frame->editor())->contextRangeForCandidateRequest();
-    String contextForCandidateRequest = contextRangeForCandidateRequest ? plainText(*contextRangeForCandidateRequest) : String();
+    RefPtr<StringImpl> contextForCandidateRequest = contextRangeForCandidateRequest ? plainText(*contextRangeForCandidateRequest) : nullptr;
 
     m_rangeForCandidates = NSMakeRange(selectionStartOffsetInParagraph, selectionLength);
-    m_paragraphContextForCandidateRequest = contextForCandidateRequest.createNSString();
+    m_paragraphContextForCandidateRequest = createNSString(contextForCandidateRequest);
 
     NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
     WeakPtr weakEditor { *this };
@@ -1236,11 +1236,11 @@ void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(const WebCore::TextC
 
     NSView <WebDocumentView> *view = [[[webView selectedFrame] frameView] documentView];
     if (RetainPtr htmlView = dynamic_objc_cast<WebHTMLView>(view)) {
-        unsigned replacementLength = acceptedCandidate.replacement.length();
+        unsigned replacementLength = length(acceptedCandidate.replacement);
         if (replacementLength > 0) {
             NSRange replacedRange = NSMakeRange(acceptedCandidate.range.location, replacementLength);
             NSRange softSpaceRange = NSMakeRange(NSMaxRange(replacedRange) - 1, 1);
-            if (acceptedCandidate.replacement.endsWith(' '))
+            if (endsWith(acceptedCandidate.replacement, ' '))
                 [htmlView _setSoftSpaceRange:softSpaceRange];
         }
     }
@@ -1304,12 +1304,12 @@ void WebEditorClient::requestCheckingOfString(WebCore::TextCheckingRequest& requ
     ASSERT(!m_requestsInFlight.contains(identifier));
     m_requestsInFlight.add(identifier, request);
 
-    NSRange range = NSMakeRange(0, request.data().text().length());
+    NSRange range = NSMakeRange(0, length(request.data().text()));
     NSRunLoop *currentLoop = [NSRunLoop currentRunLoop];
     WeakPtr weakThis { *this };
     NSDictionary *options = @{ NSTextCheckingInsertionPointKey : [NSNumber numberWithUnsignedInteger:insertionPointFromCurrentSelection(currentSelection)] };
     NSTextCheckingType types = NSTextCheckingTypeSpelling | NSTextCheckingTypeGrammar | NSTextCheckingTypeLink | NSTextCheckingTypeQuote | NSTextCheckingTypeDash | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
-    [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:request.data().text().createNSString().get() range:range types:types options:options inSpellDocumentWithTag:0 completionHandler:^(NSInteger, NSArray *results, NSOrthography *, NSInteger) {
+    [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:createNSString(request.data().text()).get() range:range types:types options:options inSpellDocumentWithTag:0 completionHandler:^(NSInteger, NSArray *results, NSOrthography *, NSInteger) {
         RetainPtr<WebEditorSpellCheckResponder> responder = adoptNS([[WebEditorSpellCheckResponder alloc] initWithClient:weakThis identifier:identifier results:results]);
         [currentLoop performBlock:^{
             [responder perform];

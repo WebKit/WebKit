@@ -128,7 +128,7 @@ void FunctionExecutable::visitOutputConstraintsImpl(JSCell* cell, Visitor& visit
 
 DEFINE_VISIT_OUTPUT_CONSTRAINTS(FunctionExecutable);
 
-FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& name, JSGlobalObject* globalObject, String&& program, const SourceOrigin& sourceOrigin, SourceTaintedness taintedOrigin, const String& sourceURL, const TextPosition& position, LexicallyScopedFeatures lexicallyScopedFeatures, JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition, FunctionConstructionMode functionConstructionMode)
+FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& name, JSGlobalObject* globalObject, RefPtr<StringImpl>&& program, const SourceOrigin& sourceOrigin, SourceTaintedness taintedOrigin, StringImpl* sourceURL, const TextPosition& position, LexicallyScopedFeatures lexicallyScopedFeatures, JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition, FunctionConstructionMode functionConstructionMode)
 {
     if (overrideLineNumber == overrideLineNumberNotFound) {
         if (auto* executable = globalObject->tryGetCachedFunctionExecutableForFunctionConstructor(name, program, sourceOrigin, taintedOrigin, sourceURL, position, lexicallyScopedFeatures, functionConstructionMode))

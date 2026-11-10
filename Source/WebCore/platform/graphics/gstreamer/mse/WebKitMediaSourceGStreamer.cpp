@@ -330,12 +330,12 @@ void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<Media
             continue;
         }
 
-        GRefPtr<WebKitMediaSrcPad> pad = WEBKIT_MEDIA_SRC_PAD(gObjectNew(webkit_media_src_pad_get_type(), "name", makeString("src_"_s, String::number(track->id())).utf8(), "direction", GST_PAD_SRC));
+        GRefPtr<WebKitMediaSrcPad> pad = WEBKIT_MEDIA_SRC_PAD(gObjectNew(webkit_media_src_pad_get_type(), "name", utf8(makeString("src_"_s, makeString(track->id()))), "direction", GST_PAD_SRC));
         gst_pad_set_activatemode_function(GST_PAD(pad.get()), webKitMediaSrcActivateMode);
 
         ASSERT(track->initialCaps());
         auto stream = adoptRef(new Stream(source, GRefPtr<GstPad>(GST_PAD(pad.get())), *track,
-            adoptGRef(gst_stream_new(makeString(track->id()).utf8().legacyCStringPointer(), track->initialCaps().get(), gstStreamType(track->type()), GST_STREAM_FLAG_SELECT))));
+            adoptGRef(gst_stream_new(utf8(makeString(track->id())).legacyCStringPointer(), track->initialCaps().get(), gstStreamType(track->type()), GST_STREAM_FLAG_SELECT))));
         pad->priv->stream = ThreadSafeWeakPtr { *stream.get() };
 
         gst_stream_collection_add_stream(source->priv->collection.get(), GRefPtr<GstStream>(stream->streamInfo.get()).leakRef());
@@ -753,7 +753,7 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
             if ((GST_CLOCK_TIME_IS_VALID(pipelineRunningTime))) {
                 GST_DEBUG_OBJECT(stream->source, "Resetting segment to current pipeline running time (%" GST_TIME_FORMAT
                     " and stream time (%" GST_TIME_FORMAT " = %s), updating rate to %f", GST_TIME_ARGS(pipelineRunningTime),
-                    GST_TIME_ARGS(pipelineStreamTime), streamTime.toString().ascii().data(), stream->source->priv->rate);
+                    GST_TIME_ARGS(pipelineStreamTime), ascii(streamTime.toString()).data(), stream->source->priv->rate);
                 streamingMembers->segment.base = pipelineRunningTime;
                 streamingMembers->segment.rate = stream->source->priv->rate;
                 streamingMembers->segment.start = streamingMembers->segment.time = static_cast<GstClockTime>(pipelineStreamTime);

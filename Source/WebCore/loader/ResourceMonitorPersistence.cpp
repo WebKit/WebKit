@@ -86,14 +86,14 @@ void ResourceMonitorPersistence::reportSQLError(ASCIILiteral method, ASCIILitera
 #endif
 }
 
-static String databasePath(const String& directoryPath)
+static RefPtr<StringImpl> databasePath(StringImpl* directoryPath)
 {
-    if (directoryPath.isEmpty())
+    if (isEmpty(directoryPath))
         return SQLiteDatabase::inMemoryPath();
     return FileSystem::pathByAppendingComponent(directoryPath, "ResourceMonitorPersistence.db"_s);
 }
 
-bool ResourceMonitorPersistence::openDatabase(String&& directoryPath)
+bool ResourceMonitorPersistence::openDatabase(RefPtr<StringImpl>&& directoryPath)
 {
     ASSERT(!isMainThread());
 
@@ -189,7 +189,7 @@ Vector<ResourceMonitorPersistence::Record> ResourceMonitorPersistence::importRec
     return records;
 }
 
-void ResourceMonitorPersistence::recordAccess(const String& host, ContinuousApproximateTime time)
+void ResourceMonitorPersistence::recordAccess(StringImpl* host, ContinuousApproximateTime time)
 {
     ASSERT(!isMainThread());
 

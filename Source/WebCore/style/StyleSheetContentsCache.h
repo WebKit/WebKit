@@ -41,7 +41,7 @@ class StyleSheetContentsCache {
 public:
     NODELETE static StyleSheetContentsCache& singleton();
 
-    using Key = std::pair<WTF::String, CSSParserContext>;
+    using Key = std::pair<RefPtr<StringImpl>, CSSParserContext>;
 
     RefPtr<StyleSheetContents> get(const Key&);
     void add(Key&&, Ref<StyleSheetContents>);

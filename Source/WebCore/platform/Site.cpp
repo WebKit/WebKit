@@ -32,21 +32,21 @@
 
 namespace WebCore {
 
-static const String& invalidProtocol()
+static const RefPtr<StringImpl>& invalidProtocol()
 {
     // Valid protocols from canonicalized URLs are always lower case.
-    static NeverDestroyed<String> protocol { "invalidProtocol"_s };
+    static NeverDestroyed<RefPtr<StringImpl>> protocol { "invalidProtocol"_s };
     return protocol.get();
 }
 
-static String nonEmptyProtocol(String&& protocol)
+static RefPtr<StringImpl> nonEmptyProtocol(RefPtr<StringImpl>&& protocol)
 {
-    if (protocol.isEmpty())
+    if (isEmpty(protocol))
         return invalidProtocol();
-    return String(WTF::move(protocol));
+    return RefPtr<StringImpl>(WTF::move(protocol));
 }
 
-static String protocolForURL(const URL& url)
+static RefPtr<StringImpl> protocolForURL(const URL& url)
 {
     if (url.protocolIsBlob())
         return BlobURL::getOriginURL(url).protocol().toString();
@@ -57,37 +57,37 @@ Site::Site(const URL& url)
     : m_protocol(nonEmptyProtocol(protocolForURL(url)))
     , m_domain(url) { }
 
-Site::Site(String&& protocol, RegistrableDomain&& domain)
+Site::Site(RefPtr<StringImpl>&& protocol, RegistrableDomain&& domain)
     : m_protocol(nonEmptyProtocol(WTF::move(protocol)))
     , m_domain(WTF::move(domain)) { }
 
 Site::Site(const SecurityOriginData& data)
-    : m_protocol(nonEmptyProtocol(String(data.protocol())))
+    : m_protocol(nonEmptyProtocol(RefPtr<StringImpl>(data.protocol())))
     , m_domain(data) { }
 
-const String& Site::protocol() const
+const RefPtr<StringImpl>& Site::protocol() const
 {
-    if (m_protocol == invalidProtocol()) [[unlikely]]
+    if (equal(m_protocol, invalidProtocol())) [[unlikely]]
         return emptyString();
     return m_protocol;
 }
 
 unsigned Site::hash() const
 {
-    return WTF::pairIntHash(m_protocol.hash(), m_domain.hash());
+    return WTF::pairIntHash(WTF::hash(m_protocol), m_domain.hash());
 }
 
 bool Site::matches(const URL& url) const
 {
-    return protocolForURL(url) == m_protocol && m_domain.matches(url);
+    return equal(protocolForURL(url), m_protocol) && m_domain.matches(url);
 }
 
-String Site::toString() const
+RefPtr<StringImpl> Site::toString() const
 {
     return isEmpty() ? emptyString() : makeString(m_protocol, "://"_s, m_domain.string());
 }
 
-String Site::loggingString() const
+RefPtr<StringImpl> Site::loggingString() const
 {
     return makeString(m_protocol, "://"_s, m_domain.string());
 }

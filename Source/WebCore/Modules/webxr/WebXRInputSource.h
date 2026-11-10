@@ -67,7 +67,7 @@ public:
     XRTargetRayMode targetRayMode() const { return m_source.targetRayMode; };
     WebXRSpace& targetRaySpace() const { return m_targetRaySpace.get(); };
     WebXRSpace* gripSpace() const { return m_gripSpace.get(); }
-    const Vector<String>& profiles() const LIFETIME_BOUND { return m_source.profiles; };
+    const Vector<RefPtr<StringImpl>>& profiles() const LIFETIME_BOUND { return m_source.profiles; };
     double connectTime() const { return m_connectTime; }
 #if ENABLE(GAMEPAD)
     Gamepad* gamepad() const { return m_gamepad.ptr(); }

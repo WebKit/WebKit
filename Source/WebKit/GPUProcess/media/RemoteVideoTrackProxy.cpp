@@ -99,12 +99,12 @@ void RemoteVideoTrackProxy::idChanged(TrackID)
     updateConfiguration();
 }
 
-void RemoteVideoTrackProxy::labelChanged(const String&)
+void RemoteVideoTrackProxy::labelChanged(StringImpl*)
 {
     updateConfiguration();
 }
 
-void RemoteVideoTrackProxy::languageChanged(const String&)
+void RemoteVideoTrackProxy::languageChanged(StringImpl*)
 {
     updateConfiguration();
 }

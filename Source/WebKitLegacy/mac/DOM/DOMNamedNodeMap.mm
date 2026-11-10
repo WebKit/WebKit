@@ -60,7 +60,7 @@
 - (DOMNode *)getNamedItem:(NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->getNamedItem(name)));
+    return kit(WTF::getPtr(IMPL->getNamedItem(AtomStringImpl::add((__bridge CFStringRef)name).get())));
 }
 
 - (DOMNode *)setNamedItem:(DOMNode *)node
@@ -77,7 +77,7 @@
 - (DOMNode *)removeNamedItem:(NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->removeNamedItem(name)).ptr());
+    return kit(raiseOnDOMError(IMPL->removeNamedItem(AtomStringImpl::add((__bridge CFStringRef)name).get())).ptr());
 }
 
 - (DOMNode *)item:(unsigned)index
@@ -89,7 +89,7 @@
 - (DOMNode *)getNamedItemNS:(NSString *)namespaceURI localName:(NSString *)localName
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->getNamedItemNS(namespaceURI, localName)));
+    return kit(WTF::getPtr(IMPL->getNamedItemNS(AtomStringImpl::add((__bridge CFStringRef)namespaceURI).get(), AtomStringImpl::add((__bridge CFStringRef)localName).get())));
 }
 
 - (DOMNode *)setNamedItemNS:(DOMNode *)node
@@ -100,7 +100,7 @@
 - (DOMNode *)removeNamedItemNS:(NSString *)namespaceURI localName:(NSString *)localName
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->removeNamedItemNS(namespaceURI, localName)).ptr());
+    return kit(raiseOnDOMError(IMPL->removeNamedItemNS(AtomStringImpl::add((__bridge CFStringRef)namespaceURI).get(), AtomStringImpl::add((__bridge CFStringRef)localName).get())).ptr());
 }
 
 @end

@@ -45,7 +45,7 @@ RenderTreeBuilder::MathML::MathML(RenderTreeBuilder& builder)
 {
 }
 
-RenderPtr<RenderMathMLFencedOperator> RenderTreeBuilder::MathML::createMathMLOperator(RenderMathMLFenced& parent, const String& operatorString,
+RenderPtr<RenderMathMLFencedOperator> RenderTreeBuilder::MathML::createMathMLOperator(RenderMathMLFenced& parent, StringImpl* operatorString,
     MathMLOperatorDictionary::Form form, MathMLOperatorDictionary::Flag flag)
 {
     RenderPtr<RenderMathMLFencedOperator> newOperator = createRenderer<RenderMathMLFencedOperator>(parent.document(), Style::ComputedStyle::createAnonymousStyleWithDisplay(protect(parent.style()), Style::DisplayType::BlockFlow), operatorString, form, flag);

@@ -50,7 +50,7 @@ static const CGFloat horizontalPadding = 5;
 static const CGFloat verticalPadding = 5;
 static const CGFloat maxLabelWidth = 300;
 
-ValidationBubble::ValidationBubble(NSView* view, String&& message, const Settings& settings)
+ValidationBubble::ValidationBubble(NSView* view, RefPtr<StringImpl>&& message, const Settings& settings)
     : m_view(view)
     , m_message(WTF::move(message))
     , m_popover(adoptNS([[WebValidationPopover alloc] init]))
@@ -64,7 +64,7 @@ ValidationBubble::ValidationBubble(NSView* view, String&& message, const Setting
     [label setEditable:NO];
     [label setDrawsBackground:NO];
     [label setBordered:NO];
-    [label setStringValue:m_message.createNSString().get()];
+    [label setStringValue:createNSString(m_message).get()];
     m_fontSize = std::max(settings.minimumFontSize, 13.0);
     [label setFont:[NSFont systemFontOfSize:m_fontSize]];
     [label setMaximumNumberOfLines:4];

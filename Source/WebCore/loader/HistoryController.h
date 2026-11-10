@@ -63,7 +63,7 @@ public:
     WEBCORE_EXPORT void restoreScrollPositionAndViewState();
 
     void updateBackForwardListForFragmentScroll(WasCreatedByJSWithoutUserInteraction = WasCreatedByJSWithoutUserInteraction::No);
-    void updateBackForwardListForReplaceState(RefPtr<SerializedScriptValue>&&, const String&, WasCreatedByJSWithoutUserInteraction = WasCreatedByJSWithoutUserInteraction::No);
+    void updateBackForwardListForReplaceState(RefPtr<SerializedScriptValue>&&, StringImpl*, WasCreatedByJSWithoutUserInteraction = WasCreatedByJSWithoutUserInteraction::No);
 
     void saveDocumentState();
     WEBCORE_EXPORT void saveDocumentAndScrollState();
@@ -92,8 +92,8 @@ public:
     HistoryItem* provisionalItem() const { return m_provisionalItem.get(); }
     void setProvisionalItem(RefPtr<HistoryItem>&&);
 
-    void pushState(RefPtr<SerializedScriptValue>&&, const String& url);
-    void replaceState(RefPtr<SerializedScriptValue>&&, const String& url);
+    void pushState(RefPtr<SerializedScriptValue>&&, StringImpl* url);
+    void replaceState(RefPtr<SerializedScriptValue>&&, StringImpl* url);
 
     void setDefersLoading(bool);
 

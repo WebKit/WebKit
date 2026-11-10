@@ -44,13 +44,13 @@
 - (NSString *)data
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->data().createNSString().autorelease();
+    return createNSString(IMPL->data()).autorelease();
 }
 
 - (void)initTextEvent:(NSString *)typeArg canBubbleArg:(BOOL)canBubbleArg cancelableArg:(BOOL)cancelableArg viewArg:(DOMAbstractView *)viewArg dataArg:(NSString *)dataArg
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->initTextEvent(typeArg, canBubbleArg, cancelableArg, toWindowProxy(viewArg), dataArg);
+    IMPL->initTextEvent(AtomStringImpl::add((__bridge CFStringRef)typeArg).get(), canBubbleArg, cancelableArg, toWindowProxy(viewArg), StringImpl::create(dataArg).get());
 }
 
 @end

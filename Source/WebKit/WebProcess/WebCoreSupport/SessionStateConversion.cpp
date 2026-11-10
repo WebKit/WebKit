@@ -115,7 +115,7 @@ Ref<FrameState> toFrameState(const HistoryItem& historyItem)
     frameState->policyContainer = historyItem.policyContainer();
 
     static constexpr auto maxTitleLength = 1000u; // Closest power of 10 above the W3C recommendation for Title length.
-    frameState->title = historyItem.title().left(maxTitleLength);
+    frameState->title = left(historyItem.title(), maxTitleLength);
 
 #if PLATFORM(IOS_FAMILY)
     frameState->exposedContentRect = historyItem.exposedContentRect();
@@ -142,7 +142,7 @@ static Ref<FormData> toFormData(const HTTPBody& httpBody)
             formData->appendData(borrow(data)->span());
         }, [&] (const HTTPBody::Element::FileData& data) {
             formData->appendFileRange(data.filePath, data.fileStart, data.fileLength.value_or(BlobDataItem::toEndOfFile), data.expectedFileModificationTime);
-        }, [&] (const String& blobURLString) {
+        }, [&] (StringImpl* blobURLString) {
             formData->appendBlob(URL { blobURLString });
         });
     }
@@ -153,7 +153,7 @@ static Ref<FormData> toFormData(const HTTPBody& httpBody)
 static void applyFrameState(HistoryItemClient& client, HistoryItem& historyItem, const FrameState& frameState)
 {
     historyItem.setOriginalURLString(frameState.originalURLString);
-    historyItem.setReferrer(String { frameState.referrer });
+    historyItem.setReferrer(RefPtr<StringImpl> { frameState.referrer });
     historyItem.setTarget(frameState.target);
     historyItem.setFrameID(frameState.frameID);
 
@@ -199,7 +199,7 @@ static void applyFrameState(HistoryItemClient& client, HistoryItem& historyItem,
 #endif
 
     for (auto& childFrameState : borrow(frameState.children)) {
-        Ref childHistoryItem = HistoryItem::create(client, childFrameState->urlString, { }, { }, childFrameState->itemID, childFrameState->frameItemID);
+        Ref childHistoryItem = HistoryItem::create(client, childFrameState->urlString, nullptr, nullptr, childFrameState->itemID, childFrameState->frameItemID);
         applyFrameState(client, childHistoryItem, childFrameState);
 
         historyItem.addChildItem(WTF::move(childHistoryItem));
@@ -210,7 +210,7 @@ Ref<HistoryItem> toHistoryItem(WebHistoryItemClient& client, const FrameState& f
 {
     // The UI process sent this state, so don't send it back.
     auto ignoreHistoryItemChangesForScope = client.ignoreChangesForScope();
-    Ref historyItem = HistoryItem::create(client, frameState.urlString, frameState.title, { }, frameState.itemID, frameState.frameItemID);
+    Ref historyItem = HistoryItem::create(client, frameState.urlString, frameState.title, nullptr, frameState.itemID, frameState.frameItemID);
     applyFrameState(client, historyItem, frameState);
     return historyItem;
 }

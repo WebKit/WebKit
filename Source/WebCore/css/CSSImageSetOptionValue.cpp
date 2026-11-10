@@ -57,7 +57,7 @@ bool CSSImageSetOptionValue::equals(const CSSImageSetOptionValue& other) const
     return true;
 }
 
-String CSSImageSetOptionValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSImageSetOptionValue::customCSSText(const CSS::SerializationContext& context) const
 {
     using namespace CSS::Literals;
 

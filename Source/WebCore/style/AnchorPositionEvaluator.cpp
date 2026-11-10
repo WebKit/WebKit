@@ -398,7 +398,7 @@ void AnchorPositionEvaluator::updateScrollAdjustments(RenderView& renderView)
 static const ScopedName& implicitAnchorElementName()
 {
     // User specified anchor names start with "--".
-    static NeverDestroyed<ScopedName> name { ScopedName { "implicit-anchor-element"_s } };
+    static NeverDestroyed<ScopedName> name { ScopedName { "implicit-anchor-element"_atom } };
     return name;
 }
 

@@ -286,7 +286,7 @@ void LocalFrameView::reset()
     m_scrollToTextFragmentRetryTimer.stop();
     m_scrollToTextFragmentInitialAttemptTime = std::nullopt;
     m_pendingTextFragmentIndicatorRange.reset();
-    m_pendingTextFragmentIndicatorText = String();
+    m_pendingTextFragmentIndicatorText = nullptr;
     m_haveCreatedTextIndicator = false;
     m_lastViewportSize = IntSize();
     m_lastUsedZoomFactor = 1.0f;
@@ -1586,17 +1586,17 @@ void LocalFrameView::removeEmbeddedObjectToUpdate(RenderEmbeddedObject& embedded
     m_embeddedObjectsToUpdate->remove(&embeddedObject);
 }
 
-void LocalFrameView::setMediaType(const AtomString& mediaType)
+void LocalFrameView::setMediaType(AtomStringImpl* mediaType)
 {
     m_mediaType = mediaType;
 }
 
-AtomString LocalFrameView::mediaType() const
+RefPtr<AtomStringImpl> LocalFrameView::mediaType() const
 {
     // See if we have an override type.
     auto overrideType = m_frame->loader().client().overrideMediaType();
     InspectorInstrumentation::applyEmulatedMedia(m_frame.get(), overrideType);
-    if (!overrideType.isNull())
+    if (overrideType)
         return overrideType;
     return m_mediaType;
 }
@@ -1604,11 +1604,11 @@ AtomString LocalFrameView::mediaType() const
 void LocalFrameView::adjustMediaTypeForPrinting(bool printing)
 {
     if (printing) {
-        if (m_mediaTypeWhenNotPrinting.isNull())
+        if (!m_mediaTypeWhenNotPrinting)
             m_mediaTypeWhenNotPrinting = mediaType();
         setMediaType(printAtom());
     } else {
-        if (!m_mediaTypeWhenNotPrinting.isNull())
+        if (m_mediaTypeWhenNotPrinting)
             setMediaType(m_mediaTypeWhenNotPrinting);
         m_mediaTypeWhenNotPrinting = nullAtom();
     }
@@ -1675,7 +1675,7 @@ bool LocalFrameView::mockScrollbarsControllerEnabled() const
     return m_frame->settings().mockScrollbarsControllerEnabled();
 }
 
-void LocalFrameView::logMockScrollbarsControllerMessage(const String& message) const
+void LocalFrameView::logMockScrollbarsControllerMessage(StringImpl* message) const
 {
     RefPtr document = m_frame->document();
     if (!document)
@@ -1684,7 +1684,7 @@ void LocalFrameView::logMockScrollbarsControllerMessage(const String& message) c
         makeString(m_frame->isMainFrame() ? "Main"_s : ""_s, "LocalFrameView: "_s, message));
 }
 
-String LocalFrameView::debugDescription() const
+RefPtr<StringImpl> LocalFrameView::debugDescription() const
 {
     return makeString("LocalFrameView 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ' ', m_frame->debugDescription());
 }
@@ -3194,7 +3194,7 @@ bool LocalFrameView::scrollToTextFragment(IsRetry isRetry)
     if (!parsedContentType)
         return false;
     auto mimeType = parsedContentType->mimeType();
-    if (mimeType != "text/html"_s && mimeType != "text/plain"_s)
+    if (!equal(mimeType, "text/html"_s) && !equal(mimeType, "text/plain"_s))
         return false;
 
     // Block text fragments in cross-origin window.open() popups
@@ -3204,7 +3204,7 @@ bool LocalFrameView::scrollToTextFragment(IsRetry isRetry)
     protect(document->fragmentHighlightRegistry())->clear();
     
     auto fragmentDirective = document->fragmentDirective();
-    if (fragmentDirective.isEmpty())
+    if (isEmpty(fragmentDirective))
         return false;
 
     FragmentDirectiveParser fragmentDirectiveParser(fragmentDirective);
@@ -3553,7 +3553,7 @@ void LocalFrameView::textFragmentIndicatorTimerFired()
         return;
     
     auto range = m_pendingTextFragmentIndicatorRange.value();
-    if (m_pendingTextFragmentIndicatorText != plainText(range))
+    if (!equal(m_pendingTextFragmentIndicatorText, plainText(range)))
         return;
 
     // FIXME: <http://webkit.org/b/245262> (Scroll To Text Fragment should use DelegateMainFrameScroll)
@@ -3567,7 +3567,7 @@ void LocalFrameView::cancelScheduledTextFragmentIndicatorTimer()
     if (m_skipScrollResetOfScrollToTextFragmentRange)
         return;
     m_pendingTextFragmentIndicatorRange.reset();
-    m_pendingTextFragmentIndicatorText = String();
+    m_pendingTextFragmentIndicatorText = nullptr;
     m_haveCreatedTextIndicator = false;
     m_delayedTextFragmentIndicatorTimer.stop();
 }
@@ -4138,7 +4138,7 @@ static unsigned countRenderedCharactersInRenderObjectWithThreshold(const RenderE
     unsigned count = 0;
     for (CheckedPtr<const RenderObject> descendant = &renderer; descendant; descendant = descendant->nextInPreOrder()) {
         if (auto* renderText = dynamicDowncast<RenderText>(descendant.get())) {
-            count += renderText->text().length();
+            count += length(renderText->text());
             if (count >= threshold)
                 break;
         }
@@ -4793,7 +4793,7 @@ void LocalFrameView::scrollToPendingTextFragmentRange()
 
     auto range = *m_pendingTextFragmentIndicatorRange;
     auto rangeText = plainText(range);
-    if (m_pendingTextFragmentIndicatorText != rangeText)
+    if (!equal(m_pendingTextFragmentIndicatorText, rangeText))
         return;
 
     LOG_WITH_STREAM(Scrolling, stream << *this << " scrollToPendingTextFragmentRange() " << range);
@@ -5102,7 +5102,7 @@ void LocalFrameView::scheduleResizeEventIfNeeded()
 
     RefPtr document = m_frame->document();
     if (document->quirks().shouldSilenceWindowResizeEventsDuringApplicationSnapshotting()) {
-        document->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "Window resize events silenced due to: http://webkit.org/b/258597"_s);
+        document->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "Window resize events silenced due to: http://webkit.org/b/258597"_si);
         FRAMEVIEW_RELEASE_LOG(Events, LocalFrameViewFiringResizeEventsDisabledForPage);
         return;
     }
@@ -6174,12 +6174,12 @@ static size_t nonWhitespaceLength(std::span<const CharacterType> characters)
     return characters.size() - WTF::countMatchedCharacters<CharacterType, ' ', '\t', '\n', '\f', '\r'>(characters);
 }
 
-SUPPRESS_NODELETE void LocalFrameView::incrementVisuallyNonEmptyCharacterCountSlowCase(const String& inlineText)
+SUPPRESS_NODELETE void LocalFrameView::incrementVisuallyNonEmptyCharacterCountSlowCase(StringImpl* inlineText)
 {
-    if (inlineText.is8Bit())
-        m_visuallyNonEmptyCharacterCount += nonWhitespaceLength(inlineText.span8());
+    if (is8Bit(inlineText))
+        m_visuallyNonEmptyCharacterCount += nonWhitespaceLength(span8(inlineText));
     else
-        m_visuallyNonEmptyCharacterCount += nonWhitespaceLength(inlineText.span16());
+        m_visuallyNonEmptyCharacterCount += nonWhitespaceLength(span16(inlineText));
     ++m_textRendererCountForVisuallyNonEmptyCharacters;
 }
 
@@ -6579,7 +6579,7 @@ void LocalFrameView::resetTrackedRepaints()
         protect(renderView->compositor())->resetTrackedRepaintRects();
 }
 
-String LocalFrameView::trackedRepaintRectsAsText() const
+RefPtr<StringImpl> LocalFrameView::trackedRepaintRectsAsText() const
 {
     auto& frame = this->m_frame.get();
     Ref protectedFrame { frame };

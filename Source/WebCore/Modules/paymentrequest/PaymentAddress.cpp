@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-PaymentAddress::PaymentAddress(const String& country, const Vector<String>& addressLine, const String& region, const String& city, const String& dependentLocality, const String& postalCode, const String& sortingCode, const String& organization, const String& recipient, const String& phone)
+PaymentAddress::PaymentAddress(StringImpl* country, const Vector<RefPtr<StringImpl>>& addressLine, StringImpl* region, StringImpl* city, StringImpl* dependentLocality, StringImpl* postalCode, StringImpl* sortingCode, StringImpl* organization, StringImpl* recipient, StringImpl* phone)
     : m_country { country }
     , m_addressLine { addressLine }
     , m_region { region }

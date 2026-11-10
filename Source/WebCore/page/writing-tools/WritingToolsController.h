@@ -182,7 +182,7 @@ private:
     static CharacterRange characterRange(const SimpleRange& scope, const SimpleRange&);
     static SimpleRange resolveCharacterRange(const SimpleRange& scope, CharacterRange);
     static uint64_t characterCount(const SimpleRange&);
-    static String plainText(const SimpleRange&);
+    static RefPtr<StringImpl> plainText(const SimpleRange&);
 
     template<WritingTools::Session::Type Type>
     NODELETE StateFromSessionType<Type>::Value* currentState();
@@ -193,14 +193,14 @@ private:
     std::optional<std::tuple<Node&, DocumentMarker&>> findTextSuggestionMarkerContainingRange(const SimpleRange&) const;
     std::optional<std::tuple<Node&, DocumentMarker&>> findTextSuggestionMarkerByID(const SimpleRange& outerRange, const WritingTools::TextSuggestion::ID&) const;
 
-    std::optional<SimpleRange> validatedRangeForSuggestionMarker(const SimpleRange& sessionRange, Node&, const DocumentMarker&, const String& expectedCurrentText) const;
+    std::optional<SimpleRange> validatedRangeForSuggestionMarker(const SimpleRange& sessionRange, Node&, const DocumentMarker&, StringImpl* expectedCurrentText) const;
 
-    void replaceContentsOfRangeInSession(ProofreadingState&, const SimpleRange&, const String&);
-    void replaceContentsOfRangeInSession(ProofreadingState&, const SimpleRange&, const String&, WritingToolsCompositionCommand&);
+    void replaceContentsOfRangeInSession(ProofreadingState&, const SimpleRange&, StringImpl*);
+    void replaceContentsOfRangeInSession(ProofreadingState&, const SimpleRange&, StringImpl*, WritingToolsCompositionCommand&);
     void replaceContentsOfRangeInSession(CompositionState&, const SimpleRange&, const AttributedString&, WritingToolsCompositionCommand::State);
 
     void compositionSessionDidFinishReplacement();
-    void compositionSessionDidFinishReplacement(Markable<WTF::UUID> sourceAnimationUUID, Markable<WTF::UUID> destinationAnimationUUID, const CharacterRange&, const String&);
+    void compositionSessionDidFinishReplacement(Markable<WTF::UUID> sourceAnimationUUID, Markable<WTF::UUID> destinationAnimationUUID, const CharacterRange&, StringImpl*);
 
     void smartReplySessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished);
 

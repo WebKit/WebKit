@@ -37,11 +37,11 @@ public:
 
     virtual bool isDiscrete() const { return false; }
 
-    virtual bool setFromAndToValues(SVGElement& targetElement, const String&, const String&) = 0;
-    virtual bool setFromAndByValues(SVGElement& targetElement, const String&, const String&) = 0;
-    virtual bool setToAtEndOfDurationValue(SVGElement& targetElement, const String&) = 0;
+    virtual bool setFromAndToValues(SVGElement& targetElement, StringImpl*, StringImpl*) = 0;
+    virtual bool setFromAndByValues(SVGElement& targetElement, StringImpl*, StringImpl*) = 0;
+    virtual bool setToAtEndOfDurationValue(SVGElement& targetElement, StringImpl*) = 0;
 
-    virtual std::optional<float> calculateDistance(SVGElement&, const String&, const String&) const { return { }; }
+    virtual std::optional<float> calculateDistance(SVGElement&, StringImpl*, StringImpl*) const { return { }; }
 protected:
     SVGAnimationFunction(AnimationMode animationMode)
         : m_animationMode(animationMode)

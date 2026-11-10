@@ -38,13 +38,13 @@ class GPUDevice;
 
 class GPUPipelineLayout : public RefCountedAndCanMakeWeakPtr<GPUPipelineLayout> {
 public:
-    static Ref<GPUPipelineLayout> create(Ref<::WebGPU::PipelineLayout>&& backing, String&& label, GPUDevice& device)
+    static Ref<GPUPipelineLayout> create(Ref<::WebGPU::PipelineLayout>&& backing, RefPtr<StringImpl>&& label, GPUDevice& device)
     {
         return adoptRef(*new GPUPipelineLayout(WTF::move(backing), WTF::move(label), device));
     }
 
-    NODELETE String label() const;
-    void setLabel(String&&);
+    NODELETE RefPtr<StringImpl> label() const;
+    void setLabel(RefPtr<StringImpl>&&);
 
     ::WebGPU::PipelineLayout& backing() { return m_backing; }
     const ::WebGPU::PipelineLayout& backing() const { return m_backing; }
@@ -54,10 +54,10 @@ public:
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPUPipelineLayout(Ref<::WebGPU::PipelineLayout>&&, String&& label, GPUDevice&);
+    GPUPipelineLayout(Ref<::WebGPU::PipelineLayout>&&, RefPtr<StringImpl>&& label, GPUDevice&);
 
     const Ref<::WebGPU::PipelineLayout> m_backing;
-    String m_label;
+    RefPtr<StringImpl> m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
 };
 

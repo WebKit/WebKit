@@ -39,7 +39,7 @@ struct ShadowRootInit {
     bool serializable { false };
     SlotAssignmentMode slotAssignment { SlotAssignmentMode::Named };
     std::optional<RefPtr<CustomElementRegistry>> customElementRegistry;
-    String referenceTarget;
+    RefPtr<StringImpl> referenceTarget;
 };
 
 }

@@ -35,7 +35,7 @@ namespace TestWebKitAPI {
 
 TEST(MixedContentChecker, CanModifyRequest)
 {
-    URL url { "http://example.com/cat.jpg"_s };
+    URL url { "http://example.com/cat.jpg"_si };
     FetchOptions::Destination destination = FetchOptions::Destination::Image;
     Initiator initiator = Initiator::EmptyString;
 
@@ -47,27 +47,27 @@ TEST(MixedContentChecker, CanModifyRequest)
 
     // 4.1.1 request’s URL is a potentially trustworthy URL.
     ASSERT_FALSE(MixedContentChecker::canModifyRequest(
-        URL { "https://example.com/cat.jpg"_s },
+        URL { "https://example.com/cat.jpg"_si },
         destination,
         initiator
     ));
 
     // 4.1.2 request’s URL’s host is an IP address.
     ASSERT_FALSE(MixedContentChecker::canModifyRequest(
-        URL { "http://192.0.1.36"_s },
+        URL { "http://192.0.1.36"_si },
         destination,
         initiator
     ));
 
     // Exception for 4.1.2 potentially truthworthy address
     ASSERT_TRUE(MixedContentChecker::canModifyRequest(
-        URL { "http://127.0.0.1"_s },
+        URL { "http://127.0.0.1"_si },
         destination,
         initiator
     ));
 
     ASSERT_TRUE(MixedContentChecker::canModifyRequest(
-        URL { "http://localhost"_s },
+        URL { "http://localhost"_si },
         destination,
         initiator
     ));
@@ -99,12 +99,12 @@ TEST(MixedContentChecker, CanModifyRequest)
     ));
 
     // But if the scheme is handled by the handler, it is modifiable even if the initiator is "imageset".
-    LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler("custom"_s);
+    LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler("custom"_si);
 
     ASSERT_TRUE(LegacySchemeRegistry::schemeIsHandledBySchemeHandler("custom"_s));
 
     ASSERT_TRUE(MixedContentChecker::canModifyRequest(
-        URL { "custom://example.com/cat.jpg"_s },
+        URL { "custom://example.com/cat.jpg"_si },
         destination,
         Initiator::Imageset
     ));
@@ -113,7 +113,7 @@ TEST(MixedContentChecker, CanModifyRequest)
     ASSERT_FALSE(LegacySchemeRegistry::schemeIsHandledBySchemeHandler("custom2"_s));
 
     ASSERT_FALSE(MixedContentChecker::canModifyRequest(
-        URL { "custom2://example.com/cat.jpg"_s },
+        URL { "custom2://example.com/cat.jpg"_si },
         destination,
         Initiator::Imageset
     ));
@@ -121,7 +121,7 @@ TEST(MixedContentChecker, CanModifyRequest)
 
 TEST(MixedContentChecker, CanModifyRequestLocalNetworkAccessExemption)
 {
-    URL url { "http://example.com/cat.jpg"_s };
+    URL url { "http://example.com/cat.jpg"_si };
     FetchOptions::Destination destination = FetchOptions::Destination::Image;
     Initiator initiator = Initiator::EmptyString;
 
@@ -140,7 +140,7 @@ TEST(MixedContentChecker, CanModifyRequestLocalNetworkAccessExemption)
     ));
 
     ASSERT_FALSE(MixedContentChecker::canModifyRequest(
-        URL { "http://192.0.1.36"_s },
+        URL { "http://192.0.1.36"_si },
         destination,
         initiator,
         IPAddressSpace::Local
@@ -159,14 +159,14 @@ TEST(MixedContentChecker, CanModifyRequestLocalNetworkAccessExemption)
     // the space it is really in is what makes Local Network Access exempt it, and this pair is the whole
     // behaviour change: same URL, opposite answer.
     ASSERT_TRUE(MixedContentChecker::canModifyRequest(
-        URL { "http://127.0.0.1"_s },
+        URL { "http://127.0.0.1"_si },
         destination,
         initiator,
         IPAddressSpace::Public
     ));
 
     ASSERT_FALSE(MixedContentChecker::canModifyRequest(
-        URL { "http://127.0.0.1"_s },
+        URL { "http://127.0.0.1"_si },
         destination,
         initiator,
         IPAddressSpace::Loopback
@@ -177,14 +177,14 @@ TEST(MixedContentChecker, CanModifyRequestLocalNetworkAccessExemption)
     // ".local" name is Local per determineIPAddressSpace, so declaring it is the only thing that stops
     // the upgrade -- nothing else in mixed content would have.
     ASSERT_TRUE(MixedContentChecker::canModifyRequest(
-        URL { "http://printer.local/cat.jpg"_s },
+        URL { "http://printer.local/cat.jpg"_si },
         destination,
         initiator,
         IPAddressSpace::Public
     ));
 
     ASSERT_FALSE(MixedContentChecker::canModifyRequest(
-        URL { "http://printer.local/cat.jpg"_s },
+        URL { "http://printer.local/cat.jpg"_si },
         destination,
         initiator,
         IPAddressSpace::Local

@@ -72,7 +72,7 @@ RetainPtr<id> AXCoreObject::platformElement() const
     return wrapper();
 }
 
-String AXCoreObject::speechHint() const
+RefPtr<StringImpl> AXCoreObject::speechHint() const
 {
     auto speakAs = this->speakAs();
 
@@ -99,10 +99,10 @@ static StringView platformNameForShortcutKey(StringView key)
     return key;
 }
 
-String AXCoreObject::keyShortcutsPlatformString() const
+RefPtr<StringImpl> AXCoreObject::keyShortcutsPlatformString() const
 {
-    String shortcuts = keyShortcuts();
-    if (shortcuts.isEmpty())
+    RefPtr<StringImpl> shortcuts = keyShortcuts();
+    if (isEmpty(shortcuts))
         return shortcuts;
 
     // Shortcuts are delimited by whitespace, and the keys comprising each shortcut by plus signs.
@@ -195,7 +195,7 @@ void attributedStringSetExpandedText(NSMutableAttributedString *string, const AX
         return;
 
     if (object.supportsExpandedTextValue())
-        [string addAttribute:NSAccessibilityExpandedTextValueAttribute value:object.expandedTextValue().createNSString().get() range:range];
+        [string addAttribute:NSAccessibilityExpandedTextValueAttribute value:createNSString(object.expandedTextValue()).get() range:range];
 }
 
 void attributedStringSetNeedsSpellCheck(NSMutableAttributedString *string, const AXCoreObject& object)
@@ -357,30 +357,30 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-String AXCoreObject::rolePlatformDescription()
+RefPtr<StringImpl> AXCoreObject::rolePlatformDescription()
 {
     // Attachments have the AXImage role, but may have different subroles.
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (isAttachment())
-        return dynamic_objc_cast<NSString>([protect([protect(wrapper()) attachmentView]) accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute]);
+        return StringImpl::create(dynamic_objc_cast<NSString>([protect([protect(wrapper()) attachmentView]) accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute]));
 
     if (isRemoteFrame())
-        return dynamic_objc_cast<NSString>([remoteFramePlatformElement().get() accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute]);
+        return StringImpl::create(dynamic_objc_cast<NSString>([remoteFramePlatformElement().get() accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute]));
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    RetainPtr axRole = rolePlatformString().createNSString();
+    RetainPtr axRole = createNSString(rolePlatformString());
 
     if ([axRole isEqualToString:NSAccessibilityGroupRole]) {
         if (isOutput())
             return AXOutputText();
 
-        String ariaLandmarkRoleDescription = this->ariaLandmarkRoleDescription();
-        if (!ariaLandmarkRoleDescription.isEmpty())
+        RefPtr<StringImpl> ariaLandmarkRoleDescription = this->ariaLandmarkRoleDescription();
+        if (!isEmpty(ariaLandmarkRoleDescription))
             return ariaLandmarkRoleDescription;
 
         switch (role()) {
         case AccessibilityRole::Audio:
-            return localizedMediaControlElementString("AudioElement"_s);
+            return localizedMediaControlElementString("AudioElement"_si);
         case AccessibilityRole::Definition:
             return AXDefinitionText();
         case AccessibilityRole::DescriptionListTerm:
@@ -399,7 +399,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         case AccessibilityRole::Mark:
             return AXMarkText();
         case AccessibilityRole::Video:
-            return localizedMediaControlElementString("VideoElement"_s);
+            return localizedMediaControlElementString("VideoElement"_si);
         case AccessibilityRole::GraphicsDocument:
             return AXARIAContentGroupText("ARIADocument"_s);
         default:
@@ -462,7 +462,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     // AppKit also returns AXTab for the role description for a tab item.
     if (isTabItem())
-        return NSAccessibilityRoleDescription(@"AXTab", nil);
+        return StringImpl::create(protect(NSAccessibilityRoleDescription(@"AXTab", nil)).get());
 
     if (isSummary())
         return AXSummaryText();
@@ -470,14 +470,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return { };
 }
 
-String AXCoreObject::rolePlatformString()
+RefPtr<StringImpl> AXCoreObject::rolePlatformString()
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (isAttachment())
-        return dynamic_objc_cast<NSString>([protect([protect(wrapper()) attachmentView]) accessibilityAttributeValue:NSAccessibilityRoleAttribute]);
+        return StringImpl::create(dynamic_objc_cast<NSString>([protect([protect(wrapper()) attachmentView]) accessibilityAttributeValue:NSAccessibilityRoleAttribute]));
 
     if (isRemoteFrame())
-        return dynamic_objc_cast<NSString>([remoteFramePlatformElement().get() accessibilityAttributeValue:NSAccessibilityRoleAttribute]);
+        return StringImpl::create(dynamic_objc_cast<NSString>([remoteFramePlatformElement().get() accessibilityAttributeValue:NSAccessibilityRoleAttribute]));
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     auto role = this->role();
@@ -521,7 +521,7 @@ bool AXCoreObject::isEmptyGroup()
     if (isRemoteFrame()) [[unlikely]]
         return false;
 
-    return [rolePlatformString().createNSString() isEqual:NSAccessibilityGroupRole]
+    return [createNSString(rolePlatformString()) isEqual:NSAccessibilityGroupRole]
         && !hasUnignoredChild()
         && ![protect(renderWidgetChildren(*this)) count];
 }
@@ -720,7 +720,7 @@ PlatformRoleMap createPlatformRoleMap()
     });
     PlatformRoleMap roleMap;
     for (auto& role : roles.get())
-        roleMap.add(static_cast<unsigned>(role.value), role.string.get());
+        roleMap.add(static_cast<unsigned>(role.value), StringImpl::create(role.string.get()));
     return roleMap;
 }
 
@@ -737,7 +737,7 @@ std::optional<AXTextMarkerRange> markerRangeFrom(NSRange range, const AXCoreObje
 
         // But that boundary can also include content after the group, so clamp to the stitched length
         // (the length of the concatenated member text) to keep the walk inside the group.
-        NSUInteger stitchedLength = object.stringValue().length();
+        NSUInteger stitchedLength = length(object.stringValue());
         range.location = std::min<NSUInteger>(range.location, stitchedLength);
         // range.location is clamped to stitchedLength above, so this unsigned subtraction never wraps.
         range.length = std::min<NSUInteger>(range.length, stitchedLength - range.location);

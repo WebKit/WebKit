@@ -130,7 +130,7 @@ static void testWebViewAuthenticationRequest(AuthenticationTest* test, gconstpoi
     // Test authentication request getters match soup authentication header.
     test->loadURI(kServer->getURIForPath("/auth-test.html"));
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
-    ASSERT_CMP_CSTRING(webkit_authentication_request_get_host(request), ==, kServer->baseURL().host().toString().utf8());
+    ASSERT_CMP_CSTRING(webkit_authentication_request_get_host(request), ==, utf8(kServer->baseURL().host().toString()));
     g_assert_cmpuint(webkit_authentication_request_get_port(request), ==, kServer->port());
     g_assert_cmpstr(webkit_authentication_request_get_realm(request), ==, "my realm");
     g_assert_cmpint(webkit_authentication_request_get_scheme(request), ==, WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC);
@@ -138,8 +138,8 @@ static void testWebViewAuthenticationRequest(AuthenticationTest* test, gconstpoi
     g_assert_false(webkit_authentication_request_is_retry(request));
     auto* origin = webkit_authentication_request_get_security_origin(request);
     g_assert_nonnull(origin);
-    ASSERT_CMP_CSTRING(webkit_security_origin_get_protocol(origin), ==, kServer->baseURL().protocol().toString().utf8());
-    ASSERT_CMP_CSTRING(webkit_security_origin_get_host(origin), ==, kServer->baseURL().host().toString().utf8());
+    ASSERT_CMP_CSTRING(webkit_security_origin_get_protocol(origin), ==, utf8(kServer->baseURL().protocol().toString()));
+    ASSERT_CMP_CSTRING(webkit_security_origin_get_host(origin), ==, utf8(kServer->baseURL().host().toString()));
     g_assert_cmpuint(webkit_security_origin_get_port(origin), ==, kServer->port());
     webkit_security_origin_unref(origin);
 }
@@ -484,7 +484,7 @@ public:
         m_proxyServer.run(serverCallback);
         g_assert_false(m_proxyServer.baseURL().isNull());
         gProxyServerPort = m_proxyServer.port();
-        WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(m_proxyServer.baseURL().string().utf8().legacyCStringPointer(), nullptr);
+        WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(utf8(m_proxyServer.baseURL().string()).legacyCStringPointer(), nullptr);
 #if ENABLE(2022_GLIB_API)
         webkit_network_session_set_proxy_settings(m_networkSession.get(), WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
 #else
@@ -512,7 +512,7 @@ static void testWebViewAuthenticationProxy(ProxyAuthenticationTest* test, gconst
 {
     test->loadURI(kServer->getURIForPath("/proxy/auth-test.html"));
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
-    ASSERT_CMP_CSTRING(webkit_authentication_request_get_host(request), ==, test->m_proxyServer.baseURL().host().toString().utf8());
+    ASSERT_CMP_CSTRING(webkit_authentication_request_get_host(request), ==, utf8(test->m_proxyServer.baseURL().host().toString()));
     g_assert_cmpuint(webkit_authentication_request_get_port(request), ==, test->m_proxyServer.port());
     g_assert_cmpstr(webkit_authentication_request_get_realm(request), ==, "Proxy realm");
     g_assert_cmpint(webkit_authentication_request_get_scheme(request), ==, WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC);
@@ -520,8 +520,8 @@ static void testWebViewAuthenticationProxy(ProxyAuthenticationTest* test, gconst
     g_assert_false(webkit_authentication_request_is_retry(request));
     auto* origin = webkit_authentication_request_get_security_origin(request);
     g_assert_nonnull(origin);
-    ASSERT_CMP_CSTRING(webkit_security_origin_get_protocol(origin), ==, kServer->baseURL().protocol().toString().utf8());
-    ASSERT_CMP_CSTRING(webkit_security_origin_get_host(origin), ==, test->m_proxyServer.baseURL().host().toString().utf8());
+    ASSERT_CMP_CSTRING(webkit_security_origin_get_protocol(origin), ==, utf8(kServer->baseURL().protocol().toString()));
+    ASSERT_CMP_CSTRING(webkit_security_origin_get_host(origin), ==, utf8(test->m_proxyServer.baseURL().host().toString()));
     g_assert_cmpuint(webkit_security_origin_get_port(origin), ==, test->m_proxyServer.port());
     webkit_security_origin_unref(origin);
 }
@@ -533,7 +533,7 @@ static void testWebViewAuthenticationProxyHTTPS(ProxyAuthenticationTest* test, g
 
     test->loadURI(httpsServer->getURIForPath("/proxy/auth-test.html"));
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
-    ASSERT_CMP_CSTRING(webkit_authentication_request_get_host(request), ==, test->m_proxyServer.baseURL().host().toString().utf8());
+    ASSERT_CMP_CSTRING(webkit_authentication_request_get_host(request), ==, utf8(test->m_proxyServer.baseURL().host().toString()));
     g_assert_cmpuint(webkit_authentication_request_get_port(request), ==, test->m_proxyServer.port());
     g_assert_cmpstr(webkit_authentication_request_get_realm(request), ==, "Proxy realm");
     g_assert_cmpint(webkit_authentication_request_get_scheme(request), ==, WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC);
@@ -541,8 +541,8 @@ static void testWebViewAuthenticationProxyHTTPS(ProxyAuthenticationTest* test, g
     g_assert_false(webkit_authentication_request_is_retry(request));
     auto* origin = webkit_authentication_request_get_security_origin(request);
     g_assert_nonnull(origin);
-    ASSERT_CMP_CSTRING(webkit_security_origin_get_protocol(origin), ==, httpsServer->baseURL().protocol().toString().utf8());
-    ASSERT_CMP_CSTRING(webkit_security_origin_get_host(origin), ==, test->m_proxyServer.baseURL().host().toString().utf8());
+    ASSERT_CMP_CSTRING(webkit_security_origin_get_protocol(origin), ==, utf8(httpsServer->baseURL().protocol().toString()));
+    ASSERT_CMP_CSTRING(webkit_security_origin_get_host(origin), ==, utf8(test->m_proxyServer.baseURL().host().toString()));
     g_assert_cmpuint(webkit_security_origin_get_port(origin), ==, test->m_proxyServer.port());
     webkit_security_origin_unref(origin);
 }

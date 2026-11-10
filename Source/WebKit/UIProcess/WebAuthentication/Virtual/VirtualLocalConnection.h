@@ -42,7 +42,7 @@ public:
 private:
     explicit VirtualLocalConnection(const VirtualAuthenticatorConfiguration&);
 
-    void verifyUser(const String&, WebCore::ClientDataType, SecAccessControlRef, WebCore::UserVerificationRequirement, UserVerificationCallback&&) final;
+    void verifyUser(StringImpl*, WebCore::ClientDataType, SecAccessControlRef, WebCore::UserVerificationRequirement, UserVerificationCallback&&) final;
     void verifyUser(SecAccessControlRef, LAContext *, CompletionHandler<void(UserVerification)>&&) final;
     void filterResponses(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&) const final;
 

@@ -134,7 +134,7 @@ public:
     void setMatrix(GLuint, const TransformationMatrix&);
 
 private:
-    TextureMapperShaderProgram(const String& vertexShaderSource, const String& fragmentShaderSource);
+    TextureMapperShaderProgram(StringImpl* vertexShaderSource, StringImpl* fragmentShaderSource);
 
     GLuint m_vertexShader;
     GLuint m_fragmentShader;

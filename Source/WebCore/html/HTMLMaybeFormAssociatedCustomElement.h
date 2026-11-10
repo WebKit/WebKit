@@ -70,7 +70,7 @@ private:
     void postConnectionSteps() final;
     void didMoveToNewDocument(Document&, Document&) final;
     void removingSteps(RemovalType, ContainerNode&) final;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     void finishParsingChildren() final;
 };
 

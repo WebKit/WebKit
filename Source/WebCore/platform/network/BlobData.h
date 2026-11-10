@@ -97,12 +97,12 @@ typedef Vector<BlobDataItem> BlobDataItemList;
 
 class BlobData : public ThreadSafeRefCounted<BlobData, WTF::DestructionThread::Main> {
 public:
-    static Ref<BlobData> create(const String& contentType)
+    static Ref<BlobData> create(StringImpl* contentType)
     {
         return adoptRef(*new BlobData(contentType));
     }
 
-    const String& contentType() const LIFETIME_BOUND { return m_contentType; }
+    const RefPtr<StringImpl>& contentType() const LIFETIME_BOUND { return m_contentType; }
 
     const PolicyContainer& policyContainer() const LIFETIME_BOUND { return m_policyContainer; }
     void setPolicyContainer(const PolicyContainer& policyContainer) { m_policyContainer = policyContainer; }
@@ -117,12 +117,12 @@ public:
 
 private:
     friend class BlobRegistryImpl;
-    WEBCORE_EXPORT BlobData(const String& contentType);
+    WEBCORE_EXPORT BlobData(StringImpl* contentType);
 
     void appendData(Ref<DataSegment>&&, long long offset, long long length);
     void appendFile(Ref<BlobDataFileReference>&&, long long offset, long long length);
 
-    String m_contentType;
+    RefPtr<StringImpl> m_contentType;
     PolicyContainer m_policyContainer;
     BlobDataItemList m_items;
 };

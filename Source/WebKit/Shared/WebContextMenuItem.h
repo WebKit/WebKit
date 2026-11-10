@@ -48,7 +48,7 @@ public:
         return adoptRef(*new WebContextMenuItem(data));
     }
 
-    static Ref<WebContextMenuItem> create(const String& title, bool enabled, API::Array* submenuItems);
+    static Ref<WebContextMenuItem> create(StringImpl* title, bool enabled, API::Array* submenuItems);
     static WebContextMenuItem* separatorItem();
 
     Ref<API::Array> submenuItemsAsAPIArray() const;

@@ -42,7 +42,7 @@ FloatSize presentationSizeFromFormatDescription(CMFormatDescriptionRef);
 WEBCORE_EXPORT std::optional<PlatformVideoColorSpace> colorSpaceFromFormatDescription(CMFormatDescriptionRef);
 WEBCORE_EXPORT std::optional<PlatformVideoFieldCount> fieldCountFromFormatDescription(CMFormatDescriptionRef);
 WEBCORE_EXPORT std::optional<PlatformVideoFieldDetail> fieldDetailFromFormatDescription(CMFormatDescriptionRef);
-String codecFromFormatDescription(CMFormatDescriptionRef);
+RefPtr<StringImpl> codecFromFormatDescription(CMFormatDescriptionRef);
 bool formatDescriptionIsProtected(CMFormatDescriptionRef);
 WEBCORE_EXPORT std::optional<ImmersiveVideoMetadata> immersiveVideoMetadataFromFormatDescription(CMFormatDescriptionRef);
 #if HAVE(IMMERSIVE_VIDEO_METADATA_SUPPORT)

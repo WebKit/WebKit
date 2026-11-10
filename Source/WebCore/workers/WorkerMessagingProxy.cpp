@@ -141,7 +141,7 @@ WorkerMessagingProxy::~WorkerMessagingProxy()
         workerThread->clearProxies();
 }
 
-void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::SessionID sessionID, const String& name, WorkerInitializationData&& initializationData, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy, MonotonicTime timeOrigin, ReferrerPolicy referrerPolicy, WorkerType workerType, FetchRequestCredentials credentials, JSC::RuntimeFlags runtimeFlags)
+void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::SessionID sessionID, StringImpl* name, WorkerInitializationData&& initializationData, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy, MonotonicTime timeOrigin, ReferrerPolicy referrerPolicy, WorkerType workerType, FetchRequestCredentials credentials, JSC::RuntimeFlags runtimeFlags)
 {
     RefPtr scriptExecutionContext = m_scriptExecutionContext;
     if (!scriptExecutionContext)
@@ -154,7 +154,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
 
     RefPtr parentWorkerGlobalScope = dynamicDowncast<WorkerGlobalScope>(*scriptExecutionContext);
     WorkerThreadStartMode startMode = m_inspectorProxy->workerStartMode(*scriptExecutionContext);
-    String identifier = m_inspectorProxy->identifier();
+    RefPtr<StringImpl> identifier = m_inspectorProxy->identifier();
 
     RefPtr proxy = scriptExecutionContext->idbConnectionProxy();
     RefPtr socketProvider = scriptExecutionContext->socketProvider();
@@ -221,7 +221,7 @@ void WorkerMessagingProxy::postMessageToWorkerObject(MessageWithMessagePorts&& m
             auto& vm = globalObject->vm();
             auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
             UserGestureIndicator userGestureIndicator(userGestureForwarder ? userGestureForwarder->userGestureToForward() : nullptr);
-            auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, { }, WTF::move(ports));
+            auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, nullptr, { }, WTF::move(ports));
             if (scope.exception()) [[unlikely]] {
                 // Currently, we assume that the only way we can get here is if we have a termination.
                 RELEASE_ASSERT(vm.hasPendingTerminationException());
@@ -266,7 +266,7 @@ void WorkerMessagingProxy::postMessageToWorkerGlobalScope(MessageWithMessagePort
         m_userGestureForwarder = WTF::move(userGestureForwarder);
 
         auto ports = MessagePort::entanglePorts(scriptContext, WTF::move(message.transferredPorts));
-        auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, std::nullopt, WTF::move(ports));
+        auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, nullptr, std::nullopt, WTF::move(ports));
         if (scope.exception()) [[unlikely]] {
             // Currently, we assume that the only way we can get here is if we have a termination.
             RELEASE_ASSERT(vm.hasPendingTerminationException());
@@ -364,12 +364,12 @@ RefPtr<IDBClient::IDBConnectionProxy> WorkerMessagingProxy::createIDBConnectionP
     return &page->idbConnection().proxy();
 }
 
-void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
+void WorkerMessagingProxy::postExceptionToWorkerObject(StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL)
 {
     if (!m_scriptExecutionContextIdentifier)
         return;
 
-    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, protectedThis = Ref { *this }, errorMessage = errorMessage.isolatedCopy(), sourceURL = sourceURL.isolatedCopy(), lineNumber, columnNumber](auto&) {
+    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, protectedThis = Ref { *this }, errorMessage = isolatedCopy(errorMessage), sourceURL = isolatedCopy(sourceURL), lineNumber, columnNumber](auto&) {
         RefPtr workerObject = this->workerObject();
         if (!workerObject)
             return;
@@ -380,20 +380,20 @@ void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessag
     });
 }
 
-void WorkerMessagingProxy::reportErrorToWorkerObject(const String& errorMessage)
+void WorkerMessagingProxy::reportErrorToWorkerObject(StringImpl* errorMessage)
 {
     if (!m_scriptExecutionContextIdentifier)
         return;
 
-    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, protectedThis = Ref { *this }, errorMessage = errorMessage.isolatedCopy()] (auto&) {
+    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, protectedThis = Ref { *this }, errorMessage = isolatedCopy(errorMessage)] (auto&) {
         if (RefPtr workerObject = this->workerObject())
             workerObject->reportError(errorMessage);
     });
 }
 
-void WorkerMessagingProxy::postMessageToDebugger(const String& message)
+void WorkerMessagingProxy::postMessageToDebugger(StringImpl* message)
 {
-    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, message = message.isolatedCopy()]() mutable {
+    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, message = isolatedCopy(message)]() mutable {
         if (!m_mayBeDestroyed)
             m_inspectorProxy->sendMessageFromWorkerToFrontend(WTF::move(message));
     });

@@ -40,7 +40,7 @@ namespace Style {
 class Extractor;
 }
 
-String serializeShorthandValue(const CSS::SerializationContext&, const Style::Extractor&, CSSPropertyID);
-String serializeShorthandValue(const CSS::SerializationContext&, const StyleProperties&, CSSPropertyID);
+RefPtr<StringImpl> serializeShorthandValue(const CSS::SerializationContext&, const Style::Extractor&, CSSPropertyID);
+RefPtr<StringImpl> serializeShorthandValue(const CSS::SerializationContext&, const StyleProperties&, CSSPropertyID);
 
 } // namespace WebCore

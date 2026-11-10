@@ -48,7 +48,7 @@ public:
 
 private:
     AVAudioSessionCaptureDevice(AVAudioSessionPortDescription *deviceInput, AVAudioSessionPortDescription *defaultInput, CaptureDevice::DeviceType);
-    AVAudioSessionCaptureDevice(const String& persistentId, DeviceType, const String& label, const String& groupId, bool isEnabled, bool isDefault, bool isMock, RetainPtr<AVAudioSessionPortDescription>&&);
+    AVAudioSessionCaptureDevice(StringImpl* persistentId, DeviceType, StringImpl* label, StringImpl* groupId, bool isEnabled, bool isDefault, bool isMock, RetainPtr<AVAudioSessionPortDescription>&&);
 
     RetainPtr<AVAudioSessionPortDescription> m_description;
 };

@@ -34,28 +34,31 @@ namespace WebCore {
 
 class PublicSuffix {
 public:
-    static PublicSuffix fromRawString(String&& string) { return PublicSuffix(WTF::move(string)); }
+    static PublicSuffix fromRawString(RefPtr<StringImpl>&& string) { return PublicSuffix(WTF::move(string)); }
     PublicSuffix() = default;
-    bool isValid() const { return !m_string.isEmpty(); }
-    const String& string() const LIFETIME_BOUND { return m_string; }
+    bool isValid() const { return !isEmpty(m_string); }
+    const RefPtr<StringImpl>& string() const LIFETIME_BOUND { return m_string; }
     PublicSuffix isolatedCopy() const { return fromRawString(crossThreadCopy(m_string)); }
 
     PublicSuffix(WTF::HashTableDeletedValueType)
         : m_string(WTF::HashTableDeletedValue) { }
-    friend bool operator==(const PublicSuffix&, const PublicSuffix&) = default;
-    bool operator==(ASCIILiteral other) const { return m_string == other; }
+    friend bool operator==(const PublicSuffix& a, const PublicSuffix& b)
+    {
+        return contentEquals(a.m_string, b.m_string);
+    }
+    bool operator==(ASCIILiteral other) const { return equal(m_string, other); }
     bool isHashTableDeletedValue() const { return m_string.isHashTableDeletedValue(); }
-    unsigned hash() const { return m_string.hash(); }
+    unsigned hash() const { return WTF::hash(m_string); }
     struct PublicSuffixHash {
-        static unsigned hash(const PublicSuffix& publicSuffix) { return ASCIICaseInsensitiveHash::hash(publicSuffix.m_string.impl()); }
+        static unsigned hash(const PublicSuffix& publicSuffix) { return ASCIICaseInsensitiveHash::hash(publicSuffix.m_string.get()); }
         static bool equal(const PublicSuffix& a, const PublicSuffix& b) { return equalIgnoringASCIICase(a.string(), b.string()); }
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
 private:
-    explicit PublicSuffix(String&& string) : m_string(WTF::move(string)) { }
+    explicit PublicSuffix(RefPtr<StringImpl>&& string) : m_string(WTF::move(string)) { }
 
-    String m_string;
+    RefPtr<StringImpl> m_string;
 };
 
 } // namespace WebCore

@@ -76,7 +76,7 @@ static void registerBlobResourceHandleConstructor()
 {
     static bool didRegister = false;
     if (!didRegister) {
-        AtomString blob = "blob"_s;
+        RefPtr<AtomStringImpl> blob = "blob"_atom;
         ResourceHandle::registerBuiltinConstructor(blob, createBlobResourceHandle);
         ResourceHandle::registerBuiltinSynchronousLoader(blob, loadBlobResourceSynchronously);
         didRegister = true;
@@ -124,7 +124,7 @@ void BlobRegistryImpl::appendStorageItems(BlobData* blobData, const BlobDataItem
     ASSERT(!length);
 }
 
-void BlobRegistryImpl::registerInternalFileBlobURL(const URL& url, Ref<BlobDataFileReference>&& file, const String& contentType)
+void BlobRegistryImpl::registerInternalFileBlobURL(const URL& url, Ref<BlobDataFileReference>&& file, StringImpl* contentType)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
@@ -134,7 +134,7 @@ void BlobRegistryImpl::registerInternalFileBlobURL(const URL& url, Ref<BlobDataF
     addBlobData(url.string(), WTF::move(blobData));
 }
 
-static FileSystem::MappedFileData storeInMappedFileData(const String& path, std::span<const uint8_t> data)
+static FileSystem::MappedFileData storeInMappedFileData(StringImpl* path, std::span<const uint8_t> data)
 {
     auto mappedFileData = FileSystem::createMappedFileData(path, data.size());
     if (!mappedFileData)
@@ -158,13 +158,13 @@ Ref<DataSegment> BlobRegistryImpl::createDataSegment(Vector<uint8_t>&& movedData
     ASSERT(isMainThread());
 
     auto data = DataSegment::create(WTF::move(movedData));
-    if (m_fileDirectory.isEmpty())
+    if (isEmpty(m_fileDirectory))
         return data;
 
     static uint64_t blobMappingFileCounter;
 
     auto filePath = FileSystem::pathByAppendingComponent(m_fileDirectory, makeString("mapping-file-"_s, ++blobMappingFileCounter, ".blob"_s));
-    registryQueueSingleton().dispatch([blobData = Ref { blobData }, data, filePath = WTF::move(filePath).isolatedCopy()]() mutable {
+    registryQueueSingleton().dispatch([blobData = Ref { blobData }, data, filePath = isolatedCopy(WTF::move(filePath))]() mutable {
         auto mappedFileData = storeInMappedFileData(filePath, data->span());
         if (!mappedFileData)
             return;
@@ -176,7 +176,7 @@ Ref<DataSegment> BlobRegistryImpl::createDataSegment(Vector<uint8_t>&& movedData
     return data;
 }
 
-void BlobRegistryImpl::registerInternalBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
+void BlobRegistryImpl::registerInternalBlobURL(const URL& url, Vector<BlobPart>&& blobParts, StringImpl* contentType)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
@@ -211,15 +211,15 @@ void BlobRegistryImpl::registerInternalBlobURL(const URL& url, Vector<BlobPart>&
 
 void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL, const PolicyContainer& policyContainer, const std::optional<SecurityOriginData>& topOrigin)
 {
-    registerBlobURLOptionallyFileBacked(url, srcURL, nullptr, { }, policyContainer, topOrigin);
+    registerBlobURLOptionallyFileBacked(url, srcURL, nullptr, nullptr, policyContainer, topOrigin);
 }
 
-void BlobRegistryImpl::registerInternalBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& file, const String& contentType, const PolicyContainer& policyContainer)
+void BlobRegistryImpl::registerInternalBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& file, StringImpl* contentType, const PolicyContainer& policyContainer)
 {
     registerBlobURLOptionallyFileBacked(url, srcURL, WTF::move(file), contentType, policyContainer);
 }
 
-void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& file, const String& contentType, const PolicyContainer& policyContainer, const std::optional<SecurityOriginData>& topOrigin)
+void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& file, StringImpl* contentType, const PolicyContainer& policyContainer, const std::optional<SecurityOriginData>& topOrigin)
 {
     ASSERT(isMainThread());
     ASSERT(BlobURL::isInternalURL(url) || topOrigin);
@@ -236,7 +236,7 @@ void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const
         return;
     }
 
-    if (!file || file->path().isEmpty())
+    if (!file || isEmpty(file->path()))
         return;
 
     auto backingFile = BlobData::create(contentType);
@@ -246,7 +246,7 @@ void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const
     addBlobData(url.string(), WTF::move(backingFile), topOrigin);
 }
 
-void BlobRegistryImpl::registerInternalBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end, const String& contentType)
+void BlobRegistryImpl::registerInternalBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end, StringImpl* contentType)
 {
     ASSERT(isMainThread());
     RefPtr originalData = blobDataFromURL(srcURL);
@@ -314,7 +314,7 @@ BlobData* BlobRegistryImpl::blobDataFromURL(const URL& url, const std::optional<
     return m_blobs.get(urlKey);
 }
 
-String BlobRegistryImpl::blobType(const URL& url)
+RefPtr<StringImpl> BlobRegistryImpl::blobType(const URL& url)
 {
     ASSERT(isMainThread());
     if (RefPtr data = blobDataFromURL(url))
@@ -342,10 +342,10 @@ static WorkQueue& blobUtilityQueueSingleton()
     return queue.get();
 }
 
-bool BlobRegistryImpl::populateBlobsForFileWriting(const Vector<String>& blobURLs, Vector<BlobForFileWriting>& blobsForWriting)
+bool BlobRegistryImpl::populateBlobsForFileWriting(const Vector<RefPtr<StringImpl>>& blobURLs, Vector<BlobForFileWriting>& blobsForWriting)
 {
     for (auto& url : blobURLs) {
-        blobsForWriting.append({ .blobURL = url.isolatedCopy(), .filePathsOrDataBuffers = { } });
+        blobsForWriting.append({ .blobURL = isolatedCopy(url), .filePathsOrDataBuffers = { } });
 
         RefPtr blobData = blobDataFromURL({ { }, url });
         if (!blobData)
@@ -357,7 +357,7 @@ bool BlobRegistryImpl::populateBlobsForFileWriting(const Vector<String>& blobURL
                     blobsForWriting.last().filePathsOrDataBuffers.append(data);
                 },
                 [&](BlobDataFileReference& file) {
-                    blobsForWriting.last().filePathsOrDataBuffers.append(file.path().isolatedCopy());
+                    blobsForWriting.last().filePathsOrDataBuffers.append(isolatedCopy(file.path()));
                 }
             );
         }
@@ -365,18 +365,18 @@ bool BlobRegistryImpl::populateBlobsForFileWriting(const Vector<String>& blobURL
     return true;
 }
 
-static bool writeFilePathsOrDataBuffersToFile(const Vector<Variant<String, Ref<DataSegment>>>& filePathsOrDataBuffers, FileSystem::FileHandle& file, const String& path)
+static bool writeFilePathsOrDataBuffersToFile(const Vector<Variant<RefPtr<StringImpl>, Ref<DataSegment>>>& filePathsOrDataBuffers, FileSystem::FileHandle& file, StringImpl* path)
 {
-    if (path.isEmpty() || !file) {
+    if (isEmpty(path) || !file) {
         LOG_ERROR("Failed to open temporary file for writing a Blob");
         return false;
     }
 
     for (auto& part : filePathsOrDataBuffers) {
         bool success = WTF::switchOn(part,
-            [&](const String& filePath) {
+            [&](StringImpl* filePath) {
                 if (!file.appendFileContents(filePath)) {
-                    LOG_ERROR("Failed copying File contents to a Blob temporary file (%s to %s)", filePath.utf8(), path.utf8());
+                    LOG_ERROR("Failed copying File contents to a Blob temporary file (%s to %s)", utf8(filePath), utf8(path));
                     return false;
                 }
                 return true;
@@ -396,7 +396,7 @@ static bool writeFilePathsOrDataBuffersToFile(const Vector<Variant<String, Ref<D
     return true;
 }
 
-void BlobRegistryImpl::writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
+void BlobRegistryImpl::writeBlobsToTemporaryFilesForIndexedDB(const Vector<RefPtr<StringImpl>>& blobURLs, CompletionHandler<void(Vector<RefPtr<StringImpl>>&& filePaths)>&& completionHandler)
 {
     Vector<BlobForFileWriting> blobsForWriting;
     if (!populateBlobsForFileWriting(blobURLs, blobsForWriting)) {
@@ -405,14 +405,14 @@ void BlobRegistryImpl::writeBlobsToTemporaryFilesForIndexedDB(const Vector<Strin
     }
 
     blobUtilityQueueSingleton().dispatch([blobsForWriting = WTF::move(blobsForWriting), completionHandler = WTF::move(completionHandler)]() mutable {
-        Vector<String> filePaths;
+        Vector<RefPtr<StringImpl>> filePaths;
         for (auto& blob : blobsForWriting) {
             auto [tempFilePath, file] = FileSystem::openTemporaryFile("Blob"_s);
             if (!writeFilePathsOrDataBuffersToFile(blob.filePathsOrDataBuffers, file, tempFilePath)) {
                 filePaths.clear();
                 break;
             }
-            filePaths.append(WTF::move(tempFilePath).isolatedCopy());
+            filePaths.append(isolatedCopy(WTF::move(tempFilePath)));
         }
 
         callOnMainThread([completionHandler = WTF::move(completionHandler), filePaths = WTF::move(filePaths)] () mutable {
@@ -440,7 +440,7 @@ Vector<Ref<BlobDataFileReference>> BlobRegistryImpl::filesInBlob(const URL& url,
     return result;
 }
 
-void BlobRegistryImpl::addBlobData(const String& url, Ref<BlobData>&& blobData, const std::optional<WebCore::SecurityOriginData>& topOrigin)
+void BlobRegistryImpl::addBlobData(StringImpl* url, Ref<BlobData>&& blobData, const std::optional<WebCore::SecurityOriginData>& topOrigin)
 {
     if (!m_blobs.isValidKey(url))
         return;

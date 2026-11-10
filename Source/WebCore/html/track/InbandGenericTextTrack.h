@@ -71,7 +71,7 @@ private:
 
     WebVTTParser& parser();
     void parseWebVTTCueData(ISOWebVTTCue&&) final;
-    void parseWebVTTFileHeader(String&&) final;
+    void parseWebVTTFileHeader(RefPtr<StringImpl>&&) final;
 
     void newCuesParsed() final;
     void newRegionsParsed() final;

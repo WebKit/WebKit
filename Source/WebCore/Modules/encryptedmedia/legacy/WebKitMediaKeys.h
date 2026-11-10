@@ -45,31 +45,31 @@ class WebKitMediaKeys final : public RefCounted<WebKitMediaKeys>, private Legacy
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebKitMediaKeys);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebKitMediaKeys);
 public:
-    static ExceptionOr<Ref<WebKitMediaKeys>> create(const String& keySystem);
+    static ExceptionOr<Ref<WebKitMediaKeys>> create(StringImpl* keySystem);
     virtual ~WebKitMediaKeys();
 
     void decrementCheckedPtrCount() const { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
     void incrementCheckedPtrCount() const { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
 
-    ExceptionOr<Ref<WebKitMediaKeySession>> createSession(Document&, const String& mimeType, Ref<Uint8Array>&& initData);
-    static bool isTypeSupported(const Document&, const String& keySystem, const String& mimeType);
-    const String& keySystem() const LIFETIME_BOUND { return m_keySystem; }
+    ExceptionOr<Ref<WebKitMediaKeySession>> createSession(Document&, StringImpl* mimeType, Ref<Uint8Array>&& initData);
+    static bool isTypeSupported(const Document&, StringImpl* keySystem, StringImpl* mimeType);
+    const RefPtr<StringImpl>& keySystem() const LIFETIME_BOUND { return m_keySystem; }
 
     LegacyCDM& cdm() { return m_cdm; }
 
     void setMediaElement(HTMLMediaElement*);
 
     void keyAdded();
-    RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
+    RefPtr<ArrayBuffer> cachedKeyForKeyId(StringImpl* keyId) const;
 
 private:
     RefPtr<MediaPlayer> cdmMediaPlayer(const LegacyCDM*) const final;
 
-    WebKitMediaKeys(const String& keySystem, Ref<LegacyCDM>&&);
+    WebKitMediaKeys(StringImpl* keySystem, Ref<LegacyCDM>&&);
 
     Vector<Ref<WebKitMediaKeySession>> m_sessions;
     WeakPtr<HTMLMediaElement> m_mediaElement;
-    String m_keySystem;
+    RefPtr<StringImpl> m_keySystem;
     const Ref<LegacyCDM> m_cdm;
 };
 

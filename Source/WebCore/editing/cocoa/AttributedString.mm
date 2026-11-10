@@ -65,7 +65,7 @@ using IdentifierToTableBlockMap = HashMap<AttributedStringTextTableBlockID, Reta
 using IdentifierToListMap = HashMap<AttributedStringTextListID, RetainPtr<NSTextList>>;
 
 using NSFontToInstalledFontCache = HashMap<RetainPtr<CTFontRef>, std::unique_ptr<InstalledFont>, WTF::RetainPtrObjectHash<CTFontRef>, WTF::RetainPtrObjectHashTraits<CTFontRef>>;
-using InstalledFontToCTFontCache = HashMap<String, RetainPtr<CTFontRef>>;
+using InstalledFontToCTFontCache = HashMap<RefPtr<StringImpl>, RetainPtr<CTFontRef>>;
 
 static unsigned s_encodeFontCacheMisses;
 static unsigned s_decodeFontCacheMisses;
@@ -96,14 +96,14 @@ AttributedString::AttributedString(const AttributedString&) = default;
 
 AttributedString& AttributedString::operator=(const AttributedString&) = default;
 
-AttributedString::AttributedString(String&& string, Vector<std::pair<Range, HashMap<String, AttributeValue>>>&& attributes, std::optional<HashMap<String, AttributeValue>>&& documentAttributes)
+AttributedString::AttributedString(RefPtr<StringImpl>&& string, Vector<std::pair<Range, HashMap<RefPtr<StringImpl>, AttributeValue>>>&& attributes, std::optional<HashMap<RefPtr<StringImpl>, AttributeValue>>&& documentAttributes)
     : string(WTF::move(string))
     , attributes(WTF::move(attributes))
     , documentAttributes(WTF::move(documentAttributes)) { }
 
-bool AttributedString::rangesAreSafe(const String& string, const Vector<std::pair<Range, HashMap<String, AttributeValue>>>& vector)
+bool AttributedString::rangesAreSafe(StringImpl* string, const Vector<std::pair<Range, HashMap<RefPtr<StringImpl>, AttributeValue>>>& vector)
 {
-    auto stringLength = string.length();
+    auto stringLength = length(string);
     for (auto& pair : vector) {
         auto& range = pair.first;
         if (range.location > stringLength
@@ -219,7 +219,7 @@ inline static RetainPtr<NSParagraphStyle> reconstructStyle(const ParagraphStyle&
 {
     for (const auto& item : style.textLists) {
         lists.ensure(item.thisID, [&] {
-            RetainPtr list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:item.markerFormat.createNSString().get() options:0]);
+            RetainPtr list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:createNSString(item.markerFormat).get() options:0]);
             [list setStartingItemNumber:item.startingItemNumber];
             return list;
         });
@@ -291,13 +291,13 @@ inline static RetainPtr<NSParagraphStyle> reconstructStyle(const ParagraphStyle&
 static MultiRepresentationHEICAttachmentData toMultiRepresentationHEICAttachmentData(NSAdaptiveImageGlyph *attachment)
 {
     MultiRepresentationHEICAttachmentData attachmentData;
-    attachmentData.identifier = attachment.contentIdentifier;
-    attachmentData.description = attachment.contentDescription;
+    attachmentData.identifier = StringImpl::create(attachment.contentIdentifier);
+    attachmentData.description = StringImpl::create(attachment.contentDescription);
 
 #if HAVE(NS_EMOJI_IMAGE_STRIKE_PROVENANCE)
     if (RetainPtr<NSDictionary<NSString *, NSString *>> provenance = attachment.strikes.firstObject.provenance) {
-        attachmentData.credit = [provenance objectForKey:(__bridge NSString *)kCGImagePropertyIPTCCredit];
-        attachmentData.digitalSourceType = [provenance objectForKey:(__bridge NSString *)kCGImagePropertyIPTCExtDigitalSourceType];
+        attachmentData.credit = StringImpl::create([provenance objectForKey:(__bridge NSString *)kCGImagePropertyIPTCCredit]);
+        attachmentData.digitalSourceType = StringImpl::create([provenance objectForKey:(__bridge NSString *)kCGImagePropertyIPTCExtDigitalSourceType]);
     }
 #endif
 
@@ -322,16 +322,16 @@ static RetainPtr<NSAdaptiveImageGlyph> toWebMultiRepresentationHEICAttachment(co
             return attachment;
     }
 
-    RetainPtr identifier = attachmentData.identifier.createNSString();
-    RetainPtr description = attachmentData.description.createNSString();
+    RetainPtr identifier = createNSString(attachmentData.identifier);
+    RetainPtr description = createNSString(attachmentData.description);
     if (!description.get().length)
         description = @"Apple Emoji";
 
 #if HAVE(NS_EMOJI_IMAGE_STRIKE_PROVENANCE)
     RetainPtr<NSMutableDictionary<NSString *, NSString *>> provenanceInfo = [NSMutableDictionary dictionaryWithCapacity:2];
 
-    RetainPtr credit = attachmentData.credit.createNSString();
-    RetainPtr digitalSourceType = attachmentData.digitalSourceType.createNSString();
+    RetainPtr credit = createNSString(attachmentData.credit);
+    RetainPtr digitalSourceType = createNSString(attachmentData.digitalSourceType);
     if (identifier.get().length && digitalSourceType.get().length) {
         [provenanceInfo setObject:credit.get() forKey:bridge_cast(kCGImagePropertyIPTCCredit)];
         [provenanceInfo setObject:digitalSourceType.get() forKey:bridge_cast(kCGImagePropertyIPTCExtDigitalSourceType)];
@@ -363,16 +363,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif
 
-static String stringifyCFNumber(CFNumberRef number)
+static RefPtr<StringImpl> stringifyCFNumber(CFNumberRef number)
 {
     if (!number)
         return { };
     double value = 0;
     CFNumberGetValue(number, kCFNumberDoubleType, &value);
-    return String::number(value);
+    return makeString(value);
 }
 
-static String stringifyCFBoolean(CFBooleanRef boolean)
+static RefPtr<StringImpl> stringifyCFBoolean(CFBooleanRef boolean)
 {
     if (!boolean)
         return { };
@@ -381,13 +381,13 @@ static String stringifyCFBoolean(CFBooleanRef boolean)
 
 // Keep in sync with FontPlatformSerializedAttributes; any new field needs to be folded in
 // or bailed on, or two distinct fonts will alias in the cache.
-static String cacheKeyForInstalledFont(const InstalledFont& font)
+static RefPtr<StringImpl> cacheKeyForInstalledFont(const InstalledFont& font)
 {
     return WTF::switchOn(font.font,
-        [&] (const InstalledFont::SystemUIFont& systemFont) -> String {
+        [&] (const InstalledFont::SystemUIFont& systemFont) -> RefPtr<StringImpl> {
             return makeString("S|"_s, static_cast<unsigned>(systemFont.systemUIFontType), '|', systemFont.language, '|', font.metadata.pointSize);
         },
-        [&] (const InstalledFont::PostScriptFont& postScriptFont) -> String {
+        [&] (const InstalledFont::PostScriptFont& postScriptFont) -> RefPtr<StringImpl> {
             if (postScriptFont.fontSerializedAttributes) {
                 auto& attributes = *postScriptFont.fontSerializedAttributes;
                 if (attributes.matrix || attributes.paletteColors || attributes.featureSettings)
@@ -418,7 +418,7 @@ static String cacheKeyForInstalledFont(const InstalledFont& font)
                         [&] (const RetainPtr<CFNumberRef>& number) {
                             builder.append(stringifyCFNumber(number.get()));
                         },
-                        [&] (const String& string) {
+                        [&] (StringImpl* string) {
                             builder.append(string);
                         });
                 }
@@ -446,17 +446,17 @@ static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, I
 {
     return WTF::switchOn(value.value, [] (double value) -> RetainPtr<id> {
         return adoptNS([[NSNumber alloc] initWithDouble:value]);
-    }, [] (const String& value) -> RetainPtr<id> {
-        return value.createNSString();
+    }, [] (StringImpl* value) -> RetainPtr<id> {
+        return createNSString(value);
     }, [&] (const ParagraphStyle& value) -> RetainPtr<id> {
         return reconstructStyle(value, tables, tableBlocks, lists);
     }, [] (const RetainPtr<NSPresentationIntent>& value) -> RetainPtr<id> {
         return value;
     }, [] (const URL& value) -> RetainPtr<id> {
         return value.createNSURL();
-    }, [] (const Vector<String>& value) -> RetainPtr<id> {
-        return createNSArray(value, [] (const String& string) {
-            return string.createNSString();
+    }, [] (const Vector<RefPtr<StringImpl>>& value) -> RetainPtr<id> {
+        return createNSArray(value, [] (StringImpl* string) {
+            return createNSString(string);
         });
     }, [] (const Vector<double>& value) -> RetainPtr<id> {
         return createNSArray(value, [] (double number) {
@@ -474,19 +474,19 @@ static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, I
         // never decodes them, and show the missing-image placeholder instead. Non-image
         // file wrappers and web-safe images are left untouched.
         RetainPtr imageType = data ? imageTypeForAttachmentData(data.get()) : nullptr;
-        bool isUnsupportedImage = imageType && !isSupportedImageType(imageType.get());
+        bool isUnsupportedImage = imageType && !isSupportedImageType(StringImpl::create(imageType.get()).get());
         if (isUnsupportedImage)
             data = nil;
 
         RetainPtr fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
-        if (!value.preferredFilename.isNull())
-            [fileWrapper setPreferredFilename:protect(filenameByFixingIllegalCharacters(value.preferredFilename.createNSString().get())).get()];
+        if (value.preferredFilename)
+            [fileWrapper setPreferredFilename:protect(filenameByFixingIllegalCharacters(createNSString(value.preferredFilename).get())).get()];
 
         auto textAttachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
         if (isUnsupportedImage)
             ((NSTextAttachment *)textAttachment.get()).image = protect(webCoreTextAttachmentMissingPlatformImage()).get();
-        if (!value.accessibilityLabel.isNull())
-            ((NSTextAttachment*)textAttachment.get()).accessibilityLabel = value.accessibilityLabel.createNSString().get();
+        if (value.accessibilityLabel)
+            ((NSTextAttachment*)textAttachment.get()).accessibilityLabel = createNSString(value.accessibilityLabel).get();
 
         return textAttachment;
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
@@ -499,13 +499,13 @@ static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, I
         return value;
     }, [&] (const InstalledFont& font) -> RetainPtr<id> {
         auto key = cacheKeyForInstalledFont(font);
-        if (!key.isNull()) {
+        if (key) {
             if (RetainPtr cached = fontCache.get(key))
                 return (__bridge PlatformFont *)cached.get();
         }
         ++s_decodeFontCacheMisses;
         RetainPtr ctFont = font.toCTFont();
-        if (ctFont && !key.isNull())
+        if (ctFont && key)
             fontCache.set(key, ctFont);
         return (__bridge PlatformFont *)ctFont.get();
     }, [] (const AttributedString::ColorFromPlatformColor& value) -> RetainPtr<id> {
@@ -515,28 +515,28 @@ static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, I
     });
 }
 
-static RetainPtr<NSDictionary> toNSDictionary(const HashMap<String, AttributedString::AttributeValue>& map, IdentifierToTableMap& tables, IdentifierToTableBlockMap& tableBlocks, IdentifierToListMap& lists, InstalledFontToCTFontCache& fontCache)
+static RetainPtr<NSDictionary> toNSDictionary(const HashMap<RefPtr<StringImpl>, AttributedString::AttributeValue>& map, IdentifierToTableMap& tables, IdentifierToTableBlockMap& tableBlocks, IdentifierToListMap& lists, InstalledFontToCTFontCache& fontCache)
 {
     auto result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:map.size()]);
     for (auto& pair : map) {
         if (auto nsObject = toNSObject(pair.value, tables, tableBlocks, lists, fontCache))
-            [result setObject:nsObject.get() forKey:pair.key.createNSString().get()];
+            [result setObject:nsObject.get() forKey:createNSString(pair.key).get()];
     }
     return result;
 }
 
 bool AttributedString::isNull() const
 {
-    return string.isNull();
+    return !string;
 }
 
 void AttributedString::truncate(uint64_t length)
 {
-    if (string.length() <= length)
+    if (WTF::length(string) <= length)
         return;
 
     auto truncatedLength = static_cast<unsigned>(length);
-    string = string.left(truncatedLength);
+    string = left(string, truncatedLength);
     attributes.removeAllMatching([truncatedLength](auto& attribute) {
         return attribute.first.location >= truncatedLength;
     });
@@ -560,14 +560,14 @@ RetainPtr<NSDictionary> AttributedString::documentAttributesAsNSDictionary() con
 
 RetainPtr<NSAttributedString> AttributedString::nsAttributedString() const
 {
-    if (string.isNull())
+    if (!string)
         return nullptr;
 
     IdentifierToTableMap tables;
     IdentifierToTableBlockMap tableBlocks;
     IdentifierToListMap lists;
     InstalledFontToCTFontCache fontCache;
-    RetainPtr result = adoptNS([[NSMutableAttributedString alloc] initWithString:string.createNSString().get()]);
+    RetainPtr result = adoptNS([[NSMutableAttributedString alloc] initWithString:createNSString(string).get()]);
     for (auto& pair : attributes) {
         auto& map = pair.second;
         auto& range = pair.first;
@@ -580,13 +580,13 @@ static std::optional<AttributedString::AttributeValue> extractArray(NSArray *arr
 {
     size_t arrayLength = array.count;
     if (!arrayLength)
-        return { { { Vector<String>() } } };
+        return { { { Vector<RefPtr<StringImpl>>() } } };
     if ([array[0] isKindOfClass:NSString.class]) {
-        Vector<String> result(ReserveCapacityTag { }, arrayLength);
+        Vector<RefPtr<StringImpl>> result(ReserveCapacityTag { }, arrayLength);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL id element in array) {
             if (RetainPtr string = dynamic_objc_cast<NSString>(element))
-                result.append(string.get());
+                result.append(StringImpl::create(string.get()));
             else
                 RELEASE_LOG_ERROR(Editing, "NSAttributedString extraction failed with array containing <%@>", NSStringFromClass([element class]));
         }
@@ -689,7 +689,7 @@ inline static ParagraphStyle extractParagraphStyle(NSParagraphStyle *style, Tabl
         if (listResult.isNewEntry) {
             newTextLists.append(ParagraphStyleTextList {
                 listID,
-                list.markerFormat,
+                StringImpl::create(list.markerFormat),
                 list.startingItemNumber
             });
         }
@@ -835,7 +835,7 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value, Ta
     if (RetainPtr number = dynamic_objc_cast<NSNumber>(value))
         return { { { [number doubleValue] } } };
     if (RetainPtr string = dynamic_objc_cast<NSString>(value))
-        return { { { String { string } } } };
+        return { { { StringImpl::create(string) } } };
     if (RetainPtr url = dynamic_objc_cast<NSURL>(value))
         return { { { URL { url } } } };
     if (RetainPtr array = dynamic_objc_cast<NSArray>(value))
@@ -861,7 +861,7 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value, Ta
             return { { TextAttachmentMissingImage() } };
         TextAttachmentFileWrapper textAttachment;
         if (auto accessibilityLabel = retainPtr([value accessibilityLabel]))
-            textAttachment.accessibilityLabel = accessibilityLabel.get();
+            textAttachment.accessibilityLabel = StringImpl::create(accessibilityLabel.get());
 #if !PLATFORM(IOS_FAMILY)
         textAttachment.ignoresOrientation = [value ignoresOrientation];
 #endif
@@ -871,7 +871,7 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value, Ta
                     textAttachment.data = data;
             }
             if (auto preferredFilename = retainPtr([fileWrapper preferredFilename]))
-                textAttachment.preferredFilename = preferredFilename.get();
+                textAttachment.preferredFilename = StringImpl::create(preferredFilename.get());
         }
         return { { textAttachment } };
     }
@@ -897,9 +897,9 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value, Ta
     return std::nullopt;
 }
 
-static HashMap<String, AttributedString::AttributeValue> extractDictionary(NSDictionary *dictionary, TableToIdentifierMap& tableIDs, TableBlockToIdentifierMap& tableBlockIDs, ListToIdentifierMap& listIDs, NSFontToInstalledFontCache& fontCache)
+static HashMap<RefPtr<StringImpl>, AttributedString::AttributeValue> extractDictionary(NSDictionary *dictionary, TableToIdentifierMap& tableIDs, TableBlockToIdentifierMap& tableBlockIDs, ListToIdentifierMap& listIDs, NSFontToInstalledFontCache& fontCache)
 {
-    HashMap<String, AttributedString::AttributeValue> result;
+    HashMap<RefPtr<StringImpl>, AttributedString::AttributeValue> result;
     [dictionary enumerateKeysAndObjectsUsingBlock:[&](id key, id value, BOOL *) {
         RetainPtr keyString = dynamic_objc_cast<NSString>(key);
         if (!keyString) {
@@ -911,7 +911,7 @@ static HashMap<String, AttributedString::AttributeValue> extractDictionary(NSDic
             ASSERT_NOT_REACHED();
             return;
         }
-        result.set(keyString.get(), WTF::move(*extractedValue));
+        result.set(StringImpl::create(keyString.get()), WTF::move(*extractedValue));
     }];
     return result;
 }
@@ -928,7 +928,7 @@ AttributedString AttributedString::fromNSAttributedStringAndDocumentAttributes(R
     __block ListToIdentifierMap listIDs;
     __block NSFontToInstalledFontCache fontCache;
     __block AttributedString result;
-    result.string = [string string];
+    result.string = StringImpl::create([string string]);
     [string enumerateAttributesInRange:NSMakeRange(0, [string length]) options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired usingBlock: ^(NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
         result.attributes.append({ Range { range.location, range.length }, extractDictionary(attributes, tableIDs, tableBlockIDs, listIDs, fontCache) });
     }];

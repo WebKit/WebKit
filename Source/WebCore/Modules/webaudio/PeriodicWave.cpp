@@ -68,21 +68,21 @@ ExceptionOr<Ref<PeriodicWave>> PeriodicWave::create(BaseAudioContext& context, P
     
     if (options.real && options.imag) {
         if (options.real->size() != options.imag->size())
-            return Exception { ExceptionCode::IndexSizeError, "real and imag have different lengths"_s };
+            return Exception { ExceptionCode::IndexSizeError, "real and imag have different lengths"_si };
         if (options.real->size() < 2)
-            return Exception { ExceptionCode::IndexSizeError, "real's length cannot be less than 2"_s };
+            return Exception { ExceptionCode::IndexSizeError, "real's length cannot be less than 2"_si };
         if (options.imag->size() < 2)
-            return Exception { ExceptionCode::IndexSizeError, "imag's length cannot be less than 2"_s };
+            return Exception { ExceptionCode::IndexSizeError, "imag's length cannot be less than 2"_si };
         real = WTF::move(*options.real);
         imag = WTF::move(*options.imag);
     } else if (options.real) {
         if (options.real->size() < 2)
-            return Exception { ExceptionCode::IndexSizeError, "real's length cannot be less than 2"_s };
+            return Exception { ExceptionCode::IndexSizeError, "real's length cannot be less than 2"_si };
         real = WTF::move(*options.real);
         imag.fill(0, real.size());
     } else if (options.imag) {
         if (options.imag->size() < 2)
-            return Exception { ExceptionCode::IndexSizeError, "imag's length cannot be less than 2"_s };
+            return Exception { ExceptionCode::IndexSizeError, "imag's length cannot be less than 2"_si };
         imag = WTF::move(*options.imag);
         real.fill(0, imag.size());
     } else {

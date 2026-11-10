@@ -281,10 +281,10 @@ static std::pair<AccessibilitySearchTextCriteria, AccessibilityTextOperation> ac
     }
 
     if (replacementStringParameter)
-        operation.replacementStrings = { String(replacementStringParameter.get()) };
+        operation.replacementStrings = { StringImpl::create(replacementStringParameter.get()) };
 
     if (searchStringsParameter)
-        criteria.searchStrings = makeVector<String>(searchStringsParameter.get());
+        criteria.searchStrings = makeVector<RefPtr<StringImpl>>(searchStringsParameter.get());
 
     return std::make_pair(criteria, operation);
 }
@@ -298,7 +298,7 @@ static AccessibilitySearchTextCriteria accessibilitySearchTextCriteriaForParamet
     RetainPtr direction = dynamic_objc_cast<NSString>([params objectForKey:NSAccessibilitySearchTextDirection]);
 
     if (searchStrings)
-        criteria.searchStrings = makeVector<String>(searchStrings.get());
+        criteria.searchStrings = makeVector<RefPtr<StringImpl>>(searchStrings.get());
 
     if (start) {
         if ([start isEqualToString:NSAccessibilitySearchTextStartFromBegin])
@@ -350,9 +350,9 @@ static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttr
     }
 
     if (individualReplacementStrings) {
-        operation.replacementStrings = makeVector<String>(individualReplacementStrings.get());
+        operation.replacementStrings = makeVector<RefPtr<StringImpl>>(individualReplacementStrings.get());
     } else if (replacementString)
-        operation.replacementStrings = { String(replacementString.get()) };
+        operation.replacementStrings = { StringImpl::create(replacementString.get()) };
 
     if (smartReplace)
         operation.smartReplace = [smartReplace boolValue] ? AccessibilityTextOperationSmartReplace::Yes : AccessibilityTextOperationSmartReplace::No;
@@ -625,10 +625,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (backingObject->supportsExpandedTextValue())
         [additional addObject:NSAccessibilityExpandedTextValueAttribute];
 
-    if (!backingObject->brailleLabel().isEmpty())
+    if (!isEmpty(backingObject->brailleLabel()))
         [additional addObject:NSAccessibilityBrailleLabelAttribute];
 
-    if (!backingObject->brailleRoleDescription().isEmpty())
+    if (!isEmpty(backingObject->brailleRoleDescription()))
         [additional addObject:NSAccessibilityBrailleRoleDescriptionAttribute];
 
     if (backingObject->detailedByObjects().size())
@@ -640,7 +640,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (backingObject->labelForObjects().size())
         [additional addObject:NSAccessibilityServesAsTitleForUIElementsAttribute];
 
-    if (!backingObject->keyShortcuts().isEmpty())
+    if (!isEmpty(backingObject->keyShortcuts()))
         [additional addObject:NSAccessibilityKeyShortcutsAttribute];
 
     if (backingObject->titleUIElement())
@@ -668,7 +668,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray *)accessibilityAttributeNames
 {
-    AXTRACE("WebAccessibilityObjectWrapper accessibilityAttributeNames"_s);
+    AXTRACE("WebAccessibilityObjectWrapper accessibilityAttributeNames"_si);
 
     RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
@@ -1233,9 +1233,9 @@ static NSArray *children(AXCoreObject& backingObject)
 
 static RetainPtr<NSString> roleString(AXCoreObject& backingObject)
 {
-    String roleString = backingObject.rolePlatformString();
-    if (!roleString.isEmpty())
-        return roleString.createNSString();
+    RefPtr<StringImpl> roleString = backingObject.rolePlatformString();
+    if (!isEmpty(roleString))
+        return createNSString(roleString);
     return NSAccessibilityUnknownRole;
 }
 
@@ -1244,17 +1244,17 @@ static RetainPtr<NSString> subroleString(AXCoreObject& backingObject)
     if (backingObject.isEmptyGroup())
         return NSAccessibilityEmptyGroupSubrole;
 
-    String subrole = backingObject.subrolePlatformString();
-    if (!subrole.isEmpty())
-        return subrole.createNSString();
+    RefPtr<StringImpl> subrole = backingObject.subrolePlatformString();
+    if (!isEmpty(subrole))
+        return createNSString(subrole);
     return nil;
 }
 
 static RetainPtr<NSString> roleDescription(AXCoreObject& backingObject)
 {
-    String roleDescription = backingObject.roleDescription();
-    if (!roleDescription.isEmpty())
-        return roleDescription.createNSString();
+    RefPtr<StringImpl> roleDescription = backingObject.roleDescription();
+    if (!isEmpty(roleDescription))
+        return createNSString(roleDescription);
 
     RetainPtr axRole = roleString(backingObject);
     RetainPtr subrole = subroleString(backingObject);
@@ -1398,7 +1398,7 @@ static id handleTitleAttribute(WebAccessibilityObjectWrapper* wrapper, AXCoreObj
             return [attachmentView accessibilityAttributeValue:NSAccessibilityTitleAttribute];
         ALLOW_DEPRECATED_DECLARATIONS_END
     }
-    return backingObject.title().createNSString().autorelease();
+    return createNSString(backingObject.title()).autorelease();
 }
 
 static id handleDescriptionAttribute(WebAccessibilityObjectWrapper* wrapper, AXCoreObject& backingObject)
@@ -1410,7 +1410,7 @@ static id handleDescriptionAttribute(WebAccessibilityObjectWrapper* wrapper, AXC
             return [attachmentView accessibilityAttributeValue:NSAccessibilityDescriptionAttribute];
         ALLOW_DEPRECATED_DECLARATIONS_END
     }
-    return backingObject.descriptionAttributeValue().createNSString().autorelease();
+    return createNSString(backingObject.descriptionAttributeValue()).autorelease();
 }
 
 static id handleInlineTextAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
@@ -1433,7 +1433,7 @@ static id handleValueAttribute(WebAccessibilityObjectWrapper* wrapper, AXCoreObj
         [] (bool& typedValue) -> id { return @(typedValue); },
         [] (unsigned& typedValue) -> id { return @(typedValue); },
         [] (float& typedValue) -> id { return @(typedValue); },
-        [] (String& typedValue) -> id { return typedValue.createNSString().autorelease(); },
+        [] (RefPtr<StringImpl>& typedValue) -> id { return createNSString(typedValue).autorelease(); },
         [&backingObject] (WallTime& typedValue) -> id {
             NSInteger offset = gmtToLocalTimeOffset(backingObject.dateTimeComponentsType());
             auto time = typedValue.secondsSinceEpoch().value();
@@ -1453,12 +1453,12 @@ static id handleChildrenAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& 
 
 static id handleDatetimeValueAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.datetimeAttributeValue().createNSString().autorelease();
+    return createNSString(backingObject.datetimeAttributeValue()).autorelease();
 }
 
 static id handleARIACurrentAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.currentValue().createNSString().autorelease();
+    return createNSString(backingObject.currentValue()).autorelease();
 }
 
 static id handleEnabledAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
@@ -1474,7 +1474,7 @@ static id handleTitleUIElementAttribute(WebAccessibilityObjectWrapper*, AXCoreOb
 
 static id handleValueDescriptionAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.valueDescription().createNSString().autorelease();
+    return createNSString(backingObject.valueDescription()).autorelease();
 }
 
 static id handleFocusedAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
@@ -1489,7 +1489,7 @@ static id handleRoleDescriptionAttribute(WebAccessibilityObjectWrapper*, AXCoreO
 
 static id handleLanguageAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.languageIncludingAncestors().createNSString().autorelease();
+    return createNSString(backingObject.languageIncludingAncestors()).autorelease();
 }
 
 static id handleURLAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
@@ -1515,7 +1515,7 @@ static id handleDisclosureLevelAttribute(WebAccessibilityObjectWrapper*, AXCoreO
 
 static id handlePlaceholderValueAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.placeholderValue().createNSString().autorelease();
+    return createNSString(backingObject.placeholderValue()).autorelease();
 }
 
 static id handleRequiredAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
@@ -1525,12 +1525,12 @@ static id handleRequiredAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& 
 
 static id handlePopupValueAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.popupValueString().createNSString().autorelease();
+    return createNSString(backingObject.popupValueString()).autorelease();
 }
 
 static id handleInvalidAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.invalidStatusIncludingInferred().createNSString().autorelease();
+    return createNSString(backingObject.invalidStatusIncludingInferred()).autorelease();
 }
 
 static id handleHasPopupAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
@@ -1619,7 +1619,7 @@ static id handleBlockQuoteLevelAttribute(WebAccessibilityObjectWrapper*, AXCoreO
 
 static id handleEmbeddedImageDescriptionAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.embeddedImageDescription().createNSString().autorelease();
+    return createNSString(backingObject.embeddedImageDescription()).autorelease();
 }
 
 static id handleImageDataSizeAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
@@ -1700,10 +1700,10 @@ static id handleNumberOfCharactersAttribute(WebAccessibilityObjectWrapper*, AXCo
 
 static id handleSelectedTextAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    String selectedText = backingObject.selectedText();
-    if (selectedText.isNull())
+    RefPtr<StringImpl> selectedText = backingObject.selectedText();
+    if (!selectedText)
         return nil;
-    return selectedText.createNSString().autorelease();
+    return createNSString(selectedText).autorelease();
 }
 
 static id handleSelectedTextRangeAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
@@ -1746,12 +1746,12 @@ static id handleDateTimeComponentsAttribute(WebAccessibilityObjectWrapper*, AXCo
 static id handleMenuItemMarkCharAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
     if (backingObject.isChecked())
-        return String(span(checkMarkCharacter)).createNSString().autorelease();
+        return createNSString(StringImpl::create(span(checkMarkCharacter))).autorelease();
 
     // AppKit marks the selected item of a pop-up button's menu with a checkmark. Do the same for the selected
     // option of a base-appearance select (exposed as a menu item), but only with the checkmark the page shows.
-    String checkmark = backingObject.selectedOptionCheckmark();
-    return checkmark.isEmpty() ? nil : checkmark.createNSString().autorelease();
+    RefPtr<StringImpl> checkmark = backingObject.selectedOptionCheckmark();
+    return isEmpty(checkmark) ? nil : createNSString(checkmark).autorelease();
 }
 
 static id handleMinValueAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
@@ -1796,14 +1796,14 @@ static id handleImageOverlayElementsAttribute(WebAccessibilityObjectWrapper*, AX
 static id handleAccessKeyAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
     auto accessKey = backingObject.accessKey();
-    if (accessKey.isNull())
+    if (!accessKey)
         return nil;
-    return accessKey.createNSString().autorelease();
+    return createNSString(accessKey).autorelease();
 }
 
 static id handleLinkRelationshipTypeAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.linkRelValue().createNSString().autorelease();
+    return createNSString(backingObject.linkRelValue()).autorelease();
 }
 
 static id handleTabsAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
@@ -1939,14 +1939,14 @@ static id handleARIARowIndexAttribute(WebAccessibilityObjectWrapper*, AXCoreObje
 
 static id handleColumnIndexDescriptionAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    String columnIndexText = backingObject.axColumnIndexText();
-    return !columnIndexText.isNull() ? columnIndexText.createNSString().autorelease() : nil;
+    RefPtr<StringImpl> columnIndexText = backingObject.axColumnIndexText();
+    return !!columnIndexText ? createNSString(columnIndexText).autorelease() : nil;
 }
 
 static id handleRowIndexDescriptionAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    String rowIndexText = backingObject.axRowIndexText();
-    return !rowIndexText.isNull() ? rowIndexText.createNSString().autorelease() : nil;
+    RefPtr<StringImpl> rowIndexText = backingObject.axRowIndexText();
+    return !!rowIndexText ? createNSString(rowIndexText).autorelease() : nil;
 }
 
 #pragma mark -
@@ -2123,12 +2123,12 @@ static id handleValueAutofillTypeAttribute(WebAccessibilityObjectWrapper*, AXCor
 
 static id handleARIALiveAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.liveRegionStatus().createNSString().autorelease();
+    return createNSString(backingObject.liveRegionStatus()).autorelease();
 }
 
 static id handleARIARelevantAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.liveRegionRelevant().createNSString().autorelease();
+    return createNSString(backingObject.liveRegionRelevant()).autorelease();
 }
 
 static id handleARIAAtomicAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
@@ -2187,12 +2187,12 @@ static id handleMathOverAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& 
 
 static id handleMathFencedOpenAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.mathFencedOpenString().createNSString().autorelease();
+    return createNSString(backingObject.mathFencedOpenString()).autorelease();
 }
 
 static id handleMathFencedCloseAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.mathFencedCloseString().createNSString().autorelease();
+    return createNSString(backingObject.mathFencedCloseString()).autorelease();
 }
 
 static id handleMathLineThicknessAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
@@ -2214,12 +2214,12 @@ static id handleMathPrescriptsAttribute(WebAccessibilityObjectWrapper* wrapper, 
 
 static id handleExpandedTextValueAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.expandedTextValue().createNSString().autorelease();
+    return createNSString(backingObject.expandedTextValue()).autorelease();
 }
 
 static id handleDOMIdentifierAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.identifierAttribute().createNSString().autorelease();
+    return createNSString(backingObject.identifierAttribute()).autorelease();
 }
 
 static id handleDOMClassListAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
@@ -2234,7 +2234,7 @@ static id handleAssociatedPluginParentAttribute(WebAccessibilityObjectWrapper* w
 
 static id handleKeyShortcutsAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.keyShortcutsPlatformString().createNSString().autorelease();
+    return createNSString(backingObject.keyShortcutsPlatformString()).autorelease();
 }
 
 static id handleIsInDescriptionListTermAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
@@ -2249,17 +2249,17 @@ static id handleDetailsElementsAttribute(WebAccessibilityObjectWrapper*, AXCoreO
 
 static id handleBrailleLabelAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.brailleLabel().createNSString().autorelease();
+    return createNSString(backingObject.brailleLabel()).autorelease();
 }
 
 static id handleBrailleRoleDescriptionAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.brailleRoleDescription().createNSString().autorelease();
+    return createNSString(backingObject.brailleRoleDescription()).autorelease();
 }
 
 static id handleErrorMessageElementsAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    if (backingObject.invalidStatusIncludingInferred() == "false"_s)
+    if (equal(backingObject.invalidStatusIncludingInferred(), "false"_s))
         return nil;
     return makeNSArray(backingObject.errorMessageObjects());
 }
@@ -2305,7 +2305,7 @@ static id handleAutoInteractableAttribute(WebAccessibilityObjectWrapper*, AXCore
     return @(backingObject.isRemoteFrame());
 }
 
-static MemoryCompactLookupOnlyRobinHoodHashMap<String, AttributeHandlerEntry> createAttributeHandlerMap()
+static MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, AttributeHandlerEntry> createAttributeHandlerMap()
 {
     // Precondition arrays for handlers that need multiple type checks (OR semantics).
     static constexpr AttributePrecondition webAreaPreconditions[] = { AttributePrecondition::IsWebArea };
@@ -2481,9 +2481,9 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, AttributeHandlerEntry> cr
         { NSAccessibilityAutoInteractableAttribute, { handleAutoInteractableAttribute, { } } },
     });
 
-    MemoryCompactLookupOnlyRobinHoodHashMap<String, AttributeHandlerEntry> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, AttributeHandlerEntry> map;
     for (auto& mapping : mappings.get())
-        map.add(String(mapping.name), mapping.entry);
+        map.add(StringImpl::create(mapping.name), mapping.entry);
     return map;
 }
 
@@ -2535,7 +2535,7 @@ static bool matchesAnyPrecondition(AXCoreObject& backingObject, std::span<const 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString *)attributeName
 {
-    AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityAttributeValue:"_s, String(attributeName)));
+    AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityAttributeValue:"_s, StringImpl::create(attributeName)));
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (AXObjectCache::accessibilityMode() != AccessibilityMode::AXThread) {
@@ -2555,7 +2555,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 
     static NeverDestroyed handlerMap = createAttributeHandlerMap();
 
-    auto iterator = handlerMap.get().find(String(attributeName));
+    auto iterator = handlerMap.get().find(StringImpl::create(attributeName).get());
     if (iterator != handlerMap.get().end()) {
         const auto& entry = iterator->value;
         if (matchesAnyPrecondition(*backingObject, entry.matchingPreconditions))
@@ -2569,12 +2569,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 }
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
-static String debugDescriptionFrom(AXCoreObject* object)
+static RefPtr<StringImpl> debugDescriptionFrom(AXCoreObject* object)
 {
-    String objectDescription = "null backingObject"_s;
+    RefPtr<StringImpl> objectDescription = "null backingObject"_si;
     if (object)
         objectDescription = object->debugDescription();
-    return makeString("PID: "_s, getpid(), ", "_s, objectDescription).createNSString().autorelease();
+    RetainPtr description = createNSString(makeString("PID: "_s, getpid(), ", "_s, objectDescription));
+    return StringImpl::create(description.get());
 }
 
 id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString *attributeName)
@@ -2582,10 +2583,10 @@ id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString 
     ASSERT_WITH_MESSAGE(AXObjectCache::clientIsInTestMode(), "Should be used for testing only, not for AT clients.");
 
     if ([attributeName isEqualToString:NSAccessibilityARIARoleAttribute])
-        return backingObject->computedRoleString().createNSString().autorelease();
+        return createNSString(backingObject->computedRoleString()).autorelease();
 
     if ([attributeName isEqualToString:NSAccessibilityStringValueAttribute])
-        return backingObject->stringValue().createNSString().autorelease();
+        return createNSString(backingObject->stringValue()).autorelease();
 
     if ([attributeName isEqualToString:NSAccessibilityDateTimeComponentsTypeAttribute])
         return [NSNumber numberWithUnsignedShort:(uint8_t)backingObject->dateTimeComponentsType()];
@@ -2627,7 +2628,7 @@ id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString 
         return [NSNumber numberWithBool:backingObject->pressedIsPresent()];
 
     if ([attributeName isEqualToString:NSAccessibilityAutocompleteValueAttribute])
-        return backingObject->autoCompleteValue().createNSString().autorelease();
+        return createNSString(backingObject->autoCompleteValue()).autorelease();
 
     if ([attributeName isEqualToString:NSAccessibilityClickPointAttribute])
         return [NSValue valueWithPoint:backingObject->clickPoint()];
@@ -2652,13 +2653,13 @@ id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString 
         return [NSNumber numberWithBool:backingObject->isRemoteFrame()];
 
     if ([attributeName isEqualToString:NSAccessibilityInfoStringForTestingAttribute])
-        return backingObject->infoStringForTesting().createNSString().autorelease();
+        return createNSString(backingObject->infoStringForTesting()).autorelease();
 
     if ([attributeName isEqualToString:NSAccessibilityPageRelativePositionAttribute])
         return [NSValue valueWithPoint:(CGPoint)backingObject->relativeFrame().location()];
 
     if ([attributeName isEqualToString:@"_AXDebugDescription"])
-        return debugDescriptionFrom(backingObject.get()).createNSString().autorelease();
+        return createNSString(debugDescriptionFrom(backingObject.get())).autorelease();
 
     if ([attributeName isEqualToString:@"_AXFrameGeometryInitialized"]) {
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
@@ -2669,7 +2670,7 @@ id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString 
     }
 
     if ([attributeName isEqualToString:@"_AXRawRoleForTesting"])
-        return roleToString(backingObject->role()).createNSString().autorelease();
+        return createNSString(roleToString(backingObject->role())).autorelease();
 
     if ([attributeName isEqualToString:@"_AXIsIgnoredForTesting"])
         return @(backingObject->isIgnored());
@@ -2725,16 +2726,16 @@ id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString 
     }
 
     if ([attribute isEqualToString:NSAccessibilityTextMarkerDescriptionAttribute])
-        return AXTextMarker { markerRef }.description().createNSString().autorelease();
+        return createNSString(AXTextMarker { markerRef }.description()).autorelease();
 
     if ([attribute isEqualToString:NSAccessibilityTextMarkerDebugDescriptionAttribute])
-        return AXTextMarker { markerRef }.debugDescription().createNSString().autorelease();
+        return createNSString(AXTextMarker { markerRef }.debugDescription()).autorelease();
 
     if ([attribute isEqualToString:NSAccessibilityTextMarkerRangeDescriptionAttribute])
-        return AXTextMarkerRange { markerRangeRef }.description().createNSString().autorelease();
+        return createNSString(AXTextMarkerRange { markerRangeRef }.description()).autorelease();
 
     if ([attribute isEqualToString:NSAccessibilityTextMarkerRangeDebugDescriptionAttribute])
-        return AXTextMarkerRange { markerRangeRef }.debugDescription().createNSString().autorelease();
+        return createNSString(AXTextMarkerRange { markerRangeRef }.debugDescription()).autorelease();
 
 #if ENABLE(TREE_DEBUGGING)
     if ([attribute isEqualToString:AXTextMarkerNodeDebugDescriptionAttribute]) {
@@ -2856,7 +2857,7 @@ id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString 
             RefPtr page = backingObject ? backingObject->page() : nullptr;
             RefPtr axRemoteFrame = dynamicDowncast<AXRemoteFrame>(axObject);
             if (page && axRemoteFrame) {
-                auto clientCallback = [callback = makeBlockPtr(callback)] (String result) {
+                auto clientCallback = [callback = makeBlockPtr(callback)] (RefPtr<StringImpl> result) {
                     callback(nsStringNilIfEmpty(result).get());
                 };
 
@@ -3052,7 +3053,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 {
     if (AXObjectCache::accessibilityDOMIdentifiersEnabled()) {
         if (RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore)
-            return backingObject->identifierAttribute().createNSString().autorelease();
+            return createNSString(backingObject->identifierAttribute()).autorelease();
     }
 
     return nil;
@@ -3122,7 +3123,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)accessibilityPerformShowMenuAction
 {
-    AXTRACE("WebAccessibilityObjectWrapper accessibilityPerformShowMenuAction"_s);
+    AXTRACE("WebAccessibilityObjectWrapper accessibilityPerformShowMenuAction"_si);
 
     RefPtr<AXCoreObject> backingObject = self.axBackingObject;
     if (!backingObject) {
@@ -3226,13 +3227,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (BOOL)accessibilityReplaceRange:(NSRange)range withText:(NSString *)string
 {
     RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
-    return backingObject ? backingObject->replaceTextInRange(String(string), range) : NO;
+    return backingObject ? backingObject->replaceTextInRange(StringImpl::create(string).get(), range) : NO;
 }
 
 - (BOOL)accessibilityInsertText:(NSString *)text
 {
     RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
-    return backingObject ? backingObject->insertText(String(text)) : NO;
+    return backingObject ? backingObject->insertText(StringImpl::create(text).get()) : NO;
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -3260,7 +3261,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)_accessibilitySetValue:(id)value forAttribute:(NSString *)attributeName
 {
-    AXTRACE(makeString("WebAccessibilityObjectWrapper _accessibilitySetValue: forAttribute:"_s, String(attributeName)));
+    AXTRACE(makeString("WebAccessibilityObjectWrapper _accessibilitySetValue: forAttribute:"_s, StringImpl::create(attributeName)));
 
     RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject) {
@@ -3299,7 +3300,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if (number && backingObject->canSetNumericValue())
             backingObject->setValueIgnoringResult([number floatValue]);
         else if (string)
-            backingObject->setValueIgnoringResult(string);
+            backingObject->setValueIgnoringResult(StringImpl::create(string).get());
     } else if ([attributeName isEqualToString: NSAccessibilitySelectedAttribute]) {
         if (!number)
             return;
@@ -3313,7 +3314,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         backingObject->setSelectedChildren(selectedChildren);
     } else if (backingObject->isTextControl()) {
         if ([attributeName isEqualToString:NSAccessibilitySelectedTextAttribute])
-            backingObject->setSelectedText(string);
+            backingObject->setSelectedText(StringImpl::create(string).get());
         else if ([attributeName isEqualToString:NSAccessibilitySelectedTextRangeAttribute])
             backingObject->setSelectedTextRange(range);
     } else if ([attributeName isEqualToString:NSAccessibilityDisclosingAttribute] || [attributeName isEqualToString:NSAccessibilityExpandedAttribute])
@@ -3365,7 +3366,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 {
 #if ENABLE(WRITING_TOOLS)
     if ([action isEqualToString:NSAccessibilityShowWritingToolsAction])
-        return AXShowWritingToolsLabel().createNSString().autorelease();
+        return createNSString(AXShowWritingToolsLabel()).autorelease();
 #endif // ENABLE(WRITING_TOOLS)
     return NSAccessibilityActionDescription(action);
 }
@@ -3825,19 +3826,19 @@ static id handleAttributedStringForTextMarkerRangeAttribute(WebAccessibilityObje
 
 static id handleSelectTextWithCriteriaAttribute(WebAccessibilityObjectWrapper* wrapper, AXCoreObject&, const ParameterizedAttributeContext& context)
 {
-    auto result = Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([protectedDictionary = context.dictionary, protectedSelf = retainPtr(wrapper)] () -> Vector<String> {
+    auto result = Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([protectedDictionary = context.dictionary, protectedSelf = retainPtr(wrapper)] () -> Vector<RefPtr<StringImpl>> {
         RefPtr<AXCoreObject> backingObject = protectedSelf.get().axBackingObject;
         if (!backingObject)
-            return Vector<String>();
+            return Vector<RefPtr<StringImpl>>();
 
         auto criteria = accessibilityTextCriteriaForParameterizedAttribute(protectedDictionary.get());
         criteria.second.textRanges = backingObject->findTextRanges(criteria.first);
         AX_ASSERT(criteria.second.textRanges.size() <= 1);
         return backingObject->performTextOperation(criteria.second);
-    }, Accessibility::InteractiveTimeout, Vector<String>());
+    }, Accessibility::InteractiveTimeout, Vector<RefPtr<StringImpl>>());
     AX_ASSERT(result.size() <= 1);
     if (result.size() > 0)
-        return result[0].createNSString().autorelease();
+        return createNSString(result[0]).autorelease();
     return @"";
 }
 
@@ -3862,15 +3863,15 @@ static id handleSearchTextWithCriteriaAttribute(WebAccessibilityObjectWrapper* w
 
 static id handleTextOperationAttribute(WebAccessibilityObjectWrapper* wrapper, AXCoreObject&, const ParameterizedAttributeContext& context)
 {
-    auto operationResult = Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([protectedDictionary = context.dictionary, protectedSelf = retainPtr(wrapper)] () -> Vector<String> {
+    auto operationResult = Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([protectedDictionary = context.dictionary, protectedSelf = retainPtr(wrapper)] () -> Vector<RefPtr<StringImpl>> {
         RefPtr backingObject = downcast<AccessibilityObject>(protectedSelf.get().axBackingObject);
         if (!backingObject)
-            return Vector<String>();
+            return Vector<RefPtr<StringImpl>>();
 
         CheckedPtr cache = backingObject->axObjectCache();
         auto textOperation = accessibilityTextOperationForParameterizedAttribute(cache.get(), protectedDictionary.get());
         return backingObject->performTextOperation(textOperation);
-    }, Accessibility::InteractiveTimeout, Vector<String>());
+    }, Accessibility::InteractiveTimeout, Vector<RefPtr<StringImpl>>());
     if (operationResult.isEmpty())
         return nil;
     return createNSArray(operationResult).autorelease();
@@ -4094,7 +4095,7 @@ static id handleTextMarkerRangeForLineAttribute(WebAccessibilityObjectWrapper* w
 
 static id handleStringForTextMarkerRangeAttribute(WebAccessibilityObjectWrapper*, AXCoreObject&, const ParameterizedAttributeContext& context)
 {
-    return AXTextMarkerRange { context.textMarkerRange }.toString().createNSString().autorelease();
+    return createNSString(AXTextMarkerRange { context.textMarkerRange }.toString()).autorelease();
 }
 
 static id handleTextMarkerForPositionAttribute(WebAccessibilityObjectWrapper* wrapper, AXCoreObject& backingObject, const ParameterizedAttributeContext& context)
@@ -4165,11 +4166,11 @@ static id handleBoundsForRangeParameterizedAttribute(WebAccessibilityObjectWrapp
 static id handleStringForRangeParameterizedAttribute(WebAccessibilityObjectWrapper* wrapper, AXCoreObject& backingObject, const ParameterizedAttributeContext& context)
 {
     if (backingObject.isTextControl())
-        return backingObject.doAXStringForRange(context.range).createNSString().autorelease();
+        return createNSString(backingObject.doAXStringForRange(context.range)).autorelease();
 
     if (!isMainThread()) {
         std::optional markerRange = Accessibility::markerRangeFrom(context.range, backingObject);
-        return markerRange ? markerRange->toString().createNSString().autorelease() : @"";
+        return markerRange ? createNSString(markerRange->toString()).autorelease() : @"";
     }
 
     RefPtr mainThreadBackingObject = downcast<AccessibilityObject>(wrapper.axBackingObject);
@@ -4182,7 +4183,7 @@ static id handleStringForRangeParameterizedAttribute(WebAccessibilityObjectWrapp
     auto start = cache->characterOffsetForIndex(context.range.location, mainThreadBackingObject.get());
     auto end = cache->characterOffsetForIndex(context.range.location + context.range.length, mainThreadBackingObject.get());
     auto characterRange = cache->rangeForUnorderedCharacterOffsets(start, end);
-    return AXTextMarkerRange { characterRange }.toString().createNSString().autorelease();
+    return createNSString(AXTextMarkerRange { characterRange }.toString()).autorelease();
 }
 
 static id handleAttributedStringForTextMarkerRangeWithOptionsAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject, const ParameterizedAttributeContext& context)
@@ -4384,7 +4385,7 @@ static id handleImageDataParameterizedAttribute(WebAccessibilityObjectWrapper*, 
     return [NSData dataWithBytes:span.data() length:span.size()];
 }
 
-static MemoryCompactLookupOnlyRobinHoodHashMap<String, ParameterizedAttributeHandlerEntry> createParameterizedAttributeHandlerMap()
+static MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, ParameterizedAttributeHandlerEntry> createParameterizedAttributeHandlerMap()
 {
     struct ParameterizedAttributeMapping {
         RetainPtr<NSString> name;
@@ -4452,9 +4453,9 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, ParameterizedAttributeHan
         { NSAccessibilityImageDataParameterizedAttribute, { handleImageDataParameterizedAttribute } },
     });
 
-    MemoryCompactLookupOnlyRobinHoodHashMap<String, ParameterizedAttributeHandlerEntry> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, ParameterizedAttributeHandlerEntry> map;
     for (auto& mapping : mappings.get())
-        map.add(String(mapping.name), mapping.entry);
+        map.add(StringImpl::create(mapping.name), mapping.entry);
     return map;
 }
 
@@ -4475,7 +4476,7 @@ static bool checkParameterizedAttributePrecondition(AXCoreObject& backingObject,
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString*)attribute forParameter:(id)parameter
 {
-    AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityAttributeValue:"_s, String(attribute)));
+    AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityAttributeValue:"_s, StringImpl::create(attribute)));
     RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return nil;
@@ -4519,7 +4520,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 
     static NeverDestroyed handlerMap = createParameterizedAttributeHandlerMap();
 
-    auto iterator = handlerMap.get().find(String(attribute));
+    auto iterator = handlerMap.get().find(StringImpl::create(attribute).get());
     if (iterator != handlerMap.get().end()) {
         const auto& entry = iterator->value;
         if (checkParameterizedAttributePrecondition(*backingObject, entry.precondition))
@@ -4611,7 +4612,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute
 {
-    AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityArrayAttributeCount:"_s, String(attribute)));
+    AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityArrayAttributeCount:"_s, StringImpl::create(attribute)));
 
     RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
@@ -4650,7 +4651,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount
 {
-    AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityArrayAttributeValue:"_s, String(attribute)));
+    AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityArrayAttributeValue:"_s, StringImpl::create(attribute)));
 
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute])
         return [self _accessibilityChildrenFromIndex:index maxCount:maxCount returnPlatformElements:YES];
@@ -4717,7 +4718,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     for (auto& actionData : actionsData) {
         auto treeID = actionData.treeID;
         auto targetID = actionData.targetID;
-        RetainPtr action = adoptNS([[NSAccessibilityCustomAction alloc] initWithName:actionData.name.createNSString() handler:^BOOL {
+        RetainPtr action = adoptNS([[NSAccessibilityCustomAction alloc] initWithName:createNSString(actionData.name) handler:^BOOL {
             return Accessibility::performCustomActionPress(treeID, targetID);
         }]);
         [actions addObject:action.get()];
@@ -4729,7 +4730,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (NSString *)debugDescription
 {
     RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
-    return debugDescriptionFrom(backingObject.get()).createNSString().autorelease();
+    return createNSString(debugDescriptionFrom(backingObject.get())).autorelease();
 }
 @end
 

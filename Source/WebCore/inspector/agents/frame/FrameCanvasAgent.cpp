@@ -71,7 +71,7 @@ void FrameCanvasAgent::internalDisable()
     InspectorCanvasAgent::internalDisable();
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> FrameCanvasAgent::requestNodes(const Inspector::Protocol::Canvas::CanvasId& canvasId)
+Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> FrameCanvasAgent::requestNodes(StringImpl* canvasId)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -100,7 +100,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::N
     return nodeIds;
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> FrameCanvasAgent::requestCSSCanvasClientNodes(const Inspector::Protocol::Canvas::CanvasId& canvasId)
+Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> FrameCanvasAgent::requestCSSCanvasClientNodes(StringImpl* canvasId)
 {
     Inspector::Protocol::ErrorString errorString;
 

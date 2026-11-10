@@ -24,16 +24,17 @@
  */
 
 #include "config.h"
+#include "Helpers/Test.h"
 
 #include "AST.h"
 #include "ParserPrivate.h"
 #include "WGSLShaderModule.h"
 #include <wtf/DataLog.h>
 
-static std::expected<std::pair<WGSL::ShaderModule, WGSL::AST::Expression::Ref>, WGSL::Error> parseLCharPrimaryExpression(const String& input)
+static std::expected<std::pair<WGSL::ShaderModule, WGSL::AST::Expression::Ref>, WGSL::Error> parseLCharPrimaryExpression(StringImpl* input)
 {
     WGSL::ShaderModule shaderModule(input, { });
-    WGSL::Lexer lexer(input.span<Latin1Character>());
+    WGSL::Lexer lexer(WTF::span<Latin1Character>(input));
     WGSL::Parser parser(shaderModule, lexer);
 
     auto expression = parser.parsePrimaryExpression();
@@ -44,7 +45,7 @@ static std::expected<std::pair<WGSL::ShaderModule, WGSL::AST::Expression::Ref>, 
 
 template<class NumberType>
 struct ConstLiteralTestCase {
-    String input;
+    RefPtr<StringImpl> input;
     NumberType expectedValue;
 };
 
@@ -68,7 +69,7 @@ TEST(WGSLConstLiteralTests, BoolLiteral)
 
         const auto& intLiteral = downcast<AST::BoolLiteral>(expr);
         EXPECT_EQ(intLiteral.value(), testCase.expectedValue);
-        auto inputLength = testCase.input.length();
+        auto inputLength = length(testCase.input);
         EXPECT_EQ(intLiteral.span(), SourceSpan(1, 0, 0, inputLength));
     }
 }
@@ -92,7 +93,7 @@ TEST(WGSLConstLiteralTests, AbstractIntegerLiteralDecimal)
 
         const auto& intLiteral = downcast<AST::AbstractIntegerLiteral>(expr);
         EXPECT_EQ(intLiteral.value(), testCase.expectedValue);
-        auto inputLength = testCase.input.length();
+        auto inputLength = length(testCase.input);
         EXPECT_EQ(intLiteral.span(), SourceSpan(1, 0, 0, inputLength));
     }
 }
@@ -116,7 +117,7 @@ TEST(WGSLConstLiteralTests, AbstractIntegerLiteralHex)
 
         const auto& intLiteral = downcast<AST::AbstractIntegerLiteral>(expr);
         EXPECT_EQ(intLiteral.value(), testCase.expectedValue);
-        auto inputLength = testCase.input.length();
+        auto inputLength = length(testCase.input);
         EXPECT_EQ(intLiteral.span(), WGSL::SourceSpan(1, 0, 0, inputLength));
     }
 }
@@ -145,7 +146,7 @@ TEST(WGSLConstLiteralTests, AbstractFloatLiteralDec)
 
         const auto& floatLiteral = downcast<AST::AbstractFloatLiteral>(expr);
         EXPECT_EQ(floatLiteral.value(), testCase.expectedValue);
-        auto inputLength = testCase.input.length();
+        auto inputLength = length(testCase.input);
         EXPECT_EQ(floatLiteral.span(), SourceSpan(1, 0, 0, inputLength));
     }
 }

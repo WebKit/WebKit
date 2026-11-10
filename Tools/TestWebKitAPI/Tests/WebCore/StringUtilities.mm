@@ -37,71 +37,71 @@ TEST(WebCore, WildcardStringMatching)
 {
     JSC::initialize();
 
-    String wildcardString = "a*b"_s;
-    EXPECT_TRUE(stringMatchesWildcardString("aaaabb"_s, "a*b"_s));
-    EXPECT_TRUE(stringMatchesWildcardString("ab"_s, wildcardString));
-    EXPECT_FALSE(stringMatchesWildcardString("ba"_s, wildcardString));
+    RefPtr<StringImpl> wildcardString = "a*b"_si;
+    EXPECT_TRUE(stringMatchesWildcardString("aaaabb"_si, "a*b"_si));
+    EXPECT_TRUE(stringMatchesWildcardString("ab"_si, wildcardString));
+    EXPECT_FALSE(stringMatchesWildcardString("ba"_si, wildcardString));
     EXPECT_FALSE(stringMatchesWildcardString(emptyString(), wildcardString));
-    EXPECT_FALSE(stringMatchesWildcardString("a"_s, wildcardString));
-    EXPECT_FALSE(stringMatchesWildcardString("b"_s, wildcardString));
+    EXPECT_FALSE(stringMatchesWildcardString("a"_si, wildcardString));
+    EXPECT_FALSE(stringMatchesWildcardString("b"_si, wildcardString));
 
-    wildcardString = "aabb"_s;
-    EXPECT_TRUE(stringMatchesWildcardString("aabb"_s, wildcardString));
-    EXPECT_FALSE(stringMatchesWildcardString("a*b"_s, wildcardString));
+    wildcardString = "aabb"_si;
+    EXPECT_TRUE(stringMatchesWildcardString("aabb"_si, wildcardString));
+    EXPECT_FALSE(stringMatchesWildcardString("a*b"_si, wildcardString));
 
-    wildcardString = "*apple*"_s;
-    EXPECT_TRUE(stringMatchesWildcardString("freshapple"_s, wildcardString));
-    EXPECT_TRUE(stringMatchesWildcardString("applefresh"_s, wildcardString));
-    EXPECT_TRUE(stringMatchesWildcardString("freshapplefresh"_s, wildcardString));
+    wildcardString = "*apple*"_si;
+    EXPECT_TRUE(stringMatchesWildcardString("freshapple"_si, wildcardString));
+    EXPECT_TRUE(stringMatchesWildcardString("applefresh"_si, wildcardString));
+    EXPECT_TRUE(stringMatchesWildcardString("freshapplefresh"_si, wildcardString));
 
-    wildcardString = "a*b*c"_s;
-    EXPECT_TRUE(stringMatchesWildcardString("aabbcc"_s, wildcardString));
-    EXPECT_FALSE(stringMatchesWildcardString("bca"_s, wildcardString));
+    wildcardString = "a*b*c"_si;
+    EXPECT_TRUE(stringMatchesWildcardString("aabbcc"_si, wildcardString));
+    EXPECT_FALSE(stringMatchesWildcardString("bca"_si, wildcardString));
 
-    wildcardString = "*.example*.com/*"_s;
-    EXPECT_TRUE(stringMatchesWildcardString("food.examplehello.com/"_s, wildcardString));
-    EXPECT_TRUE(stringMatchesWildcardString("food.example.com/bar.html"_s, wildcardString));
-    EXPECT_TRUE(stringMatchesWildcardString("foo.bar.example.com/hello?query#fragment.html"_s, wildcardString));
-    EXPECT_FALSE(stringMatchesWildcardString("food.example.com"_s, wildcardString));
+    wildcardString = "*.example*.com/*"_si;
+    EXPECT_TRUE(stringMatchesWildcardString("food.examplehello.com/"_si, wildcardString));
+    EXPECT_TRUE(stringMatchesWildcardString("food.example.com/bar.html"_si, wildcardString));
+    EXPECT_TRUE(stringMatchesWildcardString("foo.bar.example.com/hello?query#fragment.html"_si, wildcardString));
+    EXPECT_FALSE(stringMatchesWildcardString("food.example.com"_si, wildcardString));
 
-    wildcardString = "a*b.b*c"_s;
-    EXPECT_TRUE(stringMatchesWildcardString("aabb.bbcc"_s, wildcardString));
-    EXPECT_FALSE(stringMatchesWildcardString("aabbcbbcc"_s, wildcardString));
+    wildcardString = "a*b.b*c"_si;
+    EXPECT_TRUE(stringMatchesWildcardString("aabb.bbcc"_si, wildcardString));
+    EXPECT_FALSE(stringMatchesWildcardString("aabbcbbcc"_si, wildcardString));
 
-    wildcardString = "a+b"_s;
-    EXPECT_TRUE(stringMatchesWildcardString("a+b"_s, wildcardString));
-    EXPECT_FALSE(stringMatchesWildcardString("ab"_s, wildcardString));
+    wildcardString = "a+b"_si;
+    EXPECT_TRUE(stringMatchesWildcardString("a+b"_si, wildcardString));
+    EXPECT_FALSE(stringMatchesWildcardString("ab"_si, wildcardString));
 
-    wildcardString = "(a*)b aa"_s;
-    EXPECT_TRUE(stringMatchesWildcardString("(aaa)b aa"_s, wildcardString));
-    EXPECT_FALSE(stringMatchesWildcardString("aab aa"_s, wildcardString));
+    wildcardString = "(a*)b aa"_si;
+    EXPECT_TRUE(stringMatchesWildcardString("(aaa)b aa"_si, wildcardString));
+    EXPECT_FALSE(stringMatchesWildcardString("aab aa"_si, wildcardString));
 
-    wildcardString = "a|c"_s;
-    EXPECT_TRUE(stringMatchesWildcardString("a|c"_s, wildcardString));
-    EXPECT_FALSE(stringMatchesWildcardString("abc"_s, wildcardString));
-    EXPECT_FALSE(stringMatchesWildcardString("a"_s, wildcardString));
-    EXPECT_FALSE(stringMatchesWildcardString("c"_s, wildcardString));
+    wildcardString = "a|c"_si;
+    EXPECT_TRUE(stringMatchesWildcardString("a|c"_si, wildcardString));
+    EXPECT_FALSE(stringMatchesWildcardString("abc"_si, wildcardString));
+    EXPECT_FALSE(stringMatchesWildcardString("a"_si, wildcardString));
+    EXPECT_FALSE(stringMatchesWildcardString("c"_si, wildcardString));
 
-    wildcardString = "(a+|b)*"_s;
-    EXPECT_TRUE(stringMatchesWildcardString("(a+|b)acca"_s, "(a+|b)*"_s));
-    EXPECT_FALSE(stringMatchesWildcardString("ab"_s, "(a+|b)*"_s));
+    wildcardString = "(a+|b)*"_si;
+    EXPECT_TRUE(stringMatchesWildcardString("(a+|b)acca"_si, "(a+|b)*"_si));
+    EXPECT_FALSE(stringMatchesWildcardString("ab"_si, "(a+|b)*"_si));
 
-    wildcardString = "a[-]?c"_s;
-    EXPECT_TRUE(stringMatchesWildcardString("a[-]?c"_s, wildcardString));
-    EXPECT_FALSE(stringMatchesWildcardString("ac"_s, wildcardString));
+    wildcardString = "a[-]?c"_si;
+    EXPECT_TRUE(stringMatchesWildcardString("a[-]?c"_si, wildcardString));
+    EXPECT_FALSE(stringMatchesWildcardString("ac"_si, wildcardString));
 
-    EXPECT_FALSE(stringMatchesWildcardString("hello"_s, "^hello$"_s));
-    EXPECT_TRUE(stringMatchesWildcardString(" "_s, " "_s));
-    EXPECT_TRUE(stringMatchesWildcardString("^$"_s, "^$"_s));
-    EXPECT_FALSE(stringMatchesWildcardString("a"_s, "a{1}"_s));
+    EXPECT_FALSE(stringMatchesWildcardString("hello"_si, "^hello$"_si));
+    EXPECT_TRUE(stringMatchesWildcardString(" "_si, " "_si));
+    EXPECT_TRUE(stringMatchesWildcardString("^$"_si, "^$"_si));
+    EXPECT_FALSE(stringMatchesWildcardString("a"_si, "a{1}"_si));
 
     // stringMatchesWildcardString should only match the entire string.
-    EXPECT_FALSE(stringMatchesWildcardString("aabbaabb"_s, "aabb"_s));
-    EXPECT_FALSE(stringMatchesWildcardString("aabb\naabb"_s, "aabb"_s));
-    EXPECT_FALSE(stringMatchesWildcardString("bab"_s, "a*"_s));
-    EXPECT_FALSE(stringMatchesWildcardString("bab"_s, "*a"_s));
-    EXPECT_FALSE(stringMatchesWildcardString("bab"_s, "a*b"_s));
-    EXPECT_FALSE(stringMatchesWildcardString("abcd"_s, "b*c"_s));
+    EXPECT_FALSE(stringMatchesWildcardString("aabbaabb"_si, "aabb"_si));
+    EXPECT_FALSE(stringMatchesWildcardString("aabb\naabb"_si, "aabb"_si));
+    EXPECT_FALSE(stringMatchesWildcardString("bab"_si, "a*"_si));
+    EXPECT_FALSE(stringMatchesWildcardString("bab"_si, "*a"_si));
+    EXPECT_FALSE(stringMatchesWildcardString("bab"_si, "a*b"_si));
+    EXPECT_FALSE(stringMatchesWildcardString("abcd"_si, "b*c"_si));
 }
 
 }

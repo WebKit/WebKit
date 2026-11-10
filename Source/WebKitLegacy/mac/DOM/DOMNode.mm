@@ -90,19 +90,19 @@ SUPPRESS_NODELETE DOMNode *kit(WebCore::Node* value)
 - (NSString *)nodeName
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->nodeName().createNSString().autorelease();
+    return createNSString(unwrap(*self)->nodeName()).autorelease();
 }
 
 - (NSString *)nodeValue
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->nodeValue().createNSString().autorelease();
+    return createNSString(unwrap(*self)->nodeValue()).autorelease();
 }
 
 - (void)setNodeValue:(NSString *)newNodeValue
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->setNodeValue(newNodeValue);
+    unwrap(*self)->setNodeValue(StringImpl::create(newNodeValue).get());
 }
 
 - (unsigned short)nodeType
@@ -156,13 +156,13 @@ SUPPRESS_NODELETE DOMNode *kit(WebCore::Node* value)
 - (NSString *)namespaceURI
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->namespaceURI().createNSString().autorelease();
+    return createNSString(unwrap(*self)->namespaceURI()).autorelease();
 }
 
 - (NSString *)prefix
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->prefix().createNSString().autorelease();
+    return createNSString(unwrap(*self)->prefix()).autorelease();
 }
 
 - (void)setPrefix:(NSString *)newPrefix
@@ -173,7 +173,7 @@ SUPPRESS_NODELETE DOMNode *kit(WebCore::Node* value)
 - (NSString *)localName
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->localName().createNSString().autorelease();
+    return createNSString(unwrap(*self)->localName()).autorelease();
 }
 
 - (DOMNamedNodeMap *)attributes
@@ -185,19 +185,19 @@ SUPPRESS_NODELETE DOMNode *kit(WebCore::Node* value)
 - (NSString *)baseURI
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->baseURI().string().createNSString().autorelease();
+    return createNSString(unwrap(*self)->baseURI().string()).autorelease();
 }
 
 - (NSString *)textContent
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->textContent().createNSString().autorelease();
+    return createNSString(unwrap(*self)->textContent()).autorelease();
 }
 
 - (void)setTextContent:(NSString *)newTextContent
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->setTextContent(newTextContent);
+    unwrap(*self)->setTextContent(StringImpl::create(newTextContent));
 }
 
 - (BOOL)isConnected
@@ -300,19 +300,19 @@ SUPPRESS_NODELETE DOMNode *kit(WebCore::Node* value)
 - (NSString *)lookupPrefix:(NSString *)inNamespaceURI
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->lookupPrefix(inNamespaceURI).createNSString().autorelease();
+    return createNSString(unwrap(*self)->lookupPrefix(AtomStringImpl::add((__bridge CFStringRef)inNamespaceURI).get())).autorelease();
 }
 
 - (NSString *)lookupNamespaceURI:(NSString *)inPrefix
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->lookupNamespaceURI(inPrefix).createNSString().autorelease();
+    return createNSString(unwrap(*self)->lookupNamespaceURI(AtomStringImpl::add((__bridge CFStringRef)inPrefix).get())).autorelease();
 }
 
 - (BOOL)isDefaultNamespace:(NSString *)inNamespaceURI
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->isDefaultNamespace(inNamespaceURI);
+    return unwrap(*self)->isDefaultNamespace(AtomStringImpl::add((__bridge CFStringRef)inNamespaceURI).get());
 }
 
 - (unsigned short)compareDocumentPosition:(DOMNode *)other
@@ -338,25 +338,25 @@ SUPPRESS_NODELETE DOMNode *kit(WebCore::Node* value)
 - (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->addEventListenerForBindings(type, WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
+    unwrap(*self)->addEventListenerForBindings(AtomStringImpl::add((__bridge CFStringRef)type).get(), WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
 }
 
 - (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->addEventListenerForBindings(type, WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
+    unwrap(*self)->addEventListenerForBindings(AtomStringImpl::add((__bridge CFStringRef)type).get(), WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
 }
 
 - (void)removeEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->removeEventListenerForBindings(type, WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
+    unwrap(*self)->removeEventListenerForBindings(AtomStringImpl::add((__bridge CFStringRef)type).get(), WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
 }
 
 - (void)removeEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->removeEventListenerForBindings(type, WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
+    unwrap(*self)->removeEventListenerForBindings(AtomStringImpl::add((__bridge CFStringRef)type).get(), WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
 }
 
 - (BOOL)dispatchEvent:(DOMEvent *)event

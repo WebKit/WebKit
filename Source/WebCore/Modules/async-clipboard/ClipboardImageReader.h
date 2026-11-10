@@ -35,7 +35,7 @@ class Document;
 class FragmentedSharedBuffer;
 
 struct ClipboardImageReader : PasteboardFileReader {
-    ClipboardImageReader(Document* document, const String& mimeType)
+    ClipboardImageReader(Document* document, StringImpl* mimeType)
         : PasteboardFileReader()
         , m_document(document)
         , m_mimeType(mimeType)
@@ -45,14 +45,14 @@ struct ClipboardImageReader : PasteboardFileReader {
     RefPtr<Blob> takeResult() { return std::exchange(m_result, nullptr); }
 
 private:
-    void readFilename(const String&) final { ASSERT_NOT_REACHED(); }
+    void readFilename(StringImpl*) final { ASSERT_NOT_REACHED(); }
 
-    bool shouldReadBuffer(const String&) const final;
-    void readBuffer(const String& filename, const String& type, Ref<SharedBuffer>&&) final;
+    bool shouldReadBuffer(StringImpl*) const final;
+    void readBuffer(StringImpl* filename, StringImpl* type, Ref<SharedBuffer>&&) final;
     void readSVG(const SharedBuffer&);
 
     const RefPtr<Document> m_document;
-    String m_mimeType;
+    RefPtr<StringImpl> m_mimeType;
     RefPtr<Blob> m_result;
 };
 

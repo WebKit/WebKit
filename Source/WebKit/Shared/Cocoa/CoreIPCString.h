@@ -35,23 +35,23 @@ namespace WebKit {
 class CoreIPCString  {
 public:
     CoreIPCString(NSString *string)
-        : m_string(string)
+        : m_string(StringImpl::create(string))
     {
     }
 
-    CoreIPCString(String&& string)
+    CoreIPCString(RefPtr<StringImpl>&& string)
         : m_string(WTF::move(string))
     {
     }
 
     CoreIPCString() = default;
 
-    RetainPtr<id> toID() const { return m_string.createNSString(); }
+    RetainPtr<id> toID() const { return createNSString(m_string); }
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCString>;
 
-    String m_string;
+    RefPtr<StringImpl> m_string;
 };
 
 } // namespace WebKit

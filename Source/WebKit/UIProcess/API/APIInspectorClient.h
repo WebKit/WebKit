@@ -39,7 +39,7 @@ class InspectorClient {
 public:
     virtual ~InspectorClient() = default;
 
-    virtual void openURLExternally(WebKit::WebInspectorUIProxy&, const WTF::String& url) { }
+    virtual void openURLExternally(WebKit::WebInspectorUIProxy&, StringImpl* url) { }
     virtual void frontendLoaded(WebKit::WebInspectorUIProxy&) { }
     virtual bool supportsDisablingSiteIsolation() const { return false; }
     virtual void requestDisableSiteIsolation(WebKit::WebInspectorUIProxy&) { }

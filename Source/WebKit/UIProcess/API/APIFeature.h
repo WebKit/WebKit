@@ -37,7 +37,7 @@ class Feature final : public ObjectImpl<Object::Type::Feature> {
 public:
 
     template <FeatureStatus Status, bool DefaultValue>
-    static Ref<Feature> create(const WTF::String& name, const WTF::String& key, FeatureConstant<Status> status, FeatureCategory category, const WTF::String& details, std::bool_constant<DefaultValue> defaultValue, bool hidden)
+    static Ref<Feature> create(StringImpl* name, StringImpl* key, FeatureConstant<Status> status, FeatureCategory category, StringImpl* details, std::bool_constant<DefaultValue> defaultValue, bool hidden)
     {
 #if ENABLE(FEATURE_DEFAULT_VALIDATION)
         constexpr auto impliedDefaultValue = API::defaultValueForFeatureStatus(Status);
@@ -51,29 +51,29 @@ public:
     }
 
     template <FeatureStatus Status>
-    static Ref<Feature> create(const WTF::String& name, const WTF::String& key, FeatureConstant<Status> status, FeatureCategory category, const WTF::String& details, bool defaultValue, bool hidden)
+    static Ref<Feature> create(StringImpl* name, StringImpl* key, FeatureConstant<Status> status, FeatureCategory category, StringImpl* details, bool defaultValue, bool hidden)
     {
         return uncheckedCreate(name, key, status, category, details, defaultValue, hidden);
     }
 
     virtual ~Feature() = default;
 
-    WTF::String name() const { return m_name; }
-    WTF::String key() const { return m_key; }
+    RefPtr<StringImpl> name() const { return m_name; }
+    RefPtr<StringImpl> key() const { return m_key; }
     FeatureStatus status() const { return m_status; }
     FeatureCategory category() const { return m_category; }
-    WTF::String details() const { return m_details; }
+    RefPtr<StringImpl> details() const { return m_details; }
     bool defaultValue() const { return m_defaultValue; }
     bool isHidden() const { return m_hidden; }
     
 private:
-    explicit Feature(const WTF::String& name, const WTF::String& key, FeatureStatus, FeatureCategory, const WTF::String& details, bool defaultValue, bool hidden);
+    explicit Feature(StringImpl* name, StringImpl* key, FeatureStatus, FeatureCategory, StringImpl* details, bool defaultValue, bool hidden);
 
-    static Ref<Feature> uncheckedCreate(const WTF::String& name, const WTF::String& key, FeatureStatus, FeatureCategory, const WTF::String& details, bool defaultValue, bool hidden);
+    static Ref<Feature> uncheckedCreate(StringImpl* name, StringImpl* key, FeatureStatus, FeatureCategory, StringImpl* details, bool defaultValue, bool hidden);
 
-    WTF::String m_name;
-    WTF::String m_key;
-    WTF::String m_details;
+    RefPtr<StringImpl> m_name;
+    RefPtr<StringImpl> m_key;
+    RefPtr<StringImpl> m_details;
     FeatureStatus m_status;
     FeatureCategory m_category;
     bool m_defaultValue;

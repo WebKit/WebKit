@@ -34,7 +34,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SubmitEvent);
 
-Ref<SubmitEvent> SubmitEvent::create(const AtomString& type, Init&& init)
+Ref<SubmitEvent> SubmitEvent::create(AtomStringImpl* type, Init&& init)
 {
     return adoptRef(*new SubmitEvent(type, WTF::move(init)));
 }
@@ -44,7 +44,7 @@ Ref<SubmitEvent> SubmitEvent::create(RefPtr<HTMLElement>&& submitter)
     return adoptRef(*new SubmitEvent(WTF::move(submitter)));
 }
 
-SubmitEvent::SubmitEvent(const AtomString& type, Init&& init)
+SubmitEvent::SubmitEvent(AtomStringImpl* type, Init&& init)
     : Event(EventInterfaceType::SubmitEvent, type, init, IsTrusted::No)
     , m_submitter(WTF::move(init.submitter))
 { }

@@ -37,7 +37,7 @@ namespace WebKit {
 class ResourceLoadStatisticsClassifierCocoa : public ResourceLoadStatisticsClassifier {
 private:
     bool classify(unsigned, unsigned, unsigned) override;
-    String storagePath();
+    RefPtr<StringImpl> storagePath();
     bool canUseCorePrediction();
     const struct svm_model* singletonPredictionModel();
     bool m_useCorePrediction { true };

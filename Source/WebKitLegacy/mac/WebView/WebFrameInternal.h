@@ -80,7 +80,7 @@ WebCore::EditableLinkBehavior core(WebKitEditableLinkBehavior);
 WebCore::TextDirectionSubmenuInclusionBehavior core(WebTextDirectionSubmenuInclusionBehavior);
 
 #if defined(__cplusplus) && PLATFORM(IOS_FAMILY)
-Vector<Vector<String>> vectorForDictationPhrasesArray(NSArray *);
+Vector<Vector<RefPtr<StringImpl>>> vectorForDictationPhrasesArray(NSArray *);
 #endif
 
 WebView *getWebView(WebFrame *webFrame);
@@ -115,8 +115,8 @@ WebView *getWebView(WebFrame *webFrame);
 
 @interface WebFrame (WebInternal)
 
-+ (void)_createMainFrameWithPage:(WebCore::Page*)page frameName:(const WTF::AtomString&)name frameView:(WebFrameView *)frameView;
-+ (Ref<WebCore::LocalFrame>)_createSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement&)ownerElement page:(WebCore::Page&)page frameName:(const WTF::AtomString&)name frameView:(WebFrameView *)frameView;
++ (void)_createMainFrameWithPage:(WebCore::Page*)page frameName:(AtomStringImpl*)name frameView:(WebFrameView *)frameView;
++ (Ref<WebCore::LocalFrame>)_createSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement&)ownerElement page:(WebCore::Page&)page frameName:(AtomStringImpl*)name frameView:(WebFrameView *)frameView;
 - (id)_initWithWebFrameView:(WebFrameView *)webFrameView webView:(WebView *)webView;
 
 - (void)_clearCoreFrame;

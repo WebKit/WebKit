@@ -89,7 +89,7 @@ namespace WebCore {
 // MARK: - Custom properties
 
 static std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> consumeCustomPropertyValueWithSyntax(CSSParserTokenRange&, CSS::PropertyParserState&, const CSSCustomPropertySyntax&);
-static std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> consumeTypedCustomPropertyValue(CSSParserTokenRange&, CSS::PropertyParserState&, const AtomString& name, const CSSCustomPropertySyntax&, Style::BuilderState&, Style::IsAttrTainted = Style::IsAttrTainted::No);
+static std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> consumeTypedCustomPropertyValue(CSSParserTokenRange&, CSS::PropertyParserState&, AtomStringImpl* name, const CSSCustomPropertySyntax&, Style::BuilderState&, Style::IsAttrTainted = Style::IsAttrTainted::No);
 
 // MARK: - Root consumers
 
@@ -364,7 +364,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID pr
 
 // MARK: - Custom properties
 
-std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax& syntax, CSSParserTokenRange range, Style::BuilderState& builderState, const CSSParserContext& context, Style::IsAttrTainted isAttrTainted)
+std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> CSSPropertyParser::parseTypedCustomPropertyValue(AtomStringImpl* name, const CSSCustomPropertySyntax& syntax, CSSParserTokenRange range, Style::BuilderState& builderState, const CSSParserContext& context, Style::IsAttrTainted isAttrTainted)
 {
     auto state = CSS::PropertyParserState {
         .context = context,
@@ -381,7 +381,7 @@ std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> CSSProp
     return value;
 }
 
-RefPtr<const Style::CustomProperty> CSSPropertyParser::parseTypedCustomPropertyInitialValue(const AtomString& name, const CSSCustomPropertySyntax& syntax, CSSParserTokenRange range, Style::BuilderState& builderState, const CSSParserContext& context)
+RefPtr<const Style::CustomProperty> CSSPropertyParser::parseTypedCustomPropertyInitialValue(AtomStringImpl* name, const CSSCustomPropertySyntax& syntax, CSSParserTokenRange range, Style::BuilderState& builderState, const CSSParserContext& context)
 {
     if (syntax.isUniversal())
         return CSSSubstitutionParser::parseInitialValueForUniversalSyntax(name, range);
@@ -542,7 +542,7 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> consumeCustomProperty
     return { nullptr, CSSCustomPropertySyntax::Type::Unknown };
 }
 
-std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> consumeTypedCustomPropertyValue(CSSParserTokenRange& range, CSS::PropertyParserState& state, const AtomString& name, const CSSCustomPropertySyntax& syntax, Style::BuilderState& builderState, Style::IsAttrTainted isAttrTainted)
+std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> consumeTypedCustomPropertyValue(CSSParserTokenRange& range, CSS::PropertyParserState& state, AtomStringImpl* name, const CSSCustomPropertySyntax& syntax, Style::BuilderState& builderState, Style::IsAttrTainted isAttrTainted)
 {
     if (syntax.isUniversal()) {
         auto data = CSSVariableData::create(range.consumeAll(), isAttrTainted);

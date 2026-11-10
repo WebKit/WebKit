@@ -58,7 +58,7 @@ bool VideoDecoder::isVPXSupported()
 #endif
 }
 
-Ref<VideoDecoder::CreatePromise> VideoDecoder::create(const String& codecName, const Config& config, OutputCallback&& outputCallback)
+Ref<VideoDecoder::CreatePromise> VideoDecoder::create(StringImpl* codecName, const Config& config, OutputCallback&& outputCallback)
 {
     CreatePromise::Producer producer;
     Ref promise = producer.promise();
@@ -76,36 +76,36 @@ Ref<VideoDecoder::CreatePromise> VideoDecoder::create(const String& codecName, c
 
 #define LE_CHR(a, b, c, d) (((a)<<24) | ((b)<<16) | ((c)<<8) | (d))
 
-String VideoDecoder::fourCCToCodecString(uint32_t fourCC)
+RefPtr<StringImpl> VideoDecoder::fourCCToCodecString(uint32_t fourCC)
 {
     switch (fourCC) {
-    case LE_CHR('v', 'p', '0', '8'): return "vp8"_s;
-    case LE_CHR('v', 'p', '0', '9'): return "vp09.00"_s;
-    case LE_CHR('a', 'v', '0', '1'): return "av01."_s;
+    case LE_CHR('v', 'p', '0', '8'): return "vp8"_si;
+    case LE_CHR('v', 'p', '0', '9'): return "vp09.00"_si;
+    case LE_CHR('a', 'v', '0', '1'): return "av01."_si;
     default:
             return nullString();
     }
 }
 
-void VideoDecoder::createLocalDecoder(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
+void VideoDecoder::createLocalDecoder(StringImpl* codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
 {
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     ASSERT(isVPXSupported());
     if (isVPXSupported()) {
-        if (codecName == "vp8"_s) {
+        if (equal(codecName, "vp8"_s)) {
             LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP8, config, WTF::move(callback), WTF::move(outputCallback));
             return;
         }
-        if (codecName.startsWith("vp09.00"_s)) {
+        if (startsWith(codecName, "vp09.00"_s)) {
             LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP9, config, WTF::move(callback), WTF::move(outputCallback));
             return;
         }
-        if (codecName.startsWith("vp09.02"_s)) {
+        if (startsWith(codecName, "vp09.02"_s)) {
             LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP9_P2, config, WTF::move(callback), WTF::move(outputCallback));
             return;
         }
 #if ENABLE(AV1)
-        if (codecName.startsWith("av01."_s)) {
+        if (startsWith(codecName, "av01."_s)) {
             LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::AV1, config, WTF::move(callback), WTF::move(outputCallback));
             return;
         }

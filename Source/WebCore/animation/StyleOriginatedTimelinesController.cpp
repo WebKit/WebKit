@@ -90,7 +90,7 @@ Vector<WeakStyleable> StyleOriginatedTimelinesController::relatedTimelineScopeEl
     return timelineScopeElements;
 }
 
-ScrollTimeline& StyleOriginatedTimelinesController::inactiveNamedTimeline(const AtomString& name)
+ScrollTimeline& StyleOriginatedTimelinesController::inactiveNamedTimeline(AtomStringImpl* name)
 {
     auto& timelines = timelinesForName(name);
     timelines.append(ScrollTimeline::createInactiveStyleOriginatedTimeline(name));
@@ -212,14 +212,14 @@ ScrollTimeline* StyleOriginatedTimelinesController::determineTimelineForElement(
     return nullptr;
 }
 
-Vector<Ref<ScrollTimeline>>& StyleOriginatedTimelinesController::timelinesForName(const AtomString& name)
+Vector<Ref<ScrollTimeline>>& StyleOriginatedTimelinesController::timelinesForName(AtomStringImpl* name)
 {
     return m_nameToTimelineMap.ensure(name, [] {
         return Vector<Ref<ScrollTimeline>> { };
     }).iterator->value;
 }
 
-void StyleOriginatedTimelinesController::updateTimelineForTimelineScope(const Ref<ScrollTimeline>& timeline, const AtomString& name)
+void StyleOriginatedTimelinesController::updateTimelineForTimelineScope(const Ref<ScrollTimeline>& timeline, AtomStringImpl* name)
 {
     Vector<Styleable> matchedTimelineScopeElements;
     RefPtr timelineElement = originatingElementExcludingTimelineScope(timeline);
@@ -269,7 +269,7 @@ void StyleOriginatedTimelinesController::registerNamedScrollTimeline(const Style
     }
 }
 
-void StyleOriginatedTimelinesController::updateCSSAnimationsAssociatedWithNamedTimeline(const AtomString& name)
+void StyleOriginatedTimelinesController::updateCSSAnimationsAssociatedWithNamedTimeline(AtomStringImpl* name)
 {
     // First, we need to gather all CSS Animations attached to existing timelines
     // with the specified name. We do this prior to updating animation-to-timeline
@@ -352,7 +352,7 @@ void StyleOriginatedTimelinesController::registerNamedViewTimeline(const Style::
         m_timelineNamesPendingAnimationUpdate.add(scopedName.name);
 }
 
-void StyleOriginatedTimelinesController::unregisterNamedTimeline(const AtomString& name, const Styleable& styleable)
+void StyleOriginatedTimelinesController::unregisterNamedTimeline(AtomStringImpl* name, const Styleable& styleable)
 {
     LOG_WITH_STREAM(Animations, stream << "StyleOriginatedTimelinesController::unregisterNamedTimeline: " << name << " styleable: " << styleable);
 

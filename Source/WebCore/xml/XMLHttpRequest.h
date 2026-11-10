@@ -81,28 +81,28 @@ public:
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::XMLHttpRequest; }
     ScriptExecutionContext* scriptExecutionContext() const final;
 
-    using SendTypes = Variant<Ref<Document>, Ref<Blob>, Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, Ref<DOMFormData>, String, Ref<URLSearchParams>>;
+    using SendTypes = Variant<Ref<Document>, Ref<Blob>, Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, Ref<DOMFormData>, RefPtr<StringImpl>, Ref<URLSearchParams>>;
 
     const URL& url() const LIFETIME_BOUND { return m_url; }
-    String statusText() const;
+    RefPtr<StringImpl> statusText() const;
     int status() const;
     State readyState() const { return m_readyState; }
     bool withCredentials() const { return m_includeCredentials; }
     ExceptionOr<void> setWithCredentials(bool);
-    ExceptionOr<void> open(const String& method, const String& url);
-    ExceptionOr<void> open(const String& method, const URL&, bool async);
-    ExceptionOr<void> open(const String& method, const String&, bool async, const String& user, const String& password);
+    ExceptionOr<void> open(StringImpl* method, StringImpl* url);
+    ExceptionOr<void> open(StringImpl* method, const URL&, bool async);
+    ExceptionOr<void> open(StringImpl* method, StringImpl*, bool async, StringImpl* user, StringImpl* password);
     ExceptionOr<void> send(std::optional<SendTypes>&&);
     void abort();
-    ExceptionOr<void> setRequestHeader(const String& name, const String& value);
-    ExceptionOr<void> overrideMimeType(const String& override);
+    ExceptionOr<void> setRequestHeader(StringImpl* name, StringImpl* value);
+    ExceptionOr<void> overrideMimeType(StringImpl* override);
     bool doneWithoutErrors() const { return !m_error && readyState() == DONE; }
-    String getAllResponseHeaders() const;
-    String getResponseHeader(const String& name) const;
+    RefPtr<StringImpl> getAllResponseHeaders() const;
+    RefPtr<StringImpl> getResponseHeader(StringImpl* name) const;
     ExceptionOr<OwnedString> responseText();
-    String responseTextIgnoringResponseType() const { return m_responseBuilder.toStringPreserveCapacity(); }
+    RefPtr<StringImpl> responseTextIgnoringResponseType() const { return m_responseBuilder.toStringPreserveCapacity(); }
     enum class FinalMIMEType : bool { No, Yes };
-    String responseMIMEType(FinalMIMEType = FinalMIMEType::No) const;
+    RefPtr<StringImpl> responseMIMEType(FinalMIMEType = FinalMIMEType::No) const;
 
     ExceptionOr<Document*> responseXML();
 
@@ -127,7 +127,7 @@ public:
     ExceptionOr<void> setResponseType(ResponseType);
     ResponseType responseType() const { return m_responseType; }
 
-    String responseURL() const;
+    RefPtr<StringImpl> responseURL() const;
 
     XMLHttpRequestUpload& upload();
 
@@ -178,12 +178,12 @@ private:
     std::optional<ExceptionOr<void>> prepareToSend();
     ExceptionOr<void> send(Ref<URLSearchParams>&&);
     ExceptionOr<void> send(Ref<Document>&&);
-    ExceptionOr<void> send(String&& = { });
+    ExceptionOr<void> send(RefPtr<StringImpl>&& = { });
     ExceptionOr<void> send(Ref<Blob>&&);
     ExceptionOr<void> send(Ref<DOMFormData>&&);
     ExceptionOr<void> send(Ref<JSC::ArrayBuffer>&&);
     ExceptionOr<void> send(Ref<JSC::ArrayBufferView>&&);
-    ExceptionOr<void> sendStringData(String&&, const String& defaultContentType);
+    ExceptionOr<void> sendStringData(RefPtr<StringImpl>&&, StringImpl* defaultContentType);
     ExceptionOr<void> sendBytesData(std::span<const uint8_t>);
 
     void changeState(State);
@@ -205,7 +205,7 @@ private:
     void networkError();
     void abortError();
 
-    void dispatchErrorEvents(const AtomString&);
+    void dispatchErrorEvents(AtomStringImpl*);
 
     Ref<TextResourceDecoder> createDecoder() const;
 
@@ -226,10 +226,10 @@ private:
     const std::unique_ptr<XMLHttpRequestUpload> m_upload WTF_GUARDED_BY_LOCK(m_gcLock);
 
     URLKeepingBlobAlive m_url;
-    String m_method;
+    RefPtr<StringImpl> m_method;
     HTTPHeaderMap m_requestHeaders;
     RefPtr<FormData> m_requestEntityBody;
-    String m_mimeTypeOverride;
+    RefPtr<StringImpl> m_mimeTypeOverride;
 
     struct LoadingActivity {
         Ref<XMLHttpRequest> protectedThis; // Keep object alive while loading even if there is no longer a JS wrapper.
@@ -252,7 +252,7 @@ private:
 
     const UniqueRef<XMLHttpRequestProgressEventThrottle> m_progressEventThrottle;
 
-    mutable String m_allResponseHeaders;
+    mutable RefPtr<StringImpl> m_allResponseHeaders;
 
     Timer m_timeoutTimer;
 

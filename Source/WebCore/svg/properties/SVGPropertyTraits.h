@@ -44,94 +44,94 @@ struct SVGPropertyTraits { };
 template<>
 struct SVGPropertyTraits<bool> {
     static bool initialValue() { return false; }
-    static bool fromString(SVGElement&, const String& string) { return string == "true"_s; }
-    static std::optional<bool> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
-    static String toString(bool type) { return type ? trueAtom() : falseAtom(); }
+    static bool fromString(SVGElement&, StringImpl* string) { return equal(string, "true"_s); }
+    static std::optional<bool> parse(const QualifiedName&, StringImpl*) { ASSERT_NOT_REACHED(); return initialValue(); }
+    static RefPtr<StringImpl> toString(bool type) { return type ? trueAtom() : falseAtom(); }
 };
 
 template<>
 struct SVGPropertyTraits<Color> {
     static Color initialValue() { return Color(); }
-    static Color fromString(SVGElement&, const String&);
-    static String toString(const Color&);
+    static Color fromString(SVGElement&, StringImpl*);
+    static RefPtr<StringImpl> toString(const Color&);
 };
 
 template<>
 struct SVGPropertyTraits<unsigned> {
     static unsigned initialValue() { return 0; }
-    static std::optional<unsigned> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
-    static String toString(unsigned type) { return String::number(type); }
+    static std::optional<unsigned> parse(const QualifiedName&, StringImpl*) { ASSERT_NOT_REACHED(); return initialValue(); }
+    static RefPtr<StringImpl> toString(unsigned type) { return makeString(type); }
 };
 
 template<>
 struct SVGPropertyTraits<int> {
     static int initialValue() { return 0; }
-    static int fromString(SVGElement&, const String&);
-    static std::optional<int> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
-    static String toString(int type) { return String::number(type); }
+    static int fromString(SVGElement&, StringImpl*);
+    static std::optional<int> parse(const QualifiedName&, StringImpl*) { ASSERT_NOT_REACHED(); return initialValue(); }
+    static RefPtr<StringImpl> toString(int type) { return makeString(type); }
 };
 
 template<>
 struct SVGPropertyTraits<std::pair<int, int>> {
     static std::pair<int, int> initialValue() { return { }; }
-    static std::pair<int, int> fromString(SVGElement&, const String& string)
+    static std::pair<int, int> fromString(SVGElement&, StringImpl* string)
     {
         return parse(string).value_or(initialValue());
     }
-    static std::optional<std::pair<int, int>> parse(const String& string)
+    static std::optional<std::pair<int, int>> parse(StringImpl* string)
     {
         auto result = parseNumberOptionalNumber(string);
         if (!result)
             return std::nullopt;
         return std::make_pair(static_cast<int>(std::round(result->first)), static_cast<int>(std::round(result->second)));
     }
-    static String toString(std::pair<int, int>) { ASSERT_NOT_REACHED(); return emptyString(); }
+    static RefPtr<StringImpl> toString(std::pair<int, int>) { ASSERT_NOT_REACHED(); return emptyString(); }
 };
 
 template<>
 struct SVGPropertyTraits<float> {
     static float initialValue() { return 0; }
-    static float fromString(SVGElement&, const String& string)
+    static float fromString(SVGElement&, StringImpl* string)
     {
         return parseNumber(string).value_or(0);
     }
-    static std::optional<float> parse(const String& string)
+    static std::optional<float> parse(StringImpl* string)
     {
         return parseNumber(string);
     }
-    static std::optional<float> parse(const QualifiedName&, const String& string)
+    static std::optional<float> parse(const QualifiedName&, StringImpl* string)
     {
         return parse(string);
     }
-    static String toString(float type) { return String::number(type); }
+    static RefPtr<StringImpl> toString(float type) { return makeString(type); }
 };
 
 template<>
 struct SVGPropertyTraits<std::pair<float, float>> {
     static std::pair<float, float> initialValue() { return { }; }
-    static std::pair<float, float> fromString(SVGElement&, const String& string)
+    static std::pair<float, float> fromString(SVGElement&, StringImpl* string)
     {
         return parse(string).value_or(initialValue());
     }
-    static std::optional<std::pair<float, float>> parse(const String& string)
+    static std::optional<std::pair<float, float>> parse(StringImpl* string)
     {
         return parseNumberOptionalNumber(string);
     }
-    static String toString(std::pair<float, float>) { ASSERT_NOT_REACHED(); return emptyString(); }
+    static RefPtr<StringImpl> toString(std::pair<float, float>) { ASSERT_NOT_REACHED(); return emptyString(); }
 };
 
 template<>
 struct SVGPropertyTraits<FloatPoint> {
     static FloatPoint initialValue() { return FloatPoint(); }
-    static FloatPoint fromString(SVGElement&, const String& string)
+    static FloatPoint fromString(SVGElement&, StringImpl* string)
     {
         return valueOrDefault(parsePoint(string));
     }
-    static std::optional<FloatPoint> parse(const QualifiedName&, const String& string)
+    static std::optional<FloatPoint> parse(const QualifiedName&, StringImpl* string)
     {
         return parsePoint(string);
     }
-    static String toString(const FloatPoint& type)
+    static RefPtr<StringImpl> toString(const FloatPoint& type)
     {
         return makeString(type.x(), ' ', type.y());
     }
@@ -140,26 +140,26 @@ struct SVGPropertyTraits<FloatPoint> {
 template<>
 struct SVGPropertyTraits<FloatRect> {
     static FloatRect initialValue() { return FloatRect(); }
-    static FloatRect fromString(SVGElement&, const String& string)
+    static FloatRect fromString(SVGElement&, StringImpl* string)
     {
         return valueOrDefault(parseRect(string));
     }
-    static std::optional<FloatRect> parse(const QualifiedName&, const String& string)
+    static std::optional<FloatRect> parse(const QualifiedName&, StringImpl* string)
     {
         return parseRect(string);
     }
-    static String toString(const FloatRect& type)
+    static RefPtr<StringImpl> toString(const FloatRect& type)
     {
         return makeString(type.x(), ' ', type.y(), ' ', type.width(), ' ', type.height());
     }
 };
 
 template<>
-struct SVGPropertyTraits<String> {
-    static String initialValue() { return String(); }
-    static String fromString(SVGElement&, const String& string) { return string; }
-    static std::optional<String> parse(const QualifiedName&, const String& string) { return string; }
-    static String toString(const String& string) { return string; }
+struct SVGPropertyTraits<RefPtr<StringImpl>> {
+    static RefPtr<StringImpl> initialValue() { return nullptr; }
+    static RefPtr<StringImpl> fromString(SVGElement&, StringImpl* string) { return string; }
+    static std::optional<RefPtr<StringImpl>> parse(const QualifiedName&, StringImpl* string) { return string; }
+    static RefPtr<StringImpl> toString(StringImpl* string) { return string; }
 };
 
 } // namespace WebCore

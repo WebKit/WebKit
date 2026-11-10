@@ -90,7 +90,7 @@ public:
         Type type { Type::Inline };
         // This is block-start relative, like Box::blockStartRelativePhysicalRect().
         FloatRect visualRect;
-        AtomString text;
+        RefPtr<AtomStringImpl> text;
     };
     bool hasEllipsis() const { return m_hasEllipsis; }
 

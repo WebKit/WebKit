@@ -166,8 +166,8 @@ public:
     NODELETE ASCIILiteral className() const;
 
     // Extracting the value.
-    JS_EXPORT_PRIVATE bool getString(JSGlobalObject*, String&) const;
-    JS_EXPORT_PRIVATE String getString(JSGlobalObject*) const; // null string if not a string
+    JS_EXPORT_PRIVATE bool getString(JSGlobalObject*, RefPtr<StringImpl>&) const;
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> getString(JSGlobalObject*) const; // null string if not a string
     NODELETE JS_EXPORT_PRIVATE JSObject* getObject(); // NULL if not an object
     const JSObject* getObject() const; // NULL if not an object
         

@@ -43,14 +43,14 @@ public:
     WEBCORE_EXPORT void setRows(unsigned);
     unsigned cols() const { return m_cols; }
     WEBCORE_EXPORT void setCols(unsigned);
-    WEBCORE_EXPORT String defaultValue() const;
-    WEBCORE_EXPORT void setDefaultValue(String&&);
-    WEBCORE_EXPORT ValueOrReference<String> value() const final;
-    WEBCORE_EXPORT ExceptionOr<void> setValue(const String&, TextFieldEventBehavior = DispatchNoEvent, TextControlSetValueSelection = TextControlSetValueSelection::SetSelectionToEnd) final;
-    unsigned textLength() const { return value()->length(); }
-    String validationMessage() const final;
+    WEBCORE_EXPORT RefPtr<StringImpl> defaultValue() const;
+    WEBCORE_EXPORT void setDefaultValue(RefPtr<StringImpl>&&);
+    WEBCORE_EXPORT ValueOrReference<RefPtr<StringImpl>> value() const final;
+    WEBCORE_EXPORT ExceptionOr<void> setValue(StringImpl*, TextFieldEventBehavior = DispatchNoEvent, TextControlSetValueSelection = TextControlSetValueSelection::SetSelectionToEnd) final;
+    unsigned textLength() const { return WTF::length(value().get()); }
+    RefPtr<StringImpl> validationMessage() const final;
 
-    void setSelectionRangeForBindings(unsigned start, unsigned end, const String& direction);
+    void setSelectionRangeForBindings(unsigned start, unsigned end, StringImpl* direction);
 
     WEBCORE_EXPORT RefPtr<TextControlInnerTextElement> innerTextElement() const final;
 
@@ -65,18 +65,18 @@ private:
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
-    static String sanitizeUserInputValue(const String& proposedValue, unsigned maxLength);
+    static RefPtr<StringImpl> sanitizeUserInputValue(StringImpl* proposedValue, unsigned maxLength);
     void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&) const;
     void updateValue() const;
-    void setNonDirtyValue(const String&, TextControlSetValueSelection);
-    void setValueCommon(const String&, TextFieldEventBehavior, TextControlSetValueSelection);
+    void setNonDirtyValue(StringImpl*, TextControlSetValueSelection);
+    void setValueCommon(StringImpl*, TextFieldEventBehavior, TextControlSetValueSelection);
 
     bool supportsReadOnly() const final { return true; }
 
     bool supportsPlaceholder() const final { return true; }
     HTMLElement* placeholderElement() const final { return m_placeholder.get(); }
     void updatePlaceholderText() final;
-    bool isEmptyValue() const final { return value()->isEmpty(); }
+    bool isEmptyValue() const final { return isEmpty(value().get()); }
 
     NODELETE bool isOptionalFormControl() const final { return !isRequiredFormControl(); }
     NODELETE bool isRequiredFormControl() const final { return isRequired(); }
@@ -90,7 +90,7 @@ private:
 
     bool isInteractiveContent() const final { return true; }
 
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
 
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
@@ -98,9 +98,9 @@ private:
     bool isTextField() const final { return true; }
 
     void childrenChanged(const ChildChange&) final;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) final;
     NODELETE bool supportsBaseAppearance(StyleAppearance) const final;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool appendFormData(DOMFormData&) final;
@@ -141,7 +141,7 @@ private:
     unsigned m_rows { defaultRows };
     unsigned m_cols { defaultCols };
     RefPtr<HTMLElement> m_placeholder;
-    mutable String m_value;
+    mutable RefPtr<StringImpl> m_value;
     WrapMethod m_wrap { SoftWrap };
     mutable uint8_t m_isDirty { false }; // uint8_t for better packing on Windows
     mutable uint8_t m_wasModifiedByUser { false }; // uint8_t for better packing on Windows

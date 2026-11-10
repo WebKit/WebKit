@@ -48,7 +48,7 @@ protected:
 private:
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
     bool acceptsLegacyMathVariantAttribute() override { return false; };
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
 
     const ScriptType m_scriptType;
     std::optional<Length> m_subscriptShift;

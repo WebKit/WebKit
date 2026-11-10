@@ -85,7 +85,7 @@ public:
         m_didParseInitializationDataCallback = WTF::move(callback);
     }
 
-    using DidProvideMediaDataCallback = Function<void(Ref<MediaSampleAVFObjC>&&, uint64_t trackID, const String& mediaType)>;
+    using DidProvideMediaDataCallback = Function<void(Ref<MediaSampleAVFObjC>&&, uint64_t trackID, StringImpl* mediaType)>;
     void setDidProvideMediaDataCallback(DidProvideMediaDataCallback&& callback)
     {
         m_didProvideMediaDataCallback = WTF::move(callback);

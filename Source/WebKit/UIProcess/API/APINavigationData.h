@@ -40,8 +40,8 @@ public:
 
     virtual ~NavigationData();
 
-    WTF::String title() const { return m_store.title; }
-    WTF::String url() const { return m_store.url; }
+    RefPtr<StringImpl> title() const { return m_store.title; }
+    RefPtr<StringImpl> url() const { return m_store.url; }
     const WebCore::ResourceRequest& originalRequest() const LIFETIME_BOUND { return m_store.originalRequest; }
     const WebCore::ResourceResponse& response() const LIFETIME_BOUND { return m_store.response; }
 

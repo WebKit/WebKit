@@ -170,11 +170,11 @@
     RetainPtr<WKSecurityOrigin> _origin;
     RetainPtr<NSString> _textContent;
     RetainPtr<NSDictionary<NSString *, NSURL *>> _shortenedURLs;
-    HashMap<String, Vector<WebKit::ExtractedNodeInfo>> _textToContainerMap;
+    HashMap<RefPtr<StringImpl>, Vector<WebKit::ExtractedNodeInfo>> _textToContainerMap;
     __weak WKWebView *_webView;
 }
 
-- (instancetype)initWithWebView:(WKWebView *)webView origin:(WKSecurityOrigin *)origin textContent:(NSString *)textContent filteredOutAnyText:(BOOL)filteredOutAnyText shortenedURLs:(NSDictionary<NSString *, NSURL *> *)shortenedURLs textToContainerMap:(HashMap<String, Vector<WebKit::ExtractedNodeInfo>>&&)textToContainerMap
+- (instancetype)initWithWebView:(WKWebView *)webView origin:(WKSecurityOrigin *)origin textContent:(NSString *)textContent filteredOutAnyText:(BOOL)filteredOutAnyText shortenedURLs:(NSDictionary<NSString *, NSURL *> *)shortenedURLs textToContainerMap:(HashMap<RefPtr<StringImpl>, Vector<WebKit::ExtractedNodeInfo>>&&)textToContainerMap
 {
     if (self = [super init]) {
         _origin = origin;
@@ -187,12 +187,12 @@
     return self;
 }
 
-- (std::expected<std::optional<WebKit::ExtractedNodeInfo>, String>)resolveContainerForSearchText:(NSString *)searchText
+- (std::expected<std::optional<WebKit::ExtractedNodeInfo>, RefPtr<StringImpl>>)resolveContainerForSearchText:(NSString *)searchText
 {
     if (!searchText.length)
         return { std::nullopt };
 
-    auto iterator = _textToContainerMap.find(searchText);
+    auto iterator = _textToContainerMap.find(StringImpl::create(searchText).get());
     if (iterator == _textToContainerMap.end())
         return { std::nullopt };
 
@@ -209,7 +209,7 @@
             continue;
 
         if (interactiveContainer)
-            return makeUnexpected(makeString("Multiple interactive matches for '"_s, String { searchText }, "'; use a uid to disambiguate"_s));
+            return makeUnexpected(makeString("Multiple interactive matches for '"_s, StringImpl::create(searchText), "'; use a uid to disambiguate"_s));
 
         interactiveContainer = container;
     }
@@ -217,7 +217,7 @@
     if (interactiveContainer)
         return { *interactiveContainer };
 
-    return makeUnexpected(makeString("Multiple matches for '"_s, String { searchText }, "'; use a uid to disambiguate"_s));
+    return makeUnexpected(makeString("Multiple matches for '"_s, StringImpl::create(searchText), "'; use a uid to disambiguate"_s));
 }
 
 - (WKSecurityOrigin *)origin

@@ -93,7 +93,7 @@ public:
         OnOff,
     };
 
-    RealtimeMediaSourceCapabilities(LongCapabilityRange width, LongCapabilityRange height, DoubleCapabilityRange aspectRatio, DoubleCapabilityRange frameRate, Vector<VideoFacingMode>&& facingMode, DoubleCapabilityRange volume, LongCapabilityRange sampleRate, LongCapabilityRange sampleSize, EchoCancellation echoCancellation, String&& deviceId, String&& groupId, DoubleCapabilityRange focusDistance, Vector<MeteringMode>&& whiteBalanceModes, DoubleCapabilityRange zoom, bool torch, BackgroundBlur backgroundBlur, bool powerEfficient, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
+    RealtimeMediaSourceCapabilities(LongCapabilityRange width, LongCapabilityRange height, DoubleCapabilityRange aspectRatio, DoubleCapabilityRange frameRate, Vector<VideoFacingMode>&& facingMode, DoubleCapabilityRange volume, LongCapabilityRange sampleRate, LongCapabilityRange sampleSize, EchoCancellation echoCancellation, RefPtr<StringImpl>&& deviceId, RefPtr<StringImpl>&& groupId, DoubleCapabilityRange focusDistance, Vector<MeteringMode>&& whiteBalanceModes, DoubleCapabilityRange zoom, bool torch, BackgroundBlur backgroundBlur, bool powerEfficient, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
         : m_width(WTF::move(width))
         , m_height(WTF::move(height))
         , m_aspectRatio(WTF::move(aspectRatio))
@@ -160,12 +160,12 @@ public:
     void setEchoCancellation(EchoCancellation echoCancellation) { m_echoCancellation = echoCancellation; }
 
     bool supportsDeviceId() const { return m_supportedConstraints.supportsDeviceId(); }
-    const String& deviceId() const LIFETIME_BOUND { return m_deviceId; }
-    void setDeviceId(const String& id)  { m_deviceId = id; }
+    const RefPtr<StringImpl>& deviceId() const LIFETIME_BOUND { return m_deviceId; }
+    void setDeviceId(StringImpl* id)  { m_deviceId = id; }
 
     bool supportsGroupId() const { return m_supportedConstraints.supportsGroupId(); }
-    const String& groupId() const LIFETIME_BOUND { return m_groupId; }
-    void setGroupId(const String& id)  { m_groupId = id; }
+    const RefPtr<StringImpl>& groupId() const LIFETIME_BOUND { return m_groupId; }
+    void setGroupId(StringImpl* id)  { m_groupId = id; }
 
     bool supportsFocusDistance() const { return m_supportedConstraints.supportsFocusDistance(); }
     const DoubleCapabilityRange& focusDistance() const LIFETIME_BOUND { return m_focusDistance; }
@@ -194,7 +194,7 @@ public:
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const LIFETIME_BOUND { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& constraints) { m_supportedConstraints = constraints; }
 
-    RealtimeMediaSourceCapabilities isolatedCopy() const { return { m_width, m_height, m_aspectRatio, m_frameRate, Vector<VideoFacingMode> { m_facingMode }, m_volume, m_sampleRate, m_sampleSize, m_echoCancellation, m_deviceId.isolatedCopy(), m_groupId.isolatedCopy(), m_focusDistance, Vector<MeteringMode> { m_whiteBalanceModes }, m_zoom, m_torch, m_backgroundBlur, m_powerEfficient, RealtimeMediaSourceSupportedConstraints { m_supportedConstraints } }; }
+    RealtimeMediaSourceCapabilities isolatedCopy() const { return { m_width, m_height, m_aspectRatio, m_frameRate, Vector<VideoFacingMode> { m_facingMode }, m_volume, m_sampleRate, m_sampleSize, m_echoCancellation, WTF::isolatedCopy(m_deviceId), WTF::isolatedCopy(m_groupId), m_focusDistance, Vector<MeteringMode> { m_whiteBalanceModes }, m_zoom, m_torch, m_backgroundBlur, m_powerEfficient, RealtimeMediaSourceSupportedConstraints { m_supportedConstraints } }; }
 
 private:
     LongCapabilityRange m_width;
@@ -206,8 +206,8 @@ private:
     LongCapabilityRange m_sampleRate;
     LongCapabilityRange m_sampleSize;
     EchoCancellation m_echoCancellation { EchoCancellation::On };
-    String m_deviceId;
-    String m_groupId;
+    RefPtr<StringImpl> m_deviceId;
+    RefPtr<StringImpl> m_groupId;
     DoubleCapabilityRange m_focusDistance;
 
     Vector<MeteringMode> m_whiteBalanceModes;

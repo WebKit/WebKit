@@ -106,7 +106,7 @@ static CGFloat promptWidthForAvailableWidth(CGFloat availableWidth)
     [self setContentMode:UIViewContentModeRedraw];
 
     [self setIsAccessibilityElement:YES];
-    [self setAccessibilityLabel:WEB_UI_STRING_KEY(@"Microphone level", "Microphone level (usermedia)", @"Accessibility label for the microphone level meter in the user media prompt").createNSString().get()];
+    [self setAccessibilityLabel:createNSString(WEB_UI_STRING_KEY(@"Microphone level", "Microphone level (usermedia)", @"Accessibility label for the microphone level meter in the user media prompt")).get()];
     [self setAccessibilityTraits:UIAccessibilityTraitUpdatesFrequently];
 
     return self;
@@ -371,7 +371,7 @@ static CGFloat promptWidthForAvailableWidth(CGFloat availableWidth)
 
     for (auto& action : _additionalActions) {
         RetainPtr configuration = [UIButtonConfiguration grayButtonConfiguration];
-        [configuration setTitle:action.title.createNSString().get()];
+        [configuration setTitle:createNSString(action.title).get()];
         [configuration setCornerStyle:UIButtonConfigurationCornerStyleMedium];
         [configuration setTitleLineBreakMode:NSLineBreakByWordWrapping];
 
@@ -419,7 +419,7 @@ static CGFloat promptWidthForAvailableWidth(CGFloat availableWidth)
         [_previewBadge setTranslatesAutoresizingMaskIntoConstraints:NO];
 
         RetainPtr badgeLabel = adoptNS([[UILabel alloc] init]);
-        [badgeLabel setText:WEB_UI_STRING_KEY(@"Preview", "Preview (usermedia)", @"Badge label identifying the live camera preview in the user media prompt").createNSString().get()];
+        [badgeLabel setText:createNSString(WEB_UI_STRING_KEY(@"Preview", "Preview (usermedia)", @"Badge label identifying the live camera preview in the user media prompt")).get()];
         [badgeLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleCaption1]];
         [badgeLabel setAdjustsFontForContentSizeCategory:YES];
         [badgeLabel setTextColor:[UIColor whiteColor]];
@@ -615,9 +615,9 @@ static CGFloat promptWidthForAvailableWidth(CGFloat availableWidth)
     [button setConfiguration:configuration.get()];
 
     if (deviceType == PreviewDeviceType::Camera)
-        [button setAccessibilityLabel:WEB_UI_STRING_KEY(@"Camera", "Camera (usermedia)", @"Accessibility label for the camera menu in the user media prompt").createNSString().get()];
+        [button setAccessibilityLabel:createNSString(WEB_UI_STRING_KEY(@"Camera", "Camera (usermedia)", @"Accessibility label for the camera menu in the user media prompt")).get()];
     else
-        [button setAccessibilityLabel:WEB_UI_STRING_KEY(@"Microphone", "Microphone (usermedia)", @"Accessibility label for the microphone menu in the user media prompt").createNSString().get()];
+        [button setAccessibilityLabel:createNSString(WEB_UI_STRING_KEY(@"Microphone", "Microphone (usermedia)", @"Accessibility label for the microphone menu in the user media prompt")).get()];
 
     [self _updateMenuForButton:button.get() deviceType:deviceType];
     return button;
@@ -632,7 +632,7 @@ static CGFloat promptWidthForAvailableWidth(CGFloat availableWidth)
     // get separate entries, and so the index survives a device list update.
     NSMutableArray<UIAction *> *actions = [NSMutableArray arrayWithCapacity:devices.size()];
     for (size_t index = 0; index < devices.size(); ++index) {
-        RetainPtr title = devices[index].label().createNSString();
+        RetainPtr title = createNSString(devices[index].label());
         RetainPtr action = [UIAction actionWithTitle:title.get() image:nil identifier:nil handler:[weakSelf = WeakObjCPtr<WKCapturePreviewViewController>(self), deviceType, index](UIAction *) {
             RetainPtr strongSelf = weakSelf.get();
             if (!strongSelf)
@@ -650,7 +650,7 @@ static CGFloat promptWidthForAvailableWidth(CGFloat availableWidth)
     [button setHidden:devices.isEmpty()];
     [button setEnabled:devices.size() > 1];
     if (selectedIndex < devices.size()) {
-        RetainPtr title = devices[selectedIndex].label().createNSString();
+        RetainPtr title = createNSString(devices[selectedIndex].label());
         RetainPtr configuration = [button configuration];
         [configuration setTitle:title.get()];
         [button setConfiguration:configuration.get()];
@@ -663,9 +663,9 @@ static CGFloat promptWidthForAvailableWidth(CGFloat availableWidth)
     if (index >= _model.devices(deviceType).size())
         return;
 
-    String previousDeviceID = _model.selectedDeviceID(deviceType);
+    RefPtr<StringImpl> previousDeviceID = _model.selectedDeviceID(deviceType);
     _model.select(deviceType, index);
-    if (deviceType == PreviewDeviceType::Microphone && _model.selectedDeviceID(deviceType) != previousDeviceID)
+    if (deviceType == PreviewDeviceType::Microphone && !equal(_model.selectedDeviceID(deviceType), previousDeviceID))
         [_audioLevelMeter reset];
     [self _updateMenuForButton:deviceType == PreviewDeviceType::Camera ? _videoButton.get() : _audioButton.get() deviceType:deviceType];
     _model.notifySelectionChanged();
@@ -741,7 +741,7 @@ static CGFloat promptWidthForAvailableWidth(CGFloat availableWidth)
     if (_model.hasSameDevices(videoDevices, audioDevices))
         return;
 
-    String previousMicrophoneID = _model.selectedDeviceID(PreviewDeviceType::Microphone);
+    RefPtr<StringImpl> previousMicrophoneID = _model.selectedDeviceID(PreviewDeviceType::Microphone);
     bool previewNeedsRestart = _model.update(WTF::move(videoDevices), WTF::move(audioDevices));
 
     if (_videoButton)
@@ -749,7 +749,7 @@ static CGFloat promptWidthForAvailableWidth(CGFloat availableWidth)
     if (_audioButton)
         [self _updateMenuForButton:_audioButton.get() deviceType:PreviewDeviceType::Microphone];
 
-    if (_model.selectedDeviceID(PreviewDeviceType::Microphone) != previousMicrophoneID)
+    if (!equal(_model.selectedDeviceID(PreviewDeviceType::Microphone), previousMicrophoneID))
         [_audioLevelMeter reset];
 
     if ([self isViewLoaded]) {

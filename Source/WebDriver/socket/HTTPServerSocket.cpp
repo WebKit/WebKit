@@ -31,11 +31,11 @@
 
 namespace WebDriver {
 
-bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
+bool HTTPServer::listen(const std::optional<RefPtr<StringImpl>>& host, unsigned port)
 {
     auto& endpoint = RemoteInspectorSocketEndpoint::singleton();
 
-    if (auto id = endpoint.listenInet(host ? host->utf8() : UTF8CString { }, port, *this)) {
+    if (auto id = endpoint.listenInet(host ? utf8(*host) : UTF8CString { }, port, *this)) {
         m_server = id;
         return true;
     }
@@ -75,13 +75,13 @@ void HTTPRequestHandler::reset()
     m_parser = { };
 }
 
-static String headerValue(const Vector<String>& headers, ASCIILiteral name)
+static RefPtr<StringImpl> headerValue(const Vector<RefPtr<StringImpl>>& headers, ASCIILiteral name)
 {
     for (const auto& header : headers) {
-        if (header.length() > name.length() && header[name.length()] == ':' && header.startsWithIgnoringASCIICase(name))
-            return header.substring(name.length() + 1).trim(isASCIIWhitespace<char16_t>);
+        if (length(header) > name.length() && codeUnitAt(header, name.length()) == ':' && startsWithIgnoringASCIICase(header, name))
+            return trim(substring(header, name.length() + 1), isASCIIWhitespace<char16_t>);
     }
-    return { };
+    return nullptr;
 }
 
 void HTTPRequestHandler::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID, Vector<uint8_t>&& data)
@@ -90,10 +90,13 @@ void HTTPRequestHandler::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID
     case HTTPParser::Phase::Complete: {
         auto message = m_parser.pullMessage();
         auto& headers = message.requestHeaders;
-        auto result = validateRequestHeaders(headerValue(headers, "Host"_s), headerValue(headers, "Origin"_s), message.method, headerValue(headers, "Content-Type"_s));
+        auto hostHeader = headerValue(headers, "Host"_s);
+        auto originHeader = headerValue(headers, "Origin"_s);
+        auto contentTypeHeader = headerValue(headers, "Content-Type"_s);
+        auto result = validateRequestHeaders(hostHeader.get(), originHeader.get(), message.method.get(), contentTypeHeader.get());
         if (!result) {
-            RELEASE_LOG_ERROR(WebDriverClassic, "Rejected HTTP request: %s", result.error().utf8());
-            sendResponse(rejectedRequestResponse(result.error()));
+            RELEASE_LOG_ERROR(WebDriverClassic, "Rejected HTTP request: %s", utf8(result.error()));
+            sendResponse(rejectedRequestResponse(result.error().get()));
             return;
         }
 
@@ -126,11 +129,11 @@ void HTTPRequestHandler::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID
 void HTTPRequestHandler::sendResponse(HTTPRequestHandler::Response&& response)
 {
     auto& endpoint = RemoteInspectorSocketEndpoint::singleton();
-    endpoint.send(m_client.value(), byteCast<uint8_t>(packHTTPMessage(WTF::move(response)).utf8().span()));
+    endpoint.send(m_client.value(), byteCast<uint8_t>(utf8(packHTTPMessage(WTF::move(response))).span()));
     reset();
 }
 
-String HTTPRequestHandler::packHTTPMessage(HTTPRequestHandler::Response&& response) const
+RefPtr<StringImpl> HTTPRequestHandler::packHTTPMessage(HTTPRequestHandler::Response&& response) const
 {
     StringBuilder builder;
     auto EOL = "\r\n"_s;
@@ -146,7 +149,7 @@ String HTTPRequestHandler::packHTTPMessage(HTTPRequestHandler::Response&& respon
     builder.append(EOL);
 
     if (!response.data.isNull())
-        builder.append(String::fromUTF8(response.data.span()));
+        builder.append(StringImpl::fromUTF8(response.data.span()));
 
     return builder.toString();
 }

@@ -365,9 +365,9 @@ void ComplexTextController::collectComplexTextRuns()
         // We need a 16-bit string to pass to Core Text.
         if (!m_run->is8Bit())
             return m_run->span16();
-        String stringConvertedTo16Bit = m_run->textAsString();
-        stringConvertedTo16Bit.convertTo16Bit();
-        auto characters = stringConvertedTo16Bit.span16();
+        RefPtr<StringImpl> stringConvertedTo16Bit = m_run->textAsString();
+        convertTo16Bit(stringConvertedTo16Bit);
+        auto characters = span16(stringConvertedTo16Bit);
         m_stringsFor8BitRuns.append(WTF::move(stringConvertedTo16Bit));
         return characters;
     }();

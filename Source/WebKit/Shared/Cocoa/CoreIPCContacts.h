@@ -48,7 +48,7 @@ public:
 private:
     friend struct IPC::ArgumentCoder<CoreIPCCNPostalAddress>;
 
-    CoreIPCCNPostalAddress(String&& street, String&& subLocality, String&& city, String&& subAdministrativeArea, String&& state, String&& postalCode, String&& country, String&& isoCountryCode, String&& formattedAddress)
+    CoreIPCCNPostalAddress(RefPtr<StringImpl>&& street, RefPtr<StringImpl>&& subLocality, RefPtr<StringImpl>&& city, RefPtr<StringImpl>&& subAdministrativeArea, RefPtr<StringImpl>&& state, RefPtr<StringImpl>&& postalCode, RefPtr<StringImpl>&& country, RefPtr<StringImpl>&& isoCountryCode, RefPtr<StringImpl>&& formattedAddress)
         : m_street(WTF::move(street))
         , m_subLocality(WTF::move(subLocality))
         , m_city(WTF::move(city))
@@ -61,15 +61,15 @@ private:
     {
     }
 
-    String m_street;
-    String m_subLocality;
-    String m_city;
-    String m_subAdministrativeArea;
-    String m_state;
-    String m_postalCode;
-    String m_country;
-    String m_isoCountryCode;
-    String m_formattedAddress;
+    RefPtr<StringImpl> m_street;
+    RefPtr<StringImpl> m_subLocality;
+    RefPtr<StringImpl> m_city;
+    RefPtr<StringImpl> m_subAdministrativeArea;
+    RefPtr<StringImpl> m_state;
+    RefPtr<StringImpl> m_postalCode;
+    RefPtr<StringImpl> m_country;
+    RefPtr<StringImpl> m_isoCountryCode;
+    RefPtr<StringImpl> m_formattedAddress;
 };
 
 class CoreIPCCNPhoneNumber {
@@ -81,19 +81,19 @@ public:
 private:
     friend struct IPC::ArgumentCoder<CoreIPCCNPhoneNumber>;
 
-    CoreIPCCNPhoneNumber(String&& digits, String&& countryCode)
+    CoreIPCCNPhoneNumber(RefPtr<StringImpl>&& digits, RefPtr<StringImpl>&& countryCode)
         : m_digits(WTF::move(digits))
         , m_countryCode(WTF::move(countryCode))
     {
     }
 
-    String m_digits;
-    String m_countryCode;
+    RefPtr<StringImpl> m_digits;
+    RefPtr<StringImpl> m_countryCode;
 };
 
 struct CoreIPCContactLabeledValue {
-    String identifier;
-    String label;
+    RefPtr<StringImpl> identifier;
+    RefPtr<StringImpl> label;
     Variant<CoreIPCDateComponents, CoreIPCCNPhoneNumber, CoreIPCCNPostalAddress, CoreIPCString> value;
 
     template <typename T> static bool allValuesAreOfType(const Vector<CoreIPCContactLabeledValue>& values) {
@@ -115,24 +115,24 @@ private:
     friend struct IPC::ArgumentCoder<CoreIPCCNContact>;
     CoreIPCCNContact() = default;
 
-    String m_identifier;
+    RefPtr<StringImpl> m_identifier;
     bool m_personContactType { false };
 
-    String m_namePrefix;
-    String m_givenName;
-    String m_middleName;
-    String m_familyName;
-    String m_previousFamilyName;
-    String m_nameSuffix;
-    String m_nickname;
-    String m_organizationName;
-    String m_departmentName;
-    String m_jobTitle;
-    String m_phoneticGivenName;
-    String m_phoneticMiddleName;
-    String m_phoneticFamilyName;
-    String m_phoneticOrganizationName;
-    String m_note;
+    RefPtr<StringImpl> m_namePrefix;
+    RefPtr<StringImpl> m_givenName;
+    RefPtr<StringImpl> m_middleName;
+    RefPtr<StringImpl> m_familyName;
+    RefPtr<StringImpl> m_previousFamilyName;
+    RefPtr<StringImpl> m_nameSuffix;
+    RefPtr<StringImpl> m_nickname;
+    RefPtr<StringImpl> m_organizationName;
+    RefPtr<StringImpl> m_departmentName;
+    RefPtr<StringImpl> m_jobTitle;
+    RefPtr<StringImpl> m_phoneticGivenName;
+    RefPtr<StringImpl> m_phoneticMiddleName;
+    RefPtr<StringImpl> m_phoneticFamilyName;
+    RefPtr<StringImpl> m_phoneticOrganizationName;
+    RefPtr<StringImpl> m_note;
 
     std::optional<CoreIPCDateComponents> m_birthday;
     std::optional<CoreIPCDateComponents> m_nonGregorianBirthday;

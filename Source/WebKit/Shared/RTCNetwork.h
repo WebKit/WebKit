@@ -88,7 +88,7 @@ struct InterfaceAddress {
 
 struct SocketAddress {
     explicit SocketAddress(const webrtc::SocketAddress&);
-    explicit SocketAddress(uint16_t port, int scopeID, String&& hostname, std::optional<IPAddress> ipAddress)
+    explicit SocketAddress(uint16_t port, int scopeID, RefPtr<StringImpl>&& hostname, std::optional<IPAddress> ipAddress)
         : port(port)
         , scopeID(scopeID)
         , hostname(WTF::move(hostname))
@@ -98,7 +98,7 @@ struct SocketAddress {
 
     uint16_t port;
     int scopeID;
-    String hostname;
+    RefPtr<StringImpl> hostname;
     std::optional<IPAddress> ipAddress;
 };
 
@@ -110,13 +110,13 @@ struct RTCNetwork {
     using InterfaceAddress = WebRTCNetwork::InterfaceAddress;
 
     RTCNetwork() = default;
-    explicit RTCNetwork(String&& name, String&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<InterfaceAddress>&& ips);
+    explicit RTCNetwork(RefPtr<StringImpl>&& name, RefPtr<StringImpl>&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<InterfaceAddress>&& ips);
     RTCNetwork isolatedCopy() const;
 
     std::unique_ptr<webrtc::Network> value() const;
 
-    String name;
-    String description;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> description;
     IPAddress prefix;
     int prefixLength { 0 };
     int type { 0 };

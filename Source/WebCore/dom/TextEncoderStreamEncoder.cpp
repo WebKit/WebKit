@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-RefPtr<Uint8Array> TextEncoderStreamEncoder::encode(const String& input)
+RefPtr<Uint8Array> TextEncoderStreamEncoder::encode(StringImpl* input)
 {
     StringView view(input);
 

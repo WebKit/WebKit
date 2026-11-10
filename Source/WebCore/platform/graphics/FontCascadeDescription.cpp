@@ -46,8 +46,8 @@ struct SameSizeAsFontCascadeDescription {
     FontPalette palette;
     FontSizeAdjust sizeAdjust;
     FontVariantAlternates alternates;
-    AtomString string;
-    AtomString string2;
+    RefPtr<AtomStringImpl> string;
+    RefPtr<AtomStringImpl> string2;
     int16_t fontSelectionRequest[3];
     float size;
     float zoom;
@@ -109,31 +109,31 @@ bool FontCascadeDescription::familiesEqualForTextAutoSizing(const FontCascadeDes
     return true;
 }
 
-bool FontCascadeDescription::familyNamesAreEqual(const AtomString& family1, const AtomString& family2)
+bool FontCascadeDescription::familyNamesAreEqual(AtomStringImpl* family1, AtomStringImpl* family2)
 {
 #if PLATFORM(COCOA)
-    if (family1.startsWith('.'))
+    if (startsWith(family1, '.'))
         return family1 == family2;
 #endif
     return ASCIICaseInsensitiveHash::equal(family1, family2);
 }
 
-unsigned FontCascadeDescription::familyNameHash(const AtomString& family)
+unsigned FontCascadeDescription::familyNameHash(AtomStringImpl* family)
 {
 #if PLATFORM(COCOA)
-    if (family.startsWith('.'))
-        return family.existingHash();
+    if (startsWith(family, '.'))
+        return existingHash(family);
 #endif
     return ASCIICaseInsensitiveHash::hash(family);
 }
 
-String FontCascadeDescription::foldedFamilyName(const String& family)
+RefPtr<StringImpl> FontCascadeDescription::foldedFamilyName(StringImpl* family)
 {
 #if PLATFORM(COCOA)
-    if (family.startsWith('.'))
+    if (startsWith(family, '.'))
         return family;
 #endif
-    return family.convertToASCIILowercase();
+    return convertToASCIILowercase(family);
 }
 
 FontSmoothingMode FontCascadeDescription::usedFontSmoothing() const

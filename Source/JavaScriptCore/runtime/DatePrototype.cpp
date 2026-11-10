@@ -110,7 +110,7 @@ static EncodedJSValue formateDateInstance(JSGlobalObject* globalObject, CallFram
         ? thisDateObj->gregorianDateTimeUTC(cache)
         : thisDateObj->gregorianDateTime(cache);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNontrivialString(vm, String("Invalid Date"_s)));
+        return JSValue::encode(jsNontrivialString(vm, "Invalid Date"_si));
 
     return JSValue::encode(jsNontrivialString(vm, formatDateTime(gregorianDateTime, format, asUTCVariant, cache)));
 }
@@ -312,7 +312,7 @@ void DatePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, toUTCStringName, toUTCStringFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, Identifier::fromString(vm, "toGMTString"_s), toUTCStringFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    JSFunction* toPrimitiveFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.toPrimitive]"_s, dateProtoFuncToPrimitiveSymbol, ImplementationVisibility::Public);
+    JSFunction* toPrimitiveFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.toPrimitive]"_si, dateProtoFuncToPrimitiveSymbol, ImplementationVisibility::Public);
     putDirectWithoutTransition(vm, vm.propertyNames->toPrimitiveSymbol, toPrimitiveFunction, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 
     if (Options::useTemporal()) {
@@ -348,11 +348,11 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToISOString, (JSGlobalObject* globalObject
 
     Integrity::auditStructureID(thisDateObj->structureID());
     if (!std::isfinite(thisDateObj->internalNumber()))
-        return throwVMError(globalObject, scope, createRangeError(globalObject, "Invalid Date"_s));
+        return throwVMError(globalObject, scope, createRangeError(globalObject, "Invalid Date"_si));
 
     auto gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNontrivialString(vm, String("Invalid Date"_s)));
+        return JSValue::encode(jsNontrivialString(vm, "Invalid Date"_si));
 
     // https://tc39.es/ecma262/#sec-date-time-string-format
 
@@ -368,7 +368,7 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToISOString, (JSGlobalObject* globalObject
     int minute = gregorianDateTime.minute();
     int second = gregorianDateTime.second();
 
-    String prefix;
+    RefPtr<StringImpl> prefix;
     auto yearDigits = 4;
     if (year < 0 || year > 9999) {
         prefix = year < 0 ? "-"_s : "+"_s;
@@ -970,7 +970,7 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToTemporalInstant, (JSGlobalObject* global
 
     double epochMilliseconds = thisDateObj->internalNumber();
     if (!isInteger(epochMilliseconds))
-        return throwVMError(globalObject, scope, createRangeError(globalObject, "Invalid integer number of Epoch Millseconds"_s));
+        return throwVMError(globalObject, scope, createRangeError(globalObject, "Invalid integer number of Epoch Millseconds"_si));
 
     ASSERT(epochMilliseconds >= std::numeric_limits<int64_t>::min() && epochMilliseconds <= static_cast<double>(std::numeric_limits<int64_t>::max()));
     ISO8601::ExactTime exactTime = ISO8601::ExactTime::fromEpochMilliseconds(epochMilliseconds);
@@ -989,7 +989,7 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToLocaleString, (JSGlobalObject* globalObj
 
     double milli = thisDateObj->internalNumber();
     if (std::isnan(milli))
-        return JSValue::encode(jsNontrivialString(vm, String("Invalid Date"_s)));
+        return JSValue::encode(jsNontrivialString(vm, "Invalid Date"_si));
 
     JSValue locales = callFrame->argument(0);
     JSValue options = callFrame->argument(1);
@@ -1015,7 +1015,7 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToLocaleDateString, (JSGlobalObject* globa
 
     double milli = thisDateObj->internalNumber();
     if (std::isnan(milli))
-        return JSValue::encode(jsNontrivialString(vm, String("Invalid Date"_s)));
+        return JSValue::encode(jsNontrivialString(vm, "Invalid Date"_si));
 
     JSValue locales = callFrame->argument(0);
     JSValue options = callFrame->argument(1);
@@ -1041,7 +1041,7 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToLocaleTimeString, (JSGlobalObject* globa
 
     double milli = thisDateObj->internalNumber();
     if (std::isnan(milli))
-        return JSValue::encode(jsNontrivialString(vm, String("Invalid Date"_s)));
+        return JSValue::encode(jsNontrivialString(vm, "Invalid Date"_si));
 
     JSValue locales = callFrame->argument(0);
     JSValue options = callFrame->argument(1);

@@ -35,7 +35,7 @@ class SharedBuffer;
 
 namespace WebKit {
 
-Vector<String> testDisplayListData(const Vector<Ref<WebCore::SharedBuffer>>& webFonts);
+Vector<RefPtr<StringImpl>> testDisplayListData(const Vector<Ref<WebCore::SharedBuffer>>& webFonts);
 
 } // namespace WebKit
 

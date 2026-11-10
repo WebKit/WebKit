@@ -405,7 +405,7 @@ static void* kvoContext = &kvoContext;
     self.popoverPresentationController.delegate = self;
 
     UINavigationItem *navigationItem = self.navigationItem;
-    navigationItem.title = protect(extensionContext->extension())->displayName().createNSString().get();
+    navigationItem.title = createNSString(protect(extensionContext->extension())->displayName()).get();
     navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(_dismissPopup)];
 
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(_viewControllerDismissalTransitionDidEnd:) name:UIPresentationControllerDismissalTransitionDidEndNotification object:nil];
@@ -633,7 +633,7 @@ WebExtensionContext* WebExtensionAction::extensionContext() const
 void WebExtensionAction::clearCustomizations()
 {
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
-    if (!m_customIcons && !m_customIconVariants && m_customPopupPath.isNull() && m_customLabel.isNull() && m_customBadgeText.isNull() && !m_customEnabled && !m_blockedResourceCount)
+    if (!m_customIcons && !m_customIconVariants && !m_customPopupPath && !m_customLabel && !m_customBadgeText && !m_customEnabled && !m_blockedResourceCount)
 #else
     if (!m_customIcons && m_customPopupPath.isNull() && m_customLabel.isNull() && m_customBadgeText.isNull() && !m_customEnabled && !m_blockedResourceCount)
 #endif
@@ -833,13 +833,13 @@ void WebExtensionAction::clearIconCache()
     m_cachedIconIdealSize = { };
 }
 
-String WebExtensionAction::popupPath() const
+RefPtr<StringImpl> WebExtensionAction::popupPath() const
 {
     RefPtr extensionContext = this->extensionContext();
     if (!extensionContext)
         return emptyString();
 
-    if (!m_customPopupPath.isNull())
+    if (m_customPopupPath)
         return m_customPopupPath;
 
     if (RefPtr fallback = fallbackAction())
@@ -849,9 +849,9 @@ String WebExtensionAction::popupPath() const
     return protect(extensionContext->extension())->actionPopupPath();
 }
 
-void WebExtensionAction::setPopupPath(String path)
+void WebExtensionAction::setPopupPath(RefPtr<StringImpl> path)
 {
-    if (m_customPopupPath == path)
+    if (equal(m_customPopupPath, path))
         return;
 
     m_customPopupPath = path;
@@ -866,17 +866,17 @@ void WebExtensionAction::setPopupPath(String path)
 
 NSString *WebExtensionAction::popupWebViewInspectionName()
 {
-    if (m_popupWebViewInspectionName.isEmpty()) {
+    if (isEmpty(m_popupWebViewInspectionName)) {
         if (RefPtr extensionContext = this->extensionContext())
-            m_popupWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Popup Page", "Label for an inspectable Web Extension popup page", protect(extensionContext->extension())->displayShortName().createCFString().get());
+            m_popupWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Popup Page", "Label for an inspectable Web Extension popup page", createCFString(protect(extensionContext->extension())->displayShortName()).get());
     }
-    return m_popupWebViewInspectionName.createNSString().autorelease();
+    return createNSString(m_popupWebViewInspectionName).autorelease();
 }
 
-void WebExtensionAction::setPopupWebViewInspectionName(const String& name)
+void WebExtensionAction::setPopupWebViewInspectionName(StringImpl* name)
 {
     m_popupWebViewInspectionName = name;
-    m_popupWebView.get()._remoteInspectionNameOverride = name.createNSString().get();
+    m_popupWebView.get()._remoteInspectionNameOverride = createNSString(name).get();
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -1009,7 +1009,7 @@ WKWebView *WebExtensionAction::popupWebView()
     m_popupWebView.get().navigationDelegate = m_popupWebViewDelegate.get();
     m_popupWebView.get().UIDelegate = m_popupWebViewDelegate.get();
     m_popupWebView.get().inspectable = extensionContext->isInspectable();
-    m_popupWebView.get().accessibilityLabel = protect(extensionContext->extension())->displayName().createNSString().get();
+    m_popupWebView.get().accessibilityLabel = createNSString(protect(extensionContext->extension())->displayName()).get();
     m_popupWebView.get()._remoteInspectionNameOverride = popupWebViewInspectionName();
 
 #if PLATFORM(MAC)
@@ -1193,14 +1193,14 @@ void WebExtensionAction::closePopup()
 #endif
 }
 
-String WebExtensionAction::label(FallbackWhenEmpty fallback) const
+RefPtr<StringImpl> WebExtensionAction::label(FallbackWhenEmpty fallback) const
 {
     RefPtr extensionContext = this->extensionContext();
     if (!extensionContext)
         return emptyString();
 
-    if (!m_customLabel.isNull()) {
-        if (!m_customLabel.isEmpty() || fallback == FallbackWhenEmpty::No)
+    if (m_customLabel) {
+        if (!isEmpty(m_customLabel) || fallback == FallbackWhenEmpty::No)
             return m_customLabel;
 
         return protect(extensionContext->extension())->displayName();
@@ -1211,15 +1211,15 @@ String WebExtensionAction::label(FallbackWhenEmpty fallback) const
 
     // Default
     Ref extension = extensionContext->extension();
-    if (auto defaultLabel = extension->displayActionLabel(); !defaultLabel.isEmpty() || fallback == FallbackWhenEmpty::No)
+    if (auto defaultLabel = extension->displayActionLabel(); !isEmpty(defaultLabel) || fallback == FallbackWhenEmpty::No)
         return defaultLabel;
 
     return extension->displayName();
 }
 
-void WebExtensionAction::setLabel(String label)
+void WebExtensionAction::setLabel(RefPtr<StringImpl> label)
 {
-    if (m_customLabel == label)
+    if (equal(m_customLabel, label))
         return;
 
     m_customLabel = label;
@@ -1227,16 +1227,16 @@ void WebExtensionAction::setLabel(String label)
     propertiesDidChange();
 }
 
-String WebExtensionAction::badgeText() const
+RefPtr<StringImpl> WebExtensionAction::badgeText() const
 {
     if (!extensionContext())
         return emptyString();
 
-    if (!m_customBadgeText.isNull())
+    if (m_customBadgeText)
         return m_customBadgeText;
 
     if (m_blockedResourceCount)
-        return String::number(m_blockedResourceCount);
+        return makeString(m_blockedResourceCount);
 
     if (RefPtr fallback = fallbackAction())
         return fallback->badgeText();
@@ -1245,15 +1245,15 @@ String WebExtensionAction::badgeText() const
     return emptyString();
 }
 
-void WebExtensionAction::setBadgeText(String badgeText)
+void WebExtensionAction::setBadgeText(RefPtr<StringImpl> badgeText)
 {
-    if (m_customBadgeText == badgeText)
+    if (equal(m_customBadgeText, badgeText))
         return;
 
     m_customBadgeText = badgeText;
 
-    if (!badgeText.isNull())
-        m_hasUnreadBadgeText = !badgeText.isEmpty();
+    if (badgeText)
+        m_hasUnreadBadgeText = !isEmpty(badgeText);
     else
         m_hasUnreadBadgeText = std::nullopt;
 
@@ -1277,7 +1277,7 @@ bool WebExtensionAction::hasUnreadBadgeText() const
 
 void WebExtensionAction::setHasUnreadBadgeText(bool hasUnreadBadgeText)
 {
-    auto newValue = !badgeText().isEmpty() ? std::optional(hasUnreadBadgeText) : std::nullopt;
+    auto newValue = !isEmpty(badgeText()) ? std::optional(hasUnreadBadgeText) : std::nullopt;
     if (m_hasUnreadBadgeText == newValue)
         return;
 
@@ -1300,7 +1300,7 @@ void WebExtensionAction::incrementBlockedResourceCount(ssize_t amount)
     if (m_blockedResourceCount < 0)
         m_blockedResourceCount = 0;
 
-    if (!badgeText().isEmpty())
+    if (!isEmpty(badgeText()))
         m_hasUnreadBadgeText = true;
 
     propertiesDidChange();

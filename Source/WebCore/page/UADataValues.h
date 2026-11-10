@@ -32,16 +32,16 @@
 namespace WebCore {
 
 struct UADataValues {
-    String architecture;
-    String bitness;
+    RefPtr<StringImpl> architecture;
+    RefPtr<StringImpl> bitness;
     Vector<NavigatorUABrandVersion> brands;
-    std::optional<Vector<String>> formFactors;
+    std::optional<Vector<RefPtr<StringImpl>>> formFactors;
     std::optional<Vector<NavigatorUABrandVersion>> fullVersionList;
-    String model;
+    RefPtr<StringImpl> model;
     bool mobile;
-    String platform;
-    String platformVersion;
-    String uaFullVersion;
+    RefPtr<StringImpl> platform;
+    RefPtr<StringImpl> platformVersion;
+    RefPtr<StringImpl> uaFullVersion;
     std::optional<bool> wow64;
 };
 

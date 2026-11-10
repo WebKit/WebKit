@@ -75,7 +75,7 @@ using ProcessAndVisibilityPropagatorPair = std::pair<WeakPtr<AuxiliaryProcessPro
         return;
 
 #if HAVE(NON_HOSTING_VISIBILITY_PROPAGATION_VIEW)
-    RetainPtr visibilityPropagationView = adoptNS([[_UINonHostingVisibilityPropagationView alloc] initWithFrame:CGRectZero pid:processID environmentIdentifier:process.environmentIdentifier().createNSString().get()]);
+    RetainPtr visibilityPropagationView = adoptNS([[_UINonHostingVisibilityPropagationView alloc] initWithFrame:CGRectZero pid:processID environmentIdentifier:createNSString(process.environmentIdentifier()).get()]);
 #else
     if (!contextID)
         return;

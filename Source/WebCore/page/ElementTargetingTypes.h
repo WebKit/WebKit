@@ -44,7 +44,7 @@ namespace WebCore {
 
 class SharedBuffer;
 
-using TargetedElementSelectors = Vector<HashSet<String>>;
+using TargetedElementSelectors = Vector<HashSet<RefPtr<StringImpl>>>;
 using TargetedElementIdentifiers = std::pair<NodeIdentifier, ScriptExecutionContextIdentifier>;
 
 struct TargetedElementAdjustment {
@@ -53,7 +53,7 @@ struct TargetedElementAdjustment {
 };
 
 struct TargetedElementRequest {
-    Variant<FloatPoint, String, TargetedElementSelectors> data;
+    Variant<FloatPoint, RefPtr<StringImpl>, TargetedElementSelectors> data;
     bool canIncludeNearbyElements { true };
     bool shouldIgnorePointerEventsNone { true };
 };
@@ -62,10 +62,10 @@ struct TargetedElementInfo {
     NodeIdentifier nodeIdentifier;
     ScriptExecutionContextIdentifier documentIdentifier;
     RectEdges<bool> offsetEdges;
-    String renderedText;
-    String searchableText;
-    String screenReaderText;
-    Vector<Vector<String>> selectors;
+    RefPtr<StringImpl> renderedText;
+    RefPtr<StringImpl> searchableText;
+    RefPtr<StringImpl> screenReaderText;
+    Vector<Vector<RefPtr<StringImpl>>> selectors;
     FloatRect boundsInRootView;
     FloatRect boundsInClientCoordinates;
     PositionType positionType { PositionType::Static };

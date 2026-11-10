@@ -80,9 +80,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSource);
 
-String convertEnumerationToString(MediaSourcePrivate::AddStatus enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(MediaSourcePrivate::AddStatus enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 3> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 3> values {
         MAKE_STATIC_STRING_IMPL("Ok"),
         MAKE_STATIC_STRING_IMPL("NotSupported"),
         MAKE_STATIC_STRING_IMPL("ReachedIdLimit"),
@@ -94,9 +94,9 @@ String convertEnumerationToString(MediaSourcePrivate::AddStatus enumerationValue
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String convertEnumerationToString(MediaSourcePrivate::EndOfStreamStatus enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(MediaSourcePrivate::EndOfStreamStatus enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 3> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 3> values {
         MAKE_STATIC_STRING_IMPL("NoError"),
         MAKE_STATIC_STRING_IMPL("NetworkError"),
         MAKE_STATIC_STRING_IMPL("DecodeError"),
@@ -418,7 +418,7 @@ ExceptionOr<void> MediaSource::clearLiveSeekableRange()
 
 bool MediaSource::contentTypeShouldGenerateTimestamps(const ContentType& contentType)
 {
-    return contentType.containerType() == "audio/aac"_s || contentType.containerType() == "audio/mpeg"_s;
+    return equal(contentType.containerType(), "audio/aac"_s) || equal(contentType.containerType(), "audio/mpeg"_s);
 }
 
 void MediaSource::monitorSourceBuffers()
@@ -693,7 +693,7 @@ void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
     });
 }
 
-ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
+ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(StringImpl* type)
 {
     DEBUG_LOG(LOGIDENTIFIER, type);
 
@@ -701,7 +701,7 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
     // When this method is invoked, the user agent must run the following steps:
 
     // 1. If type is an empty string then throw a TypeError exception and abort these steps.
-    if (type.isEmpty())
+    if (isEmpty(type))
         return Exception { ExceptionCode::TypeError };
 
     RefPtr context = scriptExecutionContext();
@@ -960,7 +960,7 @@ void MediaSource::removeSourceBufferWithOptionalDestruction(SourceBuffer& buffer
     notifyElementUpdateMediaState();
 }
 
-bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String& type)
+bool MediaSource::isTypeSupported(ScriptExecutionContext& context, StringImpl* type)
 {
     Vector<ContentType> mediaContentTypesRequiringHardwareSupport;
     if (RefPtr document = dynamicDowncast<Document>(context))
@@ -969,21 +969,21 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
     return isTypeSupported(context, type, WTF::move(mediaContentTypesRequiringHardwareSupport));
 }
 
-bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String& type, Vector<ContentType>&& contentTypesRequiringHardwareSupport)
+bool MediaSource::isTypeSupported(ScriptExecutionContext& context, StringImpl* type, Vector<ContentType>&& contentTypesRequiringHardwareSupport)
 {
     // Section 2.2 isTypeSupported() method steps.
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#widl-MediaSource-isTypeSupported-boolean-DOMString-type
     // 1. If type is an empty string, then return false.
-    if (type.isNull() || type.isEmpty())
+    if (!type || isEmpty(type))
         return false;
 
     ContentType contentType(type);
     RefPtr document = dynamicDowncast<Document>(context);
 
-    String codecs = contentType.parameter("codecs"_s);
+    RefPtr<StringImpl> codecs = contentType.parameter("codecs"_si);
 
     // 2. If type does not contain a valid MIME type string, then return false.
-    if (contentType.containerType().isEmpty())
+    if (isEmpty(contentType.containerType()))
         return false;
 
     // 3. If type contains a media type or media subtype that the MediaSource does not support, then return false.
@@ -1016,7 +1016,7 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
     });
 
     bool isSupported;
-    if (codecs.isEmpty())
+    if (isEmpty(codecs))
         isSupported = supported != MediaPlayer::SupportsType::IsNotSupported;
     else
         isSupported = supported == MediaPlayer::SupportsType::IsSupported;
@@ -1292,7 +1292,7 @@ ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(con
     return Exception { ExceptionCode::QuotaExceededError };
 }
 
-void MediaSource::scheduleEvent(const AtomString& eventName)
+void MediaSource::scheduleEvent(AtomStringImpl* eventName)
 {
     DEBUG_LOG(LOGIDENTIFIER, "scheduling '", eventName, "'");
 

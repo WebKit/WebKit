@@ -60,7 +60,7 @@ SecurityFlagsController::SecurityFlagsController()
 
     for (auto& name : borrow(m_persistentlyDisabledNames)) {
         UNUSED_VARIABLE(name);
-        RELEASE_LOG(Process, "SecurityFlagsController: security flag %" PUBLIC_LOG_STRING " is disabled by a user default and cannot be enforced again at runtime", name.utf8());
+        RELEASE_LOG(Process, "SecurityFlagsController: security flag %" PUBLIC_LOG_STRING " is disabled by a user default and cannot be enforced again at runtime", utf8(name));
     }
 
     // Deferred because singleton() is still under construction here. A privileged child process launched before the
@@ -71,7 +71,7 @@ SecurityFlagsController::SecurityFlagsController()
     });
 }
 
-SecurityFlags::Storage SecurityFlagsController::flagsWithNamesDisabled(const Vector<String>& names, IncludePersistentNames includePersistentNames) const
+SecurityFlags::Storage SecurityFlagsController::flagsWithNamesDisabled(const Vector<RefPtr<StringImpl>>& names, IncludePersistentNames includePersistentNames) const
 {
     SecurityFlags::Storage flags;
     size_t unknownNameCount = 0;
@@ -93,12 +93,12 @@ SecurityFlags::Storage SecurityFlagsController::flagsWithNamesDisabled(const Vec
     return flags;
 }
 
-void SecurityFlagsController::setDisabledFlagsNamed(const Vector<String>& names)
+void SecurityFlagsController::setDisabledFlagsNamed(const Vector<RefPtr<StringImpl>>& names)
 {
     apply(flagsWithNamesDisabled(names, IncludePersistentNames::Yes));
 }
 
-void SecurityFlagsController::setDisabledFlagsNamedForTesting(const Vector<String>& names)
+void SecurityFlagsController::setDisabledFlagsNamedForTesting(const Vector<RefPtr<StringImpl>>& names)
 {
     m_remoteListSuppressedForTesting = true;
     m_remoteListState = RemoteListState::Idle;
@@ -150,7 +150,7 @@ void SecurityFlagsController::remoteListRequestTimedOut(uint64_t generation)
     didReceiveRemoteList(generation, std::nullopt);
 }
 
-void SecurityFlagsController::didReceiveRemoteList(uint64_t generation, std::optional<Vector<String>>&& names)
+void SecurityFlagsController::didReceiveRemoteList(uint64_t generation, std::optional<Vector<RefPtr<StringImpl>>>&& names)
 {
     ASSERT(RunLoop::isMain());
 
@@ -197,7 +197,7 @@ void SecurityFlagsController::apply(SecurityFlags::Storage&& newFlags)
 }
 
 #if !PLATFORM(COCOA)
-Vector<String> SecurityFlagsController::platformPersistentlyDisabledFlagNames()
+Vector<RefPtr<StringImpl>> SecurityFlagsController::platformPersistentlyDisabledFlagNames()
 {
     return { };
 }

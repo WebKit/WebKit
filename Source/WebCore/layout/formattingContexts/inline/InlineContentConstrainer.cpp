@@ -131,7 +131,7 @@ NODELETE static bool containsPreservedTab(const InlineItem& inlineItem)
     auto length = textItem->length();
     const auto& textContent = textBox.content();
     for (size_t index = start; index < start + length; index++) {
-        if (textContent[index] == tabCharacter)
+        if (codeUnitAt(textContent, index) == tabCharacter)
             return true;
     }
     return false;

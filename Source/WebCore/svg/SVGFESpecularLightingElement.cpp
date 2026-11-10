@@ -60,7 +60,7 @@ Ref<SVGFESpecularLightingElement> SVGFESpecularLightingElement::create(const Qua
     return adoptRef(*new SVGFESpecularLightingElement(tagName, document));
 }
 
-void SVGFESpecularLightingElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGFESpecularLightingElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::inAttr:

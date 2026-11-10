@@ -30,7 +30,7 @@ class PipeWireCaptureDevice : public CaptureDevice {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PipeWireCaptureDevice);
 
 public:
-    PipeWireCaptureDevice(PipeWireNodeData& nodeData, const String& persistentId, DeviceType type, const String& label, const String& groupId = emptyString())
+    PipeWireCaptureDevice(PipeWireNodeData& nodeData, StringImpl* persistentId, DeviceType type, StringImpl* label, StringImpl* groupId = emptyString())
         : CaptureDevice(persistentId, type, label, groupId)
         , m_nodeData(nodeData)
     {

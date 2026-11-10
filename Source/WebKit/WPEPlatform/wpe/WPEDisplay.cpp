@@ -79,7 +79,7 @@ struct _WPEDisplayPrivate {
     bool eglInitialized;
     EGLDisplay eglDisplay;
     GUniqueOutPtr<GError> eglDisplayError;
-    HashMap<String, bool> extensionsMap;
+    HashMap<RefPtr<StringImpl>, bool> extensionsMap;
     GRefPtr<WPEBufferFormats> preferredBufferFormats;
     GRefPtr<WPEKeymap> keymap;
     GRefPtr<WPEClipboard> clipboard;
@@ -292,7 +292,7 @@ WPEDisplay* wpe_display_get_default(void)
         if (!extensionName) {
             static constexpr auto displayNamePrefix = "wpe-display-"_s;
             extensionName = UTF8CStringView::unsafeFromUTF8(g_getenv("WPE_DISPLAY"));
-            if (extensionName.lengthInBytes() > displayNamePrefix.length() && extensionName.span().first(displayNamePrefix.length()) == displayNamePrefix) {
+            if (extensionName.lengthInBytes() > displayNamePrefix.length() && equal(StringImpl::create(extensionName.span().first(displayNamePrefix.length())), displayNamePrefix)) {
                 auto nullTerminatedSpan = extensionName.spanIncludingNullTerminator();
                 extensionName = UTF8CStringView::fromUTF8(nullTerminatedSpan.last(nullTerminatedSpan.size() - displayNamePrefix.length()));
             }

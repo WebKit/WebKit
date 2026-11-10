@@ -45,7 +45,7 @@ public:
 private:
     ConnectionType connectionType() const override { return ConnectionType::Local; }
 
-    void sendMessageToFrontend(const String& message) override
+    void sendMessageToFrontend(StringImpl* message) override
     {
         if (CheckedPtr workerDebuggerProxy = m_globalScope->workerOrWorkletThread()->workerDebuggerProxy())
             workerDebuggerProxy->postMessageToDebugger(message);

@@ -75,7 +75,7 @@ WebSharedWorkerContextManagerConnection::WebSharedWorkerContextManagerConnection
     , m_webPageProxyID(webPageProxyID)
     , m_pageID(pageID)
 #if PLATFORM(COCOA)
-    , m_userAgent(WebCore::standardUserAgentWithApplicationName({ }))
+    , m_userAgent(WebCore::standardUserAgentWithApplicationName(nullptr))
 #else
     , m_userAgent(WebCore::standardUserAgent())
 #endif
@@ -93,7 +93,7 @@ void WebSharedWorkerContextManagerConnection::establishConnection(CompletionHand
     m_connectionToNetworkProcess->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::EstablishSharedWorkerContextConnection { m_webPageProxyID, m_site, m_crossOriginEmbedderPolicyValue }, WTF::move(completionHandler), 0);
 }
 
-void WebSharedWorkerContextManagerConnection::postErrorToWorkerObject(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent)
+void WebSharedWorkerContextManagerConnection::postErrorToWorkerObject(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL, bool isErrorEvent)
 {
     m_connectionToNetworkProcess->send(Messages::WebSharedWorkerServerToContextConnection::PostErrorToWorkerObject { sharedWorkerIdentifier, errorMessage, lineNumber, columnNumber, sourceURL, isErrorEvent }, 0);
 }
@@ -128,7 +128,7 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
     else if (WebProcess::singleton().isLockdownModeEnabled())
         WebPage::adjustSettingsForLockdownMode(page->settings(), nullptr);
 
-    if (initializationData.userAgent.isEmpty())
+    if (isEmpty(initializationData.userAgent))
         initializationData.userAgent = m_userAgent;
 
     if (!initializationData.clientIdentifier)

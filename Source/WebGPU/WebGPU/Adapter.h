@@ -68,9 +68,9 @@ public:
     bool hasFeature(WebGPU::FeatureName);
     void requestDevice(const WebGPU::DeviceDescriptor&, CompletionHandler<void(RefPtr<WebGPU::Device>&&)>&&) final;
     // requestDevice() with the reason a device could not be created, for the C API.
-    void requestDeviceOrError(const WebGPU::DeviceDescriptor&, CompletionHandler<void(std::expected<Ref<Device>, String>&&)>&&);
+    void requestDeviceOrError(const WebGPU::DeviceDescriptor&, CompletionHandler<void(std::expected<Ref<Device>, RefPtr<StringImpl>>&&)>&&);
 
-    void setLabel(String&&) final { }
+    void setLabel(RefPtr<StringImpl>&&) final { }
     bool isValid() const final { return m_device; }
     id<MTLDevice> device() const { return m_device; }
     void makeInvalid() { m_device = nil; }

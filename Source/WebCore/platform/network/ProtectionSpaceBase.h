@@ -75,11 +75,11 @@ public:
 
     bool isHashTableDeletedValue() const { return m_isHashTableDeletedValue; }
     
-    const String& host() const LIFETIME_BOUND { return m_host; }
+    const RefPtr<StringImpl>& host() const LIFETIME_BOUND { return m_host; }
     int port() const { return m_port; }
     ServerType serverType() const { return m_serverType; }
     NODELETE WEBCORE_EXPORT bool isProxy() const;
-    const String& realm() const LIFETIME_BOUND { return m_realm; }
+    const RefPtr<StringImpl>& realm() const LIFETIME_BOUND { return m_realm; }
     AuthenticationScheme authenticationScheme() const { return m_authenticationScheme; }
     
     NODELETE WEBCORE_EXPORT bool receivesCredentialSecurely() const;
@@ -91,7 +91,7 @@ public:
 
 protected:
     ProtectionSpaceBase() = default;
-    NODELETE WEBCORE_EXPORT ProtectionSpaceBase(const String& host, int port, ServerType, const String& realm, AuthenticationScheme);
+    NODELETE WEBCORE_EXPORT ProtectionSpaceBase(StringImpl* host, int port, ServerType, StringImpl* realm, AuthenticationScheme);
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     ProtectionSpaceBase(WTF::HashTableDeletedValueType) : m_isHashTableDeletedValue(true) { }
@@ -101,8 +101,8 @@ protected:
 private:
     // Need to enforce empty, non-null strings due to the pickiness of the String == String operator
     // combined with the semantics of the String(NSString*) constructor
-    String m_host { emptyString() };
-    String m_realm { emptyString() };
+    RefPtr<StringImpl> m_host { emptyString() };
+    RefPtr<StringImpl> m_realm { emptyString() };
 
     int m_port { 0 };
     ServerType m_serverType { ServerType::HTTP };

@@ -34,7 +34,7 @@ namespace WebCore {
 Ref<JSON::Object> GPUSamplerBindingLayout::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setString("type"_s, convertEnumerationToString(type));
+    json->setString("type"_si, convertEnumerationToString(type));
     return json;
 }
 

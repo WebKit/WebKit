@@ -47,28 +47,28 @@ public:
 
     Inspector::RemoteControllableTarget::Type type() const final { return Inspector::RemoteControllableTarget::Type::WasmDebugger; }
 
-    String name() const final;
-    String url() const final;
+    RefPtr<StringImpl> name() const final;
+    RefPtr<StringImpl> url() const final;
     bool hasLocalDebugger() const final;
 
     void connect(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false) final;
     void disconnect(Inspector::FrontendChannel&) final;
-    void dispatchMessageFromRemote(String&& message) final;
+    void dispatchMessageFromRemote(RefPtr<StringImpl>&& message) final;
     void setIndicating(bool) final;
 
-    const String& nameOverride() const LIFETIME_BOUND final { return m_nameOverride; }
-    void setNameOverride(const String&);
+    const RefPtr<StringImpl>& nameOverride() const LIFETIME_BOUND final { return m_nameOverride; }
+    void setNameOverride(StringImpl*);
 
     std::optional<ProcessID> webContentProcessPID() const override;
 
     NODELETE void detachFromProcess();
 
     // Response forwarding for WebAssembly debugging
-    void sendResponseToFrontend(const String& response);
+    void sendResponseToFrontend(StringImpl* response);
 
 private:
     WeakPtr<WebProcessProxy> m_process;
-    String m_nameOverride;
+    RefPtr<StringImpl> m_nameOverride;
     Inspector::FrontendChannel* m_frontendChannel { nullptr };
 };
 

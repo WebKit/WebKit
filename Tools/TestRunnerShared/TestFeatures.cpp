@@ -118,7 +118,7 @@ static std::optional<double> overrideDeviceScaleFactorForTest(const std::string&
 static bool shouldDumpJSConsoleLogInStdErr(const std::string& pathOrURL)
 {
     // Disable console logging for WPT tests as it frequently causes flakiness.
-    if (auto url = URL { { }, String::fromUTF8(pathOrURL.c_str()) }; isWebPlatformTestURL(url))
+    if (auto url = URL { { }, StringImpl::fromUTF8(pathOrURL.c_str()) }; isWebPlatformTestURL(url))
         return true;
 
     return false;
@@ -174,7 +174,7 @@ static bool shouldEnableLocalNetworkAccess(const std::string& pathOrURL)
 
 static bool shouldDumpCSSPageBoxes(const std::string& pathOrURL)
 {
-    if (!isWebPlatformTestURL(URL { { }, String::fromUTF8(pathOrURL.c_str()) }))
+    if (!isWebPlatformTestURL(URL { { }, StringImpl::fromUTF8(pathOrURL.c_str()) }))
         return false;
     return pathContains(pathOrURL, "-print.") || pathContains(pathOrURL, "-print-expected") || pathContains(pathOrURL, "/print/");
 }

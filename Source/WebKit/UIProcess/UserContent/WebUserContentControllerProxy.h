@@ -92,7 +92,7 @@ public:
 
     UserContentControllerParameters parametersForProcess(WebProcessProxy&) const;
 
-    IPC::TransferString cachedTransferString(const String&) const;
+    IPC::TransferString cachedTransferString(StringImpl*) const;
     void resetTransferStringCache();
 
     API::Array& userScripts() { return m_userScripts.get(); }
@@ -117,12 +117,12 @@ public:
 #endif
     WebCoreUserStyleSheetData dataFromUserStyleSheet(const API::UserStyleSheet&, WebProcessProxy&) const;
 
-    void addJSBuffer(Ref<WebCore::SharedMemory>&&, API::ContentWorld&, const String&);
-    void removeJSBuffer(API::ContentWorld&, const String&);
+    void addJSBuffer(Ref<WebCore::SharedMemory>&&, API::ContentWorld&, StringImpl*);
+    void removeJSBuffer(API::ContentWorld&, StringImpl*);
 
     // Returns false if there was a name conflict.
     bool addUserScriptMessageHandler(WebScriptMessageHandler&);
-    void removeUserMessageHandlerForName(const String&, API::ContentWorld&);
+    void removeUserMessageHandlerForName(StringImpl*, API::ContentWorld&);
     void removeAllUserMessageHandlers(API::ContentWorld&);
     void removeAllUserMessageHandlers();
 
@@ -131,32 +131,32 @@ public:
     void removeNetworkProcess(NetworkProcessProxy&);
 
     void addContentRuleList(API::ContentRuleList&, const WTF::URL& extensionBaseURL = { });
-    void removeContentRuleList(const String&);
+    void removeContentRuleList(StringImpl*);
 #if ENABLE(WK_WEB_EXTENSIONS)
     void removeAllContentRuleLists(RemoveWebExtensions = RemoveWebExtensions::No);
 #else
     void removeAllContentRuleLists();
 #endif
 
-    const HashMap<String, std::pair<Ref<API::ContentRuleList>, URL>>& contentExtensionRules() LIFETIME_BOUND { return m_contentRuleLists; }
+    const HashMap<RefPtr<StringImpl>, std::pair<Ref<API::ContentRuleList>, URL>>& contentExtensionRules() LIFETIME_BOUND { return m_contentRuleLists; }
     Vector<std::pair<WebCompiledContentRuleListData, URL>> contentRuleListData() const;
 #endif
 
     bool operator==(const WebUserContentControllerProxy& other) const { return (this == &other); }
 
-    void didPostMessage(WebPageProxy&, FrameInfoData&&, ScriptMessageHandlerIdentifier, JavaScriptEvaluationResult&&, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&&) const;
+    void didPostMessage(WebPageProxy&, FrameInfoData&&, ScriptMessageHandlerIdentifier, JavaScriptEvaluationResult&&, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, RefPtr<StringImpl>>&&)>&&) const;
 
 private:
     mutable WeakHashSet<WebProcessProxy> m_processes;
     const Ref<API::Array> m_userScripts;
     const Ref<API::Array> m_userStyleSheets;
     HashMap<ScriptMessageHandlerIdentifier, Ref<WebScriptMessageHandler>> m_scriptMessageHandlers;
-    HashMap<std::pair<WebKit::ContentWorldIdentifier, String>, Ref<WebCore::SharedMemory>> m_buffers;
-    mutable HashMap<String, IPC::TransferString> m_transferStringCache;
+    HashMap<std::pair<WebKit::ContentWorldIdentifier, RefPtr<StringImpl>>, Ref<WebCore::SharedMemory>> m_buffers;
+    mutable HashMap<RefPtr<StringImpl>, IPC::TransferString> m_transferStringCache;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WeakHashSet<NetworkProcessProxy> m_networkProcesses;
-    HashMap<String, std::pair<Ref<API::ContentRuleList>, URL>> m_contentRuleLists;
+    HashMap<RefPtr<StringImpl>, std::pair<Ref<API::ContentRuleList>, URL>> m_contentRuleLists;
 #endif
 };
 

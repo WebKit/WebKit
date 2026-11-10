@@ -103,7 +103,7 @@ bool DebugServer::start()
 }
 
 #if ENABLE(REMOTE_INSPECTOR)
-void DebugServer::startRWI(Function<bool(const String&)>&& rwiResponseHandler)
+void DebugServer::startRWI(Function<bool(StringImpl*)>&& rwiResponseHandler)
 {
     m_moduleManager = makeUnique<ModuleManager>();
     m_executionHandler = makeUnique<ExecutionHandler>(*this, *m_moduleManager);

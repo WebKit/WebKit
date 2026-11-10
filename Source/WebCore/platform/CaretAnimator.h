@@ -96,7 +96,7 @@ public:
 
     void serviceCaretAnimation();
 
-    virtual String debugDescription() const = 0;
+    virtual RefPtr<StringImpl> debugDescription() const = 0;
 
     virtual void setBlinkingSuspended(bool suspended) { m_isBlinkingSuspended = suspended; }
     NODELETE bool isBlinkingSuspended() const;

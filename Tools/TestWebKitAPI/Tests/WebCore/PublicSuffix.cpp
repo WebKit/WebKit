@@ -60,7 +60,7 @@ TEST_F(PublicSuffix, IsPublicSuffix)
     EXPECT_FALSE(publicSuffixStore.isPublicSuffix(utf16String(bidirectionalDomain)));
     EXPECT_TRUE(publicSuffixStore.isPublicSuffix(utf16String(u"\u6803\u6728.jp")));
     EXPECT_FALSE(publicSuffixStore.isPublicSuffix(""_s));
-    EXPECT_FALSE(publicSuffixStore.isPublicSuffix(String::fromUTF8("åäö")));
+    EXPECT_FALSE(publicSuffixStore.isPublicSuffix(StringImpl::fromUTF8("åäö")));
 
     // UK
     EXPECT_TRUE(publicSuffixStore.isPublicSuffix("uk"_s));
@@ -155,83 +155,83 @@ TEST_F(PublicSuffix, IsPublicSuffix)
 TEST_F(PublicSuffix, TopPrivatelyControlledDomain)
 {
     auto& publicSuffixStore = PublicSuffixStore::singleton();
-    EXPECT_EQ(String(utf16String(u"example.\u6803\u6728.jp")), publicSuffixStore.topPrivatelyControlledDomain(utf16String(u"example.\u6803\u6728.jp")));
-    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomain(String()));
-    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomain(""_s));
-    EXPECT_EQ(String("test.com"_s), publicSuffixStore.topPrivatelyControlledDomain("test.com"_s));
-    EXPECT_EQ(String("test.com"_s), publicSuffixStore.topPrivatelyControlledDomain("com.test.com"_s));
-    EXPECT_EQ(String("test.com"_s), publicSuffixStore.topPrivatelyControlledDomain("subdomain.test.com"_s));
-    EXPECT_EQ(String("com.com"_s), publicSuffixStore.topPrivatelyControlledDomain("www.com.com"_s));
-    EXPECT_EQ(String("test.co.uk"_s), publicSuffixStore.topPrivatelyControlledDomain("test.co.uk"_s));
-    EXPECT_EQ(String("test.co.uk"_s), publicSuffixStore.topPrivatelyControlledDomain("subdomain.test.co.uk"_s));
-    EXPECT_EQ(String("bl.uk"_s), publicSuffixStore.topPrivatelyControlledDomain("bl.uk"_s));
-    EXPECT_EQ(String("bl.uk"_s), publicSuffixStore.topPrivatelyControlledDomain("subdomain.bl.uk"_s));
-    EXPECT_EQ(String("127.0.0.1"_s), publicSuffixStore.topPrivatelyControlledDomain("127.0.0.1"_s));
-    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomain("1"_s));
-    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomain("com"_s));
-    EXPECT_EQ(String("test.com"_s), publicSuffixStore.topPrivatelyControlledDomain("r4---asdf.test.com"_s));
-    EXPECT_EQ(String("r4---asdf.com"_s), publicSuffixStore.topPrivatelyControlledDomain("r4---asdf.com"_s));
-    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomain("r4---asdf"_s));
+    EXPECT_EQ(utf16String(u"example.\u6803\u6728.jp"), publicSuffixStore.topPrivatelyControlledDomain(utf16String(u"example.\u6803\u6728.jp")));
+    EXPECT_EQ(nullString(), publicSuffixStore.topPrivatelyControlledDomain(nullString()));
+    EXPECT_EQ(nullString(), publicSuffixStore.topPrivatelyControlledDomain(""_s));
+    EXPECT_EQ("test.com"_si, publicSuffixStore.topPrivatelyControlledDomain("test.com"_s));
+    EXPECT_EQ("test.com"_si, publicSuffixStore.topPrivatelyControlledDomain("com.test.com"_s));
+    EXPECT_EQ("test.com"_si, publicSuffixStore.topPrivatelyControlledDomain("subdomain.test.com"_s));
+    EXPECT_EQ("com.com"_si, publicSuffixStore.topPrivatelyControlledDomain("www.com.com"_s));
+    EXPECT_EQ("test.co.uk"_si, publicSuffixStore.topPrivatelyControlledDomain("test.co.uk"_s));
+    EXPECT_EQ("test.co.uk"_si, publicSuffixStore.topPrivatelyControlledDomain("subdomain.test.co.uk"_s));
+    EXPECT_EQ("bl.uk"_si, publicSuffixStore.topPrivatelyControlledDomain("bl.uk"_s));
+    EXPECT_EQ("bl.uk"_si, publicSuffixStore.topPrivatelyControlledDomain("subdomain.bl.uk"_s));
+    EXPECT_EQ("127.0.0.1"_si, publicSuffixStore.topPrivatelyControlledDomain("127.0.0.1"_s));
+    EXPECT_EQ(nullString(), publicSuffixStore.topPrivatelyControlledDomain("1"_s));
+    EXPECT_EQ(nullString(), publicSuffixStore.topPrivatelyControlledDomain("com"_s));
+    EXPECT_EQ("test.com"_si, publicSuffixStore.topPrivatelyControlledDomain("r4---asdf.test.com"_s));
+    EXPECT_EQ("r4---asdf.com"_si, publicSuffixStore.topPrivatelyControlledDomain("r4---asdf.com"_s));
+    EXPECT_EQ(nullString(), publicSuffixStore.topPrivatelyControlledDomain("r4---asdf"_s));
     EXPECT_EQ(utf16String(bidirectionalDomain), utf16String(bidirectionalDomain));
-    EXPECT_EQ(String("example.com"_s), publicSuffixStore.topPrivatelyControlledDomain("ExamPle.com"_s));
-    EXPECT_EQ(String("example.com"_s), publicSuffixStore.topPrivatelyControlledDomain("SUB.dOmain.ExamPle.com"_s));
-    EXPECT_EQ(String("localhost"_s), publicSuffixStore.topPrivatelyControlledDomain("localhost"_s));
-    EXPECT_EQ(String("localhost"_s), publicSuffixStore.topPrivatelyControlledDomain("LocalHost"_s));
-    EXPECT_EQ(String::fromUTF8("åäö"), publicSuffixStore.topPrivatelyControlledDomain(String::fromUTF8("åäö")));
-    EXPECT_EQ(String::fromUTF8("ÅÄÖ"), publicSuffixStore.topPrivatelyControlledDomain(String::fromUTF8("ÅÄÖ")));
-    EXPECT_EQ(String("test.com"_s), publicSuffixStore.topPrivatelyControlledDomain(".test.com"_s));
-    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomain("...."_s));
+    EXPECT_EQ("example.com"_si, publicSuffixStore.topPrivatelyControlledDomain("ExamPle.com"_s));
+    EXPECT_EQ("example.com"_si, publicSuffixStore.topPrivatelyControlledDomain("SUB.dOmain.ExamPle.com"_s));
+    EXPECT_EQ("localhost"_si, publicSuffixStore.topPrivatelyControlledDomain("localhost"_s));
+    EXPECT_EQ("localhost"_si, publicSuffixStore.topPrivatelyControlledDomain("LocalHost"_s));
+    EXPECT_EQ(StringImpl::fromUTF8("åäö"), publicSuffixStore.topPrivatelyControlledDomain(StringImpl::fromUTF8("åäö")));
+    EXPECT_EQ(StringImpl::fromUTF8("ÅÄÖ"), publicSuffixStore.topPrivatelyControlledDomain(StringImpl::fromUTF8("ÅÄÖ")));
+    EXPECT_EQ("test.com"_si, publicSuffixStore.topPrivatelyControlledDomain(".test.com"_s));
+    EXPECT_EQ(nullString(), publicSuffixStore.topPrivatelyControlledDomain("...."_s));
 }
 
 TEST_F(PublicSuffix, topPrivatelyControlledDomainWithoutPublicSuffix)
 {
     auto& publicSuffixStore = PublicSuffixStore::singleton();
-    EXPECT_EQ(String(utf16String(u"example")), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(utf16String(u"example.\u6803\u6728.jp")));
-    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(String()));
-    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(""_s));
-    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("test.com"_s));
-    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("com.test.com"_s));
-    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("subdomain.test.com"_s));
-    EXPECT_EQ(String("com"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("www.com.com"_s));
-    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("test.co.uk"_s));
-    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("subdomain.test.co.uk"_s));
-    EXPECT_EQ(String("bl"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("bl.uk"_s));
-    EXPECT_EQ(String("bl"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("subdomain.bl.uk"_s));
-    EXPECT_EQ(String("127.0.0.1"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("127.0.0.1"_s));
-    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("1"_s));
-    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("com"_s));
-    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("r4---asdf.test.com"_s));
-    EXPECT_EQ(String("r4---asdf"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("r4---asdf.com"_s));
-    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("r4---asdf"_s));
+    EXPECT_EQ(utf16String(u"example"), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(utf16String(u"example.\u6803\u6728.jp")));
+    EXPECT_EQ(nullString(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(nullString()));
+    EXPECT_EQ(nullString(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(""_s));
+    EXPECT_EQ("test"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("test.com"_s));
+    EXPECT_EQ("test"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("com.test.com"_s));
+    EXPECT_EQ("test"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("subdomain.test.com"_s));
+    EXPECT_EQ("com"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("www.com.com"_s));
+    EXPECT_EQ("test"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("test.co.uk"_s));
+    EXPECT_EQ("test"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("subdomain.test.co.uk"_s));
+    EXPECT_EQ("bl"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("bl.uk"_s));
+    EXPECT_EQ("bl"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("subdomain.bl.uk"_s));
+    EXPECT_EQ("127.0.0.1"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("127.0.0.1"_s));
+    EXPECT_EQ(nullString(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("1"_s));
+    EXPECT_EQ(nullString(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("com"_s));
+    EXPECT_EQ("test"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("r4---asdf.test.com"_s));
+    EXPECT_EQ("r4---asdf"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("r4---asdf.com"_s));
+    EXPECT_EQ(nullString(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("r4---asdf"_s));
     EXPECT_EQ(utf16String(bidirectionalDomain), utf16String(bidirectionalDomain));
-    EXPECT_EQ(String("example"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("ExamPle.com"_s));
-    EXPECT_EQ(String("example"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("SUB.dOmain.ExamPle.com"_s));
-    EXPECT_EQ(String("localhost"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("localhost"_s));
-    EXPECT_EQ(String("localhost"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("LocalHost"_s));
-    EXPECT_EQ(String::fromUTF8("åäö"), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(String::fromUTF8("åäö")));
-    EXPECT_EQ(String::fromUTF8("ÅÄÖ"), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(String::fromUTF8("ÅÄÖ")));
-    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(".test.com"_s));
-    EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("...."_s));
+    EXPECT_EQ("example"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("ExamPle.com"_s));
+    EXPECT_EQ("example"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("SUB.dOmain.ExamPle.com"_s));
+    EXPECT_EQ("localhost"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("localhost"_s));
+    EXPECT_EQ("localhost"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("LocalHost"_s));
+    EXPECT_EQ(StringImpl::fromUTF8("åäö"), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(StringImpl::fromUTF8("åäö")));
+    EXPECT_EQ(StringImpl::fromUTF8("ÅÄÖ"), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(StringImpl::fromUTF8("ÅÄÖ")));
+    EXPECT_EQ("test"_si, publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix(".test.com"_s));
+    EXPECT_EQ(nullString(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("...."_s));
 }
 
 #if PLATFORM(COCOA)
 TEST_F(PublicSuffix, PublicSuffixCache)
 {
-    WTF::URL abExampleURL { "http://a.b.example.example"_s };
+    WTF::URL abExampleURL { "http://a.b.example.example"_si };
     auto& publicSuffixStore = PublicSuffixStore::singleton();
     EXPECT_FALSE(publicSuffixStore.isPublicSuffix("example.example"_s));
-    EXPECT_EQ(String("example"_s), publicSuffixStore.publicSuffix(abExampleURL).string());
+    EXPECT_EQ("example"_si, publicSuffixStore.publicSuffix(abExampleURL).string());
     // Non-cocoa platforms currently do not use public suffix cache for topPrivatelyControlledDomain().
-    EXPECT_EQ(String("example.example"_s), publicSuffixStore.topPrivatelyControlledDomain("a.b.example.example"_s));
+    EXPECT_EQ("example.example"_si, publicSuffixStore.topPrivatelyControlledDomain("a.b.example.example"_s));
     EXPECT_FALSE(publicSuffixStore.isPublicSuffix(""_s));
 
     publicSuffixStore.enablePublicSuffixCache();
     publicSuffixStore.clearHostTopPrivatelyControlledDomainCache();
-    publicSuffixStore.addPublicSuffix(WebCore::PublicSuffix::fromRawString("example.example"_s));
+    publicSuffixStore.addPublicSuffix(WebCore::PublicSuffix::fromRawString("example.example"_si));
     publicSuffixStore.addPublicSuffix(WebCore::PublicSuffix { });
     EXPECT_TRUE(publicSuffixStore.isPublicSuffix("example.example"_s));
-    EXPECT_EQ(String("example.example"_s), publicSuffixStore.publicSuffix(abExampleURL).string());
-    EXPECT_EQ(String("b.example.example"_s), publicSuffixStore.topPrivatelyControlledDomain("a.b.example.example"_s));
+    EXPECT_EQ("example.example"_si, publicSuffixStore.publicSuffix(abExampleURL).string());
+    EXPECT_EQ("b.example.example"_si, publicSuffixStore.topPrivatelyControlledDomain("a.b.example.example"_s));
     EXPECT_FALSE(publicSuffixStore.isPublicSuffix(""_s));
 }
 #endif

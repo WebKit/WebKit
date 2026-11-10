@@ -97,11 +97,11 @@ public:
     InspectorDOMAgent(PageAgentContext&, InspectorOverlay&);
     ~InspectorDOMAgent();
 
-    static String toErrorString(ExceptionCode);
-    static String toErrorString(Exception&&);
+    static RefPtr<StringImpl> toErrorString(ExceptionCode);
+    static RefPtr<StringImpl> toErrorString(Exception&&);
 
-    NODELETE static String documentURLString(Document*);
-    static String documentBaseURLString(Document*);
+    NODELETE static RefPtr<StringImpl> documentURLString(Document*);
+    static RefPtr<StringImpl> documentBaseURLString(Document*);
 
     // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
     // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.
@@ -119,60 +119,60 @@ public:
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // DOMBackendDispatcherHandler
-    Inspector::Protocol::ErrorStringOr<std::optional<Inspector::Protocol::DOM::NodeId>> querySelector(Inspector::Protocol::DOM::NodeId, const String& selector);
-    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> querySelectorAll(Inspector::Protocol::DOM::NodeId, const String& selector);
+    Inspector::Protocol::ErrorStringOr<std::optional<Inspector::Protocol::DOM::NodeId>> querySelector(Inspector::Protocol::DOM::NodeId, StringImpl* selector);
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> querySelectorAll(Inspector::Protocol::DOM::NodeId, StringImpl* selector);
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Node>> getDocument();
     Inspector::Protocol::ErrorStringOr<void> requestChildNodes(Inspector::Protocol::DOM::NodeId, std::optional<int>&& depth);
     Inspector::CommandResult<std::optional<Inspector::Protocol::DOM::NodeId>> requestAssignedSlot(Inspector::Protocol::DOM::NodeId);
     Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> requestAssignedNodes(Inspector::Protocol::DOM::NodeId);
-    Inspector::Protocol::ErrorStringOr<void> setAttributeValue(Inspector::Protocol::DOM::NodeId, const String& name, const String& value);
-    Inspector::Protocol::ErrorStringOr<void> setAttributesAsText(Inspector::Protocol::DOM::NodeId, const String& text, const String& name);
-    Inspector::Protocol::ErrorStringOr<void> removeAttribute(Inspector::Protocol::DOM::NodeId, const String& name);
+    Inspector::Protocol::ErrorStringOr<void> setAttributeValue(Inspector::Protocol::DOM::NodeId, StringImpl* name, StringImpl* value);
+    Inspector::Protocol::ErrorStringOr<void> setAttributesAsText(Inspector::Protocol::DOM::NodeId, StringImpl* text, StringImpl* name);
+    Inspector::Protocol::ErrorStringOr<void> removeAttribute(Inspector::Protocol::DOM::NodeId, StringImpl* name);
     Inspector::Protocol::ErrorStringOr<void> removeNode(Inspector::Protocol::DOM::NodeId);
-    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> setNodeName(Inspector::Protocol::DOM::NodeId, const String&);
-    Inspector::Protocol::ErrorStringOr<String> getOuterHTML(Inspector::Protocol::DOM::NodeId);
-    Inspector::Protocol::ErrorStringOr<void> setOuterHTML(Inspector::Protocol::DOM::NodeId, const String&);
-    Inspector::Protocol::ErrorStringOr<void> insertAdjacentHTML(Inspector::Protocol::DOM::NodeId, const String& position, const String& html);
-    Inspector::Protocol::ErrorStringOr<void> setNodeValue(Inspector::Protocol::DOM::NodeId, const String&);
-    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> getSupportedEventNames();
+    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> setNodeName(Inspector::Protocol::DOM::NodeId, StringImpl*);
+    Inspector::Protocol::ErrorStringOr<RefPtr<StringImpl>> getOuterHTML(Inspector::Protocol::DOM::NodeId);
+    Inspector::Protocol::ErrorStringOr<void> setOuterHTML(Inspector::Protocol::DOM::NodeId, StringImpl*);
+    Inspector::Protocol::ErrorStringOr<void> insertAdjacentHTML(Inspector::Protocol::DOM::NodeId, StringImpl* position, StringImpl* html);
+    Inspector::Protocol::ErrorStringOr<void> setNodeValue(Inspector::Protocol::DOM::NodeId, StringImpl*);
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<RefPtr<StringImpl>>>> getSupportedEventNames();
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::DataBinding>>> getDataBindingsForNode(Inspector::Protocol::DOM::NodeId);
-    Inspector::Protocol::ErrorStringOr<String> getAssociatedDataForNode(Inspector::Protocol::DOM::NodeId);
+    Inspector::Protocol::ErrorStringOr<RefPtr<StringImpl>> getAssociatedDataForNode(Inspector::Protocol::DOM::NodeId);
 #endif
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>> getEventListenersForNode(Inspector::Protocol::DOM::NodeId, std::optional<bool>&& includeAncestors);
     Inspector::Protocol::ErrorStringOr<void> setEventListenerDisabled(Inspector::Protocol::DOM::EventListenerId, bool);
     Inspector::Protocol::ErrorStringOr<void> setBreakpointForEventListener(Inspector::Protocol::DOM::EventListenerId, RefPtr<JSON::Object>&& options);
     Inspector::Protocol::ErrorStringOr<void> removeBreakpointForEventListener(Inspector::Protocol::DOM::EventListenerId);
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::AccessibilityProperties>> getAccessibilityPropertiesForNode(Inspector::Protocol::DOM::NodeId);
-    Inspector::Protocol::ErrorStringOr<std::tuple<String /* searchId */, int /* resultCount */>> performSearch(const String& query, RefPtr<JSON::Array>&& nodeIds, std::optional<bool>&& caseSensitive);
-    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> getSearchResults(const String& searchId, int fromIndex, int toIndex);
-    Inspector::Protocol::ErrorStringOr<void> discardSearchResults(const String& searchId);
-    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveNode(Inspector::Protocol::DOM::NodeId, const String& objectGroup);
-    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> getAttributes(Inspector::Protocol::DOM::NodeId);
+    Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<StringImpl> /* searchId */, int /* resultCount */>> performSearch(StringImpl* query, RefPtr<JSON::Array>&& nodeIds, std::optional<bool>&& caseSensitive);
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> getSearchResults(StringImpl* searchId, int fromIndex, int toIndex);
+    Inspector::Protocol::ErrorStringOr<void> discardSearchResults(StringImpl* searchId);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveNode(Inspector::Protocol::DOM::NodeId, StringImpl* objectGroup);
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<RefPtr<StringImpl>>>> getAttributes(Inspector::Protocol::DOM::NodeId);
 #if PLATFORM(IOS_FAMILY)
     Inspector::Protocol::ErrorStringOr<void> setInspectModeEnabled(bool, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig);
 #else
     Inspector::Protocol::ErrorStringOr<void> setInspectModeEnabled(bool, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers);
 #endif
-    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> requestNode(const Inspector::Protocol::Runtime::RemoteObjectId&);
-    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> requestFrameOwner(const Inspector::Protocol::Network::FrameId&);
-    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> pushNodeByPathToFrontend(const String& path);
+    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> requestNode(StringImpl*);
+    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> requestFrameOwner(StringImpl*);
+    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> pushNodeByPathToFrontend(StringImpl* path);
     Inspector::Protocol::ErrorStringOr<void> hideHighlight();
     Inspector::Protocol::ErrorStringOr<void> highlightRect(int x, int y, int width, int height, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates);
     Inspector::Protocol::ErrorStringOr<void> highlightQuad(Ref<JSON::Array>&& quad, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates);
 #if PLATFORM(IOS_FAMILY)
-    Inspector::Protocol::ErrorStringOr<void> highlightSelector(const String& selectorString, const Inspector::Protocol::Network::FrameId&, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig);
+    Inspector::Protocol::ErrorStringOr<void> highlightSelector(StringImpl* selectorString, StringImpl*, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig);
 #endif
-    Inspector::Protocol::ErrorStringOr<void> highlightSelector(const String& selectorString, const Inspector::Protocol::Network::FrameId&, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers);
+    Inspector::Protocol::ErrorStringOr<void> highlightSelector(StringImpl* selectorString, StringImpl*, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers);
 #if PLATFORM(IOS_FAMILY)
-    Inspector::Protocol::ErrorStringOr<void> highlightNode(std::optional<Inspector::Protocol::DOM::NodeId>&&, const Inspector::Protocol::Runtime::RemoteObjectId&, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig);
+    Inspector::Protocol::ErrorStringOr<void> highlightNode(std::optional<Inspector::Protocol::DOM::NodeId>&&, StringImpl*, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig);
 #endif
-    Inspector::Protocol::ErrorStringOr<void> highlightNode(std::optional<Inspector::Protocol::DOM::NodeId>&&, const Inspector::Protocol::Runtime::RemoteObjectId&, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers);
+    Inspector::Protocol::ErrorStringOr<void> highlightNode(std::optional<Inspector::Protocol::DOM::NodeId>&&, StringImpl*, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers);
 #if PLATFORM(IOS_FAMILY)
     Inspector::Protocol::ErrorStringOr<void> highlightNodeList(Ref<JSON::Array>&& nodeIds, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig);
 #endif
     Inspector::Protocol::ErrorStringOr<void> highlightNodeList(Ref<JSON::Array>&& nodeIds, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers);
-    Inspector::Protocol::ErrorStringOr<void> highlightFrame(const Inspector::Protocol::Network::FrameId&, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor);
+    Inspector::Protocol::ErrorStringOr<void> highlightFrame(StringImpl*, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor);
     Inspector::Protocol::ErrorStringOr<void> showGridOverlay(Inspector::Protocol::DOM::NodeId, Ref<JSON::Object>&& gridOverlayConfig);
     Inspector::Protocol::ErrorStringOr<void> hideGridOverlay(std::optional<Inspector::Protocol::DOM::NodeId>&&);
     Inspector::Protocol::ErrorStringOr<void> showFlexOverlay(Inspector::Protocol::DOM::NodeId, Ref<JSON::Object>&& flexOverlayConfig);
@@ -192,9 +192,9 @@ public:
     void didInsertDOMNode(Node&);
     void didRemoveDOMNode(Node&);
     void willDestroyDOMNode(Node&);
-    NODELETE void willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
-    void didModifyDOMAttr(Element&, const AtomString& name, const AtomString& value);
-    void didRemoveDOMAttr(Element&, const AtomString& name);
+    NODELETE void willModifyDOMAttr(Element&, AtomStringImpl* oldValue, AtomStringImpl* newValue);
+    void didModifyDOMAttr(Element&, AtomStringImpl* name, AtomStringImpl* value);
+    void didRemoveDOMAttr(Element&, AtomStringImpl* name);
     void characterDataModified(CharacterData&);
     void didInvalidateStyleAttr(Element&);
     void didPushShadowRoot(Element& host, ShadowRoot&);
@@ -207,8 +207,8 @@ public:
     void pseudoElementCreated(PseudoElement&);
     void pseudoElementDestroyed(PseudoElement&);
     void didAddEventListener(EventTarget&);
-    void willRemoveEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
-    bool isEventListenerDisabled(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    void willRemoveEventListener(EventTarget&, AtomStringImpl* eventType, EventListener&, bool capture);
+    bool isEventListenerDisabled(EventTarget&, AtomStringImpl* eventType, EventListener&, bool capture);
     void eventDidResetAfterDispatch(const Event&);
     void flexibleBoxRendererBeganLayout(const RenderObject&);
     void flexibleBoxRendererWrappedToNextLine(const RenderObject&, size_t lineStartItemIndex);
@@ -227,7 +227,7 @@ public:
     Node* nodeForId(Inspector::Protocol::DOM::NodeId);
     Inspector::Protocol::DOM::NodeId boundNodeId(const Node*);
 
-    RefPtr<Inspector::Protocol::Runtime::RemoteObject> resolveNode(Node*, const String& objectGroup);
+    RefPtr<Inspector::Protocol::Runtime::RemoteObject> resolveNode(Node*, StringImpl* objectGroup);
     bool handleMousePress();
     void mouseDidMoveOverElement(const HitTestResult&, OptionSet<PlatformEventModifier>);
     void mouseDidMoveOverRemoteFrame();
@@ -243,8 +243,8 @@ public:
     Element* assertElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
     Document* assertDocument(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
 
-    RefPtr<JSC::Breakpoint> breakpointForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
-    Inspector::Protocol::DOM::EventListenerId idForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    RefPtr<JSC::Breakpoint> breakpointForEventListener(EventTarget&, AtomStringImpl* eventType, EventListener&, bool capture);
+    Inspector::Protocol::DOM::EventListenerId idForEventListener(EventTarget&, AtomStringImpl* eventType, EventListener&, bool capture);
 
 private:
 #if ENABLE(VIDEO)
@@ -265,14 +265,14 @@ private:
     void pushChildNodesToFrontend(Inspector::Protocol::DOM::NodeId, int depth = 1);
 
     Ref<Inspector::Protocol::DOM::Node> buildObjectForNode(Node*, int depth);
-    Ref<JSON::ArrayOf<String>> buildArrayForElementAttributes(Element*);
+    Ref<JSON::ArrayOf<RefPtr<StringImpl>>> buildArrayForElementAttributes(Element*);
     Ref<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth);
     RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForPseudoElements(const Element&);
-    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, Inspector::Protocol::DOM::EventListenerId identifier, EventTarget&, const AtomString& eventType, bool disabled, const RefPtr<JSC::Breakpoint>&);
+    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, Inspector::Protocol::DOM::EventListenerId identifier, EventTarget&, AtomStringImpl* eventType, bool disabled, const RefPtr<JSC::Breakpoint>&);
     Ref<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node&);
     void processAccessibilityChildren(AXCoreObject&, JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>&);
 
-    RefPtr<Node> nodeForPath(const String& path);
+    RefPtr<Node> nodeForPath(StringImpl* path);
     Node* nodeForObjectId(const Inspector::Protocol::Runtime::RemoteObjectId&);
 
     void discardBindings();
@@ -295,7 +295,7 @@ private:
     HashSet<Inspector::Protocol::DOM::NodeId> m_childrenRequested;
     Inspector::Protocol::DOM::NodeId m_lastNodeId { 1 };
     RefPtr<Document> m_document;
-    using SearchResults = HashMap<String, Vector<RefPtr<Node>>>;
+    using SearchResults = HashMap<RefPtr<StringImpl>, Vector<RefPtr<Node>>>;
     SearchResults m_searchResults;
     const std::unique_ptr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
     RefPtr<Node> m_nodeToFocus;
@@ -336,14 +336,14 @@ private:
         Inspector::Protocol::DOM::EventListenerId identifier { 1 };
         RefPtr<EventTarget> eventTarget;
         RefPtr<EventListener> eventListener;
-        AtomString eventType;
+        RefPtr<AtomStringImpl> eventType;
         bool useCapture { false };
         bool disabled { false };
         RefPtr<JSC::Breakpoint> breakpoint;
 
         InspectorEventListener() { }
 
-        InspectorEventListener(Inspector::Protocol::DOM::EventListenerId identifier, EventTarget& target, const AtomString& type, EventListener& listener, bool capture)
+        InspectorEventListener(Inspector::Protocol::DOM::EventListenerId identifier, EventTarget& target, AtomStringImpl* type, EventListener& listener, bool capture)
             : identifier(identifier)
             , eventTarget(&target)
             , eventListener(&listener)
@@ -352,7 +352,7 @@ private:
         {
         }
 
-        bool matches(EventTarget& target, const AtomString& type, EventListener& listener, bool capture)
+        bool matches(EventTarget& target, AtomStringImpl* type, EventListener& listener, bool capture)
         {
             if (eventTarget.get() != &target)
                 return false;

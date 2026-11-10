@@ -34,11 +34,11 @@ class StyleRuleCounterStyle;
 enum class ListMarkerIncludeSuffix : bool { No, Yes };
 
 struct ListMarkerTextContent {
-    String textWithSuffix;
+    RefPtr<StringImpl> textWithSuffix;
     uint32_t textWithoutSuffixLength { 0 };
     bool isEmpty() const
     {
-        return textWithSuffix.isEmpty();
+        return WTF::isEmpty(textWithSuffix);
     }
 
     StringView textWithoutSuffix() const LIFETIME_BOUND
@@ -99,7 +99,7 @@ private:
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
     Node* nodeForHitTest() const final;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override { ASSERT_NOT_REACHED(); return { }; }
-    std::pair<float, float> layoutBoundForTextContent(String) const;
+    std::pair<float, float> layoutBoundForTextContent(RefPtr<StringImpl>) const;
 
     void element() const = delete;
 

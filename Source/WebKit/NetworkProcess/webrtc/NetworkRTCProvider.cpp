@@ -77,7 +77,7 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
 {
 #if PLATFORM(COCOA)
     if (CheckedPtr session = downcast<NetworkSessionCocoa>(connection.networkSession()))
-        m_applicationBundleIdentifier = session->sourceApplicationBundleIdentifier().utf8();
+        m_applicationBundleIdentifier = utf8(session->sourceApplicationBundleIdentifier());
 #endif
 #if !RELEASE_LOG_DISABLED
     LibWebRTCProvider::setRTCLogging(WebKit2LogWebRTC.state == WTFLogChannelState::On ? WTFLogLevel::Info : WTFLogLevel::Warning);
@@ -194,12 +194,12 @@ void NetworkRTCProvider::dispatch(Function<void()>&& callback)
     callOnRTCNetworkThread((WTF::move(callback)));
 }
 
-void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, String&& address)
+void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, RefPtr<StringImpl>&& address)
 {
-    MESSAGE_CHECK(!address.isNull());
+    MESSAGE_CHECK(address);
 
     if (!isMainRunLoop()) {
-        callOnMainRunLoop([this, protectedThis = Ref { *this }, identifier, address = WTF::move(address).isolatedCopy()]() mutable {
+        callOnMainRunLoop([this, protectedThis = Ref { *this }, identifier, address = isolatedCopy(WTF::move(address))]() mutable {
             if (!m_connection)
                 return;
             createResolver(identifier, WTF::move(address));
@@ -265,14 +265,14 @@ bool NetworkRTCProvider::webRTCInterfaceMonitoringViaNWEnabled() const
     return connection && connection->webRTCInterfaceMonitoringViaNWEnabled();
 }
 
-const String& NetworkRTCProvider::attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier pageIdentifier)
+const RefPtr<StringImpl>& NetworkRTCProvider::attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier pageIdentifier)
 {
-    return m_attributedBundleIdentifiers.ensure(pageIdentifier, [protectedThis = Ref { *this }, pageIdentifier]() -> String {
-        String value;
+    return m_attributedBundleIdentifiers.ensure(pageIdentifier, [protectedThis = Ref { *this }, pageIdentifier]() -> RefPtr<StringImpl> {
+        RefPtr<StringImpl> value;
         callOnMainRunLoopAndWait([protectedThis, &value, pageIdentifier] {
             RefPtr connection = protectedThis->m_connection.get();
             if (CheckedPtr session = connection ? connection->networkSession() : nullptr)
-                value = session->attributedBundleIdentifierFromPageIdentifier(pageIdentifier).isolatedCopy();
+                value = isolatedCopy(session->attributedBundleIdentifierFromPageIdentifier(pageIdentifier));
         });
         return value;
     }).iterator->value;
@@ -294,11 +294,11 @@ void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, c
         return;
     }
 
-    auto socket = makeUnique<NetworkRTCUDPSocketCocoa>(identifier, *this, rtcAddress, m_ipcConnection.copyRef(), String(attributedBundleIdentifierFromPageIdentifier(pageIdentifier)), flags, WTF::move(domain));
+    auto socket = makeUnique<NetworkRTCUDPSocketCocoa>(identifier, *this, rtcAddress, m_ipcConnection.copyRef(), RefPtr<StringImpl>(attributedBundleIdentifierFromPageIdentifier(pageIdentifier)), flags, WTF::move(domain));
     addSocket(identifier, WTF::move(socket));
 }
 
-void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& localAddress, const RTCNetwork::SocketAddress& remoteAddress, String&& userAgent, int options, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, WebCore::RegistrableDomain&& domain)
+void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& localAddress, const RTCNetwork::SocketAddress& remoteAddress, RefPtr<StringImpl>&& userAgent, int options, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, WebCore::RegistrableDomain&& domain)
 {
     assertIsRTCNetworkThread();
 
@@ -321,7 +321,7 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
         signalSocketIsClosed(identifier);
 }
 
-void NetworkRTCProvider::getInterfaceName(URL&& url, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, WebCore::RegistrableDomain&& domain, CompletionHandler<void(String&&)>&& completionHandler)
+void NetworkRTCProvider::getInterfaceName(URL&& url, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, WebCore::RegistrableDomain&& domain, CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
 {
     if (!url.protocolIsInHTTPFamily()) {
         completionHandler({ });
@@ -329,7 +329,7 @@ void NetworkRTCProvider::getInterfaceName(URL&& url, WebPageProxyIdentifier page
     }
 
     NetworkRTCTCPSocketCocoa::getInterfaceName(*this, url, attributedBundleIdentifierFromPageIdentifier(pageIdentifier), flags, domain)->whenSettled(m_rtcNetworkThreadQueue, [completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
-        completionHandler(result ? WTF::move(result.value()) : String { });
+        completionHandler(result ? WTF::move(result.value()) : nullptr);
     });
 }
 
@@ -365,7 +365,7 @@ void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, c
     createSocket(identifier, WTF::move(socket), Socket::Type::UDP, m_ipcConnection.copyRef());
 }
 
-void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& localAddress, const RTCNetwork::SocketAddress& remoteAddress, String&& userAgent, int options, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags, WebCore::RegistrableDomain&& domain)
+void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& localAddress, const RTCNetwork::SocketAddress& remoteAddress, RefPtr<StringImpl>&& userAgent, int options, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags, WebCore::RegistrableDomain&& domain)
 {
     assertIsRTCNetworkThread();
 
@@ -374,7 +374,7 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
         return;
     }
 
-    callOnMainRunLoop([this, protectedThis = Ref { *this }, identifier, localAddress, remoteAddress, userAgent = WTF::move(userAgent).isolatedCopy(), options]() mutable {
+    callOnMainRunLoop([this, protectedThis = Ref { *this }, identifier, localAddress, remoteAddress, userAgent = isolatedCopy(WTF::move(userAgent)), options]() mutable {
         if (!m_connection)
             return;
 

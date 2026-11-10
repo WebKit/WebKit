@@ -272,7 +272,7 @@ JSC::JSValue InternalWritableStream::getWriter(JSC::JSGlobalObject& globalObject
 }
 
 // FIXME: Remove globalObject parameter.
-String InternalWritableStream::state(JSC::JSGlobalObject& globalObject) const
+RefPtr<StringImpl> InternalWritableStream::state(JSC::JSGlobalObject& globalObject) const
 {
     auto* clientData = downcast<JSVMClientData>(globalObject.vm().clientData);
     auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().writableStreamStatePrivateName();

@@ -555,7 +555,7 @@ void JSPromise::resolvePromise(JSGlobalObject* globalObject, VM& vm, JSValue res
 {
     if (resolution == this) [[unlikely]] {
         Structure* errorStructure = globalObject->errorStructure(ErrorType::TypeError);
-        auto* error = ErrorInstance::create(vm, errorStructure, "Cannot resolve a promise with itself"_s, jsUndefined(), nullptr, TypeNothing, ErrorType::TypeError, false);
+        auto* error = ErrorInstance::create(vm, errorStructure, "Cannot resolve a promise with itself"_si, jsUndefined(), nullptr, TypeNothing, ErrorType::TypeError, false);
         return rejectPromise(vm, error);
     }
 

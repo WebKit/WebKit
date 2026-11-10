@@ -57,14 +57,14 @@ IDBError SQLiteMemoryIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo
 
     // Open SQLite in-memory database using the special ":memory:" path
     setSqliteDB(makeUnique<SQLiteDatabase>());
-    if (CheckedPtr db = sqliteDB(); !db->open(SQLiteDatabase::inMemoryPath())) {
+    if (CheckedPtr db = sqliteDB(); !db->open(StringImpl::create(SQLiteDatabase::inMemoryPath()).ptr())) {
         RELEASE_LOG_ERROR(IndexedDB, "%p - SQLiteMemoryIDBBackingStore::getOrEstablishDatabaseInfo: Failed to open in-memory database (%d) - %s", this, db->lastError(), db->lastErrorMsg());
         db = nullptr;
         closeSQLiteDB();
     }
 
     if (!sqliteDB())
-        return IDBError { ExceptionCode::UnknownError, "Unable to open in-memory database"_s };
+        return IDBError { ExceptionCode::UnknownError, "Unable to open in-memory database"_si };
 
     {
         CheckedRef db = *sqliteDB();
@@ -79,7 +79,7 @@ IDBError SQLiteMemoryIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo
             LOG_ERROR("SQLite in-memory database could not set cache_size");
 
         // Set up the IDBKEY collation function for proper IndexedDB key sorting
-        db->setCollationFunction("IDBKEY"_s, [](int aLength, const void* a, int bLength, const void* b) {
+        db->setCollationFunction("IDBKEY"_si, [](int aLength, const void* a, int bLength, const void* b) {
             IDBKeyData aKey, bKey;
             if (!deserializeIDBKeyData(unsafeMakeSpan(static_cast<const uint8_t*>(a), aLength), aKey)) {
                 LOG_ERROR("Unable to deserialize key A in collation function.");
@@ -150,7 +150,7 @@ IDBError SQLiteMemoryIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo
     if (!databaseInfoResult) {
         LOG_ERROR("Unable to establish IDB in-memory database");
         closeSQLiteDB();
-        return IDBError { ExceptionCode::UnknownError, "Unable to establish IDB in-memory database"_s };
+        return IDBError { ExceptionCode::UnknownError, "Unable to establish IDB in-memory database"_si };
     }
 
     setDatabaseInfo(WTF::move(databaseInfoResult));

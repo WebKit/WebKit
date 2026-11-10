@@ -36,7 +36,7 @@ void Icon::paint(GraphicsContext&, const FloatRect&)
 {
 }
 
-RefPtr<Icon> Icon::createIconForFiles(const Vector<String>&)
+RefPtr<Icon> Icon::createIconForFiles(const Vector<RefPtr<StringImpl>>&)
 {
     return nullptr;
 }

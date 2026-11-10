@@ -85,16 +85,16 @@ public:
     Inspector::CommandResultOf<RefPtr<Inspector::Protocol::CSS::CSSStyle>, RefPtr<Inspector::Protocol::CSS::CSSStyle>> getInlineStylesForNode(Inspector::Protocol::DOM::NodeId) override;
     Inspector::CommandResultOf<RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>>> getMatchedStylesForNode(Inspector::Protocol::DOM::NodeId, std::optional<bool>&& includePseudo, std::optional<bool>&& includeInherited, std::optional<bool>&& includeKeyframes) override;
     Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSStyleSheetHeader>>> getAllStyleSheets() override;
-    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSStyleSheetBody>> getStyleSheet(const Inspector::Protocol::CSS::StyleSheetId&) override;
-    Inspector::CommandResult<String> getStyleSheetText(const Inspector::Protocol::CSS::StyleSheetId&) override;
-    Inspector::CommandResult<void> setStyleSheetText(const Inspector::Protocol::CSS::StyleSheetId&, const String& text) override;
-    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSStyle>> setStyleText(Ref<JSON::Object>&& styleId, const String& text) override;
-    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSRule>> setRuleSelector(Ref<JSON::Object>&& ruleId, const String& selector) override;
-    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::Grouping>> setGroupingHeaderText(Ref<JSON::Object>&& ruleId, const String& headerText) override;
-    Inspector::CommandResult<Inspector::Protocol::CSS::StyleSheetId> createStyleSheet(const Inspector::Protocol::Network::FrameId&) override;
-    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSRule>> addRule(const Inspector::Protocol::CSS::StyleSheetId&, const String& selector) override;
+    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSStyleSheetBody>> getStyleSheet(StringImpl*) override;
+    Inspector::CommandResult<RefPtr<StringImpl>> getStyleSheetText(StringImpl*) override;
+    Inspector::CommandResult<void> setStyleSheetText(StringImpl*, StringImpl* text) override;
+    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSStyle>> setStyleText(Ref<JSON::Object>&& styleId, StringImpl* text) override;
+    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSRule>> setRuleSelector(Ref<JSON::Object>&& ruleId, StringImpl* selector) override;
+    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::Grouping>> setGroupingHeaderText(Ref<JSON::Object>&& ruleId, StringImpl* headerText) override;
+    Inspector::CommandResult<Inspector::Protocol::CSS::StyleSheetId> createStyleSheet(StringImpl*) override;
+    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSRule>> addRule(StringImpl*, StringImpl* selector) override;
     Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>> getSupportedCSSProperties() override;
-    Inspector::CommandResult<Ref<JSON::ArrayOf<String>>> getSupportedSystemFontFamilyNames() override;
+    Inspector::CommandResult<Ref<JSON::ArrayOf<RefPtr<StringImpl>>>> getSupportedSystemFontFamilyNames() override;
     Inspector::CommandResult<void> forcePseudoState(Inspector::Protocol::DOM::NodeId, Ref<JSON::Array>&& forcedPseudoClasses) override;
     Inspector::CommandResult<void> setLayoutContextTypeChangedMode(Inspector::Protocol::CSS::LayoutContextTypeChangedMode) override;
 
@@ -121,7 +121,7 @@ public:
     void characterDataModified(CharacterData&);
 
     // FrameDOMAgent
-    RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> protocolLayoutFlagsForNode(Node&);
+    RefPtr<JSON::ArrayOf<RefPtr<StringImpl> /* Inspector::Protocol::CSS::LayoutFlag */>> protocolLayoutFlagsForNode(Node&);
     void didBindDocument();
 
 private:
@@ -129,7 +129,7 @@ private:
     bool documentIsReportedByPageCSSAgent() const;
     RefPtr<Element> elementForId(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
     InspectorStyleSheet& bindStyleSheet(CSSStyleSheet*);
-    InspectorStyleSheet* assertStyleSheetForId(Inspector::Protocol::ErrorString&, const Inspector::Protocol::CSS::StyleSheetId&);
+    InspectorStyleSheet* assertStyleSheetForId(Inspector::Protocol::ErrorString&, StringImpl* styleSheetId);
     InspectorStyleSheetForInlineStyle& asInspectorStyleSheet(StyledElement&);
     RefPtr<Inspector::Protocol::CSS::CSSStyle> buildObjectForAttributesStyle(StyledElement&);
     RefPtr<Inspector::Protocol::CSS::CSSRule> buildObjectForRule(const StyleRule*, Style::Resolver&, Element&);

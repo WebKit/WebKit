@@ -30,11 +30,11 @@
 namespace WebCore {
 
 struct IDBDatabaseNameAndVersion {
-    String name;
+    RefPtr<StringImpl> name;
     uint64_t version { 0 };
 
-    IDBDatabaseNameAndVersion isolatedCopy() const & { return { name.isolatedCopy(), version }; }
-    IDBDatabaseNameAndVersion isolatedCopy() && { return { WTF::move(name).isolatedCopy(), version }; }
+    IDBDatabaseNameAndVersion isolatedCopy() const & { return { WTF::isolatedCopy(name), version }; }
+    IDBDatabaseNameAndVersion isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(name)), version }; }
 };
 
 } // namespace WebCore

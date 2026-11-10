@@ -55,7 +55,7 @@ void RemoteQuerySetProxy::destroy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteQuerySetProxy::setLabel(String&& label)
+void RemoteQuerySetProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteQuerySet::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

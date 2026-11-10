@@ -132,18 +132,18 @@ private:
     void dispatchDidFailLoad(const WebCore::ResourceError&) final;
     void dispatchDidFinishDocumentLoad() final;
     void dispatchDidFinishLoad() final;
-    void dispatchDidExplicitOpen(const URL&, const String& mimeType) final;
+    void dispatchDidExplicitOpen(const URL&, StringImpl* mimeType) final;
 
     void dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>) final;
     void dispatchDidReachVisuallyNonEmptyState() final;
     void dispatchDidLayout() final;
 
-    WebCore::LocalFrame* dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy, const String& openedMainFrameName) final;
+    WebCore::LocalFrame* dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy, StringImpl* openedMainFrameName) final;
     void dispatchShow() final;
     
-    void dispatchDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, const String&, WebCore::FramePolicyFunction&&) final;
-    void dispatchDecidePolicyForNewWindowAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, WebCore::FormState*, const String& frameName, std::optional<WebCore::HitTestResult>&&, WebCore::FramePolicyFunction&&) final;
-    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::NavigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) final;
+    void dispatchDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, StringImpl*, WebCore::FramePolicyFunction&&) final;
+    void dispatchDecidePolicyForNewWindowAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, WebCore::FormState*, StringImpl* frameName, std::optional<WebCore::HitTestResult>&&, WebCore::FramePolicyFunction&&) final;
+    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, StringImpl* clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::NavigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) final;
     void updateSandboxFlags(WebCore::SandboxFlags) final;
     void updateOpener(std::optional<WebCore::FrameIdentifier>) final;
     void setPrinting(bool printing, WebCore::FloatSize pageSize, WebCore::FloatSize originalPageSize, float maximumShrinkRatio, WebCore::AdjustViewSize) final;
@@ -152,16 +152,16 @@ private:
     void dispatchUnableToImplementPolicy(const WebCore::ResourceError&) final;
     
     void dispatchWillSendSubmitEvent(Ref<WebCore::FormState>&&) final;
-    void dispatchWillSubmitForm(WebCore::FormState&, URL&& requestURL, String&& method, CompletionHandler<void()>&&) final;
+    void dispatchWillSubmitForm(WebCore::FormState&, URL&& requestURL, RefPtr<StringImpl>&& method, CompletionHandler<void()>&&) final;
     
-    void dispatchBackForwardItemLoading(const URL&, const String& referer, WebCore::LocalFrame& childFrame) final;
+    void dispatchBackForwardItemLoading(const URL&, StringImpl* referer, WebCore::LocalFrame& childFrame) final;
 
     void revertToProvisionalState(WebCore::DocumentLoader*) final;
     void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&) final;
     
     void setMainFrameDocumentReady(bool) final;
     
-    void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = String(), WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No) final;
+    void startDownload(const WebCore::ResourceRequest&, StringImpl* suggestedName = nullptr, WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No) final;
     
     void willChangeTitle(WebCore::DocumentLoader*) final;
     void didChangeTitle(WebCore::DocumentLoader*) final;
@@ -190,10 +190,10 @@ private:
     bool shouldFallBack(const WebCore::ResourceError&) const final;
     
     bool canHandleRequest(const WebCore::ResourceRequest&) const final;
-    bool canShowMIMEType(const String& MIMEType) const final;
-    bool canShowMIMETypeAsHTML(const String& MIMEType) const final;
+    bool canShowMIMEType(StringImpl* MIMEType) const final;
+    bool canShowMIMETypeAsHTML(StringImpl* MIMEType) const final;
     bool representationExistsForURLScheme(StringView URLScheme) const final;
-    String generatedMIMETypeForURLScheme(StringView URLScheme) const final;
+    RefPtr<StringImpl> generatedMIMETypeForURLScheme(StringView URLScheme) const final;
     
     void frameLoadCompleted() final;
     void saveViewStateToItem(WebCore::HistoryItem&) final;
@@ -209,9 +209,9 @@ private:
     void setTitle(const WebCore::StringWithDirection&, const URL&) final;
 
     bool hasCustomUserAgent() const final;
-    String userAgent(const URL&) const final;
+    RefPtr<StringImpl> userAgent(const URL&) const final;
 
-    String overrideContentSecurityPolicy() const final;
+    RefPtr<StringImpl> overrideContentSecurityPolicy() const final;
 
     void savePlatformDataToCachedFrame(WebCore::CachedFrame*) final;
     void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*) final;
@@ -229,13 +229,13 @@ private:
     bool canCachePage() const final;
     void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) final;
 
-    RefPtr<WebCore::LocalFrame> createFrame(const AtomString& name, WebCore::HTMLFrameOwnerElement&) final;
+    RefPtr<WebCore::LocalFrame> createFrame(AtomStringImpl* name, WebCore::HTMLFrameOwnerElement&) final;
 
-    RefPtr<WebCore::Widget> createPlugin(WebCore::HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool loadManually) final;
+    RefPtr<WebCore::Widget> createPlugin(WebCore::HTMLPlugInElement&, const URL&, const Vector<RefPtr<AtomStringImpl>>&, const Vector<RefPtr<AtomStringImpl>>&, StringImpl*, bool loadManually) final;
     void redirectDataToPlugin(WebCore::Widget&) final;
     
-    WebCore::ObjectContentType objectContentType(const URL&, const String& mimeType) final;
-    AtomString overrideMediaType() const final;
+    WebCore::ObjectContentType objectContentType(const URL&, StringImpl* mimeType) final;
+    RefPtr<AtomStringImpl> overrideMediaType() const final;
 
     void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&) final;
     
@@ -272,14 +272,14 @@ private:
     void setDocumentVisualUpdatesAllowed(bool) final;
 
 #if USE(QUICK_LOOK)
-    RefPtr<WebCore::LegacyPreviewLoaderClient> createPreviewLoaderClient(const String& fileName, const String& uti) final;
+    RefPtr<WebCore::LegacyPreviewLoaderClient> createPreviewLoaderClient(StringImpl* fileName, StringImpl* uti) final;
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
     void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler&&) final;
 #endif
 
-    void prefetchDNS(const String&) final;
+    void prefetchDNS(StringImpl*) final;
     void sendH2Ping(const URL&, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&&) final;
 
     void didRestoreScrollPosition() final;
@@ -299,7 +299,7 @@ private:
     void didRevokeForcedUserActivation(WebCore::UserGestureTokenIdentifier) final;
     void didHandleFirstUserGesture(MonotonicTime) final;
 
-    void dispatchDecidePolicyForBackForwardNavigationAction(WebCore::FrameLoadRequest&&, const String& referer, WebCore::FrameLoadType);
+    void dispatchDecidePolicyForBackForwardNavigationAction(WebCore::FrameLoadRequest&&, StringImpl* referer, WebCore::FrameLoadType);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void didExceedNetworkUsageThreshold();
@@ -324,7 +324,7 @@ private:
 #endif
 
 #if ENABLE(PDF_PLUGIN)
-    bool shouldUsePDFPlugin(const String& contentType, StringView path) const final;
+    bool shouldUsePDFPlugin(StringImpl* contentType, StringView path) const final;
 #endif
 
     bool isParentProcessAFullWebBrowser() const final;
@@ -332,7 +332,7 @@ private:
 
     void dispatchLoadEventToOwnerElementInAnotherProcess() final;
 
-    void frameNameChanged(const String&) final;
+    void frameNameChanged(StringImpl*) final;
 
     RefPtr<WebCore::HistoryItem> createHistoryItemTree(bool clipAtTarget, WebCore::BackForwardItemIdentifier) const final;
 

@@ -54,7 +54,7 @@ public:
     WEBCORE_EXPORT static WebMediaSessionManager& singleton();
 
     WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerEnabled(bool);
-    WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetMockState);
+    WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerState(StringImpl*, MediaPlaybackTargetMockState);
     WEBCORE_EXPORT void mockMediaPlaybackTargetPickerDismissPopup();
     WEBCORE_EXPORT FloatRect mockMediaPlaybackTargetPickerRect();
 
@@ -73,7 +73,7 @@ public:
         WatchdogTimerConfiguration = 1 << 3,
     };
     using ConfigurationTasks = OptionSet<ConfigurationTaskFlags>;
-    String toString(ConfigurationTasks);
+    RefPtr<StringImpl> toString(ConfigurationTasks);
 
 protected:
     WebMediaSessionManager();
@@ -121,7 +121,7 @@ private:
     bool m_mockPickerEnabled { false };
 };
 
-String mediaProducerStateString(WebCore::MediaProducerMediaStateFlags);
+RefPtr<StringImpl> mediaProducerStateString(WebCore::MediaProducerMediaStateFlags);
 
 } // namespace WebCore
 
@@ -130,7 +130,7 @@ namespace WTF {
 template<typename> struct LogArgument;
 
 template<> struct LogArgument<WebCore::MediaProducerMediaStateFlags> {
-    static String toString(WebCore::MediaProducerMediaStateFlags flags) { return WebCore::mediaProducerStateString(flags); }
+    static RefPtr<StringImpl> toString(WebCore::MediaProducerMediaStateFlags flags) { return WebCore::mediaProducerStateString(flags); }
 };
 
 template<> struct EnumTraits<WebCore::WebMediaSessionManager::ConfigurationTaskFlags> {

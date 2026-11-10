@@ -59,60 +59,60 @@ private:
 
     // WebCore::PasteboardStrategy
 #if PLATFORM(IOS_FAMILY)
-    void writeToPasteboard(const WebCore::PasteboardWebContent&, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    void writeToPasteboard(const WebCore:: PasteboardURL&, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    void writeToPasteboard(const WebCore::PasteboardImage&, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    void writeToPasteboard(const String& pasteboardType, const String&, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    void updateSupportedTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName, const WebCore::PasteboardContext*) override;
+    void writeToPasteboard(const WebCore::PasteboardWebContent&, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    void writeToPasteboard(const WebCore:: PasteboardURL&, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    void writeToPasteboard(const WebCore::PasteboardImage&, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    void writeToPasteboard(StringImpl* pasteboardType, StringImpl*, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    void updateSupportedTypeIdentifiers(const Vector<RefPtr<StringImpl>>& identifiers, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
 #endif
 #if PLATFORM(COCOA)
-    int getNumberOfFiles(const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    void getTypes(Vector<String>& types, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    RefPtr<WebCore::SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    String stringForType(const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    Vector<String> allStringsForType(const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    int64_t changeCount(const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    WebCore::Color color(const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    URL url(const String& pasteboardName, const WebCore::PasteboardContext*) override;
+    int getNumberOfFiles(StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    void getTypes(Vector<RefPtr<StringImpl>>& types, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    RefPtr<WebCore::SharedBuffer> bufferForType(StringImpl* pasteboardType, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    void getPathnamesForType(Vector<RefPtr<StringImpl>>& pathnames, StringImpl* pasteboardType, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    RefPtr<StringImpl> stringForType(StringImpl* pasteboardType, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    Vector<RefPtr<StringImpl>> allStringsForType(StringImpl* pasteboardType, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    int64_t changeCount(StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    WebCore::Color color(StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    URL url(StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
 
-    int64_t addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    int64_t setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    int64_t setBufferForType(WebCore::SharedBuffer*, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    int64_t setURL(const WebCore::PasteboardURL&, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    int64_t setColor(const WebCore::Color&, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    int64_t setStringForType(const String&, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    int64_t writeWebArchive(WebCore::LegacyWebArchive&, const String& pasteboardName) override;
+    int64_t addTypes(const Vector<RefPtr<StringImpl>>& pasteboardTypes, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    int64_t setTypes(const Vector<RefPtr<StringImpl>>& pasteboardTypes, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    int64_t setBufferForType(WebCore::SharedBuffer*, StringImpl* pasteboardType, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    int64_t setURL(const WebCore::PasteboardURL&, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    int64_t setColor(const WebCore::Color&, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    int64_t setStringForType(StringImpl*, StringImpl* pasteboardType, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    int64_t writeWebArchive(WebCore::LegacyWebArchive&, StringImpl* pasteboardName) override;
 
-    bool containsURLStringSuitableForLoading(const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    String urlStringSuitableForLoading(const String& pasteboardName, String& title, const WebCore::PasteboardContext*) override;
+    bool containsURLStringSuitableForLoading(StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    RefPtr<StringImpl> urlStringSuitableForLoading(StringImpl* pasteboardName, RefPtr<StringImpl>& title, const WebCore::PasteboardContext*) override;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    Vector<String> types(const String& pasteboardName) override;
-    String readTextFromClipboard(const String& pasteboardName, const String& pasteboardType) override;
-    Vector<String> readFilePathsFromClipboard(const String& pasteboardName) override;
-    RefPtr<WebCore::SharedBuffer> readBufferFromClipboard(const String& pasteboardName, const String& pasteboardType) override;
-    void writeToClipboard(const String& pasteboardName, WebCore::SelectionData&&) override;
-    void clearClipboard(const String& pasteboardName) override;
+    Vector<RefPtr<StringImpl>> types(StringImpl* pasteboardName) override;
+    RefPtr<StringImpl> readTextFromClipboard(StringImpl* pasteboardName, StringImpl* pasteboardType) override;
+    Vector<RefPtr<StringImpl>> readFilePathsFromClipboard(StringImpl* pasteboardName) override;
+    RefPtr<WebCore::SharedBuffer> readBufferFromClipboard(StringImpl* pasteboardName, StringImpl* pasteboardType) override;
+    void writeToClipboard(StringImpl* pasteboardName, WebCore::SelectionData&&) override;
+    void clearClipboard(StringImpl* pasteboardName) override;
 #elif USE(LIBWPE)
-    void getTypes(Vector<String>& types) override;
+    void getTypes(Vector<RefPtr<StringImpl>>& types) override;
     void writeToPasteboard(const WebCore::PasteboardWebContent&) override;
-    void writeToPasteboard(const String& pasteboardType, const String&) override;
+    void writeToPasteboard(StringImpl* pasteboardType, StringImpl*) override;
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
-    int64_t changeCount(const String& pasteboardName) override;
+    int64_t changeCount(StringImpl* pasteboardName) override;
 #endif
 
-    String readStringFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    RefPtr<WebCore::SharedBuffer> readBufferFromPasteboard(std::optional<size_t> index, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    URL readURLFromPasteboard(size_t index, const String& pasteboardName, String& title, const WebCore::PasteboardContext*) override;
-    int getPasteboardItemsCount(const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    std::optional<WebCore::PasteboardItemInfo> informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount, const WebCore::PasteboardContext*) override;
-    std::optional<Vector<WebCore::PasteboardItemInfo>> allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount, const WebCore::PasteboardContext*) override;
-    Vector<String> typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin, const WebCore::PasteboardContext*) override;
-    int64_t writeCustomData(const Vector<WebCore::PasteboardCustomData>&, const String&, const WebCore::PasteboardContext*) override;
-    bool containsStringSafeForDOMToReadForType(const String&, const String& pasteboardName, const WebCore::PasteboardContext*) override;
+    RefPtr<StringImpl> readStringFromPasteboard(size_t index, StringImpl* pasteboardType, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    RefPtr<WebCore::SharedBuffer> readBufferFromPasteboard(std::optional<size_t> index, StringImpl* pasteboardType, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    URL readURLFromPasteboard(size_t index, StringImpl* pasteboardName, RefPtr<StringImpl>& title, const WebCore::PasteboardContext*) override;
+    int getPasteboardItemsCount(StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
+    std::optional<WebCore::PasteboardItemInfo> informationForItemAtIndex(size_t index, StringImpl* pasteboardName, int64_t changeCount, const WebCore::PasteboardContext*) override;
+    std::optional<Vector<WebCore::PasteboardItemInfo>> allPasteboardItemInfo(StringImpl* pasteboardName, int64_t changeCount, const WebCore::PasteboardContext*) override;
+    Vector<RefPtr<StringImpl>> typesSafeForDOMToReadAndWrite(StringImpl* pasteboardName, StringImpl* origin, const WebCore::PasteboardContext*) override;
+    int64_t writeCustomData(const Vector<WebCore::PasteboardCustomData>&, StringImpl*, const WebCore::PasteboardContext*) override;
+    bool containsStringSafeForDOMToReadForType(StringImpl*, StringImpl* pasteboardName, const WebCore::PasteboardContext*) override;
 
     // WebCore::PushStrategy
 #if ENABLE(DECLARATIVE_WEB_PUSH)

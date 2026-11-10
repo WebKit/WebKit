@@ -40,7 +40,7 @@ public:
     };
 
     TextureMapperAnimation() = default;
-    TextureMapperAnimation(const String&, const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation&, MonotonicTime, Seconds, State);
+    TextureMapperAnimation(StringImpl*, const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation&, MonotonicTime, Seconds, State);
     ~TextureMapperAnimation() = default;
 
     WEBCORE_EXPORT TextureMapperAnimation(const TextureMapperAnimation&);
@@ -54,7 +54,7 @@ public:
     void pause(Seconds);
     void resume();
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     const GraphicsLayerKeyframeValueList& keyframes() const LIFETIME_BOUND { return m_keyframes; }
     State state() const { return m_state; }
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
@@ -64,7 +64,7 @@ private:
     Seconds computeTotalRunningTime(MonotonicTime);
     const TimingFunction& timingFunctionForKeyframe(const GraphicsLayerAnimationValue& from) const;
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
     GraphicsLayerKeyframeValueList m_keyframes { AnimatedProperty::Invalid };
     RefPtr<TimingFunction> m_timingFunction;
     RefPtr<TimingFunction> m_defaultTimingFunctionForKeyframes;
@@ -90,9 +90,9 @@ public:
     void setTransform(TransformationMatrix transform) { m_transform = transform; }
 
     void add(const TextureMapperAnimation&);
-    void remove(const String&);
-    void remove(const String&, AnimatedProperty);
-    void pause(const String&, Seconds);
+    void remove(StringImpl*);
+    void remove(StringImpl*, AnimatedProperty);
+    void pause(StringImpl*, Seconds);
 
     void apply(TextureMapperAnimation::ApplicationResult&, MonotonicTime, TextureMapperAnimation::KeepInternalState = TextureMapperAnimation::KeepInternalState::No);
 

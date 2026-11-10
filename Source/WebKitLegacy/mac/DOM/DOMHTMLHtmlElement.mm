@@ -42,13 +42,13 @@
 - (NSString *)version
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::versionAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::versionAttr)).autorelease();
 }
 
 - (void)setVersion:(NSString *)newVersion
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::versionAttr, newVersion);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::versionAttr, AtomStringImpl::add((__bridge CFStringRef)newVersion).get());
 }
 
 - (NSString *)manifest

@@ -71,7 +71,7 @@ public:
     };
     using FontShorthandUnderlyingType = std::underlying_type<FontShorthand>::type;
 
-    const AtomString& systemFontShorthandFamily(FontShorthand);
+    const RefPtr<AtomStringImpl>& systemFontShorthandFamily(FontShorthand);
     float systemFontShorthandSize(FontShorthand);
     FontSelectionValue systemFontShorthandWeight(FontShorthand);
 
@@ -86,7 +86,7 @@ private:
     void platformInvalidate();
 
     struct SystemFontShorthandInfo {
-        AtomString family;
+        RefPtr<AtomStringImpl> family;
         float size;
         FontSelectionValue weight;
     };

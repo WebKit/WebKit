@@ -73,28 +73,28 @@ unsigned StorageAreaMap::length()
     return ensureMap().length();
 }
 
-String StorageAreaMap::key(unsigned index)
+RefPtr<StringImpl> StorageAreaMap::key(unsigned index)
 {
     return ensureMap().key(index);
 }
 
-String StorageAreaMap::item(const String& key)
+RefPtr<StringImpl> StorageAreaMap::item(StringImpl* key)
 {
     return ensureMap().getItem(key);
 }
 
-void StorageAreaMap::setItem(LocalFrame& sourceFrame, StorageAreaImpl* sourceArea, const String& key, const String& value, bool& quotaException)
+void StorageAreaMap::setItem(LocalFrame& sourceFrame, StorageAreaImpl* sourceArea, StringImpl* key, StringImpl* value, bool& quotaException)
 {
     auto& map = ensureMap();
     ASSERT(!map.isShared());
 
-    String oldValue;
+    RefPtr<StringImpl> oldValue;
     quotaException = false;
     map.setItem(key, value, oldValue, quotaException);
     if (quotaException)
         return;
 
-    if (oldValue == value)
+    if (equal(oldValue, value))
         return;
 
     m_pendingValueChanges.add(key);
@@ -104,7 +104,7 @@ void StorageAreaMap::setItem(LocalFrame& sourceFrame, StorageAreaImpl* sourceAre
         return;
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key](bool hasError, auto&& allItems) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key = RefPtr { key }](bool hasError, auto&& allItems) mutable {
         if (RefPtr protectedThis = weakThis)
             protectedThis->didSetItem(seed, key, hasError, WTF::move(allItems));
     };
@@ -112,15 +112,15 @@ void StorageAreaMap::setItem(LocalFrame& sourceFrame, StorageAreaImpl* sourceAre
     connection->sendWithAsyncReply(Messages::NetworkStorageManager::SetItem(*m_remoteAreaIdentifier, sourceArea->identifier(), key, value, protect(sourceFrame.document())->url().string()), WTF::move(callback));
 }
 
-void StorageAreaMap::removeItem(WebCore::LocalFrame& sourceFrame, StorageAreaImpl* sourceArea, const String& key)
+void StorageAreaMap::removeItem(WebCore::LocalFrame& sourceFrame, StorageAreaImpl* sourceArea, StringImpl* key)
 {
     auto& map = ensureMap();
     ASSERT(!map.isShared());
 
-    String oldValue;
+    RefPtr<StringImpl> oldValue;
     map.removeItem(key, oldValue);
 
-    if (oldValue.isNull())
+    if (!oldValue)
         return;
 
     m_pendingValueChanges.add(key);
@@ -130,7 +130,7 @@ void StorageAreaMap::removeItem(WebCore::LocalFrame& sourceFrame, StorageAreaImp
         return;
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key](bool hasError, HashMap<String, String>&& allItems) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key = RefPtr { key }](bool hasError, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& allItems) mutable {
         if (RefPtr protectedThis = weakThis)
             protectedThis->didRemoveItem(seed, key, hasError, WTF::move(allItems));
     };
@@ -156,7 +156,7 @@ void StorageAreaMap::clear(WebCore::LocalFrame& sourceFrame, StorageAreaImpl* so
     protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendWithAsyncReply(Messages::NetworkStorageManager::Clear(*m_remoteAreaIdentifier, sourceArea->identifier(), protect(sourceFrame.document())->url().string()), WTF::move(callback));
 }
 
-bool StorageAreaMap::contains(const String& key)
+bool StorageAreaMap::contains(StringImpl* key)
 {
     return ensureMap().contains(key);
 }
@@ -170,7 +170,7 @@ StorageMap& StorageAreaMap::ensureMap()
     return *m_map;
 }
 
-void StorageAreaMap::didSetItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&& remoteItems)
+void StorageAreaMap::didSetItem(uint64_t mapSeed, StringImpl* key, bool hasError, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& remoteItems)
 {
     if (m_currentSeed != mapSeed)
         return;
@@ -182,7 +182,7 @@ void StorageAreaMap::didSetItem(uint64_t mapSeed, const String& key, bool hasErr
         syncItems(WTF::move(remoteItems));
 }
 
-void StorageAreaMap::didRemoveItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&& remoteItems)
+void StorageAreaMap::didRemoveItem(uint64_t mapSeed, StringImpl* key, bool hasError, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& remoteItems)
 {
     if (m_currentSeed != mapSeed)
         return;
@@ -203,20 +203,20 @@ void StorageAreaMap::didClear(uint64_t mapSeed)
     m_hasPendingClear = false;
 }
 
-void StorageAreaMap::applyChange(const String& key, const String& newValue)
+void StorageAreaMap::applyChange(StringImpl* key, StringImpl* newValue)
 {
     ASSERT(!m_map || !m_map->isShared());
 
     // A null key means clear.
     if (!key) {
-        syncItems(HashMap<String, String> { });
+        syncItems(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> { });
         return;
     }
 
     syncOneItem(key, newValue);
 }
 
-void StorageAreaMap::dispatchStorageEvent(const std::optional<StorageAreaImplIdentifier>& storageAreaImplID, const String& key, const String& oldValue, const String& newValue, const String& urlString, uint64_t messageIdentifier)
+void StorageAreaMap::dispatchStorageEvent(const std::optional<StorageAreaImplIdentifier>& storageAreaImplID, StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StringImpl* urlString, uint64_t messageIdentifier)
 {
     if (messageIdentifier < m_lastHandledMessageIdentifier)
         return;
@@ -239,10 +239,10 @@ void StorageAreaMap::clearCache(uint64_t messageIdentifier)
         return;
 
     m_lastHandledMessageIdentifier = messageIdentifier;
-    syncItems(HashMap<String, String> { });
+    syncItems(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> { });
 }
 
-void StorageAreaMap::dispatchSessionStorageEvent(const std::optional<StorageAreaImplIdentifier>& storageAreaImplID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
+void StorageAreaMap::dispatchSessionStorageEvent(const std::optional<StorageAreaImplIdentifier>& storageAreaImplID, StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StringImpl* urlString)
 {
     // Namespace IDs for session storage namespaces are equivalent to web page IDs
     // so we can get the right page here.
@@ -259,7 +259,7 @@ void StorageAreaMap::dispatchSessionStorageEvent(const std::optional<StorageArea
     });
 }
 
-void StorageAreaMap::dispatchLocalStorageEvent(const std::optional<StorageAreaImplIdentifier>& storageAreaImplID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
+void StorageAreaMap::dispatchLocalStorageEvent(const std::optional<StorageAreaImplIdentifier>& storageAreaImplID, StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StringImpl* urlString)
 {
     ASSERT(isLocalStorage(type()));
 
@@ -328,7 +328,7 @@ void StorageAreaMap::connect()
     sendConnectMessage(SendMode::Async);
 }
 
-void StorageAreaMap::didConnect(std::optional<StorageAreaIdentifier> remoteAreaIdentifier, HashMap<String, String>&& items, uint64_t messageIdentifier)
+void StorageAreaMap::didConnect(std::optional<StorageAreaIdentifier> remoteAreaIdentifier, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& items, uint64_t messageIdentifier)
 {
     m_isWaitingForConnectReply = false;
     if (messageIdentifier < m_lastHandledMessageIdentifier)
@@ -371,14 +371,14 @@ void StorageAreaMap::decrementUseCount()
         protect(m_namespace)->destroyStorageAreaMap(*this);
 }
 
-void StorageAreaMap::syncOneItem(const String& key, const String& value)
+void StorageAreaMap::syncOneItem(StringImpl* key, StringImpl* value)
 {
     // Once the pending value change request is handled by remote area, this item will be changed.
     if (!m_map || m_pendingValueChanges.contains(key))
         return;
 
     if (!value) {
-        String oldValue;
+        RefPtr<StringImpl> oldValue;
         m_map->removeItem(key, oldValue);
         return;
     }
@@ -386,7 +386,7 @@ void StorageAreaMap::syncOneItem(const String& key, const String& value)
     m_map->setItemIgnoringQuota(key, value);
 }
 
-void StorageAreaMap::syncItems(HashMap<String, String>&& items)
+void StorageAreaMap::syncItems(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& items)
 {
     // Once the pending clear request is handled by remote area, these items will be gone.
     if (!m_map || m_hasPendingClear)
@@ -395,11 +395,11 @@ void StorageAreaMap::syncItems(HashMap<String, String>&& items)
     auto oldMap = std::exchange(m_map, makeUnique<StorageMap>(m_quotaInBytes));
     m_map->importItems(WTF::move(items));
     for (auto change : m_pendingValueChanges) {
-        String value = oldMap->getItem(change.key);
-        if (!value.isNull())
+        RefPtr<StringImpl> value = oldMap->getItem(change.key);
+        if (value)
             m_map->setItemIgnoringQuota(change.key, value);
         else {
-            String oldValue;
+            RefPtr<StringImpl> oldValue;
             m_map->removeItem(change.key, oldValue);
         }
     }

@@ -29,6 +29,6 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT String windowsVersionForUAString();
+WEBCORE_EXPORT RefPtr<StringImpl> windowsVersionForUAString();
 
 } // namespace WebCore

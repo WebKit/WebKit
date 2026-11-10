@@ -74,7 +74,7 @@ public:
 
     virtual ~AutomationSessionClient() { }
 
-    virtual WTF::String sessionIdentifier() const { return WTF::String(); }
+    virtual RefPtr<StringImpl> sessionIdentifier() const { return nullptr; }
     virtual void didDisconnectFromRemote(WebKit::WebAutomationSession&) { }
     virtual void requestNewPageWithOptions(WebKit::WebAutomationSession&, AutomationSessionBrowsingContextOptions, CompletionHandler<void(WebKit::WebPageProxy*)>&& completionHandler) { completionHandler(nullptr); }
     virtual void requestMaximizeWindowOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
@@ -84,18 +84,18 @@ public:
     virtual bool isShowingJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { return false; }
     virtual void dismissCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { }
     virtual void acceptCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { }
-    virtual std::optional<WTF::String> messageOfCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { return std::nullopt; }
-    virtual std::optional<WTF::String> defaultTextOfCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { return std::nullopt; }
-    virtual std::optional<WTF::String> userInputOfCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { return std::nullopt; }
-    virtual void setUserInputForCurrentJavaScriptPromptOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, const WTF::String&) { }
+    virtual std::optional<RefPtr<StringImpl>> messageOfCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { return std::nullopt; }
+    virtual std::optional<RefPtr<StringImpl>> defaultTextOfCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { return std::nullopt; }
+    virtual std::optional<RefPtr<StringImpl>> userInputOfCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { return std::nullopt; }
+    virtual void setUserInputForCurrentJavaScriptPromptOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, StringImpl*) { }
     virtual std::optional<JavaScriptDialogType> typeOfCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { return std::nullopt; }
     virtual BrowsingContextPresentation currentPresentationOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { return BrowsingContextPresentation::Window; }
 #if ENABLE(WK_WEB_EXTENSIONS_IN_WEBDRIVER)
-    virtual void loadWebExtensionWithOptions(WebKit::WebAutomationSession&, API::AutomationSessionWebExtensionResourceOptions, const WTF::String& resource, CompletionHandler<void(const WTF::String&)>&& completionHandler) { completionHandler(WTF::String()); }
-    virtual void unloadWebExtension(WebKit::WebAutomationSession&, const WTF::String& identifier, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
+    virtual void loadWebExtensionWithOptions(WebKit::WebAutomationSession&, API::AutomationSessionWebExtensionResourceOptions, StringImpl* resource, CompletionHandler<void(StringImpl*)>&& completionHandler) { completionHandler(nullString()); }
+    virtual void unloadWebExtension(WebKit::WebAutomationSession&, StringImpl* identifier, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
 #endif
 
-    virtual void performApplicationCommand(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, const WTF::String& commandName, const WTF::String& arguments, CompletionHandler<void(const WTF::String&)>&& completionHandler) { completionHandler(WTF::String()); }
+    virtual void performApplicationCommand(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, StringImpl* commandName, StringImpl* arguments, CompletionHandler<void(StringImpl*)>&& completionHandler) { completionHandler(nullString()); }
 
     virtual bool shouldEnableInspectorTesting(WebKit::WebAutomationSession&) { return false; }
 };

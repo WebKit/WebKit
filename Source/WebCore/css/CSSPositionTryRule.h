@@ -37,20 +37,20 @@ class CSSPositionTryDescriptors;
 
 class StyleRulePositionTry final : public StyleRuleBase {
 public:
-    NODELETE static Ref<StyleRulePositionTry> create(AtomString&& name, Ref<StyleProperties>&&);
+    NODELETE static Ref<StyleRulePositionTry> create(RefPtr<AtomStringImpl>&& name, Ref<StyleProperties>&&);
 
     Ref<StyleRulePositionTry> copy() const { return adoptRef(*new StyleRulePositionTry(*this)); }
 
-    AtomString name() const { return m_name; }
+    RefPtr<AtomStringImpl> name() const { return m_name; }
 
     StyleProperties& properties() const { return m_properties; }
     MutableStyleProperties& mutableProperties();
 
 private:
-    explicit StyleRulePositionTry(AtomString&& name, Ref<StyleProperties>&&);
+    explicit StyleRulePositionTry(RefPtr<AtomStringImpl>&& name, Ref<StyleProperties>&&);
     StyleRulePositionTry(const StyleRulePositionTry&);
 
-    AtomString m_name;
+    RefPtr<AtomStringImpl> m_name;
     Ref<StyleProperties> m_properties;
 };
 
@@ -61,12 +61,12 @@ public:
 
     StyleRuleType styleRuleType() const { return StyleRuleType::PositionTry; }
 
-    String cssText() const;
+    RefPtr<StringImpl> cssText() const;
     void reattach(StyleRuleBase&);
 
     StyleRulePositionTry& positionTryRule() const { return m_positionTryRule; }
 
-    WEBCORE_EXPORT String name() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> name() const;
     WEBCORE_EXPORT CSSPositionTryDescriptors& style();
 
 private:

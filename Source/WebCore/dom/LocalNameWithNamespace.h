@@ -34,7 +34,7 @@ namespace WebCore {
 // expanded name should be treated as identical regardless of how they were prefixed.
 class LocalNameWithNamespace {
 public:
-    LocalNameWithNamespace(const AtomString& namespaceURI, const AtomString& localName)
+    LocalNameWithNamespace(AtomStringImpl* namespaceURI, AtomStringImpl* localName)
         : m_canonical(nullAtom(), localName, namespaceURI) { }
     LocalNameWithNamespace(const QualifiedName& qualifiedName)
         : m_canonical(qualifiedName.hasPrefix()
@@ -46,8 +46,8 @@ public:
     explicit LocalNameWithNamespace(WTF::HashTableDeletedValueType)
         : m_canonical(WTF::HashTableDeletedValue) { }
 
-    const AtomString& namespaceURI() const LIFETIME_BOUND { return m_canonical.namespaceURI(); }
-    const AtomString& localName() const LIFETIME_BOUND { return m_canonical.localName(); }
+    const RefPtr<AtomStringImpl>& namespaceURI() const LIFETIME_BOUND { return m_canonical.namespaceURI(); }
+    const RefPtr<AtomStringImpl>& localName() const LIFETIME_BOUND { return m_canonical.localName(); }
 
     bool isHashTableDeletedValue() const { return m_canonical.isHashTableDeletedValue(); }
     QualifiedName::QualifiedNameImpl* impl() const { return m_canonical.impl(); }

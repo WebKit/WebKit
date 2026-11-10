@@ -53,17 +53,17 @@ static ExceptionOr<FileSystemWritableFileStream::WriteParams> writeParamsFromChu
             switch (params.type) {
             case FileSystemWriteCommandType::Write:
                 if (!params.data)
-                    return Exception { ExceptionCode::SyntaxError, "Data is missing"_s };
+                    return Exception { ExceptionCode::SyntaxError, "Data is missing"_si };
                 return params;
             case FileSystemWriteCommandType::Seek:
                 // FIXME: Reconsider exception type when https://github.com/whatwg/fs/issues/168 is closed.
                 if (!params.position)
-                    return Exception { ExceptionCode::SyntaxError, "Position is missing."_s };
+                    return Exception { ExceptionCode::SyntaxError, "Position is missing."_si };
                 return params;
             case FileSystemWriteCommandType::Truncate:
                 // FIXME: Reconsider exception type when https://github.com/whatwg/fs/issues/168 is closed.
                 if (!params.size)
-                    return Exception { ExceptionCode::SyntaxError, "Size is missing."_s };
+                    return Exception { ExceptionCode::SyntaxError, "Size is missing."_si };
                 return params;
             }
             return params;
@@ -112,8 +112,8 @@ static void fetchDataBytesForWrite(const std::optional<FileSystemWritableFileStr
                 completionHandler(buffer->span());
             });
         },
-        [&](const String& string) {
-            completionHandler(byteCast<uint8_t>(string.utf8().span()));
+        [&](StringImpl* string) {
+            completionHandler(byteCast<uint8_t>(utf8(string).span()));
         }
     );
 }
@@ -140,7 +140,7 @@ static ExceptionOr<FileSystemWritableFileStream::ChunkType> convertFileSystemWri
     // ScriptExecutionContext::globalObject() is null once a document has been detached from its frame.
     auto* globalObject = downcast<JSDOMGlobalObject>(context.globalObject());
     if (!globalObject) [[unlikely]]
-        return Exception { ExceptionCode::InvalidStateError, "Global object is invalid"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Global object is invalid"_si };
 
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
     auto chunkResult = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer, IDLInterface<Blob>, IDLUSVString, IDLDictionary<FileSystemWritableFileStream::WriteParams>>>(*globalObject, value);

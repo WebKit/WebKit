@@ -145,7 +145,7 @@ void RemoteRenderPassEncoder::setBindGroup(uint32_t index, std::optional<WebGPUI
     protect(m_backing)->setBindGroup(index, convertedBindGroup.get(), dynamicOffsets ? std::optional { dynamicOffsets->span() } : std::nullopt);
 }
 
-void RemoteRenderPassEncoder::pushDebugGroup(String&& groupLabel)
+void RemoteRenderPassEncoder::pushDebugGroup(RefPtr<StringImpl>&& groupLabel)
 {
     protect(m_backing)->pushDebugGroup(WTF::move(groupLabel));
 }
@@ -155,7 +155,7 @@ void RemoteRenderPassEncoder::popDebugGroup()
     protect(m_backing)->popDebugGroup();
 }
 
-void RemoteRenderPassEncoder::insertDebugMarker(String&& markerLabel)
+void RemoteRenderPassEncoder::insertDebugMarker(RefPtr<StringImpl>&& markerLabel)
 {
     protect(m_backing)->insertDebugMarker(WTF::move(markerLabel));
 }
@@ -211,7 +211,7 @@ void RemoteRenderPassEncoder::end()
     protect(m_backing)->end();
 }
 
-void RemoteRenderPassEncoder::setLabel(String&& label)
+void RemoteRenderPassEncoder::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

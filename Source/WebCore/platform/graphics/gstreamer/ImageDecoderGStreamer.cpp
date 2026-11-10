@@ -107,7 +107,7 @@ ImageDecoderGStreamerSample* toSample(Iterator iter)
     return (ImageDecoderGStreamerSample*)iter->second.ptr();
 }
 
-RefPtr<ImageDecoderGStreamer> ImageDecoderGStreamer::create(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+RefPtr<ImageDecoderGStreamer> ImageDecoderGStreamer::create(FragmentedSharedBuffer& data, StringImpl* mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     RefPtr decoder = adoptRef(*new ImageDecoderGStreamer(data, mimeType, alphaOption, gammaAndColorProfileOption));
     {
@@ -117,12 +117,12 @@ RefPtr<ImageDecoderGStreamer> ImageDecoderGStreamer::create(FragmentedSharedBuff
     return decoder;
 }
 
-ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption)
+ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, StringImpl* mimeType, AlphaOption, GammaAndColorProfileOption)
     : m_mimeType(mimeType)
 {
     ensureDebugCategoryIsInitialized();
     static Atomic<uint32_t> decoderId;
-    GRefPtr<GstElement> parsebin = gst_element_factory_make("parsebin", makeString("image-decoder-parser-"_s, decoderId.exchangeAdd(1)).utf8().legacyCStringPointer());
+    GRefPtr<GstElement> parsebin = gst_element_factory_make("parsebin", utf8(makeString("image-decoder-parser-"_s, decoderId.exchangeAdd(1))).legacyCStringPointer());
     m_parserHarness = GStreamerElementHarness::create(WTF::move(parsebin), [](auto&, auto&&) { }, [this](auto& pad) -> RefPtr<GStreamerElementHarness> {
         GRefPtr caps = adoptGRef(gst_pad_query_caps(pad.get(), nullptr));
         auto identityHarness = GStreamerElementHarness::create(GRefPtr<GstElement>(gst_element_factory_make("identity", nullptr)), [](auto&, const auto&) { });
@@ -167,25 +167,25 @@ void ImageDecoderGStreamer::tearDown()
     m_parserHarness = nullptr;
 }
 
-bool ImageDecoderGStreamer::supportsContainerType(const String& type)
+bool ImageDecoderGStreamer::supportsContainerType(StringImpl* type)
 {
     // Ideally this decoder should operate only from the WebProcess (or from the GPUProcess) which
     // should be the only process where GStreamer has been runtime initialized.
     if (!isInWebProcess())
         return false;
 
-    if (!type.startsWith("video/"_s))
+    if (!startsWith(type, "video/"_s))
         return false;
 
     return GStreamerRegistryScanner::singleton().isContainerTypeSupported(GStreamerRegistryScanner::Configuration::Decoding, type);
 }
 
-bool ImageDecoderGStreamer::canDecodeType(const String& mimeType)
+bool ImageDecoderGStreamer::canDecodeType(StringImpl* mimeType)
 {
-    if (mimeType.isEmpty())
+    if (isEmpty(mimeType))
         return false;
 
-    if (!mimeType.startsWith("video/"_s))
+    if (!startsWith(mimeType, "video/"_s))
         return false;
 
     // Ideally this decoder should operate only from the WebProcess (or from the GPUProcess) which

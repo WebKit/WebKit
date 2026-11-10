@@ -66,7 +66,7 @@ public:
 
     void hide() { hidePopupMenu(); }
 
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
 private:
     WebPopupMenuProxyWin(WebView*, WebPopupMenuProxy::Client&);

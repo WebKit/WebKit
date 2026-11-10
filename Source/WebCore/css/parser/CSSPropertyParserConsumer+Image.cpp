@@ -1421,7 +1421,7 @@ static RefPtr<CSSValue> consumeImageSet(CSSParserTokenRange& args, CSS::Property
 RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSS::PropertyParserState& state, OptionSet<AllowedImageType> allowedImageTypes)
 {
     if (range.peek().type() == StringToken && allowedImageTypes.contains(AllowedImageType::RawStringAsURL)) {
-        auto imageURL = CSS::completeURL(range.peek().value().toAtomString().string(), state.context);
+        auto imageURL = CSS::completeURL(range.peek().value().toAtomString(), state.context);
         if (!imageURL)
             return nullptr;
         range.consumeIncludingWhitespace();

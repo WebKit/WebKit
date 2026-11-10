@@ -106,8 +106,8 @@ private:
     void paint(GraphicsContext&, const FloatRect&) final { }
     ColorSpace colorSpace() final { return ColorSpace::SRGB(); }
     static OptionSet<MediaPlaybackTargetType> playbackTargetTypes();
-    String wirelessPlaybackTargetName() const final;
-    String wirelessPlaybackRouteName() const final;
+    RefPtr<StringImpl> wirelessPlaybackTargetName() const final;
+    RefPtr<StringImpl> wirelessPlaybackRouteName() const final;
     MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const final;
     bool wirelessVideoPlaybackDisabled() const final { return !m_allowsWirelessVideoPlayback; }
     void setWirelessVideoPlaybackDisabled(bool disabled) final { m_allowsWirelessVideoPlayback = !disabled; }
@@ -128,7 +128,7 @@ private:
     void setVolume(float) final;
     float volume() const final;
     void setMuted(bool) final;
-    String engineDescription() const final;
+    RefPtr<StringImpl> engineDescription() const final;
 
     // MediaDeviceRouteClient
     void timeRangeDidChange(MediaDeviceRoute&) final;

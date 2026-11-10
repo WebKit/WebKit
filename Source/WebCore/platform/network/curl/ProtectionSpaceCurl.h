@@ -37,12 +37,12 @@ public:
     {
     }
 
-    ProtectionSpace(const String& host, int port, ServerType serverType, const String& realm, AuthenticationScheme authenticationScheme)
+    ProtectionSpace(StringImpl* host, int port, ServerType serverType, StringImpl* realm, AuthenticationScheme authenticationScheme)
         : ProtectionSpaceBase(host, port, serverType, realm, authenticationScheme)
     {
     }
 
-    ProtectionSpace(const String& host, int port, ServerType serverType, const String& realm, AuthenticationScheme authenticationScheme, const CertificateInfo& certificateInfo)
+    ProtectionSpace(StringImpl* host, int port, ServerType serverType, StringImpl* realm, AuthenticationScheme authenticationScheme, const CertificateInfo& certificateInfo)
         : ProtectionSpaceBase(host, port, serverType, realm, authenticationScheme)
         , m_certificateInfo(certificateInfo)
     {

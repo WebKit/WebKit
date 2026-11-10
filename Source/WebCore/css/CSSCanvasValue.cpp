@@ -39,7 +39,7 @@ CSSCanvasValue::CSSCanvasValue(CSS::CustomIdent&& name)
 
 CSSCanvasValue::~CSSCanvasValue() = default;
 
-String CSSCanvasValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSCanvasValue::customCSSText(const CSS::SerializationContext& context) const
 {
     StringBuilder builder;
     builder.append("-webkit-canvas("_s);

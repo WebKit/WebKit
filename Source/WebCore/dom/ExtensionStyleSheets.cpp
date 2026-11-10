@@ -63,7 +63,7 @@ ExtensionStyleSheets::ExtensionStyleSheets(Document& document)
 
 ExtensionStyleSheets::~ExtensionStyleSheets() = default;
 
-static Ref<CSSStyleSheet> createExtensionsStyleSheet(Document& document, URL url, const String& text, UserStyleLevel level)
+static Ref<CSSStyleSheet> createExtensionsStyleSheet(Document& document, URL url, StringImpl* text, UserStyleLevel level)
 {
     auto contents = StyleSheetContents::create(url.string(), CSSParserContext(document, url));
     auto styleSheet = CSSStyleSheet::create(contents.get(), document, true);
@@ -83,8 +83,8 @@ CSSStyleSheet* ExtensionStyleSheets::pageUserSheet()
     if (!owningPage)
         return nullptr;
     
-    String userSheetText = owningPage->userStyleSheet();
-    if (userSheetText.isEmpty())
+    RefPtr<StringImpl> userSheetText = owningPage->userStyleSheet();
+    if (isEmpty(userSheetText))
         return nullptr;
     
     m_pageUserSheet = createExtensionsStyleSheet(protect(m_document), m_document->settings().userStyleSheetLocation(), userSheetText, UserStyleLevel::User);
@@ -134,7 +134,7 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
     if (!owningPage)
         return;
 
-    auto addStyleSheet = [&](const URL& url, const String& source, UserStyleLevel level) {
+    auto addStyleSheet = [&](const URL& url, StringImpl* source, UserStyleLevel level) {
         Ref sheet = createExtensionsStyleSheet(document, url, source, level);
 
         m_injectedStyleSheetToSource.set(sheet.copyRef(), source);
@@ -200,9 +200,9 @@ void ExtensionStyleSheets::removePageSpecificUserStyleSheet(const UserStyleSheet
         invalidateInjectedStyleSheetCache();
 }
 
-void ExtensionStyleSheets::setQuirkStyleSheets(Vector<String>&& sources)
+void ExtensionStyleSheets::setQuirkStyleSheets(Vector<RefPtr<StringImpl>>&& sources)
 {
-    if (m_quirkStyleSheetSources == sources)
+    if (contentEquals(m_quirkStyleSheetSources, sources))
         return;
 
     for (auto& sheet : m_quirkStyleSheets)
@@ -246,7 +246,7 @@ void ExtensionStyleSheets::addAuthorStyleSheetForTesting(Ref<StyleSheetContents>
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void ExtensionStyleSheets::addDisplayNoneSelector(const String& identifier, const String& selector, uint32_t selectorID)
+void ExtensionStyleSheets::addDisplayNoneSelector(StringImpl* identifier, StringImpl* selector, uint32_t selectorID)
 {
     Ref document = m_document;
     auto result = m_contentExtensionSelectorSheets.ensure(identifier, [&] {
@@ -259,7 +259,7 @@ void ExtensionStyleSheets::addDisplayNoneSelector(const String& identifier, cons
         document->styleScope().didChangeExtensionStyleSheets();
 }
 
-void ExtensionStyleSheets::maybeAddContentExtensionSheet(const String& identifier, StyleSheetContents& sheet)
+void ExtensionStyleSheets::maybeAddContentExtensionSheet(StringImpl* identifier, StyleSheetContents& sheet)
 {
     ASSERT(sheet.isUserStyleSheet());
 
@@ -275,9 +275,12 @@ void ExtensionStyleSheets::maybeAddContentExtensionSheet(const String& identifie
 }
 #endif // ENABLE(CONTENT_EXTENSIONS)
 
-String ExtensionStyleSheets::contentForInjectedStyleSheet(CSSStyleSheet& styleSheet) const
+RefPtr<StringImpl> ExtensionStyleSheets::contentForInjectedStyleSheet(CSSStyleSheet& styleSheet) const
 {
-    return m_injectedStyleSheetToSource.get(styleSheet);
+    auto iterator = m_injectedStyleSheetToSource.find(styleSheet);
+    if (iterator == m_injectedStyleSheetToSource.end())
+        return nullptr;
+    return iterator->value;
 }
 
 void ExtensionStyleSheets::detachFromDocument()

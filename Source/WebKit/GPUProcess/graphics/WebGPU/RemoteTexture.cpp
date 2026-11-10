@@ -86,7 +86,7 @@ void RemoteTexture::destruct()
     protect(m_objectHeap)->removeObject(m_identifier);
 }
 
-void RemoteTexture::setLabel(String&& label)
+void RemoteTexture::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

@@ -74,35 +74,35 @@ unsigned StorageMap::length() const
     return m_impl->map.size();
 }
 
-String StorageMap::key(unsigned index)
+RefPtr<StringImpl> StorageMap::key(unsigned index)
 {
     if (index >= length())
-        return String();
+        return nullptr;
 
     setIteratorToIndex(index);
     return m_impl->iterator->key;
 }
 
-String StorageMap::getItem(const String& key) const
+RefPtr<StringImpl> StorageMap::getItem(StringImpl* key) const
 {
     return m_impl->map.get(key);
 }
 
-void StorageMap::setItem(const String& key, const String& value, String& oldValue, bool& quotaException)
+void StorageMap::setItem(StringImpl* key, StringImpl* value, RefPtr<StringImpl>& oldValue, bool& quotaException)
 {
-    ASSERT(!value.isNull());
+    ASSERT(value);
 
     quotaException = false;
     CheckedUint32 newSize = m_impl->currentSize;
     auto iter = m_impl->map.find(key);
     if (iter != m_impl->map.end()) {
         oldValue = iter->value;
-        newSize -= oldValue.sizeInBytes();
+        newSize -= sizeInBytes(oldValue);
     } else {
         oldValue = nullString();
-        newSize += key.sizeInBytes();
+        newSize += sizeInBytes(key);
     }
-    newSize += value.sizeInBytes();
+    newSize += sizeInBytes(value);
     if (m_quotaSize != noQuota && (newSize.hasOverflowed() || newSize > m_quotaSize)) {
         quotaException = true;
         return;
@@ -117,17 +117,17 @@ void StorageMap::setItem(const String& key, const String& value, String& oldValu
     invalidateIterator();
 }
 
-void StorageMap::setItemIgnoringQuota(const String& key, const String& value)
+void StorageMap::setItemIgnoringQuota(StringImpl* key, StringImpl* value)
 {
     SetForScope quotaSizeChange(m_quotaSize, noQuota);
 
-    String oldValue;
+    RefPtr<StringImpl> oldValue;
     bool quotaException;
     setItem(key, value, oldValue, quotaException);
     ASSERT(!quotaException);
 }
 
-void StorageMap::removeItem(const String& key, String& oldValue)
+void StorageMap::removeItem(StringImpl* key, RefPtr<StringImpl>& oldValue)
 {
     oldValue = nullString();
     CheckedUint32 newSize = m_impl->currentSize;
@@ -135,7 +135,7 @@ void StorageMap::removeItem(const String& key, String& oldValue)
     if (iter == m_impl->map.end())
         return;
     oldValue = iter->value;
-    newSize = newSize - iter->key.sizeInBytes() - oldValue.sizeInBytes();
+    newSize = newSize - sizeInBytes(iter->key) - sizeInBytes(oldValue);
 
     if (m_impl->hasOneRef())
         m_impl->map.remove(iter);
@@ -160,20 +160,20 @@ void StorageMap::clear()
     invalidateIterator();
 }
 
-bool StorageMap::contains(const String& key) const
+bool StorageMap::contains(StringImpl* key) const
 {
     return m_impl->map.contains(key);
 }
 
-void StorageMap::importItems(HashMap<String, String>&& items)
+void StorageMap::importItems(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& items)
 {
     RELEASE_ASSERT(m_impl->map.isEmpty());
     RELEASE_ASSERT(!m_impl->currentSize);
 
     CheckedUint32 newSize;
     for (auto& [key, value] : items) {
-        newSize += key.sizeInBytes();
-        newSize += value.sizeInBytes();
+        newSize += sizeInBytes(key);
+        newSize += sizeInBytes(value);
     }
 
     m_impl->map = WTF::move(items);

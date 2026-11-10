@@ -436,7 +436,7 @@ TargetContents ThreadedCompositor::paintToCurrentGLContext(const TransformationM
 }
 
 #if HAVE(OS_SIGNPOST) || USE(SYSPROF_CAPTURE)
-static String reasonsToString(const OptionSet<CompositionReason>& reasons)
+static RefPtr<StringImpl> reasonsToString(const OptionSet<CompositionReason>& reasons)
 {
     StringBuilder builder;
     for (auto reason : reasons) {
@@ -520,7 +520,7 @@ void ThreadedCompositor::renderLayerTree()
     if (shouldNotifiyDidComposite)
         m_didCompositeRunLoopObserver->schedule(&RunLoop::mainSingleton());
 
-    WTFEmitSignpost(this, DidRenderFrame, "reasons: %s", reasonsToString(reasons).utf8());
+    WTFEmitSignpost(this, DidRenderFrame, "reasons: %s", utf8(reasonsToString(reasons)));
 
     PlatformDisplay::sharedDisplay().skiaGLContext()->swapBuffers();
 
@@ -572,7 +572,7 @@ ASCIILiteral ThreadedCompositor::stateToString(ThreadedCompositor::State state)
 void ThreadedCompositor::scheduleUpdateLocked()
 {
     assertIsHeld(m_state.lock);
-    WTFEmitSignpost(this, ScheduleComposition, "reasons: %s, state: %s, waiting for tiles: %s, render timer active: %s", reasonsToString(m_state.reasons).utf8(), stateToString(m_state.state).characters(), m_state.isWaitingForTiles ? "yes" : "no", m_state.isRenderTimerActive ? "yes" : "no");
+    WTFEmitSignpost(this, ScheduleComposition, "reasons: %s, state: %s, waiting for tiles: %s, render timer active: %s", utf8(reasonsToString(m_state.reasons)), stateToString(m_state.state).characters(), m_state.isWaitingForTiles ? "yes" : "no", m_state.isRenderTimerActive ? "yes" : "no");
 
     switch (m_state.state) {
     case State::Idle:
@@ -598,7 +598,7 @@ void ThreadedCompositor::frameComplete()
     ASSERT(m_workQueue->runLoop().isCurrent());
 
     Locker locker { m_state.lock };
-    WTFEmitSignpost(this, FrameComplete, "reasons: %s, state: %s, waiting for tiles: %s", reasonsToString(m_state.reasons).utf8(), stateToString(m_state.state).characters(), m_state.isWaitingForTiles ? "yes" : "no");
+    WTFEmitSignpost(this, FrameComplete, "reasons: %s, state: %s, waiting for tiles: %s", utf8(reasonsToString(m_state.reasons)), stateToString(m_state.state).characters(), m_state.isWaitingForTiles ? "yes" : "no");
 
     switch (m_state.state) {
     case State::Idle:
@@ -647,9 +647,9 @@ void ThreadedCompositor::initializeFPSCounter()
 {
     // When the envvar is set, the FPS is logged to the console, so it may be necessary to enable the
     // 'LogsPageMessagesToSystemConsole' runtime preference to see it.
-    const auto showFPSEnvironment = String::fromLatin1(getenv("WEBKIT_SHOW_FPS"));
+    const auto showFPSEnvironment = StringImpl::fromLatin1(getenv("WEBKIT_SHOW_FPS"));
     bool ok = false;
-    Seconds interval(showFPSEnvironment.toDouble(&ok));
+    Seconds interval(toDouble(showFPSEnvironment, &ok));
     if (ok && interval) {
         m_fpsCounter.exposesFPS = true;
         m_fpsCounter.calculationInterval = interval;
@@ -723,7 +723,7 @@ void ThreadedCompositor::updateFPSCounterGeometry()
         return;
 
     m_fpsCounter.displayedFPS = m_fpsCounter.lastFPS;
-    m_fpsCounter.fpsString = String::number(m_fpsCounter.lastFPS).ascii();
+    m_fpsCounter.fpsString = ascii(makeString(m_fpsCounter.lastFPS));
 
     const auto& font = fpsCounterFont();
     SkRect textBounds;
@@ -774,15 +774,15 @@ void ThreadedCompositor::drawFPSCounter(SkCanvas& canvas)
 void ThreadedCompositor::fillGLInformation(RenderProcessInfo&& info, CompletionHandler<void(RenderProcessInfo&&)>&& completionHandler)
 {
     m_workQueue->dispatchSync([protectedThis = Ref { *this }, info = WTF::move(info), completionHandler = WTF::move(completionHandler)]() mutable {
-        info.glRenderer = String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
-        info.glVendor = String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
-        info.glVersion = String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VERSION)));
-        info.glShadingVersion = String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
-        info.glExtensions = String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
+        info.glRenderer = StringImpl::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+        info.glVendor = StringImpl::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+        info.glVersion = StringImpl::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+        info.glShadingVersion = StringImpl::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+        info.glExtensions = StringImpl::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
 
         auto eglDisplay = eglGetCurrentDisplay();
-        info.eglVersion = String::fromUTF8(eglQueryString(eglDisplay, EGL_VERSION));
-        info.eglVendor = String::fromUTF8(eglQueryString(eglDisplay, EGL_VENDOR));
+        info.eglVersion = StringImpl::fromUTF8(eglQueryString(eglDisplay, EGL_VERSION));
+        info.eglVendor = StringImpl::fromUTF8(eglQueryString(eglDisplay, EGL_VENDOR));
         info.eglExtensions = makeString(unsafeSpan(eglQueryString(nullptr, EGL_EXTENSIONS)), ' ', unsafeSpan(eglQueryString(eglDisplay, EGL_EXTENSIONS)));
 
         RunLoop::mainSingleton().dispatch([info = WTF::move(info), completionHandler = WTF::move(completionHandler)]() mutable {

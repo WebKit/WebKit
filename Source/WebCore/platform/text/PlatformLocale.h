@@ -45,13 +45,13 @@ class Locale : public CanMakeCheckedPtr<Locale> {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Locale);
 
 public:
-    WEBCORE_EXPORT static std::unique_ptr<Locale> create(const AtomString& localeIdentifier);
+    WEBCORE_EXPORT static std::unique_ptr<Locale> create(AtomStringImpl* localeIdentifier);
     static std::unique_ptr<Locale> createDefault();
 
     // Converts the specified number string to another number string localized
     // for this Locale locale. The input string must conform to HTML
     // floating-point numbers, and is not empty.
-    String convertToLocalizedNumber(const String&);
+    RefPtr<StringImpl> convertToLocalizedNumber(StringImpl*);
 
     // Converts the specified localized number string to a number string in the
     // HTML floating-point number format. The input string is provided by a end
@@ -59,7 +59,7 @@ public:
     // a string which is not conforms to the HTML floating-point number format,
     // callers of this function are responsible to check the format of the
     // resultant string.
-    String convertFromLocalizedNumber(const String&);
+    RefPtr<StringImpl> convertFromLocalizedNumber(StringImpl*);
 
     enum class WritingDirection: uint8_t {
         Default,
@@ -73,61 +73,61 @@ public:
     // Returns date format in Unicode TR35 LDML[1] containing day of month,
     // month, and year, e.g. "dd/mm/yyyy"
     // [1] LDML http://unicode.org/reports/tr35/#Date_Format_Patterns
-    virtual String dateFormat() = 0;
+    virtual RefPtr<StringImpl> dateFormat() = 0;
 
     // Returns a year-month format in Unicode TR35 LDML.
-    virtual String monthFormat() = 0;
+    virtual RefPtr<StringImpl> monthFormat() = 0;
 
     // Returns a year-month format using short month lanel in Unicode TR35 LDML.
-    virtual String shortMonthFormat() = 0;
+    virtual RefPtr<StringImpl> shortMonthFormat() = 0;
 
     // Returns time format in Unicode TR35 LDML[1] containing hour, minute, and
     // second with optional period(AM/PM), e.g. "h:mm:ss a"
     // [1] LDML http://unicode.org/reports/tr35/#Date_Format_Patterns
-    virtual String timeFormat() = 0;
+    virtual RefPtr<StringImpl> timeFormat() = 0;
 
     // Returns time format in Unicode TR35 LDML containing hour, and minute
     // with optional period(AM/PM), e.g. "h:mm a"
     // Note: Some platforms return same value as timeFormat().
-    virtual String shortTimeFormat() = 0;
+    virtual RefPtr<StringImpl> shortTimeFormat() = 0;
 
     // Returns a date-time format in Unicode TR35 LDML. It should have a seconds
     // field.
-    virtual String dateTimeFormatWithSeconds() = 0;
+    virtual RefPtr<StringImpl> dateTimeFormatWithSeconds() = 0;
 
     // Returns a date-time format in Unicode TR35 LDML. It should have no seconds
     // field.
-    virtual String dateTimeFormatWithoutSeconds() = 0;
+    virtual RefPtr<StringImpl> dateTimeFormatWithoutSeconds() = 0;
 
     // Returns a vector of string of which size is 12. The first item is a
     // localized string of Jan and the last item is a localized string of
     // Dec. These strings should be short.
-    virtual const Vector<String>& shortMonthLabels() = 0;
+    virtual const Vector<RefPtr<StringImpl>>& shortMonthLabels() = 0;
 
     // Returns a vector of string of which size is 12. The first item is a
     // stand-alone localized string of January and the last item is a
     // stand-alone localized string of December. These strings should not be
     // abbreviations.
-    virtual const Vector<String>& standAloneMonthLabels() = 0;
+    virtual const Vector<RefPtr<StringImpl>>& standAloneMonthLabels() = 0;
 
     // Stand-alone month version of shortMonthLabels.
-    virtual const Vector<String>& shortStandAloneMonthLabels() = 0;
+    virtual const Vector<RefPtr<StringImpl>>& shortStandAloneMonthLabels() = 0;
 
     // Returns localized period field(AM/PM) strings.
-    virtual const Vector<String>& timeAMPMLabels() = 0;
+    virtual const Vector<RefPtr<StringImpl>>& timeAMPMLabels() = 0;
 
     // Returns a vector of string of which size is 12. The first item is a
     // localized string of January, and the last item is a localized string of
     // December. These strings should not be abbreviations.
-    virtual const Vector<String>& monthLabels() = 0;
+    virtual const Vector<RefPtr<StringImpl>>& monthLabels() = 0;
 
-    const String& localizedDecimalSeparator();
+    const RefPtr<StringImpl>& localizedDecimalSeparator();
 
     // Converts digit and decimal separator characters to their localized
     // equivalents, passing through all other characters unchanged. Unlike
     // convertToLocalizedNumber, this handles partial input (e.g. containing
     // 'e', '+') and does not add sign prefixes or suffixes.
-    String localizeNumberCharacters(const String&);
+    RefPtr<StringImpl> localizeNumberCharacters(StringImpl*);
 
     enum FormatType { FormatTypeUnspecified, FormatTypeShort, FormatTypeMedium };
 
@@ -135,7 +135,7 @@ public:
     // display to the user. If an implementation doesn't support
     // localized dates the function should return an empty string.
     // FormatType can be used to specify if you want the short format. 
-    virtual String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified);
+    virtual RefPtr<StringImpl> formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified);
 
     WEBCORE_EXPORT virtual ~Locale();
 
@@ -149,23 +149,23 @@ protected:
 
     Locale() : m_hasLocaleData(false) { }
     virtual void initializeLocaleData() = 0;
-    void setLocaleData(const Vector<String, DecimalSymbolsSize>&, const String& positivePrefix, const String& positiveSuffix, const String& negativePrefix, const String& negativeSuffix);
+    void setLocaleData(const Vector<RefPtr<StringImpl>, DecimalSymbolsSize>&, StringImpl* positivePrefix, StringImpl* positiveSuffix, StringImpl* negativePrefix, StringImpl* negativeSuffix);
 
 private:
-    NODELETE bool detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex);
-    NODELETE unsigned matchedDecimalSymbolIndex(const String& input, unsigned& position);
+    NODELETE bool detectSignAndGetDigitRange(StringImpl* input, bool& isNegative, unsigned& startIndex, unsigned& endIndex);
+    NODELETE unsigned matchedDecimalSymbolIndex(StringImpl* input, unsigned& position);
 
-    std::array<String, DecimalSymbolsSize> m_decimalSymbols;
-    String m_positivePrefix;
-    String m_positiveSuffix;
-    String m_negativePrefix;
-    String m_negativeSuffix;
+    std::array<RefPtr<StringImpl>, DecimalSymbolsSize> m_decimalSymbols;
+    RefPtr<StringImpl> m_positivePrefix;
+    RefPtr<StringImpl> m_positiveSuffix;
+    RefPtr<StringImpl> m_negativePrefix;
+    RefPtr<StringImpl> m_negativeSuffix;
     bool m_hasLocaleData;
 };
 
 inline std::unique_ptr<Locale> Locale::createDefault()
 {
-    return Locale::create(AtomString { defaultLanguage() });
+    return Locale::create(AtomStringImpl::add(defaultLanguage()).get());
 }
 
 } // namespace WebCore

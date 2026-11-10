@@ -64,7 +64,7 @@ void SVGFEGaussianBlurElement::setStdDeviation(float x, float y)
     updateSVGRendererForElementChange();
 }
 
-void SVGFEGaussianBlurElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGFEGaussianBlurElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::stdDeviationAttr:
@@ -80,7 +80,7 @@ void SVGFEGaussianBlurElement::attributeChanged(const QualifiedName& name, const
         Ref { m_in1 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::edgeModeAttr:
-        if (!protect(m_edgeMode)->parseBaseVal<EdgeModeType>(*this, newValue) && !newValue.isNull())
+        if (!protect(m_edgeMode)->parseBaseVal<EdgeModeType>(*this, newValue) && newValue)
             protect(protect(document())->svgExtensions())->reportWarning(makeString("feGaussianBlur: problem parsing edgeMode=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         break;
     default:

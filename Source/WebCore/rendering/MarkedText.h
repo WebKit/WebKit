@@ -82,7 +82,7 @@ struct MarkedText : public CanMakeCheckedPtr<MarkedText, WTF::DefaultedOperatorE
         Frontmost
     };
 
-    MarkedText(unsigned startOffset, unsigned endOffset, Type type, const RenderedDocumentMarker* marker = nullptr, const AtomString& highlightName = { }, int priority = 0) : startOffset(startOffset), endOffset(endOffset), type(type), marker(marker), highlightName(highlightName), priority(priority) { };
+    MarkedText(unsigned startOffset, unsigned endOffset, Type type, const RenderedDocumentMarker* marker = nullptr, AtomStringImpl* highlightName = nullptr, int priority = 0) : startOffset(startOffset), endOffset(endOffset), type(type), marker(marker), highlightName(highlightName), priority(priority) { };
     MarkedText(WTF::HashTableDeletedValueType) : startOffset(std::numeric_limits<unsigned>::max()) { };
     MarkedText() = default;
 
@@ -102,7 +102,7 @@ struct MarkedText : public CanMakeCheckedPtr<MarkedText, WTF::DefaultedOperatorE
     unsigned endOffset { 0 };
     Type type { Type::Unmarked };
     const RenderedDocumentMarker* marker { nullptr };
-    AtomString highlightName;
+    RefPtr<AtomStringImpl> highlightName;
     int priority { 0 };
 };
 

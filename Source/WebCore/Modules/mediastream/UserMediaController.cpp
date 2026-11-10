@@ -58,13 +58,13 @@ void provideUserMediaTo(Page* page, Ref<UserMediaClient>&& client)
 void UserMediaController::logGetUserMediaDenial(Document& document)
 {
     if (RefPtr window = document.window())
-        window->printErrorMessage("Not allowed to call getUserMedia."_s);
+        window->printErrorMessage("Not allowed to call getUserMedia."_si);
 }
 
 void UserMediaController::logGetDisplayMediaDenial(Document& document)
 {
     if (RefPtr window = document.window())
-        window->printErrorMessage("Not allowed to call getDisplayMedia."_s);
+        window->printErrorMessage("Not allowed to call getDisplayMedia."_si);
 }
 
 void UserMediaController::logEnumerateDevicesDenial(Document& document)
@@ -73,7 +73,7 @@ void UserMediaController::logEnumerateDevicesDenial(Document& document)
     PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Camera, document);
     PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, document);
     if (RefPtr window = document.window())
-        window->printErrorMessage("Not allowed to call enumerateDevices."_s);
+        window->printErrorMessage("Not allowed to call enumerateDevices."_si);
 }
 
 void UserMediaController::setShouldListenToVoiceActivity(Document& document, bool shouldListen)

@@ -41,8 +41,8 @@ public:
 
     ~WebGLRenderingContext();
 
-    std::optional<WebGLExtensionAny> getExtension(const String&) final;
-    std::optional<Vector<String>> getSupportedExtensions() final;
+    std::optional<WebGLExtensionAny> getExtension(StringImpl*) final;
+    std::optional<Vector<RefPtr<StringImpl>>> getSupportedExtensions() final;
 
     WebGLAny getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname) final;
 

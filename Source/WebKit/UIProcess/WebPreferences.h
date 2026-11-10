@@ -34,10 +34,16 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
+// String getters return a RefPtr<StringImpl> from WebPreferencesStore::getStringValueForKey(), which can destroy objects.
+#define PREFERENCE_GETTER_NODELETE_Bool NODELETE
+#define PREFERENCE_GETTER_NODELETE_Double NODELETE
+#define PREFERENCE_GETTER_NODELETE_UInt32 NODELETE
+#define PREFERENCE_GETTER_NODELETE_String
+
 #define DECLARE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
     void set##KeyUpper(const Type& value); \
     void delete##KeyUpper(); \
-    NODELETE Type KeyLower() const;
+    PREFERENCE_GETTER_NODELETE_##TypeName Type KeyLower() const;
 
 #define DECLARE_INSPECTOR_OVERRIDE_SETTERS(KeyUpper, KeyLower, Type) \
     void set##KeyUpper##InspectorOverride(std::optional<Type> inspectorOverride);
@@ -52,10 +58,10 @@ class WebPageProxy;
 
 class WebPreferences : public API::ObjectImpl<API::Object::Type::Preferences> {
 public:
-    static Ref<WebPreferences> create(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
-    static Ref<WebPreferences> createWithLegacyDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
+    static Ref<WebPreferences> create(StringImpl* identifier, StringImpl* keyPrefix, StringImpl* globalDebugKeyPrefix);
+    static Ref<WebPreferences> createWithLegacyDefaults(StringImpl* identifier, StringImpl* keyPrefix, StringImpl* globalDebugKeyPrefix);
 
-    explicit WebPreferences(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
+    explicit WebPreferences(StringImpl* identifier, StringImpl* keyPrefix, StringImpl* globalDebugKeyPrefix);
     WebPreferences(const WebPreferences&);
 
     virtual ~WebPreferences();
@@ -79,7 +85,7 @@ public:
     
     bool isFeatureEnabled(const API::Feature&) const;
     void setFeatureEnabled(const API::Feature&, bool);
-    void setFeatureEnabledForKey(const String&, bool);
+    void setFeatureEnabledForKey(StringImpl*, bool);
 
     // FIXME: Update for unified feature semantics
     // enableAllExperimentalFeatures() should enable settings for testing based on status, or be replaced with an API that WebKitTestRunner can use to enable arbitrary settings.
@@ -89,10 +95,10 @@ public:
     void disableMediaPlaybackRelatedFeatures();
 
     // Exposed for WebKitTestRunner use only.
-    void setBoolValueForKey(const String&, bool value, bool ephemeral);
-    void setDoubleValueForKey(const String&, double value, bool ephemeral);
-    void setUInt32ValueForKey(const String&, uint32_t value, bool ephemeral);
-    void setStringValueForKey(const String&, const String& value, bool ephemeral);
+    void setBoolValueForKey(StringImpl*, bool value, bool ephemeral);
+    void setDoubleValueForKey(StringImpl*, double value, bool ephemeral);
+    void setUInt32ValueForKey(StringImpl*, uint32_t value, bool ephemeral);
+    void setStringValueForKey(StringImpl*, StringImpl* value, bool ephemeral);
     void forceUpdate() { update(); }
 
     NODELETE void startBatchingUpdates();
@@ -123,31 +129,31 @@ private:
         const Ref<WebPreferences> m_preferences;
     };
 
-    void updateStringValueForKey(const String& key, const String& value, bool ephemeral);
-    void updateBoolValueForKey(const String& key, bool value, bool ephemeral);
-    void updateUInt32ValueForKey(const String& key, uint32_t value, bool ephemeral);
-    void updateDoubleValueForKey(const String& key, double value, bool ephemeral);
-    void updateFloatValueForKey(const String& key, float value, bool ephemeral);
-    void platformUpdateStringValueForKey(const String& key, const String& value);
-    void platformUpdateBoolValueForKey(const String& key, bool value);
-    void platformUpdateUInt32ValueForKey(const String& key, uint32_t value);
-    void platformUpdateDoubleValueForKey(const String& key, double value);
-    void platformUpdateFloatValueForKey(const String& key, float value);
+    void updateStringValueForKey(StringImpl* key, StringImpl* value, bool ephemeral);
+    void updateBoolValueForKey(StringImpl* key, bool value, bool ephemeral);
+    void updateUInt32ValueForKey(StringImpl* key, uint32_t value, bool ephemeral);
+    void updateDoubleValueForKey(StringImpl* key, double value, bool ephemeral);
+    void updateFloatValueForKey(StringImpl* key, float value, bool ephemeral);
+    void platformUpdateStringValueForKey(StringImpl* key, StringImpl* value);
+    void platformUpdateBoolValueForKey(StringImpl* key, bool value);
+    void platformUpdateUInt32ValueForKey(StringImpl* key, uint32_t value);
+    void platformUpdateDoubleValueForKey(StringImpl* key, double value);
+    void platformUpdateFloatValueForKey(StringImpl* key, float value);
 
-    void deleteKey(const String& key);
-    void platformDeleteKey(const String& key);
+    void deleteKey(StringImpl* key);
+    void platformDeleteKey(StringImpl* key);
 
-    void registerDefaultBoolValueForKey(const String&, bool);
-    void registerDefaultUInt32ValueForKey(const String&, uint32_t);
+    void registerDefaultBoolValueForKey(StringImpl*, bool);
+    void registerDefaultUInt32ValueForKey(StringImpl*, uint32_t);
 
-    bool platformGetStringUserValueForKey(const String& key, String& userValue);
-    bool platformGetBoolUserValueForKey(const String&, bool&);
-    bool platformGetUInt32UserValueForKey(const String&, uint32_t&);
-    bool platformGetDoubleUserValueForKey(const String&, double&);
+    bool platformGetStringUserValueForKey(StringImpl* key, RefPtr<StringImpl>& userValue);
+    bool platformGetBoolUserValueForKey(StringImpl*, bool&);
+    bool platformGetUInt32UserValueForKey(StringImpl*, uint32_t&);
+    bool platformGetDoubleUserValueForKey(StringImpl*, double&);
 
-    const String m_identifier;
-    const String m_keyPrefix;
-    const String m_globalDebugKeyPrefix;
+    const RefPtr<StringImpl> m_identifier;
+    const RefPtr<StringImpl> m_keyPrefix;
+    const RefPtr<StringImpl> m_globalDebugKeyPrefix;
     WebPreferencesStore m_store;
 
     WeakHashSet<WebPageProxy> m_pages;

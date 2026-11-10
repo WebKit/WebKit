@@ -30,6 +30,6 @@
 
 namespace WebCoreTestSupport {
 
-String serializationForCSS(WebCore::CocoaColor *) WTF_EXPORT_PRIVATE;
+RefPtr<StringImpl> serializationForCSS(WebCore::CocoaColor *) WTF_EXPORT_PRIVATE;
 
 } // namespace WebCoreTestSupport

@@ -64,7 +64,7 @@ public:
 #if PLATFORM(COCOA)
     RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t, bool& isIOSurfaceSupportedFormat) final;
 #endif
-    void setLabel(String&&) final { }
+    void setLabel(RefPtr<StringImpl>&&) final { }
     bool isValid() const final;
 
 private:

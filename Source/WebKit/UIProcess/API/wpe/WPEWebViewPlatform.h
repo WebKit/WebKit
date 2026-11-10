@@ -63,7 +63,7 @@ public:
     static WebKit::WebPageProxy* platformWebPageProxyForGamepadInput();
 #endif
 
-    std::expected<Ref<WebKit::ViewSnapshot>, String> takeViewSnapshot(std::optional<WebCore::IntRect>&&);
+    std::expected<Ref<WebKit::ViewSnapshot>, RefPtr<StringImpl>> takeViewSnapshot(std::optional<WebCore::IntRect>&&);
 
     void updateAcceleratedSurface(uint64_t);
     WebKit::RendererBufferDescription renderBufferDescription() const;
@@ -74,7 +74,7 @@ private:
     ViewPlatform(WPEDisplay*, const API::PageConfiguration&);
 
     WPEView* wpeView() const override { return m_wpeView.get(); }
-    void synthesizeCompositionKeyPress(const String&, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<WebKit::EditingRange>&&) override;
+    void synthesizeCompositionKeyPress(StringImpl*, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<WebKit::EditingRange>&&) override;
     void callAfterNextPresentationUpdate(CompletionHandler<void()>&&) override;
     void setCursor(const WebCore::Cursor&) override;
 

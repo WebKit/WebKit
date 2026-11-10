@@ -39,9 +39,9 @@ namespace PCM {
 class ManagerProxy : public ManagerInterface {
     WTF_MAKE_TZONE_ALLOCATED(ManagerProxy);
 public:
-    static Ref<ManagerProxy> create(const String& machServiceName, NetworkSession&);
+    static Ref<ManagerProxy> create(StringImpl* machServiceName, NetworkSession&);
 
-    using ApplicationBundleIdentifier = String;
+    using ApplicationBundleIdentifier = RefPtr<StringImpl>;
 
     void storeUnattributed(WebCore::PrivateClickMeasurement&&, CompletionHandler<void()>&&) final;
     void handleAttribution(WebCore::PCM::AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier&) final;
@@ -51,14 +51,14 @@ public:
     void setDebugModeIsEnabled(bool) final;
     void setPrivateRelayEnforcementIsEnabled(bool) final;
 
-    void toStringForTesting(CompletionHandler<void(String)>&&) const final;
+    void toStringForTesting(CompletionHandler<void(RefPtr<StringImpl>)>&&) const final;
     void setOverrideTimerForTesting(bool) final;
     void setTokenPublicKeyURLForTesting(URL&&) final;
     void setTokenSignatureURLForTesting(URL&&) final;
     void setAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL) final;
     void markAllUnattributedAsExpiredForTesting() final;
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&) final;
-    void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID) final;
+    void setPCMFraudPreventionValuesForTesting(RefPtr<StringImpl>&& unlinkableToken, RefPtr<StringImpl>&& secretToken, RefPtr<StringImpl>&& signature, RefPtr<StringImpl>&& keyID) final;
     void startTimerImmediatelyForTesting() final;
     void setPrivateClickMeasurementAppBundleIDForTesting(ApplicationBundleIdentifier&&) final;
     void destroyStoreForTesting(CompletionHandler<void()>&&) final;
@@ -66,7 +66,7 @@ public:
     void fetchRegistrableDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>&&)>&&) final;
 
 private:
-    ManagerProxy(const String& machServiceName, NetworkSession&);
+    ManagerProxy(StringImpl* machServiceName, NetworkSession&);
 
     template<MessageType messageType, typename... Args>
     void sendMessage(Args&&...) const;

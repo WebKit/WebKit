@@ -42,11 +42,11 @@ public:
     SkiaSystemFallbackFontCache();
     ~SkiaSystemFallbackFontCache();
 
-    sk_sp<SkTypeface> fontForCharacterCluster(const String& locale, StringView);
+    sk_sp<SkTypeface> fontForCharacterCluster(StringImpl* locale, StringView);
     void clear();
 private:
-    HashMap<String, std::unique_ptr<FontSetCache>> m_cache;
-    HashMap<std::pair<String, int>, sk_sp<SkTypeface>> m_typefaceCache;
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<FontSetCache>> m_cache;
+    HashMap<std::pair<RefPtr<StringImpl>, int>, sk_sp<SkTypeface>> m_typefaceCache;
 };
 
 } // namespace WebCore

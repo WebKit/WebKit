@@ -61,15 +61,15 @@ public:
     // IndexedDBBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<void> enable();
     Inspector::Protocol::ErrorStringOr<void> disable();
-    void requestDatabaseNames(const String& securityOrigin, Ref<RequestDatabaseNamesCallback>&&);
-    void requestDatabase(const String& securityOrigin, const String& databaseName, Ref<RequestDatabaseCallback>&&);
-    void requestData(const String& securityOrigin, const String& databaseName, const String& objectStoreName, const String& indexName, int skipCount, int pageSize, RefPtr<JSON::Object>&& keyRange, Ref<RequestDataCallback>&&);
-    void clearObjectStore(const String& securityOrigin, const String& databaseName, const String& objectStoreName, Ref<ClearObjectStoreCallback>&&);
+    void requestDatabaseNames(StringImpl* securityOrigin, Ref<RequestDatabaseNamesCallback>&&);
+    void requestDatabase(StringImpl* securityOrigin, StringImpl* databaseName, Ref<RequestDatabaseCallback>&&);
+    void requestData(StringImpl* securityOrigin, StringImpl* databaseName, StringImpl* objectStoreName, StringImpl* indexName, int skipCount, int pageSize, RefPtr<JSON::Object>&& keyRange, Ref<RequestDataCallback>&&);
+    void clearObjectStore(StringImpl* securityOrigin, StringImpl* databaseName, StringImpl* objectStoreName, Ref<ClearObjectStoreCallback>&&);
 
 protected:
     InspectorIndexedDBAgent(WebAgentContext&);
 
-    virtual Inspector::Protocol::ErrorStringOr<Ref<LocalFrame>> frameForSecurityOrigin(const String& securityOrigin) = 0;
+    virtual Inspector::Protocol::ErrorStringOr<Ref<LocalFrame>> frameForSecurityOrigin(StringImpl* securityOrigin) = 0;
 
 private:
     const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;

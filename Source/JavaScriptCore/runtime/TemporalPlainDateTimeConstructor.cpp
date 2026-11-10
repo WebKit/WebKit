@@ -79,7 +79,7 @@ TemporalPlainDateTimeConstructor::TemporalPlainDateTimeConstructor(VM& vm, Struc
 
 void TemporalPlainDateTimeConstructor::finishCreation(VM& vm, TemporalPlainDateTimePrototype* plainDateTimePrototype)
 {
-    Base::finishCreation(vm, 3, "PlainDateTime"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 3, "PlainDateTime"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, plainDateTimePrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 
@@ -105,7 +105,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainDateTime, (JSGlobalObject* global
         double v = arg.toIntegerWithTruncation(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         if (!std::isfinite(v)) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "Temporal.PlainDateTime properties must be finite"_s);
+            return throwVMRangeError(globalObject, scope, "Temporal.PlainDateTime properties must be finite"_si);
         duration.setField(durationIndex, v);
     }
 
@@ -120,7 +120,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainDateTime, (JSGlobalObject* global
             RETURN_IF_EXCEPTION(scope, { });
             auto canonicalized = isBuiltinCalendar(rawCalendarId);
             if (!canonicalized) [[unlikely]]
-                return throwVMRangeError(globalObject, scope, "invalid calendar ID"_s);
+                return throwVMRangeError(globalObject, scope, "invalid calendar ID"_si);
             calId = *canonicalized;
         }
     }

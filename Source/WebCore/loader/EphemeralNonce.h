@@ -30,10 +30,10 @@
 namespace WebCore::PCM {
 
 struct EphemeralNonce {
-    String nonce;
+    RefPtr<StringImpl> nonce;
 
-    EphemeralNonce isolatedCopy() const & { return { nonce.isolatedCopy() }; }
-    EphemeralNonce isolatedCopy() &&  { return { WTF::move(nonce).isolatedCopy() }; }
+    EphemeralNonce isolatedCopy() const & { return { WTF::isolatedCopy(nonce) }; }
+    EphemeralNonce isolatedCopy() &&  { return { WTF::isolatedCopy(WTF::move(nonce)) }; }
 
     WEBCORE_EXPORT bool isValid() const;
 };

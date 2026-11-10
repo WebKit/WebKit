@@ -195,7 +195,7 @@ void EOTHeader::appendPaddingShort()
 
 // adds fontName to the font table in fontData, and writes the new font table to rewrittenFontTable
 // returns the size of the name table (which is used by renameAndActivateFont), or 0 on early abort
-bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<uint8_t>& rewrittenFontData)
+bool renameFont(const SharedBuffer& fontData, StringImpl* fontName, Vector<uint8_t>& rewrittenFontData)
 {
     size_t originalDataSize = fontData.size();
     const sfntHeader* sfnt = reinterpret_cast<const sfntHeader*>(fontData.span().data());
@@ -219,7 +219,7 @@ bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<uin
     const int nameRecordCount = 5;
 
     // Rounded up to a multiple of 4 to simplify the checksum calculation.
-    size_t nameTableSize = ((offsetof(nameTable, nameRecords) + nameRecordCount * sizeof(nameRecord) + fontName.length() * sizeof(char16_t)) & ~3) + 4;
+    size_t nameTableSize = ((offsetof(nameTable, nameRecords) + nameRecordCount * sizeof(nameRecord) + length(fontName) * sizeof(char16_t)) & ~3) + 4;
 
     rewrittenFontData.resize(fontData.size() + nameTableSize);
     auto dataSpan = rewrittenFontData.mutableSpan();
@@ -240,7 +240,7 @@ bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<uin
         name->nameRecords[i].encodingID = 1;
         name->nameRecords[i].languageID = 0x0409;
         name->nameRecords[i].offset = 0;
-        name->nameRecords[i].length = fontName.length() * sizeof(char16_t);
+        name->nameRecords[i].length = length(fontName) * sizeof(char16_t);
     }
 
     // The required 'name' record types: Family, Style, Unique, Full and PostScript.
@@ -251,8 +251,8 @@ bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<uin
     name->nameRecords[4].nameID = 6;
 
     auto fontSpan = spanReinterpretCast<BigEndianUShort>(dataSpan.subspan(originalDataSize + name->stringOffset));
-    for (unsigned i = 0; i < fontName.length(); ++i)
-        fontSpan[i] = fontName[i];
+    for (unsigned i = 0; i < length(fontName); ++i)
+        fontSpan[i] = codeUnitAt(fontName, i);
 
     // Update the table checksum in the directory entry.
     rewrittenSfnt->tables[t].checkSum = 0;
@@ -263,7 +263,7 @@ bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<uin
 }
 
 // Rename the font and install the new font data into the system
-RefPtr<FontMemoryResource> renameAndActivateFont(const SharedBuffer& fontData, const String& fontName)
+RefPtr<FontMemoryResource> renameAndActivateFont(const SharedBuffer& fontData, StringImpl* fontName)
 {
     Vector<uint8_t> rewrittenFontData;
     if (!renameFont(fontData, fontName, rewrittenFontData))

@@ -58,15 +58,15 @@ Ref<JSON::Value> Bytecodes::toJSON(Dumper& dumper) const
     auto result = JSON::Object::create();
 
     result->setDouble(dumper.keys().m_bytecodesID, m_id);
-    result->setString(dumper.keys().m_inferredName, String::fromUTF8(m_inferredName.span()));
-    String sourceCode = String::fromUTF8(m_sourceCode.span());
+    result->setString(dumper.keys().m_inferredName, StringImpl::fromUTF8(m_inferredName.span()));
+    RefPtr<StringImpl> sourceCode = StringImpl::fromUTF8(m_sourceCode.span());
     if (Options::abbreviateSourceCodeForProfiler()) {
         unsigned size = Options::abbreviateSourceCodeForProfiler();
-        if (sourceCode.length() > size)
+        if (length(sourceCode) > size)
             sourceCode = makeString(StringView(sourceCode).left(size - 1), horizontalEllipsis);
     }
     result->setString(dumper.keys().m_sourceCode, WTF::move(sourceCode));
-    result->setString(dumper.keys().m_hash, String::fromUTF8(toUTF8CString(m_hash).span()));
+    result->setString(dumper.keys().m_hash, StringImpl::fromUTF8(toUTF8CString(m_hash).span()));
     result->setDouble(dumper.keys().m_instructionCount, m_instructionCount);
     addSequenceProperties(dumper, result.get());
 

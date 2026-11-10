@@ -146,7 +146,7 @@ JSC::ScriptExecutionStatus JSWorkerGlobalScopeBase::scriptExecutionStatus(JSC::J
     return uncheckedDowncast<JSWorkerGlobalScopeBase>(globalObject)->wrapped().jscScriptExecutionStatus();
 }
 
-void JSWorkerGlobalScopeBase::reportViolationForUnsafeEval(JSC::JSGlobalObject* globalObject, const String& source)
+void JSWorkerGlobalScopeBase::reportViolationForUnsafeEval(JSC::JSGlobalObject* globalObject, StringImpl* source)
 {
     return JSGlobalObject::reportViolationForUnsafeEval(globalObject, source);
 }

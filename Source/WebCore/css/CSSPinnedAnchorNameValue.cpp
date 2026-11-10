@@ -44,7 +44,7 @@ CSSPinnedAnchorNameValue::CSSPinnedAnchorNameValue(CSS::CustomIdent&& name, CSS:
 {
 }
 
-String CSSPinnedAnchorNameValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSPinnedAnchorNameValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return makeString(CSS::serializationForCSS(context, m_name), '#', CSS::serializationForCSS(context, m_attachment));
 }

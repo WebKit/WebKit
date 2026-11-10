@@ -94,7 +94,7 @@ NODELETE static bool isRootModule(JSC::JSValue importerModuleKey)
     return importerModuleKey.isSymbol() || importerModuleKey.isUndefined();
 }
 
-static std::expected<URL, String> resolveModuleSpecifier(ScriptExecutionContext& context, ScriptModuleLoader::OwnerType ownerType, JSC::ImportMap& importMap, const String& specifier, const URL& originalBaseURL)
+static std::expected<URL, RefPtr<StringImpl>> resolveModuleSpecifier(ScriptExecutionContext& context, ScriptModuleLoader::OwnerType ownerType, JSC::ImportMap& importMap, StringImpl* specifier, const URL& originalBaseURL)
 {
     // https://html.spec.whatwg.org/multipage/webappapis.html#resolve-a-module-specifier
 
@@ -111,11 +111,11 @@ static std::expected<URL, String> resolveModuleSpecifier(ScriptExecutionContext&
     return result;
 }
 
-static URL parseURLLikeModuleSpecifier(const String& specifier, const URL& baseURL)
+static URL parseURLLikeModuleSpecifier(StringImpl* specifier, const URL& baseURL)
 {
     // https://html.spec.whatwg.org/C#resolving-a-url-like-module-specifier
 
-    if (specifier.startsWith('/') || specifier.startsWith("./"_s) || specifier.startsWith("../"_s))
+    if (startsWith(specifier, '/') || startsWith(specifier, "./"_s) || startsWith(specifier, "../"_s))
         return URL(baseURL, specifier);
 
     return URL { specifier };
@@ -137,7 +137,7 @@ JSC::Identifier ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGlobalObject,
         return { };
     }
 
-    String specifier = asString(moduleNameValue)->value(jsGlobalObject);
+    RefPtr<StringImpl> specifier = asString(moduleNameValue)->value(jsGlobalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     URL baseURL = responseURLFromRequestURL(*jsGlobalObject, importerModuleKey);
@@ -169,7 +169,7 @@ static void rejectToPropagateNetworkError(ScriptExecutionContext& context, Ref<D
             JSC::VM& vm = jsGlobalObject.vm();
             // FIXME: Propagate more descriptive error.
             // https://bugs.webkit.org/show_bug.cgi?id=167553
-            auto* error = JSC::createTypeError(&jsGlobalObject, message);
+            auto* error = JSC::createTypeError(&jsGlobalObject, StringImpl::create(message).ptr());
             ASSERT(error);
             error->putDirect(vm, vm.propertyNames->builtinNames().moduleFetchFailureKindPrivateName(), JSC::jsNumber(std::to_underlying(failureKind)));
             return error;
@@ -177,7 +177,7 @@ static void rejectToPropagateNetworkError(ScriptExecutionContext& context, Ref<D
     });
 }
 
-static void rejectWithFetchError(ScriptExecutionContext& context, Ref<DeferredPromise>&& deferred, ExceptionCode ec, String&& message)
+static void rejectWithFetchError(ScriptExecutionContext& context, Ref<DeferredPromise>&& deferred, ExceptionCode ec, RefPtr<StringImpl>&& message)
 {
     // Used to signal to the promise client that the failure was from a fetch, but not one that was propagated from another context.
     protect(context.eventLoop())->queueTask(TaskSource::Networking, [deferred = WTF::move(deferred), ec, message = WTF::move(message)] {
@@ -191,7 +191,7 @@ static void rejectWithFetchError(ScriptExecutionContext& context, Ref<DeferredPr
     });
 }
 
-JSC::JSPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, const String& referrer, RefPtr<JSC::ScriptFetchParameters> parameters, RefPtr<JSC::ScriptFetcher> scriptFetcher)
+JSC::JSPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, StringImpl* referrer, RefPtr<JSC::ScriptFetchParameters> parameters, RefPtr<JSC::ScriptFetcher> scriptFetcher)
 {
     JSC::VM& vm = jsGlobalObject->vm();
 
@@ -201,20 +201,20 @@ JSC::JSPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, J
 
     auto deferred = DeferredPromise::create(globalObject, *jsPromise);
     if (moduleKeyValue.isSymbol()) {
-        rejectWithFetchError(m_context, WTF::move(deferred), ExceptionCode::TypeError, "Symbol module key should be already fulfilled with the inlined resource."_s);
+        rejectWithFetchError(m_context, WTF::move(deferred), ExceptionCode::TypeError, "Symbol module key should be already fulfilled with the inlined resource."_si);
         return jsPromise;
     }
 
     if (!moduleKeyValue.isString()) {
-        rejectWithFetchError(m_context, WTF::move(deferred), ExceptionCode::TypeError, "Module key is not Symbol or String."_s);
+        rejectWithFetchError(m_context, WTF::move(deferred), ExceptionCode::TypeError, "Module key is not Symbol or String."_si);
         return jsPromise;
     }
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
 
-    URL completedURL { asString(moduleKeyValue)->value(jsGlobalObject) };
+    URL completedURL { asString(moduleKeyValue)->value(jsGlobalObject)->get() };
     if (!completedURL.isValid()) {
-        rejectWithFetchError(m_context, WTF::move(deferred), ExceptionCode::TypeError, "Module key is a valid URL."_s);
+        rejectWithFetchError(m_context, WTF::move(deferred), ExceptionCode::TypeError, "Module key is a valid URL."_si);
         return jsPromise;
     }
 
@@ -225,8 +225,8 @@ JSC::JSPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, J
     // no URL of its own (an inline module), and a null one that there is no referring script at all — a
     // script element or worker top-level fetch — which uses the fetch client's referrer.
     URL referrerURL;
-    if (!referrer.isNull())
-        referrerURL = referrer.isEmpty() ? baseURLForScriptWithoutURL() : responseURLFromRequestURL(referrer);
+    if (referrer)
+        referrerURL = isEmpty(referrer) ? baseURLForScriptWithoutURL() : responseURLFromRequestURL(referrer);
 
     if (m_ownerType == OwnerType::Document) {
         Ref loader = CachedModuleScriptLoader::create(*this, deferred.get(), *downcast<CachedScriptFetcher>(scriptFetcher.get()), WTF::move(parameters));
@@ -256,7 +256,7 @@ URL ScriptModuleLoader::moduleURL(JSC::JSGlobalObject& jsGlobalObject, JSC::JSVa
         return m_context->url();
 
     ASSERT(moduleKeyValue.isString());
-    return URL { asString(moduleKeyValue)->value(&jsGlobalObject) };
+    return URL { asString(moduleKeyValue)->value(&jsGlobalObject)->get() };
 }
 
 URL ScriptModuleLoader::responseURLFromRequestURL(JSC::JSGlobalObject& jsGlobalObject, JSC::JSValue moduleKeyValue)
@@ -268,7 +268,7 @@ URL ScriptModuleLoader::responseURLFromRequestURL(JSC::JSGlobalObject& jsGlobalO
         return baseURLForScriptWithoutURL();
 
     ASSERT(moduleKeyValue.isString());
-    String requestURL = asString(moduleKeyValue)->value(&jsGlobalObject);
+    RefPtr<StringImpl> requestURL = asString(moduleKeyValue)->value(&jsGlobalObject);
     RETURN_IF_EXCEPTION(scope, { });
     return responseURLFromRequestURL(requestURL);
 }
@@ -281,7 +281,7 @@ URL ScriptModuleLoader::baseURLForScriptWithoutURL()
     return m_context->url();
 }
 
-URL ScriptModuleLoader::responseURLFromRequestURL(const String& requestURL)
+URL ScriptModuleLoader::responseURLFromRequestURL(StringImpl* requestURL)
 {
     ASSERT_WITH_MESSAGE(URL(requestURL).isValid(), "Invalid module referrer never starts importing dependent modules.");
 
@@ -319,7 +319,7 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, J
     return JSC::jsUndefined();
 }
 
-static JSC::JSPromise* rejectPromise(ScriptExecutionContext& context, JSDOMGlobalObject& globalObject, ExceptionCode ec, String message)
+static JSC::JSPromise* rejectPromise(ScriptExecutionContext& context, JSDOMGlobalObject& globalObject, ExceptionCode ec, RefPtr<StringImpl> message)
 {
     auto* jsPromise = JSC::JSPromise::create(globalObject.vm(), globalObject.promiseStructure());
     RELEASE_ASSERT(jsPromise);
@@ -337,7 +337,7 @@ JSC::JSPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalOb
     // If settings object's global object implements WorkletGlobalScope or ServiceWorkerGlobalScope, then:
     if (is<WorkletGlobalScope>(m_context) || is<ServiceWorkerGlobalScope>(m_context)) {
         scope.release();
-        return rejectPromise(m_context, globalObject, ExceptionCode::TypeError, "Dynamic-import is not available in Worklets or ServiceWorkers"_s);
+        return rejectPromise(m_context, globalObject, ExceptionCode::TypeError, "Dynamic-import is not available in Worklets or ServiceWorkers"_si);
     }
 
     auto reject = [&](auto& scope) {
@@ -347,7 +347,7 @@ JSC::JSPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalOb
 
     auto type = fetchParameters ? fetchParameters->type() : JSC::ScriptFetchParameters::Type::JavaScript;
 
-    auto specifier = moduleName->value(jsGlobalObject);
+    RefPtr<StringImpl> specifier = moduleName->value(jsGlobalObject);
     // If SourceOrigin and/or CachedScriptFetcher is null, we import the module with the default fetcher.
     // SourceOrigin can be null if the source code is not coupled with the script file.
     // The examples,
@@ -381,7 +381,7 @@ JSC::JSPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalOb
         if (m_ownerType == OwnerType::Document) {
             CheckedRef document = downcast<Document>(m_context);
             baseURL = document->baseURL();
-            scriptFetcher = CachedScriptFetcher::create(document->charset());
+            scriptFetcher = CachedScriptFetcher::create(RefPtr<AtomStringImpl> { document->charset() }.get());
         } else {
             // https://html.spec.whatwg.org/multipage/webappapis.html#default-classic-script-fetch-options
             baseURL = m_context->url();
@@ -391,7 +391,7 @@ JSC::JSPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalOb
         baseURL = URL { sourceOrigin.string() };
         if (!baseURL.isValid()) {
             scope.release();
-            return rejectPromise(m_context, globalObject, ExceptionCode::TypeError, "Importer module key is not a Symbol or a String."_s);
+            return rejectPromise(m_context, globalObject, ExceptionCode::TypeError, "Importer module key is not a Symbol or a String."_si);
         }
 
         URL moduleURL = globalObject.importMap().resolve(specifier, baseURL);
@@ -409,7 +409,7 @@ JSC::JSPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalOb
 
         if (!scriptFetcher) {
             if (m_ownerType == OwnerType::Document)
-                scriptFetcher = CachedScriptFetcher::create(downcast<Document>(m_context).charset());
+                scriptFetcher = CachedScriptFetcher::create(RefPtr<AtomStringImpl> { downcast<Document>(m_context).charset() }.get());
             else
                 scriptFetcher = WorkerScriptFetcher::create(*parameters, FetchOptions::Credentials::SameOrigin, destination, ReferrerPolicy::EmptyString);
         }
@@ -417,7 +417,7 @@ JSC::JSPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalOb
 
     if (!baseURL.isValid()) {
         scope.release();
-        return rejectPromise(m_context, globalObject, ExceptionCode::TypeError, "Cannot import a module from a document with no base URL."_s);
+        return rejectPromise(m_context, globalObject, ExceptionCode::TypeError, "Cannot import a module from a document with no base URL."_si);
     }
 
     ASSERT(scriptFetcher);
@@ -443,7 +443,7 @@ JSC::JSObject* ScriptModuleLoader::createImportMetaProperties(JSC::JSGlobalObjec
     metaProperties->putDirect(vm, JSC::Identifier::fromString(vm, "url"_s), JSC::jsString(vm, responseURL.string()));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    String resolveName = "resolve"_s;
+    RefPtr<StringImpl> resolveName = "resolve"_si;
     OwnerType ownerType = m_ownerType;
     auto* function = JSC::JSNativeStdFunction::create(vm, jsGlobalObject, 1, resolveName, [ownerType, responseURL](JSC::JSGlobalObject* globalObject, JSC::CallFrame* callFrame) -> JSC::EncodedJSValue {
         JSC::VM& vm = globalObject->vm();
@@ -473,7 +473,7 @@ JSC::JSObject* ScriptModuleLoader::createImportMetaProperties(JSC::JSGlobalObjec
 
 // Create a CSS Module Script object from a CSS source, as outlined in
 // https://html.spec.whatwg.org/multipage/webappapis.html#creating-a-css-module-script
-static JSC::JSValue createCSSModuleScript(JSC::JSGlobalObject& object, String&& source, URL&& baseURL)
+static JSC::JSValue createCSSModuleScript(JSC::JSGlobalObject& object, RefPtr<StringImpl>&& source, URL&& baseURL)
 {
     auto& vm = object.vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -527,7 +527,7 @@ static JSC::JSValue createCSSModuleScript(JSC::JSGlobalObject& object, String&& 
 
 // Stores information to turn CSS source code into a CSS Module Scripts.
 struct CSSSourceCode {
-    String sourceCode;
+    RefPtr<StringImpl> sourceCode;
     URL baseURL;
 };
 
@@ -623,15 +623,15 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         }
 
         auto* globalObject = m_context->globalObject();
-        String integrity = globalObject ? globalObject->importMap().integrityForURL(sourceURL) : String();
+        RefPtr<StringImpl> integrity = globalObject ? globalObject->importMap().integrityForURL(sourceURL) : nullptr;
 
         if (auto* parameters = loader.parameters())
             integrity = parameters->integrity();
 
-        if (!integrity.isEmpty()) {
+        if (!isEmpty(integrity)) {
             if (!matchIntegrityMetadata(cachedResource, integrity)) {
                 m_context->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load script "_s, integrityMismatchDescription(cachedResource, integrity)));
-                rejectWithFetchError(m_context, WTF::move(promise), ExceptionCode::TypeError, "Cannot load script due to integrity mismatch"_s);
+                rejectWithFetchError(m_context, WTF::move(promise), ExceptionCode::TypeError, "Cannot load script due to integrity mismatch"_si);
                 return;
             }
         }

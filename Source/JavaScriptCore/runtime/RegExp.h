@@ -65,7 +65,7 @@ public:
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM&); // Defined in RegExpInlines.h
 
-    JS_EXPORT_PRIVATE static RegExp* create(VM&, const String& pattern, OptionSet<Yarr::Flags>);
+    JS_EXPORT_PRIVATE static RegExp* create(VM&, StringImpl* pattern, OptionSet<Yarr::Flags>);
     static void destroy(JSCell*);
     static size_t estimatedSize(JSCell*, VM&);
     DECLARE_VISIT_CHILDREN;
@@ -84,7 +84,7 @@ public:
     bool globalOrSticky() const { return global() || sticky(); }
     bool eitherUnicode() const { return unicode() || unicodeSets(); }
 
-    const String& pattern() const LIFETIME_BOUND { return m_patternString; }
+    const RefPtr<StringImpl>& pattern() const LIFETIME_BOUND { return m_patternString; }
 
     bool isValid() const { return !Yarr::hasError(m_constructionErrorCode); }
     ASCIILiteral errorMessage() const { return Yarr::errorMessage(m_constructionErrorCode); }
@@ -132,7 +132,7 @@ public:
         return m_rareData && m_rareData->m_numDuplicateNamedCaptureGroups;
     }
 
-    const AtomString& getCaptureGroupNameForSubpatternId(unsigned i) const
+    const RefPtr<AtomStringImpl>& getCaptureGroupNameForSubpatternId(unsigned i) const
     {
         if (!i || !m_rareData || m_rareData->m_captureGroupNames.isEmpty())
             return nullAtom();
@@ -180,9 +180,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     RegExpKey key() { return RegExpKey(m_flags, m_patternString); }
 
-    String escapedPattern() const;
+    RefPtr<StringImpl> escapedPattern() const;
 
-    String toSourceString() const;
+    RefPtr<StringImpl> toSourceString() const;
 
 #if ENABLE(YARR_JIT)
     Yarr::YarrCodeBlock* getRegExpJITCodeBlock()
@@ -199,20 +199,20 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 #endif
 
-    bool hasValidAtom() const { return !m_atom.isNull(); }
-    const String& atom() const LIFETIME_BOUND { return m_atom; }
+    bool hasValidAtom() const { return !!m_atom; }
+    const RefPtr<StringImpl>& atom() const LIFETIME_BOUND { return m_atom; }
     Yarr::SpecificPattern specificPattern() const { return m_specificPattern; }
 
     const WTF::BitSet<256>* firstCharacterBitmap(FirstCharacterFilterPosition);
 
 private:
     friend class RegExpCache;
-    RegExp(VM&, const String&, OptionSet<Yarr::Flags>);
+    RegExp(VM&, StringImpl*, OptionSet<Yarr::Flags>);
     void finishCreation(VM&);
 
     void updateMetadataFromPattern(Yarr::YarrPattern&);
 
-    static RegExp* createWithoutCaching(VM&, const String&, OptionSet<Yarr::Flags>);
+    static RegExp* createWithoutCaching(VM&, StringImpl*, OptionSet<Yarr::Flags>);
 
     enum RegExpState : uint8_t {
         ParseError,
@@ -240,17 +240,17 @@ private:
     struct RareData {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RareData);
         unsigned m_numDuplicateNamedCaptureGroups;
-        FixedVector<AtomString> m_captureGroupNames;
+        FixedVector<RefPtr<AtomStringImpl>> m_captureGroupNames;
 
         // This first element of the RHS vector is the subpatternId in the non-duplicate case.
         // For the duplicate case, the first element is the namedCaptureGroupId.
         // The remaining elements are the subpatternIds for each of the duplicate groups.
-        UncheckedKeyHashMap<String, Vector<unsigned>> m_namedGroupToParenIndices;
+        UncheckedKeyHashMap<RefPtr<StringImpl>, Vector<unsigned>> m_namedGroupToParenIndices;
         WriteBarrierStructureID m_cachedGroupsStructureID;
     };
 
-    String m_patternString;
-    String m_atom;
+    RefPtr<StringImpl> m_patternString;
+    RefPtr<StringImpl> m_atom;
     RegExpState m_state { NotCompiled };
     Yarr::SpecificPattern m_specificPattern { Yarr::SpecificPattern::None };
     OptionSet<Yarr::Flags> m_flags;

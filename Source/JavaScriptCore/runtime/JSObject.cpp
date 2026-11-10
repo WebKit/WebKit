@@ -500,9 +500,9 @@ void JSFinalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, JSFinalObject);
 
-String JSObject::calculatedClassName(JSObject* object)
+RefPtr<StringImpl> JSObject::calculatedClassName(JSObject* object)
 {
-    String constructorFunctionName;
+    RefPtr<StringImpl> constructorFunctionName;
     auto* globalObject = object->realmMayBeNull();
     if (!globalObject)
         return object->structure()->classInfoForCells()->className;
@@ -524,13 +524,13 @@ String JSObject::calculatedClassName(JSObject* object)
         }
     }
 
-    EXCEPTION_ASSERT(!scope.exception() || constructorFunctionName.isNull());
+    EXCEPTION_ASSERT(!scope.exception() || !constructorFunctionName);
     if (scope.exception()) [[unlikely]]
         scope.clearException();
 
     // Get the display name of obj.__proto__.constructor.
     // This is useful to get `Foo` for a `new Foo` object.
-    if (constructorFunctionName.isNull()) {
+    if (!constructorFunctionName) {
         if (!object->structure()->typeInfo().overridesGetPrototype()) [[likely]] {
             JSValue protoValue = object->getPrototypeDirect();
             if (protoValue.isObject()) {
@@ -551,11 +551,11 @@ String JSObject::calculatedClassName(JSObject* object)
         }
     }
 
-    EXCEPTION_ASSERT(!scope.exception() || constructorFunctionName.isNull());
+    EXCEPTION_ASSERT(!scope.exception() || !constructorFunctionName);
     if (scope.exception()) [[unlikely]]
         scope.clearException();
 
-    if (constructorFunctionName.isNull() || constructorFunctionName == "Object"_s) {
+    if (!constructorFunctionName || equal(constructorFunctionName, "Object"_s)) {
         PropertySlot slot(object, PropertySlot::InternalMethodType::VMInquiry, &vm);
         if (object->getPropertySlot(globalObject, vm.propertyNames->toStringTagSymbol, slot)) {
             EXCEPTION_ASSERT(!scope.exception());
@@ -573,12 +573,12 @@ String JSObject::calculatedClassName(JSObject* object)
         if (scope.exception()) [[unlikely]]
             scope.clearException();
 
-        String classInfoName = object->classInfo()->className;
-        if (!classInfoName.isNull())
+        RefPtr<StringImpl> classInfoName = object->classInfo()->className;
+        if (classInfoName)
             return classInfoName;
 
-        if (constructorFunctionName.isNull())
-            return "Object"_s;
+        if (!constructorFunctionName)
+            return "Object"_si;
     }
 
     return constructorFunctionName;
@@ -4249,7 +4249,7 @@ uint32_t JSObject::getEnumerableLength()
 
 // Implements GetMethod(O, P) in section 7.3.9 of the spec.
 // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-getmethod
-JSValue JSObject::getMethod(JSGlobalObject* globalObject, CallData& callData, const Identifier& ident, const String& errorMessage)
+JSValue JSObject::getMethod(JSGlobalObject* globalObject, CallData& callData, const Identifier& ident, StringImpl* errorMessage)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

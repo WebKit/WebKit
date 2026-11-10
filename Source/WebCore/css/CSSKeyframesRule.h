@@ -39,7 +39,7 @@ class StyleRuleKeyframe;
 
 class StyleRuleKeyframes final : public StyleRuleBase {
 public:
-    NODELETE static Ref<StyleRuleKeyframes> create(const AtomString& name);
+    NODELETE static Ref<StyleRuleKeyframes> create(AtomStringImpl* name);
     ~StyleRuleKeyframes();
     
     NODELETE const Vector<Ref<StyleRuleKeyframe>>& keyframes() const;
@@ -48,21 +48,21 @@ public:
     void wrapperAppendKeyframe(Ref<StyleRuleKeyframe>&&);
     void wrapperRemoveKeyframe(unsigned);
 
-    const AtomString& name() const LIFETIME_BOUND { return m_name; }
-    void setName(const AtomString& name) { m_name = name; }
+    const RefPtr<AtomStringImpl>& name() const LIFETIME_BOUND { return m_name; }
+    void setName(AtomStringImpl* name) { m_name = name; }
 
-    std::optional<size_t> findKeyframeIndex(const String& key) const;
+    std::optional<size_t> findKeyframeIndex(StringImpl* key) const;
 
     Ref<StyleRuleKeyframes> copy() const { return adoptRef(*new StyleRuleKeyframes(*this)); }
 
     void shrinkToFit();
 
 private:
-    explicit StyleRuleKeyframes(const AtomString&);
+    explicit StyleRuleKeyframes(AtomStringImpl*);
     StyleRuleKeyframes(const StyleRuleKeyframes&);
     
     mutable Vector<Ref<StyleRuleKeyframe>> m_keyframes;
-    AtomString m_name;
+    RefPtr<AtomStringImpl> m_name;
 };
 
 class CSSKeyframesRule final : public CSSRule {
@@ -72,19 +72,19 @@ public:
     virtual ~CSSKeyframesRule();
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Keyframes; }
-    String cssText() const final;
+    RefPtr<StringImpl> cssText() const final;
     void reattach(StyleRuleBase&) final;
 
-    const AtomString& name() const LIFETIME_BOUND { return m_keyframesRule->name(); }
-    void setName(const AtomString&);
+    const RefPtr<AtomStringImpl>& name() const LIFETIME_BOUND { return m_keyframesRule->name(); }
+    void setName(AtomStringImpl*);
 
     StyleRuleKeyframes& keyframesRule() const LIFETIME_BOUND { return m_keyframesRule.get(); }
 
     CSSRuleList& cssRules();
 
-    void appendRule(const String& rule);
-    void deleteRule(const String& key);
-    CSSKeyframeRule* findRule(const String& key);
+    void appendRule(StringImpl* rule);
+    void deleteRule(StringImpl* key);
+    CSSKeyframeRule* findRule(StringImpl* key);
 
     // For IndexedGetter and CSSRuleList.
     NODELETE unsigned length() const;

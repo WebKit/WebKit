@@ -59,7 +59,7 @@ public:
     virtual void setAttachmentElement(Ref<HTMLAttachmentElement>&&);
 
     HTMLAttachmentElement* attachmentElement() const;
-    const String& attachmentIdentifier() const;
+    const RefPtr<StringImpl>& attachmentIdentifier() const;
     void didUpdateAttachmentIdentifier();
 
 protected:
@@ -75,7 +75,7 @@ private:
 
     virtual AttachmentAssociatedElement* asAttachmentAssociatedElement() = 0;
 
-    String m_pendingClonedAttachmentID;
+    RefPtr<StringImpl> m_pendingClonedAttachmentID;
 };
 
 } // namespace WebCore

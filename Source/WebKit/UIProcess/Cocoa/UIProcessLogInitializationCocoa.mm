@@ -35,22 +35,22 @@ namespace WebKit {
 
 namespace UIProcess {
 
-String wtfLogLevelString()
+RefPtr<StringImpl> wtfLogLevelString()
 {
     static NeverDestroyed<RetainPtr<NSString>> logString = [[NSUserDefaults standardUserDefaults] stringForKey:@"WTFLogging"];
-    return logString.get().get();
+    return StringImpl::create(logString.get().get());
 }
 
-String webCoreLogLevelString()
+RefPtr<StringImpl> webCoreLogLevelString()
 {
     static NeverDestroyed<RetainPtr<NSString>> logString = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebCoreLogging"];
-    return logString.get().get();
+    return StringImpl::create(logString.get().get());
 }
 
-String webKitLogLevelString()
+RefPtr<StringImpl> webKitLogLevelString()
 {
     static NeverDestroyed<RetainPtr<NSString>> logString = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebKit2Logging"];
-    return logString.get().get();
+    return StringImpl::create(logString.get().get());
 }
 
 }

@@ -52,7 +52,7 @@ public:
     WEBCORE_EXPORT URL href() const;
 
     URL hrefURL() const;
-    AtomString target() const final;
+    RefPtr<AtomStringImpl> target() const final;
 
     URL fullURL() const final { return href(); }
     void setFullURL(const URL&) final;
@@ -62,16 +62,16 @@ public:
     bool hasRel(Relation) const;
     DOMTokenList& relList();
 
-    String referrerPolicyForBindings() const;
+    RefPtr<StringImpl> referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const;
 
 private:
     MathMLAnchorElement(const QualifiedName&, Document&);
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 
-    AtomString effectiveTarget() const;
+    RefPtr<AtomStringImpl> effectiveTarget() const;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
 
     OptionSet<Relation> m_linkRelations;
     const std::unique_ptr<DOMTokenList> m_relList;

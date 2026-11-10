@@ -60,7 +60,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSURL *)injectedBundleURL
 {
-    return [NSURL fileURLWithPath:_processPoolConfiguration->injectedBundlePath().createNSString().get()];
+    return [NSURL fileURLWithPath:createNSString(_processPoolConfiguration->injectedBundlePath()).get()];
 }
 
 - (void)setInjectedBundleURL:(NSURL *)injectedBundleURL
@@ -68,7 +68,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (injectedBundleURL && !injectedBundleURL.isFileURL)
         [NSException raise:NSInvalidArgumentException format:@"Injected Bundle URL must be a file URL"];
 
-    protect(*_processPoolConfiguration)->setInjectedBundlePath(injectedBundleURL.path);
+    protect(*_processPoolConfiguration)->setInjectedBundlePath(StringImpl::create(injectedBundleURL.path).get());
 }
 
 - (NSSet<Class> *)customClassesForParameterCoder
@@ -146,19 +146,19 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return @[ ];
 
     return createNSArray(paths, [] (auto& path) {
-        return [NSURL fileURLWithFileSystemRepresentation:path.utf8().legacyCStringPointer() isDirectory:NO relativeToURL:nil];
+        return [NSURL fileURLWithFileSystemRepresentation:utf8(path).legacyCStringPointer() isDirectory:NO relativeToURL:nil];
     }).autorelease();
 }
 
 - (void)setAdditionalReadAccessAllowedURLs:(NSArray<NSURL *> *)additionalReadAccessAllowedURLs
 {
-    Vector<String> paths(ReserveCapacityTag { }, additionalReadAccessAllowedURLs.count);
+    Vector<RefPtr<StringImpl>> paths(ReserveCapacityTag { }, additionalReadAccessAllowedURLs.count);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSURL *url in additionalReadAccessAllowedURLs) {
         if (!url.isFileURL)
             [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", url];
 
-        paths.append(String::fromUTF8(url.fileSystemRepresentation));
+        paths.append(StringImpl::fromUTF8(url.fileSystemRepresentation));
     }
 
     protect(*_processPoolConfiguration)->setAdditionalReadAccessAllowedPaths(WTF::move(paths));
@@ -182,7 +182,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)setCachePartitionedURLSchemes:(NSArray *)cachePartitionedURLSchemes
 {
-    protect(*_processPoolConfiguration)->setCachePartitionedURLSchemes(makeVector<String>(cachePartitionedURLSchemes));
+    protect(*_processPoolConfiguration)->setCachePartitionedURLSchemes(makeVector<RefPtr<StringImpl>>(cachePartitionedURLSchemes));
 }
 
 - (NSArray *)alwaysRevalidatedURLSchemes
@@ -192,7 +192,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)setAlwaysRevalidatedURLSchemes:(NSArray *)alwaysRevalidatedURLSchemes
 {
-    protect(*_processPoolConfiguration)->setAlwaysRevalidatedURLSchemes(makeVector<String>(alwaysRevalidatedURLSchemes));
+    protect(*_processPoolConfiguration)->setAlwaysRevalidatedURLSchemes(makeVector<RefPtr<StringImpl>>(alwaysRevalidatedURLSchemes));
 }
 
 - (NSString *)sourceApplicationBundleIdentifier
@@ -341,7 +341,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     RetainPtr description = adoptNS([[NSString alloc] initWithFormat:@"<%@: %p", NSStringFromClass(self.class), self]);
 
-    if (!_processPoolConfiguration->injectedBundlePath().isEmpty())
+    if (!isEmpty(_processPoolConfiguration->injectedBundlePath()))
         return [description stringByAppendingFormat:@"; injectedBundleURL: \"%@\">", retainPtr([self injectedBundleURL]).get()];
 
     return [description stringByAppendingString:@">"];
@@ -373,12 +373,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSString *)timeZoneOverride
 {
-    return _processPoolConfiguration->timeZoneOverride().createNSString().autorelease();
+    return createNSString(_processPoolConfiguration->timeZoneOverride()).autorelease();
 }
 
 - (void)setTimeZoneOverride:(NSString *)timeZone
 {
-    protect(*_processPoolConfiguration)->setTimeZoneOverride(timeZone);
+    protect(*_processPoolConfiguration)->setTimeZoneOverride(StringImpl::create(timeZone).get());
 }
 
 - (void)setMemoryFootprintPollIntervalForTesting:(NSTimeInterval)pollInterval

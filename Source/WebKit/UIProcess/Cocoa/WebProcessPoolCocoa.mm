@@ -310,7 +310,7 @@ void WebProcessPool::setMediaAccessibilityPreferences(WebProcessProxy& process)
                 process->send(Messages::WebProcess::SetMediaAccessibilityPreferredCaptionDisplayMode(captionDisplayMode), 0);
             }
 
-            if (preferredLanguages != protectedThis->m_preferredLanguages) {
+            if (!protectedThis->m_preferredLanguages || !contentEquals(preferredLanguages, *protectedThis->m_preferredLanguages)) {
                 protectedThis->m_preferredLanguages = preferredLanguages;
                 process->send(Messages::WebProcess::SetMediaAccessibilityPreferredLanguages(preferredLanguages), 0);
             }
@@ -342,7 +342,7 @@ static void logProcessPoolState(const WebProcessPool& pool)
         processDescription << process;
 
         RegistrableDomain domain = process->site() ? process->site()->domain() : RegistrableDomain();
-        String domainString = domain.isEmpty() ? "unknown"_s : domain.string();
+        RefPtr<StringImpl> domainString = domain.isEmpty() ? "unknown"_si : domain.string();
 
         WTF::TextStream pageURLs;
         const Vector pages = process->pages();
@@ -356,7 +356,7 @@ static void logProcessPoolState(const WebProcessPool& pool)
             }
         }
 
-        RELEASE_LOG(Process, "WebProcessProxy %p - %" PUBLIC_LOG_STRING ", domain: %" PRIVATE_LOG_STRING ", pageURLs: %" SENSITIVE_LOG_STRING, process.ptr(), processDescription.release().utf8(), domainString.utf8(), pageURLs.release().utf8());
+        RELEASE_LOG(Process, "WebProcessProxy %p - %" PUBLIC_LOG_STRING ", domain: %" PRIVATE_LOG_STRING ", pageURLs: %" SENSITIVE_LOG_STRING, process.ptr(), utf8(processDescription.release()), utf8(domainString), utf8(pageURLs.release()));
     }
 }
 
@@ -417,10 +417,10 @@ void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization needsGlo
 
 void WebProcessPool::platformResolvePathsForSandboxExtensions()
 {
-    m_resolvedPaths.uiProcessBundleResourcePath = resolvePathForSandboxExtension(String { [[NSBundle mainBundle] resourcePath] });
+    m_resolvedPaths.uiProcessBundleResourcePath = resolvePathForSandboxExtension(StringImpl::create([[NSBundle mainBundle] resourcePath]).get());
 }
 
-void WebProcessPool::cacheMediaSourceTypeSupported(const String& type, bool isSupported)
+void WebProcessPool::cacheMediaSourceTypeSupported(StringImpl* type, bool isSupported)
 {
     m_mediaSourceTypesSupported.add(type, isSupported);
 }
@@ -500,13 +500,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if PLATFORM(VISION)
-    auto metalDirectory = WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/com.apple.metal"_s);
+    auto metalDirectory = WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/com.apple.metal"_si);
     if (auto metalDirectoryHandle = SandboxExtension::createHandleForReadWriteDirectory(metalDirectory))
         parameters.metalCacheDirectoryExtensionHandles.append(WTF::move(*metalDirectoryHandle));
-    auto metalFEDirectory = WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/com.apple.metalfe"_s);
+    auto metalFEDirectory = WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/com.apple.metalfe"_si);
     if (auto metalFEDirectoryHandle = SandboxExtension::createHandleForReadWriteDirectory(metalFEDirectory))
         parameters.metalCacheDirectoryExtensionHandles.append(WTF::move(*metalFEDirectoryHandle));
-    auto gpuArchiverDirectory = WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/com.apple.gpuarchiver"_s);
+    auto gpuArchiverDirectory = WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/com.apple.gpuarchiver"_si);
     if (auto gpuArchiverDirectoryHandle = SandboxExtension::createHandleForReadWriteDirectory(gpuArchiverDirectory))
         parameters.metalCacheDirectoryExtensionHandles.append(WTF::move(*gpuArchiverDirectoryHandle));
 #endif
@@ -520,7 +520,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     parameters.cssValueToSystemColorMap = RenderThemeIOS::cssValueToSystemColorMap();
     parameters.focusRingColor = RenderThemeIOS::systemFocusRingColor();
     parameters.localizedDeviceModel = localizedDeviceModel();
-    parameters.contentSizeCategory = contentSizeCategory();
+    parameters.contentSizeCategory = StringImpl::create(protect(contentSizeCategory()).get());
 #endif
 
 #if HAVE(TEXT_SCALE_FACTOR)
@@ -624,14 +624,14 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.uiProcessCookieStorageIdentifier = identifyingDataFromCookieStorage([[NSHTTPCookieStorage sharedHTTPCookieStorage] _cookieStorage]);
 #endif
 
-    parameters.enablePrivateClickMeasurement = ![defaults objectForKey:WebPreferencesKey::privateClickMeasurementEnabledKey().createNSString().get()] || [defaults boolForKey:WebPreferencesKey::privateClickMeasurementEnabledKey().createNSString().get()];
-    parameters.ftpEnabled = [defaults objectForKey:WebPreferencesKey::ftpEnabledKey().createNSString().get()] && [defaults boolForKey:WebPreferencesKey::ftpEnabledKey().createNSString().get()];
+    parameters.enablePrivateClickMeasurement = ![defaults objectForKey:createNSString(WebPreferencesKey::privateClickMeasurementEnabledKey()).get()] || [defaults boolForKey:createNSString(WebPreferencesKey::privateClickMeasurementEnabledKey()).get()];
+    parameters.ftpEnabled = [defaults objectForKey:createNSString(WebPreferencesKey::ftpEnabledKey()).get()] && [defaults boolForKey:createNSString(WebPreferencesKey::ftpEnabledKey()).get()];
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::sharedSingleton().cachedListData();
 #endif
 #if HAVE(ENHANCED_SECURITY_LINKS)
-    parameters.enableEnhancedSecurityLinks = ![defaults objectForKey:WebPreferencesKey::enhancedSecurityLinksEnabledKey().createNSString().get()] || [defaults boolForKey:WebPreferencesKey::enhancedSecurityLinksEnabledKey().createNSString().get()];
+    parameters.enableEnhancedSecurityLinks = ![defaults objectForKey:createNSString(WebPreferencesKey::enhancedSecurityLinksEnabledKey()).get()] || [defaults boolForKey:createNSString(WebPreferencesKey::enhancedSecurityLinksEnabledKey()).get()];
 #endif
 
     RELEASE_LOG(Process, "SecurityFlags: radar184485266 is %" PUBLIC_LOG_STRING, SecurityFlags::radar184485266() ? "enforced" : "disabled");
@@ -711,7 +711,7 @@ void WebProcessPool::mediaAccessibilityPreferencesChangedCallback(CFNotification
         pool->m_captionDisplayMode = captionDisplayMode;
         pool->sendToAllProcesses(Messages::WebProcess::SetMediaAccessibilityPreferredCaptionDisplayMode(captionDisplayMode));
     }
-    if (preferredLanguages != pool->m_preferredLanguages) {
+    if (!pool->m_preferredLanguages || !contentEquals(preferredLanguages, *pool->m_preferredLanguages)) {
         pool->m_preferredLanguages = preferredLanguages;
         pool->sendToAllProcesses(Messages::WebProcess::SetMediaAccessibilityPreferredLanguages(preferredLanguages));
     }
@@ -859,8 +859,8 @@ void WebProcessPool::registerNotificationObservers()
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis)
                     return;
-                protectedThis->setNotifyState(message, status, state);
-                String messageString(message);
+                Ref messageString = StringImpl::create(message);
+                protectedThis->setNotifyState(messageString.ptr(), status, state);
                 for (auto& process : borrow(protectedThis->m_processes)) {
                     if (process->auditToken() && !WTF::hasEntitlement(process->auditToken().value(), "com.apple.developer.web-browser-engine.restrict.notifyd"_s))
                         continue;
@@ -874,7 +874,7 @@ void WebProcessPool::registerNotificationObservers()
         if (RefPtr protectedThis = weakThis.get()) {
             uint64_t state;
             int stateStatus = notify_get_state(notifyToken, &state);
-            protectedThis->setNotifyState(message, stateStatus, state);
+            protectedThis->setNotifyState(StringImpl::create(message).ptr(), stateStatus, state);
         }
 
         return notifyToken;
@@ -889,7 +889,7 @@ void WebProcessPool::registerNotificationObservers()
             if (!protectedThis)
                 return;
             if (!protectedThis->m_processes.isEmpty()) {
-                String messageString(message.get());
+                RefPtr messageString = StringImpl::create(message.get());
                 for (auto& process : borrow(protectedThis->m_processes))
                     process->send(Messages::WebProcess::PostObserverNotification(messageString), 0);
             }
@@ -1184,7 +1184,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(NOTIFY_BLOCKING)
 
-void WebProcessPool::setNotifyState(const String& name, int status, uint64_t state)
+void WebProcessPool::setNotifyState(StringImpl* name, int status, uint64_t state)
 {
     if (status == NOTIFY_STATUS_OK && state)
         m_notifyState.set(name, state);
@@ -1259,7 +1259,7 @@ static bool isLockdownModeEnabledBySystemIgnoringCaching()
         return false;
 
 #if PLATFORM(IOS_FAMILY)
-    if (processHasContainer() && [_WKSystemPreferences isCaptivePortalModeIgnored:pathForProcessContainer().createNSString().get()])
+    if (processHasContainer() && [_WKSystemPreferences isCaptivePortalModeIgnored:createNSString(pathForProcessContainer()).get()])
         return false;
 #endif
     
@@ -1335,7 +1335,7 @@ void setLockdownModeEnabledGloballyForTesting(std::optional<bool> enabledForTest
 
 void WebProcessPool::setHasEnhancedSecurityDefaultOptOutEntitlementForTesting(std::optional<bool> hasEntitlement)
 {
-    if (!isRunningTest(retainPtr([[NSBundle mainBundle] bundleIdentifier]).get()))
+    if (!isRunningTest(StringImpl::create(retainPtr([[NSBundle mainBundle] bundleIdentifier]).get()).get()))
         return;
     m_hasEnhancedSecurityDefaultOptOutEntitlementForTesting = hasEntitlement;
 }
@@ -1396,12 +1396,12 @@ void WebProcessPool::setProcessesShouldSuspend(bool shouldSuspend)
 #endif
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-void WebProcessPool::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
+void WebProcessPool::notifyPreferencesChanged(StringImpl* domain, StringImpl* key, const std::optional<RefPtr<StringImpl>>& encodedValue)
 {
     for (Ref process : m_processes)
         process->notifyPreferencesChanged(domain, key, encodedValue);
 
-    if (key == WKLockdownModeEnabledKey)
+    if (equal(key, WKLockdownModeEnabledKey))
         lockdownModeStateChanged();
 }
 #endif // ENABLE(CFPREFS_DIRECT_MODE)
@@ -1661,7 +1661,7 @@ void WebProcessPool::platformLoadResourceMonitorRuleList(CompletionHandler<void(
 #endif
 }
 
-void WebProcessPool::platformCompileResourceMonitorRuleList(const String& rulesText, CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&& completionHandler)
+void WebProcessPool::platformCompileResourceMonitorRuleList(StringImpl* rulesText, CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&& completionHandler)
 {
     StringView view { rulesText };
     RetainPtr source = view.createNSStringWithoutCopying();
@@ -1681,7 +1681,7 @@ void WebProcessPool::platformCompileResourceMonitorRuleList(const String& rulesT
     }).get()];
 }
 
-SUPPRESS_NODELETE String WebProcessPool::platformResourceMonitorRuleListSourceForTesting()
+SUPPRESS_NODELETE RefPtr<StringImpl> WebProcessPool::platformResourceMonitorRuleListSourceForTesting()
 {
 #if ENABLE(HEAVY_AD_UNLOADING)
     return R"json([
@@ -1718,8 +1718,8 @@ void WebProcessPool::registerUserInstalledFonts(WebProcessProxy& process)
         return;
     }
 
-    HashMap<String, URL> fontURLs;
-    HashMap<String, Vector<String>> fontFamilyMap;
+    HashMap<RefPtr<StringImpl>, URL> fontURLs;
+    HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>> fontFamilyMap;
     Vector<URL> sandboxExtensionURLs;
 
     RELEASE_LOG(Process, "WebProcessPool::registerUserInstalledFonts: start registering fonts");
@@ -1733,26 +1733,26 @@ void WebProcessPool::registerUserInstalledFonts(WebProcessProxy& process)
             continue;
         RetainPtr cfFontURL = checked_cf_cast<CFURLRef>(CFDictionaryGetValue(fontDictionary.get(), CFSTR("NSCTFontFileURLAttribute")));
         URL fontURL(cfFontURL.get());
-        if (fontURL.string().startsWith("file:///System/Library/Fonts/"_s))
+        if (startsWith(fontURL.string(), "file:///System/Library/Fonts/"_s))
             continue;
-        if (fontURL.string().startsWith("file:///System/Library/PrivateFrameworks/"_s))
+        if (startsWith(fontURL.string(), "file:///System/Library/PrivateFrameworks/"_s))
             continue;
         RetainPtr fontNameAttribute = checked_cf_cast<CFStringRef>(CFDictionaryGetValue(fontDictionary.get(), CFSTR("NSFontNameAttribute")));
         RetainPtr fontFamilyNameAttribute = checked_cf_cast<CFStringRef>(CFDictionaryGetValue(fontDictionary.get(), CFSTR("NSFontFamilyAttribute")));
-        String fontName(fontNameAttribute.get());
-        String fontFamilyName(fontFamilyNameAttribute.get());
-        auto fontNameLowerCase = fontName.convertToASCIILowercase();
-        if (fontNameLowerCase.isEmpty())
+        RefPtr<StringImpl> fontName(StringImpl::create(fontNameAttribute.get()));
+        RefPtr<StringImpl> fontFamilyName(StringImpl::create(fontFamilyNameAttribute.get()));
+        auto fontNameLowerCase = convertToASCIILowercase(fontName);
+        if (isEmpty(fontNameLowerCase))
             continue;
         fontURLs.add(fontNameLowerCase, fontURL);
-        auto fontFamilyNameLowerCase = fontFamilyName.convertToASCIILowercase();
-        if (fontFamilyNameLowerCase.isEmpty())
+        auto fontFamilyNameLowerCase = convertToASCIILowercase(fontFamilyName);
+        if (isEmpty(fontFamilyNameLowerCase))
             continue;
         auto fontNames = fontFamilyMap.find(fontFamilyNameLowerCase);
         if (fontNames != fontFamilyMap.end())
             fontNames->value.append(fontNameLowerCase);
         else {
-            Vector<String> fontNames { fontNameLowerCase };
+            Vector<RefPtr<StringImpl>> fontNames { fontNameLowerCase };
             fontFamilyMap.add(fontFamilyNameLowerCase, WTF::move(fontNames));
         }
     }
@@ -1775,8 +1775,8 @@ void WebProcessPool::registerAdditionalFonts(NSArray *fontNames)
         return;
 
     if (!m_userInstalledFontURLs) {
-        m_userInstalledFontURLs = HashMap<String, URL>();
-        m_userInstalledFontFamilyMap = HashMap<String, Vector<String>>();
+        m_userInstalledFontURLs = HashMap<RefPtr<StringImpl>, URL>();
+        m_userInstalledFontFamilyMap = HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>();
         m_sandboxExtensionURLs = Vector<URL>();
     }
 
@@ -1788,7 +1788,7 @@ void WebProcessPool::registerAdditionalFonts(NSArray *fontNames)
             return;
         RetainPtr url = adoptCF(static_cast<CFURLRef>(CTFontCopyAttribute(ctFont.get(), kCTFontURLAttribute)));
         URL fontURL(url.get());
-        String fontName(nsFontName);
+        RefPtr<StringImpl> fontName(StringImpl::create(nsFontName));
         m_userInstalledFontURLs->add(fontName, fontURL);
         m_sandboxExtensionURLs->append(WTF::move(fontURL));
     }
@@ -1840,7 +1840,7 @@ void WebProcessPool::registerAssetFonts(WebProcessProxy& process)
                 protectedThis->m_assetFontURLs = Vector<URL> { };
                 for (auto& fontName : borrow(assetFonts)) {
                     URL fontURL = fontURLFromName(fontName);
-                    RELEASE_LOG(Process, "Registering font name %s with url %s", fontName.characters(), fontURL.string().utf8());
+                    RELEASE_LOG(Process, "Registering font name %s with url %s", fontName.characters(), utf8(fontURL.string()));
                     protectedThis->m_assetFontURLs->append(WTF::move(fontURL));
                 }
             }

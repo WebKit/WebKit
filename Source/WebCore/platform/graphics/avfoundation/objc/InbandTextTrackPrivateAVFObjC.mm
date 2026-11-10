@@ -74,24 +74,24 @@ void InbandTextTrackPrivateAVFObjC::disconnect()
     m_assetTrack = nullptr;
 }
 
-String InbandTextTrackPrivateAVFObjC::mediaType() const
+RefPtr<StringImpl> InbandTextTrackPrivateAVFObjC::mediaType() const
 {
     if (m_mediaSelectionOption)
-        return [m_mediaSelectionOption mediaType];
+        return StringImpl::create([m_mediaSelectionOption mediaType]);
 
     if (m_assetTrack)
-        return [m_assetTrack mediaType];
+        return StringImpl::create([m_assetTrack mediaType]);
 
     return emptyString();
 }
 
-bool InbandTextTrackPrivateAVFObjC::hasMediaCharacteristic(const String& type) const
+bool InbandTextTrackPrivateAVFObjC::hasMediaCharacteristic(StringImpl* type) const
 {
     if (m_mediaSelectionOption)
-        return [m_mediaSelectionOption hasMediaCharacteristic:type.createNSString().get()];
+        return [m_mediaSelectionOption hasMediaCharacteristic:createNSString(type).get()];
 
     if (m_assetTrack)
-        return [m_assetTrack hasMediaCharacteristic:type.createNSString().get()];
+        return [m_assetTrack hasMediaCharacteristic:createNSString(type).get()];
 
     return false;
 }
@@ -109,15 +109,15 @@ InbandTextTrackPrivate::Kind InbandTextTrackPrivateAVFObjC::kind() const
 
 bool InbandTextTrackPrivateAVFObjC::isClosedCaptions() const
 {
-    return mediaType() == String(AVMediaTypeClosedCaption);
+    return equal(mediaType(), StringImpl::create(AVMediaTypeClosedCaption).get());
 }
 
 bool InbandTextTrackPrivateAVFObjC::isSDH() const
 {
-    if (mediaType() != String(AVMediaTypeSubtitle))
+    if (!equal(mediaType(), StringImpl::create(AVMediaTypeSubtitle).get()))
         return false;
 
-    if (hasMediaCharacteristic(AVMediaCharacteristicTranscribesSpokenDialogForAccessibility) && hasMediaCharacteristic(AVMediaCharacteristicDescribesMusicAndSoundForAccessibility))
+    if (hasMediaCharacteristic(StringImpl::create(AVMediaCharacteristicTranscribesSpokenDialogForAccessibility).get()) && hasMediaCharacteristic(StringImpl::create(AVMediaCharacteristicDescribesMusicAndSoundForAccessibility).get()))
         return true;
 
     return false;
@@ -125,26 +125,26 @@ bool InbandTextTrackPrivateAVFObjC::isSDH() const
     
 bool InbandTextTrackPrivateAVFObjC::containsOnlyForcedSubtitles() const
 {
-    return hasMediaCharacteristic(AVMediaCharacteristicContainsOnlyForcedSubtitles);
+    return hasMediaCharacteristic(StringImpl::create(AVMediaCharacteristicContainsOnlyForcedSubtitles).get());
 }
 
 bool InbandTextTrackPrivateAVFObjC::isMainProgramContent() const
 {
-    return hasMediaCharacteristic(AVMediaCharacteristicIsMainProgramContent);
+    return hasMediaCharacteristic(StringImpl::create(AVMediaCharacteristicIsMainProgramContent).get());
 }
 
 bool InbandTextTrackPrivateAVFObjC::isEasyToRead() const
 {
-    return hasMediaCharacteristic(AVMediaCharacteristicEasyToRead);
+    return hasMediaCharacteristic(StringImpl::create(AVMediaCharacteristicEasyToRead).get());
 }
 
 bool InbandTextTrackPrivateAVFObjC::isMachineGenerated() const
 {
     return PAL::canLoad_AVFoundation_AVMediaCharacteristicMachineGenerated()
-        && hasMediaCharacteristic(AVMediaCharacteristicMachineGenerated);
+        && hasMediaCharacteristic(StringImpl::create(AVMediaCharacteristicMachineGenerated).get());
 }
 
-String InbandTextTrackPrivateAVFObjC::label() const
+RefPtr<StringImpl> InbandTextTrackPrivateAVFObjC::label() const
 {
     NSArray<AVMetadataItem*>* commonMetadata = nil;
     if (m_mediaSelectionOption)
@@ -166,10 +166,10 @@ String InbandTextTrackPrivateAVFObjC::label() const
             title = [[titles objectAtIndex:0] stringValue];
     }
 
-    return title.get();
+    return StringImpl::create(title.get());
 }
 
-String InbandTextTrackPrivateAVFObjC::language() const
+RefPtr<StringImpl> InbandTextTrackPrivateAVFObjC::language() const
 {
     if (m_mediaSelectionOption)
         return AVTrackPrivateAVFObjCImpl::languageForAVMediaSelectionOption(m_mediaSelectionOption.get());

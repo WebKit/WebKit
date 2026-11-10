@@ -113,7 +113,7 @@ void CSSFontFaceSet::updateStyleIfNeeded()
         protect(*m_owningFontSelector)->updateStyleIfNeeded();
 }
 
-void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const AtomString& familyName)
+void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(AtomStringImpl* familyName)
 {
     ASSERT(m_owningFontSelector);
     if (m_locallyInstalledFacesLookupTable.contains(familyName))
@@ -141,7 +141,7 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const AtomString& f
     m_locallyInstalledFacesLookupTable.add(familyName, WTF::move(faces));
 }
 
-AtomString CSSFontFaceSet::familyName(const CSSValue& value)
+RefPtr<AtomStringImpl> CSSFontFaceSet::familyName(const CSSValue& value)
 {
     if (auto* fontFamilyNameValue = dynamicDowncast<CSSFontFamilyNameValue>(value))
         return fontFamilyNameValue->fontFamilyName().value;
@@ -184,7 +184,7 @@ void CSSFontFaceSet::addToFacesLookupTable(CSSFontFace& face)
     }
 
     auto familyName = CSSFontFaceSet::familyName(*family);
-    if (familyName.isNull())
+    if (!familyName)
         return;
 
     auto addResult = m_facesLookupTable.add(familyName, Vector<Ref<CSSFontFace>>());
@@ -230,7 +230,7 @@ void CSSFontFaceSet::add(CSSFontFace& face)
 void CSSFontFaceSet::removeFromFacesLookupTable(const CSSFontFace& face, const CSSValue& familyToSearchFor)
 {
     auto familyName = CSSFontFaceSet::familyName(familyToSearchFor);
-    if (familyName.isNull())
+    if (!familyName)
         return;
 
     auto iterator = m_facesLookupTable.find(familyName);
@@ -408,27 +408,27 @@ static CodePointsMap codePointsFromString(StringView stringView)
     return result;
 }
 
-ExceptionOr<Vector<Ref<CSSFontFace>>> CSSFontFaceSet::matchingFacesExcludingPreinstalledFonts(ScriptExecutionContext& context, const String& fontShorthand, const String& string)
+ExceptionOr<Vector<Ref<CSSFontFace>>> CSSFontFaceSet::matchingFacesExcludingPreinstalledFonts(ScriptExecutionContext& context, StringImpl* fontShorthand, StringImpl* string)
 {
     auto font = CSSPropertyParserHelpers::parseUnresolvedFont(fontShorthand, context);
     if (!font)
         return Exception { ExceptionCode::SyntaxError };
 
-    HashSet<AtomString> uniqueFamilies;
-    Vector<AtomString> familyOrder;
+    HashSet<RefPtr<AtomStringImpl>> uniqueFamilies;
+    Vector<RefPtr<AtomStringImpl>> familyOrder;
     for (auto& familyRaw : font->family) {
         auto familyAtom = WTF::switchOn(familyRaw,
-            [&](CSSValueID familyKeyword) -> AtomString {
+            [&](CSSValueID familyKeyword) -> RefPtr<AtomStringImpl> {
                 if (familyKeyword == CSSValueID::WebkitBody)
-                    return AtomString { context.settingsValues().fontGenericFamilies.standardFontFamily() };
-                return *familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(familyKeyword));
+                    return AtomStringImpl::add(context.settingsValues().fontGenericFamilies.standardFontFamily());
+                return AtomStringImpl::add(*familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(familyKeyword)));
             },
-            [&](const AtomString& familyString) -> AtomString  {
+            [&](AtomStringImpl* familyString) -> RefPtr<AtomStringImpl>  {
                 return familyString;
             }
         );
 
-        if (!familyAtom.isNull() && uniqueFamilies.add(familyAtom).isNewEntry)
+        if (familyAtom && uniqueFamilies.add(familyAtom).isNewEntry)
             familyOrder.append(familyAtom);
     }
 
@@ -460,7 +460,7 @@ ExceptionOr<Vector<Ref<CSSFontFace>>> CSSFontFaceSet::matchingFacesExcludingPrei
     });
 }
 
-ExceptionOr<bool> CSSFontFaceSet::check(ScriptExecutionContext& context, const String& font, const String& text)
+ExceptionOr<bool> CSSFontFaceSet::check(ScriptExecutionContext& context, StringImpl* font, StringImpl* text)
 {
     auto matchingFaces = this->matchingFacesExcludingPreinstalledFonts(context, font, text);
     if (matchingFaces.hasException())
@@ -474,7 +474,7 @@ ExceptionOr<bool> CSSFontFaceSet::check(ScriptExecutionContext& context, const S
     return true;
 }
 
-CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, FontVariantCaps variantCaps, const AtomString& family)
+CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, FontVariantCaps variantCaps, AtomStringImpl* family)
 {
     auto iterator = m_facesLookupTable.find(family);
     if (iterator == m_facesLookupTable.end())

@@ -63,8 +63,8 @@ class Scope;
 class CSSStyleSheet final : public StyleSheet, public CanMakeSingleThreadWeakPtr<CSSStyleSheet> {
 public:
     struct Init {
-        String baseURL;
-        Variant<Ref<MediaList>, String> media { emptyString() };
+        RefPtr<StringImpl> baseURL;
+        Variant<Ref<MediaList>, RefPtr<StringImpl>> media { emptyString() };
         bool disabled { false };
     };
     static Ref<CSSStyleSheet> create(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule = nullptr, std::optional<bool>isOriginClean = std::nullopt);
@@ -77,8 +77,8 @@ public:
     CSSStyleSheet* parentStyleSheet() const final;
     NODELETE Node* ownerNode() const final;
     MediaList* media() const final;
-    NODELETE String href() const final;
-    String title() const final { return !m_title.isEmpty() ? m_title : String(); }
+    NODELETE RefPtr<StringImpl> href() const final;
+    RefPtr<StringImpl> title() const final { return !isEmpty(m_title) ? m_title : nullptr; }
     bool disabled() const final { return m_isDisabled; }
     void setDisabled(bool) final;
 
@@ -86,14 +86,14 @@ public:
     ExceptionOr<Ref<CSSRuleList>> cssRulesForBindings();
     ExceptionOr<Ref<CSSRuleList>> rules() { return this->cssRulesForBindings(); }
 
-    WEBCORE_EXPORT ExceptionOr<unsigned> insertRule(const String& rule, unsigned index);
+    WEBCORE_EXPORT ExceptionOr<unsigned> insertRule(StringImpl* rule, unsigned index);
     WEBCORE_EXPORT ExceptionOr<void> deleteRule(unsigned index);
 
-    WEBCORE_EXPORT ExceptionOr<int> addRule(const String& selector, const String& style, std::optional<unsigned> index);
+    WEBCORE_EXPORT ExceptionOr<int> addRule(StringImpl* selector, StringImpl* style, std::optional<unsigned> index);
     ExceptionOr<void> removeRule(unsigned index) { return deleteRule(index); }
 
-    void replace(String&&, Ref<DeferredPromise>&&);
-    ExceptionOr<void> replaceSync(String&&);
+    void replace(RefPtr<StringImpl>&&, Ref<DeferredPromise>&&);
+    ExceptionOr<void> replaceSync(RefPtr<StringImpl>&&);
 
     bool wasMutated() const { return m_wasMutated; }
     bool wasConstructedByJS() const { return m_wasConstructedByJS; }
@@ -121,7 +121,7 @@ public:
 
     const MQ::MediaQueryList& mediaQueries() const LIFETIME_BOUND { return m_mediaQueries; }
     void setMediaQueries(MQ::MediaQueryList&&);
-    void setTitle(const String& title) { m_title = title; }
+    void setTitle(StringImpl* title) { m_title = title; }
 
     RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&);
 
@@ -140,11 +140,11 @@ public:
         RuleMutationType m_mutationType;
         ContentsClonedForMutation m_contentsClonedForMutation;
         const RefPtr<StyleRuleKeyframes> m_insertedKeyframesRule;
-        String m_modifiedKeyframesRuleName;
+        RefPtr<StringImpl> m_modifiedKeyframesRuleName;
     };
 
     ContentsClonedForMutation willMutateRules();
-    void didMutateRules(RuleMutationType, ContentsClonedForMutation, StyleRuleKeyframes* insertedKeyframesRule, const String& modifiedKeyframesRuleName);
+    void didMutateRules(RuleMutationType, ContentsClonedForMutation, StyleRuleKeyframes* insertedKeyframesRule, StringImpl* modifiedKeyframesRuleName);
     void didMutateRuleFromCSSStyleDeclaration();
     void didMutate();
     
@@ -160,8 +160,8 @@ public:
 
     bool canAccessRules() const;
 
-    String debugDescription() const final;
-    String cssText(const CSS::SerializationContext&);
+    RefPtr<StringImpl> debugDescription() const final;
+    RefPtr<StringImpl> cssText(const CSS::SerializationContext&);
     void getChildStyleSheets(HashSet<Ref<CSSStyleSheet>>&);
 
     WebCoreOpaqueRoot opaqueRootForGCThread() override;
@@ -177,7 +177,7 @@ private:
     void forEachStyleScope(NOESCAPE const Function<void(Style::Scope&)>&);
 
     bool isCSSStyleSheet() const final { return true; }
-    String type() const final { return cssContentTypeAtom(); }
+    RefPtr<StringImpl> type() const final { return cssContentTypeAtom(); }
     RefPtr<CSSRuleList> cssRulesSkippingAccessCheck();
 
     Ref<StyleSheetContents> m_contents;
@@ -186,7 +186,7 @@ private:
     bool m_wasMutated { false };
     bool m_wasConstructedByJS { false }; // constructed flag in the spec.
     std::optional<bool> m_isOriginClean;
-    String m_title;
+    RefPtr<StringImpl> m_title;
     MQ::MediaQueryList m_mediaQueries;
     WeakPtr<Style::Scope> m_styleScope;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_constructorDocument;

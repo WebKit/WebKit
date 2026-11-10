@@ -58,7 +58,7 @@ static bool isValidEmailAddress(StringView address)
     return !matchOffset && matchLength == addressLength;
 }
 
-const AtomString& EmailInputType::formControlType() const
+const RefPtr<AtomStringImpl>& EmailInputType::formControlType() const
 {
     return InputTypeNames::email();
 }
@@ -83,7 +83,7 @@ bool EmailInputType::typeMismatch() const
     return typeMismatchFor(protect(element())->value());
 }
 
-String EmailInputType::typeMismatchText() const
+RefPtr<StringImpl> EmailInputType::typeMismatchText() const
 {
     ASSERT(element());
     return element()->multiple() ? validationMessageTypeMismatchForMultipleEmailText() : validationMessageTypeMismatchForEmailText();
@@ -98,25 +98,26 @@ void EmailInputType::attributeChanged(const QualifiedName& name)
 {
     if (name == multipleAttr) {
         Ref element = *this->element();
-        element->setValueInternal(sanitizeValue(element->value()), TextFieldEventBehavior::DispatchNoEvent);
+        RefPtr<StringImpl> sanitizedValue = sanitizeValue(protect(element->value().get()));
+        element->setValueInternal(sanitizedValue, TextFieldEventBehavior::DispatchNoEvent);
     }
 
     BaseTextInputType::attributeChanged(name);
 }
 
-ValueOrReference<String> EmailInputType::sanitizeValue(const String& proposedValue LIFETIME_BOUND) const
+ValueOrReference<RefPtr<StringImpl>> EmailInputType::sanitizeValue(StringImpl* proposedValue LIFETIME_BOUND) const
 {
     // Passing a lambda instead of a function name helps the compiler inline isHTMLLineBreak.
-    String noLineBreakValue = proposedValue;
+    RefPtr<StringImpl> noLineBreakValue = proposedValue;
     if (containsHTMLLineBreak(proposedValue)) [[unlikely]] {
-        noLineBreakValue = proposedValue.removeCharacters([](auto character) {
+        noLineBreakValue = removeCharacters(proposedValue, [](auto character) {
             return isHTMLLineBreak(character);
         });
     }
 
     ASSERT(element());
     if (!element()->multiple())
-        return noLineBreakValue.trim(isASCIIWhitespace);
+        return trim(noLineBreakValue, isASCIIWhitespace);
     StringBuilder strippedValue;
     bool first = true;
     for (auto address : StringView(noLineBreakValue).splitAllowingEmptyEntries(',')) {
@@ -125,7 +126,7 @@ ValueOrReference<String> EmailInputType::sanitizeValue(const String& proposedVal
         first = false;
         strippedValue.append(address.trim(isASCIIWhitespace));
     }
-    return String { strippedValue.toString() };
+    return RefPtr<StringImpl> { strippedValue.toString() };
 }
 
 } // namespace WebCore

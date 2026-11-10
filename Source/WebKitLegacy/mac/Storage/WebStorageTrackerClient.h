@@ -31,7 +31,7 @@ public:
     NODELETE static WebStorageTrackerClient* sharedWebStorageTrackerClient();
     
     virtual ~WebStorageTrackerClient();
-    void dispatchDidModifyOrigin(const String& originIdentifier) override;
+    void dispatchDidModifyOrigin(StringImpl* originIdentifier) override;
     virtual void dispatchDidModifyOrigin(WebCore::SecurityOrigin*);
 
 private:

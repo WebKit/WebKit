@@ -63,10 +63,10 @@ void WebExtensionContext::fireCommandEventIfNeeded(const WebExtensionCommand& co
     });
 }
 
-void WebExtensionContext::fireCommandChangedEventIfNeeded(const WebExtensionCommand& command, const String& oldShortcut)
+void WebExtensionContext::fireCommandChangedEventIfNeeded(const WebExtensionCommand& command, StringImpl* oldShortcut)
 {
     constexpr auto type = WebExtensionEventListenerType::CommandsOnChanged;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }, command = Ref { command }] {
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, oldShortcut = RefPtr { oldShortcut }, this, protectedThis = Ref { *this }, command = Ref { command }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchCommandsChangedEvent(command->identifier(), oldShortcut, command->shortcutString()));
     });
 }

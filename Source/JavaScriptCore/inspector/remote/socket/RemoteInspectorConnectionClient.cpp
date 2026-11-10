@@ -77,7 +77,7 @@ void RemoteInspectorConnectionClient::didReceive(RemoteInspectorSocketEndpoint&,
                         auto call = methods.get(methodName);
                         (this->*call)(event);
                     } else
-                        LOG_ERROR("Unknown event: %s", methodName.utf8());
+                        LOG_ERROR("Unknown event: %s", utf8(methodName));
                 });
             }
         });
@@ -90,7 +90,7 @@ std::optional<RemoteInspectorConnectionClient::Event> RemoteInspectorConnectionC
     if (data.isEmpty())
         return std::nullopt;
 
-    String jsonData = String::fromUTF8(data);
+    RefPtr<StringImpl> jsonData = StringImpl::fromUTF8(data.span());
 
     auto messageValue = JSON::Value::parseJSON(jsonData);
     if (!messageValue)
@@ -102,24 +102,25 @@ std::optional<RemoteInspectorConnectionClient::Event> RemoteInspectorConnectionC
 
     Event event;
 
-    event.methodName = messageObject->getString("event"_s);
+    event.methodName = messageObject->getString("event"_si);
     if (!event.methodName)
         return std::nullopt;
 
     event.clientID = clientID;
 
-    if (auto connectionID = messageObject->getInteger("connectionID"_s))
+    if (auto connectionID = messageObject->getInteger("connectionID"_si))
         event.connectionID = *connectionID;
 
-    if (auto targetID = messageObject->getInteger("targetID"_s))
+    if (auto targetID = messageObject->getInteger("targetID"_si))
         event.targetID = *targetID;
 
-    event.message = messageObject->getString("message"_s);
+    event.message = messageObject->getString("message"_si);
 
     return event;
 }
 
-std::optional<Vector<Ref<JSON::Object>>> RemoteInspectorConnectionClient::parseTargetListJSON(const String& message)
+std::optional<Vector<Ref<JSON::Object>>> RemoteInspectorConnectionClient::parseTargetListJSON(StringImpl* message)
+
 {
     auto messageValue = JSON::Value::parseJSON(message);
     if (!messageValue)

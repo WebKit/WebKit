@@ -187,9 +187,9 @@ void ModelPlayer::enableSystemEnvironmentMap()
 {
 }
 
-String ModelPlayer::environmentMapForTesting() const
+RefPtr<StringImpl> ModelPlayer::environmentMapForTesting() const
 {
-    return "auto"_s;
+    return "auto"_si;
 }
 
 #endif
@@ -212,7 +212,7 @@ void ModelPlayer::setPortalAction(PortalActionKind)
 {
 }
 
-void ModelPlayer::setAnchor(NodeIdentifier, std::optional<NodeIdentifier>, const String&)
+void ModelPlayer::setAnchor(NodeIdentifier, std::optional<NodeIdentifier>, StringImpl*)
 {
 }
 
@@ -299,7 +299,7 @@ std::optional<double> ModelPlayer::getEffectiveDynamicRangeLimitValue() const
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-void ModelPlayer::sceneGraphAsTextForTesting(std::optional<NodeIdentifier>, Vector<std::pair<NodeIdentifier, String>>&&, const ModelSceneGraphAsTextOptions&, CompletionHandler<void(String&&)>&& completionHandler)
+void ModelPlayer::sceneGraphAsTextForTesting(std::optional<NodeIdentifier>, Vector<std::pair<NodeIdentifier, RefPtr<StringImpl>>>&&, const ModelSceneGraphAsTextOptions&, CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
 {
     completionHandler({ });
 }

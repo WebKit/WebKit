@@ -40,10 +40,10 @@
 
 namespace Inspector {
 
-static inline String argumentAsString(JSC::JSGlobalObject* globalObject, JSC::JSValue argument)
+static inline RefPtr<StringImpl> argumentAsString(JSC::JSGlobalObject* globalObject, JSC::JSValue argument)
 {
     if (is<JSC::ProxyObject>(argument))
-        return "[object Proxy]"_s;
+        return "[object Proxy]"_si;
 
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(globalObject->vm());
     auto result = argument.toWTFString(globalObject);
@@ -75,7 +75,7 @@ JSC::JSGlobalObject* ScriptArguments::globalObject() const
     return m_globalObject.get();
 }
 
-std::optional<String> ScriptArguments::getArgumentAtIndexAsString(size_t argumentIndex) const
+std::optional<RefPtr<StringImpl>> ScriptArguments::getArgumentAtIndexAsString(size_t argumentIndex) const
 {
     if (argumentIndex >= argumentCount())
         return std::nullopt;
@@ -89,7 +89,7 @@ std::optional<String> ScriptArguments::getArgumentAtIndexAsString(size_t argumen
     return argumentAsString(globalObject, argumentAt(argumentIndex));
 }
 
-bool ScriptArguments::getFirstArgumentAsString(String& result) const
+bool ScriptArguments::getFirstArgumentAsString(RefPtr<StringImpl>& result) const
 {
     auto argument = getArgumentAtIndexAsString(0);
     if (!argument)
@@ -99,7 +99,7 @@ bool ScriptArguments::getFirstArgumentAsString(String& result) const
     return true;
 }
 
-Vector<String> ScriptArguments::getArgumentsAsStrings() const
+Vector<RefPtr<StringImpl>> ScriptArguments::getArgumentsAsStrings() const
 {
     auto* globalObject = this->globalObject();
     ASSERT(globalObject);

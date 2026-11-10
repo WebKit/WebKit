@@ -42,7 +42,7 @@ public:
 
     static bool supported(GraphicsContextGL&);
 
-    String getTranslatedShaderSource(WebGLShader&);
+    RefPtr<StringImpl> getTranslatedShaderSource(WebGLShader&);
 };
 
 } // namespace WebCore

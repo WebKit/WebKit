@@ -79,7 +79,7 @@ void SubFrameSOAuthorizationSession::fallBackToWebPathInternal()
     AUTHORIZATIONSESSION_RELEASE_LOG("fallBackToWebPathInternal: navigationAction=%p", navigationAction());
     ASSERT(navigationAction());
     appendRequestToLoad(URL(navigationAction()->request().url()), Vector<uint8_t>(soAuthorizationPostDidCancelMessageToParent.span8()));
-    appendRequestToLoad(URL(navigationAction()->request().url()), String(navigationAction()->request().httpReferrer()));
+    appendRequestToLoad(URL(navigationAction()->request().url()), RefPtr { navigationAction()->request().httpReferrer() });
 }
 
 void SubFrameSOAuthorizationSession::userCancel()
@@ -87,7 +87,7 @@ void SubFrameSOAuthorizationSession::userCancel()
     AUTHORIZATIONSESSION_RELEASE_LOG("userCancel: navigationAction=%p", navigationAction());
     ASSERT(navigationAction());
     appendRequestToLoad(URL(navigationAction()->request().url()), Vector<uint8_t>(soAuthorizationPostDidUserCancelMessageToParent.span8()));
-    appendRequestToLoad(URL(navigationAction()->request().url()), String(navigationAction()->request().httpReferrer()));
+    appendRequestToLoad(URL(navigationAction()->request().url()), RefPtr { navigationAction()->request().httpReferrer() });
 }
 
 void SubFrameSOAuthorizationSession::abortInternal()
@@ -145,14 +145,14 @@ void SubFrameSOAuthorizationSession::loadRequestToFrame()
         page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
         auto& url = m_requestsToLoad.first().first;
         WTF::switchOn(m_requestsToLoad.first().second, [&](const Vector<uint8_t>& data) {
-            frame->loadData(borrow(data), "text/html"_s, "UTF-8"_s, url);
-        }, [&](const String& referrer) {
+            frame->loadData(borrow(data), "text/html"_si, "UTF-8"_si, url);
+        }, [&](StringImpl* referrer) {
             frame->loadURL(url, referrer);
         });
     }
 }
 
-bool SubFrameSOAuthorizationSession::shouldInterruptLoadForXFrameOptions(Vector<Ref<SecurityOrigin>>&& frameAncestorOrigins, const String& xFrameOptions, const URL& url)
+bool SubFrameSOAuthorizationSession::shouldInterruptLoadForXFrameOptions(Vector<Ref<SecurityOrigin>>&& frameAncestorOrigins, StringImpl* xFrameOptions, const URL& url)
 {
     switch (parseXFrameOptionsHeader(xFrameOptions)) {
     case XFrameOptionsDisposition::None:
@@ -170,12 +170,12 @@ bool SubFrameSOAuthorizationSession::shouldInterruptLoadForXFrameOptions(Vector<
     }
     case XFrameOptionsDisposition::Conflict: {
         auto errorMessage = makeString("Multiple 'X-Frame-Options' headers with conflicting values ('"_s, xFrameOptions, "') encountered. Falling back to 'DENY'."_s);
-        AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForXFrameOptions: %s", errorMessage.utf8());
+        AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForXFrameOptions: %s", utf8(errorMessage));
         return true;
     }
     case XFrameOptionsDisposition::Invalid: {
         auto errorMessage = makeString("Invalid 'X-Frame-Options' header encountered: '"_s, xFrameOptions, "' is not a recognized directive. The header will be ignored."_s);
-        AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForXFrameOptions: %s", errorMessage.utf8());
+        AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForXFrameOptions: %s", utf8(errorMessage));
         return false;
     }
     }
@@ -205,10 +205,10 @@ bool SubFrameSOAuthorizationSession::shouldInterruptLoadForCSPFrameAncestorsOrXF
         return true;
 
     if (!contentSecurityPolicy.overridesXFrameOptions()) {
-        String xFrameOptions = response.httpHeaderField(HTTPHeaderName::XFrameOptions);
-        if (!xFrameOptions.isNull() && shouldInterruptLoadForXFrameOptions(WTF::move(frameAncestorOrigins), xFrameOptions, response.url())) {
-            String errorMessage = makeString("Refused to display '"_s, response.url().stringCenterEllipsizedToLength(), "' in a frame because it set 'X-Frame-Options' to '"_s, xFrameOptions, "'."_s);
-            AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions: %s", errorMessage.utf8());
+        RefPtr<StringImpl> xFrameOptions = response.httpHeaderField(HTTPHeaderName::XFrameOptions);
+        if (xFrameOptions && shouldInterruptLoadForXFrameOptions(WTF::move(frameAncestorOrigins), xFrameOptions, response.url())) {
+            RefPtr<StringImpl> errorMessage = makeString("Refused to display '"_s, response.url().stringCenterEllipsizedToLength(), "' in a frame because it set 'X-Frame-Options' to '"_s, xFrameOptions, "'."_s);
+            AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions: %s", utf8(errorMessage));
 
             return true;
         }

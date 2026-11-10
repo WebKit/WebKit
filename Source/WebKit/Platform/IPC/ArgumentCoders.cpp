@@ -36,38 +36,38 @@
 namespace IPC {
 
 template<typename Encoder>
-void ArgumentCoder<String>::encode(Encoder& encoder, const String& string)
+void ArgumentCoder<RefPtr<StringImpl>>::encode(Encoder& encoder, StringImpl* string)
 {
     // Special case the null string.
-    if (string.isNull()) {
+    if (!string) {
         encoder << std::numeric_limits<unsigned>::max();
         return;
     }
 
-    bool is8Bit = string.is8Bit();
-    encoder << string.length() << is8Bit;
+    bool is8Bit = string->is8Bit();
+    encoder << string->length() << is8Bit;
 
     if (is8Bit)
-        encoder.encodeSpan(string.span8());
+        encoder.encodeSpan(string->span8());
     else
-        encoder.encodeSpan(string.span16());
+        encoder.encodeSpan(string->span16());
 }
 template
-void ArgumentCoder<String>::encode<Encoder>(Encoder&, const String&);
+void ArgumentCoder<RefPtr<StringImpl>>::encode<Encoder>(Encoder&, StringImpl*);
 template
-void ArgumentCoder<String>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const String&);
+void ArgumentCoder<RefPtr<StringImpl>>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, StringImpl*);
 
 template<typename CharacterType, typename Decoder>
-static inline std::optional<String> decodeStringText(Decoder& decoder, unsigned length)
+static inline std::optional<RefPtr<StringImpl>> decodeStringText(Decoder& decoder, unsigned length)
 {
     auto data = decoder.template decodeSpan<CharacterType>(length);
     if (!data.data())
         return std::nullopt;
-    return std::make_optional<String>(data);
+    return RefPtr<StringImpl> { StringImpl::create(data) };
 }
 
 template<typename Decoder>
-[[nodiscard]] std::optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
+[[nodiscard]] std::optional<RefPtr<StringImpl>> ArgumentCoder<RefPtr<StringImpl>>::decode(Decoder& decoder)
 {
     auto length = decoder.template decode<unsigned>();
     if (!length)
@@ -75,7 +75,7 @@ template<typename Decoder>
     
     if (*length == std::numeric_limits<unsigned>::max()) {
         // This is the null string.
-        return String();
+        return RefPtr<StringImpl> { };
     }
 
     auto is8Bit = decoder.template decode<bool>();
@@ -87,7 +87,29 @@ template<typename Decoder>
     return decodeStringText<char16_t>(decoder, *length);
 }
 template
-std::optional<String> ArgumentCoder<String>::decode<Decoder>(Decoder&);
+std::optional<RefPtr<StringImpl>> ArgumentCoder<RefPtr<StringImpl>>::decode<Decoder>(Decoder&);
+
+template<typename Decoder>
+[[nodiscard]] std::optional<Ref<StringImpl>> ArgumentCoder<Ref<StringImpl>>::decode(Decoder& decoder)
+{
+    auto string = ArgumentCoder<RefPtr<StringImpl>>::decode(decoder);
+    if (!string || !*string) [[unlikely]]
+        return std::nullopt;
+    return string->releaseNonNull();
+}
+template
+std::optional<Ref<StringImpl>> ArgumentCoder<Ref<StringImpl>>::decode<Decoder>(Decoder&);
+
+template<typename Decoder>
+[[nodiscard]] std::optional<RefPtr<AtomStringImpl>> ArgumentCoder<RefPtr<AtomStringImpl>>::decode(Decoder& decoder)
+{
+    auto string = ArgumentCoder<RefPtr<StringImpl>>::decode(decoder);
+    if (!string) [[unlikely]]
+        return std::nullopt;
+    return AtomStringImpl::add(WTF::move(*string));
+}
+template
+std::optional<RefPtr<AtomStringImpl>> ArgumentCoder<RefPtr<AtomStringImpl>>::decode<Decoder>(Decoder&);
 
 template<typename Encoder>
 void ArgumentCoder<StringView>::encode(Encoder& encoder, StringView string)

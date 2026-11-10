@@ -38,7 +38,7 @@ public:
     const CSS::Keyword& keyword() const LIFETIME_BOUND { return m_keyword; }
     CSSValueID valueID() const { return m_keyword.value; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     NODELETE bool equals(const CSSKeywordValue&) const;
     NODELETE IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
     NODELETE bool addDerivedHash(Hasher&) const;

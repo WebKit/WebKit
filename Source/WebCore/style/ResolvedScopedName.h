@@ -42,19 +42,19 @@ struct ScopedName;
 class ResolvedScopedName {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ResolvedScopedName);
 public:
-    ResolvedScopedName(AtomString, ScopeIdentifier);
+    ResolvedScopedName(RefPtr<AtomStringImpl>, ScopeIdentifier);
 
     // Creates a ResolvedScopedName from a ScopedName by resolving the scope ordinal
     // into the concrete Style::Scope object.
     static ResolvedScopedName createFromScopedName(const Element&, const ScopedName&);
 
-    AtomString name() const { return m_name; }
+    RefPtr<AtomStringImpl> name() const { return m_name; }
     ScopeIdentifier scopeIdentifier() const { return m_scopeIdentifier; }
 
     friend bool operator==(const ResolvedScopedName& lhs, const ResolvedScopedName& rhs) = default;
 
 private:
-    AtomString m_name;
+    RefPtr<AtomStringImpl> m_name;
     ScopeIdentifier m_scopeIdentifier;
 };
 

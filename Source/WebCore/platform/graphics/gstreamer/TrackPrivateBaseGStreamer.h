@@ -84,9 +84,9 @@ public:
     const Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     // FIXME: this should be optional...
     unsigned m_index { 0 };
-    String m_label;
-    String m_language;
-    String m_gstStreamId;
+    RefPtr<StringImpl> m_label;
+    RefPtr<StringImpl> m_language;
+    RefPtr<StringImpl> m_gstStreamId;
     // Track ID parsed from stream-id.
     TrackID m_id;
     GRefPtr<GstPad> m_pad;
@@ -142,7 +142,7 @@ public:
     GRefPtr<GstCaps> initialCaps();
 
     TrackID streamId() const;
-    String gstStreamId() const;
+    RefPtr<StringImpl> gstStreamId() const;
 
     virtual void updateConfigurationFromCaps(GRefPtr<GstCaps>&&) { }
     virtual void tagsChanged(GRefPtr<GstTagList>&&) { }

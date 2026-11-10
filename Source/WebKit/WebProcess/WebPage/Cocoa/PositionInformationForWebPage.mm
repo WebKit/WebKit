@@ -314,8 +314,8 @@ static void elementPositionInformation(WebPage& page, const WebCore::LocalFrame&
     info.idAttribute = element.getIdAttribute();
     info.isImageOverlayText = WebCore::ImageOverlay::isOverlayText(innerNonSharedNode);
 
-    info.title = element.attributeWithoutSynchronization(WebCore::HTMLNames::titleAttr).string();
-    if (linkElement && info.title.isEmpty())
+    info.title = element.attributeWithoutSynchronization(WebCore::HTMLNames::titleAttr);
+    if (linkElement && isEmpty(info.title))
         info.title = element.innerText();
 #if PLATFORM(IOS_FAMILY)
     if (element.renderer())

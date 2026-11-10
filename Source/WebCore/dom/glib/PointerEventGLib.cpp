@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static const AtomString& pointerEventType(PlatformTouchPoint::State state)
+static const RefPtr<AtomStringImpl>& pointerEventType(PlatformTouchPoint::State state)
 {
     switch (state) {
     case PlatformTouchPoint::State::TouchPressed:
@@ -67,7 +67,7 @@ Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, const Ve
     return adoptRef(*new PointerEvent(type, event, coalescedEvents, predictedEvents, canBubble, isCancelable, index, isPrimary, WTF::move(view), touchDelta));
 }
 
-Ref<PointerEvent> PointerEvent::create(const AtomString& type, const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const DoublePoint& touchDelta)
+Ref<PointerEvent> PointerEvent::create(AtomStringImpl* type, const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const DoublePoint& touchDelta)
 {
     return adoptRef(*new PointerEvent(type, event, coalescedEvents, predictedEvents, typeCanBubble(type), typeIsCancelable(type), index, isPrimary, WTF::move(view), touchDelta));
 }
@@ -82,7 +82,7 @@ unsigned PointerEvent::pointerIdForTouchPoint(const PlatformTouchPoint& point)
     return touchMinimumPointerId + point.id();
 }
 
-PointerEvent::PointerEvent(const AtomString& type, const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const DoublePoint& touchDelta)
+PointerEvent::PointerEvent(AtomStringImpl* type, const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const DoublePoint& touchDelta)
     : MouseEvent(EventInterfaceType::PointerEvent, type, canBubble, isCancelable, typeIsComposed(type), event.timestamp(), WTF::move(view), 0, event.touchPoints().at(index).pos(), event.touchPoints().at(index).pos(), touchDelta.x(), touchDelta.y(), event.modifiers(), buttonForType(type), buttonsForType(type), nullptr, 0, SyntheticClickType::NoTap, { }, { }, std::nullopt, IsSimulated::No, IsTrusted::Yes)
     , m_pointerId(pointerIdForTouchPoint(event.touchPoints().at(index)))
     , m_width(2 * event.touchPoints().at(index).radius().width())

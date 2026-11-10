@@ -49,7 +49,7 @@ struct CalendarFieldsIn {
     std::optional<uint32_t> month;
     std::optional<ParsedMonthCode> monthCode;
     std::optional<uint8_t> day;
-    std::optional<String> era;
+    std::optional<RefPtr<StringImpl>> era;
     std::optional<int32_t> eraYear;
 };
 

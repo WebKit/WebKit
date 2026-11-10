@@ -2639,7 +2639,7 @@ void RenderElement::updateReferencedSVGResources()
         clearReferencedSVGResources();
 }
 
-bool RenderElement::addReferencedSVGResourceIfNeeded(SVGElement& targetElement, const AtomString& targetID)
+bool RenderElement::addReferencedSVGResourceIfNeeded(SVGElement& targetElement, AtomStringImpl* targetID)
 {
     return ensureReferencedSVGResources().addReferencedSVGResourceIfNeeded(targetElement, targetID);
 }

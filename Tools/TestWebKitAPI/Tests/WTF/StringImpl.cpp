@@ -82,23 +82,23 @@ TEST(WTF, StringImplReplaceWithLiteral)
     ASSERT_TRUE(equal(testStringImpl.get(), "15555554"_s));
 
     // Cases for 16Bit source.
-    String testString = String::fromUTF8("résumé");
-    ASSERT_FALSE(testString.impl()->is8Bit());
+    RefPtr<StringImpl> testString = StringImpl::fromUTF8("résumé");
+    ASSERT_FALSE(testString.get()->is8Bit());
 
-    testStringImpl = testString.impl()->replace('2', "NotFound"_span);
-    ASSERT_TRUE(equal(testStringImpl.get(), String::fromUTF8("résumé").impl()));
+    testStringImpl = testString.get()->replace('2', "NotFound"_span);
+    ASSERT_TRUE(equal(testStringImpl.get(), StringImpl::fromUTF8("résumé").get()));
 
-    testStringImpl = testString.impl()->replace(char16_t(0x00E9 /*U+00E9 is 'é'*/), "e"_span);
+    testStringImpl = testString.get()->replace(char16_t(0x00E9 /*U+00E9 is 'é'*/), "e"_span);
     ASSERT_TRUE(equal(testStringImpl.get(), "resume"_s));
 
-    testString = String::fromUTF8("résumé");
-    ASSERT_FALSE(testString.impl()->is8Bit());
-    testStringImpl = testString.impl()->replace(char16_t(0x00E9 /*U+00E9 is 'é'*/), ""_span);
+    testString = StringImpl::fromUTF8("résumé");
+    ASSERT_FALSE(testString.get()->is8Bit());
+    testStringImpl = testString.get()->replace(char16_t(0x00E9 /*U+00E9 is 'é'*/), ""_span);
     ASSERT_TRUE(equal(testStringImpl.get(), "rsum"_s));
 
-    testString = String::fromUTF8("résumé");
-    ASSERT_FALSE(testString.impl()->is8Bit());
-    testStringImpl = testString.impl()->replace(char16_t(0x00E9 /*U+00E9 is 'é'*/), "555"_span);
+    testString = StringImpl::fromUTF8("résumé");
+    ASSERT_FALSE(testString.get()->is8Bit());
+    testStringImpl = testString.get()->replace(char16_t(0x00E9 /*U+00E9 is 'é'*/), "555"_span);
     ASSERT_TRUE(equal(testStringImpl.get(), "r555sum555"_s));
 }
 
@@ -184,7 +184,7 @@ TEST(WTF, StringImplEqualIgnoringASCIICaseWithEmpty)
 
 static Ref<StringImpl> stringFromUTF8(const char* characters)
 {
-    return String::fromUTF8(characters).releaseImpl().releaseNonNull();
+    return StringImpl::fromUTF8(characters).releaseNonNull();
 }
 
 TEST(WTF, StringImplEqualIgnoringASCIICaseWithLatin1Characters)
@@ -449,7 +449,7 @@ TEST(WTF, StringImplStartsWithIgnoringASCIICaseWithEmpty)
 
 TEST(WTF, StartsWithLettersIgnoringASCIICase)
 {
-    String string("Test tEST"_s);
+    RefPtr<StringImpl> string("Test tEST"_si);
     ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, "test t"_s));
     ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, "test te"_s));
     ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, "test test"_s));
@@ -458,8 +458,8 @@ TEST(WTF, StartsWithLettersIgnoringASCIICase)
     ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, ""_s));
     ASSERT_TRUE(startsWithLettersIgnoringASCIICase(emptyString(), ""_s));
 
-    ASSERT_FALSE(startsWithLettersIgnoringASCIICase(String(), "t"_s));
-    ASSERT_FALSE(startsWithLettersIgnoringASCIICase(String(), ""_s));
+    ASSERT_FALSE(startsWithLettersIgnoringASCIICase(nullString(), "t"_s));
+    ASSERT_FALSE(startsWithLettersIgnoringASCIICase(nullString(), ""_s));
 }
 
 TEST(WTF, StringImplEndsWithIgnoringASCIICaseBasic)
@@ -682,13 +682,13 @@ TEST(WTF, StringImplEmpty)
     ASSERT_FALSE(StringImpl::empty()->length());
 }
 
-static const String& neverDestroyedString()
+static const RefPtr<StringImpl>& neverDestroyedString()
 {
-    static NeverDestroyed<String> str(MAKE_STATIC_STRING_IMPL("NeverDestroyedString"));
+    static NeverDestroyed<RefPtr<StringImpl>> str(MAKE_STATIC_STRING_IMPL("NeverDestroyedString"));
     return str;
 };
 
-static const String& getNeverDestroyedStringAtStackDepth(int i)
+static const RefPtr<StringImpl>& getNeverDestroyedStringAtStackDepth(int i)
 {
     if (--i)
         return getNeverDestroyedStringAtStackDepth(i);
@@ -700,12 +700,12 @@ enum class StaticStringImplTestSet {
     DynamicallyAllocatedImpl
 };
 
-static void doStaticStringImplTests(StaticStringImplTestSet testSet, String& hello, String& world, String& longer, String& hello2)
+static void doStaticStringImplTests(StaticStringImplTestSet testSet, RefPtr<StringImpl>& hello, RefPtr<StringImpl>& world, RefPtr<StringImpl>& longer, RefPtr<StringImpl>& hello2)
 {
-    ASSERT_EQ(strlen("hello"), hello.length());
-    ASSERT_EQ(strlen("world"), world.length());
-    ASSERT_EQ(strlen("longer"), longer.length());
-    ASSERT_EQ(strlen("hello"), hello2.length());
+    ASSERT_EQ(strlen("hello"), length(hello));
+    ASSERT_EQ(strlen("world"), length(world));
+    ASSERT_EQ(strlen("longer"), length(longer));
+    ASSERT_EQ(strlen("hello"), length(hello2));
 
     ASSERT_TRUE(equal(hello, "hello"_s));
     ASSERT_TRUE(equal(world, "world"_s));
@@ -713,37 +713,37 @@ static void doStaticStringImplTests(StaticStringImplTestSet testSet, String& hel
     ASSERT_TRUE(equal(hello2, "hello"_s));
 
     // Each StaticStringImpl* returned by MAKE_STATIC_STRING_IMPL should be unique.
-    ASSERT_NE(hello.impl(), hello2.impl());
+    ASSERT_NE(hello.get(), hello2.get());
 
     if (testSet == StaticStringImplTestSet::StaticallyAllocatedImpl) {
         // Test that MAKE_STATIC_STRING_IMPL isn't allocating a StaticStringImpl on the stack.
-        const String& str1 = getNeverDestroyedStringAtStackDepth(10);
-        ASSERT_EQ(strlen("NeverDestroyedString"), str1.length());
+        const RefPtr<StringImpl>& str1 = getNeverDestroyedStringAtStackDepth(10);
+        ASSERT_EQ(strlen("NeverDestroyedString"), length(str1));
         ASSERT_TRUE(equal(str1, "NeverDestroyedString"_s));
 
-        const String& str2 = getNeverDestroyedStringAtStackDepth(20);
-        ASSERT_EQ(strlen("NeverDestroyedString"), str2.length());
+        const RefPtr<StringImpl>& str2 = getNeverDestroyedStringAtStackDepth(20);
+        ASSERT_EQ(strlen("NeverDestroyedString"), length(str2));
         ASSERT_TRUE(equal(str2, "NeverDestroyedString"_s));
 
         ASSERT_TRUE(equal(str1, str2));
         ASSERT_EQ(&str1, &str2);
-        ASSERT_EQ(str1.impl(), str2.impl());
+        ASSERT_EQ(str1.get(), str2.get());
     }
 
     // Test that the StaticStringImpl's hash has already been set.
     // We're relying on an ASSERT in setHash() to detect that the hash hasn't
     // already been set. If the hash has already been set, the hash() method
     // will not call setHash().
-    ASSERT_EQ(hello.hash(), 14060208U);
+    ASSERT_EQ(hash(hello), 14060208U);
 }
 
 TEST(WTF, StaticStringImpl)
 {
     // Construct using MAKE_STATIC_STRING_IMPL.
-    String hello(MAKE_STATIC_STRING_IMPL("hello"));
-    String world(MAKE_STATIC_STRING_IMPL("world"));
-    String longer(MAKE_STATIC_STRING_IMPL("longer"));
-    String hello2(MAKE_STATIC_STRING_IMPL("hello"));
+    RefPtr<StringImpl> hello(MAKE_STATIC_STRING_IMPL("hello"));
+    RefPtr<StringImpl> world(MAKE_STATIC_STRING_IMPL("world"));
+    RefPtr<StringImpl> longer(MAKE_STATIC_STRING_IMPL("longer"));
+    RefPtr<StringImpl> hello2(MAKE_STATIC_STRING_IMPL("hello"));
 
     doStaticStringImplTests(StaticStringImplTestSet::StaticallyAllocatedImpl, hello, world, longer, hello2);
 }
@@ -751,10 +751,10 @@ TEST(WTF, StaticStringImpl)
 TEST(WTF, DynamicStaticStringImpl)
 {
     // Construct using MAKE_STATIC_STRING_IMPL.
-    String hello = StringImpl::createStaticStringImpl("hello"_span);
-    String world = StringImpl::createStaticStringImpl("world"_span);
-    String longer = StringImpl::createStaticStringImpl("longer"_span);
-    String hello2 = StringImpl::createStaticStringImpl("hello"_span);
+    RefPtr<StringImpl> hello = StringImpl::createStaticStringImpl("hello"_span);
+    RefPtr<StringImpl> world = StringImpl::createStaticStringImpl("world"_span);
+    RefPtr<StringImpl> longer = StringImpl::createStaticStringImpl("longer"_span);
+    RefPtr<StringImpl> hello2 = StringImpl::createStaticStringImpl("hello"_span);
 
     doStaticStringImplTests(StaticStringImplTestSet::DynamicallyAllocatedImpl, hello, world, longer, hello2);
 }
@@ -893,14 +893,14 @@ TEST(WTF, ExternalStringToSymbol)
 
 TEST(WTF, CreateSubstringSharingImpl)
 {
-    auto base = String::fromUTF8("日本語 Hello World This is a bit longer text than tested");
-    ASSERT_FALSE(base.impl()->is8Bit());
-    auto small8Bit = StringImpl::createSubstringSharingImpl(*base.impl(), 10, 2);
+    auto base = StringImpl::fromUTF8("日本語 Hello World This is a bit longer text than tested");
+    ASSERT_FALSE(base.get()->is8Bit());
+    auto small8Bit = StringImpl::createSubstringSharingImpl(*base.get(), 10, 2);
     ASSERT_TRUE(equal(small8Bit.ptr(), "Wo"));
     ASSERT_TRUE(small8Bit->is8Bit());
-    auto small16Bit = StringImpl::createSubstringSharingImpl(*base.impl(), 0, 3);
+    auto small16Bit = StringImpl::createSubstringSharingImpl(*base.get(), 0, 3);
     ASSERT_TRUE(!small16Bit->is8Bit());
-    ASSERT_TRUE(equal(small16Bit.ptr(), String::fromUTF8("日本語").impl()));
+    ASSERT_TRUE(equal(small16Bit.ptr(), StringImpl::fromUTF8("日本語").get()));
 }
 
 TEST(WTF, StringImplCodePointAtASCII)
@@ -913,21 +913,21 @@ TEST(WTF, StringImplCodePointAtASCII)
 TEST(WTF, StringImplCodePointAtBMP)
 {
     // U+00E9 (LATIN SMALL LETTER E WITH ACUTE) - single 16-bit code unit.
-    auto string = String::fromUTF8("caf\xC3\xA9");
-    ASSERT_FALSE(string.impl()->is8Bit());
-    ASSERT_EQ(string.impl()->codePointAt(0), static_cast<char32_t>('c'));
-    ASSERT_EQ(string.impl()->codePointAt(3), 0x00E9u);
+    auto string = StringImpl::fromUTF8("caf\xC3\xA9");
+    ASSERT_FALSE(string.get()->is8Bit());
+    ASSERT_EQ(string.get()->codePointAt(0), static_cast<char32_t>('c'));
+    ASSERT_EQ(string.get()->codePointAt(3), 0x00E9u);
 }
 
 TEST(WTF, StringImplCodePointAtSupplementary)
 {
     // U+1F600 (GRINNING FACE) is encoded as a surrogate pair: D83D DE00.
-    auto string = String::fromUTF8("A\xF0\x9F\x98\x80Z");
-    ASSERT_FALSE(string.impl()->is8Bit());
-    ASSERT_EQ(string.impl()->length(), 4u); // 'A' + surrogate pair + 'Z'
-    ASSERT_EQ(string.impl()->codePointAt(0), static_cast<char32_t>('A'));
-    ASSERT_EQ(string.impl()->codePointAt(1), 0x1F600u);
-    ASSERT_EQ(string.impl()->codePointAt(3), static_cast<char32_t>('Z'));
+    auto string = StringImpl::fromUTF8("A\xF0\x9F\x98\x80Z");
+    ASSERT_FALSE(string.get()->is8Bit());
+    ASSERT_EQ(string.get()->length(), 4u); // 'A' + surrogate pair + 'Z'
+    ASSERT_EQ(string.get()->codePointAt(0), static_cast<char32_t>('A'));
+    ASSERT_EQ(string.get()->codePointAt(1), 0x1F600u);
+    ASSERT_EQ(string.get()->codePointAt(3), static_cast<char32_t>('Z'));
 }
 
 TEST(WTF, StringImplCodePointAtLoneSurrogate)

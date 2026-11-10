@@ -86,7 +86,7 @@ do { \
         if (logger().hasEnabledInspector()) { \
             std::array<char, 1024> buffer { }; \
             SAFE_SPRINTF(std::span { buffer }, MESSAGE_HTMLVideoElement##formatString, logIdentifier(), ##__VA_ARGS__); \
-            logger().toObservers(logChannel(), WTFLogLevel::Always, { }, String::fromUTF8(buffer.data())); \
+            logger().toObservers(logChannel(), WTFLogLevel::Always, { }, StringImpl::fromUTF8(buffer.data())); \
         } \
     } \
 } while (0)
@@ -102,7 +102,7 @@ inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document
     : HTMLMediaElement(tagName, document, createdByParser)
 {
     ASSERT(hasTagName(videoTag));
-    m_defaultPosterURL = AtomString { document.settings().defaultVideoPosterURL() };
+    m_defaultPosterURL = AtomStringImpl::add(document.settings().defaultVideoPosterURL());
 }
 
 HTMLVideoElement::~HTMLVideoElement() = default;
@@ -204,7 +204,7 @@ bool HTMLVideoElement::canShowWhileLocked() const
 }
 #endif
 
-void HTMLVideoElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLVideoElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == widthAttr) {
         addHTMLLengthToStyle(style, CSSPropertyID::Width, value);
@@ -223,7 +223,7 @@ bool HTMLVideoElement::hasPresentationalHintsForAttribute(const QualifiedName& n
     return HTMLMediaElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLVideoElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLVideoElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == posterAttr) {
         if (shouldDisplayPosterImage()) {
@@ -387,7 +387,7 @@ bool HTMLVideoElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == posterAttr || HTMLMediaElement::isURLAttribute(attribute);
 }
 
-String HTMLVideoElement::imageSourceURL() const
+RefPtr<StringImpl> HTMLVideoElement::imageSourceURL() const
 {
     const auto& url = attributeWithoutSynchronization(posterAttr);
     if (!StringView(url).containsOnly<isASCIIWhitespace<char16_t>>())
@@ -587,8 +587,8 @@ unsigned HTMLVideoElement::webkitDroppedFrameCount() const
 
 URL HTMLVideoElement::posterImageURL() const
 {
-    auto url = imageSourceURL().trim(isASCIIWhitespace);
-    if (url.isEmpty())
+    auto url = trim(imageSourceURL(), isASCIIWhitespace);
+    if (isEmpty(url))
         return URL();
     return protect(document())->encodingParseURL(url);
 }

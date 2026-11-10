@@ -74,7 +74,7 @@ WebCore::Color resolveColor(const ColorMix&, const ResolvedColors&);
 bool containsCurrentColor(const ColorMix&);
 
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const ColorMix&);
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const ColorMix&);
+RefPtr<StringImpl> serializationForCSSTokenization(const CSS::SerializationContext&, const ColorMix&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ColorMix&);
 

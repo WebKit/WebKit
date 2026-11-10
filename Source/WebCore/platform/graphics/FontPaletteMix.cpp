@@ -67,7 +67,7 @@ static Vector<Color> colorsForPalette(const OpenTypeCPAL& colorPalettes, const F
             }
             return colorsForBasePalette(colorPalettes, std::nullopt);
         },
-        [&](const AtomString& ident) {
+        [&](AtomStringImpl* ident) {
             auto* customPalette = fontPaletteValues ? fontPaletteValues->customPalette(ident) : nullptr;
             auto colors = colorsForBasePalette(colorPalettes, customPalette ? customPalette->basePalette : std::nullopt);
             if (customPalette) {

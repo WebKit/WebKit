@@ -48,7 +48,7 @@ class Module {
     WTF_MAKE_TZONE_ALLOCATED(Module);
     WTF_MAKE_NONCOPYABLE(Module);
 public:
-    explicit Module(const String& path);
+    explicit Module(StringImpl* path);
     ~Module();
 
     bool load();
@@ -57,7 +57,7 @@ public:
     NODELETE void unload();
 
 #if USE(CF)
-    String bundleIdentifier() const;
+    RefPtr<StringImpl> bundleIdentifier() const;
 #endif
 
     template<typename FunctionType> FunctionType functionPointer(const char* functionName) const;
@@ -65,7 +65,7 @@ public:
 private:
     void* platformFunctionPointer(const char* functionName) const;
 
-    String m_path;
+    RefPtr<StringImpl> m_path;
 #if OS(WINDOWS)
     HMODULE m_module;
 #endif

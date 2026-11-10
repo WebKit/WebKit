@@ -502,7 +502,7 @@ auto SectionParser::parseExport() -> PartialResult
     RELEASE_ASSERT(!m_info->exports.capacity());
     WASM_ALLOCATOR_FAIL_IF(!m_info->exports.tryReserveInitialCapacity(exportCount), "can't allocate enough memory for "_s, exportCount, " exports"_s);
 
-    UncheckedKeyHashSet<String> exportNames;
+    UncheckedKeyHashSet<RefPtr<StringImpl>> exportNames;
     for (uint32_t exportNumber = 0; exportNumber < exportCount; ++exportNumber) {
         uint32_t fieldLen;
         Name fieldString;
@@ -511,7 +511,7 @@ auto SectionParser::parseExport() -> PartialResult
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(fieldLen), "can't get "_s, exportNumber, "th Export's field name length"_s);
         WASM_ALLOCATOR_FAIL_IF(!consumeUTF8String(fieldString, fieldLen), "can't get "_s, exportNumber, "th Export's field name of length "_s, fieldLen);
-        String fieldName = WTF::makeString(fieldString);
+        RefPtr<StringImpl> fieldName = WTF::makeString(fieldString);
         WASM_PARSER_FAIL_IF(exportNames.contains(fieldName), "duplicate export: '"_s, fieldString, "'"_s);
         exportNames.add(fieldName);
 

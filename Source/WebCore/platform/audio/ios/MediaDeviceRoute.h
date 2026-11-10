@@ -54,7 +54,7 @@ struct MediaTimelineSegment {
     const bool isMarked;
     const bool requiresLinearPlayback;
     const MediaTimeRange timeRange;
-    const String identifier;
+    const RefPtr<StringImpl> identifier;
 };
 
 enum class MediaPlaybackSourceState : uint8_t {
@@ -78,8 +78,8 @@ enum class MediaPlaybackSourcePlaybackType : uint8_t {
 
 struct MediaPlaybackSourceError {
     const long code;
-    const String domain;
-    const String localizedDescription;
+    const RefPtr<StringImpl> domain;
+    const RefPtr<StringImpl> localizedDescription;
 };
 
 class MediaDeviceRoute;
@@ -113,8 +113,8 @@ public:
     void setClient(MediaDeviceRouteClient* client) { m_client = client; }
 
     const WTF::UUID& identifier() const LIFETIME_BOUND { return m_identifier; }
-    String deviceName() const;
-    String routeName() const;
+    RefPtr<StringImpl> deviceName() const;
+    RefPtr<StringImpl> routeName() const;
     WebMediaDevicePlatformRoute *platformRoute() const;
 
     void loadURL(const URL&, CompletionHandler<void(const MediaDeviceRouteLoadURLResult&)>&&);

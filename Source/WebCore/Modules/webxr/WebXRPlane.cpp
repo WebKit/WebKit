@@ -87,22 +87,22 @@ WebXRSpace& WebXRPlane::planeSpace()
     return m_planeSpace;
 }
 
-String WebXRPlane::semanticLabel() const
+RefPtr<StringImpl> WebXRPlane::semanticLabel() const
 {
     if (!m_semanticLabel)
-        return String();
+        return nullptr;
     switch (*m_semanticLabel) {
     case PlatformXR::PlaneSemanticLabel::Floor:
-        return "floor"_s;
+        return "floor"_si;
     case PlatformXR::PlaneSemanticLabel::Wall:
-        return "wall"_s;
+        return "wall"_si;
     case PlatformXR::PlaneSemanticLabel::Ceiling:
-        return "ceiling"_s;
+        return "ceiling"_si;
     case PlatformXR::PlaneSemanticLabel::Table:
-        return "table"_s;
+        return "table"_si;
     }
     ASSERT_NOT_REACHED();
-    return String();
+    return nullptr;
 }
 
 // https://immersive-web.github.io/plane-detection/#update-plane-object

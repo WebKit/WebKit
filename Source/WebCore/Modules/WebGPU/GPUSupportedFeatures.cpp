@@ -34,7 +34,7 @@ namespace WebCore {
 
 Ref<GPUSupportedFeatures> GPUSupportedFeatures::create(const Vector<::WebGPU::FeatureName>& features)
 {
-    return create(WebGPUSupportedFeatures::create(features.map([](auto feature) -> String {
+    return create(WebGPUSupportedFeatures::create(features.map([](auto feature) -> RefPtr<StringImpl> {
         return convertEnumerationToString(convertFromBacking(feature));
     })));
 }

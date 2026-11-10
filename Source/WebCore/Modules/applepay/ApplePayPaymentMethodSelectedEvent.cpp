@@ -35,7 +35,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ApplePayPaymentMethodSelectedEvent);
 
-ApplePayPaymentMethodSelectedEvent::ApplePayPaymentMethodSelectedEvent(const AtomString& type, const PaymentMethod& paymentMethod)
+ApplePayPaymentMethodSelectedEvent::ApplePayPaymentMethodSelectedEvent(AtomStringImpl* type, const PaymentMethod& paymentMethod)
     : Event(EventInterfaceType::ApplePayPaymentMethodSelectedEvent, type, CanBubble::No, IsCancelable::No)
     , m_paymentMethod(paymentMethod.toApplePayPaymentMethod())
 {

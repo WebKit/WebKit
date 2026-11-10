@@ -37,9 +37,9 @@ std::unique_ptr<KeyedEncoder> KeyedEncoder::encoder()
     return makeUnique<KeyedEncoderGeneric>();
 }
 
-void KeyedEncoderGeneric::encodeString(const String& key)
+void KeyedEncoderGeneric::encodeString(StringImpl* key)
 {
-    auto result = key.tryGetUTF8([&](std::span<const char8_t> span) -> bool {
+    auto result = tryGetUTF8(key, [&](std::span<const char8_t> span) -> bool {
         m_encoder << span.size();
         m_encoder.encodeFixedLengthData(byteCast<uint8_t>(span));
         return true;
@@ -47,7 +47,7 @@ void KeyedEncoderGeneric::encodeString(const String& key)
     RELEASE_ASSERT(result);
 }
 
-void KeyedEncoderGeneric::encodeBytes(const String& key, std::span<const uint8_t> bytes)
+void KeyedEncoderGeneric::encodeBytes(StringImpl* key, std::span<const uint8_t> bytes)
 {
     m_encoder << Type::Bytes;
     encodeString(key);
@@ -55,63 +55,63 @@ void KeyedEncoderGeneric::encodeBytes(const String& key, std::span<const uint8_t
     m_encoder.encodeFixedLengthData(bytes);
 }
 
-void KeyedEncoderGeneric::encodeBool(const String& key, bool value)
+void KeyedEncoderGeneric::encodeBool(StringImpl* key, bool value)
 {
     m_encoder << Type::Bool;
     encodeString(key);
     m_encoder << value;
 }
 
-void KeyedEncoderGeneric::encodeUInt32(const String& key, uint32_t value)
+void KeyedEncoderGeneric::encodeUInt32(StringImpl* key, uint32_t value)
 {
     m_encoder << Type::UInt32;
     encodeString(key);
     m_encoder << value;
 }
 
-void KeyedEncoderGeneric::encodeUInt64(const String& key, uint64_t value)
+void KeyedEncoderGeneric::encodeUInt64(StringImpl* key, uint64_t value)
 {
     m_encoder << Type::UInt64;
     encodeString(key);
     m_encoder << value;
 }
 
-void KeyedEncoderGeneric::encodeInt32(const String& key, int32_t value)
+void KeyedEncoderGeneric::encodeInt32(StringImpl* key, int32_t value)
 {
     m_encoder << Type::Int32;
     encodeString(key);
     m_encoder << value;
 }
 
-void KeyedEncoderGeneric::encodeInt64(const String& key, int64_t value)
+void KeyedEncoderGeneric::encodeInt64(StringImpl* key, int64_t value)
 {
     m_encoder << Type::Int64;
     encodeString(key);
     m_encoder << value;
 }
 
-void KeyedEncoderGeneric::encodeFloat(const String& key, float value)
+void KeyedEncoderGeneric::encodeFloat(StringImpl* key, float value)
 {
     m_encoder << Type::Float;
     encodeString(key);
     m_encoder << value;
 }
 
-void KeyedEncoderGeneric::encodeDouble(const String& key, double value)
+void KeyedEncoderGeneric::encodeDouble(StringImpl* key, double value)
 {
     m_encoder << Type::Double;
     encodeString(key);
     m_encoder << value;
 }
 
-void KeyedEncoderGeneric::encodeString(const String& key, const String& value)
+void KeyedEncoderGeneric::encodeString(StringImpl* key, StringImpl* value)
 {
     m_encoder << Type::String;
     encodeString(key);
     encodeString(value);
 }
 
-void KeyedEncoderGeneric::beginObject(const String& key)
+void KeyedEncoderGeneric::beginObject(StringImpl* key)
 {
     m_encoder << Type::BeginObject;
     encodeString(key);
@@ -122,7 +122,7 @@ void KeyedEncoderGeneric::endObject()
     m_encoder << Type::EndObject;
 }
 
-void KeyedEncoderGeneric::beginArray(const String& key)
+void KeyedEncoderGeneric::beginArray(StringImpl* key)
 {
     m_encoder << Type::BeginArray;
     encodeString(key);

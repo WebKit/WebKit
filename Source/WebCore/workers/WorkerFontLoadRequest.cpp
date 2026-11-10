@@ -60,7 +60,7 @@ void WorkerFontLoadRequest::load(WorkerGlobalScope& workerGlobalScope)
     m_context = workerGlobalScope;
 
     ResourceRequest request { URL { m_url } };
-    ASSERT(request.httpMethod() == "GET"_s);
+    ASSERT(equal(request.httpMethod(), "GET"_s));
 
     FetchOptions fetchOptions;
     fetchOptions.mode = FetchOptions::Mode::SameOrigin;
@@ -82,7 +82,7 @@ void WorkerFontLoadRequest::load(WorkerGlobalScope& workerGlobalScope)
     WorkerThreadableLoader::loadResourceSynchronously(workerGlobalScope, WTF::move(request), *this, options);
 }
 
-RefPtr<FontCustomPlatformData> WorkerFontLoadRequest::loadCustomFont(SharedBuffer& bytes, const String& itemInCollection)
+RefPtr<FontCustomPlatformData> WorkerFontLoadRequest::loadCustomFont(SharedBuffer& bytes, StringImpl* itemInCollection)
 {
     RefPtr context = m_context.get();
     ASSERT(context);

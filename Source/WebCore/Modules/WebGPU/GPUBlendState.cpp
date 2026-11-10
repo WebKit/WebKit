@@ -33,8 +33,8 @@ namespace WebCore {
 Ref<JSON::Object> GPUBlendState::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setObject("color"_s, color.toJSON());
-    json->setObject("alpha"_s, alpha.toJSON());
+    json->setObject("color"_si, color.toJSON());
+    json->setObject("alpha"_si, alpha.toJSON());
     return json;
 }
 

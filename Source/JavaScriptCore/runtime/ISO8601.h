@@ -217,7 +217,7 @@ public:
         return static_cast<int>(m_epochNanoseconds % ExactTime::nsPerSecond);
     }
 
-    String asString() const
+    RefPtr<StringImpl> asString() const
     {
         StringBuilder builder;
         if (m_epochNanoseconds < 0) {
@@ -554,13 +554,13 @@ uint8_t weekOfYear(PlainDate);
 int32_t yearOfWeek(PlainDate);
 NODELETE uint8_t daysInMonth(int32_t year, uint8_t month);
 uint8_t daysInMonth(uint8_t month);
-String formatTimeZoneOffsetString(int64_t);
-String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned>);
-String temporalDateToString(PlainDate);
-JS_EXPORT_PRIVATE String temporalDateTimeToString(PlainDate, PlainTime, std::tuple<Precision, unsigned>);
-String temporalYearMonthToString(PlainYearMonth, StringView, unsigned calendarId);
-String temporalMonthDayToString(PlainMonthDay, StringView, unsigned calendarId);
-String monthCode(uint32_t);
+RefPtr<StringImpl> formatTimeZoneOffsetString(int64_t);
+RefPtr<StringImpl> temporalTimeToString(PlainTime, std::tuple<Precision, unsigned>);
+RefPtr<StringImpl> temporalDateToString(PlainDate);
+JS_EXPORT_PRIVATE RefPtr<StringImpl> temporalDateTimeToString(PlainDate, PlainTime, std::tuple<Precision, unsigned>);
+RefPtr<StringImpl> temporalYearMonthToString(PlainYearMonth, StringView, unsigned calendarId);
+RefPtr<StringImpl> temporalMonthDayToString(PlainMonthDay, StringView, unsigned calendarId);
+RefPtr<StringImpl> monthCode(uint32_t);
 
 NODELETE bool isValidDuration(const Duration&);
 NODELETE bool isValidISODate(double, double, double);

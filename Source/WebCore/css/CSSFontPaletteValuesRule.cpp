@@ -45,36 +45,36 @@ CSSFontPaletteValuesRule::CSSFontPaletteValuesRule(StyleRuleFontPaletteValues& f
 
 CSSFontPaletteValuesRule::~CSSFontPaletteValuesRule() = default;
 
-String CSSFontPaletteValuesRule::name() const
+RefPtr<StringImpl> CSSFontPaletteValuesRule::name() const
 {
     return m_fontPaletteValuesRule->name();
 }
 
-String CSSFontPaletteValuesRule::fontFamily() const
+RefPtr<StringImpl> CSSFontPaletteValuesRule::fontFamily() const
 {
     auto serialize = [] (auto& family) {
-        return serializeFontFamily(family.string());
+        return serializeFontFamily(family.get());
     };
-    return makeStringByJoining(m_fontPaletteValuesRule->fontFamilies().map(serialize).span(), ", "_s);
+    return makeStringByJoining(m_fontPaletteValuesRule->fontFamilies().map(serialize).span(), ", "_si);
 }
 
-String CSSFontPaletteValuesRule::basePalette() const
+RefPtr<StringImpl> CSSFontPaletteValuesRule::basePalette() const
 {
     if (!m_fontPaletteValuesRule->basePalette())
         return StringImpl::empty();
 
     switch (m_fontPaletteValuesRule->basePalette()->type) {
     case FontPaletteIndex::Type::Light:
-        return "light"_s;
+        return "light"_si;
     case FontPaletteIndex::Type::Dark:
-        return "dark"_s;
+        return "dark"_si;
     case FontPaletteIndex::Type::Integer:
         return makeString(m_fontPaletteValuesRule->basePalette()->integer);
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-String CSSFontPaletteValuesRule::overrideColors() const
+RefPtr<StringImpl> CSSFontPaletteValuesRule::overrideColors() const
 {     
     StringBuilder result;
     for (size_t i = 0; i < m_fontPaletteValuesRule->overrideColors().size(); ++i) {
@@ -86,7 +86,7 @@ String CSSFontPaletteValuesRule::overrideColors() const
     return result.toString();
 }
 
-String CSSFontPaletteValuesRule::cssText() const
+RefPtr<StringImpl> CSSFontPaletteValuesRule::cssText() const
 {
     StringBuilder builder;
 

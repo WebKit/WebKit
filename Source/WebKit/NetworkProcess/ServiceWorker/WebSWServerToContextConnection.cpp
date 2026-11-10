@@ -156,7 +156,7 @@ void WebSWServerToContextConnection::skipWaiting(ServiceWorkerIdentifier service
     callback();
 }
 
-void WebSWServerToContextConnection::installServiceWorkerContext(const ServiceWorkerContextData& contextData, const ServiceWorkerData& workerData, const String& userAgent, WorkerThreadMode workerThreadMode, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections)
+void WebSWServerToContextConnection::installServiceWorkerContext(const ServiceWorkerContextData& contextData, const ServiceWorkerData& workerData, StringImpl* userAgent, WorkerThreadMode workerThreadMode, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections)
 {
     send(Messages::WebSWContextManagerConnection::InstallServiceWorker { contextData, workerData, userAgent, workerThreadMode, m_isInspectable, advancedPrivacyProtections });
 }
@@ -374,7 +374,7 @@ void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier
     sendWithAsyncReplyToParentProcess(Messages::NetworkProcessProxy::OpenWindowFromServiceWorker { m_connection->sessionID(), url.string(), worker->origin().clientOrigin }, WTF::move(innerCallback));
 }
 
-void WebSWServerToContextConnection::reportConsoleMessage(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, MessageSource source, MessageLevel level, const String& message, uint64_t requestIdentifier)
+void WebSWServerToContextConnection::reportConsoleMessage(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, MessageSource source, MessageLevel level, StringImpl* message, uint64_t requestIdentifier)
 {
     RefPtr server = this->server();
     RefPtr worker = server ? server->workerByID(serviceWorkerIdentifier) : nullptr;

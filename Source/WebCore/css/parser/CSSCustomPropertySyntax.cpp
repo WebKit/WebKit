@@ -93,7 +93,7 @@ auto CSSCustomPropertySyntax::parseComponent(std::span<const CharacterType> span
         return range.atEnd() ? value.toAtomString() : nullAtom();
     }();
 
-    if (ident.isNull())
+    if (!ident)
         return { };
 
     auto multiplier = consumeMultiplier();

@@ -106,7 +106,7 @@ AudioWorkletMessagingProxy::~AudioWorkletMessagingProxy()
     m_workletThread->clearProxies();
 }
 
-bool AudioWorkletMessagingProxy::postTaskForModeToWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
+bool AudioWorkletMessagingProxy::postTaskForModeToWorkletGlobalScope(ScriptExecutionContext::Task&& task, StringImpl* mode)
 {
     m_workletThread->runLoop().postTaskForMode(WTF::move(task), mode);
     return true;

@@ -125,7 +125,7 @@ public:
 
         const char* scheme = webkit_uri_scheme_request_get_scheme(request);
         g_assert_nonnull(scheme);
-        g_assert_true(test->m_handlersMap.contains(String::fromUTF8(scheme)));
+        g_assert_true(test->m_handlersMap.contains(StringImpl::fromUTF8(scheme)));
 
         const char* method = webkit_uri_scheme_request_get_http_method(request);
         g_assert_nonnull(method);
@@ -148,7 +148,7 @@ public:
             g_assert_cmpstr(soup_message_headers_get_list(headers, "x-test2"), ==, "1, 2, 3, 4");
         }
 
-        const URISchemeHandler& handler = test->m_handlersMap.get(String::fromUTF8(scheme));
+        const URISchemeHandler& handler = test->m_handlersMap.get(StringImpl::fromUTF8(scheme));
 
         GRefPtr<GInputStream> inputStream = adoptGRef(g_memory_input_stream_new());
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(inputStream.get()));
@@ -195,20 +195,20 @@ public:
 
     void registerURISchemeHandler(const char* scheme, const char* reply, int replyLength, const char* mimeType, int statusCode = 200)
     {
-        m_handlersMap.set(String::fromUTF8(scheme), URISchemeHandler(reply, replyLength, mimeType, statusCode));
+        m_handlersMap.set(StringImpl::fromUTF8(scheme), URISchemeHandler(reply, replyLength, mimeType, statusCode));
         webkit_web_context_register_uri_scheme(m_webContext.get(), scheme, uriSchemeRequestCallback, this, 0);
     }
 
     GRefPtr<WebKitURISchemeRequest> m_uriSchemeRequest;
-    HashMap<String, URISchemeHandler> m_handlersMap;
+    HashMap<RefPtr<StringImpl>, URISchemeHandler> m_handlersMap;
     bool m_uriSchemeRequestCallbackUsesTestWebView { true };
     int m_loadCounter { 0 };
 };
 
-String generateHTMLContent(unsigned contentLength)
+RefPtr<StringImpl> generateHTMLContent(unsigned contentLength)
 {
-    String baseString("abcdefghijklmnopqrstuvwxyz0123457890"_s);
-    unsigned baseLength = baseString.length();
+    RefPtr<StringImpl> baseString("abcdefghijklmnopqrstuvwxyz0123457890"_s);
+    unsigned baseLength = length(baseString);
 
     StringBuilder builder;
     builder.append("<html><body>"_s);
@@ -292,8 +292,8 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     // Anything over 8192 bytes will get multiple calls to g_input_stream_read_async in
     // WebKitURISchemeRequest when reading data, but we still need way more than that to
     // ensure that we reach the load-committed state before failing, so we use an 8MB HTML.
-    String longHTMLContent = generateHTMLContent(8 * 1024 * 1024);
-    test->registerURISchemeHandler("error", longHTMLContent.utf8().legacyCStringPointer(), -1, "text/html");
+    RefPtr<StringImpl> longHTMLContent = generateHTMLContent(8 * 1024 * 1024);
+    test->registerURISchemeHandler("error", utf8(longHTMLContent).legacyCStringPointer(), -1, "text/html");
     test->m_loadEvents.clear();
     test->loadURI("error:error");
     test->waitUntilLoadFinished();
@@ -779,7 +779,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
     g_assert_true(serverType == ProxyTest::WebSocketServerType::NoProxy);
 
     // Set default proxy URI to point to proxyServer. Requests to kServer should be received by proxyServer instead.
-    WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(test->m_proxyServer.baseURL().string().utf8().legacyCStringPointer(), nullptr);
+    WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(utf8(test->m_proxyServer.baseURL().string()).legacyCStringPointer(), nullptr);
     auto* dataManager = webkit_web_context_get_website_data_manager(test->m_webContext.get());
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     GUniquePtr<char> proxyServerPortAsString = test->proxyServerPortAsString();
@@ -819,7 +819,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 
     // Use a default proxy uri, but ignoring requests to localhost.
     static const char* ignoreHosts[] = { "localhost", nullptr };
-    settings = webkit_network_proxy_settings_new(test->m_proxyServer.baseURL().string().utf8().legacyCStringPointer(), ignoreHosts);
+    settings = webkit_network_proxy_settings_new(utf8(test->m_proxyServer.baseURL().string()).legacyCStringPointer(), ignoreHosts);
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort"));
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
@@ -835,7 +835,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 
     // Use scheme specific proxy instead of the default.
     settings = webkit_network_proxy_settings_new(nullptr, nullptr);
-    webkit_network_proxy_settings_add_proxy_for_scheme(settings, "http", test->m_proxyServer.baseURL().string().utf8().legacyCStringPointer());
+    webkit_network_proxy_settings_add_proxy_for_scheme(settings, "http", utf8(test->m_proxyServer.baseURL().string()).legacyCStringPointer());
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort"));
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());

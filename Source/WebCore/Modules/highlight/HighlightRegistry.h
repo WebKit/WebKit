@@ -47,9 +47,9 @@ public:
     static Ref<HighlightRegistry> create() { return adoptRef(*new HighlightRegistry); }
 
     void initializeMapLike(DOMMapAdapter&);
-    void setFromMapLike(AtomString&&, Ref<Highlight>&&);
+    void setFromMapLike(RefPtr<AtomStringImpl>&&, Ref<Highlight>&&);
     void clear();
-    bool remove(const AtomString&);
+    bool remove(AtomStringImpl*);
     bool isEmpty() const { return map().isEmpty(); }    
 
     HighlightVisibility highlightsVisibility() const { return m_highlightVisibility; }
@@ -58,15 +58,15 @@ public:
 #endif
     
     WEBCORE_EXPORT void addAnnotationHighlightWithRange(Ref<StaticRange>&&);
-    const HashMap<AtomString, Ref<Highlight>>& map() const LIFETIME_BOUND { return m_map; }
-    const Vector<AtomString>& highlightNames() const LIFETIME_BOUND { return m_highlightNames; }
+    const HashMap<RefPtr<AtomStringImpl>, Ref<Highlight>>& map() const LIFETIME_BOUND { return m_map; }
+    const Vector<RefPtr<AtomStringImpl>>& highlightNames() const LIFETIME_BOUND { return m_highlightNames; }
 
     Vector<HighlightHitResult> highlightsFromPoint(Document&, float x, float y, HighlightsFromPointOptions&&);
     
 private:
     HighlightRegistry() = default;
-    HashMap<AtomString, Ref<Highlight>> m_map;
-    Vector<AtomString> m_highlightNames;
+    HashMap<RefPtr<AtomStringImpl>, Ref<Highlight>> m_map;
+    Vector<RefPtr<AtomStringImpl>> m_highlightNames;
 
     HighlightVisibility m_highlightVisibility { HighlightVisibility::Hidden };
 };

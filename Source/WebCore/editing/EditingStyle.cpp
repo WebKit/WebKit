@@ -382,8 +382,8 @@ void HTMLAttributeEquivalent::addToStyle(Element* element, EditingStyle* style) 
 RefPtr<CSSValue> HTMLAttributeEquivalent::attributeValueAsCSSValue(Element* element) const
 {
     ASSERT(element);
-    const AtomString& value = element->getAttribute(m_attrName);
-    if (value.isNull())
+    const RefPtr<AtomStringImpl>& value = element->getAttribute(m_attrName);
+    if (!value)
         return nullptr;
     
     RefPtr<MutableStyleProperties> dummyStyle;
@@ -407,8 +407,8 @@ HTMLFontSizeEquivalent::HTMLFontSizeEquivalent()
 RefPtr<CSSValue> HTMLFontSizeEquivalent::attributeValueAsCSSValue(Element* element) const
 {
     ASSERT(element);
-    const AtomString& value = element->getAttribute(m_attrName);
-    if (value.isNull())
+    const RefPtr<AtomStringImpl>& value = element->getAttribute(m_attrName);
+    if (!value)
         return nullptr;
     CSSValueID size;
     if (!HTMLFontElement::cssValueFromFontSizeNumber(value, size))
@@ -474,7 +474,7 @@ EditingStyle::EditingStyle(const StyleProperties* style)
     extractFontSizeDelta();
 }
 
-EditingStyle::EditingStyle(CSSPropertyID propertyID, const String& value)
+EditingStyle::EditingStyle(CSSPropertyID propertyID, StringImpl* value)
     : EditingStyle()
 {
     setProperty(propertyID, value);
@@ -608,7 +608,7 @@ void EditingStyle::removeTextFillAndStrokeColorsIfNeeded(const Style::ComputedSt
         mutableStyle->removeProperty(CSSPropertyID::WebkitTextStrokeColor);
 }
 
-void EditingStyle::setProperty(CSSPropertyID propertyID, const String& value, IsImportant important)
+void EditingStyle::setProperty(CSSPropertyID propertyID, StringImpl* value, IsImportant important)
 {
     if (!m_mutableStyle)
         m_mutableStyle = MutableStyleProperties::create();
@@ -1191,7 +1191,7 @@ bool EditingStyle::elementIsStyledSpanOrHTMLEquivalent(const HTMLElement& elemen
     if (!elementIsSpanOrElementEquivalent && !matchedAttributes)
         return false; // element is not a span, a html element equivalent, or font element.
     
-    if (element.attributeWithoutSynchronization(HTMLNames::classAttr) == AppleStyleSpanClass)
+    if (equal(element.attributeWithoutSynchronization(HTMLNames::classAttr), AppleStyleSpanClass))
         matchedAttributes++;
 
     if (element.hasAttribute(HTMLNames::styleAttr)) {
@@ -1438,7 +1438,7 @@ void EditingStyle::mergeStyleFromRules(StyledElement& element)
     m_mutableStyle = WTF::move(styleFromMatchedRules);
 }
 
-static AtomString loneFontFamilyName(const CSSValue& value)
+static RefPtr<AtomStringImpl> loneFontFamilyName(const CSSValue& value)
 {
     if (RefPtr fontFamilyNameValue = dynamicDowncast<CSSFontFamilyNameValue>(value))
         return fontFamilyNameValue->fontFamilyName().value;
@@ -1621,7 +1621,7 @@ void EditingStyle::removeEquivalentProperties(T& style)
         }
 
         // Do not remove equivalent properties when they share a shorthand with non-equivalent ones, and the removal would prevent them from being serialized with the shorthand.
-        if (mutableStyle->getPropertyValue(shorthandID).isEmpty()) {
+        if (WTF::isEmpty(mutableStyle->getPropertyValue(shorthandID))) {
             propertiesToRemove.append(property.id());
             continue;
         }
@@ -1693,7 +1693,7 @@ int EditingStyle::legacyFontSize(Document& document) const
     return legacyFontSizeFromCSSValue(document, *cssValue, m_shouldUseFixedDefaultFontSize, LegacyFontSizeMode::AlwaysUseLegacyFontSize);
 }
 
-bool EditingStyle::hasStyle(CSSPropertyID propertyID, const String& value)
+bool EditingStyle::hasStyle(CSSPropertyID propertyID, StringImpl* value)
 {
     return EditingStyle::create(propertyID, value)->triStateOfStyle(this) != TriState::False;
 }
@@ -1992,7 +1992,7 @@ bool StyleChange::operator==(const StyleChange& other)
         return false;
 
     return (!m_cssStyle && !other.m_cssStyle)
-        || (m_cssStyle && other.m_cssStyle && protect(cssStyle())->asText(CSS::defaultSerializationContext()) == protect(other.cssStyle())->asText(CSS::defaultSerializationContext()));
+        || (m_cssStyle && other.m_cssStyle && equal(protect(cssStyle())->asText(CSS::defaultSerializationContext()), protect(other.cssStyle())->asText(CSS::defaultSerializationContext())));
 }
 
 static void setTextDecorationProperty(MutableStyleProperties& style, const CSSValueList& newTextDecoration, CSSPropertyID propertyID)
@@ -2049,18 +2049,18 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
     if (style.getPropertyCSSValue(CSSPropertyID::Color)) {
         auto color = textColorFromStyle(style);
         if (color.isOpaque()) {
-            m_applyFontColor = AtomString { serializationForHTML(color) };
+            m_applyFontColor = AtomStringImpl::add(serializationForHTML(color));
             style.removeProperty(CSSPropertyID::Color);
         }
     }
 
     // Remove quotes for Outlook 2007 compatibility. See https://bugs.webkit.org/show_bug.cgi?id=79448
-    m_applyFontFace = AtomString { makeStringByReplacingAll(style.getPropertyValue(CSSPropertyID::FontFamily), '\"', ""_s) };
+    m_applyFontFace = AtomStringImpl::add(makeStringByReplacingAll(style.getPropertyValue(CSSPropertyID::FontFamily), '\"', ""_s));
     style.removeProperty(CSSPropertyID::FontFamily);
 
     if (RefPtr fontSize = style.getPropertyCSSValue(CSSPropertyID::FontSize)) {
         if (int legacyFontSize = legacyFontSizeFromCSSValue(document, *fontSize, shouldUseFixedFontDefaultSize, LegacyFontSizeMode::UseLegacyFontSizeOnlyIfPixelValuesMatch)) {
-            m_applyFontSize = AtomString::number(legacyFontSize);
+            m_applyFontSize = AtomStringImpl::number(legacyFontSize);
             // For CSS keyword values (e.g. "large"), the legacy <font size> is
             // a lossless representation, so remove the CSS property.
             // For explicit lengths (e.g. "13px"), keep the CSS property nested inside

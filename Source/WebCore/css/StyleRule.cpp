@@ -375,7 +375,7 @@ Vector<Ref<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCompo
     return rules;
 }
 
-String StyleRule::debugDescription() const
+RefPtr<StringImpl> StyleRule::debugDescription() const
 {
     return makeString(" StyleRule ["_s, " selector: "_s, selectorList().selectorsText(), " properties: "_s, protect(m_properties)->asText(CSS::defaultSerializationContext()), ']');
 }
@@ -387,7 +387,7 @@ Ref<StyleRuleWithNesting> StyleRuleWithNesting::copy() const
     return adoptRef(*new StyleRuleWithNesting(*this));
 }
 
-String StyleRuleWithNesting::debugDescription() const
+RefPtr<StringImpl> StyleRuleWithNesting::debugDescription() const
 {
     StringBuilder builder;
     builder.append(" StyleRuleWithNesting ["_s, "originalSelector: "_s, originalSelectorList().selectorsText(), StyleRule::debugDescription());
@@ -452,7 +452,7 @@ StyleRuleNestedDeclarations::StyleRuleNestedDeclarations(Ref<StyleProperties>&& 
     setType(StyleRuleType::NestedDeclarations);
 }
 
-String StyleRuleNestedDeclarations::debugDescription() const
+RefPtr<StringImpl> StyleRuleNestedDeclarations::debugDescription() const
 {
     return makeString("StyleRuleNestedDeclarations ["_s, protect(properties())->asText(CSS::defaultSerializationContext()), ']');
 }
@@ -492,7 +492,7 @@ MutableStyleProperties& StyleRuleFontFace::mutableProperties()
     return uncheckedDowncast<MutableStyleProperties>(m_properties.get());
 }
 
-StyleRuleFontFeatureValues::StyleRuleFontFeatureValues(const Vector<AtomString>& fontFamilies, Ref<FontFeatureValues>&& value)
+StyleRuleFontFeatureValues::StyleRuleFontFeatureValues(const Vector<RefPtr<AtomStringImpl>>& fontFamilies, Ref<FontFeatureValues>&& value)
     : StyleRuleBase(StyleRuleType::FontFeatureValues)
     , m_fontFamilies(fontFamilies)
     , m_value(WTF::move(value))
@@ -506,17 +506,17 @@ StyleRuleFontFeatureValuesBlock::StyleRuleFontFeatureValuesBlock(FontFeatureValu
 {
 }
 
-Ref<StyleRuleFontFeatureValues> StyleRuleFontFeatureValues::create(const Vector<AtomString>& fontFamilies, Ref<FontFeatureValues>&& values)
+Ref<StyleRuleFontFeatureValues> StyleRuleFontFeatureValues::create(const Vector<RefPtr<AtomStringImpl>>& fontFamilies, Ref<FontFeatureValues>&& values)
 {
     return adoptRef(*new StyleRuleFontFeatureValues(fontFamilies, WTF::move(values)));
 }
 
-Ref<StyleRuleFontPaletteValues> StyleRuleFontPaletteValues::create(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors)
+Ref<StyleRuleFontPaletteValues> StyleRuleFontPaletteValues::create(AtomStringImpl* name, Vector<RefPtr<AtomStringImpl>>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors)
 {
     return adoptRef(*new StyleRuleFontPaletteValues(name, WTF::move(fontFamilies), basePalette, WTF::move(overrideColors)));
 }
 
-StyleRuleFontPaletteValues::StyleRuleFontPaletteValues(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors)
+StyleRuleFontPaletteValues::StyleRuleFontPaletteValues(AtomStringImpl* name, Vector<RefPtr<AtomStringImpl>>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors)
     : StyleRuleBase(StyleRuleType::FontPaletteValues)
     , m_name(name)
     , m_fontFamilies(WTF::move(fontFamilies))
@@ -552,7 +552,7 @@ void StyleRuleGroup::wrapperRemoveRule(unsigned index)
     m_childRules.removeAt(index);
 }
 
-String StyleRuleGroup::debugDescription() const
+RefPtr<StringImpl> StyleRuleGroup::debugDescription() const
 {
     StringBuilder builder;
     builder.append("StyleRuleGroup ["_s);
@@ -584,21 +584,21 @@ Ref<StyleRuleMedia> StyleRuleMedia::copy() const
     return adoptRef(*new StyleRuleMedia(*this));
 }
 
-String StyleRuleMedia::debugDescription() const
+RefPtr<StringImpl> StyleRuleMedia::debugDescription() const
 {
     StringBuilder builder;
     builder.append("StyleRuleMedia ["_s, StyleRuleGroup::debugDescription(), ']');
     return builder.toString();
 }
 
-StyleRuleSupports::StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<Ref<StyleRuleBase>>&& rules)
+StyleRuleSupports::StyleRuleSupports(StringImpl* conditionText, bool conditionIsSupported, Vector<Ref<StyleRuleBase>>&& rules)
     : StyleRuleGroup(StyleRuleType::Supports, WTF::move(rules))
     , m_conditionText(conditionText)
     , m_conditionIsSupported(conditionIsSupported)
 {
 }
 
-Ref<StyleRuleSupports> StyleRuleSupports::create(const String& conditionText, bool conditionIsSupported, Vector<Ref<StyleRuleBase>>&& rules)
+Ref<StyleRuleSupports> StyleRuleSupports::create(StringImpl* conditionText, bool conditionIsSupported, Vector<Ref<StyleRuleBase>>&& rules)
 {
     return adoptRef(*new StyleRuleSupports(conditionText, conditionIsSupported, WTF::move(rules)));
 }
@@ -693,14 +693,14 @@ StyleRuleCharset::StyleRuleCharset()
 {
 }
 
-StyleRuleNamespace::StyleRuleNamespace(const AtomString& prefix, const AtomString& uri)
+StyleRuleNamespace::StyleRuleNamespace(AtomStringImpl* prefix, AtomStringImpl* uri)
     : StyleRuleBase(StyleRuleType::Namespace)
     , m_prefix(prefix)
     , m_uri(uri)
 {
 }
 
-Ref<StyleRuleNamespace> StyleRuleNamespace::create(const AtomString& prefix, const AtomString& uri)
+Ref<StyleRuleNamespace> StyleRuleNamespace::create(AtomStringImpl* prefix, AtomStringImpl* uri)
 {
     return adoptRef(*new StyleRuleNamespace(prefix, uri));
 }
@@ -732,12 +732,12 @@ void StyleRuleBase::invalidateResolvedSelectorListRecursively()
         ));
 }
 
-String StyleRuleBase::debugDescription() const
+RefPtr<StringImpl> StyleRuleBase::debugDescription() const
 {
-    return visitDerived([]<typename RuleType> (const RuleType& rule) -> String {
+    return visitDerived([]<typename RuleType> (const RuleType& rule) -> RefPtr<StringImpl> {
         // FIXME: implement debugDescription() for all classes which inherit StyleRuleBase.
         if constexpr (std::is_same_v<decltype(&RuleType::debugDescription), decltype(&StyleRuleBase::debugDescription)>)
-            return "StyleRuleBase"_s;
+            return "StyleRuleBase"_si;
         return rule.debugDescription();
     });
 }

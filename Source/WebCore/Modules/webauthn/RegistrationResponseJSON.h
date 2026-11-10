@@ -35,19 +35,19 @@ namespace WebCore {
 
 struct RegistrationResponseJSON {
     struct AuthenticatorAttestationResponseJSON {
-        String clientDataJSON;
-        String authenticatorData;
-        Vector<String> transports;
-        String publicKey;
+        RefPtr<StringImpl> clientDataJSON;
+        RefPtr<StringImpl> authenticatorData;
+        Vector<RefPtr<StringImpl>> transports;
+        RefPtr<StringImpl> publicKey;
         long long publicKeyAlgorithm { 0 };
-        String attestationObject;
+        RefPtr<StringImpl> attestationObject;
     };
-    String id;
-    String rawId;
+    RefPtr<StringImpl> id;
+    RefPtr<StringImpl> rawId;
     AuthenticatorAttestationResponseJSON response;
-    String authenticatorAttachment;
+    RefPtr<StringImpl> authenticatorAttachment;
     AuthenticationExtensionsClientOutputsJSON clientExtensionResults;
-    String type;
+    RefPtr<StringImpl> type;
 };
 }
 

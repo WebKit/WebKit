@@ -244,7 +244,7 @@ std::optional<WebCore::JSHandleIdentifier> jsHandleIdentifierInFrame(const WebFr
 #endif
 
 enum class SimilarToOriginalTextTag : uint8_t { Value };
-using TextValidationMapValue = Variant<String, SimilarToOriginalTextTag>;
+using TextValidationMapValue = Variant<RefPtr<StringImpl>, SimilarToOriginalTextTag>;
 
 #if PLATFORM(IOS_FAMILY)
 struct LiveResizeParameters {
@@ -551,7 +551,7 @@ struct LiveResizeSnapshotState {
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(VISION)
-    String _defaultSTSLabel;
+    RefPtr<StringImpl> _defaultSTSLabel;
 #endif
 
     BOOL _didAccessBackForwardList;
@@ -577,7 +577,7 @@ struct LiveResizeSnapshotState {
 
     RetainPtr<WKScrollGeometry> _currentScrollGeometry;
 
-    std::pair<String, RetainPtr<NSURL>> _cachedActiveNSURL;
+    std::pair<RefPtr<StringImpl>, RetainPtr<NSURL>> _cachedActiveNSURL;
 
     BOOL _allowsMagnification;
 
@@ -599,10 +599,10 @@ struct LiveResizeSnapshotState {
 
 #if ENABLE(TEXT_EXTRACTION_FILTER)
     HashMap<unsigned /* string hash */, TextValidationMapValue> _textValidationCache;
-    std::optional<HashSet<String>> _textExtractionRecognizedWords;
+    std::optional<HashSet<RefPtr<StringImpl>>> _textExtractionRecognizedWords;
 #endif
     RefPtr<WebKit::TextExtractionURLCache> _textExtractionURLCache;
-    Vector<std::pair<String, String>> _lastTextExtractionReplacementStrings;
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> _lastTextExtractionReplacementStrings;
 
 #if ENABLE(SYSTEM_TEXT_EXTRACTION)
     std::optional<WTF::UUID> _textExtractionIdentifier;
@@ -680,7 +680,7 @@ struct LiveResizeSnapshotState {
 
 // Asks the _WKTranslationDelegate to translate accessibility announcements. Replies with an empty
 // Vector if there is no delegate or the delegate does not implement the method.
-- (void)_translateAccessibilityAnnouncementStrings:(NSArray<NSString *> *)strings targetLocaleIdentifier:(NSString *)targetLocaleIdentifier completionHandler:(CompletionHandler<void(Vector<String>&&)>&&)completionHandler;
+- (void)_translateAccessibilityAnnouncementStrings:(NSArray<NSString *> *)strings targetLocaleIdentifier:(NSString *)targetLocaleIdentifier completionHandler:(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&)completionHandler;
 
 - (void)_showWarningView:(const WebKit::BrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
 - (void)_showBrowsingWarning:(const WebKit::BrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
@@ -822,11 +822,11 @@ struct LiveResizeSnapshotState {
 - (void)_extractDebugTextWithConfigurationWithoutUpdatingFilterRules:(_WKTextExtractionConfiguration *)configuration assertionScope:(UniqueRef<WebKit::TextExtractionAssertionScope>&&)assertionScope completionHandler:(void(^)(_WKTextExtractionResult *))completionHandler;
 - (void)_filterExtractedStringWithoutUpdatingFilterRules:(NSString *)string options:(_WKTextExtractionFilterOptions)options completionHandler:(void(^)(NSString *))completionHandler;
 // FIXME(rdar://189512757): NS_DIRECT avoids emitting an ObjC type encoding for std::expected, which crashes clang. Remove when resolved.
-- (std::expected<std::pair<RefPtr<WebKit::WebFrameProxy>, WebCore::TextExtraction::Interaction>, RetainPtr<NSString>>)_convertToWebCoreInteraction:(_WKTextExtractionInteraction *)wkInteraction nodeIdentifier:(const String&)nodeIdentifierString NS_DIRECT;
+- (std::expected<std::pair<RefPtr<WebKit::WebFrameProxy>, WebCore::TextExtraction::Interaction>, RetainPtr<NSString>>)_convertToWebCoreInteraction:(_WKTextExtractionInteraction *)wkInteraction nodeIdentifier:(StringImpl*)nodeIdentifierString NS_DIRECT;
 - (void)_performInteraction:(WebCore::TextExtraction::Interaction)interaction inFrame:(RefPtr<WebKit::WebFrameProxy>)targetFrame actionType:(_WKTextExtractionAction)actionType staleNodeResolution:(const WebKit::StaleNodeResolutionState&)staleNodeResolution completionHandler:(void(^)(_WKTextExtractionInteractionResult *))completionHandler;
 
 #if ENABLE(TEXT_EXTRACTION_FILTER)
-- (void)_validateText:(const String&)text inFrame:(std::optional<WebCore::FrameIdentifier>&&)frameIdentifier inNode:(std::optional<WebCore::NodeIdentifier>&&)nodeIdentifier completionHandler:(CompletionHandler<void(const String&)>&&)completionHandler;
+- (void)_validateText:(StringImpl*)text inFrame:(std::optional<WebCore::FrameIdentifier>&&)frameIdentifier inNode:(std::optional<WebCore::NodeIdentifier>&&)nodeIdentifier completionHandler:(CompletionHandler<void(StringImpl*)>&&)completionHandler;
 #endif
 
 #endif // !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP

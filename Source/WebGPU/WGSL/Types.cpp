@@ -282,7 +282,7 @@ ConversionRank conversionRank(const Type* from, const Type* to)
     return std::nullopt;
 }
 
-String Type::toString() const
+RefPtr<StringImpl> Type::toString() const
 {
     StringPrintStream out;
     dump(out);

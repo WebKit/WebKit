@@ -170,7 +170,7 @@ static unsigned mouseButtonToWPEPlatformButton(MouseButton button)
 }
 #endif // ENABLE(WPE_PLATFORM)
 
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, const String& pointerType)
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, StringImpl* pointerType)
 {
     UNUSED_PARAM(pointerType);
 
@@ -458,7 +458,7 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
     }
 #endif // ENABLE(WPE_PLATFORM)
 }
-void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const String& keySequence)
+void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, StringImpl* keySequence)
 {
 #if USE(LIBWPE)
     if (page.viewBackend()) {
@@ -501,7 +501,7 @@ void WebAutomationSession::platformSimulateTouchInteraction(WebPageProxy&page, T
 #if USE(LIBWPE)
     if (page.viewBackend()) {
         LOG(Automation, "Touch event emulation is not supported for the legacy libwpe API");
-        completionHandler(AutomationCommandError(Inspector::Protocol::Automation::ErrorMessage::InternalError, "Touch event emulation is not supported for the legacy libwpe API"_s));
+        completionHandler(AutomationCommandError(Inspector::Protocol::Automation::ErrorMessage::InternalError, "Touch event emulation is not supported for the legacy libwpe API"_si));
         return;
     }
 #endif

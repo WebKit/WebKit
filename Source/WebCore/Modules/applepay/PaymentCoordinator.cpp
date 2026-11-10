@@ -82,7 +82,7 @@ bool PaymentCoordinator::canMakePayments()
     return canMakePayments;
 }
 
-void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const String& merchantIdentifier, Function<void(bool)>&& completionHandler)
+void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, StringImpl* merchantIdentifier, Function<void(bool)>&& completionHandler)
 {
     m_client->canMakePaymentsWithActiveCard(merchantIdentifier, document.domain(), [weakThis = WeakPtr { *this }, document = WeakPtr<Document, WeakPtrImplWithEventTargetData> { document }, completionHandler = WTF::move(completionHandler)](bool canMakePayments) {
         if (!weakThis)
@@ -100,7 +100,7 @@ void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const
     });
 }
 
-void PaymentCoordinator::openPaymentSetup(Document& document, const String& merchantIdentifier, Function<void(bool)>&& completionHandler)
+void PaymentCoordinator::openPaymentSetup(Document& document, StringImpl* merchantIdentifier, Function<void(bool)>&& completionHandler)
 {
     PAYMENT_COORDINATOR_RELEASE_LOG("openPaymentSetup()");
     m_client->openPaymentSetup(merchantIdentifier, document.domain(), WTF::move(completionHandler));
@@ -124,7 +124,7 @@ bool PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession&
 
 #if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
     if (paymentRequest.shippingContactEditingMode() == ApplePayShippingContactEditingMode::Enabled)
-        document.addConsoleMessage(MessageSource::PaymentRequest, MessageLevel::Warning, "`enabled` is a deprecated value for `shippingContactEditingMode`. Please use `available` instead."_s);
+        document.addConsoleMessage(MessageSource::PaymentRequest, MessageLevel::Warning, "`enabled` is a deprecated value for `shippingContactEditingMode`. Please use `available` instead."_si);
 #endif
 
     m_activeSession = paymentSession;
@@ -261,7 +261,7 @@ void PaymentCoordinator::didSelectShippingContact(const PaymentContact& shipping
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
 
-void PaymentCoordinator::didChangeCouponCode(String&& couponCode)
+void PaymentCoordinator::didChangeCouponCode(RefPtr<StringImpl>&& couponCode)
 {
     RefPtr activeSession = m_activeSession;
     if (!activeSession) {
@@ -288,7 +288,7 @@ void PaymentCoordinator::didCancelPaymentSession(PaymentSessionError&& error)
     m_activeSession = nullptr;
 }
 
-std::optional<String> PaymentCoordinator::validatedPaymentNetwork(Document&, unsigned version, const String& paymentNetwork) const
+std::optional<RefPtr<StringImpl>> PaymentCoordinator::validatedPaymentNetwork(Document&, unsigned version, StringImpl* paymentNetwork) const
 {
     if (version < 2 && equalLettersIgnoringASCIICase(paymentNetwork, "jcb"_s))
         return std::nullopt;

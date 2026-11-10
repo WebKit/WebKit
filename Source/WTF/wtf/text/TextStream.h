@@ -85,14 +85,12 @@ public:
     WTF_EXPORT_PRIVATE TextStream& operator<<(double);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const char*);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const void*);
-    WTF_EXPORT_PRIVATE TextStream& operator<<(const AtomString&);
     // A CStringBase does not know its encoding and therefore cannot be streamed: use one of the
     // encoding-aware overloads below, which decode according to the character type.
     TextStream& operator<<(const CStringBase&) = delete;
     WTF_EXPORT_PRIVATE TextStream& operator<<(const UTF8CString&);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const Latin1CString&);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const ASCIICString&);
-    WTF_EXPORT_PRIVATE TextStream& operator<<(const String&);
     WTF_EXPORT_PRIVATE TextStream& operator<<(ASCIILiteral);
     WTF_EXPORT_PRIVATE TextStream& operator<<(StringView);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const HexNumberBuffer&);
@@ -110,7 +108,7 @@ public:
     bool hasFormattingFlag(Formatting flag) const { return m_formattingFlags.contains(flag); }
 
     template<typename T>
-    void dumpProperty(const String& name, const T& value)
+    void dumpProperty(StringImpl* name, const T& value)
     {
         TextStream& ts = *this;
         ts.startGroup();
@@ -127,7 +125,7 @@ public:
         ts.endGroup();
     }
 
-    WTF_EXPORT_PRIVATE String release();
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> release();
     
     WTF_EXPORT_PRIVATE void startGroup();
     WTF_EXPORT_PRIVATE void endGroup();
@@ -343,6 +341,25 @@ template<typename T>
 TextStream& operator<<(TextStream& ts, const Ref<T>& item)
 {
     return ts << item.get();
+}
+
+// Strings print their contents (a null string prints nothing), never their address.
+template<typename T> requires std::is_convertible_v<T*, const StringImpl*>
+TextStream& operator<<(TextStream& ts, T* string)
+{
+    return ts << StringView { static_cast<const StringImpl*>(string) };
+}
+
+template<typename T> requires std::is_convertible_v<T*, const StringImpl*>
+TextStream& operator<<(TextStream& ts, const RefPtr<T>& string)
+{
+    return ts << StringView { static_cast<const StringImpl*>(string.get()) };
+}
+
+template<typename T> requires std::is_convertible_v<T*, const StringImpl*>
+TextStream& operator<<(TextStream& ts, const Ref<T>& string)
+{
+    return ts << StringView { static_cast<const StringImpl&>(string.get()) };
 }
 
 template<typename T>

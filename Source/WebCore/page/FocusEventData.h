@@ -28,8 +28,8 @@
 namespace WebCore {
 
 struct FocusEventData {
-    AtomString type;
-    AtomString keyIdentifier;
+    RefPtr<AtomStringImpl> type;
+    RefPtr<AtomStringImpl> keyIdentifier;
     bool altKey { false };
 };
 

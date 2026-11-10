@@ -51,10 +51,10 @@ private:
     void streamReceiveBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool, std::optional<Exception>&&) final;
     void streamReceiveError(WebTransportStreamIdentifier, uint64_t) final;
     void streamSendError(WebTransportStreamIdentifier, uint64_t) final;
-    void didFail(std::optional<uint32_t>&&, String&&) final;
+    void didFail(std::optional<uint32_t>&&, RefPtr<StringImpl>&&) final;
     void didDrain() final;
 
-    Ref<WebTransportSessionInitializationPromise> initialize(ScriptExecutionContext&, const URL&, const WebTransportOptions&, const Vector<KeyValuePair<String, String>>&, const ClientOrigin&) final;
+    Ref<WebTransportSessionInitializationPromise> initialize(ScriptExecutionContext&, const URL&, const WebTransportOptions&, const Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&, const ClientOrigin&) final;
     Ref<WebTransportSendPromise> sendDatagram(std::optional<WebTransportSendGroupIdentifier>, std::span<const uint8_t>) final;
     Ref<WebTransportStreamPromise> createOutgoingUnidirectionalStream() final;
     Ref<WebTransportStreamPromise> createBidirectionalStream() final;

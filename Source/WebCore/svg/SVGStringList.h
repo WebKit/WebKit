@@ -29,8 +29,8 @@
 
 namespace WebCore {
 
-class SVGStringList final : public SVGPrimitiveList<String> {
-    using Base = SVGPrimitiveList<String>;
+class SVGStringList final : public SVGPrimitiveList<RefPtr<StringImpl>> {
+    using Base = SVGPrimitiveList<RefPtr<StringImpl>>;
     using Base::Base;
     using Base::m_items;
 
@@ -43,7 +43,7 @@ public:
     void setFromCommaSeparatedTokens(StringView);
     void setFromSpaceSeparatedTokens(StringView);
 
-    String valueAsString() const override;
+    RefPtr<StringImpl> valueAsString() const override;
 
 private:
     void parseCommaSeparatedTokens(StringView);

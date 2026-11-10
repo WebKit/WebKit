@@ -37,19 +37,19 @@ class SQLResultSetRowList : public RefCounted<SQLResultSetRowList> {
 public:
     static Ref<SQLResultSetRowList> create() { return adoptRef(*new SQLResultSetRowList); }
 
-    const Vector<String>& columnNames() const LIFETIME_BOUND { return m_columns; }
+    const Vector<RefPtr<StringImpl>>& columnNames() const LIFETIME_BOUND { return m_columns; }
     const Vector<SQLValue>& values() const LIFETIME_BOUND { return m_result; }
 
-    void addColumn(const String& name) { m_columns.append(name); }
+    void addColumn(StringImpl* name) { m_columns.append(name); }
     void addResult(const SQLValue& result) { m_result.append(result); }
 
     NODELETE unsigned length() const;
-    ExceptionOr<Vector<KeyValuePair<String, SQLValue>>> item(unsigned index) const;
+    ExceptionOr<Vector<KeyValuePair<RefPtr<StringImpl>, SQLValue>>> item(unsigned index) const;
 
 private:
     SQLResultSetRowList() { }
 
-    Vector<String> m_columns;
+    Vector<RefPtr<StringImpl>> m_columns;
     Vector<SQLValue> m_result;
 };
 

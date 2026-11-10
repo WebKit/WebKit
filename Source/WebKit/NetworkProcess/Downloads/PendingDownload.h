@@ -61,7 +61,7 @@ class PendingDownload : public RefCounted<PendingDownload>, public NetworkLoadCl
     WTF_MAKE_TZONE_ALLOCATED(PendingDownload);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PendingDownload);
 public:
-    static Ref<PendingDownload> create(IPC::Connection* connection, NetworkLoadParameters&& networkLoadParameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName, WebCore::FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::ProcessIdentifier> webProcessId)
+    static Ref<PendingDownload> create(IPC::Connection* connection, NetworkLoadParameters&& networkLoadParameters, DownloadID downloadID, NetworkSession& networkSession, StringImpl* suggestedName, WebCore::FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::ProcessIdentifier> webProcessId)
     {
         return adoptRef(*new PendingDownload(connection, WTF::move(networkLoadParameters), downloadID, networkSession, suggestedName, fromDownloadAttribute, webProcessId));
     }
@@ -77,7 +77,7 @@ public:
     virtual ~PendingDownload();
 
     void cancel(CompletionHandler<void(std::span<const uint8_t>)>&&);
-    void setPendingDownloadLocation(const String& path, SandboxExtension::Handle&&, bool allowOverwrite);
+    void setPendingDownloadLocation(StringImpl* path, SandboxExtension::Handle&&, bool allowOverwrite);
 
 #if PLATFORM(COCOA)
 #if HAVE(MODERN_DOWNLOADPROGRESS)
@@ -89,7 +89,7 @@ public:
 #endif
 
 private:    
-    PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName, WebCore::FromDownloadAttribute, std::optional<WebCore::ProcessIdentifier>);
+    PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, StringImpl* suggestedName, WebCore::FromDownloadAttribute, std::optional<WebCore::ProcessIdentifier>);
     PendingDownload(IPC::Connection*, Ref<NetworkLoad>&&, ResponseCompletionHandler&&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     // NetworkLoadClient.

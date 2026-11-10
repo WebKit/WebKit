@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-String convertEnumerationToString(PlatformMediaError enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(PlatformMediaError enumerationValue)
 {
-    static std::array<const NeverDestroyed<String>, 19> values {
+    static std::array<const NeverDestroyed<RefPtr<StringImpl>>, 19> values {
         MAKE_STATIC_STRING_IMPL("AppendError"),
         MAKE_STATIC_STRING_IMPL("ClientDisconnected"),
         MAKE_STATIC_STRING_IMPL("BufferRemoved"),

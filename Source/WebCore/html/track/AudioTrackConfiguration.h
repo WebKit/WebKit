@@ -44,8 +44,8 @@ public:
     enum class StateChanged : bool { No, Yes };
     StateChanged updateState(const AudioTrackConfigurationInit&);
 
-    String codec() const { return m_state.codec; }
-    void setCodec(String codec) { m_state.codec = codec; }
+    RefPtr<StringImpl> codec() const { return m_state.codec; }
+    void setCodec(RefPtr<StringImpl> codec) { m_state.codec = codec; }
 
     uint32_t sampleRate() const { return m_state.sampleRate; }
     void setSampleRate(uint32_t sampleRate) { m_state.sampleRate = sampleRate; }

@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-StyleRuleKeyframes::StyleRuleKeyframes(const AtomString& name)
+StyleRuleKeyframes::StyleRuleKeyframes(AtomStringImpl* name)
     : StyleRuleBase(StyleRuleType::Keyframes)
     , m_name(name)
 {
@@ -50,7 +50,7 @@ StyleRuleKeyframes::StyleRuleKeyframes(const StyleRuleKeyframes& o)
 {
 }
 
-Ref<StyleRuleKeyframes> StyleRuleKeyframes::create(const AtomString& name)
+Ref<StyleRuleKeyframes> StyleRuleKeyframes::create(AtomStringImpl* name)
 {
     return adoptRef(*new StyleRuleKeyframes(name));
 }
@@ -79,7 +79,7 @@ void StyleRuleKeyframes::wrapperRemoveKeyframe(unsigned index)
     m_keyframes.removeAt(index);
 }
 
-std::optional<size_t> StyleRuleKeyframes::findKeyframeIndex(const String& key) const
+std::optional<size_t> StyleRuleKeyframes::findKeyframeIndex(StringImpl* key) const
 {
     auto keys = CSSPropertyParserHelpers::parseKeyframeKeyList(key, strictCSSParserContext());
     if (keys.isEmpty())
@@ -118,14 +118,14 @@ CSSKeyframesRule::~CSSKeyframesRule()
     }
 }
 
-void CSSKeyframesRule::setName(const AtomString& name)
+void CSSKeyframesRule::setName(AtomStringImpl* name)
 {
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
     protect(m_keyframesRule)->setName(name);
 }
 
-void CSSKeyframesRule::appendRule(const String& ruleText)
+void CSSKeyframesRule::appendRule(StringImpl* ruleText)
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
 
@@ -140,7 +140,7 @@ void CSSKeyframesRule::appendRule(const String& ruleText)
     m_childRuleCSSOMWrappers.grow(length());
 }
 
-void CSSKeyframesRule::deleteRule(const String& s)
+void CSSKeyframesRule::deleteRule(StringImpl* s)
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
 
@@ -157,13 +157,13 @@ void CSSKeyframesRule::deleteRule(const String& s)
     m_childRuleCSSOMWrappers.removeAt(*i);
 }
 
-CSSKeyframeRule* CSSKeyframesRule::findRule(const String& s)
+CSSKeyframeRule* CSSKeyframesRule::findRule(StringImpl* s)
 {
     auto i = protect(m_keyframesRule)->findKeyframeIndex(s);
     return i ? item(*i) : nullptr;
 }
 
-String CSSKeyframesRule::cssText() const
+RefPtr<StringImpl> CSSKeyframesRule::cssText() const
 {
     StringBuilder result;
 

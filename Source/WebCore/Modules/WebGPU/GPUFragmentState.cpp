@@ -40,7 +40,7 @@ Ref<JSON::Object> GPUFragmentState::toJSON() const
         else
             targetsJSON->pushValue(JSON::Value::null());
     }
-    json->setArray("targets"_s, WTF::move(targetsJSON));
+    json->setArray("targets"_si, WTF::move(targetsJSON));
     return json;
 }
 

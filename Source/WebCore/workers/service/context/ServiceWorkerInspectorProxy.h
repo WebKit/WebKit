@@ -50,8 +50,8 @@ public:
 
     WEBCORE_EXPORT void connectToWorker(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false);
     WEBCORE_EXPORT void disconnectFromWorker(Inspector::FrontendChannel&);
-    WEBCORE_EXPORT void sendMessageToWorker(String&&);
-    void sendMessageFromWorkerToFrontend(String&&);
+    WEBCORE_EXPORT void sendMessageToWorker(RefPtr<StringImpl>&&);
+    void sendMessageFromWorkerToFrontend(RefPtr<StringImpl>&&);
 
 private:
     ThreadSafeWeakPtr<ServiceWorkerThreadProxy> m_serviceWorkerThreadProxy;

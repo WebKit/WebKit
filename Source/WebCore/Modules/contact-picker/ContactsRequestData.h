@@ -35,7 +35,7 @@ namespace WebCore {
 struct ContactsRequestData {
     Vector<ContactProperty> properties;
     bool multiple { false };
-    String url;
+    RefPtr<StringImpl> url;
 };
 
 }

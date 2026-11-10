@@ -77,7 +77,7 @@ void InspectorExtensionDelegate::InspectorExtensionClient::didShowExtensionTab(c
     if (!delegate)
         return;
 
-    [delegate inspectorExtension:m_inspectorExtensionDelegate->m_inspectorExtension.get().get() didShowTabWithIdentifier:extensionTabID.createNSString().get() withFrameHandle:wrapper(API::FrameHandle::create(frameID)).get()];
+    [delegate inspectorExtension:m_inspectorExtensionDelegate->m_inspectorExtension.get().get() didShowTabWithIdentifier:createNSString(extensionTabID).get() withFrameHandle:wrapper(API::FrameHandle::create(frameID)).get()];
 }
 
 void InspectorExtensionDelegate::InspectorExtensionClient::didHideExtensionTab(const Inspector::ExtensionTabID& extensionTabID)
@@ -89,7 +89,7 @@ void InspectorExtensionDelegate::InspectorExtensionClient::didHideExtensionTab(c
     if (!delegate)
         return;
 
-    [delegate inspectorExtension:m_inspectorExtensionDelegate->m_inspectorExtension.get().get() didHideTabWithIdentifier:extensionTabID.createNSString().get()];
+    [delegate inspectorExtension:m_inspectorExtensionDelegate->m_inspectorExtension.get().get() didHideTabWithIdentifier:createNSString(extensionTabID).get()];
 }
 
 void InspectorExtensionDelegate::InspectorExtensionClient::didNavigateExtensionTab(const Inspector::ExtensionTabID& extensionTabID, const WTF::URL& newURL)
@@ -101,7 +101,7 @@ void InspectorExtensionDelegate::InspectorExtensionClient::didNavigateExtensionT
     if (!delegate)
         return;
 
-    [delegate inspectorExtension:m_inspectorExtensionDelegate->m_inspectorExtension.get().get() didNavigateTabWithIdentifier:extensionTabID.createNSString().get() newURL:newURL.createNSURL().get()];
+    [delegate inspectorExtension:m_inspectorExtensionDelegate->m_inspectorExtension.get().get() didNavigateTabWithIdentifier:createNSString(extensionTabID).get() newURL:newURL.createNSURL().get()];
 }
 
 void InspectorExtensionDelegate::InspectorExtensionClient::inspectedPageDidNavigate(const WTF::URL& newURL)

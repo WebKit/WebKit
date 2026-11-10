@@ -174,7 +174,7 @@ bool ObjcArray::setValueAt(JSGlobalObject* lexicalGlobalObject, unsigned int ind
     }
 
     if (index > [_array count]) {
-        throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Index exceeds array size."_s));
+        throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Index exceeds array size."_si));
         return false;
     }
     
@@ -186,7 +186,7 @@ bool ObjcArray::setValueAt(JSGlobalObject* lexicalGlobalObject, unsigned int ind
         [_array insertObject:protect((__bridge id)oValue.objectValue) atIndex:index];
         return true;
     } @catch(NSException* localException) {
-        throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Objective-C exception."_s));
+        throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Objective-C exception."_si));
         return false;
     }
 }
@@ -197,13 +197,13 @@ JSValue ObjcArray::valueAt(JSGlobalObject* lexicalGlobalObject, unsigned int ind
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (index > [_array count])
-        return throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Index exceeds array size."_s));
+        return throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Index exceeds array size."_si));
     @try {
         id obj = [(NSArray *)_array objectAtIndex:index];
         if (obj)
             return convertObjcValueToValue (lexicalGlobalObject, &obj, ObjcObjectType, m_rootObject.get());
     } @catch(NSException* localException) {
-        return throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Objective-C exception."_s));
+        return throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Objective-C exception."_si));
     }
     return jsUndefined();
 }
@@ -215,7 +215,7 @@ unsigned int ObjcArray::getLength() const
 
 const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ObjcFallbackObjectImp) };
 
-ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Structure* structure, ObjcInstance* i, const String& propertyName)
+ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Structure* structure, ObjcInstance* i, StringImpl* propertyName)
     : JSDestructibleObject(globalObject->vm(), structure)
     , _instance(i)
     , m_item(propertyName)
@@ -234,7 +234,7 @@ void ObjcFallbackObjectImp::finishCreation(JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->toPrimitiveSymbol,
-        JSFunction::create(vm, globalObject, 0, "[Symbol.toPrimitive]"_s, convertObjCFallbackObjectToPrimitive, ImplementationVisibility::Public),
+        JSFunction::create(vm, globalObject, 0, "[Symbol.toPrimitive]"_si, convertObjCFallbackObjectToPrimitive, ImplementationVisibility::Public),
         static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
@@ -279,7 +279,7 @@ JSC_DEFINE_HOST_FUNCTION(callObjCFallbackObject, (JSGlobalObject* lexicalGlobalO
         auto* objcClass = downcast<ObjcClass>(objcInstance->getClass());
         std::unique_ptr<ObjcMethod> fallbackMethod(makeUnique<ObjcMethod>(objcClass->isa(), @selector(invokeUndefinedMethodFromWebScript:withArguments:)));
         auto& nameIdentifier = uncheckedDowncast<ObjcFallbackObjectImp>(callFrame->jsCallee())->propertyName();
-        fallbackMethod->setJavaScriptName(nameIdentifier.createCFString().get());
+        fallbackMethod->setJavaScriptName(createCFString(nameIdentifier).get());
         result = objcInstance->invokeObjcMethod(lexicalGlobalObject, callFrame, fallbackMethod.get());
     }
             

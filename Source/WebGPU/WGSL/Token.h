@@ -136,7 +136,7 @@ FOREACH_KEYWORD(ENUM_ENTRY)
     TemplateArgsRight,
 };
 
-String toString(TokenType);
+RefPtr<StringImpl> toString(TokenType);
 
 struct Token {
     TokenType type;
@@ -144,7 +144,7 @@ struct Token {
     union {
         double floatValue;
         int64_t integerValue;
-        String ident;
+        RefPtr<StringImpl> ident;
     };
 
     Token(TokenType type, SourcePosition position, unsigned length)
@@ -180,26 +180,26 @@ struct Token {
             || type == TokenType::HalfLiteral);
     }
 
-    Token(TokenType type, SourcePosition position, unsigned length, String&& ident)
+    Token(TokenType type, SourcePosition position, unsigned length, RefPtr<StringImpl>&& ident)
         : type(type)
         , span(position.line, position.lineOffset, position.offset, length)
         , ident(WTF::move(ident))
     {
-        ASSERT(this->ident.impl() && this->ident.impl()->bufferOwnership() == StringImpl::BufferInternal);
+        ASSERT(this->ident.get() && this->ident.get()->bufferOwnership() == StringImpl::BufferInternal);
         ASSERT(type == TokenType::Identifier);
     }
 
     Token& operator=(Token&& other)
     {
         if (type == TokenType::Identifier)
-            ident.~String();
+            ident.~RefPtr();
 
         type = other.type;
         span = other.span;
 
         switch (other.type) {
         case TokenType::Identifier:
-            new (NotNull, &ident) String();
+            new (NotNull, &ident) RefPtr<StringImpl>();
             ident = other.ident;
             break;
         case TokenType::IntegerLiteral:
@@ -222,14 +222,14 @@ struct Token {
     Token& operator=(const Token& other)
     {
         if (type == TokenType::Identifier)
-            ident.~String();
+            ident.~RefPtr();
 
         type = other.type;
         span = other.span;
 
         switch (other.type) {
         case TokenType::Identifier:
-            new (NotNull, &ident) String();
+            new (NotNull, &ident) RefPtr<StringImpl>();
             ident = other.ident;
             break;
         case TokenType::IntegerLiteral:
@@ -255,7 +255,7 @@ struct Token {
     {
         switch (other.type) {
         case TokenType::Identifier:
-            new (NotNull, &ident) String();
+            new (NotNull, &ident) RefPtr<StringImpl>();
             ident = other.ident;
             break;
         case TokenType::IntegerLiteral:
@@ -276,7 +276,7 @@ struct Token {
     ~Token()
     {
         if (type == TokenType::Identifier)
-            (&ident)->~String();
+            (&ident)->~RefPtr();
     }
 };
 

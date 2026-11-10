@@ -58,39 +58,39 @@ struct Cookie {
 
     bool isNull() const
     {
-        return name.isNull()
-            && value.isNull()
-            && domain.isNull()
-            && path.isNull()
-            && partitionKey.isNull()
+        return !name
+            && !value
+            && !domain
+            && !path
+            && !partitionKey
             && !created
             && !expires
             && !httpOnly
             && !secure
             && !session
-            && comment.isNull()
+            && !comment
             && commentURL.isNull();
     }
     
     bool isKeyEqual(const Cookie& otherCookie) const
     {
-        return name == otherCookie.name
-            && domain == otherCookie.domain
-            && path == otherCookie.path;
+        return equal(name, otherCookie.name)
+            && equal(domain, otherCookie.domain)
+            && equal(path, otherCookie.path);
     }
 
-    String name;
-    String value;
-    String domain;
-    String path;
-    String partitionKey;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> value;
+    RefPtr<StringImpl> domain;
+    RefPtr<StringImpl> path;
+    RefPtr<StringImpl> partitionKey;
     // Creation and expiration dates are expressed as milliseconds since the UNIX epoch.
     double created { 0 };
     std::optional<double> expires;
     bool httpOnly { false };
     bool secure { false };
     bool session { false };
-    String comment;
+    RefPtr<StringImpl> comment;
     URL commentURL;
     Vector<uint16_t> ports;
 
@@ -102,7 +102,7 @@ struct Cookie {
 
     SameSitePolicy sameSite { SameSitePolicy::None };
 
-    Cookie(String&& name, String&& value, String&& domain, String&& path, String&& partitionKey, double created, std::optional<double> expires, bool httpOnly, bool secure, bool session, String&& comment, URL&& commentURL, Vector<uint16_t> ports, SameSitePolicy sameSite)
+    Cookie(RefPtr<StringImpl>&& name, RefPtr<StringImpl>&& value, RefPtr<StringImpl>&& domain, RefPtr<StringImpl>&& path, RefPtr<StringImpl>&& partitionKey, double created, std::optional<double> expires, bool httpOnly, bool secure, bool session, RefPtr<StringImpl>&& comment, URL&& commentURL, Vector<uint16_t> ports, SameSitePolicy sameSite)
         : name(WTF::move(name))
         , value(WTF::move(value))
         , domain(WTF::move(domain))
@@ -120,22 +120,22 @@ struct Cookie {
     {
     }
 
-    Cookie isolatedCopy() const & { return { name.isolatedCopy(), value.isolatedCopy(), domain.isolatedCopy(), path.isolatedCopy(), partitionKey.isolatedCopy(), created, expires, httpOnly, secure, session, comment.isolatedCopy(), commentURL.isolatedCopy(), ports, sameSite }; }
-    Cookie isolatedCopy() && { return { WTF::move(name).isolatedCopy(), WTF::move(value).isolatedCopy(), WTF::move(domain).isolatedCopy(), WTF::move(path).isolatedCopy(), WTF::move(partitionKey).isolatedCopy(), created, expires, httpOnly, secure, session, WTF::move(comment).isolatedCopy(), WTF::move(commentURL).isolatedCopy(), WTF::move(ports), sameSite }; }
+    Cookie isolatedCopy() const & { return { WTF::isolatedCopy(name), WTF::isolatedCopy(value), WTF::isolatedCopy(domain), WTF::isolatedCopy(path), WTF::isolatedCopy(partitionKey), created, expires, httpOnly, secure, session, WTF::isolatedCopy(comment), commentURL.isolatedCopy(), ports, sameSite }; }
+    Cookie isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(name)), WTF::isolatedCopy(WTF::move(value)), WTF::isolatedCopy(WTF::move(domain)), WTF::isolatedCopy(WTF::move(path)), WTF::isolatedCopy(WTF::move(partitionKey)), created, expires, httpOnly, secure, session, WTF::isolatedCopy(WTF::move(comment)), WTF::move(commentURL).isolatedCopy(), WTF::move(ports), sameSite }; }
 };
 
 namespace CookieUtil {
 
-WEBCORE_EXPORT String defaultPathForURL(const URL&);
+WEBCORE_EXPORT RefPtr<StringImpl> defaultPathForURL(const URL&);
 
-std::optional<String> cookieStringWithDayFirstExpires(StringView);
+std::optional<RefPtr<StringImpl>> cookieStringWithDayFirstExpires(StringView);
 
 // These functions can reinterpret a cookie string heading from DOM to storage
 // or from storage to DOM. Some platforms choose to handle DOM strings differently
 // depending on how the data is written to storage.
-WEBCORE_EXPORT String cookieStringForScript(const String& storedValue);
-WEBCORE_EXPORT String cookieStringForScript(String&& storedValue);
-WEBCORE_EXPORT String cookieStringForStorage(const String& scriptValue);
+WEBCORE_EXPORT RefPtr<StringImpl> cookieStringForScript(StringImpl* storedValue);
+WEBCORE_EXPORT RefPtr<StringImpl> cookieStringForScript(RefPtr<StringImpl>&& storedValue);
+WEBCORE_EXPORT RefPtr<StringImpl> cookieStringForStorage(StringImpl* scriptValue);
 
 } // namespace CookieUtil
 
@@ -144,7 +144,7 @@ WEBCORE_EXPORT String cookieStringForStorage(const String& scriptValue);
 namespace WTF {
     template<> struct HashTraits<WebCore::Cookie> : GenericHashTraits<WebCore::Cookie> {
         static WebCore::Cookie emptyValue() { return { }; }
-        static void constructDeletedValue(WebCore::Cookie& slot) { new (NotNull, &slot.name) String(WTF::HashTableDeletedValue); }
+        static void constructDeletedValue(WebCore::Cookie& slot) { new (NotNull, &slot.name) RefPtr<StringImpl>(WTF::HashTableDeletedValue); }
         static bool isDeletedValue(const WebCore::Cookie& slot) { return slot.name.isHashTableDeletedValue(); }
 
         static const bool hasIsEmptyValueFunction = true;

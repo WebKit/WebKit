@@ -47,7 +47,7 @@ public:
     void beginInterruption(PlatformMediaSession::InterruptionType) final;
 
     bool hasActiveNowPlayingSession() const final { return m_nowPlayingActive; }
-    String lastUpdatedNowPlayingTitle() const final { return m_lastUpdatedNowPlayingTitle; }
+    RefPtr<StringImpl> lastUpdatedNowPlayingTitle() const final { return m_lastUpdatedNowPlayingTitle; }
     double lastUpdatedNowPlayingDuration() const final { return m_lastUpdatedNowPlayingDuration; }
     double lastUpdatedNowPlayingElapsedTime() const final { return m_lastUpdatedNowPlayingElapsedTime; }
     std::optional<MediaUniqueIdentifier> lastUpdatedNowPlayingInfoUniqueIdentifier() const final { return m_lastUpdatedNowPlayingInfoUniqueIdentifier; }
@@ -108,7 +108,7 @@ private:
     bool m_haveEverRegisteredAsNowPlayingApplication { false };
 
     // For testing purposes only.
-    String m_lastUpdatedNowPlayingTitle;
+    RefPtr<StringImpl> m_lastUpdatedNowPlayingTitle;
     double m_lastUpdatedNowPlayingDuration { NAN };
     double m_lastUpdatedNowPlayingElapsedTime { NAN };
     Markable<MediaUniqueIdentifier> m_lastUpdatedNowPlayingInfoUniqueIdentifier;

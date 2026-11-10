@@ -45,7 +45,7 @@ static bool observableArraySetLength(JSObservableArray* object, JSGlobalObject* 
     auto lengthNumber = value.toNumber(lexicalGlobalObject);
     RETURN_IF_EXCEPTION(scope, false);
     if (length != lengthNumber) {
-        throwRangeError(lexicalGlobalObject, scope, "Invalid length"_s);
+        throwRangeError(lexicalGlobalObject, scope, "Invalid length"_si);
         return false;
     }
     Ref concreteArray = object->getConcreteArray();

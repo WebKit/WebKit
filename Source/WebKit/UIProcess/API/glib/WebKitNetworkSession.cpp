@@ -92,7 +92,7 @@ struct _WebKitNetworkSessionPrivate {
     UTF8CString dataDirectory;
     UTF8CString cacheDirectory;
 
-    HashSet<String> dnsPrefetchedHosts;
+    HashSet<RefPtr<StringImpl>> dnsPrefetchedHosts;
     PAL::HysteresisActivity dnsPrefetchHystereris;
 };
 
@@ -138,8 +138,8 @@ static void webkitNetworkSessionConstructed(GObject* object)
     WebKitNetworkSessionPrivate* priv = WEBKIT_NETWORK_SESSION(object)->priv;
     if (!priv->websiteDataManager) {
         priv->websiteDataManager = adoptGRef(webkitWebsiteDataManagerCreate(
-            !priv->dataDirectory.isNull() ? WTF::move(priv->dataDirectory) : WebsiteDataStore::defaultBaseDataDirectory().utf8(),
-            !priv->cacheDirectory.isNull() ? WTF::move(priv->cacheDirectory) : WebsiteDataStore::defaultBaseCacheDirectory().utf8())
+            !priv->dataDirectory.isNull() ? WTF::move(priv->dataDirectory) : utf8(WebsiteDataStore::defaultBaseDataDirectory()),
+            !priv->cacheDirectory.isNull() ? WTF::move(priv->cacheDirectory) : utf8(WebsiteDataStore::defaultBaseCacheDirectory()))
         );
     }
 
@@ -485,7 +485,7 @@ void webkit_network_session_allow_tls_certificate_for_host(WebKitNetworkSession*
 
     auto certificateInfo = WebCore::CertificateInfo(certificate, static_cast<GTlsCertificateFlags>(0));
     Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
-    websiteDataStore->allowSpecificHTTPSCertificateForHost(certificateInfo, String::fromUTF8(host));
+    websiteDataStore->allowSpecificHTTPSCertificateForHost(certificateInfo, StringImpl::fromUTF8(host));
 }
 
 /**
@@ -625,9 +625,9 @@ void webkit_network_session_prefetch_dns(WebKitNetworkSession* session, const ch
     g_return_if_fail(WEBKIT_IS_NETWORK_SESSION(session));
     g_return_if_fail(hostname);
 
-    if (session->priv->dnsPrefetchedHosts.add(String::fromUTF8(hostname)).isNewEntry) {
+    if (session->priv->dnsPrefetchedHosts.add(StringImpl::fromUTF8(hostname)).isNewEntry) {
         Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
-        websiteDataStore->networkProcess().send(Messages::NetworkProcess::PrefetchDNS(String::fromUTF8(hostname)), 0);
+        websiteDataStore->networkProcess().send(Messages::NetworkProcess::PrefetchDNS(StringImpl::fromUTF8(hostname)), 0);
     }
     session->priv->dnsPrefetchHystereris.impulse();
 }
@@ -653,7 +653,7 @@ WebKitDownload* webkit_network_session_download_uri(WebKitNetworkSession* sessio
     g_return_val_if_fail(WEBKIT_IS_NETWORK_SESSION(session), nullptr);
     g_return_val_if_fail(uri, nullptr);
 
-    WebCore::ResourceRequest request(String::fromUTF8(uri));
+    WebCore::ResourceRequest request(StringImpl::fromUTF8(uri));
     Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
     auto downloadProxy = websiteDataStore->createDownloadProxy(adoptRef(*new API::DownloadClient), request, nullptr, { });
     auto download = webkitDownloadCreate(downloadProxy);

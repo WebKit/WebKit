@@ -114,7 +114,7 @@ template<typename CharacterType>
 ALWAYS_INLINE Ref<AtomStringImpl> JSONCache::makeIdentifier(VM& vm, std::span<const CharacterType> characters)
 {
     if (characters.empty())
-        return *emptyAtom().impl();
+        return *emptyAtom().get();
 
     auto firstCharacter = characters.front();
     if (characters.size() == 1) {
@@ -143,7 +143,7 @@ template<typename CharacterType>
 ALWAYS_INLINE AtomStringImpl* JSONCache::existingIdentifier(VM& vm, std::span<const CharacterType> characters)
 {
     if (characters.empty())
-        return emptyAtom().impl();
+        return emptyAtom().get();
 
     auto firstCharacter = characters.front();
     if (characters.size() == 1) {
@@ -166,13 +166,13 @@ NEVER_INLINE JSString* JSONCache::makeJSStringSlow(VM& vm, uint64_t key, std::sp
     if (index != stringCapacity) {
         if (JSString* cached = m_jsStrings[index])
             return cached;
-        JSString* result = jsString(vm, String { m_atomStrings[index].m_impl.get() });
+        JSString* result = jsString(vm, RefPtr<StringImpl> { m_atomStrings[index].m_impl });
         m_jsStrings[index] = result;
         return result;
     }
 
     Ref impl = AtomStringImpl::add(characters).releaseNonNull();
-    JSString* result = jsString(vm, String { impl.copyRef() });
+    JSString* result = jsString(vm, impl.copyRef());
     m_jsStrings[addAtomString(key, characters, WTF::move(impl))] = result;
     return result;
 }
@@ -237,9 +237,9 @@ inline JSString* JSONCache::makeLongJSString(VM& vm, std::span<const CharacterTy
 {
     auto create = [&] {
         if constexpr (std::is_same_v<CharacterType, char16_t>)
-            return jsNontrivialString(vm, String(StringImpl::create8BitIfPossible(characters)));
+            return jsNontrivialString(vm, RefPtr<StringImpl> { StringImpl::create8BitIfPossible(characters) });
         else
-            return jsNontrivialString(vm, String(characters));
+            return jsNontrivialString(vm, RefPtr<StringImpl> { StringImpl::create(characters) });
     };
 
     if (characters.size() > maxLongStringLength)

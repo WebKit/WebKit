@@ -45,42 +45,41 @@ namespace WTF {
 
 template<typename T>
 struct LogArgument {
-    template<typename U = T> requires (std::same_as<U, bool>) static String toString(bool argument) { return argument ? "true"_s : "false"_s; }
-    template<typename U = T> requires (std::same_as<U, int>) static String toString(int argument) { return String::number(argument); }
-    template<typename U = T> requires (std::same_as<U, unsigned>) static String toString(unsigned argument) { return String::number(argument); }
-    template<typename U = T> requires (std::same_as<U, unsigned long>) static String toString(unsigned long argument) { return String::number(argument); }
-    template<typename U = T> requires (std::same_as<U, long>) static String toString(long argument) { return String::number(argument); }
-    template<typename U = T> requires (std::same_as<U, unsigned long long>) static String toString(unsigned long long argument) { return String::number(argument); }
-    template<typename U = T> requires (std::same_as<U, long long>) static String toString(long long argument) { return String::number(argument); }
-    template<typename U = T> requires (std::same_as<U, unsigned short>) static String toString(unsigned short argument) { return String::number(argument); }
-    template<typename U = T> requires (std::same_as<U, short>) static String toString(short argument) { return String::number(argument); }
-    template<typename U = T> requires (std::is_enum_v<U>) static String toString(U argument) { return String::number(static_cast<typename std::underlying_type<U>::type>(argument)); }
-    template<typename U = T> requires (std::same_as<U, float>) static String toString(float argument) { return String::number(argument); }
-    template<typename U = T> requires (std::same_as<U, double>) static String toString(double argument) { return String::number(argument); }
-    template<typename U = T> requires (std::same_as<typename std::remove_reference_t<U>, AtomString>) static String toString(const AtomString& argument) { return argument.string(); }
-    template<typename U = T> requires (std::same_as<typename std::remove_reference_t<U>, String>) static String toString(String argument) { return argument; }
-    template<typename U = T> requires (std::same_as<typename std::remove_reference_t<U>, StringBuilder*>) static String toString(StringBuilder* argument) { return argument->toString(); }
-    template<typename U = T> requires (std::same_as<typename std::remove_reference_t<U>, StringView>) static String toString(const StringView& argument) { return argument.toString(); }
-    template<typename U = T> requires (std::same_as<U, const char*>) static String toString(const char* argument) { return String::fromLatin1(argument); }
-    template<typename U = T> requires (std::same_as<U, ASCIILiteral>) static String toString(ASCIILiteral argument) { return argument; }
-    template<typename U = T> requires (std::same_as<U, std::span<const char8_t>>) static String toString(std::span<const char8_t> argument) { return argument; }
+    template<typename U = T> requires (std::same_as<U, bool>) static RefPtr<StringImpl> toString(bool argument) { return argument ? "true"_si : "false"_si; }
+    template<typename U = T> requires (std::same_as<U, int>) static RefPtr<StringImpl> toString(int argument) { return makeString(argument); }
+    template<typename U = T> requires (std::same_as<U, unsigned>) static RefPtr<StringImpl> toString(unsigned argument) { return makeString(argument); }
+    template<typename U = T> requires (std::same_as<U, unsigned long>) static RefPtr<StringImpl> toString(unsigned long argument) { return makeString(argument); }
+    template<typename U = T> requires (std::same_as<U, long>) static RefPtr<StringImpl> toString(long argument) { return makeString(argument); }
+    template<typename U = T> requires (std::same_as<U, unsigned long long>) static RefPtr<StringImpl> toString(unsigned long long argument) { return makeString(argument); }
+    template<typename U = T> requires (std::same_as<U, long long>) static RefPtr<StringImpl> toString(long long argument) { return makeString(argument); }
+    template<typename U = T> requires (std::same_as<U, unsigned short>) static RefPtr<StringImpl> toString(unsigned short argument) { return makeString(argument); }
+    template<typename U = T> requires (std::same_as<U, short>) static RefPtr<StringImpl> toString(short argument) { return makeString(argument); }
+    template<typename U = T> requires (std::is_enum_v<U>) static RefPtr<StringImpl> toString(U argument) { return makeString(+static_cast<typename std::underlying_type<U>::type>(argument)); }
+    template<typename U = T> requires (std::same_as<U, float>) static RefPtr<StringImpl> toString(float argument) { return makeString(argument); }
+    template<typename U = T> requires (std::same_as<U, double>) static RefPtr<StringImpl> toString(double argument) { return makeString(argument); }
+    template<typename U = T> requires (StringImplPointerLike<U>) static RefPtr<StringImpl> toString(const U& argument) { return toStringImplPointer(argument); }
+    template<typename U = T> requires (std::same_as<typename std::remove_reference_t<U>, StringBuilder*>) static RefPtr<StringImpl> toString(StringBuilder* argument) { return argument->toString(); }
+    template<typename U = T> requires (std::same_as<typename std::remove_reference_t<U>, StringView>) static RefPtr<StringImpl> toString(const StringView& argument) { return argument.toString(); }
+    template<typename U = T> requires (std::same_as<U, const char*>) static RefPtr<StringImpl> toString(const char* argument) { return StringImpl::fromLatin1(argument); }
+    template<typename U = T> requires (std::same_as<U, ASCIILiteral>) static RefPtr<StringImpl> toString(ASCIILiteral argument) { return argument; }
+    template<typename U = T> requires (std::same_as<U, std::span<const char8_t>>) static RefPtr<StringImpl> toString(std::span<const char8_t> argument) { return StringImpl::create(argument); }
 #ifdef __OBJC__
-    template<typename U = T> requires (std::is_base_of_v<NSError, std::remove_pointer_t<U>>) static String toString(NSError *argument) { return String(argument.localizedDescription); }
-    template<typename U = T> requires (std::is_base_of_v<NSObject, std::remove_pointer_t<U>>) static String toString(NSObject *argument) { return String(argument.description); }
-    template<typename U = T> requires (std::is_base_of_v<NSProxy, std::remove_pointer_t<U>>) static String toString(NSProxy *argument) { return String(argument.description); }
+    template<typename U = T> requires (std::is_base_of_v<NSError, std::remove_pointer_t<U>>) static RefPtr<StringImpl> toString(NSError *argument) { return StringImpl::create(argument.localizedDescription); }
+    template<typename U = T> requires (std::is_base_of_v<NSObject, std::remove_pointer_t<U>>) static RefPtr<StringImpl> toString(NSObject *argument) { return StringImpl::create(argument.description); }
+    template<typename U = T> requires (std::is_base_of_v<NSProxy, std::remove_pointer_t<U>>) static RefPtr<StringImpl> toString(NSProxy *argument) { return StringImpl::create(argument.description); }
 #endif
-    template<size_t length> static String toString(const char (&argument)[length]) { return String::fromLatin1(argument); }
+    template<size_t length> static RefPtr<StringImpl> toString(const char (&argument)[length]) { return StringImpl::fromLatin1(argument); }
 };
 
 struct JSONLogValue {
     enum class Type { String, JSON };
     Type type { Type::JSON };
-    String value;
+    RefPtr<StringImpl> value;
 };
 
 template<class C>
 class HasToJSONString {
-    template <class T> static std::true_type testSignature(String (T::*)() const);
+    template <class T> static std::true_type testSignature(RefPtr<StringImpl> (T::*)() const);
 
     template <class T> static decltype(testSignature(&T::toJSONString)) test(std::nullptr_t);
     template <class T> static std::false_type test(...);
@@ -323,7 +322,7 @@ public:
         {
         }
 
-        WTF_EXPORT_PRIVATE String toString() const;
+        WTF_EXPORT_PRIVATE RefPtr<StringImpl> toString() const;
 
         ASCIILiteral className;
         const char* methodName { nullptr };
@@ -378,18 +377,18 @@ private:
         auto logMessage = makeString(LogArgument<Argument>::toString(arguments)...);
 
 #if RELEASE_LOG_DISABLED
-        SAFE_WTFLOG(&channel, "%s", logMessage.utf8());
+        SAFE_WTFLOG(&channel, "%s", utf8(logMessage));
 #elif USE(OS_LOG)
-        osLog(channel, logMessage.utf8());
+        osLog(channel, utf8(logMessage));
 #elif OS(ANDROID)
-        SAFE_ANDROID_LOG_PRINT(ANDROID_LOG_VERBOSE, LOG_CHANNEL_WEBKIT_SUBSYSTEM, "[%s] %s", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8());
+        SAFE_ANDROID_LOG_PRINT(ANDROID_LOG_VERBOSE, LOG_CHANNEL_WEBKIT_SUBSYSTEM, "[%s] %s", UTF8CStringView::unsafeFromUTF8(channel.name), utf8(logMessage));
 #elif ENABLE(JOURNALD_LOG)
         if (WTFShouldLogToJournal())
-            SAFE_SD_JOURNAL_SEND("WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", logMessage.utf8());
+            SAFE_SD_JOURNAL_SEND("WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", utf8(logMessage));
         else
-            SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s\n", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8());
+            SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s\n", UTF8CStringView::unsafeFromUTF8(channel.name), utf8(logMessage));
 #else
-        SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s\n", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8());
+        SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s\n", UTF8CStringView::unsafeFromUTF8(channel.name), utf8(logMessage));
 #endif
 
         sendMessageToObservers(channel, level, { }, arguments...);
@@ -415,24 +414,24 @@ private:
         auto logMessage = makeString(LogArgument<Argument>::toString(arguments)...);
 
 #if RELEASE_LOG_DISABLED
-        SAFE_WTFLOG_VERBOSE(file, line, function, &channel, "%s", logMessage.utf8());
+        SAFE_WTFLOG_VERBOSE(file, line, function, &channel, "%s", utf8(logMessage));
 #elif USE(OS_LOG)
-        osLog(channel, logMessage.utf8());
+        osLog(channel, utf8(logMessage));
         UNUSED_PARAM(file);
         UNUSED_PARAM(line);
         UNUSED_PARAM(function);
 #elif OS(ANDROID)
-        SAFE_ANDROID_LOG_PRINT(ANDROID_LOG_VERBOSE, LOG_CHANNEL_WEBKIT_SUBSYSTEM, "[%s] %s FILE=%s:%d: %s", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8(), UTF8CStringView::unsafeFromUTF8(file), line, UTF8CStringView::unsafeFromUTF8(function));
+        SAFE_ANDROID_LOG_PRINT(ANDROID_LOG_VERBOSE, LOG_CHANNEL_WEBKIT_SUBSYSTEM, "[%s] %s FILE=%s:%d: %s", UTF8CStringView::unsafeFromUTF8(channel.name), utf8(logMessage), UTF8CStringView::unsafeFromUTF8(file), line, UTF8CStringView::unsafeFromUTF8(function));
 #elif ENABLE(JOURNALD_LOG)
         if (WTFShouldLogToJournal()) {
             auto fileString = makeString("CODE_FILE="_s, unsafeSpan(file));
             auto lineString = makeString("CODE_LINE="_s, line);
-            SAFE_SD_JOURNAL_SEND_WITH_LOCATION(fileString.utf8(), lineString.utf8(), function, "WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", logMessage.utf8());
+            SAFE_SD_JOURNAL_SEND_WITH_LOCATION(utf8(fileString), utf8(lineString), function, "WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", utf8(logMessage));
         } else {
-            SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s [%s:%d %s]\n", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8(), UTF8CStringView::unsafeFromUTF8(file), line, UTF8CStringView::unsafeFromUTF8(function));
+            SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s [%s:%d %s]\n", UTF8CStringView::unsafeFromUTF8(channel.name), utf8(logMessage), UTF8CStringView::unsafeFromUTF8(file), line, UTF8CStringView::unsafeFromUTF8(function));
         }
 #else
-        SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s FILE=%s:%d %s\n", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8(), UTF8CStringView::unsafeFromUTF8(file), line, UTF8CStringView::unsafeFromUTF8(function));
+        SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s FILE=%s:%d %s\n", UTF8CStringView::unsafeFromUTF8(channel.name), utf8(logMessage), UTF8CStringView::unsafeFromUTF8(file), line, UTF8CStringView::unsafeFromUTF8(function));
 #endif
 
         sendMessageToObservers(channel, level, { { file, function, line } }, arguments...);
@@ -460,25 +459,25 @@ private:
 WTF_EXPORT_PRIVATE const Logger& emptyLogger();
 
 template<> struct LogArgument<Logger::LogSiteIdentifier> {
-    static String toString(const Logger::LogSiteIdentifier& value) { return value.toString(); }
+    static RefPtr<StringImpl> toString(const Logger::LogSiteIdentifier& value) { return value.toString(); }
 };
 template<> struct LogArgument<const void*> {
-    WTF_EXPORT_PRIVATE static String toString(const void*);
+    WTF_EXPORT_PRIVATE static RefPtr<StringImpl> toString(const void*);
 };
 template<typename T>
 struct LogArgument<std::optional<T>> {
-    static String toString(const std::optional<T>& value)
+    static RefPtr<StringImpl> toString(const std::optional<T>& value)
     {
-        return value ? LogArgument<T>::toString(value.value()) : "nullopt"_s;
+        return value ? LogArgument<T>::toString(value.value()) : "nullopt"_si;
     }
 };
 
 #ifdef __OBJC__
 template<> struct LogArgument<id> {
-    static String toString(id argument)
+    static RefPtr<StringImpl> toString(id argument)
     {
         if ([argument respondsToSelector:@selector(description)])
-            return String([argument description]);
+            return StringImpl::create([argument description]);
         return LogArgument<const void*>::toString((__bridge const void*)argument);
     }
 };

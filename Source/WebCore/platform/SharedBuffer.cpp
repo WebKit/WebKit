@@ -213,7 +213,7 @@ std::span<const FragmentedSharedBuffer::DataSegmentVectorEntry> FragmentedShared
     return m_segments.subspan(element - m_segments.begin() - 1);
 }
 
-String FragmentedSharedBuffer::toHexString() const
+RefPtr<StringImpl> FragmentedSharedBuffer::toHexString() const
 {
     StringBuilder stringBuilder;
     stringBuilder.reserveCapacity(size() * 2);
@@ -494,7 +494,7 @@ SharedBuffer::SharedBuffer(GstMappedOwnedBuffer& mappedBuffer)
 }
 #endif
 
-RefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath, FileSystem::MappedFileMode mappedFileMode, MayUseFileMapping mayUseFileMapping)
+RefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(StringImpl* filePath, FileSystem::MappedFileMode mappedFileMode, MayUseFileMapping mayUseFileMapping)
 {
     if (mayUseFileMapping == MayUseFileMapping::Yes) {
         if (auto mappedFileData = FileSystem::mapFile(filePath, mappedFileMode))
@@ -791,14 +791,14 @@ Ref<SharedBuffer> SharedBufferDataView::createSharedBuffer() const
     });
 }
 
-RefPtr<SharedBuffer> utf8Buffer(const String& string)
+RefPtr<SharedBuffer> utf8Buffer(StringImpl* string)
 {
     // Allocate a buffer big enough to hold all the characters.
     // 8-bit (Latin1) characters expand to at most 2 UTF-8 bytes.
     // 16-bit characters expand to at most 3 UTF-8 bytes.
-    const size_t length = string.length();
-    const size_t maxExpansion = string.is8Bit() ? 2 : 3;
-    if constexpr (String::MaxLength > std::numeric_limits<size_t>::max() / 3) {
+    const size_t length = WTF::length(string);
+    const size_t maxExpansion = is8Bit(string) ? 2 : 3;
+    if constexpr (StringImpl::MaxLength > std::numeric_limits<size_t>::max() / 3) {
         if (length > std::numeric_limits<size_t>::max() / maxExpansion)
             return nullptr;
     }
@@ -806,10 +806,10 @@ RefPtr<SharedBuffer> utf8Buffer(const String& string)
     Vector<uint8_t> buffer(length * maxExpansion);
     WTF::Unicode::ConversionResult<char8_t> result;
     if (length) {
-        if (string.is8Bit())
-            result = WTF::Unicode::convert(string.span8(), spanReinterpretCast<char8_t>(buffer.mutableSpan()));
+        if (is8Bit(string))
+            result = WTF::Unicode::convert(span8(string), spanReinterpretCast<char8_t>(buffer.mutableSpan()));
         else
-            result = WTF::Unicode::convert(string.span16(), spanReinterpretCast<char8_t>(buffer.mutableSpan()));
+            result = WTF::Unicode::convert(span16(string), spanReinterpretCast<char8_t>(buffer.mutableSpan()));
         if (result.code != WTF::Unicode::ConversionResultCode::Success)
             return nullptr;
     }

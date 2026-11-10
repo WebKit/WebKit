@@ -199,7 +199,7 @@ public:
 
     bool isFinite() const { return std::isfinite(m_x) && std::isfinite(m_y); }
 
-    WEBCORE_EXPORT String toJSONString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> toJSONString() const;
     WEBCORE_EXPORT Ref<JSON::Object> toJSONObject() const;
 
     operator DoublePoint() const { return { m_x, m_y }; }
@@ -350,7 +350,7 @@ namespace WTF {
 template<typename Type> struct LogArgument;
 template <>
 struct LogArgument<WebCore::FloatPoint> {
-    static String toString(const WebCore::FloatPoint& point)
+    static RefPtr<StringImpl> toString(const WebCore::FloatPoint& point)
     {
         return point.toJSONString();
     }

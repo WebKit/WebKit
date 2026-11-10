@@ -239,15 +239,15 @@ auto KanjiCode::judge(std::span<const uint8_t> string) -> Type
     return code;
 }
 
-TextResourceDecoder::ContentType TextResourceDecoder::contentTypeForMIMEType(const String& mimeType)
+TextResourceDecoder::ContentType TextResourceDecoder::contentTypeForMIMEType(StringImpl* mimeType)
 {
-    ASSERT(mimeType == extractMIMETypeFromMediaType(mimeType));
+    ASSERT(equal(mimeType, extractMIMETypeFromMediaType(mimeType)));
 
-    if (mimeType == "text/css"_s)
+    if (equal(mimeType, "text/css"_s))
         return ContentType::CSS;
-    if (mimeType == "text/html"_s)
+    if (equal(mimeType, "text/html"_s))
         return ContentType::HTML;
-    if (MIMETypeRegistry::isXMLMIMEType(mimeType) || mimeType == "text/xsl"_s)
+    if (MIMETypeRegistry::isXMLMIMEType(mimeType) || equal(mimeType, "text/xsl"_s))
         return ContentType::XML;
     return ContentType::PlainText;
 }
@@ -290,7 +290,7 @@ Ref<TextResourceDecoder> TextResourceDecoder::createUTF8()
 }
 
 // https://encoding.spec.whatwg.org/#utf-8-decode
-String TextResourceDecoder::textFromUTF8(std::span<const uint8_t> data)
+RefPtr<StringImpl> TextResourceDecoder::textFromUTF8(std::span<const uint8_t> data)
 {
     return createUTF8()->decodeAndFlush(data);
 }
@@ -317,7 +317,7 @@ void TextResourceDecoder::setEncoding(const PAL::TextEncoding& encoding, Encodin
     m_source = source;
 }
 
-bool TextResourceDecoder::charsetWouldChangeEncoding(const String& charset) const
+bool TextResourceDecoder::charsetWouldChangeEncoding(StringImpl* charset) const
 {
     if (m_alwaysUseUTF8)
         return false;
@@ -549,7 +549,7 @@ bool TextResourceDecoder::shouldAutoDetect() const
         && (m_source == EncodingSource::Default || (m_source == EncodingSource::ParentFrame && m_parentFrameAutoDetectedEncoding));
 }
 
-String TextResourceDecoder::decode(std::span<const uint8_t> data)
+RefPtr<StringImpl> TextResourceDecoder::decode(std::span<const uint8_t> data)
 {
     size_t lengthOfBOM = 0;
     if (!m_checkedForBOM) {
@@ -597,12 +597,12 @@ String TextResourceDecoder::decode(std::span<const uint8_t> data)
         memcpySpan(m_buffer.mutableSpan().subspan(oldSize), data);
     }
 
-    String result = m_codec->decode(m_buffer.subspan(lengthOfBOM), false, m_contentType == ContentType::XML && !m_useLenientXMLDecoding, m_sawError);
+    RefPtr<StringImpl> result = m_codec->decode(m_buffer.subspan(lengthOfBOM), false, m_contentType == ContentType::XML && !m_useLenientXMLDecoding, m_sawError);
     m_buffer.clear();
     return result;
 }
 
-String TextResourceDecoder::flush()
+RefPtr<StringImpl> TextResourceDecoder::flush()
 {
     // If we can not identify the encoding even after a document is completely
     // loaded, we need to detect the encoding if other conditions for
@@ -617,18 +617,18 @@ String TextResourceDecoder::flush()
     if (!m_codec)
         m_codec = newTextCodec(m_encoding);
 
-    String result = m_codec->decode(m_buffer.span(), true, m_contentType == ContentType::XML && !m_useLenientXMLDecoding, m_sawError);
+    RefPtr<StringImpl> result = m_codec->decode(m_buffer.span(), true, m_contentType == ContentType::XML && !m_useLenientXMLDecoding, m_sawError);
     m_buffer.clear();
     m_codec = nullptr;
     m_checkedForBOM = false; // Skip BOM again when re-decoding.
     return result;
 }
 
-String TextResourceDecoder::decodeAndFlush(std::span<const uint8_t> data)
+RefPtr<StringImpl> TextResourceDecoder::decodeAndFlush(std::span<const uint8_t> data)
 {
     auto decoded = decode(data);
     auto result = tryMakeString(decoded, flush());
-    if (result.isNull())
+    if (!result)
         RELEASE_LOG_ERROR(TextDecoding, "TextResourceDecoder::decodeAndFlush() failed, size too large (%zu)", data.size());
     return result;
 }

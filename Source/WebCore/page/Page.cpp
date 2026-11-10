@@ -589,7 +589,7 @@ Page::~Page()
     m_diagnosticLoggingClient = nullptr;
     m_performanceLoggingClient = nullptr;
     protect(mainFrame())->disconnectView();
-    setGroupName(String());
+    setGroupName(nullString());
     allPages().remove(*this);
     if (!isUtilityPage()) {
         --gNonUtilityPageCount;
@@ -741,7 +741,7 @@ ScrollingCoordinator* Page::scrollingCoordinator()
     return m_scrollingCoordinator;
 }
 
-String Page::scrollingStateTreeAsText()
+RefPtr<StringImpl> Page::scrollingStateTreeAsText()
 {
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
     if (RefPtr document = localMainFrame ? localMainFrame->document() : nullptr) {
@@ -755,10 +755,10 @@ String Page::scrollingStateTreeAsText()
     if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
         return scrollingCoordinator->scrollingStateTreeAsText();
 
-    return String();
+    return nullptr;
 }
 
-String Page::synchronousScrollingReasonsAsText()
+RefPtr<StringImpl> Page::synchronousScrollingReasonsAsText()
 {
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
     if (RefPtr document = localMainFrame ? localMainFrame->document() : nullptr)
@@ -1090,9 +1090,9 @@ void Page::updateTopDocumentSyncData(Ref<DocumentSyncData>&& data)
         topDocumentURLDidChange();
 }
 
-void Page::setMainFrameURLFragment(String&& fragment)
+void Page::setMainFrameURLFragment(RefPtr<StringImpl>&& fragment)
 {
-    if (!fragment.isEmpty())
+    if (!isEmpty(fragment))
         m_mainFrameURLFragment = WTF::move(fragment);
 }
 
@@ -1150,15 +1150,15 @@ void Page::goToItemForNavigationAPI(LocalFrame& frame, HistoryItem& item, FrameL
     frame.loader().history().goToItemForNavigationAPI(item, type, triggeringFrame, tracker);
 }
 
-void Page::setGroupName(const String& name)
+void Page::setGroupName(StringImpl* name)
 {
-    if (CheckedPtr group = m_group.get(); group && !group->name().isEmpty()) {
+    if (CheckedPtr group = m_group.get(); group && !isEmpty(group->name())) {
         ASSERT(group != m_singlePageGroup.get());
         ASSERT(!m_singlePageGroup);
         group->removePage(*this);
     }
 
-    if (name.isEmpty())
+    if (isEmpty(name))
         m_group = m_singlePageGroup.get();
     else {
         m_singlePageGroup = nullptr;
@@ -1167,9 +1167,11 @@ void Page::setGroupName(const String& name)
     }
 }
 
-const String& Page::groupName() const
+const RefPtr<StringImpl>& Page::groupName() const
 {
-    return m_group ? m_group->name() : nullAtom().string();
+    if (!m_group)
+        return nullString();
+    return m_group->name();
 }
 
 void Page::setBroadcastChannelRegistry(Ref<BroadcastChannelRegistry>&& broadcastChannelRegistry)
@@ -1277,9 +1279,9 @@ NODELETE static Frame* incrementFrame(Frame* current, bool forward, CanWrap canW
         : current->tree().traversePrevious(canWrap, didWrap);
 }
 
-Page::FindStringData Page::findString(const String& target, FindOptions options, DidWrap* didWrap)
+Page::FindStringData Page::findString(StringImpl* target, FindOptions options, DidWrap* didWrap)
 {
-    if (target.isEmpty())
+    if (isEmpty(target))
         return { std::nullopt, std::nullopt };
 
     CanWrap canWrap = options.contains(FindOption::WrapAround) ? CanWrap::Yes : CanWrap::No;
@@ -1326,12 +1328,12 @@ void Page::analyzeImagesForFindInPage(Function<void()>&& callback)
     if (settings().imageAnalysisDuringFindInPageEnabled()) {
         Ref imageAnalysisQueue = this->imageAnalysisQueue();
         imageAnalysisQueue->setDidBecomeEmptyCallback(WTF::move(callback));
-        imageAnalysisQueue->enqueueAllImagesIfNeeded(m_mainFrame.get(), { }, { });
+        imageAnalysisQueue->enqueueAllImagesIfNeeded(m_mainFrame.get(), nullptr, nullptr);
     }
 }
 #endif
 
-auto Page::findTextMatches(const String& target, FindOptions options, unsigned limit, bool markMatches) -> MatchingRanges
+auto Page::findTextMatches(StringImpl* target, FindOptions options, unsigned limit, bool markMatches) -> MatchingRanges
 {
     MatchingRanges result;
 
@@ -1404,10 +1406,10 @@ auto Page::findTextMatches(const String& target, FindOptions options, unsigned l
 }
 
 #if ENABLE(VIDEO)
-Vector<CueMatch> Page::findCueMatches(const String& target, FindOptions options)
+Vector<CueMatch> Page::findCueMatches(StringImpl* target, FindOptions options)
 {
     Vector<CueMatch> results;
-    if (target.isEmpty())
+    if (isEmpty(target))
         return results;
 
     // Walk frames in document order and searches each document independently. Cue ordering is therefore correct within a document
@@ -1432,9 +1434,9 @@ void Page::clearFindCaptionTracks()
 }
 #endif // ENABLE(VIDEO)
 
-std::optional<SimpleRange> Page::rangeOfString(const String& target, const std::optional<SimpleRange>& referenceRange, FindOptions options)
+std::optional<SimpleRange> Page::rangeOfString(StringImpl* target, const std::optional<SimpleRange>& referenceRange, FindOptions options)
 {
-    if (target.isEmpty())
+    if (isEmpty(target))
         return std::nullopt;
 
     if (referenceRange && referenceRange->start.document().page() != this)
@@ -1464,9 +1466,9 @@ std::optional<SimpleRange> Page::rangeOfString(const String& target, const std::
     return std::nullopt;
 }
 
-unsigned Page::findMatchesForText(const String& target, FindOptions options, unsigned maxMatchCount, ShouldHighlightMatches shouldHighlightMatches, ShouldMarkMatches shouldMarkMatches)
+unsigned Page::findMatchesForText(StringImpl* target, FindOptions options, unsigned maxMatchCount, ShouldHighlightMatches shouldHighlightMatches, ShouldMarkMatches shouldMarkMatches)
 {
-    if (target.isEmpty())
+    if (isEmpty(target))
         return 0;
 
     unsigned matchCount = 0;
@@ -1489,12 +1491,12 @@ unsigned Page::findMatchesForText(const String& target, FindOptions options, uns
     return matchCount;
 }
 
-unsigned Page::markAllMatchesForText(const String& target, FindOptions options, bool shouldHighlight, unsigned maxMatchCount)
+unsigned Page::markAllMatchesForText(StringImpl* target, FindOptions options, bool shouldHighlight, unsigned maxMatchCount)
 {
     return findMatchesForText(target, options, maxMatchCount, shouldHighlight ? HighlightMatches : DoNotHighlightMatches, MarkMatches);
 }
 
-unsigned Page::countFindMatches(const String& target, FindOptions options, unsigned maxMatchCount)
+unsigned Page::countFindMatches(StringImpl* target, FindOptions options, unsigned maxMatchCount)
 {
     return findMatchesForText(target, options, maxMatchCount, DoNotHighlightMatches, DoNotMarkMatches);
 }
@@ -1504,7 +1506,7 @@ struct FindReplacementRange {
     CharacterRange range;
 };
 
-static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges, const String& replacementText)
+static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges, StringImpl* replacementText)
 {
     HashMap<Ref<ContainerNode>, Vector<FindReplacementRange>> rangesByContainerNode;
     for (auto& range : ranges) {
@@ -1572,7 +1574,7 @@ static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges
     }
 }
 
-uint32_t Page::replaceRangesWithText(const Vector<SimpleRange>& rangesToReplace, const String& replacementText, bool /*selectionOnly*/)
+uint32_t Page::replaceRangesWithText(const Vector<SimpleRange>& rangesToReplace, StringImpl* replacementText, bool /*selectionOnly*/)
 {
     // FIXME: In the future, we should respect the `selectionOnly` flag by checking whether each range being replaced is contained within its frame's selection.
 
@@ -1588,7 +1590,7 @@ uint32_t Page::replaceRangesWithText(const Vector<SimpleRange>& rangesToReplace,
     return replacementRanges.size();
 }
 
-uint32_t Page::replaceSelectionWithText(const String& replacementText)
+uint32_t Page::replaceSelectionWithText(StringImpl* replacementText)
 {
     RefPtr frame = focusController().focusedOrMainFrame();
     if (!frame)
@@ -2066,7 +2068,7 @@ void Page::didCommitLoad()
     m_userHasInteractedSinceLastPageLoad = false;
     m_userHasInteractedSinceLastPageLoadExcludingForcedUserGestures = false;
 
-    m_mainFrameURLFragment = { };
+    m_mainFrameURLFragment = nullptr;
 
 #if PLATFORM(VISION) && ENABLE(GAMEPAD)
     initializeGamepadAccessForPageLoad();
@@ -3146,10 +3148,10 @@ void Page::userStyleSheetLocationChanged()
     if (LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol()))
         m_userStyleSheetPath = url.fileSystemPath();
     else
-        m_userStyleSheetPath = String();
+        m_userStyleSheetPath = nullptr;
 
     m_didLoadUserStyleSheet = false;
-    m_userStyleSheet = String();
+    m_userStyleSheet = nullptr;
     m_userStyleSheetModificationTime = std::nullopt;
 
     if (url.protocolIsData()) {
@@ -3157,7 +3159,7 @@ void Page::userStyleSheetLocationChanged()
 
         if (auto result = DataURLDecoder::decode(url)) {
             Ref decoder = TextResourceDecoder::create(TextResourceDecoder::ContentType::CSS, PAL::UTF8Encoding());
-            decoder->setEncoding(result->charset, TextResourceDecoder::EncodingSource::HTTPHeader);
+            decoder->setEncoding(result->charset.get(), TextResourceDecoder::EncodingSource::HTTPHeader);
             m_userStyleSheet = decoder->decodeAndFlush(result->data.span());
         }
     }
@@ -3167,9 +3169,9 @@ void Page::userStyleSheetLocationChanged()
     });
 }
 
-const String& Page::userStyleSheet() const
+const RefPtr<StringImpl>& Page::userStyleSheet() const
 {
-    if (m_userStyleSheetPath.isEmpty())
+    if (isEmpty(m_userStyleSheetPath))
         return m_userStyleSheet;
 
     auto modificationTime = FileSystem::fileModificationTime(m_userStyleSheetPath);
@@ -3177,7 +3179,7 @@ const String& Page::userStyleSheet() const
         // The stylesheet either doesn't exist, was just deleted, or is
         // otherwise unreadable. If we've read the stylesheet before, we should
         // throw away that data now as it no longer represents what's on disk.
-        m_userStyleSheet = String();
+        m_userStyleSheet = nullptr;
         return m_userStyleSheet;
     }
 
@@ -3187,7 +3189,7 @@ const String& Page::userStyleSheet() const
         return m_userStyleSheet;
 
     m_didLoadUserStyleSheet = true;
-    m_userStyleSheet = String();
+    m_userStyleSheet = nullptr;
     m_userStyleSheetModificationTime = modificationTime;
 
     // FIXME: It would be better to load this asynchronously to avoid blocking
@@ -4178,12 +4180,12 @@ NODELETE bool Page::hasSeenAnyPlugin() const
     return !m_seenPlugins.isEmpty();
 }
 
-bool Page::hasSeenPlugin(const String& serviceType) const
+bool Page::hasSeenPlugin(StringImpl* serviceType) const
 {
     return m_seenPlugins.contains(serviceType);
 }
 
-void Page::sawPlugin(const String& serviceType)
+void Page::sawPlugin(StringImpl* serviceType)
 {
     m_seenPlugins.add(serviceType);
 }
@@ -4198,12 +4200,12 @@ bool Page::hasSeenAnyMediaEngine() const
     return !m_seenMediaEngines.isEmpty();
 }
 
-bool Page::hasSeenMediaEngine(const String& engineDescription) const
+bool Page::hasSeenMediaEngine(StringImpl* engineDescription) const
 {
     return m_seenMediaEngines.contains(engineDescription);
 }
 
-void Page::sawMediaEngine(const String& engineDescription)
+void Page::sawMediaEngine(StringImpl* engineDescription)
 {
     m_seenMediaEngines.add(engineDescription);
 }
@@ -4281,34 +4283,34 @@ bool Page::areSynchronousLoadsAllowed()
 
 void Page::logNavigation(const Navigation& navigation)
 {
-    String navigationDescription;
+    RefPtr<StringImpl> navigationDescription;
     switch (navigation.type) {
     case FrameLoadType::Standard:
-        navigationDescription = "standard"_s;
+        navigationDescription = "standard"_si;
         break;
     case FrameLoadType::Back:
-        navigationDescription = "back"_s;
+        navigationDescription = "back"_si;
         break;
     case FrameLoadType::Forward:
-        navigationDescription = "forward"_s;
+        navigationDescription = "forward"_si;
         break;
     case FrameLoadType::IndexedBackForward:
-        navigationDescription = "indexedBackForward"_s;
+        navigationDescription = "indexedBackForward"_si;
         break;
     case FrameLoadType::Reload:
-        navigationDescription = "reload"_s;
+        navigationDescription = "reload"_si;
         break;
     case FrameLoadType::Same:
-        navigationDescription = "same"_s;
+        navigationDescription = "same"_si;
         break;
     case FrameLoadType::ReloadFromOrigin:
-        navigationDescription = "reloadFromOrigin"_s;
+        navigationDescription = "reloadFromOrigin"_si;
         break;
     case FrameLoadType::ReloadExpiredOnly:
-        navigationDescription = "reloadRevalidatingExpired"_s;
+        navigationDescription = "reloadRevalidatingExpired"_si;
         break;
     case FrameLoadType::NavigationAPIReplace:
-        navigationDescription = "navigationAPIReplace"_s;
+        navigationDescription = "navigationAPIReplace"_si;
         break;
     case FrameLoadType::MultipartReplace:
     case FrameLoadType::RedirectWithLockedBackForwardList:
@@ -4418,7 +4420,7 @@ void Page::removePlaybackTargetPickerClient(PlaybackTargetClientContextIdentifie
     chrome().client().removePlaybackTargetPickerClient(contextId);
 }
 
-void Page::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, const WebCore::IntPoint& positionInMainFrameView, bool isVideo, RouteSharingPolicy routeSharingPolicy, const String& routingContextUID)
+void Page::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, const WebCore::IntPoint& positionInMainFrameView, bool isVideo, RouteSharingPolicy routeSharingPolicy, StringImpl* routingContextUID)
 {
 #if PLATFORM(IOS_FAMILY)
     // FIXME: refactor iOS implementation.
@@ -4442,7 +4444,7 @@ void Page::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
     chrome().client().setMockMediaPlaybackTargetPickerEnabled(enabled);
 }
 
-void Page::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetMockState state)
+void Page::setMockMediaPlaybackTargetPickerState(StringImpl* name, MediaPlaybackTargetMockState state)
 {
     chrome().client().setMockMediaPlaybackTargetPickerState(name, state);
 }
@@ -4575,14 +4577,14 @@ void Page::setResourceUsageOverlayVisible(bool visible)
 }
 #endif
 
-String Page::captionUserPreferencesStyleSheet()
+RefPtr<StringImpl> Page::captionUserPreferencesStyleSheet()
 {
     return m_captionUserPreferencesStyleSheet;
 }
 
-void Page::setCaptionUserPreferencesStyleSheet(const String& styleSheet)
+void Page::setCaptionUserPreferencesStyleSheet(StringImpl* styleSheet)
 {
-    if (m_captionUserPreferencesStyleSheet == styleSheet)
+    if (equal(m_captionUserPreferencesStyleSheet, styleSheet))
         return;
 
     m_captionUserPreferencesStyleSheet = styleSheet;
@@ -5078,7 +5080,7 @@ ScrollLatchingController& Page::scrollLatchingController()
 #endif // ENABLE(WHEEL_EVENT_LATCHING)
 
 enum class DispatchedOnDocumentEventLoop : bool { No, Yes };
-static void dispatchPrintEvent(Frame& mainFrame, const AtomString& eventType, DispatchedOnDocumentEventLoop dispatchedOnDocumentEventLoop)
+static void dispatchPrintEvent(Frame& mainFrame, AtomStringImpl* eventType, DispatchedOnDocumentEventLoop dispatchedOnDocumentEventLoop)
 {
     Vector<Ref<LocalFrame>> frames;
     for (RefPtr frame = mainFrame; frame; frame = frame->tree().traverseNext()) {
@@ -5090,7 +5092,7 @@ static void dispatchPrintEvent(Frame& mainFrame, const AtomString& eventType, Di
 
     for (auto& frame : frames) {
         if (RefPtr window = frame->window()) {
-            auto dispatchEvent = [window = WTF::move(window), eventType] {
+            auto dispatchEvent = [window = WTF::move(window), eventType = RefPtr { eventType }] {
                 window->dispatchEvent(Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No), protect(window->document()).get());
             };
             if (dispatchedOnDocumentEventLoop == DispatchedOnDocumentEventLoop::No)
@@ -5188,7 +5190,7 @@ void Page::invalidateMediaSessionCoordinator()
 }
 #endif
 
-void Page::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
+void Page::configureLoggingChannel(StringImpl* channelName, WTFLogChannelState state, WTFLogLevel level)
 {
 #if !RELEASE_LOG_DISABLED
     if (auto* channel = getLogChannel(channelName)) {
@@ -5321,7 +5323,7 @@ void Page::injectUserStyleSheet(UserStyleSheet& userStyleSheet)
 #if ENABLE(APP_BOUND_DOMAINS)
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get())) {
         if (localMainFrame->loader().client().shouldEnableInAppBrowserPrivacyProtections()) {
-            localMainFrame->console().addMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_s);
+            localMainFrame->console().addMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_si);
             return;
         }
         localMainFrame->loader().client().notifyPageOfAppBoundBehavior();
@@ -5557,7 +5559,7 @@ ModelPlayerProvider& Page::modelPlayerProvider()
     return m_modelPlayerProvider.get();
 }
 
-void Page::setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& topOrigin, const String& referrerPolicy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, std::optional<bool> globalPrivacyControlEnabled)
+void Page::setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& topOrigin, StringImpl* referrerPolicy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, std::optional<bool> globalPrivacyControlEnabled)
 {
     RefPtr localMainFrame = this->localMainFrame();
     if (!localMainFrame)
@@ -5650,7 +5652,7 @@ URL Page::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTr
     return chrome().client().applyLinkDecorationFiltering(url, trigger);
 }
 
-String Page::applyLinkDecorationFiltering(const String& urlString, LinkDecorationFilteringTrigger trigger) const
+RefPtr<StringImpl> Page::applyLinkDecorationFiltering(StringImpl* urlString, LinkDecorationFilteringTrigger trigger) const
 {
     if (auto url = URL { urlString }; url.isValid()) {
         if (auto sanitizedURL = applyLinkDecorationFiltering(WTF::move(url), trigger); sanitizedURL != url)
@@ -5688,7 +5690,7 @@ void Page::removeRootFrame(LocalFrame& frame)
     chrome().client().rootFrameRemoved(frame);
 }
 
-String Page::ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData& origin)
+RefPtr<StringImpl> Page::ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData& origin)
 {
     if (usesEphemeralSession())
         return emptyString();
@@ -5696,7 +5698,7 @@ String Page::ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData& 
     return m_storageProvider->ensureMediaKeysStorageDirectoryForOrigin(origin);
 }
 
-void Page::setMediaKeysStorageDirectory(const String& directory)
+void Page::setMediaKeysStorageDirectory(StringImpl* directory)
 {
     m_storageProvider->setMediaKeysStorageDirectory(directory);
 }
@@ -5766,7 +5768,7 @@ void Page::deleteRemovedNodesAndDetachedRenderers()
     });
 }
 
-const String& Page::sceneIdentifier() const
+const RefPtr<StringImpl>& Page::sceneIdentifier() const
 {
 #if PLATFORM(IOS_FAMILY)
     return m_sceneIdentifier;
@@ -5776,9 +5778,9 @@ const String& Page::sceneIdentifier() const
 }
 
 #if PLATFORM(IOS_FAMILY)
-void Page::setSceneIdentifier(String&& sceneIdentifier)
+void Page::setSceneIdentifier(RefPtr<StringImpl>&& sceneIdentifier)
 {
-    if (m_sceneIdentifier == sceneIdentifier)
+    if (equal(m_sceneIdentifier, sceneIdentifier))
         return;
     m_sceneIdentifier = WTF::move(sceneIdentifier);
 
@@ -5918,9 +5920,9 @@ void Page::setQuirksSubframeURLForTesting(URL&& url)
     });
 }
 
-void Page::setQuirksTopDocumentHostForTesting(String&& host)
+void Page::setQuirksTopDocumentHostForTesting(RefPtr<StringImpl>&& host)
 {
-    if (m_quirksTopDocumentHostForTesting == host)
+    if (equal(m_quirksTopDocumentHostForTesting, host))
         return;
 
     m_quirksTopDocumentHostForTesting = WTF::move(host);
@@ -5980,19 +5982,19 @@ RefPtr<WebXRSession> Page::activeImmersiveXRSession() const
 #endif //  ENABLE(WEBXR)
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-void Page::setDefaultSpatialTrackingLabel(const String& label)
+void Page::setDefaultSpatialTrackingLabel(StringImpl* label)
 {
-    if (m_defaultSpatialTrackingLabel == label)
+    if (equal(m_defaultSpatialTrackingLabel, label))
         return;
     m_defaultSpatialTrackingLabel = label;
 
     forEachDocument([&] (Document& document) {
-        document.defaultSpatialTrackingLabelChanged(m_defaultSpatialTrackingLabel);
+        document.defaultSpatialTrackingLabelChanged(protect(m_defaultSpatialTrackingLabel).get());
     });
 }
 #endif
 
-void Page::setDisplayedTranslationLocaleIdentifier(String&& localeIdentifier)
+void Page::setDisplayedTranslationLocaleIdentifier(RefPtr<StringImpl>&& localeIdentifier)
 {
     m_displayedTranslationLocaleIdentifier = WTF::move(localeIdentifier);
 }

@@ -41,13 +41,13 @@ class ExtensionCapabilityGrant {
 public:
     ExtensionCapabilityGrant() = default;
     ExtensionCapabilityGrant(ExtensionCapabilityGrant&&) = default;
-    explicit ExtensionCapabilityGrant(String environmentIdentifier);
+    explicit ExtensionCapabilityGrant(RefPtr<StringImpl> environmentIdentifier);
     ~ExtensionCapabilityGrant();
 
     ExtensionCapabilityGrant& operator=(ExtensionCapabilityGrant&&) = default;
     ExtensionCapabilityGrant isolatedCopy() &&;
 
-    const String& environmentIdentifier() const LIFETIME_BOUND { return m_environmentIdentifier; }
+    const RefPtr<StringImpl>& environmentIdentifier() const LIFETIME_BOUND { return m_environmentIdentifier; }
     bool isEmpty() const;
     bool isValid() const;
 
@@ -56,9 +56,9 @@ public:
     void invalidate();
 
 private:
-    ExtensionCapabilityGrant(String&&, PlatformGrant&&);
+    ExtensionCapabilityGrant(RefPtr<StringImpl>&&, PlatformGrant&&);
 
-    String m_environmentIdentifier;
+    RefPtr<StringImpl> m_environmentIdentifier;
     PlatformGrant m_platformGrant;
 };
 

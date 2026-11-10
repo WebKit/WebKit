@@ -38,7 +38,7 @@ class CryptoAlgorithmHkdfParams final : public CryptoAlgorithmParameters {
     WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmHkdfParams);
 public:
     // FIXME: Consider merging hash and hashIdentifier.
-    Variant<JSC::Strong<JSC::JSObject>, String> hash;
+    Variant<JSC::Strong<JSC::JSObject>, RefPtr<StringImpl>> hash;
     CryptoAlgorithmIdentifier hashIdentifier;
     std::optional<BufferSource> salt;
     std::optional<BufferSource> info;

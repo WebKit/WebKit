@@ -629,7 +629,7 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
 
         // Disallow -webkit-user-modify on ::pseudo elements, except if that pseudo-element targets a slot,
         // in which case we want the editability to be passed onto the slotted contents.
-        if (element->isInUserAgentShadowTree() && !element->userAgentPart().isNull() && !is<HTMLSlotElement>(element))
+        if (element->isInUserAgentShadowTree() && element->userAgentPart() && !is<HTMLSlotElement>(element))
             style.setUserModify(UserModify::ReadOnly);
 
         if (is<HTMLMarqueeElement>(*element)) {
@@ -1093,19 +1093,19 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
 
     if (documentQuirks.needsYouTubeOverflowScrollQuirk()) {
         // This turns sidebar scrollable without hover.
-        static MainThreadNeverDestroyed<const AtomString> idValue("guide-inner-content"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> idValue("guide-inner-content"_s);
         if (style.overflowY() == Overflow::Hidden && m_element->idForStyleResolution() == idValue)
             style.setOverflowY(Overflow::Auto);
     }
     if (documentQuirks.needsGMailOverflowScrollQuirk()) {
         // This turns sidebar scrollable without mouse move event.
-        static MainThreadNeverDestroyed<const AtomString> roleValue("navigation"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> roleValue("navigation"_s);
         if (style.overflowY() == Overflow::Hidden && m_element->attributeWithoutSynchronization(roleAttr) == roleValue)
             style.setOverflowY(Overflow::Auto);
     }
 
     if (documentQuirks.needsGoogleDocsNavigationWidgetScrollQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> className("navigation-widget-content"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> className("navigation-widget-content"_s);
         if (style.visibility() == Visibility::Hidden && m_parentStyle.visibility() == Visibility::Visible && m_element->hasClassName(className))
             style.setVisibility(Visibility::Visible);
     }
@@ -1114,7 +1114,7 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
         // Ignore overflow: hidden on the body and #wrapper so the page remains
         // scrollable, and drop the width constraints on #wrapper so the desktop
         // layout fits the viewport.
-        static MainThreadNeverDestroyed<const AtomString> wrapperID("wrapper"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> wrapperID("wrapper"_s);
         bool isWrapper = m_element->idForStyleResolution() == wrapperID;
         if (m_element->hasTagName(bodyTag) || isWrapper) {
             if (style.overflowX() == Overflow::Hidden)
@@ -1130,7 +1130,7 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
 
     // yahoo.com rdar://170502516
     if (documentQuirks.needsYahooVolumeSliderQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> className("vjs-volume-control"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> className("vjs-volume-control"_s);
         if (is<HTMLDivElement>(*m_element) && m_element->hasClassName(className)) {
             style.setMinHeight(100_css_percentage);
             style.setAlignItems(Style::AlignItems { CSS::Keyword::Center { } });
@@ -1147,15 +1147,15 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
 
 #if PLATFORM(IOS_FAMILY)
     if (documentQuirks.needsGoogleMapsScrollingQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> className("PUtLdf"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> className("PUtLdf"_s);
         if (is<HTMLBodyElement>(*m_element) && m_element->hasClassName(className))
             style.setUsedTouchAction(CSS::Keyword::Auto { });
     }
     // netflix.com rdar://178545839
     if (documentQuirks.needsNetflixVolumeSliderQuirk()) {
-        static MainThreadNeverDestroyed<const QualifiedName> dataUiaAttr(nullAtom(), "data-uia"_s, nullAtom());
-        static MainThreadNeverDestroyed<const AtomString> scrubberValue("scrubber"_s);
-        static MainThreadNeverDestroyed<const AtomString> verticalValue("vertical"_s);
+        static MainThreadNeverDestroyed<const QualifiedName> dataUiaAttr(nullAtom(), "data-uia"_atom, nullAtom());
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> scrubberValue("scrubber"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> verticalValue("vertical"_s);
         if (is<HTMLDivElement>(*m_element)
             && m_element->attributeWithoutSynchronization(dataUiaAttr) == scrubberValue
             && m_element->attributeWithoutSynchronization(HTMLNames::aria_orientationAttr) == verticalValue)
@@ -1166,14 +1166,14 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
 #endif // PLATFORM(IOS_FAMILY)
 
     if (documentQuirks.needsFacebookRemoveNotSupportedQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> className("xnw9j1v"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> className("xnw9j1v"_s);
         if (is<HTMLDivElement>(*m_element) && m_element->hasClassName(className))
             style.setDisplayMaintainingOriginalDisplay(DisplayType::None);
     }
 
     // airindiaexpress.com https://webkit.org/b/317375
     if (documentQuirks.needsAirIndiaExpressLayeringQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> className("new-trip-type-and-guest-selection-container"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> className("new-trip-type-and-guest-selection-container"_s);
         if (m_element->hasClassName(className))
             style.setUsedZIndex(2);
     }
@@ -1195,11 +1195,11 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
 #if ENABLE(VIDEO)
     if (documentQuirks.needsFullscreenDisplayNoneQuirk()) {
         if (is<HTMLDivElement>(*m_element) && style.display() == DisplayType::None) {
-            static MainThreadNeverDestroyed<const AtomString> instreamNativeVideoDivClass("instream-native-video--mobile"_s);
-            static MainThreadNeverDestroyed<const AtomString> videoElementID("vjs_video_3_html5_api"_s);
+            static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> instreamNativeVideoDivClass("instream-native-video--mobile"_s);
+            static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> videoElementID("vjs_video_3_html5_api"_s);
 
             if (m_element->hasClassName(instreamNativeVideoDivClass)) {
-                RefPtr video = dynamicDowncast<HTMLVideoElement>(m_element->treeScope().getElementById(videoElementID));
+                RefPtr video = dynamicDowncast<HTMLVideoElement>(m_element->treeScope().getElementById(videoElementID.get()));
                 if (video && video->isFullscreen())
                     style.setDisplayMaintainingOriginalDisplay(DisplayType::BlockFlow);
             }
@@ -1207,7 +1207,7 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
     }
 #if ENABLE(FULLSCREEN_API)
     if (RefPtr documentFullscreen = m_document->fullscreenIfExists(); documentFullscreen && documentQuirks.needsFullscreenObjectFitQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> playerClassName("top-player-video-element"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> playerClassName("top-player-video-element"_s);
         bool isFullscreen = documentFullscreen->isFullscreen();
         if (is<HTMLVideoElement>(*m_element) && isFullscreen && m_element->hasClassName(playerClassName) && style.objectFit() == ObjectFit::Fill)
             style.setObjectFit(ObjectFit::Contain);
@@ -1221,12 +1221,12 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
         //     animation-duration: 0.18s, 0.06s;
         //     animation-fill-mode: none, both;
         //     animation-name: menu-grow-left, menu-fade-in;
-        auto menuGrowLeftAnimation = Style::Animation { { ScopedName { "menu-grow-left"_s } } };
+        auto menuGrowLeftAnimation = Style::Animation { { ScopedName { "menu-grow-left"_atom } } };
         menuGrowLeftAnimation.setDelay(0_css_s);
         menuGrowLeftAnimation.setDuration(.18_css_s);
         menuGrowLeftAnimation.setFillMode(AnimationFillMode::None);
 
-        auto menuFadeInAnimation = Style::Animation { { ScopedName { "menu-fade-in"_s } } };
+        auto menuFadeInAnimation = Style::Animation { { ScopedName { "menu-fade-in"_atom } } };
         menuFadeInAnimation.setDelay(.06_css_s);
         menuFadeInAnimation.setDuration(.06_css_s);
         menuFadeInAnimation.setFillMode(AnimationFillMode::Both);
@@ -1259,7 +1259,7 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
 
 #if PLATFORM(MAC)
     if (documentQuirks.needsZomatoEmailLoginLabelQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> class1("eNjKGZ"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> class1("eNjKGZ"_s);
         if (is<HTMLLabelElement>(*m_element)
             && m_element->hasClassName(class1)
             && style.backgroundColorResolvingCurrentColor() == WebCore::Color::white)

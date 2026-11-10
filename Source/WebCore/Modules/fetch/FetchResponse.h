@@ -56,7 +56,7 @@ public:
 
     struct Init {
         unsigned short status { httpStatus200OK };
-        AtomString statusText;
+        RefPtr<AtomStringImpl> statusText;
         std::optional<FetchHeaders::Init> headers;
     };
 
@@ -68,11 +68,11 @@ public:
     static ExceptionOr<Ref<FetchResponse>> create(ScriptExecutionContext&, std::optional<FetchBody::Init>&&, Init&&);
     static ExceptionOr<Ref<FetchResponse>> create(ScriptExecutionContext&, std::optional<FetchBodyWithType>&&, Init&&);
     static Ref<FetchResponse> error(ScriptExecutionContext&);
-    static ExceptionOr<Ref<FetchResponse>> redirect(ScriptExecutionContext&, const String& url, int status);
+    static ExceptionOr<Ref<FetchResponse>> redirect(ScriptExecutionContext&, StringImpl* url, int status);
     static ExceptionOr<Ref<FetchResponse>> jsonForBindings(ScriptExecutionContext&, JSC::JSValue data, Init&&);
 
     using NotificationCallback = Function<void(ExceptionOr<Ref<FetchResponse>>&&)>;
-    static void fetch(ScriptExecutionContext&, FetchRequest&, NotificationCallback&&, const String& initiator);
+    static void fetch(ScriptExecutionContext&, FetchRequest&, NotificationCallback&&, StringImpl* initiator);
     static Ref<FetchResponse> createFetchResponse(ScriptExecutionContext&, FetchRequest&, NotificationCallback&&, RefPtr<ReadableStreamToSharedBufferSink>&& = { });
 
     void startConsumingStream(unsigned);
@@ -80,12 +80,12 @@ public:
     void finishConsumingStream(Ref<DeferredPromise>&&);
 
     Type type() const { return filteredResponse().type(); }
-    const String& url() const;
+    const RefPtr<StringImpl>& url() const;
     const URL& firstURL() const LIFETIME_BOUND { return m_internalResponse.isRedirected() ? m_requestURL : m_internalResponse.url(); }
     bool redirected() const { return filteredResponse().isRedirected(); }
     int status() const { return filteredResponse().httpStatusCode(); }
     bool ok() const { return filteredResponse().isSuccessful(); }
-    const String& statusText() const LIFETIME_BOUND { return filteredResponse().httpStatusText(); }
+    const RefPtr<StringImpl>& statusText() const LIFETIME_BOUND { return filteredResponse().httpStatusText(); }
 
     const FetchHeaders& headers() const { return m_headers; }
     FetchHeaders& headers() { return m_headers; }
@@ -125,7 +125,7 @@ public:
 
     const NetworkLoadMetrics& networkLoadMetrics() const LIFETIME_BOUND { return m_networkLoadMetrics; }
     void setReceivedInternalResponse(const ResourceResponse&, FetchOptions::Credentials);
-    void startLoader(ScriptExecutionContext&, FetchRequest&, const String& initiator);
+    void startLoader(ScriptExecutionContext&, FetchRequest&, StringImpl* initiator);
 
     void setIsNavigationPreload(bool isNavigationPreload) { m_isNavigationPreload = isNavigationPreload; }
     bool isAvailableNavigationPreload() const { return m_isNavigationPreload && m_loader && !m_loader->hasLoader() && !hasReadableStreamBody(); }
@@ -162,7 +162,7 @@ private:
         void ref() const final { RefCounted::ref(); }
         void deref() const final { RefCounted::deref(); }
 
-        bool start(ScriptExecutionContext&, const FetchRequest&, const String& initiator);
+        bool start(ScriptExecutionContext&, const FetchRequest&, StringImpl* initiator);
         void stop();
         void abortUpload(JSDOMGlobalObject&, JSC::JSValue);
         void consumeDataByChunk(ConsumeDataByChunkCallback&&);
@@ -198,7 +198,7 @@ private:
     ResourceResponse m_internalResponse;
     RefPtr<Loader> m_loader;
     std::unique_ptr<FetchResponseBodyLoader> m_bodyLoader;
-    mutable String m_responseURL;
+    mutable RefPtr<StringImpl> m_responseURL;
     URL m_requestURL;
     std::optional<ResourceLoaderIdentifier> m_resourceLoaderIdentifier;
     // Opaque responses will padd their body size when used with Cache API.

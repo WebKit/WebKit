@@ -34,13 +34,13 @@ namespace WebCore {
 // https://webidl.spec.whatwg.org/#idl-QuotaExceededError
 class QuotaExceededError final : public DOMException {
 public:
-    NODELETE static Ref<QuotaExceededError> create(const String& message = { }, QuotaExceededErrorOptions&& = { });
+    NODELETE static Ref<QuotaExceededError> create(StringImpl* message = nullptr, QuotaExceededErrorOptions&& = { });
 
     std::optional<double> quota() const { return m_quota; }
     std::optional<double> requested() const { return m_requested; }
 
 private:
-    QuotaExceededError(const String& message, QuotaExceededErrorOptions&&);
+    QuotaExceededError(StringImpl* message, QuotaExceededErrorOptions&&);
 
     const Markable<double> m_quota;
     const Markable<double> m_requested;

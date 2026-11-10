@@ -395,7 +395,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
     RefPtr cachedImage = core(self)->cachedImage();
     if (!cachedImage || !cachedImage->image())
         return nil;
-    return cachedImage->response().mimeType().createNSString().autorelease();
+    return createNSString(cachedImage->response().mimeType()).autorelease();
 }
 
 @end

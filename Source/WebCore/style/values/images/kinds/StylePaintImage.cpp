@@ -115,10 +115,10 @@ ImageDrawResult PaintImage::drawAsPattern(GraphicsContext& context, const Render
     return drawPatternBuffer(context, *buffer, size, descriptor, destination, tile, patternTransform, phase, spacing);
 }
 
-Vector<WTF::String> PaintImage::paintArguments() const
+Vector<RefPtr<StringImpl>> PaintImage::paintArguments() const
 {
     // FIXME: Check if argument list matches syntax.
-    Vector<WTF::String> arguments;
+    Vector<RefPtr<StringImpl>> arguments;
     CSSParserTokenRange localRange(m_arguments->tokenRange());
 
     while (!localRange.atEnd()) {
@@ -140,7 +140,7 @@ Vector<WTF::String> PaintImage::paintArguments() const
     return arguments;
 }
 
-static RefPtr<CSSValue> extractComputedProperty(const AtomString& name, Element& element)
+static RefPtr<CSSValue> extractComputedProperty(AtomStringImpl* name, Element& element)
 {
     Extractor extractor(&element);
 
@@ -166,7 +166,7 @@ ImageDrawResult PaintImage::paint(GraphicsContext& context, const RenderElement&
 
     // The definition is read under the worklet's lock, and the callback, which is script, runs without it.
     WeakPtr<PaintDefinition> paintDefinition;
-    Vector<AtomString> inputProperties;
+    Vector<RefPtr<AtomStringImpl>> inputProperties;
     {
         Locker locker { globalScope->paintDefinitionLock() };
         CheckedPtr registration = globalScope->paintDefinitionMap().get(m_name.value);
@@ -196,7 +196,7 @@ ImageDrawResult PaintImage::paint(GraphicsContext& context, const RenderElement&
     Ref canvas = CustomPaintCanvas::create(*scriptExecutionContext, paintSize.width(), paintSize.height());
     RefPtr canvasContext = canvas->getContext();
 
-    HashMap<AtomString, RefPtr<CSSValue>> propertyValues;
+    HashMap<RefPtr<AtomStringImpl>, RefPtr<CSSValue>> propertyValues;
     for (auto& name : inputProperties)
         propertyValues.add(name, extractComputedProperty(name, *element));
 

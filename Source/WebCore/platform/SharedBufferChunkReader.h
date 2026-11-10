@@ -52,7 +52,7 @@ public:
     bool nextChunk(Vector<uint8_t>& data, bool includeSeparator = false);
 
     // Returns a null string when the end of the buffer has been reached.
-    String nextChunkAsUTF8StringWithLatin1Fallback(bool includeSeparator = false);
+    RefPtr<StringImpl> nextChunkAsUTF8StringWithLatin1Fallback(bool includeSeparator = false);
 
     // Reads size bytes at the current location in the buffer, without changing the buffer position.
     // Returns the number of bytes read. That number might be less than the specified size if the end of the buffer was reached.

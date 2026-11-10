@@ -190,7 +190,7 @@ gboolean webkit_dom_keyboard_event_get_modifier_state(WebKitDOMKeyboardEvent* se
     g_return_val_if_fail(WEBKIT_DOM_IS_KEYBOARD_EVENT(self), FALSE);
     g_return_val_if_fail(keyIdentifierArg, FALSE);
     WebCore::KeyboardEvent* item = WebKit::core(self);
-    WTF::String convertedKeyIdentifierArg = WTF::String::fromUTF8(keyIdentifierArg);
+    RefPtr<StringImpl> convertedKeyIdentifierArg = StringImpl::fromUTF8(keyIdentifierArg);
     gboolean result = item->getModifierState(convertedKeyIdentifierArg);
     return result;
 }
@@ -203,8 +203,8 @@ void webkit_dom_keyboard_event_init_keyboard_event(WebKitDOMKeyboardEvent* self,
     g_return_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(view));
     g_return_if_fail(keyIdentifier);
     WebCore::KeyboardEvent* item = WebKit::core(self);
-    auto convertedType = WTF::AtomString::fromUTF8(type);
-    auto convertedKeyIdentifier = WTF::AtomString::fromUTF8(keyIdentifier);
+    auto convertedType = AtomStringImpl::fromUTF8(type);
+    auto convertedKeyIdentifier = AtomStringImpl::fromUTF8(keyIdentifier);
     item->initKeyboardEvent(convertedType, canBubble, cancelable, WebKit::toWindowProxy(view), convertedKeyIdentifier, location, ctrlKey, altKey, shiftKey, metaKey);
 }
 

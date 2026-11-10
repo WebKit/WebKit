@@ -85,7 +85,7 @@ ExceptionOr<Ref<CSSRotate>> CSSRotate::create(Ref<const CSSFunctionValue> cssFun
         }
         if (components.size() != expectedNumberOfComponents) {
             ASSERT_NOT_REACHED();
-            return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
+            return Exception { ExceptionCode::TypeError, "Unexpected number of values."_si };
         }
         return create(WTF::move(components));
     };

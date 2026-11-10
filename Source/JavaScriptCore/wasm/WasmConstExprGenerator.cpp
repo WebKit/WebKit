@@ -47,7 +47,7 @@ namespace JSC { namespace Wasm {
 class ConstExprInterpreter {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    using UnexpectedResult = std::unexpected<String>;
+    using UnexpectedResult = std::unexpected<RefPtr<StringImpl>>;
 
     ConstExprInterpreter(size_t offsetInSource, const ModuleInformation& info, JSWebAssemblyInstance* instance)
         : m_offsetInSource(offsetInSource)
@@ -56,7 +56,7 @@ public:
     {
     }
 
-    std::expected<uint64_t, String> run(std::span<const uint8_t> bytes, uint32_t maxStackHeight)
+    std::expected<uint64_t, RefPtr<StringImpl>> run(std::span<const uint8_t> bytes, uint32_t maxStackHeight)
     {
         Vector<ConstExprValue, 16> stack(ReserveCapacityTag { }, maxStackHeight);
         auto push = [&](ConstExprValue value) ALWAYS_INLINE_LAMBDA {
@@ -328,7 +328,7 @@ private:
     // names the same byte position the module parser would have reported.
     [[nodiscard]] NEVER_INLINE UnexpectedResult failedToAllocate(ASCIILiteral kind, size_t offset) const
     {
-        return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, String::number(m_offsetInSource + offset), ": Failed to allocate new "_s, kind));
+        return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, m_offsetInSource + offset, ": Failed to allocate new "_s, kind));
     }
 
     ConstExprValue loadGlobal(uint32_t index)
@@ -455,7 +455,7 @@ private:
 class ConstExprGenerator {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    using ErrorType = String;
+    using ErrorType = RefPtr<StringImpl>;
     using PartialResult = std::expected<void, ErrorType>;
     using UnexpectedResult = std::unexpected<ErrorType>;
     using CallType = CallLinkInfo::CallType;
@@ -510,7 +510,7 @@ protected:
     {
         using namespace FailureHelper; // See ADL comment in WasmParser.h.
         size_t offset = m_offsetInSource + m_parser->offset();
-        return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, String::number(offset), ": "_s, makeString(args)...));
+        return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, makeString(offset), ": "_s, makeString(args)...));
     }
 #define WASM_COMPILE_FAIL_IF(condition, ...) do { \
         if (condition) [[unlikely]]                  \
@@ -908,7 +908,7 @@ private:
     Vector<FunctionSpaceIndex> m_declaredFunctions;
 };
 
-std::expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> source, size_t offsetInSource, size_t& offset, uint32_t& maxStackHeight, ModuleInformation& info, Type expectedType)
+std::expected<void, RefPtr<StringImpl>> parseExtendedConstExpr(std::span<const uint8_t> source, size_t offsetInSource, size_t& offset, uint32_t& maxStackHeight, ModuleInformation& info, Type expectedType)
 {
     ConstExprGenerator generator(offsetInSource, info);
     FunctionParser<ConstExprGenerator> parser(generator, source, BlockSignature { expectedType }, info);
@@ -922,7 +922,7 @@ std::expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> sour
     return { };
 }
 
-std::expected<uint64_t, String> evaluateExtendedConstExpr(const ModuleInformation::ConstantExpression& constantExpression, JSWebAssemblyInstance* instance, const ModuleInformation& info)
+std::expected<uint64_t, RefPtr<StringImpl>> evaluateExtendedConstExpr(const ModuleInformation::ConstantExpression& constantExpression, JSWebAssemblyInstance* instance, const ModuleInformation& info)
 {
     ConstExprInterpreter interpreter(constantExpression.sourceOffset, info, instance);
     return interpreter.run(constantExpression.bytes.span(), constantExpression.maxStackHeight);

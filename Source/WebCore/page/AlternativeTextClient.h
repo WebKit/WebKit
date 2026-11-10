@@ -60,15 +60,15 @@ class AlternativeTextClient : public CanMakeCheckedPtr<AlternativeTextClient> {
 public:
     virtual ~AlternativeTextClient() = default;
 #if USE(AUTOCORRECTION_PANEL)
-    virtual void showCorrectionAlternative(AlternativeTextType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacmentString, const Vector<String>& alternativeReplacementStrings) = 0;
+    virtual void showCorrectionAlternative(AlternativeTextType, const FloatRect& boundingBoxOfReplacedString, StringImpl* replacedString, StringImpl* replacmentString, const Vector<RefPtr<StringImpl>>& alternativeReplacementStrings) = 0;
     virtual void dismissAlternative(ReasonForDismissingAlternativeText) = 0;
-    virtual String dismissAlternativeSoon(ReasonForDismissingAlternativeText) = 0;
-    virtual void recordAutocorrectionResponse(AutocorrectionResponse, const String& replacedString, const String& replacementString) = 0;
+    virtual RefPtr<StringImpl> dismissAlternativeSoon(ReasonForDismissingAlternativeText) = 0;
+    virtual void recordAutocorrectionResponse(AutocorrectionResponse, StringImpl* replacedString, StringImpl* replacementString) = 0;
 #endif
 #if USE(DICTATION_ALTERNATIVES)
     virtual void showDictationAlternativeUI(const FloatRect& boundingBoxOfDictatedText, DictationContext) = 0;
     virtual void removeDictationAlternatives(DictationContext) = 0;
-    virtual Vector<String> dictationAlternatives(DictationContext) = 0;
+    virtual Vector<RefPtr<StringImpl>> dictationAlternatives(DictationContext) = 0;
 #endif
 };
     

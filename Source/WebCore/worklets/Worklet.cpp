@@ -61,22 +61,22 @@ Document* Worklet::document()
 }
 
 // https://www.w3.org/TR/worklets-1/#dom-worklet-addmodule
-void Worklet::addModule(const String& moduleURLString, WorkletOptions&& options, DOMPromiseDeferred<void>&& promise)
+void Worklet::addModule(StringImpl* moduleURLString, WorkletOptions&& options, DOMPromiseDeferred<void>&& promise)
 {
     RefPtr document = this->document();
     if (!document || !document->page()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "This frame is detached"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "This frame is detached"_si });
         return;
     }
 
     URL moduleURL = document->encodingParseURL(moduleURLString);
     if (!moduleURL.isValid()) {
-        promise.reject(Exception { ExceptionCode::SyntaxError, "Module URL is invalid"_s });
+        promise.reject(Exception { ExceptionCode::SyntaxError, "Module URL is invalid"_si });
         return;
     }
 
     if (!protect(document->contentSecurityPolicy())->allowScriptFromSource(moduleURL, document->currentParserSourcePosition())) {
-        promise.reject(Exception { ExceptionCode::SecurityError, "Not allowed by CSP"_s });
+        promise.reject(Exception { ExceptionCode::SecurityError, "Not allowed by CSP"_si });
         return;
     }
 

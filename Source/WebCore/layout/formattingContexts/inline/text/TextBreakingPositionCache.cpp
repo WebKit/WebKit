@@ -108,9 +108,9 @@ void TextBreakingPositionCache::addWidths(const Key& key, const FontCascadeCache
     m_cachedContentSize += widthsBytes(entry);
 }
 
-size_t TextBreakingPositionCache::approximateEntrySizeBytes(const String& text, const Entry& entry)
+size_t TextBreakingPositionCache::approximateEntrySizeBytes(StringImpl* text, const Entry& entry)
 {
-    return text.length() + sizeof(unsigned) * entry.breakingPositions.size() + widthsBytes(entry);
+    return length(text) + sizeof(unsigned) * entry.breakingPositions.size() + widthsBytes(entry);
 }
 
 void TextBreakingPositionCache::evict()

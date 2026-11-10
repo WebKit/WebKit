@@ -66,7 +66,7 @@ static std::optional<Feature> consumeStyleRangeFeature(CSSParserTokenRange& rang
     };
 
     struct Operand {
-        AtomString customPropertyName;
+        RefPtr<AtomStringImpl> customPropertyName;
         Ref<CSSCustomPropertyValue> value;
     };
 
@@ -79,8 +79,8 @@ static std::optional<Feature> consumeStyleRangeFeature(CSSParserTokenRange& rang
 
         // A non-name operand (literal, calc(), var(), attr(), ...) still needs a valid custom-property
         // name for parsing/resolution; it is never looked up as a real property.
-        static MainThreadNeverDestroyed<const AtomString> operandName("--style-range-operand"_s);
-        auto name = customPropertyName.isNull() ? operandName.get() : customPropertyName;
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> operandName("--style-range-operand"_s);
+        auto name = !customPropertyName ? operandName.get() : customPropertyName;
         auto value = CSSSubstitutionParser::parseDeclarationValue(name, operandRange, context);
         if (!value)
             return { };
@@ -121,7 +121,7 @@ static std::optional<Feature> consumeStyleRangeFeature(CSSParserTokenRange& rang
     // <custom-property-name> center is stored as the feature name (matching the plain/size model, so
     // serialization and custom-property invalidation keep working); other centers go in `subject`.
     auto setCenter = [](Feature& feature, Operand&& center) {
-        if (!center.customPropertyName.isNull())
+        if (center.customPropertyName)
             feature.name = center.customPropertyName;
         else
             feature.subject = Box<Value>::create(WTF::move(center.value));
@@ -211,7 +211,7 @@ std::optional<ContainerCondition> ContainerQueryParser::consumeContainerConditio
     auto condition = consumeCondition(range, context);
 
     if (!condition) {
-        if (name.isEmpty())
+        if (isEmpty(name))
             return { };
         // it's valid to have a named container query without a condition, like "@container --name {}"
         condition = MQ::Condition { };
@@ -236,7 +236,7 @@ bool ContainerQueryParser::isValidFunctionId(CSSValueID functionId)
     return functionId == CSSValueID::Style || functionId == CSSValueID::ScrollState;
 }
 
-const MQ::FeatureSchema* ContainerQueryParser::schemaForFeatureName(const AtomString& name, const CSSParserContext& context, State& state)
+const MQ::FeatureSchema* ContainerQueryParser::schemaForFeatureName(AtomStringImpl* name, const CSSParserContext& context, State& state)
 {
     if (state.inFunctionId == CSSValueID::Style)
         return &Features::style();

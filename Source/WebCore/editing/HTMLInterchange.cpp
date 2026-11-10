@@ -36,24 +36,24 @@
 
 namespace WebCore {
 
-String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
+RefPtr<StringImpl> convertHTMLTextToInterchangeFormat(StringImpl* in, const Text* node)
 {
     // Assume all the text comes from node.
     if (node->renderer() && node->renderer()->style().preserveNewline())
         return in;
 
-    static NeverDestroyed<const String> convertedSpaceString { makeString("<span class=\""_s, AppleConvertedSpace, "\">"_s, noBreakSpace, "</span>"_s) };
+    static NeverDestroyed<const RefPtr<StringImpl>> convertedSpaceString { makeString("<span class=\""_s, AppleConvertedSpace, "\">"_s, noBreakSpace, "</span>"_s) };
 
     StringBuilder s;
 
     unsigned i = 0;
     unsigned consumed = 0;
-    while (i < in.length()) {
+    while (i < length(in)) {
         consumed = 1;
-        if (deprecatedIsCollapsibleWhitespace(in[i])) {
+        if (deprecatedIsCollapsibleWhitespace(codeUnitAt(in, i))) {
             // count number of adjoining spaces
             unsigned j = i + 1;
-            while (j < in.length() && deprecatedIsCollapsibleWhitespace(in[j]))
+            while (j < length(in) && deprecatedIsCollapsibleWhitespace(codeUnitAt(in, j)))
                 j++;
             unsigned count = j - i;
             consumed = count;
@@ -65,7 +65,7 @@ String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
                         add = 3;
                         break;
                     case 1:
-                        if (i == 0 || i + 1 == in.length()) // at start or end of string
+                        if (i == 0 || i + 1 == length(in)) // at start or end of string
                             s.append(convertedSpaceString.get());
                         else
                             s.append(' ');
@@ -74,7 +74,7 @@ String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
                         if (i == 0) {
                              // at start of string
                             s.append(convertedSpaceString.get(), ' ');
-                        } else if (i + 2 == in.length()) {
+                        } else if (i + 2 == length(in)) {
                              // at end of string
                             s.append(convertedSpaceString.get(), convertedSpaceString.get());
                         } else {
@@ -85,7 +85,7 @@ String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
                 count -= add;
             }
         } else
-            s.append(in[i]);
+            s.append(codeUnitAt(in, i));
         i += consumed;
     }
 

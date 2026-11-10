@@ -51,7 +51,7 @@ UIScriptContext::~UIScriptContext()
     m_controller->waitForOutstandingCallbacks();
 }
 
-void UIScriptContext::runUIScript(const String& script, unsigned scriptCallbackID)
+void UIScriptContext::runUIScript(StringImpl* script, unsigned scriptCallbackID)
 {
     m_currentScriptCallbackID = scriptCallbackID;
 
@@ -170,7 +170,8 @@ void UIScriptContext::tryToCompleteUIScriptForCurrentParentCallback()
         return;
 
     RefPtr result = m_uiScriptResultsPendingCompletion.take(m_currentScriptCallbackID);
-    String scriptResult({ reinterpret_cast<const char16_t*>(JSStringGetCharactersPtr(result.get())), JSStringGetLength(result.get()) });
+    std::span<const char16_t> scriptResultCharacters { reinterpret_cast<const char16_t*>(JSStringGetCharactersPtr(result.get())), JSStringGetLength(result.get()) };
+    RefPtr<StringImpl> scriptResult = scriptResultCharacters.data() ? RefPtr { StringImpl::create(scriptResultCharacters) } : nullptr; // A null buffer makes a null string.
 
     m_delegate.uiScriptDidComplete(scriptResult, m_currentScriptCallbackID);
     

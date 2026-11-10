@@ -73,7 +73,7 @@ public:
     NODELETE WEBCORE_EXPORT bool alpha();
     bool checked() const { return m_isChecked; }
     WEBCORE_EXPORT void setChecked(bool, WasSetByJavaScript = WasSetByJavaScript::Yes);
-    String colorSpace();
+    RefPtr<StringImpl> colorSpace();
     NODELETE WEBCORE_EXPORT FileList* files();
     WEBCORE_EXPORT void setFiles(RefPtr<FileList>&&, WasSetByJavaScript = WasSetByJavaScript::No);
     FileList* filesForBindings() { return files(); }
@@ -84,9 +84,9 @@ public:
     WEBCORE_EXPORT RefPtr<HTMLElement> list() const;
     unsigned size() const { return m_size; }
     WEBCORE_EXPORT ExceptionOr<void> setSize(unsigned);
-    WEBCORE_EXPORT ValueOrReference<String> value() const final;
-    WEBCORE_EXPORT ExceptionOr<void> setValue(const String&, TextFieldEventBehavior = DispatchNoEvent, TextControlSetValueSelection = TextControlSetValueSelection::SetSelectionToEnd) final;
-    WEBCORE_EXPORT void setValueForUser(const String&);
+    WEBCORE_EXPORT ValueOrReference<RefPtr<StringImpl>> value() const final;
+    WEBCORE_EXPORT ExceptionOr<void> setValue(StringImpl*, TextFieldEventBehavior = DispatchNoEvent, TextControlSetValueSelection = TextControlSetValueSelection::SetSelectionToEnd) final;
+    WEBCORE_EXPORT void setValueForUser(StringImpl*);
     WEBCORE_EXPORT WallTime valueAsDate() const;
     WEBCORE_EXPORT ExceptionOr<void> setValueAsDate(WallTime);
     WallTime accessibilityValueAsDate() const;
@@ -96,16 +96,16 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> stepDown(int = 1);
     WEBCORE_EXPORT unsigned width() const;
     bool hasSwitchAttribute() const { return m_hasSwitchAttribute; }
-    WEBCORE_EXPORT String validationMessage() const final;
+    WEBCORE_EXPORT RefPtr<StringImpl> validationMessage() const final;
     std::optional<unsigned> selectionStartForBindings() const;
     ExceptionOr<void> setSelectionStartForBindings(std::optional<unsigned>);
     std::optional<unsigned> selectionEndForBindings() const;
     ExceptionOr<void> setSelectionEndForBindings(std::optional<unsigned>);
-    ExceptionOr<String> selectionDirectionForBindings() const;
-    ExceptionOr<void> setSelectionDirectionForBindings(const String&);
+    ExceptionOr<RefPtr<StringImpl>> selectionDirectionForBindings() const;
+    ExceptionOr<void> setSelectionDirectionForBindings(StringImpl*);
     using HTMLTextFormControlElement::setRangeText;
-    WEBCORE_EXPORT ExceptionOr<void> setRangeText(StringView, unsigned start, unsigned end, const String& selectionMode) final;
-    ExceptionOr<void> setSelectionRangeForBindings(unsigned start, unsigned end, const String& direction);
+    WEBCORE_EXPORT ExceptionOr<void> setRangeText(StringView, unsigned start, unsigned end, StringImpl* selectionMode) final;
+    ExceptionOr<void> setSelectionRangeForBindings(unsigned start, unsigned end, StringImpl* direction);
     ExceptionOr<void> showPicker();
 
     WEBCORE_EXPORT bool shouldAutocomplete() const final;
@@ -202,23 +202,23 @@ public:
     // Checks if the specified string would be a valid value.
     // We should not call this for types with no string value such as CHECKBOX and RADIO.
     bool isValidValue(StringView) const;
-    bool hasDirtyValue() const { return !m_valueIfDirty.isNull(); }
+    bool hasDirtyValue() const { return !!m_valueIfDirty; }
 
-    String placeholder() const;
+    RefPtr<StringImpl> placeholder() const;
 
-    ValueOrReference<String> sanitizeValue(const String& value LIFETIME_BOUND) const;
+    ValueOrReference<RefPtr<StringImpl>> sanitizeValue(StringImpl* value LIFETIME_BOUND) const;
 
-    String localizeValue(const String&) const;
+    RefPtr<StringImpl> localizeValue(StringImpl*) const;
 
     // The value which is drawn by a renderer.
-    WEBCORE_EXPORT String visibleValue() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> visibleValue() const;
 
-    String valueWithDefault() const;
+    RefPtr<StringImpl> valueWithDefault() const;
 
     // This function dispatches 'input' event for non-textfield types. Callers
     // need to handle any DOM structure changes by event handlers, or need to
     // delay the 'input' event with EventQueueScope.
-    void setValueFromRenderer(const String&);
+    void setValueFromRenderer(StringImpl*);
 
     bool rendererIsNeeded(const Style::ComputedStyle&) final;
     NODELETE bool supportsBaseAppearance(StyleAppearance) const final;
@@ -231,7 +231,7 @@ public:
     bool isActivatedSubmit() const final;
     void setActivatedSubmit(bool flag) final;
 
-    String altText() const;
+    RefPtr<StringImpl> altText() const;
 
     void willDispatchEvent(Event&, InputElementClickState&);
     void didDispatchClickEvent(Event&, const InputElementClickState&);
@@ -240,8 +240,8 @@ public:
 
     int maxResults() const { return m_maxResults; }
 
-    Vector<String> acceptMIMETypes() const;
-    Vector<String> acceptFileExtensions() const;
+    Vector<RefPtr<StringImpl>> acceptMIMETypes() const;
+    Vector<RefPtr<StringImpl>> acceptFileExtensions() const;
 
     NODELETE unsigned effectiveMaxLength() const;
 
@@ -278,7 +278,7 @@ public:
 #endif
 
     NODELETE Icon* icon() const;
-    NODELETE String displayString() const;
+    RefPtr<StringImpl> displayString() const;
 
     // These functions are used for rendering the input active during a drag-and-drop operation.
     bool canReceiveDroppedFiles() const { return m_canReceiveDroppedFiles; }
@@ -300,7 +300,7 @@ public:
     // Returns null if this isn't associated with any radio button group.
     RadioButtonGroups* radioButtonGroups() const;
     // Functions for InputType classes.
-    void setValueInternal(const String&, TextFieldEventBehavior);
+    void setValueInternal(StringImpl*, TextFieldEventBehavior);
     bool isTextFormControlFocusable() const;
     bool isTextFormControlKeyboardFocusable(const FocusEventData&) const;
     bool isTextFormControlMouseFocusable() const;
@@ -314,7 +314,7 @@ public:
     WEBCORE_EXPORT void selectColor(StringView); // Does nothing if not type=color. Simulates user selection of color; intended for testing.
     WEBCORE_EXPORT Vector<Color> suggestedColors() const;
 
-    String defaultToolTip() const;
+    RefPtr<StringImpl> defaultToolTip() const;
 
 #if ENABLE(MEDIA_CAPTURE)
     MediaCaptureType mediaCaptureType() const;
@@ -329,7 +329,7 @@ public:
     void blur() final;
     void defaultBlur();
 
-    const AtomString& name() const final;
+    const RefPtr<AtomStringImpl>& name() const final;
 
     void endEditing();
 
@@ -347,7 +347,7 @@ public:
 
     NODELETE bool shouldTruncateText(const Style::ComputedStyle&) const;
 
-    String resultForDialogSubmit() const final;
+    RefPtr<StringImpl> resultForDialogSubmit() const final;
 
     bool isInnerTextElementEditable() const final { return !hasAutofillStrongPasswordButton() && HTMLTextFormControlElement::isInnerTextElementEditable(); }
     void finishParsingChildren() final;
@@ -396,7 +396,7 @@ private:
 
     bool canTriggerImplicitSubmission() const final { return isTextField(); }
 
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
 
     bool shouldSaveAndRestoreFormControlState() const final;
     FormControlState saveFormControlState() const final;
@@ -409,9 +409,9 @@ private:
 
     bool accessKeyAction(bool sendMouseEvents) final;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason = AttributeModificationReason::Directly) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) final;
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
@@ -454,7 +454,7 @@ private:
 
     void logUserInteraction();
 
-    void updateType(const AtomString& typeAttributeValue);
+    void updateType(AtomStringImpl* typeAttributeValue);
     void runPostTypeUpdateTasks();
 
     void subtreeHasChanged() final;
@@ -462,8 +462,8 @@ private:
     void readOnlyStateChanged() final;
 
     void resetListAttributeTargetObserver();
-    void maxLengthAttributeChanged(const AtomString& newValue);
-    void minLengthAttributeChanged(const AtomString& newValue);
+    void maxLengthAttributeChanged(AtomStringImpl* newValue);
+    void minLengthAttributeChanged(AtomStringImpl* newValue);
     void updateValueIfNeeded();
 
     void addToRadioButtonGroup();
@@ -476,8 +476,8 @@ private:
 
     bool dirAutoUsesValue() const final;
 
-    AtomString m_name;
-    String m_valueIfDirty;
+    RefPtr<AtomStringImpl> m_name;
+    RefPtr<StringImpl> m_valueIfDirty;
     unsigned m_size { defaultSize };
     short m_maxResults { -1 };
     bool m_isChecked : 1 { false };

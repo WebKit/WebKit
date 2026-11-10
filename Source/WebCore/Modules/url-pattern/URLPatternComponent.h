@@ -58,11 +58,11 @@ public:
     static ExceptionOr<URLPatternComponent> compileWithoutRegExp(StringView, EncodingCallbackType, const URLPatternStringOptions&);
     bool matchesWithoutRegExp(StringView input) const;
 
-    const String& patternString() const LIFETIME_BOUND { return m_patternString; }
+    const RefPtr<StringImpl>& patternString() const LIFETIME_BOUND { return m_patternString; }
     bool hasRegexGroupsFromPartList() const { return m_hasRegexGroupsFromPartList; }
     bool matchSpecialSchemeProtocol() const;
     std::optional<Vector<unsigned>> componentExec(StringView) const;
-    URLPatternComponentResult createComponentMatchResult(String&& input, const Vector<unsigned>& offsets) const;
+    URLPatternComponentResult createComponentMatchResult(RefPtr<StringImpl>&& input, const Vector<unsigned>& offsets) const;
     NODELETE URLPatternComponent();
     ~URLPatternComponent();
     URLPatternComponent(URLPatternComponent&&);
@@ -74,13 +74,13 @@ private:
         UniqueRef<JSC::Yarr::BytecodePattern> bytecode;
     };
 
-    URLPatternComponent(String&&, std::optional<CompiledPattern>&&, Vector<String>&&, bool);
-    URLPatternComponent(String&&, std::optional<URLPatternPartListMatcher>&&, Vector<String>&&, bool);
+    URLPatternComponent(RefPtr<StringImpl>&&, std::optional<CompiledPattern>&&, Vector<RefPtr<StringImpl>>&&, bool);
+    URLPatternComponent(RefPtr<StringImpl>&&, std::optional<URLPatternPartListMatcher>&&, Vector<RefPtr<StringImpl>>&&, bool);
 
-    String m_patternString;
+    RefPtr<StringImpl> m_patternString;
     std::optional<CompiledPattern> m_compiledPattern;
     std::optional<URLPatternPartListMatcher> m_partListMatcher;
-    Vector<String> m_groupNameList;
+    Vector<RefPtr<StringImpl>> m_groupNameList;
     bool m_hasRegexGroupsFromPartList { false };
 };
 

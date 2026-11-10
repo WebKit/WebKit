@@ -31,33 +31,33 @@ namespace WebCore {
 
 class URLDecomposition {
 public:
-    String origin() const;
+    RefPtr<StringImpl> origin() const;
 
-    WEBCORE_EXPORT String protocol() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> protocol() const;
     void setProtocol(StringView);
 
-    String username() const;
+    RefPtr<StringImpl> username() const;
     void setUsername(StringView);
 
-    String password() const;
+    RefPtr<StringImpl> password() const;
     void setPassword(StringView);
 
-    WEBCORE_EXPORT String host() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> host() const;
     void setHost(StringView);
 
-    WEBCORE_EXPORT String hostname() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> hostname() const;
     void setHostname(StringView);
 
-    WEBCORE_EXPORT String port() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> port() const;
     void setPort(StringView);
 
-    WEBCORE_EXPORT String pathname() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> pathname() const;
     void setPathname(StringView);
 
-    WEBCORE_EXPORT String search() const;
-    void setSearch(const String&);
+    WEBCORE_EXPORT RefPtr<StringImpl> search() const;
+    void setSearch(StringImpl*);
 
-    WEBCORE_EXPORT String hash() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> hash() const;
     void setHash(StringView);
 
     NODELETE static std::optional<uint16_t> parsePort(StringView);

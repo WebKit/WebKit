@@ -87,8 +87,8 @@ public:
     void layerPropertyChangedWhileBuildingTransaction(PlatformCALayerRemote&);
 
     // From the UI process
-    void animationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime);
-    void animationDidEnd(WebCore::PlatformLayerIdentifier, const String& key);
+    void animationDidStart(WebCore::PlatformLayerIdentifier, StringImpl* key, MonotonicTime startTime);
+    void animationDidEnd(WebCore::PlatformLayerIdentifier, StringImpl* key);
 
     void willStartAnimationOnLayer(PlatformCALayerRemote&);
 

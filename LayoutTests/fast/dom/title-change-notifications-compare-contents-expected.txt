@@ -1,0 +1,24 @@
+TITLE CHANGED: 'Title A'
+TITLE CHANGED: 'Title B'
+TITLE CHANGED: ''
+1. Set the title to the empty string (creates a title element)
+    document.title = ""
+2. Set the title to 'Title A'
+    document.title = "Title A"
+3. Set the title to a different string with the same contents
+    document.title = "Title A"
+4. Replace the title element's text node with the same contents
+    document.title = "Title A"
+5. Set the title to the same contents with extra whitespace
+    document.title = "Title A"
+6. Set the title to 'Title B'
+    document.title = "Title B"
+7. Change the title element's direction to rtl
+    document.title = "Title B"
+8. Set the title to the empty string again
+    document.title = ""
+9. Remove the title element (null title)
+    document.title = ""
+10. Set the title to the empty string again
+    document.title = ""
+

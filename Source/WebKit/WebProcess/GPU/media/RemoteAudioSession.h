@@ -76,7 +76,7 @@ private:
     Mode mode() const final;
 
     WebCore::RouteSharingPolicy routeSharingPolicy() const final { return m_routeSharingPolicy; }
-    String routingContextUID() const final { return configuration().routingContextUID; }
+    RefPtr<StringImpl> routingContextUID() const final { return configuration().routingContextUID; }
 
     float sampleRate() const final { return configuration().sampleRate; }
     size_t bufferSize() const final { return configuration().bufferSize; }
@@ -102,8 +102,8 @@ private:
     Ref<ActivationCountPromise> systemActivationCountForTesting() final;
     void clearInterruptionFlagForTesting() final { m_isInterruptedForTesting = false; }
 
-    void setSceneIdentifier(const String&) final;
-    const String& sceneIdentifier() const final { return configuration().sceneIdentifier; }
+    void setSceneIdentifier(StringImpl*) final;
+    const RefPtr<StringImpl>& sceneIdentifier() const final { return configuration().sceneIdentifier; }
 
     void setSoundStageSize(SoundStageSize) final;
     SoundStageSize soundStageSize() const final { return configuration().soundStageSize; }

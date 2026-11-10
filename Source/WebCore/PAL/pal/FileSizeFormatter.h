@@ -30,6 +30,6 @@
 
 namespace PAL {
 
-PAL_EXPORT AtomString fileSizeDescription(uint64_t);
+PAL_EXPORT RefPtr<AtomStringImpl> fileSizeDescription(uint64_t);
 
 } // namespace PAL

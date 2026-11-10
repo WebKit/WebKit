@@ -113,7 +113,7 @@ typedef NSString *AVContentKeySystem;
         if (!parent)
             return;
 
-        parent->setSessionId(sessionIdentifierString.get());
+        parent->setSessionId(StringImpl::create(sessionIdentifierString.get()).get());
     });
 }
 @end
@@ -162,7 +162,7 @@ bool CDMSessionAVContentKeySession::isAvailable()
     return PAL::getAVContentKeySessionClassSingleton();
 }
 
-RefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
+RefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyRequest(StringImpl* mimeType, Uint8Array* initData, RefPtr<StringImpl>& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
 {
     UNUSED_PARAM(mimeType);
     UNUSED_PARAM(destinationURL);
@@ -185,10 +185,10 @@ RefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyRequest(const Strin
         m_initData = SharedBuffer::create(initData->span());
 
     ASSERT(!m_certificate);
-    String certificateString("certificate"_s);
-    auto array = Uint8Array::create(certificateString.length());
-    for (unsigned i = 0, length = certificateString.length(); i < length; ++i)
-        array->set(i, certificateString[i]);
+    RefPtr<StringImpl> certificateString("certificate"_si);
+    auto array = Uint8Array::create(WTF::length(certificateString));
+    for (unsigned i = 0, length = WTF::length(certificateString); i < length; ++i)
+        array->set(i, codeUnitAt(certificateString, i));
     return WTF::move(array);
 }
 
@@ -210,11 +210,11 @@ void CDMSessionAVContentKeySession::releaseKeys()
             return;
 
         auto storagePath = this->storagePath();
-        if (storagePath.isEmpty())
+        if (isEmpty(storagePath))
             return;
 
         RetainPtr certificateData = WTF::toNSData(protect(m_certificate)->span());
-        RetainPtr expiredSessions = [PAL::getAVContentKeySessionClassSingleton() pendingExpiredSessionReportsWithAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:storagePath.createNSString().get()]];
+        RetainPtr expiredSessions = [PAL::getAVContentKeySessionClassSingleton() pendingExpiredSessionReportsWithAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:createNSString(storagePath).get()]];
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL NSData* expiredSessionData in expiredSessions.get()) {
             static const NSString *PlaybackSessionIdKey = @"PlaybackSessionID";
@@ -223,7 +223,7 @@ void CDMSessionAVContentKeySession::releaseKeys()
             if (!playbackSessionIdValue)
                 continue;
 
-            if (m_sessionId == String(playbackSessionIdValue.get())) {
+            if (equal(m_sessionId, StringImpl::create(playbackSessionIdValue.get()).get())) {
                 ALWAYS_LOG(LOGIDENTIFIER, "found session, sending expiration message");
                 m_expiredSession = expiredSessionData;
                 Ref { *m_client }->sendMessage(Uint8Array::create(span(m_expiredSession.get())).ptr(), emptyString());
@@ -256,8 +256,8 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
     if (isEqual(key, "acknowledged"_s)) {
         ALWAYS_LOG(LOGIDENTIFIER, "acknowleding secure stop message");
 
-        String storagePath = this->storagePath();
-        if (!m_expiredSession || storagePath.isEmpty()) {
+        RefPtr<StringImpl> storagePath = this->storagePath();
+        if (!m_expiredSession || isEmpty(storagePath)) {
             errorCode = MediaPlayer::InvalidPlayerState;
             return false;
         }
@@ -265,7 +265,7 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
         RetainPtr certificateData = WTF::toNSData(protect(m_certificate)->span());
 
         if ([PAL::getAVContentKeySessionClassSingleton() respondsToSelector:@selector(removePendingExpiredSessionReports:withAppIdentifier:storageDirectoryAtURL:)])
-            [PAL::getAVContentKeySessionClassSingleton() removePendingExpiredSessionReports:@[m_expiredSession.get()] withAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:storagePath.createNSString().get()]];
+            [PAL::getAVContentKeySessionClassSingleton() removePendingExpiredSessionReports:@[m_expiredSession.get()] withAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:createNSString(storagePath).get()]];
         m_expiredSession = nullptr;
         return true;
     }
@@ -369,7 +369,7 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
     return true;
 }
 
-RefPtr<ArrayBuffer> CDMSessionAVContentKeySession::cachedKeyForKeyID(const String&) const
+RefPtr<ArrayBuffer> CDMSessionAVContentKeySession::cachedKeyForKeyID(StringImpl*) const
 {
     return nullptr;
 }
@@ -415,14 +415,14 @@ RefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyReleaseMessage(unsi
     ASSERT(m_mode == KeyRelease);
     RetainPtr certificateData = WTF::toNSData(protect(m_certificate)->span());
 
-    String storagePath = this->storagePath();
-    if (storagePath.isEmpty() || ![PAL::getAVContentKeySessionClassSingleton() respondsToSelector:@selector(pendingExpiredSessionReportsWithAppIdentifier:storageDirectoryAtURL:)]) {
+    RefPtr<StringImpl> storagePath = this->storagePath();
+    if (isEmpty(storagePath) || ![PAL::getAVContentKeySessionClassSingleton() respondsToSelector:@selector(pendingExpiredSessionReportsWithAppIdentifier:storageDirectoryAtURL:)]) {
         errorCode = MediaPlayer::KeySystemNotSupported;
         systemCode = '!mor';
         return nullptr;
     }
 
-    RetainPtr expiredSessions = [PAL::getAVContentKeySessionClassSingleton() pendingExpiredSessionReportsWithAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:storagePath.createNSString().get()]];
+    RetainPtr expiredSessions = [PAL::getAVContentKeySessionClassSingleton() pendingExpiredSessionReportsWithAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:createNSString(storagePath).get()]];
     if (![expiredSessions count]) {
         ALWAYS_LOG(LOGIDENTIFIER, "no expired sessions found");
 
@@ -473,17 +473,17 @@ RetainPtr<AVContentKeySession> CDMSessionAVContentKeySession::contentKeySession(
     if (!PAL::canLoad_AVFoundation_AVContentKeySystemFairPlayStreaming())
         return nil;
 
-    String storagePath = this->storagePath();
+    RefPtr<StringImpl> storagePath = this->storagePath();
     NSURL *storageURL = nil;
-    if (!storagePath.isEmpty()) {
-        String storageDirectory = FileSystem::parentPath(storagePath);
+    if (!isEmpty(storagePath)) {
+        RefPtr<StringImpl> storageDirectory = FileSystem::parentPath(storagePath);
 
         if (!FileSystem::fileExists(storageDirectory)) {
             if (!FileSystem::makeAllDirectories(storageDirectory))
                 return nil;
         }
 
-        storageURL = [NSURL fileURLWithPath:storagePath.createNSString().get()];
+        storageURL = [NSURL fileURLWithPath:createNSString(storagePath).get()];
     }
 
     lazyInitialize(m_contentKeySession, createContentKeySession(storageURL));
@@ -499,14 +499,14 @@ void CDMSessionAVContentKeySession::setInitData(SharedBuffer& initData)
     lazyInitialize(m_sourceBufferInitData, Ref { initData });
 }
 
-String CDMSessionAVContentKeySession::storagePath() const
+RefPtr<StringImpl> CDMSessionAVContentKeySession::storagePath() const
 {
     RefPtr client = m_client.get();
     if (!client)
         return emptyString();
 
-    String storageDirectory = client->mediaKeysStorageDirectory();
-    if (storageDirectory.isEmpty())
+    RefPtr<StringImpl> storageDirectory = client->mediaKeysStorageDirectory();
+    if (isEmpty(storageDirectory))
         return emptyString();
 
     return FileSystem::pathByAppendingComponent(storageDirectory, "SecureStop.plist"_s);

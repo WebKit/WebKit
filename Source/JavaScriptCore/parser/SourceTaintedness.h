@@ -111,7 +111,7 @@ JS_EXPORT_PRIVATE std::pair<SourceTaintedOrigin, URL> sourceTaintedOriginFromSta
 JS_EXPORT_PRIVATE std::pair<SourceTaintedness, URL> sourceTaintednessFromStack(VM&, CallFrame*);
 JS_EXPORT_PRIVATE SourceTaintedness computeNewSourceTaintednessFromStack(VM&, CallFrame*);
 
-JS_EXPORT_PRIVATE String sourceTaintedOriginToString(SourceTaintedOrigin taintedness);
+JS_EXPORT_PRIVATE RefPtr<StringImpl> sourceTaintedOriginToString(SourceTaintedOrigin taintedness);
 
 JS_EXPORT_PRIVATE void markSourceAsPrevalentDomainTainted(VM&, SourceProvider&);
 JS_EXPORT_PRIVATE bool isPrevalentDomainTaintedCodeOnStack(VM&, CallFrame*);

@@ -83,12 +83,12 @@ static std::optional<std::pair<Vector<uint8_t>, bool>> cookieDataForHandshake(co
     if (!networkStorageSession)
         return std::nullopt;
     
-    auto [cookieDataString, secureCookiesAccessed] = networkStorageSession->cookieRequestHeaderFieldValue(headerFieldProxy, ThirdPartyCookieBlockingDecision::None, String { });
-    if (cookieDataString.isEmpty())
+    auto [cookieDataString, secureCookiesAccessed] = networkStorageSession->cookieRequestHeaderFieldValue(headerFieldProxy, ThirdPartyCookieBlockingDecision::None, nullString());
+    if (isEmpty(cookieDataString))
         return std::pair<Vector<uint8_t>, bool> { { }, secureCookiesAccessed };
 
     Vector<uint8_t> data = { 'C', 'o', 'o', 'k', 'i', 'e', ':', ' ' };
-    data.append(cookieDataString.utf8().span());
+    data.append(utf8(cookieDataString).span());
     data.append("\r\n\r\n"_span);
 
     return std::pair<Vector<uint8_t>, bool> { data, secureCookiesAccessed };

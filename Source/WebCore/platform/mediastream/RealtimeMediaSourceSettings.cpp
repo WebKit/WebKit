@@ -40,24 +40,24 @@ namespace WebCore {
 
 RealtimeMediaSourceSettings RealtimeMediaSourceSettings::isolatedCopy() const
 {
-    return { m_width, m_height , m_frameRate, m_facingMode, m_volume , m_sampleRate, m_sampleSize, m_echoCancellation, m_deviceId.isolatedCopy(), m_groupId.isolatedCopy(), m_label.isolatedCopy(), m_displaySurface, m_logicalSurface, m_whiteBalanceMode, m_zoom, m_torch, m_backgroundBlur, m_powerEfficient, RealtimeMediaSourceSupportedConstraints { m_supportedConstraints } };
+    return { m_width, m_height , m_frameRate, m_facingMode, m_volume , m_sampleRate, m_sampleSize, m_echoCancellation, WTF::isolatedCopy(m_deviceId), WTF::isolatedCopy(m_groupId), WTF::isolatedCopy(m_label), m_displaySurface, m_logicalSurface, m_whiteBalanceMode, m_zoom, m_torch, m_backgroundBlur, m_powerEfficient, RealtimeMediaSourceSupportedConstraints { m_supportedConstraints } };
 }
 
-VideoFacingMode RealtimeMediaSourceSettings::videoFacingModeEnum(const String& mode)
+VideoFacingMode RealtimeMediaSourceSettings::videoFacingModeEnum(StringImpl* mode)
 {
-    if (mode == "user"_s)
+    if (equal(mode, "user"_s))
         return VideoFacingMode::User;
-    if (mode == "environment"_s)
+    if (equal(mode, "environment"_s))
         return VideoFacingMode::Environment;
-    if (mode == "left"_s)
+    if (equal(mode, "left"_s))
         return VideoFacingMode::Left;
-    if (mode == "right"_s)
+    if (equal(mode, "right"_s))
         return VideoFacingMode::Right;
 
     return VideoFacingMode::Unknown;
 }
 
-String RealtimeMediaSourceSettings::convertFlagsToString(const OptionSet<RealtimeMediaSourceSettings::Flag> flags)
+RefPtr<StringImpl> RealtimeMediaSourceSettings::convertFlagsToString(const OptionSet<RealtimeMediaSourceSettings::Flag> flags)
 {
     StringBuilder builder;
 
@@ -148,11 +148,11 @@ OptionSet<RealtimeMediaSourceSettings::Flag> RealtimeMediaSourceSettings::differ
         difference.add(RealtimeMediaSourceSettings::SampleSize);
     if (echoCancellation() != that.echoCancellation())
         difference.add(RealtimeMediaSourceSettings::EchoCancellation);
-    if (deviceId() != that.deviceId())
+    if (!equal(deviceId(), that.deviceId()))
         difference.add(RealtimeMediaSourceSettings::DeviceId);
-    if (groupId() != that.groupId())
+    if (!equal(groupId(), that.groupId()))
         difference.add(RealtimeMediaSourceSettings::GroupId);
-    if (label() != that.label())
+    if (!equal(label(), that.label()))
         difference.add(RealtimeMediaSourceSettings::Label);
     if (displaySurface() != that.displaySurface())
         difference.add(RealtimeMediaSourceSettings::DisplaySurface);
@@ -172,9 +172,9 @@ OptionSet<RealtimeMediaSourceSettings::Flag> RealtimeMediaSourceSettings::differ
     return difference;
 }
 
-String convertEnumerationToString(VideoFacingMode enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(VideoFacingMode enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 5> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 5> values {
         MAKE_STATIC_STRING_IMPL("unknown"),
         MAKE_STATIC_STRING_IMPL("user"),
         MAKE_STATIC_STRING_IMPL("environment"),
@@ -190,9 +190,9 @@ String convertEnumerationToString(VideoFacingMode enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String RealtimeMediaSourceSettings::displaySurface(DisplaySurfaceType surface)
+RefPtr<StringImpl> RealtimeMediaSourceSettings::displaySurface(DisplaySurfaceType surface)
 {
-    static const std::array<NeverDestroyed<String>, 5> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 5> values {
         MAKE_STATIC_STRING_IMPL("monitor"),
         MAKE_STATIC_STRING_IMPL("window"),
         MAKE_STATIC_STRING_IMPL("application"),

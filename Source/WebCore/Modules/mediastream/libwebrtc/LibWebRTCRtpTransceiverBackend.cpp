@@ -70,11 +70,11 @@ void LibWebRTCRtpTransceiverBackend::setDirection(RTCRtpTransceiverDirection dir
     m_rtcTransceiver->SetDirectionWithError(fromRTCRtpTransceiverDirection(direction));
 }
 
-String LibWebRTCRtpTransceiverBackend::mid()
+RefPtr<StringImpl> LibWebRTCRtpTransceiverBackend::mid()
 {
     if (auto mid = m_rtcTransceiver->mid())
         return fromStdString(*mid);
-    return String { };
+    return nullptr;
 }
 
 void LibWebRTCRtpTransceiverBackend::stop()
@@ -90,12 +90,12 @@ bool LibWebRTCRtpTransceiverBackend::stopped() const
 static inline ExceptionOr<webrtc::RtpCodecCapability> toRtpCodecCapability(const RTCRtpCodec& codec)
 {
     webrtc::RtpCodecCapability rtcCodec;
-    if (codec.mimeType.startsWithIgnoringASCIICase("video/"_s))
+    if (startsWithIgnoringASCIICase(codec.mimeType, "video/"_s))
         rtcCodec.kind = webrtc::MediaType::VIDEO;
-    else if (codec.mimeType.startsWithIgnoringASCIICase("audio/"_s))
+    else if (startsWithIgnoringASCIICase(codec.mimeType, "audio/"_s))
         rtcCodec.kind = webrtc::MediaType::AUDIO;
     else
-        return Exception { ExceptionCode::InvalidModificationError, "RTCRtpCodec bad mimeType"_s };
+        return Exception { ExceptionCode::InvalidModificationError, "RTCRtpCodec bad mimeType"_si };
 
     rtcCodec.name = StringView(codec.mimeType).substring(6).utf8().toStdString();
     rtcCodec.clock_rate = codec.clockRate;
@@ -105,7 +105,7 @@ static inline ExceptionOr<webrtc::RtpCodecCapability> toRtpCodecCapability(const
     for (auto parameter : StringView(codec.sdpFmtpLine).split(';')) {
         auto position = parameter.find('=');
         if (position == notFound)
-            return Exception { ExceptionCode::InvalidModificationError, "RTCRtpCodec sdpFmtLine badly formated"_s };
+            return Exception { ExceptionCode::InvalidModificationError, "RTCRtpCodec sdpFmtLine badly formated"_si };
         rtcCodec.parameters.emplace(parameter.left(position).utf8().toStdString(), parameter.substring(position + 1).utf8().toStdString());
     }
 

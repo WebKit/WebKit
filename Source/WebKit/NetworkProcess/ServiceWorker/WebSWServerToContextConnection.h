@@ -120,7 +120,7 @@ private:
     void workerTerminated(WebCore::ServiceWorkerIdentifier);
 
     // Messages to the SW host WebProcess
-    void installServiceWorkerContext(const WebCore::ServiceWorkerContextData&, const WebCore::ServiceWorkerData&, const String& userAgent, WebCore::WorkerThreadMode, OptionSet<WebCore::AdvancedPrivacyProtections>) final;
+    void installServiceWorkerContext(const WebCore::ServiceWorkerContextData&, const WebCore::ServiceWorkerData&, StringImpl* userAgent, WebCore::WorkerThreadMode, OptionSet<WebCore::AdvancedPrivacyProtections>) final;
     void updateAppInitiatedValue(WebCore::ServiceWorkerIdentifier, WebCore::LastNavigationWasAppInitiated) final;
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier) final;
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier) final;
@@ -136,7 +136,7 @@ private:
     void connectionIsNoLongerNeeded() final;
     void terminateDueToUnresponsiveness() final;
     void openWindow(WebCore::ServiceWorkerIdentifier, const URL&, OpenWindowCallback&&) final;
-    void reportConsoleMessage(WebCore::ServiceWorkerIdentifier, MessageSource, MessageLevel, const String& message, uint64_t requestIdentifier);
+    void reportConsoleMessage(WebCore::ServiceWorkerIdentifier, MessageSource, MessageLevel, StringImpl* message, uint64_t requestIdentifier);
     void startPendingStreamUploadForwarding(WebCore::FetchIdentifier);
     void pendingStreamDataAvailable(WebCore::FetchIdentifier);
     void cancelPendingStreamUploadForwarding(WebCore::FetchIdentifier);

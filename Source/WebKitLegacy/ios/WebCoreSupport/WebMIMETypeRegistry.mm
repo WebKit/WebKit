@@ -35,22 +35,22 @@ using WebCore::MIMETypeRegistry;
 
 + (NSString *)mimeTypeForExtension:(NSString *)extension
 {
-    return MIMETypeRegistry::mimeTypeForExtension(String(extension)).createNSString().autorelease();
+    return createNSString(MIMETypeRegistry::mimeTypeForExtension(StringImpl::create(extension).get())).autorelease();
 }
 
 + (NSString *)preferredExtensionForMIMEType:(NSString *)mimeType
 {
-    return MIMETypeRegistry::preferredExtensionForMIMEType(mimeType).createNSString().autorelease();
+    return createNSString(MIMETypeRegistry::preferredExtensionForMIMEType(StringImpl::create(mimeType).get())).autorelease();
 }
 
 + (BOOL)isSupportedImageMIMEType:(NSString *)mimeType
 {
-    return MIMETypeRegistry::isSupportedImageMIMEType(mimeType);
+    return MIMETypeRegistry::isSupportedImageMIMEType(StringImpl::create(mimeType).get());
 }
 
 + (BOOL)isSupportedMediaMIMEType:(NSString *)mimeType
 {
-    return MIMETypeRegistry::isSupportedMediaMIMEType(mimeType);
+    return MIMETypeRegistry::isSupportedMediaMIMEType(StringImpl::create(mimeType).get());
 }
 
 @end

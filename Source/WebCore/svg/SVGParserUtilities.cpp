@@ -276,14 +276,14 @@ std::optional<FloatRect> parseRect(StringView string)
     });
 }
 
-std::optional<HashSet<String>> parseGlyphName(StringView string)
+std::optional<HashSet<RefPtr<StringImpl>>> parseGlyphName(StringView string)
 {
     // FIXME: Parsing error detection is missing.
 
     return readCharactersForParsing(string, [](auto buffer) {
         skipOptionalSVGSpaces(buffer);
 
-        HashSet<String> values;
+        HashSet<RefPtr<StringImpl>> values;
 
         while (buffer.hasCharactersRemaining()) {
             // Leading and trailing white space, and white space before and after separators, will be ignored.
@@ -299,7 +299,7 @@ std::optional<HashSet<String>> parseGlyphName(StringView string)
             while (index > 0 && isASCIIWhitespace(inputStart[index - 1]))
                 --index;
 
-            values.add(inputStart.first(index));
+            values.add(StringImpl::create(inputStart.first(index)));
             skipOptionalSVGSpacesOrDelimiter(buffer, ',');
         }
         return values;
@@ -379,13 +379,13 @@ template<typename CharacterType> NODELETE static std::optional<UnicodeRange> par
     return range;
 }
 
-std::optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeString(StringView string)
+std::optional<std::pair<UnicodeRanges, HashSet<RefPtr<StringImpl>>>> parseKerningUnicodeString(StringView string)
 {
     // FIXME: Parsing error detection is missing.
 
-    return readCharactersForParsing(string, [](auto buffer) -> std::pair<UnicodeRanges, HashSet<String>> {
+    return readCharactersForParsing(string, [](auto buffer) -> std::pair<UnicodeRanges, HashSet<RefPtr<StringImpl>>> {
         UnicodeRanges rangeList;
-        HashSet<String> stringList;
+        HashSet<RefPtr<StringImpl>> stringList;
 
         while (1) {
             auto inputStart = buffer.position();
@@ -399,7 +399,7 @@ std::optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeStri
             if (auto range = parseUnicodeRange(std::span { inputStart, buffer.position() }))
                 rangeList.append(WTF::move(*range));
             else
-                stringList.add(String({ inputStart, buffer.position() }));
+                stringList.add(StringImpl::create(std::span { inputStart, buffer.position() }));
 
             if (buffer.atEnd())
                 break;

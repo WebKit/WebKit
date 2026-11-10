@@ -200,7 +200,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 #if PLATFORM(IOS_FAMILY)
 - (void)_setOverrideTextEncodingName:(NSString *)encoding
 {
-    protect(toPrivate(_private)->loader)->setOverrideEncoding(encoding);
+    protect(toPrivate(_private)->loader)->setOverrideEncoding(StringImpl::create(encoding).get());
 }
 #endif
 
@@ -310,7 +310,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
             protect(toPrivate(_private)->loader)->addAllArchiveResources(protect(*[archive _coreLegacyWebArchive]));
 
             return [[self webFrame] _documentFragmentWithMarkupString:markupString.get() baseURLString:[[mainResource URL] _web_originalDataAsString]];
-        } else if (WebCore::MIMETypeRegistry::isSupportedImageMIMEType(MIMEType))
+        } else if (WebCore::MIMETypeRegistry::isSupportedImageMIMEType(StringImpl::create(MIMEType).get()))
             return [self _documentFragmentWithImageResource:mainResource];
     }
     return nil;
@@ -381,7 +381,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
     RetainPtr<id<WebDocumentRepresentation>> representation = toPrivate(_private)->representation.get();
     [representation.get() setDataSource:self];
 #if PLATFORM(IOS_FAMILY)
-    protect(toPrivate(_private)->loader)->setResponseMIMEType([self _responseMIMEType]);
+    protect(toPrivate(_private)->loader)->setResponseMIMEType(StringImpl::create([self _responseMIMEType]).get());
 #endif
 }
 
@@ -494,7 +494,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 
 - (NSString *)textEncodingName
 {
-    RetainPtr textEncodingName = toPrivate(_private)->loader->overrideEncoding().createNSString();
+    RetainPtr textEncodingName = createNSString(toPrivate(_private)->loader->overrideEncoding());
     if (!textEncodingName)
         textEncodingName = [[self response] textEncodingName];
     return textEncodingName.autorelease();

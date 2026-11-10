@@ -113,10 +113,10 @@ static void waitForSampledPageTopColorToChange(TestWKWebView *webView, Function<
     TestWebKitAPI::Util::run(&done);
 }
 
-static void waitForSampledPageTopColorToChangeForHTML(TestWKWebView *webView, String&& html)
+static void waitForSampledPageTopColorToChangeForHTML(TestWKWebView *webView, RefPtr<StringImpl>&& html)
 {
     waitForSampledPageTopColorToChange(webView, [webView, html = WTF::move(html)] () mutable {
-        [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:html.createNSString().get()];
+        [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createNSString(html).get()];
     });
 }
 
@@ -127,7 +127,7 @@ static bool waitForAnimationsToFinish(TestWKWebView *webView)
     });
 }
 
-static String createHTMLGradientWithColorStops(String&& direction, Vector<String>&& colorStops)
+static RefPtr<StringImpl> createHTMLGradientWithColorStops(RefPtr<StringImpl>&& direction, Vector<RefPtr<StringImpl>>&& colorStops)
 {
     EXPECT_GE(colorStops.size(), 2UL);
 
@@ -616,7 +616,7 @@ TEST(SampledPageTopColor, ZeroMaxDifference)
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(0);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createHTMLGradientWithColorStops("right"_s, { "red"_s, "red"_s }).createNSString().get()];
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createNSString(createHTMLGradientWithColorStops("right"_si, { "red"_s, "red"_s })).get()];
     EXPECT_NULL([webView _sampledPageTopColor]);
 }
 
@@ -625,7 +625,7 @@ TEST(SampledPageTopColor, NegativeMaxDifference)
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(-5);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createHTMLGradientWithColorStops("right"_s, { "red"_s, "red"_s }).createNSString().get()];
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createNSString(createHTMLGradientWithColorStops("right"_si, { "red"_s, "red"_s })).get()];
     EXPECT_NULL([webView _sampledPageTopColor]);
 }
 
@@ -634,7 +634,7 @@ TEST(SampledPageTopColor, SolidColor)
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    waitForSampledPageTopColorToChangeForHTML(webView.get(), createHTMLGradientWithColorStops("right"_s, { "red"_s, "red"_s }));
+    waitForSampledPageTopColorToChangeForHTML(webView.get(), createHTMLGradientWithColorStops("right"_si, { "red"_s, "red"_s }));
     EXPECT_EQ(WebCore::roundAndClampToSRGBALossy([webView _sampledPageTopColor].CGColor), WebCore::Color::red);
 }
 
@@ -643,7 +643,7 @@ TEST(SampledPageTopColor, DifferentColorsWithoutOutlierBelowMaxDifference)
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    waitForSampledPageTopColorToChangeForHTML(webView.get(), createHTMLGradientWithColorStops("right"_s, {
+    waitForSampledPageTopColorToChangeForHTML(webView.get(), createHTMLGradientWithColorStops("right"_si, {
         "lab(1% 0 0)"_s,
         "lab(2% 0 0)"_s,
         "lab(3% 0 0)"_s,
@@ -663,7 +663,7 @@ TEST(SampledPageTopColor, DifferentColorsWithLeftOutlierAboveMaxDifference)
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    waitForSampledPageTopColorToChangeForHTML(webView.get(), createHTMLGradientWithColorStops("right"_s, {
+    waitForSampledPageTopColorToChangeForHTML(webView.get(), createHTMLGradientWithColorStops("right"_si, {
         "lab(100% 0 0)"_s, // outlier
         "lab(1% 0 0)"_s,
         "lab(2% 0 0)"_s,
@@ -683,13 +683,13 @@ TEST(SampledPageTopColor, DifferentColorsWithMiddleOutlierAboveMaxDifference)
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createHTMLGradientWithColorStops("right"_s, {
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createNSString(createHTMLGradientWithColorStops("right"_si, {
         "lab(1% 0 0)"_s,
         "lab(2% 0 0)"_s,
         "lab(100% 0 0)"_s, // outlier
         "lab(3% 0 0)"_s,
         "lab(4% 0 0)"_s,
-    }).createNSString().get()];
+    })).get()];
     EXPECT_NULL([webView _sampledPageTopColor]);
 }
 
@@ -698,7 +698,7 @@ TEST(SampledPageTopColor, DifferentColorsWithRightOutlierAboveMaxDifference)
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    waitForSampledPageTopColorToChangeForHTML(webView.get(), createHTMLGradientWithColorStops("right"_s, {
+    waitForSampledPageTopColorToChangeForHTML(webView.get(), createHTMLGradientWithColorStops("right"_si, {
         "lab(1% 0 0)"_s,
         "lab(2% 0 0)"_s,
         "lab(3% 0 0)"_s,
@@ -718,13 +718,13 @@ TEST(SampledPageTopColor, DifferentColorsIndividuallyAboveMaxDifference)
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createHTMLGradientWithColorStops("right"_s, {
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createNSString(createHTMLGradientWithColorStops("right"_si, {
         "lab(10% 0 0)"_s,
         "lab(20% 0 0)"_s,
         "lab(30% 0 0)"_s,
         "lab(40% 0 0)"_s,
         "lab(50% 0 0)"_s,
-    }).createNSString().get()];
+    })).get()];
     EXPECT_NULL([webView _sampledPageTopColor]);
 }
 
@@ -733,13 +733,13 @@ TEST(SampledPageTopColor, DifferentColorsCumulativelyAboveMaxDifference)
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createHTMLGradientWithColorStops("right"_s, {
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createNSString(createHTMLGradientWithColorStops("right"_si, {
         "lab(1% 0 0)"_s,
         "lab(3% 0 0)"_s,
         "lab(5% 0 0)"_s,
         "lab(7% 0 0)"_s,
         "lab(9% 0 0)"_s,
-    }).createNSString().get()];
+    })).get()];
     EXPECT_NULL([webView _sampledPageTopColor]);
 }
 
@@ -748,14 +748,14 @@ TEST(SampledPageTopColor, VerticalGradientBelowMaxDifference)
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(5, 100);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createHTMLGradientWithColorStops("bottom"_s, {
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createNSString(createHTMLGradientWithColorStops("bottom"_si, {
         "lab(1% 0 0)"_s,
         "lab(2% 0 0)"_s,
         "lab(3% 0 0)"_s,
         "lab(4% 0 0)"_s,
         "lab(5% 0 0)"_s,
         "lab(6% 0 0)"_s,
-    }).createNSString().get()];
+    })).get()];
     auto components = CGColorGetComponents([webView _sampledPageTopColor].CGColor);
     EXPECT_IN_RANGE(components[0], 0.01, 0.02);
     EXPECT_IN_RANGE(components[1], 0.01, 0.02);
@@ -768,7 +768,7 @@ TEST(SampledPageTopColor, VerticalGradientAboveMaxDifference)
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(5, 100);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createHTMLGradientWithColorStops("bottom"_s, { "red"_s, "blue"_s }).createNSString().get()];
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createNSString(createHTMLGradientWithColorStops("bottom"_si, { "red"_s, "blue"_s })).get()];
     EXPECT_NULL([webView _sampledPageTopColor]);
 }
 
@@ -786,7 +786,7 @@ TEST(SampledPageTopColor, HitTestHTMLCanvasWithoutRenderingContext)
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    waitForSampledPageTopColorToChangeForHTML(webView.get(), @"<body style='margin: 0'><canvas style='width: 100%; height: 100%; background-color: red'></canvas>Test");
+    waitForSampledPageTopColorToChangeForHTML(webView.get(), StringImpl::create(@"<body style='margin: 0'><canvas style='width: 100%; height: 100%; background-color: red'></canvas>Test"));
     EXPECT_EQ(WebCore::roundAndClampToSRGBALossy([webView _sampledPageTopColor].CGColor), WebCore::Color::red);
 }
 
@@ -813,7 +813,7 @@ TEST(SampledPageTopColor, HitTestBeforeCSSTransition)
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    waitForSampledPageTopColorToChangeForHTML(webView.get(), @"<body style='margin: 0; transition: background-color 1s'>Test");
+    waitForSampledPageTopColorToChangeForHTML(webView.get(), StringImpl::create(@"<body style='margin: 0; transition: background-color 1s'>Test"));
     EXPECT_EQ(WebCore::roundAndClampToSRGBALossy([webView _sampledPageTopColor].CGColor), WebCore::Color::white);
 }
 
@@ -854,7 +854,7 @@ TEST(SampledPageTopColor, HitTestBeforeCSSAnimation)
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    waitForSampledPageTopColorToChangeForHTML(webView.get(), @"<style>@keyframes changeBackgroundRed { to { background-color: red; } }</style><body style='margin: 0; animation: changeBackgroundRed 1s forwards paused'>Test");
+    waitForSampledPageTopColorToChangeForHTML(webView.get(), StringImpl::create(@"<style>@keyframes changeBackgroundRed { to { background-color: red; } }</style><body style='margin: 0; animation: changeBackgroundRed 1s forwards paused'>Test"));
     EXPECT_EQ(WebCore::roundAndClampToSRGBALossy([webView _sampledPageTopColor].CGColor), WebCore::Color::white);
 }
 
@@ -903,13 +903,13 @@ TEST(SampledPageTopColor, DISABLED_DisplayP3)
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
     EXPECT_NULL([webView _sampledPageTopColor]);
 
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createHTMLGradientWithColorStops("right"_s, {
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createNSString(createHTMLGradientWithColorStops("right"_si, {
         "color(display-p3 0.99 0 0)"_s,
         "color(display-p3 0.98 0 0)"_s,
         "color(display-p3 0.97 0 0)"_s,
         "color(display-p3 0.96 0 0)"_s,
         "color(display-p3 0.95 0 0)"_s,
-    }).createNSString().get()];
+    })).get()];
 
     auto components = CGColorGetComponents([webView _sampledPageTopColor].CGColor);
     EXPECT_IN_RANGE(components[0], 0.3, 0.4);

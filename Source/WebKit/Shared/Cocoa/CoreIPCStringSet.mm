@@ -44,11 +44,11 @@ CoreIPCStringSet::CoreIPCStringSet(NSSet *stringSet)
     for (SUPPRESS_UNRETAINED_LOCAL id value in stringSet) {
         if (![value isKindOfClass:[NSString class]])
             continue;
-        m_stringSet.append(value);
+        m_stringSet.append(StringImpl::create(checked_objc_cast<NSString>(value)));
     }
 }
 
-CoreIPCStringSet::CoreIPCStringSet(Vector<String>&& strings)
+CoreIPCStringSet::CoreIPCStringSet(Vector<RefPtr<StringImpl>>&& strings)
     : m_stringSet(WTF::move(strings)) { }
 
 CoreIPCStringSet::~CoreIPCStringSet() = default;
@@ -57,7 +57,7 @@ RetainPtr<id> CoreIPCStringSet::toID() const
 {
     RetainPtr result = adoptNS([[NSMutableArray alloc] init]);
     for (auto& s : borrow(m_stringSet))
-        [result addObject:s.createNSString().get()];
+        [result addObject:createNSString(s).get()];
 
     RetainPtr<NSSet> set = [NSSet setWithArray:result.get()];
     return set;

@@ -110,7 +110,7 @@ public:
     bool operator==(const WebExtensionContextProxy& other) const { return (this == &other); }
 
     const URL& baseURL() const LIFETIME_BOUND { return m_baseURL; }
-    const String& uniqueIdentifier() const LIFETIME_BOUND { return m_uniqueIdentifier; }
+    const RefPtr<StringImpl>& uniqueIdentifier() const LIFETIME_BOUND { return m_uniqueIdentifier; }
 
     bool isURLForThisExtension(const URL&) const;
 
@@ -138,16 +138,16 @@ public:
 
     void addFrameWithExtensionContent(WebFrame&);
 
-    void didEncounterScriptError(const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, WebExtensionContentWorldType);
+    void didEncounterScriptError(StringImpl* message, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber, WebExtensionContentWorldType);
 
     NODELETE std::optional<WebExtensionTabIdentifier> tabIdentifier(WebPage&) const;
 
     NODELETE RefPtr<WebPage> backgroundPage() const;
     NODELETE void setBackgroundPage(WebPage&);
 
-    bool isUnsupportedAPI(const String& propertyPath, const ASCIILiteral& propertyName) const;
+    bool isUnsupportedAPI(StringImpl* propertyPath, const ASCIILiteral& propertyName) const;
 
-    bool hasPermission(const String& permission) const;
+    bool hasPermission(StringImpl* permission) const;
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     void addInspectorPage(WebPage&, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
@@ -195,8 +195,8 @@ private:
     void dispatchAlarmsEvent(const WebExtensionAlarmParameters&);
 
     // Commands
-    void dispatchCommandsCommandEvent(const String& identifier, const std::optional<WebExtensionTabParameters>&);
-    void dispatchCommandsChangedEvent(const String& identifier, const String& oldShortcut, const String& newShortcut);
+    void dispatchCommandsCommandEvent(StringImpl* identifier, const std::optional<WebExtensionTabParameters>&);
+    void dispatchCommandsChangedEvent(StringImpl* identifier, StringImpl* oldShortcut, StringImpl* newShortcut);
 
     // Cookies
     void dispatchCookiesChangedEvent();
@@ -231,14 +231,14 @@ private:
 
 #if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
     // Notifications
-    void dispatchNotificationsClickedEvent(const String& identifier);
-    void dispatchNotificationsButtonClickedEvent(const String& identifier, uint64_t buttonIndex);
-    void dispatchNotificationsClosedEvent(const String& identifier, bool byUser);
+    void dispatchNotificationsClickedEvent(StringImpl* identifier);
+    void dispatchNotificationsButtonClickedEvent(StringImpl* identifier, uint64_t buttonIndex);
+    void dispatchNotificationsClosedEvent(StringImpl* identifier, bool byUser);
 #endif
 
     // Permissions
     void updateGrantedPermissions(PermissionsMap&&);
-    void dispatchPermissionsEvent(WebExtensionEventListenerType, HashSet<String> permissions, HashSet<String> origins);
+    void dispatchPermissionsEvent(WebExtensionEventListenerType, HashSet<RefPtr<StringImpl>> permissions, HashSet<RefPtr<StringImpl>> origins);
 
     // Port
     void dispatchPortMessageEvent(std::optional<WebPageProxyIdentifier>, WebExtensionPortChannelIdentifier, const WebExtensionMessage&, bool userGesture);
@@ -246,16 +246,16 @@ private:
 
     // Runtime
     void internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType, const WebExtensionMessage&, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(std::optional<WebExtensionMessage>&& reply)>&&);
-    void internalDispatchRuntimeConnectEvent(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, const String& name, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&&);
+    void internalDispatchRuntimeConnectEvent(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, StringImpl* name, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&&);
     void dispatchRuntimeMessageEvent(WebExtensionContentWorldType, const WebExtensionMessage&, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(std::optional<WebExtensionMessage>&& reply)>&&);
-    void dispatchRuntimeConnectEvent(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, const String& name, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&&);
-    void dispatchRuntimeInstalledEvent(WebExtensionContextInstallReason, String previousVersion);
+    void dispatchRuntimeConnectEvent(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, StringImpl* name, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&&);
+    void dispatchRuntimeInstalledEvent(WebExtensionContextInstallReason, RefPtr<StringImpl> previousVersion);
     void dispatchRuntimeStartupEvent();
     bool matchesTarget(WebFrame&, const std::optional<WebExtensionMessageTargetParameters>&);
 
     // Storage
     void setStorageAccessLevel(WebExtensionDataType, WebExtensionStorageAccessLevel);
-    void dispatchStorageChangedEvent(const Vector<String>& onChangedJSON, WebExtensionDataType, WebExtensionContentWorldType);
+    void dispatchStorageChangedEvent(const Vector<RefPtr<StringImpl>>& onChangedJSON, WebExtensionDataType, WebExtensionContentWorldType);
 
     // Tabs
     void dispatchTabsCreatedEvent(const WebExtensionTabParameters&);
@@ -269,9 +269,9 @@ private:
     void dispatchTabsRemovedEvent(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, WebExtensionContextWindowIsClosing);
 
     // Test
-    void dispatchTestMessageEvent(const String& message, const String& argumentJSON, WebExtensionContentWorldType);
-    void dispatchTestStartedEvent(const String& argumentJSON, WebExtensionContentWorldType);
-    void dispatchTestFinishedEvent(const String& argumentJSON, WebExtensionContentWorldType);
+    void dispatchTestMessageEvent(StringImpl* message, StringImpl* argumentJSON, WebExtensionContentWorldType);
+    void dispatchTestStartedEvent(StringImpl* argumentJSON, WebExtensionContentWorldType);
+    void dispatchTestFinishedEvent(StringImpl* argumentJSON, WebExtensionContentWorldType);
 
     // Web Navigation
     void dispatchWebNavigationEvent(WebExtensionEventListenerType, WebExtensionTabIdentifier, const WebExtensionFrameParameters&, WallTime);
@@ -294,8 +294,8 @@ private:
     Markable<WebExtensionContextIdentifier> m_privilegedIdentifier;
     WeakPtr<WebExtensionControllerProxy> m_extensionControllerProxy;
     URL m_baseURL;
-    String m_uniqueIdentifier;
-    HashSet<String> m_unsupportedAPIs;
+    RefPtr<StringImpl> m_uniqueIdentifier;
+    HashSet<RefPtr<StringImpl>> m_unsupportedAPIs;
     RefPtr<WebExtensionLocalization> m_localization;
     RefPtr<JSON::Value> m_manifest;
     bool m_usesStructuredCloneMessageSerialization { false };

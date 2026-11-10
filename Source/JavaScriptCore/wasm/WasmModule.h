@@ -58,7 +58,7 @@ enum class BindingFailure;
 
 class Module : public ThreadSafeRefCounted<Module> {
 public:
-    using ValidationResult = std::expected<Ref<Module>, String>;
+    using ValidationResult = std::expected<Ref<Module>, RefPtr<StringImpl>>;
     typedef void CallbackType(ValidationResult&&);
     using AsyncValidationCallback = RefPtr<SharedTask<CallbackType>>;
 

@@ -125,20 +125,20 @@ bool DOMSelection::isCollapsed() const
     return !range || range->collapsed();
 }
 
-String DOMSelection::type() const
+RefPtr<StringImpl> DOMSelection::type() const
 {
     RefPtr frame = this->frame();
     if (!frame)
-        return "None"_s;
+        return "None"_si;
     auto range = frame->selection().selection().range();
     if (!range)
-        return "None"_s;
+        return "None"_si;
     if (range->collapsed())
-        return "Caret"_s;
-    return "Range"_s;
+        return "Caret"_si;
+    return "Range"_si;
 }
 
-String DOMSelection::direction() const
+RefPtr<StringImpl> DOMSelection::direction() const
 {
     RefPtr frame = this->frame();
     if (!frame)
@@ -188,7 +188,7 @@ ExceptionOr<void> DOMSelection::collapseToEnd()
         return { };
     CheckedRef selection = frame->selection();
     if (selection->isNone())
-        return Exception { ExceptionCode::InvalidStateError, "collapseToEnd() requires a Range to be associated with Selection"_s };
+        return Exception { ExceptionCode::InvalidStateError, "collapseToEnd() requires a Range to be associated with Selection"_si };
     selection->disassociateLiveRange();
     selection->moveTo(selection->selection().uncanonicalizedEnd(), Affinity::Downstream);
     return { };
@@ -201,7 +201,7 @@ ExceptionOr<void> DOMSelection::collapseToStart()
         return { };
     CheckedRef selection = frame->selection();
     if (selection->isNone())
-        return Exception { ExceptionCode::InvalidStateError, "collapseToStart() requires a Range to be associated with Selection"_s };
+        return Exception { ExceptionCode::InvalidStateError, "collapseToStart() requires a Range to be associated with Selection"_si };
     selection->disassociateLiveRange();
     selection->moveTo(selection->selection().uncanonicalizedStart(), Affinity::Downstream);
     return { };
@@ -235,7 +235,7 @@ ExceptionOr<void> DOMSelection::setPosition(Node* node, unsigned offset)
     return collapse(node, offset);
 }
 
-void DOMSelection::modify(const String& alterString, const String& directionString, const String& granularityString)
+void DOMSelection::modify(StringImpl* alterString, StringImpl* directionString, StringImpl* granularityString)
 {
     FrameSelection::Alteration alter;
     if (equalLettersIgnoringASCIICase(alterString, "extend"_s))
@@ -290,7 +290,7 @@ ExceptionOr<void> DOMSelection::extend(Node& node, unsigned offset)
         return { };
 
     if (rangeCount() < 1 && !(frame->selection().isCaretOrRange()))
-        return Exception { ExceptionCode::InvalidStateError, "extend() requires a Range to be added to the Selection"_s };
+        return Exception { ExceptionCode::InvalidStateError, "extend() requires a Range to be added to the Selection"_si };
 
     if (!(node.isConnected() && frame->document() == &node.document()) && &node.rootNode() != frame->document())
         return { };
@@ -427,11 +427,11 @@ ExceptionOr<void> DOMSelection::selectAllChildren(Node& node)
     return setBaseAndExtent(node, 0, node, node.countChildNodes());
 }
 
-String DOMSelection::toString() const
+RefPtr<StringImpl> DOMSelection::toString() const
 {
     RefPtr frame = this->frame();
     if (!frame)
-        return String();
+        return nullptr;
 
     OptionSet<TextIteratorBehavior> options;
     if (!protect(frame->document())->quirks().needsToCopyUserSelectNoneQuirk())

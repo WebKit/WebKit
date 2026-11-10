@@ -64,7 +64,7 @@ public:
 
     WEBCORE_EXPORT static Color systemFocusRingColor();
 
-    WEBCORE_EXPORT static IconAndSize iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
+    WEBCORE_EXPORT static IconAndSize iconForAttachment(StringImpl* fileName, StringImpl* attachmentType, StringImpl* title);
 
     bool canCreateControlPartForRenderer(const RenderElement&) const final;
 
@@ -149,14 +149,14 @@ public:
 #if ENABLE(ATTACHMENT_ELEMENT)
     LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const final;
     bool attachmentShouldAllowWidthToShrink(const RenderAttachment&) const final { return true; }
-    String attachmentStyleSheet() const final;
+    RefPtr<StringImpl> attachmentStyleSheet() const final;
     bool paintAttachment(const RenderElement&, const PaintInfo&, const IntRect&) final;
 #endif
 
     bool shouldHaveSpinButton(const HTMLInputElement&) const final;
 
 #if PLATFORM(WATCHOS)
-    String extraDefaultStyleSheet() final;
+    RefPtr<StringImpl> extraDefaultStyleSheet() final;
 #endif
 
     WEBCORE_EXPORT Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;

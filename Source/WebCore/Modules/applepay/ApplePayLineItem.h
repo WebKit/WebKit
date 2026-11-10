@@ -45,8 +45,8 @@ struct ApplePayLineItem final {
     };
 
     Type type { Type::Final };
-    String label;
-    String amount;
+    RefPtr<StringImpl> label;
+    RefPtr<StringImpl> amount;
 
     ApplePayPaymentTiming paymentTiming { ApplePayPaymentTiming::Immediate };
 
@@ -62,7 +62,7 @@ struct ApplePayLineItem final {
 #endif
 
 #if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
-    String automaticReloadPaymentThresholdAmount; /* required */
+    RefPtr<StringImpl> automaticReloadPaymentThresholdAmount; /* required */
 #endif
 
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)

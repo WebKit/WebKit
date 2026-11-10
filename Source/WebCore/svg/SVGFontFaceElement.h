@@ -47,7 +47,7 @@ public:
     float verticalAdvanceY() const;
     int ascent() const;
     int descent() const;
-    String fontFamily() const;
+    RefPtr<StringImpl> fontFamily() const;
 
     bool supportsVariantCaps(FontVariantCaps) const;
 
@@ -60,7 +60,7 @@ private:
     SVGFontFaceElement(const QualifiedName&, Document&);
     ~SVGFontFaceElement();
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
 
     void childrenChanged(const ChildChange&) final;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;

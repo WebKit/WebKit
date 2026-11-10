@@ -59,62 +59,62 @@ KeyedEncoderCF::~KeyedEncoderCF()
     ASSERT(m_arrayStack.isEmpty());
 }
 
-void KeyedEncoderCF::encodeBytes(const String& key, std::span<const uint8_t> bytes)
+void KeyedEncoderCF::encodeBytes(StringImpl* key, std::span<const uint8_t> bytes)
 {
     RetainPtr data = toCFDataNoCopy(bytes, kCFAllocatorNull);
-    CFDictionarySetValue(protect(m_dictionaryStack.last()), key.createCFString().get(), data.get());
+    CFDictionarySetValue(protect(m_dictionaryStack.last()), createCFString(key).get(), data.get());
 }
 
-void KeyedEncoderCF::encodeBool(const String& key, bool value)
+void KeyedEncoderCF::encodeBool(StringImpl* key, bool value)
 {
-    CFDictionarySetValue(protect(m_dictionaryStack.last()), key.createCFString().get(), value ? kCFBooleanTrue : kCFBooleanFalse);
+    CFDictionarySetValue(protect(m_dictionaryStack.last()), createCFString(key).get(), value ? kCFBooleanTrue : kCFBooleanFalse);
 }
 
-void KeyedEncoderCF::encodeUInt32(const String& key, uint32_t value)
+void KeyedEncoderCF::encodeUInt32(StringImpl* key, uint32_t value)
 {
     auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &value));
-    CFDictionarySetValue(protect(m_dictionaryStack.last()), key.createCFString().get(), number.get());
+    CFDictionarySetValue(protect(m_dictionaryStack.last()), createCFString(key).get(), number.get());
 }
     
-void KeyedEncoderCF::encodeUInt64(const String& key, uint64_t value)
+void KeyedEncoderCF::encodeUInt64(StringImpl* key, uint64_t value)
 {
     auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &value));
-    CFDictionarySetValue(protect(m_dictionaryStack.last()), key.createCFString().get(), number.get());
+    CFDictionarySetValue(protect(m_dictionaryStack.last()), createCFString(key).get(), number.get());
 }
 
-void KeyedEncoderCF::encodeInt32(const String& key, int32_t value)
+void KeyedEncoderCF::encodeInt32(StringImpl* key, int32_t value)
 {
     auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &value));
-    CFDictionarySetValue(protect(m_dictionaryStack.last()), key.createCFString().get(), number.get());
+    CFDictionarySetValue(protect(m_dictionaryStack.last()), createCFString(key).get(), number.get());
 }
 
-void KeyedEncoderCF::encodeInt64(const String& key, int64_t value)
+void KeyedEncoderCF::encodeInt64(StringImpl* key, int64_t value)
 {
     auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &value));
-    CFDictionarySetValue(protect(m_dictionaryStack.last()), key.createCFString().get(), number.get());
+    CFDictionarySetValue(protect(m_dictionaryStack.last()), createCFString(key).get(), number.get());
 }
 
-void KeyedEncoderCF::encodeFloat(const String& key, float value)
+void KeyedEncoderCF::encodeFloat(StringImpl* key, float value)
 {
     auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &value));
-    CFDictionarySetValue(protect(m_dictionaryStack.last()), key.createCFString().get(), number.get());
+    CFDictionarySetValue(protect(m_dictionaryStack.last()), createCFString(key).get(), number.get());
 }
 
-void KeyedEncoderCF::encodeDouble(const String& key, double value)
+void KeyedEncoderCF::encodeDouble(StringImpl* key, double value)
 {
     auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &value));
-    CFDictionarySetValue(protect(m_dictionaryStack.last()), key.createCFString().get(), number.get());
+    CFDictionarySetValue(protect(m_dictionaryStack.last()), createCFString(key).get(), number.get());
 }
 
-void KeyedEncoderCF::encodeString(const String& key, const String& value)
+void KeyedEncoderCF::encodeString(StringImpl* key, StringImpl* value)
 {
-    CFDictionarySetValue(protect(m_dictionaryStack.last()), key.createCFString().get(), value.createCFString().get());
+    CFDictionarySetValue(protect(m_dictionaryStack.last()), createCFString(key).get(), createCFString(value).get());
 }
 
-void KeyedEncoderCF::beginObject(const String& key)
+void KeyedEncoderCF::beginObject(StringImpl* key)
 {
     auto dictionary = createDictionary();
-    CFDictionarySetValue(protect(m_dictionaryStack.last()), key.createCFString().get(), dictionary.get());
+    CFDictionarySetValue(protect(m_dictionaryStack.last()), createCFString(key).get(), dictionary.get());
 
     m_dictionaryStack.append(dictionary.get());
 }
@@ -124,10 +124,10 @@ void KeyedEncoderCF::endObject()
     m_dictionaryStack.removeLast();
 }
 
-void KeyedEncoderCF::beginArray(const String& key)
+void KeyedEncoderCF::beginArray(StringImpl* key)
 {
     auto array = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks));
-    CFDictionarySetValue(protect(m_dictionaryStack.last()), key.createCFString().get(), array.get());
+    CFDictionarySetValue(protect(m_dictionaryStack.last()), createCFString(key).get(), array.get());
 
     m_arrayStack.append(array.get());
 }

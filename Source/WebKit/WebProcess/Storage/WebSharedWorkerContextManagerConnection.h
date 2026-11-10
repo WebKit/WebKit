@@ -61,7 +61,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     void establishConnection(CompletionHandler<void()>&&) final;
-    void postErrorToWorkerObject(WebCore::SharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent) final;
+    void postErrorToWorkerObject(WebCore::SharedWorkerIdentifier, StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL, bool isErrorEvent) final;
     void sharedWorkerTerminated(WebCore::SharedWorkerIdentifier) final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -72,7 +72,7 @@ private:
     // IPC Messages.
     void launchSharedWorker(WebCore::ClientOrigin&&, WebCore::SharedWorkerIdentifier, WebCore::WorkerOptions&&, WebCore::WorkerFetchResult&&, WebCore::WorkerInitializationData&&);
     void updatePreferencesStore(const WebPreferencesStore&);
-    void setUserAgent(String&& userAgent) { m_userAgent = WTF::move(userAgent); }
+    void setUserAgent(RefPtr<StringImpl>&& userAgent) { m_userAgent = WTF::move(userAgent); }
     void close();
 
     const Ref<IPC::Connection> m_connectionToNetworkProcess;
@@ -80,7 +80,7 @@ private:
     PageGroupIdentifier m_pageGroupID;
     WebPageProxyIdentifier m_webPageProxyID;
     WebCore::PageIdentifier m_pageID;
-    String m_userAgent;
+    RefPtr<StringImpl> m_userAgent;
     const Ref<WebUserContentController> m_userContentController;
     std::optional<WebPreferencesStore> m_preferencesStore;
     WebCore::CrossOriginEmbedderPolicyValue m_crossOriginEmbedderPolicyValue;

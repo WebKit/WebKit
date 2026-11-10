@@ -54,13 +54,13 @@
 
 namespace WebKit {
 
-NODELETE static Vector<String>& overrideLanguagesFromBootstrap()
+NODELETE static Vector<RefPtr<StringImpl>>& overrideLanguagesFromBootstrap()
 {
-    static NeverDestroyed<Vector<String>> languages;
+    static NeverDestroyed<Vector<RefPtr<StringImpl>>> languages;
     return languages;
 }
 
-NODELETE static void stageOverrideLanguagesForMainThread(Vector<String>&& languages)
+NODELETE static void stageOverrideLanguagesForMainThread(Vector<RefPtr<StringImpl>>&& languages)
 {
     RELEASE_ASSERT(overrideLanguagesFromBootstrap().isEmpty());
     overrideLanguagesFromBootstrap().swap(languages);
@@ -114,9 +114,9 @@ static void checkFrameworkVersion(xpc_object_t message)
 {
     auto uiProcessWebKitBundleVersion = xpcDictionaryGetString(message, "WebKitBundleVersion"_s);
     auto webkitBundleVersion = ASCIILiteral { WEBKIT_BUNDLE_VERSION };
-    if (!uiProcessWebKitBundleVersion.isNull() && uiProcessWebKitBundleVersion != webkitBundleVersion) {
+    if (uiProcessWebKitBundleVersion && !equal(uiProcessWebKitBundleVersion, webkitBundleVersion)) {
         auto errorMessage = makeString("WebKit framework version mismatch: "_s, uiProcessWebKitBundleVersion, " != "_s, webkitBundleVersion);
-        logAndSetCrashLogMessage(errorMessage.utf8());
+        logAndSetCrashLogMessage(utf8(errorMessage));
         crashDueWebKitFrameworkVersionMismatch();
     }
 }
@@ -126,10 +126,10 @@ static void checkFrameworkVersion(xpc_object_t message)
 static bool s_isWebProcess = false;
 #endif
 
-static void setUserDirSuffix(String&& suffix)
+static void setUserDirSuffix(RefPtr<StringImpl>&& suffix)
 {
 #if PLATFORM(IOS_FAMILY)
-    if (_set_user_dir_suffix(suffix.utf8().legacyCStringPointer())) {
+    if (_set_user_dir_suffix(utf8(suffix).legacyCStringPointer())) {
         RELEASE_LOG(IPC, "Successfully set temp dir");
         confstr(_CS_DARWIN_USER_TEMP_DIR, nullptr, 0);
         return;
@@ -165,19 +165,19 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             return;
         }
 
-        String messageName = xpcDictionaryGetString(event, "message-name"_s);
+        RefPtr<StringImpl> messageName = xpcDictionaryGetString(event, "message-name"_s);
         if (!messageName) {
             RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: 'message-name' is not present in the XPC dictionary");
             return;
         }
-        if (messageName == "bootstrap"_s) {
+        if (equal(messageName, "bootstrap"_s)) {
             WTF::initialize();
 
             bool disableLogging = xpc_dictionary_get_bool(event, "disable-logging");
             initializeLogd(disableLogging, retainedPeerConnection.get());
 
             if (OSObjectPtr<xpc_object_t> languages = xpc_dictionary_get_value(event, "OverrideLanguages")) {
-                Vector<String> newLanguages;
+                Vector<RefPtr<StringImpl>> newLanguages;
                 @autoreleasepool {
                     xpc_array_apply(languages.get(), makeBlockPtr([&newLanguages](size_t index, xpc_object_t value) {
                         newLanguages.append(xpcStringGetString(value));
@@ -197,16 +197,16 @@ void XPCServiceEventHandler(xpc_connection_t peer)
                 });
             }
 #endif
-            String serviceName = xpcDictionaryGetString(event, "service-name"_s);
+            RefPtr<StringImpl> serviceName = xpcDictionaryGetString(event, "service-name"_s);
             if (!serviceName) {
                 RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: 'service-name' is not present in the XPC dictionary");
                 return;
             }
 
-            String uiProcessName = xpcDictionaryGetString(event, "ui-process-name"_s);
+            RefPtr<StringImpl> uiProcessName = xpcDictionaryGetString(event, "ui-process-name"_s);
 
             CFStringRef entryPointFunctionName = nullptr;
-            if (serviceName.startsWith(webContentServiceName)) {
+            if (startsWith(serviceName, webContentServiceName)) {
 #if ENABLE(CLOSE_WEBCONTENT_XPC_CONNECTION_POST_LAUNCH)
                 s_isWebProcess = true;
 #endif
@@ -216,20 +216,20 @@ void XPCServiceEventHandler(xpc_connection_t peer)
                 setUserDirSuffix(webContentServiceName);
 #endif
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(WEBCONTENT_SERVICE_INITIALIZER));
-            } else if (serviceName == networkingServiceName) {
+            } else if (equal(serviceName, networkingServiceName)) {
                 setUserDirSuffix(networkingServiceName);
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(NETWORK_SERVICE_INITIALIZER));
-            } else if (serviceName == gpuServiceName) {
+            } else if (equal(serviceName, gpuServiceName)) {
 #if USE(EXTENSIONKIT)
                 setUserDirSuffix(WTF::move(uiProcessName));
 #else
                 setUserDirSuffix(gpuServiceName);
 #endif
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(GPU_SERVICE_INITIALIZER));
-            } else if (serviceName == modelServiceName)
+            } else if (equal(serviceName, modelServiceName))
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(MODEL_SERVICE_INITIALIZER));
             else {
-                RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: Unexpected 'service-name': %{public}s", serviceName.utf8());
+                RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: Unexpected 'service-name': %{public}s", utf8(serviceName));
                 return;
             }
 

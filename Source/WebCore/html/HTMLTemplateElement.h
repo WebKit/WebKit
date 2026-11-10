@@ -49,8 +49,8 @@ public:
     DocumentFragment& content() const;
     NODELETE DocumentFragment* contentIfAvailable() const;
 
-    const AtomString& shadowRootMode() const;
-    const AtomString& shadowRootSlotAssignment() const;
+    const RefPtr<AtomStringImpl>& shadowRootMode() const;
+    const RefPtr<AtomStringImpl>& shadowRootSlotAssignment() const;
 
     NODELETE void setDeclarativeShadowRoot(ShadowRoot&);
 

@@ -90,7 +90,7 @@ void OMGPlan::dumpDisassembly(const Callee& callee, CompilationContext& context,
         B3::Value* prevOrigin = nullptr;
         auto forEachInst = [&] (B3::Air::Inst& inst) {
             if (inst.origin && inst.origin != prevOrigin && context.procedure->code().shouldPreserveB3Origins()) {
-                if (String string = inst.origin->compilerConstructionSite(); !string.isNull())
+                if (RefPtr<StringImpl> string = inst.origin->compilerConstructionSite(); string)
                     out.println(string);
                 Vector<B3::Value*> children;
                 Vector<B3::Value*> worklist;
@@ -164,7 +164,7 @@ void OMGPlan::work()
         ScopedPrintStream out;
         dumpDisassembly(callee.get(), context, linkBuffer, signature, functionIndexSpace);
         omgEntrypoint.compilation = makeUnique<Compilation>(
-            FINALIZE_CODE_IF(context.procedure->shouldDumpIR(), linkBuffer, JITCompilationPtrTag, nullptr, "OMG functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection().get(functionIndexSpace))).ascii().data(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")"),
+            FINALIZE_CODE_IF(context.procedure->shouldDumpIR(), linkBuffer, JITCompilationPtrTag, nullptr, "OMG functionIndexSpace:(", functionIndexSpace, "),sig:(", ascii(signature.toString()).data(), "),name:(", ascii(makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection().get(functionIndexSpace)))).data(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")"),
             WTF::move(context.wasmEntrypointByproducts));
     }
 

@@ -126,13 +126,13 @@ public:
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     static void registerMediaEngine(MediaEngineRegistrar);
-    static bool supportsKeySystem(const String& keySystem, const String& mimeType);
+    static bool supportsKeySystem(StringImpl* keySystem, StringImpl* mimeType);
 
     void mediaPlayerWillBeDestroyed() final;
 
     bool hasVideo() const final { return m_hasVideo; }
     bool hasAudio() const final { return m_hasAudio; }
-    void load(const String &url) override;
+    void load(StringImpl*url) override;
 #if ENABLE(MEDIA_SOURCE)
     void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) override;
 #endif
@@ -243,7 +243,7 @@ public:
     // to avoid deadlocks from threads in the playback pipeline waiting for the main thread.
     AbortableTaskQueue& sinkTaskQueue() LIFETIME_BOUND { return m_sinkTaskQueue; }
 
-    String codecForStreamId(TrackID streamId);
+    RefPtr<StringImpl> codecForStreamId(TrackID streamId);
     bool shouldDownload() { return m_fillTimer.isActive(); }
 
     void setQuirkState(const GStreamerQuirk* owner, std::unique_ptr<GStreamerQuirkBase::GStreamerQuirkState>&& state)
@@ -263,7 +263,7 @@ public:
     bool requiresVideoSinkCapsNotifications() const;
     void videoSinkCapsChanged(GstPad*);
 
-    void elementIdChanged(const String&) const final;
+    void elementIdChanged(StringImpl*) const final;
 
 protected:
     enum MainThreadNotification {
@@ -391,7 +391,7 @@ protected:
     URL m_url;
     const Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     ThreadSafeWeakPtr<MediaPlayer> m_player;
-    String m_referrer;
+    RefPtr<StringImpl> m_referrer;
     mutable MediaTime m_cachedPosition;
     mutable bool m_isCachedPositionValid { false };
     mutable MediaTime m_cachedDuration;
@@ -444,7 +444,7 @@ protected:
     GRefPtr<GstElement> m_pipeline;
     IntSize m_size;
 
-    String m_originalPipelineName;
+    RefPtr<StringImpl> m_originalPipelineName;
 
     MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
     mutable MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
@@ -484,7 +484,7 @@ protected:
     TrackIDHashMap<RefPtr<InbandMetadataTextTrackPrivateGStreamer>> m_metadataTracks;
 #endif
 
-    String errorMessage() const override { return m_errorMessage; }
+    RefPtr<StringImpl> errorMessage() const override { return m_errorMessage; }
 
     bool updateVideoSinkStatistics();
     void resetVideoSinkStatistics();
@@ -538,7 +538,7 @@ private:
     void uninstallVideoSinkStatsProbe();
 
     friend class MediaPlayerFactoryGStreamer;
-    static void getSupportedTypes(HashSet<String>&);
+    static void getSupportedTypes(HashSet<RefPtr<StringImpl>>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     void syncOnClock(bool sync);
@@ -570,11 +570,11 @@ private:
     void processTableOfContents(GstMessage*);
     void processTableOfContentsEntry(GstTocEntry*);
 
-    String engineDescription() const override { return "GStreamer"_s; }
+    RefPtr<StringImpl> engineDescription() const override { return "GStreamer"_si; }
     bool didPassCORSAccessCheck() const override;
     bool canSaveMediaData() const override;
 
-    void purgeOldDownloadFiles(const String& downloadFilePrefixPath);
+    void purgeOldDownloadFiles(StringImpl* downloadFilePrefixPath);
     void configureDownloadBuffer(GstElement*);
     static void downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer*);
 
@@ -699,7 +699,7 @@ private:
 
     bool m_initialSegmentSeekDone { false };
 
-    String m_errorMessage;
+    RefPtr<StringImpl> m_errorMessage;
 
     AbortableTaskQueue m_sinkTaskQueue;
 
@@ -720,7 +720,7 @@ private:
     Lock m_decoderConfigurationLock;
     Vector<RefPtr<PadProbeHandle<MediaPlayerPrivateGStreamer>>> m_codecProbes WTF_GUARDED_BY_LOCK(m_decoderConfigurationLock);
     Lock m_codecsLock;
-    TrackIDHashMap<String> m_codecs WTF_GUARDED_BY_LOCK(m_codecsLock);
+    TrackIDHashMap<RefPtr<StringImpl>> m_codecs WTF_GUARDED_BY_LOCK(m_codecsLock);
 
     const Ref<PlatformMediaResourceLoader> m_loader;
 

@@ -32,7 +32,7 @@
 namespace WebCore {
 
 struct RTCRtpCodingParameters {
-    String rid;
+    RefPtr<StringImpl> rid;
 };
 
 } // namespace WebCore

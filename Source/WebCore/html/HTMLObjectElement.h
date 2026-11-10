@@ -57,9 +57,9 @@ private:
 
     int defaultTabIndex() const final;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) final;
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void postConnectionSteps() final;
@@ -70,14 +70,14 @@ private:
     void childrenChanged(const ChildChange&) final;
 
     NODELETE bool isURLAttribute(const Attribute&) const final;
-    String imageSourceURL() const final;
+    RefPtr<StringImpl> imageSourceURL() const final;
 
     void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const final;
 
     void updateWidget(CreatePlugins) final;
 
     // FIXME: Better share code between <object> and <embed>.
-    void parametersForPlugin(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues);
+    void parametersForPlugin(Vector<RefPtr<AtomStringImpl>>& paramNames, Vector<RefPtr<AtomStringImpl>>& paramValues);
 
     void refFormAssociatedElement() const final { ref(); }
     void derefFormAssociatedElement() const final { deref(); }

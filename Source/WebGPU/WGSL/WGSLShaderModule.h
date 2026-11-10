@@ -46,18 +46,18 @@ namespace WGSL {
 class ShaderModule : public AST::DiagnosticContainer {
     WTF_MAKE_TZONE_ALLOCATED(ShaderModule);
 public:
-    explicit ShaderModule(const String& source)
+    explicit ShaderModule(StringImpl* source)
         : ShaderModule(source, { })
     { }
     
-    ShaderModule(const String& source, const Configuration& configuration)
+    ShaderModule(StringImpl* source, const Configuration& configuration)
         : m_source(source)
         , m_configuration(configuration)
     {
         initializeOverloads();
     }
 
-    const String& source() const LIFETIME_BOUND { return m_source; }
+    const RefPtr<StringImpl>& source() const LIFETIME_BOUND { return m_source; }
     const Configuration& configuration() const LIFETIME_BOUND { return m_configuration; }
     AST::Declaration::List& declarations() LIFETIME_BOUND { return m_declarations; }
     const AST::Declaration::List& declarations() const LIFETIME_BOUND { return m_declarations; }
@@ -290,9 +290,9 @@ public:
     {
         m_pipelineOverrideIds.add(idValue);
     }
-    bool hasFeature(const String& featureName) const { return m_configuration.supportedFeatures.contains(featureName); }
+    bool hasFeature(StringImpl* featureName) const { return m_configuration.supportedFeatures.contains(featureName); }
 
-    using OverrideValidator = Function<std::optional<Error>(const HashMap<String, ConstantValue>&)>;
+    using OverrideValidator = Function<std::optional<Error>(const HashMap<RefPtr<StringImpl>, ConstantValue>&)>;
 
     template<typename Validator>
     void addOverrideValidation(Validator&& validator)
@@ -310,23 +310,23 @@ public:
         m_overrideValidations.shrink(size);
     }
 
-    std::optional<Error> validateOverrides(const PrepareResult&, HashMap<String, ConstantValue>&);
+    std::optional<Error> validateOverrides(const PrepareResult&, HashMap<RefPtr<StringImpl>, ConstantValue>&);
 
-    const OverloadedDeclaration* lookupOverload(const String&) const;
+    const OverloadedDeclaration* lookupOverload(StringImpl*) const;
     const Vector<OverloadCandidate>& overloadCandidates(const OverloadedDeclaration&);
     // Only the type checker resolves overloads. Later passes look builtins up only for their
     // constant and validation functions, which this keeps.
     void releaseOverloadCandidates();
 
     void addOverride(AST::Variable& variable) { m_overrides.append(&variable); }
-    bool containsOverride(const String& key) const;
+    bool containsOverride(StringImpl* key) const;
 
-    Result<ConstantValue> ensureOverrideValue(const AST::Expression&, const HashMap<String, ConstantValue>&) const;
+    Result<ConstantValue> ensureOverrideValue(const AST::Expression&, const HashMap<RefPtr<StringImpl>, ConstantValue>&) const;
 
 private:
     void initializeOverloads();
 
-    String m_source;
+    RefPtr<StringImpl> m_source;
     bool m_usesExternalTextures { false };
     bool m_usesPackArray { false };
     bool m_usesUnpackArray { false };
@@ -366,7 +366,7 @@ private:
     Vector<std::function<void()>> m_replacements;
     HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_pipelineOverrideIds;
     Vector<OverrideValidator> m_overrideValidations;
-    HashMap<String, OverloadedDeclaration> m_overloadedOperations;
+    HashMap<RefPtr<StringImpl>, OverloadedDeclaration> m_overloadedOperations;
     Vector<AST::Variable*> m_overrides;
 };
 

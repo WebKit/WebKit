@@ -35,7 +35,7 @@ namespace WebCore {
 void MockCaptionDisplaySettingsClientCallback::showCaptionDisplaySettings(HTMLMediaElement& element, const ResolvedCaptionDisplaySettingsOptions& options, CompletionHandler<void(ExceptionOr<void>)>&& completionHandler)
 {
     if (!hasCallback()) {
-        completionHandler(Exception { ExceptionCode::NotSupportedError, "Caption Display Settings are not supported."_s });
+        completionHandler(Exception { ExceptionCode::NotSupportedError, "Caption Display Settings are not supported."_si });
         return;
     }
 

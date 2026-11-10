@@ -51,7 +51,7 @@ AggregateErrorConstructor::AggregateErrorConstructor(VM& vm, Structure* structur
 
 void AggregateErrorConstructor::finishCreation(VM& vm, AggregateErrorPrototype* prototype)
 {
-    Base::finishCreation(vm, 2, errorTypeName(ErrorType::AggregateError), PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 2, StringImpl::create(errorTypeName(ErrorType::AggregateError)).ptr(), PropertyAdditionMode::WithoutStructureTransition);
     ASSERT(inherits(info()));
 
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
@@ -63,7 +63,7 @@ ErrorInstance* constructAggregateError(JSGlobalObject* globalObject, VM& vm, Str
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String messageString = message.isUndefined() ? String() : message.toWTFString(globalObject);
+    RefPtr<StringImpl> messageString = message.isUndefined() ? nullptr : message.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     JSValue cause;

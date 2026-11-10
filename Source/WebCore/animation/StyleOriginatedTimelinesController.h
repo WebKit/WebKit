@@ -67,10 +67,10 @@ public:
 
     void registerNamedScrollTimeline(const Style::ScopedName&, const Styleable&, ScrollAxis);
     void registerNamedViewTimeline(const Style::ScopedName&, const Styleable&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);
-    void unregisterNamedTimeline(const AtomString&, const Styleable&);
+    void unregisterNamedTimeline(AtomStringImpl*, const Styleable&);
     void attachAnimation(CSSAnimation&);
     void updateNamedTimelineMapForTimelineScope(const Style::NameScope&, const Styleable&);
-    void updateTimelineForTimelineScope(const Ref<ScrollTimeline>&, const AtomString&);
+    void updateTimelineForTimelineScope(const Ref<ScrollTimeline>&, AtomStringImpl*);
     void unregisterNamedTimelinesAssociatedWithElement(const Styleable&);
     void removePendingOperationsForCSSAnimation(const CSSAnimation&);
     bool isPendingTimelineAttachment(const WebAnimation&) const;
@@ -78,23 +78,23 @@ public:
     void styleableWasRemoved(const Styleable&);
 
 private:
-    Vector<Ref<ScrollTimeline>>& timelinesForName(const AtomString&) LIFETIME_BOUND;
+    Vector<Ref<ScrollTimeline>>& timelinesForName(AtomStringImpl*) LIFETIME_BOUND;
     Vector<WeakStyleable> relatedTimelineScopeElements(const Style::CustomIdent&);
-    void updateCSSAnimationsAssociatedWithNamedTimeline(const AtomString&);
+    void updateCSSAnimationsAssociatedWithNamedTimeline(AtomStringImpl*);
     void updateTimelinesForTimelineScope(Vector<Ref<ScrollTimeline>>, const Styleable&);
 
     enum class AllowsDeferral : bool { No, Yes };
     void attachAnimation(CSSAnimation&, AllowsDeferral);
     ScrollTimeline* determineTimelineForElement(const Vector<Ref<ScrollTimeline>>&, const Styleable&, Style::ScopeOrdinal targetTimelineScopeOrdinal, const Element*);
     ScrollTimeline* determineTreeOrder(const Vector<Ref<ScrollTimeline>>&, const Styleable&, const Element*);
-    ScrollTimeline& inactiveNamedTimeline(const AtomString&);
+    ScrollTimeline& inactiveNamedTimeline(AtomStringImpl*);
 
     using TimelineScopeEntry = std::pair<Style::NameScope, WeakStyleable>;
     Vector<Ref<CSSAnimation>> m_cssAnimationsPendingAttachment;
     Vector<TimelineScopeEntry> m_timelineScopeEntries;
-    HashMap<AtomString, Vector<Ref<ScrollTimeline>>> m_nameToTimelineMap;
+    HashMap<RefPtr<AtomStringImpl>, Vector<Ref<ScrollTimeline>>> m_nameToTimelineMap;
     HashSet<Ref<ScrollTimeline>> m_removedTimelines;
-    HashSet<AtomString> m_timelineNamesPendingAnimationUpdate;
+    HashSet<RefPtr<AtomStringImpl>> m_timelineNamesPendingAnimationUpdate;
 };
 
 } // namespace WebCore

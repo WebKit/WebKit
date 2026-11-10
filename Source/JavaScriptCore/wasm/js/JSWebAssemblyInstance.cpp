@@ -305,7 +305,7 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
 
 Identifier JSWebAssemblyInstance::createPrivateModuleKey()
 {
-    return Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyInstance"_s));
+    return Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyInstance"_si));
 }
 
 size_t JSWebAssemblyInstance::allocationSize(const Wasm::ModuleInformation& info)
@@ -346,7 +346,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
     if (creationMode == CreationMode::FromJS) {
         // If the list of module.imports is not empty and Type(importObject) is not Object, a TypeError is thrown.
         if (moduleInformation.imports.size() && !importObject)
-            return exception(createTypeError(globalObject, "can't make WebAssembly.Instance because there is no imports Object and the WebAssembly.Module requires imports"_s));
+            return exception(createTypeError(globalObject, "can't make WebAssembly.Instance because there is no imports Object and the WebAssembly.Module requires imports"_si));
     }
 
     auto isReservedESMName = [](const Wasm::Name& name) {
@@ -387,7 +387,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
                 ScriptFetchParameters::Type::JavaScript,
                 moduleName,
                 fieldName,
-                Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyImportName"_s)),
+                Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyImportName"_si)),
             });
         }
         ASSERT(moduleRecord->importEntries().size() == moduleInformation.imports.size());
@@ -769,7 +769,7 @@ void JSWebAssemblyInstance::copyElementSegment(JSWebAssemblyArray* array, const 
     }
 }
 
-std::expected<uint64_t, String> JSWebAssemblyInstance::evaluateConstantExpression(uint64_t constantExpressionIndex)
+std::expected<uint64_t, RefPtr<StringImpl>> JSWebAssemblyInstance::evaluateConstantExpression(uint64_t constantExpressionIndex)
 {
     const auto& constantExpression = m_moduleInformation->constantExpressions[constantExpressionIndex];
     return evaluateExtendedConstExpr(constantExpression, this, m_moduleInformation.get());

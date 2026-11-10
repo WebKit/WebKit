@@ -112,8 +112,8 @@ static CALayer *findTileGridContainerLayer(CALayer *layer)
 {
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL CALayer *currLayer : [layer sublayers]) {
-        String layerName = [currLayer name];
-        if (layerName == TileController::tileGridContainerLayerName())
+        RefPtr<StringImpl> layerName = StringImpl::create([currLayer name]);
+        if (equal(layerName, TileController::tileGridContainerLayerName()))
             return currLayer;
 
         if (RetainPtr foundLayer = findTileGridContainerLayer(currLayer))

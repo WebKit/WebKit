@@ -34,9 +34,9 @@
 namespace WebCore {
 
 struct PushSubscriptionJSON {
-    String endpoint;
+    RefPtr<StringImpl> endpoint;
     std::optional<EpochTimeStamp> expirationTime;
-    Vector<KeyValuePair<String, String>> keys;
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> keys;
 };
 
 } // namespace WebCore

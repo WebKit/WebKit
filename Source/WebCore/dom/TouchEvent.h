@@ -41,7 +41,7 @@ public:
     virtual ~TouchEvent();
 
     static Ref<TouchEvent> create(TouchList* touches, TouchList* targetTouches, TouchList* changedTouches,
-        const AtomString& type, RefPtr<WindowProxy>&& view, const DoublePoint& globalLocation, OptionSet<Modifier> modifiers)
+        AtomStringImpl* type, RefPtr<WindowProxy>&& view, const DoublePoint& globalLocation, OptionSet<Modifier> modifiers)
     {
         return adoptRef(*new TouchEvent(touches, targetTouches, changedTouches, type, WTF::move(view), globalLocation, modifiers));
     }
@@ -56,7 +56,7 @@ public:
         RefPtr<TouchList> changedTouches;
     };
 
-    static Ref<TouchEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<TouchEvent> create(AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new TouchEvent(type, initializer, isTrusted));
     }
@@ -71,9 +71,9 @@ public:
 
 private:
     TouchEvent();
-    TouchEvent(TouchList* touches, TouchList* targetTouches, TouchList* changedTouches, const AtomString& type,
+    TouchEvent(TouchList* touches, TouchList* targetTouches, TouchList* changedTouches, AtomStringImpl* type,
         RefPtr<WindowProxy>&&, const DoublePoint& globalLocation, OptionSet<Modifier>);
-    TouchEvent(const AtomString&, const Init&, IsTrusted);
+    TouchEvent(AtomStringImpl*, const Init&, IsTrusted);
 
     RefPtr<TouchList> m_touches;
     RefPtr<TouchList> m_targetTouches;

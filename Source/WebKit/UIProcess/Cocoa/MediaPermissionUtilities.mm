@@ -242,15 +242,15 @@ bool checkUsageDescriptionStringForSpeechRecognition()
     return dynamic_objc_cast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSSpeechRecognitionUsageDescription"]).length > 0;
 }
 
-static RetainPtr<NSString> visibleDomain(const String& host)
+static RetainPtr<NSString> visibleDomain(StringImpl* host)
 {
-    auto domain = WTF::URLHelpers::userVisibleURL(host.utf8().span());
-    return startsWithLettersIgnoringASCIICase(domain, "www."_s) ? StringView(domain).substring(4).createNSString() : domain.createNSString();
+    auto domain = WTF::URLHelpers::userVisibleURL(utf8(host).span());
+    return startsWithLettersIgnoringASCIICase(domain, "www."_s) ? StringView(domain).substring(4).createNSString() : createNSString(domain);
 }
 
 RetainPtr<NSString> applicationVisibleNameFromOrigin(const WebCore::SecurityOriginData& origin)
 {
-    if (origin.protocol() != "http"_s && origin.protocol() != "https"_s)
+    if (!equal(origin.protocol(), "http"_s) && !equal(origin.protocol(), "https"_s))
         return nil;
 
     return visibleDomain(origin.host());
@@ -294,15 +294,15 @@ static RetainPtr<NSString> allowButtonText(MediaPermissionReason reason)
     case MediaPermissionReason::Camera:
     case MediaPermissionReason::CameraAndMicrophone:
     case MediaPermissionReason::Microphone:
-        return WEB_UI_STRING_KEY(@"Allow", "Allow (usermedia)", @"Allow button title in user media prompt").createNSString();
+        return createNSString(WEB_UI_STRING_KEY(@"Allow", "Allow (usermedia)", @"Allow button title in user media prompt"));
     case MediaPermissionReason::ScreenCapture:
-        return WEB_UI_STRING_KEY(@"Allow", "Allow (screensharing)", @"Allow button title in screen sharing prompt").createNSString();
+        return createNSString(WEB_UI_STRING_KEY(@"Allow", "Allow (screensharing)", @"Allow button title in screen sharing prompt"));
     case MediaPermissionReason::DeviceOrientation:
-        return WEB_UI_STRING_KEY(@"Allow", "Allow (device motion and orientation access)", @"Button title in Device Orientation Permission API prompt").createNSString();
+        return createNSString(WEB_UI_STRING_KEY(@"Allow", "Allow (device motion and orientation access)", @"Button title in Device Orientation Permission API prompt"));
     case MediaPermissionReason::Geolocation:
-        return WEB_UI_STRING_KEY(@"Allow", "Allow (geolocation)", @"Allow button title in geolocation prompt").createNSString();
+        return createNSString(WEB_UI_STRING_KEY(@"Allow", "Allow (geolocation)", @"Allow button title in geolocation prompt"));
     case MediaPermissionReason::SpeechRecognition:
-        return WEB_UI_STRING_KEY(@"Allow", "Allow (speechrecognition)", @"Allow button title in speech recognition prompt").createNSString();
+        return createNSString(WEB_UI_STRING_KEY(@"Allow", "Allow (speechrecognition)", @"Allow button title in speech recognition prompt"));
     }
 }
 
@@ -312,15 +312,15 @@ static RetainPtr<NSString> doNotAllowButtonText(MediaPermissionReason reason)
     case MediaPermissionReason::Camera:
     case MediaPermissionReason::CameraAndMicrophone:
     case MediaPermissionReason::Microphone:
-        return WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (usermedia)", @"Disallow button title in user media prompt").createNSString();
+        return createNSString(WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (usermedia)", @"Disallow button title in user media prompt"));
     case MediaPermissionReason::ScreenCapture:
-        return WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (screensharing)", @"Disallow button title in screen sharing prompt").createNSString();
+        return createNSString(WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (screensharing)", @"Disallow button title in screen sharing prompt"));
     case MediaPermissionReason::DeviceOrientation:
-        return WEB_UI_STRING_KEY(@"Cancel", "Cancel (device motion and orientation access)", @"Button title in Device Orientation Permission API prompt").createNSString();
+        return createNSString(WEB_UI_STRING_KEY(@"Cancel", "Cancel (device motion and orientation access)", @"Button title in Device Orientation Permission API prompt"));
     case MediaPermissionReason::Geolocation:
-        return WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (geolocation)", @"Disallow button title in geolocation prompt").createNSString();
+        return createNSString(WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (geolocation)", @"Disallow button title in geolocation prompt"));
     case MediaPermissionReason::SpeechRecognition:
-        return WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (speechrecognition)", @"Disallow button title in speech recognition prompt").createNSString();
+        return createNSString(WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (speechrecognition)", @"Disallow button title in speech recognition prompt"));
     }
 }
 
@@ -353,30 +353,30 @@ static MediaPermissionPromptResult promptResultForAlertResponse(NSModalResponse 
 
 static RetainPtr<NSString> promptMessageText(const PermissionPromptRequest& request)
 {
-    if (!request.customization.messageText.isNull())
-        return request.customization.messageText.createNSString();
+    if (request.customization.messageText)
+        return createNSString(request.customization.messageText);
     return alertMessageText(request.reason, request.origin);
 }
 
 static RetainPtr<NSString> promptAllowButtonText(const PermissionPromptRequest& request)
 {
-    if (!request.customization.allowButtonTitle.isNull())
-        return request.customization.allowButtonTitle.createNSString();
+    if (request.customization.allowButtonTitle)
+        return createNSString(request.customization.allowButtonTitle);
     return allowButtonText(request.reason);
 }
 
 static RetainPtr<NSString> promptDenyButtonText(const PermissionPromptRequest& request)
 {
-    if (!request.customization.denyButtonTitle.isNull())
-        return request.customization.denyButtonTitle.createNSString();
+    if (request.customization.denyButtonTitle)
+        return createNSString(request.customization.denyButtonTitle);
     return doNotAllowButtonText(request.reason);
 }
 
 static RetainPtr<NSString> promptInformativeText(const PermissionPromptRequest& request)
 {
-    if (request.customization.informativeText.isNull())
+    if (!request.customization.informativeText)
         return nil;
-    return request.customization.informativeText.createNSString();
+    return createNSString(request.customization.informativeText);
 }
 
 void alertForPermission(WebPageProxy& page, PermissionPromptRequest&& request, CompletionHandler<void(MediaPermissionPromptResult&&)>&& completionHandler)
@@ -411,7 +411,7 @@ void alertForPermission(WebPageProxy& page, PermissionPromptRequest&& request, C
     [button setKeyEquivalent:@""];
     // Tags keep the responses promptResultForAlertResponse expects, which would otherwise follow position.
     for (size_t index = 0; index < request.customization.additionalActions.size(); ++index) {
-        button = [alert addButtonWithTitle:request.customization.additionalActions[index].title.createNSString().get()];
+        button = [alert addButtonWithTitle:createNSString(request.customization.additionalActions[index].title).get()];
         // Cleared so AppKit does not hand Return to a button the application supplied.
         [button setKeyEquivalent:@""];
         [button setTag:NSAlertThirdButtonReturn + index];
@@ -437,7 +437,7 @@ void alertForPermission(WebPageProxy& page, PermissionPromptRequest&& request, C
 
     for (auto& action : request.customization.additionalActions) {
         bool granted = action.decision == MediaPermissionPromptAdditionalAction::Decision::Allow;
-        [alert addAction:[UIAlertAction actionWithTitle:action.title.createNSString().get() style:UIAlertActionStyleDefault handler:[completionBlock, source = action.source, granted](UIAlertAction *) {
+        [alert addAction:[UIAlertAction actionWithTitle:createNSString(action.title).get() style:UIAlertActionStyleDefault handler:[completionBlock, source = action.source, granted](UIAlertAction *) {
             completionBlock({ .granted = granted, .wasAnswered = true, .chosenAction = source });
         }]];
     }
@@ -570,8 +570,8 @@ static void connectPreviewToGPUProcess(WebPageProxy& page, id<WKCapturePreviewPr
 static void stopPreviewAndReport(id<WKCapturePreviewPrompting> prompt, CapturePreviewSession& session, MediaPermissionPromptResult&& result, CompletionHandler<void(MediaPermissionPromptResult&&)>&& completionHandler)
 {
     if (result.granted) {
-        result.selectedAudioDeviceUID = [prompt selectedAudioDeviceID];
-        result.selectedVideoDeviceUID = [prompt selectedVideoDeviceID];
+        result.selectedAudioDeviceUID = StringImpl::create([prompt selectedAudioDeviceID]);
+        result.selectedVideoDeviceUID = StringImpl::create([prompt selectedVideoDeviceID]);
     }
     [prompt stop];
 
@@ -616,7 +616,7 @@ static CapturePreviewRestarter previewRestarter(WebPageProxy& page, id<WKCapture
 
 class CapturePreviewPromptForTesting final : public MediaPermissionPromptForTesting {
 public:
-    static Ref<CapturePreviewPromptForTesting> create(String&& title, String&& informativeText, Vector<String>&& buttonTitles, bool showsPreview, RetainPtr<WKCapturePreviewPromptForTesting>&& prompt, RefPtr<CapturePreviewSession>&& session, Vector<MediaPermissionPromptAdditionalAction>&& additionalActions, CompletionHandler<void(MediaPermissionPromptResult&&)>&& completionHandler)
+    static Ref<CapturePreviewPromptForTesting> create(RefPtr<StringImpl>&& title, RefPtr<StringImpl>&& informativeText, Vector<RefPtr<StringImpl>>&& buttonTitles, bool showsPreview, RetainPtr<WKCapturePreviewPromptForTesting>&& prompt, RefPtr<CapturePreviewSession>&& session, Vector<MediaPermissionPromptAdditionalAction>&& additionalActions, CompletionHandler<void(MediaPermissionPromptResult&&)>&& completionHandler)
     {
         return adoptRef(*new CapturePreviewPromptForTesting(WTF::move(title), WTF::move(informativeText), WTF::move(buttonTitles), showsPreview, WTF::move(prompt), WTF::move(session), WTF::move(additionalActions), WTF::move(completionHandler)));
     }
@@ -625,8 +625,8 @@ public:
 
     Vector<Device> cameras() const final { return devicesForTesting(CapturePreviewDeviceType::Camera); }
     Vector<Device> microphones() const final { return devicesForTesting(CapturePreviewDeviceType::Microphone); }
-    String selectedCameraID() const final { return [m_prompt selection].selectedDeviceID(CapturePreviewDeviceType::Camera); }
-    String selectedMicrophoneID() const final { return [m_prompt selection].selectedDeviceID(CapturePreviewDeviceType::Microphone); }
+    RefPtr<StringImpl> selectedCameraID() const final { return [m_prompt selection].selectedDeviceID(CapturePreviewDeviceType::Camera); }
+    RefPtr<StringImpl> selectedMicrophoneID() const final { return [m_prompt selection].selectedDeviceID(CapturePreviewDeviceType::Microphone); }
     unsigned audioLevelUpdateCount() const final { return [m_prompt audioLevelUpdateCount]; }
     unsigned previewLayerCount() const final { return [m_prompt previewLayerCount]; }
     bool hasPreviewLayer() const final { return [m_prompt hasPreviewLayer]; }
@@ -654,7 +654,7 @@ public:
     void dismiss() { finish({ }); }
 
 private:
-    CapturePreviewPromptForTesting(String&& title, String&& informativeText, Vector<String>&& buttonTitles, bool showsPreview, RetainPtr<WKCapturePreviewPromptForTesting>&& prompt, RefPtr<CapturePreviewSession>&& session, Vector<MediaPermissionPromptAdditionalAction>&& additionalActions, CompletionHandler<void(MediaPermissionPromptResult&&)>&& completionHandler)
+    CapturePreviewPromptForTesting(RefPtr<StringImpl>&& title, RefPtr<StringImpl>&& informativeText, Vector<RefPtr<StringImpl>>&& buttonTitles, bool showsPreview, RetainPtr<WKCapturePreviewPromptForTesting>&& prompt, RefPtr<CapturePreviewSession>&& session, Vector<MediaPermissionPromptAdditionalAction>&& additionalActions, CompletionHandler<void(MediaPermissionPromptResult&&)>&& completionHandler)
         : MediaPermissionPromptForTesting(WTF::move(title), WTF::move(informativeText), WTF::move(buttonTitles), showsPreview)
         , m_prompt(WTF::move(prompt))
         , m_session(WTF::move(session))
@@ -670,12 +670,12 @@ private:
         });
     }
 
-    void selectDevice(CapturePreviewDeviceType type, const String& persistentID)
+    void selectDevice(CapturePreviewDeviceType type, StringImpl* persistentID)
     {
-        if (persistentID.isNull())
+        if (!persistentID)
             return;
         size_t index = [m_prompt selection].devices(type).findIf([&](auto& device) {
-            return device.persistentId() == persistentID;
+            return equal(device.persistentId(), persistentID);
         });
         ASSERT(index != notFound);
         [m_prompt selectDeviceOfType:type atIndex:index];
@@ -709,11 +709,11 @@ private:
 CapturePreviewPromptHandles alertForPermissionForTesting(WebPageProxy& page, CapturePreviewPromptRequest&& request, bool showsPreview, CompletionHandler<void(MediaPermissionPromptResult&&)>&& completionHandler)
 {
     PermissionPromptRequest textRequest { .reason = request.reason, .origin = request.origin, .customization = request.customization };
-    Vector<String> buttonTitles;
-    buttonTitles.append(promptAllowButtonText(textRequest).get());
+    Vector<RefPtr<StringImpl>> buttonTitles;
+    buttonTitles.append(StringImpl::create(promptAllowButtonText(textRequest).get()));
     for (auto& action : request.customization.additionalActions)
         buttonTitles.append(action.title);
-    buttonTitles.append(promptDenyButtonText(textRequest).get());
+    buttonTitles.append(StringImpl::create(promptDenyButtonText(textRequest).get()));
 
     Vector<WebCore::CaptureDevice> videoDevices;
     Vector<WebCore::CaptureDevice> audioDevices;
@@ -732,7 +732,7 @@ CapturePreviewPromptHandles alertForPermissionForTesting(WebPageProxy& page, Cap
         [prompt beginPreview];
     }
 
-    Ref testingPrompt = CapturePreviewPromptForTesting::create(promptMessageText(textRequest).get(), promptInformativeText(textRequest).get(), WTF::move(buttonTitles), showsPreview, RetainPtr { prompt }, RefPtr { session }, WTF::move(request.customization.additionalActions), WTF::move(completionHandler));
+    Ref testingPrompt = CapturePreviewPromptForTesting::create(StringImpl::create(promptMessageText(textRequest).get()), StringImpl::create(promptInformativeText(textRequest).get()), WTF::move(buttonTitles), showsPreview, RetainPtr { prompt }, RefPtr { session }, WTF::move(request.customization.additionalActions), WTF::move(completionHandler));
     page.mediaPermissionPromptHandlerForTesting()(testingPrompt.copyRef());
 
     return {
@@ -775,7 +775,7 @@ CapturePreviewPromptHandles alertForPermissionWithCapturePreview(WebPageProxy& p
     RetainPtr allowButtons = adoptNS([[NSMutableArray alloc] initWithObjects:allowButton.get(), nil]);
     for (size_t index = 0; index < request.customization.additionalActions.size(); ++index) {
         auto& action = request.customization.additionalActions[index];
-        RetainPtr additionalButton = [sheet addButtonWithTitle:action.title.createNSString().get() response:NSAlertThirdButtonReturn + index];
+        RetainPtr additionalButton = [sheet addButtonWithTitle:createNSString(action.title).get() response:NSAlertThirdButtonReturn + index];
         if (action.decision == MediaPermissionPromptAdditionalAction::Decision::Allow)
             [allowButtons addObject:additionalButton.get()];
     }
@@ -927,9 +927,9 @@ IGNORE_WARNINGS_END
     return MediaPermissionResult::Unknown;
 }
 
-bool checkSpeechRecognitionServiceAvailability(const String& localeIdentifier)
+bool checkSpeechRecognitionServiceAvailability(StringImpl* localeIdentifier)
 {
-    auto recognizer = localeIdentifier.isEmpty() ? adoptNS([PAL::allocSFSpeechRecognizerInstance() init]) : adoptNS([PAL::allocSFSpeechRecognizerInstance() initWithLocale:[NSLocale localeWithLocaleIdentifier:localeIdentifier.createNSString().get()]]);
+    auto recognizer = isEmpty(localeIdentifier) ? adoptNS([PAL::allocSFSpeechRecognizerInstance() init]) : adoptNS([PAL::allocSFSpeechRecognizerInstance() initWithLocale:[NSLocale localeWithLocaleIdentifier:createNSString(localeIdentifier).get()]]);
     return recognizer && [recognizer isAvailable];
 }
 

@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-static inline Ref<Blob> blobFromData(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
+static inline Ref<Blob> blobFromData(ScriptExecutionContext* context, Vector<uint8_t>&& data, StringImpl* contentType)
 {
     return Blob::create(context, WTF::move(data), Blob::normalizedContentType(contentType));
 }
@@ -63,14 +63,14 @@ NODELETE static bool isHTTPQuotedStringTokenCodePoint(char16_t c)
 }
 
 struct MimeType {
-    String type;
-    String subtype;
-    HashMap<String, String> parameters;
+    RefPtr<StringImpl> type;
+    RefPtr<StringImpl> subtype;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> parameters;
 };
 
-static HashMap<String, String> parseParameters(StringView input, size_t position)
+static HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> parseParameters(StringView input, size_t position)
 {
-    HashMap<String, String> parameters;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> parameters;
     while (position < input.length()) {
         while (position < input.length() && isTabOrSpace(input[position]))
             position++;
@@ -113,20 +113,20 @@ static HashMap<String, String> parseParameters(StringView input, size_t position
 }
 
 // https://mimesniff.spec.whatwg.org/#parsing-a-mime-type
-static std::optional<MimeType> parseMIMEType(const String& contentType)
+static std::optional<MimeType> parseMIMEType(StringImpl* contentType)
 {
-    String input = contentType.trim(isASCIIWhitespaceWithoutFF<char16_t>);
-    size_t slashIndex = input.find('/');
+    RefPtr<StringImpl> input = trim(contentType, isASCIIWhitespaceWithoutFF<char16_t>);
+    size_t slashIndex = find(input, '/');
     if (slashIndex == notFound)
         return std::nullopt;
 
-    String type = input.left(slashIndex);
-    if (!type.length() || !isValidHTTPToken(type))
+    RefPtr<StringImpl> type = left(input, slashIndex);
+    if (!length(type) || !isValidHTTPToken(type))
         return std::nullopt;
     
-    size_t semicolonIndex = input.find(';', slashIndex);
-    String subtype = input.substring(slashIndex + 1, semicolonIndex - slashIndex - 1).trim(isASCIIWhitespaceWithoutFF<char16_t>);
-    if (!subtype.length() || !isValidHTTPToken(subtype))
+    size_t semicolonIndex = find(input, ';', slashIndex);
+    RefPtr<StringImpl> subtype = trim(substring(input, slashIndex + 1, semicolonIndex - slashIndex - 1), isASCIIWhitespaceWithoutFF<char16_t>);
+    if (!length(subtype) || !isValidHTTPToken(subtype))
         return std::nullopt;
 
     return {{ WTF::move(type), WTF::move(subtype), parseParameters(StringView(input), semicolonIndex + 1) }};
@@ -142,7 +142,7 @@ FetchBodyConsumer::~FetchBodyConsumer() = default;
 FetchBodyConsumer& FetchBodyConsumer::operator=(FetchBodyConsumer&&) = default;
 
 // https://fetch.spec.whatwg.org/#concept-body-package-data
-RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* context, const String& contentType, std::span<const uint8_t> data)
+RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* context, StringImpl* contentType, std::span<const uint8_t> data)
 {
     static constexpr auto oneNewLine = "\r\n"_s;
     auto parseMultipartPart = [context] (std::span<const uint8_t> part, DOMFormData& form) -> bool {
@@ -154,33 +154,33 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
 
         auto body = part.subspan(headerBytes.size() + twoNewLines.size());
 
-        auto header = String::fromUTF8(headerBytes);
+        auto header = StringImpl::fromUTF8(headerBytes);
 
         constexpr auto contentDispositionCharacters = "content-disposition:"_s;
-        size_t contentDispositionBegin = header.findIgnoringASCIICase(contentDispositionCharacters);
+        size_t contentDispositionBegin = findIgnoringASCIICase(header, contentDispositionCharacters);
         if (contentDispositionBegin == notFound)
             return false;
 
-        size_t contentDispositionEnd = header.find(oneNewLine, contentDispositionBegin);
-        size_t contentDispositionParametersBegin = header.find(';', contentDispositionBegin + contentDispositionCharacters.length());
+        size_t contentDispositionEnd = find(header, oneNewLine, contentDispositionBegin);
+        size_t contentDispositionParametersBegin = find(header, ';', contentDispositionBegin + contentDispositionCharacters.length());
         if (contentDispositionParametersBegin != notFound)
             contentDispositionParametersBegin++;
 
         auto parameters = parseParameters(StringView(header).substring(contentDispositionParametersBegin, contentDispositionEnd - contentDispositionParametersBegin), 0);
-        String name = parameters.get<HashTranslatorASCIILiteral>("name"_s);
+        RefPtr<StringImpl> name = parameters.get<HashTranslatorASCIILiteral>("name"_s);
         if (!name)
             return false;
-        String filename = parameters.get<HashTranslatorASCIILiteral>("filename"_s);
+        RefPtr<StringImpl> filename = parameters.get<HashTranslatorASCIILiteral>("filename"_s);
         if (!filename)
-            form.append(name, String::fromUTF8(body));
+            form.append(name, StringImpl::fromUTF8(body));
         else {
-            String contentType = "text/plain"_s;
+            RefPtr<StringImpl> contentType = "text/plain"_si;
 
             constexpr auto contentTypeCharacters = "content-type:"_s;
             size_t contentTypePrefixLength = contentTypeCharacters.length();
-            size_t contentTypeBegin = header.findIgnoringASCIICase(contentTypeCharacters);
+            size_t contentTypeBegin = findIgnoringASCIICase(header, contentTypeCharacters);
             if (contentTypeBegin != notFound) {
-                size_t contentTypeEnd = header.find(oneNewLine, contentTypeBegin);
+                size_t contentTypeEnd = find(header, oneNewLine, contentTypeBegin);
                 contentType = StringView(header).substring(contentTypeBegin + contentTypePrefixLength, contentTypeEnd - contentTypeBegin - contentTypePrefixLength).trim(isASCIIWhitespaceWithoutFF<char16_t>).toString();
             }
 
@@ -189,7 +189,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
         return true;
     };
     
-    auto parseMultipartBoundary = [] (const std::optional<MimeType>& mimeType) -> std::optional<String> {
+    auto parseMultipartBoundary = [] (const std::optional<MimeType>& mimeType) -> std::optional<RefPtr<StringImpl>> {
         if (!mimeType)
             return std::nullopt;
         if (equalLettersIgnoringASCIICase(mimeType->type, "multipart"_s) && equalLettersIgnoringASCIICase(mimeType->subtype, "form-data"_s)) {
@@ -204,7 +204,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
     auto mimeType = parseMIMEType(contentType);
     if (auto multipartBoundary = parseMultipartBoundary(mimeType)) {
         auto boundaryWithDashes = makeString("--"_s, *multipartBoundary);
-        auto boundary = boundaryWithDashes.utf8();
+        auto boundary = utf8(boundaryWithDashes);
         size_t boundaryLength = boundary.length();
 
         size_t currentBoundaryIndex = find(data, byteCast<uint8_t>(boundary.span()));
@@ -232,7 +232,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
                 return nullptr;
         }
     } else if (mimeType && equalLettersIgnoringASCIICase(mimeType->type, "application"_s) && equalLettersIgnoringASCIICase(mimeType->subtype, "x-www-form-urlencoded"_s)) {
-        auto dataString = String::fromUTF8(data);
+        auto dataString = StringImpl::fromUTF8(data);
         for (auto& pair : WTF::URLParser::parseURLEncodedForm(dataString))
             form->append(pair.key, pair.value);
     } else
@@ -241,7 +241,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
     return form;
 }
 
-static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyConsumer::Type type, const String& contentType, std::span<const uint8_t> data)
+static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyConsumer::Type type, StringImpl* contentType, std::span<const uint8_t> data)
 {
     RefPtr context = promise->scriptExecutionContext();
 
@@ -293,12 +293,12 @@ void FetchBodyConsumer::cancelReadableStream()
         formDataConsumer->cancel();
 }
 
-void FetchBodyConsumer::resolveWithData(Ref<DeferredPromise>&& promise, const String& contentType, std::span<const uint8_t> data)
+void FetchBodyConsumer::resolveWithData(Ref<DeferredPromise>&& promise, StringImpl* contentType, std::span<const uint8_t> data)
 {
     resolveWithTypeAndData(WTF::move(promise), m_type, contentType, data);
 }
 
-void FetchBodyConsumer::resolveWithFormData(Ref<DeferredPromise>&& promise, const String& contentType, const FormData& formData, ScriptExecutionContext* context)
+void FetchBodyConsumer::resolveWithFormData(Ref<DeferredPromise>&& promise, StringImpl* contentType, const FormData& formData, ScriptExecutionContext* context)
 {
     if (auto sharedBuffer = formData.asSharedBuffer()) {
         resolveWithData(WTF::move(promise), contentType, sharedBuffer->makeContiguous()->span());
@@ -308,7 +308,7 @@ void FetchBodyConsumer::resolveWithFormData(Ref<DeferredPromise>&& promise, cons
     if (!context)
         return;
 
-    m_formDataConsumer = FormDataConsumer::create(formData, *context, [promise = WTF::move(promise), type = m_type, contentType, builder = SharedBufferBuilder { }](auto&& result) mutable {
+    m_formDataConsumer = FormDataConsumer::create(formData, *context, [promise = WTF::move(promise), type = m_type, contentType = RefPtr { contentType }, builder = SharedBufferBuilder { }](auto&& result) mutable {
         if (result.hasException()) {
             auto protectedPromise = WTF::move(promise);
             protectedPromise->reject(result.releaseException());
@@ -371,11 +371,11 @@ void FetchBodyConsumer::extract(ReadableStream& stream, ReadableStreamToSharedBu
     protect(m_sink)->pipeFrom(stream);
 }
 
-void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& contentType, FetchBodyOwner* owner, ReadableStream* stream)
+void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, StringImpl* contentType, FetchBodyOwner* owner, ReadableStream* stream)
 {
     if (stream) {
         ASSERT(!m_sink);
-        m_sink = ReadableStreamToSharedBufferSink::create([promise = WTF::move(promise), data = SharedBufferBuilder(), type = m_type, contentType](auto&& result) mutable {
+        m_sink = ReadableStreamToSharedBufferSink::create([promise = WTF::move(promise), data = SharedBufferBuilder(), type = m_type, contentType = RefPtr { contentType }](auto&& result) mutable {
             WTF::switchOn(WTF::move(result), [&](std::nullptr_t) {
                 auto protectedPromise = WTF::move(promise);
                 Ref buffer = data.takeBufferAsContiguous();
@@ -471,9 +471,9 @@ RefPtr<JSC::ArrayBuffer> FetchBodyConsumer::asArrayBuffer()
     return m_buffer.tryCreateArrayBuffer();
 }
 
-Ref<Blob> FetchBodyConsumer::takeAsBlob(ScriptExecutionContext* context, const String& contentType)
+Ref<Blob> FetchBodyConsumer::takeAsBlob(ScriptExecutionContext* context, StringImpl* contentType)
 {
-    String normalizedContentType = Blob::normalizedContentType(extractMIMETypeFromMediaType(contentType));
+    RefPtr<StringImpl> normalizedContentType = Blob::normalizedContentType(extractMIMETypeFromMediaType(contentType));
 
     if (!m_buffer)
         return Blob::create(context, Vector<uint8_t>(), normalizedContentType);
@@ -523,11 +523,11 @@ Ref<Blob> FetchBodyConsumer::takeAsBlob(ScriptExecutionContext* context, const S
     return Blob::create(context, bufferBuilder.takeBuffer(), normalizedContentType);
 }
 
-String FetchBodyConsumer::takeAsText()
+RefPtr<StringImpl> FetchBodyConsumer::takeAsText()
 {
     // FIXME: We could probably text decode on the fly as soon as m_type is set to JSON or Text.
     if (!m_buffer)
-        return String();
+        return nullptr;
 
     auto buffer = m_buffer.takeBufferAsContiguous();
     auto text = TextResourceDecoder::textFromUTF8(buffer->span());
@@ -567,7 +567,7 @@ void FetchBodyConsumer::loadingFailed(const Exception& exception)
     }
 }
 
-void FetchBodyConsumer::loadingSucceeded(const String& contentType)
+void FetchBodyConsumer::loadingSucceeded(StringImpl* contentType)
 {
     m_isLoading = false;
 

@@ -106,7 +106,7 @@ ExceptionOr<void> MutationObserver::observe(Node& node, const Init& init)
     if (init.characterDataOldValue.value_or(false))
         options.add(OptionType::CharacterDataOldValue);
 
-    MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> attributeFilter;
+    MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>> attributeFilter;
     if (init.attributeFilter) {
         for (auto& value : init.attributeFilter.value())
             attributeFilter.add(value);
@@ -237,7 +237,7 @@ void MutationObserver::deliver()
         if (!context)
             return;
 
-        InspectorInstrumentation::willFireObserverCallback(*context, "MutationObserver"_s);
+        InspectorInstrumentation::willFireObserverCallback(*context, "MutationObserver"_si);
         if (!m_isInNonNormalWorld) [[likely]]
             m_callback->invoke(*this, records, *this);
         else if (m_isAutoFillWorld)

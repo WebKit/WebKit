@@ -42,15 +42,15 @@ SOFT_LINK(libnetworkextension, NEHelperTrackerGetDisposition, NEHelperTrackerDis
 
 namespace WebKit {
 
-void setNWParametersApplicationIdentifiers(nw_parameters_t parameters, const UTF8CString& sourceApplicationBundleIdentifier, std::optional<audit_token_t> sourceApplicationAuditToken, const String& attributedBundleIdentifier)
+void setNWParametersApplicationIdentifiers(nw_parameters_t parameters, const UTF8CString& sourceApplicationBundleIdentifier, std::optional<audit_token_t> sourceApplicationAuditToken, StringImpl* attributedBundleIdentifier)
 {
     if (!sourceApplicationBundleIdentifier.isEmpty())
         nw_parameters_set_source_application_by_bundle_id(parameters, sourceApplicationBundleIdentifier.legacyCStringPointer());
     else if (sourceApplicationAuditToken)
         nw_parameters_set_source_application(parameters, *sourceApplicationAuditToken);
 
-    if (!attributedBundleIdentifier.isEmpty())
-        nw_parameters_set_attributed_bundle_identifier(parameters, attributedBundleIdentifier.utf8().legacyCStringPointer());
+    if (!isEmpty(attributedBundleIdentifier))
+        nw_parameters_set_attributed_bundle_identifier(parameters, utf8(attributedBundleIdentifier).legacyCStringPointer());
 }
 
 void setNWParametersTrackerOptions(nw_parameters_t parameters, bool shouldBypassRelay, bool isFirstParty, bool isKnownTracker, IsRTC isRTC)
@@ -64,7 +64,7 @@ void setNWParametersTrackerOptions(nw_parameters_t parameters, bool shouldBypass
 
 bool isKnownTracker(const WebCore::RegistrableDomain& domain)
 {
-    RetainPtr domains = @[domain.string().createNSString().get()];
+    RetainPtr domains = @[createNSString(domain.string()).get()];
     NEHelperTrackerDomainContextRef *context = nil;
     CFIndex index = 0;
     return !!NEHelperTrackerGetDisposition(nullptr, bridge_cast(domains.get()), context, &index);

@@ -54,7 +54,7 @@ public:
     NODELETE static Ref<InspectorShaderProgram> create(GPUComputePipeline&, InspectorCanvas&);
     NODELETE static Ref<InspectorShaderProgram> create(GPURenderPipeline&, InspectorCanvas&);
 
-    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const RefPtr<StringImpl>& identifier() const LIFETIME_BOUND { return m_identifier; }
     InspectorCanvas& canvas() const { return m_canvas; }
 
 #if ENABLE(WEBGL)
@@ -63,8 +63,8 @@ public:
     NODELETE GPUComputePipeline* computePipeline() const;
     NODELETE GPURenderPipeline* renderPipeline() const;
 
-    String requestShaderSource(Inspector::Protocol::Canvas::ShaderType);
-    void updateShader(Inspector::Protocol::Canvas::ShaderType, const String& source, CompletionHandler<void(bool)>&&);
+    RefPtr<StringImpl> requestShaderSource(Inspector::Protocol::Canvas::ShaderType);
+    void updateShader(Inspector::Protocol::Canvas::ShaderType, StringImpl* source, CompletionHandler<void(bool)>&&);
 
     bool disabled() const { return m_disabled; }
     bool setDisabled(bool);
@@ -88,7 +88,7 @@ private:
     void requestRenderPipelineForHighlighting(unsigned canvasColorAttachmentMask, CompletionHandler<void()>&&);
     RefPtr<::WebGPU::RenderPipeline> renderPipelineForHighlighting(unsigned canvasColorAttachmentMask);
 
-    String m_identifier;
+    RefPtr<StringImpl> m_identifier;
     WeakRef<InspectorCanvas> m_canvas;
     Variant<
 #if ENABLE(WEBGL)

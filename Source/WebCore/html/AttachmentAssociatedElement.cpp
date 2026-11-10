@@ -53,25 +53,25 @@ HTMLAttachmentElement* AttachmentAssociatedElement::attachmentElement() const
     return nullptr;
 }
 
-const String& AttachmentAssociatedElement::attachmentIdentifier() const
+const RefPtr<StringImpl>& AttachmentAssociatedElement::attachmentIdentifier() const
 {
-    if (!m_pendingClonedAttachmentID.isEmpty())
+    if (!isEmpty(m_pendingClonedAttachmentID))
         return m_pendingClonedAttachmentID;
 
     if (auto* attachment = attachmentElement())
         return attachment->uniqueIdentifier();
 
-    return nullAtom();
+    return nullString();
 }
 
 void AttachmentAssociatedElement::didUpdateAttachmentIdentifier()
 {
-    m_pendingClonedAttachmentID = { };
+    m_pendingClonedAttachmentID = nullptr;
 }
 
 void AttachmentAssociatedElement::copyAttachmentAssociatedPropertiesFromElement(const AttachmentAssociatedElement& source)
 {
-    m_pendingClonedAttachmentID = !source.m_pendingClonedAttachmentID.isEmpty() ? source.m_pendingClonedAttachmentID : source.attachmentIdentifier();
+    m_pendingClonedAttachmentID = !isEmpty(source.m_pendingClonedAttachmentID) ? source.m_pendingClonedAttachmentID : source.attachmentIdentifier();
 }
 
 void AttachmentAssociatedElement::cloneAttachmentAssociatedElementWithoutAttributesAndChildren(AttachmentAssociatedElement& clone, Document& targetDocument) const

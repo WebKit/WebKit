@@ -42,17 +42,17 @@ class CSPViolationReportBody final : public ReportBody {
 public:
     using Init = SecurityPolicyViolationEventInit;
 
-    NODELETE WEBCORE_EXPORT static Ref<CSPViolationReportBody> create(Init&&);
-    NODELETE WEBCORE_EXPORT static Ref<CSPViolationReportBody> create(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, std::optional<uint64_t> lineNumber, std::optional<uint64_t> columnNumber);
+    WEBCORE_EXPORT static Ref<CSPViolationReportBody> create(Init&&);
+    NODELETE WEBCORE_EXPORT static Ref<CSPViolationReportBody> create(RefPtr<StringImpl>&& documentURL, RefPtr<StringImpl>&& referrer, RefPtr<StringImpl>&& blockedURL, RefPtr<StringImpl>&& effectiveDirective, RefPtr<StringImpl>&& originalPolicy, RefPtr<StringImpl>&& sourceFile, RefPtr<StringImpl>&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, std::optional<uint64_t> lineNumber, std::optional<uint64_t> columnNumber);
 
-    const String& type() const LIFETIME_BOUND final;
-    const String& documentURL() const LIFETIME_BOUND { return m_documentURL; }
-    const String& referrer() const LIFETIME_BOUND { return m_referrer; }
-    const String& blockedURL() const LIFETIME_BOUND { return m_blockedURL; }
-    const String& effectiveDirective() const LIFETIME_BOUND { return m_effectiveDirective; }
-    const String& originalPolicy() const LIFETIME_BOUND { return m_originalPolicy; }
-    const String& sourceFile() const LIFETIME_BOUND { return m_sourceFile; }
-    const String& sample() const LIFETIME_BOUND { return m_sample; }
+    const RefPtr<StringImpl>& type() const LIFETIME_BOUND final;
+    const RefPtr<StringImpl>& documentURL() const LIFETIME_BOUND { return m_documentURL; }
+    const RefPtr<StringImpl>& referrer() const LIFETIME_BOUND { return m_referrer; }
+    const RefPtr<StringImpl>& blockedURL() const LIFETIME_BOUND { return m_blockedURL; }
+    const RefPtr<StringImpl>& effectiveDirective() const LIFETIME_BOUND { return m_effectiveDirective; }
+    const RefPtr<StringImpl>& originalPolicy() const LIFETIME_BOUND { return m_originalPolicy; }
+    const RefPtr<StringImpl>& sourceFile() const LIFETIME_BOUND { return m_sourceFile; }
+    const RefPtr<StringImpl>& sample() const LIFETIME_BOUND { return m_sample; }
     SecurityPolicyViolationEventDisposition disposition() const { return m_disposition; }
     unsigned short statusCode() const { return m_statusCode; }
     std::optional<uint64_t> lineNumber() const { return m_lineNumber; }
@@ -62,17 +62,17 @@ public:
 
 private:
     CSPViolationReportBody(Init&&);
-    CSPViolationReportBody(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, std::optional<uint64_t> lineNumber, std::optional<uint64_t> columnNumber);
+    CSPViolationReportBody(RefPtr<StringImpl>&& documentURL, RefPtr<StringImpl>&& referrer, RefPtr<StringImpl>&& blockedURL, RefPtr<StringImpl>&& effectiveDirective, RefPtr<StringImpl>&& originalPolicy, RefPtr<StringImpl>&& sourceFile, RefPtr<StringImpl>&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, std::optional<uint64_t> lineNumber, std::optional<uint64_t> columnNumber);
 
     ViolationReportType reportBodyType() const final { return ViolationReportType::ContentSecurityPolicy; }
 
-    const String m_documentURL;
-    const String m_referrer;
-    const String m_blockedURL;
-    const String m_effectiveDirective;
-    const String m_originalPolicy;
-    const String m_sourceFile;
-    const String m_sample;
+    const RefPtr<StringImpl> m_documentURL;
+    const RefPtr<StringImpl> m_referrer;
+    const RefPtr<StringImpl> m_blockedURL;
+    const RefPtr<StringImpl> m_effectiveDirective;
+    const RefPtr<StringImpl> m_originalPolicy;
+    const RefPtr<StringImpl> m_sourceFile;
+    const RefPtr<StringImpl> m_sample;
     const SecurityPolicyViolationEventDisposition m_disposition;
     const unsigned short m_statusCode;
     const std::optional<uint64_t> m_lineNumber;

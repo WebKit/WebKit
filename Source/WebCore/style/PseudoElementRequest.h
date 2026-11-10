@@ -40,7 +40,7 @@ public:
     {
     }
 
-    PseudoElementRequest(PseudoElementType type, const AtomString& nameOrPart)
+    PseudoElementRequest(PseudoElementType type, AtomStringImpl* nameOrPart)
         : m_identifier({ type, nameOrPart })
     {
         ASSERT(type == PseudoElementType::Highlight || type == PseudoElementType::ViewTransitionGroup || type == PseudoElementType::ViewTransitionImagePair || type == PseudoElementType::ViewTransitionOld || type == PseudoElementType::ViewTransitionNew);
@@ -53,7 +53,7 @@ public:
 
     const PseudoElementIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
     PseudoElementType type() const { return m_identifier.type; }
-    const AtomString& nameOrPart() const LIFETIME_BOUND { return m_identifier.nameOrPart; }
+    const RefPtr<AtomStringImpl>& nameOrPart() const LIFETIME_BOUND { return m_identifier.nameOrPart; }
     const std::optional<StyleScrollbarState>& scrollbarState() const LIFETIME_BOUND { return m_scrollbarState; }
 
 private:

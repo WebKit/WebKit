@@ -58,7 +58,7 @@ public:
     virtual void addNotificationManager(WebKit::WebNotificationManagerProxy&) { }
     virtual void removeNotificationManager(WebKit::WebNotificationManagerProxy&) { }
 
-    virtual HashMap<WTF::String, bool> notificationPermissions() { return HashMap<WTF::String, bool>(); };
+    virtual HashMap<RefPtr<StringImpl>, bool> notificationPermissions() { return HashMap<RefPtr<StringImpl>, bool>(); };
 };
 
 } // namespace API

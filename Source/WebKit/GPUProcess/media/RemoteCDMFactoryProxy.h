@@ -83,7 +83,7 @@ public:
 
     NODELETE bool allowsExitUnderMemoryPressure() const;
 
-    String mediaKeysStorageDirectory() const LIFETIME_BOUND;
+    RefPtr<StringImpl> mediaKeysStorageDirectory() const LIFETIME_BOUND;
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 #if !RELEASE_LOG_DISABLED
@@ -99,8 +99,8 @@ private:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     // Messages
-    void createCDM(const String& keySystem, const String& mediaKeysHashSalt, CompletionHandler<void(std::optional<RemoteCDMIdentifier>&&, RemoteCDMConfiguration&&)>&&);
-    void supportsKeySystem(const String& keySystem, CompletionHandler<void(bool)>&&);
+    void createCDM(StringImpl* keySystem, StringImpl* mediaKeysHashSalt, CompletionHandler<void(std::optional<RemoteCDMIdentifier>&&, RemoteCDMConfiguration&&)>&&);
+    void supportsKeySystem(StringImpl* keySystem, CompletionHandler<void(bool)>&&);
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     HashMap<RemoteCDMIdentifier, Ref<RemoteCDMProxy>> m_proxies;

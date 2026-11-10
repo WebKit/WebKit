@@ -328,10 +328,10 @@ public:
     Vector<WeakPtr<RemotePageProxy>> remotePages() const;
     unsigned remotePageCount() const;
 
-    void activePagesDomainsForTesting(CompletionHandler<void(Vector<String>&&)>&&); // This is what is reported to ActivityMonitor.
+    void activePagesDomainsForTesting(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&); // This is what is reported to ActivityMonitor.
 
 #if ENABLE(NOTIFY_BLOCKING)
-    void getNotifyStateForTesting(const String&, CompletionHandler<void(std::optional<uint64_t>)>&&);
+    void getNotifyStateForTesting(StringImpl*, CompletionHandler<void(std::optional<uint64_t>)>&&);
 #endif
 
     bool isRunningServiceWorkers() const { return !!m_serviceWorkerInformation; }
@@ -377,11 +377,11 @@ public:
     void updateTextCheckerState();
 
     void willAcquireUniversalFileReadSandboxExtension() { m_mayHaveUniversalFileReadSandboxExtension = true; }
-    void assumeReadAccessToBaseURL(WebPageProxy&, const String&, CompletionHandler<void()>&&, CreateSandboxExtensionForNetworkingProcess = CreateSandboxExtensionForNetworkingProcess::No);
-    void assumeReadAccessToBaseURLs(WebPageProxy&, const Vector<String>&, CompletionHandler<void()>&&);
+    void assumeReadAccessToBaseURL(WebPageProxy&, StringImpl*, CompletionHandler<void()>&&, CreateSandboxExtensionForNetworkingProcess = CreateSandboxExtensionForNetworkingProcess::No);
+    void assumeReadAccessToBaseURLs(WebPageProxy&, const Vector<RefPtr<StringImpl>>&, CompletionHandler<void()>&&);
     bool hasAssumedReadAccessToURL(const URL&) const;
 
-    bool checkURLReceivedFromWebProcess(const String&, CheckBackForwardList = CheckBackForwardList::Yes);
+    bool checkURLReceivedFromWebProcess(StringImpl*, CheckBackForwardList = CheckBackForwardList::Yes);
     bool checkURLReceivedFromWebProcess(const URL&, CheckBackForwardList = CheckBackForwardList::Yes);
 
     static bool fullKeyboardAccessEnabled();
@@ -403,8 +403,8 @@ public:
     void setOptInCookiePartitioningEnabled(bool);
 #endif
 
-    void didPostMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, FrameInfoData&&, ScriptMessageHandlerIdentifier, JavaScriptEvaluationResult&&, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, String>&&)>&&);
-    void didPostLegacySynchronousMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, FrameInfoData&&, ScriptMessageHandlerIdentifier, JavaScriptEvaluationResult&&, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&&);
+    void didPostMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, FrameInfoData&&, ScriptMessageHandlerIdentifier, JavaScriptEvaluationResult&&, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, RefPtr<StringImpl>>&&)>&&);
+    void didPostLegacySynchronousMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, FrameInfoData&&, ScriptMessageHandlerIdentifier, JavaScriptEvaluationResult&&, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, RefPtr<StringImpl>>&&)>&&);
 
     void enableSuddenTermination();
     void disableSuddenTermination();
@@ -453,9 +453,9 @@ public:
     bool isBackground() const { return !!m_backgroundToken; }
 
 #if PLATFORM(COCOA)
-    static const Vector<String>& mediaMIMETypes();
-    void cacheMediaMIMETypes(const Vector<String>&);
-    void cacheMediaSourceTypeSupported(const String& type, bool isSupported);
+    static const Vector<RefPtr<StringImpl>>& mediaMIMETypes();
+    void cacheMediaMIMETypes(const Vector<RefPtr<StringImpl>>&);
+    void cacheMediaSourceTypeSupported(StringImpl* type, bool isSupported);
 
     void setTaskNamePort(MachSendRight&&);
     const MachSendRight& taskNamePort() const { return m_taskNamePort; }
@@ -536,7 +536,7 @@ public:
     void updateAudibleMediaAssertions();
     void updateMediaStreamingActivity();
 
-    void setRemoteWorkerUserAgent(const String&);
+    void setRemoteWorkerUserAgent(StringImpl*);
     void updateRemoteWorkerPreferencesStore(const WebPreferencesStore&);
     void establishRemoteWorkerContext(RemoteWorkerType, const WebPreferencesStore&, const WebCore::Site&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, WebCore::CrossOriginEmbedderPolicyValue, CompletionHandler<void()>&&);
     void registerRemoteWorkerClientProcess(RemoteWorkerType, WebProcessProxy&);
@@ -558,7 +558,7 @@ public:
     void modelProcessDidFinishLaunching();
     void modelProcessExited(ProcessTerminationReason);
 #if HAVE(TASK_IDENTITY_TOKEN)
-    void createMemoryAttributionIDIfNeeded(CompletionHandler<void(const std::optional<String>&)>&&);
+    void createMemoryAttributionIDIfNeeded(CompletionHandler<void(const std::optional<RefPtr<StringImpl>>&)>&&);
     void unregisterMemoryAttributionIDIfNeeded();
 #endif
 #endif
@@ -578,8 +578,8 @@ public:
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void addAllowedAttachmentFilePath(const String&);
-    bool isAllowedAttachmentFilePath(const String&) const;
+    void addAllowedAttachmentFilePath(StringImpl*);
+    bool isAllowedAttachmentFilePath(StringImpl*) const;
 #endif
     
     bool allowTestOnlyIPC() const { return m_allowTestOnlyIPC; }
@@ -605,9 +605,9 @@ public:
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     void setCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode);
-    void setCaptionLanguage(const String&);
+    void setCaptionLanguage(StringImpl*);
 #endif
-    void getNotifications(const URL&, const String&, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
+    void getNotifications(const URL&, StringImpl*, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
     void serializeAndWrapCryptoKey(WebCore::CryptoKeyData&&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
     void unwrapCryptoKey(WebCore::WrappedCryptoKey&&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
 
@@ -668,8 +668,8 @@ public:
     void setResourceMonitorRuleLists(RefPtr<WebCompiledContentRuleList>, CompletionHandler<void()>&&);
 #endif
 
-    std::optional<SandboxExtension::Handle> sandboxExtensionForFile(const String& fileName) const;
-    void addSandboxExtensionForFile(const String& fileName, SandboxExtension::Handle);
+    std::optional<SandboxExtension::Handle> sandboxExtensionForFile(StringImpl* fileName) const;
+    void addSandboxExtensionForFile(StringImpl* fileName, SandboxExtension::Handle);
     void clearSandboxExtensions();
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
@@ -681,16 +681,16 @@ public:
     void destroyWasmDebuggerTarget();
     NODELETE void connectWasmDebuggerTarget(bool isAutomaticConnection, bool immediatelyPause);
     NODELETE void disconnectWasmDebuggerTarget();
-    void dispatchWasmDebuggerMessage(const String& message);
+    void dispatchWasmDebuggerMessage(StringImpl* message);
     NODELETE void setWasmDebuggerTargetIndicating(bool);
 
-    void sendWasmDebuggerResponse(const String& response);
+    void sendWasmDebuggerResponse(StringImpl* response);
     void updateWasmDebuggerTarget();
     void wasmDebugServerReady();
 #endif
 
 #if ENABLE(IPC_TESTING_API)
-    void takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&&);
+    void takeInvalidMessageStringForTesting(CompletionHandler<void(RefPtr<StringImpl>&&)>&&);
 #endif
 
 #if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
@@ -805,7 +805,7 @@ private:
 
     bool shouldAllowNonValidInjectedCode() const;
 
-    static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& platformPathsWithAssumedReadAccess();
+    static const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>& platformPathsWithAssumedReadAccess();
 
     void updateBackgroundResponsivenessTimer();
 
@@ -834,7 +834,7 @@ private:
     void didCompleteAutofill(IPC::Untrusted<WebCore::Site>&&);
     void didObserveFirstPartyUserGesture(IPC::Untrusted<WebCore::Site>&&);
 
-    void logDiagnosticMessageForResourceLimitTermination(const String& limitKey);
+    void logDiagnosticMessageForResourceLimitTermination(StringImpl* limitKey);
     
     void updateRegistrationWithDataStore();
 
@@ -868,7 +868,7 @@ private:
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
     void createServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier, URL&&, WebCore::ServiceWorkerIsInspectable, CompletionHandler<void(bool shouldWaitForAutoInspection)>&&);
     void deleteServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier);
-    void sendMessageToInspector(WebCore::ServiceWorkerIdentifier, String&& message);
+    void sendMessageToInspector(WebCore::ServiceWorkerIdentifier, RefPtr<StringImpl>&& message);
 #endif
 
     enum class IsWeak : bool { No, Yes };
@@ -908,8 +908,8 @@ private:
     WeakOrStrongPtr<WebProcessPool> m_processPool; // Pre-warmed and cached processes do not hold a strong reference to their pool.
 
     bool m_mayHaveUniversalFileReadSandboxExtension { false }; // True if a read extension for "/" was ever granted - we don't track whether WebProcess still has it.
-    HashSet<String> m_localPathsWithAssumedReadAccess;
-    HashSet<String> m_previouslyApprovedFilePaths;
+    HashSet<RefPtr<StringImpl>> m_localPathsWithAssumedReadAccess;
+    HashSet<RefPtr<StringImpl>> m_previouslyApprovedFilePaths;
 
     WebPageProxyMap m_pageMap;
     WeakHashSet<RemotePageProxy> m_remotePages;
@@ -1019,7 +1019,7 @@ private:
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    HashSet<String> m_allowedAttachmentFilePaths;
+    HashSet<RefPtr<StringImpl>> m_allowedAttachmentFilePaths;
 #endif
     
     bool m_allowTestOnlyIPC { false };
@@ -1045,7 +1045,7 @@ private:
 #endif
 #if ENABLE(MODEL_PROCESS)
     uint64_t m_sharedPreferencesVersionInModelProcess { 0 };
-    std::optional<String> m_memoryAttributionID;
+    std::optional<RefPtr<StringImpl>> m_memoryAttributionID;
 #endif
     uint64_t m_awaitedSharedPreferencesVersion { 0 };
     CompletionHandler<void(bool success)> m_sharedPreferencesForWebProcessCompletionHandler;
@@ -1073,7 +1073,7 @@ private:
     RefPtr<WasmDebuggerDebuggable> m_wasmDebuggerDebuggable;
 #endif
 
-    HashMap<String, SandboxExtension::Handle> m_fileSandboxExtensions;
+    HashMap<RefPtr<StringImpl>, SandboxExtension::Handle> m_fileSandboxExtensions;
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     bool m_didReceiveLogsDuringLaunchForTesting { false };

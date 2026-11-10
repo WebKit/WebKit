@@ -56,14 +56,14 @@ Document* MainThreadStylePropertyMapReadOnly::documentFromContext(ScriptExecutio
 }
 
 // https://drafts.css-houdini.org/css-typed-om-1/#dom-stylepropertymapreadonly-get
-ExceptionOr<MainThreadStylePropertyMapReadOnly::CSSStyleValueOrUndefined> MainThreadStylePropertyMapReadOnly::get(ScriptExecutionContext& context, const AtomString& property) const
+ExceptionOr<MainThreadStylePropertyMapReadOnly::CSSStyleValueOrUndefined> MainThreadStylePropertyMapReadOnly::get(ScriptExecutionContext& context, AtomStringImpl* property) const
 {
     RefPtr document = documentFromContext(context);
     if (!document)
         return { std::monostate { } };
 
     if (isCustomPropertyName(property)) {
-        if (RefPtr value = reifyValue(*document, customPropertyValue(property), property))
+        if (RefPtr value = reifyValue(*document, customPropertyValue(property), RefPtr { property }))
             return { value.releaseNonNull() };
 
         return { std::monostate { } };
@@ -87,14 +87,14 @@ ExceptionOr<MainThreadStylePropertyMapReadOnly::CSSStyleValueOrUndefined> MainTh
 }
 
 // https://drafts.css-houdini.org/css-typed-om-1/#dom-stylepropertymapreadonly-getall
-ExceptionOr<Vector<RefPtr<CSSStyleValue>>> MainThreadStylePropertyMapReadOnly::getAll(ScriptExecutionContext& context, const AtomString& property) const
+ExceptionOr<Vector<RefPtr<CSSStyleValue>>> MainThreadStylePropertyMapReadOnly::getAll(ScriptExecutionContext& context, AtomStringImpl* property) const
 {
     RefPtr document = documentFromContext(context);
     if (!document)
         return Vector<RefPtr<CSSStyleValue>> { };
 
     if (isCustomPropertyName(property))
-        return reifyValueToVector(*document, customPropertyValue(property), AtomString { property });
+        return reifyValueToVector(*document, customPropertyValue(property), RefPtr<AtomStringImpl> { property });
 
     auto propertyID = cssPropertyID(property);
     if (!isExposed(propertyID, &document->settings()))
@@ -110,7 +110,7 @@ ExceptionOr<Vector<RefPtr<CSSStyleValue>>> MainThreadStylePropertyMapReadOnly::g
 }
 
 // https://drafts.css-houdini.org/css-typed-om-1/#dom-stylepropertymapreadonly-has
-ExceptionOr<bool> MainThreadStylePropertyMapReadOnly::has(ScriptExecutionContext& context, const AtomString& property) const
+ExceptionOr<bool> MainThreadStylePropertyMapReadOnly::has(ScriptExecutionContext& context, AtomStringImpl* property) const
 {
     auto result = get(context, property);
     if (result.hasException())

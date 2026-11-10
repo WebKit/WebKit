@@ -254,9 +254,9 @@ template<typename T> struct TestArgumentCoder<T, typename std::enable_if_t<std::
     template<typename Decoder> static std::optional<T> decode(Decoder& decoder) { return decoder.template decodeInteger<T>(); }
 };
 
-template<> struct TestArgumentCoder<String> {
+template<> struct TestArgumentCoder<StringView> {
     template<typename Encoder>
-    static void encode(Encoder& encoder, const String& string)
+    static void encode(Encoder& encoder, StringView string)
     {
         if (string.isNull()) {
             encoder << std::numeric_limits<uint32_t>::max();
@@ -271,9 +271,17 @@ template<> struct TestArgumentCoder<String> {
         else
             encoder.encodeSpan(string.span16());
     }
+};
+
+template<> struct TestArgumentCoder<RefPtr<StringImpl>> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, StringImpl* string)
+    {
+        TestArgumentCoder<StringView>::encode(encoder, StringView { string });
+    }
 
     template<typename CharacterType, typename Decoder>
-    static std::optional<String> decodeStringText(Decoder& decoder, uint32_t length)
+    static std::optional<RefPtr<StringImpl>> decodeStringText(Decoder& decoder, uint32_t length)
     {
         Vector<CharacterType> characters;
         for (size_t i = 0; i < length; i++) {
@@ -282,17 +290,17 @@ template<> struct TestArgumentCoder<String> {
                 return std::nullopt;
             characters.append(*character);
         }
-        return String(characters.span());
+        return characters.span().data() ? RefPtr<StringImpl> { StringImpl::create(characters.span()) } : nullptr;
     }
 
     template<typename Decoder>
-    static std::optional<String> decode(Decoder& decoder)
+    static std::optional<RefPtr<StringImpl>> decode(Decoder& decoder)
     {
         auto length = decoder.template decode<uint32_t>();
         if (!length)
             return std::nullopt;
         if (*length == std::numeric_limits<uint32_t>::max())
-            return String();
+            return nullString();
         auto is8Bit = decoder.template decode<bool>();
         if (!is8Bit)
             return std::nullopt;
@@ -314,7 +322,7 @@ template<> struct TestArgumentCoder<URL> {
     template<typename Encoder> static void encode(Encoder& encoder, const URL& url) { encoder << url.string(); }
     template<typename Decoder> static std::optional<URL> decode(Decoder& decoder)
     {
-        auto string = decoder.template decode<String>();
+        auto string = decoder.template decode<RefPtr<StringImpl>>();
         if (!string)
             return std::nullopt;
         return { URL(WTF::move(*string)) };
@@ -334,8 +342,8 @@ template<> struct TestArgumentCoder<WebCore::SecurityOriginData> {
         auto index = decoder.template decode<uint8_t>();
         if (!index || *index)
             return std::nullopt;
-        auto protocol = decoder.template decode<String>();
-        auto host = decoder.template decode<String>();
+        auto protocol = decoder.template decode<RefPtr<StringImpl>>();
+        auto host = decoder.template decode<RefPtr<StringImpl>>();
         auto port = decoder.template decode<std::optional<uint16_t>>();
         if (!protocol || !host || !port)
             return std::nullopt;
@@ -578,7 +586,7 @@ TEST(WebPushD, BasicCommunication)
     // Send a basic message and make sure its reply handler ran.
     auto sender = WebPushXPCConnectionMessageSender { connection.get() };
     sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(defaultWebPushDaemonConfiguration()));
-    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushTopicsForTesting(), ^(Vector<String>, Vector<String>) {
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushTopicsForTesting(), ^(Vector<RefPtr<StringImpl>>, Vector<RefPtr<StringImpl>>) {
         webPushDaemonDone = true;
     });
     TestWebKitAPI::Util::run(&webPushDaemonDone);
@@ -950,12 +958,12 @@ static void enableFeatureForPreferences(NSString *featureName, WKPreferences *pr
 class WebPushDTestWebView {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebPushDTestWebView);
 public:
-    WebPushDTestWebView(const String& pushPartition, const std::optional<WTF::UUID>& dataStoreIdentifier, WKProcessPool *processPool, TestNotificationProvider& notificationProvider, ASCIILiteral html, InstallDataStoreDelegate installDataStoreDelegate, BuiltInNotificationsEnabled builtInNotificationsEnabled)
+    WebPushDTestWebView(StringImpl* pushPartition, const std::optional<WTF::UUID>& dataStoreIdentifier, WKProcessPool *processPool, TestNotificationProvider& notificationProvider, ASCIILiteral html, InstallDataStoreDelegate installDataStoreDelegate, BuiltInNotificationsEnabled builtInNotificationsEnabled)
         : m_pushPartition(pushPartition)
         , m_dataStoreIdentifier(dataStoreIdentifier)
         , m_notificationProvider(notificationProvider)
     {
-        m_origin = "https://example.com"_s;
+        m_origin = "https://example.com"_si;
         m_url = adoptNS([[NSURL alloc] initWithString:@"https://example.com/"]);
         m_testMessageHandler = adoptNS([[TestMessageHandler alloc] init]);
 
@@ -964,7 +972,7 @@ public:
             ready = true;
         }];
 
-        m_server = makeUnique<TestWebKitAPI::HTTPServer>(std::initializer_list<std::pair<String, TestWebKitAPI::HTTPResponse>> {
+        m_server = makeUnique<TestWebKitAPI::HTTPServer>(std::initializer_list<std::pair<RefPtr<StringImpl>, TestWebKitAPI::HTTPResponse>> {
             { "/"_s, { html } },
             { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerScriptSource } }
         }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
@@ -980,7 +988,7 @@ public:
             dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:dataStoreIdentifier->createNSUUID().get()]);
         else
             dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
-        [dataStoreConfiguration setWebPushPartitionString:pushPartition.createNSString().get()];
+        [dataStoreConfiguration setWebPushPartitionString:createNSString(pushPartition).get()];
         [dataStoreConfiguration setProxyConfiguration:@{
             (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
             (NSString *)kCFStreamPropertyHTTPSProxyPort: @(m_server->port())
@@ -1052,7 +1060,7 @@ public:
 
     std::optional<WTF::UUID> dataStoreIdentifier() { return m_dataStoreIdentifier; }
 
-    const String& origin() { return m_origin; }
+    const RefPtr<StringImpl>& origin() { return m_origin; }
 
     RetainPtr<WKWebsiteDataStore> dataStore() { return m_dataStore; }
 
@@ -1063,11 +1071,11 @@ public:
         return error ?: obj;
     }
 
-    id subscribe(String key = validServerKey)
+    id subscribe(RefPtr<StringImpl> key = validServerKey)
     {
         NSError *error = nil;
         auto script = makeString("return await subscribe('"_s, key, "')"_s);
-        id obj = [m_webView objectByCallingAsyncFunction:script.createNSString().get() withArguments:@{ } error:&error];
+        id obj = [m_webView objectByCallingAsyncFunction:createNSString(script).get() withArguments:@{ } error:&error];
         return error ?: obj;
     }
 
@@ -1219,17 +1227,17 @@ public:
     void injectDeclarativePushMessage(ASCIILiteral json)
     {
         WebKit::WebPushD::PushMessageForTesting message;
-        message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_s;
-        message.registrationURL = URL("https://example.com"_s);
+        message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_si;
+        message.registrationURL = URL("https://example.com"_si);
         message.disposition = WebKit::WebPushD::PushMessageDisposition::Notification;
         message.payload = json;
 
         auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
         auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
         __block bool webPushDaemonDone = false;
-        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), ^(const String& error) {
-            if (!error.isEmpty())
-                SAFE_WTFLOGALWAYS("ERROR: %s", error.utf8());
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), ^(StringImpl* error) {
+            if (!isEmpty(error))
+                SAFE_WTFLOGALWAYS("ERROR: %s", utf8(error));
             webPushDaemonDone = true;
         });
         TestWebKitAPI::Util::run(&webPushDaemonDone);
@@ -1258,7 +1266,7 @@ public:
 
     void injectPushMessage(NSDictionary *apsUserInfo)
     {
-        String scope = [m_url absoluteString];
+        RefPtr<StringImpl> scope = StringImpl::create([m_url absoluteString]);
         WebCore::PushSubscriptionSetIdentifier subscriptionSetIdentifier {
             .bundleIdentifier = "com.apple.WebKit.TestWebKitAPI"_s,
             .pushPartition = m_pushPartition,
@@ -1266,11 +1274,11 @@ public:
         };
         auto topic = WebCore::makePushTopic(subscriptionSetIdentifier, scope);
         id obj = @{
-            @"topic": topic.createNSString().get(),
+            @"topic": createNSString(topic).get(),
             @"userInfo": apsUserInfo
         };
 
-        String message { byteCast<Latin1Character>(span([NSJSONSerialization dataWithJSONObject:obj options:0 error:nullptr])) };
+        RefPtr<StringImpl> message { StringImpl::create(byteCast<Latin1Character>(span([NSJSONSerialization dataWithJSONObject:obj options:0 error:nullptr]))) };
 
         auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
         auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
@@ -1396,11 +1404,11 @@ public:
     void captureAllMessages()
     {
         [m_testMessageHandler setDidReceiveScriptMessage:^(NSString *message) {
-            m_mostRecentMessage = message;
+            m_mostRecentMessage = StringImpl::create(message);
         }];
     }
 
-    const String& mostRecentMessage() const
+    const RefPtr<StringImpl>& mostRecentMessage() const
     {
         return m_mostRecentMessage;
     }
@@ -1408,9 +1416,9 @@ public:
     NSURL *url() const { return m_url.get(); }
 
 private:
-    String m_pushPartition;
+    RefPtr<StringImpl> m_pushPartition;
     Markable<WTF::UUID> m_dataStoreIdentifier;
-    String m_origin;
+    RefPtr<StringImpl> m_origin;
     RetainPtr<NSURL> m_url;
     RetainPtr<WKWebsiteDataStore> m_dataStore;
     RetainPtr<PushNotificationDelegate> m_delegate;
@@ -1418,7 +1426,7 @@ private:
     std::unique_ptr<TestWebKitAPI::HTTPServer> m_server;
     TestNotificationProvider& m_notificationProvider;
     RetainPtr<WKWebView> m_webView;
-    String m_mostRecentMessage;
+    RefPtr<StringImpl> m_mostRecentMessage;
 };
 
 class WebPushDTest : public ::testing::Test {
@@ -1447,23 +1455,23 @@ public:
         auto webViewWithIdentifier2 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
         m_webViews.append(WTF::move(webViewWithIdentifier2));
 
-        auto webViewWithPartition = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, std::nullopt, processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
+        auto webViewWithPartition = makeUniqueRef<WebPushDTestWebView>("testPartition"_si, std::nullopt, processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
         m_webViews.append(WTF::move(webViewWithPartition));
 
-        auto webViewWithPartitionAndIdentifier = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
+        auto webViewWithPartitionAndIdentifier = makeUniqueRef<WebPushDTestWebView>("testPartition"_si, WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
         m_webViews.append(WTF::move(webViewWithPartitionAndIdentifier));
     }
 
     Vector<UniqueRef<WebPushDTestWebView>>& webViews() { return m_webViews; }
 
-    std::pair<Vector<String>, Vector<String>> getPushTopics()
+    std::pair<Vector<RefPtr<StringImpl>>, Vector<RefPtr<StringImpl>>> getPushTopics()
     {
-        Vector<String> enabledTopics;
-        Vector<String> ignoredTopics;
+        Vector<RefPtr<StringImpl>> enabledTopics;
+        Vector<RefPtr<StringImpl>> ignoredTopics;
         auto connection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
         auto sender = WebPushXPCConnectionMessageSender { connection.get() };
         bool webPushDaemonDone = false;
-        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushTopicsForTesting(), [&](Vector<String> enabled, Vector<String> ignored) {
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushTopicsForTesting(), [&](Vector<RefPtr<StringImpl>> enabled, Vector<RefPtr<StringImpl>> ignored) {
             enabledTopics = enabled;
             ignoredTopics = ignored;
             webPushDaemonDone = true;
@@ -1519,14 +1527,14 @@ TEST_F(WebPushDTest, SubscribeTest)
         ASSERT_EQ([subscription[@"keys"][@"p256dh"] length], 87u);
     }
 
-    auto lessThan = [](const String& lhs, const String& rhs) {
+    auto lessThan = [](StringImpl* lhs, StringImpl* rhs) {
         return codePointCompare(lhs, rhs) < 0;
     };
     auto topics = getPushTopics();
     auto& subscribed = topics.first;
     std::ranges::sort(subscribed, lessThan);
 
-    Vector<String> expected {
+    Vector<RefPtr<StringImpl>> expected {
         "com.apple.WebKit.TestWebKitAPI ds:0bf5053b-164c-4b7d-8179-832e6bf158df https://example.com/"_s,
         "com.apple.WebKit.TestWebKitAPI ds:940e7729-738e-439f-a366-1a8719e23b2d https://example.com/"_s,
         "com.apple.WebKit.TestWebKitAPI https://example.com/"_s,
@@ -1547,7 +1555,7 @@ TEST_F(WebPushDTest, SubscribeTest)
         webPushDaemonDone = true;
     });
     TestWebKitAPI::Util::run(&webPushDaemonDone);
-    ASSERT_TRUE(origins.contains(WebCore::SecurityOriginData::fromURL(URL { "https://example.com"_s })));
+    ASSERT_TRUE(origins.contains(WebCore::SecurityOriginData::fromURL(URL { "https://example.com"_si })));
 }
 
 TEST_F(WebPushDTest, SubscribeWithBadIPCVersionRaisesExceptionTest)
@@ -1604,14 +1612,14 @@ TEST_F(WebPushDNavigatorTest, SubscribeTest)
         ASSERT_EQ([subscription[@"keys"][@"p256dh"] length], 87u);
     }
 
-    auto lessThan = [](const String& lhs, const String& rhs) {
+    auto lessThan = [](StringImpl* lhs, StringImpl* rhs) {
         return codePointCompare(lhs, rhs) < 0;
     };
     auto topics = getPushTopics();
     auto& subscribed = topics.first;
     std::ranges::sort(subscribed, lessThan);
 
-    Vector<String> expected {
+    Vector<RefPtr<StringImpl>> expected {
         "com.apple.WebKit.TestWebKitAPI ds:0bf5053b-164c-4b7d-8179-832e6bf158df https://example.com/"_s,
         "com.apple.WebKit.TestWebKitAPI ds:940e7729-738e-439f-a366-1a8719e23b2d https://example.com/"_s,
         "com.apple.WebKit.TestWebKitAPI https://example.com/"_s,
@@ -1764,7 +1772,7 @@ TEST_F(WebPushDTest, UnsubscribesOnClearingWebsiteDataForOrigin)
         }];
         TestWebKitAPI::Util::run(&fetchedRecords);
 
-        RetainPtr vOrigin = v->origin().createNSString();
+        RetainPtr vOrigin = createNSString(v->origin());
         WKWebsiteDataRecord *filteredRecord = nil;
         for (WKWebsiteDataRecord *record in records.get()) {
             for (NSString *originString in record._originsStrings) {
@@ -1898,7 +1906,7 @@ TEST_F(WebPushDTest, GetPushSubscriptionWithMismatchedPublicToken)
     auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
     auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
     bool webPushDaemonDone = false;
-    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetPublicTokenForTesting("foobar"_s), [&]() {
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetPublicTokenForTesting("foobar"_si), [&]() {
         webPushDaemonDone = true;
     });
     TestWebKitAPI::Util::run(&webPushDaemonDone);
@@ -1948,25 +1956,25 @@ TEST_F(WebPushDBuiltInTest, ShowAndGetNotifications)
     auto dataStore = view->dataStore();
 
     auto configuration = defaultWebPushDaemonConfiguration();
-    configuration.pushPartitionString = dataStore.get()._webPushPartition;
+    configuration.pushPartitionString = StringImpl::create(dataStore.get()._webPushPartition);
     configuration.dataStoreIdentifier = WTF::UUID::fromNSUUID(dataStore.get()._identifier);
     auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service", WTF::move(configuration));
     auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
 
     WebKit::WebPushD::PushMessageForTesting message;
-    message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_s;
-    message.pushPartitionString = dataStore.get()._webPushPartition;
+    message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_si;
+    message.pushPartitionString = StringImpl::create(dataStore.get()._webPushPartition);
     message.registrationURL = view->url();
     message.disposition = WebKit::WebPushD::PushMessageDisposition::Legacy;
-    message.payload = @"hello";
+    message.payload = StringImpl::create(@"hello");
 
     // No badge had been set, so confirm its `nil`
     EXPECT_FALSE(view->getAppBadge());
 
     webPushDaemonDone = false;
-    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), ^(const String& error) {
-        if (!error.isEmpty())
-            SAFE_WTFLOGALWAYS("ERROR: %s", error.utf8());
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), ^(StringImpl* error) {
+        if (!isEmpty(error))
+            SAFE_WTFLOGALWAYS("ERROR: %s", utf8(error));
         webPushDaemonDone = true;
     });
     TestWebKitAPI::Util::run(&webPushDaemonDone);
@@ -2101,7 +2109,7 @@ TEST_F(WebPushDBuiltInTest, ImplicitSilentPushTimerIgnoredForInspectedContexts)
     auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
     auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
 
-    auto setServiceWorkerIsBeingInspected = [&](const String& originString) {
+    auto setServiceWorkerIsBeingInspected = [&](StringImpl* originString) {
         __block bool webPushDaemonDone = false;
         sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetServiceWorkerIsBeingInspected(URL(originString), true), ^() {
             webPushDaemonDone = true;
@@ -2213,12 +2221,12 @@ TEST_F(WebPushDInjectedPushTest, HandleInjectedAESGCMPush)
 TEST_F(WebPushDInjectedPushTest, HandleInjectedAES128GCMPush)
 {
     // From example in RFC8291 Section 5.
-    String payloadBase64URL = "DGv6ra1nlYgDCS1FRnbzlwAAEABBBP4z9KsN6nGRTbVYI_c7VJSPQTBtkgcy27mlmlMoZIIgDll6e3vCYLocInmYWAmS6TlzAC8wEqKK6PBru3jl7A_yl95bQpu6cVPTpK4Mqgkf1CXztLVBSt2Ks3oZwbuwXPXLWyouBWLVWGNWQexSgSxsj_Qulcy4a-fN"_s;
-    String payloadBase64 = base64EncodeToString(base64URLDecode(payloadBase64URL).value());
+    RefPtr<StringImpl> payloadBase64URL = "DGv6ra1nlYgDCS1FRnbzlwAAEABBBP4z9KsN6nGRTbVYI_c7VJSPQTBtkgcy27mlmlMoZIIgDll6e3vCYLocInmYWAmS6TlzAC8wEqKK6PBru3jl7A_yl95bQpu6cVPTpK4Mqgkf1CXztLVBSt2Ks3oZwbuwXPXLWyouBWLVWGNWQexSgSxsj_Qulcy4a-fN"_si;
+    RefPtr<StringImpl> payloadBase64 = base64EncodeToString(base64URLDecode(payloadBase64URL).value());
 
     runTest(@"When I grow up, I want to be a watermelon", @{
         @"content_encoding": @"aes128gcm",
-        @"payload": payloadBase64.createNSString().get()
+        @"payload": createNSString(payloadBase64).get()
     });
 }
 
@@ -2782,17 +2790,17 @@ TEST(WebPushD, DeclarativeParsing)
     static bool webPushDaemonDone = false;
 
     WebKit::WebPushD::PushMessageForTesting message;
-    message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_s;
-    message.registrationURL = URL("https://example.com"_s);
+    message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_si;
+    message.registrationURL = URL("https://example.com"_si);
     message.disposition = WebKit::WebPushD::PushMessageDisposition::Notification;
 
     unsigned i = 0;
     while (!jsonAndErrors[i].first.isNull()) {
         message.payload = jsonAndErrors[i].first;
         webPushDaemonDone = false;
-        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), [&](const String& error) {
-            if (!error.isEmpty())
-                EXPECT_TRUE(error.endsWith(jsonAndErrors[i].second));
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), [&](StringImpl* error) {
+            if (!isEmpty(error))
+                EXPECT_TRUE(endsWith(error, jsonAndErrors[i].second));
             else
                 EXPECT_FALSE(strcmp(jsonAndErrors[i].second, " "));
 
@@ -2836,13 +2844,13 @@ TEST(WebPushD, DeclarativeWebPushHandling)
     static bool webPushDaemonDone = false;
 
     WebKit::WebPushD::PushMessageForTesting message;
-    message.pushPartitionString = "TestWebKitAPI"_s;
-    message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_s;
-    message.registrationURL = URL("https://example.com"_s);
+    message.pushPartitionString = "TestWebKitAPI"_si;
+    message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_si;
+    message.registrationURL = URL("https://example.com"_si);
     message.disposition = WebKit::WebPushD::PushMessageDisposition::Notification;
     message.payload = json33;
-    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), [&](const String& error) {
-        EXPECT_TRUE(error.isEmpty());
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), [&](StringImpl* error) {
+        EXPECT_TRUE(isEmpty(error));
         webPushDaemonDone = true;
     });
     TestWebKitAPI::Util::run(&webPushDaemonDone);
@@ -3138,10 +3146,10 @@ public:
 
     void waitForMessageAndVerify(NSString *message)
     {
-        while (webViews().first()->mostRecentMessage().isEmpty())
+        while (isEmpty(webViews().first()->mostRecentMessage()))
             TestWebKitAPI::Util::runFor(0.05_s);
 
-        EXPECT_TRUE([webViews().first()->mostRecentMessage().createNSString() isEqualToString:message]);
+        EXPECT_TRUE([createNSString(webViews().first()->mostRecentMessage()) isEqualToString:message]);
     }
 
     void checkLastNotificationTitle(NSString *title)

@@ -192,7 +192,7 @@ private:
     static void createCompletionHandler(ScriptExecutionContext&, Ref<Blob>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
     static void createCompletionHandler(ScriptExecutionContext&, Ref<ImageData>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
     static void createCompletionHandler(ScriptExecutionContext&, Ref<CSSStyleImageValue>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
-    static void createFromBuffer(ScriptExecutionContext&, Ref<ArrayBuffer>&&, String mimeType, long long expectedContentLength, const URL&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
+    static void createFromBuffer(ScriptExecutionContext&, Ref<ArrayBuffer>&&, RefPtr<StringImpl> mimeType, long long expectedContentLength, const URL&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
 
     RefPtr<ImageBuffer> m_bitmap;
     std::atomic<size_t> m_memoryCost { 0 }; // Atomic, accessed from arbitrary thread by GC.

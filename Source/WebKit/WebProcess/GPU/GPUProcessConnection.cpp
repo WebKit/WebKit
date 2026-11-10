@@ -411,7 +411,7 @@ void GPUProcessConnection::destroyVisibilityPropagationContextForPage(WebPage& p
 }
 #endif
 
-void GPUProcessConnection::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
+void GPUProcessConnection::configureLoggingChannel(StringImpl* channelName, WTFLogChannelState state, WTFLogLevel level)
 {
     m_connection->send(Messages::GPUConnectionToWebProcess::ConfigureLoggingChannel(channelName, state, level), { });
 }
@@ -450,12 +450,12 @@ void GPUProcessConnection::updateMediaConfiguration(bool forceUpdate)
 }
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-void GPUProcessConnection::setMediaPlaybackEnvironment(WebCore::PageIdentifier pageIdentifier, const String& environment)
+void GPUProcessConnection::setMediaPlaybackEnvironment(WebCore::PageIdentifier pageIdentifier, StringImpl* environment)
 {
     m_connection->send(Messages::GPUConnectionToWebProcess::SetMediaPlaybackEnvironment(pageIdentifier, environment), { });
 }
 
-void GPUProcessConnection::setDisplayCaptureEnvironment(WebCore::PageIdentifier pageIdentifier, const String& environment)
+void GPUProcessConnection::setDisplayCaptureEnvironment(WebCore::PageIdentifier pageIdentifier, StringImpl* environment)
 {
     m_connection->send(Messages::GPUConnectionToWebProcess::SetDisplayCaptureEnvironment(pageIdentifier, environment), { });
 }

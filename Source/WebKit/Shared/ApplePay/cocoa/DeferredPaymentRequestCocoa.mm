@@ -40,21 +40,21 @@ using namespace WebCore;
 RetainPtr<PKDeferredPaymentRequest> platformDeferredPaymentRequest(const ApplePayDeferredPaymentRequest& webDeferredPaymentRequest)
 {
     auto pkDeferredPaymentRequest = adoptNS([PAL::allocPKDeferredPaymentRequestInstance()
-        initWithPaymentDescription:webDeferredPaymentRequest.paymentDescription.createNSString().get()
+        initWithPaymentDescription:createNSString(webDeferredPaymentRequest.paymentDescription).get()
         deferredBilling:platformDeferredSummaryItem(webDeferredPaymentRequest.deferredBilling).get()
-        managementURL:adoptNS([[NSURL alloc] initWithString:webDeferredPaymentRequest.managementURL.createNSString().get()]).get()]);
-    if (auto& billingAgreement = webDeferredPaymentRequest.billingAgreement; !billingAgreement.isNull())
-        [pkDeferredPaymentRequest setBillingAgreement:billingAgreement.createNSString().get()];
+        managementURL:adoptNS([[NSURL alloc] initWithString:createNSString(webDeferredPaymentRequest.managementURL).get()]).get()]);
+    if (auto& billingAgreement = webDeferredPaymentRequest.billingAgreement; billingAgreement)
+        [pkDeferredPaymentRequest setBillingAgreement:createNSString(billingAgreement).get()];
     if (auto& freeCancellationDate = webDeferredPaymentRequest.freeCancellationDate; !freeCancellationDate.isNaN()) {
-        if (auto& freeCancellationDateTimeZone = webDeferredPaymentRequest.freeCancellationDateTimeZone; !freeCancellationDateTimeZone.isNull()) {
-            if (RetainPtr timeZone = [NSTimeZone timeZoneWithName:freeCancellationDateTimeZone.createNSString().get()]) {
+        if (auto& freeCancellationDateTimeZone = webDeferredPaymentRequest.freeCancellationDateTimeZone; freeCancellationDateTimeZone) {
+            if (RetainPtr timeZone = [NSTimeZone timeZoneWithName:createNSString(freeCancellationDateTimeZone).get()]) {
                 [pkDeferredPaymentRequest setFreeCancellationDate:[NSDate dateWithTimeIntervalSince1970:freeCancellationDate.secondsSinceEpoch().value()]];
                 [pkDeferredPaymentRequest setFreeCancellationDateTimeZone:timeZone.get()];
             }
         }
     }
-    if (auto& tokenNotificationURL = webDeferredPaymentRequest.tokenNotificationURL; !tokenNotificationURL.isNull())
-        [pkDeferredPaymentRequest setTokenNotificationURL:adoptNS([[NSURL alloc] initWithString:tokenNotificationURL.createNSString().get()]).get()];
+    if (auto& tokenNotificationURL = webDeferredPaymentRequest.tokenNotificationURL; tokenNotificationURL)
+        [pkDeferredPaymentRequest setTokenNotificationURL:adoptNS([[NSURL alloc] initWithString:createNSString(tokenNotificationURL).get()]).get()];
     return pkDeferredPaymentRequest;
 }
 

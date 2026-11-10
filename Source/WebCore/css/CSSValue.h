@@ -66,7 +66,7 @@ public:
     unsigned refCount() const { return m_refCount / refCountIncrement; }
     bool hasAtLeastOneRef() const { return m_refCount; }
 
-    WEBCORE_EXPORT String cssText(const CSS::SerializationContext&) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> cssText(const CSS::SerializationContext&) const;
 
     bool isAppleColorFilterValue() const { return m_classType == ClassType::AppleColorFilter; }
     bool isBackgroundRepeatValue() const { return m_classType == ClassType::BackgroundRepeat; }

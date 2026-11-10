@@ -80,7 +80,7 @@ bool MathMLAnnotationElement::childShouldCreateRenderer(const Node& child) const
     return StyledElement::childShouldCreateRenderer(child);
 }
 
-void MathMLAnnotationElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+void MathMLAnnotationElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason reason)
 {
     if (name == MathMLNames::srcAttr || name == MathMLNames::encodingAttr) {
         RefPtr parent = parentElement();

@@ -60,7 +60,7 @@ public:
     JSWebAssemblyInstance* jsInstance(uint32_t instanceId);
     uint32_t nextInstanceId() const;
 
-    String generateLibrariesXML() const;
+    RefPtr<StringImpl> generateLibrariesXML() const;
 
     bool needsLibraryRequery();
     void notifyLibraryRequeryComplete();

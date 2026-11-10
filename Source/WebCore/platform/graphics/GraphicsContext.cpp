@@ -187,7 +187,7 @@ void GraphicsContext::drawGlyphsImmediate(const FontBase& font, std::span<const 
     FontCascade::drawGlyphs(*this, font, glyphs, advances, point, fontSmoothingMode);
 }
 
-void GraphicsContext::drawEmphasisMarks(const FontCascade& font, const TextRun& run, const AtomString& mark, const FloatPoint& point, unsigned from, std::optional<unsigned> to)
+void GraphicsContext::drawEmphasisMarks(const FontCascade& font, const TextRun& run, AtomStringImpl* mark, const FloatPoint& point, unsigned from, std::optional<unsigned> to)
 {
     font.drawEmphasisMarks(*this, run, mark, point, from, to);
 }

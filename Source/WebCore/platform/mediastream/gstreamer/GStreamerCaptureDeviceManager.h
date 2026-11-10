@@ -46,7 +46,7 @@ class GStreamerCaptureDeviceManager : public CaptureDeviceManager, public Realti
 public:
     GStreamerCaptureDeviceManager();
     ~GStreamerCaptureDeviceManager();
-    std::optional<GStreamerCaptureDevice> gstreamerDeviceWithUID(const String&);
+    std::optional<GStreamerCaptureDevice> gstreamerDeviceWithUID(StringImpl*);
 
     const Vector<CaptureDevice>& speakerDevices();
     const Vector<CaptureDevice>& captureDevices() final;
@@ -54,11 +54,11 @@ public:
 
     // RealtimeMediaSourceCenterObserver interface.
     void devicesChanged() final;
-    void deviceWillBeRemoved(const String& persistentId) final;
+    void deviceWillBeRemoved(StringImpl* persistentId) final;
 
     void registerCapturer(RefPtr<GStreamerCapturer>&&);
     void unregisterCapturer(const GStreamerCapturer&);
-    void stopCapturing(const String& persistentId);
+    void stopCapturing(StringImpl* persistentId);
 
     void addDevice(GRefPtr<GstDevice>&&);
 
@@ -137,7 +137,7 @@ public:
         Window = 1 << 1
     };
 
-    void stopSource(const String& persistentID);
+    void stopSource(StringImpl* persistentID);
 
     // DisplayCaptureManager interface
     bool requiresCaptureDevicesEnumeration() const final { return true; }
@@ -148,7 +148,7 @@ private:
 
     Vector<CaptureDevice> m_devices;
 
-    HashMap<String, std::unique_ptr<PipeWireNodeData>> m_sessions;
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<PipeWireNodeData>> m_sessions;
     RefPtr<DesktopPortalScreenCast> m_portal;
 };
 

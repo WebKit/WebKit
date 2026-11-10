@@ -266,9 +266,9 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
 {
     _params = WTF::move(params);
 
-    RetainPtr currentDateValueString = _params.currentValue.createNSString();
+    RetainPtr currentDateValueString = createNSString(_params.currentValue);
 
-    RetainPtr<NSString> format = [self dateFormatStringForType:_params.type.createNSString().get()];
+    RetainPtr<NSString> format = [self dateFormatStringForType:createNSString(_params.type).get()];
     [_dateFormatter setDateFormat:format.get()];
 
     if (![currentDateValueString length])
@@ -328,7 +328,7 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
     if (sender != _datePicker)
         return;
 
-    String dateString = [_dateFormatter stringFromDate:retainPtr([_datePicker dateValue]).get()];
+    RefPtr<StringImpl> dateString = StringImpl::create([_dateFormatter stringFromDate:retainPtr([_datePicker dateValue]).get()]);
     Ref { *_picker }->didChooseDate(StringView(dateString));
 
     if (_params.wasActivatedByKeyboard) {

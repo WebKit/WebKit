@@ -64,7 +64,7 @@
 
 namespace WebCore {
 
-static String resourceName(const URL& url)
+static RefPtr<StringImpl> resourceName(const URL& url)
 {
     auto path = url.path();
     auto result = makeString(
@@ -72,12 +72,12 @@ static String resourceName(const URL& url)
         path.isEmpty() ? "/"_s : ""_s,
         url.queryWithLeadingQuestionMark()
     );
-    ASSERT(!result.isEmpty());
-    ASSERT(!result.contains(' '));
+    ASSERT(!isEmpty(result));
+    ASSERT(!contains(result, ' '));
     return result;
 }
 
-static String hostName(const URL& url, bool secure)
+static RefPtr<StringImpl> hostName(const URL& url, bool secure)
 {
     ASSERT(url.protocolIs("wss"_s) == secure);
     if (url.port() && ((!secure && url.port().value() != 80) || (secure && url.port().value() != 443)))
@@ -86,15 +86,15 @@ static String hostName(const URL& url, bool secure)
 }
 
 static constexpr size_t maxInputSampleSize = 128;
-static String trimInputSample(std::span<const uint8_t> input)
+static RefPtr<StringImpl> trimInputSample(std::span<const uint8_t> input)
 {
     // FIXME: Unclear why this is Latin-1 and not UTF-8.
     if (input.size() <= maxInputSampleSize)
-        return byteCast<Latin1Character>(input);
+        return StringImpl::create(byteCast<Latin1Character>(input));
     return makeString(byteCast<Latin1Character>(input.first(maxInputSampleSize)), horizontalEllipsis);
 }
 
-static String generateSecWebSocketKey()
+static RefPtr<StringImpl> generateSecWebSocketKey()
 {
     constexpr size_t nonceSize = 16;
     std::array<uint8_t, nonceSize> key;
@@ -104,11 +104,11 @@ static String generateSecWebSocketKey()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketHandshake);
 
-String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocketKey)
+RefPtr<StringImpl> WebSocketHandshake::getExpectedWebSocketAccept(StringImpl* secWebSocketKey)
 {
     const auto webSocketKeyGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"_span;
     SHA1 sha1;
-    auto keyData = secWebSocketKey.ascii();
+    auto keyData = ascii(secWebSocketKey);
     sha1.addBytes(std::as_bytes(keyData.span()));
     sha1.addBytes(std::as_bytes(webSocketKeyGUID));
     SHA1::Digest hash;
@@ -116,7 +116,7 @@ String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocket
     return base64EncodeToString(hash);
 }
 
-WebSocketHandshake::WebSocketHandshake(const URL& url, const String& protocol, const String& userAgent, const String& clientOrigin, bool allowCookies, bool isAppInitiated)
+WebSocketHandshake::WebSocketHandshake(const URL& url, StringImpl* protocol, StringImpl* userAgent, StringImpl* clientOrigin, bool allowCookies, bool isAppInitiated)
     : m_url(url)
     , m_clientProtocol(protocol)
     , m_secure(m_url.protocolIs("wss"_s))
@@ -138,17 +138,17 @@ const URL& WebSocketHandshake::url() const
 }
 
 // FIXME: Return type should just be String, not const String.
-const String WebSocketHandshake::host() const
+const RefPtr<StringImpl> WebSocketHandshake::host() const
 {
     return m_url.host().convertToASCIILowercase();
 }
 
-const String& WebSocketHandshake::clientProtocol() const
+const RefPtr<StringImpl>& WebSocketHandshake::clientProtocol() const
 {
     return m_clientProtocol;
 }
 
-void WebSocketHandshake::setClientProtocol(const String& protocol)
+void WebSocketHandshake::setClientProtocol(StringImpl* protocol)
 {
     m_clientProtocol = protocol;
 }
@@ -158,7 +158,7 @@ bool WebSocketHandshake::secure() const
     return m_secure;
 }
 
-String WebSocketHandshake::clientLocation() const
+RefPtr<StringImpl> WebSocketHandshake::clientLocation() const
 {
     return makeString(m_secure ? "wss"_s : "ws"_s, "://"_s, hostName(m_url, m_secure), resourceName(m_url));
 }
@@ -214,43 +214,43 @@ UTF8CString WebSocketHandshake::clientHandshakeMessage() const
         extraHeaders.append(header.key, ": "_s, header.value, "\r\n"_s);
 
     auto extensions = m_extensionDispatcher.createHeaderValue();
-    return makeString("GET "_s, resourceName(m_url), " HTTP/1.1\r\n"
+    return utf8(makeString("GET "_s, resourceName(m_url), " HTTP/1.1\r\n"
         "Upgrade: websocket\r\n"
         "Connection: Upgrade\r\n"
         "Host: "_s, hostName(m_url, m_secure), "\r\n"
         "Origin: "_s, m_clientOrigin, "\r\n"_s,
-        m_clientProtocol.isEmpty() ? ""_s : "Sec-WebSocket-Protocol: "_s, m_clientProtocol, m_clientProtocol.isEmpty() ? ""_s : "\r\n"_s,
+        isEmpty(m_clientProtocol) ? ""_s : "Sec-WebSocket-Protocol: "_s, m_clientProtocol, isEmpty(m_clientProtocol) ? ""_s : "\r\n"_s,
         "Pragma: no-cache\r\n"
         "Cache-Control: no-cache\r\n"
         "Sec-WebSocket-Key: "_s, m_secWebSocketKey, "\r\n"
         "Sec-WebSocket-Version: 13\r\n"_s,
-        extensions.isEmpty() ? ""_s : "Sec-WebSocket-Extensions: "_s, extensions, extensions.isEmpty() ? ""_s : "\r\n"_s,
+        isEmpty(extensions) ? ""_s : "Sec-WebSocket-Extensions: "_s, extensions, isEmpty(extensions) ? ""_s : "\r\n"_s,
         "User-Agent: "_s, m_userAgent, "\r\n"_s,
         extraHeaders.toString(),
-        "\r\n"_s).utf8();
+        "\r\n"_s));
 }
 
-ResourceRequest WebSocketHandshake::clientHandshakeRequest(NOESCAPE const Function<String(const URL&)>& cookieRequestHeaderFieldValue) const
+ResourceRequest WebSocketHandshake::clientHandshakeRequest(NOESCAPE const Function<RefPtr<StringImpl>(const URL&)>& cookieRequestHeaderFieldValue) const
 {
     // Keep the following consistent with clientHandshakeMessage just above.
 
     auto cookie = m_allowCookies ? cookieRequestHeaderFieldValue(httpURLForAuthenticationAndCookies()) : emptyString();
     auto extensions = m_extensionDispatcher.createHeaderValue();
     ResourceRequest request { URL { m_url } };
-    request.setHTTPMethod("GET"_s);
-    request.setHTTPHeaderField(HTTPHeaderName::Upgrade, "websocket"_s);
-    request.setHTTPHeaderField(HTTPHeaderName::Connection, "Upgrade"_s);
+    request.setHTTPMethod("GET"_si);
+    request.setHTTPHeaderField(HTTPHeaderName::Upgrade, "websocket"_si);
+    request.setHTTPHeaderField(HTTPHeaderName::Connection, "Upgrade"_si);
     request.setHTTPHeaderField(HTTPHeaderName::Host, hostName(m_url, m_secure));
     request.setHTTPHeaderField(HTTPHeaderName::Origin, m_clientOrigin);
-    if (!m_clientProtocol.isEmpty())
+    if (!isEmpty(m_clientProtocol))
         request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketProtocol, m_clientProtocol);
-    if (!cookie.isEmpty())
+    if (!isEmpty(cookie))
         request.setHTTPHeaderField(HTTPHeaderName::Cookie, cookie);
     request.setHTTPHeaderField(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
     request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketKey, m_secWebSocketKey);
-    request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketVersion, "13"_s);
-    if (!extensions.isEmpty())
+    request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketVersion, "13"_si);
+    if (!isEmpty(extensions))
         request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketExtensions, extensions);
     request.setHTTPUserAgent(m_userAgent);
     request.setIsAppInitiated(m_isAppInitiated);
@@ -274,7 +274,7 @@ int WebSocketHandshake::readServerHandshake(std::span<const uint8_t> header)
     ASSERT(header.size() <= static_cast<size_t>(std::numeric_limits<int>::max()));
     m_mode = Incomplete;
     int statusCode;
-    String statusText;
+    RefPtr<StringImpl> statusText;
     int lineLength = readStatusLine(header, statusCode, statusText);
     if (lineLength == -1)
         return -1;
@@ -320,37 +320,37 @@ WebSocketHandshake::Mode WebSocketHandshake::mode() const
     return m_mode;
 }
 
-String WebSocketHandshake::failureReason() const
+RefPtr<StringImpl> WebSocketHandshake::failureReason() const
 {
     return m_failureReason;
 }
 
-String WebSocketHandshake::serverWebSocketProtocol() const
+RefPtr<StringImpl> WebSocketHandshake::serverWebSocketProtocol() const
 {
     return m_serverHandshakeResponse.httpHeaderFields().get(HTTPHeaderName::SecWebSocketProtocol);
 }
 
-String WebSocketHandshake::serverSetCookie() const
+RefPtr<StringImpl> WebSocketHandshake::serverSetCookie() const
 {
     return m_serverHandshakeResponse.httpHeaderFields().get(HTTPHeaderName::SetCookie);
 }
 
-String WebSocketHandshake::serverUpgrade() const
+RefPtr<StringImpl> WebSocketHandshake::serverUpgrade() const
 {
     return m_serverHandshakeResponse.httpHeaderFields().get(HTTPHeaderName::Upgrade);
 }
 
-String WebSocketHandshake::serverConnection() const
+RefPtr<StringImpl> WebSocketHandshake::serverConnection() const
 {
     return m_serverHandshakeResponse.httpHeaderFields().get(HTTPHeaderName::Connection);
 }
 
-String WebSocketHandshake::serverWebSocketAccept() const
+RefPtr<StringImpl> WebSocketHandshake::serverWebSocketAccept() const
 {
     return m_serverHandshakeResponse.httpHeaderFields().get(HTTPHeaderName::SecWebSocketAccept);
 }
 
-String WebSocketHandshake::acceptedExtensions() const
+RefPtr<StringImpl> WebSocketHandshake::acceptedExtensions() const
 {
     return m_extensionDispatcher.acceptedExtensions();
 }
@@ -424,7 +424,7 @@ static inline std::optional<HTTPVersion> readHTTPVersion(StringView httpStatusLi
 // Returns the header length (including "\r\n"), or -1 if we have not received enough data yet.
 // If the line is malformed or the status code is not a 3-digit number,
 // statusCode and statusText will be set to -1 and a null string, respectively.
-int WebSocketHandshake::readStatusLine(std::span<const uint8_t> header, int& statusCode, String& statusText)
+int WebSocketHandshake::readStatusLine(std::span<const uint8_t> header, int& statusCode, RefPtr<StringImpl>& statusText)
 {
     // Arbitrary size limit to prevent the server from sending an unbounded
     // amount of data with no newlines and forcing us to buffer it all.
@@ -447,10 +447,10 @@ int WebSocketHandshake::readStatusLine(std::span<const uint8_t> header, int& sta
             // The caller isn't prepared to deal with null bytes in status
             // line. WebSockets specification doesn't prohibit this, but HTTP
             // does, so we'll just treat this as an error.
-            m_failureReason = "Status line contains embedded null"_s;
+            m_failureReason = "Status line contains embedded null"_si;
             return index + 1;
         } else if (!isASCII(header[index])) {
-            m_failureReason = "Status line contains non-ASCII character"_s;
+            m_failureReason = "Status line contains non-ASCII character"_si;
             return index + 1;
         } else if (header[index] == '\n')
             break;
@@ -460,13 +460,13 @@ int WebSocketHandshake::readStatusLine(std::span<const uint8_t> header, int& sta
 
     int lineLength = index + 1;
     if (lineLength > maximumLength) {
-        m_failureReason = "Status line is too long"_s;
+        m_failureReason = "Status line is too long"_si;
         return maximumLength;
     }
 
     // The line must end with "\r\n".
     if (lineLength < 2 || header[index - 1] != '\r') {
-        m_failureReason = "Status line does not end with CRLF"_s;
+        m_failureReason = "Status line does not end with CRLF"_si;
         return lineLength;
     }
 
@@ -493,7 +493,7 @@ int WebSocketHandshake::readStatusLine(std::span<const uint8_t> header, int& sta
     }
 
     statusCode = parseInteger<int>(statusCodeString).value();
-    statusText = String(byteCast<Latin1Character>(header.subspan(*secondSpaceIndex + 1, lineLength - *secondSpaceIndex - 3))); // Exclude "\r\n".
+    statusText = StringImpl::create(byteCast<Latin1Character>(header.subspan(*secondSpaceIndex + 1, lineLength - *secondSpaceIndex - 3))); // Exclude "\r\n".
 
     // https://tools.ietf.org/html/rfc6455#section-4.1
     // "The HTTP version MUST be at least 1.1."
@@ -508,7 +508,7 @@ int WebSocketHandshake::readStatusLine(std::span<const uint8_t> header, int& sta
 std::span<const uint8_t> WebSocketHandshake::readHTTPHeaders(std::span<const uint8_t> data)
 {
     StringView name;
-    String value;
+    RefPtr<StringImpl> value;
     bool sawSecWebSocketExtensionsHeaderField = false;
     bool sawSecWebSocketAcceptHeaderField = false;
     bool sawSecWebSocketProtocolHeaderField = false;
@@ -534,14 +534,14 @@ std::span<const uint8_t> WebSocketHandshake::readHTTPHeaders(std::span<const uin
         if ((headerName == HTTPHeaderName::SecWebSocketExtensions
             || headerName == HTTPHeaderName::SecWebSocketAccept
             || headerName == HTTPHeaderName::SecWebSocketProtocol)
-            && !value.containsOnlyASCII()) {
+            && !containsOnlyASCII(value)) {
             m_failureReason = makeString(name, " header value should only contain ASCII characters"_s);
             return { };
         }
         
         if (headerName == HTTPHeaderName::SecWebSocketExtensions) {
             if (sawSecWebSocketExtensionsHeaderField) {
-                m_failureReason = "The Sec-WebSocket-Extensions header must not appear more than once in an HTTP response"_s;
+                m_failureReason = "The Sec-WebSocket-Extensions header must not appear more than once in an HTTP response"_si;
                 return { };
             }
             if (!m_extensionDispatcher.processHeaderValue(value)) {
@@ -552,13 +552,13 @@ std::span<const uint8_t> WebSocketHandshake::readHTTPHeaders(std::span<const uin
         } else {
             if (headerName == HTTPHeaderName::SecWebSocketAccept) {
                 if (sawSecWebSocketAcceptHeaderField) {
-                    m_failureReason = "The Sec-WebSocket-Accept header must not appear more than once in an HTTP response"_s;
+                    m_failureReason = "The Sec-WebSocket-Accept header must not appear more than once in an HTTP response"_si;
                     return { };
                 }
                 sawSecWebSocketAcceptHeaderField = true;
             } else if (headerName == HTTPHeaderName::SecWebSocketProtocol) {
                 if (sawSecWebSocketProtocolHeaderField) {
-                    m_failureReason = "The Sec-WebSocket-Protocol header must not appear more than once in an HTTP response"_s;
+                    m_failureReason = "The Sec-WebSocket-Protocol header must not appear more than once in an HTTP response"_si;
                     return { };
                 }
                 sawSecWebSocketProtocolHeaderField = true;
@@ -572,45 +572,45 @@ std::span<const uint8_t> WebSocketHandshake::readHTTPHeaders(std::span<const uin
 
 bool WebSocketHandshake::checkResponseHeaders()
 {
-    const String& serverWebSocketProtocol = this->serverWebSocketProtocol();
-    const String& serverUpgrade = this->serverUpgrade();
-    const String& serverConnection = this->serverConnection();
-    const String& serverWebSocketAccept = this->serverWebSocketAccept();
+    const RefPtr<StringImpl>& serverWebSocketProtocol = this->serverWebSocketProtocol();
+    const RefPtr<StringImpl>& serverUpgrade = this->serverUpgrade();
+    const RefPtr<StringImpl>& serverConnection = this->serverConnection();
+    const RefPtr<StringImpl>& serverWebSocketAccept = this->serverWebSocketAccept();
 
-    if (serverUpgrade.isNull()) {
-        m_failureReason = "Error during WebSocket handshake: 'Upgrade' header is missing"_s;
+    if (!serverUpgrade) {
+        m_failureReason = "Error during WebSocket handshake: 'Upgrade' header is missing"_si;
         return false;
     }
-    if (serverConnection.isNull()) {
-        m_failureReason = "Error during WebSocket handshake: 'Connection' header is missing"_s;
+    if (!serverConnection) {
+        m_failureReason = "Error during WebSocket handshake: 'Connection' header is missing"_si;
         return false;
     }
-    if (serverWebSocketAccept.isNull()) {
-        m_failureReason = "Error during WebSocket handshake: 'Sec-WebSocket-Accept' header is missing"_s;
+    if (!serverWebSocketAccept) {
+        m_failureReason = "Error during WebSocket handshake: 'Sec-WebSocket-Accept' header is missing"_si;
         return false;
     }
 
     if (!equalLettersIgnoringASCIICase(serverUpgrade, "websocket"_s)) {
-        m_failureReason = "Error during WebSocket handshake: 'Upgrade' header value is not 'WebSocket'"_s;
+        m_failureReason = "Error during WebSocket handshake: 'Upgrade' header value is not 'WebSocket'"_si;
         return false;
     }
     if (!equalLettersIgnoringASCIICase(serverConnection, "upgrade"_s)) {
-        m_failureReason = "Error during WebSocket handshake: 'Connection' header value is not 'Upgrade'"_s;
+        m_failureReason = "Error during WebSocket handshake: 'Connection' header value is not 'Upgrade'"_si;
         return false;
     }
 
-    if (serverWebSocketAccept != m_expectedAccept) {
-        m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Accept mismatch"_s;
+    if (!equal(serverWebSocketAccept, m_expectedAccept)) {
+        m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Accept mismatch"_si;
         return false;
     }
-    if (!serverWebSocketProtocol.isNull()) {
-        if (m_clientProtocol.isEmpty()) {
-            m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch"_s;
+    if (serverWebSocketProtocol) {
+        if (isEmpty(m_clientProtocol)) {
+            m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch"_si;
             return false;
         }
-        Vector<String> result = m_clientProtocol.split(StringView { WebSocket::subprotocolSeparator() });
-        if (!result.contains(serverWebSocketProtocol)) {
-            m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch"_s;
+        Vector<RefPtr<StringImpl>> result = split(m_clientProtocol, StringView { WebSocket::subprotocolSeparator() });
+        if (!result.containsIf([&](auto& item) { return equal(item, serverWebSocketProtocol); })) {
+            m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch"_si;
             return false;
         }
     }

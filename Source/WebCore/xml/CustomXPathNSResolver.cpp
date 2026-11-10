@@ -28,13 +28,13 @@
 
 namespace WebCore {
 
-AtomString CustomXPathNSResolver::lookupNamespaceURI(const AtomString& prefix)
+RefPtr<AtomStringImpl> CustomXPathNSResolver::lookupNamespaceURI(AtomStringImpl* prefix)
 {
     auto result = lookupNamespaceURIForBindings(prefix);
     if (result.type() != CallbackResultType::Success)
         return nullAtom();
 
-    return AtomString { result.releaseReturnValue() };
+    return AtomStringImpl::add(result.releaseReturnValue());
 }
 
 } // namespace WebCore

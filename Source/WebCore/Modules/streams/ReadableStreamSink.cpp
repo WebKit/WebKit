@@ -66,7 +66,7 @@ void ReadableStreamToSharedBufferSink::close()
     callback(nullptr);
 }
 
-void ReadableStreamToSharedBufferSink::error(String&& message)
+void ReadableStreamToSharedBufferSink::error(RefPtr<StringImpl>&& message)
 {
     if (!m_callback)
         return;

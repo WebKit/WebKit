@@ -63,7 +63,7 @@ static constexpr auto didImportUserInteractionsKey = "didImportUserInteractions"
 static constexpr auto selectMetadataSQL = "SELECT value FROM metadata WHERE key = ?"_s;
 static constexpr auto insertMetadataSQL = "INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)"_s;
 
-IsolatedSitePersistence::IsolatedSitePersistence(const String& databaseDirectoryPath)
+IsolatedSitePersistence::IsolatedSitePersistence(StringImpl* databaseDirectoryPath)
 {
     ASSERT(!isMainRunLoop());
     openDatabase(databaseDirectoryPath);
@@ -95,16 +95,16 @@ IsolatedSitePersistence::OpenResult IsolatedSitePersistence::reportSQLErrorAndCl
     return OpenResult::Retain;
 }
 
-static String isolatedSitesDatabasePath(const String& directoryPath)
+static RefPtr<StringImpl> isolatedSitesDatabasePath(StringImpl* directoryPath)
 {
-    ASSERT(!directoryPath.isEmpty());
+    ASSERT(!isEmpty(directoryPath));
     return FileSystem::pathByAppendingComponent(directoryPath, "IsolatedSites.db"_s);
 }
 
-IsolatedSitePersistence::OpenResult IsolatedSitePersistence::openDatabase(const String& directoryPath)
+IsolatedSitePersistence::OpenResult IsolatedSitePersistence::openDatabase(StringImpl* directoryPath)
 {
     ASSERT(!isMainRunLoop());
-    ASSERT(!directoryPath.isEmpty());
+    ASSERT(!isEmpty(directoryPath));
 
     FileSystem::makeAllDirectories(directoryPath);
 
@@ -124,7 +124,7 @@ IsolatedSitePersistence::OpenResult IsolatedSitePersistence::openDatabase(const 
     return openDatabaseAtPath(path);
 }
 
-IsolatedSitePersistence::OpenResult IsolatedSitePersistence::openDatabaseAtPath(const String& path)
+IsolatedSitePersistence::OpenResult IsolatedSitePersistence::openDatabaseAtPath(StringImpl* path)
 {
     ASSERT(!isMainRunLoop());
 

@@ -83,7 +83,7 @@ public:
     }
 
 private:
-    void didChangeSelection(WebPage&, const String&) final
+    void didChangeSelection(WebPage&, StringImpl*) final
     {
         g_signal_emit(m_editor, signals[SELECTION_CHANGED], 0);
     }

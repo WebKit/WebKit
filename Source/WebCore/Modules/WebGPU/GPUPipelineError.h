@@ -35,16 +35,16 @@ namespace WebCore {
 
 class GPUPipelineError final : public DOMException {
 public:
-    static Ref<GPUPipelineError> create(String&& message, GPUPipelineErrorInit options)
+    static Ref<GPUPipelineError> create(RefPtr<StringImpl>&& message, GPUPipelineErrorInit options)
     {
         return adoptRef(*new GPUPipelineError(WTF::move(message), options));
     }
 
     GPUPipelineErrorReason reason() const { return m_reason.reason; }
-    String stack() const { return "_"_s; }
+    RefPtr<StringImpl> stack() const { return "_"_si; }
 
 private:
-    GPUPipelineError(String&& message, GPUPipelineErrorInit);
+    GPUPipelineError(RefPtr<StringImpl>&& message, GPUPipelineErrorInit);
 
     GPUPipelineErrorInit m_reason;
 };

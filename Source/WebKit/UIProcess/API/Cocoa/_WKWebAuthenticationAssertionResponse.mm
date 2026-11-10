@@ -50,12 +50,12 @@
 
 - (NSString *)name
 {
-    return _response->name().createNSString().autorelease();
+    return createNSString(_response->name()).autorelease();
 }
 
 - (NSString *)displayName
 {
-    return _response->displayName().createNSString().autorelease();
+    return createNSString(_response->displayName()).autorelease();
 }
 
 - (NSData *)userHandle
@@ -70,7 +70,7 @@
 
 - (NSString *)group
 {
-    return _response->group().createNSString().autorelease();
+    return createNSString(_response->group()).autorelease();
 }
 
 - (NSData *)credentialID
@@ -80,7 +80,7 @@
 
 - (NSString *)accessGroup
 {
-    return _response->accessGroup().createNSString().autorelease();
+    return createNSString(_response->accessGroup()).autorelease();
 }
 
 #endif // ENABLE(WEB_AUTHN)

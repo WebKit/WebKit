@@ -43,17 +43,17 @@ public:
     NODELETE API::FrameInfo* targetFrame() const;
     NODELETE API::FrameInfo* sourceFrame() const;
     NODELETE const WTF::URL& submissionURL() const LIFETIME_BOUND;
-    NODELETE const WTF::String& httpMethod() const LIFETIME_BOUND;
-    NODELETE const Vector<std::pair<WTF::String, WTF::String>>& formValues() const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& httpMethod() const LIFETIME_BOUND;
+    NODELETE const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& formValues() const LIFETIME_BOUND;
 
 private:
-    FormInfo(API::FrameInfo&, API::FrameInfo& sourceFrame, const WTF::URL& submissionURL, const WTF::String& httpMethod, const Vector<std::pair<WTF::String, WTF::String>>& formValues);
+    FormInfo(API::FrameInfo&, API::FrameInfo& sourceFrame, const WTF::URL& submissionURL, StringImpl* httpMethod, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& formValues);
 
     const Ref<API::FrameInfo> m_targetFrame;
     const Ref<API::FrameInfo> m_sourceFrame;
     WTF::URL m_submissionURL;
-    WTF::String m_httpMethod;
-    Vector<std::pair<WTF::String, WTF::String>> m_formValues;
+    RefPtr<StringImpl> m_httpMethod;
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> m_formValues;
 };
 
 } // namespace API

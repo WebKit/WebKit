@@ -62,7 +62,7 @@ public:
     NODELETE const URL& url() const;
     NODELETE FrameType frameType() const;
     NODELETE Type type() const;
-    String id() const;
+    RefPtr<StringImpl> id() const;
 
     Identifier identifier() const { return m_data.identifier; }
 

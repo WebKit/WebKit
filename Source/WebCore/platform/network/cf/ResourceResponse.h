@@ -54,14 +54,14 @@ public:
         m_isNull = !nsResponse;
     }
 
-    ResourceResponse(URL&& url, String&& mimeType, long long expectedLength, String&& textEncodingName)
+    ResourceResponse(URL&& url, RefPtr<StringImpl>&& mimeType, long long expectedLength, RefPtr<StringImpl>&& textEncodingName)
         : ResourceResponseBase(WTF::move(url), WTF::move(mimeType), expectedLength, WTF::move(textEncodingName))
     {
         m_initLevel = AllFields;
     }
 
     // FIXME(rdar://149970210): Remove this constructor once the internal build is up-to-date
-    ResourceResponse(const URL& url, String&& mimeType, long long expectedLength, String&& textEncodingName)
+    ResourceResponse(const URL& url, RefPtr<StringImpl>&& mimeType, long long expectedLength, RefPtr<StringImpl>&& textEncodingName)
         : ResourceResponseBase(URL { url }, WTF::move(mimeType), expectedLength, WTF::move(textEncodingName))
     {
         m_initLevel = AllFields;
@@ -94,7 +94,7 @@ private:
     friend class ResourceResponseBase;
 
     void platformLazyInit(InitLevel);
-    String platformSuggestedFilename() const;
+    RefPtr<StringImpl> platformSuggestedFilename() const;
     CertificateInfo platformCertificateInfo(std::span<const std::byte>) const;
 
     static bool platformCompare(const ResourceResponse& a, const ResourceResponse& b);

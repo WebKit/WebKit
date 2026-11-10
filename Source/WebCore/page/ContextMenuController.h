@@ -63,7 +63,7 @@ public:
 
     void populate();
     WEBCORE_EXPORT void didDismissContextMenu();
-    WEBCORE_EXPORT void contextMenuItemSelected(ContextMenuAction, const String& title);
+    WEBCORE_EXPORT void contextMenuItemSelected(ContextMenuAction, StringImpl* title);
     void addDebuggingItems();
 
     WEBCORE_EXPORT void checkOrEnableIfNeeded(ContextMenuItem&) const;
@@ -106,7 +106,7 @@ private:
     TextCheckingGuesses guessesForSpellingAndGrammarItems(LocalFrame&);
 
 #if ENABLE(PDFJS)
-    void performPDFJSAction(LocalFrame&, const String& action);
+    void performPDFJSAction(LocalFrame&, StringImpl* action);
 #endif
 
     WeakRef<Page> m_page;
@@ -117,7 +117,7 @@ private:
 
     struct SpellingAndGrammarTarget {
         Ref<Range> range;
-        String text;
+        RefPtr<StringImpl> text;
     };
     // The unselected word that spelling and grammar items act on.
     std::optional<SpellingAndGrammarTarget> m_spellingAndGrammarTarget;

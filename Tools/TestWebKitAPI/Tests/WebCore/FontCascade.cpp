@@ -84,7 +84,7 @@ static void testCodePathRange(CodePathRange range)
 TEST(FontCascadeTest, EqualityWithNullFonts)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(16);
 
     FontCascade a(FontCascadeDescription { description });
@@ -168,7 +168,7 @@ TEST(FontCascadeTest, characterRangeCodePath_Surrogates)
 TEST(FontCascadeTest, PurgeInactiveFontDataClearsShapedTextCache)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(16);
     FontCascade font(WTF::move(description));
     font.update();
@@ -189,14 +189,14 @@ TEST(FontCascadeTest, PurgeInactiveFontDataClearsShapedTextCache)
 TEST(FontCascadeTest, ComplexTextRetainsSystemFallbackFonts)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(16);
     FontCascade fontCascade(WTF::move(description));
     fontCascade.update();
 
     // Complex-script characters Times cannot render, forcing Core Text system fallbacks.
     static constexpr std::array<char16_t, 8> characters { 0x06D8, 0x092D, 0x0B40, 0x0F96, 0x0DBD, 0x0EAF, 0xA86C, 0x0ACF };
-    String text { std::span<const char16_t> { characters } };
+    RefPtr<StringImpl> text { StringImpl::create(std::span<const char16_t> { characters }) };
     TextRun run { text };
 
     // Shaping the run collects the system fallback fonts Core Text used.
@@ -224,7 +224,7 @@ TEST(FontCascadeTest, SyntheticBoldMeasuresTheSameOnBothSimpleTextPaths)
     constexpr float fontSize = 16;
 
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(fontSize);
     FontCascade unboldedFontCascade(WTF::move(description));
     unboldedFontCascade.update();
@@ -236,7 +236,7 @@ TEST(FontCascadeTest, SyntheticBoldMeasuresTheSameOnBothSimpleTextPaths)
     // Otherwise the run would not be emboldened at all and the expectations below would hold trivially.
     EXPECT_GT(fontCascade.primaryFont().syntheticBoldOffset(), 0);
 
-    String text = "the quick brown fox"_str;
+    RefPtr<StringImpl> text = "the quick brown fox"_str;
     TextRun run { text };
     ASSERT_NE(fontCascade.codePath(run), CodePath::Complex);
 

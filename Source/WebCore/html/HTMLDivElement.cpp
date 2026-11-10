@@ -55,7 +55,7 @@ Ref<HTMLDivElement> HTMLDivElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new HTMLDivElement(tagName, document));
 }
 
-void HTMLDivElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLDivElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == alignAttr) {
         if (equalLettersIgnoringASCIICase(value, "middle"_s) || equalLettersIgnoringASCIICase(value, "center"_s))

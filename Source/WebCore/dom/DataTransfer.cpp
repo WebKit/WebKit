@@ -92,11 +92,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DragImageLoader);
 
 #endif
 
-DataTransfer::DataTransfer(StoreMode mode, std::unique_ptr<Pasteboard> pasteboard, Type type, String&& effectAllowed)
+DataTransfer::DataTransfer(StoreMode mode, std::unique_ptr<Pasteboard> pasteboard, Type type, RefPtr<StringImpl>&& effectAllowed)
     : m_storeMode(mode)
     , m_pasteboard(WTF::move(pasteboard))
 #if ENABLE(DRAG_SUPPORT)
-    , m_dropEffect("uninitialized"_s)
+    , m_dropEffect("uninitialized"_si)
     , m_effectAllowed(WTF::move(effectAllowed))
     , m_type(type)
     , m_shouldUpdateDragImage(false)
@@ -117,7 +117,7 @@ Ref<DataTransfer> DataTransfer::createForCopyAndPaste(const Document& document, 
 
 Ref<DataTransfer> DataTransfer::create()
 {
-    return adoptRef(*new DataTransfer(StoreMode::ReadWrite, makeUnique<StaticPasteboard>(), Type::CopyAndPaste, "none"_s));
+    return adoptRef(*new DataTransfer(StoreMode::ReadWrite, makeUnique<StaticPasteboard>(), Type::CopyAndPaste, "none"_si));
 }
 
 DataTransfer::~DataTransfer()
@@ -143,17 +143,17 @@ bool DataTransfer::canWriteData() const
     return m_storeMode == StoreMode::ReadWrite;
 }
 
-static String normalizeType(const String& type)
+static RefPtr<StringImpl> normalizeType(StringImpl* type)
 {
-    if (type.isNull())
+    if (!type)
         return type;
 
-    auto lowercaseType = type.trim(isASCIIWhitespace).convertToASCIILowercase();
-    if (lowercaseType == "text"_s || lowercaseType == textPlainContentTypeAtom() || lowercaseType.startsWith("text/plain;"_s))
+    auto lowercaseType = convertToASCIILowercase(trim(type, isASCIIWhitespace));
+    if (equal(lowercaseType, "text"_s) || equal(lowercaseType, textPlainContentTypeAtom()) || startsWith(lowercaseType, "text/plain;"_s))
         return textPlainContentTypeAtom();
-    if (lowercaseType == "url"_s || lowercaseType.startsWith("text/uri-list;"_s))
-        return "text/uri-list"_s;
-    if (lowercaseType.startsWith("text/html;"_s))
+    if (equal(lowercaseType, "url"_s) || startsWith(lowercaseType, "text/uri-list;"_s))
+        return "text/uri-list"_si;
+    if (startsWith(lowercaseType, "text/html;"_s))
         return textHTMLContentTypeAtom();
 
     return lowercaseType;
@@ -161,7 +161,7 @@ static String normalizeType(const String& type)
 
 // Parses text/uri-list data as described by RFC 2483 and returns the first URL it contains,
 // skipping the comment lines that specification defines as well as lines that cannot be URLs.
-static String firstURLFromURIList(StringView uriList)
+static RefPtr<StringImpl> firstURLFromURIList(StringView uriList)
 {
     // split() elides empty entries, and trimming removes the CR of a CRLF line ending.
     for (auto line : uriList.split('\n')) {
@@ -173,13 +173,13 @@ static String firstURLFromURIList(StringView uriList)
     return emptyString();
 }
 
-void DataTransfer::clearData(const String& type)
+void DataTransfer::clearData(StringImpl* type)
 {
     if (!canWriteData())
         return;
 
-    String normalizedType = normalizeType(type);
-    if (normalizedType.isNull())
+    RefPtr<StringImpl> normalizedType = normalizeType(type);
+    if (!normalizedType)
         m_pasteboard->clear();
     else
         m_pasteboard->clear(normalizedType);
@@ -187,10 +187,10 @@ void DataTransfer::clearData(const String& type)
         m_itemList->didClearStringData(normalizedType);
 }
 
-static String readURLsFromPasteboardAsString(Page* page, Pasteboard& pasteboard, NOESCAPE const Function<bool(const String&)>& shouldIncludeURL)
+static RefPtr<StringImpl> readURLsFromPasteboardAsString(Page* page, Pasteboard& pasteboard, NOESCAPE const Function<bool(StringImpl*)>& shouldIncludeURL)
 {
     StringBuilder urlList;
-    auto urlStrings = pasteboard.readAllStrings("text/uri-list"_s);
+    auto urlStrings = pasteboard.readAllStrings("text/uri-list"_si);
     if (page) {
         urlStrings = urlStrings.map([&](auto& string) {
             return page->applyLinkDecorationFiltering(string, LinkDecorationFilteringTrigger::Paste);
@@ -201,23 +201,23 @@ static String readURLsFromPasteboardAsString(Page* page, Pasteboard& pasteboard,
         return !shouldIncludeURL(string);
     });
 
-    return makeStringByJoining(urlStrings, "\n"_s);
+    return makeStringByJoining(urlStrings, "\n"_si);
 }
 
-String DataTransfer::getDataForItem(Document& document, const String& type) const
+RefPtr<StringImpl> DataTransfer::getDataForItem(Document& document, StringImpl* type) const
 {
     if (!canReadData())
         return { };
 
-    auto lowercaseType = type.trim(isASCIIWhitespace).convertToASCIILowercase();
+    auto lowercaseType = convertToASCIILowercase(trim(type, isASCIIWhitespace));
     if (shouldSuppressGetAndSetDataToAvoidExposingFilePaths()) {
-        if (lowercaseType == "text/uri-list"_s) {
-            return readURLsFromPasteboardAsString(protect(document.page()), *m_pasteboard, [] (auto& urlString) {
+        if (equal(lowercaseType, "text/uri-list"_s)) {
+            return readURLsFromPasteboardAsString(protect(document.page()), *m_pasteboard, [] (auto* urlString) {
                 return Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(urlString);
             });
         }
 
-        if (lowercaseType == textHTMLContentTypeAtom() && DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
+        if (equal(lowercaseType, textHTMLContentTypeAtom()) && DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
             // If the pasteboard contains files and the page requests 'text/html', we only read from rich text types to prevent file
             // paths from leaking (e.g. from plain text data on the pasteboard) since we sanitize cross-origin markup. However, if
             // custom pasteboard data is disabled, then we can't ensure that the markup we deliver is sanitized, so we fall back to
@@ -231,22 +231,22 @@ String DataTransfer::getDataForItem(Document& document, const String& type) cons
     return readStringFromPasteboard(document, lowercaseType, WebContentReadingPolicy::AnyType);
 }
 
-String DataTransfer::readStringFromPasteboard(Document& document, const String& lowercaseType, WebContentReadingPolicy policy) const
+RefPtr<StringImpl> DataTransfer::readStringFromPasteboard(Document& document, StringImpl* lowercaseType, WebContentReadingPolicy policy) const
 {
     if (!DeprecatedGlobalSettings::customPasteboardDataEnabled())
         return m_pasteboard->readString(lowercaseType);
 
     // StaticPasteboard is only used to stage data written by websites before being committed to the system pasteboard.
-    bool isSameOrigin = is<StaticPasteboard>(*m_pasteboard) || (!m_originIdentifier.isNull() && m_originIdentifier == m_pasteboard->readOrigin());
+    bool isSameOrigin = is<StaticPasteboard>(*m_pasteboard) || (!!m_originIdentifier && equal(m_originIdentifier, m_pasteboard->readOrigin()));
     if (isSameOrigin) {
-        String value = m_pasteboard->readStringInCustomData(lowercaseType);
-        if (!value.isNull())
+        RefPtr<StringImpl> value = m_pasteboard->readStringInCustomData(lowercaseType);
+        if (value)
             return value;
     }
     if (!Pasteboard::isSafeTypeForDOMToReadAndWrite(lowercaseType))
         return { };
 
-    if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == textHTMLContentTypeAtom()) {
+    if (!is<StaticPasteboard>(*m_pasteboard) && equal(lowercaseType, textHTMLContentTypeAtom())) {
         if (!document.frame())
             return { };
         WebContentMarkupReader reader { protect(document.frame()).releaseNonNull() };
@@ -254,8 +254,8 @@ String DataTransfer::readStringFromPasteboard(Document& document, const String& 
         return reader.takeMarkup();
     }
 
-    if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == "text/uri-list"_s) {
-        return readURLsFromPasteboardAsString(protect(document.page()).get(), *m_pasteboard, [] (auto&) {
+    if (!is<StaticPasteboard>(*m_pasteboard) && equal(lowercaseType, "text/uri-list"_s)) {
+        return readURLsFromPasteboardAsString(protect(document.page()).get(), *m_pasteboard, [] (auto*) {
             return true;
         });
     }
@@ -267,7 +267,7 @@ String DataTransfer::readStringFromPasteboard(Document& document, const String& 
     return string;
 }
 
-String DataTransfer::getData(Document& document, const String& type) const
+RefPtr<StringImpl> DataTransfer::getData(Document& document, StringImpl* type) const
 {
     // https://html.spec.whatwg.org/multipage/dnd.html#dom-datatransfer-getdata
     // Step 6 sets the convert-to-URL flag when the requested format is "url", and step 9
@@ -302,7 +302,7 @@ bool DataTransfer::allowsFileAccess() const
 #endif
 }
 
-void DataTransfer::setData(Document& document, const String& type, const String& data)
+void DataTransfer::setData(Document& document, StringImpl* type, StringImpl* data)
 {
     if (!canWriteData())
         return;
@@ -316,7 +316,7 @@ void DataTransfer::setData(Document& document, const String& type, const String&
         m_itemList->didSetStringData(normalizedType);
 }
 
-void DataTransfer::setDataFromItemList(Document& document, const String& type, const String& data)
+void DataTransfer::setDataFromItemList(Document& document, StringImpl* type, StringImpl* data)
 {
     ASSERT(canWriteData());
 
@@ -326,25 +326,25 @@ void DataTransfer::setDataFromItemList(Document& document, const String& type, c
         return;
     }
 
-    String sanitizedData;
-    if (type == "text/html"_s)
+    RefPtr<StringImpl> sanitizedData;
+    if (equal(type, "text/html"_s))
         sanitizedData = sanitizeMarkup(data, &document);
-    else if (type == "text/uri-list"_s) {
+    else if (equal(type, "text/uri-list"_s)) {
         auto url = URL({ }, data);
         if (url.isValid())
             sanitizedData = url.string();
-    } else if (type == textPlainContentTypeAtom())
+    } else if (equal(type, textPlainContentTypeAtom()))
         sanitizedData = data; // Nothing to sanitize.
 
-    if (type == "text/uri-list"_s || type == textPlainContentTypeAtom()) {
+    if (equal(type, "text/uri-list"_s) || equal(type, textPlainContentTypeAtom())) {
         if (RefPtr page = document.page())
             sanitizedData = page->applyLinkDecorationFiltering(sanitizedData, LinkDecorationFilteringTrigger::Copy);
     }
 
-    if (sanitizedData != data)
+    if (!equal(sanitizedData, data))
         pasteboard.writeStringInCustomData(type, data);
 
-    if (Pasteboard::isSafeTypeForDOMToReadAndWrite(type) && !sanitizedData.isNull())
+    if (Pasteboard::isSafeTypeForDOMToReadAndWrite(type) && sanitizedData)
         pasteboard.writeString(type, sanitizedData);
 }
 
@@ -373,17 +373,17 @@ DataTransferItemList& DataTransfer::items(Document& document)
     return *m_itemList;
 }
 
-Vector<String> DataTransfer::types(Document& document) const
+Vector<RefPtr<StringImpl>> DataTransfer::types(Document& document) const
 {
     return types(document, AddFilesType::Yes);
 }
 
-Vector<String> DataTransfer::typesForItemList(Document& document) const
+Vector<RefPtr<StringImpl>> DataTransfer::typesForItemList(Document& document) const
 {
     return types(document, AddFilesType::No);
 }
 
-Vector<String> DataTransfer::types(Document& document, AddFilesType addFilesType) const
+Vector<RefPtr<StringImpl>> DataTransfer::types(Document& document, AddFilesType addFilesType) const
 {
     if (!canReadTypes())
         return { };
@@ -391,7 +391,9 @@ Vector<String> DataTransfer::types(Document& document, AddFilesType addFilesType
     bool hideFilesType = !canWriteData() && !allowsFileAccess();
     if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
         auto types = m_pasteboard->typesForLegacyUnsafeBindings();
-        ASSERT(!types.contains("Files"_s));
+        ASSERT(!types.containsIf([&](auto& item) {
+            return equal(item, "Files"_s);
+        }));
         if (!hideFilesType && m_pasteboard->fileContentState() != Pasteboard::FileContentState::NoFileOrImageData && addFilesType == AddFilesType::Yes)
             types.append("Files"_s);
         return types;
@@ -404,7 +406,7 @@ Vector<String> DataTransfer::types(Document& document, AddFilesType addFilesType
 
     auto fileContentState = m_pasteboard->fileContentState();
     if (hasFileBackedItem || fileContentState != Pasteboard::FileContentState::NoFileOrImageData) {
-        Vector<String> types;
+        Vector<RefPtr<StringImpl>> types;
         if (!hideFilesType && addFilesType == AddFilesType::Yes) {
             types.append("Files"_s);
             if (document.quirks().needsMozillaFileTypeForDataTransfer())
@@ -416,14 +418,16 @@ Vector<String> DataTransfer::types(Document& document, AddFilesType addFilesType
             return types;
         }
 
-        if (safeTypes.contains("text/uri-list"_s))
+        if (safeTypes.containsIf([&](auto& item) { return equal(item, "text/uri-list"_s); }))
             types.append("text/uri-list"_s);
-        if (safeTypes.contains(textHTMLContentTypeAtom()) && DeprecatedGlobalSettings::customPasteboardDataEnabled())
+        if (safeTypes.containsIf([&](auto& item) { return equal(item, textHTMLContentTypeAtom()); }) && DeprecatedGlobalSettings::customPasteboardDataEnabled())
             types.append(textHTMLContentTypeAtom());
         return types;
     }
 
-    ASSERT(!safeTypes.contains("Files"_s));
+    ASSERT(!safeTypes.containsIf([&](auto& item) {
+        return equal(item, "Files"_s);
+    }));
     return safeTypes;
 }
 
@@ -474,20 +478,20 @@ FileList& DataTransfer::files(Document& document) const
 }
 
 struct PasteboardFileTypeReader final : PasteboardFileReader {
-    void readFilename(const String& filename)
+    void readFilename(StringImpl* filename)
     {
         types.add(File::contentTypeForFile(filename));
     }
 
-    void readBuffer(const String&, const String& type, Ref<SharedBuffer>&&)
+    void readBuffer(StringImpl*, StringImpl* type, Ref<SharedBuffer>&&)
     {
         types.add(type);
     }
 
-    HashSet<String, ASCIICaseInsensitiveHash> types;
+    HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash> types;
 };
 
-bool DataTransfer::hasFileOfType(const String& type)
+bool DataTransfer::hasFileOfType(StringImpl* type)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(canReadTypes());
     PasteboardFileTypeReader reader;
@@ -495,14 +499,16 @@ bool DataTransfer::hasFileOfType(const String& type)
     return reader.types.contains(type);
 }
 
-bool DataTransfer::hasStringOfType(Document& document, const String& type)
+bool DataTransfer::hasStringOfType(Document& document, StringImpl* type)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(canReadTypes());
 
-    return !type.isNull() && types(document).contains(type);
+    return !!type && types(document).containsIf([&](auto& item) {
+        return equal(item, type);
+    });
 }
 
-Ref<DataTransfer> DataTransfer::createForInputEvent(const String& plainText, const String& htmlText)
+Ref<DataTransfer> DataTransfer::createForInputEvent(StringImpl* plainText, StringImpl* htmlText)
 {
     auto pasteboard = makeUnique<StaticPasteboard>();
     pasteboard->writeString(textPlainContentTypeAtom(), plainText);
@@ -531,32 +537,32 @@ void DataTransfer::commitToPasteboard(Pasteboard& nativePasteboard)
     }
 
     nativePasteboard.clear();
-    customData.forEachPlatformString([&] (auto& type, auto& string) {
+    customData.forEachPlatformString([&] (auto* type, auto* string) {
         nativePasteboard.writeString(type, string);
     });
 
-    customData.forEachCustomString([&] (auto& type, auto& string) {
+    customData.forEachCustomString([&] (auto* type, auto* string) {
         nativePasteboard.writeString(type, string);
     });
 }
 
 #if !ENABLE(DRAG_SUPPORT)
 
-String DataTransfer::dropEffect() const
+RefPtr<StringImpl> DataTransfer::dropEffect() const
 {
     return noneAtom();
 }
 
-void DataTransfer::setDropEffect(const String&)
+void DataTransfer::setDropEffect(StringImpl*)
 {
 }
 
-String DataTransfer::effectAllowed() const
+RefPtr<StringImpl> DataTransfer::effectAllowed() const
 {
-    return "uninitialized"_s;
+    return "uninitialized"_si;
 }
 
-void DataTransfer::setEffectAllowed(const String&)
+void DataTransfer::setEffectAllowed(StringImpl*)
 {
 }
 
@@ -711,25 +717,25 @@ void DragImageLoader::imageChanged(CachedImage*, const IntRect*)
         dataTransfer->updateDragImage(document.get());
 }
 
-static OptionSet<DragOperation> dragOpFromIEOp(const String& operation)
+static OptionSet<DragOperation> dragOpFromIEOp(StringImpl* operation)
 {
-    if (operation == "uninitialized"_s)
+    if (equal(operation, "uninitialized"_s))
         return anyDragOperation();
-    if (operation == "none"_s)
+    if (equal(operation, "none"_s))
         return { };
-    if (operation == "copy"_s)
+    if (equal(operation, "copy"_s))
         return { DragOperation::Copy };
-    if (operation == "link"_s)
+    if (equal(operation, "link"_s))
         return { DragOperation::Link };
-    if (operation == "move"_s)
+    if (equal(operation, "move"_s))
         return { DragOperation::Generic, DragOperation::Move };
-    if (operation == "copyLink"_s)
+    if (equal(operation, "copyLink"_s))
         return { DragOperation::Copy, DragOperation::Link };
-    if (operation == "copyMove"_s)
+    if (equal(operation, "copyMove"_s))
         return { DragOperation::Copy, DragOperation::Generic, DragOperation::Move };
-    if (operation == "linkMove"_s)
+    if (equal(operation, "linkMove"_s))
         return { DragOperation::Link, DragOperation::Generic, DragOperation::Move };
-    if (operation == "all"_s)
+    if (equal(operation, "all"_s))
         return anyDragOperation();
     return { DragOperation::Private }; // Really a marker for "no conversion".
 }
@@ -781,17 +787,17 @@ void DataTransfer::setDestinationOperationMask(OptionSet<DragOperation> operatio
     m_dropEffect = IEOpFromDragOp(operationMask);
 }
 
-String DataTransfer::dropEffect() const
+RefPtr<StringImpl> DataTransfer::dropEffect() const
 {
-    return m_dropEffect == "uninitialized"_s ? "none"_s : m_dropEffect;
+    return equal(m_dropEffect, "uninitialized"_s) ? "none"_si : m_dropEffect;
 }
 
-void DataTransfer::setDropEffect(const String& effect)
+void DataTransfer::setDropEffect(StringImpl* effect)
 {
     if (!forDrag())
         return;
 
-    if (effect != "none"_s && effect != "copy"_s && effect != "link"_s && effect != "move"_s)
+    if (!equal(effect, "none"_s) && !equal(effect, "copy"_s) && !equal(effect, "link"_s) && !equal(effect, "move"_s))
         return;
 
     // FIXME: The spec allows this in all circumstances. There is probably no value
@@ -802,12 +808,12 @@ void DataTransfer::setDropEffect(const String& effect)
     m_dropEffect = effect;
 }
 
-String DataTransfer::effectAllowed() const
+RefPtr<StringImpl> DataTransfer::effectAllowed() const
 {
     return m_effectAllowed;
 }
 
-void DataTransfer::setEffectAllowed(const String& effect)
+void DataTransfer::setEffectAllowed(StringImpl* effect)
 {
     if (!forDrag())
         return;

@@ -253,7 +253,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     // The computed "locale" equals the "lang" attribute. The latter must be a valid BCP 47 language tag,
     // according to <https://html.spec.whatwg.org/multipage/dom.html#attr-lang>.
     // This is exactly what hb_language_from_string() expects, so we can pass directly.
-    auto language = hb_language_from_string(m_fontCascade->fontDescription().usedLocale().string().utf8().legacyCStringPointer(), -1);
+    auto language = hb_language_from_string(utf8(m_fontCascade->fontDescription().usedLocale()).legacyCStringPointer(), -1);
 
     auto shapeFunction = [&](const HBRun& run) {
         hb_buffer_set_cluster_level(buffer.get(), HB_BUFFER_CLUSTER_LEVEL_CHARACTERS);

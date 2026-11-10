@@ -51,9 +51,9 @@ public:
 
     virtual ~WorkerRunLoop() = default;
 
-    virtual bool runInMode(WorkerOrWorkletGlobalScope*, const String& mode, bool allowEventLoopTasks = false) = 0;
+    virtual bool runInMode(WorkerOrWorkletGlobalScope*, StringImpl* mode, bool allowEventLoopTasks = false) = 0;
     virtual void postTaskAndTerminate(ScriptExecutionContext::Task&&) = 0;
-    virtual void postTaskForMode(ScriptExecutionContext::Task&&, const String& mode) = 0;
+    virtual void postTaskForMode(ScriptExecutionContext::Task&&, StringImpl* mode) = 0;
     virtual void terminate() = 0;
     virtual bool terminated() const = 0;
     virtual Type type() const = 0;
@@ -61,7 +61,7 @@ public:
     void postTask(ScriptExecutionContext::Task&&);
     void postDebuggerTask(ScriptExecutionContext::Task&&);
 
-    NODELETE WEBCORE_EXPORT static String defaultMode();
+    NODELETE WEBCORE_EXPORT static RefPtr<StringImpl> defaultMode();
 
     unsigned long createUniqueId() { return ++m_uniqueId; }
 
@@ -79,7 +79,7 @@ public:
     void run(WorkerOrWorkletGlobalScope*);
 
     // Waits for a single task and returns.
-    bool runInMode(WorkerOrWorkletGlobalScope*, const String& mode, bool) final;
+    bool runInMode(WorkerOrWorkletGlobalScope*, StringImpl* mode, bool) final;
     MessageQueueWaitResult runInDebuggerMode(WorkerOrWorkletGlobalScope&);
 
     void terminate() final;
@@ -87,20 +87,20 @@ public:
     Type type() const final { return Type::WorkerDedicatedRunLoop; }
 
     void postTaskAndTerminate(ScriptExecutionContext::Task&&) final;
-    WEBCORE_EXPORT void postTaskForMode(ScriptExecutionContext::Task&&, const String& mode) final;
+    WEBCORE_EXPORT void postTaskForMode(ScriptExecutionContext::Task&&, StringImpl* mode) final;
 
     class Task {
         WTF_MAKE_TZONE_ALLOCATED(Task);
         WTF_MAKE_NONCOPYABLE(Task);
     public:
-        Task(ScriptExecutionContext::Task&&, const String& mode);
-        const String& mode() const LIFETIME_BOUND { return m_mode; }
+        Task(ScriptExecutionContext::Task&&, StringImpl* mode);
+        const RefPtr<StringImpl>& mode() const LIFETIME_BOUND { return m_mode; }
 
     private:
         void performTask(WorkerOrWorkletGlobalScope*);
 
         ScriptExecutionContext::Task m_task;
-        String m_mode;
+        RefPtr<StringImpl> m_mode;
 
         friend class WorkerDedicatedRunLoop;
     };
@@ -112,8 +112,8 @@ private:
         MessageQueueWaitResult messageQueueResult;
         bool firedSharedTimer { false };
         bool firedRunLoopTimer { false };
-        String activeRunLoopTimersBeforeFiring;
-        String activeRunLoopTimersAfterFiring;
+        RefPtr<StringImpl> activeRunLoopTimersBeforeFiring;
+        RefPtr<StringImpl> activeRunLoopTimersAfterFiring;
     };
     RunInModeResult runInMode(WorkerOrWorkletGlobalScope*, const ModePredicate&);
 
@@ -140,9 +140,9 @@ public:
     void terminate() final { m_terminated = true; }
     bool terminated() const final { return m_terminated; }
 
-    bool runInMode(WorkerOrWorkletGlobalScope*, const String& mode, bool);
+    bool runInMode(WorkerOrWorkletGlobalScope*, StringImpl* mode, bool);
     void postTaskAndTerminate(ScriptExecutionContext::Task&&) final;
-    void postTaskForMode(ScriptExecutionContext::Task&&, const String& mode) final;
+    void postTaskForMode(ScriptExecutionContext::Task&&, StringImpl* mode) final;
     Type type() const final { return Type::WorkerMainRunLoop; }
 
 private:

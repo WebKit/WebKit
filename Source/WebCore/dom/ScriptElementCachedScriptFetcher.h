@@ -33,7 +33,7 @@ namespace WebCore {
 
 class ScriptElementCachedScriptFetcher : public CachedScriptFetcher {
 public:
-    virtual CachedResourceHandle<CachedResource> requestModuleResource(Document&, const URL& sourceURL, FetchOptionsDestination, String&& integrity, std::optional<ServiceWorkersMode>, const URL& referrer) const;
+    virtual CachedResourceHandle<CachedResource> requestModuleResource(Document&, const URL& sourceURL, FetchOptionsDestination, RefPtr<StringImpl>&& integrity, std::optional<ServiceWorkersMode>, const URL& referrer) const;
 
     virtual ScriptType scriptType() const = 0;
     bool isClassicScript() const { return scriptType() == ScriptType::Classic; }
@@ -41,17 +41,17 @@ public:
     bool isImportMap() const { return scriptType() == ScriptType::ImportMap; }
     bool isSpeculationRules() const { return scriptType() == ScriptType::SpeculationRules; }
 
-    const String& crossOriginMode() const LIFETIME_BOUND { return m_crossOriginMode; }
+    const RefPtr<AtomStringImpl>& crossOriginMode() const LIFETIME_BOUND { return m_crossOriginMode; }
 
 protected:
-    ScriptElementCachedScriptFetcher(const AtomString& nonce, ReferrerPolicy policy, RequestPriority fetchPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
+    ScriptElementCachedScriptFetcher(AtomStringImpl* nonce, ReferrerPolicy policy, RequestPriority fetchPriority, AtomStringImpl* crossOriginMode, AtomStringImpl* charset, AtomStringImpl* initiatorType, bool isInUserAgentShadowTree)
         : CachedScriptFetcher(nonce, policy, fetchPriority, charset, initiatorType, isInUserAgentShadowTree)
         , m_crossOriginMode(crossOriginMode)
     {
     }
 
 private:
-    const AtomString m_crossOriginMode;
+    const RefPtr<AtomStringImpl> m_crossOriginMode;
 };
 
 } // namespace WebCore

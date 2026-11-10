@@ -33,7 +33,7 @@ class RenderSVGInlineText final : public RenderText {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGInlineText);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInlineText);
 public:
-    RenderSVGInlineText(Text&, const String&);
+    RenderSVGInlineText(Text&, StringImpl*);
     virtual ~RenderSVGInlineText();
 
     Text& textNode() const { return downcast<Text>(nodeForNonAnonymous()); }
@@ -60,7 +60,7 @@ public:
 private:
     ASCIILiteral renderName() const override { return "RenderSVGInlineText"_s; }
 
-    String originalText() const override;
+    RefPtr<StringImpl> originalText() const override;
     void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
 
     FloatRect objectBoundingBox() const override { return floatLinesBoundingBox(); }
@@ -68,8 +68,8 @@ private:
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
     IntRect linesBoundingBox() const override;
 
-    void setTextInternal(const String&, bool force) final;
-    void setRenderedText(const String&) final;
+    void setTextInternal(StringImpl*, bool force) final;
+    void setRenderedText(StringImpl*) final;
 
     float m_scalingFactor;
     FontCascade m_scaledFont;

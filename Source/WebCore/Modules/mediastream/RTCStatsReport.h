@@ -93,7 +93,7 @@ public:
     struct Stats {
         double timestamp { 0 };
         Type type;
-        String id;
+        RefPtr<StringImpl> id;
 
 #if USE(LIBWEBRTC)
         static Stats convert(Type, const webrtc::RTCStats&);
@@ -102,9 +102,9 @@ public:
 
     struct RtpStreamStats : Stats {
         uint32_t ssrc { 0 };
-        String kind;
-        String transportId;
-        String codecId;
+        RefPtr<StringImpl> kind;
+        RefPtr<StringImpl> transportId;
+        RefPtr<StringImpl> codecId;
 
 #if USE(LIBWEBRTC)
         static RtpStreamStats convert(Type, const webrtc::RTCRtpStreamStats&);
@@ -122,9 +122,9 @@ public:
     };
 
     struct InboundRtpStreamStats : ReceivedRtpStreamStats {
-        String trackIdentifier;
-        String mid;
-        String remoteId;
+        RefPtr<StringImpl> trackIdentifier;
+        RefPtr<StringImpl> mid;
+        RefPtr<StringImpl> remoteId;
         std::optional<uint32_t> framesDecoded;
         std::optional<uint32_t> keyFramesDecoded;
         std::optional<uint32_t> framesRendered;
@@ -166,8 +166,8 @@ public:
         std::optional<double> totalAudioEnergy;
         std::optional<double> totalSamplesDuration;
         std::optional<uint32_t> framesReceived;
-        String decoderImplementation;
-        String playoutId;
+        RefPtr<StringImpl> decoderImplementation;
+        RefPtr<StringImpl> playoutId;
         std::optional<bool> powerEfficientDecoder;
         std::optional<uint32_t> framesAssembledFromMultiplePackets;
         std::optional<double> totalAssemblyTime;
@@ -177,12 +177,12 @@ public:
         std::optional<uint32_t> fecSsrc;
 
 #if USE(LIBWEBRTC)
-        static InboundRtpStreamStats convert(const webrtc::RTCInboundRtpStreamStats&, const HashMap<String, String>&);
+        static InboundRtpStreamStats convert(const webrtc::RTCInboundRtpStreamStats&, const HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&);
 #endif
     };
 
     struct RemoteInboundRtpStreamStats : ReceivedRtpStreamStats {
-        String localId;
+        RefPtr<StringImpl> localId;
         std::optional<double> roundTripTime;
         std::optional<double> totalRoundTripTime;
         std::optional<double> fractionLost;
@@ -210,10 +210,10 @@ public:
     };
 
     struct OutboundRtpStreamStats : SentRtpStreamStats {
-        String mid;
-        String mediaSourceId;
-        String remoteId;
-        String rid;
+        RefPtr<StringImpl> mid;
+        RefPtr<StringImpl> mediaSourceId;
+        RefPtr<StringImpl> remoteId;
+        RefPtr<StringImpl> rid;
         std::optional<uint64_t> headerBytesSent;
         std::optional<uint64_t> retransmittedPacketsSent;
         std::optional<uint64_t> retransmittedBytesSent;
@@ -231,13 +231,13 @@ public:
         std::optional<double> totalEncodeTime;
         std::optional<double> totalPacketSendDelay;
         std::optional<QualityLimitationReason> qualityLimitationReason;
-        std::optional<Vector<KeyValuePair<String, double>>> qualityLimitationDurations;
+        std::optional<Vector<KeyValuePair<RefPtr<StringImpl>, double>>> qualityLimitationDurations;
         std::optional<uint32_t> qualityLimitationResolutionChanges;
         std::optional<uint32_t> nackCount;
         std::optional<uint32_t> firCount;
         std::optional<uint32_t> pliCount;
         std::optional<bool> active;
-        String scalabilityMode;
+        RefPtr<StringImpl> scalabilityMode;
 
 #if USE(LIBWEBRTC)
         static OutboundRtpStreamStats convert(const webrtc::RTCOutboundRtpStreamStats&);
@@ -245,7 +245,7 @@ public:
     };
 
     struct RemoteOutboundRtpStreamStats : SentRtpStreamStats {
-        String localId;
+        RefPtr<StringImpl> localId;
         std::optional<double> remoteTimestamp;
         std::optional<uint64_t> reportsSent;
         std::optional<double> roundTripTime;
@@ -258,10 +258,10 @@ public:
     };
 
     struct DataChannelStats : Stats {
-        String label;
-        String protocol;
+        RefPtr<StringImpl> label;
+        RefPtr<StringImpl> protocol;
         std::optional<int> dataChannelIdentifier;
-        String state;
+        RefPtr<StringImpl> state;
         std::optional<uint32_t> messagesSent;
         std::optional<uint64_t> bytesSent;
         std::optional<uint32_t> messagesReceived;
@@ -281,9 +281,9 @@ public:
     };
 
     struct IceCandidatePairStats : Stats {
-        String transportId;
-        String localCandidateId;
-        String remoteCandidateId;
+        RefPtr<StringImpl> transportId;
+        RefPtr<StringImpl> localCandidateId;
+        RefPtr<StringImpl> remoteCandidateId;
         IceCandidatePairState state;
         std::optional<bool> nominated;
         std::optional<uint64_t> packetsSent;
@@ -310,18 +310,18 @@ public:
     };
 
     struct IceCandidateStats : Stats {
-        String transportId;
-        std::optional<String> address;
+        RefPtr<StringImpl> transportId;
+        std::optional<RefPtr<StringImpl>> address;
         std::optional<int32_t> port;
-        String protocol;
+        RefPtr<StringImpl> protocol;
         RTCIceCandidateType candidateType;
         std::optional<int32_t> priority;
-        String url;
+        RefPtr<StringImpl> url;
         std::optional<RTCIceServerTransportProtocol> relayProtocol;
-        String foundation;
-        String relatedAddress;
+        RefPtr<StringImpl> foundation;
+        RefPtr<StringImpl> relatedAddress;
         std::optional<int32_t> relatedPort;
-        String usernameFragment;
+        RefPtr<StringImpl> usernameFragment;
         std::optional<RTCIceTcpCandidateType> tcpType;
 
 #if USE(LIBWEBRTC)
@@ -330,10 +330,10 @@ public:
     };
 
     struct CertificateStats : Stats {
-        String fingerprint;
-        String fingerprintAlgorithm;
-        String base64Certificate;
-        String issuerCertificateId;
+        RefPtr<StringImpl> fingerprint;
+        RefPtr<StringImpl> fingerprintAlgorithm;
+        RefPtr<StringImpl> base64Certificate;
+        RefPtr<StringImpl> issuerCertificateId;
 
 #if USE(LIBWEBRTC)
         static CertificateStats convert(const webrtc::RTCCertificateStats&);
@@ -347,11 +347,11 @@ public:
 
     struct CodecStats : Stats {
         uint32_t payloadType { 0 };
-        String transportId;
-        String mimeType;
+        RefPtr<StringImpl> transportId;
+        RefPtr<StringImpl> mimeType;
         std::optional<uint32_t> clockRate;
         std::optional<uint32_t> channels;
-        String sdpFmtpLine;
+        RefPtr<StringImpl> sdpFmtpLine;
 
 #if USE(LIBWEBRTC)
         static CodecStats convert(const webrtc::RTCCodecStats&);
@@ -370,16 +370,16 @@ public:
         std::optional<uint64_t> bytesSent;
         std::optional<uint64_t> bytesReceived;
         std::optional<RTCIceRole> iceRole;
-        String iceLocalUsernameFragment;
+        RefPtr<StringImpl> iceLocalUsernameFragment;
         RTCDtlsTransportState dtlsState;
         std::optional<RTCIceTransportState> iceState;
-        String selectedCandidatePairId;
-        String localCertificateId;
-        String remoteCertificateId;
-        String tlsVersion;
-        String dtlsCipher;
+        RefPtr<StringImpl> selectedCandidatePairId;
+        RefPtr<StringImpl> localCertificateId;
+        RefPtr<StringImpl> remoteCertificateId;
+        RefPtr<StringImpl> tlsVersion;
+        RefPtr<StringImpl> dtlsCipher;
         std::optional<DtlsRole> dtlsRole;
-        String srtpCipher;
+        RefPtr<StringImpl> srtpCipher;
         std::optional<uint32_t> selectedCandidatePairChanges;
 
 #if USE(LIBWEBRTC)
@@ -388,7 +388,7 @@ public:
     };
 
     struct AudioPlayoutStats : Stats {
-        String kind;
+        RefPtr<StringImpl> kind;
         std::optional<double> synthesizedSamplesDuration;
         std::optional<uint32_t> synthesizedSamplesEvents;
         std::optional<double> totalSamplesDuration;
@@ -410,8 +410,8 @@ public:
     };
 
     struct MediaSourceStats : Stats {
-        String trackIdentifier;
-        String kind;
+        RefPtr<StringImpl> trackIdentifier;
+        RefPtr<StringImpl> kind;
 
 #if USE(LIBWEBRTC)
         static MediaSourceStats convert(Type, const webrtc::RTCMediaSourceStats&);

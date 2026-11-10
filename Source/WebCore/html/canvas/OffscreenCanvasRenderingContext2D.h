@@ -43,17 +43,17 @@ public:
 
     OffscreenCanvas& canvas() const { return downcast<OffscreenCanvas>(canvasBase()); }
 
-    void setFont(const String&);
-    void fillText(const String& text, double x, double y, std::optional<double> maxWidth = std::nullopt);
-    void strokeText(const String& text, double x, double y, std::optional<double> maxWidth = std::nullopt);
-    Ref<TextMetrics> measureText(const String& text);
+    void setFont(StringImpl*);
+    void fillText(StringImpl* text, double x, double y, std::optional<double> maxWidth = std::nullopt);
+    void strokeText(StringImpl* text, double x, double y, std::optional<double> maxWidth = std::nullopt);
+    Ref<TextMetrics> measureText(StringImpl* text);
 
 private:
     OffscreenCanvasRenderingContext2D(CanvasBase&, CanvasRenderingContext2DSettings&&);
-    void drawText(const String& text, double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
+    void drawText(StringImpl* text, double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
     RefPtr<ImageBuffer> transferToImageBuffer() final;
     const FontProxy* fontProxy() final;
-    AtomString inheritedLanguage() const final;
+    RefPtr<AtomStringImpl> inheritedLanguage() const final;
     TextDirection toTextDirection(Direction) const;
 };
 

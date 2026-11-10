@@ -217,7 +217,7 @@ void RunLoop::unregisterTimer(TimerBase& timer)
     m_registeredTimers.remove(&timer);
 }
 
-String RunLoop::listActiveTimersForLogging() const
+RefPtr<StringImpl> RunLoop::listActiveTimersForLogging() const
 {
     Vector<ASCIILiteral> timers;
     {
@@ -227,7 +227,7 @@ String RunLoop::listActiveTimersForLogging() const
     }
 
     if (timers.isEmpty())
-        return "{ }"_s;
+        return "{ }"_si;
 
     StringBuilder builder;
     builder.append("{ "_s);

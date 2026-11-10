@@ -38,11 +38,11 @@ class VirtualAuthenticatorManager;
 
 class VirtualHidConnection final : public HidConnection {
 public:
-    static Ref<VirtualHidConnection> create(const String& authenticatorId, const VirtualAuthenticatorConfiguration&, const WeakPtr<VirtualAuthenticatorManager>&);
+    static Ref<VirtualHidConnection> create(StringImpl* authenticatorId, const VirtualAuthenticatorConfiguration&, const WeakPtr<VirtualAuthenticatorManager>&);
     virtual ~VirtualHidConnection() = default;
 
 private:
-    explicit VirtualHidConnection(const String& authenticatorId, const VirtualAuthenticatorConfiguration&, const WeakPtr<VirtualAuthenticatorManager>&);
+    explicit VirtualHidConnection(StringImpl* authenticatorId, const VirtualAuthenticatorConfiguration&, const WeakPtr<VirtualAuthenticatorManager>&);
 
     void initialize() final;
     void terminate() final;
@@ -59,7 +59,7 @@ private:
     std::optional<fido::FidoHidMessage> m_requestMessage;
     Vector<uint8_t> m_nonce;
     uint32_t m_currentChannel { fido::kHidBroadcastChannel };
-    String m_authenticatorId;
+    RefPtr<StringImpl> m_authenticatorId;
 };
 } // namespace WebKit
 #endif

@@ -43,8 +43,8 @@ public:
     ~XSLTProcessor();
 
     void setXSLStyleSheet(RefPtr<XSLStyleSheet>&& styleSheet) { m_stylesheet = WTF::move(styleSheet); }
-    bool transformToString(Node& source, String& resultMIMEType, String& resultString, String& resultEncoding);
-    Ref<Document> createDocumentFromSource(const String& source, const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, LocalFrame*);
+    bool transformToString(Node& source, RefPtr<StringImpl>& resultMIMEType, RefPtr<StringImpl>& resultString, RefPtr<StringImpl>& resultEncoding);
+    Ref<Document> createDocumentFromSource(StringImpl* source, StringImpl* sourceEncoding, StringImpl* sourceMIMEType, Node* sourceNode, LocalFrame*);
     
     // DOM methods
     void importStylesheet(Ref<Node>&& style)
@@ -54,9 +54,9 @@ public:
     RefPtr<DocumentFragment> transformToFragment(Document& callerDocument, Node& source, Document& ouputDocument);
     RefPtr<Document> transformToDocument(Document& callerDocument, Node& source);
     
-    void setParameter(const String& namespaceURI, const String& localName, const String& value);
-    String getParameter(const String& namespaceURI, const String& localName) const;
-    void removeParameter(const String& namespaceURI, const String& localName);
+    void setParameter(StringImpl* namespaceURI, StringImpl* localName, StringImpl* value);
+    RefPtr<StringImpl> getParameter(StringImpl* namespaceURI, StringImpl* localName) const;
+    void removeParameter(StringImpl* namespaceURI, StringImpl* localName);
     void clearParameters() { m_parameters.clear(); }
 
     void reset();
@@ -71,7 +71,7 @@ public:
     // Only for libXSLT callbacks
     XSLStyleSheet* xslStylesheet() const { return m_stylesheet.get(); }
 
-    using ParameterMap = HashMap<String, String>;
+    using ParameterMap = HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>;
 
 private:
     XSLTProcessor() = default;

@@ -76,7 +76,7 @@ public:
     void attemptToResumePlaybackOnClients();
 
     bool hasOpenSessions() const;
-    bool hasOpenSessionWithIdForOrigin(const String& sessionId, const String& origin) const;
+    bool hasOpenSessionWithIdForOrigin(StringImpl* sessionId, StringImpl* origin) const;
     CDMInstance& cdmInstance() { return m_instance; }
     const CDMInstance& cdmInstance() const { return m_instance; }
 
@@ -90,7 +90,7 @@ protected:
     MediaKeys(Document&, bool useDistinctiveIdentifier, bool persistentStateAllowed, const Vector<MediaKeySessionType>&, Ref<CDM>&&, Ref<CDMInstance>&&);
 
     // CDMInstanceClient
-    void unrequestedInitializationDataReceived(const String&, Ref<SharedBuffer>&&) final;
+    void unrequestedInitializationDataReceived(StringImpl*, Ref<SharedBuffer>&&) final;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }

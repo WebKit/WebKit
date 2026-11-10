@@ -63,7 +63,7 @@ void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& en
 
 #if ENABLE(DATACUE_VALUE)
 
-void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& platformValue, const String& type)
+void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& platformValue, StringImpl* type)
 {
     // FIXME: handle datacue creation on worker.
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());

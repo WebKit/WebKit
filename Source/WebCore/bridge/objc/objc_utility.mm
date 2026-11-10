@@ -165,7 +165,7 @@ JSValue convertNSStringToString(JSGlobalObject* lexicalGlobalObject, NSString *n
 {
     VM& vm = lexicalGlobalObject->vm();
     JSLockHolder lock(vm);
-    JSValue aValue = jsString(vm, String(nsstring));
+    JSValue aValue = jsString(vm, StringImpl::create(nsstring));
     return aValue;
 }
 
@@ -331,7 +331,7 @@ ObjcValueType objcValueTypeForType(const char* rawType)
 Exception *throwError(JSGlobalObject* lexicalGlobalObject, ThrowScope& scope, NSString *message)
 {
     ASSERT(message);
-    return throwException(lexicalGlobalObject, scope, JSC::createError(lexicalGlobalObject, String(message)));
+    return throwException(lexicalGlobalObject, scope, JSC::createError(lexicalGlobalObject, StringImpl::create(message).get()));
 }
 
 }

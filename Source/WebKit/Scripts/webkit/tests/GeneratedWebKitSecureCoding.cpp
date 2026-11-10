@@ -51,17 +51,17 @@ static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingTypeFromWKKeyedCod
 }
 
 #if ENABLE(DATA_DETECTION)
-template<typename T> RetainPtr<NSDictionary> dictionaryFromVector(const Vector<std::pair<String, RetainPtr<T>>>& vector)
+template<typename T> RetainPtr<NSDictionary> dictionaryFromVector(const Vector<std::pair<RefPtr<StringImpl>, RetainPtr<T>>>& vector)
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:vector.size()];
     for (auto& pair : vector)
-        dictionary[pair.first] = pair.second;
+        dictionary[createNSString(pair.first).get()] = pair.second;
     return dictionary;
 }
 #endif // ENABLE(DATA_DETECTION)
 
 #if ENABLE(DATA_DETECTION)
-template<typename T> RetainPtr<NSDictionary> dictionaryFromOptionalVector(const std::optional<Vector<std::pair<String, RetainPtr<T>>>>& vector)
+template<typename T> RetainPtr<NSDictionary> dictionaryFromOptionalVector(const std::optional<Vector<std::pair<RefPtr<StringImpl>, RetainPtr<T>>>>& vector)
 {
     if (!vector)
         return nil;
@@ -70,21 +70,21 @@ template<typename T> RetainPtr<NSDictionary> dictionaryFromOptionalVector(const 
 #endif // ENABLE(DATA_DETECTION)
 
 #if ENABLE(DATA_DETECTION)
-template<typename T> Vector<std::pair<String, RetainPtr<T>>> vectorFromDictionary(NSDictionary *dictionary)
+template<typename T> Vector<std::pair<RefPtr<StringImpl>, RetainPtr<T>>> vectorFromDictionary(NSDictionary *dictionary)
 {
     if (![dictionary isKindOfClass:NSDictionary.class])
         return { };
-    __block Vector<std::pair<String, RetainPtr<T>>> result;
+    __block Vector<std::pair<RefPtr<StringImpl>, RetainPtr<T>>> result;
     [dictionary enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL*){
         if ([key isKindOfClass:NSString.class] && [value isKindOfClass:IPC::getClass<T>()])
-            result.append((NSString *)key, (T)value);
+            result.append(StringImpl::create((NSString *)key), (T)value);
     }];
     return result;
 }
 #endif // ENABLE(DATA_DETECTION)
 
 #if ENABLE(DATA_DETECTION)
-template<typename T> std::optional<Vector<std::pair<String, RetainPtr<T>>>> optionalVectorFromDictionary(NSDictionary *dictionary)
+template<typename T> std::optional<Vector<std::pair<RefPtr<StringImpl>, RetainPtr<T>>>> optionalVectorFromDictionary(NSDictionary *dictionary)
 {
     if (![dictionary isKindOfClass:NSDictionary.class])
         return std::nullopt;
@@ -281,8 +281,8 @@ CoreIPCDDScannerResult::CoreIPCDDScannerResult(
     RetainPtr<NSNumber>&& OptionalNumberKey,
     Vector<RetainPtr<DDScannerResult>>&& ArrayKey,
     std::optional<Vector<RetainPtr<DDScannerResult>>>&& OptionalArrayKey,
-    Vector<std::pair<String, RetainPtr<Number>>>&& DictionaryKey,
-    std::optional<Vector<std::pair<String, RetainPtr<DDScannerResult>>>>&& OptionalDictionaryKey,
+    Vector<std::pair<RefPtr<StringImpl>, RetainPtr<Number>>>&& DictionaryKey,
+    std::optional<Vector<std::pair<RefPtr<StringImpl>, RetainPtr<DDScannerResult>>>>&& OptionalDictionaryKey,
     Vector<RetainPtr<NSData>>&& DataArrayKey,
     Vector<RetainPtr<SecTrustRef>>&& SecTrustArrayKey
 )

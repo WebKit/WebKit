@@ -39,9 +39,9 @@ class WorkerReportingProxy : public AbstractCanMakeCheckedPtr {
 public:
     virtual ~WorkerReportingProxy() = default;
 
-    virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) = 0;
+    virtual void postExceptionToWorkerObject(StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL) = 0;
 
-    virtual void reportErrorToWorkerObject(const String&) = 0;
+    virtual void reportErrorToWorkerObject(StringImpl*) = 0;
 
     // Invoked when close() is invoked on the worker context.
     virtual void workerGlobalScopeClosed() = 0;

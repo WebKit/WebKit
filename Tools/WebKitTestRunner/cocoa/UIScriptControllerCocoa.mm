@@ -159,18 +159,18 @@ void UIScriptControllerCocoa::addViewToWindow(JSValueRef callback)
 
 void UIScriptControllerCocoa::overridePreference(JSStringRef preferenceRef, JSStringRef valueRef)
 {
-    if (toWTFString(preferenceRef) == "WebKitMinimumFontSize"_s)
-        webView().configuration.preferences.minimumFontSize = toWTFString(valueRef).toDouble();
+    if (equal(toWTFString(preferenceRef), "WebKitMinimumFontSize"_s))
+        webView().configuration.preferences.minimumFontSize = toDouble(toWTFString(valueRef));
 }
 
 void UIScriptControllerCocoa::findString(JSStringRef string, unsigned long options, unsigned long maxCount)
 {
-    [webView() _findString:toWTFString(string).createNSString().get() options:options maxCount:maxCount];
+    [webView() _findString:createNSString(toWTFString(string)).get() options:options maxCount:maxCount];
 }
 
 JSObjectRef UIScriptControllerCocoa::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
 {
-    NSDictionary *contentDictionary = [webView() _contentsOfUserInterfaceItem:toWTFString(interfaceItem).createNSString().get()];
+    NSDictionary *contentDictionary = [webView() _contentsOfUserInterfaceItem:createNSString(toWTFString(interfaceItem)).get()];
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:contentDictionary inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
@@ -286,9 +286,9 @@ void UIScriptControllerCocoa::insertAttachmentForFilePath(JSStringRef filePath, 
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
     auto testURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, TestController::singleton().currentTestURL()));
-    auto attachmentURL = [NSURL fileURLWithPath:toWTFString(filePath).createNSString().get() relativeToURL:(__bridge NSURL *)testURL.get()];
+    auto attachmentURL = [NSURL fileURLWithPath:createNSString(toWTFString(filePath)).get() relativeToURL:(__bridge NSURL *)testURL.get()];
     auto fileWrapper = adoptNS([[NSFileWrapper alloc] initWithURL:attachmentURL options:0 error:nil]);
-    [webView() _insertAttachmentWithFileWrapper:fileWrapper.get() contentType:toWTFString(contentType).createNSString().get() completion:^(BOOL success) {
+    [webView() _insertAttachmentWithFileWrapper:fileWrapper.get() contentType:createNSString(toWTFString(contentType)).get() completion:^(BOOL success) {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -557,10 +557,10 @@ void UIScriptControllerCocoa::performTextExtractionInteraction(JSStringRef jsAct
     RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:*action]);
 
     if (options->nodeIdentifier && JSStringGetLength(options->nodeIdentifier.get()) > 0)
-        [interaction setNodeIdentifier:toWTFString(options->nodeIdentifier.get()).createNSString().get()];
+        [interaction setNodeIdentifier:createNSString(toWTFString(options->nodeIdentifier.get())).get()];
 
     if (options->text && JSStringGetLength(options->text.get()) > 0)
-        [interaction setText:toWTFString(options->text.get()).createNSString().get()];
+        [interaction setText:createNSString(toWTFString(options->text.get())).get()];
 
     [interaction setReplaceAll:options->replaceAll];
     [interaction setScrollToVisible:options->scrollToVisible];
@@ -640,7 +640,7 @@ JSObjectRef UIScriptControllerCocoa::fixedContainerEdgeColors() const
 {
     auto colorDescriptionOrNull = [fixedEdges = webView()._fixedContainerEdges](WebCore::CocoaColor *color, _WKRectEdge edge) -> id {
         if (color)
-            return WebCoreTestSupport::serializationForCSS(color).createNSString().autorelease();
+            return createNSString(WebCoreTestSupport::serializationForCSS(color)).autorelease();
         if (fixedEdges & edge)
             return @"multiple";
         return NSNull.null;
@@ -679,7 +679,7 @@ void UIScriptControllerCocoa::cookiesForDomain(JSStringRef jsDomain, JSValueRef 
     [cookieStore getAllCookies:[this, callbackID, domain = toWTFString(jsDomain)](NSArray<NSHTTPCookie *> *cookies) {
         RetainPtr matchingCookieProperties = adoptNS([NSMutableArray new]);
         for (NSHTTPCookie *cookie in cookies) {
-            if (![cookie.domain isEqualToString:domain.createNSString().get()])
+            if (![cookie.domain isEqualToString:createNSString(domain).get()])
                 continue;
             [matchingCookieProperties addObject:propertyDictionaryForJS(cookie)];
         }

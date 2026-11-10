@@ -49,7 +49,7 @@ RemoteBindGroupProxy::~RemoteBindGroupProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteBindGroupProxy::setLabel(String&& label)
+void RemoteBindGroupProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteBindGroup::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

@@ -60,7 +60,7 @@ public:
     virtual constexpr MediaPlayerType mediaPlayerType() const = 0;
 
     using LoadOptions = MediaPlayer::LoadOptions;
-    virtual void load(const String&) { }
+    virtual void load(StringImpl*) { }
     virtual void load(const URL& url, const LoadOptions&) { load(url.string()); }
 
 #if ENABLE(MEDIA_SOURCE)
@@ -106,8 +106,8 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     virtual NSArray *timedMetadata() const { return nil; }
-    virtual String accessLog() const { return emptyString(); }
-    virtual String errorLog() const { return emptyString(); }
+    virtual RefPtr<StringImpl> accessLog() const { return emptyString(); }
+    virtual RefPtr<StringImpl> errorLog() const { return emptyString(); }
 #endif
     virtual long platformErrorCode() const { return 0; }
 
@@ -224,8 +224,8 @@ public:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-    virtual String wirelessPlaybackTargetName() const { return emptyString(); }
-    virtual String wirelessPlaybackRouteName() const { return emptyString(); }
+    virtual RefPtr<StringImpl> wirelessPlaybackTargetName() const { return emptyString(); }
+    virtual RefPtr<StringImpl> wirelessPlaybackRouteName() const { return emptyString(); }
     virtual MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const { return MediaPlayer::WirelessPlaybackTargetType::TargetTypeNone; }
 
     virtual bool wirelessVideoPlaybackDisabled() const { return true; }
@@ -261,20 +261,20 @@ public:
     virtual unsigned audioDecodedByteCount() const { return 0; }
     virtual unsigned videoDecodedByteCount() const { return 0; }
 
-    HashSet<SecurityOriginData> originsInMediaCache(const String&) { return { }; }
-    void clearMediaCache(const String&, WallTime) { }
-    void clearMediaCacheForOrigins(const String&, const HashSet<SecurityOriginData>&) { }
+    HashSet<SecurityOriginData> originsInMediaCache(StringImpl*) { return { }; }
+    void clearMediaCache(StringImpl*, WallTime) { }
+    void clearMediaCacheForOrigins(StringImpl*, const HashSet<SecurityOriginData>&) { }
 
     virtual void setPrivateBrowsingMode(bool) { }
 
-    virtual String engineDescription() const { return emptyString(); }
+    virtual RefPtr<StringImpl> engineDescription() const { return emptyString(); }
 
 #if ENABLE(WEB_AUDIO)
     virtual AudioSourceProvider* audioSourceProvider() { return 0; }
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    virtual RefPtr<LegacyCDMSession> createSession(const String&, LegacyCDMSessionClient&) { return nullptr; }
+    virtual RefPtr<LegacyCDMSession> createSession(StringImpl*, LegacyCDMSessionClient&) { return nullptr; }
     virtual void setCDM(LegacyCDM*) { }
     virtual void setCDMSession(LegacyCDMSession*) { }
     virtual void keyAdded() { }
@@ -303,7 +303,7 @@ public:
 #endif
 #endif
 
-    virtual String languageOfPrimaryAudioTrack() const { return emptyString(); }
+    virtual RefPtr<StringImpl> languageOfPrimaryAudioTrack() const { return emptyString(); }
 
     virtual size_t extraMemoryCost() const
     {
@@ -360,7 +360,7 @@ public:
 
     virtual void setResourceOwner(const ProcessIdentity&) { }
 
-    virtual String errorMessage() const { return { }; }
+    virtual RefPtr<StringImpl> errorMessage() const { return { }; }
 
     virtual void renderVideoWillBeDestroyed() { }
 
@@ -374,10 +374,10 @@ public:
     virtual void setVideoTarget(const PlatformVideoTarget&) { }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    virtual String defaultSpatialTrackingLabel() const { return emptyString(); }
-    virtual void setDefaultSpatialTrackingLabel(const String&) { }
-    virtual String spatialTrackingLabel() const { return emptyString(); }
-    virtual void setSpatialTrackingLabel(const String&) { }
+    virtual RefPtr<StringImpl> defaultSpatialTrackingLabel() const { return emptyString(); }
+    virtual void setDefaultSpatialTrackingLabel(StringImpl*) { }
+    virtual RefPtr<StringImpl> spatialTrackingLabel() const { return emptyString(); }
+    virtual void setSpatialTrackingLabel(StringImpl*) { }
 #endif
 
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
@@ -398,7 +398,7 @@ public:
 
     virtual void setMessageClientForTesting(WeakPtr<MessageClientForTesting>) { }
 
-    virtual void elementIdChanged(const String&) const { }
+    virtual void elementIdChanged(StringImpl*) const { }
 
     static WEBCORE_EXPORT RefPtr<ShareableBitmap> bitmapFromImage(NativeImage&);
 

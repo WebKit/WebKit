@@ -40,7 +40,7 @@ using namespace WebCore;
 
 SystemSettingsManagerProxy::SystemSettingsManagerProxy() = default;
 
-String SystemSettingsManagerProxy::themeName() const
+RefPtr<StringImpl> SystemSettingsManagerProxy::themeName() const
 {
     return emptyString();
 }
@@ -50,9 +50,9 @@ bool SystemSettingsManagerProxy::darkMode() const
     return false;
 }
 
-String SystemSettingsManagerProxy::fontName() const
+RefPtr<StringImpl> SystemSettingsManagerProxy::fontName() const
 {
-    return "Sans 10"_s;
+    return "Sans 10"_si;
 }
 
 int SystemSettingsManagerProxy::xftAntialias() const
@@ -65,14 +65,14 @@ int SystemSettingsManagerProxy::xftHinting() const
     return -1;
 }
 
-String SystemSettingsManagerProxy::xftHintStyle() const
+RefPtr<StringImpl> SystemSettingsManagerProxy::xftHintStyle() const
 {
     return emptyString();
 }
 
-String SystemSettingsManagerProxy::xftRGBA() const
+RefPtr<StringImpl> SystemSettingsManagerProxy::xftRGBA() const
 {
-    return "rgb"_s;
+    return "rgb"_si;
 }
 
 int SystemSettingsManagerProxy::xftDPI() const
@@ -118,7 +118,7 @@ WebCore::InterfaceContrastPreference SystemSettingsManagerProxy::interfaceContra
 #endif // !PLATFORM(GTK) && (!PLATFORM(WPE) || !ENABLE(WPE_PLATFORM))
 
 #if !PLATFORM(GTK)
-void SystemSettingsManagerProxy::updateFontProperties(const String& fontName, WebCore::SystemSettingsState& changedState)
+void SystemSettingsManagerProxy::updateFontProperties(StringImpl* fontName, WebCore::SystemSettingsState& changedState)
 {
     changedState.fontName = fontName;
 }
@@ -135,7 +135,7 @@ void SystemSettingsManagerProxy::settingsDidChange()
     SystemSettings::State changedState;
 
     auto themeName = this->themeName();
-    if (oldState.themeName != themeName)
+    if (!oldState.themeName || !equal(*oldState.themeName, themeName))
         changedState.themeName = themeName;
 
     auto darkMode = this->darkMode();
@@ -143,7 +143,7 @@ void SystemSettingsManagerProxy::settingsDidChange()
         changedState.darkMode = darkMode;
 
     auto fontName = this->fontName();
-    if (oldState.fontName != fontName)
+    if (!oldState.fontName || !equal(*oldState.fontName, fontName))
         updateFontProperties(fontName, changedState);
 
     auto xftAntialias = this->xftAntialias();
@@ -159,11 +159,11 @@ void SystemSettingsManagerProxy::settingsDidChange()
         changedState.xftDPI = xftDPI;
 
     auto xftHintStyle = this->xftHintStyle();
-    if (oldState.xftHintStyle != xftHintStyle)
+    if (!oldState.xftHintStyle || !equal(*oldState.xftHintStyle, xftHintStyle))
         changedState.xftHintStyle = xftHintStyle;
 
     auto xftRGBA = this->xftRGBA();
-    if (oldState.xftRGBA != xftRGBA)
+    if (!oldState.xftRGBA || !equal(*oldState.xftRGBA, xftRGBA))
         changedState.xftRGBA = xftRGBA;
 
     auto followFontSystemSettings = this->followFontSystemSettings();

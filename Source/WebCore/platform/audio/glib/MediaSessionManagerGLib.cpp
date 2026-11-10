@@ -330,14 +330,14 @@ void MediaSessionManagerGLib::updateNowPlayingInfo()
     m_haveEverRegisteredAsNowPlayingApplication = true;
 
     if (m_nowPlayingManager->setNowPlayingInfo(*nowPlayingInfo))
-        ALWAYS_LOG(LOGIDENTIFIER, "title = \"", nowPlayingInfo->metadata.title, "\", isPlaying = ", nowPlayingInfo->isPlaying, ", duration = ", nowPlayingInfo->duration, ", now = ", nowPlayingInfo->currentTime, ", id = ", (nowPlayingInfo->uniqueIdentifier ? nowPlayingInfo->uniqueIdentifier->toUInt64() : 0), ", registered = ", m_registeredAsNowPlayingApplication, ", src = \"", nowPlayingInfo->metadata.artwork ? nowPlayingInfo->metadata.artwork->src : String(), "\"");
+        ALWAYS_LOG(LOGIDENTIFIER, "title = \"", nowPlayingInfo->metadata.title, "\", isPlaying = ", nowPlayingInfo->isPlaying, ", duration = ", nowPlayingInfo->duration, ", now = ", nowPlayingInfo->currentTime, ", id = ", (nowPlayingInfo->uniqueIdentifier ? nowPlayingInfo->uniqueIdentifier->toUInt64() : 0), ", registered = ", m_registeredAsNowPlayingApplication, ", src = \"", nowPlayingInfo->metadata.artwork ? nowPlayingInfo->metadata.artwork->src : nullptr, "\"");
 
     if (!m_registeredAsNowPlayingApplication) {
         m_registeredAsNowPlayingApplication = true;
         providePresentingApplicationPIDIfNecessary();
     }
 
-    if (!nowPlayingInfo->metadata.title.isEmpty())
+    if (!isEmpty(nowPlayingInfo->metadata.title))
         m_lastUpdatedNowPlayingTitle = nowPlayingInfo->metadata.title;
 
     double duration = nowPlayingInfo->duration;

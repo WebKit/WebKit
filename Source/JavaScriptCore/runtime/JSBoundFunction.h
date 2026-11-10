@@ -65,7 +65,7 @@ public:
             return m_nameMayBeNull.get();
         return nameSlow(vm);
     }
-    String nameString(VM& vm)
+    RefPtr<StringImpl> nameString(VM& vm)
     {
         if (!m_nameMayBeNull)
             name(vm);
@@ -73,7 +73,7 @@ public:
         bool allocationAllowed = false;
         return m_nameMayBeNull->tryGetValue(allocationAllowed);
     }
-    String nameStringWithoutGC(VM& vm)
+    RefPtr<StringImpl> nameStringWithoutGC(VM& vm)
     {
         if (m_nameMayBeNull) {
             ASSERT(!m_nameMayBeNull->isRope());
@@ -126,7 +126,7 @@ private:
     JSString* nameSlow(VM&);
     NODELETE double lengthSlow(VM&);
     bool canConstructSlow();
-    String nameStringWithoutGCSlow(VM&);
+    RefPtr<StringImpl> nameStringWithoutGCSlow(VM&);
 
     DECLARE_DEFAULT_FINISH_CREATION;
 

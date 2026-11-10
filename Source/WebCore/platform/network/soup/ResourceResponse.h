@@ -37,7 +37,7 @@ class ResourceResponse : public ResourceResponseBase {
 public:
     ResourceResponse() = default;
 
-    ResourceResponse(URL&& url, String&& mimeType, long long expectedLength, String&& textEncodingName)
+    ResourceResponse(URL&& url, RefPtr<StringImpl>&& mimeType, long long expectedLength, RefPtr<StringImpl>&& textEncodingName)
         : ResourceResponseBase(WTF::move(url), WTF::move(mimeType), expectedLength, WTF::move(textEncodingName))
     {
     }
@@ -58,12 +58,12 @@ public:
 private:
     friend class ResourceResponseBase;
 
-    String m_sniffedContentType;
+    RefPtr<StringImpl> m_sniffedContentType;
     GRefPtr<GTlsCertificate> m_certificate;
     GTlsCertificateFlags m_tlsErrors { static_cast<GTlsCertificateFlags>(0) };
 
     void doUpdateResourceResponse() { }
-    String platformSuggestedFilename() const;
+    RefPtr<StringImpl> platformSuggestedFilename() const;
     CertificateInfo platformCertificateInfo(std::span<const std::byte>) const;
 };
 

@@ -57,7 +57,7 @@ namespace TestWebKitAPI {
 
 using namespace WebCore::QuirkSelectors;
 
-static String shippedQuirkTableJSON();
+static RefPtr<StringImpl> shippedQuirkTableJSON();
 
 class QuirksTest : public testing::Test {
 public:
@@ -69,9 +69,9 @@ public:
     }
 };
 
-static std::optional<String> customUserAgentFor(ASCIILiteral urlString)
+static std::optional<RefPtr<StringImpl>> customUserAgentFor(ASCIILiteral urlString)
 {
-    return WebCore::Quirks::needsCustomUserAgentOverride(URL { urlString }, "TestApp"_s, "TestBase/1.0 (KHTML, like Gecko) Trailer/1.0"_s);
+    return WebCore::Quirks::needsCustomUserAgentOverride(URL { urlString }, "TestApp"_si, "TestBase/1.0 (KHTML, like Gecko) Trailer/1.0"_si);
 }
 
 static WebCore::QuirksData resolveQuirksForTopURL(ASCIILiteral urlString)
@@ -172,7 +172,7 @@ TEST_F(QuirksTest, EmbeddedQuirksResolveFromTheDocumentURL)
 static bool cnameCloakingCookieCapExempt(ASCIILiteral firstPartyURLString, ASCIILiteral cnameHostName)
 {
     auto patterns = WebCore::Quirks::cnameCloakingCookieCapExemptTargetPatterns(URL { firstPartyURLString });
-    return WebCore::Quirks::anyPatternMatchesCNAMETarget(patterns, String { cnameHostName });
+    return WebCore::Quirks::anyPatternMatchesCNAMETarget(patterns, StringImpl::create(cnameHostName).ptr());
 }
 
 TEST_F(QuirksTest, CNAMECloakingCookieCapIsSkippedOnlyBetweenDomainsOfOneOwner)
@@ -191,7 +191,7 @@ TEST_F(QuirksTest, CNAMECloakingCookieCapIsSkippedOnlyBetweenDomainsOfOneOwner)
 }
 #endif
 
-static String shippedQuirkTableJSON()
+static RefPtr<StringImpl> shippedQuirkTableJSON()
 {
 #if PLATFORM(PLAYSTATION)
     return { };
@@ -204,21 +204,21 @@ static String shippedQuirkTableJSON()
     RetainPtr url = adoptCF(CFBundleCopyResourceURL(resourcesBundle.get(), CFSTR("QuirkTable"), CFSTR("json"), nullptr));
     if (!url)
         return { };
-    String path = adoptCF(CFURLCopyFileSystemPath(url.get(), kCFURLPOSIXPathStyle)).get();
+    RefPtr<StringImpl> path = StringImpl::create(adoptCF(CFURLCopyFileSystemPath(url.get(), kCFURLPOSIXPathStyle)).get());
 #else
     auto path = FileSystem::pathByAppendingComponents(StringView::fromLatin1(WEBKIT_SRC_DIR), std::array<StringView, 4> { "Source"_s, "WebCore"_s, "page"_s, "QuirkTable.json"_s });
 #endif
     auto contents = FileSystem::readEntireFile(path);
     if (!contents)
         return { };
-    return String::fromUTF8(contents->span());
+    return StringImpl::fromUTF8(contents->span());
 #endif
 }
 
 TEST_F(QuirksTest, ShippedQuirkTableParsesWithoutErrors)
 {
     auto json = shippedQuirkTableJSON();
-    if (json.isNull())
+    if (!json)
         GTEST_SKIP() << "The shipped quirk table is unavailable on this platform";
 
     auto result = WebCore::parseQuirkTable(json);
@@ -232,12 +232,12 @@ static WebCore::QuirkTableParseResult parseRow(ASCIILiteral rowJSON)
     return WebCore::parseQuirkTable(makeString("{ \"quirks\": ["_s, rowJSON, "] }"_s));
 }
 
-static String describeErrors(const Vector<WebCore::QuirkTableParseError>& errors)
+static RefPtr<StringImpl> describeErrors(const Vector<WebCore::QuirkTableParseError>& errors)
 {
     auto descriptions = WTF::map(errors, [](auto& error) {
         return error.description();
     });
-    return makeStringByJoining(descriptions, " | "_s);
+    return makeStringByJoining(descriptions, " | "_si);
 }
 
 static void expectRowRejected(ASCIILiteral rowJSON, WebCore::QuirkTableParseErrorKind kind, ASCIILiteral field = { }, ASCIILiteral value = { })
@@ -315,10 +315,10 @@ TEST_F(QuirksTest, RowsWithBehaviorErrorsAreRejected)
 
 TEST_F(QuirksTest, ParseErrorsDescribeWhereTheyAre)
 {
-    auto onlyErrorDescription = [](ASCIILiteral json) -> String {
+    auto onlyErrorDescription = [](ASCIILiteral json) -> RefPtr<StringImpl> {
         auto result = WebCore::parseQuirkTable(json);
         EXPECT_EQ(result.errors.size(), 1u) << describeErrors(result.errors);
-        return result.errors.isEmpty() ? String { } : result.errors[0].description();
+        return result.errors.isEmpty() ? nullptr : result.errors[0].description();
     };
 
     EXPECT_EQ(onlyErrorDescription("[]"_s), "the top level must be an object whose only key is \"quirks\", an array of rows"_str);
@@ -421,13 +421,13 @@ TEST_F(QuirksTest, SiteSpecificQuirksResolveWithoutADocument)
     EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).hasBehaviors());
 }
 
-static Vector<String> scriptsForScriptURL(const WebCore::QuirksData& quirks, ASCIILiteral scriptURLString)
+static Vector<RefPtr<StringImpl>> scriptsForScriptURL(const WebCore::QuirksData& quirks, ASCIILiteral scriptURLString)
 {
-    Vector<String> scripts;
+    Vector<RefPtr<StringImpl>> scripts;
     WebCore::URLMatchContext scriptURLContext { URL { scriptURLString } };
 
     for (const auto& behavior : quirks.behaviors()) {
-        if (!behavior.script.isEmpty() && behavior.secondaryURLConditionMatches(scriptURLContext))
+        if (!isEmpty(behavior.script) && behavior.secondaryURLConditionMatches(scriptURLContext))
             scripts.append(behavior.script);
     }
 
@@ -440,7 +440,7 @@ TEST_F(QuirksTest, ScriptQuirkWithoutAScriptURLMatchAppliesToEveryScript)
 
     auto scripts = scriptsForScriptURL(quirks, "https://cdn.example.com/vendor.js"_s);
     ASSERT_EQ(scripts.size(), 1u);
-    EXPECT_TRUE(scripts[0].contains("app=listen:60"_s));
+    EXPECT_TRUE(contains(scripts[0], "app=listen:60"_s));
 }
 
 TEST_F(QuirksTest, ScriptQuirkWithAScriptURLMatchAppliesOnlyToMatchingScripts)
@@ -449,7 +449,7 @@ TEST_F(QuirksTest, ScriptQuirkWithAScriptURLMatchAppliesOnlyToMatchingScripts)
 
     auto scripts = scriptsForScriptURL(quirks, "https://ceac.state.gov/js/CheckBrowserClose.js"_s);
     ASSERT_EQ(scripts.size(), 1u);
-    EXPECT_TRUE(scripts[0].contains("__ceacBeforeUnloadFix"_s));
+    EXPECT_TRUE(contains(scripts[0], "__ceacBeforeUnloadFix"_s));
 
     EXPECT_TRUE(scriptsForScriptURL(quirks, "https://ceac.state.gov/js/Other.js"_s).isEmpty());
 }
@@ -464,10 +464,10 @@ TEST_F(QuirksTest, BaiduChatInputScriptGetsAChromeTokenInTheUserAgent)
     ASSERT_EQ(scripts.size(), 1u);
     // The Chrome token is only returned to callers whose stack includes the chat-input script, so that other
     // scripts on the page keep seeing the real user agent.
-    EXPECT_TRUE(scripts[0].contains("Navigator.prototype"_s));
-    EXPECT_TRUE(scripts[0].contains("new Error().stack"_s));
-    EXPECT_TRUE(scripts[0].contains(" Chrome/152.0.0.0"_s));
-    EXPECT_FALSE(scripts[0].contains("Android"_s));
+    EXPECT_TRUE(contains(scripts[0], "Navigator.prototype"_s));
+    EXPECT_TRUE(contains(scripts[0], "new Error().stack"_s));
+    EXPECT_TRUE(contains(scripts[0], " Chrome/152.0.0.0"_s));
+    EXPECT_FALSE(contains(scripts[0], "Android"_s));
 
     EXPECT_TRUE(scriptsForScriptURL(quirks, "https://pss.bdstatic.com/r/www/cache/static/protocol/https/bundles/result.js"_s).isEmpty());
     EXPECT_TRUE(scriptsForScriptURL(quirks, "https://pss.bdstatic.com/r/www/cache/static/molecules/app/other/result.js"_s).isEmpty());
@@ -488,7 +488,7 @@ TEST_F(QuirksTest, DuolingoEnglishTestGetsAChromeTokenInTheUserAgent)
 {
     for (auto url : { "https://englishtest.duolingo.com/practice"_s, "https://englishtest.duolingo.com/test/practice"_s, "https://englishtest.duolingo.cn/practice"_s }) {
 #if PLATFORM(COCOA)
-        EXPECT_EQ(customUserAgentFor(url), String { "TestBase/1.0 (KHTML, like Gecko, like Chrome/157.) Trailer/1.0"_s }) << url.characters();
+        EXPECT_EQ(customUserAgentFor(url), "TestBase/1.0 (KHTML, like Gecko, like Chrome/157.) Trailer/1.0"_si) << url.characters();
 #else
         EXPECT_FALSE(customUserAgentFor(url).has_value()) << url.characters();
 #endif
@@ -507,7 +507,7 @@ TEST_F(QuirksTest, DocumentsWithoutAScriptQuirkGetNoParameters)
 
 static WebCore::QuirkBehavior behaviorWithScript(ASCIILiteral script, ASCIILiteral secondaryURL = { })
 {
-    WebCore::QuirkBehavior behavior { .id = WebCore::QuirkBehaviorID::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk, .script = String { script } };
+    WebCore::QuirkBehavior behavior { .id = WebCore::QuirkBehaviorID::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk, .script = StringImpl::create(script) };
     if (!secondaryURL.isNull())
         behavior.secondaryURL = { *WebCore::QuirkMatchPattern::parse(secondaryURL) };
     return behavior;
@@ -515,7 +515,7 @@ static WebCore::QuirkBehavior behaviorWithScript(ASCIILiteral script, ASCIILiter
 
 static WebCore::QuirkBehavior behaviorWithElementSelector(ASCIILiteral selector)
 {
-    return { .id = WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk, .elementSelector = String { selector } };
+    return { .id = WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk, .elementSelector = StringImpl::create(selector) };
 }
 
 TEST_F(QuirksTest, ParametersAreOnlyReturnedForTheBehaviorThatSuppliedThem)
@@ -529,10 +529,10 @@ TEST_F(QuirksTest, ParametersAreOnlyReturnedForTheBehaviorThatSuppliedThem)
     for (const auto& behavior : behaviors)
         quirks.addBehavior(behavior);
 
-    WebCore::URLMatchContext context { URL { "https://www.example.com/app.js"_s } };
+    WebCore::URLMatchContext context { URL { "https://www.example.com/app.js"_si } };
 
     EXPECT_TRUE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::NeedsAirIndiaExpressLayeringQuirk));
-    EXPECT_EQ(scriptsForScriptURL(quirks, "https://www.example.com/app.js"_s), Vector<String> { "script"_str });
+    EXPECT_EQ(scriptsForScriptURL(quirks, "https://www.example.com/app.js"_s), Vector<RefPtr<StringImpl>> { "script"_str });
 }
 
 TEST_F(QuirksTest, OneQuirkCanCarryDifferentParametersForDifferentScriptURLs)
@@ -549,18 +549,18 @@ TEST_F(QuirksTest, OneQuirkCanCarryDifferentParametersForDifferentScriptURLs)
     for (const auto& behavior : behaviors)
         quirks.addBehavior(behavior);
 
-    EXPECT_EQ(scriptsForScriptURL(quirks, "https://first.example.com/a.js"_s), Vector<String> { "firstScript"_str });
-    EXPECT_EQ(scriptsForScriptURL(quirks, "https://second.example.com/b.js"_s), Vector<String> { "secondScript"_str });
+    EXPECT_EQ(scriptsForScriptURL(quirks, "https://first.example.com/a.js"_s), Vector<RefPtr<StringImpl>> { "firstScript"_str });
+    EXPECT_EQ(scriptsForScriptURL(quirks, "https://second.example.com/b.js"_s), Vector<RefPtr<StringImpl>> { "secondScript"_str });
 
     EXPECT_TRUE(scriptsForScriptURL(quirks, "https://third.example.com/c.js"_s).isEmpty());
 
     constexpr auto id = WebCore::QuirkBehaviorID::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk;
-    EXPECT_TRUE(quirks.behaviorAppliesToURL(id, URL { "https://first.example.com/a.js"_s }));
-    EXPECT_TRUE(quirks.behaviorAppliesToURL(id, URL { "https://second.example.com/b.js"_s }));
-    EXPECT_FALSE(quirks.behaviorAppliesToURL(id, URL { "https://third.example.com/c.js"_s }));
+    EXPECT_TRUE(quirks.behaviorAppliesToURL(id, URL { "https://first.example.com/a.js"_si }));
+    EXPECT_TRUE(quirks.behaviorAppliesToURL(id, URL { "https://second.example.com/b.js"_si }));
+    EXPECT_FALSE(quirks.behaviorAppliesToURL(id, URL { "https://third.example.com/c.js"_si }));
 
     quirks.addBehavior(behaviorWithScript("unscopedScript"_s));
-    EXPECT_TRUE(quirks.behaviorAppliesToURL(id, URL { "https://third.example.com/c.js"_s }));
+    EXPECT_TRUE(quirks.behaviorAppliesToURL(id, URL { "https://third.example.com/c.js"_si }));
 }
 
 TEST_F(QuirksTest, EveryMatchingRowContributesWhenSeveralSupplyTheSameBehavior)
@@ -576,7 +576,7 @@ TEST_F(QuirksTest, EveryMatchingRowContributesWhenSeveralSupplyTheSameBehavior)
     for (const auto& behavior : behaviors)
         quirks.addBehavior(behavior);
 
-    Vector<String> expected { "firstScript"_str, "secondScript"_str };
+    Vector<RefPtr<StringImpl>> expected { "firstScript"_str, "secondScript"_str };
     EXPECT_EQ(scriptsForScriptURL(quirks, "https://first.example.com/a.js"_s), expected);
 }
 
@@ -593,7 +593,7 @@ TEST_F(QuirksTest, IdenticalBehaviorsWithParametersAreRecordedOnce)
     other.addBehavior(behavior);
     quirks.merge(other);
 
-    Vector<String> expected { "script"_str };
+    Vector<RefPtr<StringImpl>> expected { "script"_str };
     EXPECT_EQ(scriptsForScriptURL(quirks, "https://example.com/a.js"_s), expected);
 }
 
@@ -615,10 +615,10 @@ TEST_F(QuirksTest, AnIdenticalBehaviorFromSeveralRowsIsRecordedOnce)
 }
 #endif
 
-static Vector<String> elementSelectorsFor(const WebCore::QuirksData& quirks, WebCore::QuirkBehaviorID id)
+static Vector<RefPtr<StringImpl>> elementSelectorsFor(const WebCore::QuirksData& quirks, WebCore::QuirkBehaviorID id)
 {
-    return WTF::compactMap(quirks.behaviors(), [&](const auto& behavior) -> std::optional<String> {
-        if (behavior.id == id && !behavior.elementSelector.isNull())
+    return WTF::compactMap(quirks.behaviors(), [&](const auto& behavior) -> std::optional<RefPtr<StringImpl>> {
+        if (behavior.id == id && behavior.elementSelector)
             return behavior.elementSelector;
         return std::nullopt;
     });
@@ -628,12 +628,12 @@ TEST_F(QuirksTest, ASecondaryURLConditionIsRecordedOnTheBehavior)
 {
     auto scoped = behaviorWithScript("script"_s, "*://cdn.example.com/*"_s);
     ASSERT_FALSE(scoped.secondaryURL.isEmpty());
-    EXPECT_TRUE(scoped.secondaryURLConditionMatches(WebCore::URLMatchContext { URL { "https://cdn.example.com/a.js"_s } }));
-    EXPECT_FALSE(scoped.secondaryURLConditionMatches(WebCore::URLMatchContext { URL { "https://other.example.com/a.js"_s } }));
+    EXPECT_TRUE(scoped.secondaryURLConditionMatches(WebCore::URLMatchContext { URL { "https://cdn.example.com/a.js"_si } }));
+    EXPECT_FALSE(scoped.secondaryURLConditionMatches(WebCore::URLMatchContext { URL { "https://other.example.com/a.js"_si } }));
 
     auto unscoped = behaviorWithScript("script"_s);
     EXPECT_TRUE(unscoped.secondaryURL.isEmpty());
-    EXPECT_TRUE(unscoped.secondaryURLConditionMatches(WebCore::URLMatchContext { URL { "https://other.example.com/a.js"_s } }));
+    EXPECT_TRUE(unscoped.secondaryURLConditionMatches(WebCore::URLMatchContext { URL { "https://other.example.com/a.js"_si } }));
 }
 
 TEST_F(QuirksTest, BehaviorAppliesToURLRequiresTheBehaviorToBeEnabled)
@@ -641,8 +641,8 @@ TEST_F(QuirksTest, BehaviorAppliesToURLRequiresTheBehaviorToBeEnabled)
     WebCore::QuirksData quirks;
     quirks.addBehavior(WebCore::QuirkBehavior { .id = WebCore::QuirkBehaviorID::NeedsAirIndiaExpressLayeringQuirk });
 
-    EXPECT_FALSE(quirks.behaviorAppliesToURL(WebCore::QuirkBehaviorID::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk, URL { "https://www.example.com/a.js"_s }));
-    EXPECT_TRUE(quirks.behaviorAppliesToURL(WebCore::QuirkBehaviorID::NeedsAirIndiaExpressLayeringQuirk, URL { "https://www.example.com/a.js"_s }));
+    EXPECT_FALSE(quirks.behaviorAppliesToURL(WebCore::QuirkBehaviorID::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk, URL { "https://www.example.com/a.js"_si }));
+    EXPECT_TRUE(quirks.behaviorAppliesToURL(WebCore::QuirkBehaviorID::NeedsAirIndiaExpressLayeringQuirk, URL { "https://www.example.com/a.js"_si }));
 }
 
 TEST_F(QuirksTest, MediaRangeRewriteAppliesOnlyToBingRequestURLs)
@@ -650,10 +650,10 @@ TEST_F(QuirksTest, MediaRangeRewriteAppliesOnlyToBingRequestURLs)
     constexpr auto id = WebCore::QuirkBehaviorID::NeedsMediaRewriteRangeRequestQuirk;
 
     auto bing = resolveQuirksForTopURL("https://www.bing.com/videos"_s);
-    EXPECT_TRUE(bing.behaviorAppliesToURL(id, URL { "https://th.bing.com/video.mp4"_s }));
-    EXPECT_FALSE(bing.behaviorAppliesToURL(id, URL { "https://cdn.example.com/video.mp4"_s }));
+    EXPECT_TRUE(bing.behaviorAppliesToURL(id, URL { "https://th.bing.com/video.mp4"_si }));
+    EXPECT_FALSE(bing.behaviorAppliesToURL(id, URL { "https://cdn.example.com/video.mp4"_si }));
 
-    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).behaviorAppliesToURL(id, URL { "https://th.bing.com/video.mp4"_s }));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).behaviorAppliesToURL(id, URL { "https://th.bing.com/video.mp4"_si }));
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -662,11 +662,11 @@ TEST_F(QuirksTest, FacebookStoriesCreationFormAppliesOnlyToTheStoriesCreationPat
     constexpr auto id = WebCore::QuirkBehaviorID::NeedsFacebookStoriesCreationFormQuirk;
 
     auto facebook = resolveQuirksForTopURL("https://www.facebook.com/"_s);
-    EXPECT_TRUE(facebook.behaviorAppliesToURL(id, URL { "https://www.facebook.com/stories/create/"_s }));
-    EXPECT_FALSE(facebook.behaviorAppliesToURL(id, URL { "https://www.facebook.com/stories/"_s }));
-    EXPECT_FALSE(facebook.behaviorAppliesToURL(id, URL { "https://www.facebook.com/"_s }));
+    EXPECT_TRUE(facebook.behaviorAppliesToURL(id, URL { "https://www.facebook.com/stories/create/"_si }));
+    EXPECT_FALSE(facebook.behaviorAppliesToURL(id, URL { "https://www.facebook.com/stories/"_si }));
+    EXPECT_FALSE(facebook.behaviorAppliesToURL(id, URL { "https://www.facebook.com/"_si }));
 
-    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).behaviorAppliesToURL(id, URL { "https://www.example.com/stories/create/"_s }));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).behaviorAppliesToURL(id, URL { "https://www.example.com/stories/create/"_si }));
 }
 #endif
 
@@ -675,11 +675,11 @@ TEST_F(QuirksTest, LogoutCookieCleanupAppliesOnlyToTheLogoutEndpoint)
     constexpr auto id = WebCore::QuirkBehaviorID::NeedsLogoutCookieCleanupQuirk;
 
     auto claude = resolveQuirksForTopURL("https://claude.ai/chat"_s);
-    EXPECT_TRUE(claude.behaviorAppliesToURL(id, URL { "https://claude.ai/api/auth/logout"_s }));
+    EXPECT_TRUE(claude.behaviorAppliesToURL(id, URL { "https://claude.ai/api/auth/logout"_si }));
     for (auto urlString : { "https://claude.ai/api/auth/logout/"_s, "https://claude.ai/api/auth/login"_s, "https://api.claude.ai/api/auth/logout"_s, "https://claude.com/api/auth/logout"_s })
         EXPECT_FALSE(claude.behaviorAppliesToURL(id, URL { urlString }));
 
-    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).behaviorAppliesToURL(id, URL { "https://claude.ai/api/auth/logout"_s }));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).behaviorAppliesToURL(id, URL { "https://claude.ai/api/auth/logout"_si }));
 }
 
 TEST_F(QuirksTest, LogoutCookieCleanupCarriesTheCookiesToDelete)
@@ -687,7 +687,7 @@ TEST_F(QuirksTest, LogoutCookieCleanupCarriesTheCookiesToDelete)
     auto behaviors = resolveQuirksForTopURL("https://claude.ai/"_s).behaviorsMatching(WebCore::QuirkBehaviorID::NeedsLogoutCookieCleanupQuirk);
     ASSERT_EQ(behaviors.size(), 1u);
 
-    Vector<String> expected { "__ssid"_str, "__cf_bm"_str, "anthropic-device-id"_str, "lastActiveOrg"_str, "activitySessionId"_str };
+    Vector<RefPtr<StringImpl>> expected { "__ssid"_str, "__cf_bm"_str, "anthropic-device-id"_str, "lastActiveOrg"_str, "activitySessionId"_str };
     EXPECT_EQ(behaviors[0].cookieNames, expected);
 }
 
@@ -697,12 +697,12 @@ TEST_F(QuirksTest, OneDrivePopupBypassRequiresAOneDriveTarget)
     constexpr auto id = WebCore::QuirkBehaviorID::ShouldAllowPopupFromMicrosoftOfficeToOneDrive;
 
     auto m365 = resolveQuirksForTopURL("https://m365.cloud.microsoft/"_s);
-    EXPECT_TRUE(m365.behaviorAppliesToURL(id, URL { "https://onedrive.live.com/edit"_s }));
-    EXPECT_TRUE(m365.behaviorAppliesToURL(id, URL { "https://foo.onedrive.live.com/"_s }));
-    EXPECT_FALSE(m365.behaviorAppliesToURL(id, URL { "https://xonedrive.live.com/"_s }));
-    EXPECT_FALSE(m365.behaviorAppliesToURL(id, URL { "https://live.com/"_s }));
+    EXPECT_TRUE(m365.behaviorAppliesToURL(id, URL { "https://onedrive.live.com/edit"_si }));
+    EXPECT_TRUE(m365.behaviorAppliesToURL(id, URL { "https://foo.onedrive.live.com/"_si }));
+    EXPECT_FALSE(m365.behaviorAppliesToURL(id, URL { "https://xonedrive.live.com/"_si }));
+    EXPECT_FALSE(m365.behaviorAppliesToURL(id, URL { "https://live.com/"_si }));
 
-    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).behaviorAppliesToURL(id, URL { "https://onedrive.live.com/edit"_s }));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).behaviorAppliesToURL(id, URL { "https://onedrive.live.com/edit"_si }));
 }
 
 TEST_F(QuirksTest, ChromeOSUserAgentAppliesOnlyToTheWordEditorScriptInItsFrame)
@@ -711,8 +711,8 @@ TEST_F(QuirksTest, ChromeOSUserAgentAppliesOnlyToTheWordEditorScriptInItsFrame)
     constexpr auto editorFrameURL = "https://word-edit.officeapps.live.com/we/wordeditorframe.aspx"_s;
 
     auto editorFrame = resolveQuirksForEmbeddedDocument("https://onedrive.live.com/"_s, editorFrameURL);
-    EXPECT_TRUE(editorFrame.behaviorAppliesToURL(id, URL { "https://cdn.example.com/we/wordeditords.js"_s }));
-    EXPECT_FALSE(editorFrame.behaviorAppliesToURL(id, URL { "https://cdn.example.com/we/other.js"_s }));
+    EXPECT_TRUE(editorFrame.behaviorAppliesToURL(id, URL { "https://cdn.example.com/we/wordeditords.js"_si }));
+    EXPECT_FALSE(editorFrame.behaviorAppliesToURL(id, URL { "https://cdn.example.com/we/other.js"_si }));
 
     EXPECT_FALSE(resolveQuirksForEmbeddedDocument("https://onedrive.live.com/"_s, "https://word-edit.officeapps.live.com/we/other.aspx"_s).isBehaviorEnabled(id));
     EXPECT_FALSE(resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, editorFrameURL).isBehaviorEnabled(id));
@@ -734,7 +734,7 @@ TEST_F(QuirksTest, AddingAndRemovingBehaviorsKeepsTheEnabledFlagInSync)
     quirks.addBehavior(onSecond);
     EXPECT_TRUE(quirks.hasBehaviors());
     EXPECT_TRUE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk));
-    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk), (Vector<String> { ".first"_str, ".second"_str }));
+    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk), (Vector<RefPtr<StringImpl>> { ".first"_str, ".second"_str }));
 
     quirks.setEnabled(onFirst.id, false);
     EXPECT_FALSE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk));
@@ -743,7 +743,7 @@ TEST_F(QuirksTest, AddingAndRemovingBehaviorsKeepsTheEnabledFlagInSync)
 
     quirks.addBehavior(onSecond);
     EXPECT_TRUE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk));
-    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk), Vector<String> { ".second"_str });
+    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk), Vector<RefPtr<StringImpl>> { ".second"_str });
 }
 
 TEST_F(QuirksTest, MergeUnionsFlagsAndConcatenatesBehaviors)
@@ -762,7 +762,7 @@ TEST_F(QuirksTest, MergeUnionsFlagsAndConcatenatesBehaviors)
 
     EXPECT_TRUE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk));
     EXPECT_TRUE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::NeedsAirIndiaExpressLayeringQuirk));
-    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk), (Vector<String> { ".first"_str, ".second"_str }));
+    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk), (Vector<RefPtr<StringImpl>> { ".first"_str, ".second"_str }));
 }
 
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
@@ -771,12 +771,12 @@ TEST_F(QuirksTest, SitesThatOnlyNeedSimulatedMouseEventsOnSomeElementsCarryASele
     for (auto urlString : { "https://www.facebook.com/"_s, "https://www.tiktok.com/"_s }) {
         auto quirks = resolveQuirksForTopURL(urlString);
         EXPECT_TRUE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk));
-        EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk), Vector<String> { String { onSliderRole } });
+        EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onSliderRole) });
     }
 
     auto myBinder = resolveQuirksForTopURL("https://mybinder.org/"_s);
     EXPECT_TRUE(myBinder.isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk));
-    EXPECT_EQ(elementSelectorsFor(myBinder, WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk), Vector<String> { String { onDockPanelTabBar } });
+    EXPECT_EQ(elementSelectorsFor(myBinder, WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onDockPanelTabBar) });
 }
 
 TEST_F(QuirksTest, SitesThatNeedSimulatedMouseEventsEverywhereCarryNoSelector)
@@ -805,7 +805,7 @@ TEST_F(QuirksTest, TouchEventQuirksFollowTheirBuildConditions)
     auto yahoo = resolveQuirksForTopURL("https://www.yahoo.com/"_s);
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
-    EXPECT_EQ(elementSelectorsFor(linkedIn, nativeTaps), Vector<String> { "video.vjs-tech, audio.vjs-tech"_str });
+    EXPECT_EQ(elementSelectorsFor(linkedIn, nativeTaps), Vector<RefPtr<StringImpl>> { "video.vjs-tech, audio.vjs-tech"_str });
 #else
     EXPECT_FALSE(linkedIn.isBehaviorEnabled(nativeTaps));
 #endif
@@ -813,8 +813,8 @@ TEST_F(QuirksTest, TouchEventQuirksFollowTheirBuildConditions)
 #if ENABLE(TOUCH_EVENTS)
     EXPECT_TRUE(netflix.isBehaviorEnabled(pointerOut));
     EXPECT_TRUE(soylent.isBehaviorEnabled(pointerOut));
-    EXPECT_EQ(elementSelectorsFor(outlook, touchMove), Vector<String> { ".ms-Suggestions, .ms-Suggestions *"_str });
-    EXPECT_EQ(elementSelectorsFor(yahoo, touchEnd), Vector<String> { ".DPvwYc.sm8sCf, .vjs-subs-cap-button.vjs-menu-button"_str });
+    EXPECT_EQ(elementSelectorsFor(outlook, touchMove), Vector<RefPtr<StringImpl>> { ".ms-Suggestions, .ms-Suggestions *"_str });
+    EXPECT_EQ(elementSelectorsFor(yahoo, touchEnd), Vector<RefPtr<StringImpl>> { ".DPvwYc.sm8sCf, .vjs-subs-cap-button.vjs-menu-button"_str });
 #else
     EXPECT_FALSE(netflix.isBehaviorEnabled(pointerOut));
     EXPECT_FALSE(soylent.isBehaviorEnabled(pointerOut));
@@ -825,13 +825,13 @@ TEST_F(QuirksTest, TouchEventQuirksFollowTheirBuildConditions)
 
 static bool matchesSelector(ASCIILiteral selector, const WebCore::Node* node)
 {
-    return WebCore::Quirks::elementMatchesSelectorCondition(selector, node);
+    return WebCore::Quirks::elementMatchesSelectorCondition(StringImpl::create(selector).ptr(), node);
 }
 
 TEST_F(QuirksTest, ATargetThatIsNotAnElementAndHasNoParentElementNeverMatches)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html><div role='slider'></div>"_s);
+    page.loadHTML("<!DOCTYPE html><div role='slider'></div>"_si);
 
     EXPECT_FALSE(matchesSelector(onSliderRole, nullptr));
     EXPECT_FALSE(matchesSelector(onSliderRole, &page.document()));
@@ -840,18 +840,18 @@ TEST_F(QuirksTest, ATargetThatIsNotAnElementAndHasNoParentElementNeverMatches)
 TEST_F(QuirksTest, AnElementTargetIsMatchedAgainstTheSelectorItself)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html><div id='slider' role='slider'></div><div id='plain'></div>"_s);
+    page.loadHTML("<!DOCTYPE html><div id='slider' role='slider'></div><div id='plain'></div>"_si);
 
-    EXPECT_TRUE(matchesSelector(onSliderRole, page.getElementById("slider"_s).get()));
-    EXPECT_FALSE(matchesSelector(onSliderRole, page.getElementById("plain"_s).get()));
+    EXPECT_TRUE(matchesSelector(onSliderRole, page.getElementById("slider"_si).get()));
+    EXPECT_FALSE(matchesSelector(onSliderRole, page.getElementById("plain"_si).get()));
 }
 
 TEST_F(QuirksTest, DescendantsMatchOnlyBecauseTheSelectorReachesDownToThem)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html><div role='slider'><span><b id='thumb'>x</b></span></div>"_s);
+    page.loadHTML("<!DOCTYPE html><div role='slider'><span><b id='thumb'>x</b></span></div>"_si);
 
-    RefPtr thumb = page.getElementById("thumb"_s);
+    RefPtr thumb = page.getElementById("thumb"_si);
 
     EXPECT_TRUE(matchesSelector(onSliderRole, thumb.get()));
 
@@ -861,13 +861,13 @@ TEST_F(QuirksTest, DescendantsMatchOnlyBecauseTheSelectorReachesDownToThem)
 TEST_F(QuirksTest, TextNodeTargetsResolveToTheirParentElement)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html><div role='slider'><b id='thumb'>inside</b></div><p id='plain'>outside</p>"_s);
+    page.loadHTML("<!DOCTYPE html><div role='slider'><b id='thumb'>inside</b></div><p id='plain'>outside</p>"_si);
 
-    RefPtr inside = page.getElementById("thumb"_s)->firstChild();
+    RefPtr inside = page.getElementById("thumb"_si)->firstChild();
     ASSERT_TRUE(inside && inside->isTextNode());
     EXPECT_TRUE(matchesSelector(onSliderRole, inside.get()));
 
-    RefPtr outside = page.getElementById("plain"_s)->firstChild();
+    RefPtr outside = page.getElementById("plain"_si)->firstChild();
     ASSERT_TRUE(outside && outside->isTextNode());
     EXPECT_FALSE(matchesSelector(onSliderRole, outside.get()));
 }
@@ -875,10 +875,10 @@ TEST_F(QuirksTest, TextNodeTargetsResolveToTheirParentElement)
 TEST_F(QuirksTest, DetachedTargetsAreStillMatchedAgainstTheirOwnSubtree)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html><div id='slider' role='slider'><b id='thumb'>x</b></div>"_s);
+    page.loadHTML("<!DOCTYPE html><div id='slider' role='slider'><b id='thumb'>x</b></div>"_si);
 
-    RefPtr slider = page.getElementById("slider"_s);
-    RefPtr thumb = page.getElementById("thumb"_s);
+    RefPtr slider = page.getElementById("slider"_si);
+    RefPtr thumb = page.getElementById("thumb"_si);
     ASSERT_FALSE(slider->remove().hasException());
 
     EXPECT_TRUE(matchesSelector(onSliderRole, slider.get()));
@@ -892,18 +892,18 @@ TEST_F(QuirksTest, MixedCaseClassSelectorMatchesInEitherDocumentMode)
         page.loadHTML(makeString(doctype, "<div id='tabBar' class='lm-DockPanel-tabBar'><b id='tab'>x</b></div>"_s));
         ASSERT_EQ(page.document().inQuirksMode(), doctype.isEmpty());
 
-        EXPECT_TRUE(matchesSelector(onDockPanelTabBar, page.getElementById("tabBar"_s).get()));
-        EXPECT_TRUE(matchesSelector(onDockPanelTabBar, page.getElementById("tab"_s).get()));
+        EXPECT_TRUE(matchesSelector(onDockPanelTabBar, page.getElementById("tabBar"_si).get()));
+        EXPECT_TRUE(matchesSelector(onDockPanelTabBar, page.getElementById("tab"_si).get()));
     }
 }
 
 TEST_F(QuirksTest, ConditionsSupportTheSelectorShapesAQuirkMightNeed)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html><ul class='menu'><li id='item' class='entry active' data-kind='tab'>x</li></ul><p id='loose' class='entry'>y</p>"_s);
+    page.loadHTML("<!DOCTYPE html><ul class='menu'><li id='item' class='entry active' data-kind='tab'>x</li></ul><p id='loose' class='entry'>y</p>"_si);
 
-    RefPtr item = page.getElementById("item"_s);
-    RefPtr loose = page.getElementById("loose"_s);
+    RefPtr item = page.getElementById("item"_si);
+    RefPtr loose = page.getElementById("loose"_si);
 
     EXPECT_TRUE(matchesSelector(".entry.active"_s, item.get()));
     EXPECT_FALSE(matchesSelector(".entry.active"_s, loose.get()));
@@ -924,19 +924,19 @@ TEST_F(QuirksTest, ConditionsSupportTheSelectorShapesAQuirkMightNeed)
 TEST_F(QuirksTest, TheSameSelectorIsEvaluatedPerDocument)
 {
     auto quirksModePage = TestPageHarness::create();
-    quirksModePage.loadHTML("<div id='tabBar' class='LM-DOCKPANEL-TABBAR'></div>"_s);
+    quirksModePage.loadHTML("<div id='tabBar' class='LM-DOCKPANEL-TABBAR'></div>"_si);
 
     auto standardsModePage = TestPageHarness::create();
-    standardsModePage.loadHTML("<!DOCTYPE html><div id='tabBar' class='LM-DOCKPANEL-TABBAR'></div>"_s);
+    standardsModePage.loadHTML("<!DOCTYPE html><div id='tabBar' class='LM-DOCKPANEL-TABBAR'></div>"_si);
 
-    EXPECT_TRUE(matchesSelector(onDockPanelTabBar, quirksModePage.getElementById("tabBar"_s).get()));
-    EXPECT_FALSE(matchesSelector(onDockPanelTabBar, standardsModePage.getElementById("tabBar"_s).get()));
+    EXPECT_TRUE(matchesSelector(onDockPanelTabBar, quirksModePage.getElementById("tabBar"_si).get()));
+    EXPECT_FALSE(matchesSelector(onDockPanelTabBar, standardsModePage.getElementById("tabBar"_si).get()));
 }
 
-static Vector<String> documentSelectorsFor(const WebCore::QuirksData& quirks, WebCore::QuirkBehaviorID id)
+static Vector<RefPtr<StringImpl>> documentSelectorsFor(const WebCore::QuirksData& quirks, WebCore::QuirkBehaviorID id)
 {
-    return WTF::compactMap(quirks.behaviors(), [&](const auto& behavior) -> std::optional<String> {
-        if (behavior.id == id && !behavior.documentSelector.isNull())
+    return WTF::compactMap(quirks.behaviors(), [&](const auto& behavior) -> std::optional<RefPtr<StringImpl>> {
+        if (behavior.id == id && behavior.documentSelector)
             return behavior.documentSelector;
         return std::nullopt;
     });
@@ -944,9 +944,9 @@ static Vector<String> documentSelectorsFor(const WebCore::QuirksData& quirks, We
 
 TEST_F(QuirksTest, BackForwardCacheBypassSitesCarryTheirDocumentSelector)
 {
-    EXPECT_EQ(documentSelectorsFor(resolveQuirksForTopURL("https://www.bing.com/images"_s), WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheWhenRenderedElementMatchesQuirk), Vector<String> { String { onBingImageSearchDialog } });
-    EXPECT_EQ(documentSelectorsFor(resolveQuirksForTopURL("https://secure.bankofamerica.com/"_s), WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheWhenUnloadListenerAndElementMatchesQuirk), Vector<String> { String { onBankOfAmericaLoadingSignInButton } });
-    EXPECT_EQ(documentSelectorsFor(resolveQuirksForTopURL("https://docs.google.com/"_s), WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheWhenElementMatchesQuirk), Vector<String> { String { onGoogleDocsHomescreenFreezeOverlay } });
+    EXPECT_EQ(documentSelectorsFor(resolveQuirksForTopURL("https://www.bing.com/images"_s), WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheWhenRenderedElementMatchesQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onBingImageSearchDialog) });
+    EXPECT_EQ(documentSelectorsFor(resolveQuirksForTopURL("https://secure.bankofamerica.com/"_s), WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheWhenUnloadListenerAndElementMatchesQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onBankOfAmericaLoadingSignInButton) });
+    EXPECT_EQ(documentSelectorsFor(resolveQuirksForTopURL("https://docs.google.com/"_s), WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheWhenElementMatchesQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onGoogleDocsHomescreenFreezeOverlay) });
 
     auto vimeo = resolveQuirksForTopURL("https://vimeo.com/"_s);
     EXPECT_TRUE(vimeo.isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldBypassBackForwardCacheForNoStoreQuirk));
@@ -956,7 +956,7 @@ TEST_F(QuirksTest, BackForwardCacheBypassSitesCarryTheirDocumentSelector)
 #if PLATFORM(IOS_FAMILY)
 TEST_F(QuirksTest, OnlyRedditScopesScrollAnchoringToADocumentSelector)
 {
-    EXPECT_EQ(documentSelectorsFor(resolveQuirksForTopURL("https://www.reddit.com/"_s), WebCore::QuirkBehaviorID::ShouldDisableScrollAnchoringQuirk), Vector<String> { String { onRedditSinkItBackToTop } });
+    EXPECT_EQ(documentSelectorsFor(resolveQuirksForTopURL("https://www.reddit.com/"_s), WebCore::QuirkBehaviorID::ShouldDisableScrollAnchoringQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onRedditSinkItBackToTop) });
 
     auto appleRetail = resolveQuirksForTopURL("https://www.apple.com/retail/"_s);
     EXPECT_TRUE(appleRetail.isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldDisableScrollAnchoringQuirk));
@@ -967,29 +967,29 @@ TEST_F(QuirksTest, OnlyRedditScopesScrollAnchoringToADocumentSelector)
 TEST_F(QuirksTest, DocumentSelectorsFindElementsAnywhereInTheDocument)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html><div><span><b id='sink-it-back-to-top'></b></span></div><button id='signIn' class='loading'></button>"_s);
+    page.loadHTML("<!DOCTYPE html><div><span><b id='sink-it-back-to-top'></b></span></div><button id='signIn' class='loading'></button>"_si);
 
-    EXPECT_EQ(WebCore::Quirks::firstElementMatchingSelectorCondition(onRedditSinkItBackToTop, page.document()), page.getElementById("sink-it-back-to-top"_s));
-    EXPECT_EQ(WebCore::Quirks::firstElementMatchingSelectorCondition(onBankOfAmericaLoadingSignInButton, page.document()), page.getElementById("signIn"_s));
-    EXPECT_FALSE(WebCore::Quirks::firstElementMatchingSelectorCondition(onBingImageSearchDialog, page.document()));
+    EXPECT_EQ(WebCore::Quirks::firstElementMatchingSelectorCondition(StringImpl::create(onRedditSinkItBackToTop).ptr(), page.document()), page.getElementById("sink-it-back-to-top"_si));
+    EXPECT_EQ(WebCore::Quirks::firstElementMatchingSelectorCondition(StringImpl::create(onBankOfAmericaLoadingSignInButton).ptr(), page.document()), page.getElementById("signIn"_si));
+    EXPECT_FALSE(WebCore::Quirks::firstElementMatchingSelectorCondition(StringImpl::create(onBingImageSearchDialog).ptr(), page.document()));
 }
 
 TEST_F(QuirksTest, GoogleDocsOverlaySelectorRequiresTheFirstElementInTheBody)
 {
     auto overlayFirst = TestPageHarness::create();
-    overlayFirst.loadHTML("<!DOCTYPE html><body><div class='docs-homescreen-freeze-el-full'></div><div></div></body>"_s);
-    EXPECT_TRUE(WebCore::Quirks::firstElementMatchingSelectorCondition(onGoogleDocsHomescreenFreezeOverlay, overlayFirst.document()));
+    overlayFirst.loadHTML("<!DOCTYPE html><body><div class='docs-homescreen-freeze-el-full'></div><div></div></body>"_si);
+    EXPECT_TRUE(WebCore::Quirks::firstElementMatchingSelectorCondition(StringImpl::create(onGoogleDocsHomescreenFreezeOverlay).ptr(), overlayFirst.document()));
 
     auto overlaySecond = TestPageHarness::create();
-    overlaySecond.loadHTML("<!DOCTYPE html><body><div></div><div class='docs-homescreen-freeze-el-full'></div></body>"_s);
-    EXPECT_FALSE(WebCore::Quirks::firstElementMatchingSelectorCondition(onGoogleDocsHomescreenFreezeOverlay, overlaySecond.document()));
+    overlaySecond.loadHTML("<!DOCTYPE html><body><div></div><div class='docs-homescreen-freeze-el-full'></div></body>"_si);
+    EXPECT_FALSE(WebCore::Quirks::firstElementMatchingSelectorCondition(StringImpl::create(onGoogleDocsHomescreenFreezeOverlay).ptr(), overlaySecond.document()));
 
     auto overlayNested = TestPageHarness::create();
-    overlayNested.loadHTML("<!DOCTYPE html><body><main><div class='docs-homescreen-freeze-el-full'></div></main></body>"_s);
-    EXPECT_FALSE(WebCore::Quirks::firstElementMatchingSelectorCondition(onGoogleDocsHomescreenFreezeOverlay, overlayNested.document()));
+    overlayNested.loadHTML("<!DOCTYPE html><body><main><div class='docs-homescreen-freeze-el-full'></div></main></body>"_si);
+    EXPECT_FALSE(WebCore::Quirks::firstElementMatchingSelectorCondition(StringImpl::create(onGoogleDocsHomescreenFreezeOverlay).ptr(), overlayNested.document()));
 }
 
-static Vector<String> selectorsFor(ASCIILiteral urlString, WebCore::QuirkBehaviorID id)
+static Vector<RefPtr<StringImpl>> selectorsFor(ASCIILiteral urlString, WebCore::QuirkBehaviorID id)
 {
     return elementSelectorsFor(resolveQuirksForTopURL(urlString), id);
 }
@@ -1000,11 +1000,11 @@ TEST_F(QuirksTest, SitesThatAssumeDefaultPreventedScopeItToTheTargetElement)
 {
     constexpr auto id = WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk;
 
-    EXPECT_EQ(selectorsFor("https://www.amazon.com/"_s, id), Vector<String> { String { onAmazonMagnifierLens } });
-    EXPECT_EQ(selectorsFor("https://soundcloud.com/"_s, id), Vector<String> { String { onSoundCloudSceneLayer } });
+    EXPECT_EQ(selectorsFor("https://www.amazon.com/"_s, id), Vector<RefPtr<StringImpl>> { StringImpl::create(onAmazonMagnifierLens) });
+    EXPECT_EQ(selectorsFor("https://soundcloud.com/"_s, id), Vector<RefPtr<StringImpl>> { StringImpl::create(onSoundCloudSceneLayer) });
 
     for (auto urlString : { "https://www.facebook.com/"_s, "https://www.tiktok.com/"_s })
-        EXPECT_EQ(selectorsFor(urlString, id), Vector<String> { String { onSliderRoleItself } });
+        EXPECT_EQ(selectorsFor(urlString, id), Vector<RefPtr<StringImpl>> { StringImpl::create(onSliderRoleItself) });
 }
 #endif
 
@@ -1014,48 +1014,48 @@ TEST_F(QuirksTest, ContentObservationSelectorsAreScopedPerSite)
 {
     constexpr auto id = WebCore::QuirkBehaviorID::MayNeedToIgnoreContentObservation;
 
-    EXPECT_EQ(selectorsFor("https://www.google.com/maps/"_s, id), Vector<String> { String { onSuggestionsLabel } });
-    EXPECT_EQ(selectorsFor("https://www.walmart.com/"_s, id), Vector<String> { String { onButtonInListItem } });
-    EXPECT_EQ(selectorsFor("https://outlook.live.com/"_s, id), Vector<String> { String { onSwatchColorPicker } });
+    EXPECT_EQ(selectorsFor("https://www.google.com/maps/"_s, id), Vector<RefPtr<StringImpl>> { StringImpl::create(onSuggestionsLabel) });
+    EXPECT_EQ(selectorsFor("https://www.walmart.com/"_s, id), Vector<RefPtr<StringImpl>> { StringImpl::create(onButtonInListItem) });
+    EXPECT_EQ(selectorsFor("https://outlook.live.com/"_s, id), Vector<RefPtr<StringImpl>> { StringImpl::create(onSwatchColorPicker) });
 }
 #endif
 
 TEST_F(QuirksTest, OutlookSwatchPickerSelectorMatchesTheIDPrefix)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html>"
+    page.loadHTML(StringImpl::create("<!DOCTYPE html>"
         "<div id='swatchColorPicker'></div>"
         "<div id='swatchColorPicker-42'></div>"
         "<div id='SWATCHCOLORPICKER'></div>"
         "<div id='outerSwatchColorPicker'></div>"
-        "<div id='plain'></div>"_s);
+        "<div id='plain'></div>"_s).ptr());
 
-    EXPECT_TRUE(matchesSelector(onSwatchColorPicker, page.getElementById("swatchColorPicker"_s).get()));
-    EXPECT_TRUE(matchesSelector(onSwatchColorPicker, page.getElementById("swatchColorPicker-42"_s).get()));
+    EXPECT_TRUE(matchesSelector(onSwatchColorPicker, page.getElementById("swatchColorPicker"_si).get()));
+    EXPECT_TRUE(matchesSelector(onSwatchColorPicker, page.getElementById("swatchColorPicker-42"_si).get()));
 
-    EXPECT_FALSE(matchesSelector(onSwatchColorPicker, page.getElementById("SWATCHCOLORPICKER"_s).get()));
-    EXPECT_FALSE(matchesSelector(onSwatchColorPicker, page.getElementById("outerSwatchColorPicker"_s).get()));
-    EXPECT_FALSE(matchesSelector(onSwatchColorPicker, page.getElementById("plain"_s).get()));
+    EXPECT_FALSE(matchesSelector(onSwatchColorPicker, page.getElementById("SWATCHCOLORPICKER"_si).get()));
+    EXPECT_FALSE(matchesSelector(onSwatchColorPicker, page.getElementById("outerSwatchColorPicker"_si).get()));
+    EXPECT_FALSE(matchesSelector(onSwatchColorPicker, page.getElementById("plain"_si).get()));
 }
 
 TEST_F(QuirksTest, SingleSiteSelectorConditions)
 {
-    EXPECT_EQ(selectorsFor("https://www.ea.com/"_s, WebCore::QuirkBehaviorID::ShouldPreventKeyframeEffectAccelerationQuirk), Vector<String> { String { onEANetworkNav } });
+    EXPECT_EQ(selectorsFor("https://www.ea.com/"_s, WebCore::QuirkBehaviorID::ShouldPreventKeyframeEffectAccelerationQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onEANetworkNav) });
 
     for (auto urlString : { "https://www.hotels.com/"_s, "https://www.expedia.fr/"_s, "https://www.ebookers.de/"_s })
-        EXPECT_EQ(selectorsFor(urlString, WebCore::QuirkBehaviorID::NeedsExpediaGroupAnimationQuirk), Vector<String> { String { onExpediaOpeningMenu } });
+        EXPECT_EQ(selectorsFor(urlString, WebCore::QuirkBehaviorID::NeedsExpediaGroupAnimationQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onExpediaOpeningMenu) });
 }
 
 #if PLATFORM(IOS_FAMILY)
 
 TEST_F(QuirksTest, SingleSiteSelectorConditionsOnIOS)
 {
-    EXPECT_EQ(selectorsFor("https://www.theguardian.com/"_s, WebCore::QuirkBehaviorID::ShouldHideSoftTopScrollEdgeEffectDuringFocusQuirk), Vector<String> { String { onCrosswordID } });
-    EXPECT_EQ(selectorsFor("https://www.cbssports.com/"_s, WebCore::QuirkBehaviorID::ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk), Vector<String> { String { onAviaButton } });
-    EXPECT_EQ(selectorsFor("https://docs.google.com/"_s, WebCore::QuirkBehaviorID::ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk), Vector<String> { String { onGoogleDocsMLPromotion } });
+    EXPECT_EQ(selectorsFor("https://www.theguardian.com/"_s, WebCore::QuirkBehaviorID::ShouldHideSoftTopScrollEdgeEffectDuringFocusQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onCrosswordID) });
+    EXPECT_EQ(selectorsFor("https://www.cbssports.com/"_s, WebCore::QuirkBehaviorID::ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onAviaButton) });
+    EXPECT_EQ(selectorsFor("https://docs.google.com/"_s, WebCore::QuirkBehaviorID::ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onGoogleDocsMLPromotion) });
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    EXPECT_EQ(selectorsFor("https://www.linkedin.com/"_s, WebCore::QuirkBehaviorID::ShouldAllowNativeTapsOnMediaElementsQuirk), Vector<String> { String { onVideoJSTech } });
+    EXPECT_EQ(selectorsFor("https://www.linkedin.com/"_s, WebCore::QuirkBehaviorID::ShouldAllowNativeTapsOnMediaElementsQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onVideoJSTech) });
 #endif
 }
 #endif
@@ -1064,16 +1064,16 @@ TEST_F(QuirksTest, StorageAccessQuirksCarrySignInSelectors)
 {
     constexpr auto signInID = WebCore::QuirkBehaviorID::NeedsStorageAccessOnLoginButtonClickQuirk;
 
-    EXPECT_EQ(selectorsFor("https://www.microsoft.com/"_s, signInID), Vector<String> { String { onMicrosoftSignInButton } });
+    EXPECT_EQ(selectorsFor("https://www.microsoft.com/"_s, signInID), Vector<RefPtr<StringImpl>> { StringImpl::create(onMicrosoftSignInButton) });
     for (auto urlString : { "https://www.playstation.com/"_s, "https://my.playstation.com/"_s })
-        EXPECT_EQ(selectorsFor(urlString, signInID), Vector<String> { String { onPlayStationSignInButton } });
+        EXPECT_EQ(selectorsFor(urlString, signInID), Vector<RefPtr<StringImpl>> { StringImpl::create(onPlayStationSignInButton) });
 
     EXPECT_FALSE(resolveQuirksForTopURL("https://microsoft.com/"_s).isBehaviorEnabled(signInID));
     EXPECT_FALSE(resolveQuirksForTopURL("https://playstation.com/"_s).isBehaviorEnabled(signInID));
 
     constexpr auto kinjaID = WebCore::QuirkBehaviorID::NeedsKinjaLoginStorageAccessQuirk;
     for (auto urlString : { "https://jalopnik.com/"_s, "https://kotaku.com/"_s, "https://theroot.com/"_s, "https://www.theinventory.com/"_s })
-        EXPECT_EQ(selectorsFor(urlString, kinjaID), Vector<String> { String { onKinjaLoginAvatar } });
+        EXPECT_EQ(selectorsFor(urlString, kinjaID), Vector<RefPtr<StringImpl>> { StringImpl::create(onKinjaLoginAvatar) });
 
     EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).isBehaviorEnabled(kinjaID));
 }
@@ -1085,7 +1085,7 @@ TEST_F(QuirksTest, YouTubeWatchLaterStorageAccessIsEmbeddedOnly)
 
     auto embedded = resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, "https://www.youtube.com/embed/abc"_s);
     EXPECT_TRUE(embedded.isBehaviorEnabled(id));
-    EXPECT_EQ(elementSelectorsFor(embedded, id), Vector<String> { String { onYouTubeWatchLaterIcon } });
+    EXPECT_EQ(elementSelectorsFor(embedded, id), Vector<RefPtr<StringImpl>> { StringImpl::create(onYouTubeWatchLaterIcon) });
 
     EXPECT_FALSE(resolveQuirksForTopURL("https://www.youtube.com/"_s).isBehaviorEnabled(id));
     EXPECT_FALSE(resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, "https://vimeo.com/12345"_s).isBehaviorEnabled(id));
@@ -1095,32 +1095,32 @@ TEST_F(QuirksTest, YouTubeWatchLaterStorageAccessIsEmbeddedOnly)
 TEST_F(QuirksTest, MigratedSelectorsMatchWhatTheHandWrittenChecksDid)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html>"
+    page.loadHTML(StringImpl::create("<!DOCTYPE html>"
         "<div id='before'></div><div id='magnifierLens'></div><div id='after'></div>"
         "<div id='farBefore'></div><span></span><div id='lens2'></div>"
         "<div id='quick-crossword-3'></div><div id='CROSSWORD'></div><div id='cross'></div>"
         "<div role='listitem'><span id='gridButton' role='button'></span></div>"
         "<div role='LISTITEM'><span id='shoutyButton' role='BUTTON'></span></div>"
         "<div role='listitem'><i><span id='deepButton' role='button'></span></i></div>"
-        "<video id='media' class='vjs-tech'>fallback</video><div id='notMedia' class='vjs-tech'></div>"_s);
+        "<video id='media' class='vjs-tech'>fallback</video><div id='notMedia' class='vjs-tech'></div>"_s).ptr());
 
-    EXPECT_TRUE(matchesSelector(onAmazonMagnifierLens, page.getElementById("magnifierLens"_s).get()));
-    EXPECT_TRUE(matchesSelector(onAmazonMagnifierLens, page.getElementById("before"_s).get()));
-    EXPECT_FALSE(matchesSelector(onAmazonMagnifierLens, page.getElementById("after"_s).get()));
-    EXPECT_FALSE(matchesSelector(onAmazonMagnifierLens, page.getElementById("farBefore"_s).get()));
+    EXPECT_TRUE(matchesSelector(onAmazonMagnifierLens, page.getElementById("magnifierLens"_si).get()));
+    EXPECT_TRUE(matchesSelector(onAmazonMagnifierLens, page.getElementById("before"_si).get()));
+    EXPECT_FALSE(matchesSelector(onAmazonMagnifierLens, page.getElementById("after"_si).get()));
+    EXPECT_FALSE(matchesSelector(onAmazonMagnifierLens, page.getElementById("farBefore"_si).get()));
 
-    EXPECT_TRUE(matchesSelector(onCrosswordID, page.getElementById("quick-crossword-3"_s).get()));
-    EXPECT_FALSE(matchesSelector(onCrosswordID, page.getElementById("CROSSWORD"_s).get()));
-    EXPECT_FALSE(matchesSelector(onCrosswordID, page.getElementById("cross"_s).get()));
+    EXPECT_TRUE(matchesSelector(onCrosswordID, page.getElementById("quick-crossword-3"_si).get()));
+    EXPECT_FALSE(matchesSelector(onCrosswordID, page.getElementById("CROSSWORD"_si).get()));
+    EXPECT_FALSE(matchesSelector(onCrosswordID, page.getElementById("cross"_si).get()));
 
-    EXPECT_TRUE(matchesSelector(onButtonInListItem, page.getElementById("gridButton"_s).get()));
-    EXPECT_TRUE(matchesSelector(onButtonInListItem, page.getElementById("shoutyButton"_s).get()));
-    EXPECT_FALSE(matchesSelector(onButtonInListItem, page.getElementById("deepButton"_s).get()));
+    EXPECT_TRUE(matchesSelector(onButtonInListItem, page.getElementById("gridButton"_si).get()));
+    EXPECT_TRUE(matchesSelector(onButtonInListItem, page.getElementById("shoutyButton"_si).get()));
+    EXPECT_FALSE(matchesSelector(onButtonInListItem, page.getElementById("deepButton"_si).get()));
 
-    EXPECT_TRUE(matchesSelector(onVideoJSTech, page.getElementById("media"_s).get()));
-    EXPECT_FALSE(matchesSelector(onVideoJSTech, page.getElementById("notMedia"_s).get()));
+    EXPECT_TRUE(matchesSelector(onVideoJSTech, page.getElementById("media"_si).get()));
+    EXPECT_FALSE(matchesSelector(onVideoJSTech, page.getElementById("notMedia"_si).get()));
 
-    RefPtr fallback = page.getElementById("media"_s)->firstChild();
+    RefPtr fallback = page.getElementById("media"_si)->firstChild();
     ASSERT_TRUE(fallback && fallback->isTextNode());
     EXPECT_TRUE(matchesSelector(onVideoJSTech, fallback.get()));
 }
@@ -1129,18 +1129,18 @@ TEST_F(QuirksTest, MigratedSelectorsMatchWhatTheHandWrittenChecksDid)
 TEST_F(QuirksTest, GoogleDocsPromotionSelectorStopsAtTheGrandparent)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html>"
+    page.loadHTML(StringImpl::create("<!DOCTYPE html>"
         "<div id='self' class='docs-ml-promotion-action-container'>"
         "<span id='child'><i id='grandchild'><b id='greatGrandchild'>x</b></i></span>"
         "</div>"
-        "<div id='unrelated'></div>"_s);
+        "<div id='unrelated'></div>"_s).ptr());
 
-    EXPECT_TRUE(matchesSelector(onGoogleDocsMLPromotion, page.getElementById("self"_s).get()));
-    EXPECT_TRUE(matchesSelector(onGoogleDocsMLPromotion, page.getElementById("child"_s).get()));
-    EXPECT_TRUE(matchesSelector(onGoogleDocsMLPromotion, page.getElementById("grandchild"_s).get()));
+    EXPECT_TRUE(matchesSelector(onGoogleDocsMLPromotion, page.getElementById("self"_si).get()));
+    EXPECT_TRUE(matchesSelector(onGoogleDocsMLPromotion, page.getElementById("child"_si).get()));
+    EXPECT_TRUE(matchesSelector(onGoogleDocsMLPromotion, page.getElementById("grandchild"_si).get()));
 
-    EXPECT_FALSE(matchesSelector(onGoogleDocsMLPromotion, page.getElementById("greatGrandchild"_s).get()));
-    EXPECT_FALSE(matchesSelector(onGoogleDocsMLPromotion, page.getElementById("unrelated"_s).get()));
+    EXPECT_FALSE(matchesSelector(onGoogleDocsMLPromotion, page.getElementById("greatGrandchild"_si).get()));
+    EXPECT_FALSE(matchesSelector(onGoogleDocsMLPromotion, page.getElementById("unrelated"_si).get()));
 }
 #endif
 
@@ -1156,83 +1156,82 @@ TEST_F(QuirksTest, ExpediaMenuSelectorMatchesInEitherDocumentMode)
             "<div id='unmounted' class='uitk-menu-container uitk-menu-container-autoposition uitk-menu-container-has-intersection-root-el uitk-menu-open'></div>"_s));
         ASSERT_EQ(page.document().inQuirksMode(), doctype.isEmpty());
 
-        EXPECT_TRUE(matchesSelector(onExpediaOpeningMenu, page.getElementById("opening"_s).get()));
-        EXPECT_FALSE(matchesSelector(onExpediaOpeningMenu, page.getElementById("closed"_s).get()));
-        EXPECT_FALSE(matchesSelector(onExpediaOpeningMenu, page.getElementById("unmounted"_s).get()));
+        EXPECT_TRUE(matchesSelector(onExpediaOpeningMenu, page.getElementById("opening"_si).get()));
+        EXPECT_FALSE(matchesSelector(onExpediaOpeningMenu, page.getElementById("closed"_si).get()));
+        EXPECT_FALSE(matchesSelector(onExpediaOpeningMenu, page.getElementById("unmounted"_si).get()));
     }
 }
 
 TEST_F(QuirksTest, KinjaAvatarSelectorCoversTheSVGAndItsDirectPath)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html>"
+    page.loadHTML(StringImpl::create("<!DOCTYPE html>"
         "<div id='burner' class='js_switch-to-burner-login'></div>"
-        "<div id='plain'></div>"_s);
+        "<div id='plain'></div>"_s).ptr());
 
-    Ref avatars = page.document().createElementForBindings("div"_s).releaseReturnValue();
-    EXPECT_FALSE(avatars->setInnerHTML(String {
-        "<svg id='avatar' aria-label='UserFilled icon'><path id='glyph'></path><g><path id='deepGlyph'></path></g></svg>"
-        "<svg id='lowercase' aria-label='userfilled icon'></svg>"_s }).hasException());
+    Ref avatars = page.document().createElementForBindings("div"_atom).releaseReturnValue();
+    EXPECT_FALSE(avatars->setInnerHTML(StringImpl::create("<svg id='avatar' aria-label='UserFilled icon'><path id='glyph'></path><g><path id='deepGlyph'></path></g></svg>"
+        "<svg id='lowercase' aria-label='userfilled icon'></svg>"_s)).hasException());
 
     auto avatarElement = [&](ASCIILiteral id) {
         return avatars->querySelector(makeString('#', id)).releaseReturnValue();
     };
 
-    EXPECT_TRUE(matchesSelector(onKinjaLoginAvatar, page.getElementById("burner"_s).get()));
+    EXPECT_TRUE(matchesSelector(onKinjaLoginAvatar, page.getElementById("burner"_si).get()));
     EXPECT_TRUE(matchesSelector(onKinjaLoginAvatar, avatarElement("avatar"_s)));
     EXPECT_TRUE(matchesSelector(onKinjaLoginAvatar, avatarElement("glyph"_s)));
 
     EXPECT_FALSE(matchesSelector(onKinjaLoginAvatar, avatarElement("deepGlyph"_s)));
     EXPECT_FALSE(matchesSelector(onKinjaLoginAvatar, avatarElement("lowercase"_s)));
-    EXPECT_FALSE(matchesSelector(onKinjaLoginAvatar, page.getElementById("plain"_s).get()));
+    EXPECT_FALSE(matchesSelector(onKinjaLoginAvatar, page.getElementById("plain"_si).get()));
 }
 
 TEST_F(QuirksTest, NeedsIPadMiniUserAgent)
 {
-    EXPECT_TRUE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://roblox.com/"_s }));
-    EXPECT_TRUE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://www.roblox.com/games"_s }));
-    EXPECT_TRUE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://web.roblox.com/home"_s }));
+    EXPECT_TRUE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://roblox.com/"_si }));
+    EXPECT_TRUE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://www.roblox.com/games"_si }));
+    EXPECT_TRUE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://web.roblox.com/home"_si }));
 
-    EXPECT_FALSE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://notroblox.com/"_s }));
-    EXPECT_FALSE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://roblox.com.example.com/"_s }));
+    EXPECT_FALSE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://notroblox.com/"_si }));
+    EXPECT_FALSE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://roblox.com.example.com/"_si }));
 
-    EXPECT_TRUE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://www.indiatimes.com/"_s }));
-    EXPECT_FALSE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://indiatimes.com/"_s }));
-    EXPECT_FALSE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://timesofindia.indiatimes.com/"_s }));
+    EXPECT_TRUE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://www.indiatimes.com/"_si }));
+    EXPECT_FALSE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://indiatimes.com/"_si }));
+    EXPECT_FALSE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://timesofindia.indiatimes.com/"_si }));
 
-    EXPECT_FALSE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://www.example.com/"_s }));
+    EXPECT_FALSE(WebCore::Quirks::needsIPadMiniUserAgent(URL { "https://www.example.com/"_si }));
 }
 
 TEST_F(QuirksTest, NeedsIPhoneUserAgent)
 {
-    auto shopeeLandingURL = URL { "https://shopee.sg/payment/account-linking/landing"_s };
+    auto shopeeLandingURL = URL { "https://shopee.sg/payment/account-linking/landing"_si };
 
 #if PLATFORM(IOS_FAMILY)
     EXPECT_TRUE(WebCore::Quirks::needsIPhoneUserAgent(shopeeLandingURL));
 
-    EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(URL { "https://shopee.sg/"_s }));
-    EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(URL { "https://shopee.sg/payment/account-linking/landing/"_s }));
-    EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(URL { "https://shopee.sg/payment/account-linking/landing/step2"_s }));
-    EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(URL { "https://shopee.sg/payment/account-linking"_s }));
+    EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(URL { "https://shopee.sg/"_si }));
+    EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(URL { "https://shopee.sg/payment/account-linking/landing/"_si }));
+    EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(URL { "https://shopee.sg/payment/account-linking/landing/step2"_si }));
+    EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(URL { "https://shopee.sg/payment/account-linking"_si }));
 
-    EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(URL { "https://www.shopee.sg/payment/account-linking/landing"_s }));
-    EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(URL { "https://shopee.com/payment/account-linking/landing"_s }));
+    EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(URL { "https://www.shopee.sg/payment/account-linking/landing"_si }));
+    EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(URL { "https://shopee.com/payment/account-linking/landing"_si }));
 #else
     EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(shopeeLandingURL));
 #endif
 
-    EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(URL { "https://www.example.com/"_s }));
+    EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(URL { "https://www.example.com/"_si }));
 }
 
 TEST_F(QuirksTest, ShouldTranscodeHeicImagesForURL)
 {
-    EXPECT_TRUE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://www.zillow.com/"_s }));
-    EXPECT_TRUE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://zillow.com/homes"_s }));
-    EXPECT_TRUE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://www.canva.com/design"_s }));
-    EXPECT_TRUE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://member.uhc.com/"_s }));
+    EXPECT_TRUE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://www.zillow.com/"_si }));
+    EXPECT_TRUE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://zillow.com/homes"_si }));
+    EXPECT_TRUE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://www.canva.com/design"_si }));
+    EXPECT_TRUE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://member.uhc.com/"_si }));
 
-    EXPECT_FALSE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://www.example.com/"_s }));
-    EXPECT_FALSE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://zillow.com.example.com/"_s }));
+    EXPECT_FALSE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://www.example.com/"_si }));
+    EXPECT_FALSE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://zillow.com.example.com/"_si }));
 }
 
 TEST_F(QuirksTest, IsMicrosoftTeamsRedirectURL)
@@ -1285,11 +1284,11 @@ TEST_F(QuirksTest, NeedsPartitionedCookies)
 #if ENABLE(TOUCH_EVENTS)
 TEST_F(QuirksTest, ShouldOmitTouchEventDOMAttributesForDesktopWebsite)
 {
-    EXPECT_TRUE(WebCore::Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(URL { "https://secure.chase.com/web/auth/dashboard"_s }));
+    EXPECT_TRUE(WebCore::Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(URL { "https://secure.chase.com/web/auth/dashboard"_si }));
 
-    EXPECT_FALSE(WebCore::Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(URL { "https://www.chase.com/"_s }));
-    EXPECT_FALSE(WebCore::Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(URL { "https://chase.com/"_s }));
-    EXPECT_FALSE(WebCore::Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(URL { "https://www.example.com/"_s }));
+    EXPECT_FALSE(WebCore::Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(URL { "https://www.chase.com/"_si }));
+    EXPECT_FALSE(WebCore::Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(URL { "https://chase.com/"_si }));
+    EXPECT_FALSE(WebCore::Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(URL { "https://www.example.com/"_si }));
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
@@ -1303,7 +1302,7 @@ TEST_F(QuirksTest, NeedsCustomUserAgentOverrideOutlook)
 {
     auto agent = customUserAgentFor("https://outlook.live.com/mail/0/"_s);
     ASSERT_TRUE(agent.has_value());
-    EXPECT_TRUE(agent->contains("Chrome/"_s));
+    EXPECT_TRUE(contains(*agent, "Chrome/"_s));
 
     EXPECT_FALSE(customUserAgentFor("https://live.com/"_s).has_value());
     EXPECT_FALSE(customUserAgentFor("https://onedrive.live.com/"_s).has_value());
@@ -1312,9 +1311,9 @@ TEST_F(QuirksTest, NeedsCustomUserAgentOverrideOutlook)
 TEST_F(QuirksTest, NeedsCustomUserAgentOverrideGroupCall)
 {
     for (auto url : { "https://www.messenger.com/groupcall/ROOM:12345"_s, "https://www.facebook.com/groupcall/ROOM:12345"_s }) {
-        auto agent = WebCore::Quirks::needsCustomUserAgentOverride(URL { url }, "TestApp"_s, "TestBase/1.0 (KHTML, like Gecko) Trailer/1.0"_s);
+        auto agent = WebCore::Quirks::needsCustomUserAgentOverride(URL { url }, "TestApp"_si, "TestBase/1.0 (KHTML, like Gecko) Trailer/1.0"_si);
         ASSERT_TRUE(agent.has_value());
-        EXPECT_TRUE(agent->contains("Chrome/"_s));
+        EXPECT_TRUE(contains(*agent, "Chrome/"_s));
     }
 
     EXPECT_FALSE(customUserAgentFor("https://www.facebook.com/"_s).has_value());
@@ -1344,9 +1343,9 @@ TEST_F(QuirksTest, NeedsCustomUserAgentOverrideRewritesBaseAgent)
     for (auto testCase : cases) {
         auto agent = customUserAgentFor(testCase.url);
         ASSERT_TRUE(agent.has_value());
-        EXPECT_TRUE(agent->contains(testCase.marker));
-        EXPECT_TRUE(agent->startsWith("TestBase/1.0"_s));
-        EXPECT_TRUE(agent->contains("Trailer/1.0"_s));
+        EXPECT_TRUE(contains(*agent, testCase.marker));
+        EXPECT_TRUE(startsWith(*agent, "TestBase/1.0"_s));
+        EXPECT_TRUE(contains(*agent, "Trailer/1.0"_s));
     }
 
     EXPECT_FALSE(customUserAgentFor("https://www.pinduoduo.com/"_s).has_value());
@@ -1357,14 +1356,14 @@ TEST_F(QuirksTest, NeedsCustomUserAgentOverrideRewritesBaseAgent)
 
 TEST_F(QuirksTest, NeedsCustomUserAgentOverrideLayersChromeCompatibilityOnUserAgentOverride)
 {
-    EXPECT_EQ(customUserAgentFor("https://www.tiktok.com/"_s), String { "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko, like Chrome/136.) Version/18.6 Safari/605.1.15"_s });
+    EXPECT_EQ(customUserAgentFor("https://www.tiktok.com/"_s), "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko, like Chrome/136.) Version/18.6 Safari/605.1.15"_si);
 }
 #endif // PLATFORM(COCOA)
 
 TEST_F(QuirksTest, NeedsCustomUserAgentOverrideSafari18_6)
 {
     for (auto url : { "https://www.bilibili.com/"_s, "https://www.gunbroker.com/"_s })
-        EXPECT_EQ(customUserAgentFor(url), String { "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"_s });
+        EXPECT_EQ(customUserAgentFor(url), "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"_si);
 }
 
 TEST_F(QuirksTest, NeedsCustomUserAgentOverrideChrome152)
@@ -1378,7 +1377,7 @@ TEST_F(QuirksTest, NeedsCustomUserAgentOverrideChrome152)
         "https://www.upgrad.com/"_s }) {
         auto agent = customUserAgentFor(url);
         ASSERT_TRUE(agent.has_value());
-        EXPECT_TRUE(agent->contains("Chrome/152.0.0.0"_s));
+        EXPECT_TRUE(contains(*agent, "Chrome/152.0.0.0"_s));
     }
 
     EXPECT_FALSE(customUserAgentFor("https://www.atomm.com/"_s).has_value());
@@ -1388,24 +1387,24 @@ TEST_F(QuirksTest, NeedsCustomUserAgentOverrideChrome152)
 
     auto outlook = customUserAgentFor("https://outlook.live.com/mail/0/"_s);
     ASSERT_TRUE(outlook.has_value());
-    EXPECT_TRUE(outlook->contains("Chrome/143.0.0.0"_s));
+    EXPECT_TRUE(contains(*outlook, "Chrome/143.0.0.0"_s));
 }
 
 TEST_F(QuirksTest, NeedsCustomUserAgentOverrideHSBC)
 {
-    EXPECT_EQ(customUserAgentFor("https://security.us.hsbc.com/"_s), String { "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15"_s });
+    EXPECT_EQ(customUserAgentFor("https://security.us.hsbc.com/"_s), "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15"_si);
     EXPECT_FALSE(customUserAgentFor("https://us.hsbc.com/"_s).has_value());
 }
 
 #if PLATFORM(MAC)
 TEST_F(QuirksTest, NeedsCustomUserAgentOverrideInstacartSafariWebApp)
 {
-    setApplicationBundleIdentifierOverride("com.apple.Safari.WebApp"_s);
+    setApplicationBundleIdentifierOverride("com.apple.Safari.WebApp"_si);
     auto agent = customUserAgentFor("https://www.instacart.com/"_s);
     clearApplicationBundleIdentifierTestingOverride();
 
     ASSERT_TRUE(agent.has_value());
-    EXPECT_TRUE(agent->contains("Chrome/152.0.0.0"_s));
+    EXPECT_TRUE(contains(*agent, "Chrome/152.0.0.0"_s));
 }
 
 TEST_F(QuirksTest, NeedsCustomUserAgentOverrideInstacartOutsideSafariWebApp)
@@ -1419,7 +1418,7 @@ TEST_F(QuirksTest, NeedsCustomUserAgentOverrideAmazonPrimeVideo)
 {
     auto agent = customUserAgentFor("https://www.amazon.com/gp/video/"_s);
     ASSERT_TRUE(agent.has_value());
-    EXPECT_TRUE(agent->contains("Chrome/"_s));
+    EXPECT_TRUE(contains(*agent, "Chrome/"_s));
 
     EXPECT_TRUE(customUserAgentFor("https://www.amazon.co.uk/gp/video/"_s).has_value());
 
@@ -1435,7 +1434,7 @@ TEST_F(QuirksTest, OnlyGoogleSearchLimitsMouseFocusableAnchorsToTheExpandablePan
 
     auto search = resolveQuirksForTopURL("https://www.google.com/search"_s);
     EXPECT_TRUE(search.isBehaviorEnabled(id));
-    EXPECT_EQ(elementSelectorsFor(search, id), Vector<String> { String { onExpandablePanel } });
+    EXPECT_EQ(elementSelectorsFor(search, id), Vector<RefPtr<StringImpl>> { StringImpl::create(onExpandablePanel) });
 
     for (auto urlString : { "https://www.dictionary.com/"_s, "https://www.thesaurus.com/"_s }) {
         auto quirks = resolveQuirksForTopURL(urlString);
@@ -1448,24 +1447,24 @@ TEST_F(QuirksTest, OnlyGoogleSearchLimitsMouseFocusableAnchorsToTheExpandablePan
 TEST_F(QuirksTest, ExpandablePanelSelectorMatchesThePanelAndAnythingInsideIt)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html><div data-expc><span><a id='inside' href='#'>x</a></span></div><a id='panel' data-expc href='#'>y</a><a id='outside' href='#'>z</a>"_s);
+    page.loadHTML("<!DOCTYPE html><div data-expc><span><a id='inside' href='#'>x</a></span></div><a id='panel' data-expc href='#'>y</a><a id='outside' href='#'>z</a>"_si);
 
-    EXPECT_TRUE(matchesSelector(onExpandablePanel, page.getElementById("inside"_s).get()));
-    EXPECT_TRUE(matchesSelector(onExpandablePanel, page.getElementById("panel"_s).get()));
-    EXPECT_FALSE(matchesSelector(onExpandablePanel, page.getElementById("outside"_s).get()));
+    EXPECT_TRUE(matchesSelector(onExpandablePanel, page.getElementById("inside"_si).get()));
+    EXPECT_TRUE(matchesSelector(onExpandablePanel, page.getElementById("panel"_si).get()));
+    EXPECT_FALSE(matchesSelector(onExpandablePanel, page.getElementById("outside"_si).get()));
 }
 
 #if PLATFORM(IOS_FAMILY)
 TEST_F(QuirksTest, ClaudeSidebarQuirkCarriesTheSidebarSelector)
 {
     auto quirks = resolveQuirksForTopURL("https://claude.ai/"_s);
-    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsClaudeSidebarViewportUnitQuirk), Vector<String> { String { onClaudeSidebar } });
+    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsClaudeSidebarViewportUnitQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onClaudeSidebar) });
 }
 
 TEST_F(QuirksTest, OpenRiceAdPopupQuirkIsScopedToOpenRiceAndCarriesTheContainerSelector)
 {
     auto quirks = resolveQuirksForTopURL("https://www.openrice.com/"_s);
-    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsOpenRiceAdPopupHeightQuirk), Vector<String> { ".popup-ad-subview-container"_s });
+    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsOpenRiceAdPopupHeightQuirk), Vector<RefPtr<StringImpl>> { ".popup-ad-subview-container"_str });
     EXPECT_FALSE(resolveQuirksForTopURL("https://www.notopenrice.com/"_s).isBehaviorEnabled(WebCore::QuirkBehaviorID::NeedsOpenRiceAdPopupHeightQuirk));
 }
 
@@ -1479,30 +1478,30 @@ TEST_F(QuirksTest, OnlyGoogleDocsOpensAboutURLsAsAboutBlank)
 TEST_F(QuirksTest, ClaudeSidebarSelectorMatchesTheAriaLabelExactly)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html><nav id='sidebar' aria-label='Sidebar'></nav><nav id='lowercase' aria-label='sidebar'></nav><nav id='plain'></nav>"_s);
+    page.loadHTML("<!DOCTYPE html><nav id='sidebar' aria-label='Sidebar'></nav><nav id='lowercase' aria-label='sidebar'></nav><nav id='plain'></nav>"_si);
 
-    EXPECT_TRUE(matchesSelector(onClaudeSidebar, page.getElementById("sidebar"_s).get()));
-    EXPECT_FALSE(matchesSelector(onClaudeSidebar, page.getElementById("lowercase"_s).get()));
-    EXPECT_FALSE(matchesSelector(onClaudeSidebar, page.getElementById("plain"_s).get()));
+    EXPECT_TRUE(matchesSelector(onClaudeSidebar, page.getElementById("sidebar"_si).get()));
+    EXPECT_FALSE(matchesSelector(onClaudeSidebar, page.getElementById("lowercase"_si).get()));
+    EXPECT_FALSE(matchesSelector(onClaudeSidebar, page.getElementById("plain"_si).get()));
 }
 
 TEST_F(QuirksTest, TikTokCarriesSeparateSelectorsForTheCommentsAndVideoContainers)
 {
     auto quirks = resolveQuirksForTopURL("https://www.tiktok.com/"_s);
-    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsTikTokCommentsOverflowingContentQuirk), Vector<String> { String { onTikTokCommentsContainer } });
-    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsTikTokVideoOverflowingContentQuirk), Vector<String> { String { onTikTokVideoContainer } });
+    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsTikTokCommentsOverflowingContentQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onTikTokCommentsContainer) });
+    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsTikTokVideoOverflowingContentQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onTikTokVideoContainer) });
 }
 
 TEST_F(QuirksTest, TikTokSelectorsMatchClassNameSubstringsUnderTheBrowserModeContainer)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html>"
+    page.loadHTML(StringImpl::create("<!DOCTYPE html>"
         "<div class='css-1-DivBrowserModeContainer'><div id='comments' class='a css-2-DivContentContainer'></div><div id='video' class='css-3-DivVideoContainer b'></div></div>"
-        "<div><div id='orphan' class='css-2-DivContentContainer'></div></div>"_s);
+        "<div><div id='orphan' class='css-2-DivContentContainer'></div></div>"_s).ptr());
 
-    RefPtr comments = page.getElementById("comments"_s);
-    RefPtr video = page.getElementById("video"_s);
-    RefPtr orphan = page.getElementById("orphan"_s);
+    RefPtr comments = page.getElementById("comments"_si);
+    RefPtr video = page.getElementById("video"_si);
+    RefPtr orphan = page.getElementById("orphan"_si);
 
     EXPECT_TRUE(matchesSelector(onTikTokCommentsContainer, comments.get()));
     EXPECT_FALSE(matchesSelector(onTikTokVideoContainer, comments.get()));
@@ -1518,15 +1517,15 @@ TEST_F(QuirksTest, EachSiteThatPreventsTouchDispatchCarriesOnlyItsOwnSelector)
     constexpr auto touchMove = WebCore::QuirkBehaviorID::ShouldPreventTouchMoveDispatchQuirk;
 
     auto sites = resolveQuirksForTopURL("https://sites.google.com/"_s);
-    EXPECT_EQ(elementSelectorsFor(sites, touchEnd), Vector<String> { String { onGoogleSitesButton } });
+    EXPECT_EQ(elementSelectorsFor(sites, touchEnd), Vector<RefPtr<StringImpl>> { StringImpl::create(onGoogleSitesButton) });
     EXPECT_FALSE(sites.isBehaviorEnabled(touchMove));
 
     auto yahoo = resolveQuirksForTopURL("https://www.yahoo.com/"_s);
-    EXPECT_EQ(elementSelectorsFor(yahoo, touchEnd), Vector<String> { String { onYahooButton } });
+    EXPECT_EQ(elementSelectorsFor(yahoo, touchEnd), Vector<RefPtr<StringImpl>> { StringImpl::create(onYahooButton) });
     EXPECT_FALSE(yahoo.isBehaviorEnabled(touchMove));
 
     auto outlook = resolveQuirksForTopURL("https://outlook.live.com/"_s);
-    EXPECT_EQ(elementSelectorsFor(outlook, touchMove), Vector<String> { String { onOutlookSuggestions } });
+    EXPECT_EQ(elementSelectorsFor(outlook, touchMove), Vector<RefPtr<StringImpl>> { StringImpl::create(onOutlookSuggestions) });
     EXPECT_FALSE(outlook.isBehaviorEnabled(touchEnd));
 }
 #endif // ENABLE(TOUCH_EVENTS)
@@ -1534,30 +1533,30 @@ TEST_F(QuirksTest, EachSiteThatPreventsTouchDispatchCarriesOnlyItsOwnSelector)
 TEST_F(QuirksTest, TouchDispatchSelectorsRequireEveryClassInThePair)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html>"
+    page.loadHTML(StringImpl::create("<!DOCTYPE html>"
         "<div id='button' class='DPvwYc sm8sCf'></div><div id='half' class='DPvwYc'></div>"
         "<div id='captions' class='vjs-menu-button vjs-subs-cap-button'></div>"
-        "<div class='ms-Suggestions'><div><span id='suggestion'>x</span></div></div><div id='elsewhere'></div>"_s);
+        "<div class='ms-Suggestions'><div><span id='suggestion'>x</span></div></div><div id='elsewhere'></div>"_s).ptr());
 
-    EXPECT_TRUE(matchesSelector(onGoogleSitesButton, page.getElementById("button"_s).get()));
-    EXPECT_FALSE(matchesSelector(onGoogleSitesButton, page.getElementById("half"_s).get()));
-    EXPECT_FALSE(matchesSelector(onGoogleSitesButton, page.getElementById("captions"_s).get()));
-    EXPECT_TRUE(matchesSelector(onYahooButton, page.getElementById("captions"_s).get()));
+    EXPECT_TRUE(matchesSelector(onGoogleSitesButton, page.getElementById("button"_si).get()));
+    EXPECT_FALSE(matchesSelector(onGoogleSitesButton, page.getElementById("half"_si).get()));
+    EXPECT_FALSE(matchesSelector(onGoogleSitesButton, page.getElementById("captions"_si).get()));
+    EXPECT_TRUE(matchesSelector(onYahooButton, page.getElementById("captions"_si).get()));
 
-    EXPECT_TRUE(matchesSelector(onOutlookSuggestions, page.getElementById("suggestion"_s).get()));
-    EXPECT_FALSE(matchesSelector(onOutlookSuggestions, page.getElementById("elsewhere"_s).get()));
+    EXPECT_TRUE(matchesSelector(onOutlookSuggestions, page.getElementById("suggestion"_si).get()));
+    EXPECT_FALSE(matchesSelector(onOutlookSuggestions, page.getElementById("elsewhere"_si).get()));
 }
 
 TEST_F(QuirksTest, InstagramReelsQuirkOnlyAppliesToElementsContainingAVideo)
 {
     auto quirks = resolveQuirksForTopURL("https://www.instagram.com/"_s);
-    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsInstagramResizingReelsQuirk), Vector<String> { String { onElementContainingVideo } });
+    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsInstagramResizingReelsQuirk), Vector<RefPtr<StringImpl>> { StringImpl::create(onElementContainingVideo) });
 
     auto page = TestPageHarness::create();
-    page.loadHTML("<!DOCTYPE html><div id='reel'><div><video></video></div></div><div id='empty'><img></div>"_s);
+    page.loadHTML("<!DOCTYPE html><div id='reel'><div><video></video></div></div><div id='empty'><img></div>"_si);
 
-    EXPECT_TRUE(matchesSelector(onElementContainingVideo, page.getElementById("reel"_s).get()));
-    EXPECT_FALSE(matchesSelector(onElementContainingVideo, page.getElementById("empty"_s).get()));
+    EXPECT_TRUE(matchesSelector(onElementContainingVideo, page.getElementById("reel"_si).get()));
+    EXPECT_FALSE(matchesSelector(onElementContainingVideo, page.getElementById("empty"_si).get()));
 }
 
 #if ENABLE(VIDEO)
@@ -1571,18 +1570,18 @@ static ReelWidths reelWidthsForTopURL(ASCIILiteral topURLString)
     auto page = TestPageHarness::create({ .configureSettings = [](auto& settings) {
         settings.setNeedsSiteSpecificQuirks(true);
     } });
-    page.loadHTML("<!DOCTYPE html><style>"
+    page.loadHTML(StringImpl::create("<!DOCTYPE html><style>"
         "body { margin: 0 } .container { display: flex; width: 50% } .item { overflow: hidden }"
         "video, .placeholder { display: block; width: 100px; height: 50px }"
         "</style>"
         "<div class='container'><div id='reel' class='item'><video></video></div></div>"
-        "<div class='container'><div id='empty' class='item'><div class='placeholder'></div></div></div>"_s);
+        "<div class='container'><div id='empty' class='item'><div class='placeholder'></div></div></div>"_s).ptr());
 
     Ref document = page.document();
     document->quirks().setTopDocumentURLForTesting(URL { topURLString });
     document->scheduleFullStyleRebuild();
 
-    return { page.getElementById("reel"_s)->offsetWidth(), page.getElementById("empty"_s)->offsetWidth() };
+    return { page.getElementById("reel"_si)->offsetWidth(), page.getElementById("empty"_si)->offsetWidth() };
 }
 
 TEST_F(QuirksTest, InstagramReelsGrowToFillTheirFlexContainerOnlyWhenTheyContainAVideo)
@@ -1599,7 +1598,9 @@ TEST_F(QuirksTest, InstagramReelsGrowToFillTheirFlexContainerOnlyWhenTheyContain
 
 static bool hasActiveQuirk(WebCore::Document& document, ASCIILiteral quirkName)
 {
-    return document.quirks().activeQuirkNames().contains(String { quirkName });
+    return document.quirks().activeQuirkNames().containsIf([&](auto& item) {
+        return equal(item, StringImpl::create(quirkName).ptr());
+    });
 }
 
 static TestPageHarness createPageWithQuirksEnabled()
@@ -1612,16 +1613,16 @@ static TestPageHarness createPageWithQuirksEnabled()
 TEST_F(QuirksTest, SameDocumentNavigationReresolvesQuirks)
 {
     auto page = createPageWithQuirksEnabled();
-    page.loadHTML("<!DOCTYPE html>"_s);
+    page.loadHTML("<!DOCTYPE html>"_si);
 
     Ref document = page.document();
-    document->setURL(URL { "https://www.apple.com/"_s });
+    document->setURL(URL { "https://www.apple.com/"_si });
     EXPECT_FALSE(hasActiveQuirk(document, "ShouldDisableScrollAnchoringQuirk"_s));
 
-    document->updateURLForPushOrReplaceState(URL { "https://www.apple.com/retail"_s });
+    document->updateURLForPushOrReplaceState(URL { "https://www.apple.com/retail"_si });
     EXPECT_TRUE(hasActiveQuirk(document, "ShouldDisableScrollAnchoringQuirk"_s));
 
-    document->updateURLForPushOrReplaceState(URL { "https://www.apple.com/"_s });
+    document->updateURLForPushOrReplaceState(URL { "https://www.apple.com/"_si });
     EXPECT_FALSE(hasActiveQuirk(document, "ShouldDisableScrollAnchoringQuirk"_s));
 }
 

@@ -67,8 +67,8 @@ public:
     {
     }
 
-    APIString(const String& string)
-        : APIString(string.utf8().legacyCStringPointer())
+    APIString(StringImpl* string)
+        : APIString(utf8(string).legacyCStringPointer())
     {
     }
 
@@ -816,7 +816,7 @@ void TestAPI::checkThrownException(JSValueRef* exception, const ASCIILiteral& ex
     check(exception, description, " throws an exception");
     JSC::JSGlobalObject* globalObject = toJS(context);
     JSC::JSValue exceptionValue = toJS(globalObject, *exception);
-    check(exceptionValue.toWTFString(globalObject) == expectedMessage, description, " has correct exception message");
+    check(equal(exceptionValue.toWTFString(globalObject), expectedMessage), description, " has correct exception message");
 }
 
 void TestAPI::testBigInt()
@@ -1238,7 +1238,7 @@ void TestAPI::testBigInt()
                 JSValueRef bigint = JSBigIntCreateWithUInt64(context, 0x2a, exception);
                 checkIsBigIntType(bigint);
                 JSStringRef string = JSValueToStringCopy(context, bigint, exception);
-                check(string->string() == "42"_s, description, " has correct string");
+                check(equal(string->string(), "42"_s), description, " has correct string");
                 JSStringRelease(string);
                 return bigint;
             }, description);
@@ -1258,11 +1258,11 @@ void TestAPI::testBigInt()
 }
 
 
-static String sourceFromPayload(const JSC::SourceProfiler::Payload& payload)
+static RefPtr<StringImpl> sourceFromPayload(const JSC::SourceProfiler::Payload& payload)
 {
     if (payload.sourceCharSize == JSC::SourceProfiler::CharacterSize::Char8Bit)
-        return unsafeMakeSpan(static_cast<const Latin1Character*>(payload.sourceStr), payload.sourceLength);
-    return unsafeMakeSpan(static_cast<const char16_t*>(payload.sourceStr), payload.sourceLength);
+        return StringImpl::createOrNull(unsafeMakeSpan(static_cast<const Latin1Character*>(payload.sourceStr), payload.sourceLength));
+    return StringImpl::createOrNull(unsafeMakeSpan(static_cast<const char16_t*>(payload.sourceStr), payload.sourceLength));
 }
 
 void TestAPI::sourceProfiler()
@@ -1271,7 +1271,7 @@ void TestAPI::sourceProfiler()
 
     struct ProfiledSource {
         Type type;
-        String source;
+        RefPtr<StringImpl> source;
         unsigned order;
     };
     static NeverDestroyed<Vector<ProfiledSource>> profiledSources;
@@ -1294,7 +1294,7 @@ void TestAPI::sourceProfiler()
             JSC::JSGlobalObject* globalObject = context;
             JSC::VM& vm = globalObject->vm();
             JSC::JSLockHolder locker(vm);
-            auto source = JSC::makeSource("export var moduleTestBlurb = 'MODULE_TEST_BLURB';"_s, JSC::SourceOrigin { URL { "file:///sourceProfilerModule.js"_s } }, JSC::SourceTaintedOrigin::Untainted, "sourceProfilerModule.js"_s, TextPosition(), JSC::SourceProviderSourceType::Module);
+            auto source = JSC::makeSource("export var moduleTestBlurb = 'MODULE_TEST_BLURB';"_si, JSC::SourceOrigin { URL { "file:///sourceProfilerModule.js"_si } }, JSC::SourceTaintedOrigin::Untainted, "sourceProfilerModule.js"_si, TextPosition(), JSC::SourceProviderSourceType::Module);
             JSC::JSPromise* promise = JSC::loadAndEvaluateModule(globalObject, WTF::move(source), nullptr);
             vm.drainMicrotasks();
             check(promise->status() == JSC::JSPromise::Status::Fulfilled, "module should load and evaluate");
@@ -1305,7 +1305,7 @@ void TestAPI::sourceProfiler()
         const ProfiledSource* match = nullptr;
         unsigned matchCount = 0;
         for (const auto& entry : profiledSources.get()) {
-            if (entry.type == type && entry.source.contains(blurb)) {
+            if (entry.type == type && contains(entry.source, blurb)) {
                 match = &entry;
                 ++matchCount;
             }

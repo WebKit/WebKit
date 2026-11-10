@@ -277,16 +277,16 @@ public:
     enum class InTouchEventHandling : bool { No, Yes };
     enum class InMotion : bool { No, Yes };
     void updateTouchLastGlobalPositionAndDelta(PointerID, const DoublePoint&, InTouchEventHandling, InMotion);
-    bool dispatchTouchEvent(const PlatformTouchEvent&, const AtomString&, const EventTargetTouchArrayMap&, float, float);
+    bool dispatchTouchEvent(const PlatformTouchEvent&, AtomStringImpl*, const EventTargetTouchArrayMap&, float, float);
     WEBCORE_EXPORT bool dispatchSimulatedTouchEvent(IntPoint location);
     Frame* touchEventTargetSubframe() const { return m_touchEventTargetSubframe.get(); }
     const TouchArray& touches() const LIFETIME_BOUND { return m_touches; }
 #endif
 
 #if ENABLE(IOS_GESTURE_EVENTS)
-    bool dispatchGestureEvent(const PlatformTouchEvent&, const AtomString&, const EventTargetSet&, float, float);
+    bool dispatchGestureEvent(const PlatformTouchEvent&, AtomStringImpl*, const EventTargetSet&, float, float);
 #elif ENABLE(MAC_GESTURE_EVENTS)
-    bool dispatchGestureEvent(const PlatformGestureEvent&, const AtomString&, const EventTargetSet&, float, float);
+    bool dispatchGestureEvent(const PlatformGestureEvent&, AtomStringImpl*, const EventTargetSet&, float, float);
     WEBCORE_EXPORT HandleUserInputEventResult handleGestureEvent(const PlatformGestureEvent&);
     WEBCORE_EXPORT void didEndMagnificationGesture();
 #endif
@@ -323,7 +323,7 @@ public:
     bool accessibilityPreventsEventPropagation(KeyboardEvent&);
     WEBCORE_EXPORT void handleKeyboardSelectionMovementForAccessibility(KeyboardEvent&);
 
-    bool handleTextInputEvent(const String& text, Event* underlyingEvent = nullptr, TextEventInputType = TextEventInputKeyboard);
+    bool handleTextInputEvent(StringImpl* text, Event* underlyingEvent = nullptr, TextEventInputType = TextEventInputKeyboard);
     void defaultTextInputEventHandler(TextEvent&);
 
 #if ENABLE(DRAG_SUPPORT)
@@ -523,21 +523,21 @@ private:
 #endif
     
     enum class FireMouseOverOut : bool { No, Yes };
-    void updateMouseEventTargetNode(const AtomString& eventType, Node*, const PlatformMouseEvent&, FireMouseOverOut);
+    void updateMouseEventTargetNode(AtomStringImpl* eventType, Node*, const PlatformMouseEvent&, FireMouseOverOut);
 
-    void notifyScrollableAreasOfMouseEvents(const AtomString& eventType, Element* lastElementUnderMouse, Element* elementUnderMouse);
+    void notifyScrollableAreasOfMouseEvents(AtomStringImpl* eventType, Element* lastElementUnderMouse, Element* elementUnderMouse);
 
     MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const PlatformMouseEvent&);
 
-    bool dispatchAnyClickEvent(const AtomString& eventType, Node* target, int clickCount, const PlatformMouseEvent&);
-    bool dispatchMouseEvent(const AtomString& eventType, Node* target, int clickCount, const PlatformMouseEvent&, FireMouseOverOut);
+    bool dispatchAnyClickEvent(AtomStringImpl* eventType, Node* target, int clickCount, const PlatformMouseEvent&);
+    bool dispatchMouseEvent(AtomStringImpl* eventType, Node* target, int clickCount, const PlatformMouseEvent&, FireMouseOverOut);
 
     enum class IgnoreAncestorNodesForClickEvent : bool { No, Yes };
     bool swallowAnyClickEvent(const PlatformMouseEvent&, const MouseEventWithHitTestResults&, IgnoreAncestorNodesForClickEvent);
 
 #if ENABLE(DRAG_SUPPORT)
-    bool dispatchDragEvent(const AtomString& eventType, Element& target, RefPtr<Element>&& relatedTarget, const PlatformMouseEvent&, DataTransfer&);
-    DragTargetResponse dispatchDragEnterOrDragOverEvent(const AtomString& eventType, Element& target, RefPtr<Element>&& relatedTarget, const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&& , OptionSet<DragOperation>, bool draggingFiles);
+    bool dispatchDragEvent(AtomStringImpl* eventType, Element& target, RefPtr<Element>&& relatedTarget, const PlatformMouseEvent&, DataTransfer&);
+    DragTargetResponse dispatchDragEnterOrDragOverEvent(AtomStringImpl* eventType, Element& target, RefPtr<Element>&& relatedTarget, const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&& , OptionSet<DragOperation>, bool draggingFiles);
     void invalidateDataTransfer();
 
     bool handleDrag(const MouseEventWithHitTestResults&, CheckDragHysteresis);
@@ -549,7 +549,7 @@ private:
     void clearDragState();
 
     NODELETE static bool shouldDispatchEventsToDragSourceElement();
-    void dispatchEventToDragSourceElement(const AtomString& eventType, const PlatformMouseEvent&);
+    void dispatchEventToDragSourceElement(AtomStringImpl* eventType, const PlatformMouseEvent&);
     bool dispatchDragStartEventOnSourceElement(DataTransfer&);
 
     bool dragHysteresisExceeded(const FloatPoint&) const;

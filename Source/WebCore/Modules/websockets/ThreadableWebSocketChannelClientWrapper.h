@@ -57,20 +57,20 @@ public:
     NODELETE void setFailedWebSocketChannelCreation();
 
     // Subprotocol and extensions will be available when didConnect() callback is invoked.
-    String subprotocol() const;
-    void setSubprotocol(const String&);
-    String extensions() const;
-    void setExtensions(const String&);
+    RefPtr<StringImpl> subprotocol() const;
+    void setSubprotocol(StringImpl*);
+    RefPtr<StringImpl> extensions() const;
+    void setExtensions(StringImpl*);
 
     NODELETE void clearClient();
 
     void didConnect();
-    void didReceiveMessage(String&& message);
+    void didReceiveMessage(RefPtr<StringImpl>&& message);
     void didReceiveBinaryData(Vector<uint8_t>&&);
     void didUpdateBufferedAmount(uint64_t bufferedAmount);
     void didStartClosingHandshake();
-    void didClose(uint64_t unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
-    void didReceiveMessageError(String&& reason);
+    void didClose(uint64_t unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus, unsigned short code, StringImpl* reason);
+    void didReceiveMessageError(RefPtr<StringImpl>&& reason);
     void didUpgradeURL();
 
     NODELETE void suspend();

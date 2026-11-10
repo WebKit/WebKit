@@ -264,7 +264,7 @@ template<typename T, typename Malloc>
 size_t FixedVector<T, Malloc>::find(const auto& value) const
 {
     return findIf([&](auto& item) {
-        return item == value;
+        return Detail::vectorItemEquals(item, value);
     });
 }
 
@@ -283,7 +283,7 @@ template<typename T, typename Malloc>
 size_t FixedVector<T, Malloc>::reverseFind(const auto& value) const
 {
     return reverseFindIf([&](auto& item) {
-        return item == value;
+        return Detail::vectorItemEquals(item, value);
     });
 }
 

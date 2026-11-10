@@ -38,7 +38,7 @@ namespace WebCore {
 class PlatformSpeechSynthesisUtteranceClient : public CanMakeWeakPtr<PlatformSpeechSynthesisUtteranceClient>, public AbstractRefCounted {
 public:
     virtual ~PlatformSpeechSynthesisUtteranceClient() = default;
-    virtual void eventOccurred(const AtomString& type, uint32_t charIndex, uint32_t charLength, const String& name) = 0;
+    virtual void eventOccurred(AtomStringImpl* type, uint32_t charIndex, uint32_t charLength, StringImpl* name) = 0;
 
     virtual bool isSpeechSynthesisUtterance() const { return false; }
 
@@ -50,11 +50,11 @@ class PlatformSpeechSynthesisUtterance : public RefCounted<PlatformSpeechSynthes
 public:
     NODELETE WEBCORE_EXPORT static Ref<PlatformSpeechSynthesisUtterance> create(PlatformSpeechSynthesisUtteranceClient*);
 
-    const String& text() const LIFETIME_BOUND { return m_text; }
-    void setText(const String& text) { m_text = text; }
+    const RefPtr<StringImpl>& text() const LIFETIME_BOUND { return m_text; }
+    void setText(StringImpl* text) { m_text = text; }
     
-    const String& lang() const LIFETIME_BOUND { return m_lang; }
-    void setLang(const String& lang) { m_lang = lang; }
+    const RefPtr<StringImpl>& lang() const LIFETIME_BOUND { return m_lang; }
+    void setLang(StringImpl* lang) { m_lang = lang; }
     
     PlatformSpeechSynthesisVoice* voice() const { return m_voice.get(); }
     void setVoice(PlatformSpeechSynthesisVoice* voice) { m_voice = voice; }
@@ -85,8 +85,8 @@ private:
     explicit PlatformSpeechSynthesisUtterance(PlatformSpeechSynthesisUtteranceClient*);
 
     WeakPtr<PlatformSpeechSynthesisUtteranceClient> m_client;
-    String m_text;
-    String m_lang;
+    RefPtr<StringImpl> m_text;
+    RefPtr<StringImpl> m_lang;
     RefPtr<PlatformSpeechSynthesisVoice> m_voice;
     float m_volume { 1 };
     float m_rate { 1 };

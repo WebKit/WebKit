@@ -48,25 +48,25 @@
 - (NSString *)title
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::titleAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::titleAttr)).autorelease();
 }
 
 - (void)setTitle:(NSString *)newTitle
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::titleAttr, newTitle);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::titleAttr, AtomStringImpl::add((__bridge CFStringRef)newTitle).get());
 }
 
 - (NSString *)lang
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::langAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::langAttr)).autorelease();
 }
 
 - (void)setLang:(NSString *)newLang
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::langAttr, newLang);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::langAttr, AtomStringImpl::add((__bridge CFStringRef)newLang).get());
 }
 
 - (BOOL)translate
@@ -84,13 +84,13 @@
 - (NSString *)dir
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->dir().createNSString().autorelease();
+    return createNSString(IMPL->dir()).autorelease();
 }
 
 - (void)setDir:(NSString *)newDir
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::dirAttr, newDir);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::dirAttr, AtomStringImpl::add((__bridge CFStringRef)newDir).get());
 }
 
 - (int)tabIndex
@@ -120,13 +120,13 @@
 - (NSString *)webkitdropzone
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::webkitdropzoneAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::webkitdropzoneAttr)).autorelease();
 }
 
 - (void)setWebkitdropzone:(NSString *)newWebkitdropzone
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::webkitdropzoneAttr, newWebkitdropzone);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::webkitdropzoneAttr, AtomStringImpl::add((__bridge CFStringRef)newWebkitdropzone).get());
 }
 
 - (BOOL)hidden
@@ -144,49 +144,49 @@
 - (NSString *)accessKey
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::accesskeyAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::accesskeyAttr)).autorelease();
 }
 
 - (void)setAccessKey:(NSString *)newAccessKey
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::accesskeyAttr, newAccessKey);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::accesskeyAttr, AtomStringImpl::add((__bridge CFStringRef)newAccessKey).get());
 }
 
 - (NSString *)innerText
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->innerText().createNSString().autorelease();
+    return createNSString(IMPL->innerText()).autorelease();
 }
 
 - (void)setInnerText:(NSString *)newInnerText
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(IMPL->setInnerText(newInnerText));
+    raiseOnDOMError(IMPL->setInnerText(StringImpl::create(newInnerText)));
 }
 
 - (NSString *)outerText
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->outerText().createNSString().autorelease();
+    return createNSString(IMPL->outerText()).autorelease();
 }
 
 - (void)setOuterText:(NSString *)newOuterText
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(IMPL->setOuterText(newOuterText));
+    raiseOnDOMError(IMPL->setOuterText(StringImpl::create(newOuterText)));
 }
 
 - (NSString *)contentEditable
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->contentEditable().createNSString().autorelease();
+    return createNSString(IMPL->contentEditable()).autorelease();
 }
 
 - (void)setContentEditable:(NSString *)newContentEditable
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(IMPL->setContentEditable(newContentEditable));
+    raiseOnDOMError(IMPL->setContentEditable(StringImpl::create(newContentEditable).get()));
 }
 
 - (BOOL)isContentEditable
@@ -210,13 +210,13 @@
 - (NSString *)idName
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getIdAttribute().createNSString().autorelease();
+    return createNSString(IMPL->getIdAttribute()).autorelease();
 }
 
 - (void)setIdName:(NSString *)newIdName
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::idAttr, newIdName);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::idAttr, AtomStringImpl::add((__bridge CFStringRef)newIdName).get());
 }
 
 - (DOMHTMLCollection *)children
@@ -228,7 +228,7 @@
 - (NSString *)titleDisplayString
 {
     WebCore::JSMainThreadNullState state;
-    return WebCore::displayString(IMPL->title(), protect(core(self))).createNSString().autorelease();
+    return createNSString(WebCore::displayString(IMPL->title(), protect(core(self)))).autorelease();
 }
 
 - (DOMElement *)insertAdjacentElement:(NSString *)where element:(DOMElement *)element
@@ -236,19 +236,19 @@
     WebCore::JSMainThreadNullState state;
     if (!element)
         raiseTypeErrorException();
-    return kit(raiseOnDOMError(IMPL->insertAdjacentElement(where, protect(*core(element)))));
+    return kit(raiseOnDOMError(IMPL->insertAdjacentElement(StringImpl::create(where).get(), protect(*core(element)))));
 }
 
 - (void)insertAdjacentHTML:(NSString *)where html:(NSString *)html
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(IMPL->insertAdjacentHTML(where, html));
+    raiseOnDOMError(IMPL->insertAdjacentHTML(StringImpl::create(where).get(), StringImpl::create(html)));
 }
 
 - (void)insertAdjacentText:(NSString *)where text:(NSString *)text
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(IMPL->insertAdjacentText(where, text));
+    raiseOnDOMError(IMPL->insertAdjacentText(StringImpl::create(where).get(), StringImpl::create(text)));
 }
 
 - (void)click
@@ -281,14 +281,14 @@
 - (NSString *)autocapitalize
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->autocapitalize().createNSString().autorelease();
+    return createNSString(IMPL->autocapitalize()).autorelease();
 }
 
 // FIXME: This method isn't in a header. Is it used? Can we remove it?
 - (void)setAutocapitalize:(NSString *)newAutocapitalize
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::autocapitalizeAttr, newAutocapitalize);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::autocapitalizeAttr, AtomStringImpl::add((__bridge CFStringRef)newAutocapitalize).get());
 }
 
 #endif

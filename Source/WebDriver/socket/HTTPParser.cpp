@@ -48,27 +48,27 @@ HTTPParser::Process HTTPParser::handlePhase()
 {
     switch (m_phase) {
     case Phase::Idle: {
-        String line;
+        RefPtr<StringImpl> line;
         if (!readLine(line))
             return Process::Suspend;
 
         if (!parseFirstLine(WTF::move(line)))
             return abortProcess("Client error: invalid request line.");
 
-        ASSERT(!m_message.method.isEmpty());
-        ASSERT(!m_message.path.isEmpty());
-        ASSERT(!m_message.version.isEmpty());
+        ASSERT(!isEmpty(m_message.method));
+        ASSERT(!isEmpty(m_message.path));
+        ASSERT(!isEmpty(m_message.version));
         m_phase = Phase::Header;
 
         return Process::Continue;
     }
 
     case Phase::Header: {
-        String line;
+        RefPtr<StringImpl> line;
         if (!readLine(line))
             return Process::Suspend;
 
-        if (!line.isEmpty())
+        if (!isEmpty(line))
             m_message.requestHeaders.append(WTF::move(line));
         else {
             m_bodyLength = expectedBodyLength();
@@ -110,9 +110,9 @@ HTTPParser::Process HTTPParser::abortProcess(const char* message)
     return Process::Suspend;
 }
 
-bool HTTPParser::parseFirstLine(String&& line)
+bool HTTPParser::parseFirstLine(RefPtr<StringImpl>&& line)
 {
-    auto components = line.split(' ');
+    auto components = split(line, ' ');
     if (components.size() != 3)
         return false;
 
@@ -122,15 +122,15 @@ bool HTTPParser::parseFirstLine(String&& line)
     return true;
 }
 
-bool HTTPParser::readLine(String& line)
+bool HTTPParser::readLine(RefPtr<StringImpl>& line)
 {
     auto length = m_buffer.size();
     auto position = m_buffer.find(0x0d);
     if (position == notFound || position + 1 == length || m_buffer[position + 1] != 0x0a)
         return false;
 
-    line = String::fromUTF8(m_buffer.span().first(position));
-    if (line.isNull())
+    line = StringImpl::fromUTF8(m_buffer.span().first(position));
+    if (!line)
         LOG_ERROR("Client error: invalid encoding in HTTP header.");
 
     m_buffer.removeAt(0, position + 2);
@@ -139,14 +139,14 @@ bool HTTPParser::readLine(String& line)
 
 size_t HTTPParser::expectedBodyLength() const
 {
-    if (m_message.method == "HEAD"_s)
+    if (equal(m_message.method, "HEAD"_s))
         return 0;
 
     constexpr auto name = "content-length:"_s;
     const size_t nameLength = name.length();
 
     for (const auto& header : m_message.requestHeaders) {
-        if (header.startsWithIgnoringASCIICase(name))
+        if (startsWithIgnoringASCIICase(header, name))
             return parseIntegerAllowingTrailingJunk<size_t>(StringView { header }.substring(nameLength)).value_or(0);
     }
 

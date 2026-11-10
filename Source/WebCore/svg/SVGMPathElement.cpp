@@ -63,7 +63,7 @@ void SVGMPathElement::buildPendingResource()
         if (treeScope->isPendingSVGResource(*this, target.identifier))
             return;
 
-        if (!target.identifier.isEmpty()) {
+        if (!isEmpty(target.identifier)) {
             treeScope->addPendingSVGResource(target.identifier, *this);
             ASSERT(hasPendingResources());
         }
@@ -99,7 +99,7 @@ void SVGMPathElement::removingSteps(RemovalType removalType, ContainerNode& oldP
         clearResourceReferences();
 }
 
-void SVGMPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGMPathElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGURIReference::parseAttribute(name, newValue);
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);

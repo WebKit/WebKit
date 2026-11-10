@@ -53,7 +53,7 @@ MediaTelemetryReport::~MediaTelemetryReport()
     notImplemented();
 }
 
-void MediaTelemetryReport::reportPlaybackState(AVPipelineState state, const String& additionalInfo, MediaType mediaType)
+void MediaTelemetryReport::reportPlaybackState(AVPipelineState state, StringImpl* additionalInfo, MediaType mediaType)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(additionalInfo);
@@ -61,7 +61,7 @@ void MediaTelemetryReport::reportPlaybackState(AVPipelineState state, const Stri
     notImplemented();
 }
 
-void MediaTelemetryReport::reportDrmInfo(DrmType drmType, const String& additionalInfo)
+void MediaTelemetryReport::reportDrmInfo(DrmType drmType, StringImpl* additionalInfo)
 {
     UNUSED_PARAM(drmType);
     UNUSED_PARAM(additionalInfo);

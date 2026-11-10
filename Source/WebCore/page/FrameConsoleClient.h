@@ -72,22 +72,22 @@ public:
 
     // The following addMessage function are deprecated.
     // Callers should try to create the ConsoleMessage themselves.
-    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&& = nullptr, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0);
-    void addMessage(MessageSource, MessageLevel, const String& message, Ref<Inspector::ScriptCallStack>&&);
-    void addMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0, Document* = nullptr);
+    void addMessage(MessageSource, MessageLevel, StringImpl* message, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&& = nullptr, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0);
+    void addMessage(MessageSource, MessageLevel, StringImpl* message, Ref<Inspector::ScriptCallStack>&&);
+    void addMessage(MessageSource, MessageLevel, StringImpl* message, unsigned long requestIdentifier = 0, Document* = nullptr);
 
     static void logMessageToSystemConsole(const Inspector::ConsoleMessage&);
 
 private:
     void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
-    void count(JSC::JSGlobalObject*, const String& label) override;
-    void countReset(JSC::JSGlobalObject*, const String& label) override;
-    void profile(JSC::JSGlobalObject*, const String& title) override;
-    void profileEnd(JSC::JSGlobalObject*, const String& title) override;
-    void takeHeapSnapshot(JSC::JSGlobalObject*, const String& title) override;
-    void time(JSC::JSGlobalObject*, const String& label) override;
-    void timeLog(JSC::JSGlobalObject*, const String& label, Ref<Inspector::ScriptArguments>&&) override;
-    void timeEnd(JSC::JSGlobalObject*, const String& label) override;
+    void count(JSC::JSGlobalObject*, StringImpl* label) override;
+    void countReset(JSC::JSGlobalObject*, StringImpl* label) override;
+    void profile(JSC::JSGlobalObject*, StringImpl* title) override;
+    void profileEnd(JSC::JSGlobalObject*, StringImpl* title) override;
+    void takeHeapSnapshot(JSC::JSGlobalObject*, StringImpl* title) override;
+    void time(JSC::JSGlobalObject*, StringImpl* label) override;
+    void timeLog(JSC::JSGlobalObject*, StringImpl* label, Ref<Inspector::ScriptArguments>&&) override;
+    void timeEnd(JSC::JSGlobalObject*, StringImpl* label) override;
     void timeStamp(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
     void record(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
     void recordEnd(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;

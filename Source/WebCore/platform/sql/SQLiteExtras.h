@@ -55,19 +55,19 @@ inline int sqliteBindText(sqlite3_stmt* statement, int index, const UTF8CString&
     return sqliteBindText(statement, index, byteCast<char>(text.span()), destructor);
 }
 
-inline String sqliteColumnName(sqlite3_stmt* statement, int index)
+inline RefPtr<StringImpl> sqliteColumnName(sqlite3_stmt* statement, int index)
 {
-    return String::fromUTF8(sqlite3_column_name(statement, index)); // NOLINT
+    return StringImpl::fromUTF8(sqlite3_column_name(statement, index)); // NOLINT
 }
 
-inline String sqliteValueText(sqlite3_value* value)
+inline RefPtr<StringImpl> sqliteValueText(sqlite3_value* value)
 {
-    return String::fromUTF8(unsafeMakeSpan(sqlite3_value_text(value), sqlite3_value_bytes(value))); // NOLINT
+    return StringImpl::fromUTF8(unsafeMakeSpan(sqlite3_value_text(value), sqlite3_value_bytes(value))); // NOLINT
 }
 
-inline String sqliteColumnText(sqlite3_stmt* statement, int index)
+inline RefPtr<StringImpl> sqliteColumnText(sqlite3_stmt* statement, int index)
 {
-    return String::fromUTF8(unsafeMakeSpan(sqlite3_column_text(statement, index), sqlite3_column_bytes(statement, index))); // NOLINT
+    return StringImpl::fromUTF8(unsafeMakeSpan(sqlite3_column_text(statement, index), sqlite3_column_bytes(statement, index))); // NOLINT
 }
 
 template<typename T = uint8_t>

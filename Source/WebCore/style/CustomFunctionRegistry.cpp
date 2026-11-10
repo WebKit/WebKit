@@ -34,7 +34,7 @@ namespace Style {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomFunction);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomFunctionRegistry);
 
-CustomFunction::CustomFunction(const AtomString& name, const Vector<StyleRuleFunction::Parameter>& parameters, const CSSCustomPropertySyntax& returnType, DeclarationsBlocks&& declarationBlocks)
+CustomFunction::CustomFunction(AtomStringImpl* name, const Vector<StyleRuleFunction::Parameter>& parameters, const CSSCustomPropertySyntax& returnType, DeclarationsBlocks&& declarationBlocks)
     : name(name)
     , parameters(parameters)
     , returnType(returnType)
@@ -53,7 +53,7 @@ void CustomFunctionRegistry::registerFunction(const StyleRuleFunction& function,
     m_functions.set(function.name(), WTF::move(customFunction));
 }
 
-const CustomFunction* CustomFunctionRegistry::functionForName(const AtomString& name) const
+const CustomFunction* CustomFunctionRegistry::functionForName(AtomStringImpl* name) const
 {
     return m_functions.get(name);
 }

@@ -63,7 +63,7 @@ public:
 
     ~Sampler();
 
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
 
     NODELETE bool isValid() const final;
 
@@ -79,7 +79,7 @@ private:
     Sampler(Device&);
 
     std::optional<UniqueSamplerIdentifier> m_samplerIdentifier;
-    String m_label;
+    RefPtr<StringImpl> m_label;
     WebGPU::AddressMode m_addressModeU { WebGPU::AddressMode::ClampToEdge };
     WebGPU::AddressMode m_addressModeV { WebGPU::AddressMode::ClampToEdge };
     WebGPU::AddressMode m_addressModeW { WebGPU::AddressMode::ClampToEdge };

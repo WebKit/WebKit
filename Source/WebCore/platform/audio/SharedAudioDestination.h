@@ -56,7 +56,7 @@ private:
     NODELETE unsigned framesPerBuffer() const final;
     MediaTime outputLatency() const final;
 #if PLATFORM(IOS_FAMILY)
-    void setSceneIdentifier(const String&) final;
+    void setSceneIdentifier(StringImpl*) final;
 #endif
 
     void setIsPlaying(bool);

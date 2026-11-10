@@ -36,14 +36,14 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerStorageManager);
 
-ServiceWorkerStorageManager::ServiceWorkerStorageManager(const String& path)
+ServiceWorkerStorageManager::ServiceWorkerStorageManager(StringImpl* path)
     : m_path(path)
 {
 }
 
 WebCore::SWRegistrationDatabase* ServiceWorkerStorageManager::ensureDatabase()
 {
-    if (!m_database && !m_path.isEmpty())
+    if (!m_database && !isEmpty(m_path))
         m_database = makeUnique<WebCore::SWRegistrationDatabase>(m_path);
 
     return m_database.get();

@@ -32,8 +32,8 @@
 namespace WebCore {
 
 struct XRSessionInit {
-    Vector<String> requiredFeatures;
-    Vector<String> optionalFeatures;
+    Vector<RefPtr<StringImpl>> requiredFeatures;
+    Vector<RefPtr<StringImpl>> optionalFeatures;
 };
 
 } // namespace WebCore

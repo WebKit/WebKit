@@ -53,7 +53,7 @@ TemporalPlainDate* TemporalPlainDate::create(VM& vm, Structure* structure, ISO86
     return object;
 }
 
-TemporalPlainDate* TemporalPlainDate::create(VM& vm, Structure* structure, ISO8601::PlainDate&& plainDate, String&& calendarId)
+TemporalPlainDate* TemporalPlainDate::create(VM& vm, Structure* structure, ISO8601::PlainDate&& plainDate, RefPtr<StringImpl>&& calendarId)
 {
     auto* object = new (NotNull, allocateCell<TemporalPlainDate>(vm)) TemporalPlainDate(vm, structure, WTF::move(plainDate), WTF::move(calendarId));
     object->finishCreation(vm);
@@ -80,14 +80,14 @@ TemporalPlainDate::TemporalPlainDate(VM& vm, Structure* structure, ISO8601::Plai
 {
 }
 
-TemporalPlainDate::TemporalPlainDate(VM& vm, Structure* structure, ISO8601::PlainDate&& plainDate, String&& calendarId)
+TemporalPlainDate::TemporalPlainDate(VM& vm, Structure* structure, ISO8601::PlainDate&& plainDate, RefPtr<StringImpl>&& calendarId)
     : Base(vm, structure)
     , m_plainDate(WTF::move(plainDate))
     , m_calendarID(TemporalCore::calendarIDFromString(calendarId))
 {
 }
 
-String TemporalPlainDate::toString() const
+RefPtr<StringImpl> TemporalPlainDate::toString() const
 {
     auto base = ISO8601::temporalDateToString(m_plainDate);
     if (TemporalCore::calendarIsISO(m_calendarID))
@@ -107,14 +107,14 @@ ISO8601::PlainDate TemporalPlainDate::validateAndCreateISODateRecord(JSGlobalObj
     double dayDouble = duration.days();
 
     if (!ISO8601::isYearWithinLimits(yearDouble)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "year is out of range"_s);
+        throwRangeError(globalObject, scope, "year is out of range"_si);
         return { };
     }
     int32_t year = static_cast<int32_t>(yearDouble);
 
     // IsValidISODate Step 1: If month < 1 or month > 12, return false.
     if (!(monthDouble >= 1 && monthDouble <= 12)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "month is out of range"_s);
+        throwRangeError(globalObject, scope, "month is out of range"_si);
         return { };
     }
     uint32_t month = static_cast<uint32_t>(monthDouble);
@@ -122,7 +122,7 @@ ISO8601::PlainDate TemporalPlainDate::validateAndCreateISODateRecord(JSGlobalObj
     // IsValidISODate Steps 2-3: reject day outside [1, ISODaysInMonth(year, month)].
     double daysInMonth = ISO8601::daysInMonth(year, month);
     if (!(dayDouble >= 1 && dayDouble <= daysInMonth)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "day is out of range"_s);
+        throwRangeError(globalObject, scope, "day is out of range"_si);
         return { };
     }
     uint32_t day = static_cast<uint32_t>(dayDouble);
@@ -134,7 +134,7 @@ ISO8601::PlainDate TemporalPlainDate::validateAndCreateISODateRecord(JSGlobalObj
 static bool isValidPlainDateOrThrow(JSGlobalObject* globalObject, ThrowScope& scope, const ISO8601::PlainDate& plainDate)
 {
     if (!ISO8601::isDateTimeWithinLimits(plainDate.year(), plainDate.month(), plainDate.day(), 12, 0, 0, 0, 0, 0)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
+        throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_si);
         return false;
     }
     return true;
@@ -176,7 +176,7 @@ TemporalPlainDate* createTemporalDate(JSGlobalObject* globalObject, ISO8601::Pla
     return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTF::move(plainDate));
 }
 
-TemporalPlainDate* createTemporalDate(JSGlobalObject* globalObject, ISO8601::PlainDate&& plainDate, String&& calendarId)
+TemporalPlainDate* createTemporalDate(JSGlobalObject* globalObject, ISO8601::PlainDate&& plainDate, RefPtr<StringImpl>&& calendarId)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -226,7 +226,8 @@ static TemporalPlainDate* fromImpl(JSGlobalObject* globalObject, JSValue itemVal
             auto [date, time] = zdt->getLocalDateTime(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
             if (!TemporalCore::calendarIsISO(zdt->calendarID()))
-                return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTF::move(date), String(zdt->calendarId()));
+                return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTF::move(date), RefPtr<StringImpl> { zdt->calendarId() });
+
             return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTF::move(date));
         }
 
@@ -252,9 +253,9 @@ static TemporalPlainDate* fromImpl(JSGlobalObject* globalObject, JSValue itemVal
         auto result = TemporalCore::dateFromFields(calendarId, fields, overflow);
         if (!result) [[unlikely]] {
             if (result.error().kind == TemporalErrorKind::TypeError)
-                throwTypeError(globalObject, scope, String(result.error().message));
+                throwTypeError(globalObject, scope, RefPtr<StringImpl>(result.error().message));
             else
-                throwRangeError(globalObject, scope, String(result.error().message));
+                throwRangeError(globalObject, scope, RefPtr<StringImpl>(result.error().message));
             return { };
         }
 
@@ -293,7 +294,7 @@ static TemporalPlainDate* fromImpl(JSGlobalObject* globalObject, JSValue itemVal
         RELEASE_AND_RETURN(scope, createTemporalDate(globalObject, WTF::move(plainDate), WTF::move(calendarId)));
     }
 
-    throwRangeError(globalObject, scope, "invalid date string"_s);
+    throwRangeError(globalObject, scope, "invalid date string"_si);
     return { };
 }
 
@@ -327,7 +328,8 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
             toTemporalOverflow(globalObject, optionsValue);
             RETURN_IF_EXCEPTION(scope, { });
             if (!TemporalCore::calendarIsISO(zdt->calendarID()))
-                return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTF::move(date), String(zdt->calendarId()));
+                return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTF::move(date), RefPtr<StringImpl> { zdt->calendarId() });
+
             return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTF::move(date));
         }
 
@@ -390,7 +392,7 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
     }
 
     // Step 4: ParseISODateTime failed → throw RangeError.
-    throwRangeError(globalObject, scope, "invalid date string"_s);
+    throwRangeError(globalObject, scope, "invalid date string"_si);
     return { };
 }
 
@@ -405,7 +407,7 @@ ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject*
 
     // Step 2: If CalendarEquals is false, throw RangeError.
     if (m_calendarID != other->m_calendarID) [[unlikely]] {
-        throwRangeError(globalObject, scope, "cannot compute difference between dates with different calendars"_s);
+        throwRangeError(globalObject, scope, "cannot compute difference between dates with different calendars"_si);
         return { };
     }
 

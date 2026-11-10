@@ -497,7 +497,7 @@ void PlatformCALayerRemote::adoptSublayers(PlatformCALayer& source)
     setSublayers(layersToMove);
 }
 
-void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnimation& animation)
+void PlatformCALayerRemote::addAnimationForKey(StringImpl* key, PlatformCAAnimation& animation)
 {
     auto addResult = m_animations.set(key, animation);
     bool appendToAddedAnimations = true;
@@ -507,7 +507,7 @@ void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnim
         // to the list of animations to be added: PlatformCAAnimationRemote::updateLayerAnimations
         // will actually take care of replacing the existing animation.
         for (auto& keyAnimationPair : borrow(m_properties.animationChanges.addedAnimations)) {
-            if (keyAnimationPair.first == key) {
+            if (equal(keyAnimationPair.first, key)) {
                 keyAnimationPair.second = downcast<PlatformCAAnimationRemote>(animation).properties();
                 appendToAddedAnimations = false;
                 break;
@@ -515,7 +515,7 @@ void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnim
         }
     }
     if (appendToAddedAnimations)
-        m_properties.animationChanges.addedAnimations.append(std::pair<String, PlatformCAAnimationRemote::Properties>(key, downcast<PlatformCAAnimationRemote>(animation).properties()));
+        m_properties.animationChanges.addedAnimations.append(std::pair<RefPtr<StringImpl>, PlatformCAAnimationRemote::Properties>(key, downcast<PlatformCAAnimationRemote>(animation).properties()));
     
     m_properties.notePropertiesChanged(LayerChange::AnimationsChanged);
 
@@ -523,18 +523,18 @@ void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnim
         context->willStartAnimationOnLayer(*this);
 }
 
-void PlatformCALayerRemote::removeAnimationForKey(const String& key)
+void PlatformCALayerRemote::removeAnimationForKey(StringImpl* key)
 {
     if (m_animations.remove(key)) {
         m_properties.animationChanges.addedAnimations.removeFirstMatching([&key](auto& pair) {
-            return pair.first == key;
+            return equal(pair.first, key);
         });
     }
     m_properties.animationChanges.keysOfAnimationsToRemove.add(key);
     m_properties.notePropertiesChanged(LayerChange::AnimationsChanged);
 }
 
-RefPtr<PlatformCAAnimation> PlatformCALayerRemote::animationForKey(const String& key)
+RefPtr<PlatformCAAnimation> PlatformCALayerRemote::animationForKey(StringImpl* key)
 {
     return m_animations.get(key);
 }
@@ -545,7 +545,7 @@ NODELETE static inline bool isEquivalentLayer(const PlatformCALayer* layer, cons
     return layerID == newLayerID;
 }
 
-void PlatformCALayerRemote::animationStarted(const String& key, MonotonicTime beginTime)
+void PlatformCALayerRemote::animationStarted(StringImpl* key, MonotonicTime beginTime)
 {
     auto it = m_animations.find(key);
     if (it != m_animations.end())
@@ -555,7 +555,7 @@ void PlatformCALayerRemote::animationStarted(const String& key, MonotonicTime be
         m_owner->platformCALayerAnimationStarted(key, beginTime);
 }
 
-void PlatformCALayerRemote::animationEnded(const String& key)
+void PlatformCALayerRemote::animationEnded(StringImpl* key)
 {
     if (m_owner)
         m_owner->platformCALayerAnimationEnded(key);
@@ -944,7 +944,7 @@ bool PlatformCALayerRemote::filtersCanBeComposited(const FilterOperations& filte
     return PlatformCALayerCocoa::filtersCanBeComposited(filters);
 }
 
-void PlatformCALayerRemote::setName(const String& value)
+void PlatformCALayerRemote::setName(StringImpl* value)
 {
     m_properties.name = value;
     m_properties.notePropertiesChanged(LayerChange::NameChanged);

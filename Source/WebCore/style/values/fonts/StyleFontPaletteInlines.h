@@ -48,7 +48,7 @@ template<typename... F> decltype(auto) FontPalette::switchOn(NOESCAPE F&&... f) 
             }
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const AtomString& ident) -> ResultType {
+        [&](AtomStringImpl* ident) -> ResultType {
             return visitor(CustomIdent { ident });
         },
         [&](const WebCore::FontPaletteMixFunction& mix) -> ResultType {

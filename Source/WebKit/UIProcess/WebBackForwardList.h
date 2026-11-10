@@ -103,12 +103,12 @@ public:
     void backForwardAddItemShared(IPC::Connection&, Ref<FrameState>&&, LoadedWebArchive, BrowsingContextGroup&);
     void backForwardGoToItemShared(IPC::Connection&, WebCore::BackForwardItemIdentifier);
 
-    RefPtr<FrameState> findFrameStateInItem(WebCore::BackForwardItemIdentifier, WebCore::FrameIdentifier parentFrameID, WebCore::FrameIdentifier childFrameID, uint64_t childFrameIndex, const String& childFrameName);
+    RefPtr<FrameState> findFrameStateInItem(WebCore::BackForwardItemIdentifier, WebCore::FrameIdentifier parentFrameID, WebCore::FrameIdentifier childFrameID, uint64_t childFrameIndex, StringImpl* childFrameName);
     void updateFrameIdentifier(WebCore::FrameIdentifier oldFrameID, WebCore::FrameIdentifier newFrameID);
 
     void replaceFrameStateForChild(WebBackForwardListItem&, WebCore::FrameIdentifier, Ref<FrameState>&& newFrameState);
 
-    String loggingString() const;
+    RefPtr<StringImpl> loggingString() const;
 
     enum class MakeAPIArray : bool { No, Yes };
 
@@ -188,7 +188,7 @@ public:
     Ref<API::Array> backListAsAPIArrayWithLimit(unsigned limit) const;
     Ref<API::Array> forwardListAsAPIArrayWithLimit(unsigned limit) const;
 
-    String loggingString();
+    RefPtr<StringImpl> loggingString();
 
     WebBackForwardList& getImpl() { return *m_impl; }
     WebBackForwardListMessageForwarder& messageReceiver() const;

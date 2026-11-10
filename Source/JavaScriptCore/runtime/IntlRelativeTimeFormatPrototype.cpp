@@ -89,7 +89,7 @@ JSC_DEFINE_HOST_FUNCTION(intlRelativeTimeFormatPrototypeFuncFormat, (JSGlobalObj
     double value = callFrame->argument(0).toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    String unit = callFrame->argument(1).toWTFString(globalObject);
+    RefPtr<StringImpl> unit = callFrame->argument(1).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     RELEASE_AND_RETURN(scope, JSValue::encode(relativeTimeFormat->format(globalObject, value, unit)));
@@ -108,7 +108,7 @@ JSC_DEFINE_HOST_FUNCTION(intlRelativeTimeFormatPrototypeFuncFormatToParts, (JSGl
     double value = callFrame->argument(0).toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    String unit = callFrame->argument(1).toWTFString(globalObject);
+    RefPtr<StringImpl> unit = callFrame->argument(1).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     RELEASE_AND_RETURN(scope, JSValue::encode(relativeTimeFormat->formatToParts(globalObject, value, unit)));

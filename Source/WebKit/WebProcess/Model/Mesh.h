@@ -68,9 +68,9 @@ class Mesh : public RefCountedAndCanMakeWeakPtr<Mesh> {
 public:
     virtual ~Mesh() = default;
 
-    String label() const { return m_label; }
+    RefPtr<StringImpl> label() const { return m_label; }
 
-    void setLabel(String&& label)
+    void setLabel(RefPtr<StringImpl>&& label)
     {
         m_label = WTF::move(label);
         setLabelInternal(m_label);
@@ -124,9 +124,9 @@ private:
     Mesh& operator=(const Mesh&) = delete;
     Mesh& operator=(Mesh&&) = delete;
 
-    virtual void setLabelInternal(const String&) = 0;
+    virtual void setLabelInternal(StringImpl*) = 0;
 
-    String m_label;
+    RefPtr<StringImpl> m_label;
 };
 
 #define WEBMODEL_WEB_MODEL_PLAYER_DECLARE_DIFFUSE_AND_SPECULAR_TEXTURES \

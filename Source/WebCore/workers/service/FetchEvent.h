@@ -48,14 +48,14 @@ class FetchEvent final : public ExtendableEvent {
 public:
     struct Init : ExtendableEventInit {
         Ref<FetchRequest> request;
-        String clientId;
-        String resultingClientId;
+        RefPtr<StringImpl> clientId;
+        RefPtr<StringImpl> resultingClientId;
         RefPtr<DOMPromise> handled;
     };
 
     WEBCORE_EXPORT static Ref<FetchEvent> createForTesting(ScriptExecutionContext&);
 
-    static Ref<FetchEvent> create(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<FetchEvent> create(JSC::JSGlobalObject& globalObject, AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new FetchEvent(globalObject, type, WTF::move(initializer), isTrusted));
     }
@@ -67,14 +67,14 @@ public:
     WEBCORE_EXPORT void onResponse(ResponseCallback&&);
 
     FetchRequest& request() { return m_request.get(); }
-    const String& clientId() const LIFETIME_BOUND { return m_clientId; }
-    const String& resultingClientId() const LIFETIME_BOUND { return m_resultingClientId; }
+    const RefPtr<StringImpl>& clientId() const LIFETIME_BOUND { return m_clientId; }
+    const RefPtr<StringImpl>& resultingClientId() const LIFETIME_BOUND { return m_resultingClientId; }
     DOMPromise& handled() const { return m_handled.get(); }
 
     void processRespondWithPromise(Ref<DOMPromise>&&);
     bool respondWithEntered() const { return m_respondWithEntered; }
 
-    static ResourceError createResponseError(const URL&, const String&, ResourceError::IsSanitized = ResourceError::IsSanitized::No);
+    static ResourceError createResponseError(const URL&, StringImpl*, ResourceError::IsSanitized = ResourceError::IsSanitized::No);
 
     using PreloadResponsePromise = DOMPromiseProxy<IDLAny>;
     PreloadResponsePromise& preloadResponse(ScriptExecutionContext&);
@@ -84,15 +84,15 @@ public:
     WEBCORE_EXPORT void navigationPreloadFailed(ResourceError&&);
 
 private:
-    WEBCORE_EXPORT FetchEvent(JSC::JSGlobalObject&, const AtomString&, Init&&, IsTrusted);
+    WEBCORE_EXPORT FetchEvent(JSC::JSGlobalObject&, AtomStringImpl*, Init&&, IsTrusted);
 
     void promiseIsSettled();
     void processResponse(std::expected<Ref<FetchResponse>, std::optional<ResourceError>>&&);
     void respondWithError(ResourceError&&);
 
     const Ref<FetchRequest> m_request;
-    String m_clientId;
-    String m_resultingClientId;
+    RefPtr<StringImpl> m_clientId;
+    RefPtr<StringImpl> m_resultingClientId;
 
     bool m_respondWithEntered { false };
     bool m_waitToRespond { false };

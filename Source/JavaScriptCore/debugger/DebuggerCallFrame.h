@@ -57,11 +57,11 @@ public:
     JS_EXPORT_PRIVATE const TextPosition& position() const LIFETIME_BOUND { return m_position; }
 
     JS_EXPORT_PRIVATE DebuggerScope* scope(VM&);
-    JS_EXPORT_PRIVATE String functionName(VM&) const;
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> functionName(VM&) const;
     NODELETE JS_EXPORT_PRIVATE Type type(VM&) const;
     JS_EXPORT_PRIVATE JSValue thisValue(VM&) const;
 
-    JSValue evaluateWithScopeExtension(VM&, const String&, JSObject* scopeExtensionObject, NakedPtr<Exception>&);
+    JSValue evaluateWithScopeExtension(VM&, StringImpl*, JSObject* scopeExtensionObject, NakedPtr<Exception>&);
 
     bool isValid() const { return !!m_validMachineFrame || isTailDeleted(); }
     JS_EXPORT_PRIVATE void invalidate();

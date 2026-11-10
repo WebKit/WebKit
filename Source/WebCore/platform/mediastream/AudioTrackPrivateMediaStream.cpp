@@ -122,7 +122,7 @@ void AudioTrackPrivateMediaStream::setVolume(float volume)
     updateRenderer();
 }
 
-void AudioTrackPrivateMediaStream::setAudioOutputDevice(const String& deviceId)
+void AudioTrackPrivateMediaStream::setAudioOutputDevice(StringImpl* deviceId)
 {
     if (RefPtr renderer = m_renderer)
         renderer->setAudioOutputDevice(deviceId);

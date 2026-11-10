@@ -828,11 +828,40 @@ template<typename... Types> struct ArgumentCoder<Variant<Types...>> {
     }
 };
 
-template<> struct ArgumentCoder<String> {
+// Strings have their own coders rather than the generic RefPtr / Ref ones above: a null string
+// is encoded as a length of UINT_MAX, with no "is engaged" bool in front. This is the format
+// WTF::String used, and it must not change.
+template<> struct ArgumentCoder<RefPtr<StringImpl>> {
     template<typename Encoder>
-    static void encode(Encoder&, const String&);
+    static void encode(Encoder&, StringImpl*);
     template<typename Decoder>
-    static std::optional<String> decode(Decoder&);
+    static std::optional<RefPtr<StringImpl>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<StringImpl*> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, StringImpl* string) { ArgumentCoder<RefPtr<StringImpl>>::encode(encoder, string); }
+};
+
+// Decoding a null string as a Ref<StringImpl> fails.
+template<> struct ArgumentCoder<Ref<StringImpl>> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, StringImpl& string) { ArgumentCoder<RefPtr<StringImpl>>::encode(encoder, &string); }
+    template<typename Decoder>
+    static std::optional<Ref<StringImpl>> decode(Decoder&);
+};
+
+// Atoms are encoded like any other string and atomized after decoding.
+template<> struct ArgumentCoder<RefPtr<AtomStringImpl>> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, AtomStringImpl* string) { ArgumentCoder<RefPtr<StringImpl>>::encode(encoder, string); }
+    template<typename Decoder>
+    static std::optional<RefPtr<AtomStringImpl>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<AtomStringImpl*> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, AtomStringImpl* string) { ArgumentCoder<RefPtr<StringImpl>>::encode(encoder, string); }
 };
 
 template<> struct ArgumentCoder<StringView> {

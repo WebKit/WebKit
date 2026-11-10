@@ -33,11 +33,11 @@
 
 namespace WebCore {
 
-FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, Function<void(FileChangeType)>&& modificationHandler)
+FileMonitor::FileMonitor(StringImpl* path, Ref<WorkQueue>&& handlerQueue, Function<void(FileChangeType)>&& modificationHandler)
     : m_handlerQueue(WTF::move(handlerQueue))
     , m_modificationHandler(WTF::move(modificationHandler))
 {
-    if (path.isEmpty() || !m_modificationHandler)
+    if (isEmpty(path) || !m_modificationHandler)
         return;
 
     Function<void ()> createPlatformMonitor = [&] {
@@ -47,7 +47,7 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, Func
         if (m_platformMonitor)
             g_signal_connect(m_platformMonitor.get(), "changed", G_CALLBACK(fileChangedCallback), this);
         else
-            SAFE_WTFLOGALWAYS("Failed to create a monitor for path %s: %s", path.utf8(), UTF8CStringView::unsafeFromUTF8(error->message));
+            SAFE_WTFLOGALWAYS("Failed to create a monitor for path %s: %s", utf8(path), UTF8CStringView::unsafeFromUTF8(error->message));
     };
 
     // The monitor can be created in the work queue thread.

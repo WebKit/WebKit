@@ -168,7 +168,7 @@ private:
     bool addActivity(Activity&);
     void removeActivity(Activity&);
     void invalidateAllActivities();
-    String assertionName(ProcessAssertionType) const;
+    RefPtr<StringImpl> assertionName(ProcessAssertionType) const;
     NODELETE ProcessAssertionType assertionTypeForState(ProcessThrottleState);
 
     void uiAssertionWillExpireImminently();

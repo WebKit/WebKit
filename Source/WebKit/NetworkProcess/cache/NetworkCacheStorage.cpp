@@ -284,10 +284,10 @@ public:
     }
 
     struct PartitionEntry {
-        String recordPath;
+        RefPtr<StringImpl> recordPath;
         WallTime lastAccessTime;
     };
-    HashMap<String, PartitionEntry>& ensurePartitionMap()
+    HashMap<RefPtr<StringImpl>, PartitionEntry>& ensurePartitionMap()
     {
         ASSERT(!isMainRunLoop());
         return m_partitionMap;
@@ -302,10 +302,10 @@ private:
     Lock m_lock;
     Condition m_activeCondition;
     unsigned m_activityCount WTF_GUARDED_BY_LOCK(m_lock) { 0 };
-    HashMap<String, PartitionEntry> m_partitionMap;
+    HashMap<RefPtr<StringImpl>, PartitionEntry> m_partitionMap;
 };
 
-static String makeCachePath(const String& baseCachePath)
+static RefPtr<StringImpl> makeCachePath(StringImpl* baseCachePath)
 {
 #if PLATFORM(MAC)
     // Put development cache to a different directory to avoid affecting the system cache.
@@ -315,34 +315,34 @@ static String makeCachePath(const String& baseCachePath)
     return baseCachePath;
 }
 
-static String makeVersionedDirectoryPath(const String& baseDirectoryPath)
+static RefPtr<StringImpl> makeVersionedDirectoryPath(StringImpl* baseDirectoryPath)
 {
     return FileSystem::pathByAppendingComponent(baseDirectoryPath, makeString(versionDirectoryPrefix, Storage::version));
 }
 
-static String makeRecordsDirectoryPath(const String& baseDirectoryPath)
+static RefPtr<StringImpl> makeRecordsDirectoryPath(StringImpl* baseDirectoryPath)
 {
     return FileSystem::pathByAppendingComponent(makeVersionedDirectoryPath(baseDirectoryPath), recordsDirectoryName);
 }
 
-static String makeBlobDirectoryPath(const String& baseDirectoryPath)
+static RefPtr<StringImpl> makeBlobDirectoryPath(StringImpl* baseDirectoryPath)
 {
     return FileSystem::pathByAppendingComponent(makeVersionedDirectoryPath(baseDirectoryPath), blobsDirectoryName);
 }
 
-static String makeSaltFilePath(const String& baseDirectoryPath)
+static RefPtr<StringImpl> makeSaltFilePath(StringImpl* baseDirectoryPath)
 {
     return FileSystem::pathByAppendingComponent(makeVersionedDirectoryPath(baseDirectoryPath), saltFileName);
 }
 
-RefPtr<Storage> Storage::open(const String& baseCachePath, Mode mode, size_t capacity, size_t mainResourceBlobMemoryCacheFileLimit)
+RefPtr<Storage> Storage::open(StringImpl* baseCachePath, Mode mode, size_t capacity, size_t mainResourceBlobMemoryCacheFileLimit)
 {
     ASSERT(RunLoop::isMain());
-    ASSERT(!baseCachePath.isNull());
+    ASSERT(baseCachePath);
 
     auto cachePath = makeCachePath(baseCachePath);
     bool hasMarkedExcludedFromBackup = false;
-    if (cachePath != baseCachePath) {
+    if (!equal(cachePath, baseCachePath)) {
         if (!FileSystem::makeAllDirectories(cachePath))
             return nullptr;
 
@@ -364,46 +364,46 @@ RefPtr<Storage> Storage::open(const String& baseCachePath, Mode mode, size_t cap
     return adoptRef(new Storage(cachePath, mode, *salt, capacity, mainResourceBlobMemoryCacheFileLimit));
 }
 
-using RecordFileTraverseFunction = Function<void (const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath)>;
+using RecordFileTraverseFunction = Function<void (StringImpl* fileName, StringImpl* hashString, StringImpl* type, bool isBlob, StringImpl* recordDirectoryPath)>;
 
-static void traversePartitionFiles(const String& partitionPath, const String& expectedType, NOESCAPE const RecordFileTraverseFunction& function)
+static void traversePartitionFiles(StringImpl* partitionPath, StringImpl* expectedType, NOESCAPE const RecordFileTraverseFunction& function)
 {
-    traverseDirectory(partitionPath, [&](const String& actualType, DirectoryEntryType entryType) {
+    traverseDirectory(partitionPath, [&](StringImpl* actualType, DirectoryEntryType entryType) {
         if (entryType != DirectoryEntryType::Directory)
             return;
-        if (!expectedType.isEmpty() && expectedType != actualType)
+        if (!isEmpty(expectedType) && !equal(expectedType, actualType))
             return;
-        String recordDirectoryPath = FileSystem::pathByAppendingComponent(partitionPath, actualType);
-        traverseDirectory(recordDirectoryPath, [&function, &recordDirectoryPath, &actualType](const String& fileName, DirectoryEntryType entryType) {
-            if (entryType != DirectoryEntryType::File || fileName.length() < Key::hashStringLength())
+        RefPtr<StringImpl> recordDirectoryPath = FileSystem::pathByAppendingComponent(partitionPath, actualType);
+        traverseDirectory(recordDirectoryPath, [&function, &recordDirectoryPath, &actualType](StringImpl* fileName, DirectoryEntryType entryType) {
+            if (entryType != DirectoryEntryType::File || length(fileName) < Key::hashStringLength())
                 return;
 
-            String hashString = fileName.left(Key::hashStringLength());
-            auto isBlob = fileName.length() > Key::hashStringLength() && fileName.endsWith(blobSuffix);
+            RefPtr<StringImpl> hashString = left(fileName, Key::hashStringLength());
+            auto isBlob = length(fileName) > Key::hashStringLength() && endsWith(fileName, blobSuffix);
             function(fileName, hashString, actualType, isBlob, recordDirectoryPath);
         });
     });
 }
 
-static void traverseRecordsFiles(const String& recordsPath, const String& expectedType, NOESCAPE const RecordFileTraverseFunction& function)
+static void traverseRecordsFiles(StringImpl* recordsPath, StringImpl* expectedType, NOESCAPE const RecordFileTraverseFunction& function)
 {
-    traverseDirectory(recordsPath, [&](const String& partitionName, DirectoryEntryType entryType) {
+    traverseDirectory(recordsPath, [&](StringImpl* partitionName, DirectoryEntryType entryType) {
         if (entryType != DirectoryEntryType::Directory)
             return;
-        String partitionPath = FileSystem::pathByAppendingComponent(recordsPath, partitionName);
+        RefPtr<StringImpl> partitionPath = FileSystem::pathByAppendingComponent(recordsPath, partitionName);
         traversePartitionFiles(partitionPath, expectedType, function);
     });
 }
 
-static void deleteEmptyRecordsDirectories(const String& recordsPath)
+static void deleteEmptyRecordsDirectories(StringImpl* recordsPath)
 {
-    traverseDirectory(recordsPath, [&recordsPath](const String& partitionName, DirectoryEntryType type) {
+    traverseDirectory(recordsPath, [&recordsPath](StringImpl* partitionName, DirectoryEntryType type) {
         if (type != DirectoryEntryType::Directory)
             return;
 
         // Delete [type] sub-folders.
-        String partitionPath = FileSystem::pathByAppendingComponent(recordsPath, partitionName);
-        traverseDirectory(partitionPath, [&partitionPath](const String& subdirName, DirectoryEntryType entryType) {
+        RefPtr<StringImpl> partitionPath = FileSystem::pathByAppendingComponent(recordsPath, partitionName);
+        traverseDirectory(partitionPath, [&partitionPath](StringImpl* subdirName, DirectoryEntryType entryType) {
             if (entryType != DirectoryEntryType::Directory)
                 return;
 
@@ -417,7 +417,7 @@ static void deleteEmptyRecordsDirectories(const String& recordsPath)
     });
 }
 
-Storage::Storage(const String& baseDirectoryPath, Mode mode, Salt salt, size_t capacity, size_t mainResourceBlobMemoryCacheFileLimit)
+Storage::Storage(StringImpl* baseDirectoryPath, Mode mode, Salt salt, size_t capacity, size_t mainResourceBlobMemoryCacheFileLimit)
     : m_basePath(baseDirectoryPath)
     , m_recordsPath(makeRecordsDirectoryPath(baseDirectoryPath))
     , m_mode(mode)
@@ -451,19 +451,19 @@ Storage::~Storage()
     ASSERT(!m_shrinkInProgress);
 }
 
-String Storage::basePathIsolatedCopy() const
+RefPtr<StringImpl> Storage::basePathIsolatedCopy() const
 {
-    return m_basePath.isolatedCopy();
+    return isolatedCopy(m_basePath);
 }
 
-String Storage::versionPath() const
+RefPtr<StringImpl> Storage::versionPath() const
 {
     return makeVersionedDirectoryPath(basePathIsolatedCopy());
 }
 
-String Storage::recordsPathIsolatedCopy() const
+RefPtr<StringImpl> Storage::recordsPathIsolatedCopy() const
 {
-    return m_recordsPath.isolatedCopy();
+    return isolatedCopy(m_recordsPath);
 }
 
 size_t Storage::approximateSize() const
@@ -513,8 +513,8 @@ void Storage::synchronize()
         unsigned recordCount = 0;
         unsigned blobCount = 0;
 
-        String anyType;
-        traverseRecordsFiles(recordsPathIsolatedCopy(), anyType, [&](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
+        RefPtr<StringImpl> anyType;
+        traverseRecordsFiles(recordsPathIsolatedCopy(), anyType, [&](StringImpl* fileName, StringImpl* hashString, StringImpl* type, bool isBlob, StringImpl* recordDirectoryPath) {
             auto filePath = FileSystem::pathByAppendingComponent(recordDirectoryPath, fileName);
 
             Key::HashType hash;
@@ -586,23 +586,23 @@ bool Storage::mayContainBlob(const Key& key) const
     return !m_blobFilter || m_blobFilter->mayContain(key.hash());
 }
 
-String Storage::recordDirectoryPathForKey(const Key& key) const
+RefPtr<StringImpl> Storage::recordDirectoryPathForKey(const Key& key) const
 {
-    ASSERT(!key.type().isEmpty());
+    ASSERT(!isEmpty(key.type()));
     return FileSystem::pathByAppendingComponent(FileSystem::pathByAppendingComponent(recordsPathIsolatedCopy(), key.partitionHashAsString()), key.type());
 }
 
-String Storage::recordPathForKey(const Key& key) const
+RefPtr<StringImpl> Storage::recordPathForKey(const Key& key) const
 {
     return FileSystem::pathByAppendingComponent(recordDirectoryPathForKey(key), key.hashAsString());
 }
 
-static String blobPathForRecordPath(const String& recordPath)
+static RefPtr<StringImpl> blobPathForRecordPath(StringImpl* recordPath)
 {
     return makeString(recordPath, blobSuffix);
 }
 
-String Storage::blobPathForKey(const Key& key) const
+RefPtr<StringImpl> Storage::blobPathForKey(const Key& key) const
 {
     return blobPathForRecordPath(recordPathForKey(key));
 }
@@ -827,14 +827,14 @@ void Storage::removeFromPendingWriteOperations(const Key& key)
     }
 }
 
-Vector<Key> Storage::pendingWriteKeys(const String& type, const std::optional<String>& partition) const
+Vector<Key> Storage::pendingWriteKeys(StringImpl* type, const std::optional<RefPtr<StringImpl>>& partition) const
 {
     assertIsMainThread();
 
     Vector<Key> keys;
     for (auto& operation : m_pendingWriteOperations) {
         auto& key = operation->record().key;
-        if (key.type() == type && (!partition || equalIgnoringNullity(key.partition(), *partition)))
+        if (equal(key.type(), type) && (!partition || equalIgnoringNullity(key.partition(), *partition)))
             keys.append(key);
     }
     return keys;
@@ -887,9 +887,9 @@ void Storage::deleteFiles(const Key& key)
     m_blobStorage.remove(blobPathForKey(key));
 }
 
-void Storage::updateFileModificationTime(String&& path)
+void Storage::updateFileModificationTime(RefPtr<StringImpl>&& path)
 {
-    serialBackgroundIOQueue().dispatch([path = WTF::move(path).isolatedCopy()] {
+    serialBackgroundIOQueue().dispatch([path = isolatedCopy(WTF::move(path))] {
         updateFileModificationTimeIfNeeded(path);
     });
 }
@@ -903,10 +903,10 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
     m_activeReadOperations.add(identifier, WTF::move(readOperationPtr));
     auto key = readOperation.key();
     auto recordPath = recordPathForKey(key);
-    auto blobPath = mayContainBlob(key) ? blobPathForKey(key) : String { };
+    auto blobPath = mayContainBlob(key) ? blobPathForKey(key) : nullptr;
 
     readOperation.updateForDispatch(m_synchronizationInProgress, m_shrinkInProgress, m_readOperationDispatchCount);
-    if (!blobPath.isEmpty())
+    if (!isEmpty(blobPath))
         readOperation.setWaitsForBlob();
 
     ++m_readOperationDispatchCount;
@@ -941,9 +941,9 @@ void Storage::readRecordFromData(Storage::ReadOperationIdentifier identifier, Mo
     });
 }
 
-void Storage::readBlobIfNecessary(Storage::ReadOperationIdentifier identifier, const String& blobPath)
+void Storage::readBlobIfNecessary(Storage::ReadOperationIdentifier identifier, StringImpl* blobPath)
 {
-    if (blobPath.isEmpty())
+    if (isEmpty(blobPath))
         return;
 
     auto blobIOStartTime = MonotonicTime::now();
@@ -1072,7 +1072,7 @@ void Storage::dispatchWriteOperation(std::unique_ptr<WriteOperation> writeOperat
         auto recordSize = recordData.size();
 
         if (!FileSystem::overwriteEntireFile(recordPath, recordData.span()))
-            RELEASE_LOG_ERROR(NetworkCacheStorage, "Failed to write %zu bytes of network cache record data to %" PUBLIC_LOG_STRING, recordSize, recordPath.utf8());
+            RELEASE_LOG_ERROR(NetworkCacheStorage, "Failed to write %zu bytes of network cache record data to %" PUBLIC_LOG_STRING, recordSize, utf8(recordPath));
 
         RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, identifier, recordSize]() mutable {
             m_approximateRecordsSize += recordSize;
@@ -1157,15 +1157,15 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler,
     m_writeOperationDispatchTimer.startOneShot(m_initialWriteDelay);
 }
 
-void Storage::traverseInternal(const String& partitionName, const String& type, OptionSet<TraverseFlag> flags, TraverseHandler&& traverseHandler)
+void Storage::traverseInternal(StringImpl* partitionName, StringImpl* type, OptionSet<TraverseFlag> flags, TraverseHandler&& traverseHandler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(traverseHandler);
 
     auto traverseOperation = TraverseOperation::create(WTF::move(traverseHandler));
     ioQueue().dispatch([this, protectedThis = Ref { *this }, traverseOperation = WTF::move(traverseOperation), flags, partitionName = crossThreadCopy(partitionName), type = crossThreadCopy(type)]() mutable {
-        RecordFileTraverseFunction traverseFunction = [this, protectedThis, expectedType = type, flags, traverseOperation](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
-            ASSERT(type == expectedType || expectedType.isEmpty());
+        RecordFileTraverseFunction traverseFunction = [this, protectedThis, expectedType = type, flags, traverseOperation](StringImpl* fileName, StringImpl* hashString, StringImpl* type, bool isBlob, StringImpl* recordDirectoryPath) {
+            ASSERT(equal(type, expectedType) || isEmpty(expectedType));
             if (isBlob)
                 return;
 
@@ -1209,7 +1209,7 @@ void Storage::traverseInternal(const String& partitionName, const String& type, 
                         static_cast<size_t>(metaData.bodySize),
                         worth,
                         bodyShareCount,
-                        String::fromUTF8(SHA1::hexDigest(metaData.bodyHash).span()),
+                        StringImpl::fromUTF8(SHA1::hexDigest(metaData.bodyHash).span()),
                         { }
                     };
                     traverseOperation->invokeHandler(&record, info);
@@ -1217,8 +1217,8 @@ void Storage::traverseInternal(const String& partitionName, const String& type, 
                 traverseOperation->decrementActivityCount();
             });
         };
-        if (!partitionName.isEmpty()) {
-            String partitionPath = FileSystem::pathByAppendingComponent(recordsPathIsolatedCopy(), partitionName);
+        if (!isEmpty(partitionName)) {
+            RefPtr<StringImpl> partitionPath = FileSystem::pathByAppendingComponent(recordsPathIsolatedCopy(), partitionName);
             traversePartitionFiles(partitionPath, type, traverseFunction);
         } else
             traverseRecordsFiles(recordsPathIsolatedCopy(), type, traverseFunction);
@@ -1232,7 +1232,7 @@ void Storage::traverseInternal(const String& partitionName, const String& type, 
                     Data headerData;
                     if (decodeRecordHeader(fileData, metaData, headerData, m_salt)) {
                         Record record { metaData.key, metaData.timeStamp, headerData, { }, metaData.bodyHash };
-                        RecordInfo info { static_cast<size_t>(metaData.bodySize), -1, 0, String { }, accessTime };
+                        RecordInfo info { static_cast<size_t>(metaData.bodySize), -1, 0, nullString(), accessTime };
                         traverseOperation->invokeHandler(&record, info);
                     }
                     traverseOperation->decrementActivityCount();
@@ -1248,13 +1248,13 @@ void Storage::traverseInternal(const String& partitionName, const String& type, 
     });
 }
 
-void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, TraverseHandler&& traverseHandler)
+void Storage::traverse(StringImpl* type, OptionSet<TraverseFlag> flags, TraverseHandler&& traverseHandler)
 {
-    String anyPartition;
+    RefPtr<StringImpl> anyPartition;
     traverseInternal(anyPartition, type, flags, WTF::move(traverseHandler));
 }
 
-void Storage::traverse(const String& type, const String& partition, OptionSet<TraverseFlag> flags, TraverseHandler&& traverseHandler)
+void Storage::traverse(StringImpl* type, StringImpl* partition, OptionSet<TraverseFlag> flags, TraverseHandler&& traverseHandler)
 {
     auto partitionHashAsString = Key::partitionToPartitionHashAsString(partition, salt());
     traverseInternal(partitionHashAsString, type, flags, WTF::move(traverseHandler));
@@ -1280,7 +1280,7 @@ void Storage::setCapacity(size_t capacity)
     shrinkIfNeeded();
 }
 
-void Storage::clear(String&& type, WallTime modifiedSinceTime, CompletionHandler<void()>&& completionHandler)
+void Storage::clear(RefPtr<StringImpl>&& type, WallTime modifiedSinceTime, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     LOG(NetworkCacheStorage, "(NetworkProcess) clearing cache");
@@ -1294,12 +1294,12 @@ void Storage::clear(String&& type, WallTime modifiedSinceTime, CompletionHandler
     m_pendingWriteOperations.removeAllMatching([&type, modifiedSinceTime](auto& operation) {
         assertIsMainThread();
 
-        return (type.isEmpty() || operation->record().key.type() == type) && operation->record().timeStamp >= modifiedSinceTime;
+        return (isEmpty(type) || equal(operation->record().key.type(), type)) && operation->record().timeStamp >= modifiedSinceTime;
     });
 
-    ioQueue().dispatch([this, protectedThis = Ref { *this }, modifiedSinceTime, completionHandler = WTF::move(completionHandler), type = WTF::move(type).isolatedCopy()] () mutable {
+    ioQueue().dispatch([this, protectedThis = Ref { *this }, modifiedSinceTime, completionHandler = WTF::move(completionHandler), type = isolatedCopy(WTF::move(type))] () mutable {
         auto recordsPath = this->recordsPathIsolatedCopy();
-        traverseRecordsFiles(recordsPath, type, [modifiedSinceTime](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
+        traverseRecordsFiles(recordsPath, type, [modifiedSinceTime](StringImpl* fileName, StringImpl* hashString, StringImpl* type, bool isBlob, StringImpl* recordDirectoryPath) {
             auto filePath = FileSystem::pathByAppendingComponent(recordDirectoryPath, fileName);
             if (modifiedSinceTime > -WallTime::infinity()) {
                 auto times = fileTimes(filePath);
@@ -1375,8 +1375,8 @@ void Storage::shrink()
 
     backgroundIOQueue().dispatch([this, protectedThis = Ref { *this }] () mutable {
         auto recordsPath = this->recordsPathIsolatedCopy();
-        String anyType;
-        traverseRecordsFiles(recordsPath, anyType, [this](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
+        RefPtr<StringImpl> anyType;
+        traverseRecordsFiles(recordsPath, anyType, [this](StringImpl* fileName, StringImpl* hashString, StringImpl* type, bool isBlob, StringImpl* recordDirectoryPath) {
             if (isBlob)
                 return;
 
@@ -1410,10 +1410,10 @@ void Storage::shrink()
 void Storage::deleteOldVersions()
 {
     backgroundIOQueue().dispatch([cachePath = basePathIsolatedCopy()] () mutable {
-        traverseDirectory(cachePath, [&cachePath](const String& subdirName, DirectoryEntryType type) {
+        traverseDirectory(cachePath, [&cachePath](StringImpl* subdirName, DirectoryEntryType type) {
             if (type != DirectoryEntryType::Directory)
                 return;
-            if (!subdirName.startsWith(versionDirectoryPrefix))
+            if (!startsWith(subdirName, versionDirectoryPrefix))
                 return;
             auto directoryVersion = parseInteger<unsigned>(StringView { subdirName }.substring(versionDirectoryPrefix.length()));
             if (!directoryVersion || *directoryVersion >= version)

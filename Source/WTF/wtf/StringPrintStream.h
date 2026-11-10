@@ -46,9 +46,9 @@ public:
     // marking constraints. Like ASCIICString itself, this cannot enforce that; it asserts in debug builds.
     WTF_EXPORT_PRIVATE ASCIICString toASCIICString() const;
 
-    WTF_EXPORT_PRIVATE std::expected<String, UTF8ConversionError> tryToString() const;
-    WTF_EXPORT_PRIVATE String toString() const;
-    WTF_EXPORT_PRIVATE String toStringWithLatin1Fallback() const;
+    WTF_EXPORT_PRIVATE std::expected<RefPtr<StringImpl>, UTF8ConversionError> tryToString() const;
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> toString() const;
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> toStringWithLatin1Fallback() const;
     NODELETE WTF_EXPORT_PRIVATE void reset();
     
 private:
@@ -78,7 +78,7 @@ ASCIICString toASCIICString(const Types&... values)
 }
 
 template<typename... Types>
-String toString(const Types&... values)
+RefPtr<StringImpl> toString(const Types&... values)
 {
     StringPrintStream stream;
     stream.print(values...);
@@ -86,11 +86,11 @@ String toString(const Types&... values)
 }
 
 template<typename... Types>
-std::optional<String> toStringWithBoundsCheck(const Types&... values)
+std::optional<RefPtr<StringImpl>> toStringWithBoundsCheck(const Types&... values)
 {
     StringPrintStream stream;
     stream.print(values...);
-    if (stream.length() > WTF::String::MaxLength)
+    if (stream.length() > StringImpl::MaxLength)
         return std::nullopt;
     return stream.toString();
 }

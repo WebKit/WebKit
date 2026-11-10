@@ -50,8 +50,8 @@ void VideoTrackPrivateMediaSourceAVFObjC::resetPropertiesFromTrack()
     setTrackIndex(m_impl->index());
     setKind(m_impl->videoKind());
     setId(m_impl->id());
-    setLabel(m_impl->label().isolatedCopy());
-    setLanguage(m_impl->language().isolatedCopy());
+    setLabel(isolatedCopy(m_impl->label()));
+    setLanguage(isolatedCopy(m_impl->language()));
     setConfiguration(m_impl->videoTrackConfiguration());
 }
 

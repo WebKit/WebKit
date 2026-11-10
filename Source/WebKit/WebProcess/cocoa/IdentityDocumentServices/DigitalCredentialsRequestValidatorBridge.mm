@@ -94,11 +94,11 @@ static WebCore::ISO18013DocumentRequest buildDocumentRequest(WKIdentityDocumentP
 {
     WebCore::ISO18013DocumentRequest mappedDocumentRequest;
 
-    mappedDocumentRequest.documentType = individualDocumentRequest.documentType;
+    mappedDocumentRequest.documentType = StringImpl::create(individualDocumentRequest.documentType);
 
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString *namespaceKey in individualDocumentRequest.namespaces) {
-        String mappedNamespaceKey = namespaceKey;
+        RefPtr<StringImpl> mappedNamespaceKey = StringImpl::create(namespaceKey);
 
         using ElementDictionaryType = NSDictionary<NSString *, WKIdentityDocumentPresentmentMobileDocumentElementInfo *>;
         RetainPtr<ElementDictionaryType> elementDictionary = individualDocumentRequest.namespaces[namespaceKey];
@@ -106,7 +106,7 @@ static WebCore::ISO18013DocumentRequest buildDocumentRequest(WKIdentityDocumentP
         WebCore::ISO18013ElementNamespaceVector innerVector;
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL NSString *elementIdentifier in elementDictionary.get()) {
-            String mappedElementIdentifier = elementIdentifier;
+            RefPtr<StringImpl> mappedElementIdentifier = StringImpl::create(elementIdentifier);
             WebCore::ISO18013ElementInfo elementInfo {
                 static_cast<bool>(elementDictionary.get()[elementIdentifier].isRetaining)
             };
@@ -195,16 +195,16 @@ static std::optional<OpenID4VPTrustedAuthorityType> convertTrustedAuthorityType(
     return std::nullopt;
 }
 
-static Vector<String> convertStrings(NSArray<NSString *> *strings)
+static Vector<RefPtr<StringImpl>> convertStrings(NSArray<NSString *> *strings)
 {
-    return makeVector(strings, [](NSString *string) -> std::optional<String> {
-        return String(string);
+    return makeVector(strings, [](NSString *string) -> std::optional<RefPtr<StringImpl>> {
+        return StringImpl::create(string);
     });
 }
 
-static Vector<Vector<String>> convertStringSets(NSArray<NSArray<NSString *> *> *stringSets)
+static Vector<Vector<RefPtr<StringImpl>>> convertStringSets(NSArray<NSArray<NSString *> *> *stringSets)
 {
-    return makeVector(stringSets, [](NSArray<NSString *> *strings) -> std::optional<Vector<String>> {
+    return makeVector(stringSets, [](NSArray<NSString *> *strings) -> std::optional<Vector<RefPtr<StringImpl>>> {
         return convertStrings(strings);
     });
 }
@@ -212,7 +212,7 @@ static Vector<Vector<String>> convertStringSets(NSArray<NSArray<NSString *> *> *
 static std::optional<OpenID4VPClaimPathComponent> convertClaimPathComponent(WKIdentityDocumentPresentmentOpenID4VPClaimPathComponent *component)
 {
     if (component.key)
-        return OpenID4VPClaimPathComponent { String(component.key) };
+        return OpenID4VPClaimPathComponent { StringImpl::create(component.key) };
     if (component.index)
         return OpenID4VPClaimPathComponent { static_cast<uint64_t>(component.index.unsignedLongLongValue) };
     return OpenID4VPClaimPathComponent { OpenID4VPAllArrayElements { } };
@@ -221,7 +221,7 @@ static std::optional<OpenID4VPClaimPathComponent> convertClaimPathComponent(WKId
 static std::optional<OpenID4VPClaimValue> convertClaimValue(WKIdentityDocumentPresentmentOpenID4VPClaimValue *value)
 {
     if (value.stringValue)
-        return OpenID4VPClaimValue { String(value.stringValue) };
+        return OpenID4VPClaimValue { StringImpl::create(value.stringValue) };
     if (value.integerValue)
         return OpenID4VPClaimValue { static_cast<int64_t>(value.integerValue.longLongValue) };
     if (value.booleanValue)
@@ -239,10 +239,10 @@ static ValidatedOpenID4VPRequestObject buildValidatedOpenID4VPRequestObject(WKId
             return std::nullopt;
 
         return OpenID4VPCredentialQuery {
-            .identifier = credential.identifier,
+            .identifier = StringImpl::create(credential.identifier),
             .format = *format,
             .allowsMultiple = static_cast<bool>(credential.allowsMultiple),
-            .documentType = credential.documentType,
+            .documentType = StringImpl::create(credential.documentType),
             .verifiableCredentialTypes = convertStrings(credential.verifiableCredentialTypes),
             .trustedAuthorities = makeVector(credential.trustedAuthorities, [](WKIdentityDocumentPresentmentOpenID4VPTrustedAuthoritiesQuery *query) -> std::optional<OpenID4VPTrustedAuthoritiesQuery> {
                 auto type = convertTrustedAuthorityType(query.type);
@@ -257,7 +257,7 @@ static ValidatedOpenID4VPRequestObject buildValidatedOpenID4VPRequestObject(WKId
                     intentToRetain = claim.intentToRetain.boolValue;
 
                 return OpenID4VPClaimsQuery {
-                    .identifier = claim.identifier,
+                    .identifier = StringImpl::create(claim.identifier),
                     .path = makeVector(claim.path, convertClaimPathComponent),
                     .values = makeVector(claim.values, convertClaimValue),
                     .intentToRetain = intentToRetain,
@@ -277,8 +277,8 @@ static ValidatedOpenID4VPRequestObject buildValidatedOpenID4VPRequestObject(WKId
         });
 
         return OpenID4VPVerifierIdentity {
-            .clientIdentifierPrefix = identity.clientIdentifierPrefix,
-            .identifier = identity.identifier,
+            .clientIdentifierPrefix = StringImpl::create(identity.clientIdentifierPrefix),
+            .identifier = StringImpl::create(identity.identifier),
             .certificateChain = CertificateInfo { createSecTrustForChain(certificateChain) },
         };
     });
@@ -293,7 +293,7 @@ static std::optional<std::pair<DigitalCredentialPresentationProtocol, RetainPtr<
         return std::nullopt;
 
     auto& [protocol, json] = *protocolAndJSON;
-    RetainPtr requestData = [json.createNSString() dataUsingEncoding:NSUTF8StringEncoding];
+    RetainPtr requestData = [createNSString(json) dataUsingEncoding:NSUTF8StringEncoding];
     if (!requestData)
         return std::nullopt;
 
@@ -301,13 +301,13 @@ static std::optional<std::pair<DigitalCredentialPresentationProtocol, RetainPtr<
 }
 #endif // HAVE(DIGITAL_CREDENTIALS_OPENID4VP)
 
-static void reportValidationFailure(const Document &document, const String &protocolName, NSError *error)
+static void reportValidationFailure(const Document &document, StringImpl*protocolName, NSError *error)
 {
     RetainPtr debugDescription = dynamic_objc_cast<NSString>(error.userInfo[NSDebugDescriptionErrorKey]);
-    String errorMessage = makeString("An error occurred validating the incoming '"_s, protocolName, "' request. The request will be ignored."_s);
+    RefPtr<StringImpl> errorMessage = makeString("An error occurred validating the incoming '"_s, protocolName, "' request. The request will be ignored."_s);
 
     if ([debugDescription length])
-        errorMessage = makeString(errorMessage, " ("_s, String(debugDescription.get()), ")"_s);
+        errorMessage = makeString(errorMessage, " ("_s, StringImpl::create(debugDescription.get()), ")"_s);
 
     const_cast<Document &>(document).addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(
         MessageSource::JS,
@@ -329,6 +329,7 @@ static std::optional<WebCore::ValidatedDigitalCredentialRequest> validateRequest
 
         auto [protocol, requestData] = *protocolAndRequestData;
         RetainPtr requestType = WebCore::digitalCredentialPresentationProtocolToString(protocol).createNSString();
+        Ref protocolName = StringImpl::create(WebCore::digitalCredentialPresentationProtocolToString(protocol));
 
         NSError *openID4VPError = nil;
         RetainPtr validatedOpenID4VPRequest = [validator validateOpenID4VPRequest:requestData.get() requestType:requestType.get() origin:topOrigin error:&openID4VPError];
@@ -338,19 +339,19 @@ static std::optional<WebCore::ValidatedDigitalCredentialRequest> validateRequest
             if (WebCore::isWithinOpenID4VPRequestLimits(requestObject))
                 return WebCore::ValidatedOpenID4VPRequest { protocol, WTF::move(requestObject) };
             RetainPtr limitsError = [NSError errorWithDomain:NSCocoaErrorDomain code:NSValidationErrorMaximum userInfo:@{ NSDebugDescriptionErrorKey: @"The request is too large." }];
-            reportValidationFailure(document, WebCore::digitalCredentialPresentationProtocolToString(protocol), limitsError.get());
+            reportValidationFailure(document, protocolName.ptr(), limitsError.get());
             return std::nullopt;
         }
         if (openID4VPError)
-            reportValidationFailure(document, WebCore::digitalCredentialPresentationProtocolToString(protocol), openID4VPError);
+            reportValidationFailure(document, protocolName.ptr(), openID4VPError);
 #else
         LOG(DigitalCredentials, "DigitalCredentials::validateRequests() - WebProcess: no platform support for OpenID4VP; the request will be ignored.");
 #endif // HAVE(DIGITAL_CREDENTIALS_OPENID4VP)
         return std::nullopt;
     }
 
-    RetainPtr convertedEncryptionInfo = mobileDocumentRequest->encryptionInfo.createNSString();
-    RetainPtr convertedDeviceRequest = mobileDocumentRequest->deviceRequest.createNSString();
+    RetainPtr convertedEncryptionInfo = createNSString(mobileDocumentRequest->encryptionInfo);
+    RetainPtr convertedDeviceRequest = createNSString(mobileDocumentRequest->deviceRequest);
 
     RetainPtr iso18013Request = adoptNS([WebKit::allocWKISO18013RequestInstance() initWithEncryptionInfo:convertedEncryptionInfo.get() deviceRequest:convertedDeviceRequest.get()]);
 
@@ -360,7 +361,7 @@ static std::optional<WebCore::ValidatedDigitalCredentialRequest> validateRequest
     if (validatedISORequest)
         return buildValidatedRequest(validatedISORequest.get());
     if (error)
-        reportValidationFailure(document, "org-iso-mdoc"_s, error);
+        reportValidationFailure(document, "org-iso-mdoc"_si, error);
     return std::nullopt;
 }
 

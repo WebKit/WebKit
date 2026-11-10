@@ -76,7 +76,7 @@ static InspectedWindowInfo getInspectedWindowInfo(HWND inspectedWindow, HWND par
     return { rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, parentRect.right - parentRect.left, parentRect.bottom - parentRect.top };
 }
 
-static String systemErrorMessage(DWORD errorCode)
+static RefPtr<StringImpl> systemErrorMessage(DWORD errorCode)
 {
     if (!errorCode)
         return emptyString();
@@ -84,7 +84,7 @@ static String systemErrorMessage(DWORD errorCode)
     wchar_t* messageBuffer = nullptr;
     size_t size = FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
         nullptr, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), reinterpret_cast<LPWSTR>(&messageBuffer), 0, nullptr);
-    String message(messageBuffer, size);
+    RefPtr<StringImpl> message = StringImpl::create(messageBuffer, size);
     LocalFree(messageBuffer);
 
     return message;
@@ -94,7 +94,7 @@ void WebInspectorUIProxy::showSavePanelForSingleFile(HWND parentWindow, Vector<W
 {
     // Remove custom URI schemes such as "web-inspector://" and also remove the leading "/".
     URL url { saveDatas[0].url };
-    auto filePath = url.path().substring(1).toString().wideCharacters();
+    auto filePath = wideCharacters(url.path().substring(1).toString());
     filePath.grow(MAX_PATH);
 
     OPENFILENAME ofn { };
@@ -109,25 +109,25 @@ void WebInspectorUIProxy::showSavePanelForSingleFile(HWND parentWindow, Vector<W
         if (!fileHandle)
             return;
 
-        auto content = saveDatas[0].content.utf8();
+        auto content = utf8(saveDatas[0].content);
         auto contentSize = content.length();
         auto bytesWritten = fileHandle.write(byteCast<uint8_t>(content.span()));
         if (bytesWritten != contentSize) {
             auto message = systemErrorMessage(GetLastError());
-            if (message.isEmpty())
+            if (isEmpty(message))
                 message = makeString("Error: writeToFile returns "_s, bytesWritten ? static_cast<int64_t>(*bytesWritten) : -1, ", contentLength = "_s, content.length());
-            MessageBox(parentWindow, message.wideCharacters().span().data(), L"Export HAR", MB_OK | MB_ICONEXCLAMATION);
+            MessageBox(parentWindow, wideCharacters(message).span().data(), L"Export HAR", MB_OK | MB_ICONEXCLAMATION);
         }
     } else {
         auto errorCode = CommDlgExtendedError();
         if (errorCode) {
-            String message;
+            RefPtr<StringImpl> message;
             // FNERR_INVALIDFILENAME is treated specially because this is a common error.
             if (errorCode == FNERR_INVALIDFILENAME)
                 message = "Error: A file name is invalid."_s;
             else
                 message = makeString("Error: "_s, errorCode);
-            MessageBox(parentWindow, message.wideCharacters().span().data(), L"Export HAR", MB_OK | MB_ICONEXCLAMATION);
+            MessageBox(parentWindow, wideCharacters(message).span().data(), L"Export HAR", MB_OK | MB_ICONEXCLAMATION);
         }
     }
 }
@@ -258,7 +258,7 @@ RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
 {
     ASSERT(m_inspectedPage);
 
-    auto preferences = WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s);
+    auto preferences = WebPreferences::create(nullptr, "WebKit2."_si, "WebKit2."_si);
 #if ENABLE(DEVELOPER_MODE)
     // Allow developers to inspect the Web Inspector in debug builds without changing settings.
     preferences->setDeveloperExtrasEnabled(true);
@@ -309,7 +309,7 @@ RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
     m_inspectorViewWindow = reinterpret_cast<HWND>(inspectorPage->viewWidget());
     WKPageSetPageNavigationClient(toAPI(inspectorPage.get()), &navigationClient.base);
 
-    inspectorPage->setURLSchemeHandlerForScheme(InspectorResourceURLSchemeHandler::create(), "inspector-resource"_s);
+    inspectorPage->setURLSchemeHandlerForScheme(InspectorResourceURLSchemeHandler::create(), "inspector-resource"_si);
 
     return inspectorPage;
 }
@@ -332,14 +332,14 @@ void WebInspectorUIProxy::platformCloseFrontendPageAndWindow()
     m_inspectedViewParentWindow = nullptr;
 }
 
-String WebInspectorUIProxy::inspectorPageURL()
+RefPtr<StringImpl> WebInspectorUIProxy::inspectorPageURL()
 {
-    return "inspector-resource:///Main.html"_s;
+    return "inspector-resource:///Main.html"_si;
 }
 
-String WebInspectorUIProxy::inspectorTestPageURL()
+RefPtr<StringImpl> WebInspectorUIProxy::inspectorTestPageURL()
 {
-    return "inspector-resource:///Test.html"_s;
+    return "inspector-resource:///Test.html"_si;
 }
 
 DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
@@ -476,12 +476,12 @@ void WebInspectorUIProxy::platformSetForcedAppearance(WebCore::InspectorFrontend
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformRevealFileExternally(const String&)
+void WebInspectorUIProxy::platformRevealFileExternally(StringImpl*)
 {
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformInspectedURLChanged(const String& /* url */)
+void WebInspectorUIProxy::platformInspectedURLChanged(StringImpl* /* url */)
 {
     notImplemented();
 }
@@ -499,7 +499,7 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
     WebInspectorUIProxy::showSavePanelForSingleFile(m_inspectedViewWindow, WTF::move(saveDatas));
 }
 
-void WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)
+void WebInspectorUIProxy::platformLoad(StringImpl*, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     notImplemented();
     completionHandler(nullString());

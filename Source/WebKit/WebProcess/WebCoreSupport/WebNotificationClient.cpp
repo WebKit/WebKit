@@ -138,7 +138,7 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
         RefPtr page = documentPage ? WebPage::fromCorePage(*documentPage) : nullptr;
         resultPermission = protect(WebProcess::singleton().notificationManager())->policyForOrigin(origin->data().toString(), page.get());
     } else {
-        callOnMainRunLoopAndWait([&resultPermission, origin = origin->data().toString().isolatedCopy()] {
+        callOnMainRunLoopAndWait([&resultPermission, origin = isolatedCopy(origin->data().toString())] {
             resultPermission = protect(WebProcess::singleton().notificationManager())->policyForOrigin(origin);
         });
     }

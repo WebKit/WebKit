@@ -378,12 +378,12 @@ static bool shouldAllowDeviceOrientationAndMotionAccess(WKPageRef, WKSecurityOri
     return TestController::singleton().handleDeviceOrientationAndMotionAccessRequest(origin, frame);
 }
 
-static String originString(WKSecurityOriginRef origin)
+static RefPtr<StringImpl> originString(WKSecurityOriginRef origin)
 {
     return toWTFString(adoptWK(WKSecurityOriginCopyToString(origin)).get());
 }
 
-static String localNetworkAccessPermissionKey(const String& requestingOrigin, bool isLoopback)
+static RefPtr<StringImpl> localNetworkAccessPermissionKey(StringImpl* requestingOrigin, bool isLoopback)
 {
     return makeString(requestingOrigin, isLoopback ? " loopback"_s : " local"_s);
 }
@@ -420,7 +420,7 @@ static void queryPermission(WKStringRef string, WKSecurityOriginRef securityOrig
 
 void TestController::handleQueryPermission(WKStringRef string, WKSecurityOriginRef securityOrigin, WKQueryPermissionResultCallbackRef callback)
 {
-    if (toWTFString(string) == "camera"_s) {
+    if (equal(toWTFString(string), "camera"_s)) {
         if (!m_isCameraPermissionAllowed) {
             WKQueryPermissionResultCallbackCompleteWithPrompt(callback);
             return;
@@ -433,7 +433,7 @@ void TestController::handleQueryPermission(WKStringRef string, WKSecurityOriginR
         return;
     }
 
-    if (toWTFString(string) == "microphone"_s) {
+    if (equal(toWTFString(string), "microphone"_s)) {
         if (!m_isMicrophonePermissionAllowed) {
             WKQueryPermissionResultCallbackCompleteWithPrompt(callback);
             return;
@@ -446,7 +446,7 @@ void TestController::handleQueryPermission(WKStringRef string, WKSecurityOriginR
         return;
     }
 
-    if (toWTFString(string) == "notifications"_s) {
+    if (equal(toWTFString(string), "notifications"_s)) {
         auto permissionState = m_webNotificationProvider.permissionState(securityOrigin);
         if (permissionState) {
             if (permissionState.value())
@@ -457,7 +457,7 @@ void TestController::handleQueryPermission(WKStringRef string, WKSecurityOriginR
         }
     }
 
-    if (toWTFString(string) == "geolocation"_s) {
+    if (equal(toWTFString(string), "geolocation"_s)) {
         m_geolocationPermissionQueryOrigins.add(toWTFString(adoptWK(WKSecurityOriginCopyToString(securityOrigin))));
 
         if (m_isGeolocationPermissionSet) {
@@ -469,8 +469,8 @@ void TestController::handleQueryPermission(WKStringRef string, WKSecurityOriginR
         }
     }
 
-    if (toWTFString(string) == "local-network"_s || toWTFString(string) == "loopback-network"_s) {
-        auto iterator = m_localNetworkAccessPermissions.find(localNetworkAccessPermissionKey(originString(securityOrigin), toWTFString(string) == "loopback-network"_s));
+    if (equal(toWTFString(string), "local-network"_s) || equal(toWTFString(string), "loopback-network"_s)) {
+        auto iterator = m_localNetworkAccessPermissions.find(localNetworkAccessPermissionKey(originString(securityOrigin), equal(toWTFString(string), "loopback-network"_s)));
         if (iterator != m_localNetworkAccessPermissions.end()) {
             if (iterator->value)
                 WKQueryPermissionResultCallbackCompleteWithGranted(callback);
@@ -480,7 +480,7 @@ void TestController::handleQueryPermission(WKStringRef string, WKSecurityOriginR
         }
     }
 
-    if (toWTFString(string) == "screen-wake-lock"_s) {
+    if (equal(toWTFString(string), "screen-wake-lock"_s)) {
         if (m_screenWakeLockPermission) {
             if (*m_screenWakeLockPermission)
                 WKQueryPermissionResultCallbackCompleteWithGranted(callback);
@@ -528,9 +528,9 @@ static StringView lastFileURLPathComponent(StringView path)
 static void addMessageToConsole(WKPageRef, WKStringRef message, const void*)
 {
     auto messageString = toWTFString(message);
-    messageString = messageString.left(messageString.find(nullCharacter));
+    messageString = left(messageString, find(messageString, nullCharacter));
 
-    size_t fileProtocolStart = messageString.find("file://"_s);
+    size_t fileProtocolStart = find(messageString, "file://"_s);
     if (fileProtocolStart != WTF::notFound) {
         StringView messageStringView { messageString };
         // FIXME: The code below does not handle additional text after url nor multiple urls. This matches DumpRenderTree implementation.
@@ -542,7 +542,7 @@ static void addMessageToConsole(WKPageRef, WKStringRef message, const void*)
     if (!invocation || invocation->gotFinalMessage())
         return;
     if (invocation->shouldDumpJSConsoleLogInStdErr()) {
-        if (auto string = messageString.tryGetUTF8())
+        if (auto string = tryGetUTF8(messageString))
             SAFE_FPRINTF(stderr, "%s", *string);
         else
             SAFE_FPRINTF(stderr, "Out of memory\n");
@@ -664,7 +664,7 @@ void TestController::willEnterFullScreen(WKPageRef page, WKCompletionListenerRef
 void TestController::willEnterFullScreen(WKPageRef page, WKCompletionListenerRef listener)
 {
     if (m_dumpFullScreenCallbacks)
-        protectedCurrentInvocation()->outputText("supportsFullScreen() == true\nenterFullScreenForElement()\n"_s);
+        protectedCurrentInvocation()->outputText("supportsFullScreen() == true\nenterFullScreenForElement()\n"_si);
     if (!m_scrollDuringEnterFullscreen)
         return WKCompletionListenerComplete(listener, nullptr);
 
@@ -720,7 +720,7 @@ void TestController::exitFullScreen(WKPageRef page, const void* clientInfo)
 void TestController::exitFullScreen(WKPageRef page)
 {
     if (m_dumpFullScreenCallbacks)
-        protectedCurrentInvocation()->outputText("exitFullScreenForElement()\n"_s);
+        protectedCurrentInvocation()->outputText("exitFullScreenForElement()\n"_si);
 }
 
 void TestController::beganExitFullScreen(WKPageRef page, WKRect initialFrame, WKRect finalFrame, WKCompletionListenerRef listener, const void* clientInfo)
@@ -1043,7 +1043,7 @@ WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfigurat
 void TestController::configureWebsiteDataStoreTemporaryDirectories(WKWebsiteDataStoreConfigurationRef configuration)
 {
     if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
-        String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
+        RefPtr<StringImpl> temporaryFolder = StringImpl::fromUTF8(dumpRenderTreeTemp);
         auto randomNumber = cryptographicallyRandomNumber<uint32_t>();
 
         WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Cache"_s, pathSeparator, randomNumber)).get());
@@ -1108,7 +1108,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
         m_geolocationProvider = makeUnique<GeolocationProviderMock>(m_context.get());
 
         if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
-            String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
+            RefPtr<StringImpl> temporaryFolder = StringImpl::fromUTF8(dumpRenderTreeTemp);
 
             // FIXME: This should be migrated to WKContextConfigurationRef.
             // Disable icon database to avoid fetching <http://127.0.0.1:8000/favicon.ico> and making tests flaky.
@@ -1190,15 +1190,15 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
     // Cocoa sets the application manifest in platformCreateWebView() via _WKApplicationManifest SPI instead.
     auto applicationManifestPath = options.applicationManifest();
     if (!applicationManifestPath.empty()) {
-        if (auto fileContents = FileSystem::readEntireFile(String::fromUTF8(applicationManifestPath.c_str())))
-            WKPageConfigurationSetApplicationManifest(pageConfiguration.get(), toWK(String::fromUTF8(fileContents->span())).get(), nullptr, nullptr);
+        if (auto fileContents = FileSystem::readEntireFile(StringImpl::fromUTF8(applicationManifestPath.c_str())))
+            WKPageConfigurationSetApplicationManifest(pageConfiguration.get(), toWK(StringImpl::fromUTF8(fileContents->span())).get(), nullptr, nullptr);
     }
 #endif
 
     return pageConfiguration;
 }
 
-static String originUserVisibleName(WKSecurityOriginRef origin)
+static RefPtr<StringImpl> originUserVisibleName(WKSecurityOriginRef origin)
 {
     if (!origin)
         return emptyString();
@@ -1206,7 +1206,7 @@ static String originUserVisibleName(WKSecurityOriginRef origin)
     auto host = toWTFString(adoptWK(WKSecurityOriginCopyHost(origin)));
     auto protocol = toWTFString(adoptWK(WKSecurityOriginCopyProtocol(origin)));
 
-    if (host.isEmpty() || protocol.isEmpty())
+    if (isEmpty(host) || isEmpty(protocol))
         return emptyString();
 
     if (int port = WKSecurityOriginGetPort(origin))
@@ -1668,11 +1668,11 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges = false;
     m_handlesAuthenticationChallenges = false;
-    m_authenticationUsername = String();
-    m_authenticationPassword = String();
+    m_authenticationUsername = nullptr;
+    m_authenticationPassword = nullptr;
 
     setBlockAllPlugins(false);
-    setPluginSupportedMode({ });
+    setPluginSupportedMode(nullptr);
 
     m_shouldLogDownloadSize = false;
     m_shouldLogDownloadExpectedSize = false;
@@ -1776,7 +1776,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     m_downloadIndex = 0;
     m_shouldDownloadContentDispositionAttachments = true;
     m_dumpPolicyDelegateCallbacks = false;
-    m_resourceResponseMIMETypesToDump = String();
+    m_resourceResponseMIMETypesToDump = nullptr;
     m_dumpFullScreenCallbacks = false;
 
     WKPageSetResourceLoadClient(m_mainWebView->page(), nullptr);
@@ -1817,10 +1817,10 @@ static inline bool isLocalFileScheme(WKStringRef scheme)
     return WKStringIsEqualToUTF8CStringIgnoringCase(scheme, "file");
 }
 
-static WTF::String pathSuitableForTestResult(WKURLRef fileURL, WKPageRef page)
+static RefPtr<StringImpl> pathSuitableForTestResult(WKURLRef fileURL, WKPageRef page)
 {
     if (!fileURL)
-        return "(null)"_s;
+        return "(null)"_si;
 
     auto schemeString = adoptWK(WKURLCopyScheme(fileURL));
     if (!isLocalFileScheme(schemeString.get()))
@@ -1831,16 +1831,16 @@ static WTF::String pathSuitableForTestResult(WKURLRef fileURL, WKPageRef page)
     if (!mainFrameURL)
         mainFrameURL = adoptWK(WKFrameCopyProvisionalURL(mainFrame));
 
-    String pathString = toWTFString(adoptWK(WKURLCopyPath(fileURL)));
-    String mainFrameURLPathString = mainFrameURL ? toWTFString(adoptWK(WKURLCopyPath(mainFrameURL.get()))) : ""_s;
-    auto basePath = StringView(mainFrameURLPathString).left(mainFrameURLPathString.reverseFind('/') + 1);
+    RefPtr<StringImpl> pathString = toWTFString(adoptWK(WKURLCopyPath(fileURL)));
+    RefPtr<StringImpl> mainFrameURLPathString = mainFrameURL ? toWTFString(adoptWK(WKURLCopyPath(mainFrameURL.get()))) : ""_si;
+    auto basePath = StringView(mainFrameURLPathString).left(reverseFind(mainFrameURLPathString, '/') + 1);
 
-    if (!basePath.isEmpty() && pathString.startsWith(basePath))
-        return pathString.substring(basePath.length());
+    if (!basePath.isEmpty() && startsWith(pathString, basePath))
+        return substring(pathString, basePath.length());
     return toWTFString(adoptWK(WKURLCopyLastPathComponent(fileURL))); // We lose some information here, but it's better than exposing a full path, which is always machine specific.
 }
 
-static String string(WKURLRequestRef request, WKPageRef page)
+static RefPtr<StringImpl> string(WKURLRequestRef request, WKPageRef page)
 {
     auto url = adoptWK(WKURLRequestCopyURL(request));
     auto firstParty = adoptWK(WKURLRequestCopyFirstPartyForCookies(request));
@@ -1850,11 +1850,11 @@ static String string(WKURLRequestRef request, WKPageRef page)
         ", http method "_s, WKStringIsEmpty(httpMethod.get()) ? "(none)"_s : ""_s, toWTFString(httpMethod.get()), '>');
 }
 
-static String string(WKURLResponseRef response, WKPageRef page, bool shouldDumpResponseHeaders = false)
+static RefPtr<StringImpl> string(WKURLResponseRef response, WKPageRef page, bool shouldDumpResponseHeaders = false)
 {
     auto url = adoptWK(WKURLResponseCopyURL(response));
     if (!url)
-        return "(null)"_s;
+        return "(null)"_si;
     if (!shouldDumpResponseHeaders) {
         return makeString("<NSURLResponse "_s, pathSuitableForTestResult(url.get(), page),
             ", http status code "_s, WKURLResponseHTTPStatusCode(response), '>');
@@ -1870,12 +1870,12 @@ static inline void dumpErrorDescriptionSuitableForTestResult(WKErrorRef error, S
     auto errorCode = WKErrorGetErrorCode(error);
 
     // We need to do some error mapping here to match the test expectations (Mac error names are expected).
-    if (errorDomain == "WebKitNetworkError"_s) {
-        errorDomain = "NSURLErrorDomain"_s;
+    if (equal(errorDomain, "WebKitNetworkError"_s)) {
+        errorDomain = "NSURLErrorDomain"_si;
         errorCode = -999;
     }
-    if (errorDomain == "WebKitPolicyError"_s)
-        errorDomain = "WebKitErrorDomain"_s;
+    if (equal(errorDomain, "WebKitPolicyError"_s))
+        errorDomain = "WebKitErrorDomain"_si;
 
     stringBuilder.append("<NSError domain "_s, errorDomain, ", code "_s, errorCode);
     if (auto url = adoptWK(WKErrorCopyFailingURL(error)))
@@ -1883,7 +1883,7 @@ static inline void dumpErrorDescriptionSuitableForTestResult(WKErrorRef error, S
     stringBuilder.append('>');
 }
 
-void TestController::dumpResourceResponseMIMETypes(String&& types)
+void TestController::dumpResourceResponseMIMETypes(RefPtr<StringImpl>&& types)
 {
     m_resourceResponseMIMETypesToDump = WTF::move(types);
     installResourceLoadClient();
@@ -1910,7 +1910,7 @@ void TestController::didSendRequest(WKPageRef page, WKURLRequestRef request)
 }
 
 #if !PLATFORM(COCOA)
-String TestController::platformResponseMIMEType(WKURLResponseRef response)
+RefPtr<StringImpl> TestController::platformResponseMIMEType(WKURLResponseRef response)
 {
     return { };
 }
@@ -1936,16 +1936,16 @@ void TestController::didReceiveResponse(WKPageRef page, WKURLRef originalURL, WK
         currentInvocation()->outputResourceLoadCallback(stringBuilder.toString());
     }
 
-    if (!m_resourceResponseMIMETypesToDump.isEmpty()) {
+    if (!isEmpty(m_resourceResponseMIMETypesToDump)) {
         WKRetainPtr url = adoptWK(WKURLResponseCopyURL(response));
         WKRetainPtr urlString = adoptWK(WKURLCopyLastPathComponent(url.get()));
         WKRetainPtr mimeTypeString = adoptWK(WKURLResponseCopyMIMEType(response));
-        if (m_resourceResponseMIMETypesToDump == "*" || m_resourceResponseMIMETypesToDump.contains(toWTFString(urlString))) {
+        if (equal(m_resourceResponseMIMETypesToDump, "*") || contains(m_resourceResponseMIMETypesToDump, toWTFString(urlString))) {
             StringBuilder stringBuilder;
             stringBuilder.append(urlString.get(), " has MIME type "_s, mimeTypeString.get());
 
-            String platformMIMEType = platformResponseMIMEType(response);
-            if (!platformMIMEType.isEmpty() && platformMIMEType != toWTFString(mimeTypeString))
+            RefPtr<StringImpl> platformMIMEType = platformResponseMIMEType(response);
+            if (!isEmpty(platformMIMEType) && !equal(platformMIMEType, toWTFString(mimeTypeString)))
                 stringBuilder.append(" but platform response has "_s, platformMIMEType);
 
             stringBuilder.append('\n');
@@ -2013,12 +2013,12 @@ void TestController::checkForWorldLeaks()
     }, 20_s).run();
 }
 
-void TestController::dumpResponse(const String& result)
+void TestController::dumpResponse(StringImpl* result)
 {
-    unsigned resultLength = result.length();
+    unsigned resultLength = length(result);
     printf("Content-Type: text/plain\n");
     printf("Content-Length: %u\n", resultLength);
-    fwrite(result.utf8().legacyCStringPointer(), 1, resultLength, stdout);
+    fwrite(utf8(result).legacyCStringPointer(), 1, resultLength, stdout);
     printf("#EOF\n");
     fprintf(stderr, "#EOF\n");
     fflush(stdout);
@@ -2040,7 +2040,7 @@ void TestController::findAndDumpWebKitProcessIdentifiers()
 #endif
     ));
 #else
-    dumpResponse("\n"_s);
+    dumpResponse("\n"_si);
 #endif
 }
 
@@ -2060,8 +2060,8 @@ void TestController::findAndDumpWorldLeaks()
         it.value.hasBeenReported = true;
         reportedAnyLeaks = true;
         auto documentURL = it.value.abandonedDocumentURL;
-        if (documentURL.isEmpty())
-            documentURL = "(no url)"_s;
+        if (isEmpty(documentURL))
+            documentURL = "(no url)"_si;
         builder.append("TEST: "_s);
         builder.append(it.value.testURL);
         builder.append('\n');
@@ -2203,21 +2203,21 @@ WKURLRef TestController::createTestURL(std::span<const char> pathOrURL)
     if (spanHasPrefix(pathOrURL, "file://"_span)) {
         auto url = adoptWK(WKURLCreateWithUTF8String(pathOrURL.data(), pathOrURL.size()));
         auto path = testPath(url.get());
-        auto pathString = String::fromUTF8(std::span { path });
+        auto pathString = StringImpl::fromUTF8(std::span { path });
         if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(pathString)) {
-            SAFE_PRINTF("Failed: File for URL ‘%s’ was not found or is inaccessible\n", pathString.utf8());
+            SAFE_PRINTF("Failed: File for URL ‘%s’ was not found or is inaccessible\n", utf8(pathString));
             return nullptr;
         }
         return url.leakRef();
     }
 
     // Creating from filesytem path.
-    auto urlString = makeString("file://"_s, FileSystem::realPath(String::fromUTF8(pathOrURL))).utf8();
+    auto urlString = utf8(makeString("file://"_s, FileSystem::realPath(StringImpl::fromUTF8(pathOrURL))));
     auto url = toWKURL(urlString);
     auto path = testPath(url.get());
-    auto pathString = String::fromUTF8(std::span { path });
+    auto pathString = StringImpl::fromUTF8(std::span { path });
     if (!m_usingServerMode && !FileSystem::fileExists(pathString)) {
-        SAFE_PRINTF("Failed: File ‘%s’ was not found or is inaccessible\n", pathString.utf8());
+        SAFE_PRINTF("Failed: File ‘%s’ was not found or is inaccessible\n", utf8(pathString));
         return nullptr;
     }
     return url.leakRef();
@@ -2312,7 +2312,7 @@ static void runUISideScriptImmediately(void* context)
     delete data;
 };
 
-void TestController::uiScriptDidComplete(const String& result, unsigned scriptCallbackID)
+void TestController::uiScriptDidComplete(StringImpl* result, unsigned scriptCallbackID)
 {
     m_uiScriptCallbacks.get(scriptCallbackID).notifyListeners(toWK(result).get());
 }
@@ -2621,7 +2621,7 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, WKCompl
     });
 }
 
-static WKRetainPtr<WKURLRef> makeOpenPanelURL(WKURLRef baseURL, const String& filePath)
+static WKRetainPtr<WKURLRef> makeOpenPanelURL(WKURLRef baseURL, StringImpl* filePath)
 {
 #if OS(WINDOWS)
     auto cFilePath = FileSystem::fileSystemRepresentation(filePath);
@@ -2633,7 +2633,7 @@ static WKRetainPtr<WKURLRef> makeOpenPanelURL(WKURLRef baseURL, const String& fi
     }
 #else
     WKRetainPtr<WKURLRef> fileURL;
-    if (!filePath.isEmpty() && filePath[0] == '/') {
+    if (!isEmpty(filePath) && codeUnitAt(filePath, 0) == '/') {
         fileURL = adoptWK(WKURLCreateWithUTF8CString("file://"));
         baseURL = fileURL.get();
     }
@@ -3129,7 +3129,7 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
     if (WKStringIsEqualToUTF8CString(command, "SetAllowedMenuActions")) {
         auto argumentArray = dynamic_wk_cast<WKArrayRef>(argument);
         auto size = WKArrayGetSize(argumentArray);
-        Vector<String> actions(ReserveCapacityTag { }, size);
+        Vector<RefPtr<StringImpl>> actions(ReserveCapacityTag { }, size);
         for (size_t index = 0; index < size; ++index)
             actions.append(toWTFString(stringValue(WKArrayGetItemAtIndex(argumentArray, index))));
         TestController::singleton().setAllowedMenuActions(actions);
@@ -3144,7 +3144,7 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         const auto length = WKArrayGetSize(files);
         for (size_t i = 0; i < length; i++) {
             auto file = WKArrayGetItemAtIndex(files, i);
-            String fileString = toWTFString(dynamic_wk_cast<WKStringRef>(file));
+            RefPtr<StringImpl> fileString = toWTFString(dynamic_wk_cast<WKStringRef>(file));
             auto fileURL = makeOpenPanelURL(currentTestURL(), fileString);
             WKArrayAppendItem(fileURLs.get(), fileURL.get());
         }
@@ -3572,7 +3572,7 @@ void TestController::didReceiveLiveDocumentsList(WKArrayRef liveDocumentList)
 {
     auto numDocuments = WKArrayGetSize(liveDocumentList);
 
-    HashMap<String, String> documentInfo;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> documentInfo;
     for (size_t i = 0; i < numDocuments; ++i) {
         if (auto dictionary = dictionaryValue(WKArrayGetItemAtIndex(liveDocumentList, i)))
             documentInfo.add(toWTFString(stringValue(dictionary, "id")), toWTFString(stringValue(dictionary, "url")));
@@ -3589,7 +3589,7 @@ void TestController::didReceiveLiveDocumentsList(WKArrayRef liveDocumentList)
     });
     
     // Add newly abandoned documents.
-    String currentTestURL = m_currentInvocation ? toWTFString(adoptWK(WKURLCopyString(m_currentInvocation->url()))) : "no test"_s;
+    RefPtr<StringImpl> currentTestURL = m_currentInvocation ? toWTFString(adoptWK(WKURLCopyString(m_currentInvocation->url()))) : "no test"_si;
     for (const auto& it : documentInfo)
         m_abandonedDocumentInfo.add(it.key, AbandonedDocumentInfo(currentTestURL, it.value));
 }
@@ -4071,13 +4071,13 @@ void TestController::setBlockAllPlugins(bool shouldBlock)
 #endif
 }
 
-void TestController::setPluginSupportedMode(const String& mode)
+void TestController::setPluginSupportedMode(StringImpl* mode)
 {
-    if (m_unsupportedPluginMode == mode)
+    if (equal(m_unsupportedPluginMode, mode))
         return;
 
     m_unsupportedPluginMode = mode;
-    if (m_unsupportedPluginMode.isEmpty()) {
+    if (isEmpty(m_unsupportedPluginMode)) {
         WKContextClearSupportedPlugins(m_context.get());
         return;
     }
@@ -4091,13 +4091,13 @@ void TestController::setPluginSupportedMode(const String& mode)
     WKArrayAppendItem(mimeTypesNetscape.get(), toWK("application/x-webkit-test-netscape").get());
     auto namePdf = toWK("WebKit built-in PDF");
 
-    if (m_unsupportedPluginMode == "allOrigins"_s) {
+    if (equal(m_unsupportedPluginMode, "allOrigins"_s)) {
         WKContextAddSupportedPlugin(m_context.get(), toWK("").get(), nameNetscape.get(), mimeTypesNetscape.get(), emptyArray.get());
         WKContextAddSupportedPlugin(m_context.get(), toWK("").get(), namePdf.get(), emptyArray.get(), emptyArray.get());
         return;
     }
 
-    if (m_unsupportedPluginMode == "specificOrigin"_s) {
+    if (equal(m_unsupportedPluginMode, "specificOrigin"_s)) {
         WKContextAddSupportedPlugin(m_context.get(), toWK("localhost").get(), nameNetscape.get(), mimeTypesNetscape.get(), emptyArray.get());
         WKContextAddSupportedPlugin(m_context.get(), toWK("localhost").get(), namePdf.get(), emptyArray.get(), emptyArray.get());
         return;
@@ -4144,7 +4144,7 @@ static ASCIILiteral toString(WKProtectionSpaceAuthenticationScheme scheme)
 bool TestController::canAuthenticateAgainstProtectionSpace(WKPageRef page, WKProtectionSpaceRef protectionSpace)
 {
     if (m_shouldLogCanAuthenticateAgainstProtectionSpace)
-        protectedCurrentInvocation()->outputText("canAuthenticateAgainstProtectionSpace\n"_s);
+        protectedCurrentInvocation()->outputText("canAuthenticateAgainstProtectionSpace\n"_si);
     auto scheme = WKProtectionSpaceGetAuthenticationScheme(protectionSpace);
     if (scheme == kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
         auto host = toSTD(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)));
@@ -4181,7 +4181,7 @@ void TestController::didFailProvisionalNavigation(WKPageRef page, WKErrorRef err
     auto errorDescription = toWTFString(adoptWK(WKErrorCopyLocalizedDescription(error)));
     int errorCode = WKErrorGetErrorCode(error);
     auto errorMessage = makeString("Failed: "_s, errorDescription, " (errorDomain="_s, errorDomain, ", code="_s, errorCode, ") for URL "_s, failingURLString);
-    SAFE_PRINTF("%s\n", errorMessage.utf8());
+    SAFE_PRINTF("%s\n", utf8(errorMessage));
 }
 
 WKRetainPtr<WKStringRef> TestController::lastProvisionalNavigationFailureURL() const
@@ -4213,7 +4213,7 @@ void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthent
     }
 
     if (m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges) {
-        protectedCurrentInvocation()->outputText("Simulating reject protection space and continue for authentication challenge\n"_s);
+        protectedCurrentInvocation()->outputText("Simulating reject protection space and continue for authentication challenge\n"_si);
         WKAuthenticationDecisionListenerRejectProtectionSpaceAndContinue(decisionListener);
         return;
     }
@@ -4262,7 +4262,7 @@ bool TestController::downloadDidReceiveServerRedirectToURL(WKDownloadRef downloa
 void TestController::downloadDidStart(WKDownloadRef download)
 {
     if (m_shouldLogDownloadCallbacks)
-        protectedCurrentInvocation()->outputText("Download started.\n"_s);
+        protectedCurrentInvocation()->outputText("Download started.\n"_si);
 }
 
 WKStringRef TestController::decideDestinationWithSuggestedFilename(WKDownloadRef download, WKStringRef filename)
@@ -4276,9 +4276,9 @@ WKStringRef TestController::decideDestinationWithSuggestedFilename(WKDownloadRef
     if (!dumpRenderTreeTemp)
         return nullptr;
 
-    auto temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
-    if (suggestedFilename.isEmpty())
-        suggestedFilename = "Unknown"_s;
+    auto temporaryFolder = StringImpl::fromUTF8(dumpRenderTreeTemp);
+    if (isEmpty(suggestedFilename))
+        suggestedFilename = "Unknown"_si;
     
     auto destination = makeString(temporaryFolder, pathSeparator, suggestedFilename);
     if (auto downloadIndex = m_downloadIndex++)
@@ -4297,7 +4297,7 @@ void TestController::downloadDidFinish(WKDownloadRef)
     if (m_shouldLogDownloadExpectedSize)
         currentInvocation->outputText(makeString("Download expected size: "_s, m_downloadTotalBytesExpectedToWrite.value_or(0), ".\n"_s));
     if (m_shouldLogDownloadCallbacks)
-        currentInvocation->outputText("Download completed.\n"_s);
+        currentInvocation->outputText("Download completed.\n"_si);
     currentInvocation->notifyDownloadDone();
 }
 
@@ -4313,7 +4313,7 @@ void TestController::downloadDidFail(WKDownloadRef, WKErrorRef error)
 {
     RefPtr currentInvocation = m_currentInvocation;
     if (m_shouldLogDownloadCallbacks) {
-        currentInvocation->outputText("Download failed.\n"_s);
+        currentInvocation->outputText("Download failed.\n"_si);
 
         auto domain = toWTFString(adoptWK(WKErrorCopyDomain(error)));
         auto description = toWTFString(adoptWK(WKErrorCopyLocalizedDescription(error)));
@@ -4324,7 +4324,7 @@ void TestController::downloadDidFail(WKDownloadRef, WKErrorRef error)
     currentInvocation->notifyDownloadDone();
 }
 
-void TestController::receivedServiceWorkerConsoleMessage(const String& message)
+void TestController::receivedServiceWorkerConsoleMessage(StringImpl* message)
 {
     protectedCurrentInvocation()->outputText(makeString("Received ServiceWorker Console Message: "_s, message, '\n'));
 }
@@ -4719,7 +4719,7 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
                     auto blockedURL = sanitizeExternalURL(urlString.get());
                     auto message = makeString("CONSOLE MESSAGE: Blocked access to external URL "_s, blockedURL, '\n');
                     if (protectedCurrentInvocation()->shouldDumpJSConsoleLogInStdErr()) {
-                        if (auto string = message.tryGetUTF8())
+                        if (auto string = tryGetUTF8(message))
                             SAFE_FPRINTF(stderr, "%s", *string);
                         else
                             SAFE_FPRINTF(stderr, "Out of memory\n");
@@ -5304,7 +5304,7 @@ void TestController::setStatisticsVeryPrevalentResource(WKStringRef host, bool v
     WKWebsiteDataStoreSetStatisticsVeryPrevalentResource(websiteDataStore(), host, value, completionHandler.leak(), adoptAndCallCompletionHandler);
 }
     
-String TestController::dumpResourceLoadStatistics()
+RefPtr<StringImpl> TestController::dumpResourceLoadStatistics()
 {
     ResourceStatisticsCallbackContext context(*this);
     WKWebsiteDataStoreDumpResourceLoadStatistics(websiteDataStore(), &context, resourceStatisticsStringResultCallback);
@@ -5715,20 +5715,20 @@ void TestController::injectUserScript(WKStringRef)
 {
 }
 
-void TestController::addTestKeyToKeychain(const String&, const String&, const String&)
+void TestController::addTestKeyToKeychain(StringImpl*, StringImpl*, StringImpl*)
 {
 }
 
-void TestController::cleanUpKeychain(const String&, const String&)
+void TestController::cleanUpKeychain(StringImpl*, StringImpl*)
 {
 }
 
-bool TestController::keyExistsInKeychain(const String&, const String&)
+bool TestController::keyExistsInKeychain(StringImpl*, StringImpl*)
 {
     return false;
 }
 
-void TestController::setAllowedMenuActions(const Vector<String>&)
+void TestController::setAllowedMenuActions(const Vector<RefPtr<StringImpl>>&)
 {
 }
 
@@ -5775,7 +5775,7 @@ static void privateClickMeasurementStringResultCallback(WKStringRef privateClick
     context->testController.notifyDone();
 }
 
-String TestController::dumpPrivateClickMeasurement()
+RefPtr<StringImpl> TestController::dumpPrivateClickMeasurement()
 {
     PrivateClickMeasurementStringResultCallbackContext callbackContext(*this);
     WKPageDumpPrivateClickMeasurement(m_mainWebView->page(), privateClickMeasurementStringResultCallback, &callbackContext);
@@ -6132,7 +6132,7 @@ WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsString(WKDict
     if (CFGetTypeID(value.get()) != CFStringGetTypeID())
         return nullptr;
 
-    return toWK(String(static_cast<CFStringRef>(value.get())));
+    return toWK(StringImpl::create(static_cast<CFStringRef>(value.get())).get());
 }
 
 WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsElement(WKDictionaryRef messageBody)
@@ -6500,7 +6500,7 @@ WKRetainPtr<WKTypeRef> TestController::axValueToWK(CFTypeRef value, CFTypeRef te
 {
     auto typeID = CFGetTypeID(value);
     if (typeID == CFStringGetTypeID())
-        return toWK(String(static_cast<CFStringRef>(value)));
+        return toWK(StringImpl::create(static_cast<CFStringRef>(value)).get());
     if (typeID == CFBooleanGetTypeID())
         return adoptWK(WKBooleanCreate(CFBooleanGetValue(static_cast<CFBooleanRef>(value))));
     if (typeID == CFNumberGetTypeID()) {
@@ -6518,7 +6518,7 @@ WKRetainPtr<WKTypeRef> TestController::axValueToWK(CFTypeRef value, CFTypeRef te
         CFTypeRef string = nullptr;
         AXUIElementCopyParameterizedAttributeValue(static_cast<AXUIElementRef>(textElement), CFSTR("AXStringForTextMarkerRange"), value, &string);
         RetainPtr adoptedString = adoptCF(string);
-        setValue(dictionary, "AXTextMarkerRangeString", string && CFGetTypeID(string) == CFStringGetTypeID() ? String(static_cast<CFStringRef>(string)) : String());
+        setValue(dictionary, "AXTextMarkerRangeString", string && CFGetTypeID(string) == CFStringGetTypeID() ? StringImpl::create(static_cast<CFStringRef>(string)) : nullptr);
         return dictionary;
     }
     if (typeID == CFArrayGetTypeID()) {
@@ -6541,7 +6541,7 @@ WKRetainPtr<WKTypeRef> TestController::axValueToWK(CFTypeRef value, CFTypeRef te
             if (CFGetTypeID(keys[i]) != CFStringGetTypeID())
                 continue;
             if (auto item = axValueToWK(values[i], textElement))
-                WKDictionarySetItem(dictionary.get(), toWK(String(static_cast<CFStringRef>(keys[i]))).get(), item.get());
+                WKDictionarySetItem(dictionary.get(), toWK(StringImpl::create(protect(static_cast<CFStringRef>(keys[i])).get()).get()).get(), item.get());
         }
         return dictionary;
     }
@@ -6563,7 +6563,7 @@ void TestController::axNotificationReceived(CFTypeRef element, CFStringRef notif
 
     WKRetainPtr body = adoptWK(WKMutableDictionaryCreate());
     setValue(body, "elementToken", storeAXElement(element));
-    setValue(body, "notificationName", String(notification));
+    setValue(body, "notificationName", StringImpl::create(notification).get());
     if (userInfo) {
         // Like VoiceOver, resolve text markers on the AXTextChangeElement when there is one. Markers relayed from a
         // cross-site frame's process only resolve there, not on the main frame's web area the notification is posted on.

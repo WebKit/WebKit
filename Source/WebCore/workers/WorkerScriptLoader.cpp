@@ -72,7 +72,7 @@ WorkerScriptLoader::~WorkerScriptLoader()
         accessWorkerScriptLoaderMap([clientIdentifier = *m_clientIdentifier](auto& map) { map.remove(clientIdentifier); });
 }
 
-std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, Source source, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier)
+std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, Source source, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, StringImpl* initiatorIdentifier)
 {
     ASSERT(scriptExecutionContext);
     auto& workerGlobalScope = downcast<WorkerGlobalScope>(*scriptExecutionContext);
@@ -95,7 +95,7 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
         }
         auto state = serviceWorkerGlobalScope->serviceWorker().state();
         if (state != ServiceWorkerState::Parsed && state != ServiceWorkerState::Installing)
-            return Exception { ExceptionCode::NetworkError, "Importing a script from a service worker that is past installing state"_s };
+            return Exception { ExceptionCode::NetworkError, "Importing a script from a service worker that is past installing state"_si };
     }
 
     std::unique_ptr<ResourceRequest> request(createResourceRequest(initiatorIdentifier));
@@ -124,14 +124,14 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
 
     if (serviceWorkerGlobalScope) {
         if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(responseMIMEType()))
-            return Exception { ExceptionCode::NetworkError, "mime type is not a supported JavaScript mime type"_s };
+            return Exception { ExceptionCode::NetworkError, "mime type is not a supported JavaScript mime type"_si };
 
         serviceWorkerGlobalScope->setScriptResource(url, ServiceWorkerContextData::ImportedScript { script(), m_responseURL, m_responseMIMEType });
     }
     return std::nullopt;
 }
 
-void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, Source source, FetchOptions&& fetchOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, ServiceWorkersMode serviceWorkerMode, WorkerScriptLoaderClient& client, String&& taskMode, std::optional<ScriptExecutionContextIdentifier> clientIdentifier, String&& referrer)
+void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, Source source, FetchOptions&& fetchOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, ServiceWorkersMode serviceWorkerMode, WorkerScriptLoaderClient& client, RefPtr<StringImpl>&& taskMode, std::optional<ScriptExecutionContextIdentifier> clientIdentifier, RefPtr<StringImpl>&& referrer)
 {
     m_client = client;
     m_url = scriptRequest.url();
@@ -143,7 +143,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
     m_advancedPrivacyProtections = scriptExecutionContext.advancedPrivacyProtections();
     m_globalPrivacyControlEnabled = scriptExecutionContext.settingsValues().globalPrivacyControlEnabled;
 
-    ASSERT(scriptRequest.httpMethod() == "GET"_s);
+    ASSERT(equal(scriptRequest.httpMethod(), "GET"_s));
 
     auto request = makeUnique<ResourceRequest>(WTF::move(scriptRequest));
 
@@ -195,10 +195,10 @@ const URL& WorkerScriptLoader::responseURL() const
     return m_responseURL;
 }
 
-std::unique_ptr<ResourceRequest> WorkerScriptLoader::createResourceRequest(const String& initiatorIdentifier)
+std::unique_ptr<ResourceRequest> WorkerScriptLoader::createResourceRequest(StringImpl* initiatorIdentifier)
 {
     auto request = makeUnique<ResourceRequest>(URL { m_url });
-    request->setHTTPMethod("GET"_s);
+    request->setHTTPMethod("GET"_si);
     request->setInitiatorIdentifier(initiatorIdentifier);
     return request;
 }
@@ -206,19 +206,19 @@ std::unique_ptr<ResourceRequest> WorkerScriptLoader::createResourceRequest(const
 static ResourceError constructJavaScriptMIMETypeError(const ResourceResponse& response)
 {
     auto message = makeString("Refused to execute "_s, response.url().stringCenterEllipsizedToLength(), " as script because "_s, response.mimeType(), " is not a script MIME type."_s);
-    return { errorDomainWebKitInternal, 0, response.url(), WTF::move(message), ResourceError::Type::AccessControl };
+    return { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, response.url(), WTF::move(message), ResourceError::Type::AccessControl };
 }
 
 ResourceError WorkerScriptLoader::validateWorkerResponse(const ResourceResponse& response, Source source, FetchOptions::Destination destination)
 {
     if (!response.isSuccessful() && response.httpStatusCode())
-        return { errorDomainWebKitInternal, 0, response.url(), "Response is not 2xx"_s, ResourceError::Type::General };
+        return { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, response.url(), "Response is not 2xx"_si, ResourceError::Type::General };
 
     // https://fetch.spec.whatwg.org/#should-response-to-request-be-blocked-due-to-nosniff
     // Only a script-like destination is blocked; a JSON or text module accepts any MIME type.
     if (isScriptLikeDestination(destination) && !isScriptAllowedByNosniff(response)) {
         auto message = makeString("Refused to execute "_s, response.url().stringCenterEllipsizedToLength(), " as script because \"X-Content-Type-Options: nosniff\" was given and its Content-Type is not a script MIME type."_s);
-        return { errorDomainWebKitInternal, 0, response.url(), WTF::move(message), ResourceError::Type::General };
+        return { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, response.url(), WTF::move(message), ResourceError::Type::General };
     }
 
     switch (source) {
@@ -329,7 +329,7 @@ void WorkerScriptLoader::notifyError(std::optional<ScriptExecutionContextIdentif
 {
     m_failed = true;
     if (m_error.isNull())
-        m_error = { errorDomainWebKitInternal, 0, url(), "Failed to load script"_s, ResourceError::Type::General };
+        m_error = { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, url(), "Failed to load script"_si, ResourceError::Type::General };
     notifyFinished(mainContext);
 }
 

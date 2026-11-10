@@ -52,16 +52,16 @@ DOMCSSPaintWorklet* DOMCSSPaintWorklet::from(DOMCSSNamespace& css)
 }
 
 // FIXME: Get rid of this override and rely on the standard-compliant Worklet::addModule() instead.
-void PaintWorklet::addModule(const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&& promise)
+void PaintWorklet::addModule(StringImpl* moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&& promise)
 {
     RefPtr document = this->document();
     if (!document) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "This frame is detached"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "This frame is detached"_si });
         return;
     }
 
     if (!document->hasBrowsingContext()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "This document does not have a browsing context"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "This document does not have a browsing context"_si });
         return;
     }
 

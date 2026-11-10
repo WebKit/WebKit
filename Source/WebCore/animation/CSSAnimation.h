@@ -45,7 +45,7 @@ public:
     static Ref<CSSAnimation> create(const Styleable&, Style::Animation&&, Style::ZoomFactor, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle, const Style::ResolutionContext&);
     ~CSSAnimation();
 
-    const String& animationName() const LIFETIME_BOUND { return m_animationName.name; }
+    const RefPtr<AtomStringImpl>& animationName() const LIFETIME_BOUND { return m_animationName.name; }
     const Style::ScopedName& scopedAnimationName() const LIFETIME_BOUND { return m_animationName; }
 
     NODELETE void effectTimingWasUpdatedUsingBindings(const OptionalEffectTiming&);
@@ -69,7 +69,7 @@ private:
     void syncPropertiesWithBackingAnimation() final;
     AnimationPlayState backingAnimationPlayState() const final;
     TimingFunction* backingAnimationTimingFunction() const final;
-    Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&) final;
+    Ref<StyleOriginatedAnimationEvent> createEvent(AtomStringImpl* eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&) final;
 
     AnimationTimeline* bindingsTimeline() const final;
     void setBindingsTimeline(RefPtr<AnimationTimeline>&&) final;

@@ -73,15 +73,15 @@ static void webkit_form_submission_request_class_init(WebKitFormSubmissionReques
     objectClass->dispose = webkitFormSubmissionRequestDispose;
 }
 
-WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(const Vector<std::pair<String, String>>& values, Ref<WebFormSubmissionListenerProxy>&& listener)
+WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& values, Ref<WebFormSubmissionListenerProxy>&& listener)
 {
     WebKitFormSubmissionRequest* request = WEBKIT_FORM_SUBMISSION_REQUEST(g_object_new(WEBKIT_TYPE_FORM_SUBMISSION_REQUEST, nullptr));
     if (values.size()) {
         request->priv->textFieldNames = adoptGRef(g_ptr_array_new_full(values.size(), g_free));
         request->priv->textFieldValues = adoptGRef(g_ptr_array_new_full(values.size(), g_free));
         for (size_t i = 0; i < values.size(); i++) {
-            g_ptr_array_add(request->priv->textFieldNames.get(), gStrdup(values[i].first.utf8()));
-            g_ptr_array_add(request->priv->textFieldValues.get(), gStrdup(values[i].second.utf8()));
+            g_ptr_array_add(request->priv->textFieldNames.get(), gStrdup(utf8(values[i].first)));
+            g_ptr_array_add(request->priv->textFieldValues.get(), gStrdup(utf8(values[i].second)));
         }
     }
     request->priv->listener = WTF::move(listener);

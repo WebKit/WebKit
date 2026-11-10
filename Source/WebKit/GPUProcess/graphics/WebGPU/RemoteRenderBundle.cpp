@@ -60,7 +60,7 @@ void RemoteRenderBundle::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteRenderBundle::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteRenderBundle::setLabel(String&& label)
+void RemoteRenderBundle::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

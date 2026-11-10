@@ -65,16 +65,16 @@ static WebCore::VideoFrameRotation computeVideoFrameRotation(int rotation)
 
 @interface WKRotationCoordinatorObserver : NSObject {
     WeakPtr<WebKit::UserMediaPermissionRequestManagerProxy> _managerProxy;
-    HashMap<String, RetainPtr<AVCaptureDeviceRotationCoordinator>> m_coordinators;
-    HashSet<String> m_monitoredForCapture;
-    HashSet<String> m_monitoredForCapturePreview;
+    HashMap<RefPtr<StringImpl>, RetainPtr<AVCaptureDeviceRotationCoordinator>> m_coordinators;
+    HashSet<RefPtr<StringImpl>> m_monitoredForCapture;
+    HashSet<RefPtr<StringImpl>> m_monitoredForCapturePreview;
 }
 
 -(id)initWithRequestManagerProxy:(WeakPtr<WebKit::UserMediaPermissionRequestManagerProxy>&&)managerProxy;
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context;
--(bool)isMonitoringCaptureDeviceRotation:(const String&)persistentId;
--(std::optional<WebCore::VideoFrameRotation>)start:(const String&)persistentId layer:(CALayer*)layer reason:(WebKit::RotationMonitoringReason)reason;
--(void)stop:(const String&)persistentId reason:(WebKit::RotationMonitoringReason)reason;
+-(bool)isMonitoringCaptureDeviceRotation:(StringImpl*)persistentId;
+-(std::optional<WebCore::VideoFrameRotation>)start:(StringImpl*)persistentId layer:(CALayer*)layer reason:(WebKit::RotationMonitoringReason)reason;
+-(void)stop:(StringImpl*)persistentId reason:(WebKit::RotationMonitoringReason)reason;
 -(void)stopAllForCapturePreview;
 @end
 
@@ -97,26 +97,26 @@ static WebCore::VideoFrameRotation computeVideoFrameRotation(int rotation)
         return;
 
     AVCaptureDeviceRotationCoordinator* coordinator = (AVCaptureDeviceRotationCoordinator*)object;
-    String persistentId = [coordinator device].uniqueID;
+    RefPtr<StringImpl> persistentId = StringImpl::create([coordinator device].uniqueID);
     auto rotation = computeVideoFrameRotation(clampTo<int>([coordinator videoRotationAngleForHorizonLevelPreview]));
 
-    RunLoop::mainSingleton().dispatch([protectedSelf = retainPtr(self), self, persistentId = WTF::move(persistentId).isolatedCopy(), rotation] {
+    RunLoop::mainSingleton().dispatch([protectedSelf = retainPtr(self), self, persistentId = isolatedCopy(WTF::move(persistentId)), rotation] {
         if (_managerProxy)
             _managerProxy->rotationAngleForCaptureDeviceChanged(persistentId, rotation);
     });
 }
 
--(bool)isMonitoringCaptureDeviceRotation:(const String&)persistentId {
+-(bool)isMonitoringCaptureDeviceRotation:(StringImpl*)persistentId {
     return m_coordinators.contains(persistentId);
 }
 
--(std::optional<WebCore::VideoFrameRotation>)start:(const String&)persistentId layer:(CALayer*)layer reason:(WebKit::RotationMonitoringReason)reason {
+-(std::optional<WebCore::VideoFrameRotation>)start:(StringImpl*)persistentId layer:(CALayer*)layer reason:(WebKit::RotationMonitoringReason)reason {
     auto iterator = m_coordinators.add(persistentId, RetainPtr<AVCaptureDeviceRotationCoordinator> { }).iterator;
     if (!iterator->value) {
         if (!PAL::getAVCaptureDeviceRotationCoordinatorClassSingleton())
             return { };
 
-        RetainPtr avDevice = [PAL::getAVCaptureDeviceClassSingleton() deviceWithUniqueID:persistentId.createNSString().get()];
+        RetainPtr avDevice = [PAL::getAVCaptureDeviceClassSingleton() deviceWithUniqueID:createNSString(persistentId).get()];
         if (!avDevice)
             return { };
 
@@ -130,7 +130,7 @@ static WebCore::VideoFrameRotation computeVideoFrameRotation(int rotation)
     return computeVideoFrameRotation((clampTo<int>([iterator->value videoRotationAngleForHorizonLevelPreview])));
 }
 
--(void)stop:(const String&)persistentId reason:(WebKit::RotationMonitoringReason)reason {
+-(void)stop:(StringImpl*)persistentId reason:(WebKit::RotationMonitoringReason)reason {
     (reason == WebKit::RotationMonitoringReason::CapturePreview ? m_monitoredForCapturePreview : m_monitoredForCapture).remove(persistentId);
     if (m_monitoredForCapture.contains(persistentId) || m_monitoredForCapturePreview.contains(persistentId))
         return;
@@ -210,14 +210,14 @@ void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPa
 }
 
 #if ENABLE(MEDIA_STREAM) && HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
-bool UserMediaPermissionRequestManagerProxy::isMonitoringCaptureDeviceRotation(const String& persistentId)
+bool UserMediaPermissionRequestManagerProxy::isMonitoringCaptureDeviceRotation(StringImpl* persistentId)
 {
-    if (persistentId.isEmpty())
+    if (isEmpty(persistentId))
         return false;
     return [m_objcObserver isMonitoringCaptureDeviceRotation:persistentId];
 }
 
-void UserMediaPermissionRequestManagerProxy::startMonitoringCaptureDeviceRotation(const String& persistentId, RotationMonitoringReason reason)
+void UserMediaPermissionRequestManagerProxy::startMonitoringCaptureDeviceRotation(StringImpl* persistentId, RotationMonitoringReason reason)
 {
     RefPtr page = this->page();
     if (!page)
@@ -237,7 +237,7 @@ void UserMediaPermissionRequestManagerProxy::startMonitoringCaptureDeviceRotatio
         rotationAngleForCaptureDeviceChanged(persistentId, *currentRotation);
 }
 
-void UserMediaPermissionRequestManagerProxy::stopMonitoringCaptureDeviceRotation(const String& persistentId, RotationMonitoringReason reason)
+void UserMediaPermissionRequestManagerProxy::stopMonitoringCaptureDeviceRotation(StringImpl* persistentId, RotationMonitoringReason reason)
 {
     [m_objcObserver stop:persistentId reason:reason];
 }
@@ -247,7 +247,7 @@ void UserMediaPermissionRequestManagerProxy::stopMonitoringCaptureDeviceRotation
     [m_objcObserver stopAllForCapturePreview];
 }
 
-void UserMediaPermissionRequestManagerProxy::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)
+void UserMediaPermissionRequestManagerProxy::rotationAngleForCaptureDeviceChanged(StringImpl* persistentId, WebCore::VideoFrameRotation rotation)
 {
     if (RefPtr page = this->page())
         page->rotationAngleForCaptureDeviceChanged(persistentId, rotation);

@@ -77,8 +77,8 @@ public:
     void removeInstance(RemoteCDMInstanceIdentifier);
 
 private:
-    std::unique_ptr<WebCore::CDMPrivate> createCDM(const String& keySystem, const String& mediaKeysHashSalt, const WebCore::CDMPrivateClient&) final;
-    bool supportsKeySystem(const String&) final;
+    std::unique_ptr<WebCore::CDMPrivate> createCDM(StringImpl* keySystem, StringImpl* mediaKeysHashSalt, const WebCore::CDMPrivateClient&) final;
+    bool supportsKeySystem(StringImpl*) final;
 
     WeakRef<WebProcess> m_webProcess;
     HashMap<RemoteCDMInstanceSessionIdentifier, WeakPtr<RemoteCDMInstanceSession>> m_sessions;

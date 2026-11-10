@@ -84,12 +84,12 @@ DOMWindow::DOMWindow(GlobalWindowIdentifier&& identifier, DOMWindowType type)
 
 DOMWindow::~DOMWindow() = default;
 
-ExceptionOr<RefPtr<SecurityOrigin>> DOMWindow::createTargetOriginForPostMessage(const String& targetOrigin, Document& sourceDocument)
+ExceptionOr<RefPtr<SecurityOrigin>> DOMWindow::createTargetOriginForPostMessage(StringImpl* targetOrigin, Document& sourceDocument)
 {
     RefPtr<SecurityOrigin> targetSecurityOrigin;
-    if (targetOrigin == "/"_s)
+    if (equal(targetOrigin, "/"_s))
         targetSecurityOrigin = sourceDocument.securityOrigin();
-    else if (targetOrigin != "*"_s) {
+    else if (!equal(targetOrigin, "*"_s)) {
         targetSecurityOrigin = SecurityOrigin::createFromString(targetOrigin);
         // It doesn't make sense target a postMessage at an opaque origin
         // because there's no way to represent an opaque origin in a string.
@@ -140,7 +140,7 @@ void DOMWindow::close()
         return;
 
     if (!(page->openedByDOM() || protect(page->backForward())->count() <= 1)) {
-        protect(console())->addMessage(MessageSource::JS, MessageLevel::Warning, "Can't close the window since it was not opened by JavaScript"_s);
+        protect(console())->addMessage(MessageSource::JS, MessageLevel::Warning, "Can't close the window since it was not opened by JavaScript"_si);
         return;
     }
 
@@ -206,7 +206,7 @@ WindowProxy* DOMWindow::parent() const
     return &frame->windowProxy();
 }
 
-ExceptionOr<AtomString> DOMWindow::name() const
+ExceptionOr<RefPtr<AtomStringImpl>> DOMWindow::name() const
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -214,7 +214,7 @@ ExceptionOr<AtomString> DOMWindow::name() const
     return localThis->name();
 }
 
-ExceptionOr<void> DOMWindow::setName(const AtomString& name)
+ExceptionOr<void> DOMWindow::setName(AtomStringImpl* name)
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -223,7 +223,7 @@ ExceptionOr<void> DOMWindow::setName(const AtomString& name)
     return { };
 }
 
-ExceptionOr<String> DOMWindow::status() const
+ExceptionOr<RefPtr<StringImpl>> DOMWindow::status() const
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -231,7 +231,7 @@ ExceptionOr<String> DOMWindow::status() const
     return localThis->status();
 }
 
-ExceptionOr<void> DOMWindow::setStatus(const String& status)
+ExceptionOr<void> DOMWindow::setStatus(StringImpl* status)
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -507,7 +507,7 @@ ExceptionOr<Storage*> DOMWindow::sessionStorage()
     return localThis->sessionStorage();
 }
 
-ExceptionOr<String> DOMWindow::origin() const
+ExceptionOr<RefPtr<StringImpl>> DOMWindow::origin() const
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -599,13 +599,13 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::JSGlobalObject& globalObject, Loca
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-ExceptionOr<void> DOMWindow::postMessage(JSC::JSGlobalObject& globalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+ExceptionOr<void> DOMWindow::postMessage(JSC::JSGlobalObject& globalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, RefPtr<StringImpl>&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {
     RELEASE_LOG_DEBUG(DOMAPI, "DOMWindow::postMessage frameID=%" PRIu64, frame() ? protect(frame())->frameID().toUInt64() : 0);
     return postMessage(globalObject, incumbentWindow, message, WindowPostMessageOptions { { WTF::move(transfer) }, WTF::move(targetOrigin) });
 }
 
-ExceptionOr<Ref<CSSStyleDeclaration>> DOMWindow::getComputedStyle(Element& element, const String& pseudoElt) const
+ExceptionOr<Ref<CSSStyleDeclaration>> DOMWindow::getComputedStyle(Element& element, StringImpl* pseudoElt) const
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -613,7 +613,7 @@ ExceptionOr<Ref<CSSStyleDeclaration>> DOMWindow::getComputedStyle(Element& eleme
     return localThis->getComputedStyle(element, pseudoElt);
 }
 
-ExceptionOr<RefPtr<WebCore::MediaQueryList>> DOMWindow::matchMedia(const String& media)
+ExceptionOr<RefPtr<WebCore::MediaQueryList>> DOMWindow::matchMedia(StringImpl* media)
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -629,7 +629,7 @@ ExceptionOr<Crypto&> DOMWindow::crypto() const
     return localThis->crypto();
 }
 
-ExceptionOr<RefPtr<WindowProxy>> DOMWindow::open(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& urlString, const AtomString& frameName, const String& windowFeaturesString)
+ExceptionOr<RefPtr<WindowProxy>> DOMWindow::open(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, StringImpl* urlString, AtomStringImpl* frameName, StringImpl* windowFeaturesString)
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -637,7 +637,7 @@ ExceptionOr<RefPtr<WindowProxy>> DOMWindow::open(LocalDOMWindow& activeWindow, L
     return localThis->open(activeWindow, firstWindow, urlString, frameName, windowFeaturesString);
 }
 
-ExceptionOr<void> DOMWindow::alert(const String& message)
+ExceptionOr<void> DOMWindow::alert(StringImpl* message)
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -646,7 +646,7 @@ ExceptionOr<void> DOMWindow::alert(const String& message)
     return { };
 }
 
-ExceptionOr<bool> DOMWindow::confirmForBindings(const String& message)
+ExceptionOr<bool> DOMWindow::confirmForBindings(StringImpl* message)
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -654,7 +654,7 @@ ExceptionOr<bool> DOMWindow::confirmForBindings(const String& message)
     return localThis->confirmForBindings(message);
 }
 
-ExceptionOr<String> DOMWindow::prompt(const String& message, const String& defaultValue)
+ExceptionOr<RefPtr<StringImpl>> DOMWindow::prompt(StringImpl* message, StringImpl* defaultValue)
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -680,7 +680,7 @@ ExceptionOr<void> DOMWindow::releaseEvents()
     return { };
 }
 
-ExceptionOr<bool> DOMWindow::find(const String& string, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const
+ExceptionOr<bool> DOMWindow::find(StringImpl* string, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -748,7 +748,7 @@ ExceptionOr<void> DOMWindow::createImageBitmap(ImageBitmap::Source&& source, int
     return { };
 }
 
-ExceptionOr<RefPtr<CSSRuleList>> DOMWindow::getMatchedCSSRules(Element* element, const String& pseudoElt, bool authorOnly) const
+ExceptionOr<RefPtr<CSSRuleList>> DOMWindow::getMatchedCSSRules(Element* element, StringImpl* pseudoElt, bool authorOnly) const
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -772,7 +772,7 @@ ExceptionOr<RefPtr<WebKitPoint>> DOMWindow::webkitConvertPointFromNodeToPage(Nod
     return localThis->webkitConvertPointFromNodeToPage(node, point);
 }
 
-ExceptionOr<Ref<NodeList>> DOMWindow::collectMatchingElementsInFlatTree(Node& node, const String& selectors)
+ExceptionOr<Ref<NodeList>> DOMWindow::collectMatchingElementsInFlatTree(Node& node, StringImpl* selectors)
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -780,7 +780,7 @@ ExceptionOr<Ref<NodeList>> DOMWindow::collectMatchingElementsInFlatTree(Node& no
     return localThis->collectMatchingElementsInFlatTree(node, selectors);
 }
 
-ExceptionOr<RefPtr<Element>> DOMWindow::matchingElementInFlatTree(Node& node, const String& selectors)
+ExceptionOr<RefPtr<Element>> DOMWindow::matchingElementInFlatTree(Node& node, StringImpl* selectors)
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -937,7 +937,7 @@ ExceptionOr<JSC::JSValue> DOMWindow::structuredClone(JSDOMGlobalObject& lexicalG
     return WindowOrWorkerGlobalScope::structuredClone(lexicalGlobalObject, relevantGlobalObject, value, WTF::move(options));
 }
 
-ExceptionOr<String> DOMWindow::btoa(const String& stringToEncode)
+ExceptionOr<RefPtr<StringImpl>> DOMWindow::btoa(StringImpl* stringToEncode)
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -945,7 +945,7 @@ ExceptionOr<String> DOMWindow::btoa(const String& stringToEncode)
     return WindowOrWorkerGlobalScope::btoa(stringToEncode);
 }
 
-ExceptionOr<String> DOMWindow::atob(const String& stringToEncode)
+ExceptionOr<RefPtr<StringImpl>> DOMWindow::atob(StringImpl* stringToEncode)
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -969,26 +969,26 @@ bool DOMWindow::isCurrentlyDisplayedInFrame() const
     return frame && frame->window() == this;
 }
 
-void DOMWindow::printErrorMessage(const String& message) const
+void DOMWindow::printErrorMessage(StringImpl* message) const
 {
-    if (message.isEmpty())
+    if (isEmpty(message))
         return;
 
     if (CheckedPtr frameConsole = console())
         frameConsole->addMessage(MessageSource::JS, MessageLevel::Error, message);
 }
 
-String DOMWindow::crossDomainAccessErrorMessage(const LocalDOMWindow& activeWindow, IncludeTargetOrigin includeTargetOrigin)
+RefPtr<StringImpl> DOMWindow::crossDomainAccessErrorMessage(const LocalDOMWindow& activeWindow, IncludeTargetOrigin includeTargetOrigin)
 {
     URL activeWindowURL = protect(activeWindow.document())->url();
     if (activeWindowURL.isNull())
-        return String();
+        return nullptr;
 
     RefPtr remoteThis = dynamicDowncast<RemoteDOMWindow>(*this);
     RefPtr localDocument = documentIfLocal();
     // We can't figure anything out if we are a LocalDOMWindow that no longer has a document.
     if (!localDocument && !remoteThis)
-        return String();
+        return nullptr;
     Ref activeOrigin = protect(activeWindow.document())->securityOrigin();
     const Ref targetOrigin = localDocument ? localDocument->securityOrigin() : remoteThis->frameDocumentSecurityOriginOrOpaque();
 
@@ -1001,7 +1001,7 @@ String DOMWindow::crossDomainAccessErrorMessage(const LocalDOMWindow& activeWind
     ASSERT(!activeOrigin->isSameOriginDomain(targetOrigin) || (remoteThis && Site { activeOrigin->data() }.isEmpty()));
 
     // FIXME: This message, and other console messages, have extra newlines. Should remove them.
-    String message;
+    RefPtr<StringImpl> message;
     if (includeTargetOrigin == IncludeTargetOrigin::Yes)
         message = makeString("Blocked a frame with origin \""_s, activeOrigin->toString(), "\" from accessing a frame with origin \""_s, targetOrigin->toString(), "\". "_s);
     else
@@ -1027,7 +1027,7 @@ String DOMWindow::crossDomainAccessErrorMessage(const LocalDOMWindow& activeWind
 
     if (includeTargetOrigin == IncludeTargetOrigin::Yes) {
         // Protocol errors: Use the URL's protocol rather than the origin's protocol so that we get a useful message for non-heirarchal URLs like 'data:'.
-        if (targetOrigin->protocol() != activeOrigin->protocol())
+        if (!equal(targetOrigin->protocol(), activeOrigin->protocol()))
             return makeString(message, " The frame requesting access has a protocol of \""_s, activeURL.protocol(), "\", the frame being accessed has a protocol of \""_s, targetURL.protocol(), "\". Protocols must match.\n"_s);
 
         // 'document.domain' errors.

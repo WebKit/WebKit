@@ -31,18 +31,18 @@ namespace WebCore {
 
 class WEBCORE_EXPORT HTTPHeaderField {
 public:
-    static std::optional<HTTPHeaderField> create(String&& name, String&& value);
+    static std::optional<HTTPHeaderField> create(RefPtr<StringImpl>&& name, RefPtr<StringImpl>&& value);
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
-    const String& value() const LIFETIME_BOUND { return m_value; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& value() const LIFETIME_BOUND { return m_value; }
 
 private:
-    HTTPHeaderField(String&& name, String&& value)
+    HTTPHeaderField(RefPtr<StringImpl>&& name, RefPtr<StringImpl>&& value)
         : m_name(WTF::move(name))
         , m_value(WTF::move(value))
     { }
-    String m_name;
-    String m_value;
+    RefPtr<StringImpl> m_name;
+    RefPtr<StringImpl> m_value;
 };
 
 } // namespace WebCore

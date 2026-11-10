@@ -41,7 +41,7 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual bool isJSMockMediaDeviceRouteURLCallback() const { return false; }
-    virtual CallbackResult<Ref<DOMPromise>> invoke(const String& url) = 0;
+    virtual CallbackResult<Ref<DOMPromise>> invoke(StringImpl* url) = 0;
 
     // ContextDestructionObserver
     void ref() const final { RefCounted::ref(); }

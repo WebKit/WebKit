@@ -32,11 +32,11 @@
 namespace WebCore {
 struct UserAgentStringData : public RefCounted<UserAgentStringData> {
 public:
-    String browserName;
-    String browserVersion;
-    String platform;
-    String laytoutEngine;
-    String laytoutEngineVersion;
+    RefPtr<StringImpl> browserName;
+    RefPtr<StringImpl> browserVersion;
+    RefPtr<StringImpl> platform;
+    RefPtr<StringImpl> laytoutEngine;
+    RefPtr<StringImpl> laytoutEngineVersion;
     bool mobile { false };
 
     static Ref<UserAgentStringData> create()

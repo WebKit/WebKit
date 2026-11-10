@@ -53,16 +53,16 @@ public:
 
     static RefPtr<HTMLFrameSetElement> findContaining(Element* descendant);
 
-    NODELETE Vector<AtomString> supportedPropertyNames() const;
-    WindowProxy* namedItem(const AtomString&);
-    bool isSupportedPropertyName(const AtomString&);
+    NODELETE Vector<RefPtr<AtomStringImpl>> supportedPropertyNames() const;
+    WindowProxy* namedItem(AtomStringImpl*);
+    bool isSupportedPropertyName(AtomStringImpl*);
 
 private:
     HTMLFrameSetElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) final;
 
     void willAttachRenderers() final;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;

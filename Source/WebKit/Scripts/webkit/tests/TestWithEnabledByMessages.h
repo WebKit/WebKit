@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 
@@ -43,7 +44,7 @@ static inline IPC::ReceiverName messageReceiverName()
 
 class AlwaysEnabled {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_AlwaysEnabled; }
     static constexpr bool isSync = false;
@@ -51,7 +52,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit AlwaysEnabled(const String& url)
+    explicit AlwaysEnabled(StringView url)
         : m_url(url)
     {
     }
@@ -63,12 +64,12 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 
 class ConditionallyEnabled {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_ConditionallyEnabled; }
     static constexpr bool isSync = false;
@@ -76,7 +77,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit ConditionallyEnabled(const String& url)
+    explicit ConditionallyEnabled(StringView url)
         : m_url(url)
     {
     }
@@ -88,7 +89,7 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 
 class ConditionallyEnabledAnd {

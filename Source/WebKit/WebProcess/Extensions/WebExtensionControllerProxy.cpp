@@ -119,10 +119,10 @@ void WebExtensionControllerProxy::unload(WebExtensionContextIdentifier contextId
     });
 }
 
-RefPtr<WebExtensionContextProxy> WebExtensionControllerProxy::extensionContext(const String& uniqueIdentifier) const
+RefPtr<WebExtensionContextProxy> WebExtensionControllerProxy::extensionContext(StringImpl* uniqueIdentifier) const
 {
     for (auto& extensionContext : m_extensionContexts) {
-        if (extensionContext->uniqueIdentifier() == uniqueIdentifier)
+        if (equal(extensionContext->uniqueIdentifier(), uniqueIdentifier))
             return extensionContext.ptr();
     }
 
@@ -138,11 +138,11 @@ RefPtr<WebExtensionContextProxy> WebExtensionControllerProxy::extensionContext(W
 {
     if (!world.isNormal()) {
         auto prefix = "WebExtension-"_s;
-        if (!world.name().startsWith(prefix))
+        if (!startsWith(world.name(), prefix))
             return nullptr;
 
         auto prefixLength = prefix.length();
-        auto uniqueIdentifier = world.name().substring(prefixLength);
+        auto uniqueIdentifier = substring(world.name(), prefixLength);
         return extensionContext(uniqueIdentifier);
     }
 

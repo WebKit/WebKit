@@ -385,7 +385,7 @@ static ASCIILiteral runningBoardDomainForAssertionType(ProcessAssertionType asse
 
 #if !USE(EXTENSIONKIT)
 
-ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType, const String& environmentIdentifier)
+ProcessAssertion::ProcessAssertion(pid_t pid, StringImpl* reason, ProcessAssertionType assertionType, StringImpl* environmentIdentifier)
     : m_assertionType(assertionType)
     , m_pid(pid)
     , m_reason(reason)
@@ -397,7 +397,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
 
 Lock ProcessAssertion::s_capabilityLock;
 
-ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType, const String& environmentIdentifier, std::optional<ExtensionProcess>&& extensionProcess)
+ProcessAssertion::ProcessAssertion(pid_t pid, StringImpl* reason, ProcessAssertionType assertionType, StringImpl* environmentIdentifier, std::optional<ExtensionProcess>&& extensionProcess)
     : m_assertionType(assertionType)
     , m_pid(pid)
     , m_reason(reason)
@@ -432,24 +432,24 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
 
 #endif // !USE(EXTENSIONKIT)
 
-void ProcessAssertion::init(const String& environmentIdentifier)
+void ProcessAssertion::init(StringImpl* environmentIdentifier)
 {
     ASCIILiteral runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
     ASSERT(!runningBoardAssertionName.isEmpty());
     if (m_pid <= 0) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}s assertion '%{public}s' for process because PID %d is invalid", this, runningBoardAssertionName.characters(), m_reason.utf8(), m_pid);
+        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}s assertion '%{public}s' for process because PID %d is invalid", this, runningBoardAssertionName.characters(), utf8(m_reason), m_pid);
         m_wasInvalidated = true;
         return;
     }
 
     RBSTarget *target = nil;
-    if (environmentIdentifier.isEmpty())
+    if (isEmpty(environmentIdentifier))
         target = [RBSTarget targetWithPid:m_pid];
     else
-        target = [RBSTarget targetWithPid:m_pid environmentIdentifier:environmentIdentifier.createNSString().get()];
+        target = [RBSTarget targetWithPid:m_pid environmentIdentifier:createNSString(environmentIdentifier).get()];
 
     RetainPtr domainAttribute = [RBSDomainAttribute attributeWithDomain:runningBoardDomainForAssertionType(m_assertionType).createNSString().get() name:runningBoardAssertionName.createNSString().get()];
-    lazyInitialize(m_rbsAssertion, adoptNS([[RBSAssertion alloc] initWithExplanation:m_reason.createNSString().get() target:target attributes:@[domainAttribute.get()]]));
+    lazyInitialize(m_rbsAssertion, adoptNS([[RBSAssertion alloc] initWithExplanation:createNSString(m_reason).get() target:target attributes:@[domainAttribute.get()]]));
 
     m_delegate = adoptNS([[WKRBSAssertionDelegate alloc] init]);
     [m_rbsAssertion addObserver:m_delegate.get()];
@@ -494,7 +494,7 @@ void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandle
 
 void ProcessAssertion::acquireSync()
 {
-    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Trying to take RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8(), m_pid);
+    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Trying to take RBS assertion '%{public}s' for process with PID=%d", this, utf8(m_reason), m_pid);
 #if USE(EXTENSIONKIT)
     if (m_process && m_capability && m_capability->hasPlatformCapability()) {
         Locker locker { s_capabilityLock };
@@ -510,18 +510,18 @@ void ProcessAssertion::acquireSync()
 #endif
     NSError *acquisitionError = nil;
     if (![m_rbsAssertion acquireWithError:&acquisitionError]) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion::acquireSync Failed to acquire RBS assertion '%{public}s' for process with PID=%d, error: %{public}@", this, m_reason.utf8(), m_pid, acquisitionError);
+        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion::acquireSync Failed to acquire RBS assertion '%{public}s' for process with PID=%d, error: %{public}@", this, utf8(m_reason), m_pid, acquisitionError);
         RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
             if (auto protectedThis = weakThis.get())
                 protectedThis->processAssertionWasInvalidated();
         });
     } else
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Successfully took RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8(), m_pid);
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Successfully took RBS assertion '%{public}s' for process with PID=%d", this, utf8(m_reason), m_pid);
 }
 
 ProcessAssertion::~ProcessAssertion()
 {
-    RELEASE_LOG(ProcessSuspension, "%p - ~ProcessAssertion: Releasing process assertion '%{public}s' for process with PID=%d", this, m_reason.utf8(), m_pid);
+    RELEASE_LOG(ProcessSuspension, "%p - ~ProcessAssertion: Releasing process assertion '%{public}s' for process with PID=%d", this, utf8(m_reason), m_pid);
 
     if (m_rbsAssertion) {
         m_delegate.get().invalidationCallback = nil;
@@ -558,7 +558,7 @@ void ProcessAssertion::processAssertionWasInvalidated()
 
 #if !USE(EXTENSIONKIT)
 
-ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType, const String& environmentIdentifier)
+ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, StringImpl* reason, ProcessAssertionType assertionType, StringImpl* environmentIdentifier)
     : ProcessAssertion(pid, reason, assertionType, environmentIdentifier)
 {
 #if PLATFORM(IOS_FAMILY)
@@ -568,7 +568,7 @@ ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, const String& reason, Pr
 
 #else
 
-ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType, const String& environmentIdentifier, std::optional<ExtensionProcess>&& extensionProcess)
+ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, StringImpl* reason, ProcessAssertionType assertionType, StringImpl* environmentIdentifier, std::optional<ExtensionProcess>&& extensionProcess)
     : ProcessAssertion(pid, reason, assertionType, environmentIdentifier, WTF::move(extensionProcess))
 {
 #if PLATFORM(IOS_FAMILY)

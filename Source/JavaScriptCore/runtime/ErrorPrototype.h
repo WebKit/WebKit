@@ -33,7 +33,7 @@ public:
 
 protected:
     ErrorPrototypeBase(VM&, Structure*);
-    void finishCreation(VM&, const String&);
+    void finishCreation(VM&, StringImpl*);
 };
 
 class ErrorPrototype final : public ErrorPrototypeBase {
@@ -55,7 +55,7 @@ public:
     static ErrorPrototype* create(VM& vm, JSGlobalObject*, Structure* structure)
     {
         ErrorPrototype* prototype = new (NotNull, allocateCell<ErrorPrototype>(vm)) ErrorPrototype(vm, structure);
-        prototype->finishCreation(vm, "Error"_s);
+        prototype->finishCreation(vm, "Error"_si);
         return prototype;
     }
 

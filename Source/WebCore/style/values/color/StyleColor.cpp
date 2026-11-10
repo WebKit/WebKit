@@ -260,7 +260,7 @@ Color::ColorKind Color::copy(const Color::ColorKind& other)
     );
 }
 
-WTF::String Color::debugDescription() const
+RefPtr<StringImpl> Color::debugDescription() const
 {
     TextStream ts;
     ts << *this;
@@ -350,7 +350,7 @@ bool containsCurrentColor(const Color& value)
 
 // MARK: - Serialization
 
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext& context, const Color& value)
+RefPtr<StringImpl> serializationForCSSTokenization(const CSS::SerializationContext& context, const Color& value)
 {
     return WTF::switchOn(value, [&](const auto& kind) { return WebCore::Style::serializationForCSSTokenization(context, kind); });
 }

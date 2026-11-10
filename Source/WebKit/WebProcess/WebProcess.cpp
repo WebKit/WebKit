@@ -445,8 +445,8 @@ WebProcess::~WebProcess()
 
 void WebProcess::initializeProcess(const AuxiliaryProcessInitializationParameters& parameters)
 {
-    m_isLockdownModeEnabled = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s) == "1"_s;
-    m_isEnhancedSecurityEnabled = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-enhanced-security"_s) == "1"_s;
+    m_isLockdownModeEnabled = equal(parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s), "1"_s);
+    m_isEnhancedSecurityEnabled = equal(parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-enhanced-security"_s), "1"_s);
 
     WTF::setProcessPrivileges({ });
 
@@ -620,7 +620,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
             WTF::TextStream activityStateStream(WTF::TextStream::LineMode::SingleLine);
             activityStateStream << page->activityState();
 
-            RELEASE_LOG(ActivityState, "WebPage %p - load_time: %" PRId64 ", visible: %d, throttleable: %d , suspended: %d , websam_state: %" PUBLIC_LOG_STRING ", activity_state: %" PUBLIC_LOG_STRING ", url: %" PRIVATE_LOG_STRING, page.ptr(), loadCommitTime, page->isVisible(), page->isThrottleable(), page->isSuspended(), MemoryPressureHandler::processStateDescription().characters(), activityStateStream.release().utf8(), page->mainWebFrame().url().string().utf8());
+            RELEASE_LOG(ActivityState, "WebPage %p - load_time: %" PRId64 ", visible: %d, throttleable: %d , suspended: %d , websam_state: %" PUBLIC_LOG_STRING ", activity_state: %" PUBLIC_LOG_STRING ", url: %" PRIVATE_LOG_STRING, page.ptr(), loadCommitTime, page->isVisible(), page->isThrottleable(), page->isSuspended(), MemoryPressureHandler::processStateDescription().characters(), utf8(activityStateStream.release()), utf8(page->mainWebFrame().url().string()));
         }
     });
 #endif
@@ -628,18 +628,18 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
     SandboxExtension::consumePermanently(parameters.additionalSandboxExtensionHandles);
 
 #if PLATFORM(MAC) && HAVE(SANDBOX_STATE_FLAGS)
-    if (!parameters.injectedBundlePath.endsWith("StoreWebBundle.bundle"_s)) {
+    if (!endsWith(parameters.injectedBundlePath, "StoreWebBundle.bundle"_s)) {
         auto auditToken = auditTokenForSelf();
         if (!sandbox_enable_state_flag("WebProcessDidNotInjectStoreBundle", auditToken.value()))
             WEBPROCESS_RELEASE_LOG_ERROR(Process, "Could not state sandbox state flag");
     }
 #endif
 
-    if (!parameters.injectedBundlePath.isEmpty()) {
+    if (!isEmpty(parameters.injectedBundlePath)) {
         if (RefPtr injectedBundle = InjectedBundle::create(parameters, transformHandlesToObjects(protect(parameters.initializationUserData.object()).get())))
             lazyInitialize(m_injectedBundle, injectedBundle.releaseNonNull());
         else
-            WEBPROCESS_RELEASE_LOG_ERROR(Process, "Failed to create injected bundle for path [%" PUBLIC_LOG_STRING "]; bundle plug-in callbacks will not fire for any WebPage in this process", parameters.injectedBundlePath.utf8());
+            WEBPROCESS_RELEASE_LOG_ERROR(Process, "Failed to create injected bundle for path [%" PUBLIC_LOG_STRING "]; bundle plug-in callbacks will not fire for any WebPage in this process", utf8(parameters.injectedBundlePath));
     }
 
     for (auto& supplement : m_supplements.values())
@@ -650,7 +650,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
 
     setCacheModel(parameters.cacheModel);
 
-    if (!parameters.timeZoneOverride.isEmpty())
+    if (!isEmpty(parameters.timeZoneOverride))
         setTimeZoneOverride(parameters.timeZoneOverride);
 
     if (!parameters.overrideLanguages.isEmpty()) {
@@ -818,7 +818,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR) && CPU(ARM64)
     if (JSC::Options::enableWasmDebugger()) [[unlikely]] {
-        JSC::Wasm::DebugServer::singleton().startRWI([](const String& response) {
+        JSC::Wasm::DebugServer::singleton().startRWI([](StringImpl* response) {
             return WebKit::WebProcess::singleton().send(Messages::WebProcessProxy::SendWasmDebuggerResponse(response), 0);
         });
         send(Messages::WebProcessProxy::WasmDebugServerReady(), 0);
@@ -834,7 +834,7 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
     m_sessionID = parameters.sessionID;
 
 #if ENABLE(VIDEO)
-    if (!parameters.mediaCacheDirectory.isEmpty())
+    if (!isEmpty(parameters.mediaCacheDirectory))
         WebCore::HTMLMediaElement::setMediaCacheDirectory(parameters.mediaCacheDirectory);
 #endif
 
@@ -961,66 +961,66 @@ void WebProcess::prewarmWithDomainInformation(WebCore::PrewarmInformation&& prew
     WebCore::ProcessWarming::prewarmWithInformation(WTF::move(prewarmInformation));
 }
 
-void WebProcess::registerURLSchemeAsEmptyDocument(const String& urlScheme)
+void WebProcess::registerURLSchemeAsEmptyDocument(StringImpl* urlScheme)
 {
     LegacySchemeRegistry::registerURLSchemeAsEmptyDocument(urlScheme);
 }
 
-void WebProcess::registerURLSchemeAsSecure(const String& urlScheme) const
+void WebProcess::registerURLSchemeAsSecure(StringImpl* urlScheme) const
 {
     LegacySchemeRegistry::registerURLSchemeAsSecure(urlScheme);
 }
 
-void WebProcess::registerURLSchemeAsBypassingContentSecurityPolicy(const String& urlScheme) const
+void WebProcess::registerURLSchemeAsBypassingContentSecurityPolicy(StringImpl* urlScheme) const
 {
     LegacySchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(urlScheme);
 }
 
-void WebProcess::setDomainRelaxationForbiddenForURLScheme(const String& urlScheme) const
+void WebProcess::setDomainRelaxationForbiddenForURLScheme(StringImpl* urlScheme) const
 {
     LegacySchemeRegistry::setDomainRelaxationForbiddenForURLScheme(true, urlScheme);
 }
 
-void WebProcess::registerURLSchemeAsLocal(const String& urlScheme) const
+void WebProcess::registerURLSchemeAsLocal(StringImpl* urlScheme) const
 {
     LegacySchemeRegistry::registerURLSchemeAsLocal(urlScheme);
 }
 
 #if ENABLE(ALL_LEGACY_REGISTERED_SPECIAL_URL_SCHEMES)
-void WebProcess::registerURLSchemeAsNoAccess(const String& urlScheme) const
+void WebProcess::registerURLSchemeAsNoAccess(StringImpl* urlScheme) const
 {
     LegacySchemeRegistry::registerURLSchemeAsNoAccess(urlScheme);
 }
 #endif
 
-void WebProcess::registerURLSchemeAsDisplayIsolated(const String& urlScheme) const
+void WebProcess::registerURLSchemeAsDisplayIsolated(StringImpl* urlScheme) const
 {
     LegacySchemeRegistry::registerURLSchemeAsDisplayIsolated(urlScheme);
 }
 
-void WebProcess::registerURLSchemeAsCORSEnabled(const String& urlScheme)
+void WebProcess::registerURLSchemeAsCORSEnabled(StringImpl* urlScheme)
 {
     LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(urlScheme);
     protect(ensureNetworkProcessConnection())->connection().send(Messages::NetworkConnectionToWebProcess::RegisterURLSchemesAsCORSEnabled({ urlScheme }), 0);
 }
 
-void WebProcess::registerURLSchemeAsAlwaysRevalidated(const String& urlScheme) const
+void WebProcess::registerURLSchemeAsAlwaysRevalidated(StringImpl* urlScheme) const
 {
     LegacySchemeRegistry::registerURLSchemeAsAlwaysRevalidated(urlScheme);
 }
 
-void WebProcess::registerURLSchemeAsCachePartitioned(const String& urlScheme) const
+void WebProcess::registerURLSchemeAsCachePartitioned(StringImpl* urlScheme) const
 {
     LegacySchemeRegistry::registerURLSchemeAsCachePartitioned(urlScheme);
 }
 
-void WebProcess::registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String& urlScheme) const
+void WebProcess::registerURLSchemeAsCanDisplayOnlyIfCanRequest(StringImpl* urlScheme) const
 {
     LegacySchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(urlScheme);
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-void WebProcess::registerURLSchemeAsWebExtension(const String& urlScheme) const
+void WebProcess::registerURLSchemeAsWebExtension(StringImpl* urlScheme) const
 {
     WebExtensionMatchPattern::registerCustomURLScheme(urlScheme);
 }
@@ -1041,7 +1041,7 @@ void WebProcess::setDisableFontSubpixelAntialiasingForTesting(bool disable)
     WebCore::FontCascade::setDisableFontSubpixelAntialiasingForTesting(disable);
 }
 
-void WebProcess::userPreferredLanguagesChanged(const Vector<String>& languages) const
+void WebProcess::userPreferredLanguagesChanged(const Vector<RefPtr<StringImpl>>& languages) const
 {
     LOG_WITH_STREAM(Language, stream << "The web process's userPreferredLanguagesChanged: " << languages);
     overrideUserPreferredLanguages(languages);
@@ -1084,7 +1084,7 @@ WebPage* WebProcess::focusedWebPage() const
     return 0;
 }
 
-void WebProcess::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&& userAgentStringQuirk)
+void WebProcess::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, RefPtr<StringImpl>>&& userAgentStringQuirk)
 {
     Quirks::updateStorageAccessUserAgentStringQuirks(WTF::move(userAgentStringQuirk));
 }
@@ -1374,7 +1374,7 @@ void WebProcess::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
     GarbageCollectionController::singleton().setJavaScriptGarbageCollectorTimerEnabled(flag);
 }
 
-void WebProcess::handleInjectedBundleMessage(const String& messageName, const UserData& messageBody)
+void WebProcess::handleInjectedBundleMessage(StringImpl* messageName, const UserData& messageBody)
 {
     RefPtr injectedBundle = WebProcess::singleton().injectedBundle();
     if (!injectedBundle)
@@ -1383,7 +1383,7 @@ void WebProcess::handleInjectedBundleMessage(const String& messageName, const Us
     injectedBundle->didReceiveMessage(messageName, transformHandlesToObjects(protect(messageBody.object()).get()));
 }
 
-void WebProcess::setInjectedBundleParameter(const String& key, std::span<const uint8_t> value)
+void WebProcess::setInjectedBundleParameter(StringImpl* key, std::span<const uint8_t> value)
 {
     RefPtr injectedBundle = WebProcess::singleton().injectedBundle();
     if (!injectedBundle)
@@ -1470,8 +1470,8 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
 #if ENABLE(LAUNCHSERVICES_SANDBOX_EXTENSION_BLOCKING)
         if (auto auditToken = auditTokenForSelf()) {
             protect(m_networkProcessConnection->connection())->send(Messages::NetworkConnectionToWebProcess::CheckInWebProcess(*auditToken), 0);
-            if (!m_pendingDisplayName.isNull())
-                protect(m_networkProcessConnection->connection())->send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(std::exchange(m_pendingDisplayName, String()), { }, *auditToken), 0);
+            if (m_pendingDisplayName)
+                protect(m_networkProcessConnection->connection())->send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(std::exchange(m_pendingDisplayName, nullString()), { }, *auditToken), 0);
         }
 #endif
     }
@@ -1554,7 +1554,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     }();
     for (auto& weakSession : sessions) {
         if (RefPtr webtransportSession = weakSession.get())
-            webtransportSession->didFail(std::nullopt, String(emptyString()));
+            webtransportSession->didFail(std::nullopt, RefPtr<StringImpl>(emptyString()));
     }
 }
 
@@ -1710,7 +1710,7 @@ void WebProcess::setAccessibilityMode(WebCore::AccessibilityMode mode)
     WebCore::AXObjectCache::enableAccessibility(preconditions);
 }
 
-void WebProcess::startMemorySampler(SandboxExtension::Handle&& sampleLogFileHandle, const String& sampleLogFilePath, const double interval)
+void WebProcess::startMemorySampler(SandboxExtension::Handle&& sampleLogFileHandle, StringImpl* sampleLogFilePath, const double interval)
 {
 #if ENABLE(MEMORY_SAMPLER)    
     WebMemorySampler::singleton()->start(WTF::move(sampleLogFileHandle), sampleLogFilePath, interval);
@@ -1830,11 +1830,11 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
 {
 }
 
-void WebProcess::updateActivePages(const String& overrideDisplayName)
+void WebProcess::updateActivePages(StringImpl* overrideDisplayName)
 {
 }
 
-void WebProcess::getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void WebProcess::getActivePagesOriginsForTesting(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completionHandler)
 {
     completionHandler({ });
 }
@@ -2286,7 +2286,7 @@ void WebProcess::setOptInCookiePartitioningEnabled(bool enabled)
 }
 #endif
 
-void WebProcess::ensureAutomationSessionProxy(const String& sessionIdentifier)
+void WebProcess::ensureAutomationSessionProxy(StringImpl* sessionIdentifier)
 {
     m_automationSessionProxy = WebAutomationSessionProxy::create(sessionIdentifier);
 }
@@ -2298,9 +2298,9 @@ void WebProcess::destroyAutomationSessionProxy()
     m_automationSessionProxy = nullptr;
 }
 
-void WebProcess::prefetchDNS(const String& hostname)
+void WebProcess::prefetchDNS(StringImpl* hostname)
 {
-    if (hostname.isEmpty())
+    if (isEmpty(hostname))
         return;
 
     if (m_dnsPrefetchedHosts.add(hostname).isNewEntry)
@@ -2396,12 +2396,12 @@ void WebProcess::clearMockMediaDevices()
     MockRealtimeMediaSourceCenter::setDevices({ });
 }
 
-void WebProcess::removeMockMediaDevice(const String& persistentId)
+void WebProcess::removeMockMediaDevice(StringImpl* persistentId)
 {
     MockRealtimeMediaSourceCenter::removeDevice(persistentId);
 }
 
-void WebProcess::setMockMediaDeviceIsEphemeral(const String& persistentId, bool isEphemeral)
+void WebProcess::setMockMediaDeviceIsEphemeral(StringImpl* persistentId, bool isEphemeral)
 {
     MockRealtimeMediaSourceCenter::setDeviceIsEphemeral(persistentId, isEphemeral);
 }
@@ -2418,7 +2418,7 @@ void WebProcess::grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensi
         auto extensionID = extensions[i].first;
         Ref sandboxExtension = extensions[i].second;
         sandboxExtension->consume();
-        WEBPROCESS_RELEASE_LOG(WebRTC, "grantUserMediaDeviceSandboxExtensions: granted extension %s", extensionID.utf8());
+        WEBPROCESS_RELEASE_LOG(WebRTC, "grantUserMediaDeviceSandboxExtensions: granted extension %s", utf8(extensionID));
         m_mediaCaptureSandboxExtensions.add(extensionID, WTF::move(sandboxExtension));
     }
     m_machBootstrapExtension = extensions.machBootstrapExtension();
@@ -2426,7 +2426,7 @@ void WebProcess::grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensi
         machBootstrapExtension->consume();
 }
 
-NODELETE static inline void checkDocumentsCaptureStateConsistency(const Vector<String>& extensionIDs)
+NODELETE static inline void checkDocumentsCaptureStateConsistency(const Vector<RefPtr<StringImpl>>& extensionIDs)
 {
 #if ASSERT_ENABLED
     bool isCapturingAudio = std::ranges::any_of(Document::allDocumentsMap().values(), [](auto& document) {
@@ -2437,13 +2437,13 @@ NODELETE static inline void checkDocumentsCaptureStateConsistency(const Vector<S
     });
 
     if (isCapturingAudio)
-        ASSERT(!extensionIDs.containsIf([](auto& id) { return id.contains("microphone"_s); }));
+        ASSERT(!extensionIDs.containsIf([](auto& id) { return contains(id, "microphone"_s); }));
     if (isCapturingVideo)
-        ASSERT(!extensionIDs.containsIf([](auto& id) { return id.contains("camera"_s); }));
+        ASSERT(!extensionIDs.containsIf([](auto& id) { return contains(id, "camera"_s); }));
 #endif // ASSERT_ENABLED
 }
 
-void WebProcess::revokeUserMediaDeviceSandboxExtensions(const Vector<String>& extensionIDs)
+void WebProcess::revokeUserMediaDeviceSandboxExtensions(const Vector<RefPtr<StringImpl>>& extensionIDs)
 {
     checkDocumentsCaptureStateConsistency(extensionIDs);
     
@@ -2452,7 +2452,7 @@ void WebProcess::revokeUserMediaDeviceSandboxExtensions(const Vector<String>& ex
         ASSERT(extension || MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled());
         if (extension) {
             extension->revoke();
-            WEBPROCESS_RELEASE_LOG(WebRTC, "revokeUserMediaDeviceSandboxExtensions: revoked extension %s", extensionID.utf8());
+            WEBPROCESS_RELEASE_LOG(WebRTC, "revokeUserMediaDeviceSandboxExtensions: revoked extension %s", utf8(extensionID));
         }
     }
     

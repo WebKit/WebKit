@@ -137,7 +137,7 @@ struct SizeFrameRateAndZoom {
     std::optional<double> frameRate;
     std::optional<double> zoom;
 
-    String toJSONString() const;
+    RefPtr<StringImpl> toJSONString() const;
     Ref<JSON::Object> toJSONObject() const;
 };
 
@@ -155,7 +155,7 @@ namespace WTF {
 template<typename Type> struct LogArgument;
 template <>
 struct LogArgument<WebCore::SizeFrameRateAndZoom> {
-    static String toString(const WebCore::SizeFrameRateAndZoom& size)
+    static RefPtr<StringImpl> toString(const WebCore::SizeFrameRateAndZoom& size)
     {
         return size.toJSONString();
     }

@@ -38,7 +38,7 @@ template<typename> class ExceptionOr;
 class ExtendableEvent : public Event {
     WTF_MAKE_TZONE_ALLOCATED(ExtendableEvent);
 public:
-    static Ref<ExtendableEvent> create(const AtomString& type, const ExtendableEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<ExtendableEvent> create(AtomStringImpl* type, const ExtendableEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new ExtendableEvent(EventInterfaceType::ExtendableEvent, type, initializer, isTrusted));
     }
@@ -53,8 +53,8 @@ public:
     virtual bool isBackgroundFetchEvent() const { return false; }
 
 protected:
-    WEBCORE_EXPORT ExtendableEvent(enum EventInterfaceType, const AtomString&, const ExtendableEventInit&, IsTrusted);
-    ExtendableEvent(enum EventInterfaceType, const AtomString&, CanBubble, IsCancelable);
+    WEBCORE_EXPORT ExtendableEvent(enum EventInterfaceType, AtomStringImpl*, const ExtendableEventInit&, IsTrusted);
+    ExtendableEvent(enum EventInterfaceType, AtomStringImpl*, CanBubble, IsCancelable);
 
     void addExtendLifetimePromise(Ref<DOMPromise>&&);
     bool isWaiting() const { return m_isWaiting; }

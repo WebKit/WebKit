@@ -166,13 +166,13 @@ URLPatternPartListMatcher::URLPatternPartListMatcher(Vector<Part>&& partList, co
     , m_delimiterCodepoint(options.delimiterCodepoint)
     , m_ignoreCase(options.ignoreCase)
 {
-    ASSERT(m_delimiterCodepoint.isEmpty() || m_delimiterCodepoint == "."_s || m_delimiterCodepoint == "/"_s);
+    ASSERT(isEmpty(m_delimiterCodepoint) || equal(m_delimiterCodepoint, "."_s) || equal(m_delimiterCodepoint, "/"_s));
 
     if (m_ignoreCase) {
         for (auto& part : m_partList) {
-            part.prefix = part.prefix.foldCase();
-            part.value = part.value.foldCase();
-            part.suffix = part.suffix.foldCase();
+            part.prefix = foldCase(part.prefix);
+            part.value = foldCase(part.value);
+            part.suffix = foldCase(part.suffix);
         }
     }
 }
@@ -183,9 +183,9 @@ URLPatternPartListMatcher::~URLPatternPartListMatcher() = default;
 
 bool URLPatternPartListMatcher::matches(StringView input) const
 {
-    String foldedInput;
+    RefPtr<StringImpl> foldedInput;
     if (m_ignoreCase) {
-        foldedInput = input.toString().foldCase();
+        foldedInput = foldCase(input.toString());
         input = foldedInput;
     }
 

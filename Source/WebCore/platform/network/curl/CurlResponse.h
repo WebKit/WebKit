@@ -45,7 +45,7 @@ public:
         copy.expectedContentLength = expectedContentLength;
 
         for (const auto& header : headers)
-            copy.headers.append(header.isolatedCopy());
+            copy.headers.append(WTF::isolatedCopy(header));
 
         copy.proxyUrl = proxyUrl.isolatedCopy();
         copy.availableHttpAuth = availableHttpAuth;
@@ -62,7 +62,7 @@ public:
     long statusCode { 0 };
     long httpConnectCode { 0 };
     long long expectedContentLength { 0 };
-    Vector<String> headers;
+    Vector<RefPtr<StringImpl>> headers;
 
     URL proxyUrl;
     long availableHttpAuth { 0 };

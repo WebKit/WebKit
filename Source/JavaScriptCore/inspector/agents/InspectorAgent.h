@@ -64,14 +64,14 @@ public:
     // CommandLineAPI
     void inspect(Ref<Protocol::Runtime::RemoteObject>&&, Ref<JSON::Object>&& hints);
 
-    void evaluateForTestInFrontend(const String& script);
+    void evaluateForTestInFrontend(StringImpl* script);
 
 private:
     WeakRef<InspectorEnvironment> m_environment;
     const UniqueRef<InspectorFrontendDispatcher> m_frontendDispatcher;
     const Ref<InspectorBackendDispatcher> m_backendDispatcher;
 
-    Vector<String> m_pendingEvaluateTestCommands;
+    Vector<RefPtr<StringImpl>> m_pendingEvaluateTestCommands;
     std::pair<RefPtr<Protocol::Runtime::RemoteObject>, RefPtr<JSON::Object>> m_pendingInspectData;
     bool m_enabled { false };
 };

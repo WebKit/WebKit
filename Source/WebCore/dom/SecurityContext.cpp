@@ -120,7 +120,7 @@ bool SecurityContext::isSupportedSandboxPolicy(StringView policy)
 }
 
 // Keep SecurityContext::isSupportedSandboxPolicy() in sync when updating this function.
-SandboxFlags SecurityContext::parseSandboxPolicy(StringView policy, String& invalidTokensErrorMessage)
+SandboxFlags SecurityContext::parseSandboxPolicy(StringView policy, RefPtr<StringImpl>& invalidTokensErrorMessage)
 {
     // http://www.w3.org/TR/html5/the-iframe-element.html#attr-iframe-sandbox
     // Parse the unordered set of unique space-separated tokens.

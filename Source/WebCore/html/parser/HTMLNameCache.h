@@ -44,12 +44,12 @@ public:
         return makeQualifiedName(string);
     }
 
-    ALWAYS_INLINE static AtomString makeAttributeValue(std::span<const char16_t> string)
+    ALWAYS_INLINE static RefPtr<AtomStringImpl> makeAttributeValue(std::span<const char16_t> string)
     {
         return makeAtomString(string);
     }
 
-    ALWAYS_INLINE static AtomString makeAttributeValue(std::span<const Latin1Character> string)
+    ALWAYS_INLINE static RefPtr<AtomStringImpl> makeAttributeValue(std::span<const Latin1Character> string)
     {
         return makeAtomString(string);
     }
@@ -63,17 +63,17 @@ public:
 
 private:
     template<typename CharacterType>
-    ALWAYS_INLINE static AtomString makeAtomString(std::span<const CharacterType> string)
+    ALWAYS_INLINE static RefPtr<AtomStringImpl> makeAtomString(std::span<const CharacterType> string)
     {
         if (string.empty())
             return emptyAtom();
 
         if (string.size() > maxStringLengthForCache)
-            return AtomString(string);
+            return AtomStringImpl::add(string);
 
         auto& slot = atomStringCacheSlot(string.front(), string.back(), string.size());
-        if (!equal(slot.impl(), string)) {
-            AtomString result { string };
+        if (!equal(slot.get(), string)) {
+            RefPtr result = AtomStringImpl::add(string);
             slot = result;
             return result;
         }
@@ -88,11 +88,11 @@ private:
             return nullQName();
 
         if (string.size() > maxStringLengthForCache)
-            return QualifiedName(nullAtom(), AtomString(string), nullAtom());
+            return QualifiedName(nullAtom(), AtomStringImpl::add(string).get(), nullAtom());
 
         auto& slot = qualifiedNameCacheSlot(string.front(), string.back(), string.size());
-        if (!slot || !equal(slot->m_localName.impl(), string)) {
-            QualifiedName result(nullAtom(), AtomString(string), nullAtom());
+        if (!slot || !equal(slot->m_localName.get(), string)) {
+            QualifiedName result(nullAtom(), AtomStringImpl::add(string).get(), nullAtom());
             slot = result.impl();
             return result;
         }
@@ -108,7 +108,7 @@ private:
         return (hash + (hash >> 6)) % capacity;
     }
 
-    ALWAYS_INLINE static AtomString& atomStringCacheSlot(char16_t firstCharacter, char16_t lastCharacter, char16_t length)
+    ALWAYS_INLINE static RefPtr<AtomStringImpl>& atomStringCacheSlot(char16_t firstCharacter, char16_t lastCharacter, char16_t length)
     {
         auto index = slotIndex(firstCharacter, lastCharacter, length, atomStringCacheCapacity);
         return atomStringCache()[index];
@@ -124,7 +124,7 @@ private:
     static constexpr auto atomStringCacheCapacity = 2048;
     static constexpr auto qualifiedNameCacheCapacity = 512;
 
-    using AtomStringCache = std::array<AtomString, atomStringCacheCapacity>;
+    using AtomStringCache = std::array<RefPtr<AtomStringImpl>, atomStringCacheCapacity>;
     using QualifiedNameCache = std::array<RefPtr<QualifiedName::QualifiedNameImpl>, qualifiedNameCacheCapacity>;
 
     NODELETE static AtomStringCache& atomStringCache();

@@ -170,7 +170,7 @@ bool HTMLParserScheduler::shouldYieldBeforeExecutingScript(const ScriptElement* 
         // Async and deferred scripts are not executed by the parser.
         if (scriptElement->hasAsyncAttribute() || scriptElement->hasDeferAttribute())
             return false;
-        if (!scriptElement->hasSourceAttribute() && scriptElement->scriptContent().length() < inlineScriptLengthLimit)
+        if (!scriptElement->hasSourceAttribute() && length(scriptElement->scriptContent()) < inlineScriptLengthLimit)
             return false;
     }
 

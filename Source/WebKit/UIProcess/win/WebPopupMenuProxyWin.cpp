@@ -1067,7 +1067,7 @@ bool WebPopupMenuProxyWin::scrollToRevealSelection()
     return false;
 }
 
-String WebPopupMenuProxyWin::debugDescription() const
+RefPtr<StringImpl> WebPopupMenuProxyWin::debugDescription() const
 {
     return makeString("WebPopupMenuProxyWin 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
 }

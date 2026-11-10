@@ -174,7 +174,7 @@ static FontRanges realizeNextFallback(const FontCascadeDescription& description,
     CheckedRef fontCache = FontCache::forCurrentThread();
     while (index < description.effectiveFamilyCount()) {
         auto visitor = WTF::makeVisitor([&, fontSelector = RefPtr { fontSelector }](const FontFamily& fontFamily) -> FontRanges {
-            if (fontFamily.name.isNull())
+            if (!fontFamily.name)
                 return FontRanges();
             if (fontSelector) {
                 auto ranges = fontSelector->fontRangesForFamily(description, fontFamily);
@@ -222,7 +222,7 @@ const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDes
     if (!index) {
         fontRanges = realizeNextFallback(description, m_lastRealizedFallbackIndex, fontSelector);
         if (fontRanges.isNull() && fontSelector)
-            fontRanges = fontSelector->fontRangesForFamily(description, FontFamily { *familyNamesData->at(FamilyNamesIndex::StandardFamily), FontFamilyKind::Generic });
+            fontRanges = fontSelector->fontRangesForFamily(description, FontFamily { AtomStringImpl::add(*familyNamesData->at(FamilyNamesIndex::StandardFamily)), FontFamilyKind::Generic });
         if (fontRanges.isNull())
             fontRanges = FontRanges(protect(FontCache::forCurrentThread())->lastResortFallbackFont(description));
         return appendRealizedFallbackRanges(WTF::move(fontRanges));

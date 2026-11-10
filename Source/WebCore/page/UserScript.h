@@ -36,23 +36,23 @@ namespace WebCore {
 class UserScript {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(UserScript, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT UserScript(String&& source, URL&& = { }, Vector<String>&& allowlist = { }, Vector<String>&& blocklist = { }, UserScriptInjectionTime = UserScriptInjectionTime::DocumentStart, UserContentInjectedFrames = UserContentInjectedFrames::InjectInAllFrames, UserContentMatchParentFrame = UserContentMatchParentFrame::Never);
+    WEBCORE_EXPORT UserScript(RefPtr<StringImpl>&& source, URL&& = { }, Vector<RefPtr<StringImpl>>&& allowlist = { }, Vector<RefPtr<StringImpl>>&& blocklist = { }, UserScriptInjectionTime = UserScriptInjectionTime::DocumentStart, UserContentInjectedFrames = UserContentInjectedFrames::InjectInAllFrames, UserContentMatchParentFrame = UserContentMatchParentFrame::Never);
     WEBCORE_EXPORT ~UserScript();
 
-    const String& source() const LIFETIME_BOUND { return m_source; }
+    const RefPtr<StringImpl>& source() const LIFETIME_BOUND { return m_source; }
     const URL& url() const LIFETIME_BOUND { return m_url; }
-    const Vector<String>& allowlist() const LIFETIME_BOUND { return m_allowlist; }
-    const Vector<String>& blocklist() const LIFETIME_BOUND { return m_blocklist; }
+    const Vector<RefPtr<StringImpl>>& allowlist() const LIFETIME_BOUND { return m_allowlist; }
+    const Vector<RefPtr<StringImpl>>& blocklist() const LIFETIME_BOUND { return m_blocklist; }
     UserScriptInjectionTime injectionTime() const { return m_injectionTime; }
     UserContentInjectedFrames injectedFrames() const { return m_injectedFrames; }
     UserContentMatchParentFrame matchParentFrame() const { return m_matchParentFrame; }
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 
 private:
-    String m_source;
+    RefPtr<StringImpl> m_source;
     URL m_url;
-    Vector<String> m_allowlist;
-    Vector<String> m_blocklist;
+    Vector<RefPtr<StringImpl>> m_allowlist;
+    Vector<RefPtr<StringImpl>> m_blocklist;
     UserScriptInjectionTime m_injectionTime { UserScriptInjectionTime::DocumentStart };
     UserContentInjectedFrames m_injectedFrames { UserContentInjectedFrames::InjectInAllFrames };
     UserContentMatchParentFrame m_matchParentFrame { UserContentMatchParentFrame::Never };

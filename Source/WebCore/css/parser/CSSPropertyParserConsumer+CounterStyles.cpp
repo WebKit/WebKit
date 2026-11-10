@@ -141,7 +141,7 @@ RefPtr<CSSValue> consumeCounterStyle(CSSParserTokenRange& range, CSS::PropertyPa
     return consumeCustomIdentExcluding(range, state, { CSSValueID::None });
 }
 
-AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude, CSSParserMode mode)
+RefPtr<AtomStringImpl> consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude, CSSParserMode mode)
 {
     // In the context of the prelude of an @counter-style rule, a <counter-style-name> must not be an
     // ASCII case-insensitive match for "decimal", "disc", "square", "circle", "disclosure-open" and
@@ -151,13 +151,13 @@ AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude, CSSPar
 
     auto nameToken = prelude.consumeIncludingWhitespace();
     if (!prelude.atEnd())
-        return AtomString();
+        return nullptr;
     // Ensure this token is a valid <custom-ident>.
     if (nameToken.type() != IdentToken || !isValidCustomIdentifier(nameToken.id()))
-        return AtomString();
+        return nullptr;
     auto id = nameToken.id();
     if (identMatches<CSSValueID::None>(id) || (!isUASheetBehavior(mode) && identMatches<CSSValueID::Decimal, CSSValueID::Disc, CSSValueID::Circle, CSSValueID::Square, CSSValueID::DisclosureOpen, CSSValueID::DisclosureClosed>(id)))
-        return AtomString();
+        return nullptr;
     auto name = nameToken.value();
     return isPredefinedCounterStyle(nameToken.id()) ? name.convertToASCIILowercaseAtom() : name.toAtomString();
 }

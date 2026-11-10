@@ -258,7 +258,7 @@ public:
     // should not be shown to the user until the ChromeClient of the newly
     // created Page has its show method called.
     // The ChromeClient should not load the request.
-    virtual RefPtr<Page> createWindow(LocalFrame&, const String& openedMainFrameName, const WindowFeatures&, const NavigationAction&) = 0;
+    virtual RefPtr<Page> createWindow(LocalFrame&, StringImpl* openedMainFrameName, const WindowFeatures&, const NavigationAction&) = 0;
     virtual void show() = 0;
 
     virtual bool canRunModal() const = 0;
@@ -268,19 +268,19 @@ public:
 
     virtual void setResizable(bool) = 0;
 
-    virtual void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) = 0;
+    virtual void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, StringImpl* message, unsigned lineNumber, unsigned columnNumber, StringImpl* sourceID) = 0;
 
     virtual bool canRunBeforeUnloadConfirmPanel() = 0;
-    virtual bool runBeforeUnloadConfirmPanel(String&& message, LocalFrame&) = 0;
+    virtual bool runBeforeUnloadConfirmPanel(RefPtr<StringImpl>&& message, LocalFrame&) = 0;
 
     virtual void closeWindow() = 0;
 
     virtual void rootFrameAdded(const LocalFrame&) = 0;
     virtual void rootFrameRemoved(const LocalFrame&) = 0;
 
-    virtual void runJavaScriptAlert(LocalFrame&, const String&) = 0;
-    virtual bool runJavaScriptConfirm(LocalFrame&, const String&) = 0;
-    virtual bool runJavaScriptPrompt(LocalFrame&, const String& message, const String& defaultValue, String& result) = 0;
+    virtual void runJavaScriptAlert(LocalFrame&, StringImpl*) = 0;
+    virtual bool runJavaScriptConfirm(LocalFrame&, StringImpl*) = 0;
+    virtual bool runJavaScriptPrompt(LocalFrame&, StringImpl* message, StringImpl* defaultValue, RefPtr<StringImpl>& result) = 0;
     virtual KeyboardUIMode keyboardUIMode() = 0;
 
     virtual bool hasAccessoryMousePointingDevice() const = 0;
@@ -307,13 +307,13 @@ public:
     virtual void scheduleAccessibilityFrameGeometryUpdate() const { }
 #endif
 #if PLATFORM(IOS_FAMILY)
-    virtual void relayAccessibilityNotification(String&&, RetainPtr<NSData>&&) const = 0;
+    virtual void relayAccessibilityNotification(RefPtr<StringImpl>&&, RetainPtr<NSData>&&) const = 0;
     virtual void relayAriaNotifyNotification(AriaNotifyData&&) const = 0;
     virtual void relayLiveRegionNotification(LiveRegionAnnouncementData&&) const = 0;
-    virtual void didDisplayCaptions(Vector<String>&&) const { }
+    virtual void didDisplayCaptions(Vector<RefPtr<StringImpl>>&&) const { }
 #endif
 
-    virtual void translateAccessibilityAnnouncementStrings(const Vector<String>& strings, const String& targetLocaleIdentifier, CompletionHandler<void(Vector<String>&&)>&& completion) { UNUSED_PARAM(strings); UNUSED_PARAM(targetLocaleIdentifier); completion({ }); }
+    virtual void translateAccessibilityAnnouncementStrings(const Vector<RefPtr<StringImpl>>& strings, StringImpl* targetLocaleIdentifier, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completion) { UNUSED_PARAM(strings); UNUSED_PARAM(targetLocaleIdentifier); completion({ }); }
 
     virtual void mainFrameDidChange() { };
 
@@ -358,7 +358,7 @@ public:
 
     virtual bool shouldUnavailablePluginMessageBeButton(PluginUnavailabilityReason) const { return false; }
     virtual void unavailablePluginButtonClicked(Element&, PluginUnavailabilityReason) const { }
-    virtual void mouseDidMoveOverElement(const HitTestResult&, OptionSet<PlatformEventModifier>, const String& toolTip, TextDirection) = 0;
+    virtual void mouseDidMoveOverElement(const HitTestResult&, OptionSet<PlatformEventModifier>, StringImpl* toolTip, TextDirection) = 0;
 
     virtual void print(LocalFrame&, const StringWithDirection&) = 0;
 
@@ -385,7 +385,7 @@ public:
     virtual WebCore::HighlightVisibility appHighlightsVisiblility() const { return HighlightVisibility::Hidden; };
 #endif
 
-    virtual void exceededDatabaseQuota(LocalFrame&, const String& databaseName, DatabaseDetails) = 0;
+    virtual void exceededDatabaseQuota(LocalFrame&, StringImpl* databaseName, DatabaseDetails) = 0;
 
     WEBCORE_EXPORT virtual std::unique_ptr<WorkerClient> createWorkerClient(SerialFunctionDispatcher&);
 
@@ -421,7 +421,7 @@ public:
     virtual void removeScrollingLayer(Node*, PlatformLayer* scrollingLayer, PlatformLayer* contentsLayer) = 0;
 
     virtual void webAppOrientationsUpdated() = 0;
-    virtual void showPlaybackTargetPicker(bool hasVideo, RouteSharingPolicy, const String&) = 0;
+    virtual void showPlaybackTargetPicker(bool hasVideo, RouteSharingPolicy, StringImpl*) = 0;
 
     virtual bool showDataDetectorsUIForElement(const Element&, const Event&) = 0;
 #endif
@@ -447,7 +447,7 @@ public:
     virtual void updateTextIndicator(RefPtr<TextIndicator>&&) const = 0;
 
     virtual void runOpenPanel(LocalFrame&, FileChooser&) = 0;
-    WEBCORE_EXPORT virtual void transcodeChosenFiles(Vector<String>&& transcodingPaths, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&&);
+    WEBCORE_EXPORT virtual void transcodeChosenFiles(Vector<RefPtr<StringImpl>>&& transcodingPaths, RefPtr<StringImpl>&& destinationUTI, RefPtr<StringImpl>&& destinationExtension, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&);
     virtual void showShareSheet(ShareDataWithParsedURL&&, CompletionHandler<void(bool)>&& callback) { callback(false); }
     virtual void showContactPicker(ContactsRequestData&&, CompletionHandler<void(std::optional<Vector<ContactInfo>>&&)>&& callback) { callback(std::nullopt); }
 
@@ -466,7 +466,7 @@ public:
 #endif
 
     // Asynchronous request to load an icon for specified filenames.
-    virtual void loadIconForFiles(const Vector<String>&, FileIconLoader&) = 0;
+    virtual void loadIconForFiles(const Vector<RefPtr<StringImpl>>&, FileIconLoader&) = 0;
     virtual void elementDidFocus(Element&, const FocusOptions&) { }
     virtual void elementDidBlur(Element&) { }
     virtual void elementDidRefocus(Element&, const FocusOptions&) { }
@@ -518,7 +518,7 @@ public:
     virtual RefPtr<ShapeDetection::FaceDetector> createFaceDetector(const ShapeDetection::FaceDetectorOptions&) const;
     virtual RefPtr<ShapeDetection::TextDetector> createTextDetector() const;
 
-    virtual void registerBlobPathForTesting(const String&, CompletionHandler<void()>&&) { }
+    virtual void registerBlobPathForTesting(StringImpl*, CompletionHandler<void()>&&) { }
 
     // Pass nullptr as the GraphicsLayer to detatch the root layer.
     virtual void attachRootGraphicsLayer(LocalFrame&, GraphicsLayer*) = 0;
@@ -582,7 +582,7 @@ public:
 #endif
 
 #if ENABLE(MEDIA_USAGE)
-    virtual void addMediaUsageManagerSession(MediaSessionIdentifier, const String&, const URL&) { }
+    virtual void addMediaUsageManagerSession(MediaSessionIdentifier, StringImpl*, const URL&) { }
     virtual void updateMediaUsageManagerSessionState(MediaSessionIdentifier, const MediaUsageInfo&) { }
     virtual void removeMediaUsageManagerSession(MediaSessionIdentifier) { }
 #endif
@@ -638,7 +638,7 @@ public:
 
 #if PLATFORM(PLAYSTATION) || PLATFORM(HAIKU)
     virtual void postAccessibilityNotification(AccessibilityObject&, AXNotification) = 0;
-    virtual void postAccessibilityNodeTextChangeNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) = 0;
+    virtual void postAccessibilityNodeTextChangeNotification(AccessibilityObject*, AXTextChange, unsigned, StringImpl*) = 0;
     virtual void postAccessibilityFrameLoadingEventNotification(AccessibilityObject*, AXLoadingEvent) = 0;
 #endif
 
@@ -677,7 +677,7 @@ public:
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     virtual void isAnyAnimationAllowedToPlayDidChange(bool /* anyAnimationCanPlay */) { };
 #endif
-    virtual void resolveAccessibilityHitTestForTesting(WebCore::FrameIdentifier, const IntPoint&, CompletionHandler<void(String)>&& callback) { callback(""_s); };
+    virtual void resolveAccessibilityHitTestForTesting(WebCore::FrameIdentifier, const IntPoint&, CompletionHandler<void(RefPtr<StringImpl>)>&& callback) { callback(""_si); };
 #if PLATFORM(MAC)
     WEBCORE_EXPORT virtual void performAccessibilitySearchInRemoteFrame(FrameIdentifier, const AccessibilitySearchCriteriaIPC&, CompletionHandler<void(Vector<AccessibilityRemoteToken>&&)>&&);
     // Called by a child frame to continue a search in its parent frame.
@@ -691,7 +691,7 @@ public:
     virtual void handleAutoplayEvent(AutoplayEvent, OptionSet<AutoplayEventFlags>) { }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
-    virtual void handleTelephoneNumberClick(const String&, const IntPoint&, const IntRect&) { }
+    virtual void handleTelephoneNumberClick(StringImpl*, const IntPoint&, const IntRect&) { }
 #endif
 
 #if ENABLE(DATA_DETECTION)
@@ -699,7 +699,7 @@ public:
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)
-    virtual void handleSelectionServiceClick(FrameIdentifier, FrameSelection&, const Vector<String>&, const IntPoint&) { }
+    virtual void handleSelectionServiceClick(FrameIdentifier, FrameSelection&, const Vector<RefPtr<StringImpl>>&, const IntPoint&) { }
     virtual bool hasRelevantSelectionServices(bool /*isTextOnly*/) const { return false; }
     virtual bool handleImageServiceClick(FrameIdentifier, const IntPoint&, HTMLImageElement&) { return false; }
     virtual bool handlePDFServiceClick(FrameIdentifier, const IntPoint&, HTMLAttachmentElement&) { return false; }
@@ -726,7 +726,7 @@ public:
     virtual void showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier, const IntPoint& /*positionInMainFrameView*/, bool /*isVideo*/) { }
     virtual void playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier, MediaProducerMediaStateFlags) { }
     virtual void setMockMediaPlaybackTargetPickerEnabled(bool)  { }
-    virtual void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetMockState) { }
+    virtual void setMockMediaPlaybackTargetPickerState(StringImpl*, MediaPlaybackTargetMockState) { }
     virtual void mockMediaPlaybackTargetPickerDismissPopup() { }
     virtual void mockMediaPlaybackTargetPickerRect(CompletionHandler<void(FloatRect)>&& completionHandler) { completionHandler({ }); }
 #endif
@@ -736,7 +736,7 @@ public:
     virtual void didInvalidateDocumentMarkerRects() { }
 
     virtual void reportProcessCPUTime(Seconds, ActivityStateForCPUSampling) { }
-    virtual RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) = 0;
+    virtual RefPtr<Icon> createIconForFiles(const Vector<RefPtr<StringImpl>>& /* filenames */) = 0;
 
     virtual void hasStorageAccess(RegistrableDomain&& /*subFrameDomain*/, RegistrableDomain&& /*topFrameDomain*/, LocalFrame&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
     virtual void requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, LocalFrame&, StorageAccessScope scope, HasUserGestureOrNoUserGestureRequired, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler) { completionHandler({ StorageAccessWasGranted::No, StorageAccessPromptWasShown::No, scope, WTF::move(topFrameDomain), WTF::move(subFrameDomain) }); }
@@ -749,7 +749,7 @@ public:
     virtual void shouldAllowDeviceOrientationAndMotionAccess(LocalFrame&, bool /* mayPrompt */, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& callback) { callback(DeviceOrientationOrMotionPermissionState::Denied); }
 #endif
 
-    virtual void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel) { }
+    virtual void configureLoggingChannel(StringImpl*, WTFLogChannelState, WTFLogLevel) { }
 
     virtual bool userIsInteracting() const { return false; }
     virtual void setUserIsInteracting(bool) { }
@@ -805,7 +805,7 @@ public:
 
     virtual FloatSize screenSizeForFingerprintingProtections(const LocalFrame&, FloatSize defaultSize) const { return defaultSize; }
 
-    virtual void didAdjustVisibilityWithSelectors(Vector<String>&&) { }
+    virtual void didAdjustVisibilityWithSelectors(Vector<RefPtr<StringImpl>>&&) { }
 
 #if ENABLE(GAMEPAD)
     virtual void gamepadsRecentlyAccessed() { }
@@ -824,9 +824,9 @@ public:
 
     virtual void addInitialTextAnimationForActiveWritingToolsSession() { }
 
-    virtual void addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& /*sourceAnimationUUID*/, const WTF::UUID& /*destinationAnimationUUID*/, bool, const CharacterRange&, const String&, CompletionHandler<void(TextAnimationRunMode)>&&) { }
+    virtual void addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& /*sourceAnimationUUID*/, const WTF::UUID& /*destinationAnimationUUID*/, bool, const CharacterRange&, StringImpl*, CompletionHandler<void(TextAnimationRunMode)>&&) { }
 
-    virtual void addDestinationTextAnimationForActiveWritingToolsSession(Markable<WTF::UUID> /*sourceAnimationUUID*/, Markable<WTF::UUID> /*destinationAnimationUUID*/, const std::optional<CharacterRange>&, const String&) { }
+    virtual void addDestinationTextAnimationForActiveWritingToolsSession(Markable<WTF::UUID> /*sourceAnimationUUID*/, Markable<WTF::UUID> /*destinationAnimationUUID*/, const std::optional<CharacterRange>&, StringImpl*) { }
 
     virtual void saveSnapshotOfTextPlaceholderForAnimation(const SimpleRange&) { };
 

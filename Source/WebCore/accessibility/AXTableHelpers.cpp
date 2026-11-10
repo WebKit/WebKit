@@ -58,7 +58,7 @@ bool appendCaptionTextIfNecessary(Element& element, Vector<AccessibilityText>& t
 {
     if (RefPtr tableElement = dynamicDowncast<HTMLTableElement>(element)) {
         RefPtr caption = tableElement->caption();
-        if (String captionText = caption ? caption->innerText() : emptyString(); !captionText.isEmpty()) {
+        if (RefPtr<StringImpl> captionText = caption ? caption->innerText() : emptyString(); !isEmpty(captionText)) {
             textOrder.append(AccessibilityText(WTF::move(captionText), AccessibilityTextSource::LabelByElement));
             return true;
         }
@@ -145,14 +145,14 @@ HTMLTableElement* tableElementIncludingAncestors(Node* node, RenderObject* rende
 bool tableElementIndicatesAccessibleTable(HTMLTableElement& tableElement)
 {
     // If there is a caption element, summary, THEAD, or TFOOT section, it's most certainly a data table.
-    if (!tableElement.summary().isEmpty()
+    if (!isEmpty(tableElement.summary())
         || (tableElement.tHead() && tableElement.tHead()->renderer())
         || (tableElement.tFoot() && tableElement.tFoot()->renderer())
         || tableElement.caption())
         return true;
 
     // If someone used "rules" attribute than the table should appear.
-    if (!tableElement.rules().isEmpty())
+    if (!isEmpty(tableElement.rules()))
         return true;
 
     // If there's a colgroup or col element, it's probably a data table.
@@ -254,7 +254,7 @@ bool isDataTableWithTraversal(HTMLTableElement& tableElement, AXObjectCache& cac
                 if (isDataTableBasedOnRowColumnCount())
                     return true;
 
-                if (tableRow->integralAttribute(aria_rowindexAttr) >= 1 || tableRow->integralAttribute(aria_colindexAttr) || !tableRow->getAttribute(aria_rowindextextAttr).isEmpty() || hasRole(*tableRow, "row"_s))
+                if (tableRow->integralAttribute(aria_rowindexAttr) >= 1 || tableRow->integralAttribute(aria_colindexAttr) || !isEmpty(tableRow->getAttribute(aria_rowindextextAttr)) || hasRole(*tableRow, "row"_s))
                     return true;
 
                 // For the first 5 rows, cache the background color so we can check if this table has zebra-striped rows.
@@ -284,12 +284,12 @@ bool isDataTableWithTraversal(HTMLTableElement& tableElement, AXObjectCache& cac
                 }
 
                 // In this case, the developer explicitly assigned a "data" table attribute.
-                if (!cell->headers().isEmpty() || !cell->abbr().isEmpty() || !cell->axis().isEmpty() || !cell->scope().isEmpty() || hasCellARIARole(*cell))
+                if (!isEmpty(cell->headers()) || !isEmpty(cell->abbr()) || !isEmpty(cell->axis()) || !isEmpty(cell->scope()) || hasCellARIARole(*cell))
                     return true;
 
                 // If the author has used ARIA to specify a valid column or row index or index text, assume they want us
                 // to treat the table as a data table.
-                if (cell->integralAttribute(aria_colindexAttr) >= 1 || cell->integralAttribute(aria_rowindexAttr) >= 1 || !cell->getAttribute(aria_colindextextAttr).isEmpty() || !cell->getAttribute(aria_rowindextextAttr).isEmpty())
+                if (cell->integralAttribute(aria_colindexAttr) >= 1 || cell->integralAttribute(aria_rowindexAttr) >= 1 || !isEmpty(cell->getAttribute(aria_colindextextAttr)) || !isEmpty(cell->getAttribute(aria_rowindextextAttr)))
                     return true;
 
                 // If the author has used ARIA to specify a column or row span, we're supposed to ignore

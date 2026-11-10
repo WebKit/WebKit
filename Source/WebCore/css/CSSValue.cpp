@@ -390,7 +390,7 @@ bool CSSValue::isCSSLocalURL(StringView relativeURL)
     return relativeURL.isEmpty() || relativeURL.startsWith('#');
 }
 
-String CSSValue::cssText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSValue::cssText(const CSS::SerializationContext& context) const
 {
     return visitDerived([&](auto& value) {
         return value.customCSSText(context);

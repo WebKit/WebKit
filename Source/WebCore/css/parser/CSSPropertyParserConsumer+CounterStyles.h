@@ -50,7 +50,7 @@ std::optional<CSS::CounterStyle> consumeUnresolvedCounterStyle(CSSParserTokenRan
 RefPtr<CSSValue> consumeCounterStyle(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 // MARK: @counter-style consumer
-AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange&, CSSParserMode = CSSParserMode::HTMLStandardMode);
+RefPtr<AtomStringImpl> consumeCounterStyleNameInPrelude(CSSParserTokenRange&, CSSParserMode = CSSParserMode::HTMLStandardMode);
 
 // MARK: @counter-style descriptor consumers
 RefPtr<CSSValue> consumeCounterStyleName(CSSParserTokenRange&, CSS::PropertyParserState&);

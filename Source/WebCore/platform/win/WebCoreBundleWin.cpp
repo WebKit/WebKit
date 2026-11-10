@@ -35,24 +35,24 @@
 
 namespace WebCore {
 
-static String dllDirectory()
+static RefPtr<StringImpl> dllDirectory()
 {
     WCHAR buffer[MAX_PATH];
     DWORD length = ::GetModuleFileNameW(WebCore::instanceHandle(), buffer, MAX_PATH);
     if (!length || (length == MAX_PATH && GetLastError() == ERROR_INSUFFICIENT_BUFFER))
         return emptyString();
 
-    String path(buffer, length);
+    RefPtr<StringImpl> path = StringImpl::create(buffer, length);
     return FileSystem::parentPath(path);
 }
 
-String webKitBundlePath()
+RefPtr<StringImpl> webKitBundlePath()
 {
-    static NeverDestroyed<String> bundle = FileSystem::pathByAppendingComponent(dllDirectory(), "WebKit.resources"_s);
+    static NeverDestroyed<RefPtr<StringImpl>> bundle = FileSystem::pathByAppendingComponent(dllDirectory(), "WebKit.resources"_s);
     return bundle;
 }
 
-String webKitBundlePath(StringView path)
+RefPtr<StringImpl> webKitBundlePath(StringView path)
 {
     auto resource = FileSystem::pathByAppendingComponent(webKitBundlePath(), path);
     if (!FileSystem::fileExists(resource))
@@ -61,13 +61,13 @@ String webKitBundlePath(StringView path)
     return resource;
 }
 
-String webKitBundlePath(StringView name, StringView type, StringView directory)
+RefPtr<StringImpl> webKitBundlePath(StringView name, StringView type, StringView directory)
 {
     auto fileName = makeString(name, '.', type);
     return webKitBundlePath(FileSystem::pathByAppendingComponent(directory, fileName));
 }
 
-String webKitBundlePath(const Vector<StringView>& components)
+RefPtr<StringImpl> webKitBundlePath(const Vector<StringView>& components)
 {
     return webKitBundlePath(FileSystem::pathByAppendingComponents(emptyString(), components));
 }

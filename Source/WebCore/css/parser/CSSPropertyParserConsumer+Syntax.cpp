@@ -46,8 +46,8 @@ RefPtr<CSSValue> consumeFunctionResult(CSSParserTokenRange& range, CSS::Property
 {
     // https://www.w3.org/TR/css-mixins-1/#descdef-function-result
     // Per spec, the result descriptor is treated as a custom property named "result".
-    static MainThreadNeverDestroyed<const AtomString> resultName { "result"_s };
-    return CSSSubstitutionParser::parseDeclarationValue(resultName, range.consumeAll(), state.context);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> resultName { "result"_s };
+    return CSSSubstitutionParser::parseDeclarationValue(resultName.get(), range.consumeAll(), state.context);
 }
 
 } // namespace CSSPropertyParserHelpers

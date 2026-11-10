@@ -74,7 +74,7 @@ static UnixFileDescriptor createSharedMemory()
     UTF8CString tempName;
     for (int tries = 0; fileDescriptor == -1 && tries < 10; ++tries) {
         auto name = makeString("/WPEWaylandSHMPool."_s, cryptographicallyRandomNumber<unsigned>());
-        tempName = name.utf8();
+        tempName = utf8(name);
 
         do {
             fileDescriptor = posixShmOpen(tempName, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);

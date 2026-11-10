@@ -476,10 +476,10 @@ TEST(WKWebExtensionAPIWebNavigation, ErrorOccurredEventDuringProvisionalLoad)
 }
 
 template<size_t length>
-String longString(Latin1Character c)
+RefPtr<StringImpl> longString(Latin1Character c)
 {
     Vector<Latin1Character> vector(FillWith { }, length, c);
-    return vector.span();
+    return StringImpl::create(vector.span());
 }
 
 TEST(WKWebExtensionAPIWebNavigation, ErrorOccurredEventDuringLoad)

@@ -57,8 +57,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedWorker);
 
-#define SHARED_WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, identifier().toString().utf8(), ##__VA_ARGS__)
-#define SHARED_WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, identifier().toString().utf8(), ##__VA_ARGS__)
+#define SHARED_WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, utf8(identifier().toString()), ##__VA_ARGS__)
+#define SHARED_WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, utf8(identifier().toString()), ##__VA_ARGS__)
 
 NODELETE static HashMap<SharedWorkerObjectIdentifier, WeakRef<SharedWorker, WeakPtrImplWithEventTargetData>>& allSharedWorkers()
 {
@@ -77,21 +77,21 @@ static inline SharedWorkerObjectConnection* sharedWorkerMainThreadConnection()
     return SharedWorkerProvider::singleton().sharedWorkerConnection();
 }
 
-ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, Variant<Ref<TrustedScriptURL>, String>&& scriptURLString, std::optional<Variant<String, WorkerOptions>>&& maybeOptions)
+ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, Variant<Ref<TrustedScriptURL>, RefPtr<StringImpl>>&& scriptURLString, std::optional<Variant<RefPtr<StringImpl>, WorkerOptions>>&& maybeOptions)
 {
-    auto compliantScriptURLString = trustedTypeCompliantString(protect(document.contextDocument()), WTF::move(scriptURLString), "SharedWorker constructor"_s);
+    auto compliantScriptURLString = trustedTypeCompliantString(protect(document.contextDocument()), WTF::move(scriptURLString), "SharedWorker constructor"_si);
     if (compliantScriptURLString.hasException())
         return compliantScriptURLString.releaseException();
 
     if (!sharedWorkerMainThreadConnection())
-        return Exception { ExceptionCode::NotSupportedError, "Shared workers are not supported"_s };
+        return Exception { ExceptionCode::NotSupportedError, "Shared workers are not supported"_si };
 
     if (!document.hasBrowsingContext())
-        return Exception { ExceptionCode::InvalidStateError, "No browsing context"_s };
+        return Exception { ExceptionCode::InvalidStateError, "No browsing context"_si };
 
     auto url = document.encodingParseURL(compliantScriptURLString.releaseReturnValue());
     if (!url.isValid())
-        return Exception { ExceptionCode::SyntaxError, "Invalid script URL"_s };
+        return Exception { ExceptionCode::SyntaxError, "Invalid script URL"_si };
 
     CheckedPtr contentSecurityPolicy = document.contentSecurityPolicy();
     if (contentSecurityPolicy)
@@ -99,7 +99,7 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, Variant<
 
     WorkerOptions options;
     if (maybeOptions) {
-        WTF::switchOn(*maybeOptions, [&] (const String& name) {
+        WTF::switchOn(*maybeOptions, [&] (StringImpl* name) {
             options.name = name;
         }, [&] (const WorkerOptions& optionsFromVariant) {
             options = optionsFromVariant;
@@ -202,7 +202,7 @@ void SharedWorker::reportNetworkUsage(size_t bytesTransferredOverNetwork)
 
     if (delta) {
         if (m_resourceMonitor) {
-            RELEASE_LOG(ResourceMonitoring, "[identifier=%" PUBLIC_LOG_STRING "] SharedWorker::reportNetworkUsage to ResourceMonitor: %zu bytes", identifier().toString().utf8(), delta.value());
+            RELEASE_LOG(ResourceMonitoring, "[identifier=%" PUBLIC_LOG_STRING "] SharedWorker::reportNetworkUsage to ResourceMonitor: %zu bytes", utf8(identifier().toString()), delta.value());
             m_resourceMonitor->addNetworkUsage(delta);
         }
     }

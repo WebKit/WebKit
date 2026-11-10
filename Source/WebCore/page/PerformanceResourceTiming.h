@@ -46,9 +46,9 @@ class PerformanceResourceTiming : public PerformanceEntry {
 public:
     NODELETE static Ref<PerformanceResourceTiming> create(MonotonicTime timeOrigin, ResourceTiming&&);
 
-    const String& initiatorType() const LIFETIME_BOUND { return m_resourceTiming.initiatorType(); }
-    String deliveryType() const { return m_resourceTiming.deliveryType(); }
-    NODELETE const String& nextHopProtocol() const LIFETIME_BOUND;
+    const RefPtr<StringImpl>& initiatorType() const LIFETIME_BOUND { return m_resourceTiming.initiatorType(); }
+    RefPtr<StringImpl> deliveryType() const { return m_resourceTiming.deliveryType(); }
+    NODELETE const RefPtr<StringImpl>& nextHopProtocol() const LIFETIME_BOUND;
 
     double workerStart() const;
     double redirectStart() const;
@@ -69,8 +69,8 @@ public:
     NODELETE uint64_t decodedBodySize() const;
     double workerRouterEvaluationStart() const;
     double workerCacheLookupStart() const;
-    NODELETE const String& workerMatchedRouterSource() const LIFETIME_BOUND;
-    NODELETE const String& workerFinalRouterSource() const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& workerMatchedRouterSource() const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& workerFinalRouterSource() const LIFETIME_BOUND;
 
     const Vector<Ref<PerformanceServerTiming>>& serverTiming() const LIFETIME_BOUND { return m_serverTiming; }
     ResourceTiming& resourceTiming() LIFETIME_BOUND { return m_resourceTiming; }

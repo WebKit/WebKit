@@ -43,12 +43,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MutationObserverRegistration);
 
-Ref<MutationObserverRegistration> MutationObserverRegistration::create(MutationObserver& observer, Node& node, MutationObserverOptions options, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter)
+Ref<MutationObserverRegistration> MutationObserverRegistration::create(MutationObserver& observer, Node& node, MutationObserverOptions options, const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>>& attributeFilter)
 {
     return adoptRef(*new MutationObserverRegistration(observer, node, options, attributeFilter));
 }
 
-MutationObserverRegistration::MutationObserverRegistration(MutationObserver& observer, Node& node, MutationObserverOptions options, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter)
+MutationObserverRegistration::MutationObserverRegistration(MutationObserver& observer, Node& node, MutationObserverOptions options, const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>>& attributeFilter)
     : m_observer(observer)
     , m_node(node)
     , m_options(options)
@@ -63,7 +63,7 @@ MutationObserverRegistration::~MutationObserverRegistration()
     m_observer->observationEnded(*this);
 }
 
-void MutationObserverRegistration::resetObservation(MutationObserverOptions options, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter)
+void MutationObserverRegistration::resetObservation(MutationObserverOptions options, const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>>& attributeFilter)
 {
     takeTransientRegistrations();
     m_options = options;
@@ -115,7 +115,7 @@ bool MutationObserverRegistration::shouldReceiveMutationFrom(Node& node, Mutatio
     if (type != MutationObserverOptionType::Attributes || !m_options.contains(MutationObserverOptionType::AttributeFilter))
         return true;
 
-    if (!attributeName->namespaceURI().isNull())
+    if (attributeName->namespaceURI())
         return false;
 
     return m_attributeFilter.contains(attributeName->localName());

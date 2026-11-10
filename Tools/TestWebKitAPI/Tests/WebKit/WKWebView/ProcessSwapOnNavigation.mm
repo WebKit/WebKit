@@ -310,8 +310,8 @@ static RetainPtr<WKWebView> createdWebView;
 
 @interface PSONScheme : NSObject <WKURLSchemeHandler> {
     ASCIILiteral _bytes;
-    HashMap<String, String> _redirects;
-    HashMap<String, RetainPtr<NSData>> _dataMappings;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> _redirects;
+    HashMap<RefPtr<StringImpl>, RetainPtr<NSData>> _dataMappings;
     HashSet<id <WKURLSchemeTask>> _runningTasks;
     bool _shouldRespondAsynchronously;
 }
@@ -331,12 +331,12 @@ static RetainPtr<WKWebView> createdWebView;
 
 - (void)addRedirectFromURLString:(NSString *)sourceURLString toURLString:(NSString *)destinationURLString
 {
-    _redirects.set(sourceURLString, destinationURLString);
+    _redirects.set(StringImpl::create(sourceURLString), StringImpl::create(destinationURLString));
 }
 
 - (void)addMappingFromURLString:(NSString *)urlString toData:(ASCIILiteral)data
 {
-    _dataMappings.set(urlString, toNSData(data.span8()));
+    _dataMappings.set(StringImpl::create(urlString), toNSData(data.span8()));
 }
 
 - (void)setShouldRespondAsynchronously:(BOOL)value
@@ -363,11 +363,11 @@ static RetainPtr<WKWebView> createdWebView;
     };
 
     RetainPtr<NSURL> finalURL = task.request.URL;
-    auto target = _redirects.get(task.request.URL.absoluteString);
-    if (!target.isEmpty()) {
+    auto target = _redirects.get(StringImpl::create(task.request.URL.absoluteString).get());
+    if (!isEmpty(target)) {
         RetainPtr redirectResponse = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:nil expectedContentLength:0 textEncodingName:nil]);
 
-        finalURL = adoptNS([[NSURL alloc] initWithString:target.createNSString().get()]);
+        finalURL = adoptNS([[NSURL alloc] initWithString:createNSString(target).get()]);
         RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:finalURL.get()]);
 
         [(id<WKURLSchemeTaskPrivate>)task _didPerformRedirection:redirectResponse.get() newRequest:request.get()];
@@ -383,7 +383,7 @@ static RetainPtr<WKWebView> createdWebView;
     }, 0.1);
 
     doAsynchronouslyIfNecessary([self, finalURL](id <WKURLSchemeTask> task) {
-        if (RetainPtr data = _dataMappings.get([finalURL absoluteString]))
+        if (RetainPtr data = _dataMappings.get(StringImpl::create([finalURL absoluteString]).get()))
             [task didReceiveData:data.get()];
         else if (_bytes)
             [task didReceiveData:toNSData(_bytes.span8()).get()];
@@ -761,13 +761,13 @@ TEST(ProcessSwap, KillWebContentProcessAfterServerRedirectPolicyDecision)
 
 TEST(ProcessSwap, PSONRedirectionToExternal)
 {
-    TestWebKitAPI::HTTPServer server(std::initializer_list<std::pair<String, TestWebKitAPI::HTTPResponse>> { }, TestWebKitAPI::HTTPServer::Protocol::Https);
+    TestWebKitAPI::HTTPServer server(std::initializer_list<std::pair<RefPtr<StringImpl>, TestWebKitAPI::HTTPResponse>> { }, TestWebKitAPI::HTTPServer::Protocol::Https);
 
-    Vector<WTF::KeyValuePair<String, String>> redirectHeaders;
+    Vector<WTF::KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> redirectHeaders;
     redirectHeaders.append({ "location"_s, "other://test"_s });
     TestWebKitAPI::HTTPResponse redirectResponse(301, WTF::move(redirectHeaders));
 
-    server.addResponse("/popup.html"_s, WTF::move(redirectResponse));
+    server.addResponse("/popup.html"_si, WTF::move(redirectResponse));
     auto popupURL = makeString("https://localhost:"_s, server.port(), "/popup.html"_s);
 
     auto processPoolConfiguration = psonProcessPoolConfiguration();
@@ -782,7 +782,7 @@ TEST(ProcessSwap, PSONRedirectionToExternal)
 
     [webView configuration].preferences.fraudulentWebsiteWarningEnabled = NO;
 
-    RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:popupURL.createNSString().get()]).get()]);
+    RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:createNSString(popupURL).get()]).get()]);
     [webView loadRequest:request.get()];
     done = false;
 
@@ -2530,13 +2530,13 @@ static void runQuickBackForwardNavigationTest(ShouldEnablePSON shouldEnablePSON)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    Vector<String> backForwardListURLs;
+    Vector<RefPtr<StringImpl>> backForwardListURLs;
     auto* backForwardList = [webView backForwardList];
     for (unsigned i = 0; i < backForwardList.backList.count; ++i)
-        backForwardListURLs.append([backForwardList.backList[i].URL absoluteString]);
-    backForwardListURLs.append([backForwardList.currentItem.URL absoluteString]);
+        backForwardListURLs.append(StringImpl::create([backForwardList.backList[i].URL absoluteString]));
+    backForwardListURLs.append(StringImpl::create([backForwardList.currentItem.URL absoluteString]));
     for (unsigned i = 0; i < backForwardList.forwardList.count; ++i)
-        backForwardListURLs.append([backForwardList.forwardList[i].URL absoluteString]);
+        backForwardListURLs.append(StringImpl::create([backForwardList.forwardList[i].URL absoluteString]));
     RELEASE_ASSERT(backForwardListURLs.size() == 3u);
     EXPECT_WK_STREQ("pson://www.webkit.org/main1.html", backForwardListURLs[0]);
     EXPECT_WK_STREQ("pson://www.webkit.org/main2.html", backForwardListURLs[1]);
@@ -4223,7 +4223,7 @@ TEST(ProcessSwap, NumberOfCachedProcesses)
 
     const unsigned maxSuspendedPageCount = [processPool _maximumSuspendedPageCount];
     for (unsigned i = 0; i < maxSuspendedPageCount + 2; i++)
-        [handler addMappingFromURLString:makeString("pson://www.domain-"_s, i, ".com"_s).createNSString().get() toData:pageCache1Bytes];
+        [handler addMappingFromURLString:createNSString(makeString("pson://www.domain-"_s, i, ".com"_s)).get() toData:pageCache1Bytes];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -4231,7 +4231,7 @@ TEST(ProcessSwap, NumberOfCachedProcesses)
     [webView setNavigationDelegate:delegate.get()];
 
     for (unsigned i = 0; i < maxSuspendedPageCount + 1; i++) {
-        RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:makeString("pson://www.domain-"_s, i, ".com"_s).createNSString().get()]).get()]);
+        RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:createNSString(makeString("pson://www.domain-"_s, i, ".com"_s)).get()]).get()]);
         [webView loadRequest:request.get()];
         TestWebKitAPI::Util::run(&done);
         done = false;
@@ -4241,7 +4241,7 @@ TEST(ProcessSwap, NumberOfCachedProcesses)
         EXPECT_FALSE([processPool _hasPrewarmedWebProcess]);
     }
 
-    RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:makeString("pson://www.domain-"_s, maxSuspendedPageCount + 1, ".com"_s).createNSString().get()]).get()]);
+    RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:createNSString(makeString("pson://www.domain-"_s, maxSuspendedPageCount + 1, ".com"_s)).get()]).get()]);
     [webView loadRequest:request.get()];
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -4784,9 +4784,9 @@ TEST(ProcessSwap, CrossOriginBlobNavigation)
     EXPECT_TRUE(!!pid1);
 
     bool finishedRunningScript = false;
-    String blobURL;
+    RefPtr<StringImpl> blobURL;
     [webView _evaluateJavaScriptWithoutUserGesture:@"document.getElementById('link').href" completionHandler: [&] (id result, NSError *error) {
-        blobURL = String([NSString stringWithFormat:@"%@", result]);
+        blobURL = StringImpl::create([NSString stringWithFormat:@"%@", result]);
         finishedRunningScript = true;
     }];
     TestWebKitAPI::Util::run(&finishedRunningScript);
@@ -4799,7 +4799,7 @@ TEST(ProcessSwap, CrossOriginBlobNavigation)
 
     finishedRunningScript = false;
     auto script = makeString("document.getElementById('link').href = '"_s, blobURL, '\'');
-    [webView _evaluateJavaScriptWithoutUserGesture:script.createNSString().get() completionHandler: [&] (id result, NSError *error) {
+    [webView _evaluateJavaScriptWithoutUserGesture:createNSString(script).get() completionHandler: [&] (id result, NSError *error) {
         finishedRunningScript = true;
     }];
     TestWebKitAPI::Util::run(&finishedRunningScript);
@@ -8076,7 +8076,7 @@ TEST(ProcessSwap, COOPSwapDoesNotAbortNavigationAPINavigation)
 TEST(ProcessSwap, COOPAndCOEPOn304Response)
 {
     using namespace TestWebKitAPI;
-    HTTPResponse response({ { { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s }, { "cross-origin-embedder-policy"_s, "require-corp"_s }, { "Etag"_s, "123456789"_s } }, "foo"_s });
+    HTTPResponse response({ { { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s }, { "cross-origin-embedder-policy"_s, "require-corp"_s }, { "Etag"_s, "123456789"_s } }, "foo"_si });
     response.setShouldRespondWith304ToConditionalRequests({ { "Cross-Origin-Opener-Policy"_s, "same-origin"_s }, { "cross-origin-embedder-policy"_s, "require-corp"_s } });
     HTTPServer server({
         { "/index.html"_s, WTF::move(response) },
@@ -8843,37 +8843,37 @@ static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceC
 {
     using namespace TestWebKitAPI;
 
-    Vector<WTF::KeyValuePair<String, String>> sourceHeaders;
+    Vector<WTF::KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> sourceHeaders;
     sourceHeaders.append({ "Content-Type"_s, "text/html"_s });
     if (sourceCOOP)
         sourceHeaders.append({ "Cross-Origin-Opener-Policy"_s, sourceCOOP });
     if (sourceCOEP)
         sourceHeaders.append({ "Cross-Origin-Embedder-Policy"_s, sourceCOEP });
 
-    Vector<WTF::KeyValuePair<String, String>> destinationHeaders;
+    Vector<WTF::KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> destinationHeaders;
     destinationHeaders.append({ "Content-Type"_s, "text/html"_s });
     if (destinationCOOP)
         destinationHeaders.append({ "Cross-Origin-Opener-Policy"_s, destinationCOOP });
     if (destinationCOEP)
         destinationHeaders.append({ "Cross-Origin-Embedder-Policy"_s, destinationCOEP });
-    HTTPResponse destinationResponse(WTF::move(destinationHeaders), "popup"_s);
+    HTTPResponse destinationResponse(WTF::move(destinationHeaders), "popup"_si);
 
-    HTTPServer server(std::initializer_list<std::pair<String, HTTPResponse>> { }, HTTPServer::Protocol::Https);
+    HTTPServer server(std::initializer_list<std::pair<RefPtr<StringImpl>, HTTPResponse>> { }, HTTPServer::Protocol::Https);
 
     auto popupURL = isSameOrigin == IsSameOrigin::Yes ? "popup.html"_str : makeString("https://localhost:"_s, server.port(), "/popup.html"_s);
     auto popupSource = makeString("<script>onload = () => { w = open('"_s, popupURL, "', 'foo'); };</script>"_s);
-    server.addResponse("/main.html"_s, HTTPResponse { WTF::move(sourceHeaders), WTF::move(popupSource) });
+    server.addResponse("/main.html"_si, HTTPResponse { WTF::move(sourceHeaders), WTF::move(popupSource) });
 
     if (doServerSideRedirect == DoServerSideRedirect::Yes) {
-        Vector<WTF::KeyValuePair<String, String>> redirectHeaders;
-        String redirectionURL = isSameOrigin == IsSameOrigin::Yes ? makeString("https://127.0.0.1:"_s, server.port(), "/popup-after-redirection.html"_s) : makeString("https://localhost:"_s, server.port(), "/popup-after-redirection.html"_s);
+        Vector<WTF::KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> redirectHeaders;
+        RefPtr<StringImpl> redirectionURL = isSameOrigin == IsSameOrigin::Yes ? makeString("https://127.0.0.1:"_s, server.port(), "/popup-after-redirection.html"_s) : makeString("https://localhost:"_s, server.port(), "/popup-after-redirection.html"_s);
         redirectHeaders.append({ "location"_s, WTF::move(redirectionURL) });
         HTTPResponse redirectResponse(301, WTF::move(redirectHeaders));
 
-        server.addResponse("/popup.html"_s, WTF::move(redirectResponse));
-        server.addResponse("/popup-after-redirection.html"_s, WTF::move(destinationResponse));
+        server.addResponse("/popup.html"_si, WTF::move(redirectResponse));
+        server.addResponse("/popup-after-redirection.html"_si, WTF::move(destinationResponse));
     } else
-        server.addResponse("/popup.html"_s, WTF::move(destinationResponse));
+        server.addResponse("/popup.html"_si, WTF::move(destinationResponse));
 
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
@@ -9357,10 +9357,10 @@ enum class ShouldBeEnabled : bool { No, Yes };
 enum class IsShowingInitialEmptyDocument : bool { No, Yes };
 static void checkSettingsControlledByLockdownMode(WKWebView *webView, ShouldBeEnabled shouldBeEnabled, IsShowingInitialEmptyDocument isShowingInitialEmptyDocument = IsShowingInitialEmptyDocument::No)
 {
-    auto runJSCheck = [&](const String& js) -> bool {
+    auto runJSCheck = [&](StringImpl* js) -> bool {
         bool finishedRunningScript = false;
         bool checkResult = false;
-        [webView evaluateJavaScript:js.createNSString().get() completionHandler:[&] (id result, NSError *error) {
+        [webView evaluateJavaScript:createNSString(js).get() completionHandler:[&] (id result, NSError *error) {
             EXPECT_NULL(error);
             checkResult = [result boolValue];
             finishedRunningScript = true;
@@ -9369,50 +9369,50 @@ static void checkSettingsControlledByLockdownMode(WKWebView *webView, ShouldBeEn
         return checkResult;
     };
 
-    EXPECT_EQ(runJSCheck("!!window.WebGL2RenderingContext"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebGL2.
-    EXPECT_EQ(runJSCheck("!!window.Gamepad"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Gamepad API.
-    EXPECT_EQ(runJSCheck("!!window.RemotePlayback"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Remote Playback.
-    EXPECT_EQ(runJSCheck("!!window.FileSystemHandle"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // File System Access.
-    EXPECT_EQ(runJSCheck("!!window.HTMLModelElement"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // AR (Model)
-    EXPECT_EQ(runJSCheck("!!window.PictureInPictureEvent"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Picture in Picture API.
-    EXPECT_EQ(runJSCheck("!!window.SpeechRecognitionEvent"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Speech recognition.
+    EXPECT_EQ(runJSCheck("!!window.WebGL2RenderingContext"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // WebGL2.
+    EXPECT_EQ(runJSCheck("!!window.Gamepad"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // Gamepad API.
+    EXPECT_EQ(runJSCheck("!!window.RemotePlayback"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // Remote Playback.
+    EXPECT_EQ(runJSCheck("!!window.FileSystemHandle"_si), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // File System Access.
+    EXPECT_EQ(runJSCheck("!!window.HTMLModelElement"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // AR (Model)
+    EXPECT_EQ(runJSCheck("!!window.PictureInPictureEvent"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // Picture in Picture API.
+    EXPECT_EQ(runJSCheck("!!window.SpeechRecognitionEvent"_si), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Speech recognition.
 #if ENABLE(SPEECH_SYNTHESIS)
-    EXPECT_EQ(runJSCheck("!!window.SpeechSynthesisEvent"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Speech synthesis.
+    EXPECT_EQ(runJSCheck("!!window.SpeechSynthesisEvent"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // Speech synthesis.
 #endif
 #if ENABLE(NOTIFICATIONS)
-    EXPECT_EQ(runJSCheck("!!window.Notification"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // Notification API.
+    EXPECT_EQ(runJSCheck("!!window.Notification"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // Notification API.
 #endif
-    EXPECT_EQ(runJSCheck("!!window.WebXRSystem"_s), false); // WebXR (currently always disabled).
-    EXPECT_EQ(runJSCheck("!!window.AudioContext"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebAudio.
-    EXPECT_EQ(runJSCheck("!!window.Cache"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Cache API.
-    EXPECT_EQ(runJSCheck("!!window.CacheStorage"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Cache API.
-    EXPECT_EQ(runJSCheck("!!window.FileReader"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // FileReader API.
-    EXPECT_EQ(runJSCheck("!!window.FileSystemFileHandle"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // File System Access API.
-    EXPECT_EQ(runJSCheck("!!window.RTCPeerConnection"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebRTC Peer Connection.
-    EXPECT_EQ(runJSCheck("!!window.RTCRtpScriptTransform"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebRTC Script Transform
-    EXPECT_EQ(runJSCheck("!!window.indexedDB"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // IndexedDB API
-    EXPECT_EQ(runJSCheck("!!navigator.getUserMedia"_s), false); // Legacy GetUserMedia (currently always disabled).
-    EXPECT_EQ(runJSCheck("!!window.MathMLElement"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // MathML.
-    EXPECT_EQ(runJSCheck("!!window.MathMLMathElement"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // MathML.
-    EXPECT_EQ(runJSCheck("!!window.PushManager"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Push API.
-    EXPECT_EQ(runJSCheck("!!window.PushSubscription"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Push API.
-    EXPECT_EQ(runJSCheck("!!window.PushSubscriptionOptions"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Push API.
-    EXPECT_EQ(runJSCheck("!!window.LockManager"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // WebLockManager API.
-    EXPECT_EQ(runJSCheck("!!window.VideoDecoder"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebCodecs.
-    EXPECT_EQ(runJSCheck("!!window.VideoEncoder"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebCodecs.
-    EXPECT_EQ(runJSCheck("!!window.VideoFrame"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebCodecs.
-    EXPECT_EQ(runJSCheck("!!window.EncodedVideoChunk"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebCodecs.
-    String mathMLCheck = makeString("document.createElementNS('http://www.w3.org/1998/Math/MathML','mspace').__proto__ == "_s, shouldBeEnabled == ShouldBeEnabled::Yes ? "MathMLElement"_s : "Element"_s, ".prototype"_s);
+    EXPECT_EQ(runJSCheck("!!window.WebXRSystem"_si), false); // WebXR (currently always disabled).
+    EXPECT_EQ(runJSCheck("!!window.AudioContext"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // WebAudio.
+    EXPECT_EQ(runJSCheck("!!window.Cache"_si), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Cache API.
+    EXPECT_EQ(runJSCheck("!!window.CacheStorage"_si), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Cache API.
+    EXPECT_EQ(runJSCheck("!!window.FileReader"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // FileReader API.
+    EXPECT_EQ(runJSCheck("!!window.FileSystemFileHandle"_si), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // File System Access API.
+    EXPECT_EQ(runJSCheck("!!window.RTCPeerConnection"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // WebRTC Peer Connection.
+    EXPECT_EQ(runJSCheck("!!window.RTCRtpScriptTransform"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // WebRTC Script Transform
+    EXPECT_EQ(runJSCheck("!!window.indexedDB"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // IndexedDB API
+    EXPECT_EQ(runJSCheck("!!navigator.getUserMedia"_si), false); // Legacy GetUserMedia (currently always disabled).
+    EXPECT_EQ(runJSCheck("!!window.MathMLElement"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // MathML.
+    EXPECT_EQ(runJSCheck("!!window.MathMLMathElement"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // MathML.
+    EXPECT_EQ(runJSCheck("!!window.PushManager"_si), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Push API.
+    EXPECT_EQ(runJSCheck("!!window.PushSubscription"_si), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Push API.
+    EXPECT_EQ(runJSCheck("!!window.PushSubscriptionOptions"_si), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Push API.
+    EXPECT_EQ(runJSCheck("!!window.LockManager"_si), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // WebLockManager API.
+    EXPECT_EQ(runJSCheck("!!window.VideoDecoder"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // WebCodecs.
+    EXPECT_EQ(runJSCheck("!!window.VideoEncoder"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // WebCodecs.
+    EXPECT_EQ(runJSCheck("!!window.VideoFrame"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // WebCodecs.
+    EXPECT_EQ(runJSCheck("!!window.EncodedVideoChunk"_si), shouldBeEnabled == ShouldBeEnabled::Yes); // WebCodecs.
+    RefPtr<StringImpl> mathMLCheck = makeString("document.createElementNS('http://www.w3.org/1998/Math/MathML','mspace').__proto__ == "_s, shouldBeEnabled == ShouldBeEnabled::Yes ? "MathMLElement"_s : "Element"_s, ".prototype"_s);
     EXPECT_EQ(runJSCheck(mathMLCheck), true); // MathML.
-    String embedElementCheck = makeString("document.createElement('embed').__proto__ == "_s, shouldBeEnabled == ShouldBeEnabled::Yes ? "HTMLEmbedElement"_s : "HTMLUnknownElement"_s, ".prototype"_s);
+    RefPtr<StringImpl> embedElementCheck = makeString("document.createElement('embed').__proto__ == "_s, shouldBeEnabled == ShouldBeEnabled::Yes ? "HTMLEmbedElement"_s : "HTMLUnknownElement"_s, ".prototype"_s);
     EXPECT_EQ(runJSCheck(embedElementCheck), true); // Embed Element.
 
-    EXPECT_EQ(runJSCheck("CSS.supports('text-justify: auto')"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
-    EXPECT_EQ(runJSCheck("!!navigator.contacts"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes);
-    EXPECT_EQ(runJSCheck("!!window.DeprecationReportBody"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
+    EXPECT_EQ(runJSCheck("CSS.supports('text-justify: auto')"_si), shouldBeEnabled == ShouldBeEnabled::Yes);
+    EXPECT_EQ(runJSCheck("!!navigator.contacts"_si), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes);
+    EXPECT_EQ(runJSCheck("!!window.DeprecationReportBody"_si), shouldBeEnabled == ShouldBeEnabled::Yes);
 
     // Confirm unstable settings are always off in Lockdown Mode.
-    EXPECT_EQ(runJSCheck("!!document.undoManager"_s), false);
+    EXPECT_EQ(runJSCheck("!!document.undoManager"_si), false);
 }
 
 @interface LockdownMessageHandler : NSObject <WKScriptMessageHandler, WKNavigationDelegate>

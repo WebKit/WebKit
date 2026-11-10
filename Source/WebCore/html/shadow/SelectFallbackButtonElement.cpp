@@ -73,7 +73,7 @@ Ref<SelectFallbackButtonElement> SelectFallbackButtonElement::create(Document& d
     Ref element = adoptRef(*new SelectFallbackButtonElement(document));
     ScriptDisallowedScope::EventAllowedScope scope { element };
     element->setUserAgentPart(UserAgentParts::fieldContent());
-    element->appendChild(Text::create(document, "\n"_s));
+    element->appendChild(Text::create(document, "\n"_si));
     return element;
 }
 
@@ -99,11 +99,11 @@ void SelectFallbackButtonElement::updateText(HTMLOptionElement* selectedOption, 
     selectElement->didUpdateActiveOption(optionIndex);
 }
 
-void SelectFallbackButtonElement::setText(const String& text)
+void SelectFallbackButtonElement::setText(StringImpl* text)
 {
-    String textToUse = text.isEmpty() ? "\n"_s : text;
+    RefPtr<StringImpl> textToUse = isEmpty(text) ? "\n"_si : RefPtr { text };
     Ref textNode = downcast<Text>(*firstChild());
-    if (textNode->data() == textToUse)
+    if (equal(textNode->data(), textToUse))
         return;
     textNode->setData(textToUse);
 

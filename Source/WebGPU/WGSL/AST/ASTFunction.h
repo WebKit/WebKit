@@ -68,7 +68,7 @@ public:
     std::optional<Interpolation> returnTypeInterpolation() const { return m_returnTypeInterpolation; }
     std::optional<unsigned> returnTypeLocation() const { return m_returnTypeLocation; }
 
-    const String& originalName() const { return m_originalName; }
+    const RefPtr<StringImpl>& originalName() const { return m_originalName; }
 
 private:
     Function(SourceSpan span, Identifier&& name, Parameter::List&& parameters, Expression::Ptr returnType, CompoundStatement::Ref&& body, Attribute::List&& attributes, Attribute::List&& returnAttributes)
@@ -83,7 +83,7 @@ private:
     { }
 
     Identifier m_name;
-    String m_originalName;
+    RefPtr<StringImpl> m_originalName;
     Parameter::List m_parameters;
     Attribute::List m_attributes;
     Attribute::List m_returnAttributes;

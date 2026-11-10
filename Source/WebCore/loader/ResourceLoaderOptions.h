@@ -248,7 +248,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     ShouldEnableContentExtensionsCheck shouldEnableContentExtensionsCheck : bitWidthOfShouldEnableContentExtensionsCheck;
 
     Markable<FetchIdentifier> navigationPreloadIdentifier;
-    String nonce;
+    RefPtr<StringImpl> nonce;
     FetchingWorkerIdentifier workerIdentifier;
     URL workerURL;
 };

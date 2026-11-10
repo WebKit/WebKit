@@ -50,7 +50,7 @@ void CookieStorageSession::permitProcessToUseCookieAPI(bool value)
         removeProcessPrivilege(ProcessPrivilege::CanAccessRawCookies);
 }
 
-String CookieStorageSession::cookiePartitionIdentifier(const URL& firstPartyForCookies)
+RefPtr<StringImpl> CookieStorageSession::cookiePartitionIdentifier(const URL& firstPartyForCookies)
 {
     return Site { firstPartyForCookies }.toString();
 }

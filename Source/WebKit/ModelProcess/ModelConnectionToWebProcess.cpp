@@ -61,7 +61,7 @@ Ref<ModelConnectionToWebProcess> ModelConnectionToWebProcess::create(
     PAL::SessionID sessionID,
     IPC::Connection::Handle&& connectionHandle,
     ModelProcessConnectionParameters&& parameters,
-    const std::optional<String>& attributionTaskID)
+    const std::optional<RefPtr<StringImpl>>& attributionTaskID)
 {
     return adoptRef(*new ModelConnectionToWebProcess(modelProcess, webProcessIdentifier, sessionID, WTF::move(connectionHandle), WTF::move(parameters), attributionTaskID));
 }
@@ -72,7 +72,7 @@ ModelConnectionToWebProcess::ModelConnectionToWebProcess(
     PAL::SessionID sessionID,
     IPC::Connection::Handle&& connectionHandle,
     ModelProcessConnectionParameters&& parameters,
-    const std::optional<String>& attributionTaskID)
+    const std::optional<RefPtr<StringImpl>>& attributionTaskID)
     : m_modelProcessModelPlayerManagerProxy(ModelProcessModelPlayerManagerProxy::create(*this))
     , m_connection(IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTF::move(connectionHandle) }))
     , m_modelProcess(modelProcess)
@@ -141,7 +141,7 @@ void ModelConnectionToWebProcess::destroyVisibilityPropagationContextForPage(Web
 }
 #endif
 
-void ModelConnectionToWebProcess::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
+void ModelConnectionToWebProcess::configureLoggingChannel(StringImpl* channelName, WTFLogChannelState state, WTFLogLevel level)
 {
 #if !RELEASE_LOG_DISABLED
     if  (auto* channel = WebCore::getLogChannel(channelName)) {

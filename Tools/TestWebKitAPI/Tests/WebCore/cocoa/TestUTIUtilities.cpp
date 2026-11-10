@@ -35,23 +35,23 @@ using namespace WebCore;
 
 TEST(UTIUtilities, MIMETypeFromUTIForMailPsd)
 {
-    EXPECT_EQ(MIMETypeFromUTI("com.adobe.photoshop-image"_s), "image/vnd.adobe.photoshop"_s);
+    EXPECT_EQ(MIMETypeFromUTI("com.adobe.photoshop-image"_si), "image/vnd.adobe.photoshop"_s);
 }
 
 TEST(UTIUtilities, RequiredMIMETypesFromUTIForMailPsd)
 {
-    auto mimeTypes = RequiredMIMETypesFromUTI("com.adobe.photoshop-image"_s);
+    auto mimeTypes = RequiredMIMETypesFromUTI("com.adobe.photoshop-image"_si);
     EXPECT_EQ(mimeTypes.size(), 2u);
-    EXPECT_TRUE(mimeTypes.contains("image/vnd.adobe.photoshop"_s));
+    EXPECT_TRUE(mimeTypes.contains("image/vnd.adobe.photoshop"_si));
     // If this fails, Mail may not be able to display psd images when editing.
-    EXPECT_TRUE(mimeTypes.contains("application/x-photoshop"_s));
+    EXPECT_TRUE(mimeTypes.contains("application/x-photoshop"_si));
 }
 
 TEST(UTIUtilities, UTIFromMIMETypeForModelTypes)
 {
-    for (auto& mimeType : Vector<String> { "model/usd"_s, "model/vnd.pixar.usd"_s, "model/vnd.usdz+zip"_s })
+    for (auto& mimeType : Vector<RefPtr<StringImpl>> { "model/usd"_s, "model/vnd.pixar.usd"_s, "model/vnd.usdz+zip"_s })
         EXPECT_EQ(UTIFromMIMEType(mimeType), "com.pixar.universal-scene-description-mobile"_s);
-    EXPECT_EQ(UTIFromMIMEType("model/vnd.reality"_s), "com.apple.reality"_s);
+    EXPECT_EQ(UTIFromMIMEType("model/vnd.reality"_si), "com.apple.reality"_s);
 }
 
 }; // namespace TestWebKitAPI

@@ -43,34 +43,34 @@ using UnvalidatedDigitalCredentialRequest = Variant<
     OpenID4VPUnsignedRequest
 >;
 
-inline std::optional<std::pair<DigitalCredentialPresentationProtocol, String>> openID4VPRequestJSON(const UnvalidatedDigitalCredentialRequest& request)
+inline std::optional<std::pair<DigitalCredentialPresentationProtocol, RefPtr<StringImpl>>> openID4VPRequestJSON(const UnvalidatedDigitalCredentialRequest& request)
 {
     using enum DigitalCredentialPresentationProtocol;
 
     return WTF::switchOn(request,
-        [](const OpenID4VPSignedRequest& signedRequest) -> std::optional<std::pair<DigitalCredentialPresentationProtocol, String>> {
+        [](const OpenID4VPSignedRequest& signedRequest) -> std::optional<std::pair<DigitalCredentialPresentationProtocol, RefPtr<StringImpl>>> {
             Ref object = JSON::Object::create();
-            object->setString("request"_s, signedRequest.request);
+            object->setString("request"_si, signedRequest.request);
             return std::make_pair(Openid4vpV1Signed, object->toJSONString());
         },
-        [](const OpenID4VPMultisignedRequest& multisignedRequest) -> std::optional<std::pair<DigitalCredentialPresentationProtocol, String>> {
+        [](const OpenID4VPMultisignedRequest& multisignedRequest) -> std::optional<std::pair<DigitalCredentialPresentationProtocol, RefPtr<StringImpl>>> {
             Ref signatures = JSON::Array::create();
             for (auto& signature : multisignedRequest.signatures) {
                 Ref signatureObject = JSON::Object::create();
-                signatureObject->setString("protected"_s, signature.protectedHeader);
-                signatureObject->setString("signature"_s, signature.signature);
+                signatureObject->setString("protected"_si, signature.protectedHeader);
+                signatureObject->setString("signature"_si, signature.signature);
                 signatures->pushObject(WTF::move(signatureObject));
             }
 
             Ref object = JSON::Object::create();
-            object->setString("payload"_s, multisignedRequest.payload);
-            object->setArray("signatures"_s, WTF::move(signatures));
+            object->setString("payload"_si, multisignedRequest.payload);
+            object->setArray("signatures"_si, WTF::move(signatures));
             return std::make_pair(Openid4vpV1Multisigned, object->toJSONString());
         },
-        [](const OpenID4VPUnsignedRequest& unsignedRequest) -> std::optional<std::pair<DigitalCredentialPresentationProtocol, String>> {
+        [](const OpenID4VPUnsignedRequest& unsignedRequest) -> std::optional<std::pair<DigitalCredentialPresentationProtocol, RefPtr<StringImpl>>> {
             return std::make_pair(Openid4vpV1Unsigned, unsignedRequest.requestJSON);
         },
-        [](const MobileDocumentRequest&) -> std::optional<std::pair<DigitalCredentialPresentationProtocol, String>> {
+        [](const MobileDocumentRequest&) -> std::optional<std::pair<DigitalCredentialPresentationProtocol, RefPtr<StringImpl>>> {
             return std::nullopt;
         });
 }

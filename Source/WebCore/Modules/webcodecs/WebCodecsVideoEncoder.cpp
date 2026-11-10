@@ -75,7 +75,7 @@ WebCodecsVideoEncoder::WebCodecsVideoEncoder(ScriptExecutionContext& context, In
 
 WebCodecsVideoEncoder::~WebCodecsVideoEncoder() = default;
 
-static bool isSupportedVP9EncoderCodec(const String& codec, const SettingsValues& settings)
+static bool isSupportedVP9EncoderCodec(StringImpl* codec, const SettingsValues& settings)
 {
 #if !ENABLE(WEB_RTC)
     UNUSED_PARAM(settings);
@@ -103,11 +103,11 @@ static bool isSupportedEncoderCodec(const WebCodecsVideoEncoderConfig& config, c
     if (config.width > maxFrameDimension || config.height > maxFrameDimension)
         return false;
 
-    return config.codec.startsWith("vp8"_s) || config.codec.startsWith("avc1."_s)
-        || (config.codec.startsWith("vp09."_s) && isSupportedVP9EncoderCodec(config.codec, settings))
-        || (config.codec.startsWith("hev1."_s) && settings.webCodecsHEVCEnabled)
-        || (config.codec.startsWith("hvc1."_s) && settings.webCodecsHEVCEnabled)
-        || (config.codec.startsWith("av01.0"_s) && settings.webCodecsAV1Enabled);
+    return startsWith(config.codec, "vp8"_s) || startsWith(config.codec, "avc1."_s)
+        || (startsWith(config.codec, "vp09."_s) && isSupportedVP9EncoderCodec(config.codec, settings))
+        || (startsWith(config.codec, "hev1."_s) && settings.webCodecsHEVCEnabled)
+        || (startsWith(config.codec, "hvc1."_s) && settings.webCodecsHEVCEnabled)
+        || (startsWith(config.codec, "av01.0"_s) && settings.webCodecsAV1Enabled);
 }
 
 static bool isValidEncoderConfig(const WebCodecsVideoEncoderConfig& config)
@@ -129,20 +129,20 @@ static bool isValidEncoderConfig(const WebCodecsVideoEncoderConfig& config)
 static ExceptionOr<VideoEncoder::Config> createVideoEncoderConfig(const WebCodecsVideoEncoderConfig& config)
 {
     if (config.alpha == WebCodecsAlphaOption::Keep)
-        return Exception { ExceptionCode::NotSupportedError, "Alpha keep is not supported"_s };
+        return Exception { ExceptionCode::NotSupportedError, "Alpha keep is not supported"_si };
 
     VideoEncoder::ScalabilityMode scalabilityMode = VideoEncoder::ScalabilityMode::L1T1;
-    if (!config.scalabilityMode.isNull()) {
-        if (config.scalabilityMode == "L1T3"_s)
+    if (config.scalabilityMode) {
+        if (equal(config.scalabilityMode, "L1T3"_s))
             scalabilityMode = VideoEncoder::ScalabilityMode::L1T3;
-        else if (config.scalabilityMode == "L1T2"_s)
+        else if (equal(config.scalabilityMode, "L1T2"_s))
             scalabilityMode = VideoEncoder::ScalabilityMode::L1T2;
-        else if (config.scalabilityMode != "L1T1"_s)
-            return Exception { ExceptionCode::TypeError, "Scalabilty mode is not supported"_s };
+        else if (!equal(config.scalabilityMode, "L1T1"_s))
+            return Exception { ExceptionCode::TypeError, "Scalabilty mode is not supported"_si };
     }
 
-    if (config.codec.startsWith("avc1."_s) && (!!(config.width % 2) || !!(config.height % 2)))
-        return Exception { ExceptionCode::TypeError, "H264 only supports even sized frames"_s };
+    if (startsWith(config.codec, "avc1."_s) && (!!(config.width % 2) || !!(config.height % 2)))
+        return Exception { ExceptionCode::TypeError, "H264 only supports even sized frames"_si };
 
     bool useAnnexB = (config.avc && config.avc->format == AvcBitstreamFormat::AnnexB) || (config.hevc && config.hevc->format == HevcBitstreamFormat::AnnexB);
     return VideoEncoder::Config { config.width, config.height, useAnnexB, config.bitrate.value_or(0), config.framerate.value_or(0), config.latencyMode == LatencyMode::Realtime, scalabilityMode };
@@ -173,10 +173,10 @@ void WebCodecsVideoEncoder::updateRates(const WebCodecsVideoEncoderConfig& confi
 ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& context, WebCodecsVideoEncoderConfig&& config)
 {
     if (!isValidEncoderConfig(config))
-        return Exception { ExceptionCode::TypeError, "Config is invalid"_s };
+        return Exception { ExceptionCode::TypeError, "Config is invalid"_si };
 
     if (state() == WebCodecsCodecState::Closed || !scriptExecutionContext())
-        return Exception { ExceptionCode::InvalidStateError, "VideoEncoder is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "VideoEncoder is closed"_si };
 
     setState(WebCodecsCodecState::Configured);
     m_isKeyChunkRequired = true;
@@ -218,7 +218,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
 
         if (!isSupportedCodec) {
             postTaskToCodec<WebCodecsVideoEncoder>(identifier, *this, [] (auto& encoder) {
-                encoder.closeEncoder(Exception { ExceptionCode::NotSupportedError, "Codec is not supported"_s });
+                encoder.closeEncoder(Exception { ExceptionCode::NotSupportedError, "Codec is not supported"_si });
                 encoder.unblockControlMessageQueue();
             });
             return WebCodecsControlMessageOutcome::Processed;
@@ -283,7 +283,7 @@ WebCodecsEncodedVideoChunkMetadata WebCodecsVideoEncoder::createEncodedChunkMeta
         m_activeOutputOrientation = orientation;
         // FIXME: Provide more accurate decoder configuration
         metadata.decoderConfig = WebCodecsVideoDecoderConfig {
-            !m_activeConfiguration.codec.isEmpty() ? String { m_activeConfiguration.codec } : String { m_baseConfiguration.codec },
+            !isEmpty(m_activeConfiguration.codec) ? RefPtr<StringImpl> { m_activeConfiguration.codec } : RefPtr<StringImpl> { m_baseConfiguration.codec },
             { },
             m_activeConfiguration.visibleWidth ? m_activeConfiguration.visibleWidth : m_baseConfiguration.width,
             m_activeConfiguration.visibleHeight ? m_activeConfiguration.visibleHeight : m_baseConfiguration.height,
@@ -319,17 +319,17 @@ ExceptionOr<void> WebCodecsVideoEncoder::encode(Ref<WebCodecsVideoFrame>&& frame
     auto internalFrame = frame->internalFrame();
     if (!internalFrame) {
         ASSERT(frame->isDetached());
-        return Exception { ExceptionCode::TypeError, "VideoFrame is detached"_s };
+        return Exception { ExceptionCode::TypeError, "VideoFrame is detached"_si };
     }
     ASSERT(!frame->isDetached());
 
     if (state() != WebCodecsCodecState::Configured)
-        return Exception { ExceptionCode::InvalidStateError, "VideoEncoder is not configured"_s };
+        return Exception { ExceptionCode::InvalidStateError, "VideoEncoder is not configured"_si };
 
     Orientation orientation { frame->rotation(), frame->flip() };
     if (m_activeOrientation) {
         if (*m_activeOrientation != orientation)
-            return Exception { ExceptionCode::DataError, "VideoFrame rotation or flip does not match the previous frames"_s };
+            return Exception { ExceptionCode::DataError, "VideoFrame rotation or flip does not match the previous frames"_si };
     } else
         m_activeOrientation = orientation;
 
@@ -356,7 +356,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::encode(Ref<WebCodecsVideoFrame>&& frame
 void WebCodecsVideoEncoder::flush(Ref<DeferredPromise>&& promise)
 {
     if (state() != WebCodecsCodecState::Configured) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "VideoEncoder is not configured"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "VideoEncoder is not configured"_si });
         return;
     }
 
@@ -373,18 +373,18 @@ void WebCodecsVideoEncoder::flush(Ref<DeferredPromise>&& promise)
 
 ExceptionOr<void> WebCodecsVideoEncoder::reset()
 {
-    return resetEncoder(Exception { ExceptionCode::AbortError, "Reset called"_s });
+    return resetEncoder(Exception { ExceptionCode::AbortError, "Reset called"_si });
 }
 
 ExceptionOr<void> WebCodecsVideoEncoder::close()
 {
-    return closeEncoder(Exception { ExceptionCode::AbortError, "Close called"_s });
+    return closeEncoder(Exception { ExceptionCode::AbortError, "Close called"_si });
 }
 
 void WebCodecsVideoEncoder::isConfigSupported(ScriptExecutionContext& context, WebCodecsVideoEncoderConfig&& config, Ref<DeferredPromise>&& promise)
 {
     if (!isValidEncoderConfig(config)) {
-        promise->reject(Exception { ExceptionCode::TypeError, "Config is not valid"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Config is not valid"_si });
         return;
     }
 
@@ -421,7 +421,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::closeEncoder(Exception&& exception)
 ExceptionOr<void> WebCodecsVideoEncoder::resetEncoder(const Exception& exception)
 {
     if (state() == WebCodecsCodecState::Closed)
-        return Exception { ExceptionCode::InvalidStateError, "VideoEncoder is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "VideoEncoder is closed"_si };
 
     setState(WebCodecsCodecState::Unconfigured);
     m_activeOutputOrientation = std::nullopt;

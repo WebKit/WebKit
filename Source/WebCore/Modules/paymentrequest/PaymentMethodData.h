@@ -34,7 +34,7 @@
 namespace WebCore {
 
 struct PaymentMethodData {
-    String supportedMethods;
+    RefPtr<StringImpl> supportedMethods;
     JSC::Strong<JSC::JSObject> data;
 };
 

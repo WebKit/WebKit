@@ -143,7 +143,7 @@ void UserMediaPermissionRequestManager::userMediaAccessWasGranted(UserMediaReque
     request->allow(WTF::move(audioDevice), WTF::move(videoDevice), WTF::move(deviceIdentifierHashSalts), WTF::move(completionHandler));
 }
 
-void UserMediaPermissionRequestManager::userMediaAccessWasDenied(UserMediaRequestIdentifier requestID, MediaAccessDenialReason reason, String&& message, MediaConstraintType invalidConstraint)
+void UserMediaPermissionRequestManager::userMediaAccessWasDenied(UserMediaRequestIdentifier requestID, MediaAccessDenialReason reason, RefPtr<StringImpl>&& message, MediaConstraintType invalidConstraint)
 {
     auto request = m_ongoingUserMediaRequests.take(requestID);
     if (!request)

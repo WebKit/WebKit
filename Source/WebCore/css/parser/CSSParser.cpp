@@ -133,7 +133,7 @@ auto CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID pr
     return declaration.addParsedProperties(parser.topContext().m_parsedProperties) ? ParseResult::Changed : ParseResult::Unchanged;
 }
 
-auto CSSParser::parseCustomPropertyValue(MutableStyleProperties& declaration, const AtomString& propertyName, StringView string, IsImportant important, const CSSParserContext& context) -> ParseResult
+auto CSSParser::parseCustomPropertyValue(MutableStyleProperties& declaration, AtomStringImpl* propertyName, StringView string, IsImportant important, const CSSParserContext& context) -> ParseResult
 {
     CSSParser parser(context, string);
 
@@ -147,7 +147,7 @@ auto CSSParser::parseCustomPropertyValue(MutableStyleProperties& declaration, co
     return declaration.addParsedProperties(parser.topContext().m_parsedProperties) ? ParseResult::Changed : ParseResult::Unchanged;
 }
 
-static inline void filterProperties(IsImportant important, const ParsedPropertyVector& input, ParsedPropertyVector& output, size_t& unusedEntries, std::bitset<numCSSProperties>& seenProperties, HashSet<AtomString>& seenCustomProperties)
+static inline void filterProperties(IsImportant important, const ParsedPropertyVector& input, ParsedPropertyVector& output, size_t& unusedEntries, std::bitset<numCSSProperties>& seenProperties, HashSet<RefPtr<AtomStringImpl>>& seenCustomProperties)
 {
     // Add properties in reverse order so that highest priority definitions are reached first. Duplicate definitions can then be ignored when found.
     for (size_t i = input.size(); i--;) {
@@ -178,7 +178,7 @@ static Ref<ImmutableStyleProperties> createStyleProperties(ParsedPropertyVector&
     std::bitset<numCSSProperties> seenProperties;
     size_t unusedEntries = parsedProperties.size();
     ParsedPropertyVector results(unusedEntries);
-    HashSet<AtomString> seenCustomProperties;
+    HashSet<RefPtr<AtomStringImpl>> seenCustomProperties;
 
     filterProperties(IsImportant::Yes, parsedProperties, results, unusedEntries, seenProperties, seenCustomProperties);
     filterProperties(IsImportant::No, parsedProperties, results, unusedEntries, seenProperties, seenCustomProperties);
@@ -209,7 +209,7 @@ bool CSSParser::parseDeclarationList(MutableStyleProperties& declaration, String
     std::bitset<numCSSProperties> seenProperties;
     size_t unusedEntries = parser.topContext().m_parsedProperties.size();
     ParsedPropertyVector results(unusedEntries);
-    HashSet<AtomString> seenCustomProperties;
+    HashSet<RefPtr<AtomStringImpl>> seenCustomProperties;
     filterProperties(IsImportant::Yes, parser.topContext().m_parsedProperties, results, unusedEntries, seenProperties, seenCustomProperties);
     filterProperties(IsImportant::No, parser.topContext().m_parsedProperties, results, unusedEntries, seenProperties, seenCustomProperties);
     if (unusedEntries)
@@ -270,7 +270,7 @@ CSSSelectorList CSSParser::parsePageSelector(CSSParserTokenRange range, StyleShe
 {
     // We only support a small subset of the css-page spec.
     range.consumeWhitespace();
-    AtomString typeSelector;
+    RefPtr<AtomStringImpl> typeSelector;
     if (range.peek().type() == IdentToken)
         typeSelector = range.consume().value().toAtomString();
 
@@ -289,7 +289,7 @@ CSSSelectorList CSSParser::parsePageSelector(CSSParserTokenRange range, StyleShe
     auto& defaultNamespace = styleSheet ? styleSheet->defaultNamespace() : starAtom();
 
     std::unique_ptr<MutableCSSSelector> selector;
-    if (!typeSelector.isNull() && pseudo.isNull())
+    if (typeSelector && pseudo.isNull())
         selector = makeUnique<MutableCSSSelector>(QualifiedName(nullAtom(), typeSelector, defaultNamespace));
     else {
         selector = makeUnique<MutableCSSSelector>();
@@ -298,7 +298,7 @@ CSSSelectorList CSSParser::parsePageSelector(CSSParserTokenRange range, StyleShe
             if (!selector || selector->match() != CSSSelector::Match::PagePseudoClass)
                 return { };
         }
-        if (!typeSelector.isNull())
+        if (typeSelector)
             selector->appendTagInComplexSelector(QualifiedName(nullAtom(), typeSelector, defaultNamespace));
     }
 
@@ -576,7 +576,7 @@ RefPtr<StyleRuleBase> CSSParser::consumeQualifiedRule(CSSParserTokenRange& range
 }
 
 // This may still consume tokens if it fails
-static AtomString consumeStringOrURI(CSSParserTokenRange& range)
+static RefPtr<AtomStringImpl> consumeStringOrURI(CSSParserTokenRange& range)
 {
     const CSSParserToken& token = range.peek();
 
@@ -584,12 +584,12 @@ static AtomString consumeStringOrURI(CSSParserTokenRange& range)
         return range.consumeIncludingWhitespace().value().toAtomString();
 
     if (token.type() != FunctionToken || !equalLettersIgnoringASCIICase(token.value(), "url"_s))
-        return AtomString();
+        return nullptr;
 
     CSSParserTokenRange contents = range.consumeBlock();
     const CSSParserToken& uri = contents.consumeIncludingWhitespace();
     if (uri.type() == BadStringToken || !contents.atEnd())
-        return AtomString();
+        return nullptr;
     return uri.value().toAtomString();
 }
 
@@ -629,8 +629,8 @@ static std::optional<CascadeLayerName> consumeCascadeLayerName(CSSParserTokenRan
 
 RefPtr<StyleRuleImport> CSSParser::consumeImportRule(CSSParserTokenRange prelude)
 {
-    AtomString uri(consumeStringOrURI(prelude));
-    if (uri.isNull())
+    RefPtr<AtomStringImpl> uri(consumeStringOrURI(prelude));
+    if (!uri)
         return nullptr; // Parse error, expected string or URI
 
     if (RefPtr observerWrapper = m_observerWrapper.get()) {
@@ -685,12 +685,12 @@ RefPtr<StyleRuleImport> CSSParser::consumeImportRule(CSSParserTokenRange prelude
 
 RefPtr<StyleRuleNamespace> CSSParser::consumeNamespaceRule(CSSParserTokenRange prelude)
 {
-    AtomString namespacePrefix;
+    RefPtr<AtomStringImpl> namespacePrefix;
     if (prelude.peek().type() == IdentToken)
         namespacePrefix = prelude.consumeIncludingWhitespace().value().toAtomString();
 
-    AtomString uri(consumeStringOrURI(prelude));
-    if (uri.isNull() || !prelude.atEnd())
+    RefPtr<AtomStringImpl> uri(consumeStringOrURI(prelude));
+    if (!uri || !prelude.atEnd())
         return nullptr; // Parse error, expected string or URI
 
     return StyleRuleNamespace::create(namespacePrefix, uri);
@@ -779,7 +779,7 @@ RefPtr<StyleRuleSupports> CSSParser::consumeSupportsRule(CSSParserTokenRange pre
     if (RefPtr observerWrapper = m_observerWrapper.get())
         observerWrapper->observer().endRuleBody(observerWrapper->endOffset(block));
 
-    return StyleRuleSupports::create(prelude.serialize().trim(deprecatedIsSpaceOrNewline), supported, WTF::move(rules));
+    return StyleRuleSupports::create(trim(prelude.serialize(), deprecatedIsSpaceOrNewline), supported, WTF::move(rules));
 }
 
 RefPtr<StyleRuleFontFace> CSSParser::consumeFontFaceRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
@@ -950,7 +950,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParser::consumeFontPaletteValuesRule(CSSPa
     Ref properties = createStyleProperties(declarations, m_context.mode);
 
     auto fontFamilies = [&] {
-        Vector<AtomString> fontFamilies;
+        Vector<RefPtr<AtomStringImpl>> fontFamilies;
         auto append = [&](auto& value) {
             if (RefPtr fontFamilyNameValue = dynamicDowncast<CSSFontFamilyNameValue>(value))
                 fontFamilies.append(fontFamilyNameValue->fontFamilyName().value);
@@ -1035,7 +1035,7 @@ RefPtr<StyleRuleKeyframes> CSSParser::consumeKeyframesRule(CSSParserTokenRange p
 
     auto name = nameToken.value().toAtomString();
 
-    if (name.isEmpty())
+    if (isEmpty(name))
         return nullptr; // Parse error: empty string consider invalid.
 
     if (RefPtr observerWrapper = m_observerWrapper.get()) {
@@ -1077,7 +1077,7 @@ RefPtr<StyleRuleCounterStyle> CSSParser::consumeCounterStyleRule(CSSParserTokenR
 {
     auto rangeCopy = prelude; // For inspector callbacks
     auto name = CSSPropertyParserHelpers::consumeCounterStyleNameInPrelude(rangeCopy, m_context.mode);
-    if (name.isNull())
+    if (!name)
         return nullptr;
 
     if (RefPtr observerWrapper = m_observerWrapper.get()) {
@@ -1474,7 +1474,7 @@ RefPtr<StyleRuleProperty> CSSParser::consumePropertyRule(CSSParserTokenRange pre
 
     // "If the provided string is not a valid syntax string, the descriptor is invalid and must be ignored."
     // https://drafts.css-houdini.org/css-properties-values-api/#the-syntax-descriptor
-    if (descriptor.syntax.isNull())
+    if (!descriptor.syntax)
         return nullptr;
     auto syntax = CSSCustomPropertySyntax::parse(descriptor.syntax);
     if (!syntax)
@@ -1562,7 +1562,7 @@ static void validateUserAgentSheetSelector(const CSSSelectorList& selectorList)
         }
         // Don't use subject position :is(foo, bar) and similar on UA sheet before we have good optimizations for them.
         // Selectors like this should be expanded manually.
-        ASSERT_WITH_MESSAGE(hasBucketedSelector || !hasLogicalCombination, "Subject position selector list in '%s' not allowed in user-agent stylesheet", complexSelector.selectorText().utf8());
+        ASSERT_WITH_MESSAGE(hasBucketedSelector || !hasLogicalCombination, "Subject position selector list in '%s' not allowed in user-agent stylesheet", utf8(complexSelector.selectorText()));
     };
 
     for (auto& complexSelector : selectorList)
@@ -1869,7 +1869,7 @@ auto CSSParser::consumeDeclaration(CSSParserTokenRange range, StyleRuleType rule
     // @position-try doesn't allow custom properties.
     // FIXME: maybe make this logic more elegant?
     if (propertyID == CSSPropertyID::Invalid && CSSSubstitutionParser::isValidCustomPropertyName(token) && ruleType != StyleRuleType::PositionTry) {
-        AtomString variableName = token.value().toAtomString();
+        RefPtr<AtomStringImpl> variableName = token.value().toAtomString();
         consumeCustomPropertyValue(range, variableName, important);
     }
 
@@ -1890,7 +1890,7 @@ auto CSSParser::consumeDeclaration(CSSParserTokenRange range, StyleRuleType rule
     return { didParseNewProperties(), std::nullopt };
 }
 
-void CSSParser::consumeCustomPropertyValue(CSSParserTokenRange range, const AtomString& variableName, IsImportant important)
+void CSSParser::consumeCustomPropertyValue(CSSParserTokenRange range, AtomStringImpl* variableName, IsImportant important)
 {
     if (range.atEnd())
         topContext().m_parsedProperties.append(CSSProperty(CSSPropertyID::Custom, CSSCustomPropertyValue::createEmpty(variableName), important));

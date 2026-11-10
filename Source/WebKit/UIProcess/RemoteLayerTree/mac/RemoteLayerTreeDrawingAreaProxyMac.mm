@@ -671,7 +671,7 @@ FloatPoint RemoteLayerTreeDrawingAreaProxyMac::scrolledContentsLayerPositionForS
     return LocalFrameView::scrolledContentsLayerPositionForDelegatedPageScale(scrollPosition, scale, rootContentsLayerPosition);
 }
 
-String RemoteLayerTreeDrawingAreaProxyMac::delegatedZoomOverrideAsTextForTesting() const
+RefPtr<StringImpl> RemoteLayerTreeDrawingAreaProxyMac::delegatedZoomOverrideAsTextForTesting() const
 {
     if (!m_delegatedZoomAppliedScale)
         return { };

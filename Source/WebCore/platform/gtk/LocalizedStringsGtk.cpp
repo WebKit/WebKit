@@ -38,147 +38,147 @@
 namespace WebCore {
 
 #if ENABLE(CONTEXT_MENUS)
-String contextMenuItemTagCopyLinkToClipboard()
+RefPtr<StringImpl> contextMenuItemTagCopyLinkToClipboard()
 {
-    return String::fromUTF8(_("Copy Link Loc_ation"));
+    return StringImpl::fromUTF8(_("Copy Link Loc_ation"));
 }
 
-String contextMenuItemTagDownloadImageToDisk()
+RefPtr<StringImpl> contextMenuItemTagDownloadImageToDisk()
 {
-    return String::fromUTF8(_("Sa_ve Image As"));
+    return StringImpl::fromUTF8(_("Sa_ve Image As"));
 }
 
-String contextMenuItemTagCopyImageURLToClipboard()
+RefPtr<StringImpl> contextMenuItemTagCopyImageURLToClipboard()
 {
-    return String::fromUTF8(_("Copy Image _Address"));
+    return StringImpl::fromUTF8(_("Copy Image _Address"));
 }
 
-String contextMenuItemTagCopyVideoLinkToClipboard()
+RefPtr<StringImpl> contextMenuItemTagCopyVideoLinkToClipboard()
 {
-    return String::fromUTF8(_("Cop_y Video Link Location"));
+    return StringImpl::fromUTF8(_("Cop_y Video Link Location"));
 }
 
-String contextMenuItemTagCopyAudioLinkToClipboard()
+RefPtr<StringImpl> contextMenuItemTagCopyAudioLinkToClipboard()
 {
-    return String::fromUTF8(_("Cop_y Audio Link Location"));
+    return StringImpl::fromUTF8(_("Cop_y Audio Link Location"));
 }
 
-String contextMenuItemTagToggleMediaControls()
+RefPtr<StringImpl> contextMenuItemTagToggleMediaControls()
 {
-    return String::fromUTF8(_("_Toggle Media Controls"));
+    return StringImpl::fromUTF8(_("_Toggle Media Controls"));
 }
 
-String contextMenuItemTagShowMediaControls()
+RefPtr<StringImpl> contextMenuItemTagShowMediaControls()
 {
-    return String::fromUTF8(_("_Show Media Controls"));
+    return StringImpl::fromUTF8(_("_Show Media Controls"));
 }
 
-String contextMenuItemTagHideMediaControls()
+RefPtr<StringImpl> contextMenuItemTagHideMediaControls()
 {
-    return String::fromUTF8(_("_Hide Media Controls"));
+    return StringImpl::fromUTF8(_("_Hide Media Controls"));
 }
 
-String contextMenuItemTagToggleMediaLoop()
+RefPtr<StringImpl> contextMenuItemTagToggleMediaLoop()
 {
-    return String::fromUTF8(_("Toggle Media _Loop Playback"));
+    return StringImpl::fromUTF8(_("Toggle Media _Loop Playback"));
 }
 
-String contextMenuItemTagEnterVideoFullscreen()
+RefPtr<StringImpl> contextMenuItemTagEnterVideoFullscreen()
 {
-    return String::fromUTF8(_("Switch Video to _Fullscreen"));
+    return StringImpl::fromUTF8(_("Switch Video to _Fullscreen"));
 }
 
-String contextMenuItemTagPasteAsPlainText()
+RefPtr<StringImpl> contextMenuItemTagPasteAsPlainText()
 {
-    return String::fromUTF8(_("Paste As Plain _Text"));
+    return StringImpl::fromUTF8(_("Paste As Plain _Text"));
 }
 
-String contextMenuItemTagDelete()
+RefPtr<StringImpl> contextMenuItemTagDelete()
 {
-    return String::fromUTF8(_("_Delete"));
+    return StringImpl::fromUTF8(_("_Delete"));
 }
 
-String contextMenuItemTagSelectAll()
+RefPtr<StringImpl> contextMenuItemTagSelectAll()
 {
-    return String::fromUTF8(_("Select _All"));
+    return StringImpl::fromUTF8(_("Select _All"));
 }
 
-String contextMenuItemTagInsertEmoji()
+RefPtr<StringImpl> contextMenuItemTagInsertEmoji()
 {
-    return String::fromUTF8(_("Insert _Emoji"));
+    return StringImpl::fromUTF8(_("Insert _Emoji"));
 }
 
-String contextMenuItemTagUnicode()
+RefPtr<StringImpl> contextMenuItemTagUnicode()
 {
-    return String::fromUTF8(_("_Insert Unicode Control Character"));
+    return StringImpl::fromUTF8(_("_Insert Unicode Control Character"));
 }
 
-String contextMenuItemTagInputMethods()
+RefPtr<StringImpl> contextMenuItemTagInputMethods()
 {
-    return String::fromUTF8(_("Input _Methods"));
+    return StringImpl::fromUTF8(_("Input _Methods"));
 }
 
-String contextMenuItemTagUnicodeInsertLRMMark()
+RefPtr<StringImpl> contextMenuItemTagUnicodeInsertLRMMark()
 {
-    return String::fromUTF8(_("LRM _Left-to-right mark"));
+    return StringImpl::fromUTF8(_("LRM _Left-to-right mark"));
 }
 
-String contextMenuItemTagUnicodeInsertRLMMark()
+RefPtr<StringImpl> contextMenuItemTagUnicodeInsertRLMMark()
 {
-    return String::fromUTF8(_("RLM _Right-to-left mark"));
+    return StringImpl::fromUTF8(_("RLM _Right-to-left mark"));
 }
 
-String contextMenuItemTagUnicodeInsertLREMark()
+RefPtr<StringImpl> contextMenuItemTagUnicodeInsertLREMark()
 {
-    return String::fromUTF8(_("LRE Left-to-right _embedding"));
+    return StringImpl::fromUTF8(_("LRE Left-to-right _embedding"));
 }
 
-String contextMenuItemTagUnicodeInsertRLEMark()
+RefPtr<StringImpl> contextMenuItemTagUnicodeInsertRLEMark()
 {
-    return String::fromUTF8(_("RLE Right-to-left e_mbedding"));
+    return StringImpl::fromUTF8(_("RLE Right-to-left e_mbedding"));
 }
 
-String contextMenuItemTagUnicodeInsertLROMark()
+RefPtr<StringImpl> contextMenuItemTagUnicodeInsertLROMark()
 {
-    return String::fromUTF8(_("LRO Left-to-right _override"));
+    return StringImpl::fromUTF8(_("LRO Left-to-right _override"));
 }
 
-String contextMenuItemTagUnicodeInsertRLOMark()
+RefPtr<StringImpl> contextMenuItemTagUnicodeInsertRLOMark()
 {
-    return String::fromUTF8(_("RLO Right-to-left o_verride"));
+    return StringImpl::fromUTF8(_("RLO Right-to-left o_verride"));
 }
 
-String contextMenuItemTagUnicodeInsertPDFMark()
+RefPtr<StringImpl> contextMenuItemTagUnicodeInsertPDFMark()
 {
-    return String::fromUTF8(_("PDF _Pop directional formatting"));
+    return StringImpl::fromUTF8(_("PDF _Pop directional formatting"));
 }
 
-String contextMenuItemTagUnicodeInsertZWSMark()
+RefPtr<StringImpl> contextMenuItemTagUnicodeInsertZWSMark()
 {
-    return String::fromUTF8(_("ZWS _Zero width space"));
+    return StringImpl::fromUTF8(_("ZWS _Zero width space"));
 }
 
-String contextMenuItemTagUnicodeInsertZWJMark()
+RefPtr<StringImpl> contextMenuItemTagUnicodeInsertZWJMark()
 {
-    return String::fromUTF8(_("ZWJ Zero width _joiner"));
+    return StringImpl::fromUTF8(_("ZWJ Zero width _joiner"));
 }
 
-String contextMenuItemTagUnicodeInsertZWNJMark()
+RefPtr<StringImpl> contextMenuItemTagUnicodeInsertZWNJMark()
 {
-    return String::fromUTF8(_("ZWNJ Zero width _non-joiner"));
+    return StringImpl::fromUTF8(_("ZWNJ Zero width _non-joiner"));
 }
 #endif // ENABLE(CONTEXT_MENUS)
 
-String validationMessageTooShortText(int, int minLength)
+RefPtr<StringImpl> validationMessageTooShortText(int, int minLength)
 {
     GUniquePtr<char> string(g_strdup_printf(ngettext("Use at least one character", "Use at least %d characters", minLength), minLength));
-    return String::fromUTF8(string.get());
+    return StringImpl::fromUTF8(string.get());
 }
 
-String validationMessageTooLongText(int, int maxLength)
+RefPtr<StringImpl> validationMessageTooLongText(int, int maxLength)
 {
     GUniquePtr<char> string(g_strdup_printf(ngettext("Use no more than one character", "Use no more than %d characters", maxLength), maxLength));
-    return String::fromUTF8(string.get());
+    return StringImpl::fromUTF8(string.get());
 }
 
 } // namespace WebCore

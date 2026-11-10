@@ -37,8 +37,8 @@ public:
     RenderFileUploadControl(HTMLInputElement&, Style::ComputedStyle&&);
     virtual ~RenderFileUploadControl();
 
-    String buttonValue();
-    String fileTextValue() const;
+    RefPtr<StringImpl> buttonValue();
+    RefPtr<StringImpl> fileTextValue() const;
 
     NODELETE HTMLInputElement& inputElement() const;
     

@@ -114,8 +114,8 @@ void PluginDocumentParser::createDocumentStructure()
     RefPtr frame = document->frame();
     if (frame && frame->isMainFrame()) {
         Ref metaElement = HTMLMetaElement::create(document);
-        metaElement->setAttributeWithoutSynchronization(nameAttr, "color-scheme"_s);
-        metaElement->setAttributeWithoutSynchronization(contentAttr, "light dark"_s);
+        metaElement->setAttributeWithoutSynchronization(nameAttr, "color-scheme"_atom);
+        metaElement->setAttributeWithoutSynchronization(contentAttr, "light dark"_atom);
         headElement->appendChild(metaElement);
     }
 
@@ -127,12 +127,12 @@ void PluginDocumentParser::createDocumentStructure()
 
     Ref embedElement = HTMLEmbedElement::create(document);
     m_embedElement = embedElement.get();
-    embedElement->setAttributeWithoutSynchronization(nameAttr, "plugin"_s);
-    embedElement->setAttributeWithoutSynchronization(srcAttr, AtomString { document->url().string() });
+    embedElement->setAttributeWithoutSynchronization(nameAttr, "plugin"_atom);
+    embedElement->setAttributeWithoutSynchronization(srcAttr, AtomStringImpl::add(document->url().string()).get());
 
     ASSERT(document->loader());
     if (RefPtr loader = document->loader())
-        embedElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->writer().mimeType() });
+        embedElement->setAttributeWithoutSynchronization(typeAttr, AtomStringImpl::add(loader->writer().mimeType()).get());
 
     document->setPluginElement(embedElement);
 

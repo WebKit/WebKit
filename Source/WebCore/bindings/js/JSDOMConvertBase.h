@@ -70,7 +70,7 @@ template<typename IDL> ConversionResult<IDL> convert(JSC::JSGlobalObject&, JSC::
 template<typename IDL, typename F> decltype(auto) convert(JSC::JSGlobalObject&, JSC::JSValue, NOESCAPE F&&);
 template<typename IDL> ConversionResult<IDL> convert(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSObject&);
 template<typename IDL> ConversionResult<IDL> convert(JSC::JSGlobalObject&, JSC::JSValue, JSDOMGlobalObject&);
-template<typename IDL> ConversionResult<IDL> convert(JSC::JSGlobalObject&, JSC::JSValue, JSDOMGlobalObject&, const String&);
+template<typename IDL> ConversionResult<IDL> convert(JSC::JSGlobalObject&, JSC::JSValue, JSDOMGlobalObject&, StringImpl*);
 template<typename IDL, ExceptionThrowerFunctor ExceptionThrower> ConversionResult<IDL> convert(JSC::JSGlobalObject&, JSC::JSValue, NOESCAPE ExceptionThrower&&);
 template<typename IDL, ExceptionThrowerFunctor ExceptionThrower> ConversionResult<IDL> convert(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSObject&, NOESCAPE ExceptionThrower&&);
 template<typename IDL, ExceptionThrowerFunctor ExceptionThrower> ConversionResult<IDL> convert(JSC::JSGlobalObject&, JSC::JSValue, JSDOMGlobalObject&, NOESCAPE ExceptionThrower&&);
@@ -95,7 +95,7 @@ template<typename IDL> inline ConversionResult<IDL> convert(JSC::JSGlobalObject&
     return Converter<IDL>::convert(lexicalGlobalObject, value, globalObject);
 }
 
-template<typename IDL> inline ConversionResult<IDL> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, const String& sink)
+template<typename IDL> inline ConversionResult<IDL> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, StringImpl* sink)
 {
     return Converter<IDL>::convert(lexicalGlobalObject, value, globalObject, sink);
 }

@@ -109,26 +109,26 @@ public:
     void didRemoveTimer(int timerId);
     void willFireTimer(int timerId);
     void didFireTimer();
-    void willCallFunction(const String& scriptName, int scriptLine, int scriptColumn);
+    void willCallFunction(StringImpl* scriptName, int scriptLine, int scriptColumn);
     void didCallFunction();
     void willDispatchEvent(const Event&);
     void didDispatchEvent(bool defaultPrevented);
-    void willEvaluateScript(const String& url, int lineNumber, int columnNumber);
+    void willEvaluateScript(StringImpl* url, int lineNumber, int columnNumber);
     void didEvaluateScript();
-    void didTimeStamp(const String& message);
-    void didPerformanceMark(const String& label, std::optional<MonotonicTime>);
+    void didTimeStamp(StringImpl* message);
+    void didPerformanceMark(StringImpl* label, std::optional<MonotonicTime>);
     void didRequestAnimationFrame(int callbackId);
     void didCancelAnimationFrame(int callbackId);
     void willFireAnimationFrame(int callbackId);
     void didFireAnimationFrame();
-    void willFireObserverCallback(const String& callbackType);
+    void willFireObserverCallback(StringImpl* callbackType);
     void didFireObserverCallback();
-    void time(const String& label);
-    void timeEnd(const String& label);
+    void time(StringImpl* label);
+    void timeEnd(StringImpl* label);
 
     // Console
-    void startFromConsole(const String& title);
-    void stopFromConsole(const String& title);
+    void startFromConsole(StringImpl* title);
+    void stopFromConsole(StringImpl* title);
 
 protected:
     virtual bool enabled() const;

@@ -92,8 +92,8 @@ public:
     ProcessQualified next() const { return { m_object.next(), m_processIdentifier }; }
     ProcessQualified& increment() { m_object.increment(); return *this; }
 
-    String toString() const { return makeString(m_processIdentifier.toUInt64(), '-', m_object.toUInt64()); }
-    String loggingString() const { return toString(); }
+    RefPtr<StringImpl> toString() const { return makeString(m_processIdentifier.toUInt64(), '-', m_object.toUInt64()); }
+    RefPtr<StringImpl> loggingString() const { return toString(); }
 
     // Comparison operators for callers that have already verified that
     // the objects originate from the same process.

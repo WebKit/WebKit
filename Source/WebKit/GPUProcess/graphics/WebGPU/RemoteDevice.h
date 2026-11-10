@@ -134,8 +134,8 @@ private:
     void createComputePipelineWithPipelineLayoutFromPipeline(const WebGPU::ComputePipelineDescriptor&, WebGPUIdentifier, WebGPUIdentifier pipelineToReplaceIdentifier, CompletionHandler<void(bool)>&&);
     void createRenderPipeline(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier);
     void createRenderPipelineWithPipelineLayoutFromPipeline(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier, WebGPUIdentifier pipelineToReplaceIdentifier, CompletionHandler<void(bool)>&&);
-    void createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void(bool, String&&)>&&);
-    void createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void(bool, String&&)>&&);
+    void createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&&);
+    void createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&&);
 
     void createCommandEncoder(const std::optional<WebGPU::CommandEncoderDescriptor>&, WebGPUIdentifier);
     void createRenderBundleEncoder(const WebGPU::RenderBundleEncoderDescriptor&, WebGPUIdentifier);
@@ -147,7 +147,7 @@ private:
     void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&);
     void resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason)>&&);
 
-    void setLabel(String&&);
+    void setLabel(RefPtr<StringImpl>&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(WebCore::SharedMemoryHandle&&);
     void pauseAllErrorReporting(bool pauseErrorReporting);

@@ -33,7 +33,7 @@ namespace WTF {
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 WTF_EXPORT_PRIVATE LogChannels& logChannels();
-NODELETE WTF_EXPORT_PRIVATE String logLevelString();
+NODELETE WTF_EXPORT_PRIVATE RefPtr<StringImpl> logLevelString();
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 

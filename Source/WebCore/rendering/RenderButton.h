@@ -54,8 +54,8 @@ public:
 
     void updateAnonymousChildStyle(Style::ComputedStyle&) const override;
 
-    void setText(const String&);
-    NODELETE String text() const;
+    void setText(StringImpl*);
+    NODELETE RefPtr<StringImpl> text() const;
 
 #if PLATFORM(IOS_FAMILY)
     void layout() override;

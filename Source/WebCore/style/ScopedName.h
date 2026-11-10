@@ -34,7 +34,7 @@ namespace WebCore {
 namespace Style {
 
 struct ScopedName {
-    AtomString name;
+    RefPtr<AtomStringImpl> name;
     ScopeOrdinal scopeOrdinal { ScopeOrdinal::Element };
     bool isIdentifier { true };
 
@@ -66,7 +66,7 @@ namespace WTF {
 
 template<>
 struct MarkableTraits<WebCore::Style::ScopedName> {
-    static bool isEmptyValue(const WebCore::Style::ScopedName& value) { return value.name.isNull(); }
+    static bool isEmptyValue(const WebCore::Style::ScopedName& value) { return !value.name; }
     static WebCore::Style::ScopedName emptyValue() { return WebCore::Style::ScopedName { nullAtom() }; }
 };
 

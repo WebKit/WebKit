@@ -33,11 +33,11 @@ namespace WebCore {
 struct NavigationPreloadState {
     static NavigationPreloadState defaultValue() { return { false, "true"_s }; }
 
-    NavigationPreloadState isolatedCopy() const & { return { enabled, headerValue.isolatedCopy() }; }
-    NavigationPreloadState isolatedCopy() && { return { enabled, WTF::move(headerValue).isolatedCopy() }; }
+    NavigationPreloadState isolatedCopy() const & { return { enabled, WTF::isolatedCopy(headerValue) }; }
+    NavigationPreloadState isolatedCopy() && { return { enabled, WTF::isolatedCopy(WTF::move(headerValue)) }; }
 
     bool enabled { false };
-    String headerValue;
+    RefPtr<StringImpl> headerValue;
 };
 
 } // namespace WebCore

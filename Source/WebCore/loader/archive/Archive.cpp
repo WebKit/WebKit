@@ -53,11 +53,11 @@ void Archive::clearAllSubframeArchives(HashSet<Ref<Archive>>& clearedArchives)
     m_subframeArchives.clear();
 }
 
-std::expected<Vector<String>, ArchiveError> Archive::saveResourcesToDisk(const String& directory)
+std::expected<Vector<RefPtr<StringImpl>>, ArchiveError> Archive::saveResourcesToDisk(StringImpl* directory)
 {
     ASSERT(!RunLoop::isMain());
 
-    Vector<String> filePaths;
+    Vector<RefPtr<StringImpl>> filePaths;
     RefPtr mainResource = m_mainResource;
     if (!mainResource)
         return makeUnexpected(ArchiveError::EmptyResource);

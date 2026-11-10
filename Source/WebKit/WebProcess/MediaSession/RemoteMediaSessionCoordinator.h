@@ -46,14 +46,14 @@ class WebPage;
 class RemoteMediaSessionCoordinator final : public WebCore::MediaSessionCoordinatorPrivate, public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionCoordinator);
 public:
-    static Ref<RemoteMediaSessionCoordinator> create(WebPage&, const String&);
+    static Ref<RemoteMediaSessionCoordinator> create(WebPage&, StringImpl*);
     ~RemoteMediaSessionCoordinator();
 
     void ref() const final { WebCore::MediaSessionCoordinatorPrivate::ref(); }
     void deref() const final { WebCore::MediaSessionCoordinatorPrivate::deref(); }
 
 private:
-    explicit RemoteMediaSessionCoordinator(WebPage&, const String&);
+    explicit RemoteMediaSessionCoordinator(WebPage&, StringImpl*);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -62,28 +62,28 @@ private:
     void seekSessionToTime(double, CompletionHandler<void(bool)>&&);
     void playSession(std::optional<double>, std::optional<MonotonicTime>, CompletionHandler<void(bool)>&&);
     void pauseSession(CompletionHandler<void(bool)>&&);
-    void setSessionTrack(const String&, CompletionHandler<void(bool)>&&);
+    void setSessionTrack(StringImpl*, CompletionHandler<void(bool)>&&);
     void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState);
 
     // MediaSessionCoordinatorPrivate overrides.
-    String identifier() const final { return m_identifier; }
+    RefPtr<StringImpl> identifier() const final { return m_identifier; }
     void join(CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&) final;
     void leave() final;
     void seekTo(double, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&) final;
     void play(CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&) final;
     void pause(CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&) final;
-    void setTrack(const String&, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&) final;
+    void setTrack(StringImpl*, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&) final;
 
     void positionStateChanged(const std::optional<WebCore::MediaPositionState>&) final;
     void readyStateChanged(WebCore::MediaSessionReadyState) final;
     void playbackStateChanged(WebCore::MediaSessionPlaybackState) final;
-    void trackIdentifierChanged(const String&) final;
+    void trackIdentifierChanged(StringImpl*) final;
 
     ASCIILiteral logClassName() const { return "RemoteMediaSessionCoordinator"_s; }
     NODELETE WTFLogChannel& logChannel() const;
 
     WeakRef<WebPage> m_page;
-    String m_identifier;
+    RefPtr<StringImpl> m_identifier;
 };
 
 } // namespace WebKit

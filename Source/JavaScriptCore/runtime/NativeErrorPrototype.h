@@ -39,7 +39,7 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static NativeErrorPrototype* create(VM& vm, Structure* structure, const String& name)
+    static NativeErrorPrototype* create(VM& vm, Structure* structure, StringImpl* name)
     {
         NativeErrorPrototype* prototype = new (NotNull, allocateCell<NativeErrorPrototype>(vm)) NativeErrorPrototype(vm, structure);
         prototype->finishCreation(vm, name);

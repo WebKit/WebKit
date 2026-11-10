@@ -42,7 +42,7 @@ class Node;
 class Range;
 class ShadowRoot;
 
-typedef HashMap<AtomString, AtomStringImpl*> Namespaces;
+typedef HashMap<RefPtr<AtomStringImpl>, AtomStringImpl*> Namespaces;
 
 enum class EntityMask : uint8_t {
     Amp = 1 << 0,
@@ -71,10 +71,10 @@ public:
     MarkupAccumulator(Vector<Ref<Node>>*, ResolveURLs, SerializationSyntax, SerializeShadowRoots = SerializeShadowRoots::Explicit, Vector<Ref<ShadowRoot>>&& explicitShadowRoots = { }, const Vector<MarkupExclusionRule>& exclusionRules = { });
     virtual ~MarkupAccumulator();
 
-    String serializeNodes(Node& targetNode, SerializedNodes);
+    RefPtr<StringImpl> serializeNodes(Node& targetNode, SerializedNodes);
 
-    static void appendCharactersReplacingEntities(StringBuilder&, const String&, OptionSet<EntityMask>);
-    void enableURLReplacement(HashMap<String, String>&& replacementURLStrings, HashMap<Ref<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet);
+    static void appendCharactersReplacingEntities(StringBuilder&, StringImpl*, OptionSet<EntityMask>);
+    void enableURLReplacement(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& replacementURLStrings, HashMap<Ref<CSSStyleSheet>, RefPtr<StringImpl>>&& replacementURLStringsForCSSStyleSheet);
 
     NODELETE static SerializationSyntax serializationSyntax(Document&);
 
@@ -100,7 +100,7 @@ protected:
 
     void appendNonElementNode(StringBuilder&, const Node&, Namespaces*);
 
-    void appendAttributeValue(StringBuilder&, const String&);
+    void appendAttributeValue(StringBuilder&, StringImpl*);
     bool appendAttribute(StringBuilder&, const Element&, const Attribute&, Namespaces*);
 
     OptionSet<EntityMask> entityMaskForText(const Text&) const;
@@ -108,9 +108,9 @@ protected:
     Vector<Ref<Node>>* const m_nodes;
 
 private:
-    void appendNamespace(StringBuilder&, const AtomString& prefix, const AtomString& namespaceURI, Namespaces&, bool allowEmptyDefaultNS = false);
+    void appendNamespace(StringBuilder&, AtomStringImpl* prefix, AtomStringImpl* namespaceURI, Namespaces&, bool allowEmptyDefaultNS = false);
     enum class IsCreatedByURLReplacement : bool { No, Yes };
-    std::pair<String, IsCreatedByURLReplacement> resolveURLIfNeeded(const Element&, const String&) const;
+    std::pair<RefPtr<StringImpl>, IsCreatedByURLReplacement> resolveURLIfNeeded(const Element&, StringImpl*) const;
     NODELETE bool shouldIncludeShadowRoots() const;
     bool includeShadowRoot(const ShadowRoot&) const;
     void serializeNodesWithNamespaces(Node& targetNode, SerializedNodes, const Namespaces*);
@@ -128,7 +128,7 @@ private:
     const ResolveURLs m_resolveURLs;
     const SerializationSyntax m_serializationSyntax;
     unsigned m_prefixLevel { 0 };
-    Vector<std::pair<WeakRef<const Element, WeakPtrImplWithEventTargetData>, AtomString>> m_resolvedElementQualifiedNameStack;
+    Vector<std::pair<WeakRef<const Element, WeakPtrImplWithEventTargetData>, RefPtr<AtomStringImpl>>> m_resolvedElementQualifiedNameStack;
     SerializeShadowRoots m_serializeShadowRoots;
     Vector<Ref<ShadowRoot>> m_explicitShadowRoots;
     Vector<MarkupExclusionRule> m_exclusionRules;

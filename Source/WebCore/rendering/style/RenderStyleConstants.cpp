@@ -56,13 +56,13 @@ CSSBoxType transformBoxToCSSBoxType(TransformBox transformBox)
     }
 }
 
-String fallbackText(SynthesizedGlyph glyph)
+RefPtr<StringImpl> fallbackText(SynthesizedGlyph glyph)
 {
     switch (glyph) {
     case SynthesizedGlyph::PickerUp:
-        return String::fromCodePoint(upArrowhead);
+        return StringImpl::fromCodePoint(upArrowhead);
     case SynthesizedGlyph::PickerDown:
-        return String::fromCodePoint(downArrowhead);
+        return StringImpl::fromCodePoint(downArrowhead);
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

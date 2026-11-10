@@ -167,7 +167,7 @@ static WebValidationBubbleViewController *allocWebValidationBubbleViewController
 
 namespace WebCore {
 
-ValidationBubble::ValidationBubble(UIView *view, String&& message, const Settings&)
+ValidationBubble::ValidationBubble(UIView *view, RefPtr<StringImpl>&& message, const Settings&)
     : m_view(view)
     , m_message(WTF::move(message))
     , m_popoverController(adoptNS([allocWebValidationBubbleViewControllerInstance() init]))
@@ -176,7 +176,7 @@ ValidationBubble::ValidationBubble(UIView *view, String&& message, const Setting
     m_tapRecognizer = adoptNS([[WebValidationBubbleTapRecognizer alloc] initWithPopoverController:m_popoverController.get()]);
 
     RetainPtr validationLabel = label(m_popoverController);
-    [validationLabel setText:m_message.createNSString()];
+    [validationLabel setText:createNSString(m_message)];
     m_fontSize = [validationLabel font].pointSize;
     CGSize labelSize = [validationLabel sizeThatFits:CGSizeMake(validationBubbleMaxLabelWidth, CGFLOAT_MAX)];
     [m_popoverController setPreferredContentSize:CGSizeMake(labelSize.width + validationBubbleHorizontalPadding * 2, labelSize.height + validationBubbleVerticalPadding * 2)];
@@ -210,7 +210,7 @@ void ValidationBubble::show()
         protectedThis->m_startingToPresentViewController = false;
     }];
 
-    PAL::softLinkUIKitUIAccessibilityPostNotification(PAL::get_UIKit_UIAccessibilityAnnouncementNotificationSingleton(), m_message.createNSString().get());
+    PAL::softLinkUIKitUIAccessibilityPostNotification(PAL::get_UIKit_UIAccessibilityAnnouncementNotificationSingleton(), createNSString(m_message).get());
 }
 
 static UIViewController *fallbackViewController(UIView *view)

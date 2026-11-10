@@ -48,7 +48,7 @@ RemoteLegacyCDM::RemoteLegacyCDM(RemoteLegacyCDMFactory& factory, RemoteLegacyCD
 
 RemoteLegacyCDM::~RemoteLegacyCDM() = default;
 
-bool RemoteLegacyCDM::supportsMIMEType(const String& mimeType) const
+bool RemoteLegacyCDM::supportsMIMEType(StringImpl* mimeType) const
 {
     auto sendResult = protect(protect(m_factory)->gpuProcessConnection().connection())->sendSync(Messages::RemoteLegacyCDMProxy::SupportsMIMEType(mimeType), m_identifier);
     auto [supported] = sendResult.takeReplyOr(false);

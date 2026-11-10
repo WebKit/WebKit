@@ -87,7 +87,7 @@ void UIScriptControllerGtk::setContinuousSpellCheckingEnabled(bool enabled)
 
 void UIScriptControllerGtk::copyText(JSStringRef text)
 {
-    auto string = text->string().utf8();
+    auto string = utf8(text->string());
 #if USE(GTK4)
     gdk_clipboard_set_text(gdk_display_get_clipboard(gdk_display_get_default()), string.legacyCStringPointer());
 #else
@@ -176,11 +176,11 @@ void UIScriptControllerGtk::addViewToWindow(JSValueRef callback)
 
 void UIScriptControllerGtk::overridePreference(JSStringRef preference, JSStringRef value)
 {
-    if (toWTFString(preference) != "WebKitMinimumFontSize"_s)
+    if (!equal(toWTFString(preference), "WebKitMinimumFontSize"_s))
         return;
 
     auto preferences = TestController::singleton().platformPreferences();
-    WKPreferencesSetMinimumFontSize(preferences, static_cast<uint32_t>(toWTFString(value).toDouble()));
+    WKPreferencesSetMinimumFontSize(preferences, static_cast<uint32_t>(toDouble(toWTFString(value))));
 }
 
 static Ref<JSON::Object> toJSONObject(GVariant* variant)
@@ -194,11 +194,11 @@ static Ref<JSON::Object> toJSONObject(GVariant* variant)
     while (g_variant_iter_loop(&iter, "{&sv}", &key, &value)) {
         const GVariantType* type = g_variant_get_type(value);
         if (type && g_variant_type_equal(type, G_VARIANT_TYPE_VARDICT))
-            jsonObject->setObject(String::fromLatin1(key), toJSONObject(value));
+            jsonObject->setObject(StringImpl::fromLatin1(key).get(), toJSONObject(value));
         else if (type && g_variant_type_equal(type, G_VARIANT_TYPE_STRING))
-            jsonObject->setString(String::fromLatin1(key), String::fromLatin1(g_variant_get_string(value, nullptr)));
+            jsonObject->setString(StringImpl::fromLatin1(key).get(), StringImpl::fromLatin1(g_variant_get_string(value, nullptr)).get());
         else if (type && g_variant_type_equal(type, G_VARIANT_TYPE_DOUBLE))
-            jsonObject->setDouble(String::fromLatin1(key), g_variant_get_double(value));
+            jsonObject->setDouble(StringImpl::fromLatin1(key).get(), g_variant_get_double(value));
     }
     return jsonObject;
 }
@@ -206,7 +206,7 @@ static Ref<JSON::Object> toJSONObject(GVariant* variant)
 JSObjectRef UIScriptControllerGtk::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
 {
     auto* webView = TestController::singleton().mainWebView()->platformView();
-    GRefPtr<GVariant> contentDictionary = WKViewContentsOfUserInterfaceItem(webView, toWTFString(interfaceItem).utf8().legacyCStringPointer());
+    GRefPtr<GVariant> contentDictionary = WKViewContentsOfUserInterfaceItem(webView, utf8(toWTFString(interfaceItem)).legacyCStringPointer());
     auto jsonObject = toJSONObject(contentDictionary.get());
 
     return JSValueToObject(m_context->jsContext(), contentDictionary ? JSValueMakeFromJSONString(m_context->jsContext(), ::createJSString(jsonObject->toJSONString()).get()) : JSValueMakeUndefined(m_context->jsContext()), nullptr);
@@ -231,17 +231,17 @@ double UIScriptControllerGtk::zoomScale() const
     return WKPageGetScaleFactor(page);
 }
 
-static WheelEventPhase wheelEventPhaseFromString(const String& phase)
+static WheelEventPhase wheelEventPhaseFromString(StringImpl* phase)
 {
-    if (phase == "began"_s)
+    if (equal(phase, "began"_s))
         return WheelEventPhase::Began;
-    if (phase == "changed"_s || phase == "continue"_s) // Allow "continue" for ease of conversion from mouseScrollByWithWheelAndMomentumPhases values.
+    if (equal(phase, "changed"_s) || equal(phase, "continue"_s)) // Allow "continue" for ease of conversion from mouseScrollByWithWheelAndMomentumPhases values.
         return WheelEventPhase::Changed;
-    if (phase == "ended"_s)
+    if (equal(phase, "ended"_s))
         return WheelEventPhase::Ended;
-    if (phase == "cancelled"_s)
+    if (equal(phase, "cancelled"_s))
         return WheelEventPhase::Cancelled;
-    if (phase == "maybegin"_s)
+    if (equal(phase, "maybegin"_s))
         return WheelEventPhase::MayBegin;
 
     ASSERT_NOT_REACHED();
@@ -260,7 +260,7 @@ void UIScriptControllerGtk::sendEventStream(JSStringRef eventsJSON, JSValueRef c
 
     auto jsonValue = JSON::Value::parseJSON(eventsJSON->string());
     auto jsonObject = jsonValue ? jsonValue->asObject() : nullptr;
-    auto eventsArray = jsonObject ? jsonObject->getArray("events"_s) : nullptr;
+    auto eventsArray = jsonObject ? jsonObject->getArray("events"_si) : nullptr;
     if (!eventsArray) {
         WTFLogAlways("JSON is not convertible to a dictionary with an `events` array");
         return;
@@ -276,25 +276,25 @@ void UIScriptControllerGtk::sendEventStream(JSStringRef eventsJSON, JSValueRef c
             break;
         }
 
-        auto eventTypeString = eventObject->getString("type"_s);
+        auto eventTypeString = eventObject->getString("type"_si);
         if (!eventTypeString) {
-            SAFE_WTFLOGALWAYS("Failed to find type key in %s", eventTypeString.utf8());
+            SAFE_WTFLOGALWAYS("Failed to find type key in %s", utf8(eventTypeString));
             break;
         }
 
-        if (eventTypeString == "wheel"_s) {
+        if (equal(eventTypeString, "wheel"_s)) {
             auto phase = WheelEventPhase::NoPhase;
             auto momentumPhase = WheelEventPhase::NoPhase;
 
-            auto phaseString = eventObject->getString("phase"_s);
-            if (!phaseString.isNull())
-                phase = wheelEventPhaseFromString(phaseString);
+            auto phaseString = eventObject->getString("phase"_si);
+            if (phaseString)
+                phase = wheelEventPhaseFromString(phaseString.get());
 
-            auto momentumPhaseString = eventObject->getString("momentumPhase"_s);
-            if (!momentumPhaseString.isNull()) {
-                momentumPhase = wheelEventPhaseFromString(momentumPhaseString);
+            auto momentumPhaseString = eventObject->getString("momentumPhase"_si);
+            if (momentumPhaseString) {
+                momentumPhase = wheelEventPhaseFromString(momentumPhaseString.get());
                 if (momentumPhase == WheelEventPhase::Cancelled || momentumPhase == WheelEventPhase::MayBegin) {
-                    SAFE_WTFLOGALWAYS("Invalid value %s for momentumPhase", momentumPhaseString.utf8());
+                    SAFE_WTFLOGALWAYS("Invalid value %s for momentumPhase", utf8(momentumPhaseString));
                     break;
                 }
             }
@@ -302,14 +302,14 @@ void UIScriptControllerGtk::sendEventStream(JSStringRef eventsJSON, JSValueRef c
             ASSERT_IMPLIES(phase == WheelEventPhase::NoPhase, momentumPhase != WheelEventPhase::NoPhase);
             ASSERT_IMPLIES(momentumPhase == WheelEventPhase::NoPhase, phase != WheelEventPhase::NoPhase);
 
-            if (auto x = eventObject->getDouble("viewX"_s))
+            if (auto x = eventObject->getDouble("viewX"_si))
                 currentViewRelativeX = *x;
 
-            if (auto y = eventObject->getDouble("viewY"_s))
+            if (auto y = eventObject->getDouble("viewY"_si))
                 currentViewRelativeY = *y;
 
-            double deltaX = eventObject->getDouble("deltaX"_s).value_or(0);
-            double deltaY = eventObject->getDouble("deltaY"_s).value_or(0);
+            double deltaX = eventObject->getDouble("deltaX"_si).value_or(0);
+            double deltaY = eventObject->getDouble("deltaY"_si).value_or(0);
 
             eventSender->sendWheelEvent(currentViewRelativeX, currentViewRelativeY, deltaX, deltaY, phase, momentumPhase);
         }

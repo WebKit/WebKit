@@ -50,10 +50,10 @@ template<> struct ReplyCaller<> {
         completionHandler();
     }
 };
-template<> struct ReplyCaller<String> {
-    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(String&&)>&& completionHandler)
+template<> struct ReplyCaller<RefPtr<StringImpl>> {
+    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
     {
-        std::optional<String> string;
+        std::optional<RefPtr<StringImpl>> string;
         decoder >> string;
         if (!string)
             return completionHandler({ });
@@ -82,13 +82,13 @@ void ManagerProxy::sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&& 
     });
 }
 
-Ref<ManagerProxy> ManagerProxy::create(const String& machServiceName, NetworkSession& networkSession)
+Ref<ManagerProxy> ManagerProxy::create(StringImpl* machServiceName, NetworkSession& networkSession)
 {
     return adoptRef(*new ManagerProxy(machServiceName, networkSession));
 }
 
-ManagerProxy::ManagerProxy(const String& machServiceName, NetworkSession& networkSession)
-    : m_connection(Connection::create(machServiceName.utf8(), networkSession))
+ManagerProxy::ManagerProxy(StringImpl* machServiceName, NetworkSession& networkSession)
+    : m_connection(Connection::create(utf8(machServiceName), networkSession))
 { }
 
 void ManagerProxy::storeUnattributed(WebCore::PrivateClickMeasurement&& pcm, CompletionHandler<void()>&& completionHandler)
@@ -126,7 +126,7 @@ void ManagerProxy::migratePrivateClickMeasurementFromLegacyStorage(WebCore::Priv
     sendMessage<MessageType::MigratePrivateClickMeasurementFromLegacyStorage>(pcm, type);
 }
 
-void ManagerProxy::toStringForTesting(CompletionHandler<void(String)>&& completionHandler) const
+void ManagerProxy::toStringForTesting(CompletionHandler<void(RefPtr<StringImpl>)>&& completionHandler) const
 {
     sendMessageWithReply<MessageType::ToStringForTesting>(WTF::move(completionHandler));
 }
@@ -161,7 +161,7 @@ void ManagerProxy::markAttributedPrivateClickMeasurementsAsExpiredForTesting(Com
     sendMessageWithReply<MessageType::MarkAttributedPrivateClickMeasurementsAsExpiredForTesting>(WTF::move(completionHandler));
 }
 
-void ManagerProxy::setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID)
+void ManagerProxy::setPCMFraudPreventionValuesForTesting(RefPtr<StringImpl>&& unlinkableToken, RefPtr<StringImpl>&& secretToken, RefPtr<StringImpl>&& signature, RefPtr<StringImpl>&& keyID)
 {
     sendMessage<MessageType::SetPCMFraudPreventionValuesForTesting>(unlinkableToken, secretToken, signature, keyID);
 }

@@ -107,7 +107,7 @@ void serializationForCSSTokenization(StringBuilder& builder, const CSS::Serializ
     builder.append(WebCore::serializationForCSS(keywordColor.computedStyleColor));
 }
 
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const KeywordColor& keywordColor)
+RefPtr<StringImpl> serializationForCSSTokenization(const CSS::SerializationContext&, const KeywordColor& keywordColor)
 {
     return WebCore::serializationForCSS(keywordColor.computedStyleColor);
 }

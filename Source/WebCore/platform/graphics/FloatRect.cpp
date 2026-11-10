@@ -238,13 +238,13 @@ Ref<JSON::Object> FloatRect::toJSONObject() const
 {
     auto object = JSON::Object::create();
 
-    object->setObject("location"_s, m_location.toJSONObject());
-    object->setObject("size"_s, m_size.toJSONObject());
+    object->setObject("location"_si, m_location.toJSONObject());
+    object->setObject("size"_si, m_size.toJSONObject());
 
     return object;
 }
 
-String FloatRect::toJSONString() const
+RefPtr<StringImpl> FloatRect::toJSONString() const
 {
     return toJSONObject()->toJSONString();
 }

@@ -52,26 +52,26 @@ static inline bool isConnectionError(GError* error)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketTask);
 
-Ref<WebSocketTask> WebSocketTask::create(NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, SoupSession* session, SoupMessage* msg, const String& protocol)
+Ref<WebSocketTask> WebSocketTask::create(NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, SoupSession* session, SoupMessage* msg, StringImpl* protocol)
 {
     return adoptRef(*new WebSocketTask(channel, request, session, msg, protocol));
 }
 
-WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, SoupSession* session, SoupMessage* msg, const String& protocol)
+WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, SoupSession* session, SoupMessage* msg, StringImpl* protocol)
     : m_channel(channel)
     , m_request(request)
     , m_handshakeMessage(msg)
     , m_cancellable(adoptGRef(g_cancellable_new()))
     , m_delayFailTimer(RunLoop::mainSingleton(), "WebSocketTask::DelayFailTimer"_s, this, &WebSocketTask::delayFailTimerFired)
 {
-    auto protocolList = protocol.split(',');
+    auto protocolList = split(protocol, ',');
     GUniquePtr<char*> protocols;
     if (!protocolList.isEmpty()) {
         protocols.reset(static_cast<char**>(g_new0(char*, protocolList.size() + 1)));
         auto protocolsSpan = unsafeMakeSpan(protocols.get(), protocolList.size());
         unsigned i = 0;
         for (auto& subprotocol : protocolList)
-            protocolsSpan[i++] = gStrdup(subprotocol.trim(isASCIIWhitespaceWithoutFF<char16_t>).utf8());
+            protocolsSpan[i++] = gStrdup(utf8(trim(subprotocol, isASCIIWhitespaceWithoutFF<char16_t>)));
     }
 
     {
@@ -83,7 +83,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
 
     g_signal_connect(msg, "request-certificate-password", G_CALLBACK(+[](SoupMessage* msg, GTlsPassword* tlsPassword, WebSocketTask* task) -> gboolean {
         auto protectionSpace = WebCore::AuthenticationChallenge::protectionSpaceForClientCertificatePassword(WebCore::soupURIToURL(soup_message_get_uri(msg)), tlsPassword);
-        auto password = protect(protect(task->m_channel)->session()->networkStorageSession())->credentialStorage().get(task->m_request.cachePartition(), protectionSpace).password().utf8();
+        auto password = utf8(protect(protect(task->m_channel)->session()->networkStorageSession())->credentialStorage().get(task->m_request.cachePartition(), protectionSpace).password());
         g_tls_password_set_value(tlsPassword, reinterpret_cast<const unsigned char*>(password.data()), password.length());
         soup_message_tls_client_certificate_password_request_complete(msg);
         return TRUE;
@@ -97,14 +97,14 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
                 return;
             auto* task = static_cast<WebSocketTask*>(userData);
             if (isConnectionError(error.get())) {
-                task->m_delayErrorMessage = String::fromUTF8(error->message);
+                task->m_delayErrorMessage = StringImpl::fromUTF8(error->message);
                 task->m_delayFailTimer.startOneShot(NetworkProcess::randomClosedPortDelay());
                 return;
             }
             if (connection)
                 task->didConnect(WTF::move(connection));
             else
-                task->didFail(String::fromUTF8(error->message));
+                task->didFail(StringImpl::fromUTF8(error->message));
         }, this);
 
     g_signal_connect(msg, "starting", G_CALLBACK(+[](SoupMessage* msg, WebSocketTask* task) {
@@ -121,7 +121,7 @@ WebSocketTask::~WebSocketTask()
     cancel();
 }
 
-String WebSocketTask::acceptedExtensions() const
+RefPtr<StringImpl> WebSocketTask::acceptedExtensions() const
 {
     StringBuilder result;
     GList* extensions = soup_websocket_connection_get_extensions(m_connection.get());
@@ -130,11 +130,11 @@ String WebSocketTask::acceptedExtensions() const
 
         if (!result.isEmpty())
             result.append(", "_s);
-        result.append(String::fromUTF8(SOUP_WEBSOCKET_EXTENSION_GET_CLASS(extension)->name));
+        result.append(StringImpl::fromUTF8(SOUP_WEBSOCKET_EXTENSION_GET_CLASS(extension)->name));
 
         GUniquePtr<char> params(soup_websocket_extension_get_response_params(extension));
         if (params)
-            result.append(String::fromUTF8(params.get()));
+            result.append(StringImpl::fromUTF8(params.get()));
     }
     return result.toStringPreserveCapacity();
 }
@@ -152,7 +152,7 @@ void WebSocketTask::didConnect(GRefPtr<SoupWebsocketConnection>&& connection)
     g_signal_connect_swapped(m_connection.get(), "closed", reinterpret_cast<GCallback>(didCloseCallback), this);
 
     if (RefPtr channel = m_channel.get()) {
-        channel->didConnect(String::fromLatin1(soup_websocket_connection_get_protocol(m_connection.get())), acceptedExtensions());
+        channel->didConnect(StringImpl::fromLatin1(soup_websocket_connection_get_protocol(m_connection.get())), acceptedExtensions());
         channel->didReceiveHandshakeResponse(m_handshakeMessage.get());
     }
     g_signal_handlers_disconnect_by_data(m_handshakeMessage.get(), this);
@@ -167,7 +167,7 @@ void WebSocketTask::didReceiveMessageCallback(WebSocketTask* task, SoupWebsocket
     std::span data = span(message);
     switch (dataType) {
     case SOUP_WEBSOCKET_DATA_TEXT:
-        protect(task->m_channel)->didReceiveText(String::fromUTF8(data));
+        protect(task->m_channel)->didReceiveText(StringImpl::fromUTF8(data));
         break;
     case SOUP_WEBSOCKET_DATA_BINARY:
         protect(task->m_channel)->didReceiveBinaryData(data);
@@ -180,10 +180,10 @@ void WebSocketTask::didReceiveErrorCallback(WebSocketTask* task, GError* error)
     if (g_cancellable_is_cancelled(task->m_cancellable.get()))
         return;
 
-    task->didFail(String::fromUTF8(error->message));
+    task->didFail(StringImpl::fromUTF8(error->message));
 }
 
-void WebSocketTask::didFail(String&& errorMessage)
+void WebSocketTask::didFail(RefPtr<StringImpl>&& errorMessage)
 {
     if (m_receivedDidFail)
         return;
@@ -215,10 +215,10 @@ void WebSocketTask::didCloseCallback(WebSocketTask* task)
         // The connection was closed but close frame was not received or sent.
         code = SOUP_WEBSOCKET_CLOSE_ABNORMAL;
     }
-    task->didClose(code, String::fromUTF8(soup_websocket_connection_get_close_data(task->m_connection.get())));
+    task->didClose(code, StringImpl::fromUTF8(soup_websocket_connection_get_close_data(task->m_connection.get())));
 }
 
-void WebSocketTask::didClose(unsigned short code, const String& reason)
+void WebSocketTask::didClose(unsigned short code, StringImpl* reason)
 {
     if (m_receivedDidClose)
         return;
@@ -244,7 +244,7 @@ void WebSocketTask::sendData(std::span<const uint8_t> data, CompletionHandler<vo
     callback();
 }
 
-void WebSocketTask::close(int32_t code, const String& reason)
+void WebSocketTask::close(int32_t code, StringImpl* reason)
 {
     if (m_receivedDidClose)
         return;
@@ -259,7 +259,7 @@ void WebSocketTask::close(int32_t code, const String& reason)
         code = SOUP_WEBSOCKET_CLOSE_NO_STATUS;
 
     if (soup_websocket_connection_get_state(m_connection.get()) == SOUP_WEBSOCKET_STATE_OPEN)
-        soup_websocket_connection_close(m_connection.get(), code, reason.utf8().legacyCStringPointer());
+        soup_websocket_connection_close(m_connection.get(), code, utf8(reason).legacyCStringPointer());
 }
 
 void WebSocketTask::cancel()

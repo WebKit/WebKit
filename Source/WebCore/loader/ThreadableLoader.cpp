@@ -59,7 +59,7 @@ ThreadableLoaderOptions::ThreadableLoaderOptions(FetchOptions&& baseOptions)
 {
 }
 
-ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& baseOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, String&& initiatorType, ResponseFilteringPolicy filteringPolicy)
+ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& baseOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, RefPtr<StringImpl>&& initiatorType, ResponseFilteringPolicy filteringPolicy)
     : ResourceLoaderOptions(baseOptions)
     , contentSecurityPolicyEnforcement(contentSecurityPolicyEnforcement)
     , initiatorType(WTF::move(initiatorType))
@@ -78,7 +78,7 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
     copy.cache = this->cache;
     copy.redirect = this->redirect;
     copy.referrerPolicy = this->referrerPolicy;
-    copy.integrity = this->integrity.isolatedCopy();
+    copy.integrity = WTF::isolatedCopy(this->integrity);
     copy.keepAlive = this->keepAlive;
     copy.clientIdentifier = this->clientIdentifier;
     copy.resultingClientIdentifier = this->resultingClientIdentifier;
@@ -108,14 +108,14 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
 
     // ThreadableLoaderOptions
     copy.contentSecurityPolicyEnforcement = this->contentSecurityPolicyEnforcement;
-    copy.initiatorType = this->initiatorType.isolatedCopy();
+    copy.initiatorType = WTF::isolatedCopy(this->initiatorType);
     copy.filteringPolicy = this->filteringPolicy;
 
     return copy;
 }
 
 
-RefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext& context, ThreadableLoaderClient& client, ResourceRequest&& request, const ThreadableLoaderOptions& options, String&& referrer, String&& taskMode)
+RefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext& context, ThreadableLoaderClient& client, ResourceRequest&& request, const ThreadableLoaderOptions& options, RefPtr<StringImpl>&& referrer, RefPtr<StringImpl>&& taskMode)
 {
     RefPtr document = [&] {
         if (auto* globalScope = dynamicDowncast<WorkletGlobalScope>(context))
@@ -142,7 +142,7 @@ void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext& context
     context.didLoadResourceSynchronously(resourceURL);
 }
 
-void ThreadableLoader::logError(ScriptExecutionContext& context, const ResourceError& error, const String& initiatorType)
+void ThreadableLoader::logError(ScriptExecutionContext& context, const ResourceError& error, StringImpl* initiatorType)
 {
     if (error.isCancellation())
         return;
@@ -153,20 +153,20 @@ void ThreadableLoader::logError(ScriptExecutionContext& context, const ResourceE
 
     // We further reduce logging to some errors.
     // FIXME: Log more errors when making so do not make some layout tests flaky.
-    if (error.domain() != errorDomainWebKitInternal && error.domain() != errorDomainWebKitServiceWorker && !error.isAccessControl())
+    if (!equal(error.domain(), errorDomainWebKitInternal) && !equal(error.domain(), errorDomainWebKitServiceWorker) && !error.isAccessControl())
         return;
 
     ASCIILiteral messageStart;
-    if (initiatorType == cachedResourceRequestInitiatorTypes().eventsource)
+    if (equal(initiatorType, cachedResourceRequestInitiatorTypes().eventsource))
         messageStart = "EventSource cannot load "_s;
-    else if (initiatorType == cachedResourceRequestInitiatorTypes().fetch)
+    else if (equal(initiatorType, cachedResourceRequestInitiatorTypes().fetch))
         messageStart = "Fetch API cannot load "_s;
-    else if (initiatorType == cachedResourceRequestInitiatorTypes().xmlhttprequest)
+    else if (equal(initiatorType, cachedResourceRequestInitiatorTypes().xmlhttprequest))
         messageStart = "XMLHttpRequest cannot load "_s;
     else
         messageStart = "Cannot load "_s;
 
-    String messageEnd = error.isAccessControl() ? " due to access control checks."_s : "."_s;
+    RefPtr<StringImpl> messageEnd = error.isAccessControl() ? " due to access control checks."_s : "."_s;
     context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString(messageStart, error.failingURL().stringCenterEllipsizedToLength(), messageEnd));
 }
 

@@ -28,7 +28,7 @@
 namespace WTF {
 class ASCIILiteral;
 class PrintStream;
-class String;
+class StringImpl;
 }
 
 namespace WGSL {
@@ -161,7 +161,7 @@ namespace WGSL {
     WTF::ASCIILiteral toString(__name)
 
 #define ENUM_DECLARE_PARSE(__name) \
-    const __name* parse##__name(const WTF::String&)
+    const __name* parse##__name(WTF::StringImpl*)
 
 #define ENUM_DECLARE(__name) \
     enum class __name : uint8_t { \

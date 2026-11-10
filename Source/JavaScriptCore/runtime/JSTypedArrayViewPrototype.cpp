@@ -129,29 +129,29 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewProtoGetterFuncToStringTag, (JSGlobalObje
     VM& vm = globalObject->vm();
     switch (thisValue.getObject()->type()) {
     case Uint8ClampedArrayType:
-        return JSValue::encode(jsNontrivialString(vm, "Uint8ClampedArray"_s));
+        return JSValue::encode(jsNontrivialString(vm, "Uint8ClampedArray"_si));
     case Int32ArrayType:
-        return JSValue::encode(jsNontrivialString(vm, "Int32Array"_s));
+        return JSValue::encode(jsNontrivialString(vm, "Int32Array"_si));
     case Uint32ArrayType:
-        return JSValue::encode(jsNontrivialString(vm, "Uint32Array"_s));
+        return JSValue::encode(jsNontrivialString(vm, "Uint32Array"_si));
     case Float64ArrayType:
-        return JSValue::encode(jsNontrivialString(vm, "Float64Array"_s));
+        return JSValue::encode(jsNontrivialString(vm, "Float64Array"_si));
     case Float32ArrayType:
-        return JSValue::encode(jsNontrivialString(vm, "Float32Array"_s));
+        return JSValue::encode(jsNontrivialString(vm, "Float32Array"_si));
     case Float16ArrayType:
-        return JSValue::encode(jsNontrivialString(vm, "Float16Array"_s));
+        return JSValue::encode(jsNontrivialString(vm, "Float16Array"_si));
     case Int8ArrayType:
-        return JSValue::encode(jsNontrivialString(vm, "Int8Array"_s));
+        return JSValue::encode(jsNontrivialString(vm, "Int8Array"_si));
     case Uint8ArrayType:
-        return JSValue::encode(jsNontrivialString(vm, "Uint8Array"_s));
+        return JSValue::encode(jsNontrivialString(vm, "Uint8Array"_si));
     case Int16ArrayType:
-        return JSValue::encode(jsNontrivialString(vm, "Int16Array"_s));
+        return JSValue::encode(jsNontrivialString(vm, "Int16Array"_si));
     case Uint16ArrayType:
-        return JSValue::encode(jsNontrivialString(vm, "Uint16Array"_s));
+        return JSValue::encode(jsNontrivialString(vm, "Uint16Array"_si));
     case BigInt64ArrayType:
-        return JSValue::encode(jsNontrivialString(vm, "BigInt64Array"_s));
+        return JSValue::encode(jsNontrivialString(vm, "BigInt64Array"_si));
     case BigUint64ArrayType:
-        return JSValue::encode(jsNontrivialString(vm, "BigUint64Array"_s));
+        return JSValue::encode(jsNontrivialString(vm, "BigUint64Array"_si));
     default:
         return JSValue::encode(jsUndefined());
     }
@@ -191,7 +191,7 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().keysPublicName(), typedArrayViewProtoFuncKeys, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public, TypedArrayKeysIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf"_s, typedArrayViewProtoFuncLastIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
 
-    JSFunction* lengthFunction = JSFunction::create(vm, globalObject, 0, "get length"_s, typedArrayViewProtoGetterFuncLength, ImplementationVisibility::Public, TypedArrayLengthIntrinsic);
+    JSFunction* lengthFunction = JSFunction::create(vm, globalObject, 0, "get length"_si, typedArrayViewProtoGetterFuncLength, ImplementationVisibility::Public, TypedArrayLengthIntrinsic);
     GetterSetter* lengthGetterSetter = GetterSetter::create(vm, globalObject, lengthFunction, nullptr);
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->length, lengthGetterSetter, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly | PropertyAttribute::Accessor);
 
@@ -209,7 +209,7 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->withKeyword, typedArrayViewProtoFuncWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().atPublicName(), typedArrayPrototypeAtCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    JSFunction* toStringTagFunction = JSFunction::create(vm, globalObject, 0, "get [Symbol.toStringTag]"_s, typedArrayViewProtoGetterFuncToStringTag, ImplementationVisibility::Public);
+    JSFunction* toStringTagFunction = JSFunction::create(vm, globalObject, 0, "get [Symbol.toStringTag]"_si, typedArrayViewProtoGetterFuncToStringTag, ImplementationVisibility::Public);
     GetterSetter* toStringTagAccessor = GetterSetter::create(vm, globalObject, toStringTagFunction, nullptr);
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, toStringTagAccessor, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly | PropertyAttribute::Accessor);
 

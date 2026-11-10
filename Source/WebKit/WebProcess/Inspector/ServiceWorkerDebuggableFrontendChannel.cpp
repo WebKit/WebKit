@@ -44,7 +44,7 @@ ServiceWorkerDebuggableFrontendChannel::ServiceWorkerDebuggableFrontendChannel(W
 {
 }
 
-void ServiceWorkerDebuggableFrontendChannel::sendMessageToFrontend(const String& message)
+void ServiceWorkerDebuggableFrontendChannel::sendMessageToFrontend(StringImpl* message)
 {
     WebProcess::singleton().send(Messages::WebProcessProxy::SendMessageToInspector(m_identifier, message));
 }

@@ -133,15 +133,15 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 + (JSValue *)valueWithNewRegularExpressionFromPattern:(NSString *)pattern flags:(NSString *)flags inContext:(JSContext *)context
 {
-    auto patternString = OpaqueJSString::tryCreate(pattern);
-    auto flagsString = OpaqueJSString::tryCreate(flags);
+    auto patternString = OpaqueJSString::tryCreate(StringImpl::create(pattern));
+    auto flagsString = OpaqueJSString::tryCreate(StringImpl::create(flags));
     JSValueRef arguments[2] = { JSValueMakeString([context JSGlobalContextRef], patternString.get()), JSValueMakeString([context JSGlobalContextRef], flagsString.get()) };
     return [JSValue valueWithJSValueRef:JSObjectMakeRegExp([context JSGlobalContextRef], 2, arguments, 0) inContext:context];
 }
 
 + (JSValue *)valueWithNewErrorFromMessage:(NSString *)message inContext:(JSContext *)context
 {
-    auto string = OpaqueJSString::tryCreate(message);
+    auto string = OpaqueJSString::tryCreate(StringImpl::create(message));
     JSValueRef argument = JSValueMakeString([context JSGlobalContextRef], string.get());
     return [JSValue valueWithJSValueRef:JSObjectMakeError([context JSGlobalContextRef], 1, &argument, 0) inContext:context];
 }
@@ -158,14 +158,14 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 + (JSValue *)valueWithNewSymbolFromDescription:(NSString *)description inContext:(JSContext *)context
 {
-    auto string = OpaqueJSString::tryCreate(description);
+    auto string = OpaqueJSString::tryCreate(StringImpl::create(description));
     return [JSValue valueWithJSValueRef:JSValueMakeSymbol([context JSGlobalContextRef], string.get()) inContext:context];
 }
 
 + (JSValue *)valueWithNewBigIntFromString:(NSString *)string inContext:(JSContext *)context
 {
     JSValueRef exception = nullptr;
-    JSValueRef bigInt = JSBigIntCreateWithString([context JSGlobalContextRef], OpaqueJSString::tryCreate(string).get(), &exception);
+    JSValueRef bigInt = JSBigIntCreateWithString([context JSGlobalContextRef], OpaqueJSString::tryCreate(StringImpl::create(string)).get(), &exception);
     if (exception) {
         [context notifyException:exception];
         return nil;
@@ -409,7 +409,7 @@ inline std::expected<Result, JSValueRef> performPropertyOperation(NSStringFuncti
     Result result;
     // If it's a NSString already, reduce indirection and just pass the NSString.
     if (auto *propertyKeyString = dynamic_objc_cast<NSString>(propertyKey)) {
-        auto name = OpaqueJSString::tryCreate(propertyKeyString);
+        auto name = OpaqueJSString::tryCreate(StringImpl::create(propertyKeyString));
         result = stringFunction([context JSGlobalContextRef], object, name.get(), arguments..., &exception);
     } else
         result = jsFunction([context JSGlobalContextRef], object, [[JSValue valueWithObject:propertyKey inContext:context] JSValueRef], arguments..., &exception);
@@ -689,7 +689,7 @@ inline std::expected<Result, JSValueRef> performPropertyOperation(NSStringFuncti
     if (exception)
         return [_context valueFromNotifyException:exception];
 
-    auto name = OpaqueJSString::tryCreate(method);
+    auto name = OpaqueJSString::tryCreate(StringImpl::create(method));
     JSValueRef function = JSObjectGetProperty([_context JSGlobalContextRef], thisObject, name.get(), &exception);
     if (exception)
         return [_context valueFromNotifyException:exception];
@@ -942,7 +942,7 @@ static id containerValueToObject(JSGlobalContextRef context, JSContainerConverto
             ASSERT([current.objc isKindOfClass:[NSMutableArray class]]);
             RetainPtr array = dynamic_objc_cast<NSMutableArray>(current.objc);
 
-            auto lengthString = OpaqueJSString::tryCreate("length"_s);
+            auto lengthString = OpaqueJSString::tryCreate("length"_si);
             unsigned length = JSC::toUInt32(JSValueToNumber(context, JSObjectGetProperty(context, js, lengthString.get(), 0), 0));
 
             for (unsigned i = 0; i < length; ++i) {
@@ -1037,7 +1037,7 @@ id valueToArray(JSGlobalContextRef context, JSValueRef value, JSValueRef* except
 
     JSC::JSLockHolder locker(toJS(context));
     if (!(JSValueIsNull(context, value) || JSValueIsUndefined(context, value))) {
-        JSC::JSObject* exceptionObject = JSC::createTypeError(toJS(context), "Cannot convert primitive to NSArray"_s);
+        JSC::JSObject* exceptionObject = JSC::createTypeError(toJS(context), "Cannot convert primitive to NSArray"_si);
         *exception = toRef(exceptionObject);
 #if ENABLE(REMOTE_INSPECTOR)
         reportExceptionToInspector(context, exceptionObject);
@@ -1059,7 +1059,7 @@ id valueToDictionary(JSGlobalContextRef context, JSValueRef value, JSValueRef* e
 
     JSC::JSLockHolder locker(toJS(context));
     if (!(JSValueIsNull(context, value) || JSValueIsUndefined(context, value))) {
-        JSC::JSObject* exceptionObject = JSC::createTypeError(toJS(context), "Cannot convert primitive to NSDictionary"_s);
+        JSC::JSObject* exceptionObject = JSC::createTypeError(toJS(context), "Cannot convert primitive to NSDictionary"_si);
         *exception = toRef(exceptionObject);
 #if ENABLE(REMOTE_INSPECTOR)
         reportExceptionToInspector(context, exceptionObject);
@@ -1152,7 +1152,7 @@ static ObjcContainerConvertor::Task objectToValueWithoutCopy(JSContext *context,
             return { object, ((JSValue *)object)->m_value, ContainerNone };
 
         if (auto *nsString = dynamic_objc_cast<NSString>(object)) {
-            auto string = OpaqueJSString::tryCreate(nsString);
+            auto string = OpaqueJSString::tryCreate(StringImpl::create(nsString));
             return { object, JSValueMakeString(contextRef, string.get()), ContainerNone };
         }
 
@@ -1209,7 +1209,7 @@ JSValueRef objectToValue(JSContext *context, id object)
             RetainPtr dictionary = dynamic_objc_cast<NSDictionary>(current.objc);
             for (id key in [dictionary.get() keyEnumerator]) {
                 if (RetainPtr keyString = dynamic_objc_cast<NSString>(key)) {
-                    auto propertyName = OpaqueJSString::tryCreate(keyString.get());
+                    auto propertyName = OpaqueJSString::tryCreate(StringImpl::create(keyString.get()));
                     JSObjectSetProperty(contextRef, js, propertyName.get(), convertor.convert([dictionary.get() objectForKey:key]), 0, 0);
                 }
             }
@@ -1255,7 +1255,7 @@ struct StructTagHandler {
     SEL typeToValueSEL;
     SEL valueToTypeSEL;
 };
-typedef UncheckedKeyHashMap<String, StructTagHandler> StructHandlers;
+typedef UncheckedKeyHashMap<RefPtr<StringImpl>, StructTagHandler> StructHandlers;
 
 static StructHandlers* createStructHandlerMap()
 {
@@ -1287,7 +1287,7 @@ static StructHandlers* createStructHandlerMap()
             return;
         {
             auto type = adoptSystemMalloc(method_copyArgumentType(method, 2));
-            structHandlers->add(byteCast<Latin1Character>(unsafeSpan(type.get())), StructTagHandler { selector, nullptr });
+            structHandlers->add(StringImpl::create(byteCast<Latin1Character>(unsafeSpan(type.get()))), StructTagHandler { selector, nullptr });
         }
     });
 
@@ -1303,7 +1303,7 @@ static StructHandlers* createStructHandlerMap()
             return;
         // Try to find a matching valueWith<Foo>:context: method.
         auto type = adoptSystemMalloc(method_copyReturnType(method));
-        StructHandlers::iterator iter = structHandlers->find(String::fromLatin1(type.get()));
+        StructHandlers::iterator iter = structHandlers->find(StringImpl::fromLatin1(type.get()));
         if (iter == structHandlers->end())
             return;
         StructTagHandler& handler = iter->value;
@@ -1320,7 +1320,7 @@ static StructHandlers* createStructHandlerMap()
     });
 
     // Step 3: clean up - remove entries where we found prospective valueWith<Foo>:inContext: conversions, but no matching to<Foo> methods.
-    typedef UncheckedKeyHashSet<String> RemoveSet;
+    typedef UncheckedKeyHashSet<RefPtr<StringImpl>> RemoveSet;
     RemoveSet removeSet;
     for (StructHandlers::iterator iter = structHandlers->begin(); iter != structHandlers->end(); ++iter) {
         StructTagHandler& handler = iter->value;
@@ -1341,7 +1341,7 @@ static StructTagHandler* handerForStructTag(const char* encodedType)
 
     static StructHandlers* structHandlers = createStructHandlerMap();
 
-    StructHandlers::iterator iter = structHandlers->find(String::fromLatin1(encodedType));
+    StructHandlers::iterator iter = structHandlers->find(StringImpl::fromLatin1(encodedType));
     if (iter == structHandlers->end())
         return 0;
     return &iter->value;

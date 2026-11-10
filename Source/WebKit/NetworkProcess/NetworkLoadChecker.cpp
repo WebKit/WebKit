@@ -60,7 +60,7 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkLoadChecker);
 
-NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, NetworkSchemeRegistry* schemeRegistry, FetchOptions&& options, PAL::SessionID sessionID, std::optional<WebPageProxyIdentifier> webPageProxyID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, DocumentURL&& documentURL, RefPtr<SecurityOrigin>&& sourceOrigin, RefPtr<SecurityOrigin>&& topOrigin, RefPtr<SecurityOrigin>&& parentOrigin, PreflightPolicy preflightPolicy, String&& referrer, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType)
+NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, NetworkSchemeRegistry* schemeRegistry, FetchOptions&& options, PAL::SessionID sessionID, std::optional<WebPageProxyIdentifier> webPageProxyID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, DocumentURL&& documentURL, RefPtr<SecurityOrigin>&& sourceOrigin, RefPtr<SecurityOrigin>&& topOrigin, RefPtr<SecurityOrigin>&& parentOrigin, PreflightPolicy preflightPolicy, RefPtr<StringImpl>&& referrer, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType)
     : m_options(WTF::move(options))
     , m_allowPrivacyProxy(allowPrivacyProxy)
     , m_advancedPrivacyProtections(advancedPrivacyProtections)
@@ -125,9 +125,9 @@ void NetworkLoadChecker::check(ResourceRequest&& request, ContentSecurityPolicyC
     checkRequest(WTF::move(request), client, WTF::move(handler));
 }
 
-static inline NetworkLoadChecker::RedirectionRequestOrError redirectionError(const ResourceResponse& redirectResponse, String&& errorMessage)
+static inline NetworkLoadChecker::RedirectionRequestOrError redirectionError(const ResourceResponse& redirectResponse, RefPtr<StringImpl>&& errorMessage)
 {
-    return makeUnexpected(ResourceError { String { }, 0, redirectResponse.url(), WTF::move(errorMessage), ResourceError::Type::AccessControl });
+    return makeUnexpected(ResourceError { nullString(), 0, redirectResponse.url(), WTF::move(errorMessage), ResourceError::Type::AccessControl });
 }
 
 void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, ContentSecurityPolicyClient* client, RedirectionValidationHandler&& handler)
@@ -165,7 +165,7 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceReq
     }
 
     if (++m_redirectCount > 20) {
-        handler(redirectionError(redirectResponse, "Load cannot follow more than 20 redirections"_s));
+        handler(redirectionError(redirectResponse, "Load cannot follow more than 20 redirections"_si));
         return;
     }
 
@@ -272,7 +272,7 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
 
     auto result = passesAccessControlCheck(response, m_storedCredentialsPolicy, *protect(origin()), m_networkResourceLoader.get());
     if (!result)
-        return ResourceError { String { }, 0, m_url, WTF::move(result.error()), ResourceError::Type::AccessControl };
+        return ResourceError { nullString(), 0, m_url, WTF::move(result.error()), ResourceError::Type::AccessControl };
 
     response.setTainting(ResourceResponse::Tainting::Cors);
     return { };
@@ -305,7 +305,7 @@ bool NetworkLoadChecker::checkTAO(const ResourceResponse& response)
 // https://fetch.spec.whatwg.org/#append-to-a-requests-navigation-timing-allow-values-list
 void NetworkLoadChecker::appendToNavigationTimingAllowValuesList(const ResourceResponse& response)
 {
-    Vector<String> taoValues;
+    Vector<RefPtr<StringImpl>> taoValues;
     const auto& timingAllowOriginString = response.httpHeaderField(HTTPHeaderName::TimingAllowOrigin);
     for (auto valueWithSpace : StringView(timingAllowOriginString).split(',')) {
         auto value = valueWithSpace.trim(isASCIIWhitespaceWithoutFF<char16_t>);
@@ -315,9 +315,9 @@ void NetworkLoadChecker::appendToNavigationTimingAllowValuesList(const ResourceR
     m_navigationTimingAllowValuesList.append(WTF::move(taoValues));
 }
 
-auto NetworkLoadChecker::accessControlErrorForValidationHandler(String&& message) -> RequestOrRedirectionTripletOrError
+auto NetworkLoadChecker::accessControlErrorForValidationHandler(RefPtr<StringImpl>&& message) -> RequestOrRedirectionTripletOrError
 {
-    return ResourceError { String { }, 0, m_url, WTF::move(message), ResourceError::Type::AccessControl };
+    return ResourceError { nullString(), 0, m_url, WTF::move(message), ResourceError::Type::AccessControl };
 }
 
 void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurityPolicyClient* client, ValidationHandler&& handler)
@@ -332,7 +332,7 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
 
         if (!this->isAllowedByContentSecurityPolicy(request, client)) {
             contentSecurityPolicy = nullptr;
-            handler(this->accessControlErrorForValidationHandler("Blocked by Content Security Policy."_s));
+            handler(this->accessControlErrorForValidationHandler("Blocked by Content Security Policy."_si));
             return;
         }
     }
@@ -350,12 +350,12 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
             return handler({ ResourceError { ResourceError::Type::Cancellation }});
 
         if (result.value().results.shouldBlock()) {
-            handler(protectedThis->accessControlErrorForValidationHandler("Blocked by content extension"_s));
+            handler(protectedThis->accessControlErrorForValidationHandler("Blocked by content extension"_si));
             return;
         }
 
         if (protectedThis->shouldBlockForTrackingPolicy(result.value().request)) {
-            handler(protectedThis->accessControlErrorForValidationHandler("Blocked by tracking protections"_s));
+            handler(protectedThis->accessControlErrorForValidationHandler("Blocked by tracking protections"_si));
             return;
         }
 
@@ -665,7 +665,7 @@ ContentSecurityPolicy* NetworkLoadChecker::contentSecurityPolicy()
         // FIXME: Pass the URL of the protected resource instead of its origin.
         lazyInitialize(m_contentSecurityPolicy, makeUnique<ContentSecurityPolicy>(URL { protect(origin())->toRawString() }, nullptr, m_networkResourceLoader.get()));
         CheckedPtr checkedContentSecurityPolicy = m_contentSecurityPolicy.get();
-        checkedContentSecurityPolicy->didReceiveHeaders(*m_cspResponseHeaders, String { m_referrer }, ContentSecurityPolicy::ReportParsingErrors::No);
+        checkedContentSecurityPolicy->didReceiveHeaders(*m_cspResponseHeaders, RefPtr<StringImpl> { m_referrer }, ContentSecurityPolicy::ReportParsingErrors::No);
         if (!m_documentURL.isEmpty())
             checkedContentSecurityPolicy->setDocumentURL(m_documentURL);
     }

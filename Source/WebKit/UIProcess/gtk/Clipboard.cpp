@@ -58,12 +58,12 @@ static Clipboard& primary()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Clipboard);
 
-Clipboard& Clipboard::get(const String& name)
+Clipboard& Clipboard::get(StringImpl* name)
 {
-    if (name == "CLIPBOARD"_s)
+    if (equal(name, "CLIPBOARD"_s))
         return clipboard();
 
-    if (name == "PRIMARY"_s)
+    if (equal(name, "PRIMARY"_s))
         return primary();
 
     RELEASE_ASSERT_NOT_REACHED();

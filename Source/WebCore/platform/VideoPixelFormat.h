@@ -62,6 +62,6 @@ inline bool isHighBitDepthVideoPixelFormat(VideoPixelFormat format)
         || format == VideoPixelFormat::I444P10 || format == VideoPixelFormat::I444P12;
 }
 
-WEBCORE_EXPORT String convertVideoPixelFormatToString(VideoPixelFormat);
+WEBCORE_EXPORT RefPtr<StringImpl> convertVideoPixelFormatToString(VideoPixelFormat);
 
 } // namespace WebCore

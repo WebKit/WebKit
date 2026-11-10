@@ -52,14 +52,14 @@ public:
     void deref() const;
 
     void unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier);
-    void registerMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
+    void registerMDNSName(WebCore::ScriptExecutionContextIdentifier, StringImpl* ipAddress, CompletionHandler<void(StringImpl*, std::optional<WebCore::MDNSRegisterError>)>&&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
-    void finishedRegisteringMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, String&& mdnsName, std::optional<WebCore::MDNSRegisterError>, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
+    void finishedRegisteringMDNSName(WebCore::ScriptExecutionContextIdentifier, StringImpl* ipAddress, RefPtr<StringImpl>&& mdnsName, std::optional<WebCore::MDNSRegisterError>, CompletionHandler<void(StringImpl*, std::optional<WebCore::MDNSRegisterError>)>&&);
 
-    HashMap<WebCore::ScriptExecutionContextIdentifier, HashMap<String, String>> m_registeringDocuments;
+    HashMap<WebCore::ScriptExecutionContextIdentifier, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>> m_registeringDocuments;
 
     WeakRef<WebRTCNetworkBase> m_webRTCNetwork;
 };

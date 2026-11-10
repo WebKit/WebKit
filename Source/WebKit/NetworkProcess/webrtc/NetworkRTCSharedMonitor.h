@@ -71,7 +71,7 @@ private:
     void updateNetworks();
     void updateNetworksOnQueue();
 
-    void onGatheredNetworks(RTCNetwork::IPAddress&&, RTCNetwork::IPAddress&&, HashMap<String, RTCNetwork>&&);
+    void onGatheredNetworks(RTCNetwork::IPAddress&&, RTCNetwork::IPAddress&&, HashMap<RefPtr<StringImpl>, RTCNetwork>&&);
 
     WeakHashSet<NetworkRTCMonitor> m_observers;
 
@@ -83,10 +83,10 @@ private:
     RTCNetwork::IPAddress m_ipv4;
     RTCNetwork::IPAddress m_ipv6;
     int m_networkLastIndex { 0 };
-    HashMap<String, RTCNetwork> m_networkMap;
+    HashMap<RefPtr<StringImpl>, RTCNetwork> m_networkMap;
 #if PLATFORM(COCOA)
     RetainPtr<nw_path_monitor_t> m_nwMonitor;
-    HashMap<String, webrtc::AdapterType> m_adapterTypes;
+    HashMap<RefPtr<StringImpl>, webrtc::AdapterType> m_adapterTypes;
 #endif
 };
 

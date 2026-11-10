@@ -1560,7 +1560,7 @@ private:
         CodeFeatures features;
         unsigned usedPrivateNameCount;
     };
-    std::expected<ParseInnerResult, String> parseInner(const Identifier&, ParsingContext, std::optional<int> functionConstructorParametersEndPosition, const FixedVector<UnlinkedFunctionExecutable::ClassElementDefinition>*, const PrivateNameEnvironment* parentScopePrivateNames);
+    std::expected<ParseInnerResult, RefPtr<StringImpl>> parseInner(const Identifier&, ParsingContext, std::optional<int> functionConstructorParametersEndPosition, const FixedVector<UnlinkedFunctionExecutable::ClassElementDefinition>*, const PrivateNameEnvironment* parentScopePrivateNames);
 
     enum class FunctionParsePhase { Parameters, Body };
 
@@ -1593,8 +1593,8 @@ private:
 
     struct SavePointWithError : public SavePoint {
         bool lexerError;
-        String lexerErrorMessage;
-        String parserErrorMessage;
+        RefPtr<StringImpl> lexerErrorMessage;
+        RefPtr<StringImpl> parserErrorMessage;
     };
 
     // Used to determine type of error to report.
@@ -1691,11 +1691,11 @@ private:
         return m_token.location();
     }
 
-    void setErrorMessage(const String& message)
+    void setErrorMessage(StringImpl* message)
     {
-        ASSERT_WITH_MESSAGE(!message.isEmpty(), "Attempted to set the empty string as an error message. Likely caused by invalid UTF8 used when creating the message.");
+        ASSERT_WITH_MESSAGE(!isEmpty(message), "Attempted to set the empty string as an error message. Likely caused by invalid UTF8 used when creating the message.");
         m_errorMessage = message;
-        if (m_errorMessage.isEmpty())
+        if (isEmpty(m_errorMessage))
             m_errorMessage = "Unparseable script"_s;
     }
     
@@ -1703,7 +1703,7 @@ private:
     template <typename... Args>
     NEVER_INLINE void logError(bool, Args&&...);
     
-    NEVER_INLINE void updateErrorWithNameAndMessage(ASCIILiteral beforeMessage, const String& name, ASCIILiteral afterMessage)
+    NEVER_INLINE void updateErrorWithNameAndMessage(ASCIILiteral beforeMessage, StringImpl* name, ASCIILiteral afterMessage)
     {
         m_errorMessage = makeString(beforeMessage, " '"_s, name, "' "_s, afterMessage);
     }
@@ -1711,8 +1711,8 @@ private:
     NEVER_INLINE void updateErrorMessage(const char* msg)
     {
         ASSERT(msg);
-        m_errorMessage = String::fromLatin1(msg);
-        ASSERT(!m_errorMessage.isNull());
+        m_errorMessage = StringImpl::fromLatin1(msg);
+        ASSERT(m_errorMessage);
     }
 
     ALWAYS_INLINE void recordPauseLocation(const JSTextPosition&);
@@ -1916,7 +1916,7 @@ private:
 
     bool hasError() const
     {
-        return !m_errorMessage.isNull();
+        return !!m_errorMessage;
     }
 
     bool isAllowedIdentifierLet(const JSToken& token)
@@ -2119,7 +2119,7 @@ private:
     ALWAYS_INLINE void restoreSavePoint(TreeBuilder& context, const SavePoint& savePoint)
     {
         internalRestoreState(context, savePoint);
-        m_errorMessage = String();
+        m_errorMessage = nullptr;
     }
 
     // Fields up to m_seenArgumentsDotLength are grouped so that each group fills one cache line.
@@ -2132,7 +2132,7 @@ private:
     // offset 64
     const SourceCode* m_source;
     std::unique_ptr<LexerType> m_lexer;
-    String m_errorMessage;
+    RefPtr<StringImpl> m_errorMessage;
     DebuggerParseData* m_debuggerParseData;
     RefPtr<SourceProviderCache> m_functionCache;
     RefPtr<ModuleScopeData> m_moduleScopeData;
@@ -2192,14 +2192,14 @@ template <class ParsedNode>
 std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const Identifier& calleeName, ParsingContext parsingContext, std::optional<int> functionConstructorParametersEndPosition, const PrivateNameEnvironment* parentScopePrivateNames, const FixedVector<UnlinkedFunctionExecutable::ClassElementDefinition>* classElementDefinitions)
 {
     int errLine;
-    String errMsg;
+    RefPtr<StringImpl> errMsg;
     SourceParseMode parseMode = sourceParseMode();
 
     if (ParsedNode::scopeIsFunction)
         m_lexer->setIsReparsingFunction();
 
     errLine = -1;
-    errMsg = String();
+    errMsg = nullptr;
 
     JSTokenLocation startLocation(tokenLocation());
 
@@ -2207,13 +2207,13 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
 
     int errorOffset = m_lexer->currentOffset();
     bool lexError = m_lexer->sawError();
-    String lexErrorMessage = lexError ? m_lexer->getErrorMessage() : String();
-    ASSERT(lexErrorMessage.isNull() != lexError);
+    RefPtr<StringImpl> lexErrorMessage = lexError ? m_lexer->getErrorMessage() : nullptr;
+    ASSERT(!lexErrorMessage != lexError);
     m_lexer->clear();
 
     if (!parseResult || lexError) {
         errLine = static_cast<int>(m_source->provider()->documentLineColumnForOffset(errorOffset).line);
-        errMsg = !lexErrorMessage.isNull() ? lexErrorMessage : parseResult.error();
+        errMsg = !!lexErrorMessage ? lexErrorMessage : parseResult.error();
     }
 
     std::unique_ptr<ParsedNode> result;
@@ -2238,8 +2238,10 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
         result->setUsedPrivateNameCount(parseResult.value().usedPrivateNameCount);
 
         if (!isFunctionParseMode(parseMode)) {
-            m_source->provider()->setSourceURLDirective(m_lexer->sourceURLDirective());
-            m_source->provider()->setSourceMappingURLDirective(m_lexer->sourceMappingURLDirective());
+            RefPtr sourceURLDirective = m_lexer->sourceURLDirective();
+            m_source->provider()->setSourceURLDirective(sourceURLDirective);
+            RefPtr sourceMappingURLDirective = m_lexer->sourceMappingURLDirective();
+            m_source->provider()->setSourceMappingURLDirective(sourceMappingURLDirective);
         }
     } else {
         // We can never see a syntax error when reparsing a function, since we should have

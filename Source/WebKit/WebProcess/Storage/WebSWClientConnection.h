@@ -86,7 +86,7 @@ private:
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source) final;
     void postMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerData&& source, const WebCore::SecurityOriginData& sourceOrigin);
     void postMessageToServiceWorkerClientAndNotifyWhenDispatched(WebCore::ScriptExecutionContextIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerData&& source, const WebCore::SecurityOriginData& sourceOrigin, CompletionHandler<void()>&&);
-    void registerServiceWorkerClient(const WebCore::ClientOrigin&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent) final;
+    void registerServiceWorkerClient(const WebCore::ClientOrigin&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, RefPtr<StringImpl>&& userAgent) final;
     void unregisterServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier) final;
     void scheduleUnregisterJobInServer(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::ServiceWorkerOrClientIdentifier, CompletionHandler<void(WebCore::ExceptionOr<bool>&&)>&&) final;
 
@@ -109,18 +109,18 @@ private:
     void getPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier, GetPushSubscriptionCallback&&) final;
     void getPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier, GetPushPermissionStateCallback&&) final;
 #if ENABLE(NOTIFICATION_EVENT)
-    void getNotifications(const URL&, const String&, GetNotificationsCallback&&) final;
+    void getNotifications(const URL&, StringImpl*, GetNotificationsCallback&&) final;
 #endif
     void enableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) final;
     void disableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) final;
-    void setNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier, String&&, ExceptionOrVoidCallback&&) final;
+    void setNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier, RefPtr<StringImpl>&&, ExceptionOrVoidCallback&&) final;
     void getNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrNavigationPreloadStateCallback&&) final;
 
-    void startBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier, const String&, Vector<WebCore::BackgroundFetchRequest>&&, WebCore::BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&) final;
-    void backgroundFetchInformation(WebCore::ServiceWorkerRegistrationIdentifier, const String&, ExceptionOrBackgroundFetchInformationCallback&&) final;
+    void startBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier, StringImpl*, Vector<WebCore::BackgroundFetchRequest>&&, WebCore::BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&) final;
+    void backgroundFetchInformation(WebCore::ServiceWorkerRegistrationIdentifier, StringImpl*, ExceptionOrBackgroundFetchInformationCallback&&) final;
     void backgroundFetchIdentifiers(WebCore::ServiceWorkerRegistrationIdentifier, BackgroundFetchIdentifiersCallback&&) final;
-    void abortBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier, const String&, AbortBackgroundFetchCallback&&) final;
-    void matchBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier, const String&, WebCore::RetrieveRecordsOptions&&, MatchBackgroundFetchCallback&&) final;
+    void abortBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier, StringImpl*, AbortBackgroundFetchCallback&&) final;
+    void matchBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier, StringImpl*, WebCore::RetrieveRecordsOptions&&, MatchBackgroundFetchCallback&&) final;
     void retrieveRecordResponse(WebCore::BackgroundFetchRecordIdentifier, RetrieveRecordResponseCallback&&) final;
     void retrieveRecordResponseBody(WebCore::BackgroundFetchRecordIdentifier, RetrieveRecordResponseBodyCallback&&) final;
 

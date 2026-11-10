@@ -63,7 +63,7 @@ public:
 #endif
     struct FilterResult {
         bool handled { false };
-        String keyText;
+        RefPtr<StringImpl> keyText;
     };
     FilterResult filterKeyEvent(PlatformEventKey*);
 
@@ -75,7 +75,7 @@ public:
     void notifyFocusedOut();
     void notifyMouseButtonPress();
     void notifyCursorRect(const WebCore::IntRect&);
-    void notifySurrounding(const String&, uint64_t, uint64_t);
+    void notifySurrounding(StringImpl*, uint64_t, uint64_t);
 
     void cancelComposition();
 
@@ -104,7 +104,7 @@ private:
     GRefPtr<WebKitInputMethodContext> m_context;
 
     struct {
-        String text;
+        RefPtr<StringImpl> text;
         Vector<WebCore::CompositionUnderline> underlines;
         unsigned cursorOffset;
     } m_preedit;
@@ -117,11 +117,11 @@ private:
 #endif
     } m_filteringContext;
 
-    String m_compositionResult;
+    RefPtr<StringImpl> m_compositionResult;
     WebCore::IntRect m_cursorRect;
 
     struct {
-        String text;
+        RefPtr<StringImpl> text;
         uint64_t cursorPosition;
         uint64_t selectionPosition;
     } m_surrounding;

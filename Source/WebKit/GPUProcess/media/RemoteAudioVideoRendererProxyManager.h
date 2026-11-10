@@ -122,7 +122,7 @@ private:
     void flushTrack(RemoteAudioVideoRendererIdentifier, TrackIdentifier, CompletionHandler<void(bool)>&&);
 
     void applicationWillResignActive(RemoteAudioVideoRendererIdentifier);
-    void setSpatialTrackingInfo(RemoteAudioVideoRendererIdentifier, bool, WebCore::MediaPlayerSoundStageSize, const String&, const String&, const String&);
+    void setSpatialTrackingInfo(RemoteAudioVideoRendererIdentifier, bool, WebCore::MediaPlayerSoundStageSize, StringImpl*, StringImpl*, StringImpl*);
 
     void notifyWhenErrorOccurs(RemoteAudioVideoRendererIdentifier, CompletionHandler<void(WebCore::PlatformMediaError)>&&);
 
@@ -140,7 +140,7 @@ private:
     void setMuted(RemoteAudioVideoRendererIdentifier, bool);
     void setPreservesPitchAndCorrectionAlgorithm(RemoteAudioVideoRendererIdentifier, bool, std::optional<WebCore::MediaPlayerPitchCorrectionAlgorithm>);
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
-    void setOutputDeviceId(RemoteAudioVideoRendererIdentifier, const String&);
+    void setOutputDeviceId(RemoteAudioVideoRendererIdentifier, StringImpl*);
 #endif
 
     // VideoInterface

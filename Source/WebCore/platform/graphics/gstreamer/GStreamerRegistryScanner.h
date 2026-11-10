@@ -44,7 +44,7 @@ class GStreamerRegistryScanner {
 public:
     static bool singletonWasInitialized();
     static GStreamerRegistryScanner& singleton();
-    static void getSupportedDecodingTypes(HashSet<String>&);
+    static void getSupportedDecodingTypes(HashSet<RefPtr<StringImpl>>&);
 
     explicit GStreamerRegistryScanner(bool isMediaSource = false);
     ~GStreamerRegistryScanner() = default;
@@ -57,8 +57,8 @@ public:
         Encoding
     };
 
-    const HashSet<String>& mimeTypeSet(Configuration) const;
-    bool isContainerTypeSupported(Configuration, const String& containerType) const;
+    const HashSet<RefPtr<StringImpl>>& mimeTypeSet(Configuration) const;
+    bool isContainerTypeSupported(Configuration, StringImpl* containerType) const;
 
     struct RegistryLookupResult {
         bool isSupported { false };
@@ -99,9 +99,9 @@ public:
     };
 
     enum class CaseSensitiveCodecName : bool { No, Yes };
-    CodecLookupResult isCodecSupported(Configuration, const String& codec, bool usingHardware = false, CaseSensitiveCodecName = CaseSensitiveCodecName::Yes) const;
+    CodecLookupResult isCodecSupported(Configuration, StringImpl* codec, bool usingHardware = false, CaseSensitiveCodecName = CaseSensitiveCodecName::Yes) const;
     MediaPlayerEnums::SupportsType isContentTypeSupported(Configuration, const ContentType&, const Vector<ContentType>& contentTypesRequiringHardwareSupport, CaseSensitiveCodecName = CaseSensitiveCodecName::Yes) const;
-    bool areAllCodecsSupported(Configuration, const Vector<String>& codecs, bool shouldCheckForHardwareUse = false) const;
+    bool areAllCodecsSupported(Configuration, const Vector<RefPtr<StringImpl>>& codecs, bool shouldCheckForHardwareUse = false) const;
 
     CodecLookupResult areCapsSupported(Configuration, const GRefPtr<GstCaps>&, bool shouldCheckForHardwareUse) const;
 
@@ -132,8 +132,8 @@ protected:
         GList* factory(Type) const;
 
         enum class CheckHardwareClassifier : bool { No, Yes };
-        RegistryLookupResult hasElementForMediaType(Type, const ASCIILiteral& capsString, CheckHardwareClassifier = CheckHardwareClassifier::No, std::optional<Vector<String>> disallowedList = std::nullopt) const;
-        RegistryLookupResult hasElementForCaps(Type, const GRefPtr<GstCaps>&, CheckHardwareClassifier = CheckHardwareClassifier::No, std::optional<Vector<String>> disallowedList = std::nullopt) const;
+        RegistryLookupResult hasElementForMediaType(Type, const ASCIILiteral& capsString, CheckHardwareClassifier = CheckHardwareClassifier::No, std::optional<Vector<RefPtr<StringImpl>>> disallowedList = std::nullopt) const;
+        RegistryLookupResult hasElementForCaps(Type, const GRefPtr<GstCaps>&, CheckHardwareClassifier = CheckHardwareClassifier::No, std::optional<Vector<RefPtr<StringImpl>>> disallowedList = std::nullopt) const;
 
         GList* audioDecoderFactories { nullptr };
         GList* audioParserFactories { nullptr };
@@ -163,17 +163,17 @@ protected:
     void fillMimeTypeSetFromCapsMapping(const ElementFactories&, const Vector<GstCapsWebKitMapping>&);
 
 private:
-    CodecLookupResult isAVC1CodecSupported(Configuration, const String& codec, bool shouldCheckForHardwareUse) const;
-    CodecLookupResult isHEVCCodecSupported(Configuration, const String& codec, bool shouldCheckForHardwareUse) const;
+    CodecLookupResult isAVC1CodecSupported(Configuration, StringImpl* codec, bool shouldCheckForHardwareUse) const;
+    CodecLookupResult isHEVCCodecSupported(Configuration, StringImpl* codec, bool shouldCheckForHardwareUse) const;
 
     ASCIILiteral configurationNameForLogging(Configuration) const;
-    bool supportsFeatures(const String& features) const;
+    bool supportsFeatures(StringImpl* features) const;
 
     bool m_isMediaSource { false };
-    HashSet<String> m_decoderMimeTypeSet;
-    HashMap<String, RegistryLookupResult> m_decoderCodecMap;
-    HashSet<String> m_encoderMimeTypeSet;
-    HashMap<String, RegistryLookupResult> m_encoderCodecMap;
+    HashSet<RefPtr<StringImpl>> m_decoderMimeTypeSet;
+    HashMap<RefPtr<StringImpl>, RegistryLookupResult> m_decoderCodecMap;
+    HashSet<RefPtr<StringImpl>> m_encoderMimeTypeSet;
+    HashMap<RefPtr<StringImpl>, RegistryLookupResult> m_encoderCodecMap;
 };
 
 } // namespace WebCore

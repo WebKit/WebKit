@@ -39,14 +39,14 @@ public:
         Ref<DOMFormData> formData;
     };
 
-    NODELETE static Ref<FormDataEvent> create(const AtomString&, Init&&);
-    NODELETE static Ref<FormDataEvent> create(const AtomString&, CanBubble, IsCancelable, IsComposed, Ref<DOMFormData>&&);
+    NODELETE static Ref<FormDataEvent> create(AtomStringImpl*, Init&&);
+    NODELETE static Ref<FormDataEvent> create(AtomStringImpl*, CanBubble, IsCancelable, IsComposed, Ref<DOMFormData>&&);
 
     const DOMFormData& formData() const { return m_formData.get(); }
     
 private:
-    FormDataEvent(const AtomString&, Init&&);
-    FormDataEvent(const AtomString&, CanBubble, IsCancelable, IsComposed, Ref<DOMFormData>&&);
+    FormDataEvent(AtomStringImpl*, Init&&);
+    FormDataEvent(AtomStringImpl*, CanBubble, IsCancelable, IsComposed, Ref<DOMFormData>&&);
 
     const Ref<DOMFormData> m_formData;
 };

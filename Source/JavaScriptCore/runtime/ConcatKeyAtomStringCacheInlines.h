@@ -56,7 +56,7 @@ inline JSString* ConcatKeyAtomStringCache::getOrInsert(VM& vm, JSString* s0, JSS
     }
 
     auto value = variable->tryGetValue();
-    SUPPRESS_UNCOUNTED_LOCAL auto* impl = value->impl();
+    SUPPRESS_UNCOUNTED_LOCAL auto* impl = value->get();
 
     if (!impl)
         return nullptr;

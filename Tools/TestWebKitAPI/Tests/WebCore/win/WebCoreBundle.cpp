@@ -38,12 +38,12 @@ public:
         if (!length || (length == MAX_PATH && GetLastError() == ERROR_INSUFFICIENT_BUFFER))
             return;
 
-        String path(buffer, length);
+        RefPtr<StringImpl> path = StringImpl::create(buffer, length);
         m_root = FileSystem::pathByAppendingComponent(FileSystem::parentPath(path), "WebKit.resources"_s);
     }
 
 protected:
-    String m_root;
+    RefPtr<StringImpl> m_root;
 };
 
 TEST_F(WebCoreBundleTest, BundleRootPath)

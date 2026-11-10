@@ -55,9 +55,9 @@ public:
 
     DECLARE_VISIT_CHILDREN;
 
-    JS_EXPORT_PRIVATE static JSNativeStdFunction* create(VM&, JSGlobalObject*, unsigned length, const String& name, NativeStdFunction&&, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
+    JS_EXPORT_PRIVATE static JSNativeStdFunction* create(VM&, JSGlobalObject*, unsigned length, StringImpl* name, NativeStdFunction&&, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
 
-    static JSNativeStdFunction* create(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, NativeStdFunction&& nativeFunction, auto... captures)
+    static JSNativeStdFunction* create(VM& vm, JSGlobalObject* globalObject, unsigned length, StringImpl* name, NativeStdFunction&& nativeFunction, auto... captures)
         requires (sizeof...(captures) > 0)
     {
         NativeExecutable* executable = getHostFunction(vm, NoIntrinsic, callHostFunctionAsConstructor, length, name);
@@ -79,7 +79,7 @@ private:
     {
     }
 
-    JS_EXPORT_PRIVATE static NativeExecutable* getHostFunction(VM&, Intrinsic, NativeFunction, unsigned length, const String& name);
+    JS_EXPORT_PRIVATE static NativeExecutable* getHostFunction(VM&, Intrinsic, NativeFunction, unsigned length, StringImpl* name);
 
     NativeStdFunction m_function;
     FixedVector<WriteBarrier<Unknown>> m_captures;

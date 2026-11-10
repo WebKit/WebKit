@@ -38,13 +38,13 @@ class WebAssemblyScriptBufferSourceProvider final : public JSC::BaseWebAssemblyS
 public:
     static Ref<WebAssemblyScriptBufferSourceProvider> create(const ScriptBuffer& scriptBuffer, URL&& sourceURL, Ref<JSC::ScriptFetcher>&& scriptFetcher)
     {
-        String sourceURLString = sourceURL.string();
+        RefPtr<StringImpl> sourceURLString = sourceURL.string();
         return adoptRef(*new WebAssemblyScriptBufferSourceProvider(scriptBuffer, JSC::SourceOrigin { WTF::move(sourceURL), WTF::move(scriptFetcher) }, WTF::move(sourceURLString)));
     }
 
     unsigned hash() const final
     {
-        return m_source.impl()->hash();
+        return m_source.get()->hash();
     }
 
     StringView source() const final
@@ -87,17 +87,17 @@ public:
     }
 
 private:
-    WebAssemblyScriptBufferSourceProvider(const ScriptBuffer& scriptBuffer, const JSC::SourceOrigin& sourceOrigin, String sourceURL)
+    WebAssemblyScriptBufferSourceProvider(const ScriptBuffer& scriptBuffer, const JSC::SourceOrigin& sourceOrigin, RefPtr<StringImpl> sourceURL)
         : BaseWebAssemblySourceProvider(sourceOrigin, WTF::move(sourceURL))
         , m_scriptBuffer(scriptBuffer)
         , m_buffer(nullptr)
-        , m_source("[WebAssembly source]"_s)
+        , m_source("[WebAssembly source]"_si)
     {
     }
 
     ScriptBuffer m_scriptBuffer;
     RefPtr<const SharedBuffer> m_buffer;
-    String m_source;
+    RefPtr<StringImpl> m_source;
 };
 
 } // namespace WebCore

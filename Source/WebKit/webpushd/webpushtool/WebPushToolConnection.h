@@ -54,18 +54,18 @@ enum class WaitForServiceToExist : bool {
 class Connection final : public RefCountedAndCanMakeWeakPtr<Connection>, public IPC::MessageSender {
     WTF_MAKE_TZONE_ALLOCATED(Connection);
 public:
-    static Ref<Connection> create(PreferTestService, String bundleIdentifier, String pushPartition);
-    Connection(PreferTestService, String bundleIdentifier, String pushPartition);
+    static Ref<Connection> create(PreferTestService, RefPtr<StringImpl> bundleIdentifier, RefPtr<StringImpl> pushPartition);
+    Connection(PreferTestService, RefPtr<StringImpl> bundleIdentifier, RefPtr<StringImpl> pushPartition);
     ~Connection() final { }
 
     void connectToService(WaitForServiceToExist);
 
-    String bundleIdentifier() const { return m_bundleIdentifier; }
-    String pushPartition() const { return m_pushPartition; }
+    RefPtr<StringImpl> bundleIdentifier() const { return m_bundleIdentifier; }
+    RefPtr<StringImpl> pushPartition() const { return m_pushPartition; }
 
-    void sendPushMessage(PushMessageForTesting&&, CompletionHandler<void(String)>&&);
-    void getPushPermissionState(const String& scope, CompletionHandler<void(WebCore::PushPermissionState)>&&);
-    void requestPushPermission(const String& scope, CompletionHandler<void(bool)>&&);
+    void sendPushMessage(PushMessageForTesting&&, CompletionHandler<void(RefPtr<StringImpl>)>&&);
+    void getPushPermissionState(StringImpl* scope, CompletionHandler<void(WebCore::PushPermissionState)>&&);
+    void requestPushPermission(StringImpl* scope, CompletionHandler<void(bool)>&&);
 
 private:
     void sendAuditToken();
@@ -75,8 +75,8 @@ private:
     IPC::Connection* messageSenderConnection() const final { return nullptr; }
     uint64_t messageSenderDestinationID() const final { return 0; }
 
-    String m_bundleIdentifier;
-    String m_pushPartition;
+    RefPtr<StringImpl> m_bundleIdentifier;
+    RefPtr<StringImpl> m_pushPartition;
 
     OSObjectPtr<xpc_connection_t> m_connection;
     ASCIILiteral m_serviceName;

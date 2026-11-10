@@ -37,14 +37,14 @@ enum class WebExtensionFirstTimeRegistration : bool { No, Yes };
 
 struct WebExtensionRegisteredScriptParameters {
 
-    std::optional<Vector<String>> css;
-    std::optional<Vector<String>> js;
+    std::optional<Vector<RefPtr<StringImpl>>> css;
+    std::optional<Vector<RefPtr<StringImpl>>> js;
 
-    String identifier;
+    RefPtr<StringImpl> identifier;
     std::optional<WebExtension::InjectionTime> injectionTime;
 
-    std::optional<Vector<String>> excludeMatchPatterns;
-    std::optional<Vector<String>> matchPatterns;
+    std::optional<Vector<RefPtr<StringImpl>>> excludeMatchPatterns;
+    std::optional<Vector<RefPtr<StringImpl>>> matchPatterns;
 
     std::optional<bool> allFrames;
     std::optional<WebCore::UserContentMatchParentFrame> matchParentFrame;

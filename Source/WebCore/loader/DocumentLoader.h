@@ -146,7 +146,7 @@ enum class MouseEventPolicy : uint8_t {
 enum class ModalContainerObservationPolicy : bool { Disabled, Prompt };
 
 enum class ContentExtensionDefaultEnablement : bool { Disabled, Enabled };
-using ContentExtensionEnablement = std::pair<ContentExtensionDefaultEnablement, HashSet<String>>;
+using ContentExtensionEnablement = std::pair<ContentExtensionDefaultEnablement, HashSet<RefPtr<StringImpl>>>;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentLoader);
 
@@ -208,12 +208,12 @@ public:
 
     const URL& originalURL() const;
     const URL& responseURL() const;
-    const String& responseMIMEType() const;
+    const RefPtr<StringImpl>& responseMIMEType() const;
 #if PLATFORM(IOS_FAMILY)
     // FIXME: This method seems to violate the encapsulation of this class.
-    WEBCORE_EXPORT void setResponseMIMEType(const String&);
+    WEBCORE_EXPORT void setResponseMIMEType(StringImpl*);
 #endif
-    const String& currentContentType() const;
+    const RefPtr<StringImpl>& currentContentType() const;
     void replaceRequestURLForSameDocumentNavigation(const URL&);
     bool isStopping() const { return m_isStopping; }
     void stopLoading();
@@ -237,7 +237,7 @@ public:
     bool wasOnloadDispatched() { return m_wasOnloadDispatched; }
     WEBCORE_EXPORT bool isLoadingInAPISense() const;
     WEBCORE_EXPORT void setTitle(const StringWithDirection&);
-    const String& overrideEncoding() const LIFETIME_BOUND { return m_overrideEncoding; }
+    const RefPtr<StringImpl>& overrideEncoding() const LIFETIME_BOUND { return m_overrideEncoding; }
 
 #if PLATFORM(COCOA)
     void schedule(SchedulePair&);
@@ -248,7 +248,7 @@ public:
     void setArchive(Ref<Archive>&&);
     WEBCORE_EXPORT void addAllArchiveResources(Archive&);
     WEBCORE_EXPORT void addArchiveResource(Ref<ArchiveResource>&&);
-    RefPtr<Archive> popArchiveForSubframe(const String& frameName, const URL&);
+    RefPtr<Archive> popArchiveForSubframe(StringImpl* frameName, const URL&);
     NODELETE WEBCORE_EXPORT SharedBuffer* parsedArchiveData() const;
 
     bool hasArchiveResourceCollection() const { return !!m_archiveResourceCollection; }
@@ -289,7 +289,7 @@ public:
     NavigationHistoryBehavior navigationHistoryBehavior() const { return m_navigationHistoryBehavior; }
     void setNavigationHistoryBehavior(NavigationHistoryBehavior historyHandling) { m_navigationHistoryBehavior = historyHandling; }
 
-    void setOverrideEncoding(const String& encoding) { m_overrideEncoding = encoding; }
+    void setOverrideEncoding(StringImpl* encoding) { m_overrideEncoding = encoding; }
     void setLastCheckedRequest(ResourceRequest&& request) { m_lastCheckedRequest = WTF::move(request); }
     const ResourceRequest& lastCheckedRequest() LIFETIME_BOUND { return m_lastCheckedRequest; }
 
@@ -304,12 +304,12 @@ public:
     // these accessors return the URL that would have been used if a history
     // item were created. This allows WebKit to link history items reflecting
     // redirects into a chain from start to finish.
-    const String& clientRedirectSourceForHistory() const { return m_clientRedirectSourceForHistory; } // null if no client redirect occurred.
-    String clientRedirectDestinationForHistory() const { return urlForHistory().string(); }
-    void setClientRedirectSourceForHistory(const String& clientRedirectSourceForHistory) { m_clientRedirectSourceForHistory = clientRedirectSourceForHistory; }
+    const RefPtr<StringImpl>& clientRedirectSourceForHistory() const { return m_clientRedirectSourceForHistory; } // null if no client redirect occurred.
+    RefPtr<StringImpl> clientRedirectDestinationForHistory() const { return urlForHistory().string(); }
+    void setClientRedirectSourceForHistory(StringImpl* clientRedirectSourceForHistory) { m_clientRedirectSourceForHistory = clientRedirectSourceForHistory; }
     
-    String serverRedirectSourceForHistory() const { return (urlForHistory() == url() || url() == aboutBlankURL()) ? String() : urlForHistory().string(); } // null if no server redirect occurred.
-    const String& serverRedirectDestinationForHistory() const { return url().string(); }
+    RefPtr<StringImpl> serverRedirectSourceForHistory() const { return (urlForHistory() == url() || url() == aboutBlankURL()) ? nullptr : urlForHistory().string(); } // null if no server redirect occurred.
+    const RefPtr<StringImpl>& serverRedirectDestinationForHistory() const { return url().string(); }
 
     bool didCreateGlobalHistoryEntry() const { return m_didCreateGlobalHistoryEntry; }
     void setDidCreateGlobalHistoryEntry(bool didCreateGlobalHistoryEntry) { m_didCreateGlobalHistoryEntry = didCreateGlobalHistoryEntry; }
@@ -332,8 +332,8 @@ public:
     void setContentExtensionEnablement(ContentExtensionEnablement&& enablement) { m_contentExtensionEnablement = WTF::move(enablement); }
 
     bool hasActiveContentRuleListActions() const { return !m_activeContentRuleListActionPatterns.isEmpty(); }
-    bool allowsActiveContentRuleListActionsForURL(const String& contentRuleListIdentifier, const URL&) const;
-    WEBCORE_EXPORT void setActiveContentRuleListActionPatterns(const HashMap<String, Vector<String>>&);
+    bool allowsActiveContentRuleListActionsForURL(StringImpl* contentRuleListIdentifier, const URL&) const;
+    WEBCORE_EXPORT void setActiveContentRuleListActionPatterns(const HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>&);
 
     WEBCORE_EXPORT void copyContentRuleListPoliciesFrom(const DocumentLoader&);
 
@@ -348,8 +348,8 @@ public:
     AutoplayPolicy autoplayPolicy() const { return m_autoplayPolicy; }
     void setAutoplayPolicy(AutoplayPolicy policy) { m_autoplayPolicy = policy; }
 
-    void setCustomUserAgent(String&& customUserAgent) { m_customUserAgent = WTF::move(customUserAgent); }
-    const String& customUserAgent() const LIFETIME_BOUND { return m_customUserAgent; }
+    void setCustomUserAgent(RefPtr<StringImpl>&& customUserAgent) { m_customUserAgent = WTF::move(customUserAgent); }
+    const RefPtr<StringImpl>& customUserAgent() const LIFETIME_BOUND { return m_customUserAgent; }
 
     void setAllowPrivacyProxy(bool allow) { m_allowPrivacyProxy = allow; }
     bool allowPrivacyProxy() const { return m_allowPrivacyProxy; }
@@ -357,11 +357,11 @@ public:
     void setAllowsJSHandleCreationInPageWorld(bool allow) { m_allowsJSHandleCreationInPageWorld = allow; }
     bool allowsJSHandleCreationInPageWorld() const { return m_allowsJSHandleCreationInPageWorld; }
 
-    void setCustomUserAgentAsSiteSpecificQuirks(String&& customUserAgent) { m_customUserAgentAsSiteSpecificQuirks = WTF::move(customUserAgent); }
-    const String& customUserAgentAsSiteSpecificQuirks() const LIFETIME_BOUND { return m_customUserAgentAsSiteSpecificQuirks; }
+    void setCustomUserAgentAsSiteSpecificQuirks(RefPtr<StringImpl>&& customUserAgent) { m_customUserAgentAsSiteSpecificQuirks = WTF::move(customUserAgent); }
+    const RefPtr<StringImpl>& customUserAgentAsSiteSpecificQuirks() const LIFETIME_BOUND { return m_customUserAgentAsSiteSpecificQuirks; }
 
-    void setCustomNavigatorPlatform(String&& customNavigatorPlatform) { m_customNavigatorPlatform = WTF::move(customNavigatorPlatform); }
-    const String& customNavigatorPlatform() const LIFETIME_BOUND { return m_customNavigatorPlatform; }
+    void setCustomNavigatorPlatform(RefPtr<StringImpl>&& customNavigatorPlatform) { m_customNavigatorPlatform = WTF::move(customNavigatorPlatform); }
+    const RefPtr<StringImpl>& customNavigatorPlatform() const LIFETIME_BOUND { return m_customNavigatorPlatform; }
 
     OptionSet<AutoplayQuirk> allowedAutoplayQuirks() const { return m_allowedAutoplayQuirks; }
     void setAllowedAutoplayQuirks(OptionSet<AutoplayQuirk> allowedQuirks) { m_allowedAutoplayQuirks = allowedQuirks; }
@@ -402,7 +402,7 @@ public:
 
     struct WebpagePreferences {
         RefPtr<UserContentProvider> userContentProvider;
-        String overrideReferrerForAllRequests;
+        RefPtr<StringImpl> overrideReferrerForAllRequests;
     };
     const WebpagePreferences& preferences() const LIFETIME_BOUND { return m_preferences; }
     WEBCORE_EXPORT void setPreferences(WebpagePreferences&&);
@@ -416,8 +416,8 @@ public:
 
     void setDeferMainResourceDataLoad(bool defer) { m_deferMainResourceDataLoad = defer; }
     
-    void didTellClientAboutLoad(const String& url);
-    bool haveToldClientAboutLoad(const String& url) { return m_resourcesClientKnowsAbout.contains(url); }
+    void didTellClientAboutLoad(StringImpl* url);
+    bool haveToldClientAboutLoad(StringImpl* url) { return m_resourcesClientKnowsAbout.contains(url); }
     void recordMemoryCacheLoadForFutureClientNotification(const ResourceRequest&);
     void takeMemoryCacheLoadsForClientNotification(Vector<ResourceRequest>& loads);
 
@@ -440,8 +440,8 @@ public:
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void addPendingContentExtensionSheet(const String& identifier, StyleSheetContents&);
-    void addPendingContentExtensionDisplayNoneSelector(const String& identifier, const String& selector, uint32_t selectorID);
+    void addPendingContentExtensionSheet(StringImpl* identifier, StyleSheetContents&);
+    void addPendingContentExtensionDisplayNoneSelector(StringImpl* identifier, StringImpl* selector, uint32_t selectorID);
 #endif
 
     void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy) { m_shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy; }
@@ -454,7 +454,7 @@ public:
     void setSubstituteDataFromContentFilter(SubstituteData&& substituteDataFromContentFilter) { m_substituteDataFromContentFilter = WTF::move(substituteDataFromContentFilter); }
     ContentFilter* contentFilter() const { return m_contentFilter.get(); }
 
-    WEBCORE_EXPORT ResourceError handleContentFilterDidBlock(ContentFilterUnblockHandler&&, String&& unblockRequestDeniedScript);
+    WEBCORE_EXPORT ResourceError handleContentFilterDidBlock(ContentFilterUnblockHandler&&, RefPtr<StringImpl>&& unblockRequestDeniedScript);
 #endif
 
     void startIconLoading();
@@ -474,7 +474,7 @@ public:
     bool allowsWebArchiveForMainFrame() const { return m_isRequestFromClientOrUserInput; }
     bool allowsDataURLsForMainFrame() const { return m_isRequestFromClientOrUserInput; }
 
-    const AtomString& downloadAttribute() const LIFETIME_BOUND { return m_triggeringAction.downloadAttribute(); }
+    const RefPtr<AtomStringImpl>& downloadAttribute() const LIFETIME_BOUND { return m_triggeringAction.downloadAttribute(); }
 
     WEBCORE_EXPORT void applyPoliciesToSettings();
 
@@ -602,12 +602,12 @@ private:
 #if ENABLE(CONTENT_FILTERING)
     // ContentFilterClient
     WEBCORE_EXPORT void dataReceivedThroughContentFilter(const SharedBuffer&) final;
-    WEBCORE_EXPORT ResourceError contentFilterDidBlock(ContentFilterUnblockHandler&&, String&& unblockRequestDeniedScript) final;
+    WEBCORE_EXPORT ResourceError contentFilterDidBlock(ContentFilterUnblockHandler&&, RefPtr<StringImpl>&& unblockRequestDeniedScript) final;
     WEBCORE_EXPORT void cancelMainResourceLoadForContentFilter(const ResourceError&) final;
     WEBCORE_EXPORT void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData&&) final;
 #if HAVE(WEBCONTENTRESTRICTIONS)
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    WEBCORE_EXPORT String webContentRestrictionsConfigurationPath() const final;
+    WEBCORE_EXPORT RefPtr<StringImpl> webContentRestrictionsConfigurationPath() const final;
 #endif
     WEBCORE_EXPORT URL mainDocumentURL() const final;
 #endif
@@ -649,7 +649,7 @@ private:
 #endif
 
     // ContentSecurityPolicyClient
-    WEBCORE_EXPORT void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long requestIdentifier) final;
+    WEBCORE_EXPORT void addConsoleMessage(MessageSource, MessageLevel, StringImpl*, unsigned long requestIdentifier) final;
     WEBCORE_EXPORT void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&&) final;
 
     bool disallowWebArchive() const;
@@ -692,7 +692,7 @@ private:
     ResourceError m_mainDocumentError;    
 
     StringWithDirection m_pageTitle;
-    String m_overrideEncoding;
+    RefPtr<StringImpl> m_overrideEncoding;
 
     // The action that triggered loading - we keep this around for the
     // benefit of the various policy handlers.
@@ -720,10 +720,10 @@ private:
     RefPtr<SharedBuffer> m_parsedArchiveData;
 #endif
 
-    MemoryCompactRobinHoodHashSet<String> m_resourcesClientKnowsAbout;
+    MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>> m_resourcesClientKnowsAbout;
     Vector<ResourceRequest> m_resourcesLoadedFromMemoryCacheForClientNotification;
     
-    String m_clientRedirectSourceForHistory;
+    RefPtr<StringImpl> m_clientRedirectSourceForHistory;
     DocumentLoadTiming m_loadTiming;
     MonotonicTime m_originalNavigationStartTime;
 
@@ -756,13 +756,13 @@ private:
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    MemoryCompactRobinHoodHashMap<String, Ref<StyleSheetContents>> m_pendingNamedContentExtensionStyleSheets;
-    MemoryCompactRobinHoodHashMap<String, Vector<std::pair<String, uint32_t>>> m_pendingContentExtensionDisplayNoneSelectors;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Ref<StyleSheetContents>> m_pendingNamedContentExtensionStyleSheets;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Vector<std::pair<RefPtr<StringImpl>, uint32_t>>> m_pendingContentExtensionDisplayNoneSelectors;
 #endif
-    String m_customUserAgent;
-    String m_customUserAgentAsSiteSpecificQuirks;
-    String m_customNavigatorPlatform;
-    MemoryCompactRobinHoodHashMap<String, Vector<UserContentURLPattern>> m_activeContentRuleListActionPatterns;
+    RefPtr<StringImpl> m_customUserAgent;
+    RefPtr<StringImpl> m_customUserAgentAsSiteSpecificQuirks;
+    RefPtr<StringImpl> m_customNavigatorPlatform;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Vector<UserContentURLPattern>> m_activeContentRuleListActionPatterns;
     ContentExtensionEnablement m_contentExtensionEnablement { ContentExtensionDefaultEnablement::Enabled, { } };
 
     Vector<TargetedElementSelectors> m_visibilityAdjustmentSelectors;
@@ -902,12 +902,12 @@ inline const URL& DocumentLoader::responseURL() const
     return m_response.url();
 }
 
-inline const String& DocumentLoader::responseMIMEType() const
+inline const RefPtr<StringImpl>& DocumentLoader::responseMIMEType() const
 {
     return m_response.mimeType();
 }
 
-inline const String& DocumentLoader::currentContentType() const
+inline const RefPtr<StringImpl>& DocumentLoader::currentContentType() const
 {
     return m_writer.mimeType();
 }
@@ -917,14 +917,14 @@ inline const URL& DocumentLoader::unreachableURL() const
     return m_substituteData.failingURL();
 }
 
-inline void DocumentLoader::didTellClientAboutLoad(const String& url)
+inline void DocumentLoader::didTellClientAboutLoad(StringImpl* url)
 {
 #if !PLATFORM(COCOA)
     // Don't include data URLs here, as if a lot of data is loaded that way, we hold on to the (large) URL string for too long.
     if (protocolIs(url, "data"_s))
         return;
 #endif
-    if (!url.isEmpty())
+    if (!isEmpty(url))
         m_resourcesClientKnowsAbout.add(url);
 }
 

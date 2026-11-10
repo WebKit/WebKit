@@ -56,7 +56,7 @@ public:
     NODELETE static Ref<ValidationMessage> create(HTMLElement&);
     ~ValidationMessage();
 
-    void updateValidationMessage(HTMLElement&, const String&);
+    void updateValidationMessage(HTMLElement&, StringImpl*);
     void requestToHideMessage();
     bool isVisible() const;
     NODELETE bool shadowTreeContains(const Node&) const;
@@ -66,13 +66,13 @@ private:
     explicit ValidationMessage(HTMLElement&);
 
     NODELETE ValidationMessageClient* validationMessageClient() const;
-    void setMessage(String&&);
+    void setMessage(RefPtr<StringImpl>&&);
     void setMessageDOMAndStartTimer();
     void buildBubbleTree();
     void deleteBubbleTree();
 
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_element;
-    String m_message;
+    RefPtr<StringImpl> m_message;
     std::unique_ptr<Timer> m_timer;
     RefPtr<HTMLElement> m_bubble;
     RefPtr<HTMLElement> m_messageHeading;

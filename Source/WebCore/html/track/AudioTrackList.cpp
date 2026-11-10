@@ -89,7 +89,7 @@ AudioTrack* AudioTrackList::firstEnabled() const
     return nullptr;
 }
 
-RefPtr<AudioTrack> AudioTrackList::getTrackById(const AtomString& id) const
+RefPtr<AudioTrack> AudioTrackList::getTrackById(AtomStringImpl* id) const
 {
     for (auto& inbandTrack : m_inbandTracks) {
         Ref track = downcast<AudioTrack>(inbandTrack);

@@ -196,7 +196,7 @@ static void dumpSeparatedLayerProperties(TextStream&, CALayer *) { }
     return _inputViewBoundsInWindow;
 }
 
-static String allowListedClassToString(UIView *view)
+static RefPtr<StringImpl> allowListedClassToString(UIView *view)
 {
     static constexpr SortedArraySet allowedClasses { WTF::toArray<ComparableASCIILiteral>({
         "UIView"_s,
@@ -214,11 +214,11 @@ static String allowListedClassToString(UIView *view)
         "_UILayerHostView"_s,
     }) };
 
-    String classString { NSStringFromClass(view.class) };
+    RefPtr<StringImpl> classString { StringImpl::create(NSStringFromClass(view.class)) };
     if (allowedClasses.contains(classString))
         return classString;
 
-    return "<class not in allowed list of classes>"_s;
+    return "<class not in allowed list of classes>"_si;
 }
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
@@ -229,7 +229,7 @@ static bool shouldDumpSeparatedDetails(UIView *view)
         "WKSeparatedImageView"_s,
     }) };
 
-    String classString { NSStringFromClass(view.class) };
+    RefPtr classString = StringImpl::create(NSStringFromClass(view.class));
     if (deniedClasses.contains(classString))
         return false;
 
@@ -257,7 +257,7 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
         auto rects = [(WKBaseScrollView *)view overlayRegionsForTesting];
         auto overlaysAsStrings = adoptNS([[NSMutableArray alloc] initWithCapacity:rects.size()]);
         for (auto rect : rects)
-            [overlaysAsStrings addObject:rectToString(CGRect(rect)).createNSString().get()];
+            [overlaysAsStrings addObject:createNSString(rectToString(CGRect(rect))).get()];
 
         [overlaysAsStrings sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
         for (NSString *overlayAsString in overlaysAsStrings.get())
@@ -361,7 +361,7 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
         dumpUIView(ts, view, true);
     }
 
-    return ts.release().createNSString().autorelease();
+    return createNSString(ts.release()).autorelease();
 }
 
 - (NSString *)_scrollbarState:(unsigned long long)rawScrollingNodeID processID:(unsigned long long)processID isVertical:(bool)isVertical
@@ -378,14 +378,14 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
             ts << ([_scrollView showsHorizontalScrollIndicator] ? ""_s : "none"_s);
 #if HAVE(UIKIT_SCROLLBAR_COLOR_SPI)
             if (isVertical)
-                ts << ([_scrollView _verticalScrollIndicatorColor] ? WebCore::colorFromCocoaColor([_scrollView _verticalScrollIndicatorColor]).debugDescription() :  ""_s);
+                ts << ([_scrollView _verticalScrollIndicatorColor] ? WebCore::colorFromCocoaColor([_scrollView _verticalScrollIndicatorColor]).debugDescription() :  ""_si);
             else
-                ts << ([_scrollView _horizontalScrollIndicatorColor] ? WebCore::colorFromCocoaColor([_scrollView _horizontalScrollIndicatorColor]).debugDescription() :  ""_s);
+                ts << ([_scrollView _horizontalScrollIndicatorColor] ? WebCore::colorFromCocoaColor([_scrollView _horizontalScrollIndicatorColor]).debugDescription() :  ""_si);
 #endif
         }
-        return ts.release().createNSString().autorelease();
+        return createNSString(ts.release()).autorelease();
     }
-    return _page->scrollbarStateForScrollingNodeID(scrollingNodeID, isVertical).createNSString().autorelease();
+    return createNSString(_page->scrollbarStateForScrollingNodeID(scrollingNodeID, isVertical)).autorelease();
 }
 
 - (UIView *)_colorExtensionViewForTesting:(UIRectEdge)edge

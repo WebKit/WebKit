@@ -33,7 +33,7 @@ enum class ServiceWorkerUpdateViaCache : uint8_t;
 enum class WorkerType : bool;
 
 struct ServiceWorkerRegistrationOptions {
-    String scope;
+    RefPtr<StringImpl> scope;
     WorkerType type;
     ServiceWorkerUpdateViaCache updateViaCache;
 

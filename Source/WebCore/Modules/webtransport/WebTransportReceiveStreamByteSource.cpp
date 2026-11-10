@@ -139,7 +139,7 @@ void WebTransportReceiveStreamByteSource::receiveBytes(std::span<const uint8_t> 
     if (bytes.size()) {
         RefPtr arrayBuffer = ArrayBuffer::tryCreateUninitialized(bytes.size(), 1);
         if (!arrayBuffer)
-            return errorStream(*globalObject, *controller, Exception { ExceptionCode::RangeError, "Unable to allocate memory for the received bytes"_s });
+            return errorStream(*globalObject, *controller, Exception { ExceptionCode::RangeError, "Unable to allocate memory for the received bytes"_si });
         memcpySpan(arrayBuffer->mutableSpan(), bytes);
         m_queue.append(arrayBuffer.releaseNonNull());
     }

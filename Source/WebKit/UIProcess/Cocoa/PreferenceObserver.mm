@@ -182,11 +182,11 @@
 {
 #if ENABLE(CFPREFS_DIRECT_MODE)
     RunLoop::mainSingleton().dispatch([domain = retainPtr(domain), key = retainPtr(key), encodedValue = retainPtr(encodedValue)] {
-        std::optional<String> encodedValueString;
+        std::optional<RefPtr<StringImpl>> encodedValueString;
         if (encodedValue)
-            encodedValueString = String(encodedValue.get());
-        String domainString = domain.get();
-        String keyString = key.get();
+            encodedValueString = StringImpl::create(encodedValue.get());
+        RefPtr<StringImpl> domainString = StringImpl::create(domain.get());
+        RefPtr<StringImpl> keyString = StringImpl::create(key.get());
 
 #if ENABLE(GPU_PROCESS)
         if (RefPtr gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated())

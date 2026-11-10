@@ -29,6 +29,6 @@
 
 namespace JSC {
 
-ErrorInstance* createAggregateError(VM&, Structure*, JSArray* errors, const String& message, JSValue cause, ErrorInstance::SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
+ErrorInstance* createAggregateError(VM&, Structure*, JSArray* errors, StringImpl* message, JSValue cause, ErrorInstance::SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
 
 } // namespace JSC

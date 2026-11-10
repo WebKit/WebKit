@@ -49,9 +49,9 @@ namespace WTF::FileSystemImpl {
 
 static const ULONGLONG kSecondsFromFileTimeToTimet = 11644473600;
 
-static bool getFindData(String path, WIN32_FIND_DATAW& findData)
+static bool getFindData(StringImpl* path, WIN32_FIND_DATAW& findData)
 {
-    HANDLE handle = FindFirstFileW(path.wideCharacters().span().data(), &findData);
+    HANDLE handle = FindFirstFileW(wideCharacters(path).span().data(), &findData);
     if (handle == INVALID_HANDLE_VALUE)
         return false;
     FindClose(handle);
@@ -74,7 +74,7 @@ bool fileIDsAreEqual(std::optional<PlatformFileID>, std::optional<PlatformFileID
     return true;
 }
 
-std::optional<WallTime> fileCreationTime(const String& path)
+std::optional<WallTime> fileCreationTime(StringImpl* path)
 {
     WIN32_FIND_DATAW findData;
     if (!getFindData(path, findData))
@@ -85,57 +85,57 @@ std::optional<WallTime> fileCreationTime(const String& path)
     return WallTime::fromRawSeconds(time);
 }
 
-UTF8CString fileSystemRepresentation(const String& path)
+UTF8CString fileSystemRepresentation(StringImpl* path)
 {
     auto characters = StringView(path).upconvertedCharacters();
-    int size = WideCharToMultiByte(CP_UTF8, 0, wcharFrom(characters), path.length(), 0, 0, 0, 0);
+    int size = WideCharToMultiByte(CP_UTF8, 0, wcharFrom(characters), length(path), 0, 0, 0, 0);
 
     std::span<char8_t> buffer;
     auto string = UTF8CString::newUninitialized(size, buffer);
 
-    WideCharToMultiByte(CP_UTF8, 0, wcharFrom(characters), path.length(), byteCast<char>(buffer).data(), buffer.size(), 0, 0);
+    WideCharToMultiByte(CP_UTF8, 0, wcharFrom(characters), length(path), byteCast<char>(buffer).data(), buffer.size(), 0, 0);
 
     return string;
 }
 
-static String storageDirectory(DWORD pathIdentifier)
+static RefPtr<StringImpl> storageDirectory(DWORD pathIdentifier)
 {
     Vector<char16_t> buffer(MAX_PATH);
     if (FAILED(SHGetFolderPathW(nullptr, pathIdentifier | CSIDL_FLAG_CREATE, nullptr, 0, wcharFrom(buffer.mutableSpan().data()))))
-        return String();
+        return nullptr;
 
     buffer.shrink(wcslen(wcharFrom(buffer.span().data())));
-    String directory = String::adopt(WTF::move(buffer));
+    RefPtr<StringImpl> directory = StringImpl::adopt(WTF::move(buffer));
 
     directory = pathByAppendingComponent(directory, "Apple Computer\\WebKit"_s);
-    if (!makeAllDirectories(directory))
-        return String();
+    if (!makeAllDirectories(directory.get()))
+        return nullptr;
 
     return directory;
 }
 
-static String cachedStorageDirectory(DWORD pathIdentifier)
+static RefPtr<StringImpl> cachedStorageDirectory(DWORD pathIdentifier)
 {
-    static HashMap<DWORD, String> directories;
+    static NeverDestroyed<HashMap<DWORD, RefPtr<StringImpl>>> directories;
 
-    HashMap<DWORD, String>::iterator it = directories.find(pathIdentifier);
-    if (it != directories.end())
+    auto it = directories->find(pathIdentifier);
+    if (it != directories->end())
         return it->value;
 
-    String directory = storageDirectory(pathIdentifier);
-    directories.add(pathIdentifier, directory);
+    RefPtr<StringImpl> directory = storageDirectory(pathIdentifier);
+    directories->add(pathIdentifier, directory);
 
     return directory;
 }
 
-static String generateTemporaryPath(NOESCAPE const Function<bool(const String&)>& action)
+static RefPtr<StringImpl> generateTemporaryPath(NOESCAPE const Function<bool(StringImpl*)>& action)
 {
     wchar_t tempPath[MAX_PATH];
     int tempPathLength = ::GetTempPathW(std::size(tempPath), tempPath);
     if (tempPathLength <= 0 || static_cast<size_t>(tempPathLength) >= std::size(tempPath))
-        return String();
+        return nullptr;
 
-    String proposedPath;
+    RefPtr<StringImpl> proposedPath;
     do {
         wchar_t tempFile[] = L"XXXXXXXX.tmp"; // Use 8.3 style name (more characters aren't helpful due to 8.3 short file names)
         const int randomPartLength = 8;
@@ -149,35 +149,35 @@ static String generateTemporaryPath(NOESCAPE const Function<bool(const String&)>
 
         ASSERT(wcslen(tempFile) == std::size(tempFile) - 1);
 
-        proposedPath = pathByAppendingComponent(String(tempPath), String(tempFile));
-        if (proposedPath.isEmpty())
+        proposedPath = pathByAppendingComponent(StringImpl::create(tempPath), StringImpl::create(tempFile));
+        if (isEmpty(proposedPath))
             break;
-    } while (!action(proposedPath));
+    } while (!action(proposedPath.get()));
 
     return proposedPath;
 }
 
-std::pair<String, FileHandle> openTemporaryFile(StringView, StringView suffix, const String&)
+std::pair<RefPtr<StringImpl>, FileHandle> openTemporaryFile(StringView, StringView suffix, StringImpl*)
 {
     // FIXME: Suffix is not supported, but OK for now since the code using it is macOS-port-only.
     ASSERT_UNUSED(suffix, suffix.isEmpty());
 
     FileHandle handle;
 
-    String proposedPath = generateTemporaryPath([&handle](const String& proposedPath) {
+    RefPtr<StringImpl> proposedPath = generateTemporaryPath([&handle](StringImpl* proposedPath) {
         // use CREATE_NEW to avoid overwriting an existing file with the same name
-        handle = FileHandle::adopt(::CreateFileW(proposedPath.wideCharacters().span().data(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr));
+        handle = FileHandle::adopt(::CreateFileW(wideCharacters(proposedPath).span().data(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr));
 
         return handle || GetLastError() == ERROR_ALREADY_EXISTS;
     });
 
     if (!handle)
-        return { String(), FileHandle() };
+        return { nullptr, FileHandle() };
 
     return { proposedPath, WTF::move(handle) };
 }
 
-FileHandle openFile(const String& path, FileOpenMode mode, FileAccessPermission, OptionSet<FileLockMode> lockMode, bool failIfFileExists)
+FileHandle openFile(StringImpl* path, FileOpenMode mode, FileAccessPermission, OptionSet<FileLockMode> lockMode, bool failIfFileExists)
 {
     DWORD desiredAccess = 0;
     DWORD creationDisposition = 0;
@@ -201,21 +201,20 @@ FileHandle openFile(const String& path, FileOpenMode mode, FileAccessPermission,
     if (failIfFileExists)
         creationDisposition = CREATE_NEW;
 
-    String destination = path;
-    return FileHandle::adopt(CreateFile(destination.wideCharacters().span().data(), desiredAccess, shareMode, nullptr, creationDisposition, FILE_ATTRIBUTE_NORMAL, nullptr), lockMode);
+    return FileHandle::adopt(CreateFile(wideCharacters(path).span().data(), desiredAccess, shareMode, nullptr, creationDisposition, FILE_ATTRIBUTE_NORMAL, nullptr), lockMode);
 }
 
-String localUserSpecificStorageDirectory()
+RefPtr<StringImpl> localUserSpecificStorageDirectory()
 {
     return cachedStorageDirectory(CSIDL_LOCAL_APPDATA);
 }
 
-String roamingUserSpecificStorageDirectory()
+RefPtr<StringImpl> roamingUserSpecificStorageDirectory()
 {
     return cachedStorageDirectory(CSIDL_APPDATA);
 }
 
-std::optional<int32_t> getFileDeviceId(const String& fsFile)
+std::optional<int32_t> getFileDeviceId(StringImpl* fsFile)
 {
     auto handle = openFile(fsFile, FileOpenMode::Read);
     if (!handle)
@@ -228,17 +227,17 @@ std::optional<int32_t> getFileDeviceId(const String& fsFile)
     return fileInformation.dwVolumeSerialNumber;
 }
 
-String createTemporaryDirectory()
+RefPtr<StringImpl> createTemporaryDirectory()
 {
-    return generateTemporaryPath([](const String& proposedPath) {
+    return generateTemporaryPath([](StringImpl* proposedPath) {
         return makeAllDirectories(proposedPath);
     });
 }
 
-std::optional<uint32_t> volumeFileBlockSize(const String& path)
+std::optional<uint32_t> volumeFileBlockSize(StringImpl* path)
 {
     DWORD sectorsPerCluster, bytesPerSector, freeClusters, totalClusters;
-    if (!GetDiskFreeSpaceW(path.wideCharacters().span().data(), &sectorsPerCluster, &bytesPerSector, &freeClusters, &totalClusters))
+    if (!GetDiskFreeSpaceW(wideCharacters(path).span().data(), &sectorsPerCluster, &bytesPerSector, &freeClusters, &totalClusters))
         return std::nullopt;
 
     return sectorsPerCluster * bytesPerSector;

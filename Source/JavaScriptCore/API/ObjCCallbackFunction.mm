@@ -129,7 +129,7 @@ private:
             return;
         }
 
-        *exception = toRef(JSC::createTypeError(toJS(contextRef), "Argument does not match Objective-C Class"_s));
+        *exception = toRef(JSC::createTypeError(toJS(contextRef), "Argument does not match Objective-C Class"_si));
     }
 
     const RetainPtr<Class> m_class;
@@ -463,7 +463,7 @@ public:
         return !!wrappedBlock() || m_type == CallbackInitMethod;
     }
 
-    String name();
+    RefPtr<StringImpl> name();
 
 private:
     CallbackType m_type;
@@ -489,7 +489,7 @@ static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext,
 
     if (impl->type() == CallbackInitMethod) {
         JSGlobalContextRef contextRef = [context JSGlobalContextRef];
-        *exception = toRef(JSC::createTypeError(toJS(contextRef), "Cannot call a class constructor without |new|"_s));
+        *exception = toRef(JSC::createTypeError(toJS(contextRef), "Cannot call a class constructor without |new|"_si));
         if (*exception)
             return nullptr;
         return JSValueMakeUndefined(contextRef);
@@ -532,7 +532,7 @@ static JSObjectRef objCCallbackFunctionCallAsConstructor(JSContextRef callerCont
 
     JSGlobalContextRef contextRef = [context JSGlobalContextRef];
     if (!JSValueIsObject(contextRef, result)) {
-        *exception = toRef(JSC::createTypeError(toJS(contextRef), "Objective-C blocks called as constructors must return an object."_s));
+        *exception = toRef(JSC::createTypeError(toJS(contextRef), "Objective-C blocks called as constructors must return an object."_si));
         return nullptr;
     }
     ASSERT(!*exception);
@@ -562,7 +562,7 @@ ObjCCallbackFunction::ObjCCallbackFunction(JSC::VM& vm, JSC::Structure* structur
 {
 }
 
-ObjCCallbackFunction* ObjCCallbackFunction::create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, const String& name, std::unique_ptr<ObjCCallbackFunctionImpl> impl)
+ObjCCallbackFunction* ObjCCallbackFunction::create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, StringImpl* name, std::unique_ptr<ObjCCallbackFunctionImpl> impl)
 {
     Structure* structure = globalObject->objcCallbackFunctionStructure();
     ObjCCallbackFunction* function = new (NotNull, allocateCell<ObjCCallbackFunction>(vm)) ObjCCallbackFunction(vm, structure, objCCallbackFunctionCallAsFunction, objCCallbackFunctionCallAsConstructor, WTF::move(impl));
@@ -577,10 +577,10 @@ void ObjCCallbackFunction::destroy(JSCell* cell)
     function.~ObjCCallbackFunction();
 }
 
-String ObjCCallbackFunctionImpl::name()
+RefPtr<StringImpl> ObjCCallbackFunctionImpl::name()
 {
     if (m_type == CallbackInitMethod)
-        return String::fromLatin1(class_getName(m_instanceClass.get()));
+        return StringImpl::fromLatin1(class_getName(m_instanceClass.get()));
     // FIXME: Maybe we could support having the selector as the name of the non-init 
     // functions to make it a bit more user-friendly from the JS side?
     return emptyString();
@@ -598,7 +598,7 @@ JSValueRef ObjCCallbackFunctionImpl::call(JSContext *context, JSObjectRef thisOb
         RELEASE_ASSERT(!thisObject);
         target = [m_instanceClass alloc];
         if (!target || ![target isKindOfClass:m_instanceClass.get()]) {
-            *exception = toRef(JSC::createTypeError(toJS(contextRef), "self type check failed for Objective-C instance method"_s));
+            *exception = toRef(JSC::createTypeError(toJS(contextRef), "self type check failed for Objective-C instance method"_si));
             if (*exception)
                 return nullptr;
             return JSValueMakeUndefined(contextRef);
@@ -610,7 +610,7 @@ JSValueRef ObjCCallbackFunctionImpl::call(JSContext *context, JSObjectRef thisOb
     case CallbackInstanceMethod: {
         target = tryUnwrapObjcObject(contextRef, thisObject);
         if (!target || ![target isKindOfClass:m_instanceClass.get()]) {
-            *exception = toRef(JSC::createTypeError(toJS(contextRef), "self type check failed for Objective-C instance method"_s));
+            *exception = toRef(JSC::createTypeError(toJS(contextRef), "self type check failed for Objective-C instance method"_si));
             if (*exception)
                 return nullptr;
             return JSValueMakeUndefined(contextRef);
@@ -716,7 +716,7 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
     JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
     auto impl = makeUnique<JSC::ObjCCallbackFunctionImpl>(invocation, type, instanceClass, WTF::move(arguments), WTF::move(result));
-    const String& name = impl->name();
+    const RefPtr<StringImpl>& name = impl->name();
     return toRef(JSC::ObjCCallbackFunction::create(vm, globalObject, name, WTF::move(impl)));
 }
 

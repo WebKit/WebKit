@@ -89,7 +89,7 @@ void XSLTProcessor::parseErrorFunc(void* userData, xmlError* error)
     }
 
     // xmlError->int2 is the column number of the error or 0 if N/A.
-    console->addMessage(MessageSource::XML, level, String::fromLatin1(error->message), String::fromLatin1(error->file), error->line, error->int2);
+    console->addMessage(MessageSource::XML, level, StringImpl::fromLatin1(error->message), StringImpl::fromLatin1(error->file), error->line, error->int2);
 }
 
 // FIXME: There seems to be no way to control the ctxt pointer for loading here, thus we have globals.
@@ -112,7 +112,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
     case XSLT_LOAD_DOCUMENT: {
         xsltTransformContextPtr context = (xsltTransformContextPtr)ctxt;
         xmlChar* base = xmlNodeGetBase(context->document->doc, context->node);
-        URL url(URL({ }, String::fromLatin1(byteCast<char>(base))), String::fromLatin1(byteCast<char>(uri)));
+        URL url(URL({ }, StringImpl::fromLatin1(byteCast<char>(base))), StringImpl::fromLatin1(byteCast<char>(uri)));
         xmlFree(base);
         ResourceError error;
         ResourceResponse response;
@@ -184,7 +184,7 @@ static int writeToStringBuilder(void* context, const char* rawBuffer, int length
     return checkedString.characters.size();
 }
 
-static bool saveResultToString(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, String& resultString)
+static bool saveResultToString(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, RefPtr<StringImpl>& resultString)
 {
     xmlOutputBufferPtr outputBuf = xmlAllocOutputBuffer(nullptr);
     if (!outputBuf)
@@ -218,8 +218,8 @@ static MallocSpan<const char*> xsltParamArrayFromParameterMap(XSLTProcessor::Par
 
     size_t index = 0;
     for (auto& parameter : parameters) {
-        parameterArray[index++] = fastStrDup(parameter.key.utf8().legacyCStringPointer());
-        parameterArray[index++] = fastStrDup(parameter.value.utf8().legacyCStringPointer());
+        parameterArray[index++] = fastStrDup(utf8(parameter.key).legacyCStringPointer());
+        parameterArray[index++] = fastStrDup(utf8(parameter.value).legacyCStringPointer());
     }
     parameterArray[index] = nullptr;
 
@@ -270,13 +270,13 @@ static inline xmlDocPtr xmlDocPtrFromNode(Node& sourceNode, bool& shouldDelete)
         sourceDoc = ownerDocument->transformSource()->platformSource();
     if (!sourceDoc) {
         sourceDoc = xmlDocPtrForString(protect(ownerDocument->cachedResourceLoader()), serializeFragment(sourceNode, SerializedNodes::SubtreeIncludingNode),
-            sourceIsDocument ? ownerDocument->url().string() : String());
+            sourceIsDocument ? ownerDocument->url().string() : nullptr);
         shouldDelete = sourceDoc;
     }
     return sourceDoc;
 }
 
-static inline String resultMIMEType(xmlDocPtr resultDoc, xsltStylesheetPtr sheet)
+static inline RefPtr<StringImpl> resultMIMEType(xmlDocPtr resultDoc, xsltStylesheetPtr sheet)
 {
     // There are three types of output we need to be able to deal with:
     // HTML (create an HTML document), XML (create an XML document),
@@ -295,7 +295,7 @@ static inline String resultMIMEType(xmlDocPtr resultDoc, xsltStylesheetPtr sheet
     return applicationXMLContentTypeAtom();
 }
 
-bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String& resultString, String& resultEncoding)
+bool XSLTProcessor::transformToString(Node& sourceNode, RefPtr<StringImpl>& mimeType, RefPtr<StringImpl>& resultString, RefPtr<StringImpl>& resultEncoding)
 {
     Ref<Document> ownerDocument(sourceNode.document());
 
@@ -319,7 +319,7 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
     xsltMaxDepth = 1000;
 
     xmlChar* origMethod = sheet->method;
-    if (!origMethod && mimeType == textHTMLContentTypeAtom())
+    if (!origMethod && equal(mimeType, textHTMLContentTypeAtom()))
         sheet->method = byteCast<xmlChar>(const_cast<char*>("html"));
 
     bool success = false;
@@ -359,7 +359,7 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
 
         if ((success = saveResultToString(resultDoc, sheet, resultString))) {
             mimeType = resultMIMEType(resultDoc, sheet);
-            resultEncoding = String::fromLatin1(byteCast<char>(resultDoc->encoding));
+            resultEncoding = StringImpl::fromLatin1(byteCast<char>(resultDoc->encoding));
         }
         xmlFreeDoc(resultDoc);
     }

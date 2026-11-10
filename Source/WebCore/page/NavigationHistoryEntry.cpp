@@ -49,7 +49,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigationHistoryEntry);
 
-NavigationHistoryEntry::NavigationHistoryEntry(Navigation& navigation, const DocumentState& originalDocumentState, Ref<HistoryItem>&& historyItem, String urlString, RefPtr<SerializedScriptValue>&& state, WTF::UUID id)
+NavigationHistoryEntry::NavigationHistoryEntry(Navigation& navigation, const DocumentState& originalDocumentState, Ref<HistoryItem>&& historyItem, RefPtr<StringImpl> urlString, RefPtr<SerializedScriptValue>&& state, WTF::UUID id)
     : ActiveDOMObject(protect(navigation.scriptExecutionContext()).get())
     , m_navigation(navigation)
     , m_urlString(urlString)
@@ -95,7 +95,7 @@ void NavigationHistoryEntry::eventListenersDidChange()
     m_hasDisposeEventListener = hasEventListeners(eventNames().disposeEvent);
 }
 
-const String& NavigationHistoryEntry::url() const
+const RefPtr<StringImpl>& NavigationHistoryEntry::url() const
 {
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     // https://html.spec.whatwg.org/#dom-navigationhistoryentry-url (Step 2)
@@ -108,7 +108,7 @@ const String& NavigationHistoryEntry::url() const
 }
 
 // https://html.spec.whatwg.org/#concept-navigationhistoryentry-key
-String NavigationHistoryEntry::key() const
+RefPtr<StringImpl> NavigationHistoryEntry::key() const
 {
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (!document || !document->isFullyActive())
@@ -117,7 +117,7 @@ String NavigationHistoryEntry::key() const
 }
 
 // https://html.spec.whatwg.org/#concept-navigationhistoryentry-id
-String NavigationHistoryEntry::id() const
+RefPtr<StringImpl> NavigationHistoryEntry::id() const
 {
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (!document || !document->isFullyActive())

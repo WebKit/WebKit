@@ -59,15 +59,15 @@ void WakeLock::request(WakeLockType lockType, Ref<DeferredPromise>&& promise)
 {
     RefPtr document = this->document();
     if (!document || !document->isFullyActive() || !document->page()) {
-        promise->reject(Exception { ExceptionCode::NotAllowedError, "Document is not fully active"_s });
+        promise->reject(Exception { ExceptionCode::NotAllowedError, "Document is not fully active"_si });
         return;
     }
     if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::ScreenWakeLock, *document, PermissionsPolicy::ShouldReportViolation::Yes)) {
-        promise->reject(Exception { ExceptionCode::NotAllowedError, "'screen-wake-lock' is not allowed by Feature-Policy"_s });
+        promise->reject(Exception { ExceptionCode::NotAllowedError, "'screen-wake-lock' is not allowed by Feature-Policy"_si });
         return;
     }
     if (document->visibilityState() == VisibilityState::Hidden) {
-        promise->reject(Exception { ExceptionCode::NotAllowedError, "Document is hidden"_s });
+        promise->reject(Exception { ExceptionCode::NotAllowedError, "Document is hidden"_si });
         return;
     }
 
@@ -85,15 +85,15 @@ void WakeLock::request(WakeLockType lockType, Ref<DeferredPromise>&& promise)
             m_wasPreviouslyAuthorizedDueToTransientActivation = false;
         protect(document->eventLoop())->queueTask(TaskSource::ScreenWakelock, [protectedThis = WTF::move(protectedThis), document = WTF::move(document), promise = WTF::move(promise), lockType, permission]() mutable {
             if (permission == PermissionState::Denied) {
-                promise->reject(Exception { ExceptionCode::NotAllowedError, "Permission was denied"_s });
+                promise->reject(Exception { ExceptionCode::NotAllowedError, "Permission was denied"_si });
                 return;
             }
             if (!document->isFullyActive()) {
-                promise->reject(Exception { ExceptionCode::NotAllowedError, "Document is not fully active"_s });
+                promise->reject(Exception { ExceptionCode::NotAllowedError, "Document is not fully active"_si });
                 return;
             }
             if (document->visibilityState() == VisibilityState::Hidden) {
-                promise->reject(Exception { ExceptionCode::NotAllowedError, "Document is hidden"_s });
+                promise->reject(Exception { ExceptionCode::NotAllowedError, "Document is hidden"_si });
                 return;
             }
             auto lock = WakeLockSentinel::create(document, lockType);

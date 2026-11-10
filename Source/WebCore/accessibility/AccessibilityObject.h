@@ -78,8 +78,8 @@ public:
     virtual ~AccessibilityObject();
 
     std::optional<AXTreeID> treeID() const final;
-    String debugDescriptionInternal(bool, std::optional<OptionSet<AXDebugStringOption>> = std::nullopt) const final;
-    virtual String extraDebugInfo() const { return emptyString(); }
+    RefPtr<StringImpl> debugDescriptionInternal(bool, std::optional<OptionSet<AXDebugStringOption>> = std::nullopt) const final;
+    virtual RefPtr<StringImpl> extraDebugInfo() const { return emptyString(); }
 
     // After constructing an AccessibilityObject, it must be given a
     // unique ID, then added to AXObjectCache, and finally init() must
@@ -184,7 +184,7 @@ public:
     AccessibilityObject* cellForColumnAndRow(unsigned, unsigned) override { return nullptr; }
     AccessibilityChildrenVector rowHeaders() override { return AccessibilityChildrenVector(); }
     AccessibilityChildrenVector visibleRows() override { return AccessibilityChildrenVector(); }
-    String cellScope() const final { return getAttribute(HTMLNames::scopeAttr); }
+    RefPtr<StringImpl> cellScope() const final { return getAttribute(HTMLNames::scopeAttr); }
     AccessibilityObject* tableHeaderContainer() override { return nullptr; }
     int axColumnCount() const override { return 0; }
     int axRowCount() const override { return 0; }
@@ -202,8 +202,8 @@ public:
     std::pair<unsigned, unsigned> columnIndexRange() const override { return { 0, 1 }; }
     std::optional<unsigned> axColumnIndex() const override { return std::nullopt; }
     std::optional<unsigned> axRowIndex() const override { return std::nullopt; }
-    String axColumnIndexText() const override { return { }; }
-    String axRowIndexText() const override { return { }; }
+    RefPtr<StringImpl> axColumnIndexText() const override { return { }; }
+    RefPtr<StringImpl> axRowIndexText() const override { return { }; }
 
     // Table column support.
     unsigned columnIndex() const override { return 0; }
@@ -247,7 +247,7 @@ public:
     bool isChecked() const override { return false; }
     bool isEnabled() const override { return false; }
     bool isSelected() const override;
-    String selectedOptionCheckmark() const final;
+    RefPtr<StringImpl> selectedOptionCheckmark() const final;
     bool isTabItemSelected() const;
     bool isFocused() const override { return false; }
     bool isIndeterminate() const override { return false; }
@@ -267,7 +267,7 @@ public:
     FloatRect primaryScreenRect() const final;
 #endif
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const final;
-    HashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const;
+    HashMap<RefPtr<StringImpl>, AXEditingStyleValueVariant> resolvedEditingStyles() const;
 
     // In a multi-select list, many items can be selected but only one is active at a time.
     bool isSelectedOptionActive() const override { return false; }
@@ -285,7 +285,7 @@ public:
 
     WallTime dateTimeValue() const override { return { }; }
     DateComponentsType dateTimeComponentsType() const final;
-    String datetimeAttributeValue() const final;
+    RefPtr<StringImpl> datetimeAttributeValue() const final;
 
     bool canSetFocusAttribute() const override { return false; }
     bool canSetValueAttribute() const override { return false; }
@@ -311,10 +311,10 @@ public:
     bool isARIAHidden() const override;
 
     bool isShowingValidationMessage() const;
-    String validationMessage() const;
+    RefPtr<StringImpl> validationMessage() const;
 
     AccessibilityButtonState checkboxOrRadioValue() const override;
-    String valueDescription() const override { return String(); }
+    RefPtr<StringImpl> valueDescription() const override { return nullptr; }
     float valueForRange() const override { return 0.0f; }
     float maxValueForRange() const override { return 0.0f; }
     float minValueForRange() const override { return 0.0f; }
@@ -331,8 +331,8 @@ public:
     bool supportsHasPopup() const final;
     bool pressedIsPresent() const final;
     bool ariaIsMultiline() const;
-    String explicitInvalidStatus() const;
-    String invalidStatusIncludingInferred() const final;
+    RefPtr<StringImpl> explicitInvalidStatus() const;
+    RefPtr<StringImpl> invalidStatusIncludingInferred() const final;
     RefPtr<AXCoreObject> formOwnerObject() const;
     bool supportsPressed() const;
     bool supportsExpanded() const final;
@@ -340,13 +340,13 @@ public:
     bool supportsRowCountChange() const;
     AccessibilitySortDirection sortDirection() const final;
     virtual bool hasElementDescendant() const { return false; }
-    String identifierAttribute() const final;
-    String linkRelValue() const final;
-    Vector<String> classList() const final;
+    RefPtr<StringImpl> identifierAttribute() const final;
+    RefPtr<StringImpl> linkRelValue() const final;
+    Vector<RefPtr<StringImpl>> classList() const final;
     AccessibilityCurrentState currentState() const final;
     bool supportsCurrent() const final;
     bool supportsKeyShortcuts() const final;
-    String keyShortcuts() const final;
+    RefPtr<StringImpl> keyShortcuts() const final;
 
     // This function checks if the object should be ignored when there's a modal dialog displayed.
     virtual bool ignoredFromModalPresence() const;
@@ -363,7 +363,7 @@ public:
     bool supportsDragging() const override { return false; }
     bool isGrabbed() override { return false; }
     void setARIAGrabbed(bool) override { }
-    Vector<String> determineDropEffects() const override { return { }; }
+    Vector<RefPtr<StringImpl>> determineDropEffects() const override { return { }; }
 
     // Called on the root AX object to return the deepest available element.
     RefPtr<AXCoreObject> accessibilityHitTest(const IntPoint&) const override { return nullptr; }
@@ -395,7 +395,7 @@ public:
 
     // Text selection
     Vector<SimpleRange> findTextRanges(const AccessibilitySearchTextCriteria&) const final;
-    Vector<String> performTextOperation(const AccessibilityTextOperation&) final;
+    Vector<RefPtr<StringImpl>> performTextOperation(const AccessibilityTextOperation&) final;
 
     virtual AccessibilityObject* observableObject() const { return nullptr; }
     virtual AccessibilityObject* controlForLabelElement() const { return nullptr; }
@@ -414,19 +414,19 @@ public:
     // Accessibility Text
     void accessibilityText(Vector<AccessibilityText>&) const override { };
     // A single method for getting a computed label for an AXObject. It condenses the nuances of accessibilityText. Used by Inspector.
-    WEBCORE_EXPORT String computedLabel();
+    WEBCORE_EXPORT RefPtr<StringImpl> computedLabel();
     // Used by aria live regions for the text spoken via announcements.
-    String announcementText() const;
+    RefPtr<StringImpl> announcementText() const;
 
     // A programmatic way to set a name on an AccessibleObject.
-    void setAccessibleName(const AtomString&) override { }
+    void setAccessibleName(AtomStringImpl*) override { }
     virtual bool hasAttributesRequiredForInclusion() const { return false; }
 
-    String description() const override { return { }; }
-    virtual String helpText() const { return { }; }
-    String altTextFromAttributeOrStyle() const;
+    RefPtr<StringImpl> description() const override { return { }; }
+    virtual RefPtr<StringImpl> helpText() const { return { }; }
+    RefPtr<StringImpl> altTextFromAttributeOrStyle() const;
 
-    std::optional<String> textContent() const final;
+    std::optional<RefPtr<StringImpl>> textContent() const final;
     bool hasTextContent() const;
 #if PLATFORM(COCOA)
     bool hasAttributedText() const;
@@ -434,19 +434,19 @@ public:
     // only be completed in an Objective-C++ translation unit.
     static void makeFirstResponderForPlatformWidget(ChromeClient&, Widget&);
 #endif
-    String textContentPrefixFromListMarker() const override;
+    RefPtr<StringImpl> textContentPrefixFromListMarker() const override;
 
     // Methods for determining accessibility text.
     bool isARIAStaticText() const { return ariaRoleAttribute() == AccessibilityRole::StaticText; }
     virtual Vector<AXStitchGroup> stitchGroups() const { return { }; }
     // Whether this object should cache a string value when an isolated object is created for it.
     bool shouldCacheStringValue() const;
-    String stringValue() const override { return { }; }
+    RefPtr<StringImpl> stringValue() const override { return { }; }
     bool dependsOnTextUnderElement() const;
-    String textUnderElement(TextUnderElementMode = { }) const override { return { }; }
-    String text() const override { return { }; }
+    RefPtr<StringImpl> textUnderElement(TextUnderElementMode = { }) const override { return { }; }
+    RefPtr<StringImpl> text() const override { return { }; }
     unsigned textLength() const final;
-    String revealableText() const override { return nullString(); }
+    RefPtr<StringImpl> revealableText() const override { return nullString(); }
     bool isHiddenUntilFoundContainer() const override { return false; }
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     virtual AXTextRuns textRuns() { return { }; }
@@ -455,7 +455,7 @@ public:
     bool isReplacedElementForTextEmission() const final;
     bool isInUserAgentShadowTree() const final;
     bool isInsideNativeTextControl() const final;
-    String listMarkerText() const override { return { }; }
+    RefPtr<StringImpl> listMarkerText() const override { return { }; }
     FontOrientation fontOrientation() const final;
 #endif
 #if PLATFORM(COCOA)
@@ -475,21 +475,21 @@ public:
     bool hasTextShadow() const;
     LineDecorationStyle lineDecorationStyle() const;
 #endif
-    virtual String ariaLabeledByAttribute() const { return String(); }
-    virtual String ariaDescribedByAttribute() const { return String(); }
-    const String placeholderValue() const final;
+    virtual RefPtr<StringImpl> ariaLabeledByAttribute() const { return nullptr; }
+    virtual RefPtr<StringImpl> ariaDescribedByAttribute() const { return nullptr; }
+    const RefPtr<StringImpl> placeholderValue() const final;
     bool accessibleNameDerivesFromContent() const;
     bool accessibleNameDerivesFromHeading() const;
-    String brailleLabel() const override { return getAttribute(HTMLNames::aria_braillelabelAttr); }
-    String brailleRoleDescription() const override { return getAttribute(HTMLNames::aria_brailleroledescriptionAttr); }
-    String embeddedImageDescription() const final;
+    RefPtr<StringImpl> brailleLabel() const override { return getAttribute(HTMLNames::aria_braillelabelAttr); }
+    RefPtr<StringImpl> brailleRoleDescription() const override { return getAttribute(HTMLNames::aria_brailleroledescriptionAttr); }
+    RefPtr<StringImpl> embeddedImageDescription() const final;
     FloatSize imageDataSize() const final;
     RefPtr<SharedBuffer> imageData(const AXImageDataParameters&) const final;
     std::optional<AccessibilityChildrenVector> imageOverlayElements() override { return std::nullopt; }
-    String extendedDescription() const final;
+    RefPtr<StringImpl> extendedDescription() const final;
 
     // Abbreviations
-    String abbreviation() const final { return getAttribute(HTMLNames::abbrAttr); }
+    RefPtr<StringImpl> abbreviation() const final { return getAttribute(HTMLNames::abbrAttr); }
 
     Vector<Ref<Element>> elementsFromAttribute(const QualifiedName&) const;
 
@@ -497,9 +497,9 @@ public:
     SRGBA<uint8_t> colorValue() const override;
 
     virtual AccessibilityRole determineAccessibilityRole() = 0;
-    String subrolePlatformString() const final;
+    RefPtr<StringImpl> subrolePlatformString() const final;
 
-    String ariaRoleDescription() const final { return getAttributeTrimmed(HTMLNames::aria_roledescriptionAttr); };
+    RefPtr<StringImpl> ariaRoleDescription() const final { return getAttributeTrimmed(HTMLNames::aria_roledescriptionAttr); };
 
     inline AXObjectCache* axObjectCache() const;
 
@@ -542,10 +542,10 @@ public:
 
     URL url() const override { return URL(); }
     VisibleSelection selection() const final;
-    String selectedText() const override { return String(); }
-    String accessKey() const override { return nullAtom(); }
-    String localizedActionVerb() const final;
-    String actionVerb() const final;
+    RefPtr<StringImpl> selectedText() const override { return nullptr; }
+    RefPtr<StringImpl> accessKey() const override { return nullAtom(); }
+    RefPtr<StringImpl> localizedActionVerb() const final;
+    RefPtr<StringImpl> actionVerb() const final;
 
     bool isWidget() const override { return false; }
     Widget* widget() const override { return nullptr; }
@@ -573,7 +573,7 @@ public:
     virtual ScrollView* scrollView() const { return nullptr; }
     unsigned ariaLevel() const final;
     unsigned computedHeadingLevel() const final;
-    String language() const final;
+    RefPtr<StringImpl> language() const final;
     // 1-based, to match the aria-level spec.
     bool isInlineText() const final;
 
@@ -581,12 +581,12 @@ public:
     // Subclasses that override setFocused should call this base implementation first.
     void setFocused(bool) override;
 
-    void setSelectedText(const String&) override { }
+    void setSelectedText(StringImpl*) override { }
     void setSelectedTextRange(CharacterRange&&) override { }
-    bool setValue(const String&) override { return false; }
-    void setValueIgnoringResult(const String& value) final { setValue(value); }
-    bool replaceTextInRange(const String&, const CharacterRange&) final;
-    bool insertText(const String&) final;
+    bool setValue(StringImpl*) override { return false; }
+    void setValueIgnoringResult(StringImpl* value) final { setValue(value); }
+    bool replaceTextInRange(StringImpl*, const CharacterRange&) final;
+    bool insertText(StringImpl*) final;
 
     bool setValue(float) override { return false; }
     void setValueIgnoringResult(float value) final { setValue(value); }
@@ -649,14 +649,14 @@ public:
     AccessibilityChildrenVector visibleChildren() override { return { }; }
     bool shouldFocusActiveDescendant() const;
 
-    WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(const String&);
-    static AccessibilityRole ariaRoleToWebCoreRole(const String&, NOESCAPE const Function<bool(const AccessibilityRole&)>&);
+    WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(StringImpl*);
+    static AccessibilityRole ariaRoleToWebCoreRole(StringImpl*, NOESCAPE const Function<bool(const AccessibilityRole&)>&);
     bool hasAttribute(const QualifiedName&) const;
-    const AtomString& getAttribute(const QualifiedName&) const;
-    String getAttributeTrimmed(const QualifiedName&) const;
+    const RefPtr<AtomStringImpl>& getAttribute(const QualifiedName&) const;
+    RefPtr<StringImpl> getAttributeTrimmed(const QualifiedName&) const;
 
-    String nameAttribute() const final { return getAttribute(HTMLNames::nameAttr); }
-    String titleAttribute() const final { return getAttribute(HTMLNames::titleAttr); }
+    RefPtr<StringImpl> nameAttribute() const final { return getAttribute(HTMLNames::nameAttr); }
+    RefPtr<StringImpl> titleAttribute() const final { return getAttribute(HTMLNames::titleAttr); }
     int integralAttribute(const QualifiedName&) const;
     bool hasElementName(const ElementName) const final;
     bool hasAttachmentTag() const final { return hasElementName(ElementName::HTML_attachment); }
@@ -693,7 +693,7 @@ public:
 #if PLATFORM(MAC)
     AXTextMarkerRange selectedTextMarkerRange() const final;
 #endif
-    static String stringForVisiblePositionRange(const VisiblePositionRange&);
+    static RefPtr<StringImpl> stringForVisiblePositionRange(const VisiblePositionRange&);
     virtual IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const { return IntRect(); }
     IntRect boundsForRange(const SimpleRange&) const final;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override { }
@@ -715,32 +715,32 @@ public:
     CharacterRange doAXRangeForIndex(unsigned) const override { return { }; }
     CharacterRange doAXStyleRangeForIndex(unsigned) const override;
 
-    String doAXStringForRange(const CharacterRange&) const override { return { }; }
+    RefPtr<StringImpl> doAXStringForRange(const CharacterRange&) const override { return { }; }
     IntRect doAXBoundsForRange(const CharacterRange&) const override { return { }; }
     IntRect doAXBoundsForRangeUsingCharacterOffset(const CharacterRange&) const override { return { }; }
-    static String listMarkerTextForNodeAndPosition(Node*, Position&&);
+    static RefPtr<StringImpl> listMarkerTextForNodeAndPosition(Node*, Position&&);
 
     unsigned doAXLineForIndex(unsigned) final;
 
-    WEBCORE_EXPORT String computedRoleString() const final;
+    WEBCORE_EXPORT RefPtr<StringImpl> computedRoleString() const final;
 
-    virtual String secureFieldValue() const { return String(); }
+    virtual RefPtr<StringImpl> secureFieldValue() const { return nullptr; }
     bool isValueAutofillAvailable() const final;
     AutoFillButtonType valueAutofillButtonType() const final;
 
     // ARIA live-region features.
-    const String explicitLiveRegionStatus() const override { return String(); }
-    const String explicitLiveRegionRelevant() const override { return nullAtom(); }
+    const RefPtr<StringImpl> explicitLiveRegionStatus() const override { return nullptr; }
+    const RefPtr<StringImpl> explicitLiveRegionRelevant() const override { return nullAtom(); }
     bool liveRegionAtomic() const override { return false; }
     bool isBusy() const override { return false; }
     static bool contentEditableAttributeIsEnabled(Element&);
     bool hasContentEditableAttributeSet() const;
 
     bool supportsReadOnly() const;
-    virtual String readOnlyValue() const;
+    virtual RefPtr<StringImpl> readOnlyValue() const;
 
     bool supportsAutoComplete() const;
-    String explicitAutoCompleteValue() const final;
+    RefPtr<StringImpl> explicitAutoCompleteValue() const final;
 
     bool hasARIAValueNow() const { return hasAttribute(HTMLNames::aria_valuenowAttr); }
     bool supportsARIAAttributes() const;
@@ -800,8 +800,8 @@ public:
     AXCoreObject* mathSuperscriptObject() override { return nullptr; }
 
     // Fenced components.
-    String mathFencedOpenString() const override { return String(); }
-    String mathFencedCloseString() const override { return String(); }
+    RefPtr<StringImpl> mathFencedOpenString() const override { return nullptr; }
+    RefPtr<StringImpl> mathFencedCloseString() const override { return nullptr; }
     int mathLineThickness() const override { return 0; }
     bool isAnonymousMathOperator() const override { return false; }
 
@@ -867,8 +867,8 @@ public:
 
     AccessibilityChildrenVector relatedObjects(AXRelation) const final;
 
-    String innerHTML() const final;
-    String outerHTML() const final;
+    RefPtr<StringImpl> innerHTML() const final;
+    RefPtr<StringImpl> outerHTML() const final;
 
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
     ModelPlayerAccessibilityChildren modelElementChildren() final;
@@ -876,18 +876,18 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     struct InlineTextPrediction {
-        String text;
+        RefPtr<StringImpl> text;
         size_t location { 0 };
         void reset()
         {
-            text = ""_s;
+            text = ""_si;
             location = 0;
         }
     };
 
     InlineTextPrediction& lastPresentedTextPrediction() LIFETIME_BOUND { return m_lastPresentedTextPrediction; }
     InlineTextPrediction& lastPresentedTextPredictionComplete() LIFETIME_BOUND { return m_lastPresentedTextPredictionComplete; }
-    void setLastPresentedTextPrediction(Node&, CompositionState, const String&, size_t, bool);
+    void setLastPresentedTextPrediction(Node&, CompositionState, StringImpl*, size_t, bool);
 #endif // PLATFORM(IOS_FAMILY)
 
     virtual FloatRect localRect() const { return { }; }
@@ -1014,9 +1014,9 @@ protected:
 private:
     ProcessID processID() const final { return legacyPresentingApplicationPID(); }
     bool hasAncestorFlag(AXAncestorFlag flag) const { return ancestorFlagsAreInitialized() && m_ancestorFlags.contains(flag); }
-    std::optional<SimpleRange> rangeOfStringClosestToRangeInDirection(const SimpleRange&, AccessibilitySearchDirection, const Vector<String>&) const;
+    std::optional<SimpleRange> rangeOfStringClosestToRangeInDirection(const SimpleRange&, AccessibilitySearchDirection, const Vector<RefPtr<StringImpl>>&) const;
     std::optional<SimpleRange> selectionRange() const;
-    std::optional<SimpleRange> findTextRange(const Vector<String>& searchStrings, const SimpleRange& start, AccessibilitySearchTextDirection) const;
+    std::optional<SimpleRange> findTextRange(const Vector<RefPtr<StringImpl>>& searchStrings, const SimpleRange& start, AccessibilitySearchTextDirection) const;
     std::optional<SimpleRange> visibleCharacterRangeInternal(SimpleRange&, const FloatRect&, const IntRect&) const;
     Vector<BoundaryPoint> previousLineStartBoundaryPoints(const VisiblePosition&, const SimpleRange&, unsigned) const;
     std::optional<VisiblePosition> previousLineStartPositionInternal(const VisiblePosition&) const;
@@ -1062,7 +1062,7 @@ inline VisiblePosition AccessibilityObject::previousLineStartPosition(const Visi
 
 #if !USE(ATSPI)
 inline bool AccessibilityObject::allowsTextRanges() const { return true; }
-inline unsigned AccessibilityObject::getLengthForTextRange() const { return text().length(); }
+inline unsigned AccessibilityObject::getLengthForTextRange() const { return length(text()); }
 #endif
 
 inline bool AccessibilityObject::hasTextContent() const

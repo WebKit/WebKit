@@ -147,7 +147,7 @@ public:
     // MARK: - Used Values
 
     WEBCORE_EXPORT float usedLineHeight() const;
-    const WTF::String& hyphenString() const LIFETIME_BOUND;
+    const RefPtr<StringImpl>& hyphenString() const LIFETIME_BOUND;
     float usedStrokeWidth(const IntSize& viewportSize) const;
     WebCore::Color usedStrokeColor(StyleColorOptionsPurpose = StyleColorOptionsPurpose::ComputedStyle) const;
     WebCore::Color usedStrokeColorApplyingColorFilter() const;

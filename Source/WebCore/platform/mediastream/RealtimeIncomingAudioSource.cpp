@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
-RealtimeIncomingAudioSource::RealtimeIncomingAudioSource(Ref<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
-    : RealtimeMediaSource(CaptureDevice { WTF::move(audioTrackId), CaptureDevice::DeviceType::Microphone, "remote audio"_s })
+RealtimeIncomingAudioSource::RealtimeIncomingAudioSource(Ref<webrtc::AudioTrackInterface>&& audioTrack, RefPtr<StringImpl>&& audioTrackId)
+    : RealtimeMediaSource(CaptureDevice { WTF::move(audioTrackId), CaptureDevice::DeviceType::Microphone, "remote audio"_si })
     , m_audioTrack(WTF::move(audioTrack))
 {
     m_audioTrack->RegisterObserver(this);

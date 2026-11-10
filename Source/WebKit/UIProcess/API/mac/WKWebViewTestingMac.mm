@@ -166,7 +166,7 @@
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
         RetainPtr text = [info.platformData.attributedString.nsAttributedString() string];
 #else
-        RetainPtr text = info.text.createNSString();
+        RetainPtr text = createNSString(info.text);
 #endif
         RefPtr textIndicator = info.textIndicator;
         handler(text.get(), textIndicator ? CGRect(textIndicator->textBoundingRectInRootViewCoordinates()) : CGRectNull);

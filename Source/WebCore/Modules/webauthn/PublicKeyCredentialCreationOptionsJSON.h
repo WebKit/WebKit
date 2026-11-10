@@ -43,13 +43,13 @@ struct PublicKeyCredentialCreationOptionsJSON {
     PublicKeyCredentialRpEntity rp;
     PublicKeyCredentialUserEntityJSON user;
 
-    String challenge;
+    RefPtr<StringImpl> challenge;
     mutable Vector<PublicKeyCredentialParameters> pubKeyCredParams;
 
     std::optional<unsigned> timeout;
     Vector<PublicKeyCredentialDescriptorJSON> excludeCredentials;
     std::optional<AuthenticatorSelectionCriteria> authenticatorSelection;
-    String attestation;
+    RefPtr<StringImpl> attestation;
     std::optional<AuthenticationExtensionsClientInputsJSON> extensions;
 };
 

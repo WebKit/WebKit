@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-typedef HashMap<const CSSStyleRule*, String> SelectorTextCache;
+typedef HashMap<const CSSStyleRule*, RefPtr<StringImpl>> SelectorTextCache;
 NODELETE static SelectorTextCache& selectorTextCache()
 {
     static NeverDestroyed<SelectorTextCache> cache;
@@ -93,7 +93,7 @@ StylePropertyMap& CSSStyleRule::styleMap()
     return m_styleMap.get();
 }
 
-String CSSStyleRule::generateSelectorText() const
+RefPtr<StringImpl> CSSStyleRule::generateSelectorText() const
 {
     if (RefPtr styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
         return styleRule->originalSelectorList().selectorsText();
@@ -101,7 +101,7 @@ String CSSStyleRule::generateSelectorText() const
     return m_styleRule->selectorList().selectorsText();
 }
 
-String CSSStyleRule::selectorText() const
+RefPtr<StringImpl> CSSStyleRule::selectorText() const
 {
     if (hasCachedSelectorText()) {
         ASSERT(selectorTextCache().contains(this));
@@ -109,13 +109,13 @@ String CSSStyleRule::selectorText() const
     }
 
     ASSERT(!selectorTextCache().contains(this));
-    String text = generateSelectorText();
+    RefPtr<StringImpl> text = generateSelectorText();
     selectorTextCache().set(this, text);
     setHasCachedSelectorText(true);
     return text;
 }
 
-void CSSStyleRule::setSelectorText(const String& selectorText)
+void CSSStyleRule::setSelectorText(StringImpl* selectorText)
 {
     // FIXME: getMatchedCSSRules can return CSSStyleRules that are missing parent stylesheet pointer while
     // referencing StyleRules that are part of stylesheet. Disallow mutations in this case.
@@ -153,7 +153,7 @@ Vector<Ref<StyleRuleBase>> CSSStyleRule::nestedRules() const
 }
 
 // https://w3c.github.io/csswg-drafts/cssom-1/#serialize-a-css-rule
-String CSSStyleRule::cssText() const
+RefPtr<StringImpl> CSSStyleRule::cssText() const
 {
     auto declarationsString = protect(protect(m_styleRule)->properties())->asText(CSS::defaultSerializationContext());
     StringBuilder declarations;
@@ -168,12 +168,12 @@ void CSSStyleRule::cssTextForRules(StringBuilder& rules) const
 {
     for (unsigned index = 0; index < length(); ++index) {
         auto ruleText = protect(item(index))->cssText();
-        if (!ruleText.isEmpty())
+        if (!isEmpty(ruleText))
             rules.append("\n  "_s, WTF::move(ruleText));
     }
 }
 
-String CSSStyleRule::cssText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSStyleRule::cssText(const CSS::SerializationContext& context) const
 {
     StringBuilder declarations;
     StringBuilder rules;
@@ -192,7 +192,7 @@ void CSSStyleRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, cons
         rules.append("\n  "_s, protect(item(index))->cssText(context));
 }
 
-String CSSStyleRule::cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const
+RefPtr<StringImpl> CSSStyleRule::cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const
 {
     StringBuilder builder;
     builder.append(selectorText(), " {"_s);
@@ -235,7 +235,7 @@ void CSSStyleRule::reattach(StyleRuleBase& rule)
         m_propertiesCSSOMWrapper->reattach(protect(protect(m_styleRule)->mutableProperties()));
 }
 
-ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigned index)
+ExceptionOr<unsigned> CSSStyleRule::insertRule(StringImpl* ruleString, unsigned index)
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == nestedRules().size());
 

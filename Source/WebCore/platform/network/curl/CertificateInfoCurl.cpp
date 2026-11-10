@@ -45,9 +45,9 @@ CertificateInfo CertificateInfo::isolatedCopy() const
     return { m_verificationError, crossThreadCopy(m_certificateChain) };
 }
 
-String CertificateInfo::verificationErrorDescription() const
+RefPtr<StringImpl> CertificateInfo::verificationErrorDescription() const
 {
-    return String::fromLatin1(X509_verify_cert_error_string(m_verificationError));
+    return StringImpl::fromLatin1(X509_verify_cert_error_string(m_verificationError));
 }
 
 CertificateInfo::Certificate CertificateInfo::makeCertificate(std::span<const uint8_t> buffer)

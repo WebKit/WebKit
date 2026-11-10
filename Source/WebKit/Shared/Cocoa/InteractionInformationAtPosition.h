@@ -118,20 +118,20 @@ struct InteractionInformationAtPosition {
         URL&&,
         URL&& imageURL,
         URL&& modelURL,
-        String&& imageMIMEType,
-        String&& title,
-        String&& idAttribute,
+        RefPtr<StringImpl>&& imageMIMEType,
+        RefPtr<StringImpl>&& title,
+        RefPtr<StringImpl>&& idAttribute,
         WebCore::IntRect&& bounds,
 #if PLATFORM(MACCATALYST)
         WebCore::IntRect&& caretRect,
 #endif
         RefPtr<WebCore::ShareableBitmap>&&,
-        String&& textBefore,
-        String&& textAfter,
+        RefPtr<StringImpl>&& textBefore,
+        RefPtr<StringImpl>&& textAfter,
         CursorContext&&,
         RefPtr<WebCore::TextIndicator>&&,
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
-        String&& dataDetectorIdentifier,
+        RefPtr<StringImpl>&& dataDetectorIdentifier,
         Vector<RetainPtr<DDScannerResult>>&&,
         WebCore::IntRect&& dataDetectorBounds,
 #endif
@@ -209,22 +209,22 @@ struct InteractionInformationAtPosition {
     URL url;
     URL imageURL;
     URL modelURL;
-    String imageMIMEType;
-    String title;
-    String idAttribute;
+    RefPtr<StringImpl> imageMIMEType;
+    RefPtr<StringImpl> title;
+    RefPtr<StringImpl> idAttribute;
     WebCore::IntRect bounds;
 #if PLATFORM(MACCATALYST)
     WebCore::IntRect caretRect;
 #endif
     RefPtr<WebCore::ShareableBitmap> image;
-    String textBefore;
-    String textAfter;
+    RefPtr<StringImpl> textBefore;
+    RefPtr<StringImpl> textAfter;
 
     CursorContext cursorContext;
 
     RefPtr<WebCore::TextIndicator> textIndicator;
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
-    String dataDetectorIdentifier;
+    RefPtr<StringImpl> dataDetectorIdentifier;
     RetainPtr<NSArray> dataDetectorResults;
     WebCore::IntRect dataDetectorBounds;
 #endif

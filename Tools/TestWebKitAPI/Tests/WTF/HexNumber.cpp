@@ -36,9 +36,9 @@ namespace TestWebKitAPI {
 #define expectBuilderContent(expected, builder) \
     { \
         if (builder.is8Bit()) \
-            EXPECT_EQ(String(expected), String(builder.span<Latin1Character>())); \
+            EXPECT_EQ(StringImpl::create(expected), StringImpl::create(builder.span<Latin1Character>())); \
         else \
-            EXPECT_EQ(String(expected), String(builder.span<char16_t>())); \
+            EXPECT_EQ(StringImpl::create(expected), StringImpl::create(builder.span<char16_t>())); \
     } \
 
 TEST(WTF, HexNumber)

@@ -98,7 +98,7 @@ static inline bool isAbsentUnit(Variant<TemporalAuto, std::optional<TemporalUnit
     return std::holds_alternative<std::optional<TemporalUnit>>(unit) && !std::get<std::optional<TemporalUnit>>(unit);
 }
 
-WTF::String ellipsizeAt(unsigned maxLength, StringView);
+RefPtr<StringImpl> ellipsizeAt(unsigned maxLength, StringView);
 NODELETE PropertyName temporalUnitPluralPropertyName(VM&, TemporalUnit);
 NODELETE PropertyName temporalUnitSingularPropertyName(VM&, TemporalUnit);
 std::optional<TemporalUnit> temporalUnitType(StringView);
@@ -121,7 +121,7 @@ bool isPartialTemporalObject(JSGlobalObject*, JSValue);
 
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSObject*);
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSValue);
-String temporalShowCalendarName(JSGlobalObject*, JSObject*);
+RefPtr<StringImpl> temporalShowCalendarName(JSGlobalObject*, JSObject*);
 CalendarID toTemporalCalendarIdentifier(JSGlobalObject*, JSValue);
 TemporalDisambiguation toTemporalDisambiguation(JSGlobalObject*, JSObject*);
 TemporalOffsetDisambiguation toTemporalOffset(JSGlobalObject*, JSObject*, TemporalOffsetDisambiguation fallback);

@@ -81,7 +81,7 @@ auto DOMException::description(ExceptionCode ec) -> const Description&
     return emptyDescription;
 }
 
-NODELETE static DOMException::LegacyCode legacyCodeFromName(const String& name)
+NODELETE static DOMException::LegacyCode legacyCodeFromName(StringImpl* name)
 {
     for (auto& description : descriptions) {
         if (description.name == name)
@@ -90,13 +90,13 @@ NODELETE static DOMException::LegacyCode legacyCodeFromName(const String& name)
     return 0;
 }
 
-Ref<DOMException> DOMException::create(ExceptionCode ec, const String& message)
+Ref<DOMException> DOMException::create(ExceptionCode ec, StringImpl* message)
 {
     auto& description = DOMException::description(ec);
-    return adoptRef(*new DOMException(description.legacyCode, description.name, !message.isEmpty() ? message : description.message));
+    return adoptRef(*new DOMException(description.legacyCode, StringImpl::create(description.name).ptr(), !isEmpty(message) ? RefPtr { message } : RefPtr<StringImpl> { description.message }));
 }
 
-Ref<DOMException> DOMException::create(const String& message, const String& name)
+Ref<DOMException> DOMException::create(StringImpl* message, StringImpl* name)
 {
     return adoptRef(*new DOMException(legacyCodeFromName(name), name, message));
 }
@@ -104,10 +104,10 @@ Ref<DOMException> DOMException::create(const String& message, const String& name
 Ref<DOMException> DOMException::create(const Exception& exception)
 {
     auto& description = DOMException::description(exception.code());
-    return adoptRef(*new DOMException(description.legacyCode, description.name, exception.message().isEmpty() ? description.message : exception.message()));
+    return adoptRef(*new DOMException(description.legacyCode, StringImpl::create(description.name).ptr(), isEmpty(exception.message()) ? description.message : exception.message()));
 }
 
-DOMException::DOMException(LegacyCode legacyCode, const String& name, const String& message, Type type)
+DOMException::DOMException(LegacyCode legacyCode, StringImpl* name, StringImpl* message, Type type)
     : m_type(type)
     , m_legacyCode(legacyCode)
     , m_name(name)

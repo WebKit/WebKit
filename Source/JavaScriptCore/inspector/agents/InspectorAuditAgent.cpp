@@ -43,7 +43,7 @@ using namespace JSC;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorAuditAgent);
 
 InspectorAuditAgent::InspectorAuditAgent(AgentContext& context)
-    : InspectorAgentBase("Audit"_s)
+    : InspectorAgentBase("Audit"_si)
     , m_backendDispatcher(AuditBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_debugger(CheckedRef { context.environment }->debugger())
@@ -88,7 +88,7 @@ Protocol::ErrorStringOr<void> InspectorAuditAgent::setup(std::optional<Protocol:
     return { };
 }
 
-Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */>> InspectorAuditAgent::run(const String& test, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
+Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */>> InspectorAuditAgent::run(StringImpl* test, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     Protocol::ErrorString errorString;
 
@@ -99,7 +99,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::op
     auto functionString = makeString("(function(WebInspectorAudit) { \"use strict\"; return eval(`("_s, makeStringByReplacingAll(test, '`', "\\`"_s), ")`)(WebInspectorAudit); })"_s);
 
     InjectedScript::ExecuteOptions options;
-    options.objectGroup = "audit"_s;
+    options.objectGroup = "audit"_si;
     if (m_injectedWebInspectorAuditValue)
         options.args = { m_injectedWebInspectorAuditValue.get() };
 

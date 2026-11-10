@@ -34,9 +34,9 @@ namespace WebCore {
 Ref<JSON::Object> GPUBufferBindingLayout::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setString("type"_s, convertEnumerationToString(type));
-    json->setBoolean("hasDynamicOffset"_s, hasDynamicOffset);
-    json->setDouble("minBindingSize"_s, minBindingSize);
+    json->setString("type"_si, convertEnumerationToString(type));
+    json->setBoolean("hasDynamicOffset"_si, hasDynamicOffset);
+    json->setDouble("minBindingSize"_si, minBindingSize);
     return json;
 }
 

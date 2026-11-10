@@ -35,7 +35,7 @@ struct ITPThirdPartyDataForSpecificFirstParty {
     bool storageAccessGranted;
     Seconds timeLastUpdated;
 
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
 
     // FIXME: Since this ignores differences in decodedTimeLastUpdated it probably should be a named function, not operator==.
     NODELETE bool operator==(const ITPThirdPartyDataForSpecificFirstParty&) const;

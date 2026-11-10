@@ -79,12 +79,12 @@
 
 - (void)setTitle:(NSString *)title
 {
-    _coreData.title = title;
+    _coreData.title = StringImpl::create(title);
 }
 
 - (NSString *)title
 {
-    return _coreData.title.createNSString().autorelease();
+    return createNSString(_coreData.title).autorelease();
 }
 
 - (void)setDir:(_WKNotificationDirection)dir
@@ -116,32 +116,32 @@
 
 - (void)setLang:(NSString *)lang
 {
-    _coreData.language = lang;
+    _coreData.language = StringImpl::create(lang);
 }
 
 - (NSString *)lang
 {
-    return _coreData.language.createNSString().autorelease();
+    return createNSString(_coreData.language).autorelease();
 }
 
 - (void)setBody:(NSString *)body
 {
-    _coreData.body = body;
+    _coreData.body = StringImpl::create(body);
 }
 
 - (NSString *)body
 {
-    return _coreData.body.createNSString().autorelease();
+    return createNSString(_coreData.body).autorelease();
 }
 
 - (void)setTag:(NSString *)tag
 {
-    _coreData.tag = tag;
+    _coreData.tag = StringImpl::create(tag);
 }
 
 - (NSString *)tag
 {
-    return _coreData.tag.createNSString().autorelease();
+    return createNSString(_coreData.tag).autorelease();
 }
 
 - (void)setAlert:(_WKNotificationAlert)alert
@@ -178,7 +178,7 @@
 
 - (NSString *)origin
 {
-    return _coreData.originString.createNSString().autorelease();
+    return createNSString(_coreData.originString).autorelease();
 }
 
 - (void)setSecurityOrigin:(NSURL *)securityOrigin
@@ -203,7 +203,7 @@
 
 - (NSString *)identifier
 {
-    return _coreData.notificationID.toString().createNSString().autorelease();
+    return createNSString(_coreData.notificationID.toString()).autorelease();
 }
 
 - (void)setUuid:(NSUUID *)uuid

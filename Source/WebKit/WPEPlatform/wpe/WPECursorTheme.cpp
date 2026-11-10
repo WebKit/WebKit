@@ -54,9 +54,9 @@ static UTF8CString cursorsPath(UTF8CStringView basePath, Vector<UTF8CString>& in
         return { };
     };
 
-    String pathOfIndex = FileSystem::pathByAppendingComponent(String::fromUTF8(basePath.span()), "index.theme"_s);
-    String canonicalPathOfIndex = FileSystem::realPath(pathOfIndex);
-    GUniquePtr<char> canonicalDirectoryOfIndex(g_path_get_dirname(canonicalPathOfIndex.utf8().legacyCStringPointer()));
+    RefPtr<StringImpl> pathOfIndex = FileSystem::pathByAppendingComponent(StringImpl::fromUTF8(basePath.span()), "index.theme"_s);
+    RefPtr<StringImpl> canonicalPathOfIndex = FileSystem::realPath(pathOfIndex);
+    GUniquePtr<char> canonicalDirectoryOfIndex(g_path_get_dirname(utf8(canonicalPathOfIndex).legacyCStringPointer()));
     auto actualBasePath = g_file_test(canonicalDirectoryOfIndex.get(), G_FILE_TEST_IS_DIR) ? UTF8CStringView::unsafeFromUTF8(canonicalDirectoryOfIndex.get()) : basePath;
     auto baseCursorsPath = gBuildFilename(actualBasePath, "cursors");
 

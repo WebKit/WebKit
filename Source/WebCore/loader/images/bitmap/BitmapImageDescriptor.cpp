@@ -202,23 +202,23 @@ bool BitmapImageDescriptor::hasHDRColorSpace() const
     return hasHDRColorSpace;
 }
 
-String BitmapImageDescriptor::uti() const
+RefPtr<StringImpl> BitmapImageDescriptor::uti() const
 {
 #if USE(CG)
-    return imageMetadata(m_uti, String(), CachedFlag::UTI, &ImageDecoder::uti);
+    return imageMetadata(m_uti, nullString(), CachedFlag::UTI, &ImageDecoder::uti);
 #else
-    return String();
+    return nullptr;
 #endif
 }
 
-String BitmapImageDescriptor::filenameExtension() const
+RefPtr<StringImpl> BitmapImageDescriptor::filenameExtension() const
 {
-    return imageMetadata(m_filenameExtension, String(), CachedFlag::FilenameExtension, &ImageDecoder::filenameExtension);
+    return imageMetadata(m_filenameExtension, nullString(), CachedFlag::FilenameExtension, &ImageDecoder::filenameExtension);
 }
 
-String BitmapImageDescriptor::accessibilityDescription() const
+RefPtr<StringImpl> BitmapImageDescriptor::accessibilityDescription() const
 {
-    return imageMetadata(m_accessibilityDescription, String(), CachedFlag::AccessibilityDescription, &ImageDecoder::accessibilityDescription);
+    return imageMetadata(m_accessibilityDescription, nullString(), CachedFlag::AccessibilityDescription, &ImageDecoder::accessibilityDescription);
 }
 
 std::optional<IntPoint> BitmapImageDescriptor::hotSpot() const

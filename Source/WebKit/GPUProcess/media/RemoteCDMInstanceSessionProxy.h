@@ -65,7 +65,7 @@ private:
     using KeyStatusVector = WebCore::CDMInstanceSession::KeyStatusVector;
     using Message = WebCore::CDMInstanceSession::Message;
     using SessionLoadFailure = WebCore::CDMInstanceSession::SessionLoadFailure;
-    using LicenseCallback = CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&, const String& sessionId, bool, bool)>;
+    using LicenseCallback = CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&, StringImpl* sessionId, bool, bool)>;
     using LicenseUpdateCallback = CompletionHandler<void(bool, std::optional<KeyStatusVector>&&, std::optional<double>&&, std::optional<Message>&&, bool)>;
     using LoadSessionCallback = CompletionHandler<void(std::optional<KeyStatusVector>&&, std::optional<double>&&, std::optional<Message>&&, bool, SessionLoadFailure)>;
     using CloseSessionCallback = CompletionHandler<void()>;
@@ -74,17 +74,17 @@ private:
 
     // Messages
     void setLogIdentifier(uint64_t);
-    void requestLicense(LicenseType, KeyGroupingStrategy, String initDataType, RefPtr<WebCore::SharedBuffer>&& initData, LicenseCallback&&);
-    void updateLicense(String sessionId, LicenseType, RefPtr<WebCore::SharedBuffer>&& response, LicenseUpdateCallback&&);
-    void loadSession(LicenseType, String sessionId, String origin, LoadSessionCallback&&);
-    void closeSession(const String& sessionId, CloseSessionCallback&&);
-    void removeSessionData(const String& sessionId, LicenseType, RemoveSessionDataCallback&&);
-    void storeRecordOfKeyUsage(const String& sessionId);
+    void requestLicense(LicenseType, KeyGroupingStrategy, RefPtr<StringImpl> initDataType, RefPtr<WebCore::SharedBuffer>&& initData, LicenseCallback&&);
+    void updateLicense(RefPtr<StringImpl> sessionId, LicenseType, RefPtr<WebCore::SharedBuffer>&& response, LicenseUpdateCallback&&);
+    void loadSession(LicenseType, RefPtr<StringImpl> sessionId, RefPtr<StringImpl> origin, LoadSessionCallback&&);
+    void closeSession(StringImpl* sessionId, CloseSessionCallback&&);
+    void removeSessionData(StringImpl* sessionId, LicenseType, RemoveSessionDataCallback&&);
+    void storeRecordOfKeyUsage(StringImpl* sessionId);
 
     // CDMInstanceSessionClient
     void updateKeyStatuses(KeyStatusVector&&) final;
     void sendMessage(WebCore::CDMMessageType, Ref<WebCore::SharedBuffer>&& message) final;
-    void sessionIdChanged(const String&) final;
+    void sessionIdChanged(StringImpl*) final;
     PlatformDisplayID displayID() final { return m_displayID; }
 
     WeakPtr<RemoteCDMProxy> m_cdm;

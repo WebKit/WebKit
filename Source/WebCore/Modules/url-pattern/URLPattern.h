@@ -48,31 +48,31 @@ class URLPatternComponent;
 class URLPattern final : public RefCounted<URLPattern> {
     WTF_MAKE_TZONE_ALLOCATED(URLPattern);
 public:
-    using URLPatternInput = Variant<String, URLPatternInit>;
+    using URLPatternInput = Variant<RefPtr<StringImpl>, URLPatternInit>;
 
-    WEBCORE_EXPORT static ExceptionOr<Ref<URLPattern>> create(URLPatternInput&&, String&& baseURL, URLPatternOptions&&);
+    WEBCORE_EXPORT static ExceptionOr<Ref<URLPattern>> create(URLPatternInput&&, RefPtr<StringImpl>&& baseURL, URLPatternOptions&&);
     WEBCORE_EXPORT static ExceptionOr<Ref<URLPattern>> create(URLPatternInput&&, URLPatternOptions&&);
 
-    WEBCORE_EXPORT static ExceptionOr<Ref<URLPattern>> createWithoutRegExpSupport(URLPatternInput&&, String&& baseURL, URLPatternOptions&&);
+    WEBCORE_EXPORT static ExceptionOr<Ref<URLPattern>> createWithoutRegExpSupport(URLPatternInput&&, RefPtr<StringImpl>&& baseURL, URLPatternOptions&&);
     WEBCORE_EXPORT bool testWithoutRegExp(const URL&) const;
 
-    using Compatible = Variant<String, URLPatternInit, Ref<URLPattern>>;
-    static ExceptionOr<Ref<URLPattern>> create(Compatible&&, const String&);
+    using Compatible = Variant<RefPtr<StringImpl>, URLPatternInit, Ref<URLPattern>>;
+    static ExceptionOr<Ref<URLPattern>> create(Compatible&&, StringImpl*);
 
     WEBCORE_EXPORT ~URLPattern();
 
-    WEBCORE_EXPORT ExceptionOr<bool> test(URLPatternInput&&, String&& baseURL) const;
+    WEBCORE_EXPORT ExceptionOr<bool> test(URLPatternInput&&, RefPtr<StringImpl>&& baseURL) const;
 
-    WEBCORE_EXPORT ExceptionOr<std::optional<URLPatternResult>> exec(URLPatternInput&&, String&& baseURL) const;
+    WEBCORE_EXPORT ExceptionOr<std::optional<URLPatternResult>> exec(URLPatternInput&&, RefPtr<StringImpl>&& baseURL) const;
 
-    const String& protocol() const LIFETIME_BOUND { return m_protocolComponent.patternString(); }
-    const String& username() const LIFETIME_BOUND { return m_usernameComponent.patternString(); }
-    const String& password() const LIFETIME_BOUND { return m_passwordComponent.patternString(); }
-    const String& hostname() const LIFETIME_BOUND { return m_hostnameComponent.patternString(); }
-    const String& port() const LIFETIME_BOUND { return m_portComponent.patternString(); }
-    const String& pathname() const LIFETIME_BOUND { return m_pathnameComponent.patternString(); }
-    const String& search() const LIFETIME_BOUND { return m_searchComponent.patternString(); }
-    const String& hash() const LIFETIME_BOUND { return m_hashComponent.patternString(); }
+    const RefPtr<StringImpl>& protocol() const LIFETIME_BOUND { return m_protocolComponent.patternString(); }
+    const RefPtr<StringImpl>& username() const LIFETIME_BOUND { return m_usernameComponent.patternString(); }
+    const RefPtr<StringImpl>& password() const LIFETIME_BOUND { return m_passwordComponent.patternString(); }
+    const RefPtr<StringImpl>& hostname() const LIFETIME_BOUND { return m_hostnameComponent.patternString(); }
+    const RefPtr<StringImpl>& port() const LIFETIME_BOUND { return m_portComponent.patternString(); }
+    const RefPtr<StringImpl>& pathname() const LIFETIME_BOUND { return m_pathnameComponent.patternString(); }
+    const RefPtr<StringImpl>& search() const LIFETIME_BOUND { return m_searchComponent.patternString(); }
+    const RefPtr<StringImpl>& hash() const LIFETIME_BOUND { return m_hashComponent.patternString(); }
 
     NODELETE WEBCORE_EXPORT bool hasRegExpGroups() const;
     bool shouldIgnoreCase() const { return m_shouldIgnoreCase; }
@@ -85,7 +85,7 @@ private:
 
     enum class CompileMode : bool { WithRegExp, WithoutRegExp };
     ExceptionOr<void> compileAllComponents(URLPatternInit&&, CompileMode);
-    ExceptionOr<std::optional<URLPatternResult>> match(Variant<URL, URLPatternInput>&&, String&& baseURLString) const;
+    ExceptionOr<std::optional<URLPatternResult>> match(Variant<URL, URLPatternInput>&&, RefPtr<StringImpl>&& baseURLString) const;
 
     const bool m_shouldIgnoreCase;
     URLPatternUtilities::URLPatternComponent m_protocolComponent;

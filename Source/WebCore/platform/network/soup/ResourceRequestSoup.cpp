@@ -61,11 +61,11 @@ GRefPtr<SoupMessage> ResourceRequest::createSoupMessage(BlobRegistryImpl& blobRe
     if (!uri)
         return nullptr;
 
-    auto method = httpMethod().isEmpty() ? "GET"_s : httpMethod();
+    RefPtr<StringImpl> method = WTF::isEmpty(httpMethod()) ? "GET"_si : httpMethod();
     if (!isValidHTTPToken(method))
         return nullptr;
 
-    GRefPtr soupMessage = adoptGRef(soup_message_new_from_uri(method.ascii().data(), uri.get()));
+    GRefPtr soupMessage = adoptGRef(soup_message_new_from_uri(ascii(method).data(), uri.get()));
 
     soup_message_set_priority(soupMessage.get(), toSoupMessagePriority(priority()));
 
@@ -146,7 +146,7 @@ void ResourceRequest::updateSoupMessageHeaders(SoupMessageHeaders* soupHeaders) 
     if (!headers.isEmpty()) {
         HTTPHeaderMap::const_iterator end = headers.end();
         for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it)
-            soup_message_headers_append(soupHeaders, it->key.utf8().legacyCStringPointer(), it->value.utf8().legacyCStringPointer());
+            soup_message_headers_append(soupHeaders, utf8(it->key).legacyCStringPointer(), utf8(it->value).legacyCStringPointer());
     }
 }
 
@@ -158,7 +158,7 @@ void ResourceRequest::updateFromSoupMessageHeaders(SoupMessageHeaders* soupHeade
     const char* headerName;
     const char* headerValue;
     while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
-        m_requestData.m_httpHeaderFields.set(String::fromLatin1(headerName), String::fromLatin1(headerValue));
+        m_requestData.m_httpHeaderFields.set(StringImpl::fromLatin1(headerName), StringImpl::fromLatin1(headerValue));
 }
 
 unsigned initializeMaximumHTTPConnectionCountPerHost()

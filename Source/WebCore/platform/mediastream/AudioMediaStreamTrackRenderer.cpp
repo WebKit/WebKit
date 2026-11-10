@@ -57,10 +57,10 @@ RefPtr<AudioMediaStreamTrackRenderer> AudioMediaStreamTrackRenderer::create(Init
 #endif
 }
 
-String AudioMediaStreamTrackRenderer::defaultDeviceID()
+RefPtr<StringImpl> AudioMediaStreamTrackRenderer::defaultDeviceID()
 {
     ASSERT(isMainThread());
-    return "default"_s;
+    return "default"_si;
 }
 
 AudioMediaStreamTrackRenderer::AudioMediaStreamTrackRenderer(Init&& init)

@@ -41,7 +41,7 @@ NODELETE static bool mayBeAffectedByAttributeChange(const RuleFeatureSet& featur
     return nameSet.contains(attributeName.localName());
 }
 
-void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attributeName, const AtomString& oldValue, const AtomString& newValue)
+void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attributeName, AtomStringImpl* oldValue, AtomStringImpl* newValue)
 {
     if (newValue == oldValue)
         return;
@@ -90,8 +90,8 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
 
             for (auto& selector : invalidationRuleSet.invalidationSelectors) {
                 ASSERT(selector.isAttributeSelector());
-                bool oldMatches = !oldValue.isNull() && SelectorChecker::attributeSelectorMatches(m_element, attributeName, oldValue, selector);
-                bool newMatches = !newValue.isNull() && SelectorChecker::attributeSelectorMatches(m_element, attributeName, newValue, selector);
+                bool oldMatches = !!oldValue && SelectorChecker::attributeSelectorMatches(m_element, attributeName, oldValue, selector);
+                bool newMatches = !!newValue && SelectorChecker::attributeSelectorMatches(m_element, attributeName, newValue, selector);
                 if (oldMatches != newMatches) {
                     Invalidator::addToMatchElementRuleSets(m_matchElementRuleSets, invalidationRuleSet);
                     break;

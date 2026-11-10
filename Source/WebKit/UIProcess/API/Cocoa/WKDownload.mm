@@ -113,13 +113,13 @@ private:
         }).get()];
     }
 
-    void decideDestinationWithSuggestedFilename(WebKit::DownloadProxy& download, const WebCore::ResourceResponse& response, const WTF::String& suggestedFilename, CompletionHandler<void(WebKit::AllowOverwrite, WTF::String)>&& completionHandler) final
+    void decideDestinationWithSuggestedFilename(WebKit::DownloadProxy& download, const WebCore::ResourceResponse& response, StringImpl* suggestedFilename, CompletionHandler<void(WebKit::AllowOverwrite, RefPtr<StringImpl>)>&& completionHandler) final
     {
         RetainPtr delegate = m_delegate.get();
         if (!delegate)
             return completionHandler(WebKit::AllowOverwrite::No, { });
 
-        [delegate download:protect(wrapper(download)).get() decideDestinationUsingResponse:protect(response.nsURLResponse()).get() suggestedFilename:suggestedFilename.createNSString().get() completionHandler:makeBlockPtr([download = Ref { download }, completionHandler = WTF::move(completionHandler), checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:decideDestinationUsingResponse:suggestedFilename:completionHandler:))] (NSURL *destination) mutable {
+        [delegate download:protect(wrapper(download)).get() decideDestinationUsingResponse:protect(response.nsURLResponse()).get() suggestedFilename:createNSString(suggestedFilename).get() completionHandler:makeBlockPtr([download = Ref { download }, completionHandler = WTF::move(completionHandler), checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:decideDestinationUsingResponse:suggestedFilename:completionHandler:))] (NSURL *destination) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -141,7 +141,7 @@ private:
 
             protect(wrapper(download.get())).get().progress.fileURL = destination;
 
-            completionHandler(WebKit::AllowOverwrite::No, destination.path);
+            completionHandler(WebKit::AllowOverwrite::No, StringImpl::create(destination.path));
         }).get()];
     }
 

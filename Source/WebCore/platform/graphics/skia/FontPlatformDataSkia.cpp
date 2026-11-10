@@ -203,18 +203,18 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 }
 
 #if !LOG_DISABLED
-String FontPlatformData::description() const
+RefPtr<StringImpl> FontPlatformData::description() const
 {
-    return String();
+    return nullptr;
 }
 #endif
 
-String FontPlatformData::familyName() const
+RefPtr<StringImpl> FontPlatformData::familyName() const
 {
     if (auto* typeface = m_font.getTypeface()) {
         SkString familyName;
         typeface->getFamilyName(&familyName);
-        return String::fromUTF8(familyName.data());
+        return StringImpl::fromUTF8(familyName.data());
     }
     return { };
 }
@@ -296,7 +296,7 @@ Vector<FontPlatformData::FontVariationAxis> FontPlatformData::variationAxes(Shou
 
     return WTF::map(defaultFontVariationValues(*typeface), [](auto&& entry) {
         auto& [tag, values] = entry;
-        return FontPlatformData::FontVariationAxis { values.axisName, String::fromLatin1(tag), values.defaultValue, values.minimumValue, values.maximumValue };
+        return FontPlatformData::FontVariationAxis { values.axisName, StringImpl::fromLatin1(tag), values.defaultValue, values.minimumValue, values.maximumValue };
     });
 }
 

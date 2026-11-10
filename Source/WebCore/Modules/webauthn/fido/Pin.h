@@ -86,7 +86,7 @@ constexpr int64_t kProtocolVersion = 1;
 WEBCORE_EXPORT cbor::CBORValue::MapValue encodeCOSEPublicKey(const Vector<uint8_t>& key);
 
 // validateAndConvertToUTF8 convert the input to a UTF8 CString if it is a syntactically valid PIN.
-WEBCORE_EXPORT std::optional<UTF8CString> validateAndConvertToUTF8(const String& pin);
+WEBCORE_EXPORT std::optional<UTF8CString> validateAndConvertToUTF8(StringImpl* pin);
 
 // kMinBytes is the minimum number of *bytes* of PIN data that a CTAP2 device
 // will accept. Since the PIN is UTF-8 encoded, this could be a single code
@@ -139,7 +139,7 @@ private:
 struct SetPinRequest {
 public:
     const WebCore::CryptoKeyAES& sharedKey() const { return m_sharedKey.get(); }
-    WEBCORE_EXPORT static std::optional<SetPinRequest> tryCreate(PINUVAuthProtocol, const String& newPin, const WebCore::CryptoKeyEC&);
+    WEBCORE_EXPORT static std::optional<SetPinRequest> tryCreate(PINUVAuthProtocol, StringImpl* newPin, const WebCore::CryptoKeyEC&);
     NODELETE WEBCORE_EXPORT const Vector<uint8_t>& pinAuth() const;
 
     friend Vector<uint8_t> encodeAsCBOR(const SetPinRequest&);

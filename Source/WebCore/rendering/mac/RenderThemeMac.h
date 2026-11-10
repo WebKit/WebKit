@@ -101,7 +101,7 @@ public:
     // Controls color values returned from platformFocusRingColor(). systemColor() will be used when false.
     NODELETE bool usesTestModeFocusRingColor() const;
 
-    WEBCORE_EXPORT static IconAndSize iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
+    WEBCORE_EXPORT static IconAndSize iconForAttachment(StringImpl* fileName, StringImpl* attachmentType, StringImpl* title);
     WEBCORE_EXPORT Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
     Seconds switchAnimationVisuallyOnDuration() const final { return 300_ms; }
     bool hasSwitchHapticFeedback(SwitchTrigger trigger) const final { return trigger == SwitchTrigger::PointerTracking; }
@@ -144,7 +144,7 @@ public:
     bool paintAttachment(const RenderElement&, const PaintInfo&, const IntRect&) final;
 #endif
 
-    String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const final;
+    RefPtr<StringImpl> fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const final;
 
     NODELETE bool searchFieldShouldAppearAsTextField(const Style::ComputedStyle&, const Settings&) const final;
 

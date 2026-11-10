@@ -41,7 +41,7 @@ class Frame;
 class LocalFrame;
 class Node;
 
-void printErrorMessageForFrame(LocalFrame*, const String& message);
+void printErrorMessageForFrame(LocalFrame*, StringImpl* message);
 
 enum SecurityReportingOption { DoNotReportSecurityError, LogSecurityError, ThrowSecurityError };
 
@@ -55,15 +55,15 @@ template<typename T> ExceptionOr<T*> checkSecurityForNode(JSC::JSGlobalObject&, 
 template<typename T> ExceptionOr<T*> checkSecurityForNodeWithDOMWindow(JSC::JSGlobalObject&, ExceptionOr<T*>&&, const DOMWindow&);
 
 bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, LocalDOMWindow&, SecurityReportingOption = LogSecurityError);
-bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, LocalDOMWindow&, String& message);
+bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, LocalDOMWindow&, RefPtr<StringImpl>& message);
 bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, LocalDOMWindow*, SecurityReportingOption = LogSecurityError);
-bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, LocalDOMWindow*, String& message);
+bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, LocalDOMWindow*, RefPtr<StringImpl>& message);
 bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, DOMWindow&, SecurityReportingOption = LogSecurityError);
-bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, DOMWindow&, String& message);
+bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, DOMWindow&, RefPtr<StringImpl>& message);
 bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, DOMWindow*, SecurityReportingOption = LogSecurityError);
-bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, DOMWindow*, String& message);
+bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, DOMWindow*, RefPtr<StringImpl>& message);
 bool shouldAllowAccessToFrame(JSC::JSGlobalObject*, Frame*, SecurityReportingOption = LogSecurityError);
-bool shouldAllowAccessToFrame(JSC::JSGlobalObject&, Frame&, String& message);
+bool shouldAllowAccessToFrame(JSC::JSGlobalObject&, Frame&, RefPtr<StringImpl>& message);
 bool shouldAllowAccessToNode(JSC::JSGlobalObject&, Node*);
 
 }

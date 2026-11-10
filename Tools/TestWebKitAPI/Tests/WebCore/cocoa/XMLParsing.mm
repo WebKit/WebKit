@@ -68,7 +68,7 @@ TEST_F(XMLParsing, WebCoreRestoresLibxml2GenericAndStructuredErrorState)
     xmlSetStructuredErrorFunc(testStructuredErrorContext, testStructuredErrorFunc);
 
     // Parse XHTML in WebKit.
-    String chunk = "<x/>"_s;
+    RefPtr<StringImpl> chunk = "<x/>"_si;
     auto result = WebCoreTestSupport::testDocumentFragmentParseXML(chunk, WebCore::DefaultParserContentPolicy);
     EXPECT_TRUE(result);
 
@@ -93,7 +93,7 @@ TEST_F(XMLParsing, WebCoreDoesNotBreakLibxml2)
     xmlSetExternalEntityLoader(testEntityLoader);
 
     // Parse XHTML in WebKit.
-    String chunk = "<x/>"_s;
+    RefPtr<StringImpl> chunk = "<x/>"_si;
     auto result = WebCoreTestSupport::testDocumentFragmentParseXML(chunk, WebCore::DefaultParserContentPolicy);
     EXPECT_TRUE(result);
 

@@ -76,7 +76,7 @@ static inline int accessModeMMap(SharedMemory::Protection protection)
 static UnixFileDescriptor createSharedMemory(size_t size)
 {
     const auto name = makeString("/WK2SharedMemory."_s, cryptographicallyRandomNumber<unsigned>());
-    int fileDescriptor = ASharedMemory_create(name.utf8().legacyCStringPointer(), size);
+    int fileDescriptor = ASharedMemory_create(utf8(name).legacyCStringPointer(), size);
     return UnixFileDescriptor { fileDescriptor, UnixFileDescriptor::Adopt };
 }
 

@@ -41,18 +41,18 @@ DirectoryFileListCreator::~DirectoryFileListCreator()
 }
 
 struct FileInformation {
-    String path;
-    String relativePath;
-    String displayName;
+    RefPtr<StringImpl> path;
+    RefPtr<StringImpl> relativePath;
+    RefPtr<StringImpl> displayName;
 
-    FileInformation isolatedCopy() const & { return { path.isolatedCopy(), relativePath.isolatedCopy(), displayName.isolatedCopy() }; }
-    FileInformation isolatedCopy() && { return { WTF::move(path).isolatedCopy(), relativePath.isolatedCopy(), WTF::move(displayName).isolatedCopy() }; }
+    FileInformation isolatedCopy() const & { return { WTF::isolatedCopy(path), WTF::isolatedCopy(relativePath), WTF::isolatedCopy(displayName) }; }
+    FileInformation isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(path)), WTF::isolatedCopy(relativePath), WTF::isolatedCopy(WTF::move(displayName)) }; }
 };
 
-static void appendDirectoryFiles(const String& directory, const String& relativePath, Vector<FileInformation>& files)
+static void appendDirectoryFiles(StringImpl* directory, StringImpl* relativePath, Vector<FileInformation>& files)
 {
     ASSERT(!isMainThread());
-    FileSystem::traverseDirectory(directory, [&](const String& childName, FileSystem::FileType fileType) {
+    FileSystem::traverseDirectory(directory, [&](StringImpl* childName, FileSystem::FileType fileType) {
         auto childPath = FileSystem::pathByAppendingComponent(directory, childName);
         if (FileSystem::isHiddenFile(childPath))
             return;
@@ -82,9 +82,9 @@ static Ref<FileList> toFileList(Document* document, const Vector<FileInformation
 {
     ASSERT(isMainThread());
     auto fileObjects = files.map([document](auto& file) {
-        if (file.relativePath.isNull())
-            return File::create(document, file.path, { }, file.displayName);
-        return File::createWithRelativePath(document, file.path, file.relativePath);
+        if (!file.relativePath)
+            return File::create(document, file.path, nullptr, file.displayName);
+        return File::createWithRelativePath(document, RefPtr<StringImpl> { file.path }, RefPtr<StringImpl> { file.relativePath });
     });
     return FileList::create(WTF::move(fileObjects));
 }

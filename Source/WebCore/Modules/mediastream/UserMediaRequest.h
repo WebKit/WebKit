@@ -66,13 +66,13 @@ public:
 
     void start();
 
-    WEBCORE_EXPORT void setAllowedMediaDeviceUIDs(const String& audioDeviceUID, const String& videoDeviceUID);
+    WEBCORE_EXPORT void setAllowedMediaDeviceUIDs(StringImpl* audioDeviceUID, StringImpl* videoDeviceUID);
     WEBCORE_EXPORT void allow(CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, MediaDeviceHashSalts&&, CompletionHandler<void()>&&);
 
-    WEBCORE_EXPORT void deny(MediaAccessDenialReason, const String& errorMessage = emptyString(), MediaConstraintType = MediaConstraintType::Unknown);
+    WEBCORE_EXPORT void deny(MediaAccessDenialReason, StringImpl* errorMessage = emptyString(), MediaConstraintType = MediaConstraintType::Unknown);
 
-    const Vector<String>& audioDeviceUIDs() const LIFETIME_BOUND { return m_audioDeviceUIDs; }
-    const Vector<String>& videoDeviceUIDs() const LIFETIME_BOUND { return m_videoDeviceUIDs; }
+    const Vector<RefPtr<StringImpl>>& audioDeviceUIDs() const LIFETIME_BOUND { return m_audioDeviceUIDs; }
+    const Vector<RefPtr<StringImpl>>& videoDeviceUIDs() const LIFETIME_BOUND { return m_videoDeviceUIDs; }
 
     const MediaConstraints& audioConstraints() const LIFETIME_BOUND { return m_request.audioConstraints; }
     const MediaConstraints& videoConstraints() const LIFETIME_BOUND { return m_request.videoConstraints; }
@@ -89,8 +89,8 @@ private:
     // ActiveDOMObject.
     void stop() final;
 
-    Vector<String> m_videoDeviceUIDs;
-    Vector<String> m_audioDeviceUIDs;
+    Vector<RefPtr<StringImpl>> m_videoDeviceUIDs;
+    Vector<RefPtr<StringImpl>> m_audioDeviceUIDs;
 
     const UniqueRef<DOMPromiseDeferred<IDLInterface<MediaStream>>> m_promise;
     CompletionHandler<void()> m_allowCompletionHandler;

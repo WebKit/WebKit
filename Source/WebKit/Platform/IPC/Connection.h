@@ -625,9 +625,9 @@ public:
     template<typename T, typename C> static void cancelReply(C&&);
 
     void markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral error);
-    void markCurrentlyDispatchedMessageAsInvalid(const String& error);
+    void markCurrentlyDispatchedMessageAsInvalid(StringImpl* error);
 
-    static void logFailedMessageCheck(const String& reason, const String& function, const String& file, unsigned line);
+    static void logFailedMessageCheck(StringImpl* reason, StringImpl* function, StringImpl* file, unsigned line);
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     static bool signpostsEnabled();
@@ -647,15 +647,15 @@ public:
     bool hasErrorString() const
     {
         Locker locker { m_errorStringLock };
-        return !m_errorString.isNull();
+        return !!m_errorString;
     }
-    void setErrorString(const String& error)
+    void setErrorString(StringImpl* error)
     {
         Locker locker { m_errorStringLock };
-        if (m_errorString.isNull())
+        if (!m_errorString)
             m_errorString = error;
     }
-    String takeErrorString()
+    RefPtr<StringImpl> takeErrorString()
     {
         Locker locker { m_errorStringLock };
         return std::exchange(m_errorString, { });
@@ -983,7 +983,7 @@ private:
 
 #if ENABLE(IPC_TESTING_API)
     mutable Lock m_errorStringLock;
-    String m_errorString WTF_GUARDED_BY_LOCK(m_errorStringLock);
+    RefPtr<StringImpl> m_errorString WTF_GUARDED_BY_LOCK(m_errorStringLock);
 #endif
 
     friend class StreamClientConnection;
@@ -1284,20 +1284,20 @@ inline void Connection::markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral err
 
 #if ENABLE(IPC_TESTING_API)
     if (!error.isNull())
-        setErrorString(error);
+        setErrorString(StringImpl::create(error).ptr());
 #else
     UNUSED_PARAM(error);
 #endif
 }
 
-inline void Connection::markCurrentlyDispatchedMessageAsInvalid(const String& error)
+inline void Connection::markCurrentlyDispatchedMessageAsInvalid(StringImpl* error)
 {
     // This should only be called while processing a message. See the overload above.
     bool didMarkMessage = markCurrentMessageDispatchScopeAsInvalid();
     ASSERT_UNUSED(didMarkMessage, didMarkMessage);
 
 #if ENABLE(IPC_TESTING_API)
-    if (!error.isNull())
+    if (error)
         setErrorString(error);
 #else
     UNUSED_PARAM(error);

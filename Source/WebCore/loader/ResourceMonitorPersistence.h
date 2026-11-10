@@ -37,21 +37,21 @@ class ResourceMonitorPersistence final {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ResourceMonitorPersistence);
 public:
     struct Record {
-        String host;
+        RefPtr<StringImpl> host;
         ContinuousApproximateTime time;
     };
 
     WEBCORE_EXPORT ResourceMonitorPersistence();
     WEBCORE_EXPORT ~ResourceMonitorPersistence();
 
-    bool openDatabase(String&& directoryPath);
+    bool openDatabase(RefPtr<StringImpl>&& directoryPath);
     bool isDatabaseOpen() const { return m_sqliteDB && m_sqliteDB->isOpen(); }
 
     void deleteAllRecords();
     void deleteExpiredRecords(ContinuousApproximateTime, Seconds expirationDuration);
     Vector<Record> importRecords();
 
-    void recordAccess(const String& host, ContinuousApproximateTime);
+    void recordAccess(StringImpl* host, ContinuousApproximateTime);
 
 private:
     void closeDatabase();

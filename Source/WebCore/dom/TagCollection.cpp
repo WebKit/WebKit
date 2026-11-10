@@ -34,12 +34,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(TagCollection);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TagCollectionNS);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTagCollection);
 
-TagCollectionNS::TagCollectionNS(ContainerNode& rootNode, const AtomString& namespaceURI, const AtomString& localName)
+TagCollectionNS::TagCollectionNS(ContainerNode& rootNode, AtomStringImpl* namespaceURI, AtomStringImpl* localName)
     : CachedHTMLCollection(rootNode, CollectionType::ByTag)
     , m_namespaceURI(namespaceURI)
     , m_localName(localName)
 {
-    ASSERT(m_namespaceURI.isNull() || !m_namespaceURI.isEmpty());
+    ASSERT(!m_namespaceURI || !isEmpty(m_namespaceURI));
 }
 
 TagCollectionNS::~TagCollectionNS()
@@ -47,7 +47,7 @@ TagCollectionNS::~TagCollectionNS()
     ownerNode().nodeLists()->removeCachedTagCollectionNS(*this, m_namespaceURI, m_localName);
 }
 
-TagCollection::TagCollection(ContainerNode& rootNode, const AtomString& qualifiedName)
+TagCollection::TagCollection(ContainerNode& rootNode, AtomStringImpl* qualifiedName)
     : CachedHTMLCollection(rootNode, CollectionType::ByTag)
     , m_qualifiedName(qualifiedName)
 {
@@ -59,10 +59,10 @@ TagCollection::~TagCollection()
     ownerNode().nodeLists()->removeCachedCollection(this, m_qualifiedName);
 }
 
-HTMLTagCollection::HTMLTagCollection(ContainerNode& rootNode, const AtomString& qualifiedName)
+HTMLTagCollection::HTMLTagCollection(ContainerNode& rootNode, AtomStringImpl* qualifiedName)
     : CachedHTMLCollection(rootNode, CollectionType::ByHTMLTag)
     , m_qualifiedName(qualifiedName)
-    , m_loweredQualifiedName(qualifiedName.convertToASCIILowercase())
+    , m_loweredQualifiedName(convertToASCIILowercase(qualifiedName))
 {
     ASSERT(qualifiedName != starAtom());
 }

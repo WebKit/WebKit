@@ -32,15 +32,15 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SelectionData);
 
-SelectionData::SelectionData(const String& text, const String& markup, const URL& url, const String& uriList, RefPtr<ShareableBitmap>&& image, RefPtr<WebCore::SharedBuffer>&& buffer, bool canSmartReplace)
+SelectionData::SelectionData(StringImpl* text, StringImpl* markup, const URL& url, StringImpl* uriList, RefPtr<ShareableBitmap>&& image, RefPtr<WebCore::SharedBuffer>&& buffer, bool canSmartReplace)
 {
-    if (!text.isEmpty())
+    if (!isEmpty(text))
         setText(text);
-    if (!markup.isEmpty())
+    if (!isEmpty(markup))
         setMarkup(markup);
     if (!url.isEmpty())
-        setURL(url, String());
-    if (!uriList.isEmpty())
+        setURL(url, nullptr);
+    if (!isEmpty(uriList))
         setURIList(uriList);
     if (image)
         setImage(WTF::move(image));
@@ -49,18 +49,18 @@ SelectionData::SelectionData(const String& text, const String& markup, const URL
     setCanSmartReplace(canSmartReplace);
 }
 
-static void replaceNonBreakingSpaceWithSpace(String& string)
+static void replaceNonBreakingSpaceWithSpace(RefPtr<StringImpl>& string)
 {
     string = makeStringByReplacingAll(string, noBreakSpace, space);
 }
 
-void SelectionData::setText(const String& newText)
+void SelectionData::setText(StringImpl* newText)
 {
     m_text = newText;
     replaceNonBreakingSpaceWithSpace(m_text);
 }
 
-void SelectionData::setURIList(const String& uriListString)
+void SelectionData::setURIList(StringImpl* uriListString)
 {
     m_uriList = uriListString;
 
@@ -76,11 +76,11 @@ void SelectionData::setURIList(const String& uriListString)
     // "The DragEvent and DataTransfer interfaces"). Also extract all filenames
     // from the URI list.
     bool setURL = hasURL();
-    for (auto& line : uriListString.split('\n')) {
-        line = line.trim(deprecatedIsSpaceOrNewline);
-        if (line.isEmpty())
+    for (auto& line : split(uriListString, '\n')) {
+        line = trim(line, deprecatedIsSpaceOrNewline);
+        if (isEmpty(line))
             continue;
-        if (line[0] == '#')
+        if (codeUnitAt(line, 0) == '#')
             continue;
 
         URL url { line };
@@ -91,17 +91,17 @@ void SelectionData::setURIList(const String& uriListString)
             }
 
             GUniqueOutPtr<GError> error;
-            GUniquePtr<gchar> filename(g_filename_from_uri(line.utf8().legacyCStringPointer(), 0, &error.outPtr()));
+            GUniquePtr<gchar> filename(g_filename_from_uri(utf8(line).legacyCStringPointer(), 0, &error.outPtr()));
             if (!error && filename)
-                m_filenames.append(String::fromUTF8(filename.get()));
+                m_filenames.append(StringImpl::fromUTF8(filename.get()));
         }
     }
 }
 
-void SelectionData::setURL(const URL& url, const String& label)
+void SelectionData::setURL(const URL& url, StringImpl* label)
 {
     m_url = url;
-    if (m_uriList.isEmpty())
+    if (isEmpty(m_uriList))
         m_uriList = url.string();
 
     if (!hasText())
@@ -110,12 +110,12 @@ void SelectionData::setURL(const URL& url, const String& label)
     if (hasMarkup())
         return;
 
-    String actualLabel = label.isEmpty() ? url.string() : label;
-    auto escaped = gMarkupEscapeText(actualLabel.utf8());
+    RefPtr<StringImpl> actualLabel = isEmpty(label) ? url.string() : RefPtr<StringImpl> { label };
+    auto escaped = gMarkupEscapeText(utf8(actualLabel));
     setMarkup(makeString("<a href=\""_s, url.string(), "\">"_s, escaped.span(), "</a>"_s));
 }
 
-const String& SelectionData::urlLabel() const
+const RefPtr<StringImpl>& SelectionData::urlLabel() const
 {
     if (hasText())
         return text();

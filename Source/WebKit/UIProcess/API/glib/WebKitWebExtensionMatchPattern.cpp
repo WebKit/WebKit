@@ -49,10 +49,10 @@ struct _WebKitWebExtensionMatchPattern {
     }
 
     RefPtr<WebExtensionMatchPattern> matchPattern;
-    UTF8CString string { matchPattern->string().utf8() };
-    UTF8CString scheme { matchPattern->scheme().utf8() };
-    UTF8CString host { matchPattern->host().utf8() };
-    UTF8CString path { matchPattern->path().utf8() };
+    UTF8CString string { utf8(matchPattern->string()) };
+    UTF8CString scheme { utf8(matchPattern->scheme()) };
+    UTF8CString host { utf8(matchPattern->host()) };
+    UTF8CString path { utf8(matchPattern->path()) };
     bool matchesAllURLs { matchPattern->matchesAllURLs() };
     bool matchesAllHosts { matchPattern->matchesAllHosts() };
     int referenceCount { 1 };
@@ -80,9 +80,9 @@ G_DEFINE_BOXED_TYPE(WebKitWebExtensionMatchPattern, webkit_web_extension_match_p
  */
 void webkit_web_extension_match_pattern_register_custom_url_scheme(const gchar* urlScheme)
 {
-    g_return_if_fail(WTF::URLParser::maybeCanonicalizeScheme(String::fromUTF8(urlScheme)));
+    g_return_if_fail(WTF::URLParser::maybeCanonicalizeScheme(StringImpl::fromUTF8(urlScheme)));
 
-    WebKit::WebExtensionMatchPattern::registerCustomURLScheme(String::fromUTF8(urlScheme));
+    WebKit::WebExtensionMatchPattern::registerCustomURLScheme(StringImpl::fromUTF8(urlScheme));
 }
 
 /**
@@ -100,9 +100,9 @@ void webkit_web_extension_match_pattern_register_custom_url_scheme(const gchar* 
  */
 void webkit_web_extension_match_pattern_register_custom_URL_scheme(const gchar* urlScheme)
 {
-    g_return_if_fail(WTF::URLParser::maybeCanonicalizeScheme(String::fromUTF8(urlScheme)));
+    g_return_if_fail(WTF::URLParser::maybeCanonicalizeScheme(StringImpl::fromUTF8(urlScheme)));
 
-    WebKit::WebExtensionMatchPattern::registerCustomURLScheme(String::fromUTF8(urlScheme));
+    WebKit::WebExtensionMatchPattern::registerCustomURLScheme(StringImpl::fromUTF8(urlScheme));
 }
 
 WebKitWebExtensionMatchPattern* webkitWebExtensionMatchPatternCreate(const RefPtr<WebExtensionMatchPattern>& apiMatchPattern)
@@ -205,14 +205,14 @@ WebKitWebExtensionMatchPattern* webkit_web_extension_match_pattern_new_all_hosts
 WebKitWebExtensionMatchPattern* webkit_web_extension_match_pattern_new_with_string(const gchar* string, GError** error)
 {
     if (!error)
-        return webkitWebExtensionMatchPatternCreate(WebExtensionMatchPattern::getOrCreate(String::fromUTF8(string)));
+        return webkitWebExtensionMatchPatternCreate(WebExtensionMatchPattern::getOrCreate(StringImpl::fromUTF8(string)));
 
     RefPtr<API::Error> internalError;
-    RefPtr matchPattern = WebKit::WebExtensionMatchPattern::create(String::fromUTF8(string), internalError);
+    RefPtr matchPattern = WebKit::WebExtensionMatchPattern::create(StringImpl::fromUTF8(string), internalError);
 
     if (error && internalError) {
         SAFE_G_SET_ERROR(error, webkit_web_extension_match_pattern_error_quark(),
-            toWebKitWebExtensionMatchPatternError(internalError->errorCode()), "%s", internalError->localizedDescription().utf8());
+            toWebKitWebExtensionMatchPatternError(internalError->errorCode()), "%s", utf8(internalError->localizedDescription()));
     }
 
     return webkitWebExtensionMatchPatternCreate(matchPattern);
@@ -235,14 +235,14 @@ WebKitWebExtensionMatchPattern* webkit_web_extension_match_pattern_new_with_stri
 WebKitWebExtensionMatchPattern* webkit_web_extension_match_pattern_new_with_scheme(const gchar* scheme, const gchar* host, const gchar* path, GError** error)
 {
     if (!error)
-        return webkitWebExtensionMatchPatternCreate(WebExtensionMatchPattern::getOrCreate(String::fromUTF8(scheme), String::fromUTF8(host), String::fromUTF8(path)));
+        return webkitWebExtensionMatchPatternCreate(WebExtensionMatchPattern::getOrCreate(StringImpl::fromUTF8(scheme), StringImpl::fromUTF8(host), StringImpl::fromUTF8(path)));
 
     RefPtr<API::Error> internalError;
-    RefPtr matchPattern = WebKit::WebExtensionMatchPattern::create(String::fromUTF8(scheme), String::fromUTF8(host), String::fromUTF8(path), internalError);
+    RefPtr matchPattern = WebKit::WebExtensionMatchPattern::create(StringImpl::fromUTF8(scheme), StringImpl::fromUTF8(host), StringImpl::fromUTF8(path), internalError);
 
     if (error && internalError) {
         SAFE_G_SET_ERROR(error, webkit_web_extension_match_pattern_error_quark(),
-            toWebKitWebExtensionMatchPatternError(internalError->errorCode()), "%s", internalError->localizedDescription().utf8());
+            toWebKitWebExtensionMatchPatternError(internalError->errorCode()), "%s", utf8(internalError->localizedDescription()));
     }
 
     return webkitWebExtensionMatchPatternCreate(matchPattern);
@@ -383,7 +383,7 @@ gboolean webkit_web_extension_match_pattern_matches_url(WebKitWebExtensionMatchP
         g_warning("Invalid parameter: WEBKIT_WEB_EXTENSION_MATCH_PATTERN_OPTIONS_MATCH_BIDIRECTIONALLY is not valid when matching a URL");
 
 
-    return matchPattern->matchPattern->matchesURL(URL(String::fromUTF8(url)), toImpl(options));
+    return matchPattern->matchPattern->matchesURL(URL(StringImpl::fromUTF8(url)), toImpl(options));
 }
 
 /**

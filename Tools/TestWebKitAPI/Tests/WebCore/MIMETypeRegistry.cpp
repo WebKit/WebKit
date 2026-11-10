@@ -33,14 +33,14 @@ namespace TestWebKitAPI {
 
 TEST(MIMETypeRegistry, JSONMIMETypes)
 {
-    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("application/json"_s));
-    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("APPLICATION/JSON"_s));
-    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("application/vnd.api+json"_s));
-    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("anything/something+json"_s));
-    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("text/json"_s));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("application/json"_si));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("APPLICATION/JSON"_si));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("application/vnd.api+json"_si));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("anything/something+json"_si));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("text/json"_si));
 
-    ASSERT_FALSE(MIMETypeRegistry::isSupportedJSONMIMEType("text/plain"_s));
-    ASSERT_FALSE(MIMETypeRegistry::isSupportedJSONMIMEType("text/javascript"_s));
+    ASSERT_FALSE(MIMETypeRegistry::isSupportedJSONMIMEType("text/plain"_si));
+    ASSERT_FALSE(MIMETypeRegistry::isSupportedJSONMIMEType("text/javascript"_si));
 }
 
 TEST(MIMETypeRegistry, JavaScriptMIMETypes)
@@ -59,70 +59,70 @@ TEST(MIMETypeRegistry, JavaScriptMIMETypes)
 
 TEST(MIMETypeRegistry, CanShowMIMEType)
 {
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/plain"_s));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/html"_s));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/xml"_s));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/foo"_s));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/plain"_si));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/html"_si));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/xml"_si));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/foo"_si));
 
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/json"_s));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("APPLICATION/JSON"_s));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/vnd.api+json"_s));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("anything/something+json"_s));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/json"_si));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("APPLICATION/JSON"_si));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/vnd.api+json"_si));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("anything/something+json"_si));
 
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/javascript"_s));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("TEXT/JAVASCRIPT"_s));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/javascript"_s));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/ecmascript"_s));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/x-javascript"_s));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/x-ecmascript"_s));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/javascript"_si));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("TEXT/JAVASCRIPT"_si));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/javascript"_si));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/ecmascript"_si));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/x-javascript"_si));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/x-ecmascript"_si));
 
-    ASSERT_FALSE(MIMETypeRegistry::canShowMIMEType("foo/bar"_s));
-    ASSERT_FALSE(MIMETypeRegistry::canShowMIMEType("text/vcard"_s));
+    ASSERT_FALSE(MIMETypeRegistry::canShowMIMEType("foo/bar"_si));
+    ASSERT_FALSE(MIMETypeRegistry::canShowMIMEType("text/vcard"_si));
 }
 
 TEST(MIMETypeRegistry, PreferredExtensionForMIMEType)
 {
-    EXPECT_TRUE(MIMETypeRegistry::preferredExtensionForMIMEType({ }).isEmpty());
+    EXPECT_TRUE(isEmpty(MIMETypeRegistry::preferredExtensionForMIMEType(nullptr)));
 }
 
 TEST(MIMETypeRegistry, ExtensionsForMIMEType)
 {
-    EXPECT_EQ(MIMETypeRegistry::extensionsForMIMEType({ }).size(), 0U);
+    EXPECT_EQ(MIMETypeRegistry::extensionsForMIMEType(nullptr).size(), 0U);
 }
 
 TEST(MIMETypeRegistry, CorrectExtensionForMIMEType)
 {
-    EXPECT_TRUE(MIMETypeRegistry::correctExtensionForMIMEType({ }, "image/png"_s).isEmpty());
-    EXPECT_EQ("file.png"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.png"_s, { }));
-    EXPECT_EQ("file.png"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.png"_s, "application/octet-stream"_s));
-    EXPECT_EQ("file.html"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.html"_s, "text/plain"_s));
+    EXPECT_TRUE(isEmpty(MIMETypeRegistry::correctExtensionForMIMEType(nullptr, "image/png"_si)));
+    EXPECT_EQ("file.png"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.png"_si, nullptr));
+    EXPECT_EQ("file.png"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.png"_si, "application/octet-stream"_si));
+    EXPECT_EQ("file.html"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.html"_si, "text/plain"_si));
 
-    EXPECT_EQ("image.png"_s, MIMETypeRegistry::correctExtensionForMIMEType("image.png"_s, "image/png"_s));
+    EXPECT_EQ("image.png"_s, MIMETypeRegistry::correctExtensionForMIMEType("image.png"_si, "image/png"_si));
 
-    EXPECT_EQ("video.mp4"_s, MIMETypeRegistry::correctExtensionForMIMEType("video.gif"_s, "video/mp4"_s));
-    EXPECT_EQ("file.png"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.gif"_s, "image/png"_s));
+    EXPECT_EQ("video.mp4"_s, MIMETypeRegistry::correctExtensionForMIMEType("video.gif"_si, "video/mp4"_si));
+    EXPECT_EQ("file.png"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.gif"_si, "image/png"_si));
 
-    EXPECT_EQ("file.png"_s, MIMETypeRegistry::correctExtensionForMIMEType("file"_s, "image/png"_s));
+    EXPECT_EQ("file.png"_s, MIMETypeRegistry::correctExtensionForMIMEType("file"_si, "image/png"_si));
 
 #if PLATFORM(COCOA)
-    EXPECT_EQ("archive.tar.gz"_s, MIMETypeRegistry::correctExtensionForMIMEType("archive.tar.gz"_s, "application/gzip"_s));
+    EXPECT_EQ("archive.tar.gz"_s, MIMETypeRegistry::correctExtensionForMIMEType("archive.tar.gz"_si, "application/gzip"_si));
 
-    EXPECT_EQ("resource.tgz"_s, MIMETypeRegistry::correctExtensionForMIMEType("resource.tgz"_s, "application/gzip"_s));
+    EXPECT_EQ("resource.tgz"_s, MIMETypeRegistry::correctExtensionForMIMEType("resource.tgz"_si, "application/gzip"_si));
 
-    EXPECT_EQ("resource.tgz"_s, MIMETypeRegistry::correctExtensionForMIMEType("resource.tgz"_s, "application/x-gzip"_s));
-    EXPECT_EQ("file.zip"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.zip"_s, "application/x-zip-compressed"_s));
-    EXPECT_EQ("file.gz"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.gz"_s, "application/gzip"_s));
-    EXPECT_EQ("file.gz"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.gz"_s, "application/x-gzip"_s));
+    EXPECT_EQ("resource.tgz"_s, MIMETypeRegistry::correctExtensionForMIMEType("resource.tgz"_si, "application/x-gzip"_si));
+    EXPECT_EQ("file.zip"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.zip"_si, "application/x-zip-compressed"_si));
+    EXPECT_EQ("file.gz"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.gz"_si, "application/gzip"_si));
+    EXPECT_EQ("file.gz"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.gz"_si, "application/x-gzip"_si));
 
-    EXPECT_EQ("resource.TGZ"_s, MIMETypeRegistry::correctExtensionForMIMEType("resource.TGZ"_s, "application/gzip"_s));
-    EXPECT_EQ("resource.tgz"_s, MIMETypeRegistry::correctExtensionForMIMEType("resource.tgz"_s, "Application/X-Gzip"_s));
+    EXPECT_EQ("resource.TGZ"_s, MIMETypeRegistry::correctExtensionForMIMEType("resource.TGZ"_si, "application/gzip"_si));
+    EXPECT_EQ("resource.tgz"_s, MIMETypeRegistry::correctExtensionForMIMEType("resource.tgz"_si, "Application/X-Gzip"_si));
 
-    EXPECT_EQ("archive.cpgz"_s, MIMETypeRegistry::correctExtensionForMIMEType("archive.cpgz"_s, "application/zip"_s));
-    EXPECT_EQ("archive.cpgz"_s, MIMETypeRegistry::correctExtensionForMIMEType("archive.cpgz"_s, "application/gzip"_s));
-    EXPECT_EQ("data.tar"_s, MIMETypeRegistry::correctExtensionForMIMEType("data.tar"_s, "application/gzip"_s));
-    EXPECT_EQ("data.tgz"_s, MIMETypeRegistry::correctExtensionForMIMEType("data.tgz"_s, "application/zip"_s));
-    EXPECT_EQ("file.gz"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.gz"_s, "application/zip"_s));
-    EXPECT_EQ("app.jar"_s, MIMETypeRegistry::correctExtensionForMIMEType("app.jar"_s, "application/zip"_s));
+    EXPECT_EQ("archive.cpgz"_s, MIMETypeRegistry::correctExtensionForMIMEType("archive.cpgz"_si, "application/zip"_si));
+    EXPECT_EQ("archive.cpgz"_s, MIMETypeRegistry::correctExtensionForMIMEType("archive.cpgz"_si, "application/gzip"_si));
+    EXPECT_EQ("data.tar"_s, MIMETypeRegistry::correctExtensionForMIMEType("data.tar"_si, "application/gzip"_si));
+    EXPECT_EQ("data.tgz"_s, MIMETypeRegistry::correctExtensionForMIMEType("data.tgz"_si, "application/zip"_si));
+    EXPECT_EQ("file.gz"_s, MIMETypeRegistry::correctExtensionForMIMEType("file.gz"_si, "application/zip"_si));
+    EXPECT_EQ("app.jar"_s, MIMETypeRegistry::correctExtensionForMIMEType("app.jar"_si, "application/zip"_si));
 #endif
 }
 

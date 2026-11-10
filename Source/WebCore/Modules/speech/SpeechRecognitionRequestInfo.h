@@ -33,7 +33,7 @@ namespace WebCore {
 
 struct SpeechRecognitionRequestInfo {
     SpeechRecognitionConnectionClientIdentifier clientIdentifier;
-    String lang;
+    RefPtr<StringImpl> lang;
     bool continuous { false };
     bool interimResults { false };
     uint64_t maxAlternatives { 1 };

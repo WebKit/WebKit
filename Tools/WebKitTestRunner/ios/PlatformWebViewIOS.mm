@@ -357,9 +357,9 @@ void PlatformWebView::addChromeInputField()
     [m_window addSubview:textField.get()];
 }
 
-void PlatformWebView::setTextInChromeInputField(const String& text)
+void PlatformWebView::setTextInChromeInputField(StringImpl* text)
 {
-    chromeInputField(m_window).text = text.createNSString().get();
+    chromeInputField(m_window).text = createNSString(text).get();
 }
 
 void PlatformWebView::selectChromeInputField()
@@ -369,10 +369,10 @@ void PlatformWebView::selectChromeInputField()
     [textField selectAll:nil];
 }
 
-String PlatformWebView::getSelectedTextInChromeInputField()
+RefPtr<StringImpl> PlatformWebView::getSelectedTextInChromeInputField()
 {
     auto textField = chromeInputField(m_window);
-    return [textField textInRange:textField.selectedTextRange];
+    return StringImpl::create([textField textInRange:textField.selectedTextRange]);
 }
 
 void PlatformWebView::removeChromeInputField()

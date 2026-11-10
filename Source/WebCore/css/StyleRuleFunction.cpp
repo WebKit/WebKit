@@ -31,12 +31,12 @@
 
 namespace WebCore {
 
-Ref<StyleRuleFunction> StyleRuleFunction::create(const AtomString& name, Vector<Parameter>&& parameters, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&& rules)
+Ref<StyleRuleFunction> StyleRuleFunction::create(AtomStringImpl* name, Vector<Parameter>&& parameters, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&& rules)
 {
     return adoptRef(*new StyleRuleFunction(name, WTF::move(parameters), WTF::move(returnType), WTF::move(rules)));
 }
 
-StyleRuleFunction::StyleRuleFunction(const AtomString& name, Vector<Parameter>&& parameters, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&& rules)
+StyleRuleFunction::StyleRuleFunction(AtomStringImpl* name, Vector<Parameter>&& parameters, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&& rules)
     : StyleRuleGroup(StyleRuleType::Function, WTF::move(rules))
     , m_name(name)
     , m_parameters(WTF::move(parameters))

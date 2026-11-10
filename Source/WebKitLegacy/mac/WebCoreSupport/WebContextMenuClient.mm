@@ -111,9 +111,9 @@ bool WebContextMenuClient::isSpeaking() const
     return [NSApp isSpeaking];
 }
 
-void WebContextMenuClient::speak(const String& string)
+void WebContextMenuClient::speak(StringImpl* string)
 {
-    [NSApp speakString:string.createNSString().get()];
+    [NSApp speakString:createNSString(string).get()];
 }
 
 void WebContextMenuClient::stopSpeaking()

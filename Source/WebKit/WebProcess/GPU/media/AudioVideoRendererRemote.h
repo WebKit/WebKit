@@ -114,7 +114,7 @@ private:
     void setMuted(bool) final;
     void setPreservesPitchAndCorrectionAlgorithm(bool, std::optional<PitchCorrectionAlgorithm>) final;
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
-    void setOutputDeviceId(const String&) final;
+    void setOutputDeviceId(StringImpl*) final;
 #endif
 
     void setIsVisible(bool) final;
@@ -183,7 +183,7 @@ private:
     void notifyWhenErrorOccurs(Function<void(WebCore::PlatformMediaError)>&&) final;
 
     using SoundStageSize = WebCore::MediaPlayerSoundStageSize;
-    void setSpatialTrackingInfo(bool, SoundStageSize, const String&, const String&, const String&) final;
+    void setSpatialTrackingInfo(bool, SoundStageSize, StringImpl*, StringImpl*, StringImpl*) final;
 
     // Remote Layers
     Ref<HostingContextPromise> requestHostingContext() final;

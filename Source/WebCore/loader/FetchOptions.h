@@ -49,9 +49,9 @@ struct FetchOptions {
     using Redirect = FetchOptionsRedirect;
 
     FetchOptions() = default;
-    FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, bool, String&&, Markable<WTF::UUID>, Markable<WTF::UUID>);
-    FetchOptions isolatedCopy() const & { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, integrity.isolatedCopy(), clientIdentifier, resultingClientIdentifier }; }
-    FetchOptions isolatedCopy() && { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, WTF::move(integrity).isolatedCopy(), clientIdentifier, resultingClientIdentifier }; }
+    FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, bool, RefPtr<StringImpl>&&, Markable<WTF::UUID>, Markable<WTF::UUID>);
+    FetchOptions isolatedCopy() const & { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, WTF::isolatedCopy(integrity), clientIdentifier, resultingClientIdentifier }; }
+    FetchOptions isolatedCopy() && { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, WTF::isolatedCopy(WTF::move(integrity)), clientIdentifier, resultingClientIdentifier }; }
 
     template<class Encoder> void encodePersistent(Encoder&) const;
     template<class Decoder> [[nodiscard]] static bool decodePersistent(Decoder&, FetchOptions&);
@@ -63,12 +63,12 @@ struct FetchOptions {
     Redirect redirect { Redirect::Follow };
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
     bool keepAlive { false };
-    String integrity;
+    RefPtr<StringImpl> integrity;
     Markable<WTF::UUID> clientIdentifier; // Identifier of https://fetch.spec.whatwg.org/#concept-request-client
     Markable<WTF::UUID> resultingClientIdentifier; // Identifier of https://fetch.spec.whatwg.org/#concept-request-reserved-client
 };
 
-inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, bool keepAlive, String&& integrity, Markable<WTF::UUID> clientIdentifier, Markable<WTF::UUID> resultingClientIdentifier)
+inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, bool keepAlive, RefPtr<StringImpl>&& integrity, Markable<WTF::UUID> clientIdentifier, Markable<WTF::UUID> resultingClientIdentifier)
     : destination(destination)
     , mode(mode)
     , credentials(credentials)
@@ -251,7 +251,7 @@ inline bool FetchOptions::decodePersistent(Decoder& decoder, FetchOptions& optio
     if (!referrerPolicy)
         return false;
 
-    std::optional<String> integrity;
+    std::optional<RefPtr<StringImpl>> integrity;
     decoder >> integrity;
     if (!integrity)
         return false;

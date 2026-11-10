@@ -48,8 +48,8 @@ public:
 
     USING_CAN_MAKE_WEAKPTR(SpeechRecognitionConnectionClient);
 
-    const String& lang() const LIFETIME_BOUND { return m_lang; }
-    void setLang(String&& lang) { m_lang = WTF::move(lang); }
+    const RefPtr<StringImpl>& lang() const LIFETIME_BOUND { return m_lang; }
+    void setLang(RefPtr<StringImpl>&& lang) { m_lang = WTF::move(lang); }
 
     bool continuous() const { return m_continuous; }
     void setContinuous(bool continuous) { m_continuous = continuous; }
@@ -104,7 +104,7 @@ private:
     void derefEventTarget() final { deref(); }
     NODELETE bool virtualHasPendingActivity() const final;
 
-    String m_lang;
+    RefPtr<StringImpl> m_lang;
     bool m_continuous { false };
     bool m_interimResults { false };
     uint64_t m_maxAlternatives { 1 };

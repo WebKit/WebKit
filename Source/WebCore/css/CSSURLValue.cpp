@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-String CSSURLValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSURLValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_url);
 }

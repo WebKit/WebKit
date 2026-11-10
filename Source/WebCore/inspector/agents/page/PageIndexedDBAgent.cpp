@@ -45,7 +45,7 @@ PageIndexedDBAgent::PageIndexedDBAgent(PageAgentContext& context)
 
 PageIndexedDBAgent::~PageIndexedDBAgent() = default;
 
-Inspector::Protocol::ErrorStringOr<Ref<LocalFrame>> PageIndexedDBAgent::frameForSecurityOrigin(const String& securityOrigin)
+Inspector::Protocol::ErrorStringOr<Ref<LocalFrame>> PageIndexedDBAgent::frameForSecurityOrigin(StringImpl* securityOrigin)
 {
     RefPtr frame = ResourceUtilities::findFrameWithSecurityOrigin(protect(m_inspectedPage.get()), securityOrigin);
     if (!frame)

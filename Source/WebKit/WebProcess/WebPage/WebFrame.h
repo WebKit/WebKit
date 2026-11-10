@@ -125,8 +125,8 @@ struct WebsitePoliciesData;
 class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public IPC::MessageReceiver, public IPC::MessageSender {
 public:
     static Ref<WebFrame> create(WebPage& page, WebCore::FrameIdentifier frameID) { return adoptRef(*new WebFrame(page, frameID)); }
-    static Ref<WebFrame> createSubframe(WebPage&, WebFrame& parent, const AtomString& frameName, WebCore::HTMLFrameOwnerElement&);
-    static Ref<WebFrame> createRemoteSubframe(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, const String& frameName, std::optional<WebCore::FrameIdentifier> openerFrameID, WebCore::ProcessIdentifier hostingProcessID, Ref<WebCore::FrameTreeSyncData>&&);
+    static Ref<WebFrame> createSubframe(WebPage&, WebFrame& parent, AtomStringImpl* frameName, WebCore::HTMLFrameOwnerElement&);
+    static Ref<WebFrame> createRemoteSubframe(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, StringImpl* frameName, std::optional<WebCore::FrameIdentifier> openerFrameID, WebCore::ProcessIdentifier hostingProcessID, Ref<WebCore::FrameTreeSyncData>&&);
     ~WebFrame();
 
     void ref() const final { API::ObjectImpl<API::Object::Type::BundleFrame>::ref(); }
@@ -173,24 +173,24 @@ public:
     void didFinishLoadInAnotherProcess();
     void removeFromTree();
 
-    void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = { }, WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No);
+    void startDownload(const WebCore::ResourceRequest&, StringImpl* suggestedName = nullptr, WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No);
     void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
-    void addConsoleMessage(MessageSource, MessageLevel, const String&, uint64_t requestID = 0);
+    void addConsoleMessage(MessageSource, MessageLevel, StringImpl*, uint64_t requestID = 0);
 
-    String source() const;
-    String contentsAsString() const;
-    String selectionAsString() const;
+    RefPtr<StringImpl> source() const;
+    RefPtr<StringImpl> contentsAsString() const;
+    RefPtr<StringImpl> selectionAsString() const;
 
     WebCore::IntSize size() const;
 
     // WKBundleFrame API and SPI functions
     NODELETE bool isMainFrame() const;
     bool isRootFrame() const;
-    String name() const;
+    RefPtr<StringImpl> name() const;
     URL url() const;
     WebCore::CertificateInfo certificateInfo() const;
-    String innerText() const;
+    RefPtr<StringImpl> innerText() const;
     bool isFrameSet() const;
     NODELETE RefPtr<WebFrame> parentFrame() const;
     Ref<API::Array> childFrames();
@@ -223,7 +223,7 @@ public:
     NODELETE bool containsAnyFormElements() const;
     bool containsAnyFormControls() const;
     void stopLoading();
-    void setAccessibleName(const AtomString&);
+    void setAccessibleName(AtomStringImpl*);
 
     static RefPtr<WebFrame> frameForContext(JSContextRef);
     static RefPtr<WebFrame> contentFrameForWindowOrFrameElement(JSContextRef, JSValueRef);
@@ -232,25 +232,25 @@ public:
     JSValueRef jsWrapperForWorld(InjectedBundleNodeHandle*, InjectedBundleScriptWorld*);
     JSValueRef jsWrapperForWorld(InjectedBundleRangeHandle*, InjectedBundleScriptWorld*);
 
-    static String counterValue(JSObjectRef element);
+    static RefPtr<StringImpl> counterValue(JSObjectRef element);
 
-    String layerTreeAsText() const;
+    RefPtr<StringImpl> layerTreeAsText() const;
     
     unsigned pendingUnloadCount() const;
     
     bool allowsFollowingLink(const URL&) const;
 
-    String provisionalURL() const;
+    RefPtr<StringImpl> provisionalURL() const;
     enum class ResourceType : uint8_t { Generic, Image };
-    String suggestedFilenameForResourceWithURL(const URL&, ResourceType = ResourceType::Generic) const;
-    String mimeTypeForResourceWithURL(const URL&, ResourceType = ResourceType::Generic) const;
+    RefPtr<StringImpl> suggestedFilenameForResourceWithURL(const URL&, ResourceType = ResourceType::Generic) const;
+    RefPtr<StringImpl> mimeTypeForResourceWithURL(const URL&, ResourceType = ResourceType::Generic) const;
 
-    void setTextDirection(const String&);
+    void setTextDirection(StringImpl*);
     void updateFrameRectFromRemote(WebCore::IntRect);
 
 #if PLATFORM(COCOA)
     typedef bool (*FrameFilterFunction)(WKBundleFrameRef, WKBundleFrameRef subframe, void* context);
-    RetainPtr<CFDataRef> webArchiveData(FrameFilterFunction, void* context, const Vector<WebCore::MarkupExclusionRule>& exclusionRules = { }, const String& mainResourceFileName = { });
+    RetainPtr<CFDataRef> webArchiveData(FrameFilterFunction, void* context, const Vector<WebCore::MarkupExclusionRule>& exclusionRules = { }, StringImpl* mainResourceFileName = nullptr);
 #endif
 
     RefPtr<WebImage> createSelectionSnapshot() const;
@@ -286,7 +286,7 @@ public:
 
     NODELETE bool isFocused() const;
 
-    String frameTextForTesting(bool);
+    RefPtr<StringImpl> frameTextForTesting(bool);
 
     std::optional<std::pair<Ref<WebCore::WebKitJSHandle>, JSHandleInfo>> createAndPrepareToSendJSHandle(WebCore::Node&) const;
     std::optional<std::pair<Ref<WebCore::WebKitJSHandle>, JSHandleInfo>> createAndPrepareToSendJSHandle(WebCore::Node&, InjectedBundleScriptWorld&) const;
@@ -304,20 +304,20 @@ public:
 
     void connectInspector(Inspector::FrontendChannel::ConnectionType);
     void disconnectInspector();
-    void sendMessageToInspectorTarget(const String& message);
+    void sendMessageToInspectorTarget(StringImpl* message);
 
     void requestTextExtraction(WebCore::TextExtraction::Request&&, CompletionHandler<void(WebCore::TextExtraction::Result&&)>&&);
-    void handleTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(bool, String&&, Vector<String>&&, WebCore::FloatRect)>&&);
+    void handleTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(bool, RefPtr<StringImpl>&&, Vector<RefPtr<StringImpl>>&&, WebCore::FloatRect)>&&);
     void describeTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(WebCore::TextExtraction::InteractionDescription&&)>&&);
     void takeSnapshotOfExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
     void requestJSHandleForExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
     void requestContainerJSHandleForExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
-    void requestContainerJSHandleForSearchTexts(Vector<String>&&, std::optional<WebCore::NodeIdentifier>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
+    void requestContainerJSHandleForSearchTexts(Vector<RefPtr<StringImpl>>&&, std::optional<WebCore::NodeIdentifier>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
     void requestContentFrameIdentifierForNode(WebCore::NodeIdentifier, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>&&)>&&);
     void findFirstConnectedNode(Vector<WebCore::NodeIdentifier>&&, CompletionHandler<void(std::optional<WebCore::NodeIdentifier>)>&&);
 
-    void getSelectorPathsForNode(JSHandleInfo&&, CompletionHandler<void(Vector<HashSet<String>>&&)>&&);
-    void getNodeForSelectorPaths(Vector<HashSet<String>>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
+    void getSelectorPathsForNode(JSHandleInfo&&, CompletionHandler<void(Vector<HashSet<RefPtr<StringImpl>>>&&)>&&);
+    void getNodeForSelectorPaths(Vector<HashSet<RefPtr<StringImpl>>>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
 
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);

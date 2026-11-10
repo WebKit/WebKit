@@ -43,7 +43,6 @@ namespace WTF {
 
 class ASCIILiteral;
 class AbstractLocker;
-class AtomString;
 class AtomStringImpl;
 class BinarySemaphore;
 class CStringBase;
@@ -65,7 +64,6 @@ class SHA1;
 class Seconds;
 class SerialFunctionDispatcher;
 class GuaranteedSerialFunctionDispatcher;
-class String;
 class StringBuilder;
 class StringImpl;
 class StringView;
@@ -186,9 +184,9 @@ template <typename T>
 using SaVector = Vector<T, 0, CrashOnOverflow, 16, SequesteredArenaMalloc>;
 
 template<typename> struct DefaultHash;
-template<> struct DefaultHash<AtomString>;
+template<> struct DefaultHash<RefPtr<AtomStringImpl>>;
 template<typename T, ConcurrencyTag C> struct DefaultHash<OptionSet<T, C>>;
-template<> struct DefaultHash<String>;
+template<> struct DefaultHash<RefPtr<StringImpl>>;
 template<> struct DefaultHash<StringImpl*>;
 template<> struct DefaultHash<URL>;
 
@@ -261,7 +259,6 @@ using WTF::SaVector;
 using WTF::ASCIICString;
 using WTF::ASCIILiteral;
 using WTF::AbstractLocker;
-using WTF::AtomString;
 using WTF::AtomStringImpl;
 using WTF::AtomicObjectIdentifier;
 using WTF::Awaitable;
@@ -327,7 +324,6 @@ using WTF::SerialFunctionDispatcher;
 using WTF::SingleThreadWeakKeyHashMap;
 using WTF::SingleThreadWeakKeyHashSet;
 using WTF::SingleThreadWeakKeyListHashSet;
-using WTF::String;
 using WTF::StringBuffer;
 using WTF::StringBuilder;
 using WTF::StringImpl;

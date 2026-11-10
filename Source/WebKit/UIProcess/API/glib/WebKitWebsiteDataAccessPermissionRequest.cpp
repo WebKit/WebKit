@@ -95,8 +95,8 @@ static void webkit_website_data_access_permission_request_class_init(WebKitWebsi
 WebKitWebsiteDataAccessPermissionRequest* webkitWebsiteDataAccessPermissionRequestCreate(const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto* websiteDataPermissionRequest = WEBKIT_WEBSITE_DATA_ACCESS_PERMISSION_REQUEST(g_object_new(WEBKIT_TYPE_WEBSITE_DATA_ACCESS_PERMISSION_REQUEST, nullptr));
-    websiteDataPermissionRequest->priv->requestingDomain = requestingDomain.string().utf8();
-    websiteDataPermissionRequest->priv->currentDomain = currentDomain.string().utf8();
+    websiteDataPermissionRequest->priv->requestingDomain = utf8(requestingDomain.string());
+    websiteDataPermissionRequest->priv->currentDomain = utf8(currentDomain.string());
     websiteDataPermissionRequest->priv->completionHandler = WTF::move(completionHandler);
     return websiteDataPermissionRequest;
 }

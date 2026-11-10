@@ -252,29 +252,29 @@ public:
     void pasteFont(FromMenuOrKeyBinding = FromMenuOrKeyBinding::No);
     WEBCORE_EXPORT void performDelete();
 
-    WEBCORE_EXPORT void copyURL(const URL&, const String& title);
-    void copyURL(const URL&, const String& title, Pasteboard&);
-    PasteboardWriterData::URLData pasteboardWriterURL(const URL&, const String& title);
+    WEBCORE_EXPORT void copyURL(const URL&, StringImpl* title);
+    void copyURL(const URL&, StringImpl* title, Pasteboard&);
+    PasteboardWriterData::URLData pasteboardWriterURL(const URL&, StringImpl* title);
 
     WEBCORE_EXPORT void copyImage(const HitTestResult&);
 
     void renderLayerDidScroll(const RenderLayer&);
     void revealSelectionIfNeededAfterLoadingImageForElement(HTMLImageElement&);
 
-    String readPlainTextFromPasteboard(Pasteboard&);
+    RefPtr<StringImpl> readPlainTextFromPasteboard(Pasteboard&);
 
     void transpose();
 
     bool shouldInsertFragment(DocumentFragment&, const std::optional<SimpleRange>&, EditorInsertAction);
-    bool shouldInsertText(const String&, const std::optional<SimpleRange>&, EditorInsertAction) const;
+    bool shouldInsertText(StringImpl*, const std::optional<SimpleRange>&, EditorInsertAction) const;
     WEBCORE_EXPORT bool shouldDeleteRange(const std::optional<SimpleRange>&) const;
     bool shouldApplyStyle(const StyleProperties&, const SimpleRange&);
 
     void respondToChangedContents(const VisibleSelection& endingSelection);
 
-    bool selectionStartHasStyle(CSSPropertyID, const String& value) const;
-    WEBCORE_EXPORT TriState selectionHasStyle(CSSPropertyID, const String& value) const;
-    String selectionStartCSSPropertyValue(CSSPropertyID);
+    bool selectionStartHasStyle(CSSPropertyID, StringImpl* value) const;
+    WEBCORE_EXPORT TriState selectionHasStyle(CSSPropertyID, StringImpl* value) const;
+    RefPtr<StringImpl> selectionStartCSSPropertyValue(CSSPropertyID);
     
     TriState selectionUnorderedListState() const;
     TriState selectionOrderedListState() const;
@@ -323,7 +323,7 @@ public:
     void appliedEditing(CompositeEditCommand&);
     void unappliedEditing(EditCommandComposition&);
     void reappliedEditing(EditCommandComposition&);
-    void unappliedSpellCorrection(const VisibleSelection& selectionOfCorrected, const String& corrected, const String& correction);
+    void unappliedSpellCorrection(const VisibleSelection& selectionOfCorrected, StringImpl* corrected, StringImpl* correction);
 
     // This is off by default, since most editors want this behavior (originally matched IE but not Firefox).
     void setShouldStyleWithCSS(bool flag) { m_shouldStyleWithCSS = flag; }
@@ -334,14 +334,14 @@ public:
         NODELETE WEBCORE_EXPORT Command();
         NODELETE Command(const EditorInternalCommand*, EditorCommandSource, Document&);
 
-        WEBCORE_EXPORT bool execute(const String& parameter = String(), Event* triggeringEvent = nullptr) const;
+        WEBCORE_EXPORT bool execute(StringImpl* parameter = nullptr, Event* triggeringEvent = nullptr) const;
         WEBCORE_EXPORT bool execute(Event* triggeringEvent) const;
 
         WEBCORE_EXPORT bool isSupported() const;
         WEBCORE_EXPORT bool isEnabled(Event* triggeringEvent = nullptr) const;
 
         WEBCORE_EXPORT TriState state(Event* triggeringEvent = nullptr) const;
-        String value(Event* triggeringEvent = nullptr) const;
+        RefPtr<StringImpl> value(Event* triggeringEvent = nullptr) const;
 
         WEBCORE_EXPORT bool isTextInsertion() const;
         WEBCORE_EXPORT bool allowExecutionWhenDisabled() const;
@@ -353,14 +353,14 @@ public:
         EditorCommandSource m_source;
         RefPtr<Document> m_document;
     };
-    WEBCORE_EXPORT Command command(const String& commandName); // Command source is EditorCommandSource::MenuOrKeyBinding.
-    Command command(const String& commandName, EditorCommandSource);
-    WEBCORE_EXPORT static bool commandIsSupportedFromMenuOrKeyBinding(const String& commandName); // Works without a frame.
+    WEBCORE_EXPORT Command command(StringImpl* commandName); // Command source is EditorCommandSource::MenuOrKeyBinding.
+    Command command(StringImpl* commandName, EditorCommandSource);
+    WEBCORE_EXPORT static bool commandIsSupportedFromMenuOrKeyBinding(StringImpl* commandName); // Works without a frame.
 
-    WEBCORE_EXPORT bool insertText(const String&, Event* triggeringEvent, TextEventInputType = TextEventInputKeyboard);
-    bool insertTextForConfirmedComposition(const String& text);
-    WEBCORE_EXPORT bool insertDictatedText(const String&, const Vector<DictationAlternative>& dictationAlternatives, Event* triggeringEvent);
-    bool insertTextWithoutSendingTextEvent(const String&, bool selectInsertedText, TextEvent* triggeringEvent);
+    WEBCORE_EXPORT bool insertText(StringImpl*, Event* triggeringEvent, TextEventInputType = TextEventInputKeyboard);
+    bool insertTextForConfirmedComposition(StringImpl* text);
+    WEBCORE_EXPORT bool insertDictatedText(StringImpl*, const Vector<DictationAlternative>& dictationAlternatives, Event* triggeringEvent);
+    bool insertTextWithoutSendingTextEvent(StringImpl*, bool selectInsertedText, TextEvent* triggeringEvent);
     bool insertLineBreak();
     bool insertParagraphSeparator();
     WEBCORE_EXPORT bool insertParagraphSeparatorInQuotedContent();
@@ -373,9 +373,9 @@ public:
     void learnSpelling(const std::optional<SimpleRange>& = std::nullopt);
     int spellCheckerDocumentTag();
     WEBCORE_EXPORT bool isSelectionUngrammatical();
-    String misspelledSelectionString() const;
-    String misspelledWordAtCaretOrRange(Node* clickedNode) const;
-    Vector<String> guessesForMisspelledWord(const String&) const;
+    RefPtr<StringImpl> misspelledSelectionString() const;
+    RefPtr<StringImpl> misspelledWordAtCaretOrRange(Node* clickedNode) const;
+    Vector<RefPtr<StringImpl>> guessesForMisspelledWord(StringImpl*) const;
     TextCheckingGuesses guessesForMisspelledOrUngrammatical();
     TextCheckingGuesses guessesForMisspelledOrUngrammatical(const SimpleRange&);
     bool isSpellCheckingEnabledInFocusedNode() const;
@@ -385,7 +385,7 @@ public:
     void markBadGrammar(const VisibleSelection&);
     void markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection);
     void markAndReplaceFor(const SpellCheckRequest&, const Vector<TextCheckingResult>&);
-    WEBCORE_EXPORT void replaceRangeForSpellChecking(const SimpleRange&, const String&);
+    WEBCORE_EXPORT void replaceRangeForSpellChecking(const SimpleRange&, StringImpl*);
 
     bool isOverwriteModeEnabled() const { return m_overwriteModeEnabled; }
     WEBCORE_EXPORT void toggleOverwriteModeEnabled();
@@ -394,7 +394,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     NO_RETURN_DUE_TO_ASSERT
 #endif
-    WEBCORE_EXPORT void changeBackToReplacedString(const String& replacedString);
+    WEBCORE_EXPORT void changeBackToReplacedString(StringImpl* replacedString);
 
 #if !PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void advanceToNextMisspelling(bool startBeforeSelection = false);
@@ -431,13 +431,13 @@ public:
 
     // international text input composition
     bool hasComposition() const { return m_compositionNode; }
-    WEBCORE_EXPORT void setComposition(const String&, const Vector<CompositionUnderline>&, const Vector<CompositionHighlight>&, const HashMap<String, Vector<CharacterRange>>&, unsigned selectionStart, unsigned selectionEnd);
+    WEBCORE_EXPORT void setComposition(StringImpl*, const Vector<CompositionUnderline>&, const Vector<CompositionHighlight>&, const HashMap<RefPtr<StringImpl>, Vector<CharacterRange>>&, unsigned selectionStart, unsigned selectionEnd);
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT void setWritingSuggestion(const String&, const CharacterRange& selection);
+    WEBCORE_EXPORT void setWritingSuggestion(StringImpl*, const CharacterRange& selection);
 #endif
     WEBCORE_EXPORT void setOffset(uint64_t);
     WEBCORE_EXPORT void confirmComposition();
-    WEBCORE_EXPORT void confirmComposition(const String&); // if no existing composition, replaces selection
+    WEBCORE_EXPORT void confirmComposition(StringImpl*); // if no existing composition, replaces selection
     void confirmOrCancelCompositionAndNotifyClient();
     WEBCORE_EXPORT void cancelComposition();
     WEBCORE_EXPORT bool cancelCompositionIfSelectionIsInvalid();
@@ -454,7 +454,7 @@ public:
     bool compositionUsesCustomHighlights() const { return !m_customCompositionHighlights.isEmpty(); }
     const Vector<CompositionHighlight>& customCompositionHighlights() const LIFETIME_BOUND { return m_customCompositionHighlights; }
     bool compositionUsesCustomAnnotations() const { return !m_customCompositionAnnotations.isEmpty(); }
-    const HashMap<String, Vector<CharacterRange>>& customCompositionAnnotations() const LIFETIME_BOUND { return m_customCompositionAnnotations; }
+    const HashMap<RefPtr<StringImpl>, Vector<CharacterRange>>& customCompositionAnnotations() const LIFETIME_BOUND { return m_customCompositionAnnotations; }
 
     // FIXME: This should be a page-level concept (i.e. on EditorClient) instead of on the Editor, which
     // is a frame-specific concept, because executing an editing command can run JavaScript that can do
@@ -479,24 +479,24 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void confirmMarkedText();
-    WEBCORE_EXPORT void setTextAsChildOfElement(String&&, Element&);
-    WEBCORE_EXPORT void insertDictationPhrases(Vector<Vector<String>>&& dictationPhrases, id metadata);
-    WEBCORE_EXPORT void setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& dictationPhrases, id metadata, Element&);
+    WEBCORE_EXPORT void setTextAsChildOfElement(RefPtr<StringImpl>&&, Element&);
+    WEBCORE_EXPORT void insertDictationPhrases(Vector<Vector<RefPtr<StringImpl>>>&& dictationPhrases, id metadata);
+    WEBCORE_EXPORT void setDictationPhrasesAsChildOfElement(const Vector<Vector<RefPtr<StringImpl>>>& dictationPhrases, id metadata, Element&);
 #endif
     WEBCORE_EXPORT void setTextAlignmentForChangedBaseWritingDirection(WritingDirection);
     
     enum class KillRingInsertionMode { PrependText, AppendText };
     void addRangeToKillRing(const SimpleRange&, KillRingInsertionMode);
-    void addTextToKillRing(const String&, KillRingInsertionMode);
+    void addTextToKillRing(StringImpl*, KillRingInsertionMode);
     void setStartNewKillRingSequence(bool);
 
     void startAlternativeTextUITimer();
     // If user confirmed a correction in the correction panel, correction has non-zero length, otherwise it means that user has dismissed the panel.
-    WEBCORE_EXPORT void handleAlternativeTextUIResult(const String& correction);
+    WEBCORE_EXPORT void handleAlternativeTextUIResult(StringImpl* correction);
     void dismissCorrectionPanelAsIgnored();
 
     WEBCORE_EXPORT void pasteAsFragment(Ref<DocumentFragment>&&, bool smartReplace, bool matchStyle, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote, EditAction = EditAction::Paste);
-    WEBCORE_EXPORT void pasteAsPlainText(const String&, bool smartReplace);
+    WEBCORE_EXPORT void pasteAsPlainText(StringImpl*, bool smartReplace);
 
     // This is only called on the mac where paste is implemented primarily at the WebKit level.
     WEBCORE_EXPORT void pasteAsPlainTextBypassingDHTML();
@@ -506,11 +506,11 @@ public:
 
     RefPtr<Element> findEventTargetFrom(const VisibleSelection&) const;
 
-    WEBCORE_EXPORT String selectedText() const;
-    String selectedTextForDataTransfer() const;
-    WEBCORE_EXPORT std::optional<SimpleRange> findString(const String&, FindOptions);
+    WEBCORE_EXPORT RefPtr<StringImpl> selectedText() const;
+    RefPtr<StringImpl> selectedTextForDataTransfer() const;
+    WEBCORE_EXPORT std::optional<SimpleRange> findString(StringImpl*, FindOptions);
 
-    WEBCORE_EXPORT std::optional<SimpleRange> rangeOfString(const String&, const std::optional<SimpleRange>& searchRange, FindOptions);
+    WEBCORE_EXPORT std::optional<SimpleRange> rangeOfString(StringImpl*, const std::optional<SimpleRange>& searchRange, FindOptions);
 
     const VisibleSelection& mark() const LIFETIME_BOUND; // Mark, to be used as emacs uses it.
     void setMark(const VisibleSelection&);
@@ -525,8 +525,8 @@ public:
     void respondToChangedSelection(const VisibleSelection& oldSelection, OptionSet<FrameSelection::SetSelectionOption>);
     WEBCORE_EXPORT void updateEditorUINowIfScheduled();
     bool shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, Affinity, bool stillSelecting) const;
-    WEBCORE_EXPORT unsigned countMatchesForText(const String&, const std::optional<SimpleRange>&, FindOptions, unsigned limit, bool markMatches, Vector<SimpleRange>*);
-    WEBCORE_EXPORT unsigned markAllMatchesForText(const String&, FindOptions, unsigned limit);
+    WEBCORE_EXPORT unsigned countMatchesForText(StringImpl*, const std::optional<SimpleRange>&, FindOptions, unsigned limit, bool markMatches, Vector<SimpleRange>*);
+    WEBCORE_EXPORT unsigned markAllMatchesForText(StringImpl*, FindOptions, unsigned limit);
     NODELETE WEBCORE_EXPORT void textMatchMarkersWereCleared();
     bool markedTextMatchesAreHighlighted() const;
     WEBCORE_EXPORT void setMarkedTextMatchesAreHighlighted(bool);
@@ -543,18 +543,18 @@ public:
     enum class SmartReplace : bool { No, Yes };
     enum class MatchStyle : bool { No, Yes };
     WEBCORE_EXPORT void replaceSelectionWithFragment(DocumentFragment&, SelectReplacement, SmartReplace, MatchStyle, EditAction = EditAction::Insert, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
-    WEBCORE_EXPORT void replaceSelectionWithText(const String&, SelectReplacement, SmartReplace, EditAction = EditAction::Insert);
+    WEBCORE_EXPORT void replaceSelectionWithText(StringImpl*, SelectReplacement, SmartReplace, EditAction = EditAction::Insert);
     WEBCORE_EXPORT bool selectionStartHasMarkerFor(DocumentMarkerType, int from, int length) const;
-    WEBCORE_EXPORT void selectionStartSetMarkerForTesting(DocumentMarkerType, int from, int length, const String&);
+    WEBCORE_EXPORT void selectionStartSetMarkerForTesting(DocumentMarkerType, int from, int length, StringImpl*);
     void updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionAtWordBoundary);
-    void deletedAutocorrectionAtPosition(const Position&, const String& originalString);
+    void deletedAutocorrectionAtPosition(const Position&, StringImpl* originalString);
     
     WEBCORE_EXPORT void simplifyMarkup(Node* startNode, Node* endNode);
 
     EditorParagraphSeparator defaultParagraphSeparator() const { return m_defaultParagraphSeparator; }
     void setDefaultParagraphSeparator(EditorParagraphSeparator separator) { m_defaultParagraphSeparator = separator; }
-    Vector<String> dictationAlternativesForMarker(const DocumentMarker&);
-    void applyDictationAlternative(const String& alternativeString);
+    Vector<RefPtr<StringImpl>> dictationAlternativesForMarker(const DocumentMarker&);
+    void applyDictationAlternative(StringImpl* alternativeString);
 
 #if USE(APPKIT)
     WEBCORE_EXPORT void uppercaseWord();
@@ -562,9 +562,9 @@ public:
     WEBCORE_EXPORT void capitalizeWord();
     WEBCORE_EXPORT void convertToTraditionalChinese();
     WEBCORE_EXPORT void convertToSimplifiedChinese();
-    WEBCORE_EXPORT bool canApplyCaseTransformations(const String&);
-    WEBCORE_EXPORT bool canConvertToSimplifiedChinese(const String&);
-    WEBCORE_EXPORT bool canConvertToTraditionalChinese(const String&);
+    WEBCORE_EXPORT bool canApplyCaseTransformations(StringImpl*);
+    WEBCORE_EXPORT bool canConvertToSimplifiedChinese(StringImpl*);
+    WEBCORE_EXPORT bool canConvertToTraditionalChinese(StringImpl*);
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
@@ -598,15 +598,15 @@ public:
     WEBCORE_EXPORT FontAttributes fontAttributesAtSelectionStart();
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT String stringSelectionForPasteboard();
-    String stringSelectionForPasteboardWithImageAltText();
+    WEBCORE_EXPORT RefPtr<StringImpl> stringSelectionForPasteboard();
+    RefPtr<StringImpl> stringSelectionForPasteboardWithImageAltText();
     void takeFindStringFromSelection();
     WEBCORE_EXPORT void replaceSelectionWithAttributedString(NSAttributedString *, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
-    WEBCORE_EXPORT void readSelectionFromPasteboard(const String& pasteboardName);
-    WEBCORE_EXPORT void replaceNodeFromPasteboard(Node&, const String& pasteboardName, EditAction = EditAction::Paste);
+    WEBCORE_EXPORT void readSelectionFromPasteboard(StringImpl* pasteboardName);
+    WEBCORE_EXPORT void replaceNodeFromPasteboard(Node&, StringImpl* pasteboardName, EditAction = EditAction::Paste);
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    WEBCORE_EXPORT void insertMultiRepresentationHEIC(const std::span<const uint8_t>&, const String&);
+    WEBCORE_EXPORT void insertMultiRepresentationHEIC(const std::span<const uint8_t>&, StringImpl*);
 #endif
 
     static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
@@ -616,12 +616,12 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    WEBCORE_EXPORT RefPtr<SharedBuffer> dataSelectionForPasteboard(const String& pasteboardName);
+    WEBCORE_EXPORT RefPtr<SharedBuffer> dataSelectionForPasteboard(StringImpl* pasteboardName);
 #endif
 
     bool canCopyExcludingStandaloneImages() const;
 
-    WEBCORE_EXPORT void writeImageToPasteboard(Pasteboard&, Element& imageElement, const URL&, const String& title);
+    WEBCORE_EXPORT void writeImageToPasteboard(Pasteboard&, Element& imageElement, const URL&, StringImpl* title);
 
 #if !PLATFORM(WIN)
     WEBCORE_EXPORT void writeSelectionToPasteboard(Pasteboard&);
@@ -633,7 +633,7 @@ public:
     const Vector<SimpleRange>& detectedTelephoneNumberRanges() const LIFETIME_BOUND { return m_detectedTelephoneNumberRanges; }
 #endif
 
-    WEBCORE_EXPORT String stringForCandidateRequest() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> stringForCandidateRequest() const;
     WEBCORE_EXPORT void handleAcceptedCandidate(TextCheckingResult);
     WEBCORE_EXPORT std::optional<SimpleRange> contextRangeForCandidateRequest() const;
     std::optional<SimpleRange> rangeForTextCheckingResult(const TextCheckingResult&) const;
@@ -643,18 +643,18 @@ public:
     bool isGettingDictionaryPopupInfo() const { return m_isGettingDictionaryPopupInfo; }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    WEBCORE_EXPORT void insertAttachment(const String& identifier, std::optional<uint64_t>&& fileSize, const AtomString& fileName, const AtomString& contentType);
-    void registerAttachmentIdentifier(const String&, const String& contentType, const String& preferredFileName, Ref<FragmentedSharedBuffer>&& fileData);
+    WEBCORE_EXPORT void insertAttachment(StringImpl* identifier, std::optional<uint64_t>&& fileSize, AtomStringImpl* fileName, AtomStringImpl* contentType);
+    void registerAttachmentIdentifier(StringImpl*, StringImpl* contentType, StringImpl* preferredFileName, Ref<FragmentedSharedBuffer>&& fileData);
     void registerAttachments(Vector<SerializedAttachmentData>&&);
-    void registerAttachmentIdentifier(const String&, const String& contentType, const String& filePath);
-    void registerAttachmentIdentifier(const String&, const AttachmentAssociatedElement&);
-    void cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier);
+    void registerAttachmentIdentifier(StringImpl*, StringImpl* contentType, StringImpl* filePath);
+    void registerAttachmentIdentifier(StringImpl*, const AttachmentAssociatedElement&);
+    void cloneAttachmentData(StringImpl* fromIdentifier, StringImpl* toIdentifier);
     void didInsertAttachmentElement(HTMLAttachmentElement&);
     void didRemoveAttachmentElement(HTMLAttachmentElement&);
 
     WEBCORE_EXPORT PromisedAttachmentInfo promisedAttachmentInfo(Element&);
 #if PLATFORM(COCOA)
-    void getPasteboardTypesAndDataForAttachment(Element&, Vector<std::pair<String, RefPtr<SharedBuffer>>>& outTypesAndData);
+    void getPasteboardTypesAndDataForAttachment(Element&, Vector<std::pair<RefPtr<StringImpl>, RefPtr<SharedBuffer>>>& outTypesAndData);
 #endif
 #endif
 
@@ -685,7 +685,7 @@ private:
     bool canSmartReplaceWithPasteboard(Pasteboard&);
     void pasteAsPlainTextWithPasteboard(Pasteboard&);
     void pasteWithPasteboard(Pasteboard*, OptionSet<PasteOption>);
-    String plainTextFromPasteboard(const PasteboardPlainText&);
+    RefPtr<StringImpl> plainTextFromPasteboard(const PasteboardPlainText&);
 
     bool dispatchClipboardEvent(RefPtr<Element>&&, ClipboardEventKind);
     bool dispatchClipboardEvent(RefPtr<Element>&&, ClipboardEventKind, Ref<DataTransfer>&&);
@@ -699,12 +699,12 @@ private:
     std::optional<SimpleRange> markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling);
     OptionSet<TextCheckingType> resolveTextCheckingTypeMask(const Node& rootEditableElement, OptionSet<TextCheckingType>);
 
-    WEBCORE_EXPORT String selectedText(TextIteratorBehaviors) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> selectedText(TextIteratorBehaviors) const;
 
     void selectComposition();
     enum SetCompositionMode { ConfirmComposition, CancelComposition };
-    void setComposition(const String&, SetCompositionMode);
-    String compositionText() const;
+    void setComposition(StringImpl*, SetCompositionMode);
+    RefPtr<StringImpl> compositionText() const;
 
     void changeSelectionAfterCommand(const VisibleSelection& newSelection, OptionSet<FrameSelection::SetSelectionOption>);
 
@@ -721,9 +721,9 @@ private:
 
 #if PLATFORM(COCOA)
     RefPtr<SharedBuffer> selectionInWebArchiveFormat();
-    String selectionInHTMLFormat();
+    RefPtr<StringImpl> selectionInHTMLFormat();
     RefPtr<SharedBuffer> imageInWebArchiveFormat(Element&);
-    static String userVisibleString(const URL&);
+    static RefPtr<StringImpl> userVisibleString(const URL&);
 #endif
 
     void scheduleEditorUIUpdate();
@@ -732,13 +732,13 @@ private:
     void notifyClientOfAttachmentUpdates();
 #endif
 
-    String platformContentTypeForBlobType(const String& type) const;
+    RefPtr<StringImpl> platformContentTypeForBlobType(StringImpl* type) const;
 
-    void postTextStateChangeNotificationForCut(const String&, const VisibleSelection&);
+    void postTextStateChangeNotificationForCut(StringImpl*, const VisibleSelection&);
 
     void removeWritingSuggestionIfNeeded();
 
-    Vector<SimpleRange> findAllMatches(const String& searchText, const std::optional<SimpleRange>&, FindOptions searchOptions, std::optional<unsigned> limit);
+    Vector<SimpleRange> findAllMatches(StringImpl* searchText, const std::optional<SimpleRange>&, FindOptions searchOptions, std::optional<unsigned> limit);
 
     WeakPtr<EditorClient> m_client;
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
@@ -748,7 +748,7 @@ private:
     unsigned m_compositionEnd;
     Vector<CompositionUnderline> m_customCompositionUnderlines;
     Vector<CompositionHighlight> m_customCompositionHighlights;
-    HashMap<String, Vector<CharacterRange>> m_customCompositionAnnotations;
+    HashMap<RefPtr<StringImpl>, Vector<CharacterRange>> m_customCompositionAnnotations;
     bool m_ignoreSelectionChanges { false };
     bool m_shouldStartNewKillRingSequence { false };
     bool m_shouldStyleWithCSS { false };
@@ -763,8 +763,8 @@ private:
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    MemoryCompactRobinHoodHashSet<String> m_insertedAttachmentIdentifiers;
-    MemoryCompactRobinHoodHashSet<String> m_removedAttachmentIdentifiers;
+    MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>> m_insertedAttachmentIdentifiers;
+    MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>> m_removedAttachmentIdentifiers;
 #endif
 
     std::unique_ptr<WritingSuggestionData> m_writingSuggestionData;

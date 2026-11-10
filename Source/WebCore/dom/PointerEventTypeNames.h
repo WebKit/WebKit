@@ -29,8 +29,8 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT const String& mousePointerEventType();
-WEBCORE_EXPORT const String& penPointerEventType();
-WEBCORE_EXPORT const String& touchPointerEventType();
+WEBCORE_EXPORT const RefPtr<StringImpl>& mousePointerEventType();
+WEBCORE_EXPORT const RefPtr<StringImpl>& penPointerEventType();
+WEBCORE_EXPORT const RefPtr<StringImpl>& touchPointerEventType();
 
 } // namespace WebCore

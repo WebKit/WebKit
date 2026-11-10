@@ -55,7 +55,7 @@ ApplePayReferenceSession::~ApplePayReferenceSession() = default;
 void ApplePayReferenceSession::prepare(Document&, PreparePromise&& promise)
 {
     // FIXME: Resolve with a token from the platform (rdar://188711233).
-    promise.reject(Exception { ExceptionCode::NotSupportedError, "Reference sessions are not supported yet."_s });
+    promise.reject(Exception { ExceptionCode::NotSupportedError, "Reference sessions are not supported yet."_si });
 }
 
 } // namespace WebCore

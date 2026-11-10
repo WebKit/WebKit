@@ -63,7 +63,7 @@ void RemoteCDMInstanceSessionProxy::setLogIdentifier(uint64_t logIdentifier)
 #endif
 }
 
-void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, KeyGroupingStrategy keyGroupingStrategy, String initDataType, RefPtr<WebCore::SharedBuffer>&& initData, LicenseCallback&& completion)
+void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, KeyGroupingStrategy keyGroupingStrategy, RefPtr<StringImpl> initDataType, RefPtr<WebCore::SharedBuffer>&& initData, LicenseCallback&& completion)
 {
     if (!initData) {
         completion({ }, emptyString(), false, false);
@@ -76,12 +76,12 @@ void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, KeyGrouping
         return;
     }
 
-    protect(m_session)->requestLicense(type, keyGroupingStrategy, initDataType, initData.releaseNonNull(), [completion = WTF::move(completion)] (Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
+    protect(m_session)->requestLicense(type, keyGroupingStrategy, initDataType, initData.releaseNonNull(), [completion = WTF::move(completion)] (Ref<SharedBuffer>&& message, StringImpl* sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
         completion(WTF::move(message), sessionId, needsIndividualization, succeeded == CDMInstanceSession::Succeeded);
     });
 }
 
-void RemoteCDMInstanceSessionProxy::updateLicense(String sessionId, LicenseType type, RefPtr<SharedBuffer>&& response, LicenseUpdateCallback&& completion)
+void RemoteCDMInstanceSessionProxy::updateLicense(RefPtr<StringImpl> sessionId, LicenseType type, RefPtr<SharedBuffer>&& response, LicenseUpdateCallback&& completion)
 {
     if (!response) {
         completion(true, { }, std::nullopt, std::nullopt, false);
@@ -100,7 +100,7 @@ void RemoteCDMInstanceSessionProxy::updateLicense(String sessionId, LicenseType 
     });
 }
 
-void RemoteCDMInstanceSessionProxy::loadSession(LicenseType type, String sessionId, String origin, LoadSessionCallback&& completion)
+void RemoteCDMInstanceSessionProxy::loadSession(LicenseType type, RefPtr<StringImpl> sessionId, RefPtr<StringImpl> origin, LoadSessionCallback&& completion)
 {
     // Implement the CDMPrivate::sanitizeSessionId() check here:
     auto sanitizedSessionId = protect(m_cdm)->sanitizeSessionId(sessionId);
@@ -114,21 +114,21 @@ void RemoteCDMInstanceSessionProxy::loadSession(LicenseType type, String session
     });
 }
 
-void RemoteCDMInstanceSessionProxy::closeSession(const String& sessionId, CloseSessionCallback&& completion)
+void RemoteCDMInstanceSessionProxy::closeSession(StringImpl* sessionId, CloseSessionCallback&& completion)
 {
     protect(m_session)->closeSession(sessionId, [completion = WTF::move(completion)] () mutable {
         completion();
     });
 }
 
-void RemoteCDMInstanceSessionProxy::removeSessionData(const String& sessionId, LicenseType type, RemoveSessionDataCallback&& completion)
+void RemoteCDMInstanceSessionProxy::removeSessionData(StringImpl* sessionId, LicenseType type, RemoveSessionDataCallback&& completion)
 {
     protect(m_session)->removeSessionData(sessionId, type, [completion = WTF::move(completion)] (CDMInstanceSession::KeyStatusVector&& keyStatuses, RefPtr<SharedBuffer>&& expiredSessionsData, CDMInstanceSession::SuccessValue succeeded) mutable {
         completion(WTF::move(keyStatuses), WTF::move(expiredSessionsData), succeeded == CDMInstanceSession::Succeeded);
     });
 }
 
-void RemoteCDMInstanceSessionProxy::storeRecordOfKeyUsage(const String& sessionId)
+void RemoteCDMInstanceSessionProxy::storeRecordOfKeyUsage(StringImpl* sessionId)
 {
     protect(m_session)->storeRecordOfKeyUsage(sessionId);
 }
@@ -165,7 +165,7 @@ void RemoteCDMInstanceSessionProxy::sendMessage(CDMMessageType type, Ref<SharedB
     gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstanceSession::SendMessage(type, WTF::move(message)), m_identifier);
 }
 
-void RemoteCDMInstanceSessionProxy::sessionIdChanged(const String& sessionId)
+void RemoteCDMInstanceSessionProxy::sessionIdChanged(StringImpl* sessionId)
 {
     if (!m_cdm)
         return;

@@ -60,7 +60,7 @@ public:
     ~ComputePipeline();
 
     Ref<WebGPU::BindGroupLayout> getBindGroupLayout(uint32_t groupIndex) final;
-    NODELETE void setLabel(String&&) final;
+    NODELETE void setLabel(RefPtr<StringImpl>&&) final;
 
     bool isValid() const final { return m_computePipelineState && m_pipelineLayout->isValid(); }
 

@@ -1561,20 +1561,20 @@ ALWAYS_INLINE JSValue LiteralParser<CharType, reviverMode>::parsePrimitiveValue(
     case TokIdentifier: {
         auto token = m_lexer.currentToken();
 
-        auto tryMakeErrorString = [&] (unsigned length) -> String {
+        auto tryMakeErrorString = [&] (unsigned length) -> RefPtr<StringImpl> {
             bool addEllipsis = length != token->stringOrIdentifierLength;
             return tryMakeString("Unexpected identifier \""_s, std::span { token->identifierStart, length }, addEllipsis ? "..."_s : ""_s, '"');
         };
 
         constexpr unsigned maxLength = 200;
 
-        String errorString = tryMakeErrorString(std::min(token->stringOrIdentifierLength, maxLength));
+        RefPtr<StringImpl> errorString = tryMakeErrorString(std::min(token->stringOrIdentifierLength, maxLength));
         if (!errorString) {
             constexpr unsigned shortLength = 10;
             if (token->stringOrIdentifierLength > shortLength)
                 errorString = tryMakeErrorString(shortLength);
             if (!errorString)
-                errorString = "Unexpected identifier"_s;
+                errorString = "Unexpected identifier"_si;
         }
 
         m_parseErrorMessage = errorString;
@@ -1923,7 +1923,7 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
                         EnsureStillAliveScope newStructureScope(newStructureID.decode());
                         m_lexer.setPtr(cursor);
                         value = parseValue(/* lookUpCachedStrings */ false);
-                        EXCEPTION_ASSERT((!!scope.exception() || !m_parseErrorMessage.isNull()) == !value);
+                        EXCEPTION_ASSERT((!!scope.exception() || !!m_parseErrorMessage) == !value);
                         if (!value) [[unlikely]]
                             return { };
                         putWithTransition(structureID, newStructureID, offset, value);
@@ -2001,7 +2001,7 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
 #if ASSERT_ENABLED
                             if (transition) {
                                 PropertyOffset expectedOffset = 0;
-                                RefPtr<AtomStringImpl> expectedName = key.empty() ? RefPtr { emptyAtom().impl() } : AtomStringImpl::lookUp(key);
+                                RefPtr<AtomStringImpl> expectedName = key.empty() ? RefPtr { emptyAtom() } : AtomStringImpl::lookUp(key);
                                 ASSERT(expectedName);
                                 ASSERT(Structure::addPropertyTransitionToExistingStructure(originalStructure, expectedName.get(), 0, expectedOffset) == transition);
                                 ASSERT(expectedOffset == transition->transitionOffset());
@@ -2053,7 +2053,7 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
             }
 
             JSValue value = parseValue(/* lookUpCachedStrings */ true);
-            EXCEPTION_ASSERT((!!scope.exception() || !m_parseErrorMessage.isNull()) == !value);
+            EXCEPTION_ASSERT((!!scope.exception() || !!m_parseErrorMessage) == !value);
             if (!value) [[unlikely]]
                 return { };
 
@@ -2127,7 +2127,7 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
             value = parsePrimitiveValue(vm);
         if (!isArray)
             return value;
-        EXCEPTION_ASSERT((!!scope.exception() || !m_parseErrorMessage.isNull()) == !value);
+        EXCEPTION_ASSERT((!!scope.exception() || !!m_parseErrorMessage) == !value);
         if (!value) [[unlikely]] {
             m_elementStack.shrink(stackBase);
             return { };

@@ -43,10 +43,10 @@ public:
     ~WebOpenPanelResultListener();
 
     void disconnectFromPage() { m_page = 0; }
-    void didChooseFiles(const Vector<String>& files, const Vector<String>& replacementFiles);
+    void didChooseFiles(const Vector<RefPtr<StringImpl>>& files, const Vector<RefPtr<StringImpl>>& replacementFiles);
     void didCancelFileChoosing();
 #if PLATFORM(IOS_FAMILY)
-    void didChooseFilesWithDisplayStringAndIcon(const Vector<String>&, const String& displayString, WebCore::Icon*);
+    void didChooseFilesWithDisplayStringAndIcon(const Vector<RefPtr<StringImpl>>&, StringImpl* displayString, WebCore::Icon*);
 #endif
 
 private:

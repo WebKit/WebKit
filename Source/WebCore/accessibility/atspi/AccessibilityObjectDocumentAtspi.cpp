@@ -44,17 +44,17 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_documentFunctions = {
         if (!g_strcmp0(methodName, "GetAttributeValue")) {
             const char* name;
             g_variant_get(parameters, "(&s)", &name);
-            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", atspiObject->documentAttribute(String::fromUTF8(name)).utf8()));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", utf8(atspiObject->documentAttribute(StringImpl::fromUTF8(name)))));
         } else if (!g_strcmp0(methodName, "GetAttributes")) {
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("(a{ss})"));
             g_variant_builder_open(&builder, G_VARIANT_TYPE("a{ss}"));
             auto attributes = atspiObject->documentAttributes();
             for (const auto& it : attributes)
-                gVariantBuilderAdd(&builder, "{ss}", it.key.utf8(), it.value.utf8());
+                gVariantBuilderAdd(&builder, "{ss}", utf8(it.key), utf8(it.value));
             g_variant_builder_close(&builder);
             g_dbus_method_invocation_return_value(invocation, g_variant_builder_end(&builder));
         } else if (!g_strcmp0(methodName, "GetLocale"))
-            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", atspiObject->documentLocale().utf8()));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", utf8(atspiObject->documentLocale())));
     },
     // get_property
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* propertyName, GError** error, gpointer userData) -> GVariant* {
@@ -75,7 +75,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_documentFunctions = {
     { nullptr }
 };
 
-String AccessibilityObjectAtspi::documentAttribute(const String& name) const
+RefPtr<StringImpl> AccessibilityObjectAtspi::documentAttribute(StringImpl* name) const
 {
     if (!m_coreObject)
         return { };
@@ -84,23 +84,23 @@ String AccessibilityObjectAtspi::documentAttribute(const String& name) const
     if (!document)
         return { };
 
-    if (name == "DocType"_s)
-        return document->doctype() ? document->doctype()->name() : String();
-    if (name == "Encoding"_s)
+    if (equal(name, "DocType"_s))
+        return document->doctype() ? document->doctype()->name() : nullptr;
+    if (equal(name, "Encoding"_s))
         return document->charset();
-    if (name == "URI"_s)
+    if (equal(name, "URI"_s))
         return document->documentURI();
-    if (name == "MimeType"_s)
+    if (equal(name, "MimeType"_s))
         return document->contentType();
-    if (name == "Title"_s)
+    if (equal(name, "Title"_s))
         return document->title();
 
     return { };
 }
 
-HashMap<String, String> AccessibilityObjectAtspi::documentAttributes() const
+HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> AccessibilityObjectAtspi::documentAttributes() const
 {
-    HashMap<String, String> map;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> map;
     if (!m_coreObject)
         return map;
 
@@ -116,21 +116,21 @@ HashMap<String, String> AccessibilityObjectAtspi::documentAttributes() const
         map.add("Encoding"_s, WTF::move(charset));
 
     auto uri = document->documentURI();
-    if (!uri.isEmpty())
+    if (!isEmpty(uri))
         map.add("URI"_s, WTF::move(uri));
 
     auto contentType = document->contentType();
-    if (!contentType.isEmpty())
+    if (!isEmpty(contentType))
         map.add("MimeType"_s, WTF::move(contentType));
 
     const auto& title = document->title();
-    if (!title.isEmpty())
+    if (!isEmpty(title))
         map.add("Title"_s, title);
 
     return map;
 }
 
-String AccessibilityObjectAtspi::documentLocale() const
+RefPtr<StringImpl> AccessibilityObjectAtspi::documentLocale() const
 {
     if (!m_coreObject)
         return { };

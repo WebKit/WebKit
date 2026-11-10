@@ -110,7 +110,7 @@ UUID::UUID()
 {
 }
 
-String UUID::toString() const
+RefPtr<StringImpl> UUID::toString() const
 {
     return makeString(*this);
 }
@@ -176,30 +176,30 @@ std::optional<UUID> UUID::parseVersion4(StringView value)
     return uuid;
 }
 
-String createVersion4UUIDString()
+RefPtr<StringImpl> createVersion4UUIDString()
 {
     return makeString(UUID::createVersion4());
 }
 
-String createVersion4UUIDStringWeak()
+RefPtr<StringImpl> createVersion4UUIDStringWeak()
 {
     return makeString(UUID::createVersion4Weak());
 }
 
-String bootSessionUUIDString()
+RefPtr<StringImpl> bootSessionUUIDString()
 {
 #if OS(DARWIN)
-    static NeverDestroyed<String> bootSessionUUID = []() -> String {
+    static NeverDestroyed<RefPtr<StringImpl>> bootSessionUUID = []() -> RefPtr<StringImpl> {
         constexpr size_t maxUUIDLength = 37;
         std::array<Latin1Character, maxUUIDLength> uuid;
         size_t uuidLength = maxUUIDLength;
         if (sysctlbyname("kern.bootsessionuuid", uuid.data(), &uuidLength, nullptr, 0))
             return { };
-        return String(std::span { uuid }.first(uuidLength - 1));
+        return StringImpl::create(std::span { uuid }.first(uuidLength - 1));
     }();
     return bootSessionUUID;
 #else
-    return String();
+    return nullptr;
 #endif
 }
 

@@ -144,17 +144,17 @@ TEST(AutocorrectionTests, AutocorrectionContextDoesNotIncludeNewlineInTextField)
     [webView waitForNextPresentationUpdate];
 
     auto contextBeforeTyping = [webView autocorrectionContext];
-    EXPECT_TRUE(contextBeforeTyping.contextBeforeSelection.isEmpty());
-    EXPECT_TRUE(contextBeforeTyping.selectedText.isEmpty());
-    EXPECT_TRUE(contextBeforeTyping.contextAfterSelection.isEmpty());
+    EXPECT_TRUE(isEmpty(contextBeforeTyping.contextBeforeSelection));
+    EXPECT_TRUE(isEmpty(contextBeforeTyping.selectedText));
+    EXPECT_TRUE(isEmpty(contextBeforeTyping.contextAfterSelection));
 
     [[webView textInputContentView] insertText:@"a"];
     [webView waitForNextPresentationUpdate];
 
     auto contextAfterTyping = [webView autocorrectionContext];
     EXPECT_WK_STREQ(@"a", contextAfterTyping.contextBeforeSelection);
-    EXPECT_TRUE(contextAfterTyping.selectedText.isEmpty());
-    EXPECT_TRUE(contextAfterTyping.contextAfterSelection.isEmpty());
+    EXPECT_TRUE(isEmpty(contextAfterTyping.selectedText));
+    EXPECT_TRUE(isEmpty(contextAfterTyping.contextAfterSelection));
 }
 
 TEST(AutocorrectionTests, MultiWordAutocorrectionFromStartOfText)
@@ -314,26 +314,26 @@ TEST(AutocorrectionTests, AutocorrectionContextBeforeAndAfterEditing)
 
     auto *contentView = [webView textInputContentView];
     auto contextBeforeInsertingText = [webView autocorrectionContext];
-    EXPECT_TRUE(contextBeforeInsertingText.contextBeforeSelection.isEmpty());
-    EXPECT_TRUE(contextBeforeInsertingText.selectedText.isEmpty());
-    EXPECT_TRUE(contextBeforeInsertingText.contextAfterSelection.isEmpty());
-    EXPECT_TRUE(contextBeforeInsertingText.markedText.isNull());
+    EXPECT_TRUE(isEmpty(contextBeforeInsertingText.contextBeforeSelection));
+    EXPECT_TRUE(isEmpty(contextBeforeInsertingText.selectedText));
+    EXPECT_TRUE(isEmpty(contextBeforeInsertingText.contextAfterSelection));
+    EXPECT_TRUE(!contextBeforeInsertingText.markedText);
     EXPECT_TRUE(NSEqualRanges(contextBeforeInsertingText.selectedRangeInMarkedText, NSMakeRange(NSNotFound, 0)));
 
     [contentView insertText:@"hello"];
     auto contextAfterInsertingText = [webView autocorrectionContext];
     EXPECT_WK_STREQ("hello", contextAfterInsertingText.contextBeforeSelection);
-    EXPECT_TRUE(contextAfterInsertingText.selectedText.isEmpty());
-    EXPECT_TRUE(contextAfterInsertingText.contextAfterSelection.isEmpty());
-    EXPECT_TRUE(contextAfterInsertingText.markedText.isNull());
+    EXPECT_TRUE(isEmpty(contextAfterInsertingText.selectedText));
+    EXPECT_TRUE(isEmpty(contextAfterInsertingText.contextAfterSelection));
+    EXPECT_TRUE(!contextAfterInsertingText.markedText);
     EXPECT_TRUE(NSEqualRanges(contextAfterInsertingText.selectedRangeInMarkedText, NSMakeRange(NSNotFound, 0)));
 
     [contentView selectAll:nil];
     auto contextAfterSelecting = [webView autocorrectionContext];
-    EXPECT_TRUE(contextAfterSelecting.contextBeforeSelection.isEmpty());
+    EXPECT_TRUE(isEmpty(contextAfterSelecting.contextBeforeSelection));
     EXPECT_WK_STREQ("hello", contextAfterSelecting.selectedText);
-    EXPECT_TRUE(contextAfterSelecting.contextAfterSelection.isEmpty());
-    EXPECT_TRUE(contextAfterSelecting.markedText.isNull());
+    EXPECT_TRUE(isEmpty(contextAfterSelecting.contextAfterSelection));
+    EXPECT_TRUE(!contextAfterSelecting.markedText);
     EXPECT_TRUE(NSEqualRanges(contextAfterSelecting.selectedRangeInMarkedText, NSMakeRange(NSNotFound, 0)));
 }
 

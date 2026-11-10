@@ -31,24 +31,24 @@ namespace WebCore {
 
 struct AuthenticationExtensionsClientInputsJSON {
     struct LargeBlobInputsJSON {
-        String support;
+        RefPtr<StringImpl> support;
         std::optional<bool> read;
-        String write;
+        RefPtr<StringImpl> write;
     };
     struct PRFValuesJSON {
-        String first;
-        String second;
+        RefPtr<StringImpl> first;
+        RefPtr<StringImpl> second;
     };
     struct PRFInputsJSON {
         std::optional<PRFValuesJSON> eval;
-        std::optional<Vector<KeyValuePair<String, PRFValuesJSON>>> evalByCredential;
+        std::optional<Vector<KeyValuePair<RefPtr<StringImpl>, PRFValuesJSON>>> evalByCredential;
     };
 
-    String appid;
+    RefPtr<StringImpl> appid;
     std::optional<bool> credProps;
     std::optional<LargeBlobInputsJSON> largeBlob;
     std::optional<PRFInputsJSON> prf;
-    String crossDeviceFallbackURL;
+    RefPtr<StringImpl> crossDeviceFallbackURL;
 };
 }
 

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class OriginLock : public ThreadSafeRefCounted<OriginLock> {
 public:
-    static Ref<OriginLock> create(const String& originPath)
+    static Ref<OriginLock> create(StringImpl* originPath)
     {
         return adoptRef(*new OriginLock(originPath));
     }
@@ -43,12 +43,12 @@ public:
     void lock();
     void unlock();
 
-    static void deleteLockFile(const String& originPath);
+    static void deleteLockFile(StringImpl* originPath);
 
 private:
-    explicit OriginLock(const String& originPath);
+    explicit OriginLock(StringImpl* originPath);
 
-    String m_lockFileName;
+    RefPtr<StringImpl> m_lockFileName;
     Lock m_mutex;
 #if USE(FILE_LOCK)
     FileSystem::FileHandle m_lockHandle;

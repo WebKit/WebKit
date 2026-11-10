@@ -161,7 +161,7 @@ public:
     {
         auto inverse = m_value.inverse();
         if (!inverse)
-            return Exception { ExceptionCode::InvalidStateError, "Matrix is not invertible"_s };
+            return Exception { ExceptionCode::InvalidStateError, "Matrix is not invertible"_si };
         return SVGMatrix::create(*inverse);
     }
 

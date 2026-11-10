@@ -33,24 +33,24 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionErrorEvent);
 
-Ref<SpeechRecognitionErrorEvent> SpeechRecognitionErrorEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
+Ref<SpeechRecognitionErrorEvent> SpeechRecognitionErrorEvent::create(AtomStringImpl* type, Init&& init, IsTrusted isTrusted)
 {
     return adoptRef(*new SpeechRecognitionErrorEvent(type, WTF::move(init), isTrusted));
 }
 
-Ref<SpeechRecognitionErrorEvent> SpeechRecognitionErrorEvent::create(const AtomString& type, SpeechRecognitionErrorCode error, const String& message)
+Ref<SpeechRecognitionErrorEvent> SpeechRecognitionErrorEvent::create(AtomStringImpl* type, SpeechRecognitionErrorCode error, StringImpl* message)
 {
     return adoptRef(*new SpeechRecognitionErrorEvent(type, error, message));
 }
 
-SpeechRecognitionErrorEvent::SpeechRecognitionErrorEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
+SpeechRecognitionErrorEvent::SpeechRecognitionErrorEvent(AtomStringImpl* type, Init&& init, IsTrusted isTrusted)
     : Event(EventInterfaceType::SpeechRecognitionErrorEvent, type, init, isTrusted)
     , m_error(init.error)
     , m_message(WTF::move(init.message))
 {
 }
 
-SpeechRecognitionErrorEvent::SpeechRecognitionErrorEvent(const AtomString& type, SpeechRecognitionErrorCode error, const String& message)
+SpeechRecognitionErrorEvent::SpeechRecognitionErrorEvent(AtomStringImpl* type, SpeechRecognitionErrorCode error, StringImpl* message)
     : Event(EventInterfaceType::SpeechRecognitionErrorEvent, type, Event::CanBubble::No, Event::IsCancelable::No)
     , m_error(error)
     , m_message(message)

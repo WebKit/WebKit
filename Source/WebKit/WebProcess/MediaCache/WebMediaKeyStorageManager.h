@@ -48,8 +48,8 @@ public:
 
     static ASCIILiteral supplementName();
 
-    const String& mediaKeyStorageDirectory() const LIFETIME_BOUND { return m_mediaKeyStorageDirectory; }
-    String mediaKeyStorageDirectoryForOrigin(const WebCore::SecurityOriginData&);
+    const RefPtr<StringImpl>& mediaKeyStorageDirectory() const LIFETIME_BOUND { return m_mediaKeyStorageDirectory; }
+    RefPtr<StringImpl> mediaKeyStorageDirectoryForOrigin(const WebCore::SecurityOriginData&);
 
     Vector<WebCore::SecurityOriginData> getMediaKeyOrigins();
     void deleteMediaKeyEntriesForOrigin(const WebCore::SecurityOriginData&);
@@ -59,7 +59,7 @@ public:
 private:
     void setWebsiteDataStore(const WebProcessDataStoreParameters&) override;
 
-    String m_mediaKeyStorageDirectory;
+    RefPtr<StringImpl> m_mediaKeyStorageDirectory;
 };
 
 }

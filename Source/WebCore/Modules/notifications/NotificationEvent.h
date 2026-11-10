@@ -36,7 +36,7 @@ namespace WebCore {
 
 struct NotificationEventInit : ExtendableEventInit {
     Ref<Notification> notification;
-    String action;
+    RefPtr<StringImpl> action;
 };
 
 class NotificationEvent final : public ExtendableEvent {
@@ -46,17 +46,17 @@ public:
 
     using Init = NotificationEventInit;
 
-    NODELETE static Ref<NotificationEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
-    static Ref<NotificationEvent> create(const AtomString&, Ref<Notification>&&, const String& action, IsTrusted = IsTrusted::No);
+    NODELETE static Ref<NotificationEvent> create(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<NotificationEvent> create(AtomStringImpl*, Ref<Notification>&&, StringImpl* action, IsTrusted = IsTrusted::No);
 
     Notification& notification() { return m_notification; }
-    const String& action() const LIFETIME_BOUND { return m_action; }
+    const RefPtr<StringImpl>& action() const LIFETIME_BOUND { return m_action; }
 
 private:
-    NotificationEvent(const AtomString&, NotificationEventInit&&, IsTrusted = IsTrusted::No);
+    NotificationEvent(AtomStringImpl*, NotificationEventInit&&, IsTrusted = IsTrusted::No);
 
     const Ref<Notification> m_notification;
-    String m_action;
+    RefPtr<StringImpl> m_action;
 };
 
 } // namespace WebCore

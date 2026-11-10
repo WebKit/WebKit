@@ -39,23 +39,23 @@ class SourceCode;
 
 class ImportMap final : public RefCounted<ImportMap> {
 public:
-    using SpecifierMap = UncheckedKeyHashMap<AtomString, URL>;
+    using SpecifierMap = UncheckedKeyHashMap<RefPtr<AtomStringImpl>, URL>;
     using ScopesMap = UncheckedKeyHashMap<URL, SpecifierMap>;
     using ScopesVector = Vector<URL>;
-    using IntegrityMap = UncheckedKeyHashMap<URL, String>;
+    using IntegrityMap = UncheckedKeyHashMap<URL, RefPtr<StringImpl>>;
 
     class Reporter {
     public:
         virtual ~Reporter() = default;
-        virtual void reportWarning(const String&) const { };
-        virtual void reportError(const String&) const { };
+        virtual void reportWarning(StringImpl*) const { };
+        virtual void reportError(StringImpl*) const { };
     };
 
     static Ref<ImportMap> create() { return adoptRef(*new ImportMap()); }
 
-    JS_EXPORT_PRIVATE URL resolve(const String& specifier, const URL& baseURL);
+    JS_EXPORT_PRIVATE URL resolve(StringImpl* specifier, const URL& baseURL);
 
-    JS_EXPORT_PRIVATE String integrityForURL(const URL&) const;
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> integrityForURL(const URL&) const;
 
     // https://html.spec.whatwg.org/C#parse-an-import-map-string
     JS_EXPORT_PRIVATE static std::optional<Ref<ImportMap>> parseImportMapString(const SourceCode&, const URL& baseURL, const ImportMap::Reporter&);
@@ -65,12 +65,12 @@ public:
     // this call.
     JS_EXPORT_PRIVATE void mergeExistingAndNewImportMaps(Ref<ImportMap>&& newImportMap, const ImportMap::Reporter&);
 
-    void addModuleToResolvedModuleSet(String referringScriptURL, AtomString specifier);
+    void addModuleToResolvedModuleSet(RefPtr<StringImpl> referringScriptURL, RefPtr<AtomStringImpl> specifier);
 private:
     ImportMap() = default;
     ImportMap(SpecifierMap&&, ScopesMap&&, IntegrityMap&&);
 
-    static std::expected<URL, String> resolveImportMatch(const AtomString&, const URL&, const SpecifierMap&);
+    static std::expected<URL, RefPtr<StringImpl>> resolveImportMatch(AtomStringImpl*, const URL&, const SpecifierMap&);
 
     SpecifierMap m_imports;
     ScopesMap m_scopesMap;
@@ -84,8 +84,8 @@ private:
     // of prefixes resolved in them. That permits us to reduce the cost of merging
     // a new map, by performing more work at addModuleToResolvedModuleSet time,
     // and by keeping more prefixes in memory.
-    UncheckedKeyHashSet<AtomString> m_toplevelResolvedModuleSet;
-    UncheckedKeyHashMap<AtomString, UncheckedKeyHashSet<AtomString>> m_scopedResolvedModuleMap;
+    UncheckedKeyHashSet<RefPtr<AtomStringImpl>> m_toplevelResolvedModuleSet;
+    UncheckedKeyHashMap<RefPtr<AtomStringImpl>, UncheckedKeyHashSet<RefPtr<AtomStringImpl>>> m_scopedResolvedModuleMap;
 };
 
 } // namespace JSC

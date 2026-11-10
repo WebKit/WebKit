@@ -49,7 +49,7 @@ bool QuirksAccessors::needsQuirks() const
     return m_document && m_document->settings().needsSiteSpecificQuirks();
 }
 
-bool QuirksAccessors::elementMatchesSelectorCondition(const String& selector, const Node* node)
+bool QuirksAccessors::elementMatchesSelectorCondition(StringImpl* selector, const Node* node)
 {
     if (!node)
         return false;
@@ -76,7 +76,7 @@ bool QuirksAccessors::behaviorAppliesToNode(QuirkBehaviorID id, const Node* node
         if (behavior.id != id)
             continue;
 
-        if (behavior.elementSelector.isNull())
+        if (!behavior.elementSelector)
             return true;
 
         if (elementMatchesSelectorCondition(behavior.elementSelector, node))
@@ -86,7 +86,7 @@ bool QuirksAccessors::behaviorAppliesToNode(QuirkBehaviorID id, const Node* node
     return false;
 }
 
-RefPtr<Element> QuirksAccessors::firstElementMatchingSelectorCondition(const String& selector, Document& document)
+RefPtr<Element> QuirksAccessors::firstElementMatchingSelectorCondition(StringImpl* selector, Document& document)
 {
     auto* query = SelectorQueryCache::singleton().add(selector, document);
     if (!query) {
@@ -107,7 +107,7 @@ RefPtr<Element> QuirksAccessors::elementMatchingDocumentSelectorCondition(QuirkB
         return nullptr;
 
     for (const auto& behavior : m_quirksData.behaviors()) {
-        if (behavior.id != id || behavior.documentSelector.isNull())
+        if (behavior.id != id || !behavior.documentSelector)
             continue;
 
         if (RefPtr element = firstElementMatchingSelectorCondition(behavior.documentSelector, *document))
@@ -123,7 +123,7 @@ bool QuirksAccessors::behaviorAppliesToDocument(QuirkBehaviorID id) const
         return false;
 
     bool appliesUnconditionally = std::ranges::any_of(m_quirksData.behaviors(), [&](const auto& behavior) {
-        return behavior.id == id && behavior.documentSelector.isNull();
+        return behavior.id == id && !behavior.documentSelector;
     });
 
     return appliesUnconditionally || elementMatchingDocumentSelectorCondition(id);

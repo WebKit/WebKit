@@ -55,7 +55,7 @@ FunctionPrototype::FunctionPrototype(VM& vm, Structure* structure)
 {
 }
 
-void FunctionPrototype::finishCreation(VM& vm, const String& name)
+void FunctionPrototype::finishCreation(VM& vm, StringImpl* name)
 {
     Base::finishCreation(vm, 0, name, PropertyAdditionMode::WithoutStructureTransition);
     ASSERT(inherits(info()));
@@ -72,7 +72,7 @@ void FunctionPrototype::addFunctionProperties(VM& vm, JSGlobalObject* globalObje
     putDirectCustomGetterSetterWithoutTransition(vm, vm.propertyNames->arguments, CustomGetterSetter::create(vm, argumentsGetter, callerAndArgumentsSetter), PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor);
     putDirectCustomGetterSetterWithoutTransition(vm, vm.propertyNames->caller, CustomGetterSetter::create(vm, callerGetter, callerAndArgumentsSetter), PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor);
 
-    *hasInstanceSymbolFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.hasInstance]"_s, functionProtoFuncSymbolHasInstance, ImplementationVisibility::Public);
+    *hasInstanceSymbolFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.hasInstance]"_si, functionProtoFuncSymbolHasInstance, ImplementationVisibility::Public);
     putDirectWithoutTransition(vm, vm.propertyNames->hasInstanceSymbol, *hasInstanceSymbolFunction, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 

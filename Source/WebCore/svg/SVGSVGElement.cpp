@@ -183,7 +183,7 @@ void SVGSVGElement::updateCurrentTranslate()
     updateSVGRendererForElementChange();
 }
 
-void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGSVGElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (!SVGGraphicsElement::nearestViewportElement(this) && isConnected()) {
         // For these events, the outermost <svg> element works like a <body> element does,
@@ -953,19 +953,19 @@ bool SVGSVGElement::setViewForFragment(StringView fragmentIdentifier)
 
 void SVGSVGElement::resetViewToDefault()
 {
-    if (!m_useCurrentView && m_currentViewFragmentIdentifier.isEmpty())
+    if (!m_useCurrentView && isEmpty(m_currentViewFragmentIdentifier))
         return;
 
     if (RefPtr viewSpec = m_viewSpec)
         viewSpec->reset();
 
-    if (!m_currentViewFragmentIdentifier.isEmpty()) {
+    if (!isEmpty(m_currentViewFragmentIdentifier)) {
         if (RefPtr rootElement = findRootAnchor(m_currentViewFragmentIdentifier)) {
             Ref view = rootElement->currentView();
             view->setViewBox(viewBox());
             view->setPreserveAspectRatio(preserveAspectRatio());
             view->setZoomAndPan(zoomAndPan());
-            m_currentViewFragmentIdentifier = { };
+            m_currentViewFragmentIdentifier = nullptr;
         }
     }
 
@@ -1018,9 +1018,9 @@ void SVGSVGElement::resumeFromDocumentSuspension()
 
 // getElementById on SVGSVGElement is restricted to only the child subtree defined by the <svg> element.
 // See http://www.w3.org/TR/SVG11/struct.html#InterfaceSVGSVGElement
-RefPtr<Element> SVGSVGElement::getElementById(const AtomString& id)
+RefPtr<Element> SVGSVGElement::getElementById(AtomStringImpl* id)
 {
-    if (id.isNull())
+    if (!id)
         return nullptr;
 
     if (!isInTreeScope()) [[unlikely]] {

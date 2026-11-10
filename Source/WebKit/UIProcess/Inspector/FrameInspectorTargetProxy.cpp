@@ -66,7 +66,7 @@ void FrameInspectorTargetProxy::disconnect()
     protect(m_targetProcess.get())->send(Messages::WebFrame::DisconnectInspector(), m_frameID);
 }
 
-void FrameInspectorTargetProxy::sendMessageToTargetBackend(const String& message)
+void FrameInspectorTargetProxy::sendMessageToTargetBackend(StringImpl* message)
 {
     protect(m_targetProcess.get())->send(Messages::WebFrame::SendMessageToInspectorTarget(message), m_frameID);
 }

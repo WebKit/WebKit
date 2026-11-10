@@ -48,18 +48,18 @@ Ref<CSSLayerBlockRule> CSSLayerBlockRule::create(StyleRuleLayer& rule, CSSStyleS
     return adoptRef(*new CSSLayerBlockRule(rule, parent));
 }
 
-String CSSLayerBlockRule::cssText() const
+RefPtr<StringImpl> CSSLayerBlockRule::cssText() const
 {
     StringBuilder builder;
 
     builder.append("@layer"_s);
-    if (auto name = this->name(); !name.isEmpty())
+    if (auto name = this->name(); !isEmpty(name))
         builder.append(' ', name);
     appendCSSTextForItems(builder);
     return builder.toString();
 }
 
-String CSSLayerBlockRule::name() const
+RefPtr<StringImpl> CSSLayerBlockRule::name() const
 {
     Ref layer = downcast<StyleRuleLayer>(groupRule());
 
@@ -69,7 +69,7 @@ String CSSLayerBlockRule::name() const
     return stringFromCascadeLayerName(layer->name());
 }
 
-String stringFromCascadeLayerName(const CascadeLayerName& name)
+RefPtr<StringImpl> stringFromCascadeLayerName(const CascadeLayerName& name)
 {
     StringBuilder result;
     for (auto& segment : name) {

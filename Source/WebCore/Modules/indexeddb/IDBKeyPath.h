@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-using IDBKeyPath = Variant<String, Vector<String>>;
+using IDBKeyPath = Variant<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>;
 bool isIDBKeyPathValid(const IDBKeyPath&);
 
 enum class IDBKeyPathParseError {
@@ -41,10 +41,10 @@ enum class IDBKeyPathParseError {
     Dot,
 };
 
-void IDBParseKeyPath(const String&, Vector<String>&, IDBKeyPathParseError&);
+void IDBParseKeyPath(StringImpl*, Vector<RefPtr<StringImpl>>&, IDBKeyPathParseError&);
 
 #if !LOG_DISABLED
-String loggingString(const IDBKeyPath&);
+RefPtr<StringImpl> loggingString(const IDBKeyPath&);
 #endif
 
 } // namespace WebCore

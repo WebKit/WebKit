@@ -225,7 +225,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontFormatFu
 
     auto state = CSS::PropertyParserState { .context = m_parser.context() };
     auto format = CSSPropertyParserHelpers::consumeFontFormat(range, state, true);
-    if (format.isNull())
+    if (!format)
         return Unsupported;
     return FontCustomPlatformData::supportsFormat(format) ? Supported : Unsupported;
 }

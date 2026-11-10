@@ -100,9 +100,9 @@ private:
     void didRelaunchProcess() override;
     void pageClosed() override;
     void preferencesDidChange() override;
-    void toolTipChanged(const String&, const String&) override;
+    void toolTipChanged(StringImpl*, StringImpl*) override;
 
-    void didCommitLoadForMainFrame(const String&, bool) override;
+    void didCommitLoadForMainFrame(StringImpl*, bool) override;
 
     void didChangeContentSize(const WebCore::IntSize&) override;
 
@@ -143,7 +143,7 @@ private:
     void exitAcceleratedCompositingMode() override;
     void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
 
-    void didFinishLoadingDataForCustomContentProvider(const String&, std::span<const uint8_t>) override;
+    void didFinishLoadingDataForCustomContentProvider(StringImpl*, std::span<const uint8_t>) override;
 
     void navigationGestureDidBegin() override;
     void navigationGestureWillEnd(bool, WebBackForwardListItem&) override;
@@ -185,7 +185,7 @@ private:
     UnixFileDescriptor hostFileDescriptor() final;
 #endif
 
-    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
+    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, StringImpl*, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 

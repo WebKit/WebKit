@@ -81,9 +81,9 @@ public:
                 return a.getInteger() > b.getInteger();
             case Type::String: {
                 const auto& aStr = a.getString();
-                const size_t aLength = aStr.length();
+                const size_t aLength = length(aStr);
                 const auto& bStr = b.getString();
-                const size_t bLength = bStr.length();
+                const size_t bLength = length(bStr);
 
                 if (aLength != bLength)
                     return aLength < bLength;
@@ -135,8 +135,8 @@ public:
 
     explicit CBORValue(const char*);
     explicit CBORValue(ASCIILiteral);
-    explicit CBORValue(String&&);
-    explicit CBORValue(const String&);
+    explicit CBORValue(RefPtr<StringImpl>&&);
+    explicit CBORValue(StringImpl*);
 
     explicit CBORValue(const ArrayValue&);
     explicit CBORValue(ArrayValue&&);
@@ -180,7 +180,7 @@ public:
     NODELETE const int64_t& getNegative() const;
     NODELETE const BinaryValue& getByteString() const;
     // Returned string may contain NUL characters.
-    NODELETE const String& getString() const;
+    NODELETE const RefPtr<StringImpl>& getString() const;
     NODELETE const ArrayValue& getArray() const;
     NODELETE const MapValue& getMap() const;
 
@@ -191,7 +191,7 @@ private:
         SimpleValue m_simpleValue;
         int64_t m_integerValue;
         BinaryValue m_byteStringValue;
-        String m_stringValue;
+        RefPtr<StringImpl> m_stringValue;
         ArrayValue m_arrayValue;
         MapValue m_mapValue;
     };

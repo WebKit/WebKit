@@ -254,7 +254,7 @@ void ProcessThrottler::updateThrottleStateNow()
     setThrottleState(expectedThrottleState());
 }
 
-String ProcessThrottler::assertionName(ProcessAssertionType type) const
+RefPtr<StringImpl> ProcessThrottler::assertionName(ProcessAssertionType type) const
 {
     ASCIILiteral typeString = [type] {
         switch (type) {

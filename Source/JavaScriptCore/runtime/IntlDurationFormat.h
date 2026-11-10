@@ -91,7 +91,7 @@ public:
     };
 
     const UnitData* units() const { return m_units; }
-    const String& timeSeparator() const LIFETIME_BOUND;
+    const RefPtr<StringImpl>& timeSeparator() const LIFETIME_BOUND;
 
     UNumberFormatter* createNumberFormatterIfNecessary(JSGlobalObject*, TemporalUnit) const;
 
@@ -103,7 +103,7 @@ private:
     static ASCIILiteral unitStyleString(UnitStyle);
     static ASCIILiteral displayString(Display);
 
-    const String& numberingSystem() const LIFETIME_BOUND;
+    const RefPtr<StringImpl>& numberingSystem() const LIFETIME_BOUND;
 
     struct FormatterCache {
         WTF_MAKE_TZONE_ALLOCATED(FormatterCache);
@@ -113,10 +113,10 @@ private:
 
     std::unique_ptr<UListFormatter, UListFormatterDeleter> m_listFormat;
     mutable std::unique_ptr<FormatterCache> m_formatterCache;
-    String m_locale;
-    String m_dataLocale;
-    mutable String m_numberingSystem;
-    mutable String m_timeSeparator;
+    RefPtr<StringImpl> m_locale;
+    RefPtr<StringImpl> m_dataLocale;
+    mutable RefPtr<StringImpl> m_numberingSystem;
+    mutable RefPtr<StringImpl> m_timeSeparator;
     ASCIICString m_dataLocaleWithExtensions;
     unsigned m_fractionalDigits { 0 };
     Style m_style { Style::Long };

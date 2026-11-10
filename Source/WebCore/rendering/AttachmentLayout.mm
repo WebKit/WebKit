@@ -57,8 +57,8 @@ void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
     baseline = CGRound(attachmentIconBackgroundSize + attachmentIconToTitleMargin + CTFontGetAscent(font.get()));
     wrappingWidth = attachmentTitleMaximumWidth;
     widthPadding = attachmentIconBackgroundSize;
-    String title = protect(attachment.attachmentElement())->attachmentTitleForDisplay();
-    if (title.isEmpty())
+    RefPtr<StringImpl> title = protect(attachment.attachmentElement())->attachmentTitleForDisplay();
+    if (isEmpty(title))
         return;
     NSDictionary *textAttributes = @{
         (__bridge id)kCTFontAttributeName: (__bridge id)font.get(),
@@ -96,8 +96,8 @@ void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
 
 void AttachmentLayout::layOutSubtitle(const RenderAttachment& attachment)
 {
-    String subtitleText = attachment.attachmentElement().attachmentSubtitleForDisplay();
-    if (subtitleText.isEmpty())
+    RefPtr<StringImpl> subtitleText = attachment.attachmentElement().attachmentSubtitleForDisplay();
+    if (isEmpty(subtitleText))
         return;
 
     Style::ColorResolver colorResolver { attachment.style() };
@@ -172,10 +172,10 @@ constexpr CFIndex attachmentWrappingTextMaximumLineCount = 2;
 static BOOL getAttachmentProgress(const RenderAttachment& attachment, float& progress)
 {
     auto& progressString = attachment.attachmentElement().attributeWithoutSynchronization(HTMLNames::progressAttr);
-    if (progressString.isEmpty())
+    if (isEmpty(progressString))
         return NO;
     bool validProgress;
-    progress = std::max<float>(std::min<float>(progressString.toFloat(&validProgress), 1), 0);
+    progress = std::max<float>(std::min<float>(toFloat(progressString, &validProgress), 1), 0);
     return validProgress;
 }
 
@@ -233,9 +233,9 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, Attachmen
     widthPadding = attachmentRect.width();
 
     hasProgress = getAttachmentProgress(attachment, progress);
-    String title = protect(attachment.attachmentElement())->attachmentTitleForDisplay();
-    String action = attachment.attachmentElement().attachmentActionForDisplay();
-    String subtitle = attachment.attachmentElement().attachmentSubtitleForDisplay();
+    RefPtr<StringImpl> title = protect(attachment.attachmentElement())->attachmentTitleForDisplay();
+    RefPtr<StringImpl> action = attachment.attachmentElement().attachmentActionForDisplay();
+    RefPtr<StringImpl> subtitle = attachment.attachmentElement().attachmentSubtitleForDisplay();
 
     CGFloat yOffset = 0;
 
@@ -244,7 +244,7 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, Attachmen
         yOffset += attachmentProgressSize + attachmentItemMargin;
     }
 
-    if (action.isEmpty() && !hasProgress) {
+    if (isEmpty(action) && !hasProgress) {
         protect(attachment.attachmentElement())->requestIconIfNeededWithSize(FloatSize());
         FloatSize iconSize = attachment.attachmentElement().iconSize();
         icon = attachment.attachmentElement().icon();
@@ -262,7 +262,7 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, Attachmen
         buildWrappedLines(action, attachmentActionFont().get(), textAttributesTitle, attachmentWrappingTextMaximumLineCount);
     }
 
-    bool forceSingleLineTitle = !action.isEmpty() || !subtitle.isEmpty() || hasProgress;
+    bool forceSingleLineTitle = !isEmpty(action) || !isEmpty(subtitle) || hasProgress;
     RetainPtr textAttributesTitle = @{
         (id)kCTFontAttributeName: (id)attachmentTitleFont().get(),
         (id)kCTForegroundColorAttributeName: attachmentTitleColor(attachment)
@@ -306,12 +306,12 @@ void AttachmentLayout::addLine(CTFontRef font, CTLineRef line, bool isSubtitle =
     lines.append(labelLine);
 }
 
-void AttachmentLayout::buildWrappedLines(String& text, CTFontRef font, NSDictionary *textAttributes, unsigned maximumLineCount)
+void AttachmentLayout::buildWrappedLines(RefPtr<StringImpl>& text, CTFontRef font, NSDictionary *textAttributes, unsigned maximumLineCount)
 {
-    if (text.isEmpty())
+    if (isEmpty(text))
         return;
     
-    RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:text.createNSString().get() attributes:textAttributes]);
+    RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:createNSString(text).get() attributes:textAttributes]);
     RetainPtr framesetter = adoptCF(CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedText.get()));
     
     CFRange fitRange;
@@ -356,12 +356,12 @@ void AttachmentLayout::buildWrappedLines(String& text, CTFontRef font, NSDiction
     addLine(font, truncatedLine.get());
 }
 
-void AttachmentLayout::buildSingleLine(const String& text, CTFontRef font, NSDictionary *textAttributes)
+void AttachmentLayout::buildSingleLine(StringImpl* text, CTFontRef font, NSDictionary *textAttributes)
 {
-    if (text.isEmpty())
+    if (isEmpty(text))
         return;
 
-    RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:text.createNSString().get() attributes:textAttributes]);
+    RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:createNSString(text).get() attributes:textAttributes]);
     addLine(font, adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)attributedText.get())).get(), true);
 }
 

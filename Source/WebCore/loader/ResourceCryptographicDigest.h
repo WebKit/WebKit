@@ -64,7 +64,7 @@ struct EncodedResourceCryptographicDigest {
     using Algorithm = ResourceCryptographicDigest::Algorithm;
     
     Algorithm algorithm;
-    String digest;
+    RefPtr<StringImpl> digest;
 };
 
 std::optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsingBuffer<char16_t>&);

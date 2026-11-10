@@ -98,25 +98,25 @@ public:
     static bool supportsPersistableState();
     NODELETE static bool supportsPersistentKeys();
     static bool supportsMediaCapability(const CDMMediaCapability&);
-    static bool mimeTypeIsPlayable(const String&);
+    static bool mimeTypeIsPlayable(StringImpl*);
 
     ImplementationType implementationType() const final { return ImplementationType::FairPlayStreaming; }
 
     void initializeWithConfiguration(const CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
     void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) final;
-    void setStorageDirectory(const String&) final;
+    void setStorageDirectory(StringImpl*) final;
     RefPtr<CDMInstanceSession> createSession() final;
     void setClient(WeakPtr<CDMInstanceClient>&&) final;
     void clearClient() final;
 
-    const String& keySystem() const final;
+    const RefPtr<StringImpl>& keySystem() const final;
 
     NSURL *storageURL() const { return m_storageURL.get(); }
     bool persistentStateAllowed() const { return m_persistentStateAllowed; }
     SharedBuffer* serverCertificate() const { return m_serverCertificate.get(); }
     AVContentKeySession *contentKeySession();
 
-    RetainPtr<AVContentKeyRequest> takeUnexpectedKeyRequestForInitializationData(const String& initDataType, SharedBuffer& initData);
+    RetainPtr<AVContentKeyRequest> takeUnexpectedKeyRequestForInitializationData(StringImpl* initDataType, SharedBuffer& initData);
 
     // AVContentKeySessionDelegateClient
     void didProvideRequest(AVContentKeyRequest*) final;
@@ -154,7 +154,7 @@ public:
     ASCIILiteral logClassName() const { return "CDMInstanceFairPlayStreamingAVFObjC"_s; }
 #endif
 
-    const String& mediaKeysHashSalt() const LIFETIME_BOUND { return m_mediaKeysHashSalt; }
+    const RefPtr<StringImpl>& mediaKeysHashSalt() const LIFETIME_BOUND { return m_mediaKeysHashSalt; }
 
 private:
     explicit CDMInstanceFairPlayStreamingAVFObjC(const CDMPrivateFairPlayStreaming&);
@@ -170,7 +170,7 @@ private:
     Vector<WeakPtr<CDMInstanceSessionFairPlayStreamingAVFObjC>> m_sessions;
     HashSet<RetainPtr<AVContentKeyRequest>> m_unexpectedKeyRequests;
     WeakHashSet<KeyStatusesChangedObserver> m_keyStatusChangedObservers;
-    String m_mediaKeysHashSalt;
+    RefPtr<StringImpl> m_mediaKeysHashSalt;
 
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;
@@ -193,12 +193,12 @@ public:
     void deref() const final { CDMInstanceSession::deref(); }
 
     // CDMInstanceSession
-    void requestLicense(LicenseType, KeyGroupingStrategy, const String& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
-    void updateLicense(const String&, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
-    void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
-    void closeSession(const String&, CloseSessionCallback&&) final;
-    void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;
-    void storeRecordOfKeyUsage(const String&) final;
+    void requestLicense(LicenseType, KeyGroupingStrategy, StringImpl* initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
+    void updateLicense(StringImpl*, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
+    void loadSession(LicenseType, StringImpl*, StringImpl*, LoadSessionCallback&&) final;
+    void closeSession(StringImpl*, CloseSessionCallback&&) final;
+    void removeSessionData(StringImpl*, LicenseType, RemoveSessionDataCallback&&) final;
+    void storeRecordOfKeyUsage(StringImpl*) final;
     void displayChanged(PlatformDisplayID) final;
     void setClient(WeakPtr<CDMInstanceSessionClient>&&) final;
     void clearClient() final;
@@ -222,9 +222,13 @@ public:
     WebAVContentKeyGrouping *contentKeyReportGroup() { return m_group.get(); }
 
     struct Request {
-        String initType;
+        RefPtr<StringImpl> initType;
         Vector<RetainPtr<AVContentKeyRequest>> requests;
-        friend bool operator==(const Request&, const Request&) = default;
+        friend bool operator==(const Request& a, const Request& b)
+        {
+            return contentEquals(a.initType, b.initType)
+                && a.requests == b.requests;
+        }
     };
 
     bool hasKey(AVContentKey *) const;
@@ -236,7 +240,7 @@ public:
 
     void attachContentKeyToSample(const MediaSampleAVFObjC&);
 
-    static RetainPtr<NSDictionary> optionsForKeyRequestWithHashSalt(const String&);
+    static RetainPtr<NSDictionary> optionsForKeyRequestWithHashSalt(StringImpl*);
 
 private:
     explicit CDMInstanceSessionFairPlayStreamingAVFObjC(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
@@ -280,7 +284,7 @@ private:
     const RetainPtr<WebCoreFPSContentKeySessionDelegate> m_delegate;
     Vector<RetainPtr<NSData>> m_expiredSessions;
     WeakPtr<CDMInstanceSessionClient> m_client;
-    String m_sessionId;
+    RefPtr<StringImpl> m_sessionId;
     bool m_outputObscured { false };
 
     class UpdateResponseCollector;

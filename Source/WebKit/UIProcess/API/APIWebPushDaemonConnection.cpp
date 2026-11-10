@@ -40,9 +40,9 @@ namespace API {
 
 using namespace WebCore;
 
-WebPushDaemonConnection::WebPushDaemonConnection(const WTF::String& machServiceName, WebKit::WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
+WebPushDaemonConnection::WebPushDaemonConnection(StringImpl* machServiceName, WebKit::WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    : m_connection(WebKit::WebPushD::Connection::create(machServiceName.utf8(), WTF::move(configuration)))
+    : m_connection(WebKit::WebPushD::Connection::create(utf8(machServiceName), WTF::move(configuration)))
 #endif
 {
 }
@@ -117,7 +117,7 @@ void WebPushDaemonConnection::showNotification(const WebCore::NotificationData& 
 #endif
 }
 
-void WebPushDaemonConnection::getNotifications(const WTF::URL& scopeURL, const WTF::String& tag, CompletionHandler<void(const std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&)>&& completionHandler)
+void WebPushDaemonConnection::getNotifications(const WTF::URL& scopeURL, StringImpl* tag, CompletionHandler<void(const std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&)>&& completionHandler)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetNotifications { scopeURL, tag }, WTF::move(completionHandler));

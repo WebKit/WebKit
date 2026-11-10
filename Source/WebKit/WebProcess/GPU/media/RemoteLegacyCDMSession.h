@@ -63,22 +63,22 @@ private:
     // LegacyCDMSession
     void invalidate() final;
     WebCore::LegacyCDMSessionType type() const final { return WebCore::CDMSessionTypeRemote; }
-    const String& sessionId() const LIFETIME_BOUND final { return m_sessionId; }
-    RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) final;
+    const RefPtr<StringImpl>& sessionId() const LIFETIME_BOUND final { return m_sessionId; }
+    RefPtr<Uint8Array> generateKeyRequest(StringImpl* mimeType, Uint8Array* initData, RefPtr<StringImpl>& destinationURL, unsigned short& errorCode, uint32_t& systemCode) final;
     void releaseKeys() final;
     bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) final;
-    RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const final;
+    RefPtr<ArrayBuffer> cachedKeyForKeyID(StringImpl*) const final;
     bool isRemoteLegacyCDMSession() const final { return true; }
 
     // Messages
-    void sendMessage(RefPtr<WebCore::SharedBuffer>&& message, const String& destinationURL);
+    void sendMessage(RefPtr<WebCore::SharedBuffer>&& message, StringImpl* destinationURL);
     void sendError(WebCore::LegacyCDMSessionClient::MediaKeyErrorCode, uint32_t systemCode);
 
     WeakPtr<RemoteLegacyCDMFactory> m_factory;
     RemoteLegacyCDMSessionIdentifier m_identifier;
     WeakPtr<WebCore::LegacyCDMSessionClient> m_client;
-    String m_sessionId;
-    mutable HashMap<String, RefPtr<ArrayBuffer>> m_cachedKeyCache;
+    RefPtr<StringImpl> m_sessionId;
+    mutable HashMap<RefPtr<StringImpl>, RefPtr<ArrayBuffer>> m_cachedKeyCache;
 };
 
 }

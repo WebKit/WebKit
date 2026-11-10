@@ -112,12 +112,12 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEv
     auto stepDownKeyIdentifier = isHorizontal ? "Down"_s : "Left"_s;
 
     RefPtr fieldOwner = m_fieldOwner;
-    if (key == previousKeyIdentifier && fieldOwner && fieldOwner->focusOnPreviousField(*this)) {
+    if (equal(key, previousKeyIdentifier) && fieldOwner && fieldOwner->focusOnPreviousField(*this)) {
         keyboardEvent.setDefaultHandled();
         return;
     }
 
-    if ((key == nextKeyIdentifier || code == "Comma"_s || code == "Minus"_s || code == "Period"_s || code == "Slash"_s || code == "Semicolon"_s)
+    if ((equal(key, nextKeyIdentifier) || equal(code, "Comma"_s) || equal(code, "Minus"_s) || equal(code, "Period"_s) || equal(code, "Slash"_s) || equal(code, "Semicolon"_s))
         && fieldOwner && fieldOwner->focusOnNextField(*this)) {
         keyboardEvent.setDefaultHandled();
         return;
@@ -126,20 +126,20 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEv
     if (isFieldOwnerReadOnly())
         return;
 
-    if (key == stepUpKeyIdentifier) {
+    if (equal(key, stepUpKeyIdentifier)) {
         stepUp();
         keyboardEvent.setDefaultHandled();
         return;
     }
 
-    if (key == stepDownKeyIdentifier) {
+    if (equal(key, stepDownKeyIdentifier)) {
         stepDown();
         keyboardEvent.setDefaultHandled();
         return;
     }
 
     // Clear value when pressing backspace or delete.
-    if (key == "U+0008"_s || key == "U+007F"_s) {
+    if (equal(key, "U+0008"_s) || equal(key, "U+007F"_s)) {
         setEmptyValue(DispatchInputAndChangeEvents);
         keyboardEvent.setDefaultHandled();
         return;
@@ -182,13 +182,13 @@ Locale& DateTimeFieldElement::localeForOwner() const
     return protect(document())->getCachedLocale(localeIdentifier());
 }
 
-AtomString DateTimeFieldElement::localeIdentifier() const
+RefPtr<AtomStringImpl> DateTimeFieldElement::localeIdentifier() const
 {
     RefPtr fieldOwner = m_fieldOwner;
     return fieldOwner ? fieldOwner->localeIdentifier() : nullAtom();
 }
 
-String DateTimeFieldElement::visibleValue() const
+RefPtr<StringImpl> DateTimeFieldElement::visibleValue() const
 {
     if (hasValue())
         return value();
@@ -198,11 +198,11 @@ String DateTimeFieldElement::visibleValue() const
 void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
 {
     if (!firstChild())
-        appendChild(Text::create(protect(document()).get(), String { emptyString() }));
+        appendChild(Text::create(protect(document()).get(), RefPtr<StringImpl> { emptyString() }));
 
     Ref textNode = downcast<Text>(*firstChild());
-    String newVisibleValue = visibleValue();
-    if (textNode->wholeText() != newVisibleValue)
+    RefPtr<StringImpl> newVisibleValue = visibleValue();
+    if (!equal(textNode->wholeText(), newVisibleValue))
         textNode->replaceWholeText(newVisibleValue);
 
     auto hasValue = this->hasValue();

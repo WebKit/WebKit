@@ -75,7 +75,7 @@ public:
 
     ~RenderBundle();
 
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
 
     NODELETE bool isValid() const final;
 

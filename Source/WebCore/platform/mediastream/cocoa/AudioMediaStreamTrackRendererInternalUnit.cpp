@@ -51,7 +51,7 @@ namespace WebCore {
 class LocalAudioMediaStreamTrackRendererInternalUnit final : public AudioMediaStreamTrackRendererInternalUnit, public RefCounted<LocalAudioMediaStreamTrackRendererInternalUnit>  {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(LocalAudioMediaStreamTrackRendererInternalUnit);
 public:
-    static Ref<AudioMediaStreamTrackRendererInternalUnit> create(const String& deviceID, Client& client)
+    static Ref<AudioMediaStreamTrackRendererInternalUnit> create(StringImpl* deviceID, Client& client)
     {
         auto unit = adoptRef(*new LocalAudioMediaStreamTrackRendererInternalUnit(client));
         unit->setAudioOutputDevice(deviceID);
@@ -69,7 +69,7 @@ private:
     void start() final;
     void stop() final;
     void retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&&) final;
-    void setAudioOutputDevice(const String&);
+    void setAudioOutputDevice(StringImpl*);
 
     OSStatus render(AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 sampleCount, AudioBufferList*);
     static OSStatus renderingCallback(void*, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 inBusNumber, UInt32 sampleCount, AudioBufferList*);
@@ -82,7 +82,7 @@ private:
 #if PLATFORM(MAC)
     uint32_t m_deviceID { 0 };
 #endif
-    String m_audioOutputDeviceID;
+    RefPtr<StringImpl> m_audioOutputDeviceID;
 };
 
 
@@ -97,15 +97,15 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::retrieveFormatDescription(C
     callback(m_outputDescription);
 }
 
-void LocalAudioMediaStreamTrackRendererInternalUnit::setAudioOutputDevice(const String& deviceID)
+void LocalAudioMediaStreamTrackRendererInternalUnit::setAudioOutputDevice(StringImpl* deviceID)
 {
 #if PLATFORM(MAC)
-    if (deviceID == AudioMediaStreamTrackRenderer::defaultDeviceID())
+    if (equal(deviceID, AudioMediaStreamTrackRenderer::defaultDeviceID()))
         return;
 
     auto device = CoreAudioCaptureDeviceManager::singleton().coreAudioDeviceWithUID(deviceID);
 
-    if (!device && !deviceID.isEmpty()) {
+    if (!device && !isEmpty(deviceID)) {
         RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererInternalUnit::setAudioOutputDeviceId - did not find device");
         return;
     }
@@ -319,7 +319,7 @@ void AudioMediaStreamTrackRendererInternalUnit::setCreateFunction(CreateFunction
     createInternalUnit = function;
 }
 
-Ref<AudioMediaStreamTrackRendererInternalUnit> AudioMediaStreamTrackRendererInternalUnit::create(const String& deviceID, Client& client)
+Ref<AudioMediaStreamTrackRendererInternalUnit> AudioMediaStreamTrackRendererInternalUnit::create(StringImpl* deviceID, Client& client)
 {
     return createInternalUnit(deviceID, client);
 }

@@ -152,7 +152,7 @@ IntlDateTimeFormat::DateTimeValueRecord IntlDateTimeFormat::handleDateTimeValue(
         if (!dtf || (calendarId == iso8601CalendarID() && iso8601Exempt))
             return false;
         if (!IntlDateTimeFormat::calendarMatchesICU(TemporalCore::calendarIDToString(calendarId), dtf->ensureCalendar())) [[unlikely]] {
-            throwRangeError(globalObject, scope, "Temporal object's calendar does not match DateTimeFormat calendar"_s);
+            throwRangeError(globalObject, scope, "Temporal object's calendar does not match DateTimeFormat calendar"_si);
             return true;
         }
         return false;
@@ -273,7 +273,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlDateTimeFormatPrototypeGetterFormat, (JSGlobalObjec
         JSGlobalObject* globalObject = dtf->realm();
         // a. Let F be a new built-in function object as defined in 12.3.4.
         // b. The value of F's length property is 1. (Note: F's length property was 0 in ECMA-402 1.0)
-        JSFunction* targetObject = JSFunction::create(vm, globalObject, 1, "format"_s, intlDateTimeFormatFuncFormatDateTime, ImplementationVisibility::Public);
+        JSFunction* targetObject = JSFunction::create(vm, globalObject, 1, "format"_si, intlDateTimeFormatFuncFormatDateTime, ImplementationVisibility::Public);
         // c. Let bf be BoundFunctionCreate(F, «this value»).
         boundFormat = JSBoundFunction::create(vm, globalObject, targetObject, dtf, { }, 1, jsEmptyString(vm), SourceTaintedOrigin::Untainted);
         RETURN_IF_EXCEPTION(scope, { });

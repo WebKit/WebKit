@@ -40,7 +40,7 @@ private:
     void updateAnimationProperties() final;
     void start() final;
 
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
     void setVisible(bool visible) final { setBlinkState(visible ? PresentationProperties::BlinkState::On : PresentationProperties::BlinkState::Off); }
 

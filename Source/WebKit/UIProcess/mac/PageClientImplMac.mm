@@ -311,12 +311,12 @@ void PageClientImpl::preferencesDidChange()
     protect(m_impl)->preferencesDidChange();
 }
 
-void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newToolTip)
+void PageClientImpl::toolTipChanged(StringImpl* oldToolTip, StringImpl* newToolTip)
 {
     protect(m_impl)->toolTipChanged(oldToolTip, newToolTip);
 }
 
-void PageClientImpl::didCommitLoadForMainFrame(const String&, bool)
+void PageClientImpl::didCommitLoadForMainFrame(StringImpl*, bool)
 {
     CheckedRef impl = *m_impl;
     impl->updateSupportsArbitraryLayoutModes();
@@ -344,7 +344,7 @@ void PageClientImpl::didCommitLoadForMainFrame(const String&, bool)
 #endif
 }
 
-void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t> dataReference)
+void PageClientImpl::didFinishLoadingDataForCustomContentProvider(StringImpl* suggestedFilename, std::span<const uint8_t> dataReference)
 {
 }
 
@@ -476,7 +476,7 @@ void PageClientImpl::startDrag(const WebCore::DragItem& item, ShareableBitmap::H
     protect(m_impl)->startDrag(item, WTF::move(image), frameID);
 }
 
-void PageClientImpl::setPromisedDataForImage(const String& pasteboardName, Ref<FragmentedSharedBuffer>&& imageBuffer, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL, RefPtr<FragmentedSharedBuffer>&& archiveBuffer, const String& originIdentifier)
+void PageClientImpl::setPromisedDataForImage(StringImpl* pasteboardName, Ref<FragmentedSharedBuffer>&& imageBuffer, StringImpl* filename, StringImpl* extension, StringImpl* title, StringImpl* url, StringImpl* visibleURL, RefPtr<FragmentedSharedBuffer>&& archiveBuffer, StringImpl* originIdentifier)
 {
     Ref image = BitmapImage::create();
     image->setData(WTF::move(imageBuffer), true);
@@ -577,7 +577,7 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void PageClientImpl::requestTextRecognition(const URL& imageURL, ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
+void PageClientImpl::requestTextRecognition(const URL& imageURL, ShareableBitmap::Handle&& imageData, StringImpl* sourceLanguageIdentifier, StringImpl* targetLanguageIdentifier, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
 {
     protect(m_impl)->requestTextRecognition(imageURL, WTF::move(imageData), sourceLanguageIdentifier, targetLanguageIdentifier, WTF::move(completion));
 }
@@ -628,7 +628,7 @@ RefPtr<WebDateTimePicker> PageClientImpl::createDateTimePicker(WebPageProxy& pag
     return WebDateTimePickerMac::create(page, m_view.get().get());
 }
 
-Ref<ValidationBubble> PageClientImpl::createValidationBubble(String&& message, const ValidationBubble::Settings& settings)
+Ref<ValidationBubble> PageClientImpl::createValidationBubble(RefPtr<StringImpl>&& message, const ValidationBubble::Settings& settings)
 {
     return ValidationBubble::create(m_view.get().get(), WTF::move(message), settings);
 }
@@ -738,7 +738,7 @@ void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dicti
     protect(m_impl)->prepareForDictionaryLookup();
 }
 
-void PageClientImpl::showCorrectionPanel(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
+void PageClientImpl::showCorrectionPanel(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, StringImpl* replacedString, StringImpl* replacementString, const Vector<RefPtr<StringImpl>>& alternativeReplacementStrings)
 {
 #if USE(AUTOCORRECTION_PANEL)
     if (!isActiveViewVisible() || !isViewInWindow())
@@ -754,12 +754,12 @@ void PageClientImpl::dismissCorrectionPanel(ReasonForDismissingAlternativeText r
 #endif
 }
 
-String PageClientImpl::dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText reason)
+RefPtr<StringImpl> PageClientImpl::dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText reason)
 {
 #if USE(AUTOCORRECTION_PANEL)
     return m_correctionPanel.dismiss(reason);
 #else
-    return String();
+    return nullptr;
 #endif
 }
 
@@ -778,7 +778,7 @@ NODELETE static inline NSCorrectionResponse toCorrectionResponse(AutocorrectionR
     return NSCorrectionResponseAccepted;
 }
 
-void PageClientImpl::recordAutocorrectionResponse(AutocorrectionResponse response, const String& replacedString, const String& replacementString)
+void PageClientImpl::recordAutocorrectionResponse(AutocorrectionResponse response, StringImpl* replacedString, StringImpl* replacementString)
 {
     CheckedRef impl = *m_impl;
     CorrectionPanel::recordAutocorrectionResponse(impl.get(), impl->spellCheckerDocumentTag(), toCorrectionResponse(response), replacedString, replacementString);
@@ -801,9 +801,9 @@ void PageClientImpl::intrinsicContentSizeDidChange(const IntSize& intrinsicConte
     protect(m_impl)->setIntrinsicContentSize(intrinsicContentSize);
 }
 
-bool PageClientImpl::executeSavedCommandBySelector(const String& selectorString)
+bool PageClientImpl::executeSavedCommandBySelector(StringImpl* selectorString)
 {
-    return protect(m_impl)->executeSavedCommandBySelector(NSSelectorFromString(selectorString.createNSString().get()));
+    return protect(m_impl)->executeSavedCommandBySelector(NSSelectorFromString(createNSString(selectorString).get()));
 }
 
 void PageClientImpl::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext dictationContext)
@@ -811,7 +811,7 @@ void PageClientImpl::showDictationAlternativeUI(const WebCore::FloatRect& boundi
     if (!isActiveViewVisible() || !isViewInWindow())
         return;
     m_alternativeTextUIController->showAlternatives(m_view.get().get(), boundingBoxOfDictatedText, dictationContext, ^(NSString *acceptedAlternative) {
-        protect(m_impl)->handleAcceptedAlternativeText(acceptedAlternative);
+        protect(m_impl)->handleAcceptedAlternativeText(StringImpl::create(acceptedAlternative).get());
     });
 }
 
@@ -1044,9 +1044,9 @@ void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigatio
         gestureController->didSameDocumentNavigationForMainFrame(type);
 }
 
-void PageClientImpl::handleControlledElementIDResponse(const String& identifier)
+void PageClientImpl::handleControlledElementIDResponse(StringImpl* identifier)
 {
-    [webView() _handleControlledElementIDResponse:identifier.createNSString().get()];
+    [webView() _handleControlledElementIDResponse:createNSString(identifier).get()];
 }
 
 void PageClientImpl::didChangeBackgroundColor()
@@ -1197,7 +1197,7 @@ void PageClientImpl::performSwitchHapticFeedback()
     [[NSHapticFeedbackManager defaultPerformer] performFeedbackPattern:NSHapticFeedbackPatternLevelChange performanceTime:NSHapticFeedbackPerformanceTimeDefault];
 }
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, WebCore::FrameIdentifier frameID, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completion)
+void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, WebCore::FrameIdentifier frameID, const WebCore::IntRect& elementRect, StringImpl* originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completion)
 {
     protect(m_impl)->requestDOMPasteAccess(pasteAccessCategory, requiresInteraction, frameID, elementRect, originIdentifier, WTF::move(completion));
 }

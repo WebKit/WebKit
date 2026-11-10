@@ -43,8 +43,8 @@ struct SingleAnimationName {
     {
     }
 
-    bool isNone() const { return m_value.name.isNull(); }
-    bool isKeyframesName() const { return !m_value.name.isNull(); }
+    bool isNone() const { return !m_value.name; }
+    bool isKeyframesName() const { return !!m_value.name; }
     std::optional<ScopedName> tryKeyframesName() const { return isKeyframesName() ? std::make_optional(m_value) : std::nullopt; }
 
     template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const

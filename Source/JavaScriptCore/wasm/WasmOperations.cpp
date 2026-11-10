@@ -582,7 +582,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
     OPERATION_RETURN_IF_EXCEPTION(scope);
 
     if (buffer.hasOverflowed()) {
-        throwOutOfMemoryError(globalObject, scope, "JS results to Wasm are too large"_s);
+        throwOutOfMemoryError(globalObject, scope, "JS results to Wasm are too large"_si);
         OPERATION_RETURN(scope);
     }
 
@@ -1342,7 +1342,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyInstance* 
     OPERATION_RETURN_IF_EXCEPTION(scope);
 
     if (buffer.hasOverflowed()) {
-        throwOutOfMemoryError(globalObject, scope, "JS results to Wasm are too large"_s);
+        throwOutOfMemoryError(globalObject, scope, "JS results to Wasm are too large"_si);
         OPERATION_RETURN(scope);
     }
 

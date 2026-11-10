@@ -52,7 +52,7 @@ public:
 
     NODELETE AuthenticatorGetInfoResponse& setMaxMsgSize(uint32_t);
     AuthenticatorGetInfoResponse& setPinProtocols(StdSet<PINUVAuthProtocol>&&);
-    AuthenticatorGetInfoResponse& setExtensions(Vector<String>&&);
+    AuthenticatorGetInfoResponse& setExtensions(Vector<RefPtr<StringImpl>>&&);
     NODELETE AuthenticatorGetInfoResponse& setOptions(AuthenticatorSupportedOptions&&);
     AuthenticatorGetInfoResponse& setTransports(Vector<WebCore::AuthenticatorTransport>&&);
     NODELETE AuthenticatorGetInfoResponse& setRemainingDiscoverableCredentials(uint32_t);
@@ -65,7 +65,7 @@ public:
     const Vector<uint8_t>& aaguid() const LIFETIME_BOUND { return m_aaguid; }
     const std::optional<uint32_t>& maxMsgSize() const LIFETIME_BOUND { return m_maxMsgSize; }
     const std::optional<StdSet<PINUVAuthProtocol>>& pinProtocol() const LIFETIME_BOUND { return m_pinProtocols; }
-    const std::optional<Vector<String>>& extensions() const LIFETIME_BOUND { return m_extensions; }
+    const std::optional<Vector<RefPtr<StringImpl>>>& extensions() const LIFETIME_BOUND { return m_extensions; }
     const AuthenticatorSupportedOptions& options() const LIFETIME_BOUND { return m_options; }
     AuthenticatorSupportedOptions& mutableOptions() LIFETIME_BOUND { return m_options; }
     const std::optional<Vector<WebCore::AuthenticatorTransport>>& transports() const LIFETIME_BOUND { return m_transports; }
@@ -82,7 +82,7 @@ private:
     std::optional<StdSet<PINUVAuthProtocol>> m_pinProtocols;
     std::optional<uint32_t> m_maxCredentialCountInList;
     std::optional<uint32_t> m_maxCredentialIdLength;
-    std::optional<Vector<String>> m_extensions;
+    std::optional<Vector<RefPtr<StringImpl>>> m_extensions;
     AuthenticatorSupportedOptions m_options;
     std::optional<Vector<WebCore::AuthenticatorTransport>> m_transports;
     std::optional<uint32_t> m_minPINLength;

@@ -82,7 +82,7 @@ struct IDBKeyRangeData {
     bool isNull() const { return lowerKey.isNull() && upperKey.isNull(); };
 
 #if !LOG_DISABLED
-    String loggingString() const;
+    RefPtr<StringImpl> loggingString() const;
 #endif
 };
 

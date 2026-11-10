@@ -90,7 +90,7 @@ bool MediaCapability::isActivatingOrActive() const
     return false;
 }
 
-String MediaCapability::environmentIdentifier() const
+RefPtr<StringImpl> MediaCapability::environmentIdentifier() const
 {
 #if USE(EXTENSIONKIT)
     xpc_object_t xpcObject = [m_mediaEnvironment createXPCRepresentation];

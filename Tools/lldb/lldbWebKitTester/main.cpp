@@ -38,7 +38,7 @@ extern void breakForTestingSummaryProviders();
 void breakForTestingSummaryProviders() { return; }
 
 template<size_t length>
-static String utf16String(const char16_t (&string)[length])
+static RefPtr<StringImpl> utf16String(const char16_t (&string)[length])
 {
     StringBuilder builder;
     builder.reserveCapacity(length - 1);
@@ -57,17 +57,17 @@ enum class ExampleFlags {
 
 static void testSummaryProviders()
 {
-    String aNullString { ""_s };
-    [[maybe_unused]] StringImpl* aNullStringImpl = aNullString.impl();
+    RefPtr<StringImpl> aNullString { ""_si };
+    [[maybe_unused]] StringImpl* aNullStringImpl = aNullString.get();
 
-    String anEmptyString { ""_s };
-    [[maybe_unused]] StringImpl* anEmptyStringImpl = anEmptyString.impl();
+    RefPtr<StringImpl> anEmptyString { ""_si };
+    [[maybe_unused]] StringImpl* anEmptyStringImpl = anEmptyString.get();
 
-    auto an8BitString = String::fromLatin1("résumé");
-    StringImpl* an8BitStringImpl = an8BitString.impl();
+    auto an8BitString = StringImpl::fromLatin1("résumé");
+    StringImpl* an8BitStringImpl = an8BitString.get();
 
-    String a16BitString = utf16String(u"\u1680Cappuccino\u1680");
-    [[maybe_unused]] StringImpl* a16BitStringImpl = a16BitString.impl();
+    RefPtr<StringImpl> a16BitString = utf16String(u"\u1680Cappuccino\u1680");
+    [[maybe_unused]] StringImpl* a16BitStringImpl = a16BitString.get();
 
     Vector<int> anEmptyVector;
     Vector<int> aVectorWithOneItem;
@@ -93,7 +93,7 @@ static void testSummaryProviders()
     CompactPointerTuple<StringImpl*, uint8_t> exampleCompactPointerTupleMaxTypeValue { an8BitStringImpl, 255 };
     CompactPointerTuple<StringImpl*, bool> exampleCompactPointerTupleSimpleBool { an8BitStringImpl, true };
     
-    URL aURL("https://www.example.com"_s);
+    URL aURL("https://www.example.com"_si);
 
     breakForTestingSummaryProviders();
 }

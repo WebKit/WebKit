@@ -44,10 +44,10 @@ static bool operator==(const PushRecord& a, const PushRecord& b)
 {
     return a.identifier == b.identifier
         && a.subscriptionSetIdentifier == b.subscriptionSetIdentifier
-        && a.securityOrigin == b.securityOrigin
-        && a.scope == b.scope
-        && a.endpoint == b.endpoint
-        && a.topic == b.topic
+        && equal(a.securityOrigin, b.securityOrigin)
+        && equal(a.scope, b.scope)
+        && equal(a.endpoint, b.endpoint)
+        && equal(a.topic, b.topic)
         && a.serverVAPIDPublicKey == b.serverVAPIDPublicKey
         && a.clientPublicKey == b.clientPublicKey
         && a.clientPrivateKey == b.clientPrivateKey
@@ -57,7 +57,7 @@ static bool operator==(const PushRecord& a, const PushRecord& b)
 
 static bool operator==(const PushSubscriptionSetRecord& a, const PushSubscriptionSetRecord& b)
 {
-    return a.identifier == b.identifier && a.securityOrigin == b.securityOrigin && a.enabled == b.enabled;
+    return a.identifier == b.identifier && equal(a.securityOrigin, b.securityOrigin) && a.enabled == b.enabled;
 }
 
 static bool operator==(const Vector<PushSubscriptionSetRecord>& a, const Vector<PushSubscriptionSetRecord>& b)
@@ -77,7 +77,7 @@ static bool operator==(const Vector<PushSubscriptionSetRecord>& a, const Vector<
 
 static bool operator==(PushTopics a, PushTopics b)
 {
-    auto lessThan = [](const String& lhs, const String& rhs) {
+    auto lessThan = [](StringImpl* lhs, StringImpl* rhs) {
         return codePointCompare(lhs, rhs) < 0;
     };
 
@@ -86,8 +86,8 @@ static bool operator==(PushTopics a, PushTopics b)
     std::ranges::sort(b.enabledTopics, lessThan);
     std::ranges::sort(b.ignoredTopics, lessThan);
 
-    return a.enabledTopics == b.enabledTopics
-        && a.ignoredTopics == b.ignoredTopics;
+    return contentEquals(a.enabledTopics, b.enabledTopics)
+        && contentEquals(a.ignoredTopics, b.ignoredTopics);
 }
 
 }
@@ -95,19 +95,19 @@ static bool operator==(PushTopics a, PushTopics b)
 namespace TestWebKitAPI {
 
 template <typename T>
-static HashSet<String> getTopicsFromRecords(const T& records) {
-    HashSet<String> result;
+static HashSet<RefPtr<StringImpl>> getTopicsFromRecords(const T& records) {
+    HashSet<RefPtr<StringImpl>> result;
     for (const auto& record : records)
         result.add(record.topic);
     return result;
 };
 
-static String makeTemporaryDatabasePath()
+static RefPtr<StringImpl> makeTemporaryDatabasePath()
 {
     return FileSystem::createTemporaryFile("PushDatabase"_s, ".db"_s);
 }
 
-static RefPtr<PushDatabase> createDatabaseSync(const String& path)
+static RefPtr<PushDatabase> createDatabaseSync(StringImpl* path)
 {
     RefPtr<PushDatabase> result;
     bool done = false;
@@ -149,7 +149,7 @@ static PushDatabase::PublicTokenChanged updatePublicTokenSync(PushDatabase& data
     return updateResult;
 }
 
-static std::optional<PushRecord> getRecordBySubscriptionSetAndScopeSync(PushDatabase& database, const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, const String& scope)
+static std::optional<PushRecord> getRecordBySubscriptionSetAndScopeSync(PushDatabase& database, const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, StringImpl* scope)
 {
     bool done = false;
     std::optional<PushRecord> getResult;
@@ -371,7 +371,7 @@ public:
         return removeResult;
     }
 
-    std::optional<PushRecord> getRecordByTopic(const String& topic)
+    std::optional<PushRecord> getRecordByTopic(StringImpl* topic)
     {
         bool done = false;
         std::optional<PushRecord> getResult;
@@ -385,7 +385,7 @@ public:
         return getResult;
     }
 
-    std::optional<PushRecord> getRecordBySubscriptionSetAndScope(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, const String& scope)
+    std::optional<PushRecord> getRecordBySubscriptionSetAndScope(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, StringImpl* scope)
     {
         return getRecordBySubscriptionSetAndScopeSync(*db, subscriptionSetIdentifier, scope);
     }
@@ -419,7 +419,7 @@ public:
         return removedRecords;
     }
 
-    Vector<RemovedPushRecord> removeRecordsBySubscriptionSetAndSecurityOrigin(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, const String& securityOrigin)
+    Vector<RemovedPushRecord> removeRecordsBySubscriptionSetAndSecurityOrigin(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, StringImpl* securityOrigin)
     {
         bool done = false;
         Vector<RemovedPushRecord> removedRecords;
@@ -433,7 +433,7 @@ public:
         return removedRecords;
     }
 
-    Vector<RemovedPushRecord> removeRecordsByBundleIdentifierAndDataStore(const String& bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier)
+    Vector<RemovedPushRecord> removeRecordsByBundleIdentifierAndDataStore(StringImpl* bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier)
     {
         bool done = false;
         Vector<RemovedPushRecord> removedRecords;
@@ -447,7 +447,7 @@ public:
         return removedRecords;
     }
 
-    unsigned incrementSilentPushCount(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, const String& securityOrigin)
+    unsigned incrementSilentPushCount(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, StringImpl* securityOrigin)
     {
         bool done = false;
         unsigned count = 0;
@@ -475,7 +475,7 @@ public:
         return result;
     }
 
-    bool setPushesEnabledForOrigin(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, const String& securityOrigin, bool enabled)
+    bool setPushesEnabledForOrigin(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, StringImpl* securityOrigin, bool enabled)
     {
         bool done = false;
         bool result = false;
@@ -491,7 +491,7 @@ public:
 
     void SetUp() final
     {
-        db = createDatabaseSync(SQLiteDatabase::inMemoryPath());
+        db = createDatabaseSync(StringImpl::create(SQLiteDatabase::inMemoryPath()).ptr());
         ASSERT_TRUE(db);
         ASSERT_TRUE(insertResult1 = insertRecord(record1));
         ASSERT_TRUE(insertResult2 = insertRecord(record2));
@@ -569,19 +569,19 @@ TEST_F(PushDatabaseTest, InsertRecord)
 
     // Inserting a record with the same (subscriptionSetIdentifier, scope) as record 1 should fail.
     PushRecord record8 = record1;
-    record8.topic = "topic8"_s;
+    record8.topic = "topic8"_si;
     EXPECT_FALSE(insertRecord(WTF::move(record8)));
     
     // Inserting a record that has a different dataStoreIdentifier should succeed.
     PushRecord record9 = record1;
     record9.subscriptionSetIdentifier.dataStoreIdentifier = WTF::UUID::createVersion4Weak();
-    record9.topic = "topic9"_s;
+    record9.topic = "topic9"_si;
     EXPECT_TRUE(insertRecord(WTF::move(record9)));
 
     // Inserting a record that has a different pushPartition should succeed.
     PushRecord record10 = record1;
-    record10.subscriptionSetIdentifier.pushPartition = "foobar"_s;
-    record10.topic = "topic10"_s;
+    record10.subscriptionSetIdentifier.pushPartition = "foobar"_si;
+    record10.topic = "topic10"_si;
     EXPECT_TRUE(insertRecord(WTF::move(record10)));
 
     EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
@@ -606,21 +606,21 @@ TEST_F(PushDatabaseTest, RemoveRecordsBySubscriptionSet)
 {
     // record2, record3, and record4 have the same subscriptionSetIdentifier.
     auto removedRecords = removeRecordsBySubscriptionSet(record2.subscriptionSetIdentifier);
-    auto expected = HashSet<String> { record2.topic, record3.topic, record4.topic };
+    auto expected = HashSet<RefPtr<StringImpl>> { record2.topic, record3.topic, record4.topic };
     EXPECT_EQ(getTopicsFromRecords(removedRecords), expected);
     EXPECT_EQ(removedRecords.size(), 3u);
     EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 5, 6, 7 }));
 
     // record5 and record6 have the same subscriptionSetIdentifier.
     removedRecords = removeRecordsBySubscriptionSet(record5.subscriptionSetIdentifier);
-    expected = HashSet<String> { record5.topic, record6.topic };
+    expected = HashSet<RefPtr<StringImpl>> { record5.topic, record6.topic };
     EXPECT_EQ(getTopicsFromRecords(removedRecords), expected);
     EXPECT_EQ(removedRecords.size(), 2u);
     EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 7 }));
 
     // record7 has its own subscriptionSetIdentifier.
     removedRecords = removeRecordsBySubscriptionSet(record7.subscriptionSetIdentifier);
-    expected = HashSet<String> { record7.topic };
+    expected = HashSet<RefPtr<StringImpl>> { record7.topic };
     EXPECT_EQ(getTopicsFromRecords(removedRecords), expected);
     EXPECT_EQ(removedRecords.size(), 1u);
     EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1 }));
@@ -643,21 +643,21 @@ TEST_F(PushDatabaseTest, RemoveRecordsBySubscriptionSetAndSecurityOrigin)
 {
     // record3 and record4 have the same subscriptionSetIdentifier.
     auto removedRecords = removeRecordsBySubscriptionSetAndSecurityOrigin(record3.subscriptionSetIdentifier, record3.securityOrigin);
-    auto expected = HashSet<String> { record3.topic, record4.topic };
+    auto expected = HashSet<RefPtr<StringImpl>> { record3.topic, record4.topic };
     EXPECT_EQ(getTopicsFromRecords(removedRecords), expected);
     EXPECT_EQ(removedRecords.size(), 2u);
     EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 5, 6, 7 }));
 
     // record5 and record6 have the same subscriptionSetIdentifier.
     removedRecords = removeRecordsBySubscriptionSetAndSecurityOrigin(record6.subscriptionSetIdentifier, record6.securityOrigin);
-    expected = HashSet<String> { record6.topic };
+    expected = HashSet<RefPtr<StringImpl>> { record6.topic };
     EXPECT_EQ(getTopicsFromRecords(removedRecords), expected);
     EXPECT_EQ(removedRecords.size(), 1u);
     EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 5, 7 }));
 
     // record7 has a distinct subscriptionSetIdentifier.
     removedRecords = removeRecordsBySubscriptionSetAndSecurityOrigin(record7.subscriptionSetIdentifier, record7.securityOrigin);
-    expected = HashSet<String> { record7.topic };
+    expected = HashSet<RefPtr<StringImpl>> { record7.topic };
     EXPECT_EQ(getTopicsFromRecords(removedRecords), expected);
     EXPECT_EQ(removedRecords.size(), 1u);
     EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 5 }));
@@ -682,7 +682,7 @@ TEST_F(PushDatabaseTest, RemoveRecordsByBundleIdentifierAndDataStore)
 {
     // record5, record6, and record7 have the same bundleIdentifier and dataStoreIdentifier, but different pushPartitions.
     auto removedRecords = removeRecordsByBundleIdentifierAndDataStore(record5.subscriptionSetIdentifier.bundleIdentifier, record5.subscriptionSetIdentifier.dataStoreIdentifier);
-    auto expected = HashSet<String> { record5.topic, record6.topic, record7.topic };
+    auto expected = HashSet<RefPtr<StringImpl>> { record5.topic, record6.topic, record7.topic };
     EXPECT_EQ(getTopicsFromRecords(removedRecords), expected);
     EXPECT_EQ(removedRecords.size(), 3u);
     EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 3, 4 }));
@@ -709,7 +709,7 @@ TEST_F(PushDatabaseTest, GetRecordByTopic)
     ASSERT_TRUE(result1);
     EXPECT_EQ(*result1, *insertResult1);
 
-    auto result2 = getRecordByTopic("foo"_s);
+    auto result2 = getRecordByTopic("foo"_si);
     EXPECT_FALSE(result2);
 }
 
@@ -719,7 +719,7 @@ TEST_F(PushDatabaseTest, GetRecordBySubscriptionSetAndScope)
     ASSERT_TRUE(result1);
     EXPECT_EQ(*result1, *insertResult1);
 
-    auto result2 = getRecordBySubscriptionSetAndScope(record1.subscriptionSetIdentifier, "bar"_s);
+    auto result2 = getRecordBySubscriptionSetAndScope(record1.subscriptionSetIdentifier, "bar"_si);
     EXPECT_FALSE(result2);
 
     auto result3 = getRecordBySubscriptionSetAndScope(PushSubscriptionSetIdentifier { "foo"_s, emptyString(), std::nullopt }, record1.scope);
@@ -769,7 +769,7 @@ TEST_F(PushDatabaseTest, IncrementSilentPushCount)
     count = incrementSilentPushCount(record7.subscriptionSetIdentifier, record7.securityOrigin);
     EXPECT_EQ(count, 1u);
 
-    count = incrementSilentPushCount(PushSubscriptionSetIdentifier { "foobar"_s, emptyString(), std::nullopt }, "nonexistent"_s);
+    count = incrementSilentPushCount(PushSubscriptionSetIdentifier { "foobar"_s, emptyString(), std::nullopt }, "nonexistent"_si);
     EXPECT_EQ(count, 0u);
 }
 
@@ -819,7 +819,7 @@ TEST_F(PushDatabaseTest, SetPushesEnabled)
     expectedSubscriptionSets.at(5).enabled = true;
     EXPECT_EQ(getPushSubscriptionSets(), expectedSubscriptionSets);
 
-    result = setPushesEnabledForOrigin(PushSubscriptionSetIdentifier { "foobar"_s, emptyString(), std::nullopt }, "https://www.apple.com"_s, false);
+    result = setPushesEnabledForOrigin(PushSubscriptionSetIdentifier { "foobar"_s, emptyString(), std::nullopt }, "https://www.apple.com"_si, false);
     EXPECT_FALSE(result);
 
     EXPECT_EQ(topics, expectedTopics);
@@ -870,7 +870,7 @@ TEST_F(PushDatabaseTest, SetPushesEnabledForOrigin)
     expectedSubscriptionSets.at(5).enabled = true;
     EXPECT_EQ(getPushSubscriptionSets(), expectedSubscriptionSets);
 
-    result = setPushesEnabledForOrigin(PushSubscriptionSetIdentifier { "foobar"_s, emptyString(), std::nullopt }, "https://www.apple.com"_s, false);
+    result = setPushesEnabledForOrigin(PushSubscriptionSetIdentifier { "foobar"_s, emptyString(), std::nullopt }, "https://www.apple.com"_si, false);
     EXPECT_FALSE(result);
 
     EXPECT_EQ(topics, expectedTopics);
@@ -950,7 +950,7 @@ TEST(PushDatabase, StartsFromScratchOnDowngrade)
     }
 }
 
-static bool createDatabaseFromStatements(String path, ASCIILiteral* statements, size_t count)
+static bool createDatabaseFromStatements(RefPtr<StringImpl> path, ASCIILiteral* statements, size_t count)
 {
     auto db = makeUniqueRef<SQLiteDatabase>();
     db->open(path);
@@ -992,7 +992,7 @@ TEST(PushDatabase, CanMigrateV2DatabaseToCurrentSchema)
         ASSERT_TRUE(databaseResult);
         auto& database = *databaseResult;
 
-        auto recordResult = getRecordBySubscriptionSetAndScopeSync(database, PushSubscriptionSetIdentifier { "com.apple.Safari"_s, emptyString(), std::nullopt }, "https://www.webkit.org/blog"_s);
+        auto recordResult = getRecordBySubscriptionSetAndScopeSync(database, PushSubscriptionSetIdentifier { "com.apple.Safari"_s, emptyString(), std::nullopt }, "https://www.webkit.org/blog"_si);
         ASSERT_TRUE(recordResult);
         ASSERT_EQ(recordResult->topic, "topic2"_s);
 

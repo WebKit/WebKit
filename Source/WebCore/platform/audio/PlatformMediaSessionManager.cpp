@@ -44,7 +44,7 @@ do { \
         if (logger().developerExtrasEnabled()) { \
             std::array<char, 1024> buffer { }; \
             SAFE_SPRINTF(std::span { buffer }, MESSAGE_PLATFORMMEDIASESSIONMANAGER_##formatString, ##__VA_ARGS__); \
-            logger().toObservers(logChannel(), WTFLogLevel::Always, { }, String::fromUTF8(buffer.data())); \
+            logger().toObservers(logChannel(), WTFLogLevel::Always, { }, StringImpl::fromUTF8(buffer.data())); \
         } \
     } \
 } while (0)

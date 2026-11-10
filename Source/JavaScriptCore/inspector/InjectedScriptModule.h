@@ -53,7 +53,7 @@ protected:
     // Do not expose constructor in the child classes as well. Instead provide
     // a static factory method that would create a new instance of the class
     // and call its ensureInjected() method immediately.
-    JS_EXPORT_PRIVATE explicit InjectedScriptModule(const String& name);
+    JS_EXPORT_PRIVATE explicit InjectedScriptModule(StringImpl* name);
     void ensureInjected(InjectedScriptManager*, JSC::JSGlobalObject*);
     JS_EXPORT_PRIVATE void ensureInjected(InjectedScriptManager*, const InjectedScript&);
 };

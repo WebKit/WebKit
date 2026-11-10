@@ -32,15 +32,15 @@
 
 namespace WebCore::ContentExtensions {
 
-String deserializeString(std::span<const uint8_t> span)
+RefPtr<StringImpl> deserializeString(std::span<const uint8_t> span)
 {
     auto serializedLength = stringSerializedLength(span);
-    return String::fromUTF8(span.subspan(sizeof(uint32_t), serializedLength - sizeof(uint32_t)));
+    return StringImpl::fromUTF8(span.subspan(sizeof(uint32_t), serializedLength - sizeof(uint32_t)));
 }
 
-void serializeString(Vector<uint8_t>& actions, const String& string)
+void serializeString(Vector<uint8_t>& actions, StringImpl* string)
 {
-    auto utf8 = string.utf8();
+    auto utf8 = WTF::utf8(string);
     uint32_t serializedLength = sizeof(uint32_t) + utf8.length();
     actions.reserveCapacity(actions.size() + serializedLength);
     actions.append(asByteSpan(serializedLength));

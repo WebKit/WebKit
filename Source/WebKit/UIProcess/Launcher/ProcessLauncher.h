@@ -88,19 +88,19 @@ enum class ProcessLaunchType {
 struct ProcessLaunchOptions {
     WebCore::ProcessIdentifier processIdentifier;
     ProcessLaunchType processType { ProcessLaunchType::Web };
-    HashMap<String, String> extraInitializationData { };
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> extraInitializationData { };
     bool nonValidInjectedCodeAllowed { false };
     bool shouldMakeProcessLaunchFailForTesting { false };
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     HashMap<UTF8CString, SandboxPermission> extraSandboxPaths { };
 #if ENABLE(DEVELOPER_MODE)
-    String processCmdPrefix { };
+    RefPtr<StringImpl> processCmdPrefix { };
 #endif
 #endif
 
 #if PLATFORM(PLAYSTATION)
-    String processPath { };
+    RefPtr<StringImpl> processPath { };
     int32_t userId { -1 };
 #endif
 };
@@ -149,7 +149,7 @@ public:
     bool isLaunching() const { return m_isLaunching; }
     ProcessID processID() const { return m_processID; }
 
-    void terminateProcess(const String& reason = { });
+    void terminateProcess(StringImpl* reason = nullptr);
     void invalidate();
 
 #if USE(EXTENSIONKIT)

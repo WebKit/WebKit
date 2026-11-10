@@ -86,7 +86,7 @@ ExceptionOr<CanvasImageSourceUsability> checkUsability(CanvasBase& image)
     // If image has either a horizontal dimension or a vertical dimension equal to zero, then
     // throw an "InvalidStateError" DOMException.
     if (!image.width() || !image.height())
-        return Exception { ExceptionCode::InvalidStateError, "The canvas provided has a width or height of zero."_s };
+        return Exception { ExceptionCode::InvalidStateError, "The canvas provided has a width or height of zero."_si };
 
     return CanvasImageSourceUsability::Good;
 }
@@ -96,7 +96,7 @@ ExceptionOr<CanvasImageSourceUsability> checkUsability(ImageBitmap& image)
     // If image's [[Detached]] internal slot value is set to true, then throw an
     // "InvalidStateError" DOMException.
     if (image.isDetached())
-        return Exception { ExceptionCode::InvalidStateError, "The ImageBitmap provided is detached."_s };
+        return Exception { ExceptionCode::InvalidStateError, "The ImageBitmap provided is detached."_si };
 
     return CanvasImageSourceUsability::Good;
 }
@@ -107,7 +107,7 @@ ExceptionOr<CanvasImageSourceUsability> checkUsability(WebCodecsVideoFrame& imag
     // If image's [[Detached]] internal slot value is set to true, then throw an
     // "InvalidStateError" DOMException.
     if (image.isDetached())
-        return Exception { ExceptionCode::InvalidStateError, "The VideoFrame provided is detached."_s };
+        return Exception { ExceptionCode::InvalidStateError, "The VideoFrame provided is detached."_si };
 
     return CanvasImageSourceUsability::Good;
 }

@@ -44,7 +44,7 @@ struct ApplePayPaymentMethodUpdate final : public ApplePayDetailsUpdateBase {
 #endif
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
-    String installmentGroupIdentifier;
+    RefPtr<StringImpl> installmentGroupIdentifier;
 #endif
 };
 

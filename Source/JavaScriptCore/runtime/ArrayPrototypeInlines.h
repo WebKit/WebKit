@@ -150,7 +150,7 @@ ALWAYS_INLINE void setLength(JSGlobalObject* globalObject, VM& vm, JSObject* obj
     static constexpr bool throwException = true;
     if (isJSArray(obj)) [[likely]] {
         if (value > UINT32_MAX) [[unlikely]] {
-            throwRangeError(globalObject, scope, "Invalid array length"_s);
+            throwRangeError(globalObject, scope, "Invalid array length"_si);
             return;
         }
         JSArray* array = uncheckedDowncast<JSArray>(obj);
@@ -245,7 +245,7 @@ inline void unshift(JSGlobalObject* globalObject, JSObject* thisObj, uint64_t he
     if (isJSArray(thisObj)) {
         // Spec says if we would produce an array of this size, we must throw a range error.
         if (count + length > std::numeric_limits<uint32_t>::max()) {
-            throwRangeError(globalObject, scope, LengthExceededTheMaximumArrayLengthError);
+            throwRangeError(globalObject, scope, StringImpl::create(LengthExceededTheMaximumArrayLengthError).ptr());
             return;
         }
 

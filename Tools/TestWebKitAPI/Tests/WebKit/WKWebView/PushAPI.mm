@@ -56,7 +56,7 @@ static NSDictionary *messageDictionary(NSData *data, NSURL *registration)
     };
 }
 
-static String expectedMessage;
+static RefPtr<StringImpl> expectedMessage;
 
 @interface PushAPIMessageHandlerWithExpectedMessage : NSObject <WKScriptMessageHandler>
 @end
@@ -190,7 +190,7 @@ TEST_F(PushAPI, firePushEvent)
     RetainPtr messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    expectedMessage = "Ready"_s;
+    expectedMessage = "Ready"_si;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
 
@@ -200,7 +200,7 @@ TEST_F(PushAPI, firePushEvent)
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
     NSString *message = @"Sweet Potatoes";
-    expectedMessage = "Received: Sweet Potatoes"_s;
+    expectedMessage = "Received: Sweet Potatoes"_si;
 
     [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
         pushMessageSuccessful = result;
@@ -215,7 +215,7 @@ TEST_F(PushAPI, firePushEvent)
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
     message = @"Rotten Potatoes";
-    expectedMessage = "Received: Rotten Potatoes"_s;
+    expectedMessage = "Received: Rotten Potatoes"_si;
     [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
         pushMessageSuccessful = result;
         pushMessageProcessed = true;
@@ -298,11 +298,11 @@ TEST_F(PushAPI, firePushEventDataStoreDelegate)
 
     RetainPtr<FirePushEventDataStoreDelegate> delegate = adoptNS([FirePushEventDataStoreDelegate new]);
     delegate.get().permissions = @{
-        server.origin().createNSString().get() : @YES
+        createNSString(server.origin()).get() : @YES
     };
     [configuration websiteDataStore]._delegate = delegate.get();
 
-    expectedMessage = "Ready"_s;
+    expectedMessage = "Ready"_si;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
 
@@ -312,7 +312,7 @@ TEST_F(PushAPI, firePushEventDataStoreDelegate)
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
     NSString *message = @"Sweet Potatoes";
-    expectedMessage = "Received: Sweet Potatoes"_s;
+    expectedMessage = "Received: Sweet Potatoes"_si;
 
     [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
         pushMessageSuccessful = result;
@@ -327,7 +327,7 @@ TEST_F(PushAPI, firePushEventDataStoreDelegate)
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
     message = @"Rotten Potatoes";
-    expectedMessage = "Received: Rotten Potatoes"_s;
+    expectedMessage = "Received: Rotten Potatoes"_si;
     [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
         pushMessageSuccessful = result;
         pushMessageProcessed = true;
@@ -402,17 +402,17 @@ TEST_F(PushAPI, testSilentFlag)
 
     RetainPtr<FirePushEventDataStoreDelegate> delegate = adoptNS([FirePushEventDataStoreDelegate new]);
     delegate.get().permissions = @{
-        server.origin().createNSString().get() : @YES
+        createNSString(server.origin()).get() : @YES
     };
     [configuration websiteDataStore]._delegate = delegate.get();
 
-    expectedMessage = "Ready"_s;
+    expectedMessage = "Ready"_si;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
 
     TestWebKitAPI::Util::run(&done);
 
-    expectedMessage = "Done"_s;
+    expectedMessage = "Done"_si;
 
     done = false;
     pushMessageProcessed = false;
@@ -558,7 +558,7 @@ TEST_F(PushAPI, firePushEventWithNoPagesSuccessful)
     RetainPtr messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    expectedMessage = "Ready"_s;
+    expectedMessage = "Ready"_si;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
 
@@ -607,7 +607,7 @@ TEST_F(PushAPI, firePushEventWithNoPagesFail)
     RetainPtr messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    expectedMessage = "Ready"_s;
+    expectedMessage = "Ready"_si;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
 
@@ -658,7 +658,7 @@ TEST_F(PushAPI, firePushEventWithNoPagesTimeout)
     RetainPtr messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    expectedMessage = "Ready"_s;
+    expectedMessage = "Ready"_si;
 
     @autoreleasepool {
         RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -758,7 +758,7 @@ TEST_F(PushAPI, pushEventsAndInspectedServiceWorker)
     RetainPtr messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    expectedMessage = "Ready"_s;
+    expectedMessage = "Ready"_si;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
 
@@ -871,7 +871,7 @@ void PushAPI::testInspectedServiceWorkerWithoutPage(bool enableServiceWorkerInsp
     RetainPtr messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    expectedMessage = "Ready"_s;
+    expectedMessage = "Ready"_si;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
 
@@ -1016,7 +1016,7 @@ TEST_F(PushAPI, fireNotificationClickEvent)
     RetainPtr messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    expectedMessage = "Ready"_s;
+    expectedMessage = "Ready"_si;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
 
@@ -1029,7 +1029,7 @@ TEST_F(PushAPI, fireNotificationClickEvent)
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
     NSString *message = @"Sweet Potatoes";
-    expectedMessage = "Received: Sweet Potatoes"_s;
+    expectedMessage = "Received: Sweet Potatoes"_si;
 
     [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
         EXPECT_TRUE(providerRef.hasReceivedShowNotification());
@@ -1046,7 +1046,7 @@ TEST_F(PushAPI, fireNotificationClickEvent)
     EXPECT_TRUE(provider.simulateNotificationClick());
 
     done = false;
-    expectedMessage = "Received notificationclick: true"_s;
+    expectedMessage = "Received notificationclick: true"_si;
     TestWebKitAPI::Util::run(&done);
 
     clearWebsiteDataStore([configuration websiteDataStore]);
@@ -1067,7 +1067,7 @@ TEST_F(PushAPI, fireNotificationCloseEvent)
     RetainPtr messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    expectedMessage = "Ready"_s;
+    expectedMessage = "Ready"_si;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
 
@@ -1080,7 +1080,7 @@ TEST_F(PushAPI, fireNotificationCloseEvent)
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
     NSString *message = @"Sweet Potatoes";
-    expectedMessage = "Received: Sweet Potatoes"_s;
+    expectedMessage = "Received: Sweet Potatoes"_si;
 
     [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
         EXPECT_TRUE(providerRef.hasReceivedShowNotification());
@@ -1097,7 +1097,7 @@ TEST_F(PushAPI, fireNotificationCloseEvent)
     EXPECT_TRUE(provider.simulateNotificationClose());
 
     done = false;
-    expectedMessage = "Received notificationclose"_s;
+    expectedMessage = "Received notificationclose"_si;
     TestWebKitAPI::Util::run(&done);
 
     clearWebsiteDataStore([configuration websiteDataStore]);
@@ -1273,7 +1273,7 @@ TEST_F(PushAPI, callNotificationClose)
     RetainPtr messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    expectedMessage = "Ready"_s;
+    expectedMessage = "Ready"_si;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
 
@@ -1286,7 +1286,7 @@ TEST_F(PushAPI, callNotificationClose)
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
     NSString *message = @"Sweet Potatoes";
-    expectedMessage = "Received: Sweet Potatoes"_s;
+    expectedMessage = "Received: Sweet Potatoes"_si;
 
     [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
         EXPECT_TRUE(providerRef.hasReceivedShowNotification());
@@ -1308,7 +1308,7 @@ TEST_F(PushAPI, callNotificationClose)
     EXPECT_FALSE(providerRef.hasReceivedCloseNotification());
 
     done = false;
-    expectedMessage = "PASS close notification"_s;
+    expectedMessage = "PASS close notification"_si;
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {

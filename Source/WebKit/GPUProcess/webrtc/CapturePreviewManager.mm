@@ -91,10 +91,10 @@ RefPtr<WebCore::RealtimeMediaSource> CapturePreviewManager::createSource(const W
     if (!sourceOrError) {
         RELEASE_LOG_ERROR(WebRTC, "CapturePreviewManager unable to create %s preview source for '%s' (%s), denialReason=%d, %s",
             device.type() == WebCore::CaptureDevice::DeviceType::Microphone ? "microphone" : "camera",
-            device.label().utf8(),
-            device.persistentId().utf8(),
+            utf8(device.label()),
+            utf8(device.persistentId()),
             static_cast<int>(sourceOrError.error.denialReason),
-            sourceOrError.error.errorMessage.utf8());
+            utf8(sourceOrError.error.errorMessage));
         return nullptr;
     }
 
@@ -105,10 +105,10 @@ void CapturePreviewManager::start(std::optional<WebCore::CaptureDevice>&& videoD
 {
     assertIsMainThread();
 
-    String videoDeviceID = videoDevice ? videoDevice->persistentId() : String { };
-    String audioDeviceID = audioDevice ? audioDevice->persistentId() : String { };
+    RefPtr<StringImpl> videoDeviceID = videoDevice ? videoDevice->persistentId() : nullptr;
+    RefPtr<StringImpl> audioDeviceID = audioDevice ? audioDevice->persistentId() : nullptr;
 
-    if (audioDeviceID != m_audioDeviceID) {
+    if (!equal(audioDeviceID, m_audioDeviceID)) {
         stopAudio();
         if (audioDevice)
             startAudio(*audioDevice);
@@ -118,7 +118,7 @@ void CapturePreviewManager::start(std::optional<WebCore::CaptureDevice>&& videoD
 #endif
     }
 
-    if (videoDeviceID == m_videoDeviceID && previewSize == m_previewSize) {
+    if (equal(videoDeviceID, m_videoDeviceID) && previewSize == m_previewSize) {
         callback(m_hostingContext);
         return;
     }
@@ -140,7 +140,7 @@ void CapturePreviewManager::startAudio(const WebCore::CaptureDevice& device)
 #if (PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)) && USE(AUDIO_SESSION)
     prepareAudioSession([protectedThis = Ref { *this }, device] {
         assertIsMainThread();
-        if (protectedThis->m_audioDeviceID != device.persistentId())
+        if (!equal(protectedThis->m_audioDeviceID, device.persistentId()))
             return;
         protectedThis->startAudioSource(device);
     });
@@ -155,7 +155,7 @@ void CapturePreviewManager::startAudioSource(const WebCore::CaptureDevice& devic
 
     m_audioSource = createSource(device);
     if (!m_audioSource) {
-        RELEASE_LOG_ERROR(WebRTC, "CapturePreviewManager no audio source for '%s'", device.label().utf8());
+        RELEASE_LOG_ERROR(WebRTC, "CapturePreviewManager no audio source for '%s'", utf8(device.label()));
         return;
     }
 
@@ -254,7 +254,7 @@ void CapturePreviewManager::setOrientation(WebCore::IntDegrees orientation)
     m_orientationNotifier.orientationChanged(orientation);
 }
 
-void CapturePreviewManager::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)
+void CapturePreviewManager::rotationAngleForCaptureDeviceChanged(StringImpl* persistentId, WebCore::VideoFrameRotation rotation)
 {
     assertIsMainThread();
     m_orientationNotifier.rotationAngleForCaptureDeviceChanged(persistentId, rotation);
@@ -269,11 +269,11 @@ void CapturePreviewManager::stopVideo()
         videoSource->endImmediatly();
     }
 
-    if (!m_videoDeviceID.isEmpty()) {
+    if (!isEmpty(m_videoDeviceID)) {
         if (RefPtr connection = GPUProcess::singleton().parentProcessConnection())
             connection->send(Messages::GPUProcessProxy::StopMonitoringCaptureDeviceRotation(m_pageIdentifier, m_videoDeviceID, RotationMonitoringReason::CapturePreview), 0);
     }
-    m_videoDeviceID = { };
+    m_videoDeviceID = nullptr;
     m_previewSize = { };
     m_layerHostingContext = nullptr;
     setDisplayLayer(nullptr);
@@ -293,7 +293,7 @@ void CapturePreviewManager::stopAudio()
 {
     detachAudioSource();
 
-    m_audioDeviceID = { };
+    m_audioDeviceID = nullptr;
 
     Locker locker { m_audioLevelLock };
     m_peakSinceLastLevel = 0;
@@ -302,7 +302,7 @@ void CapturePreviewManager::stopAudio()
 bool CapturePreviewManager::isRunning() const
 {
     assertIsMainThread();
-    return !m_videoDeviceID.isEmpty() || !m_audioDeviceID.isEmpty();
+    return !isEmpty(m_videoDeviceID) || !isEmpty(m_audioDeviceID);
 }
 
 void CapturePreviewManager::stop()

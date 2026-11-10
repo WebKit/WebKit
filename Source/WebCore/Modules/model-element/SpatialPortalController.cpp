@@ -136,7 +136,7 @@ private:
     }
 
 #if ENABLE(MODEL_PROCESS)
-    void didConvertModelData(ModelPlayer&, Ref<SharedBuffer>&&, const String&) final { }
+    void didConvertModelData(ModelPlayer&, Ref<SharedBuffer>&&, StringImpl*) final { }
 #endif
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
@@ -181,7 +181,7 @@ private:
         return controller && controller->isPortalVisible();
     }
 
-    void logWarning(ModelPlayer& player, const String& warningMessage) final
+    void logWarning(ModelPlayer& player, StringImpl* warningMessage) final
     {
         if (CheckedPtr controller = m_controller.get())
             controller->logWarning(player, warningMessage);
@@ -698,18 +698,18 @@ void SpatialPortalController::pushEnvironmentMapToPlayer(ModelPlayer& player) co
     }
 }
 
-String SpatialPortalController::effectiveEnvironmentMapForTesting() const
+RefPtr<StringImpl> SpatialPortalController::effectiveEnvironmentMapForTesting() const
 {
     if (RefPtr player = m_modelPlayer)
         return player->environmentMapForTesting();
 
-    return "no player"_s;
+    return "no player"_si;
 }
 
 #endif // ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
 
 #if ENABLE(MODEL_PROCESS)
-void SpatialPortalController::sceneGraphAsTextForTesting(std::optional<NodeIdentifier> rootNode, const ModelSceneGraphAsTextOptions& options, CompletionHandler<void(String&&)>&& completionHandler)
+void SpatialPortalController::sceneGraphAsTextForTesting(std::optional<NodeIdentifier> rootNode, const ModelSceneGraphAsTextOptions& options, CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
 {
     RefPtr player = m_modelPlayer;
     if (!player) {
@@ -719,7 +719,7 @@ void SpatialPortalController::sceneGraphAsTextForTesting(std::optional<NodeIdent
 
     updateAnchors();
 
-    Vector<std::pair<NodeIdentifier, String>> modelLabels;
+    Vector<std::pair<NodeIdentifier, RefPtr<StringImpl>>> modelLabels;
     unsigned treeOrderPosition = 0;
     for (Ref model : hostedModelsInTreeOrder())
         modelLabels.append({ model->nodeIdentifier(), model->dumpLabelForTesting(++treeOrderPosition) });
@@ -744,7 +744,7 @@ void SpatialPortalController::updateGestureHandling()
         if (!m_eventListener)
             lazyInitialize(m_eventListener, SpatialPortalEventListener::create(*this));
 
-        auto updateListener = [&](const AtomString& eventName) {
+        auto updateListener = [&](AtomStringImpl* eventName) {
             if (shouldHandleGesture)
                 element->addEventListener(eventName, *m_eventListener, { });
             else
@@ -1140,18 +1140,18 @@ void SpatialPortalController::updateAnchorForChild(const HTMLModelElement& model
 
     if (resolution.node)
         hostedModel.anchorWarningIssued = false;
-    else if (!resolution.warning.isNull() && !hostedModel.anchorWarningIssued) {
+    else if (resolution.warning && !hostedModel.anchorWarningIssued) {
         hostedModel.anchorWarningIssued = true;
-        addConsoleWarning(resolution.warning);
+        addConsoleWarning(resolution.warning.get());
     }
 
-    String placement;
+    RefPtr<StringImpl> placement;
     if (resolution.node) {
         if (auto attachment = style.positionAnchorOutOfLine().tryAttachment())
             placement = attachment->value;
     }
 
-    if (hostedModel.anchorNode == resolution.node && hostedModel.anchorPlacement == placement)
+    if (hostedModel.anchorNode == resolution.node && equal(hostedModel.anchorPlacement, placement))
         return;
 
     RefPtr player = m_modelPlayer;
@@ -1161,7 +1161,7 @@ void SpatialPortalController::updateAnchorForChild(const HTMLModelElement& model
     hostedModel.anchorNode = resolution.node;
     hostedModel.anchorPlacement = placement;
 
-    player->setAnchor(model.nodeIdentifier(), resolution.node, placement);
+    player->setAnchor(model.nodeIdentifier(), resolution.node, placement.get());
 }
 
 void SpatialPortalController::updateAnchors()
@@ -1228,7 +1228,7 @@ void SpatialPortalController::modelDidUpdatePortalTransform(ModelPlayer& player,
 }
 
 // Mirrors HTMLModelElement::logWarning().
-void SpatialPortalController::addConsoleWarning(const String& warningMessage) const
+void SpatialPortalController::addConsoleWarning(StringImpl* warningMessage) const
 {
     RefPtr element = m_portalElement.get();
     if (!element)
@@ -1238,7 +1238,7 @@ void SpatialPortalController::addConsoleWarning(const String& warningMessage) co
     document->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, warningMessage);
 }
 
-void SpatialPortalController::logWarning(ModelPlayer& player, const String& warningMessage)
+void SpatialPortalController::logWarning(ModelPlayer& player, StringImpl* warningMessage)
 {
     ASSERT_UNUSED(player, &player == m_modelPlayer);
 

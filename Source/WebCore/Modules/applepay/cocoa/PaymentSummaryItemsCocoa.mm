@@ -46,11 +46,11 @@ SPECIALIZE_OBJC_TYPE_TRAITS(PKAutomaticReloadPaymentSummaryItem, PAL::getPKAutom
 
 namespace WebCore {
 
-NSDecimalNumber *toDecimalNumber(const String& amount)
+NSDecimalNumber *toDecimalNumber(StringImpl* amount)
 {
     if (!amount)
         return [NSDecimalNumber zero];
-    return [NSDecimalNumber decimalNumberWithString:amount.createNSString().get() locale:@{ NSLocaleDecimalSeparator : @"." }];
+    return [NSDecimalNumber decimalNumberWithString:createNSString(amount).get() locale:@{ NSLocaleDecimalSeparator : @"." }];
 }
 
 NODELETE static PKPaymentSummaryItemType toPKPaymentSummaryItemType(ApplePayLineItem::Type type)
@@ -105,7 +105,7 @@ NODELETE static NSCalendarUnit toCalendarUnit(ApplePayRecurringPaymentDateUnit u
 RetainPtr<PKRecurringPaymentSummaryItem> platformRecurringSummaryItem(const ApplePayLineItem& lineItem)
 {
     ASSERT(lineItem.paymentTiming == ApplePayPaymentTiming::Recurring);
-    RetainPtr summaryItem = checked_objc_cast<PKRecurringPaymentSummaryItem>([PAL::getPKRecurringPaymentSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:protect(toDecimalNumber(lineItem.amount)).get() type:toPKPaymentSummaryItemType(lineItem.type)]);
+    RetainPtr summaryItem = checked_objc_cast<PKRecurringPaymentSummaryItem>([PAL::getPKRecurringPaymentSummaryItemClassSingleton() summaryItemWithLabel:createNSString(lineItem.label).get() amount:protect(toDecimalNumber(lineItem.amount)).get() type:toPKPaymentSummaryItemType(lineItem.type)]);
     if (!lineItem.recurringPaymentStartDate.isNaN())
         summaryItem.get().startDate = protect(toDate(lineItem.recurringPaymentStartDate)).get();
     summaryItem.get().intervalUnit = toCalendarUnit(lineItem.recurringPaymentIntervalUnit);
@@ -122,7 +122,7 @@ RetainPtr<PKRecurringPaymentSummaryItem> platformRecurringSummaryItem(const Appl
 RetainPtr<PKDeferredPaymentSummaryItem> platformDeferredSummaryItem(const ApplePayLineItem& lineItem)
 {
     ASSERT(lineItem.paymentTiming == ApplePayPaymentTiming::Deferred);
-    RetainPtr summaryItem = checked_objc_cast<PKDeferredPaymentSummaryItem>([PAL::getPKDeferredPaymentSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:protect(toDecimalNumber(lineItem.amount)).get() type:toPKPaymentSummaryItemType(lineItem.type)]);
+    RetainPtr summaryItem = checked_objc_cast<PKDeferredPaymentSummaryItem>([PAL::getPKDeferredPaymentSummaryItemClassSingleton() summaryItemWithLabel:createNSString(lineItem.label).get() amount:protect(toDecimalNumber(lineItem.amount)).get() type:toPKPaymentSummaryItemType(lineItem.type)]);
     if (!lineItem.deferredPaymentDate.isNaN())
         summaryItem.get().deferredDate = protect(toDate(lineItem.deferredPaymentDate)).get();
     return summaryItem;
@@ -135,7 +135,7 @@ RetainPtr<PKDeferredPaymentSummaryItem> platformDeferredSummaryItem(const AppleP
 RetainPtr<PKAutomaticReloadPaymentSummaryItem> platformAutomaticReloadSummaryItem(const ApplePayLineItem& lineItem)
 {
     ASSERT(lineItem.paymentTiming == ApplePayPaymentTiming::AutomaticReload);
-    RetainPtr summaryItem = checked_objc_cast<PKAutomaticReloadPaymentSummaryItem>([PAL::getPKAutomaticReloadPaymentSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:protect(toDecimalNumber(lineItem.amount)).get() type:toPKPaymentSummaryItemType(lineItem.type)]);
+    RetainPtr summaryItem = checked_objc_cast<PKAutomaticReloadPaymentSummaryItem>([PAL::getPKAutomaticReloadPaymentSummaryItemClassSingleton() summaryItemWithLabel:createNSString(lineItem.label).get() amount:protect(toDecimalNumber(lineItem.amount)).get() type:toPKPaymentSummaryItemType(lineItem.type)]);
     summaryItem.get().thresholdAmount = protect(toDecimalNumber(lineItem.automaticReloadPaymentThresholdAmount)).get();
     return summaryItem;
 }
@@ -147,13 +147,13 @@ RetainPtr<PKAutomaticReloadPaymentSummaryItem> platformAutomaticReloadSummaryIte
 PKDisbursementSummaryItem *platformDisbursementSummaryItem(const ApplePayLineItem& lineItem)
 {
     ASSERT(lineItem.disbursementLineItemType == ApplePayLineItem::DisbursementLineItemType::Disbursement);
-    return [PAL::getPKDisbursementSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:protect(toDecimalNumber(lineItem.amount)).get()];
+    return [PAL::getPKDisbursementSummaryItemClassSingleton() summaryItemWithLabel:createNSString(lineItem.label).get() amount:protect(toDecimalNumber(lineItem.amount)).get()];
 }
 
 PKInstantFundsOutFeeSummaryItem *platformInstantFundsOutFeeSummaryItem(const ApplePayLineItem& lineItem)
 {
     ASSERT(lineItem.disbursementLineItemType == ApplePayLineItem::DisbursementLineItemType::InstantFundsOutFee);
-    return [PAL::getPKInstantFundsOutFeeSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:protect(toDecimalNumber(lineItem.amount)).get()];
+    return [PAL::getPKInstantFundsOutFeeSummaryItemClassSingleton() summaryItemWithLabel:createNSString(lineItem.label).get() amount:protect(toDecimalNumber(lineItem.amount)).get()];
 }
 
 #endif // HAVE(PASSKIT_DISBURSEMENTS)
@@ -191,7 +191,7 @@ RetainPtr<PKPaymentSummaryItem> platformSummaryItem(const ApplePayLineItem& line
 #endif
     }
 
-    return checked_objc_cast<PKPaymentSummaryItem>([PAL::getPKPaymentSummaryItemClassSingleton() summaryItemWithLabel:lineItem.label.createNSString().get() amount:protect(toDecimalNumber(lineItem.amount)).get() type:toPKPaymentSummaryItemType(lineItem.type)]);
+    return checked_objc_cast<PKPaymentSummaryItem>([PAL::getPKPaymentSummaryItemClassSingleton() summaryItemWithLabel:createNSString(lineItem.label).get() amount:protect(toDecimalNumber(lineItem.amount)).get() type:toPKPaymentSummaryItemType(lineItem.type)]);
 }
 
 #if HAVE(PASSKIT_DISBURSEMENTS)

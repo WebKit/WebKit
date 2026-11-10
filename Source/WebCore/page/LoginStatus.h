@@ -48,26 +48,26 @@ public:
     enum class CredentialTokenType : bool { LegacyCookie, HTTPStateToken };
     using AuthenticationType = LoginStatusAuthenticationType;
 
-    WEBCORE_EXPORT static ExceptionOr<UniqueRef<LoginStatus>> create(const RegistrableDomain&, const String& username, CredentialTokenType, AuthenticationType);
-    WEBCORE_EXPORT static ExceptionOr<UniqueRef<LoginStatus>> create(const RegistrableDomain&, const String& username, CredentialTokenType, AuthenticationType, Seconds timeToLive);
-    NODELETE WEBCORE_EXPORT LoginStatus(const RegistrableDomain&, const String& username, CredentialTokenType, AuthenticationType, WallTime loggedInTime, Seconds timeToLive);
+    WEBCORE_EXPORT static ExceptionOr<UniqueRef<LoginStatus>> create(const RegistrableDomain&, StringImpl* username, CredentialTokenType, AuthenticationType);
+    WEBCORE_EXPORT static ExceptionOr<UniqueRef<LoginStatus>> create(const RegistrableDomain&, StringImpl* username, CredentialTokenType, AuthenticationType, Seconds timeToLive);
+    NODELETE WEBCORE_EXPORT LoginStatus(const RegistrableDomain&, StringImpl* username, CredentialTokenType, AuthenticationType, WallTime loggedInTime, Seconds timeToLive);
 
     NODELETE WEBCORE_EXPORT void setTimeToLive(Seconds);
     WEBCORE_EXPORT bool hasExpired() const;
     WEBCORE_EXPORT WallTime expiry() const;
 
     const RegistrableDomain& domain() const LIFETIME_BOUND { return m_domain; }
-    const String& username() const LIFETIME_BOUND { return m_username; }
+    const RefPtr<StringImpl>& username() const LIFETIME_BOUND { return m_username; }
     CredentialTokenType tokenType() const { return m_tokenType; }
     AuthenticationType authType() const { return m_authType; }
     WallTime loggedInTime() const { return m_loggedInTime; }
     Seconds timeToLive() const { return m_timeToLive; }
 
 private:
-    LoginStatus(const RegistrableDomain&, const String& username, CredentialTokenType, AuthenticationType, Seconds timeToLive);
+    LoginStatus(const RegistrableDomain&, StringImpl* username, CredentialTokenType, AuthenticationType, Seconds timeToLive);
 
     RegistrableDomain m_domain;
-    String m_username;
+    RefPtr<StringImpl> m_username;
     CredentialTokenType m_tokenType;
     AuthenticationType m_authType;
     WallTime m_loggedInTime;

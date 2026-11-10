@@ -78,7 +78,7 @@ static bool urlRequiresChromeBrowser(StringView domain, StringView baseDomain)
         return true;
 
     // Use Chrome UA for luna.amazon.* otherwise the user gets an error popup when starting a game.
-    if (domain.startsWith("luna."_s) && PublicSuffixStore::singleton().domainWithoutPublicSuffix(baseDomain) == "amazon"_s)
+    if (domain.startsWith("luna."_s) && equal(PublicSuffixStore::singleton().domainWithoutPublicSuffix(baseDomain), "amazon"_s))
         return true;
 
     // DRM playback fails on tv.orange.fr with WebKitGTK's standard user agent.
@@ -222,7 +222,7 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url, UserAgentType user
 
     auto domain = url.host();
     UserAgentQuirks quirks;
-    String baseDomain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(domain);
+    RefPtr<StringImpl> baseDomain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(domain);
 
     if (urlRequiresChromeBrowser(domain, baseDomain))
         quirks.add(UserAgentQuirks::NeedsChromeBrowser);
@@ -240,17 +240,17 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url, UserAgentType user
     return quirks;
 }
 
-String UserAgentQuirks::stringForQuirk(UserAgentQuirk quirk)
+RefPtr<StringImpl> UserAgentQuirks::stringForQuirk(UserAgentQuirk quirk)
 {
     switch (quirk) {
     case NeedsChromeBrowser:
-        return "Chrome/300.0.0.0"_s;
+        return "Chrome/300.0.0.0"_si;
     case NeedsFirefoxBrowser:
-        return "; rv:300.0) Gecko/20100101 Firefox/300.0"_s;
+        return "; rv:300.0) Gecko/20100101 Firefox/300.0"_si;
     case NeedsMacintoshPlatform:
-        return "Macintosh; Intel Mac OS X 10_15"_s;
+        return "Macintosh; Intel Mac OS X 10_15"_si;
     case NeedsAndroidPlatform:
-        return "Linux; Android 12.0.0"_s;
+        return "Linux; Android 12.0.0"_si;
     case NeedsUnbrandedUserAgent:
     case NumUserAgentQuirks:
         ASSERT_NOT_REACHED();

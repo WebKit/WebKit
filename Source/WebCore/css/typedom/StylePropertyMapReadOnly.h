@@ -41,7 +41,7 @@ class StyledElement;
 
 class StylePropertyMapReadOnly : public RefCounted<StylePropertyMapReadOnly> {
 public:
-    using StylePropertyMapEntry = KeyValuePair<String, Vector<RefPtr<CSSStyleValue>>>;
+    using StylePropertyMapEntry = KeyValuePair<RefPtr<StringImpl>, Vector<RefPtr<CSSStyleValue>>>;
 
     enum class Type {
         Computed,
@@ -65,17 +65,17 @@ public:
 
     virtual ~StylePropertyMapReadOnly() = default;
     using CSSStyleValueOrUndefined = Variant<std::monostate, Ref<CSSStyleValue>>;
-    virtual ExceptionOr<CSSStyleValueOrUndefined> get(ScriptExecutionContext&, const AtomString& property) const = 0;
-    virtual ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(ScriptExecutionContext&, const AtomString&) const = 0;
-    virtual ExceptionOr<bool> has(ScriptExecutionContext&, const AtomString&) const = 0;
+    virtual ExceptionOr<CSSStyleValueOrUndefined> get(ScriptExecutionContext&, AtomStringImpl* property) const = 0;
+    virtual ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(ScriptExecutionContext&, AtomStringImpl*) const = 0;
+    virtual ExceptionOr<bool> has(ScriptExecutionContext&, AtomStringImpl*) const = 0;
     virtual unsigned size() const = 0;
 
     static RefPtr<CSSStyleValue> reifyValue(Document&, RefPtr<CSSValue>&&, AssociatedProperty&&);
     static RefPtr<CSSStyleValue> reifyValue(Document&, RefPtr<CSSValue>&&, CSSPropertyID);
-    static RefPtr<CSSStyleValue> reifyValue(Document&, RefPtr<CSSValue>&&, AtomString&& customPropertyName);
+    static RefPtr<CSSStyleValue> reifyValue(Document&, RefPtr<CSSValue>&&, RefPtr<AtomStringImpl>&& customPropertyName);
     static Vector<RefPtr<CSSStyleValue>> reifyValueToVector(Document&, RefPtr<CSSValue>&&, AssociatedProperty&&);
     static Vector<RefPtr<CSSStyleValue>> reifyValueToVector(Document&, RefPtr<CSSValue>&&, CSSPropertyID);
-    static Vector<RefPtr<CSSStyleValue>> reifyValueToVector(Document&, RefPtr<CSSValue>&&, AtomString&& customPropertyName);
+    static Vector<RefPtr<CSSStyleValue>> reifyValueToVector(Document&, RefPtr<CSSValue>&&, RefPtr<AtomStringImpl>&& customPropertyName);
 
     virtual bool isStylePropertyMap() const { return false; }
 

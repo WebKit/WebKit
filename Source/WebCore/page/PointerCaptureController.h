@@ -62,7 +62,7 @@ public:
     void pointerLockWasApplied();
     void elementWasRemoved(Element&);
 
-    RefPtr<PointerEvent> pointerEventForMouseEvent(const MouseEvent&, PointerID, const String& pointerType);
+    RefPtr<PointerEvent> pointerEventForMouseEvent(const MouseEvent&, PointerID, StringImpl* pointerType);
 
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE) || PLATFORM(GTK))
     void dispatchEventForTouchAtIndex(EventTarget&, const PlatformTouchEvent&, unsigned, bool isPrimary, WindowProxy&, const DoublePoint&);
@@ -78,7 +78,7 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    bool dispatchEventForTrackedPointer(Element& target, const MouseEvent&, PointerID, const String& pointerType);
+    bool dispatchEventForTrackedPointer(Element& target, const MouseEvent&, PointerID, StringImpl* pointerType);
     void cancelTrackedPointer(PointerID);
     bool mouseEventBelongsToTrackedPointer(const PlatformMouseEvent&) const;
     void mouseButtonWillBePressed(const PlatformMouseEvent&);
@@ -95,7 +95,7 @@ public:
 
 private:
     struct CapturingData : public RefCounted<CapturingData> {
-        static Ref<CapturingData> create(const String& pointerType)
+        static Ref<CapturingData> create(StringImpl* pointerType)
         {
             return adoptRef(*new CapturingData(pointerType));
         }
@@ -107,7 +107,7 @@ private:
         bool hasAnyElement() const {
             return pendingTargetOverride || targetOverride || previousTarget;
         }
-        String pointerType;
+        RefPtr<StringImpl> pointerType;
         enum class State : uint8_t {
             Ready,
             Finished,
@@ -129,7 +129,7 @@ private:
         std::expected<MouseButton, MouseButtonState> previousMouseButton { std::unexpected { MouseButtonState::PointerHasNotChanged } };
 
     private:
-        CapturingData(const String& pointerType)
+        CapturingData(StringImpl* pointerType)
             : pointerType(pointerType)
         { }
     };
@@ -141,10 +141,10 @@ private:
     void updateHaveAnyCapturingElement();
     void elementWasRemovedSlow(Element&);
 
-    static bool hierarchyHasCapturingEventListeners(Element*, const AtomString& eventName);
-    void dispatchBoundaryEvents(Element* previousTarget, Element* currentTarget, NOESCAPE const Function<Ref<PointerEvent>(const AtomString& eventType)>& createEvent);
-    void dispatchOverOrOutEvent(const AtomString&, EventTarget*, const PlatformTouchEvent&, unsigned index, bool isPrimary, WindowProxy&, DoublePoint);
-    void dispatchEnterOrLeaveEvent(const AtomString&, Element&, const PlatformTouchEvent&, unsigned index, bool isPrimary, WindowProxy&, DoublePoint);
+    static bool hierarchyHasCapturingEventListeners(Element*, AtomStringImpl* eventName);
+    void dispatchBoundaryEvents(Element* previousTarget, Element* currentTarget, NOESCAPE const Function<Ref<PointerEvent>(AtomStringImpl* eventType)>& createEvent);
+    void dispatchOverOrOutEvent(AtomStringImpl*, EventTarget*, const PlatformTouchEvent&, unsigned index, bool isPrimary, WindowProxy&, DoublePoint);
+    void dispatchEnterOrLeaveEvent(AtomStringImpl*, Element&, const PlatformTouchEvent&, unsigned index, bool isPrimary, WindowProxy&, DoublePoint);
 #if PLATFORM(MAC)
     bool mouseEventCanBelongToTrackedPointer(const PlatformMouseEvent&) const;
 #endif

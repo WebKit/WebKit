@@ -47,18 +47,18 @@ RefPtr<SharedBuffer> serializeIDBKeyPath(const std::optional<IDBKeyPath>& keyPat
     auto encoder = KeyedEncoder::encoder();
 
     if (keyPath) {
-        auto visitor = WTF::makeVisitor([&](const String& string) {
-            encoder->encodeEnum("type"_s, KeyPathType::String);
-            encoder->encodeString("string"_s, string);
-        }, [&](const Vector<String>& vector) {
-            encoder->encodeEnum("type"_s, KeyPathType::Array);
-            encoder->encodeObjects("array"_s, vector, [](WebCore::KeyedEncoder& encoder, const String& string) {
-                encoder.encodeString("string"_s, string);
+        auto visitor = WTF::makeVisitor([&](StringImpl* string) {
+            encoder->encodeEnum("type"_si, KeyPathType::String);
+            encoder->encodeString("string"_si, string);
+        }, [&](const Vector<RefPtr<StringImpl>>& vector) {
+            encoder->encodeEnum("type"_si, KeyPathType::Array);
+            encoder->encodeObjects("array"_si, vector, [](WebCore::KeyedEncoder& encoder, StringImpl* string) {
+                encoder.encodeString("string"_si, string);
             });
         });
         WTF::visit(visitor, keyPath.value());
     } else
-        encoder->encodeEnum("type"_s, KeyPathType::Null);
+        encoder->encodeEnum("type"_si, KeyPathType::Null);
 
     return encoder->finishEncoding();
 }
@@ -71,7 +71,7 @@ bool deserializeIDBKeyPath(std::span<const uint8_t> data, std::optional<IDBKeyPa
     auto decoder = KeyedDecoder::decoder(data);
 
     KeyPathType type;
-    bool succeeded = decoder->decodeEnum("type"_s, type, [](KeyPathType value) {
+    bool succeeded = decoder->decodeEnum("type"_si, type, [](KeyPathType value) {
         return value == KeyPathType::Null || value == KeyPathType::String || value == KeyPathType::Array;
     });
     if (!succeeded)
@@ -81,16 +81,16 @@ bool deserializeIDBKeyPath(std::span<const uint8_t> data, std::optional<IDBKeyPa
     case KeyPathType::Null:
         break;
     case KeyPathType::String: {
-        String string;
-        if (!decoder->decodeString("string"_s, string))
+        RefPtr<StringImpl> string;
+        if (!decoder->decodeString("string"_si, string))
             return false;
         result = IDBKeyPath(WTF::move(string));
         break;
     }
     case KeyPathType::Array: {
-        Vector<String> vector;
-        succeeded = decoder->decodeObjects("array"_s, vector, [](KeyedDecoder& decoder, String& result) {
-            return decoder.decodeString("string"_s, result);
+        Vector<RefPtr<StringImpl>> vector;
+        succeeded = decoder->decodeObjects("array"_si, vector, [](KeyedDecoder& decoder, RefPtr<StringImpl>& result) {
+            return decoder.decodeString("string"_si, result);
         });
         if (!succeeded)
             return false;
@@ -224,11 +224,11 @@ static void encodeKey(Vector<uint8_t>& data, const IDBKeyData& key)
         break;
     case SIDBKeyType::String: {
         auto string = key.string();
-        uint32_t length = string.length();
+        uint32_t length = WTF::length(string);
         writeLittleEndian(data, length);
 
         for (size_t i = 0; i < length; ++i)
-            writeLittleEndian(data, string[i]);
+            writeLittleEndian(data, codeUnitAt(string, i));
 
         break;
     }
@@ -313,7 +313,7 @@ RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData& key)
             buffer.append(ch);
         }
 
-        result.setStringValue(String::adopt(WTF::move(buffer)));
+        result.setStringValue(StringImpl::adopt(WTF::move(buffer)).ptr());
 
         return true;
     }

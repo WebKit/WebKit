@@ -153,9 +153,9 @@ void Clipboard::readText(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    String text;
+    RefPtr<StringImpl> text;
     for (size_t index = 0; index < allInfo->size(); ++index) {
-        if (allInfo->at(index).webSafeTypesByFidelity.contains(textPlainContentTypeAtom())) {
+        if (allInfo->at(index).webSafeTypesByFidelity.containsIf([&](auto& item) { return equal(item, textPlainContentTypeAtom()); })) {
             PasteboardPlainText plainTextReader;
             pasteboard->read(plainTextReader, PlainTextURLReadingPolicy::IgnoreURL, index);
             text = WTF::move(plainTextReader.text);
@@ -174,7 +174,7 @@ void Clipboard::readText(Ref<DeferredPromise>&& promise)
         });
 }
 
-void Clipboard::writeText(const String& data, Ref<DeferredPromise>&& promise)
+void Clipboard::writeText(StringImpl* data, Ref<DeferredPromise>&& promise)
 {
     RefPtr frame = this->frame();
     RefPtr document = frame ? frame->document() : nullptr;
@@ -235,7 +235,7 @@ void Clipboard::read(Ref<DeferredPromise>&& promise)
         });
 }
 
-void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPromise>&& promise)
+void Clipboard::getType(ClipboardItem& item, StringImpl* type, Ref<DeferredPromise>&& promise)
 {
     if (!m_activeSession) {
         promise->reject(ExceptionCode::NotAllowedError);
@@ -258,12 +258,12 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
         return;
     }
 
-    if (!item.types().contains(type)) {
+    if (!item.types().containsIf([&](auto& item) { return equal(item, type); })) {
         promise->reject(ExceptionCode::NotAllowedError);
         return;
     }
 
-    if (type == "image/png"_s || type == imageSVGContentTypeAtom()) {
+    if (equal(type, "image/png"_s) || equal(type, imageSVGContentTypeAtom())) {
         ClipboardImageReader imageReader { frame->document(), type };
         activePasteboard().read(imageReader, itemIndex);
         auto imageBlob = imageReader.takeResult();
@@ -274,27 +274,27 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
         return;
     }
 
-    String resultAsString;
+    RefPtr<StringImpl> resultAsString;
 
-    if (type == "text/uri-list"_s) {
-        String title;
+    if (equal(type, "text/uri-list"_s)) {
+        RefPtr<StringImpl> title;
         resultAsString = activePasteboard().readURL(itemIndex, title).string();
     }
 
-    if (type == textPlainContentTypeAtom()) {
+    if (equal(type, textPlainContentTypeAtom())) {
         PasteboardPlainText plainTextReader;
         activePasteboard().read(plainTextReader, PlainTextURLReadingPolicy::IgnoreURL, itemIndex);
         resultAsString = WTF::move(plainTextReader.text);
     }
 
-    if (type == textHTMLContentTypeAtom()) {
+    if (equal(type, textHTMLContentTypeAtom())) {
         WebContentMarkupReader markupReader { *frame };
         activePasteboard().read(markupReader, WebContentReadingPolicy::OnlyRichTextTypes, itemIndex);
         resultAsString = markupReader.takeMarkup();
     }
 
     // FIXME: Support reading custom data.
-    if (updateSessionValidity() == SessionIsValid::No || resultAsString.isNull()) {
+    if (updateSessionValidity() == SessionIsValid::No || !resultAsString) {
         promise->reject(ExceptionCode::NotAllowedError);
         return;
     }
@@ -431,8 +431,8 @@ void Clipboard::ItemWriter::didSetAllData()
         if (!supportsRichContent) {
             bool hasPlainText = false;
             bool hasUnsupportedData = false;
-            data->forEachPlatformStringOrBuffer([&](auto& type, auto& value) {
-                if (type != textPlainContentTypeAtom() || !std::holds_alternative<String>(value)) {
+            data->forEachPlatformStringOrBuffer([&](auto* type, auto& value) {
+                if (!equal(type, textPlainContentTypeAtom()) || !std::holds_alternative<RefPtr<StringImpl>>(value)) {
                     hasUnsupportedData = true;
                     return;
                 }

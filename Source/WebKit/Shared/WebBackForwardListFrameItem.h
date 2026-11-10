@@ -55,7 +55,7 @@ public:
 
     NODELETE std::optional<WebCore::FrameIdentifier> frameID() const;
     WebCore::BackForwardFrameItemIdentifier identifier() const { return m_identifier; }
-    NODELETE const String& url() const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& url() const LIFETIME_BOUND;
 
     WebBackForwardListFrameItem* parent() const { return m_parent; }
     void setParent(WebBackForwardListFrameItem* parent) { m_parent = parent; }
@@ -65,7 +65,7 @@ public:
     Ref<WebBackForwardListFrameItem> mainFrame();
     NODELETE WebBackForwardListFrameItem* childItemForFrameID(WebCore::FrameIdentifier);
     NODELETE WebBackForwardListFrameItem* childItemForFrameItemID(WebCore::BackForwardFrameItemIdentifier);
-    NODELETE WebBackForwardListFrameItem* childItemForFrameName(const String& frameName);
+    NODELETE WebBackForwardListFrameItem* childItemForFrameName(StringImpl* frameName);
     NODELETE WebBackForwardListFrameItem* childItemAtIndex(uint64_t);
     const Vector<Ref<WebBackForwardListFrameItem>>& children() const { return m_children; }
     NODELETE bool containsItemSequenceNumber(int64_t) const;
@@ -79,12 +79,12 @@ public:
 
     NODELETE void setWasRestoredFromSession();
 
-    String loggingString();
+    RefPtr<StringImpl> loggingString();
 
 private:
     WebBackForwardListFrameItem(WebBackForwardListItem&, WebBackForwardListFrameItem* parentItem, Ref<FrameState>&&);
 
-    String loggingStringAtIndent(size_t);
+    RefPtr<StringImpl> loggingStringAtIndent(size_t);
     size_t insertionIndexForChild(std::optional<WebCore::FrameIdentifier>) const;
 
     NODELETE static HashMap<std::pair<WebCore::BackForwardFrameItemIdentifier, WebCore::BackForwardItemIdentifier>, WeakRef<WebBackForwardListFrameItem>>& allItems();

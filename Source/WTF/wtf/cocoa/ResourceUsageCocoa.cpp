@@ -54,12 +54,12 @@ void logFootprintComparison(const std::array<TagInfo, 256>& before, const std::a
         ssize_t dirtyDiff = dirtyAfter - dirtyBefore;
         if (!dirtyBefore && !dirtyAfter)
             continue;
-        String tagName = displayNameForVMTag(i);
+        RefPtr<StringImpl> tagName = displayNameForVMTag(i);
         if (!tagName)
             tagName = makeString("Tag "_s, i);
         SAFE_WTFLOGALWAYS("  %02X %16s %10ld %10ld %10ld",
             i,
-            tagName.ascii(),
+            ascii(tagName),
             dirtyBefore,
             dirtyAfter,
             dirtyDiff

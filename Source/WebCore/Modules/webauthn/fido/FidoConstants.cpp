@@ -47,19 +47,19 @@ bool isCtap2Protocol(ProtocolVersion protocol)
     }
 }
 
-String toString(ProtocolVersion protocol)
+RefPtr<StringImpl> toString(ProtocolVersion protocol)
 {
     switch (protocol) {
     case ProtocolVersion::kCtap2:
-        return "FIDO_2_0"_s;
+        return "FIDO_2_0"_si;
     case ProtocolVersion::kCtap21:
-        return "FIDO_2_1"_s;
+        return "FIDO_2_1"_si;
     case ProtocolVersion::kCtap21Pre:
-        return "FIDO_2_1_PRE"_s;
+        return "FIDO_2_1_PRE"_si;
     case ProtocolVersion::kU2f:
-        return "U2F_V2"_s;
+        return "U2F_V2"_si;
     default:
-        return "UNKNOWN"_s;
+        return "UNKNOWN"_si;
     }
 }
 

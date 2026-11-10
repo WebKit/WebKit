@@ -46,7 +46,7 @@ public:
     };
     using Mode = Variant<LineMode, CharacterMode>;
 
-    TextBreakIteratorICU(StringView string, std::span<const char16_t> priorContext, Mode mode, const AtomString& locale)
+    TextBreakIteratorICU(StringView string, std::span<const char16_t> priorContext, Mode mode, AtomStringImpl* locale)
     {
         auto type = switchOn(mode, [](LineMode) {
             return UBRK_LINE;
@@ -57,11 +57,11 @@ public:
         auto localeWithOptionalBreakKeyword = switchOn(mode, [&locale](LineMode lineMode) {
             return makeLocaleWithBreakKeyword(locale, lineMode.behavior);
         }, [&locale](CharacterMode) {
-            return locale;
+            return RefPtr<AtomStringImpl> { locale };
         });
 
         UErrorCode status = U_ZERO_ERROR;
-        m_iterator = ubrkOpen(type, localeWithOptionalBreakKeyword.string().utf8(), nullptr, 0, &status);
+        m_iterator = ubrkOpen(type, utf8(localeWithOptionalBreakKeyword), nullptr, 0, &status);
         if (!m_iterator || U_FAILURE(status)) {
             status = U_ZERO_ERROR;
             m_iterator = ubrk_open(type, "", nullptr, 0, &status); // There's no reason for this to ever fail, unless there's an allocation failure, in which case we _should_ crash; that's the behavior of our allocators.
@@ -148,13 +148,13 @@ public:
     }
 
 private:
-    static AtomString makeLocaleWithBreakKeyword(const AtomString& locale, LineMode::Behavior behavior)
+    static RefPtr<AtomStringImpl> makeLocaleWithBreakKeyword(AtomStringImpl* locale, LineMode::Behavior behavior)
     {
         if (behavior == LineMode::Behavior::Default)
             return locale;
 
-        // The uloc functions model locales as char*, so we have to downconvert our AtomString.
-        auto utf8Locale = locale.string().utf8();
+        // The uloc functions model locales as char*, so we have to downconvert our atom.
+        auto utf8Locale = utf8(locale);
         if (!utf8Locale.length())
             return locale;
         Vector<char> scratchBuffer(FillWith { }, utf8Locale.length() + 11, 0);
@@ -180,7 +180,7 @@ private:
         UErrorCode status = U_ZERO_ERROR;
         int32_t lengthNeeded = uloc_setKeywordValue("lb", keywordValue, scratchBuffer.mutableSpan().data(), scratchBuffer.size(), &status);
         if (U_SUCCESS(status))
-            return AtomString::fromUTF8(scratchBuffer.subspan(0, lengthNeeded));
+            return AtomStringImpl::fromUTF8(scratchBuffer.subspan(0, lengthNeeded));
         if (needsToGrowToProduceBuffer(status)) {
             scratchBuffer.grow(lengthNeeded + 1);
             zeroSpan(scratchBuffer.mutableSpan().subspan(utf8Locale.length()));
@@ -188,7 +188,7 @@ private:
             int32_t lengthNeeded2 = uloc_setKeywordValue("lb", keywordValue, scratchBuffer.mutableSpan().data(), scratchBuffer.size(), &status);
             if (!U_SUCCESS(status) || lengthNeeded != lengthNeeded2)
                 return locale;
-            return AtomString::fromUTF8(scratchBuffer.subspan(0, lengthNeeded));
+            return AtomStringImpl::fromUTF8(scratchBuffer.subspan(0, lengthNeeded));
         }
         return locale;
     }

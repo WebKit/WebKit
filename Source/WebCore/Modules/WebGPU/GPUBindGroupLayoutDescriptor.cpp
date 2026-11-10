@@ -36,7 +36,7 @@ Ref<JSON::Object> GPUBindGroupLayoutDescriptor::toJSON() const
     auto entriesJSON = JSON::Array::create();
     for (auto& entry : entries)
         entriesJSON->pushObject(entry.toJSON());
-    json->setArray("entries"_s, WTF::move(entriesJSON));
+    json->setArray("entries"_si, WTF::move(entriesJSON));
     return json;
 }
 

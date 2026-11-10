@@ -55,7 +55,7 @@ private:
     RTCRtpTransceiverDirection direction() const final;
     std::optional<RTCRtpTransceiverDirection> currentDirection() const final;
     void setDirection(RTCRtpTransceiverDirection) final;
-    String mid() final;
+    RefPtr<StringImpl> mid() final;
     void stop() final;
     bool stopped() const final;
     ExceptionOr<void> setCodecPreferences(const Vector<RTCRtpCodec>&) final;

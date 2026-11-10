@@ -40,14 +40,14 @@ struct WebProcessDataStoreParameters {
     using SubResourceDomain = WebCore::RegistrableDomain;
 
     PAL::SessionID sessionID;
-    String mediaCacheDirectory;
+    RefPtr<StringImpl> mediaCacheDirectory;
 #if !ENABLE(GPU_PROCESS)
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
 #endif
-    String mediaKeyStorageDirectory;
+    RefPtr<StringImpl> mediaKeyStorageDirectory;
     SandboxExtension::Handle mediaKeyStorageDirectoryExtensionHandle;
     FileSystem::Salt mediaKeysStorageSalt;
-    String javaScriptConfigurationDirectory;
+    RefPtr<StringImpl> javaScriptConfigurationDirectory;
     SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
     HashSet<WebCore::RegistrableDomain> domainsWithUserInteraction;

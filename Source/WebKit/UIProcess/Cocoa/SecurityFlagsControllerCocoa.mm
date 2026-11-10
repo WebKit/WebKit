@@ -41,11 +41,11 @@ namespace WebKit {
 
 #if (defined(ENGINEERING_BUILD) && ENGINEERING_BUILD) || ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
-static Vector<String> flagNamesFrom(NSArray *names)
+static Vector<RefPtr<StringImpl>> flagNamesFrom(NSArray *names)
 {
-    return makeVector(names, [](id name) -> std::optional<String> {
+    return makeVector(names, [](id name) -> std::optional<RefPtr<StringImpl>> {
         if (RetainPtr string = dynamic_objc_cast<NSString>(name))
-            return String { string.get() };
+            return StringImpl::create(string.get());
         return std::nullopt;
     });
 }
@@ -56,7 +56,7 @@ static Vector<String> flagNamesFrom(NSArray *names)
 
 static NSString * const disabledSecurityFlagsDefaultsKey = @"WebKitDebugDisabledSecurityFlags";
 
-Vector<String> SecurityFlagsController::platformPersistentlyDisabledFlagNames()
+Vector<RefPtr<StringImpl>> SecurityFlagsController::platformPersistentlyDisabledFlagNames()
 {
     RetainPtr value = [NSUserDefaults.standardUserDefaults objectForKey:disabledSecurityFlagsDefaultsKey];
     if (!value)
@@ -64,7 +64,7 @@ Vector<String> SecurityFlagsController::platformPersistentlyDisabledFlagNames()
 
     // A bare string rather than an array is what writing the default without -array produces.
     if (RetainPtr name = dynamic_objc_cast<NSString>(value.get()))
-        return { String { name.get() } };
+        return { StringImpl::create(name.get()) };
 
     RetainPtr names = dynamic_objc_cast<NSArray>(value.get());
     if (!names) {
@@ -77,7 +77,7 @@ Vector<String> SecurityFlagsController::platformPersistentlyDisabledFlagNames()
 
 #else
 
-Vector<String> SecurityFlagsController::platformPersistentlyDisabledFlagNames()
+Vector<RefPtr<StringImpl>> SecurityFlagsController::platformPersistentlyDisabledFlagNames()
 {
     return { };
 }

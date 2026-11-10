@@ -47,7 +47,7 @@ public:
     virtual void streamReceiveBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool, std::optional<Exception>&&) = 0;
     virtual void streamReceiveError(WebTransportStreamIdentifier, uint64_t) = 0;
     virtual void streamSendError(WebTransportStreamIdentifier, uint64_t) = 0;
-    virtual void didFail(std::optional<uint32_t>&&, String&&) = 0;
+    virtual void didFail(std::optional<uint32_t>&&, RefPtr<StringImpl>&&) = 0;
     virtual void didDrain() = 0;
 };
 

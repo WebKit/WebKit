@@ -33,111 +33,57 @@ namespace WTF {
 const StaticAtomString nullAtomData { nullptr };
 const StaticAtomString emptyAtomData { &StringImpl::s_emptyAtomString };
 
-template<AtomString::CaseConvertType type>
-ALWAYS_INLINE AtomString AtomString::convertASCIICase() const
+RefPtr<AtomStringImpl> AtomStringImpl::number(int number)
 {
-    StringImpl* impl = this->impl();
-    if (!impl) [[unlikely]]
-        return nullAtom();
-
-    // Convert short strings without allocating a new StringImpl, since
-    // there's a good chance these strings are already in the atom
-    // string table and so no memory allocation will be required.
-    unsigned length;
-    const unsigned localBufferSize = 100;
-    if (impl->is8Bit() && (length = impl->length()) <= localBufferSize) {
-        auto characters = impl->span8();
-        unsigned failingIndex;
-        for (unsigned i = 0; i < length; ++i) {
-            if constexpr (type == CaseConvertType::Lower) {
-                if (isASCIIUpper(characters[i])) [[unlikely]] {
-                    failingIndex = i;
-                    goto SlowPath;
-                }
-            } else {
-                if (isASCIILower(characters[i])) [[likely]] {
-                    failingIndex = i;
-                    goto SlowPath;
-                }
-            }
-        }
-        return *this;
-SlowPath:
-        std::array<Latin1Character, localBufferSize> localBuffer;
-        std::span<Latin1Character> localSpan { localBuffer };
-        StringImpl::copyCharacters(localSpan, characters.first(failingIndex));
-        for (unsigned i = failingIndex; i < length; ++i)
-            localBuffer[i] = type == CaseConvertType::Lower ? toASCIILower(characters[i]) : toASCIIUpper(characters[i]);
-        return std::span<const Latin1Character> { localBuffer }.first(length);
-    }
-
-    Ref<StringImpl> convertedString = type == CaseConvertType::Lower ? impl->convertToASCIILowercase() : impl->convertToASCIIUppercase();
-    if (convertedString.ptr() == impl) [[likely]]
-        return *this;
-
-    AtomString result;
-    result.m_string = AtomStringImpl::add(convertedString.ptr());
-    return result;
+    return numberToStringSigned<RefPtr<AtomStringImpl>>(number);
 }
 
-AtomString AtomString::convertToASCIILowercase() const
+RefPtr<AtomStringImpl> AtomStringImpl::number(unsigned number)
 {
-    return convertASCIICase<CaseConvertType::Lower>();
+    return numberToStringUnsigned<RefPtr<AtomStringImpl>>(number);
 }
 
-AtomString AtomString::convertToASCIIUppercase() const
+RefPtr<AtomStringImpl> AtomStringImpl::number(unsigned long number)
 {
-    return convertASCIICase<CaseConvertType::Upper>();
+    return numberToStringUnsigned<RefPtr<AtomStringImpl>>(number);
 }
 
-AtomString AtomString::number(int number)
+RefPtr<AtomStringImpl> AtomStringImpl::number(unsigned long long number)
 {
-    return numberToStringSigned<AtomString>(number);
+    return numberToStringUnsigned<RefPtr<AtomStringImpl>>(number);
 }
 
-AtomString AtomString::number(unsigned number)
-{
-    return numberToStringUnsigned<AtomString>(number);
-}
-
-AtomString AtomString::number(unsigned long number)
-{
-    return numberToStringUnsigned<AtomString>(number);
-}
-
-AtomString AtomString::number(unsigned long long number)
-{
-    return numberToStringUnsigned<AtomString>(number);
-}
-
-AtomString AtomString::number(float number)
+RefPtr<AtomStringImpl> AtomStringImpl::number(float number)
 {
     NumberToStringBuffer buffer;
     auto span = numberToStringAndSize(number, buffer);
-    return AtomString { byteCast<Latin1Character>(span) };
+    return AtomStringImpl::add(byteCast<Latin1Character>(span));
 }
 
-AtomString AtomString::number(double number)
+RefPtr<AtomStringImpl> AtomStringImpl::number(double number)
 {
     NumberToStringBuffer buffer;
     auto span = numberToStringAndSize(number, buffer);
-    return AtomString { byteCast<Latin1Character>(span) };
+    return AtomStringImpl::add(byteCast<Latin1Character>(span));
 }
 
-AtomString AtomString::fromUTF8Internal(std::span<const char> characters)
+RefPtr<AtomStringImpl> AtomStringImpl::fromUTF8(std::span<const char> characters)
 {
-    ASSERT(!characters.empty());
-    return AtomStringImpl::add(byteCast<char8_t>(characters));
+    if (!characters.data())
+        return nullptr;
+    if (characters.empty())
+        return emptyAtom();
+    return add(byteCast<char8_t>(characters));
 }
 
-#ifndef NDEBUG
-
-void AtomString::show() const
+RefPtr<AtomStringImpl> AtomStringImpl::fromUTF8(const char* characters)
 {
-    m_string.show();
+    if (!characters)
+        return nullptr;
+    if (!*characters)
+        return emptyAtom();
+    return add(byteCast<char8_t>(unsafeSpan(characters)));
 }
-
-#endif
 
 static inline StringBuilder replaceUnpairedSurrogatesWithReplacementCharacterInternal(StringView view)
 {
@@ -154,7 +100,7 @@ static inline StringBuilder replaceUnpairedSurrogatesWithReplacementCharacterInt
     return result;
 }
 
-AtomString replaceUnpairedSurrogatesWithReplacementCharacter(AtomString&& string)
+RefPtr<AtomStringImpl> replaceUnpairedSurrogatesWithReplacementCharacter(RefPtr<AtomStringImpl>&& string)
 {
     // Fast path for the case where there are no unpaired surrogates.
     if (!hasUnpairedSurrogate(string)) [[likely]]
@@ -162,7 +108,7 @@ AtomString replaceUnpairedSurrogatesWithReplacementCharacter(AtomString&& string
     return replaceUnpairedSurrogatesWithReplacementCharacterInternal(string).toAtomString();
 }
 
-String replaceUnpairedSurrogatesWithReplacementCharacter(String&& string)
+RefPtr<StringImpl> replaceUnpairedSurrogatesWithReplacementCharacter(RefPtr<StringImpl>&& string)
 {
     // Fast path for the case where there are no unpaired surrogates.
     if (!hasUnpairedSurrogate(string)) [[likely]]

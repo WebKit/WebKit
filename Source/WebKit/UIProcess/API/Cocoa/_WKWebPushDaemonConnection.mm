@@ -81,8 +81,8 @@ IGNORE_NULL_CHECK_WARNINGS_END
 
     WebKit::WebPushD::WebPushDaemonConnectionConfiguration connectionConfiguration {
         { },
-        configuration.bundleIdentifierOverrideForTesting,
-        configuration.partition,
+        StringImpl::create(configuration.bundleIdentifierOverrideForTesting),
+        StringImpl::create(configuration.partition),
         { },
     };
 
@@ -93,7 +93,7 @@ IGNORE_NULL_CHECK_WARNINGS_END
     connectionConfiguration.hostAppAuditTokenData = WTF::move(hostAppAuditTokenData);
 #endif
 
-    API::Object::constructInWrapper<API::WebPushDaemonConnection>(self, configuration.machServiceName, WTF::move(connectionConfiguration));
+    API::Object::constructInWrapper<API::WebPushDaemonConnection>(self, StringImpl::create(configuration.machServiceName), WTF::move(connectionConfiguration));
 
     return self;
 }
@@ -140,7 +140,7 @@ NODELETE static _WKWebPushPermissionState toWKPermissionsState(WebCore::PushPerm
             return completionHandlerCopy(wrapper(API::WebPushSubscriptionData::create(WTF::move(result.value()))).get(), nil);
 
         // FIXME: This error can be used to create DOMException; we may consider adding a new value to WKErrorCode for it.
-        RetainPtr error = adoptNS([[NSError alloc] initWithDomain:@"WKErrorDomain" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:result.error().message.createNSString().get() }]);
+        RetainPtr error = adoptNS([[NSError alloc] initWithDomain:@"WKErrorDomain" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:createNSString(result.error().message).get() }]);
         completionHandlerCopy(nil, error.get());
     });
 }
@@ -151,7 +151,7 @@ NODELETE static _WKWebPushPermissionState toWKPermissionsState(WebCore::PushPerm
         if (result)
             return completionHandlerCopy(result.value(), nil);
 
-        RetainPtr error = adoptNS([[NSError alloc] initWithDomain:@"WKErrorDomain" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:result.error().message.createNSString().get() }]);
+        RetainPtr error = adoptNS([[NSError alloc] initWithDomain:@"WKErrorDomain" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:createNSString(result.error().message).get() }]);
         completionHandlerCopy(false, error.get());
     });
 }
@@ -166,7 +166,7 @@ NODELETE static _WKWebPushPermissionState toWKPermissionsState(WebCore::PushPerm
             return completionHandlerCopy(nil, nil);
         }
 
-        RetainPtr error = adoptNS([[NSError alloc] initWithDomain:@"WKErrorDomain" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:result.error().message.createNSString().get() }]);
+        RetainPtr error = adoptNS([[NSError alloc] initWithDomain:@"WKErrorDomain" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:createNSString(result.error().message).get() }]);
         completionHandlerCopy(nil, error.get());
     });
 }
@@ -191,7 +191,7 @@ NODELETE static _WKWebPushPermissionState toWKPermissionsState(WebCore::PushPerm
 
 - (void)getNotifications:(NSURL *)scopeURL tag:(NSString *)tag completionHandler:(void (^)(NSArray<_WKNotificationData *> *, NSError *))completionHandler
 {
-    protect(*_connection)->getNotifications(scopeURL, tag, [completionHandlerCopy = makeBlockPtr(completionHandler)] (auto result) {
+    protect(*_connection)->getNotifications(scopeURL, StringImpl::create(tag).get(), [completionHandlerCopy = makeBlockPtr(completionHandler)] (auto result) {
         if (result) {
             NSMutableArray<_WKNotificationData *> *nsResult = [NSMutableArray arrayWithCapacity:result.value().size()];
             for (auto& data : borrow(result.value()))
@@ -200,7 +200,7 @@ NODELETE static _WKWebPushPermissionState toWKPermissionsState(WebCore::PushPerm
             return completionHandlerCopy(nsResult, nil);
         }
 
-        RetainPtr error = adoptNS([[NSError alloc] initWithDomain:@"WKErrorDomain" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:result.error().message.createNSString().get() }]);
+        RetainPtr error = adoptNS([[NSError alloc] initWithDomain:@"WKErrorDomain" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:createNSString(result.error().message).get() }]);
         completionHandlerCopy(nil, error.get());
     });
 }

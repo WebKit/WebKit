@@ -102,26 +102,26 @@ JSValueRef toWebAPI(JSContextRef context, const WebExtensionMessageSenderParamet
     JSObjectRef result = JSObjectMake(context, 0, 0);
 
     if (parameters.extensionUniqueIdentifier)
-        JSObjectSetProperty(context, result, toJSString(idKey).get(), toJSValueRef(context, parameters.extensionUniqueIdentifier.value()), 0, nullptr);
+        JSObjectSetProperty(context, result, toJSString(StringImpl::create(idKey).get()).get(), toJSValueRef(context, parameters.extensionUniqueIdentifier.value()), 0, nullptr);
 
     if (parameters.tabParameters)
-        JSObjectSetProperty(context, result, toJSString(tabKey).get(), toJSValueRef(context, toWebAPI(parameters.tabParameters.value())), 0, nullptr);
+        JSObjectSetProperty(context, result, toJSString(StringImpl::create(tabKey).get()).get(), toJSValueRef(context, toWebAPI(parameters.tabParameters.value())), 0, nullptr);
 
     // The window identifier is omitted for senders without a window, like background pages.
     if (isValid(parameters.windowIdentifier))
-        JSObjectSetProperty(context, result, toJSString(windowIdKey).get(), JSValueMakeNumber(context, toWebAPI(parameters.windowIdentifier.value())), 0, nullptr);
+        JSObjectSetProperty(context, result, toJSString(StringImpl::create(windowIdKey).get()).get(), JSValueMakeNumber(context, toWebAPI(parameters.windowIdentifier.value())), 0, nullptr);
 
     // The frame identifier is only included when tab is included.
     if (parameters.frameIdentifier && parameters.tabParameters)
-        JSObjectSetProperty(context, result, toJSString(frameIdKey).get(), JSValueMakeNumber(context, toWebAPI(parameters.frameIdentifier.value())), 0, nullptr);
+        JSObjectSetProperty(context, result, toJSString(StringImpl::create(frameIdKey).get()).get(), JSValueMakeNumber(context, toWebAPI(parameters.frameIdentifier.value())), 0, nullptr);
 
     if (parameters.url.isValid()) {
-        JSObjectSetProperty(context, result, toJSString(urlKey).get(), toJSValueRef(context, parameters.url.string()), 0, nullptr);
-        JSObjectSetProperty(context, result, toJSString(originKey).get(), toJSValueRef(context, WebCore::SecurityOrigin::create(parameters.url)->toString()), 0, nullptr);
+        JSObjectSetProperty(context, result, toJSString(StringImpl::create(urlKey).get()).get(), toJSValueRef(context, parameters.url.string()), 0, nullptr);
+        JSObjectSetProperty(context, result, toJSString(StringImpl::create(originKey).get()).get(), toJSValueRef(context, WebCore::SecurityOrigin::create(parameters.url)->toString()), 0, nullptr);
     }
 
     if (parameters.documentIdentifier)
-        JSObjectSetProperty(context, result, toJSString(documentIdKey).get(), toJSValueRef(context, parameters.documentIdentifier->toString()), 0, nullptr);
+        JSObjectSetProperty(context, result, toJSString(StringImpl::create(documentIdKey).get()).get(), toJSValueRef(context, parameters.documentIdentifier->toString()), 0, nullptr);
 
     return result;
 }
@@ -184,8 +184,8 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEventOnceBackgroundServiceW
             JSValueRef exception = nullptr;
             reply = serializeMessage(replyMessage.context.JSGlobalContextRef, replyMessage.JSValueRef, true, &exception);
         } else {
-            auto json = String { encodeJSONString(replyMessage, JSONOptions::FragmentsAllowed) };
-            if (!json.isNull())
+            auto json = StringImpl::create(encodeJSONString(replyMessage, JSONOptions::FragmentsAllowed));
+            if (!!json)
                 reply = WebExtensionMessage { WTF::move(json) };
         }
 

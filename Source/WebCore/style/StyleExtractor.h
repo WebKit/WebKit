@@ -72,25 +72,25 @@ public:
     RefPtr<DeprecatedCSSOMValue> propertyValueDeprecatedCSSOMValue(CSSPropertyID, CSSStyleDeclaration&, UpdateLayout = UpdateLayout::Yes, ExtractorState::PropertyValueType = ExtractorState::PropertyValueType::Resolved) const;
 
     // Extract a serialized value for the specified property.
-    WTF::String propertyValueSerialization(CSSPropertyID, const CSS::SerializationContext&, UpdateLayout = UpdateLayout::Yes, ExtractorState::PropertyValueType = ExtractorState::PropertyValueType::Resolved) const;
+    RefPtr<StringImpl> propertyValueSerialization(CSSPropertyID, const CSS::SerializationContext&, UpdateLayout = UpdateLayout::Yes, ExtractorState::PropertyValueType = ExtractorState::PropertyValueType::Resolved) const;
 
     // Extract a CSSValue for the specified property using the provided ComputedStyle and RenderElement.
     RefPtr<CSSValue> propertyValueInStyle(const Style::ComputedStyle&, CSSPropertyID, CSSValuePool&, const RenderElement* = nullptr, ExtractorState::PropertyValueType = ExtractorState::PropertyValueType::Resolved) const;
 
     // Extract a serialized value for the specified property using the provided ComputedStyle and RenderElement.
-    WTF::String propertyValueSerializationInStyle(const Style::ComputedStyle&, CSSPropertyID, const CSS::SerializationContext&, CSSValuePool&, const RenderElement* = nullptr, ExtractorState::PropertyValueType = ExtractorState::PropertyValueType::Resolved) const;
+    RefPtr<StringImpl> propertyValueSerializationInStyle(const Style::ComputedStyle&, CSSPropertyID, const CSS::SerializationContext&, CSSValuePool&, const RenderElement* = nullptr, ExtractorState::PropertyValueType = ExtractorState::PropertyValueType::Resolved) const;
 
     // Extract a CSSValue for the specified custom property.
-    RefPtr<CSSValue> customPropertyValue(const AtomString& propertyName) const;
+    RefPtr<CSSValue> customPropertyValue(AtomStringImpl* propertyName) const;
 
     // Extract a DeprecatedCSSOMValue for the specified custom property.
-    RefPtr<DeprecatedCSSOMValue> customPropertyValueDeprecatedCSSOMValue(const AtomString& propertyName, CSSStyleDeclaration&) const;
+    RefPtr<DeprecatedCSSOMValue> customPropertyValueDeprecatedCSSOMValue(AtomStringImpl* propertyName, CSSStyleDeclaration&) const;
 
     // Extract a serialized value for the specified custom property.
-    WTF::String customPropertyValueSerialization(const AtomString& propertyName, const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customPropertyValueSerialization(AtomStringImpl* propertyName, const CSS::SerializationContext&) const;
 
     // Extract a serialized value for the specified custom property using the provided ComputedStyle and RenderElement.
-    WTF::String customPropertyValueSerializationInStyle(const Style::ComputedStyle&, const AtomString& propertyName, const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customPropertyValueSerializationInStyle(const Style::ComputedStyle&, AtomStringImpl* propertyName, const CSS::SerializationContext&) const;
 
     // Helper methods for HTML editing.
     Ref<MutableStyleProperties> copyProperties(std::span<const CSSPropertyID>) const;
@@ -102,7 +102,7 @@ public:
 
     static bool updateStyleIfNeededForProperty(Element&, const std::optional<Style::PseudoElementIdentifier>&, CSSPropertyID);
 
-    WEBCORE_EXPORT static WTF::String appleColorFilterSerializationForTesting(Element&);
+    WEBCORE_EXPORT static RefPtr<StringImpl> appleColorFilterSerializationForTesting(Element&);
 
 private:
     // The renderer we should use for resolving layout-dependent properties.

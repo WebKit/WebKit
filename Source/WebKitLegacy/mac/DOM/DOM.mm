@@ -408,7 +408,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     RefPtr link = [self _linkElement];
     if (!link)
         return nil;
-    return link->getAttribute(WebCore::HTMLNames::targetAttr).createNSString().autorelease();
+    return createNSString(link->getAttribute(WebCore::HTMLNames::targetAttr)).autorelease();
 }
 
 - (CGRect)hrefFrame
@@ -427,7 +427,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     RefPtr link = [self _linkElement];
     if (!link)
         return nil;
-    return link->textContent().createNSString().autorelease();
+    return createNSString(link->textContent()).autorelease();
 }
 
 - (NSString *)hrefTitle
@@ -435,7 +435,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     RefPtr link = [self _linkElement];
     if (!is<WebCore::HTMLElement>(link))
         return nil;
-    return protect(link->document())->displayStringModifiedByEncoding(downcast<WebCore::HTMLElement>(*link).title()).createNSString().autorelease();
+    return createNSString(protect(link->document())->displayStringModifiedByEncoding(downcast<WebCore::HTMLElement>(*link).title())).autorelease();
 }
 
 - (CGRect)boundingFrame
@@ -680,7 +680,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
 - (NSURL *)_getURLAttribute:(NSString *)name
 {
     Ref element = *core(self);
-    return protect(element->document())->encodingParseURL(element->getAttribute(name)).createNSURL().autorelease();
+    return protect(element->document())->encodingParseURL(element->getAttribute(AtomStringImpl::add((__bridge CFStringRef)name).get())).createNSURL().autorelease();
 }
 
 - (BOOL)isFocused

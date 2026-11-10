@@ -620,10 +620,10 @@ unsigned TestController::keyboardUpdateForChangedSelectionCount() const
     return globalKeyboardUpdateForChangedSelectionCount;
 }
 
-void TestController::setKeyboardInputModeIdentifier(const String& identifier)
+void TestController::setKeyboardInputModeIdentifier(StringImpl* identifier)
 {
     m_inputModeSwizzlers.clear();
-    m_overriddenKeyboardInputMode = [UIKeyboardInputMode keyboardInputModeWithIdentifier:identifier.createNSString().get()];
+    m_overriddenKeyboardInputMode = [UIKeyboardInputMode keyboardInputModeWithIdentifier:createNSString(identifier).get()];
     if (!m_overriddenKeyboardInputMode) {
         ASSERT_NOT_REACHED();
         return;

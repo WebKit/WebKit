@@ -47,7 +47,7 @@
 namespace WebCore {
 
 using RawDataCreationFunction = RefPtr<Archive>(const URL&, FragmentedSharedBuffer&);
-using ArchiveMIMETypesMap = HashMap<String, RawDataCreationFunction*, ASCIICaseInsensitiveHash>;
+using ArchiveMIMETypesMap = HashMap<RefPtr<StringImpl>, RawDataCreationFunction*, ASCIICaseInsensitiveHash>;
 
 // The create functions in the archive classes return RefPtr to concrete subclasses
 // of Archive. This adaptor makes the functions have a uniform return type.
@@ -61,7 +61,7 @@ static ArchiveMIMETypesMap createArchiveMIMETypesMap()
     ArchiveMIMETypesMap map;
 
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
-    map.add("application/x-webarchive"_s, archiveFactoryCreate<LegacyWebArchive>);
+    map.add("application/x-webarchive"_si, archiveFactoryCreate<LegacyWebArchive>);
 #endif
 
 #if ENABLE(MHTML)
@@ -78,16 +78,16 @@ static ArchiveMIMETypesMap& archiveMIMETypes()
     return map;
 }
 
-bool ArchiveFactory::isArchiveMIMEType(const String& mimeType)
+bool ArchiveFactory::isArchiveMIMEType(StringImpl* mimeType)
 {
-    return !mimeType.isEmpty() && archiveMIMETypes().contains(mimeType);
+    return !isEmpty(mimeType) && archiveMIMETypes().contains(mimeType);
 }
 
-RefPtr<Archive> ArchiveFactory::create(const URL& url, FragmentedSharedBuffer* data, const String& mimeType)
+RefPtr<Archive> ArchiveFactory::create(const URL& url, FragmentedSharedBuffer* data, StringImpl* mimeType)
 {
     if (!data)
         return nullptr;
-    if (mimeType.isEmpty())
+    if (isEmpty(mimeType))
         return nullptr;
     auto* function = archiveMIMETypes().get(mimeType);
     if (!function)
@@ -95,7 +95,7 @@ RefPtr<Archive> ArchiveFactory::create(const URL& url, FragmentedSharedBuffer* d
     return function(url, *data);
 }
 
-void ArchiveFactory::registerKnownArchiveMIMETypes(HashSet<String, ASCIICaseInsensitiveHash>& mimeTypes)
+void ArchiveFactory::registerKnownArchiveMIMETypes(HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash>& mimeTypes)
 {
     for (auto& mimeType : archiveMIMETypes().keys())
         mimeTypes.add(mimeType);

@@ -42,7 +42,7 @@ namespace WebCore {
 class ISOWebVTTCue final : public ISOBox {
 public:
     ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration);
-    WEBCORE_EXPORT ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration, String&& cueID, String&& cueText, String&& settings = { }, String&& sourceID = { }, String&& originalStartTime = { });
+    WEBCORE_EXPORT ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration, RefPtr<StringImpl>&& cueID, RefPtr<StringImpl>&& cueText, RefPtr<StringImpl>&& settings = { }, RefPtr<StringImpl>&& sourceID = { }, RefPtr<StringImpl>&& originalStartTime = { });
     ISOWebVTTCue(const ISOWebVTTCue&) = default;
     WEBCORE_EXPORT ISOWebVTTCue();
     WEBCORE_EXPORT ISOWebVTTCue(ISOWebVTTCue&&);
@@ -53,13 +53,13 @@ public:
     const MediaTime& presentationTime() const LIFETIME_BOUND { return m_presentationTime; }
     const MediaTime& duration() const LIFETIME_BOUND { return m_duration; }
 
-    const String& sourceID() const LIFETIME_BOUND { return m_sourceID; }
-    const String& id() const LIFETIME_BOUND { return m_identifier; }
-    const String& originalStartTime() const LIFETIME_BOUND { return m_originalStartTime; }
-    const String& settings() const LIFETIME_BOUND { return m_settings; }
-    const String& cueText() const LIFETIME_BOUND { return m_cueText; }
+    const RefPtr<StringImpl>& sourceID() const LIFETIME_BOUND { return m_sourceID; }
+    const RefPtr<StringImpl>& id() const LIFETIME_BOUND { return m_identifier; }
+    const RefPtr<StringImpl>& originalStartTime() const LIFETIME_BOUND { return m_originalStartTime; }
+    const RefPtr<StringImpl>& settings() const LIFETIME_BOUND { return m_settings; }
+    const RefPtr<StringImpl>& cueText() const LIFETIME_BOUND { return m_cueText; }
 
-    String toJSONString() const;
+    RefPtr<StringImpl> toJSONString() const;
 
     WEBCORE_EXPORT bool parse(const ByteView&, unsigned& offset) override;
 
@@ -70,11 +70,11 @@ private:
     MediaTime m_presentationTime;
     MediaTime m_duration;
 
-    String m_sourceID;
-    String m_identifier;
-    String m_originalStartTime;
-    String m_settings;
-    String m_cueText;
+    RefPtr<StringImpl> m_sourceID;
+    RefPtr<StringImpl> m_identifier;
+    RefPtr<StringImpl> m_originalStartTime;
+    RefPtr<StringImpl> m_settings;
+    RefPtr<StringImpl> m_cueText;
 };
 
 } // namespace WebCore
@@ -86,7 +86,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::ISOWebVTTCue> {
-    static String toString(const WebCore::ISOWebVTTCue& cue)
+    static RefPtr<StringImpl> toString(const WebCore::ISOWebVTTCue& cue)
     {
         return cue.toJSONString();
     }

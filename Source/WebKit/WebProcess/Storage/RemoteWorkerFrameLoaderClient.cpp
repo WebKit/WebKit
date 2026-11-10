@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-RemoteWorkerFrameLoaderClient::RemoteWorkerFrameLoaderClient(WebCore::FrameLoader& frameLoader, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, const String& userAgent)
+RemoteWorkerFrameLoaderClient::RemoteWorkerFrameLoaderClient(WebCore::FrameLoader& frameLoader, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, StringImpl* userAgent)
     : WebCore::EmptyFrameLoaderClient(frameLoader)
     , m_webPageProxyID(webPageProxyID)
     , m_userAgent(userAgent)

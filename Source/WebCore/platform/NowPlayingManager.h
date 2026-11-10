@@ -73,7 +73,7 @@ private:
     WeakPtr<NowPlayingManagerClient> m_client;
     std::optional<NowPlayingInfo> m_nowPlayingInfo;
     struct ArtworkCache {
-        String src;
+        RefPtr<StringImpl> src;
         RefPtr<NativeImage> image;
     };
     std::optional<ArtworkCache> m_nowPlayingInfoArtwork;

@@ -34,16 +34,16 @@ class CharacterData : public Node {
     WTF_MAKE_TZONE_ALLOCATED(CharacterData);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CharacterData);
 public:
-    const String& data() const LIFETIME_BOUND { return m_data; }
+    const RefPtr<StringImpl>& data() const LIFETIME_BOUND { return m_data; }
     static constexpr ptrdiff_t dataMemoryOffset() { return OBJECT_OFFSETOF(CharacterData, m_data); }
 
-    WEBCORE_EXPORT void setData(const String&);
-    unsigned length() const { return m_data.length(); }
-    WEBCORE_EXPORT ExceptionOr<String> substringData(unsigned offset, unsigned count) const;
-    WEBCORE_EXPORT void appendData(const String&);
-    WEBCORE_EXPORT ExceptionOr<void> insertData(unsigned offset, const String&);
+    WEBCORE_EXPORT void setData(StringImpl*);
+    unsigned length() const { return WTF::length(m_data); }
+    WEBCORE_EXPORT ExceptionOr<RefPtr<StringImpl>> substringData(unsigned offset, unsigned count) const;
+    WEBCORE_EXPORT void appendData(StringImpl*);
+    WEBCORE_EXPORT ExceptionOr<void> insertData(unsigned offset, StringImpl*);
     WEBCORE_EXPORT ExceptionOr<void> deleteData(unsigned offset, unsigned count);
-    WEBCORE_EXPORT ExceptionOr<void> replaceData(unsigned offset, unsigned count, const String&);
+    WEBCORE_EXPORT ExceptionOr<void> replaceData(unsigned offset, unsigned count, StringImpl*);
 
     NODELETE bool containsOnlyASCIIWhitespace() const;
 
@@ -52,11 +52,11 @@ public:
     void parserAppendData(StringView, StringBuilder&);
 
 protected:
-    CharacterData(Document& document, String&& text, NodeType type, OptionSet<TypeFlag> typeFlags = { })
+    CharacterData(Document& document, RefPtr<StringImpl>&& text, NodeType type, OptionSet<TypeFlag> typeFlags = { })
         : Node(document, type, typeFlags | TypeFlag::IsCharacterData)
         , m_data(WTF::move(text))
     {
-        if (m_data.isNull())
+        if (!m_data)
             m_data = emptyString();
 
         ASSERT(isCharacterDataNode());
@@ -65,21 +65,21 @@ protected:
 
     ~CharacterData();
 
-    void setDataWithoutUpdate(const String&);
+    void setDataWithoutUpdate(StringImpl*);
 
-    void dispatchModifiedEvent(const String& oldValue);
+    void dispatchModifiedEvent(StringImpl* oldValue);
 
     enum class UpdateLiveRanges : bool { No, Yes };
-    virtual void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges = UpdateLiveRanges::Yes);
+    virtual void setDataAndUpdate(StringImpl*, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges = UpdateLiveRanges::Yes);
 
 private:
-    String nodeValue() const final;
-    ExceptionOr<void> setNodeValue(const String&) final;
+    RefPtr<StringImpl> nodeValue() const final;
+    ExceptionOr<void> setNodeValue(StringImpl*) final;
     void notifyParentAfterChange(const ContainerNode::ChildChange&);
 
     void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
 
-    String m_data;
+    RefPtr<StringImpl> m_data;
 };
 
 } // namespace WebCore

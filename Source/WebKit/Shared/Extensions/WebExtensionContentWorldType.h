@@ -51,20 +51,20 @@ inline bool isEqual(WebExtensionContentWorldType a, WebExtensionContentWorldType
     return a == b;
 }
 
-inline String toDebugString(WebExtensionContentWorldType contentWorldType)
+inline RefPtr<StringImpl> toDebugString(WebExtensionContentWorldType contentWorldType)
 {
     switch (contentWorldType) {
     case WebExtensionContentWorldType::Main:
-        return "main"_s;
+        return "main"_si;
     case WebExtensionContentWorldType::ContentScript:
-        return "content script"_s;
+        return "content script"_si;
     case WebExtensionContentWorldType::Native:
-        return "native"_s;
+        return "native"_si;
     case WebExtensionContentWorldType::WebPage:
-        return "web page"_s;
+        return "web page"_si;
 #if ENABLE(INSPECTOR_EXTENSIONS)
     case WebExtensionContentWorldType::Inspector:
-        return "inspector"_s;
+        return "inspector"_si;
 #endif
     }
 

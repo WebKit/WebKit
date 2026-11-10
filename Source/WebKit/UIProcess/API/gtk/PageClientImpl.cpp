@@ -168,7 +168,7 @@ void PageClientImpl::didRelaunchProcess()
     webkitWebViewBaseDidRelaunchWebProcess(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
-void PageClientImpl::toolTipChanged(const String&, const String& newToolTip)
+void PageClientImpl::toolTipChanged(StringImpl*, StringImpl* newToolTip)
 {
     webkitWebViewBaseSetTooltipText(WEBKIT_WEB_VIEW_BASE(m_viewWidget), newToolTip);
 }
@@ -309,7 +309,7 @@ RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestions
     return WebDataListSuggestionsDropdownGtk::create(m_viewWidget, page);
 }
 
-Ref<ValidationBubble> PageClientImpl::createValidationBubble(String&& message, const ValidationBubble::Settings& settings)
+Ref<ValidationBubble> PageClientImpl::createValidationBubble(RefPtr<StringImpl>&& message, const ValidationBubble::Settings& settings)
 {
     return ValidationBubbleGtk::create(m_viewWidget, WTF::move(message), settings);
 }
@@ -368,7 +368,7 @@ void PageClientImpl::didPerformDragControllerAction()
 }
 #endif
 
-void PageClientImpl::didCommitLoadForMainFrame(const String& /* mimeType */, bool /* useCustomContentProvider */ )
+void PageClientImpl::didCommitLoadForMainFrame(StringImpl* /* mimeType */, bool /* useCustomContentProvider */ )
 {
     webkitWebViewBaseResetClickCounter(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
@@ -484,7 +484,7 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
     webkitWebViewBasePropagateWheelEvent(WEBKIT_WEB_VIEW_BASE(m_viewWidget), event.nativeEvent());
 }
 
-void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String&, std::span<const uint8_t>)
+void PageClientImpl::didFinishLoadingDataForCustomContentProvider(StringImpl*, std::span<const uint8_t>)
 {
 }
 
@@ -573,11 +573,11 @@ void PageClientImpl::derefView()
     g_object_unref(m_viewWidget);
 }
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, WebCore::FrameIdentifier, const IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, WebCore::FrameIdentifier, const IntRect&, StringImpl* originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
-    auto& clipboard = Clipboard::get("CLIPBOARD"_s);
-    clipboard.readBuffer(PasteboardCustomData::gtkType(), [weakWebView = GWeakPtr<GtkWidget>(m_viewWidget), originIdentifier, requiresInteraction, completionHandler = WTF::move(completionHandler)](Ref<SharedBuffer>&& buffer) mutable {
-        if (requiresInteraction == WebCore::DOMPasteRequiresInteraction::No && PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() == originIdentifier) {
+    auto& clipboard = Clipboard::get("CLIPBOARD"_si);
+    clipboard.readBuffer(PasteboardCustomData::gtkType(), [weakWebView = GWeakPtr<GtkWidget>(m_viewWidget), originIdentifier = RefPtr { originIdentifier }, requiresInteraction, completionHandler = WTF::move(completionHandler)](Ref<SharedBuffer>&& buffer) mutable {
+        if (requiresInteraction == WebCore::DOMPasteRequiresInteraction::No && equal(PasteboardCustomData::fromSharedBuffer(buffer.get()).origin(), originIdentifier)) {
             completionHandler(DOMPasteAccessResponse::GrantedForGesture);
             return;
         }

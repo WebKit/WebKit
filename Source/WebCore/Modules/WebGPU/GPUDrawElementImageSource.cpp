@@ -35,13 +35,13 @@ Ref<JSON::Object> GPUDrawElementImageSource::toJSON() const
     Ref json = JSON::Object::create();
     // `CanvasElementImageSource` is not JSON serializable.
     if (sourceX)
-        json->setDouble("sourceX"_s, *sourceX);
+        json->setDouble("sourceX"_si, *sourceX);
     if (sourceY)
-        json->setDouble("sourceY"_s, *sourceY);
+        json->setDouble("sourceY"_si, *sourceY);
     if (sourceWidth)
-        json->setDouble("sourceWidth"_s, *sourceWidth);
+        json->setDouble("sourceWidth"_si, *sourceWidth);
     if (sourceHeight)
-        json->setDouble("sourceHeight"_s, *sourceHeight);
+        json->setDouble("sourceHeight"_si, *sourceHeight);
     return json;
 }
 

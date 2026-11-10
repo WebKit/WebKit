@@ -69,11 +69,11 @@ public:
     }
     virtual ~CryptoKeyEC();
 
-    WEBCORE_EXPORT static ExceptionOr<CryptoKeyPair> generatePair(CryptoAlgorithmIdentifier, const String& curve, bool extractable, CryptoKeyUsageBitmap);
-    WEBCORE_EXPORT static RefPtr<CryptoKeyEC> importRaw(CryptoAlgorithmIdentifier, const String& curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
-    static RefPtr<CryptoKeyEC> importJwk(CryptoAlgorithmIdentifier, const String& curve, JsonWebKey&&, bool extractable, CryptoKeyUsageBitmap);
-    static RefPtr<CryptoKeyEC> importSpki(CryptoAlgorithmIdentifier, const String& curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
-    static RefPtr<CryptoKeyEC> importPkcs8(CryptoAlgorithmIdentifier, const String& curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
+    WEBCORE_EXPORT static ExceptionOr<CryptoKeyPair> generatePair(CryptoAlgorithmIdentifier, StringImpl* curve, bool extractable, CryptoKeyUsageBitmap);
+    WEBCORE_EXPORT static RefPtr<CryptoKeyEC> importRaw(CryptoAlgorithmIdentifier, StringImpl* curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
+    static RefPtr<CryptoKeyEC> importJwk(CryptoAlgorithmIdentifier, StringImpl* curve, JsonWebKey&&, bool extractable, CryptoKeyUsageBitmap);
+    static RefPtr<CryptoKeyEC> importSpki(CryptoAlgorithmIdentifier, StringImpl* curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
+    static RefPtr<CryptoKeyEC> importPkcs8(CryptoAlgorithmIdentifier, StringImpl* curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
 
     WEBCORE_EXPORT ExceptionOr<Vector<uint8_t>> exportRaw() const;
     ExceptionOr<JsonWebKey> exportJwk() const;
@@ -83,7 +83,7 @@ public:
     NODELETE size_t keySizeInBits() const;
     size_t keySizeInBytes() const { return std::ceil(keySizeInBits() / 8.); }
     NamedCurve namedCurve() const { return m_curve; }
-    String namedCurveString() const;
+    RefPtr<StringImpl> namedCurveString() const;
     const PlatformECKeyContainer& platformKey() const LIFETIME_BOUND { return m_platformKey; }
 
     NODELETE static bool isValidECAlgorithm(CryptoAlgorithmIdentifier);

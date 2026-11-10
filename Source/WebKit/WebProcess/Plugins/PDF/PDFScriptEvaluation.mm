@@ -40,7 +40,7 @@
 
 namespace WebKit::PDFScriptEvaluation {
 
-static bool isPrintScript(const String& script)
+static bool isPrintScript(StringImpl* script)
 {
     static constexpr ASCIILiteral searchExpression = "^.*.\\.print(.*)$"_s;
     static NeverDestroyed<const JSC::Yarr::RegularExpression> printRegex { StringView { searchExpression }, OptionSet<JSC::Yarr::Flags> { JSC::Yarr::Flags::IgnoreCase } };
@@ -52,7 +52,7 @@ static bool actionContainsPrintScript(CGPDFDictionaryRef action)
     if (!action)
         return false;
 
-    if (CGPDFDictionaryGetNameString(action, "S"_s) != "JavaScript"_s)
+    if (!equal(CGPDFDictionaryGetNameString(action, "S"_s), "JavaScript"_s))
         return false;
 
     auto scriptFromBytes = [](std::span<const uint8_t> bytes) {
@@ -81,7 +81,7 @@ static bool actionContainsPrintScript(CGPDFDictionaryRef action)
     };
 
     RetainPtr script = scriptFromStream() ?: scriptFromString();
-    return script && isPrintScript({ script.get() });
+    return script && isPrintScript(StringImpl::create(script.get()).get());
 }
 
 static void appendValuesInPDFNameSubtreeToVector(RetainPtr<CGPDFDictionaryRef> subtree, Vector<CGPDFObjectRef>& values)

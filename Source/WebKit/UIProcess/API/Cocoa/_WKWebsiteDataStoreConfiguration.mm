@@ -92,7 +92,7 @@ static void checkURLArgument(NSURL *url)
         [NSException raise:NSInvalidArgumentException format:@"Directory is nil"];
 
     RetainPtr<NSString> path = directory.path;
-    API::Object::constructInWrapper<WebKit::WebsiteDataStoreConfiguration>(self, path.get(), path.get());
+    API::Object::constructInWrapper<WebKit::WebsiteDataStoreConfiguration>(self, StringImpl::create(path.get()).get(), StringImpl::create(path.get()).get());
 
     return self;
 }
@@ -112,7 +112,7 @@ static void checkURLArgument(NSURL *url)
 
 - (NSURL *)_webStorageDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->localStorageDirectory().createNSString().get() isDirectory:YES];
+    return [NSURL fileURLWithPath:createNSString(_configuration->localStorageDirectory()).get() isDirectory:YES];
 }
 
 - (void)_setWebStorageDirectory:(NSURL *)url
@@ -124,12 +124,12 @@ static void checkURLArgument(NSURL *url)
         [NSException raise:NSGenericException format:@"Cannot set _webStorageDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
 
     checkURLArgument(url);
-    protect(_configuration.get())->setLocalStorageDirectory(url.path);
+    protect(_configuration.get())->setLocalStorageDirectory(StringImpl::create(url.path));
 }
 
 - (NSURL *)_indexedDBDatabaseDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->indexedDBDatabaseDirectory().createNSString().get() isDirectory:YES];
+    return [NSURL fileURLWithPath:createNSString(_configuration->indexedDBDatabaseDirectory()).get() isDirectory:YES];
 }
 
 - (void)_setIndexedDBDatabaseDirectory:(NSURL *)url
@@ -141,12 +141,12 @@ static void checkURLArgument(NSURL *url)
         [NSException raise:NSGenericException format:@"Cannot set _indexedDBDatabaseDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
 
     checkURLArgument(url);
-    protect(_configuration.get())->setIndexedDBDatabaseDirectory(url.path);
+    protect(_configuration.get())->setIndexedDBDatabaseDirectory(StringImpl::create(url.path));
 }
 
 - (NSURL *)networkCacheDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->networkCacheDirectory().createNSString().get() isDirectory:YES];
+    return [NSURL fileURLWithPath:createNSString(_configuration->networkCacheDirectory()).get() isDirectory:YES];
 }
 
 - (void)setNetworkCacheDirectory:(NSURL *)url
@@ -158,12 +158,12 @@ static void checkURLArgument(NSURL *url)
         [NSException raise:NSGenericException format:@"Cannot set networkCacheDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
 
     checkURLArgument(url);
-    protect(_configuration.get())->setNetworkCacheDirectory(url.path);
+    protect(_configuration.get())->setNetworkCacheDirectory(StringImpl::create(url.path));
 }
 
 - (NSURL *)deviceIdHashSaltsStorageDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->deviceIdHashSaltsStorageDirectory().createNSString().get() isDirectory:YES];
+    return [NSURL fileURLWithPath:createNSString(_configuration->deviceIdHashSaltsStorageDirectory()).get() isDirectory:YES];
 }
 
 - (void)setDeviceIdHashSaltsStorageDirectory:(NSURL *)url
@@ -175,12 +175,12 @@ static void checkURLArgument(NSURL *url)
         [NSException raise:NSGenericException format:@"Cannot set deviceIdHashSaltsStorageDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
 
     checkURLArgument(url);
-    protect(_configuration.get())->setDeviceIdHashSaltsStorageDirectory(url.path);
+    protect(_configuration.get())->setDeviceIdHashSaltsStorageDirectory(StringImpl::create(url.path));
 }
 
 - (NSURL *)_webSQLDatabaseDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->webSQLDatabaseDirectory().createNSString().get() isDirectory:YES];
+    return [NSURL fileURLWithPath:createNSString(_configuration->webSQLDatabaseDirectory()).get() isDirectory:YES];
 }
 
 - (void)_setWebSQLDatabaseDirectory:(NSURL *)url
@@ -192,7 +192,7 @@ static void checkURLArgument(NSURL *url)
         [NSException raise:NSGenericException format:@"Cannot set _webSQLDatabaseDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
 
     checkURLArgument(url);
-    protect(_configuration.get())->setWebSQLDatabaseDirectory(url.path);
+    protect(_configuration.get())->setWebSQLDatabaseDirectory(StringImpl::create(url.path));
 }
 
 - (NSURL *)httpProxy
@@ -217,7 +217,7 @@ static void checkURLArgument(NSURL *url)
 
 - (NSURL *)_cookieStorageFile
 {
-    return [NSURL fileURLWithPath:_configuration->cookieStorageFile().createNSString().get() isDirectory:NO];
+    return [NSURL fileURLWithPath:createNSString(_configuration->cookieStorageFile()).get() isDirectory:NO];
 }
 
 - (void)_setCookieStorageFile:(NSURL *)url
@@ -232,12 +232,12 @@ static void checkURLArgument(NSURL *url)
     if ([url hasDirectoryPath])
         [NSException raise:NSInvalidArgumentException format:@"The cookie storage path must point to a file, not a directory."];
 
-    protect(_configuration.get())->setCookieStorageFile(url.path);
+    protect(_configuration.get())->setCookieStorageFile(StringImpl::create(url.path));
 }
 
 - (NSURL *)_resourceLoadStatisticsDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->resourceLoadStatisticsDirectory().createNSString().get() isDirectory:YES];
+    return [NSURL fileURLWithPath:createNSString(_configuration->resourceLoadStatisticsDirectory()).get() isDirectory:YES];
 }
 
 - (void)_setResourceLoadStatisticsDirectory:(NSURL *)url
@@ -249,12 +249,12 @@ static void checkURLArgument(NSURL *url)
         [NSException raise:NSGenericException format:@"Cannot set _resourceLoadStatisticsDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
 
     checkURLArgument(url);
-    protect(_configuration.get())->setResourceLoadStatisticsDirectory(url.path);
+    protect(_configuration.get())->setResourceLoadStatisticsDirectory(StringImpl::create(url.path));
 }
 
 - (NSURL *)_cacheStorageDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->cacheStorageDirectory().createNSString().get() isDirectory:YES];
+    return [NSURL fileURLWithPath:createNSString(_configuration->cacheStorageDirectory()).get() isDirectory:YES];
 }
 
 - (void)_setCacheStorageDirectory:(NSURL *)url
@@ -266,12 +266,12 @@ static void checkURLArgument(NSURL *url)
         [NSException raise:NSGenericException format:@"Cannot set _cacheStorageDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
 
     checkURLArgument(url);
-    protect(_configuration.get())->setCacheStorageDirectory(url.path);
+    protect(_configuration.get())->setCacheStorageDirectory(StringImpl::create(url.path));
 }
 
 - (NSURL *)_serviceWorkerRegistrationDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->serviceWorkerRegistrationDirectory().createNSString().get() isDirectory:YES];
+    return [NSURL fileURLWithPath:createNSString(_configuration->serviceWorkerRegistrationDirectory()).get() isDirectory:YES];
 }
 
 - (void)_setServiceWorkerRegistrationDirectory:(NSURL *)url
@@ -283,7 +283,7 @@ static void checkURLArgument(NSURL *url)
         [NSException raise:NSGenericException format:@"Cannot set _serviceWorkerRegistrationDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
 
     checkURLArgument(url);
-    protect(_configuration.get())->setServiceWorkerRegistrationDirectory(url.path);
+    protect(_configuration.get())->setServiceWorkerRegistrationDirectory(StringImpl::create(url.path));
 }
 
 - (BOOL)serviceWorkerProcessTerminationDelayEnabled
@@ -298,22 +298,22 @@ static void checkURLArgument(NSURL *url)
 
 - (void)setSourceApplicationBundleIdentifier:(NSString *)identifier
 {
-    protect(_configuration.get())->setSourceApplicationBundleIdentifier(identifier);
+    protect(_configuration.get())->setSourceApplicationBundleIdentifier(StringImpl::create(identifier));
 }
 
 - (NSString *)sourceApplicationBundleIdentifier
 {
-    return _configuration->sourceApplicationBundleIdentifier().createNSString().autorelease();
+    return createNSString(_configuration->sourceApplicationBundleIdentifier()).autorelease();
 }
 
 - (NSString *)sourceApplicationSecondaryIdentifier
 {
-    return _configuration->sourceApplicationSecondaryIdentifier().createNSString().autorelease();
+    return createNSString(_configuration->sourceApplicationSecondaryIdentifier()).autorelease();
 }
 
 - (void)setSourceApplicationSecondaryIdentifier:(NSString *)identifier
 {
-    protect(_configuration.get())->setSourceApplicationSecondaryIdentifier(identifier);
+    protect(_configuration.get())->setSourceApplicationSecondaryIdentifier(StringImpl::create(identifier));
 }
 
 - (NSURL *)applicationCacheDirectory
@@ -336,7 +336,7 @@ static void checkURLArgument(NSURL *url)
 
 - (NSURL *)mediaCacheDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->mediaCacheDirectory().createNSString().get() isDirectory:YES];
+    return [NSURL fileURLWithPath:createNSString(_configuration->mediaCacheDirectory()).get() isDirectory:YES];
 }
 
 - (void)setMediaCacheDirectory:(NSURL *)url
@@ -348,12 +348,12 @@ static void checkURLArgument(NSURL *url)
         [NSException raise:NSGenericException format:@"Cannot set mediaCacheDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
 
     checkURLArgument(url);
-    protect(_configuration.get())->setMediaCacheDirectory(url.path);
+    protect(_configuration.get())->setMediaCacheDirectory(StringImpl::create(url.path));
 }
 
 - (NSURL *)mediaKeysStorageDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->mediaKeysStorageDirectory().createNSString().get() isDirectory:YES];
+    return [NSURL fileURLWithPath:createNSString(_configuration->mediaKeysStorageDirectory()).get() isDirectory:YES];
 }
 
 - (void)setMediaKeysStorageDirectory:(NSURL *)url
@@ -365,12 +365,12 @@ static void checkURLArgument(NSURL *url)
         [NSException raise:NSGenericException format:@"Cannot set mediaKeysStorageDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
 
     checkURLArgument(url);
-    protect(_configuration.get())->setMediaKeysStorageDirectory(url.path);
+    protect(_configuration.get())->setMediaKeysStorageDirectory(StringImpl::create(url.path));
 }
 
 - (NSURL *)hstsStorageDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->hstsStorageDirectory().createNSString().get() isDirectory:YES];
+    return [NSURL fileURLWithPath:createNSString(_configuration->hstsStorageDirectory()).get() isDirectory:YES];
 }
 
 - (void)setHSTSStorageDirectory:(NSURL *)url
@@ -382,12 +382,12 @@ static void checkURLArgument(NSURL *url)
         [NSException raise:NSGenericException format:@"Cannot set hstsStorageDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
 
     checkURLArgument(url);
-    protect(_configuration.get())->setHSTSStorageDirectory(url.path);
+    protect(_configuration.get())->setHSTSStorageDirectory(StringImpl::create(url.path));
 }
 
 - (NSURL *)alternativeServicesStorageDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->alternativeServicesDirectory().createNSString().get() isDirectory:YES];
+    return [NSURL fileURLWithPath:createNSString(_configuration->alternativeServicesDirectory()).get() isDirectory:YES];
 }
 
 - (void)setAlternativeServicesStorageDirectory:(NSURL *)url
@@ -399,15 +399,15 @@ static void checkURLArgument(NSURL *url)
         [NSException raise:NSGenericException format:@"Cannot set alternativeServicesStorageDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
 
     checkURLArgument(url);
-    protect(_configuration.get())->setAlternativeServicesDirectory(url.path);
+    protect(_configuration.get())->setAlternativeServicesDirectory(StringImpl::create(url.path));
 }
 
 - (NSURL *)generalStorageDirectory
 {
     auto& directory = _configuration->generalStorageDirectory();
-    if (directory.isNull())
+    if (!directory)
         return nil;
-    return [NSURL fileURLWithPath:directory.createNSString().get() isDirectory:YES];
+    return [NSURL fileURLWithPath:createNSString(directory).get() isDirectory:YES];
 }
 
 - (void)setGeneralStorageDirectory:(NSURL *)url
@@ -419,7 +419,7 @@ static void checkURLArgument(NSURL *url)
         [NSException raise:NSGenericException format:@"Cannot set generalStorageDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
 
     checkURLArgument(url);
-    protect(_configuration.get())->setGeneralStorageDirectory(url.path);
+    protect(_configuration.get())->setGeneralStorageDirectory(StringImpl::create(url.path));
 }
 
 NODELETE static _WKUnifiedOriginStorageLevel toWKUnifiedOriginStorageLevel(WebKit::UnifiedOriginStorageLevel level)
@@ -458,12 +458,12 @@ NODELETE static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_W
 
 - (NSString *)webPushPartitionString
 {
-    return _configuration->webPushPartitionString().createNSString().autorelease();
+    return createNSString(_configuration->webPushPartitionString()).autorelease();
 }
 
 - (void)setWebPushPartitionString:(NSString *)string
 {
-    protect(_configuration.get())->setWebPushPartitionString(string);
+    protect(_configuration.get())->setWebPushPartitionString(StringImpl::create(string));
 }
 
 - (BOOL)deviceManagementRestrictionsEnabled
@@ -582,7 +582,7 @@ NODELETE static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_W
     auto& origins = _configuration->mockPushSubscriptionOriginsForTesting();
     RetainPtr result = adoptNS([[NSMutableArray alloc] initWithCapacity:origins.size()]);
     for (auto& origin : borrow(origins))
-        [result addObject:origin.toString().createNSString().get()];
+        [result addObject:createNSString(origin.toString()).get()];
     return result.autorelease();
 }
 
@@ -591,7 +591,7 @@ NODELETE static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_W
     Vector<WebCore::SecurityOriginData> origins(ReserveCapacityTag { }, originStrings.count);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString *originString in originStrings) {
-        auto origin = WebCore::SecurityOriginData::fromURL(URL { String { originString } });
+        auto origin = WebCore::SecurityOriginData::fromURL(URL { StringImpl::create(originString) });
         if (origin.isNull() || origin.isOpaque())
             continue;
 
@@ -680,7 +680,7 @@ NODELETE static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_W
 
 - (NSURL *)_resourceMonitorThrottlerDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->resourceMonitorThrottlerDirectory().createNSString().get() isDirectory:YES];
+    return [NSURL fileURLWithPath:createNSString(_configuration->resourceMonitorThrottlerDirectory()).get() isDirectory:YES];
 }
 
 - (void)_setResourceMonitorThrottlerDirectory:(NSURL *)url
@@ -692,15 +692,15 @@ NODELETE static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_W
         [NSException raise:NSGenericException format:@"Cannot set _resourceMonitorThrottlerDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
 
     checkURLArgument(url);
-    protect(_configuration.get())->setResourceMonitorThrottlerDirectory(url.path);
+    protect(_configuration.get())->setResourceMonitorThrottlerDirectory(StringImpl::create(url.path));
 }
 
 - (NSURL *)webContentRestrictionsConfigurationURL
 {
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     auto file = _configuration->webContentRestrictionsConfigurationFile();
-    if (!file.isEmpty())
-        return [NSURL fileURLWithPath:file.createNSString().get()];
+    if (!isEmpty(file))
+        return [NSURL fileURLWithPath:createNSString(file).get()];
 #endif
 
     return nil;
@@ -710,7 +710,7 @@ NODELETE static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_W
 {
     checkURLArgument(url);
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    _configuration->setWebContentRestrictionsConfigurationFile(url.path);
+    _configuration->setWebContentRestrictionsConfigurationFile(StringImpl::create(url.path));
 #endif
 }
 
@@ -763,12 +763,12 @@ NODELETE static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_W
 
 - (NSString *)boundInterfaceIdentifier
 {
-    return _configuration->boundInterfaceIdentifier().createNSString().autorelease();
+    return createNSString(_configuration->boundInterfaceIdentifier()).autorelease();
 }
 
 - (void)setBoundInterfaceIdentifier:(NSString *)identifier
 {
-    protect(_configuration.get())->setBoundInterfaceIdentifier(identifier);
+    protect(_configuration.get())->setBoundInterfaceIdentifier(StringImpl::create(identifier));
 }
 
 - (BOOL)allowsCellularAccess
@@ -798,12 +798,12 @@ NODELETE static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_W
 
 - (NSString *)dataConnectionServiceType
 {
-    return _configuration->dataConnectionServiceType().createNSString().autorelease();
+    return createNSString(_configuration->dataConnectionServiceType()).autorelease();
 }
 
 - (void)setDataConnectionServiceType:(NSString *)type
 {
-    protect(_configuration.get())->setDataConnectionServiceType(type);
+    protect(_configuration.get())->setDataConnectionServiceType(StringImpl::create(type));
 }
 
 - (BOOL)preventsSystemHTTPProxyAuthentication
@@ -893,22 +893,22 @@ NODELETE static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_W
 
 - (NSString *)pcmMachServiceName
 {
-    return _configuration->pcmMachServiceName().createNSString().autorelease();
+    return createNSString(_configuration->pcmMachServiceName()).autorelease();
 }
 
 - (void)setPCMMachServiceName:(NSString *)name
 {
-    protect(_configuration.get())->setPCMMachServiceName(name);
+    protect(_configuration.get())->setPCMMachServiceName(StringImpl::create(name));
 }
 
 - (NSString *)webPushMachServiceName
 {
-    return _configuration->webPushMachServiceName().createNSString().autorelease();
+    return createNSString(_configuration->webPushMachServiceName()).autorelease();
 }
 
 - (void)setWebPushMachServiceName:(NSString *)name
 {
-    protect(_configuration.get())->setWebPushMachServiceName(name);
+    protect(_configuration.get())->setWebPushMachServiceName(StringImpl::create(name));
 }
 
 - (BOOL)allLoadsBlockedByDeviceManagementRestrictionsForTesting
@@ -951,12 +951,12 @@ NODELETE static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_W
 
 - (NSString *)additionalDomainsWithUserInteractionForTesting
 {
-    return _configuration->additionalDomainsWithUserInteractionForTesting().createNSString().autorelease();
+    return createNSString(_configuration->additionalDomainsWithUserInteractionForTesting()).autorelease();
 }
 
 - (void)setAdditionalDomainsWithUserInteractionForTesting:(NSString *)domains
 {
-    protect(_configuration.get())->setAdditionalDomainsWithUserInteractionForTesting(domains);
+    protect(_configuration.get())->setAdditionalDomainsWithUserInteractionForTesting(StringImpl::create(domains));
 }
 
 - (NSUInteger)overridePersistentNotificationMinimumLifetimeForTesting

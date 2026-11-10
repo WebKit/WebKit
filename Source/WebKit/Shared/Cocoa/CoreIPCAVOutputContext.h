@@ -37,8 +37,8 @@ OBJC_CLASS AVOutputContext;
 namespace WebKit {
 
 struct CoreIPCAVOutputContextData {
-    String contextID;
-    String contextType;
+    RefPtr<StringImpl> contextID;
+    RefPtr<StringImpl> contextType;
 };
 
 class CoreIPCAVOutputContext {

@@ -72,7 +72,7 @@ public:
     }
 
 private:
-    void didFindStringMatches(WebPageProxy* page, const String&, const Vector<Vector<WebCore::IntRect>>& matchRects, int32_t) override
+    void didFindStringMatches(WebPageProxy* page, StringImpl*, const Vector<Vector<WebCore::IntRect>>& matchRects, int32_t) override
     {
         [m_textFinderClient didFindStringMatchesWithRects:matchRects didWrapAround:NO];
     }
@@ -82,7 +82,7 @@ private:
         [m_textFinderClient didGetImageForMatchResult:image];
     }
 
-    void didFindString(WebPageProxy*, const String&, const Vector<WebCore::IntRect>& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrapAround) override
+    void didFindString(WebPageProxy*, StringImpl*, const Vector<WebCore::IntRect>& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrapAround) override
     {
         Vector<Vector<WebCore::IntRect>> allMatches;
         if (matchCount != static_cast<unsigned>(kWKMoreThanMaximumMatchCount)) {
@@ -99,7 +99,7 @@ private:
         [m_textFinderClient didFindStringMatchesWithRects:allMatches didWrapAround:didWrapAround];
     }
 
-    void didFailToFindString(WebPageProxy*, const String& string) override
+    void didFailToFindString(WebPageProxy*, StringImpl* string) override
     {
         [m_textFinderClient didFindStringMatchesWithRects:{ } didWrapAround:NO];
     }
@@ -209,7 +209,7 @@ private:
         if ([match isKindOfClass:WKTextFinderMatch.class])
             matchIndices.append([(WKTextFinderMatch *)match index]);
     }
-    protect(_page)->replaceMatches(WTF::move(matchIndices), replacementText, selectionOnly, [collector = makeBlockPtr(resultCollector)] (uint64_t numberOfReplacements) {
+    protect(_page)->replaceMatches(WTF::move(matchIndices), StringImpl::create(replacementText).get(), selectionOnly, [collector = makeBlockPtr(resultCollector)] (uint64_t numberOfReplacements) {
         collector(numberOfReplacements);
     });
 }
@@ -247,17 +247,17 @@ private:
     });
 
     if (maxResults == 1)
-        protect(_page)->findString(targetString, kitFindOptions, maxResults);
+        protect(_page)->findString(StringImpl::create(targetString).get(), kitFindOptions, maxResults);
     else
-        protect(_page)->findStringMatches(targetString, kitFindOptions, maxResults);
+        protect(_page)->findStringMatches(StringImpl::create(targetString).get(), kitFindOptions, maxResults);
 }
 
 - (void)getSelectedText:(void (^)(NSString *selectedTextString))completionHandler
 {
     void (^copiedCompletionHandler)(NSString *) = Block_copy(completionHandler);
 
-    protect(_page)->getSelectionOrContentsAsString([copiedCompletionHandler] (const String& string) {
-        copiedCompletionHandler(string.createNSString().get());
+    protect(_page)->getSelectionOrContentsAsString([copiedCompletionHandler] (StringImpl* string) {
+        copiedCompletionHandler(createNSString(string).get());
         Block_release(copiedCompletionHandler);
     });
 }

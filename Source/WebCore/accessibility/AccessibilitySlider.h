@@ -54,7 +54,7 @@ private:
 
     bool canSetValueAttribute() const final { return true; }
 
-    bool setValue(const String&) final;
+    bool setValue(StringImpl*) final;
     float valueForRange() const final;
     float maxValueForRange() const final;
     float minValueForRange() const final;

@@ -78,7 +78,7 @@ std::optional<CSS::GridNamedAreaMapRow> consumeUnresolvedGridTemplateAreasRow(CS
     for (auto character : rowString.codeUnits()) {
         if (isCSSSpace(character)) {
             if (!areaName.isEmpty()) {
-                row->append(areaName.toString());
+                row->append(areaName.toAtomString());
                 areaName.clear();
             }
             continue;
@@ -87,7 +87,7 @@ std::optional<CSS::GridNamedAreaMapRow> consumeUnresolvedGridTemplateAreasRow(CS
             if (areaName == "."_s)
                 continue;
             if (!areaName.isEmpty()) {
-                row->append(areaName.toString());
+                row->append(areaName.toAtomString());
                 areaName.clear();
             }
         } else {
@@ -97,7 +97,7 @@ std::optional<CSS::GridNamedAreaMapRow> consumeUnresolvedGridTemplateAreasRow(CS
                 return row;
             }
             if (areaName == "."_s) {
-                row->append("."_s);
+                row->append("."_atom);
                 areaName.clear();
             }
         }

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-GPUComputePassEncoder::GPUComputePassEncoder(Ref<WebGPU::ComputePassEncoder>&& backing, String&& label, GPUCommandEncoder& commandEncoder)
+GPUComputePassEncoder::GPUComputePassEncoder(Ref<WebGPU::ComputePassEncoder>&& backing, RefPtr<StringImpl>&& label, GPUCommandEncoder& commandEncoder)
     : m_backing(WTF::move(backing))
     , m_label(WTF::move(label))
     , m_device(commandEncoder.device())
@@ -54,12 +54,12 @@ GPUDevice* GPUComputePassEncoder::device() const
     return m_device;
 }
 
-String GPUComputePassEncoder::label() const
+RefPtr<StringImpl> GPUComputePassEncoder::label() const
 {
     return m_overrideLabel ? *m_overrideLabel : m_label;
 }
 
-void GPUComputePassEncoder::setLabel(String&& label)
+void GPUComputePassEncoder::setLabel(RefPtr<StringImpl>&& label)
 {
     m_label = label;
     protect(backing())->setLabel(WTF::move(label));
@@ -102,13 +102,13 @@ ExceptionOr<void> GPUComputePassEncoder::setBindGroup(GPUIndex32 index, const GP
 {
     auto offset = checkedSum<uint64_t>(dynamicOffsetsDataStart, dynamicOffsetsDataLength);
     if (offset.hasOverflowed() || offset > dynamicOffsetsData.length())
-        return Exception { ExceptionCode::RangeError, "dynamic offsets overflowed"_s };
+        return Exception { ExceptionCode::RangeError, "dynamic offsets overflowed"_si };
 
     protect(backing())->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, std::optional { dynamicOffsetsData.typedSpan().subspan(dynamicOffsetsDataStart, dynamicOffsetsDataLength) });
     return { };
 }
 
-void GPUComputePassEncoder::pushDebugGroup(String&& groupLabel)
+void GPUComputePassEncoder::pushDebugGroup(RefPtr<StringImpl>&& groupLabel)
 {
     protect(backing())->pushDebugGroup(WTF::move(groupLabel));
 }
@@ -118,7 +118,7 @@ void GPUComputePassEncoder::popDebugGroup()
     protect(backing())->popDebugGroup();
 }
 
-void GPUComputePassEncoder::insertDebugMarker(String&& markerLabel)
+void GPUComputePassEncoder::insertDebugMarker(RefPtr<StringImpl>&& markerLabel)
 {
     protect(backing())->insertDebugMarker(WTF::move(markerLabel));
 }

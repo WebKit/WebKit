@@ -168,14 +168,14 @@ static RetainPtr<WKHTTPCookieStore> globalCookieStore;
 
 @end
 
-static void testAlertWithEnhancedSecurity(RetainPtr<TestUIDelegate> uiDelegate, String message, BOOL enhancedSecurityEnabled, std::source_location location)
+static void testAlertWithEnhancedSecurity(RetainPtr<TestUIDelegate> uiDelegate, RefPtr<StringImpl> message, BOOL enhancedSecurityEnabled, std::source_location location)
 {
     NSArray *result = [uiDelegate waitForAlertWithEnhancedSecurity];
 
     EXPECT_WK_STREQ(result[0], message);
     if ([result[1] boolValue] != enhancedSecurityEnabled) {
         ADD_FAILURE_AT(location.file_name(), location.line())
-            << "Enhanced security mismatch for alert '" << message.utf8().toStdString() << "'"
+            << "Enhanced security mismatch for alert '" << utf8(message).toStdString() << "'"
             << " (expected: " << (enhancedSecurityEnabled ? "Enabled" : "Disabled")
             << ", actual: " << ([result[1] boolValue] ? "Enabled" : "Disabled") << ")";
     }
@@ -250,7 +250,7 @@ enum class ExpectedEnhancedSecurity : bool { Disabled = false, Enabled = true };
 static void runActionAndCheckEnhancedSecurityAlerts(
     RetainPtr<TestWKWebView> webView,
     Function<void()>&& performAction,
-    std::initializer_list<std::pair<String, ExpectedEnhancedSecurity>> alerts,
+    std::initializer_list<std::pair<RefPtr<StringImpl>, ExpectedEnhancedSecurity>> alerts,
     std::source_location location = std::source_location::current())
 {
     RELEASE_ASSERT(!webView.get().UIDelegate);
@@ -279,7 +279,7 @@ static void runActionAndCheckEnhancedSecurityAlerts(
 static void loadRequestAndCheckEnhancedSecurityAlerts(
     RetainPtr<TestWKWebView> webView,
     NSString *url,
-    std::initializer_list<std::pair<String, ExpectedEnhancedSecurity>> alerts,
+    std::initializer_list<std::pair<RefPtr<StringImpl>, ExpectedEnhancedSecurity>> alerts,
     std::source_location location = std::source_location::current())
 {
     runActionAndCheckEnhancedSecurityAlerts(webView, [webView, url] {
@@ -961,7 +961,7 @@ static void runOpenerNavigatedWhileSelfNavigationIsProvisional(bool useSiteIsola
     [webView setUIDelegate:uiDelegate.get()];
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://insecure.example.internal/"]]];
-    testAlertWithEnhancedSecurity(uiDelegate, "opened-window"_s, true, std::source_location::current());
+    testAlertWithEnhancedSecurity(uiDelegate, "opened-window"_si, true, std::source_location::current());
 
     __block bool didStartSelfNavigation = false;
     navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *navigatingWebView, WKNavigation *) {
@@ -974,7 +974,7 @@ static void runOpenerNavigatedWhileSelfNavigationIsProvisional(bool useSiteIsola
     TestWebKitAPI::Util::run(&didStartSelfNavigation);
 
     [popup evaluateJavaScript:@"window.opener.location = 'https://secure.final.internal/navigated'" completionHandler:nil];
-    testAlertWithEnhancedSecurity(uiDelegate, "navigated"_s, true, std::source_location::current());
+    testAlertWithEnhancedSecurity(uiDelegate, "navigated"_si, true, std::source_location::current());
 
     navigationDelegate.get().didStartProvisionalNavigation = nil;
     [webView setUIDelegate:nil];
@@ -1633,7 +1633,7 @@ static void createEnhancedSecuritySitesTable(WebCore::SQLiteDatabase& database)
     EXPECT_TRUE(database.executeCommand(createEnhancedSecuritySitesTable));
 }
 
-static void addEnhancedSecuritySite(WebCore::SQLiteDatabase& database, String site, SeenOutsideEnhancedSecurity seenOutsideEnhancedSecurity, double lastModified = 0.0)
+static void addEnhancedSecuritySite(WebCore::SQLiteDatabase& database, RefPtr<StringImpl> site, SeenOutsideEnhancedSecurity seenOutsideEnhancedSecurity, double lastModified = 0.0)
 {
     constexpr auto query = "INSERT INTO sites (site, enhanced_security_state, last_modified) VALUES (?, ?, ?)"_s;
     auto statement = database.prepareStatement(query);
@@ -1646,10 +1646,10 @@ static void addEnhancedSecuritySite(WebCore::SQLiteDatabase& database, String si
     EXPECT_EQ(statement->reset(), SQLITE_OK);
 }
 
-static void setUpEnhancedSecuritySeenValues(std::initializer_list<std::tuple<String, SeenOutsideEnhancedSecurity, double>> priorValues)
+static void setUpEnhancedSecuritySeenValues(std::initializer_list<std::tuple<RefPtr<StringImpl>, SeenOutsideEnhancedSecurity, double>> priorValues)
 {
     auto database = makeUniqueRef<WebCore::SQLiteDatabase>();
-    EXPECT_TRUE(database->open(emptyEnhancedSecuritySitesPath().get()));
+    EXPECT_TRUE(database->open(StringImpl::create(emptyEnhancedSecuritySitesPath().get()).get()));
 
     createEnhancedSecuritySitesTable(database.get());
 
@@ -1865,7 +1865,7 @@ static void waitForEnhancedSecurityDatabaseOpen(WKWebView *webView)
     TestWebKitAPI::Util::run(&done);
 }
 
-static int countSitesInDatabase(WebCore::SQLiteDatabase& database, const String& site)
+static int countSitesInDatabase(WebCore::SQLiteDatabase& database, StringImpl* site)
 {
     constexpr auto query = "SELECT COUNT(*) FROM sites WHERE site = ?"_s;
     auto statement = database.prepareStatement(query);
@@ -1884,8 +1884,8 @@ TEST(EnhancedSecurityPolicies, StaleDisabledSiteIsRemovedOnDatabaseOpen)
     waitForEnhancedSecurityDatabaseOpen(webView.get());
 
     auto verifyDB = makeUniqueRef<WebCore::SQLiteDatabase>();
-    EXPECT_TRUE(verifyDB->open(enhancedSecuritySitesPath().path));
-    EXPECT_EQ(countSitesInDatabase(verifyDB.get(), "stale.internal"_s), 0);
+    EXPECT_TRUE(verifyDB->open(StringImpl::create(enhancedSecuritySitesPath().path).get()));
+    EXPECT_EQ(countSitesInDatabase(verifyDB.get(), "stale.internal"_si), 0);
     verifyDB->close();
 
     cleanUpEnhancedSecuritySites();
@@ -1901,8 +1901,8 @@ TEST(EnhancedSecurityPolicies, RecentDisabledSiteIsKeptOnDatabaseOpen)
     waitForEnhancedSecurityDatabaseOpen(webView.get());
 
     auto verifyDB = makeUniqueRef<WebCore::SQLiteDatabase>();
-    EXPECT_TRUE(verifyDB->open(enhancedSecuritySitesPath().path));
-    EXPECT_EQ(countSitesInDatabase(verifyDB.get(), "recent.internal"_s), 1);
+    EXPECT_TRUE(verifyDB->open(StringImpl::create(enhancedSecuritySitesPath().path).get()));
+    EXPECT_EQ(countSitesInDatabase(verifyDB.get(), "recent.internal"_si), 1);
     verifyDB->close();
 
     cleanUpEnhancedSecuritySites();
@@ -1918,8 +1918,8 @@ TEST(EnhancedSecurityPolicies, StaleEnabledSiteIsKeptOnDatabaseOpen)
     waitForEnhancedSecurityDatabaseOpen(webView.get());
 
     auto verifyDB = makeUniqueRef<WebCore::SQLiteDatabase>();
-    EXPECT_TRUE(verifyDB->open(enhancedSecuritySitesPath().path));
-    EXPECT_EQ(countSitesInDatabase(verifyDB.get(), "stale-enabled.internal"_s), 1);
+    EXPECT_TRUE(verifyDB->open(StringImpl::create(enhancedSecuritySitesPath().path).get()));
+    EXPECT_EQ(countSitesInDatabase(verifyDB.get(), "stale-enabled.internal"_si), 1);
     verifyDB->close();
 
     cleanUpEnhancedSecuritySites();
@@ -1931,7 +1931,7 @@ TEST(EnhancedSecurityPolicies, MigrationAddsLastModifiedColumnToExistingDatabase
 
     {
         auto database = makeUniqueRef<WebCore::SQLiteDatabase>();
-        EXPECT_TRUE(database->open(dbPath.get()));
+        EXPECT_TRUE(database->open(StringImpl::create(dbPath.get()).get()));
         EXPECT_TRUE(database->executeCommand("CREATE TABLE sites (site TEXT PRIMARY KEY, enhanced_security_state INT NOT NULL)"_s));
         EXPECT_TRUE(database->executeCommand("CREATE INDEX idx_sites_enhanced_security_state ON sites(enhanced_security_state)"_s));
 
@@ -1955,7 +1955,7 @@ TEST(EnhancedSecurityPolicies, MigrationAddsLastModifiedColumnToExistingDatabase
     waitForEnhancedSecurityDatabaseOpen(webView.get());
 
     auto verifyDB = makeUniqueRef<WebCore::SQLiteDatabase>();
-    EXPECT_TRUE(verifyDB->open(dbPath.get()));
+    EXPECT_TRUE(verifyDB->open(StringImpl::create(dbPath.get()).get()));
 
     {
         auto columnCheckStmt = verifyDB->prepareStatement("SELECT COUNT(*) FROM pragma_table_info('sites') WHERE name = 'last_modified'"_s);
@@ -1964,8 +1964,8 @@ TEST(EnhancedSecurityPolicies, MigrationAddsLastModifiedColumnToExistingDatabase
         EXPECT_GT(columnCheckStmt->columnInt(0), 0);
     }
 
-    EXPECT_EQ(countSitesInDatabase(verifyDB.get(), "disabled-old.internal"_s), 0);
-    EXPECT_EQ(countSitesInDatabase(verifyDB.get(), "enabled-old.internal"_s), 1);
+    EXPECT_EQ(countSitesInDatabase(verifyDB.get(), "disabled-old.internal"_si), 0);
+    EXPECT_EQ(countSitesInDatabase(verifyDB.get(), "enabled-old.internal"_si), 1);
 
     verifyDB->close();
 
@@ -1978,7 +1978,7 @@ TEST(EnhancedSecurityPolicies, OpenDatabaseDoesNotCrashWhenMigrationFails)
 
     {
         auto database = makeUniqueRef<WebCore::SQLiteDatabase>();
-        EXPECT_TRUE(database->open(dbPath.get()));
+        EXPECT_TRUE(database->open(StringImpl::create(dbPath.get()).get()));
 
         // Create a table with a specific edge case that causes our ALTER TABLE statement to fail
         // by causing a collision in the column names of the table. This should not crash.

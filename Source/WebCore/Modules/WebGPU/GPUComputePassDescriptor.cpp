@@ -34,7 +34,7 @@ Ref<JSON::Object> GPUComputePassDescriptor::toJSON() const
 {
     Ref json = GPUObjectDescriptorBase::toJSON();
     if (timestampWrites)
-        json->setObject("timestampWrites"_s, timestampWrites->toJSON());
+        json->setObject("timestampWrites"_si, timestampWrites->toJSON());
     return json;
 }
 

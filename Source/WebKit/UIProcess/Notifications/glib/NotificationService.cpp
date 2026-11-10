@@ -130,7 +130,7 @@ public:
         removeUnusedIcons(true);
     }
 
-    const char* iconPath(const String& iconURL, const RefPtr<WebCore::NativeImage>& icon)
+    const char* iconPath(StringImpl* iconURL, const RefPtr<WebCore::NativeImage>& icon)
     {
         if (!icon)
             return nullptr;
@@ -172,7 +172,7 @@ public:
         return std::get<UTF8CString>(addResult.iterator->value.second).legacyCStringPointer();
     }
 
-    GBytes* iconBytes(const String& iconURL, const RefPtr<WebCore::NativeImage>& icon)
+    GBytes* iconBytes(StringImpl* iconURL, const RefPtr<WebCore::NativeImage>& icon)
     {
         if (!icon)
             return nullptr;
@@ -200,7 +200,7 @@ public:
         return std::get<GRefPtr<GBytes>>(addResult.iterator->value.second).get();
     }
 
-    void unuseIcon(const String& iconURL)
+    void unuseIcon(StringImpl* iconURL)
     {
         auto it = m_iconCache.find(iconURL);
         if (it == m_iconCache.end())
@@ -250,7 +250,7 @@ public:
     }
 
 private:
-    HashMap<String, std::pair<uint32_t, Variant<UTF8CString, GRefPtr<GBytes>>>> m_iconCache;
+    HashMap<RefPtr<StringImpl>, std::pair<uint32_t, Variant<UTF8CString, GRefPtr<GBytes>>>> m_iconCache;
     RunLoop::Timer m_timer;
 };
 
@@ -338,7 +338,7 @@ static const char* applicationIcon()
             }
 #endif
 
-            auto desktopFileID = makeString(applicationID.span(), ".desktop"_s).utf8();
+            auto desktopFileID = utf8(makeString(applicationID.span(), ".desktop"_s));
             GRefPtr<GDesktopAppInfo> appInfo = adoptGRef(g_desktop_app_info_new(desktopFileID.legacyCStringPointer()));
             if (!appInfo)
                 return { };
@@ -370,13 +370,13 @@ bool NotificationService::showNotification(const WebNotification& notification, 
     if (!m_proxy)
         return false;
 
-    auto findNotificationByTag = [this](const String& tag) -> Notification {
-        if (tag.isEmpty())
+    auto findNotificationByTag = [this](StringImpl* tag) -> Notification {
+        if (isEmpty(tag))
             return Notification();
 
         std::optional<WebNotificationIdentifier> notificationID;
         for (const auto& it : m_notifications) {
-            if (it.value.tag == tag) {
+            if (equal(it.value.tag, tag)) {
                 notificationID = it.key;
                 break;
             }
@@ -392,8 +392,8 @@ bool NotificationService::showNotification(const WebNotification& notification, 
         GVariantBuilder builder;
         g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
 
-        g_variant_builder_add(&builder, "{sv}", "title", gVariantNewString(notification.title().utf8()));
-        g_variant_builder_add(&builder, "{sv}", "body", gVariantNewString(notification.body().utf8()));
+        g_variant_builder_add(&builder, "{sv}", "title", gVariantNewString(utf8(notification.title())));
+        g_variant_builder_add(&builder, "{sv}", "body", gVariantNewString(utf8(notification.body())));
         g_variant_builder_add(&builder, "{sv}", "default-action", g_variant_new_string("default"));
         if (resources) {
             if (auto* bytes = iconCache().iconBytes(notification.iconURL(), resources->icon())) {
@@ -402,7 +402,7 @@ bool NotificationService::showNotification(const WebNotification& notification, 
             }
         }
         addResult.iterator->value.portalID = createVersion4UUIDString();
-        g_dbus_proxy_call(m_proxy.get(), "AddNotification", gVariantNew("(s@a{sv})", addResult.iterator->value.portalID.utf8(), g_variant_builder_end(&builder)),
+        g_dbus_proxy_call(m_proxy.get(), "AddNotification", gVariantNew("(s@a{sv})", utf8(addResult.iterator->value.portalID), g_variant_builder_end(&builder)),
             G_DBUS_CALL_FLAGS_NONE, -1, nullptr, [](GObject* source, GAsyncResult* result, gpointer) {
                 GUniqueOutPtr<GError> error;
                 GRefPtr<GVariant> variant = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(source), result, &error.outPtr()));
@@ -435,14 +435,14 @@ bool NotificationService::showNotification(const WebNotification& notification, 
 
         UTF8CString body;
         if (m_capabilities.contains(Capabilities::Body))
-            body = notification.body().utf8();
+            body = utf8(notification.body());
 
         const char* appIcon = applicationIcon();
 
         g_dbus_proxy_call(m_proxy.get(), "Notify", gVariantNew(
             "(susssasa{sv}i)",
             g_get_application_name(), addResult.iterator->value.id, appIcon ? appIcon : "",
-            notification.title().utf8(), body,
+            utf8(notification.title()), body,
             &actionsBuilder, &hintsBuilder, -1
             ), G_DBUS_CALL_FLAGS_NONE, -1, nullptr, [](GObject* source, GAsyncResult* result, gpointer userData) {
                 GUniqueOutPtr<GError> error;
@@ -472,10 +472,10 @@ void NotificationService::cancelNotification(WebNotificationIdentifier webNotifi
         return;
 
     if (shouldUsePortal()) {
-        if (it->value.portalID.isEmpty())
+        if (isEmpty(it->value.portalID))
             return;
 
-        g_dbus_proxy_call(m_proxy.get(), "RemoveNotification", gVariantNew("(s)", it->value.portalID.utf8()), G_DBUS_CALL_FLAGS_NONE, -1, nullptr,
+        g_dbus_proxy_call(m_proxy.get(), "RemoveNotification", gVariantNew("(s)", utf8(it->value.portalID)), G_DBUS_CALL_FLAGS_NONE, -1, nullptr,
             [](GObject* source, GAsyncResult* result, gpointer) {
                 GUniqueOutPtr<GError> error;
                 GRefPtr<GVariant> variant = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(source), result, &error.outPtr()));
@@ -515,10 +515,10 @@ std::optional<WebNotificationIdentifier> NotificationService::findNotification(u
     return std::nullopt;
 }
 
-std::optional<WebNotificationIdentifier> NotificationService::findNotification(const String& notificationID)
+std::optional<WebNotificationIdentifier> NotificationService::findNotification(StringImpl* notificationID)
 {
     for (const auto& it : m_notifications) {
-        if (it.value.portalID == notificationID)
+        if (equal(it.value.portalID, notificationID))
             return it.key;
     }
 
@@ -537,7 +537,7 @@ void NotificationService::handleSignal(GDBusProxy* proxy, char*, char* signal, G
             const char* action;
             g_variant_get(parameters, "(&s&s@av)", &id, &action, nullptr);
             if (!g_strcmp0(action, "default")) {
-                if (auto notificationID = service->findNotification(String::fromUTF8(id))) {
+                if (auto notificationID = service->findNotification(StringImpl::fromUTF8(id))) {
                     service->didClickNotification(*notificationID);
                     service->didCloseNotification(*notificationID);
                 }
@@ -570,7 +570,7 @@ void NotificationService::didCloseNotification(std::optional<WebNotificationIden
         observer->didCloseNotification(*notificationID);
 
     auto notification = m_notifications.take(*notificationID);
-    if (!notification.iconURL.isEmpty())
+    if (!isEmpty(notification.iconURL))
         iconCache().unuseIcon(notification.iconURL);
 }
 

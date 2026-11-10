@@ -773,7 +773,7 @@ static StringImpl::StaticStringImpl terminationErrorString { "JavaScript executi
 Exception* VM::ensureTerminationException()
 {
     if (!m_terminationException) {
-        JSString* terminationError = jsNontrivialString(*this, terminationErrorString);
+        JSString* terminationError = jsNontrivialString(*this, RefPtr<StringImpl> { &static_cast<StringImpl&>(terminationErrorString) });
         m_terminationException = Exception::create(*this, terminationError, Exception::StackCaptureAction::DoNotCaptureStack);
     }
     return m_terminationException;
@@ -868,7 +868,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> VM::getCTIStub(CommonJITThunkID thunkID)
 
 #endif // ENABLE(JIT)
 
-NativeExecutable* VM::getHostFunction(NativeFunction function, ImplementationVisibility implementationVisibility, NativeFunction constructor, unsigned length, const String& name)
+NativeExecutable* VM::getHostFunction(NativeFunction function, ImplementationVisibility implementationVisibility, NativeFunction constructor, unsigned length, StringImpl* name)
 {
     return getHostFunction(function, implementationVisibility, NoIntrinsic, constructor, nullptr, length, name);
 }
@@ -907,7 +907,7 @@ static Ref<NativeJITCode> jitCodeForConstructTrampoline()
     return result.get();
 }
 
-NativeExecutable* VM::getHostFunction(NativeFunction function, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, NativeFunction constructor, const DOMJIT::Signature* signature, unsigned length, const String& name)
+NativeExecutable* VM::getHostFunction(NativeFunction function, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, NativeFunction constructor, const DOMJIT::Signature* signature, unsigned length, StringImpl* name)
 {
 #if ENABLE(JIT)
     if (Options::useJIT()) {
@@ -935,7 +935,7 @@ NativeExecutable* VM::getBoundFunction(bool isJSFunction, SourceTaintedOrigin ta
             slowCase ? boundFunctionCall : boundThisNoArgsFunctionCall,
             ImplementationVisibility::Private, // Bound function's visibility is private on the stack.
             slowCase ? NoIntrinsic : BoundFunctionCallIntrinsic,
-            boundFunctionConstruct, nullptr, 0, String());
+            boundFunctionConstruct, nullptr, 0, nullString());
         slot.setWithoutWriteBarrier(result);
         return result;
     };
@@ -1434,7 +1434,7 @@ void VM::dumpTypeProfilerData()
     if (!typeProfiler())
         return;
 
-    typeProfilerLog()->processLogEntries(*this, "VM Dump Types"_s);
+    typeProfilerLog()->processLogEntries(*this, "VM Dump Types"_si);
     typeProfiler()->dumpTypeProfilerData(*this);
 }
 

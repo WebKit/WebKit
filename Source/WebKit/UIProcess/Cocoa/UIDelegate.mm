@@ -426,7 +426,7 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, Ref<API::PageCon
     completionHandler(webView->_page.get());
 }
 
-void UIDelegate::UIClient::runJavaScriptAlert(WebPageProxy& page, const WTF::String& message, WebFrameProxy*, FrameInfoData&& frameInfo, Function<void()>&& completionHandler)
+void UIDelegate::UIClient::runJavaScriptAlert(WebPageProxy& page, StringImpl* message, WebFrameProxy*, FrameInfoData&& frameInfo, Function<void()>&& completionHandler)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate)
@@ -446,7 +446,7 @@ void UIDelegate::UIClient::runJavaScriptAlert(WebPageProxy& page, const WTF::Str
     page.makeViewBlankIfUnpaintedSinceLastLoadCommit();
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:));
-    [delegate webView:uiDelegate->m_webView.get().get() runJavaScriptAlertPanelWithMessage:message.createNSString().get() initiatedByFrame:wrapper(API::FrameInfo::create(WTF::move(frameInfo))).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] {
+    [delegate webView:uiDelegate->m_webView.get().get() runJavaScriptAlertPanelWithMessage:createNSString(message).get() initiatedByFrame:wrapper(API::FrameInfo::create(WTF::move(frameInfo))).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] {
         if (checker->completionHandlerHasBeenCalled())
             return;
         completionHandler();
@@ -454,7 +454,7 @@ void UIDelegate::UIClient::runJavaScriptAlert(WebPageProxy& page, const WTF::Str
     }).get()];
 }
 
-void UIDelegate::UIClient::runJavaScriptConfirm(WebPageProxy& page, const WTF::String& message, WebFrameProxy* webFrameProxy, FrameInfoData&& frameInfo, Function<void(bool)>&& completionHandler)
+void UIDelegate::UIClient::runJavaScriptConfirm(WebPageProxy& page, StringImpl* message, WebFrameProxy* webFrameProxy, FrameInfoData&& frameInfo, Function<void(bool)>&& completionHandler)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate)
@@ -474,7 +474,7 @@ void UIDelegate::UIClient::runJavaScriptConfirm(WebPageProxy& page, const WTF::S
     page.makeViewBlankIfUnpaintedSinceLastLoadCommit();
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:));
-    [delegate webView:uiDelegate->m_webView.get().get() runJavaScriptConfirmPanelWithMessage:message.createNSString().get() initiatedByFrame:wrapper(API::FrameInfo::create(WTF::move(frameInfo))).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (BOOL result) mutable {
+    [delegate webView:uiDelegate->m_webView.get().get() runJavaScriptConfirmPanelWithMessage:createNSString(message).get() initiatedByFrame:wrapper(API::FrameInfo::create(WTF::move(frameInfo))).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (BOOL result) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         completionHandler(result);
@@ -482,30 +482,30 @@ void UIDelegate::UIClient::runJavaScriptConfirm(WebPageProxy& page, const WTF::S
     }).get()];
 }
 
-void UIDelegate::UIClient::runJavaScriptPrompt(WebPageProxy& page, const WTF::String& message, const WTF::String& defaultValue, WebFrameProxy*, FrameInfoData&& frameInfo, Function<void(const WTF::String&)>&& completionHandler)
+void UIDelegate::UIClient::runJavaScriptPrompt(WebPageProxy& page, StringImpl* message, StringImpl* defaultValue, WebFrameProxy*, FrameInfoData&& frameInfo, Function<void(StringImpl*)>&& completionHandler)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate)
-        return completionHandler({ });
+        return completionHandler(nullptr);
 
     if (!uiDelegate->m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler) {
-        completionHandler(String());
+        completionHandler(nullString());
         return;
     }
 
     RetainPtr delegate = uiDelegatePrivate();
     if (!delegate) {
-        completionHandler(String());
+        completionHandler(nullString());
         return;
     }
 
     page.makeViewBlankIfUnpaintedSinceLastLoadCommit();
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:));
-    [delegate webView:uiDelegate->m_webView.get().get() runJavaScriptTextInputPanelWithPrompt:message.createNSString().get() defaultText:defaultValue.createNSString().get() initiatedByFrame:wrapper(API::FrameInfo::create(WTF::move(frameInfo))).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (NSString *result) mutable {
+    [delegate webView:uiDelegate->m_webView.get().get() runJavaScriptTextInputPanelWithPrompt:createNSString(message).get() defaultText:createNSString(defaultValue).get() initiatedByFrame:wrapper(API::FrameInfo::create(WTF::move(frameInfo))).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (NSString *result) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
-        completionHandler(result);
+        completionHandler(StringImpl::create(result));
         checker->didCallCompletionHandler();
     }).get()];
 }
@@ -533,14 +533,14 @@ void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy& webPageProx
                 for (auto& [topFrameDomain, subFrameDomains] : organizationStorageAccessPromptQuirk->quirkDomains) {
                     RetainPtr<NSMutableArray<NSString *>> mutableSubFrameDomains = adoptNS([[NSMutableArray alloc] initWithCapacity:subFrameDomains.size()]);
                     for (auto& subFrameDomain : borrow(subFrameDomains))
-                        [mutableSubFrameDomains addObject:subFrameDomain.string().createNSString().get()];
-                    [quirkDomains setObject:mutableSubFrameDomains.get() forKey:topFrameDomain.string().createNSString().get()];
+                        [mutableSubFrameDomains addObject:createNSString(subFrameDomain.string()).get()];
+                    [quirkDomains setObject:mutableSubFrameDomains.get() forKey:createNSString(topFrameDomain.string()).get()];
                 }
             } else
-                [quirkDomains setObject:@[additionalLoginDomain->string().createNSString().get()] forKey:currentDomain.string().createNSString().get()];
+                [quirkDomains setObject:@[createNSString(additionalLoginDomain->string()).get()] forKey:createNSString(currentDomain.string()).get()];
 
             auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestStorageAccessPanelForDomain:underCurrentDomain:forQuirkDomains:completionHandler:));
-            [delegate _webView:uiDelegate->m_webView.get().get() requestStorageAccessPanelForDomain:requestingDomain.string().createNSString().get() underCurrentDomain:currentDomain.string().createNSString().get() forQuirkDomains:quirkDomains.get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (BOOL result) mutable {
+            [delegate _webView:uiDelegate->m_webView.get().get() requestStorageAccessPanelForDomain:createNSString(requestingDomain.string()).get() underCurrentDomain:createNSString(currentDomain.string()).get() forQuirkDomains:quirkDomains.get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (BOOL result) mutable {
                 if (checker->completionHandlerHasBeenCalled())
                     return;
                 completionHandler(result);
@@ -573,7 +573,7 @@ void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy& webPageProx
     }
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestStorageAccessPanelForDomain:underCurrentDomain:completionHandler:));
-    [delegate _webView:uiDelegate->m_webView.get().get() requestStorageAccessPanelForDomain:requestingDomain.string().createNSString().get() underCurrentDomain:currentDomain.string().createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (BOOL result) mutable {
+    [delegate _webView:uiDelegate->m_webView.get().get() requestStorageAccessPanelForDomain:createNSString(requestingDomain.string()).get() underCurrentDomain:createNSString(currentDomain.string()).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (BOOL result) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         completionHandler(result);
@@ -657,7 +657,7 @@ bool UIDelegate::UIClient::canRunBeforeUnloadConfirmPanel() const
     return uiDelegate && uiDelegate->m_delegateMethods.webViewRunBeforeUnloadConfirmPanelWithMessageInitiatedByFrameCompletionHandler;
 }
 
-void UIDelegate::UIClient::runBeforeUnloadConfirmPanel(WebPageProxy& page, WTF::String&& message, WebFrameProxy*, FrameInfoData&& frameInfo, Function<void(bool)>&& completionHandler)
+void UIDelegate::UIClient::runBeforeUnloadConfirmPanel(WebPageProxy& page, RefPtr<StringImpl>&& message, WebFrameProxy*, FrameInfoData&& frameInfo, Function<void(bool)>&& completionHandler)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate)
@@ -675,7 +675,7 @@ void UIDelegate::UIClient::runBeforeUnloadConfirmPanel(WebPageProxy& page, WTF::
     }
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:));
-    [delegate _webView:uiDelegate->m_webView.get().get() runBeforeUnloadConfirmPanelWithMessage:message.createNSString().get() initiatedByFrame:wrapper(API::FrameInfo::create(WTF::move(frameInfo))).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (BOOL result) mutable {
+    [delegate _webView:uiDelegate->m_webView.get().get() runBeforeUnloadConfirmPanelWithMessage:createNSString(message).get() initiatedByFrame:wrapper(API::FrameInfo::create(WTF::move(frameInfo))).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (BOOL result) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         completionHandler(result);
@@ -683,7 +683,7 @@ void UIDelegate::UIClient::runBeforeUnloadConfirmPanel(WebPageProxy& page, WTF::
     }).get()];
 }
 
-void UIDelegate::UIClient::exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin* securityOrigin, const WTF::String& databaseName, const WTF::String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentUsage, unsigned long long expectedUsage, Function<void (unsigned long long)>&& completionHandler)
+void UIDelegate::UIClient::exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin* securityOrigin, StringImpl* databaseName, StringImpl* displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentUsage, unsigned long long expectedUsage, Function<void (unsigned long long)>&& completionHandler)
 {
     // Use 50 MB as the default database quota.
     unsigned long long defaultPerOriginDatabaseQuota = 50 * 1024 * 1024;
@@ -707,7 +707,7 @@ void UIDelegate::UIClient::exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, 
 
     if (uiDelegate->m_delegateMethods.webViewDecideDatabaseQuotaForSecurityOriginDatabaseNameDisplayNameCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler) {
         auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:decideDatabaseQuotaForSecurityOrigin:databaseName:displayName:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:));
-        [delegate _webView:uiDelegate->m_webView.get().get() decideDatabaseQuotaForSecurityOrigin:protect(wrapper(*securityOrigin)).get() databaseName:databaseName.createNSString().get() displayName:displayName.createNSString().get() currentQuota:currentQuota currentOriginUsage:currentOriginUsage currentDatabaseUsage:currentUsage expectedUsage:expectedUsage decisionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)](unsigned long long newQuota) {
+        [delegate _webView:uiDelegate->m_webView.get().get() decideDatabaseQuotaForSecurityOrigin:protect(wrapper(*securityOrigin)).get() databaseName:createNSString(databaseName).get() displayName:createNSString(displayName).get() currentQuota:currentQuota currentOriginUsage:currentOriginUsage currentDatabaseUsage:currentUsage expectedUsage:expectedUsage decisionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)](unsigned long long newQuota) {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -941,19 +941,19 @@ bool UIDelegate::UIClient::runOpenPanel(WebPageProxy& page, WebFrameProxy* webFr
             return;
         }
 
-        Vector<String> filenames;
+        Vector<RefPtr<StringImpl>> filenames;
 #if PLATFORM(IOS)
         RetainPtr<NSFileCoordinator> uploadFileCoordinator = adoptNS([[NSFileCoordinator alloc] init]);
         RetainPtr<NSFileManager> uploadFileManager = adoptNS([[NSFileManager alloc] init]);
         for (NSURL *url in URLs) {
             auto [operationResult, maybeMovedURL, temporaryURL] = [WKFileUploadPanel _moveToNewTemporaryDirectory:url fileCoordinator:uploadFileCoordinator.get() fileManager:uploadFileManager.get() asCopy:YES];
             if (operationResult == WebKit::MovedSuccessfully::Yes)
-                filenames.append(maybeMovedURL.get().path);
+                filenames.append(StringImpl::create(maybeMovedURL.get().path));
         }
 #else
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL NSURL *url in URLs)
-            filenames.append(url.path);
+            filenames.append(StringImpl::create(url.path));
 #endif
         listener->chooseFiles(filenames, openPanelParameters->allowedMIMETypes()->toStringVector());
     }).get()];
@@ -1061,7 +1061,7 @@ void UIDelegate::UIClient::drawHeader(WebPageProxy&, WebFrameProxy& frame, WebCo
     if (!delegate)
         return;
     
-    [delegate _webView:uiDelegate->m_webView.get().get() drawHeaderInRect:rect forPageWithTitle:frame.title().createNSString().get() URL:frame.url().createNSURL().get()];
+    [delegate _webView:uiDelegate->m_webView.get().get() drawHeaderInRect:rect forPageWithTitle:createNSString(frame.title()).get() URL:frame.url().createNSURL().get()];
 }
 
 void UIDelegate::UIClient::drawFooter(WebPageProxy&, WebFrameProxy& frame, WebCore::FloatRect&& rect)
@@ -1077,7 +1077,7 @@ void UIDelegate::UIClient::drawFooter(WebPageProxy&, WebFrameProxy& frame, WebCo
     if (!delegate)
         return;
     
-    [delegate _webView:uiDelegate->m_webView.get().get() drawFooterInRect:rect forPageWithTitle:frame.title().createNSString().get() URL:frame.url().createNSURL().get()];
+    [delegate _webView:uiDelegate->m_webView.get().get() drawFooterInRect:rect forPageWithTitle:createNSString(frame.title()).get() URL:frame.url().createNSURL().get()];
 }
 
 void UIDelegate::UIClient::pageDidScroll(WebPageProxy*)
@@ -1197,7 +1197,7 @@ void UIDelegate::UIClient::showPage(WebPageProxy*)
     [delegate _showWebView:uiDelegate->m_webView.get().get()];
 }
     
-void UIDelegate::UIClient::saveDataToFileInDownloadsFolder(WebPageProxy*, const WTF::String& suggestedFilename, const WTF::String& mimeType, const URL& originatingURL, API::Data& data)
+void UIDelegate::UIClient::saveDataToFileInDownloadsFolder(WebPageProxy*, StringImpl* suggestedFilename, StringImpl* mimeType, const URL& originatingURL, API::Data& data)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate)
@@ -1210,7 +1210,7 @@ void UIDelegate::UIClient::saveDataToFileInDownloadsFolder(WebPageProxy*, const 
     if (!delegate)
         return;
 
-    [delegate _webView:uiDelegate->m_webView.get().get() saveDataToFile:protect(wrapper(data)).get() suggestedFilename:suggestedFilename.createNSString().get() mimeType:mimeType.createNSString().get() originatingURL:originatingURL.createNSURL().get()];
+    [delegate _webView:uiDelegate->m_webView.get().get() saveDataToFile:protect(wrapper(data)).get() suggestedFilename:createNSString(suggestedFilename).get() mimeType:createNSString(mimeType).get() originatingURL:originatingURL.createNSURL().get()];
 }
 
 Ref<API::InspectorConfiguration> UIDelegate::UIClient::configurationForLocalInspector(WebPageProxy&, WebInspectorUIProxy& inspector)
@@ -1403,8 +1403,8 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
                     protectedRequest->promptForGetUserMedia();
                     break;
                 case WKPermissionDecisionGrant: {
-                    const String& videoDeviceUID = protectedRequest->requiresVideoCapture() ? protectedRequest->videoDeviceUIDs().first() : String();
-                    const String& audioDeviceUID = protectedRequest->requiresAudioCapture() ? protectedRequest->audioDeviceUIDs().first() : String();
+                    const RefPtr<StringImpl>& videoDeviceUID = protectedRequest->requiresVideoCapture() ? protectedRequest->videoDeviceUIDs().first() : nullptr;
+                    const RefPtr<StringImpl>& audioDeviceUID = protectedRequest->requiresAudioCapture() ? protectedRequest->audioDeviceUIDs().first() : nullptr;
                     protectedRequest->allow(audioDeviceUID, videoDeviceUID);
                     break;
                 }
@@ -1453,8 +1453,8 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
             protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
             return;
         }
-        const String& videoDeviceUID = protectedRequest->requiresVideoCapture() ? protectedRequest->videoDeviceUIDs().first() : String();
-        const String& audioDeviceUID = protectedRequest->requiresAudioCapture() ? protectedRequest->audioDeviceUIDs().first() : String();
+        const RefPtr<StringImpl>& videoDeviceUID = protectedRequest->requiresVideoCapture() ? protectedRequest->videoDeviceUIDs().first() : nullptr;
+        const RefPtr<StringImpl>& audioDeviceUID = protectedRequest->requiresAudioCapture() ? protectedRequest->audioDeviceUIDs().first() : nullptr;
         protectedRequest->allow(audioDeviceUID, videoDeviceUID);
     });
     [delegate _webView:uiDelegate->m_webView.get().get() requestUserMediaAuthorizationForDevices:devices url:requestFrameURL.createNSURL().get() mainFrameURL:mainFrameURL.createNSURL().get() decisionHandler:decisionHandler.get()];
@@ -1881,7 +1881,7 @@ void UIDelegate::UIClient::runWebAuthenticationPanel(WebPageProxy& page, API::We
     }).get()];
 }
 
-void UIDelegate::UIClient::requestWebAuthenticationConditonalMediationRegistration(const WTF::String& username, Vector<WTF::String>&& relatedOrigins, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
+void UIDelegate::UIClient::requestWebAuthenticationConditonalMediationRegistration(StringImpl* username, Vector<RefPtr<StringImpl>>&& relatedOrigins, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate)
@@ -1895,7 +1895,7 @@ void UIDelegate::UIClient::requestWebAuthenticationConditonalMediationRegistrati
         return completionHandler(std::nullopt);
 
     if (uiDelegate->m_delegateMethods.webViewRequestWebAuthenticationConditionalMediationRegistrationForUserRelatedOriginsCompletionHandler) {
-        auto nsOrigins = createNSArray(relatedOrigins, [](const String& origin) -> RetainPtr<WKSecurityOrigin> {
+        auto nsOrigins = createNSArray(relatedOrigins, [](StringImpl* origin) -> RetainPtr<WKSecurityOrigin> {
             URL url { origin };
             if (!url.isValid())
                 return nil;
@@ -1903,7 +1903,7 @@ void UIDelegate::UIClient::requestWebAuthenticationConditonalMediationRegistrati
         });
 
         Ref checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestWebAuthenticationConditionalMediationRegistrationForUser:relatedOrigins:completionHandler:));
-        [delegate _webView:uiDelegate->m_webView.get().get() requestWebAuthenticationConditionalMediationRegistrationForUser:username.createNSString().get() relatedOrigins:nsOrigins.get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)](BOOL result) mutable {
+        [delegate _webView:uiDelegate->m_webView.get().get() requestWebAuthenticationConditionalMediationRegistrationForUser:createNSString(username).get() relatedOrigins:nsOrigins.get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)](BOOL result) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -1913,7 +1913,7 @@ void UIDelegate::UIClient::requestWebAuthenticationConditonalMediationRegistrati
     }
 
     Ref checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestWebAuthenticationConditionalMediationRegistrationForUser:completionHandler:));
-    [delegate _webView:uiDelegate->m_webView.get().get() requestWebAuthenticationConditionalMediationRegistrationForUser:username.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)](BOOL result) mutable {
+    [delegate _webView:uiDelegate->m_webView.get().get() requestWebAuthenticationConditionalMediationRegistrationForUser:createNSString(username).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)](BOOL result) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
@@ -1954,7 +1954,7 @@ void UIDelegate::UIClient::imageOrMediaDocumentSizeChanged(const WebCore::IntSiz
     [static_cast<id<WKUIDelegatePrivate>>(delegate) _webView:uiDelegate->m_webView.get().get() imageOrMediaDocumentSizeChanged:newSize];
 }
 
-void UIDelegate::UIClient::queryPermission(const String& permissionName, API::SecurityOrigin& origin, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& callback)
+void UIDelegate::UIClient::queryPermission(StringImpl* permissionName, API::SecurityOrigin& origin, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& callback)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate) {
@@ -1974,7 +1974,7 @@ void UIDelegate::UIClient::queryPermission(const String& permissionName, API::Se
     }
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:queryPermission:forOrigin:completionHandler:));
-    [delegate _webView:uiDelegate->m_webView.get().get() queryPermission:permissionName.createNSString().get() forOrigin:protect(wrapper(origin)).get() completionHandler:makeBlockPtr([callback = WTF::move(callback), checker = WTF::move(checker)](WKPermissionDecision permissionState) mutable {
+    [delegate _webView:uiDelegate->m_webView.get().get() queryPermission:createNSString(permissionName).get() forOrigin:protect(wrapper(origin)).get() completionHandler:makeBlockPtr([callback = WTF::move(callback), checker = WTF::move(checker)](WKPermissionDecision permissionState) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
@@ -2044,12 +2044,12 @@ void UIDelegate::UIClient::didDisableInspectorBrowserDomain(WebPageProxy&)
     [delegate _webViewDidDisableInspectorBrowserDomain:uiDelegate->m_webView.get().get()];
 }
 
-void UIDelegate::UIClient::addMessageToConsoleForTesting(WebPageProxy& page, String&& log)
+void UIDelegate::UIClient::addMessageToConsoleForTesting(WebPageProxy& page, RefPtr<StringImpl>&& log)
 {
     RetainPtr delegate = uiDelegatePrivate();
     if (!delegate || ![delegate respondsToSelector:@selector(_webView:didReceiveConsoleLogForTesting:)])
         return;
-    [delegate _webView:page.cocoaView().get() didReceiveConsoleLogForTesting:log.createNSString().get()];
+    [delegate _webView:page.cocoaView().get() didReceiveConsoleLogForTesting:createNSString(log).get()];
 }
 
 void UIDelegate::UIClient::updateAppBadge(WebPageProxy&, const WebCore::SecurityOriginData& origin, std::optional<uint64_t> badge)
@@ -2073,7 +2073,7 @@ void UIDelegate::UIClient::updateAppBadge(WebPageProxy&, const WebCore::Security
     [delegate _webView:uiDelegate->m_webView.get().get() updatedAppBadge:nsBadge.get() fromSecurityOrigin:protect(wrapper(apiOrigin.get())).get()];
 }
 
-void UIDelegate::UIClient::didAdjustVisibilityWithSelectors(WebPageProxy&, Vector<String>&& selectors)
+void UIDelegate::UIClient::didAdjustVisibilityWithSelectors(WebPageProxy&, Vector<RefPtr<StringImpl>>&& selectors)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate)
@@ -2223,14 +2223,14 @@ void UIDelegate::UIClient::requestPermissionOnXRSessionFeatures(WebPageProxy&, c
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), requestPermissionSelector);
     if (!usingOldDelegateMethod) {
-        [delegate _webView:uiDelegate->m_webView.get().get() requestPermissionForXRSessionOrigin:securityOriginData.toString().createNSString().get() mode:toWKXRSessionMode(mode) grantedFeatures:toWKXRSessionFeatureFlags(granted) consentRequiredFeatures:toWKXRSessionFeatureFlags(consentRequired) consentOptionalFeatures:toWKXRSessionFeatureFlags(consentOptional) requiredFeaturesRequested:toWKXRSessionFeatureFlags(requiredFeaturesRequested) optionalFeaturesRequested:toWKXRSessionFeatureFlags(optionalFeaturesRequested) completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (_WKXRSessionFeatureFlags userGrantedFeatures) mutable {
+        [delegate _webView:uiDelegate->m_webView.get().get() requestPermissionForXRSessionOrigin:createNSString(securityOriginData.toString()).get() mode:toWKXRSessionMode(mode) grantedFeatures:toWKXRSessionFeatureFlags(granted) consentRequiredFeatures:toWKXRSessionFeatureFlags(consentRequired) consentOptionalFeatures:toWKXRSessionFeatureFlags(consentOptional) requiredFeaturesRequested:toWKXRSessionFeatureFlags(requiredFeaturesRequested) optionalFeaturesRequested:toWKXRSessionFeatureFlags(optionalFeaturesRequested) completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (_WKXRSessionFeatureFlags userGrantedFeatures) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
             completionHandler(toPlatformXRFeatures(userGrantedFeatures));
         }).get()];
     } else {
-        [delegate _webView:uiDelegate->m_webView.get().get() requestPermissionForXRSessionOrigin:securityOriginData.toString().createNSString().get() mode:toWKXRSessionMode(mode) grantedFeatures:toWKXRSessionFeatureFlags(granted) consentRequiredFeatures:toWKXRSessionFeatureFlags(consentRequired) consentOptionalFeatures:toWKXRSessionFeatureFlags(consentOptional) completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (_WKXRSessionFeatureFlags userGrantedFeatures) mutable {
+        [delegate _webView:uiDelegate->m_webView.get().get() requestPermissionForXRSessionOrigin:createNSString(securityOriginData.toString()).get() mode:toWKXRSessionMode(mode) grantedFeatures:toWKXRSessionFeatureFlags(granted) consentRequiredFeatures:toWKXRSessionFeatureFlags(consentRequired) consentOptionalFeatures:toWKXRSessionFeatureFlags(consentOptional) completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (_WKXRSessionFeatureFlags userGrantedFeatures) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();

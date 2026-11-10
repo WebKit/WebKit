@@ -43,7 +43,7 @@ struct QNameComponentsTranslator {
 
     NODELETE static bool equal(QualifiedName::QualifiedNameImpl* name, const QualifiedNameComponents& c)
     {
-        return c.m_prefix == name->m_prefix.impl() && c.m_localName == name->m_localName.impl() && c.m_namespaceURI == name->m_namespaceURI.impl();
+        return c.m_prefix == name->m_prefix.get() && c.m_localName == name->m_localName.get() && c.m_namespaceURI == name->m_namespaceURI.get();
     }
 
     static void translate(QualifiedName::QualifiedNameImpl** location, const QualifiedNameComponents& components, unsigned)
@@ -57,7 +57,7 @@ static void updateImplWithNamespaceAndElementName(QualifiedName::QualifiedNameIm
     impl.m_namespace = nodeNamespace;
     impl.m_nodeName = nodeName;
     bool needsLowercasing = nodeNamespace != Namespace::HTML || nodeName == NodeName::Unknown;
-    impl.m_localNameLower = needsLowercasing ? impl.m_localName.convertToASCIILowercase() : impl.m_localName;
+    impl.m_localNameLower = needsLowercasing ? convertToASCIILowercase(impl.m_localName) : impl.m_localName;
 }
 
 Ref<QualifiedName::QualifiedNameImpl> QualifiedNameCache::getOrCreate(const QualifiedNameComponents& components)

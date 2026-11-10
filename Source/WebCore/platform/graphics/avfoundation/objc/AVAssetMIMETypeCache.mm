@@ -100,25 +100,25 @@ bool AVAssetMIMETypeCache::canDecodeExtendedType(const ContentType& typeParamete
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #if ENABLE(OPUS)
     // Disclaim support for 'opus' if multi-channel decode is not available.
-    if ((type.containerType() == "video/mp4"_s || type.containerType() == "audio/mp4"_s)
-        && type.codecs().contains("opus"_s) && !isMultichannelOpusAvailable())
+    if ((equal(type.containerType(), "video/mp4"_s) || equal(type.containerType(), "audio/mp4"_s))
+        && type.codecs().containsIf([&](auto& item) { return equal(item, "opus"_s); }) && !isMultichannelOpusAvailable())
         return false;
 #endif
 
     // Some platforms will disclaim support for 'flac', and only support the MP4RA registered `fLaC`
     // codec string for flac, so convert the former to the latter before querying.
-    if ((type.containerType() == "video/mp4"_s || type.containerType() == "audio/mp4"_s)
-        && type.codecs().contains("flac"_s))
+    if ((equal(type.containerType(), "video/mp4"_s) || equal(type.containerType(), "audio/mp4"_s))
+        && type.codecs().containsIf([&](auto& item) { return equal(item, "flac"_s); }))
         type = ContentType(makeStringByReplacingAll(type.raw(), "flac"_s, "fLaC"_s));
 
     ASSERT(isAvailable());
 
     if (PAL::canLoad_AVFoundation_AVURLAssetExtendedMIMETypePlayabilityTreatPlaylistMIMETypesAsISOBMFFMediaDataContainersKey()) {
-        if ([PAL::getAVURLAssetClassSingleton() isPlayableExtendedMIMEType:type.raw().createNSString().get() options:@{ AVURLAssetExtendedMIMETypePlayabilityTreatPlaylistMIMETypesAsISOBMFFMediaDataContainersKey: @YES }])
+        if ([PAL::getAVURLAssetClassSingleton() isPlayableExtendedMIMEType:createNSString(type.raw()).get() options:@{ AVURLAssetExtendedMIMETypePlayabilityTreatPlaylistMIMETypesAsISOBMFFMediaDataContainersKey: @YES }])
             return true;
     } else
 
-    if ([PAL::getAVURLAssetClassSingleton() isPlayableExtendedMIMEType:type.raw().createNSString().get()])
+    if ([PAL::getAVURLAssetClassSingleton() isPlayableExtendedMIMEType:createNSString(type.raw()).get()])
         return true;
 
 #endif // ENABLE(VIDEO) && USE(AVFOUNDATION)
@@ -126,9 +126,9 @@ bool AVAssetMIMETypeCache::canDecodeExtendedType(const ContentType& typeParamete
     return false;
 }
 
-bool AVAssetMIMETypeCache::isUnsupportedContainerType(const String& type)
+bool AVAssetMIMETypeCache::isUnsupportedContainerType(StringImpl* type)
 {
-    if (type.isEmpty())
+    if (WTF::isEmpty(type))
         return false;
 
     // AVFoundation will return non-video MIME types which it claims to support, but which we
@@ -178,14 +178,14 @@ bool AVAssetMIMETypeCache::isStaticContainerType(StringView type)
     return staticContainerTypesSet.contains(type);
 }
 
-void AVAssetMIMETypeCache::addSupportedTypes(const Vector<String>& types)
+void AVAssetMIMETypeCache::addSupportedTypes(const Vector<RefPtr<StringImpl>>& types)
 {
     MIMETypeCache::addSupportedTypes(types);
     if (m_cacheTypeCallback)
         m_cacheTypeCallback(types);
 }
 
-void AVAssetMIMETypeCache::initializeCache(HashSet<String>& cache)
+void AVAssetMIMETypeCache::initializeCache(HashSet<RefPtr<StringImpl>>& cache)
 {
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     if (!isAvailable())
@@ -193,7 +193,7 @@ void AVAssetMIMETypeCache::initializeCache(HashSet<String>& cache)
 
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString *type in [PAL::getAVURLAssetClassSingleton() audiovisualMIMETypes])
-        cache.add(type);
+        cache.add(StringImpl::create(type));
 
     if (m_cacheTypeCallback)
         m_cacheTypeCallback(copyToVector(cache));

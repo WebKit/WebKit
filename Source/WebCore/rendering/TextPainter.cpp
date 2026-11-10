@@ -102,7 +102,7 @@ ShadowApplier::~ShadowApplier()
         m_context.clearDropShadow();
 }
 
-TextPainter::TextPainter(GraphicsContext& context, const FontCascade& font, const Style::ComputedStyle& renderStyle, const TextPaintStyle& textPaintStyle, const Style::TextShadows& shadow, const Style::AppleColorFilter& shadowColorFilter, const AtomString& emphasisMark, float emphasisMarkOffset, bool isCombinedText)
+TextPainter::TextPainter(GraphicsContext& context, const FontCascade& font, const Style::ComputedStyle& renderStyle, const TextPaintStyle& textPaintStyle, const Style::TextShadows& shadow, const Style::AppleColorFilter& shadowColorFilter, AtomStringImpl* emphasisMark, float emphasisMarkOffset, bool isCombinedText)
     : m_context(context)
     , m_font(font)
     , m_renderStyle(renderStyle)
@@ -115,7 +115,7 @@ TextPainter::TextPainter(GraphicsContext& context, const FontCascade& font, cons
 {
 }
 
-void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRun& textRun, const AtomString& emphasisMark,
+void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRun& textRun, AtomStringImpl* emphasisMark,
     float emphasisMarkOffset, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset)
 {
     ASSERT(startOffset < endOffset);
@@ -127,7 +127,7 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
     }
 
     RefPtr glyphDisplayList = WTF::move(m_glyphDisplayList);
-    if (!emphasisMark.isEmpty())
+    if (!isEmpty(emphasisMark))
         m_context.drawEmphasisMarks(font, textRun, emphasisMark, textOrigin + FloatSize(0, emphasisMarkOffset), startOffset, endOffset);
     else if (startOffset || endOffset < textRun.length() || !glyphDisplayList)
         m_context.drawText(font, textRun, textOrigin, startOffset, endOffset);
@@ -153,7 +153,7 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
     }
 }
 
-void TextPainter::paintTextWithShadows(const Style::TextShadows* shadows, const Style::AppleColorFilter& colorFilter, const FontCascade& font, const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset, const AtomString& emphasisMark, float emphasisMarkOffset, bool stroked)
+void TextPainter::paintTextWithShadows(const Style::TextShadows* shadows, const Style::AppleColorFilter& colorFilter, const FontCascade& font, const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset, AtomStringImpl* emphasisMark, float emphasisMarkOffset, bool stroked)
 {
     if (!shadows || shadows->isNone()) {
         paintTextOrEmphasisMarks(font, textRun, emphasisMark, emphasisMarkOffset, textOrigin, startOffset, endOffset);
@@ -214,7 +214,7 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
         }
     }
     
-    if (m_emphasisMark.isEmpty())
+    if (isEmpty(m_emphasisMark))
         return;
 
     FloatPoint boxOrigin = boxRect.location();
@@ -268,10 +268,10 @@ void TextPainter::clearGlyphDisplayListCacheForTesting()
     GlyphDisplayListCache::singleton().clear();
 }
 
-String TextPainter::cachedGlyphDisplayListsForTextNodeAsText(Text& textNode, OptionSet<DisplayList::AsTextFlag> flags)
+RefPtr<StringImpl> TextPainter::cachedGlyphDisplayListsForTextNodeAsText(Text& textNode, OptionSet<DisplayList::AsTextFlag> flags)
 {
     if (!textNode.renderer())
-        return String();
+        return nullptr;
 
     StringBuilder builder;
 

@@ -76,7 +76,7 @@ TemporalPlainDateConstructor::TemporalPlainDateConstructor(VM& vm, Structure* st
 
 void TemporalPlainDateConstructor::finishCreation(VM& vm, TemporalPlainDatePrototype* plainDatePrototype)
 {
-    Base::finishCreation(vm, 3, "PlainDate"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 3, "PlainDate"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, plainDatePrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 
@@ -100,7 +100,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainDate, (JSGlobalObject* globalObje
         auto value = callFrame->uncheckedArgument(0).toIntegerWithTruncation(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         if (!std::isfinite(value)) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "Temporal.PlainDate year property must be finite"_s);
+            return throwVMRangeError(globalObject, scope, "Temporal.PlainDate year property must be finite"_si);
         duration.setField(TemporalUnit::Year, value);
     }
 
@@ -108,7 +108,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainDate, (JSGlobalObject* globalObje
         auto value = callFrame->uncheckedArgument(1).toIntegerWithTruncation(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         if (!std::isfinite(value)) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "Temporal.PlainDate month property must be finite"_s);
+            return throwVMRangeError(globalObject, scope, "Temporal.PlainDate month property must be finite"_si);
         duration.setField(TemporalUnit::Month, value);
     }
 
@@ -116,7 +116,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainDate, (JSGlobalObject* globalObje
         auto value = callFrame->uncheckedArgument(2).toIntegerWithTruncation(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         if (!std::isfinite(value)) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "Temporal.PlainDate day property must be finite"_s);
+            return throwVMRangeError(globalObject, scope, "Temporal.PlainDate day property must be finite"_si);
         duration.setField(TemporalUnit::Day, value);
     }
 
@@ -131,7 +131,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainDate, (JSGlobalObject* globalObje
             RETURN_IF_EXCEPTION(scope, { });
             auto canonicalized = isBuiltinCalendar(rawCalendarId);
             if (!canonicalized) [[unlikely]]
-                return throwVMRangeError(globalObject, scope, "invalid calendar ID"_s);
+                return throwVMRangeError(globalObject, scope, "invalid calendar ID"_si);
             calendarId = *canonicalized;
         }
     }

@@ -46,11 +46,11 @@ public:
 
     enum class CacheUnusable : bool { Oversized };
 
-    WEBCORE_EXPORT std::expected<std::optional<SimpleRange>, CacheUnusable> findMatchFrom(const std::optional<SimpleRange>&, const String& target, FindOptions);
-    WEBCORE_EXPORT std::expected<Vector<SimpleRange>, CacheUnusable> findMatches(const std::optional<SimpleRange>&, const String& target, FindOptions, std::optional<unsigned> limit = std::nullopt);
-    WEBCORE_EXPORT std::expected<unsigned, CacheUnusable> countMatches(const std::optional<SimpleRange>&, const String& target, FindOptions, std::optional<unsigned> limit = std::nullopt);
+    WEBCORE_EXPORT std::expected<std::optional<SimpleRange>, CacheUnusable> findMatchFrom(const std::optional<SimpleRange>&, StringImpl* target, FindOptions);
+    WEBCORE_EXPORT std::expected<Vector<SimpleRange>, CacheUnusable> findMatches(const std::optional<SimpleRange>&, StringImpl* target, FindOptions, std::optional<unsigned> limit = std::nullopt);
+    WEBCORE_EXPORT std::expected<unsigned, CacheUnusable> countMatches(const std::optional<SimpleRange>&, StringImpl* target, FindOptions, std::optional<unsigned> limit = std::nullopt);
 
-    WEBCORE_EXPORT bool matchesAreMarked(const String& target, FindOptions, std::optional<unsigned> limit) const;
+    WEBCORE_EXPORT bool matchesAreMarked(StringImpl* target, FindOptions, std::optional<unsigned> limit) const;
     NODELETE WEBCORE_EXPORT void setMatchesMarked();
     NODELETE WEBCORE_EXPORT void clearMatchesMarked();
 
@@ -67,7 +67,7 @@ private:
     };
 
     struct TextRunCache {
-        String text;
+        RefPtr<StringImpl> text;
         Vector<TextRun> runs;
         bool dirty { true };
         bool oversized { false };
@@ -76,12 +76,12 @@ private:
     bool isTextBufferCacheValid() const;
     void clearTextBufferCache();
     TextRunCache& bufferForOptions(FindOptions);
-    bool isSearchResultCacheValid(const String&, FindOptions, std::optional<unsigned> limit) const;
-    static std::optional<std::pair<String, Vector<TextRun>>> textForScope(ContainerNode&, FindOptions);
+    bool isSearchResultCacheValid(StringImpl*, FindOptions, std::optional<unsigned> limit) const;
+    static std::optional<std::pair<RefPtr<StringImpl>, Vector<TextRun>>> textForScope(ContainerNode&, FindOptions);
     enum class SearchShouldContinue : bool { No, Yes };
-    std::expected<std::optional<SimpleRange>, CachedMatchFinder::CacheUnusable> findNextMatchInShadowIncludingAncestorTree(ShadowRoot&, const SimpleRange&, const String& target, FindOptions);
-    static void performSearch(StringView, unsigned startOffset, const String& target, FindOptions, NOESCAPE const Function<SearchShouldContinue(size_t, size_t)>&);
-    static std::optional<SimpleRange> findNextMatch(StringView, const Vector<TextRun>&, unsigned startOffset, const String& target, FindOptions, const std::optional<SimpleRange>& excludeRange = std::nullopt);
+    std::expected<std::optional<SimpleRange>, CachedMatchFinder::CacheUnusable> findNextMatchInShadowIncludingAncestorTree(ShadowRoot&, const SimpleRange&, StringImpl* target, FindOptions);
+    static void performSearch(StringView, unsigned startOffset, StringImpl* target, FindOptions, NOESCAPE const Function<SearchShouldContinue(size_t, size_t)>&);
+    static std::optional<SimpleRange> findNextMatch(StringView, const Vector<TextRun>&, unsigned startOffset, StringImpl* target, FindOptions, const std::optional<SimpleRange>& excludeRange = std::nullopt);
     static unsigned bufferOffsetForBoundaryPoint(StringView, const Vector<TextRun>&, const BoundaryPoint&, FindOptions);
     static unsigned startingOffsetForSelection(StringView, const Vector<TextRun>&, const SimpleRange&, FindOptions);
     static SimpleRange bufferRangeToSimpleRange(const Vector<TextRun>&, size_t start, size_t end);
@@ -101,7 +101,7 @@ private:
     };
 
     struct SearchResultCacheKeys {
-        std::optional<String> targetString;
+        std::optional<RefPtr<StringImpl>> targetString;
         std::optional<unsigned> limit;
         std::optional<FindOptions> options;
     };

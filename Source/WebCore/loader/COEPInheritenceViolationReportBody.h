@@ -36,21 +36,21 @@ namespace WebCore {
 class COEPInheritenceViolationReportBody : public ReportBody {
     WTF_MAKE_TZONE_ALLOCATED(COEPInheritenceViolationReportBody);
 public:
-    NODELETE WEBCORE_EXPORT static Ref<COEPInheritenceViolationReportBody> create(COEPDisposition, const URL& blockedURL, const String& type);
+    NODELETE WEBCORE_EXPORT static Ref<COEPInheritenceViolationReportBody> create(COEPDisposition, const URL& blockedURL, StringImpl* type);
 
-    String disposition() const;
-    const String& type() const LIFETIME_BOUND final { return m_type; }
-    const String& blockedURL() const LIFETIME_BOUND { return m_blockedURL.string(); }
+    RefPtr<StringImpl> disposition() const;
+    const RefPtr<StringImpl>& type() const LIFETIME_BOUND final { return m_type; }
+    const RefPtr<StringImpl>& blockedURL() const LIFETIME_BOUND { return m_blockedURL.string(); }
 
 private:
     friend struct IPC::ArgumentCoder<COEPInheritenceViolationReportBody>;
-    COEPInheritenceViolationReportBody(COEPDisposition, const URL& blockedURL, const String& type);
+    COEPInheritenceViolationReportBody(COEPDisposition, const URL& blockedURL, StringImpl* type);
 
     ViolationReportType reportBodyType() const final { return ViolationReportType::COEPInheritenceViolation; }
 
     COEPDisposition m_disposition;
     URL m_blockedURL;
-    String m_type;
+    RefPtr<StringImpl> m_type;
 };
 
 } // namespace WebCore

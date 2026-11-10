@@ -34,8 +34,8 @@ namespace WebCore {
 Ref<JSON::Object> GPUImageCopyTextureTagged::toJSON() const
 {
     Ref json = GPUImageCopyTexture::toJSON();
-    json->setString("colorSpace"_s, convertEnumerationToString(colorSpace));
-    json->setBoolean("premultipliedAlpha"_s, premultipliedAlpha);
+    json->setString("colorSpace"_si, convertEnumerationToString(colorSpace));
+    json->setBoolean("premultipliedAlpha"_si, premultipliedAlpha);
     return json;
 }
 

@@ -60,7 +60,7 @@ enum class ApplePayButtonStyle : uint8_t {
 class ApplePayButtonPart : public ControlPart {
 public:
     NODELETE static Ref<ApplePayButtonPart> create();
-    NODELETE WEBCORE_EXPORT static Ref<ApplePayButtonPart> create(ApplePayButtonType, ApplePayButtonStyle, const String& locale);
+    NODELETE WEBCORE_EXPORT static Ref<ApplePayButtonPart> create(ApplePayButtonType, ApplePayButtonStyle, StringImpl* locale);
 
     ApplePayButtonType buttonType() const { return m_buttonType; }
     void setButtonType(ApplePayButtonType buttonType) { m_buttonType = buttonType; }
@@ -68,17 +68,17 @@ public:
     ApplePayButtonStyle buttonStyle() const { return m_buttonStyle; }
     void setButtonStyle(ApplePayButtonStyle buttonStyle) { m_buttonStyle = buttonStyle; }
 
-    String locale() const { return m_locale; }
-    void setLocale(String locale) { m_locale = locale; }
+    RefPtr<StringImpl> locale() const { return m_locale; }
+    void setLocale(RefPtr<StringImpl> locale) { m_locale = locale; }
 
 private:
-    ApplePayButtonPart(ApplePayButtonType, ApplePayButtonStyle, const String& locale);
+    ApplePayButtonPart(ApplePayButtonType, ApplePayButtonStyle, StringImpl* locale);
 
     std::unique_ptr<PlatformControl> createPlatformControl() override;
 
     ApplePayButtonType m_buttonType;
     ApplePayButtonStyle m_buttonStyle;
-    String m_locale;
+    RefPtr<StringImpl> m_locale;
 };
 
 } // namespace WebCore

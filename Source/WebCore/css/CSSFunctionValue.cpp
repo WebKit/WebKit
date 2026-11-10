@@ -99,7 +99,7 @@ Ref<CSSFunctionValue> CSSFunctionValue::create(CSSValueID name, Ref<CSSValue>&& 
     return adoptRef(*new CSSFunctionValue(name, WTF::move(argument1), WTF::move(argument2), WTF::move(argument3), WTF::move(argument4)));
 }
 
-String CSSFunctionValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSFunctionValue::customCSSText(const CSS::SerializationContext& context) const
 {
     StringBuilder result;
     result.append(nameLiteral(m_name), '(');

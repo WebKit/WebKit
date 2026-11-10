@@ -65,7 +65,7 @@ void Editor::removeUnchangeableStyles()
     auto defaultStyle = protect(editingStyle->style())->mutableCopy();
     
     // Text widgets implement background color via the UIView property. Their body element will not have one.
-    defaultStyle->setProperty(CSSPropertyID::BackgroundColor, "rgba(255, 255, 255, 0.0)"_s);
+    defaultStyle->setProperty(CSSPropertyID::BackgroundColor, "rgba(255, 255, 255, 0.0)"_si);
     
     // Remove properties that the user can modify, like font-weight. 
     // Also remove font-family, per HI spec.
@@ -81,7 +81,7 @@ void Editor::removeUnchangeableStyles()
     applyStyleToSelection(defaultStyle.ptr(), EditAction::ChangeAttributes);
 }
 
-void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL& url, const String& title)
+void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL& url, StringImpl* title)
 {
     CheckedPtr renderImage = dynamicDowncast<RenderImage>(imageElement.renderer());
     if (!renderImage)
@@ -106,7 +106,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     }
     pasteboardImage.suggestedName = imageSourceURL.lastPathComponent().toString();
     pasteboardImage.preferredPresentationSize = renderImage->concreteObjectSizeForPasteboard().size();
-    pasteboardImage.resourceMIMEType = pasteboard.resourceMIMEType(cachedImage->response().mimeType().createNSString().get());
+    pasteboardImage.resourceMIMEType = pasteboard.resourceMIMEType(createNSString(cachedImage->response().mimeType()).get());
     if (RefPtr buffer = cachedImage->resourceBuffer())
         pasteboardImage.resourceData = buffer->makeContiguous();
 
@@ -154,7 +154,7 @@ void Editor::platformPasteFont()
 {
 }
 
-void Editor::insertDictationPhrases(Vector<Vector<String>>&& dictationPhrases, id metadata)
+void Editor::insertDictationPhrases(Vector<Vector<RefPtr<StringImpl>>>&& dictationPhrases, id metadata)
 {
     Ref document = this->document();
     if (document->selection().isNone())
@@ -166,7 +166,7 @@ void Editor::insertDictationPhrases(Vector<Vector<String>>&& dictationPhrases, i
     DictationCommandIOS::create(WTF::move(document), WTF::move(dictationPhrases), metadata)->apply();
 }
 
-void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& dictationPhrases, id metadata, Element& element)
+void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<RefPtr<StringImpl>>>& dictationPhrases, id metadata, Element& element)
 {
     // Clear the composition.
     clear();
@@ -209,7 +209,7 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
 
     unsigned previousDictationPhraseStart = 0;
     for (auto& interpretations : dictationPhrases) {
-        auto dictationPhraseLength = interpretations[0].length();
+        auto dictationPhraseLength = length(interpretations[0]);
         if (interpretations.size() > 1)
             addMarker(*textNode, previousDictationPhraseStart, dictationPhraseLength, DocumentMarkerType::DictationPhraseWithAlternatives, interpretations.subvector(1));
         previousDictationPhraseStart += dictationPhraseLength;
@@ -234,7 +234,7 @@ void Editor::confirmMarkedText()
         confirmComposition();
 }
 
-void Editor::setTextAsChildOfElement(String&& text, Element& element)
+void Editor::setTextAsChildOfElement(RefPtr<StringImpl>&& text, Element& element)
 {
     // Clear the composition
     clear();
@@ -245,7 +245,7 @@ void Editor::setTextAsChildOfElement(String&& text, Element& element)
 
     // If the element is empty already and we're not adding text, we can early return and avoid clearing/setting
     // a selection at [0, 0] and the expense involved in creating VisiblePositions.
-    if (!element.firstChild() && text.isEmpty())
+    if (!element.firstChild() && isEmpty(text))
         return;
 
     // As a side effect this function sets a caret selection after the inserted content.

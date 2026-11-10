@@ -97,7 +97,7 @@ Ref<RealtimeMediaSource::PhotoSettingsNativePromise> RemoteRealtimeMediaSource::
     return m_proxy.getPhotoSettings();
 }
 
-void RemoteRealtimeMediaSource::configurationChanged(String&& persistentID, WebCore::RealtimeMediaSourceSettings&& settings, WebCore::RealtimeMediaSourceCapabilities&& capabilities)
+void RemoteRealtimeMediaSource::configurationChanged(RefPtr<StringImpl>&& persistentID, WebCore::RealtimeMediaSourceSettings&& settings, WebCore::RealtimeMediaSourceCapabilities&& capabilities)
 {
     setPersistentId(WTF::move(persistentID));
     setSettings(WTF::move(settings));
@@ -157,7 +157,7 @@ void RemoteRealtimeMediaSource::gpuProcessConnectionDidClose(GPUProcessConnectio
     m_proxy.resetReady();
     createRemoteMediaSource();
 
-    m_proxy.failApplyConstraintCallbacks("GPU Process terminated"_s);
+    m_proxy.failApplyConstraintCallbacks("GPU Process terminated"_si);
     if (m_constraints)
         m_proxy.applyConstraints(*m_constraints, [](auto) { });
 

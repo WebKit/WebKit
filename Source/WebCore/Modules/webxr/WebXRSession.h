@@ -94,7 +94,7 @@ public:
     const WebXRInputSourceArray& inputSources() const LIFETIME_BOUND { return m_inputSources; }
     RefPtr<PlatformXR::Device> device() const { return m_device; }
 
-    const Vector<String> enabledFeatures() const;
+    const Vector<RefPtr<StringImpl>> enabledFeatures() const;
     bool supportsFeature(PlatformXR::SessionFeature) const;
 
     ExceptionOr<void> updateRenderState(const XRRenderStateInit&);

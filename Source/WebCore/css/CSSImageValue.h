@@ -44,8 +44,8 @@ class Image;
 class CSSImageValue final : public CSSValue {
 public:
     NODELETE static Ref<CSSImageValue> create();
-    static Ref<CSSImageValue> create(CSS::URL, AtomString initiatorType = { });
-    static Ref<CSSImageValue> create(WTF::URL, AtomString initiatorType = { });
+    static Ref<CSSImageValue> create(CSS::URL, RefPtr<AtomStringImpl> initiatorType = { });
+    static Ref<CSSImageValue> create(WTF::URL, RefPtr<AtomStringImpl> initiatorType = { });
     static Ref<CSSImageValue> create(CachedImage&);
     ~CSSImageValue();
 
@@ -58,7 +58,7 @@ public:
     // Take care when using this, and read https://drafts.csswg.org/css-values/#relative-urls
     const CSS::URL& url() const LIFETIME_BOUND { return m_location; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
 
     Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
@@ -82,11 +82,11 @@ public:
 
 private:
     NODELETE CSSImageValue();
-    CSSImageValue(CSS::URL&&, AtomString&&);
+    CSSImageValue(CSS::URL&&, RefPtr<AtomStringImpl>&&);
     explicit CSSImageValue(CachedImage&);
 
     CSS::URL m_location;
-    AtomString m_initiatorType;
+    RefPtr<AtomStringImpl> m_initiatorType;
     std::optional<CachedResourceHandle<CachedImage>> m_cachedImage;
     const RefPtr<CSSImageValue> m_unresolvedValue;
     bool m_isInvalid { false };

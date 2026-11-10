@@ -144,17 +144,17 @@ void PageAgentProxy::frameNavigated(LocalFrame& frame)
         return;
 
     URL url = document->url();
-    String mimeType = document->suggestedMIMEType();
+    RefPtr<StringImpl> mimeType = document->suggestedMIMEType();
     auto securityOrigin = document->securityOrigin().data();
 
     std::optional<FrameIdentifier> parentFrameID;
     if (auto* parentFrame = frame.tree().parent())
         parentFrameID = parentFrame->frameID();
 
-    String name;
+    RefPtr<StringImpl> name;
     if (RefPtr ownerElement = frame.ownerElement()) {
         name = ownerElement->getNameAttribute();
-        if (name.isEmpty())
+        if (isEmpty(name))
             name = ownerElement->attributeWithoutSynchronization(WebCore::HTMLNames::idAttr);
     }
 
@@ -207,20 +207,20 @@ void PageAgentProxy::defaultAppearanceDidChange()
 }
 #endif
 
-void PageAgentProxy::applyUserAgentOverride(String&)
+void PageAgentProxy::applyUserAgentOverride(RefPtr<StringImpl>&)
 {
 }
 
-void PageAgentProxy::applyEmulatedMedia(AtomString&)
+void PageAgentProxy::applyEmulatedMedia(RefPtr<AtomStringImpl>&)
 {
 }
 
-String PageAgentProxy::bootstrapScriptToEvaluate(DOMWrapperWorld& world)
+RefPtr<StringImpl> PageAgentProxy::bootstrapScriptToEvaluate(DOMWrapperWorld& world)
 {
     if (&world != &mainThreadNormalWorldSingleton())
         return { };
 
-    if (m_bootstrapScript.isEmpty())
+    if (isEmpty(m_bootstrapScript))
         return { };
 
     // The main-frame process's enabled InspectorPageAgent evaluates its own copy, received through the page target.

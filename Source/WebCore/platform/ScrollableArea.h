@@ -164,8 +164,8 @@ public:
     WEBCORE_EXPORT bool allowsHorizontalScrolling() const;
     WEBCORE_EXPORT bool allowsVerticalScrolling() const;
 
-    WEBCORE_EXPORT String horizontalScrollbarStateForTesting() const;
-    WEBCORE_EXPORT String verticalScrollbarStateForTesting() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> horizontalScrollbarStateForTesting() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> verticalScrollbarStateForTesting() const;
 
     bool inLiveResize() const { return m_inLiveResize; }
     WEBCORE_EXPORT virtual void willStartLiveResize();
@@ -419,13 +419,13 @@ public:
     void horizontalScrollbarLayerDidChange();
 
     virtual bool mockScrollbarsControllerEnabled() const { return false; }
-    virtual void logMockScrollbarsControllerMessage(const String&) const { };
+    virtual void logMockScrollbarsControllerMessage(StringImpl*) const { };
 
     virtual bool shouldPlaceVerticalScrollbarOnLeft() const = 0;
     
     virtual bool isHorizontalWritingMode() const { return false; }
 
-    virtual String debugDescription() const = 0;
+    virtual RefPtr<StringImpl> debugDescription() const = 0;
 
     virtual float pageScaleFactor() const
     {

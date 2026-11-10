@@ -154,13 +154,13 @@ public:
     virtual EventLoopTaskGroup& eventLoop() = 0;
 
     virtual const URL& url() const = 0;
-    virtual URL parseURL(const String& url) const = 0;
-    virtual URL encodingParseURL(const String& url) const;
+    virtual URL parseURL(StringImpl* url) const = 0;
+    virtual URL encodingParseURL(StringImpl* url) const;
 
     virtual const URL& cookieURL() const = 0;
 
-    virtual String userAgent(const URL&) const = 0;
-    virtual String navigatorPlatform() const { return { }; }
+    virtual RefPtr<StringImpl> userAgent(const URL&) const = 0;
+    virtual RefPtr<StringImpl> navigatorPlatform() const { return { }; }
 
     NODELETE virtual const SettingsValues& settingsValues() const = 0;
 
@@ -170,8 +170,8 @@ public:
     virtual ReportingClient* reportingClient() { return nullptr; }
     virtual std::optional<PAL::SessionID> sessionID() const;
 
-    virtual void disableEval(const String& errorMessage) = 0;
-    virtual void disableWebAssembly(const String& errorMessage) = 0;
+    virtual void disableEval(StringImpl* errorMessage) = 0;
+    virtual void disableWebAssembly(StringImpl* errorMessage) = 0;
     virtual void setTrustedTypesEnforcement(JSC::TrustedTypesEnforcement) = 0;
 
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
@@ -186,18 +186,18 @@ public:
 
     virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection();
 
-    virtual String resourceRequestIdentifier() const { return String(); };
+    virtual RefPtr<StringImpl> resourceRequestIdentifier() const { return nullptr; };
 
-    bool canIncludeErrorDetails(CachedScript*, const String& sourceURL, bool = false);
-    void reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception*, RefPtr<Inspector::ScriptCallStack>&&, CachedScript* = nullptr, bool = false);
-    void reportUnhandledPromiseRejection(JSC::JSGlobalObject&, JSC::JSPromise&, RefPtr<Inspector::ScriptCallStack>&&, const String& unmaskedSourceURL = { });
+    bool canIncludeErrorDetails(CachedScript*, StringImpl* sourceURL, bool = false);
+    void reportException(StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL, JSC::Exception*, RefPtr<Inspector::ScriptCallStack>&&, CachedScript* = nullptr, bool = false);
+    void reportUnhandledPromiseRejection(JSC::JSGlobalObject&, JSC::JSPromise&, RefPtr<Inspector::ScriptCallStack>&&, StringImpl* unmaskedSourceURL = nullptr);
 
     virtual void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) = 0;
 
     // The following addConsoleMessage functions are deprecated.
     // Callers should try to create the ConsoleMessage themselves.
-    void addConsoleMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0);
-    virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) = 0;
+    void addConsoleMessage(MessageSource, MessageLevel, StringImpl* message, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0);
+    virtual void addConsoleMessage(MessageSource, MessageLevel, StringImpl* message, unsigned long requestIdentifier = 0) = 0;
 
     virtual SecurityOrigin& topOrigin() const = 0;
     virtual bool hasUnpartitionedStorageAccess() const { return false; }
@@ -240,14 +240,14 @@ public:
 
     virtual CSSFontSelector* cssFontSelector() { return nullptr; }
     virtual CSSValuePool& cssValuePool();
-    virtual RefPtr<FontLoadRequest> fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource);
+    virtual RefPtr<FontLoadRequest> fontLoadRequest(StringImpl* url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource);
     virtual void beginLoadingFontSoon(FontLoadRequest&) { }
 
     NODELETE WEBCORE_EXPORT static void setCrossOriginMode(CrossOriginMode);
     NODELETE WEBCORE_EXPORT static CrossOriginMode crossOriginMode();
 
     virtual bool crossOriginIsolated() const { return false; }
-    virtual String agentClusterID() const = 0;
+    virtual RefPtr<StringImpl> agentClusterID() const = 0;
 
     NODELETE WEBCORE_EXPORT void ref();
     WEBCORE_EXPORT void deref();
@@ -344,7 +344,7 @@ public:
 
     WEBCORE_EXPORT JSC::JSGlobalObject* globalObject() const;
 
-    WEBCORE_EXPORT String domainForCachePartition() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> domainForCachePartition() const;
 
     bool allowsMediaDevices() const;
     ServiceWorker* activeServiceWorker() const { return m_activeServiceWorker.get(); }
@@ -358,7 +358,7 @@ public:
     ServiceWorkerContainer* ensureServiceWorkerContainer();
     virtual void updateServiceWorkerClientData() { ASSERT_NOT_REACHED(); }
     WEBCORE_EXPORT static bool postTaskTo(ScriptExecutionContextIdentifier, Task&&);
-    WEBCORE_EXPORT static bool postTaskForModeToWorkerOrWorklet(ScriptExecutionContextIdentifier, Task&&, const String&);
+    WEBCORE_EXPORT static bool postTaskForModeToWorkerOrWorklet(ScriptExecutionContextIdentifier, Task&&, StringImpl*);
     WEBCORE_EXPORT static bool ensureOnContextThread(ScriptExecutionContextIdentifier, Task&&);
     WEBCORE_EXPORT static bool isContextThread(ScriptExecutionContextIdentifier);
     WEBCORE_EXPORT static bool ensureOnContextThreadForCrossThreadTask(ScriptExecutionContextIdentifier, CrossThreadTask&&);
@@ -410,7 +410,7 @@ protected:
     class AddConsoleMessageTask : public Task {
     public:
         inline AddConsoleMessageTask(std::unique_ptr<Inspector::ConsoleMessage>&&);
-        inline AddConsoleMessageTask(MessageSource, MessageLevel, const String&);
+        inline AddConsoleMessageTask(MessageSource, MessageLevel, StringImpl*);
     };
 
     std::optional<ReasonForSuspension> reasonForSuspendingActiveDOMObjects() const { return m_reasonForSuspendingActiveDOMObjects; }
@@ -427,10 +427,10 @@ private:
 
     // The following addMessage function is deprecated.
     // Callers should try to create the ConsoleMessage themselves.
-    virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0) = 0;
-    virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) = 0;
+    virtual void addMessage(MessageSource, MessageLevel, StringImpl* message, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0) = 0;
+    virtual void logExceptionToConsole(StringImpl* errorMessage, StringImpl* sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) = 0;
 
-    bool dispatchErrorEvent(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception*, CachedScript*, bool);
+    bool dispatchErrorEvent(StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL, JSC::Exception*, CachedScript*, bool);
 
     void dispatchMessagePortEvents();
 

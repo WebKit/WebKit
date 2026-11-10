@@ -52,8 +52,8 @@ public:
         bool operator==(const Key&) const = default;
     };
 
-    String keyText() const;
-    bool setKeyText(const String&);
+    RefPtr<StringImpl> keyText() const;
+    bool setKeyText(StringImpl*);
     void setKey(Key key)
     {
         ASSERT(m_keys.isEmpty());
@@ -66,7 +66,7 @@ public:
     const StyleProperties& properties() const { return m_properties; }
     MutableStyleProperties& mutableProperties();
 
-    String cssText() const;
+    RefPtr<StringImpl> cssText() const;
 
 private:
     explicit StyleRuleKeyframe(Ref<StyleProperties>&&);
@@ -80,11 +80,11 @@ class CSSKeyframeRule final : public CSSRule {
 public:
     virtual ~CSSKeyframeRule();
 
-    String cssText() const final { return m_keyframe->cssText(); }
+    RefPtr<StringImpl> cssText() const final { return m_keyframe->cssText(); }
     NODELETE void reattach(StyleRuleBase&) final;
 
-    String keyText() const { return m_keyframe->keyText(); }
-    void setKeyText(const String&);
+    RefPtr<StringImpl> keyText() const { return m_keyframe->keyText(); }
+    void setKeyText(StringImpl*);
 
     CSSStyleProperties& style();
 

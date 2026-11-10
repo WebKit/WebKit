@@ -38,8 +38,8 @@ static WebCore::ApplePayLineItem makeLineItem(WebCore::ApplePayLineItem::Type ty
 {
     WebCore::ApplePayLineItem lineItem;
     lineItem.type = type;
-    lineItem.label = "Shipping"_s;
-    lineItem.amount = "4.99"_s;
+    lineItem.label = "Shipping"_si;
+    lineItem.amount = "4.99"_si;
     return lineItem;
 }
 

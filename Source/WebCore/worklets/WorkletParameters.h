@@ -42,21 +42,21 @@ struct WorkletParameters {
     JSC::RuntimeFlags jsRuntimeFlags;
     float sampleRate;
     size_t currentFrame;
-    String identifier;
+    RefPtr<StringImpl> identifier;
     PAL::SessionID sessionID;
     SettingsValues settingsValues;
     ReferrerPolicy referrerPolicy;
     bool isAudioContextRealTime;
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections;
     std::optional<uint64_t> noiseInjectionHashSalt;
-    String agentClusterID;
+    RefPtr<StringImpl> agentClusterID;
     CanBeCrossOriginIsolated canBeCrossOriginIsolated { CanBeCrossOriginIsolated::No };
     ContentSecurityPolicyResponseHeaders contentSecurityPolicyResponseHeaders;
     NetworkLoadPolicy networkLoadPolicy;
     TransferredMessagePort globalScopePort;
 
-    WorkletParameters isolatedCopy() const & { return { windowURL.isolatedCopy(), jsRuntimeFlags, sampleRate, currentFrame, identifier.isolatedCopy(), sessionID, settingsValues.isolatedCopy(), referrerPolicy, isAudioContextRealTime, advancedPrivacyProtections, noiseInjectionHashSalt, agentClusterID.isolatedCopy(), canBeCrossOriginIsolated, contentSecurityPolicyResponseHeaders.isolatedCopy(), networkLoadPolicy.isolatedCopy(), globalScopePort }; }
-    WorkletParameters isolatedCopy() && { return { WTF::move(windowURL).isolatedCopy(), jsRuntimeFlags, sampleRate, currentFrame, WTF::move(identifier).isolatedCopy(), sessionID, WTF::move(settingsValues).isolatedCopy(), referrerPolicy, isAudioContextRealTime, advancedPrivacyProtections, WTF::move(noiseInjectionHashSalt), WTF::move(agentClusterID).isolatedCopy(), canBeCrossOriginIsolated, WTF::move(contentSecurityPolicyResponseHeaders).isolatedCopy(), networkLoadPolicy.isolatedCopy(), WTF::move(globalScopePort) }; }
+    WorkletParameters isolatedCopy() const & { return { windowURL.isolatedCopy(), jsRuntimeFlags, sampleRate, currentFrame, WTF::isolatedCopy(identifier), sessionID, settingsValues.isolatedCopy(), referrerPolicy, isAudioContextRealTime, advancedPrivacyProtections, noiseInjectionHashSalt, WTF::isolatedCopy(agentClusterID), canBeCrossOriginIsolated, contentSecurityPolicyResponseHeaders.isolatedCopy(), networkLoadPolicy.isolatedCopy(), globalScopePort }; }
+    WorkletParameters isolatedCopy() && { return { WTF::move(windowURL).isolatedCopy(), jsRuntimeFlags, sampleRate, currentFrame, WTF::isolatedCopy(WTF::move(identifier)), sessionID, WTF::move(settingsValues).isolatedCopy(), referrerPolicy, isAudioContextRealTime, advancedPrivacyProtections, WTF::move(noiseInjectionHashSalt), WTF::isolatedCopy(WTF::move(agentClusterID)), canBeCrossOriginIsolated, WTF::move(contentSecurityPolicyResponseHeaders).isolatedCopy(), networkLoadPolicy.isolatedCopy(), WTF::move(globalScopePort) }; }
 };
 
 } // namespace WebCore

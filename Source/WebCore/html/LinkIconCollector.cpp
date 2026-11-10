@@ -102,10 +102,10 @@ auto LinkIconCollector::iconsOfTypes(OptionSet<LinkIconType> iconTypes) -> Vecto
         if (sizes->length())
             iconSize = parseIntegerAllowingTrailingJunk<unsigned>(sizes->item(0));
 
-        Vector<std::pair<String, String>> attributes;
+        Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> attributes;
         if (protect(linkElement)->hasAttributes()) {
             auto linkAttributes = protect(linkElement)->attributes();
-            attributes = WTF::map(linkAttributes, [](auto& attribute) -> std::pair<String, String> {
+            attributes = WTF::map(linkAttributes, [](auto& attribute) -> std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>> {
                 return { attribute.localName(), attribute.value() };
             });
         }

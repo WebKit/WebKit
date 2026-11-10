@@ -81,19 +81,19 @@ public:
     ~SessionHost();
 
 #if ENABLE(WEBDRIVER_BIDI)
-    using BrowserTerminatedObserver = WTF::Observer<void(const String&)>;
+    using BrowserTerminatedObserver = WTF::Observer<void(StringImpl*)>;
     static void addBrowserTerminatedObserver(const BrowserTerminatedObserver&);
     static void removeBrowserTerminatedObserver(const BrowserTerminatedObserver&);
 #endif
 
-    void setHostAddress(const String& ip, uint16_t port) { m_targetIp = ip; m_targetPort = port; }
+    void setHostAddress(StringImpl* ip, uint16_t port) { m_targetIp = ip; m_targetPort = port; }
     bool isConnected() const;
 
-    const String& sessionID() const LIFETIME_BOUND { return m_sessionID; }
+    const RefPtr<StringImpl>& sessionID() const LIFETIME_BOUND { return m_sessionID; }
     const Capabilities& capabilities() const LIFETIME_BOUND { return m_capabilities; }
 
-    void connectToBrowser(Function<void (std::optional<String> error)>&&);
-    void startAutomationSession(Function<void (bool, std::optional<String>)>&&);
+    void connectToBrowser(Function<void (std::optional<RefPtr<StringImpl>> error)>&&);
+    void startAutomationSession(Function<void (bool, std::optional<RefPtr<StringImpl>>)>&&);
 
     bool isRemoteBrowser() const;
 
@@ -101,7 +101,7 @@ public:
         RefPtr<JSON::Object> responseObject;
         bool isError { false };
     };
-    long sendCommandToBackend(const String&, RefPtr<JSON::Object>&& parameters, Function<void (CommandResponse&&)>&&);
+    long sendCommandToBackend(StringImpl*, RefPtr<JSON::Object>&& parameters, Function<void (CommandResponse&&)>&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
     void setBidiHandler(WeakPtr<BidiMessageHandler>&& handler) { m_bidiHandler = WTF::move(handler); }
@@ -121,8 +121,8 @@ private:
     };
 
     void inspectorDisconnected();
-    void sendMessageToBackend(const String&);
-    void dispatchMessage(const String&);
+    void sendMessageToBackend(StringImpl*);
+    void dispatchMessage(StringImpl*);
 #if ENABLE(WEBDRIVER_BIDI)
     void dispatchBidiMessage(RefPtr<JSON::Object>&&);
 #endif
@@ -136,7 +136,7 @@ private:
 
     static const SocketConnection::MessageHandlers& messageHandlers();
     void disconnect(DisconnectReason);
-    void launchBrowser(Function<void (std::optional<String> error)>&&);
+    void launchBrowser(Function<void (std::optional<RefPtr<StringImpl>> error)>&&);
     void connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&&);
     bool matchCapabilities(GVariant*);
     bool buildSessionCapabilities(GVariantBuilder*) const;
@@ -145,9 +145,9 @@ private:
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
     void sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char* message);
 #elif USE(INSPECTOR_SOCKET_SERVER)
-    HashMap<String, CallHandler>& dispatchMap() override;
+    HashMap<RefPtr<StringImpl>, CallHandler>& dispatchMap() override;
     void didClose(Inspector::RemoteInspectorSocketEndpoint&, Inspector::ConnectionID) final;
-    void sendWebInspectorEvent(const String&);
+    void sendWebInspectorEvent(StringImpl*);
 
     void receivedSetTargetList(const struct Event&);
     void receivedSendMessageToFrontend(const struct Event&);
@@ -156,13 +156,13 @@ private:
     std::optional<Vector<Target>> parseTargetList(const struct Event&);
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
 #elif PLATFORM(COCOA)
-    std::optional<String> launchBrowser();
+    std::optional<RefPtr<StringImpl>> launchBrowser();
     void startReading();
     void didReceiveData(dispatch_data_t);
     void sendEvent(const JSON::Object&);
     void didReceiveEvent(const JSON::Object&);
-    void didReceiveStartAutomationSessionReturn(const String& message);
-    void didReceiveSetTargetList(uint64_t connectionID, const String& message);
+    void didReceiveStartAutomationSessionReturn(StringImpl* message);
+    void didReceiveSetTargetList(uint64_t connectionID, StringImpl* message);
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
     void connectionDidClose();
     void browserDidExit();
@@ -171,7 +171,7 @@ private:
 
     Capabilities m_capabilities;
 
-    String m_sessionID;
+    RefPtr<StringImpl> m_sessionID;
     uint64_t m_connectionID { 0 };
     Target m_target;
 
@@ -181,23 +181,23 @@ private:
     WeakPtr<BidiMessageHandler> m_bidiHandler;
 #endif
 
-    String m_targetIp;
+    RefPtr<StringImpl> m_targetIp;
     uint16_t m_targetPort { 0 };
     bool m_isRemoteBrowser { false };
 
 #if USE(GLIB)
-    Function<void (bool, std::optional<String>)> m_startSessionCompletionHandler;
+    Function<void (bool, std::optional<RefPtr<StringImpl>>)> m_startSessionCompletionHandler;
     GRefPtr<GSubprocess> m_browser;
     RefPtr<SocketConnection> m_socketConnection;
     GRefPtr<GCancellable> m_cancellable;
 #elif USE(INSPECTOR_SOCKET_SERVER)
-    Function<void(bool, std::optional<String>)> m_startSessionCompletionHandler;
+    Function<void(bool, std::optional<RefPtr<StringImpl>>)> m_startSessionCompletionHandler;
     std::optional<Inspector::ConnectionID> m_clientID;
 #if PLATFORM(WIN)
     WTF::Win32Handle m_browserHandle;
 #endif
 #elif PLATFORM(COCOA)
-    Function<void(bool, std::optional<String>)> m_startSessionCompletionHandler;
+    Function<void(bool, std::optional<RefPtr<StringImpl>>)> m_startSessionCompletionHandler;
     bool m_browserMatchesCapabilities { true };
     pid_t m_browserProcessID { 0 };
     OSObjectPtr<dispatch_io_t> m_channel;

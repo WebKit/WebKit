@@ -55,7 +55,7 @@ struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialRequestOptions;
 class SecurityOriginData;
 
-using CapabilitiesCompletionHandler = CompletionHandler<void(Vector<KeyValuePair<String, bool>>&&)>;
+using CapabilitiesCompletionHandler = CompletionHandler<void(Vector<KeyValuePair<RefPtr<StringImpl>, bool>>&&)>;
 using RequestCompletionHandler = CompletionHandler<void(WebCore::AuthenticatorResponseData&&, WebCore::AuthenticatorAttachment, WebCore::ExceptionData&&)>;
 using QueryCompletionHandler = CompletionHandler<void(bool)>;
 

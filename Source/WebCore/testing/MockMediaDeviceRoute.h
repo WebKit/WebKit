@@ -54,13 +54,13 @@ public:
 
     void setURLCallback(MockMediaDeviceRouteURLCallback*);
 
-    String deviceName() const;
-    void setDeviceName(const String&);
+    RefPtr<StringImpl> deviceName() const;
+    void setDeviceName(StringImpl*);
 
-    String protocolTypeIdentifier() const;
-    void setProtocolTypeIdentifier(const String&);
+    RefPtr<StringImpl> protocolTypeIdentifier() const;
+    void setProtocolTypeIdentifier(StringImpl*);
 
-    String routeName() const;
+    RefPtr<StringImpl> routeName() const;
 
     bool connected() const;
 
@@ -74,9 +74,9 @@ public:
     void setHasPlaybackError(bool);
 
     struct AudioOption {
-        String displayName;
-        String identifier;
-        String extendedLanguageTag;
+        RefPtr<StringImpl> displayName;
+        RefPtr<StringImpl> identifier;
+        RefPtr<StringImpl> extendedLanguageTag;
     };
     Vector<AudioOption> audioOptions() const;
     void setAudioOptions(const Vector<AudioOption>&);
@@ -96,7 +96,7 @@ public:
     bool muted() const;
     void setMuted(bool);
 
-    String lastSeekTolerance() const;
+    RefPtr<StringImpl> lastSeekTolerance() const;
 
 private:
     MockMediaDeviceRoute();

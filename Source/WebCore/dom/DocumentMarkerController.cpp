@@ -105,7 +105,7 @@ bool DocumentMarkerController::addMarker(const SimpleRange& range, DocumentMarke
     auto needsTextEffect = false;
     if (isGrammar && textEffectsEnabled) {
         auto& grammarUUID = std::get<DocumentMarker::GrammarData>(data).uuid;
-        if (grammarUUID.isEmpty() || !m_appliedGrammarTextEffectUUIDs.contains(grammarUUID))
+        if (isEmpty(grammarUUID) || !m_appliedGrammarTextEffectUUIDs.contains(grammarUUID))
             needsTextEffect = true;
     }
     RefPtr<TextIndicator> textIndicator;
@@ -123,7 +123,7 @@ bool DocumentMarkerController::addMarker(const SimpleRange& range, DocumentMarke
         RefPtr decorationIndicator = page->textEffectController().createTextIndicatorForRange(range, IncludeDocumentMarkers::Yes);
         page->textEffectController().addTextEffect(range, WTF::move(textIndicator), WTF::move(decorationIndicator));
         auto& grammarUUID = std::get<DocumentMarker::GrammarData>(data).uuid;
-        if (!grammarUUID.isEmpty())
+        if (!isEmpty(grammarUUID))
             m_appliedGrammarTextEffectUUIDs.add(grammarUUID);
     }
 #endif

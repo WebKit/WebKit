@@ -52,8 +52,8 @@ PDFPluginPasswordField::~PDFPluginPasswordField()
 Ref<Element> PDFPluginPasswordField::createAnnotationElement()
 {
     Ref element = PDFPluginTextAnnotation::createAnnotationElement();
-    element->setAttribute(typeAttr, "password"_s);
-    element->setAttribute(enterkeyhintAttr, AtomString { attributeValueForEnterKeyHint(EnterKeyHint::Go) });
+    element->setAttribute(typeAttr, "password"_atom);
+    element->setAttribute(enterkeyhintAttr, AtomStringImpl::add(attributeValueForEnterKeyHint(EnterKeyHint::Go)).get());
     element->addEventListener(eventNames().keyupEvent, *eventListener());
     return element;
 }
@@ -66,7 +66,7 @@ void PDFPluginPasswordField::updateGeometry()
 bool PDFPluginPasswordField::handleEvent(WebCore::Event& event)
 {
     if (auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event); keyboardEvent && keyboardEvent->type() == eventNames().keyupEvent) {
-        if (keyboardEvent->keyIdentifier() == "Enter"_s) {
+        if (equal(keyboardEvent->keyIdentifier(), "Enter"_s)) {
             plugin()->attemptToUnlockPDF(value());
             event.preventDefault();
             return true;
@@ -78,7 +78,7 @@ bool PDFPluginPasswordField::handleEvent(WebCore::Event& event)
 
 void PDFPluginPasswordField::resetField()
 {
-    setValue(""_s);
+    setValue(""_si);
 }
     
 } // namespace WebKit

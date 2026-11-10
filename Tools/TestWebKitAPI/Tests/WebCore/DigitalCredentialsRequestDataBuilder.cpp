@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "Test.h"
 #include <WebCore/DigitalCredentialsRequestDataBuilder.h>
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/ProcessWarming.h>
@@ -42,7 +43,7 @@ static Ref<Document> createDocument()
 {
     ProcessWarming::initializeNames();
     auto settings = Settings::create(nullptr);
-    return Document::create(settings.get(), URL { "https://example.com/"_s });
+    return Document::create(settings.get(), URL { "https://example.com/"_si });
 }
 
 static UnvalidatedDigitalCredentialRequest mobileDocumentRequest(ASCIILiteral deviceRequest)
@@ -70,7 +71,7 @@ static std::optional<ValidatedDigitalCredentialRequest> validatedOpenID4VP(Digit
     return ValidatedOpenID4VPRequest { protocol, { } };
 }
 
-static Vector<String> rawRequestIdentifiers(const DigitalCredentialsRawRequests& rawRequests)
+static Vector<RefPtr<StringImpl>> rawRequestIdentifiers(const DigitalCredentialsRawRequests& rawRequests)
 {
     return rawRequests.map([](auto& request) {
         return WTF::switchOn(request,
@@ -101,7 +102,7 @@ TEST(DigitalCredentialsRequestDataBuilder, RawRequestsOmitRequestsThatDidNotVali
 
     auto [requestData, rawRequests] = result.releaseReturnValue();
     EXPECT_EQ(requestData.requests.size(), 2u);
-    EXPECT_EQ(rawRequestIdentifiers(rawRequests), (Vector<String> { "valid-1"_s, "valid-2"_s }));
+    EXPECT_EQ(rawRequestIdentifiers(rawRequests), (Vector<RefPtr<StringImpl>> { "valid-1"_s, "valid-2"_s }));
 }
 
 TEST(DigitalCredentialsRequestDataBuilder, PresentsMobileDocumentAndOpenID4VPRequestsInPageOrder)
@@ -118,7 +119,7 @@ TEST(DigitalCredentialsRequestDataBuilder, PresentsMobileDocumentAndOpenID4VPReq
     ASSERT_EQ(requestData.requests.size(), 2u);
     EXPECT_TRUE(std::holds_alternative<ValidatedOpenID4VPRequest>(requestData.requests[0]));
     EXPECT_TRUE(std::holds_alternative<ValidatedMobileDocumentRequest>(requestData.requests[1]));
-    EXPECT_EQ(rawRequestIdentifiers(rawRequests), (Vector<String> { "openid4vp"_s, "mdoc"_s }));
+    EXPECT_EQ(rawRequestIdentifiers(rawRequests), (Vector<RefPtr<StringImpl>> { "openid4vp"_s, "mdoc"_s }));
 }
 
 TEST(DigitalCredentialsRequestDataBuilder, PresentsOpenID4VPRequestsOfDifferentProtocols)
@@ -142,7 +143,7 @@ TEST(DigitalCredentialsRequestDataBuilder, PresentsOpenID4VPRequestsOfDifferentP
         return std::get<ValidatedOpenID4VPRequest>(request).protocol;
     });
     EXPECT_EQ(protocols, (Vector<DigitalCredentialPresentationProtocol> { DigitalCredentialPresentationProtocol::Openid4vpV1Unsigned, DigitalCredentialPresentationProtocol::Openid4vpV1Signed, DigitalCredentialPresentationProtocol::Openid4vpV1Unsigned }));
-    EXPECT_EQ(rawRequestIdentifiers(rawRequests), (Vector<String> { "unsigned-1"_s, "signed"_s, "unsigned-2"_s }));
+    EXPECT_EQ(rawRequestIdentifiers(rawRequests), (Vector<RefPtr<StringImpl>> { "unsigned-1"_s, "signed"_s, "unsigned-2"_s }));
 }
 
 TEST(DigitalCredentialsRequestDataBuilder, RejectsValidationThatDoesNotCoverEveryRequest)

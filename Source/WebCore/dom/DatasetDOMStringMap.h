@@ -47,17 +47,17 @@ public:
     NODELETE void ref();
     void deref();
 
-    bool isSupportedPropertyName(const String& name) const;
-    Vector<String> supportedPropertyNames() const;
+    bool isSupportedPropertyName(StringImpl* name) const;
+    Vector<RefPtr<StringImpl>> supportedPropertyNames() const;
 
-    String namedItem(const AtomString& name) const;
-    ExceptionOr<void> setNamedItem(const String& name, const AtomString& value);
-    bool deleteNamedProperty(const String& name);
+    RefPtr<StringImpl> namedItem(AtomStringImpl* name) const;
+    ExceptionOr<void> setNamedItem(StringImpl* name, AtomStringImpl* value);
+    bool deleteNamedProperty(StringImpl* name);
 
     Element& element() { return m_element; }
 
 private:
-    const AtomString* item(const String& name) const;
+    const RefPtr<AtomStringImpl>* item(StringImpl* name) const;
 
     WeakRef<Element, WeakPtrImplWithEventTargetData> m_element;
 };

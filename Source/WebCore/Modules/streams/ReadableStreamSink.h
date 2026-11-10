@@ -44,7 +44,7 @@ public:
 
     virtual void enqueue(const Ref<JSC::Uint8Array>&) = 0;
     virtual void close() = 0;
-    virtual void error(String&&) = 0;
+    virtual void error(RefPtr<StringImpl>&&) = 0;
 };
 
 class ReadableStreamToSharedBufferSink final : public ReadableStreamSink {
@@ -60,7 +60,7 @@ private:
 
     void enqueue(const Ref<JSC::Uint8Array>&) final;
     void close() final;
-    void error(String&&) final;
+    void error(RefPtr<StringImpl>&&) final;
 
     Callback m_callback;
 };

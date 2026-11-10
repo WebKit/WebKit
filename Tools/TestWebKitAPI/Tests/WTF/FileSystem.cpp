@@ -40,7 +40,7 @@ namespace TestWebKitAPI {
 
 constexpr auto FileSystemTestData = "This is a test"_s;
 
-static void createTestFile(const String& path)
+static void createTestFile(StringImpl* path)
 {
     auto written = FileSystem::overwriteEntireFile(path, byteCast<uint8_t>(FileSystemTestData.span()));
     EXPECT_TRUE(written);
@@ -92,29 +92,29 @@ public:
         FileSystem::deleteFile(m_quoteContainingFilePath);
     }
 
-    const String& tempFilePath() const { return m_tempFilePath; }
-    const String& tempFileSymlinkPath() const { return m_tempFileSymlinkPath; }
-    const String& tempEmptyFolderPath() const { return m_tempEmptyFolderPath; }
-    const String& tempEmptyFolderSymlinkPath() const { return m_tempEmptyFolderSymlinkPath; }
-    const String& tempEmptyFilePath() const { return m_tempEmptyFilePath; }
-    const String& spaceContainingFilePath() const { return m_spaceContainingFilePath; }
-    const String& bangContainingFilePath() const { return m_bangContainingFilePath; }
-    const String& quoteContainingFilePath() const { return m_quoteContainingFilePath; }
+    const RefPtr<StringImpl>& tempFilePath() const { return m_tempFilePath; }
+    const RefPtr<StringImpl>& tempFileSymlinkPath() const { return m_tempFileSymlinkPath; }
+    const RefPtr<StringImpl>& tempEmptyFolderPath() const { return m_tempEmptyFolderPath; }
+    const RefPtr<StringImpl>& tempEmptyFolderSymlinkPath() const { return m_tempEmptyFolderSymlinkPath; }
+    const RefPtr<StringImpl>& tempEmptyFilePath() const { return m_tempEmptyFilePath; }
+    const RefPtr<StringImpl>& spaceContainingFilePath() const { return m_spaceContainingFilePath; }
+    const RefPtr<StringImpl>& bangContainingFilePath() const { return m_bangContainingFilePath; }
+    const RefPtr<StringImpl>& quoteContainingFilePath() const { return m_quoteContainingFilePath; }
 
 private:
-    String m_tempFilePath;
-    String m_tempFileSymlinkPath;
-    String m_tempEmptyFolderPath;
-    String m_tempEmptyFolderSymlinkPath;
-    String m_tempEmptyFilePath;
-    String m_spaceContainingFilePath;
-    String m_bangContainingFilePath;
-    String m_quoteContainingFilePath;
+    RefPtr<StringImpl> m_tempFilePath;
+    RefPtr<StringImpl> m_tempFileSymlinkPath;
+    RefPtr<StringImpl> m_tempEmptyFolderPath;
+    RefPtr<StringImpl> m_tempEmptyFolderSymlinkPath;
+    RefPtr<StringImpl> m_tempEmptyFilePath;
+    RefPtr<StringImpl> m_spaceContainingFilePath;
+    RefPtr<StringImpl> m_bangContainingFilePath;
+    RefPtr<StringImpl> m_quoteContainingFilePath;
 };
 
 TEST_F(FileSystemTest, MappingMissingFile)
 {
-    auto mappedFileData = FileSystem::mapFile(String("not_existing_file"_s), FileSystem::MappedFileMode::Shared);
+    auto mappedFileData = FileSystem::mapFile("not_existing_file"_si, FileSystem::MappedFileMode::Shared);
     EXPECT_FALSE(!!mappedFileData);
 }
 
@@ -214,10 +214,10 @@ TEST_F(FileSystemTest, isHiddenFile)
 
 TEST_F(FileSystemTest, UnicodeDirectoryName)
 {
-    String path = String::fromUTF8("/test/a\u0308lo/test.txt");
-    String directoryName = FileSystem::parentPath(path);
-    String expectedDirectoryName = String::fromUTF8("/test/a\u0308lo");
-    EXPECT_TRUE(expectedDirectoryName == directoryName);
+    RefPtr<StringImpl> path = StringImpl::fromUTF8("/test/a\u0308lo/test.txt");
+    RefPtr<StringImpl> directoryName = FileSystem::parentPath(path);
+    RefPtr<StringImpl> expectedDirectoryName = StringImpl::fromUTF8("/test/a\u0308lo");
+    EXPECT_TRUE(equal(expectedDirectoryName, directoryName));
 }
 
 // ===========================================================
@@ -570,7 +570,7 @@ TEST_F(FileSystemTest, fileSize)
     ASSERT_TRUE(fileSize);
     EXPECT_EQ(*fileSize, 0U);
 
-    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
+    RefPtr<StringImpl> fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
     fileSize = FileSystem::fileSize(fileThatDoesNotExist);
     EXPECT_TRUE(!fileSize);
 }
@@ -580,14 +580,14 @@ TEST_F(FileSystemTest, makeAllDirectories)
     EXPECT_TRUE(FileSystem::fileExists(tempEmptyFolderPath()));
     EXPECT_EQ(FileSystem::fileType(tempEmptyFolderPath()), FileSystem::FileType::Directory);
     EXPECT_TRUE(FileSystem::makeAllDirectories(tempEmptyFolderPath()));
-    String subFolderPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), std::initializer_list<StringView>({ "subFolder1"_s, "subFolder2"_s, "subFolder3"_s }));
+    RefPtr<StringImpl> subFolderPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), std::initializer_list<StringView>({ "subFolder1"_s, "subFolder2"_s, "subFolder3"_s }));
     EXPECT_FALSE(FileSystem::fileExists(subFolderPath));
     EXPECT_TRUE(FileSystem::makeAllDirectories(subFolderPath));
     EXPECT_TRUE(FileSystem::fileExists(subFolderPath));
     EXPECT_EQ(FileSystem::fileType(subFolderPath), FileSystem::FileType::Directory);
     EXPECT_TRUE(FileSystem::deleteNonEmptyDirectory(tempEmptyFolderPath()));
     EXPECT_FALSE(FileSystem::fileExists(subFolderPath));
-    String invalidFolderPath = makeString('\0', 'a');
+    RefPtr<StringImpl> invalidFolderPath = makeString('\0', 'a');
     EXPECT_FALSE(FileSystem::makeAllDirectories(invalidFolderPath));
     EXPECT_FALSE(FileSystem::makeAllDirectories(emptyString()));
 }
@@ -598,7 +598,7 @@ TEST_F(FileSystemTest, volumeFreeSpace)
     ASSERT_TRUE(freeSpace);
     EXPECT_GT(*freeSpace, 0U);
 
-    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
+    RefPtr<StringImpl> fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
     EXPECT_FALSE(FileSystem::volumeFreeSpace(fileThatDoesNotExist));
 }
 
@@ -636,7 +636,7 @@ TEST_F(FileSystemTest, createSymbolicLinkFolder)
 
 TEST_F(FileSystemTest, createSymbolicLinkFileDoesNotExist)
 {
-    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
+    RefPtr<StringImpl> fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
     EXPECT_FALSE(FileSystem::fileExists(fileThatDoesNotExist));
 
     auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist-symlink"_s);
@@ -734,7 +734,7 @@ TEST_F(FileSystemTest, hardLinkCount)
     EXPECT_TRUE(!linkCount);
 }
 
-static void runGetFileModificationTimeTest(const String& path, Function<std::optional<WallTime>(const String&)>&& fileModificationTime)
+static void runGetFileModificationTimeTest(StringImpl* path, Function<std::optional<WallTime>(StringImpl*)>&& fileModificationTime)
 {
     auto modificationTime = fileModificationTime(path);
     EXPECT_TRUE(!!modificationTime);
@@ -767,7 +767,7 @@ static void runGetFileModificationTimeTest(const String& path, Function<std::opt
 
 TEST_F(FileSystemTest, fileModificationTime)
 {
-    runGetFileModificationTimeTest(tempFilePath(), [](const String& path) {
+    runGetFileModificationTimeTest(tempFilePath(), [](StringImpl* path) {
         return FileSystem::fileModificationTime(path);
     });
 }
@@ -799,19 +799,19 @@ TEST_F(FileSystemTest, pathFileName)
     EXPECT_EQ("filename.txt"_s, FileSystem::pathFileName(testPath));
 
 #if OS(UNIX)
-    EXPECT_EQ("."_s, FileSystem::pathFileName("."_s));
-    EXPECT_EQ(".."_s, FileSystem::pathFileName(".."_s));
-    EXPECT_EQ(""_s, FileSystem::pathFileName("/"_s));
-    EXPECT_EQ("."_s, FileSystem::pathFileName("/foo/."_s));
-    EXPECT_EQ(".."_s, FileSystem::pathFileName("/foo/.."_s));
-    EXPECT_EQ(""_s, FileSystem::pathFileName("/foo/"_s));
-    EXPECT_EQ("host"_s, FileSystem::pathFileName("//host"_s));
+    EXPECT_EQ("."_s, FileSystem::pathFileName("."_si));
+    EXPECT_EQ(".."_s, FileSystem::pathFileName(".."_si));
+    EXPECT_EQ(""_s, FileSystem::pathFileName("/"_si));
+    EXPECT_EQ("."_s, FileSystem::pathFileName("/foo/."_si));
+    EXPECT_EQ(".."_s, FileSystem::pathFileName("/foo/.."_si));
+    EXPECT_EQ(""_s, FileSystem::pathFileName("/foo/"_si));
+    EXPECT_EQ("host"_s, FileSystem::pathFileName("//host"_si));
 #endif
 #if OS(WINDOWS)
-    EXPECT_EQ(""_s, FileSystem::pathFileName("C:\\"_s));
-    EXPECT_EQ("foo"_s, FileSystem::pathFileName("C:\\foo"_s));
-    EXPECT_EQ(""_s, FileSystem::pathFileName("C:\\foo\\"_s));
-    EXPECT_EQ("bar.txt"_s, FileSystem::pathFileName("C:\\foo\\bar.txt"_s));
+    EXPECT_EQ(""_s, FileSystem::pathFileName("C:\\"_si));
+    EXPECT_EQ("foo"_s, FileSystem::pathFileName("C:\\foo"_si));
+    EXPECT_EQ(""_s, FileSystem::pathFileName("C:\\foo\\"_si));
+    EXPECT_EQ("bar.txt"_s, FileSystem::pathFileName("C:\\foo\\bar.txt"_si));
 #endif
 }
 
@@ -820,14 +820,14 @@ TEST_F(FileSystemTest, parentPath)
     auto testPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), std::initializer_list<StringView>({ "subfolder"_s, "filename.txt"_s }));
     EXPECT_EQ(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder"_s), FileSystem::parentPath(testPath));
 #if OS(UNIX)
-    EXPECT_EQ("/var/tmp"_s, FileSystem::parentPath("/var/tmp/example.txt"_s));
-    EXPECT_EQ("/var/tmp"_s, FileSystem::parentPath("/var/tmp/"_s));
-    EXPECT_EQ("/var/tmp"_s, FileSystem::parentPath("/var/tmp/."_s));
-    EXPECT_EQ("/"_s, FileSystem::parentPath("/"_s));
+    EXPECT_EQ("/var/tmp"_s, FileSystem::parentPath("/var/tmp/example.txt"_si));
+    EXPECT_EQ("/var/tmp"_s, FileSystem::parentPath("/var/tmp/"_si));
+    EXPECT_EQ("/var/tmp"_s, FileSystem::parentPath("/var/tmp/."_si));
+    EXPECT_EQ("/"_s, FileSystem::parentPath("/"_si));
 #endif
 #if OS(WINDOWS)
-    EXPECT_EQ("C:\\foo"_s, FileSystem::parentPath("C:\\foo\\example.txt"_s));
-    EXPECT_EQ("C:\\"_s, FileSystem::parentPath("C:\\"_s));
+    EXPECT_EQ("C:\\foo"_s, FileSystem::parentPath("C:\\foo\\example.txt"_si));
+    EXPECT_EQ("C:\\"_s, FileSystem::parentPath("C:\\"_si));
 #endif
 }
 
@@ -940,7 +940,7 @@ TEST_F(FileSystemTest, readEntireFile)
 
     auto buffer = FileSystem::readEntireFile(tempFilePath());
     EXPECT_TRUE(buffer);
-    auto contents = String { byteCast<Latin1Character>(buffer.value().span()) }.utf8();
+    auto contents = utf8(StringImpl::create(byteCast<Latin1Character>(buffer.value().span())));
     EXPECT_EQ(contents, FileSystemTestData);
 }
 
@@ -973,11 +973,13 @@ TEST_F(FileSystemTest, isAncestor)
         { { "/a/b/c"_s, "a/b/c/"_s }, false }
     };
     std::ranges::for_each(narrowString, [](auto input) {
+        Ref<StringImpl> first = StringImpl::create(input.first.first);
+        Ref<StringImpl> second = StringImpl::create(input.first.second);
         EXPECT_EQ(
             input.second,
                 FileSystem::isAncestor(
-                    input.first.first,
-                    input.first.second
+                    first.ptr(),
+                    second.ptr()
                 )
             );
         }
@@ -1001,8 +1003,8 @@ TEST_F(FileSystemTest, isAncestor)
         EXPECT_EQ(
             input.second,
                 FileSystem::isAncestor(
-                    std::span<const char16_t> { static_cast<const char16_t *>(input.first.first), std::char_traits<char16_t>::length(input.first.first) },
-                    std::span<const char16_t> { static_cast<const char16_t*>(input.first.second), std::char_traits<char16_t>::length(input.first.second) }
+                    StringImpl::create(std::span<const char16_t> { static_cast<const char16_t *>(input.first.first), std::char_traits<char16_t>::length(input.first.first) }).ptr(),
+                    StringImpl::create(std::span<const char16_t> { static_cast<const char16_t*>(input.first.second), std::char_traits<char16_t>::length(input.first.second) }).ptr()
                 )
             );
         }
@@ -1041,7 +1043,7 @@ TEST_F(FileSystemTest, createTemporaryFileInDirectory)
     EXPECT_TRUE(!!fileHandle);
     EXPECT_TRUE(FileSystem::fileType(filePath) == FileSystem::FileType::Regular);
     EXPECT_TRUE(FileSystem::isAncestor(tempEmptyFolderPath(), filePath));
-    EXPECT_TRUE(FileSystem::parentPath(filePath) == tempEmptyFolderPath());
+    EXPECT_TRUE(equal(FileSystem::parentPath(filePath), tempEmptyFolderPath()));
 }
 #endif
 

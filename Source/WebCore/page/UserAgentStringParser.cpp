@@ -69,11 +69,11 @@
  */
 
 namespace WebCore {
-UserAgentStringParser::UserAgentStringParser(const String& userAgentString)
+UserAgentStringParser::UserAgentStringParser(StringImpl* userAgentString)
     : m_userAgentString(userAgentString)
     , data(UserAgentStringData::create()) { };
 
-Ref<UserAgentStringParser> UserAgentStringParser::create(const String& userAgentString)
+Ref<UserAgentStringParser> UserAgentStringParser::create(StringImpl* userAgentString)
 {
     return adoptRef(*new UserAgentStringParser(userAgentString));
 }
@@ -163,8 +163,8 @@ void UserAgentStringParser::consumeComment()
     }
 
     auto s = getSubstring();
-    if (!s.isEmpty()) {
-        auto comment = Comment { .parts = s.split(';') };
+    if (!isEmpty(s)) {
+        auto comment = Comment { .parts = split(s, ';') };
         segments.append(comment);
     }
     increment();
@@ -199,7 +199,7 @@ void UserAgentStringParser::consumeQuotedPair()
 
 inline char16_t UserAgentStringParser::peek()
 {
-    return m_userAgentString[this->pos];
+    return codeUnitAt(m_userAgentString, this->pos);
 }
 
 inline void UserAgentStringParser::increment()
@@ -209,12 +209,12 @@ inline void UserAgentStringParser::increment()
 
 inline bool UserAgentStringParser::atEnd()
 {
-    return this->pos >= this->m_userAgentString.length();
+    return this->pos >= length(this->m_userAgentString);
 }
 
-inline String UserAgentStringParser::getSubstring()
+inline RefPtr<StringImpl> UserAgentStringParser::getSubstring()
 {
-    return m_userAgentString.substring(start, pos - start);
+    return substring(m_userAgentString, start, pos - start);
 }
 
 struct BrowsersSeen {
@@ -224,12 +224,12 @@ struct BrowsersSeen {
     bool safari : 1 { false };
     bool opera : 1 { false };
     bool edge : 1 { false };
-    String braveVersion;
-    String firefoxVersion;
-    String chromeVersion;
-    String safariVersion;
-    String operaVersion;
-    String edgeVersion;
+    RefPtr<StringImpl> braveVersion;
+    RefPtr<StringImpl> firefoxVersion;
+    RefPtr<StringImpl> chromeVersion;
+    RefPtr<StringImpl> safariVersion;
+    RefPtr<StringImpl> operaVersion;
+    RefPtr<StringImpl> edgeVersion;
 };
 
 void UserAgentStringParser::populateUserAgentData()
@@ -239,102 +239,102 @@ void UserAgentStringParser::populateUserAgentData()
     bool linuxSeen { false };
     for (const auto& segment : segments) {
         WTF::switchOn(segment, [&browsersSeen, weakThis](const Product& p) {
-            if (p.name == "Mobile") {
+            if (equal(p.name, "Mobile")) {
                 weakThis->data->mobile = true;
                 return;
             }
-            if (p.name == "Brave") {
+            if (equal(p.name, "Brave")) {
                 browsersSeen.braveVersion = p.version;
                 browsersSeen.brave = true;
                 return;
             }
-            if (p.name == "Firefox" || p.name == "fxiOS") {
+            if (equal(p.name, "Firefox") || equal(p.name, "fxiOS")) {
                 browsersSeen.firefoxVersion = p.version;
                 browsersSeen.firefox = true;
                 return;
             }
-            if (p.name == "Chrome") {
+            if (equal(p.name, "Chrome")) {
                 browsersSeen.chromeVersion = p.version;
                 browsersSeen.chrome = true;
                 return;
             }
-            if (p.name == "Safari") {
+            if (equal(p.name, "Safari")) {
                 browsersSeen.safariVersion = p.version;
                 browsersSeen.safari = true;
                 return;
             }
-            if (p.name == "OPR") {
+            if (equal(p.name, "OPR")) {
                 browsersSeen.operaVersion = p.version;
                 browsersSeen.opera = true;
                 return;
             }
-            if (p.name.contains("Edg")) {
+            if (contains(p.name, "Edg")) {
                 browsersSeen.edgeVersion = p.version;
                 browsersSeen.edge = true;
                 return;
             } }, [weakThis, &linuxSeen](const Comment& c) {
             for (const auto& part : c.parts) {
-                if (part.contains("Windows")) {
-                    weakThis->data->platform = "Windows"_s;
+                if (contains(part, "Windows")) {
+                    weakThis->data->platform = "Windows"_si;
                     return;
                 }
-                if (part == "Macintosh") {
-                    weakThis->data->platform = "macOS"_s;
+                if (equal(part, "Macintosh")) {
+                    weakThis->data->platform = "macOS"_si;
                     return;
                 }
-                if (part == "iPhone") {
-                    weakThis->data->platform = "iOS"_s;
+                if (equal(part, "iPhone")) {
+                    weakThis->data->platform = "iOS"_si;
                     return;
                 }
-                if (part == "iPad") {
-                    weakThis->data->platform = "iOS"_s;
+                if (equal(part, "iPad")) {
+                    weakThis->data->platform = "iOS"_si;
                     return;
                 }
-                if (part.contains("Android")) {
-                    weakThis->data->platform = "Android"_s;
+                if (contains(part, "Android")) {
+                    weakThis->data->platform = "Android"_si;
                     return;
                 }
-                if (part.contains("Linux")) {
+                if (contains(part, "Linux")) {
                     linuxSeen = true;
                     return;
                 }
-                if (part.contains("CrOS")) {
-                    weakThis->data->platform = "ChromeOS"_s;
+                if (contains(part, "CrOS")) {
+                    weakThis->data->platform = "ChromeOS"_si;
                     return;
                 }
             } });
     }
 
     // android user agents sometimes list linux and android, but linux user agents don't list androids
-    if (linuxSeen && data->platform.isEmpty())
-        data->platform = "Linux"_s;
+    if (linuxSeen && isEmpty(data->platform))
+        data->platform = "Linux"_si;
 
     // both chrome and firefox sometimes list safari in their user agent strings
     if (browsersSeen.safari && !browsersSeen.chrome && !browsersSeen.firefox) {
-        data->browserName = "Safari"_s;
+        data->browserName = "Safari"_si;
         data->browserVersion = browsersSeen.safariVersion;
         return;
     }
 
     // no other browser typically list firefox
     if (browsersSeen.firefox) {
-        data->browserName = "Firefox"_s;
+        data->browserName = "Firefox"_si;
         data->browserVersion = browsersSeen.firefoxVersion;
     }
 
     // chrome based browsers typically list chrome
     if (browsersSeen.chrome) {
         if (browsersSeen.edge) {
-            data->browserName = "Microsoft Edge"_s;
+            data->browserName = "Microsoft Edge"_si;
             data->browserVersion = browsersSeen.edgeVersion;
         } else if (browsersSeen.brave) {
-            data->browserName = "Brave"_s;
+            data->browserName = "Brave"_si;
             data->browserVersion = browsersSeen.braveVersion;
         } else if (browsersSeen.opera) {
-            data->browserName = "Opera"_s;
+            data->browserName = "Opera"_si;
             data->browserVersion = browsersSeen.operaVersion;
         } else {
-            data->browserName = "Google Chrome"_s;
+            data->browserName = "Google Chrome"_si;
             data->browserVersion = browsersSeen.chromeVersion;
         }
     }

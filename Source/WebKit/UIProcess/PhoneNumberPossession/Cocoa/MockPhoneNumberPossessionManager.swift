@@ -49,7 +49,7 @@ final class MockPhoneNumberPossessionManager: PhoneNumberPossessionManaging {
 
     func requestPhoneNumberPossession(
         request: WebKit.RefCountedPhoneNumberPossessionRequest,
-        origin: WTF.String,
+        origin: WTF.StringImpl?,
         presentationAnchor: PhoneNumberPossessionPresentationAnchor
     ) async throws(CxxUnexpected<WebKit.PhoneNumberPossessionError>) -> WebCore.PhoneNumberPossessionResponse {
         // Like the platform, fail a request when the preflight check would fail.
@@ -89,7 +89,7 @@ final class MockPhoneNumberPossessionManager: PhoneNumberPossessionManaging {
         let clientData = ClientData(
             challenge: challenge.base64EncodedString(options: [.base64URLAlphabet, .omitPaddingCharacter]),
             requestContext: "web browser",
-            rpId: request.pointee.relyingPartyIdentifier.description
+            rpId: String(request.pointee.relyingPartyIdentifier.get())
         )
 
         let phoneNumberRequested = request.pointee.desiredResponseType == .PossessionIdentifierAndPhoneNumber
@@ -118,7 +118,7 @@ final class MockPhoneNumberPossessionManager: PhoneNumberPossessionManaging {
 
         var response = WebCore.PhoneNumberPossessionResponse(
             encryptedResult: JSC.ArrayBuffer.createFromSpan(resultJSON.span),
-            carrierDomain: WTF.String("carrier.example" as CFString),
+            carrierDomain: .init(WTF.StringImpl.create(from: "carrier.example")),
             carrierConfigurationID: 1,
             encryptedDecryptionKey: .init(),
             carrierPubKey: .init(),

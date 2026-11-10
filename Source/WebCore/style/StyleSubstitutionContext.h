@@ -39,7 +39,7 @@ namespace Style {
 struct SubstitutionContext {
     enum class Type : uint8_t { Property, Attribute, Function };
     Type type;
-    AtomString name;
+    RefPtr<AtomStringImpl> name;
     // For Function contexts, the scope the function resolved in. Tree-scoping means distinct functions
     // can share a name, and (name, scope) identifies the function.
     ScopeOrdinal functionScopeOrdinal { ScopeOrdinal::Element };

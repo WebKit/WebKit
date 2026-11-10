@@ -40,13 +40,13 @@ Ref<RTCRtpSFrameTransformErrorEvent> RTCRtpSFrameTransformErrorEvent::create(Can
     return adoptRef(*new RTCRtpSFrameTransformErrorEvent(eventNames().errorEvent, canBubble, isCancelable, errorType));
 }
 
-Ref<RTCRtpSFrameTransformErrorEvent> RTCRtpSFrameTransformErrorEvent::create(const AtomString& type, Init&& init)
+Ref<RTCRtpSFrameTransformErrorEvent> RTCRtpSFrameTransformErrorEvent::create(AtomStringImpl* type, Init&& init)
 {
     return adoptRef(*new RTCRtpSFrameTransformErrorEvent(type, init.bubbles ? CanBubble::Yes : CanBubble::No,
         init.cancelable ? IsCancelable::Yes : IsCancelable::No, init.errorType));
 }
 
-RTCRtpSFrameTransformErrorEvent::RTCRtpSFrameTransformErrorEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Type errorType)
+RTCRtpSFrameTransformErrorEvent::RTCRtpSFrameTransformErrorEvent(AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable, Type errorType)
     : Event(EventInterfaceType::RTCRtpSFrameTransformErrorEvent, type, canBubble, cancelable)
     , m_errorType(errorType)
 {

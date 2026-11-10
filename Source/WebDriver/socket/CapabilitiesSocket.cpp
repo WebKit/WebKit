@@ -31,13 +31,13 @@ namespace WebDriver {
 void CapabilitiesSocket::parseCapabilities(const JSON::Object& matchedCapabilities, Capabilities& capabilities)
 {
     RefPtr<JSON::Value> targetAddrValue;
-    String targetAddr;
-    if (matchedCapabilities.getValue("socket:targetAddr"_s, targetAddrValue) && targetAddrValue->asString(targetAddr))
+    RefPtr<StringImpl> targetAddr;
+    if (matchedCapabilities.getValue("socket:targetAddr"_si, targetAddrValue) && targetAddrValue->asString(targetAddr))
         capabilities.targetAddr = targetAddr;
 
     RefPtr<JSON::Value> targetPortValue;
     int targetPort;
-    if (matchedCapabilities.getValue("socket:targetPort"_s, targetPortValue) && targetPortValue->asInteger(targetPort))
+    if (matchedCapabilities.getValue("socket:targetPort"_si, targetPortValue) && targetPortValue->asInteger(targetPort))
         capabilities.targetPort = targetPort;
 }
 

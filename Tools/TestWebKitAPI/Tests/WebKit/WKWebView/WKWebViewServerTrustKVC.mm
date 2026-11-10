@@ -196,14 +196,14 @@ TEST(WKWebView, QualifiedServerTrustKVC)
     auto linkHeader = [&] (ASCIILiteral rel) {
         return makeString("<https://webkit.org/2qwac>; rel=\""_s, rel, "\""_s);
     };
-    server.addResponse("/no-link"_s, { "hi"_s });
-    server.addResponse("/binding-link"_s, { { { "Link"_s, linkHeader("tls-certificate-binding preload"_s) } }, "hi"_s });
-    server.addResponse("/other-rel"_s, { { { "Link"_s, linkHeader("author"_s) } }, "hi"_s });
-    server.addResponse("/many-links"_s, { { { "Link"_s, makeString("<https://webkit.org/author>; rel=\"author\", "_s, linkHeader("tls-certificate-binding"_s)) } }, "hi"_s });
-    server.addResponse("/cross-origin-link"_s, { { { "Link"_s, "<https://example.com/2qwac>; rel=\"tls-certificate-binding\""_s } }, "hi"_s });
-    server.addResponse("/relative-link"_s, { { { "Link"_s, "</2qwac>; rel=\"tls-certificate-binding\""_s } }, "hi"_s });
-    server.addResponse("/scheme-relative-cross-origin-link"_s, { { { "Link"_s, "<//example.com/2qwac>; rel=\"tls-certificate-binding\""_s } }, "hi"_s });
-    server.addResponse("/path/relative-link"_s, { { { "Link"_s, "<../2qwac>; rel=\"tls-certificate-binding\""_s } }, "hi"_s });
+    server.addResponse("/no-link"_si, { "hi"_si });
+    server.addResponse("/binding-link"_si, { { { "Link"_s, linkHeader("tls-certificate-binding preload"_s) } }, "hi"_si });
+    server.addResponse("/other-rel"_si, { { { "Link"_s, linkHeader("author"_s) } }, "hi"_si });
+    server.addResponse("/many-links"_si, { { { "Link"_s, makeString("<https://webkit.org/author>; rel=\"author\", "_s, linkHeader("tls-certificate-binding"_s)) } }, "hi"_si });
+    server.addResponse("/cross-origin-link"_si, { { { "Link"_s, "<https://example.com/2qwac>; rel=\"tls-certificate-binding\""_s } }, "hi"_si });
+    server.addResponse("/relative-link"_si, { { { "Link"_s, "</2qwac>; rel=\"tls-certificate-binding\""_s } }, "hi"_si });
+    server.addResponse("/scheme-relative-cross-origin-link"_si, { { { "Link"_s, "<//example.com/2qwac>; rel=\"tls-certificate-binding\""_s } }, "hi"_si });
+    server.addResponse("/path/relative-link"_si, { { { "Link"_s, "<../2qwac>; rel=\"tls-certificate-binding\""_s } }, "hi"_si });
 
     RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
     [storeConfiguration setQualifiedServerTrustDebugEnabledForTesting:YES];

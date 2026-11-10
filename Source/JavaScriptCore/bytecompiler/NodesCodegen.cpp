@@ -4954,8 +4954,8 @@ static void processClauseList(ClauseListNode* list, Vector<ExpressionNode*, 8>& 
                 break;
             }
             auto& value = static_cast<StringNode*>(clauseExpression)->value().string();
-            if (singleCharacterSwitch &= value.length() == 1) {
-                int32_t intVal = value[0];
+            if (singleCharacterSwitch &= length(value) == 1) {
+                int32_t intVal = codeUnitAt(value, 0);
                 if (intVal < min_num)
                     min_num = intVal;
                 if (intVal > max_num)

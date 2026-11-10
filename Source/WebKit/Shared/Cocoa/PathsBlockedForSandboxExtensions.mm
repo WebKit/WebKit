@@ -33,43 +33,43 @@
 
 namespace WebKit {
 
-static Vector<String>& pathsBlockedForSandboxExtension()
+static Vector<RefPtr<StringImpl>>& pathsBlockedForSandboxExtension()
 {
-    static NeverDestroyed<Vector<String>> pathsBlocked;
+    static NeverDestroyed<Vector<RefPtr<StringImpl>>> pathsBlocked;
     return pathsBlocked;
 }
 
-static Vector<String>& subPathsBlockedForSandboxExtension()
+static Vector<RefPtr<StringImpl>>& subPathsBlockedForSandboxExtension()
 {
-    static NeverDestroyed<Vector<String>> subPathsBlocked;
+    static NeverDestroyed<Vector<RefPtr<StringImpl>>> subPathsBlocked;
     return subPathsBlocked;
 }
 
-void addPathsBlockedForSandboxExtension(Vector<String>&& paths)
+void addPathsBlockedForSandboxExtension(Vector<RefPtr<StringImpl>>&& paths)
 {
     for (auto& path : borrow(paths)) {
-        String normalizedPath = FileSystem::realPath(path);
+        RefPtr<StringImpl> normalizedPath = FileSystem::realPath(path);
         path = FileSystem::lexicallyNormal(normalizedPath);
     }
     pathsBlockedForSandboxExtension().appendVector(WTF::move(paths));
 }
 
-void addSubPathsBlockedForSandboxExtension(Vector<String>&& paths)
+void addSubPathsBlockedForSandboxExtension(Vector<RefPtr<StringImpl>>&& paths)
 {
     for (auto& path : borrow(paths)) {
-        String normalizedPath = FileSystem::realPath(path);
+        RefPtr<StringImpl> normalizedPath = FileSystem::realPath(path);
         path = FileSystem::lexicallyNormal(normalizedPath);
     }
     subPathsBlockedForSandboxExtension().appendVector(WTF::move(paths));
 }
 
-bool pathIsBlockedForSandboxExtensions(const String& path)
+bool pathIsBlockedForSandboxExtensions(StringImpl* path)
 {
-    String normalizedPath = FileSystem::realPath(path);
+    RefPtr<StringImpl> normalizedPath = FileSystem::realPath(path);
     normalizedPath = FileSystem::lexicallyNormal(normalizedPath);
 
     for (auto& pathBlocked : pathsBlockedForSandboxExtension()) {
-        if (pathBlocked == normalizedPath)
+        if (equal(pathBlocked, normalizedPath))
             return true;
     }
 

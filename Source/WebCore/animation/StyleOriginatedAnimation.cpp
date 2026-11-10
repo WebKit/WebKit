@@ -388,7 +388,7 @@ void StyleOriginatedAnimation::invalidateDOMEvents(WebAnimationTime cancelationT
     m_previousIteration = iteration;
 }
 
-void StyleOriginatedAnimation::enqueueDOMEvent(const AtomString& eventType, WebAnimationTime elapsedTime, WebAnimationTime scheduledEffectTime)
+void StyleOriginatedAnimation::enqueueDOMEvent(AtomStringImpl* eventType, WebAnimationTime elapsedTime, WebAnimationTime scheduledEffectTime)
 {
     if (!m_owningElement)
         return;

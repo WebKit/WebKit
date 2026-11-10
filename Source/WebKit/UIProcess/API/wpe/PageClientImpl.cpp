@@ -165,11 +165,11 @@ void PageClientImpl::preferencesDidChange()
 {
 }
 
-void PageClientImpl::toolTipChanged(const String&, const String&)
+void PageClientImpl::toolTipChanged(StringImpl*, StringImpl*)
 {
 }
 
-void PageClientImpl::didCommitLoadForMainFrame(const String&, bool)
+void PageClientImpl::didCommitLoadForMainFrame(StringImpl*, bool)
 {
 }
 
@@ -371,7 +371,7 @@ void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& co
 #endif
 }
 
-void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String&, std::span<const uint8_t>)
+void PageClientImpl::didFinishLoadingDataForCustomContentProvider(StringImpl*, std::span<const uint8_t>)
 {
 }
 
@@ -531,7 +531,7 @@ void PageClientImpl::beganExitFullScreen(const WebCore::IntRect& /* initialFrame
 
 #endif // ENABLE(FULLSCREEN_API)
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, StringImpl* originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
 #if ENABLE(WPE_PLATFORM)
     if (auto* view = m_view.wpeView()) {
@@ -539,7 +539,7 @@ void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebC
             auto* clipboard = wpe_display_get_clipboard(wpe_view_get_display(view));
             if (GRefPtr<GBytes> bytes = adoptGRef(wpe_clipboard_read_bytes(clipboard, WebCore::PasteboardCustomData::wpeType().characters()))) {
                 Ref buffer = WebCore::SharedBuffer::create(bytes.get());
-                if (WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() == originIdentifier) {
+                if (equal(WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin(), originIdentifier)) {
                     completionHandler(WebCore::DOMPasteAccessResponse::GrantedForGesture);
                     return;
                 }

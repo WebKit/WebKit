@@ -42,12 +42,12 @@ struct CustomFunction : CanMakeCheckedPtr<CustomFunction> {
     // A function body without conditional group rules is a single block.
     using DeclarationsBlocks = Vector<DeclarationsBlock, 1>;
 
-    AtomString name;
+    RefPtr<AtomStringImpl> name;
     const Vector<StyleRuleFunction::Parameter> parameters;
     const CSSCustomPropertySyntax returnType;
     DeclarationsBlocks declarationBlocks;
 
-    CustomFunction(const AtomString&, const Vector<StyleRuleFunction::Parameter>&, const CSSCustomPropertySyntax& returnType, DeclarationsBlocks&&);
+    CustomFunction(AtomStringImpl*, const Vector<StyleRuleFunction::Parameter>&, const CSSCustomPropertySyntax& returnType, DeclarationsBlocks&&);
 
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(CustomFunction);
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(CustomFunction);
@@ -59,11 +59,11 @@ class CustomFunctionRegistry : public CanMakeCheckedPtr<CustomFunctionRegistry> 
 public:
     CustomFunctionRegistry() = default;
 
-    NODELETE const CustomFunction* functionForName(const AtomString&) const;
+    NODELETE const CustomFunction* functionForName(AtomStringImpl*) const;
     void registerFunction(const StyleRuleFunction&, CustomFunction::DeclarationsBlocks&&);
 
 private:
-    HashMap<AtomString, UniqueRef<const CustomFunction>> m_functions;
+    HashMap<RefPtr<AtomStringImpl>, UniqueRef<const CustomFunction>> m_functions;
 };
 
 }

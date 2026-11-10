@@ -32,8 +32,8 @@
 namespace WebKit {
 
 struct RemoteCDMConfiguration {
-    Vector<String> supportedInitDataTypes;
-    Vector<String> supportedRobustnesses;
+    Vector<RefPtr<StringImpl>> supportedInitDataTypes;
+    Vector<RefPtr<StringImpl>> supportedRobustnesses;
     bool supportsServerCertificates;
     bool supportsSessions;
     uint64_t logIdentifier { 0 };

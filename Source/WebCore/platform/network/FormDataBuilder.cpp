@@ -175,7 +175,7 @@ void addBoundaryToMultiPartHeader(Vector<uint8_t>& buffer, std::span<const uint8
     append(buffer, "\r\n"_s);
 }
 
-void addFilenameToMultiPartHeader(Vector<uint8_t>& buffer, const PAL::TextEncoding& encoding, const String& filename)
+void addFilenameToMultiPartHeader(Vector<uint8_t>& buffer, const PAL::TextEncoding& encoding, StringImpl* filename)
 {
     append(buffer, "; filename=\""_s);
     appendQuoted(buffer, encoding.encode(filename, PAL::UnencodableHandling::Entities));

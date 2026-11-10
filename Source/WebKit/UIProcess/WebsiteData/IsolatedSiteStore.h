@@ -55,7 +55,7 @@ public:
     static constexpr uint32_t defaultMaximumSiteCount = 5000;
 
     using UserInteractionDomainFetcher = Function<void(CompletionHandler<void(std::optional<HashMap<WebCore::RegistrableDomain, WallTime>>&&)>&&)>;
-    static Ref<IsolatedSiteStore> create(const String& databaseDirectoryPath, UserInteractionDomainFetcher&&, bool highValueFraudTargetDomainsEnabled, HashSet<WebCore::RegistrableDomain>&& additionalSitesForTesting);
+    static Ref<IsolatedSiteStore> create(StringImpl* databaseDirectoryPath, UserInteractionDomainFetcher&&, bool highValueFraudTargetDomainsEnabled, HashSet<WebCore::RegistrableDomain>&& additionalSitesForTesting);
     ~IsolatedSiteStore();
 
     void addSite(const WebCore::Site&, Signal);
@@ -77,7 +77,7 @@ public:
     void setMaximumSiteCountForTesting(uint32_t);
 
 private:
-    IsolatedSiteStore(const String& databaseDirectoryPath, UserInteractionDomainFetcher&&, bool highValueFraudTargetDomainsEnabled, HashSet<WebCore::RegistrableDomain>&&);
+    IsolatedSiteStore(StringImpl* databaseDirectoryPath, UserInteractionDomainFetcher&&, bool highValueFraudTargetDomainsEnabled, HashSet<WebCore::RegistrableDomain>&&);
 
     static WorkQueue& sharedWorkQueueSingleton();
 

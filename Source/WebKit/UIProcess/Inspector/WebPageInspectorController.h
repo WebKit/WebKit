@@ -84,13 +84,13 @@ public:
     void disconnectFrontend(Inspector::FrontendChannel&);
     void disconnectAllFrontends();
 
-    void dispatchMessageFromFrontend(const String& message);
+    void dispatchMessageFromFrontend(StringImpl* message);
 
 #if ENABLE(REMOTE_INSPECTOR)
     void setIndicating(bool);
 #endif
 
-    void sendMessageToInspectorFrontend(const String& targetId, const String& message);
+    void sendMessageToInspectorFrontend(StringImpl* targetId, StringImpl* message);
 
     bool shouldPauseLoadingForPage(const ProvisionalPageProxy&) const;
     void setContinueLoadingCallbackForPage(const ProvisionalPageProxy&, WTF::Function<void()>&&);
@@ -109,8 +109,8 @@ public:
     NODELETE InspectorBrowserAgent* enabledBrowserAgent() const;
     void setEnabledBrowserAgent(InspectorBrowserAgent*);
 
-    void browserExtensionsEnabled(HashMap<String, String>&&);
-    void browserExtensionsDisabled(HashSet<String>&&);
+    void browserExtensionsEnabled(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&&);
+    void browserExtensionsDisabled(HashSet<RefPtr<StringImpl>>&&);
 
     bool isNetworkInstrumentationEnabled() const;
     bool isPageInstrumentationEnabled() const;
@@ -119,7 +119,7 @@ public:
 
     void disconnectFrameTargetForTesting(WebCore::FrameIdentifier);
 
-    void debuggerPauseSessionDidChange(WebCore::DebuggerPauseSessionIdentifier, bool isPaused, const Vector<String>& stoppingTargetIDs);
+    void debuggerPauseSessionDidChange(WebCore::DebuggerPauseSessionIdentifier, bool isPaused, const Vector<RefPtr<StringImpl>>& stoppingTargetIDs);
 
 private:
     void browsingContextGroupPageWasAddedToProcess(WebProcessProxy&, WebCore::PageIdentifier);
@@ -128,7 +128,7 @@ private:
     void createLazyAgents();
 
     void addTarget(std::unique_ptr<InspectorTargetProxy>&&);
-    void removeTarget(const String& targetId);
+    void removeTarget(StringImpl* targetId);
 
     bool shouldManageFrameTargets() const;
 
@@ -139,7 +139,7 @@ private:
     WeakRef<WebPageProxy> m_inspectedPage;
 
     CheckedPtr<Inspector::InspectorTargetAgent> m_targetAgent;
-    HashMap<String, std::unique_ptr<InspectorTargetProxy>> m_targets;
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<InspectorTargetProxy>> m_targets;
 
     CheckedPtr<InspectorBrowserAgent> m_enabledBrowserAgent;
     const RefPtr<Inspector::ProxyingNetworkAgent> m_networkAgent;

@@ -70,7 +70,7 @@ public:
     void setProvider(std::unique_ptr<API::GeolocationProvider>&&);
 
     void providerDidChangePosition(WebGeolocationPosition*);
-    void providerDidFailToDeterminePosition(const String& errorMessage = String());
+    void providerDidFailToDeterminePosition(StringImpl* errorMessage = nullptr);
 #if PLATFORM(IOS_FAMILY)
     void resetPermissions();
 #endif
@@ -90,19 +90,19 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // IPC messages.
-    void startUpdating(IPC::Connection&, IPC::Untrusted<WebCore::RegistrableDomain>&&, WebPageProxyIdentifier, const String& authorizationToken, bool enableHighAccuracy);
+    void startUpdating(IPC::Connection&, IPC::Untrusted<WebCore::RegistrableDomain>&&, WebPageProxyIdentifier, StringImpl* authorizationToken, bool enableHighAccuracy);
     void stopUpdating(IPC::Connection&, IPC::Untrusted<WebCore::RegistrableDomain>&&);
     void setEnableHighAccuracy(IPC::Connection&, IPC::Untrusted<WebCore::RegistrableDomain>&&, bool);
 
-    void startUpdatingWithProxy(WebProcessProxy&, const WebCore::RegistrableDomain&, WebPageProxyIdentifier, const String& authorizationToken, bool enableHighAccuracy);
+    void startUpdatingWithProxy(WebProcessProxy&, const WebCore::RegistrableDomain&, WebPageProxyIdentifier, StringImpl* authorizationToken, bool enableHighAccuracy);
     void stopUpdatingWithProxy(WebProcessProxy&, const WebCore::RegistrableDomain&);
     void setEnableHighAccuracyWithProxy(WebProcessProxy&, const WebCore::RegistrableDomain&, bool);
 
 #if PLATFORM(IOS_FAMILY)
     // CoreLocationGeolocationProvider::Client
-    void positionChanged(const String& websiteIdentifier, WebCore::GeolocationPositionData&&) final;
-    void errorOccurred(const String& websiteIdentifier, const String& errorMessage) final;
-    void resetGeolocation(const String& websiteIdentifier) final;
+    void positionChanged(StringImpl* websiteIdentifier, WebCore::GeolocationPositionData&&) final;
+    void errorOccurred(StringImpl* websiteIdentifier, StringImpl* errorMessage) final;
+    void resetGeolocation(StringImpl* websiteIdentifier) final;
 #endif
 
     struct PerDomainData {

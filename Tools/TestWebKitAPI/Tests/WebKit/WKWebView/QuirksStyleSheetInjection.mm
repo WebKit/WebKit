@@ -44,7 +44,7 @@ static constexpr auto overlayDisplayScript = "getComputedStyle(document.querySel
 static RetainPtr<NSString> overlayDisplayInSubframe(NSString *topURL, NSString *subframeURL, bool siteIsolationEnabled)
 {
     HTTPServer server({
-        { "/main"_s, { makeString("<iframe src='"_s, String(subframeURL), "'></iframe>"_s) } },
+        { "/main"_s, { makeString("<iframe src='"_s, StringImpl::create(subframeURL), "'></iframe>"_s) } },
         { "/subframe"_s, { "<div class='cdk-overlay-container'>overlay</div>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
 

@@ -40,7 +40,7 @@ public:
     using Type = HTMLToken::Type;
 
     explicit AtomHTMLToken(HTMLToken&);
-    AtomHTMLToken(Type, TagName, const AtomString& name, Vector<Attribute>&& = { }); // Only StartTag or EndTag.
+    AtomHTMLToken(Type, TagName, AtomStringImpl* name, Vector<Attribute>&& = { }); // Only StartTag or EndTag.
     AtomHTMLToken(Type, TagName, Vector<Attribute>&& = { }); // Only StartTag or EndTag.
 
     AtomHTMLToken(const AtomHTMLToken&) = delete;
@@ -52,13 +52,13 @@ public:
 
     void setTagName(TagName);
 
-    const AtomString& name() const LIFETIME_BOUND;
+    const RefPtr<AtomStringImpl>& name() const LIFETIME_BOUND;
 
     // DOCTYPE.
 
     bool forceQuirks() const;
-    String publicIdentifier() const;
-    String systemIdentifier() const;
+    RefPtr<StringImpl> publicIdentifier() const;
+    RefPtr<StringImpl> systemIdentifier() const;
 
     // StartTag, EndTag.
 
@@ -77,21 +77,21 @@ public:
 
     // Comment
 
-    const String& comment() const LIFETIME_BOUND;
-    String& comment() LIFETIME_BOUND;
+    const RefPtr<StringImpl>& comment() const LIFETIME_BOUND;
+    RefPtr<StringImpl>& comment() LIFETIME_BOUND;
 
     // Processing instruction
 
-    const AtomString& processingInstructionTarget() const LIFETIME_BOUND;
-    const String& processingInstructionData() const LIFETIME_BOUND;
+    const RefPtr<AtomStringImpl>& processingInstructionTarget() const LIFETIME_BOUND;
+    const RefPtr<StringImpl>& processingInstructionData() const LIFETIME_BOUND;
 
     bool hasDuplicateAttribute() const { return m_hasDuplicateAttribute; }
 
 private:
     void initializeAttributes(const HTMLToken::AttributeList& attributes);
 
-    AtomString m_name; // StartTag, EndTag, DOCTYPE, ProcessingInstruction.
-    String m_data; // Comment, ProcessingInstruction.
+    RefPtr<AtomStringImpl> m_name; // StartTag, EndTag, DOCTYPE, ProcessingInstruction.
+    RefPtr<StringImpl> m_data; // Comment, ProcessingInstruction.
     std::unique_ptr<DoctypeData> m_doctypeData; // DOCTYPE.
     Vector<Attribute> m_attributes; // StartTag, EndTag.
 
@@ -109,17 +109,17 @@ private:
 };
 
 const Attribute* findAttribute(const Vector<Attribute>&, const QualifiedName&);
-bool hasAttribute(const Vector<Attribute>&, const AtomString& localName);
+bool hasAttribute(const Vector<Attribute>&, AtomStringImpl* localName);
 
 inline auto AtomHTMLToken::type() const -> Type
 {
     return m_type;
 }
 
-inline const AtomString& AtomHTMLToken::name() const
+inline const RefPtr<AtomStringImpl>& AtomHTMLToken::name() const
 {
     ASSERT(m_type == Type::StartTag || m_type == Type::EndTag || m_type == Type::DOCTYPE);
-    if (!m_name.isNull())
+    if (m_name)
         return m_name;
 
     ASSERT(m_type == Type::StartTag || m_type == Type::EndTag);
@@ -184,25 +184,25 @@ inline bool AtomHTMLToken::isReplacedNullCharacter() const
     return m_isReplacedNullCharacter;
 }
 
-inline const String& AtomHTMLToken::comment() const
+inline const RefPtr<StringImpl>& AtomHTMLToken::comment() const
 {
     ASSERT(m_type == Type::Comment);
     return m_data;
 }
 
-inline String& AtomHTMLToken::comment()
+inline RefPtr<StringImpl>& AtomHTMLToken::comment()
 {
     ASSERT(m_type == Type::Comment);
     return m_data;
 }
 
-inline const AtomString& AtomHTMLToken::processingInstructionTarget() const
+inline const RefPtr<AtomStringImpl>& AtomHTMLToken::processingInstructionTarget() const
 {
     ASSERT(m_type == Type::ProcessingInstruction);
     return m_name;
 }
 
-inline const String& AtomHTMLToken::processingInstructionData() const
+inline const RefPtr<StringImpl>& AtomHTMLToken::processingInstructionData() const
 {
     ASSERT(m_type == Type::ProcessingInstruction);
     return m_data;
@@ -214,18 +214,18 @@ inline bool AtomHTMLToken::forceQuirks() const
     return m_doctypeData->forceQuirks;
 }
 
-inline String AtomHTMLToken::publicIdentifier() const
+inline RefPtr<StringImpl> AtomHTMLToken::publicIdentifier() const
 {
     ASSERT(m_type == Type::DOCTYPE);
     if (!m_doctypeData->hasPublicIdentifier)
-        return String();
+        return nullptr;
     return StringImpl::create8BitIfPossible(m_doctypeData->publicIdentifier);
 }
 
-inline String AtomHTMLToken::systemIdentifier() const
+inline RefPtr<StringImpl> AtomHTMLToken::systemIdentifier() const
 {
     if (!m_doctypeData->hasSystemIdentifier)
-        return String();
+        return nullptr;
     return StringImpl::create8BitIfPossible(m_doctypeData->systemIdentifier);
 }
 
@@ -238,7 +238,7 @@ inline const Attribute* findAttribute(const Vector<Attribute>& attributes, const
     return nullptr;
 }
 
-inline bool hasAttribute(const Vector<Attribute>& attributes, const AtomString& localName)
+inline bool hasAttribute(const Vector<Attribute>& attributes, AtomStringImpl* localName)
 {
     for (auto& attribute : attributes) {
         if (attribute.localName() == localName)
@@ -260,7 +260,7 @@ inline void AtomHTMLToken::initializeAttributes(const HTMLToken::AttributeList& 
             return std::nullopt;
 
         auto qualifiedName = HTMLNameCache::makeAttributeQualifiedName(attribute.name);
-        if (!insertInUniquedSortedVector(addedAttributes, qualifiedName.localName().impl())) [[unlikely]] {
+        if (!insertInUniquedSortedVector(addedAttributes, qualifiedName.localName().get())) [[unlikely]] {
             m_hasDuplicateAttribute = true;
             return std::nullopt;
         }
@@ -277,10 +277,10 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
         ASSERT_NOT_REACHED();
         return;
     case Type::DOCTYPE:
-        if (token.name().size() == 4 && equal(HTMLNames::htmlTag->localName().impl(), token.name().span())) [[likely]]
+        if (token.name().size() == 4 && equal(HTMLNames::htmlTag->localName().get(), token.name().span())) [[likely]]
             m_name = HTMLNames::htmlTag->localName();
         else
-            m_name = AtomString(token.name().span());
+            m_name = AtomStringImpl::add(token.name().span());
         m_doctypeData = token.releaseDoctypeData();
         return;
     case Type::EndOfFile:
@@ -290,19 +290,19 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
         m_selfClosing = token.selfClosing();
         m_tagName = findTagName(token.name());
         if (m_tagName == TagName::Unknown) [[unlikely]]
-            m_name = AtomString(token.name().span());
+            m_name = AtomStringImpl::add(token.name().span());
         initializeAttributes(token.attributes());
         return;
     case Type::Comment: {
         if (token.commentIsAll8BitData())
-            m_data = String::make8Bit(token.comment().span());
+            m_data = StringImpl::make8Bit(token.comment().span());
         else
-            m_data = token.comment().span();
+            m_data = StringImpl::create(token.comment().span());
         return;
     }
     case Type::ProcessingInstruction:
-        m_name = AtomString(token.processingInstructionTarget().span());
-        m_data = AtomString(token.processingInstructionData().span()).releaseString();
+        m_name = AtomStringImpl::add(token.processingInstructionTarget().span());
+        m_data = AtomStringImpl::add(token.processingInstructionData().span());
         return;
     case Type::Character:
         m_externalCharacters = token.characters().span();
@@ -313,7 +313,7 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
     ASSERT_NOT_REACHED();
 }
 
-inline AtomHTMLToken::AtomHTMLToken(HTMLToken::Type type, TagName tagName, const AtomString& name, Vector<Attribute>&& attributes)
+inline AtomHTMLToken::AtomHTMLToken(HTMLToken::Type type, TagName tagName, AtomStringImpl* name, Vector<Attribute>&& attributes)
     : m_name(name)
     , m_attributes(WTF::move(attributes))
     , m_type(type)

@@ -88,10 +88,10 @@ NSString *NetworkTaskCocoa::lastRemoteIPAddress(NSURLSessionTask *task)
     return task._incompleteTaskMetrics.transactionMetrics.lastObject.remoteAddress;
 }
 
-WebCore::RegistrableDomain NetworkTaskCocoa::lastCNAMEDomain(String cname)
+WebCore::RegistrableDomain NetworkTaskCocoa::lastCNAMEDomain(RefPtr<StringImpl> cname)
 {
-    if (cname.endsWith('.'))
-        cname = cname.left(cname.length() - 1);
+    if (endsWith(cname, '.'))
+        cname = left(cname, length(cname) - 1);
     return WebCore::RegistrableDomain::uncheckedCreateFromHost(cname);
 }
 
@@ -124,9 +124,9 @@ bool NetworkTaskCocoa::needsFirstPartyCookieBlockingLatchModeQuirk(const URL& fi
     using RegistrableDomain = WebCore::RegistrableDomain;
     static NeverDestroyed<HashMap<RegistrableDomain, RegistrableDomain>> quirkPairs = [] {
         HashMap<RegistrableDomain, RegistrableDomain> map;
-        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("ymail.com"_s), RegistrableDomain::uncheckedCreateFromRegistrableDomainString("yahoo.com"_s));
-        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("aolmail.com"_s), RegistrableDomain::uncheckedCreateFromRegistrableDomainString("aol.com"_s));
-        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("googleusercontent.com"_s), RegistrableDomain::uncheckedCreateFromRegistrableDomainString("google.com"_s));
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("ymail.com"_si), RegistrableDomain::uncheckedCreateFromRegistrableDomainString("yahoo.com"_si));
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("aolmail.com"_si), RegistrableDomain::uncheckedCreateFromRegistrableDomainString("aol.com"_si));
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("googleusercontent.com"_si), RegistrableDomain::uncheckedCreateFromRegistrableDomainString("google.com"_si));
         return map;
     }();
 
@@ -163,7 +163,7 @@ void NetworkTaskCocoa::setCookieTransformForThirdPartyRequest(const WebCore::Res
     if (!networkStorageSession->isOptInCookiePartitioningEnabled())
         return;
 
-    String cookiePartition = networkStorageSession->cookiePartitionIdentifier(request);
+    RefPtr<StringImpl> cookiePartition = networkStorageSession->cookiePartitionIdentifier(request);
 
     protect(task()).get()._cookieTransformCallback = makeBlockPtr([
         requestURL = crossThreadCopy(request.url())
@@ -176,17 +176,17 @@ void NetworkTaskCocoa::setCookieTransformForThirdPartyRequest(const WebCore::Res
             return cookiesSetInResponse;
 
         // FIXME: Consider making these session cookies, as well.
-        if (!cookiePartition.isEmpty())
-            protectedCookiesSetInResponse = cookiesBySettingPartition(protectedCookiesSetInResponse.get(), cookiePartition.createNSString().get());
+        if (!isEmpty(cookiePartition))
+            protectedCookiesSetInResponse = cookiesBySettingPartition(protectedCookiesSetInResponse.get(), createNSString(cookiePartition).get());
 
         return protectedCookiesSetInResponse.autorelease();
     }).get();
 }
 #endif
 
-static const Vector<String>& cnameCloakingExemptTargetPatterns(const URL& firstPartyURL)
+static const Vector<RefPtr<StringImpl>>& cnameCloakingExemptTargetPatterns(const URL& firstPartyURL)
 {
-    static MainRunLoopNeverDestroyed<HashMap<String, Vector<String>>> patternsByFirstPartyHost;
+    static MainRunLoopNeverDestroyed<HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>> patternsByFirstPartyHost;
     return patternsByFirstPartyHost.get().ensure(firstPartyURL.host().toString(), [&] {
         return Quirks::cnameCloakingCookieCapExemptTargetPatterns(firstPartyURL);
     }).iterator->value;
@@ -233,7 +233,7 @@ void NetworkTaskCocoa::setCookieTransformForFirstPartyRequest(const WebCore::Res
 
         auto cnameDomain = [&task]() {
             if (RetainPtr lastResolvedCNAMEInChain = [[task _resolvedCNAMEChain] lastObject])
-                return lastCNAMEDomain(lastResolvedCNAMEInChain.get());
+                return lastCNAMEDomain(StringImpl::create(lastResolvedCNAMEInChain.get()));
             return RegistrableDomain { };
         }();
         if (cnameDomain.isEmpty() && thirdPartyCNAMEDomainForTesting)
@@ -243,18 +243,18 @@ void NetworkTaskCocoa::setCookieTransformForFirstPartyRequest(const WebCore::Res
             if (!firstPartyAddress)
                 return cookiesSetInResponse;
 
-            auto remoteAddress = WebCore::IPAddress::fromString(lastRemoteIPAddress(task.get()));
+            auto remoteAddress = WebCore::IPAddress::fromString(StringImpl::create(protect(lastRemoteIPAddress(task.get())).get()).get());
             if (!remoteAddress)
                 return cookiesSetInResponse;
 
-            auto needsThirdPartyIPAddressQuirk = [] (const URL& requestURL, const String& firstPartyRegistrableDomainName) {
+            auto needsThirdPartyIPAddressQuirk = [] (const URL& requestURL, StringImpl* firstPartyRegistrableDomainName) {
                 // We only apply this quirk if we're already on Google or youtube.com;
                 // otherwise, we would've already bailed at the top of this method, due to
                 // the request being third party.
-                if (firstPartyRegistrableDomainName == "google.com"_s)
+                if (equal(firstPartyRegistrableDomainName, "google.com"_s))
                     return true;
 
-                return (firstPartyRegistrableDomainName.startsWith("google."_s) || firstPartyRegistrableDomainName == "youtube.com"_s)
+                return (startsWith(firstPartyRegistrableDomainName, "google."_s) || equal(firstPartyRegistrableDomainName, "youtube.com"_s))
                     && requestURL.host() == makeString("consent."_s, firstPartyRegistrableDomainName);
             };
 
@@ -274,10 +274,10 @@ void NetworkTaskCocoa::setCookieTransformForFirstPartyRequest(const WebCore::Res
         auto isExemptCNAMETarget = [&] {
             if (exemptCNAMETargetPatterns.isEmpty())
                 return false;
-            String cnameHostName;
+            RefPtr<StringImpl> cnameHostName;
             if (RetainPtr lastResolvedCNAMEInChain = [[task _resolvedCNAMEChain] lastObject])
-                cnameHostName = lastResolvedCNAMEInChain.get();
-            if (cnameHostName.isEmpty())
+                cnameHostName = StringImpl::create(lastResolvedCNAMEInChain.get());
+            if (isEmpty(cnameHostName))
                 cnameHostName = cnameDomain.string();
             return Quirks::anyPatternMatchesCNAMETarget(exemptCNAMETargetPatterns, cnameHostName);
         };
@@ -388,7 +388,7 @@ void NetworkTaskCocoa::updateTaskWithStoragePartitionIdentifier(const WebCore::R
     if (!networkStorageSession)
         return;
 
-    protect(task()).get()._storagePartitionIdentifier = networkStorageSession->cookiePartitionIdentifier(request).createNSString().get();
+    protect(task()).get()._storagePartitionIdentifier = createNSString(networkStorageSession->cookiePartitionIdentifier(request)).get();
 }
 #endif
 
@@ -419,7 +419,7 @@ void NetworkTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& re
 
 #if !RELEASE_LOG_DISABLED
     if (protect(m_networkSession)->shouldLogCookieInformation())
-        RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkTaskCocoa::willPerformHTTPRedirection::logCookieInformation: pageID=%" PRIu64 ", frameID=%" PRIu64 ", taskID=%lu: %s cookies for redirect URL %s", this, pageID() ? pageID()->toUInt64() : 0, frameID() ? frameID()->toUInt64() : 0, (unsigned long)[task() taskIdentifier], (m_hasBeenSetToUseStatelessCookieStorage ? "Blocking" : "Not blocking"), request.url().string().utf8());
+        RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkTaskCocoa::willPerformHTTPRedirection::logCookieInformation: pageID=%" PRIu64 ", frameID=%" PRIu64 ", taskID=%lu: %s cookies for redirect URL %s", this, pageID() ? pageID()->toUInt64() : 0, frameID() ? frameID()->toUInt64() : 0, (unsigned long)[task() taskIdentifier], (m_hasBeenSetToUseStatelessCookieStorage ? "Blocking" : "Not blocking"), utf8(request.url().string()));
 #else
     LOG_WITH_STREAM(NetworkSession, stream << (unsigned long)[task() taskIdentifier] << " "_s << (m_hasBeenSetToUseStatelessCookieStorage ? "Blocking" : "Not blocking") << " cookies for redirect URL "_s << request.url().string());
 #endif

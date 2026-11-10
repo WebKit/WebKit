@@ -142,7 +142,7 @@ void TextCheckingParagraph::invalidateParagraphRangeValues()
     m_automaticReplacementStart.reset();
     m_automaticReplacementLength.reset();
     m_offsetAsRange = std::nullopt;
-    m_text = String();
+    m_text = nullptr;
 }
 
 uint64_t TextCheckingParagraph::rangeLength() const
@@ -186,7 +186,7 @@ const SimpleRange& TextCheckingParagraph::offsetAsRange() const
 
 StringView TextCheckingParagraph::text() const LIFETIME_BOUND
 {
-    if (m_text.isNull())
+    if (!m_text)
         m_text = plainText(paragraphRange());
     return m_text; 
 }
@@ -265,7 +265,7 @@ auto TextCheckingHelper::findMisspelledWords(Operation operation) const -> std::
         if (operation == Operation::MarkAll)
             addMarker(misspellingRange, DocumentMarkerType::Spelling);
 
-        if (first.first.word.isNull()) {
+        if (!first.first.word) {
             first = {
                 {
                     text.substring(misspellingLocation, misspellingLength).toString(),
@@ -298,8 +298,8 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
     Variant<MisspelledWord, UngrammaticalPhrase> firstFoundItem;
     GrammarDetail grammarDetail;
 
-    String misspelledWord;
-    String badGrammarPhrase;
+    RefPtr<StringImpl> misspelledWord;
+    RefPtr<StringImpl> badGrammarPhrase;
     
     // Expand the search range to encompass entire paragraphs, since text checking needs that much context.
     // Determine the character offset from the start of the paragraph to the start of the original search range,
@@ -325,8 +325,8 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
             lastIteration = true;
         }
         if (currentStartOffset < currentEndOffset) {
-            String paragraphString = plainText(paragraphRange);
-            if (paragraphString.length() > 0) {
+            RefPtr<StringImpl> paragraphString = plainText(paragraphRange);
+            if (length(paragraphString) > 0) {
                 bool foundGrammar = false;
                 uint64_t spellingLocation = 0;
                 uint64_t grammarPhraseLocation = 0;
@@ -346,8 +346,8 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
                     if (result.type == TextCheckingType::Spelling && result.range.location >= currentStartOffset && result.range.location + result.range.length <= currentEndOffset) {
                         ASSERT(result.range.length > 0);
                         spellingLocation = result.range.location;
-                        misspelledWord = paragraphString.substring(result.range.location, result.range.length);
-                        ASSERT(misspelledWord.length());
+                        misspelledWord = substring(paragraphString, result.range.location, result.range.length);
+                        ASSERT(length(misspelledWord));
                         break;
                     }
                     if (checkGrammar && result.type == TextCheckingType::Grammar && result.range.location < currentEndOffset && result.range.location + result.range.length > currentStartOffset) {
@@ -368,13 +368,13 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
                         if (foundGrammar) {
                             grammarPhraseLocation = result.range.location;
                             grammarDetail = result.details[grammarDetailIndex];
-                            badGrammarPhrase = paragraphString.substring(result.range.location, result.range.length);
-                            ASSERT(badGrammarPhrase.length());
+                            badGrammarPhrase = substring(paragraphString, result.range.location, result.range.length);
+                            ASSERT(length(badGrammarPhrase));
                         }
                     }
                 }
 
-                if (!misspelledWord.isEmpty() && (!checkGrammar || badGrammarPhrase.isEmpty() || spellingLocation <= grammarDetailLocation)) {
+                if (!isEmpty(misspelledWord) && (!checkGrammar || isEmpty(badGrammarPhrase) || spellingLocation <= grammarDetailLocation)) {
                     uint64_t spellingOffset = spellingLocation - currentStartOffset;
                     if (!firstIteration)
                         spellingOffset += characterCount({ m_range.start, paragraphRange.start });
@@ -384,7 +384,7 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
                     };
                     break;
                 }
-                if (checkGrammar && !badGrammarPhrase.isEmpty()) {
+                if (checkGrammar && !isEmpty(badGrammarPhrase)) {
                     uint64_t grammarPhraseOffset = grammarPhraseLocation - currentStartOffset;
                     if (!firstIteration)
                         grammarPhraseOffset += characterCount({ m_range.start, paragraphRange.start });
@@ -473,7 +473,7 @@ auto TextCheckingHelper::findUngrammaticalPhrases(Operation operation) const -> 
         // Found some bad grammar. Find the earliest detail range that starts in our search range (if any).
         int badGrammarIndex = findUngrammaticalPhrases(operation, grammarDetails, badGrammarPhraseLocation, paragraph.checkingStart(), paragraph.checkingEnd());
 
-        if (badGrammarIndex >= 0 && result.phrase.isEmpty()) {
+        if (badGrammarIndex >= 0 && isEmpty(result.phrase)) {
             result.offset = badGrammarPhraseLocation - paragraph.checkingStart();
             result.phrase = paragraph.text().substring(badGrammarPhraseLocation, badGrammarPhraseLength).toString();
             ASSERT(static_cast<unsigned>(badGrammarIndex) < grammarDetails.size());
@@ -524,10 +524,10 @@ TextCheckingGuesses TextCheckingHelper::guessesForMisspelledWordOrUngrammaticalP
 
     for (auto& result : results) {
         if (result.type == TextCheckingType::Spelling && paragraph.checkingRangeMatches(result.range)) {
-            String misspelledWord = paragraph.checkingSubstring().toString();
-            ASSERT(misspelledWord.length());
-            Vector<String> guesses;
-            client->textChecker()->getGuessesForWord(misspelledWord, String(), currentSelection, guesses);
+            RefPtr<StringImpl> misspelledWord = paragraph.checkingSubstring().toString();
+            ASSERT(length(misspelledWord));
+            Vector<RefPtr<StringImpl>> guesses;
+            client->textChecker()->getGuessesForWord(misspelledWord, nullString(), currentSelection, guesses);
             client->updateSpellingUIWithMisspelledWord(misspelledWord);
             return { WTF::move(guesses), true, false };
         }
@@ -541,8 +541,8 @@ TextCheckingGuesses TextCheckingHelper::guessesForMisspelledWordOrUngrammaticalP
             for (auto& detail : result.details) {
                 ASSERT(detail.range.length > 0);
                 if (paragraph.checkingRangeMatches({ result.range.location + detail.range.location, detail.range.length })) {
-                    String badGrammarPhrase = paragraph.text().substring(result.range.location, result.range.length).toString();
-                    ASSERT(badGrammarPhrase.length());
+                    RefPtr<StringImpl> badGrammarPhrase = paragraph.text().substring(result.range.location, result.range.length).toString();
+                    ASSERT(length(badGrammarPhrase));
                     client->updateSpellingUIWithGrammarString(badGrammarPhrase, detail);
                     return { WTF::move(detail.guesses), false, true };
                 }

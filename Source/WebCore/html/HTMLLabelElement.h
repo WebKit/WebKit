@@ -42,7 +42,7 @@ public:
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
     bool hasActivationBehavior() const final;
-    void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
+    void updateLabel(TreeScope&, AtomStringImpl* oldForAttributeValue, AtomStringImpl* newForAttributeValue);
 
 private:
     HTMLLabelElement(const QualifiedName&, Document&);

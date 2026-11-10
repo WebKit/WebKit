@@ -69,7 +69,7 @@ class InspectorAgentBase : public AbstractCanMakeCheckedPtr {
 public:
     virtual ~InspectorAgentBase() { }
 
-    String domainName() const { return m_name; }
+    RefPtr<StringImpl> domainName() const { return m_name; }
 
     virtual void didCreateFrontendAndBackend() = 0;
     virtual void willDestroyFrontendAndBackend(DisconnectReason) = 0;
@@ -77,12 +77,12 @@ public:
     virtual void discardAgent() { }
 
 protected:
-    InspectorAgentBase(const String& name)
+    InspectorAgentBase(StringImpl* name)
         : m_name(name)
     {
     }
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
 };
 
 } // namespace Inspector

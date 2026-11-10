@@ -37,14 +37,14 @@
 namespace WebCore {
 namespace MQ {
 
-MediaQueryEvaluator::MediaQueryEvaluator(const AtomString& mediaType, const Document& document)
+MediaQueryEvaluator::MediaQueryEvaluator(AtomStringImpl* mediaType, const Document& document)
     : GenericMediaQueryEvaluator()
     , m_mediaType(mediaType)
     , m_document(document)
 {
 }
 
-MediaQueryEvaluator::MediaQueryEvaluator(const AtomString& mediaType, EvaluationResult mediaConditionResult)
+MediaQueryEvaluator::MediaQueryEvaluator(AtomStringImpl* mediaType, EvaluationResult mediaConditionResult)
     : GenericMediaQueryEvaluator()
     , m_mediaType(mediaType)
     , m_staticMediaConditionResult(mediaConditionResult)
@@ -111,7 +111,7 @@ bool MediaQueryEvaluator::evaluate(const MediaQuery& query) const
 
 bool MediaQueryEvaluator::evaluateMediaType(const MediaQuery& query) const
 {
-    if (query.mediaType.isEmpty())
+    if (isEmpty(query.mediaType))
         return true;
     if (query.mediaType == allAtom())
         return true;

@@ -70,7 +70,7 @@ private:
     RemoteCDMInstanceProxy(RemoteCDMProxy&, Ref<WebCore::CDMInstance>&&, UniqueRef<RemoteCDMInstanceConfiguration>&&, RemoteCDMInstanceIdentifier);
 
     // CDMInstanceClient
-    void unrequestedInitializationDataReceived(const String&, Ref<WebCore::SharedBuffer>&&) final;
+    void unrequestedInitializationDataReceived(StringImpl*, Ref<WebCore::SharedBuffer>&&) final;
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
@@ -87,7 +87,7 @@ private:
     // Messages
     void initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, CompletionHandler<void(SuccessValue)>&&);
     void setServerCertificate(Ref<WebCore::SharedBuffer>&&, CompletionHandler<void(SuccessValue)>&&);
-    void setStorageDirectory(const String&);
+    void setStorageDirectory(StringImpl*);
     void createSession(uint64_t logIdentifier, CompletionHandler<void(std::optional<RemoteCDMInstanceSessionIdentifier>)>&&);
 
     WeakPtr<RemoteCDMProxy> m_cdm;

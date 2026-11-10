@@ -96,22 +96,22 @@ public:
         virtual ~Client() = default;
 
         virtual IPC::Connection* paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&) = 0;
-        virtual const String& paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&) = 0;
-        virtual const String& paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&) = 0;
-        virtual const String& paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&) = 0;
+        virtual const RefPtr<StringImpl>& paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&) = 0;
+        virtual const RefPtr<StringImpl>& paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&) = 0;
+        virtual const RefPtr<StringImpl>& paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&) = 0;
         virtual void paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName, IPC::MessageReceiver&) = 0;
         virtual void paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName) = 0;
 #if PLATFORM(IOS_FAMILY)
         virtual UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) = 0;
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-        virtual void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&&) = 0;
+        virtual void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(StringImpl*, StringImpl*)>&&) = 0;
         virtual void notifyWillPresentPaymentUI(WebPageProxyIdentifier) = 0;
 #endif
-        virtual const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) = 0;
+        virtual const RefPtr<StringImpl>& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) = 0;
         virtual Ref<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) = 0;
 #endif
         virtual CocoaWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const = 0;
-        virtual void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) = 0;
+        virtual void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(StringImpl*)>&&) = 0;
         virtual std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebPaymentMessages() const = 0;
     };
 
@@ -148,15 +148,15 @@ private:
     void presenterDidSelectShippingContact(PaymentAuthorizationPresenter&, const WebCore::PaymentContact&) final;
     void presenterDidSelectShippingMethod(PaymentAuthorizationPresenter&, const WebCore::ApplePayShippingMethod&) final;
 #if ENABLE(APPLE_PAY_COUPON_CODE)
-    void presenterDidChangeCouponCode(PaymentAuthorizationPresenter&, const String& couponCode) final;
+    void presenterDidChangeCouponCode(PaymentAuthorizationPresenter&, StringImpl* couponCode) final;
 #endif
     void presenterWillValidateMerchant(PaymentAuthorizationPresenter&, const URL&) final;
     CocoaWindow *presentingWindowForPaymentAuthorization(PaymentAuthorizationPresenter&) const final;
 
     // Message handlers
     void canMakePayments(CompletionHandler<void(bool)>&&);
-    void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&);
-    void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&);
+    void canMakePaymentsWithActiveCard(StringImpl* merchantIdentifier, StringImpl* domainName, CompletionHandler<void(bool)>&&);
+    void openPaymentSetup(StringImpl* merchantIdentifier, StringImpl* domainName, CompletionHandler<void(bool)>&&);
     void showPaymentUI(WebCore::PageIdentifier destinationID, WebPageProxyIdentifier, const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
     void completeShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&);
@@ -183,8 +183,8 @@ private:
     void didReachFinalState(WebCore::PaymentSessionError&& = { });
 
     void platformCanMakePayments(CompletionHandler<void(bool)>&&);
-    void platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler);
-    void platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler);
+    void platformCanMakePaymentsWithActiveCard(StringImpl* merchantIdentifier, StringImpl* domainName, WTF::Function<void(bool)>&& completionHandler);
+    void platformOpenPaymentSetup(StringImpl* merchantIdentifier, StringImpl* domainName, WTF::Function<void(bool)>&& completionHandler);
     void platformShowPaymentUI(WebPageProxyIdentifier, const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
     void platformCompleteMerchantValidation(const WebCore::PaymentMerchantSession&);
     void platformCompleteShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&);
@@ -197,7 +197,7 @@ private:
     void platformHidePaymentUI();
 #if PLATFORM(COCOA)
     RetainPtr<PKPaymentRequest> platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&);
-    void platformSetPaymentRequestUserAgent(PKPaymentRequest *, const String& userAgent);
+    void platformSetPaymentRequestUserAgent(PKPaymentRequest *, StringImpl* userAgent);
 #endif
 
     WeakPtr<Client> m_client;

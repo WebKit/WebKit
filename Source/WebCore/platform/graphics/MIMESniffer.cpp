@@ -292,7 +292,7 @@ NODELETE static bool hasSignatureForMP3WithoutID3(std::span<const uint8_t> seque
     return matchMP3Header(sequence.subspan(s));
 }
 
-static String mimeTypeFromSnifferEntries(std::span<const uint8_t> sequence)
+static RefPtr<StringImpl> mimeTypeFromSnifferEntries(std::span<const uint8_t> sequence)
 {
     struct MIMESniffEntry {
         const std::span<const uint8_t> pattern;
@@ -337,31 +337,31 @@ static String mimeTypeFromSnifferEntries(std::span<const uint8_t> sequence)
     return nullString();
 }
 
-String getMIMETypeFromContent(std::span<const uint8_t> sequence)
+RefPtr<StringImpl> getMIMETypeFromContent(std::span<const uint8_t> sequence)
 {
     // 6.2. Matching an audio or video type pattern
     // To determine which audio or video MIME type byte pattern a byte sequence input matches, if any, use the following audio or video type pattern matching algorithm:
 
-    if (auto mimeType = mimeTypeFromSnifferEntries(sequence); !mimeType.isNull())
+    if (auto mimeType = mimeTypeFromSnifferEntries(sequence); mimeType)
         return mimeType;
 
     // 2. If input matches the signature for MP4, return "video/mp4".
     if (hasSignatureForMP4(sequence))
-        return "video/mp4"_s;
+        return "video/mp4"_si;
 
     // 3. If input matches the signature for WebM, return "video/webm".
     if (hasSignatureForWebM(sequence))
-        return "video/webm"_s;
+        return "video/webm"_si;
 
     // 4. If input matches the signature for MP3 without ID3, return "audio/mpeg".
     if (hasSignatureForMP3WithoutID3(sequence))
-        return "audio/mpeg"_s;
+        return "audio/mpeg"_si;
 
     // 5. Return undefined.
     return emptyString();
 }
 
-String getModelMIMETypeFromContent(std::span<const uint8_t> sequence)
+RefPtr<StringImpl> getModelMIMETypeFromContent(std::span<const uint8_t> sequence)
 {
     struct ModelSignature {
         const std::span<const uint8_t> signature;
@@ -379,7 +379,7 @@ String getModelMIMETypeFromContent(std::span<const uint8_t> sequence)
 
     for (auto& [signature, mimeType] : signatures) {
         if (spanHasPrefix(sequence, signature))
-            return mimeType;
+            return StringImpl::create(mimeType);
     }
     return nullString();
 }

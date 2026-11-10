@@ -156,7 +156,7 @@ public:
 #if ENABLE(SPATIAL_PORTAL)
     void environmentMapStyleDidChange();
 #endif
-    WEBCORE_EXPORT String effectiveEnvironmentMapForTesting() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> effectiveEnvironmentMapForTesting() const;
 #endif
 
     void enterFullscreen();
@@ -248,11 +248,11 @@ public:
     std::optional<double> getEffectiveDynamicRangeLimitValue() const;
 #endif
 
-    WEBCORE_EXPORT String modelElementStateForTesting() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> modelElementStateForTesting() const;
 
 #if ENABLE(MODEL_PROCESS)
-    WEBCORE_EXPORT void sceneGraphAsTextForTesting(const ModelSceneGraphAsTextOptions&, CompletionHandler<void(String&&)>&&) const;
-    String dumpLabelForTesting(unsigned treeOrderPosition) const;
+    WEBCORE_EXPORT void sceneGraphAsTextForTesting(const ModelSceneGraphAsTextOptions&, CompletionHandler<void(RefPtr<StringImpl>&&)>&&) const;
+    RefPtr<StringImpl> dumpLabelForTesting(unsigned treeOrderPosition) const;
 #endif
 
 private:
@@ -293,11 +293,11 @@ private:
     // DOM overrides.
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
     NODELETE bool isURLAttribute(const Attribute&) const final;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
 
     // StyledElement
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) final;
 
     // Rendering overrides.
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
@@ -315,7 +315,7 @@ private:
     void didFinishLoading(ModelPlayer&, NodeIdentifier) final;
     void didFailLoading(ModelPlayer&, NodeIdentifier, const ResourceError&) final;
 #if ENABLE(MODEL_PROCESS)
-    void didConvertModelData(ModelPlayer&, Ref<SharedBuffer>&& convertedData, const String& convertedMIMEType) final;
+    void didConvertModelData(ModelPlayer&, Ref<SharedBuffer>&& convertedData, StringImpl* convertedMIMEType) final;
 #endif
     void didUnload(ModelPlayer&) final;
     void didUpdate(ModelPlayer&) final;
@@ -333,7 +333,7 @@ private:
 #endif
     RefPtr<GraphicsLayer> graphicsLayer() const final;
     bool isVisible() const final;
-    void logWarning(ModelPlayer&, const String&) final;
+    void logWarning(ModelPlayer&, StringImpl*) final;
 
     Node::NeedsPostConnectionSteps insertionSteps(InsertionType , ContainerNode& parentOfInsertedTree) override;
     void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree) override;
@@ -408,7 +408,7 @@ private:
 
     URL m_sourceURL;
     CachedResourceHandle<CachedRawResource> m_resource;
-    String m_originalMIMEType;
+    RefPtr<StringImpl> m_originalMIMEType;
     SharedBufferBuilder m_data;
     mutable std::atomic<size_t> m_dataMemoryCost { 0 };
     size_t m_reportedDataMemoryCost { 0 };

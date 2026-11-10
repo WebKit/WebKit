@@ -52,14 +52,14 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    const Vector<String>& supportedDataTypes() const LIFETIME_BOUND { return m_supportedDataTypes; }
-    void setSupportedDataTypes(Vector<String>&&);
+    const Vector<RefPtr<StringImpl>>& supportedDataTypes() const LIFETIME_BOUND { return m_supportedDataTypes; }
+    void setSupportedDataTypes(Vector<RefPtr<StringImpl>>&&);
 
     const Vector<MediaKeySessionType>& supportedSessionTypes() const LIFETIME_BOUND { return m_supportedSessionTypes; }
     void setSupportedSessionTypes(Vector<MediaKeySessionType>&& types) { m_supportedSessionTypes = WTF::move(types); }
 
-    const Vector<String>& supportedRobustness() const LIFETIME_BOUND { return m_supportedRobustness; }
-    void setSupportedRobustness(Vector<String>&& supportedRobustness) { m_supportedRobustness = WTF::move(supportedRobustness); }
+    const Vector<RefPtr<StringImpl>>& supportedRobustness() const LIFETIME_BOUND { return m_supportedRobustness; }
+    void setSupportedRobustness(Vector<RefPtr<StringImpl>>&& supportedRobustness) { m_supportedRobustness = WTF::move(supportedRobustness); }
 
     MediaKeysRequirement distinctiveIdentifiersRequirement() const { return m_distinctiveIdentifiersRequirement; }
     void setDistinctiveIdentifiersRequirement(MediaKeysRequirement requirement) { m_distinctiveIdentifiersRequirement = requirement; }
@@ -79,42 +79,42 @@ public:
     const Vector<MediaKeyEncryptionScheme>& supportedEncryptionSchemes() const LIFETIME_BOUND { return m_supportedEncryptionSchemes; }
     void setSupportedEncryptionSchemes(Vector<MediaKeyEncryptionScheme>&& schemes) { m_supportedEncryptionSchemes = WTF::move(schemes); }
 
-    const Vector<String>& unsupportedVideoCodecs() const LIFETIME_BOUND { return m_unsupportedVideoCodecs; }
-    void setUnsupportedVideoCodecs(Vector<String>&& codecs) { m_unsupportedVideoCodecs = WTF::move(codecs); }
+    const Vector<RefPtr<StringImpl>>& unsupportedVideoCodecs() const LIFETIME_BOUND { return m_unsupportedVideoCodecs; }
+    void setUnsupportedVideoCodecs(Vector<RefPtr<StringImpl>>&& codecs) { m_unsupportedVideoCodecs = WTF::move(codecs); }
 
     void unregister();
 
-    bool hasSessionWithID(const String& id);
-    void removeSessionWithID(const String& id);
-    void addKeysToSessionWithID(const String& id, Vector<Ref<SharedBuffer>>&&);
-    const Vector<Ref<SharedBuffer>>* keysForSessionWithID(const String& id) const;
-    Vector<Ref<SharedBuffer>> removeKeysFromSessionWithID(const String& id);
-    size_t keyCountForSession(const String& id) const;
+    bool hasSessionWithID(StringImpl* id);
+    void removeSessionWithID(StringImpl* id);
+    void addKeysToSessionWithID(StringImpl* id, Vector<Ref<SharedBuffer>>&&);
+    const Vector<Ref<SharedBuffer>>* keysForSessionWithID(StringImpl* id) const;
+    Vector<Ref<SharedBuffer>> removeKeysFromSessionWithID(StringImpl* id);
+    size_t keyCountForSession(StringImpl* id) const;
 
-    void setSessionType(const String& id, CDMSessionType type) { m_sessionTypes.set(id, type); }
-    std::optional<CDMSessionType> sessionType(const String& id) const;
+    void setSessionType(StringImpl* id, CDMSessionType type) { m_sessionTypes.set(id, type); }
+    std::optional<CDMSessionType> sessionType(StringImpl* id) const;
 
     double expirationOnUpdate() const { return m_expirationOnUpdate; }
     void setExpirationOnUpdate(double t) { m_expirationOnUpdate = t; }
 
 private:
     MockCDMFactory();
-    std::unique_ptr<CDMPrivate> createCDM(const String&, const String& mediaKeysHashSalt, const CDMPrivateClient&) final;
-    bool supportsKeySystem(const String&) final;
+    std::unique_ptr<CDMPrivate> createCDM(StringImpl*, StringImpl* mediaKeysHashSalt, const CDMPrivateClient&) final;
+    bool supportsKeySystem(StringImpl*) final;
 
     MediaKeysRequirement m_distinctiveIdentifiersRequirement { MediaKeysRequirement::Optional };
     MediaKeysRequirement m_persistentStateRequirement { MediaKeysRequirement::Optional };
-    Vector<String> m_supportedDataTypes;
+    Vector<RefPtr<StringImpl>> m_supportedDataTypes;
     Vector<MediaKeySessionType> m_supportedSessionTypes;
-    Vector<String> m_supportedRobustness;
+    Vector<RefPtr<StringImpl>> m_supportedRobustness;
     Vector<MediaKeyEncryptionScheme> m_supportedEncryptionSchemes;
-    Vector<String> m_unsupportedVideoCodecs;
+    Vector<RefPtr<StringImpl>> m_unsupportedVideoCodecs;
     bool m_registered { true };
     bool m_canCreateInstances { true };
     bool m_supportsServerCertificates { true };
     bool m_supportsSessions { true };
-    HashMap<String, Vector<Ref<SharedBuffer>>> m_sessions;
-    HashMap<String, CDMSessionType> m_sessionTypes;
+    HashMap<RefPtr<StringImpl>, Vector<Ref<SharedBuffer>>> m_sessions;
+    HashMap<RefPtr<StringImpl>, CDMSessionType> m_sessionTypes;
     double m_expirationOnUpdate { std::numeric_limits<double>::quiet_NaN() };
 };
 
@@ -122,16 +122,16 @@ class MockCDM : public CDMPrivate {
     WTF_MAKE_TZONE_ALLOCATED(MockCDM);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MockCDM);
 public:
-    MockCDM(WeakPtr<MockCDMFactory>, const String&);
+    MockCDM(WeakPtr<MockCDMFactory>, StringImpl*);
 
     RefPtr<MockCDMFactory> factory() const { return m_factory.get(); }
-    const String& mediaKeysHashSalt() const LIFETIME_BOUND { return m_mediaKeysHashSalt; }
+    const RefPtr<StringImpl>& mediaKeysHashSalt() const LIFETIME_BOUND { return m_mediaKeysHashSalt; }
 
 private:
     friend class MockCDMInstance;
 
-    Vector<String> supportedInitDataTypes() const final;
-    Vector<String> supportedRobustnesses() const final;
+    Vector<RefPtr<StringImpl>> supportedInitDataTypes() const final;
+    Vector<RefPtr<StringImpl>> supportedRobustnesses() const final;
     bool supportsConfiguration(const MediaKeySystemConfiguration&) const final;
     bool supportsConfigurationWithRestrictions(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) const final;
     bool supportsSessionTypeWithConfiguration(const MediaKeySessionType&, const MediaKeySystemConfiguration&) const final;
@@ -142,12 +142,12 @@ private:
     void loadAndInitialize() final;
     bool supportsServerCertificates() const final;
     bool supportsSessions() const final;
-    bool supportsInitData(const String&, const SharedBuffer&) const final;
+    bool supportsInitData(StringImpl*, const SharedBuffer&) const final;
     RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const final;
-    std::optional<String> sanitizeSessionId(const String&) const final;
+    std::optional<RefPtr<StringImpl>> sanitizeSessionId(StringImpl*) const final;
 
     WeakPtr<MockCDMFactory> m_factory;
-    String m_mediaKeysHashSalt;
+    RefPtr<StringImpl> m_mediaKeysHashSalt;
 };
 
 class MockCDMInstance : public CDMInstance, public CanMakeWeakPtr<MockCDMInstance> {
@@ -164,8 +164,8 @@ private:
     ImplementationType implementationType() const final { return ImplementationType::Mock; }
     void initializeWithConfiguration(const MediaKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
     void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) final;
-    void setStorageDirectory(const String&) final;
-    const String& keySystem() const final;
+    void setStorageDirectory(StringImpl*) final;
+    const RefPtr<StringImpl>& keySystem() const final;
     RefPtr<CDMInstanceSession> createSession() final;
 
     WeakPtr<MockCDM> m_cdm;
@@ -180,12 +180,12 @@ public:
     RefPtr<MockCDMFactory> factory() const;
 
 private:
-    void requestLicense(LicenseType, KeyGroupingStrategy, const String& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
-    void updateLicense(const String&, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
-    void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
-    void closeSession(const String&, CloseSessionCallback&&) final;
-    void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;
-    void storeRecordOfKeyUsage(const String&) final;
+    void requestLicense(LicenseType, KeyGroupingStrategy, StringImpl* initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
+    void updateLicense(StringImpl*, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
+    void loadSession(LicenseType, StringImpl*, StringImpl*, LoadSessionCallback&&) final;
+    void closeSession(StringImpl*, CloseSessionCallback&&) final;
+    void removeSessionData(StringImpl*, LicenseType, RemoveSessionDataCallback&&) final;
+    void storeRecordOfKeyUsage(StringImpl*) final;
 
     WeakPtr<MockCDMInstance> m_instance;
 };

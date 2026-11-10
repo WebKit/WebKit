@@ -84,13 +84,13 @@ bool FrontendRouter::hasRemoteFrontend() const
     return false;
 }
 
-void FrontendRouter::sendEvent(const String& message) const
+void FrontendRouter::sendEvent(StringImpl* message) const
 {
     for (auto* connection : m_connections)
         connection->sendMessageToFrontend(message);
 }
 
-void FrontendRouter::sendResponse(const String& message) const
+void FrontendRouter::sendResponse(StringImpl* message) const
 {
     // FIXME: send responses to the appropriate frontend.
     for (auto* connection : m_connections)

@@ -124,19 +124,19 @@ TEST(WebKit, CookieCacheSyncAcrossProcess)
 
     // Making sure new cookie gets sync'd to second WebView process.
     int timeout = 0;
-    __block String cookieString;
+    __block RefPtr<StringImpl> cookieString;
     do {
         TestWebKitAPI::Util::runFor(0.1_s);
         doneEvaluatingJavaScript = false;
         [view2 evaluateJavaScript:@"document.cookie;" completionHandler:^(id _Nullable cookie, NSError * _Nullable error) {
             EXPECT_NULL(error);
             EXPECT_TRUE([cookie isKindOfClass:[NSString class]]);
-            cookieString = (NSString *)cookie;
+            cookieString = StringImpl::create((NSString *)cookie);
             doneEvaluatingJavaScript = true;
         }];
         TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
         ++timeout;
-    } while (!cookieString.isEmpty() && timeout < 50);
+    } while (!isEmpty(cookieString) && timeout < 50);
     EXPECT_WK_STREQ("foo=bar", cookieString);
 }
 
@@ -146,7 +146,7 @@ TEST(WebKit, CookieCachePruning)
     RetainPtr view = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     for (unsigned i = 0; i < 100; ++i) {
-        [view synchronouslyLoadHTMLString:@"foo" baseURL:adoptNS([[NSURL alloc] initWithString:makeString("http://foo"_s, i, ".example.com/"_s).createNSString().get()]).get()];
+        [view synchronouslyLoadHTMLString:@"foo" baseURL:adoptNS([[NSURL alloc] initWithString:createNSString(makeString("http://foo"_s, i, ".example.com/"_s)).get()]).get()];
 
         __block bool doneEvaluatingJavaScript = false;
         [view evaluateJavaScript:@"document.cookie;" completionHandler:^(id _Nullable cookie, NSError * _Nullable error) {

@@ -336,7 +336,7 @@ void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacings(const InlineItemLi
         size_t boundaryIndex = inlineBoxStartIndexesOnInlineItemsList[inlineBoxStartOnBoundaryIndex];
         CheckedRef boundaryOwnerStyle = inlineItemList[boundaryIndex].layoutBox().parent().style();
         auto boundaryTextAutospace = boundaryOwnerStyle->textAutospace();
-        if (!boundaryTextAutospace.isNoAutospace() && boundaryTextAutospace.shouldApplySpacing(inlineTextBox->content().codePointAt(start), lastCharacterFromPreviousRun))
+        if (!boundaryTextAutospace.isNoAutospace() && boundaryTextAutospace.shouldApplySpacing(codePointAt(inlineTextBox->content(), start), lastCharacterFromPreviousRun))
             spacings.add(boundaryIndex, TextAutospace::textAutospaceSize(boundaryOwnerStyle->fontCascade().primaryFont()));
 
         lastCharacterFromPreviousRun = TextUtil::lastBaseCharacterFromText(content);
@@ -508,8 +508,8 @@ static void replaceNonPreservedNewLineAndTabCharactersAndAppend(const InlineText
     // ubidi prefers non-preserved new lines/tabs as space characters.
     ASSERT(!TextUtil::shouldPreserveNewline(inlineTextBox));
     auto textContent = inlineTextBox.content();
-    auto contentLength = textContent.length();
-    auto needsUnicodeHandling = !textContent.is8Bit();
+    auto contentLength = length(textContent);
+    auto needsUnicodeHandling = !is8Bit(textContent);
     size_t nonReplacedContentStartPosition = 0;
     for (size_t position = 0; position < contentLength;) {
         // Note that because of proper code point boundary handling (see U16_NEXT), position is incremented in an unconventional way here.
@@ -517,11 +517,11 @@ static void replaceNonPreservedNewLineAndTabCharactersAndAppend(const InlineText
         auto isNewLineOrTabCharacter = [&] {
             if (needsUnicodeHandling) {
                 char32_t character;
-                auto characters = textContent.span16();
+                auto characters = span16(textContent);
                 U16_NEXT(characters, position, contentLength, character);
                 return character == newlineCharacter || character == tabCharacter || character == paragraphSeparator;
             }
-            auto isNewLineOrTab = textContent[position] == newlineCharacter || textContent[position] == tabCharacter;
+            auto isNewLineOrTab = codeUnitAt(textContent, position) == newlineCharacter || codeUnitAt(textContent, position) == tabCharacter;
             ++position;
             return isNewLineOrTab;
         };
@@ -932,7 +932,7 @@ static void handleTextSpacing(TextSpacing::SpacingState& spacingState, Trimmable
     auto autospace = inlineTextItem.style().textAutospace();
     if (!autospace.isNoAutospace()) {
         // We need to store information about spacing added between inline text items since it needs to be trimmed during line breaking if the consecutive items are placed on different lines
-        auto characterClass = TextSpacing::characterClass(inlineTextItem.content().codePointAt(0));
+        auto characterClass = TextSpacing::characterClass(codePointAt(inlineTextItem.content(), 0));
         if (autospace.shouldApplySpacing(spacingState.lastCharacterClassFromPreviousRun, characterClass))
             trimmableTextSpacings.add(inlineItemIndex, TextAutospace::textAutospaceSize(inlineTextItem.style().fontCascade().primaryFont()));
 
@@ -1010,7 +1010,7 @@ bool InlineItemsBuilder::buildInlineItemListForTextFromBreakingPositionsCache(co
     CheckedRef style = inlineTextBox.style();
 
     auto intialSize = inlineItemList.size();
-    auto contentLength = text.length();
+    auto contentLength = WTF::length(text);
     ASSERT(contentLength);
 
     CheckedRef fontCascade = style->fontCascade();
@@ -1054,7 +1054,7 @@ bool InlineItemsBuilder::buildInlineItemListForTextFromBreakingPositionsCache(co
             return false;
         }
 
-        auto character = text[startPosition];
+        auto character = codeUnitAt(text, startPosition);
         if (character == lineSeparator || character == paragraphSeparator || (character == newlineCharacter && shouldPreserveNewline)) {
             inlineItemList.append(InlineSoftLineBreakItem::createSoftLineBreakItem(inlineTextBox, startPosition));
             continue;
@@ -1075,7 +1075,7 @@ bool InlineItemsBuilder::buildInlineItemListForTextFromBreakingPositionsCache(co
         }
 
         ASSERT(endPosition);
-        auto hasTrailingSoftHyphen = text[endPosition - 1] == softHyphen;
+        auto hasTrailingSoftHyphen = codeUnitAt(text, endPosition - 1) == softHyphen;
         auto length = endPosition - startPosition;
         if (deferNonWhitespaceMeasurement || !length) {
             inlineItemList.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, startPosition, length, UBIDI_DEFAULT_LTR, hasTrailingSoftHyphen));
@@ -1095,7 +1095,7 @@ bool InlineItemsBuilder::buildInlineItemListForTextFromBreakingPositionsCache(co
 void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, InlineItemList& inlineItemList, std::optional<size_t> partialContentOffset)
 {
     auto text = inlineTextBox.content();
-    auto contentLength = text.length();
+    auto contentLength = WTF::length(text);
     if (!contentLength)
         return inlineItemList.append(InlineTextItem::createEmptyItem(inlineTextBox));
 
@@ -1125,7 +1125,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     auto handleSegmentBreak = [&] {
         // U+2028 LINE SEPARATOR and U+2029 PARAGRAPH SEPARATOR are always forced line breaks (UAX#14 class BK, CSS Text §5.1).
         // U+000A is a forced line break only when white-space preserves newlines.
-        auto character = text[currentPosition];
+        auto character = codeUnitAt(text, currentPosition);
         if (character != lineSeparator && character != paragraphSeparator && (character != newlineCharacter || !shouldPreserveNewline))
             return false;
         inlineItemList.append(InlineSoftLineBreakItem::createSoftLineBreakItem(inlineTextBox, currentPosition++));
@@ -1133,9 +1133,9 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     };
     auto handleWhitespace = [&] {
         auto stopAtWordSeparatorBoundary = shouldPreserveSpacesAndTabs && fontCascade->wordSpacing();
-        auto whitespaceContent = text.is8Bit()
-            ? moveToNextNonWhitespacePosition(text.span8(), currentPosition, shouldPreserveNewline, shouldPreserveSpacesAndTabs, stopAtWordSeparatorBoundary)
-            : moveToNextNonWhitespacePosition(text.span16(), currentPosition, shouldPreserveNewline, shouldPreserveSpacesAndTabs, stopAtWordSeparatorBoundary);
+        auto whitespaceContent = is8Bit(text)
+            ? moveToNextNonWhitespacePosition(span8(text), currentPosition, shouldPreserveNewline, shouldPreserveSpacesAndTabs, stopAtWordSeparatorBoundary)
+            : moveToNextNonWhitespacePosition(span16(text), currentPosition, shouldPreserveNewline, shouldPreserveSpacesAndTabs, stopAtWordSeparatorBoundary);
         if (!whitespaceContent)
             return false;
 
@@ -1169,7 +1169,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
         auto startPosition = currentPosition;
         auto endPosition = startPosition;
         for (; endPosition < contentLength; ++endPosition) {
-            if (text[endPosition] != noBreakSpace)
+            if (codeUnitAt(text, endPosition) != noBreakSpace)
                 break;
         }
         if (startPosition == endPosition)
@@ -1189,11 +1189,11 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
             do {
                 endPosition += moveToNextBreakablePosition(endPosition, lineBreakIteratorFactory, style);
                 ASSERT(startPosition < endPosition);
-            } while (endPosition < contentLength && text[endPosition - 1] == softHyphen);
+            } while (endPosition < contentLength && codeUnitAt(text, endPosition - 1) == softHyphen);
         } else {
             endPosition += moveToNextBreakablePosition(startPosition, lineBreakIteratorFactory, style);
             ASSERT(startPosition < endPosition);
-            hasTrailingSoftHyphen = text[endPosition - 1] == softHyphen;
+            hasTrailingSoftHyphen = codeUnitAt(text, endPosition - 1) == softHyphen;
         }
         ASSERT_IMPLIES(style->hyphens() == Hyphens::None, !hasTrailingSoftHyphen);
 
@@ -1307,7 +1307,7 @@ void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inl
             continue;
         }
 
-        auto isInlineTextBoxEligibleForBreakingPositionCache = inlineTextBox->content().length() >= TextBreakingPositionCache::minimumRequiredTextLengthForContentBreakCache;
+        auto isInlineTextBoxEligibleForBreakingPositionCache = WTF::length(inlineTextBox->content()) >= TextBreakingPositionCache::minimumRequiredTextLengthForContentBreakCache;
         if (!isInlineTextBoxEligibleForBreakingPositionCache) {
             // Text is too short.
             index += span.size();

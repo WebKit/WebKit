@@ -417,60 +417,60 @@ void CSSFontFace::setLineGapOverride(CSSValue& value)
     });
 }
 
-AtomString CSSFontFace::family() const
+RefPtr<AtomStringImpl> CSSFontFace::family() const
 {
     RefPtr value = dynamicDowncast<CSSFontFamilyNameValue>(protect(properties())->getPropertyCSSValue(CSSPropertyID::FontFamily));
     if (!value)
         return { };
-    return AtomString(serializeFontFamily(value->fontFamilyName().value));
+    return AtomStringImpl::add(serializeFontFamily(value->fontFamilyName().value));
 }
 
-String CSSFontFace::style() const
+RefPtr<StringImpl> CSSFontFace::style() const
 {
     return protect(properties())->getPropertyValue(CSSPropertyID::FontStyle);
 }
 
-String CSSFontFace::weight() const
+RefPtr<StringImpl> CSSFontFace::weight() const
 {
     return protect(properties())->getPropertyValue(CSSPropertyID::FontWeight);
 }
 
-String CSSFontFace::width() const
+RefPtr<StringImpl> CSSFontFace::width() const
 {
     return protect(properties())->getPropertyValue(CSSPropertyID::FontWidth);
 }
 
-String CSSFontFace::unicodeRange() const
+RefPtr<StringImpl> CSSFontFace::unicodeRange() const
 {
     return protect(properties())->getPropertyValue(CSSPropertyID::UnicodeRange);
 }
 
-String CSSFontFace::featureSettings() const
+RefPtr<StringImpl> CSSFontFace::featureSettings() const
 {
     return protect(properties())->getPropertyValue(CSSPropertyID::FontFeatureSettings);
 }
 
-String CSSFontFace::sizeAdjust() const
+RefPtr<StringImpl> CSSFontFace::sizeAdjust() const
 {
     return protect(properties())->getPropertyValue(CSSPropertyID::SizeAdjust);
 }
 
-String CSSFontFace::ascentOverride() const
+RefPtr<StringImpl> CSSFontFace::ascentOverride() const
 {
     return protect(properties())->getPropertyValue(CSSPropertyID::AscentOverride);
 }
 
-String CSSFontFace::descentOverride() const
+RefPtr<StringImpl> CSSFontFace::descentOverride() const
 {
     return protect(properties())->getPropertyValue(CSSPropertyID::DescentOverride);
 }
 
-String CSSFontFace::lineGapOverride() const
+RefPtr<StringImpl> CSSFontFace::lineGapOverride() const
 {
     return protect(properties())->getPropertyValue(CSSPropertyID::LineGapOverride);
 }
 
-String CSSFontFace::display() const
+RefPtr<StringImpl> CSSFontFace::display() const
 {
     return protect(properties())->getPropertyValue(CSSPropertyID::FontDisplay);
 }

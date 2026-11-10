@@ -76,15 +76,15 @@ public:
     WEBCORE_EXPORT void didAcquirePointerLock();
     WEBCORE_EXPORT void didNotAcquirePointerLock();
     WEBCORE_EXPORT void didLosePointerLock();
-    void dispatchLockedMouseEvent(const PlatformMouseEvent&, const AtomString& eventType);
+    void dispatchLockedMouseEvent(const PlatformMouseEvent&, AtomStringImpl* eventType);
     void dispatchLockedWheelEvent(const PlatformWheelEvent&);
 
 private:
     void clearElement();
-    void enqueueEvent(const AtomString& type, Element*);
-    void enqueueEvent(const AtomString& type, Document*);
+    void enqueueEvent(AtomStringImpl* type, Element*);
+    void enqueueEvent(AtomStringImpl* type, Document*);
     void resolvePromises();
-    void rejectPromises(ExceptionCode, const String&);
+    void rejectPromises(ExceptionCode, StringImpl*);
     void elementWasRemovedInternal();
 
     bool supportsUnadjustedMovement() const;

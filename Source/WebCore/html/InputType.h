@@ -161,13 +161,13 @@ public:
         Type::Submit,
     };
 
-    static RefPtr<InputType> createIfDifferent(HTMLInputElement&, const AtomString&, InputType* currentInputType = nullptr);
+    static RefPtr<InputType> createIfDifferent(HTMLInputElement&, AtomStringImpl*, InputType* currentInputType = nullptr);
 
     virtual ~InputType();
 
     void detachFromElement() { m_element = nullptr; }
 
-    virtual const AtomString& formControlType() const = 0;
+    virtual const RefPtr<AtomStringImpl>& formControlType() const = 0;
 
     bool isValidValue(StringView) const;
 
@@ -231,8 +231,8 @@ public:
 
     // DOM property functions.
 
-    virtual ValueOrReference<String> fallbackValue() const; // Checked last, if both internal storage and value attribute are missing.
-    virtual String defaultValue() const; // Checked after even fallbackValue, only when the valueWithDefault function is called.
+    virtual ValueOrReference<RefPtr<StringImpl>> fallbackValue() const; // Checked last, if both internal storage and value attribute are missing.
+    virtual RefPtr<StringImpl> defaultValue() const; // Checked after even fallbackValue, only when the valueWithDefault function is called.
     virtual WallTime valueAsDate() const;
     virtual ExceptionOr<void> setValueAsDate(WallTime) const;
     virtual WallTime accessibilityValueAsDate() const;
@@ -242,7 +242,7 @@ public:
 
     // Validation functions.
 
-    virtual String validationMessage() const;
+    virtual RefPtr<StringImpl> validationMessage() const;
     virtual bool typeMismatchFor(StringView) const { return false; }
     NODELETE virtual bool supportsRequired() const;
     virtual bool valueMissing(StringView) const { return false; }
@@ -262,12 +262,12 @@ public:
     virtual StepRange createStepRange(AnyStepHandling) const;
     virtual ExceptionOr<void> stepUp(int);
     virtual void stepUpOrDown(StepDirection);
-    virtual String badInputText() const;
-    virtual String typeMismatchText() const;
-    virtual String valueMissingText() const;
+    virtual RefPtr<StringImpl> badInputText() const;
+    virtual RefPtr<StringImpl> typeMismatchText() const;
+    virtual RefPtr<StringImpl> valueMissingText() const;
     NODELETE virtual bool canSetStringValue() const;
-    virtual String localizeValue(const String&) const;
-    virtual String visibleValue() const;
+    virtual RefPtr<StringImpl> localizeValue(StringImpl*) const;
+    virtual RefPtr<StringImpl> visibleValue() const;
     virtual bool isEmptyValue() const;
 
     // Returns true if the value violates any step/range constraint (stepMismatch,
@@ -279,7 +279,7 @@ public:
     virtual bool typeMismatch() const { return false; }
 
     // This function must be called only by HTMLInputElement::sanitizeValue().
-    virtual ValueOrReference<String> sanitizeValue(const String& value LIFETIME_BOUND) const;
+    virtual ValueOrReference<RefPtr<StringImpl>> sanitizeValue(StringImpl* value LIFETIME_BOUND) const;
 
     // Event handlers.
 
@@ -352,7 +352,7 @@ public:
     NODELETE virtual Icon* icon() const;
     NODELETE virtual bool shouldSendChangeEventAfterCheckedChanged();
     NODELETE virtual bool storesValueSeparateFromAttribute();
-    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection);
+    virtual void setValue(StringImpl*, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection);
     NODELETE virtual bool shouldResetOnDocumentActivation();
     virtual bool shouldRespectListAttribute() { return false; }
     NODELETE virtual bool shouldRespectHeightAndWidthAttributes();
@@ -366,7 +366,7 @@ public:
     virtual void requiredStateChanged() { }
     virtual void capsLockStateMayHaveChanged();
     virtual void updateAutoFillButton();
-    virtual String defaultToolTip() const;
+    virtual RefPtr<StringImpl> defaultToolTip() const;
     virtual bool matchesIndeterminatePseudoClass() const;
     NODELETE virtual bool isPresentingAttachedView() const;
     NODELETE virtual bool supportsSelectionAPI() const;
@@ -383,7 +383,7 @@ public:
     // Create a string representation of the specified Decimal value for the
     // input type. If NaN or Infinity is specified, this returns an empty
     // string. This should not be called for types without valueAsNumber.
-    virtual String serialize(const Decimal&) const;
+    virtual RefPtr<StringImpl> serialize(const Decimal&) const;
 
     // Gets width and height of the input element if the type of the
     // element is image. It returns 0 if the element is not image type.
@@ -403,9 +403,9 @@ public:
 
     NODELETE virtual DateComponentsType dateType() const;
 
-    NODELETE virtual String displayString() const;
+    NODELETE virtual RefPtr<StringImpl> displayString() const;
 
-    virtual String resultForDialogSubmit() const;
+    virtual RefPtr<StringImpl> resultForDialogSubmit() const;
 
 protected:
     InputType(Type type, HTMLInputElement& element)

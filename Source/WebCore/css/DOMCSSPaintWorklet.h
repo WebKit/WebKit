@@ -47,7 +47,7 @@ public:
     }
 
     // Worklet.
-    void addModule(const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&&) final;
+    void addModule(StringImpl* moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&&) final;
     NODELETE Vector<Ref<WorkletGlobalScopeProxy>> createGlobalScopes() final;
 
 private:

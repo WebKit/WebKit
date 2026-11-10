@@ -32,11 +32,11 @@
 namespace WebCore {
 
 struct MediaMetadataInit {
-    String title;
-    String artist;
-    String album;
+    RefPtr<StringImpl> title;
+    RefPtr<StringImpl> artist;
+    RefPtr<StringImpl> album;
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
-    String trackIdentifier;
+    RefPtr<StringImpl> trackIdentifier;
 #endif
     Vector<MediaImage> artwork;
 };

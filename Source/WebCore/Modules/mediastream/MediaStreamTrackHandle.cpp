@@ -38,7 +38,7 @@ ExceptionOr<Ref<MediaStreamTrackHandle>> MediaStreamTrackHandle::create(MediaStr
 {
     RefPtr context = track.scriptExecutionContext();
     if (!context)
-        return Exception { ExceptionCode::InvalidStateError, "Track context is gone"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Track context is gone"_si };
 
     return create(context->identifier(), track, track.keeper(), track.privateTrack().sourceObserver());
 }

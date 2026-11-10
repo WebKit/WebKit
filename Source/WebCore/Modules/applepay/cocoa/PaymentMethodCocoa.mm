@@ -38,7 +38,7 @@ static void finishConverting(PKPaymentMethod *paymentMethod, ApplePayPaymentMeth
 {
 #if HAVE(PASSKIT_INSTALLMENTS)
     if (RetainPtr<NSString> bindToken = paymentMethod.bindToken)
-        result.bindToken = bindToken.get();
+        result.bindToken = StringImpl::create(bindToken.get());
 #else
     UNUSED_PARAM(paymentMethod);
     UNUSED_PARAM(result);
@@ -68,13 +68,13 @@ static std::optional<ApplePayPaymentPass> convert(PKPaymentPass *paymentPass)
 
     ApplePayPaymentPass result;
 
-    result.primaryAccountIdentifier = paymentPass.primaryAccountIdentifier;
-    result.primaryAccountNumberSuffix = paymentPass.primaryAccountNumberSuffix;
+    result.primaryAccountIdentifier = StringImpl::create(paymentPass.primaryAccountIdentifier);
+    result.primaryAccountNumberSuffix = StringImpl::create(paymentPass.primaryAccountNumberSuffix);
 
     if (RetainPtr<NSString> deviceAccountIdentifier = paymentPass.deviceAccountIdentifier)
-        result.deviceAccountIdentifier = deviceAccountIdentifier.get();
+        result.deviceAccountIdentifier = StringImpl::create(deviceAccountIdentifier.get());
     if (RetainPtr<NSString> deviceAccountNumberSuffix = paymentPass.deviceAccountNumberSuffix)
-        result.deviceAccountNumberSuffix = deviceAccountNumberSuffix.get();
+        result.deviceAccountNumberSuffix = StringImpl::create(deviceAccountNumberSuffix.get());
 
     result.activationState = convert(paymentPass.activationState);
 
@@ -101,14 +101,14 @@ NODELETE static std::optional<ApplePayPaymentMethod::Type> convert(PKPaymentMeth
 static void convert(CNLabeledValue<CNPostalAddress*> *postalAddress, ApplePayPaymentContact &result)
 {
     if (RetainPtr<NSString> street = postalAddress.value.street)
-        result.addressLines = { String { street.get() } };
-    result.subLocality = postalAddress.value.subLocality;
-    result.locality = postalAddress.value.city;
-    result.subAdministrativeArea = postalAddress.value.subAdministrativeArea;
-    result.administrativeArea = postalAddress.value.state;
-    result.postalCode = postalAddress.value.postalCode;
-    result.country = postalAddress.value.country;
-    result.countryCode = postalAddress.value.ISOCountryCode;
+        result.addressLines = { StringImpl::create(street.get()) };
+    result.subLocality = StringImpl::create(postalAddress.value.subLocality);
+    result.locality = StringImpl::create(postalAddress.value.city);
+    result.subAdministrativeArea = StringImpl::create(postalAddress.value.subAdministrativeArea);
+    result.administrativeArea = StringImpl::create(postalAddress.value.state);
+    result.postalCode = StringImpl::create(postalAddress.value.postalCode);
+    result.country = StringImpl::create(postalAddress.value.country);
+    result.countryCode = StringImpl::create(postalAddress.value.ISOCountryCode);
 }
 
 static std::optional<ApplePayPaymentContact> convert(CNContact *billingContact)
@@ -119,16 +119,16 @@ static std::optional<ApplePayPaymentContact> convert(CNContact *billingContact)
     ApplePayPaymentContact result;
 
     if (auto firstPhoneNumber = retainPtr(billingContact.phoneNumbers.firstObject))
-        result.phoneNumber = firstPhoneNumber.get().value.stringValue;
+        result.phoneNumber = StringImpl::create(firstPhoneNumber.get().value.stringValue);
 
     if (auto firstEmailAddress = retainPtr(billingContact.emailAddresses.firstObject))
-        result.emailAddress = firstEmailAddress.get().value;
+        result.emailAddress = StringImpl::create(firstEmailAddress.get().value);
 
-    result.givenName = billingContact.givenName;
-    result.familyName = billingContact.familyName;
+    result.givenName = StringImpl::create(billingContact.givenName);
+    result.familyName = StringImpl::create(billingContact.familyName);
 
-    result.phoneticGivenName = billingContact.phoneticGivenName;
-    result.phoneticFamilyName = billingContact.phoneticFamilyName;
+    result.phoneticGivenName = StringImpl::create(billingContact.phoneticGivenName);
+    result.phoneticFamilyName = StringImpl::create(billingContact.phoneticFamilyName);
 
     if (RetainPtr<CNLabeledValue<CNPostalAddress*>> firstPostalAddress = billingContact.postalAddresses.firstObject)
         convert(firstPostalAddress.get(), result);
@@ -141,14 +141,14 @@ static ApplePayPaymentMethod convert(PKPaymentMethod *paymentMethod)
     ApplePayPaymentMethod result;
     
     if (RetainPtr<NSString> displayName = paymentMethod.displayName)
-        result.displayName = displayName.get();
+        result.displayName = StringImpl::create(displayName.get());
     if (RetainPtr<NSString> network = paymentMethod.network)
-        result.network = network.get();
+        result.network = StringImpl::create(network.get());
 #if HAVE(PASSKIT_ISSUING_REGION_CODE)
     // FIXME: <rdar://188823158> (Remove PKPaymentMethod issuingRegionCode staging code from WebKit)
     if ([paymentMethod respondsToSelector:@selector(issuingRegionCode)]) {
         if (RetainPtr<NSString> issuingRegionCode = paymentMethod.issuingRegionCode)
-            result.issuingRegionCode = issuingRegionCode.get();
+            result.issuingRegionCode = StringImpl::create(issuingRegionCode.get());
     }
 #endif
     result.billingContact = convert(retainPtr(paymentMethod.billingAddress).get());

@@ -35,12 +35,12 @@ public:
     void TearDown() override;
 
     static ASCIILiteral testData() { return "This is a test"_s; }
-    const String& tempFilePath() { return m_tempFilePath; }
-    const String& tempEmptyFilePath() { return m_tempEmptyFilePath; }
+    const RefPtr<StringImpl>& tempFilePath() { return m_tempFilePath; }
+    const RefPtr<StringImpl>& tempEmptyFilePath() { return m_tempEmptyFilePath; }
 
 private:
-    String m_tempFilePath;
-    String m_tempEmptyFilePath;
+    RefPtr<StringImpl> m_tempFilePath;
+    RefPtr<StringImpl> m_tempEmptyFilePath;
 };
 
 #if ENABLE(MHTML)

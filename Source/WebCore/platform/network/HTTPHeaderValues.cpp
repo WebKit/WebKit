@@ -32,34 +32,34 @@ namespace WebCore {
 
 namespace HTTPHeaderValues {
 
-const String& textPlainContentType()
+const RefPtr<StringImpl>& textPlainContentType()
 {
-    static NeverDestroyed<const String> contentType(MAKE_STATIC_STRING_IMPL("text/plain;charset=UTF-8"));
+    static NeverDestroyed<const RefPtr<StringImpl>> contentType(MAKE_STATIC_STRING_IMPL("text/plain;charset=UTF-8"));
     return contentType;
 }
 
-const String& formURLEncodedContentType()
+const RefPtr<StringImpl>& formURLEncodedContentType()
 {
-    static NeverDestroyed<const String> contentType(MAKE_STATIC_STRING_IMPL("application/x-www-form-urlencoded;charset=UTF-8"));
+    static NeverDestroyed<const RefPtr<StringImpl>> contentType(MAKE_STATIC_STRING_IMPL("application/x-www-form-urlencoded;charset=UTF-8"));
     return contentType;
 }
 
-const String& applicationJSONContentType()
+const RefPtr<StringImpl>& applicationJSONContentType()
 {
     // The default encoding is UTF-8: https://www.ietf.org/rfc/rfc4627.txt.
-    static NeverDestroyed<const String> contentType(MAKE_STATIC_STRING_IMPL("application/json"));
+    static NeverDestroyed<const RefPtr<StringImpl>> contentType(MAKE_STATIC_STRING_IMPL("application/json"));
     return contentType;
 }
 
-const String& noCache()
+const RefPtr<StringImpl>& noCache()
 {
-    static NeverDestroyed<const String> value(MAKE_STATIC_STRING_IMPL("no-cache"));
+    static NeverDestroyed<const RefPtr<StringImpl>> value(MAKE_STATIC_STRING_IMPL("no-cache"));
     return value;
 }
 
-const String& maxAge0()
+const RefPtr<StringImpl>& maxAge0()
 {
-    static NeverDestroyed<const String> value(MAKE_STATIC_STRING_IMPL("max-age=0"));
+    static NeverDestroyed<const RefPtr<StringImpl>> value(MAKE_STATIC_STRING_IMPL("max-age=0"));
     return value;
 }
 

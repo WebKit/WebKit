@@ -68,7 +68,7 @@ public:
 #if PLATFORM(COCOA)
     // Mac-specific helper function to allow access to web archives and NSPasteboard extras in WebKit.
     // This is not abstract as that would require another #if PLATFORM(COCOA) for the SVGImage client empty implentation.
-    virtual void declareAndWriteDragImage(const String&, Element&, const URL&, const String&, LocalFrame*) { }
+    virtual void declareAndWriteDragImage(StringImpl*, Element&, const URL&, StringImpl*, LocalFrame*) { }
 #endif
 
     virtual ~DragClient() = default;

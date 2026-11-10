@@ -120,7 +120,7 @@ void WebTransportSession::streamSendError(WebCore::WebTransportStreamIdentifier 
         strongClient->streamSendError(identifier, errorCode);
 }
 
-void WebTransportSession::didFail(std::optional<uint32_t>&& code, String&& message)
+void WebTransportSession::didFail(std::optional<uint32_t>&& code, RefPtr<StringImpl>&& message)
 {
     ASSERT(RunLoop::isMain());
     if (RefPtr strongClient = m_client.get())
@@ -134,7 +134,7 @@ void WebTransportSession::didDrain()
         strongClient->didDrain();
 }
 
-Ref<WebCore::WebTransportSessionInitializationPromise> WebTransportSession::initialize(WebCore::ScriptExecutionContext& context, const URL& url, const WebCore::WebTransportOptions& options, const Vector<KeyValuePair<String, String>>& additionalHeaders, const WebCore::ClientOrigin& origin)
+Ref<WebCore::WebTransportSessionInitializationPromise> WebTransportSession::initialize(WebCore::ScriptExecutionContext& context, const URL& url, const WebCore::WebTransportOptions& options, const Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& additionalHeaders, const WebCore::ClientOrigin& origin)
 {
     std::optional<TextPosition> sourcePosition;
     if (RefPtr document = dynamicDowncast<WebCore::Document>(context))

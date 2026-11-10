@@ -90,7 +90,7 @@ public:
 
     USING_CAN_MAKE_WEAKPTR(Widget);
 
-    String debugDescription() const override;
+    RefPtr<StringImpl> debugDescription() const override;
 
     // ScrollableArea functions.
     WEBCORE_EXPORT void setScrollOffset(const ScrollOffset&) final;

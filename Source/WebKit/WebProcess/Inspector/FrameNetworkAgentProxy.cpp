@@ -127,7 +127,7 @@ CommandResult<void> FrameNetworkAgentProxy::disable()
 
 // The loaderId for a resource's DocumentLoader. The registry memoizes one string per loader, so
 // this network path and PageAgentProxy::frameNavigated report the identical id for a navigation.
-static String loaderIdForLoader(WebPage& page, DocumentLoader* loader)
+static RefPtr<StringImpl> loaderIdForLoader(WebPage& page, DocumentLoader* loader)
 {
     RefPtr corePage = page.corePage();
     if (!corePage)
@@ -326,7 +326,7 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
         auto* resourceData = m_resourcesData->data(resourceID);
         if (resourceData && resourceData->type() == ResourceType::Document) {
             if (RefPtr documentLoader = frameLoader->documentLoader())
-                m_resourcesData->addResourceSharedBuffer(resourceID, documentLoader->mainResourceData(), document->encoding());
+                m_resourcesData->addResourceSharedBuffer(resourceID, documentLoader->mainResourceData(), StringImpl::createOrNull(document->encoding()).get());
         }
     }
 
@@ -339,7 +339,7 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
     // ResourceLoader to ask for it.
     if (auto* resourceData = m_resourcesData->data(resourceID); resourceData && resourceData->receivedNoContent()) {
         if (RefPtr cachedResource = ResourceUtilities::cachedResource(frame.get(), URL { resourceData->url() })) {
-            String content;
+            RefPtr<StringImpl> content;
             bool base64Encoded;
             if (ResourceUtilities::cachedResourceContent(*cachedResource, &content, &base64Encoded))
                 m_resourcesData->setResourceContent(resourceID, content, base64Encoded);
@@ -351,10 +351,10 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
     // the Debugger domain. Mirror ResourceUtilities::sourceMapURLForResource: prefer the
     // SourceMap/X-SourceMap response header (captured at response time), then fall back to
     // a "/*# sourceMappingURL=... */" comment in the decoded stylesheet text.
-    String sourceMapURL;
+    RefPtr<StringImpl> sourceMapURL;
     if (auto* resourceData = m_resourcesData->data(resourceID); resourceData && resourceData->type() == ResourceType::StyleSheet) {
         sourceMapURL = resourceData->sourceMapURL();
-        if (sourceMapURL.isEmpty() && resourceData->hasContent() && !resourceData->base64Encoded())
+        if (isEmpty(sourceMapURL) && resourceData->hasContent() && !resourceData->base64Encoded())
             sourceMapURL = ContentSearchUtilities::findStylesheetSourceMapURL(resourceData->content());
     }
 
@@ -418,7 +418,7 @@ void FrameNetworkAgentProxy::didLoadResourceFromMemoryCache(DocumentLoader* load
     // Copy content from the CachedResource now, since the store does not hold
     // CachedResource references and memory-cached resources don't go through
     // didReceiveData.
-    String content;
+    RefPtr<StringImpl> content;
     bool base64Encoded;
     if (ResourceUtilities::cachedResourceContent(cachedResource, &content, &base64Encoded))
         m_resourcesData->setResourceContent(resourceID, content, base64Encoded);
@@ -457,7 +457,7 @@ void FrameNetworkAgentProxy::willDestroyCachedResource(CachedResource&)
 {
 }
 
-void FrameNetworkAgentProxy::setInitialScriptContent(ResourceLoaderIdentifier resourceID, const String& sourceString)
+void FrameNetworkAgentProxy::setInitialScriptContent(ResourceLoaderIdentifier resourceID, StringImpl* sourceString)
 {
     m_resourcesData->setResourceContent(resourceID, sourceString);
 }

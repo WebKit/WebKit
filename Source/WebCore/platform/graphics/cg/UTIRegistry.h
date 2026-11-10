@@ -30,14 +30,14 @@
 
 namespace WebCore {
 
-const MemoryCompactLookupOnlyRobinHoodHashSet<String>& supportedImageTypes();
-NODELETE MemoryCompactRobinHoodHashSet<String>& additionalSupportedImageTypes();
-WEBCORE_EXPORT void setAdditionalSupportedImageTypes(const Vector<String>&);
-WEBCORE_EXPORT void setAdditionalSupportedImageTypesForTesting(const String&);
-WEBCORE_EXPORT bool isSupportedImageType(const String&);
-WEBCORE_EXPORT Vector<String> allowableImageTypes();
+const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>& supportedImageTypes();
+NODELETE MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>>& additionalSupportedImageTypes();
+WEBCORE_EXPORT void setAdditionalSupportedImageTypes(const Vector<RefPtr<StringImpl>>&);
+WEBCORE_EXPORT void setAdditionalSupportedImageTypesForTesting(StringImpl*);
+WEBCORE_EXPORT bool isSupportedImageType(StringImpl*);
+WEBCORE_EXPORT Vector<RefPtr<StringImpl>> allowableImageTypes();
 bool isGIFImageType(StringView);
-String preferredExtensionForImageType(const String& type);
-String MIMETypeForImageType(const String& type);
+RefPtr<StringImpl> preferredExtensionForImageType(StringImpl* type);
+RefPtr<StringImpl> MIMETypeForImageType(StringImpl* type);
 
 } // namespace WebCore

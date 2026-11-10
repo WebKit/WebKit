@@ -241,18 +241,18 @@ class BuiltinNames {
     WTF_MAKE_TZONE_ALLOCATED(BuiltinNames);
     
 public:
-    using PrivateNameSet = MemoryCompactLookupOnlyRobinHoodHashSet<String>;
-    using WellKnownSymbolMap = MemoryCompactLookupOnlyRobinHoodHashMap<String, SymbolImpl*>;
+    using PrivateNameSet = MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>;
+    using WellKnownSymbolMap = MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, SymbolImpl*>;
 
     BuiltinNames(VM&, CommonIdentifiers*);
 
     PrivateSymbolImpl* lookUpPrivateName(const Identifier&) const;
-    PrivateSymbolImpl* lookUpPrivateName(const String&) const;
+    PrivateSymbolImpl* lookUpPrivateName(StringImpl*) const;
     PrivateSymbolImpl* lookUpPrivateName(std::span<const Latin1Character>) const;
     PrivateSymbolImpl* lookUpPrivateName(std::span<const char16_t>) const;
 
     SymbolImpl* lookUpWellKnownSymbol(const Identifier&) const;
-    SymbolImpl* lookUpWellKnownSymbol(const String&) const;
+    SymbolImpl* lookUpWellKnownSymbol(StringImpl*) const;
     SymbolImpl* lookUpWellKnownSymbol(std::span<const Latin1Character>) const;
     SymbolImpl* lookUpWellKnownSymbol(std::span<const char16_t>) const;
     
@@ -297,7 +297,7 @@ inline void BuiltinNames::checkPublicToPrivateMapConsistency(UniquedStringImpl* 
 {
 #if ASSERT_ENABLED
     for (const auto& key : m_privateNameSet)
-        ASSERT(String(privateName) != key);
+        ASSERT(!equal(RefPtr<StringImpl>(privateName), key));
     ASSERT(privateName->isSymbol());
     ASSERT(static_cast<SymbolImpl*>(privateName)->isPrivate());
 #else
@@ -307,7 +307,7 @@ inline void BuiltinNames::checkPublicToPrivateMapConsistency(UniquedStringImpl* 
 
 inline void BuiltinNames::appendExternalName(const Identifier& publicName, const Identifier& privateName)
 {
-    ASSERT_UNUSED(publicName, String(publicName.impl()) == String(privateName.impl()));
+    ASSERT_UNUSED(publicName, equal(RefPtr<StringImpl>(publicName.impl()), RefPtr<StringImpl>(privateName.impl())));
     checkPublicToPrivateMapConsistency(privateName.impl());
     m_privateNameSet.add(privateName.impl());
 }

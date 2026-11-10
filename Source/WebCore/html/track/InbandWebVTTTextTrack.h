@@ -44,7 +44,7 @@ private:
     InbandWebVTTTextTrack(ScriptExecutionContext&, InbandTextTrackPrivate&);
 
     WebVTTParser& parser();
-    void parseWebVTTFileHeader(String&&) final;
+    void parseWebVTTFileHeader(RefPtr<StringImpl>&&) final;
     void parseWebVTTCueData(std::span<const uint8_t>) final;
     void parseWebVTTCueData(ISOWebVTTCue&&) final;
 

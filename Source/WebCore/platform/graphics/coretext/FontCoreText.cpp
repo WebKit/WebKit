@@ -601,7 +601,7 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     return advance.width;
 }
 
-GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningGlyphIndex, unsigned beginningStringIndex, bool enableKerning, bool requiresShaping, const AtomString& locale, StringView text, TextDirection textDirection) const
+GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningGlyphIndex, unsigned beginningStringIndex, bool enableKerning, bool requiresShaping, AtomStringImpl* locale, StringView text, TextDirection textDirection) const
 {
     UNUSED_PARAM(requiresShaping);
 
@@ -630,7 +630,7 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
     auto substring = text.substring(beginningStringIndex);
     constexpr unsigned bufferSize = 256;
     auto upconvertedCharacters = substring.upconvertedCharacters<bufferSize>();
-    auto localeString = locale.isNull() ? nullptr : LocaleCocoa::canonicalLanguageIdentifierFromString(locale);
+    auto localeString = !locale ? nullptr : LocaleCocoa::canonicalLanguageIdentifierFromString(locale);
     auto numberOfInputGlyphs = glyphBuffer.size() - beginningGlyphIndex;
     // FIXME: Enable kerning for single glyphs when rdar://82195405 is fixed
     CTFontShapeOptions options = kCTFontShapeWithClusterComposition
@@ -643,9 +643,9 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
 
     RetainPtr ctFont = this->ctFont();
     LOG_WITH_STREAM(TextShaping,
-        stream << "Simple shaping " << numberOfInputGlyphs << " glyphs in font " << String(adoptCF(CTFontCopyPostScriptName(ctFont.get())).get()) << ".\n";
-        stream << "Font attributes: " << String(adoptCF(CFCopyDescription(adoptCF(CTFontDescriptorCopyAttributes(adoptCF(CTFontCopyFontDescriptor(ctFont.get())).get())).get())).get()) << "\n";
-        stream << "Locale: " << String(localeString.get()) << "\n";
+        stream << "Simple shaping " << numberOfInputGlyphs << " glyphs in font " << StringImpl::create(adoptCF(CTFontCopyPostScriptName(ctFont.get())).get()) << ".\n";
+        stream << "Font attributes: " << StringImpl::create(adoptCF(CFCopyDescription(adoptCF(CTFontDescriptorCopyAttributes(adoptCF(CTFontCopyFontDescriptor(ctFont.get())).get())).get())).get()) << "\n";
+        stream << "Locale: " << StringImpl::create(localeString.get()) << "\n";
         stream << "Options: " << options << "\n";
         auto glyphs = glyphBuffer.glyphs(beginningGlyphIndex);
         stream << "Glyphs:";
@@ -1032,7 +1032,7 @@ std::optional<InstalledFont> Font::toSerializableInstalledFont() const
         return InstalledFont {
             InstalledFont::SystemUIFont {
                 fontType,
-                adoptCF(checked_cf_cast<CFStringRef>(CTFontCopyAttribute(ctFont.get(), kCTFontDescriptorLanguageAttribute))).get()
+                StringImpl::create(adoptCF(checked_cf_cast<CFStringRef>(CTFontCopyAttribute(ctFont.get(), kCTFontDescriptorLanguageAttribute))).get())
             },
             platformData().metadata()
         };
@@ -1042,7 +1042,7 @@ std::optional<InstalledFont> Font::toSerializableInstalledFont() const
     RetainPtr attributes = adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get()));
     return InstalledFont {
         InstalledFont::PostScriptFont {
-            String(adoptCF(CTFontCopyPostScriptName(ctFont.get())).get()),
+            StringImpl::create(adoptCF(CTFontCopyPostScriptName(ctFont.get())).get()),
             CTFontDescriptorGetOptions(fontDescriptor.get()),
             FontPlatformSerializedAttributes::fromCF(attributes.get())
         },

@@ -42,7 +42,7 @@ namespace WebKit {
 #define MDNS_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - NetworkMDNSRegister::" fmt, this, ##__VA_ARGS__)
 #define MDNS_RELEASE_LOG_IN_CALLBACK(sessionID, fmt, ...) RELEASE_LOG(Network, "NetworkMDNSRegister callback - " fmt, ##__VA_ARGS__)
 
-NetworkMDNSRegister::PendingRegistrationRequest::PendingRegistrationRequest(Ref<NetworkConnectionToWebProcess>&& connection, String&& name, String address, PAL::SessionID sessionID, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&& completionHandler)
+NetworkMDNSRegister::PendingRegistrationRequest::PendingRegistrationRequest(Ref<NetworkConnectionToWebProcess>&& connection, RefPtr<StringImpl>&& name, RefPtr<StringImpl> address, PAL::SessionID sessionID, CompletionHandler<void(StringImpl*, std::optional<WebCore::MDNSRegisterError>)>&& completionHandler)
     : connection(WTF::move(connection))
     , name(WTF::move(name))
     , address(WTF::move(address))
@@ -72,7 +72,7 @@ void NetworkMDNSRegister::deref() const
     m_connection->deref();
 }
 
-bool NetworkMDNSRegister::hasRegisteredName(const String& name) const
+bool NetworkMDNSRegister::hasRegisteredName(StringImpl* name) const
 {
     return m_registeredNames.contains(name);
 }
@@ -118,13 +118,13 @@ static void registerMDNSNameCallback(DNSServiceRef service, DNSRecordRef record,
     request->completionHandler(request->name, { });
 }
 
-void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdentifier documentIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&& completionHandler)
+void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdentifier documentIdentifier, StringImpl* ipAddress, CompletionHandler<void(StringImpl*, std::optional<WebCore::MDNSRegisterError>)>&& completionHandler)
 {
     auto name = makeString(WTF::UUID::createVersion4(), ".local"_s);
 
     m_registeredNames.add(name);
     m_perDocumentRegisteredNames.ensure(documentIdentifier, [] {
-        return Vector<String>();
+        return Vector<RefPtr<StringImpl>>();
     }).iterator->value.append(name);
 
     DNSServiceRef service;
@@ -145,7 +145,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
     } else
         service = iterator->value.get();
 
-    auto ip = inet_addr(ipAddress.utf8().legacyCStringPointer());
+    auto ip = inet_addr(utf8(ipAddress).legacyCStringPointer());
 
     // FIXME: Add IPv6 support.
     if (ip == ( in_addr_t)(-1)) {
@@ -166,7 +166,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
         kDNSServiceFlagsUnique,
 #endif
         0,
-        addResult.iterator->value->name.utf8().legacyCStringPointer(),
+        utf8(addResult.iterator->value->name).legacyCStringPointer(),
         kDNSServiceType_A,
         kDNSServiceClass_IN,
         4,
@@ -192,7 +192,7 @@ void NetworkMDNSRegister::unregisterMDNSNames(WebCore::ScriptExecutionContextIde
 }
 
 #if !USE(GLIB)
-void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdentifier documentIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&& completionHandler)
+void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdentifier documentIdentifier, StringImpl* ipAddress, CompletionHandler<void(StringImpl*, std::optional<WebCore::MDNSRegisterError>)>&& completionHandler)
 {
     auto name = makeString(WTF::UUID::createVersion4(), ".local"_s);
 

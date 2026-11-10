@@ -65,10 +65,10 @@ private:
     explicit WebPaymentCoordinator(WebPage&);
 
     // WebCore::PaymentCoordinatorClient.
-    std::optional<String> validatedPaymentNetwork(const String&) const override;
+    std::optional<RefPtr<StringImpl>> validatedPaymentNetwork(StringImpl*) const override;
     bool canMakePayments() override;
-    void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&) override;
-    void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&) override;
+    void canMakePaymentsWithActiveCard(StringImpl* merchantIdentifier, StringImpl* domainName, CompletionHandler<void(bool)>&&) override;
+    void openPaymentSetup(StringImpl* merchantIdentifier, StringImpl* domainName, CompletionHandler<void(bool)>&&) override;
     bool showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&) override;
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&) override;
     void completeShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&) override;
@@ -98,17 +98,17 @@ private:
     NODELETE WebCore::PaymentCoordinator& paymentCoordinator() const;
 
     // Message handlers.
-    void validateMerchant(const String& validationURLString);
+    void validateMerchant(StringImpl* validationURLString);
     void didAuthorizePayment(const WebCore::Payment&);
     void didSelectShippingMethod(const WebCore::ApplePayShippingMethod&);
     void didSelectShippingContact(const WebCore::PaymentContact&);
     void didSelectPaymentMethod(const WebCore::PaymentMethod&);
 #if ENABLE(APPLE_PAY_COUPON_CODE)
-    void didChangeCouponCode(String&& couponCode);
+    void didChangeCouponCode(RefPtr<StringImpl>&& couponCode);
 #endif
     void didCancelPaymentSession(WebCore::PaymentSessionError&&);
 
-    using AvailablePaymentNetworksSet = HashSet<String, ASCIICaseInsensitiveHash>;
+    using AvailablePaymentNetworksSet = HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash>;
     static AvailablePaymentNetworksSet platformAvailablePaymentNetworks();
 
     WeakPtr<WebPage> m_webPage;

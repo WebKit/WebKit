@@ -64,11 +64,11 @@ JSArray* RegExpCachedResult::lastResult(JSGlobalObject* globalObject, JSObject* 
 
             if (m_oneCharacterMatch) {
                 ASSERT(m_lastRegExp->hasValidAtom());
-                const String& pattern = m_lastRegExp->atom();
-                ASSERT(!pattern.isEmpty());
-                ASSERT(pattern.length() == 1);
+                const RefPtr<StringImpl>& pattern = m_lastRegExp->atom();
+                ASSERT(!isEmpty(pattern));
+                ASSERT(length(pattern) == 1);
                 // Reify precise m_result.
-                size_t found = input->reverseFind(pattern.codeUnitAt(0));
+                size_t found = input->reverseFind(codeUnitAt(pattern, 0));
                 if (found != notFound) {
                     m_result.start = found;
                     m_result.end = found + 1;

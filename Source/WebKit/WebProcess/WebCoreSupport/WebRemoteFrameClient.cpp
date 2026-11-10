@@ -141,33 +141,33 @@ void WebRemoteFrameClient::changeLocation(FrameLoadRequest&& request, std::optio
         action.setPrivateClickMeasurement(WTF::move(*privateClickMeasurement));
     // FIXME: action.request and request are probably duplicate information. <rdar://116203126>
     // FIXME: Get more parameters correct and add tests for each one. <rdar://116203354>
-    dispatchDecidePolicyForNavigationAction(action, action.originalRequest(), ResourceResponse(), nullptr, { }, { }, { }, { }, NavigationUpgradeToHTTPSBehavior::BasedOnPolicy, { }, PolicyDecisionMode::Asynchronous, [protectedFrame = Ref { m_frame }, request = WTF::move(request)] (PolicyAction policyAction) mutable {
+    dispatchDecidePolicyForNavigationAction(action, action.originalRequest(), ResourceResponse(), nullptr, nullptr, { }, { }, { }, NavigationUpgradeToHTTPSBehavior::BasedOnPolicy, { }, PolicyDecisionMode::Asynchronous, [protectedFrame = Ref { m_frame }, request = WTF::move(request)] (PolicyAction policyAction) mutable {
         // WebPage::loadRequest will make this load happen if needed.
         // FIXME: What if PolicyAction::Ignore is sent. Is everything in the right state? We probably need to make sure the load event still happens on the parent frame. <rdar://116203453>
     });
 }
 
-String WebRemoteFrameClient::renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag> behavior)
+RefPtr<StringImpl> WebRemoteFrameClient::renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag> behavior)
 {
     RefPtr page = m_frame->page();
     if (!page)
-        return "Test Error - Missing page\n"_s;
+        return "Test Error - Missing page\n"_si;
     auto sendResult = page->sendSync(Messages::WebPageProxy::RenderTreeAsTextForTesting(m_frame->frameID(), baseIndent, behavior), IPC::Timeout::infinity(), IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
     if (!sendResult.succeeded())
-        return "Test Error - sending WebPageProxy::RenderTreeAsTextForTesting failed\n"_s;
+        return "Test Error - sending WebPageProxy::RenderTreeAsTextForTesting failed\n"_si;
     auto [result] = sendResult.takeReply();
     return result;
 }
 
-String WebRemoteFrameClient::layerTreeAsText(size_t baseIndent, OptionSet<LayerTreeAsTextOptions> options)
+RefPtr<StringImpl> WebRemoteFrameClient::layerTreeAsText(size_t baseIndent, OptionSet<LayerTreeAsTextOptions> options)
 {
     RefPtr page = m_frame->page();
     if (!page)
-        return "Test Error - Missing page\n"_s;
+        return "Test Error - Missing page\n"_si;
     options.add(LayerTreeAsTextOptions::IncludeRootLayers);
     auto sendResult = page->sendSync(Messages::WebPageProxy::LayerTreeAsTextForTesting(m_frame->frameID(), baseIndent, options));
     if (!sendResult.succeeded())
-        return "Test Error - sending WebPageProxy::LayerTreeAsTextForTesting failed\n"_s;
+        return "Test Error - sending WebPageProxy::LayerTreeAsTextForTesting failed\n"_si;
     auto [result] = sendResult.takeReply();
     return result;
 }
@@ -241,7 +241,7 @@ void WebRemoteFrameClient::unfocus()
 }
 
 void WebRemoteFrameClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse,
-    FormState* formState, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
+    FormState* formState, StringImpl* clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
 {
     WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(navigationAction, request, redirectResponse, formState, clientRedirectSourceForHistory, navigationID, WTF::move(hitTestResult), hasOpener, navigationUpgradeToHTTPSBehavior, sandboxFlags, policyDecisionMode, WTF::move(function));
 }

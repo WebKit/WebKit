@@ -341,8 +341,8 @@ void RunLoop::notifyEvent(RunLoop::Event event, const char* name)
     if (m_eventObservers.isEmptyIgnoringNullReferences())
         return;
 
-    m_eventObservers.forEach([event, name = String::fromUTF8(name)](auto& observer) {
-        observer(event, name);
+    m_eventObservers.forEach([event, name = StringImpl::fromUTF8(name)](auto& observer) {
+        observer(event, name.get());
     });
 }
 

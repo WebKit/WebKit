@@ -35,11 +35,11 @@
 namespace WTF::FileSystemImpl {
 
 
-String localUserSpecificStorageDirectory()
+RefPtr<StringImpl> localUserSpecificStorageDirectory()
 {
     BPath path;
     find_directory(B_USER_SETTINGS_DIRECTORY, &path);
-    return String::fromUTF8(path.Path());
+    return StringImpl::fromUTF8(path.Path());
 }
 
 } // namespace WTF::FileSystemImpl

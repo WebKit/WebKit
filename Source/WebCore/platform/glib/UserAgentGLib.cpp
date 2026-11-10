@@ -69,25 +69,25 @@ static ASCIILiteral platformForUAString(UserAgentType type)
 #endif
 }
 
-static const String platformVersionForUAString(UserAgentType type)
+static const RefPtr<StringImpl> platformVersionForUAString(UserAgentType type)
 {
 #if OS(UNIX)
     if (isMobileUA(type))
-        return "like Android 4.4"_s;
+        return "like Android 4.4"_si;
 
     struct utsname name;
     uname(&name);
-    static NeverDestroyed<const String> uaOSVersion(makeString(unsafeSpan(name.sysname), ' ', unsafeSpan(name.machine)));
+    static NeverDestroyed<const RefPtr<StringImpl>> uaOSVersion(makeString(unsafeSpan(name.sysname), ' ', unsafeSpan(name.machine)));
     return uaOSVersion;
 #else
     // We will always claim to be Safari in Intel Mac OS X, since Safari without
     // OS X or anything on ARM triggers mobile versions of some websites.
-    static NeverDestroyed<const String> uaOSVersion(MAKE_STATIC_STRING_IMPL("Intel Mac OS X 10_13_4"));
+    static NeverDestroyed<const RefPtr<StringImpl>> uaOSVersion(MAKE_STATIC_STRING_IMPL("Intel Mac OS X 10_13_4"));
     return uaOSVersion;
 #endif
 }
 
-static String buildUserAgentString(const UserAgentQuirks& quirks, UserAgentType type)
+static RefPtr<StringImpl> buildUserAgentString(const UserAgentQuirks& quirks, UserAgentType type)
 {
     StringBuilder uaString;
     uaString.append("Mozilla/5.0 ("_s);
@@ -133,17 +133,17 @@ static String buildUserAgentString(const UserAgentQuirks& quirks, UserAgentType 
     return uaString.toString();
 }
 
-static const String standardUserAgentStatic(UserAgentType type)
+static const RefPtr<StringImpl> standardUserAgentStatic(UserAgentType type)
 {
     if (isMobileUA(type)) {
-        static NeverDestroyed<const String> uaMobileStatic(buildUserAgentString(UserAgentQuirks(), UserAgentType::Mobile));
+        static NeverDestroyed<const RefPtr<StringImpl>> uaMobileStatic(buildUserAgentString(UserAgentQuirks(), UserAgentType::Mobile));
         return uaMobileStatic;
     }
-    static NeverDestroyed<const String> uaDesktopStatic(buildUserAgentString(UserAgentQuirks(), UserAgentType::Desktop));
+    static NeverDestroyed<const RefPtr<StringImpl>> uaDesktopStatic(buildUserAgentString(UserAgentQuirks(), UserAgentType::Desktop));
     return uaDesktopStatic;
 }
 
-String standardUserAgent(const String& applicationName, const String& applicationVersion, UserAgentType type)
+RefPtr<StringImpl> standardUserAgent(StringImpl* applicationName, StringImpl* applicationVersion, UserAgentType type)
 {
     // Create a default user agent string with a liberal interpretation of
     // https://developer.mozilla.org/en-US/docs/User_Agent_Strings_Reference
@@ -154,12 +154,12 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     // wrong can cause sites to load the wrong JavaScript, CSS, or custom fonts. In some cases
     // sites won't load resources at all.
 
-    String userAgent;
-    if (applicationName.isEmpty())
+    RefPtr<StringImpl> userAgent;
+    if (isEmpty(applicationName))
         userAgent = standardUserAgentStatic(type);
     else {
-        String finalApplicationVersion = applicationVersion;
-        if (finalApplicationVersion.isEmpty())
+        RefPtr<StringImpl> finalApplicationVersion = applicationVersion;
+        if (isEmpty(finalApplicationVersion))
             finalApplicationVersion = "605.1.15"_s;
         userAgent = makeString(standardUserAgentStatic(type), ' ', applicationName, '/', finalApplicationVersion);
     }
@@ -168,14 +168,14 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     if (!checked) {
         // For release builds, we'll only check the first resource load, mainly to ensure that any
         // configured application details or user agent branding is OK.
-        RELEASE_ASSERT_WITH_MESSAGE(isValidUserAgentHeaderValue(userAgent), "%s is not a valid user agent header", userAgent.utf8());
+        RELEASE_ASSERT_WITH_MESSAGE(isValidUserAgentHeaderValue(userAgent), "%s is not a valid user agent header", utf8(userAgent));
         checked = true;
     }
     ASSERT(isValidUserAgentHeaderValue(userAgent));
     return userAgent;
 }
 
-String standardUserAgentForURL(const URL& url, UserAgentType type)
+RefPtr<StringImpl> standardUserAgentForURL(const URL& url, UserAgentType type)
 {
     auto quirks = UserAgentQuirks::quirksForURL(url, type);
     // The null string means we don't need a specific UA for the given URL.
@@ -184,7 +184,7 @@ String standardUserAgentForURL(const URL& url, UserAgentType type)
     if (quirks.isEmpty())
         return { };
 
-    String userAgent(buildUserAgentString(quirks, type));
+    RefPtr<StringImpl> userAgent(buildUserAgentString(quirks, type));
     ASSERT(isValidUserAgentHeaderValue(userAgent));
     return userAgent;
 }

@@ -36,8 +36,6 @@
 
 namespace WTF {
 
-class String;
-
 WTF_EXPORT_PRIVATE bool hasEntitlement(SecTaskRef, ASCIILiteral entitlement);
 WTF_EXPORT_PRIVATE bool hasEntitlement(audit_token_t, ASCIILiteral entitlement);
 WTF_EXPORT_PRIVATE bool hasEntitlement(xpc_connection_t, StringView entitlement);

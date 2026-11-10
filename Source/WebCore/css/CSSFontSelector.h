@@ -105,12 +105,12 @@ private:
 
     void dispatchInvalidationCallbacks();
 
-    void opportunisticallyStartFontDataURLLoading(const FontCascadeDescription&, const AtomString& family) final;
+    void opportunisticallyStartFontDataURLLoading(const FontCascadeDescription&, AtomStringImpl* family) final;
 
-    std::optional<AtomString> resolveGenericFamily(const FontDescription&, const AtomString& family);
+    std::optional<RefPtr<AtomStringImpl>> resolveGenericFamily(const FontDescription&, AtomStringImpl* family);
 
-    FontPaletteValues lookupFontPaletteValues(const AtomString& familyName, const FontDescription&) const;
-    RefPtr<FontFeatureValues> lookupFontFeatureValues(const AtomString& familyName) const;
+    FontPaletteValues lookupFontPaletteValues(AtomStringImpl* familyName, const FontDescription&) const;
+    RefPtr<FontFeatureValues> lookupFontFeatureValues(AtomStringImpl* familyName) const;
 
     // CSSFontFaceClient
     void fontLoaded(CSSFontFace&) final;
@@ -129,19 +129,19 @@ private:
     const Ref<CSSFontFaceSet> m_cssFontFaceSet;
     HashSet<FontSelectorClient*> m_clients;
 
-    struct PaletteMapHash : DefaultHash<std::pair<AtomString, AtomString>> {
-        static unsigned hash(const std::pair<AtomString, AtomString>& key)
+    struct PaletteMapHash : DefaultHash<std::pair<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>> {
+        static unsigned hash(const std::pair<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>& key)
         {
-            return pairIntHash(ASCIICaseInsensitiveHash::hash(key.first), DefaultHash<AtomString>::hash(key.second));
+            return pairIntHash(ASCIICaseInsensitiveHash::hash(key.first), DefaultHash<RefPtr<AtomStringImpl>>::hash(key.second));
         }
 
-        static bool equal(const std::pair<AtomString, AtomString>& a, const std::pair<AtomString, AtomString>& b)
+        static bool equal(const std::pair<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>& a, const std::pair<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>& b)
         {
-            return ASCIICaseInsensitiveHash::equal(a.first, b.first) && DefaultHash<AtomString>::equal(a.second, b.second);
+            return ASCIICaseInsensitiveHash::equal(a.first, b.first) && DefaultHash<RefPtr<AtomStringImpl>>::equal(a.second, b.second);
         }
     };
-    HashMap<std::pair<AtomString, AtomString>, FontPaletteValues::CustomPalette, PaletteMapHash> m_paletteMap;
-    HashMap<String, Ref<FontFeatureValues>> m_featureValues;
+    HashMap<std::pair<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>, FontPaletteValues::CustomPalette, PaletteMapHash> m_paletteMap;
+    HashMap<RefPtr<StringImpl>, Ref<FontFeatureValues>> m_featureValues;
 
     HashSet<Ref<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
     HashSet<Ref<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;
@@ -155,7 +155,7 @@ private:
     bool m_buildIsUnderway { false };
     bool m_isStopped { false };
 
-    WebKitFontFamilyNames::FamilyNamesList<AtomString> m_fontFamilyNames;
+    WebKitFontFamilyNames::FamilyNamesList<RefPtr<AtomStringImpl>> m_fontFamilyNames;
 };
 
 } // namespace WebCore

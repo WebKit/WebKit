@@ -100,8 +100,8 @@ public:
     // Usually you use this via OriginDump, though it's cool to use it directly.
     void printOrigin(PrintStream& out, Origin origin) const;
 
-    void setName(String name) { m_name = WTF::move(name); }
-    const String& name() const { return m_name; }
+    void setName(RefPtr<StringImpl> name) { m_name = WTF::move(name); }
+    const RefPtr<StringImpl>& name() const { return m_name; }
 
     // This is a debugging hack. Sometimes while debugging B3 you need to break the abstraction
     // and get at the DFG Graph, or whatever data structure the frontend used to describe the
@@ -355,7 +355,7 @@ private:
     UniqueRef<AbstractHeapRepository> m_heaps;
     RefPtr<SharedTask<void(PrintStream&, Origin)>> m_originPrinter;
     const void* m_frontendData;
-    String m_name;
+    RefPtr<StringImpl> m_name;
     PCToOriginMap m_pcToOriginMap;
     RefPtr<JSON::Array> m_ionGraphPasses;
     unsigned m_numEntrypoints { 1 };

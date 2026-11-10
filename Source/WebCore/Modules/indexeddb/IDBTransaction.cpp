@@ -146,7 +146,7 @@ DOMException* IDBTransaction::error() const
     return m_domError.get();
 }
 
-ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objectStoreName)
+ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(StringImpl* objectStoreName)
 {
     LOG(IndexedDB, "IDBTransaction::objectStore");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
@@ -155,7 +155,7 @@ ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objec
         return Exception { ExceptionCode::InvalidStateError };
 
     if (isFinishedOrFinishing())
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'objectStore' on 'IDBTransaction': The transaction finished."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'objectStore' on 'IDBTransaction': The transaction finished."_si };
 
     Locker locker { m_objectStoresLock };
 
@@ -164,12 +164,14 @@ ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objec
 
     auto* info = m_database->info().infoForExistingObjectStore(objectStoreName);
     if (!info)
-        return Exception { ExceptionCode::NotFoundError, "Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found."_s };
+        return Exception { ExceptionCode::NotFoundError, "Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found."_si };
 
     // Version change transactions are scoped to every object store in the database.
-    bool found = m_info.objectStores().contains(objectStoreName);
+    bool found = m_info.objectStores().containsIf([&](auto& item) {
+        return equal(item, objectStoreName);
+    });
     if (!found && !isVersionChange())
-        return Exception { ExceptionCode::NotFoundError, "Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found."_s };
+        return Exception { ExceptionCode::NotFoundError, "Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found."_si };
 
     auto objectStore = IDBObjectStore::create(*protect(scriptExecutionContext()), *info, *this);
     Ref objectStoreRef { objectStore.get() };
@@ -211,7 +213,7 @@ ExceptionOr<void> IDBTransaction::abort()
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (isFinishedOrFinishing())
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'abort' on 'IDBTransaction': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'abort' on 'IDBTransaction': The transaction is inactive or finished."_si };
 
     abortInternal();
 
@@ -224,7 +226,7 @@ void IDBTransaction::abortInternal()
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(!isFinishedOrFinishing());
     if (isVersionChange())
-        RELEASE_LOG(IndexedDB, "IDBTransaction::abortInternal: version change transaction %" PUBLIC_LOG_STRING, info().identifier().loggingString().utf8());
+        RELEASE_LOG(IndexedDB, "IDBTransaction::abortInternal: version change transaction %" PUBLIC_LOG_STRING, utf8(info().identifier().loggingString()));
 
     m_database->willAbortTransaction(*this);
 
@@ -466,7 +468,7 @@ ExceptionOr<void> IDBTransaction::commit()
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (!isActive())
-        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'commit' on 'IDBTransaction': The transaction is inactive."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'commit' on 'IDBTransaction': The transaction is inactive."_si };
 
     if (m_currentlyCompletingRequest && Ref { *m_currentlyCompletingRequest }->willAbortTransactionAfterDispatchingEvent())
         return { };
@@ -482,7 +484,7 @@ void IDBTransaction::commitInternal()
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(!isFinishedOrFinishing());
     if (isVersionChange())
-        RELEASE_LOG(IndexedDB, "IDBTransaction::commitInternal: version change transaction %" PUBLIC_LOG_STRING, info().identifier().loggingString().utf8());
+        RELEASE_LOG(IndexedDB, "IDBTransaction::commitInternal: version change transaction %" PUBLIC_LOG_STRING, utf8(info().identifier().loggingString()));
 
     transitionedToFinishing(IndexedDB::TransactionState::Committing);
     m_database->willCommitTransaction(*this);
@@ -704,7 +706,7 @@ void IDBTransaction::didCreateObjectStoreOnServer(const IDBResultData& resultDat
     ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::CreateObjectStoreSuccess || resultData.type() == IDBResultType::Error);
 }
 
-void IDBTransaction::renameObjectStore(IDBObjectStore& objectStore, const String& newName)
+void IDBTransaction::renameObjectStore(IDBObjectStore& objectStore, StringImpl* newName)
 {
     LOG(IndexedDB, "IDBTransaction::renameObjectStore");
 
@@ -723,14 +725,14 @@ void IDBTransaction::renameObjectStore(IDBObjectStore& objectStore, const String
     LOG_WITH_STREAM(IndexedDBOperations, stream << "IDB rename object store operation: "_s << objectStore.info().condensedLoggingString() << " to "_s << newName);
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, [protectedThis = Ref { *this }] (const auto& result) {
         protectedThis->didRenameObjectStoreOnServer(result);
-    }, [protectedThis = Ref { *this }, objectStoreIdentifier, newName = newName.isolatedCopy()] (auto& operation) {
+    }, [protectedThis = Ref { *this }, objectStoreIdentifier, newName = isolatedCopy(newName)] (auto& operation) {
         protectedThis->renameObjectStoreOnServer(operation, objectStoreIdentifier, newName);
     }), IsWriteOperation::Yes);
 
     m_referencedObjectStores.set(newName, m_referencedObjectStores.take(objectStore.info().name()));
 }
 
-void IDBTransaction::renameObjectStoreOnServer(IDBClient::TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
+void IDBTransaction::renameObjectStoreOnServer(IDBClient::TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* newName)
 {
     LOG(IndexedDB, "IDBTransaction::renameObjectStoreOnServer");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
@@ -793,7 +795,7 @@ void IDBTransaction::didCreateIndexOnServer(const IDBResultData& resultData)
     abortDueToFailedRequest(DOMException::create(resultData.error().message(), resultData.error().name()));
 }
 
-void IDBTransaction::renameIndex(IDBIndex& index, const String& newName)
+void IDBTransaction::renameIndex(IDBIndex& index, StringImpl* newName)
 {
     LOG(IndexedDB, "IDBTransaction::renameIndex");
     Locker locker { m_objectStoresLock };
@@ -813,12 +815,12 @@ void IDBTransaction::renameIndex(IDBIndex& index, const String& newName)
     LOG_WITH_STREAM(IndexedDBOperations, stream << "IDB rename index operation: "_s << index.info().condensedLoggingString() << " to "_s << newName << " under object store "_s << objectStoreIdentifier.toUInt64());
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, [protectedThis = Ref { *this }] (const auto& result) {
         protectedThis->didRenameIndexOnServer(result);
-    }, [protectedThis = Ref { *this }, objectStoreIdentifier, indexIdentifier, newName = newName.isolatedCopy()] (auto& operation) {
+    }, [protectedThis = Ref { *this }, objectStoreIdentifier, indexIdentifier, newName = isolatedCopy(newName)] (auto& operation) {
         protectedThis->renameIndexOnServer(operation, objectStoreIdentifier, indexIdentifier, newName);
     }), IsWriteOperation::Yes);
 }
 
-void IDBTransaction::renameIndexOnServer(IDBClient::TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, const String& newName)
+void IDBTransaction::renameIndexOnServer(IDBClient::TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, StringImpl* newName)
 {
     LOG(IndexedDB, "IDBTransaction::renameIndexOnServer");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
@@ -1263,7 +1265,7 @@ Ref<IDBRequest> IDBTransaction::requestPutOrAdd(IDBObjectStore& objectStore, Ref
     auto request = IDBRequest::create(*protect(scriptExecutionContext()), objectStore, *this);
     addRequest(request.get());
 
-    LOG_WITH_STREAM(IndexedDBOperations, stream << "IDB putOrAdd operation: "_s << objectStore.info().condensedLoggingString() << " key: "_s << (key ? key->loggingString() : "<null key>"_s));
+    LOG_WITH_STREAM(IndexedDBOperations, stream << "IDB putOrAdd operation: "_s << objectStore.info().condensedLoggingString() << " key: "_s << (key ? key->loggingString() : "<null key>"_si));
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, request.get(), [protectedThis = Ref { *this }, request] (const auto& result) {
         protectedThis->didPutOrAddOnServer(request.get(), result);
     }, [protectedThis = Ref { *this }, key = WTF::move(key), value = Ref { value }, overwriteMode, objectStoreInfo = objectStore.info()] (auto& operation) mutable {
@@ -1284,7 +1286,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
     if (!globalObject) {
         if (context) {
             context->postTask([protectedOperation = Ref { operation }](ScriptExecutionContext&) {
-                auto result = IDBResultData::error(protectedOperation->identifier(), IDBError { ExceptionCode::InvalidStateError, "Script execution context has stopped"_s });
+                auto result = IDBResultData::error(protectedOperation->identifier(), IDBError { ExceptionCode::InvalidStateError, "Script execution context has stopped"_si });
                 protectedOperation->doComplete(result);
             });
         }
@@ -1312,7 +1314,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
             // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
             // In that case, we cannot successfully store this record, so we callback with an error.
             context->postTask([protectedOperation = Ref { operation }](ScriptExecutionContext&) {
-                auto result = IDBResultData::error(protectedOperation->identifier(), IDBError { ExceptionCode::UnknownError, "Error preparing Blob/File data to be stored in object store"_s });
+                auto result = IDBResultData::error(protectedOperation->identifier(), IDBError { ExceptionCode::UnknownError, "Error preparing Blob/File data to be stored in object store"_si });
                 protectedOperation->doComplete(result);
             });
         }
@@ -1338,7 +1340,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
         // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
         // In that case, we cannot successfully store this record, so we callback with an error.
         callOnMainThread([protectedThis = WTF::move(protectedThis), protectedOperation = WTF::move(protectedOperation)]() mutable {
-            auto result = IDBResultData::error(protectedOperation->identifier(), IDBError { ExceptionCode::UnknownError, "Error preparing Blob/File data to be stored in object store"_s });
+            auto result = IDBResultData::error(protectedOperation->identifier(), IDBError { ExceptionCode::UnknownError, "Error preparing Blob/File data to be stored in object store"_si });
             protectedOperation->doComplete(result);
         });
     });
@@ -1356,7 +1358,7 @@ void IDBTransaction::didPutOrAddOnServer(IDBRequest& request, const IDBResultDat
     completeNoncursorRequest(request, resultData);
 }
 
-void IDBTransaction::deleteObjectStore(const String& objectStoreName)
+void IDBTransaction::deleteObjectStore(StringImpl* objectStoreName)
 {
     LOG(IndexedDB, "IDBTransaction::deleteObjectStore");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
@@ -1373,12 +1375,12 @@ void IDBTransaction::deleteObjectStore(const String& objectStoreName)
     LOG_WITH_STREAM(IndexedDBOperations, stream << "IDB delete object store operation: "_s << objectStoreName);
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, [protectedThis = Ref { *this }] (const auto& result) {
         protectedThis->didDeleteObjectStoreOnServer(result);
-    }, [protectedThis = Ref { *this }, objectStoreName = objectStoreName.isolatedCopy()] (auto& operation) {
+    }, [protectedThis = Ref { *this }, objectStoreName = isolatedCopy(objectStoreName)] (auto& operation) {
         protectedThis->deleteObjectStoreOnServer(operation, objectStoreName);
     }), IsWriteOperation::Yes);
 }
 
-void IDBTransaction::deleteObjectStoreOnServer(IDBClient::TransactionOperation& operation, const String& objectStoreName)
+void IDBTransaction::deleteObjectStoreOnServer(IDBClient::TransactionOperation& operation, StringImpl* objectStoreName)
 {
     LOG(IndexedDB, "IDBTransaction::deleteObjectStoreOnServer");
     ASSERT(isVersionChange());
@@ -1394,7 +1396,7 @@ void IDBTransaction::didDeleteObjectStoreOnServer(const IDBResultData& resultDat
     ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::DeleteObjectStoreSuccess || resultData.type() == IDBResultType::Error);
 }
 
-void IDBTransaction::deleteIndex(IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
+void IDBTransaction::deleteIndex(IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* indexName)
 {
     LOG(IndexedDB, "IDBTransaction::deleteIndex");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
@@ -1403,12 +1405,12 @@ void IDBTransaction::deleteIndex(IDBObjectStoreIdentifier objectStoreIdentifier,
     LOG_WITH_STREAM(IndexedDBOperations, stream << "IDB delete index operation: "_s << indexName << " ("_s << objectStoreIdentifier.toUInt64() << ")"_s);
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, [protectedThis = Ref { *this }] (const auto& result) {
         protectedThis->didDeleteIndexOnServer(result);
-    }, [protectedThis = Ref { *this }, objectStoreIdentifier, indexName = indexName.isolatedCopy()] (auto& operation) {
+    }, [protectedThis = Ref { *this }, objectStoreIdentifier, indexName = isolatedCopy(indexName)] (auto& operation) {
         protectedThis->deleteIndexOnServer(operation, objectStoreIdentifier, indexName);
     }), IsWriteOperation::Yes);
 }
 
-void IDBTransaction::deleteIndexOnServer(IDBClient::TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
+void IDBTransaction::deleteIndexOnServer(IDBClient::TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* indexName)
 {
     LOG(IndexedDB, "IDBTransaction::deleteIndexOnServer");
     ASSERT(isVersionChange());

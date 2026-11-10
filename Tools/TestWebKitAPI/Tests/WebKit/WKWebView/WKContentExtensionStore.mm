@@ -369,13 +369,13 @@ TEST_F(WKContentRuleListStoreTest, CrossOriginCookieBlocking)
                 auto path = HTTPServer::parsePath(request);
                 std::optional<bool> pendingCookieResult;
                 auto response = [&] {
-                    if (path == "/com"_s)
-                        return HTTPResponse({ { "Set-Cookie"_s, "testCookie=42; Path=/; SameSite=None; Secure"_s } }, "<script>alert('hi')</script>"_s);
-                    if (path == "/org"_s)
-                        return HTTPResponse("<script>fetch('https://example.com/cookie-check', {credentials: 'include'})</script>"_s);
-                    if (path == "/cookie-check"_s) {
+                    if (equal(path, "/com"_s))
+                        return HTTPResponse({ { "Set-Cookie"_s, "testCookie=42; Path=/; SameSite=None; Secure"_s } }, "<script>alert('hi')</script>"_si);
+                    if (equal(path, "/org"_s))
+                        return HTTPResponse("<script>fetch('https://example.com/cookie-check', {credentials: 'include'})</script>"_si);
+                    if (equal(path, "/cookie-check"_s)) {
                         pendingCookieResult = contains(request.span(), "Cookie: testCookie=42"_span);
-                        return HTTPResponse("hi"_s);
+                        return HTTPResponse("hi"_si);
                     }
                     RELEASE_ASSERT_NOT_REACHED();
                 }();
@@ -701,7 +701,7 @@ static RetainPtr<TestNavigationDelegate> navigationDelegateAllowingActiveActions
     return delegate;
 }
 
-static void checkURLs(const Vector<String>& actual, const Vector<String>& expected)
+static void checkURLs(const Vector<RefPtr<StringImpl>>& actual, const Vector<RefPtr<StringImpl>>& expected)
 {
     EXPECT_EQ(actual.size(), expected.size());
     for (size_t i = 0; i < std::min(actual.size(), expected.size()); i++)
@@ -768,9 +768,9 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeaders)
     auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().unsafeGet();
     webView.get().navigationDelegate = delegate;
     __block bool receivedActionNotification { false };
-    __block Vector<String> urls;
+    __block Vector<RefPtr<StringImpl>> urls;
     delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
-        urls.append(url.absoluteString);
+        urls.append(StringImpl::create(url.absoluteString));
         EXPECT_TRUE(action.modifiedHeaders);
         receivedActionNotification = true;
     };
@@ -854,9 +854,9 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereAppendWin
     auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().unsafeGet();
     webView.get().navigationDelegate = delegate;
     __block bool receivedActionNotification { false };
-    __block Vector<String> urls;
+    __block Vector<RefPtr<StringImpl>> urls;
     delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
-        urls.append(url.absoluteString);
+        urls.append(StringImpl::create(url.absoluteString));
         EXPECT_TRUE(action.modifiedHeaders);
         receivedActionNotification = true;
     };
@@ -943,9 +943,9 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereSetWins)
     auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().unsafeGet();
     webView.get().navigationDelegate = delegate;
     __block bool receivedActionNotification { false };
-    __block Vector<String> urls;
+    __block Vector<RefPtr<StringImpl>> urls;
     delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
-        urls.append(url.absoluteString);
+        urls.append(StringImpl::create(url.absoluteString));
         EXPECT_TRUE(action.modifiedHeaders);
         receivedActionNotification = true;
     };
@@ -1009,9 +1009,9 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereRemoveWin
     auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().unsafeGet();
     webView.get().navigationDelegate = delegate;
     __block bool receivedActionNotification { false };
-    __block Vector<String> urls;
+    __block Vector<RefPtr<StringImpl>> urls;
     delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
-        urls.append(url.absoluteString);
+        urls.append(StringImpl::create(url.absoluteString));
         EXPECT_TRUE(action.modifiedHeaders);
         receivedActionNotification = true;
     };
@@ -1081,9 +1081,9 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithMultipleRuleLists)
     auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().unsafeGet();
     webView.get().navigationDelegate = delegate;
     __block bool receivedActionNotification { false };
-    __block Vector<String> urls;
+    __block Vector<RefPtr<StringImpl>> urls;
     delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
-        urls.append(url.absoluteString);
+        urls.append(StringImpl::create(url.absoluteString));
         EXPECT_TRUE(action.modifiedHeaders);
         receivedActionNotification = true;
     };
@@ -1201,9 +1201,9 @@ TEST_F(WKContentRuleListStoreTest, Redirect)
     auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().unsafeGet();
     webView.get().navigationDelegate = delegate;
     __block bool receivedActionNotification { false };
-    __block Vector<String> urlsFromCallback;
+    __block Vector<RefPtr<StringImpl>> urlsFromCallback;
     delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
-        urlsFromCallback.append(url.absoluteString);
+        urlsFromCallback.append(StringImpl::create(url.absoluteString));
         EXPECT_TRUE(action.redirected);
         receivedActionNotification = true;
     };
@@ -1212,7 +1212,7 @@ TEST_F(WKContentRuleListStoreTest, Redirect)
     TestWebKitAPI::Util::run(&receivedAllRequests);
     TestWebKitAPI::Util::run(&receivedActionNotification);
 
-    Vector<String> expectedRequestedURLs {
+    Vector<RefPtr<StringImpl>> expectedRequestedURLs {
         "testscheme://testhost/main.html"_s,
         "othertestscheme://not-testhost/1-redirected.txt"_s,
         "testscheme://not-testhost-should-not-trigger-action/2.txt"_s,
@@ -1229,7 +1229,7 @@ TEST_F(WKContentRuleListStoreTest, Redirect)
         EXPECT_WK_STREQ(expectedRequestedURLs[i], [[urls objectAtIndex:i] absoluteString]);
 
     expectedRequestedURLs.removeAt(0);
-    expectedRequestedURLs[1] = "testscheme://testhost:123/2.txt"_s;
+    expectedRequestedURLs[1] = "testscheme://testhost:123/2.txt"_si;
     checkURLs(urlsFromCallback, expectedRequestedURLs);
 }
 

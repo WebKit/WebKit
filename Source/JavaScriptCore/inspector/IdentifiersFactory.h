@@ -32,8 +32,8 @@ namespace Inspector {
 
 class IdentifiersFactory {
 public:
-    JS_EXPORT_PRIVATE static String createIdentifier();
-    JS_EXPORT_PRIVATE static String requestId(unsigned long identifier);
+    JS_EXPORT_PRIVATE static RefPtr<StringImpl> createIdentifier();
+    JS_EXPORT_PRIVATE static RefPtr<StringImpl> requestId(unsigned long identifier);
 };
 
 } // namespace Inspector

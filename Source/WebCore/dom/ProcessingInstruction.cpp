@@ -51,13 +51,13 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessingInstruction);
 
-inline ProcessingInstruction::ProcessingInstruction(Document& document, AtomString target, String data)
+inline ProcessingInstruction::ProcessingInstruction(Document& document, RefPtr<AtomStringImpl> target, RefPtr<StringImpl> data)
     : CharacterData(document, WTF::move(data), NodeType::ProcessingInstruction)
-    , m_target(target.releaseString())
+    , m_target(WTF::move(target))
 {
 }
 
-Ref<ProcessingInstruction> ProcessingInstruction::create(Document& document, AtomString target, String data)
+Ref<ProcessingInstruction> ProcessingInstruction::create(Document& document, RefPtr<AtomStringImpl> target, RefPtr<StringImpl> data)
 {
     return adoptRef(*new ProcessingInstruction(document, WTF::move(target), WTF::move(data)));
 }
@@ -82,7 +82,7 @@ void ProcessingInstruction::setSheet(RefPtr<StyleSheet>&& sheet)
         oldSheet->clearOwnerNode();
 }
 
-String ProcessingInstruction::nodeName() const
+RefPtr<StringImpl> ProcessingInstruction::nodeName() const
 {
     return m_target;
 }
@@ -91,7 +91,7 @@ Ref<Node> ProcessingInstruction::cloneNodeInternal(Document& document, CloningOp
 {
     // FIXME: Is it a problem that this does not copy m_localHref?
     // What about other data members?
-    return create(document, AtomString { m_target }, String { data() });
+    return create(document, AtomStringImpl::add(m_target), RefPtr<StringImpl> { data() });
 }
 
 SerializedNode ProcessingInstruction::serializeNode(CloningOperation) const
@@ -102,36 +102,36 @@ SerializedNode ProcessingInstruction::serializeNode(CloningOperation) const
 void ProcessingInstruction::checkStyleSheet()
 {
     Ref document = this->document();
-    if (m_target == "xml-stylesheet"_s && document->frame() && parentNode() == document.ptr()) {
+    if (equal(m_target, "xml-stylesheet"_s) && document->frame() && parentNode() == document.ptr()) {
         // see http://www.w3.org/TR/xml-stylesheet/
         // ### support stylesheet included in a fragment of this (or another) document
         // ### make sure this gets called when adding from javascript
         auto attributes = parseAttributes(protect(document->cachedResourceLoader()), data());
         if (!attributes)
             return;
-        String type = attributes->get<HashTranslatorASCIILiteral>("type"_s);
+        RefPtr<StringImpl> type = attributes->get<HashTranslatorASCIILiteral>("type"_s);
 
-        m_isCSS = type.isEmpty() || type == cssContentTypeAtom();
+        m_isCSS = isEmpty(type) || equal(type, cssContentTypeAtom());
 #if ENABLE(XSLT)
         bool isXSLTSupported = document->settings().isXSLTEnabled();
-        m_isXSL = isXSLTSupported && (type == "text/xml"_s || type == "text/xsl"_s || type == "application/xml"_s || type == "application/xhtml+xml"_s || type == "application/rss+xml"_s || type == "application/atom+xml"_s);
+        m_isXSL = isXSLTSupported && (equal(type, "text/xml"_s) || equal(type, "text/xsl"_s) || equal(type, "application/xml"_s) || equal(type, "application/xhtml+xml"_s) || equal(type, "application/rss+xml"_s) || equal(type, "application/atom+xml"_s));
         if (!m_isCSS && !m_isXSL)
 #else
         if (!m_isCSS)
 #endif
             return;
 
-        String href = attributes->get<HashTranslatorASCIILiteral>("href"_s);
-        String alternate = attributes->get<HashTranslatorASCIILiteral>("alternate"_s);
-        m_alternate = alternate == "yes"_s;
+        RefPtr<StringImpl> href = attributes->get<HashTranslatorASCIILiteral>("href"_s);
+        RefPtr<StringImpl> alternate = attributes->get<HashTranslatorASCIILiteral>("alternate"_s);
+        m_alternate = equal(alternate, "yes"_s);
         m_title = attributes->get<HashTranslatorASCIILiteral>("title"_s);
         m_media = attributes->get<HashTranslatorASCIILiteral>("media"_s);
 
-        if (m_alternate && m_title.isEmpty())
+        if (m_alternate && isEmpty(m_title))
             return;
 
-        if (href.length() > 1 && href[0] == '#') {
-            m_localHref = href.substring(1);
+        if (WTF::length(href) > 1 && codeUnitAt(href, 0) == '#') {
+            m_localHref = substring(href, 1);
 #if ENABLE(XSLT)
             // We need to make a synthetic XSLStyleSheet that is embedded.  It needs to be able
             // to kick off import/include loads that can hang off some parent sheet.
@@ -164,8 +164,8 @@ void ProcessingInstruction::checkStyleSheet()
             } else
 #endif
             {
-                String charset = attributes->get<HashTranslatorASCIILiteral>("charset"_s);
-                CachedResourceRequest request(document->encodingParseURL(href), CachedResourceLoader::defaultCachedResourceOptions(), std::nullopt, charset.isEmpty() ? String::fromLatin1(document->charset()) : WTF::move(charset));
+                RefPtr<StringImpl> charset = attributes->get<HashTranslatorASCIILiteral>("charset"_s);
+                CachedResourceRequest request(document->encodingParseURL(href), CachedResourceLoader::defaultCachedResourceOptions(), std::nullopt, isEmpty(charset) ? StringImpl::fromLatin1(document->charset()) : WTF::move(charset));
 
                 if (auto result = protect(document->cachedResourceLoader())->requestCSSStyleSheet(WTF::move(request)))
                     m_cachedSheet = WTF::move(result.value());
@@ -211,7 +211,7 @@ bool ProcessingInstruction::sheetLoaded()
     return false;
 }
 
-void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet& sheet)
+void ProcessingInstruction::setCSSStyleSheet(StringImpl* href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet& sheet)
 {
     if (!isConnected()) {
         ASSERT(!m_sheet);
@@ -236,7 +236,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& base
 }
 
 #if ENABLE(XSLT)
-void ProcessingInstruction::setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet)
+void ProcessingInstruction::setXSLStyleSheet(StringImpl* href, const URL& baseURL, StringImpl* sheet)
 {
     ASSERT(m_isXSL);
     setSheet(XSLStyleSheet::create(*this, href, baseURL));
@@ -245,7 +245,7 @@ void ProcessingInstruction::setXSLStyleSheet(const String& href, const URL& base
 }
 #endif
 
-void ProcessingInstruction::parseStyleSheet(const String& sheet)
+void ProcessingInstruction::parseStyleSheet(StringImpl* sheet)
 {
     Ref styleSheet = *m_sheet;
     if (m_isCSS)

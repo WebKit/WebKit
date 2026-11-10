@@ -159,7 +159,7 @@ Vector<CSSCounterStyleDescriptors::Symbol> symbolsFromCSSValue(const CSSValue& v
     Vector<CSSCounterStyleDescriptors::Symbol> result;
     for (Ref symbolValue : downcast<CSSValueList>(value)) {
         auto symbol = symbolFromCSSValue(symbolValue.ptr());
-        if (!symbol.text.isNull())
+        if (symbol.text)
             result.append(symbol);
     }
     return result;
@@ -169,7 +169,7 @@ static CSSCounterStyleDescriptors::Name fallbackNameFromStyleProperties(const St
 {
     RefPtr fallback = properties.getPropertyCSSValue(CSSPropertyID::Fallback);
     if (!fallback)
-        return "decimal"_s;
+        return "decimal"_atom;
     return fallbackNameFromCSSValue(*fallback);
 }
 
@@ -205,14 +205,14 @@ static CSSCounterStyleDescriptors::SystemData extractSystemDataFromStyleProperti
     auto systemValue = properties.getPropertyCSSValue(CSSPropertyID::System);
     // If no value is provided after `fixed`, the first synbol value is implicitly 1 (https://www.w3.org/TR/css-counter-styles-3/#first-symbol-value).
     if (!systemValue)
-        return { "decimal"_s, 1 };
+        return { "decimal"_atom, 1 };
 
     return extractSystemDataFromCSSValue(WTF::move(systemValue), system);
 }
 
 CSSCounterStyleDescriptors::SystemData extractSystemDataFromCSSValue(const CSSValue* systemValue, CSSCounterStyleDescriptors::System system)
 {
-    std::pair<CSSCounterStyleDescriptors::Name, int> result { "decimal"_s, 1 };
+    std::pair<CSSCounterStyleDescriptors::Name, int> result { "decimal"_atom, 1 };
     if (!systemValue)
         return result;
     ASSERT(systemValue->isKeywordValue() || systemValue->isPair());
@@ -263,7 +263,7 @@ void CSSCounterStyleDescriptors::setExplicitlySetDescriptors(const StyleProperti
         m_explicitlySetDescriptors.add(ExplicitlySetDescriptors::SpeakAs);
 }
 
-CSSCounterStyleDescriptors CSSCounterStyleDescriptors::create(AtomString name, const StyleProperties& properties)
+CSSCounterStyleDescriptors CSSCounterStyleDescriptors::create(RefPtr<AtomStringImpl> name, const StyleProperties& properties)
 {
     auto systemValue = properties.getPropertyCSSValue(CSSPropertyID::System);
     auto system = toCounterStyleSystemEnum(systemValue.get());
@@ -302,7 +302,7 @@ CSSCounterStyleDescriptors CSSCounterStyleDescriptors::createForSymbolsFunction(
         .m_suffix = { false, " "_s },
         .m_ranges = { },
         .m_pad = { },
-        .m_fallbackName = "decimal"_s,
+        .m_fallbackName = "decimal"_atom,
         .m_symbols = WTF::move(symbols),
         .m_additiveSymbols = { },
         .m_speakAs = SpeakAs::Auto,
@@ -352,7 +352,7 @@ bool CSSCounterStyleDescriptors::isValid() const
 
 void CSSCounterStyleDescriptors::setName(CSSCounterStyleDescriptors::Name name)
 {
-    if (name.isNull() || m_name == name)
+    if (!name || m_name == name)
         return;
     m_name = WTF::move(name);
 }
@@ -429,7 +429,7 @@ void CSSCounterStyleDescriptors::setAdditiveSymbols(CSSCounterStyleDescriptors::
     m_explicitlySetDescriptors.set(ExplicitlySetDescriptors::AdditiveSymbols, true);
 }
 
-String CSSCounterStyleDescriptors::Symbol::cssText() const
+RefPtr<StringImpl> CSSCounterStyleDescriptors::Symbol::cssText() const
 {
     StringBuilder builder;
     if (isCustomIdent)
@@ -439,12 +439,12 @@ String CSSCounterStyleDescriptors::Symbol::cssText() const
     return builder.toString();
 }
 
-String CSSCounterStyleDescriptors::nameCSSText() const
+RefPtr<StringImpl> CSSCounterStyleDescriptors::nameCSSText() const
 {
     return m_name;
 }
 
-String CSSCounterStyleDescriptors::systemCSSText() const
+RefPtr<StringImpl> CSSCounterStyleDescriptors::systemCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::System))
         return emptyString();
@@ -461,15 +461,15 @@ String CSSCounterStyleDescriptors::systemCSSText() const
 
     switch (m_system) {
     case System::Cyclic:
-        return "cyclic"_s;
+        return "cyclic"_si;
     case System::Numeric:
-        return "numeric"_s;
+        return "numeric"_si;
     case System::Alphabetic:
-        return "alphabetic"_s;
+        return "alphabetic"_si;
     case System::Symbolic:
-        return "symbolic"_s;
+        return "symbolic"_si;
     case System::Additive:
-        return "additive"_s;
+        return "additive"_si;
     case System::Fixed:
         return makeString("fixed "_s, m_fixedSystemFirstSymbolValue);
     case System::Extends:
@@ -492,33 +492,33 @@ String CSSCounterStyleDescriptors::systemCSSText() const
     return emptyString();
 }
 
-String CSSCounterStyleDescriptors::negativeCSSText() const
+RefPtr<StringImpl> CSSCounterStyleDescriptors::negativeCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Negative))
         return emptyString();
     return makeString(m_negativeSymbols.m_prefix.cssText(), " "_s, m_negativeSymbols.m_suffix.cssText());
 }
 
-String CSSCounterStyleDescriptors::prefixCSSText() const
+RefPtr<StringImpl> CSSCounterStyleDescriptors::prefixCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Prefix))
         return emptyString();
     return m_prefix.cssText();
 }
 
-String CSSCounterStyleDescriptors::suffixCSSText() const
+RefPtr<StringImpl> CSSCounterStyleDescriptors::suffixCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Suffix))
         return emptyString();
     return m_suffix.cssText();
 }
 
-String CSSCounterStyleDescriptors::rangesCSSText() const
+RefPtr<StringImpl> CSSCounterStyleDescriptors::rangesCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Range))
         return emptyString();
     if (m_ranges.isEmpty())
-        return "auto"_s;
+        return "auto"_si;
 
     StringBuilder builder;
     for (size_t i = 0; i < m_ranges.size(); ++i) {
@@ -538,19 +538,19 @@ String CSSCounterStyleDescriptors::rangesCSSText() const
     return builder.toString();
 }
 
-String CSSCounterStyleDescriptors::Pad::cssText() const
+RefPtr<StringImpl> CSSCounterStyleDescriptors::Pad::cssText() const
 {
     return makeString(m_padMinimumLength, ' ', m_padSymbol.cssText());
 }
 
-String CSSCounterStyleDescriptors::padCSSText() const
+RefPtr<StringImpl> CSSCounterStyleDescriptors::padCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Pad))
         return emptyString();
     return m_pad.cssText();
 }
 
-String CSSCounterStyleDescriptors::fallbackCSSText() const
+RefPtr<StringImpl> CSSCounterStyleDescriptors::fallbackCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Fallback))
         return emptyString();
@@ -560,7 +560,7 @@ String CSSCounterStyleDescriptors::fallbackCSSText() const
     return builder.toString();
 }
 
-String CSSCounterStyleDescriptors::symbolsCSSText() const
+RefPtr<StringImpl> CSSCounterStyleDescriptors::symbolsCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Symbols))
         return emptyString();
@@ -573,7 +573,7 @@ String CSSCounterStyleDescriptors::symbolsCSSText() const
     return builder.toString();
 }
 
-String CSSCounterStyleDescriptors::additiveSymbolsCSSText() const
+RefPtr<StringImpl> CSSCounterStyleDescriptors::additiveSymbolsCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::AdditiveSymbols))
         return emptyString();

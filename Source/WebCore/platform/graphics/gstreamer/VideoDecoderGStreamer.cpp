@@ -57,7 +57,7 @@ class GStreamerInternalVideoDecoder : public ThreadSafeRefCountedAndCanMakeThrea
     WTF_MAKE_TZONE_ALLOCATED_INLINE(GStreamerInternalVideoDecoder);
 
 public:
-    static Ref<GStreamerInternalVideoDecoder> create(const String& codecName, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
+    static Ref<GStreamerInternalVideoDecoder> create(StringImpl* codecName, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
     {
         return adoptRef(*new GStreamerInternalVideoDecoder(codecName, config, WTF::move(outputCallback), WTF::move(element)));
     }
@@ -79,7 +79,7 @@ public:
     GstElement* harnessedElement() const { return m_harness->element(); }
 
 private:
-    GStreamerInternalVideoDecoder(const String& codecName, const VideoDecoder::Config&, VideoDecoder::OutputCallback&&, GRefPtr<GstElement>&&);
+    GStreamerInternalVideoDecoder(StringImpl* codecName, const VideoDecoder::Config&, VideoDecoder::OutputCallback&&, GRefPtr<GstElement>&&);
 
     VideoDecoder::OutputCallback m_outputCallback;
 
@@ -101,7 +101,7 @@ private:
     const bool m_isMirrored { false };
 };
 
-void GStreamerVideoDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
+void GStreamerVideoDecoder::create(StringImpl* codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
 {
     if (!ensureGStreamerInitialized()) [[unlikely]] {
         callback(makeUnexpected("GStreamer initialization failed"_s));
@@ -117,19 +117,19 @@ void GStreamerVideoDecoder::create(const String& codecName, const Config& config
     auto& scanner = GStreamerRegistryScanner::singleton();
     auto lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codecName, usingHardware);
     if (usingHardware && !lookupResult) {
-        GST_DEBUG("No hardware decoder found for codec %s, falling back to software", codecName.utf8());
+        GST_DEBUG("No hardware decoder found for codec %s, falling back to software", utf8(codecName));
         lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codecName, false);
     }
 
     if (!lookupResult) {
-        GST_WARNING("No decoder found for codec %s", codecName.utf8());
+        GST_WARNING("No decoder found for codec %s", utf8(codecName));
         callback(makeUnexpected(makeString("No decoder found for codec "_s, codecName)));
         return;
     }
 
     GRefPtr<GstElement> element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
     if (!element) {
-        GST_WARNING("Unable to create decoder for codec %s", codecName.utf8());
+        GST_WARNING("Unable to create decoder for codec %s", utf8(codecName));
         callback(makeUnexpected(makeString("Unable to create decoder for codec "_s, codecName)));
         return;
     }
@@ -137,7 +137,7 @@ void GStreamerVideoDecoder::create(const String& codecName, const Config& config
     Ref decoder = adoptRef(*new GStreamerVideoDecoder(codecName, config, WTF::move(outputCallback), WTF::move(element)));
     Ref internalDecoder = decoder->m_internalDecoder;
     if (!internalDecoder->isConfigured()) {
-        GST_WARNING("Internal video decoder failed to configure for codec %s", codecName.utf8());
+        GST_WARNING("Internal video decoder failed to configure for codec %s", utf8(codecName));
         callback(makeUnexpected(makeString("Internal video decoder failed to configure for codec "_s, codecName)));
         return;
     }
@@ -149,7 +149,7 @@ void GStreamerVideoDecoder::create(const String& codecName, const Config& config
     });
 }
 
-GStreamerVideoDecoder::GStreamerVideoDecoder(const String& codecName, const Config& config, OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
+GStreamerVideoDecoder::GStreamerVideoDecoder(StringImpl* codecName, const Config& config, OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
     : m_internalDecoder(GStreamerInternalVideoDecoder::create(codecName, config, WTF::move(outputCallback), WTF::move(element)))
 {
 }
@@ -184,12 +184,12 @@ void GStreamerVideoDecoder::close()
     m_internalDecoder->close();
 }
 
-GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codecName, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
+GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(StringImpl* codecName, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
     : m_outputCallback(WTF::move(outputCallback))
     , m_rotation(config.rotation)
     , m_isMirrored(config.isMirrored)
 {
-    GST_DEBUG_OBJECT(element.get(), "Configuring decoder for codec %s", codecName.ascii().data());
+    GST_DEBUG_OBJECT(element.get(), "Configuring decoder for codec %s", ascii(codecName).data());
     configureVideoDecoderForHarnessing(element);
 
 #if USE(GSTREAMER_GL)
@@ -201,36 +201,36 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
 
     auto* factory = gst_element_get_factory(element.get());
     ASCIILiteral parser;
-    if (codecName.startsWith("avc1"_s)) {
+    if (startsWith(codecName, "avc1"_s)) {
         m_inputCaps = adoptGRef(gst_caps_new_simple("video/x-h264", "stream-format", G_TYPE_STRING, "avc", "alignment", G_TYPE_STRING, "au", nullptr));
         if (auto codecData = wrapSpanData(config.description))
             gst_caps_set_simple(m_inputCaps.get(), "codec_data", GST_TYPE_BUFFER, codecData.get(), nullptr);
         if (!gst_element_factory_can_sink_all_caps(factory, m_inputCaps.get()))
             parser = "h264parse"_s;
-    } else if (codecName.startsWith("av01"_s)) {
+    } else if (startsWith(codecName, "av01"_s)) {
         m_inputCaps = adoptGRef(gst_caps_new_simple("video/x-av1", "stream-format", G_TYPE_STRING, "obu-stream", "alignment", G_TYPE_STRING, "frame", nullptr));
         // vaav1dec requires a profile field and av1dec (libaom) requires TU alignment; av1parse provides both.
         if (!gst_element_factory_can_sink_all_caps(factory, m_inputCaps.get()))
             parser = "av1parse"_s;
-    } else if (codecName.startsWith("vp8"_s))
+    } else if (startsWith(codecName, "vp8"_s))
         m_inputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp8"));
-    else if (codecName.startsWith("vp09"_s)) {
+    else if (startsWith(codecName, "vp09"_s)) {
         m_inputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp9"));
         parser = "vp9parse"_s;
-    } else if (codecName.startsWith("hvc1"_s)) {
+    } else if (startsWith(codecName, "hvc1"_s)) {
         m_inputCaps = adoptGRef(gst_caps_new_simple("video/x-h265", "stream-format", G_TYPE_STRING, "hvc1", "alignment", G_TYPE_STRING, "au", nullptr));
         if (auto codecData = wrapSpanData(config.description))
             gst_caps_set_simple(m_inputCaps.get(), "codec_data", GST_TYPE_BUFFER, codecData.get(), nullptr);
         if (!gst_element_factory_can_sink_all_caps(factory, m_inputCaps.get()))
             parser = "h265parse"_s;
-    } else if (codecName.startsWith("hev1"_s)) {
+    } else if (startsWith(codecName, "hev1"_s)) {
         m_inputCaps = adoptGRef(gst_caps_new_simple("video/x-h265", "stream-format", G_TYPE_STRING, "hev1", "alignment", G_TYPE_STRING, "au", nullptr));
         if (auto codecData = wrapSpanData(config.description))
             gst_caps_set_simple(m_inputCaps.get(), "codec_data", GST_TYPE_BUFFER, codecData.get(), nullptr);
         if (!gst_element_factory_can_sink_all_caps(factory, m_inputCaps.get()))
             parser = "h265parse"_s;
     } else {
-        GST_ERROR("Codec %s not wired in yet", codecName.ascii().data());
+        GST_ERROR("Codec %s not wired in yet", ascii(codecName).data());
         return;
     }
 

@@ -67,7 +67,7 @@ NSArray *toWebAPI(const Vector<WebExtensionScriptInjectionResultParameters>& par
     // tabs.executeScript() only returns an array of the injection result.
     if (returnExecutionResultOnly) {
         for (auto& parameters : borrowedParametersVector) {
-            RetainPtr result = parameters.resultJSON ? parseJSON(parameters.resultJSON.value().createNSString().get(), JSONOptions::FragmentsAllowed) : nil;
+            RetainPtr result = parameters.resultJSON ? parseJSON(createNSString(parameters.resultJSON.value()).get(), JSONOptions::FragmentsAllowed) : nil;
             [results addObject:result.get() ?: NSNull.null];
         }
 
@@ -77,7 +77,7 @@ NSArray *toWebAPI(const Vector<WebExtensionScriptInjectionResultParameters>& par
     for (auto& parameters : borrowedParametersVector) {
         auto *result =[NSMutableDictionary dictionaryWithCapacity:3];
 
-        id value = parameters.resultJSON ? parseJSON(parameters.resultJSON.value().createNSString().get(), JSONOptions::FragmentsAllowed) : nil;
+        id value = parameters.resultJSON ? parseJSON(createNSString(parameters.resultJSON.value()).get(), JSONOptions::FragmentsAllowed) : nil;
         result[@"result"] = value ?: NSNull.null;
 
         ASSERT(parameters.frameIdentifier);
@@ -86,10 +86,10 @@ NSArray *toWebAPI(const Vector<WebExtensionScriptInjectionResultParameters>& par
 
         ASSERT(parameters.documentIdentifier);
         if (parameters.documentIdentifier)
-            result[@"documentId"] = parameters.documentIdentifier.value().toString().createNSString().get();
+            result[@"documentId"] = createNSString(parameters.documentIdentifier.value().toString()).get();
 
         if (parameters.error)
-            result[@"error"] = parameters.error.value().createNSString().get();
+            result[@"error"] = createNSString(parameters.error.value()).get();
 
         [results addObject:[result copy]];
     }
@@ -104,7 +104,7 @@ NSDictionary *toWebAPI(const WebExtensionRegisteredScriptParameters& parameters)
     ASSERT(parameters.matchPatterns);
     ASSERT(parameters.persistent);
 
-    result[@"id"] = parameters.identifier.createNSString().get();
+    result[@"id"] = createNSString(parameters.identifier).get();
     result[matchesKey] = createNSArray(parameters.matchPatterns.value()).get();
     result[persistAcrossSessionsKey] = parameters.persistent.value() ? @YES : @NO;
 
@@ -124,7 +124,7 @@ NSDictionary *toWebAPI(const WebExtensionRegisteredScriptParameters& parameters)
         result[matchOriginAsFallbackKey] = parameters.matchParentFrame.value() == WebCore::UserContentMatchParentFrame::ForOpaqueOrigins ? @YES : @NO;
 
     if (parameters.injectionTime)
-        result[runAtKey] = toWebAPI(parameters.injectionTime.value()).createNSString().get();
+        result[runAtKey] = createNSString(toWebAPI(parameters.injectionTime.value())).get();
 
     if (parameters.styleLevel)
         result[cssOriginKey] = parameters.styleLevel.value() == WebCore::UserStyleLevel::User ? userValue : authorValue;
@@ -135,19 +135,19 @@ NSDictionary *toWebAPI(const WebExtensionRegisteredScriptParameters& parameters)
     return [result copy];
 }
 
-String toWebAPI(WebExtension::InjectionTime injectionTime)
+RefPtr<StringImpl> toWebAPI(WebExtension::InjectionTime injectionTime)
 {
     switch (injectionTime) {
     case WebExtension::InjectionTime::DocumentEnd:
-        return documentEnd;
+        return StringImpl::create(documentEnd);
     case WebExtension::InjectionTime::DocumentIdle:
-        return documentIdle;
+        return StringImpl::create(documentIdle);
     case WebExtension::InjectionTime::DocumentStart:
-        return documentStart;
+        return StringImpl::create(documentStart);
 
     default:
         ASSERT_NOT_REACHED();
-        return documentIdle;
+        return StringImpl::create(documentIdle);
     }
 }
 
@@ -169,7 +169,7 @@ void WebExtensionAPIScripting::executeScript(NSDictionary *script, Ref<WebExtens
     bool userGesture = WebCore::UserGestureIndicator::processingUserGesture();
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingExecuteScript(WTF::move(parameters), userGesture), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebKit::WebExtensionScriptInjectionResultParameters>, WebExtensionError>&& result) {
         if (!result)
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
         else
             callback->call(toJSValueRef(callback->globalContext(), toWebAPI(result.value(), false)));
     }, extensionContext().identifier());
@@ -185,7 +185,7 @@ void WebExtensionAPIScripting::insertCSS(NSDictionary *cssInfo, Ref<WebExtension
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingInsertCSS(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result)
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
         else
             callback->call();
     }, extensionContext().identifier());
@@ -201,7 +201,7 @@ void WebExtensionAPIScripting::removeCSS(NSDictionary *cssInfo, Ref<WebExtension
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRemoveCSS(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result)
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
         else
             callback->call();
     }, extensionContext().identifier());
@@ -217,7 +217,7 @@ void WebExtensionAPIScripting::registerContentScripts(NSArray *scripts, Ref<WebE
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRegisterContentScripts(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result)
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
         else
             callback->call();
     }, extensionContext().identifier());
@@ -230,11 +230,11 @@ void WebExtensionAPIScripting::getRegisteredContentScripts(NSDictionary *filter,
     if (!validateFilter(filter, outExceptionString))
         return;
 
-    auto scriptIDs = makeVector<String>(checked_objc_cast<NSArray>(filter[idsKey]));
+    auto scriptIDs = makeVector<RefPtr<StringImpl>>(checked_objc_cast<NSArray>(filter[idsKey]));
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingGetRegisteredScripts(WTF::move(scriptIDs)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionRegisteredScriptParameters>, WebExtensionError>&& result) {
         if (!result)
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
         else
             callback->call(toJSValueRef(callback->globalContext(), toWebAPI(result.value())));
     }, extensionContext().identifier());
@@ -250,7 +250,7 @@ void WebExtensionAPIScripting::updateContentScripts(NSArray *scripts, Ref<WebExt
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUpdateRegisteredScripts(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result)
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
         else
             callback->call();
     }, extensionContext().identifier());
@@ -263,11 +263,11 @@ void WebExtensionAPIScripting::unregisterContentScripts(NSDictionary *filter, Re
     if (!validateFilter(filter, outExceptionString))
         return;
 
-    auto scriptIDs = makeVector<String>(checked_objc_cast<NSArray>(filter[idsKey]));
+    auto scriptIDs = makeVector<RefPtr<StringImpl>>(checked_objc_cast<NSArray>(filter[idsKey]));
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUnregisterContentScripts(WTF::move(scriptIDs)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result)
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
         else
             callback->call();
     }, extensionContext().identifier());
@@ -286,7 +286,7 @@ bool WebExtensionAPIScripting::parseStyleLevel(NSDictionary *script, NSString *k
 {
     if (NSString *cssOrigin = objectForKey<NSString>(script, key).lowercaseString) {
         if (![cssOrigin isEqualToString:userValue] && ![cssOrigin isEqualToString:authorValue]) {
-            *outExceptionString = toErrorString(nullString(), key, @"it must specify either 'author' or 'user'").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(key).get(), StringImpl::create(@"it must specify either 'author' or 'user'").get())).autorelease();
             return false;
         }
 
@@ -301,7 +301,7 @@ bool WebExtensionAPIScripting::parseExecutionWorld(NSDictionary *script, std::op
 {
     if (NSString *world = objectForKey<NSString>(script, worldKey).lowercaseString) {
         if (![world isEqualToString:isolatedWorld] && ![world isEqualToString:mainWorld]) {
-            *outExceptionString = toErrorString(nullString(), worldKey, @"it must specify either 'isolated' or 'main'").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(worldKey).get(), StringImpl::create(@"it must specify either 'isolated' or 'main'").get())).autorelease();
             return false;
         }
 
@@ -333,24 +333,24 @@ bool WebExtensionAPIScripting::parseTargetInjectionOptions(NSDictionary *targetI
 
     bool allFrames = boolForKey(targetInfo, allFramesKey, false);
     if (allFrames && targetInfo[frameIDsKey]) {
-        *outExceptionString = toErrorString(nullString(), targetKey, @"it cannot specify both 'allFrames' and 'frameIds'").createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(targetKey).get(), StringImpl::create(@"it cannot specify both 'allFrames' and 'frameIds'").get())).autorelease();
         return false;
     }
 
     if (targetInfo[frameIDsKey] && targetInfo[documentIDsKey]) {
-        *outExceptionString = toErrorString(nullString(), targetKey, @"it cannot specify both 'frameIds' and 'documentIds'").createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(targetKey).get(), StringImpl::create(@"it cannot specify both 'frameIds' and 'documentIds'").get())).autorelease();
         return false;
     }
 
     if (allFrames && targetInfo[documentIDsKey]) {
-        *outExceptionString = toErrorString(nullString(), targetKey, @"it cannot specify both 'allFrames' and 'documentIds'").createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(targetKey).get(), StringImpl::create(@"it cannot specify both 'allFrames' and 'documentIds'").get())).autorelease();
         return false;
     }
 
     NSNumber *tabID = targetInfo[tabIDKey];
     auto tabIdentifier = toWebExtensionTabIdentifier(tabID.doubleValue);
     if (!tabIdentifier) {
-        *outExceptionString = toErrorString(nullString(), tabIDKey, makeString("'"_s, String([tabID description]), "' is not a tab identifier"_s)).createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(tabIDKey).get(), makeString("'"_s, StringImpl::create([tabID description]), "' is not a tab identifier"_s))).autorelease();
         return false;
     }
 
@@ -359,9 +359,9 @@ bool WebExtensionAPIScripting::parseTargetInjectionOptions(NSDictionary *targetI
     if (NSArray *documentIdentifiers = targetInfo[documentIDsKey]) {
         Vector<WTF::UUID> parsedDocumentIdentifiers;
         for (NSString *documentIdentifier in documentIdentifiers) {
-            auto parsedUUID = WTF::UUID::parse(String(documentIdentifier));
+            auto parsedUUID = WTF::UUID::parse(StringImpl::create(documentIdentifier).get());
             if (!parsedUUID) {
-                *outExceptionString = toErrorString(nullString(), documentIDsKey, makeString("'"_s, String(documentIdentifier), "' is not a document identifier"_s)).createNSString().autorelease();
+                *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(documentIDsKey).get(), makeString("'"_s, StringImpl::create(documentIdentifier), "' is not a document identifier"_s))).autorelease();
                 return false;
             }
 
@@ -376,7 +376,7 @@ bool WebExtensionAPIScripting::parseTargetInjectionOptions(NSDictionary *targetI
         for (NSNumber *frameID in frameIDs) {
             auto frameIdentifier = toWebExtensionFrameIdentifier(frameID.doubleValue);
             if (!isValid(frameIdentifier)) {
-                *outExceptionString = toErrorString(nullString(), frameIDsKey, makeString("'"_s, String([frameID description]), "' is not a frame identifier"_s)).createNSString().autorelease();
+                *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(frameIDsKey).get(), makeString("'"_s, StringImpl::create([frameID description]), "' is not a frame identifier"_s))).autorelease();
                 return false;
             }
 
@@ -413,41 +413,41 @@ bool WebExtensionAPIScripting::parseScriptInjectionOptions(NSDictionary *script,
         return false;
 
     if (script[functionKey] && script[funcKey]) {
-        *outExceptionString = toErrorString(nullString(), @"details", @"it cannot specify both 'func' and 'function'. Please use 'func'").createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"details").get(), StringImpl::create(@"it cannot specify both 'func' and 'function'. Please use 'func'").get())).autorelease();
         return false;
     }
 
     if (script[argumentsKey] && script[argsKey]) {
-        *outExceptionString = toErrorString(nullString(), @"details", @"it cannot specify both 'args' and 'arguments'. Please use 'args'").createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"details").get(), StringImpl::create(@"it cannot specify both 'args' and 'arguments'. Please use 'args'").get())).autorelease();
         return false;
     }
 
     auto *usedFunctionKey = script[funcKey] ? funcKey : functionKey;
     bool functionWasPassed = script[usedFunctionKey];
     if (script[filesKey] && functionWasPassed) {
-        *outExceptionString = toErrorString(nullString(), @"details", @"it cannot specify both 'files' and 'func'").createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"details").get(), StringImpl::create(@"it cannot specify both 'files' and 'func'").get())).autorelease();
         return false;
     }
 
     if (!functionWasPassed && !script[filesKey]) {
-        *outExceptionString = toErrorString(nullString(), @"details", @"it must specify either 'func' or 'files''").createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"details").get(), StringImpl::create(@"it must specify either 'func' or 'files''").get())).autorelease();
         return false;
     }
 
     auto *usedArgumentKey = script[argsKey] ? argsKey : argumentsKey;
     bool scriptContainsArguments = script[usedArgumentKey];
     if (scriptContainsArguments && !functionWasPassed) {
-        *outExceptionString = toErrorString(nullString(), @"details", @"it must specify both 'func' and 'args'").createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"details").get(), StringImpl::create(@"it must specify both 'func' and 'args'").get())).autorelease();
         return false;
     }
 
     if (NSArray *files = script[filesKey]) {
         if (!files.count) {
-            *outExceptionString = toErrorString(nullString(), filesKey, @"at least one file must be specified").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(filesKey).get(), StringImpl::create(@"at least one file must be specified").get())).autorelease();
             return false;
         }
 
-        parameters.files = makeVector<String>(files);
+        parameters.files = makeVector<RefPtr<StringImpl>>(files);
     }
 
     std::optional<WebExtensionContentWorldType> worldType;
@@ -459,17 +459,17 @@ bool WebExtensionAPIScripting::parseScriptInjectionOptions(NSDictionary *script,
 
     if (JSValue *function = script[usedFunctionKey]) {
         if (!isFunction(function.context.JSGlobalContextRef, function.JSValueRef)) {
-            *outExceptionString = toErrorString(nullString(), usedFunctionKey, @"it is not a function").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(usedFunctionKey).get(), StringImpl::create(@"it is not a function").get())).autorelease();
             return false;
         }
 
         // A JSValue cannot be transferred across processes, so we must convert it to a string before passing it along.
-        parameters.function = function.toString;
+        parameters.function = StringImpl::create(function.toString);
     }
 
     if (NSArray *arguments = script[usedArgumentKey]) {
         if (!isValidJSONObject(arguments, JSONOptions::FragmentsAllowed)) {
-            *outExceptionString = toErrorString(nullString(), usedArgumentKey, @"it is not JSON-serializable").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(usedArgumentKey).get(), StringImpl::create(@"it is not JSON-serializable").get())).autorelease();
             return false;
         }
 
@@ -500,12 +500,12 @@ bool WebExtensionAPIScripting::parseCSSInjectionOptions(NSDictionary *cssInfo, W
         return false;
 
     if (cssInfo[cssKey] && cssInfo[filesKey]) {
-        *outExceptionString = toErrorString(nullString(), @"details", @"it cannot specify both 'css' and 'files'").createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"details").get(), StringImpl::create(@"it cannot specify both 'css' and 'files'").get())).autorelease();
         return false;
     }
 
     if (!cssInfo[filesKey] && !cssInfo[cssKey]) {
-        *outExceptionString = toErrorString(nullString(), @"details", @"it must specify either 'css' or 'files'").createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"details").get(), StringImpl::create(@"it must specify either 'css' or 'files'").get())).autorelease();
         return false;
     }
 
@@ -517,10 +517,10 @@ bool WebExtensionAPIScripting::parseCSSInjectionOptions(NSDictionary *cssInfo, W
         parameters.styleLevel = styleLevel.value();
 
     if (NSString *css = cssInfo[cssKey])
-        parameters.css = css;
+        parameters.css = StringImpl::create(css);
 
     if (NSArray *files = cssInfo[filesKey])
-        parameters.files = makeVector<String>(files);
+        parameters.files = makeVector<RefPtr<StringImpl>>(files);
 
     return true;
 }
@@ -553,38 +553,38 @@ bool WebExtensionAPIScripting::parseRegisteredContentScripts(NSArray *scripts, F
 
         NSString *scriptID = script[@"id"];
         if (!scriptID.length) {
-            *outExceptionString = toErrorString(nullString(), @"id", @"it must not be empty").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"id").get(), StringImpl::create(@"it must not be empty").get())).autorelease();
             return false;
         }
 
         if ([scriptID characterAtIndex:0] == '_') {
-            *outExceptionString = toErrorString(nullString(), @"id", @"it must not start with '_'").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"id").get(), StringImpl::create(@"it must not start with '_'").get())).autorelease();
             return false;
         }
 
-        parameters.identifier = scriptID;
+        parameters.identifier = StringImpl::create(scriptID);
 
         NSArray *matchPatterns = script[matchesKey];
         if (firstTimeRegistration == FirstTimeRegistration::Yes && !matchPatterns.count) {
-            *outExceptionString = toErrorString(nullString(), matchesKey, makeString("it must specify at least one match pattern for script with ID '"_s, String(scriptID), "'"_s)).createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(matchesKey).get(), makeString("it must specify at least one match pattern for script with ID '"_s, StringImpl::create(scriptID), "'"_s))).autorelease();
             return false;
         }
 
         if (matchPatterns && !matchPatterns.count) {
-            *outExceptionString = toErrorString(nullString(), matchesKey, @"it must not be empty").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(matchesKey).get(), StringImpl::create(@"it must not be empty").get())).autorelease();
             return false;
         }
 
         NSArray *jsFiles = script[jsKey];
         NSArray *cssFiles = script[cssKey];
         if (firstTimeRegistration == FirstTimeRegistration::Yes && !jsFiles.count && !cssFiles.count) {
-            *outExceptionString = toErrorString(nullString(), @"details", @"it must specify at least one 'css' or 'js' file").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"details").get(), StringImpl::create(@"it must specify at least one 'css' or 'js' file").get())).autorelease();
             return false;
         }
 
         if (NSString *injectionTime = script[runAtKey]) {
             if (![injectionTime isEqualToString:documentIdle] && ![injectionTime isEqualToString:documentStart] && ![injectionTime isEqualToString:documentEnd]) {
-                *outExceptionString = toErrorString(nullString(), runAtKey, @"it must specify either 'document_start', 'document_end', or 'document_idle'").createNSString().autorelease();
+                *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(runAtKey).get(), StringImpl::create(@"it must specify either 'document_start', 'document_end', or 'document_idle'").get())).autorelease();
                 return false;
             }
 
@@ -611,16 +611,16 @@ bool WebExtensionAPIScripting::parseRegisteredContentScripts(NSArray *scripts, F
             parameters.world = worldType;
 
         if (cssFiles)
-            parameters.css = makeVector<String>(cssFiles);
+            parameters.css = makeVector<RefPtr<StringImpl>>(cssFiles);
 
         if (jsFiles)
-            parameters.js = makeVector<String>(jsFiles);
+            parameters.js = makeVector<RefPtr<StringImpl>>(jsFiles);
 
         if (matchPatterns)
-            parameters.matchPatterns = makeVector<String>(matchPatterns);
+            parameters.matchPatterns = makeVector<RefPtr<StringImpl>>(matchPatterns);
 
         if (NSArray *excludeMatchPatterns = script[excludeMatchesKey])
-            parameters.excludeMatchPatterns = makeVector<String>(excludeMatchPatterns);
+            parameters.excludeMatchPatterns = makeVector<RefPtr<StringImpl>>(excludeMatchPatterns);
 
         if (script[allFramesKey])
             parameters.allFrames = boolForKey(script, allFramesKey, false);

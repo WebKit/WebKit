@@ -93,7 +93,7 @@ enum class GeolocationPermissionState {
 
 #if ENABLE(IPC_TESTING_API)
 
-static Vector<String> gObservedGeolocationOriginHosts;
+static Vector<RefPtr<StringImpl>> gObservedGeolocationOriginHosts;
 static bool gDidReceiveGeolocationRequestForForgeryTest;
 
 @interface ForgedOriginGeolocationDelegate : NSObject<WKUIDelegate>
@@ -107,7 +107,7 @@ static bool gDidReceiveGeolocationRequestForForgeryTest;
 
 - (void)_webView:(WKWebView *)webView requestGeolocationPermissionForFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(BOOL))decisionHandler
 {
-    gObservedGeolocationOriginHosts.append(String(frame.securityOrigin.host));
+    gObservedGeolocationOriginHosts.append(StringImpl::create(frame.securityOrigin.host));
     gDidReceiveGeolocationRequestForForgeryTest = true;
     decisionHandler(NO);
 }
@@ -207,7 +207,7 @@ TEST(PermissionsAPI, OnChange)
     EXPECT_STREQ(((NSString *)[scriptMessage body]).UTF8String, "prompt");
 }
 
-static void testPermissionsAPIForGeolocation(GeolocationPermissionState geolocationPermissionState, RequestGeolocationSincePageLoad requestGeolocationSincePageLoad, String expectedResult)
+static void testPermissionsAPIForGeolocation(GeolocationPermissionState geolocationPermissionState, RequestGeolocationSincePageLoad requestGeolocationSincePageLoad, RefPtr<StringImpl> expectedResult)
 {
     RetainPtr pool = adoptNS([[WKProcessPool alloc] init]);
 
@@ -286,42 +286,42 @@ static void testPermissionsAPIForGeolocation(GeolocationPermissionState geolocat
 
 TEST(PermissionsAPI, GeolocationPermissionGrantedFromPromptAndGeolocationRequestedSinceLoad)
 {
-    testPermissionsAPIForGeolocation(GeolocationPermissionState::GrantedFromPrompt, RequestGeolocationSincePageLoad::Yes, "granted"_s);
+    testPermissionsAPIForGeolocation(GeolocationPermissionState::GrantedFromPrompt, RequestGeolocationSincePageLoad::Yes, "granted"_si);
 }
 
 TEST(PermissionsAPI, GeolocationPermissionGrantedFromPromptAndGeolocationNotRequestedSinceLoad)
 {
-    testPermissionsAPIForGeolocation(GeolocationPermissionState::GrantedFromPrompt, RequestGeolocationSincePageLoad::No, "prompt"_s);
+    testPermissionsAPIForGeolocation(GeolocationPermissionState::GrantedFromPrompt, RequestGeolocationSincePageLoad::No, "prompt"_si);
 }
 
 TEST(PermissionsAPI, GeolocationPermissionDeniedFromPromptAndGeolocationRequestedSinceLoad)
 {
-    testPermissionsAPIForGeolocation(GeolocationPermissionState::DeniedFromPrompt, RequestGeolocationSincePageLoad::Yes, "denied"_s);
+    testPermissionsAPIForGeolocation(GeolocationPermissionState::DeniedFromPrompt, RequestGeolocationSincePageLoad::Yes, "denied"_si);
 }
 
 TEST(PermissionsAPI, GeolocationPermissionDeniedFromPromptAndGeolocationNotRequestedSinceLoad)
 {
-    testPermissionsAPIForGeolocation(GeolocationPermissionState::DeniedFromPrompt, RequestGeolocationSincePageLoad::No, "prompt"_s);
+    testPermissionsAPIForGeolocation(GeolocationPermissionState::DeniedFromPrompt, RequestGeolocationSincePageLoad::No, "prompt"_si);
 }
 
 TEST(PermissionsAPI, GeolocationPermissionGrantedPermanentlyAndGeolocationRequestedSinceLoad)
 {
-    testPermissionsAPIForGeolocation(GeolocationPermissionState::GrantedPermanently, RequestGeolocationSincePageLoad::Yes, "granted"_s);
+    testPermissionsAPIForGeolocation(GeolocationPermissionState::GrantedPermanently, RequestGeolocationSincePageLoad::Yes, "granted"_si);
 }
 
 TEST(PermissionsAPI, GeolocationPermissionGrantedPermanentlyAndGeolocationNotRequestedSinceLoad)
 {
-    testPermissionsAPIForGeolocation(GeolocationPermissionState::GrantedPermanently, RequestGeolocationSincePageLoad::No, "granted"_s);
+    testPermissionsAPIForGeolocation(GeolocationPermissionState::GrantedPermanently, RequestGeolocationSincePageLoad::No, "granted"_si);
 }
 
 TEST(PermissionsAPI, GeolocationPermissionDeniedPermanentlyAndGeolocationRequestedSinceLoad)
 {
-    testPermissionsAPIForGeolocation(GeolocationPermissionState::DeniedPermanently, RequestGeolocationSincePageLoad::Yes, "denied"_s);
+    testPermissionsAPIForGeolocation(GeolocationPermissionState::DeniedPermanently, RequestGeolocationSincePageLoad::Yes, "denied"_si);
 }
 
 TEST(PermissionsAPI, GeolocationPermissionDeniedPermanentlyAndGeolocationNotRequestedSinceLoad)
 {
-    testPermissionsAPIForGeolocation(GeolocationPermissionState::DeniedPermanently, RequestGeolocationSincePageLoad::No, "prompt"_s);
+    testPermissionsAPIForGeolocation(GeolocationPermissionState::DeniedPermanently, RequestGeolocationSincePageLoad::No, "prompt"_si);
 }
 
 #if ENABLE(IPC_TESTING_API)
@@ -397,7 +397,7 @@ TEST(PermissionsAPI, GeolocationFrameInfoOriginIgnoresWebProcessForgery)
     EXPECT_GT(gObservedGeolocationOriginHosts.size(), 0u);
     for (auto& host : gObservedGeolocationOriginHosts) {
         EXPECT_WK_STREQ(host, "localhost"_s);
-        EXPECT_FALSE(host.contains("evil"_s));
+        EXPECT_FALSE(contains(host, "evil"_s));
     }
 }
 

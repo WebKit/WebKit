@@ -37,7 +37,7 @@ enum class CSSUnitType : uint8_t;
 class CSSUnitValue final : public CSSNumericValue {
     WTF_MAKE_TZONE_ALLOCATED(CSSUnitValue);
 public:
-    static ExceptionOr<Ref<CSSUnitValue>> create(double value, const String& unit);
+    static ExceptionOr<Ref<CSSUnitValue>> create(double value, StringImpl* unit);
     static Ref<CSSUnitValue> create(double value, CSSUnitType unit) { return adoptRef(*new CSSUnitValue(value, unit)); }
     static ExceptionOr<Ref<CSSUnitValue>> reifyValue(Document&, const CSSValue&);
 
@@ -50,7 +50,7 @@ public:
     CSSUnitType unitEnum() const { return m_unit; }
 
     NODELETE RefPtr<CSSUnitValue> convertTo(CSSUnitType) const;
-    static CSSUnitType parseUnit(const String& unit);
+    static CSSUnitType parseUnit(StringImpl* unit);
 
     RefPtr<CSSValue> toCSSValue() const final;
     RefPtr<CSSValue> toCSSValueWithProperty(CSSPropertyID) const final;

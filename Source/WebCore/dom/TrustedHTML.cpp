@@ -33,12 +33,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TrustedHTML);
 
-Ref<TrustedHTML> TrustedHTML::create(const String& data)
+Ref<TrustedHTML> TrustedHTML::create(StringImpl* data)
 {
     return adoptRef(*new TrustedHTML(data));
 }
 
-TrustedHTML::TrustedHTML(const String& data)
+TrustedHTML::TrustedHTML(StringImpl* data)
     : m_data(data)
 {
 }

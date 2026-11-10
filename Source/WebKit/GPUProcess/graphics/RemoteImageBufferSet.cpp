@@ -191,7 +191,7 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
             stream << "size " << m_configuration.logicalSize << " scale " << m_configuration.resolutionScale << " colorSpace " << m_configuration.colorSpace
                 << " pixelFormat " << m_configuration.bufferFormat.pixelFormat << " lossless " << (m_configuration.bufferFormat.useLosslessCompression == WebCore::UseLosslessCompression::Yes)
                 << " renderingMode " << m_configuration.renderingMode << " renderingPurpose " << m_configuration.renderingPurpose;
-            RELEASE_LOG_ERROR(RemoteLayerBuffers, "RemoteImageBufferSet %" PRIu64 " failed to allocate front buffer: %" PUBLIC_LOG_STRING, m_identifier.toUInt64(), stream.release().utf8());
+            RELEASE_LOG_ERROR(RemoteLayerBuffers, "RemoteImageBufferSet %" PRIu64 " failed to allocate front buffer: %" PUBLIC_LOG_STRING, m_identifier.toUInt64(), utf8(stream.release()));
         }
         m_frontBufferIsCleared = true;
     }

@@ -43,7 +43,7 @@ NetworkSessionCurl::NetworkSessionCurl(NetworkProcess& networkProcess, const Net
     : NetworkSession(networkProcess, parameters)
 {
     if (auto* storageSession = networkStorageSession()) {
-        if (!parameters.cookiePersistentStorageFile.isEmpty())
+        if (!isEmpty(parameters.cookiePersistentStorageFile))
             storageSession->setCookieDatabase(makeUniqueRef<CookieJarDB>(parameters.cookiePersistentStorageFile));
         storageSession->setProxySettings(parameters.proxySettings);
     }
@@ -63,7 +63,7 @@ void NetworkSessionCurl::clearAlternativeServices(WallTime)
         storageSession->clearAlternativeServices();
 }
 
-RefPtr<WebSocketTask> NetworkSessionCurl::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, StoredCredentialsPolicy, IsInitiatedByWorker)
+RefPtr<WebSocketTask> NetworkSessionCurl::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, StringImpl* protocol, const WebCore::ClientOrigin& clientOrigin, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, StoredCredentialsPolicy, IsInitiatedByWorker)
 {
     return WebSocketTask::create(channel, webPageProxyID, request, protocol, clientOrigin);
 }

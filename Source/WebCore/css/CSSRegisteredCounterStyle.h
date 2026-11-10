@@ -48,7 +48,7 @@ public:
             && m_predefinedCounterStyle == other.m_predefinedCounterStyle;
     }
 
-    String text(int, WritingMode);
+    RefPtr<StringImpl> text(int, WritingMode);
     const CSSCounterStyleDescriptors::Name& name() const LIFETIME_BOUND { return m_descriptors.m_name; }
     CSSCounterStyleDescriptors::System system() const { return m_descriptors.m_system; }
     const CSSCounterStyleDescriptors::NegativeSymbols& negative() const LIFETIME_BOUND { return m_descriptors.m_negativeSymbols; }
@@ -83,18 +83,18 @@ public:
     bool isExtendsSystem() const { return system() == CSSCounterStyleDescriptors::System::Extends; }
     void extendAndResolve(const CSSRegisteredCounterStyle&);
 
-    static String counterForSystemSimplifiedChineseInformal(unsigned);
-    static String counterForSystemSimplifiedChineseFormal(unsigned);
-    static String counterForSystemTraditionalChineseInformal(unsigned);
-    static String counterForSystemTraditionalChineseFormal(unsigned);
-    static String counterForSystemJapaneseInformal(unsigned);
-    static String counterForSystemJapaneseFormal(unsigned);
-    static String counterForSystemKoreanHangulFormal(unsigned);
-    static String counterForSystemKoreanHanjaInformal(unsigned);
-    static String counterForSystemKoreanHanjaFormal(unsigned);
-    static String counterForSystemEthiopicNumeric(unsigned);
-    static String counterForSystemDisclosureClosed(WritingMode);
-    static String counterForSystemDisclosureOpen(WritingMode);
+    static RefPtr<StringImpl> counterForSystemSimplifiedChineseInformal(unsigned);
+    static RefPtr<StringImpl> counterForSystemSimplifiedChineseFormal(unsigned);
+    static RefPtr<StringImpl> counterForSystemTraditionalChineseInformal(unsigned);
+    static RefPtr<StringImpl> counterForSystemTraditionalChineseFormal(unsigned);
+    static RefPtr<StringImpl> counterForSystemJapaneseInformal(unsigned);
+    static RefPtr<StringImpl> counterForSystemJapaneseFormal(unsigned);
+    static RefPtr<StringImpl> counterForSystemKoreanHangulFormal(unsigned);
+    static RefPtr<StringImpl> counterForSystemKoreanHanjaInformal(unsigned);
+    static RefPtr<StringImpl> counterForSystemKoreanHanjaFormal(unsigned);
+    static RefPtr<StringImpl> counterForSystemEthiopicNumeric(unsigned);
+    static RefPtr<StringImpl> counterForSystemDisclosureClosed(WritingMode);
+    static RefPtr<StringImpl> counterForSystemDisclosureOpen(WritingMode);
 
 private:
     CSSRegisteredCounterStyle(const CSSCounterStyleDescriptors&, bool isPredefinedCounterStyle);
@@ -106,19 +106,19 @@ private:
     NODELETE bool shouldApplyNegativeSymbols(int) const;
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-fallback
     WeakPtr<CSSRegisteredCounterStyle> fallback() const { return m_fallbackReference; };
-    String fallbackText(int, WritingMode);
+    RefPtr<StringImpl> fallbackText(int, WritingMode);
     // Generates a CSSRegisteredCounterStyle object as it was defined by a 'decimal' descriptor. It is used as a last-resource in case we can't resolve fallback references.
-    bool applyPadSymbols(String&, int) const;
-    void applyNegativeSymbols(String&) const;
+    bool applyPadSymbols(RefPtr<StringImpl>&, int) const;
+    void applyNegativeSymbols(RefPtr<StringImpl>&) const;
     // Initial text representation for the counter, before applying pad and/or negative symbols. Suffix and Prefix are also not considered as described by https://www.w3.org/TR/css-counter-styles-3/#counter-styles.
-    String initialRepresentation(int, WritingMode) const;
+    RefPtr<StringImpl> initialRepresentation(int, WritingMode) const;
 
-    NODELETE String counterForSystemCyclic(int) const;
-    NODELETE String counterForSystemFixed(int) const;
-    String counterForSystemSymbolic(unsigned) const;
-    String counterForSystemAlphabetic(unsigned) const;
-    String counterForSystemNumeric(unsigned) const;
-    String counterForSystemAdditive(unsigned) const;
+    NODELETE RefPtr<StringImpl> counterForSystemCyclic(int) const;
+    NODELETE RefPtr<StringImpl> counterForSystemFixed(int) const;
+    RefPtr<StringImpl> counterForSystemSymbolic(unsigned) const;
+    RefPtr<StringImpl> counterForSystemAlphabetic(unsigned) const;
+    RefPtr<StringImpl> counterForSystemNumeric(unsigned) const;
+    RefPtr<StringImpl> counterForSystemAdditive(unsigned) const;
 
     bool isPredefinedCounterStyle() const { return m_predefinedCounterStyle; }
     bool isAutoRange() const { return ranges().isEmpty(); }

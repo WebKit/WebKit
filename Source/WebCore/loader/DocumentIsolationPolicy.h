@@ -48,13 +48,19 @@ enum class DocumentIsolationPolicyValue : bool {
 struct DocumentIsolationPolicy {
     DocumentIsolationPolicyValue value { DocumentIsolationPolicyValue::None };
     DocumentIsolationPolicyValue reportOnlyValue { DocumentIsolationPolicyValue::None };
-    String reportingEndpoint;
-    String reportOnlyReportingEndpoint;
+    RefPtr<StringImpl> reportingEndpoint;
+    RefPtr<StringImpl> reportOnlyReportingEndpoint;
 
-    DocumentIsolationPolicy isolatedCopy() const & { return { value, reportOnlyValue, reportingEndpoint.isolatedCopy(), reportOnlyReportingEndpoint.isolatedCopy() }; }
-    DocumentIsolationPolicy isolatedCopy() && { return { value, reportOnlyValue, WTF::move(reportingEndpoint).isolatedCopy(), WTF::move(reportOnlyReportingEndpoint).isolatedCopy() }; }
+    DocumentIsolationPolicy isolatedCopy() const & { return { value, reportOnlyValue, WTF::isolatedCopy(reportingEndpoint), WTF::isolatedCopy(reportOnlyReportingEndpoint) }; }
+    DocumentIsolationPolicy isolatedCopy() && { return { value, reportOnlyValue, WTF::isolatedCopy(WTF::move(reportingEndpoint)), WTF::isolatedCopy(WTF::move(reportOnlyReportingEndpoint)) }; }
 
-    friend bool operator==(const DocumentIsolationPolicy&, const DocumentIsolationPolicy&) = default;
+    friend bool operator==(const DocumentIsolationPolicy& a, const DocumentIsolationPolicy& b)
+    {
+        return a.value == b.value
+            && a.reportOnlyValue == b.reportOnlyValue
+            && contentEquals(a.reportingEndpoint, b.reportingEndpoint)
+            && contentEquals(a.reportOnlyReportingEndpoint, b.reportOnlyReportingEndpoint);
+    }
 
     void addPolicyHeadersTo(ResourceResponse&) const;
 };
@@ -66,6 +72,6 @@ WEBCORE_EXPORT DocumentIsolationPolicy obtainDocumentIsolationPolicy(const URL&,
 WEBCORE_EXPORT DocumentIsolationPolicy parseDocumentIsolationPolicy(const ResourceResponse&);
 
 // https://wicg.github.io/document-isolation-policy/#queue-a-document-isolation-policy-corp-violation-report
-void sendDocumentIsolationPolicyCORPViolation(ReportingClient&, const URL& contextURL, const String& endpoint, COEPDisposition, FetchOptionsDestination, const URL& blockedURL);
+void sendDocumentIsolationPolicyCORPViolation(ReportingClient&, const URL& contextURL, StringImpl* endpoint, COEPDisposition, FetchOptionsDestination, const URL& blockedURL);
 
 } // namespace WebCore

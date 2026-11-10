@@ -85,7 +85,7 @@ bool CBORWriter::encodeCBOR(const CBORValue& node, int maxNestingLevel)
     }
     case CBORValue::Type::String: {
         // WTFString uses UTF16 but RFC7049 requires UTF8
-        auto utf8String = node.getString().utf8();
+        auto utf8String = utf8(node.getString());
         startItem(CBORValue::Type::String, static_cast<uint64_t>(utf8String.length()));
         // Add the characters.
         m_encodedCBOR->append(utf8String.span());

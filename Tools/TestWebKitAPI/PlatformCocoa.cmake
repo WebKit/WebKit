@@ -139,6 +139,7 @@ list(APPEND TestWTF_SOURCES
     Tests/WTF/cocoa/RetainRef.mm
     Tests/WTF/cocoa/RetainRefARC.mm
     Tests/WTF/cocoa/RunLoopCocoa.mm
+    Tests/WTF/cocoa/StringFunctionsCocoa.mm
     Tests/WTF/cocoa/TextStreamCocoa.cpp
     Tests/WTF/cocoa/TextStreamCocoa.mm
     Tests/WTF/cocoa/TypeCastsCocoa.mm

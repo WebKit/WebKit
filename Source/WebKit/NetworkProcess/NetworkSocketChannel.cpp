@@ -43,17 +43,17 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkSocketChannel);
 
-RefPtr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnectionToWebProcess& connection, PAL::SessionID sessionID, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, IsInitiatedByWorker isInitiatedByWorker)
+RefPtr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnectionToWebProcess& connection, PAL::SessionID sessionID, const ResourceRequest& request, StringImpl* protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, IsInitiatedByWorker isInitiatedByWorker)
 {
     Ref result = adoptRef(*new NetworkSocketChannel(connection, protect(NetworkProcess::singleton().networkSession(sessionID)), request, protocol, identifier, webPageProxyID, frameID, pageID, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, storedCredentialsPolicy, isInitiatedByWorker));
     if (!result->m_socket) {
-        result->didClose(0, "Cannot create a web socket task"_s);
+        result->didClose(0, "Cannot create a web socket task"_si);
         return nullptr;
     }
     return result;
 }
 
-NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connection, NetworkSession* session, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, IsInitiatedByWorker isInitiatedByWorker)
+NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connection, NetworkSession* session, const ResourceRequest& request, StringImpl* protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, IsInitiatedByWorker isInitiatedByWorker)
     : m_connectionToWebProcess(connection)
     , m_identifier(identifier)
     , m_session(session)
@@ -104,18 +104,18 @@ void NetworkSocketChannel::finishClosingIfPossible()
     protect(m_connectionToWebProcess)->removeSocketChannel(m_identifier);
 }
 
-void NetworkSocketChannel::close(int32_t code, const String& reason)
+void NetworkSocketChannel::close(int32_t code, StringImpl* reason)
 {
     protect(m_socket)->close(code, reason);
     finishClosingIfPossible();
 }
 
-void NetworkSocketChannel::didConnect(const String& subprotocol, const String& extensions)
+void NetworkSocketChannel::didConnect(StringImpl* subprotocol, StringImpl* extensions)
 {
     send(Messages::WebSocketChannel::DidConnect { subprotocol, extensions });
 }
 
-void NetworkSocketChannel::didReceiveText(const String& text)
+void NetworkSocketChannel::didReceiveText(StringImpl* text)
 {
     send(Messages::WebSocketChannel::DidReceiveText { text });
 }
@@ -125,7 +125,7 @@ void NetworkSocketChannel::didReceiveBinaryData(std::span<const uint8_t> data)
     send(Messages::WebSocketChannel::DidReceiveBinaryData { data });
 }
 
-void NetworkSocketChannel::didClose(unsigned short code, const String& reason)
+void NetworkSocketChannel::didClose(unsigned short code, StringImpl* reason)
 {
     if (m_errorTimer.isActive()) {
         m_closeInfo = std::make_pair(code, reason);
@@ -135,7 +135,7 @@ void NetworkSocketChannel::didClose(unsigned short code, const String& reason)
     finishClosingIfPossible();
 }
 
-void NetworkSocketChannel::didReceiveMessageError(String&& errorMessage)
+void NetworkSocketChannel::didReceiveMessageError(RefPtr<StringImpl>&& errorMessage)
 {
     m_errorMessage = WTF::move(errorMessage);
     m_errorTimer.startOneShot(NetworkProcess::randomClosedPortDelay());

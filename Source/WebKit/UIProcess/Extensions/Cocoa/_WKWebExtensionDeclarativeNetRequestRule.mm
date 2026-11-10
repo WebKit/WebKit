@@ -606,10 +606,10 @@ using namespace WebKit;
     if (headerValue && !isHeaderValueValid(headerValue))
         return [[NSString alloc] initWithFormat:@"Rule with id %ld is invalid. The value for the header `%@` is not valid.", (long)_ruleID, headerName];
 
-    if (isRequestHeader && (isSetOperation || isAppendOperation) && WebCore::isRequestHeaderUnsafeToModify(headerName, String(headerValue)))
+    if (isRequestHeader && (isSetOperation || isAppendOperation) && WebCore::isRequestHeaderUnsafeToModify(StringImpl::create(headerName).get(), StringImpl::create(headerValue).get()))
         return [[NSString alloc] initWithFormat:@"Rule with id %ld is invalid. The request header `%@` cannot be modified.", (long)_ruleID, headerName];
 
-    if (isRequestHeader && isAppendOperation && !WebCore::requestHeaderAppendDelimiter(headerName))
+    if (isRequestHeader && isAppendOperation && !WebCore::requestHeaderAppendDelimiter(StringImpl::create(headerName).get()))
         return [[NSString alloc] initWithFormat:@"Rule with id %ld is invalid. The request header `%@` does not support the `append` operation.", (long)_ruleID, headerName];
 
     return nil;
@@ -617,7 +617,7 @@ using namespace WebKit;
 
 static BOOL isHeaderNameValid(NSString *headerName)
 {
-    return WebCore::isValidHTTPToken(String(headerName));
+    return WebCore::isValidHTTPToken(StringImpl::create(headerName).get());
 }
 
 static BOOL isHeaderValueValid(NSString *headerValue)

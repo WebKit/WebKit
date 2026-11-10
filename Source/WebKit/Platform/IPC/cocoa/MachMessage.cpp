@@ -113,7 +113,7 @@ static MachMessage::SendResult sendResult(kern_return_t kr, MessageName messageN
 
     default:
         auto errorMessage = makeString("Unhandled error code 0x"_s, hex(kr), ", message '"_s, description(messageName), "' ("_s, messageName, ")"_s);
-        WebKit::logAndSetCrashLogMessage(errorMessage.utf8());
+        WebKit::logAndSetCrashLogMessage(utf8(errorMessage));
         CRASH_WITH_INFO(kr, std::to_underlying(messageName));
     }
 }

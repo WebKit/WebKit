@@ -75,7 +75,8 @@ inline bool areBuffersEqual(const WebGPU::Metal::Buffer& a, const WebGPU::Metal:
     return &a == &b;
 }
 
-inline NSString * convertWTFStringToNSString(const String& input)
+// Takes the RefPtr<StringImpl> that Swift sees for string members (descriptor labels).
+inline NSString * convertStringImplToNSString(const RefPtr<StringImpl>& input)
 {
     return nsStringNilIfEmpty(input).autorelease();
 }

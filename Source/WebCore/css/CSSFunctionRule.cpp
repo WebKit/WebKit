@@ -41,7 +41,7 @@ CSSFunctionRule::CSSFunctionRule(StyleRuleFunction& rule, CSSStyleSheet* parent)
 {
 }
 
-String CSSFunctionRule::name() const
+RefPtr<StringImpl> CSSFunctionRule::name() const
 {
     return styleRuleFunction().name();
 }
@@ -64,14 +64,14 @@ auto CSSFunctionRule::getParameters() const -> Vector<FunctionParameter>
     });
 }
 
-String CSSFunctionRule::returnType() const
+RefPtr<StringImpl> CSSFunctionRule::returnType() const
 {
     StringBuilder builder;
     serializeCustomPropertySyntax(builder, styleRuleFunction().returnType());
     return builder.toString();
 }
 
-String CSSFunctionRule::cssText() const
+RefPtr<StringImpl> CSSFunctionRule::cssText() const
 {
     StringBuilder builder;
     builder.append("@function "_s);

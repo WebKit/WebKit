@@ -34,13 +34,13 @@ Ref<JSON::Object> GPUProgrammableStage::toJSON() const
 {
     Ref json = JSON::Object::create();
     // `GPUShaderModule` is not JSON serializable.
-    if (!entryPoint.isNull())
-        json->setString("entryPoint"_s, entryPoint);
+    if (entryPoint)
+        json->setString("entryPoint"_si, entryPoint);
     if (!constants.isEmpty()) {
         auto constantsJSON = JSON::Object::create();
         for (auto& constant : constants)
             constantsJSON->setDouble(constant.key, constant.value);
-        json->setObject("constants"_s, WTF::move(constantsJSON));
+        json->setObject("constants"_si, WTF::move(constantsJSON));
     }
     return json;
 }

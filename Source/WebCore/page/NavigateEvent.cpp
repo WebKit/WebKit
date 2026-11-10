@@ -48,7 +48,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigateEvent);
 
-NavigateEvent::NavigateEvent(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& init, EventIsTrusted isTrusted, AbortController* abortController)
+NavigateEvent::NavigateEvent(JSC::JSGlobalObject& globalObject, AtomStringImpl* type, Init&& init, EventIsTrusted isTrusted, AbortController* abortController)
     : Event(EventInterfaceType::NavigateEvent, type, WTF::move(init), isTrusted)
     , m_navigationType(init.navigationType)
     , m_destination(WTF::move(init.destination))
@@ -66,7 +66,7 @@ NavigateEvent::NavigateEvent(JSC::JSGlobalObject& globalObject, const AtomString
     m_info.set(globalObject, wrapper(), init.info);
 }
 
-NavigateEvent::NavigateEvent(RefPtr<DOMWrapperWorld>&& world, const AtomString& type, Init&& init, EventIsTrusted isTrusted, AbortController* abortController)
+NavigateEvent::NavigateEvent(RefPtr<DOMWrapperWorld>&& world, AtomStringImpl* type, Init&& init, EventIsTrusted isTrusted, AbortController* abortController)
     : Event(EventInterfaceType::NavigateEvent, type, WTF::move(init), isTrusted)
     , m_navigationType(init.navigationType)
     , m_destination(WTF::move(init.destination))
@@ -84,12 +84,12 @@ NavigateEvent::NavigateEvent(RefPtr<DOMWrapperWorld>&& world, const AtomString& 
     m_info.setWeakly(WTF::move(world), init.info);
 }
 
-Ref<NavigateEvent> NavigateEvent::create(RefPtr<DOMWrapperWorld>&& world, const AtomString& type, Init&& init, AbortController* abortController)
+Ref<NavigateEvent> NavigateEvent::create(RefPtr<DOMWrapperWorld>&& world, AtomStringImpl* type, Init&& init, AbortController* abortController)
 {
     return adoptRef(*new NavigateEvent(WTF::move(world), type, WTF::move(init), EventIsTrusted::Yes, abortController));
 }
 
-Ref<NavigateEvent> NavigateEvent::create(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& init)
+Ref<NavigateEvent> NavigateEvent::create(JSC::JSGlobalObject& globalObject, AtomStringImpl* type, Init&& init)
 {
     // FIXME: AbortController is required but JS bindings need to create it without one.
     return adoptRef(*new NavigateEvent(globalObject, type, WTF::move(init), EventIsTrusted::No, nullptr));
@@ -99,13 +99,13 @@ Ref<NavigateEvent> NavigateEvent::create(JSC::JSGlobalObject& globalObject, cons
 ExceptionOr<void> NavigateEvent::sharedChecks(Document& document)
 {
     if (!document.isFullyActive())
-        return Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_si };
 
     if (!isTrusted())
-        return Exception { ExceptionCode::SecurityError, "Event is not trusted"_s };
+        return Exception { ExceptionCode::SecurityError, "Event is not trusted"_si };
 
     if (defaultPrevented())
-        return Exception { ExceptionCode::InvalidStateError, "Event was already canceled"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Event was already canceled"_si };
 
     return { };
 }
@@ -128,14 +128,14 @@ ExceptionOr<void> NavigateEvent::intercept(Document& document, NavigationInterce
         return checkResult;
 
     if (!canIntercept())
-        return Exception { ExceptionCode::SecurityError, "Event is not interceptable"_s };
+        return Exception { ExceptionCode::SecurityError, "Event is not interceptable"_si };
 
     if (!isBeingDispatched())
-        return Exception { ExceptionCode::InvalidStateError, "Event is not being dispatched"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Event is not being dispatched"_si };
 
     if (document.settings().navigationAPIPrecommitHandlerEnabled() && options.precommitHandler) {
         if (!cancelable())
-            return Exception { ExceptionCode::InvalidStateError, "A precommitHandler can only be used on a cancelable navigation"_s };
+            return Exception { ExceptionCode::InvalidStateError, "A precommitHandler can only be used on a cancelable navigation"_si };
 
         m_precommitHandlers.append(options.precommitHandler.releaseNonNull());
     }
@@ -201,7 +201,7 @@ ExceptionOr<void> NavigateEvent::scroll(Document& document)
         return checkResult;
 
     if (m_interceptionState != InterceptionState::Committed)
-        return Exception { ExceptionCode::InvalidStateError, "Interception has not been committed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Interception has not been committed"_si };
 
     processScrollBehavior(document);
 

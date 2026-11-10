@@ -329,7 +329,7 @@ public:
     bool dumpCodeOrigin(PrintStream&, const char* prefix, Node*& previousNode, Node* currentNode, DumpContext*);
 
     void dumpAndReleaseIonGraph();
-    void appendIonGraphPass(const String& passName);
+    void appendIonGraphPass(ASCIILiteral passName);
 
     AddSpeculationMode addSpeculationMode(Node* add, bool leftShouldSpeculateInt32, bool rightShouldSpeculateInt32, PredictionPass pass)
     {
@@ -1465,8 +1465,8 @@ public:
 
     bool isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(const AbstractValue&);
 
-    const BoyerMooreHorspoolTable<uint8_t>* tryAddStringSearchTable8(const String&);
-    const ConcatKeyAtomStringCache* tryAddConcatKeyAtomStringCache(const String&, const String&, ConcatKeyAtomStringCache::Mode);
+    const BoyerMooreHorspoolTable<uint8_t>* tryAddStringSearchTable8(StringImpl*);
+    const ConcatKeyAtomStringCache* tryAddConcatKeyAtomStringCache(StringImpl*, StringImpl*, ConcatKeyAtomStringCache::Mode);
 
     bool afterFixup() { return m_planStage >= PlanStage::AfterFixup; }
 
@@ -1497,7 +1497,7 @@ public:
     Vector<SimpleJumpTable> m_switchJumpTables;
     Vector<const UnlinkedStringJumpTable*> m_unlinkedStringSwitchJumpTables;
     Vector<StringJumpTable> m_stringSwitchJumpTables;
-    UncheckedKeyHashMap<String, std::unique_ptr<BoyerMooreHorspoolTable<uint8_t>>> m_stringSearchTable8;
+    UncheckedKeyHashMap<RefPtr<StringImpl>, std::unique_ptr<BoyerMooreHorspoolTable<uint8_t>>> m_stringSearchTable8;
     Vector<std::unique_ptr<ConcatKeyAtomStringCache>> m_concatKeyAtomStringCaches;
 
     UncheckedKeyHashMap<EncodedJSValue, FrozenValue*, EncodedJSValueHash, EncodedJSValueHashTraits> m_frozenValueMap;
@@ -1587,8 +1587,8 @@ public:
     UncheckedKeyHashMap<unsigned, BytecodeIndex> m_entrypointIndexToCatchBytecodeIndex;
     Vector<CatchEntrypointData> m_catchEntrypoints;
 
-    UncheckedKeyHashSet<String> m_localStrings;
-    UncheckedKeyHashSet<String> m_copiedStrings;
+    UncheckedKeyHashSet<RefPtr<StringImpl>> m_localStrings;
+    UncheckedKeyHashSet<RefPtr<StringImpl>> m_copiedStrings;
 
     Vector<LinkerIR::Value> m_constantPool;
     UncheckedKeyHashMap<LinkerIR::Value, LinkerIR::Constant, LinkerIR::ValueHash, LinkerIR::ValueTraits> m_constantPoolMap;

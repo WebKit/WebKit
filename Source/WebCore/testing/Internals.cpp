@@ -517,19 +517,19 @@ private:
     void reopen() final { }
     void bringToFront() final { }
     void setForcedAppearance(InspectorFrontendClient::Appearance) final { }
-    String localizedStringsURL() const final { return String(); }
+    RefPtr<StringImpl> localizedStringsURL() const final { return nullptr; }
     DebuggableType debuggableType() const final { return DebuggableType::WebPage; }
-    String targetPlatformName() const { return "Unknown"_s; }
-    String targetBuildVersion() const { return "Unknown"_s; }
-    String targetProductVersion() const { return "Unknown"_s; }
+    RefPtr<StringImpl> targetPlatformName() const { return "Unknown"_si; }
+    RefPtr<StringImpl> targetBuildVersion() const { return "Unknown"_si; }
+    RefPtr<StringImpl> targetProductVersion() const { return "Unknown"_si; }
     bool targetIsSimulator() const { return false; }
-    void inspectedURLChanged(const String&) final { }
+    void inspectedURLChanged(StringImpl*) final { }
     void showCertificate(const CertificateInfo&) final { }
     void setAttachedWindowHeight(unsigned) final { }
     void setAttachedWindowWidth(unsigned) final { }
     void setSheetRect(const FloatRect&) final { }
 
-    void sendMessageToFrontend(const String& message) final;
+    void sendMessageToFrontend(StringImpl* message) final;
     ConnectionType connectionType() const final { return ConnectionType::Local; }
 
     RefPtr<LocalDOMWindow> m_frontendWindow;
@@ -568,12 +568,12 @@ void InspectorStubFrontend::closeWindow()
     m_frontendWindow = nullptr;
 }
 
-void InspectorStubFrontend::sendMessageToFrontend(const String& message)
+void InspectorStubFrontend::sendMessageToFrontend(StringImpl* message)
 {
     frontendAPIDispatcher().dispatchMessageAsync(message);
 }
 
-static bool markerTypeFrom(const String& markerType, DocumentMarkerType& result)
+static bool markerTypeFrom(StringImpl* markerType, DocumentMarkerType& result)
 {
     if (equalLettersIgnoringASCIICase(markerType, "spelling"_s))
         result = DocumentMarkerType::Spelling;
@@ -613,11 +613,11 @@ static bool markerTypeFrom(const String& markerType, DocumentMarkerType& result)
     return true;
 }
 
-static bool markerTypesFrom(const String& markerType, OptionSet<DocumentMarkerType>& result)
+static bool markerTypesFrom(StringImpl* markerType, OptionSet<DocumentMarkerType>& result)
 {
     DocumentMarkerType singularResult;
 
-    if (markerType.isEmpty() || equalLettersIgnoringASCIICase(markerType, "all"_s))
+    if (isEmpty(markerType) || equalLettersIgnoringASCIICase(markerType, "all"_s))
         result = DocumentMarker::allMarkers();
     else if (markerTypeFrom(markerType, singularResult))
         result = singularResult;
@@ -709,7 +709,7 @@ void Internals::resetToConsistentState(Page& page)
         window->history().setTotalStateObjectPayloadLimitOverride(std::nullopt);
 
     WTF::clearDefaultPortForProtocolMapForTesting();
-    overrideUserPreferredLanguages(Vector<String>());
+    overrideUserPreferredLanguages(Vector<RefPtr<StringImpl>>());
     WebCore::DeprecatedGlobalSettings::setUsesOverlayScrollbars(false);
     Ref editor = localMainFrame->editor();
     if (!editor->isContinuousSpellCheckingEnabled())
@@ -809,7 +809,7 @@ void Internals::resetToConsistentState(Page& page)
     LocalDOMWindow::overrideTransientActivationDurationForTesting(std::nullopt);
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
-    WebCore::setContentSizeCategory(kCTFontContentSizeCategoryL);
+    WebCore::setContentSizeCategory(StringImpl::create(kCTFontContentSizeCategoryL).get());
 #endif
 #if HAVE(TEXT_SCALE_FACTOR)
     WebCore::setTextScaleFactor(std::nullopt);
@@ -937,10 +937,10 @@ ExceptionOr<bool> Internals::areSVGAnimationsPaused() const
 {
     RefPtr document = contextDocument();
     if (!document)
-        return Exception { ExceptionCode::InvalidAccessError, "No context document"_s };
+        return Exception { ExceptionCode::InvalidAccessError, "No context document"_si };
 
     if (!document->svgExtensionsIfExists())
-        return Exception { ExceptionCode::NotFoundError, "No SVG animations"_s };
+        return Exception { ExceptionCode::NotFoundError, "No SVG animations"_si };
 
     return document->svgExtensions().areAnimationsPaused();
 }
@@ -972,7 +972,7 @@ Vector<Ref<SVGSVGElement>> Internals::allSVGSVGElements() const
     return elements;
 }
 
-String Internals::address(Node& node)
+RefPtr<StringImpl> Internals::address(Node& node)
 {
     return makeString("0x"_s, hex(reinterpret_cast<uintptr_t>(&node)));
 }
@@ -982,48 +982,48 @@ bool Internals::nodeNeedsStyleRecalc(Node& node)
     return node.needsStyleRecalc();
 }
 
-static String styleValidityToToString(Style::Validity validity)
+static RefPtr<StringImpl> styleValidityToToString(Style::Validity validity)
 {
     switch (validity) {
     case Style::Validity::Valid:
-        return "NoStyleChange"_s;
+        return "NoStyleChange"_si;
     case Style::Validity::AnimationInvalid:
-        return "AnimationInvalid"_s;
+        return "AnimationInvalid"_si;
     case Style::Validity::InlineStyleInvalid:
-        return "InlineStyleInvalid"_s;
+        return "InlineStyleInvalid"_si;
     case Style::Validity::ElementInvalid:
-        return "InlineStyleChange"_s;
+        return "InlineStyleChange"_si;
     case Style::Validity::SubtreeInvalid:
-        return "FullStyleChange"_s;
+        return "FullStyleChange"_si;
     }
     ASSERT_NOT_REACHED();
     return emptyString();
 }
 
-String Internals::styleChangeType(Node& node)
+RefPtr<StringImpl> Internals::styleChangeType(Node& node)
 {
     protect(node.document().styleScope())->flushPendingUpdate();
 
     return styleValidityToToString(node.styleValidity());
 }
 
-String Internals::description(JSC::JSValue value)
+RefPtr<StringImpl> Internals::description(JSC::JSValue value)
 {
     return ::toString(value);
 }
 
-void Internals::log(const String& value)
+void Internals::log(StringImpl* value)
 {
-    SAFE_WTFLOGALWAYS("%s", value.utf8());
+    SAFE_WTFLOGALWAYS("%s", utf8(value));
 }
 
-bool Internals::isPreloaded(const String& url)
+bool Internals::isPreloaded(StringImpl* url)
 {
     RefPtr document = contextDocument();
     return protect(document->cachedResourceLoader())->isPreloaded(url);
 }
 
-bool Internals::isLoadingFromMemoryCache(const String& url)
+bool Internals::isLoadingFromMemoryCache(StringImpl* url)
 {
     RefPtr resource = resourceFromMemoryCache(url);
     return resource && resource->status() == CachedResource::Cached;
@@ -1042,7 +1042,7 @@ ExceptionOr<bool> Internals::frameNetworkingContextIsValid() const
     return context->isValid();
 }
 
-CachedResource* Internals::resourceFromMemoryCache(const String& url)
+CachedResource* Internals::resourceFromMemoryCache(StringImpl* url)
 {   
     RefPtr contextDocument = this->contextDocument();
     if (!contextDocument || !contextDocument->page())
@@ -1054,52 +1054,52 @@ CachedResource* Internals::resourceFromMemoryCache(const String& url)
     return MemoryCache::singleton().resourceForRequest(request, contextDocument->page()->sessionID());
 }
 
-static String responseSourceToString(const ResourceResponse& response)
+static RefPtr<StringImpl> responseSourceToString(const ResourceResponse& response)
 {
     if (response.isNull())
-        return "Null response"_s;
+        return "Null response"_si;
     switch (response.source()) {
     case ResourceResponse::Source::Unknown:
-        return "Unknown"_s;
+        return "Unknown"_si;
     case ResourceResponse::Source::Network:
-        return "Network"_s;
+        return "Network"_si;
     case ResourceResponse::Source::ServiceWorker:
-        return "Service worker"_s;
+        return "Service worker"_si;
     case ResourceResponse::Source::DiskCache:
-        return "Disk cache"_s;
+        return "Disk cache"_si;
     case ResourceResponse::Source::DiskCacheAfterValidation:
-        return "Disk cache after validation"_s;
+        return "Disk cache after validation"_si;
     case ResourceResponse::Source::MemoryCache:
-        return "Memory cache"_s;
+        return "Memory cache"_si;
     case ResourceResponse::Source::MemoryCacheAfterValidation:
-        return "Memory cache after validation"_s;
+        return "Memory cache after validation"_si;
     case ResourceResponse::Source::LegacyApplicationCachePlaceholder:
-        return "Application cache"_s;
+        return "Application cache"_si;
     case ResourceResponse::Source::DOMCache:
-        return "DOM cache"_s;
+        return "DOM cache"_si;
     case ResourceResponse::Source::InspectorOverride:
-        return "Inspector override"_s;
+        return "Inspector override"_si;
     }
     ASSERT_NOT_REACHED();
-    return "Error"_s;
+    return "Error"_si;
 }
 
-String Internals::xhrResponseSource(XMLHttpRequest& request)
+RefPtr<StringImpl> Internals::xhrResponseSource(XMLHttpRequest& request)
 {
     return responseSourceToString(request.resourceResponse());
 }
 
-String Internals::fetchResponseSource(FetchResponse& response)
+RefPtr<StringImpl> Internals::fetchResponseSource(FetchResponse& response)
 {
     return responseSourceToString(response.resourceResponse());
 }
 
-String Internals::blobInternalURL(const Blob& blob)
+RefPtr<StringImpl> Internals::blobInternalURL(const Blob& blob)
 {
     return blob.url().string();
 }
 
-void Internals::isBlobInternalURLRegistered(const String& url, DOMPromiseDeferred<IDLBoolean>&& promise)
+void Internals::isBlobInternalURLRegistered(StringImpl* url, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     promise.resolve(!!ThreadableBlobRegistry::blobSize(URL { url }));
 }
@@ -1201,7 +1201,7 @@ NODELETE static Internals::ResourceLoadPriority toInternalsResourceLoadPriority(
     return Internals::ResourceLoadPriority::ResourceLoadPriorityLow;
 }
 
-std::optional<Internals::ResourceLoadPriority> Internals::getResourcePriority(const String& url)
+std::optional<Internals::ResourceLoadPriority> Internals::getResourcePriority(StringImpl* url)
 {
     RefPtr document = contextDocument();
     if (!document)
@@ -1370,7 +1370,7 @@ unsigned Internals::imageBlankDrawCount(HTMLImageElement& element)
     return bitmapImage ? bitmapImage->blankDrawCountForTesting() : 0;
 }
 
-AtomString Internals::imageLastDecodingOptions(HTMLImageElement& element)
+RefPtr<AtomStringImpl> Internals::imageLastDecodingOptions(HTMLImageElement& element)
 {
     RefPtr bitmapImage = bitmapImageFromImageElement(element);
     if (!bitmapImage)
@@ -1529,10 +1529,10 @@ ExceptionOr<unsigned> Internals::lastSpatialNavigationCandidateCount() const
     return contextDocument()->page()->lastSpatialNavigationCandidateCount();
 }
 
-bool Internals::animationWithIdExists(const String& id) const
+bool Internals::animationWithIdExists(StringImpl* id) const
 {
     for (auto& animation : WebAnimation::instances()) {
-        if (animation->id() == id)
+        if (equal(animation->id(), id))
             return true;
     }
     return false;
@@ -1646,12 +1646,12 @@ double Internals::timeToNextAnimationTick(WebAnimation& animation) const
     return secondsToWebAnimationsAPITime(animation.timeToNextTick());
 }
 
-ExceptionOr<RefPtr<Element>> Internals::pseudoElement(Element& element, const String& pseudoId)
+ExceptionOr<RefPtr<Element>> Internals::pseudoElement(Element& element, StringImpl* pseudoId)
 {
-    if (pseudoId != "before"_s && pseudoId != "after"_s)
+    if (!equal(pseudoId, "before"_s) && !equal(pseudoId, "after"_s))
         return Exception { ExceptionCode::InvalidAccessError };
 
-    return pseudoId == "before"_s ? element.beforePseudoElement() : element.afterPseudoElement();
+    return equal(pseudoId, "before"_s) ? element.beforePseudoElement() : element.afterPseudoElement();
 }
 
 double Internals::preferredRenderingUpdateInterval()
@@ -1665,12 +1665,12 @@ double Internals::preferredRenderingUpdateInterval()
     return page->preferredRenderingUpdateInterval().milliseconds();
 }
 
-ExceptionOr<String> Internals::elementRenderTreeAsText(Element& element)
+ExceptionOr<RefPtr<StringImpl>> Internals::elementRenderTreeAsText(Element& element)
 {
     protect(element.document())->updateStyleIfNeeded();
 
-    String representation = externalRepresentation(&element);
-    if (representation.isEmpty())
+    RefPtr<StringImpl> representation = externalRepresentation(&element);
+    if (isEmpty(representation))
         return Exception { ExceptionCode::InvalidAccessError };
 
     return representation;
@@ -1741,13 +1741,13 @@ float Internals::usedOutlineOffset(Element& element)
     return Style::evaluate<float>(Style::effectiveOutlineOffset(*style), style->usedZoomForLength(), style->deviceScaleFactor());
 }
 
-String Internals::computedAppleColorFilter(Element& element)
+RefPtr<StringImpl> Internals::computedAppleColorFilter(Element& element)
 {
     return Style::Extractor::appleColorFilterSerializationForTesting(element);
 }
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-void Internals::setAXCustomColorModeElementQuirksForTesting(const String& forceFilterSelector, const String& preserveAuthoredColorsSelector)
+void Internals::setAXCustomColorModeElementQuirksForTesting(StringImpl* forceFilterSelector, StringImpl* preserveAuthoredColorsSelector)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -1758,7 +1758,7 @@ void Internals::setAXCustomColorModeElementQuirksForTesting(const String& forceF
 }
 #endif
 
-String Internals::usedBackgroundColor(Element& element)
+RefPtr<StringImpl> Internals::usedBackgroundColor(Element& element)
 {
     return serializationForCSS(protect(element.computedStyle())->usedBackgroundColorResolvingCurrentColor());
 }
@@ -1777,7 +1777,7 @@ Node* Internals::shadowRoot(Element& host)
     return host.shadowRoot();
 }
 
-ExceptionOr<String> Internals::shadowRootType(const Node& root) const
+ExceptionOr<RefPtr<StringImpl>> Internals::shadowRootType(const Node& root) const
 {
     auto* shadowRoot = dynamicDowncast<ShadowRoot>(root);
     if (!shadowRoot)
@@ -1796,12 +1796,12 @@ ExceptionOr<String> Internals::shadowRootType(const Node& root) const
     }
 }
 
-const AtomString& Internals::userAgentPart(Element& element)
+const RefPtr<AtomStringImpl>& Internals::userAgentPart(Element& element)
 {
     return element.userAgentPart();
 }
 
-void Internals::setUserAgentPart(Element& element, const AtomString& part)
+void Internals::setUserAgentPart(Element& element, AtomStringImpl* part)
 {
     return element.setUserAgentPart(part);
 }
@@ -1838,11 +1838,11 @@ ExceptionOr<bool> Internals::isTimerAligned(int timeoutId)
     return alignedFireTime != unalignedFireTime;
 }
 
-String Internals::requestAnimationFrameThrottlingReasons() const
+RefPtr<StringImpl> Internals::requestAnimationFrameThrottlingReasons() const
 {
     RefPtr scriptedAnimationController = contextDocument()->scriptedAnimationController();
     if (!scriptedAnimationController)
-        return String();
+        return nullptr;
         
     TextStream ts;
     ts << scriptedAnimationController->throttlingReasons();
@@ -1930,25 +1930,25 @@ std::optional<Internals::EventThrottlingBehavior> Internals::eventThrottlingBeha
     return std::nullopt;
 }
 
-String Internals::visiblePlaceholder(Element& element)
+RefPtr<StringImpl> Internals::visiblePlaceholder(Element& element)
 {
     protect(element.document())->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     if (auto* textFormControlElement = dynamicDowncast<HTMLTextFormControlElement>(element)) {
         if (!textFormControlElement->isPlaceholderVisible())
-            return String();
+            return nullptr;
         if (RefPtr placeholderElement = textFormControlElement->placeholderElement())
             return placeholderElement->textContent();
     }
 
-    return String();
+    return nullptr;
 }
 
-String Internals::anchorPrefetchEagerness(Element& element)
+RefPtr<StringImpl> Internals::anchorPrefetchEagerness(Element& element)
 {
     if (auto* anchor = dynamicDowncast<HTMLAnchorElement>(element))
         return anchor->prefetchEagernessForTesting();
-    return String();
+    return nullptr;
 }
 
 void Internals::setCanShowPlaceholder(Element& element, bool canShowPlaceholder)
@@ -1969,12 +1969,12 @@ void Internals::removeTextPlaceholder(Element& element)
         protect(protect(frame())->editor())->removeTextPlaceholder(*placeholderElement);
 }
 
-void Internals::selectColorInColorChooser(HTMLInputElement& element, const String& colorValue)
+void Internals::selectColorInColorChooser(HTMLInputElement& element, StringImpl* colorValue)
 {
     element.selectColor(colorValue);
 }
 
-ExceptionOr<Vector<AtomString>> Internals::formControlStateOfPreviousHistoryItem()
+ExceptionOr<Vector<RefPtr<AtomStringImpl>>> Internals::formControlStateOfPreviousHistoryItem()
 {
     RefPtr mainItem = frame() ? frame()->loader().history().previousItem() : nullptr;
     if (!mainItem)
@@ -1982,10 +1982,10 @@ ExceptionOr<Vector<AtomString>> Internals::formControlStateOfPreviousHistoryItem
     auto frameID = frame()->frameID();
     if (mainItem->frameID() != frameID && !mainItem->childItemWithFrameID(frameID))
         return Exception { ExceptionCode::InvalidAccessError };
-    return Vector<AtomString> { mainItem->frameID() == frameID ? mainItem->documentState() : mainItem->childItemWithFrameID(frameID)->documentState() };
+    return Vector<RefPtr<AtomStringImpl>> { mainItem->frameID() == frameID ? mainItem->documentState() : mainItem->childItemWithFrameID(frameID)->documentState() };
 }
 
-ExceptionOr<void> Internals::setFormControlStateOfPreviousHistoryItem(const Vector<AtomString>& state)
+ExceptionOr<void> Internals::setFormControlStateOfPreviousHistoryItem(const Vector<RefPtr<AtomStringImpl>>& state)
 {
     RefPtr mainItem = frame() ? frame()->loader().history().previousItem() : nullptr;
     if (!mainItem)
@@ -2073,7 +2073,7 @@ unsigned Internals::minimumExpectedVoiceCount()
 
 #if ENABLE(WEB_RTC)
 
-void Internals::useMockRTCPeerConnectionFactory(const String& testCase)
+void Internals::useMockRTCPeerConnectionFactory(StringImpl* testCase)
 {
     if (!WebRTCProvider::webRTCAvailable())
         return;
@@ -2196,7 +2196,7 @@ bool Internals::isSupportingAV1HardwareDecoder() const
 void Internals::isVP9HardwareDecoderUsed(RTCPeerConnection& connection, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     connection.gatherDecoderImplementationName([promise = WTF::move(promise)](auto&& name) mutable {
-        promise.resolve(!name.contains("fallback from:"_s) && !name.contains("libvpx"_s));
+        promise.resolve(!contains(name, "fallback from:"_s) && !contains(name, "libvpx"_s));
     });
 }
 
@@ -2348,7 +2348,7 @@ ExceptionOr<unsigned> Internals::inspectorPaintRectCount()
     return protect(document->page()->inspectorController())->paintRectCount();
 }
 
-ExceptionOr<unsigned> Internals::markerCountForNode(Node& node, const String& markerType)
+ExceptionOr<unsigned> Internals::markerCountForNode(Node& node, StringImpl* markerType)
 {
     OptionSet<DocumentMarkerType> markerTypes;
     if (!markerTypesFrom(markerType, markerTypes))
@@ -2359,7 +2359,7 @@ ExceptionOr<unsigned> Internals::markerCountForNode(Node& node, const String& ma
     return protect(document->markers())->markersFor(node, markerTypes).size();
 }
 
-ExceptionOr<RenderedDocumentMarker*> Internals::markerAt(Node& node, const String& markerType, unsigned index)
+ExceptionOr<RenderedDocumentMarker*> Internals::markerAt(Node& node, StringImpl* markerType, unsigned index)
 {
     Ref document = node.document();
     document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
@@ -2376,7 +2376,7 @@ ExceptionOr<RenderedDocumentMarker*> Internals::markerAt(Node& node, const Strin
     return markers[index].get();
 }
 
-ExceptionOr<RefPtr<Range>> Internals::markerRangeForNode(Node& node, const String& markerType, unsigned index)
+ExceptionOr<RefPtr<Range>> Internals::markerRangeForNode(Node& node, StringImpl* markerType, unsigned index)
 {
     auto result = markerAt(node, markerType, index);
     if (result.hasException())
@@ -2387,18 +2387,18 @@ ExceptionOr<RefPtr<Range>> Internals::markerRangeForNode(Node& node, const Strin
     return { createLiveRange(makeSimpleRange(node, *marker)) };
 }
 
-ExceptionOr<String> Internals::markerDescriptionForNode(Node& node, const String& markerType, unsigned index)
+ExceptionOr<RefPtr<StringImpl>> Internals::markerDescriptionForNode(Node& node, StringImpl* markerType, unsigned index)
 {
     auto result = markerAt(node, markerType, index);
     if (result.hasException())
         return result.releaseException();
     auto marker = result.releaseReturnValue();
     if (!marker)
-        return String();
-    return String { marker->description() };
+        return nullptr;
+    return marker->description();
 }
 
-ExceptionOr<String> Internals::dumpMarkerRects(const String& markerTypeString)
+ExceptionOr<RefPtr<StringImpl>> Internals::dumpMarkerRects(StringImpl* markerTypeString)
 {
     DocumentMarkerType markerType;
     if (!markerTypeFrom(markerTypeString, markerType))
@@ -2414,7 +2414,7 @@ ExceptionOr<String> Internals::dumpMarkerRects(const String& markerTypeString)
     rectString.append("marker rects: "_s);
     for (const auto& rect : rects)
         rectString.append('(', rect.x(), ", "_s, rect.y(), ", "_s, FormattedNumber::fixedPrecision(rect.width()), ", "_s, rect.height(), ") "_s);
-    return String { rectString.toString() };
+    return RefPtr<StringImpl> { rectString.toString() };
 }
 
 ExceptionOr<void> Internals::setMarkedTextMatchesAreHighlighted(bool flag)
@@ -2438,7 +2438,7 @@ ExceptionOr<RefPtr<ImageData>> Internals::snapshotNode(Node& node)
 
     RefPtr imageBuffer = WebCore::snapshotNode(protect(*document->frame()), node, WTF::move(options));
     if (!imageBuffer)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to create snapshot"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to create snapshot"_si };
 
     auto size = imageBuffer->logicalSize();
     IntRect sourceRect(IntPoint(), imageBuffer->calculateBackendSize(size,
@@ -2452,15 +2452,15 @@ ExceptionOr<RefPtr<ImageData>> Internals::snapshotNode(Node& node)
 
     auto pixelBuffer = imageBuffer->getPixelBuffer(destinationFormat, sourceRect);
     if (!pixelBuffer)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to get pixel buffer"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to get pixel buffer"_si };
 
     RefPtr byteArrayPixelBuffer = dynamicDowncast<ByteArrayPixelBuffer>(pixelBuffer.get());
     if (!byteArrayPixelBuffer)
-        return Exception { ExceptionCode::InvalidStateError, "Pixel buffer is not a ByteArrayPixelBuffer"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Pixel buffer is not a ByteArrayPixelBuffer"_si };
 
     RefPtr imageData = ImageData::create(WTF::move(byteArrayPixelBuffer));
     if (!imageData)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to create ImageData"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to create ImageData"_si };
 
     return imageData;
 }
@@ -2651,7 +2651,7 @@ ExceptionOr<void> Internals::setViewIsTransparent(bool transparent)
     return { };
 }
 
-ExceptionOr<String> Internals::viewBaseBackgroundColor()
+ExceptionOr<RefPtr<StringImpl>> Internals::viewBaseBackgroundColor()
 {
     RefPtr document = contextDocument();
     if (!document || !document->view())
@@ -2662,25 +2662,25 @@ ExceptionOr<String> Internals::viewBaseBackgroundColor()
     return serializationForCSS(document->view()->baseBackgroundColor());
 }
 
-ExceptionOr<void> Internals::setViewBaseBackgroundColor(const String& colorValue)
+ExceptionOr<void> Internals::setViewBaseBackgroundColor(StringImpl* colorValue)
 {
     RefPtr document = contextDocument();
     RefPtr view = document ? document->view() : nullptr;
     if (!view)
         return Exception { ExceptionCode::InvalidAccessError };
 
-    if (colorValue == "transparent"_s) {
+    if (equal(colorValue, "transparent"_s)) {
         view->setBaseBackgroundColor(Color::transparentBlack);
         return { };
     }
-    if (colorValue == "white"_s) {
+    if (equal(colorValue, "white"_s)) {
         view->setBaseBackgroundColor(Color::white);
         return { };
     }
     return Exception { ExceptionCode::SyntaxError };
 }
 
-ExceptionOr<void> Internals::setUnderPageBackgroundColorOverride(const String& colorValue)
+ExceptionOr<void> Internals::setUnderPageBackgroundColorOverride(StringImpl* colorValue)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -2695,7 +2695,7 @@ ExceptionOr<void> Internals::setUnderPageBackgroundColorOverride(const String& c
     return { };
 }
 
-ExceptionOr<String> Internals::documentBackgroundColor()
+ExceptionOr<RefPtr<StringImpl>> Internals::documentBackgroundColor()
 {
     RefPtr document = contextDocument();
     if (!document || !document->view())
@@ -2703,7 +2703,7 @@ ExceptionOr<String> Internals::documentBackgroundColor()
     return serializationForCSS(protect(document->view())->documentBackgroundColor());
 }
 
-ExceptionOr<String> Internals::textScaleMetaMode() const
+ExceptionOr<RefPtr<StringImpl>> Internals::textScaleMetaMode() const
 {
     RefPtr document = contextDocument();
     if (!document)
@@ -2719,7 +2719,7 @@ ExceptionOr<String> Internals::textScaleMetaMode() const
     return "legacy"_str;
 }
 
-ExceptionOr<String> Internals::paintedCaretColor()
+ExceptionOr<RefPtr<StringImpl>> Internals::paintedCaretColor()
 {
     RefPtr document = contextDocument();
     if (!document)
@@ -2733,31 +2733,31 @@ ExceptionOr<String> Internals::paintedCaretColor()
 
     CheckedRef selection = frame->selection();
     if (!selection->selection().isCaret())
-        return Exception { ExceptionCode::InvalidStateError, "There is no caret selection"_s };
+        return Exception { ExceptionCode::InvalidStateError, "There is no caret selection"_si };
 
     auto caretColor = selection->paintedCaretColor();
     if (!caretColor.isValid())
-        return Exception { ExceptionCode::InvalidStateError, "The platform does not resolve a caret color"_s };
+        return Exception { ExceptionCode::InvalidStateError, "The platform does not resolve a caret color"_si };
 
     return serializationForCSS(caretColor);
 }
 
-ExceptionOr<void> Internals::setPagination(const String& mode, int gap, int pageLength)
+ExceptionOr<void> Internals::setPagination(StringImpl* mode, int gap, int pageLength)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
         return Exception { ExceptionCode::InvalidAccessError };
 
     Pagination pagination;
-    if (mode == "Unpaginated"_s)
+    if (equal(mode, "Unpaginated"_s))
         pagination.mode = Pagination::Mode::Unpaginated;
-    else if (mode == "LeftToRightPaginated"_s)
+    else if (equal(mode, "LeftToRightPaginated"_s))
         pagination.mode = Pagination::Mode::LeftToRightPaginated;
-    else if (mode == "RightToLeftPaginated"_s)
+    else if (equal(mode, "RightToLeftPaginated"_s))
         pagination.mode = Pagination::Mode::RightToLeftPaginated;
-    else if (mode == "TopToBottomPaginated"_s)
+    else if (equal(mode, "TopToBottomPaginated"_s))
         pagination.mode = Pagination::Mode::TopToBottomPaginated;
-    else if (mode == "BottomToTopPaginated"_s)
+    else if (equal(mode, "BottomToTopPaginated"_s))
         pagination.mode = Pagination::Mode::BottomToTopPaginated;
     else
         return Exception { ExceptionCode::SyntaxError };
@@ -2791,7 +2791,7 @@ ExceptionOr<uint64_t> Internals::lineIndexAfterPageBreak(Element& element)
     return Exception { ExceptionCode::NotFoundError };
 }
 
-ExceptionOr<String> Internals::configurationForViewport(float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
+ExceptionOr<RefPtr<StringImpl>> Internals::configurationForViewport(float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -2824,7 +2824,7 @@ bool Internals::elementShouldAutoComplete(HTMLInputElement& element)
     return element.shouldAutocomplete();
 }
 
-void Internals::setValueForUser(HTMLInputElement& element, const String& value)
+void Internals::setValueForUser(HTMLInputElement& element, StringImpl* value)
 {
     element.setValueForUser(value);
 }
@@ -2899,7 +2899,7 @@ auto Internals::lastAutofillButtonType(const HTMLInputElement& element) -> AutoF
     return toInternalsAutofillButtonType(element.lastAutofillButtonType());
 }
 
-Vector<String> Internals::recentSearches(const HTMLInputElement& element)
+Vector<RefPtr<StringImpl>> Internals::recentSearches(const HTMLInputElement& element)
 {
     if (!element.isSearchField())
         return { };
@@ -2909,7 +2909,7 @@ Vector<String> Internals::recentSearches(const HTMLInputElement& element)
     if (!searchField)
         return { };
 
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
     for (auto search : searchField->recentSearches())
         result.append(search.string);
 
@@ -2925,10 +2925,10 @@ ExceptionOr<void> Internals::scrollElementToRect(Element& element, int x, int y,
     return { };
 }
 
-ExceptionOr<String> Internals::autofillFieldName(Element& element)
+ExceptionOr<RefPtr<StringImpl>> Internals::autofillFieldName(Element& element)
 {
     if (auto* formControl = dynamicDowncast<HTMLFormControlElement>(element))
-        return String { formControl->autofillData().fieldName };
+        return RefPtr<StringImpl> { formControl->autofillData().fieldName };
 
     return Exception { ExceptionCode::InvalidNodeTypeError };
 }
@@ -2963,7 +2963,7 @@ unsigned Internals::lengthFromRange(Element& scope, const Range& range)
     return clampTo<unsigned>(characterRange(makeBoundaryPointBeforeNodeContents(scope), makeSimpleRange(range)).length);
 }
 
-String Internals::rangeAsText(const Range& liveRange)
+RefPtr<StringImpl> Internals::rangeAsText(const Range& liveRange)
 {
     auto range = makeSimpleRange(liveRange);
     protect(range.start.document())->updateLayout();
@@ -2971,7 +2971,7 @@ String Internals::rangeAsText(const Range& liveRange)
 }
 
 // FIXME: Move this to StringConcatenate.h.
-static String join(Vector<String>&& strings)
+static RefPtr<StringImpl> join(Vector<RefPtr<StringImpl>>&& strings)
 {
     StringBuilder result;
     for (auto& string : strings)
@@ -2979,11 +2979,11 @@ static String join(Vector<String>&& strings)
     return result.toString();
 }
 
-String Internals::rangeAsTextUsingBackwardsTextIterator(const Range& liveRange)
+RefPtr<StringImpl> Internals::rangeAsTextUsingBackwardsTextIterator(const Range& liveRange)
 {
     auto range = makeSimpleRange(liveRange);
     protect(range.start.document())->updateLayout();
-    Vector<String> strings;
+    Vector<RefPtr<StringImpl>> strings;
     for (SimplifiedBackwardsTextIterator backwardsIterator(range); !backwardsIterator.atEnd(); backwardsIterator.advance())
         strings.append(backwardsIterator.text().toString());
     strings.reverse();
@@ -2997,7 +2997,7 @@ Ref<Range> Internals::subrange(Range& liveRange, unsigned rangeLocation, unsigne
     return createLiveRange(resolveCharacterRange(range, { rangeLocation, rangeLength }));
 }
 
-RefPtr<Range> Internals::rangeOfStringNearLocation(const Range& liveRange, const String& text, unsigned targetOffset)
+RefPtr<Range> Internals::rangeOfStringNearLocation(const Range& liveRange, StringImpl* text, unsigned targetOffset)
 {
     auto range = makeSimpleRange(liveRange);
     protect(range.start.document())->updateLayout();
@@ -3020,7 +3020,7 @@ Vector<Internals::TextIteratorState> Internals::statesOfTextIterator(const Range
     return states;
 }
 
-String Internals::textFragmentDirectiveForRange(const Range& range)
+RefPtr<StringImpl> Internals::textFragmentDirectiveForRange(const Range& range)
 {
     auto simpleRange = makeSimpleRange(range);
     protect(simpleRange.start.document())->updateLayout();
@@ -3082,29 +3082,29 @@ void Internals::advanceToNextMisspelling()
 #endif
 }
 
-Vector<String> Internals::userPreferredLanguages() const
+Vector<RefPtr<StringImpl>> Internals::userPreferredLanguages() const
 {
     return WTF::userPreferredLanguages(ShouldMinimizeLanguages::No);
 }
 
-void Internals::setUserPreferredLanguages(const Vector<String>& languages)
+void Internals::setUserPreferredLanguages(const Vector<RefPtr<StringImpl>>& languages)
 {
     overrideUserPreferredLanguages(languages);
 }
 
-Vector<String> Internals::userPreferredAudioCharacteristics() const
+Vector<RefPtr<StringImpl>> Internals::userPreferredAudioCharacteristics() const
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
-        return Vector<String>();
+        return Vector<RefPtr<StringImpl>>();
 #if ENABLE(VIDEO)
     return protect(protect(protect(document->page())->group())->ensureCaptionPreferences())->preferredAudioCharacteristics();
 #else
-    return Vector<String>();
+    return Vector<RefPtr<StringImpl>>();
 #endif
 }
 
-void Internals::setUserPreferredAudioCharacteristic(const String& characteristic)
+void Internals::setUserPreferredAudioCharacteristic(StringImpl* characteristic)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -3134,7 +3134,7 @@ ExceptionOr<unsigned> Internals::touchEventHandlerCount()
     return document->touchEventHandlerCount();
 }
 
-ExceptionOr<Ref<DOMRectList>> Internals::touchEventRectsForEvent(const String& eventName)
+ExceptionOr<Ref<DOMRectList>> Internals::touchEventRectsForEvent(StringImpl* eventName)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -3149,7 +3149,7 @@ ExceptionOr<Ref<DOMRectList>> Internals::touchEventRectsForEvent(const String& e
 
     std::optional<EventTrackingRegions::EventType> touchEvent;
     for (auto event : touchEvents) {
-        if (eventName == EventTrackingRegions::eventName(event)) {
+        if (equal(eventName, EventTrackingRegions::eventName(event))) {
             touchEvent = event;
             break;
         }
@@ -3262,7 +3262,7 @@ private:
     mutable CodeBlock* m_codeBlock;
 };
 
-String Internals::parserMetaData(JSC::JSValue code)
+RefPtr<StringImpl> Internals::parserMetaData(JSC::JSValue code)
 {
     auto& vm = protect(contextDocument())->vm();
     auto callFrame = vm.topCallFrame;
@@ -3276,10 +3276,10 @@ String Internals::parserMetaData(JSC::JSValue code)
     } else if (code.isCallable())
         executable = downcast<JSFunction>(code.toObject(globalObject))->jsExecutable();
     else
-        return String();
+        return nullptr;
 
     ASCIILiteral prefix;
-    String functionName;
+    RefPtr<StringImpl> functionName;
     ASCIILiteral suffix = ""_s;
 
     if (auto* functionExecutable = dynamicDowncast<FunctionExecutable>(executable)) {
@@ -3319,7 +3319,7 @@ bool Internals::hasMarkerFor(DocumentMarkerType type, int from, int length)
     return protect(document->editor())->selectionStartHasMarkerFor(type, from, length);
 }
 
-ExceptionOr<void> Internals::setMarkerFor(const String& markerTypeString, int from, int length, const String& data)
+ExceptionOr<void> Internals::setMarkerFor(StringImpl* markerTypeString, int from, int length, StringImpl* data)
 {
     DocumentMarkerType markerType;
     if (!markerTypeFrom(markerTypeString, markerType))
@@ -3492,7 +3492,7 @@ bool Internals::isSpellcheckDisabledExceptTextReplacement(const HTMLInputElement
     return element.isSpellcheckDisabledExceptTextReplacement();
 }
 
-void Internals::handleAcceptedCandidate(const String& candidate, unsigned location, unsigned length)
+void Internals::handleAcceptedCandidate(StringImpl* candidate, unsigned location, unsigned length)
 {
     RefPtr contextDocument = this->contextDocument();
     if (!contextDocument || !contextDocument->frame())
@@ -3511,7 +3511,7 @@ void Internals::changeSelectionListType()
         protect(frame->editor())->changeSelectionListType();
 }
 
-void Internals::changeBackToReplacedString(const String& replacedString)
+void Internals::changeBackToReplacedString(StringImpl* replacedString)
 {
     if (RefPtr frame = this->frame())
         protect(frame->editor())->changeBackToReplacedString(replacedString);
@@ -3535,7 +3535,7 @@ void Internals::toggleOverwriteModeEnabled()
     protect(document->editor())->toggleOverwriteModeEnabled();
 }
 
-static ExceptionOr<FindOptions> parseFindOptions(const Vector<String>& optionList)
+static ExceptionOr<FindOptions> parseFindOptions(const Vector<RefPtr<StringImpl>>& optionList)
 {
     struct FlagListEntry {
         ASCIILiteral name;
@@ -3568,7 +3568,7 @@ static ExceptionOr<FindOptions> parseFindOptions(const Vector<String>& optionLis
     return result;
 }
 
-ExceptionOr<RefPtr<Range>> Internals::rangeOfString(const String& text, RefPtr<Range>&& referenceRange, const Vector<String>& findOptions)
+ExceptionOr<RefPtr<Range>> Internals::rangeOfString(StringImpl* text, RefPtr<Range>&& referenceRange, const Vector<RefPtr<StringImpl>>& findOptions)
 {
     RefPtr document = contextDocument();
     if (!document || !document->frame())
@@ -3581,7 +3581,7 @@ ExceptionOr<RefPtr<Range>> Internals::rangeOfString(const String& text, RefPtr<R
     return createLiveRange(protect(document->editor())->rangeOfString(text, makeSimpleRange(referenceRange), parsedOptions.releaseReturnValue()));
 }
 
-ExceptionOr<unsigned> Internals::countMatchesForText(const String& text, const Vector<String>& findOptions, const String& markMatches)
+ExceptionOr<unsigned> Internals::countMatchesForText(StringImpl* text, const Vector<RefPtr<StringImpl>>& findOptions, StringImpl* markMatches)
 {
     RefPtr document = contextDocument();
     if (!document || !document->frame())
@@ -3591,7 +3591,7 @@ ExceptionOr<unsigned> Internals::countMatchesForText(const String& text, const V
     if (parsedOptions.hasException())
         return parsedOptions.releaseException();
 
-    bool mark = markMatches == "mark"_s;
+    bool mark = equal(markMatches, "mark"_s);
     return protect(document->editor())->countMatchesForText(text, std::nullopt, parsedOptions.releaseReturnValue(), 1000, mark, nullptr);
 }
 
@@ -3600,7 +3600,7 @@ void Internals::setCachedFindMatchBufferLimitForTesting(unsigned maximumRunCount
     CachedMatchFinder::setMaximumRunCountForTesting(maximumRunCount);
 }
 
-ExceptionOr<unsigned> Internals::countFindMatches(const String& text, const Vector<String>& findOptions)
+ExceptionOr<unsigned> Internals::countFindMatches(StringImpl* text, const Vector<RefPtr<StringImpl>>& findOptions)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -3614,7 +3614,7 @@ ExceptionOr<unsigned> Internals::countFindMatches(const String& text, const Vect
 }
 
 #if ENABLE(VIDEO)
-ExceptionOr<Vector<double>> Internals::findCueMatches(const String& text, const Vector<String>& findOptions)
+ExceptionOr<Vector<double>> Internals::findCueMatches(StringImpl* text, const Vector<RefPtr<StringImpl>>& findOptions)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -3698,12 +3698,12 @@ unsigned Internals::numberOfResizeObservers(const Document& document) const
     return document.numberOfResizeObservers();
 }
 
-String Internals::documentIdentifier(const Document& document) const
+RefPtr<StringImpl> Internals::documentIdentifier(const Document& document) const
 {
     return document.identifier().object().toString();
 }
 
-ExceptionOr<bool> Internals::isDocumentAlive(const String& documentIdentifier) const
+ExceptionOr<bool> Internals::isDocumentAlive(StringImpl* documentIdentifier) const
 {
     auto uuid = WTF::UUID::parseVersion4(documentIdentifier);
     if (!uuid)
@@ -3751,12 +3751,12 @@ bool Internals::isAnyWorkletGlobalScopeAlive() const
     return WorkletGlobalScope::numberOfWorkletGlobalScopes();
 }
 
-String Internals::serviceWorkerClientInternalIdentifier(const Document& document) const
+RefPtr<StringImpl> Internals::serviceWorkerClientInternalIdentifier(const Document& document) const
 {
     return document.identifier().toString();
 }
 
-RefPtr<WindowProxy> Internals::openDummyInspectorFrontend(const String& url)
+RefPtr<WindowProxy> Internals::openDummyInspectorFrontend(StringImpl* url)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -3866,26 +3866,26 @@ NODELETE static OptionSet<LayerTreeAsTextOptions> toLayerTreeAsTextOptions(unsig
 // contextDocument(), with the exception of a few tests that pass a
 // different document, and could just make the call through another Internals
 // instance instead.
-ExceptionOr<String> Internals::layerTreeAsText(Document& document, unsigned short flags) const
+ExceptionOr<RefPtr<StringImpl>> Internals::layerTreeAsText(Document& document, unsigned short flags) const
 {
     if (!document.frame() || !document.frame()->contentRenderer())
         return Exception { ExceptionCode::InvalidAccessError };
     return protect(protect(document.frame()->contentRenderer())->compositor())->layerTreeAsText(toLayerTreeAsTextOptions(flags));
 }
 
-String Internals::viewTransitionOldCaptureState(Document& document, const AtomString& name) const
+RefPtr<StringImpl> Internals::viewTransitionOldCaptureState(Document& document, AtomStringImpl* name) const
 {
     RefPtr viewTransition = document.activeViewTransition();
     if (!viewTransition)
-        return "none"_s;
+        return "none"_si;
     auto* capturedElement = viewTransition->namedElements().find(name);
     if (!capturedElement)
-        return "none"_s;
+        return "none"_si;
     if (capturedElement->oldDisplayOnlyImage)
-        return "remote"_s;
+        return "remote"_si;
     if (capturedElement->oldImage && *capturedElement->oldImage)
-        return "local"_s;
-    return "none"_s;
+        return "local"_si;
+    return "none"_si;
 }
 
 ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element, LayerType layerType)
@@ -4012,7 +4012,7 @@ NODELETE static OptionSet<PlatformLayerTreeAsTextFlags> toPlatformLayerTreeFlags
     return platformLayerTreeFlags;
 }
 
-ExceptionOr<String> Internals::platformLayerTreeAsText(Element& element, unsigned short flags) const
+ExceptionOr<RefPtr<StringImpl>> Internals::platformLayerTreeAsText(Element& element, unsigned short flags) const
 {
     Ref document = element.document();
     if (!document->frame() || !document->frame()->contentRenderer())
@@ -4022,10 +4022,10 @@ ExceptionOr<String> Internals::platformLayerTreeAsText(Element& element, unsigne
     if (!text)
         return Exception { ExceptionCode::NotFoundError };
 
-    return String { text.value() };
+    return RefPtr<StringImpl> { text.value() };
 }
 
-ExceptionOr<String> Internals::repaintRectsAsText() const
+ExceptionOr<RefPtr<StringImpl>> Internals::repaintRectsAsText() const
 {
     RefPtr document = contextDocument();
     if (!document || !document->frame())
@@ -4079,7 +4079,7 @@ ExceptionOr<ScrollableArea*> Internals::scrollableAreaForNode(Node* node) const
     return scrollableArea.get();
 }
 
-ExceptionOr<String> Internals::scrollbarOverlayStyle(Node* node) const
+ExceptionOr<RefPtr<StringImpl>> Internals::scrollbarOverlayStyle(Node* node) const
 {
     auto areaOrException = scrollableAreaForNode(node);
     if (areaOrException.hasException())
@@ -4109,7 +4109,7 @@ ExceptionOr<bool> Internals::scrollbarUsingDarkAppearance(Node* node) const
     return scrollableArea->useDarkAppearance();
 }
 
-ExceptionOr<String> Internals::horizontalScrollbarState(Node* node) const
+ExceptionOr<RefPtr<StringImpl>> Internals::horizontalScrollbarState(Node* node) const
 {
     auto areaOrException = scrollableAreaForNode(node);
     if (areaOrException.hasException())
@@ -4119,7 +4119,7 @@ ExceptionOr<String> Internals::horizontalScrollbarState(Node* node) const
     return scrollableArea->horizontalScrollbarStateForTesting();
 }
 
-ExceptionOr<String> Internals::verticalScrollbarState(Node* node) const
+ExceptionOr<RefPtr<StringImpl>> Internals::verticalScrollbarState(Node* node) const
 {
     auto areaOrException = scrollableAreaForNode(node);
     if (areaOrException.hasException())
@@ -4129,18 +4129,18 @@ ExceptionOr<String> Internals::verticalScrollbarState(Node* node) const
     return scrollableArea->verticalScrollbarStateForTesting();
 }
 
-static String scrollbarsControllerTypeString(ScrollbarsController& controller)
+static RefPtr<StringImpl> scrollbarsControllerTypeString(ScrollbarsController& controller)
 {
 #if PLATFORM(MAC)
     if (is<ScrollbarsControllerMac>(controller))
-        return "ScrollbarsControllerMac"_s;
+        return "ScrollbarsControllerMac"_si;
 #endif
     if (is<ScrollbarsControllerMock>(controller))
-        return "ScrollbarsControllerMock"_s;
-    return "RemoteScrollbarsController"_s;
+        return "ScrollbarsControllerMock"_si;
+    return "RemoteScrollbarsController"_si;
 }
 
-ExceptionOr<String> Internals::scrollbarsControllerTypeForNode(Node* node) const
+ExceptionOr<RefPtr<StringImpl>> Internals::scrollbarsControllerTypeForNode(Node* node) const
 {
     auto areaOrException = scrollableAreaForNode(node);
     if (areaOrException.hasException())
@@ -4150,7 +4150,7 @@ ExceptionOr<String> Internals::scrollbarsControllerTypeForNode(Node* node) const
     return scrollbarsControllerTypeString(scrollableArea->scrollbarsController());
 }
 
-ExceptionOr<String> Internals::scrollingStateTreeAsText() const
+ExceptionOr<RefPtr<StringImpl>> Internals::scrollingStateTreeAsText() const
 {
     RefPtr document = contextDocument();
     if (!document || !document->frame())
@@ -4160,12 +4160,12 @@ ExceptionOr<String> Internals::scrollingStateTreeAsText() const
 
     RefPtr page = document->page();
     if (!page)
-        return String();
+        return nullptr;
 
     return page->scrollingStateTreeAsText();
 }
 
-ExceptionOr<String> Internals::scrollingTreeAsText() const
+ExceptionOr<RefPtr<StringImpl>> Internals::scrollingTreeAsText() const
 {
     RefPtr document = contextDocument();
     if (!document || !document->frame())
@@ -4175,11 +4175,11 @@ ExceptionOr<String> Internals::scrollingTreeAsText() const
 
     RefPtr page = document->page();
     if (!page)
-        return String();
+        return nullptr;
 
     RefPtr scrollingCoordinator = page->scrollingCoordinator();
     if (!scrollingCoordinator)
-        return String();
+        return nullptr;
 
     scrollingCoordinator->commitTreeStateIfNeeded();
     return scrollingCoordinator->scrollingTreeAsText();
@@ -4204,7 +4204,7 @@ ExceptionOr<bool> Internals::haveScrollingTree() const
     return scrollingCoordinator->haveScrollingTree();
 }
 
-ExceptionOr<String> Internals::synchronousScrollingReasons() const
+ExceptionOr<RefPtr<StringImpl>> Internals::synchronousScrollingReasons() const
 {
     RefPtr document = contextDocument();
     if (!document || !document->frame())
@@ -4212,7 +4212,7 @@ ExceptionOr<String> Internals::synchronousScrollingReasons() const
 
     RefPtr page = document->page();
     if (!page)
-        return String();
+        return nullptr;
 
     return page->synchronousScrollingReasonsAsText();
 }
@@ -4289,7 +4289,7 @@ NODELETE static OptionSet<DisplayList::AsTextFlag> toDisplayListFlags(unsigned s
     return displayListFlags;
 }
 
-ExceptionOr<String> Internals::displayListForElement(Element& element, unsigned short flags)
+ExceptionOr<RefPtr<StringImpl>> Internals::displayListForElement(Element& element, unsigned short flags)
 {
     RefPtr document = contextDocument();
     if (!document || !document->renderView())
@@ -4310,7 +4310,7 @@ ExceptionOr<String> Internals::displayListForElement(Element& element, unsigned 
     return layer->backing()->displayListAsText(toDisplayListFlags(flags));
 }
 
-ExceptionOr<String> Internals::replayDisplayListForElement(Element& element, unsigned short flags)
+ExceptionOr<RefPtr<StringImpl>> Internals::replayDisplayListForElement(Element& element, unsigned short flags)
 {
     RefPtr document = contextDocument();
     if (!document || !document->renderView())
@@ -4341,7 +4341,7 @@ void Internals::clearGlyphDisplayListCacheForTesting()
     TextPainter::clearGlyphDisplayListCacheForTesting();
 }
 
-ExceptionOr<String> Internals::cachedGlyphDisplayListsForTextNode(Node& node, unsigned short flags)
+ExceptionOr<RefPtr<StringImpl>> Internals::cachedGlyphDisplayListsForTextNode(Node& node, unsigned short flags)
 {
     RefPtr document = contextDocument();
     if (!document || !document->renderView())
@@ -4398,7 +4398,7 @@ void Internals::endSimulatedMemoryPressure()
     MemoryPressureHandler::singleton().endSimulatedMemoryPressure();
 }
 
-ExceptionOr<void> Internals::insertAuthorCSS(const String& css) const
+ExceptionOr<void> Internals::insertAuthorCSS(StringImpl* css) const
 {
     RefPtr document = contextDocument();
     if (!document)
@@ -4411,7 +4411,7 @@ ExceptionOr<void> Internals::insertAuthorCSS(const String& css) const
     return { };
 }
 
-ExceptionOr<void> Internals::insertUserCSS(const String& css) const
+ExceptionOr<void> Internals::insertUserCSS(StringImpl* css) const
 {
     RefPtr document = contextDocument();
     if (!document)
@@ -4424,7 +4424,7 @@ ExceptionOr<void> Internals::insertUserCSS(const String& css) const
     return { };
 }
 
-String Internals::counterValue(Element& element)
+RefPtr<StringImpl> Internals::counterValue(Element& element)
 {
     return counterValueForElement(&element);
 }
@@ -4434,7 +4434,7 @@ int Internals::pageNumber(Element& element, float pageWidth, float pageHeight)
     return PrintContext::pageNumberForElement(&element, { pageWidth, pageHeight });
 }
 
-Vector<String> Internals::shortcutIconURLs() const
+Vector<RefPtr<StringImpl>> Internals::shortcutIconURLs() const
 {
     if (!frame())
         return { };
@@ -4443,7 +4443,7 @@ Vector<String> Internals::shortcutIconURLs() const
     if (!documentLoader)
         return { };
 
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
     for (auto& linkIcon : documentLoader->linkIcons())
         result.append(linkIcon.url.string());
     
@@ -4458,7 +4458,7 @@ int Internals::numberOfPages(float pageWidth, float pageHeight)
     return PrintContext::numberOfPages(protect(*frame()), FloatSize(pageWidth, pageHeight));
 }
 
-ExceptionOr<String> Internals::pageProperty(const String& propertyName, int pageNumber) const
+ExceptionOr<RefPtr<StringImpl>> Internals::pageProperty(StringImpl* propertyName, int pageNumber) const
 {
     if (!frame())
         return Exception { ExceptionCode::InvalidAccessError };
@@ -4466,7 +4466,7 @@ ExceptionOr<String> Internals::pageProperty(const String& propertyName, int page
     return PrintContext::pageProperty(protect(frame()), propertyName, pageNumber);
 }
 
-ExceptionOr<String> Internals::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
+ExceptionOr<RefPtr<StringImpl>> Internals::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
 {
     if (!frame())
         return Exception { ExceptionCode::InvalidAccessError };
@@ -4646,17 +4646,17 @@ bool Internals::doesCanvasHavePendingCanvasNoiseInjection(HTMLCanvasElement& ele
     return element.havePendingCanvasNoiseInjection();
 }
 
-void Internals::registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme)
+void Internals::registerURLSchemeAsBypassingContentSecurityPolicy(StringImpl* scheme)
 {
     LegacySchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(scheme);
 }
 
-void Internals::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme)
+void Internals::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(StringImpl* scheme)
 {
     LegacySchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(scheme);
 }
 
-void Internals::registerDefaultPortForProtocol(unsigned short port, const String& protocol)
+void Internals::registerDefaultPortForProtocol(unsigned short port, StringImpl* protocol)
 {
     registerDefaultPortForProtocolForTesting(port, protocol);
 }
@@ -4676,7 +4676,7 @@ Ref<MemoryInfo> Internals::memoryInfo() const
     return MemoryInfo::create();
 }
 
-Vector<String> Internals::getReferencedFilePaths() const
+Vector<RefPtr<StringImpl>> Internals::getReferencedFilePaths() const
 {
     RefPtr localFrame = frame();
     if (!localFrame)
@@ -5035,7 +5035,7 @@ static ASCIILiteral cursorTypeToString(Cursor::Type cursorType)
 }
 #endif
 
-ExceptionOr<String> Internals::getCurrentCursorInfo()
+ExceptionOr<RefPtr<StringImpl>> Internals::getCurrentCursorInfo()
 {
     RefPtr document = contextDocument();
     if (!document || !document->frame())
@@ -5054,7 +5054,7 @@ ExceptionOr<String> Internals::getCurrentCursorInfo()
     if (cursor.imageScaleFactor() != 1)
         result.append(" scale="_s, cursor.imageScaleFactor());
 #endif
-    return String { result.toString() };
+    return RefPtr<StringImpl> { result.toString() };
 #else
     return "FAIL: Cursor details not available on this platform."_str;
 #endif
@@ -5084,7 +5084,7 @@ bool Internals::isFromCurrentWorld(JSC::JSValue value) const
     return &worldForDOMObject(*value.getObject()) == &currentWorld(*vm.topCallFrame->lexicalGlobalObject(vm));
 }
 
-JSC::JSValue Internals::evaluateInWorldIgnoringException(const String& name, const String& source)
+JSC::JSValue Internals::evaluateInWorldIgnoringException(StringImpl* name, StringImpl* source)
 {
     RefPtr document = contextDocument();
     if (!document || !document->frame())
@@ -5213,21 +5213,21 @@ Ref<MockCDMFactory> Internals::registerMockCDM()
 
 #endif
 
-String Internals::markerTextForListItem(Element& element)
+RefPtr<StringImpl> Internals::markerTextForListItem(Element& element)
 {
     return WebCore::markerTextForListItem(&element);
 }
 
-String Internals::toolTipFromElement(Element& element) const
+RefPtr<StringImpl> Internals::toolTipFromElement(Element& element) const
 {
     HitTestResult result;
     result.setInnerNode(&element);
     TextDirection direction;
     auto title = result.title(direction);
-    return !title.isEmpty() ? title : result.innerTextIfTruncated(direction);
+    return !isEmpty(title) ? title : result.innerTextIfTruncated(direction);
 }
 
-String Internals::getImageSourceURL(Element& element)
+RefPtr<StringImpl> Internals::getImageSourceURL(Element& element)
 {
     return element.imageSourceURL();
 }
@@ -5249,24 +5249,24 @@ unsigned Internals::mediaElementCount()
     return number;
 }
 
-Vector<String> Internals::mediaResponseSources(HTMLMediaElement& media)
+Vector<RefPtr<StringImpl>> Internals::mediaResponseSources(HTMLMediaElement& media)
 {
     RefPtr resourceLoader = media.lastMediaResourceLoaderForTesting();
     if (!resourceLoader)
         return { };
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
     auto responses = resourceLoader->responsesForTesting();
     for (auto& response : responses)
         result.append(responseSourceToString(response));
     return result;
 }
 
-Vector<String> Internals::mediaResponseContentRanges(HTMLMediaElement& media)
+Vector<RefPtr<StringImpl>> Internals::mediaResponseContentRanges(HTMLMediaElement& media)
 {
     RefPtr resourceLoader = media.lastMediaResourceLoaderForTesting();
     if (!resourceLoader)
         return { };
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
     auto responses = resourceLoader->responsesForTesting();
     for (auto& response : responses)
         result.append(response.httpHeaderField(HTTPHeaderName::ContentRange));
@@ -5282,7 +5282,7 @@ void Internals::simulateAudioInterruption(HTMLMediaElement& element)
 #endif
 }
 
-ExceptionOr<bool> Internals::mediaElementHasCharacteristic(HTMLMediaElement& element, const String& characteristic)
+ExceptionOr<bool> Internals::mediaElementHasCharacteristic(HTMLMediaElement& element, StringImpl* characteristic)
 {
     if (equalLettersIgnoringASCIICase(characteristic, "audible"_s))
         return element.hasAudio();
@@ -5322,24 +5322,24 @@ bool Internals::elementShouldBufferData(HTMLMediaElement& element)
     return element.bufferingPolicy() < MediaPlayer::BufferingPolicy::LimitReadAhead;
 }
 
-static String bufferingPolicyToString(MediaPlayer::BufferingPolicy policy)
+static RefPtr<StringImpl> bufferingPolicyToString(MediaPlayer::BufferingPolicy policy)
 {
     switch (policy) {
     case MediaPlayer::BufferingPolicy::Default:
-        return "Default"_s;
+        return "Default"_si;
     case MediaPlayer::BufferingPolicy::LimitReadAhead:
-        return "LimitReadAhead"_s;
+        return "LimitReadAhead"_si;
     case MediaPlayer::BufferingPolicy::MakeResourcesPurgeable:
-        return "MakeResourcesPurgeable"_s;
+        return "MakeResourcesPurgeable"_si;
     case MediaPlayer::BufferingPolicy::PurgeResources:
-        return "PurgeResources"_s;
+        return "PurgeResources"_si;
     }
 
     ASSERT_NOT_REACHED();
-    return "UNKNOWN"_s;
+    return "UNKNOWN"_si;
 }
 
-String Internals::elementBufferingPolicy(HTMLMediaElement& element)
+RefPtr<StringImpl> Internals::elementBufferingPolicy(HTMLMediaElement& element)
 {
     return bufferingPolicyToString(element.bufferingPolicy());
 }
@@ -5348,44 +5348,44 @@ String Internals::elementBufferingPolicy(HTMLMediaElement& element)
 // returned by elementBufferingPolicy(). Comparing the two, together with
 // mediaSessionState(), disambiguates "session state stuck at Playing" from
 // "applied policy stale (update never re-triggered)". rdar://181274857.
-String Internals::elementPreferredBufferingPolicy(HTMLMediaElement& element)
+RefPtr<StringImpl> Internals::elementPreferredBufferingPolicy(HTMLMediaElement& element)
 {
     return bufferingPolicyToString(protect(element.mediaSession())->preferredBufferingPolicy());
 }
 
-void Internals::setMediaElementBufferingPolicy(HTMLMediaElement& element, const String& policy)
+void Internals::setMediaElementBufferingPolicy(HTMLMediaElement& element, StringImpl* policy)
 {
-    if (policy == "Default"_s) {
+    if (equal(policy, "Default"_s)) {
         element.setBufferingPolicy(MediaPlayer::BufferingPolicy::Default);
         return;
     }
-    if (policy == "LimitReadAhead"_s) {
+    if (equal(policy, "LimitReadAhead"_s)) {
         element.setBufferingPolicy(MediaPlayer::BufferingPolicy::LimitReadAhead);
         return;
     }
-    if (policy == "MakeResourcesPurgeable"_s) {
+    if (equal(policy, "MakeResourcesPurgeable"_s)) {
         element.setBufferingPolicy(MediaPlayer::BufferingPolicy::MakeResourcesPurgeable);
         return;
     }
-    if (policy == "PurgeResources"_s) {
+    if (equal(policy, "PurgeResources"_s)) {
         element.setBufferingPolicy(MediaPlayer::BufferingPolicy::PurgeResources);
         return;
     }
     ASSERT_NOT_REACHED();
 }
 
-ExceptionOr<void> Internals::setOverridePreferredDynamicRangeMode(HTMLMediaElement& element, const String& modeString)
+ExceptionOr<void> Internals::setOverridePreferredDynamicRangeMode(HTMLMediaElement& element, StringImpl* modeString)
 {
     DynamicRangeMode mode;
-    if (modeString == "None"_s)
+    if (equal(modeString, "None"_s))
         mode = DynamicRangeMode::None;
-    else if (modeString == "Standard"_s)
+    else if (equal(modeString, "Standard"_s))
         mode = DynamicRangeMode::Standard;
-    else if (modeString == "HLG"_s)
+    else if (equal(modeString, "HLG"_s))
         mode = DynamicRangeMode::HLG;
-    else if (modeString == "HDR10"_s)
+    else if (equal(modeString, "HDR10"_s))
         mode = DynamicRangeMode::HDR10;
-    else if (modeString == "DolbyVisionPQ"_s)
+    else if (equal(modeString, "DolbyVisionPQ"_s))
         mode = DynamicRangeMode::DolbyVisionPQ;
     else
         return Exception { ExceptionCode::SyntaxError };
@@ -5460,7 +5460,7 @@ RefPtr<DOMPointReadOnly> Internals::lastSelectPopupLocation(const HTMLSelectElem
 #endif
 }
 
-ExceptionOr<String> Internals::captionsStyleSheetOverride()
+ExceptionOr<RefPtr<StringImpl>> Internals::captionsStyleSheetOverride()
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -5469,11 +5469,11 @@ ExceptionOr<String> Internals::captionsStyleSheetOverride()
 #if ENABLE(VIDEO)
     return protect(protect(protect(document->page())->group())->ensureCaptionPreferences())->captionsStyleSheetOverride();
 #else
-    return String { emptyString() };
+    return RefPtr<StringImpl> { emptyString() };
 #endif
 }
 
-ExceptionOr<void> Internals::setCaptionsStyleSheetOverride(const String& override)
+ExceptionOr<void> Internals::setCaptionsStyleSheetOverride(StringImpl* override)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -5487,7 +5487,7 @@ ExceptionOr<void> Internals::setCaptionsStyleSheetOverride(const String& overrid
     return { };
 }
 
-ExceptionOr<void> Internals::setPrimaryAudioTrackLanguageOverride(const String& language)
+ExceptionOr<void> Internals::setPrimaryAudioTrackLanguageOverride(StringImpl* language)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -5501,7 +5501,7 @@ ExceptionOr<void> Internals::setPrimaryAudioTrackLanguageOverride(const String& 
     return { };
 }
 
-ExceptionOr<void> Internals::setPreferredAudioCharacteristicsForTesting(const Vector<String>& characteristics)
+ExceptionOr<void> Internals::setPreferredAudioCharacteristicsForTesting(const Vector<RefPtr<StringImpl>>& characteristics)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -5515,7 +5515,7 @@ ExceptionOr<void> Internals::setPreferredAudioCharacteristicsForTesting(const Ve
     return { };
 }
 
-ExceptionOr<void> Internals::setCaptionDisplayMode(const String& mode)
+ExceptionOr<void> Internals::setCaptionDisplayMode(StringImpl* mode)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -5540,7 +5540,7 @@ ExceptionOr<void> Internals::setCaptionDisplayMode(const String& mode)
     return { };
 }
 
-String Internals::captionDisplayMode() const
+RefPtr<StringImpl> Internals::captionDisplayMode() const
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -5549,20 +5549,20 @@ String Internals::captionDisplayMode() const
 #if ENABLE(VIDEO)
     switch (protect(protect(protect(document->page())->group())->ensureCaptionPreferences())->captionDisplayMode()) {
     case CaptionUserPreferences::CaptionDisplayMode::Automatic:
-        return "automatic"_s;
+        return "automatic"_si;
     case CaptionUserPreferences::CaptionDisplayMode::ForcedOnly:
-        return "forcedonly"_s;
+        return "forcedonly"_si;
     case CaptionUserPreferences::CaptionDisplayMode::AlwaysOn:
-        return "alwayson"_s;
+        return "alwayson"_si;
     case CaptionUserPreferences::CaptionDisplayMode::Manual:
-        return "manual"_s;
+        return "manual"_si;
     }
 #endif
     return emptyString();
 }
 
 #if ENABLE(VIDEO)
-RefPtr<TextTrackCueGeneric> Internals::createGenericCue(double startTime, double endTime, String text)
+RefPtr<TextTrackCueGeneric> Internals::createGenericCue(double startTime, double endTime, RefPtr<StringImpl> text)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -5570,9 +5570,9 @@ RefPtr<TextTrackCueGeneric> Internals::createGenericCue(double startTime, double
     return TextTrackCueGeneric::create(*document, MediaTime::createWithDouble(startTime), MediaTime::createWithDouble(endTime), text);
 }
 
-ExceptionOr<String> Internals::textTrackBCP47Language(TextTrack& track)
+ExceptionOr<RefPtr<StringImpl>> Internals::textTrackBCP47Language(TextTrack& track)
 {
-    return String { track.validBCP47Language() };
+    return RefPtr<StringImpl> { track.validBCP47Language() };
 }
 
 Ref<TimeRanges> Internals::createTimeRanges(Float32Array& startTimes, Float32Array& endTimes)
@@ -5683,7 +5683,7 @@ void Internals::setMaximumSourceBufferSize(SourceBuffer& buffer, uint64_t maximu
     });
 }
 
-void Internals::bufferedSamplesForTrackId(SourceBuffer& buffer, const AtomString& trackId, BufferedSamplesPromise&& promise)
+void Internals::bufferedSamplesForTrackId(SourceBuffer& buffer, AtomStringImpl* trackId, BufferedSamplesPromise&& promise)
 {
     buffer.bufferedSamplesForTrackId(parseInteger<uint64_t>(trackId).value_or(0))->whenSettled(RunLoop::currentSingleton(), [promise = WTF::move(promise)](auto&& samples) mutable {
         if (!samples) {
@@ -5694,7 +5694,7 @@ void Internals::bufferedSamplesForTrackId(SourceBuffer& buffer, const AtomString
     });
 }
 
-void Internals::enqueuedSamplesForTrackID(SourceBuffer& buffer, const AtomString& trackID, BufferedSamplesPromise&& promise)
+void Internals::enqueuedSamplesForTrackID(SourceBuffer& buffer, AtomStringImpl* trackID, BufferedSamplesPromise&& promise)
 {
     buffer.enqueuedSamplesForTrackID(parseInteger<uint64_t>(trackID).value_or(0))->whenSettled(RunLoop::currentSingleton(), [promise = WTF::move(promise)](auto&& samples) mutable {
         if (!samples) {
@@ -5705,7 +5705,7 @@ void Internals::enqueuedSamplesForTrackID(SourceBuffer& buffer, const AtomString
     });
 }
 
-double Internals::minimumUpcomingPresentationTimeForTrackID(SourceBuffer& buffer, const AtomString& trackID)
+double Internals::minimumUpcomingPresentationTimeForTrackID(SourceBuffer& buffer, AtomStringImpl* trackID)
 {
     return buffer.minimumUpcomingPresentationTimeForTrackID(parseInteger<TrackID>(trackID).value_or(0)).toDouble();
 }
@@ -5715,7 +5715,7 @@ void Internals::setShouldGenerateTimestamps(SourceBuffer& buffer, bool flag)
     buffer.setShouldGenerateTimestamps(flag);
 }
 
-void Internals::setMaximumQueueDepthForTrackID(SourceBuffer& buffer, const AtomString& trackID, size_t maxQueueDepth)
+void Internals::setMaximumQueueDepthForTrackID(SourceBuffer& buffer, AtomStringImpl* trackID, size_t maxQueueDepth)
 {
     buffer.setMaximumQueueDepthForTrackID(parseInteger<TrackID>(trackID).value_or(0), maxQueueDepth);
 }
@@ -5734,7 +5734,7 @@ void Internals::enableMockMediaCapabilities()
 
 #if ENABLE(VIDEO)
 
-ExceptionOr<void> Internals::beginMediaSessionInterruption(const String& interruptionString)
+ExceptionOr<void> Internals::beginMediaSessionInterruption(StringImpl* interruptionString)
 {
     RefPtr manager = sessionManager();
     if (!manager)
@@ -5757,7 +5757,7 @@ ExceptionOr<void> Internals::beginMediaSessionInterruption(const String& interru
     return { };
 }
 
-void Internals::endMediaSessionInterruption(const String& flagsString)
+void Internals::endMediaSessionInterruption(StringImpl* flagsString)
 {
     PlatformMediaSession::EndInterruptionFlags flags = PlatformMediaSession::EndInterruptionFlags::NoFlags;
 
@@ -5792,7 +5792,7 @@ void Internals::applicationDidEnterBackground(bool suspendedUnderLock) const
         manager->applicationDidEnterBackground(suspendedUnderLock);
 }
 
-static PlatformMediaSession::MediaType mediaTypeFromString(const String& mediaTypeString)
+static PlatformMediaSession::MediaType mediaTypeFromString(StringImpl* mediaTypeString)
 {
     if (equalLettersIgnoringASCIICase(mediaTypeString, "video"_s))
         return PlatformMediaSession::MediaType::Video;
@@ -5806,7 +5806,7 @@ static PlatformMediaSession::MediaType mediaTypeFromString(const String& mediaTy
     return PlatformMediaSession::MediaType::None;
 }
 
-ExceptionOr<void> Internals::setMediaSessionRestrictions(const String& mediaTypeString, StringView restrictionsString)
+ExceptionOr<void> Internals::setMediaSessionRestrictions(StringImpl* mediaTypeString, StringView restrictionsString)
 {
     auto mediaType = mediaTypeFromString(mediaTypeString);
     if (mediaType == PlatformMediaSession::MediaType::None)
@@ -5839,7 +5839,7 @@ ExceptionOr<void> Internals::setMediaSessionRestrictions(const String& mediaType
     return { };
 }
 
-ExceptionOr<String> Internals::mediaSessionRestrictions(const String& mediaTypeString) const
+ExceptionOr<RefPtr<StringImpl>> Internals::mediaSessionRestrictions(StringImpl* mediaTypeString) const
 {
     PlatformMediaSession::MediaType mediaType = mediaTypeFromString(mediaTypeString);
     if (mediaType == PlatformMediaSession::MediaType::None)
@@ -5851,7 +5851,7 @@ ExceptionOr<String> Internals::mediaSessionRestrictions(const String& mediaTypeS
 
     auto restrictions = manager->restrictions(mediaType);
     if (restrictions == MediaSessionRestriction::NoRestrictions)
-        return String();
+        return nullptr;
 
     StringBuilder builder;
     if (restrictions & MediaSessionRestriction::ConcurrentPlaybackNotPermitted)
@@ -5871,7 +5871,7 @@ ExceptionOr<String> Internals::mediaSessionRestrictions(const String& mediaTypeS
             builder.append(',');
         builder.append("interruptedplaybacknotpermitted"_s);
     }
-    return String { builder.toString() };
+    return RefPtr<StringImpl> { builder.toString() };
 }
 
 void Internals::setMediaElementRestrictions(HTMLMediaElement& element, StringView restrictionsString)
@@ -5929,7 +5929,7 @@ void Internals::setMediaElementRestrictions(HTMLMediaElement& element, StringVie
     mediaSession->addBehaviorRestriction(restrictions);
 }
 
-static std::optional<PlatformMediaSession::RemoteControlCommandType> remoteControlCommandForString(const String& commandString)
+static std::optional<PlatformMediaSession::RemoteControlCommandType> remoteControlCommandForString(StringImpl* commandString)
 {
     if (equalLettersIgnoringASCIICase(commandString, "play"_s))
         return PlatformMediaSession::RemoteControlCommandType::PlayCommand;
@@ -5956,7 +5956,7 @@ static std::optional<PlatformMediaSession::RemoteControlCommandType> remoteContr
     return std::nullopt;
 }
 
-ExceptionOr<void> Internals::postRemoteControlCommand(const String& commandString, float argument)
+ExceptionOr<void> Internals::postRemoteControlCommand(StringImpl* commandString, float argument)
 {
     RefPtr manager = sessionManager();
     if (!manager)
@@ -5970,7 +5970,7 @@ ExceptionOr<void> Internals::postRemoteControlCommand(const String& commandStrin
     return { };
 }
 
-ExceptionOr<void> Internals::postSystemRemoteControlCommand(const String& commandString, float argument)
+ExceptionOr<void> Internals::postSystemRemoteControlCommand(StringImpl* commandString, float argument)
 {
     RefPtr manager = sessionManager();
     if (!manager)
@@ -6309,7 +6309,7 @@ void Internals::setMediaElementVolumeLocked(HTMLMediaElement& element, bool volu
     element.setVolumeLocked(volumeLocked);
 }
 
-String Internals::mediaElementViewportVisibility(HTMLMediaElement& element)
+RefPtr<StringImpl> Internals::mediaElementViewportVisibility(HTMLMediaElement& element)
 {
     return convertEnumerationToString(element.viewportVisibility());
 }
@@ -6373,7 +6373,7 @@ void Internals::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
     protect(frame->page())->setMockMediaPlaybackTargetPickerEnabled(enabled);
 }
 
-ExceptionOr<void> Internals::setMockMediaPlaybackTargetPickerState(const String& deviceName, const String& deviceState)
+ExceptionOr<void> Internals::setMockMediaPlaybackTargetPickerState(StringImpl* deviceName, StringImpl* deviceState)
 {
     RefPtr frame = this->frame();
     if (!frame || !frame->page())
@@ -6436,7 +6436,7 @@ ExceptionOr<Ref<MockPageOverlay>> Internals::installMockPageOverlay(PageOverlayT
     return MockPageOverlayClient::singleton().installOverlay(protect(*document->page()), type == PageOverlayType::View ? PageOverlay::OverlayType::View : PageOverlay::OverlayType::Document);
 }
 
-ExceptionOr<String> Internals::pageOverlayLayerTreeAsText(unsigned short flags) const
+ExceptionOr<RefPtr<StringImpl>> Internals::pageOverlayLayerTreeAsText(unsigned short flags) const
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -6467,7 +6467,7 @@ void Internals::setPageMuted(StringView statesString)
         page->setMuted(state);
 }
 
-String Internals::pageMediaState()
+RefPtr<StringImpl> Internals::pageMediaState()
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -6567,13 +6567,13 @@ void Internals::grantUniversalAccess()
         document->securityOrigin().grantUniversalAccess();
 }
 
-void Internals::disableCORSForURL(const String& url)
+void Internals::disableCORSForURL(StringImpl* url)
 {
     if (RefPtr page = contextDocument() ? contextDocument()->page() : nullptr)
         page->addCORSDisablingPatternForTesting(UserContentURLPattern { url });
 }
 
-RefPtr<File> Internals::createFile(const String& path)
+RefPtr<File> Internals::createFile(StringImpl* path)
 {
     RefPtr document = contextDocument();
     if (!document)
@@ -6588,7 +6588,7 @@ RefPtr<File> Internals::createFile(const String& path)
 
     return File::create(document, url.fileSystemPath());
 }
-void Internals::asyncCreateFile(const String& path, DOMPromiseDeferred<IDLInterface<File>>&& promise)
+void Internals::asyncCreateFile(StringImpl* path, DOMPromiseDeferred<IDLInterface<File>>&& promise)
 {
     RefPtr document = contextDocument();
     if (!document) {
@@ -6617,54 +6617,54 @@ void Internals::asyncCreateFile(const String& path, DOMPromiseDeferred<IDLInterf
 }
 
 
-String Internals::createTemporaryFile(const String& name, const String& contents)
+RefPtr<StringImpl> Internals::createTemporaryFile(StringImpl* name, StringImpl* contents)
 {
-    if (name.isEmpty())
+    if (isEmpty(name))
         return nullString();
 
     auto [path, file] = FileSystem::openTemporaryFile(makeString("WebCoreTesting-"_s, name));
     if (!file)
         return nullString();
 
-    file.write(byteCast<uint8_t>(contents.utf8().span()));
+    file.write(byteCast<uint8_t>(utf8(contents).span()));
     return path;
 }
 
-String Internals::documentIPAddressSpace() const
+RefPtr<StringImpl> Internals::documentIPAddressSpace() const
 {
     RefPtr document = contextDocument();
     if (!document)
-        return "unknown"_s;
+        return "unknown"_si;
 
     switch (document->ipAddressSpace()) {
     case IPAddressSpace::Public:
-        return "public"_s;
+        return "public"_si;
     case IPAddressSpace::Local:
-        return "local"_s;
+        return "local"_si;
     case IPAddressSpace::Loopback:
-        return "loopback"_s;
+        return "loopback"_si;
     case IPAddressSpace::Unknown:
-        return "unknown"_s;
+        return "unknown"_si;
     }
     ASSERT_NOT_REACHED();
-    return "unknown"_s;
+    return "unknown"_si;
 }
 
-void Internals::setDocumentIPAddressSpace(const String& addressSpace)
+void Internals::setDocumentIPAddressSpace(StringImpl* addressSpace)
 {
     RefPtr document = contextDocument();
     if (!document)
         return;
 
-    if (addressSpace == "public"_s)
+    if (equal(addressSpace, "public"_s))
         document->setIPAddressSpace(IPAddressSpace::Public);
-    else if (addressSpace == "local"_s)
+    else if (equal(addressSpace, "local"_s))
         document->setIPAddressSpace(IPAddressSpace::Local);
-    else if (addressSpace == "loopback"_s)
+    else if (equal(addressSpace, "loopback"_s))
         document->setIPAddressSpace(IPAddressSpace::Loopback);
 }
 
-void Internals::setLoadSourceOriginOverride(const String& origin)
+void Internals::setLoadSourceOriginOverride(StringImpl* origin)
 {
     if (RefPtr document = contextDocument())
         document->setLoadSourceOriginOverrideForTesting(SecurityOrigin::createFromString(origin));
@@ -6707,7 +6707,7 @@ void Internals::setPlatformMomentumScrollingPredictionEnabled(bool enabled)
     ScrollingMomentumCalculator::setPlatformMomentumScrollingPredictionEnabled(enabled);
 }
 
-ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
+ExceptionOr<RefPtr<StringImpl>> Internals::scrollSnapOffsets(Element& element)
 {
     auto areaOrException = scrollableAreaForNode(&element);
     if (areaOrException.hasException())
@@ -6731,7 +6731,7 @@ ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
         serializeOffsets(result, offsetInfo->verticalSnapOffsets);
     }
 
-    return String { result.toString() };
+    return RefPtr<StringImpl> { result.toString() };
 }
 
 ExceptionOr<bool> Internals::isScrollSnapInProgress(Element& element)
@@ -6752,7 +6752,7 @@ bool Internals::testPreloaderSettingViewport()
     return testPreloadScannerViewportSupport(protect(contextDocument()));
 }
 
-ExceptionOr<String> Internals::pathStringWithShrinkWrappedRects(const Vector<double>& rectComponents, double radius)
+ExceptionOr<RefPtr<StringImpl>> Internals::pathStringWithShrinkWrappedRects(const Vector<double>& rectComponents, double radius)
 {
     if (rectComponents.size() % 4)
         return Exception { ExceptionCode::InvalidAccessError };
@@ -6847,9 +6847,9 @@ void Internals::setPageHasRefreshControllerForTesting(bool hasRefreshController)
 
 #if !PLATFORM(COCOA)
 
-String Internals::userVisibleString(const DOMURL& url)
+RefPtr<StringImpl> Internals::userVisibleString(const DOMURL& url)
 {
-    return WTF::URLHelpers::userVisibleURL(url.href().string().utf8().span());
+    return WTF::URLHelpers::userVisibleURL(utf8(url.href().string()).span());
 }
 
 #endif
@@ -6904,7 +6904,7 @@ JSValue Internals::cloneArrayBuffer(JSC::JSGlobalObject& lexicalGlobalObject, JS
     return JSC::call(&lexicalGlobalObject, function, callData, JSC::jsUndefined(), arguments);
 }
 
-String Internals::resourceLoadStatisticsForURL(const DOMURL& url)
+RefPtr<StringImpl> Internals::resourceLoadStatisticsForURL(const DOMURL& url)
 {
     return ResourceLoadObserver::singleton().statisticsForURL(url.href());
 }
@@ -6926,14 +6926,14 @@ bool Internals::isPrevalentDomainScriptOnStack() const
     return JSC::isPrevalentDomainTaintedCodeOnStack(vm, vm->topCallFrame);
 }
 
-String Internals::composedTreeAsText(Node& node)
+RefPtr<StringImpl> Internals::composedTreeAsText(Node& node)
 {
     if (!is<ContainerNode>(node))
         return emptyString();
     return WebCore::composedTreeAsText(downcast<ContainerNode>(node));
 }
 
-String Internals::composedTreeAsTextFromNode(Node& root, Node& startNode)
+RefPtr<StringImpl> Internals::composedTreeAsTextFromNode(Node& root, Node& startNode)
 {
     if (!is<ContainerNode>(root))
         return emptyString();
@@ -7151,14 +7151,14 @@ void Internals::postTask(Ref<VoidCallback>&& callback)
     });
 }
 
-static std::optional<TaskSource> taskSourceFromString(const String& taskSourceName)
+static std::optional<TaskSource> taskSourceFromString(StringImpl* taskSourceName)
 {
-    if (taskSourceName == "DOMManipulation"_s)
+    if (equal(taskSourceName, "DOMManipulation"_s))
         return TaskSource::DOMManipulation;
     return std::nullopt;
 }
 
-ExceptionOr<void> Internals::queueTask(ScriptExecutionContext& context, const String& taskSourceName, Ref<VoidCallback>&& callback)
+ExceptionOr<void> Internals::queueTask(ScriptExecutionContext& context, StringImpl* taskSourceName, Ref<VoidCallback>&& callback)
 {
     auto source = taskSourceFromString(taskSourceName);
     if (!source)
@@ -7171,7 +7171,7 @@ ExceptionOr<void> Internals::queueTask(ScriptExecutionContext& context, const St
     return { };
 }
 
-ExceptionOr<void> Internals::queueTaskToQueueMicrotask(Document& document, const String& taskSourceName, Ref<VoidCallback>&& callback)
+ExceptionOr<void> Internals::queueTaskToQueueMicrotask(Document& document, StringImpl* taskSourceName, Ref<VoidCallback>&& callback)
 {
     auto source = taskSourceFromString(taskSourceName);
     if (!source)
@@ -7204,9 +7204,9 @@ ExceptionOr<bool> Internals::hasSameEventLoopAs(WindowProxy& proxy)
     return protect(context->eventLoop())->hasSameEventLoopAs(protect(proxyContext->eventLoop()));
 }
 
-Vector<String> Internals::accessKeyModifiers() const
+Vector<RefPtr<StringImpl>> Internals::accessKeyModifiers() const
 {
-    Vector<String> accessKeyModifierStrings;
+    Vector<RefPtr<StringImpl>> accessKeyModifierStrings;
 
     for (auto modifier : EventHandler::accessKeyModifiers()) {
         switch (modifier) {
@@ -7234,7 +7234,7 @@ Vector<String> Internals::accessKeyModifiers() const
     return accessKeyModifierStrings;
 }
 
-void Internals::setQuickLookPassword(const String& password)
+void Internals::setQuickLookPassword(StringImpl* password)
 {
 #if PLATFORM(IOS_FAMILY) && USE(QUICK_LOOK)
     auto& quickLookHandleClient = MockPreviewLoaderClient::singleton();
@@ -7323,13 +7323,13 @@ void Internals::setWebGLVideoUploadPath(WebGLRenderingContextBase& context, WebG
     ASSERT_NOT_REACHED();
 }
 
-static String webglVideoUploadFourCCString(uint32_t value)
+static RefPtr<StringImpl> webglVideoUploadFourCCString(uint32_t value)
 {
     if (!value)
         return emptyString();
     auto characters = FourCC(value).string();
     if (std::ranges::all_of(std::span { characters }.first(4), [](char c) { return c >= 0x20 && c < 0x7f; }))
-        return String::fromLatin1(characters.data());
+        return StringImpl::fromLatin1(characters.data());
     return makeString("0x"_s, hex(value, 8));
 }
 
@@ -7389,7 +7389,7 @@ std::optional<Internals::WebGLVideoUploadRecord> Internals::webglLastVideoUpload
     if (record->decision != WebGLRenderingContextBase::VideoUploadDecision::Copy)
         result.reason = webglVideoUploadDecisionName(record->decision);
     else if (!record->copy)
-        result.reason = "unknown"_s; // The copy record is not this upload's.
+        result.reason = "unknown"_si; // The copy record is not this upload's.
     else {
         result.reason = webglVideoUploadOutcomeName(record->copy->outcome);
         result.pixelFormat = webglVideoUploadFourCCString(record->copy->pixelFormat);
@@ -7534,7 +7534,7 @@ void Internals::simulateMediaStreamTrackCaptureSourceFailure(MediaStreamTrack& t
     protect(track.source())->captureFailed();
 }
 
-void Internals::setMediaStreamTrackIdentifier(MediaStreamTrack& track, String&& id)
+void Internals::setMediaStreamTrackIdentifier(MediaStreamTrack& track, RefPtr<StringImpl>&& id)
 {
     track.setIdForTesting(WTF::move(id));
 }
@@ -7544,7 +7544,7 @@ void Internals::setMediaStreamSourceInterrupted(MediaStreamTrack& track, bool in
     protect(track.source())->setInterruptedForTesting(interrupted);
 }
 
-const String& Internals::mediaStreamTrackPersistentId(const MediaStreamTrack& track)
+const RefPtr<StringImpl>& Internals::mediaStreamTrackPersistentId(const MediaStreamTrack& track)
 {
     return track.source().persistentID();
 }
@@ -7596,7 +7596,7 @@ bool Internals::shouldAudioTrackPlay(const AudioTrack& track)
 #endif // ENABLE(MEDIA_STREAM)
 
 #if ENABLE(WEB_RTC)
-String Internals::rtcNetworkInterfaceName() const
+RefPtr<StringImpl> Internals::rtcNetworkInterfaceName() const
 {
     RefPtr document = contextDocument();
     RefPtr rtcNetworkManager = document ? document->rtcNetworkManager() : nullptr;
@@ -7644,7 +7644,7 @@ void Internals::systemAudioSessionCategory(DOMPromiseDeferred<IDLEnumeration<Aud
     AudioSession::singleton().systemCategoryForTesting()->whenSettled(RunLoop::mainSingleton(),
         [promise = WTF::move(promise)](auto&& result) mutable {
             if (!result) {
-                promise.reject(Exception { ExceptionCode::InvalidStateError, "Could not read the system audio session category"_s });
+                promise.reject(Exception { ExceptionCode::InvalidStateError, "Could not read the system audio session category"_si });
                 return;
             }
             promise.resolve(*result);
@@ -7660,7 +7660,7 @@ void Internals::systemAudioSessionActivationCount(DOMPromiseDeferred<IDLUnsigned
     AudioSession::singleton().systemActivationCountForTesting()->whenSettled(RunLoop::mainSingleton(),
         [promise = WTF::move(promise)](auto&& result) mutable {
             if (!result) {
-                promise.reject(Exception { ExceptionCode::InvalidStateError, "Could not read the system audio session activation count"_s });
+                promise.reject(Exception { ExceptionCode::InvalidStateError, "Could not read the system audio session activation count"_si });
                 return;
             }
             promise.resolve(*result);
@@ -7747,7 +7747,7 @@ void Internals::storeRegistrationsOnDisk(DOMPromiseDeferred<void>&& promise)
     });
 }
 
-void Internals::sendH2Ping(String url, DOMPromiseDeferred<IDLDouble>&& promise)
+void Internals::sendH2Ping(RefPtr<StringImpl> url, DOMPromiseDeferred<IDLDouble>&& promise)
 {
     RefPtr document = contextDocument();
     if (!document) {
@@ -7801,10 +7801,11 @@ void Internals::cacheStorageEngineRepresentation(DOMPromiseDeferred<IDLDOMString
     }
     document->enqueueTaskWhenSettled(protect(m_cacheStorageConnection)->engineRepresentation(), TaskSource::DOMManipulation, [promise = WTF::move(promise)](auto&& result) mutable {
         if (!result) {
-            promise.reject(Exception { ExceptionCode::InvalidStateError, "internal error"_s });
+            promise.reject(Exception { ExceptionCode::InvalidStateError, "internal error"_si });
             return;
         }
-        promise.resolve(WTF::move(result.value()));
+        auto value = WTF::move(result.value());
+        promise.resolve(value);
     });
 }
 
@@ -7833,7 +7834,7 @@ void Internals::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
         page->setConsoleMessageListenerForTesting(WTF::move(listener));
 }
 
-void Internals::configureLoggingChannel(const String& channelName, bool enabled)
+void Internals::configureLoggingChannel(StringImpl* channelName, bool enabled)
 {
     if (auto* channel = getLogChannel(channelName)) {
         channel->state = enabled ? WTFLogChannelState::On : WTFLogChannelState::Off;
@@ -7851,12 +7852,12 @@ uint64_t Internals::responseSizeWithPadding(FetchResponse& response) const
     return response.bodySizeWithPadding();
 }
 
-const String& Internals::responseNetworkLoadMetricsProtocol(const FetchResponse& response)
+const RefPtr<StringImpl>& Internals::responseNetworkLoadMetricsProtocol(const FetchResponse& response)
 {
     return response.networkLoadMetrics().protocol;
 }
 
-void Internals::hasServiceWorkerRegistration(const String& clientURL, HasRegistrationPromise&& promise)
+void Internals::hasServiceWorkerRegistration(StringImpl* clientURL, HasRegistrationPromise&& promise)
 {
     RefPtr contextDocument = this->contextDocument();
     if (!contextDocument)
@@ -8062,7 +8063,7 @@ void Internals::setCaptureExtraNetworkLoadMetricsEnabled(bool value)
     platformStrategies()->loaderStrategy()->setCaptureExtraNetworkLoadMetricsEnabled(value);
 }
 
-String Internals::ongoingLoadsDescriptions() const
+RefPtr<StringImpl> Internals::ongoingLoadsDescriptions() const
 {
     StringBuilder builder;
     builder.append('[');
@@ -8152,7 +8153,7 @@ auto Internals::parseHEVCCodecParameters(StringView string) -> std::optional<HEV
     return WebCore::parseHEVCCodecParameters(string);
 }
 
-String Internals::createHEVCCodecParametersString(const HEVCParameterSet& parameters)
+RefPtr<StringImpl> Internals::createHEVCCodecParametersString(const HEVCParameterSet& parameters)
 {
     return WebCore::createHEVCCodecParametersString(parameters);
 }
@@ -8165,16 +8166,16 @@ auto Internals::parseDoViCodecParameters(StringView string) -> std::optional<DoV
     DoViParameterSet convertedResult;
     switch (parseResult->codec) {
     case DoViParameters::Codec::AVC1:
-        convertedResult.codecName = "avc1"_s;
+        convertedResult.codecName = "avc1"_si;
         break;
     case DoViParameters::Codec::AVC3:
-        convertedResult.codecName = "avc3"_s;
+        convertedResult.codecName = "avc3"_si;
         break;
     case DoViParameters::Codec::HEV1:
-        convertedResult.codecName = "hev1"_s;
+        convertedResult.codecName = "hev1"_si;
         break;
     case DoViParameters::Codec::HVC1:
-        convertedResult.codecName = "hvc1"_s;
+        convertedResult.codecName = "hvc1"_si;
         break;
     }
     convertedResult.bitstreamProfileID = parseResult->bitstreamProfileID;
@@ -8182,16 +8183,16 @@ auto Internals::parseDoViCodecParameters(StringView string) -> std::optional<DoV
     return convertedResult;
 }
 
-String Internals::createDoViCodecParametersString(const DoViParameterSet& parameterSet)
+RefPtr<StringImpl> Internals::createDoViCodecParametersString(const DoViParameterSet& parameterSet)
 {
     DoViParameters::Codec codec;
-    if (parameterSet.codecName == "avc1"_s)
+    if (equal(parameterSet.codecName, "avc1"_s))
         codec = DoViParameters::Codec::AVC1;
-    else if (parameterSet.codecName == "avc3"_s)
+    else if (equal(parameterSet.codecName, "avc3"_s))
         codec = DoViParameters::Codec::AVC3;
-    else if (parameterSet.codecName == "hev1"_s)
+    else if (equal(parameterSet.codecName, "hev1"_s))
         codec = DoViParameters::Codec::HEV1;
-    else if (parameterSet.codecName == "hvc1"_s)
+    else if (equal(parameterSet.codecName, "hvc1"_s))
         codec = DoViParameters::Codec::HVC1;
     else
         return emptyString();
@@ -8204,24 +8205,24 @@ std::optional<VPCodecConfigurationRecord> Internals::parseVPCodecParameters(Stri
     return WebCore::parseVPCodecParameters(string);
 }
 
-std::optional<AV1CodecConfigurationRecord> Internals::parseAV1CodecParameters(const String& parameters)
+std::optional<AV1CodecConfigurationRecord> Internals::parseAV1CodecParameters(StringImpl* parameters)
 {
     return WebCore::parseAV1CodecParameters(parameters);
 }
 
-String Internals::createAV1CodecParametersString(const AV1CodecConfigurationRecord& configuration)
+RefPtr<StringImpl> Internals::createAV1CodecParametersString(const AV1CodecConfigurationRecord& configuration)
 {
     return WebCore::createAV1CodecParametersString(configuration);
 }
 
-bool Internals::validateAV1PerLevelConstraints(const String& parameters, VideoConfiguration&& configuration)
+bool Internals::validateAV1PerLevelConstraints(StringImpl* parameters, VideoConfiguration&& configuration)
 {
     if (auto record = WebCore::parseAV1CodecParameters(parameters))
         return WebCore::validateAV1PerLevelConstraints(*record, toPlatform(WTF::move(configuration)));
     return false;
 }
 
-bool Internals::validateAV1ConfigurationRecord(const String& parameters)
+bool Internals::validateAV1ConfigurationRecord(StringImpl* parameters)
 {
     if (auto record = WebCore::parseAV1CodecParameters(parameters))
         return WebCore::validateAV1ConfigurationRecord(*record);
@@ -8271,18 +8272,18 @@ static Internals::WebDriverCookieData createWebDriverCookieData(Cookie cookie)
 
     // Due to how CFNetwork handles host-only cookies, we may need to prepend a '.' to the domain when
     // setting a cookie (see CookieStore::set). So we must strip this '.' when returning the cookie.
-    if (data.domain.startsWith('.'))
-        data.domain = data.domain.substring(1, data.domain.length() - 1);
+    if (startsWith(data.domain, '.'))
+        data.domain = substring(data.domain, 1, length(data.domain) - 1);
 
     switch (cookie.sameSite) {
     case Cookie::SameSitePolicy::Strict:
-        data.sameSite = "Strict"_s;
+        data.sameSite = "Strict"_si;
         break;
     case Cookie::SameSitePolicy::Lax:
-        data.sameSite = "Lax"_s;
+        data.sameSite = "Lax"_si;
         break;
     case Cookie::SameSitePolicy::None:
-        data.sameSite = "None"_s;
+        data.sameSite = "None"_si;
         break;
     }
 
@@ -8337,13 +8338,13 @@ void Internals::testDictionaryLogging()
         return;
 
     DiagnosticLoggingClient::ValueDictionary dictionary;
-    dictionary.set("stringKey"_s, String("stringValue"_s));
-    dictionary.set("uint64Key"_s, std::numeric_limits<uint64_t>::max());
-    dictionary.set("int64Key"_s, std::numeric_limits<int64_t>::min());
-    dictionary.set("boolKey"_s, true);
-    dictionary.set("doubleKey"_s, 2.7182818284590452353602874);
+    dictionary.set("stringKey"_si, "stringValue"_si);
+    dictionary.set("uint64Key"_si, std::numeric_limits<uint64_t>::max());
+    dictionary.set("int64Key"_si, std::numeric_limits<int64_t>::min());
+    dictionary.set("boolKey"_si, true);
+    dictionary.set("doubleKey"_si, 2.7182818284590452353602874);
 
-    protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary("testMessage"_s, "testDescription"_s, dictionary, ShouldSample::No);
+    protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary("testMessage"_si, "testDescription"_si, dictionary, ShouldSample::No);
 }
 
 void Internals::setMaximumIntervalForUserGestureForwardingForFetch(double interval)
@@ -8366,7 +8367,7 @@ void Internals::setIsPlayingToAutomotiveHeadUnit(bool isPlaying)
 #endif
 }
 
-String Internals::highlightPseudoElementColor(const AtomString& highlightName, Element& element)
+RefPtr<StringImpl> Internals::highlightPseudoElementColor(AtomStringImpl* highlightName, Element& element)
 {
     Ref document = element.document();
     document->updateStyleIfNeeded();
@@ -8447,16 +8448,16 @@ Ref<InternalsSetLike> Internals::createInternalsSetLike()
     return InternalsSetLike::create();
 }
 
-bool Internals::hasSandboxMachLookupAccessToGlobalName(const String& process, const String& service)
+bool Internals::hasSandboxMachLookupAccessToGlobalName(StringImpl* process, StringImpl* service)
 {
 #if PLATFORM(COCOA)
     pid_t pid;
-    if (process == "com.apple.WebKit.WebContent"_s)
+    if (equal(process, "com.apple.WebKit.WebContent"_s))
         pid = getpid();
     else
         RELEASE_ASSERT_NOT_REACHED();
 
-    return !sandboxCheck(pid, "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_GLOBAL_NAME | SANDBOX_CHECK_NO_REPORT), service.utf8());
+    return !sandboxCheck(pid, "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_GLOBAL_NAME | SANDBOX_CHECK_NO_REPORT), utf8(service));
 #else
     UNUSED_PARAM(process);
     UNUSED_PARAM(service);
@@ -8464,16 +8465,16 @@ bool Internals::hasSandboxMachLookupAccessToGlobalName(const String& process, co
 #endif
 }
 
-bool Internals::hasSandboxMachLookupAccessToXPCServiceName(const String& process, const String& service)
+bool Internals::hasSandboxMachLookupAccessToXPCServiceName(StringImpl* process, StringImpl* service)
 {
 #if PLATFORM(COCOA)
     pid_t pid;
-    if (process == "com.apple.WebKit.WebContent"_s)
+    if (equal(process, "com.apple.WebKit.WebContent"_s))
         pid = getpid();
     else
         RELEASE_ASSERT_NOT_REACHED();
 
-    return !sandboxCheck(pid, "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_XPC_SERVICE_NAME | SANDBOX_CHECK_NO_REPORT), service.utf8());
+    return !sandboxCheck(pid, "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_XPC_SERVICE_NAME | SANDBOX_CHECK_NO_REPORT), utf8(service));
 #else
     UNUSED_PARAM(process);
     UNUSED_PARAM(service);
@@ -8481,10 +8482,10 @@ bool Internals::hasSandboxMachLookupAccessToXPCServiceName(const String& process
 #endif
 }
 
-bool Internals::hasSandboxUnixSyscallAccess(const String& process, unsigned syscall) const
+bool Internals::hasSandboxUnixSyscallAccess(StringImpl* process, unsigned syscall) const
 {
 #if PLATFORM(COCOA)
-    RELEASE_ASSERT(process == "com.apple.WebKit.WebContent"_s);
+    RELEASE_ASSERT(equal(process, "com.apple.WebKit.WebContent"_s));
     auto pid = getpid();
     return !sandbox_check(pid, "syscall-unix", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_SYSCALL_NUMBER | SANDBOX_CHECK_NO_REPORT), syscall);
 #else
@@ -8494,7 +8495,7 @@ bool Internals::hasSandboxUnixSyscallAccess(const String& process, unsigned sysc
 #endif
 }
 
-String Internals::windowLocationHost(DOMWindow& window)
+RefPtr<StringImpl> Internals::windowLocationHost(DOMWindow& window)
 {
     return protect(window.location())->host();
 }
@@ -8511,7 +8512,7 @@ void Internals::resetNavigationRateLimiter(DOMWindow& window)
         localWindow->navigation().rateLimiterForTesting().resetForTesting();
 }
 
-ExceptionOr<String> Internals::systemColorForCSSValue(const String& cssValue, bool useDarkModeAppearance, bool useElevatedUserInterfaceLevel)
+ExceptionOr<RefPtr<StringImpl>> Internals::systemColorForCSSValue(StringImpl* cssValue, bool useDarkModeAppearance, bool useElevatedUserInterfaceLevel)
 {
     CSSValueID id = cssValueKeywordID(cssValue);
     if (!CSS::isSystemColorKeyword(id))
@@ -8582,11 +8583,11 @@ void Internals::setVP9ScreenSizeAndScaleForTesting(double width, double height, 
 #endif
 }
 
-int Internals::readPreferenceInteger(const String& domain, const String& key)
+int Internals::readPreferenceInteger(StringImpl* domain, StringImpl* key)
 {
 #if PLATFORM(COCOA)
     Boolean keyExistsAndHasValidFormat = false;
-    return CFPreferencesGetAppIntegerValue(key.createCFString().get(), domain.createCFString().get(), &keyExistsAndHasValidFormat);
+    return CFPreferencesGetAppIntegerValue(createCFString(key).get(), createCFString(domain).get(), &keyExistsAndHasValidFormat);
 #else
     UNUSED_PARAM(domain);
     UNUSED_PARAM(key);
@@ -8595,7 +8596,7 @@ int Internals::readPreferenceInteger(const String& domain, const String& key)
 }
 
 #if !PLATFORM(COCOA)
-String Internals::encodedPreferenceValue(const String&, const String&)
+RefPtr<StringImpl> Internals::encodedPreferenceValue(StringImpl*, StringImpl*)
 {
     return emptyString();
 }
@@ -8614,7 +8615,7 @@ bool Internals::isIOKitAvailable()
     return false;
 }
 
-bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const String& ioKitClass)
+bool Internals::hasSandboxIOKitOpenAccessToClass(StringImpl* process, StringImpl* ioKitClass)
 {
     UNUSED_PARAM(process);
     UNUSED_PARAM(ioKitClass);
@@ -8623,7 +8624,7 @@ bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const St
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-Vector<String> Internals::appHighlightContextMenuItemTitles() const
+Vector<RefPtr<StringImpl>> Internals::appHighlightContextMenuItemTitles() const
 {
     return {{
         contextMenuItemTagAddHighlightToCurrentQuickNote(),
@@ -8668,7 +8669,7 @@ bool Internals::supportsPictureInPicture()
     return WebCore::supportsPictureInPicture();
 }
 
-String Internals::focusRingColor()
+RefPtr<StringImpl> Internals::focusRingColor()
 {
     return serializationForCSS(RenderTheme::singleton().focusRingColor(StyleColorOptions::UseSystemAppearance));
 }
@@ -8678,7 +8679,7 @@ double Internals::switchAnimationVisuallyOnDuration() const
     return RenderTheme::singleton().switchAnimationVisuallyOnDuration().seconds();
 }
 
-ExceptionOr<unsigned> Internals::createSleepDisabler(const String& reason, bool display)
+ExceptionOr<unsigned> Internals::createSleepDisabler(StringImpl* reason, bool display)
 {
     RefPtr document = contextDocument();
     if (!document || !document->pageID())
@@ -8739,7 +8740,7 @@ void Internals::setContentSizeCategory(Internals::ContentSizeCategory category)
         ctCategory = kCTFontContentSizeCategoryXXXL;
         break;
     }
-    WebCore::setContentSizeCategory(ctCategory);
+    WebCore::setContentSizeCategory(StringImpl::create(ctCategory).get());
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 #else
     UNUSED_PARAM(category);
@@ -8787,7 +8788,7 @@ bool Internals::hasImageControls(const HTMLImageElement& element) const
 }
 #endif // ENABLE(SERVICE_CONTROLS)
 
-String Internals::attachmentElementShadowUserAgentStyleSheet() const
+RefPtr<StringImpl> Internals::attachmentElementShadowUserAgentStyleSheet() const
 {
     return HTMLAttachmentElement::shadowUserAgentStyleSheetText();
 }
@@ -8819,14 +8820,14 @@ std::optional<CallToActionLabel> Internals::mediaSessionCallToActionLabel(const 
 #endif
 
 #if ENABLE(WEB_CODECS)
-void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
+void Internals::loadArtworkImage(RefPtr<StringImpl>&& url, ArtworkImagePromise&& promise)
 {
     if (!contextDocument()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "No document."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "No document."_si });
         return;
     }
     if (m_artworkImagePromise) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Another download is currently pending."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Another download is currently pending."_si });
         return;
     }
     m_artworkImagePromise = makeUnique<ArtworkImagePromise>(WTF::move(promise));
@@ -8842,7 +8843,7 @@ void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
         auto promise = std::exchange(protectedThis->m_artworkImagePromise, { });
         RefPtr nativeImage = image ? image->nativeImage(ImageDrawDescriptor { MediaSessionArtworkSizing { }.resolve(image->naturalDimensions()) }) : nullptr;
         if (!nativeImage) {
-            promise->reject(Exception { ExceptionCode::InvalidAccessError, "No image retrieved."_s });
+            promise->reject(Exception { ExceptionCode::InvalidAccessError, "No image retrieved."_si });
             return;
         }
         promise->settle(WebCodecsVideoFrame::create(*document, *nativeImage, { }));
@@ -8851,14 +8852,14 @@ void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
 }
 #endif
 
-ExceptionOr<Vector<String>> Internals::platformSupportedCommands() const
+ExceptionOr<Vector<RefPtr<StringImpl>>> Internals::platformSupportedCommands() const
 {
     RefPtr manager = sessionManager();
     if (!manager || !contextDocument())
         return Exception { ExceptionCode::InvalidAccessError };
 
     auto commands = manager->supportedCommands();
-    Vector<String> commandStrings;
+    Vector<RefPtr<StringImpl>> commandStrings;
     for (auto command : commands)
         commandStrings.append(convertEnumerationToString(command));
 
@@ -8925,12 +8926,12 @@ NODELETE constexpr TreeType convertType(Internals::TreeType type)
     return Tree;
 }
 
-String Internals::treeOrder(Node& a, Node& b, TreeType type)
+RefPtr<StringImpl> Internals::treeOrder(Node& a, Node& b, TreeType type)
 {
     return string(treeOrderForTesting(convertType(type), a, b));
 }
 
-String Internals::treeOrderBoundaryPoints(Node& containerA, unsigned offsetA, Node& containerB, unsigned offsetB, TreeType type)
+RefPtr<StringImpl> Internals::treeOrderBoundaryPoints(Node& containerA, unsigned offsetA, Node& containerB, unsigned offsetB, TreeType type)
 {
     return string(treeOrderForTesting(convertType(type), BoundaryPoint( containerA, offsetA ), BoundaryPoint(containerB, offsetB)));
 }
@@ -8960,7 +8961,7 @@ bool Internals::rangeIntersectsRange(const AbstractRange& a, const AbstractRange
     return intersectsForTesting(convertType(type), makeSimpleRange(a), makeSimpleRange(b));
 }
 
-String Internals::dumpStyleResolvers()
+RefPtr<StringImpl> Internals::dumpStyleResolvers()
 {
     RefPtr document = contextDocument();
     if (!document || !document->window())
@@ -9019,7 +9020,7 @@ void Internals::retainTextIteratorForDocumentContent()
     m_textIterator = makeUnique<TextIterator>(range);
 }
 
-RefPtr<PushSubscription> Internals::createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth)
+RefPtr<PushSubscription> Internals::createPushSubscription(StringImpl* endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth)
 {
     return PushSubscription::create(PushSubscriptionData { std::nullopt, { endpoint }, expirationTime, serverVAPIDPublicKey.toVector(), clientECDHPublicKey.toVector(), auth.toVector() });
 }
@@ -9035,7 +9036,7 @@ void Internals::acceptTypedArrays(Int32Array&)
     // Do nothing.
 }
 
-Internals::SelectorFilterHashCounts Internals::selectorFilterHashCounts(const String& selector)
+Internals::SelectorFilterHashCounts Internals::selectorFilterHashCounts(StringImpl* selector)
 {
     auto selectorList = CSSSelectorParser::parseSelectorList(selector, CSSParserContext(*protect(contextDocument())));
     if (!selectorList)
@@ -9062,7 +9063,7 @@ JSC::JSValue Internals::dumpJSNodeStatistics()
         size_t connected { 0 };
         size_t count { 0 };
     };
-    HashMap<String, Entry> stats;
+    HashMap<RefPtr<StringImpl>, Entry> stats;
     Entry totals;
 
     {
@@ -9075,7 +9076,7 @@ JSC::JSValue Internals::dumpJSNodeStatistics()
                 return IterationStatus::Continue;
 
             Ref node = jsNode->wrapped();
-            String nodeName;
+            RefPtr<StringImpl> nodeName;
             if (node->isElementNode())
                 nodeName = downcast<Element>(node.get()).tagName();
             else
@@ -9146,22 +9147,22 @@ AccessibilityObject* Internals::axObjectForElement(Element& element) const
     return nullptr;
 }
 
-String Internals::getComputedLabel(Element& element) const
+RefPtr<StringImpl> Internals::getComputedLabel(Element& element) const
 {
     // Force a layout. If we don't, and this request has come in before the render tree was built,
     // the accessibility object for this element will not be created (because it doesn't yet have its renderer).
     updateLayoutAndStyleForAllFrames();
 
     RefPtr axObject = axObjectForElement(element);
-    return axObject ? axObject->computedLabel() : ""_s;
+    return axObject ? axObject->computedLabel() : ""_si;
 }
 
-String Internals::getComputedRole(Element& element) const
+RefPtr<StringImpl> Internals::getComputedRole(Element& element) const
 {
     updateLayoutAndStyleForAllFrames();
 
     RefPtr axObject = axObjectForElement(element);
-    return axObject ? axObject->computedRoleString() : ""_s;
+    return axObject ? axObject->computedRoleString() : ""_si;
 }
 
 void Internals::setHistoryTotalStateObjectPayloadLimitOverride(uint32_t limit)
@@ -9172,7 +9173,7 @@ void Internals::setHistoryTotalStateObjectPayloadLimitOverride(uint32_t limit)
     window->history().setTotalStateObjectPayloadLimitOverride(limit);
 }
 
-void Internals::setPDFDisplayModeForTesting(Element& element, const String& displayMode) const
+void Internals::setPDFDisplayModeForTesting(Element& element, StringImpl* displayMode) const
 {
     RefPtr pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
     if (!pluginElement)
@@ -9185,7 +9186,7 @@ void Internals::setPDFDisplayModeForTesting(Element& element, const String& disp
     pluginViewBase->setPDFDisplayModeForTesting(displayMode);
 }
 
-void Internals::unlockPDFDocumentForTesting(Element& element, const String& password) const
+void Internals::unlockPDFDocumentForTesting(Element& element, StringImpl* password) const
 {
     RefPtr pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
     if (!pluginElement)
@@ -9198,7 +9199,7 @@ void Internals::unlockPDFDocumentForTesting(Element& element, const String& pass
     pluginViewBase->unlockPDFDocumentForTesting(password);
 }
 
-bool Internals::sendEditingCommandToPDFForTesting(Element& element, const String& commandName, const String& argument) const
+bool Internals::sendEditingCommandToPDFForTesting(Element& element, StringImpl* commandName, StringImpl* argument) const
 {
     RefPtr pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
     if (!pluginElement)
@@ -9211,7 +9212,7 @@ bool Internals::sendEditingCommandToPDFForTesting(Element& element, const String
     return pluginViewBase->sendEditingCommandToPDFForTesting(commandName, argument);
 }
 
-Vector<String> Internals::pdfContextMenuItemTitlesForTesting(Element& element, int x, int y) const
+Vector<RefPtr<StringImpl>> Internals::pdfContextMenuItemTitlesForTesting(Element& element, int x, int y) const
 {
     RefPtr pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
     if (!pluginElement)
@@ -9249,7 +9250,7 @@ Vector<Internals::PDFAnnotationRect> Internals::pdfAnnotationRectsForTesting(Ele
     return annotationRects;
 }
 
-void Internals::setPDFTextAnnotationValueForTesting(Element& element, unsigned pageIndex, unsigned annotationIndex, const String& value)
+void Internals::setPDFTextAnnotationValueForTesting(Element& element, unsigned pageIndex, unsigned annotationIndex, StringImpl* value)
 {
     RefPtr pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
     if (!pluginElement)
@@ -9272,7 +9273,7 @@ void Internals::registerPDFTest(Ref<VoidCallback>&& callback, Element& element)
         pluginViewBase->registerPDFTestCallback(WTF::move(callback));
 }
 
-String Internals::defaultSpatialTrackingLabel() const
+RefPtr<StringImpl> Internals::defaultSpatialTrackingLabel() const
 {
 #if HAVE(SPATIAL_TRACKING_LABEL)
     RefPtr document = contextDocument();
@@ -9345,7 +9346,7 @@ ExceptionOr<void> Internals::lowerAllFrameMemoryMonitorLimits()
     return { };
 }
 
-void Internals::setTopDocumentURLForQuirks(const String& urlString)
+void Internals::setTopDocumentURLForQuirks(StringImpl* urlString)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -9355,7 +9356,7 @@ void Internals::setTopDocumentURLForQuirks(const String& urlString)
     document->quirks().setTopDocumentURLForTesting(URL { urlString });
 }
 
-void Internals::setSubframeURLForQuirks(const String& urlString)
+void Internals::setSubframeURLForQuirks(StringImpl* urlString)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -9366,7 +9367,7 @@ void Internals::setSubframeURLForQuirks(const String& urlString)
     page->setQuirksSubframeURLForTesting(URL { urlString });
 }
 
-void Internals::setTopDocumentHostForQuirks(const String& host)
+void Internals::setTopDocumentHostForQuirks(StringImpl* host)
 {
     RefPtr document = contextDocument();
     if (!document || !document->page())
@@ -9374,7 +9375,7 @@ void Internals::setTopDocumentHostForQuirks(const String& host)
 
     Ref page = *protect(document->page());
     page->settings().setNeedsSiteSpecificQuirks(true);
-    page->setQuirksTopDocumentHostForTesting(String { host });
+    page->setQuirksTopDocumentHostForTesting(RefPtr<StringImpl> { host });
 }
 
 ExceptionOr<void> Internals::setQuirkTableForTesting(JSDOMGlobalObject& globalObject, JSC::JSValue table)
@@ -9385,7 +9386,7 @@ ExceptionOr<void> Internals::setQuirkTableForTesting(JSDOMGlobalObject& globalOb
 
     auto& vm = globalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    String json = JSC::JSONStringify(&globalObject, table, 0u);
+    RefPtr<StringImpl> json = JSC::JSONStringify(&globalObject, table, 0u);
     RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
     auto result = parseQuirkTable(json);
@@ -9403,7 +9404,7 @@ ExceptionOr<void> Internals::setQuirkTableForTesting(JSDOMGlobalObject& globalOb
     return { };
 }
 
-Vector<String> Internals::activeQuirks() const
+Vector<RefPtr<StringImpl>> Internals::activeQuirks() const
 {
     RefPtr document = contextDocument();
     if (!document)
@@ -9412,7 +9413,7 @@ Vector<String> Internals::activeQuirks() const
     return document->quirks().activeQuirks();
 }
 
-Vector<String> Internals::activeQuirkNames() const
+Vector<RefPtr<StringImpl>> Internals::activeQuirkNames() const
 {
     RefPtr document = contextDocument();
     if (!document)
@@ -9548,7 +9549,7 @@ void Internals::disableModelLoadDelaysForTesting()
     document->page()->disableModelLoadDelaysForTesting();
 }
 
-String Internals::modelElementState(HTMLModelElement& element)
+RefPtr<StringImpl> Internals::modelElementState(HTMLModelElement& element)
 {
     return element.modelElementStateForTesting();
 }
@@ -9564,8 +9565,8 @@ void Internals::modelSceneGraphAsText(Element& element, const ModelSceneGraphAsT
 {
     protect(element.document())->updateStyleIfNeeded();
 
-    auto completionHandler = [promise = WTF::move(promise)](String&& sceneGraph) mutable {
-        if (sceneGraph.isNull()) {
+    auto completionHandler = [promise = WTF::move(promise)](RefPtr<StringImpl>&& sceneGraph) mutable {
+        if (!sceneGraph) {
             promise.reject(Exception { ExceptionCode::InvalidStateError, "The element has no loaded model"_s });
             return;
         }
@@ -9630,7 +9631,7 @@ std::optional<Vector<double>> Internals::spatialPortalResolvedTransform(Element&
     };
 }
 
-String Internals::effectiveEnvironmentMap(Element& element)
+RefPtr<StringImpl> Internals::effectiveEnvironmentMap(Element& element)
 {
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     if (CheckedPtr controller = element.spatialPortalController())
@@ -9641,12 +9642,12 @@ String Internals::effectiveEnvironmentMap(Element& element)
 #else
     UNUSED_PARAM(element);
 #endif
-    return "auto"_s;
+    return "auto"_si;
 }
 #endif
 
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
-String Internals::volumetricScenePresentationMode(Element& element)
+RefPtr<StringImpl> Internals::volumetricScenePresentationMode(Element& element)
 {
     return ElementVolumetricScene::presentationModeForTesting(element);
 }

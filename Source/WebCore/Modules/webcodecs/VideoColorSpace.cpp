@@ -43,13 +43,13 @@ Ref<JSON::Object> VideoColorSpace::toJSON() const
     Ref json = JSON::Object::create();
 
     if (auto& primaries = this->primaries())
-        json->setString("primaries"_s, convertEnumerationToString(*primaries));
+        json->setString("primaries"_si, convertEnumerationToString(*primaries));
     if (auto& transfer = this->transfer())
-        json->setString("transfer"_s, convertEnumerationToString(*transfer));
+        json->setString("transfer"_si, convertEnumerationToString(*transfer));
     if (auto& matrix = this->matrix())
-        json->setString("matrix"_s, convertEnumerationToString(*matrix));
+        json->setString("matrix"_si, convertEnumerationToString(*matrix));
     if (auto& fullRange = this->fullRange())
-        json->setBoolean("fullRange"_s, *fullRange);
+        json->setBoolean("fullRange"_si, *fullRange);
 
     return json;
 }

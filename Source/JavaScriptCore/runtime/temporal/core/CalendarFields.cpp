@@ -164,9 +164,9 @@ TemporalResult<void> nonISOResolveFields(CalendarID calendarId, CalendarFieldsIn
     //          then reconcile with fields.year and store the arithmetic year.
     if (hasEras && fields.era && fields.eraYear) {
         if (auto canonical = canonicalizeEraInCalendar(calendarId, StringView(*fields.era)))
-            fields.era = String(*canonical);
+            fields.era = StringImpl::create(*canonical);
         if (auto remapped = remapNonPositiveEraYear(calendarId, StringView(*fields.era), *fields.eraYear)) {
-            fields.era = String(remapped->first);
+            fields.era = StringImpl::create(remapped->first);
             fields.eraYear = remapped->second;
         }
         auto arithmeticYear = calendarDateArithmeticYearForEraYear(calendarId, StringView(*fields.era), *fields.eraYear);
@@ -384,7 +384,7 @@ static TemporalResult<ISO8601::PlainDate> nonISOMonthDayToISOReferenceDate(Calen
         auto callerYearFields = isoToCalendarFields(calendarId, *inCallerYear);
         if (!callerYearFields)
             return makeUnexpected(callerYearFields.error());
-        if (callerYearFields->monthCode.isEmpty())
+        if (isEmpty(callerYearFields->monthCode))
             return makeUnexpected(rangeError(icuReadCalendarFailed));
         auto parsed = ISO8601::parseMonthCode(callerYearFields->monthCode);
         if (!parsed)
@@ -479,7 +479,7 @@ TemporalResult<CalendarFieldsIn> isoDateToFields(CalendarID calendarId, const IS
         return makeUnexpected(calendarDate.error());
 
     // Step 3: Set fields.[[MonthCode]] to calendarDate.[[MonthCode]].
-    if (!calendarDate->monthCode.isEmpty())
+    if (!isEmpty(calendarDate->monthCode))
         fields.monthCode = ISO8601::parseMonthCode(calendarDate->monthCode);
     // Step 4: If type is either ~month-day~ or ~date~, set fields.[[Day]] to calendarDate.[[Day]].
     if (type == ResolveType::MonthDay || type == ResolveType::Date)

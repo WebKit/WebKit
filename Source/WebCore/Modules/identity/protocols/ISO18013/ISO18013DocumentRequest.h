@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-using ISO18013ElementNamespaceVector = Vector<std::pair<String, ISO18013ElementInfo>>;
+using ISO18013ElementNamespaceVector = Vector<std::pair<RefPtr<StringImpl>, ISO18013ElementInfo>>;
 
-using ISO18013ElementNamespacesVector = Vector<std::pair<String, ISO18013ElementNamespaceVector>>;
+using ISO18013ElementNamespacesVector = Vector<std::pair<RefPtr<StringImpl>, ISO18013ElementNamespaceVector>>;
 
 struct ISO18013DocumentRequest {
-    String documentType;
+    RefPtr<StringImpl> documentType;
     ISO18013ElementNamespacesVector namespaces;
     std::optional<ISO18013DocumentRequestInfo> requestInfo;
 };

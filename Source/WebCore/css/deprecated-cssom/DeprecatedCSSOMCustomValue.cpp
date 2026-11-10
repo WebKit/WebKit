@@ -40,7 +40,7 @@ DeprecatedCSSOMCustomValue::DeprecatedCSSOMCustomValue(SerializationFunctor&& fu
 {
 }
 
-String DeprecatedCSSOMCustomValue::cssText() const
+RefPtr<StringImpl> DeprecatedCSSOMCustomValue::cssText() const
 {
     return m_serializationFunctor(CSS::defaultSerializationContext());
 }

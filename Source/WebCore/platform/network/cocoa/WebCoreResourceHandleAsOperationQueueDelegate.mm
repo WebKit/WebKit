@@ -149,7 +149,7 @@ NODELETE static bool scheduledWithCustomRunLoopMode(const std::optional<Schedule
             ASSERT(protectedSelf->m_handle->firstRequest().httpBody());
             redirectRequest.setHTTPBody(protectedSelf->m_handle->firstRequest().httpBody());
         }
-        if (protectedSelf->m_handle->firstRequest().httpContentType().isEmpty())
+        if (isEmpty(protectedSelf->m_handle->firstRequest().httpContentType()))
             redirectRequest.clearHTTPContentType();
 
         // Check if the redirected url is allowed to access the redirecting url's timing information.
@@ -341,7 +341,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 metrics->responseEnd = WallTime::fromRawSeconds(adoptNS([[NSDate alloc] initWithTimeIntervalSinceReferenceDate:responseEndTime]).get().timeIntervalSince1970).approximate<MonotonicTime>();
             else
                 metrics->responseEnd = metrics->responseStart;
-            metrics->protocol = checked_objc_cast<NSString>([timingData objectForKey:@"_kCFNTimingDataNetworkProtocolName"]);
+            metrics->protocol = StringImpl::create(checked_objc_cast<NSString>([timingData objectForKey:@"_kCFNTimingDataNetworkProtocolName"]));
             metrics->responseBodyBytesReceived = [[timingData objectForKey:@"_kCFNTimingDataResponseBodyBytesReceived"] unsignedLongLongValue];
             metrics->responseBodyDecodedSize = [[timingData objectForKey:@"_kCFNTimingDataResponseBodyBytesDecoded"] unsignedLongLongValue];
             metrics->markComplete();

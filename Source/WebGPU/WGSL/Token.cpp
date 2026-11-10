@@ -28,29 +28,29 @@
 
 namespace WGSL {
 
-String toString(TokenType type)
+RefPtr<StringImpl> toString(TokenType type)
 {
     switch (type) {
     case TokenType::Invalid:
-        return "Invalid"_s;
+        return "Invalid"_si;
     case TokenType::EndOfFile:
-        return "EOF"_s;
+        return "EOF"_si;
     case TokenType::AbstractFloatLiteral:
-        return "AbstractFloatLiteral"_s;
+        return "AbstractFloatLiteral"_si;
     case TokenType::IntegerLiteral:
-        return "IntegerLiteral"_s;
+        return "IntegerLiteral"_si;
     case TokenType::IntegerLiteralSigned:
-        return "IntegerLiteralSigned"_s;
+        return "IntegerLiteralSigned"_si;
     case TokenType::IntegerLiteralUnsigned:
-        return "IntegerLiteralUnsigned"_s;
+        return "IntegerLiteralUnsigned"_si;
     case TokenType::FloatLiteral:
-        return "FloatLiteral"_s;
+        return "FloatLiteral"_si;
     case TokenType::HalfLiteral:
-        return "HalfLiteral"_s;
+        return "HalfLiteral"_si;
     case TokenType::Identifier:
-        return "Identifier"_s;
+        return "Identifier"_si;
     case TokenType::ReservedWord:
-        return "ReservedWord"_s;
+        return "ReservedWord"_si;
 
 #define KEYWORD_TO_STRING(lexeme, name) \
     case TokenType::Keyword##name: \
@@ -59,101 +59,101 @@ FOREACH_KEYWORD(KEYWORD_TO_STRING)
 #undef KEYWORD_TO_STRING
 
     case TokenType::And:
-        return "&"_s;
+        return "&"_si;
     case TokenType::AndAnd:
-        return "&&"_s;
+        return "&&"_si;
     case TokenType::AndEq:
-        return "&="_s;
+        return "&="_si;
     case TokenType::Arrow:
-        return "->"_s;
+        return "->"_si;
     case TokenType::Attribute:
-        return "@"_s;
+        return "@"_si;
     case TokenType::Bang:
-        return "!"_s;
+        return "!"_si;
     case TokenType::BangEq:
-        return "!="_s;
+        return "!="_si;
     case TokenType::BracketLeft:
-        return "["_s;
+        return "["_si;
     case TokenType::BracketRight:
-        return "]"_s;
+        return "]"_si;
     case TokenType::BraceLeft:
-        return "{"_s;
+        return "{"_si;
     case TokenType::BraceRight:
-        return "}"_s;
+        return "}"_si;
     case TokenType::Colon:
-        return ":"_s;
+        return ":"_si;
     case TokenType::Comma:
-        return ","_s;
+        return ","_si;
     case TokenType::Equal:
-        return "="_s;
+        return "="_si;
     case TokenType::EqEq:
-        return "=="_s;
+        return "=="_si;
     case TokenType::TemplateArgsRight:
     case TokenType::Gt:
-        return ">"_s;
+        return ">"_si;
     case TokenType::GtEq:
-        return ">="_s;
+        return ">="_si;
     case TokenType::GtGt:
-        return ">>"_s;
+        return ">>"_si;
     case TokenType::GtGtEq:
-        return ">>="_s;
+        return ">>="_si;
     case TokenType::TemplateArgsLeft:
     case TokenType::Lt:
-        return "<"_s;
+        return "<"_si;
     case TokenType::LtEq:
-        return "<="_s;
+        return "<="_si;
     case TokenType::LtLt:
-        return "<<"_s;
+        return "<<"_si;
     case TokenType::LtLtEq:
-        return "<<="_s;
+        return "<<="_si;
     case TokenType::Minus:
-        return "-"_s;
+        return "-"_si;
     case TokenType::MinusMinus:
-        return "--"_s;
+        return "--"_si;
     case TokenType::MinusEq:
-        return "-="_s;
+        return "-="_si;
     case TokenType::Modulo:
-        return "%"_s;
+        return "%"_si;
     case TokenType::ModuloEq:
-        return "%="_s;
+        return "%="_si;
     case TokenType::Or:
-        return "|"_s;
+        return "|"_si;
     case TokenType::OrOr:
-        return "||"_s;
+        return "||"_si;
     case TokenType::OrEq:
-        return "|="_s;
+        return "|="_si;
     case TokenType::Plus:
-        return "+"_s;
+        return "+"_si;
     case TokenType::PlusPlus:
-        return "++"_s;
+        return "++"_si;
     case TokenType::PlusEq:
-        return "+="_s;
+        return "+="_si;
     case TokenType::Period:
-        return "."_s;
+        return "."_si;
     case TokenType::ParenLeft:
-        return "("_s;
+        return "("_si;
     case TokenType::ParenRight:
-        return ")"_s;
+        return ")"_si;
     case TokenType::Semicolon:
-        return ";"_s;
+        return ";"_si;
     case TokenType::Slash:
-        return "/"_s;
+        return "/"_si;
     case TokenType::SlashEq:
-        return "/="_s;
+        return "/="_si;
     case TokenType::Star:
-        return "*"_s;
+        return "*"_si;
     case TokenType::StarEq:
-        return "*="_s;
+        return "*="_si;
     case TokenType::Tilde:
-        return "~"_s;
+        return "~"_si;
     case TokenType::Underbar:
-        return "_"_s;
+        return "_"_si;
     case TokenType::Xor:
-        return "^"_s;
+        return "^"_si;
     case TokenType::XorEq:
-        return "^="_s;
+        return "^="_si;
     case TokenType::Placeholder:
-        return "<placeholder>"_s;
+        return "<placeholder>"_si;
     }
 }
 

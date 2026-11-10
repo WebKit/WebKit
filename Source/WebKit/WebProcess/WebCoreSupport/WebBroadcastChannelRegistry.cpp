@@ -53,10 +53,10 @@ static std::optional<WebCore::ClientOrigin> toClientOrigin(const WebCore::Partit
     return WebCore::ClientOrigin { origin.topOrigin->data(), origin.clientOrigin->data() };
 }
 
-void WebBroadcastChannelRegistry::registerChannel(const WebCore::PartitionedSecurityOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier identifier)
+void WebBroadcastChannelRegistry::registerChannel(const WebCore::PartitionedSecurityOrigin& origin, StringImpl* name, WebCore::BroadcastChannelIdentifier identifier)
 {
     auto& channelsForOrigin = m_channelsPerOrigin.ensure(origin, [] {
-        return HashMap<String, Vector<WebCore::BroadcastChannelIdentifier>> { };
+        return HashMap<RefPtr<StringImpl>, Vector<WebCore::BroadcastChannelIdentifier>> { };
     }).iterator->value;
     auto& channelsForName = channelsForOrigin.ensure(name, [] { return Vector<WebCore::BroadcastChannelIdentifier> { }; }).iterator->value;
     channelsForName.append(identifier);
@@ -67,7 +67,7 @@ void WebBroadcastChannelRegistry::registerChannel(const WebCore::PartitionedSecu
     }
 }
 
-void WebBroadcastChannelRegistry::unregisterChannel(const WebCore::PartitionedSecurityOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier identifier)
+void WebBroadcastChannelRegistry::unregisterChannel(const WebCore::PartitionedSecurityOrigin& origin, StringImpl* name, WebCore::BroadcastChannelIdentifier identifier)
 {
     auto channelsPerOriginIterator = m_channelsPerOrigin.find(origin);
     if (channelsPerOriginIterator == m_channelsPerOrigin.end())
@@ -92,7 +92,7 @@ void WebBroadcastChannelRegistry::unregisterChannel(const WebCore::PartitionedSe
         m_channelsPerOrigin.remove(channelsPerOriginIterator);
 }
 
-void WebBroadcastChannelRegistry::postMessage(const WebCore::PartitionedSecurityOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
+void WebBroadcastChannelRegistry::postMessage(const WebCore::PartitionedSecurityOrigin& origin, StringImpl* name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTF::move(completionHandler));
     auto blobURLs = message->blobURLs().map([](auto& blobURL) {
@@ -105,7 +105,7 @@ void WebBroadcastChannelRegistry::postMessage(const WebCore::PartitionedSecurity
     postMessageLocally(origin, name, source, WTF::move(message), WTF::move(callbackAggregator));
 }
 
-void WebBroadcastChannelRegistry::postMessageLocally(const WebCore::PartitionedSecurityOrigin& origin, const String& name, std::optional<WebCore::BroadcastChannelIdentifier> sourceInProcess, Ref<WebCore::SerializedScriptValue>&& message, Ref<WTF::CallbackAggregator>&& callbackAggregator)
+void WebBroadcastChannelRegistry::postMessageLocally(const WebCore::PartitionedSecurityOrigin& origin, StringImpl* name, std::optional<WebCore::BroadcastChannelIdentifier> sourceInProcess, Ref<WebCore::SerializedScriptValue>&& message, Ref<WTF::CallbackAggregator>&& callbackAggregator)
 {
     auto channelsPerOriginIterator = m_channelsPerOrigin.find(origin);
     if (channelsPerOriginIterator == m_channelsPerOrigin.end())
@@ -132,7 +132,7 @@ void WebBroadcastChannelRegistry::postMessageLocally(const WebCore::PartitionedS
     }
 }
 
-void WebBroadcastChannelRegistry::postMessageToRemote(const WebCore::ClientOrigin& clientOrigin, const String& name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
+void WebBroadcastChannelRegistry::postMessageToRemote(const WebCore::ClientOrigin& clientOrigin, StringImpl* name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTF::move(completionHandler));
     WebCore::PartitionedSecurityOrigin origin { clientOrigin.topOrigin.securityOrigin(), clientOrigin.clientOrigin.securityOrigin() };

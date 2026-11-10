@@ -30,11 +30,11 @@
 namespace WebKit {
 
 struct WebExtensionBookmarksParameters {
-    String nodeId;
-    std::optional<String> parentId;
+    RefPtr<StringImpl> nodeId;
+    std::optional<RefPtr<StringImpl>> parentId;
     uint64_t index;
-    String title;
-    std::optional<String> url;
+    RefPtr<StringImpl> title;
+    std::optional<RefPtr<StringImpl>> url;
     WallTime dateAdded;
     std::optional<Vector<WebExtensionBookmarksParameters>> children;
 };

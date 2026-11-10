@@ -42,8 +42,8 @@ public:
     virtual ~VideoTrackPrivateWebM() = default;
 
     TrackID id() const final;
-    String label() const final;
-    String language() const final;
+    RefPtr<StringImpl> label() const final;
+    RefPtr<StringImpl> language() const final;
     int trackIndex() const final;
     std::optional<bool> defaultEnabled() const final;
     NODELETE uint32_t width() const;
@@ -54,14 +54,14 @@ private:
 
     void setFormatDescription(Ref<VideoInfo>&&);
 
-    String codec() const;
+    RefPtr<StringImpl> codec() const;
     NODELETE double framerate() const;
     NODELETE PlatformVideoColorSpace colorSpace() const;
     void updateConfiguration();
 
     webm::TrackEntry m_track;
-    mutable String m_label;
-    mutable String m_language;
+    mutable RefPtr<StringImpl> m_label;
+    mutable RefPtr<StringImpl> m_language;
     RefPtr<VideoInfo> m_formatDescription;
 };
 

@@ -37,7 +37,7 @@ inline void JSExecState::instrumentFunction(ScriptExecutionContext* context, con
     if (!InspectorInstrumentation::timelineAgentTracking(context))
         return;
 
-    String resourceName;
+    RefPtr<StringImpl> resourceName;
     int lineNumber = 1;
     int columnNumber = 1;
     if (callData.type == JSC::CallData::Type::JS) {
@@ -45,7 +45,7 @@ inline void JSExecState::instrumentFunction(ScriptExecutionContext* context, con
         lineNumber = callData.js.functionExecutable->firstLine();
         columnNumber = callData.js.functionExecutable->startColumn();
     } else
-        resourceName = "undefined"_s;
+        resourceName = "undefined"_si;
     InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber, columnNumber);
 }
 

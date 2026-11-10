@@ -40,18 +40,18 @@ public:
 
     WebCore::PushCrypto::ClientKeys generateClientKeys() final;
 
-    void subscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&&) override;
-    void unsubscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, UnsubscribeHandler&&) override;
+    void subscribe(StringImpl* topic, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&&) override;
+    void unsubscribe(StringImpl* topic, const Vector<uint8_t>& vapidPublicKey, UnsubscribeHandler&&) override;
 
-    Vector<String> enabledTopics() override { return m_enabledTopics; }
-    Vector<String> ignoredTopics() override { return m_ignoredTopics; }
-    Vector<String> opportunisticTopics() override { return m_opportunisticTopics; }
-    Vector<String> nonWakingTopics() override { return m_nonWakingTopics; }
+    Vector<RefPtr<StringImpl>> enabledTopics() override { return m_enabledTopics; }
+    Vector<RefPtr<StringImpl>> ignoredTopics() override { return m_ignoredTopics; }
+    Vector<RefPtr<StringImpl>> opportunisticTopics() override { return m_opportunisticTopics; }
+    Vector<RefPtr<StringImpl>> nonWakingTopics() override { return m_nonWakingTopics; }
 
-    void setEnabledTopics(Vector<String>&& enabledTopics) override { m_enabledTopics = enabledTopics; }
-    void setIgnoredTopics(Vector<String>&& ignoredTopics) override { m_ignoredTopics = ignoredTopics; }
-    void setOpportunisticTopics(Vector<String>&& opportunisticTopics) override { m_opportunisticTopics = opportunisticTopics; }
-    void setNonWakingTopics(Vector<String>&& nonWakingTopics) override { m_nonWakingTopics = nonWakingTopics; }
+    void setEnabledTopics(Vector<RefPtr<StringImpl>>&& enabledTopics) override { m_enabledTopics = enabledTopics; }
+    void setIgnoredTopics(Vector<RefPtr<StringImpl>>&& ignoredTopics) override { m_ignoredTopics = ignoredTopics; }
+    void setOpportunisticTopics(Vector<RefPtr<StringImpl>>&& opportunisticTopics) override { m_opportunisticTopics = opportunisticTopics; }
+    void setNonWakingTopics(Vector<RefPtr<StringImpl>>&& nonWakingTopics) override { m_nonWakingTopics = nonWakingTopics; }
 
     void setTopicLists(TopicLists&&) override;
 
@@ -60,10 +60,10 @@ public:
 private:
     MockPushServiceConnection();
 
-    Vector<String> m_enabledTopics;
-    Vector<String> m_ignoredTopics;
-    Vector<String> m_opportunisticTopics;
-    Vector<String> m_nonWakingTopics;
+    Vector<RefPtr<StringImpl>> m_enabledTopics;
+    Vector<RefPtr<StringImpl>> m_ignoredTopics;
+    Vector<RefPtr<StringImpl>> m_opportunisticTopics;
+    Vector<RefPtr<StringImpl>> m_nonWakingTopics;
 };
 
 } // namespace WebPushD

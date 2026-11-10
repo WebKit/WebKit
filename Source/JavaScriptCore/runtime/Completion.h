@@ -68,7 +68,7 @@ inline JSValue profiledEvaluate(JSGlobalObject* globalObject, ProfilingReason re
 JS_EXPORT_PRIVATE JSValue evaluateWithScopeExtension(JSGlobalObject*, const SourceCode&, JSObject* scopeExtension, NakedPtr<Exception>& returnedException);
 
 // Load the module source and evaluate it.
-JS_EXPORT_PRIVATE JSPromise* loadAndEvaluateModule(JSGlobalObject*, const String& moduleName, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>);
+JS_EXPORT_PRIVATE JSPromise* loadAndEvaluateModule(JSGlobalObject*, StringImpl* moduleName, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>);
 JS_EXPORT_PRIVATE JSPromise* loadAndEvaluateModule(JSGlobalObject*, SourceCode&&, RefPtr<ScriptFetcher>);
 
 // Fetch the module source, and instantiate the module record.
@@ -81,7 +81,7 @@ JS_EXPORT_PRIVATE JSPromise* linkAndEvaluateModule(JSGlobalObject*, const Identi
 
 JS_EXPORT_PRIVATE JSPromise* importModule(JSGlobalObject*, const Identifier& moduleName, const Identifier& referrer, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>, bool deferred = false);
 
-JS_EXPORT_PRIVATE UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesFromDynamicImportOptions(JSGlobalObject*, JSValue, const Vector<RefPtr<UniquedStringImpl>>& supportedAssertions);
-JS_EXPORT_PRIVATE std::optional<ScriptFetchParameters::Type> retrieveTypeImportAttribute(JSGlobalObject*, const UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String>&);
+JS_EXPORT_PRIVATE UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, RefPtr<StringImpl>> retrieveImportAttributesFromDynamicImportOptions(JSGlobalObject*, JSValue, const Vector<RefPtr<UniquedStringImpl>>& supportedAssertions);
+JS_EXPORT_PRIVATE std::optional<ScriptFetchParameters::Type> retrieveTypeImportAttribute(JSGlobalObject*, const UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, RefPtr<StringImpl>>&);
 
 } // namespace JSC

@@ -36,10 +36,10 @@ bool PublicSuffixStore::platformIsPublicSuffix(StringView domain) const
     if (domain.isEmpty())
         return false;
 
-    return soup_tld_domain_is_public_suffix(domain.convertToASCIILowercase().utf8().legacyCStringPointer());
+    return soup_tld_domain_is_public_suffix(utf8(domain.convertToASCIILowercase()).legacyCStringPointer());
 }
 
-static String permissiveTopPrivateDomain(StringView domain)
+static RefPtr<StringImpl> permissiveTopPrivateDomain(StringView domain)
 {
     auto position = domain.length();
     bool foundDot = false;
@@ -55,10 +55,10 @@ static String permissiveTopPrivateDomain(StringView domain)
         }
     }
 
-    return foundDot ? domain.toString() : String();
+    return foundDot ? domain.toString() : nullptr;
 }
 
-String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain) const
+RefPtr<StringImpl> PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain) const
 {
     // This function is expected to work with the format used by cookies, so skip any leading dots.
     unsigned position = 0;
@@ -67,25 +67,25 @@ String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain
 
     auto tldView = domain.substring(position);
     if (tldView.isEmpty())
-        return String();
+        return nullptr;
 
     const auto tldCString = tldView.utf8();
 
     GUniqueOutPtr<GError> error;
     if (const char* baseDomain = soup_tld_get_base_domain(tldCString.legacyCStringPointer(), &error.outPtr()))
-        return String::fromUTF8(baseDomain);
+        return StringImpl::fromUTF8(baseDomain);
 
     if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NO_BASE_DOMAIN))
         return permissiveTopPrivateDomain(tldView);
 
     if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_INVALID_HOSTNAME) || g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NOT_ENOUGH_DOMAINS))
-        return String();
+        return nullptr;
 
     if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_IS_IP_ADDRESS))
         return domain.toString();
 
     ASSERT_NOT_REACHED();
-    return String();
+    return nullptr;
 }
 
 } // namespace WebCore

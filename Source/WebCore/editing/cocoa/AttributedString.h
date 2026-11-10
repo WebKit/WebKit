@@ -117,7 +117,7 @@ enum class ParagraphStyleWritingDirection: uint8_t {
 
 struct ParagraphStyleTextList {
     AttributedStringTextListID thisID;
-    String markerFormat;
+    RefPtr<StringImpl> markerFormat;
     int64_t startingItemNumber { 0 };
 };
 
@@ -213,10 +213,10 @@ struct WEBCORE_EXPORT AttributedString {
 
         using AttributeType = Variant<
             double,
-            String,
+            RefPtr<StringImpl>,
             URL,
             InstalledFont,
-            Vector<String>,
+            Vector<RefPtr<StringImpl>>,
             Vector<double>,
             ParagraphStyle,
             RetainPtr<NSPresentationIntent>,
@@ -234,12 +234,12 @@ struct WEBCORE_EXPORT AttributedString {
         AttributeType value;
     };
 
-    String string;
-    Vector<std::pair<Range, HashMap<String, AttributeValue>>> attributes;
-    std::optional<HashMap<String, AttributeValue>> documentAttributes;
+    RefPtr<StringImpl> string;
+    Vector<std::pair<Range, HashMap<RefPtr<StringImpl>, AttributeValue>>> attributes;
+    std::optional<HashMap<RefPtr<StringImpl>, AttributeValue>> documentAttributes;
 
     NODELETE AttributedString();
-    AttributedString(String&&, Vector<std::pair<Range, HashMap<String, AttributeValue>>>&&, std::optional<HashMap<String, AttributeValue>>&&);
+    AttributedString(RefPtr<StringImpl>&&, Vector<std::pair<Range, HashMap<RefPtr<StringImpl>, AttributeValue>>>&&, std::optional<HashMap<RefPtr<StringImpl>, AttributeValue>>&&);
     AttributedString(AttributedString&&);
     AttributedString(const AttributedString&);
     AttributedString& operator=(AttributedString&&);
@@ -248,7 +248,7 @@ struct WEBCORE_EXPORT AttributedString {
 
     static AttributedString fromNSAttributedStringAndDocumentAttributes(RetainPtr<NSAttributedString>&&, RetainPtr<NSDictionary>&& documentAttributes);
     static AttributedString fromNSAttributedString(RetainPtr<NSAttributedString>&&);
-    NODELETE static bool rangesAreSafe(const String&, const Vector<std::pair<Range, HashMap<String, AttributeValue>>>&);
+    NODELETE static bool rangesAreSafe(StringImpl*, const Vector<std::pair<Range, HashMap<RefPtr<StringImpl>, AttributeValue>>>&);
     RetainPtr<NSDictionary> documentAttributesAsNSDictionary() const;
     RetainPtr<NSAttributedString> nsAttributedString() const;
     NODELETE bool isNull() const;

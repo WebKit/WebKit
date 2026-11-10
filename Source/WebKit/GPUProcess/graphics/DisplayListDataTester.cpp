@@ -61,25 +61,25 @@ namespace DisplayListDataTests {
 
 class Tester {
 public:
-    Vector<String> takeFailures() { return WTF::move(m_failures); }
+    Vector<RefPtr<StringImpl>> takeFailures() { return WTF::move(m_failures); }
 
-    void expect(bool condition, const String& description)
+    void expect(bool condition, StringImpl* description)
     {
         if (!condition)
             m_failures.append(description);
     }
 
-    void expectEqual(const String& actual, const String& expected, const String& description)
+    void expectEqual(StringImpl* actual, StringImpl* expected, StringImpl* description)
     {
-        if (actual != expected)
+        if (!equal(actual, expected))
             m_failures.append(makeString(description, "\nexpected:\n"_s, expected, "\nactual:\n"_s, actual));
     }
 
 private:
-    Vector<String> m_failures;
+    Vector<RefPtr<StringImpl>> m_failures;
 };
 
-static String displayListText(const DisplayList::DisplayList& displayList)
+static RefPtr<StringImpl> displayListText(const DisplayList::DisplayList& displayList)
 {
     return displayList.asText({ });
 }
@@ -217,15 +217,15 @@ static void testValueItems(Tester& tester)
 #endif
     items.append(DisplayList::BeginPage { rect });
     items.constructAndAppend(WTF::InPlaceType<DisplayList::EndPage>);
-    items.append(DisplayList::SetURLForRect { URL { "https://webkit.org/"_s }, rect });
+    items.append(DisplayList::SetURLForRect { URL { "https://webkit.org/"_si }, rect });
     Ref displayList = DisplayList::DisplayList::create(WTF::move(items));
 
     RefPtr decoded = encodeAndDecodeDisplayList(displayList);
-    tester.expect(!!decoded, "Value items round trip"_s);
+    tester.expect(!!decoded, "Value items round trip"_si);
     if (!decoded)
         return;
-    tester.expect(decoded->items().size() == displayList->items().size(), "Value items keep their count"_s);
-    tester.expectEqual(displayListText(*decoded), displayListText(displayList), "Value items keep their contents"_s);
+    tester.expect(decoded->items().size() == displayList->items().size(), "Value items keep their count"_si);
+    tester.expectEqual(displayListText(*decoded), displayListText(displayList), "Value items keep their contents"_si);
 }
 
 static Ref<const DisplayList::DisplayList> childDisplayList()
@@ -246,15 +246,15 @@ static void testNestedDisplayLists(Tester& tester)
     Ref displayList = DisplayList::DisplayList::create(WTF::move(items));
 
     auto data = DisplayListData::create(displayList);
-    tester.expect(!!data, "Nested display lists encode"_s);
+    tester.expect(!!data, "Nested display lists encode"_si);
     if (!data)
         return;
-    tester.expect(data->bottomUpDisplayLists().size() == 2, "A display list drawn twice is encoded once"_s);
+    tester.expect(data->bottomUpDisplayLists().size() == 2, "A display list drawn twice is encoded once"_si);
 
     RefPtr decoded = encodeAndDecodeDisplayList(displayList);
-    tester.expect(!!decoded, "Nested display lists round trip"_s);
+    tester.expect(!!decoded, "Nested display lists round trip"_si);
     if (decoded)
-        tester.expectEqual(displayListText(*decoded), displayListText(displayList), "Nested display lists keep their contents"_s);
+        tester.expectEqual(displayListText(*decoded), displayListText(displayList), "Nested display lists keep their contents"_si);
 }
 
 static void testPlaceholders(Tester& tester)
@@ -282,15 +282,15 @@ static void testPlaceholders(Tester& tester)
     Ref expected = DisplayList::DisplayList::create(WTF::move(expectedItems));
 
     auto data = DisplayListData::create(displayList);
-    tester.expect(!!data, "Placeholders encode"_s);
+    tester.expect(!!data, "Placeholders encode"_si);
     if (!data)
         return;
-    tester.expect(data->bottomUpDisplayLists().size() == 2, "A display list drawn by two placeholders is encoded once"_s);
+    tester.expect(data->bottomUpDisplayLists().size() == 2, "A display list drawn by two placeholders is encoded once"_si);
 
     RefPtr decoded = encodeAndDecodeDisplayList(displayList);
-    tester.expect(!!decoded, "Placeholders round trip"_s);
+    tester.expect(!!decoded, "Placeholders round trip"_si);
     if (decoded)
-        tester.expectEqual(displayListText(*decoded), displayListText(expected), "Placeholders are replaced by what they draw"_s);
+        tester.expectEqual(displayListText(*decoded), displayListText(expected), "Placeholders are replaced by what they draw"_si);
 }
 
 static void testPlaceholderDrawingItself(Tester& tester)
@@ -302,13 +302,13 @@ static void testPlaceholderDrawingItself(Tester& tester)
     } });
     displayList = DisplayList::DisplayList::create(WTF::move(items));
 
-    tester.expect(!DisplayListData::create(*displayList), "A placeholder that draws its own display list fails to encode"_s);
+    tester.expect(!DisplayListData::create(*displayList), "A placeholder that draws its own display list fails to encode"_si);
 }
 
 #if USE(CORE_TEXT)
 static constexpr float testFontSize = 30;
 
-static DisplayList::DrawGlyphs drawGlyphs(const FontBase& font, const String& text, const FloatPoint& localAnchor)
+static DisplayList::DrawGlyphs drawGlyphs(const FontBase& font, StringImpl* text, const FloatPoint& localAnchor)
 {
     auto upconvertedCharacters = StringView(text).upconvertedCharacters();
     auto characters = upconvertedCharacters.span();
@@ -337,15 +337,15 @@ static void testSystemFonts(Tester& tester)
 {
     Ref font = createFont(adoptCF(CTFontCreateWithName(CFSTR("Helvetica"), testFontSize, nullptr)));
     Vector<DisplayList::Item> items;
-    items.append(drawGlyphs(font, "Hello"_s, { 5, 40 }));
-    items.append(drawGlyphs(font, "World"_s, { 5, 80 }));
+    items.append(drawGlyphs(font, "Hello"_si, { 5, 40 }));
+    items.append(drawGlyphs(font, "World"_si, { 5, 80 }));
     Ref displayList = createDisplayList(WTF::move(items));
 
     auto data = DisplayListData::create(displayList);
-    tester.expect(!!data, "System fonts encode"_s);
+    tester.expect(!!data, "System fonts encode"_si);
     if (data) {
-        tester.expect(data->fonts().size() == 1, "A font drawn twice is encoded once"_s);
-        tester.expect(data->customFonts().isEmpty(), "System fonts have no font data"_s);
+        tester.expect(data->fonts().size() == 1, "A font drawn twice is encoded once"_si);
+        tester.expect(data->customFonts().isEmpty(), "System fonts have no font data"_si);
     }
     expectSameDrawing(tester, displayList, "System fonts"_s);
 }
@@ -368,12 +368,12 @@ static void testVariableFonts(Tester& tester)
 {
     auto displayListWithWeight = [](float weight) {
         Vector<DisplayList::Item> items;
-        items.append(drawGlyphs(createFont(createSystemFontWithWeight(weight)), "Weight"_s, { 5, 60 }));
+        items.append(drawGlyphs(createFont(createSystemFontWithWeight(weight)), "Weight"_si, { 5, 60 }));
         return createDisplayList(WTF::move(items));
     };
     Ref bold = displayListWithWeight(800);
     expectSameDrawing(tester, bold, "Variable fonts"_s);
-    tester.expect(drawToPixels(bold) != drawToPixels(displayListWithWeight(200)), "Variable fonts draw differently with another weight"_s);
+    tester.expect(drawToPixels(bold) != drawToPixels(displayListWithWeight(200)), "Variable fonts draw differently with another weight"_si);
 }
 
 static RefPtr<FontCustomPlatformData> createCustomFont(SharedBuffer& data)
@@ -388,23 +388,23 @@ static Ref<SharedFont> createWebFont(FontCustomPlatformData& customFont, float s
 
 static void testWebFonts(Tester& tester, const Vector<Ref<SharedBuffer>>& webFonts)
 {
-    tester.expect(!webFonts.isEmpty(), "Web fonts are given"_s);
+    tester.expect(!webFonts.isEmpty(), "Web fonts are given"_si);
     for (auto& webFont : webFonts) {
         RefPtr customFont = createCustomFont(webFont);
-        tester.expect(!!customFont, "Web fonts are created"_s);
+        tester.expect(!!customFont, "Web fonts are created"_si);
         if (!customFont)
             continue;
 
         Vector<DisplayList::Item> items;
-        items.append(drawGlyphs(createWebFont(*customFont, 20), "AB"_s, { 5, 30 }));
-        items.append(drawGlyphs(createWebFont(*customFont, 30), "AB"_s, { 5, 80 }));
+        items.append(drawGlyphs(createWebFont(*customFont, 20), "AB"_si, { 5, 30 }));
+        items.append(drawGlyphs(createWebFont(*customFont, 30), "AB"_si, { 5, 80 }));
         Ref displayList = createDisplayList(WTF::move(items));
 
         auto data = DisplayListData::create(displayList);
-        tester.expect(!!data, "Web fonts encode"_s);
+        tester.expect(!!data, "Web fonts encode"_si);
         if (data) {
-            tester.expect(data->fonts().size() == 2, "Each web font is encoded"_s);
-            tester.expect(data->customFonts().size() == 1, "Font data shared by two fonts is encoded once"_s);
+            tester.expect(data->fonts().size() == 2, "Each web font is encoded"_si);
+            tester.expect(data->customFonts().size() == 1, "Font data shared by two fonts is encoded once"_si);
         }
         expectSameDrawing(tester, displayList, "Web fonts"_s);
         expectSameDrawing(tester, displayList, "Web fonts parsed by the Lockdown Mode parser"_s, true);
@@ -415,9 +415,9 @@ static void testInvalidFonts(Tester& tester, const Vector<Ref<SharedBuffer>>& we
 {
     Ref font = createFont(adoptCF(CTFontCreateWithName(CFSTR("Helvetica"), testFontSize, nullptr)));
     Vector<DisplayList::Item> items;
-    items.append(drawGlyphs(font, "Hello"_s, { 5, 40 }));
+    items.append(drawGlyphs(font, "Hello"_si, { 5, 40 }));
     auto data = DisplayListData::create(createDisplayList(WTF::move(items)));
-    tester.expect(!!data, "Glyphs for the invalid font tests encode"_s);
+    tester.expect(!!data, "Glyphs for the invalid font tests encode"_si);
     if (!data)
         return;
     auto& fontData = data->fonts()[0];
@@ -431,18 +431,18 @@ static void testInvalidFonts(Tester& tester, const Vector<Ref<SharedBuffer>>& we
 
     auto missingFont = glyphs;
     missingFont.setFontIndex(1);
-    tester.expect(!withGlyphs(WTF::move(missingFont)).createDisplayList(false), "Glyphs drawn with a missing font fail to decode"_s);
+    tester.expect(!withGlyphs(WTF::move(missingFont)).createDisplayList(false), "Glyphs drawn with a missing font fail to decode"_si);
 
     auto missingAdvances = glyphs.sizes();
     missingAdvances.removeLast();
     DisplayList::DrawGlyphs missingAdvance { 0, Vector(glyphs.glyphs()), WTF::move(missingAdvances), glyphs.localAnchor(), glyphs.fontSmoothingMode() };
-    tester.expect(!withGlyphs(WTF::move(missingAdvance)).createDisplayList(false), "Glyphs without an advance each fail to decode"_s);
+    tester.expect(!withGlyphs(WTF::move(missingAdvance)).createDisplayList(false), "Glyphs without an advance each fail to decode"_si);
 
     auto missingFontData = fontData;
     missingFontData.customFontIndex = 0;
     Vector<Vector<DisplayListDataItem>> displayLists;
     displayLists.append(Vector<DisplayListDataItem> { glyphs });
-    tester.expect(!DisplayListData { { }, { WTF::move(missingFontData) }, WTF::move(displayLists) }.createDisplayList(false), "A font with missing font data fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { WTF::move(missingFontData) }, WTF::move(displayLists) }.createDisplayList(false), "A font with missing font data fails to decode"_si);
 
     if (webFonts.isEmpty())
         return;
@@ -451,7 +451,7 @@ static void testInvalidFonts(Tester& tester, const Vector<Ref<SharedBuffer>>& we
         return;
     auto invalidFontData = customFont->serializedData();
     invalidFontData.fontFaceData = SharedBuffer::create(Vector<uint8_t>(FillWith { }, 64, 0xff));
-    tester.expect(!DisplayListData { { WTF::move(invalidFontData) }, { }, { Vector<DisplayListDataItem> { DisplayList::Save { } } } }.createDisplayList(false), "Invalid font data fails to decode"_s);
+    tester.expect(!DisplayListData { { WTF::move(invalidFontData) }, { }, { Vector<DisplayListDataItem> { DisplayList::Save { } } } }.createDisplayList(false), "Invalid font data fails to decode"_si);
 }
 #endif // USE(CORE_TEXT)
 
@@ -564,44 +564,44 @@ static void testItemsWithResources(Tester& tester)
 
     GraphicsContextState state;
     state.setFillPattern(WebCore::Pattern::create(SourceImage { testImageBuffer() }));
-    tester.expect(!encodes(DisplayList::SetState { state }), "A graphics state with a pattern fails to encode"_s);
+    tester.expect(!encodes(DisplayList::SetState { state }), "A graphics state with a pattern fails to encode"_si);
 
     FloatRect rect { 0, 0, 10, 10 };
-    tester.expect(!encodes(DisplayList::DrawImageBuffer { testImageBuffer(), rect, rect, { } }), "Image buffers fail to encode"_s);
-    tester.expect(!encodes(DisplayList::DrawFilteredImageBuffer { testImageBuffer(), rect, filterWithEffect(FEFlood::create(Color::green, 1)) }), "Filters with a source image fail to encode"_s);
-    tester.expect(!encodes(DisplayList::DrawFilteredImageBuffer { nullptr, rect, filterWithEffect(FEImage::create(SourceImage { testImageBuffer() }, rect)) }), "Filters with an image fail to encode"_s);
+    tester.expect(!encodes(DisplayList::DrawImageBuffer { testImageBuffer(), rect, rect, { } }), "Image buffers fail to encode"_si);
+    tester.expect(!encodes(DisplayList::DrawFilteredImageBuffer { testImageBuffer(), rect, filterWithEffect(FEFlood::create(Color::green, 1)) }), "Filters with a source image fail to encode"_si);
+    tester.expect(!encodes(DisplayList::DrawFilteredImageBuffer { nullptr, rect, filterWithEffect(FEImage::create(SourceImage { testImageBuffer() }, rect)) }), "Filters with an image fail to encode"_si);
 }
 
 static void testInvalidData(Tester& tester)
 {
-    tester.expect(!DisplayListData { { }, { }, { } }.createDisplayList(false), "Data without a display list fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { }, { } }.createDisplayList(false), "Data without a display list fails to decode"_si);
 
     Vector<Vector<DisplayListDataItem>> drawingItself;
     drawingItself.append(Vector<DisplayListDataItem> { DisplayList::DrawDisplayList { 0 } });
-    tester.expect(!DisplayListData { { }, { }, WTF::move(drawingItself) }.createDisplayList(false), "A display list that draws itself fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { }, WTF::move(drawingItself) }.createDisplayList(false), "A display list that draws itself fails to decode"_si);
 
     Vector<Vector<DisplayListDataItem>> drawingLater;
     drawingLater.append(Vector<DisplayListDataItem> { DisplayList::DrawDisplayList { 1 } });
     drawingLater.append(Vector<DisplayListDataItem> { DisplayList::Save { } });
-    tester.expect(!DisplayListData { { }, { }, WTF::move(drawingLater) }.createDisplayList(false), "A display list that draws a later one fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { }, WTF::move(drawingLater) }.createDisplayList(false), "A display list that draws a later one fails to decode"_si);
 
     Vector<Vector<DisplayListDataItem>> drawingMissing;
     drawingMissing.append(Vector<DisplayListDataItem> { DisplayList::Save { } });
     drawingMissing.append(Vector<DisplayListDataItem> { DisplayList::DrawDisplayList { 5 } });
-    tester.expect(!DisplayListData { { }, { }, WTF::move(drawingMissing) }.createDisplayList(false), "A display list that draws a missing one fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { }, WTF::move(drawingMissing) }.createDisplayList(false), "A display list that draws a missing one fails to decode"_si);
 
     FloatRect rect { 0, 0, 10, 10 };
     Vector<Vector<DisplayListDataItem>> filterWithImage;
     filterWithImage.append(Vector<DisplayListDataItem> { DisplayList::DrawFilteredImageBuffer { rect, filterWithEffect(FEImage::create(SourceImage { testImageBuffer() }, rect)) } });
-    tester.expect(!DisplayListData { { }, { }, WTF::move(filterWithImage) }.createDisplayList(false), "A filter with an image fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { }, WTF::move(filterWithImage) }.createDisplayList(false), "A filter with an image fails to decode"_si);
 
-    tester.expect(!DisplayList::isResolved(DisplayList::DrawDisplayList { 0 }), "A display list index is unresolved"_s);
-    tester.expect(!DisplayList::isResolved(DisplayList::DrawGlyphs { 0, { }, { }, { }, FontSmoothingMode::Auto }), "A font index is unresolved"_s);
+    tester.expect(!DisplayList::isResolved(DisplayList::DrawDisplayList { 0 }), "A display list index is unresolved"_si);
+    tester.expect(!DisplayList::isResolved(DisplayList::DrawGlyphs { 0, { }, { }, { }, FontSmoothingMode::Auto }), "A font index is unresolved"_si);
 }
 
 } // namespace DisplayListDataTests
 
-Vector<String> testDisplayListData(const Vector<Ref<SharedBuffer>>& webFonts)
+Vector<RefPtr<StringImpl>> testDisplayListData(const Vector<Ref<SharedBuffer>>& webFonts)
 {
     using namespace DisplayListDataTests;
     Tester tester;

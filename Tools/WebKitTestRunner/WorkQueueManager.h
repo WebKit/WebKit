@@ -41,13 +41,13 @@ public:
     void clearWorkQueue();
     bool processWorkQueue(); // Returns 'true' if queue is processed (no new loading is started), returns 'false' otherwise.
 
-    void queueLoad(const String& url, const String& target, bool shouldOpenExternalURLs);
-    void queueLoadHTMLString(const String& content, const String& baseURL, const String& unreachableURL);
+    void queueLoad(StringImpl* url, StringImpl* target, bool shouldOpenExternalURLs);
+    void queueLoadHTMLString(StringImpl* content, StringImpl* baseURL, StringImpl* unreachableURL);
     void queueBackNavigation(unsigned howFarBackward);
     void queueForwardNavigation(unsigned howFarForward);
     void queueReload();
-    void queueLoadingScript(const String& script);
-    void queueNonLoadingScript(const String& script);
+    void queueLoadingScript(StringImpl* script);
+    void queueNonLoadingScript(StringImpl* script);
 
 private:    
     typedef Deque<std::unique_ptr<class WorkQueueItem>> WorkQueue;

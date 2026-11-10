@@ -54,9 +54,9 @@
 
 namespace WebCore {
 
-NODELETE static HashMap<const CSSPrimitiveValue*, String>& serializedPrimitiveValues()
+NODELETE static HashMap<const CSSPrimitiveValue*, RefPtr<StringImpl>>& serializedPrimitiveValues()
 {
-    static NeverDestroyed<HashMap<const CSSPrimitiveValue*, String>> map;
+    static NeverDestroyed<HashMap<const CSSPrimitiveValue*, RefPtr<StringImpl>>> map;
     return map;
 }
 
@@ -251,19 +251,19 @@ std::optional<bool> CSSPrimitiveValue::isNegative() const
     return m_value.number < 0;
 }
 
-NEVER_INLINE String CSSPrimitiveValue::formatNumberValue(ASCIILiteral suffix) const
+NEVER_INLINE RefPtr<StringImpl> CSSPrimitiveValue::formatNumberValue(ASCIILiteral suffix) const
 {
     return CSS::formatCSSNumberValue(CSS::SerializableNumber { m_value.number, suffix });
 }
 
-NEVER_INLINE String CSSPrimitiveValue::formatIntegerValue(ASCIILiteral suffix) const
+NEVER_INLINE RefPtr<StringImpl> CSSPrimitiveValue::formatIntegerValue(ASCIILiteral suffix) const
 {
     if (!std::isfinite(m_value.number))
         return CSS::formatNonfiniteCSSNumberValue(CSS::SerializableNumber { m_value.number, suffix });
     return makeString(m_value.number, suffix);
 }
 
-ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal(const CSS::SerializationContext& context) const
+ALWAYS_INLINE RefPtr<StringImpl> CSSPrimitiveValue::serializeInternal(const CSS::SerializationContext& context) const
 {
     auto type = primitiveUnitType();
     switch (type) {
@@ -344,14 +344,14 @@ ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal(const CSS::Serializati
         break;
     }
     ASSERT_NOT_REACHED();
-    return String();
+    return nullptr;
 }
 
-String CSSPrimitiveValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSPrimitiveValue::customCSSText(const CSS::SerializationContext& context) const
 {
     switch (primitiveUnitType()) {
     case CSSUnitType::Unknown:
-        return String();
+        return nullptr;
     default:
         // The memoization map and m_hasCachedCSSText are not thread-safe, and worker threads can
         // serialize FontFace descriptors concurrently with the main thread. Only memoize on the
@@ -362,7 +362,7 @@ String CSSPrimitiveValue::customCSSText(const CSS::SerializationContext& context
         ASSERT(map.contains(this) == m_hasCachedCSSText);
         if (m_hasCachedCSSText)
             return map.get(this);
-        String serializedValue = serializeInternal(context);
+        RefPtr<StringImpl> serializedValue = serializeInternal(context);
         // m_hasCachedCSSText is written here without synchronization, so it must live in its own
         // memory location (not a bit-field packed with concurrently-read members).
         static_assert(std::is_member_object_pointer_v<decltype(&CSSPrimitiveValue::m_hasCachedCSSText)>,

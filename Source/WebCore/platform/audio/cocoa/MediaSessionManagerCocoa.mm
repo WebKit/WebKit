@@ -68,7 +68,7 @@ do { \
         if (logger().hasEnabledInspector()) { \
             char buffer[1024] = { 0 }; \
             SAFE_SPRINTF(std::span { buffer }, MESSAGE_MediaSessionManagerCocoa##formatString, ##__VA_ARGS__); \
-            logger().toObservers(logChannel(), WTFLogLevel::Always, { }, String::fromUTF8(buffer)); \
+            logger().toObservers(logChannel(), WTFLogLevel::Always, { }, StringImpl::fromUTF8(buffer)); \
         } \
     } \
 } while (0)
@@ -247,17 +247,17 @@ void MediaSessionManagerCocoa::beginInterruption(PlatformMediaSession::Interrupt
     PlatformMediaSessionManager::beginInterruption(type);
 }
 
-String MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm pitchCorrectionAlgorithm, bool preservesPitch, double rate)
+RefPtr<StringImpl> MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm pitchCorrectionAlgorithm, bool preservesPitch, double rate)
 {
     if (!preservesPitch || !rate || rate == 1.)
-        return AVAudioTimePitchAlgorithmVarispeed;
+        return StringImpl::create(AVAudioTimePitchAlgorithmVarispeed);
 
     switch (pitchCorrectionAlgorithm) {
     case MediaPlayer::PitchCorrectionAlgorithm::BestAllAround:
     case MediaPlayer::PitchCorrectionAlgorithm::BestForMusic:
-        return AVAudioTimePitchAlgorithmSpectral;
+        return StringImpl::create(AVAudioTimePitchAlgorithmSpectral);
     case MediaPlayer::PitchCorrectionAlgorithm::BestForSpeech:
-        return AVAudioTimePitchAlgorithmTimeDomain;
+        return StringImpl::create(AVAudioTimePitchAlgorithmTimeDomain);
     }
 }
 
@@ -438,9 +438,9 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
 
     auto info = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 4, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtist, nowPlayingInfo.metadata.artist.createCFString().get());
-    CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoAlbum, nowPlayingInfo.metadata.album.createCFString().get());
-    CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoTitle, nowPlayingInfo.metadata.title.createCFString().get());
+    CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtist, createCFString(nowPlayingInfo.metadata.artist).get());
+    CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoAlbum, createCFString(nowPlayingInfo.metadata.album).get());
+    CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoTitle, createCFString(nowPlayingInfo.metadata.title).get());
 
     if (std::isfinite(nowPlayingInfo.duration) && !std::isnan(nowPlayingInfo.duration)) {
         auto cfDuration = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &nowPlayingInfo.duration));
@@ -453,7 +453,7 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
 
     // FIXME: This is a workaround Control Center not updating the artwork when refreshed.
     // We force the identifier to be reloaded to the new artwork if available.
-    auto lastUpdatedNowPlayingInfoUniqueIdentifier = nowPlayingInfo.metadata.artwork ? nowPlayingInfo.metadata.artwork->src.hash() : (nowPlayingInfo.uniqueIdentifier ? nowPlayingInfo.uniqueIdentifier->toUInt64() : 0);
+    auto lastUpdatedNowPlayingInfoUniqueIdentifier = nowPlayingInfo.metadata.artwork ? hash(nowPlayingInfo.metadata.artwork->src) : (nowPlayingInfo.uniqueIdentifier ? nowPlayingInfo.uniqueIdentifier->toUInt64() : 0);
     auto cfIdentifier = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &lastUpdatedNowPlayingInfoUniqueIdentifier));
     CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoUniqueIdentifier, cfIdentifier.get());
 
@@ -469,15 +469,15 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
         auto artworkSize = artworkImage->size();
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkDataWidth, @(artworkSize.width()));
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkDataHeight, @(artworkSize.height()));
-        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkIdentifier, String::number(nowPlayingInfo.metadata.artwork->src.hash()).createCFString().get());
+        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkIdentifier, createCFString(makeString(hash(nowPlayingInfo.metadata.artwork->src))).get());
     }
 
 #if HAVE(AVEXPERIENCECONTROLLER)
     CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoMediaType, nowPlayingInfo.isVideo ? kMRMediaRemoteNowPlayingInfoTypeVideo : kMRMediaRemoteNowPlayingInfoTypeAudio);
 #endif
 
-    if (canLoad_MediaRemote_MRMediaRemoteSetParentApplication() && !nowPlayingInfo.metadata.sourceApplicationIdentifier.isEmpty())
-        MRMediaRemoteSetParentApplication(MRMediaRemoteGetLocalOrigin(), nowPlayingInfo.metadata.sourceApplicationIdentifier.createCFString().get());
+    if (canLoad_MediaRemote_MRMediaRemoteSetParentApplication() && !isEmpty(nowPlayingInfo.metadata.sourceApplicationIdentifier))
+        MRMediaRemoteSetParentApplication(MRMediaRemoteGetLocalOrigin(), createCFString(nowPlayingInfo.metadata.sourceApplicationIdentifier).get());
 
     MRPlaybackState playbackState = (nowPlayingInfo.isPlaying) ? kMRPlaybackStatePlaying : kMRPlaybackStatePaused;
     MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(MRMediaRemoteGetLocalOrigin(), playbackState, mainDispatchQueueSingleton(), ^(MRMediaRemoteError error) {
@@ -723,11 +723,11 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 
     if (m_nowPlayingManager->setNowPlayingInfo(*nowPlayingInfo, pageIdentifier())) {
 #ifdef RELEASE_LOG_DISABLED
-        String src = "src"_s;
-        String title = "title"_s;
+        RefPtr<StringImpl> src = "src"_si;
+        RefPtr<StringImpl> title = "title"_si;
 #else
-        String src = nowPlayingInfo->metadata.artwork ? nowPlayingInfo->metadata.artwork->src : String();
-        String title = nowPlayingInfo->metadata.title;
+        RefPtr<StringImpl> src = nowPlayingInfo->metadata.artwork ? nowPlayingInfo->metadata.artwork->src : nullptr;
+        RefPtr<StringImpl> title = nowPlayingInfo->metadata.title;
 #endif
         ALWAYS_LOG(LOGIDENTIFIER, "title = \"", title, "\", isPlaying = ", nowPlayingInfo->isPlaying, ", duration = ", nowPlayingInfo->duration, ", now = ", currentTime, ", id = ", (nowPlayingInfo->uniqueIdentifier ? nowPlayingInfo->uniqueIdentifier->toUInt64() : 0), ", registered = ", m_registeredAsNowPlayingApplication, ", src = \"", src, "\"");
     }
@@ -739,7 +739,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
     if (!m_nowPlayingInfo || nowPlayingInfo->metadata != m_nowPlayingInfo->metadata)
         nowPlayingMetadataChanged(nowPlayingInfo->metadata);
 
-    if (!nowPlayingInfo->metadata.title.isEmpty())
+    if (!isEmpty(nowPlayingInfo->metadata.title))
         m_lastUpdatedNowPlayingTitle = nowPlayingInfo->metadata.title;
 
     double duration = nowPlayingInfo->duration;
@@ -800,8 +800,8 @@ void MediaSessionManagerCocoa::updateNowPlayingSuppression(const NowPlayingInfo*
     } else {
         setPreferredState(MRNowPlayingActivityUIStateRound);
 
-        RetainPtr parentApplicationBundleIdentifier = applicationBundleIdentifier().createNSString();
-        RetainPtr presentingApplicationBundleIdentifier = nowPlayingInfo->metadata.sourceApplicationIdentifier.createNSString();
+        RetainPtr parentApplicationBundleIdentifier = createNSString(applicationBundleIdentifier());
+        RetainPtr presentingApplicationBundleIdentifier = createNSString(nowPlayingInfo->metadata.sourceApplicationIdentifier);
         NSSet *bundleIdentifiers = [NSSet setWithArray:@[parentApplicationBundleIdentifier.get(), presentingApplicationBundleIdentifier.get()]];
         RELEASE_LOG(Media, "MediaSessionManagerCocoa::updateNowPlayingSuppression: setting suppressPresentationOverBundleIdentifiers to %@", bundleIdentifiers);
         [nowPlayingActivityController() suppressPresentationOverBundleIdentifiers:bundleIdentifiers];

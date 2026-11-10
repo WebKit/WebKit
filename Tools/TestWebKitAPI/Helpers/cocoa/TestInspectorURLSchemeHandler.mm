@@ -81,7 +81,7 @@
             return;
         }
 
-        RetainPtr mimeType = WebCore::MIMETypeRegistry::mimeTypeForExtension(String(fileURLForRequest.pathExtension)).createNSString();
+        RetainPtr mimeType = createNSString(WebCore::MIMETypeRegistry::mimeTypeForExtension(StringImpl::create(fileURLForRequest.pathExtension).get()));
         if (!mimeType)
             mimeType = @"application/octet-stream";
 

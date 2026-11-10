@@ -43,7 +43,7 @@ public:
     virtual ~CDMClient() = default;
 
     virtual void cdmClientAttemptToResumePlaybackIfNecessary() = 0;
-    virtual void cdmClientUnrequestedInitializationDataReceived(const String&, Ref<SharedBuffer>&&) = 0;
+    virtual void cdmClientUnrequestedInitializationDataReceived(StringImpl*, Ref<SharedBuffer>&&) = 0;
 };
 
 } // namespace WebCore

@@ -50,7 +50,7 @@ namespace WebCore {
 static void printScrollingStateTree()
 {
     Page::forEachPage([](Page& page) {
-        SAFE_WTFLOGALWAYS("Scrolling state tree for page %p:\n%s", &page, page.scrollingStateTreeAsText().utf8());
+        SAFE_WTFLOGALWAYS("Scrolling state tree for page %p:\n%s", &page, utf8(page.scrollingStateTreeAsText()));
     });
 }
 #endif // ENABLE(TREE_DEBUGGING)
@@ -87,13 +87,13 @@ void Page::platformInitialize()
                 RefPtr localTopDocument = page.localTopDocument();
                 if (!localTopDocument)
                     return;
-                SAFE_WTFLOGALWAYS("Page %p with main document %p %s", &page, localTopDocument.get(), localTopDocument ? localTopDocument->url().string().utf8() : ""_s);
+                SAFE_WTFLOGALWAYS("Page %p with main document %p %s", &page, localTopDocument.get(), localTopDocument ? utf8(localTopDocument->url().string()) : ""_s);
             });
 
             WTFLogAlways("%u live documents:", Document::allDocuments().size());
             for (auto& document : Document::allDocuments()) {
                 auto documentType = is<SVGDocument>(document.get()) ? "SVGDocument"_s : "Document"_s;
-                SAFE_WTFLOGALWAYS("%s %p %" PRIu64 "-%s (refCount %d, referencingNodeCount %d) %s", documentType, document.ptr(), document->identifier().processIdentifier().toUInt64(), document->identifier().toString().utf8(), document->refCount(), document->referencingNodeCount(), document->url().string().utf8());
+                SAFE_WTFLOGALWAYS("%s %p %" PRIu64 "-%s (refCount %d, referencingNodeCount %d) %s", documentType, document.ptr(), document->identifier().processIdentifier().toUInt64(), utf8(document->identifier().toString()), document->refCount(), document->referencingNodeCount(), utf8(document->url().string()));
             }
         });
     });
@@ -137,12 +137,12 @@ void Page::removeSchedulePair(Ref<SchedulePair>&& pair)
     }
 }
 
-NODELETE const String& Page::presentingApplicationBundleIdentifier() const
+NODELETE const RefPtr<StringImpl>& Page::presentingApplicationBundleIdentifier() const
 {
     return m_presentingApplicationBundleIdentifier;
 }
 
-void Page::setPresentingApplicationBundleIdentifier(String&& bundleIdentifier)
+void Page::setPresentingApplicationBundleIdentifier(RefPtr<StringImpl>&& bundleIdentifier)
 {
     m_presentingApplicationBundleIdentifier = WTF::move(bundleIdentifier);
     if (RefPtr manager = mediaSessionManagerIfExists())

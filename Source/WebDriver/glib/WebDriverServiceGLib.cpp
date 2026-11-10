@@ -30,11 +30,11 @@
 
 namespace WebDriver {
 
-static bool parseVersion(const String& version, uint64_t& major, uint64_t& minor, uint64_t& micro)
+static bool parseVersion(StringImpl* version, uint64_t& major, uint64_t& minor, uint64_t& micro)
 {
     major = minor = micro = 0;
 
-    Vector<String> tokens = version.split('.');
+    Vector<RefPtr<StringImpl>> tokens = split(version, '.');
     switch (tokens.size()) {
     case 3: {
         auto parsedMicro = parseIntegerAllowingTrailingJunk<uint64_t>(tokens[2]);
@@ -64,7 +64,7 @@ static bool parseVersion(const String& version, uint64_t& major, uint64_t& minor
     return true;
 }
 
-bool WebDriverService::platformCompareBrowserVersions(const String& requiredVersion, const String& proposedVersion)
+bool WebDriverService::platformCompareBrowserVersions(StringImpl* requiredVersion, StringImpl* proposedVersion)
 {
     // We require clients to use format major.minor.micro as version string.
     uint64_t requiredMajor, requiredMinor, requiredMicro;
@@ -80,7 +80,7 @@ bool WebDriverService::platformCompareBrowserVersions(const String& requiredVers
         || (proposedMajor == requiredMajor && proposedMinor == requiredMinor && proposedMicro >= requiredMicro);
 }
 
-bool WebDriverService::platformSupportProxyType(const String&) const
+bool WebDriverService::platformSupportProxyType(StringImpl*) const
 {
     return true;
 }

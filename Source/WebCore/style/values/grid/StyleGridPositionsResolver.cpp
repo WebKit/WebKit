@@ -188,15 +188,15 @@ NamedLineCollectionBase::NamedLineCollectionBase(const RenderGrid& initialGrid, 
         bool startSide = isStartSide(side);
         if (!nameIsAreaName) {
             size_t suffixLength;
-            if (name.value.endsWith("-start"_s)) {
+            if (endsWith(name.value, "-start"_s)) {
                 startSide = true;
                 suffixLength = "-start"_s.length();
             } else {
-                ASSERT(name.value.endsWith("-end"_s));
+                ASSERT(endsWith(name.value, "-end"_s));
                 startSide = false;
                 suffixLength = "-end"_s.length();
             }
-            areaName = CustomIdent { AtomString { name.value.string().left(name.value.length() - suffixLength) } };
+            areaName = CustomIdent { AtomStringImpl::add(left(name.value, length(name.value) - suffixLength)) };
         }
         auto implicitLine = clampedImplicitLineForArea(*gridContainerStyle, areaName, 0, m_lastLine, direction, startSide);
         if (implicitLine)
@@ -414,9 +414,9 @@ static std::pair<GridPosition, GridPosition> adjustGridPositionsFromStyle(const 
         finalPosition = CSS::Keyword::Auto { };
 
     // If the grid item has an automatic position and a grid span for a named line in a given dimension, instead treat the grid span as one.
-    if (initialPosition.isAuto() && finalPosition.isSpan() && !finalPosition.namedGridLine().value.isNull())
+    if (initialPosition.isAuto() && finalPosition.isSpan() && finalPosition.namedGridLine().value)
         finalPosition = GridPosition::Span { { 1 } };
-    if (finalPosition.isAuto() && initialPosition.isSpan() && !initialPosition.namedGridLine().value.isNull())
+    if (finalPosition.isAuto() && initialPosition.isSpan() && initialPosition.namedGridLine().value)
         initialPosition = GridPosition::Span { { 1 } };
 
     if (isIndefiniteSpan(initialPosition, finalPosition)) {
@@ -535,7 +535,7 @@ static GridSpan resolveGridPositionAgainstOppositePosition(const RenderGrid& gri
             return GridSpan::untranslatedDefiniteGridSpan(oppositeLine, oppositeLine + 1);
         },
         [&](const GridPosition::Span& spanPosition) -> GridSpan {
-            if (!spanPosition.name.value.isNull()) {
+            if (spanPosition.name.value) {
                 // span 2 'c' -> we need to find the appropriate grid line before / after our opposite position.
                 return resolveNamedGridLinePositionAgainstOppositePosition(gridContainer, oppositeLine, spanPosition.name, spanPosition.position, side);
             }
@@ -591,7 +591,7 @@ static int resolveGridPositionFromStyle(const RenderGrid& gridContainer, const G
         [&](const GridPosition::Explicit& explicitPosition) -> int {
             ASSERT(explicitPosition.position != 0);
 
-            if (!explicitPosition.name.value.isNull())
+            if (explicitPosition.name.value)
                 return resolveNamedGridLinePositionFromStyle(gridContainer, explicitPosition.name, explicitPosition.position, side);
 
             // Handle <integer> explicit position.
@@ -607,7 +607,7 @@ static int resolveGridPositionFromStyle(const RenderGrid& gridContainer, const G
             // First attempt to match the grid area's edge to a named grid area: if there is a named line with the name
             // ''<custom-ident>-start (for grid-*-start) / <custom-ident>-end'' (for grid-*-end), contributes the first such
             // line to the grid item's placement.
-            ASSERT(!namedGridAreaPosition.value.isNull());
+            ASSERT(namedGridAreaPosition.value);
 
             NamedLineCollection implicitLines(gridContainer, namedGridAreaPosition, side, true);
             if (implicitLines.hasNamedLines())

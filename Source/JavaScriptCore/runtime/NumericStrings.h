@@ -44,13 +44,13 @@ public:
     template<typename T>
     struct CacheEntry {
         T key;
-        String value;
+        RefPtr<StringImpl> value;
     };
 
     template<typename T>
     struct CacheEntryWithJSString {
         T key;
-        String value;
+        RefPtr<StringImpl> value;
         JSString* jsString { nullptr };
 
         static constexpr ptrdiff_t offsetOfKey() { return OBJECT_OFFSETOF(CacheEntryWithJSString, key); }
@@ -58,7 +58,7 @@ public:
     };
 
     struct StringWithJSString {
-        String value;
+        RefPtr<StringImpl> value;
         JSString* jsString { nullptr };
 
         static constexpr ptrdiff_t offsetOfJSString() { return OBJECT_OFFSETOF(StringWithJSString, jsString); }
@@ -70,41 +70,41 @@ public:
         std::array<CacheEntryWithJSString<double>, doubleCacheSize> m_doubleCache { };
     };
 
-    ALWAYS_INLINE const String& add(double d)
+    ALWAYS_INLINE const RefPtr<StringImpl>& add(double d)
     {
         if (!m_doubleCache) [[unlikely]]
             initializeDoubleCache();
         auto& entry = lookup(d);
-        if (d == entry.key && !entry.value.isNull())
+        if (d == entry.key && entry.value)
             return entry.value;
         entry.key = d;
-        entry.value = String::number(d);
+        entry.value = makeString(d);
         entry.jsString = nullptr;
         return entry.value;
     }
 
-    ALWAYS_INLINE const String& add(int i)
+    ALWAYS_INLINE const RefPtr<StringImpl>& add(int i)
     {
         if (static_cast<unsigned>(i) < cacheSize)
             return lookupSmallString(static_cast<unsigned>(i)).value;
         auto& entry = lookup(i);
-        if (i == entry.key && !entry.value.isNull())
+        if (i == entry.key && entry.value)
             return entry.value;
         entry.key = i;
-        entry.value = String::number(i);
+        entry.value = makeString(i);
         entry.jsString = nullptr;
         return entry.value;
     }
 
-    ALWAYS_INLINE const String& add(unsigned i)
+    ALWAYS_INLINE const RefPtr<StringImpl>& add(unsigned i)
     {
         if (i < cacheSize)
             return lookupSmallString(static_cast<unsigned>(i)).value;
         auto& entry = lookup(i);
-        if (i == entry.key && !entry.value.isNull())
+        if (i == entry.key && entry.value)
             return entry.value;
         entry.key = i;
-        entry.value = String::number(i);
+        entry.value = makeString(i);
         return entry.value;
     }
 
@@ -156,8 +156,8 @@ private:
     ALWAYS_INLINE StringWithJSString& lookupSmallString(unsigned i)
     {
         ASSERT(i < cacheSize);
-        if (m_smallIntCache[i].value.isNull())
-            m_smallIntCache[i].value = String::number(i);
+        if (!m_smallIntCache[i].value)
+            m_smallIntCache[i].value = makeString(i);
         return m_smallIntCache[i];
     }
 

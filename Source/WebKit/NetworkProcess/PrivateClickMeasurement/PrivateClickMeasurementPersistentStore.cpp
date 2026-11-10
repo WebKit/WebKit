@@ -53,11 +53,11 @@ void PersistentStore::processDidResume()
     sharedWorkQueue()->resume();
 }
 
-PersistentStore::PersistentStore(const String& databaseDirectory)
+PersistentStore::PersistentStore(StringImpl* databaseDirectory)
     : m_queue(sharedWorkQueue())
 {
-    if (!databaseDirectory.isEmpty()) {
-        postTask([this, protectedThis = Ref { *this }, databaseDirectory = databaseDirectory.isolatedCopy()] () mutable {
+    if (!isEmpty(databaseDirectory)) {
+        postTask([this, protectedThis = Ref { *this }, databaseDirectory = isolatedCopy(databaseDirectory)] () mutable {
             m_database = Database::create(WTF::move(databaseDirectory));
         });
     }
@@ -96,7 +96,7 @@ void PersistentStore::markAllUnattributedPrivateClickMeasurementAsExpiredForTest
 
 void PersistentStore::attributePrivateClickMeasurement(WebCore::PCM::SourceSite&& sourceSite, WebCore::PCM::AttributionDestinationSite&& destinationSite, const ApplicationBundleIdentifier& applicationBundleIdentifier, WebCore::PCM::AttributionTriggerData&& attributionTriggerData, WebCore::PrivateClickMeasurement::IsRunningLayoutTest isRunningTest, CompletionHandler<void(std::optional<WebCore::PCM::AttributionSecondsUntilSendData>&&, DebugInfo&&)>&& completionHandler)
 {
-    postTask([this, protectedThis = Ref { *this }, sourceSite = WTF::move(sourceSite).isolatedCopy(), destinationSite = WTF::move(destinationSite).isolatedCopy(), applicationBundleIdentifier = applicationBundleIdentifier.isolatedCopy(), attributionTriggerData = WTF::move(attributionTriggerData), isRunningTest, completionHandler = WTF::move(completionHandler)] () mutable {
+    postTask([this, protectedThis = Ref { *this }, sourceSite = WTF::move(sourceSite).isolatedCopy(), destinationSite = WTF::move(destinationSite).isolatedCopy(), applicationBundleIdentifier = isolatedCopy(applicationBundleIdentifier), attributionTriggerData = WTF::move(attributionTriggerData), isRunningTest, completionHandler = WTF::move(completionHandler)] () mutable {
         RefPtr database = m_database;
         if (!database) {
             return postTaskReply([completionHandler = WTF::move(completionHandler)] () mutable {
@@ -112,13 +112,13 @@ void PersistentStore::attributePrivateClickMeasurement(WebCore::PCM::SourceSite&
     });
 }
 
-void PersistentStore::privateClickMeasurementToStringForTesting(CompletionHandler<void(String)>&& completionHandler) const
+void PersistentStore::privateClickMeasurementToStringForTesting(CompletionHandler<void(RefPtr<StringImpl>)>&& completionHandler) const
 {
     postTask([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
-        String result;
+        RefPtr<StringImpl> result;
         if (RefPtr database = m_database)
             result = database->privateClickMeasurementToStringForTesting();
-        postTaskReply([result = WTF::move(result).isolatedCopy(), completionHandler = WTF::move(completionHandler)]() mutable {
+        postTaskReply([result = isolatedCopy(WTF::move(result)), completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(result);
         });
     });

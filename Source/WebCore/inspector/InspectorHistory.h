@@ -47,7 +47,7 @@ public:
     public:
         virtual ~Action() = default;
 
-        virtual String mergeId() { return emptyString(); }
+        virtual RefPtr<StringImpl> mergeId() { return emptyString(); }
         virtual void merge(std::unique_ptr<Action>) { };
 
         virtual ExceptionOr<void> perform() = 0;

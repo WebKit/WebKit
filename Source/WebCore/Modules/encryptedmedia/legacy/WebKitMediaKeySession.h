@@ -50,12 +50,12 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    static Ref<WebKitMediaKeySession> create(Document&, WebKitMediaKeys&, const String& keySystem);
+    static Ref<WebKitMediaKeySession> create(Document&, WebKitMediaKeys&, StringImpl* keySystem);
     ~WebKitMediaKeySession();
 
     WebKitMediaKeyError* error() { return m_error.get(); }
-    const String& keySystem() const LIFETIME_BOUND { return m_keySystem; }
-    const String& sessionId() const LIFETIME_BOUND { return m_sessionId; }
+    const RefPtr<StringImpl>& keySystem() const LIFETIME_BOUND { return m_keySystem; }
+    const RefPtr<StringImpl>& sessionId() const LIFETIME_BOUND { return m_sessionId; }
     ExceptionOr<void> update(Ref<Uint8Array>&& key);
     void close();
 
@@ -63,18 +63,18 @@ public:
 
     void detachKeys() { m_keys = nullptr; }
 
-    void generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData, const String& mediaKeysHashSalt);
-    RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
+    void generateKeyRequest(StringImpl* mimeType, Ref<Uint8Array>&& initData, StringImpl* mediaKeysHashSalt);
+    RefPtr<ArrayBuffer> cachedKeyForKeyId(StringImpl* keyId) const;
 
 private:
-    WebKitMediaKeySession(Document&, WebKitMediaKeys&, const String& keySystem);
+    WebKitMediaKeySession(Document&, WebKitMediaKeys&, StringImpl* keySystem);
     void keyRequestTimerFired();
     void addKeyTimerFired();
 
-    void sendMessage(Uint8Array*, String destinationURL) final;
+    void sendMessage(Uint8Array*, RefPtr<StringImpl> destinationURL) final;
     void sendError(MediaKeyErrorCode, uint32_t systemCode) final;
-    String mediaKeysStorageDirectory() const final;
-    String mediaKeysHashSalt() const final { return m_mediaKeysHashSalt; }
+    RefPtr<StringImpl> mediaKeysStorageDirectory() const final;
+    RefPtr<StringImpl> mediaKeysHashSalt() const final { return m_mediaKeysHashSalt; }
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
@@ -97,14 +97,14 @@ private:
 #endif
 
     CheckedPtr<WebKitMediaKeys> m_keys;
-    String m_keySystem;
-    String m_sessionId;
-    String m_mediaKeysHashSalt;
+    RefPtr<StringImpl> m_keySystem;
+    RefPtr<StringImpl> m_sessionId;
+    RefPtr<StringImpl> m_mediaKeysHashSalt;
     RefPtr<WebKitMediaKeyError> m_error;
     RefPtr<LegacyCDMSession> m_session;
 
     struct PendingKeyRequest {
-        String mimeType;
+        RefPtr<StringImpl> mimeType;
         Ref<Uint8Array> initData;
     };
     Deque<PendingKeyRequest> m_pendingKeyRequests;

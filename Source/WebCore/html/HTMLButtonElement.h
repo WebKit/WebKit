@@ -36,8 +36,8 @@ public:
     static Ref<HTMLButtonElement> create(const QualifiedName&, Document&);
     static Ref<HTMLButtonElement> create(Document&);
     
-    NODELETE const AtomString& value() const;
-    const AtomString& command() const;
+    NODELETE const RefPtr<AtomStringImpl>& value() const;
+    const RefPtr<AtomStringImpl>& command() const;
 
     RefPtr<Element> commandForElement() const;
     CommandType commandType() const;
@@ -56,14 +56,14 @@ private:
 
     enum class Type : uint8_t { Submit, Reset, Button };
 
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
 
     NODELETE bool supportsBaseAppearance(StyleAppearance) const final;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 
     int defaultTabIndex() const final;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     void descendantsChanged() final;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode& parentOfInsertedTree) final;
     void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
@@ -92,7 +92,7 @@ private:
 
     bool isSubmitButton() const final;
 
-    void computeType(const AtomString& typeAttrValue);
+    void computeType(AtomStringImpl* typeAttrValue);
 
     Type m_type;
     bool m_isActivatedSubmit;

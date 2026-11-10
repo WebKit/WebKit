@@ -50,13 +50,13 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMMatrixReadOnly);
 
 // https://drafts.fxtf.org/geometry/#dom-dommatrixreadonly-dommatrixreadonly
-ExceptionOr<Ref<DOMMatrixReadOnly>> DOMMatrixReadOnly::create(ScriptExecutionContext& scriptExecutionContext, std::optional<Variant<String, Vector<double>>>&& init)
+ExceptionOr<Ref<DOMMatrixReadOnly>> DOMMatrixReadOnly::create(ScriptExecutionContext& scriptExecutionContext, std::optional<Variant<RefPtr<StringImpl>, Vector<double>>>&& init)
 {
     if (!init)
         return adoptRef(*new DOMMatrixReadOnly);
 
     return WTF::switchOn(init.value(),
-        [&scriptExecutionContext](const String& init) -> ExceptionOr<Ref<DOMMatrixReadOnly>> {
+        [&scriptExecutionContext](StringImpl* init) -> ExceptionOr<Ref<DOMMatrixReadOnly>> {
             RefPtr document = dynamicDowncast<Document>(scriptExecutionContext);
             if (!document)
                 return Exception { ExceptionCode::TypeError };
@@ -117,17 +117,17 @@ NODELETE static bool sameValueZero(double a, double b)
 ExceptionOr<void> DOMMatrixReadOnly::validateAndFixup(DOMMatrix2DInit& init)
 {
     if (init.a && init.m11 && !sameValueZero(init.a.value(), init.m11.value()))
-        return Exception { ExceptionCode::TypeError, "init.a and init.m11 do not match"_s };
+        return Exception { ExceptionCode::TypeError, "init.a and init.m11 do not match"_si };
     if (init.b && init.m12 && !sameValueZero(init.b.value(), init.m12.value()))
-        return Exception { ExceptionCode::TypeError, "init.b and init.m12 do not match"_s };
+        return Exception { ExceptionCode::TypeError, "init.b and init.m12 do not match"_si };
     if (init.c && init.m21 && !sameValueZero(init.c.value(), init.m21.value()))
-        return Exception { ExceptionCode::TypeError, "init.c and init.m21 do not match"_s };
+        return Exception { ExceptionCode::TypeError, "init.c and init.m21 do not match"_si };
     if (init.d && init.m22 && !sameValueZero(init.d.value(), init.m22.value()))
-        return Exception { ExceptionCode::TypeError, "init.d and init.m22 do not match"_s };
+        return Exception { ExceptionCode::TypeError, "init.d and init.m22 do not match"_si };
     if (init.e && init.m41 && !sameValueZero(init.e.value(), init.m41.value()))
-        return Exception { ExceptionCode::TypeError, "init.e and init.m41 do not match"_s };
+        return Exception { ExceptionCode::TypeError, "init.e and init.m41 do not match"_si };
     if (init.f && init.m42 && !sameValueZero(init.f.value(), init.m42.value()))
-        return Exception { ExceptionCode::TypeError, "init.f and init.m42 do not match"_s };
+        return Exception { ExceptionCode::TypeError, "init.f and init.m42 do not match"_si };
 
     if (!init.m11)
         init.m11 = init.a.value_or(1);
@@ -162,25 +162,25 @@ ExceptionOr<void> DOMMatrixReadOnly::validateAndFixup(DOMMatrixInit& init)
 
     if (init.is2D && init.is2D.value()) {
         if (init.m13)
-            return Exception { ExceptionCode::TypeError, "m13 should be 0 for a 2D matrix"_s };
+            return Exception { ExceptionCode::TypeError, "m13 should be 0 for a 2D matrix"_si };
         if (init.m14)
-            return Exception { ExceptionCode::TypeError, "m14 should be 0 for a 2D matrix"_s };
+            return Exception { ExceptionCode::TypeError, "m14 should be 0 for a 2D matrix"_si };
         if (init.m23)
-            return Exception { ExceptionCode::TypeError, "m23 should be 0 for a 2D matrix"_s };
+            return Exception { ExceptionCode::TypeError, "m23 should be 0 for a 2D matrix"_si };
         if (init.m24)
-            return Exception { ExceptionCode::TypeError, "m24 should be 0 for a 2D matrix"_s };
+            return Exception { ExceptionCode::TypeError, "m24 should be 0 for a 2D matrix"_si };
         if (init.m31)
-            return Exception { ExceptionCode::TypeError, "m31 should be 0 for a 2D matrix"_s };
+            return Exception { ExceptionCode::TypeError, "m31 should be 0 for a 2D matrix"_si };
         if (init.m32)
-            return Exception { ExceptionCode::TypeError, "m32 should be 0 for a 2D matrix"_s };
+            return Exception { ExceptionCode::TypeError, "m32 should be 0 for a 2D matrix"_si };
         if (init.m34)
-            return Exception { ExceptionCode::TypeError, "m34 should be 0 for a 2D matrix"_s };
+            return Exception { ExceptionCode::TypeError, "m34 should be 0 for a 2D matrix"_si };
         if (init.m43)
-            return Exception { ExceptionCode::TypeError, "m43 should be 0 for a 2D matrix"_s };
+            return Exception { ExceptionCode::TypeError, "m43 should be 0 for a 2D matrix"_si };
         if (init.m33 != 1)
-            return Exception { ExceptionCode::TypeError, "m33 should be 1 for a 2D matrix"_s };
+            return Exception { ExceptionCode::TypeError, "m33 should be 1 for a 2D matrix"_si };
         if (init.m44 != 1)
-            return Exception { ExceptionCode::TypeError, "m44 should be 1 for a 2D matrix"_s };
+            return Exception { ExceptionCode::TypeError, "m44 should be 1 for a 2D matrix"_si };
     }
 
     if (!init.is2D) {
@@ -236,9 +236,9 @@ bool DOMMatrixReadOnly::isIdentity() const
     return m_matrix.isIdentity();
 }
 
-ExceptionOr<DOMMatrixReadOnly::AbstractMatrix> DOMMatrixReadOnly::parseStringIntoAbstractMatrix(Document& document, const String& string)
+ExceptionOr<DOMMatrixReadOnly::AbstractMatrix> DOMMatrixReadOnly::parseStringIntoAbstractMatrix(Document& document, StringImpl* string)
 {
-    if (string.isEmpty())
+    if (isEmpty(string))
         return AbstractMatrix { };
 
     auto transform = CSSPropertyParserHelpers::parseTransformRaw(string, CSSParserContext(HTMLStandardMode), document);
@@ -264,7 +264,7 @@ ExceptionOr<DOMMatrixReadOnly::AbstractMatrix> DOMMatrixReadOnly::parseStringInt
 }
 
 // https://drafts.fxtf.org/geometry/#dom-dommatrix-setmatrixvalue
-ExceptionOr<void> DOMMatrixReadOnly::setMatrixValue(Document& document, const String& string)
+ExceptionOr<void> DOMMatrixReadOnly::setMatrixValue(Document& document, StringImpl* string)
 {
     auto parseResult = parseStringIntoAbstractMatrix(document, string);
     if (parseResult.hasException())
@@ -368,7 +368,7 @@ ExceptionOr<Ref<Float32Array>> DOMMatrixReadOnly::toFloat32Array() const
 {
     auto array32 = Float32Array::tryCreateUninitialized(16);
     if (!array32)
-        return Exception { ExceptionCode::UnknownError, "Out of memory"_s };
+        return Exception { ExceptionCode::UnknownError, "Out of memory"_si };
 
     unsigned index = 0;
     array32->set(index++, m_matrix.m11());
@@ -394,7 +394,7 @@ ExceptionOr<Ref<Float64Array>> DOMMatrixReadOnly::toFloat64Array() const
 {
     auto array64 = Float64Array::tryCreateUninitialized(16);
     if (!array64)
-        return Exception { ExceptionCode::UnknownError, "Out of memory"_s };
+        return Exception { ExceptionCode::UnknownError, "Out of memory"_si };
 
     unsigned index = 0;
     array64->set(index++, m_matrix.m11());
@@ -417,10 +417,10 @@ ExceptionOr<Ref<Float64Array>> DOMMatrixReadOnly::toFloat64Array() const
 }
 
 // https://drafts.fxtf.org/geometry/#dom-dommatrixreadonly-stringifier
-ExceptionOr<String> DOMMatrixReadOnly::toString() const
+ExceptionOr<RefPtr<StringImpl>> DOMMatrixReadOnly::toString() const
 {
     if (!m_matrix.containsOnlyFiniteValues())
-        return Exception { ExceptionCode::InvalidStateError, "Matrix contains non-finite values"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Matrix contains non-finite values"_si };
 
     if (is2D())
         return makeString("matrix("_s, m_matrix.a(), ", "_s, m_matrix.b(), ", "_s, m_matrix.c(), ", "_s, m_matrix.d(), ", "_s, m_matrix.e(), ", "_s, m_matrix.f(), ')');

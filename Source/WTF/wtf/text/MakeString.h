@@ -43,7 +43,7 @@ template<typename... StringTypeAdapters> constexpr bool makeStringSlowPathRequir
 template<typename... StringTypeAdapters>
 RefPtr<StringImpl> tryMakeStringImplFromAdaptersInternal(unsigned length, bool areAllAdapters8Bit, StringTypeAdapters... adapters)
 {
-    ASSERT(length <= String::MaxLength);
+    ASSERT(length <= StringImpl::MaxLength);
     if (areAllAdapters8Bit) {
         std::span<Latin1Character> buffer;
         RefPtr result = StringImpl::tryCreateUninitialized(length, buffer);
@@ -68,9 +68,9 @@ RefPtr<StringImpl> tryMakeStringImplFromAdaptersInternal(unsigned length, bool a
 }
 
 template<typename... StringTypeAdapters>
-String tryMakeStringFromAdapters(StringTypeAdapters&&... adapters)
+RefPtr<StringImpl> tryMakeStringFromAdapters(StringTypeAdapters&&... adapters)
 {
-    static_assert(String::MaxLength == std::numeric_limits<int32_t>::max());
+    static_assert(StringImpl::MaxLength == std::numeric_limits<int32_t>::max());
 
     if constexpr (makeStringSlowPathRequired<StringTypeAdapters...>) {
         StringBuilder builder;
@@ -84,7 +84,7 @@ String tryMakeStringFromAdapters(StringTypeAdapters&&... adapters)
             sum = std::get<0>(std::tie(adapters...)).length();
 
         if (sum.hasOverflowed())
-            return String();
+            return nullptr;
 
         bool areAllAdapters8Bit = are8Bit(adapters...);
         return tryMakeStringImplFromAdaptersInternal(sum, areAllAdapters8Bit, adapters...);
@@ -92,13 +92,13 @@ String tryMakeStringFromAdapters(StringTypeAdapters&&... adapters)
 }
 
 template<StringTypeAdaptable... StringTypes>
-String tryMakeString(const StringTypes& ...strings)
+RefPtr<StringImpl> tryMakeString(const StringTypes& ...strings)
 {
     return tryMakeStringFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
 }
 
 template<StringTypeAdaptable... StringTypes>
-String makeString(StringTypes... strings)
+RefPtr<StringImpl> makeString(StringTypes... strings)
 {
     auto result = tryMakeString(strings...);
     if (!result)
@@ -107,9 +107,9 @@ String makeString(StringTypes... strings)
 }
 
 template<typename... StringTypeAdapters>
-AtomString tryMakeAtomStringFromAdapters(StringTypeAdapters ...adapters)
+RefPtr<AtomStringImpl> tryMakeAtomStringFromAdapters(StringTypeAdapters ...adapters)
 {
-    static_assert(String::MaxLength == std::numeric_limits<int32_t>::max());
+    static_assert(StringImpl::MaxLength == std::numeric_limits<int32_t>::max());
 
     if constexpr (makeStringSlowPathRequired<StringTypeAdapters...>) {
         StringBuilder builder;
@@ -123,10 +123,10 @@ AtomString tryMakeAtomStringFromAdapters(StringTypeAdapters ...adapters)
             sum = std::get<0>(std::tie(adapters...)).length();
 
         if (sum.hasOverflowed())
-            return AtomString();
+            return nullptr;
 
         unsigned length = sum;
-        ASSERT(length <= String::MaxLength);
+        ASSERT(length <= StringImpl::MaxLength);
 
         bool areAllAdapters8Bit = are8Bit(adapters...);
         constexpr size_t maxLengthToUseStackVariable = 64;
@@ -134,40 +134,40 @@ AtomString tryMakeAtomStringFromAdapters(StringTypeAdapters ...adapters)
             if (areAllAdapters8Bit) {
                 std::array<Latin1Character, maxLengthToUseStackVariable> buffer;
                 stringTypeAdapterAccumulator(std::span<Latin1Character> { buffer }, adapters...);
-                return std::span<const Latin1Character> { buffer }.first(length);
+                return AtomStringImpl::add(std::span<const Latin1Character> { buffer }.first(length));
             }
             std::array<char16_t, maxLengthToUseStackVariable> buffer;
             stringTypeAdapterAccumulator(std::span<char16_t> { buffer }, adapters...);
-            return std::span<const char16_t> { buffer }.first(length);
+            return AtomStringImpl::add(std::span<const char16_t> { buffer }.first(length));
         }
-        return tryMakeStringImplFromAdaptersInternal(length, areAllAdapters8Bit, adapters...).get();
+        return AtomStringImpl::add(tryMakeStringImplFromAdaptersInternal(length, areAllAdapters8Bit, adapters...));
     }
 }
 
 template<StringTypeAdaptable... StringTypes>
-AtomString tryMakeAtomString(StringTypes... strings)
+RefPtr<AtomStringImpl> tryMakeAtomString(StringTypes... strings)
 {
     return tryMakeAtomStringFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
 }
 
 template<StringTypeAdaptable... StringTypes>
-AtomString makeAtomString(StringTypes... strings)
+RefPtr<AtomStringImpl> makeAtomString(StringTypes... strings)
 {
     auto result = tryMakeAtomString(strings...);
-    if (result.isNull())
+    if (!result)
         CRASH();
     return result;
 }
 
-[[nodiscard]] inline String makeStringByInserting(StringView originalString, StringView stringToInsert, unsigned position)
+[[nodiscard]] inline RefPtr<StringImpl> makeStringByInserting(StringView originalString, StringView stringToInsert, unsigned position)
 {
     return makeString(originalString.left(position), stringToInsert, originalString.substring(position));
 }
 
 // Helper functor useful in generic contexts where both makeString() and StringBuilder are being used.
 struct SerializeUsingMakeString {
-    using Result = String;
-    template<typename... T> String operator()(T&&... args)
+    using Result = RefPtr<StringImpl>;
+    template<typename... T> RefPtr<StringImpl> operator()(T&&... args)
     {
         return makeString(std::forward<T>(args)...);
     }

@@ -229,7 +229,7 @@ const gchar* webkit_notification_get_title(WebKitNotification* notification)
     g_return_val_if_fail(WEBKIT_IS_NOTIFICATION(notification), nullptr);
 
     if (notification->priv->title.isNull())
-        notification->priv->title = notification->priv->notification->title().utf8();
+        notification->priv->title = utf8(notification->priv->notification->title());
 
     return notification->priv->title.legacyCStringPointer();
 }
@@ -249,7 +249,7 @@ const gchar* webkit_notification_get_body(WebKitNotification* notification)
     g_return_val_if_fail(WEBKIT_IS_NOTIFICATION(notification), nullptr);
 
     if (notification->priv->body.isNull())
-        notification->priv->body = notification->priv->notification->body().utf8();
+        notification->priv->body = utf8(notification->priv->notification->body());
 
     return notification->priv->body.legacyCStringPointer();
 }
@@ -269,7 +269,7 @@ const gchar* webkit_notification_get_tag(WebKitNotification* notification)
     g_return_val_if_fail(WEBKIT_IS_NOTIFICATION(notification), nullptr);
 
     if (notification->priv->tag.isNull())
-        notification->priv->tag = notification->priv->notification->tag().utf8();
+        notification->priv->tag = utf8(notification->priv->notification->tag());
 
     return notification->priv->tag.length() ? notification->priv->tag.legacyCStringPointer() : nullptr;
 }

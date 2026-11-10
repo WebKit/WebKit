@@ -684,9 +684,9 @@ void GraphicsLayerCoordinated::setIsBackdropRoot(bool isBackdropRoot)
     noteLayerPropertyChanged(Change::BackdropRoot, ScheduleFlush::Yes);
 }
 
-bool GraphicsLayerCoordinated::addAnimation(const GraphicsLayerKeyframeValueList& valueList, const GraphicsLayerAnimation* animation, const String& animationName, double timeOffset)
+bool GraphicsLayerCoordinated::addAnimation(const GraphicsLayerKeyframeValueList& valueList, const GraphicsLayerAnimation* animation, StringImpl* animationName, double timeOffset)
 {
-    ASSERT(!animationName.isEmpty());
+    ASSERT(!isEmpty(animationName));
     ASSERT(animation);
 
     if (animation->isZeroDuration() || valueList.size() < 2)
@@ -726,13 +726,13 @@ bool GraphicsLayerCoordinated::addAnimation(const GraphicsLayerKeyframeValueList
     return true;
 }
 
-void GraphicsLayerCoordinated::removeAnimation(const String& animationName, std::optional<AnimatedProperty>)
+void GraphicsLayerCoordinated::removeAnimation(StringImpl* animationName, std::optional<AnimatedProperty>)
 {
     m_animations.remove(animationName);
     noteLayerPropertyChanged(Change::Animations, ScheduleFlush::Yes);
 }
 
-void GraphicsLayerCoordinated::pauseAnimation(const String& animationName, double timeOffset)
+void GraphicsLayerCoordinated::pauseAnimation(StringImpl* animationName, double timeOffset)
 {
     m_animations.pause(animationName, Seconds(timeOffset));
     noteLayerPropertyChanged(Change::Animations, ScheduleFlush::Yes);
@@ -781,7 +781,7 @@ void GraphicsLayerCoordinated::setShowRepaintCounter(bool showRepaintCounter)
 }
 
 #if USE(TEXTURE_MAPPER)
-static void dumpInnerLayer(TextStream& textStream, const String& label, CoordinatedPlatformLayer* layer, OptionSet<LayerTreeAsTextOptions> options)
+static void dumpInnerLayer(TextStream& textStream, StringImpl* label, CoordinatedPlatformLayer* layer, OptionSet<LayerTreeAsTextOptions> options)
 {
     if (!layer)
         return;
@@ -801,7 +801,7 @@ void GraphicsLayerCoordinated::dumpAdditionalProperties(TextStream& textStream, 
 {
 #if USE(TEXTURE_MAPPER)
     if (options & LayerTreeAsTextOptions::IncludeContentLayers)
-        dumpInnerLayer(textStream, "backdrop layer"_s, m_backdropLayer.get(), options);
+        dumpInnerLayer(textStream, "backdrop layer"_si, m_backdropLayer.get(), options);
 #else
     if ((options & LayerTreeAsTextOptions::IncludeContentLayers) && needsBackdrop()) {
         const auto& rect = m_backdropFiltersRect.rect();

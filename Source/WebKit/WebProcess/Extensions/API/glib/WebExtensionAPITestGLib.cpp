@@ -27,22 +27,22 @@
 
 namespace WebKit {
 
-JSValueRef WebExtensionAPITest::assertRejects(JSContextRef context, JSValueRef, JSValueRef, const String&)
+JSValueRef WebExtensionAPITest::assertRejects(JSContextRef context, JSValueRef, JSValueRef, StringImpl*)
 {
     notImplemented();
-    return toJSRejectedPromise(context, "test.assertRejects()"_s, nullString(), "it is not implemented"_s);
+    return toJSRejectedPromise(context, "test.assertRejects()"_si, nullString(), "it is not implemented"_si);
 }
 
-JSValueRef WebExtensionAPITest::assertResolves(JSContextRef context, JSValueRef, const String&)
+JSValueRef WebExtensionAPITest::assertResolves(JSContextRef context, JSValueRef, StringImpl*)
 {
     notImplemented();
-    return toJSRejectedPromise(context, "test.assertResolves()"_s, nullString(), "it is not implemented"_s);
+    return toJSRejectedPromise(context, "test.assertResolves()"_si, nullString(), "it is not implemented"_si);
 }
 
-JSValueRef WebExtensionAPITest::addTest(JSContextRef context, JSValueRef, String callingAPIName)
+JSValueRef WebExtensionAPITest::addTest(JSContextRef context, JSValueRef, RefPtr<StringImpl> callingAPIName)
 {
     notImplemented();
-    return toJSRejectedPromise(context, callingAPIName, nullString(), "it is not implemented"_s);
+    return toJSRejectedPromise(context, callingAPIName, nullString(), "it is not implemented"_si);
 }
 
 } // namespace WebKit

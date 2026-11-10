@@ -59,7 +59,7 @@ inline bool isMainFrameURLExternal(WKURLRef mainFrameURL)
     return isHTTPOrHTTPSScheme(scheme.get()) && !isLocalHost(host.get());
 }
 
-inline WTF::String sanitizeExternalURL(WKStringRef urlString)
+inline RefPtr<StringImpl> sanitizeExternalURL(WKStringRef urlString)
 {
     auto result = toWTFString(urlString);
     replace(result, JSC::Yarr::RegularExpression("\\?key=[-0123456789abcdefABCDEF]+"_s), "?key=GENERATED_KEY"_s);

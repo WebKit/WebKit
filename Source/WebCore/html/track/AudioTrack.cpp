@@ -47,21 +47,21 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioTrack);
 
-const AtomString& AudioTrack::descriptionKeyword()
+const RefPtr<AtomStringImpl>& AudioTrack::descriptionKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> description("description"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> description("description"_s);
     return description;
 }
 
-const AtomString& AudioTrack::mainDescKeyword()
+const RefPtr<AtomStringImpl>& AudioTrack::mainDescKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> mainDesc("main-desc"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> mainDesc("main-desc"_s);
     return mainDesc;
 }
 
-const AtomString& AudioTrack::translationKeyword()
+const RefPtr<AtomStringImpl>& AudioTrack::translationKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> translation("translation"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> translation("translation"_s);
     return translation;
 }
 
@@ -101,7 +101,7 @@ void AudioTrack::setPrivate(AudioTrackPrivate& trackPrivate)
     setId(trackPrivate.id());
 }
 
-void AudioTrack::setLanguage(const AtomString& language)
+void AudioTrack::setLanguage(AtomStringImpl* language)
 {
     TrackBase::setLanguage(language);
 
@@ -110,14 +110,14 @@ void AudioTrack::setLanguage(const AtomString& language)
     });
 }
 
-bool AudioTrack::isValidKind(const AtomString& value) const
+bool AudioTrack::isValidKind(AtomStringImpl* value) const
 {
-    return value == "alternative"_s
-        || value == "commentary"_s
-        || value == "description"_s
-        || value == "main"_s
-        || value == "main-desc"_s
-        || value == "translation"_s;
+    return equal(value, "alternative"_s)
+        || equal(value, "commentary"_s)
+        || equal(value, "description"_s)
+        || equal(value, "main"_s)
+        || equal(value, "main-desc"_s)
+        || equal(value, "translation"_s);
 }
 
 void AudioTrack::setEnabled(bool enabled)
@@ -177,17 +177,17 @@ void AudioTrack::idChanged(TrackID id)
     });
 }
 
-void AudioTrack::labelChanged(const String& label)
+void AudioTrack::labelChanged(StringImpl* label)
 {
-    setLabel(AtomString { label.isolatedCopy() });
+    setLabel(AtomStringImpl::add(isolatedCopy(label)).get());
     m_clients.forEach([this] (auto& client) {
         client.audioTrackLabelChanged(*this);
     });
 }
 
-void AudioTrack::languageChanged(const String& language)
+void AudioTrack::languageChanged(StringImpl* language)
 {
-    setLanguage(AtomString { language.isolatedCopy() });
+    setLanguage(AtomStringImpl::add(isolatedCopy(language)).get());
 }
 
 void AudioTrack::willRemove()
@@ -201,22 +201,22 @@ void AudioTrack::updateKindFromPrivate()
 {
     switch (protect(m_private)->kind()) {
     case AudioTrackPrivate::Kind::Alternative:
-        setKind("alternative"_s);
+        setKind("alternative"_atom);
         break;
     case AudioTrackPrivate::Kind::Description:
-        setKind("description"_s);
+        setKind("description"_atom);
         break;
     case AudioTrackPrivate::Kind::Main:
-        setKind("main"_s);
+        setKind("main"_atom);
         break;
     case AudioTrackPrivate::Kind::MainDesc:
-        setKind("main-desc"_s);
+        setKind("main-desc"_atom);
         break;
     case AudioTrackPrivate::Kind::Translation:
-        setKind("translation"_s);
+        setKind("translation"_atom);
         break;
     case AudioTrackPrivate::Kind::Commentary:
-        setKind("commentary"_s);
+        setKind("commentary"_atom);
         break;
     case AudioTrackPrivate::Kind::None:
         setKind(emptyAtom());

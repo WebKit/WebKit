@@ -135,7 +135,7 @@ private:
     void remoteAudioConfigurationChanged(RemoteAudioSessionConfiguration&&);
 
     // AudioSession
-    String routingContextUID() const final { return m_audioConfiguration.routingContextUID; }
+    RefPtr<StringImpl> routingContextUID() const final { return m_audioConfiguration.routingContextUID; }
 
     float sampleRate() const final { return m_audioConfiguration.sampleRate; }
     size_t bufferSize() const final { return m_audioConfiguration.bufferSize; }

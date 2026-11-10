@@ -153,17 +153,17 @@ std::optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(c
     // 3. If the initDataTypes member of candidate configuration is non-empty, run the following steps:
     if (!candidateConfiguration.initDataTypes.isEmpty()) {
         // 3.1. Let supported types be an empty sequence of DOMStrings.
-        Vector<AtomString> supportedTypes;
+        Vector<RefPtr<AtomStringImpl>> supportedTypes;
 
         // 3.2. For each value in candidate configuration's initDataTypes member:
         for (auto initDataType : candidateConfiguration.initDataTypes) {
             // 3.2.1. Let initDataType be the value.
             // 3.2.2. If the implementation supports generating requests based on initDataType, add initDataType
             //        to supported types. String comparison is case-sensitive. The empty string is never supported.
-            if (initDataType.isEmpty())
+            if (isEmpty(initDataType))
                 continue;
 
-            if (supportedInitDataTypes().contains(initDataType))
+            if (supportedInitDataTypes().containsIf([&](auto& item) { return equal(item, initDataType); }))
                 supportedTypes.append(initDataType);
         }
 
@@ -383,10 +383,10 @@ std::optional<Vector<CDMMediaCapability>> CDMPrivate::getSupportedCapabilitiesFo
     for (auto& requestedCapability : requestedCapabilities) {
         // 3.1. Let content type be requested media capability's contentType member.
         // 3.2. Let robustness be requested media capability's robustness member.
-        String robustness = requestedCapability.robustness;
+        RefPtr<StringImpl> robustness = requestedCapability.robustness;
 
         // 3.3. If content type is the empty string, return null.
-        if (requestedCapability.contentType.isEmpty())
+        if (isEmpty(requestedCapability.contentType))
             return std::nullopt;
 
         // 3.4. If content type is an invalid or unrecognized MIME type, continue to the next iteration.
@@ -403,12 +403,12 @@ std::optional<Vector<CDMMediaCapability>> CDMPrivate::getSupportedCapabilitiesFo
         // 3.8. If the user agent does not recognize one or more parameters, continue to the next iteration.
         // 3.9. Let media types be the set of codecs and codec constraints specified by parameters. The case-sensitivity
         //      of string comparisons is determined by the appropriate RFC or other specification.
-        auto codecs = contentType->parameterValueForName("codecs"_s);
-        if (contentType->parameterCount() > (codecs.isEmpty() ? 0 : 1))
+        auto codecs = contentType->parameterValueForName("codecs"_si);
+        if (contentType->parameterCount() > (isEmpty(codecs) ? 0 : 1))
             continue;
 
         // 3.10. If media types is empty:
-        if (codecs.isEmpty()) {
+        if (isEmpty(codecs)) {
             // ↳ If container normatively implies a specific set of codecs and codec constraints:
             // ↳ Otherwise:
             notImplemented();
@@ -418,14 +418,14 @@ std::optional<Vector<CDMMediaCapability>> CDMPrivate::getSupportedCapabilitiesFo
         // NOTE: HLS playlists are not distinguised as having audio or video contents
         // at a MIME type level.
         auto expectedTopLevel = (type == AudioVideoType::Video) ? "video/"_s : "audio/"_s;
-        if (!container.startsWithIgnoringASCIICase(expectedTopLevel)
+        if (!startsWithIgnoringASCIICase(container, expectedTopLevel)
             && !equalIgnoringASCIICase(container, "application/vnd.apple.mpegurl"_s)
             && !equalIgnoringASCIICase(container, "application/x-mpegurl"_s))
             continue;
 
         // 3.12. If robustness is not the empty string and contains an unrecognized value or a value not supported by
         //       implementation, continue to the next iteration. String comparison is case-sensitive.
-        if (!robustness.isEmpty() && !supportedRobustnesses().contains(robustness))
+        if (!isEmpty(robustness) && !supportedRobustnesses().containsIf([&](auto& item) { return equal(item, robustness); }))
             continue;
 
         // 3.13. If the user agent and implementation definitely support playback of encrypted media data for the

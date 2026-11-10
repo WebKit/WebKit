@@ -36,7 +36,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentSecurityPolicySourceListDirective);
 
-ContentSecurityPolicySourceListDirective::ContentSecurityPolicySourceListDirective(const ContentSecurityPolicyDirectiveList& directiveList, const String& name, const String& value)
+ContentSecurityPolicySourceListDirective::ContentSecurityPolicySourceListDirective(const ContentSecurityPolicyDirectiveList& directiveList, StringImpl* name, StringImpl* value)
     : ContentSecurityPolicyDirective(directiveList, name, value)
     , m_sourceList(directiveList.policy(), name)
 {
@@ -50,7 +50,7 @@ bool ContentSecurityPolicySourceListDirective::allows(const URL& url, bool didRe
     return m_sourceList.matches(url, didReceiveRedirectResponse);
 }
 
-bool ContentSecurityPolicySourceListDirective::allows(const String& nonce) const
+bool ContentSecurityPolicySourceListDirective::allows(StringImpl* nonce) const
 {
     return m_sourceList.matches(nonce);
 }

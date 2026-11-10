@@ -52,11 +52,11 @@ void SVGFEMergeElement::childrenChanged(const ChildChange& change)
     markFilterEffectForRebuild();
 }
 
-Vector<AtomString> SVGFEMergeElement::filterEffectInputsNames() const
+Vector<RefPtr<AtomStringImpl>> SVGFEMergeElement::filterEffectInputsNames() const
 {
-    Vector<AtomString> inputsNames;
+    Vector<RefPtr<AtomStringImpl>> inputsNames;
     for (Ref mergeNode : childrenOfType<SVGFEMergeNodeElement>(*this))
-        inputsNames.append(mergeNode->in1());
+        inputsNames.append(AtomStringImpl::add(mergeNode->in1().get()));
     return inputsNames;
 }
 

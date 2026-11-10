@@ -47,14 +47,14 @@ class DOMPatchSupport final {
 public:
     DOMPatchSupport(DOMEditor&, Document&);
 
-    void patchDocument(const String& markup);
-    ExceptionOr<Node*> patchNode(Node&, const String& markup);
+    void patchDocument(StringImpl* markup);
+    ExceptionOr<Node*> patchNode(Node&, StringImpl* markup);
 
 private:
     struct Digest;
 
     using ResultMap = Vector<std::pair<Digest*, size_t>>;
-    using UnusedNodesMap = HashMap<String, Digest*>;
+    using UnusedNodesMap = HashMap<RefPtr<StringImpl>, Digest*>;
 
     ExceptionOr<void> innerPatchNode(Digest& oldNode, Digest& newNode);
     std::pair<ResultMap, ResultMap> diff(const Vector<std::unique_ptr<Digest>>& oldChildren, const Vector<std::unique_ptr<Digest>>& newChildren);
@@ -65,7 +65,7 @@ private:
     void markNodeAsUsed(Digest&);
 
 #ifdef DEBUG_DOM_PATCH_SUPPORT
-    void dumpMap(const ResultMap&, const String& name);
+    void dumpMap(const ResultMap&, StringImpl* name);
 #endif
 
     DOMEditor& m_domEditor;

@@ -519,7 +519,7 @@ static void updateApplePayButtonPartForRenderer(ApplePayButtonPart& applePayButt
 {
     CheckedRef style = renderer.style();
 
-    auto platformLocale = [&] -> String {
+    auto platformLocale = [&] -> RefPtr<StringImpl> {
         auto locale = style->usedLocale();
         if (locale.isAuto())
             return defaultLanguage(ShouldMinimizeLanguages::No);
@@ -1561,10 +1561,10 @@ FloatSize RenderTheme::meterSizeForBounds(const RenderMeter&, const FloatRect& b
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-String RenderTheme::attachmentStyleSheet() const
+RefPtr<StringImpl> RenderTheme::attachmentStyleSheet() const
 {
     ASSERT(DeprecatedGlobalSettings::attachmentElementEnabled());
-    return "attachment { appearance: auto; }"_s;
+    return "attachment { appearance: auto; }"_si;
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
@@ -2179,19 +2179,19 @@ Color RenderTheme::focusRingColor(OptionSet<StyleColorOptions> options) const
     return cache.systemFocusRingColor;
 }
 
-String RenderTheme::fileListDefaultLabel(bool multipleFilesAllowed) const
+RefPtr<StringImpl> RenderTheme::fileListDefaultLabel(bool multipleFilesAllowed) const
 {
     if (multipleFilesAllowed)
         return fileButtonNoFilesSelectedLabel();
     return fileButtonNoFileSelectedLabel();
 }
 
-String RenderTheme::fileListNameForWidth(const FileList* fileList, const FontCascade& font, int width, bool multipleFilesAllowed) const
+RefPtr<StringImpl> RenderTheme::fileListNameForWidth(const FileList* fileList, const FontCascade& font, int width, bool multipleFilesAllowed) const
 {
     if (width <= 0)
-        return String();
+        return nullptr;
 
-    String string;
+    RefPtr<StringImpl> string;
     if (fileList->isEmpty())
         string = fileListDefaultLabel(multipleFilesAllowed);
     else if (fileList->length() == 1)

@@ -63,17 +63,17 @@ WTF_EXPORT_PRIVATE void base64Encode(std::span<const std::byte>, std::span<Latin
 WTF_EXPORT_PRIVATE Vector<uint8_t> base64EncodeToVector(std::span<const std::byte>, OptionSet<Base64EncodeOption> = { });
 Vector<uint8_t> base64EncodeToVector(std::span<const uint8_t>, OptionSet<Base64EncodeOption> = { });
 
-WTF_EXPORT_PRIVATE String base64EncodeToString(std::span<const std::byte>, OptionSet<Base64EncodeOption> = { });
-String base64EncodeToString(std::span<const uint8_t>, OptionSet<Base64EncodeOption> = { });
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> base64EncodeToString(std::span<const std::byte>, OptionSet<Base64EncodeOption> = { });
+RefPtr<StringImpl> base64EncodeToString(std::span<const uint8_t>, OptionSet<Base64EncodeOption> = { });
 
-WTF_EXPORT_PRIVATE String base64EncodeToStringReturnNullIfOverflow(std::span<const std::byte>, OptionSet<Base64EncodeOption> = { });
-String base64EncodeToStringReturnNullIfOverflow(const Latin1CString&, OptionSet<Base64EncodeOption> = { });
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> base64EncodeToStringReturnNullIfOverflow(std::span<const std::byte>, OptionSet<Base64EncodeOption> = { });
+RefPtr<StringImpl> base64EncodeToStringReturnNullIfOverflow(const Latin1CString&, OptionSet<Base64EncodeOption> = { });
 
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(std::span<const std::byte>, OptionSet<Base64DecodeOption> = { });
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(StringView, OptionSet<Base64DecodeOption> = { });
 std::optional<Vector<uint8_t>> base64Decode(std::span<const uint8_t>, OptionSet<Base64DecodeOption> = { });
 
-WTF_EXPORT_PRIVATE String base64DecodeToString(StringView, OptionSet<Base64DecodeOption> = { });
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> base64DecodeToString(StringView, OptionSet<Base64DecodeOption> = { });
 
 // All the same functions modified for base64url, as defined in RFC 4648.
 // This format uses '-' and '_' instead of '+' and '/' respectively.
@@ -81,8 +81,8 @@ WTF_EXPORT_PRIVATE String base64DecodeToString(StringView, OptionSet<Base64Decod
 Vector<uint8_t> base64URLEncodeToVector(std::span<const std::byte>);
 Vector<uint8_t> base64URLEncodeToVector(std::span<const uint8_t>);
 
-String base64URLEncodeToString(std::span<const std::byte>);
-String base64URLEncodeToString(std::span<const uint8_t>);
+RefPtr<StringImpl> base64URLEncodeToString(std::span<const std::byte>);
+RefPtr<StringImpl> base64URLEncodeToString(std::span<const uint8_t>);
 
 std::optional<Vector<uint8_t>> base64URLDecode(StringView);
 inline std::optional<Vector<uint8_t>> base64URLDecode(ASCIILiteral literal) { return base64URLDecode(StringView { literal }); }
@@ -102,17 +102,17 @@ inline Vector<uint8_t> base64EncodeToVector(std::span<const uint8_t> input, Opti
     return base64EncodeToVector(std::as_bytes(input), options);
 }
 
-inline String base64EncodeToString(std::span<const uint8_t> input, OptionSet<Base64EncodeOption> options)
+inline RefPtr<StringImpl> base64EncodeToString(std::span<const uint8_t> input, OptionSet<Base64EncodeOption> options)
 {
     return base64EncodeToString(std::as_bytes(input), options);
 }
 
-inline String base64EncodeToStringReturnNullIfOverflow(std::span<const uint8_t> input, OptionSet<Base64EncodeOption> options)
+inline RefPtr<StringImpl> base64EncodeToStringReturnNullIfOverflow(std::span<const uint8_t> input, OptionSet<Base64EncodeOption> options)
 {
     return base64EncodeToStringReturnNullIfOverflow(std::as_bytes(input), options);
 }
 
-inline String base64EncodeToStringReturnNullIfOverflow(const Latin1CString& input, OptionSet<Base64EncodeOption> options)
+inline RefPtr<StringImpl> base64EncodeToStringReturnNullIfOverflow(const Latin1CString& input, OptionSet<Base64EncodeOption> options)
 {
     return base64EncodeToStringReturnNullIfOverflow(std::as_bytes(input.span()), options);
 }
@@ -132,12 +132,12 @@ inline Vector<uint8_t> base64URLEncodeToVector(std::span<const uint8_t> input)
     return base64EncodeToVector(input, { Base64EncodeOption::URL, Base64EncodeOption::OmitPadding });
 }
 
-inline String base64URLEncodeToString(std::span<const std::byte> input)
+inline RefPtr<StringImpl> base64URLEncodeToString(std::span<const std::byte> input)
 {
     return base64EncodeToString(input, { Base64EncodeOption::URL, Base64EncodeOption::OmitPadding });
 }
 
-inline String base64URLEncodeToString(std::span<const uint8_t> input)
+inline RefPtr<StringImpl> base64URLEncodeToString(std::span<const uint8_t> input)
 {
     return base64EncodeToString(input, { Base64EncodeOption::URL, Base64EncodeOption::OmitPadding });
 }

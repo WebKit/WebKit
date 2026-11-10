@@ -78,20 +78,20 @@ struct UserPromptHandler {
 };
 
 struct Proxy {
-    String type;
+    RefPtr<StringImpl> type;
     std::optional<URL> autoconfigURL;
     std::optional<URL> ftpURL;
     std::optional<URL> httpURL;
     std::optional<URL> httpsURL;
     std::optional<URL> socksURL;
     std::optional<uint8_t> socksVersion;
-    Vector<String> ignoreAddressList;
+    Vector<RefPtr<StringImpl>> ignoreAddressList;
 };
 
 struct Capabilities {
-    std::optional<String> browserName;
-    std::optional<String> browserVersion;
-    std::optional<String> platformName;
+    std::optional<RefPtr<StringImpl>> browserName;
+    std::optional<RefPtr<StringImpl>> browserVersion;
+    std::optional<RefPtr<StringImpl>> platformName;
     std::optional<bool> acceptInsecureCerts;
     std::optional<bool> strictFileInteractability;
     std::optional<bool> setWindowRect;
@@ -99,17 +99,17 @@ struct Capabilities {
     std::optional<PageLoadStrategy> pageLoadStrategy;
     std::optional<UserPromptHandler> unhandledPromptBehavior;
     std::optional<Proxy> proxy;
-    std::optional<String> targetAddr;
+    std::optional<RefPtr<StringImpl>> targetAddr;
     std::optional<int> targetPort;
     std::optional<uint64_t> processID;
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    std::optional<String> browserBinary;
+    std::optional<RefPtr<StringImpl>> browserBinary;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(COCOA)
-    std::optional<Vector<String>> browserArguments;
+    std::optional<Vector<RefPtr<StringImpl>>> browserArguments;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    std::optional<Vector<std::pair<String, String>>> certificates;
+    std::optional<Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>> certificates;
 #endif
 #if PLATFORM(GTK)
     std::optional<bool> useOverlayScrollbars;

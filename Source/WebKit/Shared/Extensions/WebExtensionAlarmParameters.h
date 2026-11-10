@@ -34,7 +34,7 @@
 namespace WebKit {
 
 struct WebExtensionAlarmParameters {
-    String name;
+    RefPtr<StringImpl> name;
     Seconds initialInterval;
     Seconds repeatInterval;
     MonotonicTime nextScheduledTime;

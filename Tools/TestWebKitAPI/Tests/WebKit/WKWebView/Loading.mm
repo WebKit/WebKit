@@ -107,7 +107,7 @@ TEST(WebKit, NavigateToInFlightPrefetchWithCrossOriginRedirect)
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/redirect"_s) {
+            if (equal(path, "/redirect"_s)) {
                 if (contains(request.span(), "Sec-Purpose: prefetch"_span)) {
                     // Hold the prefetch response so the navigation has a chance to join the in-flight prefetch.
                     prefetchConnection = connection;
@@ -173,13 +173,13 @@ TEST(WebKit, NavigateToInFlightPrefetchWithErrorResponse)
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/product"_s) {
+            if (equal(path, "/product"_s)) {
                 if (contains(request.span(), "Sec-Purpose: prefetch"_span)) {
                     // Hold the prefetch response so the navigation has a chance to join the in-flight prefetch.
                     prefetchConnection = connection;
                     co_return;
                 }
-                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, "product"_s).serialize());
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, "product"_si).serialize());
                 continue;
             }
             co_await connection.awaitableSend(HTTPResponse(main).serialize());
@@ -206,7 +206,7 @@ TEST(WebKit, NavigateToInFlightPrefetchWithErrorResponse)
     [webView evaluateJavaScript:@"document.getElementById('link').click()" completionHandler:nil];
     [delegate waitForDidStartProvisionalNavigation];
 
-    prefetchConnection->send("HTTP/1.1 503 Service Unavailable\r\nContent-Type: application/octet-stream\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"_s);
+    prefetchConnection->send("HTTP/1.1 503 Service Unavailable\r\nContent-Type: application/octet-stream\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"_si);
     [delegate waitForDidFinishNavigation];
 
     EXPECT_WK_STREQ(@"/product", [webView URL].path);

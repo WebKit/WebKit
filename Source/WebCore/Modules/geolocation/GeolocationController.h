@@ -66,7 +66,7 @@ public:
     WEBCORE_EXPORT static ASCIILiteral supplementName();
     static GeolocationController* from(Page* page) { return downcast<GeolocationController>(Supplement<Page>::from(page, supplementName())); }
 
-    void revokeAuthorizationToken(const String&);
+    void revokeAuthorizationToken(StringImpl*);
 
     void didNavigatePage();
 

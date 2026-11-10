@@ -37,16 +37,16 @@ namespace WebKit {
 namespace NetworkCache {
 
 Key::Key(const Key& o)
-    : m_partition(o.m_partition.isolatedCopy())
-    , m_type(o.m_type.isolatedCopy())
-    , m_identifier(o.m_identifier.isolatedCopy())
-    , m_range(o.m_range.isolatedCopy())
+    : m_partition(WTF::isolatedCopy(o.m_partition))
+    , m_type(WTF::isolatedCopy(o.m_type))
+    , m_identifier(WTF::isolatedCopy(o.m_identifier))
+    , m_range(WTF::isolatedCopy(o.m_range))
     , m_hash(o.m_hash)
     , m_partitionHash(o.m_partitionHash)
 {
 }
 
-Key::Key(const String& partition, const String& type, const String& range, const String& identifier, const Salt& salt)
+Key::Key(StringImpl* partition, StringImpl* type, StringImpl* range, StringImpl* identifier, const Salt& salt)
     : m_partition(partition)
     , m_type(type)
     , m_identifier(identifier)
@@ -72,18 +72,18 @@ Key::Key(const DataKey& dataKey, const Salt& salt)
 
 Key& Key::operator=(const Key& other)
 {
-    m_partition = other.m_partition.isolatedCopy();
-    m_type = other.m_type.isolatedCopy();
-    m_identifier = other.m_identifier.isolatedCopy();
-    m_range = other.m_range.isolatedCopy();
+    m_partition = WTF::isolatedCopy(other.m_partition);
+    m_type = WTF::isolatedCopy(other.m_type);
+    m_identifier = WTF::isolatedCopy(other.m_identifier);
+    m_range = WTF::isolatedCopy(other.m_range);
     m_hash = other.m_hash;
     m_partitionHash = other.m_partitionHash;
     return *this;
 }
 
-static void hashString(SHA1& sha1, const String& string)
+static void hashString(SHA1& sha1, StringImpl* string)
 {
-    if (string.isNull())
+    if (!string)
         return;
 
     sha1.addUTF8Bytes(string);
@@ -106,7 +106,7 @@ Key::HashType Key::computeHash(const Salt& salt) const
     return hash;
 }
 
-String Key::partitionToPartitionHashAsString(const String& partition, const Salt& salt)
+RefPtr<StringImpl> Key::partitionToPartitionHashAsString(StringImpl* partition, const Salt& salt)
 {
     return hashAsString(partitionToPartitionHash(partition, salt));
 }
@@ -116,7 +116,7 @@ Key::HashType Key::computePartitionHash(const Salt& salt) const
     return partitionToPartitionHash(m_partition, salt);
 }
 
-Key::HashType Key::partitionToPartitionHash(const String& partition, const Salt& salt)
+Key::HashType Key::partitionToPartitionHash(StringImpl* partition, const Salt& salt)
 {
     SHA1 sha1;
     sha1.addBytes(salt);
@@ -128,7 +128,7 @@ Key::HashType Key::partitionToPartitionHash(const String& partition, const Salt&
     return hash;
 }
 
-String Key::hashAsString(const HashType& hash)
+RefPtr<StringImpl> Key::hashAsString(const HashType& hash)
 {
     StringBuilder builder;
     builder.reserveCapacity(hashStringLength());
@@ -151,18 +151,18 @@ template <typename CharType> NODELETE bool hexDigitsToHash(std::span<const CharT
     return true;
 }
 
-bool Key::stringToHash(const String& string, HashType& hash)
+bool Key::stringToHash(StringImpl* string, HashType& hash)
 {
-    if (string.length() != hashStringLength())
+    if (length(string) != hashStringLength())
         return false;
-    if (string.is8Bit())
-        return hexDigitsToHash(string.span8(), hash);
-    return hexDigitsToHash(string.span16(), hash);
+    if (is8Bit(string))
+        return hexDigitsToHash(span8(string), hash);
+    return hexDigitsToHash(span16(string), hash);
 }
 
 bool Key::operator==(const Key& other) const
 {
-    return m_hash == other.m_hash && m_partition == other.m_partition && m_type == other.m_type && m_identifier == other.m_identifier && m_range == other.m_range;
+    return m_hash == other.m_hash && equal(m_partition, other.m_partition) && equal(m_type, other.m_type) && equal(m_identifier, other.m_identifier) && equal(m_range, other.m_range);
 }
 
 }

@@ -212,11 +212,11 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (void)_setContentRuleListsEnabled:(BOOL)enabled exceptions:(NSSet<NSString *> *)identifiers
 {
-    HashSet<String> exceptions;
+    HashSet<RefPtr<StringImpl>> exceptions;
     exceptions.reserveInitialCapacity(identifiers.count);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString *identifier in identifiers)
-        exceptions.add(identifier);
+        exceptions.add(StringImpl::create(identifier));
 
     auto defaultEnablement = enabled ? WebCore::ContentExtensionDefaultEnablement::Enabled : WebCore::ContentExtensionDefaultEnablement::Disabled;
     protect(*_websitePolicies)->setContentExtensionEnablement({ defaultEnablement, WTF::move(exceptions) });
@@ -224,13 +224,13 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (void)_setActiveContentRuleListActionPatterns:(NSDictionary<NSString *, NSSet<NSString *> *> *)patterns
 {
-    __block HashMap<String, Vector<String>> map;
+    __block HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>> map;
     [patterns enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSSet<NSString *> *value, BOOL *) {
-        Vector<String> vector(ReserveCapacityTag { }, value.count);
+        Vector<RefPtr<StringImpl>> vector(ReserveCapacityTag { }, value.count);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL NSString *pattern in value)
-            vector.append(pattern);
-        map.add(key, WTF::move(vector));
+            vector.append(StringImpl::create(pattern));
+        map.add(StringImpl::create(key), WTF::move(vector));
     }];
     protect(*_websitePolicies)->setActiveContentRuleListActionPatterns(WTF::move(map));
 }
@@ -241,8 +241,8 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     for (const auto& pair : _websitePolicies->activeContentRuleListActionPatterns()) {
         NSMutableSet<NSString *> *set = [NSMutableSet set];
         for (const auto& pattern : borrow(pair.value))
-            [set addObject:pattern.createNSString().get()];
-        [dictionary setObject:set forKey:pair.key.createNSString().get()];
+            [set addObject:createNSString(pattern).get()];
+        [dictionary setObject:set forKey:createNSString(pair.key).get()];
     }
     return dictionary;
 }
@@ -431,32 +431,32 @@ NODELETE static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDevi
 
 - (void)_setCustomUserAgent:(NSString *)customUserAgent
 {
-    protect(*_websitePolicies)->setCustomUserAgent(customUserAgent);
+    protect(*_websitePolicies)->setCustomUserAgent(StringImpl::create(customUserAgent));
 }
 
 - (NSString *)_customUserAgent
 {
-    return _websitePolicies->customUserAgent().createNSString().autorelease();
+    return createNSString(_websitePolicies->customUserAgent()).autorelease();
 }
 
 - (void)_setCustomUserAgentAsSiteSpecificQuirks:(NSString *)customUserAgent
 {
-    protect(*_websitePolicies)->setCustomUserAgentAsSiteSpecificQuirks(customUserAgent);
+    protect(*_websitePolicies)->setCustomUserAgentAsSiteSpecificQuirks(StringImpl::create(customUserAgent));
 }
 
 - (NSString *)_customUserAgentAsSiteSpecificQuirks
 {
-    return _websitePolicies->customUserAgentAsSiteSpecificQuirks().createNSString().autorelease();
+    return createNSString(_websitePolicies->customUserAgentAsSiteSpecificQuirks()).autorelease();
 }
 
 - (void)_setCustomNavigatorPlatform:(NSString *)customNavigatorPlatform
 {
-    protect(*_websitePolicies)->setCustomNavigatorPlatform(customNavigatorPlatform);
+    protect(*_websitePolicies)->setCustomNavigatorPlatform(StringImpl::create(customNavigatorPlatform));
 }
 
 - (NSString *)_customNavigatorPlatform
 {
-    return _websitePolicies->customNavigatorPlatform().createNSString().autorelease();
+    return createNSString(_websitePolicies->customNavigatorPlatform()).autorelease();
 }
 
 - (BOOL)_allowSiteSpecificQuirksToOverrideCompatibilityMode
@@ -471,12 +471,12 @@ NODELETE static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDevi
 
 - (NSString *)_applicationNameForUserAgentWithModernCompatibility
 {
-    return _websitePolicies->applicationNameForDesktopUserAgent().createNSString().autorelease();
+    return createNSString(_websitePolicies->applicationNameForDesktopUserAgent()).autorelease();
 }
 
 - (void)_setApplicationNameForUserAgentWithModernCompatibility:(NSString *)applicationName
 {
-    protect(*_websitePolicies)->setApplicationNameForDesktopUserAgent(applicationName);
+    protect(*_websitePolicies)->setApplicationNameForDesktopUserAgent(StringImpl::create(applicationName).get());
 }
 
 - (API::Object&)_apiObject
@@ -501,7 +501,7 @@ NODELETE static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDevi
 
 - (void)setOverrideReferrer:(NSString *)referrer
 {
-    protect(*_websitePolicies)->setOverrideReferrerForAllRequests(referrer);
+    protect(*_websitePolicies)->setOverrideReferrerForAllRequests(StringImpl::create(referrer));
 }
 
 - (void)_setOverrideReferrerForAllRequests:(NSString *)referrer
@@ -769,11 +769,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         WebCore::TargetedElementSelectors selectorsForElement(ReserveCapacityTag { }, nsSelectorsForElement.count);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL NSSet<NSString *> *nsSelectors in nsSelectorsForElement) {
-            HashSet<String> selectors;
+            HashSet<RefPtr<StringImpl>> selectors;
             selectors.reserveInitialCapacity(nsSelectors.count);
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
             for (SUPPRESS_UNRETAINED_LOCAL NSString *selector in nsSelectors)
-                selectors.add(selector);
+                selectors.add(StringImpl::create(selector));
             selectorsForElement.append(WTF::move(selectors));
         }
         result.append(WTF::move(selectorsForElement));
@@ -789,7 +789,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         for (auto& selectors : borrow(selectorsForElement)) {
             RetainPtr nsSelectors = adoptNS([[NSMutableSet alloc] initWithCapacity:selectors.size()]);
             for (auto& selector : selectors)
-                [nsSelectors addObject:selector.createNSString().get()];
+                [nsSelectors addObject:createNSString(selector).get()];
             [nsSelectorsForElement addObject:nsSelectors.get()];
         }
         [result addObject:nsSelectorsForElement.get()];
@@ -816,7 +816,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         }
 
         for (auto& selector : elementSelectors.first())
-            [selectors addObject:selector.createNSString().get()];
+            [selectors addObject:createNSString(selector).get()];
     }
     return selectors.autorelease();
 }

@@ -95,8 +95,8 @@ public:
     const URL& url() const LIFETIME_BOUND final { return m_url; }
     const URL& cookieURL() const LIFETIME_BOUND final { return url(); }
     const URL& ownerURL() const LIFETIME_BOUND { return m_ownerURL; }
-    String origin() const;
-    const String& inspectorIdentifier() const LIFETIME_BOUND { return m_inspectorIdentifier; }
+    RefPtr<StringImpl> origin() const;
+    const RefPtr<StringImpl>& inspectorIdentifier() const LIFETIME_BOUND { return m_inspectorIdentifier; }
 
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
     void suspend() final;
@@ -125,7 +125,7 @@ public:
     WorkerLocation& location() const;
     void close();
 
-    virtual ExceptionOr<void> importScripts(const FixedVector<Variant<Ref<TrustedScriptURL>, String>>& urls);
+    virtual ExceptionOr<void> importScripts(const FixedVector<Variant<Ref<TrustedScriptURL>, RefPtr<StringImpl>>>& urls);
     WorkerNavigator& navigator();
 
     NODELETE void setIsOnline(bool);
@@ -161,7 +161,7 @@ public:
     CSSValuePool& cssValuePool() final;
     CSSFontSelector* cssFontSelector() final;
     Ref<FontFaceSet> fonts();
-    RefPtr<FontLoadRequest> fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource) final;
+    RefPtr<FontLoadRequest> fontLoadRequest(StringImpl* url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource) final;
     void beginLoadingFontSoon(FontLoadRequest&) final;
 
     NODELETE const SettingsValues& settingsValues() const LIFETIME_BOUND final { return m_settingsValues; }
@@ -181,9 +181,9 @@ public:
 
     WorkerClient* workerClient() LIFETIME_BOUND { return m_workerClient.get(); }
 
-    String agentClusterID() const final { return m_agentClusterID; }
+    RefPtr<StringImpl> agentClusterID() const final { return m_agentClusterID; }
 
-    void reportErrorToWorkerObject(const String&);
+    void reportErrorToWorkerObject(StringImpl*);
 
     void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&&);
 
@@ -192,26 +192,26 @@ protected:
 
     void updateSourceProviderBuffers(const ScriptBuffer& mainScript, const HashMap<URL, ScriptBuffer>& importedScripts);
 
-    void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) override;
+    void addConsoleMessage(MessageSource, MessageLevel, StringImpl* message, unsigned long requestIdentifier) override;
 
 private:
-    void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) final;
+    void logExceptionToConsole(StringImpl* errorMessage, StringImpl* sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) final;
 
     // The following addMessage and addConsoleMessage functions are deprecated.
     // Callers should try to create the ConsoleMessage themselves.
-    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject*, unsigned long requestIdentifier) final;
+    void addMessage(MessageSource, MessageLevel, StringImpl* message, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject*, unsigned long requestIdentifier) final;
 
     bool isWorkerGlobalScope() const final { return true; }
 
     void deleteJSCodeAndGC(Synchronous);
     void clearDecodedScriptData();
 
-    URL parseURL(const String&) const final;
-    String userAgent(const URL&) const final;
-    String navigatorPlatform() const final { return m_navigatorPlatform; }
+    URL parseURL(StringImpl*) const final;
+    RefPtr<StringImpl> userAgent(const URL&) const final;
+    RefPtr<StringImpl> navigatorPlatform() const final { return m_navigatorPlatform; }
 
     EventTarget* errorEventTarget() final;
-    String resourceRequestIdentifier() const final { return m_inspectorIdentifier; }
+    RefPtr<StringImpl> resourceRequestIdentifier() const final { return m_inspectorIdentifier; }
     NODELETE SocketProvider* socketProvider() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
 
@@ -222,15 +222,15 @@ private:
 
     // ReportingClient.
     void notifyReportObservers(Ref<Report>&&) final;
-    String endpointURIForToken(const String&) const final;
-    void sendReportToEndpoints(const URL& baseURL, std::span<const String> endpointURIs, std::span<const String> endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
-    String httpUserAgent() const final { return m_userAgent; }
+    RefPtr<StringImpl> endpointURIForToken(StringImpl*) const final;
+    void sendReportToEndpoints(const URL& baseURL, std::span<const RefPtr<StringImpl>> endpointURIs, std::span<const RefPtr<StringImpl>> endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
+    RefPtr<StringImpl> httpUserAgent() const final { return m_userAgent; }
 
     URL m_url;
     URL m_ownerURL;
-    String m_inspectorIdentifier;
-    String m_userAgent;
-    String m_navigatorPlatform;
+    RefPtr<StringImpl> m_inspectorIdentifier;
+    RefPtr<StringImpl> m_userAgent;
+    RefPtr<StringImpl> m_navigatorPlatform;
 
     const RefPtr<WorkerLocation> m_location;
     const RefPtr<WorkerNavigator> m_navigator;
@@ -262,7 +262,7 @@ private:
     SettingsValues m_settingsValues;
     WorkerType m_workerType;
     FetchOptions::Credentials m_credentials;
-    String m_agentClusterID;
+    RefPtr<StringImpl> m_agentClusterID;
     const NetworkLoadPolicy m_networkLoadPolicy;
     const CanBeCrossOriginIsolated m_canBeCrossOriginIsolated;
     const RefPtr<WorkerStorageConnection> m_storageConnection;

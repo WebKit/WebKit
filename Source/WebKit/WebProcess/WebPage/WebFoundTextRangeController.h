@@ -57,9 +57,9 @@ class WebFoundTextRangeController : private WebCore::PageOverlayClient {
 public:
     explicit WebFoundTextRangeController(WebPage&);
 
-    void findTextRangesForStringMatches(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(HashMap<WebCore::FrameIdentifier, Vector<WebFoundTextRange>>&&)>&&);
+    void findTextRangesForStringMatches(StringImpl*, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(HashMap<WebCore::FrameIdentifier, Vector<WebFoundTextRange>>&&)>&&);
 
-    void replaceFoundTextRangeWithString(const WebFoundTextRange&, const String&);
+    void replaceFoundTextRangeWithString(const WebFoundTextRange&, StringImpl*);
 
     void decorateTextRangeWithStyle(const WebFoundTextRange&, FindDecorationStyle);
     void scrollTextRangeToVisible(const WebFoundTextRange&);

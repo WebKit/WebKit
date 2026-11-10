@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT String watchAdaptationName();
+WEBCORE_EXPORT RefPtr<StringImpl> watchAdaptationName();
 
 enum class DisabledAdaptations : uint8_t {
     Watch = 1 << 0,

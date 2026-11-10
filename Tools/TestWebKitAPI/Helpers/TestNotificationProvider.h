@@ -43,8 +43,8 @@ public:
     explicit TestNotificationProvider(Vector<WKNotificationManagerRef>&&);
     ~TestNotificationProvider();
 
-    void setPermission(const String& origin, bool allowed);
-    void resetPermission(const String& origin);
+    void setPermission(StringImpl* origin, bool allowed);
+    void resetPermission(StringImpl* origin);
 
     WKDictionaryRef notificationPermissions() const;
     void showWebNotification(WKPageRef, WKNotificationRef);
@@ -56,7 +56,7 @@ public:
     bool simulateMultipleNotificationsClose();
     size_t pendingNotificationCount() const { return m_pendingNotifications.size(); }
     WKStringRef lastNotificationDataStoreIdentifier() const { return m_lastNotificationDataStoreIdentifier.get(); };
-    const String& lastNotificationOrigin() const { return m_lastNotificationOrigin; }
+    const RefPtr<StringImpl>& lastNotificationOrigin() const { return m_lastNotificationOrigin; }
 
     bool hasReceivedShowNotification() const { return m_hasReceivedShowNotification; }
     bool hasReceivedCloseNotification() const { return m_hasReceivedCloseNotification; }
@@ -64,14 +64,14 @@ public:
 
 private:
     Vector<WKNotificationManagerRef> m_managers;
-    HashMap<String, bool> m_permissions;
+    HashMap<RefPtr<StringImpl>, bool> m_permissions;
     WKNotificationProviderV0 m_provider;
 
     bool m_hasReceivedShowNotification { false };
     bool m_hasReceivedCloseNotification { false };
     Vector<std::pair<WKNotificationManagerRef, uint64_t>> m_pendingNotifications;
     WKRetainPtr<WKStringRef> m_lastNotificationDataStoreIdentifier;
-    String m_lastNotificationOrigin;
+    RefPtr<StringImpl> m_lastNotificationOrigin;
 };
 
 }

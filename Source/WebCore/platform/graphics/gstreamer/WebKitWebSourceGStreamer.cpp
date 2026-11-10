@@ -106,7 +106,7 @@ struct WebKitWebSrcPrivate {
 
         // MediaPlayer referrer cached value. The corresponding method has to be called from the
         // main thread, so the value needs to be cached before use in non-main thread.
-        String referrer;
+        RefPtr<StringImpl> referrer;
 
         // Properties used for GStreamer data-flow in create().
         bool isFlushing { false };
@@ -575,7 +575,7 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
     return GST_FLOW_EOS;
 }
 
-static bool webKitWebSrcSetExtraHeader(const String& field, const GValue* value, ResourceRequest& request)
+static bool webKitWebSrcSetExtraHeader(StringImpl* field, const GValue* value, ResourceRequest& request)
 {
     GMallocString fieldContent;
 
@@ -589,8 +589,8 @@ static bool webKitWebSrcSetExtraHeader(const String& field, const GValue* value,
             fieldContent = GMallocString::unsafeAdoptFromUTF8(g_value_dup_string(&dest));
     }
 
-    GST_DEBUG("Appending extra header: \"%s: %s\"", field.ascii().data(), fieldContent.utf8());
-    request.setHTTPHeaderField(field, fieldContent.span());
+    GST_DEBUG("Appending extra header: \"%s: %s\"", ascii(field).data(), fieldContent.utf8());
+    request.setHTTPHeaderField(field, StringImpl::create(fieldContent.span()).get());
     return true;
 }
 
@@ -622,14 +622,14 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
     ASSERT(members->requestedPosition != members->stopPosition);
 
     GST_DEBUG_OBJECT(src, "Posting task to request R%u %s requestedPosition=%" G_GUINT64_FORMAT " stopPosition=%" G_GUINT64_FORMAT, members->requestNumber, priv->originalURI, members->requestedPosition, members->stopPosition);
-    URL url { String(priv->originalURI.span()) };
+    URL url { StringImpl::create(priv->originalURI.span()) };
 
     ResourceRequest request(WTF::move(url));
     request.setAllowCookies(true);
     request.setHTTPReferrer(members->referrer);
 
     if (priv->httpMethod)
-        request.setHTTPMethod(priv->httpMethod.span());
+        request.setHTTPMethod(StringImpl::create(priv->httpMethod.span()).get());
 
 #if USE(SOUP)
     // By default, HTTP Accept-Encoding is disabled here as we don't
@@ -652,13 +652,13 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
         else
             formatedRange = GMallocString::unsafeAdoptFromUTF8(g_strdup_printf("bytes=%" G_GUINT64_FORMAT "-", members->requestedPosition));
         GST_DEBUG_OBJECT(src, "Range request: %s", formatedRange.utf8());
-        request.setHTTPHeaderField(HTTPHeaderName::Range, formatedRange.span());
+        request.setHTTPHeaderField(HTTPHeaderName::Range, StringImpl::create(formatedRange.span()).get());
     }
     ASSERT(members->readPosition == members->requestedPosition);
 
     GST_DEBUG_OBJECT(src, "Persistent connection support %s", priv->keepAlive ? "enabled" : "disabled");
     if (!priv->keepAlive)
-        request.setHTTPHeaderField(HTTPHeaderName::Connection, "close"_s);
+        request.setHTTPHeaderField(HTTPHeaderName::Connection, "close"_si);
 
     if (priv->extraHeaders) {
         gstStructureForeach(priv->extraHeaders.get(), [&](auto id, auto value) -> bool {
@@ -688,7 +688,7 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
     }
 
     // We always request Icecast/Shoutcast metadata, just in case ...
-    request.setHTTPHeaderField(HTTPHeaderName::IcyMetadata, "1"_s);
+    request.setHTTPHeaderField(HTTPHeaderName::IcyMetadata, "1"_si);
 
     ASSERT(!isMainThread());
     RunLoop::mainSingleton().dispatch([protector = webKitWebSrcEnsureGRef(src), request = WTF::move(request), requestNumber = members->requestNumber] {
@@ -887,7 +887,7 @@ const gchar* const* webKitWebSrcGetProtocols(GType)
     return protocols.data();
 }
 
-static URL convertPlaybinURI(String&& uriString)
+static URL convertPlaybinURI(RefPtr<StringImpl>&& uriString)
 {
     return URL { WTF::move(uriString) };
 }
@@ -918,14 +918,14 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri, GEr
         return FALSE;
     }
 
-    URL url = convertPlaybinURI(byteCast<char8_t>(unsafeSpan(uri)));
+    URL url = convertPlaybinURI(StringImpl::create(byteCast<char8_t>(unsafeSpan(uri))));
 
     if (!urlHasSupportedProtocol(url)) {
         g_set_error(error, GST_URI_ERROR, GST_URI_ERROR_BAD_URI, "Invalid URI '%s'", uri);
         return FALSE;
     }
 
-    priv->originalURI = url.string().utf8();
+    priv->originalURI = utf8(url.string());
     return TRUE;
 }
 
@@ -945,7 +945,7 @@ void webKitWebSrcSetResourceLoader(WebKitWebSrc* src, WebCore::PlatformMediaReso
     members->loader = &loader;
 }
 
-void webKitWebSrcSetReferrer(WebKitWebSrc* src, const String& referrer)
+void webKitWebSrcSetReferrer(WebKitWebSrc* src, StringImpl* referrer)
 {
     DataMutexLocker members { src->priv->dataMutex };
     members->referrer = referrer;
@@ -1027,7 +1027,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     members->didPassAccessControlCheck = members->resource->didPassAccessControlCheck();
     members->origins.add(SecurityOrigin::create(response.url()));
 
-    auto responseURI = response.url().string().utf8();
+    auto responseURI = utf8(response.url().string());
     if (priv->originalURI != responseURI)
         members->redirectedURI = WTF::move(responseURI);
 
@@ -1055,7 +1055,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     // Pack request headers in the http-headers structure.
     GUniquePtr<GstStructure> headers(gst_structure_new_empty("request-headers"));
     for (const auto& header : m_request.httpHeaderFields())
-        gstStructureSet(headers.get(), header.key.utf8(), G_TYPE_STRING, header.value.utf8());
+        gstStructureSet(headers.get(), utf8(header.key), G_TYPE_STRING, utf8(header.value));
     GST_DEBUG_OBJECT(src.get(), "R%u: Request headers going downstream: %" GST_PTR_FORMAT, m_requestNumber, headers.get());
     gst_structure_set(httpHeaders.get(), "request-headers", GST_TYPE_STRUCTURE, headers.get(), nullptr);
 
@@ -1063,9 +1063,9 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     headers.reset(gst_structure_new_empty("response-headers"));
     for (const auto& header : response.httpHeaderFields()) {
         if (auto convertedValue = parseIntegerAllowingTrailingJunk<uint64_t>(header.value))
-            gstStructureSet(headers.get(), header.key.utf8(), G_TYPE_UINT64, *convertedValue);
+            gstStructureSet(headers.get(), utf8(header.key), G_TYPE_UINT64, *convertedValue);
         else
-            gstStructureSet(headers.get(), header.key.utf8(), G_TYPE_STRING, header.value.utf8());
+            gstStructureSet(headers.get(), utf8(header.key), G_TYPE_STRING, utf8(header.value));
     }
     GST_DEBUG_OBJECT(src.get(), "R%u: Response headers going downstream: %" GST_PTR_FORMAT, m_requestNumber, headers.get());
     gst_structure_set(httpHeaders.get(), "response-headers", GST_TYPE_STRUCTURE, headers.get(), nullptr);
@@ -1094,7 +1094,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
         GST_DEBUG_OBJECT(src.get(), "R%u: Range request succeeded", m_requestNumber);
     }
 
-    members->isSeekable = length > 0 && g_ascii_strcasecmp("none", response.httpHeaderField(HTTPHeaderName::AcceptRanges).utf8().legacyCStringPointer());
+    members->isSeekable = length > 0 && g_ascii_strcasecmp("none", utf8(response.httpHeaderField(HTTPHeaderName::AcceptRanges)).legacyCStringPointer());
 
     GST_DEBUG_OBJECT(src.get(), "R%u: Size: %" G_GUINT64_FORMAT ", isSeekable: %s", m_requestNumber, length, boolForPrinting(members->isSeekable));
     if (length > 0)
@@ -1107,9 +1107,9 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     if (auto metadataInterval = parseIntegerAllowingTrailingJunk<int>(response.httpHeaderField(HTTPHeaderName::IcyMetaInt)); metadataInterval && *metadataInterval > 0) {
         caps = adoptGRef(gst_caps_new_simple("application/x-icy", "metadata-interval", G_TYPE_INT, *metadataInterval, nullptr));
 
-        String contentType = response.httpHeaderField(HTTPHeaderName::ContentType);
-        GST_DEBUG_OBJECT(src.get(), "R%u: Response ContentType: %s", m_requestNumber, contentType.utf8());
-        gst_caps_set_simple(caps.get(), "content-type", G_TYPE_STRING, contentType.utf8().legacyCStringPointer(), nullptr);
+        RefPtr<StringImpl> contentType = response.httpHeaderField(HTTPHeaderName::ContentType);
+        GST_DEBUG_OBJECT(src.get(), "R%u: Response ContentType: %s", m_requestNumber, utf8(contentType));
+        gst_caps_set_simple(caps.get(), "content-type", G_TYPE_STRING, utf8(contentType).legacyCStringPointer(), nullptr);
     }
     if (caps) {
         GST_DEBUG_OBJECT(src.get(), "R%u: Set caps to %" GST_PTR_FORMAT, m_requestNumber, caps.get());
@@ -1221,7 +1221,7 @@ void CachedResourceStreamingClient::accessControlCheckFailed(PlatformMediaResour
     if (members->requestNumber != m_requestNumber)
         return;
 
-    GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: %s", m_requestNumber, error.localizedDescription().utf8().legacyCStringPointer()), (nullptr));
+    GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: %s", m_requestNumber, utf8(error.localizedDescription()).legacyCStringPointer()), (nullptr));
     members->doesHaveEOS = true;
     members->responseCondition.notifyOne();
 }
@@ -1238,10 +1238,10 @@ void CachedResourceStreamingClient::loadFailed(PlatformMediaResource&, const Res
         return;
 
     if (!error.isCancellation()) {
-        GST_ERROR_OBJECT(src.get(), "R%u: Have failure: %s", m_requestNumber, error.localizedDescription().utf8());
-        GST_ELEMENT_ERROR(src.get(), RESOURCE, FAILED, ("R%u: %s", m_requestNumber, error.localizedDescription().utf8().legacyCStringPointer()), (nullptr));
+        GST_ERROR_OBJECT(src.get(), "R%u: Have failure: %s", m_requestNumber, utf8(error.localizedDescription()));
+        GST_ELEMENT_ERROR(src.get(), RESOURCE, FAILED, ("R%u: %s", m_requestNumber, utf8(error.localizedDescription()).legacyCStringPointer()), (nullptr));
     } else
-        GST_LOG_OBJECT(src.get(), "R%u: Request cancelled: %s", m_requestNumber, error.localizedDescription().utf8());
+        GST_LOG_OBJECT(src.get(), "R%u: Request cancelled: %s", m_requestNumber, utf8(error.localizedDescription()));
 
     members->doesHaveEOS = true;
     members->responseCondition.notifyOne();

@@ -1711,7 +1711,7 @@ bool GraphicsContextCG::supportsInternalLinks() const
     return true;
 }
 
-void GraphicsContextCG::setDestinationForRect(const String& name, const FloatRect& destRect)
+void GraphicsContextCG::setDestinationForRect(StringImpl* name, const FloatRect& destRect)
 {
     const RetainPtr<CGContextRef>& context = contextForDraw();
 
@@ -1719,14 +1719,14 @@ void GraphicsContextCG::setDestinationForRect(const String& name, const FloatRec
     rect.intersect(CGContextGetClipBoundingBox(context));
 
     CGRect transformedRect = CGRectApplyAffineTransform(rect, CGContextGetCTM(context));
-    CGPDFContextSetDestinationForRect(context, name.createCFString().get(), transformedRect);
+    CGPDFContextSetDestinationForRect(context, createCFString(name).get(), transformedRect);
 }
 
-void GraphicsContextCG::addDestinationAtPoint(const String& name, const FloatPoint& position)
+void GraphicsContextCG::addDestinationAtPoint(StringImpl* name, const FloatPoint& position)
 {
     const RetainPtr<CGContextRef>& context = contextForDraw();
     CGPoint transformedPoint = CGPointApplyAffineTransform(position, CGContextGetCTM(context));
-    CGPDFContextAddDestinationAtPoint(context, name.createCFString().get(), transformedPoint);
+    CGPDFContextAddDestinationAtPoint(context, createCFString(name).get(), transformedPoint);
 }
 
 bool GraphicsContextCG::canUseShadowBlur() const

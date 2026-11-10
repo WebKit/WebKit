@@ -1186,17 +1186,17 @@ void RenderView::setViewTransitionContainingBlock(RenderBlockFlow& renderer)
     m_viewTransitionContainingBlock = renderer;
 }
 
-void RenderView::addViewTransitionGroup(const AtomString& name, RenderBox& group)
+void RenderView::addViewTransitionGroup(AtomStringImpl* name, RenderBox& group)
 {
     m_viewTransitionGroups.set(name, &group);
 }
 
-void RenderView::removeViewTransitionGroup(const AtomString& name)
+void RenderView::removeViewTransitionGroup(AtomStringImpl* name)
 {
     m_viewTransitionGroups.remove(name);
 }
 
-RenderBox* RenderView::viewTransitionGroupForName(const AtomString& name)
+RenderBox* RenderView::viewTransitionGroupForName(AtomStringImpl* name)
 {
     return m_viewTransitionGroups.get(name);
 }

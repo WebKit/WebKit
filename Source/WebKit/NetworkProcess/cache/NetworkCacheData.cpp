@@ -53,7 +53,7 @@ Data::Data(Vector<uint8_t>&& data)
 }
 #endif
 
-Data Data::mapToFile(const String& path) const
+Data Data::mapToFile(StringImpl* path) const
 {
     FileSystem::FileHandle handle;
     auto applyData = [&](NOESCAPE const Function<bool(std::span<const uint8_t>)>& applier) {
@@ -65,7 +65,7 @@ Data Data::mapToFile(const String& path) const
     return Data::adoptMap(WTF::move(mappedFile), WTF::move(handle));
 }
 
-Data mapFile(const String& path)
+Data mapFile(StringImpl* path)
 {
     auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
     if (!handle)

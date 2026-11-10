@@ -197,7 +197,7 @@ std::optional<WebCore::WritingTools::TextSuggestion> convertToWebTextSuggestion(
     if (!suggestionUUID)
         return std::nullopt;
 
-    return { { *suggestionUUID, { suggestion.originalRange }, { suggestion.replacement }, convertToWebTextSuggestionState(suggestion.state) } };
+    return { { *suggestionUUID, { suggestion.originalRange }, StringImpl::create(suggestion.replacement), convertToWebTextSuggestionState(suggestion.state) } };
 }
 
 } // namespace WebKit

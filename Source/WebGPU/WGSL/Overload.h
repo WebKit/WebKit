@@ -122,7 +122,7 @@ struct OverloadCandidate {
     AbstractType result;
 };
 
-using ValidationFunction = std::optional<String>(*)(const FixedVector<std::optional<ConstantValue>>&, const FixedVector<const Type*>&);
+using ValidationFunction = std::optional<RefPtr<StringImpl>>(*)(const FixedVector<std::optional<ConstantValue>>&, const FixedVector<const Type*>&);
 
 struct OverloadedDeclaration {
     enum Kind : uint8_t {
@@ -134,7 +134,7 @@ struct OverloadedDeclaration {
     Kind kind;
     bool mustUse;
 
-    std::expected<ConstantValue, String> (*constantFunction)(const Type*, const FixedVector<ConstantValue>&);
+    std::expected<ConstantValue, RefPtr<StringImpl>> (*constantFunction)(const Type*, const FixedVector<ConstantValue>&);
     ValidationFunction validationFunction;
     OptionSet<ShaderStage> visibility;
     // A shader calls only a few builtins, so `overloads` stays empty until the type checker first

@@ -47,7 +47,7 @@
 
 - (NSString *)lookupNamespaceURI:(NSString *)prefix
 {
-    return IMPL->lookupNamespaceURI(prefix).createNSString().autorelease();
+    return createNSString(IMPL->lookupNamespaceURI(AtomStringImpl::add((__bridge CFStringRef)prefix).get())).autorelease();
 }
 
 @end

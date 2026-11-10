@@ -41,7 +41,7 @@
 - (NSString *)wholeText
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->wholeText().createNSString().autorelease();
+    return createNSString(IMPL->wholeText()).autorelease();
 }
 
 - (DOMText *)splitText:(unsigned)offset
@@ -53,7 +53,7 @@
 - (DOMText *)replaceWholeText:(NSString *)content
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->replaceWholeText(content);
+    IMPL->replaceWholeText(StringImpl::create(content).get());
     return self;
 }
 

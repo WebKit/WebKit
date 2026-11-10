@@ -44,7 +44,7 @@ BufferedChangeEvent::BufferedChangeEvent(RefPtr<TimeRanges>&& added, RefPtr<Time
 {
 }
 
-BufferedChangeEvent::BufferedChangeEvent(const AtomString& type, Init&& init)
+BufferedChangeEvent::BufferedChangeEvent(AtomStringImpl* type, Init&& init)
     : Event(EventInterfaceType::BufferedChangeEvent, type, init, IsTrusted::No)
     , m_added(WTF::move(init.addedRanges))
     , m_removed(WTF::move(init.removedRanges))

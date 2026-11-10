@@ -42,9 +42,9 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBStorageManager);
 
-static bool migrateOriginDataImpl(const String& oldOriginDirectory, const String& newOriginDirectory, NOESCAPE const Function<String(const String&)>& createFileNameFunction)
+static bool migrateOriginDataImpl(StringImpl* oldOriginDirectory, StringImpl* newOriginDirectory, NOESCAPE const Function<RefPtr<StringImpl>(StringImpl*)>& createFileNameFunction)
 {
-    if (oldOriginDirectory.isEmpty() || !FileSystem::fileExists(oldOriginDirectory))
+    if (isEmpty(oldOriginDirectory) || !FileSystem::fileExists(oldOriginDirectory))
         return true;
 
     const auto fileNames = FileSystem::listDirectory(oldOriginDirectory);
@@ -73,18 +73,18 @@ static bool migrateOriginDataImpl(const String& oldOriginDirectory, const String
     return allMoved;
 }
 
-void IDBStorageManager::createVersionDirectoryIfNeeded(const String& rootDirectory)
+void IDBStorageManager::createVersionDirectoryIfNeeded(StringImpl* rootDirectory)
 {
-    if (rootDirectory.isEmpty())
+    if (isEmpty(rootDirectory))
         return;
 
     bool oldVersionDirectoryExists = false;
-    Vector<String> oldVersionNames;
+    Vector<RefPtr<StringImpl>> oldVersionNames;
     const auto fileNames = FileSystem::listDirectory(rootDirectory);
     for (auto& name : fileNames) {
-        if (name == "v0"_s)
+        if (equal(name, "v0"_s))
             oldVersionDirectoryExists = true;
-        if (name != "v0"_s && name != "v1"_s) {
+        if (!equal(name, "v0"_s) && !equal(name, "v1"_s)) {
             if (auto origin = WebCore::SecurityOriginData::fromDatabaseIdentifier(name))
                 oldVersionNames.append(name);
         }
@@ -123,35 +123,35 @@ void IDBStorageManager::createVersionDirectoryIfNeeded(const String& rootDirecto
     }
 }
 
-String IDBStorageManager::idbStorageOriginDirectory(const String& rootDirectory, const WebCore::ClientOrigin& origin)
+RefPtr<StringImpl> IDBStorageManager::idbStorageOriginDirectory(StringImpl* rootDirectory, const WebCore::ClientOrigin& origin)
 {
-    if (rootDirectory.isEmpty())
+    if (isEmpty(rootDirectory))
         return emptyString();
 
     auto originDirectory = WebCore::IDBDatabaseIdentifier::optionalDatabaseDirectoryRelativeToRoot(origin, rootDirectory, "v1"_s);
-    if (originDirectory.isEmpty())
+    if (isEmpty(originDirectory))
         return emptyString();
 
     auto oldOriginDirectory = WebCore::IDBDatabaseIdentifier::optionalDatabaseDirectoryRelativeToRoot(origin, rootDirectory, "v0"_s);
-    if (oldOriginDirectory.isEmpty())
+    if (isEmpty(oldOriginDirectory))
         return emptyString();
 
-    migrateOriginDataImpl(oldOriginDirectory, originDirectory, [](const String& name) {
+    migrateOriginDataImpl(oldOriginDirectory, originDirectory, [](StringImpl* name) {
         return WebCore::SQLiteFileSystem::computeHashForFileName(WebCore::IDBServer::SQLiteIDBBackingStore::decodeDatabaseName(name));
     });
 
     return originDirectory;
 }
 
-uint64_t IDBStorageManager::idbStorageSize(const String& originDirectory)
+uint64_t IDBStorageManager::idbStorageSize(StringImpl* originDirectory)
 {
-    if (originDirectory.isEmpty())
+    if (isEmpty(originDirectory))
         return 0;
 
     return WebCore::IDBServer::SQLiteIDBBackingStore::databasesSizeForDirectory(originDirectory);
 }
 
-static void getOriginsForVersion(const String& versionPath, HashSet<WebCore::ClientOrigin>& origins)
+static void getOriginsForVersion(StringImpl* versionPath, HashSet<WebCore::ClientOrigin>& origins)
 {
     for (auto& topDatabaseIdentifier : FileSystem::listDirectory(versionPath)) {
         auto topOrigin = WebCore::SecurityOriginData::fromDatabaseIdentifier(topDatabaseIdentifier);
@@ -179,10 +179,10 @@ static void getOriginsForVersion(const String& versionPath, HashSet<WebCore::Cli
     }
 }
 
-HashSet<WebCore::ClientOrigin> IDBStorageManager::originsOfIDBStorageData(const String& rootDirectory)
+HashSet<WebCore::ClientOrigin> IDBStorageManager::originsOfIDBStorageData(StringImpl* rootDirectory)
 {
     HashSet<WebCore::ClientOrigin> origins;
-    if (rootDirectory.isEmpty())
+    if (isEmpty(rootDirectory))
         return origins;
 
     getOriginsForVersion(FileSystem::pathByAppendingComponent(rootDirectory, "v0"_s), origins);
@@ -191,14 +191,14 @@ HashSet<WebCore::ClientOrigin> IDBStorageManager::originsOfIDBStorageData(const 
     return origins;
 }
 
-bool IDBStorageManager::migrateOriginData(const String& oldOriginDirectory, const String& newOriginDirectory)
+bool IDBStorageManager::migrateOriginData(StringImpl* oldOriginDirectory, StringImpl* newOriginDirectory)
 {
-    return migrateOriginDataImpl(oldOriginDirectory, newOriginDirectory, [](const String& name) {
+    return migrateOriginDataImpl(oldOriginDirectory, newOriginDirectory, [](StringImpl* name) {
         return name;
     });
 }
 
-IDBStorageManager::IDBStorageManager(const String& path, IDBStorageRegistry& registry, QuotaCheckFunction&& quotaCheckFunction, bool useSQLiteMemoryBackingStore)
+IDBStorageManager::IDBStorageManager(StringImpl* path, IDBStorageRegistry& registry, QuotaCheckFunction&& quotaCheckFunction, bool useSQLiteMemoryBackingStore)
     : m_path(path)
     , m_registry(registry)
     , m_quotaCheckFunction(WTF::move(quotaCheckFunction))
@@ -235,7 +235,7 @@ void IDBStorageManager::closeDatabasesForDeletion()
 
 void IDBStorageManager::stopDatabaseActivitiesForSuspend()
 {
-    if (m_path.isEmpty())
+    if (isEmpty(m_path))
         return;
 
     for (auto& database : m_databases.values()) {
@@ -278,10 +278,10 @@ void IDBStorageManager::deleteDatabase(WebCore::IDBServer::IDBConnectionToClient
 Vector<WebCore::IDBDatabaseNameAndVersion> IDBStorageManager::getAllDatabaseNamesAndVersions()
 {
     Vector<WebCore::IDBDatabaseNameAndVersion> result;
-    HashSet<String> visitedDatabasePaths;
+    HashSet<RefPtr<StringImpl>> visitedDatabasePaths;
     for (auto& database : m_databases.values()) {
         auto path = database->filePath();
-        if (!path.isEmpty())
+        if (!isEmpty(path))
             visitedDatabasePaths.add(path);
 
         if (auto nameAndVersion = database->nameAndVersion())
@@ -342,7 +342,7 @@ void IDBStorageManager::unregisterTransaction(WebCore::IDBServer::UniqueIDBDatab
 
 std::unique_ptr<WebCore::IDBServer::IDBBackingStore> IDBStorageManager::createBackingStore(const WebCore::IDBDatabaseIdentifier& identifier)
 {
-    if (m_path.isEmpty() || identifier.isTransient()) {
+    if (isEmpty(m_path) || identifier.isTransient()) {
         if (m_useSQLiteMemoryBackingStore)
             return makeUnique<WebCore::IDBServer::SQLiteMemoryIDBBackingStore>(identifier);
         return makeUnique<WebCore::IDBServer::MemoryIDBBackingStore>(identifier);

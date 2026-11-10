@@ -42,12 +42,12 @@ WKTypeID WKPreferencesGetTypeID()
 
 WKPreferencesRef WKPreferencesCreate()
 {
-    return toAPILeakingRef(WebPreferences::createWithLegacyDefaults(String(), "WebKit2."_s, "WebKit2."_s));
+    return toAPILeakingRef(WebPreferences::createWithLegacyDefaults(nullString(), "WebKit2."_si, "WebKit2."_si));
 }
 
 WKPreferencesRef WKPreferencesCreateWithIdentifier(WKStringRef identifierRef)
 {
-    return toAPILeakingRef(WebPreferences::createWithLegacyDefaults(toWTFString(identifierRef), "WebKit2."_s, "WebKit2."_s));
+    return toAPILeakingRef(WebPreferences::createWithLegacyDefaults(toWTFString(identifierRef), "WebKit2."_si, "WebKit2."_si));
 }
 
 WKPreferencesRef WKPreferencesCreateCopy(WKPreferencesRef preferencesRef)
@@ -2115,5 +2115,5 @@ void WKPreferencesSetFTPDirectoryTemplatePath(WKPreferencesRef, WKStringRef)
 
 WKStringRef WKPreferencesCopyFTPDirectoryTemplatePath(WKPreferencesRef)
 {
-    return toCopiedAPI(String { });
+    return toCopiedAPI(nullString());
 }

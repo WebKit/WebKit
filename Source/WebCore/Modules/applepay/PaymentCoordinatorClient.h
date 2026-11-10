@@ -50,10 +50,10 @@ class PaymentCoordinatorClient : public AbstractRefCounted {
 public:
     bool supportsVersion(unsigned version) const;
 
-    virtual std::optional<String> validatedPaymentNetwork(const String&) const = 0;
+    virtual std::optional<RefPtr<StringImpl>> validatedPaymentNetwork(StringImpl*) const = 0;
     virtual bool canMakePayments() = 0;
-    virtual void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&) = 0;
-    virtual void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&) = 0;
+    virtual void canMakePaymentsWithActiveCard(StringImpl* merchantIdentifier, StringImpl* domainName, CompletionHandler<void(bool)>&&) = 0;
+    virtual void openPaymentSetup(StringImpl* merchantIdentifier, StringImpl* domainName, CompletionHandler<void(bool)>&&) = 0;
 
     virtual bool showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const ApplePaySessionPaymentRequest&) = 0;
     virtual void completeMerchantValidation(const PaymentMerchantSession&) = 0;

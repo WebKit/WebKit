@@ -55,9 +55,9 @@ enum class HTMLMediaElementSourceType : uint8_t {
     StoredStream,
 };
 
-String convertEnumerationToString(HTMLMediaElementEnums::ReadyState);
-String convertEnumerationToString(HTMLMediaElementEnums::NetworkState);
-String convertEnumerationToString(HTMLMediaElementEnums::TextTrackVisibilityCheckType);
+RefPtr<StringImpl> convertEnumerationToString(HTMLMediaElementEnums::ReadyState);
+RefPtr<StringImpl> convertEnumerationToString(HTMLMediaElementEnums::NetworkState);
+RefPtr<StringImpl> convertEnumerationToString(HTMLMediaElementEnums::TextTrackVisibilityCheckType);
 
 } // namespace WebCore
 
@@ -68,7 +68,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::HTMLMediaElementEnums::ReadyState> {
-    static String toString(const WebCore::HTMLMediaElementEnums::ReadyState state)
+    static RefPtr<StringImpl> toString(const WebCore::HTMLMediaElementEnums::ReadyState state)
     {
         return convertEnumerationToString(state);
     }
@@ -76,7 +76,7 @@ struct LogArgument<WebCore::HTMLMediaElementEnums::ReadyState> {
 
 template <>
 struct LogArgument<WebCore::HTMLMediaElementEnums::NetworkState> {
-    static String toString(const WebCore::HTMLMediaElementEnums::NetworkState state)
+    static RefPtr<StringImpl> toString(const WebCore::HTMLMediaElementEnums::NetworkState state)
     {
         return convertEnumerationToString(state);
     }
@@ -84,7 +84,7 @@ struct LogArgument<WebCore::HTMLMediaElementEnums::NetworkState> {
 
 template <>
 struct LogArgument<WebCore::HTMLMediaElementEnums::TextTrackVisibilityCheckType> {
-    static String toString(const WebCore::HTMLMediaElementEnums::TextTrackVisibilityCheckType type)
+    static RefPtr<StringImpl> toString(const WebCore::HTMLMediaElementEnums::TextTrackVisibilityCheckType type)
     {
         return convertEnumerationToString(type);
     }

@@ -84,7 +84,7 @@ private:
     void createDocumentStructure();
 
     WeakPtr<HTMLMediaElement> m_mediaElement;
-    String m_outgoingReferrer;
+    RefPtr<StringImpl> m_outgoingReferrer;
 };
     
 void MediaDocumentParser::createDocumentStructure()
@@ -103,8 +103,8 @@ void MediaDocumentParser::createDocumentStructure()
     rootElement->appendChild(headElement);
 
     Ref metaElement = HTMLMetaElement::create(document);
-    metaElement->setAttributeWithoutSynchronization(nameAttr, "viewport"_s);
-    metaElement->setAttributeWithoutSynchronization(contentAttr, "width=device-width,initial-scale=1"_s);
+    metaElement->setAttributeWithoutSynchronization(nameAttr, "viewport"_atom);
+    metaElement->setAttributeWithoutSynchronization(contentAttr, "width=device-width,initial-scale=1"_atom);
     headElement->appendChild(metaElement);
 #endif
 
@@ -115,9 +115,9 @@ void MediaDocumentParser::createDocumentStructure()
     m_mediaElement = videoElement.get();
     videoElement->setAttributeWithoutSynchronization(controlsAttr, emptyAtom());
     videoElement->setAttributeWithoutSynchronization(autoplayAttr, emptyAtom());
-    videoElement->setAttributeWithoutSynchronization(srcAttr, AtomString { document->url().string() });
+    videoElement->setAttributeWithoutSynchronization(srcAttr, AtomStringImpl::add(document->url().string()).get());
     if (RefPtr loader = document->loader())
-        videoElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->responseMIMEType() });
+        videoElement->setAttributeWithoutSynchronization(typeAttr, AtomStringImpl::add(loader->responseMIMEType()).get());
 
     body->appendChild(videoElement);
     document->setHasVisuallyNonEmptyCustomContent();
@@ -170,20 +170,20 @@ void MediaDocument::replaceMediaElementTimerFired()
         return;
 
     // Set body margin width and height to 0 as that is what a PluginDocument uses.
-    htmlBody->setAttributeWithoutSynchronization(marginwidthAttr, "0"_s);
-    htmlBody->setAttributeWithoutSynchronization(marginheightAttr, "0"_s);
+    htmlBody->setAttributeWithoutSynchronization(marginwidthAttr, "0"_atom);
+    htmlBody->setAttributeWithoutSynchronization(marginheightAttr, "0"_atom);
 
     if (RefPtr videoElement = descendantVideoElement(*htmlBody)) {
         Ref embedElement = HTMLEmbedElement::create(*this);
 
-        embedElement->setAttributeWithoutSynchronization(widthAttr, "100%"_s);
-        embedElement->setAttributeWithoutSynchronization(heightAttr, "100%"_s);
-        embedElement->setAttributeWithoutSynchronization(nameAttr, "plugin"_s);
-        embedElement->setAttributeWithoutSynchronization(srcAttr, AtomString { url().string() });
+        embedElement->setAttributeWithoutSynchronization(widthAttr, "100%"_atom);
+        embedElement->setAttributeWithoutSynchronization(heightAttr, "100%"_atom);
+        embedElement->setAttributeWithoutSynchronization(nameAttr, "plugin"_atom);
+        embedElement->setAttributeWithoutSynchronization(srcAttr, AtomStringImpl::add(url().string()).get());
 
         ASSERT(loader());
         if (RefPtr loader = this->loader())
-            embedElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->writer().mimeType() });
+            embedElement->setAttributeWithoutSynchronization(typeAttr, AtomStringImpl::add(loader->writer().mimeType()).get());
 
         protect(videoElement->parentNode())->replaceChild(embedElement, *videoElement);
     }

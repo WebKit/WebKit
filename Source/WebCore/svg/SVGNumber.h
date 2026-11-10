@@ -75,7 +75,7 @@ public:
         return { };
     }
 
-    String valueAsString() const override
+    RefPtr<StringImpl> valueAsString() const override
     {
         return SVGPropertyTraits<float>::toString(m_value);
     }

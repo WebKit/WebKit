@@ -33,17 +33,17 @@ namespace PAL {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(KillRing);
 
-void KillRing::append(const String&)
+void KillRing::append(StringImpl*)
 {
 }
 
-void KillRing::prepend(const String&)
+void KillRing::prepend(StringImpl*)
 {
 }
 
-String KillRing::yank()
+RefPtr<StringImpl> KillRing::yank()
 {
-    return String();
+    return nullptr;
 }
 
 void KillRing::startNewSequence()

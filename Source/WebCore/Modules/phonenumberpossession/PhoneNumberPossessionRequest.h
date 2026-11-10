@@ -38,9 +38,9 @@ class Exception;
 
 struct PhoneNumberPossessionRequest {
     BufferSource challenge;
-    String relyingPartyIdentifier;
+    RefPtr<StringImpl> relyingPartyIdentifier;
     PhoneNumberPossessionResponseType desiredResponseType { PhoneNumberPossessionResponseType::PossessionIdentifier };
-    String phoneNumberSuffixHint;
+    RefPtr<StringImpl> phoneNumberSuffixHint;
     std::optional<BufferSource> pnpiSuffixHint;
     std::optional<BufferSource> knownCarrierPubKey;
 };

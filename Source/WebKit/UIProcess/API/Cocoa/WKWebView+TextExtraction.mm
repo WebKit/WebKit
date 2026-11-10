@@ -81,12 +81,12 @@ struct ConnectedRemapCandidate {
 
 } // namespace WebKit
 
-static String noteForRemappedStaleNode(const String& requestedIdentifier)
+static RefPtr<StringImpl> noteForRemappedStaleNode(StringImpl* requestedIdentifier)
 {
     return makeString("Note: the targeted node (uid="_s, requestedIdentifier, ") was stale from an earlier page state and was automatically re-resolved to the current matching element."_s);
 }
 
-static void findFirstConnectedRemapCandidate(WebKit::WebPageProxy& page, const Vector<String>& candidateIdentifiers, CompletionHandler<void(std::optional<WebKit::ConnectedRemapCandidate>&&)>&& completion)
+static void findFirstConnectedRemapCandidate(WebKit::WebPageProxy& page, const Vector<RefPtr<StringImpl>>& candidateIdentifiers, CompletionHandler<void(std::optional<WebKit::ConnectedRemapCandidate>&&)>&& completion)
 {
     RefPtr<WebKit::WebFrameProxy> frameToQuery;
     Vector<WebCore::NodeIdentifier> nodeIdentifiers;
@@ -145,7 +145,7 @@ static std::optional<WebCore::NodeIdentifier> activeContextMenuTargetNodeIdentif
     if (!self._isValid)
         return completionHandler(NO);
 
-    _page->simulateClickOverFirstMatchingTextInViewportWithUserInteraction(targetText, [completionHandler = makeBlockPtr(completionHandler)](bool success) {
+    _page->simulateClickOverFirstMatchingTextInViewportWithUserInteraction(StringImpl::create(targetText), [completionHandler = makeBlockPtr(completionHandler)](bool success) {
         completionHandler(static_cast<BOOL>(success));
     });
 }
@@ -218,9 +218,9 @@ static std::optional<WebCore::NodeIdentifier> activeContextMenuTargetNodeIdentif
 
 @interface WKWebView (WKTextExtractionInternal)
 - (void)_describeInteraction:(WebCore::TextExtraction::Interaction)interaction inFrame:(RefPtr<WebKit::WebFrameProxy>)targetFrame staleNodeResolution:(const WebKit::StaleNodeResolutionState&)staleNodeResolution completionHandler:(void (^)(NSString *, NSError *))completionHandler;
-- (void)_retryInteractionWithConnectedRemapCandidate:(WebCore::TextExtraction::Interaction)interaction actionType:(_WKTextExtractionAction)actionType requestedNodeIdentifier:(const String&)requestedIdentifier remapCandidates:(const Vector<String>&)remapCandidates failureDescription:(const String&)failureDescription completionHandler:(void(^)(_WKTextExtractionInteractionResult *))completionHandler;
-- (void)_retryDescribingInteractionWithConnectedRemapCandidate:(WebCore::TextExtraction::Interaction)interaction requestedNodeIdentifier:(const String&)requestedIdentifier remapCandidates:(const Vector<String>&)remapCandidates completionHandler:(void (^)(NSString *, NSError *))completionHandler;
-- (Vector<String>)_activeNativeMenuItemTitles;
+- (void)_retryInteractionWithConnectedRemapCandidate:(WebCore::TextExtraction::Interaction)interaction actionType:(_WKTextExtractionAction)actionType requestedNodeIdentifier:(StringImpl*)requestedIdentifier remapCandidates:(const Vector<RefPtr<StringImpl>>&)remapCandidates failureDescription:(StringImpl*)failureDescription completionHandler:(void(^)(_WKTextExtractionInteractionResult *))completionHandler;
+- (void)_retryDescribingInteractionWithConnectedRemapCandidate:(WebCore::TextExtraction::Interaction)interaction requestedNodeIdentifier:(StringImpl*)requestedIdentifier remapCandidates:(const Vector<RefPtr<StringImpl>>&)remapCandidates completionHandler:(void (^)(NSString *, NSError *))completionHandler;
+- (Vector<RefPtr<StringImpl>>)_activeNativeMenuItemTitles;
 #if PLATFORM(MAC)
 - (RetainPtr<NSPopUpButtonCell>)_activePopupButtonCell;
 #endif
@@ -237,38 +237,38 @@ static std::optional<WebCore::NodeIdentifier> activeContextMenuTargetNodeIdentif
     return nil;
 }
 
-static Vector<std::pair<String, String>> extractReplacementStrings(_WKTextExtractionConfiguration *configuration)
+static Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> extractReplacementStrings(_WKTextExtractionConfiguration *configuration)
 {
-    Vector<std::pair<String, String>> result;
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> result;
     RetainPtr replacementStrings = [configuration replacementStrings];
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString *replacement in replacementStrings.get()) {
         if (!replacement.length)
             continue;
 
-        auto foldedKey = WebKit::foldTextForReplacement(String { replacement });
-        if (foldedKey.isEmpty())
+        auto foldedKey = WebKit::foldTextForReplacement(StringImpl::create(replacement).get());
+        if (isEmpty(foldedKey))
             continue;
 
-        result.append({ WTF::move(foldedKey), String { [replacementStrings objectForKey:replacement] } });
+        result.append({ WTF::move(foldedKey), StringImpl::create([replacementStrings objectForKey:replacement]) });
     }
 
     std::ranges::sort(result, [](auto& a, auto& b) {
-        if (a.first.length() != b.first.length())
-            return a.first.length() > b.first.length();
+        if (length(a.first) != length(b.first))
+            return length(a.first) > length(b.first);
         return codePointCompareLessThan(a.first, b.first);
     });
     return result;
 }
 
-static String applyReplacementsToDescription(const String& description, const Vector<String>& stringsToValidate, const Vector<std::pair<String, String>>& replacementStrings)
+static RefPtr<StringImpl> applyReplacementsToDescription(StringImpl* description, const Vector<RefPtr<StringImpl>>& stringsToValidate, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& replacementStrings)
 {
     if (replacementStrings.isEmpty())
         return description;
 
-    auto result = description;
+    auto result = RefPtr { description };
     for (auto& string : borrow(stringsToValidate)) {
-        if (auto replaced = WebKit::applyReplacements(string, replacementStrings); replaced != string)
+        if (auto replaced = WebKit::applyReplacements(string, replacementStrings); !equal(replaced, string))
             result = makeStringByReplacingAll(result, string, WTF::move(replaced));
     }
     return result;
@@ -379,11 +379,11 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
 
         if (filterUsingClassifier) {
 #if ENABLE(TEXT_EXTRACTION_FILTER)
-            filterCallbacks.append([](auto& text, auto&&, auto&&) mutable {
+            filterCallbacks.append([](StringImpl* text, auto&&, auto&&) mutable {
                 WebKit::TextExtractionFilterPromise::Producer producer;
                 Ref promise = producer.promise();
 
-                WebKit::TextExtractionFilter::singleton().shouldFilter(text, [producer = WTF::move(producer), text](bool shouldFilterOut) mutable {
+                WebKit::TextExtractionFilter::singleton().shouldFilter(text, [producer = WTF::move(producer), text = RefPtr { text }](bool shouldFilterOut) mutable {
                     if (shouldFilterOut)
                         producer.settle(emptyString());
                     else
@@ -396,27 +396,27 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
 
         if (filterHiddenText) {
 #if ENABLE(TEXT_EXTRACTION_FILTER)
-            filterCallbacks.append([strongSelf](auto& text, auto&& frameID, auto&& enclosingNodeID) mutable {
+            filterCallbacks.append([strongSelf](StringImpl* text, auto&& frameID, auto&& enclosingNodeID) mutable {
                 WebKit::TextExtractionFilterPromise::Producer producer;
                 Ref promise = producer.promise();
 
-                auto lines = text.splitAllowingEmptyEntries('\n');
-                auto components = Box<Vector<String>>::create();
+                auto lines = splitAllowingEmptyEntries(text, '\n');
+                auto components = Box<Vector<RefPtr<StringImpl>>>::create();
                 components->resizeToFit(lines.size());
 
                 Ref aggregator = MainRunLoopCallbackAggregator::create([producer = WTF::move(producer), components] mutable {
-                    producer.settle(makeStringByJoining(WTF::move(*components), "\n"_s));
+                    producer.settle(makeStringByJoining(WTF::move(*components), "\n"_si));
                 });
 
                 for (size_t index = 0; index < lines.size(); ++index) {
                     static constexpr auto minimumLengthForTextDetection = 100;
                     auto line = lines[index];
-                    if (line.length() < minimumLengthForTextDetection) {
+                    if (length(line) < minimumLengthForTextDetection) {
                         components->at(index) = WTF::move(line);
                         continue;
                     }
 
-                    [strongSelf _validateText:line inFrame:std::optional { frameID } inNode:std::optional { enclosingNodeID } completionHandler:[aggregator, components, index](auto& result) mutable {
+                    [strongSelf _validateText:line inFrame:std::optional { frameID } inNode:std::optional { enclosingNodeID } completionHandler:[aggregator, components, index](StringImpl* result) mutable {
                         components->at(index) = result;
                     }];
                 }
@@ -428,7 +428,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
 
         if (filterUsingRules) {
 #if ENABLE(TEXT_EXTRACTION_FILTER)
-            filterCallbacks.append([page = strongSelf->_page](auto& text, auto&&, auto&&) mutable {
+            filterCallbacks.append([page = strongSelf->_page](StringImpl* text, auto&&, auto&&) mutable {
                 WebKit::TextExtractionFilterPromise::Producer producer;
                 Ref promise = producer.promise();
 
@@ -487,13 +487,13 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
             for (auto& string : borrow(shortenedURLStrings)) {
                 if (auto url = urlCache->urlForShortenedString(string); url.isValid()) {
                     if (RetainPtr nsURL = url.createNSURL())
-                        [shortenedURLs setObject:nsURL.get() forKey:string.createNSString().get()];
+                        [shortenedURLs setObject:nsURL.get() forKey:createNSString(string).get()];
                 }
             }
             completionHandler(adoptNS([[_WKTextExtractionResult alloc]
                 initWithWebView:strongSelf.get()
                 origin:wrapper(API::SecurityOrigin::create(origin)).get()
-                textContent:text.createNSString().get()
+                textContent:createNSString(text).get()
                 filteredOutAnyText:filteredOutAnyText
                 shortenedURLs:shortenedURLs.get()
                 textToContainerMap:WTF::move(textToContainerMap)]).get());
@@ -501,7 +501,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
     }];
 }
 
-- (std::expected<std::pair<RefPtr<WebKit::WebFrameProxy>, WebCore::TextExtraction::Interaction>, RetainPtr<NSString>>)_convertToWebCoreInteraction:(_WKTextExtractionInteraction *)wkInteraction nodeIdentifier:(const String&)nodeIdentifierString
+- (std::expected<std::pair<RefPtr<WebKit::WebFrameProxy>, WebCore::TextExtraction::Interaction>, RetainPtr<NSString>>)_convertToWebCoreInteraction:(_WKTextExtractionInteraction *)wkInteraction nodeIdentifier:(StringImpl*)nodeIdentifierString
 {
     std::optional<WebCore::FrameIdentifier> frameIdentifier;
     WebCore::TextExtraction::Interaction interaction;
@@ -547,7 +547,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
         interaction.locationInRootView = location;
 #endif
     }
-    interaction.text = wkInteraction.text;
+    interaction.text = StringImpl::create(wkInteraction.text);
     interaction.replaceAll = wkInteraction.replaceAll;
     interaction.scrollToVisible = wkInteraction.scrollToVisible;
     interaction.scrollDelta = WebCore::FloatSize { wkInteraction.scrollDelta };
@@ -555,7 +555,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
         if (RetainPtr context = [wkInteraction extractionContext]) {
             auto result = [context resolveContainerForSearchText:wkInteraction.text];
             if (!result.has_value())
-                return makeUnexpected(result.error().createNSString());
+                return makeUnexpected(createNSString(result.error()));
 
             if (auto container = *result) {
                 interaction.nodeIdentifier = container->nodeIdentifier;
@@ -597,11 +597,11 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
         interaction = WTF::move(interactionForRetry),
         presentationUpdateTimeout,
         completionHandler = makeBlockPtr(WTF::move(completionHandler))
-    ](bool success, String&& description, Vector<String>&& stringsToValidate, WebCore::FloatRect interactedElementBounds) mutable {
+    ](bool success, RefPtr<StringImpl>&& description, Vector<RefPtr<StringImpl>>&& stringsToValidate, WebCore::FloatRect interactedElementBounds) mutable {
         RetainPtr strongSelf = weakSelf.get();
         RefPtr strongPage = weakPage.get();
 
-        if (!success && strongSelf && strongPage && !staleNodeResolution.requestedIdentifier.isEmpty() && !staleNodeResolution.didRemap()) {
+        if (!success && strongSelf && strongPage && !isEmpty(staleNodeResolution.requestedIdentifier) && !staleNodeResolution.didRemap()) {
             auto resolved = strongPage->textExtractionCache().resolve(staleNodeResolution.requestedIdentifier);
             if (resolved.resolution == WebKit::TextExtractionCache::NodeResolution::Remapped) {
                 [strongSelf _retryInteractionWithConnectedRemapCandidate:WTF::move(interaction) actionType:actionType requestedNodeIdentifier:staleNodeResolution.requestedIdentifier remapCandidates:resolved.identifiers failureDescription:description completionHandler:completionHandler.get()];
@@ -615,15 +615,15 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
         RetainPtr<NSString> errorDescription;
         RetainPtr<NSString> summary;
         if (success) {
-            String replacedDescription = description;
+            RefPtr<StringImpl> replacedDescription = description;
             if (strongSelf)
                 replacedDescription = applyReplacementsToDescription(description, stringsToValidate, strongSelf->_lastTextExtractionReplacementStrings);
 
-            summary = replacedDescription.createNSString();
+            summary = createNSString(replacedDescription);
             if (staleNodeResolution.didRemap())
-                summary = adoptNS([[NSString alloc] initWithFormat:@"%@ %@", summary.get(), staleNodeResolution.noteForCurrentAttempt.createNSString().get()]);
+                summary = adoptNS([[NSString alloc] initWithFormat:@"%@ %@", summary.get(), createNSString(staleNodeResolution.noteForCurrentAttempt).get()]);
         } else
-            errorDescription = description.createNSString();
+            errorDescription = createNSString(description);
 
         CGRect bounds = CGRectNull;
         if (!interactedElementBounds.isEmpty()) {
@@ -660,10 +660,10 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
     });
 }
 
-- (void)_retryInteractionWithConnectedRemapCandidate:(WebCore::TextExtraction::Interaction)interaction actionType:(_WKTextExtractionAction)actionType requestedNodeIdentifier:(const String&)requestedIdentifier remapCandidates:(const Vector<String>&)remapCandidates failureDescription:(const String&)failureDescription completionHandler:(void(^)(_WKTextExtractionInteractionResult *))completionHandler
+- (void)_retryInteractionWithConnectedRemapCandidate:(WebCore::TextExtraction::Interaction)interaction actionType:(_WKTextExtractionAction)actionType requestedNodeIdentifier:(StringImpl*)requestedIdentifier remapCandidates:(const Vector<RefPtr<StringImpl>>&)remapCandidates failureDescription:(StringImpl*)failureDescription completionHandler:(void(^)(_WKTextExtractionInteractionResult *))completionHandler
 {
-    auto reportStaleNode = [failureDescription, completionHandler = makeBlockPtr(completionHandler)] {
-        RetainPtr errorDescription = makeString(failureDescription, staleNodeIdentifierGuidance).createNSString();
+    auto reportStaleNode = [failureDescription = RefPtr { failureDescription }, completionHandler = makeBlockPtr(completionHandler)] {
+        RetainPtr errorDescription = createNSString(makeString(failureDescription, staleNodeIdentifierGuidance));
         completionHandler(adoptNS([[_WKTextExtractionInteractionResult alloc] initWithErrorDescription:errorDescription.get() summary:nil interactedElementBounds:CGRectNull]).get());
     };
 
@@ -674,18 +674,18 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
     findFirstConnectedRemapCandidate(*page, remapCandidates, [
         weakSelf = WeakObjCPtr<WKWebView>(self),
         actionType,
-        requestedIdentifier,
+        requestedIdentifier = RefPtr { requestedIdentifier },
         interaction = WTF::move(interaction),
         reportStaleNode = WTF::move(reportStaleNode),
         completionHandler = makeBlockPtr(completionHandler)
     ](std::optional<WebKit::ConnectedRemapCandidate>&& candidate) mutable {
         RetainPtr strongSelf = weakSelf.get();
         if (!strongSelf || !candidate) {
-            RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> Interaction failed; every node that uid=%" PUBLIC_LOG_STRING " could be re-resolved to is also stale", [strongSelf class], strongSelf.get(), requestedIdentifier.utf8());
+            RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> Interaction failed; every node that uid=%" PUBLIC_LOG_STRING " could be re-resolved to is also stale", [strongSelf class], strongSelf.get(), utf8(requestedIdentifier));
             return reportStaleNode();
         }
 
-        RELEASE_LOG(TextExtraction, "<%@: %p> Interaction failed; re-resolved stale node %" PUBLIC_LOG_STRING " to a connected node and retrying", [strongSelf class], strongSelf.get(), requestedIdentifier.utf8());
+        RELEASE_LOG(TextExtraction, "<%@: %p> Interaction failed; re-resolved stale node %" PUBLIC_LOG_STRING " to a connected node and retrying", [strongSelf class], strongSelf.get(), utf8(requestedIdentifier));
         interaction.nodeIdentifier = candidate->nodeIdentifier;
         [strongSelf _performInteraction:WTF::move(interaction) inFrame:RefPtr { candidate->frame.ptr() } actionType:actionType staleNodeResolution:WebKit::StaleNodeResolutionState {
             .requestedIdentifier = requestedIdentifier,
@@ -705,10 +705,10 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
         Vector<WebKit::TextExtractionFilterCallback> callbacks;
         BlockPtr<void(NSString *)> completion;
 
-        void apply(String&& text, size_t index)
+        void apply(RefPtr<StringImpl>&& text, size_t index)
         {
             if (index >= callbacks.size()) {
-                completion(text.createNSString().get());
+                completion(createNSString(text).get());
                 return;
             }
 
@@ -726,11 +726,11 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
     applier->completion = makeBlockPtr(completionHandler);
 
     if (filterUsingClassifier) {
-        applier->callbacks.append([](auto& text, auto&&, auto&&) mutable {
+        applier->callbacks.append([](StringImpl* text, auto&&, auto&&) mutable {
             WebKit::TextExtractionFilterPromise::Producer producer;
 
             Ref promise = producer.promise();
-            WebKit::TextExtractionFilter::singleton().shouldFilter(text, [producer = WTF::move(producer), text](bool shouldFilterOut) mutable {
+            WebKit::TextExtractionFilter::singleton().shouldFilter(text, [producer = WTF::move(producer), text = RefPtr { text }](bool shouldFilterOut) mutable {
                 if (shouldFilterOut)
                     producer.settle(emptyString());
                 else
@@ -742,7 +742,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
     }
 
     if (filterUsingRules) {
-        applier->callbacks.append([page = _page](auto& text, auto&&, auto&&) mutable {
+        applier->callbacks.append([page = _page](StringImpl* text, auto&&, auto&&) mutable {
             WebKit::TextExtractionFilterPromise::Producer producer;
 
             Ref promise = producer.promise();
@@ -754,7 +754,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
         });
     }
 
-    applier->apply(String(string), 0);
+    applier->apply(StringImpl::create(string), 0);
 #else
     completionHandler(string);
 #endif // ENABLE(TEXT_EXTRACTION_FILTER)
@@ -772,18 +772,18 @@ static Vector<WebCore::JSHandleIdentifier> extractHandleIdentifiersOfNodesToSkip
     return nodes;
 }
 
-static HashMap<String, HashMap<WebCore::JSHandleIdentifier, String>> extractClientNodeAttributes(Ref<WebKit::WebFrameProxy>&& frame, _WKTextExtractionConfiguration *configuration)
+static HashMap<RefPtr<StringImpl>, HashMap<WebCore::JSHandleIdentifier, RefPtr<StringImpl>>> extractClientNodeAttributes(Ref<WebKit::WebFrameProxy>&& frame, _WKTextExtractionConfiguration *configuration)
 {
-    __block HashMap<String, HashMap<WebCore::JSHandleIdentifier, String>> result;
+    __block HashMap<RefPtr<StringImpl>, HashMap<WebCore::JSHandleIdentifier, RefPtr<StringImpl>>> result;
 
     [configuration forEachClientNodeAttribute:^(NSString *attribute, NSString *value, _WKJSHandle *nodeHandle) {
         auto handleIdentifier = WebKit::jsHandleIdentifierInFrame(frame.copyRef(), nodeHandle);
         if (!handleIdentifier)
             return;
 
-        result.ensure(String { attribute }, [] {
-            return HashMap<WebCore::JSHandleIdentifier, String> { };
-        }).iterator->value.add(WTF::move(*handleIdentifier), String { value });
+        result.ensure(StringImpl::create(attribute), [] {
+            return HashMap<WebCore::JSHandleIdentifier, RefPtr<StringImpl>> { };
+        }).iterator->value.add(WTF::move(*handleIdentifier), StringImpl::create(value));
     }];
 
     return result;
@@ -1016,12 +1016,12 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
                         return;
                     }
 
-                    __block HashSet<String> recognizedWords;
+                    __block HashSet<RefPtr<StringImpl>> recognizedWords;
                     [text enumerateSubstringsInRange:NSMakeRange(0, text.length) options:NSStringEnumerationByWords usingBlock:^(NSString *word, NSRange, NSRange, BOOL *) {
                         if (!word.length)
                             return;
 
-                        recognizedWords.add(WebCore::foldQuoteMarks(word.lowercaseString));
+                        recognizedWords.add(WebCore::foldQuoteMarks(StringImpl::create(word.lowercaseString).get()));
                     }];
                     RELEASE_LOG(TextExtraction, "<%@: %p> • Recognized text in full snapshot (%.0f ms) - %u words", [strongSelf class], strongSelf.get(), millisecondsSpent, recognizedWords.size());
                     strongSelf->_textExtractionRecognizedWords = { WTF::move(recognizedWords) };
@@ -1064,7 +1064,7 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
     if (!protect(page->preferences())->textExtractionEnabled())
         return completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
 
-    auto nodeIdentifierString = wkInteraction.elementHandle ? emptyString() : String { wkInteraction.nodeIdentifier };
+    auto nodeIdentifierString = wkInteraction.elementHandle ? emptyString() : StringImpl::create(wkInteraction.nodeIdentifier);
     auto conversionResult = [self _convertToWebCoreInteraction:wkInteraction nodeIdentifier:nodeIdentifierString];
     if (!conversionResult)
         return completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSDebugDescriptionErrorKey: conversionResult.error().get() }]);
@@ -1074,8 +1074,8 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
         return completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
 
 #if PLATFORM(MAC)
-    if ([self _activePopupButtonCell] && interaction.action == WebCore::TextExtraction::Action::SelectMenuItem && !interaction.text.isEmpty())
-        return completionHandler([NSString stringWithFormat:@"Select popup menu item labeled '%@'", interaction.text.createNSString().get()], nil);
+    if ([self _activePopupButtonCell] && interaction.action == WebCore::TextExtraction::Action::SelectMenuItem && !isEmpty(interaction.text))
+        return completionHandler([NSString stringWithFormat:@"Select popup menu item labeled '%@'", createNSString(interaction.text).get()], nil);
 #endif
 
     [self _describeInteraction:WTF::move(interaction) inFrame:targetFrame staleNodeResolution:WebKit::StaleNodeResolutionState { .requestedIdentifier = nodeIdentifierString } completionHandler:completionHandler];
@@ -1099,7 +1099,7 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
         RefPtr strongPage = weakPage.get();
 
         bool resolutionIsStale = false;
-        if (!result.didFindTargetNode && strongSelf && strongPage && !staleNodeResolution.requestedIdentifier.isEmpty() && !staleNodeResolution.didRemap()) {
+        if (!result.didFindTargetNode && strongSelf && strongPage && !isEmpty(staleNodeResolution.requestedIdentifier) && !staleNodeResolution.didRemap()) {
             auto resolved = strongPage->textExtractionCache().resolve(staleNodeResolution.requestedIdentifier);
             if (resolved.resolution == WebKit::TextExtractionCache::NodeResolution::Remapped) {
                 [strongSelf _retryDescribingInteractionWithConnectedRemapCandidate:WTF::move(interaction) requestedNodeIdentifier:staleNodeResolution.requestedIdentifier remapCandidates:resolved.identifiers completionHandler:completionHandler.get()];
@@ -1110,10 +1110,10 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
         }
 
         if (!result.describesInteractionTarget) {
-            RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> Unable to describe the target of an interaction with node %" PUBLIC_LOG_STRING, [strongSelf class], strongSelf.get(), staleNodeResolution.requestedIdentifier.utf8());
+            RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> Unable to describe the target of an interaction with node %" PUBLIC_LOG_STRING, [strongSelf class], strongSelf.get(), utf8(staleNodeResolution.requestedIdentifier));
             auto errorDescription = makeString("Unable to describe the target of the interaction."_s, resolutionIsStale ? staleNodeIdentifierGuidance : ""_s);
             completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{
-                NSDebugDescriptionErrorKey: errorDescription.createNSString()
+                NSDebugDescriptionErrorKey: createNSString(errorDescription)
             }]);
             return;
         }
@@ -1129,13 +1129,13 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
                 return;
             }
 
-            String replacedDescription = description;
+            RefPtr<StringImpl> replacedDescription = description;
             if (RetainPtr strongSelf = weakSelf.get())
                 replacedDescription = applyReplacementsToDescription(description, stringsToValidate, strongSelf->_lastTextExtractionReplacementStrings);
 
-            RetainPtr summary = replacedDescription.createNSString();
+            RetainPtr summary = createNSString(replacedDescription);
             if (staleNodeResolution.didRemap())
-                summary = adoptNS([[NSString alloc] initWithFormat:@"%@ %@", summary.get(), staleNodeResolution.noteForCurrentAttempt.createNSString().get()]);
+                summary = adoptNS([[NSString alloc] initWithFormat:@"%@ %@", summary.get(), createNSString(staleNodeResolution.noteForCurrentAttempt).get()]);
             completionHandler(summary, nil);
         });
 
@@ -1153,10 +1153,10 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
     });
 }
 
-- (void)_retryDescribingInteractionWithConnectedRemapCandidate:(WebCore::TextExtraction::Interaction)interaction requestedNodeIdentifier:(const String&)requestedIdentifier remapCandidates:(const Vector<String>&)remapCandidates completionHandler:(void (^)(NSString *, NSError *))completionHandler
+- (void)_retryDescribingInteractionWithConnectedRemapCandidate:(WebCore::TextExtraction::Interaction)interaction requestedNodeIdentifier:(StringImpl*)requestedIdentifier remapCandidates:(const Vector<RefPtr<StringImpl>>&)remapCandidates completionHandler:(void (^)(NSString *, NSError *))completionHandler
 {
     auto reportStaleNode = [completionHandler = makeBlockPtr(completionHandler)] {
-        RetainPtr errorDescription = makeString("Unable to describe the target of the interaction."_s, staleNodeIdentifierGuidance).createNSString();
+        RetainPtr errorDescription = createNSString(makeString("Unable to describe the target of the interaction."_s, staleNodeIdentifierGuidance));
         completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{
             NSDebugDescriptionErrorKey: errorDescription
         }]);
@@ -1168,18 +1168,18 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
 
     findFirstConnectedRemapCandidate(*page, remapCandidates, [
         weakSelf = WeakObjCPtr<WKWebView>(self),
-        requestedIdentifier,
+        requestedIdentifier = RefPtr { requestedIdentifier },
         interaction = WTF::move(interaction),
         reportStaleNode = WTF::move(reportStaleNode),
         completionHandler = makeBlockPtr(completionHandler)
     ](std::optional<WebKit::ConnectedRemapCandidate>&& candidate) mutable {
         RetainPtr strongSelf = weakSelf.get();
         if (!strongSelf || !candidate) {
-            RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> Describe target missing; every node that uid=%" PUBLIC_LOG_STRING " could be re-resolved to is also stale", [strongSelf class], strongSelf.get(), requestedIdentifier.utf8());
+            RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> Describe target missing; every node that uid=%" PUBLIC_LOG_STRING " could be re-resolved to is also stale", [strongSelf class], strongSelf.get(), utf8(requestedIdentifier));
             return reportStaleNode();
         }
 
-        RELEASE_LOG(TextExtraction, "<%@: %p> Describe target missing; re-resolved stale node %" PUBLIC_LOG_STRING " to a connected node and retrying", [strongSelf class], strongSelf.get(), requestedIdentifier.utf8());
+        RELEASE_LOG(TextExtraction, "<%@: %p> Describe target missing; re-resolved stale node %" PUBLIC_LOG_STRING " to a connected node and retrying", [strongSelf class], strongSelf.get(), utf8(requestedIdentifier));
         interaction.nodeIdentifier = candidate->nodeIdentifier;
         [strongSelf _describeInteraction:WTF::move(interaction) inFrame:RefPtr { candidate->frame.ptr() } staleNodeResolution:WebKit::StaleNodeResolutionState {
             .requestedIdentifier = requestedIdentifier,
@@ -1201,14 +1201,14 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
 
 #if ENABLE(TEXT_EXTRACTION_FILTER)
 
-- (void)_validateText:(const String&)text inFrame:(std::optional<WebCore::FrameIdentifier>&&)frameIdentifier inNode:(std::optional<WebCore::NodeIdentifier>&&)nodeIdentifier completionHandler:(CompletionHandler<void(const String&)>&&)completionHandler
+- (void)_validateText:(StringImpl*)text inFrame:(std::optional<WebCore::FrameIdentifier>&&)frameIdentifier inNode:(std::optional<WebCore::NodeIdentifier>&&)nodeIdentifier completionHandler:(CompletionHandler<void(StringImpl*)>&&)completionHandler
 {
-    if (text.isEmpty())
+    if (isEmpty(text))
         return completionHandler(text);
 
-    auto textHash = text.hash();
+    auto textHash = hash(text);
     if (auto cachedResult = _textValidationCache.getOptional(textHash)) {
-        return WTF::switchOn(*cachedResult, [&](const String& stringResult) {
+        return WTF::switchOn(*cachedResult, [&](StringImpl* stringResult) {
             completionHandler(stringResult);
         }, [&](SimilarToOriginalTextTag) {
             completionHandler(text);
@@ -1222,12 +1222,12 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
     if (_textExtractionRecognizedWords) {
         __block unsigned totalWords = 0;
         __block unsigned matchedWords = 0;
-        [text.createNSString() enumerateSubstringsInRange:NSMakeRange(0, text.length()) options:NSStringEnumerationByWords usingBlock:^(NSString *word, NSRange, NSRange, BOOL *) {
+        [createNSString(text) enumerateSubstringsInRange:NSMakeRange(0, length(text)) options:NSStringEnumerationByWords usingBlock:^(NSString *word, NSRange, NSRange, BOOL *) {
             if (!word.length)
                 return;
 
             totalWords += 1;
-            if (_textExtractionRecognizedWords->contains(WebCore::foldQuoteMarks(word.lowercaseString)))
+            if (_textExtractionRecognizedWords->contains(WebCore::foldQuoteMarks(StringImpl::create(word.lowercaseString).get())))
                 matchedWords += 1;
         }];
 
@@ -1236,14 +1236,14 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
 
         static constexpr auto minimumMatchRatio = 0.9;
         if (static_cast<double>(matchedWords) / totalWords >= minimumMatchRatio) {
-            RELEASE_LOG_INFO(TextExtraction, "<%@: %p> • Skipping text recognition for paragraph with length: %u", [self class], self, text.length());
+            RELEASE_LOG_INFO(TextExtraction, "<%@: %p> • Skipping text recognition for paragraph with length: %u", [self class], self, length(text));
             _textValidationCache.add(textHash, TextValidationMapValue { SimilarToOriginalTextTag::Value });
             return completionHandler(text);
         }
     }
 
-    RELEASE_LOG_INFO(TextExtraction, "<%@: %p> • Snapshotting paragraph with length: %u", [self class], self, text.length());
-    mainFrame->takeSnapshotOfExtractedText({ text, WTF::move(nodeIdentifier) }, [text = text, completionHandler = WTF::move(completionHandler), view = retainPtr(self), textHash](auto textIndicator) mutable {
+    RELEASE_LOG_INFO(TextExtraction, "<%@: %p> • Snapshotting paragraph with length: %u", [self class], self, length(text));
+    mainFrame->takeSnapshotOfExtractedText({ text, WTF::move(nodeIdentifier) }, [text = RefPtr { text }, completionHandler = WTF::move(completionHandler), view = retainPtr(self), textHash](auto textIndicator) mutable {
         if (!textIndicator)
             return completionHandler(text);
 
@@ -1265,10 +1265,10 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
             static constexpr auto minimumSimilarity = 0.5;
             static constexpr auto minimumLength = 10;
 
-            auto similarity = WebKit::computeSimilarity(text.createNSString().get(), recognizedText, minimumLength);
+            auto similarity = WebKit::computeSimilarity(createNSString(text).get(), recognizedText, minimumLength);
             if (similarity < minimumSimilarity) {
-                view->_textValidationCache.add(textHash, TextValidationMapValue { String { recognizedText } });
-                completionHandler(recognizedText);
+                view->_textValidationCache.add(textHash, TextValidationMapValue { StringImpl::create(recognizedText) });
+                completionHandler(StringImpl::create(recognizedText));
             } else {
                 view->_textValidationCache.add(textHash, TextValidationMapValue { SimilarToOriginalTextTag::Value });
                 completionHandler(text);
@@ -1296,7 +1296,7 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
 
 - (void)_requestJSHandleForNodeIdentifier:(NSString *)nodeIdentifierString searchText:(NSString *)searchText completionHandler:(void (^)(_WKJSHandle *))completion
 {
-    auto identifiers = WebKit::parseExtractedNodeInfo(String { nodeIdentifierString });
+    auto identifiers = WebKit::parseExtractedNodeInfo(StringImpl::create(nodeIdentifierString).get());
     if (!identifiers && !searchText.length)
         return completion(nil);
 
@@ -1311,14 +1311,14 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
     if (!targetFrame)
         return completion(nil);
 
-    targetFrame->requestJSHandleForExtractedText({ String { searchText }, WTF::move(nodeIdentifier) }, [completion = makeBlockPtr(completion)](auto&& info) {
+    targetFrame->requestJSHandleForExtractedText({ StringImpl::create(searchText), WTF::move(nodeIdentifier) }, [completion = makeBlockPtr(completion)](auto&& info) {
         completion(info ? wrapper(API::JSHandle::create(WTF::move(*info))).get() : nil);
     });
 }
 
 - (void)_requestContainerJSHandleForNodeIdentifier:(NSString *)nodeIdentifierString searchText:(NSString *)searchText completionHandler:(void (^)(_WKJSHandle *))completion
 {
-    auto identifiers = WebKit::parseExtractedNodeInfo(String { nodeIdentifierString });
+    auto identifiers = WebKit::parseExtractedNodeInfo(StringImpl::create(nodeIdentifierString).get());
     if (!identifiers && !searchText.length)
         return completion(nil);
 
@@ -1333,7 +1333,7 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
     if (!targetFrame)
         return completion(nil);
 
-    targetFrame->requestContainerJSHandleForExtractedText({ searchText, WTF::move(nodeIdentifier) }, [completion = makeBlockPtr(completion)](auto&& info) {
+    targetFrame->requestContainerJSHandleForExtractedText({ StringImpl::create(searchText), WTF::move(nodeIdentifier) }, [completion = makeBlockPtr(completion)](auto&& info) {
         completion(info ? wrapper(API::JSHandle::create(WTF::move(*info))).get() : nil);
     });
 }
@@ -1345,7 +1345,7 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
 
     RefPtr targetFrame = _page->mainFrame();
     std::optional<WebCore::NodeIdentifier> targetNodeIdentifier;
-    if (auto identifiers = WebKit::parseExtractedNodeInfo(String { nodeIdentifierString })) {
+    if (auto identifiers = WebKit::parseExtractedNodeInfo(StringImpl::create(nodeIdentifierString).get())) {
         targetNodeIdentifier = identifiers->nodeIdentifier;
         if (identifiers->frameIdentifier)
             targetFrame = WebKit::WebFrameProxy::webFrame(identifiers->frameIdentifier);
@@ -1354,7 +1354,7 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
     if (!targetFrame)
         return completion(nil);
 
-    auto searchTexts = makeVector<String>(texts);
+    auto searchTexts = makeVector<RefPtr<StringImpl>>(texts);
     targetFrame->requestContainerJSHandleForSearchTexts(WTF::move(searchTexts), WTF::move(targetNodeIdentifier), [completion = makeBlockPtr(completion)](auto&& info) {
         completion(info ? wrapper(API::JSHandle::create(WTF::move(*info))).get() : nil);
     });
@@ -1362,7 +1362,7 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
 
 - (void)_requestFrameInfoForNodeIdentifier:(NSString *)nodeIdentifierString completionHandler:(void (^)(WKFrameInfo *))completion
 {
-    auto identifiers = WebKit::parseExtractedNodeInfo(String { nodeIdentifierString });
+    auto identifiers = WebKit::parseExtractedNodeInfo(StringImpl::create(nodeIdentifierString).get());
     if (!identifiers)
         return completion(nil);
 

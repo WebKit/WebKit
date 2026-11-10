@@ -74,14 +74,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorCoordinatorClient);
 
 namespace AuthenticatorCoordinatorInternal {
 
-static bool needsAppIdQuirks(const String& host, const String& appId)
+static bool needsAppIdQuirks(StringImpl* host, StringImpl* appId)
 {
     // FIXME(197524): Remove this quirk in 2023. As an early adopter of U2F features, Google has a large number of
     // existing device registrations that authenticate 'google.com' against 'gstatic.com'. Firefox and other browsers
     // have agreed to grant an exception to the AppId rules for a limited time period (5 years from January, 2018) to
     // allow existing Google users to seamlessly transition to proper WebAuthN behavior.
-    if (equalLettersIgnoringASCIICase(host, "google.com"_s) || host.endsWithIgnoringASCIICase(".google.com"_s))
-        return (appId == "https://www.gstatic.com/securitykey/origins.json"_s) || (appId == "https://www.gstatic.com/securitykey/a/google.com/origins.json"_s);
+    if (equalLettersIgnoringASCIICase(host, "google.com"_s) || endsWithIgnoringASCIICase(host, ".google.com"_s))
+        return (equal(appId, "https://www.gstatic.com/securitykey/origins.json"_s)) || (equal(appId, "https://www.gstatic.com/securitykey/a/google.com/origins.json"_s));
     return false;
 }
 
@@ -90,19 +90,19 @@ static bool needsAppIdQuirks(const String& host, const String& appId)
 // It follows what Chrome and Firefox do, see:
 // https://bugzilla.mozilla.org/show_bug.cgi?id=1244959#c8
 // https://bugs.chromium.org/p/chromium/issues/detail?id=818303
-static String processAppIdExtension(const SecurityOrigin& facetId, const String& appId)
+static RefPtr<StringImpl> processAppIdExtension(const SecurityOrigin& facetId, StringImpl* appId)
 {
     // Step 1. Skipped since facetId should always be secure origins.
     ASSERT(LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(facetId.protocol()));
 
     // Step 2. Follow Chrome and Firefox to use the origin directly without adding a trailing slash.
-    if (appId.isEmpty())
+    if (isEmpty(appId))
         return facetId.toString();
 
     // Step 3. Relax the comparison to same site.
     URL appIdURL { appId };
     if (!appIdURL.isValid() || facetId.protocol() != appIdURL.protocol() || (RegistrableDomain(appIdURL) != RegistrableDomain::uncheckedCreateFromHost(facetId.host()) && !needsAppIdQuirks(facetId.host(), appId)))
-        return String();
+        return nullptr;
     return appId;
 }
 
@@ -165,20 +165,20 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     // Step 1, 3, 16 are handled by the caller.
     // Step 1
     if (!createOptions.publicKey) {
-        promise.reject(Exception { ExceptionCode::NotSupportedError, "Only PublicKeyCredential is supported."_s });
+        promise.reject(Exception { ExceptionCode::NotSupportedError, "Only PublicKeyCredential is supported."_si });
         return;
     }
     const auto& options = createOptions.publicKey.value();
 
     // Step 2.
     if (!document.isSameOriginWithAncestors()) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_si });
         return;
     }
 
     // Step 5.
     if (options.user.id.byteLength() < 1 || options.user.id.byteLength() > 64) {
-        promise.reject(Exception { ExceptionCode::TypeError, "The length options.user.id must be between 1-64 bytes."_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "The length options.user.id must be between 1-64 bytes."_si });
         return;
     }
 
@@ -186,7 +186,7 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     // Step 7. The effective domain may be represented in various manners, such as a domain or an ip address.
     // Only the domain format of host is permitted in WebAuthN.
     if (URL::hostIsIPAddress(callerOrigin->domain())) {
-        promise.reject(Exception { ExceptionCode::SecurityError, "The effective domain of the document is not a valid domain."_s });
+        promise.reject(Exception { ExceptionCode::SecurityError, "The effective domain of the document is not a valid domain."_si });
         return;
     }
 
@@ -204,7 +204,7 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
             return pubKeyCredParam.type != PublicKeyCredentialType::PublicKey;
         })) {
             
-            promise.reject(Exception { ExceptionCode::NotSupportedError, "options.pubKeyCredParams contains unsupported PublicKeyCredentialType value."_s });
+            promise.reject(Exception { ExceptionCode::NotSupportedError, "options.pubKeyCredParams contains unsupported PublicKeyCredentialType value."_si });
             return;
         }
     }
@@ -229,14 +229,14 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     options.extensions = extensionInputs;
     if (options.extensions && options.extensions->largeBlob) {
         if (options.extensions->largeBlob->read || options.extensions->largeBlob->write) {
-            promise.reject(Exception { ExceptionCode::NotAllowedError, "Read and write may not be present in largeBlob for registration."_s });
+            promise.reject(Exception { ExceptionCode::NotAllowedError, "Read and write may not be present in largeBlob for registration."_si });
             return;
         }
     }
 
     // Step 4, 18-22.
     if (!m_client) {
-        promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_s });
+        promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_si });
         return;
     }
 
@@ -265,7 +265,7 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
         }
-        ASSERT(!exception.message.isNull());
+        ASSERT(exception.message);
         promise.reject(exception.toException());
     };
 
@@ -297,20 +297,20 @@ void AuthenticatorCoordinator::discoverFromExternalSource(Document& document, Cr
     // Step 2.
     // This implements https://www.w3.org/TR/webauthn-2/#sctn-permissions-policy
     if (!requestOptions.publicKey) {
-        promise.reject(Exception { ExceptionCode::NotSupportedError, "Only PublicKeyCredential is supported."_s });
+        promise.reject(Exception { ExceptionCode::NotSupportedError, "Only PublicKeyCredential is supported."_si });
         return;
     }
 
     // The request will be aborted in WebAuthenticatorCoordinatorProxy if conditional mediation is not available.
     if (requestOptions.mediation != MediationRequirement::Conditional && !document.hasFocus()) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not focused."_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not focused."_si });
         return;
     }
 
     const auto& options = requestOptions.publicKey.value();
     auto scopeCrossOriginParent = scopeAndCrossOriginParent(document);
     if (scopeCrossOriginParent.first != WebAuthn::Scope::SameOrigin && !PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::PublickeyCredentialsGetRule, document, PermissionsPolicy::ShouldReportViolation::No)) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_si });
         return;
     }
 
@@ -318,58 +318,58 @@ void AuthenticatorCoordinator::discoverFromExternalSource(Document& document, Cr
     // Step 6. The effective domain may be represented in various manners, such as a domain or an ip address.
     // Only the domain format of host is permitted in WebAuthN.
     if (URL::hostIsIPAddress(callerOrigin->domain())) {
-        promise.reject(Exception { ExceptionCode::SecurityError, "The effective domain of the document is not a valid domain."_s });
+        promise.reject(Exception { ExceptionCode::SecurityError, "The effective domain of the document is not a valid domain."_si });
         return;
     }
 
     // Step 7.
-    if (options.rpId.isEmpty())
+    if (isEmpty(options.rpId))
         options.rpId = callerOrigin->domain();
 
     // Step 8-9.
     // Only FIDO AppID Extension is supported.
-    if (options.extensions && !options.extensions->appid.isNull()) {
+    if (options.extensions && options.extensions->appid) {
         // The following implements https://www.w3.org/TR/webauthn/#sctn-appid-extension as of 4 March 2019.
-        if (options.extensions->appid.isEmpty()) {
-            promise.reject(Exception { ExceptionCode::NotAllowedError, "Empty appid in create request."_s });
+        if (isEmpty(options.extensions->appid)) {
+            promise.reject(Exception { ExceptionCode::NotAllowedError, "Empty appid in create request."_si });
             return;
         }
         auto appid = processAppIdExtension(callerOrigin.get(), options.extensions->appid);
         if (!appid) {
-            promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided App ID."_s });
+            promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided App ID."_si });
             return;
         }
         options.extensions->appid = appid;
     }
 
-    if (options.extensions && !options.extensions->crossDeviceFallbackURL.isNull()) {
+    if (options.extensions && options.extensions->crossDeviceFallbackURL) {
         URL fallbackURL { options.extensions->crossDeviceFallbackURL };
         if (auto error = validateCrossDeviceFallbackURL(fallbackURL)) {
-            promise.reject(Exception { ExceptionCode::SecurityError, String { *error } });
+            promise.reject(Exception { ExceptionCode::SecurityError, StringImpl::create(*error) });
             return;
         }
 
         // The request the spec constructs for the fallback URL has an empty destination, which CSP governs with connect-src.
         if (!document.shouldBypassMainWorldContentSecurityPolicy() && !protect(document.contentSecurityPolicy())->allowConnectToSource(fallbackURL, document.currentParserSourcePosition())) {
-            promise.reject(Exception { ExceptionCode::SecurityError, "The cross-device fallback URL is blocked by the Content Security Policy."_s });
+            promise.reject(Exception { ExceptionCode::SecurityError, "The cross-device fallback URL is blocked by the Content Security Policy."_si });
             return;
         }
     }
 
     if (options.extensions && options.extensions->largeBlob) {
-        if (!options.extensions->largeBlob->support.isEmpty()) {
-            promise.reject(Exception { ExceptionCode::NotAllowedError, "Support should not be present in largeBlob for assertion."_s });
+        if (!isEmpty(options.extensions->largeBlob->support)) {
+            promise.reject(Exception { ExceptionCode::NotAllowedError, "Support should not be present in largeBlob for assertion."_si });
             return;
         }
         if (options.extensions->largeBlob->read && options.extensions->largeBlob->write) {
-            promise.reject(Exception { ExceptionCode::NotAllowedError, "Both read and write may not be present together in largeBlob."_s });
+            promise.reject(Exception { ExceptionCode::NotAllowedError, "Both read and write may not be present together in largeBlob."_si });
             return;
         }
     }
 
     // Step 4, 14-19.
     if (!m_client) {
-        promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_s });
+        promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_si });
         return;
     }
 
@@ -405,7 +405,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(Document& document, Cr
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
         }
-        ASSERT(!exception.message.isNull());
+        ASSERT(exception.message);
         promise.reject(exception.toException());
     };
 
@@ -430,7 +430,7 @@ void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(con
     // The following implements https://www.w3.org/TR/webauthn/#isUserVerifyingPlatformAuthenticatorAvailable
     // as of 5 December 2017.
     if (!m_client)  {
-        promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_s });
+        promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_si });
         return;
     }
 
@@ -448,7 +448,7 @@ void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(con
 void AuthenticatorCoordinator::isConditionalMediationAvailable(const Document& document, DOMPromiseDeferred<IDLBoolean>&& promise) const
 {
     if (!m_client) {
-        promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_s });
+        promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_si });
         return;
     }
 
@@ -462,11 +462,11 @@ void AuthenticatorCoordinator::isConditionalMediationAvailable(const Document& d
 void AuthenticatorCoordinator::getClientCapabilities(const Document& document, DOMPromiseDeferred<PublicKeyCredentialClientCapabilities>&& promise) const
 {
     if (!m_client)  {
-        promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_s });
+        promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_si });
         return;
     }
 
-    auto completionHandler = [promise = WTF::move(promise)] (const Vector<KeyValuePair<String, bool>> result) mutable {
+    auto completionHandler = [promise = WTF::move(promise)] (const Vector<KeyValuePair<RefPtr<StringImpl>, bool>> result) mutable {
         promise.resolve(result);
     };
 
@@ -476,12 +476,12 @@ void AuthenticatorCoordinator::getClientCapabilities(const Document& document, D
 void AuthenticatorCoordinator::signalUnknownCredential(const Document& document, UnknownCredentialOptions&& options, DOMPromiseDeferred<void>&& promise)
 {
     if (!m_client) {
-        promise.reject(Exception { ExceptionCode::UnknownError, "Web Authentication client not present."_s });
+        promise.reject(Exception { ExceptionCode::UnknownError, "Web Authentication client not present."_si });
         return;
     }
     Ref securityOrigin = document.securityOrigin();
     if (RegistrableDomain::uncheckedCreateFromHost(options.rpId) != RegistrableDomain { securityOrigin->data() }) {
-        promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided RP ID."_s });
+        promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided RP ID."_si });
         return;
     }
 
@@ -498,12 +498,12 @@ void AuthenticatorCoordinator::signalUnknownCredential(const Document& document,
 void AuthenticatorCoordinator::signalAllAcceptedCredentials(const Document& document, AllAcceptedCredentialsOptions&& options, DOMPromiseDeferred<void>&& promise)
 {
     if (!m_client)  {
-        promise.reject(Exception { ExceptionCode::UnknownError, "Web Authentication client not present."_s });
+        promise.reject(Exception { ExceptionCode::UnknownError, "Web Authentication client not present."_si });
         return;
     }
     Ref securityOrigin = document.securityOrigin();
     if (RegistrableDomain::uncheckedCreateFromHost(options.rpId) != RegistrableDomain { securityOrigin->data() }) {
-        promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided RP ID."_s });
+        promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided RP ID."_si });
         return;
     }
 
@@ -520,12 +520,12 @@ void AuthenticatorCoordinator::signalAllAcceptedCredentials(const Document& docu
 void AuthenticatorCoordinator::signalCurrentUserDetails(const Document& document, CurrentUserDetailsOptions&& options, DOMPromiseDeferred<void>&& promise)
 {
     if (!m_client)  {
-        promise.reject(Exception { ExceptionCode::UnknownError, "Web Authentication client not present."_s });
+        promise.reject(Exception { ExceptionCode::UnknownError, "Web Authentication client not present."_si });
         return;
     }
     Ref securityOrigin = document.securityOrigin();
     if (RegistrableDomain::uncheckedCreateFromHost(options.rpId) != RegistrableDomain { securityOrigin->data() }) {
-        promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided RP ID."_s });
+        promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided RP ID."_si });
         return;
     }
 

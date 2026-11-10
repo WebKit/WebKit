@@ -108,7 +108,7 @@ private:
     void documentVisibilityChanged(bool) override;
     void isChildOfElementFullscreenChanged(bool) final;
     void audioSessionCategoryChanged(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy) final;
-    void routingContextUIDChanged(const String&) final;
+    void routingContextUIDChanged(StringImpl*) final;
     void hasBeenInteractedWith() final;
     void hasObjectViewBoxChanged(bool) final;
 
@@ -199,7 +199,7 @@ protected:
     void videoDimensionsChanged(WebCore::MediaPlayerClientIdentifier, const WebCore::FloatSize&);
     void setPlayerIdentifier(WebCore::MediaPlayerClientIdentifier, std::optional<WebCore::MediaPlayerIdentifier>);
     void audioSessionCategoryChanged(WebCore::MediaPlayerClientIdentifier, WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy);
-    void routingContextUIDChanged(WebCore::MediaPlayerClientIdentifier, const String&);
+    void routingContextUIDChanged(WebCore::MediaPlayerClientIdentifier, StringImpl*);
     void hasObjectViewBoxChanged(WebCore::MediaPlayerClientIdentifier, bool);
 
     // Messages from VideoPresentationManagerProxy
@@ -224,7 +224,7 @@ protected:
     void setVideoFullscreenFrame(WebCore::MediaPlayerClientIdentifier, WebCore::FloatRect);
     void fullscreenModeChanged(WebCore::MediaPlayerClientIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void fullscreenMayReturnToInline(WebCore::MediaPlayerClientIdentifier, bool isPageVisible);
-    void requestRouteSharingPolicyAndContextUID(WebCore::MediaPlayerClientIdentifier, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
+    void requestRouteSharingPolicyAndContextUID(WebCore::MediaPlayerClientIdentifier, CompletionHandler<void(WebCore::RouteSharingPolicy, RefPtr<StringImpl>)>&&);
     void ensureUpdatedVideoDimensions(WebCore::MediaPlayerClientIdentifier, WebCore::FloatSize existingVideoDimensions);
 
     NODELETE void setCurrentVideoFullscreenMode(VideoPresentationInterfaceContext&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);

@@ -64,7 +64,7 @@ public:
     using Base = InternalFunction;
 
     static JSGenericTypedArrayViewConstructor* create(
-        VM&, JSGlobalObject*, Structure*, JSObject* prototype, const String& name);
+        VM&, JSGlobalObject*, Structure*, JSObject* prototype, StringImpl* name);
 
     DECLARE_INFO;
 
@@ -142,7 +142,7 @@ public:
 
 private:
     JSGenericTypedArrayViewConstructor(VM&, Structure*);
-    void finishCreation(VM&, JSGlobalObject*, JSObject* prototype, const String& name);
+    void finishCreation(VM&, JSGlobalObject*, JSObject* prototype, StringImpl* name);
 };
 
 JSC_DECLARE_HOST_FUNCTION(uint8ArrayConstructorFromBase64);

@@ -72,7 +72,7 @@ using LayerHostingContextID = uint32_t;
 @property (nonatomic, readonly) NSUndoManager *undoManagerForWebView;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-@property (nonatomic, readonly) const String& spatialTrackingLabel;
+@property (nonatomic, readonly) const RefPtr<StringImpl>& spatialTrackingLabel;
 #endif
 
 - (instancetype)initWithFrame:(CGRect)frame processPool:(std::reference_wrapper<WebKit::WebProcessPool>)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView;

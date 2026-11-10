@@ -46,7 +46,7 @@ public:
 
     FrameInfo* sourceFrame() const { return m_sourceFrame.get(); }
     FrameInfo* targetFrame() const { return m_targetFrame.get(); }
-    const WTF::String& targetFrameName() const LIFETIME_BOUND { return m_targetFrameName; }
+    const RefPtr<StringImpl>& targetFrameName() const LIFETIME_BOUND { return m_targetFrameName; }
 
     const WebCore::ResourceRequest& request() const LIFETIME_BOUND { return m_request; }
     const WTF::URL& originalURL() const LIFETIME_BOUND { return !m_originalURL.isNull() ? m_originalURL : m_request.url(); }
@@ -64,7 +64,7 @@ public:
     bool canHandleRequest() const { return m_navigationActionData.canHandleRequest; }
     bool shouldOpenExternalSchemes() const { return m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow || m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks; }
     bool shouldOpenAppLinks() const { return m_shouldOpenAppLinks && m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow; }
-    bool shouldPerformDownload() const { return !m_navigationActionData.downloadAttribute.isNull(); }
+    bool shouldPerformDownload() const { return !!m_navigationActionData.downloadAttribute; }
     bool isRedirect() const { return !m_navigationActionData.redirectResponse.isNull(); }
     bool isContentRuleListRedirect() const { return m_navigationActionData.isContentRuleListRedirect; }
     bool hasOpener() const { return m_navigationActionData.hasOpener; }
@@ -85,7 +85,7 @@ public:
     std::optional<WebCore::FrameIdentifier> mainFrameIDBeforeNavigationActionDecision() { return m_mainFrameIDBeforeNavigationDecision; }
     
 private:
-    NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, const WTF::String& targetFrameName, WebCore::ResourceRequest&& request, const WTF::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction, API::Navigation* mainFrameNavigation, std::optional<WebCore::FrameIdentifier> mainFrameIDBeforeNavigationActionDecision)
+    NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, StringImpl* targetFrameName, WebCore::ResourceRequest&& request, const WTF::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction, API::Navigation* mainFrameNavigation, std::optional<WebCore::FrameIdentifier> mainFrameIDBeforeNavigationActionDecision)
         : m_sourceFrame(sourceFrame)
         , m_targetFrame(targetFrame)
         , m_targetFrameName(targetFrameName)
@@ -99,14 +99,14 @@ private:
     {
     }
 
-    NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, const WTF::String& targetFrameName, WebCore::ResourceRequest&& request, const WTF::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction)
+    NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, StringImpl* targetFrameName, WebCore::ResourceRequest&& request, const WTF::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction)
         : NavigationAction(WTF::move(navigationActionData), sourceFrame, targetFrame, targetFrameName, WTF::move(request), originalURL, shouldOpenAppLinks, WTF::move(userInitiatedAction), nullptr, std::nullopt)
     {
     }
 
     const RefPtr<FrameInfo> m_sourceFrame;
     const RefPtr<FrameInfo> m_targetFrame;
-    WTF::String m_targetFrameName;
+    RefPtr<StringImpl> m_targetFrameName;
 
     WebCore::ResourceRequest m_request;
     WTF::URL m_originalURL;

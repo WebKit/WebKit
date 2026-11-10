@@ -33,15 +33,15 @@
 
 namespace JSC {
 
-JSObject* createJSWebAssemblyRuntimeError(JSGlobalObject* globalObject, VM& vm, const String& message)
+JSObject* createJSWebAssemblyRuntimeError(JSGlobalObject* globalObject, VM& vm, StringImpl* message)
 {
-    ASSERT(!message.isEmpty());
+    ASSERT(!isEmpty(message));
     return ErrorInstance::create(vm, globalObject->webAssemblyRuntimeErrorStructure(), message, JSValue(), defaultSourceAppender, TypeNothing, ErrorType::Error, true);
 }
 
 JSObject* createJSWebAssemblyRuntimeError(JSGlobalObject* globalObject, VM& vm, Wasm::ExceptionType type)
 {
-    ErrorInstance* error = ErrorInstance::create(vm, globalObject->webAssemblyRuntimeErrorStructure(), Wasm::errorMessageForExceptionType(type), JSValue(), defaultSourceAppender, TypeNothing, ErrorType::Error, true);
+    ErrorInstance* error = ErrorInstance::create(vm, globalObject->webAssemblyRuntimeErrorStructure(), StringImpl::create(Wasm::errorMessageForExceptionType(type)).ptr(), JSValue(), defaultSourceAppender, TypeNothing, ErrorType::Error, true);
     error->setCatchableFromWasm(false);
     return error;
 }

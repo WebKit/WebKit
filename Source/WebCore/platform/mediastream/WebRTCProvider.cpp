@@ -131,12 +131,12 @@ void WebRTCProvider::clearFactory()
 
 #if ENABLE(WEB_RTC)
 
-std::optional<RTCRtpCapabilities> WebRTCProvider::receiverCapabilities(const String&)
+std::optional<RTCRtpCapabilities> WebRTCProvider::receiverCapabilities(StringImpl*)
 {
     return { };
 }
 
-std::optional<RTCRtpCapabilities> WebRTCProvider::senderCapabilities(const String&)
+std::optional<RTCRtpCapabilities> WebRTCProvider::senderCapabilities(StringImpl*)
 {
     return { };
 }
@@ -204,31 +204,31 @@ bool WebRTCProvider::isH264EncoderSmooth(const PlatformMediaCapabilitiesVideoCon
     return true;
 }
 
-static String contentTypeFromRTPVideoMimeType(const String& mimeType)
+static RefPtr<StringImpl> contentTypeFromRTPVideoMimeType(StringImpl* mimeType)
 {
     ContentType contentType { mimeType };
     auto containerType = contentType.containerType();
     if (equalLettersIgnoringASCIICase(containerType, "video/h264"_s)) {
         // https://datatracker.ietf.org/doc/html/rfc6184#section-8.1
-        auto profileLevelId = contentType.parameter("profile-level-id"_s);
-        if (profileLevelId.isEmpty())
-            profileLevelId = "42001f"_s;
+        auto profileLevelId = contentType.parameter("profile-level-id"_si);
+        if (isEmpty(profileLevelId))
+            profileLevelId = "42001f"_si;
         return makeString("video/mp4;codecs=avc1."_s, profileLevelId);
     }
 
     if (equalLettersIgnoringASCIICase(containerType, "video/h265"_s)) {
         // https://datatracker.ietf.org/doc/html/rfc7798#section-7.1
         HEVCParameters parameters;
-        auto profileSpace = contentType.parameter("profile-space"_s);
-        if (!profileSpace.isEmpty()) {
+        auto profileSpace = contentType.parameter("profile-space"_si);
+        if (!isEmpty(profileSpace)) {
             auto result = parseInteger<uint16_t>(profileSpace);
             if (!result || result > 3)
                 return { };
             parameters.generalProfileSpace = *result;
         }
 
-        auto profileId = contentType.parameter("profile-id"_s);
-        if (!profileId.isEmpty()) {
+        auto profileId = contentType.parameter("profile-id"_si);
+        if (!isEmpty(profileId)) {
             auto result = parseInteger<uint16_t>(profileId);
             if (!result)
                 return { };
@@ -236,8 +236,8 @@ static String contentTypeFromRTPVideoMimeType(const String& mimeType)
         } else
             parameters.generalProfileIDC = 1;
 
-        auto profileCompatibilityIndicator = contentType.parameter("profile-compatibility-indicator"_s);
-        if (!profileCompatibilityIndicator.isEmpty()) {
+        auto profileCompatibilityIndicator = contentType.parameter("profile-compatibility-indicator"_si);
+        if (!isEmpty(profileCompatibilityIndicator)) {
             auto compatibilityFlags = parseInteger<uint32_t>(profileCompatibilityIndicator, 16);
             if (!compatibilityFlags)
                 return { };
@@ -245,16 +245,16 @@ static String contentTypeFromRTPVideoMimeType(const String& mimeType)
         } else
             parameters.generalProfileCompatibilityFlags = 1 << parameters.generalProfileIDC;
 
-        auto tierFlag = contentType.parameter("tier-flag"_s);
-        if (tierFlag.isEmpty() || tierFlag == "0"_s)
+        auto tierFlag = contentType.parameter("tier-flag"_si);
+        if (isEmpty(tierFlag) || equal(tierFlag, "0"_s))
             parameters.generalTierFlag = 0;
-        else if (tierFlag == "1"_s)
+        else if (equal(tierFlag, "1"_s))
             parameters.generalTierFlag = 1;
         else
             return { };
 
-        auto levelId = contentType.parameter("level-id"_s);
-        if (!levelId.isEmpty()) {
+        auto levelId = contentType.parameter("level-id"_si);
+        if (!isEmpty(levelId)) {
             auto result = parseInteger<uint16_t>(levelId);
             if (!result)
                 return { };
@@ -268,10 +268,10 @@ static String contentTypeFromRTPVideoMimeType(const String& mimeType)
     if (equalLettersIgnoringASCIICase(containerType, "video/vp9"_s)) {
         // https://www.rfc-editor.org/rfc/rfc9628.html#payloadFormatParameters
         VPCodecConfigurationRecord parameters;
-        parameters.codecName = "vp09"_s;
+        parameters.codecName = "vp09"_si;
 
-        auto profileId = contentType.parameter("profile-id"_s);
-        if (!profileId.isEmpty()) {
+        auto profileId = contentType.parameter("profile-id"_si);
+        if (!isEmpty(profileId)) {
             auto result = parseInteger<uint8_t>(profileId);
             if (!result || *result > 3)
                 return { };
@@ -289,18 +289,18 @@ static String contentTypeFromRTPVideoMimeType(const String& mimeType)
     if (equalLettersIgnoringASCIICase(containerType, "video/av1"_s)) {
         // https://www.iana.org/assignments/media-types/video/AV1
         AV1CodecConfigurationRecord parameters;
-        parameters.codecName = "av01"_s;
+        parameters.codecName = "av01"_si;
 
-        auto profile = contentType.parameter("profile"_s);
-        if (!profile.isEmpty()) {
+        auto profile = contentType.parameter("profile"_si);
+        if (!isEmpty(profile)) {
             auto result = parseEnumFromStringView<AV1ConfigurationProfile>(profile);
             if (!result)
                 return { };
             parameters.profile = *result;
         }
 
-        auto levelIdx = contentType.parameter("level-idx"_s);
-        if (!levelIdx.isEmpty()) {
+        auto levelIdx = contentType.parameter("level-idx"_si);
+        if (!isEmpty(levelIdx)) {
             auto result = parseEnumFromStringView<AV1ConfigurationLevel>(levelIdx);
             if (!result)
                 return { };
@@ -308,11 +308,11 @@ static String contentTypeFromRTPVideoMimeType(const String& mimeType)
         } else
             parameters.level = AV1ConfigurationLevel::Level_3_1;
 
-        auto tier = contentType.parameter("tier"_s);
-        if (!tier.isEmpty()) {
-            if (tier == "M"_s)
+        auto tier = contentType.parameter("tier"_si);
+        if (!isEmpty(tier)) {
+            if (equal(tier, "M"_s))
                 parameters.tier = AV1ConfigurationTier::Main;
-            else if (tier == "H"_s)
+            else if (equal(tier, "H"_s))
                 parameters.tier = AV1ConfigurationTier::High;
             else
                 return { };
@@ -324,7 +324,7 @@ static String contentTypeFromRTPVideoMimeType(const String& mimeType)
     }
 
     if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s))
-        return "video/webm;codecs=vp08.00.50.08"_s;
+        return "video/webm;codecs=vp08.00.50.08"_si;
 
     return { };
 }
@@ -459,7 +459,7 @@ void WebRTCProvider::setPortAllocatorRange(StringView range)
     if (range == "0:0"_s)
         return;
 
-    auto components = range.toStringWithoutCopying().split(':');
+    auto components = split(range.toStringWithoutCopying(), ':');
     if (components.size() != 2) [[unlikely]] {
         RELEASE_LOG_ERROR(WebRTC, "Invalid format for UDP port range. Should be \"min-port:max-port\"");
         ASSERT_NOT_REACHED();

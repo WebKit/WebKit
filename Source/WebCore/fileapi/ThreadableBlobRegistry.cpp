@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-using BlobURLOriginMap = HashMap<String, Ref<SecurityOrigin>>;
+using BlobURLOriginMap = HashMap<RefPtr<StringImpl>, Ref<SecurityOrigin>>;
 
 NODELETE static BlobURLOriginMap& originMap()
 {
@@ -62,9 +62,9 @@ NODELETE static BlobURLOriginMap& originMap()
     return map;
 }
 
-NODELETE static HashCountedSet<String>& blobURLReferencesMap()
+NODELETE static HashCountedSet<RefPtr<StringImpl>>& blobURLReferencesMap()
 {
-    static MainThreadNeverDestroyed<HashCountedSet<String>> map;
+    static MainThreadNeverDestroyed<HashCountedSet<RefPtr<StringImpl>>> map;
     return map;
 }
 
@@ -87,22 +87,22 @@ static void addToOriginMapIfNecessary(const URL& url, RefPtr<SecurityOrigin>&& o
     blobURLReferencesMap().add(urlWithoutFragment);
 };
 
-void ThreadableBlobRegistry::registerInternalFileBlobURL(const URL& url, const String& path, const String& replacementPath, const String& contentType)
+void ThreadableBlobRegistry::registerInternalFileBlobURL(const URL& url, StringImpl* path, StringImpl* replacementPath, StringImpl* contentType)
 {
     ASSERT(BlobURL::isInternalURL(url));
-    String effectivePath = !replacementPath.isNull() ? replacementPath : path;
+    RefPtr<StringImpl> effectivePath = !!replacementPath ? replacementPath : path;
 
     if (isMainThread()) {
         blobRegistry()->registerInternalFileBlobURL(url, BlobDataFileReference::create(effectivePath), path, contentType);
         return;
     }
 
-    callOnMainThread([url = url.isolatedCopy(), effectivePath = effectivePath.isolatedCopy(), path = path.isolatedCopy(), contentType = contentType.isolatedCopy()] {
+    callOnMainThread([url = url.isolatedCopy(), effectivePath = isolatedCopy(effectivePath), path = isolatedCopy(path), contentType = isolatedCopy(contentType)] {
         blobRegistry()->registerInternalFileBlobURL(url, BlobDataFileReference::create(effectivePath), path, contentType);
     });
 }
 
-void ThreadableBlobRegistry::registerInternalBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
+void ThreadableBlobRegistry::registerInternalBlobURL(const URL& url, Vector<BlobPart>&& blobParts, StringImpl* contentType)
 {
     ASSERT(BlobURL::isInternalURL(url));
     if (isMainThread()) {
@@ -111,7 +111,7 @@ void ThreadableBlobRegistry::registerInternalBlobURL(const URL& url, Vector<Blob
     }
     for (auto& part : blobParts)
         part.detachFromCurrentThread();
-    callOnMainThread([url = url.isolatedCopy(), blobParts = WTF::move(blobParts), contentType = contentType.isolatedCopy()]() mutable {
+    callOnMainThread([url = url.isolatedCopy(), blobParts = WTF::move(blobParts), contentType = isolatedCopy(contentType)]() mutable {
         blobRegistry()->registerInternalBlobURL(url, WTF::move(blobParts), contentType);
     });
 }
@@ -150,19 +150,19 @@ void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyConta
     registerBlobURL(origin, std::forward<PolicyContainer>(policyContainer), url, srcURL, url.topOrigin());
 }
 
-void ThreadableBlobRegistry::registerInternalBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath, const String& contentType)
+void ThreadableBlobRegistry::registerInternalBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, StringImpl* fileBackedPath, StringImpl* contentType)
 {
     ASSERT(BlobURL::isInternalURL(url));
     if (isMainThread()) {
         blobRegistry()->registerInternalBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReference::create(fileBackedPath), contentType);
         return;
     }
-    callOnMainThread([url = url.isolatedCopy(), srcURL = srcURL.isolatedCopy(), fileBackedPath = fileBackedPath.isolatedCopy(), contentType = contentType.isolatedCopy()] {
+    callOnMainThread([url = url.isolatedCopy(), srcURL = srcURL.isolatedCopy(), fileBackedPath = isolatedCopy(fileBackedPath), contentType = isolatedCopy(contentType)] {
         blobRegistry()->registerInternalBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReference::create(fileBackedPath), contentType);
     });
 }
 
-void ThreadableBlobRegistry::registerInternalBlobURLForSlice(const URL& newURL, const URL& srcURL, long long start, long long end, const String& contentType)
+void ThreadableBlobRegistry::registerInternalBlobURLForSlice(const URL& newURL, const URL& srcURL, long long start, long long end, StringImpl* contentType)
 {
     ASSERT(BlobURL::isInternalURL(newURL));
     if (isMainThread()) {
@@ -170,19 +170,19 @@ void ThreadableBlobRegistry::registerInternalBlobURLForSlice(const URL& newURL, 
         return;
     }
 
-    callOnMainThread([newURL = newURL.isolatedCopy(), srcURL = srcURL.isolatedCopy(), start, end, contentType = contentType.isolatedCopy()] {
+    callOnMainThread([newURL = newURL.isolatedCopy(), srcURL = srcURL.isolatedCopy(), start, end, contentType = isolatedCopy(contentType)] {
         blobRegistry()->registerInternalBlobURLForSlice(newURL, srcURL, start, end, contentType);
     });
 }
 
-String ThreadableBlobRegistry::blobType(const URL& url)
+RefPtr<StringImpl> ThreadableBlobRegistry::blobType(const URL& url)
 {
     if (isMainThread())
         return blobRegistry()->blobType(url);
 
-    String result;
+    RefPtr<StringImpl> result;
     callOnMainThreadAndWait([url = url.isolatedCopy(), &result] {
-        result = blobRegistry()->blobType(url).isolatedCopy();
+        result = isolatedCopy(blobRegistry()->blobType(url));
     });
     return result;
 

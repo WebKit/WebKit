@@ -35,7 +35,7 @@ public:
 
     const CSS::BoxShadowProperty& shadow() const LIFETIME_BOUND { return m_shadow; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSBoxShadowPropertyValue&) const;
 
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;

@@ -51,7 +51,7 @@ enum class VideoFrameRotation : uint16_t;
 
 class MockRealtimeVideoSource : public RealtimeVideoCaptureSource {
 public:
-    static CaptureSourceOrError create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
+    static CaptureSourceOrError create(RefPtr<StringImpl>&& deviceID, RefPtr<AtomStringImpl>&& name, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
     virtual ~MockRealtimeVideoSource();
 
     static void setIsInterrupted(bool);
@@ -60,7 +60,7 @@ public:
     ImageBuffer* imageBuffer();
 
 protected:
-    MockRealtimeVideoSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
+    MockRealtimeVideoSource(RefPtr<StringImpl>&& deviceID, RefPtr<AtomStringImpl>&& name, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
 
     virtual void updateSampleBuffer() = 0;
 
@@ -95,7 +95,7 @@ private:
 
     // OrientationNotifier::Observer
     void orientationChanged(IntDegrees orientation) final;
-    void rotationAngleForHorizonLevelDisplayChanged(const String&, VideoFrameRotation) final;
+    void rotationAngleForHorizonLevelDisplayChanged(StringImpl*, VideoFrameRotation) final;
     void monitorOrientation(OrientationNotifier&) final;
 
     void drawAnimation(GraphicsContext&);

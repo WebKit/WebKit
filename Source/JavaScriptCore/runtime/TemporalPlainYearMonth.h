@@ -57,17 +57,17 @@ public:
     void setCalendarId(WTF::StringView id) { m_calendarID = TemporalCore::calendarIDFromString(id); }
     void setCalendarID(CalendarID id) { m_calendarID = id; }
     void setPlainYearMonth(ISO8601::PlainYearMonth&& ym) { m_plainYearMonth = WTF::move(ym); }
-    String calendarIDAsString() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
+    RefPtr<StringImpl> calendarIDAsString() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
 
 #define JSC_DEFINE_TEMPORAL_PLAIN_YEAR_MONTH_FIELD(name, capitalizedName) \
     decltype(auto) name() const { return m_plainYearMonth.name(); }
     JSC_TEMPORAL_PLAIN_YEAR_MONTH_UNITS(JSC_DEFINE_TEMPORAL_PLAIN_YEAR_MONTH_FIELD);
 #undef JSC_DEFINE_TEMPORAL_PLAIN_YEAR_MONTH_FIELD
 
-    String monthCode() const { return ISO8601::monthCode(m_plainYearMonth.month()); }
+    RefPtr<StringImpl> monthCode() const { return ISO8601::monthCode(m_plainYearMonth.month()); }
 
-    String toString(JSGlobalObject*, JSValue options) const;
-    String toString() const;
+    RefPtr<StringImpl> toString(JSGlobalObject*, JSValue options) const;
+    RefPtr<StringImpl> toString() const;
 
 private:
     TemporalPlainYearMonth(VM&, Structure*, ISO8601::PlainYearMonth&&);

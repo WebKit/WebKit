@@ -35,7 +35,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionDataRecordHolder);
 
-WebExtensionDataRecord::WebExtensionDataRecord(const String& displayName, const String& uniqueIdentifier)
+WebExtensionDataRecord::WebExtensionDataRecord(StringImpl* displayName, StringImpl* uniqueIdentifier)
     : m_displayName(displayName)
     , m_uniqueIdentifier(uniqueIdentifier)
 {
@@ -43,7 +43,7 @@ WebExtensionDataRecord::WebExtensionDataRecord(const String& displayName, const 
 
 bool WebExtensionDataRecord::operator==(const WebExtensionDataRecord& other) const
 {
-    return this == &other || (m_displayName == other.m_displayName && m_uniqueIdentifier == other.m_uniqueIdentifier);
+    return this == &other || (equal(m_displayName, other.m_displayName) && equal(m_uniqueIdentifier, other.m_uniqueIdentifier));
 }
 
 size_t WebExtensionDataRecord::totalSize() const

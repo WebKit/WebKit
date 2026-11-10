@@ -77,14 +77,14 @@ public:
     void send(std::span<const uint8_t> data);
 
     // ThreadableWebSocketChannel functions.
-    ConnectStatus connect(const URL&, const String& protocol) final;
-    String subprotocol() final;
-    String extensions() final;
+    ConnectStatus connect(const URL&, StringImpl* protocol) final;
+    RefPtr<StringImpl> subprotocol() final;
+    RefPtr<StringImpl> extensions() final;
     void send(UTF8CString&&) final;
     void send(const JSC::ArrayBuffer&, size_t byteOffset, size_t byteLength) final;
     void send(Blob&) final;
-    void close(int code, const String& reason) final; // Start closing handshake.
-    void fail(String&& reason) final;
+    void close(int code, StringImpl* reason) final; // Start closing handshake.
+    void fail(RefPtr<StringImpl>&& reason) final;
     void disconnect() final;
 
     void suspend() final;
@@ -119,7 +119,7 @@ private:
     void skipBuffer(size_t len);
     bool processBuffer();
     void resumeTimerFired();
-    void startClosingHandshake(int code, const String& reason);
+    void startClosingHandshake(int code, StringImpl* reason);
     void closingTimerFired();
 
     bool processFrame();
@@ -200,7 +200,7 @@ private:
     WebSocketFrame::OpCode m_continuousFrameOpCode;
     Vector<uint8_t> m_continuousFrameData;
     unsigned short m_closeEventCode { CloseEventCodeAbnormalClosure };
-    String m_closeEventReason;
+    RefPtr<StringImpl> m_closeEventReason;
 
     Deque<std::unique_ptr<QueuedFrame>> m_outgoingFrameQueue;
     OutgoingFrameQueueStatus m_outgoingFrameQueueStatus { OutgoingFrameQueueOpen };

@@ -65,7 +65,7 @@
 {
     ASSERT(_registeredWebViews.contains((__bridge CFTypeRef)webView));
 
-    String notificationID([notification notificationID]);
+    RefPtr<StringImpl> notificationID(StringImpl::create([notification notificationID]));
     _notifications.add(notificationID, notification);
     _notificationViewMap.add(notificationID, (__bridge CFTypeRef)webView);
 
@@ -74,7 +74,7 @@
 
 - (void)cancelNotification:(WebNotification *)notification
 {
-    String notificationID([notification notificationID]);
+    RefPtr<StringImpl> notificationID(StringImpl::create([notification notificationID]));
     ASSERT(_notifications.contains(notificationID));
 
     [(__bridge WebView *)_notificationViewMap.get(notificationID) _notificationsDidClose:@[[notification notificationID]]];
@@ -82,14 +82,14 @@
 
 - (void)notificationDestroyed:(WebNotification *)notification
 {
-    _notifications.remove(String([notification notificationID]));
-    _notificationViewMap.remove(String([notification notificationID]));
+    _notifications.remove(StringImpl::create([notification notificationID]).get());
+    _notificationViewMap.remove(StringImpl::create([notification notificationID]).get());
 }
 
 - (void)clearNotifications:(NSArray *)notificationIDs
 {
     for (NSString *nsNotificationID in notificationIDs) {
-        String notificationID(nsNotificationID);
+        RefPtr<StringImpl> notificationID(StringImpl::create(nsNotificationID));
         RetainPtr<WebNotification> notification = _notifications.take(notificationID);
         _notificationViewMap.remove(notificationID);
     }
@@ -97,18 +97,18 @@
 
 - (void)webView:(WebView *)webView didShowNotification:(NSString *)notificationID
 {
-    [_notifications.get(String(notificationID))dispatchShowEvent];
+    [_notifications.get(StringImpl::create(notificationID).get())dispatchShowEvent];
 }
 
 - (void)webView:(WebView *)webView didClickNotification:(NSString *)notificationID
 {
-    [_notifications.get(String(notificationID)) dispatchClickEvent];
+    [_notifications.get(StringImpl::create(notificationID).get()) dispatchClickEvent];
 }
 
 - (void)webView:(WebView *)webView didCloseNotifications:(NSArray *)notificationIDs
 {
     for (NSString *nsNotificationID in notificationIDs) {
-        String notificationID(nsNotificationID);
+        RefPtr<StringImpl> notificationID(StringImpl::create(nsNotificationID));
         NotificationIDMap::iterator it = _notifications.find(notificationID);
         ASSERT(it != _notifications.end());
         [it->value.get() dispatchCloseEvent];
@@ -119,7 +119,7 @@
 
 - (void)simulateWebNotificationClick:(NSString *)nsNotificationID
 {
-    String notificationID(nsNotificationID);
+    RefPtr<StringImpl> notificationID(StringImpl::create(nsNotificationID));
     ASSERT(_notifications.contains(notificationID));
     [(__bridge WebView *)_notificationViewMap.get(notificationID) _notificationDidClick:nsNotificationID];
 }

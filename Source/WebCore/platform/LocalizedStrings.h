@@ -50,417 +50,417 @@ namespace WebCore {
 
 #if ENABLE(MEDIA_SESSION) && ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
     enum class CallToActionLabel : uint8_t;
-    WEBCORE_EXPORT String callToActionLabelTitle(CallToActionLabel);
+    WEBCORE_EXPORT RefPtr<StringImpl> callToActionLabelTitle(CallToActionLabel);
 #endif
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT String truncatedStringForMenuItem(const String&);
+    WEBCORE_EXPORT RefPtr<StringImpl> truncatedStringForMenuItem(StringImpl*);
 #endif
 
-    String inputElementAltText();
-    String resetButtonDefaultLabel();
-    String searchableIndexIntroduction();
-    String submitButtonDefaultLabel();
-    WEBCORE_EXPORT String fileButtonChooseFileLabel();
-    WEBCORE_EXPORT String fileButtonChooseMultipleFilesLabel();
-    String fileButtonNoFileSelectedLabel();
-    String fileButtonNoFilesSelectedLabel();
-    String defaultDetailsSummaryText();
+    RefPtr<StringImpl> inputElementAltText();
+    RefPtr<StringImpl> resetButtonDefaultLabel();
+    RefPtr<StringImpl> searchableIndexIntroduction();
+    RefPtr<StringImpl> submitButtonDefaultLabel();
+    WEBCORE_EXPORT RefPtr<StringImpl> fileButtonChooseFileLabel();
+    WEBCORE_EXPORT RefPtr<StringImpl> fileButtonChooseMultipleFilesLabel();
+    RefPtr<StringImpl> fileButtonNoFileSelectedLabel();
+    RefPtr<StringImpl> fileButtonNoFilesSelectedLabel();
+    RefPtr<StringImpl> defaultDetailsSummaryText();
 
 #if PLATFORM(COCOA)
-    String copyImageUnknownFileLabel();
+    RefPtr<StringImpl> copyImageUnknownFileLabel();
 #endif
 #if ENABLE(APP_HIGHLIGHTS)
-    WEBCORE_EXPORT String contextMenuItemTagAddHighlightToCurrentQuickNote();
-    WEBCORE_EXPORT String contextMenuItemTagAddHighlightToNewQuickNote();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagAddHighlightToCurrentQuickNote();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagAddHighlightToNewQuickNote();
 #endif
-    WEBCORE_EXPORT String contextMenuItemTagCopyLinkWithHighlight();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagCopyLinkWithHighlight();
 
 #if ENABLE(CONTEXT_MENUS)
-    WEBCORE_EXPORT String contextMenuItemTagOpenLinkInNewWindow();
-    String contextMenuItemTagDownloadLinkToDisk();
-    WEBCORE_EXPORT String contextMenuItemTagCopyLinkToClipboard();
-    String contextMenuItemTagOpenImageInNewWindow();
-    String contextMenuItemTagDownloadImageToDisk();
-    String contextMenuItemTagCopyImageToClipboard();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagOpenLinkInNewWindow();
+    RefPtr<StringImpl> contextMenuItemTagDownloadLinkToDisk();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagCopyLinkToClipboard();
+    RefPtr<StringImpl> contextMenuItemTagOpenImageInNewWindow();
+    RefPtr<StringImpl> contextMenuItemTagDownloadImageToDisk();
+    RefPtr<StringImpl> contextMenuItemTagCopyImageToClipboard();
 #if PLATFORM(GTK)
-    String contextMenuItemTagCopyImageURLToClipboard();
+    RefPtr<StringImpl> contextMenuItemTagCopyImageURLToClipboard();
 #endif
-    String contextMenuItemTagOpenFrameInNewWindow();
-    WEBCORE_EXPORT String contextMenuItemTagCopy();
-    String contextMenuItemTagGoBack();
-    String contextMenuItemTagGoForward();
-    String contextMenuItemTagStop();
-    String contextMenuItemTagReload();
-    String contextMenuItemTagCut();
-    WEBCORE_EXPORT String contextMenuItemTagPaste();
+    RefPtr<StringImpl> contextMenuItemTagOpenFrameInNewWindow();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagCopy();
+    RefPtr<StringImpl> contextMenuItemTagGoBack();
+    RefPtr<StringImpl> contextMenuItemTagGoForward();
+    RefPtr<StringImpl> contextMenuItemTagStop();
+    RefPtr<StringImpl> contextMenuItemTagReload();
+    RefPtr<StringImpl> contextMenuItemTagCut();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagPaste();
 #if PLATFORM(GTK)
-    String contextMenuItemTagPasteAsPlainText();
-    String contextMenuItemTagDelete();
-    String contextMenuItemTagInputMethods();
-    String contextMenuItemTagUnicode();
-    String contextMenuItemTagUnicodeInsertLRMMark();
-    String contextMenuItemTagUnicodeInsertRLMMark();
-    String contextMenuItemTagUnicodeInsertLREMark();
-    String contextMenuItemTagUnicodeInsertRLEMark();
-    String contextMenuItemTagUnicodeInsertLROMark();
-    String contextMenuItemTagUnicodeInsertRLOMark();
-    String contextMenuItemTagUnicodeInsertPDFMark();
-    String contextMenuItemTagUnicodeInsertZWSMark();
-    String contextMenuItemTagUnicodeInsertZWJMark();
-    String contextMenuItemTagUnicodeInsertZWNJMark();
-    String contextMenuItemTagSelectAll();
-    String contextMenuItemTagInsertEmoji();
+    RefPtr<StringImpl> contextMenuItemTagPasteAsPlainText();
+    RefPtr<StringImpl> contextMenuItemTagDelete();
+    RefPtr<StringImpl> contextMenuItemTagInputMethods();
+    RefPtr<StringImpl> contextMenuItemTagUnicode();
+    RefPtr<StringImpl> contextMenuItemTagUnicodeInsertLRMMark();
+    RefPtr<StringImpl> contextMenuItemTagUnicodeInsertRLMMark();
+    RefPtr<StringImpl> contextMenuItemTagUnicodeInsertLREMark();
+    RefPtr<StringImpl> contextMenuItemTagUnicodeInsertRLEMark();
+    RefPtr<StringImpl> contextMenuItemTagUnicodeInsertLROMark();
+    RefPtr<StringImpl> contextMenuItemTagUnicodeInsertRLOMark();
+    RefPtr<StringImpl> contextMenuItemTagUnicodeInsertPDFMark();
+    RefPtr<StringImpl> contextMenuItemTagUnicodeInsertZWSMark();
+    RefPtr<StringImpl> contextMenuItemTagUnicodeInsertZWJMark();
+    RefPtr<StringImpl> contextMenuItemTagUnicodeInsertZWNJMark();
+    RefPtr<StringImpl> contextMenuItemTagSelectAll();
+    RefPtr<StringImpl> contextMenuItemTagInsertEmoji();
 #endif
-    String contextMenuItemTagNoGuessesFound();
-    String contextMenuItemTagIgnoreSpelling();
-    String contextMenuItemTagLearnSpelling();
-    WEBCORE_EXPORT String contextMenuItemTagSearchWeb();
+    RefPtr<StringImpl> contextMenuItemTagNoGuessesFound();
+    RefPtr<StringImpl> contextMenuItemTagIgnoreSpelling();
+    RefPtr<StringImpl> contextMenuItemTagLearnSpelling();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagSearchWeb();
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT String contextMenuItemTagLookUpInDictionary(const String& selectedString);
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagLookUpInDictionary(StringImpl* selectedString);
 #endif
-    WEBCORE_EXPORT String contextMenuItemTagOpenLink();
-    WEBCORE_EXPORT String contextMenuItemTagIgnoreGrammar();
-    WEBCORE_EXPORT String contextMenuItemTagSpellingMenu();
-    WEBCORE_EXPORT String contextMenuItemTagShowSpellingPanel(bool show);
-    WEBCORE_EXPORT String contextMenuItemTagCheckSpelling();
-    WEBCORE_EXPORT String contextMenuItemTagCheckSpellingWhileTyping();
-    WEBCORE_EXPORT String contextMenuItemTagCheckGrammarWithSpelling();
-    WEBCORE_EXPORT String contextMenuItemTagFontMenu();
-    WEBCORE_EXPORT String contextMenuItemTagBold();
-    WEBCORE_EXPORT String contextMenuItemTagItalic();
-    WEBCORE_EXPORT String contextMenuItemTagUnderline();
-    WEBCORE_EXPORT String contextMenuItemTagOutline();
-    WEBCORE_EXPORT String contextMenuItemTagWritingDirectionMenu();
-    String contextMenuItemTagTextDirectionMenu();
-    WEBCORE_EXPORT String contextMenuItemTagDefaultDirection();
-    WEBCORE_EXPORT String contextMenuItemTagLeftToRight();
-    WEBCORE_EXPORT String contextMenuItemTagRightToLeft();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagOpenLink();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagIgnoreGrammar();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagSpellingMenu();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagShowSpellingPanel(bool show);
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagCheckSpelling();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagCheckSpellingWhileTyping();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagCheckGrammarWithSpelling();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagFontMenu();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagBold();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagItalic();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagUnderline();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagOutline();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagWritingDirectionMenu();
+    RefPtr<StringImpl> contextMenuItemTagTextDirectionMenu();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagDefaultDirection();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagLeftToRight();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagRightToLeft();
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT String contextMenuItemTagShowFonts();
-    WEBCORE_EXPORT String contextMenuItemTagStyles();
-    WEBCORE_EXPORT String contextMenuItemTagShowColors();
-    WEBCORE_EXPORT String contextMenuItemTagSpeechMenu();
-    WEBCORE_EXPORT String contextMenuItemTagStartSpeaking();
-    WEBCORE_EXPORT String contextMenuItemTagStopSpeaking();
-    WEBCORE_EXPORT String contextMenuItemTagCorrectSpellingAutomatically();
-    WEBCORE_EXPORT String contextMenuItemTagSubstitutionsMenu();
-    WEBCORE_EXPORT String contextMenuItemTagShowSubstitutions(bool show);
-    WEBCORE_EXPORT String contextMenuItemTagSmartCopyPaste();
-    WEBCORE_EXPORT String contextMenuItemTagSmartQuotes();
-    WEBCORE_EXPORT String contextMenuItemTagSmartDashes();
-    WEBCORE_EXPORT String contextMenuItemTagSmartLinks();
-    WEBCORE_EXPORT String contextMenuItemTagSmartLists();
-    WEBCORE_EXPORT String contextMenuItemTagTextReplacement();
-    WEBCORE_EXPORT String contextMenuItemTagTransformationsMenu();
-    WEBCORE_EXPORT String contextMenuItemTagMakeUpperCase();
-    WEBCORE_EXPORT String contextMenuItemTagMakeLowerCase();
-    WEBCORE_EXPORT String contextMenuItemTagCapitalize();
-    WEBCORE_EXPORT String contextMenuItemTagConvertToTraditionalChinese();
-    WEBCORE_EXPORT String contextMenuItemTagConvertToSimplifiedChinese();
-    NODELETE String contextMenuItemTagChangeBack(const String& replacedString);
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagShowFonts();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagStyles();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagShowColors();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagSpeechMenu();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagStartSpeaking();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagStopSpeaking();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagCorrectSpellingAutomatically();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagSubstitutionsMenu();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagShowSubstitutions(bool show);
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagSmartCopyPaste();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagSmartQuotes();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagSmartDashes();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagSmartLinks();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagSmartLists();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagTextReplacement();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagTransformationsMenu();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagMakeUpperCase();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagMakeLowerCase();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagCapitalize();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagConvertToTraditionalChinese();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagConvertToSimplifiedChinese();
+    NODELETE RefPtr<StringImpl> contextMenuItemTagChangeBack(StringImpl* replacedString);
 #endif
-    String contextMenuItemTagOpenVideoInNewWindow();
-    String contextMenuItemTagOpenAudioInNewWindow();
-    String contextMenuItemTagDownloadVideoToDisk();
-    String contextMenuItemTagDownloadAudioToDisk();
-    String contextMenuItemTagCopyVideoLinkToClipboard();
-    String contextMenuItemTagCopyAudioLinkToClipboard();
-    String contextMenuItemTagToggleMediaControls();
-    WEBCORE_EXPORT String contextMenuItemTagShowMediaControls();
-    String contextMenuItemTagHideMediaControls();
-    String contextMenuItemTagToggleMediaLoop();
-    String contextMenuItemTagEnterVideoFullscreen();
-    WEBCORE_EXPORT String contextMenuItemTagExitVideoFullscreen();
+    RefPtr<StringImpl> contextMenuItemTagOpenVideoInNewWindow();
+    RefPtr<StringImpl> contextMenuItemTagOpenAudioInNewWindow();
+    RefPtr<StringImpl> contextMenuItemTagDownloadVideoToDisk();
+    RefPtr<StringImpl> contextMenuItemTagDownloadAudioToDisk();
+    RefPtr<StringImpl> contextMenuItemTagCopyVideoLinkToClipboard();
+    RefPtr<StringImpl> contextMenuItemTagCopyAudioLinkToClipboard();
+    RefPtr<StringImpl> contextMenuItemTagToggleMediaControls();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagShowMediaControls();
+    RefPtr<StringImpl> contextMenuItemTagHideMediaControls();
+    RefPtr<StringImpl> contextMenuItemTagToggleMediaLoop();
+    RefPtr<StringImpl> contextMenuItemTagEnterVideoFullscreen();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagExitVideoFullscreen();
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-    String contextMenuItemTagEnterPictureInPicture();
-    WEBCORE_EXPORT String contextMenuItemTagExitPictureInPicture();
-    String contextMenuItemTagEnterVideoViewer();
-    WEBCORE_EXPORT String contextMenuItemTagExitVideoViewer();
+    RefPtr<StringImpl> contextMenuItemTagEnterPictureInPicture();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagExitPictureInPicture();
+    RefPtr<StringImpl> contextMenuItemTagEnterVideoViewer();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagExitVideoViewer();
 #endif
-    String contextMenuItemTagMediaPlay();
-    WEBCORE_EXPORT String contextMenuItemTagMediaPause();
-    String contextMenuItemTagMediaMute();
+    RefPtr<StringImpl> contextMenuItemTagMediaPlay();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagMediaPause();
+    RefPtr<StringImpl> contextMenuItemTagMediaMute();
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    String contextMenuItemTagPlayAllAnimations();
-    String contextMenuItemTagPauseAllAnimations();
-    String contextMenuItemTagPlayAnimation();
-    String contextMenuItemTagPauseAnimation();
+    RefPtr<StringImpl> contextMenuItemTagPlayAllAnimations();
+    RefPtr<StringImpl> contextMenuItemTagPauseAllAnimations();
+    RefPtr<StringImpl> contextMenuItemTagPlayAnimation();
+    RefPtr<StringImpl> contextMenuItemTagPauseAnimation();
 #endif
-    WEBCORE_EXPORT String contextMenuItemTagInspectElement();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagInspectElement();
 #if HAVE(TRANSLATION_UI_SERVICES)
-    WEBCORE_EXPORT String contextMenuItemTagTranslate(const String& selectedString);
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagTranslate(StringImpl* selectedString);
 #endif
 #if ENABLE(WRITING_TOOLS)
-    String contextMenuItemTagWritingTools();
-    String contextMenuItemTagProofread();
-    String contextMenuItemTagRewrite();
-    String contextMenuItemTagSummarize();
+    RefPtr<StringImpl> contextMenuItemTagWritingTools();
+    RefPtr<StringImpl> contextMenuItemTagProofread();
+    RefPtr<StringImpl> contextMenuItemTagRewrite();
+    RefPtr<StringImpl> contextMenuItemTagSummarize();
 #endif
 #if ENABLE(UNIFIED_PDF)
-    WEBCORE_EXPORT String contextMenuItemPDFOpenWithDefaultViewer(const String& appName);
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemPDFOpenWithDefaultViewer(StringImpl* appName);
 #endif
 #if ENABLE(PDFJS) || ENABLE(UNIFIED_PDF)
-    WEBCORE_EXPORT String contextMenuItemPDFSinglePageContinuous();
-    WEBCORE_EXPORT String contextMenuItemPDFTwoPagesContinuous();
-    WEBCORE_EXPORT String contextMenuItemPDFZoomIn();
-    WEBCORE_EXPORT String contextMenuItemPDFZoomOut();
-    WEBCORE_EXPORT String contextMenuItemPDFActualSize();
-    WEBCORE_EXPORT String contextMenuItemPDFNextPage();
-    WEBCORE_EXPORT String contextMenuItemPDFPreviousPage();
-    WEBCORE_EXPORT String contextMenuItemPDFAutoSize();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemPDFSinglePageContinuous();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemPDFTwoPagesContinuous();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemPDFZoomIn();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemPDFZoomOut();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemPDFActualSize();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemPDFNextPage();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemPDFPreviousPage();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemPDFAutoSize();
 #endif
 #endif // ENABLE(CONTEXT_MENU)
 
 #if ENABLE(PDFJS) || ENABLE(UNIFIED_PDF)
-    WEBCORE_EXPORT String contextMenuItemPDFSinglePage();
-    WEBCORE_EXPORT String contextMenuItemPDFTwoPages();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemPDFSinglePage();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemPDFTwoPages();
 #endif
 
-    WEBCORE_EXPORT String pdfDocumentTypeDescription();
+    WEBCORE_EXPORT RefPtr<StringImpl> pdfDocumentTypeDescription();
 
 #if !PLATFORM(IOS_FAMILY)
-    String searchMenuNoRecentSearchesText();
-    String searchMenuRecentSearchesText();
-    String searchMenuClearRecentSearchesText();
+    RefPtr<StringImpl> searchMenuNoRecentSearchesText();
+    RefPtr<StringImpl> searchMenuRecentSearchesText();
+    RefPtr<StringImpl> searchMenuClearRecentSearchesText();
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    String defaultSystemSpeakerLabel();
+    RefPtr<StringImpl> defaultSystemSpeakerLabel();
 #endif
 
-    String AXWebAreaText();
-    String AXLinkText();
-    String AXListMarkerText();
-    String AXImageMapText();
-    String AXHeadingText();
-    String AXColorWellText();
-    String AXDefinitionText();
-    String AXDescriptionListText();
-    String AXDescriptionListTermText();
-    String AXDescriptionListDetailText();
-    String AXHeaderRoleDescriptionText();
-    String AXFooterRoleDescriptionText();
-    String AXSuggestionRoleDescriptionText();
-    String AXFileUploadButtonText();
-    String AXOutputText();
-    String AXSearchFieldCancelButtonText();
-    String AXAttachmentRoleText();
-    String AXDetailsText();
-    String AXSummaryText();
-    String AXFeedText();
-    String AXFigureText();
-    String AXEmailFieldText();
-    String AXTelephoneFieldText();
-    String AXURLFieldText();
-    String AXDateFieldText();
-    String AXTimeFieldText();
-    String AXDateFieldMonthText();
-    String AXDateFieldDayText();
-    String AXDateFieldYearText();
-    String AXTimeFieldHourText();
-    String AXTimeFieldMinuteText();
-    String AXTimeFieldSecondText();
-    String AXTimeFieldMillisecondText();
-    String AXDateTimeFieldText();
-    String AXMonthFieldText();
-    String AXNumberFieldText();
-    String AXWeekFieldText();
-    String AXARIAContentGroupText(StringView ariaType);
-    String AXHorizontalRuleDescriptionText();
-    String AXMarkText();
+    RefPtr<StringImpl> AXWebAreaText();
+    RefPtr<StringImpl> AXLinkText();
+    RefPtr<StringImpl> AXListMarkerText();
+    RefPtr<StringImpl> AXImageMapText();
+    RefPtr<StringImpl> AXHeadingText();
+    RefPtr<StringImpl> AXColorWellText();
+    RefPtr<StringImpl> AXDefinitionText();
+    RefPtr<StringImpl> AXDescriptionListText();
+    RefPtr<StringImpl> AXDescriptionListTermText();
+    RefPtr<StringImpl> AXDescriptionListDetailText();
+    RefPtr<StringImpl> AXHeaderRoleDescriptionText();
+    RefPtr<StringImpl> AXFooterRoleDescriptionText();
+    RefPtr<StringImpl> AXSuggestionRoleDescriptionText();
+    RefPtr<StringImpl> AXFileUploadButtonText();
+    RefPtr<StringImpl> AXOutputText();
+    RefPtr<StringImpl> AXSearchFieldCancelButtonText();
+    RefPtr<StringImpl> AXAttachmentRoleText();
+    RefPtr<StringImpl> AXDetailsText();
+    RefPtr<StringImpl> AXSummaryText();
+    RefPtr<StringImpl> AXFeedText();
+    RefPtr<StringImpl> AXFigureText();
+    RefPtr<StringImpl> AXEmailFieldText();
+    RefPtr<StringImpl> AXTelephoneFieldText();
+    RefPtr<StringImpl> AXURLFieldText();
+    RefPtr<StringImpl> AXDateFieldText();
+    RefPtr<StringImpl> AXTimeFieldText();
+    RefPtr<StringImpl> AXDateFieldMonthText();
+    RefPtr<StringImpl> AXDateFieldDayText();
+    RefPtr<StringImpl> AXDateFieldYearText();
+    RefPtr<StringImpl> AXTimeFieldHourText();
+    RefPtr<StringImpl> AXTimeFieldMinuteText();
+    RefPtr<StringImpl> AXTimeFieldSecondText();
+    RefPtr<StringImpl> AXTimeFieldMillisecondText();
+    RefPtr<StringImpl> AXDateTimeFieldText();
+    RefPtr<StringImpl> AXMonthFieldText();
+    RefPtr<StringImpl> AXNumberFieldText();
+    RefPtr<StringImpl> AXWeekFieldText();
+    RefPtr<StringImpl> AXARIAContentGroupText(StringView ariaType);
+    RefPtr<StringImpl> AXHorizontalRuleDescriptionText();
+    RefPtr<StringImpl> AXMarkText();
 
-    String AXButtonActionVerb();
-    String AXRadioButtonActionVerb();
-    String AXTextFieldActionVerb();
-    String AXCheckedCheckboxActionVerb();
-    String AXUncheckedCheckboxActionVerb();
-    String AXMenuListActionVerb();
-    String AXMenuListPopupActionVerb();
-    String AXLinkActionVerb();
-    String AXListItemActionVerb();
-    String AXShowWritingToolsLabel();
+    RefPtr<StringImpl> AXButtonActionVerb();
+    RefPtr<StringImpl> AXRadioButtonActionVerb();
+    RefPtr<StringImpl> AXTextFieldActionVerb();
+    RefPtr<StringImpl> AXCheckedCheckboxActionVerb();
+    RefPtr<StringImpl> AXUncheckedCheckboxActionVerb();
+    RefPtr<StringImpl> AXMenuListActionVerb();
+    RefPtr<StringImpl> AXMenuListPopupActionVerb();
+    RefPtr<StringImpl> AXLinkActionVerb();
+    RefPtr<StringImpl> AXListItemActionVerb();
+    RefPtr<StringImpl> AXShowWritingToolsLabel();
 
 #if PLATFORM(COCOA)
-    String AXMeterGaugeRegionOptimumText();
-    String AXMeterGaugeRegionSuboptimalText();
-    String AXMeterGaugeRegionLessGoodText();
+    RefPtr<StringImpl> AXMeterGaugeRegionOptimumText();
+    RefPtr<StringImpl> AXMeterGaugeRegionSuboptimalText();
+    RefPtr<StringImpl> AXMeterGaugeRegionLessGoodText();
 #endif
 #if ENABLE(APPLE_PAY)
-    String AXApplePayPlainLabel();
-    String AXApplePayBuyLabel();
-    String AXApplePaySetupLabel();
-    String AXApplePayDonateLabel();
-    String AXApplePayCheckOutLabel();
-    String AXApplePayBookLabel();
-    String AXApplePaySubscribeLabel();
+    RefPtr<StringImpl> AXApplePayPlainLabel();
+    RefPtr<StringImpl> AXApplePayBuyLabel();
+    RefPtr<StringImpl> AXApplePaySetupLabel();
+    RefPtr<StringImpl> AXApplePayDonateLabel();
+    RefPtr<StringImpl> AXApplePayCheckOutLabel();
+    RefPtr<StringImpl> AXApplePayBookLabel();
+    RefPtr<StringImpl> AXApplePaySubscribeLabel();
 #if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
-    String AXApplePayReloadLabel();
-    String AXApplePayAddMoneyLabel();
-    String AXApplePayTopUpLabel();
-    String AXApplePayOrderLabel();
-    String AXApplePayRentLabel();
-    String AXApplePaySupportLabel();
-    String AXApplePayContributeLabel();
-    String AXApplePayTipLabel();
+    RefPtr<StringImpl> AXApplePayReloadLabel();
+    RefPtr<StringImpl> AXApplePayAddMoneyLabel();
+    RefPtr<StringImpl> AXApplePayTopUpLabel();
+    RefPtr<StringImpl> AXApplePayOrderLabel();
+    RefPtr<StringImpl> AXApplePayRentLabel();
+    RefPtr<StringImpl> AXApplePaySupportLabel();
+    RefPtr<StringImpl> AXApplePayContributeLabel();
+    RefPtr<StringImpl> AXApplePayTipLabel();
 #endif
 #endif
 
-    String AXAutoFillCredentialsLabel();
-    String AXAutoFillContactsLabel();
-    String AXAutoFillStrongPasswordLabel();
-    String AXAutoFillCreditCardLabel();
-    String AXAutoFillLoadingLabel();
-    String autoFillStrongPasswordLabel();
+    RefPtr<StringImpl> AXAutoFillCredentialsLabel();
+    RefPtr<StringImpl> AXAutoFillContactsLabel();
+    RefPtr<StringImpl> AXAutoFillStrongPasswordLabel();
+    RefPtr<StringImpl> AXAutoFillCreditCardLabel();
+    RefPtr<StringImpl> AXAutoFillLoadingLabel();
+    RefPtr<StringImpl> autoFillStrongPasswordLabel();
 
-    String AXProcessingPage(double);
+    RefPtr<StringImpl> AXProcessingPage(double);
 
-    String missingPluginText();
-    String crashedPluginText();
-    String blockedPluginByContentSecurityPolicyText();
-    String insecurePluginVersionText();
-    String unsupportedPluginText();
-    WEBCORE_EXPORT String pluginTooSmallText();
+    RefPtr<StringImpl> missingPluginText();
+    RefPtr<StringImpl> crashedPluginText();
+    RefPtr<StringImpl> blockedPluginByContentSecurityPolicyText();
+    RefPtr<StringImpl> insecurePluginVersionText();
+    RefPtr<StringImpl> unsupportedPluginText();
+    WEBCORE_EXPORT RefPtr<StringImpl> pluginTooSmallText();
 
-    WEBCORE_EXPORT String multipleFileUploadText(unsigned numberOfFiles);
-    String unknownFileSizeText();
+    WEBCORE_EXPORT RefPtr<StringImpl> multipleFileUploadText(unsigned numberOfFiles);
+    RefPtr<StringImpl> unknownFileSizeText();
 
-    String htmlSelectMultipleItems(size_t num);
+    RefPtr<StringImpl> htmlSelectMultipleItems(size_t num);
 
 #if PLATFORM(IOS_FAMILY)
-    String fileButtonChooseMediaFileLabel();
-    String fileButtonChooseMultipleMediaFilesLabel();
-    String fileButtonNoMediaFileSelectedLabel();
-    String fileButtonNoMediaFilesSelectedLabel();
+    RefPtr<StringImpl> fileButtonChooseMediaFileLabel();
+    RefPtr<StringImpl> fileButtonChooseMultipleMediaFilesLabel();
+    RefPtr<StringImpl> fileButtonNoMediaFileSelectedLabel();
+    RefPtr<StringImpl> fileButtonNoMediaFilesSelectedLabel();
 
-    WEBCORE_EXPORT String formControlDoneButtonTitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> formControlDoneButtonTitle();
 #endif
 
-    String imageTitle(const String& filename, const IntSize& size);
+    RefPtr<StringImpl> imageTitle(StringImpl* filename, const IntSize& size);
 
-    String mediaElementLoadingStateText();
-    String mediaElementLiveBroadcastStateText();
-    String localizedMediaControlElementString(const String&);
-    String localizedMediaControlElementHelpText(const String&);
-    String localizedMediaTimeDescription(float);
+    RefPtr<StringImpl> mediaElementLoadingStateText();
+    RefPtr<StringImpl> mediaElementLiveBroadcastStateText();
+    RefPtr<StringImpl> localizedMediaControlElementString(StringImpl*);
+    RefPtr<StringImpl> localizedMediaControlElementHelpText(StringImpl*);
+    RefPtr<StringImpl> localizedMediaTimeDescription(float);
 
-    String validationMessageValueMissingText();
-    String validationMessageValueMissingForCheckboxText();
-    String validationMessageValueMissingForFileText();
-    String validationMessageValueMissingForMultipleFileText();
-    String validationMessageValueMissingForRadioText();
-    String validationMessageValueMissingForSelectText();
-    String validationMessageValueMissingForSwitchText();
-    String validationMessageTypeMismatchText();
-    String validationMessageTypeMismatchForEmailText();
-    String validationMessageTypeMismatchForMultipleEmailText();
-    String validationMessageTypeMismatchForURLText();
-    String validationMessagePatternMismatchText();
-    String validationMessagePatternMismatchText(const String& title);
-    String validationMessageTooShortText(int valueLength, int minLength);
-    String validationMessageTooLongText(int valueLength, int maxLength);
-    String validationMessageRangeUnderflowText(const String& minimum);
-    String validationMessageRangeOverflowText(const String& maximum);
-    String validationMessageStepMismatchText(const String& base, const String& step);
-    String validationMessageBadInputForNumberText();
+    RefPtr<StringImpl> validationMessageValueMissingText();
+    RefPtr<StringImpl> validationMessageValueMissingForCheckboxText();
+    RefPtr<StringImpl> validationMessageValueMissingForFileText();
+    RefPtr<StringImpl> validationMessageValueMissingForMultipleFileText();
+    RefPtr<StringImpl> validationMessageValueMissingForRadioText();
+    RefPtr<StringImpl> validationMessageValueMissingForSelectText();
+    RefPtr<StringImpl> validationMessageValueMissingForSwitchText();
+    RefPtr<StringImpl> validationMessageTypeMismatchText();
+    RefPtr<StringImpl> validationMessageTypeMismatchForEmailText();
+    RefPtr<StringImpl> validationMessageTypeMismatchForMultipleEmailText();
+    RefPtr<StringImpl> validationMessageTypeMismatchForURLText();
+    RefPtr<StringImpl> validationMessagePatternMismatchText();
+    RefPtr<StringImpl> validationMessagePatternMismatchText(StringImpl* title);
+    RefPtr<StringImpl> validationMessageTooShortText(int valueLength, int minLength);
+    RefPtr<StringImpl> validationMessageTooLongText(int valueLength, int maxLength);
+    RefPtr<StringImpl> validationMessageRangeUnderflowText(StringImpl* minimum);
+    RefPtr<StringImpl> validationMessageRangeOverflowText(StringImpl* maximum);
+    RefPtr<StringImpl> validationMessageStepMismatchText(StringImpl* base, StringImpl* step);
+    RefPtr<StringImpl> validationMessageBadInputForNumberText();
 #if USE(SOUP)
-    String unacceptableTLSCertificate();
+    RefPtr<StringImpl> unacceptableTLSCertificate();
 #endif
 
-    String clickToExitFullScreenText();
+    RefPtr<StringImpl> clickToExitFullScreenText();
 
 #if ENABLE(VIDEO)
-    String trackNoLabelText();
-    String textTrackOffMenuItemText();
-    String textTrackOnMenuItemText();
-    String textTrackAutomaticMenuItemText();
-    String captionStylePreview();
-    String captionStylePreviewWithProfileName(const String&);
+    RefPtr<StringImpl> trackNoLabelText();
+    RefPtr<StringImpl> textTrackOffMenuItemText();
+    RefPtr<StringImpl> textTrackOnMenuItemText();
+    RefPtr<StringImpl> textTrackAutomaticMenuItemText();
+    RefPtr<StringImpl> captionStylePreview();
+    RefPtr<StringImpl> captionStylePreviewWithProfileName(StringImpl*);
 #if PLATFORM(COCOA)
-    String addTrackLabelAsSuffix(const String&, const String&);
-    String textTrackKindClosedCaptionsDisplayName();
-    String addTextTrackKindClosedCaptionsSuffix(const String&);
-    String textTrackKindCaptionsDisplayName();
-    String addTextTrackKindCaptionsSuffix(const String&);
-    String textTrackKindDescriptionsDisplayName();
-    String addTextTrackKindDescriptionsSuffix(const String&);
-    String textTrackKindChaptersDisplayName();
-    String addTextTrackKindChaptersSuffix(const String&);
-    String textTrackKindMetadataDisplayName();
-    String addTextTrackKindMetadataSuffix(const String&);
-    String textTrackKindSDHDisplayName();
-    String addTextTrackKindSDHSuffix(const String&);
-    String textTrackKindEasyReaderDisplayName();
-    String addTextTrackKindEasyReaderSuffix(const String&);
-    String textTrackKindForcedDisplayName();
-    String addTextTrackKindForcedSuffix(const String&);
-    String textTrackKindGeneratedDisplayName();
-    String addTextTrackKindGeneratedSuffix(const String&);
-    String audioTrackKindDescriptionsDisplayName();
-    String addAudioTrackKindDescriptionsSuffix(const String&);
-    String audioTrackKindCommentaryDisplayName();
-    String addAudioTrackKindCommentarySuffix(const String&);
+    RefPtr<StringImpl> addTrackLabelAsSuffix(StringImpl*, StringImpl*);
+    RefPtr<StringImpl> textTrackKindClosedCaptionsDisplayName();
+    RefPtr<StringImpl> addTextTrackKindClosedCaptionsSuffix(StringImpl*);
+    RefPtr<StringImpl> textTrackKindCaptionsDisplayName();
+    RefPtr<StringImpl> addTextTrackKindCaptionsSuffix(StringImpl*);
+    RefPtr<StringImpl> textTrackKindDescriptionsDisplayName();
+    RefPtr<StringImpl> addTextTrackKindDescriptionsSuffix(StringImpl*);
+    RefPtr<StringImpl> textTrackKindChaptersDisplayName();
+    RefPtr<StringImpl> addTextTrackKindChaptersSuffix(StringImpl*);
+    RefPtr<StringImpl> textTrackKindMetadataDisplayName();
+    RefPtr<StringImpl> addTextTrackKindMetadataSuffix(StringImpl*);
+    RefPtr<StringImpl> textTrackKindSDHDisplayName();
+    RefPtr<StringImpl> addTextTrackKindSDHSuffix(StringImpl*);
+    RefPtr<StringImpl> textTrackKindEasyReaderDisplayName();
+    RefPtr<StringImpl> addTextTrackKindEasyReaderSuffix(StringImpl*);
+    RefPtr<StringImpl> textTrackKindForcedDisplayName();
+    RefPtr<StringImpl> addTextTrackKindForcedSuffix(StringImpl*);
+    RefPtr<StringImpl> textTrackKindGeneratedDisplayName();
+    RefPtr<StringImpl> addTextTrackKindGeneratedSuffix(StringImpl*);
+    RefPtr<StringImpl> audioTrackKindDescriptionsDisplayName();
+    RefPtr<StringImpl> addAudioTrackKindDescriptionsSuffix(StringImpl*);
+    RefPtr<StringImpl> audioTrackKindCommentaryDisplayName();
+    RefPtr<StringImpl> addAudioTrackKindCommentarySuffix(StringImpl*);
 #endif // PLATFORM(COCOA)
-    String contextMenuItemTagShowMediaStats();
+    RefPtr<StringImpl> contextMenuItemTagShowMediaStats();
 #endif // ENABLE(VIDEO)
 
 #if PLATFORM(COCOA)
-    String webCryptoMasterKeyKeychainLabel(const String& localizedApplicationName);
-    String webCryptoMasterKeyKeychainComment();
+    RefPtr<StringImpl> webCryptoMasterKeyKeychainLabel(StringImpl* localizedApplicationName);
+    RefPtr<StringImpl> webCryptoMasterKeyKeychainComment();
 #endif
 
 #if PLATFORM(MAC)
-    WEBCORE_EXPORT String insertListTypeNone();
-    WEBCORE_EXPORT String insertListTypeBulleted();
-    WEBCORE_EXPORT String insertListTypeBulletedAccessibilityTitle();
-    WEBCORE_EXPORT String insertListTypeNumbered();
-    WEBCORE_EXPORT String insertListTypeNumberedAccessibilityTitle();
-    WEBCORE_EXPORT String exitFullScreenButtonAccessibilityTitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> insertListTypeNone();
+    WEBCORE_EXPORT RefPtr<StringImpl> insertListTypeBulleted();
+    WEBCORE_EXPORT RefPtr<StringImpl> insertListTypeBulletedAccessibilityTitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> insertListTypeNumbered();
+    WEBCORE_EXPORT RefPtr<StringImpl> insertListTypeNumberedAccessibilityTitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> exitFullScreenButtonAccessibilityTitle();
 #endif
 
 #if PLATFORM(WATCHOS)
-    WEBCORE_EXPORT String numberPadOKButtonTitle();
-    WEBCORE_EXPORT String formControlCancelButtonTitle();
-    WEBCORE_EXPORT String formControlHideButtonTitle();
-    WEBCORE_EXPORT String formControlGoButtonTitle();
-    WEBCORE_EXPORT String formControlSearchButtonTitle();
-    WEBCORE_EXPORT String datePickerSetButtonTitle();
-    WEBCORE_EXPORT String datePickerDayLabelTitle();
-    WEBCORE_EXPORT String datePickerMonthLabelTitle();
-    WEBCORE_EXPORT String datePickerYearLabelTitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> numberPadOKButtonTitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> formControlCancelButtonTitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> formControlHideButtonTitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> formControlGoButtonTitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> formControlSearchButtonTitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> datePickerSetButtonTitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> datePickerDayLabelTitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> datePickerMonthLabelTitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> datePickerYearLabelTitle();
 #endif
 
 #if ENABLE(INPUT_TYPE_WEEK_PICKER)
-    WEBCORE_EXPORT String inputWeekLabel(const DateComponents&);
+    WEBCORE_EXPORT RefPtr<StringImpl> inputWeekLabel(const DateComponents&);
 #endif
 
 #if ENABLE(WEB_AUTHN)
-    WEBCORE_EXPORT String makeCredentialTouchIDPromptTitle(const String& bundleName, const String& domain);
-    WEBCORE_EXPORT String getAssertionTouchIDPromptTitle(const String& bundleName, const String& domain);
-    WEBCORE_EXPORT String genericTouchIDPromptTitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> makeCredentialTouchIDPromptTitle(StringImpl* bundleName, StringImpl* domain);
+    WEBCORE_EXPORT RefPtr<StringImpl> getAssertionTouchIDPromptTitle(StringImpl* bundleName, StringImpl* domain);
+    WEBCORE_EXPORT RefPtr<StringImpl> genericTouchIDPromptTitle();
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    WEBCORE_EXPORT String contextMenuItemTagLookUpImage();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagLookUpImage();
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    WEBCORE_EXPORT String contextMenuItemTagCopySubject();
-    WEBCORE_EXPORT String contextMenuItemTitleRemoveBackground();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTagCopySubject();
+    WEBCORE_EXPORT RefPtr<StringImpl> contextMenuItemTitleRemoveBackground();
 #endif
 
-    WEBCORE_EXPORT String pdfPasswordFormTitle();
-    WEBCORE_EXPORT String pdfPasswordFormSubtitle();
-    WEBCORE_EXPORT String pdfPasswordFormInvalidPasswordSubtitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> pdfPasswordFormTitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> pdfPasswordFormSubtitle();
+    WEBCORE_EXPORT RefPtr<StringImpl> pdfPasswordFormInvalidPasswordSubtitle();
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    WEBCORE_EXPORT String fullscreenControllerViewSpatial();
-    WEBCORE_EXPORT String fullscreenControllerViewImmersive();
+    WEBCORE_EXPORT RefPtr<StringImpl> fullscreenControllerViewSpatial();
+    WEBCORE_EXPORT RefPtr<StringImpl> fullscreenControllerViewImmersive();
 #endif
 
 #if ENABLE(SPATIAL_IMAGE_CONTROLS)
-    WEBCORE_EXPORT String imageControlsLabelSpatial();
-    WEBCORE_EXPORT String imageControlsLabelPanorama();
+    WEBCORE_EXPORT RefPtr<StringImpl> imageControlsLabelSpatial();
+    WEBCORE_EXPORT RefPtr<StringImpl> imageControlsLabelPanorama();
 #endif
 
 #if PLATFORM(COCOA)
@@ -490,11 +490,11 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT String localizedString(CFStringRef key);
+    WEBCORE_EXPORT RefPtr<StringImpl> localizedString(CFStringRef key);
 #elif PLATFORM(WIN)
-    WEBCORE_EXPORT String localizedString(const wchar_t* key);
+    WEBCORE_EXPORT RefPtr<StringImpl> localizedString(const wchar_t* key);
 #else
-    WEBCORE_EXPORT String localizedString(const char* key);
+    WEBCORE_EXPORT RefPtr<StringImpl> localizedString(const char* key);
 #endif
 
 #if PLATFORM(COCOA)
@@ -510,11 +510,11 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT String formatLocalizedString(CFStringRef format, ...) CF_FORMAT_FUNCTION(1, 2);
+    WEBCORE_EXPORT RefPtr<StringImpl> formatLocalizedString(CFStringRef format, ...) CF_FORMAT_FUNCTION(1, 2);
 #elif PLATFORM(WIN)
-    WEBCORE_EXPORT String formatLocalizedString(const wchar_t* format, ...);
+    WEBCORE_EXPORT RefPtr<StringImpl> formatLocalizedString(const wchar_t* format, ...);
 #else
-    WEBCORE_EXPORT String formatLocalizedString(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
+    WEBCORE_EXPORT RefPtr<StringImpl> formatLocalizedString(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
 #endif
 
 #ifdef __OBJC__

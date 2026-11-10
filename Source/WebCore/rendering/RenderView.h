@@ -244,9 +244,9 @@ public:
     NODELETE SingleThreadWeakPtr<RenderBlockFlow> viewTransitionContainingBlock() const;
     NODELETE void setViewTransitionContainingBlock(RenderBlockFlow& renderer);
 
-    void addViewTransitionGroup(const AtomString&, RenderBox&);
-    void removeViewTransitionGroup(const AtomString&);
-    NODELETE RenderBox* viewTransitionGroupForName(const AtomString&);
+    void addViewTransitionGroup(AtomStringImpl*, RenderBox&);
+    void removeViewTransitionGroup(AtomStringImpl*);
+    NODELETE RenderBox* viewTransitionGroupForName(AtomStringImpl*);
 
 protected:
     void willBeDestroyed() override;
@@ -327,7 +327,7 @@ private:
     SingleThreadWeakHashSet<const RenderBox> m_positionTryBoxes;
 
     SingleThreadWeakPtr<RenderBlockFlow> m_viewTransitionContainingBlock;
-    HashMap<AtomString, SingleThreadWeakPtr<RenderBox>> m_viewTransitionGroups;
+    HashMap<RefPtr<AtomStringImpl>, SingleThreadWeakPtr<RenderBox>> m_viewTransitionGroups;
 };
 
 } // namespace WebCore

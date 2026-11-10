@@ -40,7 +40,7 @@ struct GenericCueData {
     enum class Status : uint8_t { Uninitialized, Partial, Complete };
 
     GenericCueData() = default;
-    GenericCueData(Markable<InbandGenericCueIdentifier> uniqueId, const MediaTime& startTime, const MediaTime& endTime, const AtomString& id, const String& content, const String& fontName, double line, double position, double size, double baseFontSize, double relativeFontSize, const Color& foregroundColor, const Color& backgroundColor, const Color& highlightColor, GenericCueData::Alignment positionAlign, GenericCueData::Alignment align, GenericCueData::Status status, bool preventLineWrapping)
+    GenericCueData(Markable<InbandGenericCueIdentifier> uniqueId, const MediaTime& startTime, const MediaTime& endTime, AtomStringImpl* id, StringImpl* content, StringImpl* fontName, double line, double position, double size, double baseFontSize, double relativeFontSize, const Color& foregroundColor, const Color& backgroundColor, const Color& highlightColor, GenericCueData::Alignment positionAlign, GenericCueData::Alignment align, GenericCueData::Status status, bool preventLineWrapping)
         : m_uniqueId(uniqueId)
         , m_startTime(startTime)
         , m_endTime(endTime)
@@ -69,9 +69,9 @@ struct GenericCueData {
     Markable<InbandGenericCueIdentifier> m_uniqueId;
     MediaTime m_startTime;
     MediaTime m_endTime;
-    AtomString m_id;
-    String m_content;
-    String m_fontName;
+    RefPtr<AtomStringImpl> m_id;
+    RefPtr<StringImpl> m_content;
+    RefPtr<StringImpl> m_fontName;
     double m_line { -1 };
     double m_position { -1 };
     double m_size { -1 };
@@ -99,11 +99,11 @@ public:
     MediaTime endTime() const { return m_cueData.m_endTime; }
     void setEndTime(const MediaTime& endTime) { m_cueData.m_endTime = endTime; }
 
-    const AtomString& id() const LIFETIME_BOUND { return m_cueData.m_id; }
-    void setId(const AtomString& id) { m_cueData.m_id = id; }
+    const RefPtr<AtomStringImpl>& id() const LIFETIME_BOUND { return m_cueData.m_id; }
+    void setId(AtomStringImpl* id) { m_cueData.m_id = id; }
 
-    const String& content() const LIFETIME_BOUND { return m_cueData.m_content; }
-    void setContent(const String& content) { m_cueData.m_content = content; }
+    const RefPtr<StringImpl>& content() const LIFETIME_BOUND { return m_cueData.m_content; }
+    void setContent(StringImpl* content) { m_cueData.m_content = content; }
 
     double line() const { return m_cueData.m_line; }
     void setLine(double line) { m_cueData.m_line = line; }
@@ -120,8 +120,8 @@ public:
     GenericCueData::Alignment align() const { return m_cueData.m_align; }
     void setAlign(GenericCueData::Alignment align) { m_cueData.m_align = align; }
 
-    const String& fontName() const LIFETIME_BOUND { return m_cueData.m_fontName; }
-    void setFontName(const String& fontName) { m_cueData.m_fontName = fontName; }
+    const RefPtr<StringImpl>& fontName() const LIFETIME_BOUND { return m_cueData.m_fontName; }
+    void setFontName(StringImpl* fontName) { m_cueData.m_fontName = fontName; }
 
     double baseFontSize() const { return m_cueData.m_baseFontSize; }
     void setBaseFontSize(double baseFontSize) { m_cueData.m_baseFontSize = baseFontSize; }
@@ -146,7 +146,7 @@ public:
 
     bool doesExtendCueData(const InbandGenericCue& other) const { return m_cueData.equalNotConsideringTimesOrId(other.m_cueData); }
 
-    String toJSONString() const;
+    RefPtr<StringImpl> toJSONString() const;
 
     const GenericCueData& cueData() const LIFETIME_BOUND { return m_cueData; }
 
@@ -168,7 +168,7 @@ namespace WTF {
 template<typename Type> struct LogArgument;
 template <>
 struct LogArgument<WebCore::InbandGenericCue> {
-    static String toString(const WebCore::InbandGenericCue& cue)
+    static RefPtr<StringImpl> toString(const WebCore::InbandGenericCue& cue)
     {
         return cue.toJSONString();
     }

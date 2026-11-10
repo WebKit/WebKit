@@ -167,7 +167,7 @@ PerfLog& PerfLog::singleton()
 PerfLog::PerfLog()
 {
     {
-        m_file = FileSystem::createDumpFile(makeString("jit-"_s, ProfilerSupport::getCurrentThreadID(), "-"_s, WTF::getCurrentProcessID()), ".dump"_s, String { Options::jitDumpDirectory() });
+        m_file = FileSystem::createDumpFile(makeString("jit-"_s, ProfilerSupport::getCurrentThreadID(), "-"_s, WTF::getCurrentProcessID()), ".dump"_s, StringImpl::create(unsafeSpan(Options::jitDumpDirectory())).get());
         RELEASE_ASSERT(m_file);
 
         if (Options::useIRDump())
@@ -228,9 +228,9 @@ void PerfLog::log(const UTF8CString& name, MacroAssemblerCodeRef<LinkBufferPtrTa
         Vector<SourceEntry> sourceEntries;
 
         if (irDebugInfo) {
-            auto baseName = makeString("irdump-"_s, String::fromUTF8(irDebugInfo->functionName.span()), "-"_s, WTF::getCurrentProcessID(), "-"_s, timestamp);
+            auto baseName = makeString("irdump-"_s, StringImpl::fromUTF8(irDebugInfo->functionName.span()), "-"_s, WTF::getCurrentProcessID(), "-"_s, timestamp);
 
-            String filePath;
+            RefPtr<StringImpl> filePath;
             FileSystem::FileHandle handle;
             auto& irDumpDir = logger.m_irDumpDirectory;
             if (irDumpDir.isNull()) {

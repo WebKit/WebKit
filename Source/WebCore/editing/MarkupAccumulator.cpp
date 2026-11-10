@@ -168,12 +168,12 @@ NODELETE static bool shouldSelfClose(const Element& element, SerializationSyntax
 }
 
 template<typename CharacterType>
-static inline void appendCharactersReplacingEntitiesInternal(StringBuilder& result, const String& source, OptionSet<EntityMask> entityMask)
+static inline void appendCharactersReplacingEntitiesInternal(StringBuilder& result, StringImpl* source, OptionSet<EntityMask> entityMask)
 {
-    unsigned length = source.length();
+    unsigned length = WTF::length(source);
     size_t positionAfterLastEntity = 0;
     for (size_t i = 0; i < length; ++i) {
-        CharacterType character = source[i];
+        CharacterType character = codeUnitAt(source, i);
         uint8_t substitution = character < std::size(entityMap) ? entityMap[character] : static_cast<uint8_t>(EntitySubstitutionIndex::Null);
         if (substitution != EntitySubstitutionIndex::Null) [[unlikely]] {
             if (entityMask.contains(*entitySubstitutionList[substitution].mask)) {
@@ -186,12 +186,12 @@ static inline void appendCharactersReplacingEntitiesInternal(StringBuilder& resu
     result.appendSubstring(source, positionAfterLastEntity, length - positionAfterLastEntity);
 }
 
-void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result, const String& source, OptionSet<EntityMask> entityMask)
+void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result, StringImpl* source, OptionSet<EntityMask> entityMask)
 {
-    if (!source.length())
+    if (!WTF::length(source))
         return;
 
-    if (source.is8Bit())
+    if (is8Bit(source))
         appendCharactersReplacingEntitiesInternal<Latin1Character>(result, source, entityMask);
     else
         appendCharactersReplacingEntitiesInternal<char16_t>(result, source, entityMask);
@@ -210,7 +210,7 @@ MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resol
 
 MarkupAccumulator::~MarkupAccumulator() = default;
 
-void MarkupAccumulator::enableURLReplacement(HashMap<String, String>&& replacementURLStrings, HashMap<Ref<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet)
+void MarkupAccumulator::enableURLReplacement(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& replacementURLStrings, HashMap<Ref<CSSStyleSheet>, RefPtr<StringImpl>>&& replacementURLStringsForCSSStyleSheet)
 {
     m_serializationContext = CSS::SerializationContext {
         WTF::move(replacementURLStrings),
@@ -219,7 +219,7 @@ void MarkupAccumulator::enableURLReplacement(HashMap<String, String>&& replaceme
     };
 }
 
-String MarkupAccumulator::serializeNodes(Node& targetNode, SerializedNodes root)
+RefPtr<StringImpl> MarkupAccumulator::serializeNodes(Node& targetNode, SerializedNodes root)
 {
     serializeNodesWithNamespaces(targetNode, root, 0);
     return m_markup.toString();
@@ -272,8 +272,8 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
     else if (inXMLFragmentSerialization()) {
         // Make sure xml prefix and namespace are always known to uphold the constraints listed at http://www.w3.org/TR/xml-names11/#xmlReserved.
         Namespaces namespaceHash;
-        namespaceHash.set(xmlAtom().impl(), XMLNames::xmlNamespaceURI->impl());
-        namespaceHash.set(XMLNames::xmlNamespaceURI->impl(), xmlAtom().impl());
+        namespaceHash.set(xmlAtom().get(), XMLNames::xmlNamespaceURI->get());
+        namespaceHash.set(XMLNames::xmlNamespaceURI->get(), xmlAtom().get());
         namespaceStack.append(WTF::move(namespaceHash));
     } else
         namespaceStack.constructAndAppend();
@@ -356,12 +356,12 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
     } while (current != &targetNode);
 }
 
-std::pair<String, MarkupAccumulator::IsCreatedByURLReplacement> MarkupAccumulator::resolveURLIfNeeded(const Element& element, const String& urlString) const
+std::pair<RefPtr<StringImpl>, MarkupAccumulator::IsCreatedByURLReplacement> MarkupAccumulator::resolveURLIfNeeded(const Element& element, StringImpl* urlString) const
 {
     if (auto* link = dynamicDowncast<HTMLLinkElement>(element); link && m_serializationContext) {
         if (RefPtr cssStyleSheet = link->sheet()) {
             auto replacementURLString = m_serializationContext->replacementURLStringsForCSSStyleSheet.get(*cssStyleSheet);
-            if (!replacementURLString.isEmpty())
+            if (!isEmpty(replacementURLString))
                 return { replacementURLString, IsCreatedByURLReplacement::Yes };
         }
     }
@@ -369,13 +369,13 @@ std::pair<String, MarkupAccumulator::IsCreatedByURLReplacement> MarkupAccumulato
     if (m_serializationContext) {
         if (RefPtr frame = frameForAttributeReplacement(element)) {
             auto replacementURLString = m_serializationContext->replacementURLStrings.get(makeString(frame->frameID().toUInt64()));
-            if (!replacementURLString.isEmpty())
+            if (!isEmpty(replacementURLString))
                 return { replacementURLString, IsCreatedByURLReplacement::Yes };
         }
 
         auto resolvedURLString = element.resolveURLStringIfNeeded(urlString);
         auto replacementURLString = m_serializationContext->replacementURLStrings.get(resolvedURLString);
-        if (!replacementURLString.isEmpty())
+        if (!isEmpty(replacementURLString))
             return { replacementURLString, IsCreatedByURLReplacement::Yes };
     }
 
@@ -438,14 +438,14 @@ void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespa
 
 void MarkupAccumulator::appendEndTag(StringBuilder& result, const Element& element)
 {
-    AtomString resolvedQualifiedName;
+    RefPtr<AtomStringImpl> resolvedQualifiedName;
     if (!m_resolvedElementQualifiedNameStack.isEmpty() && m_resolvedElementQualifiedNameStack.last().first.ptr() == &element)
         resolvedQualifiedName = m_resolvedElementQualifiedNameStack.takeLast().second;
 
     if (shouldSelfClose(element, m_serializationSyntax) || (!element.hasChildNodes() && elementCannotHaveEndTag(element)))
         return;
 
-    if (!resolvedQualifiedName.isNull())
+    if (resolvedQualifiedName)
         result.append("</"_s, resolvedQualifiedName, '>');
     else
         result.append("</"_s, element.tagQName().toString(), '>');
@@ -456,7 +456,7 @@ StringBuilder MarkupAccumulator::takeMarkup()
     return std::exchange(m_markup, { });
 }
 
-void MarkupAccumulator::appendAttributeValue(StringBuilder& result, const String& attribute)
+void MarkupAccumulator::appendAttributeValue(StringBuilder& result, StringImpl* attribute)
 {
     auto entityMask = [&] -> OptionSet<EntityMask> {
         switch (m_serializationSyntax) {
@@ -479,7 +479,7 @@ static bool shouldAddNamespaceElement(const Element& element)
 {
     // Don't add namespace attribute if it is already defined for this elem.
     auto& prefix = element.prefix();
-    if (prefix.isEmpty())
+    if (isEmpty(prefix))
         return !element.hasAttribute(xmlnsAtom());
     return !element.hasAttribute(makeAtomString("xmlns:"_s, prefix));
 }
@@ -490,28 +490,28 @@ static bool shouldAddNamespaceAttribute(const Attribute& attribute, Namespaces& 
 
     // Don't add namespace attributes twice
     // HTML Parser will create xmlns attributes without namespace for HTML elements, allow those as well.
-    if (attribute.name().localName() == xmlnsAtom() && (attribute.namespaceURI().isEmpty() || attribute.namespaceURI() == XMLNSNames::xmlnsNamespaceURI)) {
-        namespaces.set(emptyAtom().impl(), attribute.value().impl());
+    if (attribute.name().localName() == xmlnsAtom() && (isEmpty(attribute.namespaceURI()) || attribute.namespaceURI() == XMLNSNames::xmlnsNamespaceURI)) {
+        namespaces.set(emptyAtom().get(), attribute.value().get());
         return false;
     }
 
     QualifiedName xmlnsPrefixAttr(xmlnsAtom(), attribute.localName(), XMLNSNames::xmlnsNamespaceURI);
     if (attribute.name() == xmlnsPrefixAttr) {
-        namespaces.set(attribute.localName().impl(), attribute.value().impl());
-        namespaces.set(attribute.value().impl(), attribute.localName().impl());
+        namespaces.set(attribute.localName().get(), attribute.value().get());
+        namespaces.set(attribute.value().get(), attribute.localName().get());
         return false;
     }
 
     return true;
 }
 
-void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomString& prefix, const AtomString& namespaceURI, Namespaces& namespaces, bool allowEmptyDefaultNS)
+void MarkupAccumulator::appendNamespace(StringBuilder& result, AtomStringImpl* prefix, AtomStringImpl* namespaceURI, Namespaces& namespaces, bool allowEmptyDefaultNS)
 {
     namespaces.checkConsistency();
-    if (namespaceURI.isEmpty()) {
+    if (isEmpty(namespaceURI)) {
         // https://html.spec.whatwg.org/multipage/xhtml.html#xml-fragment-serialisation-algorithm
         if (allowEmptyDefaultNS) {
-            RefPtr currentDefaultNamespace = namespaces.get(emptyAtom().impl());
+            RefPtr currentDefaultNamespace = namespaces.get(emptyAtom().get());
             if (currentDefaultNamespace && !currentDefaultNamespace->isEmpty())
                 result.append(' ', xmlnsAtom(), "=\"\""_s);
         }
@@ -519,22 +519,22 @@ void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomString&
     }
 
     // Use emptyAtom()s's impl() for null strings since this HashMap can't handle nullptr as a key
-    auto addResult = namespaces.add(prefix.isNull() ? emptyAtom().impl() : prefix.impl(), namespaceURI.impl());
+    auto addResult = namespaces.add(!prefix ? emptyAtom().get() : prefix, namespaceURI);
     if (!addResult.isNewEntry) {
-        if (addResult.iterator->value == namespaceURI.impl())
+        if (addResult.iterator->value == namespaceURI)
             return;
-        addResult.iterator->value = namespaceURI.impl();
+        addResult.iterator->value = namespaceURI;
     }
 
     // Add namespace to prefix pair so we can do constraint checking later.
-    if (inXMLFragmentSerialization() && !prefix.isEmpty())
-        namespaces.set(namespaceURI.impl(), prefix.impl());
+    if (inXMLFragmentSerialization() && !isEmpty(prefix))
+        namespaces.set(namespaceURI, prefix);
 
     // Make sure xml prefix and namespace are always known to uphold the constraints listed at http://www.w3.org/TR/xml-names11/#xmlReserved.
     if (namespaceURI == XMLNames::xmlNamespaceURI)
         return;
 
-    result.append(' ', xmlnsAtom(), prefix.isEmpty() ? ""_s : ":"_s, prefix, "=\""_s);
+    result.append(' ', xmlnsAtom(), isEmpty(prefix) ? ""_s : ":"_s, prefix, "=\""_s);
     appendAttributeValue(result, namespaceURI);
     result.append('"');
 }
@@ -588,7 +588,7 @@ static void appendXMLDeclaration(StringBuilder& result, const Document& document
 
     result.append("<?xml version=\""_s,
         document.xmlVersion(),
-        encoding.isEmpty() ? ""_s : "\" encoding=\""_s,
+        isEmpty(encoding) ? ""_s : "\" encoding=\""_s,
         encoding,
         isStandaloneSpecified ? (document.xmlStandalone() ? "\" standalone=\"yes"_s : "\" standalone=\"no"_s) : ""_s,
         "\"?>"_s);
@@ -596,18 +596,18 @@ static void appendXMLDeclaration(StringBuilder& result, const Document& document
 
 static void appendDocumentType(StringBuilder& result, const DocumentType& documentType)
 {
-    if (documentType.name().isEmpty())
+    if (isEmpty(documentType.name()))
         return;
 
     result.append(
         "<!DOCTYPE "_s,
         documentType.name(),
-        documentType.publicId().isEmpty() ? ""_s : " PUBLIC \""_s,
+        isEmpty(documentType.publicId()) ? ""_s : " PUBLIC \""_s,
         documentType.publicId(),
-        documentType.publicId().isEmpty() ? ""_s : "\""_s,
-        documentType.systemId().isEmpty() ? ""_s : (documentType.publicId().isEmpty() ? " SYSTEM \""_s : " \""_s),
+        isEmpty(documentType.publicId()) ? ""_s : "\""_s,
+        isEmpty(documentType.systemId()) ? ""_s : (isEmpty(documentType.publicId()) ? " SYSTEM \""_s : " \""_s),
         documentType.systemId(),
-        documentType.systemId().isEmpty() ? ">"_s : "\">"_s
+        isEmpty(documentType.systemId()) ? ">"_s : "\">"_s
     );
 }
 
@@ -671,7 +671,7 @@ void MarkupAccumulator::appendStartTag(StringBuilder& result, const Element& ele
 void MarkupAccumulator::appendOpenTag(StringBuilder& result, const Element& element, Namespaces* namespaces)
 {
     result.append('<');
-    if (inXMLFragmentSerialization() && namespaces && element.prefix().isEmpty()) {
+    if (inXMLFragmentSerialization() && namespaces && isEmpty(element.prefix())) {
         // According to http://www.w3.org/TR/DOM-Level-3-Core/namespaces-algorithms.html#normalizeDocumentAlgo we now should create
         // a default namespace declaration to make this namespace well-formed. However, http://www.w3.org/TR/xml-names11/#xmlReserved states
         // "The prefix xml MUST NOT be declared as the default namespace.", so use the xml prefix explicitly.
@@ -680,14 +680,14 @@ void MarkupAccumulator::appendOpenTag(StringBuilder& result, const Element& elem
             result.append(qualifiedName);
             m_resolvedElementQualifiedNameStack.append({ element, WTF::move(qualifiedName) });
             return;
-        } else if (!element.namespaceURI().isEmpty() && !element.hasAttribute(xmlnsAtom())) {
+        } else if (!isEmpty(element.namespaceURI()) && !element.hasAttribute(xmlnsAtom())) {
             // If the element doesn't carry its own default namespace declaration,
             // look for an existing prefix mapped to this namespace URI in an ancestor
             // and use it instead of emitting a new default namespace declaration.
-            AtomString inheritedDefaultNS = namespaces->get(emptyAtom().impl());
-            if (inheritedDefaultNS.isNull() || inheritedDefaultNS != element.namespaceURI()) {
-                AtomString existingPrefix = namespaces->get(element.namespaceURI().impl());
-                if (!existingPrefix.isEmpty()) {
+            RefPtr<AtomStringImpl> inheritedDefaultNS = namespaces->get(emptyAtom().get());
+            if (!inheritedDefaultNS || inheritedDefaultNS != element.namespaceURI()) {
+                RefPtr<AtomStringImpl> existingPrefix = namespaces->get(element.namespaceURI().get());
+                if (!isEmpty(existingPrefix)) {
                     auto qualifiedName = makeAtomString(existingPrefix, ':', element.localName());
                     result.append(qualifiedName);
                     m_resolvedElementQualifiedNameStack.append({ element, WTF::move(qualifiedName) });
@@ -716,18 +716,18 @@ void MarkupAccumulator::generateUniquePrefix(QualifiedName& prefixedName, const 
     // http://www.w3.org/TR/DOM-Level-3-Core/namespaces-algorithms.html#normalizeDocumentAlgo
     // Find a prefix following the pattern "NS" + index (starting at 1) and make sure this
     // prefix is not declared in the current scope.
-    AtomString name;
+    RefPtr<AtomStringImpl> name;
     do {
         // FIXME: We should create makeAtomString, which would be more efficient.
         name = makeAtomString("ns"_s, ++m_prefixLevel);
-    } while (namespaces.get(name.impl()));
+    } while (namespaces.get(name.get()));
     prefixedName.setPrefix(name);
 }
 
 // https://html.spec.whatwg.org/#attribute's-serialised-name
-static String htmlAttributeSerialization(const Attribute& attribute)
+static RefPtr<StringImpl> htmlAttributeSerialization(const Attribute& attribute)
 {
-    if (attribute.namespaceURI().isEmpty())
+    if (isEmpty(attribute.namespaceURI()))
         return attribute.name().localName();
 
     QualifiedName prefixedName = attribute.name();
@@ -738,7 +738,7 @@ static String htmlAttributeSerialization(const Attribute& attribute)
             return xmlnsAtom();
         prefixedName.setPrefix(xmlnsAtom());
     } else if (attribute.namespaceURI() == XLinkNames::xlinkNamespaceURI)
-        prefixedName.setPrefix(AtomString("xlink"_s));
+        prefixedName.setPrefix("xlink"_atom);
     return prefixedName.toString();
 }
 
@@ -746,18 +746,18 @@ static String htmlAttributeSerialization(const Attribute& attribute)
 QualifiedName MarkupAccumulator::xmlAttributeSerialization(const Attribute& attribute, Namespaces* namespaces)
 {
     QualifiedName prefixedName = attribute.name();
-    if (!attribute.namespaceURI().isEmpty()) {
+    if (!isEmpty(attribute.namespaceURI())) {
         if (attribute.namespaceURI() == XMLNames::xmlNamespaceURI) {
             // Always use xml as prefix if the namespace is the XML namespace.
             prefixedName.setPrefix(xmlAtom());
         } else {
-            RefPtr foundNS = namespaces && attribute.prefix().impl() ? namespaces->get(attribute.prefix().impl()) : nullptr;
-            bool prefixIsAlreadyMappedToOtherNS = foundNS && foundNS != attribute.namespaceURI().impl();
-            if (attribute.prefix().isEmpty() || !foundNS || prefixIsAlreadyMappedToOtherNS) {
-                if (RefPtr prefix = namespaces ? namespaces->get(attribute.namespaceURI().impl()) : nullptr)
-                    prefixedName.setPrefix(AtomString(WTF::move(prefix)));
+            RefPtr foundNS = namespaces && attribute.prefix().get() ? namespaces->get(attribute.prefix().get()) : nullptr;
+            bool prefixIsAlreadyMappedToOtherNS = foundNS && foundNS != attribute.namespaceURI().get();
+            if (isEmpty(attribute.prefix()) || !foundNS || prefixIsAlreadyMappedToOtherNS) {
+                if (RefPtr prefix = namespaces ? namespaces->get(attribute.namespaceURI().get()) : nullptr)
+                    prefixedName.setPrefix(RefPtr<AtomStringImpl>(WTF::move(prefix)));
                 else {
-                    bool shouldBeDeclaredUsingAppendNamespace = !attribute.prefix().isEmpty() && !foundNS;
+                    bool shouldBeDeclaredUsingAppendNamespace = !isEmpty(attribute.prefix()) && !foundNS;
                     if (!shouldBeDeclaredUsingAppendNamespace && attribute.localName() != xmlnsAtom() && namespaces)
                         generateUniquePrefix(prefixedName, *namespaces);
                 }
@@ -790,10 +790,10 @@ Attribute MarkupAccumulator::replaceAttributeIfNecessary(const Element& element,
             return attribute;
 
         auto replacementURLString = m_serializationContext->replacementURLStrings.get(makeString(frame->frameID().toUInt64()));
-        if (replacementURLString.isEmpty())
+        if (isEmpty(replacementURLString))
             return attribute;
 
-        return { srcAttr, AtomString { replacementURLString } };
+        return { srcAttr, AtomStringImpl::add(replacementURLString).get() };
     }
 
     return element.replaceURLsInAttributeValue(attribute, *m_serializationContext);
@@ -809,10 +809,10 @@ bool MarkupAccumulator::appendURLAttributeForReplacementIfNecessary(StringBuilde
         return false;
 
     auto replacementURLString = m_serializationContext->replacementURLStrings.get(makeString(frame->frameID().toUInt64()));
-    if (replacementURLString.isEmpty())
+    if (isEmpty(replacementURLString))
         return false;
 
-    appendAttribute(result, element, Attribute { srcAttr, AtomString { replacementURLString } }, namespaces);
+    appendAttribute(result, element, Attribute { srcAttr, AtomStringImpl::add(replacementURLString).get() }, namespaces);
     return true;
 }
 
@@ -898,13 +898,13 @@ void MarkupAccumulator::appendNonElementNode(StringBuilder& result, const Node& 
 
 static bool isElementExcludedByRule(const MarkupExclusionRule& rule, const Element& element)
 {
-    if (!rule.elementLocalName.isNull() && !equalIgnoringASCIICase(rule.elementLocalName, element.localName()))
+    if (rule.elementLocalName && !equalIgnoringASCIICase(rule.elementLocalName, element.localName()))
         return false;
 
     unsigned matchedAttributes = 0;
     if (element.hasAttributes()) {
         for (auto& [attributeLocalName, attributeValue] : rule.attributes) {
-            if (attributeLocalName.isNull()) {
+            if (!attributeLocalName) {
                 ++matchedAttributes;
                 continue;
             }
@@ -913,7 +913,7 @@ static bool isElementExcludedByRule(const MarkupExclusionRule& rule, const Eleme
             for (auto& attribute : element.attributes()) {
                 if (!equalIgnoringASCIICase(attribute.localName(), attributeLocalName))
                     continue;
-                if (attributeValue.isNull() || equalIgnoringASCIICase(attribute.value(), attributeValue)) {
+                if (!attributeValue || equalIgnoringASCIICase(attribute.value(), attributeValue)) {
                     ++matchedAttributes;
                     break;
                 }

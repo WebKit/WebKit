@@ -113,13 +113,13 @@ public:
     virtual void unfocus(WebKit::WebPageProxy*) { }
     virtual bool focusFromServiceWorker(WebKit::WebPageProxy&) { return false; }
 
-    virtual void runJavaScriptAlert(WebKit::WebPageProxy&, const WTF::String&, WebKit::WebFrameProxy*, WebKit::FrameInfoData&&, Function<void()>&& completionHandler) { completionHandler(); }
-    virtual void runJavaScriptConfirm(WebKit::WebPageProxy&, const WTF::String&, WebKit::WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(bool)>&& completionHandler) { completionHandler(false); }
-    virtual void runJavaScriptPrompt(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(const WTF::String&)>&& completionHandler) { completionHandler(WTF::String()); }
+    virtual void runJavaScriptAlert(WebKit::WebPageProxy&, StringImpl*, WebKit::WebFrameProxy*, WebKit::FrameInfoData&&, Function<void()>&& completionHandler) { completionHandler(); }
+    virtual void runJavaScriptConfirm(WebKit::WebPageProxy&, StringImpl*, WebKit::WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(bool)>&& completionHandler) { completionHandler(false); }
+    virtual void runJavaScriptPrompt(WebKit::WebPageProxy&, StringImpl*, StringImpl*, WebKit::WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(StringImpl*)>&& completionHandler) { completionHandler(nullString()); }
 
-    virtual void setStatusText(WebKit::WebPageProxy*, const WTF::String&) { }
+    virtual void setStatusText(WebKit::WebPageProxy*, StringImpl*) { }
     virtual void mouseDidMoveOverElement(WebKit::WebPageProxy&, const WebKit::WebHitTestResultData&, OptionSet<WebKit::WebEventModifier>) { }
-    virtual void tooltipDidChange(WebKit::WebPageProxy&, const WTF::String&) { }
+    virtual void tooltipDidChange(WebKit::WebPageProxy&, StringImpl*) { }
 
     virtual void didNotHandleKeyEvent(WebKit::WebPageProxy*, const WebKit::NativeWebKeyboardEvent&) { }
     virtual void didNotHandleWheelEvent(WebKit::WebPageProxy*, const WebKit::NativeWebWheelEvent&) { }
@@ -140,11 +140,11 @@ public:
     virtual void windowFrame(WebKit::WebPageProxy&, Function<void(std::optional<WebCore::FloatRect>)>&& completionHandler) { completionHandler(std::nullopt); }
 
     virtual bool canRunBeforeUnloadConfirmPanel() const { return false; }
-    virtual void runBeforeUnloadConfirmPanel(WebKit::WebPageProxy&, WTF::String&&, WebKit::WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(bool)>&& completionHandler) { completionHandler(true); }
+    virtual void runBeforeUnloadConfirmPanel(WebKit::WebPageProxy&, RefPtr<StringImpl>&&, WebKit::WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(bool)>&& completionHandler) { completionHandler(true); }
 
     virtual void pageDidScroll(WebKit::WebPageProxy*) { }
 
-    virtual void exceededDatabaseQuota(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, SecurityOrigin*, const WTF::String&, const WTF::String&, unsigned long long currentQuota, unsigned long long, unsigned long long, unsigned long long, Function<void (unsigned long long)>&& completionHandler)
+    virtual void exceededDatabaseQuota(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, SecurityOrigin*, StringImpl*, StringImpl*, unsigned long long currentQuota, unsigned long long, unsigned long long, unsigned long long, Function<void (unsigned long long)>&& completionHandler)
     {
         completionHandler(currentQuota);
     }
@@ -162,7 +162,7 @@ public:
     virtual void decidePolicyForNotificationPermissionRequest(WebKit::WebPageProxy&, SecurityOrigin&, CompletionHandler<void(bool allowed)>&& completionHandler) { completionHandler(false); }
     virtual void decidePolicyForLocalNetworkAccessPermissionRequest(WebKit::WebPageProxy&, SecurityOrigin& requestingOrigin, SecurityOrigin& topOrigin, WebCore::IPAddressSpace, CompletionHandler<void(bool granted)>&& completionHandler) { completionHandler(false); }
     virtual void requestStorageAccessConfirm(WebKit::WebPageProxy&, WebKit::WebFrameProxy*, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, std::optional<WebCore::OrganizationStorageAccessPromptQuirk>&&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(true); }
-    virtual void addMessageToConsoleForTesting(WebKit::WebPageProxy&, WTF::String&&) { }
+    virtual void addMessageToConsoleForTesting(WebKit::WebPageProxy&, RefPtr<StringImpl>&&) { }
 
     // Printing.
     virtual float headerHeight(WebKit::WebPageProxy&, WebKit::WebFrameProxy&) { return 0; }
@@ -174,7 +174,7 @@ public:
     virtual bool canRunModal() const { return false; }
     virtual void runModal(WebKit::WebPageProxy&) { }
 
-    virtual void saveDataToFileInDownloadsFolder(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, const WTF::URL&, Data&) { }
+    virtual void saveDataToFileInDownloadsFolder(WebKit::WebPageProxy*, StringImpl*, StringImpl*, const WTF::URL&, Data&) { }
 
     virtual void pinnedStateDidChange(WebKit::WebPageProxy&) { }
 
@@ -219,7 +219,7 @@ public:
 #if ENABLE(WEB_AUTHN)
     virtual void runWebAuthenticationPanel(WebKit::WebPageProxy&, WebAuthenticationPanel&, WebKit::WebFrameProxy&, WebKit::FrameInfoData&&, CompletionHandler<void(WebKit::WebAuthenticationPanelResult)>&& completionHandler) { completionHandler(WebKit::WebAuthenticationPanelResult::Unavailable); }
 
-    virtual void requestWebAuthenticationConditonalMediationRegistration(const WTF::String&, Vector<WTF::String>&& relatedOrigins, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
+    virtual void requestWebAuthenticationConditonalMediationRegistration(StringImpl*, Vector<RefPtr<StringImpl>>&& relatedOrigins, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
     {
         completionHandler(std::nullopt);
     }
@@ -238,9 +238,9 @@ public:
     virtual void didEnableInspectorBrowserDomain(WebKit::WebPageProxy&) { }
     virtual void didDisableInspectorBrowserDomain(WebKit::WebPageProxy&) { }
 
-    virtual void decidePolicyForMediaKeySystemPermissionRequest(WebKit::WebPageProxy&, SecurityOrigin&, const WTF::String& keySystem, CompletionHandler<void(bool)>&&);
+    virtual void decidePolicyForMediaKeySystemPermissionRequest(WebKit::WebPageProxy&, SecurityOrigin&, StringImpl* keySystem, CompletionHandler<void(bool)>&&);
 
-    virtual void queryPermission(const WTF::String& permissionName, SecurityOrigin& origin, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler) { completionHandler({ }); }
+    virtual void queryPermission(StringImpl* permissionName, SecurityOrigin& origin, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler) { completionHandler({ }); }
 
 #if ENABLE(WEBXR)
     virtual void requestPermissionOnXRSessionFeatures(WebKit::WebPageProxy&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, const PlatformXR::Device::FeatureList& /* requiredFeaturesRequested */, const PlatformXR::Device::FeatureList& /* optionalFeaturesRequested */, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&& completionHandler) { completionHandler(granted); }
@@ -257,7 +257,7 @@ public:
 
     virtual void updateAppBadge(WebKit::WebPageProxy&, const WebCore::SecurityOriginData&, std::optional<uint64_t>) { }
 
-    virtual void didAdjustVisibilityWithSelectors(WebKit::WebPageProxy&, Vector<WTF::String>&&) { }
+    virtual void didAdjustVisibilityWithSelectors(WebKit::WebPageProxy&, Vector<RefPtr<StringImpl>>&&) { }
 
 #if ENABLE(GAMEPAD)
     virtual void recentlyAccessedGamepadsForTesting(WebKit::WebPageProxy&) { }

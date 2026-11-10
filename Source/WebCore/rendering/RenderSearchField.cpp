@@ -106,7 +106,7 @@ void RenderSearchField::showPopup()
     m_searchPopupIsVisible = true;
 
     auto recentSearches = downcast<SearchInputType>(*inputElement().inputType()).recentSearches();
-    const AtomString& name = autosaveName();
+    const RefPtr<AtomStringImpl>& name = autosaveName();
     popup->loadRecentSearches(name, recentSearches);
 
     // Trim the recent searches list if the maximum size has changed since we last saved.
@@ -156,7 +156,7 @@ std::span<const RecentSearch> RenderSearchField::recentSearches()
 
     auto& recentSearches = downcast<SearchInputType>(*inputElement().inputType().unsafeGet()).recentSearches();
 
-    const AtomString& name = autosaveName();
+    const RefPtr<AtomStringImpl>& name = autosaveName();
     protect(m_searchPopup)->loadRecentSearches(name, recentSearches);
 
     return recentSearches.span();
@@ -191,15 +191,15 @@ void RenderSearchField::updateCancelButtonVisibility() const
 
 Visibility RenderSearchField::visibilityForCancelButton() const
 {
-    return (usedStyle().visibility() == UsedVisibility::Hidden || protect(inputElement())->value()->isEmpty()) ? Visibility::Hidden : Visibility::Visible;
+    return (usedStyle().visibility() == UsedVisibility::Hidden || isEmpty(protect(inputElement())->value().get())) ? Visibility::Hidden : Visibility::Visible;
 }
 
-const AtomString& RenderSearchField::autosaveName() const
+const RefPtr<AtomStringImpl>& RenderSearchField::autosaveName() const
 {
     return inputElement().attributeWithoutSynchronization(nameAttr);
 }
 
-void RenderSearchField::updatePopup(const AtomString& name, const Vector<RecentSearch>& searchItems)
+void RenderSearchField::updatePopup(AtomStringImpl* name, const Vector<RecentSearch>& searchItems)
 {
     if (!m_searchPopup)
         m_searchPopup = page().chrome().createSearchPopupMenu(downcast<SearchInputType>(*inputElement().inputType()));

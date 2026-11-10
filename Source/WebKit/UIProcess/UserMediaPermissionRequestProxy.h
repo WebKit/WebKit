@@ -51,12 +51,12 @@ public:
 
     ~UserMediaPermissionRequestProxy();
 
-    void allow(const String& audioDeviceUID, const String& videoDeviceUID);
+    void allow(StringImpl* audioDeviceUID, StringImpl* videoDeviceUID);
     void allow();
 #if ENABLE(MEDIA_STREAM)
     struct DeviceUIDs {
-        String audioDeviceUID;
-        String videoDeviceUID;
+        RefPtr<StringImpl> audioDeviceUID;
+        RefPtr<StringImpl> videoDeviceUID;
     };
     struct BestMatchingDeviceCounts {
         unsigned audio { 0 };
@@ -97,8 +97,8 @@ public:
     void setEligibleVideoDevices(Vector<WebCore::CaptureDevice>&& devices) { m_eligibleVideoDevices = WTF::move(devices); }
     void setEligibleAudioDevices(Vector<WebCore::CaptureDevice>&& devices) { m_eligibleAudioDevices = WTF::move(devices); }
 
-    Vector<String> videoDeviceUIDs() const;
-    Vector<String> audioDeviceUIDs() const;
+    Vector<RefPtr<StringImpl>> videoDeviceUIDs() const;
+    Vector<RefPtr<StringImpl>> audioDeviceUIDs() const;
     bool hasAudioDevice() const { return !m_eligibleAudioDevices.isEmpty(); }
     bool hasVideoDevice() const { return !m_eligibleVideoDevices.isEmpty(); }
 
@@ -139,7 +139,7 @@ protected:
     NODELETE UserMediaPermissionRequestManagerProxy* manager() const;
 
 private:
-    void applyDeviceSelection(const String& audioDeviceUID, const String& videoDeviceUID);
+    void applyDeviceSelection(StringImpl* audioDeviceUID, StringImpl* videoDeviceUID);
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     void showCapturePrompt(MediaPermissionPromptCustomization&&, PromptResultHandler&&);
 #endif
@@ -170,7 +170,7 @@ private:
 #endif
 };
 
-String convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason);
+RefPtr<StringImpl> convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason);
 
 } // namespace WebKit
 
@@ -185,7 +185,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebKit::UserMediaPermissionRequestProxy::UserMediaAccessDenialReason> {
-    static String toString(const WebKit::UserMediaPermissionRequestProxy::UserMediaAccessDenialReason type)
+    static RefPtr<StringImpl> toString(const WebKit::UserMediaPermissionRequestProxy::UserMediaAccessDenialReason type)
     {
         return convertEnumerationToString(type);
     }

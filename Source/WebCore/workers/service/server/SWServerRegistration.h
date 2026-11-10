@@ -118,7 +118,7 @@ public:
 
     WEBCORE_EXPORT std::optional<ExceptionData> enableNavigationPreload();
     WEBCORE_EXPORT std::optional<ExceptionData> disableNavigationPreload();
-    WEBCORE_EXPORT std::optional<ExceptionData> setNavigationPreloadHeaderValue(String&&);
+    WEBCORE_EXPORT std::optional<ExceptionData> setNavigationPreloadHeaderValue(RefPtr<StringImpl>&&);
     const NavigationPreloadState& navigationPreloadState() const LIFETIME_BOUND { return m_preloadState; }
 
     WEBCORE_EXPORT void addCookieChangeSubscriptions(Vector<CookieChangeSubscription>&&);

@@ -341,14 +341,14 @@ void RemoteDevice::createRenderPipelineWithPipelineLayoutFromPipeline(const WebG
     });
 }
 
-void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUIdentifier identifier, CompletionHandler<void(bool, String&&)>&& callback)
+void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUIdentifier identifier, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& callback)
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<::WebGPU::ConstantEntry> constants;
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, constants);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
-        callback(false, ""_s);
+        callback(false, ""_si);
         return;
     }
 
@@ -364,14 +364,14 @@ void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescr
     });
 }
 
-void RemoteDevice::createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPUIdentifier identifier, CompletionHandler<void(bool, String&&)>&& callback)
+void RemoteDevice::createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPUIdentifier identifier, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& callback)
 {
     Ref objectHeap = m_objectHeap.get();
     WebGPU::RenderPipelineDescriptorStorage storage;
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor, storage);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
-        callback(false, ""_s);
+        callback(false, ""_si);
         return;
     }
 
@@ -438,12 +438,12 @@ void RemoteDevice::resolveUncapturedErrorEvent(CompletionHandler<void(bool, std:
 
 void RemoteDevice::resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason)>&& callback)
 {
-    m_backing->resolveDeviceLostPromise([callback = WTF::move(callback)](::WebGPU::DeviceLostReason reason, String&&) mutable {
+    m_backing->resolveDeviceLostPromise([callback = WTF::move(callback)](::WebGPU::DeviceLostReason reason, RefPtr<StringImpl>&&) mutable {
         callback(reason);
     });
 }
 
-void RemoteDevice::setLabel(String&& label)
+void RemoteDevice::setLabel(RefPtr<StringImpl>&& label)
 {
     m_backing->setLabel(WTF::move(label));
 }

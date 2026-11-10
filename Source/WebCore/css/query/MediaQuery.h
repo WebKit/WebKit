@@ -33,7 +33,7 @@ enum class Prefix : uint8_t { Not, Only };
 
 struct MediaQuery {
     Markable<Prefix> prefix;
-    AtomString mediaType;
+    RefPtr<AtomStringImpl> mediaType;
     Markable<Condition, ConditionMarkableTraits> condition { };
 };
 

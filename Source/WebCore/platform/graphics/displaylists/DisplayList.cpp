@@ -84,7 +84,7 @@ DisplayList::~DisplayList()
         observer->willDestroyDisplayList(*this);
 }
 
-String DisplayList::asText(OptionSet<AsTextFlag> flags) const
+RefPtr<StringImpl> DisplayList::asText(OptionSet<AsTextFlag> flags) const
 {
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
     if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))

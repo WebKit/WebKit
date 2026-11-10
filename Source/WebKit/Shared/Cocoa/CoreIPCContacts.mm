@@ -37,26 +37,26 @@
 namespace WebKit {
 
 CoreIPCCNPhoneNumber::CoreIPCCNPhoneNumber(CNPhoneNumber *cnPhoneNumber)
-    : m_digits(cnPhoneNumber.digits)
-    , m_countryCode(cnPhoneNumber.countryCode)
+    : m_digits(StringImpl::create(cnPhoneNumber.digits))
+    , m_countryCode(StringImpl::create(cnPhoneNumber.countryCode))
 {
 }
 
 RetainPtr<id> CoreIPCCNPhoneNumber::toID() const
 {
-    return [PAL::getCNPhoneNumberClassSingleton() phoneNumberWithDigits:m_digits.createNSString().get() countryCode:m_countryCode.createNSString().get()];
+    return [PAL::getCNPhoneNumberClassSingleton() phoneNumberWithDigits:createNSString(m_digits).get() countryCode:createNSString(m_countryCode).get()];
 }
 
 CoreIPCCNPostalAddress::CoreIPCCNPostalAddress(CNPostalAddress *cnPostalAddress)
-    : m_street(cnPostalAddress.street)
-    , m_subLocality(cnPostalAddress.subLocality)
-    , m_city(cnPostalAddress.city)
-    , m_subAdministrativeArea(cnPostalAddress.subAdministrativeArea)
-    , m_state(cnPostalAddress.state)
-    , m_postalCode(cnPostalAddress.postalCode)
-    , m_country(cnPostalAddress.country)
-    , m_isoCountryCode(cnPostalAddress.ISOCountryCode)
-    , m_formattedAddress(cnPostalAddress.formattedAddress)
+    : m_street(StringImpl::create(cnPostalAddress.street))
+    , m_subLocality(StringImpl::create(cnPostalAddress.subLocality))
+    , m_city(StringImpl::create(cnPostalAddress.city))
+    , m_subAdministrativeArea(StringImpl::create(cnPostalAddress.subAdministrativeArea))
+    , m_state(StringImpl::create(cnPostalAddress.state))
+    , m_postalCode(StringImpl::create(cnPostalAddress.postalCode))
+    , m_country(StringImpl::create(cnPostalAddress.country))
+    , m_isoCountryCode(StringImpl::create(cnPostalAddress.ISOCountryCode))
+    , m_formattedAddress(StringImpl::create(cnPostalAddress.formattedAddress))
 {
 }
 
@@ -78,39 +78,39 @@ RetainPtr<id> CoreIPCCNPostalAddress::toID() const
 }
 
 CoreIPCCNContact::CoreIPCCNContact(CNContact *contact)
-    : m_identifier { contact.identifier }
+    : m_identifier { StringImpl::create(contact.identifier) }
     , m_personContactType { contact.contactType == CNContactTypePerson }
 {
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactNamePrefixKeySingleton()] && contact.namePrefix)
-        m_namePrefix = contact.namePrefix;
+        m_namePrefix = StringImpl::create(contact.namePrefix);
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactGivenNameKeySingleton()] && contact.givenName)
-        m_givenName = contact.givenName;
+        m_givenName = StringImpl::create(contact.givenName);
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactMiddleNameKeySingleton()] && contact.middleName)
-        m_middleName = contact.middleName;
+        m_middleName = StringImpl::create(contact.middleName);
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactFamilyNameKeySingleton()] && contact.familyName)
-        m_familyName = contact.familyName;
+        m_familyName = StringImpl::create(contact.familyName);
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPreviousFamilyNameKeySingleton()] && contact.previousFamilyName)
-        m_previousFamilyName = contact.previousFamilyName;
+        m_previousFamilyName = StringImpl::create(contact.previousFamilyName);
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactNameSuffixKeySingleton()] && contact.nameSuffix)
-        m_nameSuffix = contact.nameSuffix;
+        m_nameSuffix = StringImpl::create(contact.nameSuffix);
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactNicknameKeySingleton()] && contact.nickname)
-        m_nickname = contact.nickname;
+        m_nickname = StringImpl::create(contact.nickname);
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactOrganizationNameKeySingleton()] && contact.organizationName)
-        m_organizationName = contact.organizationName;
+        m_organizationName = StringImpl::create(contact.organizationName);
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactDepartmentNameKeySingleton()] && contact.departmentName)
-        m_departmentName = contact.departmentName;
+        m_departmentName = StringImpl::create(contact.departmentName);
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactJobTitleKeySingleton()] && contact.jobTitle)
-        m_jobTitle = contact.jobTitle;
+        m_jobTitle = StringImpl::create(contact.jobTitle);
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneticGivenNameKeySingleton()] && contact.phoneticGivenName)
-        m_phoneticGivenName = contact.phoneticGivenName;
+        m_phoneticGivenName = StringImpl::create(contact.phoneticGivenName);
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneticMiddleNameKeySingleton()] && contact.phoneticMiddleName)
-        m_phoneticMiddleName = contact.phoneticMiddleName;
+        m_phoneticMiddleName = StringImpl::create(contact.phoneticMiddleName);
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneticFamilyNameKeySingleton()] && contact.phoneticFamilyName)
-        m_phoneticFamilyName = contact.phoneticFamilyName;
+        m_phoneticFamilyName = StringImpl::create(contact.phoneticFamilyName);
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneticOrganizationNameKeySingleton()] && contact.phoneticOrganizationName)
-        m_phoneticOrganizationName = contact.phoneticOrganizationName;
+        m_phoneticOrganizationName = StringImpl::create(contact.phoneticOrganizationName);
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactNoteKeySingleton()] && contact.note)
-        m_note = contact.note;
+        m_note = StringImpl::create(contact.note);
 
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactBirthdayKeySingleton()] && contact.birthday)
         m_birthday = contact.birthday;
@@ -121,31 +121,31 @@ CoreIPCCNContact::CoreIPCCNContact(CNContact *contact)
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactDatesKeySingleton()] && contact.dates) {
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL CNLabeledValue *labeledValue in contact.dates)
-            m_dates.append({ labeledValue.identifier, labeledValue.label, CoreIPCDateComponents(labeledValue.value) });
+            m_dates.append({ StringImpl::create(labeledValue.identifier), StringImpl::create(labeledValue.label), CoreIPCDateComponents(labeledValue.value) });
     }
 
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPhoneNumbersKeySingleton()] && contact.phoneNumbers) {
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL CNLabeledValue *labeledValue in contact.phoneNumbers)
-            m_phoneNumbers.append({ labeledValue.identifier, labeledValue.label, CoreIPCCNPhoneNumber(labeledValue.value) });
+            m_phoneNumbers.append({ StringImpl::create(labeledValue.identifier), StringImpl::create(labeledValue.label), CoreIPCCNPhoneNumber(labeledValue.value) });
     }
 
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactEmailAddressesKeySingleton()] && contact.emailAddresses) {
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL CNLabeledValue *labeledValue in contact.emailAddresses)
-            m_emailAddresses.append({ labeledValue.identifier, labeledValue.label, (NSString *)labeledValue.value });
+            m_emailAddresses.append({ StringImpl::create(labeledValue.identifier), StringImpl::create(labeledValue.label), (NSString *)labeledValue.value });
     }
 
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactPostalAddressesKeySingleton()] && contact.postalAddresses) {
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL CNLabeledValue *labeledValue in contact.postalAddresses)
-            m_postalAddresses.append({ labeledValue.identifier, labeledValue.label, CoreIPCCNPostalAddress(labeledValue.value) });
+            m_postalAddresses.append({ StringImpl::create(labeledValue.identifier), StringImpl::create(labeledValue.label), CoreIPCCNPostalAddress(labeledValue.value) });
     }
 
     if ([contact isKeyAvailable:PAL::get_Contacts_CNContactUrlAddressesKeySingleton()] && contact.urlAddresses) {
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL CNLabeledValue *labeledValue in contact.urlAddresses)
-            m_urlAddresses.append({ labeledValue.identifier, labeledValue.label, (NSString *)labeledValue.value });
+            m_urlAddresses.append({ StringImpl::create(labeledValue.identifier), StringImpl::create(labeledValue.label), (NSString *)labeledValue.value });
     }
 }
 
@@ -156,45 +156,45 @@ static RetainPtr<NSArray> nsArrayFromVectorOfLabeledValues(const Vector<CoreIPCC
             return actualValue.toID();
         }, labeledValue.value);
 
-        return adoptNS([[PAL::getCNLabeledValueClassSingleton() alloc] initWithIdentifier:labeledValue.identifier.createNSString().get() label:labeledValue.label.createNSString().get() value:theValue.get()]);
+        return adoptNS([[PAL::getCNLabeledValueClassSingleton() alloc] initWithIdentifier:createNSString(labeledValue.identifier).get() label:createNSString(labeledValue.label).get() value:theValue.get()]);
     });
 }
 
 RetainPtr<id> CoreIPCCNContact::toID() const
 {
-    RetainPtr<CNMutableContact> result = adoptNS([[PAL::getCNMutableContactClassSingleton() alloc] initWithIdentifier:m_identifier.createNSString().get()]);
+    RetainPtr<CNMutableContact> result = adoptNS([[PAL::getCNMutableContactClassSingleton() alloc] initWithIdentifier:createNSString(m_identifier).get()]);
     result.get().contactType = m_personContactType ? CNContactTypePerson : CNContactTypeOrganization;
 
-    if (!m_namePrefix.isNull())
-        result.get().namePrefix = m_namePrefix.createNSString().get();
-    if (!m_givenName.isNull())
-        result.get().givenName = m_givenName.createNSString().get();
-    if (!m_middleName.isNull())
-        result.get().middleName = m_middleName.createNSString().get();
-    if (!m_familyName.isNull())
-        result.get().familyName = m_familyName.createNSString().get();
-    if (!m_previousFamilyName.isNull())
-        result.get().previousFamilyName = m_previousFamilyName.createNSString().get();
-    if (!m_nameSuffix.isNull())
-        result.get().nameSuffix = m_nameSuffix.createNSString().get();
-    if (!m_nickname.isNull())
-        result.get().nickname = m_nickname.createNSString().get();
-    if (!m_organizationName.isNull())
-        result.get().organizationName = m_organizationName.createNSString().get();
-    if (!m_departmentName.isNull())
-        result.get().departmentName = m_departmentName.createNSString().get();
-    if (!m_jobTitle.isNull())
-        result.get().jobTitle = m_jobTitle.createNSString().get();
-    if (!m_phoneticGivenName.isNull())
-        result.get().phoneticGivenName = m_phoneticGivenName.createNSString().get();
-    if (!m_phoneticMiddleName.isNull())
-        result.get().phoneticMiddleName = m_phoneticMiddleName.createNSString().get();
-    if (!m_phoneticFamilyName.isNull())
-        result.get().phoneticFamilyName = m_phoneticFamilyName.createNSString().get();
-    if (!m_phoneticOrganizationName.isNull())
-        result.get().phoneticOrganizationName = m_phoneticOrganizationName.createNSString().get();
-    if (!m_note.isNull())
-        result.get().note = m_note.createNSString().get();
+    if (m_namePrefix)
+        result.get().namePrefix = createNSString(m_namePrefix).get();
+    if (m_givenName)
+        result.get().givenName = createNSString(m_givenName).get();
+    if (m_middleName)
+        result.get().middleName = createNSString(m_middleName).get();
+    if (m_familyName)
+        result.get().familyName = createNSString(m_familyName).get();
+    if (m_previousFamilyName)
+        result.get().previousFamilyName = createNSString(m_previousFamilyName).get();
+    if (m_nameSuffix)
+        result.get().nameSuffix = createNSString(m_nameSuffix).get();
+    if (m_nickname)
+        result.get().nickname = createNSString(m_nickname).get();
+    if (m_organizationName)
+        result.get().organizationName = createNSString(m_organizationName).get();
+    if (m_departmentName)
+        result.get().departmentName = createNSString(m_departmentName).get();
+    if (m_jobTitle)
+        result.get().jobTitle = createNSString(m_jobTitle).get();
+    if (m_phoneticGivenName)
+        result.get().phoneticGivenName = createNSString(m_phoneticGivenName).get();
+    if (m_phoneticMiddleName)
+        result.get().phoneticMiddleName = createNSString(m_phoneticMiddleName).get();
+    if (m_phoneticFamilyName)
+        result.get().phoneticFamilyName = createNSString(m_phoneticFamilyName).get();
+    if (m_phoneticOrganizationName)
+        result.get().phoneticOrganizationName = createNSString(m_phoneticOrganizationName).get();
+    if (m_note)
+        result.get().note = createNSString(m_note).get();
 
     if (m_birthday)
         result.get().birthday = m_birthday->toID().get();

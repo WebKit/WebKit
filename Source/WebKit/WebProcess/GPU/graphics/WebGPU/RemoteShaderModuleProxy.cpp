@@ -59,7 +59,7 @@ void RemoteShaderModuleProxy::compilationInfo(CompletionHandler<void(::WebGPU::C
     UNUSED_PARAM(sendResult);
 }
 
-void RemoteShaderModuleProxy::setLabel(String&& label)
+void RemoteShaderModuleProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteShaderModule::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

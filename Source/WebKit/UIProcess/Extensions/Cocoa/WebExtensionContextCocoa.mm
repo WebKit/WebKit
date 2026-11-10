@@ -244,7 +244,7 @@ void WebExtensionContext::recordError(Ref<API::Error> error)
 
     // Only the first occurrence of each error is recorded in the array. This prevents duplicate errors,
     // such as repeated "resource not found" errors, from being included multiple times.
-    if (m_errors.containsIf([&](auto& existingError) { return existingError->localizedDescription() == error->localizedDescription(); }))
+    if (m_errors.containsIf([&](auto& existingError) { return equal(existingError->localizedDescription(), error->localizedDescription()); }))
         return;
 
     [wrapper() willChangeValueForKey:@"errors"];
@@ -273,7 +273,7 @@ void WebExtensionContext::clearError(Error error)
     }).get());
 }
 
-std::expected<bool, RefPtr<API::Error>> WebExtensionContext::load(WebExtensionController& controller, String storageDirectory)
+std::expected<bool, RefPtr<API::Error>> WebExtensionContext::load(WebExtensionController& controller, RefPtr<StringImpl> storageDirectory)
 {
     if (isLoaded()) {
         RELEASE_LOG_ERROR(Extensions, "Extension context already loaded");
@@ -294,10 +294,10 @@ std::expected<bool, RefPtr<API::Error>> WebExtensionContext::load(WebExtensionCo
 
     readStateFromStorage();
 
-    auto lastSeenBaseURL = URL { objectForKey<NSString>(m_state, lastSeenBaseURLStateKey) };
-    [m_state setObject:m_baseURL.string().createNSString().get() forKey:lastSeenBaseURLStateKey];
+    auto lastSeenBaseURL = URL { StringImpl::create(objectForKey<NSString>(m_state, lastSeenBaseURLStateKey)) };
+    [m_state setObject:createNSString(m_baseURL.string()).get() forKey:lastSeenBaseURLStateKey];
 
-    if (RetainPtr displayName = protect(m_extension)->displayName().createNSString())
+    if (RetainPtr displayName = createNSString(protect(m_extension)->displayName()))
         [m_state setObject:displayName.get() forKey:lastSeenDisplayNameStateKey];
 
     loadStorageAccessLevelsFromStorage();
@@ -447,14 +447,14 @@ NSDictionary *WebExtensionContext::currentState() const
     return [m_state copy];
 }
 
-NSMutableDictionary *WebExtensionContext::readStateFromPath(const String& stateFilePath)
+NSMutableDictionary *WebExtensionContext::readStateFromPath(StringImpl* stateFilePath)
 {
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
 
     __block NSMutableDictionary *savedState;
 
     NSError *coordinatorError;
-    [fileCoordinator coordinateReadingItemAtURL:[[NSURL alloc] initFileURLWithPath:stateFilePath.createNSString().get()] options:NSFileCoordinatorReadingWithoutChanges error:&coordinatorError byAccessor:^(NSURL *fileURL) {
+    [fileCoordinator coordinateReadingItemAtURL:[[NSURL alloc] initFileURLWithPath:createNSString(stateFilePath).get()] options:NSFileCoordinatorReadingWithoutChanges error:&coordinatorError byAccessor:^(NSURL *fileURL) {
         savedState = [NSMutableDictionary dictionaryWithContentsOfURL:fileURL] ?: [NSMutableDictionary dictionary];
     }];
 
@@ -464,24 +464,24 @@ NSMutableDictionary *WebExtensionContext::readStateFromPath(const String& stateF
     return savedState;
 }
 
-bool WebExtensionContext::readLastBaseURLFromState(const String& filePath, URL& outLastBaseURL)
+bool WebExtensionContext::readLastBaseURLFromState(StringImpl* filePath, URL& outLastBaseURL)
 {
     auto *state = readStateFromPath(filePath);
 
     if (auto *baseURL = objectForKey<NSString>(state, lastSeenBaseURLStateKey))
-        outLastBaseURL = URL { baseURL };
+        outLastBaseURL = URL { StringImpl::create(baseURL) };
 
     return outLastBaseURL.isValid();
 }
 
-bool WebExtensionContext::readDisplayNameFromState(const String& filePath, String& outDisplayName)
+bool WebExtensionContext::readDisplayNameFromState(StringImpl* filePath, RefPtr<StringImpl>& outDisplayName)
 {
     auto *state = readStateFromPath(filePath);
 
     if (auto *displayName = objectForKey<NSString>(state, lastSeenDisplayNameStateKey))
-        outDisplayName = displayName;
+        outDisplayName = StringImpl::create(displayName);
 
-    return !outDisplayName.isEmpty();
+    return !isEmpty(outDisplayName);
 }
 
 NSDictionary *WebExtensionContext::readStateFromStorage()
@@ -507,7 +507,7 @@ void WebExtensionContext::writeStateToStorage() const
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
 
     NSError *coordinatorError;
-    [fileCoordinator coordinateWritingItemAtURL:[[NSURL alloc] initFileURLWithPath:stateFilePath().createNSString().get()] options:NSFileCoordinatorWritingForReplacing error:&coordinatorError byAccessor:^(NSURL *fileURL) {
+    [fileCoordinator coordinateWritingItemAtURL:[[NSURL alloc] initFileURLWithPath:createNSString(stateFilePath()).get()] options:NSFileCoordinatorWritingForReplacing error:&coordinatorError byAccessor:^(NSURL *fileURL) {
         NSError *error;
         if (![currentState() writeToURL:fileURL error:&error])
             RELEASE_LOG_ERROR(Extensions, "Unable to save extension state: %{public}@", privacyPreservingDescription(error));
@@ -563,7 +563,7 @@ void WebExtensionContext::removeStaleExtensionWebsiteData()
         for (auto& record : borrow(records)) {
             WebsiteDataRecord staleRecord;
             for (auto& origin : record.origins) {
-                if (WebExtensionMatchPattern::isWebExtensionURL(origin.toURL()) && !activeExtensionURLs.contains(origin.toURL().protocolHostAndPort().convertToASCIILowercase()))
+                if (WebExtensionMatchPattern::isWebExtensionURL(origin.toURL()) && !activeExtensionURLs.contains(convertToASCIILowercase(origin.toURL().protocolHostAndPort())))
                     staleRecord.origins.add(origin);
             }
             if (!staleRecord.origins.isEmpty()) {
@@ -609,25 +609,25 @@ void WebExtensionContext::setInspectable(bool inspectable)
     }
 }
 
-static String permissionNotification(WebExtensionContext::PermissionNotification notification)
+static RefPtr<StringImpl> permissionNotification(WebExtensionContext::PermissionNotification notification)
 {
     switch (notification) {
     case WebExtensionContext::PermissionNotification::PermissionsWereGranted:
-        return WKWebExtensionContextPermissionsWereGrantedNotification;
+        return StringImpl::create(WKWebExtensionContextPermissionsWereGrantedNotification);
     case WebExtensionContext::PermissionNotification::PermissionsWereDenied:
-        return WKWebExtensionContextPermissionsWereDeniedNotification;
+        return StringImpl::create(WKWebExtensionContextPermissionsWereDeniedNotification);
     case WebExtensionContext::PermissionNotification::GrantedPermissionsWereRemoved:
-        return WKWebExtensionContextGrantedPermissionsWereRemovedNotification;
+        return StringImpl::create(WKWebExtensionContextGrantedPermissionsWereRemovedNotification);
     case WebExtensionContext::PermissionNotification::DeniedPermissionsWereRemoved:
-        return WKWebExtensionContextDeniedPermissionsWereRemovedNotification;
+        return StringImpl::create(WKWebExtensionContextDeniedPermissionsWereRemovedNotification);
     case WebExtensionContext::PermissionNotification::PermissionMatchPatternsWereGranted:
-        return WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification;
+        return StringImpl::create(WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification);
     case WebExtensionContext::PermissionNotification::PermissionMatchPatternsWereDenied:
-        return WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification;
+        return StringImpl::create(WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification);
     case WebExtensionContext::PermissionNotification::GrantedPermissionMatchPatternsWereRemoved:
-        return WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification;
+        return StringImpl::create(WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification);
     case WebExtensionContext::PermissionNotification::DeniedPermissionMatchPatternsWereRemoved:
-        return WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification;
+        return StringImpl::create(WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification);
     case WebExtensionContext::PermissionNotification::None:
         return nullString();
     }
@@ -659,7 +659,7 @@ void WebExtensionContext::permissionsDidChange(PermissionNotification notificati
             firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnRemoved, permissions, { });
     }
 
-    auto notificationName = permissionNotification(notification).createNSString();
+    auto notificationName = createNSString(permissionNotification(notification));
     dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }, notificationName, permissions] {
         [NSNotificationCenter.defaultCenter postNotificationName:notificationName.get() object:wrapper() userInfo:@{ WKWebExtensionContextNotificationUserInfoKeyPermissions: toAPI(permissions) }];
     }).get());
@@ -694,7 +694,7 @@ void WebExtensionContext::permissionsDidChange(PermissionNotification notificati
         }
     }
 
-    auto notificationName = permissionNotification(notification).createNSString();
+    auto notificationName = createNSString(permissionNotification(notification));
     dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }, notificationName, matchPatterns] {
         [NSNotificationCenter.defaultCenter postNotificationName:notificationName.get() object:wrapper() userInfo:@{ WKWebExtensionContextNotificationUserInfoKeyMatchPatterns: toAPI(matchPatterns) }];
     }).get());
@@ -875,7 +875,7 @@ void WebExtensionContext::requestPermissions(const PermissionsSet& requestedPerm
 
         for (WKWebExtensionPermission permission in allowedPermissions) {
             THROW_UNLESS([permission isKindOfClass:NSString.class], @"Object returned in set by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: is not a WKWebExtensionPermission");
-            THROW_UNLESS(neededPermissions.contains(permission), @"Result returned by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: doesn't contain the requested permissions");
+            THROW_UNLESS(neededPermissions.contains(StringImpl::create(permission).get()), @"Result returned by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: doesn't contain the requested permissions");
         }
 
         auto permissions = toImpl(allowedPermissions);
@@ -1210,7 +1210,7 @@ std::expected<Ref<WebExtensionTab>, WebExtensionError> WebExtensionContext::getT
     if (tabIdentifier) {
         RefPtr tab = getTab(*tabIdentifier);
         if (!tab)
-            return makeUnexpected(@"the tab was not found");
+            return makeUnexpected("the tab was not found"_si);
         return tab.releaseNonNull();
     }
 
@@ -1218,16 +1218,16 @@ std::expected<Ref<WebExtensionTab>, WebExtensionError> WebExtensionContext::getT
     if (windowIdentifier) {
         window = getWindow(*windowIdentifier);
         if (!window)
-            return makeUnexpected(@"the window was not found");
+            return makeUnexpected("the window was not found"_si);
     } else
         window = frontmostWindow();
 
     if (!window)
-        return makeUnexpected(@"no windows are open");
+        return makeUnexpected("no windows are open"_si);
 
     RefPtr tab = window->activeTab();
     if (!tab)
-        return makeUnexpected(@"an unknown error occurred");
+        return makeUnexpected("an unknown error occurred"_si);
 
     return tab.releaseNonNull();
 }
@@ -1922,7 +1922,7 @@ void WebExtensionContext::resourceLoadDidCompleteWithError(WebPageProxyIdentifie
     if (error.isAccessControl() && (loadInfo.type == ResourceLoadInfo::Type::Fetch || loadInfo.type == ResourceLoadInfo::Type::XMLHTTPRequest)) {
         RefPtr<WebFrameProxy> originatingFrame = loadInfo.frameID ? WebFrameProxy::webFrame(*loadInfo.frameID) : nullptr;
         if (originatingFrame && isURLForThisExtension(originatingFrame->url())) {
-            RELEASE_LOG_ERROR(Extensions, "Requesting permission to access URL due to CORS failure: %{sensitive}s", loadInfo.originalURL.string().utf8());
+            RELEASE_LOG_ERROR(Extensions, "Requesting permission to access URL due to CORS failure: %{sensitive}s", utf8(loadInfo.originalURL.string()));
             requestPermissionToAccessURLs({ loadInfo.originalURL }, getTab(pageID), nullptr, GrantOnCompletion::Yes, { PermissionStateOptions::RequestedWithTabsPermission, PermissionStateOptions::IncludeOptionalPermissions });
         }
     }
@@ -2152,13 +2152,13 @@ const WebExtensionContext::CommandsVector& WebExtensionContext::commands()
     return m_commands;
 }
 
-WebExtensionCommand* WebExtensionContext::command(const String& commandIdentifier)
+WebExtensionCommand* WebExtensionContext::command(StringImpl* commandIdentifier)
 {
-    if (commandIdentifier.isEmpty())
+    if (isEmpty(commandIdentifier))
         return nullptr;
 
     for (auto& command : borrow(commands())) {
-        if (command->identifier() == commandIdentifier)
+        if (equal(command->identifier(), commandIdentifier))
             return command.ptr();
     }
 
@@ -2268,9 +2268,9 @@ NSArray *WebExtensionContext::platformMenuItems(const WebExtensionTab& tab) cons
     return @[ ];
 }
 
-WebExtensionMenuItem* WebExtensionContext::menuItem(const String& identifier) const
+WebExtensionMenuItem* WebExtensionContext::menuItem(StringImpl* identifier) const
 {
-    if (identifier.isEmpty())
+    if (isEmpty(identifier))
         return nullptr;
     return m_menuItems.get(identifier);
 }
@@ -2314,7 +2314,7 @@ CocoaMenuItem *WebExtensionContext::singleMenuItemOrExtensionItemWithSubmenu(con
         return menuItems.firstObject;
     }
 
-    auto *extensionItem = [[_WKWebExtensionMenuItem alloc] initWithTitle:protect(extension())->displayShortName().createNSString().get() handler:^(id) { }];
+    auto *extensionItem = [[_WKWebExtensionMenuItem alloc] initWithTitle:createNSString(protect(extension())->displayShortName()).get() handler:^(id) { }];
     auto *extensionSubmenu = [[NSMenu alloc] init];
     extensionSubmenu.itemArray = menuItems;
     extensionItem.submenu = extensionSubmenu;
@@ -2328,7 +2328,7 @@ CocoaMenuItem *WebExtensionContext::singleMenuItemOrExtensionItemWithSubmenu(con
     if (menuItems.count == 1)
         return menuItems.firstObject;
 
-    return [UIMenu menuWithTitle:protect(extension())->displayShortName().createNSString().get() children:menuItems];
+    return [UIMenu menuWithTitle:createNSString(protect(extension())->displayShortName()).get() children:menuItems];
 #endif
 }
 
@@ -2359,12 +2359,12 @@ void WebExtensionContext::addItemsToContextMenu(WebPageProxy& page, const Contex
     if (!hasPermission(frameInfo.request.url(), tab.get()) && (!tab || !isMainFrame || !hasPermission(WebExtensionPermission::activeTab())))
         return;
 
-    if (!hitTestData.absoluteImageURL.isEmpty()) {
+    if (!isEmpty(hitTestData.absoluteImageURL)) {
         contextParameters.types.add(WebExtensionMenuItemContextType::Image);
         contextParameters.sourceURL = URL { hitTestData.absoluteImageURL };
     }
 
-    if (!hitTestData.absoluteMediaURL.isEmpty() && hitTestData.elementType != WebHitTestResultData::ElementType::None) {
+    if (!isEmpty(hitTestData.absoluteMediaURL) && hitTestData.elementType != WebHitTestResultData::ElementType::None) {
         contextParameters.sourceURL = URL { hitTestData.absoluteMediaURL };
 
         switch (hitTestData.elementType) {
@@ -2387,12 +2387,12 @@ void WebExtensionContext::addItemsToContextMenu(WebPageProxy& page, const Contex
         contextParameters.editable = true;
     }
 
-    if (hitTestData.isSelected && !contextData.selectedText().isEmpty()) {
+    if (hitTestData.isSelected && !isEmpty(contextData.selectedText())) {
         contextParameters.types.add(WebExtensionMenuItemContextType::Selection);
         contextParameters.selectionString = contextData.selectedText();
     }
 
-    if (!hitTestData.absoluteLinkURL.isEmpty()) {
+    if (!isEmpty(hitTestData.absoluteLinkURL)) {
         // Links are selected when showing the context menu, so remove the Selection type since Link is more specific.
         // This matches how built-in context menus work, e.g. hiding Lookup and Translate when on a link.
         contextParameters.types.remove(WebExtensionMenuItemContextType::Selection);
@@ -2674,7 +2674,7 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
     configuration._contentSecurityPolicyModeForExtension = isManifestVersion3 ? _WKContentSecurityPolicyModeForExtensionManifestV3 : _WKContentSecurityPolicyModeForExtensionManifestV2;
     configuration._corsDisablingPatterns = createNSArray(corsDisablingPatterns()).get();
     configuration._crossOriginAccessControlCheckEnabled = NO;
-    configuration._processDisplayName = processDisplayName().createNSString().get();
+    configuration._processDisplayName = createNSString(processDisplayName()).get();
     configuration._requiredWebExtensionBaseURL = baseURL().createNSURL().get();
     configuration._shouldRelaxThirdPartyCookieBlocking = YES;
 
@@ -2689,7 +2689,7 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
 
     Ref pageConfiguration = *configuration->_pageConfiguration;
     pageConfiguration->setDefaultWebsitePolicies(protect(pageConfiguration->defaultWebsitePolicies())->copy());
-    [configuration.defaultWebpagePreferences _setContentRuleListsEnabled:NO exceptions:[NSSet setWithObject:uniqueIdentifier().createNSString().get()]];
+    [configuration.defaultWebpagePreferences _setContentRuleListsEnabled:NO exceptions:[NSSet setWithObject:createNSString(uniqueIdentifier()).get()]];
 
     configuration.defaultWebpagePreferences._autoplayPolicy = _WKWebsiteAutoplayPolicyAllow;
 
@@ -2843,7 +2843,7 @@ void WebExtensionContext::loadBackgroundWebView()
     if ([delegate respondsToSelector:@selector(_webExtensionController:didCreateBackgroundWebView:forExtensionContext:)])
         [delegate _webExtensionController:extensionController->wrapper() didCreateBackgroundWebView:m_backgroundWebView.get() forExtensionContext:wrapper()];
 
-    m_backgroundWebView.get()._remoteInspectionNameOverride = backgroundWebViewInspectionName().createNSString().get();
+    m_backgroundWebView.get()._remoteInspectionNameOverride = createNSString(backgroundWebViewInspectionName()).get();
     clearError(Error::BackgroundContentFailedToLoad);
     m_backgroundContentLoadError = nullptr;
 
@@ -2887,15 +2887,15 @@ void WebExtensionContext::unloadBackgroundWebView()
     m_backgroundWebView = nil;
 }
 
-void WebExtensionContext::setBackgroundWebViewInspectionName(const String& name)
+void WebExtensionContext::setBackgroundWebViewInspectionName(StringImpl* name)
 {
     m_backgroundWebViewInspectionName = name;
-    m_backgroundWebView.get()._remoteInspectionNameOverride = name.createNSString().get();
+    m_backgroundWebView.get()._remoteInspectionNameOverride = createNSString(name).get();
 }
 
 bool WebExtensionContext::isNotRunningInTestRunner()
 {
-    return applicationBundleIdentifier() != "com.apple.WebKit.TestWebKitAPI"_s;
+    return !equal(applicationBundleIdentifier(), "com.apple.WebKit.TestWebKitAPI"_s);
 }
 
 void WebExtensionContext::unloadBackgroundContentIfPossible()
@@ -2942,11 +2942,11 @@ void WebExtensionContext::determineInstallReasonDuringLoad()
     ASSERT(isLoaded());
 
     RefPtr extension = m_extension;
-    String currentVersion = extension->version();
-    m_previousVersion = objectForKey<NSString>(m_state, lastSeenVersionStateKey);
-    m_state.get()[lastSeenVersionStateKey] = currentVersion.createNSString().get();
+    RefPtr<StringImpl> currentVersion = extension->version();
+    m_previousVersion = StringImpl::create(objectForKey<NSString>(m_state, lastSeenVersionStateKey));
+    m_state.get()[lastSeenVersionStateKey] = createNSString(currentVersion).get();
 
-    bool extensionVersionDidChange = !m_previousVersion.isEmpty() && m_previousVersion != currentVersion;
+    bool extensionVersionDidChange = !isEmpty(m_previousVersion) && !equal(m_previousVersion, currentVersion);
 
     auto *lastSeenBundleHash = objectForKey<NSData>(m_state, lastSeenBundleHashStateKey);
     auto *currentBundleHash = extension->bundleHash();
@@ -3543,12 +3543,12 @@ void WebExtensionContext::unloadDeclarativeNetRequestState()
     m_declarativeNetRequestSessionRulesStore = nullptr;
 }
 
-String WebExtensionContext::declarativeNetRequestContentRuleListFilePath()
+RefPtr<StringImpl> WebExtensionContext::declarativeNetRequestContentRuleListFilePath()
 {
-    if (!m_declarativeNetRequestContentRuleListFilePath.isEmpty())
+    if (!isEmpty(m_declarativeNetRequestContentRuleListFilePath))
         return m_declarativeNetRequestContentRuleListFilePath;
 
-    auto directoryPath = storageIsPersistent() ? storageDirectory() : String(FileSystem::createTemporaryDirectory(@"DeclarativeNetRequest"));
+    auto directoryPath = storageIsPersistent() ? storageDirectory() : StringImpl::create(FileSystem::createTemporaryDirectory(@"DeclarativeNetRequest"));
     m_declarativeNetRequestContentRuleListFilePath = FileSystem::pathByAppendingComponent(directoryPath, "DeclarativeNetRequestContentRuleList.data"_s);
 
     return m_declarativeNetRequestContentRuleListFilePath;
@@ -3595,7 +3595,7 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSDictionary *rulesD
             dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }, errorStringsToRecord = RetainPtr { errorStringsToRecord }] {
                 RefPtr extension = m_extension;
                 for (NSString *errorString in errorStringsToRecord.get())
-                    recordError(extension->createError(WebExtension::Error::InvalidDeclarativeNetRequest, errorString));
+                    recordError(extension->createError(WebExtension::Error::InvalidDeclarativeNetRequest, StringImpl::create(errorString).get()));
             }).get());
         }
 
@@ -3610,8 +3610,8 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSDictionary *rulesD
         RetainPtr previouslyLoadedHash = objectForKey<NSString>(m_state, lastLoadedDeclarativeNetRequestHashStateKey);
         RetainPtr hashOfWebKitRules = computeStringHashForContentBlockerRules(webKitRules);
 
-        dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), previouslyLoadedHash = WTF::move(previouslyLoadedHash), hashOfWebKitRules = WTF::move(hashOfWebKitRules), webKitRules = String { webKitRules }]() mutable {
-            API::ContentRuleListStore::defaultStoreSingleton().lookupContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), previouslyLoadedHash = WTF::move(previouslyLoadedHash), hashOfWebKitRules = WTF::move(hashOfWebKitRules), webKitRules](RefPtr<API::ContentRuleList> foundRuleList, std::error_code) mutable {
+        dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), previouslyLoadedHash = WTF::move(previouslyLoadedHash), hashOfWebKitRules = WTF::move(hashOfWebKitRules), webKitRules = StringImpl::create(webKitRules)]() mutable {
+            API::ContentRuleListStore::defaultStoreSingleton().lookupContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), isolatedCopy(uniqueIdentifier()), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), previouslyLoadedHash = WTF::move(previouslyLoadedHash), hashOfWebKitRules = WTF::move(hashOfWebKitRules), webKitRules](RefPtr<API::ContentRuleList> foundRuleList, std::error_code) mutable {
                 // The extension could have been unloaded before this was called.
                 if (!isLoaded()) {
                     completionHandler(false);
@@ -3628,7 +3628,7 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSDictionary *rulesD
                     }
                 }
 
-                API::ContentRuleListStore::defaultStoreSingleton().compileContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), String(webKitRules), WebCore::ContentExtensions::CSSSelectorsAllowed::No, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), hashOfWebKitRules](RefPtr<API::ContentRuleList> ruleList, std::error_code error) mutable {
+                API::ContentRuleListStore::defaultStoreSingleton().compileContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), isolatedCopy(uniqueIdentifier()), RefPtr<StringImpl>(webKitRules), WebCore::ContentExtensions::CSSSelectorsAllowed::No, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), hashOfWebKitRules](RefPtr<API::ContentRuleList> ruleList, std::error_code error) mutable {
                     if (error) {
                         RELEASE_LOG_ERROR(Extensions, "Error compiling declarativeNetRequest rules: %{public}s", error.message().c_str());
                         completionHandler(false);
@@ -3688,14 +3688,14 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
             }
 
             Ref jsonData = jsonDataResult.value();
-            allJSONData.get()[ruleset.rulesetID.createNSString().get()] = jsonData->wrapper();
+            allJSONData.get()[createNSString(ruleset.rulesetID).get()] = jsonData->wrapper();
         }
 
         applyDeclarativeNetRequestRules();
     };
 
     auto addDynamicAndStaticRules = [this, protectedThis = Ref { *this }, addStaticRulesets = WTF::move(addStaticRulesets), allJSONData = RetainPtr { allJSONData }] () mutable {
-        declarativeNetRequestDynamicRulesStore()->getRulesWithRuleIDs({ }, [this, protectedThis = Ref { *this }, addStaticRulesets = WTF::move(addStaticRulesets), allJSONData = RetainPtr { allJSONData }](RefPtr<JSON::Array> rules, const String& errorMessage) mutable {
+        declarativeNetRequestDynamicRulesStore()->getRulesWithRuleIDs({ }, [this, protectedThis = Ref { *this }, addStaticRulesets = WTF::move(addStaticRulesets), allJSONData = RetainPtr { allJSONData }](RefPtr<JSON::Array> rules, StringImpl* errorMessage) mutable {
             if (!rules || !rules->length()) {
                 m_dynamicRulesIDs.clear();
                 addStaticRulesets();
@@ -3703,15 +3703,15 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
             }
 
             NSError *serializationError;
-            NSData *dynamicRulesAsData = ::WebKit::wrapper(API::Data::create(rules->toJSONString().utf8().span())).autorelease();
+            NSData *dynamicRulesAsData = ::WebKit::wrapper(API::Data::create(utf8(rules->toJSONString()).span())).autorelease();
             if (serializationError)
-                RELEASE_LOG_ERROR(Extensions, "Unable to serialize dynamic declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", uniqueIdentifier().createNSString().get(), privacyPreservingDescription(serializationError));
+                RELEASE_LOG_ERROR(Extensions, "Unable to serialize dynamic declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", createNSString(uniqueIdentifier()).get(), privacyPreservingDescription(serializationError));
             else
                 allJSONData.get()[dynamicRulesetID] = dynamicRulesAsData;
 
             HashSet<double> dynamicRuleIDs;
             for (const auto& rule : *rules)
-                dynamicRuleIDs.add(*(rule->asObject()->getDouble("id"_s)));
+                dynamicRuleIDs.add(*(rule->asObject()->getDouble("id"_si)));
 
             m_dynamicRulesIDs = WTF::move(dynamicRuleIDs);
 
@@ -3719,7 +3719,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
         });
     };
 
-    declarativeNetRequestSessionRulesStore()->getRulesWithRuleIDs({ }, [this, protectedThis = Ref { *this }, addDynamicAndStaticRules = WTF::move(addDynamicAndStaticRules), allJSONData = RetainPtr { allJSONData }](RefPtr<JSON::Array> rules, const String& errorMessage) mutable {
+    declarativeNetRequestSessionRulesStore()->getRulesWithRuleIDs({ }, [this, protectedThis = Ref { *this }, addDynamicAndStaticRules = WTF::move(addDynamicAndStaticRules), allJSONData = RetainPtr { allJSONData }](RefPtr<JSON::Array> rules, StringImpl* errorMessage) mutable {
         if (!rules || !rules->length()) {
             m_sessionRulesIDs.clear();
             addDynamicAndStaticRules();
@@ -3727,15 +3727,15 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
         }
 
         NSError *serializationError;
-        NSData *sessionRulesAsData = ::WebKit::wrapper(API::Data::create(rules->toJSONString().utf8().span())).autorelease();
+        NSData *sessionRulesAsData = ::WebKit::wrapper(API::Data::create(utf8(rules->toJSONString()).span())).autorelease();
         if (serializationError)
-            RELEASE_LOG_ERROR(Extensions, "Unable to serialize session declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", uniqueIdentifier().createNSString().get(), privacyPreservingDescription(serializationError));
+            RELEASE_LOG_ERROR(Extensions, "Unable to serialize session declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", createNSString(uniqueIdentifier()).get(), privacyPreservingDescription(serializationError));
         else
             allJSONData.get()[sessionRulesetID] = sessionRulesAsData;
 
         HashSet<double> sessionRuleIDs;
         for (const auto& rule : *rules)
-            sessionRuleIDs.add(*(rule->asObject()->getDouble("id"_s)));
+            sessionRuleIDs.add(*(rule->asObject()->getDouble("id"_si)));
 
         m_sessionRulesIDs = WTF::move(sessionRuleIDs);
 
@@ -3753,8 +3753,8 @@ void WebExtensionContext::loadStorageAccessLevelsFromStorage()
 
     if (savedLevels) {
         for (auto dataType : allWebExtensionDataTypes()) {
-            auto *accessLevelString = objectForKey<NSString>(savedLevels, toAPIString(dataType).createNSString().get());
-            if (auto accessLevel = toWebExtensionStorageAccessLevel(String { accessLevelString }))
+            auto *accessLevelString = objectForKey<NSString>(savedLevels, createNSString(toAPIString(dataType)).get());
+            if (auto accessLevel = toWebExtensionStorageAccessLevel(StringImpl::create(accessLevelString).get()))
                 m_storageAccessLevels.set(dataType, *accessLevel);
         }
 
@@ -3774,7 +3774,7 @@ void WebExtensionContext::saveStorageAccessLevelsToStorage()
     auto *savedLevels = [NSMutableDictionary dictionaryWithCapacity:m_storageAccessLevels.size()];
 
     for (auto [dataType, accessLevel] : m_storageAccessLevels)
-        [savedLevels setObject:toAPIString(accessLevel).createNSString().get() forKey:toAPIString(dataType).createNSString().get()];
+        [savedLevels setObject:createNSString(toAPIString(accessLevel)).get() forKey:createNSString(toAPIString(dataType)).get()];
 
     [m_state setObject:savedLevels forKey:storageAccessLevelsKey];
     writeStateToStorage();

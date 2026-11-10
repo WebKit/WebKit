@@ -56,15 +56,15 @@ public:
     using UnblockRequesterFunction = std::function<void(DecisionHandlerFunction)>;
 
     ContentFilterUnblockHandler() = default;
-    WEBCORE_EXPORT ContentFilterUnblockHandler(String unblockURLHost, UnblockRequesterFunction&&);
+    WEBCORE_EXPORT ContentFilterUnblockHandler(RefPtr<StringImpl> unblockURLHost, UnblockRequesterFunction&&);
 #if HAVE(WEBCONTENTRESTRICTIONS)
     NODELETE ContentFilterUnblockHandler(const URL& evaluatedURL);
 #elif HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
-    ContentFilterUnblockHandler(String unblockURLHost, RetainPtr<WebFilterEvaluator>);
+    ContentFilterUnblockHandler(RefPtr<StringImpl> unblockURLHost, RetainPtr<WebFilterEvaluator>);
 #endif
 
     NODELETE WEBCORE_EXPORT ContentFilterUnblockHandler(
-        String&& unblockURLHost,
+        RefPtr<StringImpl>&& unblockURLHost,
         URL&& unreachableURL,
 #if HAVE(WEBCONTENTRESTRICTIONS)
         std::optional<URL>&& evaluatedURL,
@@ -86,15 +86,15 @@ public:
     NODELETE WEBCORE_EXPORT bool needsNetworkProcess() const;
 #endif
 
-    const String& unblockURLHost() const LIFETIME_BOUND { return m_unblockURLHost; }
+    const RefPtr<StringImpl>& unblockURLHost() const LIFETIME_BOUND { return m_unblockURLHost; }
     const URL& unreachableURL() const LIFETIME_BOUND { return m_unreachableURL; }
     void setUnreachableURL(const URL& url) { m_unreachableURL = url; }
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
     std::optional<URL> evaluatedURL() const { return m_evaluatedURL; }
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    const String& configurationPath() const LIFETIME_BOUND { return m_configurationPath; }
-    void setConfigurationPath(const String& path) { m_configurationPath = path; }
+    const RefPtr<StringImpl>& configurationPath() const LIFETIME_BOUND { return m_configurationPath; }
+    void setConfigurationPath(StringImpl* path) { m_configurationPath = path; }
 #endif
 #elif HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     RetainPtr<WebFilterEvaluator> webFilterEvaluator() const { return m_webFilterEvaluator; }
@@ -104,13 +104,13 @@ public:
     bool unblockedAfterRequest() const { return m_unblockedAfterRequest; }
 
 private:
-    String m_unblockURLHost;
+    RefPtr<StringImpl> m_unblockURLHost;
     URL m_unreachableURL;
     UnblockRequesterFunction m_unblockRequester;
 #if HAVE(WEBCONTENTRESTRICTIONS)
     std::optional<URL> m_evaluatedURL;
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    String m_configurationPath;
+    RefPtr<StringImpl> m_configurationPath;
 #endif
 #elif HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;

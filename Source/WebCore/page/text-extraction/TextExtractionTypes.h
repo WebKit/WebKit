@@ -61,7 +61,7 @@ enum class Action : uint8_t {
 
 struct Interaction {
     Action action { Action::Click };
-    String text;
+    RefPtr<StringImpl> text;
     std::optional<FloatPoint> locationInRootView;
     std::optional<NodeIdentifier> nodeIdentifier;
     std::optional<JSHandleIdentifier> targetNodeHandleIdentifier;
@@ -71,13 +71,13 @@ struct Interaction {
 };
 
 struct ExtractedText {
-    String text;
+    RefPtr<StringImpl> text;
     std::optional<NodeIdentifier> nodeIdentifier;
 };
 
 struct InteractionDescription {
-    String description;
-    Vector<String> stringsToValidate;
+    RefPtr<StringImpl> description;
+    Vector<RefPtr<StringImpl>> stringsToValidate;
     bool didFindTargetNode { true };
     bool describesInteractionTarget { true };
 };
@@ -98,7 +98,7 @@ enum class NodeIdentifierInclusion : uint8_t {
 };
 
 struct Request {
-    HashMap<String, HashMap<JSHandleIdentifier, String>> clientNodeAttributes;
+    HashMap<RefPtr<StringImpl>, HashMap<JSHandleIdentifier, RefPtr<StringImpl>>> clientNodeAttributes;
     std::optional<FloatRect> collectionRectInRootView;
     std::optional<JSHandleIdentifier> targetNodeHandleIdentifier;
     Vector<JSHandleIdentifier> handleIdentifiersOfNodesToSkip;
@@ -119,8 +119,8 @@ struct Request {
 };
 
 struct Editable {
-    String label;
-    String placeholder;
+    RefPtr<StringImpl> label;
+    RefPtr<StringImpl> placeholder;
     bool isSecure { false };
     bool isFocused { false };
 };
@@ -128,7 +128,7 @@ struct Editable {
 struct TextItemData {
     Vector<std::pair<URL, CharacterRange>> links;
     std::optional<CharacterRange> selectedRange;
-    String content;
+    RefPtr<StringImpl> content;
     std::optional<Editable> editable;
 };
 
@@ -141,21 +141,21 @@ struct ScrollableItemData {
 
 struct ImageItemData {
     URL completedSource;
-    String shortenedName;
-    String altText;
+    RefPtr<StringImpl> shortenedName;
+    RefPtr<StringImpl> altText;
 };
 
 struct LinkItemData {
-    String target;
+    RefPtr<StringImpl> target;
     URL completedURL;
-    String shortenedURLString;
+    RefPtr<StringImpl> shortenedURLString;
     bool linksToCurrentURL { false };
-    String shortenedSelfLinkURLString;
+    RefPtr<StringImpl> shortenedSelfLinkURLString;
 };
 
 struct IFrameData {
-    String origin;
-    String shortenedOrigin;
+    RefPtr<StringImpl> origin;
+    RefPtr<StringImpl> shortenedOrigin;
     bool isSameOriginAsParent { false };
     FrameIdentifier identifier;
 };
@@ -173,17 +173,17 @@ struct ContentEditableData {
 };
 
 struct FormData {
-    String autocomplete;
-    String name;
+    RefPtr<StringImpl> autocomplete;
+    RefPtr<StringImpl> name;
 };
 
 struct TextFormControlData {
     Editable editable;
-    String controlType;
-    String autocomplete;
-    String pattern;
-    String name;
-    String value;
+    RefPtr<StringImpl> controlType;
+    RefPtr<StringImpl> autocomplete;
+    RefPtr<StringImpl> pattern;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> value;
     std::optional<int> minLength;
     std::optional<int> maxLength;
     bool isRequired { false };
@@ -194,8 +194,8 @@ struct TextFormControlData {
 };
 
 struct SelectOptionData {
-    String value;
-    String label;
+    RefPtr<StringImpl> value;
+    RefPtr<StringImpl> label;
     bool isSelected { false };
 };
 
@@ -226,22 +226,22 @@ struct Item {
     ItemData data;
     FloatRect rectInRootView;
     Vector<Item> children;
-    String nodeName;
+    RefPtr<StringImpl> nodeName;
     std::optional<NodeIdentifier> nodeIdentifier;
     std::optional<FrameIdentifier> frameIdentifier;
     OptionSet<EventListenerCategory> eventListeners;
-    HashMap<String, String> ariaAttributes;
-    String accessibilityRole;
-    String title;
-    HashMap<String, String> clientAttributes;
-    Vector<String> classNames;
-    String idAttribute;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> ariaAttributes;
+    RefPtr<StringImpl> accessibilityRole;
+    RefPtr<StringImpl> title;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> clientAttributes;
+    Vector<RefPtr<StringImpl>> classNames;
+    RefPtr<StringImpl> idAttribute;
     unsigned enclosingBlockNumber { 0 };
     unsigned visualBlockContainerNumber { 0 };
     bool hasLineThrough { false };
     bool isVisuallyClickable { false };
     bool isDisabled { false };
-    Vector<std::pair<String, String>> dataAttributeCandidates { };
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> dataAttributeCandidates { };
 
     template<typename T> bool hasData() const
     {
@@ -271,17 +271,17 @@ struct PageResults {
 WEBCORE_EXPORT Result collatePageResults(PageResults&&);
 
 struct FilterRuleData {
-    String name;
-    String urlPatternString;
-    String scriptSource;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> urlPatternString;
+    RefPtr<StringImpl> scriptSource;
 };
 
 enum class FilterRulePattern : uint8_t { Global };
 
 struct FilterRule {
-    String name;
+    RefPtr<StringImpl> name;
     Variant<FilterRulePattern, JSC::Yarr::RegularExpression> urlPattern;
-    String scriptSource;
+    RefPtr<StringImpl> scriptSource;
 };
 
 } // namespace TextExtraction

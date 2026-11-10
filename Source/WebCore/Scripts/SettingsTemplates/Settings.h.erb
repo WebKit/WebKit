@@ -40,7 +40,7 @@ struct SettingsValues {
     SettingsValues isolatedCopy() const;
 
 <%- for @setting in @allSettingsSet.inspectorOverrideSettings do -%>
-    std::optional<<%= @setting.type %>> <%= @setting.name %>BeforeInspectorOverride;
+    std::optional<<%= @setting.storageType %>> <%= @setting.name %>BeforeInspectorOverride;
 <%- end -%>
 
     FontGenericFamilies fontGenericFamilies;
@@ -50,7 +50,7 @@ struct SettingsValues {
 #if <%= @condition.condition %>
 <%- end -%>
 <%- for @setting in @condition.nonBoolSettingsNeedingImplementation -%>
-    <%= @setting.type %> <%= @setting.name %>;
+    <%= @setting.storageType %> <%= @setting.name %>;
 <%- end -%>
 <%- if @condition.condition -%>
 #endif
@@ -92,7 +92,7 @@ public:
 #if <%= @condition.condition %>
 <%- end -%>
 <%- for @setting in @condition.settingsNeedingImplementation do -%>
-    <%= @setting.parameterType %> <%= @setting.getterFunctionName %>() const { return m_values.<%= @setting.name %>; }
+    <%= @setting.getterReturnType %> <%= @setting.getterFunctionName %>() const { return m_values.<%= @setting.name %>; }
     <%- if @setting.hasComplexSetter? -%>
     WEBCORE_EXPORT void <%= @setting.setterFunctionName %>(<%= @setting.parameterType %>);
     <%- else -%>

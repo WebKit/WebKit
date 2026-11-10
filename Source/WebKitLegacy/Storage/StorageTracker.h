@@ -47,18 +47,18 @@ class StorageTracker {
     WTF_MAKE_NONCOPYABLE(StorageTracker);
     WTF_MAKE_TZONE_ALLOCATED(StorageTracker);
 public:
-    NODELETE static void initializeTracker(const String& storagePath, WebCore::StorageTrackerClient*);
+    NODELETE static void initializeTracker(StringImpl* storagePath, WebCore::StorageTrackerClient*);
     static StorageTracker& tracker();
 
-    void setOriginDetails(const String& originIdentifier, const String& databaseFile);
+    void setOriginDetails(StringImpl* originIdentifier, StringImpl* databaseFile);
     
     void deleteAllOrigins();
     void deleteOrigin(const WebCore::SecurityOriginData&);
-    void deleteOriginWithIdentifier(const String& originIdentifier);
+    void deleteOriginWithIdentifier(StringImpl* originIdentifier);
     Vector<WebCore::SecurityOriginData> origins();
     uint64_t diskUsageForOrigin(WebCore::SecurityOrigin*);
     
-    void cancelDeletingOrigin(const String& originIdentifier);
+    void cancelDeletingOrigin(StringImpl* originIdentifier);
     
     bool isActive() const { return m_isActive; }
 
@@ -68,44 +68,44 @@ public:
     void syncFileSystemAndTrackerDatabase();
 
 private:
-    explicit StorageTracker(const String& storagePath);
+    explicit StorageTracker(StringImpl* storagePath);
 
     void internalInitialize();
 
-    String trackerDatabasePath();
+    RefPtr<StringImpl> trackerDatabasePath();
     void openTrackerDatabase(bool createIfDoesNotExist) WTF_REQUIRES_LOCK(m_databaseMutex);
 
     void importOriginIdentifiers();
     void finishedImportingOriginIdentifiers();
     
     void deleteTrackerFiles();
-    String databasePathForOrigin(const String& originIdentifier) WTF_REQUIRES_LOCK(m_databaseMutex);
+    RefPtr<StringImpl> databasePathForOrigin(StringImpl* originIdentifier) WTF_REQUIRES_LOCK(m_databaseMutex);
 
-    bool canDeleteOrigin(const String& originIdentifier);
-    void willDeleteOrigin(const String& originIdentifier) WTF_REQUIRES_LOCK(m_originSetMutex);
+    bool canDeleteOrigin(StringImpl* originIdentifier);
+    void willDeleteOrigin(StringImpl* originIdentifier) WTF_REQUIRES_LOCK(m_originSetMutex);
     void willDeleteAllOrigins() WTF_REQUIRES_LOCK(m_originSetMutex);
 
-    void originFilePaths(Vector<String>& paths);
+    void originFilePaths(Vector<RefPtr<StringImpl>>& paths);
     
     NODELETE void setIsActive(bool);
 
     // Sync to disk on background thread.
     void syncDeleteAllOrigins();
-    void syncDeleteOrigin(const String& originIdentifier);
-    void syncSetOriginDetails(const String& originIdentifier, const String& databaseFile);
+    void syncDeleteOrigin(StringImpl* originIdentifier);
+    void syncSetOriginDetails(StringImpl* originIdentifier, StringImpl* databaseFile);
     void syncImportOriginIdentifiers();
 
     // Mutex for m_database. m_storageDirectoryPath is set in the constructor and never changes.
     Lock m_databaseMutex;
     WebCore::SQLiteDatabase m_database WTF_GUARDED_BY_LOCK(m_databaseMutex);
-    const String m_storageDirectoryPath;
+    const RefPtr<StringImpl> m_storageDirectoryPath;
 
     Lock m_clientMutex;
     WebCore::StorageTrackerClient* m_client;
 
     // Guard for m_originSet and m_originsBeingDeleted.
     Lock m_originSetMutex;
-    typedef HashSet<String> OriginSet;
+    typedef HashSet<RefPtr<StringImpl>> OriginSet;
     OriginSet m_originSet WTF_GUARDED_BY_LOCK(m_originSetMutex);
     OriginSet m_originsBeingDeleted WTF_GUARDED_BY_LOCK(m_originSetMutex);
 

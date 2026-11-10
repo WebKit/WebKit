@@ -26,7 +26,6 @@
 #pragma once
 
 namespace WTF {
-class String;
 }
 
 namespace WebCore {
@@ -97,6 +96,6 @@ enum class EditAction : uint8_t {
     UseStandardLigatures,
 };
 
-WTF::String undoRedoLabel(EditAction);
+RefPtr<StringImpl> undoRedoLabel(EditAction);
 
 } // namespace WebCore

@@ -34,7 +34,7 @@ namespace WebKit {
 
 class ValidationBubbleGtk final : public WebCore::ValidationBubble {
 public:
-    static Ref<ValidationBubbleGtk> create(GtkWidget* webView, String&& message, const WebCore::ValidationBubble::Settings& settings)
+    static Ref<ValidationBubbleGtk> create(GtkWidget* webView, RefPtr<StringImpl>&& message, const WebCore::ValidationBubble::Settings& settings)
     {
         return adoptRef(*new ValidationBubbleGtk(webView, WTF::move(message), settings));
     }
@@ -42,7 +42,7 @@ public:
     ~ValidationBubbleGtk();
 
 private:
-    ValidationBubbleGtk(GtkWidget*, String&&, const WebCore::ValidationBubble::Settings&);
+    ValidationBubbleGtk(GtkWidget*, RefPtr<StringImpl>&&, const WebCore::ValidationBubble::Settings&);
 
     void showRelativeTo(const WebCore::IntRect&) final;
 

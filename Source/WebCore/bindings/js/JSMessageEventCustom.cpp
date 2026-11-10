@@ -60,7 +60,7 @@ JSC::JSValue JSMessageEvent::data(JSC::JSGlobalObject& lexicalGlobalObject) cons
     return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, wrapped().cachedData(), [this, &lexicalGlobalObject](JSC::ThrowScope&) {
         return WTF::switchOn(wrapped().data(), [this] (MessageEvent::JSValueTag) -> JSC::JSValue {
             return wrapped().jsData().getValue(JSC::jsNull());
-        }, [&lexicalGlobalObject] (const String& data) {
+        }, [&lexicalGlobalObject] (StringImpl* data) {
             return toJS<IDLDOMString>(lexicalGlobalObject, data);
         }, [this, &lexicalGlobalObject] (const Ref<Blob>& data) {
             return toJS<IDLInterface<Blob>>(lexicalGlobalObject, *realm(), data);

@@ -44,10 +44,10 @@ namespace WebCore {
 struct PushRecord {
     Markable<PushSubscriptionIdentifier> identifier { };
     PushSubscriptionSetIdentifier subscriptionSetIdentifier;
-    String securityOrigin;
-    String scope;
-    String endpoint;
-    String topic;
+    RefPtr<StringImpl> securityOrigin;
+    RefPtr<StringImpl> scope;
+    RefPtr<StringImpl> endpoint;
+    RefPtr<StringImpl> topic;
     Vector<uint8_t> serverVAPIDPublicKey;
     Vector<uint8_t> clientPublicKey;
     Vector<uint8_t> clientPrivateKey;
@@ -60,7 +60,7 @@ struct PushRecord {
 
 struct RemovedPushRecord {
     PushSubscriptionIdentifier identifier;
-    String topic;
+    RefPtr<StringImpl> topic;
     Vector<uint8_t> serverVAPIDPublicKey;
 
     WEBCORE_EXPORT RemovedPushRecord isolatedCopy() const &;
@@ -69,7 +69,7 @@ struct RemovedPushRecord {
 
 struct PushSubscriptionSetRecord {
     PushSubscriptionSetIdentifier identifier;
-    String securityOrigin;
+    RefPtr<StringImpl> securityOrigin;
     bool enabled;
 
     WEBCORE_EXPORT PushSubscriptionSetRecord isolatedCopy() const &;
@@ -77,8 +77,8 @@ struct PushSubscriptionSetRecord {
 };
 
 struct PushTopics {
-    Vector<String> enabledTopics;
-    Vector<String> ignoredTopics;
+    Vector<RefPtr<StringImpl>> enabledTopics;
+    Vector<RefPtr<StringImpl>> ignoredTopics;
 
     WEBCORE_EXPORT PushTopics isolatedCopy() const &;
     WEBCORE_EXPORT PushTopics isolatedCopy() &&;
@@ -89,7 +89,7 @@ class PushDatabase : public RefCountedAndCanMakeWeakPtr<PushDatabase> {
 public:
     using CreationHandler = CompletionHandler<void(RefPtr<PushDatabase>&&)>;
 
-    WEBCORE_EXPORT static void create(const String& path, CreationHandler&&);
+    WEBCORE_EXPORT static void create(StringImpl* path, CreationHandler&&);
     WEBCORE_EXPORT ~PushDatabase();
 
     enum class PublicTokenChanged : bool { No, Yes };
@@ -98,21 +98,21 @@ public:
 
     WEBCORE_EXPORT void insertRecord(const PushRecord&, CompletionHandler<void(std::optional<PushRecord>&&)>&&);
     WEBCORE_EXPORT void removeRecordByIdentifier(PushSubscriptionIdentifier, CompletionHandler<void(bool)>&&);
-    WEBCORE_EXPORT void getRecordByTopic(const String& topic, CompletionHandler<void(std::optional<PushRecord>&&)>&&);
-    WEBCORE_EXPORT void getRecordBySubscriptionSetAndScope(const PushSubscriptionSetIdentifier&, const String& scope, CompletionHandler<void(std::optional<PushRecord>&&)>&&);
+    WEBCORE_EXPORT void getRecordByTopic(StringImpl* topic, CompletionHandler<void(std::optional<PushRecord>&&)>&&);
+    WEBCORE_EXPORT void getRecordBySubscriptionSetAndScope(const PushSubscriptionSetIdentifier&, StringImpl* scope, CompletionHandler<void(std::optional<PushRecord>&&)>&&);
     WEBCORE_EXPORT void getIdentifiers(CompletionHandler<void(HashSet<PushSubscriptionIdentifier>&&)>&&);
     WEBCORE_EXPORT void getPushSubscriptionSetRecords(CompletionHandler<void(Vector<PushSubscriptionSetRecord>&&)>&&);
-    WEBCORE_EXPORT void getAllPushSubscriptionOrigins(CompletionHandler<void(Vector<String>&&)>&&);
+    WEBCORE_EXPORT void getAllPushSubscriptionOrigins(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&);
     WEBCORE_EXPORT void getTopics(CompletionHandler<void(PushTopics&&)>&&);
 
-    WEBCORE_EXPORT void incrementSilentPushCount(const PushSubscriptionSetIdentifier&, const String& securityOrigin, CompletionHandler<void(unsigned)>&&);
+    WEBCORE_EXPORT void incrementSilentPushCount(const PushSubscriptionSetIdentifier&, StringImpl* securityOrigin, CompletionHandler<void(unsigned)>&&);
 
     WEBCORE_EXPORT void removeRecordsBySubscriptionSet(const PushSubscriptionSetIdentifier&, CompletionHandler<void(Vector<RemovedPushRecord>&&)>&&);
-    WEBCORE_EXPORT void removeRecordsBySubscriptionSetAndSecurityOrigin(const PushSubscriptionSetIdentifier&, const String& securityOrigin, CompletionHandler<void(Vector<RemovedPushRecord>&&)>&&);
-    WEBCORE_EXPORT void removeRecordsByBundleIdentifierAndDataStore(const String& bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, CompletionHandler<void(Vector<RemovedPushRecord>&&)>&&);
+    WEBCORE_EXPORT void removeRecordsBySubscriptionSetAndSecurityOrigin(const PushSubscriptionSetIdentifier&, StringImpl* securityOrigin, CompletionHandler<void(Vector<RemovedPushRecord>&&)>&&);
+    WEBCORE_EXPORT void removeRecordsByBundleIdentifierAndDataStore(StringImpl* bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, CompletionHandler<void(Vector<RemovedPushRecord>&&)>&&);
 
     WEBCORE_EXPORT void setPushesEnabled(const PushSubscriptionSetIdentifier&, bool, CompletionHandler<void(bool recordsChanged)>&&);
-    WEBCORE_EXPORT void setPushesEnabledForOrigin(const PushSubscriptionSetIdentifier&, const String& securityOrigin, bool, CompletionHandler<void(bool recordsChanged)>&&);
+    WEBCORE_EXPORT void setPushesEnabledForOrigin(const PushSubscriptionSetIdentifier&, StringImpl* securityOrigin, bool, CompletionHandler<void(bool recordsChanged)>&&);
 
 private:
     // Owns the SQLite connection and the prepared statement cache. Only touched on the work queue,

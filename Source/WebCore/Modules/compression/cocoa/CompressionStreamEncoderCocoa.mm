@@ -50,7 +50,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> CompressionStreamEncoder::compressAppleCompre
     bool shouldDecompress = true;
 
     if (!m_compressionStream.initializeIfNecessary(CompressionStream::Algorithm::Brotli, CompressionStream::Operation::Compression))
-        return Exception { ExceptionCode::TypeError, "Initialization Failed."_s };
+        return Exception { ExceptionCode::TypeError, "Initialization Failed."_si };
 
     m_compressionStream.getPlatformStream().src_ptr = input.data();
     m_compressionStream.getPlatformStream().src_size = input.size();
@@ -74,11 +74,11 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> CompressionStreamEncoder::compressAppleCompre
         result = compression_stream_process(&m_compressionStream.getPlatformStream(), m_didFinish ? COMPRESSION_STREAM_FINALIZE : 0);
 
         if (result == COMPRESSION_STATUS_ERROR)
-            return Exception { ExceptionCode::TypeError, "Failed to Encode Data."_s };
+            return Exception { ExceptionCode::TypeError, "Failed to Encode Data."_si };
 
         if ((result == COMPRESSION_STATUS_END && m_compressionStream.getPlatformStream().src_size)
             || (m_didFinish && m_compressionStream.getPlatformStream().src_size))
-            return Exception { ExceptionCode::TypeError, "Extra bytes past the end."_s };
+            return Exception { ExceptionCode::TypeError, "Extra bytes past the end."_si };
 
         if (didDeflateFinishAppleCompressionFramework(result)) {
             shouldDecompress = false;

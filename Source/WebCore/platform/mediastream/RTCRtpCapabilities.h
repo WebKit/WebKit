@@ -34,7 +34,7 @@ namespace WebCore {
 
 struct RTCRtpCapabilities {
     struct HeaderExtensionCapability {
-        String uri;
+        RefPtr<StringImpl> uri;
     };
 
     Vector<RTCRtpCodec> codecs;

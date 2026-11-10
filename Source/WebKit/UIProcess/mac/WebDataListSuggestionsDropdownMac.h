@@ -40,13 +40,13 @@ public:
     static Ref<WebDataListSuggestionsDropdownMac> create(WebPageProxy&, NSView *);
     ~WebDataListSuggestionsDropdownMac();
 
-    void didSelectOption(const String&);
+    void didSelectOption(StringImpl*);
 
 private:
     WebDataListSuggestionsDropdownMac(WebPageProxy&, NSView *);
 
     void platformShow(WebCore::DataListSuggestionInformation&&) final;
-    void handleKeydownWithIdentifier(const String&) final;
+    void handleKeydownWithIdentifier(StringImpl*) final;
     void close() final;
 
     void selectOption();

@@ -47,7 +47,7 @@ struct BlockEllipsis {
 
     BlockEllipsis(String&& string)
         : m_type { Type::String }
-        , m_string { WTF::move(string.value) }
+        , m_string { AtomStringImpl::add(WTF::move(string.value)) }
     {
     }
 
@@ -76,7 +76,7 @@ private:
     enum class Type : uint8_t { NoEllipsis, Ellipsis, String };
 
     Type m_type { Type::NoEllipsis };
-    AtomString m_string { nullAtom() };
+    RefPtr<AtomStringImpl> m_string { nullAtom() };
 };
 
 // MARK: - Conversion

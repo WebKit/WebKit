@@ -34,7 +34,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebKeyboardEvent);
 
-Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(struct wpe_input_keyboard_event* event, const String& text, bool isAutoRepeat, HandledByInputMethod handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
+Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(struct wpe_input_keyboard_event* event, StringImpl* text, bool isAutoRepeat, HandledByInputMethod handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
 {
     return adoptRef(*new NativeWebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutoRepeat, handledByInputMethod == HandledByInputMethod::Yes, WTF::move(preeditUnderlines), WTF::move(preeditSelectionRange))));
 }

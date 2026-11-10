@@ -84,7 +84,7 @@ void IPCTesterReceiver::transformNodeSwift(Ref<IPCTesterNode>&& node, RefPtr<IPC
     completionHandler(link ? RefPtr { ipcTesterMirrored(node) } : nullptr, nodeCount);
 }
 
-void IPCTesterReceiver::describeSwift(IPCTesterColor color, OptionSet<IPCTesterFlag> flags, IPCTesterChoice choice, IPCConnectionTesterIdentifier identifier, const IPCTesterVariant& variant, bool flag, CompletionHandler<void(String&&)>&& completionHandler)
+void IPCTesterReceiver::describeSwift(IPCTesterColor color, OptionSet<IPCTesterFlag> flags, IPCTesterChoice choice, IPCConnectionTesterIdentifier identifier, const IPCTesterVariant& variant, bool flag, CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
 {
     completionHandler(ipcTesterDescription(color, flags, choice, identifier, variant, flag));
 }
@@ -95,12 +95,12 @@ void IPCTesterReceiver::halveEvenNumberSwift(IPC::Connection& connection, uint32
     completionHandler(value / 2);
 }
 
-void IPCTesterReceiver::recordSwift(const String& text)
+void IPCTesterReceiver::recordSwift(StringImpl* text)
 {
     m_recordedTexts.append(text);
 }
 
-void IPCTesterReceiver::takeRecordedSwift(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void IPCTesterReceiver::takeRecordedSwift(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completionHandler)
 {
     completionHandler(std::exchange(m_recordedTexts, { }));
 }

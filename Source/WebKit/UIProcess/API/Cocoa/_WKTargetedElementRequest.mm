@@ -59,7 +59,7 @@
     if (!(self = [self init]))
         return nil;
 
-    protect(*_request)->setSearchText(searchText);
+    protect(*_request)->setSearchText(StringImpl::create(searchText));
     return self;
 }
 
@@ -80,11 +80,11 @@
     WebCore::TargetedElementSelectors selectorsForElement(ReserveCapacityTag { }, nsSelectorsForElement.count);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSSet<NSString *> *nsSelectors in nsSelectorsForElement) {
-        HashSet<String> selectors;
+        HashSet<RefPtr<StringImpl>> selectors;
         selectors.reserveInitialCapacity(nsSelectors.count);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL NSString *selector in nsSelectors)
-            selectors.add(selector);
+            selectors.add(StringImpl::create(selector));
         selectorsForElement.append(WTF::move(selectors));
     }
 

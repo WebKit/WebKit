@@ -162,12 +162,12 @@ enum class RecordType : uint8_t {
     Resource = 1 << 0,
     CompressionDictionary = 1 << 1,
 };
-const AtomString& recordTypeName(RecordType);
+const RefPtr<AtomStringImpl>& recordTypeName(RecordType);
 
 class Cache : public RefCountedAndCanMakeWeakPtr<Cache> {
 public:
     ~Cache();
-    static RefPtr<Cache> open(NetworkProcess&, const String& cachePath, OptionSet<CacheOption>, PAL::SessionID);
+    static RefPtr<Cache> open(NetworkProcess&, StringImpl* cachePath, OptionSet<CacheOption>, PAL::SessionID);
 
     NODELETE size_t capacity() const;
     void updateCapacity();
@@ -217,11 +217,11 @@ public:
     struct CompressionDictionaryMatch {
         Key key;
         CompressionDictionaryHash hash;
-        String id;
+        RefPtr<StringImpl> id;
     };
     std::optional<CompressionDictionaryMatch> bestCompressionDictionaryMatch(const WebCore::ResourceRequest&, WebCore::FetchOptions::Destination);
-    Vector<Key> compressionDictionaryKeys(const String& partition) const;
-    Vector<Key> pendingKeys(OptionSet<RecordType>, const std::optional<String>& partition = std::nullopt) const;
+    Vector<Key> compressionDictionaryKeys(StringImpl* partition) const;
+    Vector<Key> pendingKeys(OptionSet<RecordType>, const std::optional<RefPtr<StringImpl>>& partition = std::nullopt) const;
     void retrieveCompressionDictionary(const Key&, const CompressionDictionaryHash&, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 
     std::unique_ptr<Entry> update(const WebCore::ResourceRequest&, const Entry&, const WebCore::ResourceResponse& validatingResponse, PrivateRelayed);
@@ -233,8 +233,8 @@ public:
         std::optional<URL> url() const;
     };
     void traverseRecords(Function<void(const TraversalRecord*)>&&);
-    void traverseRecords(const String& partition, Function<void(const TraversalRecord*)>&&);
-    void traverseCompressionDictionaryRecords(const String& partition, Function<void(const TraversalRecord*)>&&);
+    void traverseRecords(StringImpl* partition, Function<void(const TraversalRecord*)>&&);
+    void traverseCompressionDictionaryRecords(StringImpl* partition, Function<void(const TraversalRecord*)>&&);
 
     void remove(const Key&);
     void remove(const WebCore::ResourceRequest&);
@@ -248,7 +248,7 @@ public:
 
     void dumpContentsToFile();
 
-    String recordsPathIsolatedCopy() const;
+    RefPtr<StringImpl> recordsPathIsolatedCopy() const;
 
     SpeculativeLoadManager* speculativeLoadManager() { return m_speculativeLoadManager.get(); }
 
@@ -258,22 +258,22 @@ public:
 
     NetworkProcess& networkProcess() { return m_networkProcess.get(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
-    const String& storageDirectory() const LIFETIME_BOUND { return m_storageDirectory; }
+    const RefPtr<StringImpl>& storageDirectory() const LIFETIME_BOUND { return m_storageDirectory; }
     void fetchData(bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&&);
     void fetchOriginAccessTimes(CompletionHandler<void(HashMap<WebCore::RegistrableDomain, WallTime>&&)>&&);
     void deleteData(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);
     void deleteDataForRegistrableDomains(const Vector<WebCore::RegistrableDomain>&, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
 
 private:
-    Cache(NetworkProcess&, const String& storageDirectory, Ref<Storage>&&, OptionSet<CacheOption>, PAL::SessionID);
+    Cache(NetworkProcess&, StringImpl* storageDirectory, Ref<Storage>&&, OptionSet<CacheOption>, PAL::SessionID);
 
     Key makeCacheKey(RecordType, const WebCore::ResourceRequest&);
 
-    void traverseRecordsOfTypes(OptionSet<RecordType>, const std::optional<String>& partition, OptionSet<Storage::TraverseFlag>, Function<void(const TraversalRecord*)>&&);
+    void traverseRecordsOfTypes(OptionSet<RecordType>, const std::optional<RefPtr<StringImpl>>& partition, OptionSet<Storage::TraverseFlag>, Function<void(const TraversalRecord*)>&&);
 
     static void completeRetrieve(RetrieveCompletionHandler&&, std::unique_ptr<Entry>, RetrieveInfo&);
 
-    String dumpFilePath() const;
+    RefPtr<StringImpl> dumpFilePath() const;
     void deleteDumpFile();
 
     std::optional<Seconds> maxAgeCap(Entry&, const WebCore::ResourceRequest&, PAL::SessionID);
@@ -308,7 +308,7 @@ private:
     // Returns false, keeping the entry, if it was registered after registeredNotAfter.
     bool removeFromCompressionDictionaryIndex(const Key&, WallTime registeredNotAfter = WallTime::infinity());
 
-    HashMap<String, Vector<CompressionDictionaryIndexEntry>> m_compressionDictionaryIndex;
+    HashMap<RefPtr<StringImpl>, Vector<CompressionDictionaryIndexEntry>> m_compressionDictionaryIndex;
     // What changed while the startup scan ran, so records it delivers late can be skipped.
     struct CompressionDictionaryIndexPopulation {
         CompressionDictionaryIndexPopulation()
@@ -320,7 +320,7 @@ private:
     };
     std::optional<CompressionDictionaryIndexPopulation> m_compressionDictionaryIndexPopulation;
     PAL::SessionID m_sessionID;
-    String m_storageDirectory;
+    RefPtr<StringImpl> m_storageDirectory;
 };
 
 } // namespace NetworkCache

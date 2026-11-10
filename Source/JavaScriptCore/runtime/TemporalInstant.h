@@ -59,7 +59,7 @@ public:
 
     ISO8601::ExactTime exactTime() const { return m_exactTime; }
 
-    String toString(PrecisionData precision = { { Precision::Auto, 0 }, TemporalUnit::Nanosecond, 1 }) const
+    RefPtr<StringImpl> toString(PrecisionData precision = { { Precision::Auto, 0 }, TemporalUnit::Nanosecond, 1 }) const
     {
         return TemporalCore::instantToString(exactTime(), std::nullopt, precision);
     }

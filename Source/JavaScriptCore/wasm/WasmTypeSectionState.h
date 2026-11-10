@@ -80,7 +80,7 @@ public:
     const RTT* rtt() const { return m_rtt.get(); }
     bool hasRecursiveReference() const;
 
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
     void dump(WTF::PrintStream& out) const;
 
     void setRTT(Ref<const RTT> rtt) const
@@ -151,7 +151,7 @@ public:
     TypeIndex type(RecursionGroupCount i) const { return m_types[i]; }
     std::span<const TypeIndex> types() const LIFETIME_BOUND { return m_types.span(); }
 
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
     void dump(WTF::PrintStream& out) const;
 
     static const RecursionGroup* emptySingleton();
@@ -181,7 +181,7 @@ public:
     ProjectionIndex projectionIndex() const { return m_projectionIndex; }
     const RTT* rtt() const { return m_rtt.get(); }
 
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
     void dump(WTF::PrintStream& out) const;
 
     static constexpr RecursionGroup* placeholderGroup = nullptr;

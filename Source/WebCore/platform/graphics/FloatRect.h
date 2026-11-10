@@ -260,7 +260,7 @@ public:
     static constexpr FloatRect nanRect();
     constexpr bool isNaN() const;
 
-    WEBCORE_EXPORT String toJSONString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> toJSONString() const;
     WEBCORE_EXPORT Ref<JSON::Object> toJSONObject() const;
 
     friend bool operator==(const FloatRect&, const FloatRect&) = default;
@@ -386,7 +386,7 @@ namespace WTF {
 template<typename Type> struct LogArgument;
 template <>
 struct LogArgument<WebCore::FloatRect> {
-    static String toString(const WebCore::FloatRect& rect)
+    static RefPtr<StringImpl> toString(const WebCore::FloatRect& rect)
     {
         return rect.toJSONString();
     }

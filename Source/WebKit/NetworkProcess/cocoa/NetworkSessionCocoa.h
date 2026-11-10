@@ -132,11 +132,11 @@ public:
 
     SessionWrapper& initializeEphemeralStatelessSessionIfNeeded(std::optional<WebPageProxyIdentifier>, NavigatingToAppBoundDomain);
 
-    const String& boundInterfaceIdentifier() const LIFETIME_BOUND { return m_boundInterfaceIdentifier; }
-    const String& sourceApplicationBundleIdentifier() const LIFETIME_BOUND { return m_sourceApplicationBundleIdentifier; }
-    const String& sourceApplicationSecondaryIdentifier() const LIFETIME_BOUND { return m_sourceApplicationSecondaryIdentifier; }
+    const RefPtr<StringImpl>& boundInterfaceIdentifier() const LIFETIME_BOUND { return m_boundInterfaceIdentifier; }
+    const RefPtr<StringImpl>& sourceApplicationBundleIdentifier() const LIFETIME_BOUND { return m_sourceApplicationBundleIdentifier; }
+    const RefPtr<StringImpl>& sourceApplicationSecondaryIdentifier() const LIFETIME_BOUND { return m_sourceApplicationSecondaryIdentifier; }
 #if PLATFORM(IOS_FAMILY)
-    const String& dataConnectionServiceType() const LIFETIME_BOUND { return m_dataConnectionServiceType; }
+    const RefPtr<StringImpl>& dataConnectionServiceType() const LIFETIME_BOUND { return m_dataConnectionServiceType; }
 #endif
 
     void setClientAuditToken(const WebCore::AuthenticationChallenge&);
@@ -203,10 +203,10 @@ private:
     void notifyAdAttributionKitOfSessionTermination() final;
 
     Vector<WebCore::SecurityOriginData> hostNamesWithAlternativeServices() const override;
-    void deleteAlternativeServicesForHostNames(const Vector<String>&) override;
+    void deleteAlternativeServicesForHostNames(const Vector<RefPtr<StringImpl>>&) override;
     void clearAlternativeServices(WallTime) override;
 
-    RefPtr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByWorker) final;
+    RefPtr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, StringImpl* protocol, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByWorker) final;
     void addWebSocketTask(WebSocketTask&) final;
     void removeWebSocketTask(WebSocketTask&) final;
 
@@ -232,9 +232,9 @@ private:
 
     void invalidateAndCancelSessionSet(SessionSet&);
     
-    String m_boundInterfaceIdentifier;
-    String m_sourceApplicationBundleIdentifier;
-    String m_sourceApplicationSecondaryIdentifier;
+    RefPtr<StringImpl> m_boundInterfaceIdentifier;
+    RefPtr<StringImpl> m_sourceApplicationBundleIdentifier;
+    RefPtr<StringImpl> m_sourceApplicationSecondaryIdentifier;
     const RetainPtr<CFDictionaryRef> m_proxyConfiguration;
     Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>> m_proxyConfigData;
     Vector<RetainPtr<nw_proxy_config_t>> m_nwProxyConfigs;
@@ -244,7 +244,7 @@ private:
     bool m_allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
     bool m_shouldLogCookieInformation { false };
     bool m_fastServerTrustEvaluationEnabled { false };
-    String m_dataConnectionServiceType;
+    RefPtr<StringImpl> m_dataConnectionServiceType;
     bool m_preventsSystemHTTPProxyAuthentication { false };
     bool m_isLegacyTLSAllowed { false };
 #if HAVE(AD_ATTRIBUTION_KIT_PRIVATE_BROWSING)

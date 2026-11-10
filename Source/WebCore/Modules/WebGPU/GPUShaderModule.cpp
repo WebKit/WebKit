@@ -51,12 +51,12 @@ GPUDevice* GPUShaderModule::device() const
     return m_device;
 }
 
-String GPUShaderModule::label() const
+RefPtr<StringImpl> GPUShaderModule::label() const
 {
     return m_descriptor.label;
 }
 
-void GPUShaderModule::setLabel(String&& label)
+void GPUShaderModule::setLabel(RefPtr<StringImpl>&& label)
 {
     m_descriptor.label = label;
     m_backing->setLabel(WTF::move(label));

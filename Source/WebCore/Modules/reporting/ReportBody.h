@@ -37,7 +37,7 @@ class ReportBody : public RefCounted<ReportBody> {
 public:
     virtual ~ReportBody();
 
-    virtual const String& type() const = 0;
+    virtual const RefPtr<StringImpl>& type() const = 0;
     virtual ViolationReportType reportBodyType() const = 0;
 };
 

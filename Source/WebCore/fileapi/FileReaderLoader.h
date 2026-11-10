@@ -85,14 +85,14 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    String stringResult();
+    RefPtr<StringImpl> stringResult();
     WEBCORE_EXPORT RefPtr<JSC::ArrayBuffer> arrayBufferResult() const;
     unsigned bytesLoaded() const { return m_bytesLoaded; }
     unsigned totalBytes() const { return m_totalBytes; }
     std::optional<ExceptionCode> errorCode() const { return m_errorCode; }
 
     void setEncoding(StringView);
-    void setDataType(const String& dataType) { m_dataType = dataType; }
+    void setDataType(StringImpl* dataType) { m_dataType = dataType; }
 
     const URL& url() LIFETIME_BOUND { return m_urlForReading; }
 
@@ -115,7 +115,7 @@ private:
     ReadType m_readType;
     WeakPtr<FileReaderLoaderClient> m_client;
     PAL::TextEncoding m_encoding;
-    String m_dataType;
+    RefPtr<StringImpl> m_dataType;
 
     URLKeepingBlobAlive m_urlForReading;
     RefPtr<ThreadableLoader> m_loader;
@@ -123,7 +123,7 @@ private:
     RefPtr<JSC::ArrayBuffer> m_rawData;
     bool m_isRawDataConverted;
 
-    String m_stringResult;
+    RefPtr<StringImpl> m_stringResult;
 
     // The decoder used to decode the text data.
     const RefPtr<TextResourceDecoder> m_decoder;

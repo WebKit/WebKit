@@ -150,10 +150,10 @@ static bool hasValidEndForExplicitStart(const Style::GridPosition& end)
             return true;
         },
         [&](const Style::GridPositionExplicit&) {
-            return end.namedGridLine().value.isEmpty();
+            return isEmpty(end.namedGridLine().value);
         },
         [&](const Style::GridPositionSpan&) {
-            return end.namedGridLine().value.isEmpty();
+            return isEmpty(end.namedGridLine().value);
         },
         [](const Style::CustomIdent&) {
             return false;
@@ -171,7 +171,7 @@ static bool hasValidEndForAutoStart(const Style::GridPosition& end)
             return false;
         },
         [&](const Style::GridPositionSpan&) {
-            return end.namedGridLine().value.isEmpty();
+            return isEmpty(end.namedGridLine().value);
         },
         [](const Style::CustomIdent&) {
             return false;
@@ -186,7 +186,7 @@ static bool hasValidEndForSpanStart(const Style::GridPosition& end)
             return true;
         },
         [&](const Style::GridPositionExplicit&) {
-            return end.namedGridLine().value.isEmpty();
+            return isEmpty(end.namedGridLine().value);
         },
         [](const Style::GridPositionSpan&) {
             // https://drafts.csswg.org/css-grid-1/#grid-placement-errors
@@ -467,14 +467,14 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                 return { };
             },
             [&](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
-                if (!columnStart.namedGridLine().value.isEmpty())
+                if (!isEmpty(columnStart.namedGridLine().value))
                     return GridAvoidanceReason::GridItemColumnStartHasLineName;
                 if (!hasValidEndForExplicitStart(gridItemStyle->gridItemColumnEnd()))
                     return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
                 return { };
             },
             [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
-                if (!columnStart.namedGridLine().value.isEmpty())
+                if (!isEmpty(columnStart.namedGridLine().value))
                     return GridAvoidanceReason::GridItemColumnStartHasLineName;
                 if (!hasValidEndForSpanStart(gridItemStyle->gridItemColumnEnd()))
                     return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
@@ -498,14 +498,14 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                 return { };
             },
             [&](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
-                if (!rowStart.namedGridLine().value.isEmpty())
+                if (!isEmpty(rowStart.namedGridLine().value))
                     return GridAvoidanceReason::GridItemRowStartHasLineName;
                 if (!hasValidEndForExplicitStart(gridItemStyle->gridItemRowEnd()))
                     return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
                 return { };
             },
             [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
-                if (!rowStart.namedGridLine().value.isEmpty())
+                if (!isEmpty(rowStart.namedGridLine().value))
                     return GridAvoidanceReason::GridItemRowStartHasLineName;
                 if (!hasValidEndForSpanStart(gridItemStyle->gridItemRowEnd()))
                     return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
@@ -789,7 +789,7 @@ static void printLegacyGridReasons()
         stream << "\n";
     }
     stream << "---------------------------------------------------\n";
-    SAFE_WTFLOGALWAYS("%s", stream.release().utf8());
+    SAFE_WTFLOGALWAYS("%s", utf8(stream.release()));
 }
 #endif
 

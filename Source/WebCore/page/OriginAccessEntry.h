@@ -49,17 +49,17 @@ public:
     };
 
     // If host is empty string and SubdomainSetting is AllowSubdomains, the entry will match all domains in the specified protocol.
-    OriginAccessEntry(const String& protocol, const String& host, SubdomainSetting, IPAddressSetting);
+    OriginAccessEntry(StringImpl* protocol, StringImpl* host, SubdomainSetting, IPAddressSetting);
     bool matchesOrigin(const SecurityOrigin&) const;
 
-    const String& protocol() const LIFETIME_BOUND { return m_protocol; }
-    const String& host() const LIFETIME_BOUND { return m_host; }
+    const RefPtr<StringImpl>& protocol() const LIFETIME_BOUND { return m_protocol; }
+    const RefPtr<StringImpl>& host() const LIFETIME_BOUND { return m_host; }
     SubdomainSetting subdomainSettings() const { return m_subdomainSettings; }
     IPAddressSetting ipAddressSettings() const { return m_ipAddressSettings; }
 
 private:
-    String m_protocol;
-    String m_host;
+    RefPtr<StringImpl> m_protocol;
+    RefPtr<StringImpl> m_host;
     SubdomainSetting m_subdomainSettings;
     IPAddressSetting m_ipAddressSettings;
     bool m_hostIsIPAddress;

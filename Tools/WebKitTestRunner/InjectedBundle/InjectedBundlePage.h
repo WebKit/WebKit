@@ -51,7 +51,7 @@ public:
 
     void resetAfterTest();
 
-    String dumpHistory();
+    RefPtr<StringImpl> dumpHistory();
 
 private:
     // Loader Client

@@ -125,7 +125,7 @@ ServiceWorker* ServiceWorkerRegistration::getNewestWorker() const
     return m_activeWorker.get();
 }
 
-const String& ServiceWorkerRegistration::scope() const
+const RefPtr<StringImpl>& ServiceWorkerRegistration::scope() const
 {
     return m_registrationData.scopeURL.string();
 }
@@ -159,12 +159,12 @@ void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
 
     RefPtr newestWorker = getNewestWorker();
     if (!newestWorker) {
-        promise->reject(Exception(ExceptionCode::InvalidStateError, "newestWorker is null"_s));
+        promise->reject(Exception(ExceptionCode::InvalidStateError, "newestWorker is null"_si));
         return;
     }
 
     if (RefPtr serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(scriptExecutionContext()); serviceWorkerGlobalScope && serviceWorkerGlobalScope->serviceWorker().state() == ServiceWorkerState::Installing) {
-        promise->reject(Exception(ExceptionCode::InvalidStateError, "service worker is installing"_s));
+        promise->reject(Exception(ExceptionCode::InvalidStateError, "service worker is installing"_si));
         return;
     }
 
@@ -282,24 +282,24 @@ WebCoreOpaqueRoot root(ServiceWorkerRegistration* registration)
 }
 
 #if ENABLE(NOTIFICATION_EVENT)
-void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context, String&& title, NotificationOptions&& options, Ref<DeferredPromise>&& promise)
+void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context, RefPtr<StringImpl>&& title, NotificationOptions&& options, Ref<DeferredPromise>&& promise)
 {
     if (!m_activeWorker) {
         RELEASE_LOG_ERROR(Push, "Cannot show notification from ServiceWorker: No active worker");
-        promise->reject(Exception { ExceptionCode::TypeError, "Registration does not have an active worker"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Registration does not have an active worker"_si });
         return;
     }
 
     auto* client = context.notificationClient();
     if (!client) {
         RELEASE_LOG_ERROR(Push, "Cannot show notification from ServiceWorker: Registration not active");
-        promise->reject(Exception { ExceptionCode::TypeError, "Registration not active"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Registration not active"_si });
         return;
     }
 
     if (client->checkPermission(&context) != NotificationPermission::Granted) {
         RELEASE_LOG_ERROR(Push, "Cannot show notification from ServiceWorker: Client permission is not granted");
-        promise->reject(Exception { ExceptionCode::TypeError, "Registration does not have permission to show notifications"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Registration does not have permission to show notifications"_si });
         return;
     }
 
@@ -319,7 +319,7 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
         if (RefPtr declarativePushEvent = serviceWorkerGlobalScope->declarativePushEvent()) {
             auto notification = notificationResult.releaseReturnValue();
             if (!notification->navigate().isValid()) {
-                promise->reject(Exception { ExceptionCode::TypeError, "Call to showNotification() while handling a `push` event did not include NotificationOptions that specify a valid defaultAction url"_s });
+                promise->reject(Exception { ExceptionCode::TypeError, "Call to showNotification() while handling a `push` event did not include NotificationOptions that specify a valid defaultAction url"_si });
                 return;
             }
 
@@ -336,7 +336,7 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
         }
 
         if (!serviceWorkerGlobalScope->hasPendingSilentPushEvent() && serviceWorkerGlobalScope->didFirePushEventRecently())
-            serviceWorkerGlobalScope->addConsoleMessage(MessageSource::Storage, MessageLevel::Warning, "showNotification was called outside of any push event lifetime. PushEvent.waitUntil can be used to extend the push event lifetime as necessary."_s, 0);
+            serviceWorkerGlobalScope->addConsoleMessage(MessageSource::Storage, MessageLevel::Warning, "showNotification was called outside of any push event lifetime. PushEvent.waitUntil can be used to extend the push event lifetime as necessary."_si, 0);
         else
             serviceWorkerGlobalScope->setHasPendingSilentPushEvent(false);
     }
@@ -364,20 +364,20 @@ CookieStoreManager& ServiceWorkerRegistration::cookies()
 void ServiceWorkerRegistration::addCookieChangeSubscriptions(Vector<CookieStoreGetOptions>&& subscriptions, Ref<DeferredPromise>&& promise)
 {
     if (isContextStopped()) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "The script execution context is not currently running"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "The script execution context is not currently running"_si });
         return;
     }
 
     Vector<CookieChangeSubscription> cookieChangeSubscriptions(ReserveCapacityTag { }, subscriptions.size());
     for (auto& subscription : subscriptions) {
         // FIXME: Fall back to scope url since spec does not specify an alternative and WPT layout tests expect this behavior (https://github.com/WICG/cookie-store/issues/236).
-        String url;
-        if (subscription.url.isNull())
+        RefPtr<StringImpl> url;
+        if (!subscription.url)
             url = scope();
         else {
             url = protect(scriptExecutionContext())->encodingParseURL(subscription.url).string();
-            if (!url.startsWith(scope())) {
-                promise->reject(Exception { ExceptionCode::TypeError, "The service worker cannot subcribe to cookie changes for URLs outside of its scope"_s });
+            if (!startsWith(url, scope())) {
+                promise->reject(Exception { ExceptionCode::TypeError, "The service worker cannot subcribe to cookie changes for URLs outside of its scope"_si });
                 return;
             }
         }
@@ -391,20 +391,20 @@ void ServiceWorkerRegistration::addCookieChangeSubscriptions(Vector<CookieStoreG
 void ServiceWorkerRegistration::removeCookieChangeSubscriptions(Vector<CookieStoreGetOptions>&& subscriptions, Ref<DeferredPromise>&& promise)
 {
     if (isContextStopped()) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "The script execution context is not currently running"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "The script execution context is not currently running"_si });
         return;
     }
 
     Vector<CookieChangeSubscription> cookieChangeSubscriptions(ReserveCapacityTag { }, subscriptions.size());
     for (auto& subscription : subscriptions) {
         // FIXME: Fall back to scope url since spec does not specify an alternative and WPT layout tests expect this behavior (https://github.com/WICG/cookie-store/issues/236).
-        String url;
-        if (subscription.url.isNull())
+        RefPtr<StringImpl> url;
+        if (!subscription.url)
             url = scope();
         else {
             url = protect(scriptExecutionContext())->encodingParseURL(subscription.url).string();
-            if (!url.startsWith(scope())) {
-                promise->reject(Exception { ExceptionCode::TypeError, "The service worker cannot unsubcribe from cookie changes for URLs outside of its scope"_s });
+            if (!startsWith(url, scope())) {
+                promise->reject(Exception { ExceptionCode::TypeError, "The service worker cannot unsubcribe from cookie changes for URLs outside of its scope"_si });
                 return;
             }
         }
@@ -418,7 +418,7 @@ void ServiceWorkerRegistration::removeCookieChangeSubscriptions(Vector<CookieSto
 void ServiceWorkerRegistration::cookieChangeSubscriptions(Ref<DeferredPromise>&& promise)
 {
     if (isContextStopped()) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "The script execution context is not currently running"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "The script execution context is not currently running"_si });
         return;
     }
 

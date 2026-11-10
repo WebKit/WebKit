@@ -58,31 +58,31 @@ RefPtr<DOMPlugin> DOMPluginArray::item(unsigned index)
     return m_publiclyVisiblePlugins[index].ptr();
 }
 
-RefPtr<DOMPlugin> DOMPluginArray::namedItem(const AtomString& propertyName)
+RefPtr<DOMPlugin> DOMPluginArray::namedItem(AtomStringImpl* propertyName)
 {
     for (auto& plugin : m_publiclyVisiblePlugins) {
-        if (plugin->name() == propertyName)
+        if (equal(plugin->name(), propertyName))
             return plugin.ptr();
     }
 
     for (auto& plugin : m_additionalWebVisibilePlugins) {
-        if (plugin->name() == propertyName)
+        if (equal(plugin->name(), propertyName))
             return plugin.ptr();
     }
 
     return nullptr;
 }
 
-bool DOMPluginArray::isSupportedPropertyName(const AtomString& propertyName) const
+bool DOMPluginArray::isSupportedPropertyName(AtomStringImpl* propertyName) const
 {
-    return m_publiclyVisiblePlugins.containsIf([&](auto& plugin) { return plugin->name() == propertyName; })
-        || m_additionalWebVisibilePlugins.containsIf([&](auto& plugin) { return plugin->name() == propertyName; });
+    return m_publiclyVisiblePlugins.containsIf([&](auto& plugin) { return equal(plugin->name(), propertyName); })
+        || m_additionalWebVisibilePlugins.containsIf([&](auto& plugin) { return equal(plugin->name(), propertyName); });
 }
 
-Vector<AtomString> DOMPluginArray::supportedPropertyNames() const
+Vector<RefPtr<AtomStringImpl>> DOMPluginArray::supportedPropertyNames() const
 {
     return m_publiclyVisiblePlugins.map([](auto& plugin) {
-        return AtomString { plugin->name() };
+        return AtomStringImpl::add(plugin->name());
     });
 }
 

@@ -50,17 +50,17 @@ public:
 
     bool isOpen() const { return m_isOpen; }
 
-    const String& returnValue() const LIFETIME_BOUND { return m_returnValue; }
-    void setReturnValue(String&& value) { m_returnValue = WTF::move(value); }
+    const RefPtr<StringImpl>& returnValue() const LIFETIME_BOUND { return m_returnValue; }
+    void setReturnValue(RefPtr<StringImpl>&& value) { m_returnValue = WTF::move(value); }
 
     ClosedByState closedByState() const;
     ClosedByState computedClosedByState() const;
-    const AtomString& closedBy() const;
+    const RefPtr<AtomStringImpl>& closedBy() const;
 
     ExceptionOr<void> show();
     ExceptionOr<void> showModal(Element* = nullptr);
-    void close(const String&, Element* = nullptr);
-    void requestClose(const String&, Element* = nullptr);
+    void close(StringImpl*, Element* = nullptr);
+    void requestClose(StringImpl*, Element* = nullptr);
 
     bool isModal() const { return m_isModal; };
 
@@ -96,14 +96,14 @@ private:
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void postConnectionSteps() final;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
 
     void setupSteps();
     void cleanupSteps();
     void setCloseWatcher();
     void setCloseWatcherEnabledState();
 
-    String m_returnValue;
+    RefPtr<StringImpl> m_returnValue;
     bool m_isModal { false };
     bool m_isOpen { false };
     bool m_isRequestingToClose { false };

@@ -61,7 +61,7 @@ namespace WebCore {
 constexpr auto quotedPrintable = "quoted-printable"_s;
 constexpr auto base64 = "base64"_s;
 
-static String generateRandomBoundary()
+static RefPtr<StringImpl> generateRandomBoundary()
 {
     // Trying to generate random boundaries similar to IE/UnMHT (ex: ----=_NextPart_000_001B_01CC157B.96F808A0).
     constexpr size_t randomValuesLength = 10;
@@ -80,12 +80,12 @@ static String generateRandomBoundary()
     return stringBuilder.toString();
 }
 
-static String replaceNonPrintableCharacters(const String& text)
+static RefPtr<StringImpl> replaceNonPrintableCharacters(StringImpl* text)
 {
     StringBuilder stringBuilder;
-    for (size_t i = 0; i < text.length(); ++i) {
-        if (isASCIIPrintable(text[i]))
-            stringBuilder.append(text[i]);
+    for (size_t i = 0; i < length(text); ++i) {
+        if (isASCIIPrintable(codeUnitAt(text, i)))
+            stringBuilder.append(codeUnitAt(text, i));
         else
             stringBuilder.append('?');
     }
@@ -135,11 +135,11 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
     PageSerializer pageSerializer(resources);
     pageSerializer.serialize(*page);
 
-    String boundary = generateRandomBoundary();
-    String endOfResourceBoundary = makeString("--"_s, boundary, "\r\n"_s);
+    RefPtr<StringImpl> boundary = generateRandomBoundary();
+    RefPtr<StringImpl> endOfResourceBoundary = makeString("--"_s, boundary, "\r\n"_s);
 
     auto now = PlainGregorianDateTime::currentLocalTime();
-    String dateString = makeRFC2822DateString(now.weekDay(), now.monthDay(), now.month(), now.year(), now.hour(), now.minute(), now.second(), now.utcOffsetInMinute());
+    RefPtr<StringImpl> dateString = makeRFC2822DateString(now.weekDay(), now.monthDay(), now.month(), now.year(), now.hour(), now.minute(), now.second(), now.utcOffsetInMinute());
 
     StringBuilder stringBuilder;
     stringBuilder.append("From: <Saved by WebKit>\r\n"_s);
@@ -155,8 +155,8 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
         stringBuilder.append("\ttype=\""_s, localMainFrame->document()->suggestedMIMEType());
     stringBuilder.append("\";\r\n\tboundary=\""_s, boundary, "\"\r\n\r\n"_s);
 
-    ASSERT(stringBuilder.toString().containsOnlyASCII());
-    auto asciiString = stringBuilder.toString().utf8();
+    ASSERT(containsOnlyASCII(stringBuilder.toString()));
+    auto asciiString = utf8(stringBuilder.toString());
     SharedBufferBuilder mhtmlData;
     mhtmlData.append(asciiString.span());
 
@@ -172,7 +172,7 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
 
         stringBuilder.append("\r\nContent-Transfer-Encoding: "_s, contentEncoding, "\r\nContent-Location: "_s, resource.url.string(), "\r\n\r\n"_s);
 
-        asciiString = stringBuilder.toString().utf8();
+        asciiString = utf8(stringBuilder.toString());
         mhtmlData.append(asciiString.span());
 
         // FIXME: ideally we would encode the content as a stream without having to fetch it all.
@@ -196,7 +196,7 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
         }
     }
 
-    asciiString = makeString("--"_s, boundary, "--\r\n"_s).utf8();
+    asciiString = utf8(makeString("--"_s, boundary, "--\r\n"_s));
     mhtmlData.append(asciiString.span());
 
     return mhtmlData.takeBuffer();

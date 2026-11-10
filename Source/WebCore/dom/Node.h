@@ -105,7 +105,7 @@ using MutationRecordDeliveryOptions = OptionSet<MutationObserverOptionType>;
 enum class IsMutationBySetInnerHTML : uint8_t { No, Yes };
 enum class CloneSubtree : bool { No, Yes };
 
-using NodeOrString = Variant<Ref<Node>, String>;
+using NodeOrString = Variant<Ref<Node>, RefPtr<StringImpl>>;
 
 const int initialNodeVectorSize = 11; // Covers 99.5%. See webkit.org/b/80706
 typedef Vector<Ref<Node>, initialNodeVectorSize> NodeVector;
@@ -140,9 +140,9 @@ public:
     bool hasTagName(const HTMLQualifiedName&) const;
     bool hasTagName(const MathMLQualifiedName&) const;
     inline bool hasTagName(const SVGQualifiedName&) const;
-    virtual String nodeName() const = 0;
-    virtual String nodeValue() const;
-    virtual ExceptionOr<void> setNodeValue(const String&);
+    virtual RefPtr<StringImpl> nodeName() const = 0;
+    virtual RefPtr<StringImpl> nodeValue() const;
+    virtual ExceptionOr<void> setNodeValue(StringImpl*);
     NodeType nodeType() const { return nodeTypeFromBitFields(m_typeBitFields); }
     virtual size_t approximateMemoryCost() const { return sizeof(*this); }
     ContainerNode* parentNode() const;
@@ -184,19 +184,19 @@ public:
     Ref<Node> cloneNode(CloneSubtree) const;
     WEBCORE_EXPORT ExceptionOr<Ref<Node>> cloneNodeForBindings(bool subtree) const;
 
-    NODELETE virtual const AtomString& localName() const;
-    NODELETE virtual const AtomString& namespaceURI() const;
-    NODELETE virtual const AtomString& prefix() const;
+    NODELETE virtual const RefPtr<AtomStringImpl>& localName() const;
+    NODELETE virtual const RefPtr<AtomStringImpl>& namespaceURI() const;
+    NODELETE virtual const RefPtr<AtomStringImpl>& prefix() const;
     WEBCORE_EXPORT ExceptionOr<void> normalize();
 
     bool isSameNode(Node* other) const { return this == other; }
     WEBCORE_EXPORT bool isEqualNode(Node*) const;
-    WEBCORE_EXPORT bool isDefaultNamespace(const AtomString& namespaceURI) const;
-    WEBCORE_EXPORT const AtomString& lookupPrefix(const AtomString& namespaceURI) const;
-    WEBCORE_EXPORT const AtomString& lookupNamespaceURI(const AtomString& prefix) const;
+    WEBCORE_EXPORT bool isDefaultNamespace(AtomStringImpl* namespaceURI) const;
+    WEBCORE_EXPORT const RefPtr<AtomStringImpl>& lookupPrefix(AtomStringImpl* namespaceURI) const;
+    WEBCORE_EXPORT const RefPtr<AtomStringImpl>& lookupNamespaceURI(AtomStringImpl* prefix) const;
 
-    WEBCORE_EXPORT String textContent(bool convertBRsToNewlines = false) const;
-    WEBCORE_EXPORT ExceptionOr<void> setTextContent(String&&);
+    WEBCORE_EXPORT RefPtr<StringImpl> textContent(bool convertBRsToNewlines = false) const;
+    WEBCORE_EXPORT ExceptionOr<void> setTextContent(RefPtr<StringImpl>&&);
     
     NODELETE Node* lastDescendant() const;
     NODELETE Node* firstDescendant() const;
@@ -526,8 +526,8 @@ public:
 
     NODELETE void updateShadowIncludingRootForSubtree();
 
-    virtual String description() const;
-    virtual String debugDescription() const;
+    virtual RefPtr<StringImpl> description() const;
+    virtual RefPtr<StringImpl> debugDescription() const;
 
 #if ENABLE(TREE_DEBUGGING)
     void showNode(ASCIILiteral prefix = ""_s) const;
@@ -553,9 +553,9 @@ public:
     enum EventTargetInterfaceType eventTargetInterface() const override;
     ScriptExecutionContext* scriptExecutionContext() const final;
 
-    WEBCORE_EXPORT bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    WEBCORE_EXPORT bool addEventListener(AtomStringImpl* eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
     using EventTarget::addEventListener;
-    bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) override;
+    bool removeEventListener(AtomStringImpl* eventType, EventListener&, const EventListenerOptions&) override;
     void removeAllEventListeners() override;
 
     using EventTarget::dispatchEvent;
@@ -589,7 +589,7 @@ public:
     void applyRefDuringDestructionCheck() const;
 
     HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> registeredMutationObservers(MutationObserverOptionType, const QualifiedName* attributeName);
-    void registerMutationObserver(MutationObserver&, MutationObserverOptions, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter);
+    void registerMutationObserver(MutationObserver&, MutationObserverOptions, const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>>& attributeFilter);
     void unregisterMutationObserver(MutationObserverRegistration&);
     void registerTransientMutationObserver(MutationObserverRegistration&);
     void unregisterTransientMutationObserver(MutationObserverRegistration&);
@@ -922,4 +922,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Node)
     static bool isType(const WebCore::EventTarget& target) { return target.isNode(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-extern template class mpark::variant<WTF::Ref<WebCore::Node>, WTF::String>;
+extern template class mpark::variant<WTF::Ref<WebCore::Node>, RefPtr<StringImpl>>;

@@ -67,8 +67,8 @@ public:
 
     WEBCORE_EXPORT void initialize(Type) override;
 
-    WEBCORE_EXPORT void setName(const String&) override;
-    WEBCORE_EXPORT String debugName() const override;
+    WEBCORE_EXPORT void setName(StringImpl*) override;
+    WEBCORE_EXPORT RefPtr<StringImpl> debugName() const override;
 
     WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> primaryLayerID() const override;
     WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> backdropLayerID() const override;
@@ -164,9 +164,9 @@ public:
     WEBCORE_EXPORT void setScrollingNodeID(std::optional<ScrollingNodeID>) override;
 #endif
 
-    WEBCORE_EXPORT bool addAnimation(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, const String& animationName, double timeOffset) override;
-    WEBCORE_EXPORT void pauseAnimation(const String& animationName, double timeOffset) override;
-    WEBCORE_EXPORT void removeAnimation(const String& animationName, std::optional<AnimatedProperty>) override;
+    WEBCORE_EXPORT bool addAnimation(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, StringImpl* animationName, double timeOffset) override;
+    WEBCORE_EXPORT void pauseAnimation(StringImpl* animationName, double timeOffset) override;
+    WEBCORE_EXPORT void removeAnimation(StringImpl* animationName, std::optional<AnimatedProperty>) override;
     WEBCORE_EXPORT void transformRelatedPropertyDidChange() override;
     WEBCORE_EXPORT void setContentsToNativeImage(NativeImage*) override;
     WEBCORE_EXPORT void setContentsToImageBuffer(ImageBuffer*) override;
@@ -265,8 +265,8 @@ private:
     bool platformCALayerRespondsToLayoutChanges() const override { return false; }
     WEBCORE_EXPORT void platformCALayerCustomSublayersChanged(PlatformCALayer*) override;
 
-    WEBCORE_EXPORT void platformCALayerAnimationStarted(const String& animationKey, MonotonicTime beginTime) override;
-    WEBCORE_EXPORT void platformCALayerAnimationEnded(const String& animationKey) override;
+    WEBCORE_EXPORT void platformCALayerAnimationStarted(StringImpl* animationKey, MonotonicTime beginTime) override;
+    WEBCORE_EXPORT void platformCALayerAnimationEnded(StringImpl* animationKey) override;
     CompositingCoordinatesOrientation platformCALayerContentsOrientation() const override { return contentsOrientation(); }
     WEBCORE_EXPORT void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& clip, OptionSet<GraphicsLayerPaintBehavior>) override;
     bool platformCALayerShowDebugBorders() const override { return isShowingDebugBorder(); }
@@ -308,12 +308,12 @@ private:
     WEBCORE_EXPORT void setAnimationExtent(std::optional<FloatRect>) override;
     bool allowsBackingStoreDetaching() const override { return m_allowsBackingStoreDetaching; }
 
-    WEBCORE_EXPORT String displayListAsText(OptionSet<DisplayList::AsTextFlag>) const override;
+    WEBCORE_EXPORT RefPtr<StringImpl> displayListAsText(OptionSet<DisplayList::AsTextFlag>) const override;
 
-    WEBCORE_EXPORT String platformLayerTreeAsText(OptionSet<PlatformLayerTreeAsTextFlags>) const override;
+    WEBCORE_EXPORT RefPtr<StringImpl> platformLayerTreeAsText(OptionSet<PlatformLayerTreeAsTextFlags>) const override;
 
     WEBCORE_EXPORT void setIsTrackingDisplayListReplay(bool) override;
-    WEBCORE_EXPORT String replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag>) const override;
+    WEBCORE_EXPORT RefPtr<StringImpl> replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag>) const override;
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS) && HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
     WEBCORE_EXPORT void setIsDescendentOfSeparatedPortal(bool) override;
@@ -335,7 +335,7 @@ private:
 #endif
     virtual Ref<PlatformCALayer> createPlatformCALayerHost(LayerHostingContextIdentifier, PlatformCALayerClient*);
     WEBCORE_EXPORT virtual Ref<PlatformCALayer> createPlatformVideoLayer(HTMLVideoElement&, PlatformCALayerClient* owner);
-    virtual Ref<PlatformCAAnimation> createPlatformCAAnimation(PlatformCAAnimation::AnimationType, const String& keyPath);
+    virtual Ref<PlatformCAAnimation> createPlatformCAAnimation(PlatformCAAnimation::AnimationType, StringImpl* keyPath);
 
     virtual void setLayerContentsToImageBuffer(PlatformCALayer&, ImageBuffer*) { }
     // Overridden for images whose pixels are not in this process, which have no platform image.
@@ -348,22 +348,22 @@ private:
 
     WEBCORE_EXPORT void setTileCoverage(TileCoverage) override;
 
-    using CloneID = String; // Identifier for a given clone, based on original/replica branching down the tree.
-    static bool isReplicatedRootClone(const CloneID& cloneID) { return cloneID[0U] & 1; }
+    using CloneID = RefPtr<StringImpl>; // Identifier for a given clone, based on original/replica branching down the tree.
+    static bool isReplicatedRootClone(const CloneID& cloneID) { return codeUnitAt(cloneID, 0U) & 1; }
 
     using LayerMap = HashMap<CloneID, Ref<PlatformCALayer>>;
     NODELETE LayerMap* primaryLayerClones() const;
     NODELETE LayerMap* animatedLayerClones(AnimatedProperty) const;
     static void clearClones(LayerMap&);
 
-    bool createAnimationFromKeyframes(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
-    bool createTransformAnimationsFromKeyframes(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
-    bool createFilterAnimationsFromKeyframes(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool createAnimationFromKeyframes(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, StringImpl* animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool createTransformAnimationsFromKeyframes(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, StringImpl* animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool createFilterAnimationsFromKeyframes(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, StringImpl* animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
 
     // Return autoreleased animation (use RetainPtr?)
-    Ref<PlatformCAAnimation> createBasicAnimation(const GraphicsLayerAnimation*, const String& keyPath, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
-    Ref<PlatformCAAnimation> createKeyframeAnimation(const GraphicsLayerAnimation*, const String&, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
-    Ref<PlatformCAAnimation> createSpringAnimation(const GraphicsLayerAnimation*, const String&, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
+    Ref<PlatformCAAnimation> createBasicAnimation(const GraphicsLayerAnimation*, StringImpl* keyPath, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
+    Ref<PlatformCAAnimation> createKeyframeAnimation(const GraphicsLayerAnimation*, StringImpl*, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
+    Ref<PlatformCAAnimation> createSpringAnimation(const GraphicsLayerAnimation*, StringImpl*, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
     void setupAnimation(PlatformCAAnimation*, const GraphicsLayerAnimation*, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
     
     const TimingFunction& timingFunctionForAnimationValue(const GraphicsLayerAnimationValue&, const GraphicsLayerAnimation&, bool keyframesShouldUseAnimationWideTimingFunction);
@@ -383,7 +383,7 @@ private:
     WEBCORE_EXPORT bool backingStoreAttachedForTesting() const override;
 
     bool hasAnimations() const { return !m_animations.isEmpty(); }
-    bool animationIsRunning(const String& animationName) const;
+    bool animationIsRunning(StringImpl* animationName) const;
 
     void commitLayerTypeChangesBeforeSublayers(CommitState&, float pageScaleFactor, bool& layerTypeChanged);
     void commitLayerChangesBeforeSublayers(CommitState&, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool& layerTypeChanged);
@@ -591,7 +591,7 @@ private:
     // a single transition or keyframe animation, so index is used to distinguish these.
     enum class PlayState { Playing, PlayPending, Paused, PausePending };
     struct LayerPropertyAnimation {
-        LayerPropertyAnimation(Ref<PlatformCAAnimation>&& caAnimation, const String& animationName, AnimatedProperty property, int index, Seconds timeOffset)
+        LayerPropertyAnimation(Ref<PlatformCAAnimation>&& caAnimation, StringImpl* animationName, AnimatedProperty property, int index, Seconds timeOffset)
             : m_animation(WTF::move(caAnimation))
             , m_name(animationName)
             , m_property(property)
@@ -599,7 +599,7 @@ private:
             , m_timeOffset(timeOffset)
         { }
 
-        String animationIdentifier() const { return makeString(m_name, '_', static_cast<unsigned>(m_property), '_', m_index); }
+        RefPtr<StringImpl> animationIdentifier() const { return makeString(m_name, '_', static_cast<unsigned>(m_property), '_', m_index); }
         std::optional<Seconds> computedBeginTime() const
         {
             if (m_beginTime)
@@ -608,7 +608,7 @@ private:
         }
 
         const Ref<PlatformCAAnimation> m_animation;
-        String m_name;
+        RefPtr<StringImpl> m_name;
         AnimatedProperty m_property;
         int m_index;
         Seconds m_timeOffset { 0_s };
@@ -624,7 +624,7 @@ private:
     static void dumpAnimations(WTF::TextStream&, ASCIILiteral category, const Vector<LayerPropertyAnimation>&);
 
     enum MoveOrCopy { Move, Copy };
-    static void moveOrCopyLayerAnimation(MoveOrCopy, const String& animationIdentifier, std::optional<Seconds> beginTime, PlatformCALayer *fromLayer, PlatformCALayer *toLayer);
+    static void moveOrCopyLayerAnimation(MoveOrCopy, StringImpl* animationIdentifier, std::optional<Seconds> beginTime, PlatformCALayer *fromLayer, PlatformCALayer *toLayer);
     void moveOrCopyAnimations(MoveOrCopy, PlatformCALayer* fromLayer, PlatformCALayer* toLayer);
 
     void moveAnimations(PlatformCALayer* fromLayer, PlatformCALayer* toLayer)
@@ -636,8 +636,8 @@ private:
         moveOrCopyAnimations(Copy, fromLayer, toLayer);
     }
 
-    bool appendToUncommittedAnimations(const GraphicsLayerKeyframeValueList&, const TransformOperation::Type, const GraphicsLayerAnimation*, const String& animationName, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
-    bool appendToUncommittedAnimations(const GraphicsLayerKeyframeValueList&, const FilterOperation&, const GraphicsLayerAnimation*, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool appendToUncommittedAnimations(const GraphicsLayerKeyframeValueList&, const TransformOperation::Type, const GraphicsLayerAnimation*, StringImpl* animationName, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool appendToUncommittedAnimations(const GraphicsLayerKeyframeValueList&, const FilterOperation&, const GraphicsLayerAnimation*, StringImpl* animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
 
     enum LayerChange : uint64_t {
         NoChange                                = 0,

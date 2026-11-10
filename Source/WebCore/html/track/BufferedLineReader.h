@@ -47,7 +47,7 @@ public:
     BufferedLineReader() = default;
     void reset();
 
-    void append(String&& data)
+    void append(RefPtr<StringImpl>&& data)
     {
         ASSERT(!m_endOfStream);
         m_buffer.append(WTF::move(data));
@@ -56,7 +56,7 @@ public:
     void appendEndOfStream() { m_endOfStream = true; }
     bool isAtEndOfStream() const { return m_endOfStream && m_buffer.isEmpty(); }
 
-    std::optional<String> nextLine();
+    std::optional<RefPtr<StringImpl>> nextLine();
 
 private:
     SegmentedString m_buffer;

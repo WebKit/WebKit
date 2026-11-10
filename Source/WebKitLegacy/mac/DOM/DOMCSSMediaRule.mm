@@ -58,7 +58,7 @@
 - (unsigned)insertRule:(NSString *)rule index:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
-    return raiseOnDOMError(IMPL->insertRule(rule, index));
+    return raiseOnDOMError(IMPL->insertRule(StringImpl::create(rule).get(), index));
 }
 
 - (void)deleteRule:(unsigned)index

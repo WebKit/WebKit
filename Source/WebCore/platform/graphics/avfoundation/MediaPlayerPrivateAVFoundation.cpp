@@ -188,7 +188,7 @@ bool MediaPlayerPrivateAVFoundation::hasSetUpVideoRendering() const
     return hasLayerRenderer() || hasContextRenderer();
 }
 
-void MediaPlayerPrivateAVFoundation::load(const String& url)
+void MediaPlayerPrivateAVFoundation::load(StringImpl* url)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -199,7 +199,7 @@ void MediaPlayerPrivateAVFoundation::load(const String& url)
     m_requestedOrigin = SecurityOrigin::create(m_assetURL);
 
     // Don't do any more work if the url is empty.
-    if (!url.length())
+    if (!length(url))
         return;
 
     setPreload(m_preload);
@@ -859,7 +859,7 @@ void MediaPlayerPrivateAVFoundation::playbackTargetIsWirelessChanged()
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitData(Uint8Array* initData, String& keyURI, String& keyID, RefPtr<Uint8Array>& certificate)
+bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitData(Uint8Array* initData, RefPtr<StringImpl>& keyURI, RefPtr<StringImpl>& keyID, RefPtr<Uint8Array>& certificate)
 {
     // initData should have the following layout:
     // [4 bytes: keyURI length][N bytes: keyURI][4 bytes: contentID length], [N bytes: contentID], [4 bytes: certificate length][N bytes: certificate]
@@ -882,7 +882,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!keyURIArray)
         return false;
 
-    keyURI = spanReinterpretCast<const char16_t>(keyURIArray->span().first(keyURILength));
+    keyURI = StringImpl::create(spanReinterpretCast<const char16_t>(keyURIArray->span().first(keyURILength)));
     offset += keyURILength;
 
     uint32_t keyIDLength = initDataView->get<uint32_t>(offset, true, &status);
@@ -894,7 +894,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!keyIDArray)
         return false;
 
-    keyID = spanReinterpretCast<const char16_t>(keyIDArray->span().first(keyIDLength));
+    keyID = StringImpl::create(spanReinterpretCast<const char16_t>(keyIDArray->span().first(keyIDLength)));
     offset += keyIDLength;
 
     uint32_t certificateLength = initDataView->get<uint32_t>(offset, true, &status);
@@ -928,9 +928,9 @@ bool MediaPlayerPrivateAVFoundation::canSaveMediaData() const
 
 bool MediaPlayerPrivateAVFoundation::shouldEnableInheritURIQueryComponent() const
 {
-    static NeverDestroyed<const AtomString> iTunesInheritsURIQueryComponent(MAKE_STATIC_STRING_IMPL("x-itunes-inherit-uri-query-component"));
+    static NeverDestroyed<const RefPtr<AtomStringImpl>> iTunesInheritsURIQueryComponent(AtomStringImpl::add("x-itunes-inherit-uri-query-component"_si));
     auto player = this->player();
-    return player && player->doesHaveAttribute(iTunesInheritsURIQueryComponent);
+    return player && player->doesHaveAttribute(iTunesInheritsURIQueryComponent.get());
 }
 
 void MediaPlayerPrivateAVFoundation::queueTaskOnEventLoop(Function<void()>&& task)
@@ -948,9 +948,9 @@ WTFLogChannel& MediaPlayerPrivateAVFoundation::logChannel() const
 #endif
 
 
-String convertEnumerationToString(MediaPlayerPrivateAVFoundation::MediaRenderingMode enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(MediaPlayerPrivateAVFoundation::MediaRenderingMode enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 3> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 3> values {
         MAKE_STATIC_STRING_IMPL("MediaRenderingNone"),
         MAKE_STATIC_STRING_IMPL("MediaRenderingToContext"),
         MAKE_STATIC_STRING_IMPL("MediaRenderingToLayer"),

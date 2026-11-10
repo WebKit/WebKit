@@ -41,7 +41,7 @@ class ScheduledAction {
     WTF_MAKE_TZONE_ALLOCATED(ScheduledAction);
 public:
     static std::unique_ptr<ScheduledAction> create(DOMWrapperWorld&, JSC::Strong<JSC::JSObject>&&);
-    static std::unique_ptr<ScheduledAction> create(DOMWrapperWorld&, String&&);
+    static std::unique_ptr<ScheduledAction> create(DOMWrapperWorld&, RefPtr<StringImpl>&&);
     ~ScheduledAction();
 
     void addArguments(FixedVector<JSC::Strong<JSC::Unknown>>&&);
@@ -55,7 +55,7 @@ public:
 
 private:
     ScheduledAction(DOMWrapperWorld&, JSC::Strong<JSC::JSObject>&&);
-    ScheduledAction(DOMWrapperWorld&, String&&);
+    ScheduledAction(DOMWrapperWorld&, RefPtr<StringImpl>&&);
 
     void executeFunctionInContext(JSC::JSGlobalObject*, JSC::JSValue thisValue, ScriptExecutionContext&);
     void execute(Document&);
@@ -64,7 +64,7 @@ private:
     const Ref<DOMWrapperWorld> m_isolatedWorld;
     JSC::Strong<JSC::JSObject> m_function;
     FixedVector<JSC::Strong<JSC::Unknown>> m_arguments;
-    String m_code;
+    RefPtr<StringImpl> m_code;
     JSC::SourceTaintedness m_sourceTaintedOrigin;
 };
 

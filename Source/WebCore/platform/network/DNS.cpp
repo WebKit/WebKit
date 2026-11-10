@@ -45,19 +45,19 @@
 
 namespace WebCore {
 
-void prefetchDNS(const String& hostname)
+void prefetchDNS(StringImpl* hostname)
 {
     ASSERT(isMainThread());
-    if (hostname.isEmpty())
+    if (isEmpty(hostname))
         return;
 
     DNSResolveQueue::singleton().add(hostname);
 }
 
-void resolveDNS(const String& hostname, uint64_t identifier, DNSCompletionHandler&& completionHandler)
+void resolveDNS(StringImpl* hostname, uint64_t identifier, DNSCompletionHandler&& completionHandler)
 {
     ASSERT(isMainThread());
-    if (hostname.isEmpty())
+    if (isEmpty(hostname))
         return completionHandler(makeUnexpected(DNSError::CannotResolve));
 
     WebCore::DNSResolveQueue::singleton().resolve(hostname, identifier, WTF::move(completionHandler));
@@ -118,15 +118,15 @@ bool IPAddress::isLoopback() const
     });
 }
 
-std::optional<IPAddress> IPAddress::fromString(const String& string)
+std::optional<IPAddress> IPAddress::fromString(StringImpl* string)
 {
 #if OS(UNIX)
     struct in6_addr addressV6;
-    if (inet_pton(AF_INET6, string.utf8().legacyCStringPointer(), &addressV6))
+    if (inet_pton(AF_INET6, utf8(string).legacyCStringPointer(), &addressV6))
         return IPAddress { addressV6 };
 
     struct in_addr addressV4;
-    if (inet_pton(AF_INET, string.utf8().legacyCStringPointer(), &addressV4))
+    if (inet_pton(AF_INET, utf8(string).legacyCStringPointer(), &addressV4))
         return IPAddress { addressV4 };
 #else
     // FIXME: Add support for this method on Windows.

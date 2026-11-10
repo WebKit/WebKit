@@ -48,13 +48,13 @@ template<typename> class ExceptionOr;
 
 class GPUComputePassEncoder : public RefCountedAndCanMakeWeakPtr<GPUComputePassEncoder> {
 public:
-    static Ref<GPUComputePassEncoder> create(Ref<::WebGPU::ComputePassEncoder>&& backing, String&& label, GPUCommandEncoder& commandEncoder)
+    static Ref<GPUComputePassEncoder> create(Ref<::WebGPU::ComputePassEncoder>&& backing, RefPtr<StringImpl>&& label, GPUCommandEncoder& commandEncoder)
     {
         return adoptRef(*new GPUComputePassEncoder(WTF::move(backing), WTF::move(label), commandEncoder));
     }
 
-    NODELETE String label() const;
-    void setLabel(String&&);
+    NODELETE RefPtr<StringImpl> label() const;
+    void setLabel(RefPtr<StringImpl>&&);
 
     void setPipeline(const GPUComputePipeline&);
     void dispatchWorkgroups(GPUSize32 workgroupCountX, GPUSize32 workgroupCountY, GPUSize32 workgroupCountZ);
@@ -70,9 +70,9 @@ public:
         GPUSize64 dynamicOffsetsDataStart,
         GPUSize32 dynamicOffsetsDataLength);
 
-    void pushDebugGroup(String&& groupLabel);
+    void pushDebugGroup(RefPtr<StringImpl>&& groupLabel);
     void popDebugGroup();
-    void insertDebugMarker(String&& markerLabel);
+    void insertDebugMarker(RefPtr<StringImpl>&& markerLabel);
 
     ::WebGPU::ComputePassEncoder& backing() { return m_backing; }
     const ::WebGPU::ComputePassEncoder& backing() const { return m_backing; }
@@ -82,12 +82,12 @@ public:
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPUComputePassEncoder(Ref<::WebGPU::ComputePassEncoder>&&, String&& label, GPUCommandEncoder&);
+    GPUComputePassEncoder(Ref<::WebGPU::ComputePassEncoder>&&, RefPtr<StringImpl>&& label, GPUCommandEncoder&);
 
     Ref<::WebGPU::ComputePassEncoder> m_backing;
-    String m_label;
+    RefPtr<StringImpl> m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
-    std::optional<String> m_overrideLabel;
+    std::optional<RefPtr<StringImpl>> m_overrideLabel;
 };
 
 }

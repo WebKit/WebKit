@@ -86,9 +86,9 @@ struct SVGResourcesMap {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SVGResourcesMap);
     SVGResourcesMap() = default;
 
-    MemoryCompactRobinHoodHashMap<AtomString, WeakSVGElementSet> pendingResources;
-    MemoryCompactRobinHoodHashMap<AtomString, WeakSVGElementSet> pendingResourcesForRemoval;
-    MemoryCompactRobinHoodHashMap<AtomString, SingleThreadWeakPtr<LegacyRenderSVGResourceContainer>> legacyResources;
+    MemoryCompactRobinHoodHashMap<RefPtr<AtomStringImpl>, WeakSVGElementSet> pendingResources;
+    MemoryCompactRobinHoodHashMap<RefPtr<AtomStringImpl>, WeakSVGElementSet> pendingResourcesForRemoval;
+    MemoryCompactRobinHoodHashMap<RefPtr<AtomStringImpl>, SingleThreadWeakPtr<LegacyRenderSVGResourceContainer>> legacyResources;
 };
 
 struct NodesInCommonTreeScope {
@@ -163,21 +163,21 @@ void TreeScope::setCustomElementRegistry(RefPtr<CustomElementRegistry>&& registr
     m_customElementRegistry = WTF::move(registry);
 }
 
-RefPtr<Element> TreeScope::getElementById(const AtomString& elementId) const
+RefPtr<Element> TreeScope::getElementById(AtomStringImpl* elementId) const
 {
-    if (elementId.isEmpty())
+    if (isEmpty(elementId))
         return nullptr;
     if (!m_elementsById)
         return nullptr;
     return m_elementsById->getElementById(elementId, *this);
 }
 
-RefPtr<Element> TreeScope::getElementById(const String& elementId) const
+RefPtr<Element> TreeScope::getElementById(StringImpl* elementId) const
 {
     if (!m_elementsById)
         return nullptr;
 
-    if (auto atomElementId = elementId.toExistingAtomString(); !atomElementId.isNull())
+    if (auto atomElementId = toExistingAtomString(elementId); atomElementId)
         return m_elementsById->getElementById(atomElementId, *this);
 
     return nullptr;
@@ -188,28 +188,28 @@ RefPtr<Element> TreeScope::getElementById(StringView elementId) const
     if (!m_elementsById)
         return nullptr;
 
-    if (auto atomElementId = elementId.toExistingAtomString(); !atomElementId.isNull())
+    if (auto atomElementId = elementId.toExistingAtomString(); atomElementId)
         return m_elementsById->getElementById(atomElementId, *this);
 
     return nullptr;
 }
 
-RefPtr<Element> TreeScope::elementByIdResolvingReferenceTarget(const AtomString& elementId) const
+RefPtr<Element> TreeScope::elementByIdResolvingReferenceTarget(AtomStringImpl* elementId) const
 {
     RefPtr elementForId = getElementById(elementId);
     return elementForId ? elementForId->resolveReferenceTarget() : nullptr;
 }
 
-const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScope::getAllElementsById(const AtomString& elementId) const
+const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScope::getAllElementsById(AtomStringImpl* elementId) const
 {
-    if (elementId.isEmpty())
+    if (isEmpty(elementId))
         return nullptr;
     if (!m_elementsById)
         return nullptr;
     return m_elementsById->getAllElementsById(elementId, *this);
 }
 
-void TreeScope::addElementById(const AtomString& elementId, Element& element, bool notifyObservers)
+void TreeScope::addElementById(AtomStringImpl* elementId, Element& element, bool notifyObservers)
 {
     if (!m_elementsById)
         m_elementsById = makeUnique<TreeScopeOrderedMap>();
@@ -218,7 +218,7 @@ void TreeScope::addElementById(const AtomString& elementId, Element& element, bo
         m_idTargetObserverRegistry->notifyObservers(element, elementId);
 }
 
-void TreeScope::removeElementById(const AtomString& elementId, Element& element, bool notifyObservers)
+void TreeScope::removeElementById(AtomStringImpl* elementId, Element& element, bool notifyObservers)
 {
     if (!m_elementsById)
         return;
@@ -227,23 +227,23 @@ void TreeScope::removeElementById(const AtomString& elementId, Element& element,
         m_idTargetObserverRegistry->notifyObservers(element, elementId);
 }
 
-RefPtr<Element> TreeScope::getElementByName(const AtomString& name) const
+RefPtr<Element> TreeScope::getElementByName(AtomStringImpl* name) const
 {
-    if (name.isEmpty())
+    if (isEmpty(name))
         return nullptr;
     if (!m_elementsByName)
         return nullptr;
     return m_elementsByName->getElementByName(name, *this);
 }
 
-void TreeScope::addElementByName(const AtomString& name, Element& element)
+void TreeScope::addElementByName(AtomStringImpl* name, Element& element)
 {
     if (!m_elementsByName)
         m_elementsByName = makeUnique<TreeScopeOrderedMap>();
     m_elementsByName->add(name, element, *this);
 }
 
-void TreeScope::removeElementByName(const AtomString& name, Element& element)
+void TreeScope::removeElementByName(AtomStringImpl* name, Element& element)
 {
     if (!m_elementsByName)
         return;
@@ -279,73 +279,73 @@ Element* TreeScope::ancestorElementInThisScope(Element* element) const
     return nullptr;
 }
 
-void TreeScope::addImageMap(HTMLMapElement& imageMap, const AtomString& name, const AtomString& id)
+void TreeScope::addImageMap(HTMLMapElement& imageMap, AtomStringImpl* name, AtomStringImpl* id)
 {
-    if (name.isNull() && id.isNull())
+    if (!name && !id)
         return;
     if (!m_imageMapsByName)
         m_imageMapsByName = makeUnique<TreeScopeOrderedMap>();
 
-    if (!name.isNull())
+    if (name)
         m_imageMapsByName->add(name, imageMap, *this);
-    if (!id.isNull() && id != name)
+    if (id && id != name)
         m_imageMapsByName->add(id, imageMap, *this);
 }
 
-void TreeScope::removeImageMap(HTMLMapElement& imageMap, const AtomString& name, const AtomString& id)
+void TreeScope::removeImageMap(HTMLMapElement& imageMap, AtomStringImpl* name, AtomStringImpl* id)
 {
     if (!m_imageMapsByName)
         return;
 
-    if (!name.isNull())
+    if (name)
         m_imageMapsByName->remove(name, imageMap);
-    if (!id.isNull() && id != name)
+    if (id && id != name)
         m_imageMapsByName->remove(id, imageMap);
 }
 
-RefPtr<HTMLMapElement> TreeScope::getImageMap(const AtomString& name) const
+RefPtr<HTMLMapElement> TreeScope::getImageMap(AtomStringImpl* name) const
 {
-    if (!m_imageMapsByName || name.isNull())
+    if (!m_imageMapsByName || !name)
         return nullptr;
     return m_imageMapsByName->getElementByMapName(name, *this);
 }
 
-void TreeScope::addImageElementByUsemap(const AtomString& name, HTMLImageElement& element)
+void TreeScope::addImageElementByUsemap(AtomStringImpl* name, HTMLImageElement& element)
 {
     if (!m_imagesByUsemap)
         m_imagesByUsemap = makeUnique<TreeScopeOrderedMap>();
     return m_imagesByUsemap->add(name, element, *this);
 }
 
-void TreeScope::removeImageElementByUsemap(const AtomString& name, HTMLImageElement& element)
+void TreeScope::removeImageElementByUsemap(AtomStringImpl* name, HTMLImageElement& element)
 {
     if (!m_imagesByUsemap)
         return;
     m_imagesByUsemap->remove(name, element);
 }
 
-RefPtr<HTMLImageElement> TreeScope::imageElementByUsemap(const AtomString& name) const
+RefPtr<HTMLImageElement> TreeScope::imageElementByUsemap(AtomStringImpl* name) const
 {
     if (!m_imagesByUsemap)
         return nullptr;
     return m_imagesByUsemap->getElementByUsemap(name, *this);
 }
 
-void TreeScope::addLabel(const AtomString& forAttributeValue, HTMLLabelElement& element)
+void TreeScope::addLabel(AtomStringImpl* forAttributeValue, HTMLLabelElement& element)
 {
     ASSERT(m_labelsByForAttribute);
     m_labelsByForAttribute->add(forAttributeValue, element, *this);
 }
 
-void TreeScope::removeLabel(const AtomString& forAttributeValue, HTMLLabelElement& element)
+void TreeScope::removeLabel(AtomStringImpl* forAttributeValue, HTMLLabelElement& element)
 {
     ASSERT(m_labelsByForAttribute);
     m_labelsByForAttribute->remove(forAttributeValue, element);
 }
 
-const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScope::labelElementsForId(const AtomString& forAttributeValue)
+const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScope::labelElementsForId(AtomStringImpl* forAttributeValue)
 {
-    if (forAttributeValue.isEmpty())
+    if (isEmpty(forAttributeValue))
         return nullptr;
 
     if (!m_labelsByForAttribute) {
@@ -353,8 +353,8 @@ const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScope::label
         m_labelsByForAttribute = makeUnique<TreeScopeOrderedMap>();
 
         for (Ref label : descendantsOfType<HTMLLabelElement>(m_rootNode.get())) {
-            const AtomString& forValue = label->attributeWithoutSynchronization(forAttr);
-            if (!forValue.isEmpty())
+            const RefPtr<AtomStringImpl>& forValue = label->attributeWithoutSynchronization(forAttr);
+            if (!isEmpty(forValue))
                 addLabel(forValue, label);
         }
     }
@@ -668,18 +668,18 @@ SVGResourcesMap& TreeScope::svgResourcesMap() const
     return *m_svgResourcesMap;
 }
 
-void TreeScope::addSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer& resource)
+void TreeScope::addSVGResource(AtomStringImpl* id, LegacyRenderSVGResourceContainer& resource)
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return;
 
     // Replaces resource if already present, to handle potential id changes
     svgResourcesMap().legacyResources.set(id, &resource);
 }
 
-void TreeScope::removeSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer& resource)
+void TreeScope::removeSVGResource(AtomStringImpl* id, LegacyRenderSVGResourceContainer& resource)
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return;
 
     auto& resources = svgResourcesMap().legacyResources;
@@ -688,9 +688,9 @@ void TreeScope::removeSVGResource(const AtomString& id, LegacyRenderSVGResourceC
         resources.remove(it);
 }
 
-LegacyRenderSVGResourceContainer* TreeScope::lookupLegacySVGResoureById(const AtomString& id) const
+LegacyRenderSVGResourceContainer* TreeScope::lookupLegacySVGResoureById(AtomStringImpl* id) const
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return nullptr;
 
     if (auto resource = svgResourcesMap().legacyResources.get(id))
@@ -699,9 +699,9 @@ LegacyRenderSVGResourceContainer* TreeScope::lookupLegacySVGResoureById(const At
     return nullptr;
 }
 
-void TreeScope::addPendingSVGResource(const AtomString& id, SVGElement& element)
+void TreeScope::addPendingSVGResource(AtomStringImpl* id, SVGElement& element)
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return;
 
     auto result = svgResourcesMap().pendingResources.add(id, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> { });
@@ -710,9 +710,9 @@ void TreeScope::addPendingSVGResource(const AtomString& id, SVGElement& element)
     element.setHasPendingResources();
 }
 
-bool TreeScope::isIdOfPendingSVGResource(const AtomString& id) const
+bool TreeScope::isIdOfPendingSVGResource(AtomStringImpl* id) const
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return false;
 
     return svgResourcesMap().pendingResources.contains(id);
@@ -727,9 +727,9 @@ bool TreeScope::isElementWithPendingSVGResources(SVGElement& element) const
     });
 }
 
-bool TreeScope::isPendingSVGResource(SVGElement& element, const AtomString& id) const
+bool TreeScope::isPendingSVGResource(SVGElement& element, AtomStringImpl* id) const
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return false;
 
     auto& pendingResources = svgResourcesMap().pendingResources;
@@ -749,7 +749,7 @@ void TreeScope::clearHasPendingSVGResourcesIfPossible(SVGElement& element)
 void TreeScope::removeElementFromPendingSVGResources(SVGElement& element)
 {
     if (!svgResourcesMap().pendingResources.isEmpty() && element.hasPendingResources()) {
-        Vector<AtomString> toBeRemoved;
+        Vector<RefPtr<AtomStringImpl>> toBeRemoved;
         for (auto& resource : svgResourcesMap().pendingResources) {
             auto& elements = resource.value;
             elements.remove(element);
@@ -773,14 +773,14 @@ void TreeScope::removeElementFromPendingSVGResources(SVGElement& element)
     }
 }
 
-WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> TreeScope::removePendingSVGResource(const AtomString& id)
+WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> TreeScope::removePendingSVGResource(AtomStringImpl* id)
 {
     return svgResourcesMap().pendingResources.take(id);
 }
 
-void TreeScope::markPendingSVGResourcesForRemoval(const AtomString& id)
+void TreeScope::markPendingSVGResourcesForRemoval(AtomStringImpl* id)
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return;
 
     ASSERT(!svgResourcesMap().pendingResourcesForRemoval.contains(id));
@@ -790,9 +790,9 @@ void TreeScope::markPendingSVGResourcesForRemoval(const AtomString& id)
         svgResourcesMap().pendingResourcesForRemoval.add(id, WTF::move(existing));
 }
 
-RefPtr<SVGElement> TreeScope::takeElementFromPendingSVGResourcesForRemovalMap(const AtomString& id)
+RefPtr<SVGElement> TreeScope::takeElementFromPendingSVGResourcesForRemovalMap(AtomStringImpl* id)
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return nullptr;
 
     auto it = svgResourcesMap().pendingResourcesForRemoval.find(id);

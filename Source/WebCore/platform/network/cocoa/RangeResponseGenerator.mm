@@ -89,7 +89,7 @@ RangeResponseGenerator::RangeResponseGenerator(GuaranteedSerialFunctionDispatche
 
 RangeResponseGenerator::~RangeResponseGenerator() = default;
 
-HashMap<String, std::unique_ptr<RangeResponseGenerator::Data>>& RangeResponseGenerator::map()
+HashMap<RefPtr<StringImpl>, std::unique_ptr<RangeResponseGenerator::Data>>& RangeResponseGenerator::map()
 {
     assertIsCurrent(m_targetDispatcher.get());
     IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
@@ -109,7 +109,7 @@ static std::optional<std::pair<uint64_t, uint64_t>> resolvedRange(StringView ran
 
 static ResourceResponse synthesizedResponseForRange(const ResourceResponse& originalResponse, uint64_t begin, uint64_t end, std::optional<size_t> totalContentLength)
 {
-    auto newContentRange = makeString("bytes "_s, begin, '-', end, '/', (totalContentLength ? makeString(*totalContentLength) : "*"_s));
+    auto newContentRange = makeString("bytes "_s, begin, '-', end, '/', (totalContentLength ? makeString(*totalContentLength) : "*"_si));
     auto newContentLength = makeString(end - begin + 1);
 
     ResourceResponse newResponse = originalResponse;
@@ -129,7 +129,7 @@ void RangeResponseGenerator::removeTask(WebCoreNSURLSessionDataTask *task)
     // HashMap::get() crashes if a null String is passed.
     if (!url)
         return;
-    auto* data = map().get(url.get().absoluteString);
+    auto* data = map().get(StringImpl::create(url.get().absoluteString).get());
     if (!data)
         return;
     data->taskData.remove(task);
@@ -225,11 +225,11 @@ bool RangeResponseGenerator::willHandleRequest(WebCoreNSURLSessionDataTask *task
 
     if (!request.URL)
         return false;
-    auto* data = map().get(request.URL.absoluteString);
+    auto* data = map().get(StringImpl::create(request.URL.absoluteString).get());
     if (!data)
         return false;
 
-    auto range = resolvedRange(String([request valueForHTTPHeaderField:@"Range"]));
+    auto range = resolvedRange(StringImpl::create([request valueForHTTPHeaderField:@"Range"]).get());
     if (!range)
         return false;
 
@@ -311,7 +311,7 @@ private:
     }
 
     ThreadSafeWeakPtr<RangeResponseGenerator> m_generator;
-    const String m_urlString;
+    const RefPtr<StringImpl> m_urlString;
 };
 
 bool RangeResponseGenerator::willSynthesizeRangeResponses(WebCoreNSURLSessionDataTask *task, PlatformMediaResource& resource, const ResourceResponse& response)
@@ -322,10 +322,10 @@ bool RangeResponseGenerator::willSynthesizeRangeResponses(WebCoreNSURLSessionDat
         return false;
     if (response.httpStatusCode() != httpStatus200OK)
         return false;
-    if (!response.httpHeaderField(HTTPHeaderName::ContentRange).isEmpty())
+    if (!isEmpty(response.httpHeaderField(HTTPHeaderName::ContentRange)))
         return false;
 
-    auto range = resolvedRange(String([originalRequest valueForHTTPHeaderField:@"Range"]));
+    auto range = resolvedRange(StringImpl::create([originalRequest valueForHTTPHeaderField:@"Range"]).get());
     if (!range)
         return false;
 
@@ -333,7 +333,7 @@ bool RangeResponseGenerator::willSynthesizeRangeResponses(WebCoreNSURLSessionDat
 
     resource.setClient(adoptRef(new MediaResourceClient(*this, originalRequest.get().URL)));
 
-    m_map.ensure(originalRequest.get().URL.absoluteString, [&] {
+    m_map.ensure(StringImpl::create(originalRequest.get().URL.absoluteString), [&] {
         return makeUnique<Data>(response, resource);
     }).iterator->value->taskData.add(task, makeUnique<RangeResponseGeneratorDataTaskData>(begin, end));
 

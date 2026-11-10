@@ -190,15 +190,15 @@ void CommandLineAPIHost::gatherRTCLogs(JSGlobalObject& globalObject, RefPtr<RTCL
     }
 
     document->startGatheringRTCLogs([callback = callback.releaseNonNull()] (auto&& logType, auto&& logMessage, auto&& logLevel, auto&& connection) mutable {
-        ASSERT(!logType.isNull());
-        ASSERT(!logMessage.isNull());
+        ASSERT(logType);
+        ASSERT(logMessage);
 
         callback->invoke({ WTF::move(logType), WTF::move(logMessage), WTF::move(logLevel), WTF::move(connection) });
     });
 }
 #endif
 
-void CommandLineAPIHost::copyText(const String& text)
+void CommandLineAPIHost::copyText(StringImpl* text)
 {
     Pasteboard::createForCopyAndPaste({ })->writePlainText(text, Pasteboard::CannotSmartReplace);
 }
@@ -223,7 +223,7 @@ JSC::JSValue CommandLineAPIHost::inspectedObject(JSC::JSGlobalObject& lexicalGlo
     return scriptValue ? scriptValue : jsUndefined();
 }
 
-String CommandLineAPIHost::storageId(Storage& storage)
+RefPtr<StringImpl> CommandLineAPIHost::storageId(Storage& storage)
 {
     return InspectorDOMStorageAgent::storageId(storage);
 }

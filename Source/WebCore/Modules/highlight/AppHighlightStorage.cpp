@@ -53,10 +53,10 @@ namespace WebCore {
 
 static constexpr unsigned textPreviewLength = 500;
 
-static RefPtr<Node> findNodeByPathIndex(const Node& parent, unsigned pathIndex, const String& nodeName)
+static RefPtr<Node> findNodeByPathIndex(const Node& parent, unsigned pathIndex, StringImpl* nodeName)
 {
     for (RefPtr child = parent.firstChild(); child; child = child->nextSibling()) {
-        if (nodeName != child->nodeName())
+        if (!equal(nodeName, child->nodeName()))
             continue;
 
         if (!pathIndex--)
@@ -79,7 +79,7 @@ static std::pair<RefPtr<Node>, size_t> findNodeStartingAtPathComponentIndex(cons
             return { nullptr, currentPathIndex };
 
         RefPtr chararacterData = dynamicDowncast<CharacterData>(*nextNode);
-        if (chararacterData && chararacterData->data() != component.textData)
+        if (chararacterData && !equal(chararacterData->data(), component.textData))
             return { nullptr, currentPathIndex };
 
         currentNode = WTF::move(nextNode);
@@ -102,11 +102,11 @@ static RefPtr<Node> findNode(const AppHighlightRangeData::NodePath& path, Docume
 
     while (nextIndex < path.size()) {
         auto& component = path[nextIndex++];
-        if (component.identifier.isEmpty())
+        if (isEmpty(component.identifier))
             continue;
 
         RefPtr elementWithIdentifier = document.getElementById(component.identifier);
-        if (!elementWithIdentifier || elementWithIdentifier->nodeName() != component.nodeName)
+        if (!elementWithIdentifier || !equal(elementWithIdentifier->nodeName(), component.nodeName))
             continue;
 
         std::tie(foundNode, nextIndex) = findNodeStartingAtPathComponentIndex(path, *elementWithIdentifier, nextIndex);
@@ -137,16 +137,16 @@ static std::optional<SimpleRange> findRangeByIdentifyingStartAndEndPositions(con
 
 static std::optional<SimpleRange> findRangeBySearchingText(const AppHighlightRangeData& range, Document& document)
 {
-    HashSet<String> identifiersInStartPath;
+    HashSet<RefPtr<StringImpl>> identifiersInStartPath;
     for (auto& component : range.startContainer()) {
-        if (!component.identifier.isEmpty())
+        if (!isEmpty(component.identifier))
             identifiersInStartPath.add(component.identifier);
     }
 
     RefPtr<Element> foundElement = document.body();
     for (auto iterator = range.endContainer().rbegin(), end = range.endContainer().rend(); iterator != end; ++iterator) {
         auto elementIdentifier = iterator->identifier;
-        if (elementIdentifier.isEmpty() || !identifiersInStartPath.contains(elementIdentifier))
+        if (isEmpty(elementIdentifier) || !identifiersInStartPath.contains(elementIdentifier))
             continue;
 
         foundElement = document.getElementById(elementIdentifier);
@@ -159,8 +159,8 @@ static std::optional<SimpleRange> findRangeBySearchingText(const AppHighlightRan
 
     auto foundElementRange = makeRangeSelectingNodeContents(*foundElement);
     auto foundText = plainText(foundElementRange);
-    if (auto index = foundText.find(range.text()); index != notFound && index == foundText.reverseFind(range.text()))
-        return resolveCharacterRange(foundElementRange, { index, range.text().length() });
+    if (auto index = find(foundText, range.text()); index != notFound && index == reverseFind(foundText, range.text()))
+        return resolveCharacterRange(foundElementRange, { index, length(range.text()) });
 
     return std::nullopt;
 }
@@ -175,10 +175,10 @@ static std::optional<SimpleRange> findRange(const AppHighlightRangeData& range, 
 
 static unsigned computePathIndex(const Node& node)
 {
-    String nodeName = node.nodeName();
+    RefPtr<StringImpl> nodeName = node.nodeName();
     unsigned index = 0;
     for (RefPtr previousSibling = node.previousSibling(); previousSibling; previousSibling = previousSibling->previousSibling()) {
-        if (previousSibling->nodeName() == nodeName)
+        if (equal(previousSibling->nodeName(), nodeName))
             index++;
     }
     return index;
@@ -189,7 +189,7 @@ static AppHighlightRangeData::NodePathComponent createNodePathComponent(const No
     auto* element = dynamicDowncast<Element>(node);
     auto* characterData = dynamicDowncast<CharacterData>(node);
     return {
-        element ? element->getIdAttribute().string() : nullString(),
+        element ? element->getIdAttribute() : nullString(),
         node.nodeName(),
         characterData ? characterData->data() : nullString(),
         computePathIndex(node)
@@ -208,7 +208,7 @@ static AppHighlightRangeData::NodePath makeNodePath(RefPtr<Node>&& node)
 
 static AppHighlightRangeData createAppHighlightRangeData(const StaticRange& range)
 {
-    auto text = plainText(range).left(textPreviewLength);
+    auto text = left(plainText(range), textPreviewLength);
     auto identifier = createVersion4UUIDString();
 
     return {
@@ -243,9 +243,9 @@ bool AppHighlightStorage::shouldRestoreHighlights(MonotonicTime timestamp)
 void AppHighlightStorage::storeAppHighlight(Ref<StaticRange>&& range, CompletionHandler<void(AppHighlight&&)>&& completionHandler)
 {
     auto data = createAppHighlightRangeData(range);
-    std::optional<String> text;
+    std::optional<RefPtr<StringImpl>> text;
 
-    if (!data.text().isEmpty())
+    if (!isEmpty(data.text()))
         text = data.text();
 
     AppHighlight highlight = { data.toSharedBuffer(), text, CreateNewGroupForHighlight::No, HighlightRequestOriginatedInApp::No };

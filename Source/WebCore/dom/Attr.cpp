@@ -60,7 +60,7 @@ Attr::Attr(Element& element, const QualifiedName& name)
 {
 }
 
-Attr::Attr(Document& document, const QualifiedName& name, const AtomString& standaloneValue)
+Attr::Attr(Document& document, const QualifiedName& name, AtomStringImpl* standaloneValue)
     : Node(document, NodeType::Attribute, { })
     , m_name(name)
     , m_standaloneValue(standaloneValue)
@@ -72,7 +72,7 @@ Ref<Attr> Attr::create(Element& element, const QualifiedName& name)
     return adoptRef(*new Attr(element, name));
 }
 
-Ref<Attr> Attr::create(Document& document, const QualifiedName& name, const AtomString& value)
+Ref<Attr> Attr::create(Document& document, const QualifiedName& name, AtomStringImpl* value)
 {
     return adoptRef(*new Attr(document, name, value));
 }
@@ -86,16 +86,16 @@ Attr::~Attr()
     willBeDeletedFrom(document());
 }
 
-ExceptionOr<void> Attr::setValue(const AtomString& value)
+ExceptionOr<void> Attr::setValue(AtomStringImpl* value)
 {
     assertIsOwnerThread();
     if (RefPtr element = m_element.get()) {
-        auto verifiedValue = value;
+        auto verifiedValue = RefPtr { value };
         Ref contextDocument = document().contextDocument();
         if (contextDocument->requiresTrustedTypes()) {
             auto type = trustedTypeForAttribute(element->nodeName(), qualifiedName().localName(),
                 element->namespaceURI(), qualifiedName().namespaceURI());
-            if (!type.attributeType.isNull()) {
+            if (type.attributeType) {
                 auto compliantValue = trustedTypesCompliantAttributeValue(contextDocument, type.attributeType, value,
                     type.sink);
                 if (compliantValue.hasException())
@@ -118,9 +118,9 @@ ExceptionOr<void> Attr::setValue(const AtomString& value)
     return { };
 }
 
-ExceptionOr<void> Attr::setNodeValue(const String& value)
+ExceptionOr<void> Attr::setNodeValue(StringImpl* value)
 {
-    return setValue(value.isNull() ? emptyAtom() : AtomString(value));
+    return setValue(!value ? emptyAtom() : AtomStringImpl::add(value));
 }
 
 Ref<Node> Attr::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*) const
@@ -147,7 +147,7 @@ CSSStyleProperties* Attr::style()
     return &style->ensureCSSStyleProperties();
 }
 
-AtomString Attr::value() const
+RefPtr<AtomStringImpl> Attr::value() const
 {
     assertIsOwnerThread();
     if (RefPtr element = m_element.get())
@@ -155,9 +155,9 @@ AtomString Attr::value() const
     return m_standaloneValue;
 }
 
-void Attr::detachFromElementWithValue(const AtomString& value)
+void Attr::detachFromElementWithValue(AtomStringImpl* value)
 {
-    ASSERT(m_standaloneValue.isNull());
+    ASSERT(!m_standaloneValue);
     m_standaloneValue = value;
     {
         Locker locker { m_elementLockForGC };

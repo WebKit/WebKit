@@ -104,7 +104,7 @@ private:
 
     void discardAllSurfacesInternal() WTF_REQUIRES_LOCK(m_lock);
 
-    NODELETE String poolStatistics() const WTF_REQUIRES_LOCK(m_lock);
+    NODELETE RefPtr<StringImpl> poolStatistics() const WTF_REQUIRES_LOCK(m_lock);
 
     Lock m_lock;
     // The collection runs as a delayed task on a shared work queue. It holds only a weak reference, so the pool can be destroyed on any thread.

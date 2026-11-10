@@ -176,14 +176,14 @@ private:
 #endif
     bool rendererIsNeeded(const Style::ComputedStyle&) final;
     void didAttachRenderers() final;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) final;
     bool isVideo() const final { return true; }
     bool hasVideo() const final { return player() && protect(player())->hasVideo(); }
     bool supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode) const final;
     NODELETE bool isURLAttribute(const Attribute&) const final;
-    String imageSourceURL() const final;
+    RefPtr<StringImpl> imageSourceURL() const final;
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
@@ -209,7 +209,7 @@ private:
 
     const std::unique_ptr<HTMLImageLoader> m_imageLoader;
 
-    AtomString m_defaultPosterURL;
+    RefPtr<AtomStringImpl> m_defaultPosterURL;
 
     FloatSize m_lastReportedNaturalSize { };
 

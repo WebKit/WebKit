@@ -80,11 +80,11 @@ const JSONCache::StringEntry* JSONCache::addLongString(VM& vm, std::span<const L
         if (secondary.key() == secondaryKey && longStringMatches(secondary.string(), characters))
             string = secondary.string();
         else {
-            string = jsNontrivialString(vm, String(characters));
+            string = jsNontrivialString(vm, StringImpl::create(characters));
             m_secondaryLongStrings[secondaryIndex.set] = { string, secondaryKey };
         }
     } else
-        string = jsNontrivialString(vm, String(characters));
+        string = jsNontrivialString(vm, StringImpl::create(characters));
     insertLongString(entries, string, key);
     addString(source, length + 2, string);
     return &entries[0];

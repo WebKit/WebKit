@@ -193,8 +193,8 @@ bool isExposed(CSSPropertyID, const CSSPropertySettings&);
 
 CSSPropertyID findCSSProperty(const char* characters, unsigned length);
 ASCIILiteral nameLiteral(CSSPropertyID);
-const AtomString& nameString(CSSPropertyID);
-String nameForIDL(CSSPropertyID);
+const RefPtr<AtomStringImpl>& nameString(CSSPropertyID);
+RefPtr<StringImpl> nameForIDL(CSSPropertyID);
 
 CSSPropertyID cascadeAliasProperty(CSSPropertyID);
 

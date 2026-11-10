@@ -36,37 +36,37 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT bool isValidContentType(const String&);
+WEBCORE_EXPORT bool isValidContentType(StringImpl*);
 
 class ParsedContentType {
 public:
-    WEBCORE_EXPORT static std::optional<ParsedContentType> create(const String&);
+    WEBCORE_EXPORT static std::optional<ParsedContentType> create(StringImpl*);
     ParsedContentType(ParsedContentType&&) = default;
 
-    String mimeType() const { return m_mimeType; }
-    String contentType() const { return m_contentType; }
-    String charset() const;
-    void setCharset(String&&);
+    RefPtr<StringImpl> mimeType() const { return m_mimeType; }
+    RefPtr<StringImpl> contentType() const { return m_contentType; }
+    RefPtr<StringImpl> charset() const;
+    void setCharset(RefPtr<StringImpl>&&);
 
     // Note that in the case of multiple values for the same name, the last value is returned.
-    WEBCORE_EXPORT String parameterValueForName(const String&) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> parameterValueForName(StringImpl*) const;
     NODELETE size_t parameterCount() const;
 
-    WEBCORE_EXPORT String serialize() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> serialize() const;
 
 private:
-    ParsedContentType(const String&);
+    ParsedContentType(StringImpl*);
     ParsedContentType(const ParsedContentType&) = delete;
     ParsedContentType& operator=(const ParsedContentType&) = delete;
     bool parseContentType();
-    void setContentType(String&&);
-    void setContentTypeParameter(const String&, const String&);
+    void setContentType(RefPtr<StringImpl>&&);
+    void setContentTypeParameter(StringImpl*, StringImpl*);
 
-    typedef HashMap<String, String> KeyValuePairs;
-    String m_contentType;
+    typedef HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> KeyValuePairs;
+    RefPtr<StringImpl> m_contentType;
     KeyValuePairs m_parameterValues;
-    Vector<String> m_parameterNames;
-    String m_mimeType;
+    Vector<RefPtr<StringImpl>> m_parameterNames;
+    RefPtr<StringImpl> m_mimeType;
 };
 
 }

@@ -73,11 +73,11 @@ public:
     static Ref<NativeWebMouseEvent> create(const NativeWebMouseEvent&);
     static Ref<NativeWebMouseEvent> create(GdkEvent*, int, std::optional<WebCore::FloatSize>);
     static Ref<NativeWebMouseEvent> create(GdkEvent*, const WebCore::DoublePoint&, int, std::optional<WebCore::FloatSize>);
-    static Ref<NativeWebMouseEvent> create(WebEventType, WebMouseEventButton, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, int clickCount, OptionSet<WebEventModifier> modifiers, std::optional<WebCore::FloatSize>, WebCore::PointerID, const String& pointerType, WebCore::PlatformMouseEvent::IsTouch isTouchEvent, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap);
+    static Ref<NativeWebMouseEvent> create(WebEventType, WebMouseEventButton, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, int clickCount, OptionSet<WebEventModifier> modifiers, std::optional<WebCore::FloatSize>, WebCore::PointerID, StringImpl* pointerType, WebCore::PlatformMouseEvent::IsTouch isTouchEvent, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap);
     static Ref<NativeWebMouseEvent> create(const WebCore::DoublePoint&);
 #elif PLATFORM(IOS_FAMILY)
     static Ref<NativeWebMouseEvent> create(::WebEvent *);
-    static Ref<NativeWebMouseEvent> create(WebEventType, WebMouseEventButton, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<WebEventModifier>, MonotonicTime timestamp, double force, GestureWasCancelled, const String& pointerType);
+    static Ref<NativeWebMouseEvent> create(WebEventType, WebMouseEventButton, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<WebEventModifier>, MonotonicTime timestamp, double force, GestureWasCancelled, StringImpl* pointerType);
     static Ref<NativeWebMouseEvent> create(const NativeWebMouseEvent&, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ);
 #elif PLATFORM(WPE)
 #if USE(LIBWPE)

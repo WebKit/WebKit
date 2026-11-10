@@ -212,7 +212,7 @@ void PageDOMDebuggerAgent::willInsertDOMNode(Node& parent)
         return;
 
     auto pauseData = buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified, *closestBreakpointOwner);
-    pauseData->setBoolean("insertion"_s, true);
+    pauseData->setBoolean("insertion"_si, true);
     // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
     // Include the new child node ID so the frontend can show the node that's about to be inserted.
     debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(pauseData), WTF::move(closestBreakpoint));
@@ -273,7 +273,7 @@ void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
     if (CheckedPtr domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent()) {
         if (&node != closestBreakpointOwner) {
             if (auto targetNodeId = domAgent->pushNodeToFrontend(&node))
-                pauseData->setInteger("targetNodeId"_s, targetNodeId);
+                pauseData->setInteger("targetNodeId"_si, targetNodeId);
         }
     }
     debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(pauseData), WTF::move(closestBreakpoint));
@@ -333,10 +333,10 @@ Ref<JSON::Object> PageDOMDebuggerAgent::buildPauseDataForDOMBreakpoint(Inspector
     ASSERT(m_domSubtreeModifiedBreakpoints.contains(&breakpointOwner) || m_domAttributeModifiedBreakpoints.contains(&breakpointOwner) || m_domNodeRemovedBreakpoints.contains(&breakpointOwner));
 
     auto pauseData = JSON::Object::create();
-    pauseData->setString("type"_s, Inspector::Protocol::Helpers::getEnumConstantValue(breakpointType));
+    pauseData->setString("type"_si, Inspector::Protocol::Helpers::getEnumConstantValue(breakpointType));
     if (CheckedPtr domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent()) {
         if (auto breakpointOwnerNodeId = domAgent->pushNodeToFrontend(&breakpointOwner))
-            pauseData->setInteger("nodeId"_s, breakpointOwnerNodeId);
+            pauseData->setInteger("nodeId"_si, breakpointOwnerNodeId);
     }
     return pauseData;
 }

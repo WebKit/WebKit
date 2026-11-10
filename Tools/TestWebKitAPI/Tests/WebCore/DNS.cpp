@@ -41,7 +41,7 @@ TEST(DNSTest, cancelResolveDNS)
 {
     WTF::initializeMainThread();
 
-    const String hostname = String("www.webkit.org");
+    const RefPtr<StringImpl> hostname = "www.webkit.org"_si;
     uint64_t identifier = 1;
 
     DNSCompletionHandler completionHandler = [](WebCore::DNSAddressesOrError&& result) mutable {
@@ -63,7 +63,7 @@ TEST(DNSTest, cannotResolveDNS)
 {
     WTF::initializeMainThread();
 
-    const String hostname = String("notavaliddomain.notavaliddomain");
+    const RefPtr<StringImpl> hostname = "notavaliddomain.notavaliddomain"_si;
     uint64_t identifier = 1;
 
     DNSCompletionHandler completionHandler = [](WebCore::DNSAddressesOrError&& result) mutable {
@@ -84,7 +84,7 @@ TEST(DNSTest, resolveDNS)
 {
     WTF::initializeMainThread();
 
-    const String hostname = String("www.webkit.org");
+    const RefPtr<StringImpl> hostname = "www.webkit.org"_si;
     uint64_t identifier = 1;
 
     DNSCompletionHandler completionHandler = [](WebCore::DNSAddressesOrError&& result) mutable {

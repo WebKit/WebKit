@@ -72,7 +72,7 @@ IntlDurationFormatConstructor::IntlDurationFormatConstructor(VM& vm, Structure* 
 
 void IntlDurationFormatConstructor::finishCreation(VM& vm, IntlDurationFormatPrototype* durationFormatPrototype)
 {
-    Base::finishCreation(vm, 0, "DurationFormat"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "DurationFormat"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, durationFormatPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     durationFormatPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
@@ -115,7 +115,7 @@ JSC_DEFINE_HOST_FUNCTION(intlDurationFormatConstructorSupportedLocalesOf, (JSGlo
     const auto& availableLocales = intlDurationFormatAvailableLocales();
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).
-    Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
+    Vector<RefPtr<StringImpl>> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 3. Return SupportedLocales(availableLocales, requestedLocales, options).

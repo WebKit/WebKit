@@ -83,7 +83,7 @@ RefPtr<::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional
         return nullptr;
 
     auto result = RemoteTextureViewProxy::create(*this, convertToBackingContext, identifier);
-    result->setLabel(descriptor ? String { descriptor->label } : String { });
+    result->setLabel(descriptor ? RefPtr<StringImpl> { descriptor->label } : nullptr);
     if (!m_isCanvasBacking)
         return result;
 
@@ -104,7 +104,7 @@ void RemoteTextureProxy::undestroy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteTextureProxy::setLabel(String&& label)
+void RemoteTextureProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteTexture::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

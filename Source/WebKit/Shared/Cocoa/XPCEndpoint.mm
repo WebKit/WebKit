@@ -58,7 +58,7 @@ XPCEndpoint::XPCEndpoint()
 #if PLATFORM(MAC)
                 auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(connection.get());
 
-                if (!isPlatformBinary || !signingIdentifier.startsWith("com.apple.WebKit.WebContent"_s)) {
+                if (!isPlatformBinary || !startsWith(signingIdentifier, "com.apple.WebKit.WebContent"_s)) {
                     WTFLogAlways("XPC endpoint denied to connect with unknown client");
                     return;
                 }

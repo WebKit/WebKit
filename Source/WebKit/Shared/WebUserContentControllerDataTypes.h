@@ -44,8 +44,8 @@ namespace WebKit {
 struct WebCoreUserScriptData {
     IPC::TransferString source;
     URL url;
-    Vector<String> allowlist;
-    Vector<String> blocklist;
+    Vector<RefPtr<StringImpl>> allowlist;
+    Vector<RefPtr<StringImpl>> blocklist;
     WebCore::UserScriptInjectionTime injectionTime;
     WebCore::UserContentInjectedFrames injectedFrames;
     WebCore::UserContentMatchParentFrame matchParentFrame;
@@ -60,8 +60,8 @@ struct WebUserScriptData {
 struct WebCoreUserStyleSheetData {
     IPC::TransferString source;
     URL url;
-    Vector<String> allowlist;
-    Vector<String> blocklist;
+    Vector<RefPtr<StringImpl>> allowlist;
+    Vector<RefPtr<StringImpl>> blocklist;
     WebCore::UserContentInjectedFrames injectedFrames;
     WebCore::UserContentMatchParentFrame matchParentFrame;
     WebCore::UserStyleLevel level;
@@ -77,18 +77,18 @@ struct WebUserStyleSheetData {
 struct WebScriptMessageHandlerData {
     ScriptMessageHandlerIdentifier identifier;
     ContentWorldData worldData;
-    String name;
+    RefPtr<StringImpl> name;
 };
 
 struct WebJSBufferData {
-    WebJSBufferData(const Ref<WebCore::SharedMemory>&, ContentWorldData&&, const String&);
-    WebJSBufferData(std::optional<WebCore::SharedMemoryHandle>&&, ContentWorldData&&, String&&);
+    WebJSBufferData(const Ref<WebCore::SharedMemory>&, ContentWorldData&&, StringImpl*);
+    WebJSBufferData(std::optional<WebCore::SharedMemoryHandle>&&, ContentWorldData&&, RefPtr<StringImpl>&&);
     ~WebJSBufferData();
     std::optional<WebCore::SharedMemoryHandle> sharedMemoryHandle() const;
 
     RefPtr<WebCore::SharedMemory> data;
     ContentWorldData worldData;
-    String name;
+    RefPtr<StringImpl> name;
 };
 
 } // namespace WebKit

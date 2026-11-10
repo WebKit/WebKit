@@ -72,10 +72,10 @@ public:
     virtual bool isEasyToRead() const { return false; }
     virtual bool isDefault() const { return false; }
     virtual bool isMachineGenerated() const { return false; }
-    String label() const override { return emptyString(); }
-    String language() const override { return emptyString(); }
-    std::optional<String> trackUID() const override { return emptyString(); }
-    virtual String inBandMetadataTrackDispatchType() const { return emptyString(); }
+    RefPtr<StringImpl> label() const override { return emptyString(); }
+    RefPtr<StringImpl> language() const override { return emptyString(); }
+    std::optional<RefPtr<StringImpl>> trackUID() const override { return emptyString(); }
+    virtual RefPtr<StringImpl> inBandMetadataTrackDispatchType() const { return emptyString(); }
 
     CueFormat cueFormat() const { return m_format; }
     
@@ -90,7 +90,7 @@ public:
             && isMainProgramContent() == track.isMainProgramContent()
             && isEasyToRead() == track.isEasyToRead()
             && isDefault() == track.isDefault()
-            && inBandMetadataTrackDispatchType() == track.inBandMetadataTrackDispatchType();
+            && equal(inBandMetadataTrackDispatchType(), track.inBandMetadataTrackDispatchType());
     }
 
 #if !RELEASE_LOG_DISABLED

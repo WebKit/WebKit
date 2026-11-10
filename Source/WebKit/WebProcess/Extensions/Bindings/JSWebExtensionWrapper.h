@@ -76,7 +76,7 @@ public:
     JSGlobalContextRef globalContext() const { return m_globalContext.get(); }
     NODELETE JSValueRef callbackFunction() const;
 
-    void reportError(const String&);
+    void reportError(StringImpl*);
 
     JSValueRef call();
     JSValueRef call(JSValueRef argument);
@@ -118,7 +118,7 @@ enum class ValuePolicy : bool {
 RefPtr<WebFrame> toWebFrame(JSContextRef);
 RefPtr<WebPage> toWebPage(JSContextRef);
 
-inline RefPtr<OpaqueJSString> toJSString(const String& string)
+inline RefPtr<OpaqueJSString> toJSString(StringImpl* string)
 {
     return createJSString(string);
 }
@@ -191,21 +191,21 @@ template<> Vector<Protected<JSValueRef>> toVector<Protected<JSValueRef>>(JSConte
 
 RefPtr<WebExtensionCallbackHandler> toJSCallbackHandler(JSContextRef, JSValueRef callback, WebExtensionAPIRuntimeBase&);
 
-String toString(JSContextRef, JSValueRef, NullStringPolicy = NullStringPolicy::NullAndUndefinedAsNullString);
+RefPtr<StringImpl> toString(JSContextRef, JSValueRef, NullStringPolicy = NullStringPolicy::NullAndUndefinedAsNullString);
 
-String toString(JSStringRef);
+RefPtr<StringImpl> toString(JSStringRef);
 
-JSObjectRef toJSError(JSContextRef, const String&);
+JSObjectRef toJSError(JSContextRef, StringImpl*);
 
-JSValueRef deserializeJSONString(JSContextRef, const String& jsonString);
-String serializeJSObject(JSContextRef, JSValueRef, JSValueRef* exception);
+JSValueRef deserializeJSONString(JSContextRef, StringImpl* jsonString);
+RefPtr<StringImpl> serializeJSObject(JSContextRef, JSValueRef, JSValueRef* exception);
 
 // Serializes with structured clone when requested, otherwise as JSON. Returns nothing when the value
 // cannot be serialized, and structured clone also sets the exception.
 std::optional<WebExtensionMessage> serializeMessage(JSContextRef, JSValueRef, bool useStructuredClone, JSValueRef* exception);
 
-String toJSONString(JSContextRef, JSValueRef);
-String toSortedJSONString(JSContextRef, JSValueRef);
+RefPtr<StringImpl> toJSONString(JSContextRef, JSValueRef);
+RefPtr<StringImpl> toSortedJSONString(JSContextRef, JSValueRef);
 bool isFunction(JSContextRef, JSValueRef);
 bool isDictionary(JSContextRef, JSValueRef);
 bool isRegularExpression(JSContextRef, JSValueRef);
@@ -213,14 +213,14 @@ bool isThenable(JSContextRef, JSValueRef);
 
 JSValueRef fromArray(JSContextRef, Vector<Protected<JSValueRef>>&&);
 JSValueRef fromArray(JSContextRef, Vector<size_t>&&);
-JSValueRef fromArray(JSContextRef, Vector<String>&&);
+JSValueRef fromArray(JSContextRef, Vector<RefPtr<StringImpl>>&&);
 
 JSValueRef fromJSON(JSContextRef, RefPtr<JSON::Value>);
 JSValueRef fromMessageJSON(JSContextRef, JSStringRef messageJSON);
-JSValueRef fromObject(JSContextRef, HashMap<String, Protected<JSValueRef>>&&);
+JSValueRef fromObject(JSContextRef, HashMap<RefPtr<StringImpl>, Protected<JSValueRef>>&&);
 JSValueRef makeEnumObject(JSContextRef, std::initializer_list<std::pair<ASCIILiteral, ASCIILiteral>> entries);
 
-JSValueRef toJSValueRef(JSContextRef, const String&, NullOrEmptyString = NullOrEmptyString::NullStringAsEmptyString);
+JSValueRef toJSValueRef(JSContextRef, StringImpl*, NullOrEmptyString = NullOrEmptyString::NullStringAsEmptyString);
 JSValueRef toJSValueRef(JSContextRef, URL, NullOrEmptyString = NullOrEmptyString::NullStringAsEmptyString);
 
 JSValueRef toWindowObject(JSContextRef, WebFrame&);

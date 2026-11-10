@@ -65,7 +65,7 @@ private:
     bool shouldBeginEditing(const WebCore::SimpleRange&) final;
     bool shouldEndEditing(const WebCore::SimpleRange&) final;
     bool shouldInsertNode(WebCore::Node&, const std::optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) final;
-    bool shouldInsertText(const String&, const std::optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) final;
+    bool shouldInsertText(StringImpl*, const std::optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) final;
     bool shouldChangeSelectedRange(const std::optional<WebCore::SimpleRange>& fromRange, const std::optional<WebCore::SimpleRange>& toRange, WebCore::Affinity, bool stillSelecting) final;
     
     bool shouldApplyStyle(const WebCore::StyleProperties&, const std::optional<WebCore::SimpleRange>&) final;
@@ -73,15 +73,15 @@ private:
     bool shouldMoveRangeAfterDelete(const WebCore::SimpleRange&, const WebCore::SimpleRange&) final;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void registerAttachmentIdentifier(const String&, const String& contentType, const String& preferredFileName, Ref<WebCore::FragmentedSharedBuffer>&&) final;
-    void registerAttachmentIdentifier(const String&, const String& contentType, const String& filePath) final;
-    void registerAttachmentIdentifier(const String&) final;
+    void registerAttachmentIdentifier(StringImpl*, StringImpl* contentType, StringImpl* preferredFileName, Ref<WebCore::FragmentedSharedBuffer>&&) final;
+    void registerAttachmentIdentifier(StringImpl*, StringImpl* contentType, StringImpl* filePath) final;
+    void registerAttachmentIdentifier(StringImpl*) final;
     void registerAttachments(Vector<WebCore::SerializedAttachmentData>&&) final;
-    void cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier) final;
-    void didInsertAttachmentWithIdentifier(const String& identifier, const String& source, WebCore::AttachmentAssociatedElementType) final;
-    void didRemoveAttachmentWithIdentifier(const String& identifier) final;
+    void cloneAttachmentData(StringImpl* fromIdentifier, StringImpl* toIdentifier) final;
+    void didInsertAttachmentWithIdentifier(StringImpl* identifier, StringImpl* source, WebCore::AttachmentAssociatedElementType) final;
+    void didRemoveAttachmentWithIdentifier(StringImpl* identifier) final;
     bool supportsClientSideAttachmentData() const final { return true; }
-    Vector<WebCore::SerializedAttachmentData> serializedAttachmentDataForIdentifiers(const Vector<String>&) final;
+    Vector<WebCore::SerializedAttachmentData> serializedAttachmentDataForIdentifiers(const Vector<RefPtr<StringImpl>>&) final;
 #endif
 
     void didBeginEditing() final;
@@ -95,13 +95,13 @@ private:
     void didEndEditing() final;
     void willWriteSelectionToPasteboard(const std::optional<WebCore::SimpleRange>&) final;
     void didWriteSelectionToPasteboard() final;
-    void getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>>& pasteboardTypesAndData) final;
+    void getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<std::pair<RefPtr<StringImpl>, RefPtr<WebCore::SharedBuffer>>>& pasteboardTypesAndData) final;
     
     void registerUndoStep(WebCore::UndoStep&) final;
     void registerRedoStep(WebCore::UndoStep&) final;
     void clearUndoRedoOperations() final;
 
-    WebCore::DOMPasteAccessResponse requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::FrameIdentifier, const String& originIdentifier) final;
+    WebCore::DOMPasteAccessResponse requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::FrameIdentifier, StringImpl* originIdentifier) final;
 
     bool canCopyCut(WebCore::LocalFrame*, bool defaultValue) const final;
     bool canPaste(WebCore::LocalFrame*, bool defaultValue) const final;
@@ -124,7 +124,7 @@ private:
     void subFrameScrollPositionChanged() final;
 
 #if PLATFORM(COCOA)
-    void setInsertionPasteboard(const String& pasteboardName) final;
+    void setInsertionPasteboard(StringImpl* pasteboardName) final;
     HashMap<WebCore::FrameIdentifier, WebCore::AttributedString> collectAttributedStringsForRemoteFrames(WebCore::FrameIdentifier rootFrameIdentifier, const Vector<WebCore::FrameIdentifier>&) final;
 #endif
 
@@ -132,9 +132,9 @@ private:
     void uppercaseWord() final;
     void lowercaseWord() final;
     void capitalizeWord() final;
-    bool canApplyCaseTransformations(const String&) final;
-    bool canConvertToTraditionalChinese(const String&) final;
-    bool canConvertToSimplifiedChinese(const String&) final;
+    bool canApplyCaseTransformations(StringImpl*) final;
+    bool canConvertToTraditionalChinese(StringImpl*) final;
+    bool canConvertToSimplifiedChinese(StringImpl*) final;
     void convertToTraditionalChinese() final;
     void convertToSimplifiedChinese() final;
 #endif
@@ -158,17 +158,17 @@ private:
 #endif
 
 #if PLATFORM(GTK)
-    bool executePendingEditorCommands(WebCore::LocalFrame&, const Vector<WTF::String>&, bool);
-    bool handleGtkEditorCommand(WebCore::LocalFrame&, const String& command, bool);
-    void getEditorCommandsForKeyEvent(const WebCore::KeyboardEvent*, Vector<WTF::String>&);
+    bool executePendingEditorCommands(WebCore::LocalFrame&, const Vector<RefPtr<StringImpl>>&, bool);
+    bool handleGtkEditorCommand(WebCore::LocalFrame&, StringImpl* command, bool);
+    void getEditorCommandsForKeyEvent(const WebCore::KeyboardEvent*, Vector<RefPtr<StringImpl>>&);
     void updateGlobalSelection(WebCore::LocalFrame*);
 #endif
 
     TextCheckerClient* textChecker() final { return this; }
 
     bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const final;
-    void ignoreWordInSpellDocument(const String&) final;
-    void learnWord(const String&) final;
+    void ignoreWordInSpellDocument(StringImpl*) final;
+    void learnWord(StringImpl*) final;
     void checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength) final;
     void checkGrammarOfString(StringView, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) final;
 
@@ -176,11 +176,11 @@ private:
     Vector<WebCore::TextCheckingResult> checkTextOfParagraph(StringView, OptionSet<WebCore::TextCheckingType> checkingTypes, const WebCore::VisibleSelection& currentSelection) final;
 #endif
 
-    void updateSpellingUIWithGrammarString(const String&, const WebCore::GrammarDetail&) final;
-    void updateSpellingUIWithMisspelledWord(const String&) final;
+    void updateSpellingUIWithGrammarString(StringImpl*, const WebCore::GrammarDetail&) final;
+    void updateSpellingUIWithMisspelledWord(StringImpl*) final;
     void showSpellingUI(bool show) final;
     bool spellingUIIsShowing() final;
-    void getGuessesForWord(const String& word, const String& context, const WebCore::VisibleSelection& currentSelection, Vector<String>& guesses) final;
+    void getGuessesForWord(StringImpl* word, StringImpl* context, const WebCore::VisibleSelection& currentSelection, Vector<RefPtr<StringImpl>>& guesses) final;
     void setInputMethodState(WebCore::Element*) final;
     void requestCheckingOfString(WebCore::TextCheckingRequest&, const WebCore::VisibleSelection& currentSelection) final;
     void requestExtendedCheckingOfString(WebCore::TextCheckingRequest&, const WebCore::VisibleSelection& currentSelection) final;
@@ -204,7 +204,7 @@ private:
     int getPasteboardItemsCount() final;
     RefPtr<WebCore::DocumentFragment> documentFragmentFromDelegate(int index) final;
     bool performsTwoStepPaste(WebCore::DocumentFragment*) final;
-    void updateStringForFind(const String&) final;
+    void updateStringForFind(StringImpl*) final;
     bool shouldRevealCurrentSelectionAfterInsertion() const final;
     bool shouldSuppressPasswordEcho() const final;
     bool shouldRemoveDictationAlternativesAfterEditing() const final;

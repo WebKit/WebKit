@@ -76,27 +76,27 @@ public:
         std::optional<WebCore::FrameIdentifier> frameID() const { return m_frameID; }
         void setFrameID(WebCore::FrameIdentifier frameID) { m_frameID = frameID; }
 
-        const String& url() const LIFETIME_BOUND { return m_url; }
-        void setURL(const String& url) { m_url = url; }
+        const RefPtr<StringImpl>& url() const LIFETIME_BOUND { return m_url; }
+        void setURL(StringImpl* url) { m_url = url; }
 
-        const String& mimeType() const LIFETIME_BOUND { return m_mimeType; }
-        void setMIMEType(const String& mimeType) { m_mimeType = mimeType; }
+        const RefPtr<StringImpl>& mimeType() const LIFETIME_BOUND { return m_mimeType; }
+        void setMIMEType(StringImpl* mimeType) { m_mimeType = mimeType; }
 
-        const String& textEncodingName() const LIFETIME_BOUND { return m_textEncodingName; }
-        void setTextEncodingName(const String& textEncodingName) { m_textEncodingName = textEncodingName; }
+        const RefPtr<StringImpl>& textEncodingName() const LIFETIME_BOUND { return m_textEncodingName; }
+        void setTextEncodingName(StringImpl* textEncodingName) { m_textEncodingName = textEncodingName; }
 
-        const String& sourceMapURL() const LIFETIME_BOUND { return m_sourceMapURL; }
-        void setSourceMapURL(const String& sourceMapURL) { m_sourceMapURL = sourceMapURL; }
+        const RefPtr<StringImpl>& sourceMapURL() const LIFETIME_BOUND { return m_sourceMapURL; }
+        void setSourceMapURL(StringImpl* sourceMapURL) { m_sourceMapURL = sourceMapURL; }
 
         int httpStatusCode() const { return m_httpStatusCode; }
         void setHTTPStatusCode(int code) { m_httpStatusCode = code; }
 
-        const String& httpStatusText() const LIFETIME_BOUND { return m_httpStatusText; }
-        void setHTTPStatusText(const String& text) { m_httpStatusText = text; }
+        const RefPtr<StringImpl>& httpStatusText() const LIFETIME_BOUND { return m_httpStatusText; }
+        void setHTTPStatusText(StringImpl* text) { m_httpStatusText = text; }
 
-        bool hasContent() const { return !m_content.isNull(); }
-        const String& content() const LIFETIME_BOUND { return m_content; }
-        void setContent(const String&, bool base64Encoded);
+        bool hasContent() const { return !!m_content; }
+        const RefPtr<StringImpl>& content() const LIFETIME_BOUND { return m_content; }
+        void setContent(StringImpl*, bool base64Encoded);
 
         bool base64Encoded() const { return m_base64Encoded; }
 
@@ -130,12 +130,12 @@ public:
 
         WebCore::ResourceLoaderIdentifier m_resourceID;
         std::optional<WebCore::FrameIdentifier> m_frameID;
-        String m_url;
-        String m_mimeType;
-        String m_textEncodingName;
-        String m_sourceMapURL;
-        String m_content;
-        String m_httpStatusText;
+        RefPtr<StringImpl> m_url;
+        RefPtr<StringImpl> m_mimeType;
+        RefPtr<StringImpl> m_textEncodingName;
+        RefPtr<StringImpl> m_sourceMapURL;
+        RefPtr<StringImpl> m_content;
+        RefPtr<StringImpl> m_httpStatusText;
         RefPtr<WebCore::TextResourceDecoder> m_decoder;
         WebCore::SharedBufferBuilder m_dataBuffer;
         RefPtr<WebCore::FragmentedSharedBuffer> m_buffer;
@@ -165,10 +165,10 @@ public:
     void resourceCreated(WebCore::ResourceLoaderIdentifier, WebCore::FrameIdentifier, Inspector::ResourceType);
     void responseReceived(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceResponse&, Inspector::ResourceType);
     void setResourceType(WebCore::ResourceLoaderIdentifier, Inspector::ResourceType);
-    void setResourceContent(WebCore::ResourceLoaderIdentifier, const String& content, bool base64Encoded = false);
+    void setResourceContent(WebCore::ResourceLoaderIdentifier, StringImpl* content, bool base64Encoded = false);
     ResourceData const* maybeAddResourceData(WebCore::ResourceLoaderIdentifier, const WebCore::SharedBuffer&);
     void maybeDecodeDataToContent(WebCore::ResourceLoaderIdentifier);
-    void addResourceSharedBuffer(WebCore::ResourceLoaderIdentifier, RefPtr<WebCore::FragmentedSharedBuffer>&&, const String& textEncodingName);
+    void addResourceSharedBuffer(WebCore::ResourceLoaderIdentifier, RefPtr<WebCore::FragmentedSharedBuffer>&&, StringImpl* textEncodingName);
     ResourceData const* data(WebCore::ResourceLoaderIdentifier);
     void clear();
 
@@ -176,11 +176,11 @@ public:
     // process's buffered response bodies for matches.
     template<typename Visitor> void forEach(NOESCAPE const Visitor&) const;
 
-    std::expected<std::pair<String, bool>, String> getResponseBody(WebCore::ResourceLoaderIdentifier);
+    std::expected<std::pair<RefPtr<StringImpl>, bool>, RefPtr<StringImpl>> getResponseBody(WebCore::ResourceLoaderIdentifier);
 
     // Base64-encoded persistence encoding of the response's CertificateInfo, matching
     // InspectorNetworkAgent::getSerializedCertificate.
-    std::expected<String, String> getSerializedCertificate(WebCore::ResourceLoaderIdentifier);
+    std::expected<RefPtr<StringImpl>, RefPtr<StringImpl>> getSerializedCertificate(WebCore::ResourceLoaderIdentifier);
 
 private:
     ResourceData* resourceDataForId(WebCore::ResourceLoaderIdentifier);

@@ -101,137 +101,137 @@ enum class WebExtensionEventListenerType : uint8_t {
     WindowsOnRemoved,
 };
 
-inline String toAPIString(WebExtensionEventListenerType eventType)
+inline RefPtr<StringImpl> toAPIString(WebExtensionEventListenerType eventType)
 {
     switch (eventType) {
     case WebExtensionEventListenerType::Unknown:
         return nullString();
     case WebExtensionEventListenerType::ActionOnClicked:
-        return "onClicked"_s;
+        return "onClicked"_si;
     case WebExtensionEventListenerType::AlarmsOnAlarm:
-        return "onAlarm"_s;
+        return "onAlarm"_si;
     case WebExtensionEventListenerType::CommandsOnChanged:
-        return "onChanged"_s;
+        return "onChanged"_si;
     case WebExtensionEventListenerType::CommandsOnCommand:
-        return "onCommand"_s;
+        return "onCommand"_si;
     case WebExtensionEventListenerType::CookiesOnChanged:
-        return "onChanged"_s;
+        return "onChanged"_si;
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
     case WebExtensionEventListenerType::DeclarativeNetRequestOnRuleMatchedDebug:
         return "onRuleMatchedDebug"_s;
 #endif
     case WebExtensionEventListenerType::DevToolsElementsPanelOnSelectionChanged:
-        return "onSelectionChanged"_s;
+        return "onSelectionChanged"_si;
     case WebExtensionEventListenerType::DevToolsExtensionPanelOnHidden:
-        return "onHidden"_s;
+        return "onHidden"_si;
     case WebExtensionEventListenerType::DevToolsExtensionPanelOnSearch:
-        return "onSearch"_s;
+        return "onSearch"_si;
     case WebExtensionEventListenerType::DevToolsExtensionPanelOnShown:
-        return "onShown"_s;
+        return "onShown"_si;
     case WebExtensionEventListenerType::DevToolsExtensionSidebarPaneOnHidden:
-        return "onHidden"_s;
+        return "onHidden"_si;
     case WebExtensionEventListenerType::DevToolsExtensionSidebarPaneOnShown:
-        return "onShown"_s;
+        return "onShown"_si;
     case WebExtensionEventListenerType::DevToolsInspectedWindowOnResourceAdded:
-        return "onResourceAdded"_s;
+        return "onResourceAdded"_si;
     case WebExtensionEventListenerType::DevToolsNetworkOnNavigated:
-        return "onNavigated"_s;
+        return "onNavigated"_si;
     case WebExtensionEventListenerType::DevToolsNetworkOnRequestFinished:
-        return "onRequestFinished"_s;
+        return "onRequestFinished"_si;
     case WebExtensionEventListenerType::DevToolsPanelsOnThemeChanged:
-        return "onThemeChanged"_s;
+        return "onThemeChanged"_si;
     case WebExtensionEventListenerType::DownloadsOnChanged:
-        return "onChanged"_s;
+        return "onChanged"_si;
     case WebExtensionEventListenerType::DownloadsOnCreated:
-        return "onCreated"_s;
+        return "onCreated"_si;
     case WebExtensionEventListenerType::MenusOnClicked:
-        return "onClicked"_s;
+        return "onClicked"_si;
     case WebExtensionEventListenerType::NotificationsOnButtonClicked:
-        return "onButtonClicked"_s;
+        return "onButtonClicked"_si;
     case WebExtensionEventListenerType::NotificationsOnClicked:
-        return "onClicked"_s;
+        return "onClicked"_si;
     case WebExtensionEventListenerType::NotificationsOnClosed:
-        return "onClosed"_s;
+        return "onClosed"_si;
     case WebExtensionEventListenerType::PermissionsOnAdded:
-        return "onAdded"_s;
+        return "onAdded"_si;
     case WebExtensionEventListenerType::PermissionsOnRemoved:
-        return "onRemoved"_s;
+        return "onRemoved"_si;
     case WebExtensionEventListenerType::PortOnDisconnect:
-        return "onDisconnect"_s;
+        return "onDisconnect"_si;
     case WebExtensionEventListenerType::PortOnMessage:
-        return "onMessage"_s;
+        return "onMessage"_si;
     case WebExtensionEventListenerType::RuntimeOnConnect:
-        return "onConnect"_s;
+        return "onConnect"_si;
     case WebExtensionEventListenerType::RuntimeOnConnectExternal:
-        return "onConnectExternal"_s;
+        return "onConnectExternal"_si;
     case WebExtensionEventListenerType::RuntimeOnInstalled:
-        return "onInstalled"_s;
+        return "onInstalled"_si;
     case WebExtensionEventListenerType::RuntimeOnMessage:
-        return "onMessage"_s;
+        return "onMessage"_si;
     case WebExtensionEventListenerType::RuntimeOnMessageExternal:
-        return "onMessageExternal"_s;
+        return "onMessageExternal"_si;
     case WebExtensionEventListenerType::RuntimeOnStartup:
-        return "onStartup"_s;
+        return "onStartup"_si;
     case WebExtensionEventListenerType::StorageOnChanged:
-        return "onChanged"_s;
+        return "onChanged"_si;
     case WebExtensionEventListenerType::TabsOnActivated:
-        return "onActivated"_s;
+        return "onActivated"_si;
     case WebExtensionEventListenerType::TabsOnAttached:
-        return "onAttached"_s;
+        return "onAttached"_si;
     case WebExtensionEventListenerType::TabsOnCreated:
-        return "onCreated"_s;
+        return "onCreated"_si;
     case WebExtensionEventListenerType::TabsOnDetached:
-        return "onDetached"_s;
+        return "onDetached"_si;
     case WebExtensionEventListenerType::TabsOnHighlighted:
-        return "onHighlighted"_s;
+        return "onHighlighted"_si;
     case WebExtensionEventListenerType::TabsOnMoved:
-        return "onMoved"_s;
+        return "onMoved"_si;
     case WebExtensionEventListenerType::TabsOnRemoved:
-        return "onRemoved"_s;
+        return "onRemoved"_si;
     case WebExtensionEventListenerType::TabsOnReplaced:
-        return "onReplaced"_s;
+        return "onReplaced"_si;
     case WebExtensionEventListenerType::TabsOnUpdated:
-        return "onUpdated"_s;
+        return "onUpdated"_si;
     case WebExtensionEventListenerType::TestOnMessage:
-        return "onMessage"_s;
+        return "onMessage"_si;
     case WebExtensionEventListenerType::TestOnTestStarted:
-        return "onTestStarted"_s;
+        return "onTestStarted"_si;
     case WebExtensionEventListenerType::TestOnTestFinished:
-        return "onTestFinished"_s;
+        return "onTestFinished"_si;
     case WebExtensionEventListenerType::WebNavigationOnBeforeNavigate:
-        return "onBeforeNavigate"_s;
+        return "onBeforeNavigate"_si;
     case WebExtensionEventListenerType::WebNavigationOnCommitted:
-        return "onCommitted"_s;
+        return "onCommitted"_si;
     case WebExtensionEventListenerType::WebNavigationOnCompleted:
-        return "onCompleted"_s;
+        return "onCompleted"_si;
     case WebExtensionEventListenerType::WebNavigationOnDOMContentLoaded:
-        return "onDOMContentLoaded"_s;
+        return "onDOMContentLoaded"_si;
     case WebExtensionEventListenerType::WebNavigationOnErrorOccurred:
-        return "onErrorOccurred"_s;
+        return "onErrorOccurred"_si;
     case WebExtensionEventListenerType::WebRequestOnAuthRequired:
-        return "onAuthRequired"_s;
+        return "onAuthRequired"_si;
     case WebExtensionEventListenerType::WebRequestOnBeforeRedirect:
-        return "onBeforeRedirect"_s;
+        return "onBeforeRedirect"_si;
     case WebExtensionEventListenerType::WebRequestOnBeforeRequest:
-        return "onBeforeRequest"_s;
+        return "onBeforeRequest"_si;
     case WebExtensionEventListenerType::WebRequestOnBeforeSendHeaders:
-        return "onBeforeSendHeaders"_s;
+        return "onBeforeSendHeaders"_si;
     case WebExtensionEventListenerType::WebRequestOnCompleted:
-        return "onCompleted"_s;
+        return "onCompleted"_si;
     case WebExtensionEventListenerType::WebRequestOnErrorOccurred:
-        return "onErrorOccurred"_s;
+        return "onErrorOccurred"_si;
     case WebExtensionEventListenerType::WebRequestOnHeadersReceived:
-        return "onHeadersReceived"_s;
+        return "onHeadersReceived"_si;
     case WebExtensionEventListenerType::WebRequestOnResponseStarted:
-        return "onResponseStarted"_s;
+        return "onResponseStarted"_si;
     case WebExtensionEventListenerType::WebRequestOnSendHeaders:
-        return "onSendHeaders"_s;
+        return "onSendHeaders"_si;
     case WebExtensionEventListenerType::WindowsOnCreated:
-        return "onCreated"_s;
+        return "onCreated"_si;
     case WebExtensionEventListenerType::WindowsOnFocusChanged:
-        return "onFocusChanged"_s;
+        return "onFocusChanged"_si;
     case WebExtensionEventListenerType::WindowsOnRemoved:
-        return "onRemoved"_s;
+        return "onRemoved"_si;
     }
 
     ASSERT_NOT_REACHED();

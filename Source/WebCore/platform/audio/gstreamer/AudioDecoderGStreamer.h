@@ -33,12 +33,12 @@ class GStreamerAudioDecoder final : public AudioDecoder {
     WTF_MAKE_TZONE_ALLOCATED(GStreamerAudioDecoder);
 
 public:
-    static void create(const String& codecName, const Config&, CreateCallback&&, OutputCallback&&);
+    static void create(StringImpl* codecName, const Config&, CreateCallback&&, OutputCallback&&);
 
     ~GStreamerAudioDecoder();
 
 private:
-    GStreamerAudioDecoder(const String& codecName, const Config&, OutputCallback&&, GRefPtr<GstElement>&&);
+    GStreamerAudioDecoder(StringImpl* codecName, const Config&, OutputCallback&&, GRefPtr<GstElement>&&);
 
     Ref<DecodePromise> decode(AudioEncodedData&&) final;
     Ref<GenericPromise> flush() final;

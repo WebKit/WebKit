@@ -60,7 +60,7 @@ public:
     int run(int argc, char** argv);
 
     static void platformInit();
-    static bool platformCompareBrowserVersions(const String&, const String&);
+    static bool platformCompareBrowserVersions(StringImpl*, StringImpl*);
 
     RefPtr<Session> session() const { return m_session; }
 
@@ -74,8 +74,8 @@ private:
     };
     static const Command s_commands[];
 
-    static std::optional<HTTPMethod> toCommandHTTPMethod(const String& method);
-    static bool findCommand(HTTPMethod, const String& path, CommandHandler*, HashMap<String, String>& parameters);
+    static std::optional<HTTPMethod> toCommandHTTPMethod(StringImpl* method);
+    static bool findCommand(HTTPMethod, StringImpl* path, CommandHandler*, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& parameters);
 
     void newSession(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void deleteSession(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
@@ -149,9 +149,9 @@ private:
     RefPtr<JSON::Object> validatedCapabilities(const JSON::Object&) const;
     RefPtr<JSON::Object> mergeCapabilities(const JSON::Object&, const JSON::Object&) const;
     RefPtr<JSON::Object> matchCapabilities(const JSON::Object&) const;
-    bool platformValidateCapability(const String&, const Ref<JSON::Value>&) const;
-    bool platformMatchCapability(const String&, const Ref<JSON::Value>&) const;
-    bool platformSupportProxyType(const String&) const;
+    bool platformValidateCapability(StringImpl*, const Ref<JSON::Value>&) const;
+    bool platformMatchCapability(StringImpl*, const Ref<JSON::Value>&) const;
+    bool platformSupportProxyType(StringImpl*) const;
     bool platformSupportBidi() const;
     void parseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
     void platformParseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
@@ -167,12 +167,12 @@ private:
     void flushRequestQueueWithResult(CommandResult&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    std::expected<void, String> validateHandshakeHeaders(const String& hostHeader, const String& originHeader) const override { return validateRequestHeaders(hostHeader, originHeader); }
+    std::expected<void, RefPtr<StringImpl>> validateHandshakeHeaders(StringImpl* hostHeader, StringImpl* originHeader) const override { return validateRequestHeaders(hostHeader, originHeader); }
     bool acceptHandshake(HTTPRequestHandler::Request&&) override;
     void handleMessage(WebSocketMessageHandler::Message&&, Function<void (WebSocketMessageHandler::Message&&)>&& replyHandler) override;
     void clientDisconnected(const WebSocketMessageHandler::Connection&) override;
 
-    void onBrowserTerminated(const String& sessionId);
+    void onBrowserTerminated(StringImpl* sessionId);
 
     typedef void (WebDriverService::*BidiCommandHandler)(unsigned id, RefPtr<JSON::Object>&&, Function<void (WebSocketMessageHandler::Message&&)>&&);
     struct BidiCommand {
@@ -193,7 +193,7 @@ private:
     Deque<CompletionHandler<void(std::optional<CommandResult>)>> m_pendingRequests;
     bool m_hasRunningRequest { false };
 
-    String m_targetAddress;
+    RefPtr<StringImpl> m_targetAddress;
     uint16_t m_targetPort { 0 };
 
     bool m_replaceOnNewSession { false };

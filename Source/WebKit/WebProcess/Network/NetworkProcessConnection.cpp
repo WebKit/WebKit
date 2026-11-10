@@ -225,7 +225,7 @@ void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::M
 {
 }
 
-void NetworkProcessConnection::writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
+void NetworkProcessConnection::writeBlobsToTemporaryFilesForIndexedDB(const Vector<RefPtr<StringImpl>>& blobURLs, CompletionHandler<void(Vector<RefPtr<StringImpl>>&& filePaths)>&& completionHandler)
 {
     m_connection->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::WriteBlobsToTemporaryFilesForIndexedDB(blobURLs), WTF::move(completionHandler));
 }
@@ -255,12 +255,12 @@ void NetworkProcessConnection::cookieAcceptPolicyChanged(HTTPCookieAcceptPolicy 
 }
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-void NetworkProcessConnection::cookiesAdded(const String& host, Vector<WebCore::Cookie>&& cookies)
+void NetworkProcessConnection::cookiesAdded(StringImpl* host, Vector<WebCore::Cookie>&& cookies)
 {
     WebProcess::singleton().cookieJar().cookiesAdded(host, WTF::move(cookies));
 }
 
-void NetworkProcessConnection::cookiesDeleted(const String& host, Vector<WebCore::Cookie>&& cookies)
+void NetworkProcessConnection::cookiesDeleted(StringImpl* host, Vector<WebCore::Cookie>&& cookies)
 {
     WebProcess::singleton().cookieJar().cookiesDeleted(host, WTF::move(cookies));
 }
@@ -285,7 +285,7 @@ void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, 
     
     auto buffer = WTF::move(handle).tryWrapInSharedBuffer();
     if (!buffer) {
-        LOG_ERROR("Unable to create FragmentedSharedBuffer from ShareableResource handle for resource url %s", request.url().string().utf8());
+        LOG_ERROR("Unable to create FragmentedSharedBuffer from ShareableResource handle for resource url %s", utf8(request.url().string()));
         return;
     }
 
@@ -325,7 +325,7 @@ void NetworkProcessConnection::dropNonSerializableInProcessCache(WebCore::NonSer
     WebMessagePortChannelProvider::singleton().dropNonSerializableInProcessCache(identifier);
 }
 
-void NetworkProcessConnection::broadcastConsoleMessage(MessageSource source, MessageLevel level, const String& message)
+void NetworkProcessConnection::broadcastConsoleMessage(MessageSource source, MessageLevel level, StringImpl* message)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
 
@@ -351,7 +351,7 @@ void NetworkProcessConnection::loadCancelledDownloadRedirectRequestInFrame(WebCo
         loadParameters.request = request;
         webPage->loadRequest(WTF::move(loadParameters));
     } else
-        RELEASE_LOG_ERROR(Process, "Trying to load Invalid page or frame for %s", request.url().string().utf8());
+        RELEASE_LOG_ERROR(Process, "Trying to load Invalid page or frame for %s", utf8(request.url().string()));
 }
 
 #if ENABLE(WEB_RTC)

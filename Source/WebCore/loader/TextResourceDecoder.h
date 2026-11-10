@@ -47,25 +47,25 @@ public:
 
     enum class ContentType : uint8_t { PlainText, HTML, XML, CSS }; // PlainText only checks for a BOM.
 
-    WEBCORE_EXPORT static ContentType contentTypeForMIMEType(const String&);
+    WEBCORE_EXPORT static ContentType contentTypeForMIMEType(StringImpl*);
 
     WEBCORE_EXPORT static Ref<TextResourceDecoder> create(ContentType, const PAL::TextEncoding& defaultEncoding = { }, bool usesEncodingDetector = false);
     // https://encoding.spec.whatwg.org/#utf-8-decode
     static Ref<TextResourceDecoder> createUTF8();
     WEBCORE_EXPORT ~TextResourceDecoder();
 
-    static String textFromUTF8(std::span<const uint8_t>);
+    static RefPtr<StringImpl> textFromUTF8(std::span<const uint8_t>);
 
     void setEncoding(const PAL::TextEncoding&, EncodingSource);
     const PAL::TextEncoding& encoding() const LIFETIME_BOUND { return m_encoding; }
     ContentType contentType() const { return m_contentType; }
     const PAL::TextEncoding* encodingForURLParsing();
 
-    bool charsetWouldChangeEncoding(const String& charset) const;
+    bool charsetWouldChangeEncoding(StringImpl* charset) const;
 
-    WEBCORE_EXPORT String decode(std::span<const uint8_t>);
-    WEBCORE_EXPORT String flush();
-    WEBCORE_EXPORT String decodeAndFlush(std::span<const uint8_t>);
+    WEBCORE_EXPORT RefPtr<StringImpl> decode(std::span<const uint8_t>);
+    WEBCORE_EXPORT RefPtr<StringImpl> flush();
+    WEBCORE_EXPORT RefPtr<StringImpl> decodeAndFlush(std::span<const uint8_t>);
 
     void setHintEncoding(const TextResourceDecoder* parentFrameDecoder);
    

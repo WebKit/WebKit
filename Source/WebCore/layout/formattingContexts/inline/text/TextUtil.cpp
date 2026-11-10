@@ -108,12 +108,12 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
         return fontCascade.size();
 
     auto& text = inlineTextBox.content();
-    ASSERT(to <= text.length());
+    ASSERT(to <= length(text));
     auto hasKerningOrLigatures = fontCascade.enableKerning() || fontCascade.requiresShaping();
     // The "non-whitespace" + "whitespace" pattern is very common for inline content and since most of the "non-whitespace" runs end up with
     // their "whitespace" pair on the line (notable exception is when trailing whitespace is trimmed).
     // Including the trailing whitespace here enables us to cut the number of text measures when placing content on the line.
-    auto extendedMeasuring = useTrailingWhitespaceMeasuringOptimization == UseTrailingWhitespaceMeasuringOptimization::Yes && hasKerningOrLigatures && to < text.length() && text[to] == space;
+    auto extendedMeasuring = useTrailingWhitespaceMeasuringOptimization == UseTrailingWhitespaceMeasuringOptimization::Yes && hasKerningOrLigatures && to < length(text) && codeUnitAt(text, to) == space;
     if (extendedMeasuring)
         ++to;
     auto width = 0.f;
@@ -157,7 +157,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, const Fon
 
     if (inlineTextItem.isWhitespace()) {
         CheckedRef inlineTextBox = inlineTextItem.inlineTextBox();
-        if (!TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox) || (to - from == 1 && inlineTextBox->content()[from] == space))
+        if (!TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox) || (to - from == 1 && codeUnitAt(inlineTextBox->content(), from) == space))
             return std::max(0.f, singleSpaceWidth(fontCascade, inlineTextBox->canUseSimplifiedContentMeasuring()));
     }
     return width(protect(inlineTextItem.inlineTextBox()), fontCascade, from, to, contentLogicalLeft, useTrailingWhitespaceMeasuringOptimization, spacingState, glyphOverflow);
@@ -166,7 +166,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, const Fon
 InlineLayoutUnit TextUtil::trailingWhitespaceWidth(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade, size_t startPosition, size_t endPosition)
 {
     ASSERT(endPosition > startPosition + 1);
-    ASSERT(inlineTextBox.content()[endPosition - 1] == space);
+    ASSERT(codeUnitAt(inlineTextBox.content(), endPosition - 1) == space);
     return width(inlineTextBox, fontCascade, startPosition, endPosition, { }, UseTrailingWhitespaceMeasuringOptimization::Yes) - 
         width(inlineTextBox, fontCascade, startPosition, endPosition - 1, { }, UseTrailingWhitespaceMeasuringOptimization::No);
 }
@@ -433,26 +433,26 @@ bool TextUtil::mayBreakInBetween(const InlineTextItem& previousInlineItem, const
     // Only the next item's leading edge decides breakability here, so when it starts at the beginning of
     // its text box we can pass the box content directly. Only when leading content was dropped (e.g.
     // white-space-trim moves start() past 0) do we take the item's substring and pay for the allocation.
-    String nextContent = nextInlineItem.start() ? nextInlineItem.content() : nextInlineItem.inlineTextBox().content();
-    String previousContent = previousInlineItem.inlineTextBox().content();
+    RefPtr<StringImpl> nextContent = nextInlineItem.start() ? nextInlineItem.content() : nextInlineItem.inlineTextBox().content();
+    RefPtr<StringImpl> previousContent = previousInlineItem.inlineTextBox().content();
     CheckedRef previousContentStyle = previousInlineItem.style();
     CheckedRef nextContentStyle = nextInlineItem.style();
 
     // Now we need to collect at least 3 adjacent characters to be able to make a decision whether the previous text item ends with breaking opportunity.
     // [ex-][ample] <- second to last[x] last[-] current[a]
     // We need at least 1 character in the current inline text item and 2 more from previous inline items.
-    if (!previousContent.is8Bit()) {
+    if (!is8Bit(previousContent)) {
         // FIXME: Remove this workaround when we move over to a better way of handling prior-context with Unicode.
         // See the templated CharacterType in nextBreakablePosition for last and lastlast characters.
-        nextContent.convertTo16Bit();
+        convertTo16Bit(nextContent);
     }
     auto lineBreakIteratorFactory = CachedLineBreakIteratorFactory { nextContent, Style::toPlatform(nextContentStyle->usedLocale()), TextUtil::lineBreakIteratorMode(nextContentStyle->lineBreak()), TextUtil::contentAnalysis(nextContentStyle->wordBreak()) };
-    auto previousContentLength = previousContent.length();
+    auto previousContentLength = length(previousContent);
     // FIXME: We should look into the entire uncommitted content for more text context.
-    char16_t lastCharacter = previousContentLength ? previousContent[previousContentLength - 1] : 0;
+    char16_t lastCharacter = previousContentLength ? codeUnitAt(previousContent, previousContentLength - 1) : 0;
     if (lastCharacter == softHyphen && previousContentStyle->hyphens() == Hyphens::None)
         return false;
-    char16_t secondToLastCharacter = previousContentLength > 1 ? previousContent[previousContentLength - 2] : 0;
+    char16_t secondToLastCharacter = previousContentLength > 1 ? codeUnitAt(previousContent, previousContentLength - 2) : 0;
     lineBreakIteratorFactory.priorContext().set({ secondToLastCharacter, lastCharacter });
     // Now check if we can break right at the inline item boundary.
     // With the [ex-ample], findNextBreakablePosition should return the startPosition (0).
@@ -683,15 +683,15 @@ bool TextUtil::containsStrongDirectionalityText(StringView text)
 size_t TextUtil::firstUserPerceivedCharacterLength(const InlineTextBox& inlineTextBox, size_t startPosition, size_t length)
 {
     auto& textContent = inlineTextBox.content();
-    RELEASE_ASSERT(!textContent.isEmpty());
+    RELEASE_ASSERT(!isEmpty(textContent));
 
-    if (textContent.is8Bit())
+    if (is8Bit(textContent))
         return 1;
     if (inlineTextBox.canUseSimpleFontCodePath()) {
         char32_t character;
         size_t endOfCodePoint = startPosition;
-        auto characters = textContent.span16();
-        U16_NEXT(characters, endOfCodePoint, textContent.length(), character);
+        auto characters = span16(textContent);
+        U16_NEXT(characters, endOfCodePoint, WTF::length(textContent), character);
         ASSERT(endOfCodePoint > startPosition);
         return endOfCodePoint - startPosition;
     }
@@ -733,9 +733,9 @@ TextDirection TextUtil::directionForTextContent(StringView content)
     return baseTextDirection(content).value_or(TextDirection::LTR);
 }
 
-AtomString TextUtil::ellipsisText()
+RefPtr<AtomStringImpl> TextUtil::ellipsisText()
 {
-    static MainThreadNeverDestroyed<const AtomString> ellipsisStr(span(horizontalEllipsis));
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> ellipsisStr(AtomStringImpl::add(span(horizontalEllipsis)));
     return ellipsisStr;
 }
 
@@ -749,17 +749,17 @@ static bool isForcedLineBreak(char16_t character)
         || character == lineSeparator || character == paragraphSeparator;
 }
 
-AtomString TextUtil::ellipsisStringWithCollapsedForcedLineBreaks(const String& string)
+RefPtr<AtomStringImpl> TextUtil::ellipsisStringWithCollapsedForcedLineBreaks(StringImpl* string)
 {
     // "All forced line breaks inside the specified string (regardless of white-space value) must be collapsed, as defined for
     // collapsible segment breaks in CSS Text 3 § 4.1.3 Segment Break Transformation Rules."
     // https://drafts.csswg.org/css-overflow-4/#overflow-string
     // FIXME: Segment breaks between East Asian characters are converted to a space too, rather than removed.
-    if (string.find(isForcedLineBreak) == notFound)
-        return AtomString { string };
+    if (find(string, isForcedLineBreak) == notFound)
+        return AtomStringImpl::add(string);
 
     StringBuilder builder;
-    builder.reserveCapacity(string.length());
+    builder.reserveCapacity(WTF::length(string));
     auto followsForcedLineBreak = false;
     for (auto character : StringView { string }.codeUnits()) {
         auto isBreak = isForcedLineBreak(character);
@@ -802,7 +802,7 @@ bool TextUtil::hasHangablePunctuationStart(const InlineTextItem& inlineTextItem,
 {
     if (!inlineTextItem.length() || !style.hangingPunctuation().contains(Style::HangingPunctuationValue::First))
         return false;
-    auto leadingCharacter = inlineTextItem.inlineTextBox().content()[inlineTextItem.start()];
+    auto leadingCharacter = codeUnitAt(inlineTextItem.inlineTextBox().content(), inlineTextItem.start());
     return isHangableOpenPunctuation(leadingCharacter);
 }
 
@@ -819,7 +819,7 @@ bool TextUtil::hasHangablePunctuationEnd(const InlineTextItem& inlineTextItem, c
 {
     if (!inlineTextItem.length() || !style.hangingPunctuation().contains(Style::HangingPunctuationValue::Last))
         return false;
-    auto trailingCharacter = inlineTextItem.inlineTextBox().content()[inlineTextItem.end() - 1];
+    auto trailingCharacter = codeUnitAt(inlineTextItem.inlineTextBox().content(), inlineTextItem.end() - 1);
     return isHangableClosePunctuation(trailingCharacter);
 }
 
@@ -832,13 +832,13 @@ float TextUtil::hangablePunctuationEndWidth(const InlineTextItem& inlineTextItem
     return width(inlineTextItem, protect(style.fontCascade()), trailingPosition, trailingPosition + 1, { });
 }
 
-float TextUtil::hangablePunctuationEndWidth(const String& text, const Style::ComputedStyle& style)
+float TextUtil::hangablePunctuationEndWidth(StringImpl* text, const Style::ComputedStyle& style)
 {
-    if (text.isEmpty() || !style.hangingPunctuation().contains(Style::HangingPunctuationValue::Last))
+    if (isEmpty(text) || !style.hangingPunctuation().contains(Style::HangingPunctuationValue::Last))
         return { };
-    if (!isHangableClosePunctuation(text[text.length() - 1]))
+    if (!isHangableClosePunctuation(codeUnitAt(text, length(text) - 1)))
         return { };
-    return protect(style.fontCascade())->width(text.right(1));
+    return protect(style.fontCascade())->width(right(text, 1));
 }
 
 bool TextUtil::hasHangableStopOrCommaEnd(const InlineTextItem& inlineTextItem, const Style::ComputedStyle& style)
@@ -846,7 +846,7 @@ bool TextUtil::hasHangableStopOrCommaEnd(const InlineTextItem& inlineTextItem, c
     if (!inlineTextItem.length() || !style.hangingPunctuation().containsAny({ Style::HangingPunctuationValue::AllowEnd, Style::HangingPunctuationValue::ForceEnd }))
         return false;
     auto trailingPosition = inlineTextItem.end() - 1;
-    auto trailingCharacter = inlineTextItem.inlineTextBox().content()[trailingPosition];
+    auto trailingCharacter = codeUnitAt(inlineTextItem.inlineTextBox().content(), trailingPosition);
     auto isHangableStopOrComma = trailingCharacter == 0x002C
         || trailingCharacter == 0x002E || trailingCharacter == 0x060C
         || trailingCharacter == 0x06D4 || trailingCharacter == 0x3001

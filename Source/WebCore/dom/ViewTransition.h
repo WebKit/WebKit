@@ -92,24 +92,24 @@ public:
     WeakStyleable newElement;
     State newState;
 
-    Vector<AtomString> classList;
+    Vector<RefPtr<AtomStringImpl>> classList;
     RefPtr<MutableStyleProperties> groupStyleProperties;
 };
 
 struct OrderedNamedElementsMap {
 public:
-    bool contains(const AtomString& key) const
+    bool contains(AtomStringImpl* key) const
     {
         return m_keys.contains(key);
     }
 
-    void add(const AtomString& key, CapturedElement& value)
+    void add(AtomStringImpl* key, CapturedElement& value)
     {
         m_keys.add(key);
         m_map.set(key, makeUniqueRef<CapturedElement>(value));
     }
 
-    void remove(const AtomString& key)
+    void remove(AtomStringImpl* key)
     {
         m_map.remove(key);
         m_keys.remove(key);
@@ -140,14 +140,14 @@ public:
         return m_keys.size();
     }
 
-    CapturedElement* find(const AtomString& key)
+    CapturedElement* find(AtomStringImpl* key)
     {
         if (auto it = m_map.find(key); it != m_map.end())
             return &it->value;
         return nullptr;
     }
 
-    const CapturedElement* find(const AtomString& key) const
+    const CapturedElement* find(AtomStringImpl* key) const
     {
         if (auto it = m_map.find(key); it != m_map.end())
             return &it->value;
@@ -161,8 +161,8 @@ public:
     }
 
 private:
-    OrderedHashSet<AtomString> m_keys;
-    HashMap<AtomString, UniqueRef<CapturedElement>> m_map;
+    OrderedHashSet<RefPtr<AtomStringImpl>> m_keys;
+    HashMap<RefPtr<AtomStringImpl>, UniqueRef<CapturedElement>> m_map;
 };
 
 struct ViewTransitionParams {
@@ -179,7 +179,7 @@ public:
 class ViewTransition : public RefCounted<ViewTransition>, public VisibilityChangeClient, public ActiveDOMObject {
     WTF_MAKE_TZONE_ALLOCATED(ViewTransition);
 public:
-    static Ref<ViewTransition> createSamePage(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&);
+    static Ref<ViewTransition> createSamePage(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<RefPtr<AtomStringImpl>>&&);
     static RefPtr<ViewTransition> resolveInboundCrossDocumentViewTransition(Document&, std::unique_ptr<ViewTransitionParams>);
     // Given the old document's params once its state has been captured, or null if the transition was
     // skipped. Proceeds with the navigation, which must not happen before then.
@@ -221,18 +221,18 @@ public:
     static constexpr Seconds defaultTimeout = 4_s;
 
 private:
-    ViewTransition(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&);
-    ViewTransition(Document&, Vector<AtomString>&&);
+    ViewTransition(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<RefPtr<AtomStringImpl>>&&);
+    ViewTransition(Document&, Vector<RefPtr<AtomStringImpl>>&&);
 
     void copyElementBaseProperties(RenderLayerModelObject&, CapturedElement::State&);
-    bool updatePropertiesForGroupPseudo(CapturedElement&, const AtomString&);
+    bool updatePropertiesForGroupPseudo(CapturedElement&, AtomStringImpl*);
     LayoutRect captureOverflowRect(RenderLayerModelObject& renderer);
 
     // Setup view transition sub-algorithms.
     ExceptionOr<void> captureOldState();
     ExceptionOr<void> captureNewState();
     void setupTransitionPseudoElements();
-    void setupDynamicStyleSheet(const AtomString&, const CapturedElement&);
+    void setupDynamicStyleSheet(AtomStringImpl*, const CapturedElement&);
 
     void callUpdateCallback();
     void scheduleUpdateCallback();
@@ -246,7 +246,7 @@ private:
     void clearViewTransition();
 
     void whenPendingCapturesComplete(Function<void()>&&);
-    void didCompletePendingCapture(const AtomString& name, RefPtr<NativeImage>&&);
+    void didCompletePendingCapture(AtomStringImpl* name, RefPtr<NativeImage>&&);
     void stopWaitingForPendingCaptures();
     bool hasPendingCaptures() const;
     UniqueRef<ViewTransitionParams> takeViewTransitionParams();

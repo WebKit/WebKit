@@ -37,6 +37,7 @@
 #include "TestWithSwiftTypesOptInMessages.h" // NOLINT
 #include <optional> // NOLINT
 #include <wtf/Vector.h> // NOLINT
+#include <wtf/text/StringView.h> // NOLINT
 #include <wtf/text/WTFString.h> // NOLINT
 
 #if ENABLE(IPC_TESTING_API)

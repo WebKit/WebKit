@@ -46,7 +46,7 @@
 
     WebKit::InitializeWebKit2();
 
-    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { source, { }, { }, { }, forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::UserContentMatchParentFrame::Never, WebCore::UserStyleLevel::User }, API::ContentWorld::pageContentWorldSingleton());
+    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { StringImpl::create(source).get(), { }, { }, { }, forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::UserContentMatchParentFrame::Never, WebCore::UserStyleLevel::User }, API::ContentWorld::pageContentWorldSingleton());
 
     return self;
 }
@@ -56,7 +56,7 @@
 
     WebKit::InitializeWebKit2();
 
-    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { source, baseURL, makeVector<String>(includeMatchPatternStrings), makeVector<String>(excludeMatchPatternStrings), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::UserContentMatchParentFrame::Never, API::toWebCoreUserStyleLevel(level), std::nullopt }, Ref { contentWorld ? *contentWorld->_contentWorld : API::ContentWorld::pageContentWorldSingleton() }, webView ? [webView _page].get() : nullptr);
+    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { StringImpl::create(source).get(), baseURL, makeVector<RefPtr<StringImpl>>(includeMatchPatternStrings), makeVector<RefPtr<StringImpl>>(excludeMatchPatternStrings), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::UserContentMatchParentFrame::Never, API::toWebCoreUserStyleLevel(level), std::nullopt }, Ref { contentWorld ? *contentWorld->_contentWorld : API::ContentWorld::pageContentWorldSingleton() }, webView ? [webView _page].get() : nullptr);
 
     return self;
 }
@@ -73,7 +73,7 @@
 
 - (NSString *)source
 {
-    return _userStyleSheet->userStyleSheet().source().createNSString().autorelease();
+    return createNSString(_userStyleSheet->userStyleSheet().source()).autorelease();
 }
 
 - (NSURL *)baseURL

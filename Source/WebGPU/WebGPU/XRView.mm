@@ -53,7 +53,7 @@ Ref<XRView> Device::createXRView()
     return XRView::create(*this);
 }
 
-void XRView::setLabel(String&&)
+void XRView::setLabel(RefPtr<StringImpl>&&)
 {
 }
 

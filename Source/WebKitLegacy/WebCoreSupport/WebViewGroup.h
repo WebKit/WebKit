@@ -40,10 +40,10 @@ OBJC_CLASS WebView;
 
 class WebViewGroup : public RefCounted<WebViewGroup> {
 public:
-    static Ref<WebViewGroup> getOrCreate(const String& name, const String& localStorageDatabasePath);
+    static Ref<WebViewGroup> getOrCreate(StringImpl* name, StringImpl* localStorageDatabasePath);
     ~WebViewGroup();
 
-    static WebViewGroup* get(const String& name);
+    static WebViewGroup* get(StringImpl* name);
 
     void addWebView(WebView *);
     void removeWebView(WebView *);
@@ -53,12 +53,12 @@ public:
     WebVisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore.get(); }
 
 private:
-    WebViewGroup(const String& name, const String& localStorageDatabasePath);
+    WebViewGroup(StringImpl* name, StringImpl* localStorageDatabasePath);
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
     HashSet<WebView *> m_webViews;
 
-    String m_localStorageDatabasePath;
+    RefPtr<StringImpl> m_localStorageDatabasePath;
     const RefPtr<WebCore::StorageNamespaceProvider> m_storageNamespaceProvider;
 
     const Ref<WebCore::UserContentController> m_userContentController;

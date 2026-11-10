@@ -124,7 +124,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
             m_client.didNavigateWithNavigationData(WebKit::toAPI(&processPool), WebKit::toAPI(&page), WebKit::toAPI(navigationData.get()), WebKit::toAPI(&frame), m_client.base.clientInfo);
         }
 
-        void didPerformClientRedirect(WebKit::WebProcessPool& processPool, WebKit::WebPageProxy& page, const String& sourceURL, const String& destinationURL, WebKit::WebFrameProxy& frame) override
+        void didPerformClientRedirect(WebKit::WebProcessPool& processPool, WebKit::WebPageProxy& page, StringImpl* sourceURL, StringImpl* destinationURL, WebKit::WebFrameProxy& frame) override
         {
             if (!m_client.didPerformClientRedirect)
                 return;
@@ -132,7 +132,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
             m_client.didPerformClientRedirect(WebKit::toAPI(&processPool), WebKit::toAPI(&page), WebKit::toURLRef(sourceURL), WebKit::toURLRef(destinationURL), WebKit::toAPI(&frame), m_client.base.clientInfo);
         }
 
-        void didPerformServerRedirect(WebKit::WebProcessPool& processPool, WebKit::WebPageProxy& page, const String& sourceURL, const String& destinationURL, WebKit::WebFrameProxy& frame) override
+        void didPerformServerRedirect(WebKit::WebProcessPool& processPool, WebKit::WebPageProxy& page, StringImpl* sourceURL, StringImpl* destinationURL, WebKit::WebFrameProxy& frame) override
         {
             if (!m_client.didPerformServerRedirect)
                 return;
@@ -140,7 +140,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
             m_client.didPerformServerRedirect(WebKit::toAPI(&processPool), WebKit::toAPI(&page), WebKit::toURLRef(sourceURL), WebKit::toURLRef(destinationURL), WebKit::toAPI(&frame), m_client.base.clientInfo);
         }
 
-        void didUpdateHistoryTitle(WebKit::WebProcessPool& processPool, WebKit::WebPageProxy& page, const String& title, const String& url, WebKit::WebFrameProxy& frame) override
+        void didUpdateHistoryTitle(WebKit::WebProcessPool& processPool, WebKit::WebPageProxy& page, StringImpl* title, StringImpl* url, WebKit::WebFrameProxy& frame) override
         {
             if (!m_client.didUpdateHistoryTitle)
                 return;
@@ -208,7 +208,7 @@ void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadCli
                 return;
             m_client.didReceiveData(m_context, WebKit::toAPI(&downloadProxy), length, m_client.base.clientInfo);
         }
-        void decideDestinationWithSuggestedFilename(WebKit::DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response, const String& filename, CompletionHandler<void(WebKit::AllowOverwrite, WTF::String)>&& completionHandler) final
+        void decideDestinationWithSuggestedFilename(WebKit::DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response, StringImpl* filename, CompletionHandler<void(WebKit::AllowOverwrite, RefPtr<StringImpl>)>&& completionHandler) final
         {
             didReceiveResponse(downloadProxy, response);
             if (!m_client.decideDestinationWithSuggestedFilename)
@@ -217,7 +217,7 @@ void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadCli
             auto destination = adoptWK(m_client.decideDestinationWithSuggestedFilename(m_context, WebKit::toAPI(&downloadProxy), WebKit::toAPI(filename), &allowOverwrite, m_client.base.clientInfo));
             completionHandler(allowOverwrite ? WebKit::AllowOverwrite::Yes : WebKit::AllowOverwrite::No, WebKit::toWTFString(destination.get()));
         }
-        void didCreateDestination(WebKit::DownloadProxy& downloadProxy, const String& path) final
+        void didCreateDestination(WebKit::DownloadProxy& downloadProxy, StringImpl* path) final
         {
             if (!m_client.didCreateDestination)
                 return;
@@ -279,8 +279,8 @@ void WKContextGetGlobalStatistics(WKContextStatistics* statistics)
 
 void WKContextAddVisitedLink(WKContextRef contextRef, WKStringRef visitedURL)
 {
-    String visitedURLString = protect(WebKit::toImpl(visitedURL))->string();
-    if (visitedURLString.isEmpty())
+    RefPtr<StringImpl> visitedURLString = protect(WebKit::toImpl(visitedURL))->string();
+    if (isEmpty(visitedURLString))
         return;
 
     protect(WebKit::toImpl(contextRef)->visitedLinkStore())->addVisitedLinkHash(WebCore::computeSharedStringHash(visitedURLString));

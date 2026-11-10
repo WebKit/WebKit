@@ -67,7 +67,7 @@ void RemoteShaderModule::compilationInfo(CompletionHandler<void(Vector<WebGPU::C
     });
 }
 
-void RemoteShaderModule::setLabel(String&& label)
+void RemoteShaderModule::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

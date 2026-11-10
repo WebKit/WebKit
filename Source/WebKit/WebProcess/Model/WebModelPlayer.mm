@@ -297,13 +297,13 @@ bool WebModelPlayer::ensureModelBacking(WebCore::LayoutSize size)
     return true;
 }
 
-static void trackResourceIDs(HashMap<String, WebModel::TypedResourceId>& tracked, const Vector<WebModel::TypedResourceId>& identifiers)
+static void trackResourceIDs(HashMap<RefPtr<StringImpl>, WebModel::TypedResourceId>& tracked, const Vector<WebModel::TypedResourceId>& identifiers)
 {
     for (auto& identifier : identifiers)
         tracked.add(identifier.value, identifier);
 }
 
-static void forgetResourceIDs(HashMap<String, WebModel::TypedResourceId>& tracked, const Vector<WebModel::TypedResourceId>& removals)
+static void forgetResourceIDs(HashMap<RefPtr<StringImpl>, WebModel::TypedResourceId>& tracked, const Vector<WebModel::TypedResourceId>& removals)
 {
     for (auto& identifier : removals)
         tracked.remove(identifier.value);
@@ -435,7 +435,7 @@ void WebModelPlayer::loadHostedModel(WebCore::NodeIdentifier nodeID, WebCore::Mo
 
     hosted.retainedData = modelSource.data()->createNSData();
     Ref protectedThis { *this };
-    if ([hosted.loader loadModel:hosted.retainedData.get() mimeType:modelSource.mimeType().createNSString().get()]) {
+    if ([hosted.loader loadModel:hosted.retainedData.get() mimeType:createNSString(modelSource.mimeType()).get()]) {
 #if ENABLE(SPATIAL_PORTAL)
         for (auto& dependent : m_hostedModels.values()) {
             if (dependent->anchorNode == nodeID)
@@ -1145,10 +1145,10 @@ void WebModelPlayer::notifyPortalTransformUpdated()
         client->didUpdatePortalTransform(*this, WebCore::TransformationMatrix(static_cast<simd_float4x4>(*transform)));
 }
 
-void WebModelPlayer::setAnchor(WebCore::NodeIdentifier nodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement)
+void WebModelPlayer::setAnchor(WebCore::NodeIdentifier nodeID, std::optional<WebCore::NodeIdentifier> anchorNode, StringImpl* placement)
 {
     auto& hosted = ensureHostedModel(nodeID);
-    if (hosted.anchorNode == anchorNode && hosted.anchorPlacementName == placement)
+    if (hosted.anchorNode == anchorNode && equal(hosted.anchorPlacementName, placement))
         return;
 
     hosted.anchorNode = anchorNode;
@@ -1166,11 +1166,11 @@ void WebModelPlayer::setAnchor(WebCore::NodeIdentifier nodeID, std::optional<Web
 WebCore::TransformationMatrix WebModelPlayer::HostedModel::anchorPlacementTransform(const HostedModel& anchor)
 {
     RetainPtr anchorLoader = anchor.loader;
-    if (!anchorLoader || anchorPlacementName.isEmpty())
+    if (!anchorLoader || isEmpty(anchorPlacementName))
         return { };
 
     static constexpr float cssPixelsPerMeter = WebCore::CSS::pixelsPerCm * 100;
-    simd_float4x4 placementMatrix = [anchorLoader anchorPlacementNamed:anchorPlacementName.createNSString().get()];
+    simd_float4x4 placementMatrix = [anchorLoader anchorPlacementNamed:createNSString(anchorPlacementName).get()];
     placementMatrix.columns[3] = simd_make_float4(simd_make_float3(placementMatrix.columns[3]) * cssPixelsPerMeter, 1);
 
     WebCore::TransformationMatrix placement { placementMatrix };
@@ -1314,13 +1314,13 @@ void WebModelPlayer::enableSystemEnvironmentMap()
 }
 #endif
 
-String WebModelPlayer::environmentMapForTesting() const
+RefPtr<StringImpl> WebModelPlayer::environmentMapForTesting() const
 {
     switch (m_environmentMapKind) {
     case WebCore::EnvironmentMapKind::None:
-        return "none"_s;
+        return "none"_si;
     case WebCore::EnvironmentMapKind::Default:
-        return "auto"_s;
+        return "auto"_si;
     case WebCore::EnvironmentMapKind::Custom:
         return m_environmentMapURL.string();
     }

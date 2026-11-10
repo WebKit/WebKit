@@ -170,7 +170,7 @@ bool SVGElement::isOutermostSVGSVGElement() const
     return !is<SVGElement>(parentNode());
 }
 
-void SVGElement::reportAttributeParsingError(SVGParsingError error, const QualifiedName& name, const AtomString& value)
+void SVGElement::reportAttributeParsingError(SVGParsingError error, const QualifiedName& name, AtomStringImpl* value)
 {
     if (error == SVGParsingError::None)
         return;
@@ -387,7 +387,7 @@ bool SVGElement::haveLoadedRequiredResources()
     return true;
 }
 
-bool SVGElement::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool SVGElement::addEventListener(AtomStringImpl* eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     // Add event listener to regular DOM element
     if (!Node::addEventListener(eventType, listener.copyRef(), options))
@@ -408,7 +408,7 @@ bool SVGElement::addEventListener(const AtomString& eventType, Ref<EventListener
     return true;
 }
 
-bool SVGElement::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
+bool SVGElement::removeEventListener(AtomStringImpl* eventType, EventListener& listener, const EventListenerOptions& options)
 {
     if (containingShadowRoot())
         return Node::removeEventListener(eventType, listener, options);
@@ -548,7 +548,7 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
     return svgChild->isValid();
 }
 
-void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     StyledElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
@@ -566,7 +566,7 @@ void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& o
             setTabIndexExplicitly(std::nullopt);
         break;
     default:
-        if (auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name); !eventName.isNull())
+        if (auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name); eventName)
             setAttributeEventListener(eventName, name, newValue);
         break;
     }
@@ -586,10 +586,10 @@ void SVGElement::synchronizeAttribute(const QualifiedName& name)
         // If the serialized value is empty and the attribute doesn't exist,
         // don't recreate it. This handles the case where the attribute was
         // explicitly removed after the list was emptied.
-        if (value->isEmpty() && !hasAttribute(name))
+        if (isEmpty(*value) && !hasAttribute(name))
             return;
 
-        setSynchronizedLazyAttribute(name, AtomString { *value });
+        setSynchronizedLazyAttribute(name, AtomStringImpl::add(*value).get());
     }
 }
 
@@ -599,7 +599,7 @@ void SVGElement::synchronizeAllAttributes()
     // the properties which have changed but not committed yet.
     auto map = propertyRegistry().synchronizeAllAttributes(*this);
     for (const auto& entry : map)
-        setSynchronizedLazyAttribute(entry.key, AtomString { entry.value });
+        setSynchronizedLazyAttribute(entry.key, AtomStringImpl::add(entry.value).get());
 }
 
 void SVGElement::commitPropertyChange(SVGProperty* property)
@@ -623,7 +623,7 @@ void SVGElement::commitPropertyChange(SVGAnimatedPropertyBase& animatedProperty)
     if (!propertyRegistry().isAnimatedStylePropertyAttribute(attributeName))
         propertyRegistry().setAnimatedPropertyDirty(*this, attributeName, animatedProperty);
     else
-        setSynchronizedLazyAttribute(attributeName, AtomString { animatedProperty.baseValAsString() });
+        setSynchronizedLazyAttribute(attributeName, AtomStringImpl::add(animatedProperty.baseValAsString()).get());
 
     setAnimatedSVGAttributesAreDirty();
     svgAttributeChanged(attributeName);
@@ -735,7 +735,7 @@ ColorInterpolation SVGElement::colorInterpolation() const
     return ColorInterpolation::Auto;
 }
 
-QualifiedName SVGElement::animatableAttributeForName(const AtomString& localName)
+QualifiedName SVGElement::animatableAttributeForName(AtomStringImpl* localName)
 {
     static NeverDestroyed animatableAttributes = [] {
         static constexpr std::array names {
@@ -832,7 +832,7 @@ QualifiedName SVGElement::animatableAttributeForName(const AtomString& localName
             &SVGNames::zAttr,
             &SVGNames::hrefAttr,
         };
-        MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<AtomStringImpl>, QualifiedName> map;
         for (auto& name : names) {
             auto addResult = map.add(name->get().localName(), *name);
             ASSERT_UNUSED(addResult, addResult.isNewEntry);
@@ -858,19 +858,19 @@ bool SVGElement::filterOutAnimatableAttribute(const QualifiedName&) const
 
 #endif
 
-String SVGElement::title() const
+RefPtr<StringImpl> SVGElement::title() const
 {
     RefPtr page = document().page();
     if (!page)
-        return String();
+        return nullptr;
 
     // According to spec, for stand-alone SVG documents we should not return a title when
     // hovering over the rootmost SVG element (the first <title> element is the title of
     // the document, not a tooltip) so we instantly return.
     if (isOutermostSVGSVGElement() && page->topDocumentHasDocumentClass(DocumentClass::SVG))
-        return String();
+        return nullptr;
     RefPtr firstTitle = childrenOfType<SVGTitleElement>(*this).first();
-    return firstTitle ? const_cast<SVGTitleElement&>(*firstTitle).innerText() : String();
+    return firstTitle ? const_cast<SVGTitleElement&>(*firstTitle).innerText() : nullptr;
 }
 
 bool SVGElement::rendererIsNeeded(const Style::ComputedStyle& style)
@@ -894,7 +894,7 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
     // CSS property only when *this is one of the owning element types, otherwise
     // CSSPropertyID::Invalid. Doing this inline rather than via a virtual override keeps this
     // mapping non-virtual on the attribute fast path; bug 313380.
-    if (!attrName.namespaceURI().isNull())
+    if (attrName.namespaceURI())
         return CSSPropertyID::Invalid;
 
     auto supportsXY = [&] {
@@ -1066,7 +1066,7 @@ bool SVGElement::hasPresentationalHintsForAttribute(const QualifiedName& name) c
     return StyledElement::hasPresentationalHintsForAttribute(name);
 }
 
-void SVGElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void SVGElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(name);
     if (propertyID != CSSPropertyID::Invalid)
@@ -1139,7 +1139,7 @@ bool SVGElement::isResourceContainerTagName(const QualifiedName& tagName)
     if (tagName.namespaceURI() != SVGNames::svgNamespaceURI)
         return false;
 
-    static NeverDestroyed resourceContainerLocalNames = MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> {
+    static NeverDestroyed resourceContainerLocalNames = MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>> {
         SVGNames::clipPathTag->localName(),
         SVGNames::filterTag->localName(),
         SVGNames::linearGradientTag->localName(),

@@ -55,34 +55,34 @@ public:
     static constexpr uint32_t CurrentContentRuleListFileVersion = 22;
 
     static ContentRuleListStore& defaultStoreSingleton();
-    static Ref<ContentRuleListStore> storeWithPath(const WTF::String& storePath);
+    static Ref<ContentRuleListStore> storeWithPath(StringImpl* storePath);
 
     explicit ContentRuleListStore();
-    explicit ContentRuleListStore(const WTF::String& storePath);
+    explicit ContentRuleListStore(StringImpl* storePath);
     virtual ~ContentRuleListStore();
 
-    void compileContentRuleList(WTF::String&& identifier, WTF::String&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
-    void lookupContentRuleList(WTF::String&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
-    void removeContentRuleList(WTF::String&& identifier, CompletionHandler<void(std::error_code)>);
+    void compileContentRuleList(RefPtr<StringImpl>&& identifier, RefPtr<StringImpl>&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
+    void lookupContentRuleList(RefPtr<StringImpl>&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
+    void removeContentRuleList(RefPtr<StringImpl>&& identifier, CompletionHandler<void(std::error_code)>);
 
-    void compileContentRuleListFile(WTF::String&& filePath, WTF::String&& identifier, WTF::String&& json, WebCore::ContentExtensions::CSSSelectorsAllowed, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
-    void lookupContentRuleListFile(WTF::String&& filePath, WTF::String&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
-    void removeContentRuleListFile(WTF::String&& filePath, CompletionHandler<void(std::error_code)>);
+    void compileContentRuleListFile(RefPtr<StringImpl>&& filePath, RefPtr<StringImpl>&& identifier, RefPtr<StringImpl>&& json, WebCore::ContentExtensions::CSSSelectorsAllowed, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
+    void lookupContentRuleListFile(RefPtr<StringImpl>&& filePath, RefPtr<StringImpl>&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
+    void removeContentRuleListFile(RefPtr<StringImpl>&& filePath, CompletionHandler<void(std::error_code)>);
 
-    void getAvailableContentRuleListIdentifiers(CompletionHandler<void(WTF::Vector<WTF::String>)>);
+    void getAvailableContentRuleListIdentifiers(CompletionHandler<void(WTF::Vector<RefPtr<StringImpl>>)>);
 
     // For testing only.
     void synchronousRemoveAllContentRuleLists();
-    void invalidateContentRuleListVersion(const WTF::String& identifier);
-    void corruptContentRuleListHeader(const WTF::String& identifier, bool usingCurrentVersion);
-    void corruptContentRuleListActionsMatchingEverything(const WTF::String& identifier);
-    void invalidateContentRuleListHeader(const WTF::String& identifier);
-    void getContentRuleListSource(WTF::String&& identifier, CompletionHandler<void(WTF::String)>);
+    void invalidateContentRuleListVersion(StringImpl* identifier);
+    void corruptContentRuleListHeader(StringImpl* identifier, bool usingCurrentVersion);
+    void corruptContentRuleListActionsMatchingEverything(StringImpl* identifier);
+    void invalidateContentRuleListHeader(StringImpl* identifier);
+    void getContentRuleListSource(RefPtr<StringImpl>&& identifier, CompletionHandler<void(RefPtr<StringImpl>)>);
 
 private:
-    WTF::String defaultStorePath();
+    RefPtr<StringImpl> defaultStorePath();
 
-    const WTF::String m_storePath;
+    const RefPtr<StringImpl> m_storePath;
     const Ref<WorkQueue> m_workQueue;
 #endif // ENABLE(CONTENT_EXTENSIONS)
 };

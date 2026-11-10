@@ -37,12 +37,12 @@ class MockGamepad final : public PlatformGamepad {
     WTF_MAKE_TZONE_ALLOCATED(MockGamepad);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MockGamepad);
 public:
-    MockGamepad(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected);
+    MockGamepad(unsigned index, StringImpl* gamepadID, StringImpl* mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected);
 
     const Vector<SharedGamepadValue>& axisValues() const LIFETIME_BOUND final { return m_axisValues; }
     const Vector<SharedGamepadValue>& buttonValues() const LIFETIME_BOUND final { return m_buttonValues; }
 
-    void updateDetails(const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected);
+    void updateDetails(StringImpl* gamepadID, StringImpl* mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected);
     bool setAxisValue(unsigned index, double value);
     bool setButtonValue(unsigned index, double value);
     bool wasConnected() { return m_wasConnected; }

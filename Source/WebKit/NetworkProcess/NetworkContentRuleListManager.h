@@ -59,7 +59,7 @@ public:
 
 private:
     void addContentRuleLists(UserContentControllerIdentifier, Vector<std::pair<WebCompiledContentRuleListData, URL>>&&);
-    void removeContentRuleList(UserContentControllerIdentifier, const String& name);
+    void removeContentRuleList(UserContentControllerIdentifier, StringImpl* name);
     void removeAllContentRuleLists(UserContentControllerIdentifier);
     void remove(UserContentControllerIdentifier);
 

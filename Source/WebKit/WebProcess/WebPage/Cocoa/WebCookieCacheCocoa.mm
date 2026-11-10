@@ -38,9 +38,9 @@ using namespace WebCore;
 NetworkStorageSession& WebCookieCache::inMemoryStorageSession()
 {
     if (!m_inMemoryStorageSession) {
-        String sessionName = makeString("WebKitInProcessStorage-"_s, getCurrentProcessID());
+        RefPtr<StringImpl> sessionName = makeString("WebKitInProcessStorage-"_s, getCurrentProcessID());
         auto cookieAcceptPolicy = WebProcess::singleton().ensureNetworkProcessConnection().cookieAcceptPolicy();
-        auto storageSession = WebCore::createPrivateStorageSession(sessionName.createCFString().get(), cookieAcceptPolicy);
+        auto storageSession = WebCore::createPrivateStorageSession(createCFString(sessionName).get(), cookieAcceptPolicy);
         auto cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
         m_inMemoryStorageSession = makeUnique<NetworkStorageSession>(WebProcess::singleton().sessionID(), WTF::move(storageSession), WTF::move(cookieStorage), NetworkStorageSession::IsInMemoryCookieStore::Yes);
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION

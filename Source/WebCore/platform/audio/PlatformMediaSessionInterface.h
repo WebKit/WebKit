@@ -266,7 +266,7 @@ public:
     virtual void audioSessionCategoryChanged(AudioSessionCategory, AudioSessionMode, RouteSharingPolicy) { }
 
 #if !RELEASE_LOG_DISABLED
-    virtual String description() const = 0;
+    virtual RefPtr<StringImpl> description() const = 0;
 #endif
 
     virtual std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const { return protect(client())->mediaSessionGroupIdentifier(); }

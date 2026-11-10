@@ -39,12 +39,12 @@ class WorkerNavigator final : public NavigatorBase, public Supplementable<Worker
     WTF_MAKE_TZONE_ALLOCATED(WorkerNavigator);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerNavigator);
 public:
-    static Ref<WorkerNavigator> create(ScriptExecutionContext& context, const String& userAgent, const String& platform, bool isOnline) { return adoptRef(*new WorkerNavigator(context, userAgent, platform, isOnline)); }
+    static Ref<WorkerNavigator> create(ScriptExecutionContext& context, StringImpl* userAgent, StringImpl* platform, bool isOnline) { return adoptRef(*new WorkerNavigator(context, userAgent, platform, isOnline)); }
 
     virtual ~WorkerNavigator();
 
-    NODELETE const String& userAgent() const final;
-    String platform() const final;
+    NODELETE const RefPtr<StringImpl>& userAgent() const final;
+    RefPtr<StringImpl> platform() const final;
     NODELETE bool onLine() const final;
     void setIsOnline(bool isOnline) { m_isOnline = isOnline; }
 
@@ -55,11 +55,11 @@ public:
     GPU* gpu();
 
 private:
-    explicit WorkerNavigator(ScriptExecutionContext&, const String& userAgent, const String& platform, bool isOnline);
+    explicit WorkerNavigator(ScriptExecutionContext&, StringImpl* userAgent, StringImpl* platform, bool isOnline);
 
     mutable RefPtr<NavigatorUAData> m_navigatorUAData;
-    String m_userAgent;
-    String m_platform;
+    RefPtr<StringImpl> m_userAgent;
+    RefPtr<StringImpl> m_platform;
     bool m_isOnline;
 #if HAVE(WEBGPU_IMPLEMENTATION)
     const RefPtr<GPU> m_gpuForWebGPU;

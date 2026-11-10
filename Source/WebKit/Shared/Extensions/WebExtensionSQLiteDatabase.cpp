@@ -72,13 +72,13 @@ int WebExtensionSQLiteDatabase::close()
     return result;
 }
 
-void WebExtensionSQLiteDatabase::reportErrorWithCode(int errorCode, const String& query, RefPtr<API::Error>& outError)
+void WebExtensionSQLiteDatabase::reportErrorWithCode(int errorCode, StringImpl* query, RefPtr<API::Error>& outError)
 {
     assertQueue();
     ASSERT(errorCode != SQLITE_OK);
 
-    if (!query.isEmpty())
-        RELEASE_LOG_ERROR(Extensions, "SQLite error (%d) occurred with query: %" PRIVATE_LOG_STRING, errorCode, query.utf8());
+    if (!isEmpty(query))
+        RELEASE_LOG_ERROR(Extensions, "SQLite error (%d) occurred with query: %" PRIVATE_LOG_STRING, errorCode, utf8(query));
     else
         RELEASE_LOG_ERROR(Extensions, "SQLite error (%d) occurred", errorCode);
 
@@ -92,7 +92,7 @@ void WebExtensionSQLiteDatabase::reportErrorWithCode(int errorCode, sqlite3_stmt
 
     if (statement) {
         if (char* sql = sqlite3_expanded_sql(statement)) {
-            reportErrorWithCode(errorCode, String::fromUTF8(sql), outError);
+            reportErrorWithCode(errorCode, StringImpl::fromUTF8(sql), outError);
             sqlite3_free(sql);
             return;
         }
@@ -106,8 +106,8 @@ RefPtr<API::Error> WebExtensionSQLiteDatabase::errorWithSQLiteErrorCode(int erro
     if (errorCode == SQLITE_OK)
         return nullptr;
 
-    auto errorMessage = String::fromUTF8(sqlite3_errstr(errorCode));
-    return API::Error::create({ WebExtensionSQLiteErrorDomain, errorCode, m_url, errorMessage });
+    auto errorMessage = StringImpl::fromUTF8(sqlite3_errstr(errorCode));
+    return API::Error::create({ StringImpl::create(WebExtensionSQLiteErrorDomain).ptr(), errorCode, m_url, errorMessage });
 }
 
 bool WebExtensionSQLiteDatabase::enableWAL(RefPtr<API::Error>& error)
@@ -115,12 +115,12 @@ bool WebExtensionSQLiteDatabase::enableWAL(RefPtr<API::Error>& error)
     Ref<WebExtensionSQLiteDatabase> protectedThis(*this);
 
     // SQLite docs: The synchronous NORMAL setting is a good choice for most applications running in WAL mode.
-    if (!SQLiteDatabaseExecuteAndReturnError(*this, error, "PRAGMA synchronous = NORMAL"_s))
+    if (!SQLiteDatabaseExecuteAndReturnError(*this, error, "PRAGMA synchronous = NORMAL"_si))
         return false;
-    return SQLiteDatabaseEnumerate(*this, error, "PRAGMA journal_mode = WAL"_s, std::tie(std::ignore));
+    return SQLiteDatabaseEnumerate(*this, error, "PRAGMA journal_mode = WAL"_si, std::tie(std::ignore));
 }
 
-bool WebExtensionSQLiteDatabase::openWithAccessType(AccessType accessType, RefPtr<API::Error>& outError, ProtectionType protectionType, const String& vfs)
+bool WebExtensionSQLiteDatabase::openWithAccessType(AccessType accessType, RefPtr<API::Error>& outError, ProtectionType protectionType, StringImpl* vfs)
 {
     int flags = SQLITE_OPEN_NOMUTEX;
 
@@ -154,11 +154,11 @@ bool WebExtensionSQLiteDatabase::openWithAccessType(AccessType accessType, RefPt
     assertQueue();
     ASSERT(!m_db);
 
-    String databasePath;
+    RefPtr<StringImpl> databasePath;
     if (m_url == inMemoryDatabaseURL())
         databasePath = WebExtensionSQLiteInMemoryDatabaseName;
     else if (m_url == privateOnDiskDatabaseURL())
-        databasePath = ""_s;
+        databasePath = ""_si;
     else {
         ASSERT(!m_url.isEmpty());
 
@@ -166,13 +166,13 @@ bool WebExtensionSQLiteDatabase::openWithAccessType(AccessType accessType, RefPt
 
         auto directory = m_url.truncatedForUseAsBase().fileSystemPath();
         if (!FileSystem::makeAllDirectories(directory) || FileSystem::fileType(directory) != FileSystem::FileType::Directory) {
-            RELEASE_LOG_ERROR(Extensions, "Unable to create parent folder for database at path: %s", m_url.fileSystemPath().utf8());
+            RELEASE_LOG_ERROR(Extensions, "Unable to create parent folder for database at path: %s", utf8(m_url.fileSystemPath()));
             outError = errorWithSQLiteErrorCode(SQLITE_CANTOPEN);
             return false;
         }
     }
 
-    auto vfsUTF8 = vfs.isEmpty() ? UTF8CString { } : vfs.utf8();
+    auto vfsUTF8 = isEmpty(vfs) ? UTF8CString { } : utf8(vfs);
     int result = WebCore::sqliteOpen(FileSystem::fileSystemRepresentation(databasePath), &m_db, flags, vfsUTF8);
     if (result == SQLITE_OK)
         return true;
@@ -197,7 +197,7 @@ URL WebExtensionSQLiteDatabase::inMemoryDatabaseURL()
 
 URL WebExtensionSQLiteDatabase::privateOnDiskDatabaseURL()
 {
-    return URL("webkit::privateondisk"_s);
+    return URL("webkit::privateondisk"_si);
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

@@ -51,7 +51,7 @@ private:
     bool localFileContentSniffingEnabled() const override;
     SchedulePairHashSet* scheduledRunLoopPairs() const override;
     RetainPtr<CFDataRef> sourceApplicationAuditData() const override;
-    String sourceApplicationIdentifier() const override;
+    RefPtr<StringImpl> sourceApplicationIdentifier() const override;
     WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const override;
     WebCore::CookieStorageSession* storageSession() const override;
 };

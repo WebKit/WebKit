@@ -57,7 +57,7 @@ public:
     void stopRecording(CompletionHandler<void()>&&);
     void pauseRecording(CompletionHandler<void()>&&);
     void resumeRecording(CompletionHandler<void()>&&);
-    const String& mimeType() const LIFETIME_BOUND { return m_mimeType; }
+    const RefPtr<StringImpl>& mimeType() const LIFETIME_BOUND { return m_mimeType; }
 
     void setSelectTracksCallback(SelectTracksCallback&& callback) { m_selectTracksCallback = WTF::move(callback); }
 
@@ -79,7 +79,7 @@ private:
     void positionUpdated();
 
     GRefPtr<GstEncodingProfile> m_audioEncodingProfile;
-    String m_videoCodec;
+    RefPtr<StringImpl> m_videoCodec;
     GRefPtr<GstElement> m_pipeline;
     GRefPtr<GstElement> m_src;
     GRefPtr<GstElement> m_sink;
@@ -91,7 +91,7 @@ private:
 
     MediaStreamPrivate& m_stream;
     const MediaRecorderPrivateOptions& m_options;
-    String m_mimeType;
+    RefPtr<StringImpl> m_mimeType;
     std::optional<SelectTracksCallback> m_selectTracksCallback;
     bool m_waitingForEOS { false };
     Vector<MediaRecorderPrivate::FetchDataCallback> m_fetchDataCallbacksPendingEOS;
@@ -118,7 +118,7 @@ private:
     void stopRecording(CompletionHandler<void()>&&) final;
     void pauseRecording(CompletionHandler<void()>&&) final;
     void resumeRecording(CompletionHandler<void()>&&) final;
-    String mimeType() const final;
+    RefPtr<StringImpl> mimeType() const final;
 
     const Ref<MediaRecorderPrivateBackend> m_recorder;
 };

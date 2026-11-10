@@ -33,7 +33,7 @@ namespace WebKit::PCM {
 
 class DaemonClient : public Client, public CanMakeWeakPtr<DaemonClient> {
     WTF_MAKE_TZONE_ALLOCATED(DaemonClient);
-    void broadcastConsoleMessage(JSC::MessageLevel, const String&) final;
+    void broadcastConsoleMessage(JSC::MessageLevel, StringImpl*) final;
     bool featureEnabled() const final;
     bool debugModeEnabled() const final;
     bool privateRelayEnforcementEnabled() const final;

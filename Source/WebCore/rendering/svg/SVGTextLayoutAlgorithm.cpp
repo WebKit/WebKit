@@ -273,7 +273,7 @@ void SVGTextLayoutAlgorithm::collectTextContent()
                     continue;
                 ensureTextMetrics(*text);
                 m_textContents.append({ *inlineTextBox, contentLength });
-                contentLength += inlineTextBox->content().length();
+                contentLength += length(inlineTextBox->content());
                 continue;
             }
             if (CheckedPtr childElementBox = dynamicDowncast<Layout::ElementBox>(*child); childElementBox && childElementBox->isInlineBox())
@@ -296,15 +296,15 @@ void SVGTextLayoutAlgorithm::collectTextContent()
         // https://w3c.github.io/svgwg/svg2-draft/text.html#TermTypographicCharacterUnit
         // Latin-1 has no combining marks, so every character starts a grapheme cluster except a line feed after a carriage return.
         auto clusterIterator = std::optional<NonSharedCharacterBreakIterator> { };
-        if (!content.is8Bit())
+        if (!is8Bit(content))
             clusterIterator.emplace(StringView { content });
         auto isClusterStart = [&](unsigned position) -> bool {
             if (clusterIterator)
                 return ubrk_isBoundary(*clusterIterator, position);
-            return !position || content[position] != newlineCharacter || content[position - 1] != carriageReturn;
+            return !position || codeUnitAt(content, position) != newlineCharacter || codeUnitAt(content, position - 1) != carriageReturn;
         };
         unsigned position = 0;
-        for (size_t metricsIndex = 0; metricsIndex < metrics.size() && position < content.length(); ++metricsIndex) {
+        for (size_t metricsIndex = 0; metricsIndex < metrics.size() && position < length(content); ++metricsIndex) {
             auto& character = m_characters[textContent.start + position];
             character.metricsIndex = metricsIndex;
             character.isClusterStart = isClusterStart(position);
@@ -420,9 +420,9 @@ void SVGTextLayoutAlgorithm::computeCSSPositions()
                 continue;
 
             auto offset = index - textBox.contentStart;
-            char32_t codePoint = content[offset];
-            if (U16_IS_LEAD(codePoint) && offset + 1 < content.length() && U16_IS_TRAIL(content[offset + 1]))
-                codePoint = U16_GET_SUPPLEMENTARY(codePoint, content[offset + 1]);
+            char32_t codePoint = codeUnitAt(content, offset);
+            if (U16_IS_LEAD(codePoint) && offset + 1 < length(content) && U16_IS_TRAIL(codeUnitAt(content, offset + 1)))
+                codePoint = U16_GET_SUPPLEMENTARY(codePoint, codeUnitAt(content, offset + 1));
 
             character.orientationAngle = baselineLayout.calculateGlyphOrientationAngle(m_isVertical, style, codePoint);
             character.advance = baselineLayout.calculateGlyphAdvanceAndOrientation(m_isVertical, metrics(character), character.orientationAngle, character.xOrientationShift, character.yOrientationShift);

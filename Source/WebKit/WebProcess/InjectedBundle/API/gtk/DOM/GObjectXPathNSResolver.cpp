@@ -28,9 +28,9 @@ namespace WebKit {
 
 GObjectXPathNSResolver::~GObjectXPathNSResolver() = default;
 
-AtomString GObjectXPathNSResolver::lookupNamespaceURI(const AtomString& prefix)
+RefPtr<AtomStringImpl> GObjectXPathNSResolver::lookupNamespaceURI(AtomStringImpl* prefix)
 {
-    return AtomString::fromUTF8(webkit_dom_xpath_ns_resolver_lookup_namespace_uri(m_resolver.get(), prefix.string().utf8().legacyCStringPointer()));
+    return AtomStringImpl::fromUTF8(webkit_dom_xpath_ns_resolver_lookup_namespace_uri(m_resolver.get(), utf8(prefix).legacyCStringPointer()));
 }
 
 } // namespace WebKit

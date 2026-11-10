@@ -129,5 +129,24 @@ class ModelCheckTest(unittest.TestCase):
         self.assertFalse(receiver.takes_swift_types(receiver.messages[1]))
 
 
+class StringTypeAliasTest(unittest.TestCase):
+
+    def test_cpp_type_for_ipc_type(self):
+        self.assertEqual(model.cpp_type_for_ipc_type('String'), 'RefPtr<StringImpl>')
+        self.assertEqual(model.cpp_type_for_ipc_type('WTF::String'), 'RefPtr<StringImpl>')
+        self.assertEqual(model.cpp_type_for_ipc_type('AtomString'), 'RefPtr<AtomStringImpl>')
+        self.assertEqual(model.cpp_type_for_ipc_type('std::optional<Vector<String>>'), 'std::optional<Vector<RefPtr<StringImpl>>>')
+        self.assertEqual(model.cpp_type_for_ipc_type('HashMap<String, Vector<AtomString>>'), 'HashMap<RefPtr<StringImpl>, Vector<RefPtr<AtomStringImpl>>>')
+        self.assertEqual(model.cpp_type_for_ipc_type('std::pair<String,String>'), 'std::pair<RefPtr<StringImpl>,RefPtr<StringImpl>>')
+        for type in ['StringView', 'CoreIPCString', 'WebKit::CoreIPCString', 'API::String', 'Ref<StringImpl>', 'WebCore::SharedStringHash']:
+            self.assertEqual(model.cpp_type_for_ipc_type(type), type)
+
+    def test_is_string_type_alias(self):
+        for type in ['String', 'WTF::String', 'AtomString', 'WTF::AtomString']:
+            self.assertTrue(model.is_string_type_alias(type))
+        for type in ['Vector<String>', 'std::optional<String>', 'StringView', 'API::String']:
+            self.assertFalse(model.is_string_type_alias(type))
+
+
 if __name__ == '__main__':
     unittest.main()

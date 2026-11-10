@@ -60,11 +60,11 @@ public:
     void deref() const final { HTMLElement::deref(); }
 
     URL href() const;
-    NODELETE WEBCORE_EXPORT const AtomString& rel() const;
+    NODELETE WEBCORE_EXPORT const RefPtr<AtomStringImpl>& rel() const;
 
-    AtomString target() const final;
+    RefPtr<AtomStringImpl> target() const final;
 
-    NODELETE const AtomString& type() const;
+    NODELETE const RefPtr<AtomStringImpl>& type() const;
 
     NODELETE std::optional<LinkIconType> iconType() const;
 
@@ -78,10 +78,10 @@ public:
 
     WEBCORE_EXPORT bool mediaAttributeMatches() const;
 
-    WEBCORE_EXPORT String crossOrigin() const;
-    WEBCORE_EXPORT String as() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> crossOrigin() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> as() const;
 
-    void dispatchPendingEvent(LinkEventSender*, const AtomString& eventType);
+    void dispatchPendingEvent(LinkEventSender*, AtomStringImpl* eventType);
     static void dispatchPendingLoadEvents(Page*);
 
     WEBCORE_EXPORT DOMTokenList& relList();
@@ -93,10 +93,10 @@ public:
 
     void allowPrefetchLoadAndErrorForTesting() { m_allowPrefetchLoadAndErrorForTesting = true; }
 
-    String referrerPolicyForBindings() const;
+    RefPtr<StringImpl> referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const;
 
-    String fetchPriorityForBindings() const;
+    RefPtr<StringImpl> fetchPriorityForBindings() const;
     RequestPriority fetchPriority() const;
 
     // If element is specified, checks if that Element satisfies the link.
@@ -104,7 +104,7 @@ public:
     void processInternalResourceLink(Element* = nullptr);
 
 private:
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
 
     bool shouldLoadLink() final;
     void process();
@@ -122,7 +122,7 @@ private:
     void initializeStyleSheet(Ref<StyleSheetContents>&&, const CachedCSSStyleSheet&, const CSSParserContext&);
 
     // from CachedResourceClient
-    void setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet&) final;
+    void setCSSStyleSheet(StringImpl* href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet&) final;
     bool sheetLoaded() final;
     void notifyLoadedSheetAndAllCriticalSubresources(bool errorOccurred) final;
     void startLoadingDynamicSheet() final;
@@ -142,7 +142,7 @@ private:
 
     void finishParsingChildren() final;
 
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
     enum class PendingSheetType : uint8_t { Unknown, Active, Inactive };
     void addPendingSheet(PendingSheetType);
@@ -159,9 +159,9 @@ private:
         Disabled
     };
 
-    String m_type;
-    String m_media;
-    String m_integrityMetadataForPendingSheetRequest;
+    RefPtr<StringImpl> m_type;
+    RefPtr<StringImpl> m_media;
+    RefPtr<StringImpl> m_integrityMetadataForPendingSheetRequest;
     URL m_url;
     const std::unique_ptr<DOMTokenList> m_sizes;
     const std::unique_ptr<DOMTokenList> m_relList;

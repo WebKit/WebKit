@@ -49,11 +49,11 @@
 
 namespace WebCore {
 
-ContentFilterUnblockHandler::ContentFilterUnblockHandler(String unblockURLHost, UnblockRequesterFunction&& unblockRequester)
+ContentFilterUnblockHandler::ContentFilterUnblockHandler(RefPtr<StringImpl> unblockURLHost, UnblockRequesterFunction&& unblockRequester)
     : m_unblockURLHost { WTF::move(unblockURLHost) }
     , m_unblockRequester { WTF::move(unblockRequester) }
 {
-    LOG(ContentFiltering, "Creating ContentFilterUnblockHandler with an unblock requester and unblock URL host <%s>.\n", m_unblockURLHost.utf8());
+    LOG(ContentFiltering, "Creating ContentFilterUnblockHandler with an unblock requester and unblock URL host <%s>.\n", utf8(m_unblockURLHost));
 }
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
@@ -62,16 +62,16 @@ ContentFilterUnblockHandler::ContentFilterUnblockHandler(const URL& evaluatedURL
 {
 }
 #elif HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
-ContentFilterUnblockHandler::ContentFilterUnblockHandler(String unblockURLHost, RetainPtr<WebFilterEvaluator> evaluator)
+ContentFilterUnblockHandler::ContentFilterUnblockHandler(RefPtr<StringImpl> unblockURLHost, RetainPtr<WebFilterEvaluator> evaluator)
     : m_unblockURLHost { WTF::move(unblockURLHost) }
     , m_webFilterEvaluator { WTF::move(evaluator) }
 {
-    LOG(ContentFiltering, "Creating ContentFilterUnblockHandler with a WebFilterEvaluator and unblock URL host <%s>.\n", m_unblockURLHost.utf8());
+    LOG(ContentFiltering, "Creating ContentFilterUnblockHandler with a WebFilterEvaluator and unblock URL host <%s>.\n", utf8(m_unblockURLHost));
 }
 #endif
 
 ContentFilterUnblockHandler::ContentFilterUnblockHandler(
-    String&& unblockURLHost,
+    RefPtr<StringImpl>&& unblockURLHost,
     URL&& unreachableURL,
 #if HAVE(WEBCONTENTRESTRICTIONS)
     std::optional<URL>&& evaluatedURL,
@@ -152,7 +152,7 @@ bool ContentFilterUnblockHandler::canHandleRequest(const ResourceRequest& reques
     bool isUnblockRequest = request.url().protocolIs(ContentFilter::urlScheme()) && equalIgnoringASCIICase(request.url().host(), m_unblockURLHost);
 #if !LOG_DISABLED
     if (isUnblockRequest)
-        LOG(ContentFiltering, "ContentFilterUnblockHandler will handle <%s> as an unblock request.\n", request.url().string().utf8());
+        LOG(ContentFiltering, "ContentFilterUnblockHandler will handle <%s> as an unblock request.\n", utf8(request.url().string()));
 #endif
     return isUnblockRequest;
 }

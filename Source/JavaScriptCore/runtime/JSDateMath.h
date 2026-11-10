@@ -107,7 +107,7 @@ public:
     bool takeMayHaveCachedLocalGregorianDateTime() { return std::exchange(m_mayHaveCachedLocalGregorianDateTime, false); }
 
     TimeZone defaultTimeZone();
-    String timeZoneDisplayName(bool isDST);
+    RefPtr<StringImpl> timeZoneDisplayName(bool isDST);
 
     // Whether to consult the cross-instance memo. It pays off for a Date built from a time value
     // some other Date has already decomposed, and costs a probe for one being walked forward.
@@ -115,7 +115,7 @@ public:
     PlainGregorianDateTime msToGregorianDateTime(double millisecondsFromEpoch, TimeType outputTimeType, UseSharedCache = UseSharedCache::Yes);
     double gregorianDateTimeToMS(int32_t year, int32_t month, int32_t monthDay, int32_t hour, int32_t minute, int32_t second, double milliseconds, TimeType);
     double localTimeToMS(double milliseconds, TimeType);
-    JS_EXPORT_PRIVATE double parseDate(JSGlobalObject*, VM&, const WTF::String&);
+    JS_EXPORT_PRIVATE double parseDate(JSGlobalObject*, VM&, StringImpl*);
 
 private:
     class DSTCache {
@@ -215,13 +215,13 @@ private:
     std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter> m_timeZoneCache;
     std::array<DSTCache, 2> m_caches;
     std::optional<YearMonthDayCache> m_yearMonthDayCache;
-    String m_cachedDateString;
+    RefPtr<StringImpl> m_cachedDateString;
     double m_cachedDateStringValue;
     std::array<BrokenDownDateCache, 2> m_brokenDownDateCaches;
     uint64_t m_cachedTimeZoneID { 0 };
     bool m_mayHaveCachedLocalGregorianDateTime { false };
-    String m_timeZoneStandardDisplayNameCache;
-    String m_timeZoneDSTDisplayNameCache;
+    RefPtr<StringImpl> m_timeZoneStandardDisplayNameCache;
+    RefPtr<StringImpl> m_timeZoneDSTDisplayNameCache;
 };
 
 ALWAYS_INLINE bool isUTCEquivalent(StringView timeZone)

@@ -45,7 +45,7 @@ struct UScriptCodeHashTraits : HashTraits<int> {
     static bool isDeletedValue(int value) { return value == -3; }
 };
 
-using ScriptFontFamilyMap = HashMap<int, String, DefaultHash<int>, UScriptCodeHashTraits>;
+using ScriptFontFamilyMap = HashMap<int, RefPtr<StringImpl>, DefaultHash<int>, UScriptCodeHashTraits>;
 
 class FontGenericFamilies {
     WTF_MAKE_TZONE_ALLOCATED(FontGenericFamilies);
@@ -55,25 +55,25 @@ public:
     FontGenericFamilies isolatedCopy() const &;
     FontGenericFamilies isolatedCopy() &&;
 
-    const String& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
-    const String& fixedFontFamily(UScriptCode = USCRIPT_COMMON) const;
-    const String& serifFontFamily(UScriptCode = USCRIPT_COMMON) const;
-    const String& sansSerifFontFamily(UScriptCode = USCRIPT_COMMON) const;
-    const String& cursiveFontFamily(UScriptCode = USCRIPT_COMMON) const;
-    const String& fantasyFontFamily(UScriptCode = USCRIPT_COMMON) const;
-    const String& pictographFontFamily(UScriptCode = USCRIPT_COMMON) const;
-    const String& mathFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    const RefPtr<StringImpl>& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    const RefPtr<StringImpl>& fixedFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    const RefPtr<StringImpl>& serifFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    const RefPtr<StringImpl>& sansSerifFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    const RefPtr<StringImpl>& cursiveFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    const RefPtr<StringImpl>& fantasyFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    const RefPtr<StringImpl>& pictographFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    const RefPtr<StringImpl>& mathFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
-    const String* fontFamily(WebKitFontFamilyNames::FamilyNamesIndex, UScriptCode = USCRIPT_COMMON) const;
+    const RefPtr<StringImpl>* fontFamily(WebKitFontFamilyNames::FamilyNamesIndex, UScriptCode = USCRIPT_COMMON) const;
 
-    bool setStandardFontFamily(const String&, UScriptCode);
-    bool setFixedFontFamily(const String&, UScriptCode);
-    bool setSerifFontFamily(const String&, UScriptCode);
-    bool setSansSerifFontFamily(const String&, UScriptCode);
-    bool setCursiveFontFamily(const String&, UScriptCode);
-    bool setFantasyFontFamily(const String&, UScriptCode);
-    bool setPictographFontFamily(const String&, UScriptCode);
-    bool setMathFontFamily(const String&, UScriptCode);
+    bool setStandardFontFamily(StringImpl*, UScriptCode);
+    bool setFixedFontFamily(StringImpl*, UScriptCode);
+    bool setSerifFontFamily(StringImpl*, UScriptCode);
+    bool setSansSerifFontFamily(StringImpl*, UScriptCode);
+    bool setCursiveFontFamily(StringImpl*, UScriptCode);
+    bool setFantasyFontFamily(StringImpl*, UScriptCode);
+    bool setPictographFontFamily(StringImpl*, UScriptCode);
+    bool setMathFontFamily(StringImpl*, UScriptCode);
 
     bool operator==(const FontGenericFamilies&) const = default;
 
@@ -110,7 +110,7 @@ private:
         }
     };
 
-    bool setFontFamily(ScriptFontFamilyMap Families::*, const String&, UScriptCode);
+    bool setFontFamily(ScriptFontFamilyMap Families::*, StringImpl*, UScriptCode);
 
     DataRef<Families> m_families;
 };

@@ -36,14 +36,14 @@ struct CSSSelectorParserContext;
 // The universal pseudo-element argument (::highlight(*), ::view-transition-group(*), etc.)
 // is represented by this otherwise-invalid <custom-ident> value (a real name can never be
 // empty).
-inline const AtomString& universalPseudoElementNameAtom() { return emptyAtom(); }
+inline const RefPtr<AtomStringImpl>& universalPseudoElementNameAtom() { return emptyAtom(); }
 
 struct PossiblyQuotedIdentifier {
-    AtomString identifier;
+    RefPtr<AtomStringImpl> identifier;
     bool wasQuoted { false };
 
     bool operator==(const PossiblyQuotedIdentifier&) const = default;
-    bool isNull() const { return identifier.isNull(); }
+    bool isNull() const { return !identifier; }
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, PossiblyQuotedIdentifier);
@@ -70,7 +70,7 @@ public:
     CSSSelector& operator=(CSSSelector&&);
 
     // Re-create selector text from selector's data.
-    String selectorText(StringView separator = { }, StringView rightSide = { }) const;
+    RefPtr<StringImpl> selectorText(StringView separator = { }, StringView rightSide = { }) const;
 
     unsigned computeSpecificity() const;
     std::array<uint8_t, 3> computeSpecificityTuple() const;
@@ -155,15 +155,15 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     NODELETE const CSSSelector* followingInCompound() const;
 
     const QualifiedName& tagQName() const LIFETIME_BOUND;
-    const AtomString& tagLowercaseLocalName() const LIFETIME_BOUND;
+    const RefPtr<AtomStringImpl>& tagLowercaseLocalName() const LIFETIME_BOUND;
 
-    const AtomString& value() const LIFETIME_BOUND;
-    const AtomString& serializingValue() const LIFETIME_BOUND;
+    const RefPtr<AtomStringImpl>& value() const LIFETIME_BOUND;
+    const RefPtr<AtomStringImpl>& serializingValue() const LIFETIME_BOUND;
     const QualifiedName& attribute() const LIFETIME_BOUND;
-    const AtomString& argument() const LIFETIME_BOUND { return m_hasRareData ? m_data.rareData->argument : nullAtom(); }
+    const RefPtr<AtomStringImpl>& argument() const LIFETIME_BOUND { return m_hasRareData ? m_data.rareData->argument : nullAtom(); }
     AttributeMatchType attributeMatchType() const;
     const FixedVector<int>* integerList() const LIFETIME_BOUND { return m_hasRareData ? std::get_if<FixedVector<int>>(&m_data.rareData->argumentList) : nullptr; }
-    const FixedVector<AtomString>* stringList() const LIFETIME_BOUND { return m_hasRareData ? std::get_if<FixedVector<AtomString>>(&m_data.rareData->argumentList) : nullptr; }
+    const FixedVector<RefPtr<AtomStringImpl>>* stringList() const LIFETIME_BOUND { return m_hasRareData ? std::get_if<FixedVector<RefPtr<AtomStringImpl>>>(&m_data.rareData->argumentList) : nullptr; }
     const FixedVector<PossiblyQuotedIdentifier>* langList() const LIFETIME_BOUND { return m_hasRareData ? std::get_if<FixedVector<PossiblyQuotedIdentifier>>(&m_data.rareData->argumentList) : nullptr; }
     const CSSSelectorList* selectorList() const LIFETIME_BOUND { return m_hasRareData ? m_data.rareData->selectorList.get() : nullptr; }
     CSSSelectorList* selectorList() LIFETIME_BOUND { return m_hasRareData ? m_data.rareData->selectorList.get() : nullptr; }
@@ -211,13 +211,13 @@ private:
     friend class CSSSelectorList;
     friend class MutableCSSSelector;
 
-    void setValue(const AtomString&, bool matchLowerCase = false);
+    void setValue(AtomStringImpl*, bool matchLowerCase = false);
 
     void setAttribute(const QualifiedName&, AttributeMatchType);
     void setNth(int a, int b);
-    void setArgument(const AtomString&);
+    void setArgument(AtomStringImpl*);
     void setIntegerList(FixedVector<int>);
-    void setStringList(FixedVector<AtomString>);
+    void setStringList(FixedVector<RefPtr<AtomStringImpl>>);
     void setLangList(FixedVector<PossiblyQuotedIdentifier>);
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
@@ -256,7 +256,7 @@ private:
 
     struct RareData : public RefCounted<RareData> {
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(RareData);
-        static Ref<RareData> create(AtomString);
+        static Ref<RareData> create(RefPtr<AtomStringImpl>);
         WEBCORE_EXPORT ~RareData();
 
         bool equals(const RareData&) const;
@@ -266,20 +266,20 @@ private:
         // For quirks mode, class and id are case-insensitive. In the case where uppercase
         // letters are used in quirks mode, |m_matchingValue| holds the lowercase class/id
         // and |m_serializingValue| holds the original string.
-        AtomString matchingValue;
-        AtomString serializingValue;
+        RefPtr<AtomStringImpl> matchingValue;
+        RefPtr<AtomStringImpl> serializingValue;
 
         int a { 0 }; // Used for :nth-*
         int b { 0 }; // Used for :nth-*
         QualifiedName attribute; // used for attribute selector
-        AtomString argument; // Used for :contains and :nth-*
-        Variant<std::monostate, FixedVector<int>, FixedVector<AtomString>, FixedVector<PossiblyQuotedIdentifier>> argumentList; // Used for :heading (int), :active-view-transition-type/::highlight/::view-transition-*/::part (AtomString), :lang (PossiblyQuotedIdentifier)
+        RefPtr<AtomStringImpl> argument; // Used for :contains and :nth-*
+        Variant<std::monostate, FixedVector<int>, FixedVector<RefPtr<AtomStringImpl>>, FixedVector<PossiblyQuotedIdentifier>> argumentList; // Used for :heading (int), :active-view-transition-type/::highlight/::view-transition-*/::part (AtomString), :lang (PossiblyQuotedIdentifier)
         std::unique_ptr<CSSSelectorList> selectorList; // Used for :is(), :matches(), and :not().
 
         Ref<RareData> deepCopy() const;
 
     private:
-        RareData(AtomString&& value);
+        RareData(RefPtr<AtomStringImpl>&& value);
         RareData(const RareData& other);
     };
     void createRareData();
@@ -301,7 +301,7 @@ bool complexSelectorsEqual(const CSSSelector&, const CSSSelector&, ComplexSelect
 
 NODELETE void addComplexSelector(Hasher&, const CSSSelector&, ComplexSelectorsEqualMode = ComplexSelectorsEqualMode::Full);
 
-inline bool operator==(const PossiblyQuotedIdentifier& a, const AtomString& b) { return a.identifier == b; }
+inline bool operator==(const PossiblyQuotedIdentifier& a, AtomStringImpl* b) { return a.identifier == b; }
 
 inline const QualifiedName& CSSSelector::attribute() const
 {
@@ -369,10 +369,10 @@ inline bool CSSSelector::isAttributeSelector() const
         || match() == CSSSelector::Match::End;
 }
 
-inline void CSSSelector::setValue(const AtomString& value, bool matchLowerCase)
+inline void CSSSelector::setValue(AtomStringImpl* value, bool matchLowerCase)
 {
     ASSERT(match() != Match::Tag);
-    auto matchingValue = matchLowerCase ? value.convertToASCIILowercase() : value;
+    auto matchingValue = matchLowerCase ? convertToASCIILowercase(value) : RefPtr<AtomStringImpl> { value };
     if (!m_hasRareData && matchingValue != value)
         createRareData();
 
@@ -380,7 +380,7 @@ inline void CSSSelector::setValue(const AtomString& value, bool matchLowerCase)
     if (!m_hasRareData) {
         if (m_data.value)
             m_data.value->deref();
-        m_data.value = value.impl();
+        m_data.value = value;
         m_data.value->ref();
         return;
     }
@@ -436,29 +436,29 @@ inline const QualifiedName& CSSSelector::tagQName() const
     return *reinterpret_cast<const QualifiedName*>(&m_data.tagQName);
 }
 
-inline const AtomString& CSSSelector::tagLowercaseLocalName() const
+inline const RefPtr<AtomStringImpl>& CSSSelector::tagLowercaseLocalName() const
 {
     return tagQName().localNameLowercase();
 }
 
-inline const AtomString& CSSSelector::value() const
+inline const RefPtr<AtomStringImpl>& CSSSelector::value() const
 {
     ASSERT(match() != Match::Tag);
     if (m_hasRareData)
         return m_data.rareData->matchingValue;
 
     // AtomString is really just an AtomStringImpl* so the cast below is safe.
-    return *reinterpret_cast<const AtomString*>(&m_data.value);
+    return *reinterpret_cast<const RefPtr<AtomStringImpl>*>(&m_data.value);
 }
 
-inline const AtomString& CSSSelector::serializingValue() const
+inline const RefPtr<AtomStringImpl>& CSSSelector::serializingValue() const
 {
     ASSERT(match() != Match::Tag);
     if (m_hasRareData)
         return m_data.rareData->serializingValue;
 
     // AtomString is really just an AtomStringImpl* so the cast below is safe.
-    return *reinterpret_cast<const AtomString*>(&m_data.value);
+    return *reinterpret_cast<const RefPtr<AtomStringImpl>*>(&m_data.value);
 }
 
 inline auto CSSSelector::attributeMatchType() const -> AttributeMatchType

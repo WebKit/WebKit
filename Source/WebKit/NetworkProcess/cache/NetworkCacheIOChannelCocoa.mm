@@ -53,7 +53,7 @@ NODELETE static long dispatchQueueIdentifier(WorkQueue::QOS qos)
     }
 }
 
-IOChannel::IOChannel(const String& filePath, Type type, std::optional<WorkQueue::QOS> qos)
+IOChannel::IOChannel(StringImpl* filePath, Type type, std::optional<WorkQueue::QOS> qos)
 {
     auto path = FileSystem::fileSystemRepresentation(filePath);
     int oflag;

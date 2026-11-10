@@ -281,7 +281,7 @@ bool UnevaluatedCalcBase::canBeCastedTo(Category targetCategory) const
     return false;
 }
 
-WTF::String UnevaluatedCalcBase::serializationForCSS(const SerializationContext& context) const
+RefPtr<StringImpl> UnevaluatedCalcBase::serializationForCSS(const SerializationContext& context) const
 {
     auto options = CSSCalc::SerializationOptions {
         .range = calcValue().range(),

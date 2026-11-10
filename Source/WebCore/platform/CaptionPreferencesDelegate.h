@@ -36,7 +36,7 @@ public:
     virtual ~CaptionPreferencesDelegate() { }
 
     virtual void setDisplayMode(CaptionUserPreferences::CaptionDisplayMode) { }
-    virtual void setPreferredLanguage(const String&) { }
+    virtual void setPreferredLanguage(StringImpl*) { }
 };
 
 } // namespace WebCore

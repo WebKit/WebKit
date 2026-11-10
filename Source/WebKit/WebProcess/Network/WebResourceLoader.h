@@ -114,7 +114,7 @@ private:
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
-    void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler&&, String&& unblockRequestDeniedScript, const WebCore::ResourceError&, const URL& blockedPageURL, WebCore::SubstituteData&&);
+    void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler&&, RefPtr<StringImpl>&& unblockRequestDeniedScript, const WebCore::ResourceError&, const URL& blockedPageURL, WebCore::SubstituteData&&);
 #endif
 
     NODELETE size_t calculateBytesTransferredOverNetworkDelta(size_t bytesTransferredOverNetwork);

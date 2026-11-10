@@ -38,9 +38,9 @@ public:
     virtual ~SpeechSynthesisVoice() = default;
     NODELETE static Ref<SpeechSynthesisVoice> create(PlatformSpeechSynthesisVoice&);
 
-    const String& voiceURI() const LIFETIME_BOUND { return m_platformVoice->voiceURI(); }
-    const String& name() const LIFETIME_BOUND { return m_platformVoice->name(); }
-    const String& lang() const LIFETIME_BOUND { return m_platformVoice->lang(); }
+    const RefPtr<StringImpl>& voiceURI() const LIFETIME_BOUND { return m_platformVoice->voiceURI(); }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_platformVoice->name(); }
+    const RefPtr<StringImpl>& lang() const LIFETIME_BOUND { return m_platformVoice->lang(); }
     bool localService() const { return m_platformVoice->localService(); }
     bool isDefault() const { return m_platformVoice->isDefault(); }
 

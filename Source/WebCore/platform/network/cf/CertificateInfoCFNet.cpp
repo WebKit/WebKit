@@ -99,7 +99,7 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
 #if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
     RetainPtr leafCertificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), 0));
     RetainPtr subjectCF = adoptCF(SecCertificateCopySubjectSummary(leafCertificate.get()));
-    summaryInfo.subject = subjectCF.get();
+    summaryInfo.subject = StringImpl::create(subjectCF.get());
 #endif
 
 #if PLATFORM(MAC)
@@ -124,7 +124,7 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
             if (RetainPtr dnsNamesArray = checked_cf_cast<CFArrayRef>(CFDictionaryGetValue(dnsNames.get(), CFSTR("value")))) {
                 for (CFIndex i = 0, count = CFArrayGetCount(dnsNamesArray.get()); i < count; ++i) {
                     if (RetainPtr dnsName = checked_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(dnsNamesArray.get(), i)))
-                        summaryInfo.dnsNames.append(dnsName.get());
+                        summaryInfo.dnsNames.append(StringImpl::create(dnsName.get()));
                 }
             }
         }
@@ -133,7 +133,7 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
             if (RetainPtr ipAddressesArray = checked_cf_cast<CFArrayRef>(CFDictionaryGetValue(ipAddresses.get(), CFSTR("value")))) {
                 for (CFIndex i = 0, count = CFArrayGetCount(ipAddressesArray.get()); i < count; ++i) {
                     if (RetainPtr ipAddress = checked_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(ipAddressesArray.get(), i)))
-                        summaryInfo.ipAddresses.append(ipAddress.get());
+                        summaryInfo.ipAddresses.append(StringImpl::create(ipAddress.get()));
                 }
             }
         }

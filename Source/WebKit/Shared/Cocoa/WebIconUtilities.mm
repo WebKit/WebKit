@@ -169,14 +169,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return thumbnailSizedImageForImage(imageRef.get());
 }
 
-RetainPtr<CocoaImage> iconForFiles(const Vector<String>& filenames)
+RetainPtr<CocoaImage> iconForFiles(const Vector<RefPtr<StringImpl>>& filenames)
 {
     if (!filenames.size())
         return nil;
 
     // FIXME: We should generate an icon showing multiple files here, if applicable. Currently, if there are multiple
     // files, we only use the first URL to generate an icon.
-    RetainPtr file = adoptNS([[NSURL alloc] initFileURLWithPath:borrow(filenames)[0].createNSString().get() isDirectory:NO]);
+    RetainPtr file = adoptNS([[NSURL alloc] initFileURLWithPath:createNSString(borrow(filenames)[0]).get() isDirectory:NO]);
     if (!file)
         return nil;
 

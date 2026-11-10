@@ -42,7 +42,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PasswordInputType);
 
-const AtomString& PasswordInputType::formControlType() const
+const RefPtr<AtomStringImpl>& PasswordInputType::formControlType() const
 {
     return InputTypeNames::password();
 }

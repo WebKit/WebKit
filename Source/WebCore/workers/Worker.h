@@ -67,7 +67,7 @@ public:
 
     USING_CAN_MAKE_WEAKPTR(AbstractWorker);
 
-    static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, Variant<Ref<TrustedScriptURL>, String>&&, WorkerOptions&&);
+    static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, Variant<Ref<TrustedScriptURL>, RefPtr<StringImpl>>&&, WorkerOptions&&);
     virtual ~Worker();
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
@@ -76,13 +76,13 @@ public:
     void terminate();
     bool wasTerminated() const { return m_wasTerminated; }
 
-    String identifier() const { return m_identifier; }
-    const String& name() const LIFETIME_BOUND { return m_options.name; }
+    RefPtr<StringImpl> identifier() const { return m_identifier; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_options.name; }
 
     ScriptExecutionContext* scriptExecutionContext() const final;
 
     void dispatchEvent(Event&) final;
-    void reportError(const String&);
+    void reportError(StringImpl*);
 
 #if ENABLE(WEB_RTC)
     void createRTCRtpScriptTransformer(RTCRtpScriptTransform&, MessageWithMessagePorts&&);
@@ -113,7 +113,7 @@ private:
     RefPtr<WorkerScriptLoader> m_scriptLoader;
     URLKeepingBlobAlive m_blobURLExtension;
     const WorkerOptions m_options;
-    String m_identifier;
+    RefPtr<StringImpl> m_identifier;
     WorkerGlobalScopeProxy& m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
     std::optional<ContentSecurityPolicyResponseHeaders> m_contentSecurityPolicyResponseHeaders;
     MonotonicTime m_workerCreationTime;

@@ -42,74 +42,74 @@ public:
     };
 
     // Create a file with an optional name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
-    WEBCORE_EXPORT static Ref<File> create(ScriptExecutionContext*, const String& path, const String& replacementPath = { }, const String& nameOverride = { }, const std::optional<FileSystem::PlatformFileID>& fileID = { });
+    WEBCORE_EXPORT static Ref<File> create(ScriptExecutionContext*, StringImpl* path, StringImpl* replacementPath = nullptr, StringImpl* nameOverride = nullptr, const std::optional<FileSystem::PlatformFileID>& fileID = { });
 
     // Create a File using the 'new File' constructor.
-    static Ref<File> create(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
+    static Ref<File> create(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, StringImpl* filename, const PropertyBag& propertyBag)
     {
         auto file = adoptRef(*new File(context, WTF::move(blobPartVariants), filename, propertyBag));
         file->suspendIfNeeded();
         return file;
     }
 
-    static Ref<File> deserialize(ScriptExecutionContext* context, const String& path, const URL& srcURL, const String& type, const String& name, const std::optional<int64_t>& lastModified = std::nullopt)
+    static Ref<File> deserialize(ScriptExecutionContext* context, StringImpl* path, const URL& srcURL, StringImpl* type, StringImpl* name, const std::optional<int64_t>& lastModified = std::nullopt)
     {
         auto file = adoptRef(*new File(deserializationContructor, context, path, srcURL, type, name, lastModified));
         file->suspendIfNeeded();
         return file;
     }
 
-    static Ref<File> create(ScriptExecutionContext* context, const Blob& blob, const String& name)
+    static Ref<File> create(ScriptExecutionContext* context, const Blob& blob, StringImpl* name)
     {
         auto file = adoptRef(*new File(context, blob, name));
         file->suspendIfNeeded();
         return file;
     }
 
-    static Ref<File> create(ScriptExecutionContext* context, const File& existingFile, const String& name)
+    static Ref<File> create(ScriptExecutionContext* context, const File& existingFile, StringImpl* name)
     {
         auto file = adoptRef(*new File(context, existingFile, name));
         file->suspendIfNeeded();
         return file;
     }
 
-    static Ref<File> createWithRelativePath(ScriptExecutionContext*, const String& path, const String& relativePath);
+    static Ref<File> createWithRelativePath(ScriptExecutionContext*, StringImpl* path, StringImpl* relativePath);
 
-    const String& path() const LIFETIME_BOUND { return m_path; }
-    const String& relativePath() const LIFETIME_BOUND { return m_relativePath; }
-    void setRelativePath(const String& relativePath) { m_relativePath = relativePath; }
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& path() const LIFETIME_BOUND { return m_path; }
+    const RefPtr<StringImpl>& relativePath() const LIFETIME_BOUND { return m_relativePath; }
+    void setRelativePath(StringImpl* relativePath) { m_relativePath = relativePath; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     WEBCORE_EXPORT int64_t lastModified() const; // Number of milliseconds since Epoch.
     const std::optional<int64_t>& lastModifiedOverride() const LIFETIME_BOUND { return m_lastModifiedDateOverride; } // Number of milliseconds since Epoch.
     const std::optional<FileSystem::PlatformFileID> fileID() const { return m_fileID; }
 
-    WEBCORE_EXPORT static String contentTypeForFile(const String& path);
+    WEBCORE_EXPORT static RefPtr<StringImpl> contentTypeForFile(StringImpl* path);
 
 #if ENABLE(FILE_REPLACEMENT)
-    static bool shouldReplaceFile(const String& path);
+    static bool shouldReplaceFile(StringImpl* path);
 #endif
 
     bool isDirectory() const;
 
 private:
-    WEBCORE_EXPORT File(ScriptExecutionContext*, const String& path);
-    File(ScriptExecutionContext*, URL&&, String&& type, String&& path, String&& name);
-    File(ScriptExecutionContext&, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag&);
-    File(ScriptExecutionContext*, URL&&, String&& type, String&& path, String&& name, const std::optional<FileSystem::PlatformFileID>&);
-    File(ScriptExecutionContext*, const Blob&, const String& name);
-    File(ScriptExecutionContext*, const File&, const String& name);
-    File(DeserializationContructor, ScriptExecutionContext*, const String& path, const URL& srcURL, const String& type, const String& name, const std::optional<int64_t>& lastModified);
+    WEBCORE_EXPORT File(ScriptExecutionContext*, StringImpl* path);
+    File(ScriptExecutionContext*, URL&&, RefPtr<StringImpl>&& type, RefPtr<StringImpl>&& path, RefPtr<StringImpl>&& name);
+    File(ScriptExecutionContext&, Vector<BlobPartVariant>&& blobPartVariants, StringImpl* filename, const PropertyBag&);
+    File(ScriptExecutionContext*, URL&&, RefPtr<StringImpl>&& type, RefPtr<StringImpl>&& path, RefPtr<StringImpl>&& name, const std::optional<FileSystem::PlatformFileID>&);
+    File(ScriptExecutionContext*, const Blob&, StringImpl* name);
+    File(ScriptExecutionContext*, const File&, StringImpl* name);
+    File(DeserializationContructor, ScriptExecutionContext*, StringImpl* path, const URL& srcURL, StringImpl* type, StringImpl* name, const std::optional<int64_t>& lastModified);
 
     bool isFile() const final { return true; }
 
-    static void computeNameAndContentType(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType);
+    static void computeNameAndContentType(StringImpl* path, StringImpl* nameOverride, RefPtr<StringImpl>& effectiveName, RefPtr<StringImpl>& effectiveContentType);
 #if ENABLE(FILE_REPLACEMENT)
-    static void computeNameAndContentTypeForReplacedFile(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType);
+    static void computeNameAndContentTypeForReplacedFile(StringImpl* path, StringImpl* nameOverride, RefPtr<StringImpl>& effectiveName, RefPtr<StringImpl>& effectiveContentType);
 #endif
 
-    String m_path;
-    String m_relativePath;
-    String m_name;
+    RefPtr<StringImpl> m_path;
+    RefPtr<StringImpl> m_relativePath;
+    RefPtr<StringImpl> m_name;
 
     std::optional<int64_t> m_lastModifiedDateOverride;
     std::optional<FileSystem::PlatformFileID> m_fileID;

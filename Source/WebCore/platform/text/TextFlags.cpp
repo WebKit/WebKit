@@ -106,7 +106,7 @@ WTF::TextStream& operator<<(TextStream& ts, const FontVariantAlternates& alterna
             builder.append(builder.isEmpty() ? ""_s: " "_s, std::forward<Ts>(args)...);
         };
         // FIXME: These strings needs to be escaped.
-        if (!values.stylistic.isNull())
+        if (values.stylistic)
             append("stylistic("_s, values.stylistic, ')');
         if (values.historicalForms)
             append("historical-forms"_s);
@@ -114,11 +114,11 @@ WTF::TextStream& operator<<(TextStream& ts, const FontVariantAlternates& alterna
             append("styleset("_s, interleave(values.styleset, ", "_s), ')');
         if (!values.characterVariant.isEmpty())
             append("character-variant("_s, interleave(values.characterVariant, ", "_s), ')');
-        if (!values.swash.isNull())
+        if (values.swash)
             append("swash("_s, values.swash, ')');
-        if (!values.ornaments.isNull())
+        if (values.ornaments)
             append("ornaments("_s, values.ornaments, ')');
-        if (!values.annotation.isNull())
+        if (values.annotation)
             append("annotation("_s, values.annotation, ')');
         
         ts << builder.toString();
@@ -332,7 +332,7 @@ FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& varian
         
         if (fontFeatureValues) {
             auto lookupTags = [] (const auto& name, const auto& tags) -> std::span<const unsigned> {
-                if (name.isNull())
+                if (!name)
                     return { };
 
                 auto found = tags.find(name);

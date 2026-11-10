@@ -187,7 +187,7 @@ void Pasteboard::clear()
 
 enum ClipboardDataType { ClipboardDataTypeNone, ClipboardDataTypeURL, ClipboardDataTypeText, ClipboardDataTypeTextHTML };
 
-static ClipboardDataType clipboardTypeFromMIMEType(const String& type)
+static ClipboardDataType clipboardTypeFromMIMEType(StringImpl* type)
 {
     // two special cases for IE compatibility
     if (equalLettersIgnoringASCIICase(type, "text/plain"_s))
@@ -200,7 +200,7 @@ static ClipboardDataType clipboardTypeFromMIMEType(const String& type)
     return ClipboardDataTypeNone;
 }
 
-void Pasteboard::clear(const String& type)
+void Pasteboard::clear(StringImpl* type)
 {
     if (!m_writableDataObject)
         return;
@@ -243,7 +243,7 @@ bool Pasteboard::hasData()
     return !m_dragDataMap.isEmpty();
 }
 
-static void addMIMETypesForFormat(OrderedHashSet<String>& results, const FORMATETC& format)
+static void addMIMETypesForFormat(OrderedHashSet<RefPtr<StringImpl>>& results, const FORMATETC& format)
 {
     if (format.cfFormat == urlFormat()->cfFormat || format.cfFormat == urlWFormat()->cfFormat)
         results.add("text/uri-list"_s);
@@ -278,9 +278,9 @@ int64_t Pasteboard::changeCount() const
     return platformStrategies()->pasteboardStrategy()->changeCount(name());
 }
 
-Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
+Vector<RefPtr<StringImpl>> Pasteboard::typesSafeForBindings(StringImpl* origin)
 {
-    OrderedHashSet<String> domPasteboardTypes;
+    OrderedHashSet<RefPtr<StringImpl>> domPasteboardTypes;
 
     std::optional<PasteboardCustomData> customData = readPasteboardCustomData();
 
@@ -296,21 +296,21 @@ Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
     return copyToVector(domPasteboardTypes);
 }
 
-Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
+Vector<RefPtr<StringImpl>> Pasteboard::typesForLegacyUnsafeBindings()
 {
-    OrderedHashSet<String> results;
+    OrderedHashSet<RefPtr<StringImpl>> results;
 
     if (!m_dataObject && m_dragDataMap.isEmpty())
-        return Vector<String>();
+        return Vector<RefPtr<StringImpl>>();
 
     if (m_dataObject) {
         COMPtr<IEnumFORMATETC> itr;
 
         if (FAILED(m_dataObject->EnumFormatEtc(DATADIR_GET, &itr)))
-            return Vector<String>();
+            return Vector<RefPtr<StringImpl>>();
 
         if (!itr)
-            return Vector<String>();
+            return Vector<RefPtr<StringImpl>>();
 
         FORMATETC data;
 
@@ -328,7 +328,7 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
     return copyToVector(results);
 }
 
-String Pasteboard::readOrigin()
+RefPtr<StringImpl> Pasteboard::readOrigin()
 {
     std::optional<PasteboardCustomData> customData = readPasteboardCustomData();
 
@@ -338,7 +338,7 @@ String Pasteboard::readOrigin()
     return { };
 }
 
-String Pasteboard::readString(const String& type)
+RefPtr<StringImpl> Pasteboard::readString(StringImpl* type)
 {
     if (!m_dataObject && m_dragDataMap.isEmpty())
         return emptyString();
@@ -349,8 +349,8 @@ String Pasteboard::readString(const String& type)
     if (dataType == ClipboardDataTypeURL)
         return m_dataObject ? getURL(m_dataObject.get(), DragData::DoNotConvertFilenames) : getURL(&m_dragDataMap, DragData::DoNotConvertFilenames);
     if (dataType == ClipboardDataTypeTextHTML) {
-        String data = m_dataObject ? getTextHTML(m_dataObject.get()) : getTextHTML(&m_dragDataMap);
-        if (!data.isEmpty())
+        RefPtr<StringImpl> data = m_dataObject ? getTextHTML(m_dataObject.get()) : getTextHTML(&m_dragDataMap);
+        if (!isEmpty(data))
             return data;
         return m_dataObject ? getCFHTML(m_dataObject.get()) : getCFHTML(&m_dragDataMap);
     }
@@ -358,7 +358,7 @@ String Pasteboard::readString(const String& type)
     return emptyString();
 }
 
-String Pasteboard::readStringInCustomData(const String& type)
+RefPtr<StringImpl> Pasteboard::readStringInCustomData(StringImpl* type)
 {
     std::optional<PasteboardCustomData> customData = readPasteboardCustomData();
 
@@ -369,8 +369,8 @@ String Pasteboard::readStringInCustomData(const String& type)
 }
 
 struct PasteboardFileCounter final : PasteboardFileReader {
-    void readFilename(const String&) final { ++count; }
-    void readBuffer(const String&, const String&, Ref<SharedBuffer>&&) final { ++count; }
+    void readFilename(StringImpl*) final { ++count; }
+    void readBuffer(StringImpl*, StringImpl*, Ref<SharedBuffer>&&) final { ++count; }
 
     unsigned count { 0 };
 };
@@ -414,16 +414,16 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t>)
         reader.readFilename(filename);
 }
 
-static bool writeURL(WCDataObject *data, const URL& url, String title, bool withPlainText, bool withHTML)
+static bool writeURL(WCDataObject *data, const URL& url, RefPtr<StringImpl> title, bool withPlainText, bool withHTML)
 {
     ASSERT(data);
 
     if (url.isEmpty())
         return false;
 
-    if (title.isEmpty()) {
+    if (isEmpty(title)) {
         title = url.lastPathComponent().toString();
-        if (title.isEmpty())
+        if (isEmpty(title))
             title = url.host().toString();
     }
 
@@ -458,7 +458,7 @@ static bool writeURL(WCDataObject *data, const URL& url, String title, bool with
     return success;
 }
 
-void Pasteboard::writeString(const String& type, const String& data)
+void Pasteboard::writeString(StringImpl* type, StringImpl* data)
 {
     if (!m_writableDataObject)
         return;
@@ -466,7 +466,7 @@ void Pasteboard::writeString(const String& type, const String& data)
     ClipboardDataType winType = clipboardTypeFromMIMEType(type);
 
     if (winType == ClipboardDataTypeURL) {
-        WebCore::writeURL(m_writableDataObject.get(), URL { data }, String(), false, true);
+        WebCore::writeURL(m_writableDataObject.get(), URL { data }, nullptr, false, true);
         return;
     }
 
@@ -504,7 +504,7 @@ void Pasteboard::writeRangeToDataObject(const SimpleRange& selectedRange, LocalF
     if (medium.hGlobal && FAILED(m_writableDataObject->SetData(htmlFormat(), &medium, TRUE)))
         ::GlobalFree(medium.hGlobal);
 
-    String str = frame.editor().selectedTextForDataTransfer();
+    RefPtr<StringImpl> str = frame.editor().selectedTextForDataTransfer();
     replaceNewlinesWithWindowsStyleNewlines(str);
     replaceNBSPWithSpace(str);
     medium.hGlobal = createGlobalData(str);
@@ -536,7 +536,7 @@ void Pasteboard::writeSelection(const std::optional<SimpleRange>& selectedRange,
     }
     
     // Put plain string on the pasteboard. CF_UNICODETEXT covers CF_TEXT as well
-    String str = shouldSerializeSelectedTextForDataTransfer == IncludeImageAltTextForDataTransfer ? frame.editor().selectedTextForDataTransfer() : frame.editor().selectedText();
+    RefPtr<StringImpl> str = shouldSerializeSelectedTextForDataTransfer == IncludeImageAltTextForDataTransfer ? frame.editor().selectedTextForDataTransfer() : frame.editor().selectedText();
     replaceNewlinesWithWindowsStyleNewlines(str);
     replaceNBSPWithSpace(str);
     if (::OpenClipboard(m_owner)) {
@@ -557,7 +557,7 @@ void Pasteboard::writeSelection(const std::optional<SimpleRange>& selectedRange,
     writeRangeToDataObject(*selectedRange, frame);
 }
 
-void Pasteboard::writePlainTextToDataObject(const String& text, SmartReplaceOption)
+void Pasteboard::writePlainTextToDataObject(StringImpl* text, SmartReplaceOption)
 {
     if (!m_writableDataObject)
         return;
@@ -565,7 +565,7 @@ void Pasteboard::writePlainTextToDataObject(const String& text, SmartReplaceOpti
     STGMEDIUM medium { };
     medium.tymed = TYMED_HGLOBAL;
 
-    String str = text;
+    RefPtr<StringImpl> str = text;
     replaceNewlinesWithWindowsStyleNewlines(str);
     replaceNBSPWithSpace(str);
     medium.hGlobal = createGlobalData(str);
@@ -573,12 +573,12 @@ void Pasteboard::writePlainTextToDataObject(const String& text, SmartReplaceOpti
         ::GlobalFree(medium.hGlobal);        
 }
 
-void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartReplaceOption)
+void Pasteboard::writePlainText(StringImpl* text, SmartReplaceOption smartReplaceOption)
 {
     clear();
 
     // Put plain string on the pasteboard. CF_UNICODETEXT covers CF_TEXT as well
-    String str = text;
+    RefPtr<StringImpl> str = text;
     replaceNewlinesWithWindowsStyleNewlines(str);
     if (::OpenClipboard(m_owner)) {
         HGLOBAL cbData = createGlobalData(str);
@@ -612,16 +612,16 @@ static inline void pathRemoveBadFSCharacters(PWSTR psz, size_t length)
     psz[writeTo] = 0;
 }
 
-static String fileSystemPathFromURLOrTitle(const String& urlString, const String& title, const String& extension, bool isLink)
+static RefPtr<StringImpl> fileSystemPathFromURLOrTitle(StringImpl* urlString, StringImpl* title, StringImpl* extension, bool isLink)
 {
     static const size_t fsPathMaxLengthExcludingNullTerminator = MAX_PATH - 1;
     bool usedURL = false;
     std::array<char16_t, MAX_PATH> fsPathBuffer;
     fsPathBuffer[0] = 0;
-    int fsPathMaxLengthExcludingExtension = fsPathMaxLengthExcludingNullTerminator - extension.length();
+    int fsPathMaxLengthExcludingExtension = fsPathMaxLengthExcludingNullTerminator - length(extension);
 
-    if (!title.isEmpty()) {
-        size_t len = std::min<size_t>(title.length(), fsPathMaxLengthExcludingExtension);
+    if (!isEmpty(title)) {
+        size_t len = std::min<size_t>(length(title), fsPathMaxLengthExcludingExtension);
         StringView(title).left(len).getCharacters(std::span<char16_t> { fsPathBuffer });
         fsPathBuffer[len] = 0;
         pathRemoveBadFSCharacters(wcharFrom(fsPathBuffer.data()), len);
@@ -639,19 +639,19 @@ static String fileSystemPathFromURLOrTitle(const String& urlString, const String
             len = std::min<DWORD>(fsPathMaxLengthExcludingExtension, lastComponent.length());
             lastComponent.left(len).getCharacters(std::span<char16_t> { fsPathBuffer });
         } else {
-            len = std::min<DWORD>(fsPathMaxLengthExcludingExtension, urlString.length());
+            len = std::min<DWORD>(fsPathMaxLengthExcludingExtension, length(urlString));
             StringView(urlString).left(len).getCharacters(std::span<char16_t> { fsPathBuffer });
         }
         fsPathBuffer[len] = 0;
         pathRemoveBadFSCharacters(wcharFrom(fsPathBuffer.data()), len);
     }
 
-    if (extension.isEmpty())
-        return String(wcharFrom(fsPathBuffer.data()));
+    if (isEmpty(extension))
+        return StringImpl::create(wcharFrom(fsPathBuffer.data()));
 
     if (!isLink && usedURL) {
-        PathRenameExtension(wcharFrom(fsPathBuffer.data()), extension.wideCharacters().span().data());
-        return String(wcharFrom(fsPathBuffer.data()));
+        PathRenameExtension(wcharFrom(fsPathBuffer.data()), wideCharacters(extension).span().data());
+        return StringImpl::create(wcharFrom(fsPathBuffer.data()));
     }
 
     return makeString(const_cast<const char16_t*>(fsPathBuffer.data()), extension);
@@ -700,20 +700,20 @@ exit:
     return hr;
 }
 
-void Pasteboard::writeURLToDataObject(const URL& kurl, const String& titleStr)
+void Pasteboard::writeURLToDataObject(const URL& kurl, StringImpl* titleStr)
 {
     if (!m_writableDataObject)
         return;
     WebCore::writeURL(m_writableDataObject.get(), kurl, titleStr, true, true);
 
-    String url = kurl.string();
-    ASSERT(url.containsOnlyASCII()); // URL::string() is URL encoded.
+    RefPtr<StringImpl> url = kurl.string();
+    ASSERT(containsOnlyASCII(url)); // URL::string() is URL encoded.
 
-    String fsPath = fileSystemPathFromURLOrTitle(url, titleStr, ".URL"_s, true);
+    RefPtr<StringImpl> fsPath = fileSystemPathFromURLOrTitle(url, titleStr, ".URL"_si, true);
     auto contentString = makeString("[InternetShortcut]\r\nURL="_s, url, "\r\n"_s);
-    auto content = contentString.latin1();
+    auto content = latin1(contentString);
 
-    if (fsPath.length() <= 0)
+    if (length(fsPath) <= 0)
         return;
 
     HGLOBAL urlFileDescriptor = GlobalAlloc(GPTR, sizeof(FILEGROUPDESCRIPTOR));
@@ -737,7 +737,7 @@ void Pasteboard::writeURLToDataObject(const URL& kurl, const String& titleStr)
     fgd->fgd[0].dwFlags = FD_FILESIZE;
     fgd->fgd[0].nFileSizeLow = content.length();
 
-    unsigned maxSize = std::min<unsigned>(fsPath.length(), std::size(fgd->fgd[0].cFileName));
+    unsigned maxSize = std::min<unsigned>(length(fsPath), std::size(fgd->fgd[0].cFileName));
     StringView(fsPath).left(maxSize).getCharacters(spanReinterpretCast<char16_t>(std::span<wchar_t> { fgd->fgd[0].cFileName }));
     GlobalUnlock(urlFileDescriptor);
 
@@ -759,10 +759,10 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
 
     clear();
 
-    String title(pasteboardURL.title);
-    if (title.isEmpty()) {
+    RefPtr<StringImpl> title(pasteboardURL.title);
+    if (isEmpty(title)) {
         title = pasteboardURL.url.lastPathComponent().toString();
-        if (title.isEmpty())
+        if (isEmpty(title))
             title = pasteboardURL.url.host().toString();
     }
 
@@ -825,7 +825,7 @@ void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std:
     if (::IsClipboardFormatAvailable(CF_TEXT) && ::OpenClipboard(m_owner)) {
         if (HANDLE cbData = ::GetClipboardData(CF_TEXT)) {
             // FIXME: This treats the characters as Latin-1, not UTF-8 or even Windows Latin-1. Is that the right encoding?
-            text.text = String::fromLatin1(static_cast<char*>(GlobalLock(cbData)));
+            text.text = StringImpl::fromLatin1(static_cast<char*>(GlobalLock(cbData)));
             GlobalUnlock(cbData);
             ::CloseClipboard();
             return;
@@ -843,7 +843,7 @@ RefPtr<DocumentFragment> Pasteboard::documentFragment(LocalFrame& frame, const S
         HANDLE cbData = ::GetClipboardData(HTMLClipboardFormat);
         if (cbData) {
             std::span data { static_cast<uint8_t*>(GlobalLock(cbData)), ::GlobalSize(cbData) };
-            String cfhtml(PAL::UTF8Encoding().decode(data));
+            RefPtr<StringImpl> cfhtml(PAL::UTF8Encoding().decode(data));
             GlobalUnlock(cbData);
             ::CloseClipboard();
 
@@ -858,7 +858,7 @@ RefPtr<DocumentFragment> Pasteboard::documentFragment(LocalFrame& frame, const S
             HANDLE cbData = ::GetClipboardData(CF_UNICODETEXT);
             if (cbData) {
                 auto* buffer = static_cast<wchar_t*>(GlobalLock(cbData));
-                String str(buffer);
+                RefPtr<StringImpl> str(buffer);
                 GlobalUnlock(cbData);
                 ::CloseClipboard();
                 return createFragmentFromText(context, str);
@@ -873,7 +873,7 @@ RefPtr<DocumentFragment> Pasteboard::documentFragment(LocalFrame& frame, const S
             HANDLE cbData = ::GetClipboardData(CF_TEXT);
             if (cbData) {
                 char* buffer = static_cast<char*>(GlobalLock(cbData));
-                auto str = String::fromLatin1(buffer);
+                auto str = StringImpl::fromLatin1(buffer);
                 GlobalUnlock(cbData);
                 ::CloseClipboard();
                 return createFragmentFromText(context, str);
@@ -905,12 +905,12 @@ static CachedImage* getCachedImage(Element& element)
     return nullptr;
 }
 
-static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& title, CachedImage* image)
+static HGLOBAL createGlobalImageFileDescriptor(StringImpl* url, StringImpl* title, CachedImage* image)
 {
     ASSERT_ARG(image, image);
     ASSERT(image->image()->data());
 
-    String fsPath;
+    RefPtr<StringImpl> fsPath;
     HGLOBAL memObj = GlobalAlloc(GPTR, sizeof(FILEGROUPDESCRIPTOR));
     if (!memObj)
         return 0;
@@ -926,9 +926,9 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
     fgd->fgd[0].dwFlags = FD_FILESIZE;
     fgd->fgd[0].nFileSizeLow = image->image()->data()->size();
 
-    const String& preferredTitle = title.isEmpty() ? image->response().suggestedFilename() : title;
-    String extension = image->image()->filenameExtension();
-    if (extension.isEmpty()) {
+    RefPtr<StringImpl> preferredTitle = isEmpty(title) ? image->response().suggestedFilename() : RefPtr<StringImpl> { title };
+    RefPtr<StringImpl> extension = image->image()->filenameExtension();
+    if (isEmpty(extension)) {
         // Do not continue processing in the rare and unusual case where a decoded image is not able 
         // to provide a filename extension. Something tricky (like a bait-n-switch) is going on
         GlobalUnlock(memObj);
@@ -937,13 +937,13 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
     }
     fsPath = fileSystemPathFromURLOrTitle(url, preferredTitle, makeString('.', extension), false);
 
-    if (fsPath.length() <= 0) {
+    if (length(fsPath) <= 0) {
         GlobalUnlock(memObj);
         GlobalFree(memObj);
         return 0;
     }
 
-    int maxSize = std::min<int>(fsPath.length(), std::size(fgd->fgd[0].cFileName));
+    int maxSize = std::min<int>(length(fsPath), std::size(fgd->fgd[0].cFileName));
     StringView(fsPath).left(maxSize).getCharacters(spanReinterpretCast<char16_t>(std::span<wchar_t> { fgd->fgd[0].cFileName }));
     GlobalUnlock(memObj);
 
@@ -973,19 +973,19 @@ static HGLOBAL createGlobalImageFileContent(FragmentedSharedBuffer* data)
     return memObj;
 }
 
-static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, FragmentedSharedBuffer* data)
+static HGLOBAL createGlobalHDropContent(const URL& url, RefPtr<StringImpl>& fileName, FragmentedSharedBuffer* data)
 {
-    if (fileName.isEmpty() || !data)
+    if (isEmpty(fileName) || !data)
         return 0;
 
     WCHAR filePath[MAX_PATH];
 
     if (url.protocolIsFile()) {
-        String localPath = PAL::decodeURLEscapeSequences(url.path());
+        RefPtr<StringImpl> localPath = PAL::decodeURLEscapeSequences(url.path());
         // windows does not enjoy a leading slash on paths
-        if (localPath[0] == '/')
-            localPath = localPath.substring(1);
-        auto wideCharacters = localPath.wideCharacters();
+        if (codeUnitAt(localPath, 0) == '/')
+            localPath = substring(localPath, 1);
+        auto wideCharacters = WTF::wideCharacters(localPath);
         LPCWSTR localPathStr = wideCharacters.span().data();
         if (localPathStr && wcslen(localPathStr) + 1 < MAX_PATH)
             wcscpy_s(filePath, MAX_PATH, localPathStr);
@@ -996,7 +996,7 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Fragme
         WCHAR extension[MAX_PATH];
         if (!::GetTempPath(std::size(tempPath), tempPath))
             return 0;
-        if (!::PathAppend(tempPath, fileName.wideCharacters().span().data()))
+        if (!::PathAppend(tempPath, wideCharacters(fileName).span().data()))
             return 0;
         LPCWSTR foundExtension = ::PathFindExtension(tempPath);
         if (foundExtension) {
@@ -1068,7 +1068,7 @@ void Pasteboard::writeImageToDataObject(Element& element, const URL& url)
         return;
     }
 
-    String fileName = cachedImage->response().suggestedFilename();
+    RefPtr<StringImpl> fileName = cachedImage->response().suggestedFilename();
     HGLOBAL hDropContent = createGlobalHDropContent(url, fileName, imageBuffer);
     if (!hDropContent) {
         GlobalFree(imageFileDescriptor);
@@ -1079,12 +1079,12 @@ void Pasteboard::writeImageToDataObject(Element& element, const URL& url)
     writeFileToDataObject(m_writableDataObject.get(), imageFileDescriptor, imageFileContent, hDropContent);
 }
 
-void Pasteboard::writeURLToWritableDataObject(const URL& url, const String& title)
+void Pasteboard::writeURLToWritableDataObject(const URL& url, StringImpl* title)
 {
     WebCore::writeURL(m_writableDataObject.get(), url, title, true, false);
 }
 
-void Pasteboard::writeMarkup(const String& markup)
+void Pasteboard::writeMarkup(StringImpl* markup)
 {
     Vector<char> data;
     markupToCFHTML(markup, emptyString(), data);
@@ -1152,12 +1152,12 @@ void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data, Paste
 
     if (::OpenClipboard(m_owner)) {
         const auto& customData = data.first();
-        customData.forEachPlatformStringOrBuffer([](auto& type, auto& stringOrBuffer) {
-            if (!std::holds_alternative<String>(stringOrBuffer))
+        customData.forEachPlatformStringOrBuffer([](auto* type, auto& stringOrBuffer) {
+            if (!std::holds_alternative<RefPtr<StringImpl>>(stringOrBuffer))
                 return;
 
             ClipboardDataType dataType = clipboardTypeFromMIMEType(type);
-            String str = std::get<String>(stringOrBuffer);
+            RefPtr<StringImpl> str = std::get<RefPtr<StringImpl>>(stringOrBuffer);
             replaceNewlinesWithWindowsStyleNewlines(str);
             HGLOBAL cbData = createGlobalData(str);
 
@@ -1173,7 +1173,7 @@ void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data, Paste
             }
         });
 
-        if (customData.hasSameOriginCustomData() || !customData.origin().isEmpty()) {
+        if (customData.hasSameOriginCustomData() || !isEmpty(customData.origin())) {
             auto sharedBuffer = customData.createSharedBuffer();
             HGLOBAL cbData = createGlobalData(sharedBuffer->span());
             if (cbData && !::SetClipboardData(customDataClipboardFormat(), cbData))

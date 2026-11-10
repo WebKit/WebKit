@@ -55,9 +55,9 @@ bool RemoteWebInspectorUI::canPickColorFromScreen()
     return true;
 }
 
-String RemoteWebInspectorUI::localizedStringsURL() const
+RefPtr<StringImpl> RemoteWebInspectorUI::localizedStringsURL() const
 {
-    return [WKInspectorViewController URLForInspectorResource:@"localizedStrings.js"].absoluteString;
+    return StringImpl::create([WKInspectorViewController URLForInspectorResource:@"localizedStrings.js"].absoluteString);
 }
 
 } // namespace WebKit

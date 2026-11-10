@@ -97,9 +97,9 @@ private:
     void pageClosed() override;
     void didRelaunchProcess() override;
     void preferencesDidChange() override;
-    void toolTipChanged(const String& oldToolTip, const String& newToolTip) override;
-    void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
-    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>) override;
+    void toolTipChanged(StringImpl* oldToolTip, StringImpl* newToolTip) override;
+    void didCommitLoadForMainFrame(StringImpl* mimeType, bool useCustomContentProvider) override;
+    void didFinishLoadingDataForCustomContentProvider(StringImpl* suggestedFilename, std::span<const uint8_t>) override;
     void didChangeContentSize(const WebCore::IntSize&) override;
     void setCursor(const WebCore::Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
@@ -108,10 +108,10 @@ private:
     void clearAllEditCommands() override;
     bool canUndoRedo(UndoOrRedo) override;
     void executeUndoRedo(UndoOrRedo) override;
-    bool executeSavedCommandBySelector(const String& selector) override;
+    bool executeSavedCommandBySelector(StringImpl* selector) override;
     void startDrag(const WebCore::DragItem&, WebCore::ShareableBitmap::Handle&& image, const std::optional<WebCore::NodeIdentifier>&, const std::optional<WebCore::FrameIdentifier>& = std::nullopt) override;
-    void setPromisedDataForImage(const String& pasteboardName, Ref<WebCore::FragmentedSharedBuffer>&& imageBuffer, const String& filename, const String& extension, const String& title,
-        const String& url, const String& visibleURL, RefPtr<WebCore::FragmentedSharedBuffer>&& archiveBuffer, const String& originIdentifier) override;
+    void setPromisedDataForImage(StringImpl* pasteboardName, Ref<WebCore::FragmentedSharedBuffer>&& imageBuffer, StringImpl* filename, StringImpl* extension, StringImpl* title,
+        StringImpl* url, StringImpl* visibleURL, RefPtr<WebCore::FragmentedSharedBuffer>&& archiveBuffer, StringImpl* originIdentifier) override;
     void updateSecureInputState() override;
     void resetSecureInputState() override;
     void notifyInputContextAboutDiscardedComposition() override;
@@ -152,7 +152,7 @@ private:
     void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) override;
+    void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, StringImpl* sourceLanguageIdentifier, StringImpl* targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) override;
     void computeHasVisualSearchResults(const URL&, WebCore::ShareableBitmap&, CompletionHandler<void(bool)>&&) override;
 #endif
 
@@ -169,7 +169,7 @@ private:
 
     RefPtr<WebDateTimePicker> createDateTimePicker(WebPageProxy&) override;
 
-    Ref<WebCore::ValidationBubble> createValidationBubble(String&& message, const WebCore::ValidationBubble::Settings&) final;
+    Ref<WebCore::ValidationBubble> createValidationBubble(RefPtr<StringImpl>&& message, const WebCore::ValidationBubble::Settings&) final;
 
     CALayer *textIndicatorInstallationLayer() override;
 
@@ -189,10 +189,10 @@ private:
 
     void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&) override;
 
-    void showCorrectionPanel(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) override;
+    void showCorrectionPanel(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, StringImpl* replacedString, StringImpl* replacementString, const Vector<RefPtr<StringImpl>>& alternativeReplacementStrings) override;
     void dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText) override;
-    String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText) override;
-    void recordAutocorrectionResponse(WebCore::AutocorrectionResponse, const String& replacedString, const String& replacementString) override;
+    RefPtr<StringImpl> dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText) override;
+    void recordAutocorrectionResponse(WebCore::AutocorrectionResponse, StringImpl* replacedString, StringImpl* replacementString) override;
 
     void recommendedScrollbarStyleDidChange(WebCore::ScrollbarStyle) override;
 
@@ -251,7 +251,7 @@ private:
 
     bool everMagnifiedDuringCurrentGesture() const final;
 
-    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
+    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, StringImpl*, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
 
     void makeViewBlank(bool) final;
 
@@ -264,7 +264,7 @@ private:
     void didFinishNavigation(API::Navigation*) override;
     void didFailNavigation(API::Navigation*) override;
     void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
-    void handleControlledElementIDResponse(const String&) override;
+    void handleControlledElementIDResponse(StringImpl*) override;
 
     NSObject *immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult>, uint64_t, RefPtr<API::Object>) override;
 

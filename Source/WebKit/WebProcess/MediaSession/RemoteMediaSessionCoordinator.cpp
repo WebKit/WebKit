@@ -50,12 +50,12 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionCoordinator);
 
-Ref<RemoteMediaSessionCoordinator> RemoteMediaSessionCoordinator::create(WebPage& page, const String& identifier)
+Ref<RemoteMediaSessionCoordinator> RemoteMediaSessionCoordinator::create(WebPage& page, StringImpl* identifier)
 {
     return adoptRef(*new RemoteMediaSessionCoordinator(page, identifier));
 }
 
-RemoteMediaSessionCoordinator::RemoteMediaSessionCoordinator(WebPage& page, const String& identifier)
+RemoteMediaSessionCoordinator::RemoteMediaSessionCoordinator(WebPage& page, StringImpl* identifier)
     : m_page(page)
     , m_identifier(identifier)
 {
@@ -144,7 +144,7 @@ void RemoteMediaSessionCoordinator::pause(CompletionHandler<void(std::optional<W
     });
 }
 
-void RemoteMediaSessionCoordinator::setTrack(const String& trackIdentifier, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& callback)
+void RemoteMediaSessionCoordinator::setTrack(StringImpl* trackIdentifier, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& callback)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     protect(m_page)->sendWithAsyncReply(Messages::RemoteMediaSessionCoordinatorProxy::CoordinateSetTrack { trackIdentifier }, [weakThis = WeakPtr { *this }, callback = WTF::move(callback)](auto&& exception) mutable {
@@ -180,7 +180,7 @@ void RemoteMediaSessionCoordinator::playbackStateChanged(WebCore::MediaSessionPl
     protect(m_page)->send(Messages::RemoteMediaSessionCoordinatorProxy::PlaybackStateChanged { state });
 }
 
-void RemoteMediaSessionCoordinator::trackIdentifierChanged(const String& identifier)
+void RemoteMediaSessionCoordinator::trackIdentifierChanged(StringImpl* identifier)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, identifier);
     protect(m_page)->send(Messages::RemoteMediaSessionCoordinatorProxy::TrackIdentifierChanged { identifier });
@@ -213,7 +213,7 @@ void RemoteMediaSessionCoordinator::pauseSession(CompletionHandler<void(bool)>&&
         completionHandler(false);
 }
 
-void RemoteMediaSessionCoordinator::setSessionTrack(const String& trackIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteMediaSessionCoordinator::setSessionTrack(StringImpl* trackIdentifier, CompletionHandler<void(bool)>&& completionHandler)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, trackIdentifier);
     if (RefPtr coordinatorClient = client())

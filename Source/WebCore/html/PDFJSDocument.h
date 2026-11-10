@@ -51,7 +51,7 @@ public:
     void finishedParsing();
     void injectStyleAndContentScript();
 
-    void postMessageToIframe(const String& name, JSC::JSObject* data);
+    void postMessageToIframe(StringImpl* name, JSC::JSObject* data);
     void finishLoadingPDF();
 
     bool isFinishedParsing() const { return m_isFinishedParsing; }

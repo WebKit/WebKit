@@ -78,32 +78,32 @@ RefPtr<InspectorCanvas> InspectorCanvasCallTracer::enabledInspectorCanvas(GPUDev
     return canvasAgent->findInspectorCanvas(device);
 }
 
-void InspectorCanvasCallTracer::recordAction(CanvasRenderingContext& canvasRenderingContext, String&& name, InspectorCanvasProcessedArguments&& arguments)
+void InspectorCanvasCallTracer::recordAction(CanvasRenderingContext& canvasRenderingContext, RefPtr<StringImpl>&& name, InspectorCanvasProcessedArguments&& arguments)
 {
     if (CheckedPtr canvasAgent = enabledCanvasAgent(canvasRenderingContext))
         canvasAgent->recordAction(canvasRenderingContext, WTF::move(name), WTF::move(arguments));
 }
 
-void InspectorCanvasCallTracer::recordAction(const CanvasBase& canvasBase, String&& name, InspectorCanvasProcessedArguments&& arguments)
+void InspectorCanvasCallTracer::recordAction(const CanvasBase& canvasBase, RefPtr<StringImpl>&& name, InspectorCanvasProcessedArguments&& arguments)
 {
     ASSERT(canvasBase.renderingContext());
     Ref context = *canvasBase.renderingContext();
     recordAction(context, ProcessedArgument { JSON::Value::create(0), RecordingSwizzleType::Canvas }, WTF::move(name), WTF::move(arguments));
 }
 
-void InspectorCanvasCallTracer::recordAction(CanvasRenderingContext& canvasRenderingContext, ProcessedArgument&& receiver, String&& name, ProcessedArguments&& arguments)
+void InspectorCanvasCallTracer::recordAction(CanvasRenderingContext& canvasRenderingContext, ProcessedArgument&& receiver, RefPtr<StringImpl>&& name, ProcessedArguments&& arguments)
 {
     if (CheckedPtr canvasAgent = enabledCanvasAgent(canvasRenderingContext))
         canvasAgent->recordAction(canvasRenderingContext, WTF::move(receiver), WTF::move(name), WTF::move(arguments));
 }
 
-void InspectorCanvasCallTracer::recordAction(GPUDevice& device, String&& name, InspectorCanvasProcessedArguments&& arguments)
+void InspectorCanvasCallTracer::recordAction(GPUDevice& device, RefPtr<StringImpl>&& name, InspectorCanvasProcessedArguments&& arguments)
 {
     if (CheckedPtr canvasAgent = enabledCanvasAgent(device))
         canvasAgent->recordAction(device, WTF::move(name), WTF::move(arguments));
 }
 
-void InspectorCanvasCallTracer::recordAction(GPUDevice& device, ProcessedArgument&& receiver, String&& name, InspectorCanvasProcessedArguments&& arguments)
+void InspectorCanvasCallTracer::recordAction(GPUDevice& device, ProcessedArgument&& receiver, RefPtr<StringImpl>&& name, InspectorCanvasProcessedArguments&& arguments)
 {
     if (CheckedPtr canvasAgent = enabledCanvasAgent(device))
         canvasAgent->recordAction(device, WTF::move(receiver), WTF::move(name), WTF::move(arguments));

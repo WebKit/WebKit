@@ -76,7 +76,7 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const Style::
     // FIXME: Without the following early return we hit the final assert in
     // Element::resolvePseudoElementStyle(). Making matchedPseudoElements
     // PseudoElementIdentifier-aware might be a possible solution.
-    if (!style.pseudoElementNameArgument().isNull())
+    if (style.pseudoElementNameArgument())
         return false;
     auto pseudoElementType = style.pseudoElementType();
     // Highlight pseudo-element styles inherit from the parent element's highlight pseudo-element

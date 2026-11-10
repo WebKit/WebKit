@@ -35,8 +35,8 @@ std::unique_ptr<WebCore::CertificateInfo> createCertificateInfo(std::optional<lo
 WebCore::CertificateInfo::CertificateChain createCertificateChain(X509_STORE_CTX*);
 std::optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_t>& pem);
 
-String tlsVersion(const SSL*);
-String tlsCipherName(const SSL*);
-WEBCORE_EXPORT String canonicalizeIPv6Address(std::span<uint8_t, 16> data);
+RefPtr<StringImpl> tlsVersion(const SSL*);
+RefPtr<StringImpl> tlsCipherName(const SSL*);
+WEBCORE_EXPORT RefPtr<StringImpl> canonicalizeIPv6Address(std::span<uint8_t, 16> data);
 
 } // namespace OpenSSL

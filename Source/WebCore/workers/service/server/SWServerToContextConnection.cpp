@@ -50,7 +50,7 @@ SWServer* SWServerToContextConnection::server() const
     return m_server.get();
 }
 
-void SWServerToContextConnection::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& message)
+void SWServerToContextConnection::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, StringImpl* message)
 {
     if (RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
         worker->scriptContextFailedToStart(jobDataIdentifier, message);
@@ -97,7 +97,7 @@ void SWServerToContextConnection::matchAll(ServiceWorkerIdentifier serviceWorker
     worker->matchAll(options, WTF::move(callback));
 }
 
-void SWServerToContextConnection::findClientByVisibleIdentifier(ServiceWorkerIdentifier serviceWorkerIdentifier, const String& clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&& callback)
+void SWServerToContextConnection::findClientByVisibleIdentifier(ServiceWorkerIdentifier serviceWorkerIdentifier, StringImpl* clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&& callback)
 {
     if (RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
         worker->findClientByVisibleIdentifier(clientIdentifier, WTF::move(callback));

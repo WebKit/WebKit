@@ -41,13 +41,13 @@ struct WebExtensionScriptInjectionParameters {
     std::optional<WebExtensionTabIdentifier> tabIdentifier;
 
     std::optional<Ref<API::Data>> arguments;
-    std::optional<Vector<String>> files;
+    std::optional<Vector<RefPtr<StringImpl>>> files;
     std::optional<Vector<WebExtensionFrameIdentifier>> frameIdentifiers;
     std::optional<Vector<WTF::UUID>> documentIdentifiers;
 
-    std::optional<String> code;
-    std::optional<String> css;
-    std::optional<String> function;
+    std::optional<RefPtr<StringImpl>> code;
+    std::optional<RefPtr<StringImpl>> css;
+    std::optional<RefPtr<StringImpl>> function;
 
     WebExtensionContentWorldType world { WebExtensionContentWorldType::ContentScript };
     WebCore::UserStyleLevel styleLevel { WebCore::UserStyleLevel::Author };

@@ -875,10 +875,10 @@ AXCoreObject* AXCoreObject::nextSiblingIncludingIgnoredOrParent() const
     return parentObject();
 }
 
-String AXCoreObject::autoCompleteValue() const
+RefPtr<StringImpl> AXCoreObject::autoCompleteValue() const
 {
-    String explicitValue = explicitAutoCompleteValue();
-    return explicitValue.isEmpty() ? "none"_s : explicitValue;
+    RefPtr<StringImpl> explicitValue = explicitAutoCompleteValue();
+    return isEmpty(explicitValue) ? "none"_si : explicitValue;
 }
 
 AXCoreObject::AccessibilityChildrenVector AXCoreObject::contents()
@@ -909,24 +909,24 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::ariaTreeItemContent()
     return result;
 }
 
-String AXCoreObject::currentValue() const
+RefPtr<StringImpl> AXCoreObject::currentValue() const
 {
     switch (currentState()) {
     case AccessibilityCurrentState::False:
-        return "false"_s;
+        return "false"_si;
     case AccessibilityCurrentState::Page:
-        return "page"_s;
+        return "page"_si;
     case AccessibilityCurrentState::Step:
-        return "step"_s;
+        return "step"_si;
     case AccessibilityCurrentState::Location:
-        return "location"_s;
+        return "location"_si;
     case AccessibilityCurrentState::Time:
-        return "time"_s;
+        return "time"_si;
     case AccessibilityCurrentState::Date:
-        return "date"_s;
+        return "date"_si;
     default:
     case AccessibilityCurrentState::True:
-        return "true"_s;
+        return "true"_si;
     }
 }
 
@@ -1293,24 +1293,24 @@ bool AXCoreObject::isRadioInput() const
     return type ? *type == InputType::Type::Radio : false;
 }
 
-String AXCoreObject::popupValueString() const
+RefPtr<StringImpl> AXCoreObject::popupValueString() const
 {
     switch (popupValue()) {
     case AccessibilityPopupValue::False:
-        return "false"_s;
+        return "false"_si;
     case AccessibilityPopupValue::True:
     case AccessibilityPopupValue::Menu:
-        return "menu"_s;
+        return "menu"_si;
     case AccessibilityPopupValue::Listbox:
-        return "listbox"_s;
+        return "listbox"_si;
     case AccessibilityPopupValue::Tree:
-        return "tree"_s;
+        return "tree"_si;
     case AccessibilityPopupValue::Grid:
-        return "grid"_s;
+        return "grid"_si;
     case AccessibilityPopupValue::Dialog:
-        return "dialog"_s;
+        return "dialog"_si;
     }
-    return "false"_s;
+    return "false"_si;
 }
 
 bool AXCoreObject::selfOrAncestorLinkHasPopup() const
@@ -1461,7 +1461,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::columnHeaders()
             if (!tableCell || tableCell == this || headers.contains(Ref { *tableCell }))
                 continue;
 
-            if (tableCell->cellScope() == "colgroup"_s && tableCell->rowGroupAncestorID() == rowGroupAncestor)
+            if (equal(tableCell->cellScope(), "colgroup"_s) && tableCell->rowGroupAncestorID() == rowGroupAncestor)
                 headers.append(tableCell.releaseNonNull());
             else if (tableCell->isColumnHeader())
                 headers.append(tableCell.releaseNonNull());
@@ -1554,7 +1554,7 @@ bool AXCoreObject::supportsPath() const
     return isStaticTextLabel() || isLink();
 }
 
-String AXCoreObject::roleDescription()
+RefPtr<StringImpl> AXCoreObject::roleDescription()
 {
     if (hasAttachmentTag())
         return AXAttachmentRoleText();
@@ -1562,12 +1562,12 @@ String AXCoreObject::roleDescription()
     // aria-roledescription takes precedence over any other rule.
     if (supportsARIARoleDescription()) {
         auto roleDescription = ariaRoleDescription();
-        if (!roleDescription.isEmpty())
+        if (!isEmpty(roleDescription))
             return roleDescription;
     }
 
     auto roleDescription = rolePlatformDescription();
-    if (!roleDescription.isEmpty())
+    if (!isEmpty(roleDescription))
         return roleDescription;
 
     if (role() == AccessibilityRole::Figure)
@@ -1579,7 +1579,7 @@ String AXCoreObject::roleDescription()
     return { };
 }
 
-String AXCoreObject::ariaLandmarkRoleDescription() const
+RefPtr<StringImpl> AXCoreObject::ariaLandmarkRoleDescription() const
 {
     switch (role()) {
     case AccessibilityRole::Form:
@@ -1824,10 +1824,10 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::selectedCells()
     return selectedCells;
 }
 
-String AXCoreObject::languageIncludingAncestors() const
+RefPtr<StringImpl> AXCoreObject::languageIncludingAncestors() const
 {
     auto language = this->language();
-    if (!language.isEmpty())
+    if (!isEmpty(language))
         return language;
 
     RefPtr parent = parentObject();
@@ -1875,7 +1875,7 @@ NODELETE static bool isDescriptiveText(AccessibilityTextSource textSource)
     }
 }
 
-String AXCoreObject::descriptionAttributeValue(Vector<AccessibilityText>* computedText) const
+RefPtr<StringImpl> AXCoreObject::descriptionAttributeValue(Vector<AccessibilityText>* computedText) const
 {
     if (isStaticText()) {
         // Static text objects shouldn't return a description. Their content is communicated via AXValue.
@@ -1891,7 +1891,7 @@ String AXCoreObject::descriptionAttributeValue(Vector<AccessibilityText>* comput
     // Determine if any visible text is available, which influences our usage of title tag.
     bool visibleTextAvailable = false;
     for (const auto& text : *computedText) {
-        if (isVisibleText(text.textSource) && !text.text.isEmpty()) {
+        if (isVisibleText(text.textSource) && !isEmpty(text.text)) {
             visibleTextAvailable = true;
             break;
         }
@@ -1909,7 +1909,7 @@ String AXCoreObject::descriptionAttributeValue(Vector<AccessibilityText>* comput
         case AccessibilityTextSource::Title:
         case AccessibilityTextSource::Subtitle:
         case AccessibilityTextSource::Action: {
-            if (!text.text.length())
+            if (!length(text.text))
                 break;
             if (returnText.length())
                 returnText.append(", "_s);
@@ -1929,7 +1929,7 @@ String AXCoreObject::descriptionAttributeValue(Vector<AccessibilityText>* comput
     return returnText.toString();
 }
 
-String AXCoreObject::helpTextAttributeValue() const
+RefPtr<StringImpl> AXCoreObject::helpTextAttributeValue() const
 {
     Vector<AccessibilityText> textOrder;
     accessibilityText(textOrder);
@@ -1937,7 +1937,7 @@ String AXCoreObject::helpTextAttributeValue() const
     // Determine if any descriptive text is available, which influences our usage of title tag.
     bool descriptiveTextAvailable = false;
     for (const auto& text : textOrder) {
-        if (isDescriptiveText(text.textSource) && !text.text.isEmpty()) {
+        if (isDescriptiveText(text.textSource) && !isEmpty(text.text)) {
             descriptiveTextAvailable = true;
             break;
         }
@@ -1957,11 +1957,11 @@ String AXCoreObject::helpTextAttributeValue() const
 }
 #endif // PLATFORM(COCOA)
 
-String AXCoreObject::title(Vector<AccessibilityText>* computedText) const
+RefPtr<StringImpl> AXCoreObject::title(Vector<AccessibilityText>* computedText) const
 {
     if (isWebArea()) {
-        String title = webAreaTitle();
-        if (!title.isEmpty())
+        RefPtr<StringImpl> title = webAreaTitle();
+        if (!isEmpty(title))
             return title;
     }
 
@@ -1983,7 +1983,7 @@ String AXCoreObject::title(Vector<AccessibilityText>* computedText) const
     }
 
     if (elementName() == ElementName::HTML_area && isLink()) {
-        String summaryText;
+        RefPtr<StringImpl> summaryText;
         for (auto& text : *computedText) {
             if (text.textSource == AccessibilityTextSource::TitleTag)
                 return text.text;
@@ -2022,7 +2022,7 @@ AXCoreObject* AXCoreObject::titleUIElement() const
 #endif
 }
 
-String AXCoreObject::expandedTextValue() const
+RefPtr<StringImpl> AXCoreObject::expandedTextValue() const
 {
     if (isStaticText()) {
         if (RefPtr parent = parentObject()) {
@@ -2031,7 +2031,7 @@ String AXCoreObject::expandedTextValue() const
                 return parent->titleAttribute();
         }
     }
-    return hasCellRole() ? abbreviation() : String();
+    return hasCellRole() ? abbreviation() : nullptr;
 }
 
 bool AXCoreObject::supportsExpandedTextValue() const
@@ -2042,7 +2042,7 @@ bool AXCoreObject::supportsExpandedTextValue() const
             return parentName == ElementName::HTML_abbr || parentName == ElementName::HTML_acronym;
         }
     }
-    return hasCellRole() && !abbreviation().isEmpty();
+    return hasCellRole() && !isEmpty(abbreviation());
 }
 
 AXCoreObject::AccessibilityChildrenVector AXCoreObject::linkedObjects() const
@@ -2268,7 +2268,7 @@ LineDecorationStyle::LineDecorationStyle(RenderObject& renderer)
     }
 }
 
-String LineDecorationStyle::debugDescription() const
+RefPtr<StringImpl> LineDecorationStyle::debugDescription() const
 {
     return makeString(
         "{"_s,
@@ -2280,7 +2280,7 @@ String LineDecorationStyle::debugDescription() const
     );
 }
 
-String AXCoreObject::infoStringForTesting()
+RefPtr<StringImpl> AXCoreObject::infoStringForTesting()
 {
     return makeString("Role: "_s, rolePlatformString(), ", Value: "_s, stringValue());
 }
@@ -2321,7 +2321,7 @@ void initializeRoleMap()
     roleToPlatformString(AccessibilityRole::Button);
 }
 
-String roleToPlatformString(AccessibilityRole role)
+RefPtr<StringImpl> roleToPlatformString(AccessibilityRole role)
 {
     // This map can be read from multiple threads at once. This is fine,
     // as we don't mutate it after creation, and never allow it to be destroyed.

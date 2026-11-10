@@ -65,8 +65,8 @@ public:
 
     void objectStoreDeleted(Ref<MemoryObjectStore>&&);
     void objectStoreCleared(MemoryObjectStore&, KeyValueMap&&, std::unique_ptr<IDBKeyDataSet>&&);
-    void objectStoreRenamed(MemoryObjectStore&, const String& oldName);
-    void indexRenamed(MemoryIndex&, const String& oldName);
+    void objectStoreRenamed(MemoryObjectStore&, StringImpl* oldName);
+    void indexRenamed(MemoryIndex&, StringImpl* oldName);
 
     void addNewIndex(MemoryIndex&);
     void removeNewIndex(MemoryIndex&);
@@ -98,10 +98,10 @@ private:
     HashSet<Ref<MemoryIndex>> m_indexes;
     HashSet<Ref<MemoryIndex>> m_versionChangeAddedIndexes;
 
-    HashMap<String, Ref<MemoryObjectStore>> m_deletedObjectStores;
+    HashMap<RefPtr<StringImpl>, Ref<MemoryObjectStore>> m_deletedObjectStores;
     HashSet<Ref<MemoryIndex>> m_deletedIndexes;
-    WeakHashMap<MemoryObjectStore, String> m_originalObjectStoreNames;
-    HashMap<Ref<MemoryIndex>, String> m_originalIndexNames;
+    WeakHashMap<MemoryObjectStore, RefPtr<StringImpl>> m_originalObjectStoreNames;
+    HashMap<Ref<MemoryIndex>, RefPtr<StringImpl>> m_originalIndexNames;
 
     HashMap<IDBResourceIdentifier, WeakPtr<MemoryCursor>> m_cursors;
 };

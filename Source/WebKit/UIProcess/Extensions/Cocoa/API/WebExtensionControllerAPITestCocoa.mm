@@ -39,111 +39,111 @@
 
 namespace WebKit {
 
-void WebExtensionController::testResult(bool result, String message, String sourceURL, unsigned lineNumber)
+void WebExtensionController::testResult(bool result, RefPtr<StringImpl> message, RefPtr<StringImpl> sourceURL, unsigned lineNumber)
 {
     auto delegate = this->delegate();
     if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestAssertionResult:withMessage:andSourceURL:lineNumber:)]) {
-        [delegate _webExtensionController:wrapper() recordTestAssertionResult:result withMessage:message.createNSString().get() andSourceURL:sourceURL.createNSString().get() lineNumber:lineNumber];
+        [delegate _webExtensionController:wrapper() recordTestAssertionResult:result withMessage:createNSString(message).get() andSourceURL:createNSString(sourceURL).get() lineNumber:lineNumber];
         return;
     }
 
-    if (message.isEmpty())
-        message = "(no message)"_s;
+    if (isEmpty(message))
+        message = "(no message)"_si;
 
     if (result) {
-        RELEASE_LOG_INFO(Extensions, "Test assertion passed: %{public}@ (%{public}@:%{public}u)", message.createNSString().get(), sourceURL.createNSString().get(), lineNumber);
+        RELEASE_LOG_INFO(Extensions, "Test assertion passed: %{public}@ (%{public}@:%{public}u)", createNSString(message).get(), createNSString(sourceURL).get(), lineNumber);
         return;
     }
 
-    RELEASE_LOG_ERROR(Extensions, "Test assertion failed: %{public}@ (%{public}@:%{public}u)", message.createNSString().get(), sourceURL.createNSString().get(), lineNumber);
+    RELEASE_LOG_ERROR(Extensions, "Test assertion failed: %{public}@ (%{public}@:%{public}u)", createNSString(message).get(), createNSString(sourceURL).get(), lineNumber);
 }
 
-void WebExtensionController::testEqual(bool result, String expectedValue, String actualValue, String message, String sourceURL, unsigned lineNumber)
+void WebExtensionController::testEqual(bool result, RefPtr<StringImpl> expectedValue, RefPtr<StringImpl> actualValue, RefPtr<StringImpl> message, RefPtr<StringImpl> sourceURL, unsigned lineNumber)
 {
     auto delegate = this->delegate();
     if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestEqualityResult:expectedValue:actualValue:withMessage:andSourceURL:lineNumber:)]) {
-        [delegate _webExtensionController:wrapper() recordTestEqualityResult:result expectedValue:expectedValue.createNSString().get() actualValue:actualValue.createNSString().get() withMessage:message.createNSString().get() andSourceURL:sourceURL.createNSString().get() lineNumber:lineNumber];
+        [delegate _webExtensionController:wrapper() recordTestEqualityResult:result expectedValue:createNSString(expectedValue).get() actualValue:createNSString(actualValue).get() withMessage:createNSString(message).get() andSourceURL:createNSString(sourceURL).get() lineNumber:lineNumber];
         return;
     }
 
-    if (message.isEmpty())
-        message = "Expected equality of these values"_s;
+    if (isEmpty(message))
+        message = "Expected equality of these values"_si;
 
     if (result) {
-        RELEASE_LOG_INFO(Extensions, "Test equality passed: %{public}@: %{public}@ === %{public}@ (%{public}@:%{public}u)", message.createNSString().get(), expectedValue.createNSString().get(), actualValue.createNSString().get(), sourceURL.createNSString().get(), lineNumber);
+        RELEASE_LOG_INFO(Extensions, "Test equality passed: %{public}@: %{public}@ === %{public}@ (%{public}@:%{public}u)", createNSString(message).get(), createNSString(expectedValue).get(), createNSString(actualValue).get(), createNSString(sourceURL).get(), lineNumber);
         return;
     }
 
-    RELEASE_LOG_ERROR(Extensions, "Test equality failed: %{public}@: %{public}@ !== %{public}@ (%{public}@:%{public}u)", message.createNSString().get(), expectedValue.createNSString().get(), actualValue.createNSString().get(), sourceURL.createNSString().get(), lineNumber);
+    RELEASE_LOG_ERROR(Extensions, "Test equality failed: %{public}@: %{public}@ !== %{public}@ (%{public}@:%{public}u)", createNSString(message).get(), createNSString(expectedValue).get(), createNSString(actualValue).get(), createNSString(sourceURL).get(), lineNumber);
 }
 
-void WebExtensionController::testLogMessage(String message, String sourceURL, unsigned lineNumber)
+void WebExtensionController::testLogMessage(RefPtr<StringImpl> message, RefPtr<StringImpl> sourceURL, unsigned lineNumber)
 {
     auto delegate = this->delegate();
     if ([delegate respondsToSelector:@selector(_webExtensionController:logTestMessage:andSourceURL:lineNumber:)]) {
-        [delegate _webExtensionController:wrapper() logTestMessage:message.createNSString().get() andSourceURL:sourceURL.createNSString().get() lineNumber:lineNumber];
+        [delegate _webExtensionController:wrapper() logTestMessage:createNSString(message).get() andSourceURL:createNSString(sourceURL).get() lineNumber:lineNumber];
         return;
     }
 
-    if (message.isEmpty())
-        message = "(no message)"_s;
+    if (isEmpty(message))
+        message = "(no message)"_si;
 
-    RELEASE_LOG_INFO(Extensions, "Test log: %{public}@ (%{public}@:%{public}u)", message.createNSString().get(), sourceURL.createNSString().get(), lineNumber);
+    RELEASE_LOG_INFO(Extensions, "Test log: %{public}@ (%{public}@:%{public}u)", createNSString(message).get(), createNSString(sourceURL).get(), lineNumber);
 }
 
-void WebExtensionController::testSentMessage(String message, String argument, String sourceURL, unsigned lineNumber)
+void WebExtensionController::testSentMessage(RefPtr<StringImpl> message, RefPtr<StringImpl> argument, RefPtr<StringImpl> sourceURL, unsigned lineNumber)
 {
     auto delegate = this->delegate();
     if ([delegate respondsToSelector:@selector(_webExtensionController:receivedTestMessage:withArgument:andSourceURL:lineNumber:)]) {
-        [delegate _webExtensionController:wrapper() receivedTestMessage:message.createNSString().get() withArgument:parseJSON(argument.createNSString().get(), JSONOptions::FragmentsAllowed) andSourceURL:sourceURL.createNSString().get() lineNumber:lineNumber];
+        [delegate _webExtensionController:wrapper() receivedTestMessage:createNSString(message).get() withArgument:parseJSON(createNSString(argument).get(), JSONOptions::FragmentsAllowed) andSourceURL:createNSString(sourceURL).get() lineNumber:lineNumber];
         return;
     }
 
-    RELEASE_LOG_INFO(Extensions, "Test sent message: %{public}@ %{public}@ (%{public}@:%{public}u)", message.createNSString().get(), argument.createNSString().get(), sourceURL.createNSString().get(), lineNumber);
+    RELEASE_LOG_INFO(Extensions, "Test sent message: %{public}@ %{public}@ (%{public}@:%{public}u)", createNSString(message).get(), createNSString(argument).get(), createNSString(sourceURL).get(), lineNumber);
 }
 
-void WebExtensionController::testAdded(String testName, String sourceURL, unsigned lineNumber)
+void WebExtensionController::testAdded(RefPtr<StringImpl> testName, RefPtr<StringImpl> sourceURL, unsigned lineNumber)
 {
     auto delegate = this->delegate();
     if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestAddedWithName:andSourceURL:lineNumber:)]) {
-        [delegate _webExtensionController:wrapper() recordTestAddedWithName:testName.createNSString().get() andSourceURL:sourceURL.createNSString().get() lineNumber:lineNumber];
+        [delegate _webExtensionController:wrapper() recordTestAddedWithName:createNSString(testName).get() andSourceURL:createNSString(sourceURL).get() lineNumber:lineNumber];
         return;
     }
 
-    RELEASE_LOG_INFO(Extensions, "Test added: %{public}@ (%{public}@:%{public}u)", testName.createNSString().get(), sourceURL.createNSString().get(), lineNumber);
+    RELEASE_LOG_INFO(Extensions, "Test added: %{public}@ (%{public}@:%{public}u)", createNSString(testName).get(), createNSString(sourceURL).get(), lineNumber);
 }
 
-void WebExtensionController::testStarted(String testName, String sourceURL, unsigned lineNumber)
+void WebExtensionController::testStarted(RefPtr<StringImpl> testName, RefPtr<StringImpl> sourceURL, unsigned lineNumber)
 {
     auto delegate = this->delegate();
     if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestStartedWithName:andSourceURL:lineNumber:)]) {
-        [delegate _webExtensionController:wrapper() recordTestStartedWithName:testName.createNSString().get() andSourceURL:sourceURL.createNSString().get() lineNumber:lineNumber];
+        [delegate _webExtensionController:wrapper() recordTestStartedWithName:createNSString(testName).get() andSourceURL:createNSString(sourceURL).get() lineNumber:lineNumber];
         return;
     }
 
-    RELEASE_LOG_INFO(Extensions, "Test started: %{public}@ (%{public}@:%{public}u)", testName.createNSString().get(), sourceURL.createNSString().get(), lineNumber);
+    RELEASE_LOG_INFO(Extensions, "Test started: %{public}@ (%{public}@:%{public}u)", createNSString(testName).get(), createNSString(sourceURL).get(), lineNumber);
 }
 
-void WebExtensionController::testFinished(String testName, bool result, String message, String sourceURL, unsigned lineNumber)
+void WebExtensionController::testFinished(RefPtr<StringImpl> testName, bool result, RefPtr<StringImpl> message, RefPtr<StringImpl> sourceURL, unsigned lineNumber)
 {
     auto delegate = this->delegate();
     if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestFinishedWithName:result:message:andSourceURL:lineNumber:)]) {
-        [delegate _webExtensionController:wrapper() recordTestFinishedWithName:testName.createNSString().get() result:result message:message.createNSString().get() andSourceURL:sourceURL.createNSString().get() lineNumber:lineNumber];
+        [delegate _webExtensionController:wrapper() recordTestFinishedWithName:createNSString(testName).get() result:result message:createNSString(message).get() andSourceURL:createNSString(sourceURL).get() lineNumber:lineNumber];
         return;
     }
 
-    if (testName.isEmpty())
-        testName = "(no test name)"_s;
+    if (isEmpty(testName))
+        testName = "(no test name)"_si;
 
-    if (message.isEmpty())
-        message = "(no message)"_s;
+    if (isEmpty(message))
+        message = "(no message)"_si;
 
     if (result) {
-        RELEASE_LOG_INFO(Extensions, "Test passed: %{public}@ %{public}@ (%{public}@:%{public}u)", testName.createNSString().get(), message.createNSString().get(), sourceURL.createNSString().get(), lineNumber);
+        RELEASE_LOG_INFO(Extensions, "Test passed: %{public}@ %{public}@ (%{public}@:%{public}u)", createNSString(testName).get(), createNSString(message).get(), createNSString(sourceURL).get(), lineNumber);
         return;
     }
 
-    RELEASE_LOG_ERROR(Extensions, "Test failed: %{public}@ %{public}@ (%{public}@:%{public}u)", testName.createNSString().get(), message.createNSString().get(), sourceURL.createNSString().get(), lineNumber);
+    RELEASE_LOG_ERROR(Extensions, "Test failed: %{public}@ %{public}@ (%{public}@:%{public}u)", createNSString(testName).get(), createNSString(message).get(), createNSString(sourceURL).get(), lineNumber);
 }
 
 } // namespace WebKit

@@ -133,11 +133,11 @@ TEST(CopyHTML, Sanitizes)
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"didPaste"].boolValue);
     EXPECT_WK_STREQ("<meta content=\"secret\"><b onmouseover=\"dangerousCode()\">hello</b><!-- secret-->, world<script>dangerousCode()</script>",
         [webView stringByEvaluatingJavaScript:@"pastedHTML"]);
-    String htmlInNativePasteboard = readHTMLStringFromPasteboard();
-    EXPECT_TRUE(htmlInNativePasteboard.contains("hello"_s));
-    EXPECT_TRUE(htmlInNativePasteboard.contains(", world"_s));
-    EXPECT_FALSE(htmlInNativePasteboard.contains("secret"_s));
-    EXPECT_FALSE(htmlInNativePasteboard.contains("dangerousCode"_s));
+    RefPtr<StringImpl> htmlInNativePasteboard = StringImpl::create(protect(readHTMLStringFromPasteboard()).get());
+    EXPECT_TRUE(contains(htmlInNativePasteboard, "hello"_s));
+    EXPECT_TRUE(contains(htmlInNativePasteboard, ", world"_s));
+    EXPECT_FALSE(contains(htmlInNativePasteboard, "secret"_s));
+    EXPECT_FALSE(contains(htmlInNativePasteboard, "dangerousCode"_s));
 }
 
 TEST(CopyHTML, SanitizationPreservesCharacterSetInSelectedText)

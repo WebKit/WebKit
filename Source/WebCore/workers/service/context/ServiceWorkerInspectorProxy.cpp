@@ -91,15 +91,15 @@ void ServiceWorkerInspectorProxy::disconnectFromWorker(FrontendChannel& channel)
     });
 }
 
-void ServiceWorkerInspectorProxy::sendMessageToWorker(String&& message)
+void ServiceWorkerInspectorProxy::sendMessageToWorker(RefPtr<StringImpl>&& message)
 {
     ASSERT(isMainThread());
-    m_serviceWorkerThreadProxy.get()->thread().runLoop().postDebuggerTask([message = WTF::move(message).isolatedCopy()] (ScriptExecutionContext& context) {
+    m_serviceWorkerThreadProxy.get()->thread().runLoop().postDebuggerTask([message = isolatedCopy(WTF::move(message))] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().dispatchMessageFromFrontend(message);
     });
 }
 
-void ServiceWorkerInspectorProxy::sendMessageFromWorkerToFrontend(String&& message)
+void ServiceWorkerInspectorProxy::sendMessageFromWorkerToFrontend(RefPtr<StringImpl>&& message)
 {
     ASSERT(isMainThread());
     if (!m_channel)

@@ -360,10 +360,10 @@ void PageClientImpl::preferencesDidChange()
 #endif
 }
 
-void PageClientImpl::toolTipChanged(const String&, const String& newToolTip)
+void PageClientImpl::toolTipChanged(StringImpl*, StringImpl* newToolTip)
 {
 #if HAVE(UITOOLTIPINTERACTION)
-    [contentView() _toolTipChanged:newToolTip.createNSString().get()];
+    [contentView() _toolTipChanged:createNSString(newToolTip).get()];
 #else
     UNUSED_PARAM(newToolTip);
 #endif
@@ -393,7 +393,7 @@ void PageClientImpl::didFailProvisionalLoadForMainFrame()
     [webView() _hidePasswordView];
 }
 
-void PageClientImpl::didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider)
+void PageClientImpl::didCommitLoadForMainFrame(StringImpl* mimeType, bool useCustomContentProvider)
 {
     RetainPtr webView = this->webView();
     [webView _hidePasswordView];
@@ -459,8 +459,8 @@ void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, Und
     
     RetainPtr undoManager = [contentView() undoManagerForWebView];
     [undoManager registerUndoWithTarget:m_undoTarget.get() selector:((undoOrRedo == UndoOrRedo::Undo) ? @selector(undoEditing:) : @selector(redoEditing:)) object:commandObjC.get()];
-    if (!actionName.isEmpty())
-        [undoManager setActionName:actionName.createNSString().get()];
+    if (!isEmpty(actionName))
+        [undoManager setActionName:createNSString(actionName).get()];
 }
 
 void PageClientImpl::clearAllEditCommands()
@@ -500,13 +500,13 @@ void PageClientImpl::saveImageToLibrary(const Ref<SharedBuffer>& imageBuffer)
     if (!source)
         return;
     RetainPtr type = CGImageSourceGetType(source.get());
-    if (!type || !WebCore::isSupportedImageType(type.get()))
+    if (!type || !WebCore::isSupportedImageType(StringImpl::create(type.get()).get()))
         return;
 
     UIImageDataWriteToSavedPhotosAlbum(imageData.get(), nil, NULL, NULL);
 }
 
-bool PageClientImpl::executeSavedCommandBySelector(const String&)
+bool PageClientImpl::executeSavedCommandBySelector(StringImpl*)
 {
     notImplemented();
     return false;
@@ -576,21 +576,21 @@ IntPoint PageClientImpl::accessibilityScreenToRootView(const IntPoint& point)
     return IntPoint(rootViewPoint);
 }
 
-void PageClientImpl::relayAccessibilityNotification(String&& notificationName, RetainPtr<NSData>&& notificationData)
+void PageClientImpl::relayAccessibilityNotification(RefPtr<StringImpl>&& notificationName, RetainPtr<NSData>&& notificationData)
 {
     auto contentView = this->contentView();
     if ([contentView respondsToSelector:@selector(accessibilityRelayNotification:notificationData:)])
-        [contentView accessibilityRelayNotification:notificationName.createNSString().get() notificationData:notificationData.get()];
+        [contentView accessibilityRelayNotification:createNSString(notificationName).get() notificationData:notificationData.get()];
 }
 
 void PageClientImpl::relayAriaNotifyNotification(const WebCore::AriaNotifyData& notificationData)
 {
-    RetainPtr message = notificationData.message.createNSString();
+    RetainPtr message = createNSString(notificationData.message);
 
     RetainPtr attributes = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:
         WebCore::notifyPriorityToAXValueString(notificationData.priority).get(), @"UIAccessibilityARIAAnnouncementPriority",
         WebCore::interruptBehaviorToAXValueString(notificationData.interrupt).get(), @"UIAccessibilityARIAAnnouncementInterruptBehavior",
-        notificationData.language.createNSString().get(), @"UIAccessibilitySpeechAttributeLanguage",
+        createNSString(notificationData.language).get(), @"UIAccessibilitySpeechAttributeLanguage",
         nil]);
 
     RetainPtr attributedString = adoptNS([[NSAttributedString alloc] initWithString:message.get() attributes:attributes.get()]);
@@ -672,9 +672,9 @@ UIScreen *PageClientImpl::screen()
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void PageClientImpl::requestTextRecognition(const URL& imageURL, ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
+void PageClientImpl::requestTextRecognition(const URL& imageURL, ShareableBitmap::Handle&& imageData, StringImpl* sourceLanguageIdentifier, StringImpl* targetLanguageIdentifier, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
 {
-    [contentView() requestTextRecognition:imageURL.createNSURL().get() imageData:WTF::move(imageData) sourceLanguageIdentifier:sourceLanguageIdentifier.createNSString().get() targetLanguageIdentifier:targetLanguageIdentifier.createNSString().get() completionHandler:WTF::move(completion)];
+    [contentView() requestTextRecognition:imageURL.createNSURL().get() imageData:WTF::move(imageData) sourceLanguageIdentifier:createNSString(sourceLanguageIdentifier).get() targetLanguageIdentifier:createNSString(targetLanguageIdentifier).get() completionHandler:WTF::move(completion)];
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
@@ -840,9 +840,9 @@ void PageClientImpl::reconcileEnclosingScrollViewContentOffset(EditorState& stat
     [contentView() _reconcileEnclosingScrollViewContentOffset:state];
 }
 
-void PageClientImpl::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect, WebCore::RouteSharingPolicy policy, const String& contextUID)
+void PageClientImpl::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect, WebCore::RouteSharingPolicy policy, StringImpl* contextUID)
 {
-    [contentView() _showPlaybackTargetPicker:hasVideo fromRect:elementRect routeSharingPolicy:policy routingContextUID:contextUID.createNSString().get()];
+    [contentView() _showPlaybackTargetPicker:hasVideo fromRect:elementRect routeSharingPolicy:policy routingContextUID:createNSString(contextUID).get()];
 }
 
 bool PageClientImpl::handleRunOpenPanel(const WebPageProxy& page, const WebFrameProxy&, const FrameInfoData& frameInfo, API::OpenPanelParameters& parameters, WebOpenPanelResultListenerProxy& listener)
@@ -1018,7 +1018,7 @@ void PageClientImpl::didExitFullscreen()
 #endif
 }
 
-void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t> dataReference)
+void PageClientImpl::didFinishLoadingDataForCustomContentProvider(StringImpl* suggestedFilename, std::span<const uint8_t> dataReference)
 {
     [webView() _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:suggestedFilename data:toNSData(dataReference).get()];
 }
@@ -1043,7 +1043,7 @@ void PageClientImpl::scrollingNodeScrollDidEndScroll(std::optional<ScrollingNode
     [contentView() _scrollingNodeScrollingDidEnd:nodeID];
 }
 
-Vector<String> PageClientImpl::mimeTypesWithCustomContentProviders()
+Vector<RefPtr<StringImpl>> PageClientImpl::mimeTypesWithCustomContentProviders()
 {
     return [webView() _contentProviderRegistry]._mimeTypesWithCustomContentProviders;
 }
@@ -1153,7 +1153,7 @@ WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirecti
     return WebCore::UserInterfaceLayoutDirection::LTR;
 }
 
-Ref<ValidationBubble> PageClientImpl::createValidationBubble(String&& message, const ValidationBubble::Settings& settings)
+Ref<ValidationBubble> PageClientImpl::createValidationBubble(RefPtr<StringImpl>&& message, const ValidationBubble::Settings& settings)
 {
     return ValidationBubble::create(protect(m_contentView.getAutoreleased()), WTF::move(message), settings);
 }
@@ -1207,25 +1207,25 @@ void PageClientImpl::performSwitchHapticFeedback()
 }
 
 #if USE(QUICK_LOOK)
-void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName, WTF::Function<void(const String&)>&& completionHandler)
+void PageClientImpl::requestPasswordForQuickLookDocument(StringImpl* fileName, WTF::Function<void(StringImpl*)>&& completionHandler)
 {
     auto passwordHandler = makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSString *password) {
-        completionHandler(password);
+        completionHandler(StringImpl::create(password));
     });
 
     auto webView = this->webView();
     if (WKPasswordView *passwordView = [webView _passwordView]) {
-        ASSERT(fileName == String { passwordView.documentName });
+        ASSERT(equal(fileName, StringImpl::create(passwordView.documentName).get()));
         [passwordView showPasswordFailureAlert];
         passwordView.userDidEnterPassword = passwordHandler.get();
         return;
     }
 
-    [webView _showPasswordViewWithDocumentName:fileName.createNSString().get() passwordHandler:passwordHandler.get()];
+    [webView _showPasswordViewWithDocumentName:createNSString(fileName).get() passwordHandler:passwordHandler.get()];
 }
 #endif
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, WebCore::FrameIdentifier frameID, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, WebCore::FrameIdentifier frameID, const WebCore::IntRect& elementRect, StringImpl* originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
     [contentView() _requestDOMPasteAccessForCategory:pasteAccessCategory requiresInteraction:requiresInteraction frameID:frameID elementRect:elementRect originIdentifier:originIdentifier completionHandler:WTF::move(completionHandler)];
 }
@@ -1351,9 +1351,9 @@ void PageClientImpl::requestScrollToRect(const FloatRect& targetRect, const Floa
     [contentView() _scrollToRect:targetRect withOrigin:origin minimumScrollDistance:0];
 }
 
-String PageClientImpl::sceneID()
+RefPtr<StringImpl> PageClientImpl::sceneID()
 {
-    return [contentView() window].windowScene._sceneIdentifier;
+    return StringImpl::create([contentView() window].windowScene._sceneIdentifier);
 }
 
 void PageClientImpl::beginTextRecognitionForFullscreenVideo(ShareableBitmap::Handle&& imageHandle, AVPlayerViewController *playerViewController)
@@ -1432,7 +1432,7 @@ FloatPoint PageClientImpl::webViewToRootView(const FloatPoint& point) const
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-String PageClientImpl::spatialTrackingLabel() const
+RefPtr<StringImpl> PageClientImpl::spatialTrackingLabel() const
 {
     return [contentView() spatialTrackingLabel];
 }

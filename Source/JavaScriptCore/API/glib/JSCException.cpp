@@ -414,9 +414,9 @@ char* jsc_exception_report(JSCException* exception)
     report.append('\n');
 
     if (priv->backtrace) {
-        for (auto line : String::fromUTF8(priv->backtrace.span()).split('\n'))
+        for (auto& line : split(StringImpl::fromUTF8(priv->backtrace.span()), '\n'))
             report.append("  "_s, line, '\n');
     }
 
-    return GMallocString { report.toString().utf8() }.leakUTF8();
+    return GMallocString { utf8(report.toString()) }.leakUTF8();
 }

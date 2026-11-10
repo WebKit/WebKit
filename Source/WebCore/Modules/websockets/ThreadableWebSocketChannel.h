@@ -65,17 +65,17 @@ public:
     WEBCORE_EXPORT ThreadableWebSocketChannel();
 
     enum class ConnectStatus { KO, OK };
-    virtual ConnectStatus connect(const URL&, const String& protocol) = 0;
-    virtual String subprotocol() = 0; // Will be available after didConnect() callback is invoked.
-    virtual String extensions() = 0; // Will be available after didConnect() callback is invoked.
+    virtual ConnectStatus connect(const URL&, StringImpl* protocol) = 0;
+    virtual RefPtr<StringImpl> subprotocol() = 0; // Will be available after didConnect() callback is invoked.
+    virtual RefPtr<StringImpl> extensions() = 0; // Will be available after didConnect() callback is invoked.
 
     virtual void send(UTF8CString&&) = 0;
     virtual void send(const JSC::ArrayBuffer&, size_t byteOffset, size_t byteLength) = 0;
     virtual void send(Blob&) = 0;
 
-    virtual void close(int code, const String& reason) = 0;
+    virtual void close(int code, StringImpl* reason) = 0;
     // Log the reason text and close the connection. Will call didClose().
-    virtual void fail(String&& reason) = 0;
+    virtual void fail(RefPtr<StringImpl>&& reason) = 0;
     virtual void disconnect() = 0; // Will suppress didClose().
 
     virtual void suspend() = 0;
@@ -85,7 +85,7 @@ public:
     virtual WebSocketChannelIdentifier progressIdentifier() const = 0;
     virtual bool hasCreatedHandshake() const = 0;
     virtual bool isConnected() const = 0;
-    using CookieGetter = Function<String(const URL&)>;
+    using CookieGetter = Function<RefPtr<StringImpl>(const URL&)>;
     virtual ResourceRequest clientHandshakeRequest(const CookieGetter&) const = 0;
     virtual const ResourceResponse& serverHandshakeResponse() const = 0;
 

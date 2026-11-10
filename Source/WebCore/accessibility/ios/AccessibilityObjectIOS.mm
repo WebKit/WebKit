@@ -106,7 +106,7 @@ unsigned AccessibilityObject::accessibilitySecureFieldLength()
         return 0;
 
     RefPtr inputElement = dynamicDowncast<HTMLInputElement>(renderer->node());
-    return inputElement ? inputElement->value()->length() : 0;
+    return inputElement ? length(inputElement->value().get()) : 0;
 }
 
 void AccessibilityObject::markPlatformWrapperIgnoredStateDirty() const
@@ -133,7 +133,7 @@ bool AccessibilityObject::hasTouchEventListener() const
     // If the node is in a shadowRoot, going up the node parent tree will stop and
     // not check the entire chain of ancestors. Thus, use the parentInComposedTree instead.
     for (RefPtr node = this->node(); node; node = node->parentInComposedTree()) {
-        if (node->containsMatchingEventListener([&](const AtomString& name, auto&) {
+        if (node->containsMatchingEventListener([&](AtomStringImpl* name, auto&) {
             return eventNames.typeInfoForEvent(name).isInCategory(EventCategory::TouchRelated);
         }))
             return true;
@@ -141,28 +141,28 @@ bool AccessibilityObject::hasTouchEventListener() const
     return false;
 }
 
-void AccessibilityObject::setLastPresentedTextPrediction(Node& previousCompositionNode, CompositionState state, const String& text, size_t location, bool handlingAcceptedCandidate)
+void AccessibilityObject::setLastPresentedTextPrediction(Node& previousCompositionNode, CompositionState state, StringImpl* text, size_t location, bool handlingAcceptedCandidate)
 {
 #if HAVE(INLINE_PREDICTIONS)
     if (handlingAcceptedCandidate)
         m_lastPresentedTextPrediction = { text, location };
 
-    if (state == CompositionState::Ended && !lastPresentedTextPrediction().text.isEmpty()) {
+    if (state == CompositionState::Ended && !isEmpty(lastPresentedTextPrediction().text)) {
         auto* nodeText = dynamicDowncast<Text>(previousCompositionNode);
-        String previousCompositionNodeText = nodeText ? nodeText->data() : String();
+        RefPtr<StringImpl> previousCompositionNodeText = nodeText ? nodeText->data() : nullptr;
         size_t wordStart = 0;
 
         // Find the location of the complete word being predicted by iterating backwards through the text to find whitespace.
-        if (previousCompositionNodeText.length()) {
-            for (size_t position = previousCompositionNodeText.length() - 1; position > 0; position--) {
-                if (isASCIIWhitespace(previousCompositionNodeText[position])) {
+        if (length(previousCompositionNodeText)) {
+            for (size_t position = length(previousCompositionNodeText) - 1; position > 0; position--) {
+                if (isASCIIWhitespace(codeUnitAt(previousCompositionNodeText, position))) {
                     wordStart = position + 1;
                     break;
                 }
             }
         }
         if (wordStart)
-            previousCompositionNodeText = previousCompositionNodeText.substring(wordStart);
+            previousCompositionNodeText = substring(previousCompositionNodeText, wordStart);
 
         m_lastPresentedTextPredictionComplete = { makeString(previousCompositionNodeText, m_lastPresentedTextPrediction.text), wordStart };
 
@@ -220,7 +220,7 @@ static void attributeStringSetLanguage(NSMutableAttributedString *attrString, Re
         return;
 
     RefPtr object = protect(protect(renderer->document())->axObjectCache())->getOrCreate(*renderer);
-    RetainPtr language = object->languageIncludingAncestors().createNSString();
+    RetainPtr language = createNSString(object->languageIncludingAncestors());
     if (language.get().length)
         [attrString addAttribute:AccessibilityTokenLanguage value:language.get() range:range];
     else
@@ -286,23 +286,23 @@ static void attributedStringSetCompositionAttributes(NSMutableAttributedString *
         return;
 
     auto& lastPresentedCompleteWord = object->lastPresentedTextPredictionComplete();
-    unsigned lastPresentedCompleteWordLength = lastPresentedCompleteWord.text.length();
+    unsigned lastPresentedCompleteWordLength = length(lastPresentedCompleteWord.text);
     unsigned lastPresentedCompleteWordPosition = lastPresentedCompleteWord.location;
 
-    if (!lastPresentedCompleteWord.text.isEmpty() && lastPresentedCompleteWordPosition + lastPresentedCompleteWordLength <= [attributedString length]) {
+    if (!isEmpty(lastPresentedCompleteWord.text) && lastPresentedCompleteWordPosition + lastPresentedCompleteWordLength <= [attributedString length]) {
         NSRange completeWordRange = NSMakeRange(lastPresentedCompleteWordPosition, lastPresentedCompleteWordLength);
-        RetainPtr lastPresentedCompleteWordText = lastPresentedCompleteWord.text.createNSString();
+        RetainPtr lastPresentedCompleteWordText = createNSString(lastPresentedCompleteWord.text);
         if ([[attributedString.string substringWithRange:completeWordRange] isEqualToString:lastPresentedCompleteWordText.get()])
             [attributedString addAttribute:AccessibilityAcceptedInlineTextCompletion value:lastPresentedCompleteWordText.get() range:completeWordRange];
     }
 
     auto& lastPresentedTextPrediction = object->lastPresentedTextPrediction();
-    unsigned lastPresentedLength = lastPresentedTextPrediction.text.length();
+    unsigned lastPresentedLength = length(lastPresentedTextPrediction.text);
     unsigned lastPresentedPosition = lastPresentedTextPrediction.location;
 
-    if (!lastPresentedTextPrediction.text.isEmpty() && lastPresentedPosition + lastPresentedLength <= [attributedString length]) {
+    if (!isEmpty(lastPresentedTextPrediction.text) && lastPresentedPosition + lastPresentedLength <= [attributedString length]) {
         NSRange presentedRange = NSMakeRange(lastPresentedPosition, lastPresentedLength);
-        if (![[attributedString.string substringWithRange:presentedRange] isEqualToString:lastPresentedTextPrediction.text.createNSString().get()])
+        if (![[attributedString.string substringWithRange:presentedRange] isEqualToString:createNSString(lastPresentedTextPrediction.text).get()])
             return;
 
         [attributedString addAttribute:AccessibilityInlineTextCompletion value:[attributedString.string substringWithRange:presentedRange] range:presentedRange];

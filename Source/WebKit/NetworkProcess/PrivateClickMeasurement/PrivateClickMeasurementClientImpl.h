@@ -43,7 +43,7 @@ public:
     ClientImpl(NetworkSession&, NetworkProcess&);
 
 private:
-    void broadcastConsoleMessage(JSC::MessageLevel, const String&) final;
+    void broadcastConsoleMessage(JSC::MessageLevel, StringImpl*) final;
     bool featureEnabled() const final;
     bool debugModeEnabled() const final;
     bool privateRelayEnforcementEnabled() const final;

@@ -42,17 +42,17 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCTrackEvent);
 
-Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<RTCRtpReceiver>&& receiver, Ref<MediaStreamTrack>&& track, Vector<Ref<MediaStream>>&& streams, Ref<RTCRtpTransceiver>&& transceiver)
+Ref<RTCTrackEvent> RTCTrackEvent::create(AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable, Ref<RTCRtpReceiver>&& receiver, Ref<MediaStreamTrack>&& track, Vector<Ref<MediaStream>>&& streams, Ref<RTCRtpTransceiver>&& transceiver)
 {
     return adoptRef(*new RTCTrackEvent(type, canBubble, cancelable, WTF::move(receiver), WTF::move(track), WTF::move(streams), WTF::move(transceiver)));
 }
 
-Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+Ref<RTCTrackEvent> RTCTrackEvent::create(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
 {
     return adoptRef(*new RTCTrackEvent(type, WTF::move(initializer), isTrusted));
 }
 
-RTCTrackEvent::RTCTrackEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<RTCRtpReceiver>&& receiver, Ref<MediaStreamTrack>&& track, Vector<Ref<MediaStream>>&& streams, Ref<RTCRtpTransceiver>&& transceiver)
+RTCTrackEvent::RTCTrackEvent(AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable, Ref<RTCRtpReceiver>&& receiver, Ref<MediaStreamTrack>&& track, Vector<Ref<MediaStream>>&& streams, Ref<RTCRtpTransceiver>&& transceiver)
     : Event(EventInterfaceType::RTCTrackEvent, type, canBubble, cancelable)
     , m_receiver(WTF::move(receiver))
     , m_track(WTF::move(track))
@@ -61,7 +61,7 @@ RTCTrackEvent::RTCTrackEvent(const AtomString& type, CanBubble canBubble, IsCanc
 {
 }
 
-RTCTrackEvent::RTCTrackEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+RTCTrackEvent::RTCTrackEvent(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::RTCTrackEvent, type, WTF::move(initializer), isTrusted)
     , m_receiver(WTF::move(initializer.receiver))
     , m_track(WTF::move(initializer.track))

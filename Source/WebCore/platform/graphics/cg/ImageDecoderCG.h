@@ -46,7 +46,7 @@ public:
     }
 
     static bool supportsMediaType(MediaType type) { return type == MediaType::Image; }
-    static bool canDecodeType(const String&);
+    static bool canDecodeType(StringImpl*);
 
     size_t bytesDecodedToDetermineProperties() const final;
 
@@ -56,9 +56,9 @@ public:
     size_t frameCount() const final;
     size_t primaryFrameIndex() const final;
     RepetitionCount repetitionCount() const final;
-    String uti() const final { return m_uti; }
-    String filenameExtension() const final;
-    String accessibilityDescription() const final;
+    RefPtr<StringImpl> uti() const final { return m_uti; }
+    RefPtr<StringImpl> filenameExtension() const final;
+    RefPtr<StringImpl> accessibilityDescription() const final;
     std::optional<IntPoint> hotSpot() const final;
 
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;
@@ -79,11 +79,11 @@ public:
     bool isAllDataReceived() const final { return m_isAllDataReceived; }
     void clearFrameBufferCache(size_t) final { }
 
-    static String decodeUTI(CGImageSourceRef, const SharedBuffer&);
+    static RefPtr<StringImpl> decodeUTI(CGImageSourceRef, const SharedBuffer&);
 
 private:
     bool hasAlpha() const;
-    String decodeUTI(const SharedBuffer&) const;
+    RefPtr<StringImpl> decodeUTI(const SharedBuffer&) const;
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     bool isMaybePanoramic() const;
@@ -105,7 +105,7 @@ private:
     bool m_isAllDataReceived { false };
     std::atomic<bool> m_isXBitmapImage { false };
     mutable EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
-    String m_uti;
+    RefPtr<StringImpl> m_uti;
     const RetainPtr<CGImageSourceRef> m_nativeDecoder;
 };
 

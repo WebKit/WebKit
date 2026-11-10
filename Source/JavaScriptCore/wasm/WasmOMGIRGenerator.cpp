@@ -427,7 +427,7 @@ public:
 
     static_assert(std::is_same_v<ResultList, FunctionParser<OMGIRGenerator>::ResultList>);
 
-    typedef String ErrorType;
+    typedef RefPtr<StringImpl> ErrorType;
     typedef std::unexpected<ErrorType> UnexpectedResult;
     typedef std::expected<std::unique_ptr<InternalFunction>, ErrorType> Result;
     typedef std::expected<void, ErrorType> PartialResult;
@@ -1063,7 +1063,7 @@ private:
     ExpressionType push(Value* value)
     {
         if constexpr (WasmOMGIRGeneratorInternal::traceExecution) {
-            String site;
+            RefPtr<StringImpl> site;
 #if ASSERT_ENABLED
             if constexpr (WasmOMGIRGeneratorInternal::traceExecutionIncludesConstructionSite)
                 site = Value::generateCompilerConstructionSite();
@@ -7115,7 +7115,7 @@ static bool shouldDumpIRFor(uint32_t functionIndex)
     return dumpAllowlist->shouldDumpWasmFunction(functionIndex);
 }
 
-std::expected<std::unique_ptr<InternalFunction>, String> parseAndCompileOMG(CompilationContext& compilationContext, IPIntCallee& profiledCallee, OptimizingJITCallee& callee, const FunctionData& function, const RTT& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, Module& module, CalleeGroup& calleeGroup, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, FunctionCodeIndex functionIndex, uint32_t loopIndexForOSREntry)
+std::expected<std::unique_ptr<InternalFunction>, RefPtr<StringImpl>> parseAndCompileOMG(CompilationContext& compilationContext, IPIntCallee& profiledCallee, OptimizingJITCallee& callee, const FunctionData& function, const RTT& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, Module& module, CalleeGroup& calleeGroup, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, FunctionCodeIndex functionIndex, uint32_t loopIndexForOSREntry)
 {
     CompilerTimingScope totalScope("B3"_s, "Total OMG compilation"_s);
 
@@ -7128,10 +7128,10 @@ std::expected<std::unique_ptr<InternalFunction>, String> parseAndCompileOMG(Comp
         ionGraphFunction = JSON::Object::create();
         auto passes = JSON::Array::create();
         ionGraphPasses = passes.get();
-        ionGraphFunction->setString("name"_s, callee.nameWithHash());
-        ionGraphFunction->setString("tier"_s, "OMG"_s);
-        ionGraphFunction->setBoolean("osr"_s, compilationMode == CompilationMode::OMGForOSREntryMode);
-        ionGraphFunction->setArray("passes"_s, WTF::move(passes));
+        ionGraphFunction->setString("name"_si, callee.nameWithHash());
+        ionGraphFunction->setString("tier"_si, "OMG"_si);
+        ionGraphFunction->setBoolean("osr"_si, compilationMode == CompilationMode::OMGForOSREntryMode);
+        ionGraphFunction->setArray("passes"_si, WTF::move(passes));
     }
     auto result = makeUnique<InternalFunction>();
     InliningDecision inliningDecision(module, profiledCallee);

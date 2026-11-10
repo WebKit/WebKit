@@ -285,7 +285,7 @@ ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float hei
 
                 // 4.1.2 If radius["x"] or radius["y"] is negative, then throw a RangeError.
                 if (point.x < 0 || point.y < 0)
-                    return Exception { ExceptionCode::RangeError, "radius point coordinates must be positive"_s };
+                    return Exception { ExceptionCode::RangeError, "radius point coordinates must be positive"_si };
 
                 // 4.1.3 Otherwise, append radius to normalizedRadii.
                 normalizedRadii.append({ static_cast<float>(point.x), static_cast<float>(point.y) });
@@ -302,7 +302,7 @@ ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float hei
 
                 // 4.2.2 If radius is negative, then throw a RangeError.
                 if (radiusValue < 0)
-                    return Exception { ExceptionCode::RangeError, "radius value must be positive"_s };
+                    return Exception { ExceptionCode::RangeError, "radius value must be positive"_si };
 
                 // 4.2.3 Otherwise append «[ "x" → radius, "y" → radius ]» to normalizedRadii.
                 normalizedRadii.append({ static_cast<float>(radiusValue), static_cast<float>(radiusValue) });

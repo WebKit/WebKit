@@ -110,7 +110,7 @@ Permissions::~Permissions()
 {
     auto queryPromises = std::exchange(m_queryPromises, { });
     for (auto& promise : queryPromises.values())
-        promise->reject(ExceptionCode::AbortError, "Promise was rejected because the browsing context is going away"_s);
+        promise->reject(ExceptionCode::AbortError, "Promise was rejected because the browsing context is going away"_si);
 }
 
 static bool isAllowedByPermissionsPolicy(const Document& document, PermissionName name)
@@ -147,25 +147,25 @@ std::optional<PermissionQuerySource> Permissions::sourceFromContext(const Script
 }
 
 
-std::optional<PermissionName> Permissions::toPermissionName(const String& name)
+std::optional<PermissionName> Permissions::toPermissionName(StringImpl* name)
 {
-    if (name == "camera"_s)
+    if (equal(name, "camera"_s))
         return PermissionName::Camera;
-    if (name == "geolocation"_s)
+    if (equal(name, "geolocation"_s))
         return PermissionName::Geolocation;
     // No "local-network-access" alias: Chromium's pre-split name spans both of these, whose states are
     // tracked independently, so there is no one state to report.
-    if (name == "local-network"_s)
+    if (equal(name, "local-network"_s))
         return PermissionName::LocalNetwork;
-    if (name == "loopback-network"_s)
+    if (equal(name, "loopback-network"_s))
         return PermissionName::LoopbackNetwork;
-    if (name == "microphone"_s)
+    if (equal(name, "microphone"_s))
         return PermissionName::Microphone;
-    if (name == "notifications"_s)
+    if (equal(name, "notifications"_s))
         return PermissionName::Notifications;
-    if (name == "push"_s)
+    if (equal(name, "push"_s))
         return PermissionName::Push;
-    if (name == "storage-access"_s)
+    if (equal(name, "storage-access"_s))
         return PermissionName::StorageAccess;
     return std::nullopt;
 }
@@ -173,7 +173,7 @@ std::optional<PermissionName> Permissions::toPermissionName(const String& name)
 static std::expected<PermissionState, Exception> processPermissionQueryResult(std::optional<PermissionState> permissionState, const PermissionDescriptor& permissionDescriptor, const Document& document)
 {
     if (!permissionState)
-        return makeUnexpected(Exception { ExceptionCode::NotSupportedError, "Permissions::query does not support this API"_s });
+        return makeUnexpected(Exception { ExceptionCode::NotSupportedError, "Permissions::query does not support this API"_si });
 
 #if !ENABLE(GEOLOCATION) && !ENABLE(MEDIA_STREAM)
     UNUSED_PARAM(permissionDescriptor);
@@ -185,7 +185,7 @@ static std::expected<PermissionState, Exception> processPermissionQueryResult(st
         if (auto geolocationPermissionState = determineGeolocationPermissionState(*permissionState, document))
             permissionState = geolocationPermissionState;
         else
-            return makeUnexpected(Exception { ExceptionCode::InvalidStateError, "The Document does not have a Geolocation object"_s });
+            return makeUnexpected(Exception { ExceptionCode::InvalidStateError, "The Document does not have a Geolocation object"_si });
     }
 #endif
 
@@ -201,19 +201,19 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, Re
 {
     RefPtr context = m_navigator ? m_navigator->scriptExecutionContext() : nullptr;
     if (!context || !context->globalObject()) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "The context is invalid"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "The context is invalid"_si });
         return;
     }
 
     auto source = sourceFromContext(*context);
     if (!source) {
-        promise->reject(Exception { ExceptionCode::NotSupportedError, "Permissions::query is not supported in this context"_s  });
+        promise->reject(Exception { ExceptionCode::NotSupportedError, "Permissions::query is not supported in this context"_si  });
         return;
     }
 
     RefPtr document = dynamicDowncast<Document>(*context);
     if (document && !document->isFullyActive()) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "The document is not fully active"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "The document is not fully active"_si });
         return;
     }
 
@@ -246,7 +246,7 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, Re
                 if (!protectedThis)
                     return;
                 if (RefPtr promise = protectedThis->m_queryPromises.take(promiseIdentifier))
-                    promise->reject(Exception { ExceptionCode::InvalidStateError, "The page does not exist"_s });
+                    promise->reject(Exception { ExceptionCode::InvalidStateError, "The page does not exist"_si });
             });
             return;
         }

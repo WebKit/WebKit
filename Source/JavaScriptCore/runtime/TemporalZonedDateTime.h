@@ -59,8 +59,8 @@ public:
 
     ISO8601::ExactTime exactTime() const { return m_exactTime; }
     const TimeZone& timeZone() const { return m_timeZone; }
-    String timeZoneId() const { return m_timeZone.toString(); }
-    String calendarId() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
+    RefPtr<StringImpl> timeZoneId() const { return m_timeZone.toString(); }
+    RefPtr<StringImpl> calendarId() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
     CalendarID calendarID() const { return m_calendarID; }
 
     std::optional<int64_t> getOffsetNanoseconds(JSGlobalObject*) const;

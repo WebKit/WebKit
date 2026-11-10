@@ -109,7 +109,7 @@ public:
 
     MonotonicTime timestamp() const { return m_scrollVelocity.lastUpdateTime; }
 
-    String dump() const;
+    RefPtr<StringImpl> dump() const;
 
 private:
     WebCore::FloatRect m_exposedContentRect;

@@ -37,7 +37,7 @@ enum class MainFrameMainResource : bool { No, Yes };
 
 struct NetworkLoadPolicy {
     bool loadsSubresources { true };
-    std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<String>> allowedNetworkHosts;
+    std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>> allowedNetworkHosts;
 
     WEBCORE_EXPORT bool allowsLoadFromURL(const URL&, MainFrameMainResource) const;
     WEBCORE_EXPORT NetworkLoadPolicy isolatedCopy() const;

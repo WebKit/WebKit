@@ -40,7 +40,7 @@ namespace WebCore {
 
 PathOperation::~PathOperation() = default;
 
-Ref<ReferencePathOperation> ReferencePathOperation::create(const Style::URL& url, const AtomString& fragment, const RefPtr<SVGElement> element)
+Ref<ReferencePathOperation> ReferencePathOperation::create(const Style::URL& url, AtomStringImpl* fragment, const RefPtr<SVGElement> element)
 {
     return adoptRef(*new ReferencePathOperation(url, fragment, element));
 }
@@ -59,7 +59,7 @@ Ref<PathOperation> ReferencePathOperation::clone() const
     return adoptRef(*new ReferencePathOperation(std::nullopt));
 }
 
-ReferencePathOperation::ReferencePathOperation(const Style::URL& url, const AtomString& fragment, const RefPtr<SVGElement> element)
+ReferencePathOperation::ReferencePathOperation(const Style::URL& url, AtomStringImpl* fragment, const RefPtr<SVGElement> element)
     : PathOperation(Type::Reference)
     , m_url(url)
     , m_fragment(fragment)

@@ -78,9 +78,9 @@ private:
     bool canAbortSession() final { return false; }
     void hide() final;
     void canMakePayment(Document&, Function<void(bool)>&& completionHandler) final;
-    ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) final;
+    ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, RefPtr<StringImpl>&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) final;
     ExceptionOr<void> merchantValidationCompleted(JSC::JSValue&&) final;
-    ExceptionOr<void> complete(Document&, std::optional<PaymentComplete>&&, String&& serializedData) final;
+    ExceptionOr<void> complete(Document&, std::optional<PaymentComplete>&&, RefPtr<StringImpl>&& serializedData) final;
     ExceptionOr<void> retry(PaymentValidationErrors&&) final;
 
     PaymentRequest::MethodIdentifier m_identifier;

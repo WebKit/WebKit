@@ -114,8 +114,8 @@ void PingLoader::loadImage(LocalFrame& frame, URL&& url)
 
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
 
-    String referrer = SecurityPolicy::generateReferrerHeader(document->referrerPolicy(), request.url(), frame.loader().outgoingReferrerURL(), OriginAccessPatternsForWebProcess::singleton());
-    if (!referrer.isEmpty())
+    RefPtr<StringImpl> referrer = SecurityPolicy::generateReferrerHeader(document->referrerPolicy(), request.url(), frame.loader().outgoingReferrerURL(), OriginAccessPatternsForWebProcess::singleton());
+    if (!isEmpty(referrer))
         request.setHTTPReferrer(referrer);
     frame.loader().updateRequestAndAddExtraFields(request, IsMainResource::No);
 
@@ -144,8 +144,8 @@ void PingLoader::sendPing(LocalFrame& frame, URL&& sendPingURL, const URL& desti
         return;
     protect(document->contentSecurityPolicy())->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    request.setHTTPMethod("POST"_s);
-    request.setHTTPContentType("text/ping"_s);
+    request.setHTTPMethod("POST"_si);
+    request.setHTTPContentType("text/ping"_si);
     request.setHTTPBody(FormData::create("PING"_span8));
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
 
@@ -182,11 +182,11 @@ void PingLoader::sendViolationReport(LocalFrame& frame, URL&& violationReportURL
     Ref document = *frame.document();
     protect(document->contentSecurityPolicy())->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    request.setHTTPMethod("POST"_s);
+    request.setHTTPMethod("POST"_si);
     request.setHTTPBody(WTF::move(report));
     switch (reportType) {
     case ViolationReportType::ContentSecurityPolicy:
-        request.setHTTPContentType("application/csp-report"_s);
+        request.setHTTPContentType("application/csp-report"_si);
         break;
     case ViolationReportType::COEPInheritenceViolation:
     case ViolationReportType::CORPViolation:
@@ -196,7 +196,7 @@ void PingLoader::sendViolationReport(LocalFrame& frame, URL&& violationReportURL
     case ViolationReportType::StandardReportingAPIViolation:
     case ViolationReportType::Test:
     case ViolationReportType::IntegrityPolicy:
-        request.setHTTPContentType("application/reports+json"_s);
+        request.setHTTPContentType("application/reports+json"_si);
         break;
     }
 
@@ -209,8 +209,8 @@ void PingLoader::sendViolationReport(LocalFrame& frame, URL&& violationReportURL
     if (reportType == ViolationReportType::ContentSecurityPolicy)
         frame.loader().updateRequestAndAddExtraFields(request, IsMainResource::No);
 
-    String referrer = SecurityPolicy::generateReferrerHeader(document->referrerPolicy(), reportURL, frame.loader().outgoingReferrerURL(), OriginAccessPatternsForWebProcess::singleton());
-    if (!referrer.isEmpty())
+    RefPtr<StringImpl> referrer = SecurityPolicy::generateReferrerHeader(document->referrerPolicy(), reportURL, frame.loader().outgoingReferrerURL(), OriginAccessPatternsForWebProcess::singleton());
+    if (!isEmpty(referrer))
         request.setHTTPReferrer(referrer);
 
     startPingLoad(frame, request, ShouldFollowRedirects::No, ContentSecurityPolicyImposition::SkipPolicyCheck, ReferrerPolicy::EmptyString, reportType);
@@ -247,7 +247,7 @@ void PingLoader::startPingLoad(LocalFrame& frame, ResourceRequest& request, Shou
 }
 
 // // https://html.spec.whatwg.org/multipage/origin.html#sanitize-url-report
-String PingLoader::sanitizeURLForReport(const URL& url)
+RefPtr<StringImpl> PingLoader::sanitizeURLForReport(const URL& url)
 {
     URL sanitizedURL = url;
     sanitizedURL.removeCredentials();

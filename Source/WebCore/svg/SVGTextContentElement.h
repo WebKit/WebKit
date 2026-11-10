@@ -37,26 +37,26 @@ enum SVGLengthAdjustType {
 template<> struct SVGPropertyTraits<SVGLengthAdjustType> {
     static unsigned highestEnumValue() { return SVGLengthAdjustSpacingAndGlyphs; }
 
-    static String toString(SVGLengthAdjustType type)
+    static RefPtr<StringImpl> toString(SVGLengthAdjustType type)
     {
         switch (type) {
         case SVGLengthAdjustUnknown:
             return emptyString();
         case SVGLengthAdjustSpacing:
-            return "spacing"_s;
+            return "spacing"_si;
         case SVGLengthAdjustSpacingAndGlyphs:
-            return "spacingAndGlyphs"_s;
+            return "spacingAndGlyphs"_si;
         }
 
         ASSERT_NOT_REACHED();
         return emptyString();
     }
 
-    static SVGLengthAdjustType fromString(SVGElement&, const String& value)
+    static SVGLengthAdjustType fromString(SVGElement&, StringImpl* value)
     {
-        if (value == "spacingAndGlyphs"_s)
+        if (equal(value, "spacingAndGlyphs"_s))
             return SVGLengthAdjustSpacingAndGlyphs;
-        if (value == "spacing"_s)
+        if (equal(value, "spacing"_s))
             return SVGLengthAdjustSpacing;
         return SVGLengthAdjustUnknown;
     }
@@ -98,9 +98,9 @@ protected:
 
     bool isValid() const override { return SVGTests::isValid(); }
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool selfHasRelativeLengths() const override;

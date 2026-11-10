@@ -30,12 +30,12 @@
 
 namespace WebKit {
 
-Ref<WebScriptMessageHandler> WebScriptMessageHandler::create(std::unique_ptr<Client> client, const String& name, API::ContentWorld& world)
+Ref<WebScriptMessageHandler> WebScriptMessageHandler::create(std::unique_ptr<Client> client, StringImpl* name, API::ContentWorld& world)
 {
     return adoptRef(*new WebScriptMessageHandler(WTF::move(client), name, world));
 }
 
-WebScriptMessageHandler::WebScriptMessageHandler(std::unique_ptr<Client> client, const String& name, API::ContentWorld& world)
+WebScriptMessageHandler::WebScriptMessageHandler(std::unique_ptr<Client> client, StringImpl* name, API::ContentWorld& world)
     : m_client(WTF::move(client))
     , m_name(name)
     , m_world(world)

@@ -75,8 +75,8 @@ void SearchInputType::valueChanged(unsigned listIndex, bool fireEvents)
     if (static_cast<int>(listIndex) == (listSize() - 1)) {
         if (fireEvents) {
             m_recentSearches.clear();
-            const AtomString& name = inputElement->attributeWithoutSynchronization(nameAttr);
-            if (!name.isEmpty()) {
+            const RefPtr<AtomStringImpl>& name = inputElement->attributeWithoutSynchronization(nameAttr);
+            if (!isEmpty(name)) {
                 if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(inputElement->renderer()))
                     renderer->updatePopup(name, m_recentSearches);
             }
@@ -87,7 +87,7 @@ void SearchInputType::valueChanged(unsigned listIndex, bool fireEvents)
     }
 }
 
-String SearchInputType::itemText(unsigned listIndex) const
+RefPtr<StringImpl> SearchInputType::itemText(unsigned listIndex) const
 {
 #if !PLATFORM(IOS_FAMILY)
     int size = listSize();
@@ -99,7 +99,7 @@ String SearchInputType::itemText(unsigned listIndex) const
         return searchMenuRecentSearchesText();
 #endif
     if (itemIsSeparator(listIndex))
-        return String();
+        return nullptr;
 #if !PLATFORM(IOS_FAMILY)
     if (static_cast<int>(listIndex) == (size - 1))
         return searchMenuClearRecentSearchesText();
@@ -224,8 +224,8 @@ void SearchInputType::addSearchResult()
     if (inputElement->maxResults() <= 0)
         return;
 
-    String value = inputElement->value();
-    if (value.isEmpty())
+    RefPtr<StringImpl> value = inputElement->value();
+    if (isEmpty(value))
         return;
 
     CheckedPtr renderer = dynamicDowncast<RenderSearchField>(inputElement->renderer());
@@ -233,7 +233,7 @@ void SearchInputType::addSearchResult()
         return;
 
     m_recentSearches.removeAllMatching([value] (const RecentSearch& recentSearch) {
-        return recentSearch.string == value;
+        return equal(recentSearch.string, value);
     });
 
     RecentSearch recentSearch = { value, WallTime::now() };
@@ -241,7 +241,7 @@ void SearchInputType::addSearchResult()
     while (static_cast<int>(m_recentSearches.size()) > inputElement->maxResults())
         m_recentSearches.removeLast();
 
-    const AtomString& name = inputElement->attributeWithoutSynchronization(nameAttr);
+    const RefPtr<AtomStringImpl>& name = inputElement->attributeWithoutSynchronization(nameAttr);
     if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(inputElement->renderer()))
         renderer->updatePopup(name, m_recentSearches);
 #endif
@@ -274,7 +274,7 @@ RenderPtr<RenderElement> SearchInputType::createInputRenderer(Style::ComputedSty
     return createRenderer<RenderSearchField>(*protect(element()), WTF::move(style));
 }
 
-const AtomString& SearchInputType::formControlType() const
+const RefPtr<AtomStringImpl>& SearchInputType::formControlType() const
 {
     return InputTypeNames::search();
 }
@@ -327,8 +327,8 @@ auto SearchInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBase
     if (!element->isMutable())
         return TextFieldInputType::handleKeydownEvent(event);
 
-    const String& key = event.keyIdentifier();
-    if (key == "U+001B"_s) {
+    const RefPtr<StringImpl>& key = event.keyIdentifier();
+    if (equal(key, "U+001B"_s)) {
         element->setValue(emptyString(), DispatchChangeEvent);
         event.setDefaultHandled();
         return ShouldCallBaseEventHandler::Yes;
@@ -387,9 +387,9 @@ float SearchInputType::decorationWidth(float) const
     return width;
 }
 
-void SearchInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
+void SearchInputType::setValue(StringImpl* sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
-    bool emptinessChanged = valueChanged && sanitizedValue.isEmpty() != protect(element())->value()->isEmpty();
+    bool emptinessChanged = valueChanged && isEmpty(sanitizedValue) != isEmpty(protect(element())->value().get());
 
     BaseTextInputType::setValue(sanitizedValue, valueChanged, eventBehavior, selection);
 

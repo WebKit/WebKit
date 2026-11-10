@@ -92,7 +92,7 @@ RangeInputType::RangeInputType(HTMLInputElement& element)
     ASSERT(needsShadowSubtree());
 }
 
-const AtomString& RangeInputType::formControlType() const
+const RefPtr<AtomStringImpl>& RangeInputType::formControlType() const
 {
     return InputTypeNames::range();
 }
@@ -202,7 +202,7 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
     if (element->isDisabledFormControl())
         return ShouldCallBaseEventHandler::Yes;
 
-    const String& key = event.keyIdentifier();
+    const RefPtr<StringImpl>& key = event.keyIdentifier();
 
     const Decimal current = parseToNumberOrNaN(element->value());
     ASSERT(current.isFinite());
@@ -219,21 +219,21 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
         isVertical = renderer->style().usedAppearance() == StyleAppearance::SliderVertical;
 
     Decimal newValue;
-    if (key == "Up"_s)
+    if (equal(key, "Up"_s))
         newValue = current + step;
-    else if (key == "Down"_s)
+    else if (equal(key, "Down"_s))
         newValue = current - step;
-    else if (key == "Left"_s)
+    else if (equal(key, "Left"_s))
         newValue = isVertical ? current + step : current - step;
-    else if (key == "Right"_s)
+    else if (equal(key, "Right"_s))
         newValue = isVertical ? current - step : current + step;
-    else if (key == "PageUp"_s)
+    else if (equal(key, "PageUp"_s))
         newValue = current + bigStep;
-    else if (key == "PageDown"_s)
+    else if (equal(key, "PageDown"_s))
         newValue = current - bigStep;
-    else if (key == "Home"_s)
+    else if (equal(key, "Home"_s))
         newValue = isVertical ? stepRange.maximum() : stepRange.minimum();
-    else if (key == "End"_s)
+    else if (equal(key, "End"_s))
         newValue = isVertical ? stepRange.minimum() : stepRange.maximum();
     else
         return ShouldCallBaseEventHandler::Yes; // Did not match any key binding.
@@ -319,10 +319,10 @@ Decimal RangeInputType::parseToNumber(StringView src, const Decimal& defaultValu
     return parseToDecimalForNumberType(src, defaultValue);
 }
 
-String RangeInputType::serialize(const Decimal& value) const
+RefPtr<StringImpl> RangeInputType::serialize(const Decimal& value) const
 {
     if (!value.isFinite())
-        return String();
+        return nullptr;
     return serializeForNumberType(value);
 }
 
@@ -342,7 +342,7 @@ void RangeInputType::attributeChanged(const QualifiedName& name)
         // Sanitize the value.
         if (RefPtr element = this->element()) {
             if (element->hasDirtyValue())
-                element->setValue(element->value());
+                element->setValue(protect(element->value().get()));
         }
         if (hasCreatedShadowSubtree())
             protect(typedSliderThumbElement())->setPositionFromValue();
@@ -353,7 +353,7 @@ void RangeInputType::attributeChanged(const QualifiedName& name)
     InputType::attributeChanged(name);
 }
 
-void RangeInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
+void RangeInputType::setValue(StringImpl* value, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
     InputType::setValue(value, valueChanged, eventBehavior, selection);
 
@@ -361,18 +361,18 @@ void RangeInputType::setValue(const String& value, bool valueChanged, TextFieldE
         return;
 
     if (eventBehavior == DispatchNoEvent)
-        protect(element())->setTextAsOfLastFormControlChangeEvent(String(value));
+        protect(element())->setTextAsOfLastFormControlChangeEvent(RefPtr<StringImpl>(value));
 
     if (hasCreatedShadowSubtree())
         protect(typedSliderThumbElement())->setPositionFromValue();
 }
 
-ValueOrReference<String> RangeInputType::fallbackValue() const
+ValueOrReference<RefPtr<StringImpl>> RangeInputType::fallbackValue() const
 {
     return serializeForNumberType(createStepRange(AnyStepHandling::Reject).defaultValue());
 }
 
-ValueOrReference<String> RangeInputType::sanitizeValue(const String& proposedValue LIFETIME_BOUND) const
+ValueOrReference<RefPtr<StringImpl>> RangeInputType::sanitizeValue(StringImpl* proposedValue LIFETIME_BOUND) const
 {
     StepRange stepRange(createStepRange(AnyStepHandling::Reject));
     const Decimal proposedNumericValue = parseToNumber(proposedValue, stepRange.defaultValue());

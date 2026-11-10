@@ -175,17 +175,27 @@ enum class FontVariantNumericOrdinal : bool { Normal, Yes };
 enum class FontVariantNumericSlashedZero : bool { Normal, Yes };
 
 struct FontVariantAlternatesValues {
-    String stylistic;
-    Vector<String> styleset;
-    Vector<String> characterVariant;
-    String swash;
-    String ornaments;
-    String annotation;
+    RefPtr<StringImpl> stylistic;
+    Vector<RefPtr<StringImpl>> styleset;
+    Vector<RefPtr<StringImpl>> characterVariant;
+    RefPtr<StringImpl> swash;
+    RefPtr<StringImpl> ornaments;
+    RefPtr<StringImpl> annotation;
     bool historicalForms = false;
 
     friend void add(Hasher&, const FontVariantAlternatesValues&);
 
-    bool operator==(const FontVariantAlternatesValues&) const = default;
+    bool operator==(const FontVariantAlternatesValues& other) const
+    {
+        return contentEquals(stylistic, other.stylistic)
+            && contentEquals(styleset, other.styleset)
+            && contentEquals(characterVariant, other.characterVariant)
+            && contentEquals(swash, other.swash)
+            && contentEquals(ornaments, other.ornaments)
+            && contentEquals(annotation, other.annotation)
+            && historicalForms == other.historicalForms
+            && m_isEmpty == other.m_isEmpty;
+    }
 
 private:
     friend struct MarkableTraits<FontVariantAlternatesValues>;

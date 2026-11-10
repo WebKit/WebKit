@@ -119,7 +119,7 @@ Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformVideoLayer(WebCore::HT
 }
 #endif
 
-Ref<PlatformCAAnimation> GraphicsLayerCARemote::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
+Ref<PlatformCAAnimation> GraphicsLayerCARemote::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, StringImpl* keyPath)
 {
     return PlatformCAAnimationRemote::create(type, keyPath);
 }

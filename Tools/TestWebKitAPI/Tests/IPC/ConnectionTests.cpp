@@ -1601,7 +1601,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReply)
 struct PromiseConverter {
     static auto convertError(IPC::Error)
     {
-        return makeUnexpected(String { "2"_s });
+        return makeUnexpected("2"_si);
     }
 };
 
@@ -1624,7 +1624,7 @@ TEST_P(ConnectionRunLoopTest, SendWithConvertedPromisedReply)
         b()->sendWithPromisedReply<PromiseConverter>(MockTestMessageWithAsyncReply1 { }, 1)->then(runLoop, [&] (uint64_t value) {
             EXPECT_EQ(value, 1u);
             isFinished = true;
-        }, [&] (String&& error) {
+        }, [&] (RefPtr<StringImpl>&& error) {
             EXPECT_EQ(error, "2"_s);
             isFinished = true;
         });

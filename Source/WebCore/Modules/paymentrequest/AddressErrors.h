@@ -32,18 +32,18 @@
 namespace WebCore {
 
 struct AddressErrors {
-    String addressLine;
-    String city;
-    String country;
-    String dependentLocality;
-    String languageCode;
-    String organization;
-    String phone;
-    String postalCode;
-    String recipient;
-    String region;
-    String regionCode;
-    String sortingCode;
+    RefPtr<StringImpl> addressLine;
+    RefPtr<StringImpl> city;
+    RefPtr<StringImpl> country;
+    RefPtr<StringImpl> dependentLocality;
+    RefPtr<StringImpl> languageCode;
+    RefPtr<StringImpl> organization;
+    RefPtr<StringImpl> phone;
+    RefPtr<StringImpl> postalCode;
+    RefPtr<StringImpl> recipient;
+    RefPtr<StringImpl> region;
+    RefPtr<StringImpl> regionCode;
+    RefPtr<StringImpl> sortingCode;
 };
 
 } // namespace WebCore

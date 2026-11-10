@@ -141,12 +141,12 @@ static inline InlineContentBreaker::PartialRun firstCharacterBreakRespectingLine
 {
     auto firstCharacterLength = TextUtil::firstUserPerceivedCharacterLength(inlineTextItem);
     auto firstCharacterWidth = TextUtil::width(inlineTextItem, textRun.style.fontCascade(), inlineTextItem.start(), inlineTextItem.start() + firstCharacterLength, contentLogicalRight);
-    if (inlineTextItem.inlineTextBox().content().is8Bit())
+    if (is8Bit(inlineTextItem.inlineTextBox().content()))
         return { firstCharacterLength, firstCharacterWidth };
 
     auto breakPosition = firstCharacterLength;
     auto breakWidth = firstCharacterWidth;
-    auto text = inlineTextItem.inlineTextBox().content();
+    TextUtil::CodeUnits text { inlineTextItem.inlineTextBox().content() };
     while (inlineTextItem.start() + breakPosition < inlineTextItem.end()) {
         if (canBreakBefore(text[inlineTextItem.start() + breakPosition], textRun.style.lineBreak()))
             break;
@@ -438,7 +438,7 @@ static inline std::optional<size_t> lastValidBreakingPosition(const InlineConten
 
     auto lastValidBreakingPositionInsideTextRun = [&]() -> std::optional<size_t> {
         // Find out if the candidate position for arbitrary breaking is valid. We can't always break between any characters.
-        auto text = inlineTextItem.inlineTextBox().content();
+        TextUtil::CodeUnits text { inlineTextItem.inlineTextBox().content() };
         auto left = inlineTextItem.start();
         for (auto index = inlineTextItem.end() - 1; index > left; --index) {
             U16_SET_CP_START(text, left, index);
@@ -453,7 +453,7 @@ static inline std::optional<size_t> lastValidBreakingPosition(const InlineConten
     if (auto nextTextRunCandidateIndex = nextTextRunIndex(runs, textRunIndex)) {
         auto& nextInlineTextItem = downcast<InlineTextItem>(runs[*nextTextRunCandidateIndex].inlineItem);
         auto canBreakAtRunBoundary = nextInlineTextItem.isWhitespace() ? nextInlineTextItem.style().whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces :
-            canBreakBefore(nextInlineTextItem.inlineTextBox().content()[nextInlineTextItem.start()], lineBreak);
+            canBreakBefore(codeUnitAt(nextInlineTextItem.inlineTextBox().content(), nextInlineTextItem.start()), lineBreak);
         if (canBreakAtRunBoundary)
             return inlineTextItem.end();
         return lastValidBreakingPositionInsideTextRun();
@@ -481,7 +481,7 @@ static std::optional<TextUtil::WordBreakLeft> midWordBreak(const InlineContentBr
 
     // Find out if the candidate position for arbitrary breaking is valid. We can't always break between any characters.
     auto lineBreak = textRun.style.lineBreak();
-    auto text = inlineTextItem.inlineTextBox().content();
+    TextUtil::CodeUnits text { inlineTextItem.inlineTextBox().content() };
     if (canBreakBefore(text[inlineTextItem.start() + wordBreak.length], lineBreak))
         return wordBreak;
 
@@ -607,7 +607,7 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
                     if (auto wordBreak = midWordBreak(candidateRun, candidateTextRun.logicalLeft, availableWidth))
                         return PartialRun { wordBreak->length, wordBreak->logicalWidth };
                 }
-                if (canBreakBefore(inlineTextItem.inlineTextBox().content()[inlineTextItem.start()], style->lineBreak()))
+                if (canBreakBefore(codeUnitAt(inlineTextItem.inlineTextBox().content(), inlineTextItem.start()), style->lineBreak()))
                     return PartialRun { };
                 else {
                     // Since this is an overflowing content and we are allowed to break at arbitrary position, we really ought to find a breaking position.
@@ -616,7 +616,7 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
                     auto firstBreakablePosition = [&] () -> std::optional<TextUtil::WordBreakLeft> {
                         if (lineStatus.hasContent)
                             return { };
-                        auto text = inlineTextItem.inlineTextBox().content();
+                        TextUtil::CodeUnits text { inlineTextItem.inlineTextBox().content() };
                         const auto left = inlineTextItem.start();
                         auto right = left;
                         U16_SET_CP_START(text, left, right);

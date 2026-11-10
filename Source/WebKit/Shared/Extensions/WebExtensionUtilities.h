@@ -51,7 +51,7 @@ class WebFrame;
 
 Ref<JSON::Array> filterObjects(const JSON::Array&, NOESCAPE const WTF::Function<bool(const JSON::Value&)>&);
 
-Vector<String> makeStringVector(const JSON::Array&);
+Vector<RefPtr<StringImpl>> makeStringVector(const JSON::Array&);
 
 Vector<double> availableScreenScales();
 double largestDisplayScale();
@@ -60,19 +60,19 @@ RefPtr<JSON::Object> jsonWithLowercaseKeys(RefPtr<JSON::Object>);
 RefPtr<JSON::Object> mergeJSON(RefPtr<JSON::Object>, RefPtr<JSON::Object>);
 
 /// Returns a concatenated error string that combines the provided information into a single, descriptive message.
-String toErrorString(const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString);
+RefPtr<StringImpl> toErrorString(StringImpl* callingAPIName, StringImpl* sourceKey, StringImpl* underlyingErrorString);
 
 /// Returns an error for Expected results in CompletionHandler.
-inline std::unexpected<WebExtensionError> toWebExtensionError(const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString)
+inline std::unexpected<WebExtensionError> toWebExtensionError(StringImpl* callingAPIName, StringImpl* sourceKey, StringImpl* underlyingErrorString)
 {
     return makeUnexpected(toErrorString(callingAPIName, sourceKey, underlyingErrorString));
 }
 
 /// Returns an error object that combines the provided information into a single, descriptive message.
-JSObjectRef toJSError(JSContextRef, const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString);
+JSObjectRef toJSError(JSContextRef, StringImpl* callingAPIName, StringImpl* sourceKey, StringImpl* underlyingErrorString);
 
 /// Serializes large data to JSON chunks to avoid StringBuilder overflow.
-void serializeToMultipleJSONStrings(Ref<JSON::Object>, NOESCAPE const Function<void(String&&)>&);
+void serializeToMultipleJSONStrings(Ref<JSON::Object>, NOESCAPE const Function<void(RefPtr<StringImpl>&&)>&);
 
 /// Returns the maximum number of bytes that can be set or retrieved in a single storage call. Returns a lower limit for tests to avoid a timeout.
 size_t storageMaximumBytesPerCall(bool inTestingMode);
@@ -106,25 +106,25 @@ JSObjectRef toWebAPI(JSContextRef context, const Vector<T>& data)
     return array;
 }
 
-bool validateObject(RefPtr<JSON::Value> dictionary, const String& sourceKey, Vector<JSON::Value::Type> validationType, Vector<JSON::Value::Type> arrayValidationType, String& outExceptionString);
+bool validateObject(RefPtr<JSON::Value> dictionary, StringImpl* sourceKey, Vector<JSON::Value::Type> validationType, Vector<JSON::Value::Type> arrayValidationType, RefPtr<StringImpl>& outExceptionString);
 
-bool validateDictionary(RefPtr<JSON::Value> dictionary, const String& sourceKey, Vector<String> requiredKeys, HashMap<String, JSON::Value::Type> keyTypes, String& outExceptionString);
+bool validateDictionary(RefPtr<JSON::Value> dictionary, StringImpl* sourceKey, Vector<RefPtr<StringImpl>> requiredKeys, HashMap<RefPtr<StringImpl>, JSON::Value::Type> keyTypes, RefPtr<StringImpl>& outExceptionString);
 
 /// Returns a rejected Promise object that combines the provided information into a single, descriptive error message.
-JSObjectRef toJSRejectedPromise(JSContextRef, const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString);
+JSObjectRef toJSRejectedPromise(JSContextRef, StringImpl* callingAPIName, StringImpl* sourceKey, StringImpl* underlyingErrorString);
 
 void callAfterRandomDelay(Function<void()>&&);
 
 size_t storageMaximumBytesPerCall(bool inTestingMode);
 
 /// Returns the storage size of a string.
-size_t storageSizeOf(const String&);
+size_t storageSizeOf(StringImpl*);
 
 /// Returns the storage size of all of the key value pairs in a dictionary.
 size_t storageSizeOf(RefPtr<JSON::Object>);
 
 /// Returns true if the size of any item in the dictionary exceeds the given quota.
-bool anyItemsExceedQuota(RefPtr<JSON::Object>, size_t quota, String& outKeyWithError);
+bool anyItemsExceedQuota(RefPtr<JSON::Object>, size_t quota, RefPtr<StringImpl>& outKeyWithError);
 
 #ifdef __OBJC__
 
@@ -161,7 +161,7 @@ id toWebAPI(const std::optional<T>& result, UseNullValue useNull = UseNullValue:
 inline NSDictionary *toWebAPI(const JSON::Object& object)
 {
     auto jsonString = object.toJSONString();
-    RetainPtr jsonData = [jsonString.createNSString() dataUsingEncoding:NSUTF8StringEncoding];
+    RetainPtr jsonData = [createNSString(jsonString) dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:jsonData.get() options:0 error:nil];
     return dictionary;
 }

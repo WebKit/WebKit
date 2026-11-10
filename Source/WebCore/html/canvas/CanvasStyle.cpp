@@ -84,7 +84,7 @@ static OptionSet<CSS::ColorType> allowedColorTypes(ScriptExecutionContext* scrip
     return { CSS::ColorType::Absolute, CSS::ColorType::Current };
 }
 
-Color parseColor(const String& colorString, CanvasBase& canvasBase)
+Color parseColor(StringImpl* colorString, CanvasBase& canvasBase)
 {
     using namespace CSSPropertyParserHelpers;
     auto& cssParserContext = canvasBase.cssParserContext();
@@ -112,7 +112,7 @@ Color parseColor(const String& colorString, CanvasBase& canvasBase)
     return parseColorRawGeneral(colorString, cssParserContext, *scriptExecutionContext, options, state);
 }
 
-Color parseColor(const String& colorString, ScriptExecutionContext& scriptExecutionContext)
+Color parseColor(StringImpl* colorString, ScriptExecutionContext& scriptExecutionContext)
 {
     // FIXME: Add constructor for CSSParserContext that takes a ScriptExecutionContext to allow preferences to be
     //        checked correctly.

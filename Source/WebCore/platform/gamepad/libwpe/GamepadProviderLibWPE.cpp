@@ -222,13 +222,13 @@ struct wpe_view_backend* GamepadProviderLibWPE::inputView()
     return wpe_gamepad_provider_get_view_backend(m_provider.get(), m_lastActiveGamepad);
 }
 
-void GamepadProviderLibWPE::playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
+void GamepadProviderLibWPE::playEffect(unsigned, StringImpl*, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
 {
     // Not supported by this provider.
     completionHandler(false);
 }
 
-void GamepadProviderLibWPE::stopEffects(unsigned, const String&, CompletionHandler<void()>&& completionHandler)
+void GamepadProviderLibWPE::stopEffects(unsigned, StringImpl*, CompletionHandler<void()>&& completionHandler)
 {
     // Not supported by this provider.
     completionHandler();

@@ -34,11 +34,11 @@ class Text : public CharacterData {
 public:
     static const unsigned defaultLengthLimit = 1 << 16;
 
-    static Ref<Text> create(Document& document, String&& data)
+    static Ref<Text> create(Document& document, RefPtr<StringImpl>&& data)
     {
         return adoptRef(*new Text(document, WTF::move(data), NodeType::Text, { }));
     }
-    static Ref<Text> createEditingText(Document&, String&&);
+    static Ref<Text> createEditingText(Document&, RefPtr<StringImpl>&&);
 
     virtual ~Text();
 
@@ -46,8 +46,8 @@ public:
 
     // DOM Level 3: http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-1312295772
 
-    WEBCORE_EXPORT String wholeText() const;
-    WEBCORE_EXPORT void replaceWholeText(const String&);
+    WEBCORE_EXPORT RefPtr<StringImpl> wholeText() const;
+    WEBCORE_EXPORT void replaceWholeText(StringImpl*);
     
     RenderPtr<RenderText> createTextRenderer();
     
@@ -57,23 +57,23 @@ public:
 
     void updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
 
-    String description() const final;
-    String debugDescription() const final;
+    RefPtr<StringImpl> description() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
 protected:
-    Text(Document& document, String&& data, NodeType type, OptionSet<TypeFlag> typeFlags)
+    Text(Document& document, RefPtr<StringImpl>&& data, NodeType type, OptionSet<TypeFlag> typeFlags)
         : CharacterData(document, WTF::move(data), type, typeFlags | TypeFlag::IsText)
     {
         ASSERT(!isContainerNode());
     }
 
 private:
-    String nodeName() const override;
+    RefPtr<StringImpl> nodeName() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
     SerializedNode serializeNode(CloningOperation) const override;
-    void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges) final;
+    void setDataAndUpdate(StringImpl*, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges) final;
 
-    virtual Ref<Text> virtualCreate(String&&);
+    virtual Ref<Text> virtualCreate(RefPtr<StringImpl>&&);
 };
 
 } // namespace WebCore

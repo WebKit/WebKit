@@ -72,10 +72,10 @@ public:
     // This callback comes from WebCore, not messaged from the UI process.
     void didDestroyNotification(WebCore::NotificationData&&, WebPage*);
 
-    void didUpdateNotificationDecision(const String& originString, bool allowed);
+    void didUpdateNotificationDecision(StringImpl* originString, bool allowed);
 
     // Looks in local cache for permission. If not found, returns DefaultDenied.
-    WebCore::NotificationClient::Permission policyForOrigin(const String& originString, WebPage* = nullptr) const;
+    WebCore::NotificationClient::Permission policyForOrigin(StringImpl* originString, WebPage* = nullptr) const;
 
     void removeAllPermissionsForTesting();
 
@@ -90,12 +90,12 @@ private:
     void didShowNotification(const WTF::UUID& notificationID);
     void didClickNotification(const WTF::UUID& notificationID);
     void didCloseNotifications(const Vector<WTF::UUID>& notificationIDs);
-    void didRemoveNotificationDecisions(const Vector<String>& originStrings);
+    void didRemoveNotificationDecisions(const Vector<RefPtr<StringImpl>>& originStrings);
 
     WeakRef<WebProcess> m_process;
 #if ENABLE(NOTIFICATIONS)
     HashMap<WTF::UUID, WebCore::ScriptExecutionContextIdentifier> m_nonPersistentNotificationsContexts;
-    HashMap<String, bool> m_permissionsMap;
+    HashMap<RefPtr<StringImpl>, bool> m_permissionsMap;
 #endif
 };
 

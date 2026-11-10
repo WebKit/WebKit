@@ -85,7 +85,7 @@ FileInputType::~FileInputType()
         m_fileIconLoader->invalidate();
 }
 
-std::pair<Vector<FileChooserFileInfo>, String> FileInputType::filesFromFormControlState(const FormControlState& state)
+std::pair<Vector<FileChooserFileInfo>, RefPtr<StringImpl>> FileInputType::filesFromFormControlState(const FormControlState& state)
 {
     size_t size = state.size() - 1;
     Vector<FileChooserFileInfo> files(ReserveCapacityTag { }, size / 2);
@@ -95,7 +95,7 @@ std::pair<Vector<FileChooserFileInfo>, String> FileInputType::filesFromFormContr
     return { files, state[size] };
 }
 
-const AtomString& FileInputType::formControlType() const
+const RefPtr<AtomStringImpl>& FileInputType::formControlType() const
 {
     return InputTypeNames::file();
 }
@@ -107,12 +107,12 @@ FormControlState FileInputType::saveFormControlState() const
 
     auto length = Checked<size_t>(m_fileList->files().size()) * Checked<size_t>(2) + Checked<size_t>(1);
 
-    Vector<AtomString> stateVector(ReserveCapacityTag { }, length);
+    Vector<RefPtr<AtomStringImpl>> stateVector(ReserveCapacityTag { }, length);
     for (auto& file : m_fileList->files()) {
-        stateVector.append(AtomString { file->path() });
-        stateVector.append(AtomString { file->name() });
+        stateVector.append(AtomStringImpl::add(file->path()));
+        stateVector.append(AtomStringImpl::add(file->name()));
     }
-    stateVector.append(AtomString { m_displayString });
+    stateVector.append(AtomStringImpl::add(m_displayString));
     return FormControlState { WTF::move(stateVector) };
 }
 
@@ -150,7 +150,7 @@ bool FileInputType::valueMissing(StringView value) const
     return element()->isRequired() && value.isEmpty();
 }
 
-String FileInputType::valueMissingText() const
+RefPtr<StringImpl> FileInputType::valueMissingText() const
 {
     ASSERT(element());
     return element()->multiple() ? validationMessageValueMissingForMultipleFileText() : validationMessageValueMissingForFileText();
@@ -165,7 +165,7 @@ void FileInputType::handleDOMActivateEvent(Event& event)
 
     RefPtr window = element()->document().window();
     if (!window || !window->consumeTransientActivation()) {
-        protect(element()->document())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "File chooser dialog can only be shown with a user activation."_s);
+        protect(element()->document())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "File chooser dialog can only be shown with a user activation."_si);
         return;
     }
 
@@ -202,7 +202,7 @@ bool FileInputType::canSetStringValue() const
     return false;
 }
 
-String FileInputType::firstElementPathForInputValue() const
+RefPtr<StringImpl> FileInputType::firstElementPathForInputValue() const
 {
     if (m_fileList->isEmpty())
         return { };
@@ -216,7 +216,7 @@ String FileInputType::firstElementPathForInputValue() const
     return makeString("C:\\fakepath\\"_s, files().file(0).name());
 }
 
-void FileInputType::setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection)
+void FileInputType::setValue(StringImpl*, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection)
 {
     // FIXME: Should we clear the file list, or replace it with a new empty one here? This is observable from JavaScript through custom properties.
     if (!valueChanged)
@@ -276,7 +276,7 @@ void FileInputType::attributeChanged(const QualifiedName& name)
     BaseClickableWithKeyInputType::attributeChanged(name);
 }
 
-void FileInputType::requestIcon(const Vector<String>& paths)
+void FileInputType::requestIcon(const Vector<RefPtr<StringImpl>>& paths)
 {
     if (!paths.size()) {
         iconLoaded(nullptr);
@@ -360,7 +360,7 @@ void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequest
     else {
         auto& currentFiles = m_fileList;
         for (unsigned i = 0; i < length; ++i) {
-            if (files->file(i).path() != currentFiles->file(i).path() || !FileSystem::fileIDsAreEqual(files->file(i).fileID(), currentFiles->file(i).fileID())) {
+            if (!equal(files->file(i).path(), currentFiles->file(i).path()) || !FileSystem::fileIDsAreEqual(files->file(i).fileID(), currentFiles->file(i).fileID())) {
                 pathsChanged = true;
                 break;
             }
@@ -393,9 +393,9 @@ void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequest
     element->setInteractedWithSinceLastFormSubmitEvent(true);
 }
 
-void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const String& displayString, Icon* icon)
+void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, StringImpl* displayString, Icon* icon)
 {
-    if (!displayString.isEmpty())
+    if (!isEmpty(displayString))
         m_displayString = displayString;
 
     if (RefPtr creator = m_directoryFileListCreator)
@@ -405,7 +405,7 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
     if (!allowsDirectories()) {
         auto files = paths.map([document](auto& fileInfo) {
             std::optional<FileSystem::PlatformFileID> fileID;
-            if (auto handle = FileSystem::openFile(fileInfo.path, FileSystem::FileOpenMode::Read); handle)
+            if (auto handle = FileSystem::openFile(RefPtr<StringImpl> { fileInfo.path }, FileSystem::FileOpenMode::Read); handle)
                 fileID = handle.id();
             return File::create(document.get(), fileInfo.path, fileInfo.replacementPath, fileInfo.displayName, fileID);
         });
@@ -424,7 +424,7 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
     m_directoryFileListCreator = WTF::move(creator);
 }
 
-void FileInputType::filesChosen(const Vector<String>& paths, const Vector<String>& replacementPaths)
+void FileInputType::filesChosen(const Vector<RefPtr<StringImpl>>& paths, const Vector<RefPtr<StringImpl>>& replacementPaths)
 {
     ASSERT(element());
     ASSERT(!paths.isEmpty());
@@ -456,7 +456,7 @@ void FileInputType::didCreateFileList(Ref<FileList>&& fileList, RefPtr<Icon>&& i
         iconLoaded(WTF::move(icon));
 }
 
-String FileInputType::displayString() const
+RefPtr<StringImpl> FileInputType::displayString() const
 {
     return m_displayString;
 }
@@ -473,7 +473,7 @@ void FileInputType::iconLoaded(RefPtr<Icon>&& icon)
 }
 
 #if ENABLE(DRAG_SUPPORT)
-bool FileInputType::receiveDroppedFilesWithImageTranscoding(const Vector<String>& paths)
+bool FileInputType::receiveDroppedFilesWithImageTranscoding(const Vector<RefPtr<StringImpl>>& paths)
 {
 #if PLATFORM(MAC)
     auto settings = fileChooserSettings();
@@ -484,7 +484,7 @@ bool FileInputType::receiveDroppedFilesWithImageTranscoding(const Vector<String>
         return false;
 
     auto transcodingMIMEType = MIMETypeRegistry::preferredImageMIMETypeForEncoding(allowedMIMETypes, { });
-    if (transcodingMIMEType.isNull())
+    if (!transcodingMIMEType)
         return false;
 
     auto transcodingUTI = WebCore::UTIFromMIMEType(transcodingMIMEType);
@@ -494,7 +494,7 @@ bool FileInputType::receiveDroppedFilesWithImageTranscoding(const Vector<String>
     if (!chrome)
         return false;
 
-    chrome->transcodeChosenFiles(WTF::move(transcodingPaths), WTF::move(transcodingUTI), WTF::move(transcodingExtension), [protectedThis = Ref { *this }, paths](Vector<String>&& replacementPaths) mutable {
+    chrome->transcodeChosenFiles(WTF::move(transcodingPaths), WTF::move(transcodingUTI), WTF::move(transcodingExtension), [protectedThis = Ref { *this }, paths](Vector<RefPtr<StringImpl>>&& replacementPaths) mutable {
         protectedThis->filesChosen(paths, replacementPaths);
     });
 
@@ -524,7 +524,7 @@ Icon* FileInputType::icon() const
     return m_icon.get();
 }
 
-String FileInputType::defaultToolTip() const
+RefPtr<StringImpl> FileInputType::defaultToolTip() const
 {
     unsigned listSize = m_fileList->length();
     if (!listSize) {

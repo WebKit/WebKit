@@ -204,7 +204,7 @@ protected:
 class NetworkBackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<NetworkBackendDispatcher> create(BackendDispatcher&, NetworkBackendDispatcherHandler*);
-    void dispatch(long protocol_requestId, const String& protocol_method, Ref<JSON::Object>&& protocol_message) final;
+    void dispatch(long protocol_requestId, StringImpl* protocol_method, Ref<JSON::Object>&& protocol_message) final;
 private:
 #if COMMAND-MAC
     void loadResource(long protocol_requestId, RefPtr<JSON::Object>&& protocol_parameters);
@@ -281,17 +281,17 @@ NetworkBackendDispatcher::NetworkBackendDispatcher(BackendDispatcher& backendDis
     : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 {
-    m_backendDispatcher->registerDispatcherForDomain("Network"_s, this);
+    m_backendDispatcher->registerDispatcherForDomain("Network"_si, this);
 }
 
-void NetworkBackendDispatcher::dispatch(long protocol_requestId, const String& protocol_method, Ref<JSON::Object>&& protocol_message)
+void NetworkBackendDispatcher::dispatch(long protocol_requestId, StringImpl* protocol_method, Ref<JSON::Object>&& protocol_message)
 {
     Ref<NetworkBackendDispatcher> protect(*this);
 
-    auto protocol_parameters = protocol_message->getObject("params"_s);
+    auto protocol_parameters = protocol_message->getObject("params"_si);
 
 #if COMMAND-MAC
-    if (protocol_method == "loadResource"_s) {
+    if (equal(protocol_method, "loadResource"_s)) {
         loadResource(protocol_requestId, WTF::move(protocol_parameters));
         return;
     }
@@ -312,7 +312,7 @@ void NetworkBackendDispatcher::loadResource(long protocol_requestId, RefPtr<JSON
 
     auto result = m_agent->loadResource();
     if (!result) {
-        ASSERT(!result.error().isEmpty());
+        ASSERT(!isEmpty(result.error()));
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, result.error());
         return;
     }
@@ -435,7 +435,7 @@ NetworkFrontendDispatcher::~NetworkFrontendDispatcher() = default;
 void NetworkFrontendDispatcher::resourceLoaded()
 {
     auto protocol_jsonMessage = JSON::Object::create();
-    protocol_jsonMessage->setString("method"_s, "Network.resourceLoaded"_s);
+    protocol_jsonMessage->setString("method"_si, "Network.resourceLoaded"_si);
 
     m_frontendRouter->sendEvent(protocol_jsonMessage->toJSONString());
 }
@@ -543,17 +543,17 @@ public:
         friend class NetworkError;
     public:
 
-        Builder<STATE | MessageSet>& setMessage(const String& in_message)
+        Builder<STATE | MessageSet>& setMessage(StringImpl* in_message)
         {
             static_assert(!(STATE & MessageSet), "property message already set");
-            Ref { *m_result }->setString("message"_s, in_message);
+            Ref { *m_result }->setString("message"_si, in_message);
             return castState<MessageSet>();
         }
 
         Builder<STATE | CodeSet>& setCode(int in_code)
         {
             static_assert(!(STATE & CodeSet), "property code already set");
-            Ref { *m_result }->setInteger("code"_s, in_code);
+            Ref { *m_result }->setInteger("code"_si, in_code);
             return castState<CodeSet>();
         }
 
@@ -740,13 +740,13 @@ namespace Inspector {
 void ObjCInspectorNetworkBackendDispatcher::loadResource(long protocol_requestId)
 {
     if (![m_delegate respondsToSelector:@selector(loadResourceWithErrorCallback:successCallback:)]) {
-        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::MethodNotFound, "'Network.loadResource' was not found"_s);
+        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::MethodNotFound, "'Network.loadResource' was not found"_si);
         backendDispatcher()->sendPendingErrors();
         return;
     }
 
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->sendErrorResponse(protocol_requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->sendErrorResponse(protocol_requestId, BackendDispatcher::ServerError, StringImpl::create(error).get());
     };
 
     id successCallback = ^{
@@ -875,7 +875,7 @@ using namespace Inspector;
     _networkHandler = handler;
 
     auto alternateDispatcher = makeUnique<ObjCInspectorNetworkBackendDispatcher>(handler);
-    auto alternateAgent = makeUniqueRef<AlternateDispatchableAgent<NetworkBackendDispatcher, AlternateNetworkBackendDispatcher>>("Network"_s, *_controller, WTF::move(alternateDispatcher));
+    auto alternateAgent = makeUniqueRef<AlternateDispatchableAgent<NetworkBackendDispatcher, AlternateNetworkBackendDispatcher>>("Network"_si, *_controller, WTF::move(alternateDispatcher));
     _controller->registerAlternateAgent(WTF::move(alternateAgent));
 }
 
@@ -956,7 +956,7 @@ using namespace Inspector;
     const FrontendRouter& router = _controller->frontendRouter();
 
     auto protocol_jsonMessage = JSON::Object::create();
-    protocol_jsonMessage->setString("method"_s, "Network.resourceLoaded"_s);
+    protocol_jsonMessage->setString("method"_si, "Network.resourceLoaded"_si);
     router.sendEvent(protocol_jsonMessage->toJSONString());
 }
 #endif // EVENT-MAC
@@ -1127,7 +1127,7 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-std::optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(StringImpl* value);
 
 
 

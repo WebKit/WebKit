@@ -93,26 +93,26 @@ public:
 
     virtual bool isDiscrete() const { return false; }
 
-    virtual bool setFromAndToValues(SVGElement&, const String&, const String&) = 0;
-    virtual bool setFromAndByValues(SVGElement&, const String&, const String&) = 0;
-    virtual bool setToAtEndOfDurationValue(SVGElement&, const String&) = 0;
+    virtual bool setFromAndToValues(SVGElement&, StringImpl*, StringImpl*) = 0;
+    virtual bool setFromAndByValues(SVGElement&, StringImpl*, StringImpl*) = 0;
+    virtual bool setToAtEndOfDurationValue(SVGElement&, StringImpl*) = 0;
 
     virtual void start(SVGElement&) = 0;
     virtual void animate(SVGElement&, float progress, unsigned repeatCount) = 0;
     virtual void apply(SVGElement&) = 0;
     virtual void stop(SVGElement& targetElement) = 0;
 
-    virtual std::optional<float> calculateDistance(SVGElement&, const String&, const String&) const { return { }; }
+    virtual std::optional<float> calculateDistance(SVGElement&, StringImpl*, StringImpl*) const { return { }; }
 
 protected:
     bool isAnimatedStylePropertyAnimator(const SVGElement&) const;
 
     static void invalidateStyle(SVGElement&);
-    static void applyAnimatedStylePropertyChange(SVGElement&, CSSPropertyID, const String& value);
+    static void applyAnimatedStylePropertyChange(SVGElement&, CSSPropertyID, StringImpl* value);
     static void removeAnimatedStyleProperty(SVGElement&, CSSPropertyID);
     static void applyAnimatedPropertyChange(SVGElement&, const QualifiedName&);
 
-    void applyAnimatedStylePropertyChange(SVGElement&, const String& value);
+    void applyAnimatedStylePropertyChange(SVGElement&, StringImpl* value);
     void removeAnimatedStyleProperty(SVGElement&);
     void applyAnimatedPropertyChange(SVGElement&);
 

@@ -31,7 +31,7 @@
 #include <wtf/text/StringBuilder.h>
 
 template<typename T>
-static String convertToString(const T& value)
+static RefPtr<StringImpl> convertToString(const T& value)
 {
     TextStream stream(TextStream::LineMode::SingleLine);
     stream << value;
@@ -39,9 +39,9 @@ static String convertToString(const T& value)
 }
 
 template<typename T>
-static String convertToTrimmedString(const T& value)
+static RefPtr<StringImpl> convertToTrimmedString(const T& value)
 {
-    return makeStringByReplacingAll(convertToString(value), '\n', ' ').trim(isUnicodeWhitespace);
+    return trim(makeStringByReplacingAll(convertToString(value), '\n', ' '), isUnicodeWhitespace);
 }
 
 namespace WebCore {
@@ -239,8 +239,8 @@ TEST(RegionTests, FuzzOperationsIsValidShape)
                 ASSERT_TRUE(Shape::isValidShape(segments.span(), spans.span())) << commands.toString() << r.dataForTesting();
         }
         if (printPassed) {
-            SAFE_WTFLOGALWAYS("%s", commands.toString().utf8());
-            SAFE_WTFLOGALWAYS("Shape: %s", convertToString(r.dataForTesting()).utf8());
+            SAFE_WTFLOGALWAYS("%s", utf8(commands.toString()));
+            SAFE_WTFLOGALWAYS("Shape: %s", utf8(convertToString(r.dataForTesting())));
         }
     }
 }

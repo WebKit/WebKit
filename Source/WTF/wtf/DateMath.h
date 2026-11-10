@@ -81,7 +81,7 @@ WTF_EXPORT_PRIVATE double parseES5Date(std::span<const Latin1Character> dateStri
 WTF_EXPORT_PRIVATE double parseDate(std::span<const Latin1Character> dateString);
 WTF_EXPORT_PRIVATE double parseDate(std::span<const Latin1Character> dateString, bool& isLocalTime);
 // dayOfWeek: [0, 6] 0 being Monday, day: [1, 31], month: [0, 11], year: ex: 2011, hours: [0, 23], minutes: [0, 59], seconds: [0, 59], utcOffset: [-720,720]. 
-WTF_EXPORT_PRIVATE String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, unsigned year, unsigned hours, unsigned minutes, unsigned seconds, int utcOffset);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, unsigned year, unsigned hours, unsigned minutes, unsigned seconds, int utcOffset);
 
 inline double jsCurrentTime()
 {

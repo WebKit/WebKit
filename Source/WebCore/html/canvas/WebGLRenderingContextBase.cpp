@@ -220,9 +220,9 @@ NODELETE static bool validateCharacter(unsigned char c)
     return false;
 }
 
-static bool isPrefixReserved(const String& name)
+static bool isPrefixReserved(StringImpl* name)
 {
-    if (name.startsWith("gl_"_s) || name.startsWith("webgl_"_s) || name.startsWith("_webgl_"_s))
+    if (startsWith(name, "gl_"_s) || startsWith(name, "webgl_"_s) || startsWith(name, "_webgl_"_s))
         return true;
     return false;
 }
@@ -398,11 +398,11 @@ NODELETE static constexpr GCGLenum errorCodeToGLenum(GCGLErrorCode error)
 // Conversion function converting GraphicsContextGL member function results that are directly
 // UTF8CStrings. The returned values might be null on implementation error or context loss during
 // that function.
-static String toNonNullString(const UTF8CString& text)
+static RefPtr<StringImpl> toNonNullString(const UTF8CString& text)
 {
     if (text.isNull())
         return emptyString();
-    return text;
+    return StringImpl::create((text).span());
 }
 
 NODELETE static GraphicsContextGL::SurfaceBuffer toGCGLSurfaceBuffer(CanvasRenderingContext::SurfaceBuffer buffer)
@@ -453,7 +453,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     if (!context) {
         if (canvasElement) {
             canvasElement->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent,
-                Event::CanBubble::No, Event::IsCancelable::Yes, "Could not create a WebGL context."_s));
+                Event::CanBubble::No, Event::IsCancelable::Yes, "Could not create a WebGL context."_si));
         }
         return nullptr;
     }
@@ -1102,7 +1102,7 @@ void WebGLRenderingContextBase::attachShader(WebGLProgram& program, WebGLShader&
     shader.onAttached();
 }
 
-void WebGLRenderingContextBase::bindAttribLocation(WebGLProgram& program, GCGLuint index, const String& name)
+void WebGLRenderingContextBase::bindAttribLocation(WebGLProgram& program, GCGLuint index, StringImpl* name)
 {
     if (isContextLost())
         return;
@@ -1120,7 +1120,7 @@ void WebGLRenderingContextBase::bindAttribLocation(WebGLProgram& program, GCGLui
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bindAttribLocation"_s, "index out of range"_s);
         return;
     }
-    protect(graphicsContextGL())->bindAttribLocation(program.object(), index, name.utf8());
+    protect(graphicsContextGL())->bindAttribLocation(program.object(), index, utf8(name));
 }
 
 bool WebGLRenderingContextBase::validateBufferTarget(ASCIILiteral functionName, GCGLenum target)
@@ -1918,7 +1918,7 @@ RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveAttrib(WebGLProgram&
         return nullptr;
     }
     auto& info = activeAttribs[index];
-    return WebGLActiveInfo::create(String::fromUTF8(info.name.span()), info.type, 1);
+    return WebGLActiveInfo::create(StringImpl::fromUTF8(info.name.span()), info.type, 1);
 }
 
 RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveUniform(WebGLProgram& program, GCGLuint index)
@@ -1933,7 +1933,7 @@ RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveUniform(WebGLProgram
         return nullptr;
     }
     auto& info = activeUniforms[index];
-    return WebGLActiveInfo::create(String::fromUTF8(info.name.span()), info.type, info.size);
+    return WebGLActiveInfo::create(StringImpl::fromUTF8(info.name.span()), info.type, info.size);
 }
 
 std::optional<Vector<Ref<WebGLShader>>> WebGLRenderingContextBase::getAttachedShaders(WebGLProgram& program)
@@ -1950,7 +1950,7 @@ std::optional<Vector<Ref<WebGLShader>>> WebGLRenderingContextBase::getAttachedSh
     return result;
 }
 
-GCGLint WebGLRenderingContextBase::getAttribLocation(WebGLProgram& program, const String& name)
+GCGLint WebGLRenderingContextBase::getAttribLocation(WebGLProgram& program, StringImpl* name)
 {
     if (isContextLost())
         return -1;
@@ -2401,7 +2401,7 @@ WebGLAny WebGLRenderingContextBase::getProgramParameter(WebGLProgram& program, G
     }
 }
 
-String WebGLRenderingContextBase::getProgramInfoLog(WebGLProgram& program)
+RefPtr<StringImpl> WebGLRenderingContextBase::getProgramInfoLog(WebGLProgram& program)
 {
     if (isContextLost())
         return { };
@@ -2509,7 +2509,7 @@ WebGLAny WebGLRenderingContextBase::getShaderParameter(WebGLShader& shader, GCGL
     }
 }
 
-String WebGLRenderingContextBase::getShaderInfoLog(WebGLShader& shader)
+RefPtr<StringImpl> WebGLRenderingContextBase::getShaderInfoLog(WebGLShader& shader)
 {
     if (isContextLost())
         return { };
@@ -2549,7 +2549,7 @@ RefPtr<WebGLShaderPrecisionFormat> WebGLRenderingContextBase::getShaderPrecision
     return WebGLShaderPrecisionFormat::create(range[0], range[1], precision);
 }
 
-String WebGLRenderingContextBase::getShaderSource(WebGLShader& shader)
+RefPtr<StringImpl> WebGLRenderingContextBase::getShaderSource(WebGLShader& shader)
 {
     if (isContextLost())
         return { };
@@ -2789,7 +2789,7 @@ WebGLAny WebGLRenderingContextBase::getUniform(WebGLProgram& program, WebGLUnifo
     return nullptr;
 }
 
-RefPtr<WebGLUniformLocation> WebGLRenderingContextBase::getUniformLocation(WebGLProgram& program, const String& name)
+RefPtr<WebGLUniformLocation> WebGLRenderingContextBase::getUniformLocation(WebGLProgram& program, StringImpl* name)
 {
     if (isContextLost())
         return nullptr;
@@ -2870,7 +2870,7 @@ long long WebGLRenderingContextBase::getVertexAttribOffset(GCGLuint index, GCGLe
 }
 
 // This function is used by InspectorCanvasAgent to list currently enabled extensions
-bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
+bool WebGLRenderingContextBase::extensionIsEnabled(StringImpl* name)
 {
 #define CHECK_EXTENSION(variable, nameLiteral) \
     if (equalIgnoringASCIICase(name, nameLiteral ## _s)) \
@@ -3272,13 +3272,13 @@ void WebGLRenderingContextBase::scissor(GCGLint x, GCGLint y, GCGLsizei width, G
     protect(graphicsContextGL())->scissor(x, y, width, height);
 }
 
-void WebGLRenderingContextBase::shaderSource(WebGLShader& shader, const String& string)
+void WebGLRenderingContextBase::shaderSource(WebGLShader& shader, StringImpl* string)
 {
     if (isContextLost())
         return;
     if (!validateWebGLObject("shaderSource"_s, shader))
         return;
-    protect(graphicsContextGL())->shaderSource(shader.object(), string.utf8());
+    protect(graphicsContextGL())->shaderSource(shader.object(), utf8(string));
     shader.setSource(string);
 }
 
@@ -5108,7 +5108,7 @@ void WebGLRenderingContextBase::forceLostContext(WebGLRenderingContextBase::Lost
         return;
     }
     if (mode == RealLostContext)
-        printToConsole(MessageLevel::Error, "WebGL: context lost."_s);
+        printToConsole(MessageLevel::Error, "WebGL: context lost."_si);
 
     m_contextLostState = ContextLostState { mode };
     m_contextLostState->errors.add(GCGLErrorCode::ContextLost);
@@ -5317,10 +5317,10 @@ RefPtr<WebGLTexture> WebGLRenderingContextBase::validateTexture2DBinding(ASCIILi
     return texture;
 }
 
-bool WebGLRenderingContextBase::validateLocationLength(ASCIILiteral functionName, const String& string)
+bool WebGLRenderingContextBase::validateLocationLength(ASCIILiteral functionName, StringImpl* string)
 {
     unsigned maxWebGLLocationLength = isWebGL2() ? 1024 : 256;
-    if (string.length() > maxWebGLLocationLength) {
+    if (length(string) > maxWebGLLocationLength) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "location length is too large"_s);
         return false;
     }
@@ -5336,10 +5336,10 @@ bool WebGLRenderingContextBase::validateSize(ASCIILiteral functionName, GCGLint 
     return true;
 }
 
-bool WebGLRenderingContextBase::validateString(ASCIILiteral functionName, const String& string)
+bool WebGLRenderingContextBase::validateString(ASCIILiteral functionName, StringImpl* string)
 {
-    for (size_t i = 0; i < string.length(); ++i) {
-        if (!validateCharacter(string[i])) {
+    for (size_t i = 0; i < length(string); ++i) {
+        if (!validateCharacter(codeUnitAt(string, i))) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "string not ASCII"_s);
             return false;
         }
@@ -5385,7 +5385,7 @@ bool WebGLRenderingContextBase::shouldPrintToConsole() const
 }
 
 // Frequent call sites should use above condition before constructing the message for the printToConsole().
-void WebGLRenderingContextBase::printToConsole(MessageLevel level, String&& message)
+void WebGLRenderingContextBase::printToConsole(MessageLevel level, RefPtr<StringImpl>&& message)
 {
     if (!shouldPrintToConsole())
         return;
@@ -5407,7 +5407,7 @@ void WebGLRenderingContextBase::printToConsole(MessageLevel level, String&& mess
 
     --m_numGLErrorsToConsoleAllowed;
     if (!m_numGLErrorsToConsoleAllowed)
-        scriptExecutionContext->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Warning, "WebGL: too many errors, no more errors will be reported to the console for this context."_s));
+        scriptExecutionContext->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Warning, "WebGL: too many errors, no more errors will be reported to the console for this context."_si));
 }
 
 bool WebGLRenderingContextBase::validateFramebufferTarget(GCGLenum target)
@@ -5776,7 +5776,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     if (m_contextLostState->mode == RealLostContext)
         maybeRestoreContextSoon(secondsBetweenRestoreAttempts);
     else
-        printToConsole(MessageLevel::Error, "WebGL: error restoring lost context."_s);
+        printToConsole(MessageLevel::Error, "WebGL: error restoring lost context."_si);
 }
 
 void WebGLRenderingContextBase::simulateEventForTesting(SimulatedEventForTesting event)
@@ -6077,7 +6077,7 @@ void WebGLRenderingContextBase::addDebugMessage(GCGLenum type, GCGLenum id, GCGL
         return;
 
     auto level = MessageLevel::Info;
-    String formattedMessage;
+    RefPtr<StringImpl> formattedMessage;
 
     if (type == GraphicsContextGL::DEBUG_TYPE_ERROR) {
         level = MessageLevel::Error;
@@ -6090,7 +6090,7 @@ void WebGLRenderingContextBase::addDebugMessage(GCGLenum type, GCGLenum id, GCGL
 
     --m_numGLErrorsToConsoleAllowed;
     if (!m_numGLErrorsToConsoleAllowed)
-        scriptExecutionContext->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Warning, "WebGL: too many errors, no more errors will be reported to the console for this context."_s));
+        scriptExecutionContext->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Warning, "WebGL: too many errors, no more errors will be reported to the console for this context."_si));
 }
 
 void WebGLRenderingContextBase::didChangeMemoryCost()
@@ -6101,7 +6101,7 @@ void WebGLRenderingContextBase::didChangeMemoryCost()
 void WebGLRenderingContextBase::recycleContext()
 {
     if (shouldPrintToConsole())
-        printToConsole(MessageLevel::Error, "There are too many active WebGL contexts on this page, the oldest context will be lost."_s);
+        printToConsole(MessageLevel::Error, "There are too many active WebGL contexts on this page, the oldest context will be lost."_si);
     // Using SyntheticLostContext means the developer won't be able to force the restoration
     // of the context by calling preventDefault() in a "webglcontextlost" event handler.
     forceLostContext(SyntheticLostContext);

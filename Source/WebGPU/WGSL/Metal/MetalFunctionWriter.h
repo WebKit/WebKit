@@ -37,7 +37,7 @@ struct PrepareResult;
 
 namespace Metal {
 
-void emitMetalFunctions(StringBuilder&, ShaderModule&, PrepareResult&, const HashMap<String, ConstantValue>&, DeviceState&&);
+void emitMetalFunctions(StringBuilder&, ShaderModule&, PrepareResult&, const HashMap<RefPtr<StringImpl>, ConstantValue>&, DeviceState&&);
 
 // The HDR to SDR mapping which importExternalTexture() applies to a PQ or HLG frame in the shader it
 // is sampled by, and which copyExternalImageToTexture() applies in the shader it copies with. They

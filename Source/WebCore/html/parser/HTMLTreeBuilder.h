@@ -44,12 +44,12 @@ enum class TagName : uint16_t;
 struct CustomElementConstructionData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CustomElementConstructionData);
 
-    CustomElementConstructionData(Ref<JSCustomElementInterface>&&, Ref<CustomElementRegistry>&&, const AtomString& name, Vector<Attribute>&&);
+    CustomElementConstructionData(Ref<JSCustomElementInterface>&&, Ref<CustomElementRegistry>&&, AtomStringImpl* name, Vector<Attribute>&&);
     ~CustomElementConstructionData();
 
     Ref<JSCustomElementInterface> elementInterface;
     Ref<CustomElementRegistry> registry;
-    AtomString name;
+    RefPtr<AtomStringImpl> name;
     Vector<Attribute> attributes;
 };
 
@@ -113,8 +113,8 @@ private:
     NODELETE bool isParsingFragmentOrTemplateContents() const;
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS_FAMILY)
-    void insertPhoneNumberLink(const String&);
-    void linkifyPhoneNumbers(const String&);
+    void insertPhoneNumberLink(StringImpl*);
+    void linkifyPhoneNumbers(StringImpl*);
 #endif
 
     void processToken(AtomHTMLToken&&);
@@ -152,7 +152,7 @@ private:
     void processFakeStartTag(TagName, Vector<Attribute>&& attributes = Vector<Attribute>());
     void processFakeEndTag(TagName);
     void processFakeEndTag(const HTMLStackItem&);
-    void processFakeCharacters(const String&);
+    void processFakeCharacters(StringImpl*);
     void processFakePEndTagIfPInButtonScope();
 
     void processGenericRCDATAStartTag(AtomHTMLToken&&);

@@ -858,7 +858,7 @@ public:
     bool isFinalType() const { return m_isFinalType; }
 
     // Print this RTT for debugging.
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
     void dump(WTF::PrintStream& out) const;
 
 #if ENABLE(JIT)

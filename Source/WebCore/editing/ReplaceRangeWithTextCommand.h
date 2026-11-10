@@ -34,22 +34,22 @@ class DocumentFragment;
 
 class ReplaceRangeWithTextCommand : public CompositeEditCommand {
 public:
-    static Ref<ReplaceRangeWithTextCommand> create(const SimpleRange& rangeToBeReplaced, const String& text)
+    static Ref<ReplaceRangeWithTextCommand> create(const SimpleRange& rangeToBeReplaced, StringImpl* text)
     {
         return adoptRef(*new ReplaceRangeWithTextCommand(rangeToBeReplaced, text));
     }
 
 private:
-    ReplaceRangeWithTextCommand(const SimpleRange& rangeToBeReplaced, const String& text);
+    ReplaceRangeWithTextCommand(const SimpleRange& rangeToBeReplaced, StringImpl* text);
     bool willApplyCommand() final;
     void doApply() override;
-    String inputEventData() const final;
+    RefPtr<StringImpl> inputEventData() const final;
     RefPtr<DataTransfer> inputEventDataTransfer() const final;
     Vector<Ref<StaticRange>> targetRanges() const final;
 
     SimpleRange m_rangeToBeReplaced;
     const RefPtr<DocumentFragment> m_textFragment;
-    String m_text;
+    RefPtr<StringImpl> m_text;
 };
 
 } // namespace WebCore

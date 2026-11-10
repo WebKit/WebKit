@@ -28,816 +28,816 @@
 
 namespace WebCore {
 
-String DiagnosticLoggingKeys::mediaLoadedKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::mediaLoadedKey()
 {
-    return "mediaLoaded"_s;
+    return "mediaLoaded"_si;
 }
 
-String DiagnosticLoggingKeys::mediaLoadingFailedKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::mediaLoadingFailedKey()
 {
-    return "mediaFailedLoading"_s;
+    return "mediaFailedLoading"_si;
 }
 
-String DiagnosticLoggingKeys::memoryCacheEntryDecisionKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::memoryCacheEntryDecisionKey()
 {
-    return "memoryCacheEntryDecision"_s;
+    return "memoryCacheEntryDecision"_si;
 }
 
-String DiagnosticLoggingKeys::memoryCacheUsageKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::memoryCacheUsageKey()
 {
-    return "memoryCacheUsage"_s;
+    return "memoryCacheUsage"_si;
 }
 
-String DiagnosticLoggingKeys::missingValidatorFieldsKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::missingValidatorFieldsKey()
 {
-    return "missingValidatorFields"_s;
+    return "missingValidatorFields"_si;
 }
 
-String DiagnosticLoggingKeys::postPageBackgroundingCPUUsageKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::postPageBackgroundingCPUUsageKey()
 {
-    return "postPageBackgroundingCPUUsage"_s;
+    return "postPageBackgroundingCPUUsage"_si;
 }
 
-String DiagnosticLoggingKeys::postPageBackgroundingMemoryUsageKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::postPageBackgroundingMemoryUsageKey()
 {
-    return "postPageBackgroundingMemoryUsage"_s;
+    return "postPageBackgroundingMemoryUsage"_si;
 }
 
-String DiagnosticLoggingKeys::postPageLoadCPUUsageKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::postPageLoadCPUUsageKey()
 {
-    return "postPageLoadCPUUsage"_s;
+    return "postPageLoadCPUUsage"_si;
 }
 
-String DiagnosticLoggingKeys::postPageLoadMemoryUsageKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::postPageLoadMemoryUsageKey()
 {
-    return "postPageLoadMemoryUsage"_s;
+    return "postPageLoadMemoryUsage"_si;
 }
 
-String DiagnosticLoggingKeys::provisionalLoadKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::provisionalLoadKey()
 {
-    return "provisionalLoad"_s;
+    return "provisionalLoad"_si;
 }
 
-String DiagnosticLoggingKeys::pageContainsMediaEngineKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::pageContainsMediaEngineKey()
 {
-    return "pageContainsMediaEngine"_s;
+    return "pageContainsMediaEngine"_si;
 }
 
-String DiagnosticLoggingKeys::pageContainsAtLeastOneMediaEngineKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::pageContainsAtLeastOneMediaEngineKey()
 {
-    return "pageContainsAtLeastOneMediaEngine"_s;
+    return "pageContainsAtLeastOneMediaEngine"_si;
 }
 
-String DiagnosticLoggingKeys::pageLoadedKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::pageLoadedKey()
 {
-    return "pageLoaded"_s;
+    return "pageLoaded"_si;
 }
 
-String DiagnosticLoggingKeys::playedKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::playedKey()
 {
-    return "played"_s;
+    return "played"_si;
 }
 
-String DiagnosticLoggingKeys::engineFailedToLoadKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::engineFailedToLoadKey()
 {
-    return "engineFailedToLoad"_s;
+    return "engineFailedToLoad"_si;
 }
 
-String DiagnosticLoggingKeys::entryRightlyNotWarmedUpKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::entryRightlyNotWarmedUpKey()
 {
-    return "entryRightlyNotWarmedUp"_s;
+    return "entryRightlyNotWarmedUp"_si;
 }
 
-String DiagnosticLoggingKeys::entryWronglyNotWarmedUpKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::entryWronglyNotWarmedUpKey()
 {
-    return "entryWronglyNotWarmedUp"_s;
+    return "entryWronglyNotWarmedUp"_si;
 }
 
-String DiagnosticLoggingKeys::navigationKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::navigationKey()
 {
-    return "navigation"_s;
+    return "navigation"_si;
 }
 
-String DiagnosticLoggingKeys::needsRevalidationKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::needsRevalidationKey()
 {
-    return "needsRevalidation"_s;
+    return "needsRevalidation"_si;
 }
 
-String DiagnosticLoggingKeys::networkCacheKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::networkCacheKey()
 {
-    return "networkCache"_s;
+    return "networkCache"_si;
 }
 
-String DiagnosticLoggingKeys::networkCacheFailureReasonKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::networkCacheFailureReasonKey()
 {
-    return "networkCacheFailureReason"_s;
+    return "networkCacheFailureReason"_si;
 }
 
-String DiagnosticLoggingKeys::networkCacheUnusedReasonKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::networkCacheUnusedReasonKey()
 {
-    return "networkCacheUnusedReason"_s;
+    return "networkCacheUnusedReason"_si;
 }
 
-String DiagnosticLoggingKeys::networkCacheReuseFailureKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::networkCacheReuseFailureKey()
 {
-    return "networkCacheReuseFailure"_s;
+    return "networkCacheReuseFailure"_si;
 }
 
-String DiagnosticLoggingKeys::networkKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::networkKey()
 {
-    return "network"_s;
+    return "network"_si;
 }
 
-String DiagnosticLoggingKeys::networkProcessCrashedKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::networkProcessCrashedKey()
 {
-    return "networkProcessCrashed"_s;
+    return "networkProcessCrashed"_si;
 }
 
-String DiagnosticLoggingKeys::neverSeenBeforeKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::neverSeenBeforeKey()
 {
-    return "neverSeenBefore"_s;
+    return "neverSeenBefore"_si;
 }
 
-String DiagnosticLoggingKeys::noKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::noKey()
 {
-    return "no"_s;
+    return "no"_si;
 }
 
-String DiagnosticLoggingKeys::nonVisibleStateKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::nonVisibleStateKey()
 {
-    return "nonVisibleState"_s;
+    return "nonVisibleState"_si;
 }
 
-String DiagnosticLoggingKeys::backForwardCacheKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::backForwardCacheKey()
 {
-    return "backForwardCache"_s;
+    return "backForwardCache"_si;
 }
 
-String DiagnosticLoggingKeys::backForwardCacheFailureKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::backForwardCacheFailureKey()
 {
-    return "backForwardCacheFailure"_s;
+    return "backForwardCacheFailure"_si;
 }
 
-String DiagnosticLoggingKeys::visuallyEmptyKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::visuallyEmptyKey()
 {
-    return "visuallyEmpty"_s;
+    return "visuallyEmpty"_si;
 }
 
-String DiagnosticLoggingKeys::noDocumentLoaderKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::noDocumentLoaderKey()
 {
-    return "noDocumentLoader"_s;
+    return "noDocumentLoader"_si;
 }
 
-String DiagnosticLoggingKeys::noLongerInCacheKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::noLongerInCacheKey()
 {
-    return "noLongerInCache"_s;
+    return "noLongerInCache"_si;
 }
 
-String DiagnosticLoggingKeys::otherKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::otherKey()
 {
-    return "other"_s;
+    return "other"_si;
 }
 
-String DiagnosticLoggingKeys::mainResourceKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::mainResourceKey()
 {
-    return "mainResource"_s;
+    return "mainResource"_si;
 }
 
-String DiagnosticLoggingKeys::isErrorPageKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::isErrorPageKey()
 {
-    return "isErrorPage"_s;
+    return "isErrorPage"_si;
 }
 
-String DiagnosticLoggingKeys::isReloadIgnoringCacheDataKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::isReloadIgnoringCacheDataKey()
 {
-    return "isReloadIgnoringCacheData"_s;
+    return "isReloadIgnoringCacheData"_si;
 }
 
-String DiagnosticLoggingKeys::loadingKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::loadingKey()
 {
-    return "loading"_s;
+    return "loading"_si;
 }
 
-String DiagnosticLoggingKeys::httpsNoStoreKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::httpsNoStoreKey()
 {
-    return "httpsNoStore"_s;
+    return "httpsNoStore"_si;
 }
 
-String DiagnosticLoggingKeys::imageKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::imageKey()
 {
-    return "image"_s;
+    return "image"_si;
 }
 
-String DiagnosticLoggingKeys::internalErrorKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::internalErrorKey()
 {
-    return "internalError"_s;
+    return "internalError"_si;
 }
 
-String DiagnosticLoggingKeys::invalidSessionIDKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::invalidSessionIDKey()
 {
-    return "invalidSessionID"_s;
+    return "invalidSessionID"_si;
 }
 
-String DiagnosticLoggingKeys::isAttachmentKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::isAttachmentKey()
 {
-    return "isAttachment"_s;
+    return "isAttachment"_si;
 }
 
-String DiagnosticLoggingKeys::isConditionalRequestKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::isConditionalRequestKey()
 {
-    return "isConditionalRequest"_s;
+    return "isConditionalRequest"_si;
 }
 
-String DiagnosticLoggingKeys::isDisabledKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::isDisabledKey()
 {
-    return "isDisabled"_s;
+    return "isDisabled"_si;
 }
 
-String DiagnosticLoggingKeys::noCurrentHistoryItemKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::noCurrentHistoryItemKey()
 {
-    return "noCurrentHistoryItem"_s;
+    return "noCurrentHistoryItem"_si;
 }
 
-String DiagnosticLoggingKeys::quirkRedirectComingKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::quirkRedirectComingKey()
 {
-    return "quirkRedirectComing"_s;
+    return "quirkRedirectComing"_si;
 }
 
-String DiagnosticLoggingKeys::rawKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::rawKey()
 {
-    return "raw"_s;
+    return "raw"_si;
 }
 
-String DiagnosticLoggingKeys::redirectKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::redirectKey()
 {
-    return "redirect"_s;
+    return "redirect"_si;
 }
 
-String DiagnosticLoggingKeys::isLoadingKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::isLoadingKey()
 {
-    return "isLoading"_s;
+    return "isLoading"_si;
 }
 
-String DiagnosticLoggingKeys::documentLoaderStoppingKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::documentLoaderStoppingKey()
 {
-    return "documentLoaderStopping"_s;
+    return "documentLoaderStopping"_si;
 }
 
-String DiagnosticLoggingKeys::domainCausingCrashKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::domainCausingCrashKey()
 {
-    return "DomainCausingCrash"_s;
+    return "DomainCausingCrash"_si;
 }
 
-String DiagnosticLoggingKeys::domainCausingEnergyDrainKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::domainCausingEnergyDrainKey()
 {
-    return "DomainCausingEnergyDrain"_s;
+    return "DomainCausingEnergyDrain"_si;
 }
 
-String DiagnosticLoggingKeys::domainCausingJetsamKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::domainCausingJetsamKey()
 {
-    return "DomainCausingJetsam"_s;
+    return "DomainCausingJetsam"_si;
 }
 
-String DiagnosticLoggingKeys::simulatedPageCrashKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::simulatedPageCrashKey()
 {
-    return "SimulatedPageCrash"_s;
+    return "SimulatedPageCrash"_si;
 }
 
-String DiagnosticLoggingKeys::exceededActiveMemoryLimitKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::exceededActiveMemoryLimitKey()
 {
-    return "ExceededActiveMemoryLimit"_s;
+    return "ExceededActiveMemoryLimit"_si;
 }
 
-String DiagnosticLoggingKeys::exceededInactiveMemoryLimitKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::exceededInactiveMemoryLimitKey()
 {
-    return "ExceededInactiveMemoryLimit"_s;
+    return "ExceededInactiveMemoryLimit"_si;
 }
 
-String DiagnosticLoggingKeys::exceededBackgroundCPULimitKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::exceededBackgroundCPULimitKey()
 {
-    return "ExceededBackgroundCPULimit"_s;
+    return "ExceededBackgroundCPULimit"_si;
 }
 
-String DiagnosticLoggingKeys::domainVisitedKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::domainVisitedKey()
 {
-    return "DomainVisited"_s;
+    return "DomainVisited"_si;
 }
 
-String DiagnosticLoggingKeys::cannotSuspendActiveDOMObjectsKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::cannotSuspendActiveDOMObjectsKey()
 {
-    return "cannotSuspendActiveDOMObjects"_s;
+    return "cannotSuspendActiveDOMObjects"_si;
 }
 
-String DiagnosticLoggingKeys::cpuUsageKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::cpuUsageKey()
 {
-    return "cpuUsage"_s;
+    return "cpuUsage"_si;
 }
 
-String DiagnosticLoggingKeys::createSharedBufferFailedKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::createSharedBufferFailedKey()
 {
-    return "createSharedBufferFailed"_s;
+    return "createSharedBufferFailed"_si;
 }
 
 #if ENABLE(APPLICATION_MANIFEST)
-String DiagnosticLoggingKeys::applicationManifestKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::applicationManifestKey()
 {
-    return "applicationManifest"_s;
+    return "applicationManifest"_si;
 }
 #endif
 
-String DiagnosticLoggingKeys::audioKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::audioKey()
 {
-    return "audio"_s;
+    return "audio"_si;
 }
 
-String DiagnosticLoggingKeys::backNavigationDeltaKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::backNavigationDeltaKey()
 {
-    return "backNavigationDelta"_s;
+    return "backNavigationDelta"_si;
 }
 
-String DiagnosticLoggingKeys::canCacheKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::canCacheKey()
 {
-    return "canCache"_s;
+    return "canCache"_si;
 }
 
-String DiagnosticLoggingKeys::cacheControlNoStoreKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::cacheControlNoStoreKey()
 {
-    return "cacheControlNoStore"_s;
+    return "cacheControlNoStore"_si;
 }
 
-String DiagnosticLoggingKeys::cachedResourceRevalidationKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::cachedResourceRevalidationKey()
 {
-    return "cachedResourceRevalidation"_s;
+    return "cachedResourceRevalidation"_si;
 }
 
-String DiagnosticLoggingKeys::cachedResourceRevalidationReasonKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::cachedResourceRevalidationReasonKey()
 {
-    return "cachedResourceRevalidationReason"_s;
+    return "cachedResourceRevalidationReason"_si;
 }
 
-String DiagnosticLoggingKeys::deniedByClientKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::deniedByClientKey()
 {
-    return "deniedByClient"_s;
+    return "deniedByClient"_si;
 }
 
-String DiagnosticLoggingKeys::deviceMotionKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::deviceMotionKey()
 {
-    return "deviceMotion"_s;
+    return "deviceMotion"_si;
 }
 
-String DiagnosticLoggingKeys::deviceOrientationKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::deviceOrientationKey()
 {
-    return "deviceOrientation"_s;
+    return "deviceOrientation"_si;
 }
 
-String DiagnosticLoggingKeys::diskCacheKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::diskCacheKey()
 {
-    return "diskCache"_s;
+    return "diskCache"_si;
 }
 
-String DiagnosticLoggingKeys::diskCacheAfterValidationKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::diskCacheAfterValidationKey()
 {
-    return "diskCacheAfterValidation"_s;
+    return "diskCacheAfterValidation"_si;
 }
 
-String DiagnosticLoggingKeys::memoryCacheKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::memoryCacheKey()
 {
-    return "memoryCache"_s;
+    return "memoryCache"_si;
 }
 
-String DiagnosticLoggingKeys::memoryCacheAfterValidationKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::memoryCacheAfterValidationKey()
 {
-    return "memoryCacheAfterValidation"_s;
+    return "memoryCacheAfterValidation"_si;
 }
 
-String DiagnosticLoggingKeys::reloadKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::reloadKey()
 {
-    return "reload"_s;
+    return "reload"_si;
 }
 
-String DiagnosticLoggingKeys::replaceKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::replaceKey()
 {
-    return "replace"_s;
+    return "replace"_si;
 }
 
-String DiagnosticLoggingKeys::retrievalRequestKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::retrievalRequestKey()
 {
-    return "retrievalRequest"_s;
+    return "retrievalRequest"_si;
 }
 
-String DiagnosticLoggingKeys::resourceLoadedKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::resourceLoadedKey()
 {
-    return "resourceLoaded"_s;
+    return "resourceLoaded"_si;
 }
 
-String DiagnosticLoggingKeys::resourceResponseSourceKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::resourceResponseSourceKey()
 {
-    return "resourceResponseSource"_s;
+    return "resourceResponseSource"_si;
 }
 
-String DiagnosticLoggingKeys::retrievalKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::retrievalKey()
 {
-    return "retrieval"_s;
+    return "retrieval"_si;
 }
 
-String DiagnosticLoggingKeys::reloadFromOriginKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::reloadFromOriginKey()
 {
-    return "reloadFromOrigin"_s;
+    return "reloadFromOrigin"_si;
 }
 
-String DiagnosticLoggingKeys::reloadRevalidatingExpiredKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::reloadRevalidatingExpiredKey()
 {
-    return "reloadRevalidatingExpired"_s;
+    return "reloadRevalidatingExpired"_si;
 }
 
-String DiagnosticLoggingKeys::sameLoadKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::sameLoadKey()
 {
-    return "sameLoad"_s;
+    return "sameLoad"_si;
 }
 
-String DiagnosticLoggingKeys::scriptKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::scriptKey()
 {
-    return "script"_s;
+    return "script"_si;
 }
 
-String DiagnosticLoggingKeys::serviceWorkerKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::serviceWorkerKey()
 {
-    return "serviceWorker"_s;
+    return "serviceWorker"_si;
 }
 
-String DiagnosticLoggingKeys::siteSpecificQuirkKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::siteSpecificQuirkKey()
 {
-    return "siteSpecificQuirk"_s;
+    return "siteSpecificQuirk"_si;
 }
 
-String DiagnosticLoggingKeys::streamingMedia()
+RefPtr<StringImpl> DiagnosticLoggingKeys::streamingMedia()
 {
-    return "streamingMedia"_s;
+    return "streamingMedia"_si;
 }
 
-String DiagnosticLoggingKeys::styleSheetKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::styleSheetKey()
 {
-    return "styleSheet"_s;
+    return "styleSheet"_si;
 }
 
-String DiagnosticLoggingKeys::successfulSpeculativeWarmupWithRevalidationKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::successfulSpeculativeWarmupWithRevalidationKey()
 {
-    return "successfulSpeculativeWarmupWithRevalidation"_s;
+    return "successfulSpeculativeWarmupWithRevalidation"_si;
 }
 
-String DiagnosticLoggingKeys::successfulSpeculativeWarmupWithoutRevalidationKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::successfulSpeculativeWarmupWithoutRevalidationKey()
 {
-    return "successfulSpeculativeWarmupWithoutRevalidation"_s;
+    return "successfulSpeculativeWarmupWithoutRevalidation"_si;
 }
 
-String DiagnosticLoggingKeys::svgDocumentKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::svgDocumentKey()
 {
-    return "svgDocument"_s;
+    return "svgDocument"_si;
 }
 
-String DiagnosticLoggingKeys::synchronousMessageFailedKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::synchronousMessageFailedKey()
 {
-    return "synchronousMessageFailed"_s;
+    return "synchronousMessageFailed"_si;
 }
 
-String DiagnosticLoggingKeys::telemetryPageLoadKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::telemetryPageLoadKey()
 {
-    return "telemetryPageLoad"_s;
+    return "telemetryPageLoad"_si;
 }
 
-String DiagnosticLoggingKeys::timedOutKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::timedOutKey()
 {
-    return "timedOut"_s;
+    return "timedOut"_si;
 }
 
-String DiagnosticLoggingKeys::canceledLessThan2SecondsKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::canceledLessThan2SecondsKey()
 {
-    return "canceledLessThan2Seconds"_s;
+    return "canceledLessThan2Seconds"_si;
 }
 
-String DiagnosticLoggingKeys::canceledLessThan5SecondsKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::canceledLessThan5SecondsKey()
 {
-    return "canceledLessThan5Seconds"_s;
+    return "canceledLessThan5Seconds"_si;
 }
 
-String DiagnosticLoggingKeys::canceledLessThan20SecondsKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::canceledLessThan20SecondsKey()
 {
-    return "canceledLessThan20Seconds"_s;
+    return "canceledLessThan20Seconds"_si;
 }
 
-String DiagnosticLoggingKeys::canceledMoreThan20SecondsKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::canceledMoreThan20SecondsKey()
 {
-    return "canceledMoreThan20Seconds"_s;
+    return "canceledMoreThan20Seconds"_si;
 }
 
-String DiagnosticLoggingKeys::failedLessThan2SecondsKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::failedLessThan2SecondsKey()
 {
-    return "failedLessThan2Seconds"_s;
+    return "failedLessThan2Seconds"_si;
 }
 
-String DiagnosticLoggingKeys::failedLessThan5SecondsKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::failedLessThan5SecondsKey()
 {
-    return "failedLessThan5Seconds"_s;
+    return "failedLessThan5Seconds"_si;
 }
 
-String DiagnosticLoggingKeys::failedLessThan20SecondsKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::failedLessThan20SecondsKey()
 {
-    return "failedLessThan20Seconds"_s;
+    return "failedLessThan20Seconds"_si;
 }
 
-String DiagnosticLoggingKeys::failedMoreThan20SecondsKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::failedMoreThan20SecondsKey()
 {
-    return "failedMoreThan20Seconds"_s;
+    return "failedMoreThan20Seconds"_si;
 }
 
-String DiagnosticLoggingKeys::occurredKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::occurredKey()
 {
-    return "occurred"_s;
+    return "occurred"_si;
 }
 
-String DiagnosticLoggingKeys::succeededLessThan2SecondsKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::succeededLessThan2SecondsKey()
 {
-    return "succeededLessThan2Seconds"_s;
+    return "succeededLessThan2Seconds"_si;
 }
 
-String DiagnosticLoggingKeys::succeededLessThan5SecondsKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::succeededLessThan5SecondsKey()
 {
-    return "succeededLessThan5Seconds"_s;
+    return "succeededLessThan5Seconds"_si;
 }
 
-String DiagnosticLoggingKeys::succeededLessThan20SecondsKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::succeededLessThan20SecondsKey()
 {
-    return "succeededLessThan20Seconds"_s;
+    return "succeededLessThan20Seconds"_si;
 }
 
-String DiagnosticLoggingKeys::succeededMoreThan20SecondsKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::succeededMoreThan20SecondsKey()
 {
-    return "succeededMoreThan20Seconds"_s;
+    return "succeededMoreThan20Seconds"_si;
 }
 
-String DiagnosticLoggingKeys::uncacheableStatusCodeKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::uncacheableStatusCodeKey()
 {
-    return "uncacheableStatusCode"_s;
+    return "uncacheableStatusCode"_si;
 }
 
-String DiagnosticLoggingKeys::underMemoryPressureKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::underMemoryPressureKey()
 {
-    return "underMemoryPressure"_s;
+    return "underMemoryPressure"_si;
 }
 
-String DiagnosticLoggingKeys::unknownEntryRequestKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::unknownEntryRequestKey()
 {
-    return "unknownEntryRequest"_s;
+    return "unknownEntryRequest"_si;
 }
 
-String DiagnosticLoggingKeys::unlikelyToReuseKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::unlikelyToReuseKey()
 {
-    return "unlikelyToReuse"_s;
+    return "unlikelyToReuse"_si;
 }
 
-String DiagnosticLoggingKeys::unsupportedHTTPMethodKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::unsupportedHTTPMethodKey()
 {
-    return "unsupportedHTTPMethod"_s;
+    return "unsupportedHTTPMethod"_si;
 }
 
-String DiagnosticLoggingKeys::unsuspendableDOMObjectKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::unsuspendableDOMObjectKey()
 {
-    return "unsuspendableDOMObject"_s;
+    return "unsuspendableDOMObject"_si;
 }
 
-String DiagnosticLoggingKeys::unusedKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::unusedKey()
 {
-    return "unused"_s;
+    return "unused"_si;
 }
 
-String DiagnosticLoggingKeys::usedKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::usedKey()
 {
-    return "used"_s;
+    return "used"_si;
 }
 
-String DiagnosticLoggingKeys::userZoomActionKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::userZoomActionKey()
 {
-    return "userZoomAction"_s;
+    return "userZoomAction"_si;
 }
 
-String DiagnosticLoggingKeys::varyingHeaderMismatchKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::varyingHeaderMismatchKey()
 {
-    return "varyingHeaderMismatch"_s;
+    return "varyingHeaderMismatch"_si;
 }
 
-String DiagnosticLoggingKeys::videoKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::videoKey()
 {
-    return "video"_s;
+    return "video"_si;
 }
 
-String DiagnosticLoggingKeys::visibleNonActiveStateKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::visibleNonActiveStateKey()
 {
-    return "visibleNonActiveState"_s;
+    return "visibleNonActiveState"_si;
 }
 
-String DiagnosticLoggingKeys::visibleAndActiveStateKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::visibleAndActiveStateKey()
 {
-    return "visibleAndActiveState"_s;
+    return "visibleAndActiveState"_si;
 }
 
-String DiagnosticLoggingKeys::wastedSpeculativeWarmupWithRevalidationKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::wastedSpeculativeWarmupWithRevalidationKey()
 {
-    return "wastedSpeculativeWarmupWithRevalidation"_s;
+    return "wastedSpeculativeWarmupWithRevalidation"_si;
 }
 
-String DiagnosticLoggingKeys::wastedSpeculativeWarmupWithoutRevalidationKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::wastedSpeculativeWarmupWithoutRevalidationKey()
 {
-    return "wastedSpeculativeWarmupWithoutRevalidation"_s;
+    return "wastedSpeculativeWarmupWithoutRevalidation"_si;
 }
 
-String DiagnosticLoggingKeys::webViewKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::webViewKey()
 {
-    return "webView"_s;
+    return "webView"_si;
 }
 
-String DiagnosticLoggingKeys::yesKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::yesKey()
 {
-    return "yes"_s;
+    return "yes"_si;
 }
 
-String DiagnosticLoggingKeys::expiredKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::expiredKey()
 {
-    return "expired"_s;
+    return "expired"_si;
 }
 
-String DiagnosticLoggingKeys::fontKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::fontKey()
 {
-    return "font"_s;
+    return "font"_si;
 }
 
-String DiagnosticLoggingKeys::prunedDueToMemoryPressureKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::prunedDueToMemoryPressureKey()
 {
-    return "pruned.memoryPressure"_s;
+    return "pruned.memoryPressure"_si;
 }
 
-String DiagnosticLoggingKeys::prunedDueToMaxSizeReached()
+RefPtr<StringImpl> DiagnosticLoggingKeys::prunedDueToMaxSizeReached()
 {
-    return "pruned.capacityReached"_s;
+    return "pruned.capacityReached"_si;
 }
 
-String DiagnosticLoggingKeys::prunedDueToProcessSuspended()
+RefPtr<StringImpl> DiagnosticLoggingKeys::prunedDueToProcessSuspended()
 {
-    return "pruned.processSuspended"_s;
+    return "pruned.processSuspended"_si;
 }
 
-String WebCore::DiagnosticLoggingKeys::notHTTPFamilyKey()
+RefPtr<StringImpl> WebCore::DiagnosticLoggingKeys::notHTTPFamilyKey()
 {
-    return "notHTTPFamily"_s;
+    return "notHTTPFamily"_si;
 }
 
-String DiagnosticLoggingKeys::memoryUsageToDiagnosticLoggingKey(uint64_t memoryUsage)
+RefPtr<StringImpl> DiagnosticLoggingKeys::memoryUsageToDiagnosticLoggingKey(uint64_t memoryUsage)
 {
     if (memoryUsage < 32 * MB)
-        return "below32"_s;
+        return "below32"_si;
     if (memoryUsage < 64 * MB)
-        return "32to64"_s;
+        return "32to64"_si;
     if (memoryUsage < 128 * MB)
-        return "64to128"_s;
+        return "64to128"_si;
     if (memoryUsage < 256 * MB)
-        return "128to256"_s;
+        return "128to256"_si;
     if (memoryUsage < 512 * MB)
-        return "256to512"_s;
+        return "256to512"_si;
     if (memoryUsage < 1024 * MB)
-        return "512to1024"_s;
+        return "512to1024"_si;
     if (memoryUsage < 2048 * MB)
-        return "1024to2048"_s;
+        return "1024to2048"_si;
     if (memoryUsage < 4096llu * MB)
-        return "2048to4096"_s;
+        return "2048to4096"_si;
     if (memoryUsage < 8192llu * MB)
-        return "4096to8192"_s;
+        return "4096to8192"_si;
     if (memoryUsage < 16384llu * MB)
-        return "8192to16384"_s;
+        return "8192to16384"_si;
     if (memoryUsage < 32768llu * MB)
-        return "16384to32768"_s;
-    return "over32768"_s;
+        return "16384to32768"_si;
+    return "over32768"_si;
 }
 
-String DiagnosticLoggingKeys::foregroundCPUUsageToDiagnosticLoggingKey(double cpuUsage)
+RefPtr<StringImpl> DiagnosticLoggingKeys::foregroundCPUUsageToDiagnosticLoggingKey(double cpuUsage)
 {
     if (cpuUsage < 10)
-        return "below10"_s;
+        return "below10"_si;
     if (cpuUsage < 20)
-        return "10to20"_s;
+        return "10to20"_si;
     if (cpuUsage < 40)
-        return "20to40"_s;
+        return "20to40"_si;
     if (cpuUsage < 60)
-        return "40to60"_s;
+        return "40to60"_si;
     if (cpuUsage < 80)
-        return "60to80"_s;
-    return "over80"_s;
+        return "60to80"_si;
+    return "over80"_si;
 }
 
-String DiagnosticLoggingKeys::backgroundCPUUsageToDiagnosticLoggingKey(double cpuUsage)
+RefPtr<StringImpl> DiagnosticLoggingKeys::backgroundCPUUsageToDiagnosticLoggingKey(double cpuUsage)
 {
     if (cpuUsage < 1)
-        return "below1"_s;
+        return "below1"_si;
     if (cpuUsage < 5)
-        return "1to5"_s;
+        return "1to5"_si;
     if (cpuUsage < 10)
-        return "5to10"_s;
+        return "5to10"_si;
     if (cpuUsage < 30)
-        return "10to30"_s;
+        return "10to30"_si;
     if (cpuUsage < 50)
-        return "30to50"_s;
+        return "30to50"_si;
     if (cpuUsage < 70)
-        return "50to70"_s;
-    return "over70"_s;
+        return "50to70"_si;
+    return "over70"_si;
 }
 
-String DiagnosticLoggingKeys::mediaSourceTypeWatchTimeKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::mediaSourceTypeWatchTimeKey()
 {
-    return "watchtimeBySource"_s;
+    return "watchtimeBySource"_si;
 }
 
-String DiagnosticLoggingKeys::mediaVideoCodecWatchTimeKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::mediaVideoCodecWatchTimeKey()
 {
-    return "watchtimeByVideoCodec"_s;
+    return "watchtimeByVideoCodec"_si;
 }
 
-String DiagnosticLoggingKeys::mediaAudioCodecWatchTimeKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::mediaAudioCodecWatchTimeKey()
 {
-    return "watchtimeByAudioCodec"_s;
+    return "watchtimeByAudioCodec"_si;
 }
 
-String DiagnosticLoggingKeys::mediaBufferingWatchTimeKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::mediaBufferingWatchTimeKey()
 {
-    return "watchtimeBuffering"_s;
+    return "watchtimeBuffering"_si;
 }
 
-String DiagnosticLoggingKeys::mediaTextTrackWatchTimeKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::mediaTextTrackWatchTimeKey()
 {
-    return "watchtimeTextTrack"_s;
+    return "watchtimeTextTrack"_si;
 }
 
-String DiagnosticLoggingKeys::secondsKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::secondsKey()
 {
-    return "seconds"_s;
+    return "seconds"_si;
 }
 
-String DiagnosticLoggingKeys::sourceTypeKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::sourceTypeKey()
 {
-    return "sourceType"_s;
+    return "sourceType"_si;
 }
 
-String DiagnosticLoggingKeys::videoCodecKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::videoCodecKey()
 {
-    return "videoCodec"_s;
+    return "videoCodec"_si;
 }
 
-String DiagnosticLoggingKeys::audioCodecKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::audioCodecKey()
 {
-    return "audioCodec"_s;
+    return "audioCodec"_si;
 }
 
-String DiagnosticLoggingKeys::textTrackTypeKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::textTrackTypeKey()
 {
-    return "textTrackType"_s;
+    return "textTrackType"_si;
 }
 
-String DiagnosticLoggingKeys::textTrackKindKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::textTrackKindKey()
 {
-    return "textTrackKind"_s;
+    return "textTrackKind"_si;
 }
 
-String DiagnosticLoggingKeys::textTrackModeKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::textTrackModeKey()
 {
-    return "textTrackMode"_s;
+    return "textTrackMode"_si;
 }
 
-String DiagnosticLoggingKeys::mediaPresentationTypeWatchTimeKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::mediaPresentationTypeWatchTimeKey()
 {
-    return "watchtimeByPresentationType"_s;
+    return "watchtimeByPresentationType"_si;
 }
 
-String DiagnosticLoggingKeys::presentationTypeKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::presentationTypeKey()
 {
-    return "presentationType"_s;
+    return "presentationType"_si;
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-String DiagnosticLoggingKeys::iframeResourceMonitoringKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::iframeResourceMonitoringKey()
 {
-    return "IFrameResourceMonitoring"_s;
+    return "IFrameResourceMonitoring"_si;
 }
 
-String DiagnosticLoggingKeys::unloadCountKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::unloadCountKey()
 {
-    return "unloadCount"_s;
+    return "unloadCount"_si;
 }
 
-String DiagnosticLoggingKeys::unloadPreventedByThrottlerCountKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::unloadPreventedByThrottlerCountKey()
 {
-    return "unloadPreventedByThrottlerCount"_s;
+    return "unloadPreventedByThrottlerCount"_si;
 }
 
-String DiagnosticLoggingKeys::unloadPreventedByStickyActivationCountKey()
+RefPtr<StringImpl> DiagnosticLoggingKeys::unloadPreventedByStickyActivationCountKey()
 {
-    return "unloadPreventedByStickyActivationCount"_s;
+    return "unloadPreventedByStickyActivationCount"_si;
 }
 #endif
 

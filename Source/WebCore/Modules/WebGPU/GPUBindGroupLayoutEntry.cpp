@@ -33,18 +33,18 @@ namespace WebCore {
 Ref<JSON::Object> GPUBindGroupLayoutEntry::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setDouble("binding"_s, binding);
-    json->setDouble("visibility"_s, visibility);
+    json->setDouble("binding"_si, binding);
+    json->setDouble("visibility"_si, visibility);
     if (buffer)
-        json->setObject("buffer"_s, buffer->toJSON());
+        json->setObject("buffer"_si, buffer->toJSON());
     if (sampler)
-        json->setObject("sampler"_s, sampler->toJSON());
+        json->setObject("sampler"_si, sampler->toJSON());
     if (texture)
-        json->setObject("texture"_s, texture->toJSON());
+        json->setObject("texture"_si, texture->toJSON());
     if (storageTexture)
-        json->setObject("storageTexture"_s, storageTexture->toJSON());
+        json->setObject("storageTexture"_si, storageTexture->toJSON());
     if (externalTexture)
-        json->setObject("externalTexture"_s, externalTexture->toJSON());
+        json->setObject("externalTexture"_si, externalTexture->toJSON());
     return json;
 }
 

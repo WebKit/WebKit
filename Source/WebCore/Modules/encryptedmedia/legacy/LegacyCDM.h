@@ -42,8 +42,8 @@ class CDMPrivateInterface;
 class MediaPlayer;
 
 using CreateCDM = Function<const std::unique_ptr<CDMPrivateInterface>(LegacyCDM&)>;
-using CDMSupportsKeySystem = Function<bool(const String&)>;
-using CDMSupportsKeySystemAndMimeType = Function<bool(const String&, const String&)>;
+using CDMSupportsKeySystem = Function<bool(StringImpl*)>;
+using CDMSupportsKeySystemAndMimeType = Function<bool(StringImpl*, StringImpl*)>;
 
 class LegacyCDMClient : public CanMakeCheckedPtr<LegacyCDMClient> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LegacyCDMClient);
@@ -58,19 +58,19 @@ class WEBCORE_EXPORT LegacyCDM final : public RefCountedAndCanMakeWeakPtr<Legacy
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(LegacyCDM, WEBCORE_EXPORT);
 public:
     enum CDMErrorCode { NoError, UnknownError, ClientError, ServiceError, OutputError, HardwareChangeError, DomainError };
-    static bool supportsKeySystem(const String&);
-    static bool keySystemSupportsMimeType(const String& keySystem, const String& mimeType);
-    static RefPtr<LegacyCDM> create(const String& keySystem);
+    static bool supportsKeySystem(StringImpl*);
+    static bool keySystemSupportsMimeType(StringImpl* keySystem, StringImpl* mimeType);
+    static RefPtr<LegacyCDM> create(StringImpl* keySystem);
     static void registerCDMFactory(CreateCDM&&, CDMSupportsKeySystem&&, CDMSupportsKeySystemAndMimeType&&);
     ~LegacyCDM();
 
     static void resetFactories();
     static void clearFactories();
 
-    bool supportsMIMEType(const String&) const;
+    bool supportsMIMEType(StringImpl*) const;
     RefPtr<LegacyCDMSession> createSession(LegacyCDMSessionClient&);
 
-    const String& keySystem() const LIFETIME_BOUND { return m_keySystem; }
+    const RefPtr<StringImpl>& keySystem() const LIFETIME_BOUND { return m_keySystem; }
 
     LegacyCDMClient* client() const { return m_client.get(); }
     void setClient(LegacyCDMClient* client) { m_client = client; }
@@ -79,9 +79,9 @@ public:
     CDMPrivateInterface* cdmPrivate() const { return m_private.get(); }
 
 private:
-    explicit LegacyCDM(const String& keySystem);
+    explicit LegacyCDM(StringImpl* keySystem);
 
-    String m_keySystem;
+    RefPtr<StringImpl> m_keySystem;
     CheckedPtr<LegacyCDMClient> m_client;
     const std::unique_ptr<CDMPrivateInterface> m_private;
 };

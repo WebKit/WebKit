@@ -119,7 +119,7 @@ MediaStreamTrack::~MediaStreamTrack()
     if (isCaptureTrack() && !ended()) {
         if (RefPtr context = scriptExecutionContext()) {
             context->postTask([](auto& context) {
-                context.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "A capture MediaStreamTrack was destroyed without having been stopped explicitly"_s);
+                context.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "A capture MediaStreamTrack was destroyed without having been stopped explicitly"_si);
             });
         }
     }
@@ -135,71 +135,71 @@ MediaStreamTrack::~MediaStreamTrack()
             manager->removeAudioCaptureSource(*this);
 }
 
-const AtomString& MediaStreamTrack::kind() const
+const RefPtr<AtomStringImpl>& MediaStreamTrack::kind() const
 {
-    if (m_kind.isNull())
-        m_kind = m_private->isAudio() ? "audio"_s : "video"_s;
+    if (!m_kind)
+        m_kind = AtomStringImpl::add(m_private->isAudio() ? "audio"_s : "video"_s);
     return m_kind;
 }
 
-const String& MediaStreamTrack::label() const
+const RefPtr<StringImpl>& MediaStreamTrack::label() const
 {
     return m_private->label();
 }
 
-static AtomString contentHintToAtomString(MediaStreamTrackHintValue hint)
+static RefPtr<AtomStringImpl> contentHintToAtomString(MediaStreamTrackHintValue hint)
 {
     switch (hint) {
     case MediaStreamTrackHintValue::Empty:
         return emptyAtom();
     case MediaStreamTrackHintValue::Speech:
-        return "speech"_s;
+        return "speech"_atom;
     case MediaStreamTrackHintValue::Music:
-        return "music"_s;
+        return "music"_atom;
     case MediaStreamTrackHintValue::Motion:
-        return "motion"_s;
+        return "motion"_atom;
     case MediaStreamTrackHintValue::Detail:
-        return "detail"_s;
+        return "detail"_atom;
     case MediaStreamTrackHintValue::Text:
-        return "text"_s;
+        return "text"_atom;
     default:
         return emptyAtom();
     }
 }
 
-const AtomString& MediaStreamTrack::contentHint() const
+const RefPtr<AtomStringImpl>& MediaStreamTrack::contentHint() const
 {
-    if (m_contentHint.isNull())
+    if (!m_contentHint)
         m_contentHint = contentHintToAtomString(m_private->contentHint());
 
     return m_contentHint;
 }
 
-void MediaStreamTrack::setContentHint(const String& hintValue)
+void MediaStreamTrack::setContentHint(StringImpl* hintValue)
 {
     MediaStreamTrackHintValue value;
     if (m_private->isAudio()) {
-        if (hintValue.isEmpty())
+        if (isEmpty(hintValue))
             value = MediaStreamTrackHintValue::Empty;
-        else if (hintValue == "speech"_s)
+        else if (equal(hintValue, "speech"_s))
             value = MediaStreamTrackHintValue::Speech;
-        else if (hintValue == "music"_s)
+        else if (equal(hintValue, "music"_s))
             value = MediaStreamTrackHintValue::Music;
         else
             return;
     } else {
-        if (hintValue.isEmpty())
+        if (isEmpty(hintValue))
             value = MediaStreamTrackHintValue::Empty;
-        else if (hintValue == "detail"_s)
+        else if (equal(hintValue, "detail"_s))
             value = MediaStreamTrackHintValue::Detail;
-        else if (hintValue == "motion"_s)
+        else if (equal(hintValue, "motion"_s))
             value = MediaStreamTrackHintValue::Motion;
-        else if (hintValue == "text"_s)
+        else if (equal(hintValue, "text"_s))
             value = MediaStreamTrackHintValue::Text;
         else
             return;
     }
-    m_contentHint = { };
+    m_contentHint = nullptr;
     m_private->setContentHint(value);
 }
 
@@ -345,7 +345,7 @@ auto MediaStreamTrack::takePhoto(PhotoSettings&& settings) -> Ref<TakePhotoPromi
 
         RefPtr context = protectedThis->scriptExecutionContext();
         if (!context || context->activeDOMObjectsAreStopped() || protectedThis->m_ended)
-            return TakePhotoPromise::createAndReject(Exception { ExceptionCode::OperationError, "Track has ended"_s });
+            return TakePhotoPromise::createAndReject(Exception { ExceptionCode::OperationError, "Track has ended"_si });
 
         return TakePhotoPromise::createAndResolve(WTF::move(result.value()));
     });
@@ -366,7 +366,7 @@ auto MediaStreamTrack::getPhotoCapabilities() -> Ref<PhotoCapabilitiesPromise>
 
         RefPtr context = protectedThis->scriptExecutionContext();
         if (!context || context->activeDOMObjectsAreStopped() || protectedThis->m_ended)
-            return PhotoCapabilitiesPromise::createAndReject(Exception { ExceptionCode::OperationError, "Track has ended"_s });
+            return PhotoCapabilitiesPromise::createAndReject(Exception { ExceptionCode::OperationError, "Track has ended"_si });
 
         return PhotoCapabilitiesPromise::createAndResolve(WTF::move(result.value()));
     });
@@ -387,7 +387,7 @@ auto MediaStreamTrack::getPhotoSettings() -> Ref<PhotoSettingsPromise>
 
         RefPtr context = protectedThis->scriptExecutionContext();
         if (!context || context->activeDOMObjectsAreStopped() || protectedThis->m_ended)
-            return PhotoSettingsPromise::createAndReject(Exception { ExceptionCode::OperationError, "Track has ended"_s });
+            return PhotoSettingsPromise::createAndReject(Exception { ExceptionCode::OperationError, "Track has ended"_si });
 
         return PhotoSettingsPromise::createAndResolve(WTF::move(result.value()));
     });
@@ -512,7 +512,7 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
     ALWAYS_LOG(LOGIDENTIFIER);
 
     if (m_isCaptureTrack && m_private->captureDidFail() && m_readyState != State::Ended)
-        protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "A MediaStreamTrack ended due to a capture failure"_s);
+        protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "A MediaStreamTrack ended due to a capture failure"_si);
 
     // http://w3c.github.io/mediacapture-main/#life-cycle
     // When a MediaStreamTrack track ends for any reason other than the stop() method being invoked, the User Agent must

@@ -21,4 +21,4 @@
 
 #include "WebKitFormSubmissionRequest.h"
 
-WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(const Vector<std::pair<String, String>>&, Ref<WebKit::WebFormSubmissionListenerProxy>&&);
+WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&, Ref<WebKit::WebFormSubmissionListenerProxy>&&);

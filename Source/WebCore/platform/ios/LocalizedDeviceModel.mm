@@ -32,21 +32,21 @@
 
 namespace WebCore {
 
-static std::optional<String>& cachedLocalizedDeviceModel()
+static std::optional<RefPtr<StringImpl>>& cachedLocalizedDeviceModel()
 {
-    static NeverDestroyed<std::optional<String>> deviceModel;
+    static NeverDestroyed<std::optional<RefPtr<StringImpl>>> deviceModel;
     return deviceModel;
 }
 
-String localizedDeviceModel()
+RefPtr<StringImpl> localizedDeviceModel()
 {
     auto& deviceModel = cachedLocalizedDeviceModel();
     if (!deviceModel)
-        deviceModel = String([[PAL::getUIDeviceClassSingleton() currentDevice] localizedModel]);
+        deviceModel = StringImpl::create([[PAL::getUIDeviceClassSingleton() currentDevice] localizedModel]);
     return *deviceModel;
 }
 
-void setLocalizedDeviceModel(const String& deviceModel)
+void setLocalizedDeviceModel(StringImpl* deviceModel)
 {
     cachedLocalizedDeviceModel() = deviceModel;
 }

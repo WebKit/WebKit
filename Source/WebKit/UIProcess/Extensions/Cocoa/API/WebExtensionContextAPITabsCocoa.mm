@@ -73,13 +73,13 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
 
     RefPtr extensionController = this->extensionController();
     if (!extensionController) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"the extension is not loaded"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"the extension is not loaded").get()));
         return;
     }
 
     auto delegate = extensionController->delegate();
     if (![delegate respondsToSelector:@selector(webExtensionController:openNewTabUsingConfiguration:forExtensionContext:completionHandler:)]) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"it is not implemented").get()));
         return;
     }
 
@@ -92,7 +92,7 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
 
     RefPtr window = getWindow(parameters.windowIdentifier.value_or(WebExtensionWindowConstants::CurrentIdentifier), webPageProxyIdentifier);
     if (parameters.windowIdentifier && !window) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"window not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"window not found").get()));
         return;
     }
 
@@ -102,7 +102,7 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
     if (parameters.parentTabIdentifier) {
         RefPtr tab = getTab(parameters.parentTabIdentifier.value());
         if (!tab) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"parent tab not found"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"parent tab not found").get()));
             return;
         }
 
@@ -111,7 +111,7 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
 
     if (parameters.url) {
         if (!canNavigateToURL(parameters.url.value())) {
-            completionHandler(toWebExtensionError(apiName, @"url", unsupportedNavigationURLMessage(parameters.url.value())));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), StringImpl::create(@"url").get(), unsupportedNavigationURLMessage(parameters.url.value())));
             return;
         }
 
@@ -121,7 +121,7 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
     [delegate webExtensionController:extensionController->wrapper() openNewTabUsingConfiguration:configuration forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](id<WKWebExtensionTab> newTab, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for open new tab: %{public}@", privacyPreservingDescription(error));
-            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(error.localizedDescription).get()));
             return;
         }
 
@@ -148,12 +148,12 @@ void WebExtensionContext::tabsUpdate(WebPageProxyIdentifier webPageProxyIdentifi
 
     RefPtr tab = getTab(webPageProxyIdentifier, tabIdentifier, IncludeExtensionViews::Yes);
     if (!tab) {
-        completionHandler(toWebExtensionError(@"tabs.update()", nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(@"tabs.update()").get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
     if (parameters.url && !canNavigateToURL(parameters.url.value())) {
-        completionHandler(toWebExtensionError(@"tabs.update()", @"url", unsupportedNavigationURLMessage(parameters.url.value())));
+        completionHandler(toWebExtensionError(StringImpl::create(@"tabs.update()").get(), StringImpl::create(@"url").get(), unsupportedNavigationURLMessage(parameters.url.value())));
         return;
     }
 
@@ -278,7 +278,7 @@ void WebExtensionContext::tabsDuplicate(WebExtensionTabIdentifier tabIdentifier,
 {
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
-        completionHandler(toWebExtensionError(@"tabs.duplicate()", nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(@"tabs.duplicate()").get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
@@ -302,7 +302,7 @@ void WebExtensionContext::tabsGet(WebExtensionTabIdentifier tabIdentifier, Compl
 {
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
-        completionHandler(toWebExtensionError(@"tabs.get()", nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(@"tabs.get()").get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
@@ -356,7 +356,7 @@ void WebExtensionContext::tabsReload(WebPageProxyIdentifier webPageProxyIdentifi
 {
     RefPtr tab = getTab(webPageProxyIdentifier, tabIdentifier, IncludeExtensionViews::Yes);
     if (!tab) {
-        completionHandler(toWebExtensionError(@"tabs.reload()", nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(@"tabs.reload()").get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
@@ -367,7 +367,7 @@ void WebExtensionContext::tabsGoBack(WebPageProxyIdentifier webPageProxyIdentifi
 {
     RefPtr tab = getTab(webPageProxyIdentifier, tabIdentifier, IncludeExtensionViews::Yes);
     if (!tab) {
-        completionHandler(toWebExtensionError(@"tabs.goBack()", nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(@"tabs.goBack()").get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
@@ -378,26 +378,26 @@ void WebExtensionContext::tabsGoForward(WebPageProxyIdentifier webPageProxyIdent
 {
     RefPtr tab = getTab(webPageProxyIdentifier, tabIdentifier, IncludeExtensionViews::Yes);
     if (!tab) {
-        completionHandler(toWebExtensionError(@"tabs.goForward()", nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(@"tabs.goForward()").get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
     tab->goForward(WTF::move(completionHandler));
 }
 
-void WebExtensionContext::tabsDetectLanguage(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::tabsDetectLanguage(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::expected<RefPtr<StringImpl>, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.detectLanguage()";
 
     RefPtr tab = getTab(webPageProxyIdentifier, tabIdentifier, IncludeExtensionViews::Yes);
     if (!tab) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
     requestPermissionToAccessURLs({ tab->url() }, tab, [tab, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!tab->extensionHasPermission()) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"this extension does not have access to this tab").get()));
             return;
         }
 
@@ -407,18 +407,18 @@ void WebExtensionContext::tabsDetectLanguage(WebPageProxyIdentifier webPageProxy
                 return;
             }
 
-            completionHandler(String(toWebAPI(result.value())));
+            completionHandler(StringImpl::create(toWebAPI(result.value())));
         });
     });
 }
 
-static inline String toMIMEType(WebExtensionTab::ImageFormat format)
+static inline RefPtr<StringImpl> toMIMEType(WebExtensionTab::ImageFormat format)
 {
     switch (format) {
     case WebExtensionTab::ImageFormat::PNG:
-        return "image/png"_s;
+        return "image/png"_si;
     case WebExtensionTab::ImageFormat::JPEG:
-        return "image/jpeg"_s;
+        return "image/jpeg"_si;
     }
 }
 
@@ -428,19 +428,19 @@ void WebExtensionContext::tabsCaptureVisibleTab(WebPageProxyIdentifier webPagePr
 
     RefPtr window = getWindow(windowIdentifier.value_or(WebExtensionWindowConstants::CurrentIdentifier), webPageProxyIdentifier);
     if (!window) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"window not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"window not found").get()));
         return;
     }
 
     RefPtr activeTab = window->activeTab();
     if (!activeTab) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"active tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"active tab not found").get()));
         return;
     }
 
     requestPermissionToAccessURLs({ activeTab->url() }, activeTab, [activeTab, imageFormat, imageQuality, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!activeTab->extensionHasPermission()) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"either the 'activeTab' permission or granted host permissions for the current website are required"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"either the 'activeTab' permission or granted host permissions for the current website are required").get()));
             return;
         }
 
@@ -481,7 +481,7 @@ void WebExtensionContext::tabsToggleReaderMode(WebPageProxyIdentifier webPagePro
 {
     RefPtr tab = getTab(webPageProxyIdentifier, tabIdentifier, IncludeExtensionViews::Yes);
     if (!tab) {
-        completionHandler(toWebExtensionError(@"tabs.toggleReaderMode()", nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(@"tabs.toggleReaderMode()").get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
@@ -494,7 +494,7 @@ void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifie
 
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
@@ -530,13 +530,13 @@ void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifie
     }
 }
 
-void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, String name, const WebExtensionMessageTargetParameters& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, RefPtr<StringImpl> name, const WebExtensionMessageTargetParameters& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.connect()";
 
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
@@ -548,7 +548,7 @@ void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, W
 
     auto processes = tab->processes(WebExtensionEventListenerType::RuntimeOnConnect, targetContentWorldType);
     if (processes.isEmpty()) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"no runtime.onConnect listeners found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"no runtime.onConnect listeners found").get()));
         return;
     }
 
@@ -586,7 +586,7 @@ void WebExtensionContext::tabsGetZoom(WebPageProxyIdentifier webPageProxyIdentif
 {
     RefPtr tab = getTab(webPageProxyIdentifier, tabIdentifier, IncludeExtensionViews::Yes);
     if (!tab) {
-        completionHandler(toWebExtensionError(@"tabs.getZoom()", nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(@"tabs.getZoom()").get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
@@ -597,7 +597,7 @@ void WebExtensionContext::tabsSetZoom(WebPageProxyIdentifier webPageProxyIdentif
 {
     RefPtr tab = getTab(webPageProxyIdentifier, tabIdentifier, IncludeExtensionViews::Yes);
     if (!tab) {
-        completionHandler(toWebExtensionError(@"tabs.setZoom()", nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(@"tabs.setZoom()").get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
@@ -610,13 +610,13 @@ void WebExtensionContext::tabsMove(Vector<WebExtensionTabIdentifier> tabIdentifi
 
     RefPtr extensionController = this->extensionController();
     if (!extensionController) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"the extension is not loaded"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"the extension is not loaded").get()));
         return;
     }
 
     auto *delegate = extensionController->delegate();
     if (![delegate respondsToSelector:@selector(_webExtensionController:moveTabs:toIndex:inWindow:forExtensionContext:completionHandler:)]) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"it is not implemented").get()));
         return;
     }
 
@@ -626,7 +626,7 @@ void WebExtensionContext::tabsMove(Vector<WebExtensionTabIdentifier> tabIdentifi
         if (RefPtr tab = getTab(tabIdentifier))
             tabs.append(tab.releaseNonNull());
         else {
-            completionHandler(toWebExtensionError(apiName, nullString(), makeString("tab '"_s, tabIdentifier.toUInt64(), "' was not found"_s)));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), makeString("tab '"_s, tabIdentifier.toUInt64(), "' was not found"_s)));
             return;
         }
     }
@@ -635,13 +635,13 @@ void WebExtensionContext::tabsMove(Vector<WebExtensionTabIdentifier> tabIdentifi
         .transform([this](auto& windowId) { return getWindow(windowId); })
         .value_or(nullptr);
     if (windowIdentifier && !window) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"window not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"window not found").get()));
         return;
     }
 
     // Tabs can only be moved to and from normal windows.
     if (window && window->type() != WebExtensionWindow::Type::Normal) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"the destination window is not a normal window"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"the destination window is not a normal window").get()));
         return;
     }
 
@@ -649,12 +649,12 @@ void WebExtensionContext::tabsMove(Vector<WebExtensionTabIdentifier> tabIdentifi
         RefPtr tabWindow = tab->window();
 
         if (tabWindow && tabWindow->type() != WebExtensionWindow::Type::Normal) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"it is not possible to move a tab that is not in a normal window"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"it is not possible to move a tab that is not in a normal window").get()));
             return;
         }
 
         if (window && tab->isPrivate() != window->isPrivate()) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"it is not possible to move tabs between private and non-private windows"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"it is not possible to move tabs between private and non-private windows").get()));
             return;
         }
     }
@@ -675,13 +675,13 @@ void WebExtensionContext::tabsMove(Vector<WebExtensionTabIdentifier> tabIdentifi
 
         auto *windowDelegate = window.delegate();
         if (!windowDelegate) {
-            callbackAggregator.get()(toWebExtensionError(apiName, nullString(), @"an internal error occurred"));
+            callbackAggregator.get()(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"an internal error occurred").get()));
             return false;
         }
 
         [delegate _webExtensionController:extensionController->wrapper() moveTabs:tabs toIndex:resolvedIndex inWindow:windowDelegate forExtensionContext:wrapper() completionHandler:makeBlockPtr([callbackAggregator](NSError *error) mutable {
             if (error)
-                callbackAggregator.get()(toWebExtensionError(apiName, nullString(), error.localizedDescription));
+                callbackAggregator.get()(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(error.localizedDescription).get()));
         }).get()];
 
         return true;
@@ -699,7 +699,7 @@ void WebExtensionContext::tabsMove(Vector<WebExtensionTabIdentifier> tabIdentifi
     for (Ref tab : tabs) {
         RefPtr tabWindow = tab->window();
         if (!tabWindow) {
-            callbackAggregator.get()(toWebExtensionError(apiName, nullString(), @"the tab is not in a window"));
+            callbackAggregator.get()(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"the tab is not in a window").get()));
             return;
         }
 
@@ -728,7 +728,7 @@ void WebExtensionContext::tabsRemove(Vector<WebExtensionTabIdentifier> tabIdenti
         if (RefPtr tab = getTab(tabIdentifier))
             tabs.append(tab.releaseNonNull());
         else {
-            completionHandler(toWebExtensionError(@"tabs.remove()", nullString(), makeString("tab '"_s, tabIdentifier.toUInt64(), "' was not found"_s)));
+            completionHandler(toWebExtensionError(StringImpl::create(@"tabs.remove()").get(), nullString(), makeString("tab '"_s, tabIdentifier.toUInt64(), "' was not found"_s)));
             return;
         }
     }
@@ -749,19 +749,19 @@ void WebExtensionContext::tabsExecuteScript(WebPageProxyIdentifier webPageProxyI
 
     RefPtr tab = getTab(webPageProxyIdentifier, tabIdentifier, IncludeExtensionViews::Yes);
     if (!tab) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
     requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, userGesture, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!tab->extensionHasPermission()) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"this extension does not have access to this tab").get()));
             return;
         }
 
         auto *webView = tab->webView();
         if (!webView) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"could not execute script in tab"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"could not execute script in tab").get()));
             return;
         }
 
@@ -769,10 +769,10 @@ void WebExtensionContext::tabsExecuteScript(WebPageProxyIdentifier webPageProxyI
         if (parameters.code)
             scriptData = SourcePair { parameters.code.value(), URL { } };
         else {
-            RetainPtr filePath = borrow(parameters.files.value())->first().createNSString();
-            scriptData = sourcePairForResource(filePath.get(), *this);
+            RetainPtr filePath = createNSString(borrow(parameters.files.value())->first());
+            scriptData = sourcePairForResource(StringImpl::create(filePath.get()).get(), *this);
             if (!scriptData) {
-                completionHandler(toWebExtensionError(apiName, nullString(), makeString("Invalid resource: "_s, String(filePath.get()))));
+                completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), makeString("Invalid resource: "_s, StringImpl::create(filePath.get()))));
                 return;
             }
         }
@@ -790,19 +790,19 @@ void WebExtensionContext::tabsInsertCSS(WebPageProxyIdentifier webPageProxyIdent
 
     RefPtr tab = getTab(webPageProxyIdentifier, tabIdentifier, IncludeExtensionViews::Yes);
     if (!tab) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
     requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTF::move(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!tab->extensionHasPermission()) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"this extension does not have access to this tab").get()));
             return;
         }
 
         auto *webView = tab->webView();
         if (!webView) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"could not inject stylesheet on this tab"));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"could not inject stylesheet on this tab").get()));
             return;
         }
 
@@ -822,13 +822,13 @@ void WebExtensionContext::tabsRemoveCSS(WebPageProxyIdentifier webPageProxyIdent
 
     RefPtr tab = getTab(webPageProxyIdentifier, tabIdentifier, IncludeExtensionViews::Yes);
     if (!tab) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"tab not found").get()));
         return;
     }
 
     auto *webView = tab->webView();
     if (!webView) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"could not remove stylesheet on this tab"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"could not remove stylesheet on this tab").get()));
         return;
     }
 

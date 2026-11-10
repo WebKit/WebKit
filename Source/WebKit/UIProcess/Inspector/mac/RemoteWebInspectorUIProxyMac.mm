@@ -162,14 +162,14 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
     RetainPtr<NSString> urlCommonPrefix;
     for (auto& item : borrow(saveDatas)) {
         if (!urlCommonPrefix)
-            urlCommonPrefix = item.url.createNSString();
+            urlCommonPrefix = createNSString(item.url);
         else
-            urlCommonPrefix = [urlCommonPrefix commonPrefixWithString:item.url.createNSString().get() options:0];
+            urlCommonPrefix = [urlCommonPrefix commonPrefixWithString:createNSString(item.url).get() options:0];
     }
     if ([urlCommonPrefix hasSuffix:@"."])
         urlCommonPrefix = [urlCommonPrefix substringToIndex:[urlCommonPrefix length] - 1];
 
-    RetainPtr platformURL = m_suggestedToActualURLMap.get(urlCommonPrefix.get());
+    RetainPtr platformURL = m_suggestedToActualURLMap.get(StringImpl::create(urlCommonPrefix.get()).get());
     if (!platformURL) {
         platformURL = adoptNS([[NSURL alloc] initWithString:urlCommonPrefix.get()]);
         // The user must confirm new filenames before we can save to them.
@@ -177,14 +177,14 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
     }
 
     WebInspectorUIProxy::showSavePanel(m_window.get(), platformURL.get(), WTF::move(saveDatas), forceSaveAs, [urlCommonPrefix, protectedThis = Ref { *this }] (NSURL *actualURL) {
-        protectedThis->m_suggestedToActualURLMap.set(urlCommonPrefix.get(), actualURL);
+        protectedThis->m_suggestedToActualURLMap.set(StringImpl::create(urlCommonPrefix.get()), actualURL);
     });
 }
 
-void RemoteWebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
+void RemoteWebInspectorUIProxy::platformLoad(StringImpl* path, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     if (const auto contents = FileSystem::readEntireFile(path))
-        completionHandler(String::fromUTF8ReplacingInvalidSequences(byteCast<Latin1Character>(contents->span())));
+        completionHandler(StringImpl::fromUTF8ReplacingInvalidSequences(byteCast<Latin1Character>(contents->span())));
     else
         completionHandler(nullString());
 }
@@ -236,14 +236,14 @@ void RemoteWebInspectorUIProxy::platformStartWindowDrag()
     protect(*protect(webView()).get()._page)->startWindowDrag();
 }
 
-void RemoteWebInspectorUIProxy::platformOpenURLExternally(const String& url)
+void RemoteWebInspectorUIProxy::platformOpenURLExternally(StringImpl* url)
 {
-    [[NSWorkspace sharedWorkspace] openURL:adoptNS([[NSURL alloc] initWithString:url.createNSString().get()]).get()];
+    [[NSWorkspace sharedWorkspace] openURL:adoptNS([[NSURL alloc] initWithString:createNSString(url).get()]).get()];
 }
 
-void RemoteWebInspectorUIProxy::platformRevealFileExternally(const String& path)
+void RemoteWebInspectorUIProxy::platformRevealFileExternally(StringImpl* path)
 {
-    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs:@[ adoptNS([[NSURL alloc] initWithString:path.createNSString().get()]).get() ]];
+    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs:@[ adoptNS([[NSURL alloc] initWithString:createNSString(path).get()]).get() ]];
 }
 
 void RemoteWebInspectorUIProxy::platformShowCertificate(const CertificateInfo& certificateInfo)

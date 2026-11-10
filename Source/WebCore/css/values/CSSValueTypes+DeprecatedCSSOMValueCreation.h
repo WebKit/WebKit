@@ -32,9 +32,9 @@ namespace CSS {
 
 // MARK: - DeprecatedCSSOMValue Creation
 
-Ref<DeprecatedCSSOMValue> makeCustomDeprecatedCSSOMValue(Function<WTF::String(const SerializationContext&)>&&, CSSStyleDeclaration&);
+Ref<DeprecatedCSSOMValue> makeCustomDeprecatedCSSOMValue(Function<RefPtr<StringImpl>(const SerializationContext&)>&&, CSSStyleDeclaration&);
 
-Ref<DeprecatedCSSOMValue> makePrimitiveDeprecatedCSSOMValue(Function<WTF::String(const SerializationContext&)>&&, CSSStyleDeclaration&);
+Ref<DeprecatedCSSOMValue> makePrimitiveDeprecatedCSSOMValue(Function<RefPtr<StringImpl>(const SerializationContext&)>&&, CSSStyleDeclaration&);
 Ref<DeprecatedCSSOMValue> makePrimitiveDeprecatedCSSOMValue(CSSValueID, CSSStyleDeclaration&);
 
 template<SerializationSeparatorType> Ref<DeprecatedCSSOMValue> makeListDeprecatedCSSOMValue(DeprecatedCSSOMValueListBuilder&&, CSSStyleDeclaration&);

@@ -112,7 +112,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> CompressionStreamEncoder::compressZlib(std::s
     bool shouldCompress = true;
 
     if (!m_zstream.initializeIfNecessary(compressionAlgorithm(m_format), ZStream::Operation::Compression))
-        return Exception { ExceptionCode::TypeError, "Initialization Failed."_s };
+        return Exception { ExceptionCode::TypeError, "Initialization Failed."_si };
 
     m_zstream.getPlatformStream().next_in = const_cast<z_const Bytef*>(input.data());
     m_zstream.getPlatformStream().avail_in = input.size();
@@ -136,7 +136,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> CompressionStreamEncoder::compressZlib(std::s
         result = deflate(&m_zstream.getPlatformStream(), m_didFinish ? Z_FINISH : Z_NO_FLUSH);
 
         if (didDeflateFail(result))
-            return Exception { ExceptionCode::TypeError, "Failed to compress data."_s };
+            return Exception { ExceptionCode::TypeError, "Failed to compress data."_si };
 
         if (didDeflateFinish(result)) {
             shouldCompress = false;

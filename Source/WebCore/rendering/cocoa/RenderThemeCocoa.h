@@ -83,13 +83,13 @@ public:
     };
 
 #if ENABLE(VIDEO)
-    Vector<String, 2> mediaControlsStyleSheets(const HTMLMediaElement&) final;
-    String mediaControlsBase64StringForIconNameAndType(const String&, const String&) final;
-    Vector<String, 2> mediaControlsScripts() final;
-    RefPtr<FragmentedSharedBuffer> mediaControlsImageDataForIconNameAndType(const String&, const String&) final;
-    String mediaControlsFormattedStringForDuration(double) final;
-    String youTubeQuirkScript() final;
-    String cnnQuirkScript() final;
+    Vector<RefPtr<StringImpl>, 2> mediaControlsStyleSheets(const HTMLMediaElement&) final;
+    RefPtr<StringImpl> mediaControlsBase64StringForIconNameAndType(StringImpl*, StringImpl*) final;
+    Vector<RefPtr<StringImpl>, 2> mediaControlsScripts() final;
+    RefPtr<FragmentedSharedBuffer> mediaControlsImageDataForIconNameAndType(StringImpl*, StringImpl*) final;
+    RefPtr<StringImpl> mediaControlsFormattedStringForDuration(double) final;
+    RefPtr<StringImpl> youTubeQuirkScript() final;
+    RefPtr<StringImpl> cnnQuirkScript() final;
 #endif
 
 #if ENABLE(FORM_CONTROL_REFRESH)
@@ -305,12 +305,12 @@ private:
     LayoutRect adjustedPaintRect(const RenderBox&, const LayoutRect&) const final;
 
 #if ENABLE(VIDEO)
-    String m_mediaControlsLocalizedStringsScript;
-    String m_mediaControlsScript;
-    String m_mediaControlsStyleSheet;
+    RefPtr<StringImpl> m_mediaControlsLocalizedStringsScript;
+    RefPtr<StringImpl> m_mediaControlsScript;
+    RefPtr<StringImpl> m_mediaControlsStyleSheet;
     const RetainPtr<NSDateComponentsFormatter> m_durationFormatter;
-    String m_youTubeCaptionQuirkScript;
-    String m_cnnCaptionQuirkScript;
+    RefPtr<StringImpl> m_youTubeCaptionQuirkScript;
+    RefPtr<StringImpl> m_cnnCaptionQuirkScript;
 #endif // ENABLE(VIDEO)
 };
 

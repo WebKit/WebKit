@@ -55,13 +55,13 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE static void crashDueToApplicationCreatingUse
 }
 #endif
 
-NODELETE static HashCountedSet<String>& sourceStrings()
+NODELETE static HashCountedSet<RefPtr<StringImpl>>& sourceStrings()
 {
-    static NeverDestroyed<HashCountedSet<String>> set;
+    static NeverDestroyed<HashCountedSet<RefPtr<StringImpl>>> set;
     return set;
 }
 
-static String internedSourceString(const String& string)
+static RefPtr<StringImpl> internedSourceString(StringImpl* string)
 {
 #if PLATFORM(COCOA)
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::EnableUserScriptAndUserStyleInterning))
@@ -72,14 +72,14 @@ static String internedSourceString(const String& string)
         crashDueToApplicationCreatingUserScriptFromBackgroundThread();
 #endif
 
-    if (string.isEmpty())
+    if (isEmpty(string))
         return emptyString();
 
     auto result = sourceStrings().add(string);
     return result.iterator->key;
 }
 
-static void removeSourceString(const String& string)
+static void removeSourceString(StringImpl* string)
 {
 #if PLATFORM(COCOA)
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::EnableUserScriptAndUserStyleInterning))
@@ -89,7 +89,7 @@ static void removeSourceString(const String& string)
     sourceStrings().remove(string);
 }
 
-UserScript::UserScript(String&& source, URL&& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames, UserContentMatchParentFrame matchParentFrame)
+UserScript::UserScript(RefPtr<StringImpl>&& source, URL&& url, Vector<RefPtr<StringImpl>>&& allowlist, Vector<RefPtr<StringImpl>>&& blocklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames, UserContentMatchParentFrame matchParentFrame)
     : m_source(internedSourceString(source))
     , m_url(url.isEmpty() ? generateUserScriptUniqueURL() : WTF::move(url))
     , m_allowlist(WTF::move(allowlist))
@@ -105,10 +105,10 @@ UserScript::~UserScript()
     removeSourceString(m_source);
 }
 
-String UserScript::debugDescription() const
+RefPtr<StringImpl> UserScript::debugDescription() const
 {
-    String urlString = m_url.string();
-    if (!urlString.isEmpty() && !urlString.startsWith("user-script:"_s))
+    RefPtr<StringImpl> urlString = m_url.string();
+    if (!isEmpty(urlString) && !startsWith(urlString, "user-script:"_s))
         return urlString;
 
     StringView view { m_source };

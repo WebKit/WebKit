@@ -50,7 +50,7 @@ static void fileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* res
         LOG_ERROR("Error replacing contents to file %s: %s", g_file_get_path(file), error->message);
 }
 
-void platformSaveDataToFile(GRefPtr<GFile>&& file, const String& content, bool base64Encoded)
+void platformSaveDataToFile(GRefPtr<GFile>&& file, StringImpl* content, bool base64Encoded)
 {
     PlatformSaveDataPtr platformSaveData(createPlatformSaveData(), destroyPlatformSaveData);
 
@@ -61,7 +61,7 @@ void platformSaveDataToFile(GRefPtr<GFile>&& file, const String& content, bool b
         decodedData->shrinkToFit();
         platformSaveData->dataVector = WTF::move(*decodedData);
     } else
-        platformSaveData->dataString = content.utf8();
+        platformSaveData->dataString = utf8(content);
 
     const char* data = !platformSaveData->dataString.isNull() ? platformSaveData->dataString.legacyCStringPointer() : reinterpret_cast<const char*>(platformSaveData->dataVector.span().data());
     size_t dataLength = !platformSaveData->dataString.isNull() ? platformSaveData->dataString.length() : platformSaveData->dataVector.size();

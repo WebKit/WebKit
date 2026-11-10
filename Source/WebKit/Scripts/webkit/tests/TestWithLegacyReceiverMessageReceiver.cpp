@@ -56,6 +56,7 @@
 #include <wtf/OptionSet.h> // NOLINT
 #endif
 #include <wtf/Vector.h> // NOLINT
+#include <wtf/text/StringView.h> // NOLINT
 #include <wtf/text/WTFString.h> // NOLINT
 
 #if ENABLE(IPC_TESTING_API)

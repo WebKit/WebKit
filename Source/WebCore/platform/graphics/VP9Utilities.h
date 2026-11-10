@@ -115,7 +115,7 @@ constexpr uint8_t BT_2100_ICC = 14;
 }
 
 struct VPCodecConfigurationRecord {
-    String codecName;
+    RefPtr<StringImpl> codecName;
     uint8_t profile { 0 };
     uint8_t level { VPConfigurationLevel::Level_1 };
     uint8_t bitDepth { 8 };
@@ -133,7 +133,7 @@ struct VPCodecConfigurationRecord {
 WEBCORE_EXPORT std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecString);
 // Parses the mandatory fields and chromaSubsampling; the color fields that follow are not required.
 std::optional<VPCodecConfigurationRecord> parseVPCodecParametersIgnoringColorFields(StringView codecString);
-WEBCORE_EXPORT String createVPCodecParametersString(const VPCodecConfigurationRecord&);
+WEBCORE_EXPORT RefPtr<StringImpl> createVPCodecParametersString(const VPCodecConfigurationRecord&);
 std::optional<VPCodecConfigurationRecord> createVPCodecConfigurationRecordFromVPCC(std::span<const uint8_t>);
 NODELETE void setConfigurationColorSpaceFromVP9ColorSpace(VPCodecConfigurationRecord&, uint8_t);
 

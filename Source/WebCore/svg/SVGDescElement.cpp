@@ -40,9 +40,9 @@ Ref<SVGDescElement> SVGDescElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGDescElement(tagName, document));
 }
 
-String SVGDescElement::description() const
+RefPtr<StringImpl> SVGDescElement::description() const
 {
-    return textContent().simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
+    return simplifyWhiteSpace(textContent(), deprecatedIsSpaceOrNewline);
 }
 
 }

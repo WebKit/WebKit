@@ -39,23 +39,23 @@
 
 namespace WebKit {
 
-String WebExtensionControllerConfiguration::createStorageDirectoryPath(std::optional<WTF::UUID> identifier)
+RefPtr<StringImpl> WebExtensionControllerConfiguration::createStorageDirectoryPath(std::optional<WTF::UUID> identifier)
 {
-    String libraryPath = [NSFileManager.defaultManager URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nullptr].path;
-    RELEASE_ASSERT(!libraryPath.isEmpty());
+    RefPtr<StringImpl> libraryPath = StringImpl::create([NSFileManager.defaultManager URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nullptr].path);
+    RELEASE_ASSERT(!isEmpty(libraryPath));
 
-    String identifierPath = identifier ? identifier->toString().convertToASCIIUppercase() : "Default"_s;
+    RefPtr<StringImpl> identifierPath = identifier ? convertToASCIIUppercase(identifier->toString()) : "Default"_si;
 
     if (processHasContainer())
         return FileSystem::pathByAppendingComponents(libraryPath, std::initializer_list<StringView>({ "WebKit"_s, "WebExtensions"_s, identifierPath }));
 
-    String appDirectoryName = NSBundle.mainBundle.bundleIdentifier ?: NSProcessInfo.processInfo.processName;
+    RefPtr<StringImpl> appDirectoryName = StringImpl::create(NSBundle.mainBundle.bundleIdentifier ?: NSProcessInfo.processInfo.processName);
     return FileSystem::pathByAppendingComponents(libraryPath, std::initializer_list<StringView>({ "WebKit"_s, appDirectoryName, "WebExtensions"_s, identifierPath }));
 }
 
-String WebExtensionControllerConfiguration::createTemporaryStorageDirectoryPath()
+RefPtr<StringImpl> WebExtensionControllerConfiguration::createTemporaryStorageDirectoryPath()
 {
-    return FileSystem::createTemporaryDirectory(@"WebExtensions");
+    return StringImpl::create(FileSystem::createTemporaryDirectory(@"WebExtensions"));
 }
 
 Ref<WebExtensionControllerConfiguration> WebExtensionControllerConfiguration::copy() const

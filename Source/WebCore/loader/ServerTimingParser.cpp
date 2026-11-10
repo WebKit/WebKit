@@ -35,28 +35,28 @@ namespace WebCore {
 
 namespace ServerTimingParser {
 
-Vector<ServerTiming> parseServerTiming(const String& headerValue)
+Vector<ServerTiming> parseServerTiming(StringImpl* headerValue)
 {
     auto entries = Vector<ServerTiming>();
-    if (headerValue.isNull())
+    if (!headerValue)
         return entries;
 
-    ASSERT(headerValue.is8Bit());
+    ASSERT(is8Bit(headerValue));
 
     HeaderFieldTokenizer tokenizer(headerValue);
     while (!tokenizer.isConsumed()) {
-        String name = tokenizer.consumeToken();
-        if (name.isNull())
+        RefPtr<StringImpl> name = tokenizer.consumeToken();
+        if (!name)
             break;
 
         ServerTiming entry(WTF::move(name));
 
         while (tokenizer.consume(';')) {
-            String parameterName = tokenizer.consumeToken();
-            if (parameterName.isNull())
+            RefPtr<StringImpl> parameterName = tokenizer.consumeToken();
+            if (!parameterName)
                 break;
 
-            String value = emptyString();
+            RefPtr<StringImpl> value = emptyString();
             if (tokenizer.consume('=')) {
                 value = tokenizer.consumeTokenOrQuotedString();
                 tokenizer.consumeBeforeAnyCharMatch({',', ';'});

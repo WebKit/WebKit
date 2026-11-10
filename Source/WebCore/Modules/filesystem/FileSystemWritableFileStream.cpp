@@ -68,7 +68,7 @@ static JSC::JSValue convertChunk(JSC::JSGlobalObject& lexicalGlobalObject, JSDOM
         [&](const Ref<Blob>& blob) {
             return toJS<IDLInterface<Blob>>(lexicalGlobalObject, globalObject, blob);
         },
-        [&](const String& string) {
+        [&](StringImpl* string) {
             return toJS<IDLDOMString>(lexicalGlobalObject, string);
         },
         [&](const FileSystemWritableFileStream::WriteParams& params) {
@@ -93,7 +93,7 @@ void FileSystemWritableFileStream::write(JSC::JSGlobalObject& lexicalGlobalObjec
 
     auto* jsPromise = downcast<JSC::JSPromise>(result.returnValue());
     if (!jsPromise)
-        return promise.reject(Exception { ExceptionCode::UnknownError, "Failed to complete write operation"_s });
+        return promise.reject(Exception { ExceptionCode::UnknownError, "Failed to complete write operation"_si });
 
     Ref domPromise = DOMPromise::create(*globalObject, *jsPromise);
     domPromise->whenSettledWithResult([promise = WTF::move(promise)](auto*, bool isFulfilled, auto result) mutable {

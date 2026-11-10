@@ -51,9 +51,9 @@ public:
     WebCore::LocalFrame& frame() { return *m_page->localMainFrame(); }
     WebCore::Document& document() { return *m_page->localTopDocument(); }
 
-    void loadHTML(const String& html) { WebCore::loadHTMLIntoTestPage(frame(), html); }
+    void loadHTML(StringImpl* html) { WebCore::loadHTMLIntoTestPage(frame(), html); }
 
-    RefPtr<WebCore::Element> getElementById(const String& id) { return document().getElementById(id); }
+    RefPtr<WebCore::Element> getElementById(StringImpl* id) { return document().getElementById(id); }
 
 private:
     explicit TestPageHarness(Ref<WebCore::Page>&& page)

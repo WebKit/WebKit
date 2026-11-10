@@ -43,30 +43,30 @@ template<>
 struct SVGPropertyTraits<SVGSpreadMethodType> {
     static unsigned highestEnumValue() { return SVGSpreadMethodRepeat; }
 
-    static String toString(SVGSpreadMethodType type)
+    static RefPtr<StringImpl> toString(SVGSpreadMethodType type)
     {
         switch (type) {
         case SVGSpreadMethodUnknown:
             return emptyString();
         case SVGSpreadMethodPad:
-            return "pad"_s;
+            return "pad"_si;
         case SVGSpreadMethodReflect:
-            return "reflect"_s;
+            return "reflect"_si;
         case SVGSpreadMethodRepeat:
-            return "repeat"_s;
+            return "repeat"_si;
         }
 
         ASSERT_NOT_REACHED();
         return emptyString();
     }
 
-    static SVGSpreadMethodType fromString(SVGElement&, const String& value)
+    static SVGSpreadMethodType fromString(SVGElement&, StringImpl* value)
     {
-        if (value == "pad"_s)
+        if (equal(value, "pad"_s))
             return SVGSpreadMethodPad;
-        if (value == "reflect"_s)
+        if (equal(value, "reflect"_s))
             return SVGSpreadMethodReflect;
-        if (value == "repeat"_s)
+        if (equal(value, "repeat"_s))
             return SVGSpreadMethodRepeat;
         return SVGSpreadMethodUnknown;
     }
@@ -99,7 +99,7 @@ public:
 protected:
     SVGGradientElement(const QualifiedName&, Document&, const SVGPropertyRegistry&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     void invalidateGradientResource();

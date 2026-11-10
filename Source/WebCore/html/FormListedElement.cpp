@@ -50,7 +50,7 @@ class FormAttributeTargetObserver final : private IdTargetObserver {
     WTF_MAKE_TZONE_ALLOCATED(FormAttributeTargetObserver);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FormAttributeTargetObserver);
 public:
-    FormAttributeTargetObserver(const AtomString& id, FormListedElement&);
+    FormAttributeTargetObserver(AtomStringImpl* id, FormListedElement&);
 
 private:
     void idTargetChanged(Element&) override;
@@ -98,7 +98,7 @@ void FormListedElement::elementRemovedFromAncestor(Element& element, Node::Remov
 static RefPtr<HTMLFormElement> findAssociatedForm(const HTMLElement& element, HTMLFormElement* currentAssociatedForm)
 {
     if (element.isConnected()) {
-        if (auto& formId = element.attributeWithoutSynchronization(formAttr); !formId.isNull()) {
+        if (auto& formId = element.attributeWithoutSynchronization(formAttr); formId) {
             // The HTML5 spec says that the element should be associated with
             // the first element in the document to have an ID that equal to
             // the value of form attribute, so we put the result of
@@ -184,16 +184,16 @@ void FormListedElement::resetFormOwner()
         protect(element->document())->didAssociateFormControl(element.get());
 }
 
-void FormListedElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void FormListedElement::parseAttribute(const QualifiedName& name, AtomStringImpl* value)
 {
     if (name == formAttr)
         parseFormAttribute(value);
 }
 
-void FormListedElement::parseFormAttribute(const AtomString& value)
+void FormListedElement::parseFormAttribute(AtomStringImpl* value)
 {
     Ref element = asHTMLElement();
-    if (value.isNull()) {
+    if (!value) {
         // The form attribute removed. We need to reset form owner here.
         RefPtr originalForm = form();
         // Instead of calling setForm(findAssociatedForm(&element, originalForm.get())) here,
@@ -213,7 +213,7 @@ void FormListedElement::parseFormAttribute(const AtomString& value)
 
 bool FormListedElement::customError() const
 {
-    return !m_customValidationMessage.isEmpty();
+    return !isEmpty(m_customValidationMessage);
 }
 
 bool FormListedElement::hasBadInput() const
@@ -268,17 +268,17 @@ bool FormListedElement::valueMissing() const
     return false;
 }
 
-String FormListedElement::customValidationMessage() const
+RefPtr<StringImpl> FormListedElement::customValidationMessage() const
 {
     return m_customValidationMessage;
 }
 
-String FormListedElement::validationMessage() const
+RefPtr<StringImpl> FormListedElement::validationMessage() const
 {
-    return willValidate() ? m_customValidationMessage : String();
+    return willValidate() ? m_customValidationMessage : nullptr;
 }
 
-void FormListedElement::setCustomValidity(const String& error)
+void FormListedElement::setCustomValidity(StringImpl* error)
 {
     m_customValidationMessage = makeStringBySimplifyingNewLines(error);
 }
@@ -294,13 +294,13 @@ void FormListedElement::formAttributeTargetChanged()
     resetFormOwner();
 }
 
-const AtomString& FormListedElement::name() const
+const RefPtr<AtomStringImpl>& FormListedElement::name() const
 {
-    const AtomString& name = asHTMLElement().getNameAttribute();
-    return name.isNull() ? emptyAtom() : name;
+    const RefPtr<AtomStringImpl>& name = asHTMLElement().getNameAttribute();
+    return !name ? emptyAtom() : name;
 }
 
-FormAttributeTargetObserver::FormAttributeTargetObserver(const AtomString& id, FormListedElement& element)
+FormAttributeTargetObserver::FormAttributeTargetObserver(AtomStringImpl* id, FormListedElement& element)
     : IdTargetObserver(protect(element.asHTMLElement().treeScope())->idTargetObserverRegistry(), id)
     , m_element(element)
 {

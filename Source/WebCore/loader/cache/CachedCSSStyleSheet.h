@@ -43,7 +43,7 @@ public:
     // Per spec, CSS stylesheets loaded as JavaScript modules are treated as
     // UTF-8 encoded, regardless of any encoding hints.
     enum class ForceUTF8Encoding : bool { No, Yes };
-    std::expected<String, Error> sheetText(MIMETypeCheckHint = MIMETypeCheckHint::Strict, ForceUTF8Encoding = ForceUTF8Encoding::No) const;
+    std::expected<RefPtr<StringImpl>, Error> sheetText(MIMETypeCheckHint = MIMETypeCheckHint::Strict, ForceUTF8Encoding = ForceUTF8Encoding::No) const;
 
     RefPtr<StyleSheetContents> restoreParsedStyleSheet(const CSSParserContext&, CachePolicy, FrameLoader&);
     void saveParsedStyleSheet(Ref<StyleSheetContents>&&);
@@ -51,13 +51,13 @@ public:
     bool mimeTypeAllowedByNosniff() const;
 
 private:
-    String responseMIMEType() const;
+    RefPtr<StringImpl> responseMIMEType() const;
     std::optional<Error> canUseSheet(MIMETypeCheckHint) const;
     bool mayTryReplaceEncodedData() const final { return true; }
 
     void didAddClient(CachedResourceClient&) final;
 
-    void setEncoding(const String&) final;
+    void setEncoding(StringImpl*) final;
     ASCIILiteral encoding() const final;
     const TextResourceDecoder* textResourceDecoder() const final { return m_decoder.ptr(); }
     void finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics&) final;
@@ -68,7 +68,7 @@ private:
     void checkNotify(const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No) final;
 
     Ref<TextResourceDecoder> m_decoder;
-    String m_decodedSheetText;
+    RefPtr<StringImpl> m_decodedSheetText;
 
     RefPtr<StyleSheetContents> m_parsedStyleSheetCache;
 };

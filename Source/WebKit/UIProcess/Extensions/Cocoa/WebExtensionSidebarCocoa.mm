@@ -151,7 +151,7 @@ using WTF::WeakPtr;
 
     _webExtensionSidebar = sidebar;
     self.view = sidebar.webView();
-    self.title = extensionContext->extension().displayName().createNSString().get();
+    self.title = createNSString(extensionContext->extension().displayName()).get();
 
     return self;
 }
@@ -343,7 +343,7 @@ void WebExtensionSidebar::setIconsDictionary(std::optional<Ref<JSON::Object>> ic
     propertiesDidChange();
 }
 
-String WebExtensionSidebar::title() const
+RefPtr<StringImpl> WebExtensionSidebar::title() const
 {
     // Per the sidebar_action spec, when no title is set anywhere the effective title is the extension's name.
     return m_titleOverride
@@ -352,14 +352,14 @@ String WebExtensionSidebar::title() const
                 return parent->title();
             });
         })
-        .or_else([this] -> std::optional<String> {
+        .or_else([this] -> std::optional<RefPtr<StringImpl>> {
             RefPtr context = extensionContext();
-            return context ? context->extension().displayName() : String { fallbackTitle };
+            return context ? context->extension().displayName() : StringImpl::create(fallbackTitle);
         })
         .value();
 }
 
-void WebExtensionSidebar::setTitle(std::optional<String> titleOverride)
+void WebExtensionSidebar::setTitle(std::optional<RefPtr<StringImpl>> titleOverride)
 {
     RefPtr context = extensionContext();
     if (!titleOverride && isDefaultSidebar() && context)
@@ -377,7 +377,7 @@ bool WebExtensionSidebar::isEnabled() const
         .value_or(false);
 }
 
-std::optional<String> WebExtensionSidebar::resolvedSidebarPath() const
+std::optional<RefPtr<StringImpl>> WebExtensionSidebar::resolvedSidebarPath() const
 {
     return m_sidebarPathOverride.or_else([this] {
         return parent().and_then([](auto const& parent) {
@@ -386,12 +386,12 @@ std::optional<String> WebExtensionSidebar::resolvedSidebarPath() const
     });
 }
 
-String WebExtensionSidebar::sidebarPath() const
+RefPtr<StringImpl> WebExtensionSidebar::sidebarPath() const
 {
-    return resolvedSidebarPath().value_or(fallbackPath);
+    return resolvedSidebarPath().value_or(StringImpl::create(fallbackPath));
 }
 
-void WebExtensionSidebar::setOptions(std::optional<String> panelPath, std::optional<bool> enabled)
+void WebExtensionSidebar::setOptions(std::optional<RefPtr<StringImpl>> panelPath, std::optional<bool> enabled)
 {
     RefPtr context = extensionContext();
 
@@ -416,7 +416,7 @@ void WebExtensionSidebar::setOptions(std::optional<String> panelPath, std::optio
         m_webViewDelegate = nil;
     }
 
-    if (m_sidebarPathOverride != oldPathOverride) {
+    if (!contentEquals(m_sidebarPathOverride, oldPathOverride)) {
         reloadWebView();
         reloadDescendantWebViews();
     }
@@ -535,7 +535,7 @@ WKWebView *WebExtensionSidebar::webView()
     auto *webViewConfiguration = context->webViewConfiguration(WebExtensionContext::WebViewPurpose::Sidebar);
     m_webView = [[_WKWebExtensionSidebarWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration webExtensionSidebar:*this];
     m_webView.get().inspectable = context->isInspectable();
-    m_webView.get().accessibilityLabel = title().createNSString().get();
+    m_webView.get().accessibilityLabel = createNSString(title()).get();
     m_webViewDelegate = [[_WKWebExtensionSidebarWebViewDelegate alloc] initWithWebExtensionSidebar:*this];
     m_webView.get().navigationDelegate = m_webViewDelegate.get();
 

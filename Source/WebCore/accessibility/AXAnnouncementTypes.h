@@ -54,8 +54,8 @@ enum class AnnouncementContents : bool { All, Changes };
 
 struct LiveRegionObject {
     AXID objectID;
-    String text;
-    String language;
+    RefPtr<StringImpl> text;
+    RefPtr<StringImpl> language;
     HashSet<AXID> descendants; // For atomic regions only, to track additions/removals of descendants.
     bool isTextContent { false };
 };
@@ -67,7 +67,7 @@ struct LiveRegionSnapshot {
     // Every object's text concatenated with runs of whitespace collapsed. Cached because change
     // detection compares it on every update, and the previous snapshot's copy would otherwise be
     // rebuilt from scratch each time.
-    String aggregatedText;
+    RefPtr<StringImpl> aggregatedText;
     // For each object, the offset just past the last character it contributed to aggregatedText, so
     // object i covers [end(i - 1), end(i)). Cached alongside the text because deriving it later would
     // mean rebuilding the whole aggregate, and it is only meaningful when isTruncated is false.
@@ -89,12 +89,12 @@ struct LiveRegionSnapshot {
 
 // When this is updated, WebCoreArgumentCoders.serialization.in must be updated as well.
 struct AriaNotifyData {
-    String message;
+    RefPtr<StringImpl> message;
     NotifyPriority priority { NotifyPriority::Normal };
     InterruptBehavior interrupt { InterruptBehavior::None };
-    String language;
+    RefPtr<StringImpl> language;
 
-    String debugDescription() const
+    RefPtr<StringImpl> debugDescription() const
     {
         auto priorityString = [&] {
             switch (priority) {
@@ -126,7 +126,7 @@ struct LiveRegionAnnouncementData {
     AttributedString message;
     LiveRegionStatus status { LiveRegionStatus::Polite };
 
-    String debugDescription() const
+    RefPtr<StringImpl> debugDescription() const
     {
         auto statusString = [&] {
             switch (status) {

@@ -38,12 +38,12 @@ class ResourceResponse;
 
 namespace WebKit::PCM {
 
-using ApplicationBundleIdentifiersOrAuditToken = Variant<std::pair<String, String>, Vector<uint8_t>>;
+using ApplicationBundleIdentifiersOrAuditToken = Variant<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>, Vector<uint8_t>>;
 
 class NetworkLoader {
     WTF_MAKE_TZONE_ALLOCATED(NetworkLoader);
 public:
-    using Callback = CompletionHandler<void(const String&, const RefPtr<JSON::Object>&)>;
+    using Callback = CompletionHandler<void(StringImpl*, const RefPtr<JSON::Object>&)>;
     static void start(URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, const ApplicationBundleIdentifiersOrAuditToken&, Callback&&);
     static void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&);
 };

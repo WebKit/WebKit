@@ -43,24 +43,24 @@ class SecurityOrigin;
 namespace WebKit {
 
 struct WebsiteDataRecord {
-    static String displayNameForCookieHostName(const String& hostName);
-    static String displayNameForHostName(const String& hostName);
+    static RefPtr<StringImpl> displayNameForCookieHostName(StringImpl* hostName);
+    static RefPtr<StringImpl> displayNameForHostName(StringImpl* hostName);
 
-    static String displayNameForOrigin(const WebCore::SecurityOriginData&);
+    static RefPtr<StringImpl> displayNameForOrigin(const WebCore::SecurityOriginData&);
 
     void add(WebsiteDataType, const WebCore::SecurityOriginData&);
-    void addCookieHostName(const String& hostName);
-    void addHSTSCacheHostname(const String& hostName);
-    void addAlternativeServicesHostname(const String& hostName);
+    void addCookieHostName(StringImpl* hostName);
+    void addHSTSCacheHostname(StringImpl* hostName);
+    void addAlternativeServicesHostname(StringImpl* hostName);
     void addResourceLoadStatisticsRegistrableDomain(const WebCore::RegistrableDomain&);
 
     bool matches(const WebCore::RegistrableDomain&) const;
-    String topPrivatelyControlledDomain();
+    RefPtr<StringImpl> topPrivatelyControlledDomain();
 
     WebsiteDataRecord isolatedCopy() const &;
     WebsiteDataRecord isolatedCopy() &&;
 
-    String displayName;
+    RefPtr<StringImpl> displayName;
     OptionSet<WebsiteDataType> types;
 
     struct Size {
@@ -70,9 +70,9 @@ struct WebsiteDataRecord {
     std::optional<Size> size;
 
     HashSet<WebCore::SecurityOriginData> origins;
-    HashSet<String> cookieHostNames;
-    HashSet<String> HSTSCacheHostNames;
-    HashSet<String> alternativeServicesHostNames;
+    HashSet<RefPtr<StringImpl>> cookieHostNames;
+    HashSet<RefPtr<StringImpl>> HSTSCacheHostNames;
+    HashSet<RefPtr<StringImpl>> alternativeServicesHostNames;
     HashSet<WebCore::RegistrableDomain> resourceLoadStatisticsRegistrableDomains;
 };
 

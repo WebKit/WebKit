@@ -446,7 +446,7 @@ void webkit_geolocation_manager_failed(WebKitGeolocationManager* manager, const 
 {
     g_return_if_fail(WEBKIT_IS_GEOLOCATION_MANAGER(manager));
 
-    manager->priv->manager->providerDidFailToDeterminePosition(String::fromUTF8(errorMessage));
+    manager->priv->manager->providerDidFailToDeterminePosition(StringImpl::fromUTF8(errorMessage));
 }
 
 /**

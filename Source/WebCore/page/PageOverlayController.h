@@ -84,9 +84,9 @@ public:
 
     bool handleMouseEvent(const PlatformMouseEvent&, LocalFrame& handlingFrame);
 
-    WEBCORE_EXPORT bool copyAccessibilityAttributeStringValueForPoint(String attribute, FloatPoint, String& value);
-    WEBCORE_EXPORT bool copyAccessibilityAttributeBoolValueForPoint(String attribute, FloatPoint, bool& value);
-    WEBCORE_EXPORT Vector<String> copyAccessibilityAttributesNames(bool parameterizedNames);
+    WEBCORE_EXPORT bool copyAccessibilityAttributeStringValueForPoint(RefPtr<StringImpl> attribute, FloatPoint, RefPtr<StringImpl>& value);
+    WEBCORE_EXPORT bool copyAccessibilityAttributeBoolValueForPoint(RefPtr<StringImpl> attribute, FloatPoint, bool& value);
+    WEBCORE_EXPORT Vector<RefPtr<StringImpl>> copyAccessibilityAttributesNames(bool parameterizedNames);
 
 private:
     void createRootLayersIfNeeded();

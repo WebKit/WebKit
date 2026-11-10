@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct WebTransportHash {
-    String algorithm;
+    RefPtr<StringImpl> algorithm;
     BufferSource value;
 };
 

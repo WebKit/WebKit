@@ -87,14 +87,14 @@ void Output::appendTo(LBasicBlock block)
     m_block = block;
 }
 
-void Output::probeDebugPrint(const String& str, LValue value)
+void Output::probeDebugPrint(StringImpl* str, LValue value)
 {
     PatchpointValue* result = patchpoint(Void);
     result->append(value, ValueRep::SomeRegister);
     result->setGenerator(
-        [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        [=, str = RefPtr { str }] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             auto reg = params.at(0).gpr();
-            jit.probeDebug([=](Probe::Context& ctx) {
+            jit.probeDebug([=, str = RefPtr { str }](Probe::Context& ctx) {
                 dataLogLn(str, " value: ", ctx.gpr<uint64_t>(reg));
             });
         });

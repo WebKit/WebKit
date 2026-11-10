@@ -1731,11 +1731,11 @@ yyreduce:
   case 13:
 #line 184 "XPathGrammar.y"
     {
-        String nametest = adoptRef((yyvsp[(1) - (2)].string));
+        RefPtr<StringImpl> nametest = adoptRef((yyvsp[(1) - (2)].string));
         std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[(2) - (2)].expressionVector));
 
-        AtomString localName;
-        AtomString namespaceURI;
+        RefPtr<AtomStringImpl> localName;
+        RefPtr<AtomStringImpl> namespaceURI;
         if (!parser.expandQualifiedName(nametest, localName, namespaceURI)) {
             (yyval.step) = nullptr;
             YYABORT;
@@ -1764,11 +1764,11 @@ yyreduce:
   case 15:
 #line 213 "XPathGrammar.y"
     {
-        String nametest = adoptRef((yyvsp[(2) - (3)].string));
+        RefPtr<StringImpl> nametest = adoptRef((yyvsp[(2) - (3)].string));
         std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[(3) - (3)].expressionVector));
 
-        AtomString localName;
-        AtomString namespaceURI;
+        RefPtr<AtomStringImpl> localName;
+        RefPtr<AtomStringImpl> namespaceURI;
         if (!parser.expandQualifiedName(nametest, localName, namespaceURI)) {
             (yyval.step) = nullptr;
             YYABORT;
@@ -1822,7 +1822,7 @@ yyreduce:
         auto stringImpl = adoptRef((yyvsp[(3) - (4)].string));
         if (stringImpl)
             stringImpl = stringImpl->trim(deprecatedIsSpaceOrNewline);
-        (yyval.nodeTest) = new WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::ProcessingInstructionNodeTest, stringImpl.get());
+        (yyval.nodeTest) = new WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::ProcessingInstructionNodeTest, AtomStringImpl::add(stringImpl.get()).get());
     ;}
     break;
 
@@ -1880,7 +1880,7 @@ yyreduce:
   case 32:
 #line 323 "XPathGrammar.y"
     {
-        String name = adoptRef((yyvsp[(1) - (1)].string));
+        RefPtr<StringImpl> name = adoptRef((yyvsp[(1) - (1)].string));
         (yyval.expression) = new WebCore::XPath::VariableReference(name);
     ;}
     break;
@@ -1895,7 +1895,7 @@ yyreduce:
   case 34:
 #line 334 "XPathGrammar.y"
     {
-        String literal = adoptRef((yyvsp[(1) - (1)].string));
+        RefPtr<StringImpl> literal = adoptRef((yyvsp[(1) - (1)].string));
         (yyval.expression) = new WebCore::XPath::StringExpression(WTF::move(literal));
     ;}
     break;
@@ -1903,15 +1903,15 @@ yyreduce:
   case 35:
 #line 340 "XPathGrammar.y"
     {
-        String numeral = adoptRef((yyvsp[(1) - (1)].string));
-        (yyval.expression) = new WebCore::XPath::Number(numeral.toDouble());
+        RefPtr<StringImpl> numeral = adoptRef((yyvsp[(1) - (1)].string));
+        (yyval.expression) = new WebCore::XPath::Number(toDouble(numeral));
     ;}
     break;
 
   case 37:
 #line 350 "XPathGrammar.y"
     {
-        String name = adoptRef((yyvsp[(1) - (3)].string));
+        RefPtr<StringImpl> name = adoptRef((yyvsp[(1) - (3)].string));
         (yyval.expression) = WebCore::XPath::Function::create(name).release();
         if (!(yyval.expression))
             YYABORT;
@@ -1921,7 +1921,7 @@ yyreduce:
   case 38:
 #line 358 "XPathGrammar.y"
     {
-        String name = adoptRef((yyvsp[(1) - (4)].string));
+        RefPtr<StringImpl> name = adoptRef((yyvsp[(1) - (4)].string));
         std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> argumentList((yyvsp[(3) - (4)].expressionVector));
         (yyval.expression) = WebCore::XPath::Function::create(name, WTF::move(*argumentList)).release();
         if (!(yyval.expression))

@@ -69,7 +69,7 @@ public:
     void setCommandEncoder(CommandEncoder&) const;
     NODELETE bool isDestroyed() const;
 
-    void setLabel(String&&) final { }
+    void setLabel(RefPtr<StringImpl>&&) final { }
     NODELETE bool isValid() const final;
     void update(CVPixelBufferRef);
     void updateExternalTexture(CVPixelBufferRef pixelBuffer) final { update(pixelBuffer); }

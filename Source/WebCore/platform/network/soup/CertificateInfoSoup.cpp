@@ -99,21 +99,21 @@ CertificateInfo CertificateInfo::isolatedCopy() const
 // GLib's GTlsCertificate::subject-name property returns a full RFC 2253 distinguished name
 // (e.g. "CN=example.com,O=Org,C=US"). Extract a human-readable summary by preferring the
 // CN attribute, then O, to match the behaviour of SecCertificateCopySubjectSummary on macOS.
-static String subjectSummaryFromDN(const String& dn)
+static RefPtr<StringImpl> subjectSummaryFromDN(StringImpl* dn)
 {
-    String organization;
-    for (auto& component : dn.split(',')) {
-        auto equalsPos = component.find('=');
+    RefPtr<StringImpl> organization;
+    for (auto& component : split(dn, ',')) {
+        auto equalsPos = find(component, '=');
         if (equalsPos == notFound)
             continue;
-        auto type = component.left(equalsPos).trim(isASCIIWhitespace<char16_t>);
-        auto value = component.substring(equalsPos + 1).trim(isASCIIWhitespace<char16_t>);
-        if (type == "CN"_s)
+        auto type = trim(left(component, equalsPos), isASCIIWhitespace<char16_t>);
+        auto value = trim(substring(component, equalsPos + 1), isASCIIWhitespace<char16_t>);
+        if (equal(type, "CN"_s))
             return value;
-        if (type == "O"_s && organization.isEmpty())
+        if (equal(type, "O"_s) && isEmpty(organization))
             organization = value;
     }
-    return organization.isEmpty() ? dn : organization;
+    return isEmpty(organization) ? RefPtr<StringImpl> { dn } : organization;
 }
 
 std::optional<CertificateSummary> CertificateInfo::summary() const
@@ -136,12 +136,12 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
     if (validNotAfter)
         summaryInfo.validUntil = Seconds(static_cast<double>(g_date_time_to_unix(validNotAfter.get())));
     if (subjectName)
-        summaryInfo.subject = subjectSummaryFromDN(String::fromUTF8(subjectName.get()));
+        summaryInfo.subject = subjectSummaryFromDN(StringImpl::fromUTF8(subjectName.get()));
     for (auto dnsName : span<GBytes*>(dnsNames))
-        summaryInfo.dnsNames.append(String(byteCast<Latin1Character>(span(dnsName))));
+        summaryInfo.dnsNames.append(StringImpl::createOrNull(byteCast<Latin1Character>(span(dnsName))));
     for (auto address : span<GInetAddress*>(ipAddresses)) {
         GUniquePtr<char> ipAddress(g_inet_address_to_string(address));
-        summaryInfo.ipAddresses.append(String::fromUTF8(ipAddress.get()));
+        summaryInfo.ipAddresses.append(StringImpl::fromUTF8(ipAddress.get()));
     }
 
     return summaryInfo;

@@ -139,12 +139,12 @@
 {
     Ref node = *core(self);
 
-    String markupString = serializeFragment(node, WebCore::SerializedNodes::SubtreeIncludingNode);
+    RefPtr<StringImpl> markupString = serializeFragment(node, WebCore::SerializedNodes::SubtreeIncludingNode);
     auto nodeType = node->nodeType();
     if (nodeType != WebCore::NodeType::Document && nodeType != WebCore::NodeType::DocumentType)
         markupString = makeString(documentTypeString(protect(node->document())), markupString);
 
-    return markupString.createNSString().autorelease();
+    return createNSString(markupString).autorelease();
 }
 
 - (NSRect)_renderRect:(bool *)isReplaced
@@ -166,7 +166,7 @@
 
 - (NSURL *)URLWithAttributeString:(NSString *)string
 {
-    return protect(core(self))->encodingParseURL(string).createNSURL().autorelease();
+    return protect(core(self))->encodingParseURL(StringImpl::create(string).get()).createNSURL().autorelease();
 }
 
 @end
@@ -196,7 +196,7 @@
 - (NSString *)markupString
 {
     auto range = makeSimpleRange(protect(*core(self)));
-    return makeString(documentTypeString(protect(range.start.document())), serializePreservingVisualAppearance(range, nullptr, WebCore::AnnotateForInterchange::Yes)).createNSString().autorelease();
+    return createNSString(makeString(documentTypeString(protect(range.start.document())), serializePreservingVisualAppearance(range, nullptr, WebCore::AnnotateForInterchange::Yes))).autorelease();
 }
 
 @end

@@ -30,8 +30,8 @@
 namespace WebCore {
 
 struct UnknownCredentialOptions {
-    String rpId;
-    String credentialId;
+    RefPtr<StringImpl> rpId;
+    RefPtr<StringImpl> credentialId;
 };
 
 } // namespace WebCore

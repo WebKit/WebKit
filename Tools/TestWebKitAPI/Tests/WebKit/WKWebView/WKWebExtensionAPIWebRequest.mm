@@ -561,7 +561,7 @@ TEST(WKWebExtensionAPIWebRequest, BeforeRequestEventWithRequestBodyAndFormData)
         } },
         { "/form.js"_s, {
             { { "Content-Type"_s, "application/javascript"_s } },
-            pageScript
+            StringImpl::create(pageScript)
         } },
         { "/test"_s, {
             { { "Content-Type"_s, "text/plain"_s } },
@@ -628,7 +628,7 @@ TEST(WKWebExtensionAPIWebRequest, BeforeRequestEventWithRequestBodyAndBlob)
         } },
         { "/blob.js"_s, {
             { { "Content-Type"_s, "application/javascript"_s } },
-            pageScript
+            StringImpl::create(pageScript)
         } },
         { "/test"_s, {
             { { "Content-Type"_s, "text/plain"_s } },
@@ -688,7 +688,7 @@ TEST(WKWebExtensionAPIWebRequest, BeforeRequestEventWithRequestBodyAndJSON)
         } },
         { "/fetch.js"_s, {
             { { "Content-Type"_s, "application/javascript"_s } },
-            pageScript
+            StringImpl::create(pageScript)
         } },
         { "/test"_s, {
             { { "Content-Type"_s, "text/plain"_s } },
@@ -768,7 +768,7 @@ TEST(WKWebExtensionAPIWebRequest, BeforeRequestEventWithRequestBodyAndForm)
         } },
         { "/form.js"_s, {
             { { "Content-Type"_s, "application/javascript"_s } },
-            pageScript
+            StringImpl::create(pageScript)
         } },
         { "/test"_s, {
             { { "Content-Type"_s, "text/plain"_s } },

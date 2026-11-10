@@ -73,59 +73,59 @@ public:
     ~BidiScriptAgent() override;
 
     // Inspector::BidiScriptBackendDispatcherHandler methods.
-    void addPreloadScript(const String& functionDeclaration, RefPtr<JSON::Array>&& optionalArguments, RefPtr<JSON::Array>&& optionalContexts, const String& optionalSandbox, RefPtr<JSON::Array>&& optionalUserContexts, Inspector::CommandCallback<String>&&) override;
-    void removePreloadScript(const String& script, Inspector::CommandCallback<void>&&) override;
-    void callFunction(const String& functionDeclaration, bool awaitPromise, Ref<JSON::Object>&& target, RefPtr<JSON::Array>&& optionalArguments, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&&, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Object>&& optionalThis, std::optional<bool>&& optionalUserActivation, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&&) override;
+    void addPreloadScript(StringImpl* functionDeclaration, RefPtr<JSON::Array>&& optionalArguments, RefPtr<JSON::Array>&& optionalContexts, StringImpl* optionalSandbox, RefPtr<JSON::Array>&& optionalUserContexts, Inspector::CommandCallback<RefPtr<StringImpl>>&&) override;
+    void removePreloadScript(StringImpl* script, Inspector::CommandCallback<void>&&) override;
+    void callFunction(StringImpl* functionDeclaration, bool awaitPromise, Ref<JSON::Object>&& target, RefPtr<JSON::Array>&& optionalArguments, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&&, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Object>&& optionalThis, std::optional<bool>&& optionalUserActivation, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, RefPtr<StringImpl>, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&&) override;
     void disown(Ref<JSON::Array>&& handles, Ref<JSON::Object>&& target, Inspector::CommandCallback<void>&&) override;
-    void evaluate(const String& expression, bool awaitPromise, Ref<JSON::Object>&& target, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&&, RefPtr<JSON::Object>&& optionalSerializationOptions,  std::optional<bool>&& optionalUserActivation, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&&) override;
-    void getRealms(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& optionalBrowsingContext , std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&) override;
+    void evaluate(StringImpl* expression, bool awaitPromise, Ref<JSON::Object>&& target, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&&, RefPtr<JSON::Object>&& optionalSerializationOptions,  std::optional<bool>&& optionalUserActivation, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, RefPtr<StringImpl>, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&&) override;
+    void getRealms(StringImpl* optionalBrowsingContext , std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&) override;
 
     // Realm lifecycle events.
     void notifyRealmCreated(RealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext, const WebCore::SecurityOriginData&);
     void notifyRealmDestroyed(RealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
 
     // Lookup RealmIdentifier from browsing context (for UIProcess-initiated realm destruction).
-    std::optional<RealmIdentifier> realmIdentifierForBrowsingContext(const String& browsingContext) const;
+    std::optional<RealmIdentifier> realmIdentifierForBrowsingContext(StringImpl* browsingContext) const;
 
     // Emit events for all currently active realms (called when subscribing to script.realmCreated).
-    void emitEventsForActiveRealms(const HashSet<String>& contextFilter = { });
+    void emitEventsForActiveRealms(const HashSet<RefPtr<StringImpl>>& contextFilter = { });
 
     // Access active realms for realm destruction without WebFrameProxy.
     const HashMap<RealmIdentifier, RealmInfo>& activeRealms() const { return m_activeRealms; }
 
-    void executePreloadScriptsForContext(const String& browsingContext, const String& frameHandle);
+    void executePreloadScriptsForContext(StringImpl* browsingContext, StringImpl* frameHandle);
 
 private:
     struct AllContextsTag { };
 
     struct PreloadScriptInfo {
-        String functionDeclaration;
+        RefPtr<StringImpl> functionDeclaration;
         RefPtr<JSON::Array> arguments;
-        Variant<AllContextsTag, Vector<String>> contexts;
-        String sandbox;
-        std::optional<Vector<String>> userContexts;
+        Variant<AllContextsTag, Vector<RefPtr<StringImpl>>> contexts;
+        RefPtr<StringImpl> sandbox;
+        std::optional<Vector<RefPtr<StringImpl>>> userContexts;
     };
 
-    void sendRealmCreatedEvent(const String& realmID, const WebCore::SecurityOriginData&, Inspector::Protocol::BidiScript::RealmType, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
+    void sendRealmCreatedEvent(StringImpl* realmID, const WebCore::SecurityOriginData&, Inspector::Protocol::BidiScript::RealmType, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
 
-    void processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& pagesToProcess, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&);
-    void collectExecutionReadyFrameRealms(const FrameTreeNodeData&, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>& realms, const std::optional<String>& contextHandleFilter, bool recurseSubframes = true);
+    void processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& pagesToProcess, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<RefPtr<StringImpl>>&& contextHandleFilter, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&);
+    void collectExecutionReadyFrameRealms(const FrameTreeNodeData&, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>& realms, const std::optional<RefPtr<StringImpl>>& contextHandleFilter, bool recurseSubframes = true);
     NODELETE bool isFrameExecutionReady(const FrameInfoData&);
     RefPtr<Inspector::Protocol::BidiScript::RealmInfo> createRealmInfoForFrame(const FrameInfoData&);
-    std::optional<String> contextHandleForFrame(const FrameInfoData&);
+    std::optional<RefPtr<StringImpl>> contextHandleForFrame(const FrameInfoData&);
     RealmIdentifier generateRealmIdForFrame(const FrameInfoData&);
-    String generateRealmIdForBrowsingContext(const String& browsingContext);
-    static String originStringFromSecurityOriginData(const WebCore::SecurityOriginData&);
+    RefPtr<StringImpl> generateRealmIdForBrowsingContext(StringImpl* browsingContext);
+    static RefPtr<StringImpl> originStringFromSecurityOriginData(const WebCore::SecurityOriginData&);
 
-    void finishEvaluateBidiScriptResult(const String& realmID, const String& expression, Inspector::CommandResult<String>&&, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&&);
+    void finishEvaluateBidiScriptResult(StringImpl* realmID, StringImpl* expression, Inspector::CommandResult<RefPtr<StringImpl>>&&, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, RefPtr<StringImpl>, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&&);
 
-    static std::optional<RealmIdentifier> parseRealmIdentifier(const String& realmID);
-    std::optional<String> browsingContextForRealm(RealmIdentifier) const;
+    static std::optional<RealmIdentifier> parseRealmIdentifier(StringImpl* realmID);
+    std::optional<RefPtr<StringImpl>> browsingContextForRealm(RealmIdentifier) const;
     WeakPtr<WebAutomationSession> m_session;
     const Ref<Inspector::BidiScriptBackendDispatcher> m_scriptDomainDispatcher;
 
     // Track current realm identifier for each browsing context.
-    HashMap<String, RealmIdentifier> m_browsingContextToRealmId;
+    HashMap<RefPtr<StringImpl>, RealmIdentifier> m_browsingContextToRealmId;
 
     // Store active realms (key: realm identifier, value: realm info).
     HashMap<RealmIdentifier, RealmInfo> m_activeRealms;

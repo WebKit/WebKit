@@ -35,8 +35,8 @@ struct PlatformMediaConfiguration {
     std::optional<PlatformMediaCapabilitiesVideoConfiguration> video;
     std::optional<PlatformMediaCapabilitiesAudioConfiguration> audio;
 
-    std::optional<Vector<String>> allowedMediaContainerTypes;
-    std::optional<Vector<String>> allowedMediaCodecTypes;
+    std::optional<Vector<RefPtr<StringImpl>>> allowedMediaContainerTypes;
+    std::optional<Vector<RefPtr<StringImpl>>> allowedMediaCodecTypes;
 
     PlatformMediaConfiguration isolatedCopy() const &;
     PlatformMediaConfiguration isolatedCopy() &&;

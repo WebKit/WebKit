@@ -44,7 +44,7 @@ void CommandLineAPIModule::injectIfNeeded(InjectedScriptManager* injectedScriptM
 }
 
 CommandLineAPIModule::CommandLineAPIModule()
-    : InjectedScriptModule("CommandLineAPI"_s)
+    : InjectedScriptModule("CommandLineAPI"_si)
 {
 }
 

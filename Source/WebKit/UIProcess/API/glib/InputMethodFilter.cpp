@@ -109,7 +109,7 @@ InputMethodFilter::FilterResult InputMethodFilter::filterKeyEvent(PlatformEventK
 
     SetForScope filteringContextIsAcive(m_filteringContext.isActive, true);
     m_filteringContext.preeditChanged = false;
-    m_compositionResult = { };
+    m_compositionResult = nullptr;
 
 #if PLATFORM(WPE) || USE(GTK4)
     bool handled = webkit_input_method_context_filter_key_event(m_context.get(), keyEvent);
@@ -120,7 +120,7 @@ InputMethodFilter::FilterResult InputMethodFilter::filterKeyEvent(PlatformEventK
         return { };
 
     // Simple input methods work such that even normal keystrokes fire the commit signal without any preedit change.
-    if (!m_filteringContext.preeditChanged && m_compositionResult.length() == 1)
+    if (!m_filteringContext.preeditChanged && length(m_compositionResult) == 1)
         return { false, WTF::move(m_compositionResult) };
 
     if (!platformEventKeyIsKeyPress(keyEvent))
@@ -264,23 +264,23 @@ void InputMethodFilter::notifyCursorRect(const IntRect& cursorRect)
     webkit_input_method_context_notify_cursor_area(m_context.get(), translatedRect.x(), translatedRect.y(), translatedRect.width(), translatedRect.height());
 }
 
-void InputMethodFilter::notifySurrounding(const String& text, uint64_t cursorPosition, uint64_t selectionPosition)
+void InputMethodFilter::notifySurrounding(StringImpl* text, uint64_t cursorPosition, uint64_t selectionPosition)
 {
     if (!isEnabled() || !m_context)
         return;
 
-    if (m_surrounding.text == text && m_surrounding.cursorPosition == cursorPosition && m_surrounding.selectionPosition == selectionPosition)
+    if (equal(m_surrounding.text, text) && m_surrounding.cursorPosition == cursorPosition && m_surrounding.selectionPosition == selectionPosition)
         return;
 
     m_surrounding.text = text;
     m_surrounding.cursorPosition = cursorPosition;
     m_surrounding.selectionPosition = selectionPosition;
 
-    auto textUTF8 = m_surrounding.text.utf8();
-    auto cursorPositionUTF8 = cursorPosition != text.length() ? StringView(text).left(cursorPosition).utf8().length() : textUTF8.length();
+    auto textUTF8 = utf8(m_surrounding.text);
+    auto cursorPositionUTF8 = cursorPosition != length(text) ? StringView(text).left(cursorPosition).utf8().length() : textUTF8.length();
     auto selectionPositionUTF8 = cursorPositionUTF8;
     if (cursorPosition != selectionPosition)
-        selectionPositionUTF8 = selectionPosition != text.length() ? StringView(text).left(selectionPosition).utf8().length() : textUTF8.length();
+        selectionPositionUTF8 = selectionPosition != length(text) ? StringView(text).left(selectionPosition).utf8().length() : textUTF8.length();
     auto textCharacters = byteCast<char>(textUTF8.span());
     webkit_input_method_context_notify_surrounding(m_context.get(), textCharacters.data(), textCharacters.size(), cursorPositionUTF8, selectionPositionUTF8);
 }
@@ -310,13 +310,13 @@ void InputMethodFilter::preeditChanged()
     webkit_input_method_context_get_preedit(m_context.get(), &preeditText.outPtr(), &underlines, &cursorOffset);
 
     auto newPreedit = GMallocString::unsafeAdoptFromUTF8(WTF::move(preeditText));
-    if (newPreedit == m_preedit.text.utf8()) {
+    if (newPreedit == utf8(m_preedit.text)) {
         g_list_free_full(underlines, reinterpret_cast<GDestroyNotify>(webkit_input_method_underline_free));
         return;
     }
 
-    m_preedit.text = String::fromUTF8(newPreedit.span());
-    m_preedit.cursorOffset = std::min(cursorOffset, m_preedit.text.length());
+    m_preedit.text = StringImpl::fromUTF8(newPreedit.span());
+    m_preedit.cursorOffset = std::min(cursorOffset, length(m_preedit.text));
     m_preedit.underlines.clear();
     if (underlines) {
         for (auto* it = underlines; it; it = g_list_next(it)) {
@@ -325,7 +325,7 @@ void InputMethodFilter::preeditChanged()
         }
         g_list_free_full(underlines, reinterpret_cast<GDestroyNotify>(webkit_input_method_underline_free));
     } else
-        m_preedit.underlines.append(CompositionUnderline(0, m_preedit.text.length(), CompositionUnderlineColor::TextColor, Color(Color::black), false));
+        m_preedit.underlines.append(CompositionUnderline(0, length(m_preedit.text), CompositionUnderlineColor::TextColor, Color(Color::black), false));
 
     auto* webView = webkitInputMethodContextGetWebView(m_context.get());
     ASSERT(webView);
@@ -340,7 +340,7 @@ void InputMethodFilter::preeditFinished()
     if (m_filteringContext.isActive)
         m_filteringContext.preeditChanged = true;
 
-    bool wasEmpty = m_preedit.text.isEmpty();
+    bool wasEmpty = isEmpty(m_preedit.text);
     m_preedit = { };
 
     if (wasEmpty)
@@ -356,18 +356,18 @@ void InputMethodFilter::committed(const char* compositionString)
     if (!isEnabled())
         return;
 
-    m_compositionResult = String::fromUTF8(compositionString);
-    bool preeditWasEmpty = m_preedit.text.isEmpty();
+    m_compositionResult = StringImpl::fromUTF8(compositionString);
+    bool preeditWasEmpty = isEmpty(m_preedit.text);
     m_preedit = { };
 
     auto* webView = webkitInputMethodContextGetWebView(m_context.get());
     ASSERT(webView);
     if (m_filteringContext.isActive) {
-        if (!m_filteringContext.preeditChanged && preeditWasEmpty && m_compositionResult.length() == 1)
+        if (!m_filteringContext.preeditChanged && preeditWasEmpty && length(m_compositionResult) == 1)
             return;
     }
     webkitWebViewConfirmComposition(webView, m_compositionResult);
-    m_compositionResult = { };
+    m_compositionResult = nullptr;
 }
 
 void InputMethodFilter::deleteSurrounding(int offset, unsigned characterCount)
@@ -382,14 +382,14 @@ void InputMethodFilter::deleteSurrounding(int offset, unsigned characterCount)
 
 void InputMethodFilter::cancelComposition()
 {
-    if (m_preedit.text.isNull())
+    if (!m_preedit.text)
         return;
 
     auto* webView = webkitInputMethodContextGetWebView(m_context.get());
     ASSERT(webView);
     webkitWebViewCancelComposition(webView, m_preedit.text);
     m_preedit = { };
-    m_compositionResult = { };
+    m_compositionResult = nullptr;
     webkit_input_method_context_reset(m_context.get());
 }
 

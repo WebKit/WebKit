@@ -45,33 +45,33 @@ void WebExtensionRegisteredScriptsSQLiteStore::migrateData()
 
     assertIsCurrent(queue());
 
-    String errorMessage;
+    RefPtr<StringImpl> errorMessage;
     if (!openDatabaseIfNecessary(errorMessage, false))
         return;
 
-    ASSERT(errorMessage.isEmpty());
+    ASSERT(isEmpty(errorMessage));
 
-    if (RefPtr rows = SQLiteDatabaseFetch(*database(), "SELECT * FROM registered_scripts"_s)) {
+    if (RefPtr rows = SQLiteDatabaseFetch(*database(), "SELECT * FROM registered_scripts"_si)) {
         RefPtr row = rows->next();
         while (row != nullptr) {
             NSError *error;
-            String scriptID = row->getString(0);
-            ASSERT(!scriptID.isEmpty());
+            RefPtr<StringImpl> scriptID = row->getString(0);
+            ASSERT(!isEmpty(scriptID));
 
             NSDictionary<NSString *, id> *script = [NSKeyedUnarchiver unarchivedObjectOfClasses:allowedClasses fromData:wrapper(row->getData(1)).get() error:&error];
 
             if (error) {
-                RELEASE_LOG_ERROR(Extensions, "Failed to deserialize registered content scripts for extension %s", uniqueIdentifier().utf8());
+                RELEASE_LOG_ERROR(Extensions, "Failed to deserialize registered content scripts for extension %s", utf8(uniqueIdentifier()));
                 continue;
             }
 
             // Convert the NSDictionary to a JSON Object, which can be used to update the database to a new format
             // All original data should be a String, Number, Array, or Dictionary, and those are all
             // serializable to JSON
-            String jsonString = encodeJSONString(script);
-            DatabaseResult result = SQLiteDatabaseExecute(*database(), "UPDATE registered_scripts SET script = ? WHERE key = ?"_s, jsonString, scriptID);
+            RefPtr<StringImpl> jsonString = StringImpl::create(encodeJSONString(script));
+            DatabaseResult result = SQLiteDatabaseExecute(*database(), "UPDATE registered_scripts SET script = ? WHERE key = ?"_si, jsonString, scriptID);
             if (result != SQLITE_DONE)
-                RELEASE_LOG_ERROR(Extensions, "Failed to update registered content script for extension %s.", uniqueIdentifier().utf8());
+                RELEASE_LOG_ERROR(Extensions, "Failed to update registered content script for extension %s.", utf8(uniqueIdentifier()));
 
             row = rows->next();
         }

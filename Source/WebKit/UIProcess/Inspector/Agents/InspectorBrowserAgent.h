@@ -56,8 +56,8 @@ public:
     Inspector::Protocol::ErrorStringOr<void> enable();
     Inspector::Protocol::ErrorStringOr<void> disable();
 
-    void extensionsEnabled(HashMap<String, String>&&);
-    void extensionsDisabled(HashSet<String>&&);
+    void extensionsEnabled(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&&);
+    void extensionsDisabled(HashSet<RefPtr<StringImpl>>&&);
 
 private:
     const UniqueRef<Inspector::BrowserFrontendDispatcher> m_frontendDispatcher;

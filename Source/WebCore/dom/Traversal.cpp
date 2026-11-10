@@ -44,7 +44,7 @@ ExceptionOr<unsigned short> NodeIteratorBase::acceptNodeSlowCase(Node& node)
 {
     ASSERT(m_filter);
     if (m_isActive)
-        return Exception { ExceptionCode::InvalidStateError, "Recursive filters are not allowed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Recursive filters are not allowed"_si };
 
     if (!matchesWhatToShow(node))
         return NodeFilter::FILTER_SKIP;

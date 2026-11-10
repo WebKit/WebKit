@@ -56,7 +56,7 @@ StringView CSSTokenizer::preprocessString(StringView string)
         if (indexOfNullCharacter == notFound)
             return string;
 
-        return registerString(String { StringImpl::createByReplacingInCharacters(characters, '\0', replacementCharacter, indexOfNullCharacter) });
+        return registerString(RefPtr<StringImpl> { StringImpl::createByReplacingInCharacters(characters, '\0', replacementCharacter, indexOfNullCharacter) });
     };
 
     auto preprocessSpan16 = [&](auto characters) -> StringView {
@@ -77,7 +77,7 @@ StringView CSSTokenizer::preprocessString(StringView string)
             if (indexOfNullCharacter == notFound)
                 return string;
 
-            return registerString(String { StringImpl::createByReplacingInCharacters(characters, '\0', replacementCharacter, indexOfNullCharacter) });
+            return registerString(RefPtr<StringImpl> { StringImpl::createByReplacingInCharacters(characters, '\0', replacementCharacter, indexOfNullCharacter) });
         } else {
             StringBuilder result;
             result.reserveCapacity(string.length());
@@ -973,13 +973,13 @@ bool CSSTokenizer::nextCharsAreIdentifier()
     return areIdentifier;
 }
 
-StringView CSSTokenizer::registerString(String&& string)
+StringView CSSTokenizer::registerString(RefPtr<StringImpl>&& string)
 {
     m_stringPool.append(WTF::move(string));
     return m_stringPool.last();
 }
 
-StringView CSSTokenizer::registerString(const String& string)
+StringView CSSTokenizer::registerString(StringImpl* string)
 {
     m_stringPool.append(string);
     return string;

@@ -58,7 +58,7 @@ WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
 {
     ASSERT(!m_webView);
 
-    auto preferences = WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s);
+    auto preferences = WebPreferences::create(nullptr, "WebKit2."_si, "WebKit2."_si);
 #if ENABLE(DEVELOPER_MODE)
     // Allow developers to inspect the Web Inspector in debug builds without changing settings.
     preferences->setDeveloperExtrasEnabled(true);
@@ -154,7 +154,7 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
         decodedData->shrinkToFit();
         dataVector = WTF::move(*decodedData);
     } else
-        dataString = saveDatas[0].content.utf8();
+        dataString = utf8(saveDatas[0].content);
 
     const char* data = !dataString.isNull() ? dataString.legacyCStringPointer() : reinterpret_cast<const char*>(dataVector.span().data());
     size_t dataLength = !dataString.isNull() ? dataString.length() : dataVector.size();
@@ -164,7 +164,7 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
         G_FILE_CREATE_REPLACE_DESTINATION, nullptr, remoteFileReplaceContentsCallback, protect(m_inspectorPage).get());
 }
 
-void RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)
+void RemoteWebInspectorUIProxy::platformLoad(StringImpl*, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     completionHandler(nullString());
 }
@@ -186,11 +186,11 @@ void RemoteWebInspectorUIProxy::platformStartWindowDrag()
 {
 }
 
-void RemoteWebInspectorUIProxy::platformOpenURLExternally(const String&)
+void RemoteWebInspectorUIProxy::platformOpenURLExternally(StringImpl*)
 {
 }
 
-void RemoteWebInspectorUIProxy::platformRevealFileExternally(const String&)
+void RemoteWebInspectorUIProxy::platformRevealFileExternally(StringImpl*)
 {
 }
 

@@ -120,7 +120,7 @@ private:
         addResource(*this);
     }
 
-    void setCSSStyleSheet(const String&, const URL&, ASCIILiteral, const CachedCSSStyleSheet& resource) final
+    void setCSSStyleSheet(StringImpl*, const URL&, ASCIILiteral, const CachedCSSStyleSheet& resource) final
     {
         ASSERT(ownedResource() == &resource);
         triggerEvents(resource);

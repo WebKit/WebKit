@@ -34,32 +34,32 @@ namespace WebKit {
 /* Constants for specifying permission in a WebExtensionContext. */
 class WebExtensionPermission {
 public:
-    static String activeTab();
-    static String alarms();
+    static RefPtr<StringImpl> activeTab();
+    static RefPtr<StringImpl> alarms();
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
-    static String bookmarks();
+    static RefPtr<StringImpl> bookmarks();
 #endif
-    static String clipboardWrite();
-    static String contextMenus();
-    static String cookies();
-    static String declarativeNetRequest();
-    static String declarativeNetRequestFeedback();
-    static String declarativeNetRequestWithHostAccess();
-    static String menus();
-    static String nativeMessaging();
-    static String notifications();
+    static RefPtr<StringImpl> clipboardWrite();
+    static RefPtr<StringImpl> contextMenus();
+    static RefPtr<StringImpl> cookies();
+    static RefPtr<StringImpl> declarativeNetRequest();
+    static RefPtr<StringImpl> declarativeNetRequestFeedback();
+    static RefPtr<StringImpl> declarativeNetRequestWithHostAccess();
+    static RefPtr<StringImpl> menus();
+    static RefPtr<StringImpl> nativeMessaging();
+    static RefPtr<StringImpl> notifications();
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
-    static String offscreen();
+    static RefPtr<StringImpl> offscreen();
 #endif
-    static String scripting();
+    static RefPtr<StringImpl> scripting();
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-    static String sidePanel();
+    static RefPtr<StringImpl> sidePanel();
 #endif
-    static String storage();
-    static String tabs();
-    static String unlimitedStorage();
-    static String webNavigation();
-    static String webRequest();
+    static RefPtr<StringImpl> storage();
+    static RefPtr<StringImpl> tabs();
+    static RefPtr<StringImpl> unlimitedStorage();
+    static RefPtr<StringImpl> webNavigation();
+    static RefPtr<StringImpl> webRequest();
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionPermissionAdditions.h>)
 #include <WebKitAdditions/WebExtensionPermissionAdditions.h>

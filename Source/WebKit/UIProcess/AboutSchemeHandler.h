@@ -42,7 +42,7 @@ public:
 
     static Ref<AboutSchemeHandler> create();
 
-    void registerHandler(const String& opaquePath, std::unique_ptr<OpaquePathHandler>&&);
+    void registerHandler(StringImpl* opaquePath, std::unique_ptr<OpaquePathHandler>&&);
     bool canHandleURL(const URL&) const;
 
     static constexpr auto scheme = "about"_s;
@@ -57,7 +57,7 @@ private:
 
     OpaquePathHandler* handlerForURL(URL&) const;
 
-    HashMap<String, std::unique_ptr<OpaquePathHandler>> m_handlers;
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<OpaquePathHandler>> m_handlers;
 };
 
 } // namespace WebKit

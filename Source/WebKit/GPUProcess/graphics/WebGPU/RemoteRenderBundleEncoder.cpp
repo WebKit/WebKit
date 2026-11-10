@@ -151,7 +151,7 @@ void RemoteRenderBundleEncoder::setBindGroup(uint32_t index, std::optional<WebGP
     protect(m_backing)->setBindGroup(index, convertedBindGroup.get(), dynamicOffsets ? std::optional { dynamicOffsets->span() } : std::nullopt);
 }
 
-void RemoteRenderBundleEncoder::pushDebugGroup(String&& groupLabel)
+void RemoteRenderBundleEncoder::pushDebugGroup(RefPtr<StringImpl>&& groupLabel)
 {
     protect(m_backing)->pushDebugGroup(WTF::move(groupLabel));
 }
@@ -161,7 +161,7 @@ void RemoteRenderBundleEncoder::popDebugGroup()
     protect(m_backing)->popDebugGroup();
 }
 
-void RemoteRenderBundleEncoder::insertDebugMarker(String&& markerLabel)
+void RemoteRenderBundleEncoder::insertDebugMarker(RefPtr<StringImpl>&& markerLabel)
 {
     protect(m_backing)->insertDebugMarker(WTF::move(markerLabel));
 }
@@ -175,7 +175,7 @@ void RemoteRenderBundleEncoder::finish(const WebGPU::RenderBundleDescriptor& des
     objectHeap->addObject(identifier, remoteRenderBundle);
 }
 
-void RemoteRenderBundleEncoder::setLabel(String&& label)
+void RemoteRenderBundleEncoder::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

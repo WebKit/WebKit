@@ -81,8 +81,8 @@ public:
     virtual void setEnableWebRTCEncryption(bool);
     virtual void disableNonLocalhostConnections();
 
-    std::optional<RTCRtpCapabilities> receiverCapabilities(const String& kind) final;
-    std::optional<RTCRtpCapabilities> senderCapabilities(const String& kind) final;
+    std::optional<RTCRtpCapabilities> receiverCapabilities(StringImpl* kind) final;
+    std::optional<RTCRtpCapabilities> senderCapabilities(StringImpl* kind) final;
     void clearFactory() final;
 
     virtual webrtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(ScriptExecutionContextIdentifier, webrtc::PeerConnectionObserver&, webrtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&);
@@ -125,7 +125,7 @@ public:
         virtual void disableRelay() { };
         virtual bool shouldEnableServiceClass() { return true; }
     };
-    virtual std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, ScriptExecutionContextIdentifier, bool /* isFirstParty */, RegistrableDomain&&, bool /* enableServiceClass */);
+    virtual std::unique_ptr<SuspendableSocketFactory> createSocketFactory(RefPtr<StringImpl>&& /* userAgent */, ScriptExecutionContextIdentifier, bool /* isFirstParty */, RegistrableDomain&&, bool /* enableServiceClass */);
 
     virtual void clearCodecsConnectionForTesting() { }
 

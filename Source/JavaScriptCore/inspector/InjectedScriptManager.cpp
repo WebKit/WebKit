@@ -101,7 +101,7 @@ int InjectedScriptManager::injectedScriptIdFor(JSGlobalObject* globalObject)
     return id;
 }
 
-InjectedScript InjectedScriptManager::injectedScriptForObjectId(const String& objectId)
+InjectedScript InjectedScriptManager::injectedScriptForObjectId(StringImpl* objectId)
 {
     auto parsedObjectId = JSON::Value::parseJSON(objectId);
     if (!parsedObjectId)
@@ -111,14 +111,14 @@ InjectedScript InjectedScriptManager::injectedScriptForObjectId(const String& ob
     if (!resultObject)
         return InjectedScript();
 
-    auto injectedScriptId = resultObject->getInteger("injectedScriptId"_s);
+    auto injectedScriptId = resultObject->getInteger("injectedScriptId"_si);
     if (!injectedScriptId)
         return InjectedScript();
 
     return m_idToInjectedScript.get(*injectedScriptId);
 }
 
-void InjectedScriptManager::releaseObjectGroup(const String& objectGroup)
+void InjectedScriptManager::releaseObjectGroup(StringImpl* objectGroup)
 {
     for (auto& injectedScript : m_idToInjectedScript.values())
         injectedScript.releaseObjectGroup(objectGroup);
@@ -189,7 +189,7 @@ InjectedScript InjectedScriptManager::injectedScriptFor(JSGlobalObject* globalOb
         auto& stack = error->stack();
         if (stack.size() > 0)
             lineColumn = stack[0].computeLineAndColumn();
-        SAFE_WTFLOGALWAYS("Error when creating injected script: %s (%d:%d)\n", error->value().toWTFString(globalObject).utf8(), lineColumn.line, lineColumn.column);
+        SAFE_WTFLOGALWAYS("Error when creating injected script: %s (%d:%d)\n", utf8(error->value().toWTFString(globalObject)), lineColumn.line, lineColumn.column);
         RELEASE_ASSERT_NOT_REACHED();
     }
     if (!createResult.value()) {

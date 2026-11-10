@@ -203,7 +203,7 @@ Settings& InternalSettings::settings() const
     return m_page->settings();
 }
 
-ExceptionOr<void> InternalSettings::setStandardFontFamily(const String& family, const String& script)
+ExceptionOr<void> InternalSettings::setStandardFontFamily(StringImpl* family, StringImpl* script)
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
@@ -216,7 +216,7 @@ ExceptionOr<void> InternalSettings::setStandardFontFamily(const String& family, 
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setSerifFontFamily(const String& family, const String& script)
+ExceptionOr<void> InternalSettings::setSerifFontFamily(StringImpl* family, StringImpl* script)
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
@@ -229,7 +229,7 @@ ExceptionOr<void> InternalSettings::setSerifFontFamily(const String& family, con
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setSansSerifFontFamily(const String& family, const String& script)
+ExceptionOr<void> InternalSettings::setSansSerifFontFamily(StringImpl* family, StringImpl* script)
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
@@ -242,7 +242,7 @@ ExceptionOr<void> InternalSettings::setSansSerifFontFamily(const String& family,
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setFixedFontFamily(const String& family, const String& script)
+ExceptionOr<void> InternalSettings::setFixedFontFamily(StringImpl* family, StringImpl* script)
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
@@ -255,7 +255,7 @@ ExceptionOr<void> InternalSettings::setFixedFontFamily(const String& family, con
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setCursiveFontFamily(const String& family, const String& script)
+ExceptionOr<void> InternalSettings::setCursiveFontFamily(StringImpl* family, StringImpl* script)
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
@@ -268,7 +268,7 @@ ExceptionOr<void> InternalSettings::setCursiveFontFamily(const String& family, c
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setFantasyFontFamily(const String& family, const String& script)
+ExceptionOr<void> InternalSettings::setFantasyFontFamily(StringImpl* family, StringImpl* script)
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
@@ -281,7 +281,7 @@ ExceptionOr<void> InternalSettings::setFantasyFontFamily(const String& family, c
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setPictographFontFamily(const String& family, const String& script)
+ExceptionOr<void> InternalSettings::setPictographFontFamily(StringImpl* family, StringImpl* script)
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
@@ -581,7 +581,7 @@ ExceptionOr<void> InternalSettings::setDefaultAudioContextSampleRate(float sampl
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setAllowedMediaContainerTypes(const String& types)
+ExceptionOr<void> InternalSettings::setAllowedMediaContainerTypes(StringImpl* types)
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
@@ -589,7 +589,7 @@ ExceptionOr<void> InternalSettings::setAllowedMediaContainerTypes(const String& 
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setAllowedMediaCodecTypes(const String& types)
+ExceptionOr<void> InternalSettings::setAllowedMediaCodecTypes(StringImpl* types)
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
@@ -597,7 +597,7 @@ ExceptionOr<void> InternalSettings::setAllowedMediaCodecTypes(const String& type
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setAllowedMediaVideoCodecIDs(const String& types)
+ExceptionOr<void> InternalSettings::setAllowedMediaVideoCodecIDs(StringImpl* types)
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
@@ -605,7 +605,7 @@ ExceptionOr<void> InternalSettings::setAllowedMediaVideoCodecIDs(const String& t
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setAllowedMediaAudioCodecIDs(const String& types)
+ExceptionOr<void> InternalSettings::setAllowedMediaAudioCodecIDs(StringImpl* types)
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
@@ -613,7 +613,7 @@ ExceptionOr<void> InternalSettings::setAllowedMediaAudioCodecIDs(const String& t
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setAllowedMediaCaptionFormatTypes(const String& types)
+ExceptionOr<void> InternalSettings::setAllowedMediaCaptionFormatTypes(StringImpl* types)
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };

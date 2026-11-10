@@ -82,7 +82,7 @@ static void convertWebResourceDataToString(CFMutableDictionaryRef resource)
     CFStringLowercase(mimeType.get(), RetainPtr { CFLocaleGetSystem() }.get());
     convertMIMEType(mimeType.get());
 
-    if (CFStringHasPrefix(mimeType.get(), CFSTR("text/")) || MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType.get())) {
+    if (CFStringHasPrefix(mimeType.get(), CFSTR("text/")) || MIMETypeRegistry::isSupportedNonImageMIMEType(StringImpl::create(mimeType.get()).get())) {
         RetainPtr textEncodingName = checked_cf_cast<CFStringRef>(CFDictionaryGetValue(resource, CFSTR("WebResourceTextEncodingName")));
         CFStringEncoding stringEncoding;
         if (textEncodingName && CFStringGetLength(textEncodingName.get()))

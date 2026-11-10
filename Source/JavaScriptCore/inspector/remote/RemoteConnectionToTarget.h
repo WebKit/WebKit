@@ -64,7 +64,7 @@ public:
 #if PLATFORM(COCOA)
     void sendMessageToTarget(NSString *);
 #else
-    void sendMessageToTarget(String&&);
+    void sendMessageToTarget(RefPtr<StringImpl>&&);
 #endif
     void close();
     void targetClosed();
@@ -81,7 +81,7 @@ public:
 
     // FrontendChannel overrides.
     ConnectionType connectionType() const final { return ConnectionType::Remote; }
-    void sendMessageToFrontend(const String&) final;
+    void sendMessageToFrontend(StringImpl*) final;
 
 private:
 #if PLATFORM(COCOA)

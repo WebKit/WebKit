@@ -42,7 +42,7 @@
 
 namespace JSC { namespace Wasm {
 
-StreamingCompiler::StreamingCompiler(VM& vm, CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions, const SourceCode& source, String wasmSourceURL, uint64_t requestIdentifier)
+StreamingCompiler::StreamingCompiler(VM& vm, CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions, const SourceCode& source, RefPtr<StringImpl> wasmSourceURL, uint64_t requestIdentifier)
     : m_vm(vm)
     , m_compilerMode(compilerMode)
     , m_compileOptions(WTF::move(compileOptions))
@@ -50,7 +50,7 @@ StreamingCompiler::StreamingCompiler(VM& vm, CompilerMode compilerMode, JSGlobal
     , m_parser(m_info.get(), *this)
     , m_source(source)
 {
-    m_info->sourceURL = Name(wasmSourceURL.utf8().span());
+    m_info->sourceURL = Name(utf8(wasmSourceURL).span());
     m_info->requestIdentifier = requestIdentifier;
     Vector<JSCell*> dependencies;
     dependencies.append(globalObject);
@@ -72,7 +72,7 @@ StreamingCompiler::~StreamingCompiler()
     m_ticket = nullptr;
 }
 
-Ref<StreamingCompiler> StreamingCompiler::create(VM& vm, CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions, const SourceCode& source, String wasmSourceURL, uint64_t requestIdentifier)
+Ref<StreamingCompiler> StreamingCompiler::create(VM& vm, CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions, const SourceCode& source, RefPtr<StringImpl> wasmSourceURL, uint64_t requestIdentifier)
 {
     return adoptRef(*new StreamingCompiler(vm, compilerMode, globalObject, promise, importObject, WTF::move(compileOptions), source, WTF::move(wasmSourceURL), requestIdentifier));
 }
@@ -140,7 +140,7 @@ void StreamingCompiler::didComplete()
     auto makeValidationResult = [](EntryPlan& plan) -> Module::ValidationResult {
         ASSERT(!plan.hasWork());
         if (plan.failed())
-            return std::unexpected<String>(plan.errorMessage());
+            return std::unexpected<RefPtr<StringImpl>>(plan.errorMessage());
         return JSC::Wasm::Module::ValidationResult(Module::create(static_cast<IPIntPlan&>(plan)));
     };
 

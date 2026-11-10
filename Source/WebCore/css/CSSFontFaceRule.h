@@ -40,9 +40,9 @@ private:
     CSSFontFaceRule(StyleRuleFontFace&, CSSStyleSheet* parent);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontFace; }
-    String cssText() const final;
-    String cssText(const CSS::SerializationContext&) const final;
-    String cssTextInternal(const String& declarations) const;
+    RefPtr<StringImpl> cssText() const final;
+    RefPtr<StringImpl> cssText(const CSS::SerializationContext&) const final;
+    RefPtr<StringImpl> cssTextInternal(StringImpl* declarations) const;
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleFontFace> m_fontFaceRule;

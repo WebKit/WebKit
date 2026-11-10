@@ -47,7 +47,7 @@ public:
 private:
     MockMediaSessionCoordinator(ScriptExecutionContext&, RefPtr<StringCallback>&&);
 
-    String identifier() const final { return "Mock Coordinator"_s; }
+    RefPtr<StringImpl> identifier() const final { return "Mock Coordinator"_si; }
 
     void join(CompletionHandler<void(std::optional<Exception>&&)>&&) final;
     void leave() final;
@@ -55,12 +55,12 @@ private:
     void seekTo(double, CompletionHandler<void(std::optional<Exception>&&)>&&) final;
     void play(CompletionHandler<void(std::optional<Exception>&&)>&&) final;
     void pause(CompletionHandler<void(std::optional<Exception>&&)>&&) final;
-    void setTrack(const String&, CompletionHandler<void(std::optional<Exception>&&)>&&) final;
+    void setTrack(StringImpl*, CompletionHandler<void(std::optional<Exception>&&)>&&) final;
 
     void positionStateChanged(const std::optional<MediaPositionState>&) final;
     void readyStateChanged(MediaSessionReadyState) final;
     void playbackStateChanged(MediaSessionPlaybackState) final;
-    void trackIdentifierChanged(const String&) final;
+    void trackIdentifierChanged(StringImpl*) final;
 
     ASCIILiteral logClassName() const { return "MockMediaSessionCoordinator"_s; }
     NODELETE WTFLogChannel& logChannel() const;

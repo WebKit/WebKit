@@ -74,7 +74,7 @@ private:
     void finish() final;
 
     WeakPtr<HTMLModelElement, WeakPtrImplWithEventTargetData> m_modelElement;
-    String m_outgoingReferrer;
+    RefPtr<StringImpl> m_outgoingReferrer;
 };
 
 void ModelDocumentParser::createDocumentStructure()
@@ -92,8 +92,8 @@ void ModelDocumentParser::createDocumentStructure()
     rootElement->appendChild(headElement);
 
     auto metaElement = HTMLMetaElement::create(document);
-    metaElement->setAttributeWithoutSynchronization(nameAttr, "viewport"_s);
-    metaElement->setAttributeWithoutSynchronization(contentAttr, "width=device-width,initial-scale=1"_s);
+    metaElement->setAttributeWithoutSynchronization(nameAttr, "viewport"_atom);
+    metaElement->setAttributeWithoutSynchronization(contentAttr, "width=device-width,initial-scale=1"_atom);
     headElement->appendChild(metaElement);
 
     auto styleElement = HTMLStyleElement::create(document);
@@ -111,9 +111,9 @@ void ModelDocumentParser::createDocumentStructure()
     modelElement->setAttributeWithoutSynchronization(interactiveAttr, emptyAtom());
 
     auto sourceElement = HTMLSourceElement::create(HTMLNames::sourceTag, document);
-    sourceElement->setAttributeWithoutSynchronization(srcAttr, AtomString { document->url().string() });
+    sourceElement->setAttributeWithoutSynchronization(srcAttr, AtomStringImpl::add(document->url().string()).get());
     if (RefPtr loader = document->loader())
-        sourceElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->responseMIMEType() });
+        sourceElement->setAttributeWithoutSynchronization(typeAttr, AtomStringImpl::add(loader->responseMIMEType()).get());
 
     modelElement->appendChild(sourceElement);
 

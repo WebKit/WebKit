@@ -34,7 +34,7 @@ namespace CSS {
 
 // https://drafts.csswg.org/css-values-4/#identifier-value
 struct CustomIdent {
-    AtomString value;
+    RefPtr<AtomStringImpl> value;
 
     bool operator==(const CustomIdent&) const = default;
 };

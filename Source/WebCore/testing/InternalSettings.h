@@ -43,13 +43,13 @@ public:
     void resetToConsistentState();
 
     // Settings
-    ExceptionOr<void> setStandardFontFamily(const String& family, const String& script);
-    ExceptionOr<void> setSerifFontFamily(const String& family, const String& script);
-    ExceptionOr<void> setSansSerifFontFamily(const String& family, const String& script);
-    ExceptionOr<void> setFixedFontFamily(const String& family, const String& script);
-    ExceptionOr<void> setCursiveFontFamily(const String& family, const String& script);
-    ExceptionOr<void> setFantasyFontFamily(const String& family, const String& script);
-    ExceptionOr<void> setPictographFontFamily(const String& family, const String& script);
+    ExceptionOr<void> setStandardFontFamily(StringImpl* family, StringImpl* script);
+    ExceptionOr<void> setSerifFontFamily(StringImpl* family, StringImpl* script);
+    ExceptionOr<void> setSansSerifFontFamily(StringImpl* family, StringImpl* script);
+    ExceptionOr<void> setFixedFontFamily(StringImpl* family, StringImpl* script);
+    ExceptionOr<void> setCursiveFontFamily(StringImpl* family, StringImpl* script);
+    ExceptionOr<void> setFantasyFontFamily(StringImpl* family, StringImpl* script);
+    ExceptionOr<void> setPictographFontFamily(StringImpl* family, StringImpl* script);
 
     ExceptionOr<void> setTextAutosizingWindowSizeOverride(int width, int height);
 
@@ -112,11 +112,11 @@ public:
     // AudioContext
     ExceptionOr<void> setDefaultAudioContextSampleRate(float);
 
-    ExceptionOr<void> setAllowedMediaContainerTypes(const String&);
-    ExceptionOr<void> setAllowedMediaCodecTypes(const String&);
-    ExceptionOr<void> setAllowedMediaVideoCodecIDs(const String&);
-    ExceptionOr<void> setAllowedMediaAudioCodecIDs(const String&);
-    ExceptionOr<void> setAllowedMediaCaptionFormatTypes(const String&);
+    ExceptionOr<void> setAllowedMediaContainerTypes(StringImpl*);
+    ExceptionOr<void> setAllowedMediaCodecTypes(StringImpl*);
+    ExceptionOr<void> setAllowedMediaVideoCodecIDs(StringImpl*);
+    ExceptionOr<void> setAllowedMediaAudioCodecIDs(StringImpl*);
+    ExceptionOr<void> setAllowedMediaCaptionFormatTypes(StringImpl*);
 
 private:
     explicit InternalSettings(Page*);

@@ -43,7 +43,7 @@ private:
     bool isSemanticAnnotation() const final { return true; }
 
     bool childShouldCreateRenderer(const Node&) const final;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
 };
 
 }

@@ -75,7 +75,7 @@ static const UIMenuIdentifier WKCaptionStyleMenuSystemSettingsIdentifier = @"WKC
     if (!(self = [super init]))
         return nil;
 
-    self.savedActiveProfileID = protect(CaptionUserPreferencesMediaAF::platformActiveProfileID().createNSString().autorelease()).get();
+    self.savedActiveProfileID = protect(createNSString(CaptionUserPreferencesMediaAF::platformActiveProfileID()).autorelease()).get();
     [self rebuildMenu];
 
     return self;
@@ -99,10 +99,10 @@ static const UIMenuIdentifier WKCaptionStyleMenuSystemSettingsIdentifier = @"WKC
             if (auto strongSelf = weakSelf.get())
                 [strongSelf profileActionSelected:profileID];
         });
-        RetainPtr profileAction = [UIAction actionWithTitle:title.createNSString().get() image:nil identifier:profileID.createNSString().get() handler:profileSelectedHandler.get()];
+        RetainPtr profileAction = [UIAction actionWithTitle:createNSString(title).get() image:nil identifier:createNSString(profileID).get() handler:profileSelectedHandler.get()];
         profileAction.get().attributes = UIMenuElementAttributesKeepsMenuPresented;
 
-        if ([protect(profileID.createNSString().autorelease()) isEqualToString:self.savedActiveProfileID])
+        if ([protect(createNSString(profileID).autorelease()) isEqualToString:self.savedActiveProfileID])
             profileAction.get().state = UIMenuElementStateOn;
 
         [profileElements addObject:profileAction.get()];
@@ -189,19 +189,19 @@ static bool menuHasMenuAncestor(UIMenu *targetMenu, UIMenu *ancestorMenu)
 
 #pragma mark - Actions
 
-- (void)profileActionSelected:(const WTF::String&)profileID
+- (void)profileActionSelected:(StringImpl*)profileID
 {
     for (UIMenuElement *childMenu in [_menu children]) {
         RetainPtr childAction = dynamic_objc_cast<UIAction>(childMenu);
         if (!childAction)
             continue;
 
-        String childActionIdentifier = childAction.get().identifier;
-        childAction.get().state = profileID == childActionIdentifier ? UIMenuElementStateOn : UIMenuElementStateOff;
+        RefPtr<StringImpl> childActionIdentifier = StringImpl::create(childAction.get().identifier);
+        childAction.get().state = equal(profileID, childActionIdentifier) ? UIMenuElementStateOn : UIMenuElementStateOff;
     }
 
-    self.savedActiveProfileID = protect(profileID.createNSString().autorelease()).get();
-    CaptionUserPreferencesMediaAF::setActiveProfileID(WTF::String(self.savedActiveProfileID));
+    self.savedActiveProfileID = protect(createNSString(profileID).autorelease()).get();
+    CaptionUserPreferencesMediaAF::setActiveProfileID(StringImpl::create(self.savedActiveProfileID).get());
 
     // UIMenu does not have the ability to notify clients when a submenu opens or closes.
     // Provide a similar functionality for previewing subtitle changes by triggering the
@@ -220,7 +220,7 @@ static bool menuHasMenuAncestor(UIMenu *targetMenu, UIMenu *ancestorMenu)
 
 - (void)notifyMenuWillOpen
 {
-    self.savedActiveProfileID = protect(CaptionUserPreferencesMediaAF::platformActiveProfileID().createNSString().autorelease()).get();
+    self.savedActiveProfileID = protect(createNSString(CaptionUserPreferencesMediaAF::platformActiveProfileID()).autorelease()).get();
 
     if (auto delegate = self.delegate)
         [delegate captionStyleMenuWillOpen:self.menu];
@@ -229,7 +229,7 @@ static bool menuHasMenuAncestor(UIMenu *targetMenu, UIMenu *ancestorMenu)
 - (void)notifyMenuDidClose
 {
     if (self.savedActiveProfileID && self.savedActiveProfileID.length > 0)
-        CaptionUserPreferencesMediaAF::setActiveProfileID(WTF::String(self.savedActiveProfileID));
+        CaptionUserPreferencesMediaAF::setActiveProfileID(StringImpl::create(self.savedActiveProfileID).get());
     self.savedActiveProfileID = nil;
 
     if (auto delegate = self.delegate)

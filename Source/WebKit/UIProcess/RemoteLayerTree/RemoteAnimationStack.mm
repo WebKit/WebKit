@@ -287,8 +287,8 @@ Ref<JSON::Object> RemoteAnimationStack::toJSONForTesting() const
     }
 
     Ref object = JSON::Object::create();
-    object->setArray("animations"_s, WTF::move(convertedAnimations));
-    object->setObject("baseValues"_s, WebKit::toJSONForTesting(m_baseValues, animatedProperties));
+    object->setArray("animations"_si, WTF::move(convertedAnimations));
+    object->setObject("baseValues"_si, WebKit::toJSONForTesting(m_baseValues, animatedProperties));
     return object;
 }
 

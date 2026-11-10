@@ -35,7 +35,7 @@ namespace WebCore {
 
 class SQLError : public ThreadSafeRefCounted<SQLError> {
 public:
-    static Ref<SQLError> create(unsigned code, String&& message) { return adoptRef(*new SQLError(code, WTF::move(message))); }
+    static Ref<SQLError> create(unsigned code, RefPtr<StringImpl>&& message) { return adoptRef(*new SQLError(code, WTF::move(message))); }
     static Ref<SQLError> create(unsigned code, ASCIILiteral message, int sqliteCode)
     {
         return create(code, makeString(message, " ("_s, sqliteCode, ')'));
@@ -46,7 +46,7 @@ public:
     }
 
     unsigned code() const { return m_code; }
-    String messageIsolatedCopy() const { return m_message.isolatedCopy(); }
+    RefPtr<StringImpl> messageIsolatedCopy() const { return isolatedCopy(m_message); }
 
     enum SQLErrorCode {
         UNKNOWN_ERR = 0,
@@ -60,9 +60,9 @@ public:
     };
 
 private:
-    SQLError(unsigned code, String&& message) : m_code(code), m_message(WTF::move(message).isolatedCopy()) { }
+    SQLError(unsigned code, RefPtr<StringImpl>&& message) : m_code(code), m_message(isolatedCopy(WTF::move(message))) { }
     unsigned m_code;
-    String m_message;
+    RefPtr<StringImpl> m_message;
 };
 
 } // namespace WebCore

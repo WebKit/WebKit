@@ -45,7 +45,7 @@ using namespace Inspector;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorBrowserAgent);
 
 InspectorBrowserAgent::InspectorBrowserAgent(WebPageAgentContext& context)
-    : InspectorAgentBase("Browser"_s, context)
+    : InspectorAgentBase("Browser"_si, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::BrowserFrontendDispatcher>(context.frontendRouter.get()))
     , m_backendDispatcher(Inspector::BrowserBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_inspectedPage(context.inspectedPage)
@@ -88,7 +88,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorBrowserAgent::disable()
     return { };
 }
 
-void InspectorBrowserAgent::extensionsEnabled(HashMap<String, String>&& extensionIDToName)
+void InspectorBrowserAgent::extensionsEnabled(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& extensionIDToName)
 {
     ASSERT(enabled());
 
@@ -103,11 +103,11 @@ void InspectorBrowserAgent::extensionsEnabled(HashMap<String, String>&& extensio
     m_frontendDispatcher->extensionsEnabled(WTF::move(extensionsPayload));
 }
 
-void InspectorBrowserAgent::extensionsDisabled(HashSet<String>&& extensionIDs)
+void InspectorBrowserAgent::extensionsDisabled(HashSet<RefPtr<StringImpl>>&& extensionIDs)
 {
     ASSERT(enabled());
 
-    auto extensionIdsPayload = JSON::ArrayOf<String>::create();
+    auto extensionIdsPayload = JSON::ArrayOf<RefPtr<StringImpl>>::create();
     for (auto& extensionId : extensionIDs)
         extensionIdsPayload->addItem(extensionId);
     m_frontendDispatcher->extensionsDisabled(WTF::move(extensionIdsPayload));

@@ -107,21 +107,21 @@ static OptionSet<WebEventModifier> modifiersForEvent(::WebEvent *event)
 WebKeyboardEventInit WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *event, bool handledByInputMethod)
 {
     WebEventType type = (event.type == WebEventKeyUp) ? WebEventType::KeyUp : WebEventType::KeyDown;
-    String text;
-    String unmodifiedText;
+    RefPtr<StringImpl> text;
+    RefPtr<StringImpl> unmodifiedText;
     bool autoRepeat;
     if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged) {
         text = emptyString();
         unmodifiedText = emptyString();
         autoRepeat = false;
     } else {
-        text = event.characters;
-        unmodifiedText = event.charactersIgnoringModifiers;
+        text = StringImpl::create(event.characters);
+        unmodifiedText = StringImpl::create(event.charactersIgnoringModifiers);
         autoRepeat = event.isKeyRepeating;
     }
-    String key = WebCore::keyForKeyEvent(event);
-    String code = WebCore::codeForKeyEvent(event);
-    String keyIdentifier = WebCore::keyIdentifierForKeyEvent(event);
+    RefPtr<StringImpl> key = WebCore::keyForKeyEvent(event);
+    RefPtr<StringImpl> code = WebCore::codeForKeyEvent(event);
+    RefPtr<StringImpl> keyIdentifier = WebCore::keyIdentifierForKeyEvent(event);
     int windowsVirtualKeyCode = WebCore::windowsKeyCodeForKeyEvent(event);
     // FIXME: This is not correct. WebEvent.keyCode represents the Windows native virtual key code.
     int nativeVirtualKeyCode = event.keyCode;
@@ -139,20 +139,20 @@ WebKeyboardEventInit WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *even
     }
 
     if (windowsVirtualKeyCode == '\r') {
-        text = "\r"_s;
+        text = "\r"_si;
         unmodifiedText = text;
     }
 
     // The adjustments below are only needed in backward compatibility mode, but we cannot tell what mode we are in from here.
 
     // Turn 0x7F into 8, because backspace needs to always be 8.
-    if (text == "\x7F"_s)
-        text = "\x8"_s;
-    if (unmodifiedText == "\x7F"_s)
-        unmodifiedText = "\x8"_s;
+    if (equal(text, "\x7F"_s))
+        text = "\x8"_si;
+    if (equal(unmodifiedText, "\x7F"_s))
+        unmodifiedText = "\x8"_si;
     // Always use 9 for tab.
     if (windowsVirtualKeyCode == 9) {
-        text = "\x9"_s;
+        text = "\x9"_si;
         unmodifiedText = text;
     }
 

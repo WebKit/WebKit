@@ -64,29 +64,29 @@ void MockMediaDeviceRoute::setURLCallback(MockMediaDeviceRouteURLCallback* urlCa
     [m_platformRoute setURLCallback:urlCallback];
 }
 
-String MockMediaDeviceRoute::deviceName() const
+RefPtr<StringImpl> MockMediaDeviceRoute::deviceName() const
 {
-    return [m_platformRoute routeDisplayName];
+    return StringImpl::create([m_platformRoute routeDisplayName]);
 }
 
-void MockMediaDeviceRoute::setDeviceName(const String& deviceName)
+void MockMediaDeviceRoute::setDeviceName(StringImpl* deviceName)
 {
-    [m_platformRoute setRouteDisplayName:deviceName.createNSString().get()];
+    [m_platformRoute setRouteDisplayName:createNSString(deviceName).get()];
 }
 
-String MockMediaDeviceRoute::protocolTypeIdentifier() const
+RefPtr<StringImpl> MockMediaDeviceRoute::protocolTypeIdentifier() const
 {
-    return [[m_platformRoute protocolType] identifier];
+    return StringImpl::create([[m_platformRoute protocolType] identifier]);
 }
 
-void MockMediaDeviceRoute::setProtocolTypeIdentifier(const String& identifier)
+void MockMediaDeviceRoute::setProtocolTypeIdentifier(StringImpl* identifier)
 {
-    [m_platformRoute setProtocolType:[getUTTypeClassSingleton() typeWithIdentifier:identifier.createNSString().get()]];
+    [m_platformRoute setProtocolType:[getUTTypeClassSingleton() typeWithIdentifier:createNSString(identifier).get()]];
 }
 
-String MockMediaDeviceRoute::routeName() const
+RefPtr<StringImpl> MockMediaDeviceRoute::routeName() const
 {
-    return [[m_platformRoute protocolType] localizedDescription];
+    return StringImpl::create([[m_platformRoute protocolType] localizedDescription]);
 }
 
 bool MockMediaDeviceRoute::connected() const
@@ -131,9 +131,9 @@ Vector<MockMediaDeviceRoute::AudioOption> MockMediaDeviceRoute::audioOptions() c
     return Vector<AudioOption>(options.count, [&](size_t i) {
         AVPlaybackUserInterfaceMediaSelectionOption *option = options[i];
         return AudioOption {
-            option.displayName,
-            option.identifier,
-            option.extendedLanguageTag,
+            StringImpl::create(option.displayName),
+            StringImpl::create(option.identifier),
+            StringImpl::create(option.extendedLanguageTag),
         };
     });
 }
@@ -142,7 +142,7 @@ void MockMediaDeviceRoute::setAudioOptions(const Vector<AudioOption>& audioOptio
 {
     RetainPtr options = [NSMutableArray arrayWithCapacity:audioOptions.size()];
     for (auto& option : audioOptions) {
-        RetainPtr platformOption = adoptNS([allocAVPlaybackUserInterfaceMediaSelectionOptionInstance() initWithDisplayName:option.displayName.createNSString().get() identifier:option.identifier.createNSString().get() extendedLanguageTag:option.extendedLanguageTag.createNSString().get() mediaCharacteristics:@[]]);
+        RetainPtr platformOption = adoptNS([allocAVPlaybackUserInterfaceMediaSelectionOptionInstance() initWithDisplayName:createNSString(option.displayName).get() identifier:createNSString(option.identifier).get() extendedLanguageTag:createNSString(option.extendedLanguageTag).get() mediaCharacteristics:@[]]);
         [options addObject:platformOption.get()];
     }
     [m_platformRoute setAudioOptions:options.get()];
@@ -201,16 +201,16 @@ void MockMediaDeviceRoute::setMuted(bool muted)
     [m_platformRoute setMuted:muted];
 }
 
-String MockMediaDeviceRoute::lastSeekTolerance() const
+RefPtr<StringImpl> MockMediaDeviceRoute::lastSeekTolerance() const
 {
     CMTime tolerance = [m_platformRoute lastSeekTolerance];
     if (CMTIME_IS_INVALID(tolerance))
-        return "none"_s;
+        return "none"_si;
     if (CMTIME_COMPARE_INLINE(tolerance, ==, kCMTimeZero))
-        return "precise"_s;
+        return "precise"_si;
     if (CMTIME_IS_POSITIVE_INFINITY(tolerance))
-        return "approximate"_s;
-    return "unexpected"_s;
+        return "approximate"_si;
+    return "unexpected"_si;
 }
 
 } // namespace WebCore

@@ -56,12 +56,12 @@ SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
 @implementation WebCLLocationManager {
     RetainPtr<CLLocationManager> _locationManager;
     WeakPtr<WebCore::CoreLocationGeolocationProvider::Client> _client;
-    String _websiteIdentifier;
+    RefPtr<StringImpl> _websiteIdentifier;
     BOOL _isWaitingForAuthorization;
     WebCore::CoreLocationGeolocationProvider::Mode _mode;
 }
 
-- (instancetype)initWithWebsiteIdentifier:(const String&)websiteIdentifier client:(WebCore::CoreLocationGeolocationProvider::Client&)client mode:(WebCore::CoreLocationGeolocationProvider::Mode)mode
+- (instancetype)initWithWebsiteIdentifier:(StringImpl*)websiteIdentifier client:(WebCore::CoreLocationGeolocationProvider::Client&)client mode:(WebCore::CoreLocationGeolocationProvider::Mode)mode
 {
     self = [super init];
     if (!self)
@@ -71,8 +71,8 @@ SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
     _mode = mode;
 
 #if USE(APPLE_INTERNAL_SDK) && HAVE(CORE_LOCATION_WEBSITE_IDENTIFIERS)
-    if (!websiteIdentifier.isEmpty())
-        _locationManager = adoptNS([allocCLLocationManagerInstance() initWithWebsiteIdentifier:websiteIdentifier.createNSString().get()]);
+    if (!isEmpty(websiteIdentifier))
+        _locationManager = adoptNS([allocCLLocationManagerInstance() initWithWebsiteIdentifier:createNSString(websiteIdentifier).get()]);
 #else
     UNUSED_PARAM(websiteIdentifier);
 #endif
@@ -163,7 +163,7 @@ SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
 
     RetainPtr<NSString> errorMessage = [error localizedDescription];
     if (RefPtr client = _client)
-        client->errorOccurred(_websiteIdentifier, errorMessage.get());
+        client->errorOccurred(_websiteIdentifier, StringImpl::create(errorMessage.get()).get());
 }
 
 @end
@@ -206,25 +206,25 @@ public:
 private:
     AuthorizationChecker() = default;
 
-    void geolocationAuthorizationGranted(const String&) final
+    void geolocationAuthorizationGranted(StringImpl*) final
     {
         if (m_completionHandler)
             m_completionHandler(true);
     }
 
-    void geolocationAuthorizationDenied(const String&) final
+    void geolocationAuthorizationDenied(StringImpl*) final
     {
         if (m_completionHandler)
             m_completionHandler(false);
     }
 
-    void positionChanged(const String&, GeolocationPositionData&&) final { }
-    void errorOccurred(const String&, const String&) final
+    void positionChanged(StringImpl*, GeolocationPositionData&&) final { }
+    void errorOccurred(StringImpl*, StringImpl*) final
     {
         if (m_completionHandler)
             m_completionHandler(false);
     }
-    void resetGeolocation(const String&) final { }
+    void resetGeolocation(StringImpl*) final { }
 
     const std::unique_ptr<CoreLocationGeolocationProvider> m_provider;
     CompletionHandler<void(bool)> m_completionHandler;

@@ -38,11 +38,11 @@ struct UserAgentStringData;
  */
 class UserAgentStringParser : public RefCountedAndCanMakeWeakPtr<UserAgentStringParser> {
 public:
-    WEBCORE_EXPORT static Ref<UserAgentStringParser> create(const String& userAgentString);
+    WEBCORE_EXPORT static Ref<UserAgentStringParser> create(StringImpl* userAgentString);
     WEBCORE_EXPORT std::optional<Ref<UserAgentStringData>> parse();
 
 private:
-    UserAgentStringParser(const String& userAgentString);
+    UserAgentStringParser(StringImpl* userAgentString);
 
     void consumeProduct();
     void consumeComment();
@@ -55,21 +55,21 @@ private:
     NODELETE inline char16_t peek();
     NODELETE inline void increment();
     NODELETE inline bool atEnd();
-    inline String getSubstring();
+    inline RefPtr<StringImpl> getSubstring();
 
     bool malformed { false };
-    const String& m_userAgentString;
+    const RefPtr<StringImpl> m_userAgentString;
     size_t pos { 0 };
     size_t start { 0 };
     Ref<UserAgentStringData> data;
 
     struct Product {
-        String name;
-        String version;
+        RefPtr<StringImpl> name;
+        RefPtr<StringImpl> version;
     };
 
     struct Comment {
-        Vector<String> parts; // split on ;
+        Vector<RefPtr<StringImpl>> parts; // split on ;
     };
 
     using Segment = WTF::Variant<Product, Comment>;

@@ -54,7 +54,7 @@ void CSSMediaRule::setMediaQueries(MQ::MediaQueryList&& queries)
     downcast<StyleRuleMedia>(protect(groupRule()))->setMediaQueries(WTF::move(queries));
 }
 
-String CSSMediaRule::cssText() const
+RefPtr<StringImpl> CSSMediaRule::cssText() const
 {
     StringBuilder builder;
     builder.append("@media "_s, conditionText());
@@ -62,7 +62,7 @@ String CSSMediaRule::cssText() const
     return builder.toString();
 }
 
-String CSSMediaRule::cssText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSMediaRule::cssText(const CSS::SerializationContext& context) const
 {
     StringBuilder builder;
     builder.append("@media "_s, conditionText());
@@ -70,7 +70,7 @@ String CSSMediaRule::cssText(const CSS::SerializationContext& context) const
     return builder.toString();
 }
 
-String CSSMediaRule::conditionText() const
+RefPtr<StringImpl> CSSMediaRule::conditionText() const
 {
     StringBuilder builder;
     MQ::serialize(builder, mediaQueries());

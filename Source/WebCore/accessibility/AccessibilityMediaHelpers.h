@@ -39,7 +39,7 @@ class AccessibilityMediaHelpers {
 public:
     static void enterFullscreen(HTMLVideoElement*);
     static void toggleMute(HTMLMediaElement*);
-    static String interactiveVideoDuration(HTMLMediaElement*);
+    static RefPtr<StringImpl> interactiveVideoDuration(HTMLMediaElement*);
 
     static bool isPlaying(HTMLMediaElement*);
     static bool isAutoplayEnabled(HTMLMediaElement*);

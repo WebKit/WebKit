@@ -76,7 +76,7 @@ Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, IsIn
 Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, float fontSize, bool, bool, DownloadableBinaryFontTrustedTypes trustedType)
 {
     bool wrapping;
-    auto customFontData = CachedFont::createCustomFontData(fontFaceData.get(), { }, wrapping, trustedType);
+    auto customFontData = CachedFont::createCustomFontData(fontFaceData.get(), nullptr, wrapping, trustedType);
     FontDescription description;
     description.setUsedSize(fontSize);
     // FIXME: Why doesn't this pass in any meaningful data for the last few arguments?
@@ -546,10 +546,10 @@ bool Font::isProbablyOnlyUsedToRenderIcons() const
 #endif
 
 #if !LOG_DISABLED
-String Font::description() const
+RefPtr<StringImpl> Font::description() const
 {
     if (origin() == Origin::Remote)
-        return "[custom font]"_s;
+        return "[custom font]"_si;
 
     return platformData().description();
 }
@@ -566,7 +566,7 @@ RefPtr<Font> Font::createHalfWidthFont() const
 }
 
 #if !USE(CORE_TEXT)
-GlyphBufferAdvance Font::applyTransforms(GlyphBuffer&, unsigned, unsigned, bool, bool, const AtomString&, StringView, TextDirection) const
+GlyphBufferAdvance Font::applyTransforms(GlyphBuffer&, unsigned, unsigned, bool, bool, AtomStringImpl*, StringView, TextDirection) const
 {
     return makeGlyphBufferAdvance();
 }

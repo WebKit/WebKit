@@ -53,7 +53,7 @@ private:
 #endif
 
 #if ENABLE(DATACUE_VALUE)
-    void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String&) final;
+    void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, StringImpl*) final;
     void updateDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&) final;
     void removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&) final;
     ExceptionOr<void> removeCue(TextTrackCue&) final;

@@ -548,7 +548,7 @@ void StreamPipeToState::closingMustBePropagatedBackward()
     // FIXME: Assert that no chunks have been read or written.
 
     auto getError = [](auto& globalObject) {
-        return createDOMException(globalObject, Exception { ExceptionCode::TypeError, "closing is propagated backward"_s });
+        return createDOMException(globalObject, Exception { ExceptionCode::TypeError, "closing is propagated backward"_si });
     };
 
     if (!m_options.preventCancel) {

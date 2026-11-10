@@ -57,7 +57,7 @@ TrackQueue::TrackQueue(TrackID trackId)
     });
 #if GST_CHECK_VERSION(1, 22, 0)
     static Atomic<uint64_t> queueId;
-    m_id = makeString("track-queue-"_s, m_trackId, '-', queueId.exchangeAdd(1)).ascii();
+    m_id = ascii(makeString("track-queue-"_s, m_trackId, '-', queueId.exchangeAdd(1)));
 #endif
 }
 

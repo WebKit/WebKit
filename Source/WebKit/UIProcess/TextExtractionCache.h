@@ -47,32 +47,32 @@ public:
     };
 
     struct ResolvedNode {
-        Vector<String> identifiers;
+        Vector<RefPtr<StringImpl>> identifiers;
         NodeResolution resolution { NodeResolution::Unknown };
     };
 
-    void add(const String& url, Vector<TextExtractionLineContent>&&);
-    ResolvedNode resolve(const String& identifier) const;
+    void add(StringImpl* url, Vector<TextExtractionLineContent>&&);
+    ResolvedNode resolve(StringImpl* identifier) const;
     void clear() { m_entries.clear(); }
 
 private:
     struct Entry {
-        String url;
+        RefPtr<StringImpl> url;
         Vector<TextExtractionLineContent> lines;
-        HashMap<String, unsigned> lineIndexForUID;
+        HashMap<RefPtr<StringImpl>, unsigned> lineIndexForUID;
     };
 
-    static Vector<String> contextWindowBefore(const Vector<TextExtractionLineContent>&, unsigned targetIndex);
-    static Vector<String> contextWindowAfter(const Vector<TextExtractionLineContent>&, unsigned targetIndex);
+    static Vector<RefPtr<StringImpl>> contextWindowBefore(const Vector<TextExtractionLineContent>&, unsigned targetIndex);
+    static Vector<RefPtr<StringImpl>> contextWindowAfter(const Vector<TextExtractionLineContent>&, unsigned targetIndex);
 
     Vector<Entry> m_entries;
 };
 
 struct StaleNodeResolutionState {
-    String requestedIdentifier;
-    String noteForCurrentAttempt;
+    RefPtr<StringImpl> requestedIdentifier;
+    RefPtr<StringImpl> noteForCurrentAttempt;
 
-    bool didRemap() const { return !noteForCurrentAttempt.isEmpty(); }
+    bool didRemap() const { return !isEmpty(noteForCurrentAttempt); }
 };
 
 } // namespace WebKit

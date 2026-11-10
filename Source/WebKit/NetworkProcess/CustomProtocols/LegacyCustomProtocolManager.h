@@ -62,9 +62,9 @@ public:
 
     static ASCIILiteral supplementName();
 
-    void registerScheme(const String&);
-    void unregisterScheme(const String&);
-    bool supportsScheme(const String&);
+    void registerScheme(StringImpl*);
+    void unregisterScheme(StringImpl*);
+    bool supportsScheme(StringImpl*);
 
     void ref() const final;
     void deref() const final;
@@ -105,7 +105,7 @@ private:
     Lock m_customProtocolMapLock;
 
 #if PLATFORM(COCOA)
-    HashSet<String, ASCIICaseInsensitiveHash> m_registeredSchemes WTF_GUARDED_BY_LOCK(m_registeredSchemesLock);
+    HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash> m_registeredSchemes WTF_GUARDED_BY_LOCK(m_registeredSchemesLock);
     Lock m_registeredSchemesLock;
 
     // WKCustomProtocol objects can be removed from the m_customProtocolMap from multiple threads.

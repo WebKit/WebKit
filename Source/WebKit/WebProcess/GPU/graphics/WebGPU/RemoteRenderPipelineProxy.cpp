@@ -60,7 +60,7 @@ Ref<::WebGPU::BindGroupLayout> RemoteRenderPipelineProxy::getBindGroupLayout(uin
     return RemoteBindGroupLayoutProxy::create(protect(m_parent->root()), m_convertToBackingContext, identifier);
 }
 
-void RemoteRenderPipelineProxy::setLabel(String&& label)
+void RemoteRenderPipelineProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteRenderPipeline::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

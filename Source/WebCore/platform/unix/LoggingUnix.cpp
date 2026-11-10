@@ -30,10 +30,10 @@
 
 namespace WebCore {
 
-String logLevelString()
+RefPtr<StringImpl> logLevelString()
 {
     auto logLevel = WTF::logLevelString();
-    if (logLevel == "-all"_s)
+    if (equal(logLevel, "-all"_s))
         return logLevel;
 
     // To disable logging notImplemented set the DISABLE_NI_WARNING environment variable to 1.

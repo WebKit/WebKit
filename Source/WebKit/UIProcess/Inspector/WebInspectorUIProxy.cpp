@@ -111,7 +111,7 @@ void WebInspectorUIProxy::invalidate()
     reset();
 }
 
-void WebInspectorUIProxy::sendMessageToFrontend(const String& message)
+void WebInspectorUIProxy::sendMessageToFrontend(StringImpl* message)
 {
     RefPtr inspectorPage = m_inspectorPage.get();
     if (!inspectorPage)
@@ -424,16 +424,16 @@ bool WebInspectorUIProxy::isMainOrTestInspectorPage(const URL& url)
 {
     // Use URL so we can compare the paths and protocols.
     URL mainPageURL { WebInspectorUIProxy::inspectorPageURL() };
-    if (url.protocol() == mainPageURL.protocol() && PAL::decodeURLEscapeSequences(url.path()) == PAL::decodeURLEscapeSequences(mainPageURL.path()))
+    if (url.protocol() == mainPageURL.protocol() && equal(PAL::decodeURLEscapeSequences(url.path()), PAL::decodeURLEscapeSequences(mainPageURL.path())))
         return true;
 
     // We might not have a Test URL in Production builds.
-    String testPageURLString = WebInspectorUIProxy::inspectorTestPageURL();
-    if (testPageURLString.isNull())
+    RefPtr<StringImpl> testPageURLString = WebInspectorUIProxy::inspectorTestPageURL();
+    if (!testPageURLString)
         return false;
 
     URL testPageURL { testPageURLString };
-    return url.protocol() == testPageURL.protocol() && PAL::decodeURLEscapeSequences(url.path()) == PAL::decodeURLEscapeSequences(testPageURL.path());
+    return url.protocol() == testPageURL.protocol() && equal(PAL::decodeURLEscapeSequences(url.path()), PAL::decodeURLEscapeSequences(testPageURL.path()));
 }
 
 void WebInspectorUIProxy::createFrontendPage()
@@ -634,7 +634,7 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
     dispatchDidChangeLocalInspectorAttachment();
 }
 
-void WebInspectorUIProxy::sendMessageToBackend(const String& message)
+void WebInspectorUIProxy::sendMessageToBackend(StringImpl* message)
 {
     RefPtr inspectedPage = m_inspectedPage.get();
     if (!inspectedPage)
@@ -712,13 +712,13 @@ void WebInspectorUIProxy::effectiveAppearanceDidChange(InspectorFrontendClient::
 #endif
 }
 
-void WebInspectorUIProxy::openURLExternally(const String& url)
+void WebInspectorUIProxy::openURLExternally(StringImpl* url)
 {
     if (m_inspectorClient)
         m_inspectorClient->openURLExternally(*this, url);
 }
 
-void WebInspectorUIProxy::revealFileExternally(const String& path)
+void WebInspectorUIProxy::revealFileExternally(StringImpl* path)
 {
     platformRevealFileExternally(path);
 }
@@ -735,7 +735,7 @@ void WebInspectorUIProxy::requestDisableSiteIsolation()
         m_inspectorClient->requestDisableSiteIsolation(*this);
 }
 
-void WebInspectorUIProxy::inspectedURLChanged(const String& urlString)
+void WebInspectorUIProxy::inspectedURLChanged(StringImpl* urlString)
 {
     platformInspectedURLChanged(urlString);
 }
@@ -869,20 +869,20 @@ void WebInspectorUIProxy::save(Vector<InspectorFrontendClient::SaveData>&& saveD
     if (saveDatas.isEmpty())
         return;
 
-    ASSERT(!saveDatas[0].url.isEmpty());
-    if (saveDatas[0].url.isEmpty())
+    ASSERT(!isEmpty(saveDatas[0].url));
+    if (isEmpty(saveDatas[0].url))
         return;
 
     platformSave(WTF::move(saveDatas), forceSaveAs);
 }
 
-void WebInspectorUIProxy::load(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
+void WebInspectorUIProxy::load(StringImpl* path, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     if (!protect(protect(inspectedPage())->preferences())->developerExtrasEnabled())
         return;
 
-    ASSERT(!path.isEmpty());
-    if (path.isEmpty())
+    ASSERT(!isEmpty(path));
+    if (isEmpty(path))
         return;
 
     platformLoad(path, WTF::move(completionHandler));
@@ -903,7 +903,7 @@ bool WebInspectorUIProxy::shouldOpenAttached()
     return protect(inspectorPagePreferences())->inspectorStartsAttached() && canAttach();
 }
 
-void WebInspectorUIProxy::evaluateInFrontendForTesting(const String& expression)
+void WebInspectorUIProxy::evaluateInFrontendForTesting(StringImpl* expression)
 {
     RefPtr inspectorPage = m_inspectorPage.get();
     if (!inspectorPage)
@@ -986,12 +986,12 @@ void WebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendClient::A
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformRevealFileExternally(const String&)
+void WebInspectorUIProxy::platformRevealFileExternally(StringImpl*)
 {
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformInspectedURLChanged(const String&)
+void WebInspectorUIProxy::platformInspectedURLChanged(StringImpl*)
 {
     notImplemented();
 }
@@ -1006,7 +1006,7 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
+void WebInspectorUIProxy::platformLoad(StringImpl* path, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     notImplemented();
     completionHandler(nullString());
@@ -1043,16 +1043,16 @@ void WebInspectorUIProxy::platformStartWindowDrag()
     notImplemented();
 }
 
-String WebInspectorUIProxy::inspectorPageURL()
+RefPtr<StringImpl> WebInspectorUIProxy::inspectorPageURL()
 {
     notImplemented();
-    return String();
+    return nullptr;
 }
 
-String WebInspectorUIProxy::inspectorTestPageURL()
+RefPtr<StringImpl> WebInspectorUIProxy::inspectorTestPageURL()
 {
     notImplemented();
-    return String();
+    return nullptr;
 }
 
 DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()

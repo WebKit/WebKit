@@ -79,10 +79,10 @@ WebBackForwardListItem* WebBackForwardListItem::itemForID(BackForwardItemIdentif
     return allItems().get(identifier);
 }
 
-NODELETE static const FrameState* childItemWithTarget(const FrameState& frameState, const String& target)
+NODELETE static const FrameState* childItemWithTarget(const FrameState& frameState, StringImpl* target)
 {
     for (auto& child : frameState.children) {
-        if (child->target == target)
+        if (equal(child->target, target))
             return child.ptr();
     }
 
@@ -175,17 +175,17 @@ Ref<FrameState> WebBackForwardListItem::copyMainFrameStateWithChildren() const
     return m_mainFrameItem->copyFrameStateWithChildren();
 }
 
-const String& WebBackForwardListItem::originalURL() const
+const RefPtr<StringImpl>& WebBackForwardListItem::originalURL() const
 {
     return mainFrameItem().frameState().originalURLString;
 }
 
-const String& WebBackForwardListItem::url() const
+const RefPtr<StringImpl>& WebBackForwardListItem::url() const
 {
     return mainFrameItem().frameState().urlString;
 }
 
-const String& WebBackForwardListItem::title() const
+const RefPtr<StringImpl>& WebBackForwardListItem::title() const
 {
     return mainFrameItem().frameState().title;
 }
@@ -214,7 +214,7 @@ WebBackForwardListFrameItem& WebBackForwardListItem::mainFrameItem() const
     return m_mainFrameItem;
 }
 
-String WebBackForwardListItem::loggingString()
+RefPtr<StringImpl> WebBackForwardListItem::loggingString()
 {
     return m_mainFrameItem->loggingString();
 }

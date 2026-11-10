@@ -127,16 +127,16 @@ SourceID DebuggerCallFrame::sourceID() const
     return sourceIDForCallFrame(m_validMachineFrame);
 }
 
-String DebuggerCallFrame::functionName(VM& vm) const
+RefPtr<StringImpl> DebuggerCallFrame::functionName(VM& vm) const
 {
     ASSERT(isValid());
     if (!isValid())
-        return String();
+        return nullptr;
 
     if (isTailDeleted()) {
         if (JSFunction* func = dynamicDowncast<JSFunction>(m_shadowChickenFrame.callee))
             return func->calculatedDisplayName(vm);
-        return String::fromUTF8(m_shadowChickenFrame.codeBlock->inferredName().span());
+        return StringImpl::fromUTF8(m_shadowChickenFrame.codeBlock->inferredName().span());
     }
 
     return m_validMachineFrame->friendlyFunctionName();
@@ -206,7 +206,7 @@ JSValue DebuggerCallFrame::thisValue(VM& vm) const
 }
 
 // Evaluate some JavaScript code in the scope of this frame.
-JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& script, JSObject* scopeExtensionObject, NakedPtr<Exception>& exception)
+JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, StringImpl* script, JSObject* scopeExtensionObject, NakedPtr<Exception>& exception)
 {
     CallFrame* callFrame = nullptr;
     CodeBlock* codeBlock = nullptr;

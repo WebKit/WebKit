@@ -58,7 +58,7 @@ void NetworkProcess::initializeProcess(const AuxiliaryProcessInitializationParam
 void NetworkProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters& parameters)
 {
 #if !PLATFORM(MACCATALYST)
-    SUPPRESS_UNRETAINED_ARG RetainPtr applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Networking", "visible name of the network process. The argument is the application name."), parameters.uiProcessName.createNSString().get()]);
+    SUPPRESS_UNRETAINED_ARG RetainPtr applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Networking", "visible name of the network process. The argument is the application name."), createNSString(parameters.uiProcessName).get()]);
     _LSSetApplicationInformationItem(kLSDefaultSessionID, RetainPtr { _LSGetCurrentApplicationASN() }.get(), _kLSDisplayNameKey, (CFStringRef)applicationName.get(), nullptr);
 #endif
 }
@@ -77,7 +77,7 @@ void NetworkProcess::initializeSandbox(const AuxiliaryProcessInitializationParam
 {
     RetainPtr webKitBundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
 
-    sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebKit.NetworkProcess.sb"_s));
+    sandboxParameters.setOverrideSandboxProfilePath(makeString(StringImpl::create([webKitBundle resourcePath]), "/com.apple.WebKit.NetworkProcess.sb"_s));
 
     AuxiliaryProcess::initializeSandbox(parameters, sandboxParameters);
 }

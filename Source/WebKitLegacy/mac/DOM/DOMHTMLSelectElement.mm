@@ -97,13 +97,13 @@
 - (NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getNameAttribute().createNSString().autorelease();
+    return createNSString(IMPL->getNameAttribute()).autorelease();
 }
 
 - (void)setName:(NSString *)newName
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, newName);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, AtomStringImpl::add((__bridge CFStringRef)newName).get());
 }
 
 - (int)size
@@ -121,7 +121,7 @@
 - (NSString *)type
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->type().createNSString().autorelease();
+    return createNSString(IMPL->type()).autorelease();
 }
 
 - (DOMHTMLOptionsCollection *)options
@@ -151,13 +151,13 @@
 - (NSString *)value
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->value().createNSString().autorelease();
+    return createNSString(IMPL->value()).autorelease();
 }
 
 - (void)setValue:(NSString *)newValue
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setValue(newValue);
+    IMPL->setValue(StringImpl::create(newValue).get());
 }
 
 - (BOOL)willValidate
@@ -175,7 +175,7 @@
 - (DOMNode *)namedItem:(NSString *)inName
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->namedItem(inName)));
+    return kit(WTF::getPtr(IMPL->namedItem(AtomStringImpl::add((__bridge CFStringRef)inName).get())));
 }
 
 - (void)add:(DOMHTMLElement *)element before:(DOMHTMLElement *)before

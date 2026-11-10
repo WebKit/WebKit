@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace Style {
 
-WTF::String Content::altText() const
+RefPtr<StringImpl> Content::altText() const
 {
     if (auto* contentData = tryData())
         return contentData->alt.value_or(String { nullString() }).value;
@@ -60,7 +60,7 @@ auto ToCSS<Content::Data>::operator()(const Content::Data& value, const Style::C
                     return CSS::Content::Image { toCSS(image.image, style) };
                 },
                 [&](const Content::Counter& counter) -> CSS::Content::VisibleContentListItem {
-                    if (counter.separator.value.isEmpty()) {
+                    if (isEmpty(counter.separator.value)) {
                         return CSS::Content::CounterFunction {
                             .parameters = {
                                 toCSS(counter.identifier, style),

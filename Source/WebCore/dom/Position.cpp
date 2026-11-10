@@ -1164,7 +1164,7 @@ Position Position::leadingWhitespacePosition(Affinity affinity, bool considerNon
     RefPtr previousNode = prev.deprecatedNode();
     if (prev != *this && inSameEnclosingBlockFlowElement(node.get(), previousNode.get())) {
         if (auto* previousText = dynamicDowncast<Text>(*previousNode)) {
-            char16_t c = previousText->data()[prev.deprecatedEditingOffset()];
+            char16_t c = codeUnitAt(previousText->data(), prev.deprecatedEditingOffset());
             if (considerNonCollapsibleWhitespace ? (isASCIIWhitespace(c) || c == noBreakSpace) : deprecatedIsCollapsibleWhitespace(c)) {
                 if (isEditablePosition(prev))
                     return prev;
@@ -1261,7 +1261,7 @@ std::pair<RenderObject*, unsigned> Position::rendererAndOffset() const
     if (!textFragment || !textFragment->firstLetter())
         return { renderer, offset };
 
-    if (offset >= textFragment->start() && textFragment->text().length())
+    if (offset >= textFragment->start() && length(textFragment->text()))
         return { renderer, offset - textFragment->start() };
 
     // It looks like we are on the first letter renderer.
@@ -1272,7 +1272,7 @@ std::pair<RenderObject*, unsigned> Position::rendererAndOffset() const
     }
 
     // The first-letter text may not start at DOM offset 0 (e.g. collapsed whitespace precedes the first letter).
-    auto firstLetterStart = textFragment->start() - firstLetterRenderer->text().length();
+    auto firstLetterStart = textFragment->start() - length(firstLetterRenderer->text());
     if (offset < firstLetterStart)
         return { nullptr, 0 };
     return { firstLetterRenderer, offset - firstLetterStart };
@@ -1477,13 +1477,13 @@ void Position::debugPosition(ASCIILiteral msg) const
     if (isNull())
         SAFE_FPRINTF(stderr, "Position [%s]: null\n", msg);
     else
-        SAFE_FPRINTF(stderr, "Position [%s]: %s [%p] at %d\n", msg, deprecatedNode()->nodeName().utf8(), deprecatedNode(), m_offset);
+        SAFE_FPRINTF(stderr, "Position [%s]: %s [%p] at %d\n", msg, utf8(deprecatedNode()->nodeName()), deprecatedNode(), m_offset);
 }
 
-String Position::debugDescription() const
+RefPtr<StringImpl> Position::debugDescription() const
 {
     if (isNull())
-        return "<null>"_s;
+        return "<null>"_si;
     return makeString("offset "_s, m_offset, " of "_s, deprecatedNode()->debugDescription());
 }
 

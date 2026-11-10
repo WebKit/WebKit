@@ -28,7 +28,7 @@
 namespace WebCore {
 
 struct SpeechRecognitionAlternativeData {
-    String transcript;
+    RefPtr<StringImpl> transcript;
     double confidence { 0.0 };
 };
 

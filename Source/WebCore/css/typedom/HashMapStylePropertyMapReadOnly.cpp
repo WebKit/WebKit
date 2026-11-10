@@ -31,12 +31,12 @@
 
 namespace WebCore {
 
-Ref<HashMapStylePropertyMapReadOnly> HashMapStylePropertyMapReadOnly::create(HashMap<AtomString, RefPtr<CSSValue>>&& map)
+Ref<HashMapStylePropertyMapReadOnly> HashMapStylePropertyMapReadOnly::create(HashMap<RefPtr<AtomStringImpl>, RefPtr<CSSValue>>&& map)
 {
     return adoptRef(*new HashMapStylePropertyMapReadOnly(WTF::move(map)));
 }
 
-HashMapStylePropertyMapReadOnly::HashMapStylePropertyMapReadOnly(HashMap<AtomString, RefPtr<CSSValue>>&& map)
+HashMapStylePropertyMapReadOnly::HashMapStylePropertyMapReadOnly(HashMap<RefPtr<AtomStringImpl>, RefPtr<CSSValue>>&& map)
     : m_map(WTF::move(map))
 {
 }
@@ -48,13 +48,13 @@ RefPtr<CSSValue> HashMapStylePropertyMapReadOnly::propertyValue(CSSPropertyID pr
     return m_map.get(nameString(propertyID));
 }
 
-String HashMapStylePropertyMapReadOnly::shorthandPropertySerialization(CSSPropertyID) const
+RefPtr<StringImpl> HashMapStylePropertyMapReadOnly::shorthandPropertySerialization(CSSPropertyID) const
 {
     // FIXME: Not supported.
     return { };
 }
 
-RefPtr<CSSValue> HashMapStylePropertyMapReadOnly::customPropertyValue(const AtomString& property) const
+RefPtr<CSSValue> HashMapStylePropertyMapReadOnly::customPropertyValue(AtomStringImpl* property) const
 {
     return m_map.get(property);
 }

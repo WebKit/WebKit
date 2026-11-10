@@ -77,7 +77,7 @@ Protocol::Network::LoaderId IdentifierRegistry::takeLoader(WebCore::DocumentLoad
     return m_loaderToIdentifier.take(&loader);
 }
 
-String IdentifierRegistry::protocolFrameId(const WebCore::Frame& frame)
+RefPtr<StringImpl> IdentifierRegistry::protocolFrameId(const WebCore::Frame& frame)
 {
     return protocolFrameId(frame.frameID(), hostingProcessForFrame(frame));
 }
@@ -87,7 +87,7 @@ LegacyIdentifierRegistry::~LegacyIdentifierRegistry() = default;
 
 WebCore::Frame* LegacyIdentifierRegistry::frameForId(const Protocol::Network::FrameId& frameId)
 {
-    return frameId.isEmpty() ? nullptr : m_identifierToFrame.get(frameId);
+    return isEmpty(frameId) ? nullptr : m_identifierToFrame.get(frameId);
 }
 
 Protocol::Network::FrameId LegacyIdentifierRegistry::frameId(const WebCore::Frame* frame)
@@ -105,14 +105,14 @@ RefPtr<WebCore::LocalFrame> LegacyIdentifierRegistry::assertFrame(Protocol::Erro
 {
     RefPtr frame = dynamicDowncast<WebCore::LocalFrame>(frameForId(frameId));
     if (!frame)
-        errorString = "Missing frame for given frameId"_s;
+        errorString = "Missing frame for given frameId"_si;
     return frame;
 }
 
 Protocol::Network::FrameId LegacyIdentifierRegistry::takeFrame(const WebCore::Frame& frame)
 {
     auto identifier = m_frameToIdentifier.take(frame);
-    if (!identifier.isNull())
+    if (identifier)
         m_identifierToFrame.remove(identifier);
     return identifier;
 }
@@ -135,14 +135,14 @@ Protocol::Network::FrameId BackendIdentifierRegistry::frameId(const WebCore::Fra
 
 WebCore::Frame* BackendIdentifierRegistry::frameForId(const Protocol::Network::FrameId& frameId)
 {
-    return frameId.isEmpty() ? nullptr : m_identifierToFrame.get(frameId);
+    return isEmpty(frameId) ? nullptr : m_identifierToFrame.get(frameId);
 }
 
 RefPtr<WebCore::LocalFrame> BackendIdentifierRegistry::assertFrame(Protocol::ErrorString& errorString, const Protocol::Network::FrameId& frameId)
 {
     RefPtr frame = dynamicDowncast<WebCore::LocalFrame>(frameForId(frameId));
     if (!frame)
-        errorString = "Missing frame for given frameId"_s;
+        errorString = "Missing frame for given frameId"_si;
     return frame;
 }
 

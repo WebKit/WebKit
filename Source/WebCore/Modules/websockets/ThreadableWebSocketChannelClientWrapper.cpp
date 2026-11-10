@@ -76,30 +76,30 @@ void ThreadableWebSocketChannelClientWrapper::setFailedWebSocketChannelCreation(
     m_failedWebSocketChannelCreation = true;
 }
 
-String ThreadableWebSocketChannelClientWrapper::subprotocol() const
+RefPtr<StringImpl> ThreadableWebSocketChannelClientWrapper::subprotocol() const
 {
     if (m_subprotocol.isEmpty())
         return emptyString();
-    return String(m_subprotocol);
+    return StringImpl::create(m_subprotocol);
 }
 
-void ThreadableWebSocketChannelClientWrapper::setSubprotocol(const String& subprotocol)
+void ThreadableWebSocketChannelClientWrapper::setSubprotocol(StringImpl* subprotocol)
 {
-    unsigned length = subprotocol.length();
+    unsigned length = WTF::length(subprotocol);
     m_subprotocol.resize(length);
     StringView(subprotocol).getCharacters(m_subprotocol.mutableSpan());
 }
 
-String ThreadableWebSocketChannelClientWrapper::extensions() const
+RefPtr<StringImpl> ThreadableWebSocketChannelClientWrapper::extensions() const
 {
     if (m_extensions.isEmpty())
         return emptyString();
-    return String(m_extensions);
+    return StringImpl::create(m_extensions);
 }
 
-void ThreadableWebSocketChannelClientWrapper::setExtensions(const String& extensions)
+void ThreadableWebSocketChannelClientWrapper::setExtensions(StringImpl* extensions)
 {
-    unsigned length = extensions.length();
+    unsigned length = WTF::length(extensions);
     m_extensions.resize(length);
     StringView(extensions).getCharacters(m_extensions.mutableSpan());
 }
@@ -120,9 +120,9 @@ void ThreadableWebSocketChannelClientWrapper::didConnect()
         processPendingTasks();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didReceiveMessage(String&& message)
+void ThreadableWebSocketChannelClientWrapper::didReceiveMessage(RefPtr<StringImpl>&& message)
 {
-    m_pendingTasks.append(makeUnique<ScriptExecutionContext::Task>([this, protectedThis = Ref { *this }, message = WTF::move(message).isolatedCopy()] (ScriptExecutionContext&) mutable {
+    m_pendingTasks.append(makeUnique<ScriptExecutionContext::Task>([this, protectedThis = Ref { *this }, message = isolatedCopy(WTF::move(message))] (ScriptExecutionContext&) mutable {
         if (RefPtr client = m_client.get())
             client->didReceiveMessage(WTF::move(message));
     }));
@@ -164,9 +164,9 @@ void ThreadableWebSocketChannelClientWrapper::didStartClosingHandshake()
         processPendingTasks();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didClose(uint64_t unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
+void ThreadableWebSocketChannelClientWrapper::didClose(uint64_t unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, StringImpl* reason)
 {
-    m_pendingTasks.append(makeUnique<ScriptExecutionContext::Task>([this, protectedThis = Ref { *this }, unhandledBufferedAmount, closingHandshakeCompletion, code, reason = reason.isolatedCopy()] (ScriptExecutionContext&) {
+    m_pendingTasks.append(makeUnique<ScriptExecutionContext::Task>([this, protectedThis = Ref { *this }, unhandledBufferedAmount, closingHandshakeCompletion, code, reason = isolatedCopy(reason)] (ScriptExecutionContext&) {
         if (RefPtr client = m_client.get())
             client->didClose(unhandledBufferedAmount, closingHandshakeCompletion, code, reason);
     }));
@@ -175,9 +175,9 @@ void ThreadableWebSocketChannelClientWrapper::didClose(uint64_t unhandledBuffere
         processPendingTasks();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didReceiveMessageError(String&& reason)
+void ThreadableWebSocketChannelClientWrapper::didReceiveMessageError(RefPtr<StringImpl>&& reason)
 {
-    m_pendingTasks.append(makeUnique<ScriptExecutionContext::Task>([this, protectedThis = Ref { *this }, reason = WTF::move(reason).isolatedCopy()] (ScriptExecutionContext&) mutable {
+    m_pendingTasks.append(makeUnique<ScriptExecutionContext::Task>([this, protectedThis = Ref { *this }, reason = isolatedCopy(WTF::move(reason))] (ScriptExecutionContext&) mutable {
         if (RefPtr client = m_client.get())
             client->didReceiveMessageError(WTF::move(reason));
     }));

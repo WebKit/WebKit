@@ -47,8 +47,8 @@ NODELETE static RealtimeMediaSourceSupportedConstraints supportedRealtimeIncomin
     return constraints;
 }
 
-RealtimeIncomingVideoSource::RealtimeIncomingVideoSource(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& videoTrackId)
-    : RealtimeMediaSource(CaptureDevice { WTF::move(videoTrackId), CaptureDevice::DeviceType::Camera, "remote video"_s })
+RealtimeIncomingVideoSource::RealtimeIncomingVideoSource(Ref<webrtc::VideoTrackInterface>&& videoTrack, RefPtr<StringImpl>&& videoTrackId)
+    : RealtimeMediaSource(CaptureDevice { WTF::move(videoTrackId), CaptureDevice::DeviceType::Camera, "remote video"_si })
     , m_videoTrack(WTF::move(videoTrack))
 {
     m_currentSettings = RealtimeMediaSourceSettings { };

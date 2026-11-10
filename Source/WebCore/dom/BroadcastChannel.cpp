@@ -71,7 +71,7 @@ static PartitionedSecurityOrigin partitionedSecurityOriginFromContext(ScriptExec
 
 class BroadcastChannel::MainThreadBridge : public ThreadSafeRefCounted<MainThreadBridge, WTF::DestructionThread::Main>, public Identified<BroadcastChannelIdentifier> {
 public:
-    NODELETE static Ref<MainThreadBridge> create(BroadcastChannel& channel, const String& name)
+    NODELETE static Ref<MainThreadBridge> create(BroadcastChannel& channel, StringImpl* name)
     {
         return adoptRef(*new MainThreadBridge(channel, name));
     }
@@ -81,21 +81,21 @@ public:
     void postMessage(Ref<SerializedScriptValue>&&);
     NODELETE void detach() { m_broadcastChannel = nullptr; }
 
-    String name() const { return m_name.isolatedCopy(); }
+    RefPtr<StringImpl> name() const { return isolatedCopy(m_name); }
 
 private:
-    MainThreadBridge(BroadcastChannel&, const String& name);
+    MainThreadBridge(BroadcastChannel&, StringImpl* name);
 
     void ensureOnMainThread(Function<void(Page*)>&&);
 
     WeakPtr<BroadcastChannel, WeakPtrImplWithEventTargetData> m_broadcastChannel;
-    const String m_name; // Main thread only.
+    const RefPtr<StringImpl> m_name; // Main thread only.
     PartitionedSecurityOrigin m_origin; // Main thread only.
 };
 
-BroadcastChannel::MainThreadBridge::MainThreadBridge(BroadcastChannel& channel, const String& name)
+BroadcastChannel::MainThreadBridge::MainThreadBridge(BroadcastChannel& channel, StringImpl* name)
     : m_broadcastChannel(channel)
-    , m_name(name.isolatedCopy())
+    , m_name(isolatedCopy(name))
     , m_origin(partitionedSecurityOriginFromContext(*protect(channel.scriptExecutionContext())).isolatedCopy())
 {
 }
@@ -156,7 +156,7 @@ void BroadcastChannel::MainThreadBridge::postMessage(Ref<SerializedScriptValue>&
     });
 }
 
-BroadcastChannel::BroadcastChannel(ScriptExecutionContext& context, const String& name)
+BroadcastChannel::BroadcastChannel(ScriptExecutionContext& context, StringImpl* name)
     : ActiveDOMObject(&context)
     , m_mainThreadBridge(MainThreadBridge::create(*this, name))
 {
@@ -183,7 +183,7 @@ BroadcastChannelIdentifier BroadcastChannel::identifier() const
     return m_mainThreadBridge->identifier();
 }
 
-String BroadcastChannel::name() const
+RefPtr<StringImpl> BroadcastChannel::name() const
 {
     return m_mainThreadBridge->name();
 }
@@ -194,7 +194,7 @@ ExceptionOr<void> BroadcastChannel::postMessage(JSC::JSGlobalObject& globalObjec
         return { };
 
     if (m_isClosed)
-        return Exception { ExceptionCode::InvalidStateError, "This BroadcastChannel is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "This BroadcastChannel is closed"_si };
 
     Vector<Ref<MessagePort>> ports;
     auto messageData = SerializedScriptValue::create(globalObject, message, { }, ports, SerializationForStorage::No);

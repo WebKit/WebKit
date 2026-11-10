@@ -138,7 +138,7 @@ NSDictionary *searchPredicateForSearchCriteria(JSContextRef context, Accessibili
     if (searchKey) {
         RetainPtr<id> searchKeyParameter;
         if (JSValueIsString(context, searchKey))
-            searchKeyParameter = toWTFString(context, searchKey).createNSString();
+            searchKeyParameter = createNSString(toWTFString(context, searchKey));
         else if (JSValueIsObject(context, searchKey)) {
             JSObjectRef searchKeyArray = JSValueToObject(context, searchKey, nullptr);
             unsigned searchKeyArrayLength = arrayLength(context, searchKeyArray);
@@ -146,7 +146,7 @@ NSDictionary *searchPredicateForSearchCriteria(JSContextRef context, Accessibili
                 auto searchKey = toWTFString(context, JSObjectGetPropertyAtIndex(context, searchKeyArray, i, nullptr));
                 if (!searchKeyParameter)
                     searchKeyParameter = [NSMutableArray array];
-                [searchKeyParameter addObject:searchKey.createNSString().get()];
+                [searchKeyParameter addObject:createNSString(searchKey).get()];
             }
         }
         if (searchKeyParameter)
@@ -154,7 +154,7 @@ NSDictionary *searchPredicateForSearchCriteria(JSContextRef context, Accessibili
     }
 
     if (searchText && JSStringGetLength(searchText))
-        [parameterizedAttribute setObject:toWTFString(searchText).createNSString().get() forKey:@"AXSearchText"];
+        [parameterizedAttribute setObject:createNSString(toWTFString(searchText)).get() forKey:@"AXSearchText"];
 
     [parameterizedAttribute setObject:@(visibleOnly) forKey:@"AXVisibleOnly"];
     [parameterizedAttribute setObject:@(immediateDescendantsOnly) forKey:@"AXImmediateDescendantsOnly"];

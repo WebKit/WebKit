@@ -53,7 +53,7 @@ struct DragItem final {
     IntPoint eventPositionInRootViewCoordinates;
     IntPoint dragLocationInContentCoordinates;
     IntPoint dragLocationInWindowCoordinates;
-    String title;
+    RefPtr<StringImpl> title;
     URL url;
     // FIXME: rdar://160803165 dragPreviewFrameInRootViewCoordinates is calculated using convertToRootView, which is incorrect with Site Isolation.
     IntRect dragPreviewFrameInRootViewCoordinates;

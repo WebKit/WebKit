@@ -37,7 +37,7 @@ class Payment;
 class ApplePayPaymentAuthorizedEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(ApplePayPaymentAuthorizedEvent);
 public:
-    static Ref<ApplePayPaymentAuthorizedEvent> create(const AtomString& type, unsigned version, const Payment& payment)
+    static Ref<ApplePayPaymentAuthorizedEvent> create(AtomStringImpl* type, unsigned version, const Payment& payment)
     {
         return adoptRef(*new ApplePayPaymentAuthorizedEvent(type, version, payment));
     }
@@ -47,7 +47,7 @@ public:
     const ApplePayPayment& payment() const LIFETIME_BOUND { return m_payment; }
 
 private:
-    ApplePayPaymentAuthorizedEvent(const AtomString& type, unsigned version, const Payment&);
+    ApplePayPaymentAuthorizedEvent(AtomStringImpl* type, unsigned version, const Payment&);
 
     const ApplePayPayment m_payment;
 };

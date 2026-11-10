@@ -50,14 +50,14 @@ class Node;
 
 enum class SyntheticClickType : uint8_t;
 
-bool isAnyClick(const AtomString& eventType);
+bool isAnyClick(AtomStringImpl* eventType);
 bool isAnyClick(const Event&);
 
 class MouseEvent : public MouseRelatedEvent {
     WTF_MAKE_TZONE_ALLOCATED(MouseEvent);
 public:
     NODELETE WEBCORE_EXPORT static Ref<MouseEvent> create(
-        const AtomString& type,
+        AtomStringImpl* type,
         CanBubble,
         IsCancelable,
         IsComposed,
@@ -82,7 +82,7 @@ public:
     );
 
     WEBCORE_EXPORT static Ref<MouseEvent> create(
-        const AtomString& eventType,
+        AtomStringImpl* eventType,
         RefPtr<WindowProxy>&&,
         const PlatformMouseEvent&,
         const Vector<Ref<MouseEvent>>& coalescedEvents,
@@ -92,7 +92,7 @@ public:
     );
 
     static Ref<MouseEvent> create(
-        const AtomString& eventType,
+        AtomStringImpl* eventType,
         CanBubble,
         IsCancelable,
         IsComposed,
@@ -112,7 +112,7 @@ public:
 
     NODELETE static Ref<MouseEvent> createForBindings();
 
-    static Ref<MouseEvent> create(const AtomString& eventType, const MouseEventInit&);
+    static Ref<MouseEvent> create(AtomStringImpl* eventType, const MouseEventInit&);
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     enum class ShouldComputeMovementDelta : bool { No, Yes };
@@ -122,7 +122,7 @@ public:
     virtual ~MouseEvent();
 
     WEBCORE_EXPORT void initMouseEvent(
-        const AtomString& type,
+        AtomStringImpl* type,
         bool canBubble,
         bool cancelable,
         RefPtr<WindowProxy>&&,
@@ -164,7 +164,7 @@ public:
 protected:
     MouseEvent(
         enum EventInterfaceType,
-        const AtomString& type,
+        AtomStringImpl* type,
         CanBubble,
         IsCancelable,
         IsComposed,
@@ -190,7 +190,7 @@ protected:
 
     MouseEvent(
         enum EventInterfaceType,
-        const AtomString& type,
+        AtomStringImpl* type,
         CanBubble,
         IsCancelable,
         IsComposed,
@@ -208,7 +208,7 @@ protected:
         RefPtr<EventTarget>&& relatedTarget
     );
 
-    MouseEvent(enum EventInterfaceType, const AtomString& type, const MouseEventInit&, IsTrusted);
+    MouseEvent(enum EventInterfaceType, AtomStringImpl* type, const MouseEventInit&, IsTrusted);
 
     explicit MouseEvent(enum EventInterfaceType);
 

@@ -56,7 +56,7 @@ struct SynthesisPair {
 };
 
 struct VariationDefaults {
-    String axisName;
+    RefPtr<StringImpl> axisName;
     float defaultValue;
     float minimumValue;
     float maximumValue;
@@ -84,7 +84,7 @@ enum class ApplyTraitsVariations : bool { No, Yes };
 RetainPtr<CTFontRef> preparePlatformFont(UnrealizedCoreTextFont&&, const FontDescription&, const FontCreationContext&, FontTypeForPreparation = FontTypeForPreparation::NonSystemFont, ApplyTraitsVariations = ApplyTraitsVariations::Yes);
 enum class ShouldComputePhysicalTraits : bool { No, Yes };
 SynthesisPair computeNecessarySynthesis(CTFontRef, const FontDescription&, OptionSet<FontLookupOptions> = { }, ShouldComputePhysicalTraits = ShouldComputePhysicalTraits::No, bool isPlatformFont = false);
-RetainPtr<CTFontRef> platformFontWithFamily(const AtomString& family, FontSelectionRequest, TextRenderingMode, float size, OptionSet<FontLookupOptions>);
+RetainPtr<CTFontRef> platformFontWithFamily(AtomStringImpl* family, FontSelectionRequest, TextRenderingMode, float size, OptionSet<FontLookupOptions>);
 FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef);
 void addAttributesForInstalledFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts);
 RetainPtr<CTFontRef> createFontForInstalledFonts(CTFontDescriptorRef, CGFloat size, AllowUserInstalledFonts);
@@ -95,7 +95,7 @@ NODELETE WEBCORE_EXPORT void setOverrideEnhanceTextLegibility(bool);
 bool fontNameIsSystemFont(CFStringRef);
 
 CFStringRef getUIContentSizeCategoryDidChangeNotificationName();
-WEBCORE_EXPORT void setContentSizeCategory(const String&);
+WEBCORE_EXPORT void setContentSizeCategory(StringImpl*);
 WEBCORE_EXPORT CFStringRef contentSizeCategory();
 #if HAVE(TEXT_SCALE_FACTOR)
 WEBCORE_EXPORT float textScaleFactorForContentSizeCategory(CFStringRef);
@@ -106,6 +106,6 @@ WEBCORE_EXPORT void setTextScaleFactor(std::optional<float>);
 VariationDefaultsMap defaultVariationValues(CTFontRef, ShouldLocalizeAxisNames);
 
 NODELETE WEBCORE_EXPORT Lock& userInstalledFontMapLock();
-NODELETE WEBCORE_EXPORT HashMap<String, URL>& userInstalledFontMap() WTF_REQUIRES_LOCK(userInstalledFontMapLock());
-NODELETE WEBCORE_EXPORT HashMap<String, Vector<String>>& userInstalledFontFamilyMap() WTF_REQUIRES_LOCK(userInstalledFontMapLock());
+NODELETE WEBCORE_EXPORT HashMap<RefPtr<StringImpl>, URL>& userInstalledFontMap() WTF_REQUIRES_LOCK(userInstalledFontMapLock());
+NODELETE WEBCORE_EXPORT HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>& userInstalledFontFamilyMap() WTF_REQUIRES_LOCK(userInstalledFontMapLock());
 } // namespace WebCore

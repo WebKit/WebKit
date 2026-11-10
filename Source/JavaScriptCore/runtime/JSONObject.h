@@ -59,7 +59,7 @@ private:
 
 JS_EXPORT_PRIVATE JSValue JSONParse(JSGlobalObject*, StringView);
 JSValue JSONParseWithException(JSGlobalObject*, StringView);
-JS_EXPORT_PRIVATE String JSONStringify(JSGlobalObject*, JSValue, JSValue space);
-JS_EXPORT_PRIVATE String JSONStringify(JSGlobalObject*, JSValue, unsigned indent);
+JS_EXPORT_PRIVATE RefPtr<StringImpl> JSONStringify(JSGlobalObject*, JSValue, JSValue space);
+JS_EXPORT_PRIVATE RefPtr<StringImpl> JSONStringify(JSGlobalObject*, JSValue, unsigned indent);
     
 } // namespace JSC

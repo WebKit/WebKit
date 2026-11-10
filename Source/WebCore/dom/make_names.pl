@@ -123,7 +123,7 @@ END
     print F "};\n\n";
     print F "extern LazyNeverDestroyed<FamilyNamesList<const StaticStringImpl*, ", scalar(keys %parameters), ">> familyNamesData;\n";
     print F "extern MainThreadLazyNeverDestroyed<FamilyNamesList<AtomStringImpl*, ", scalar(keys %parameters), ">> familyNames;\n\n";
-    printMacros($F, "extern MainThreadLazyNeverDestroyed<const AtomString>", "", \%parameters);
+    printMacros($F, "extern MainThreadLazyNeverDestroyed<const RefPtr<AtomStringImpl>>", "", \%parameters);
     print F "\n";
     print F "\n";
 
@@ -141,7 +141,7 @@ END
     print F "LazyNeverDestroyed<FamilyNamesList<const StaticStringImpl*, ", scalar(keys %parameters), ">> familyNamesData;\n";
     print F "MainThreadLazyNeverDestroyed<FamilyNamesList<AtomStringImpl*, ", scalar(keys %parameters), ">> familyNames;\n\n";
 
-    printMacros($F, "MainThreadLazyNeverDestroyed<const AtomString>", "", \%parameters);
+    printMacros($F, "MainThreadLazyNeverDestroyed<const RefPtr<AtomStringImpl>>", "", \%parameters);
 
     printInit($F, 0);
 
@@ -155,13 +155,13 @@ END
 
     print F "\n";
     for my $name (sort keys %parameters) {
-        print F "    ${name}.construct(${name}Data);\n";
+        print F "    ${name}.construct(AtomStringImpl::add(${name}Data));\n";
     }
 
     print F "\n";
     print F "    familyNames.construct();\n";
     for my $name (sort keys %parameters) {
-        print F "    familyNames->append(${name}->impl());\n";
+        print F "    familyNames->append(${name}->get());\n";
     }
 
     print F "}\n}\n}\n";
@@ -833,7 +833,7 @@ END
     my $lowercaseNamespacePrefix = lc($parameters{namespacePrefix});
 
     print F "// Namespace\n";
-    print F "WEBCORE_EXPORT extern MainThreadLazyNeverDestroyed<const AtomString> ${lowercaseNamespacePrefix}NamespaceURI;\n\n";
+    print F "WEBCORE_EXPORT extern MainThreadLazyNeverDestroyed<const RefPtr<AtomStringImpl>> ${lowercaseNamespacePrefix}NamespaceURI;\n\n";
 
     if (keys %allElements) {
         print F "// Tags\n";
@@ -947,18 +947,18 @@ sub printTagNameHeaderFile
     }
 
     print F "inline constexpr auto lastTagNameEnumValue = TagName::$lastTagEnumValue;\n";
-    print F "inline LazyNeverDestroyed<EnumeratedArray<TagName, AtomString, lastTagNameEnumValue>> tagNameStrings;\n";
+    print F "inline LazyNeverDestroyed<EnumeratedArray<TagName, RefPtr<AtomStringImpl>, lastTagNameEnumValue>> tagNameStrings;\n";
     print F "\n";
     print F "WEBCORE_EXPORT void initializeTagNameStrings();\n";
     print F "TagName findTagName(std::span<const char16_t>);\n";
     print F "#if ASSERT_ENABLED\n";
-    print F "TagName findTagName(const String&);\n";
+    print F "TagName findTagName(StringImpl*);\n";
     print F "#endif\n";
     for my $namespace (sort keys %namespacesWithTagsRequiringAdjustment) {
         print F "TagName adjust${namespace}TagName(TagName);\n";
     }
     print F "\n";
-    print F "inline const AtomString& tagNameAsString(TagName tagName)\n";
+    print F "inline const RefPtr<AtomStringImpl>& tagNameAsString(TagName tagName)\n";
     print F "{\n";
     print F "    return tagNameStrings.get()[tagName];\n";
     print F "}\n";
@@ -1022,7 +1022,7 @@ sub printTagNameCppFile
     for my $elementKey (sort byElementNameOrder keys %allElements) {
         next if $allElements{$elementKey}{unadjustedTagEnumValue} eq "";
         my $unadjustedTagEnumValue = $allElements{$elementKey}{unadjustedTagEnumValue};
-        print F "    strings[TagName::$unadjustedTagEnumValue] = \"$allElements{$elementKey}{parsedTagName}\"_s;\n";
+        print F "    strings[TagName::$unadjustedTagEnumValue] = \"$allElements{$elementKey}{parsedTagName}\"_atom;\n";
     }
     print F "}\n";
     print F "\n";
@@ -1038,11 +1038,11 @@ sub printTagNameCppFile
     print F "}\n";
     print F "\n";
     print F "#if ASSERT_ENABLED\n";
-    print F "TagName findTagName(const String& name)\n";
+    print F "TagName findTagName(StringImpl* name)\n";
     print F "{\n";
-    print F "    if (name.is8Bit())\n";
-    print F "        return findTagFromBuffer(name.span8());\n";
-    print F "    return findTagFromBuffer(name.span16());\n";
+    print F "    if (is8Bit(name))\n";
+    print F "        return findTagFromBuffer(span8(name));\n";
+    print F "    return findTagFromBuffer(span16(name));\n";
     print F "}\n";
     print F "#endif\n";
     print F "\n";
@@ -1115,12 +1115,12 @@ sub printNodeNameHeaderFile
     }
     print F "} // namespace AttributeNames\n";
     print F "\n";
-    print F "NodeName findNodeName(Namespace, const String&);\n";
+    print F "NodeName findNodeName(Namespace, StringImpl*);\n";
     print F "ElementName findHTMLElementName(std::span<const Latin1Character>);\n";
     print F "ElementName findHTMLElementName(std::span<const char16_t>);\n";
-    print F "ElementName findHTMLElementName(const String&);\n";
-    print F "ElementName findSVGElementName(const String&);\n";
-    print F "ElementName findMathMLElementName(const String&);\n";
+    print F "ElementName findHTMLElementName(StringImpl*);\n";
+    print F "ElementName findSVGElementName(StringImpl*);\n";
+    print F "ElementName findMathMLElementName(StringImpl*);\n";
     print F "TagName tagNameForElementName(ElementName);\n";
     print F "ElementName elementNameForTag(Namespace, TagName);\n";
     print F "const QualifiedName& qualifiedNameForNodeName(NodeName);\n";
@@ -1247,11 +1247,11 @@ sub printNodeNameCppFile
     print F "    }\n";
     print F "}\n";
     print F "\n";
-    print F "NodeName findNodeName(Namespace ns, const String& name)\n";
+    print F "NodeName findNodeName(Namespace ns, StringImpl* name)\n";
     print F "{\n";
-    print F "    if (name.is8Bit())\n";
-    print F "        return findNodeNameFromBuffer(ns, name.span8());\n";
-    print F "    return findNodeNameFromBuffer(ns, name.span16());\n";
+    print F "    if (is8Bit(name))\n";
+    print F "        return findNodeNameFromBuffer(ns, span8(name));\n";
+    print F "    return findNodeNameFromBuffer(ns, span16(name));\n";
     print F "}\n";
     print F "\n";
     print F "ElementName findHTMLElementName(std::span<const Latin1Character> buffer)\n";
@@ -1264,25 +1264,25 @@ sub printNodeNameCppFile
     print F "    return findHTMLNodeName(buffer);\n";
     print F "}\n";
     print F "\n";
-    print F "ElementName findHTMLElementName(const String& name)\n";
+    print F "ElementName findHTMLElementName(StringImpl* name)\n";
     print F "{\n";
-    print F "    if (name.is8Bit())\n";
-    print F "        return findHTMLNodeName(name.span8());\n";
-    print F "    return findHTMLNodeName(name.span16());\n";
+    print F "    if (is8Bit(name))\n";
+    print F "        return findHTMLNodeName(span8(name));\n";
+    print F "    return findHTMLNodeName(span16(name));\n";
     print F "}\n";
     print F "\n";
-    print F "ElementName findSVGElementName(const String& name)\n";
+    print F "ElementName findSVGElementName(StringImpl* name)\n";
     print F "{\n";
-    print F "    if (name.is8Bit())\n";
-    print F "        return findSVGNodeName(name.span8());\n";
-    print F "    return findSVGNodeName(name.span16());\n";
+    print F "    if (is8Bit(name))\n";
+    print F "        return findSVGNodeName(span8(name));\n";
+    print F "    return findSVGNodeName(span16(name));\n";
     print F "}\n";
     print F "\n";
-    print F "ElementName findMathMLElementName(const String& name)\n";
+    print F "ElementName findMathMLElementName(StringImpl* name)\n";
     print F "{\n";
-    print F "    if (name.is8Bit())\n";
-    print F "        return findMathMLNodeName(name.span8());\n";
-    print F "    return findMathMLNodeName(name.span16());\n";
+    print F "    if (is8Bit(name))\n";
+    print F "        return findMathMLNodeName(span8(name));\n";
+    print F "    return findMathMLNodeName(span16(name));\n";
     print F "}\n";
     print F "\n";
     print F "const QualifiedName& qualifiedNameForNodeName(NodeName nodeName)\n";
@@ -1333,7 +1333,7 @@ sub printNamespaceHeaderFile
     }
     print F "};\n";
     print F "\n";
-    print F "Namespace findNamespace(const AtomString&);\n";
+    print F "Namespace findNamespace(AtomStringImpl*);\n";
     print F "\n";
     print F "} // namespace WebCore\n";
     close F;
@@ -1514,7 +1514,7 @@ END
 
     my $lowercaseNamespacePrefix = lc($parameters{namespacePrefix});
 
-    print F "MainThreadLazyNeverDestroyed<const AtomString> ${lowercaseNamespacePrefix}NamespaceURI;\n\n";
+    print F "MainThreadLazyNeverDestroyed<const RefPtr<AtomStringImpl>> ${lowercaseNamespacePrefix}NamespaceURI;\n\n";
 
     my %allStrings = ();
     for my $elementKey (keys %allElements) {
@@ -1551,7 +1551,7 @@ END
 
     printInit($F, 0);
 
-    print(F "    AtomString ${lowercaseNamespacePrefix}NS(\"$parameters{namespaceURI}\"_s);\n\n");
+    print(F "    RefPtr<AtomStringImpl> ${lowercaseNamespacePrefix}NS = \"$parameters{namespaceURI}\"_atom;\n\n");
 
     print(F "    // Namespace\n");
     print(F "    ${lowercaseNamespacePrefix}NamespaceURI.construct(${lowercaseNamespacePrefix}NS);\n");
@@ -1559,12 +1559,12 @@ END
     print F StaticString::GenerateStringAsserts(\%allStrings);
 
     if (keys %allElements) {
-        my $tagsNamespace = $parameters{elementsNullNamespace} ? "nullAtom()" : "${lowercaseNamespacePrefix}NS";
+        my $tagsNamespace = $parameters{elementsNullNamespace} ? "nullptr" : "${lowercaseNamespacePrefix}NS";
         my $tagsNamespaceEnumValue = $parameters{elementsNullNamespace} ? "None" : $parameters{namespace};
         printDefinitions($F, \%allElements, "tags", $tagsNamespace, $tagsNamespaceEnumValue);
     }
     if (keys %allAttrs) {
-        my $attrsNamespace = $parameters{attrsNullNamespace} ? "nullAtom()" : "${lowercaseNamespacePrefix}NS";
+        my $attrsNamespace = $parameters{attrsNullNamespace} ? "nullptr" : "${lowercaseNamespacePrefix}NS";
         my $attrsNamespaceEnumValue = $parameters{attrsNullNamespace} ? "None" : $parameters{namespace};
         printDefinitions($F, \%allAttrs, "attributes", $attrsNamespace, $attrsNamespaceEnumValue);
     }
@@ -1591,13 +1591,13 @@ sub printNamespaceCppFile
     print F "\n";
     print F "namespace WebCore {\n";
     print F "\n";
-    print F "Namespace findNamespace(const AtomString& namespaceURI)\n";
+    print F "Namespace findNamespace(AtomStringImpl* namespaceURI)\n";
     print F "{\n";
-    print F "    if (namespaceURI.isEmpty())\n";
+    print F "    if (isEmpty(namespaceURI))\n";
     print F "        return Namespace::None;\n";
     for my $namespace (sort keys %allCppNamespaces) {
         my $lowercaseNamespacePrefix = lc $allCppNamespaces{$namespace}{namespacePrefix};
-        print F "    if (namespaceURI == ${namespace}Names::${lowercaseNamespacePrefix}NamespaceURI)\n";
+        print F "    if (namespaceURI == ${namespace}Names::${lowercaseNamespacePrefix}NamespaceURI.get())\n";
         print F "        return Namespace::${namespace};\n";
     }
     print F "    return Namespace::Unknown;\n";
@@ -1694,7 +1694,7 @@ sub printDefinitions
     for my $key (sort keys %$namesRef) {
         my $identifier = $namesRef->{$key}{identifier};
         my $nodeNameEnumValue = $namesRef->{$key}{nodeNameEnumValue} || "Unknown";
-        print F "    $identifier$shortCamelType.construct(nullAtom(), AtomString(${identifier}Data), $namespaceURI, Namespace::$namespaceEnumValue, NodeName::$nodeNameEnumValue);\n";
+        print F "    $identifier$shortCamelType.construct(nullptr, AtomStringImpl::add(${identifier}Data).get(), $namespaceURI, Namespace::$namespaceEnumValue, NodeName::$nodeNameEnumValue);\n";
     }
 }
 
@@ -1777,7 +1777,7 @@ END
     }
 }
 
-RefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createKnownElement(const AtomString& localName, Document& document, bool createdByParser)
+RefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createKnownElement(AtomStringImpl* localName, Document& document, bool createdByParser)
 {
     return createKnownElement(tagNameForElementName(find$parameters{namespace}ElementName(localName)), $argumentList);
 }
@@ -1787,12 +1787,12 @@ RefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::crea
     return createKnownElementWithName(tagNameForElementName(name.nodeName()), name, $argumentList);
 }
 
-Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(const AtomString& localName, Document& document, bool createdByParser)
+Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(AtomStringImpl* localName, Document& document, bool createdByParser)
 {
     auto elementName = find$parameters{namespace}ElementName(localName);
     if (elementName != ElementName::Unknown)
         return createKnownElement(tagNameForElementName(elementName), $argumentList).releaseNonNull();
-    return $parameters{fallbackInterfaceName}::create(QualifiedName(nullAtom(), localName, $parameters{namespace}Names::${lowercaseNamespacePrefix}NamespaceURI), document);
+    return $parameters{fallbackInterfaceName}::create(QualifiedName(nullptr, localName, $parameters{namespace}Names::${lowercaseNamespacePrefix}NamespaceURI.get()), document);
 }
 
 Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(const QualifiedName& name, Document& document, bool createdByParser)
@@ -1840,11 +1840,11 @@ class $parameters{namespace}ElementFactory {
 public:
 END
 
-print F "    static RefPtr<$parameters{namespace}Element> createKnownElement(const AtomString&, Document&, bool createdByParser = false);\n";
+print F "    static RefPtr<$parameters{namespace}Element> createKnownElement(AtomStringImpl*, Document&, bool createdByParser = false);\n";
 print F "    static RefPtr<$parameters{namespace}Element> createKnownElement(const QualifiedName&, Document&, bool createdByParser = false);\n";
 print F "    static RefPtr<$parameters{namespace}Element> createKnownElement(TagName, Document&, bool createdByParser = false);\n";
 print F "    static RefPtr<$parameters{namespace}Element> createKnownElementWithName(TagName, const QualifiedName&, Document&, bool createdByParser = false);\n";
-print F "    static Ref<$parameters{namespace}Element> createElement(const AtomString&, Document&, bool createdByParser = false);\n";
+print F "    static Ref<$parameters{namespace}Element> createElement(AtomStringImpl*, Document&, bool createdByParser = false);\n";
 print F "    static Ref<$parameters{namespace}Element> createElement(const QualifiedName&, Document&, bool createdByParser = false);\n";
 
 printf F <<END;

@@ -105,13 +105,13 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, Medi
 {
     StringConstraint constraint;
     WTF::switchOn(value,
-        [&] (const String& string) {
+        [&] (StringImpl* string) {
             if (setType == ConstraintSetType::Mandatory)
                 constraint.appendIdeal(string);
             else
                 constraint.appendExact(string);
         },
-        [&] (const Vector<String>& vector) {
+        [&] (const Vector<RefPtr<StringImpl>>& vector) {
             if (setType == ConstraintSetType::Mandatory) {
                 for (auto& string : vector)
                     constraint.appendIdeal(string);
@@ -123,10 +123,10 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, Medi
         [&] (const ConstrainDOMStringParameters& parameters) {
             if (parameters.exact) {
                 WTF::switchOn(parameters.exact.value(),
-                    [&] (const String& string) {
+                    [&] (StringImpl* string) {
                         constraint.appendExact(string);
                     },
-                    [&] (const Vector<String>& vector) {
+                    [&] (const Vector<RefPtr<StringImpl>>& vector) {
                         for (auto& string : vector)
                             constraint.appendExact(string);
                     }
@@ -134,10 +134,10 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, Medi
             }
             if (parameters.ideal) {
                 WTF::switchOn(parameters.ideal.value(),
-                    [&] (const String& string) {
+                    [&] (StringImpl* string) {
                         constraint.appendIdeal(string);
                     },
-                    [&] (const Vector<String>& vector) {
+                    [&] (const Vector<RefPtr<StringImpl>>& vector) {
                         for (auto& string : vector)
                             constraint.appendIdeal(string);
                     }

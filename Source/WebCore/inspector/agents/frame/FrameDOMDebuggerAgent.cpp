@@ -245,18 +245,18 @@ void FrameDOMDebuggerAgent::breakOnDOMBreakpoint(Inspector::Protocol::DOMDebugge
         return;
 
     auto pauseData = JSON::Object::create();
-    pauseData->setString("type"_s, Inspector::Protocol::Helpers::getEnumConstantValue(type));
-    pauseData->setBoolean("frameTarget"_s, true);
+    pauseData->setString("type"_si, Inspector::Protocol::Helpers::getEnumConstantValue(type));
+    pauseData->setBoolean("frameTarget"_si, true);
     if (CheckedPtr domAgent = protect(m_instrumentingAgents)->persistentFrameDOMAgent()) {
         if (auto nodeId = domAgent->pushNodePathToFrontend(&breakpointOwner))
-            pauseData->setInteger("nodeId"_s, nodeId);
+            pauseData->setInteger("nodeId"_si, nodeId);
         if (targetNode && targetNode != &breakpointOwner) {
             if (auto targetNodeId = domAgent->pushNodePathToFrontend(targetNode))
-                pauseData->setInteger("targetNodeId"_s, targetNodeId);
+                pauseData->setInteger("targetNodeId"_si, targetNodeId);
         }
     }
     if (insertion)
-        pauseData->setBoolean("insertion"_s, true);
+        pauseData->setBoolean("insertion"_si, true);
 
     debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(pauseData), WTF::move(breakpoint));
 }

@@ -90,7 +90,7 @@ public:
 
     // MARK: RemoteWebInspectorUIProxyClient methods
 
-    void sendMessageToFrontend(const String& message)
+    void sendMessageToFrontend(StringImpl* message)
     {
         if (m_proxy)
             m_proxy->sendMessageToFrontend(message);
@@ -98,7 +98,7 @@ public:
             RemoteInspectorHTTPServer::singleton().sendMessageToFrontend(m_connectionID, m_targetID, message);
     }
 
-    void sendMessageToBackend(const String& message) override
+    void sendMessageToBackend(StringImpl* message) override
     {
         m_inspectorClient.sendMessageToBackend(m_connectionID, m_targetID, message);
     }
@@ -172,13 +172,13 @@ const SocketConnection::MessageHandlers& RemoteInspectorClient::messageHandlers(
     return messageHandlers;
 }
 
-RemoteInspectorClient::RemoteInspectorClient(String&& hostAndPort, RemoteInspectorObserver& observer)
+RemoteInspectorClient::RemoteInspectorClient(RefPtr<StringImpl>&& hostAndPort, RemoteInspectorObserver& observer)
     : m_hostAndPort(WTF::move(hostAndPort))
     , m_observer(observer)
     , m_cancellable(adoptGRef(g_cancellable_new()))
 {
     GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
-    g_socket_client_connect_to_host_async(socketClient.get(), m_hostAndPort.utf8().legacyCStringPointer(), 0, m_cancellable.get(),
+    g_socket_client_connect_to_host_async(socketClient.get(), utf8(m_hostAndPort).legacyCStringPointer(), 0, m_cancellable.get(),
         [](GObject* object, GAsyncResult* result, gpointer userData) {
             GUniqueOutPtr<GError> error;
             GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(object), result, &error.outPtr()));
@@ -210,7 +210,7 @@ void RemoteInspectorClient::setupConnection(Ref<SocketConnection>&& connection)
 void RemoteInspectorClient::setBackendCommands(const char* backendCommands)
 {
     if (!backendCommands || !backendCommands[0]) {
-        m_backendCommandsURL = { };
+        m_backendCommandsURL = nullptr;
         return;
     }
 
@@ -225,18 +225,18 @@ void RemoteInspectorClient::connectionDidClose()
     m_observer.connectionClosed(*this);
 }
 
-static Inspector::DebuggableType debuggableType(const String& targetType)
+static Inspector::DebuggableType debuggableType(StringImpl* targetType)
 {
-    if (targetType == "JavaScript"_s)
+    if (equal(targetType, "JavaScript"_s))
         return Inspector::DebuggableType::JavaScript;
-    if (targetType == "ServiceWorker"_s)
+    if (equal(targetType, "ServiceWorker"_s))
         return Inspector::DebuggableType::ServiceWorker;
-    if (targetType == "WebPage"_s)
+    if (equal(targetType, "WebPage"_s))
         return Inspector::DebuggableType::WebPage;
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void RemoteInspectorClient::inspect(uint64_t connectionID, uint64_t targetID, const String& targetType, InspectorType inspectorType)
+void RemoteInspectorClient::inspect(uint64_t connectionID, uint64_t targetID, StringImpl* targetType, InspectorType inspectorType)
 {
     auto addResult = m_inspectorProxyMap.ensure(std::make_pair(connectionID, targetID), [this, connectionID, targetID] {
         return makeUnique<RemoteInspectorProxy>(*this, connectionID, targetID);
@@ -251,9 +251,9 @@ void RemoteInspectorClient::inspect(uint64_t connectionID, uint64_t targetID, co
         addResult.iterator->value->initialize(debuggableType(targetType));
 }
 
-void RemoteInspectorClient::sendMessageToBackend(uint64_t connectionID, uint64_t targetID, const String& message)
+void RemoteInspectorClient::sendMessageToBackend(uint64_t connectionID, uint64_t targetID, StringImpl* message)
 {
-    m_socketConnection->sendMessage("SendMessageToBackend"_s, gVariantNew("(tts)", connectionID, targetID, message.utf8()));
+    m_socketConnection->sendMessage("SendMessageToBackend"_s, gVariantNew("(tts)", connectionID, targetID, utf8(message)));
 }
 
 void RemoteInspectorClient::closeFromFrontend(uint64_t connectionID, uint64_t targetID)
@@ -294,7 +294,7 @@ void RemoteInspectorClient::sendMessageToFrontend(uint64_t connectionID, uint64_
     ASSERT(proxy);
     if (!proxy)
         return;
-    proxy->sendMessageToFrontend(String::fromUTF8(message));
+    proxy->sendMessageToFrontend(StringImpl::fromUTF8(message));
 }
 
 void RemoteInspectorClient::appendTargetList(StringBuilder& html, InspectorType inspectorType, ShouldEscapeSingleQuote escapeSingleQuote) const

@@ -75,7 +75,7 @@ void WebInspectorUIProxy::setClient(std::unique_ptr<WebInspectorUIProxyClient>&&
 void WebInspectorUIProxy::updateInspectorWindowTitle() const
 {
     ASSERT(m_inspectorWindow);
-    webkitInspectorWindowSetSubtitle(WEBKIT_INSPECTOR_WINDOW(m_inspectorWindow.get()), !m_inspectedURLString.isEmpty() ? UTF8CStringView { m_inspectedURLString.utf8() } : UTF8CStringView { });
+    webkitInspectorWindowSetSubtitle(WEBKIT_INSPECTOR_WINDOW(m_inspectorWindow.get()), !isEmpty(m_inspectedURLString) ? UTF8CStringView { utf8(m_inspectedURLString) } : UTF8CStringView { });
 }
 
 static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long, unsigned long long, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void*)
@@ -103,8 +103,8 @@ static void runOpenPanel(WKPageRef pageRef, WKFrameRef, WKOpenPanelParametersRef
         return;
 
     GRefPtr<GFile> file = adoptGRef(gtk_file_chooser_get_file(chooser));
-    Vector<String> paths;
-    paths.append(String::fromUTF8(g_file_peek_path(file.get())));
+    Vector<RefPtr<StringImpl>> paths;
+    paths.append(StringImpl::fromUTF8(g_file_peek_path(file.get())));
 
     toImpl(openPanelListener)->chooseFiles(paths);
 }
@@ -170,8 +170,8 @@ static void getContextMenuFromProposedMenu(WKPageRef pageRef, WKArrayRef propose
 static Ref<WebsiteDataStore> inspectorWebsiteDataStore()
 {
     static constexpr auto versionedDirectory = "webkitgtk-" WEBKITGTK_API_VERSION G_DIR_SEPARATOR_S "WebInspector" G_DIR_SEPARATOR_S ""_s;
-    String baseCacheDirectory = FileSystem::pathByAppendingComponent(FileSystem::userCacheDirectory(), versionedDirectory);
-    String baseDataDirectory = FileSystem::pathByAppendingComponent(FileSystem::userDataDirectory(), versionedDirectory);
+    RefPtr<StringImpl> baseCacheDirectory = FileSystem::pathByAppendingComponent(FileSystem::userCacheDirectory(), versionedDirectory);
+    RefPtr<StringImpl> baseDataDirectory = FileSystem::pathByAppendingComponent(FileSystem::userDataDirectory(), versionedDirectory);
 
     auto configuration = WebsiteDataStoreConfiguration::createWithBaseDirectories(baseCacheDirectory, baseDataDirectory);
     return WebsiteDataStore::create(WTF::move(configuration), PAL::SessionID::generatePersistentSessionID());
@@ -181,7 +181,7 @@ RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
 {
     ASSERT(m_inspectedPage);
     ASSERT(!m_inspectorView);
-    Ref preferences = WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s);
+    Ref preferences = WebPreferences::create(nullptr, "WebKit2."_si, "WebKit2."_si);
 #if ENABLE(DEVELOPER_MODE)
     // Allow developers to inspect the Web Inspector in debug builds without changing settings.
     preferences->setDeveloperExtrasEnabled(true);
@@ -328,7 +328,7 @@ void WebInspectorUIProxy::platformCreateFrontendWindow()
     gtk_widget_show(m_inspectorView.get());
 #endif
 
-    if (!m_inspectedURLString.isEmpty())
+    if (!isEmpty(m_inspectedURLString))
         updateInspectorWindowTitle();
 
     gtk_window_present(GTK_WINDOW(m_inspectorWindow.get()));
@@ -398,12 +398,12 @@ void WebInspectorUIProxy::platformSetForcedAppearance(WebCore::InspectorFrontend
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformRevealFileExternally(const String&)
+void WebInspectorUIProxy::platformRevealFileExternally(StringImpl*)
 {
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformInspectedURLChanged(const String& url)
+void WebInspectorUIProxy::platformInspectedURLChanged(StringImpl* url)
 {
     m_inspectedURLString = url;
     if (m_client)
@@ -418,14 +418,14 @@ void WebInspectorUIProxy::platformShowCertificate(const WebCore::CertificateInfo
     notImplemented();
 }
 
-String WebInspectorUIProxy::inspectorPageURL()
+RefPtr<StringImpl> WebInspectorUIProxy::inspectorPageURL()
 {
-    return "resource:///org/webkit/inspector/UserInterface/Main.html"_s;
+    return "resource:///org/webkit/inspector/UserInterface/Main.html"_si;
 }
 
-String WebInspectorUIProxy::inspectorTestPageURL()
+RefPtr<StringImpl> WebInspectorUIProxy::inspectorTestPageURL()
 {
-    return "resource:///org/webkit/inspector/UserInterface/Test.html"_s;
+    return "resource:///org/webkit/inspector/UserInterface/Test.html"_si;
 }
 
 DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
@@ -571,7 +571,7 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
     platformSaveDataToFile(WTF::move(file), saveDatas[0].content, saveDatas[0].base64Encoded);
 }
 
-void WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)
+void WebInspectorUIProxy::platformLoad(StringImpl*, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     notImplemented();
     completionHandler(nullString());

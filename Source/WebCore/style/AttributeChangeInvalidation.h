@@ -33,11 +33,11 @@ namespace Style {
 
 class AttributeChangeInvalidation {
 public:
-    AttributeChangeInvalidation(Ref<Element>&&, const QualifiedName&, const AtomString& oldValue, const AtomString& newValue);
+    AttributeChangeInvalidation(Ref<Element>&&, const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue);
     ~AttributeChangeInvalidation();
 
 private:
-    void invalidateStyle(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue);
+    void invalidateStyle(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue);
     void invalidateStyleWithRuleSets();
 
     const bool m_isEnabled;
@@ -46,7 +46,7 @@ private:
     Invalidator::MatchElementRuleSets m_matchElementRuleSets;
 };
 
-inline AttributeChangeInvalidation::AttributeChangeInvalidation(Ref<Element>&& element, const QualifiedName& attributeName, const AtomString& oldValue, const AtomString& newValue)
+inline AttributeChangeInvalidation::AttributeChangeInvalidation(Ref<Element>&& element, const QualifiedName& attributeName, AtomStringImpl* oldValue, AtomStringImpl* newValue)
     : m_isEnabled(element->needsStyleInvalidation())
     , m_element(WTF::move(element))
 {

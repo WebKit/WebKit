@@ -70,9 +70,9 @@
 
 namespace WebPushD {
 
-ApplePushServiceConnection::ApplePushServiceConnection(const String& incomingPushServiceName)
+ApplePushServiceConnection::ApplePushServiceConnection(StringImpl* incomingPushServiceName)
 {
-    lazyInitialize(m_connection, adoptNS([[APSConnection alloc] initWithEnvironmentName:APSEnvironmentProduction namedDelegatePort:incomingPushServiceName.createNSString().get() queue:mainDispatchQueueSingleton()]));
+    lazyInitialize(m_connection, adoptNS([[APSConnection alloc] initWithEnvironmentName:APSEnvironmentProduction namedDelegatePort:createNSString(incomingPushServiceName).get() queue:mainDispatchQueueSingleton()]));
     RetainPtr delegate = adoptNS([[_WKAPSConnectionDelegate alloc] initWithConnection:this]);
     lazyInitialize(m_delegate, RetainPtr { delegate });
     [m_connection setDelegate:delegate.get()];
@@ -83,12 +83,12 @@ ApplePushServiceConnection::~ApplePushServiceConnection()
     [m_connection setDelegate:nil];
 }
 
-static RetainPtr<APSURLTokenInfo> makeTokenInfo(const String& topic, const Vector<uint8_t>& vapidPublicKey)
+static RetainPtr<APSURLTokenInfo> makeTokenInfo(StringImpl* topic, const Vector<uint8_t>& vapidPublicKey)
 {
-    return adoptNS([[APSURLTokenInfo alloc] initWithTopic:topic.createNSString().get() vapidPublicKey:toNSData(borrow(vapidPublicKey)->span()).get()]);
+    return adoptNS([[APSURLTokenInfo alloc] initWithTopic:createNSString(topic).get() vapidPublicKey:toNSData(borrow(vapidPublicKey)->span()).get()]);
 }
 
-void ApplePushServiceConnection::subscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&& subscribeHandler)
+void ApplePushServiceConnection::subscribe(StringImpl* topic, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&& subscribeHandler)
 {
     ASSERT(isMainRunLoop());
 
@@ -106,7 +106,7 @@ void ApplePushServiceConnection::subscribe(const String& topic, const Vector<uin
     }).get()];
 }
 
-void ApplePushServiceConnection::unsubscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, UnsubscribeHandler&& unsubscribeHandler)
+void ApplePushServiceConnection::unsubscribe(StringImpl* topic, const Vector<uint8_t>& vapidPublicKey, UnsubscribeHandler&& unsubscribeHandler)
 {
     ASSERT(isMainRunLoop());
 
@@ -124,42 +124,42 @@ void ApplePushServiceConnection::unsubscribe(const String& topic, const Vector<u
     }).get()];
 }
 
-Vector<String> ApplePushServiceConnection::enabledTopics()
+Vector<RefPtr<StringImpl>> ApplePushServiceConnection::enabledTopics()
 {
-    return makeVector<String>(retainPtr([m_connection enabledTopics]).get());
+    return makeVector<RefPtr<StringImpl>>(retainPtr([m_connection enabledTopics]).get());
 }
 
-Vector<String> ApplePushServiceConnection::ignoredTopics()
+Vector<RefPtr<StringImpl>> ApplePushServiceConnection::ignoredTopics()
 {
-    return makeVector<String>(retainPtr([m_connection ignoredTopics]).get());
+    return makeVector<RefPtr<StringImpl>>(retainPtr([m_connection ignoredTopics]).get());
 }
 
-Vector<String> ApplePushServiceConnection::opportunisticTopics()
+Vector<RefPtr<StringImpl>> ApplePushServiceConnection::opportunisticTopics()
 {
-    return makeVector<String>(retainPtr([m_connection opportunisticTopics]).get());
+    return makeVector<RefPtr<StringImpl>>(retainPtr([m_connection opportunisticTopics]).get());
 }
 
-Vector<String> ApplePushServiceConnection::nonWakingTopics()
+Vector<RefPtr<StringImpl>> ApplePushServiceConnection::nonWakingTopics()
 {
-    return makeVector<String>(retainPtr([m_connection nonWakingTopics]).get());
+    return makeVector<RefPtr<StringImpl>>(retainPtr([m_connection nonWakingTopics]).get());
 }
 
-void ApplePushServiceConnection::setEnabledTopics(Vector<String>&& topics)
+void ApplePushServiceConnection::setEnabledTopics(Vector<RefPtr<StringImpl>>&& topics)
 {
     [m_connection _setEnabledTopics:createNSArray(WTF::move(topics)).get()];
 }
 
-void ApplePushServiceConnection::setIgnoredTopics(Vector<String>&& topics)
+void ApplePushServiceConnection::setIgnoredTopics(Vector<RefPtr<StringImpl>>&& topics)
 {
     [m_connection _setIgnoredTopics:createNSArray(WTF::move(topics)).get()];
 }
 
-void ApplePushServiceConnection::setOpportunisticTopics(Vector<String>&& topics)
+void ApplePushServiceConnection::setOpportunisticTopics(Vector<RefPtr<StringImpl>>&& topics)
 {
     [m_connection _setOpportunisticTopics:createNSArray(WTF::move(topics)).get()];
 }
 
-void ApplePushServiceConnection::setNonWakingTopics(Vector<String>&& topics)
+void ApplePushServiceConnection::setNonWakingTopics(Vector<RefPtr<StringImpl>>&& topics)
 {
     [m_connection _setNonWakingTopics:createNSArray(WTF::move(topics)).get()];
 }

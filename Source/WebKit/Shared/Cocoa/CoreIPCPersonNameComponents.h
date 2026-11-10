@@ -44,7 +44,7 @@ public:
 private:
     friend struct IPC::ArgumentCoder<CoreIPCPersonNameComponents>;
 
-    CoreIPCPersonNameComponents(const String& namePrefix, const String& givenName, const String& middleName, const String& familyName, const String& nickname, std::unique_ptr<CoreIPCPersonNameComponents>&& phoneticRepresentation)
+    CoreIPCPersonNameComponents(StringImpl* namePrefix, StringImpl* givenName, StringImpl* middleName, StringImpl* familyName, StringImpl* nickname, std::unique_ptr<CoreIPCPersonNameComponents>&& phoneticRepresentation)
         : m_namePrefix(namePrefix)
         , m_givenName(givenName)
         , m_middleName(middleName)
@@ -54,11 +54,11 @@ private:
     {
     }
 
-    String m_namePrefix;
-    String m_givenName;
-    String m_middleName;
-    String m_familyName;
-    String m_nickname;
+    RefPtr<StringImpl> m_namePrefix;
+    RefPtr<StringImpl> m_givenName;
+    RefPtr<StringImpl> m_middleName;
+    RefPtr<StringImpl> m_familyName;
+    RefPtr<StringImpl> m_nickname;
     std::unique_ptr<CoreIPCPersonNameComponents> m_phoneticRepresentation;
 };
 

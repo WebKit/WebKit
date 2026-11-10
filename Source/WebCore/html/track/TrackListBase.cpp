@@ -121,7 +121,7 @@ bool TrackListBase::contains(TrackID trackID) const
     return find(trackID);
 }
 
-void TrackListBase::scheduleTrackEvent(const AtomString& eventName, Ref<TrackBase>&& track)
+void TrackListBase::scheduleTrackEvent(AtomStringImpl* eventName, Ref<TrackBase>&& track)
 {
     queueTaskToDispatchEvent(*this, TaskSource::MediaElement, TrackEvent::create(eventName, Event::CanBubble::No, Event::IsCancelable::No, WTF::move(track)));
 }

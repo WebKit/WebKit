@@ -33,19 +33,19 @@ namespace WebCore {
 class AccessibleSetValueEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(AccessibleSetValueEvent);
 public:
-    static Ref<AccessibleSetValueEvent> create(const AtomString& type, const AtomString& value)
+    static Ref<AccessibleSetValueEvent> create(AtomStringImpl* type, AtomStringImpl* value)
     {
         return adoptRef(*new AccessibleSetValueEvent(type, value));
     }
 
     virtual ~AccessibleSetValueEvent();
 
-    const AtomString& value() const LIFETIME_BOUND { return m_value; }
+    const RefPtr<AtomStringImpl>& value() const LIFETIME_BOUND { return m_value; }
 
 private:
-    AccessibleSetValueEvent(const AtomString& type, const AtomString& value);
+    AccessibleSetValueEvent(AtomStringImpl* type, AtomStringImpl* value);
 
-    const AtomString m_value;
+    const RefPtr<AtomStringImpl> m_value;
 };
 
 } // namespace WebCore

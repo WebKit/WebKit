@@ -64,7 +64,7 @@ void RTCDataChannelRemoteSource::didChangeReadyState(RTCDataChannelState state)
     m_connection->didChangeReadyState(m_remoteIdentifier, state);
 }
 
-void RTCDataChannelRemoteSource::didReceiveStringData(const String& text)
+void RTCDataChannelRemoteSource::didReceiveStringData(StringImpl* text)
 {
     ASSERT(isMainThread());
     if (m_isClosed)

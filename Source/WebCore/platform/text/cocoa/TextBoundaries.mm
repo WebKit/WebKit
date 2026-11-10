@@ -233,7 +233,7 @@ void findEndWordBoundary(StringView text, int position, int* end)
 // we share with all the other platforms?
 int findNextWordFromIndex(StringView text, int position, bool forward)
 {
-    String textWithoutUnpairedSurrogates;
+    RefPtr<StringImpl> textWithoutUnpairedSurrogates;
     if (hasUnpairedSurrogate(text)) {
         textWithoutUnpairedSurrogates = replaceUnpairedSurrogatesWithReplacementCharacter(text.toStringWithoutCopying());
         text = textWithoutUnpairedSurrogates;

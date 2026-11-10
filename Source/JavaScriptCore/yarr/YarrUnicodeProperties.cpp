@@ -50,9 +50,9 @@ struct HashTable {
     const HashValue* values;
     const HashIndex* index;
 
-    ALWAYS_INLINE int entry(WTF::String& key) const
+    ALWAYS_INLINE int entry(RefPtr<StringImpl>& key) const
     {
-        int indexEntry = key.impl()->hash() & indexMask;
+        int indexEntry = key.get()->hash() & indexMask;
         int valueIndex = index[indexEntry].value;
 
         if (valueIndex == -1)
@@ -73,15 +73,15 @@ struct HashTable {
 
 #include "UnicodePatternTables.h"
 
-std::optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(WTF::String unicodePropertyName, WTF::String unicodePropertyValue)
+std::optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(RefPtr<StringImpl> unicodePropertyName, RefPtr<StringImpl> unicodePropertyValue)
 {
     int propertyIndex = -1;
 
-    if (unicodePropertyName == "Script"_s || unicodePropertyName == "sc"_s)
+    if (equal(unicodePropertyName, "Script"_s) || equal(unicodePropertyName, "sc"_s))
         propertyIndex = scriptHashTable.entry(unicodePropertyValue);
-    else if (unicodePropertyName == "Script_Extensions"_s || unicodePropertyName == "scx"_s)
+    else if (equal(unicodePropertyName, "Script_Extensions"_s) || equal(unicodePropertyName, "scx"_s))
         propertyIndex = scriptExtensionHashTable.entry(unicodePropertyValue);
-    else if (unicodePropertyName == "General_Category"_s || unicodePropertyName == "gc"_s)
+    else if (equal(unicodePropertyName, "General_Category"_s) || equal(unicodePropertyName, "gc"_s))
         propertyIndex = generalCategoryHashTable.entry(unicodePropertyValue);
 
     if (propertyIndex == -1)
@@ -90,7 +90,7 @@ std::optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(WTF::String uni
     return std::optional<BuiltInCharacterClassID>(static_cast<BuiltInCharacterClassID>(static_cast<int>(BuiltInCharacterClassID::BaseUnicodePropertyID) + propertyIndex));
 }
 
-std::optional<BuiltInCharacterClassID> unicodeMatchProperty(WTF::String unicodePropertyValue, CompileMode compileMode)
+std::optional<BuiltInCharacterClassID> unicodeMatchProperty(RefPtr<StringImpl> unicodePropertyValue, CompileMode compileMode)
 {
     int propertyIndex = -1;
 

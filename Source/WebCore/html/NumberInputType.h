@@ -55,25 +55,25 @@ private:
     {
     }
 
-    const AtomString& formControlType() const final;
-    void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
+    void setValue(StringImpl*, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
     double valueAsDouble() const final;
     ExceptionOr<void> setValueAsDouble(double, TextFieldEventBehavior) const final;
     ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const final;
     bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const final;
     float decorationWidth(float inputWidth) const final;
-    static ValueOrReference<String> stripInvalidNumberCharacters(const String&);
-    ValueOrReference<String> normalizeFullWidthNumberChars(const String&) const;
+    static ValueOrReference<RefPtr<StringImpl>> stripInvalidNumberCharacters(StringImpl*);
+    ValueOrReference<RefPtr<StringImpl>> normalizeFullWidthNumberChars(StringImpl*) const;
     StepRange createStepRange(AnyStepHandling) const final;
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&) final;
     Decimal parseToNumber(StringView, const Decimal&) const final;
-    String serialize(const Decimal&) const final;
-    String localizeValue(const String&) const final;
-    String visibleValue() const final;
-    String convertFromVisibleValue(const String&) const final;
-    ValueOrReference<String> sanitizeValue(const String& value LIFETIME_BOUND) const final;
-    String badInputText() const final;
+    RefPtr<StringImpl> serialize(const Decimal&) const final;
+    RefPtr<StringImpl> localizeValue(StringImpl*) const final;
+    RefPtr<StringImpl> visibleValue() const final;
+    RefPtr<StringImpl> convertFromVisibleValue(StringImpl*) const final;
+    ValueOrReference<RefPtr<StringImpl>> sanitizeValue(StringImpl* value LIFETIME_BOUND) const final;
+    RefPtr<StringImpl> badInputText() const final;
     bool supportsPlaceholder() const final;
     void attributeChanged(const QualifiedName&) final;
 };

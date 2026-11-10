@@ -58,9 +58,9 @@ std::unique_ptr<MutableCSSSelector> MutableCSSSelector::parsePseudoElementSelect
     auto selector = makeUnique<MutableCSSSelector>();
     selector->m_selector.setMatch(CSSSelector::Match::PseudoElement);
     selector->m_selector.setPseudoElement(*pseudoType);
-    AtomString name;
+    RefPtr<AtomStringImpl> name;
     if (*pseudoType == CSSSelector::PseudoElement::UserAgentPartLegacyAlias)
-        name = CSSSelector::nameForUserAgentPartLegacyAlias(pseudoTypeString);
+        name = RefPtr<AtomStringImpl> { CSSSelector::nameForUserAgentPartLegacyAlias(pseudoTypeString) };
     else
         name = pseudoTypeString.convertToASCIILowercaseAtom();
     selector->m_selector.setValue(name);
@@ -135,7 +135,7 @@ void MutableCSSSelector::setIntegerList(FixedVector<int> list)
     m_selector.setIntegerList(WTF::move(list));
 }
 
-void MutableCSSSelector::setStringList(FixedVector<AtomString> list)
+void MutableCSSSelector::setStringList(FixedVector<RefPtr<AtomStringImpl>> list)
 {
     ASSERT(!list.isEmpty());
     m_selector.setStringList(WTF::move(list));

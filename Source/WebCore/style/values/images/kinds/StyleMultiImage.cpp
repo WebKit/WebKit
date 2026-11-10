@@ -230,7 +230,7 @@ bool MultiImage::drawsSVGImage() const
     return m_selectedImage && protect(m_selectedImage)->drawsSVGImage();
 }
 
-WTF::String MultiImage::accessibilityDescription() const
+RefPtr<StringImpl> MultiImage::accessibilityDescription() const
 {
     if (!m_selectedImage)
         return { };

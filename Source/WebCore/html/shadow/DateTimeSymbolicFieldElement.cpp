@@ -41,7 +41,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DateTimeSymbolicFieldElement);
 
-DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<String>& symbols, int placeholderIndex)
+DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<RefPtr<StringImpl>>& symbols, int placeholderIndex)
     : DateTimeFieldElement(document, fieldOwner)
     , m_symbols(symbols)
     , m_placeholderIndex(placeholderIndex)
@@ -56,7 +56,7 @@ void DateTimeSymbolicFieldElement::adjustMinInlineSize(Style::ComputedStyle& sty
 
     float inlineSize = 0;
     for (auto& symbol : m_symbols) {
-        auto textRun = RenderBlock::constructTextRun(symbol, style);
+        auto textRun = RenderBlock::constructTextRun(symbol.get(), style);
         inlineSize = std::max(inlineSize, font->width(protect(textRun)));
     }
     style.setLogicalMinWidth(Style::MinimumSize::Fixed { inlineSize / style.usedZoomForLength().value });
@@ -95,14 +95,14 @@ void DateTimeSymbolicFieldElement::stepUp()
     setValueAsInteger(newValue, DispatchInputAndChangeEvents);
 }
 
-ValueOrReference<String> DateTimeSymbolicFieldElement::value() const
+ValueOrReference<RefPtr<StringImpl>> DateTimeSymbolicFieldElement::value() const
 {
     if (hasValue())
         return m_symbols[m_selectedIndex];
     return emptyString();
 }
 
-String DateTimeSymbolicFieldElement::placeholderValue() const
+RefPtr<StringImpl> DateTimeSymbolicFieldElement::placeholderValue() const
 {
     return m_symbols[m_placeholderIndex];
 }
@@ -130,7 +130,7 @@ int DateTimeSymbolicFieldElement::optionCount() const
     return m_symbols.size();
 }
 
-String DateTimeSymbolicFieldElement::optionAtIndex(int index) const
+RefPtr<StringImpl> DateTimeSymbolicFieldElement::optionAtIndex(int index) const
 {
     return m_symbols[index];
 }

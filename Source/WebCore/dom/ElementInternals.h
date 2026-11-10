@@ -55,18 +55,18 @@ public:
 
     ExceptionOr<void> setFormValue(CustomElementFormValue&&, std::optional<CustomElementFormValue>&& state);
 
-    ExceptionOr<void> setValidity(ValidityStateFlags, String&& message, HTMLElement* validationAnchor);
+    ExceptionOr<void> setValidity(ValidityStateFlags, RefPtr<StringImpl>&& message, HTMLElement* validationAnchor);
     ExceptionOr<bool> willValidate() const;
     ExceptionOr<ValidityState&> validity();
-    ExceptionOr<String> validationMessage() const;
+    ExceptionOr<RefPtr<StringImpl>> validationMessage() const;
     ExceptionOr<bool> reportValidity();
     ExceptionOr<bool> checkValidity();
 
     ExceptionOr<RefPtr<NodeList>> labels();
 
     // For ARIAMixin
-    const AtomString& attributeWithoutSynchronization(const QualifiedName&) const;
-    void setAttributeWithoutSynchronization(const QualifiedName&, const AtomString& value);
+    const RefPtr<AtomStringImpl>& attributeWithoutSynchronization(const QualifiedName&) const;
+    void setAttributeWithoutSynchronization(const QualifiedName&, AtomStringImpl* value);
 
     RefPtr<Element> getElementAttributeForBindings(const QualifiedName&) const;
     void setElementAttribute(const QualifiedName&, Element*);

@@ -43,7 +43,7 @@ Ref<CSSBorderImageWidthValue> CSSBorderImageWidthValue::create(CSS::BorderImageW
     return adoptRef(*new CSSBorderImageWidthValue(WTF::move(widths)));
 }
 
-String CSSBorderImageWidthValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSBorderImageWidthValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_widths);
 }

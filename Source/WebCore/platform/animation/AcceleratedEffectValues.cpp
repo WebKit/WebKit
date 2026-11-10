@@ -205,7 +205,7 @@ TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const
     return matrix;
 }
 
-String AcceleratedEffectValues::dumpProperty(AcceleratedEffectProperty property) const
+RefPtr<StringImpl> AcceleratedEffectValues::dumpProperty(AcceleratedEffectProperty property) const
 {
     TextStream ts;
     switch (property) {

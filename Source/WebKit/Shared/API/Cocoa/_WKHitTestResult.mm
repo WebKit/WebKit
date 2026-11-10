@@ -67,22 +67,22 @@
 
 - (NSString *)lookupText
 {
-    return _hitTestResult->lookupText().createNSString().autorelease();
+    return createNSString(_hitTestResult->lookupText()).autorelease();
 }
 
 - (NSString *)linkSuggestedFilename
 {
-    return _hitTestResult->linkSuggestedFilename().createNSString().autorelease();
+    return createNSString(_hitTestResult->linkSuggestedFilename()).autorelease();
 }
 
 - (NSString *)imageSuggestedFilename
 {
-    return _hitTestResult->imageSuggestedFilename().createNSString().autorelease();
+    return createNSString(_hitTestResult->imageSuggestedFilename()).autorelease();
 }
 
 - (NSString *)imageMIMEType
 {
-    return _hitTestResult->sourceImageMIMEType().createNSString().autorelease();
+    return createNSString(_hitTestResult->sourceImageMIMEType()).autorelease();
 }
 
 - (BOOL)isContentEditable

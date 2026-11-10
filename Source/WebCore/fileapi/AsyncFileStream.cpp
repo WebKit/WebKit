@@ -133,11 +133,11 @@ void AsyncFileStream::perform(Function<Function<void(FileStreamClient&)>(FileStr
     });
 }
 
-void AsyncFileStream::getSize(const String& path, std::optional<WallTime> expectedModificationTime)
+void AsyncFileStream::getSize(StringImpl* path, std::optional<WallTime> expectedModificationTime)
 {
     // FIXME: Explicit return type here and in all the other cases like this below is a workaround for a deficiency
     // in the Windows compiler at the time of this writing. Could remove it if that is resolved.
-    perform([path = path.isolatedCopy(), expectedModificationTime](FileStream& stream) -> Function<void(FileStreamClient&)> {
+    perform([path = isolatedCopy(path), expectedModificationTime](FileStream& stream) -> Function<void(FileStreamClient&)> {
         long long size = stream.getSize(path, expectedModificationTime);
         return [size](FileStreamClient& client) {
             client.didGetSize(size);
@@ -145,10 +145,10 @@ void AsyncFileStream::getSize(const String& path, std::optional<WallTime> expect
     });
 }
 
-void AsyncFileStream::openForRead(const String& path, long long offset, long long length)
+void AsyncFileStream::openForRead(StringImpl* path, long long offset, long long length)
 {
     // FIXME: Explicit return type here is a workaround for a deficiency in the Windows compiler at the time of this writing.
-    perform([path = path.isolatedCopy(), offset, length](FileStream& stream) -> Function<void(FileStreamClient&)> {
+    perform([path = isolatedCopy(path), offset, length](FileStream& stream) -> Function<void(FileStreamClient&)> {
         bool success = stream.openForRead(path, offset, length);
         return [success](FileStreamClient& client) {
             client.didOpen(success);

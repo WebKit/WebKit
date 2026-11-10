@@ -46,8 +46,8 @@ public:
     bool enabled() const override;
 
     // InspectorInstrumentation
-    void didAddEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
-    void willRemoveEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    void didAddEventListener(EventTarget&, AtomStringImpl* eventType, EventListener&, bool capture);
+    void willRemoveEventListener(EventTarget&, AtomStringImpl* eventType, EventListener&, bool capture);
     void willHandleEvent(const RegisteredEventListener&);
     void didHandleEvent(const RegisteredEventListener&);
     int willPostMessage();
@@ -65,7 +65,7 @@ protected:
     void internalEnable() override;
     void internalDisable(bool isBeingDestroyed) override;
 
-    String requestIdForScript(JSC::JSGlobalObject*, const JSC::Debugger::Script&) override;
+    RefPtr<StringImpl> requestIdForScript(JSC::JSGlobalObject*, const JSC::Debugger::Script&) override;
 
     void didClearAsyncStackTraceData() final;
 

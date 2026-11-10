@@ -102,7 +102,7 @@ static void checkCandidate(WebBasePluginPackage * __weak *currentPlugin, WebBase
         return;
     }
 
-    if ([*currentPlugin bundleIdentifier] == [*candidatePlugin bundleIdentifier] && [*candidatePlugin versionNumber] > [*currentPlugin versionNumber]) 
+    if (equal([*currentPlugin bundleIdentifier], [*candidatePlugin bundleIdentifier]) && [*candidatePlugin versionNumber] > [*currentPlugin versionNumber]) 
         *currentPlugin = *candidatePlugin;
 }
 
@@ -152,7 +152,7 @@ struct PluginPackageCandidates {
     RetainPtr pluginEnumerator = [protect(plugins) objectEnumerator];
     
     while (WebBasePluginPackage *plugin = [pluginEnumerator nextObject]) {
-        if ([plugin supportsMIMEType:MIMEType])
+        if ([plugin supportsMIMEType:StringImpl::create(MIMEType)])
             candidates.update(plugin);
     }
     
@@ -167,7 +167,7 @@ struct PluginPackageCandidates {
     RetainPtr pluginEnumerator = [protect(plugins) objectEnumerator];
     
     while (WebBasePluginPackage *plugin = [pluginEnumerator nextObject]) {
-        if ([plugin supportsExtension:extension])
+        if ([plugin supportsExtension:StringImpl::create(extension)])
             candidates.update(plugin);
     }
     
@@ -288,7 +288,7 @@ NODELETE static RetainPtr<NSArray>& additionalWebPlugInPaths()
         while ((plugin = checked_objc_cast<WebBasePluginPackage>([pluginEnumerator nextObject]))) {
             const auto& pluginInfo = [plugin pluginInfo];
             for (size_t i = 0; i < pluginInfo.mimes.size(); ++i)
-                [MIMETypes addObject:pluginInfo.mimes[i].type.createNSString().get()];
+                [MIMETypes addObject:createNSString(pluginInfo.mimes[i].type).get()];
         }
 
         // Register plug-in views and representations.
@@ -404,7 +404,7 @@ NODELETE static RetainPtr<NSArray>& additionalWebPlugInPaths()
 - (void)_addPlugin:(WebBasePluginPackage *)plugin
 {
     ASSERT(plugin);
-    RetainPtr pluginPath = [plugin path].createNSString();
+    RetainPtr pluginPath = createNSString([plugin path]);
     ASSERT(pluginPath);
     [protect(plugins) setObject:plugin forKey:pluginPath.get()];
     [plugin wasAddedToPluginDatabase:self];
@@ -418,7 +418,7 @@ NODELETE static RetainPtr<NSArray>& additionalWebPlugInPaths()
     RetainPtr registeredTypes = registeredMIMETypes;
     const auto& pluginInfo = [plugin pluginInfo];
     for (size_t i = 0; i < pluginInfo.mimes.size(); ++i) {
-        RetainPtr MIMEType = pluginInfo.mimes[i].type.createNSString();
+        RetainPtr MIMEType = createNSString(pluginInfo.mimes[i].type);
 
         if ([registeredTypes containsObject:MIMEType.get()]) {
             if (self == sharedDatabase())
@@ -428,7 +428,7 @@ NODELETE static RetainPtr<NSArray>& additionalWebPlugInPaths()
     }
 
     // Remove plug-in from database
-    RetainPtr pluginPath = [plugin path].createNSString();
+    RetainPtr pluginPath = createNSString([plugin path]);
     ASSERT(pluginPath);
     auto protectedPlugin = retainPtr(plugin);
     [protect(plugins) removeObjectForKey:pluginPath.get()];

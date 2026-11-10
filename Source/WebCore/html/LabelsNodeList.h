@@ -33,7 +33,7 @@ class HTMLElement;
 class LabelsNodeList final : public CachedLiveNodeList<LabelsNodeList, CollectionTraversalType::WeakPtrDescendants> {
     WTF_MAKE_TZONE_ALLOCATED(LabelsNodeList);
 public:
-    static Ref<LabelsNodeList> create(HTMLElement&, const AtomString&);
+    static Ref<LabelsNodeList> create(HTMLElement&, AtomStringImpl*);
     virtual ~LabelsNodeList();
 
     bool elementMatches(Element&) const final;

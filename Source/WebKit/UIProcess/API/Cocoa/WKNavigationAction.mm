@@ -293,9 +293,9 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEventSyntheti
 - (NSString *)_targetFrameName
 {
     auto& name = _navigationAction->targetFrameName();
-    if (name.isNull())
+    if (!name)
         return nil;
-    return name.createNSString().autorelease();
+    return createNSString(name).autorelease();
 }
 
 - (BOOL)_hasOpener

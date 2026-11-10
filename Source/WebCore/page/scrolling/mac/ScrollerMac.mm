@@ -620,12 +620,12 @@ bool ScrollerMac::hasScrollerImp()
     return (bool)m_scrollerImp;
 }
 
-String ScrollerMac::scrollbarState() const
+RefPtr<StringImpl> ScrollerMac::scrollbarState() const
 {
     Locker locker { m_scrollerImpLock };
 
     if (!m_hostLayer || !m_scrollerImp)
-        return "none"_s;
+        return "none"_si;
 
     StringBuilder result;
     result.append([m_scrollerImp isEnabled] ? "enabled"_s: "disabled"_s);

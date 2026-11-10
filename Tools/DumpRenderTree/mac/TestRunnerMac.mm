@@ -345,7 +345,7 @@ void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
     NSURL *nsurl = [NSURL URLWithString:urlNS relativeToURL:[[[mainFrame dataSource] response] URL]];
     NSString *nsurlString = [nsurl absoluteString];
 
-    RefPtr absoluteURL = createJSString(String { nsurlString });
+    RefPtr absoluteURL = createJSString(StringImpl::create(nsurlString));
     DRT::WorkQueue::singleton().queue(new LoadItem(absoluteURL.get(), target));
 }
 
@@ -1078,7 +1078,7 @@ void TestRunner::removeChromeInputField()
 #endif
 }
 
-void TestRunner::setTextInChromeInputField(const String&)
+void TestRunner::setTextInChromeInputField(StringImpl*)
 {
 }
 
@@ -1086,7 +1086,7 @@ void TestRunner::selectChromeInputField()
 {
 }
 
-String TestRunner::getSelectedTextInChromeInputField()
+RefPtr<StringImpl> TestRunner::getSelectedTextInChromeInputField()
 {
     return { };
 }

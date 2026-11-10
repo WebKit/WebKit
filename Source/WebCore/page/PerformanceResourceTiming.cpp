@@ -104,7 +104,7 @@ PerformanceResourceTiming::PerformanceResourceTiming(MonotonicTime timeOrigin, R
 
 PerformanceResourceTiming::~PerformanceResourceTiming() = default;
 
-const String& PerformanceResourceTiming::nextHopProtocol() const
+const RefPtr<StringImpl>& PerformanceResourceTiming::nextHopProtocol() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return emptyString();
@@ -361,12 +361,12 @@ double PerformanceResourceTiming::workerCacheLookupStart() const
     return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().workerCacheLookupStart);
 }
 
-const String& PerformanceResourceTiming::workerMatchedRouterSource() const
+const RefPtr<StringImpl>& PerformanceResourceTiming::workerMatchedRouterSource() const
 {
     return m_resourceTiming.networkLoadMetrics().workerMatchedRouterSource;
 }
 
-const String& PerformanceResourceTiming::workerFinalRouterSource() const
+const RefPtr<StringImpl>& PerformanceResourceTiming::workerFinalRouterSource() const
 {
     return m_resourceTiming.networkLoadMetrics().workerFinalRouterSource;
 }

@@ -247,10 +247,10 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
 
         bool beforeTest = false;
         if (auto options = stringValue(messageBodyDictionary, "ResetStage"))
-            beforeTest = toWTFString(options) == "BeforeTest"_s;
+            beforeTest = equal(toWTFString(options), "BeforeTest"_s);
 
         if (auto options = stringValue(messageBodyDictionary, "JSCOptions"))
-            JSC::Options::setOptions(toWTFString(options).utf8().legacyCStringPointer());
+            JSC::Options::setOptions(utf8(toWTFString(options)).legacyCStringPointer());
 
         if (booleanValue(messageBodyDictionary, "ShouldGC"))
             WKBundleGarbageCollectJavaScriptObjects(m_bundle.get());
@@ -312,9 +312,9 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     if (WKStringIsEqualToUTF8CString(messageName, "WheelEventMarker")) {
         auto bodyString = toWTFString(dynamic_wk_cast<WKStringRef>(messageBody));
         // These match the strings in EventSenderProxy::sendWheelEvent().
-        if (bodyString == "SentWheelPhaseEndOrCancel"_s)
+        if (equal(bodyString, "SentWheelPhaseEndOrCancel"_s))
             m_eventSendingController->sentWheelPhaseEndOrCancel();
-        else if (bodyString == "SentWheelMomentumPhaseEnd"_s)
+        else if (equal(bodyString, "SentWheelMomentumPhaseEnd"_s))
             m_eventSendingController->sentWheelMomentumPhaseEnd();
         return;
     }
@@ -361,7 +361,7 @@ void InjectedBundle::setAllowedHosts(WKDictionaryRef settings)
 void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode testingMode)
 {
     if (auto jscOpts = stringValue(settings, "JSCOptions"))
-        JSC::Options::setOptions(toWTFString(jscOpts).utf8().legacyCStringPointer());
+        JSC::Options::setOptions(utf8(toWTFString(jscOpts)).legacyCStringPointer());
 
     m_dumpPixels = booleanValue(settings, "DumpPixels");
     m_dumpCSSPageBoxes = booleanValue(settings, "DumpCSSPageBoxes");
@@ -683,7 +683,9 @@ bool InjectedBundle::isAllowedHost(WKStringRef host)
 {
     if (m_allowedHosts.isEmpty())
         return false;
-    return m_allowedHosts.contains(toWTFString(host));
+    return m_allowedHosts.containsIf([&](auto& item) {
+        return equal(item, toWTFString(host));
+    });
 }
 
 void InjectedBundle::setAllowsAnySSLCertificate(bool allowsAnySSLCertificate)

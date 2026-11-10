@@ -102,7 +102,7 @@ bool ModuleInformation::isInstructionStart(uint32_t moduleOffset) const
     return starts.contains(moduleOffset);
 }
 
-String ModuleInformation::declaredName() const
+RefPtr<StringImpl> ModuleInformation::declaredName() const
 {
     if (debugInfo->cachedDeclaredName)
         return *debugInfo->cachedDeclaredName;
@@ -149,9 +149,9 @@ void ModuleInformation::setNameSection(Ref<NameSection>&& section)
     m_nameSectionPtr.store(m_nameSection.ptr(), std::memory_order_release);
 }
 
-static std::optional<Name> encodeAsImportName(const String& string)
+static std::optional<Name> encodeAsImportName(StringImpl* string)
 {
-    auto utf8 = string.tryGetUTF8(StrictConversion);
+    auto utf8 = tryGetUTF8(string, StrictConversion);
     if (!utf8)
         return std::nullopt;
     return Name(byteCast<char8_t>(utf8->span()));
@@ -189,7 +189,7 @@ void ModuleInformation::populateImportShouldBeHidden()
         else if (builtinSetsInclude(import.module)) {
             auto* builtinSet = WebAssemblyBuiltinRegistry::singleton().findByQualifiedName(makeString(import.module));
             if (builtinSet) {
-                String fieldName = makeString(import.field);
+                RefPtr<StringImpl> fieldName = makeString(import.field);
                 if (builtinSet->findBuiltin(fieldName))
                     importShouldBeHidden.testAndSet(i);
             }

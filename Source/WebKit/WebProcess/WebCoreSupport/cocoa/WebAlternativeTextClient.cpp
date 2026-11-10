@@ -47,7 +47,7 @@ WebAlternativeTextClient::~WebAlternativeTextClient()
 }
 
 #if USE(AUTOCORRECTION_PANEL)
-void WebAlternativeTextClient::showCorrectionAlternative(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
+void WebAlternativeTextClient::showCorrectionAlternative(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, StringImpl* replacedString, StringImpl* replacementString, const Vector<RefPtr<StringImpl>>& alternativeReplacementStrings)
 {
     m_page->send(Messages::WebPageProxy::ShowCorrectionPanel(type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings));
 }
@@ -57,14 +57,14 @@ void WebAlternativeTextClient::dismissAlternative(ReasonForDismissingAlternative
     m_page->send(Messages::WebPageProxy::DismissCorrectionPanel(reason));
 }
 
-String WebAlternativeTextClient::dismissAlternativeSoon(ReasonForDismissingAlternativeText reason)
+RefPtr<StringImpl> WebAlternativeTextClient::dismissAlternativeSoon(ReasonForDismissingAlternativeText reason)
 {
     auto sendResult = m_page->sendSync(Messages::WebPageProxy::DismissCorrectionPanelSoon(reason));
-    auto [result] = sendResult.takeReplyOr(String { });
+    auto [result] = sendResult.takeReplyOr(nullString());
     return result;
 }
 
-void WebAlternativeTextClient::recordAutocorrectionResponse(AutocorrectionResponse response, const String& replacedString, const String& replacementString)
+void WebAlternativeTextClient::recordAutocorrectionResponse(AutocorrectionResponse response, StringImpl* replacedString, StringImpl* replacementString)
 {
     m_page->send(Messages::WebPageProxy::RecordAutocorrectionResponse(response, replacedString, replacementString));
 }
@@ -80,10 +80,10 @@ void WebAlternativeTextClient::showDictationAlternativeUI(const WebCore::FloatRe
     m_page->send(Messages::WebPageProxy::ShowDictationAlternativeUI(boundingBoxOfDictatedText, dictationContext));
 }
 
-Vector<String> WebAlternativeTextClient::dictationAlternatives(WebCore::DictationContext dictationContext)
+Vector<RefPtr<StringImpl>> WebAlternativeTextClient::dictationAlternatives(WebCore::DictationContext dictationContext)
 {
     auto sendResult = m_page->sendSync(Messages::WebPageProxy::DictationAlternatives(dictationContext));
-    auto [result] = sendResult.takeReplyOr(Vector<String> { });
+    auto [result] = sendResult.takeReplyOr(Vector<RefPtr<StringImpl>> { });
     return result;
 }
 
