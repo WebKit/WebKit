@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+// Setting `font` to a calc() that keeps a calc() root — e.g. `simplifyForMinMax`
+// refuses to merge percentages in a <length-percentage> context — registers a
+// `Style::Calculation::Value` in a process-global map. Doing that from several
+// workers can collide due to rehashing during insertion.
+const workerSource = `
+const context = new OffscreenCanvas(1, 1).getContext('2d');
+for (let i = 0; i < 100; ++i)
+    context.font = 'min(' + (i % 90 + 1.5) + '%, ' + (i % 70 + 2.5) + '%) serif';
+self.postMessage('done');
+`;
+
+const workerURL = URL.createObjectURL(new Blob([workerSource], { type: 'text/javascript' }));
+const workerCount = 4;
+let finishedCount = 0;
+
+for (let i = 0; i < workerCount; ++i) {
+    const worker = new Worker(workerURL);
+    worker.onmessage = () => {
+        if (++finishedCount == workerCount) {
+            document.write('PASS if no crash.');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    };
+}
+</script>
