@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 6px; align-items: start; }
+.root { display: flow-root; position: relative; width: 150px; height: 50px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+.f { display: flex; height: 26px; padding: 5px; background: silver; }
+.a { position: absolute; background: rgba(0, 128, 0, 0.6); }
+</style>
+<div class="roots">
+<div class="root"><div class="f" id="justify"><div class="a">justified</div></div></div>
+<div class="root"><div class="f" id="align"><div class="a">aligned</div></div></div>
+<div class="root"><div class="f" style="justify-content: center; align-items: center"><div class="a" id="text">text</div></div></div>
+<div class="root"><div class="f" id="resized" style="justify-content: flex-end; align-items: center"><div class="a">resized</div></div></div>
+<div class="root"><div class="f" id="direction" style="justify-content: flex-end"><div class="a">direction</div></div></div>
+<div class="root"><div class="f" id="padding" style="justify-content: center; align-items: flex-end"><div class="a">padding</div></div></div>
+<div class="root"><div class="f" style="justify-content: center; align-items: center"><div class="a" id="insets" style="left: 5px">inset</div></div></div>
+<div class="root"><div class="f" style="justify-content: flex-end; align-items: center"><div class="a" id="margin">margin</div></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("justify").style.justifyContent = "center";
+document.getElementById("align").style.alignItems = "flex-end";
+document.getElementById("text").firstChild.data = "longer text";
+document.getElementById("resized").style.width = "80px";
+document.getElementById("direction").style.flexDirection = "column";
+document.getElementById("padding").style.padding = "2px 10px 8px 20px";
+document.getElementById("insets").style.left = "auto";
+document.getElementById("margin").style.marginRight = "10px";
+</script>

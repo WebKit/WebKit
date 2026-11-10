@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: flow-root; margin-bottom: 4px; }
+.box { border: 1px solid blue; }
+.vertical { writing-mode: vertical-rl; background: lightgreen; }
+</style>
+<div class="root"><div class="box" style="width: min-content"><div class="vertical">vertical text in a min-content box</div></div></div>
+<div class="root"><div class="box" style="width: max-content"><div class="vertical" style="margin: 0 10px; padding: 3px">vertical with margins</div></div></div>
+<div class="root"><div class="box" style="width: fit-content"><div class="vertical" style="height: 60px">vertical with a fixed height and text that wraps</div></div></div>
+<div class="root"><div class="box" style="width: min-content"><div class="vertical" style="float: left">float</div><div>after</div></div></div>
+<div class="root"><div class="box" style="width: max-content"><div class="vertical" style="display: flex">vertical flex</div></div></div>
+<div class="root"><div class="box" style="width: min-content"><div class="vertical"><div style="width: 30px; height: 40px; background: tan"></div></div></div></div>
+<div class="root"><div class="box" style="display: inline-block"><div class="vertical">inline-block with a vertical child</div></div></div>

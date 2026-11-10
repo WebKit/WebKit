@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px monospace; }
+.wrap { width: 300px; border: 1px solid; margin: 2px; display: inline-block; vertical-align: top; }
+.l { background: lightblue; }
+</style>
+<div class="wrap"><div class="l" style="display: flex; aspect-ratio: 4">flex auto</div></div>
+<div class="wrap"><div class="l" style="display: flex; aspect-ratio: 2; height: 40px">flex height</div></div>
+<div class="wrap"><div class="l" style="display: grid; aspect-ratio: 3; width: 50%">grid width</div></div>
+<div class="wrap"><div class="l" style="display: flex; aspect-ratio: 1; height: 40px; margin: 0 auto">flex auto margins</div></div>
+<div class="wrap" style="height: 80px"><div class="l" style="display: flex; aspect-ratio: 2; height: 50%">pct height</div></div>
+<div class="wrap"><div class="l" style="display: flex; aspect-ratio: 2; max-height: 30px">max-height</div></div>
+<div class="wrap"><div class="l" style="display: flex; aspect-ratio: 1/2; min-width: 20px; height: 30px">min-width</div></div>
+<div class="wrap"><button class="l" style="display: block; aspect-ratio: 3">button</button></div>
+<div class="wrap"><table class="l" style="aspect-ratio: 3; width: 120px"><tr><td>table</td></tr></table></div>
+<div class="wrap"><div class="l" style="display: flex; aspect-ratio: 2; box-sizing: border-box; padding: 5px; height: 40px">border-box</div></div>
+<div class="wrap" style="width: min-content"><div class="l" style="display: flex; aspect-ratio: 2; height: 30px">in min-content</div></div>
+<div class="wrap" style="width: max-content"><div class="l" style="display: grid; aspect-ratio: 2; height: 30px">in max-content</div></div>
+<div class="wrap" style="direction: rtl"><div class="l" style="display: flex; aspect-ratio: 2; height: 30px; margin-inline-start: 10px">rtl</div></div>

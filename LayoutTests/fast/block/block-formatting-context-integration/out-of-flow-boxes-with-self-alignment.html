@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px monospace; }
+.cb { position: relative; width: 200px; height: 80px; border: 1px solid; margin: 4px; display: inline-block; vertical-align: top; }
+.a { position: absolute; inset: 0; background: lightblue; }
+.f { width: 50px; height: 20px; }
+.s { position: absolute; background: lightblue; width: 50px; height: 20px; }
+</style>
+<div class="cb"><div class="a f" style="justify-self: center; align-self: center">cc</div></div>
+<div class="cb"><div class="a f" style="justify-self: end; align-self: end">ee</div></div>
+<div class="cb"><div class="a f" style="justify-self: self-end; align-self: self-start; inset: 10px">sse</div></div>
+<div class="cb"><div class="a f" style="justify-self: left; align-self: flex-end">left</div></div>
+<div class="cb"><div class="a f" style="justify-self: right; align-self: last baseline">right</div></div>
+<div class="cb"><div class="a" style="justify-self: center; align-self: center">fit content</div></div>
+<div class="cb"><div class="a" style="justify-self: stretch; align-self: stretch">stretch</div></div>
+<div class="cb"><div class="a" style="justify-self: start; align-self: start; margin: 5px">start margins</div></div>
+<div class="cb"><div class="a f" style="justify-self: center; margin: auto">auto margins</div></div>
+<div class="cb"><div class="a" style="width: 260px; height: 100px; justify-self: center; align-self: center; left: 20px">overflow</div></div>
+<div class="cb"><div class="a" style="width: 260px; height: 100px; justify-self: unsafe center; align-self: unsafe end">unsafe</div></div>
+<div class="cb"><div class="a" style="width: 260px; height: 100px; justify-self: safe center; align-self: safe end">safe</div></div>
+<div class="cb" style="overflow: hidden"><div class="a" style="width: 260px; height: 100px; justify-self: end; align-self: end">scroller</div></div>
+<div class="cb" style="direction: rtl"><div class="a f" style="justify-self: start; align-self: end">rtl start</div></div>
+<div class="cb" style="direction: rtl"><div class="a f" style="justify-self: left">rtl left</div></div>
+<div class="cb" style="writing-mode: vertical-lr"><div class="a f" style="justify-self: end; align-self: center">vlr</div></div>
+<div class="cb" style="writing-mode: vertical-rl"><div class="a f" style="justify-self: center; align-self: end">vrl</div></div>
+<div class="cb"><img class="a" style="width: 30px; height: 30px; background: green; justify-self: center; align-self: end"></div>
+<div class="cb"><button class="a" style="justify-self: center; align-self: center">button</button></div>
+<div class="cb"><div class="a" style="display: flex; justify-self: end; align-self: center">flex</div></div>
+<div class="cb"><div class="a" style="justify-self: center; align-self: center"><div style="height: 50%; width: 20px; background: green"></div>pct</div></div>
+<div class="cb"><div class="a" style="justify-self: center; align-self: center; min-width: 120px; max-height: 10px">minmax</div></div>
+<div class="cb"><div style="margin-left: 30px">text<div class="s" style="justify-self: center">static c</div></div></div>
+<div class="cb"><div style="margin-left: 30px; justify-items: end">text<div class="s">items end</div></div></div>
+<div class="cb"><div style="margin-left: 30px; justify-items: legacy center">text<div class="s">legacy</div></div></div>
+<div class="cb"><div style="margin-left: 30px; direction: rtl">text<div class="s" style="justify-self: end">rtl parent</div></div></div>
+<div class="cb"><div style="margin-left: 30px">text<div class="s" style="justify-self: center; align-self: end">block static</div></div></div>
+<div class="cb"><div style="margin-left: 30px">text<div class="s" style="justify-self: center; top: 0; bottom: 0; align-self: center">mixed</div></div></div>
+<div class="cb"><div style="margin-left: 30px">text<div class="s" style="justify-self: center; width: auto">fit</div></div></div>
+<div class="cb"><span style="margin-left: 30px">text<span class="s" style="justify-self: center">in span</span></span></div>
+<div class="cb"><div style="display: flex; justify-content: center; height: 60px"><div class="s" style="align-self: center; justify-self: end">flex parent</div></div></div>
+<div class="cb"><div class="s" style="left: 10px; justify-self: end">one inset</div></div>

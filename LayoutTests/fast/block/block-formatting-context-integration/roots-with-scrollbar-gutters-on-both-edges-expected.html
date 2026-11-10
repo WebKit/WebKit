@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.s { width: 120px; height: 50px; border: 2px solid; padding: 3px; scrollbar-gutter: stable both-edges; font: 10px/12px monospace; margin-bottom: 5px; background: lightblue; }
+.b { height: 5px; background: green; }
+</style>
+<div class="s" style="overflow: auto"><div class="b"></div>auto</div>
+<div class="s" style="overflow: hidden" dir="rtl"><div class="b"></div>right to left, hidden</div>
+<div class="s" style="overflow: scroll"><div class="b"></div><div>scroll</div></div>
+<div class="s" style="overflow: auto" dir="rtl">right to left, inline content only</div>
+<div class="s" style="overflow: auto; writing-mode: vertical-lr; height: 120px; width: 50px"><div class="b" style="width: 5px; height: auto"></div></div>
+<div class="s" style="overflow: auto"><div class="b"></div><div class="b" style="height: 80px"></div></div>
+<div style="display: flex; flex-direction: column; align-items: start"><div class="s" style="overflow: auto" dir="rtl">right to left, inline content only, in a flex item</div><div class="s" style="overflow: auto" dir="rtl"><div class="b"></div>right to left, in a flex item</div></div>
