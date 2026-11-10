@@ -48,6 +48,7 @@ class BlockIntegrationUtils;
 namespace Layout {
 
 class BlockItem;
+class FloatingContext;
 
 struct BlockLayoutResult {
     struct Box {
@@ -177,6 +178,7 @@ private:
     };
     void resolveBorderBoxLogicalTops(ContainingBlockState& blockContainerState);
     void placePendingFloats(LayoutUnit borderBoxLogicalTop, const RenderBox* blockContainer = nullptr);
+    FloatingContext floatingContextForSidesOf(const RenderBox&, const PlacedFloats&) const;
     std::optional<ContainingBlockState::Clearance> clearanceAtBlockStart(const RenderBox&) const;
     void placeCollapsedThroughBoxWithClearance(const RenderBox&, ContainingBlockState&&, std::span<const ContainingBlockState* const> statesWaitingForTop, const BorderBoxLogicalTops&, BlockLayoutResult&);
     LayoutSize borderBoxOffsetInRoot(const ContainingBlockState&);
