@@ -112,10 +112,10 @@ void ImageFrameWorkQueue::start()
             }
         }
 
-        if (RefPtr protectedRunLoop = weakRunLoop.get()) {
-            // Ensure destruction happens on creation thread.
-            callOnRunLoop(*protectedRunLoop, [protectedThis = WTF::move(protectedThis), weakRunLoop = WTF::move(weakRunLoop), protectedWorkQueue = WTF::move(protectedWorkQueue), protectedSource = WTF::move(protectedSource)] mutable { });
-        }
+        // Ensure destruction happens on creation thread.
+        callOnMainThread([protectedThis = [protectedThis = WTF::move(protectedThis), weakRunLoop = WTF::move(weakRunLoop), protectedWorkQueue = WTF::move(protectedWorkQueue), protectedSource = WTF::move(protectedSource)
+            , protectedDecoder = WTF::move(protectedDecoder)
+            ] () mutable { });
     });
 }
 
