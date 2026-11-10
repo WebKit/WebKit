@@ -925,17 +925,13 @@ macro(_WEBKIT_TARGET_INTERFACE _target)
     if (NOT ${_target}_LIBRARY_TYPE STREQUAL "SHARED")
         target_compile_definitions(${_target}_PostBuild INTERFACE "STATICALLY_LINKED_WITH_${_target}")
     endif ()
-    if (TARGET ${_target}_CodeSign)
-        get_target_property(_codesign_stamp ${_target} CODESIGN_STAMP)
-        if (_codesign_stamp)
-            # add_dependencies() on a utility target would order every consumer's
-            # objects behind signing; only linking reads the signed binary.
-            set_property(TARGET ${_target}_PostBuild APPEND PROPERTY
-                INTERFACE_LINK_DEPENDS ${_codesign_stamp})
-        else ()
-            # Executables sign in POST_BUILD and have no stamp.
-            add_dependencies(${_target}_PostBuild ${_target}_CodeSign)
-        endif ()
+    # Only frameworks have a stamp. Dylibs sign in POST_BUILD as part of their link.
+    get_target_property(_codesign_stamp ${_target} CODESIGN_STAMP)
+    if (_codesign_stamp)
+        # add_dependencies() on a utility target would order every consumer's
+        # objects behind signing; only linking reads the signed binary.
+        set_property(TARGET ${_target}_PostBuild APPEND PROPERTY
+            INTERFACE_LINK_DEPENDS ${_codesign_stamp})
     endif ()
     add_library(WebKit::${_target} ALIAS ${_target}_PostBuild)
 endmacro()
