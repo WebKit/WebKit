@@ -12,6 +12,11 @@
 <script>
 
 function getHeaders(isCrossOrigin) {
+  return getHeadersFromScript(
+      `${isCrossOrigin ? CROSS_ORIGIN_RESOURCES_URL : SAME_ORIGIN_RESOURCES_URL}/echo-headers.py?callback=getHeaders.callback`);
+}
+
+function getHeadersFromScript(url) {
   function headersCallback(r) {
     return (x) => {
       r(x);
@@ -21,8 +26,7 @@ function getHeaders(isCrossOrigin) {
   let script = document.createElement("script");
   return new Promise((resolve, reject) => {
     getHeaders['callback'] = headersCallback(resolve);
-    script.src =
-      `${isCrossOrigin ? CROSS_ORIGIN_RESOURCES_URL : SAME_ORIGIN_RESOURCES_URL}/echo-headers.py?callback=getHeaders.callback`;
+    script.src = url;
     document.head.appendChild(script);
   });
 }
@@ -48,6 +52,20 @@ compression_dictionary_promise_test(async (t) => {
   const headers = await getHeaders(false /* cross-origin */);
   assert_true("available-dictionary" in headers);
 }, 'Fetch same-origin no-cors request includes Available-Dictionary header');
+
+compression_dictionary_promise_test(async (t) => {
+  // Register the dictionary for the remote origin
+  const dictionary_id = `no-cors_redirect_${token()}`;
+  const dict = await (await fetch(getRemoteHostUrl(`${kRegisterDictionaryPath}?id=${dictionary_id}`))).text();
+  assert_equals(dict, kDefaultDictionaryContent);
+  assert_equals(
+      await waitUntilHeader(t, "dictionary-id", {expected_header: `"${dictionary_id}"`, check_remote: true}),
+      `"${dictionary_id}"`);
+  // Test a same-origin no-cors fetch that is redirected to the remote origin
+  const remote_url = getRemoteHostUrl('./resources/echo-headers.py?callback=getHeaders.callback');
+  const headers = await getHeadersFromScript(`/common/redirect.py?location=${encodeURIComponent(remote_url)}`);
+  assert_false("available-dictionary" in headers);
+}, 'Fetch same-origin no-cors request redirected cross-origin does not include Available-Dictionary header');
 
 compression_dictionary_promise_test(async (t) => {
   const dictionary_id = `redirect_${token()}`;

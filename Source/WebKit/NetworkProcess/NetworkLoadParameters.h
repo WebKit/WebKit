@@ -54,6 +54,7 @@ struct CompressionDictionaryParameters {
 
     WebCore::FetchOptions::Destination destination { WebCore::FetchOptions::Destination::EmptyString };
     std::optional<Match> match { };
+    bool isNoCors { false };
 };
 
 struct NetworkLoadParameters {

@@ -546,6 +546,12 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         request.clearHTTPAuthorization();
         request.clearHTTPOrigin();
 
+        // https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch
+        // To be added with https://github.com/whatwg/fetch/pull/1854
+        // 3. If request's mode is "no-cors", then return the result of running fallback.
+        // Only same-origin no-cors loads get here, and one that has left its origin stays opaque.
+        if (m_compressionDictionary && m_compressionDictionary->isNoCors)
+            m_compressionDictionary = std::nullopt;
     } else {
         // Only consider applying authentication credentials if this is actually a redirect and the redirect
         // URL didn't include credentials of its own.
