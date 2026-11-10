@@ -474,19 +474,18 @@ struct Texture {
     unsigned id { 0 };
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(Texture)
+#endif
 
 void AcceleratedBackingStore::BufferEGLImage::didUpdateContents(Buffer*, const Rects&)
 {
+#if USE(GTK4)
     auto* texture = createTexture();
     glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, m_image);
 
     m_texture = adoptGRef(gdk_gl_texture_new(texture->context.get(), texture->id, m_size.width(), m_size.height(), [](gpointer userData) {
         destroyTexture(static_cast<Texture*>(userData));
     }, texture));
-}
 #else
-void AcceleratedBackingStore::BufferEGLImage::didUpdateContents(Buffer*, const Rects&)
-{
     if (m_textureID)
         return;
 
@@ -498,8 +497,8 @@ void AcceleratedBackingStore::BufferEGLImage::didUpdateContents(Buffer*, const R
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, m_image);
-}
 #endif
+}
 
 RendererBufferDescription AcceleratedBackingStore::BufferEGLImage::description() const
 {

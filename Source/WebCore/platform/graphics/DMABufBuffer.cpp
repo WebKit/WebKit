@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DMABufBuffer.h"
 
-#if USE(GBM)
+#if USE(COORDINATED_GRAPHICS)
 #include "BitmapTexturePool.h"
 #include "CoordinatedPlatformLayerBuffer.h"
 #include "GBMVersioning.h"
@@ -80,6 +80,7 @@ std::optional<DMABufBuffer::Attributes> DMABufBuffer::takeAttributes()
     return DMABufBuffer::Attributes { WTF::move(m_attributes.size), std::exchange(m_attributes.fourcc, 0), WTF::move(m_attributes.fds), WTF::move(m_attributes.offsets), WTF::move(m_attributes.strides), std::exchange(m_attributes.modifier, 0) };
 }
 
+#if USE(GBM)
 std::optional<DMABufBufferAttributes> DMABufBufferAttributes::fromGBMBufferObject(struct gbm_bo* bo, EnableModifiers enableModifiers)
 {
     if (!bo)
@@ -107,6 +108,7 @@ std::optional<DMABufBufferAttributes> DMABufBufferAttributes::fromGBMBufferObjec
 
     return attributes;
 }
+#endif
 
 EGLImage DMABufBuffer::createEGLImage(GLDisplay& display) const
 {
@@ -583,4 +585,4 @@ sk_sp<SkImage> DMABufBuffer::createPromiseImageForQualcommVideoFrame(const sk_sp
 
 } // namespace WebCore
 
-#endif // USE(GBM)
+#endif // USE(COORDINATED_GRAPHICS)
