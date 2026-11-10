@@ -1784,6 +1784,11 @@ void RenderLayer::updateTransformFromStyle(TransformationMatrix& transform, cons
     if (m_anchorScrollAdjustment)
         transform.translate(m_anchorScrollAdjustment->width(), m_anchorScrollAdjustment->height());
 
+    // The canvas transform positions a canvas drawable element within its canvas,
+    // so it is applied outside of the element's own CSS transforms.
+    if (auto canvasTransform = renderer().canvasTransform())
+        transform.multiply(*canvasTransform);
+
     auto referenceBoxRect = snapRectToDevicePixelsIfNeeded(renderer().transformReferenceBoxRect(style), renderer());
     renderer().applyTransform(transform, style, referenceBoxRect, options);
 

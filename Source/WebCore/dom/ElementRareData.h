@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "AffineTransform.h"
 #include "CSSCalcRandomCachingKeyMap.h"
 #include "CustomElementDefaultARIA.h"
 #include "CustomElementReactionQueue.h"
@@ -136,6 +137,9 @@ public:
     void clearLastRememberedLogicalWidth() { m_lastRememberedLogicalWidth.reset(); }
     void clearLastRememberedLogicalHeight() { m_lastRememberedLogicalHeight.reset(); }
 
+    std::optional<TransformationMatrix> canvasTransform() const { return m_canvasTransform; }
+    void setCanvasTransform(const std::optional<TransformationMatrix>& canvasTransform) { m_canvasTransform = canvasTransform; }
+
     const AtomString& nonce() const LIFETIME_BOUND { return m_nonce; }
     void setNonce(const AtomString& value) { m_nonce = value; }
 
@@ -231,6 +235,8 @@ public:
             result.add(UseType::UserInfo);
         if (m_invokedPopover)
             result.add(UseType::InvokedPopover);
+        if (m_canvasTransform)
+            result.add(UseType::CanvasTransform);
         return result;
     }
 #endif
@@ -265,6 +271,8 @@ private:
 
     Markable<LayoutUnit> m_lastRememberedLogicalWidth;
     Markable<LayoutUnit> m_lastRememberedLogicalHeight;
+
+    Markable<TransformationMatrix> m_canvasTransform;
 
     HashMap<std::optional<Style::PseudoElementIdentifier>, std::unique_ptr<ElementAnimationRareData>> m_animationRareData;
 
