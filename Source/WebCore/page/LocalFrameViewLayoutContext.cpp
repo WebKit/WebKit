@@ -1066,13 +1066,13 @@ void LocalFrameViewLayoutContext::deleteDetachedInlineContentNow() const
     m_detachedInlineContent.clear();
 }
 
-void LocalFrameViewLayoutContext::setBoxNeedsTransformUpdateAfterContainerLayout(RenderBox& box, RenderBlock& container)
+void LocalFrameViewLayoutContext::setBoxNeedsTransformUpdateAfterContainerLayout(RenderBox& box, RenderBoxModelObject& container)
 {
     auto it = m_containersWithDescendantsNeedingTransformUpdate.ensure(container, [] { return Vector<SingleThreadWeakPtr<RenderBox>>({ }); });
     it.iterator->value.append(WeakPtr { box });
 }
 
-Vector<SingleThreadWeakPtr<RenderBox>> LocalFrameViewLayoutContext::takeBoxesNeedingTransformUpdateAfterContainerLayout(RenderBlock& container)
+Vector<SingleThreadWeakPtr<RenderBox>> LocalFrameViewLayoutContext::takeBoxesNeedingTransformUpdateAfterContainerLayout(RenderBoxModelObject& container)
 {
     return m_containersWithDescendantsNeedingTransformUpdate.take(container);
 }
