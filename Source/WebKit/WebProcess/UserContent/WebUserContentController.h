@@ -32,6 +32,7 @@
 #include "UserStyleSheetIdentifier.h"
 #include "WebScriptMessageHandler.h"
 #include "WebUserContentControllerDataTypes.h"
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/UserContentProvider.h>
 #include <wtf/HashMap.h>
 
@@ -75,6 +76,7 @@ public:
     void addContentWorldIfNecessary(const ContentWorldData&);
     void addUserScripts(Vector<WebUserScriptData>&&, InjectUserScriptImmediately);
     void addUserStyleSheets(Vector<WebUserStyleSheetData>&&);
+    void injectUserStyleSheetsScopedToPage(WebCore::Page&, WebCore::PageIdentifier);
     void addUserScriptMessageHandlers(Vector<WebScriptMessageHandlerData>&&);
 #if ENABLE(CONTENT_EXTENSIONS)
     void addContentRuleLists(Vector<std::pair<WebCompiledContentRuleListData, URL>>&&);

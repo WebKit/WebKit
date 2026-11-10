@@ -1792,6 +1792,7 @@ public:
 
     void addUserScript(String&& source, InjectedBundleScriptWorld&, WebCore::UserContentInjectedFrames = WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::UserScriptInjectionTime = WebCore::UserScriptInjectionTime::DocumentStart, WebCore::UserContentMatchParentFrame = WebCore::UserContentMatchParentFrame::Never);
     void addUserStyleSheet(const String& source, WebCore::UserContentInjectedFrames);
+    void injectUserStyleSheetsScopedToThisPage();
     void removeAllUserContent();
 
     void dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>);

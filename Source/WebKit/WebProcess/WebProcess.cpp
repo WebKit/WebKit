@@ -1111,6 +1111,9 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
     if (addResult.isNewEntry) {
         page->setHiddenPageDOMTimerThrottlingIncreaseLimit(m_hiddenPageDOMTimerThrottlingIncreaseLimit);
 
+        // User style sheets delivered in the creation parameters could not be injected while the WebPage was being constructed.
+        page->injectUserStyleSheetsScopedToThisPage();
+
 #if ENABLE(GPU_PROCESS)
         assertIsMainRunLoop();
         if (RefPtr gpuProcessConnection = m_gpuProcessConnection)

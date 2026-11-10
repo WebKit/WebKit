@@ -263,6 +263,17 @@ void WebUserContentController::addUserStyleSheets(Vector<WebUserStyleSheetData>&
     invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 
+void WebUserContentController::injectUserStyleSheetsScopedToPage(Page& page, PageIdentifier pageID)
+{
+    for (auto& styleSheetVector : m_userStyleSheets.values()) {
+        for (auto& identifierUserStyleSheetPair : borrow(styleSheetVector)) {
+            auto& userStyleSheet = identifierUserStyleSheetPair.second;
+            if (userStyleSheet.pageID() == pageID)
+                page.injectUserStyleSheet(userStyleSheet);
+        }
+    }
+}
+
 void WebUserContentController::removeUserStyleSheet(ContentWorldIdentifier worldIdentifier, UserStyleSheetIdentifier userStyleSheetIdentifier)
 {
     RefPtr world = worldMap().get(worldIdentifier);

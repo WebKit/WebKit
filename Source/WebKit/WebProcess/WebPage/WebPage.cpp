@@ -9415,6 +9415,12 @@ void WebPage::addUserStyleSheet(const String& source, WebCore::UserContentInject
     Ref { m_userContentController }->addUserStyleSheet(InjectedBundleScriptWorld::normalWorldSingleton(), WTF::move(userStyleSheet));
 }
 
+void WebPage::injectUserStyleSheetsScopedToThisPage()
+{
+    if (RefPtr page = corePage())
+        Ref { m_userContentController }->injectUserStyleSheetsScopedToPage(*page, m_identifier);
+}
+
 void WebPage::removeAllUserContent()
 {
     Ref { m_userContentController }->removeAllUserContent();
