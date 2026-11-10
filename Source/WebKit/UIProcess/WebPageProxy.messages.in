@@ -102,9 +102,9 @@ messages -> WebPageProxy {
     SetCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents)
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    [EnabledBy=ModelElementImmersiveEnabled] AllowImmersiveElement() -> (bool allow)
-    [EnabledBy=ModelElementImmersiveEnabled] PresentImmersiveElement(WebCore::LayerHostingContextIdentifier contextID) -> (bool success)
-    [EnabledBy=ModelElementImmersiveEnabled] DismissImmersiveElement() -> ()
+    [EnabledBy=ModelElementImmersiveEnabled || ImageElementImmersiveEnabled] AllowImmersiveElement() -> (bool allow)
+    [EnabledBy=ModelElementImmersiveEnabled || ImageElementImmersiveEnabled] PresentImmersiveElement(WebKit::ImmersiveElementDetails details) -> (bool success)
+    [EnabledBy=ModelElementImmersiveEnabled || ImageElementImmersiveEnabled] DismissImmersiveElement() -> ()
 #endif
 
     DidChangeContentSize(WebCore::IntSize newSize)

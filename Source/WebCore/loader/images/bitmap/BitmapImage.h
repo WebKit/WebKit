@@ -149,6 +149,10 @@ private:
     bool isPanorama() const final { return m_source->isPanorama(); }
 #endif
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    std::optional<float> focalLengthIn35mm() const final { return m_source->focalLengthIn35mm(); }
+#endif
+
 #if ENABLE(SPATIAL_IMAGE_CONTROLS)
     bool isMaybePanoramic() const final { return m_source->isMaybePanoramic(); }
 #endif

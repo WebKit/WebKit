@@ -3,4 +3,11 @@ PASS Immersive API exists on img
 PASS Image immersive request fails for an image that is not a panorama
 PASS Image immersive request fails without user activation
 PASS Immersiveerror event fires when an image request fails
+PASS Image enters immersive mode with user activation
+PASS Document.exitImmersive() exits immersive image
+PASS Client dismissal exits immersive image
+PASS Immersivechange events fire when an image enters immersive
+PASS Only one image can be immersive at a time
+PASS Removing immersive image from DOM exits immersive mode
+PASS CSS :immersive pseudo-class matches an immersive image
 

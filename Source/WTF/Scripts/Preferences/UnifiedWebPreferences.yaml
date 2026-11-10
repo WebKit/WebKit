@@ -3044,7 +3044,7 @@ ImageElementImmersiveEnabled:
   type: bool
   status: unstable
   category: javascript
-  condition: ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+  condition: ENABLE(MODEL_ELEMENT_IMMERSIVE)
   humanReadableName: "Immersive <img> API"
   humanReadableDescription: "Enable <img> element immersive API"
   defaultValue: false

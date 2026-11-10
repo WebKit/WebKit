@@ -2256,18 +2256,31 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 - (void)_presentImmersiveElement:(const WebCore::LayerHostingContextIdentifier)contextID frameInfo:(WKFrameInfo *)frameInfo completion:(CompletionHandler<void(bool)>&&)completion
 {
+    RetainPtr environment = adoptNS([[WKImmersiveEnvironment alloc] _initWithContextID:contextID processIdentifier:[self _webProcessIdentifier] frameInfo:frameInfo]);
+    [self _presentImmersiveEnvironment:environment.get() completion:WTF::move(completion)];
+}
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+- (void)_presentImmersiveImageElement:(CGImageRef)image focalLengthIn35mm:(NSNumber *)focalLengthIn35mm frameInfo:(WKFrameInfo *)frameInfo completion:(CompletionHandler<void(bool)>&&)completion
+{
+    RetainPtr environment = adoptNS([[WKImmersiveEnvironment alloc] _initWithImage:image focalLengthIn35mm:focalLengthIn35mm frameInfo:frameInfo]);
+    [self _presentImmersiveEnvironment:environment.get() completion:WTF::move(completion)];
+}
+#endif
+
+- (void)_presentImmersiveEnvironment:(WKImmersiveEnvironment *)environment completion:(CompletionHandler<void(bool)>&&)completion
+{
     id<WKImmersiveEnvironmentDelegate> immersiveEnvironmentDelegate = self.immersiveEnvironmentDelegate;
     if (!immersiveEnvironmentDelegate) {
         completion(false);
         return;
     }
 
-    RetainPtr environment = adoptNS([[WKImmersiveEnvironment alloc] _initWithContextID:contextID processIdentifier:[self _webProcessIdentifier] frameInfo:frameInfo]);
     _currentImmersiveEnvironment = environment;
 
-    [immersiveEnvironmentDelegate webView:self presentImmersiveEnvironment:environment.get() completionHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self), completion = WTF::move(completion)](NSError *error) mutable {
+    [immersiveEnvironmentDelegate webView:self presentImmersiveEnvironment:environment completionHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self), weakEnvironment = WeakObjCPtr<WKImmersiveEnvironment>(environment), completion = WTF::move(completion)](NSError *error) mutable {
         if (error) {
-            if (RetainPtr retainedSelf = weakSelf.get())
+            if (RetainPtr retainedSelf = weakSelf.get(); retainedSelf && retainedSelf->_currentImmersiveEnvironment.get() == weakEnvironment.get().get())
                 retainedSelf->_currentImmersiveEnvironment = nil;
         }
         completion(!error);

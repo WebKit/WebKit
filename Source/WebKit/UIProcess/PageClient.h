@@ -75,6 +75,10 @@
 #include <WebCore/TextRecognitionResult.h>
 #endif
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+#include "ImmersiveElementDetails.h"
+#endif
+
 #if USE(DICTATION_ALTERNATIVES)
 #include <WebCore/PlatformTextAlternatives.h>
 #endif
@@ -915,7 +919,7 @@ public:
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     virtual void allowImmersiveElement(Ref<API::FrameInfo>&&, CompletionHandler<void(bool)>&& completion) const { completion(false); }
-    virtual void presentImmersiveElement(const WebCore::LayerHostingContextIdentifier, Ref<API::FrameInfo>&&, CompletionHandler<void(bool)>&& completion) const { completion(false); }
+    virtual void presentImmersiveElement(ImmersiveElementDetails&&, Ref<API::FrameInfo>&&, CompletionHandler<void(bool)>&& completion) const { completion(false); }
     virtual void dismissImmersiveElement(CompletionHandler<void()>&& completion) const { completion(); }
 #endif
 };

@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementImmersiveEnabled=true ImageElementImmersiveEnabled=true shouldAcceptImmersiveEnvironmentRequests=true UsesBackForwardCache=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test.js"></script>
+</head>
+<script>
+jsTestIsAsync = true;
+
+let image;
+
+function requestImmersiveWithUserGesture() {
+    return new Promise((resolve, reject) => {
+        internals.withUserGesture(() => {
+            image.requestImmersive().then(resolve, reject);
+        });
+    });
+}
+
+window.addEventListener("pageshow", async (event) => {
+    if (!event.persisted)
+        return;
+
+    debug("Restored from the back/forward cache.");
+    shouldBeNull("document.immersiveElement");
+
+    try {
+        await requestImmersiveWithUserGesture();
+        shouldBe("document.immersiveElement", "image");
+        testPassed("Re-entered the immersive environment after restoring from the back/forward cache.");
+    } catch (error) {
+        testFailed("Could not re-enter the immersive environment after restore: " + error);
+    }
+
+    await document.exitImmersive();
+
+    finishJSTest();
+});
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    description("A page whose &lt;img&gt; is immersive should not be immersive when restored from the back/forward cache, and re-entry should work.");
+
+    image = document.getElementById("image");
+    await image.decode();
+
+    await requestImmersiveWithUserGesture();
+    shouldBe("document.immersiveElement", "image");
+
+    debug("Navigating away to place the page in the back/forward cache.");
+    window.location.href = "../../history/resources/page-cache-helper.html";
+});
+</script>
+<body>
+<img id="image" src="resources/panorama.png">
+<div id="console"></div>
+</body>
+</html>

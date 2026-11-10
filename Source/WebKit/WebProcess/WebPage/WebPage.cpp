@@ -394,6 +394,10 @@
 #include <WebCore/MHTMLArchive.h>
 #endif
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+#include "ImmersiveElementDetails.h"
+#endif
+
 #if ENABLE(POINTER_LOCK)
 #include <WebCore/PointerLockController.h>
 #endif
@@ -9092,9 +9096,46 @@ void WebPage::allowImmersiveElement(CompletionHandler<void(bool)>&& completion)
     sendWithAsyncReply(Messages::WebPageProxy::AllowImmersiveElement(), WTF::move(completion));
 }
 
-void WebPage::presentImmersiveElement(const LayerHostingContextIdentifier contextID, CompletionHandler<void(bool)>&& completion)
+static std::optional<ImmersiveElementDetails> immersiveElementDetails(ImmersiveElement& element)
 {
-    sendWithAsyncReply(Messages::WebPageProxy::PresentImmersiveElement(contextID), WTF::move(completion));
+    Ref htmlElement = element.asHTMLElement();
+    if (RefPtr modelElement = dynamicDowncast<HTMLModelElement>(htmlElement)) {
+        auto contextID = modelElement->immersiveContextID();
+        if (!contextID)
+            return std::nullopt;
+
+        return ImmersiveElementDetails { *contextID };
+    }
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(htmlElement)) {
+        CheckedPtr renderImage = dynamicDowncast<RenderImage>(imageElement->renderer());
+        if (!renderImage)
+            return std::nullopt;
+
+        RefPtr bitmap = renderImage->createShareableBitmapForFullScreen();
+        if (!bitmap)
+            return std::nullopt;
+
+        auto imageHandle = bitmap->createReadOnlyHandle();
+        if (!imageHandle)
+            return std::nullopt;
+
+        RefPtr image = imageElement->image();
+        return ImmersiveElementDetails { ImmersiveImageDetails { WTF::move(*imageHandle), image ? image->focalLengthIn35mm() : std::nullopt } };
+    }
+#endif
+
+    return std::nullopt;
+}
+
+void WebPage::presentImmersiveElement(ImmersiveElement& element, CompletionHandler<void(bool)>&& completion)
+{
+    auto details = immersiveElementDetails(element);
+    if (!details)
+        return completion(false);
+
+    sendWithAsyncReply(Messages::WebPageProxy::PresentImmersiveElement(WTF::move(*details)), WTF::move(completion));
 }
 
 void WebPage::dismissImmersiveElement(CompletionHandler<void()>&& completion)

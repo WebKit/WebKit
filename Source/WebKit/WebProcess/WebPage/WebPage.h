@@ -216,6 +216,9 @@ class HandleUserInputEventResult;
 class HistoryItem;
 class IgnoreSelectionChangeForScope;
 class ImageBuffer;
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+class ImmersiveElement;
+#endif
 class IntPoint;
 class IntRect;
 class KeyboardEvent;
@@ -1874,7 +1877,7 @@ public:
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     void allowImmersiveElement(CompletionHandler<void(bool)>&&);
-    void presentImmersiveElement(const WebCore::LayerHostingContextIdentifier, CompletionHandler<void(bool)>&&);
+    void presentImmersiveElement(WebCore::ImmersiveElement&, CompletionHandler<void(bool)>&&);
     void dismissImmersiveElement(CompletionHandler<void()>&&);
     void exitImmersive(CompletionHandler<void()>&&);
     bool allowsImmersiveEnvironments() const;

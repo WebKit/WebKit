@@ -74,6 +74,10 @@ public:
     bool isPanorama() const;
 #endif
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    std::optional<float> focalLengthIn35mm() const;
+#endif
+
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
     bool isSpatial() const;
 #endif

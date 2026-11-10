@@ -362,6 +362,7 @@ $(PROJECT_DIR)/Shared/IPCTester.messages.in
 $(PROJECT_DIR)/Shared/IPCTester.serialization.in
 $(PROJECT_DIR)/Shared/IPCTesterReceiver.messages.in
 $(PROJECT_DIR)/Shared/ImageOptions.serialization.in
+$(PROJECT_DIR)/Shared/ImmersiveElementDetails.serialization.in
 $(PROJECT_DIR)/Shared/InspectorExtensionTypes.serialization.in
 $(PROJECT_DIR)/Shared/InspectorNetworkTypes.serialization.in
 $(PROJECT_DIR)/Shared/InspectorPageTypes.serialization.in

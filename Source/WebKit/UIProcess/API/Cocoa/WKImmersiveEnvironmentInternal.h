@@ -37,6 +37,9 @@
 @interface WKImmersiveEnvironment ()
 
 - (instancetype)_initWithContextID:(WebCore::LayerHostingContextIdentifier)contextID processIdentifier:(pid_t)processIdentifier frameInfo:(WKFrameInfo *)frameInfo;
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+- (instancetype)_initWithImage:(CGImageRef)image focalLengthIn35mm:(NSNumber *)focalLengthIn35mm frameInfo:(WKFrameInfo *)frameInfo;
+#endif
 
 @end
 

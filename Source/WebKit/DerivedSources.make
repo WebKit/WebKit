@@ -813,6 +813,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/GPUProcessMediaCodecCapabilities.serialization.in \
 	Shared/GoToBackForwardItemParameters.serialization.in \
 	Shared/ImageOptions.serialization.in \
+	Shared/ImmersiveElementDetails.serialization.in \
 	Shared/InspectorExtensionTypes.serialization.in \
 	Shared/InspectorNetworkTypes.serialization.in \
 	Shared/InspectorPageTypes.serialization.in \

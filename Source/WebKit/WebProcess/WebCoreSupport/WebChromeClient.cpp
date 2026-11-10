@@ -1907,10 +1907,10 @@ void WebChromeClient::allowImmersiveElement(CompletionHandler<void(bool)>&& comp
         completion(false);
 }
 
-void WebChromeClient::presentImmersiveElement(const LayerHostingContextIdentifier contextID, CompletionHandler<void(bool)>&& completion) const
+void WebChromeClient::presentImmersiveElement(ImmersiveElement& element, CompletionHandler<void(bool)>&& completion) const
 {
     if (RefPtr page = m_page.get())
-        page->presentImmersiveElement(contextID, WTF::move(completion));
+        page->presentImmersiveElement(element, WTF::move(completion));
     else
         completion(false);
 }

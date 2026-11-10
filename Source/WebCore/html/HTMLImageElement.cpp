@@ -1284,11 +1284,6 @@ void HTMLImageElement::prepareImmersivePresentation(CompletionHandler<void(Excep
     completion({ });
 }
 
-void HTMLImageElement::presentImmersivePresentation(ChromeClient& client, CompletionHandler<void(bool)>&& completion)
-{
-    client.presentImmersiveImageElement(*this, WTF::move(completion));
-}
-
 std::optional<Exception> HTMLImageElement::immersiveImageError() const
 {
     RefPtr image = this->image();

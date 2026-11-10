@@ -676,6 +676,9 @@ struct GeolocationIdentifierType;
 struct FocusedElementInformation;
 struct HardwareKeyboardState;
 #endif
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+struct ImmersiveImageDetails;
+#endif
 struct InsertTextOptions;
 struct InteractionInformationAtPosition;
 struct InteractionInformationRequest;
@@ -797,6 +800,14 @@ using ImageBufferBackendHandle = Variant<
     , WebCore::DynamicContentScalingDisplayList
 #endif
 >;
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+using ImmersiveElementDetails = Variant<
+    WebCore::LayerHostingContextIdentifier
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    , ImmersiveImageDetails
+#endif
+>;
+#endif
 using LayerHostingContextID = uint32_t;
 using NetworkResourceLoadIdentifier = ObjectIdentifier<NetworkResourceLoadIdentifierType>;
 using PDFPluginIdentifier = ObjectIdentifier<PDFPluginIdentifierType>;
@@ -3523,7 +3534,7 @@ private:
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     void allowImmersiveElement(CompletionHandler<void(bool)>&&);
-    void presentImmersiveElement(const WebCore::LayerHostingContextIdentifier, CompletionHandler<void(bool)>&&);
+    void presentImmersiveElement(ImmersiveElementDetails&&, CompletionHandler<void(bool)>&&);
     void dismissImmersiveElement(CompletionHandler<void()>&&);
 #endif
 
@@ -4647,6 +4658,7 @@ private:
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     bool m_immersive { false };
     RefPtr<API::FrameInfo> m_allowedImmersiveElementFrameInfo;
+    RefPtr<API::FrameInfo> m_presentedImmersiveElementFrameInfo;
 #endif
 
 #if HAVE(AUDIT_TOKEN)

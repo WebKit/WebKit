@@ -522,6 +522,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/GoToBackForwardItemParameters.serialization.in
     Shared/IPCTester.serialization.in
     Shared/ImageOptions.serialization.in
+    Shared/ImmersiveElementDetails.serialization.in
     Shared/InspectorExtensionTypes.serialization.in
     Shared/InspectorNetworkTypes.serialization.in
     Shared/InspectorPageTypes.serialization.in

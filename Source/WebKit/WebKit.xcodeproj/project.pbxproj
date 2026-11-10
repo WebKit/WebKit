@@ -2325,6 +2325,7 @@
 		BCCF6AC312C91F34008F9C35 /* WKImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCF6AC112C91F34008F9C35 /* WKImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCCF6ACA12C91F59008F9C35 /* WKImageCG.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCF6AC812C91F59008F9C35 /* WKImageCG.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCCF6B2512C93E7A008F9C35 /* ImageOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */; };
+		CCE8A51D145B6C5148AED67B /* ImmersiveElementDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C9CCD42F71F7411421B5D01 /* ImmersiveElementDetails.h */; };
 		BCD0139B110FA420003B8A67 /* WKFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD01397110FA420003B8A67 /* WKFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD25F1711D6BDE100169B0E /* WKBundleFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD25F1511D6BDE100169B0E /* WKBundleFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD597D0112B56AC00EC8C23 /* WKPreferencesRef.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD597CE112B56AC00EC8C23 /* WKPreferencesRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8369,6 +8370,8 @@
 		BCCF6AC712C91F59008F9C35 /* WKImageCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKImageCG.cpp; sourceTree = "<group>"; };
 		BCCF6AC812C91F59008F9C35 /* WKImageCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKImageCG.h; sourceTree = "<group>"; };
 		BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageOptions.h; sourceTree = "<group>"; };
+		6C9CCD42F71F7411421B5D01 /* ImmersiveElementDetails.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImmersiveElementDetails.h; sourceTree = "<group>"; };
+		1D3BBD90AF94E53B29368D73 /* ImmersiveElementDetails.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ImmersiveElementDetails.serialization.in; sourceTree = "<group>"; };
 		BCD0042C110C1E27003B8A67 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		BCD01397110FA420003B8A67 /* WKFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFrame.h; sourceTree = "<group>"; };
 		BCD01398110FA420003B8A67 /* WKFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKFrame.cpp; sourceTree = "<group>"; };
@@ -10581,6 +10584,8 @@
 				A78A5FE32B0EB39E005036D3 /* ImageBufferSetIdentifier.h */,
 				BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */,
 				33E5A6B32C6F8F8D00F2CD04 /* ImageOptions.serialization.in */,
+				6C9CCD42F71F7411421B5D01 /* ImmersiveElementDetails.h */,
+				1D3BBD90AF94E53B29368D73 /* ImmersiveElementDetails.serialization.in */,
 				999B7ED82550E4A800F450A4 /* InspectorExtensionTypes.cpp */,
 				99BE3B1625433B9400C6551C /* InspectorExtensionTypes.h */,
 				2D9BECF72B309B5A00D0AE99 /* InspectorExtensionTypes.serialization.in */,
@@ -18732,6 +18737,7 @@
 				F4351B9E25EEC84C00D63892 /* ImageAnalysisUtilities.h in Headers */,
 				A78A5FE42B0EB39E005036D3 /* ImageBufferSetIdentifier.h in Headers */,
 				BCCF6B2512C93E7A008F9C35 /* ImageOptions.h in Headers */,
+				CCE8A51D145B6C5148AED67B /* ImmersiveElementDetails.h in Headers */,
 				1A1EC69E1872092100B951F0 /* ImportanceAssertion.h in Headers */,
 				BC204EE311C83E98008F3375 /* InjectedBundle.h in Headers */,
 				BCEE7DC5128B645D009827DA /* InjectedBundleClient.h in Headers */,

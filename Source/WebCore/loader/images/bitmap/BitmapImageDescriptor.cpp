@@ -288,6 +288,15 @@ bool BitmapImageDescriptor::isPanorama() const
 }
 #endif
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+std::optional<float> BitmapImageDescriptor::focalLengthIn35mm() const
+{
+    if (RefPtr decoder = m_source->decoderIfExists())
+        return decoder->focalLengthIn35mm();
+    return std::nullopt;
+}
+#endif
+
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
 bool BitmapImageDescriptor::isSpatial() const
 {
