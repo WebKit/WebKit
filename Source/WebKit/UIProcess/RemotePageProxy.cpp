@@ -254,6 +254,7 @@ void RemotePageProxy::processDidTerminate(WebProcessProxy& process, ProcessTermi
     if (!page)
         return;
     page->stopAllURLSchemeTasks(&process);
+    page->resetFocusedFrameIfInProcess(process);
     if (RefPtr drawingArea = page->drawingArea())
         drawingArea->remotePageProcessDidTerminate(process.coreProcessIdentifier());
     if (RefPtr mainFrame = page->mainFrame())

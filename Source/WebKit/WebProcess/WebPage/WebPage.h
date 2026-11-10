@@ -2861,6 +2861,7 @@ private:
     void addResourceTimingFromSubframe(WebCore::FrameIdentifier parentFrameID, WebCore::ResourceTiming&&);
 
     void frameWasFocusedInAnotherProcess(std::optional<WebCore::FrameIdentifier>&&);
+    void focusedFrameProcessDidTerminate(WebCore::FrameIdentifier);
 
 #if ENABLE(WRITING_TOOLS)
     void willBeginWritingToolsSession(const std::optional<WebCore::WritingTools::Session>&, Vector<WebCore::JSHandleIdentifier>&& preservedNodeIdentifiers, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&&);

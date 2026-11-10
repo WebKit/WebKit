@@ -11171,6 +11171,13 @@ void WebPage::frameWasFocusedInAnotherProcess(std::optional<WebCore::FrameIdenti
     focusController->setFocusedFrame(coreFrame.get(), WebCore::BroadcastFocusedFrame::No);
 }
 
+void WebPage::focusedFrameProcessDidTerminate(WebCore::FrameIdentifier frameID)
+{
+    CheckedRef focusController { corePage()->focusController() };
+    if (RefPtr focusedFrame = focusController->focusedFrame(); focusedFrame && focusedFrame->frameID() == frameID)
+        focusController->setFocusedFrame(nullptr, WebCore::BroadcastFocusedFrame::No);
+}
+
 void WebPage::remotePostMessage(WebCore::FrameIdentifier source, const WebCore::SecurityOriginData& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts& message, std::optional<WebCore::UserGestureTokenData>&& userGestureToken)
 {
     RefPtr targetFrame = WebProcess::singleton().webFrame(target);

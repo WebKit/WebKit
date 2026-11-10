@@ -848,6 +848,7 @@ public:
     Ref<WebCore::DocumentSyncData> topDocumentSyncData() const;
     WebFrameProxy* focusedFrame() const { return m_focusedFrame.get(); }
     WebFrameProxy* focusedOrMainFrame() const { return m_focusedFrame ? m_focusedFrame.get() : m_mainFrame.get(); }
+    void resetFocusedFrameIfInProcess(const WebProcessProxy&);
 
     DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
     NODELETE DrawingAreaProxy* provisionalDrawingArea() const;

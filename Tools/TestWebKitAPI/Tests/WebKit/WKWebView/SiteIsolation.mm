@@ -10677,6 +10677,98 @@ TEST(SiteIsolation, MouseEventsAfterUnresponsiveSubframeProcessIsTerminated)
 }
 #endif
 
+#if PLATFORM(MAC)
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<NavigationDelegateWithUnresponsiveCallback>> webViewWithFocusedInputInCrossSiteIframe(const HTTPServer& server)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+    RetainPtr navigationDelegate = adoptNS([NavigationDelegateWithUnresponsiveCallback new]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    [webView focus];
+
+    // A cross-site frame needs a user gesture to take focus.
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('input').focus()" inFrame:[webView firstChildFrame]];
+    while (![[webView firstChildFrame] _isFocused])
+        Util::spinRunLoop();
+
+    [webView typeCharacter:'a'];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.querySelector('input').value" inFrame:[webView firstChildFrame]] isEqualToString:@"a"];
+    }));
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
+}
+
+static void typeIntoMainFrameInput(TestWKWebView *webView)
+{
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('input').focus()"];
+    while ([webView firstChildFrame]._isFocused)
+        Util::spinRunLoop();
+    [webView typeCharacter:'x'];
+    [webView typeCharacter:'y'];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.querySelector('input').value"] isEqualToString:@"xy"];
+    }));
+}
+
+TEST(SiteIsolation, KeyboardInputAfterFocusedIframeProcessCrash)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><input><iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><input>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = webViewWithFocusedInputInCrossSiteIframe(server);
+
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"document.hasFocus()"] boolValue]);
+
+    pid_t iframeProcess = [webView firstChildFrame]._processIdentifier;
+    kill(iframeProcess, SIGKILL);
+    while (processStillRunning(iframeProcess))
+        Util::spinRunLoop();
+    Util::runFor(0.1_s);
+
+    // The main frame process should no longer consider the crashed iframe focused.
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"document.hasFocus()"] boolValue]);
+
+    typeIntoMainFrameInput(webView.get());
+    EXPECT_FALSE(navigationDelegate.get().didBecomeUnresponsive);
+}
+
+TEST(SiteIsolation, QueuedKeyEventsAfterFocusedIframeProcessCrash)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><input><iframe src='https://webkit.org/iframe'></iframe>"
+            "<script>window.keys = ''; addEventListener('keydown', event => { keys += event.key })</script>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><input>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = webViewWithFocusedInputInCrossSiteIframe(server);
+
+    pid_t iframeProcess = [webView firstChildFrame]._processIdentifier;
+    kill(iframeProcess, SIGKILL);
+    EXPECT_TRUE(waitForProcessExitWithoutSpinningRunLoop(iframeProcess));
+
+    // The first event is sent to the iframe's process, which already exited, and the others wait for it to be handled.
+    [webView sendKey:@"b" code:'b' isDown:YES modifiers:0];
+    [webView sendKey:@"c" code:'c' isDown:YES modifiers:0];
+    [webView sendKey:@"d" code:'d' isDown:YES modifiers:0];
+
+    __block bool processedAllKeyEvents = false;
+    [webView _doAfterProcessingAllPendingKeyEvents:^{
+        processedAllKeyEvents = true;
+    }];
+    Util::run(&processedAllKeyEvents);
+
+    // The event that was sent to the iframe's process is retired rather than redirected.
+    EXPECT_WK_STREQ("cd", [webView objectByEvaluatingJavaScript:@"keys"]);
+
+    typeIntoMainFrameInput(webView.get());
+    EXPECT_FALSE(navigationDelegate.get().didBecomeUnresponsive);
+}
+#endif // PLATFORM(MAC)
+
 TEST(SiteIsolation, FormSubmit)
 {
     auto mainHTML = "<script>onload=()=>{onlyform.submit()}</script>"

@@ -907,6 +907,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     AddResourceTimingFromSubframe(WebCore::FrameIdentifier parentFrameID, WebCore::ResourceTiming resourceTiming)
 
     FrameWasFocusedInAnotherProcess(std::optional<WebCore::FrameIdentifier> frameID)
+    FocusedFrameProcessDidTerminate(WebCore::FrameIdentifier frameID)
 
     RemotePostMessage(WebCore::FrameIdentifier source, WebCore::SecurityOriginData sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, struct WebCore::MessageWithMessagePorts message, struct std::optional<WebCore::UserGestureTokenData> userGestureToken)
     RenderTreeAsTextForTesting(WebCore::FrameIdentifier frameID, uint64_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior) -> (String renderTreeDump) Synchronous

@@ -5645,16 +5645,34 @@ void WebPageProxy::sendKeyEvent(Ref<NativeWebKeyboardEvent>&& event)
     targetProcess->recordUserGestureAuthorizationToken(webPageIDInMainFrameProcess(), event->authorizationToken());
     if (event->isActivationTriggeringEvent())
         targetFrame->notifyActivated(internals().lastActivationTimestamp);
-    sendWithAsyncReplyToProcessContainingFrame(targetFrameID, Messages::WebPage::KeyEvent(targetFrameID, WTF::move(event)), [weakThis = WeakPtr { *this }] (IPC::Connection* connection, bool handled) mutable {
+    Ref sentEvent = event;
+    sendWithAsyncReplyToProcessContainingFrame(targetFrameID, Messages::WebPage::KeyEvent(targetFrameID, WTF::move(event)), [weakThis = WeakPtr { *this }, weakTargetProcess = WeakPtr { targetProcess.get() }, sentEvent = WTF::move(sentEvent)](IPC::Connection* connection, bool handled) mutable {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || !connection)
+        if (!protectedThis)
             return;
 
-        if (protectedThis->internals().keyEventQueue.isEmpty())
-            return;
+        auto isCurrentEvent = [](WebPageProxy& page, const NativeWebKeyboardEvent& event) {
+            auto& keyEventQueue = page.internals().keyEventQueue;
+            return !keyEventQueue.isEmpty() && keyEventQueue.first().ptr() == &event;
+        };
+
+        // If the target process terminated before replying, retire the event so the queue doesn't
+        // stall. This reply is cancelled synchronously from WebProcessProxy::shutDown(), before
+        // RemotePageProxy::processDidTerminate() resets m_focusedFrame. Defer to the next run loop
+        // turn so that the next event goes to the new target frame instead of the dying process.
+        if (!connection) {
+            if (RefPtr targetProcess = weakTargetProcess)
+                targetProcess->stopResponsivenessTimer();
+
+            return RunLoop::mainSingleton().dispatch([weakThis, sentEvent = WTF::move(sentEvent), isCurrentEvent] {
+                if (RefPtr protectedThis = weakThis; protectedThis && isCurrentEvent(*protectedThis, sentEvent))
+                    protectedThis->keyEventHandlingCompleted(false);
+            });
+        }
 
         WebProcessProxy::fromConnection(*connection)->stopResponsivenessTimer();
-        protectedThis->keyEventHandlingCompleted(handled);
+        if (isCurrentEvent(*protectedThis, sentEvent))
+            protectedThis->keyEventHandlingCompleted(handled);
     });
 }
 
@@ -15902,6 +15920,19 @@ void WebPageProxy::logScrollingEvent(uint32_t eventType, MonotonicTime timestamp
         WTFLogAlways("SCROLLING: Started Rubberbanding\n");
         break;
     }
+}
+
+void WebPageProxy::resetFocusedFrameIfInProcess(const WebProcessProxy& process)
+{
+    if (!m_focusedFrame || &m_focusedFrame->process() != &process)
+        return;
+
+    auto frameID = std::exchange(m_focusedFrame, nullptr)->frameID();
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        if (&webProcess == &process || !webProcess.hasConnection())
+            return;
+        webProcess.send(Messages::WebPage::FocusedFrameProcessDidTerminate(frameID), pageID);
+    });
 }
 
 void WebPageProxy::focusedFrameChanged(IPC::Connection& connection, std::optional<FrameIdentifier>&& frameID)
