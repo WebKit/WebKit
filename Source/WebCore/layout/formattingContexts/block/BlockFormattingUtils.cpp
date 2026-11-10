@@ -33,6 +33,7 @@
 #include "HTMLTextAreaElement.h"
 #include "LayoutBoxGeometry.h"
 #include "RenderBlockFlow.h"
+#include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -489,6 +490,21 @@ bool BlockFormattingUtils::establishesIndependentFormattingContext(const RenderB
 {
     CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(box);
     return !blockContainer || blockContainer->createsNewFormattingContext() || isFormControlBlockContainer(box);
+}
+
+LayoutUnit BlockFormattingUtils::alignContentShift(const RenderBox& blockContainer, LayoutUnit freeSpace)
+{
+    if (blockContainer.isRenderTableCell() || is<HTMLInputElement>(blockContainer.element()))
+        return { };
+    auto alignment = blockContainer.style().alignContent().resolve();
+    if (alignment.isNormal() || alignment.isStartward())
+        return { };
+    if (freeSpace <= 0) {
+        auto isBlockAxisScrollContainer = blockContainer.isHorizontalWritingMode() ? blockContainer.isScrollContainerY() : blockContainer.isScrollContainerX();
+        if ((alignment.overflow() == OverflowAlignment::Default && !isBlockAxisScrollContainer) || alignment.overflow() == OverflowAlignment::Safe || alignment.position() == ContentPosition::Normal)
+            return { };
+    }
+    return alignment.isCentered() ? freeSpace / 2 : freeSpace;
 }
 
 LayoutUnit BlockFormattingUtils::justifySelfOffset(const RenderBox& box, LayoutUnit borderBoxInlineSize, LayoutUnit marginStart, LayoutUnit marginEnd, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle)

@@ -192,7 +192,20 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintL
         blockLayoutState.setLastFormattedLineRoots(WTF::move(lastFormattedLineRoots));
         if (CheckedPtr lastFormattedLineRoot = blockLayoutState.lastFormattedLineRoot(rootRenderer()))
             blockLayoutState.setTextBoxTrimState({ blockLayoutState.textBoxTrimState().trimsFirstFormattedLine, lastFormattedLineRoot.get() });
-        auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layout(constraintsForBlockContent(rootRenderer(), relayoutChildren), BlockIntegrationUtils::rootGeometry(rootRenderer()));
+        auto initialBlockLayoutState = blockLayoutState;
+        auto constraints = constraintsForBlockContent(rootRenderer(), relayoutChildren);
+        auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layout(constraints, BlockIntegrationUtils::rootGeometry(rootRenderer()));
+        // align-content moves the content as a unit in the block size the root gets from that of its content (RenderBlockFlow::layoutBlock),
+        // where it is laid out again.
+        if (!rootRenderer().style().alignContent().isNormal()) {
+            auto intrinsicBorderBoxBlockSize = rootRenderer().borderAndPaddingLogicalHeight() + rootRenderer().scrollbarLogicalHeight() + result.intrinsicContentBlockSize;
+            auto borderBoxBlockSize = rootRenderer().computeLogicalHeight(intrinsicBorderBoxBlockSize, rootRenderer().logicalTop()).extent;
+            if (auto shift = Layout::BlockFormattingUtils::alignContentShift(rootRenderer(), borderBoxBlockSize - intrinsicBorderBoxBlockSize)) {
+                blockLayoutState = WTF::move(initialBlockLayoutState);
+                auto shiftedConstraints = Layout::ConstraintsForBlockContent { { constraints.horizontal(), constraints.logicalTop() + shift }, constraints.contentBoxBlockSize(), constraints.fillAvailableBlockSize(), constraints.replacedElementAvailableBlockSize(), constraints.relayoutChildren() };
+                result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layout(shiftedConstraints, BlockIntegrationUtils::rootGeometry(rootRenderer()));
+            }
+        }
         LOG_WITH_STREAM(Layout, stream << "BlockLayout for root (" << &rootRenderer() << "): " << result);
         if (auto lineClamp = blockLayoutState.lineClamp())
             renderTreeLayoutState->setLineClamp(RenderLayoutState::LineClamp { lineClamp->maximumLines, lineClamp->shouldDiscardOverflow, blockLayoutState.clampAfterBox(), lineClamp->isStableTextWrap, lineClamp->hasConstrainedTextWrapContent });

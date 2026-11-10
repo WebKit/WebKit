@@ -87,6 +87,10 @@ public:
     static bool establishesIndependentFormattingContext(const RenderBox&);
     // How far justify-self moves the margin box from the inline start of the containing block, unless an auto margin aligns it.
     static LayoutUnit justifySelfOffset(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit marginStart, LayoutUnit marginEnd, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle);
+    // How far align-content moves the content of a block container, as a unit, in a content box that has this much more block size than the
+    // content needs (css-align-3 §5.1), safe unless it says otherwise or the block container scrolls in the block axis. A table cell aligns its
+    // content with its intrinsic padding instead (RenderTableCell::computeIntrinsicPadding), and an input does not align it.
+    static LayoutUnit alignContentShift(const RenderBox& blockContainer, LayoutUnit freeSpace);
     // Its inline size, min inline size or max inline size is min-content, max-content or fit-content.
     static bool hasIntrinsicInlineSize(const RenderBox&, WritingMode);
     // The border box size of a calc-size(): its calculation, with the size of its basis standing for `size` and percentages resolving against
