@@ -2177,12 +2177,12 @@ void NetworkProcessProxy::reloadExecutionContextsForOrigin(const WebCore::Client
         process->sendWithAsyncReply(Messages::WebProcess::ReloadExecutionContextsForOrigin(origin, triggeringFrame), [callbackAggregator] { });
 }
 
-void NetworkProcessProxy::addAllowedFirstPartyForCookies(WebProcessProxy& webProcessProxy, const WebCore::RegistrableDomain& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::addAllowedFirstPartyForCookies(WebProcessProxy& webProcessProxy, const WebCore::Site& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
 {
     webProcessProxy.addAllowedFirstPartyForCookies(firstPartyForCookies, loadedWebArchive);
 
     auto& pair = m_allowedFirstPartiesForCookies.ensure(webProcessProxy, [] {
-        return std::make_pair(LoadedWebArchive::No, HashSet<RegistrableDomain> { });
+        return std::make_pair(LoadedWebArchive::No, HashSet<WebCore::Site> { });
     }).iterator->value;
 
     bool madeChange = pair.second.add(firstPartyForCookies).isNewEntry;

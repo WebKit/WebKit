@@ -124,7 +124,7 @@ void WebSharedWorkerServerToContextConnection::launchSharedWorker(WebSharedWorke
     if (!connection)
         return;
 
-    NetworkProcess::singleton().addAllowedFirstPartyForCookies(connection->webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(sharedWorker.origin().topOrigin.host()), LoadedWebArchive::No, [] { });
+    NetworkProcess::singleton().addAllowedFirstPartyDomainForCookies(connection->webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(sharedWorker.origin().topOrigin.host()), LoadedWebArchive::No, [] { });
 
     CONTEXT_CONNECTION_RELEASE_LOG("launchSharedWorker: sharedWorkerIdentifier=%" PRIu64, sharedWorker.identifier().toUInt64());
     sharedWorker.markAsRunning();

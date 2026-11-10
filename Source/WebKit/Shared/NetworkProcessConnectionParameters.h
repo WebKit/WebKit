@@ -31,6 +31,7 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/Site.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {
@@ -42,7 +43,7 @@ struct NetworkProcessConnectionParameters {
 #endif
     Vector<WebPageProxyIdentifier> pagesWithRelaxedThirdPartyCookieBlocking;
     LoadedWebArchive loadedWebArchive { LoadedWebArchive::No };
-    HashSet<WebCore::RegistrableDomain> allowedFirstPartiesForCookies;
+    HashSet<WebCore::Site> allowedFirstPartiesForCookies;
     Vector<WebPageProxyIdentifier> allowedWebPageProxyIdentifiers;
     std::optional<HashSet<WebCore::RegistrableDomain>> hostedDomains;
     HashMap<WebCore::PageIdentifier, Vector<String>> corsDisablingPatternsPerPage;
