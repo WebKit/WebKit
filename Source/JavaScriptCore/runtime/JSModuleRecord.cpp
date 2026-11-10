@@ -164,6 +164,9 @@ ModuleProgramExecutable* JSModuleRecord::getOrMakeExecutable(JSGlobalObject* glo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if (SourceProfiler::g_profilerHook) [[unlikely]]
+        SourceProfiler::profile(SourceProfiler::Type::Module, sourceCode());
+
     executable = ModuleProgramExecutable::tryCreate(globalObject, sourceCode());
     RETURN_IF_EXCEPTION(scope, nullptr);
     m_moduleProgramExecutable.set(vm, this, executable);

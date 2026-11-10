@@ -26,17 +26,22 @@
 #include "config.h"
 
 #include "APICast.h"
+#include "Completion.h"
 #include "JSGlobalObjectInlines.h"
 #include "JSMarkingConstraintPrivate.h"
+#include "JSPromise.h"
 #include "MarkedVector.h"
+#include "SourceProfiler.h"
 #include <JavaScriptCore/JSContextRefPrivate.h>
 #include <JavaScriptCore/JSObjectRefPrivate.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <thread>
 #include <wtf/DataLog.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/NumberOfCores.h>
+#include <wtf/Scope.h>
 #include <wtf/Vector.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringCommon.h>
@@ -138,6 +143,7 @@ public:
     void testJSObjectSetOnGlobalObjectSubclassDefinition();
     void heapMembershipChanges();
     void testBigInt();
+    void sourceProfiler();
 
     NODELETE int failed() const { return m_failed; }
 
@@ -1252,6 +1258,81 @@ void TestAPI::testBigInt()
 }
 
 
+static String sourceFromPayload(const JSC::SourceProfiler::Payload& payload)
+{
+    if (payload.sourceCharSize == JSC::SourceProfiler::CharacterSize::Char8Bit)
+        return unsafeMakeSpan(static_cast<const Latin1Character*>(payload.sourceStr), payload.sourceLength);
+    return unsafeMakeSpan(static_cast<const char16_t*>(payload.sourceStr), payload.sourceLength);
+}
+
+void TestAPI::sourceProfiler()
+{
+    using JSC::SourceProfiler::Type;
+
+    struct ProfiledSource {
+        Type type;
+        String source;
+        unsigned order;
+    };
+    static NeverDestroyed<Vector<ProfiledSource>> profiledSources;
+    static unsigned profileCounter;
+    profiledSources->clear();
+    profileCounter = 0;
+    {
+        auto resetHook = makeScopeExit([] {
+            JSC::SourceProfiler::g_profilerHook = nullptr;
+        });
+        JSC::SourceProfiler::g_profilerHook = [](Type type, const JSC::SourceProfiler::Payload* payload) {
+            profiledSources->append({ type, sourceFromPayload(*payload), ++profileCounter });
+        };
+
+        check(!!evaluateScript("var programTestBlurb = 'PROGRAM_TEST_BLURB';"), "program should evaluate");
+        check(!!evaluateScript("(function () { return 'FUNCTION_TEST_BLURB'; })();"), "function should evaluate");
+        check(!!evaluateScript("(function () { return eval(\"var evalDirectTestBlurb = 'EVAL_DIRECT_TEST_BLURB'; evalDirectTestBlurb\"); })();"), "direct eval should evaluate");
+        check(!!evaluateScript("(0, eval)(\"var evalIndirectTestBlurb = 'EVAL_INDIRECT_TEST_BLURB'; evalIndirectTestBlurb\");"), "indirect eval should evaluate");
+        {
+            JSC::JSGlobalObject* globalObject = context;
+            JSC::VM& vm = globalObject->vm();
+            JSC::JSLockHolder locker(vm);
+            auto source = JSC::makeSource("export var moduleTestBlurb = 'MODULE_TEST_BLURB';"_s, JSC::SourceOrigin { URL { "file:///sourceProfilerModule.js"_s } }, JSC::SourceTaintedOrigin::Untainted, "sourceProfilerModule.js"_s, TextPosition(), JSC::SourceProviderSourceType::Module);
+            JSC::JSPromise* promise = JSC::loadAndEvaluateModule(globalObject, WTF::move(source), nullptr);
+            vm.drainMicrotasks();
+            check(promise->status() == JSC::JSPromise::Status::Fulfilled, "module should load and evaluate");
+        }
+    }
+
+    auto checkProfile = [&](Type type, ASCIILiteral blurb, unsigned expectedOrder, const char* description) {
+        const ProfiledSource* match = nullptr;
+        unsigned matchCount = 0;
+        for (const auto& entry : profiledSources.get()) {
+            if (entry.type == type && entry.source.contains(blurb)) {
+                match = &entry;
+                ++matchCount;
+            }
+        }
+        if (!check(matchCount == 1, "SourceProfiler should see ", description, " source once"))
+            return;
+        check(match->order == expectedOrder, "SourceProfiler should see ", description, " source in order ", expectedOrder, ", got ", match->order);
+    };
+
+    // The hook fires for all source JSC compiles, not just the sources under test. In order, the profiles are:
+    //  1. Program:  `var programTestBlurb = 'PROGRAM_TEST_BLURB';` -- The program under test.
+    //  2. Program:  `(function () { return 'FUNCTION_TEST_BLURB'; })();` -- Script containing the function.
+    //  3. Function: `() { return 'FUNCTION_TEST_BLURB'; }` -- The function under test.
+    //  4. Program:  `(function () { return eval("var evalDirectTestBlurb = 'EVAL_DIRECT_TEST_BLURB'; ..."); })();` -- Script containing the function with the eval.
+    //  5. Function: `() { return eval("var evalDirectTestBlurb = 'EVAL_DIRECT_TEST_BLURB'; ..."); }` -- Function containing the eval.
+    //  6. Eval:     `var evalDirectTestBlurb = 'EVAL_DIRECT_TEST_BLURB'; evalDirectTestBlurb` -- The direct eval under test.
+    //  7. Program:  `(0, eval)("var evalIndirectTestBlurb = 'EVAL_INDIRECT_TEST_BLURB'; ...");` -- Script containing the indirect eval.
+    //  8. Eval:     `var evalIndirectTestBlurb = 'EVAL_INDIRECT_TEST_BLURB'; evalIndirectTestBlurb` -- The indirect eval under test.
+    //  9. Module:   `export var moduleTestBlurb = 'MODULE_TEST_BLURB';` -- The module under test.
+    checkProfile(Type::Program, "PROGRAM_TEST_BLURB"_s, 1, "program");
+    checkProfile(Type::Function, "FUNCTION_TEST_BLURB"_s, 3, "function");
+    checkProfile(Type::Eval, "EVAL_DIRECT_TEST_BLURB"_s, 6, "direct eval");
+    checkProfile(Type::Eval, "EVAL_INDIRECT_TEST_BLURB"_s, 8, "indirect eval");
+    checkProfile(Type::Module, "MODULE_TEST_BLURB"_s, 9, "module");
+
+    profiledSources->clear();
+}
 
 void initializeWTFForTesting(void)
 {
@@ -1306,12 +1387,22 @@ int testCAPIViaCpp(const char* filter)
     RUN(testJSObjectSetOnGlobalObjectSubclassDefinition());
     RUN(heapMembershipChanges());
 
+    static Atomic<int> failed { 0 };
+
+    // The SourceProfiler test's impact is process-wide, and may interfere with other tests.
+    // So run this before the worker threads below start evaluating scripts.
+    if (shouldRun("sourceProfiler()")) {
+        TestAPI tester;
+        tester.sourceProfiler();
+        dataLog("sourceProfiler(): OK!\n");
+        failed.exchangeAdd(tester.failed());
+    }
+
     if (tasks.isEmpty())
-        return 0;
+        return failed.load();
 
     Lock lock;
 
-    static Atomic<int> failed { 0 };
     Vector<Ref<Thread>> threads;
     for (unsigned i = filter ? 1 : WTF::numberOfProcessorCores(); i--;) {
         threads.append(Thread::create(
