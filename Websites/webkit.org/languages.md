@@ -6,8 +6,8 @@ Most WebKit code is written in C++. But a reasonable question is, “Which versi
 
 It’s C++23.
 
-The relevant compilers are versions of clang, gcc, and Visual Studio.
-The WebKit project has [a document explaining which version of gcc is required](https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement).
+The relevant compilers are versions of [Clang](https://clang.llvm.org) and [GCC](https://gcc.gnu.org).
+The WebKit project has [a document explaining which version of GCC is required](https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/GCCRequirement.html).
 
 ## Scripts
 
