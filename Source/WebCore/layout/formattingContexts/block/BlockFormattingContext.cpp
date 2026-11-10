@@ -824,7 +824,8 @@ static bool decidesItsOwnInlineSize(const RenderBox&, WritingMode);
 // (RenderBox::computeSizingKeywordLogicalWidthUsing). Not the one of a table, which shrinks into the space itself, or of a replaced element.
 static bool hasInlineSizeFromSpaceBesideFloats(const RenderBox& box, WritingMode writingMode)
 {
-    if (is<RenderTable>(box) || box.isRenderReplaced())
+    // An orthogonal box gets the size in the root's inline axis from its own layout, its block size.
+    if (is<RenderTable>(box) || box.isRenderReplaced() || box.writingMode().isOrthogonal(writingMode))
         return false;
     CheckedRef style = box.style();
     return style->logicalWidth(writingMode).isAuto() || style->logicalWidth(writingMode).isStretch() || style->logicalMinWidth(writingMode).isStretch() || style->logicalMaxWidth(writingMode).isStretch();
@@ -873,6 +874,11 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
     // with shrinkLogicalWidthToAvoidFloats), so it keeps the inline size it has in the containing block when that fits.
     auto shrinksIntoSpace = is<RenderTable>(box) && box.shrinkToAvoidFloats();
     auto hasInlineSizeFromSpace = hasOwnInlineSize && hasInlineSizeFromSpaceBesideFloats(box, writingMode);
+    // The auto margins of an orthogonal box, which are in its block axis, share the containing block, not the space beside the floats
+    // (RenderBox::computeLogicalHeight with a perpendicular containing block).
+    auto autoMarginsInlineSize = [&](LayoutUnit spaceInlineSize) {
+        return box.writingMode().isOrthogonal(writingMode) ? containingBlockState.inlineRange.size() : spaceInlineSize;
+    };
     struct Placement {
         BoxGeometry geometry;
         LayoutUnit spaceStart;
@@ -944,7 +950,7 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
         auto borderBoxInlineSize = laidOutState->geometry.borderBoxWidth();
         if (placement.spaceEnd >= contentBoxEnd)
             return { WTF::move(placement), borderBoxInlineSize <= spaceInlineSize };
-        auto usedMarginStart = !hasAutoInlineMargin ? marginStart : hasOwnInlineSize ? BlockFormattingUtils::inlineMargins(box, borderBoxInlineSize, spaceInlineSize, containingBlockStyle).first : placement.geometry.marginStart();
+        auto usedMarginStart = !hasAutoInlineMargin ? marginStart : hasOwnInlineSize ? BlockFormattingUtils::inlineMargins(box, borderBoxInlineSize, autoMarginsInlineSize(spaceInlineSize), containingBlockStyle).first : placement.geometry.marginStart();
         auto floatsAtStart = placement.spaceStart - contentBoxStart;
         auto marginStartInSpace = std::max(usedMarginStart, floatsAtStart) - floatsAtStart;
         return { WTF::move(placement), marginStartInSpace + borderBoxInlineSize <= spaceInlineSize };
@@ -986,7 +992,7 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
         geometry.setHorizontalMargin({ placement.geometry.marginStart(), placement.geometry.marginEnd() });
     else {
         // Its own formatting context decided its inline size (layoutIndependentFormattingContextThroughRenderTree): the margins are in the space.
-        auto spaceInlineSize = hasAutoInlineMargin ? placement.spaceEnd - placement.spaceStart : containingBlockState.inlineRange.size();
+        auto spaceInlineSize = hasAutoInlineMargin ? autoMarginsInlineSize(placement.spaceEnd - placement.spaceStart) : containingBlockState.inlineRange.size();
         auto [usedMarginStart, usedMarginEnd] = BlockFormattingUtils::inlineMargins(box, geometry.borderBoxWidth(), spaceInlineSize, containingBlockStyle);
         geometry.setHorizontalMargin({ hasAutoInlineMargin ? usedMarginStart : marginStart, hasAutoInlineMargin ? usedMarginEnd : marginEnd });
     }
