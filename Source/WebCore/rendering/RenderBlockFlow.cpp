@@ -26,6 +26,7 @@
 #include "RenderBlockFlow.h"
 
 #include "AXObjectCache.h"
+#include "BlockFormattingUtils.h"
 #include "BlockStepSizing.h"
 #include "DocumentView.h"
 #include "Editor.h"
@@ -680,7 +681,11 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
         return !is<HTMLInputElement>(element());
     };
     if (shouldApplyAlignContent()) {
-        alignContentShift = shiftForAlignContent(oldHeight, repaintLogicalTop, repaintLogicalBottom);
+        // The block formatting context laid its content out shifted already (LayoutIntegration::BlockLayout::layout).
+        if (contentLayout == ContentLayout::BlockFormattingContext)
+            alignContentShift = Layout::BlockFormattingUtils::alignContentShift(*this, newHeight - oldHeight);
+        else
+            alignContentShift = shiftForAlignContent(oldHeight, repaintLogicalTop, repaintLogicalBottom);
         afterPaddingEdge += alignContentShift;
         if (alignContentShift < 0)
             ensureRareBlockFlowData().m_alignContentShift = alignContentShift;

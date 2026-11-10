@@ -64,7 +64,6 @@ enum class BlockAvoidanceReason : uint8_t {
     RootIsInLegacyLineClampContext,
     RootIsInLineGridContext,
     RootHasColumns,
-    RootHasAlignContent,
     ContentHasFloat,
     ContentHasOutOfFlowBox,
     ContentHasOutOfFlowNonBlockContainer,
@@ -153,24 +152,22 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
         return BlockAvoidanceReason::RootIsInLineGridContext;
     if (style->specifiesColumns() || rootContainer.multiColumnFlow())
         return BlockAvoidanceReason::RootHasColumns;
-    if (!style->alignContent().isNormal())
-        return BlockAvoidanceReason::RootHasAlignContent;
     return { };
 }
 
-// Only display: flow-root, overflow other than visible and out-of-flow boxes. The other ways to establish a block formatting context also
-// contain, align or fragment the content. Not a form control, which lays out its content its own way.
+// Only display: flow-root, overflow other than visible, align-content and out-of-flow boxes. The other ways to establish a block formatting
+// context also contain or fragment the content. Not a form control, which lays out its content its own way.
 static bool isSupportedBlockFormattingContextRoot(const RenderBlockFlow& blockContainer)
 {
     if (Layout::BlockFormattingUtils::isFormControlBlockContainer(blockContainer))
         return false;
     CheckedRef style = blockContainer.style();
-    auto isSupportedRoot = blockContainer.hasNonVisibleOverflow() || style->display() == Style::DisplayType::BlockFlowRoot || blockContainer.isOutOfFlowPositioned();
+    auto isSupportedRoot = blockContainer.hasNonVisibleOverflow() || style->display() == Style::DisplayType::BlockFlowRoot || !style->alignContent().isNormal() || blockContainer.isOutOfFlowPositioned();
     // FIXME: A root whose content content-visibility skips (RenderBlockFlow::layoutBlock leaves it as it is).
     // An out-of-flow box sizes itself in its own writing mode (OutOfFlowGeometry).
     auto isSupportedWritingMode = !blockContainer.isWritingModeRoot() || (blockContainer.isOutOfFlowPositioned() && !(blockContainer.writingMode().isHorizontal() && blockContainer.writingMode().isBlockFlipped()));
     return isSupportedRoot && isSupportedWritingMode && !blockContainer.isFieldset()
-        && !blockContainer.layoutContext().isSkippedContentRootForLayout(blockContainer) && style->alignContent().isNormal()
+        && !blockContainer.layoutContext().isSkippedContentRootForLayout(blockContainer)
         && !style->specifiesColumns() && style->columnSpan() != ColumnSpan::All
         && style->overflowContinue() == OverflowContinue::Normal;
 }
@@ -885,8 +882,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "root: in line grid"_s;
     case BlockAvoidanceReason::RootHasColumns:
         return "root: columns"_s;
-    case BlockAvoidanceReason::RootHasAlignContent:
-        return "root: align-content"_s;
     case BlockAvoidanceReason::ContentHasFloat:
         return "float"_s;
     case BlockAvoidanceReason::ContentHasOutOfFlowBox:

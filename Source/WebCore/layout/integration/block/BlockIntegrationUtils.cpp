@@ -507,12 +507,12 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
     auto inlineContentStatus = inlineContentRoot.markInlineContentDirtyForLayout(invalidateChildren ? RelayoutChildren::Yes : RelayoutChildren::No);
     if (inlineContentStatus.hasSimpleOutOfFlowContentOnly) {
         // Like RenderBlockFlow::layoutInlineContent: content of out-of-flow boxes only has no lines, and the static position of the boxes is
-        // the start of the content box (RenderBlockFlow::setStaticPositionsForSimpleOutOfFlowContent).
+        // where the content starts, at the start of the content box unless align-content moves it (RenderBlockFlow::setStaticPositionsForSimpleOutOfFlowContent).
         inlineContentRoot.m_lineLayout = nullptr;
         for (auto walker = InlineWalker(inlineContentRoot); !walker.atEnd(); walker.advance()) {
             CheckedRef layer = *downcast<RenderBox>(*walker.current()).layer();
             layer->setStaticInlinePosition(geometry.borderAndPaddingStart());
-            layer->setStaticBlockPosition(geometry.borderAndPaddingBefore());
+            layer->setStaticBlockPosition(constraints.logicalTop());
         }
         return { };
     }

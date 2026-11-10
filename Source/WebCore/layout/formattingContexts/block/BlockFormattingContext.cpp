@@ -1080,7 +1080,20 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
                 blockLayoutState.setTextBoxTrimState(textBoxTrimStateFor(*root, textBoxTrimState));
             }
             auto horizontalConstraints = HorizontalConstraints { state.inlineRange.min(), state.inlineRange.size() };
-            auto rootResult = BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, state.borderAndPaddingBefore }, state.contentBoxBlockSize, state.fillAvailableBlockSize, state.replacedElementAvailableBlockSize, state.relayoutChildren }, state.geometry);
+            auto initialBlockLayoutState = blockLayoutState;
+            auto layoutRootContent = [&](LayoutUnit shift) {
+                return BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, state.borderAndPaddingBefore + shift }, state.contentBoxBlockSize, state.fillAvailableBlockSize, state.replacedElementAvailableBlockSize, state.relayoutChildren }, state.geometry);
+            };
+            auto rootResult = layoutRootContent({ });
+            // align-content moves the content as a unit in the block size the root gets from that of its content, where it is laid out again.
+            if (!root->style().alignContent().isNormal()) {
+                auto geometry = state.geometry;
+                computeBlockSize(box, rootResult.intrinsicContentBlockSize, m_blockLayoutState.containingBlockStates().last(), geometry);
+                if (auto shift = BlockFormattingUtils::alignContentShift(box, geometry.contentBoxHeight() - rootResult.intrinsicContentBlockSize)) {
+                    blockLayoutState = WTF::move(initialBlockLayoutState);
+                    rootResult = layoutRootContent(shift);
+                }
+            }
             result.boxes.appendVector(WTF::move(rootResult.boxes));
             contentBlockSize = rootResult.intrinsicContentBlockSize;
             result.outOfFlowBoxes.appendVector(WTF::move(rootResult.outOfFlowBoxes));

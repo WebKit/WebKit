@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 120px; height: 50px; border: 1px solid; margin: 0 2px 4px 0; }
+.box { background: lightblue; }
+</style>
+<div class="root" style="align-content: center"><span id="text">short</span></div>
+<div class="root" id="height" style="align-content: end"><div class="box">block at the end</div></div>
+<div class="root" id="value" style="align-content: start"><div class="box">becomes centered</div></div>
+<div class="root" style="overflow: hidden"><div style="align-content: center; min-height: 40px; background: lightblue"><span id="nested">nested</span></div></div>
+<div class="root" style="align-content: center"><div id="oof" style="position: absolute; width: 20px; height: 10px; background: green"></div><div id="spacer" style="height: 0"></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "longer text that wraps onto more lines";
+document.getElementById("height").style.height = "70px";
+document.getElementById("value").style.alignContent = "center";
+document.getElementById("nested").firstChild.data = "nested root text that grows past its min height";
+document.getElementById("spacer").style.height = "20px";
+</script>
