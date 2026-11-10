@@ -971,7 +971,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
 
     auto downloadID = *networkDataTask->pendingDownloadID();
     CheckedRef downloadManager = sessionCocoa->networkProcess().downloadManager();
-    Ref download = WebKit::Download::create(downloadManager, downloadID, downloadTask, *sessionCocoa, networkDataTask->suggestedFilename());
+    Ref download = WebKit::Download::create(downloadManager, downloadID, downloadTask, *sessionCocoa, networkDataTask->suggestedFilename(), networkDataTask->advancedPrivacyProtections());
     networkDataTask->transferSandboxExtensionToDownload(download);
     ASSERT(FileSystem::fileExists(networkDataTask->pendingDownloadLocation()));
     download->didCreateDestination(networkDataTask->pendingDownloadLocation());

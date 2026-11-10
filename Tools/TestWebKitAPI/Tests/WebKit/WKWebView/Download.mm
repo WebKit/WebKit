@@ -40,6 +40,7 @@
 #import <WebKit/WKDownload.h>
 #import <WebKit/WKDownloadDelegate.h>
 #import <WebKit/WKErrorPrivate.h>
+#import <WebKit/WKErrorRef.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationResponsePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -57,6 +58,7 @@
 #import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/MainThread.h>
@@ -64,6 +66,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/WTFString.h>
@@ -1397,6 +1400,179 @@ TEST(WKDownload, Resume)
     usleep(10000);
 
     checkResumedDownloadContents(expectedDownloadFile.get());
+}
+
+enum class ResumeWithFailClosed : bool { No, Yes };
+
+struct ResumeTestOutcome {
+    RetainPtr<NSData> resumeData;
+    bool resumeFinished { false };
+};
+
+enum class ThenResume : bool { No, Yes };
+
+// Runs a download to 5000 of 10000 bytes, cancels it for resume data, then optionally resumes.
+static ResumeTestOutcome runResumeTest(ResumeWithFailClosed failClosed, ThenResume thenResume = ThenResume::Yes)
+{
+    using namespace TestWebKitAPI;
+
+    auto server = downloadTestServer();
+    RetainPtr expectedDownloadFile = tempFileThatDoesNotExist();
+
+    RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
+    [preferences _setNetworkConnectionIntegrityPolicy:failClosed == ResumeWithFailClosed::Yes
+        ? _WKWebsiteNetworkConnectionIntegrityPolicyEnabled | _WKWebsiteNetworkConnectionIntegrityPolicyFailClosedForAllHosts
+        : _WKWebsiteNetworkConnectionIntegrityPolicyNone];
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setDefaultWebpagePreferences:preferences.get()];
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    navigationDelegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        completionHandler(WKNavigationResponsePolicyDownload);
+    };
+
+    __block bool receivedData = false;
+    __block bool didCancel = false;
+    __block bool didResume = false;
+    __block bool resumeSettled = false;
+    __block bool resumeFinished = false;
+    __block RetainPtr<WKDownload> download;
+    __block RetainPtr<NSData> resumeData;
+
+    RetainPtr downloadDelegate = adoptNS([TestDownloadDelegate new]);
+    RetainPtr observer = adoptNS([DownloadObserver new]);
+
+    navigationDelegate.get().navigationResponseDidBecomeDownload = ^(WKNavigationResponse *, WKDownload *downloadFromDelegate) {
+        download = downloadFromDelegate;
+        downloadFromDelegate.delegate = downloadDelegate.get();
+        [downloadFromDelegate.progress addObserver:observer.get() forKeyPath:@"completedUnitCount" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:nil];
+    };
+    downloadDelegate.get().decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+        completionHandler(expectedDownloadFile.get());
+    };
+    observer.get().progressChangeCallback = ^(int64_t bytesWritten, int64_t) {
+        if (!didCancel && bytesWritten == 5000)
+            receivedData = true;
+    };
+    downloadDelegate.get().downloadDidFinish = ^(WKDownload *) {
+        if (!didResume)
+            return;
+        resumeFinished = true;
+        resumeSettled = true;
+    };
+    downloadDelegate.get().didFailWithError = ^(WKDownload *, NSError *, NSData *) {
+        if (didResume)
+            resumeSettled = true;
+    };
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:server.request()];
+    Util::run(&receivedData);
+
+    [download cancel:^(NSData *resumeDataFromCallback) {
+        resumeData = resumeDataFromCallback;
+        didCancel = true;
+    }];
+    Util::run(&didCancel);
+    EXPECT_NOT_NULL(resumeData.get());
+
+    if (thenResume == ThenResume::Yes) {
+        didResume = true;
+        [webView resumeDownloadFromResumeData:resumeData.get() completionHandler:^(WKDownload *downloadFromCallback) {
+            download = downloadFromCallback;
+            downloadFromCallback.delegate = downloadDelegate.get();
+        }];
+        Util::run(&resumeSettled);
+    }
+
+    return { resumeData, resumeFinished };
+}
+
+static RetainPtr<NSDictionary> privacyInfoInResumeData(NSData *resumeData)
+{
+    return dynamic_objc_cast<NSDictionary>([NSPropertyListSerialization propertyListWithData:resumeData options:NSPropertyListImmutable format:nullptr error:nullptr]);
+}
+
+TEST(WKDownload, ResumeWithoutFailClosedPolicySucceeds)
+{
+    auto outcome = runResumeTest(ResumeWithFailClosed::No);
+    EXPECT_TRUE(outcome.resumeFinished);
+
+    RetainPtr info = privacyInfoInResumeData(outcome.resumeData.get());
+    EXPECT_NULL([info objectForKey:@"WKAdvancedPrivacyProtections"]);
+    EXPECT_NULL([info objectForKey:@"WKWasPrivateRelayed"]);
+    EXPECT_NULL([info objectForKey:@"WKDownloadURL"]);
+}
+
+// The restart is narrowed to downloads that actually used the privacy proxy. Nothing in this test
+// environment does, so a fail-closed download is still resumed. The restarted case needs a real
+// Private Relay and so cannot be covered here.
+TEST(WKDownload, ResumeWithFailClosedPolicyNotRelayedSucceeds)
+{
+    auto outcome = runResumeTest(ResumeWithFailClosed::Yes);
+    EXPECT_TRUE(outcome.resumeFinished);
+}
+
+// Resume data is a file on disk, so it can be modified. One that records protections but no URL to
+// restart from has to fail cleanly rather than resume without them.
+TEST(WKDownload, ResumeWithoutRecordedURLIsRefused)
+{
+    using namespace TestWebKitAPI;
+
+    auto outcome = runResumeTest(ResumeWithFailClosed::Yes, ThenResume::No);
+    EXPECT_NOT_NULL(outcome.resumeData.get());
+
+    RetainPtr recorded = privacyInfoInResumeData(outcome.resumeData.get());
+    EXPECT_NOT_NULL([recorded objectForKey:@"WKAdvancedPrivacyProtections"]);
+
+    RetainPtr tamperedInfo = adoptNS([[NSMutableDictionary alloc] initWithDictionary:recorded.get()]);
+    [tamperedInfo setObject:@YES forKey:@"WKWasPrivateRelayed"];
+    [tamperedInfo removeObjectForKey:@"WKDownloadURL"];
+    RetainPtr tamperedResumeData = [NSPropertyListSerialization dataWithPropertyList:tamperedInfo.get() format:NSPropertyListXMLFormat_v1_0 options:0 error:nullptr];
+    EXPECT_NOT_NULL(tamperedResumeData.get());
+
+    __block bool didFail = false;
+    __block RetainPtr<NSError> failureError;
+    RetainPtr delegate = adoptNS([TestDownloadDelegate new]);
+    delegate.get().didFailWithError = ^(WKDownload *, NSError *error, NSData *) {
+        failureError = error;
+        didFail = true;
+    };
+    delegate.get().downloadDidFinish = ^(WKDownload *) {
+        EXPECT_FALSE(true);
+        didFail = true;
+    };
+
+    RetainPtr webView = adoptNS([WKWebView new]);
+    [webView resumeDownloadFromResumeData:tamperedResumeData.get() completionHandler:^(WKDownload *download) {
+        download.delegate = delegate.get();
+    }];
+    Util::run(&didFail);
+
+    EXPECT_NOT_NULL(failureError.get());
+    EXPECT_WK_STREQ([failureError domain], _WKLegacyErrorDomain);
+    EXPECT_EQ([failureError code], kWKErrorInternal);
+}
+
+TEST(WKDownload, ResumeDataRecordsPrivacyInfo)
+{
+    auto outcome = runResumeTest(ResumeWithFailClosed::Yes);
+
+    RetainPtr info = privacyInfoInResumeData(outcome.resumeData.get());
+    EXPECT_NOT_NULL(info.get());
+    RetainPtr protections = dynamic_objc_cast<NSNumber>([info objectForKey:@"WKAdvancedPrivacyProtections"]);
+    EXPECT_NOT_NULL(protections.get());
+    EXPECT_NE([protections unsignedShortValue], 0U);
+    RetainPtr wasPrivateRelayed = dynamic_objc_cast<NSNumber>([info objectForKey:@"WKWasPrivateRelayed"]);
+    EXPECT_NOT_NULL(wasPrivateRelayed.get());
+    EXPECT_FALSE([wasPrivateRelayed boolValue]);
+
+    // Recorded so that a download which must be restarted to apply its protections can be.
+    RetainPtr url = dynamic_objc_cast<NSString>([info objectForKey:@"WKDownloadURL"]);
+    EXPECT_NOT_NULL(url.get());
+    EXPECT_TRUE([url hasPrefix:@"http://127.0.0.1:"]);
 }
 
 @interface DownloadTestSchemeDelegate : NSObject <WKNavigationDelegate>

@@ -77,6 +77,7 @@ public:
     virtual ~PendingDownload();
 
     void cancel(CompletionHandler<void(std::span<const uint8_t>)>&&);
+    void setPendingDownloadLocation(const String& path, SandboxExtension::Handle&&, bool allowOverwrite);
 
 #if PLATFORM(COCOA)
 #if HAVE(MODERN_DOWNLOADPROGRESS)
