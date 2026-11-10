@@ -948,6 +948,7 @@ private:
     CachedResourceLoader* mediaPlayerCachedResourceLoader() const override;
     Ref<PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() override;
     bool mediaPlayerShouldUsePersistentCache() const override;
+    bool mediaPlayerAllowsAutomaticMediaDataLoading() const override;
     String mediaPlayerMediaCacheDirectory() const override;
 
     void mediaPlayerActiveSourceBuffersChanged() override;
