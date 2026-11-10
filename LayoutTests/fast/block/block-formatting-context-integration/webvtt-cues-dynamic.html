@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>video { width: 320px; height: 180px; }</style>
+<video id="video" src="../../../imported/w3c/web-platform-tests/media/white.mp4"></video>
+<script>
+testRunner.waitUntilDone();
+const video = document.getElementById("video");
+const track = video.addTextTrack("captions");
+track.mode = "showing";
+const text = new VTTCue(0, 100, "short");
+track.addCue(text);
+const moved = new VTTCue(0, 100, "moves to the start");
+moved.line = 1;
+track.addCue(moved);
+function change() {
+    video.style.width = "400px";
+    text.text = "a cue whose text got a lot longer than before";
+    moved.align = "start";
+    moved.position = 10;
+    track.addCue(new VTTCue(0, 100, "an added cue"));
+    requestAnimationFrame(() => requestAnimationFrame(() => testRunner.notifyDone()));
+}
+video.addEventListener("seeked", () => requestAnimationFrame(() => requestAnimationFrame(change)));
+video.addEventListener("loadeddata", () => { video.currentTime = 0.5; });
+</script>

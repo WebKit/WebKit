@@ -1,0 +1,17 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<html style="margin: 3px; padding: 2px; border: 1px solid">
+<body style="margin: 7px 0 9px 0; padding: 3px; border: 2px solid blue">
+<style>
+img, canvas, svg { background: green; width: 10px; vertical-align: top; }
+.box { background: lightblue; }
+</style>
+<img style="height: 5%" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="> <canvas width="10" height="10" style="height: 4%"></canvas> <svg style="height: 3%"></svg>
+<div><img style="display: block; height: 4%" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>
+<div class="box" style="height: 60px; padding: 3px"><div style="margin: 4px; padding: 5px; border: 1px solid"><img style="display: block; height: 50%" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div></div>
+<div class="box" style="max-height: 40px"><div><img style="height: 50%" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div></div>
+<div class="box" style="height: 50px"><div style="height: 80%"><img style="height: 100%" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div></div>
+<div class="box" style="height: 8%"><img style="height: 50%; min-height: 1%; max-height: 30px" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>
+<div class="box" style="display: flow-root; height: 30px"><span><img style="height: 50%" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></span></div>
+<div class="box" style="box-sizing: border-box; height: 40px; padding: 5px"><img style="height: 50%; box-sizing: border-box; padding: 2px" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>
+</body>
+</html>

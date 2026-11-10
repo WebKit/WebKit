@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 400px; background: lightgray; margin-bottom: 10px; }
+.box { background: lightblue; margin: 10px 0; height: 20px; }
+.abs { position: absolute; width: 30px; height: 10px; background: green; }
+.fixed { position: fixed; width: 30px; height: 10px; background: blue; }
+.inline { position: absolute; display: inline; width: 40px; background: orange; }
+</style>
+<div class="root">
+  <div class="abs"></div>
+  <div class="box"></div>
+  <div class="abs"></div>
+  <div style="margin: 20px 0 30px"></div>
+  <div class="abs" style="margin-top: 5px"></div>
+  <div class="box"></div>
+</div>
+<div class="root" style="padding: 7px">
+  <div style="margin-top: 15px"><div class="abs"></div><div class="box"></div><div class="fixed"></div></div>
+  <div style="border-top: 3px solid blue; padding-left: 20px; margin-top: 25px"><div class="abs"></div><div class="box"></div></div>
+</div>
+<div class="root" dir="rtl" style="padding: 0 10px">
+  <div class="box"></div>
+  <div class="abs"></div>
+  <div style="padding-right: 30px"><div class="abs"></div><div class="box"></div></div>
+</div>
+<div class="root" style="text-align: center; height: 40px"><span class="inline">center</span><div class="box"></div><span class="inline" style="text-align: right">x</span></div>
+<div class="root" style="text-align: right; height: 20px"><span class="inline">right</span><div></div></div>
+<div class="root" dir="rtl" style="text-align: left; height: 20px"><span class="inline">left</span><div></div></div>
+<div class="root" dir="rtl" style="text-align: end; height: 20px"><span class="inline">end</span><div></div></div>

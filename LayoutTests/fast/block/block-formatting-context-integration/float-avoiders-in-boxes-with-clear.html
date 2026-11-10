@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; position: relative; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.r { float: right; width: 30px; height: 50px; background: rgba(0, 0, 255, 0.5); }
+.s { float: left; width: 60px; height: 20px; background: rgba(0, 128, 128, 0.6); }
+.h { overflow: hidden; background: rgba(255, 0, 255, 0.3); }
+.a { position: absolute; background: rgba(255, 128, 0, 0.8); }
+p { margin: 0; }
+</style>
+<div class="roots">
+<div class="root"><div class="l"></div><div style="clear: left"><div class="s"></div><div class="h">beside the float in the cleared box</div></div></div>
+<div class="root"><div class="l"></div><div style="clear: left"><div class="h">first in a cleared box</div></div></div>
+<div class="root"><div class="l"></div><div class="r"></div><div style="clear: left"><div class="h">beside the right float only</div></div></div>
+<div class="root"><div class="l"></div><div style="clear: left"><div class="s"></div><div class="h" style="width: 170px">too wide to fit</div></div></div>
+<div class="root"><div style="margin-top: 5px"><div class="l"></div><div style="clear: left"><div class="s" style="width: 20px; height: 10px"></div><div class="h" style="width: 170px; margin-top: 10px">all waiting for their top</div></div></div></div>
+<div class="root"><div class="l"></div><div style="clear: both; margin-top: 50px"><div class="h">a margin larger than the float</div></div></div>
+<div class="root"><div class="l"></div><div style="clear: left"><div><div class="s"></div></div><div class="h">after a nested float</div></div></div>
+<div class="root"><div class="l"></div><div style="clear: left"><div class="s"></div><span class="a">A</span><p>an inline-level out-of-flow box</p></div></div>
+<div class="root"><div class="l"></div><div style="clear: left"><table><tr><td>a table in a cleared box</td></tr></table></div></div>
+</div>
