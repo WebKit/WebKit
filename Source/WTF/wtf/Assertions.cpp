@@ -28,6 +28,7 @@
 #include "config.h"
 #include <wtf/Assertions.h>
 
+#include <atomic>
 #include <stdio.h>
 #include <string.h>
 #include <wtf/Compiler.h>
@@ -133,6 +134,20 @@ void disableForwardingVPrintfStdErrToOSLog()
     g_wtfConfig.disableForwardingVPrintfStdErrToOSLog = true;
 }
 #endif
+
+static std::atomic<bool> someThreadIsCrashing;
+thread_local static bool thisThreadIsCrashing;
+
+void notifyCurrentThreadIsCrashing()
+{
+    thisThreadIsCrashing = true;
+    someThreadIsCrashing.store(true);
+}
+
+bool isAnotherThreadCrashing()
+{
+    return someThreadIsCrashing.load() && !thisThreadIsCrashing;
+}
 
 } // namespace WTF
 
@@ -274,12 +289,14 @@ static void printCallSite(const char* file, int line, const char* function)
 
 void WTFReportNotImplementedYet(const char* file, int line, const char* function)
 {
+    WTF::notifyCurrentThreadIsCrashing();
     printf_stderr_common("NOT IMPLEMENTED YET\n");
     printCallSite(file, line, function);
 }
 
 void WTFReportAssertionFailure(const char* file, int line, const char* function, const char* assertion)
 {
+    WTF::notifyCurrentThreadIsCrashing();
     if (assertion)
         printf_stderr_common("ASSERTION FAILED: %s\n", assertion);
     else
@@ -289,6 +306,7 @@ void WTFReportAssertionFailure(const char* file, int line, const char* function,
 
 void WTFReportAssertionFailureWithMessage(const char* file, int line, const char* function, const char* assertion, const char* format, ...)
 {
+    WTF::notifyCurrentThreadIsCrashing();
     va_list args;
     va_start(args, format);
     vprintf_stderr_with_prefix("ASSERTION FAILED: ", format, args);
@@ -299,6 +317,7 @@ void WTFReportAssertionFailureWithMessage(const char* file, int line, const char
 
 void WTFReportArgumentAssertionFailure(const char* file, int line, const char* function, const char* argName, const char* assertion)
 {
+    WTF::notifyCurrentThreadIsCrashing();
     printf_stderr_common("ARGUMENT BAD: %s, %s\n", argName, assertion);
     printCallSite(file, line, function);
 }
@@ -403,6 +422,7 @@ int wtfConjectureAssertIsEnabled = 0;
 
 void WTFCrashDueToConjectureAssert(const char* file, int line, const char* function, const char* assertion)
 {
+    WTF::notifyCurrentThreadIsCrashing();
     printf_stderr_common("CONJECTURE ASSERTION FAILED: %s\n", assertion);
     printCallSite(file, line, function);
     WTFReportBacktrace();
@@ -431,6 +451,7 @@ bool WTFIsDebuggerAttached()
 
 void WTFReportFatalError(const char* file, int line, const char* function, const char* format, ...)
 {
+    WTF::notifyCurrentThreadIsCrashing();
     va_list args;
     va_start(args, format);
     vprintf_stderr_with_prefix("FATAL ERROR: ", format, args);
@@ -604,6 +625,7 @@ void WTFLogAlways(const char* format, ...)
 
 void WTFLogAlwaysAndCrash(const char* format, ...)
 {
+    WTF::notifyCurrentThreadIsCrashing();
     va_list args;
     va_start(args, format);
     WTFLogAlwaysV(format, args);

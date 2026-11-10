@@ -365,6 +365,15 @@ class StringView;
 
 NODELETE WTF_EXPORT_PRIVATE WTFLogChannel* WTFLogChannelByName(WTFLogChannel*[], size_t count, WTF::StringView name);
 WTF_EXPORT_PRIVATE void WTFInitializeLogChannelStatesFromString(WTFLogChannel*[], size_t count, WTF::StringView logLevel);
+
+namespace WTF {
+
+// Notes that the current thread is about to crash, so that isAnotherThreadCrashing() is true on other threads.
+WTF_EXPORT_PRIVATE void notifyCurrentThreadIsCrashing();
+// Whether a thread other than the current one is about to crash.
+WTF_EXPORT_PRIVATE bool isAnotherThreadCrashing();
+
+} // namespace WTF
 #endif
 
 /* BACKTRACE

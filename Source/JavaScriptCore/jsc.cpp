@@ -208,17 +208,9 @@ namespace {
 
 [[noreturn]] static void jscExit(int status)
 {
-#if ENABLE(DFG_JIT)
-    if (DFG::isCrashing()) {
-        for (;;) {
-#if OS(WINDOWS)
-            Sleep(1000);
-#else
-            pause();
-#endif
-        }
-    }
-#endif // ENABLE(DFG_JIT)
+    // Wait for the other thread's crash, so that tests see it instead of a normal exit.
+    if (WTF::isAnotherThreadCrashing())
+        sleep(Seconds::infinity());
     exitProcess(status);
 }
 

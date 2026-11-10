@@ -64,12 +64,8 @@ static Lock crashLock;
 // Use WTF_IGNORES_THREAD_SAFETY_ANALYSIS since the function keeps holding the lock when returning.
 void startCrashing() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
+    WTF::notifyCurrentThreadIsCrashing();
     crashLock.lock();
-}
-
-bool isCrashing()
-{
-    return crashLock.isLocked();
 }
 
 bool stringLessThan(StringImpl& a, StringImpl& b)

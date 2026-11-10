@@ -80,6 +80,7 @@
 #include <bmalloc/BPlatform.h>
 #include <unicode/uversion.h>
 #include <wtf/ApproximateTime.h>
+#include <wtf/Box.h>
 #include <wtf/CPUTime.h>
 #include <wtf/DataLog.h>
 #include <wtf/Language.h>
@@ -89,6 +90,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/TimeZone.h>
 #include <wtf/WTFProcess.h>
+#include <wtf/threads/BinarySemaphore.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 #if BUSE(LIBPAS)
@@ -2132,6 +2134,7 @@ namespace JSC {
 static NO_RETURN_DUE_TO_CRASH JSC_DECLARE_HOST_FUNCTION(functionCrash);
 static JSC_DECLARE_HOST_FUNCTION(functionBreakpoint);
 static JSC_DECLARE_HOST_FUNCTION(functionExit);
+static JSC_DECLARE_HOST_FUNCTION(functionFailAssertionOnAnotherThread);
 static JSC_DECLARE_HOST_FUNCTION(functionDFGTrue);
 static JSC_DECLARE_HOST_FUNCTION(functionFTLTrue);
 static JSC_DECLARE_HOST_FUNCTION(functionOMGTrue);
@@ -2357,6 +2360,23 @@ JSC_DEFINE_HOST_FUNCTION(functionExit, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
     exitProcess(EXIT_SUCCESS);
+}
+
+// Reports an assertion failure on a new thread, which crashes 10 ms later, like an assertion whose backtrace is
+// still printing when the script ends. Returns once the failure is reported.
+// Usage: $vm.failAssertionOnAnotherThread()
+JSC_DEFINE_HOST_FUNCTION(functionFailAssertionOnAnotherThread, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    auto reported = Box<BinarySemaphore>::create();
+    Thread::create("$vm Assertion Failure"_s, [reported] {
+        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "failAssertionOnAnotherThread");
+        reported->signal();
+        sleep(10_ms);
+        CRASH();
+    });
+    reported->wait();
+    return encodedJSUndefined();
 }
 
 // Returns true if the current frame is a DFG frame.
@@ -4786,6 +4806,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, allowIfNotFuzz, "crash"_s, functionCrash, 0);
     addFunction(vm, allowIfNotFuzz, "breakpoint"_s, functionBreakpoint, 0);
     addFunction(vm, allowIfNotFuzz, "exit"_s, functionExit, 0);
+    addFunction(vm, allowIfNotFuzz, "failAssertionOnAnotherThread"_s, functionFailAssertionOnAnotherThread, 0);
 
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "dfgTrue"_s), 0, functionDFGTrue, ImplementationVisibility::Public, DFGTrueIntrinsic, jsDollarVMPropertyAttributes);
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "ftlTrue"_s), 0, functionFTLTrue, ImplementationVisibility::Public, FTLTrueIntrinsic, jsDollarVMPropertyAttributes);
