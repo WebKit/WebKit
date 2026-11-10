@@ -1,0 +1,11 @@
+Test page used to check that execution will break on inline 'debugger' statement after cross-origin navigation.
+
+
+== Running test suite: Target.PSON.PauseStaysPaused
+-- Running test case: PausedPageStaysPausedAfterResourceTreeReply
+PASS: The debugger should be paused before the resource tree reply is processed.
+PASS: Processing the reply should dispatch a main resource change for the new main frame.
+PASS: The debugger should still be paused after the main resource change.
+PASS: The new page target should still be paused.
+PASS: The debugger should be resumed.
+
