@@ -53,8 +53,8 @@ public:
 
     void dump(TextStream&, DumpStyleValues = DumpStyleValues::All) const;
 
-    bool containsCurrentColor() const;
-    bool backgroundContainsCurrentColor() const;
+    bool containsStyleDependentColors() const;
+    bool backgroundContainsStyleDependentColors() const;
 
 private:
     BackgroundData();

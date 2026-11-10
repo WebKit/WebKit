@@ -74,10 +74,10 @@ bool BorderData::hasCornerShapeOutsideRoundedRect() const
     });
 }
 
-bool BorderData::containsCurrentColor() const
+bool BorderData::containsStyleDependentColors() const
 {
     return edges.anyOf([](const auto& edge) {
-        return edge.isVisible() && edge.color.containsCurrentColor();
+        return edge.isVisible() && edge.color.containsStyleDependentColors();
     });
 }
 

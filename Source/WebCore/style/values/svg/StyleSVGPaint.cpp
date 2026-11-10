@@ -35,10 +35,10 @@
 namespace WebCore {
 namespace Style {
 
-bool containsCurrentColor(const Style::SVGPaint& paint)
+bool containsStyleDependentColors(const Style::SVGPaint& paint)
 {
     if (auto color = paint.tryAnyColor())
-        return color->containsCurrentColor();
+        return color->containsStyleDependentColors();
     return false;
 }
 

@@ -155,6 +155,8 @@ public:
 
     bool containsCurrentColor() const;
     bool containsCurrentAccentColor() const;
+    bool containsStyleDependentColors() const { return containsCurrentColor() || containsCurrentAccentColor(); }
+
     NODELETE bool isCurrentColor() const;
     NODELETE bool isColorMix() const;
     NODELETE bool isContrastColor() const;
@@ -185,6 +187,7 @@ private:
 WebCore::Color resolveColor(const Color&, const ResolvedColors&);
 bool containsCurrentColor(const Color&);
 bool containsCurrentAccentColor(const Color&);
+bool containsStyleDependentColors(const Color&);
 
 // Replace color and sub-colors that is a CurrentAccentColor with the provided `replaced` color.
 Color replaceCurrentAccentColor(const Color&, const Color& replaced);

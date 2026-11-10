@@ -1188,29 +1188,29 @@ Ref<WebCore::Gradient> createPlatformGradient(const Gradient& gradient, const Fl
     return WTF::switchOn(gradient, [&](auto& gradient) { return createPlatformGradient(gradient, size, style); });
 }
 
-// MARK: - containsCurrentColor
+// MARK: - containsStyleDependentColors
 
-static bool stopColorContainsCurrentColor(const Color& stopColor)
+static bool stopColorContainsStyleDependentColors(const Color& stopColor)
 {
-    return containsCurrentColor(stopColor);
+    return containsStyleDependentColors(stopColor);
 }
 
-static bool stopColorContainsCurrentColor(const Markable<Color>& stopColor)
+static bool stopColorContainsStyleDependentColors(const Markable<Color>& stopColor)
 {
-    return stopColor && stopColorContainsCurrentColor(*stopColor);
+    return stopColor && stopColorContainsStyleDependentColors(*stopColor);
 }
 
-template<typename Gradient> static bool stopsContainCurrentColor(const Gradient& gradient)
+template<typename Gradient> static bool stopsContainStyleDependentColors(const Gradient& gradient)
 {
     return std::ranges::any_of(gradient.parameters.stops, [](auto& stop) {
-        return stopColorContainsCurrentColor(stop.color);
+        return stopColorContainsStyleDependentColors(stop.color);
     });
 }
 
-bool containsCurrentColor(const Gradient& gradient)
+bool containsStyleDependentColors(const Gradient& gradient)
 {
     return WTF::switchOn(gradient, [](auto& gradient) {
-        return stopsContainCurrentColor(gradient);
+        return stopsContainStyleDependentColors(gradient);
     });
 }
 
@@ -1218,7 +1218,7 @@ bool containsCurrentColor(const Gradient& gradient)
 
 bool stopsAreCacheable(const Gradient& gradient)
 {
-    return !containsCurrentColor(gradient);
+    return !containsStyleDependentColors(gradient);
 }
 
 // MARK: - isOpaque

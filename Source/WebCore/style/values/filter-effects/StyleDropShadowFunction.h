@@ -50,7 +50,7 @@ struct DropShadow {
 
     static DropShadow passthroughForInterpolation();
 
-    bool requiresRepaintForCurrentColorChange() const { return color.containsCurrentColor(); }
+    bool requiresRepaintForStyleDependentColorsChange() const { return color.containsStyleDependentColors(); }
     constexpr bool affectsOpacity() const { return true; }
     constexpr bool movesPixels() const { return true; }
     constexpr bool shouldBeRestrictedBySecurityOrigin() const { return false; }

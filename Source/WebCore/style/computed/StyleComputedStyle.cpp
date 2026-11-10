@@ -328,7 +328,18 @@ bool ComputedStyle::scrollSnapDataEquivalent(const ComputedStyle& other) const
         && m_nonInheritedData->rareData->scrollSnapStop == other.m_nonInheritedData->rareData->scrollSnapStop;
 }
 
+bool ComputedStyle::styleDependentColorsEqual(const ComputedStyle& other) const
+{
+    if (color() != other.color())
+        return false;
 
+    if (m_inheritedRareData.ptr() == other.m_inheritedRareData.ptr())
+        return true;
+
+    SUPPRESS_UNCOUNTED_LOCAL return
+        (m_inheritedRareData->accentColor == other.m_inheritedRareData->accentColor)
+        && (m_inheritedRareData->overrideColor == other.m_inheritedRareData->overrideColor);
+}
 
 // MARK: - Specific style change queries
 

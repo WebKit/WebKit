@@ -360,11 +360,11 @@ bool CrossfadeImage::knownToBeOpaque(const RenderElement& renderer) const
     });
 }
 
-bool CrossfadeImage::containsCurrentColor() const
+bool CrossfadeImage::containsStyleDependentColors() const
 {
     return withInputs([](const auto& inputs) {
         return std::ranges::any_of(inputs, [](const auto& input) {
-            return input.image && protect(input.image)->containsCurrentColor();
+            return input.image && protect(input.image)->containsStyleDependentColors();
         });
     });
 }

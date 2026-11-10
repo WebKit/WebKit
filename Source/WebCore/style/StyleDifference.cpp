@@ -655,10 +655,8 @@ public:
         }
     #endif
 
-        auto currentColorDiffers = a.inheritedData().color != b.inheritedData().color
-            || a.inheritedRareData().overrideColor != b.inheritedRareData().overrideColor;
-        if (currentColorDiffers) {
-            if (a.filter().hasFilterThatRequiresRepaintForCurrentColorChange() || a.backdropFilter().hasFilterThatRequiresRepaintForCurrentColorChange())
+        if (!a.styleDependentColorsEqual(b)) {
+            if (a.filter().hasFilterThatRequiresRepaintForStyleDependentColorsChange() || a.backdropFilter().hasFilterThatRequiresRepaintForStyleDependentColorsChange())
                 return true;
         }
 
@@ -676,7 +674,7 @@ public:
         return true;
     }
 
-    static bool backgroundIsEquivalentForPainting(const Style::ComputedStyle& a, const Style::ComputedStyle& b, bool currentColorDiffers)
+    static bool backgroundIsEquivalentForPainting(const Style::ComputedStyle& a, const Style::ComputedStyle& b, bool styleDependentColorsDiffer)
     {
         SUPPRESS_UNCOUNTED_LOCAL auto& backgroundA = *a.nonInheritedData().backgroundData;
         SUPPRESS_UNCOUNTED_LOCAL const auto& backgroundB = *b.nonInheritedData().backgroundData;
@@ -685,76 +683,76 @@ public:
         Color usedBackgroundColorB = b.usedBackgroundColor();
 
         if (&a == &b) {
-            ASSERT(currentColorDiffers);
-            return !usedBackgroundColorA.containsCurrentColor();
+            ASSERT(styleDependentColorsDiffer);
+            return !usedBackgroundColorA.containsStyleDependentColors();
         }
 
         if (backgroundA.background != backgroundB.background || usedBackgroundColorA != usedBackgroundColorB)
             return false;
-        if (currentColorDiffers && (backgroundA.backgroundContainsCurrentColor() || usedBackgroundColorA.containsCurrentColor()))
+        if (styleDependentColorsDiffer && (backgroundA.backgroundContainsStyleDependentColors() || usedBackgroundColorA.containsStyleDependentColors()))
             return false;
 
         if (!backgroundA.outline.isVisible() && !backgroundB.outline.isVisible())
             return true;
-        if (currentColorDiffers && backgroundA.outline.outlineColor.containsCurrentColor())
+        if (styleDependentColorsDiffer && backgroundA.outline.outlineColor.containsStyleDependentColors())
             return false;
         return backgroundA.outline == backgroundB.outline;
     }
 
-    static bool isEquivalentForPainting(const BorderData& a, const BorderData& b, bool currentColorDiffers)
+    static bool isEquivalentForPainting(const BorderData& a, const BorderData& b, bool styleDependentColorsDiffer)
     {
         if (&a == &b) {
-            ASSERT(currentColorDiffers);
-            return !a.containsCurrentColor();
+            ASSERT(styleDependentColorsDiffer);
+            return !a.containsStyleDependentColors();
         }
 
         if (a != b)
             return false;
 
-        if (!currentColorDiffers)
+        if (!styleDependentColorsDiffer)
             return true;
 
-        return !a.containsCurrentColor();
+        return !a.containsStyleDependentColors();
     }
 
-    static bool colorChangeRequiresRepaint(const Color& a, const Color& b, bool currentColorDiffers)
+    static bool colorChangeRequiresRepaint(const Color& a, const Color& b, bool styleDependentColorsDiffer)
     {
         if (a != b)
             return true;
 
-        if (a.containsCurrentColor()) {
-            ASSERT(b.containsCurrentColor());
-            return currentColorDiffers;
+        if (a.containsStyleDependentColors()) {
+            ASSERT(b.containsStyleDependentColors());
+            return styleDependentColorsDiffer;
         }
 
         return false;
     }
 
-    static bool svgDataChangeRequiresRepaint(const SVGData& a, const SVGData& b, bool currentColorDiffers)
+    static bool svgDataChangeRequiresRepaint(const SVGData& a, const SVGData& b, bool styleDependentColorsDiffer)
     {
         if (&a == &b) {
-            ASSERT(currentColorDiffers);
-            return containsCurrentColor(a.strokeData->stroke)
-                || containsCurrentColor(a.strokeData->visitedLinkStroke)
-                || containsCurrentColor(a.miscData->floodColor)
-                || containsCurrentColor(a.miscData->lightingColor)
-                || containsCurrentColor(a.fillData->fill); // FIXME: Should this be checking fillData->visitedLinkFill as well?
+            ASSERT(styleDependentColorsDiffer);
+            return containsStyleDependentColors(a.strokeData->stroke)
+                || containsStyleDependentColors(a.strokeData->visitedLinkStroke)
+                || a.miscData->floodColor.containsStyleDependentColors()
+                || a.miscData->lightingColor.containsStyleDependentColors()
+                || containsStyleDependentColors(a.fillData->fill); // FIXME: Should this be checking fillData->visitedLinkFill as well?
         }
 
         if (a.strokeData->strokeOpacity != b.strokeData->strokeOpacity
-            || colorChangeRequiresRepaint(a.strokeData->stroke.colorDisregardingType(), b.strokeData->stroke.colorDisregardingType(), currentColorDiffers)
-            || colorChangeRequiresRepaint(a.strokeData->visitedLinkStroke.colorDisregardingType(), b.strokeData->visitedLinkStroke.colorDisregardingType(), currentColorDiffers))
+            || colorChangeRequiresRepaint(a.strokeData->stroke.colorDisregardingType(), b.strokeData->stroke.colorDisregardingType(), styleDependentColorsDiffer)
+            || colorChangeRequiresRepaint(a.strokeData->visitedLinkStroke.colorDisregardingType(), b.strokeData->visitedLinkStroke.colorDisregardingType(), styleDependentColorsDiffer))
             return true;
 
         // Painting related properties only need repaints.
-        if (colorChangeRequiresRepaint(a.miscData->floodColor, b.miscData->floodColor, currentColorDiffers)
+        if (colorChangeRequiresRepaint(a.miscData->floodColor, b.miscData->floodColor, styleDependentColorsDiffer)
             || a.miscData->floodOpacity != b.miscData->floodOpacity
-            || colorChangeRequiresRepaint(a.miscData->lightingColor, b.miscData->lightingColor, currentColorDiffers))
+            || colorChangeRequiresRepaint(a.miscData->lightingColor, b.miscData->lightingColor, styleDependentColorsDiffer))
             return true;
 
         // If fill data changes, we just need to repaint. Fill boundaries are not influenced by this, only by the Path, that RenderSVGPath contains.
         if (!a.fillData->fill.hasSameType(b.fillData->fill)
-            || colorChangeRequiresRepaint(a.fillData->fill.colorDisregardingType(), b.fillData->fill.colorDisregardingType(), currentColorDiffers)
+            || colorChangeRequiresRepaint(a.fillData->fill.colorDisregardingType(), b.fillData->fill.colorDisregardingType(), styleDependentColorsDiffer)
             || a.fillData->fill.urlDisregardingType() != b.fillData->fill.urlDisregardingType()
             || a.fillData->fillOpacity != b.fillData->fillOpacity)
             return true;
@@ -866,11 +864,10 @@ public:
 
     static bool changeRequiresRepaint(const Style::ComputedStyle& a, const Style::ComputedStyle& b, OptionSet<DifferenceContextSensitiveProperty>& changedContextSensitiveProperties)
     {
-        auto currentColorDiffers = a.inheritedData().color != b.inheritedData().color
-            || a.inheritedRareData().overrideColor != b.inheritedRareData().overrideColor;
+        bool styleDependentColorsDiffer = !a.styleDependentColorsEqual(b);
 
-        if (currentColorDiffers || &a.svgData() != &b.svgData()) {
-            SUPPRESS_UNCOUNTED_ARG if (svgDataChangeRequiresRepaint(a.svgData(), b.svgData(), currentColorDiffers))
+        if (styleDependentColorsDiffer || &a.svgData() != &b.svgData()) {
+            SUPPRESS_UNCOUNTED_ARG if (svgDataChangeRequiresRepaint(a.svgData(), b.svgData(), styleDependentColorsDiffer))
                 return true;
         }
 
@@ -883,14 +880,14 @@ public:
             return true;
 
 
-        if (currentColorDiffers || &a.nonInheritedData() != &b.nonInheritedData()) {
-            if (currentColorDiffers || a.nonInheritedData().backgroundData.ptr() != b.nonInheritedData().backgroundData.ptr()) {
-                SUPPRESS_UNCOUNTED_ARG if (!backgroundIsEquivalentForPainting(a, b, currentColorDiffers))
+        if (styleDependentColorsDiffer || &a.nonInheritedData() != &b.nonInheritedData()) {
+            if (styleDependentColorsDiffer || a.nonInheritedData().backgroundData.ptr() != b.nonInheritedData().backgroundData.ptr()) {
+                SUPPRESS_UNCOUNTED_ARG if (!backgroundIsEquivalentForPainting(a, b, styleDependentColorsDiffer))
                     return true;
             }
 
-            if (currentColorDiffers || a.nonInheritedData().surroundData.ptr() != b.nonInheritedData().surroundData.ptr()) {
-                if (!isEquivalentForPainting(a.nonInheritedData().surroundData->border, b.nonInheritedData().surroundData->border, currentColorDiffers))
+            if (styleDependentColorsDiffer || a.nonInheritedData().surroundData.ptr() != b.nonInheritedData().surroundData.ptr()) {
+                if (!isEquivalentForPainting(a.nonInheritedData().surroundData->border, b.nonInheritedData().surroundData->border, styleDependentColorsDiffer))
                     return true;
             }
         }
@@ -959,8 +956,8 @@ public:
 
     static bool changeRequiresRepaintIfText(const Style::ComputedStyle& a, const Style::ComputedStyle& b, OptionSet<DifferenceContextSensitiveProperty>&)
     {
-        // FIXME: Does this code need to consider currentColorDiffers? webkit.org/b/266833
-        if (a.inheritedData().color != b.inheritedData().color)
+        // FIXME: Does this code need to consider styleDependentColorsDiffer? webkit.org/b/266833
+        if (!a.styleDependentColorsEqual(b))
             return true;
 
         // Note that we may reach this function with mutated text-decoration values (e.g. thickness), when visual overflow recompute is not required.

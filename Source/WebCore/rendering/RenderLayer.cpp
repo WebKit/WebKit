@@ -6676,8 +6676,7 @@ void RenderLayer::updateFiltersAfterStyleChange(Style::Difference diff, const St
             return true;
         if (!oldStyle)
             return false;
-        auto currentColorChanged = oldStyle->color() != renderer().style().color();
-        if (currentColorChanged && oldStyle->filter().hasFilterThatRequiresRepaintForCurrentColorChange())
+        if (!oldStyle->styleDependentColorsEqual(renderer().style()) && oldStyle->filter().hasFilterThatRequiresRepaintForStyleDependentColorsChange())
             return true;
         return false;
     };

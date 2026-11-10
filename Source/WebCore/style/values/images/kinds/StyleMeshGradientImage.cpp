@@ -41,7 +41,7 @@ namespace Style {
 MeshGradientImage::MeshGradientImage(Gradient&& gradient)
     : GeneratedImage { Type::MeshGradientImage }
     , m_gradient { WTF::move(gradient) }
-    , m_containsCurrentColor { Style::containsCurrentColor(m_gradient.parameters) }
+    , m_containsStyleDependentColors { Style::containsStyleDependentColors(m_gradient.parameters) }
 {
 }
 
@@ -83,8 +83,8 @@ Ref<WebCore::MeshGradient> MeshGradientImage::gradientForSize(const RenderElemen
 
     CheckedRef style = isForFirstLine ? renderer.firstLineStyle() : renderer.style();
 
-    // A gradient that uses currentColor can differ for each renderer, so it is not cached.
-    if (m_containsCurrentColor)
+    // A gradient that uses style-dependent colors like currentColor can differ for each renderer, so it is not cached.
+    if (m_containsStyleDependentColors)
         return createPlatformMeshGradient(m_gradient.parameters, size, style);
 
     cached = &m_gradients.ensure(size, style->appleColorFilter(), [&] {
@@ -140,9 +140,9 @@ bool MeshGradientImage::knownToBeOpaque(const RenderElement&) const
     return false;
 }
 
-bool MeshGradientImage::containsCurrentColor() const
+bool MeshGradientImage::containsStyleDependentColors() const
 {
-    return m_containsCurrentColor;
+    return m_containsStyleDependentColors;
 }
 
 } // namespace Style

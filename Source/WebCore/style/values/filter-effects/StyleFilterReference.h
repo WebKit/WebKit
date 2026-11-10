@@ -49,7 +49,7 @@ struct FilterReference {
     // `FilterReference` is never interpolated. This only exists to allow the generic blending code to compile.
     static FilterReference passthroughForInterpolation() { RELEASE_ASSERT_NOT_REACHED(); }
 
-    constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
+    constexpr bool requiresRepaintForStyleDependentColorsChange() const { return false; }
     constexpr bool affectsOpacity() const { return true; }
     constexpr bool movesPixels() const { return true; }
     // FIXME: This only needs to return true for graphs that include ConvolveMatrix, DisplacementMap, Morphology and possibly Lighting. https://bugs.webkit.org/show_bug.cgi?id=171753

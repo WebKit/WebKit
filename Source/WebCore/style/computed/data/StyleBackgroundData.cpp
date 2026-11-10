@@ -60,18 +60,18 @@ bool BackgroundData::operator==(const BackgroundData& other) const
         && outline == other.outline;
 }
 
-bool BackgroundData::containsCurrentColor() const
+bool BackgroundData::containsStyleDependentColors() const
 {
-    return backgroundContainsCurrentColor()
-        || backgroundColor.containsCurrentColor()
-        || outline.outlineColor.containsCurrentColor();
+    return backgroundContainsStyleDependentColors()
+        || backgroundColor.containsStyleDependentColors()
+        || outline.outlineColor.containsStyleDependentColors();
 }
 
-bool BackgroundData::backgroundContainsCurrentColor() const
+bool BackgroundData::backgroundContainsStyleDependentColors() const
 {
     return std::ranges::any_of(background.usedValues(), [](auto& layer) {
         RefPtr image = layer.image().tryStyleImage();
-        return image && image->containsCurrentColor();
+        return image && image->containsStyleDependentColors();
     });
 }
 

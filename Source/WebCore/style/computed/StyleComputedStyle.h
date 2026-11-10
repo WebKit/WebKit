@@ -87,6 +87,7 @@ public:
     inline bool scrollPaddingEqual(const ComputedStyle&) const;
     inline bool fontCascadeEqual(const ComputedStyle&) const;
     NODELETE bool scrollSnapDataEquivalent(const ComputedStyle&) const;
+    NODELETE bool styleDependentColorsEqual(const ComputedStyle&) const;
 
     // MARK: - Style reset utilities
 

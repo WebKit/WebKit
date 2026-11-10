@@ -114,9 +114,9 @@ bool ColorImage::knownToBeOpaque(const RenderElement& renderer) const
     return resolvedColor(renderer).isOpaque();
 }
 
-bool ColorImage::containsCurrentColor() const
+bool ColorImage::containsStyleDependentColors() const
 {
-    return m_color.containsCurrentColor();
+    return m_color.containsStyleDependentColors();
 }
 
 WebCore::Color ColorImage::resolvedColor(const RenderElement& renderer) const

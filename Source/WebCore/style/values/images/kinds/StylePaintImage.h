@@ -57,7 +57,7 @@ private:
     ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, bool isForFirstLine) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     bool canDraw(const RenderElement&) const final;
-    bool containsCurrentColor() const final { return false; }
+    bool containsStyleDependentColors() const final { return false; }
     bool canDrawAtSize(const RenderElement&, const FloatSize&) const final;
     void didAddClient(RenderElement&) final { }
     void didRemoveClient(RenderElement&) final { }

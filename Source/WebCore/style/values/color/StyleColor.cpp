@@ -358,6 +358,11 @@ bool containsCurrentAccentColor(const Color& value)
     return value.containsCurrentAccentColor();
 }
 
+bool containsStyleDependentColors(const Color& value)
+{
+    return value.containsStyleDependentColors();
+}
+
 Color replaceCurrentAccentColor(const Color& color, const Color& replaced)
 {
     // FIXME: should optimize this to avoid creating copies.

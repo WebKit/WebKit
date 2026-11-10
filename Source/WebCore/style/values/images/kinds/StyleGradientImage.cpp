@@ -167,9 +167,9 @@ bool GradientImage::knownToBeOpaque(const RenderElement& renderer) const
     return isOpaque(m_gradient, renderer.style());
 }
 
-bool GradientImage::containsCurrentColor() const
+bool GradientImage::containsStyleDependentColors() const
 {
-    return Style::containsCurrentColor(m_gradient);
+    return Style::containsStyleDependentColors(m_gradient);
 }
 
 } // namespace Style
