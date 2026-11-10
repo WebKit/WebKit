@@ -160,6 +160,32 @@ std::pair<LayoutUnit, LayoutUnit> FlexFormattingContext::minimumMaximumContentSi
     return { minimumContentSize, maximumContentSize };
 }
 
+LayoutUnit FlexFormattingContext::maximumContentSizeForBalancedRow(FlexLayoutItems& flexItems, const SizeList& flexItemsMaxContentContributions)
+{
+    ASSERT(integrationUtils().isComputingIntrinsicLogicalWidths() && !m_constraints.isColumnFlow && m_constraints.minimumLineCount > 1);
+    ASSERT(!flexItems.isEmpty() && flexItems.size() == flexItemsMaxContentContributions.size());
+
+    // Nothing wraps under a max-content constraint, but a balanced container still splits its items across its
+    // minimum flex line count.
+    auto flexBaseAndHypotheticalMainSizeList = computeFlexBaseAndHypotheticalMainSizes(flexItems);
+    Vector<LayoutUnit> itemMainAxisSizes(flexItems.size(), [&](size_t index) {
+        auto& flexItem = flexItems[index];
+        auto& sizes = flexBaseAndHypotheticalMainSizeList[index];
+        // 9.9.3: the max-content contribution, clamped by the flex base size as a maximum if the item is not growable
+        // and as a minimum if it is not shrinkable, then by the min and max main sizes.
+        auto maxContentContribution = flexItemsMaxContentContributions[index] - flexItem.mainAxisMarginExtent() - flexItem.mainAxisBorderAndPadding;
+        if (!flexItem.style().flexGrow().value)
+            maxContentContribution = std::min(maxContentContribution, sizes.flexBase);
+        if (!flexItem.style().flexShrink().value)
+            maxContentContribution = std::max(maxContentContribution, sizes.flexBase);
+        maxContentContribution = constrainSizeByMinMax(maxContentContribution, sizes.minMaxMainSizes);
+        // 9.3 (#5) breaks the items into lines at their hypothetical main sizes (9.2), which are larger for an item
+        // whose flex basis is larger than its max-content size.
+        return flexItem.outerMainSize(std::max(maxContentContribution, sizes.hypotheticalMainSize));
+    });
+    return smallestMainSizeForLineCount(itemMainAxisSizes.span(), flexFormattingUtils().computeGap(FlexFormattingUtils::GapType::BetweenItems), m_constraints.minimumLineCount);
+}
+
 LayoutUnit FlexFormattingContext::maximumContentSizeForMultilineColumn(FlexLayoutItems& flexItems, const SizeList& flexItemsMaxContentWidths)
 {
     ASSERT(integrationUtils().isComputingIntrinsicLogicalWidths() && m_constraints.isColumnFlow && m_constraints.isMultiline);

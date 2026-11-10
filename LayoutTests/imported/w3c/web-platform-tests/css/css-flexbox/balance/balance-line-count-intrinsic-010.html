@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox-2/#flex-line-count-property">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox-2/#algo-line-break">
+<meta name="assert" content="Tests the max-content size of a balanced row flexbox in a vertical writing mode, and of one with orthogonal items.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<style>
+.flex {
+  display: inline-flex;
+  gap: 20px;
+  flex-wrap: balance;
+  flex-line-count: 2;
+  vertical-align: top;
+}
+</style>
+<!-- The container's main axis is vertical. -->
+<div class="flex" style="writing-mode: vertical-lr;" data-expected-width="40" data-expected-height="100">
+  <div style="width: 10px; height: 40px;"></div>
+  <div style="width: 10px; height: 40px;"></div>
+  <div style="width: 10px; height: 40px;"></div>
+</div>
+<!-- The container's main axis is vertical, and the items are broken into lines at their 60px flex base sizes. -->
+<div class="flex" style="writing-mode: vertical-lr;" data-expected-width="40" data-expected-height="140">
+  <div style="width: 10px; height: 40px; flex: 0 0 60px;"></div>
+  <div style="width: 10px; height: 40px; flex: 0 0 60px;"></div>
+  <div style="width: 10px; height: 40px; flex: 0 0 60px;"></div>
+</div>
+<!-- The items are orthogonal to the container, so their main size is their block size. -->
+<div class="flex" data-expected-width="100" data-expected-height="40">
+  <div style="writing-mode: vertical-rl; width: 40px; height: 10px;"></div>
+  <div style="writing-mode: vertical-rl; width: 40px; height: 10px;"></div>
+  <div style="writing-mode: vertical-rl; width: 40px; height: 10px;"></div>
+</div>
+<!-- The orthogonal items are broken into lines at their 60px flex base sizes. -->
+<div class="flex" data-expected-width="140" data-expected-height="40">
+  <div style="writing-mode: vertical-rl; width: 40px; height: 10px; flex: 0 0 60px;"></div>
+  <div style="writing-mode: vertical-rl; width: 40px; height: 10px; flex: 0 0 60px;"></div>
+  <div style="writing-mode: vertical-rl; width: 40px; height: 10px; flex: 0 0 60px;"></div>
+</div>
+<!-- The orthogonal items' block sizes come from laying out their content. -->
+<div class="flex" data-expected-width="100" data-expected-height="40">
+  <div style="writing-mode: vertical-rl; height: 10px;"><div style="width: 40px; height: 10px;"></div></div>
+  <div style="writing-mode: vertical-rl; height: 10px;"><div style="width: 40px; height: 10px;"></div></div>
+  <div style="writing-mode: vertical-rl; height: 10px;"><div style="width: 40px; height: 10px;"></div></div>
+</div>
+<script>
+checkLayout('.flex');
+</script>

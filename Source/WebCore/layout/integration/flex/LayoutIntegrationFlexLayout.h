@@ -84,7 +84,9 @@ public:
 private:
     std::pair<LayoutUnit, LayoutUnit> intrinsicLogicalWidthsForFlexItem(RenderBox&) const;
     // CSS Flexbox 9.9.2; std::nullopt when the largest contribution is the answer.
-    std::optional<LayoutUnit> maximumContentSizeForMultilineColumn();
+    std::optional<LayoutUnit> maximumContentSizeForMultilineColumn(std::span<const CheckedRef<RenderBox>> flexItems);
+    // std::nullopt when the sum of the contributions is the answer.
+    std::optional<LayoutUnit> maximumContentSizeForBalancedRow(std::span<const CheckedRef<RenderBox>> flexItems, std::span<const FlexFormattingContext::IntrinsicWidthContribution>);
     class FlexItemsAtMaxContentWidthScope;
 
     void buildFlexItemList();
