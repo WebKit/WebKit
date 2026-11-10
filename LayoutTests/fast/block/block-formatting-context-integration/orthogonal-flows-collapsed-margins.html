@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; }
+p { writing-mode: vertical-rl; height: 40px; margin-block: 20px; background: lightblue; }
+</style>
+<div class="root" id="root"><p>first</p><p>second</p></div>
+<pre id="selection"></pre>
+<script>
+// The selected text has an extra line break after a paragraph whose block-end margin, in its own writing mode, is large enough (TextIterator).
+getSelection().selectAllChildren(document.getElementById("root"));
+document.getElementById("selection").textContent = JSON.stringify(getSelection().toString());
+getSelection().removeAllRanges();
+</script>

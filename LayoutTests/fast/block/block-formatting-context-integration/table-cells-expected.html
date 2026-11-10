@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font-family: monospace; font-size: 10px; line-height: 12px; }
+table { margin-bottom: 5px; border-spacing: 2px; background: lightgray; }
+td { background: silver; }
+.b { height: 12px; background: rgba(0, 128, 0, 0.6); }
+</style>
+<table><tr><td>text</td><td><div class="b"></div><div class="b" style="margin-top: 10px"></div></td><td><div class="b" style="margin: 5px 0"></div></td></tr></table>
+<table style="width: 300px"><tr><td style="height: 50px; vertical-align: middle">middle</td><td style="vertical-align: bottom">bottom</td><td style="vertical-align: top">top</td><td>baseline<br>second</td><td><span style="font-size: 20px">big</span></td></tr></table>
+<table style="border-collapse: collapse"><tr><td style="border: 3px solid; padding: 4px">collapsed</td><td style="border: 1px solid"><div class="b" style="margin: 5px"></div></td></tr></table>
+<table style="border-collapse: collapse; text-align: center"><tr><td style="border: 1px solid">ltr</td><td dir="rtl" style="border: 3px solid; padding: 2px">rtl text in a cell<div class="b" style="width: 50px"></div></td><td dir="rtl" style="border: 3px solid">rtl inline content only</td><td style="writing-mode: vertical-rl; border: 3px solid">vertical</td></tr></table>
+<table><tr><td rowspan="2">spans two rows</td><td>a</td></tr><tr><td><div class="b" style="margin: 8px 0"></div></td></tr></table>
+<table><tr><td></td><td style="padding: 5px"></td><td><div></div></td><td style="width: 100px">fixed width cell with text that wraps</td></tr></table>
+<table><tr><td><p>paragraph</p></td><td><p style="margin: 20px 0">big margins</p></td></tr></table>
+<div style="display: table; width: 300px; background: lightgray"><div style="display: table-cell">anonymous row</div><div style="display: table-cell"><div class="b" style="margin: 4px 0"></div></div></div>
+<table><tr><td><span>a<div class="b" style="margin: 5px 0"></div>b</span></td><td><div style="display: flex"><div>flex</div></div></td><td style="position: relative"><div style="position: absolute; top: 0; left: 0; width: 10px; height: 5px; background: blue"></div>relative</td></tr></table>
+<table><tr><td style="writing-mode: vertical-rl">vertical</td><td dir="rtl">rtl</td><td style="overflow: hidden; height: 20px">clipped<br>more<br>more</td></tr></table>
+<table><caption>caption</caption><thead><tr><th>header</th></tr></thead><tbody><tr><td>body</td></tr></tbody></table>

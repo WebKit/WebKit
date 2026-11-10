@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.s { float: left; width: 60px; height: 20px; background: rgba(0, 128, 128, 0.6); }
+.h { overflow: hidden; background: rgba(255, 0, 255, 0.3); }
+</style>
+<div class="roots">
+<div class="root"><div class="l" id="taller"></div><div style="clear: left"><div class="s"></div><div class="h">a float above that gets taller</div></div></div>
+<div class="root"><div class="l"></div><div id="clear-added"><div class="s"></div><div class="h">clear added</div></div></div>
+<div class="root"><div class="l"></div><div style="clear: left"><div class="s" id="wider"></div><div class="h">a float beside that gets wider</div></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("taller").style.height = "60px";
+document.getElementById("clear-added").style.clear = "left";
+document.getElementById("wider").style.width = "120px";
+</script>

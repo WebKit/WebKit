@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 20px/40px monospace; }
+.root { display: inline-block; vertical-align: top; position: relative; width: 150px; height: 130px; margin: 2px; background: lightgray; }
+.box { position: absolute; top: 0; left: 5px; width: 140px; background: lightblue; }
+.both { text-box-trim: trim-both; text-box-edge: cap alphabetic; }
+.start { text-box-trim: trim-start; }
+.end { text-box-trim: trim-end; }
+p { margin: 0; background: lightgreen; }
+</style>
+<div class="root"><div class="box end">inline end</div></div>
+<div class="root"><div class="box start">inline start</div></div>
+<div class="root"><div class="box both"><p>first</p><p>last</p></div></div>
+<div class="root"><div class="box end"><div><p>nested first</p></div><div><p>nested last</p></div></div></div>
+<div class="root"><div class="box both" style="border-top: 2px solid; padding-bottom: 4px">border padding</div></div>
+<div class="root"><div class="box both"><p style="padding-top: 4px">first</p><p style="padding-bottom: 4px">last</p></div></div>
+<div class="root"><div class="box end">before <span><div>block in inline</div></span></div></div>
+<div class="root"><div class="box both"><div style="display: flow-root"><p>root</p></div><p>after</p></div></div>
+<div class="root"><div class="box both"><div class="end"><p>child</p><p>trims</p></div></div></div>
+<div class="root"><div class="box both">text<div class="box both" style="top: 50px">inside</div></div></div>
+<div class="root both">before<div class="box end" style="top: 50px">own trim only</div></div>
+<div class="root"><div class="box both" style="top: auto; bottom: 0">bottom</div></div>
+<div class="root"><div class="box both" style="height: 100px">fixed height</div></div>
+<div class="root"><div class="box both"><p></p><p>empty before</p><p></p></div></div>
+<div class="root"><div class="box both" style="writing-mode: vertical-rl; height: 120px; width: auto"><p>vertical</p><p>text</p></div></div>
+<div class="root"><div class="start"><div style="display: flow-root; position: relative; height: 90px"><div class="box end">end only</div></div>after</div></div>

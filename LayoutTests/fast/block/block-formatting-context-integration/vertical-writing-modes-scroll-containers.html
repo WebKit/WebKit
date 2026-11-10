@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: inline-block; height: 120px; width: 100px; margin: 0 6px 6px 0; vertical-align: top; background: lightgray; border: solid blue; border-width: 1px 2px 3px 4px; padding: 3px 5px 7px 9px; font-family: monospace; font-size: 10px; overflow: scroll; }
+.lr { writing-mode: vertical-lr; }
+.rl { writing-mode: vertical-rl; }
+.box { background: lightblue; block-size: 10px; margin: 5px 0; }
+.start { inline-size: 30px; background: green; block-size: 10px; }
+.end { inline-size: 30px; margin-inline-start: auto; background: orange; block-size: 10px; }
+</style>
+<div class="root lr"><div class="box"></div><div class="start"></div><div class="end"></div><div>some text</div></div>
+<div class="root rl"><div class="box"></div><div class="start"></div><div class="end"></div><div>some text</div></div>
+<div class="root lr" dir="rtl"><div class="box"></div><div class="start"></div><div class="end"></div><div>some text</div></div>
+<div class="root rl" dir="rtl"><div class="box"></div><div class="start"></div><div class="end"></div><div>some text</div></div>
+<br>
+<div class="root lr">some text in the root only</div>
+<div class="root rl">some text in the root only</div>
+<div class="root lr" dir="rtl">some text in the root only</div>
+<div class="root rl" dir="rtl">some text in the root only</div>
