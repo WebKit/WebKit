@@ -7175,6 +7175,26 @@ class TestCheckChangeRelevanceForWebDriver(unittest.TestCase):
         self.assertTrue(CheckChangeRelevance()._patch_is_relevant('Source/WebCore/dom/Document.cpp', 'macOS-Tahoe-Debug-API-Tests-EWS'))
 
 
+class TestCheckChangeRelevanceForWebKitPy(unittest.TestCase):
+    BUILDER_NAME = 'WebKitPy-Tests-EWS'
+
+    def test_relevant_files(self):
+        for file_name in [
+            'Tools/Scripts/webkitpy/common/download_built_product.py',
+            'Tools/Scripts/libraries/webkitcorepy/webkitcorepy/config.py',
+            'Tools/CISupport/build-webkit-org/config-template.yaml',
+        ]:
+            self.assertTrue(CheckChangeRelevance()._patch_is_relevant(file_name, self.BUILDER_NAME), file_name)
+
+    def test_irrelevant_files(self):
+        for file_name in [
+            'Source/WebCore/dom/Document.cpp',
+            'Tools/CISupport/build-webkit-org/steps.py',
+            'Tools/CISupport/ews-build/config-template.yaml',
+        ]:
+            self.assertFalse(CheckChangeRelevance()._patch_is_relevant(file_name, self.BUILDER_NAME), file_name)
+
+
 class TestGetTestExpectationsBaseline(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
