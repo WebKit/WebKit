@@ -610,13 +610,12 @@ static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox&
 
 // A box that avoids floats (RenderBox::avoidsFloats), which the block formatting context places beside the floats before it or below them
 // (BlockFormattingContext::placeBesideFloats).
-// FIXME: One in inline content, which the inline formatting context places, beside floats with a shape, which it avoids by their margin box,
-// with margin-trim, which discard margins that clearance separates, a fieldset or a box with a block step, whose margins collapse once laid
-// out, justify-self, the -webkit- values of text-align, and a form control the block formatting context lays out as a block
-// container, like a checkbox with display: block.
-static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer, bool isInInlineContent, bool hasFloatsWithShape, bool isLaidOutThroughRenderTree)
+// FIXME: One beside floats with a shape, which the inline formatting context avoids by their margin box, with margin-trim, which discard
+// margins that clearance separates, a fieldset or a box with a block step, whose margins collapse once laid out, justify-self, the -webkit-
+// values of text-align, and a form control the block formatting context lays out as a block container, like a checkbox with display: block.
+static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer, bool hasFloatsWithShape, bool isLaidOutThroughRenderTree)
 {
-    if (isInInlineContent || hasFloatsWithShape || box.isFieldset() || !box.style().blockStepSize().isNone())
+    if (hasFloatsWithShape || box.isFieldset() || !box.style().blockStepSize().isNone())
         return BlockAvoidanceReason::ContentHasFloat;
     if (!isLaidOutThroughRenderTree && !Layout::BlockFormattingUtils::establishesIndependentFormattingContext(box))
         return BlockAvoidanceReason::ContentHasFloat;
@@ -649,15 +648,10 @@ static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const Rende
     CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
     if (!box || box->isInline() || box->isFloating())
         return { };
-    CheckedPtr parentBlockContainer = dynamicDowncast<RenderBlockFlow>(*box->parent());
-    auto isInInlineContent = box->parent()->isInlineBox() || (parentBlockContainer && parentBlockContainer->childrenInline());
     if (box->isOutOfFlowPositioned())
         return { };
-    // FIXME: clear on a block-level box in inline content, which the inline formatting context places, and with margin-trim, which discards
-    // margins that clearance separates.
+    // FIXME: clear with margin-trim, which discards margins that clearance separates.
     if (box->style().clear() != Clear::None) {
-        if (isInInlineContent)
-            return BlockAvoidanceReason::ContentHasFloat;
         for (CheckedPtr<const RenderBlock> ancestor = dynamicDowncast<RenderBlock>(*box); ancestor; ancestor = ancestor->containingBlock()) {
             auto marginTrim = ancestor->style().marginTrim();
             if (marginTrim.contains(Style::MarginTrimSide::BlockStart) || marginTrim.contains(Style::MarginTrimSide::BlockEnd))
@@ -668,7 +662,7 @@ static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const Rende
     }
     // Form controls avoid floats too (RenderBox::avoidsFloats).
     if (isLaidOutThroughRenderTree || box->avoidsFloats()) {
-        if (auto reason = floatAvoiderAvoidanceReason(*box, rootContainer, isInInlineContent, hasFloatsWithShape, isLaidOutThroughRenderTree))
+        if (auto reason = floatAvoiderAvoidanceReason(*box, rootContainer, hasFloatsWithShape, isLaidOutThroughRenderTree))
             return reason;
     }
     // A box whose inline direction is the opposite of the root's gets the floats mirrored, but not their shapes, and the inline-start and
