@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox-2/#flex-line-count-property">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox-2/#algo-available">
+<link rel="match" href="balance-available-size-004-ref.html">
+<meta name="assert" content="Tests that flex-line-count does not change the available-size for measuring when the cross axis is indefinite, even if it has a max-height.">
+<style>
+.flex {
+  display: inline-flex;
+  vertical-align: top;
+  flex-direction: row;
+  flex-line-count: 2;
+  gap: 20px;
+  max-height: 300px;
+}
+
+.flex > div {
+  writing-mode: vertical-rl;
+  background: green;
+  line-height: 0;
+}
+
+span {
+  display: inline-block;
+  width: 50px;
+  height: 60px;
+}
+</style>
+<p>There should be two green rectangles below, each one column of five rectangles tall.</p>
+<div class="flex" style="flex-wrap: wrap">
+  <div>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+</div>
+<div class="flex" style="flex-wrap: balance">
+  <div>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+</div>

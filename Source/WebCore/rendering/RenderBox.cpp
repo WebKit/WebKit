@@ -2903,6 +2903,8 @@ LayoutUnit RenderBox::fillAvailableMeasure(LayoutUnit availableLogicalWidth, Lay
     LayoutUnit availableSizeForResolvingMargin = isOrthogonalElement ? containingBlockLogicalWidthForContent() : availableLogicalWidth;
     marginStart = Style::evaluateMinimum<LayoutUnit>(marginStartLength, availableSizeForResolvingMargin, style().usedZoomForLength());
     marginEnd = Style::evaluateMinimum<LayoutUnit>(marginEndLength, availableSizeForResolvingMargin, style().usedZoomForLength());
+    // Margins resolve against the space before flex-line-count modifies it.
+    availableLogicalWidth = FlexFormattingUtils::crossAxisAvailableSpaceForFlexItem(*this, LogicalBoxAxis::Inline, availableLogicalWidth);
     return availableLogicalWidth - marginStart - marginEnd;
 }
 
@@ -3779,6 +3781,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
             }();
             if (!availableSpace)
                 return { };
+            availableSpace = FlexFormattingUtils::crossAxisAvailableSpaceForFlexItem(*this, LogicalBoxAxis::Block, *availableSpace);
             return std::max(0_lu, *availableSpace - borderAndPadding - blockAxisMarginForStretch());
         },
         [&](const CSS::Keyword::WebkitFillAvailable&) -> std::optional<LayoutUnit> {
