@@ -259,12 +259,6 @@ else ()
     SET_AND_EXPOSE_TO_BUILD(HAVE_SOUP_COMPRESSION_DICTIONARY_SUPPORT FALSE)
 endif ()
 
-# https://bugs.webkit.org/show_bug.cgi?id=182247
-if (ENABLED_COMPILER_SANITIZERS)
-    set(ENABLE_INTROSPECTION OFF)
-    set(ENABLE_DOCUMENTATION OFF)
-endif ()
-
 if (ENABLE_GAMEPAD)
     find_package(Manette 0.2.4)
     if (NOT Manette_FOUND)
