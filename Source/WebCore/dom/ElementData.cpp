@@ -34,9 +34,12 @@
 #include "StyleProperties.h"
 #include "StylePropertiesInlines.h"
 #include "XMLNames.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ZippedRange.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UniqueElementData);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ElementData);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableElementData);

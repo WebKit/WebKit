@@ -37,10 +37,13 @@
 #include "SubscriberCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/TopExceptionScope.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class InternalObserverInspect final : public InternalObserver {
+    WTF_MAKE_TZONE_ALLOCATED(InternalObserverInspect);
 public:
     static Ref<InternalObserverInspect> create(ScriptExecutionContext& context, Ref<Subscriber>&& subscriber, ObservableInspector&& inspector)
     {
@@ -50,6 +53,7 @@ public:
     }
 
     class SubscriberCallbackInspect final : public SubscriberCallback {
+        WTF_MAKE_TZONE_ALLOCATED(SubscriberCallbackInspect);
     public:
         static Ref<SubscriberCallbackInspect> create(ScriptExecutionContext& context, Ref<Observable>&& source, ObservableInspector&& inspector)
         {
@@ -223,6 +227,10 @@ private:
     const ObservableInspector m_inspector;
     std::optional<uint32_t> m_abortAlgorithmHandler;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalObserverInspect);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalObserverInspect::SubscriberCallbackInspect);
 
 Ref<SubscriberCallback> createSubscriberCallbackInspect(ScriptExecutionContext& context, Ref<Observable>&& observable, RefPtr<JSSubscriptionObserverCallback>&& next)
 {

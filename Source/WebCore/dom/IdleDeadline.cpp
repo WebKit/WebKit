@@ -31,8 +31,11 @@
 #include "Performance.h"
 #include "WindowEventLoop.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IdleDeadline);
 
 DOMHighResTimeStamp IdleDeadline::timeRemaining(Document& document) const
 {

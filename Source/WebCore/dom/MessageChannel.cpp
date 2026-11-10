@@ -30,8 +30,11 @@
 #include "MessagePort.h"
 #include "MessagePortChannelProvider.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MessageChannel);
 
 static std::pair<Ref<MessagePort>, Ref<MessagePort>> generateMessagePorts(ScriptExecutionContext& context)
 {

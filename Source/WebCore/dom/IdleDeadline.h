@@ -28,6 +28,7 @@
 #include "DOMHighResTimeStamp.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -35,6 +36,7 @@ namespace WebCore {
 class Document;
 
 class IdleDeadline final : public RefCounted<IdleDeadline> {
+    WTF_MAKE_TZONE_ALLOCATED(IdleDeadline);
 public:
 
     enum class DidTimeout : bool { No, Yes };

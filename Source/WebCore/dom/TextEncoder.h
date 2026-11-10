@@ -29,11 +29,13 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class TextEncoder : public RefCounted<TextEncoder> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextEncoder, WEBCORE_EXPORT);
 public:
     struct EncodeIntoResult {
         uint64_t read { 0 };

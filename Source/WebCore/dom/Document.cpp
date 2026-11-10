@@ -398,6 +398,7 @@
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/MakeString.h>
@@ -1330,7 +1331,7 @@ void Document::invalidateAccessKeyCacheSlowCase()
 }
 
 struct QuerySelectorResults {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(QuerySelectorResults);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(QuerySelectorResults);
 public:
     static constexpr unsigned maxSize = 8;
 
@@ -1357,6 +1358,8 @@ public:
 
     Vector<Entry, maxSize> entries;
 };
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(QuerySelectorResults);
 
 QuerySelectorResults* Document::querySelectorResults(ContainerNode& context)
 {

@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PopoverData::PopoverCloseWatcherEventListener);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PopoverData);
 
 Ref<ToggleEventTask> PopoverData::ensureToggleEventTask(Element& element)

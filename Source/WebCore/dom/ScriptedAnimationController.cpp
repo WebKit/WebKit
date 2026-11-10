@@ -41,8 +41,11 @@
 #include "Settings.h"
 #include "UserGestureIndicator.h"
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScriptedAnimationController);
 
 ScriptedAnimationController::ScriptedAnimationController(Document& document)
     : m_document(document)

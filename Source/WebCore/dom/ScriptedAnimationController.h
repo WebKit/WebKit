@@ -34,6 +34,7 @@
 #include <wtf/ReducedResolutionSeconds.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -46,6 +47,7 @@ class WeakPtrImplWithEventTargetData;
 
 class ScriptedAnimationController : public RefCounted<ScriptedAnimationController>
 {
+    WTF_MAKE_TZONE_ALLOCATED(ScriptedAnimationController);
 public:
     static Ref<ScriptedAnimationController> create(Document& document)
     {

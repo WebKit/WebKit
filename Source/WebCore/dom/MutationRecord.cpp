@@ -39,6 +39,8 @@
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -55,6 +57,7 @@ static void visitNodeListInGCThread(JSC::AbstractSlotVisitor& visitor, NodeList&
 }
 
 class ChildListRecord final : public MutationRecord {
+    WTF_MAKE_TZONE_ALLOCATED(ChildListRecord);
 public:
     ChildListRecord(ContainerNode& target, Ref<NodeList>&& added, Ref<NodeList>&& removed, RefPtr<Node>&& previousSibling, RefPtr<Node>&& nextSibling)
         : m_target(target)
@@ -91,7 +94,10 @@ private:
     const RefPtr<Node> m_nextSibling;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ChildListRecord);
+
 class RecordWithEmptyNodeLists : public MutationRecord {
+    WTF_MAKE_TZONE_ALLOCATED(RecordWithEmptyNodeLists);
 public:
     RecordWithEmptyNodeLists(Node& target, const String& oldValue)
         : m_target(target)
@@ -123,7 +129,10 @@ private:
     const RefPtr<NodeList> m_removedNodes;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RecordWithEmptyNodeLists);
+
 class AttributesRecord final : public RecordWithEmptyNodeLists {
+    WTF_MAKE_TZONE_ALLOCATED(AttributesRecord);
 public:
     AttributesRecord(Element& target, const QualifiedName& name, const AtomString& oldValue)
         : RecordWithEmptyNodeLists(target, oldValue)
@@ -141,7 +150,10 @@ private:
     AtomString m_attributeNamespace;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AttributesRecord);
+
 class CharacterDataRecord : public RecordWithEmptyNodeLists {
+    WTF_MAKE_TZONE_ALLOCATED(CharacterDataRecord);
 public:
     CharacterDataRecord(CharacterData& target, const String& oldValue)
         : RecordWithEmptyNodeLists(target, oldValue)
@@ -152,7 +164,10 @@ private:
     const AtomString& type() override;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CharacterDataRecord);
+
 class MutationRecordWithNullOldValue final : public MutationRecord {
+    WTF_MAKE_TZONE_ALLOCATED(MutationRecordWithNullOldValue);
 public:
     MutationRecordWithNullOldValue(MutationRecord& record)
         : m_record(record)
@@ -178,6 +193,8 @@ private:
 
     const Ref<MutationRecord> m_record;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MutationRecordWithNullOldValue);
 
 const AtomString& ChildListRecord::type()
 {

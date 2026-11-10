@@ -34,10 +34,13 @@
 #include "Subscriber.h"
 #include "SubscriberCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class InternalObserverDrop final : public InternalObserver {
+    WTF_MAKE_TZONE_ALLOCATED(InternalObserverDrop);
 public:
     static Ref<InternalObserverDrop> create(ScriptExecutionContext& context, Ref<Subscriber> subscriber, uint64_t amount)
     {
@@ -47,6 +50,7 @@ public:
     }
 
     class SubscriberCallbackDrop final : public SubscriberCallback {
+        WTF_MAKE_TZONE_ALLOCATED(SubscriberCallbackDrop);
     public:
         static Ref<SubscriberCallbackDrop> create(ScriptExecutionContext& context, Ref<Observable> source, uint64_t amount)
         {
@@ -123,6 +127,10 @@ private:
     const Ref<Subscriber> m_subscriber;
     uint64_t m_amount;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalObserverDrop);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalObserverDrop::SubscriberCallbackDrop);
 
 Ref<SubscriberCallback> createSubscriberCallbackDrop(ScriptExecutionContext& context, Ref<Observable> observable, uint64_t amount)
 {
