@@ -266,6 +266,13 @@ void LayerTreeHost::setViewOverlayRootLayer(GraphicsLayer* graphicsLayer)
 
 void LayerTreeHost::updateRenderingWithForcedRepaint()
 {
+    if (m_webPage->size().isEmpty()) {
+        m_pendingForceRepaint = false;
+        if (m_forcedRepaintAsyncCallback)
+            m_forcedRepaintAsyncCallback();
+        return;
+    }
+
     if (m_isWaitingForRenderer) {
         if (m_forcedRepaintAsyncCallback)
             m_pendingForceRepaint = true;
