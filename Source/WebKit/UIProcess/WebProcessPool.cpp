@@ -2634,10 +2634,6 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
     if (pageConfiguration->relatedPage() && page.alwaysUseRelatedPageProcess())
         return { WTF::move(sourceProcess), nullptr, "Always using related page process"_s };
 
-    // Responses decide whether navigations leave a process for documents with a Document-Isolation-Policy, but substitute data has none.
-    if (sourceProcess->crossOriginMode() != crossOriginMode && (!sourceProcess->isDocumentIsolationPolicyProcess() || navigation.substituteData()))
-        return { createNewProcess(), nullptr, "Process swap due to cross-origin isolation change"_s };
-
     if (!sourceProcess->matchesLockdownModeAndEnhancedSecurity(lockdownMode, enhancedSecurity))
         return { createNewProcess(), nullptr, "Process swap due to Lockdown mode or EnhancedSecurity change"_s };
 
@@ -2645,6 +2641,38 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
         return { createNewProcess(), nullptr, "Process swap was requested by the client"_s };
 
     bool siteIsolationEnabled = protect(page.preferences())->siteIsolationEnabled();
+
+    // With site isolation, processForNavigation() already looked for the target back/forward item's process.
+    auto processForTargetBackForwardItem = [&] -> std::optional<std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral>> {
+        RefPtr targetItem = navigation.targetItem();
+        if (!targetItem || !frame.isMainFrame() || siteIsolationEnabled)
+            return std::nullopt;
+
+        if (CheckedPtr suspendedPage = targetItem->suspendedPage()) {
+            if (suspendedPage->process().state() != AuxiliaryProcessProxy::State::Terminated && suspendedPage->process().matchesLockdownModeAndEnhancedSecurity(lockdownMode, enhancedSecurity) && browsingContextGroup.canUseProcessForCrossOriginIsolation(suspendedPage->process()))
+                return { { suspendedPage->process(), suspendedPage.get(), "Using target back/forward item's process and suspended page"_s } };
+        }
+
+        if (RefPtr process = WebProcessProxy::processForIdentifier(targetItem->lastProcessIdentifier())) {
+            if (process->state() != WebProcessProxy::State::Terminated && process->matchesLockdownModeAndEnhancedSecurity(lockdownMode, enhancedSecurity) && process->hasSameGPUAndNetworkProcessPreferencesAs(pageConfiguration) && browsingContextGroup.canUseProcessForCrossOriginIsolation(*process)) {
+                // Make sure we remove the process from the cache if it is in there since we're about to use it.
+                if (process->isInProcessCache()) {
+                    m_webProcessCache->removeProcess(*process, WebProcessCache::ShouldShutDownProcess::No);
+                    ASSERT(!process->isInProcessCache());
+                }
+
+                return { { process.releaseNonNull(), nullptr, "Using target back/forward item's process"_s } };
+            }
+        }
+        return std::nullopt;
+    };
+
+    // Responses decide whether navigations leave a process for documents with a Document-Isolation-Policy, but substitute data has none.
+    if (sourceProcess->crossOriginMode() != crossOriginMode && (!sourceProcess->isDocumentIsolationPolicyProcess() || navigation.substituteData())) {
+        if (auto targetBackForwardItemProcess = processForTargetBackForwardItem())
+            return WTF::move(*targetBackForwardItemProcess);
+        return { createNewProcess(), nullptr, "Process swap due to cross-origin isolation change"_s };
+    }
 
     if (!m_configuration->processSwapsOnNavigation() && !siteIsolationEnabled)
         return { WTF::move(sourceProcess), nullptr, "Feature is disabled"_s };
@@ -2720,24 +2748,8 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
         && !(isRequestFromClientOrUserInput || siteIsolationEnabled))
         return { WTF::move(sourceProcess), nullptr, "Browsing context has opened other windows"_s };
 
-    if (RefPtr targetItem = navigation.targetItem(); targetItem && frame.isMainFrame() && !siteIsolationEnabled) {
-        if (CheckedPtr suspendedPage = targetItem->suspendedPage()) {
-            if (suspendedPage->process().state() != AuxiliaryProcessProxy::State::Terminated && browsingContextGroup.canUseProcessForCrossOriginIsolation(suspendedPage->process()))
-                return { suspendedPage->process(), suspendedPage.get(), "Using target back/forward item's process and suspended page"_s };
-        }
-
-        if (RefPtr process = WebProcessProxy::processForIdentifier(targetItem->lastProcessIdentifier())) {
-            if (process->state() != WebProcessProxy::State::Terminated && process->hasSameGPUAndNetworkProcessPreferencesAs(pageConfiguration) && browsingContextGroup.canUseProcessForCrossOriginIsolation(*process)) {
-                // Make sure we remove the process from the cache if it is in there since we're about to use it.
-                if (process->isInProcessCache()) {
-                    m_webProcessCache->removeProcess(*process, WebProcessCache::ShouldShutDownProcess::No);
-                    ASSERT(!process->isInProcessCache());
-                }
-
-                return { process.releaseNonNull(), nullptr, "Using target back/forward item's process"_s };
-            }
-        }
-    }
+    if (auto targetBackForwardItemProcess = processForTargetBackForwardItem())
+        return WTF::move(*targetBackForwardItemProcess);
 
     // If it is the first navigation in a DOM popup and there is no opener, then force a process swap no matter what since
     // popup windows are originally created in their opener's process.
