@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { position: relative; display: inline-block; vertical-align: top; width: 150px; height: 70px; border: 1px solid; margin: 0 2px 4px 0; }
+.abs { position: absolute; background: lightgreen; }
+.box { display: -webkit-box; -webkit-box-orient: vertical; border: 2px solid gray; padding: 3px; }
+</style>
+<div class="root"><div class="box"><div id="first">first</div><span class="abs">oof</span></div></div>
+<div class="root"><div class="box" id="padding"><div>first</div><span class="abs">oof</span></div></div>
+<div class="root"><div class="box" id="orient"><div>first</div><span class="abs">oof</span><div>second</div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("first").firstChild.data = "first child that wraps onto more lines";
+document.getElementById("padding").style.padding = "10px";
+document.getElementById("orient").style.webkitBoxOrient = "horizontal";
+</script>
