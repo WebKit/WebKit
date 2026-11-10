@@ -542,6 +542,7 @@ rdar://174495016 [ mac ] TestWebKitAPI.WKWebExtensionAPIAlarms.DelaySingleShot [
 webkit.org/b/311933 [ mac ] TestWebKitAPI.WKWebExtensionAPIAlarms.WhenSingleShot [ Skip ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionAPICookies.ChangedEvent [ Pass Timeout ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionAPICookies.GetAllCookieStoresWithPrivateAccess [ Pass Timeout ]
+webkit.org/b/330828 [ ios release ] TestWebKitAPI.WKWebExtensionAPICookiesTests/getAllAfterNetworkProcessTermination() [ Pass Timeout ]
 webkit.org/b/301660 [ mac debug ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/blockedLoadInPrivateBrowsingTest() [ Skip ]
 webkit.org/b/318265 [ mac debug ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/blockedLoadTest() [ Timeout ]
 webkit.org/b/318265 [ ios debug ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/blockedLoadTest() [ Pass Timeout ]
