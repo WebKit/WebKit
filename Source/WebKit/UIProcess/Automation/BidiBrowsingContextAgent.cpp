@@ -452,20 +452,29 @@ void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std:
     });
 }
 
-void BidiBrowsingContextAgent::handleUserPrompt(const BrowsingContext& browsingContext, std::optional<bool>&& optionalShouldAccept, const String&, CommandCallback<void>&& callback)
+void BidiBrowsingContextAgent::handleUserPrompt(const BrowsingContext& browsingContext, std::optional<bool>&& optionalShouldAccept, const String& optionalUserText, CommandCallback<void>&& callback)
 {
+    // https://w3c.github.io/webdriver-bidi/#command-browsingContext-handleUserPrompt
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(browsingContext.isEmpty(), FrameNotFound);
 
-    // FIXME: implement `userText` option.
+    // User prompts belong to the top-level traversable, so a child context handles its page's prompt.
+    auto handles = session->extractBrowsingContextHandles(browsingContext);
+    ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
+    auto& pageHandle = handles.value().first;
 
-    if (optionalShouldAccept && *optionalShouldAccept) {
-        callback(session->acceptCurrentJavaScriptDialog(browsingContext));
+    if (!optionalShouldAccept.value_or(true)) {
+        callback(session->dismissCurrentJavaScriptDialog(pageHandle));
         return;
     }
 
-    // FIXME: this should consider the session's user prompt handler. <https://webkit.org/b/291666>
-    callback(session->dismissCurrentJavaScriptDialog(browsingContext));
+    // A prompt is answered with userText, or the empty string when it is omitted, not with the dialog's default
+    // text. userText only applies to prompt dialogs, so ignore the error that other dialog types report.
+    // Accepting still fails with no such alert when no dialog is showing.
+    std::ignore = session->setUserInputForCurrentJavaScriptPrompt(pageHandle, optionalUserText.isNull() ? emptyString() : optionalUserText);
+
+    callback(session->acceptCurrentJavaScriptDialog(pageHandle));
 }
 
 void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContext, Ref<JSON::Object>&& locator, std::optional<double>&& optionalMaxNodeCount, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Array>&&, CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteValue>>>&& callback)
@@ -537,7 +546,7 @@ void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContex
     // FIXME: Implement startNodes support. https://bugs.webkit.org/show_bug.cgi?id=288329
     // Inline JavaScript for CSS selector logic. Since _execute uses .apply(null, ...), this wrapper has this=null,
     // so we cannot access proxy methods. Instead, we inline the complete logic here.
-    session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle,
+    session->evaluateJavaScriptFunctionForBidi(topLevelContextHandle, frameHandle,
         "function(selector, maxCount) { \
             try { \
                 const elements = document.querySelectorAll(selector); \
@@ -566,7 +575,7 @@ void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContex
                 error.name = 'InvalidSelector'; \
                 throw error; \
             } \
-        }"_s, WTF::move(arguments), false, false, std::nullopt, [callback = WTF::move(callback)](Inspector::CommandResult<String>&& result) mutable {
+        }"_s, WTF::move(arguments), false, [callback = WTF::move(callback)](Inspector::CommandResult<String>&& result) mutable {
         if (!result) {
             callback(makeUnexpected(result.error()));
             return;

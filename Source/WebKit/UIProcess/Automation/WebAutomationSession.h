@@ -277,6 +277,8 @@ public:
     void reloadBrowsingContext(const String&, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Inspector::CommandCallback<void>&&) override;
     void waitForNavigationToComplete(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Inspector::CommandCallback<void>&&) override;
     void evaluateJavaScriptFunction(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& expectsImplicitCallbackArgument, std::optional<bool>&& forceUserGesture, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&&) override;
+    // Unlike the classic command, a user prompt does not end the evaluation: it completes when the script does.
+    void evaluateJavaScriptFunctionForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& forceUserGesture, Inspector::CommandCallback<String>&&);
     void evaluateBidiScript(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& expression, bool awaitPromise, int maxObjectDepth, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&&);
     void performMouseInteraction(const Inspector::Protocol::Automation::BrowsingContextHandle&, Ref<JSON::Object>&& requestedPosition, Inspector::Protocol::Automation::MouseButton, Inspector::Protocol::Automation::MouseInteraction, Ref<JSON::Array>&& keyModifiers, Inspector::CommandCallback<Ref<Inspector::Protocol::Automation::Point>>&&) override;
     void performKeyboardInteractions(const Inspector::Protocol::Automation::BrowsingContextHandle&, Ref<JSON::Array>&& interactions, Inspector::CommandCallback<void>&&) override;
@@ -394,6 +396,10 @@ private:
     enum class UnboundWaits : bool { Keep, Complete };
     Vector<Inspector::CommandCallback<void>> takePendingPageNavigationCallbacks(HashMap<WebPageProxyIdentifier, Vector<PendingPageNavigationCallback>>&, const WebPageProxy&, API::Navigation* finishedNavigation, UnboundWaits, NavigationNotification = NavigationNotification::LoadEnded);
     enum class SameDocumentNavigation : bool { No, Yes };
+    enum class UserPromptEndsEvaluation : bool { No, Yes };
+    // The callbacks a user prompt ends early (Yes) are kept apart from those it leaves running (No).
+    HashMap<uint64_t, Inspector::CommandCallback<String>>& evaluateJavaScriptFunctionCallbacks(UserPromptEndsEvaluation);
+    void evaluateJavaScriptFunction(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& expectsImplicitCallbackArgument, std::optional<bool>&& forceUserGesture, std::optional<double>&& callbackTimeout, UserPromptEndsEvaluation, Inspector::CommandCallback<String>&&);
     void waitForNavigationToCompleteOnPage(WebPageProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&, RefPtr<API::Navigation>&& = nullptr, SameDocumentNavigation = SameDocumentNavigation::No);
     void waitForHistoryTraversalToComplete(WebPageProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&, RefPtr<API::Navigation>&&);
     bool hasPendingNavigationCallbacks() const;
@@ -522,6 +528,9 @@ private:
 
     uint64_t m_nextEvaluateJavaScriptCallbackID { 1 };
     HashMap<uint64_t, Inspector::CommandCallback<String>> m_evaluateJavaScriptFunctionCallbacks;
+    // Kept apart from m_evaluateJavaScriptFunctionCallbacks because a user prompt must not end a BiDi script.evaluate
+    // or script.callFunction early; it keeps running until the script finishes after the prompt is handled.
+    HashMap<uint64_t, Inspector::CommandCallback<String>> m_evaluateBidiScriptCallbacks;
 
     enum class WindowTransitionedToState {
         Fullscreen,
