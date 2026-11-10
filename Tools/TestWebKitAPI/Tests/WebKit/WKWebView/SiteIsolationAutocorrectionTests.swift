@@ -109,7 +109,7 @@ struct SiteIsolationAutocorrectionTests {
 
             let inputDelegate = InputSessionAllowingDelegate()
             let alerts = AlertRecorder()
-            defer { withExtendedLifetime((inputDelegate, alerts)) {} }
+            defer { extendLifetime((inputDelegate, alerts)) }
             webView._inputDelegate = inputDelegate
             webView.uiDelegate = alerts
 

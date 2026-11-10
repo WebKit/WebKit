@@ -109,7 +109,7 @@ struct ProcessSwapStaleNavigationTests {
             #expect(try await webView.callJavaScript(returning: String.self) { "return document.body.textContent" } == "first")
 
             decideTargetResponsePolicy?(.cancel)
-            withExtendedLifetime(navigationDelegate) {}
+            extendLifetime(navigationDelegate)
         }
     }
 }

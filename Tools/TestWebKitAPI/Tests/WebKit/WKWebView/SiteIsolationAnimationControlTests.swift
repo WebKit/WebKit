@@ -67,7 +67,7 @@ struct SiteIsolationAnimationControlTests {
 
         try await server.run { serverConfiguration in
             let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: .init(httpsProxyFor: serverConfiguration))
-            defer { withExtendedLifetime(navigationDelegate) {} }
+            defer { extendLifetime(navigationDelegate) }
             webView.uiDelegate = alerts
             #if WTF_PLATFORM_MAC
             webView._windowOcclusionDetectionEnabled = false

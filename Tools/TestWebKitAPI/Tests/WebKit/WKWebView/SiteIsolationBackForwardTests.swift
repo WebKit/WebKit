@@ -168,7 +168,7 @@ struct SiteIsolationBackForwardTests {
             let (opener, openerNavigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: configuration)
 
             let openedWebViewRecorder = OpenedWebViewRecorder()
-            defer { withExtendedLifetime(openedWebViewRecorder) {} }
+            defer { extendLifetime(openedWebViewRecorder) }
             opener.uiDelegate = openedWebViewRecorder
 
             opener.load(URLRequest(url: try #require(URL(string: "https://example.com/opener"))))

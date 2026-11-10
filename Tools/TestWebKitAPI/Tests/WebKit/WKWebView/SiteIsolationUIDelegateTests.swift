@@ -79,7 +79,7 @@ struct SiteIsolationUIDelegateTests {
 
             // A web view only holds its UI delegate weakly, so keep it alive until the end of the test.
             let uiDelegate = BeforeUnloadDelegate()
-            defer { withExtendedLifetime(uiDelegate) {} }
+            defer { extendLifetime(uiDelegate) }
             webView.uiDelegate = uiDelegate
 
             try await webView.callJavaScript {
