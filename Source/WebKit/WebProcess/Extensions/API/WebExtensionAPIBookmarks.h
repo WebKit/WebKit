@@ -36,12 +36,6 @@ class WebExtensionAPIBookmarks : public WebExtensionAPIObject, public JSWebExten
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIBookmarks, bookmarks, bookmarks);
 
 public:
-    enum class BookmarkTreeNodeType : uint8_t {
-        Bookmark,
-        Folder
-    };
-
-
 #if PLATFORM(COCOA)
     void createBookmark(NSDictionary *bookmark, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
@@ -64,4 +58,4 @@ public:
 
 SPECIALIZE_TYPE_TRAITS_WEB_EXTENSION(WebExtensionAPIBookmarks, bookmarks);
 
-#endif
+#endif // ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)

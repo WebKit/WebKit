@@ -23,69 +23,65 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #if !__has_feature(objc_arc)
 #error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
 #endif
 
-#include "config.h"
+#import "config.h"
 #import "WebExtensionAPIBookmarks.h"
-#import "CocoaHelpers.h"
-#import "MessageSenderInlines.h"
 #import "WebExtensionAPIKeys.h"
-#import "WebExtensionBookmarksParameters.h"
-#import "WebExtensionContextMessages.h"
-#import "WebProcess.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
 
+#import "CocoaHelpers.h"
+#import "MessageSenderInlines.h"
+#import "WebExtensionBookmarkParameters.h"
+#import "WebExtensionContextMessages.h"
+#import "WebExtensionUtilities.h"
+#import "WebProcess.h"
+#import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
+
 namespace WebKit {
 
-
-static NSDictionary *toAPI(const WebExtensionBookmarksParameters& node)
+static inline NSDictionary *toWebAPI(const WebExtensionBookmarkParameters& bookmark)
 {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    auto *result = [NSMutableDictionary dictionary];
 
-    dictionary[idKey] = node.nodeId.createNSString().get();
-    dictionary[indexKey] = @(node.index);
-    dictionary[titleKey] = node.title.createNSString().get();
+    result[idKey] = bookmark.identifier.createNSString().get();
+    result[indexKey] = @(bookmark.index.value_or(0));
+    result[titleKey] = bookmark.title.value_or(emptyString()).createNSString().get();
 
-    if (node.parentId)
-        dictionary[parentIdKey] = node.parentId->createNSString().get();
-    if (node.url && !node.url->isEmpty()) {
-        dictionary[urlKey] = node.url->createNSString().get();
-        dictionary[typeKey] = @"bookmark";
-        double seconds = node.dateAdded.secondsSinceEpoch().value();
-        dictionary[dateAddedKey] = @(seconds * 1000.0);
+    if (bookmark.parentIdentifier)
+        result[parentIdKey] = bookmark.parentIdentifier->createNSString().get();
+
+    if (bookmark.url && !bookmark.url->isEmpty()) {
+        result[urlKey] = bookmark.url->createNSString().get();
+        result[typeKey] = bookmarkKey;
+        result[dateAddedKey] = @(bookmark.dateAdded.secondsSinceEpoch().milliseconds());
     } else
-        dictionary[typeKey] = @"folder";
+        result[typeKey] = folderKey;
 
-    if (node.children) {
-        NSMutableArray *childrenArray = [NSMutableArray array];
-        for (const auto& childNode : *node.children)
-            [childrenArray addObject:toAPI(childNode)];
-        dictionary[childrenKey] = childrenArray;
+    if (bookmark.children) {
+        result[childrenKey] = createNSArray(*bookmark.children, [](const auto& child) {
+            return toWebAPI(child);
+        }).get();
     }
 
-    return dictionary;
+    return [result copy];
 }
 
-
-static std::optional<WebExtensionAPIBookmarks::BookmarkTreeNodeType> toTypeImpl(NSString *typeString)
+static inline NSArray *toWebAPI(const Vector<WebExtensionBookmarkParameters>& bookmarks)
 {
-    if (!typeString)
-        return std::nullopt;
-
-    if ([typeString isEqualToString:bookmarkKey])
-        return WebExtensionAPIBookmarks::BookmarkTreeNodeType::Bookmark;
-    if ([typeString isEqualToString:folderKey])
-        return WebExtensionAPIBookmarks::BookmarkTreeNodeType::Folder;
-
-    return std::nullopt;
+    return createNSArray(bookmarks, [](const auto& bookmark) {
+        return toWebAPI(bookmark);
+    }).autorelease();
 }
 
 void WebExtensionAPIBookmarks::createBookmark(NSDictionary *bookmark, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/create
+
     static NSDictionary<NSString *, id> *types = @{
         indexKey: NSNumber.class,
         parentIdKey: NSString.class,
@@ -94,316 +90,246 @@ void WebExtensionAPIBookmarks::createBookmark(NSDictionary *bookmark, Ref<WebExt
         titleKey: NSString.class
     };
 
-    if (!validateDictionary(bookmark, @"bookmark", nil, types, outExceptionString))
+    if (!validateDictionary(bookmark, bookmarkKey, nil, types, outExceptionString))
         return;
 
-    if (bookmark[typeKey]) {
-        auto parsedType = toTypeImpl(dynamic_objc_cast<NSString>(bookmark[typeKey]));
-        if (!parsedType) {
+    if (auto *type = objectForKey<NSString>(bookmark, typeKey)) {
+        if (![type isEqualToString:bookmarkKey] && ![type isEqualToString:folderKey]) {
             *outExceptionString = toErrorString(nullString(), typeKey, @"it must specify either 'bookmark' or 'folder'").createNSString().autorelease();
             return;
         }
     }
 
-    const std::optional<String>& parentMockId = bookmark[parentIdKey];
-    const std::optional<String>& title = bookmark[titleKey];
-    const std::optional<String>& url = bookmark[urlKey];
+    WebExtensionBookmarkParameters parameters;
 
-    std::optional<uint64_t> index = objectForKey<NSNumber>(bookmark, indexKey).unsignedLongValue;
-    WebProcess::singleton().sendWithAsyncReply(
-        Messages::WebExtensionContext::BookmarksCreate(parentMockId, index, url, title),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionBookmarksParameters, WebExtensionError>&& result) {
-            if (!result) {
-                callback->reportError(result.error().createNSString().get());
-                return;
-            }
-            auto createdNode = result.value();
-            NSDictionary* newNodeDictionary = toAPI(createdNode);
-            callback->call(newNodeDictionary);
-        },
-        extensionContext().identifier()
-    );
+    if (auto *parentIdentifier = objectForKey<NSString>(bookmark, parentIdKey))
+        parameters.parentIdentifier = String(parentIdentifier);
+
+    if (auto *title = objectForKey<NSString>(bookmark, titleKey))
+        parameters.title = String(title);
+
+    if (auto *url = objectForKey<NSString>(bookmark, urlKey))
+        parameters.url = String(url);
+
+    parameters.index = objectForKey<NSNumber>(bookmark, indexKey).unsignedLongValue;
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksCreate(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionBookmarkParameters, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(result.value())));
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIBookmarks::getChildren(NSString *bookmarkIdentifier, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    WebProcess::singleton().sendWithAsyncReply(
-        Messages::WebExtensionContext::BookmarksGetChildren(bookmarkIdentifier),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
-            if (!result) {
-                callback->reportError(result.error().createNSString().get());
-                return;
-            }
-            const Vector<WebExtensionBookmarksParameters>& resultVector = result.value();
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/getChildren
 
-            NSMutableArray *resultArray = [NSMutableArray arrayWithCapacity:resultVector.size()];
-            for (const auto& node : resultVector)
-                [resultArray addObject:toAPI(node)];
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksGetChildren(bookmarkIdentifier), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarkParameters>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
 
-            callback->call(resultArray);
-        },
-
-        extensionContext().identifier()
-    );
+        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(result.value())));
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIBookmarks::getRecent(long long numberOfItems, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/getRecent
+
     if (numberOfItems < 1) {
-        *outExceptionString = toErrorString(nullString(), @"numberOfItems", @"it must be at least 1").createNSString().autorelease();
+        *outExceptionString = toErrorString(nullString(), numberOfItemsKey, @"it must be at least 1").createNSString().autorelease();
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(
-        Messages::WebExtensionContext::BookmarksGetRecent(static_cast<uint64_t>(numberOfItems)),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
-            if (!result) {
-                callback->reportError(result.error().createNSString().get());
-                return;
-            }
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksGetRecent(static_cast<uint64_t>(numberOfItems)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarkParameters>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
 
-            Vector<WebExtensionBookmarksParameters> recentBookmarksParams = result.value();
-            NSMutableArray *resultArray = [NSMutableArray arrayWithCapacity:recentBookmarksParams.size()];
-
-            for (const auto& bookmarkParams : recentBookmarksParams)
-                [resultArray addObject:toAPI(bookmarkParams)];
-
-            callback->call(resultArray);
-        },
-        extensionContext().identifier()
-    );
+        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(result.value())));
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIBookmarks::getSubTree(NSString *bookmarkIdentifier, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    WebProcess::singleton().sendWithAsyncReply(
-        Messages::WebExtensionContext::BookmarksGetSubTree(bookmarkIdentifier),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
-            if (!result) {
-                callback->reportError(result.error().createNSString().get());
-                return;
-            }
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/getSubTree
 
-            const Vector<WebExtensionBookmarksParameters>& resultVector = result.value();
-            const WebExtensionBookmarksParameters& subtreeRootNode = resultVector[0];
-            if (!subtreeRootNode.children) {
-                callback->call(@[], nil);
-                return;
-            }
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksGetSubTree(bookmarkIdentifier), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarkParameters>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
 
-            NSMutableArray *childrenArray = [NSMutableArray arrayWithCapacity:subtreeRootNode.children->size()];
-            for (const auto& childNode : *subtreeRootNode.children)
-                [childrenArray addObject:toAPI(childNode)];
+        const auto& subtreeRoot = result.value()[0];
+        if (!subtreeRoot.children) {
+            callback->call(toJSValueRef(callback->globalContext(), @[ ]));
+            return;
+        }
 
-            callback->call(childrenArray);
-        },
-
-        extensionContext().identifier()
-    );
+        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(*subtreeRoot.children)));
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIBookmarks::getTree(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    WebProcess::singleton().sendWithAsyncReply(
-        Messages::WebExtensionContext::BookmarksGetTree(),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
-            if (!result) {
-                callback->reportError(result.error().createNSString().get());
-                return;
-            }
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/getTree
 
-            const Vector<WebExtensionBookmarksParameters>& resultVector = result.value();
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksGetTree(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarkParameters>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
 
-            NSMutableArray *resultArray = [NSMutableArray arrayWithCapacity:resultVector.size()];
-            for (const auto& topLevelNode : resultVector)
-                [resultArray addObject:toAPI(topLevelNode)];
-
-            callback->call(resultArray);
-        },
-        extensionContext().identifier()
-    );
+        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(result.value())));
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIBookmarks::get(NSObject *idOrIdList, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    Vector<String> bookmarkIds;
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/get
 
-    if ([idOrIdList isKindOfClass:[NSString class]]) {
-        bookmarkIds.append(static_cast<NSString *>(idOrIdList));
-    } else if ([idOrIdList isKindOfClass:[NSArray class]]) {
-        for (NSString *bookmarkId in static_cast<NSArray<NSString *> *>(idOrIdList)) {
-            if (![bookmarkId isKindOfClass:[NSString class]] || !bookmarkId.length) {
-                *outExceptionString = @"Each item in the ID list must be a non-empty string.";
+    if (!validateObject(idOrIdList, idOrIdListKey, [NSOrderedSet orderedSetWithObjects:NSString.class, @[ NSString.class ], nil], outExceptionString))
+        return;
+
+    Vector<String> bookmarkIdentifiers;
+
+    if (auto *bookmarkIdentifier = dynamic_objc_cast<NSString>(idOrIdList))
+        bookmarkIdentifiers.append(bookmarkIdentifier);
+    else if (auto *identifierList = dynamic_objc_cast<NSArray>(idOrIdList)) {
+        for (NSString *bookmarkIdentifier in identifierList) {
+            if (!bookmarkIdentifier.length) {
+                *outExceptionString = toErrorString(nullString(), idOrIdListKey, @"each item in the list must be a non-empty string").createNSString().autorelease();
                 return;
             }
-            bookmarkIds.append(bookmarkId);
+
+            bookmarkIdentifiers.append(bookmarkIdentifier);
         }
-    } else {
-        *outExceptionString = @"The first argument must be a string or an array of strings.";
-        return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(
-        Messages::WebExtensionContext::BookmarksGet(bookmarkIds),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
-            if (!result) {
-                callback->reportError(result.error().createNSString().get());
-                return;
-            }
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksGet(bookmarkIdentifiers), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarkParameters>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
 
-            const Vector<WebExtensionBookmarksParameters>& resultVector = result.value();
-
-            NSMutableArray *resultArray = [NSMutableArray arrayWithCapacity:resultVector.size()];
-            for (const auto& node : resultVector)
-                [resultArray addObject:toAPI(node)];
-
-            callback->call(resultArray);
-        },
-
-        extensionContext().identifier()
-    );
+        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(result.value())));
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIBookmarks::move(NSString *bookmarkIdentifier, NSDictionary *destination, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    std::optional<WTF::String> ipcParentId;
-    std::optional<uint64_t> ipcIndex;
-
-    if (![destination isKindOfClass:[NSDictionary class]]) {
-        if (outExceptionString)
-            *outExceptionString = toErrorString(nullString(), @"destination", @"property must be an object.").createNSString().autorelease();
-        return;
-    }
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/move
 
     static NSDictionary<NSString *, id> *types = @{
         indexKey: NSNumber.class,
         parentIdKey: NSString.class,
     };
 
-    if (!validateDictionary(destination, @"destination", nil, types, outExceptionString))
+    if (!validateDictionary(destination, destinationKey, nil, types, outExceptionString))
         return;
 
-    id parentIdObj = destination[@"parentId"];
-    if (parentIdObj)
-        ipcParentId = dynamic_objc_cast<NSString>(parentIdObj);
+    WebExtensionBookmarkParameters parameters;
+    parameters.identifier = bookmarkIdentifier;
 
-    id indexObj = destination[@"index"];
-    if (indexObj)
-        ipcIndex = dynamic_objc_cast<NSNumber>(indexObj).unsignedLongLongValue;
+    if (auto *parentIdentifier = objectForKey<NSString>(destination, parentIdKey))
+        parameters.parentIdentifier = String(parentIdentifier);
 
-    WebProcess::singleton().sendWithAsyncReply(
-        Messages::WebExtensionContext::BookmarksMove(bookmarkIdentifier, ipcParentId, ipcIndex),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionBookmarksParameters, WebExtensionError>&& result) {
-            if (!result) {
-                callback->reportError(result.error().createNSString().get());
-                return;
-            }
+    if (auto *index = objectForKey<NSNumber>(destination, indexKey))
+        parameters.index = index.unsignedLongLongValue;
 
-            NSDictionary *movedNodeDictionary = toAPI(result.value());
-            callback->call(movedNodeDictionary);
-        },
-        extensionContext().identifier()
-    );
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksMove(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionBookmarkParameters, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(result.value())));
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIBookmarks::remove(NSString *bookmarkIdentifier, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    WebProcess::singleton().sendWithAsyncReply(
-        Messages::WebExtensionContext::BookmarksRemove(bookmarkIdentifier),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
-            if (!result) {
-                callback->reportError(result.error().createNSString().get());
-                return;
-            }
-            callback->call({ });
-        },
-        extensionContext().identifier()
-    );
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/remove
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksRemove(bookmarkIdentifier), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIBookmarks::removeTree(NSString *bookmarkIdentifier, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    WebProcess::singleton().sendWithAsyncReply(
-        Messages::WebExtensionContext::BookmarksRemoveTree(bookmarkIdentifier),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
-            if (!result) {
-                callback->reportError(result.error().createNSString().get());
-                return;
-            }
-            callback->call({ });
-        },
-        extensionContext().identifier()
-    );
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/removeTree
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksRemoveTree(bookmarkIdentifier), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIBookmarks::search(NSObject *query, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    std::optional<WTF::String> ipcQueryTerms;
-    std::optional<WTF::String> ipcTitle;
-    std::optional<WTF::String> ipcURL;
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/search
 
-    if ([query isKindOfClass:NSString.class])
-        ipcQueryTerms = dynamic_objc_cast<NSString>(query);
-    else if ([query isKindOfClass:NSDictionary.class]) {
-        NSDictionary *queryDict = dynamic_objc_cast<NSDictionary>(query);
+    if (!validateObject(query, queryKey, [NSOrderedSet orderedSetWithObjects:NSString.class, NSDictionary.class, nil], outExceptionString))
+        return;
 
+    std::optional<String> queryTerms;
+    std::optional<String> title;
+    std::optional<String> url;
+
+    if (auto *queryString = dynamic_objc_cast<NSString>(query))
+        queryTerms = String(queryString);
+    else if (auto *queryDictionary = dynamic_objc_cast<NSDictionary>(query)) {
         static NSDictionary<NSString *, id> *types = @{
             urlKey: NSString.class,
             titleKey: NSString.class,
             queryKey: NSString.class
         };
 
-        if (!validateDictionary(queryDict, @"query", nil, types, outExceptionString))
+        if (!validateDictionary(queryDictionary, queryKey, nil, types, outExceptionString))
             return;
 
-        id queryTermsObj = queryDict[@"query"];
-        if (queryTermsObj)
-            ipcQueryTerms = dynamic_objc_cast<NSString>(queryTermsObj);
+        if (auto *queryString = objectForKey<NSString>(queryDictionary, queryKey))
+            queryTerms = String(queryString);
 
-        id titleObj = queryDict[@"title"];
-        if (titleObj)
-            ipcTitle = dynamic_objc_cast<NSString>(titleObj);
+        if (auto *titleString = objectForKey<NSString>(queryDictionary, titleKey))
+            title = String(titleString);
 
-        id urlObj = queryDict[@"url"];
-        if (urlObj)
-            ipcURL = dynamic_objc_cast<NSString>(urlObj);
-
-    } else {
-        if (outExceptionString)
-            *outExceptionString = toErrorString(nullString(), @"query", @"property must be a string or object.").createNSString().autorelease();
-        return;
+        if (auto *urlString = objectForKey<NSString>(queryDictionary, urlKey))
+            url = String(urlString);
     }
 
-    WebProcess::singleton().sendWithAsyncReply(
-        Messages::WebExtensionContext::BookmarksSearch(ipcQueryTerms, ipcURL, ipcTitle),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
-            if (!result) {
-                callback->reportError(result.error().createNSString().get());
-                return;
-            }
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksSearch(queryTerms, url, title), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarkParameters>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
 
-            const Vector<WebExtensionBookmarksParameters>& resultVector = result.value();
-            NSMutableArray *resultArray = [NSMutableArray arrayWithCapacity:resultVector.size()];
-            for (const auto& node : resultVector)
-                [resultArray addObject:toAPI(node)];
-
-            callback->call(resultArray);
-        },
-        extensionContext().identifier()
-    );
+        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(result.value())));
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIBookmarks::update(NSString *bookmarkIdentifier, NSDictionary *changes, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    if (!bookmarkIdentifier || ![bookmarkIdentifier isKindOfClass:[NSString class]] || !bookmarkIdentifier.length) {
-        if (outExceptionString)
-            *outExceptionString = toErrorString(nullString(), @"bookmarkID", @"property must be a non-empty string.").createNSString().autorelease();
-        return;
-    }
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/update
 
-    if (!changes || ![changes isKindOfClass:[NSDictionary class]]) {
-        if (outExceptionString)
-            *outExceptionString = toErrorString(nullString(), @"changes", @"property must be an object (dictionary).").createNSString().autorelease();
+    if (!bookmarkIdentifier.length) {
+        *outExceptionString = toErrorString(nullString(), idKey, @"it must be a non-empty string").createNSString().autorelease();
         return;
     }
 
@@ -412,41 +338,33 @@ void WebExtensionAPIBookmarks::update(NSString *bookmarkIdentifier, NSDictionary
         titleKey: NSString.class
     };
 
-    if (!validateDictionary(changes, @"changes", nil, types, outExceptionString))
+    if (!validateDictionary(changes, changesKey, nil, types, outExceptionString))
         return;
 
-    std::optional<WTF::String> newTitle;
-    std::optional<WTF::String> newURL;
+    WebExtensionBookmarkParameters parameters;
+    parameters.identifier = bookmarkIdentifier;
 
-    id titleObj = changes[@"title"];
-    if (titleObj)
-        newTitle = dynamic_objc_cast<NSString>(titleObj);
+    if (auto *title = objectForKey<NSString>(changes, titleKey))
+        parameters.title = String(title);
 
-    id urlStringObj = changes[@"url"];
-    if (urlStringObj)
-        newURL = dynamic_objc_cast<NSString>(urlStringObj);
+    if (auto *url = objectForKey<NSString>(changes, urlKey))
+        parameters.url = String(url);
 
-    if (!newTitle.has_value() && !newURL.has_value()) {
-        if (outExceptionString)
-            *outExceptionString = toErrorString(nullString(), @"title or url", @"must be specified.").createNSString().autorelease();
+    if (!parameters.title && !parameters.url) {
+        *outExceptionString = toErrorString(nullString(), changesKey, @"it must contain a title or a url").createNSString().autorelease();
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(
-        Messages::WebExtensionContext::BookmarksUpdate(bookmarkIdentifier, newURL, newTitle),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionBookmarksParameters, WebExtensionError>&& result) {
-            if (!result) {
-                callback->reportError(result.error().createNSString().get());
-                return;
-            }
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksUpdate(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionBookmarkParameters, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
 
-            NSDictionary* updatedNodeDictionary = toAPI(result.value());
-            callback->call(updatedNodeDictionary);
-        },
-        extensionContext().identifier()
-    );
+        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(result.value())));
+    }, extensionContext().identifier());
 }
+
 } // namespace WebKit
 
-#endif
-
+#endif // ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)

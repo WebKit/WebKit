@@ -780,7 +780,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/KeyEventInterpretationContext.serialization.in \
 	Shared/Extensions/WebExtensionActionClickBehavior.serialization.in \
 	Shared/Extensions/WebExtensionAlarmParameters.serialization.in \
-	Shared/Extensions/WebExtensionBookmarksParameters.serialization.in \
+	Shared/Extensions/WebExtensionBookmarkParameters.serialization.in \
 	Shared/Extensions/WebExtensionCommandParameters.serialization.in \
 	Shared/Extensions/WebExtensionContentWorldType.serialization.in \
 	Shared/Extensions/WebExtensionContext.serialization.in \

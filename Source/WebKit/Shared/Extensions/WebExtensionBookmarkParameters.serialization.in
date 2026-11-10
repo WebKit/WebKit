@@ -22,14 +22,14 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
 
-struct WebKit::WebExtensionBookmarksParameters {
-    String nodeId;
-    std::optional<String> parentId;
-    uint64_t index;
-    String title;
+struct WebKit::WebExtensionBookmarkParameters {
+    String identifier;
+    std::optional<String> parentIdentifier;
+    std::optional<uint64_t> index;
+    std::optional<String> title;
     std::optional<String> url;
     WallTime dateAdded;
-    std::optional<Vector<WebKit::WebExtensionBookmarksParameters>> children;
+    std::optional<Vector<WebKit::WebExtensionBookmarkParameters>> children;
 };
 
 #endif

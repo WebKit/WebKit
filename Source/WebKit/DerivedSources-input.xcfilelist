@@ -322,7 +322,7 @@ $(PROJECT_DIR)/Shared/EditingRange.serialization.in
 $(PROJECT_DIR)/Shared/EditorState.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionActionClickBehavior.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionAlarmParameters.serialization.in
-$(PROJECT_DIR)/Shared/Extensions/WebExtensionBookmarksParameters.serialization.in
+$(PROJECT_DIR)/Shared/Extensions/WebExtensionBookmarkParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionCommandParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionContentWorldType.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionContext.serialization.in

@@ -27,18 +27,22 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
 
+#include <wtf/Vector.h>
+#include <wtf/WallTime.h>
+#include <wtf/text/WTFString.h>
+
 namespace WebKit {
 
-struct WebExtensionBookmarksParameters {
-    String nodeId;
-    std::optional<String> parentId;
-    uint64_t index;
-    String title;
+struct WebExtensionBookmarkParameters {
+    String identifier;
+    std::optional<String> parentIdentifier;
+    std::optional<uint64_t> index;
+    std::optional<String> title;
     std::optional<String> url;
     WallTime dateAdded;
-    std::optional<Vector<WebExtensionBookmarksParameters>> children;
+    std::optional<Vector<WebExtensionBookmarkParameters>> children;
 };
 
-}
+} // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)

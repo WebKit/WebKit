@@ -36,13 +36,12 @@
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKWebExtensionBookmarks.h>
 
-
-@interface _MockBookmarkNode : NSObject <_WKWebExtensionBookmark>
+@interface TestBookmarkNode : NSObject <_WKWebExtensionBookmark>
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 @property (nonatomic, strong) NSMutableDictionary *dictionary;
 @end
 
-@implementation _MockBookmarkNode
+@implementation TestBookmarkNode
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary
 {
     self = [super init];
@@ -71,9 +70,9 @@
     return _dictionary[@"url"];
 }
 
-- (NSInteger)indexForWebExtensionContext:(WKWebExtensionContext *)context
+- (NSUInteger)indexForWebExtensionContext:(WKWebExtensionContext *)context
 {
-    return [_dictionary[@"index"] integerValue];
+    return [_dictionary[@"index"] unsignedIntegerValue];
 }
 
 - (_WKWebExtensionBookmarkType)bookmarkTypeForWebExtensionContext:(WKWebExtensionContext *)context
@@ -95,7 +94,7 @@
         return nil;
     NSMutableArray<id<_WKWebExtensionBookmark>> *children = [NSMutableArray array];
     for (NSDictionary *childDict in childDictionaries)
-        [children addObject:[[_MockBookmarkNode alloc] initWithDictionary:childDict]];
+        [children addObject:[[TestBookmarkNode alloc] initWithDictionary:childDict]];
     return children;
 }
 
@@ -111,12 +110,6 @@
     return [NSDate dateWithTimeIntervalSince1970:secondsSinceEpoch];
 }
 
-@end
-
-
-@interface TestBookmarksDelegate : NSObject <WKWebExtensionControllerDelegatePrivate>
-@property (nonatomic, strong) NSMutableArray<NSMutableDictionary *> *mockBookmarks;
-@property (nonatomic) NSInteger nextMockBookmarkId;
 @end
 
 static NSMutableDictionary *findParentInMockTree(NSMutableArray<NSMutableDictionary *> *tree, NSString *parentId)
@@ -151,7 +144,7 @@ static NSMutableDictionary *findBookmarkAndParentArrayInMockTree(NSMutableArray 
     return nil;
 }
 
-NSMutableDictionary* findBookmarkInMockTree(NSMutableArray *tree, NSString *bookmarkId)
+static NSMutableDictionary *findBookmarkInMockTree(NSMutableArray *tree, NSString *bookmarkId)
 {
     if (!tree || !bookmarkId)
         return nil;
@@ -167,71 +160,12 @@ NSMutableDictionary* findBookmarkInMockTree(NSMutableArray *tree, NSString *book
     return nil;
 }
 
-
-@implementation TestBookmarksDelegate
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        _mockBookmarks = [NSMutableArray array];
-        _nextMockBookmarkId = 100;
-    }
-    return self;
-}
-
-- (void)_webExtensionController:(WKWebExtensionController *)controller bookmarksForExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSArray<NSObject<_WKWebExtensionBookmark> *> *, NSError *))completionHandler
-{
-    NSMutableArray<NSObject<_WKWebExtensionBookmark> *> *results = [NSMutableArray array];
-    for (NSDictionary *bookmarkDict in self.mockBookmarks)
-        [results addObject:[[_MockBookmarkNode alloc] initWithDictionary:bookmarkDict]];
-    completionHandler(results, nil);
-}
-
-- (void)_webExtensionController:(WKWebExtensionController *)controller createBookmarkWithParentIdentifier:(NSString *)parentId index:(NSNumber *)index url:(NSString *)url title:(NSString *)title forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSObject<_WKWebExtensionBookmark> *, NSError *))completionHandler
-{
-    NSMutableDictionary *newBookmark = [NSMutableDictionary dictionary];
-    newBookmark[@"title"] = title;
-    if (url)
-        newBookmark[@"url"] = url;
-    NSString *newId = [NSString stringWithFormat:@"%ld", (long)self.nextMockBookmarkId];
-    _nextMockBookmarkId++;
-    newBookmark[@"id"] = newId;
-
-    if (!newBookmark[@"type"]) {
-        NSString *url = newBookmark[@"url"];
-        newBookmark[@"type"] = (url && url.length > 0) ? @"bookmark" : @"folder";
-    }
-
-    if (parentId && ![parentId isEqualToString:@"0"]) {
-        NSMutableDictionary *parentDict = findParentInMockTree(self.mockBookmarks, parentId);
-        if (parentDict) {
-            NSMutableArray *children = [parentDict[@"children"] mutableCopy] ?: [NSMutableArray array];
-            newBookmark[@"parentId"] = parentId;
-            newBookmark[@"index"] = index ?: @(children.count);
-            [children addObject:newBookmark];
-            parentDict[@"children"] = children;
-
-            completionHandler([[_MockBookmarkNode alloc] initWithDictionary:newBookmark], nil);
-            return;
-        }
-    }
-
-    newBookmark[@"parentId"] = @"0";
-    newBookmark[@"index"] = index ?: @(self.mockBookmarks.count);
-    [self.mockBookmarks addObject:newBookmark];
-
-    completionHandler([[_MockBookmarkNode alloc] initWithDictionary:newBookmark], nil);
-}
-@end
-
 namespace TestWebKitAPI {
 
-#pragma mark - Constants
-
-static constexpr auto *bookmarkOffManifest = @{
+static constexpr auto *bookmarksNoPermissionManifest = @{
     @"manifest_version": @3,
-    @"name": @"bookmarkpermission off Test",
-    @"description": @"bookmarkpermission off Test",
+    @"name": @"Bookmarks No Permission Test",
+    @"description": @"Bookmarks No Permission Test",
     @"version": @"1",
 
     @"permissions": @[],
@@ -242,10 +176,10 @@ static constexpr auto *bookmarkOffManifest = @{
     },
 };
 
-static constexpr auto *bookmarkOnManifest = @{
+static constexpr auto *bookmarksManifest = @{
     @"manifest_version": @3,
-    @"name": @"bookmarkpermission on Test",
-    @"description": @"bookmarkpermission on Test",
+    @"name": @"Bookmarks Test",
+    @"description": @"Bookmarks Test",
     @"version": @"1",
 
     @"permissions": @[ @"bookmarks" ],
@@ -259,8 +193,6 @@ static constexpr auto *bookmarkOnManifest = @{
         @"default_popup": @"popup.html",
     },
 };
-
-#pragma mark - Test Fixture
 
 class WKWebExtensionAPIBookmarks : public testing::Test {
 protected:
@@ -315,11 +247,6 @@ protected:
             this->nextMockBookmarkId++;
             newBookmarkData[@"id"] = newId;
 
-            if (!newBookmarkData[@"type"]) {
-                NSString *url = newBookmarkData[@"url"];
-                newBookmarkData[@"type"] = (url && url.length > 0) ? @"bookmark" : @"folder";
-            }
-
             newBookmarkData[@"parentId"] = parentId;
             if (parentId && ![parentId isEqualToString:@"0"]) {
                 NSMutableDictionary *parentDict = findParentInMockTree(this->uiProcessMockBookmarks.get(), parentId);
@@ -329,14 +256,14 @@ protected:
                     newBookmarkData[@"index"] = index ?: @(children.count);
                     [children addObject:newBookmarkData];
                     parentDict[@"children"] = children;
-                    completionHandler(adoptNS([[_MockBookmarkNode alloc] initWithDictionary:newBookmarkData]).get(), nil);
+                    completionHandler(adoptNS([[TestBookmarkNode alloc] initWithDictionary:newBookmarkData]).get(), nil);
                     return;
                 }
             }
 
             newBookmarkData[@"index"] = index ?: @(this->uiProcessMockBookmarks.get().count);
             [this->uiProcessMockBookmarks addObject:newBookmarkData];
-            completionHandler(adoptNS([[_MockBookmarkNode alloc] initWithDictionary:newBookmarkData]).get(), nil);
+            completionHandler(adoptNS([[TestBookmarkNode alloc] initWithDictionary:newBookmarkData]).get(), nil);
         };
     }
 
@@ -345,7 +272,7 @@ protected:
         manager.internalDelegate.bookmarksForExtensionContext = ^(void (^completionHandler)(NSArray<NSObject<_WKWebExtensionBookmark> *>*, NSError*)) {
             NSMutableArray<NSObject<_WKWebExtensionBookmark>*> *results = [NSMutableArray array];
             for (NSDictionary *dict in this->uiProcessMockBookmarks.get())
-                [results addObject:[[_MockBookmarkNode alloc] initWithDictionary:dict]];
+                [results addObject:[[TestBookmarkNode alloc] initWithDictionary:dict]];
             completionHandler(results, nil);
         };
     }
@@ -409,7 +336,7 @@ protected:
                 bookmarkToUpdate[@"url"] = url;
             }
 
-            _MockBookmarkNode *updatedMockNode = [[_MockBookmarkNode alloc] initWithDictionary:bookmarkToUpdate];
+            TestBookmarkNode *updatedMockNode = [[TestBookmarkNode alloc] initWithDictionary:bookmarkToUpdate];
             completionHandler(updatedMockNode, nil);
         };
     }
@@ -462,7 +389,7 @@ protected:
             [newParentChildrenArray insertObject:bookmarkToMove atIndex:targetIndex];
             bookmarkToMove[@"index"] = @(targetIndex);
 
-            _MockBookmarkNode *movedMockNode = [[_MockBookmarkNode alloc] initWithDictionary:bookmarkToMove];
+            TestBookmarkNode *movedMockNode = [[TestBookmarkNode alloc] initWithDictionary:bookmarkToMove];
             completionHandler(movedMockNode, nil);
         };
     }
@@ -470,19 +397,15 @@ protected:
     WKWebExtensionControllerConfiguration *bookmarkConfig;
 };
 
-#pragma mark - Common Tests
-
-TEST_F(WKWebExtensionAPIBookmarks, APISUnavailableWhenManifestDoesNotRequest)
+TEST_F(WKWebExtensionAPIBookmarks, APIUnavailableWhenManifestDoesNotRequest)
 {
     auto *script = @[
         @"browser.test.assertDeepEq(browser.bookmarks, undefined)",
         @"browser.test.notifyPass()",
     ];
 
-    Util::loadAndRunExtension(bookmarkOffManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
+    Util::loadAndRunExtension(bookmarksNoPermissionManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
 }
-
-#pragma mark - more Tests
 
 TEST_F(WKWebExtensionAPIBookmarks, APIAvailableWhenManifestRequests)
 {
@@ -502,10 +425,10 @@ TEST_F(WKWebExtensionAPIBookmarks, APIAvailableWhenManifestRequests)
         @"browser.test.notifyPass()",
     ];
 
-    Util::loadAndRunExtension(bookmarkOnManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
+    Util::loadAndRunExtension(bookmarksManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
 }
 
-TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIDisallowsMissingArguments)
+TEST_F(WKWebExtensionAPIBookmarks, MissingArguments)
 {
     auto *script = @[
         @"browser.test.assertThrows(() => browser.bookmarks.create())",
@@ -521,10 +444,10 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIDisallowsMissingArguments)
         @"browser.test.notifyPass()",
     ];
 
-    Util::loadAndRunExtension(bookmarkOnManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
+    Util::loadAndRunExtension(bookmarksManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
 }
 
-TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIDisallowedIncorrectArguments)
+TEST_F(WKWebExtensionAPIBookmarks, IncorrectArguments)
 {
     auto *script = @[
         @"browser.test.assertThrows(() => browser.bookmarks.getChildren(123), /The 'id' value is invalid, because a string is expected/i)",
@@ -540,27 +463,23 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIDisallowedIncorrectArguments)
         @"browser.test.notifyPass()",
     ];
 
-    Util::loadAndRunExtension(bookmarkOnManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
+    Util::loadAndRunExtension(bookmarksManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
 }
 
-TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPICheckgetRecent)
+TEST_F(WKWebExtensionAPIBookmarks, GetRecentWithInvalidArguments)
 {
     auto *script = @[
-        @"browser.test.assertThrows(() => browser.bookmarks.getChildren(123), /The 'id' value is invalid, because a string is expected/i)",
-        @"browser.test.log('workingtest line1')",
-        @"browser.test.assertThrows(() => browser.bookmarks.getChildren({}), /The 'id' value is invalid, because a string is expected/i)",
         @"browser.test.assertThrows(() => browser.bookmarks.getRecent('not-a-number'), /The 'numberOfItems' value is invalid, because a number is expected./i)",
-        @"browser.test.log('workingtest line2')",
         @"browser.test.assertThrows(() => browser.bookmarks.getRecent({}), /The 'numberOfItems' value is invalid, because a number is expected./i)",
         @"browser.test.assertThrows(() => browser.bookmarks.getRecent(-1), /The 'numberOfItems' value is invalid, because it must be at least 1./i)",
         @"browser.test.assertThrows(() => browser.bookmarks.getRecent(0), /The 'numberOfItems' value is invalid, because it must be at least 1./i)",
         @"browser.test.notifyPass()",
     ];
 
-    Util::loadAndRunExtension(bookmarkOnManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
+    Util::loadAndRunExtension(bookmarksManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
 }
 
-TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIGetRecent)
+TEST_F(WKWebExtensionAPIBookmarks, GetRecent)
 {
     auto *script = @[
         @"let oldBm = await browser.bookmarks.create({title: 'Oldest Bookmark', url: 'http://example.com/1'})",
@@ -575,13 +494,13 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIGetRecent)
         @"browser.test.assertEq(3, recent2.length, 'Should adapt and return the max available which is 3')",
         @"browser.test.assertEq('Newest Bookmark', recent2[0].title, 'First result should be the newest bookmark')",
         @"browser.test.assertEq('Middle Bookmark', recent2[1].title, 'Second result should be the middle bookmark')",
-        @"browser.test.assertEq('Oldest Bookmark', recent2[2].title, 'Second result should be the middle bookmark')",
+        @"browser.test.assertEq('Oldest Bookmark', recent2[2].title, 'Third result should be the oldest bookmark')",
         @"browser.test.notifyPass()",
     ];
 
     auto *resources = @{ @"background.js": Util::constructScript(script) };
 
-    auto manager = getManagerFor(resources, bookmarkOnManifest);
+    auto manager = getManagerFor(resources, bookmarksManifest);
 
     configureCreateBookmarkDelegate(manager.get());
     configureGetBookmarksDelegate(manager.get());
@@ -589,7 +508,7 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIGetRecent)
     [manager loadAndRun];
 }
 
-TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPICreate)
+TEST_F(WKWebExtensionAPIBookmarks, Create)
 {
     auto *script = @[
         @"let createdNode = await browser.bookmarks.create({title: 'My Test Bookmark', url: 'https://example.com/test1'})",
@@ -608,15 +527,14 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPICreate)
 
     auto *resources = @{ @"background.js": Util::constructScript(script) };
 
-    auto manager = getManagerFor(resources, bookmarkOnManifest);
+    auto manager = getManagerFor(resources, bookmarksManifest);
 
     configureCreateBookmarkDelegate(manager.get());
 
     [manager loadAndRun];
-
 }
 
-TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIGetTree)
+TEST_F(WKWebExtensionAPIBookmarks, GetTree)
 {
     auto *script = @[
         @"let bookmark1 = await browser.bookmarks.create({type: 'bookmark', title: 'Top Bookmark 1', url: 'http://example.com/bm1'});",
@@ -644,14 +562,14 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIGetTree)
 
     auto *resources = @{ @"background.js": Util::constructScript(script) };
 
-    auto manager = getManagerFor(resources, bookmarkOnManifest);
+    auto manager = getManagerFor(resources, bookmarksManifest);
 
     configureCreateBookmarkDelegate(manager.get());
     configureGetBookmarksDelegate(manager.get());
     [manager loadAndRun];
 }
 
-TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPICreateAndGetTree)
+TEST_F(WKWebExtensionAPIBookmarks, CreateAndGetTree)
 {
     auto *script = @[
         @"let folder = await browser.bookmarks.create({ title: 'Test Folder' });",
@@ -679,14 +597,14 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPICreateAndGetTree)
 
     auto *resources = @{ @"background.js": Util::constructScript(script) };
 
-    auto manager = getManagerFor(resources, bookmarkOnManifest);
+    auto manager = getManagerFor(resources, bookmarksManifest);
 
     configureCreateBookmarkDelegate(manager.get());
     configureGetBookmarksDelegate(manager.get());
     [manager loadAndRun];
 }
 
-TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIGetSubTreeChildren)
+TEST_F(WKWebExtensionAPIBookmarks, GetSubTreeChildren)
 {
     auto *script = @[
         @"let folder = await browser.bookmarks.create({title: 'Test Folder' });",
@@ -696,10 +614,9 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIGetSubTreeChildren)
         @"browser.test.assertEq(bookmark.title, 'WebKit.org', 'Bookmark title should be correct');",
         @"browser.test.assertEq(bookmark.url, 'https://webkit.org/', 'Bookmark URL should be correct');",
         @"let folder2 = await browser.bookmarks.create({parentId: folder.id, title: 'Folder 2'});",
-        @"browser.test.assertEq(folder2.title, 'Folder 2', 'Bookmark title should be correct');",
-        @"browser.test.assertEq(folder2.parentId, folder.id, 'Bookmark URL should be correct');",
+        @"browser.test.assertEq(folder2.title, 'Folder 2', 'Folder title should be correct');",
+        @"browser.test.assertEq(folder2.parentId, folder.id, 'Folder parentId should be correct');",
         @"let bookmark2 = await browser.bookmarks.create({parentId: folder2.id, title: 'Bookmark 2', url: 'https://bookmark2.org/' });",
-        @"browser.test.log(`Starting bookmark test right before...: ${JSON.stringify(folder.id)}`);",
         @"let subtreeFolder1 = await browser.bookmarks.getSubTree(folder.id);",
         @"browser.test.assertTrue(Array.isArray(subtreeFolder1), 'subtreeFolder1 should be an array');",
         @"browser.test.assertEq(2, subtreeFolder1.length, 'subtreeFolder1 array should have 2 elements');",
@@ -708,25 +625,24 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIGetSubTreeChildren)
         @"browser.test.assertTrue(Array.isArray(subtreeFolder1[1].children), 'Folder 2 should have children');",
         @"browser.test.assertEq(1, subtreeFolder1[1].children.length, 'folder 2 should have 1 child');",
         @"browser.test.assertEq(bookmark2.title, subtreeFolder1[1].children[0].title, 'bookmark2 should be child of folder2');",
-        @"browser.test.assertEq(bookmark.id, subtreeFolder1[0].id, 'Second child is bookmark');",
+        @"browser.test.assertEq(bookmark.id, subtreeFolder1[0].id, 'First child is bookmark');",
         @"let subtreeBookmark = await browser.bookmarks.getSubTree(bookmark.id);",
         @"browser.test.assertTrue(Array.isArray(subtreeBookmark), 'subtreeBookmark should be an array');",
-        @"browser.test.assertEq(0, subtreeBookmark.length, 'subtreeBookmark array should have 1 element');",
+        @"browser.test.assertEq(0, subtreeBookmark.length, 'subtreeBookmark array should be empty');",
         @"let childrenFolder1 = await browser.bookmarks.getChildren(folder.id);",
         @"browser.test.assertTrue(Array.isArray(childrenFolder1), 'childrenFolder1 should be an array');",
         @"browser.test.assertEq('Folder 2', childrenFolder1[1].title, 'childs title should be Folder 2');",
-        @"browser.test.log(`Starting bookmark test right before...: ${JSON.stringify(folder2.id)}`);",
         @"let getFolder1 = await browser.bookmarks.get([folder.id, folder2.id]);",
         @"browser.test.assertTrue(Array.isArray(getFolder1), 'getFolder1 should be an array');",
         @"browser.test.assertEq(2, getFolder1.length, 'getFolder1 array should have 2 elements');",
         @"browser.test.assertEq('Folder 2', getFolder1[1].title, 'childs title should be Folder 2');",
-        @"browser.test.assertEq('Test Folder', getFolder1[0].title, 'childs title should be Folder 2');",
+        @"browser.test.assertEq('Test Folder', getFolder1[0].title, 'first title should be Test Folder');",
         @"browser.test.notifyPass();",
     ];
 
     auto *resources = @{ @"background.js": Util::constructScript(script) };
 
-    auto manager = getManagerFor(resources, bookmarkOnManifest);
+    auto manager = getManagerFor(resources, bookmarksManifest);
 
     configureCreateBookmarkDelegate(manager.get());
     configureGetBookmarksDelegate(manager.get());
@@ -734,7 +650,7 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIGetSubTreeChildren)
     [manager loadAndRun];
 }
 
-TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIRemoveAndRemoveTree)
+TEST_F(WKWebExtensionAPIBookmarks, RemoveAndRemoveTree)
 {
     auto script = @[
         @"let folder1 = await browser.bookmarks.create({ title: 'Folder One' });",
@@ -785,7 +701,7 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIRemoveAndRemoveTree)
 
     auto resources = @{ @"background.js": Util::constructScript(script) };
 
-    auto manager = getManagerFor(resources, bookmarkOnManifest);
+    auto manager = getManagerFor(resources, bookmarksManifest);
 
     configureCreateBookmarkDelegate(manager.get());
     configureGetBookmarksDelegate(manager.get());
@@ -794,7 +710,7 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIRemoveAndRemoveTree)
     [manager loadAndRun];
 }
 
-TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIUpdate)
+TEST_F(WKWebExtensionAPIBookmarks, Update)
 {
     auto *script = @[
         @"let bm = await browser.bookmarks.create({ title: 'Initial Title', url: 'http://example.com/initial' });",
@@ -833,7 +749,7 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIUpdate)
 
     auto *resources = @{ @"background.js": Util::constructScript(script) };
 
-    auto manager = getManagerFor(resources, bookmarkOnManifest);
+    auto manager = getManagerFor(resources, bookmarksManifest);
 
     configureCreateBookmarkDelegate(manager.get());
     configureGetBookmarksDelegate(manager.get());
@@ -842,7 +758,7 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIUpdate)
     [manager loadAndRun];
 }
 
-TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIMove)
+TEST_F(WKWebExtensionAPIBookmarks, Move)
 {
     auto *script = @[
         @"let folderA = await browser.bookmarks.create({title: 'Folder A' });",
@@ -886,7 +802,7 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIMove)
 
     auto *resources = @{ @"background.js": Util::constructScript(script) };
 
-    auto manager = getManagerFor(resources, bookmarkOnManifest);
+    auto manager = getManagerFor(resources, bookmarksManifest);
 
     configureCreateBookmarkDelegate(manager.get());
     configureGetBookmarksDelegate(manager.get());
@@ -895,7 +811,7 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPIMove)
     [manager loadAndRun];
 }
 
-TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPISearch)
+TEST_F(WKWebExtensionAPIBookmarks, Search)
 {
     auto *script = @[
         @"let folderA = await browser.bookmarks.create({ id: 'folderA_id', title: 'Animals Folder' });",
@@ -983,7 +899,7 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPISearch)
 
     auto *resources = @{ @"background.js": Util::constructScript(script) };
 
-    auto manager = getManagerFor(resources, bookmarkOnManifest);
+    auto manager = getManagerFor(resources, bookmarksManifest);
 
     configureCreateBookmarkDelegate(manager.get());
     configureGetBookmarksDelegate(manager.get());
@@ -991,6 +907,19 @@ TEST_F(WKWebExtensionAPIBookmarks, BookmarksAPISearch)
     [manager loadAndRun];
 }
 
+TEST_F(WKWebExtensionAPIBookmarks, InvalidIdentifiersAndChanges)
+{
+    auto *script = @[
+        @"browser.test.assertThrows(() => browser.bookmarks.get(['1', '']), /The 'idOrIdList' value is invalid, because each item in the list must be a non-empty string/i)",
+        @"browser.test.assertThrows(() => browser.bookmarks.get(123), /The 'idOrIdList' value is invalid, because a string or an array of strings is expected/i)",
+        @"browser.test.assertThrows(() => browser.bookmarks.update('', { title: 'WebKit' }), /The 'id' value is invalid, because it must be a non-empty string/i)",
+        @"browser.test.assertThrows(() => browser.bookmarks.update('1', { }), /The 'changes' value is invalid, because it must contain a title or a url/i)",
+        @"browser.test.assertThrows(() => browser.bookmarks.search(123), /The 'query' value is invalid, because a string or an object is expected/i)",
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(bookmarksManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
+}
+
 }
 #endif
-

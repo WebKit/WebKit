@@ -27,7 +27,6 @@
 
 @class _WKWebExtensionNotification;
 @class _WKWebExtensionSidebar;
-@class _WKWebExtensionBookmark;
 @protocol _WKWebExtensionBookmark;
 
 #if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
@@ -184,7 +183,7 @@ WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
 /*!
  @abstract Called when a new bookmark or folder is requested to be created.
  @param controller The web extension controller initiating the request.
- @param parentId The string identifier of the parent folder. Can be nil or "0" for a top-level item.
+ @param parentIdentifier The string identifier of the parent folder. Can be nil or "0" for a top-level item.
  @param index The desired index for the new bookmark within its parent. Can be nil.
  @param url The URL for the new bookmark. Should be nil if creating a folder.
  @param title The title for the new bookmark or folder.
@@ -192,16 +191,15 @@ WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
  @param completionHandler A block that must be called upon completion. It takes the newly created bookmark node
  (as an object conforming to the `id <_WKWebExtensionBookmark>` protocol) and an optional error argument.
  @discussion This method is the entry point for the `bookmarks.create` API. The delegate is responsible for
- taking the 4 parameters, creating the bookmark in its data store, and returning a new object that
- represents the created item.
+ creating the bookmark in its data store, and returning a new object that represents the created item.
  */
-- (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller createBookmarkWithParentIdentifier:(nullable NSString *)parentId index:(nullable NSNumber *)index url:(nullable NSString *)url title:(NSString * _Nonnull)title forExtensionContext:(WKWebExtensionContext * _Nonnull)context completionHandler:(void (^)(NSObject<_WKWebExtensionBookmark> * _Nullable, NSError * _Nullable))completionHandler;
+- (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller createBookmarkWithParentIdentifier:(nullable NSString *)parentIdentifier index:(nullable NSNumber *)index url:(nullable NSString *)url title:(NSString * _Nonnull)title forExtensionContext:(WKWebExtensionContext * _Nonnull)context completionHandler:(void (^)(NSObject<_WKWebExtensionBookmark> * _Nullable, NSError * _Nullable))completionHandler;
 
 /*!
  @abstract Called when a bookmark or bookmark folder is requested to be removed.
  @param controller The web extension controller initiating the request.
  @param bookmarkIdentifier The unique string identifier of the bookmark or folder to remove.
- @param recursively If YES, the entire subtree should be removed (for removeTree). If NO, only a single bookmark or an empty folder should be removed (for remove).
+ @param removeFolderWithChildren If YES, the entire subtree should be removed (for removeTree). If NO, only a single bookmark or an empty folder should be removed (for remove).
  @param context The context within which the web extension is running.
  @param completionHandler A block that must be called upon completion.
  */
@@ -210,24 +208,24 @@ WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
 /*!
  @abstract Called to update properties of an existing bookmark node.
  @param controller The WKWebExtensionController instance.
- @param bookmarkId The identifier of the bookmark node to update.
+ @param bookmarkIdentifier The identifier of the bookmark node to update.
  @param title The new title for the bookmark node, or nil if not changing.
  @param url The new URL for the bookmark (for bookmark types), or nil if not changing.
  @param context The context in which the web extension is running.
  @param completionHandler A block to call with the updated bookmark node or an error.
  */
-- (void)_webExtensionController:(WKWebExtensionController *)controller updateBookmarkWithIdentifier:(NSString *)bookmarkId title:(nullable NSString *)title url:(nullable NSString *)url forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSObject<_WKWebExtensionBookmark> *, NSError *))completionHandler;
+- (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller updateBookmarkWithIdentifier:(NSString * _Nonnull)bookmarkIdentifier title:(nullable NSString *)title url:(nullable NSString *)url forExtensionContext:(WKWebExtensionContext * _Nonnull)context completionHandler:(void (^)(NSObject<_WKWebExtensionBookmark> * _Nullable, NSError * _Nullable))completionHandler;
 
 /*!
  @abstract Called to move a bookmark node.
  @param controller The WKWebExtensionController instance.
- @param bookmarkId The identifier of the bookmark node to move.
- @param parentId The identifier of the new parent folder, or nil/empty for root.
+ @param bookmarkIdentifier The identifier of the bookmark node to move.
+ @param parentIdentifier The identifier of the new parent folder, or nil/empty for root.
  @param index The new zero-based index within the new parent, or nil for end.
  @param context The context in which the web extension is running.
  @param completionHandler A block to call with the moved bookmark node or an error.
  */
-- (void)_webExtensionController:(WKWebExtensionController *)controller moveBookmarkWithIdentifier:(NSString *)bookmarkId toParent:(nullable NSString *)parentId atIndex:(nullable NSNumber *)index forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSObject<_WKWebExtensionBookmark> *, NSError *))completionHandler;
+- (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller moveBookmarkWithIdentifier:(NSString * _Nonnull)bookmarkIdentifier toParent:(nullable NSString *)parentIdentifier atIndex:(nullable NSNumber *)index forExtensionContext:(WKWebExtensionContext * _Nonnull)context completionHandler:(void (^)(NSObject<_WKWebExtensionBookmark> * _Nullable, NSError * _Nullable))completionHandler;
 
 /*!
  @abstract Called when an extension requests that a notification be presented to the user.

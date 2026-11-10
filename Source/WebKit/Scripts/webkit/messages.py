@@ -767,6 +767,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::WCContentBufferIdentifier',
         'WebKit::WCLayerTreeHostIdentifier',
         'WebKit::WebExtensionActionClickBehavior',
+        'WebKit::WebExtensionBookmarkParameters',
         'WebKit::WebExtensionCommandParameters',
         'WebKit::WebExtensionContentWorldType',
         'WebKit::WebExtensionDataType',
