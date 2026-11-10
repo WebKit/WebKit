@@ -76,6 +76,7 @@ CANONICAL_GITHUB_PROJECT = 'WebKit/WebKit'
 HASH_LENGTH_TO_DISPLAY = 8
 DEFAULT_BRANCH = 'main'
 DEFAULT_REMOTE = 'origin'
+FEATURE_BRANCHES = ['swift-adoption']
 LAYOUT_TESTS_URL = '{}{}/blob/{}/LayoutTests/'.format(GITHUB_URL, CANONICAL_GITHUB_PROJECT, DEFAULT_BRANCH)
 MAX_COMMITS_IN_PR_SERIES = 50
 QUEUES_WITH_PUSH_ACCESS = ('merge-queue', 'unsafe-merge-queue')
@@ -91,6 +92,17 @@ USE_GITHUB_PROJECTS_FOR_HOOKS = load_password('USE_GITHUB_PROJECTS_FOR_HOOKS', d
 
 if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES:
     CURRENT_HOSTNAME = 'ews-build.webkit.org'
+
+# Commits which have already landed carry a canonical link
+LANDED_COMMIT_CHECK = "git log -1 --format=%B $GIT_COMMIT | grep -qE '^Canonical[ -]link: '"
+
+
+# Feature branches may be rebased onto the default branch, so the commits a pull request contributes to
+# a feature branch are those on neither the feature branch nor the default branch
+def refs_excluded_from_change(base_ref, remote=DEFAULT_REMOTE):
+    if base_ref in FEATURE_BRANCHES:
+        return [f'^{base_ref}', f'^remotes/{remote}/{DEFAULT_BRANCH}']
+    return [f'^{base_ref}']
 
 
 class ParseByLineLogObserver(logobserver.LineConsumerLogObserver):
@@ -1412,12 +1424,23 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
         project = self.getProperty('github.head.repo.full_name', self.getProperty('project'))
         pr_branch = self.getProperty('github.head.ref', DEFAULT_BRANCH)
 
+        checkout = ['git', 'checkout', '--progress', '-B', pr_branch]
+        if self.getProperty('github.base.ref', DEFAULT_BRANCH) in FEATURE_BRANCHES:
+            # A pull request which rebases a feature branch applies to its own intersection with the default branch
+            base_remote = self.getProperty('remote', DEFAULT_REMOTE)
+            intersection = f'git merge-base remotes/{base_remote}/{DEFAULT_BRANCH} remotes/{remote}/{pr_branch}'
+            checkout = self.shell_command(
+                f'if [ "$(git merge-base remotes/{base_remote}/{DEFAULT_BRANCH} HEAD)" = "$({intersection})" ]; '
+                f'then git checkout --progress -B {pr_branch}; '
+                f'else git checkout --progress -B {pr_branch} "$({intersection})"; fi'
+            )
+
         return [
             ['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
             self.shell_command(f'git remote add {remote} {GITHUB_URL}{project}.git || {self.shell_exit_0()}'),
             ['git', 'remote', 'set-url', remote, f'{GITHUB_URL}{project}.git'],
             ['git', 'fetch', remote, pr_branch],
-            ['git', 'checkout', '--progress', '-B', pr_branch],
+            checkout,
             ['git', 'cherry-pick', '--allow-empty', f'HEAD..remotes/{remote}/{pr_branch}'],
         ]
 
@@ -1864,12 +1887,14 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         enableSkipEWSLabel=True,
         branches=None,
         excluded_branches=None,
+        excludeFeatureBranches=True,
     ):
         self.verifyObsolete = verifyObsolete
         self.verifyBugClosed = verifyBugClosed
         self.verifyMergeQueue = verifyMergeQueue
         self.verifyNoDraftForMergeQueue = verifyNoDraftForMergeQueue
         self.enableSkipEWSLabel = enableSkipEWSLabel
+        self.excludeFeatureBranches = excludeFeatureBranches
         self.addURLs = addURLs
 
         branches = branches or [r'.+']
@@ -1911,6 +1936,10 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
 
         if any(candidate.match(branch) for candidate in self.excluded_branches):
             rc = yield self.skip_build(f"Skipping as PR {pr_number} targets '{branch}' branch")
+            return defer.returnValue(rc)
+
+        if self.excludeFeatureBranches and branch in FEATURE_BRANCHES:
+            rc = yield self.skip_build(f"Skipping as PR {pr_number} targets the '{branch}' feature branch")
             return defer.returnValue(rc)
 
         if not any(candidate.match(branch) for candidate in self.branches):
@@ -7252,6 +7281,12 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
         head_ref = self.getProperty('github.base.ref', 'main')
         remote = self.getProperty('remote', '?')
         self.command = ['git', 'push', remote, f'HEAD:{head_ref}']
+        if self.getProperty('feature_branch_rebase', False):
+            # Rebasing a feature branch replaces it, which is only safe if it hasn't changed since the rebase was validated
+            self.command = [
+                'git', 'push', f"--force-with-lease=refs/heads/{head_ref}:{self.getProperty('feature_branch_hash', '')}",
+                remote, f'HEAD:{head_ref}',
+            ]
 
         username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
         self.env['GIT_USER'] = username
@@ -7278,6 +7313,16 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
 
         else:
             self.setProperty('build_summary', '')
+            if self.getProperty('feature_branch_rebase', False):
+                self.setProperty(
+                    'comment_text',
+                    f"merge-queue failed to rebase '{head_ref}', it may have changed since PR #{self.getProperty('github.number', '')} was validated. "
+                    f"To retry, rebase the PR on '{head_ref}' again, remove any blocking labels and re-apply the merge-queue label",
+                )
+                self.setProperty('build_finish_summary', f"Failed to rebase '{head_ref}'")
+                self.build.addStepsAfterCurrentStep([LeaveComment(), BlockPullRequest()])
+                return defer.returnValue(rc)
+
             retry_count = int(self.getProperty('retry_count', 0))
             if retry_count < self.MAX_RETRY:
                 self.setProperty('retry_count', retry_count + 1)
@@ -7291,7 +7336,8 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                         CheckOutPullRequest(),
                         AddReviewerToCommitMessage(),
                         Canonicalize(),
-                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False, enableSkipEWSLabel=False),
+                        # Only queues which land on feature branches reach this point with a feature branch
+                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False, enableSkipEWSLabel=False, excludeFeatureBranches=False),
                         PushPullRequestBranch(),
                         UpdatePullRequest(),
                         PushCommitToWebKitRepo(),
@@ -7570,7 +7616,8 @@ class MapBranchAlias(shell.ShellCommand):
     def doStepIf(self, step):
         if not self.getProperty('github.number'):
             return False
-        return self.getProperty('github.base.ref', DEFAULT_BRANCH) != DEFAULT_BRANCH
+        # Feature branches may be contained by the default branch or a production branch, but should never be re-mapped
+        return self.getProperty('github.base.ref', DEFAULT_BRANCH) not in [DEFAULT_BRANCH] + FEATURE_BRANCHES
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -7636,7 +7683,9 @@ class ValidateChangeContent(shell.ShellCommand, AddToLogMixin):
     def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         remote = self.getProperty('remote', DEFAULT_REMOTE)
         base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
-        self.command = ['git', '-c', 'color.ui=false', 'diff', f'remotes/{remote}/{base_ref}...HEAD']
+        # Feature branches may be rebased, so check every change on the feature branch
+        diff_base = DEFAULT_BRANCH if base_ref in FEATURE_BRANCHES else base_ref
+        self.command = ['git', '-c', 'color.ui=false', 'diff', f'remotes/{remote}/{diff_base}...HEAD']
 
         self.log_observer = BufferLogObserverClass(wantStderr=True)
         self.addLogObserver('stdio', self.log_observer)
@@ -7689,6 +7738,118 @@ class ValidateChangeContent(shell.ShellCommand, AddToLogMixin):
         return super().getResultSummary()
 
 
+class DetermineFeatureBranchRebase(shell.ShellCommand, ShellMixin):
+    name = 'determine-feature-branch-rebase'
+    haltOnFailure = True
+    flunkOnFailure = True
+
+    def __init__(self, **kwargs):
+        self.summary = ''
+        super().__init__(logEnviron=False, timeout=60, **kwargs)
+
+    @defer.inlineCallbacks
+    def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
+        default_branch = f'remotes/{remote}/{DEFAULT_BRANCH}'
+        self.command = self.shell_command(
+            f'git rev-parse remotes/{remote}/{base_ref} && '
+            f'git merge-base {default_branch} remotes/{remote}/{base_ref} && '
+            f'git merge-base {default_branch} HEAD'
+        )
+
+        self.log_observer = BufferLogObserverClass(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+
+        hashes = self.log_observer.getStdout().split()
+        if rc != SUCCESS or len(hashes) != 3:
+            self.summary = f"Failed to determine where '{base_ref}' intersects with '{DEFAULT_BRANCH}'"
+            return defer.returnValue(FAILURE)
+
+        feature_branch_hash, feature_branch_intersection, intersection = hashes
+        self.setProperty('feature_branch_hash', feature_branch_hash)
+        # If the pull request intersects with the default branch somewhere else, it rebases the feature branch
+        self.setProperty('feature_branch_rebase', feature_branch_intersection != intersection)
+        if feature_branch_intersection != intersection:
+            self.summary = f"Rebasing '{base_ref}' on {intersection[:HASH_LENGTH_TO_DISPLAY]}"
+        else:
+            self.summary = f"Appending to '{base_ref}'"
+        return defer.returnValue(SUCCESS)
+
+    def getResultSummary(self):
+        if self.results in (FAILURE, SUCCESS):
+            return {'step': self.summary}
+        return super().getResultSummary()
+
+    def doStepIf(self, step):
+        return bool(self.getProperty('github.number')) and self.getProperty('github.base.ref', DEFAULT_BRANCH) in FEATURE_BRANCHES
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+
+class ValidateFeatureBranchRebase(shell.ShellCommand, ShellMixin):
+    name = 'validate-feature-branch-rebase'
+    haltOnFailure = False
+    flunkOnFailure = True
+    CANONICAL_LINK_RE = '^Canonical[ -]link: '
+    MAX_LINKS_IN_COMMENT = 10
+
+    def __init__(self, **kwargs):
+        self.summary = ''
+        super().__init__(logEnviron=False, timeout=60, **kwargs)
+
+    @defer.inlineCallbacks
+    def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
+
+        # Every commit which landed on the feature branch has a unique canonical link, which rebasing preserves
+        canonical_links = f"git log --format=%B {{}} ^remotes/{remote}/{DEFAULT_BRANCH} | {{{{ grep -E '{self.CANONICAL_LINK_RE}' || true; }}}} | sort -u > {{}}"
+        self.command = self.shell_command(
+            f"{canonical_links.format(self.getProperty('feature_branch_hash', ''), 'landed_links.txt')} && "
+            f"{canonical_links.format('HEAD', 'rebased_links.txt')} && "
+            'comm -23 landed_links.txt rebased_links.txt'
+        )
+
+        self.log_observer = BufferLogObserverClass(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+        if rc != SUCCESS:
+            self.summary = f"Failed to compare PR with '{base_ref}'"
+            return defer.returnValue(rc)
+
+        dropped = [line.strip() for line in self.log_observer.getStdout().splitlines() if line.strip()]
+        if not dropped:
+            self.summary = f"Verified rebase preserves every commit on '{base_ref}'"
+            return defer.returnValue(SUCCESS)
+
+        pr_number = self.getProperty('github.number')
+        self.summary = f"Rebase drops {len(dropped)} commit{'' if len(dropped) == 1 else 's'} from '{base_ref}'"
+        comment = f"{self.summary}, blocking PR #{pr_number}. Rebase the PR on the latest '{base_ref}' to preserve:\n"
+        comment += ''.join(f'- {line}\n' for line in dropped[:self.MAX_LINKS_IN_COMMENT])
+        if len(dropped) > self.MAX_LINKS_IN_COMMENT:
+            comment += f'- and {len(dropped) - self.MAX_LINKS_IN_COMMENT} more\n'
+        self.setProperty('comment_text', comment)
+        self.setProperty('build_finish_summary', self.summary)
+        self.build.addStepsAfterCurrentStep([LeaveComment(), BlockPullRequest()])
+        return defer.returnValue(FAILURE)
+
+    def getResultSummary(self):
+        if self.results in (FAILURE, SUCCESS):
+            return {'step': self.summary}
+        return super().getResultSummary()
+
+    def doStepIf(self, step):
+        return bool(self.getProperty('feature_branch_rebase', False))
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+
 class ValidateSquashed(shell.ShellCommand, AddToLogMixin):
     name = 'validate-squashed'
     haltOnFailure = False
@@ -7702,7 +7863,12 @@ class ValidateSquashed(shell.ShellCommand, AddToLogMixin):
     def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         base_ref = self.getProperty('github.base.ref', f'{DEFAULT_REMOTE}/{DEFAULT_BRANCH}')
         head_ref = self.getProperty('github.head.ref', 'HEAD')
-        self.command = ['git', 'log', '--format=format:%H', head_ref, f'^{base_ref}', f'--max-count={MAX_COMMITS_IN_PR_SERIES + 1}']
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
+        is_feature_branch = base_ref in FEATURE_BRANCHES
+        # Feature branches accept any number of commits, so the count must be exact
+        self.command = ['git', 'log', '--format=format:%H', head_ref] + refs_excluded_from_change(base_ref, remote) + (
+            [] if is_feature_branch else [f'--max-count={MAX_COMMITS_IN_PR_SERIES + 1}']
+        )
 
         self.log_observer = BufferLogObserverClass(wantStderr=True)
         self.addLogObserver('stdio', self.log_observer)
@@ -7729,6 +7895,10 @@ class ValidateSquashed(shell.ShellCommand, AddToLogMixin):
         log_text = self.log_observer.getStdout().rstrip()
         commit_count = len(log_text.splitlines())
         self.setProperty('commit_count', commit_count)
+
+        if is_feature_branch and commit_count > 0:
+            self.summary = f"Verified {commit_count} commit{'' if commit_count == 1 else 's'} for '{base_ref}'"
+            return defer.returnValue(SUCCESS)
 
         classification = self.getProperty('classification', [])
         if not isinstance(classification, list):
@@ -7818,15 +7988,21 @@ class AddReviewerToCommitMessage(shell.ShellCommand, AddReviewerMixin):
 
         base_ref = self.getProperty('github.base.ref', f'{DEFAULT_REMOTE}/{DEFAULT_BRANCH}')
         head_ref = self.getProperty('github.head.ref', 'HEAD')
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
 
         gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
         date = f'{int(time.time())} {gmtoffset}'
+        env_filter = f"GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'"
+        revisions = [f'{head_ref}...{base_ref}']
+        if base_ref in FEATURE_BRANCHES:
+            # Rebasing a feature branch should preserve the author date of commits which have already landed
+            env_filter = f"GIT_COMMITTER_DATE='{date}';{LANDED_COMMIT_CHECK} || GIT_AUTHOR_DATE='{date}'"
+            revisions = [head_ref] + refs_excluded_from_change(base_ref, remote)
         self.command = [
             'git', 'filter-branch', '-f',
-            '--env-filter', f"GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'",
+            '--env-filter', env_filter,
             '--msg-filter', f'sed -E "{self.NOBODY_SED.format(self.reviewers())}"',
-            f'{head_ref}...{base_ref}',
-        ]
+        ] + revisions
 
         commit_environment = yield self.gitCommitEnvironment()
         for key, value in commit_environment.items():
@@ -7911,11 +8087,12 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
         self.commands = []
         reviewed_strings = '\\|'.join(self.REVIEWED_STRINGS)
         reviewed_by_strings = '\\|'.join(self.REVIEWED_STRINGS[:3])
+        excluded = ' '.join(refs_excluded_from_change(base_ref, self.getProperty('remote', DEFAULT_REMOTE)))
         commands = [
-            f"git log {head_ref} ^{base_ref} | grep -q '{self.OOPS_RE}' && echo 'Commit message contains (OOPS!){reviewer_error_msg}' || test $? -eq 1",
-            f"git log {head_ref} ^{base_ref} | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\"{reviewer_error_msg}' || test $? -eq 1",
-            f"git log --format=%B {head_ref} ^{base_ref} > commit_msg.txt; grep -q '^[[:space:]]*\\({reviewed_strings}\\)' commit_msg.txt || echo 'No reviewer information in commit message';",
-            f"git log --format=%B {head_ref} ^{base_ref} | grep '^[[:space:]]*\\({reviewed_by_strings}\\)' || true",
+            f"git log {head_ref} {excluded} | grep -q '{self.OOPS_RE}' && echo 'Commit message contains (OOPS!){reviewer_error_msg}' || test $? -eq 1",
+            f"git log {head_ref} {excluded} | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\"{reviewer_error_msg}' || test $? -eq 1",
+            f"git log --format=%B {head_ref} {excluded} > commit_msg.txt; grep -q '^[[:space:]]*\\({reviewed_strings}\\)' commit_msg.txt || echo 'No reviewer information in commit message';",
+            f"git log --format=%B {head_ref} {excluded} | grep '^[[:space:]]*\\({reviewed_by_strings}\\)' || true",
         ]
         for command in commands:
             self.commands.append(util.ShellArg(command=self.shell_command(command), logname='stdio', haltOnFailure=True))
@@ -8009,16 +8186,29 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
         head_ref = self.getProperty('github.head.ref', None)
         remote = self.getProperty('remote', 'origin')
 
+        is_feature_branch = base_ref in FEATURE_BRANCHES
+        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        date = f'{int(time.time())} {gmtoffset}'
+
         commands = [self.shell_command('rm .git/identifiers.json || {}'.format(self.shell_exit_0()))]
         if self.rebase_enabled:
             if head_ref:
                 commands += [['git', 'checkout', '--progress', head_ref]]
-            commands += [['git', 'pull', remote, base_ref, '--rebase']]
-            self.verify_commit_count_command = self.shell_command(f'test "$(git rev-list --count FETCH_HEAD..HEAD)" -eq {self.getProperty("commit_count", 1)}')
-            commands.append(self.verify_commit_count_command)
+            # A pull request which rebases a feature branch replaces the feature branch, so it cannot be rebased on it
+            if not self.getProperty('feature_branch_rebase', False):
+                commands += [['git', 'pull', remote, base_ref, '--rebase']]
+                self.verify_commit_count_command = self.shell_command(f'test "$(git rev-list --count FETCH_HEAD..HEAD)" -eq {self.getProperty("commit_count", 1)}')
+                commands.append(self.verify_commit_count_command)
             if head_ref:
                 commands += [['git', 'branch', '-f', base_ref, head_ref]]
             commands += [['git', 'checkout', '--progress', base_ref]]
+        if is_feature_branch:
+            # Canonicalizing adds a canonical link to every commit, so identify commits which have not landed before canonicalizing
+            commands.append([
+                'git', 'filter-branch', '-f',
+                '--env-filter', f"{LANDED_COMMIT_CHECK} || GIT_AUTHOR_DATE='{date}'",
+                f"HEAD...HEAD~{self.getProperty('commit_count', 1)}",
+            ])
         commands.append(['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', str(self.number_commits_to_canonicalize())])
 
         committer = (self.getProperty('owners', []) or [''])[0]
@@ -8027,11 +8217,10 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
         committer_name = contributor.get('name', committer or 'WebKit Commit Queue')
         committer_email = contributor.get('email', committer or FROM_EMAIL)
 
-        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
-        date = f'{int(time.time())} {gmtoffset}'
+        author_date = '' if is_feature_branch else f"GIT_AUTHOR_DATE='{date}';"
         commands.append([
             'git', 'filter-branch', '-f',
-            '--env-filter', f"GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}';GIT_COMMITTER_NAME='{committer_name}';GIT_COMMITTER_EMAIL='{committer_email}'",
+            '--env-filter', f"{author_date}GIT_COMMITTER_DATE='{date}';GIT_COMMITTER_NAME='{committer_name}';GIT_COMMITTER_EMAIL='{committer_email}'",
             f"HEAD...HEAD~{self.getProperty('commit_count', 1)}",
         ])
 

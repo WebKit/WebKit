@@ -6815,6 +6815,65 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=SKIPPED, state_string='No pull request to checkout')
         return self.run_step()
 
+    def test_feature_branch(self):
+        self.setup_step(CheckOutPullRequest())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'swift-adoption')
+        self.setProperty('github.head.repo.full_name', 'Contributor/WebKit')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('remote', 'origin')
+        intersection = 'git merge-base remotes/origin/main remotes/Contributor/eng/pull-request-branch'
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                log_environ=False,
+                env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git remote add Contributor https://github.com/Contributor/WebKit.git || true'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'remote', 'set-url', 'Contributor', 'https://github.com/Contributor/WebKit.git'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'fetch', 'Contributor', 'eng/pull-request-branch'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                log_environ=False,
+                env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
+                         f'if [ "$(git merge-base remotes/origin/main HEAD)" = "$({intersection})" ]; '
+                         'then git checkout --progress -B eng/pull-request-branch; '
+                         f'else git checkout --progress -B eng/pull-request-branch "$({intersection})"; fi'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'cherry-pick', '--allow-empty', 'HEAD..remotes/Contributor/eng/pull-request-branch'],
+            ).exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Checked out pull request')
+        return self.run_step()
+
+
 
 class TestRevertAppliedChanges(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -9799,6 +9858,30 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         rc = self.run_step()
         return rc
 
+    def test_feature_branch(self):
+        self.setup_step(ValidateChange(verifyBugClosed=False))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.setProperty('github.base.ref', 'swift-adoption')
+
+        self.expect_outcome(result=FAILURE, state_string="Skipping as PR 1234 targets the 'swift-adoption' feature branch")
+        rc = self.run_step()
+        return rc
+
+    def test_feature_branch_allowed(self):
+        self.setup_step(ValidateChange(verifyBugClosed=False, excludeFeatureBranches=False))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.setProperty('github.base.ref', 'swift-adoption')
+
+        self.expect_outcome(result=SUCCESS, state_string='Validated change')
+        rc = self.run_step()
+        return rc
+
 
 class TestRetrievePRDataFromLabel(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -10499,6 +10582,56 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_property('build_summary', '')
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.run_step()
+
+    def test_feature_branch_rebase(self):
+        self.setup_step(PushCommitToWebKitRepo())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'swift-adoption')
+        self.setProperty('remote', 'origin')
+        self.setProperty('feature_branch_rebase', True)
+        self.setProperty('feature_branch_hash', 'a3f1e0c5b2d4')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        log_environ=False,
+                        env=dict(GIT_USER='webkit-commit-queue', GIT_PASSWORD='password'),
+                        command=['git', 'push', '--force-with-lease=refs/heads/swift-adoption:a3f1e0c5b2d4', 'origin', 'HEAD:swift-adoption'])
+            .log('stdio', stdout=' + a3f1e0c5b2d4...b94dc426b331 HEAD -> swift-adoption (forced update)\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            rc = self.run_step()
+        self.expect_property('landed_hash', 'b94dc426b331')
+        return rc
+
+    def test_feature_branch_rebase_failure(self):
+        self.setup_step(PushCommitToWebKitRepo())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'swift-adoption')
+        self.setProperty('remote', 'origin')
+        self.setProperty('feature_branch_rebase', True)
+        self.setProperty('feature_branch_hash', 'a3f1e0c5b2d4')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        log_environ=False,
+                        env=dict(GIT_USER='webkit-commit-queue', GIT_PASSWORD='password'),
+                        command=['git', 'push', '--force-with-lease=refs/heads/swift-adoption:a3f1e0c5b2d4', 'origin', 'HEAD:swift-adoption'])
+            .log('stdio', stdout=' ! [rejected] HEAD -> swift-adoption (stale info)\n')
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            rc = self.run_step()
+        self.expect_property('build_finish_summary', "Failed to rebase 'swift-adoption'")
+        self.expect_property(
+            'comment_text',
+            "merge-queue failed to rebase 'swift-adoption', it may have changed since PR #1234 was validated. "
+            "To retry, rebase the PR on 'swift-adoption' again, remove any blocking labels and re-apply the merge-queue label",
+        )
+        return rc
+
 
 
 class TestDetermineLabelOwner(BuildStepMixinAdditions, unittest.TestCase):
@@ -11558,6 +11691,16 @@ class TestMapBranchAlias(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=SKIPPED, state_string='finished (skipped)')
         return self.run_step()
 
+    def test_feature_branch(self):
+        self.setup_step(MapBranchAlias())
+        self.setProperty('remote', 'origin')
+        self.setProperty('github.base.ref', 'swift-adoption')
+        self.setProperty('github.number', '1234')
+        self.expect_outcome(result=SKIPPED, state_string='finished (skipped)')
+        rc = self.run_step()
+        self.expect_property('github.base.ref', 'swift-adoption')
+        return rc
+
     def test_prod_branch(self):
         self.setup_step(MapBranchAlias())
         self.setProperty('remote', 'origin')
@@ -11925,6 +12068,21 @@ class TestValidateChangeContent(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_property('build_finish_summary', 'Found git conflict markers in SpeechSynthesis.h, SpeechSynthesisUtterance.cpp')
         return rc
 
+    def test_feature_branch(self):
+        self.configure_pull_request(ValidateChangeContent())
+        self.setProperty('github.base.ref', 'swift-adoption')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['git', '-c', 'color.ui=false', 'diff', 'remotes/origin/main...HEAD'],
+                        )
+            .exit(0)
+            .log('stdio', stdout=DIFF_NO_MARKERS),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='No conflict markers found')
+        return self.run_step()
+
+
 
 class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -12028,6 +12186,150 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_property('comment_text', 'Policy allows for multiple cherry-picks to be landed simultaneously but there is a limit of 50, blocking PR #1234 because it has 51 commits. Please break this change into multiple pull requests.')
         self.expect_property('build_finish_summary', 'Too many commits in a pull-request')
         return rc
+
+    def test_feature_branch_multiple_commits(self):
+        self.setup_step(ValidateSquashed())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'swift-adoption')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('remote', 'origin')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['git', 'log', '--format=format:%H', 'eng/pull-request-branch', '^swift-adoption', '^remotes/origin/main'],
+                        )
+            .exit(0)
+            .log('stdio', stdout='e1eb24603493\n08abb9ddcbb5\n45cf3efe4dfb\n'),
+        )
+        self.expect_outcome(result=SUCCESS, state_string="Verified 3 commits for 'swift-adoption'")
+        rc = self.run_step()
+        self.expect_property('commit_count', 3)
+        return rc
+
+
+class TestDetermineFeatureBranchRebase(BuildStepMixinAdditions, unittest.TestCase):
+    COMMAND = [
+        '/bin/bash', '--posix', '-o', 'pipefail', '-c',
+        'git rev-parse remotes/origin/swift-adoption && '
+        'git merge-base remotes/origin/main remotes/origin/swift-adoption && '
+        'git merge-base remotes/origin/main HEAD',
+    ]
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configure_feature_branch(self):
+        self.setup_step(DetermineFeatureBranchRebase())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'swift-adoption')
+        self.setProperty('remote', 'origin')
+
+    def test_skipped_default_branch(self):
+        self.setup_step(DetermineFeatureBranchRebase())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.expect_outcome(result=SKIPPED, state_string='finished (skipped)')
+        return self.run_step()
+
+    def test_append(self):
+        self.configure_feature_branch()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', log_environ=False, timeout=60, command=self.COMMAND)
+            .log('stdio', stdout='a3f1e0c5b2d4\n59dab0396721\n59dab0396721\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string="Appending to 'swift-adoption'")
+        rc = self.run_step()
+        self.expect_property('feature_branch_hash', 'a3f1e0c5b2d4')
+        self.expect_property('feature_branch_rebase', False)
+        return rc
+
+    def test_rebase(self):
+        self.configure_feature_branch()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', log_environ=False, timeout=60, command=self.COMMAND)
+            .log('stdio', stdout='a3f1e0c5b2d4\n59dab0396721\n7496f8ecc4cc\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string="Rebasing 'swift-adoption' on 7496f8ec")
+        rc = self.run_step()
+        self.expect_property('feature_branch_hash', 'a3f1e0c5b2d4')
+        self.expect_property('feature_branch_rebase', True)
+        return rc
+
+    def test_failure(self):
+        self.configure_feature_branch()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', log_environ=False, timeout=60, command=self.COMMAND)
+            .log('stdio', stdout='a3f1e0c5b2d4\n')
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string="Failed to determine where 'swift-adoption' intersects with 'main'")
+        return self.run_step()
+
+
+class TestValidateFeatureBranchRebase(BuildStepMixinAdditions, unittest.TestCase):
+    COMMAND = [
+        '/bin/bash', '--posix', '-o', 'pipefail', '-c',
+        "git log --format=%B a3f1e0c5b2d4 ^remotes/origin/main | { grep -E '^Canonical[ -]link: ' || true; } | sort -u > landed_links.txt && "
+        "git log --format=%B HEAD ^remotes/origin/main | { grep -E '^Canonical[ -]link: ' || true; } | sort -u > rebased_links.txt && "
+        'comm -23 landed_links.txt rebased_links.txt',
+    ]
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configure_rebase(self):
+        self.setup_step(ValidateFeatureBranchRebase())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'swift-adoption')
+        self.setProperty('remote', 'origin')
+        self.setProperty('feature_branch_rebase', True)
+        self.setProperty('feature_branch_hash', 'a3f1e0c5b2d4')
+
+    def test_skipped_append(self):
+        self.setup_step(ValidateFeatureBranchRebase())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'swift-adoption')
+        self.setProperty('feature_branch_rebase', False)
+        self.expect_outcome(result=SKIPPED, state_string='finished (skipped)')
+        return self.run_step()
+
+    def test_success(self):
+        self.configure_rebase()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', log_environ=False, timeout=60, command=self.COMMAND).exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string="Verified rebase preserves every commit on 'swift-adoption'")
+        return self.run_step()
+
+    def test_dropped_commits(self):
+        self.configure_rebase()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir', log_environ=False, timeout=60, command=self.COMMAND)
+            .log('stdio', stdout='Canonical link: https://commits.webkit.org/301234.2@swift-adoption\nCanonical link: https://commits.webkit.org/301234.5@swift-adoption\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=FAILURE, state_string="Rebase drops 2 commits from 'swift-adoption'")
+        rc = self.run_step()
+        self.expect_property('build_finish_summary', "Rebase drops 2 commits from 'swift-adoption'")
+        self.expect_property(
+            'comment_text',
+            "Rebase drops 2 commits from 'swift-adoption', blocking PR #1234. Rebase the PR on the latest 'swift-adoption' to preserve:\n"
+            '- Canonical link: https://commits.webkit.org/301234.2@swift-adoption\n'
+            '- Canonical link: https://commits.webkit.org/301234.5@swift-adoption\n',
+        )
+        return rc
+
+
 
 
 class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
@@ -12157,33 +12459,63 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
         self.expect_outcome(result=SKIPPED, state_string='Skipped because commit is a cherry-pick')
         return self.run_step()
 
+    def test_feature_branch(self):
+        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        fixed_time = int(time.time())
+        date = f'{int(time.time())} {gmtoffset}'
+        time.time = lambda: fixed_time
+
+        self.setup_step(AddReviewerToCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'swift-adoption')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('remote', 'origin')
+        self.setProperty('valid_reviewers', ['WebKit Reviewer'])
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        env=self.ENV,
+                        timeout=60,
+                        command=[
+                            'git', 'filter-branch', '-f',
+                            '--env-filter', f"GIT_COMMITTER_DATE='{date}';git log -1 --format=%B $GIT_COMMIT | grep -qE '^Canonical[ -]link: ' || GIT_AUTHOR_DATE='{date}'",
+                            '--msg-filter', 'sed -E "s/by NOBODY( \\(OO*PP*S!*\\))?/by WebKit Reviewer/g"',
+                            'eng/pull-request-branch', '^swift-adoption', '^remotes/origin/main',
+                        ])
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Reviewed by WebKit Reviewer')
+        return self.run_step()
+
+
 
 class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
-    def expectCommonRemoteCommandsWithOutput(self, expected_remote_command_output):
+    def expectCommonRemoteCommandsWithOutput(self, expected_remote_command_output, revisions='eng/pull-request-branch ^main'):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
-                                 "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and no valid reviewer found' || test $? -eq 1"])
+                                 f"git log {revisions} | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and no valid reviewer found' || test $? -eq 1"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
-                                 "git log eng/pull-request-branch ^main | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\" and no valid reviewer found' || test $? -eq 1"])
+                                 f"git log {revisions} | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\" and no valid reviewer found' || test $? -eq 1"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
-                                 "git log --format=%B eng/pull-request-branch ^main > commit_msg.txt; grep -q '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' commit_msg.txt || echo 'No reviewer information in commit message';"])
+                                 f"git log --format=%B {revisions} > commit_msg.txt; grep -q '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' commit_msg.txt || echo 'No reviewer information in commit message';"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
-                                 "git log --format=%B eng/pull-request-branch ^main | grep '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
+                                 f"git log --format=%B {revisions} | grep '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
             .exit(0)
             .log('stdio', stdout=expected_remote_command_output),
         )
@@ -12412,6 +12744,20 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
         self.expect_outcome(result=SUCCESS, state_string='Validated commit message')
         return self.run_step()
+
+    def test_feature_branch(self):
+        self.setup_step(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
+        self.setUpCommonProperties()
+        self.setProperty('github.base.ref', 'swift-adoption')
+        self.setProperty('remote', 'origin')
+        self.expectCommonRemoteCommandsWithOutput(
+            'Reviewed by WebKit Reviewer.\n',
+            revisions='eng/pull-request-branch ^swift-adoption ^remotes/origin/main',
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Validated commit message')
+        return self.run_step()
+
 
 
 class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
@@ -12908,6 +13254,115 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_property('build_finish_summary', 'Changes already landed on main')
         self.expect_property('comment_text', 'Commits in PR #1234 were dropped when rebasing onto main because their changes have already landed, blocking PR #1234. Update the pull request to contain only unlanded changes, or close it.')
         return self.run_step()
+
+    def expect_feature_branch_canonicalize(self, date, rebase):
+        commands = [
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm .git/identifiers.json || true'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'checkout', '--progress', 'eng/pull-request-branch'],
+            ).exit(0),
+        ]
+        if not rebase:
+            commands += [
+                ExpectShell(
+                    workdir='wkdir',
+                    timeout=300,
+                    log_environ=False,
+                    env=self.ENV,
+                    command=['git', 'pull', 'origin', 'swift-adoption', '--rebase'],
+                ).exit(0),
+                ExpectShell(
+                    workdir='wkdir',
+                    timeout=300,
+                    log_environ=False,
+                    env=self.ENV,
+                    command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'test "$(git rev-list --count FETCH_HEAD..HEAD)" -eq 3'],
+                ).exit(0),
+            ]
+        commands += [
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'branch', '-f', 'swift-adoption', 'eng/pull-request-branch'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'checkout', '--progress', 'swift-adoption'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=[
+                    'git', 'filter-branch', '-f',
+                    '--env-filter', f"git log -1 --format=%B $GIT_COMMIT | grep -qE '^Canonical[ -]link: ' || GIT_AUTHOR_DATE='{date}'",
+                    'HEAD...HEAD~3',
+                ],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '3'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=[
+                    'git', 'filter-branch', '-f',
+                    '--env-filter', f"GIT_COMMITTER_DATE='{date}';GIT_COMMITTER_NAME='WebKit Committer';GIT_COMMITTER_EMAIL='committer@webkit.org'",
+                    'HEAD...HEAD~3',
+                ],
+            ).exit(0),
+        ]
+        self.expectRemoteCommands(*commands)
+
+    def setup_feature_branch(self, rebase):
+        self.setup_step(Canonicalize())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'swift-adoption')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('remote', 'origin')
+        self.setProperty('commit_count', 3)
+        self.setProperty('feature_branch_rebase', rebase)
+
+        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        fixed_time = int(time.time())
+        time.time = lambda: fixed_time
+        return f'{fixed_time} {gmtoffset}'
+
+    def test_feature_branch_append(self):
+        date = self.setup_feature_branch(rebase=False)
+        self.expect_feature_branch_canonicalize(date, rebase=False)
+        self.expect_outcome(result=SUCCESS, state_string='Canonicalized commits')
+        return self.run_step()
+
+    def test_feature_branch_rebase(self):
+        date = self.setup_feature_branch(rebase=True)
+        self.expect_feature_branch_canonicalize(date, rebase=True)
+        self.expect_outcome(result=SUCCESS, state_string='Canonicalized commits')
+        return self.run_step()
+
 
 
 class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):

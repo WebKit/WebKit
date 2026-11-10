@@ -22,12 +22,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from . import loadConfig
-from .steps import ResultsDatabase, ResultsDBReportMixin, RunAPITests, RunJavaScriptCoreTests
+from .steps import ResultsDatabase, ResultsDBReportMixin, RunAPITests, RunJavaScriptCoreTests, ValidateChange
 import os
 import unittest
 
 
 class TestExpectedBuildSteps(unittest.TestCase):
+
+    queues_testing_feature_branches = ['Style-EWS', 'Unsafe-Merge-Queue']
 
     expected_steps = {
         'Style-EWS': [
@@ -946,6 +948,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'show-webkit-version',
             'install-hooks',
             'checkout-pull-request',
+            'determine-feature-branch-rebase',
+            'validate-feature-branch-rebase',
             'validate-change-content',
             'validate-remote',
             'validate-squashed',
@@ -981,6 +985,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'show-webkit-version',
             'install-hooks',
             'checkout-pull-request',
+            'determine-feature-branch-rebase',
+            'validate-feature-branch-rebase',
             'validate-change-content',
             'validate-remote',
             'validate-squashed',
@@ -1040,3 +1046,13 @@ class TestExpectedBuildSteps(unittest.TestCase):
             builders.add(builder['name'])
         for builder in self.expected_steps:
             self.assertTrue(builder in builders, "Builder %s doesn't exist, but has unnecessary expected steps" % builder)
+
+    def test_feature_branch_queues(self):
+        for builder in self.config['builders']:
+            expected = builder['name'] not in self.queues_testing_feature_branches
+            for step in builder['factory'].steps:
+                if not issubclass(step.step_class, ValidateChange):
+                    continue
+                self.assertEqual(step.kwargs.get('excludeFeatureBranches', True), expected, msg='%s should %s feature branches' % (
+                    builder['name'], 'skip' if expected else 'test',
+                ))
