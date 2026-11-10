@@ -91,6 +91,7 @@ private:
     HashSet<NodeIdentifier> m_containersToRemove;
     HashMap<NodeIdentifier, Vector<InteractionRegion>> m_discoveredRegionsByElement;
     HashSet<NodeIdentifier> m_consolidatedElements;
+    HashSet<NodeIdentifier> m_guardContainersWithCompositedContent;
     bool m_hasRegionSharingRectWithContainer { false };
 #endif
 };

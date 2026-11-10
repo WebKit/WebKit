@@ -91,6 +91,7 @@ struct RenderedInteractionRegion {
     InteractionRegion region;
     bool shapeIsInset { false };
     bool hasNoVisualBorders { false };
+    bool guardsCompositedContent { false };
 };
 
 WEBCORE_EXPORT std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(const RenderObject&, const FloatRect&, const FloatSize&, const std::optional<AffineTransform>&);
