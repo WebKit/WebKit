@@ -461,6 +461,9 @@ RefPtr<CSSValue> ExtractorGenerated::extractValue(ExtractorState& extractorState
     case CSSPropertyID::TestNumericValueRange:
         // Skipped - Not computable
         return nullptr;
+    case CSSPropertyID::TestPrefixedValues:
+        // Skipped - Not computable
+        return nullptr;
     case CSSPropertyID::TestProperty:
         // Skipped - Not computable
         return nullptr;
@@ -527,6 +530,9 @@ RefPtr<CSSValue> ExtractorGenerated::extractValue(ExtractorState& extractorState
         // Skipped - Not computable
         return nullptr;
     case CSSPropertyID::TestUsingSharedRuleWithOverrideFunction:
+        // Skipped - Not computable
+        return nullptr;
+    case CSSPropertyID::WebkitTestPrefixedValues:
         // Skipped - Not computable
         return nullptr;
     case CSSPropertyID::TestSinkPriority:
@@ -818,6 +824,9 @@ void ExtractorGenerated::extractValueSerialization(ExtractorState& extractorStat
     case CSSPropertyID::TestNumericValueRange:
         // Skipped - Not computable
         return;
+    case CSSPropertyID::TestPrefixedValues:
+        // Skipped - Not computable
+        return;
     case CSSPropertyID::TestProperty:
         // Skipped - Not computable
         return;
@@ -897,6 +906,9 @@ void ExtractorGenerated::extractValueSerialization(ExtractorState& extractorStat
         // Skipped - Not computable
         return;
     case CSSPropertyID::TestUsingSharedRuleWithOverrideFunction:
+        // Skipped - Not computable
+        return;
+    case CSSPropertyID::WebkitTestPrefixedValues:
         // Skipped - Not computable
         return;
     case CSSPropertyID::TestSinkPriority:

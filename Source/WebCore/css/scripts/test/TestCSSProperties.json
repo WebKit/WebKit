@@ -44,6 +44,28 @@
                 "parser-grammar": "auto | <shared-rule-with-override-function>"
             }
         },
+        "test-prefixed-values": {
+            "animation-type": "discrete",
+            "initial": "auto",
+            "values": [ "auto", "none" ],
+            "codegen-properties": {
+                "skip-computed-style": true,
+                "skip-style-builder": true,
+                "skip-style-extractor": true,
+                "parser-grammar": "auto | none"
+            }
+        },
+        "-webkit-test-prefixed-values": {
+            "animation-type": "discrete",
+            "initial": "auto",
+            "values": [ "auto", "normal" ],
+            "codegen-properties": {
+                "skip-computed-style": true,
+                "skip-style-builder": true,
+                "skip-style-extractor": true,
+                "parser-grammar": "auto | normal"
+            }
+        },
         "test-sink-priority": {
             "animation-type": "discrete",
             "initial": "0",

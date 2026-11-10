@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    InspectorProtocol.sendCommand("CSS.getSupportedCSSProperties", {}, (messageObject) => {
+        if ("error" in messageObject)
+            ProtocolTest.log(messageObject.error.message);
+        else {
+            let entries = messageObject["result"]["cssProperties"];
+
+            const expectedProperties = [
+                "text-orientation",
+                "-webkit-text-orientation",
+                "ruby-position",
+                "-webkit-ruby-position",
+                "user-select",
+                "-webkit-user-select",
+            ];
+
+            for (let expectedProperty of expectedProperties) {
+                let entry = entries.find((entry) => entry.name === expectedProperty);
+                if (!entry)
+                    ProtocolTest.log(`"${expectedProperty}" is not supported`);
+                else if (!entry.values)
+                    ProtocolTest.log(`"${expectedProperty}" has no keyword values`);
+                else {
+                    ProtocolTest.log(`"${expectedProperty}" has keyword values:`);
+                    for (let value of entry.values)
+                        ProtocolTest.log(` - "${value}"`);
+                }
+                ProtocolTest.log("");
+            }
+        }
+
+        ProtocolTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onLoad="runTest()">
+</body>
+</html>
