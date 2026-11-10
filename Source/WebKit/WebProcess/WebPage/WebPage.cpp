@@ -7308,6 +7308,10 @@ void WebPage::updateMouseEventTargetAfterWindowAndViewFramesChanged(const Double
         return;
 
     setLastKnownMousePosition(localMainFrame->frameID(), mousePositionInView, currentMouseGlobalPosition);
+    if (RefPtr page = m_page; page && page->shouldDeferResizeEvents()) {
+        page->setNeedsMouseEventTargetUpdateAfterDeferredResize();
+        return;
+    }
     localMainFrame->eventHandler().updateMouseEventTargetAfterLayoutIfNeeded();
 }
 

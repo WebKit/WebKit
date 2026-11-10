@@ -599,6 +599,143 @@ TEST(MouseEventTests, WindowChangeOnExternalMonitorWithOffsetAndNegativeCoordina
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"target.matches(':hover')"] boolValue]);
 }
 
+TEST(MouseEventTests, WindowChangeToOutsideViewShouldCauseMouseLeaveAndClearHover)
+{
+    [OverrideMouseLocation setOverrideMouseLocation:NSZeroPoint];
+    auto resetOverride = makeScopeExit([] {
+        [OverrideMouseLocation setOverrideMouseLocation:NSZeroPoint];
+    });
+    InstanceMethodSwizzler windowSwizzler([NSWindow class], @selector(mouseLocationOutsideOfEventStream), [NSWindow instanceMethodForSelector:@selector(_mouseEventTests_mouseLocationOutsideOfEventStream)]);
+    ClassMethodSwizzler eventSwizzler([NSEvent class], @selector(mouseLocation), [OverrideMouseLocation methodForSelector:@selector(overrideMouseLocation)]);
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView removeFromSuperview];
+    [webView addToTestWindow];
+    [[webView window] setFrame:NSMakeRect(100, 100, 400, 400) display:YES];
+
+    bool pointerLeaveFired = false;
+    bool mouseLeaveFired = false;
+    [webView performAfterReceivingMessage:@"pointerleave" action:[&] { pointerLeaveFired = true; }];
+    [webView performAfterReceivingMessage:@"mouseleave" action:[&] { mouseLeaveFired = true; }];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "<style>"
+        "    body, html { margin: 0; width: 100%; height: 100%; }"
+        "    #target { width: 100px; height: 100px; position: absolute; bottom: 0; right: 0; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div id='target'></div>"
+        "<script>"
+        "    let counts = { pointerout: 0, mouseout: 0, pointerleave: 0, mouseleave: 0, mousemove: 0, pointermove: 0 };"
+        "    const target = document.getElementById('target');"
+        "    for (const type of Object.keys(counts)) {"
+        "        target.addEventListener(type, () => {"
+        "            counts[type]++;"
+        "            if (type === 'pointerleave' || type === 'mouseleave')"
+        "                window.webkit.messageHandlers.testHandler.postMessage(type);"
+        "        });"
+        "    }"
+        "</script>"
+        "</body>"
+        "</html>"];
+
+    NSPoint pointInWindow = NSMakePoint(350, 50);
+    [OverrideMouseLocation setOverrideMouseLocation:[[webView window] convertPointToScreen:pointInWindow]];
+
+    [webView mouseMoveToPoint:pointInWindow withFlags:0];
+    [webView waitForPendingMouseEvents];
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"target.matches(':hover')"] boolValue]);
+    [webView objectByEvaluatingJavaScript:@"counts.mousemove = 0; counts.pointermove = 0;"];
+
+    // Move the window completely away from the stationary screen cursor so the cursor is outside the WKWebView bounds (-150, 50).
+    [[webView window] setFrame:NSMakeRect(600, 100, 400, 400) display:YES];
+
+    EXPECT_TRUE(Util::runFor(&pointerLeaveFired, 5_s));
+    EXPECT_TRUE(Util::runFor(&mouseLeaveFired, 5_s));
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"target.matches(':hover')"] boolValue]);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"counts.pointerout"] intValue], 1);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"counts.mouseout"] intValue], 1);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"counts.pointerleave"] intValue], 1);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"counts.mouseleave"] intValue], 1);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"counts.mousemove"] intValue], 0);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"counts.pointermove"] intValue], 0);
+}
+
+TEST(MouseEventTests, WindowChangeAfterHoveredChildRemovedShouldCauseAncestorMouseLeave)
+{
+    [OverrideMouseLocation setOverrideMouseLocation:NSZeroPoint];
+    auto resetOverride = makeScopeExit([] {
+        [OverrideMouseLocation setOverrideMouseLocation:NSZeroPoint];
+    });
+    InstanceMethodSwizzler windowSwizzler([NSWindow class], @selector(mouseLocationOutsideOfEventStream), [NSWindow instanceMethodForSelector:@selector(_mouseEventTests_mouseLocationOutsideOfEventStream)]);
+    ClassMethodSwizzler eventSwizzler([NSEvent class], @selector(mouseLocation), [OverrideMouseLocation methodForSelector:@selector(overrideMouseLocation)]);
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView removeFromSuperview];
+    [webView addToTestWindow];
+    [[webView window] setFrame:NSMakeRect(100, 100, 400, 400) display:YES];
+
+    bool buttonMouseLeaveFired = false;
+    bool buttonPointerLeaveFired = false;
+    [webView performAfterReceivingMessage:@"pointerleave" action:[&] { buttonPointerLeaveFired = true; }];
+    [webView performAfterReceivingMessage:@"mouseleave" action:[&] { buttonMouseLeaveFired = true; }];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "<style>"
+        "    body, html { margin: 0; width: 100%; height: 100%; }"
+        "    #fsBtn { position: absolute; bottom: 10px; right: 10px; width: 80px; height: 80px; padding: 0; }"
+        "    #iconDiv { width: 80px; height: 80px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<button id='fsBtn'><span id='iconShape'><div id='iconDiv'></div></span></button>"
+        "<script>"
+        "    let counts = { pointerout: 0, mouseout: 0, pointerleave: 0, mouseleave: 0, mousemove: 0 };"
+        "    const fsBtn = document.getElementById('fsBtn');"
+        "    const iconShape = document.getElementById('iconShape');"
+        "    for (const type of Object.keys(counts)) {"
+        "        fsBtn.addEventListener(type, e => {"
+        "            if (e.target === fsBtn)"
+        "                counts[type]++;"
+        "            if (e.target === fsBtn && (type === 'pointerleave' || type === 'mouseleave'))"
+        "                window.webkit.messageHandlers.testHandler.postMessage(type);"
+        "        });"
+        "    }"
+        "    function swapIcon() {"
+        "        while (iconShape.firstChild)"
+        "            iconShape.removeChild(iconShape.firstChild);"
+        "        const next = document.createElement('div');"
+        "        next.style.cssText = 'width: 80px; height: 80px;';"
+        "        iconShape.appendChild(next);"
+        "    }"
+        "</script>"
+        "</body>"
+        "</html>"];
+
+    NSPoint pointInWindow = NSMakePoint(350, 50);
+    [OverrideMouseLocation setOverrideMouseLocation:[[webView window] convertPointToScreen:pointInWindow]];
+
+    [webView mouseMoveToPoint:pointInWindow withFlags:0];
+    [webView waitForPendingMouseEvents];
+    [webView objectByEvaluatingJavaScript:@"swapIcon()"];
+
+    // Move window so cursor is outside the view (-150, 50), exercising both m_lastElementUnderMouse == nullptr and targetElement == nullptr.
+    [[webView window] setFrame:NSMakeRect(600, 100, 400, 400) display:YES];
+
+    EXPECT_TRUE(Util::runFor(&buttonPointerLeaveFired, 5_s));
+    EXPECT_TRUE(Util::runFor(&buttonMouseLeaveFired, 5_s));
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"counts.pointerout"] intValue], 0);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"counts.mouseout"] intValue], 0);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"counts.pointerleave"] intValue], 1);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"counts.mouseleave"] intValue], 1);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"counts.mousemove"] intValue], 0);
+}
+
 static NSString *tallDocumentLines = @"Line of text. Line of text. Line of text. Line of text. "
     "Line of text. Line of text. Line of text. Line of text. Line of text. "
     "Line of text. Line of text. Line of text. Line of text. Line of text. "

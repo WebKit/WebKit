@@ -31,7 +31,6 @@
 #import "AppKitSPI.h"
 #import "GPUProcessProxy.h"
 #import "LayerTreeContext.h"
-#import "NativeWebMouseEvent.h"
 #import "VideoPresentationManagerProxy.h"
 #import "WKAPICast.h"
 #import "WKViewInternal.h"
@@ -371,16 +370,17 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
         return completionHandler(false);
     _fullScreenState = WaitingToEnterFullScreen;
 
-    RetainPtr screen = [NSScreen mainScreen];
+    RetainPtr webView = _webView.get();
+    RetainPtr webViewWindow = [webView window];
+    RetainPtr screen = [webViewWindow screen] ?: [NSScreen mainScreen];
 
     NSRect screenFrame = WebCore::safeScreenFrame(screen.get());
-    RetainPtr webView = _webView.get();
-    NSRect webViewFrame = convertRectToScreen(retainPtr([webView window]).get(), [webView convertRect:[webView frame] toView:nil]);
+    NSRect webViewFrame = convertRectToScreen(webViewWindow.get(), [webView convertRect:[webView frame] toView:nil]);
 
     // Flip coordinate system:
     webViewFrame.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(webViewFrame);
 
-    CGWindowID windowID = [[webView window] windowNumber];
+    CGWindowID windowID = [webViewWindow windowNumber];
     RetainPtr webViewContents = WebCore::cgWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque);
 
     // Using the returned CGImage directly would result in calls to the WindowServer every time
@@ -553,22 +553,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         page->setObscuredContentInsets(_savedObscuredContentInsets);
         manager->setAnimatingFullScreen(false);
         manager->requestExitFullScreen();
-
-        // FIXME(53342): remove once pointer events fire when elements move out from under the pointer.
-        RetainPtr fakeEvent = [NSEvent mouseEventWithType:NSEventTypeMouseMoved
-            location:[NSEvent mouseLocation]
-            modifierFlags:[[NSApp currentEvent] modifierFlags]
-            timestamp:[NSDate timeIntervalSinceReferenceDate]
-            windowNumber:[[webView window] windowNumber]
-            context:nullptr
-            eventNumber:0
-            clickCount:0
-            pressure:0];
-        Ref webEvent = WebKit::NativeWebMouseEvent::create(fakeEvent.get(), nil, webView.get(), WebKit::WebEventInputSource::Default);
-        page->handleMouseEvent(WTF::move(webEvent));
     }
     page->flushDeferredResizeEvents();
     page->flushDeferredScrollEvents();
+    page->updateMouseEventTargetAfterWindowAndViewFramesChanged();
 
     if (_exitFullScreenCompletionHandler)
         [self exitFullScreen:WTF::move(_exitFullScreenCompletionHandler)];
@@ -818,6 +806,7 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     RefPtr page = _page.get();
     page->setSuppressVisibilityUpdates(false);
     page->setNeedsDOMWindowResizeEvent();
+    page->updateMouseEventTargetAfterWindowAndViewFramesChanged();
 
     [CATransaction commit];
     [CATransaction flush];
