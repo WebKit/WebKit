@@ -3910,7 +3910,7 @@ PlatformLayer* MediaPlayerPrivateGStreamer::platformLayer() const
 void MediaPlayerPrivateGStreamer::pushTextureToCompositor(bool isDuplicateSample)
 {
     Locker sampleLocker { m_sampleMutex };
-    if (!GST_IS_SAMPLE(m_sample.get()))
+    if (!GST_IS_SAMPLE(m_sample.get()) || !gst_sample_get_buffer(m_sample.get()))
         return;
 
     // The GL video appsink reports the sample following a preroll with the same buffer, so don't
