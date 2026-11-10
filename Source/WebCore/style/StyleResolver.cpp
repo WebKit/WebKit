@@ -682,21 +682,24 @@ std::unique_ptr<Style::ComputedStyle> Resolver::styleForPage(int pageIndex)
     if (!documentElement || !documentElement->renderStyle())
         return Style::ComputedStyle::createPtr();
 
-    auto state = State(*documentElement, document().initialContainingBlockStyle(), nullptr, nullptr);
+    // The page context inherits from the root element. https://drafts.csswg.org/css-page-3/#page-properties
+    CheckedPtr rootElementStyle = documentElement->renderStyle();
 
-    state.setStyle(Style::ComputedStyle::createPtr());
-    state.style()->inheritFrom(*state.rootElementStyle());
+    auto style = Style::ComputedStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry());
+    style->inheritFrom(*rootElementStyle);
 
-    PageRuleCollector collector(m_ruleSets, documentElement->renderStyle()->writingMode());
+    PageRuleCollector collector(m_ruleSets, rootElementStyle->writingMode());
     collector.matchAllPageRules(pageIndex);
 
-    auto& result = collector.matchResult();
-
-    Builder builder(*state.style(), builderContext(state), result);
+    Builder builder(*style, {
+        .document = document(),
+        .parentStyle = rootElementStyle.get(),
+        .rootElementStyle = rootElementStyle.get(),
+        .element = documentElement,
+    }, collector.matchResult());
     builder.applyAllProperties();
 
-    // Now return the style.
-    return state.takeStyle();
+    return style;
 }
 
 std::unique_ptr<Style::ComputedStyle> Resolver::defaultStyleForElement(const Element* element)

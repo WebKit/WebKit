@@ -104,6 +104,8 @@ FloatBoxExtent PrintContext::computedPageMargin(FloatBoxExtent printMargin)
     RefPtr document = frame() ? frame()->document() : nullptr;
     if (!document)
         return printMargin;
+    // The root element's style may be out of date.
+    document->updateStyleIfNeeded();
     // FIXME Currently no pseudo class is supported.
     auto style = protect(protect(document->styleScope())->resolver())->styleForPage(0);
 
