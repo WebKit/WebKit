@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 12px monospace; }
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 8px; }
+input, textarea, select, progress, legend { display: block; margin: 4px 0; }
+</style>
+<div class="root" id="resized">
+  <input id="value" value="value">
+  <input id="half" style="width: 50%" value="half">
+  <textarea id="rows">rows</textarea>
+  <select id="options"><option>one</option></select>
+  <progress id="progress" value="0.2"></progress>
+  <legend id="legend" style="border: 2px solid">legend</legend>
+  <input id="size" size="5" value="size">
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "220px";
+document.getElementById("value").value = "a much longer value than before";
+document.getElementById("rows").rows = 4;
+document.getElementById("options").appendChild(new Option("a much longer option"));
+document.getElementById("progress").value = 0.8;
+document.getElementById("legend").firstChild.data = "longer legend";
+document.getElementById("size").size = 15;
+</script>

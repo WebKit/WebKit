@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 250px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+ul, ol { list-style: none; margin: 0; padding: 0 0 0 10px; }
+li { background: silver; }
+.b { height: 12px; background: rgba(0, 128, 0, 0.6); }
+span { background: rgba(0, 0, 255, 0.2); }
+</style>
+<div class="roots">
+<div class="root">
+  <ul><li>one</li><li style="margin: 10px 0">two</li><li></li><li><span></span></li><li>three</li></ul>
+  <ul style="margin: 15px 0"><li style="margin-top: 10px">first</li><li style="margin-bottom: 20px">last</li></ul>
+  <ul><li><ul><li>nested</li><li style="display: flow-root; margin: 5px; border: 1px solid">nested root</li></ul></li></ul>
+  <ol><li value="5">ordered</li><li>next</li></ol>
+  <div style="display: list-item; list-style-type: none; padding: 2px">a div that is a list item</div>
+  <ul><li><span>text<div class="b" style="margin: 5px 0"></div>more</span></li></ul>
+  <ul><li style="overflow: hidden; height: 30px">clipped<br>second<br>third</li><li style="width: fit-content">fits its content</li></ul>
+  <ul><li dir="rtl">right to left</li><li style="writing-mode: vertical-rl; height: 40px">vertical</li></ul>
+</div>
+<div class="root">
+  <ul style="display: flex"><li style="flex: 1; margin: 5px">flex item<div class="b" style="margin-top: 5px"></div></li><li style="flex: 1">second</li></ul>
+  <ul style="display: grid; grid-template-columns: 1fr 1fr"><li>grid item</li><li style="padding: 3px"><div class="b" style="margin-top: 10px"></div></li></ul>
+  <ul><li style="display: inline-block; width: 100px">inline-block</li></ul>
+  <div style="position: relative; height: 40px"><ul><li style="position: absolute; top: 5px; left: 20px; width: 100px">absolute</li></ul></div>
+</div>
+</div>

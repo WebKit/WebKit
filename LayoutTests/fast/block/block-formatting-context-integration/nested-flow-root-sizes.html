@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; height: 400px; background: lightgray; }
+.root div { background: rgba(0, 0, 255, 0.15); }
+.fr { display: flow-root; }
+</style>
+<div class="root">
+  <div class="fr" style="width: 200px; margin: 0 auto; padding: 5px; border: 3px solid; height: 25%">
+    <div style="height: 50%"></div>
+    <div class="fr" style="height: 20px; min-height: 30px; margin-top: 10%"><div style="height: 100%"></div></div>
+  </div>
+  <div class="fr" style="max-height: 20px; margin-top: 10px"><div style="height: 50px; margin-bottom: 20px"></div></div>
+  <div class="fr" style="direction: rtl; width: 50%; margin-right: 10px; padding-right: 20px"><div style="width: 40px; height: 10px"></div></div>
+  <div class="fr" style="height: 30%"><div class="fr" style="height: 50%"><div style="height: 50%"></div></div></div>
+  <div class="fr" style="width: fit-content; margin-top: 5px; font: 20px/1 Ahem; color: green"><div class="fr" style="padding: 0 4px">xx xxx</div></div>
+</div>
