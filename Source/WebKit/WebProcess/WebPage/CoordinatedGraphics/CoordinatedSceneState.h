@@ -70,6 +70,7 @@ public:
 
     void willPaintTile();
     void didPaintTile();
+    void schedulePaintForPendingPreRenderedTiles();
     ChangedPreRenderedTiles didPaintPreRenderedTile(WebCore::CoordinatedPlatformLayer&);
     ChangedPreRenderedTiles processLayersWithPreRenderedTiles(const Function<bool()>& shouldStopProcessingTiles);
     unsigned pendingTiles() const { return m_pendingTiles.load(); }

@@ -182,9 +182,13 @@ void SkiaCompositingLayer::processPendingTileUpdates()
         m_backingStore->processPendingTileUpdates(SkiaBackingStore::ProcessHiddenTiles::No);
 }
 
-bool SkiaCompositingLayer::processPendingTileUpdatesIncludingPreRendered(const Function<bool()>& shouldStopProcessingTiles)
+bool SkiaCompositingLayer::processPendingTileUpdatesIncludingPreRendered(Vector<CoordinatedBackingStoreProxy::Update::TileUpdate>&& tileUpdates, const Function<bool()>& shouldStopProcessingTiles)
 {
-    return m_backingStore ? m_backingStore->processPendingTileUpdates(SkiaBackingStore::ProcessHiddenTiles::Yes, shouldStopProcessingTiles) : false;
+    if (!m_backingStore)
+        return false;
+
+    m_backingStore->updatePreRenderedTiles(WTF::move(tileUpdates));
+    return m_backingStore->processPendingTileUpdates(SkiaBackingStore::ProcessHiddenTiles::Yes, shouldStopProcessingTiles);
 }
 
 void SkiaCompositingLayer::setImageBackingStore(CoordinatedImageBackingStore* imageBackingStore)

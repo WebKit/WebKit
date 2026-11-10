@@ -83,6 +83,11 @@ void FrameRenderer::renderingUpdateRunLoopObserverFired()
         updateRendering();
 }
 
+bool FrameRenderer::isRenderingUpdateScheduled() const
+{
+    return m_renderingUpdateRunLoopObserver->isScheduled();
+}
+
 void FrameRenderer::setLayerTreeStateIsFrozen(bool isFrozen)
 {
     if (m_layerTreeStateIsFrozen == isFrozen)

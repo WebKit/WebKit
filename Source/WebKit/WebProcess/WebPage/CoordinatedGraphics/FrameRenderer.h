@@ -83,6 +83,8 @@ public:
     void setLayerTreeStateIsFrozen(bool);
     void updateRenderingWithForcedRepaintAsync(CompletionHandler<void()>&&);
 
+    bool isRenderingUpdateScheduled() const;
+
 protected:
     FrameRenderer();
 

@@ -190,6 +190,7 @@ private:
     void willPaintTile() final { }
     void didPaintTile() final { }
     void didPaintPreRenderedTile(CoordinatedPlatformLayer&) final { }
+    void notifyPreRenderedTilesPending() final { }
 
     std::unique_ptr<CoordinatedTileManager> m_tileManager;
     bool m_compositionRequired { false };
