@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: inline-block; vertical-align: top; margin: 0 10px 10px 0; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.r { float: right; width: 30px; height: 50px; background: rgba(0, 0, 255, 0.5); }
+.h { overflow: hidden; width: 50px; height: 20px; background: rgba(255, 0, 255, 0.3); }
+p { margin: 0; }
+</style>
+<div class="root"><p>x</p><div class="l" id="wider"></div><div class="r"></div></div>
+<div class="root"><p>x</p><div class="l"></div><div class="l" id="clear-added"></div></div>
+<div class="root"><p>x</p><div class="l"></div><div class="l" id="clear-removed" style="clear: left"></div></div>
+<div class="root"><p>x</p><div class="l" id="removed"></div><div class="r"></div></div>
+<div class="root"><p id="inserted-after">x</p><div class="r"></div></div>
+<div class="root"><p>x</p><div class="l" style="width: auto; height: auto"><span id="text">float</span></div><div class="r"></div></div>
+<div class="root"><p>x</p><div class="l"></div><div class="h" id="margin" style="margin-left: 20px"></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("wider").style.width = "80px";
+document.getElementById("clear-added").style.clear = "left";
+document.getElementById("clear-removed").style.clear = "none";
+document.getElementById("removed").remove();
+const added = document.createElement("div");
+added.className = "l";
+document.getElementById("inserted-after").after(added);
+document.getElementById("text").firstChild.appendData(" text that gets longer");
+document.getElementById("margin").style.marginLeft = "60px";
+</script>

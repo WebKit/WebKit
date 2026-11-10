@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.h { overflow: hidden; background: rgba(255, 0, 255, 0.3); }
+</style>
+<div class="roots">
+<div class="root" id="wider"><div class="l"></div><div class="h" style="margin-left: 30%">a containing block that gets wider</div></div>
+<div class="root"><div class="l"></div><div class="h" id="margin" style="margin-left: 10%">a percentage that grows past the float</div></div>
+<div class="root"><div class="l"></div><div class="h" id="auto" style="width: 100px; margin-left: 10%">an end margin that becomes auto</div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("wider").style.width = "300px";
+document.getElementById("margin").style.marginLeft = "40%";
+document.getElementById("auto").style.marginRight = "auto";
+</script>

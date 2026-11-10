@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { overflow: hidden; width: 320px; padding: 7px; border: 3px solid black; }
+.root div { background: rgba(0, 0, 255, 0.2); }
+</style>
+<div class="root">
+  <div style="box-sizing: border-box; width: 100px; height: 40px; padding: 10px; border: 4px solid red"></div>
+  <div style="box-sizing: border-box; width: 10px; height: 10px; padding: 20px"></div>
+  <div style="width: 50px; min-width: 80px; height: 10px; max-height: 5px"></div>
+  <div style="max-width: 150px; min-height: 30px"></div>
+  <div style="width: calc(50% + 10px); height: calc(10px + 5px)"></div>
+  <div style="width: 200px; max-width: 50%; height: 12px; margin-left: auto; margin-right: auto"></div>
+</div>

@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: flow-root; position: relative; margin-bottom: 5px; }
+.s { overflow: scroll; height: 40px; border: 2px solid; background: lightblue; }
+.box { background: orange; }
+</style>
+<div class="root"><div class="box" style="float: left"><div class="s">in a float</div></div></div>
+<div class="root"><div class="box" style="width: max-content"><div class="s">in a max-content box</div></div></div>
+<div class="root"><span class="box" style="display: inline-block"><div class="s">in an inline-block</div></span></div>
+<div class="root"><div class="s" style="width: fit-content">fit-content itself</div></div>
+<div class="root" style="height: 50px"><div class="s" style="position: absolute">absolutely positioned</div></div>
+<div class="root"><div class="box" style="float: left"><div class="s" style="overflow: auto; height: 20px"><div style="width: 30px; height: 50px; background: green"></div></div></div></div>
+<div class="root" style="height: 50px"><div class="s" style="position: absolute; overflow: auto; height: 20px"><div style="width: 30px; height: 50px; background: green"></div></div></div>

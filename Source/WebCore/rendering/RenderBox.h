@@ -228,6 +228,8 @@ public:
     virtual void addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOptions> = { });
     void addOverflowFromContainedBox(const RenderBox& child, OptionSet<ComputeOverflowOptions> = { });
     void addOverflowFromFloatBox(const FloatingObject&);
+    // A float at this offset from the box, which no float list of the render tree lists.
+    void addOverflowFromFloatBox(const RenderBox&, LayoutSize offsetFromThis);
 
     LayoutRect logicalVisualOverflowRectForPropagation(const WritingMode) const;
     LayoutRect visualOverflowRectForPropagation(const WritingMode) const;
@@ -387,6 +389,7 @@ public:
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Style::Percentage<CSS::NonnegativeLayoutUnitClamped, float>& logicalHeight, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Style::UnevaluatedCalculation<CSS::LengthPercentage<CSS::NonnegativeLayoutUnitClamped, float>>& logicalHeight, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Style::UnevaluatedCalcSize& logicalHeight, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
+    bool skipContainingBlockForPercentHeightCalculation(const RenderBox& containingBlock, bool isPerpendicularWritingMode) const;
     bool hasAutoHeightOrContainingBlockWithAutoHeight(UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
 
     LayoutUnit availableLogicalHeight(AvailableLogicalHeightType) const override;
@@ -421,16 +424,18 @@ public:
     NODELETE void clearOverridingBorderBoxLogicalWidth();
     NODELETE void clearOverridingSize();
 
-    // Grid item's containing block is not the grid container, but the grid area, for which we don't have a renderer.
-    using GridAreaSize = std::optional<LayoutUnit>;
-    NODELETE std::optional<GridAreaSize> gridAreaContentWidth(WritingMode) const;
-    NODELETE std::optional<GridAreaSize> gridAreaContentHeight(WritingMode) const;
-    NODELETE std::optional<GridAreaSize> gridAreaContentLogicalWidth() const;
-    NODELETE std::optional<GridAreaSize> gridAreaContentLogicalHeight() const;
-    void setGridAreaContentLogicalWidth(GridAreaSize);
-    void setGridAreaContentLogicalHeight(GridAreaSize);
-    NODELETE void clearGridAreaContentSize();
-    NODELETE void clearGridAreaContentLogicalHeight();
+    // The content size of the containing block when it is not the content box of containingBlock(): a grid item's containing block is
+    // its grid area, which has no renderer, and the new block formatting context lays out some boxes through the render tree before it
+    // writes their containing block's geometry. A nullopt size is indefinite.
+    using ContainingBlockContentSize = std::optional<LayoutUnit>;
+    NODELETE std::optional<ContainingBlockContentSize> overridingContainingBlockContentWidth(WritingMode) const;
+    NODELETE std::optional<ContainingBlockContentSize> overridingContainingBlockContentHeight(WritingMode) const;
+    NODELETE std::optional<ContainingBlockContentSize> overridingContainingBlockContentLogicalWidth() const;
+    NODELETE std::optional<ContainingBlockContentSize> overridingContainingBlockContentLogicalHeight() const;
+    void setOverridingContainingBlockContentLogicalWidth(ContainingBlockContentSize);
+    void setOverridingContainingBlockContentLogicalHeight(ContainingBlockContentSize);
+    NODELETE void clearOverridingContainingBlockContentSize();
+    NODELETE void clearOverridingContainingBlockContentLogicalHeight();
 
     // These are currently only used by Flexbox code. In some cases we must layout flex items with a different main size
     // (the size in the main direction) than the one specified by the item in order to compute the value of flex basis, i.e.,
@@ -648,8 +653,6 @@ protected:
     LayoutRect localOutlineBoundsRepaintRect() const;
 
     void mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>, TransformState&) const override;
-
-    bool skipContainingBlockForPercentHeightCalculation(const RenderBox& containingBlock, bool isPerpendicularWritingMode) const;
 
     NODELETE void incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize&);
     NODELETE bool shouldIgnoreAspectRatio() const;
