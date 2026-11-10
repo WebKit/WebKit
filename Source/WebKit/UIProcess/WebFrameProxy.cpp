@@ -187,7 +187,7 @@ WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIde
     if (previousURL)
         frameLoadState().setURL(WTF::move(*previousURL));
 
-    updateDocumentSecurityOrigin(parent ? parent : opener);
+    updateDocumentSecurityOrigin();
 
     // The initial about:blank document is as secure as its creator and in its agent cluster.
     if (RefPtr creator = parent ? parent : opener; creator && creator->m_documentSecurityPolicy)
@@ -404,8 +404,7 @@ void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPlugin
     m_cspOriginsThatUpgradeInsecureNavigations = WTF::move(cspOriginsThatUpgradeInsecureNavigations);
     m_lastActivationTimestamp = -MonotonicTime::infinity();
 
-    RefPtr creator = parentFrame() ? parentFrame() : opener();
-    updateDocumentSecurityOrigin(creator.get());
+    updateDocumentSecurityOrigin();
 
     // Record the origin reported by the WCP, to validate against later, only if we can
     // prove it's a load where a privileged process does not specify a precise origin.
@@ -1365,7 +1364,7 @@ ProvisionalFrameCreationParameters WebFrameProxy::provisionalFrameCreationParame
     };
 }
 
-void WebFrameProxy::updateDocumentSecurityOrigin(WebFrameProxy* creator)
+void WebFrameProxy::updateDocumentSecurityOrigin()
 {
     if (m_effectiveSandboxFlags.contains(SandboxFlag::Origin)) {
         m_documentSecurityOrigin = WebCore::SecurityOrigin::opaqueOrigin();
@@ -1373,8 +1372,12 @@ void WebFrameProxy::updateDocumentSecurityOrigin(WebFrameProxy* creator)
     }
 
     if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(url())) {
-        if (RefPtr creatorFrame = creator)
-            m_documentSecurityOrigin = creatorFrame->securityOrigin().ptr();
+        // Match Document::initSecurityContext(), which can only inherit from a parent or opener in its own process.
+        RefPtr owner = parentFrame();
+        if (!owner || &owner->process() != &process())
+            owner = opener();
+        if (owner && &owner->process() == &process())
+            m_documentSecurityOrigin = owner->securityOrigin().ptr();
         else
             m_documentSecurityOrigin = WebCore::SecurityOrigin::opaqueOrigin();
         return;
