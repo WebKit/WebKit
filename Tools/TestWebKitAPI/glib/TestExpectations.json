@@ -201,6 +201,9 @@
         "subtests": {
            "/webkit/WebKitWebInspectorServer/test-page-list": {
               "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/216646"}}
+           },
+           "/webkit/WebKitWebInspectorServer/http-rejects-untrusted-requests": {
+              "expected": {"all": {"status": ["FAIL", "PASS"]}}
            }
         },
         "expected": {"all": {"slow": true}}
