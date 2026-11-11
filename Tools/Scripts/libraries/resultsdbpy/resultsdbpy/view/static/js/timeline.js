@@ -1039,7 +1039,7 @@ class TimelineFromEndpoint {
                 });
                 agregateData['configuration'] = new Configuration(partialConfiguration);
                 ToolTip.unset();
-                InvestigateDrawer.expand(self.suite, agregateData, allData);
+                InvestigateDrawer.expand(self.suite, agregateData, allData, self.test);
             }
         }
 
