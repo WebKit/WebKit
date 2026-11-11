@@ -29,6 +29,7 @@
 #include "config.h"
 #include "AccessibilityRenderObject.h"
 
+#include "AXChildIterator.h"
 #include "AXImageMapHelpers.h"
 #include "AXListHelpers.h"
 #include "AXLogger.h"
@@ -220,22 +221,6 @@ AccessibilityObject* AccessibilityRenderObject::firstChild() const
     // not rendered (like a <meter> element).
     if (!canHaveChildren())
         return AccessibilityNodeObject::firstChild();
-
-    return nullptr;
-}
-
-AccessibilityObject* AccessibilityRenderObject::lastChild() const
-{
-    if (!m_renderer)
-        return AccessibilityNodeObject::lastChild();
-
-    if (CheckedPtr lastChild = protect(m_renderer)->lastChildSlow()) {
-        CheckedPtr cache = axObjectCache();
-        return cache ? cache->getOrCreate(lastChild) : nullptr;
-    }
-
-    if (!canHaveChildren())
-        return AccessibilityNodeObject::lastChild();
 
     return nullptr;
 }

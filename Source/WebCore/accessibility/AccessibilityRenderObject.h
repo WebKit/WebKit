@@ -90,7 +90,6 @@ public:
     int layoutCount() const final;
 
     AccessibilityObject* firstChild() const final;
-    AccessibilityObject* lastChild() const final;
     AccessibilityObject* previousSibling() const final;
     AccessibilityObject* nextSibling() const final;
     AccessibilityObject* parentObject() const override;

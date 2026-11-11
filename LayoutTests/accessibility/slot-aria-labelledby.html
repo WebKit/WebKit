@@ -18,15 +18,13 @@
 
 <slotted-label-component id="test-slotted-with-hidden"><span>Visible</span><span class="hidden">Hidden</span></slotted-label-component>
 
-<slotted-label-component id="test-fallback">
-</slotted-label-component>
+<slotted-label-component id="test-fallback"></slotted-label-component>
 
 <slotted-label-component id="test-hidden-only">
     <span class="hidden">Hidden</span>
 </slotted-label-component>
 
-<slotted-label-component id="test-dynamic">
-</slotted-label-component>
+<slotted-label-component id="test-dynamic"></slotted-label-component>
 
 <script>
 var componentCount = 0;
@@ -74,9 +72,9 @@ if (window.accessibilityController) {
         fallbackButton = accessibilityController.accessibleElementById(document.getElementById("test-fallback").getButtonId());
         output += checkTextAlternatives(fallbackButton, { expected: ["Fallback"] });
 
-        output += "\nTest 4: Button labelled by slot with only hidden slotted content should use fallback.\n";
+        output += "\nTest 4: Button labelled by slot with only hidden slotted content should not use fallback, as the slot renders neither.\n";
         hiddenOnlyButton = accessibilityController.accessibleElementById(document.getElementById("test-hidden-only").getButtonId());
-        output += checkTextAlternatives(hiddenOnlyButton, { expected: ["Fallback"], unexpected: ["Hidden"] });
+        output += checkTextAlternatives(hiddenOnlyButton, { expected: ["Action"], unexpected: ["Fallback", "Hidden"] });
 
         output += "\nTest 5: Dynamically adding slotted content should update the label.\n";
         var dynamicComponent = document.getElementById("test-dynamic");

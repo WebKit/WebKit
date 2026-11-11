@@ -36,7 +36,6 @@
 #include <WebCore/LayoutRect.h>
 #include <WebCore/Path.h>
 #include <WebCore/TextIteratorBehavior.h>
-#include <iterator>
 #include <wtf/CompactUniquePtrTuple.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -374,7 +373,6 @@ public:
     AccessibilityObject* focusedUIElementInAnyLocalFrame() const final;
 
     virtual AccessibilityObject* firstChild() const { return nullptr; }
-    virtual AccessibilityObject* lastChild() const { return nullptr; }
     virtual AccessibilityObject* previousSibling() const { return nullptr; }
     virtual AccessibilityObject* nextSibling() const { return nullptr; }
     AccessibilityObject* nextSiblingUnignored(unsigned limit = std::numeric_limits<unsigned>::max()) const;
@@ -893,83 +891,7 @@ public:
     virtual FloatRect localRect() const { return { }; }
     virtual bool isNonLayerSVGObject() const { return false; }
 
-    // When using the previousSibling and nextSibling methods, we can alternate between walking the DOM and the
-    // the render tree. There are complications with this, especially introduced by display:contents, which
-    // removes the renderer for the given object, and moves its render tree children up one level higher than they
-    // otherwise would've been on. This iterator abstracts over this complexity, ensuring each object is actually a
-    // sibling of the last.
-    class iterator {
-    public:
-        using iterator_category = std::bidirectional_iterator_tag;
-        using difference_type = std::ptrdiff_t;
-        using element_type = AccessibilityObject;
-        using pointer = AccessibilityObject*;
-        using reference = AccessibilityObject&;
-
-        iterator() = default;
-        iterator(const AccessibilityObject* object, const AccessibilityObject* displayContentsParent)
-            : m_current(object)
-            , m_displayContentsParent(displayContentsParent)
-        { }
-        iterator(const AccessibilityObject* object)
-            : iterator(object, object ? object->displayContentsParent() : nullptr)
-        { }
-        iterator(const AccessibilityObject* object, const AccessibilityObject& parent)
-            : iterator(object, parent.hasDisplayContents() ? &parent : nullptr)
-        { }
-
-        explicit operator bool() const { return m_current; }
-        AccessibilityObject& operator*() const { return const_cast<AccessibilityObject&>(*m_current); }
-        AccessibilityObject* operator->() const { return const_cast<AccessibilityObject*>(m_current.get()); }
-        AccessibilityObject* ptr() const { return const_cast<AccessibilityObject*>(m_current.get()); }
-        bool operator==(const iterator& other) const { return other.m_current == m_current; }
-
-        // Prefix increment operator (++iterator).
-        iterator& operator++()
-        {
-            m_current = protect(m_current)->nextSibling();
-            ensureContentsParentValidity();
-            return *this;
-        }
-
-        // Postfix increment operator (iterator++).
-        iterator operator++(int)
-        {
-            auto copy = *this;
-            ++(*this);
-            return copy;
-        }
-
-        // --iterator
-        iterator& operator--()
-        {
-            m_current = protect(m_current)->previousSibling();
-            ensureContentsParentValidity();
-            return *this;
-        }
-
-        // iterator--
-        iterator operator--(int)
-        {
-            auto copy = *this;
-            --(*this);
-            return copy;
-        }
-    private:
-        void ensureContentsParentValidity()
-        {
-            if (!m_current || !m_displayContentsParent)
-                return;
-            // The objects after a display: contents element's last child are its own siblings, since a
-            // display:contents element has no box for them to hang off. Stop rather than walking into them.
-            if (protect(m_current)->parentObject() != m_displayContentsParent.get())
-                m_current = nullptr;
-        }
-
-        RefPtr<const AccessibilityObject> m_current;
-        // If the original object had a display:contents parent, it is stored here. This is nullptr otherwise.
-        const RefPtr<const AccessibilityObject> m_displayContentsParent { nullptr };
-    }; // class iterator
+    class iterator;
 
 protected:
     explicit AccessibilityObject(AXID, AXObjectCache&);
@@ -1082,24 +1004,6 @@ inline bool AccessibilityObject::hasAttributedText() const
 #endif
 
 AccessibilityObject* firstAccessibleObjectFromNode(const Node*, NOESCAPE const Function<bool(const AccessibilityObject&)>& isAccessible);
-
-class AXChildIterator {
-public:
-    AXChildIterator(const AccessibilityObject& parent)
-        : m_parent(parent)
-    { }
-
-    AccessibilityObject::iterator begin()
-    {
-        return AccessibilityObject::iterator { protect(m_parent->firstChild()), m_parent.get() };
-    }
-    AccessibilityObject::iterator end()
-    {
-        return AccessibilityObject::iterator { };
-    }
-private:
-    const Ref<const AccessibilityObject> m_parent;
-}; // class AXChildIterator
 
 #if PLATFORM(COCOA)
 // Helpers to extract information from Style::ComputedStyle needed for accessibility purposes.

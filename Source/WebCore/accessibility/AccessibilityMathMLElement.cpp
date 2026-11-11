@@ -31,6 +31,7 @@
 #include "AccessibilityMathMLElement.h"
 
 #include "AccessibilityNodeObjectInlines.h"
+#include "AXChildIterator.h"
 #include "AXObjectCacheInlines.h"
 #include "AXUtilities.h"
 #include "AccessibilityObjectInlines.h"
