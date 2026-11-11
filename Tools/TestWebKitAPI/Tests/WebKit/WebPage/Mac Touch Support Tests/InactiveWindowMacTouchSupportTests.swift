@@ -34,10 +34,10 @@ import Testing
 private import Recap
 private import AppKit_Private.NSMenu_Private
 
-extension AppKitGesturesTests {
+extension MacTouchSupportTests {
     @MainActor
     @Suite(.serialized, .timeLimit(.minutes(1)))
-    final class InactiveWindow: AppKitGestureTestSuite {
+    final class InactiveWindow: MacTouchSupportTestSuite {
         static let text = "Here's to the crazy ones."
 
         let recap = Recap.shared
@@ -54,7 +54,7 @@ extension AppKitGesturesTests {
             let contentSize = NSSize(width: 800, height: 600)
 
             // The web view is hosted in a window that never becomes key, so it always sees itself in an
-            // inactive window even after being clicked.
+            // inactive window even after being tapped.
             self.windowHost = TestWindowHost(size: contentSize, shouldBecomeKey: false) { [page] in
                 WebView(page)
                     .webViewBackForwardNavigationGestures(.enabled)
@@ -65,14 +65,14 @@ extension AppKitGesturesTests {
     }
 }
 
-extension AppKitGesturesTests.InactiveWindow {
+extension MacTouchSupportTests.InactiveWindow {
     @Test
-    func singleClickIntoInactiveWindowIsSuppressed() async throws {
+    func singleTapInInactiveWindowIsSuppressed() async throws {
         let html = """
             <body style="margin: 0">
             <div id="target"
                  onclick="window.clickCount = (window.clickCount || 0) + 1;"
-                 style="width: 100vw; height: 100vh; font-size: 30px;">click target</div>
+                 style="width: 100vw; height: 100vh; font-size: 30px;">tap target</div>
             </body>
             """
         try await page.load(html: html).wait()
@@ -96,7 +96,7 @@ extension AppKitGesturesTests.InactiveWindow {
     }
 
     @Test
-    func singleClickIntoInactiveWindowDoesNotShowClickHighlight() async throws {
+    func singleTapInInactiveWindowDoesNotShowTapHighlight() async throws {
         let html = """
             <body style="margin: 0">
             <a id="target" href="#" style="display: block; width: 200px; height: 50px;">Link</a>
@@ -114,7 +114,7 @@ extension AppKitGesturesTests.InactiveWindow {
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        #expect(page.clickHighlightRect == .zero)
+        #expect(page.tapHighlightRect == .zero)
     }
 }
 

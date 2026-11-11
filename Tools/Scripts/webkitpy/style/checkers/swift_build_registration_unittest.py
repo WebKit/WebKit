@@ -41,7 +41,7 @@ PROJECT_CONTENTS = '\n'.join([
     '\t\t07AA27602F83C3A900FE10FC /* Exceptions for "Tests" folder in "TestWebKitAPI" target */ = {',
     '\t\t\tisa = PBXFileSystemSynchronizedBuildFileExceptionSet;',
     '\t\t\tmembershipExceptions = (',
-    '\t\t\t\t"WebKit/WebPage/AppKit Gesture Tests/BasicAppKitGesturesTests.swift",',
+    '\t\t\t\t"WebKit/WebPage/Mac Touch Support Tests/BasicMacTouchSupportTests.swift",',
     '\t\t\t\tWebKit/WebPage/InBoth.swift,',
     '\t\t\t\tWebKit/WebPage/OnlyInXcode.swift,',
     '\t\t\t);',
@@ -138,7 +138,7 @@ class SwiftBuildRegistrationCheckerTest(unittest.TestCase):
         self.assertIn('is in neither', errors[0][1])
 
     def test_path_with_spaces_is_quoted_in_the_xcode_project(self):
-        path = TEST_DIRECTORY + '/Tests/WebKit/WebPage/AppKit Gesture Tests/BasicAppKitGesturesTests.swift'
+        path = TEST_DIRECTORY + '/Tests/WebKit/WebPage/Mac Touch Support Tests/BasicMacTouchSupportTests.swift'
         errors = self.check(self.added(path))
         # Named in the project file, so only the CMake half is reported.
         self.assertEqual(len(errors), 1)
@@ -146,7 +146,7 @@ class SwiftBuildRegistrationCheckerTest(unittest.TestCase):
 
     def test_swiftui_test_is_not_required_in_cmake(self):
         # SwiftUI pulls in the _WebKit_SwiftUI overlay, which CMake cannot link yet.
-        path = TEST_DIRECTORY + '/Tests/WebKit/WebPage/AppKit Gesture Tests/BasicAppKitGesturesTests.swift'
+        path = TEST_DIRECTORY + '/Tests/WebKit/WebPage/Mac Touch Support Tests/BasicMacTouchSupportTests.swift'
         self.assertEqual(self.check(
             self.added(path), source='import SwiftUI\nimport Testing\n'), [])
 

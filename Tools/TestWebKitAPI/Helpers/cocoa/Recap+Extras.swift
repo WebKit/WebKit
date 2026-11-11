@@ -44,7 +44,7 @@ extension RCPEventStreamComposer {
         )
     }
 
-    /// Pinches two fingers apart, pushing each one `spread` points outward along the line between them.
+    /// Pinches open, pushing each finger `spread` points outward along the line between them.
     ///
     /// The touches stay down when this returns.
     ///
@@ -57,7 +57,7 @@ extension RCPEventStreamComposer {
     ///   - dragOffset: If set, the first finger goes down alone and drags by this offset before
     ///     the second finger lands, at `end` shifted by the same offset.
     ///   - translation: If set, both fingers then move together by this offset.
-    public func magnify(
+    public func pinchOpen(
         withStart start: CGPoint,
         end: CGPoint,
         spreadBy spread: CGFloat,
@@ -137,7 +137,7 @@ extension RCPEventStreamComposer {
     }
 
     /// Like ``drag(withStart:end:duration:tapAndWait:lift:)``, but first moves to `early` right after the
-    /// tap begins, so that the tap moves before it settles.
+    /// touch begins, so that the touch moves before it settles.
     ///
     /// - Parameters:
     ///   - start: Where the finger goes down.

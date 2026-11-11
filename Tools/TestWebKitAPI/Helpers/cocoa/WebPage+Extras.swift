@@ -133,23 +133,23 @@ extension WebPage {
         backingWebView.isPoint(inScrollbar: locationInView)
     }
 
-    /// The frame of the most recently shown click highlight, in view coordinates, or `.zero` if none has been shown.
-    public var clickHighlightRect: CGRect {
+    /// The frame of the most recently shown tap highlight, in view coordinates, or `.zero` if none has been shown.
+    public var tapHighlightRect: CGRect {
         backingWebView._clickHighlightRectForTesting
     }
 
-    /// Whether a click highlight is currently shown.
-    public var isShowingClickHighlight: Bool {
+    /// Whether a tap highlight is currently shown.
+    public var isShowingTapHighlight: Bool {
         backingWebView._isShowingClickHighlightForTesting
     }
 
-    /// The color of the most recent click highlight.
-    public var clickHighlightColor: NSColor? {
+    /// The color of the most recent tap highlight.
+    public var tapHighlightColor: NSColor? {
         backingWebView._clickHighlightColorForTesting
     }
 
-    /// The bounds of the element whose click was handled as hover, in view coordinates, or `.zero` if there is none.
-    public var hoverActivatedByClickBounds: CGRect {
+    /// The bounds of the element whose tap was handled as hover, in view coordinates, or `.zero` if there is none.
+    public var hoverActivatedByTapBounds: CGRect {
         backingWebView._hoverActivatedByClickBoundsForTesting
     }
 

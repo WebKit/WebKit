@@ -38,10 +38,10 @@ private import AppKit_Private.NSScrollView_Private
 private import AppKit_Private.NSMenu_Private
 private import WebKit_Private.WKFrameInfoPrivate
 
-extension AppKitGesturesTests {
+extension MacTouchSupportTests {
     @MainActor
     @Suite(.serialized, .timeLimit(.minutes(1)))
-    final class Basic: AppKitGestureTestSuite {
+    final class Basic: MacTouchSupportTestSuite {
         static var text = "Here's to the crazy ones."
 
         let recap = Recap.shared
@@ -67,12 +67,12 @@ extension AppKitGesturesTests {
     }
 }
 
-extension AppKitGesturesTests.Basic {
+extension MacTouchSupportTests.Basic {
     @Test(
         .bug("https://webkit.org/b/314880", "Only mouse tracking mode produces pointer events"),
         arguments: [true, false]
     )
-    func singleClickFiresPointerMouseAndClickEvents(contentEditable: Bool) async throws {
+    func singleTapFiresPointerMouseAndClickEvents(contentEditable: Bool) async throws {
         try await loadHTML(contentEditable: contentEditable)
 
         let expectedEvents: [DOMEventType] = [.pointerdown, .pointerup, .mousedown, .mouseup, .click]
@@ -80,7 +80,8 @@ extension AppKitGesturesTests.Basic {
         try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: expectedEvents))
 
         if contentEditable {
-            // FIXME: <rdar://177201499> This workaround establishes a selection first so that the synthetic click does not change insertion point.
+            // FIXME: <rdar://177201499> This workaround establishes a selection first so that the synthetic tap does not change the
+            // insertion point.
             try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", offset: 0))
             await page.waitForNextPresentationUpdate()
         }
@@ -101,7 +102,7 @@ extension AppKitGesturesTests.Basic {
     @Test(
         .bug("https://webkit.org/b/324987")
     )
-    func singleClickReportsHeldButtonAndPressure() async throws {
+    func singleTapReportsHeldButtonAndPressure() async throws {
         try await loadHTML()
 
         try await page.callJavaScript {
@@ -142,7 +143,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func singleClickFiresEventsForListenersOnTheDocument() async throws {
+    func singleTapFiresEventsForListenersOnTheDocument() async throws {
         try await loadHTML()
 
         let expectedEvents: [DOMEventType] = [.pointerdown, .pointerup, .mousedown, .mouseup, .click]
@@ -163,7 +164,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func singleClickReportsMovementFromLastKnownMousePosition() async throws {
+    func singleTapReportsMovementFromLastKnownMousePosition() async throws {
         let html = """
             <!DOCTYPE html>
             <div id="start" style="position: absolute; left: 50px; top: 50px; width: 100px; height: 100px;"></div>
@@ -199,13 +200,13 @@ extension AppKitGesturesTests.Basic {
         }
 
         // The centers of #start and #target are 300px apart horizontally and 200px apart vertically.
-        let movement = try #require(movementLog.first, "clicking #target did not dispatch a mousemove")
+        let movement = try #require(movementLog.first, "tapping #target did not dispatch a mousemove")
         #expect(abs(movement[0] - 300) <= 1)
         #expect(abs(movement[1] - 200) <= 1)
     }
 
     @Test(arguments: [Recap.KeyboardModifiers(), .shift, .option, .command, .all])
-    func singleClickReportsHeldModifierKeys(modifiers: Recap.KeyboardModifiers) async throws {
+    func singleTapReportsHeldModifierKeys(modifiers: Recap.KeyboardModifiers) async throws {
         let expectedEvents: [DOMEventType] = [.pointerdown, .pointerup, .mousedown, .mouseup, .click]
 
         try await loadHTML()
@@ -255,7 +256,7 @@ extension AppKitGesturesTests.Basic {
     @Test(
         arguments: [Duration.seconds(0.5), .seconds(1.0)]
     )
-    func pressAndHoldReportsPointerEventsSpanningTheHold(holdDuration: Duration) async throws {
+    func touchAndHoldReportsPointerEventsSpanningTheHold(holdDuration: Duration) async throws {
         try await loadHTML()
 
         try await page.callJavaScript(
@@ -263,7 +264,7 @@ extension AppKitGesturesTests.Basic {
             window.eventLog = [];
 
             const target = document.getElementById("div");
-            // As every press-and-hold widget does, so that the hold isn't claimed by text selection.
+            // As every touch-and-hold widget does, so that the hold isn't claimed by text selection.
             target.style.webkitUserSelect = "none";
 
             for (const type of ["pointerdown", "pointerup"])
@@ -302,7 +303,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func singleClickWithoutPointerTrackingDerivesPointerEventsFromMouseEvents() async throws {
+    func singleTapWithoutPointerTrackingDerivesPointerEventsFromMouseEvents() async throws {
         page.setWebFeature("UseAppKitGesturesForPointerEvents", enabled: false)
         try await loadHTML()
 
@@ -323,7 +324,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func pressAndHoldInSubframeReportsPointerEventsSpanningTheHold() async throws {
+    func touchAndHoldInSubframeReportsPointerEventsSpanningTheHold() async throws {
         try await page.load(html: subframeHostMarkup).wait()
 
         try await page.callJavaScript {
@@ -352,13 +353,13 @@ extension AppKitGesturesTests.Basic {
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        try await expectPressAndHoldInSubframe(heldFor: .seconds(0.5)) {
+        try await expectTouchAndHoldInSubframe(heldFor: .seconds(0.5)) {
             "return window.eventLog;"
         }
     }
 
     @Test
-    func pressAndHoldInCrossSiteSubframeReportsPointerEventsSpanningTheHold() async throws {
+    func touchAndHoldInCrossSiteSubframeReportsPointerEventsSpanningTheHold() async throws {
         page.setWebFeature("SiteIsolationEnabled", enabled: true)
 
         var server = try HTTPServer(protocol: .http) {
@@ -413,7 +414,7 @@ extension AppKitGesturesTests.Basic {
             await page.waitForPendingMouseEvents()
             try #require(try await waitUntil("return window.eventLog.length >= 2;"))
 
-            try await expectPressAndHoldInSubframe(heldFor: .seconds(0.5)) {
+            try await expectTouchAndHoldInSubframe(heldFor: .seconds(0.5)) {
                 "return window.eventLog;"
             }
         }
@@ -433,7 +434,7 @@ extension AppKitGesturesTests.Basic {
         #"<div id="target" style="height: 200px; user-select: none; -webkit-user-select: none;"></div>"#
     }
 
-    private func expectPressAndHoldInSubframe(heldFor holdDuration: Duration, eventLogScript: () -> String) async throws {
+    private func expectTouchAndHoldInSubframe(heldFor holdDuration: Duration, eventLogScript: () -> String) async throws {
         let log = try await page.callJavaScript(returning: [[String: Any]].self, script: eventLogScript)
         let types = log.compactMap { $0["type"] as? String }
         #expect(types == ["pointerdown", "pointerup"])
@@ -442,7 +443,7 @@ extension AppKitGesturesTests.Basic {
         let elapsed = (log[1]["timeStamp"] as? Double ?? 0) - (log[0]["timeStamp"] as? Double ?? 0)
         #expect(Duration.milliseconds(elapsed) > holdDuration / 2)
 
-        // The press lands at the center of the 300x200 subframe, in the subframe's own coordinates.
+        // The touch lands at the center of the 300x200 subframe, in the subframe's own coordinates.
         for event in log {
             #expect(event["inSubframe"] as? Bool == true)
             #expect(abs((event["x"] as? Double ?? 0) - 150) <= 2)
@@ -479,7 +480,7 @@ extension AppKitGesturesTests.Basic {
             surface.addEventListener("pointerdown", event => {
                 window.positions.down = { x: event.clientX, y: event.clientY };
                 start = window.positions.down;
-                window.longPressState = "pressed";
+                window.longPressState = "touched";
                 timer = setTimeout(() => window.longPressState = "recognized", 500);
             });
 
@@ -498,8 +499,8 @@ extension AppKitGesturesTests.Basic {
                     window.positions[type] = { x: event.clientX, y: event.clientY };
                     clearTimeout(timer);
                     start = null;
-                    if (window.longPressState === "pressed")
-                        window.longPressState = "released";
+                    if (window.longPressState === "touched")
+                        window.longPressState = "lifted";
                 });
             }
             </script>
@@ -525,7 +526,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func longPressOnManipulationSurfaceIsRecognized() async throws {
+    func touchAndHoldOnManipulationSurfaceIsRecognizedAsLongPress() async throws {
         try await loadLongPressSurface()
 
         let surfaceBounds = try await screenBounds(ofElementWithID: "surface")
@@ -541,7 +542,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func clickOnManipulationSurfaceIsNotRecognizedAsLongPress() async throws {
+    func tapOnManipulationSurfaceIsNotRecognizedAsLongPress() async throws {
         try await loadLongPressSurface()
 
         let surfaceBounds = try await screenBounds(ofElementWithID: "surface")
@@ -553,11 +554,11 @@ extension AppKitGesturesTests.Basic {
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        #expect(try await longPressState() == "released")
+        #expect(try await longPressState() == "lifted")
     }
 
     @Test(arguments: [(travel: CGFloat(3), reportsMovement: false), (travel: CGFloat(60), reportsMovement: true)])
-    func pressReportsMovementOnlyPastClickAllowableMovement(travel: CGFloat, reportsMovement: Bool) async throws {
+    func touchMovementIsReportedOnlyPastTapAllowableMovement(travel: CGFloat, reportsMovement: Bool) async throws {
         try await loadLongPressSurface()
 
         let surfaceBounds = try await screenBounds(ofElementWithID: "surface")
@@ -586,7 +587,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func untrackedDragOnManipulationSurfaceStillReportsPointerMovement() async throws {
+    func untrackedTwoFingerDragOnManipulationSurfaceStillReportsPointerMovement() async throws {
         page.setWebFeature("UseAppKitGesturesForGestureEvents", enabled: true)
         try await loadLongPressSurface()
 
@@ -685,7 +686,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func pressAndHoldThatOpensContextMenuCancelsPointer() async throws {
+    func touchAndHoldThatOpensContextMenuCancelsPointer() async throws {
         let html = """
             <a id="link" href="https://webkit.org" style="font-size: 30px; display: block;">WebKit Link</a>
             <script>
@@ -718,7 +719,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func pointerStaysOverReleasedElementUntilNextPressElsewhere() async throws {
+    func pointerStaysOverTappedElementUntilNextTapElsewhere() async throws {
         let html = """
             <style>
             body { margin: 0; }
@@ -747,8 +748,8 @@ extension AppKitGesturesTests.Basic {
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        let firstPressLog = try await page.callJavaScript(returning: [String].self) { "return window.eventLog;" }
-        #expect(firstPressLog == ["pointerover:first", "pointerenter:first", "pointerdown:first", "pointerup:first"])
+        let firstTapLog = try await page.callJavaScript(returning: [String].self) { "return window.eventLog;" }
+        #expect(firstTapLog == ["pointerover:first", "pointerenter:first", "pointerdown:first", "pointerup:first"])
 
         await recap.play { composer in
             composer.humanTap(at: secondBounds.center, for: .milliseconds(100))
@@ -768,7 +769,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func clickLeavesPopupOfHoverActivatedControlOpen() async throws {
+    func tapLeavesPopupOfHoverActivatedControlOpen() async throws {
         let html = """
             <style>
             body { margin: 0; }
@@ -815,7 +816,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: [false, true])
-    func pressHeldAcrossNavigationDoesNotAffectMouseEventsOnNextPage(cancelsPointerDown: Bool) async throws {
+    func touchHeldAcrossNavigationDoesNotAffectMouseEventsOnNextPage(cancelsPointerDown: Bool) async throws {
         let cancelPointerDownStatement = cancelsPointerDown ? "event.preventDefault();" : ""
 
         var server = try HTTPServer(protocol: .http) {
@@ -861,7 +862,7 @@ extension AppKitGesturesTests.Basic {
             try #require(try await waitUntil("return location.pathname === '/next';"))
             await page.waitForNextPresentationUpdate()
 
-            // Unless the next page was loaded well before the press was released, this would not be testing anything.
+            // Unless the next page was loaded well before the touch was lifted, this would not be testing anything.
             let millisecondsSinceLoad = try await page.callJavaScript(returning: Double.self) { "return Date.now() - window.loadTime;" }
             try #require(millisecondsSinceLoad > 500)
 
@@ -884,7 +885,7 @@ extension AppKitGesturesTests.Basic {
         case mouse
     }
 
-    private func loadPressAndHoldCaptcha(
+    private func loadHoldCaptcha(
         requiredHoldMilliseconds: Int,
         family: PointerEventFamily,
         textIsSelectable: Bool = false,
@@ -947,8 +948,8 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func pressAndHoldCompletesPointerDrivenCaptcha() async throws {
-        try await loadPressAndHoldCaptcha(requiredHoldMilliseconds: 400, family: .pointer)
+    func touchAndHoldCompletesPointerDrivenCaptcha() async throws {
+        try await loadHoldCaptcha(requiredHoldMilliseconds: 400, family: .pointer)
 
         let captchaBounds = try await screenBounds(ofElementWithID: "captcha")
 
@@ -963,8 +964,8 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func quickClickDoesNotCompletePointerDrivenCaptcha() async throws {
-        try await loadPressAndHoldCaptcha(requiredHoldMilliseconds: 400, family: .pointer)
+    func quickTapDoesNotCompletePointerDrivenCaptcha() async throws {
+        try await loadHoldCaptcha(requiredHoldMilliseconds: 400, family: .pointer)
 
         let captchaBounds = try await screenBounds(ofElementWithID: "captcha")
 
@@ -979,12 +980,12 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func scrollingAfterPressCancelsPointerDrivenCaptcha() async throws {
-        try await loadPressAndHoldCaptcha(requiredHoldMilliseconds: 5000, family: .pointer)
+    func dragThatScrollsCancelsPointerDrivenCaptcha() async throws {
+        try await loadHoldCaptcha(requiredHoldMilliseconds: 5000, family: .pointer)
 
         let captchaBounds = try await screenBounds(ofElementWithID: "captcha")
 
-        // The press travels up the screen, which scrolls the page down.
+        // The touch travels up the screen, which scrolls the page down.
         let scrollEnd = CGPoint(x: captchaBounds.center.x, y: captchaBounds.center.y - 200)
 
         await recap.play { composer in
@@ -1004,7 +1005,7 @@ extension AppKitGesturesTests.Basic {
 
     @Test
     func cancelingPointerDownKeepsTheHoldOnSelectableText() async throws {
-        try await loadPressAndHoldCaptcha(
+        try await loadHoldCaptcha(
             requiredHoldMilliseconds: 400,
             family: .pointer,
             textIsSelectable: true,
@@ -1025,8 +1026,8 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func pressAndHoldOnSelectableTextWithoutCancelingSelectsAWord() async throws {
-        try await loadPressAndHoldCaptcha(
+    func touchAndHoldOnSelectableTextWithoutCancelingSelectsAWord() async throws {
+        try await loadHoldCaptcha(
             requiredHoldMilliseconds: 400,
             family: .pointer,
             textIsSelectable: true,
@@ -1093,7 +1094,8 @@ extension AppKitGesturesTests.Basic {
         let dragEnd = screenBounds(ofPointInWindowCoordinates: CGPoint(x: window.frame.width / 2, y: dragEndYInWindow))
 
         await recap.play { composer in
-            // Click-and-hold to begin a range selection, then drag to the bottom edge and hold.
+            // Touch and hold to begin a range selection, then lift, touch the same spot again, and drag to the bottom
+            // edge and hold.
             composer.humanTap(at: startBounds.center, for: .seconds(0.5))
             composer.advanceTime(0.1)
             composer.drag(withStart: startBounds.center, end: dragEnd, duration: .seconds(1), lift: false)
@@ -1305,7 +1307,7 @@ extension AppKitGesturesTests.Basic {
         .bug("rdar://176117750"),
         arguments: [true, false]
     )
-    func clickingOnSelectedWordKeepsTextSelected(contentEditable: Bool) async throws {
+    func tappingSelectedWordKeepsTextSelected(contentEditable: Bool) async throws {
         try await loadHTML(contentEditable: contentEditable)
 
         let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
@@ -1330,10 +1332,10 @@ extension AppKitGesturesTests.Basic {
         #expect(newSelection == crazySelection)
     }
 
-    // MARK: - Shift-Click Selection Extension
+    // MARK: - Shift-Tap Selection Extension
 
     @Test(arguments: [true, false])
-    func shiftClickAfterSelectionExtendsSelectionForward(contentEditable: Bool) async throws {
+    func shiftTapAfterSelectionExtendsSelectionForward(contentEditable: Bool) async throws {
         try await loadHTML(contentEditable: contentEditable)
 
         let heresRange = try #require(Self.text.utf16Range(of: "Here's"))
@@ -1344,7 +1346,7 @@ extension AppKitGesturesTests.Basic {
 
         let onesBounds = try await screenBoundsOfText("ones")
 
-        // Clicking just inside the right edge of the word resolves to the boundary at its end.
+        // Tapping just inside the right edge of the word resolves to the boundary at its end.
         await recap.play { composer in
             composer.holdingModifiers(.shift) {
                 composer.humanTap(at: CGPoint(x: onesBounds.maxX - 1, y: onesBounds.midY), for: .seconds(0.1))
@@ -1364,7 +1366,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: [true, false])
-    func shiftClickBeforeSelectionExtendsSelectionBackward(contentEditable: Bool) async throws {
+    func shiftTapBeforeSelectionExtendsSelectionBackward(contentEditable: Bool) async throws {
         try await loadHTML(contentEditable: contentEditable)
 
         let heresRange = try #require(Self.text.utf16Range(of: "Here's"))
@@ -1375,7 +1377,7 @@ extension AppKitGesturesTests.Basic {
 
         let heresBounds = try await screenBoundsOfText("Here's")
 
-        // Clicking just inside the left edge of the word resolves to the boundary at its start.
+        // Tapping just inside the left edge of the word resolves to the boundary at its start.
         await recap.play { composer in
             composer.holdingModifiers(.shift) {
                 composer.humanTap(at: CGPoint(x: heresBounds.minX + 1, y: heresBounds.midY), for: .seconds(0.1))
@@ -1396,7 +1398,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: [true, false])
-    func shiftClickInsideSelectionShrinksSelection(contentEditable: Bool) async throws {
+    func shiftTapInsideSelectionShrinksSelection(contentEditable: Bool) async throws {
         try await loadHTML(contentEditable: contentEditable)
 
         let heresRange = try #require(Self.text.utf16Range(of: "Here's"))
@@ -1429,7 +1431,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func shiftClickAfterCaretCreatesSelectionFromCaret() async throws {
+    func shiftTapAfterCaretCreatesSelectionFromCaret() async throws {
         try await loadHTML(contentEditable: true)
 
         let theRange = try #require(Self.text.utf16Range(of: "the"))
@@ -1458,7 +1460,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func clickWithoutShiftAfterSelectionReplacesSelection() async throws {
+    func tapWithoutShiftAfterSelectionReplacesSelection() async throws {
         try await loadHTML(contentEditable: true)
 
         let heresRange = try #require(Self.text.utf16Range(of: "Here's"))
@@ -1482,7 +1484,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func shiftClickOnLinkDoesNotExtendSelection() async throws {
+    func shiftTapOnLinkDoesNotExtendSelection() async throws {
         let html = """
             <div id="div" style="font-size: 30px;">\(Self.text)</div>
             <a id="link" href="#" style="font-size: 30px; display: block;">WebKit Link</a>
@@ -1540,14 +1542,14 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func shiftClickAfterMidpointOfPDFSelectionAnchorsOnItsStart() async throws {
+    func shiftTapAfterMidpointOfPDFSelectionAnchorsOnItsStart() async throws {
         try await loadPDFAndSelectAll()
 
-        let clickPoint = screenBounds(ofPointInWindowCoordinates: Self.middleOfTHREEInPDF)
+        let tapPoint = screenBounds(ofPointInWindowCoordinates: Self.middleOfTHREEInPDF)
 
         await recap.play { composer in
             composer.holdingModifiers(.shift) {
-                composer.humanTap(at: clickPoint, for: .seconds(0.1))
+                composer.humanTap(at: tapPoint, for: .seconds(0.1))
             }
         }
 
@@ -1562,14 +1564,14 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func shiftClickBeforeMidpointOfPDFSelectionAnchorsOnItsEnd() async throws {
+    func shiftTapBeforeMidpointOfPDFSelectionAnchorsOnItsEnd() async throws {
         try await loadPDFAndSelectAll()
 
-        let clickPoint = screenBounds(ofPointInWindowCoordinates: Self.middleOfOneInPDF)
+        let tapPoint = screenBounds(ofPointInWindowCoordinates: Self.middleOfOneInPDF)
 
         await recap.play { composer in
             composer.holdingModifiers(.shift) {
-                composer.humanTap(at: clickPoint, for: .seconds(0.1))
+                composer.humanTap(at: tapPoint, for: .seconds(0.1))
             }
         }
 
@@ -1607,7 +1609,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: [true, false])
-    func clickingAndHoldingOnEmptyContentOpensContextMenu(contentEditable: Bool) async throws {
+    func touchAndHoldOnEmptyContentOpensContextMenu(contentEditable: Bool) async throws {
         try await loadHTML(contentEditable: contentEditable)
 
         let middleOfWindow = screenBounds(ofPointInWindowCoordinates: window.frame.center)
@@ -1630,7 +1632,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func pressAndHoldOnLinkOpensContextMenuWithoutReleasingClick() async throws {
+    func touchAndHoldOnLinkOpensContextMenuBeforeLifting() async throws {
         let html = """
             <a id="link" href="https://webkit.org" style="font-size: 30px; display: block;">WebKit Link</a>
             """
@@ -1661,7 +1663,7 @@ extension AppKitGesturesTests.Basic {
             "REGRESSION(313984@main): Long-press over non-editable text shows a context menu instead of selecting a word"
         )
     )
-    func longPressOverTextSelectsWordAndDoesNotOpenContextMenu() async throws {
+    func touchAndHoldOverTextSelectsWordAndDoesNotOpenContextMenu() async throws {
         try await loadHTML(contentEditable: false)
 
         let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
@@ -1688,14 +1690,14 @@ extension AppKitGesturesTests.Basic {
         .bug("https://webkit.org/b/330303", "Long press on PDF document does not produce word selection"),
         arguments: PDFPresentation.allCases
     )
-    func longPressOverPDFTextSelectsWordAndDoesNotOpenContextMenu(presentation: PDFPresentation) async throws {
+    func touchAndHoldOverPDFTextSelectsWordAndDoesNotOpenContextMenu(presentation: PDFPresentation) async throws {
         try await loadFindPDF(presentation)
 
-        let pressPoint = screenBounds(ofPointInWindowCoordinates: Self.middleOfOneInPDF)
+        let touchPoint = screenBounds(ofPointInWindowCoordinates: Self.middleOfOneInPDF)
 
         let presentedMenuItems = await withSwizzledContextMenu(waitingForMenu: false) {
             await recap.play { composer in
-                composer.humanTap(at: pressPoint, for: .seconds(1))
+                composer.humanTap(at: touchPoint, for: .seconds(1))
             }
 
             await page.waitForPendingMouseEvents()
@@ -1749,7 +1751,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: [false, true])
-    func controlClickOnWordSelectsWordAndOpensContextMenu(contentEditable: Bool) async throws {
+    func controlTapOnWordSelectsWordAndOpensContextMenu(contentEditable: Bool) async throws {
         try await loadHTML(contentEditable: contentEditable)
 
         let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
@@ -1777,7 +1779,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: [true, false])
-    func clickAndHoldOnVideoOpensContextMenu(controls: Bool) async throws {
+    func touchAndHoldOnVideoOpensContextMenu(controls: Bool) async throws {
         let baseURL = try #require(Bundle.testResources.resourceURL)
         let controlsMarkup = controls ? "controls" : ""
 
@@ -1800,7 +1802,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: [true, false])
-    func clickAndHoldOnUnselectableVideoPlayerOpensContextMenu(overlay: Bool) async throws {
+    func touchAndHoldOnUnselectableVideoPlayerOpensContextMenu(overlay: Bool) async throws {
         let baseURL = try #require(Bundle.testResources.resourceURL)
         let overlayMarkup = overlay ? "<div style='position: absolute; inset: 0'></div>" : ""
 
@@ -1826,7 +1828,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func clickAndHoldOnStandaloneImageOpensContextMenu() async throws {
+    func touchAndHoldOnStandaloneImageOpensContextMenu() async throws {
         let imageURL = try #require(Bundle.testResources.url(forResource: "400x400-green", withExtension: "png"))
         try await page.load(imageURL).wait()
 
@@ -1850,7 +1852,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: [true, false])
-    func clickAndHoldOnUnselectableImageOpensContextMenu(insideLink: Bool) async throws {
+    func touchAndHoldOnUnselectableImageOpensContextMenu(insideLink: Bool) async throws {
         let baseURL = try #require(Bundle.testResources.resourceURL)
         let image = #"<img id="image" src="400x400-green.png" style="display: block">"#
         let content = insideLink ? #"<a href="https://webkit.org">\#(image)</a>"# : image
@@ -1874,7 +1876,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: [false, true])
-    func clickAndHoldOnUnselectableContentDoesNotOpenContextMenu(insideLink: Bool) async throws {
+    func touchAndHoldOnUnselectableContentDoesNotOpenContextMenu(insideLink: Bool) async throws {
         let target =
             #"<div id="target" style="width: 100vw; height: 100vh; font-size: 30px; -webkit-user-select: none; user-select: none">Hello world</div>"#
         let content = insideLink ? #"<a href="https://webkit.org">\#(target)</a>"# : target
@@ -1908,18 +1910,18 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func clickingTwiceAtCaretInEditableContentOpensContextMenu() async throws {
+    func tappingTwiceAtCaretInEditableContentOpensContextMenu() async throws {
         try await loadHTML(contentEditable: true)
 
         let textBounds = try await screenBoundsOfText(Self.text)
         let pastEndOfText = CGPoint(x: textBounds.maxX + 10, y: textBounds.midY)
 
-        let contextMenuEventCount = try await contextMenuEventCountAfterClickingTwice(at: pastEndOfText)
+        let contextMenuEventCount = try await contextMenuEventCountAfterTappingTwice(at: pastEndOfText)
         #expect(contextMenuEventCount == 1)
     }
 
     @Test(arguments: [true, false])
-    func clickingTwiceAtCaretInNonEditableContentDoesNotOpenContextMenu(onButton: Bool) async throws {
+    func tappingTwiceAtCaretInNonEditableContentDoesNotOpenContextMenu(onButton: Bool) async throws {
         let html = """
             <div id="div" style="font-size: 30px;">\(Self.text)</div>
             <button id="button" style="font-size: 30px;">Reset</button>
@@ -1943,18 +1945,18 @@ extension AppKitGesturesTests.Basic {
         )
         try #require(wordSelection == expectedWordSelection)
 
-        let clickLocation: CGPoint
+        let tapLocation: CGPoint
         let expectedSelection: JavaScriptSelection
         if onButton {
-            clickLocation = try await screenBounds(ofElementWithID: "button").center
+            tapLocation = try await screenBounds(ofElementWithID: "button").center
             expectedSelection = .collapsed(.init(in: "button", at: "Reset".count))
         } else {
             let textBounds = try await screenBoundsOfText(Self.text)
-            clickLocation = CGPoint(x: textBounds.maxX + 10, y: textBounds.midY)
+            tapLocation = CGPoint(x: textBounds.maxX + 10, y: textBounds.midY)
             expectedSelection = .collapsed(.init(in: "div", at: Self.text.count))
         }
 
-        let contextMenuEventCount = try await contextMenuEventCountAfterClickingTwice(at: clickLocation)
+        let contextMenuEventCount = try await contextMenuEventCountAfterTappingTwice(at: tapLocation)
 
         let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
         #expect(newSelection == expectedSelection)
@@ -1962,13 +1964,13 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func clickingTwiceAtCaretInMisspelledWordOpensContextMenuWithSpellingItems() async throws {
+    func tappingTwiceAtCaretInMisspelledWordOpensContextMenuWithSpellingItems() async throws {
         try await loadHTML(contentEditable: true)
 
         let endOfCrazy = try await pointJustInsideEndOfText("crazy")
         let spellChecker = SpellCheckerStub(misspelledWord: "crazy", guesses: [])
 
-        let (caretSelection, menuItems) = try await contextMenuAfterClickingTwiceInMisspelledWord(
+        let (caretSelection, menuItems) = try await contextMenuAfterTappingTwiceInMisspelledWord(
             at: endOfCrazy,
             spellChecker: spellChecker
         )
@@ -1993,7 +1995,7 @@ extension AppKitGesturesTests.Basic {
         let endOfCrazy = try await pointJustInsideEndOfText("crazy")
         let spellChecker = SpellCheckerStub(misspelledWord: "crazy", guesses: [])
 
-        let (caretSelection, _) = try await contextMenuAfterClickingTwiceInMisspelledWord(
+        let (caretSelection, _) = try await contextMenuAfterTappingTwiceInMisspelledWord(
             at: endOfCrazy,
             spellChecker: spellChecker,
             choosingItemTitled: "Learn Spelling"
@@ -2012,7 +2014,7 @@ extension AppKitGesturesTests.Basic {
         let endOfCrazy = try await pointJustInsideEndOfText("crazy")
         let spellChecker = SpellCheckerStub(misspelledWord: "crazy", guesses: [])
 
-        let (caretSelection, _) = try await contextMenuAfterClickingTwiceInMisspelledWord(
+        let (caretSelection, _) = try await contextMenuAfterTappingTwiceInMisspelledWord(
             at: endOfCrazy,
             spellChecker: spellChecker,
             choosingItemTitled: "Learn Spelling",
@@ -2049,7 +2051,7 @@ extension AppKitGesturesTests.Basic {
         let endOfCrazy = try await pointJustInsideEndOfText("crazy")
         let spellChecker = SpellCheckerStub(misspelledWord: "crazy", guesses: ["crazier"])
 
-        _ = try await contextMenuAfterClickingTwiceInMisspelledWord(
+        _ = try await contextMenuAfterTappingTwiceInMisspelledWord(
             at: endOfCrazy,
             spellChecker: spellChecker,
             choosingItemTitled: "crazier"
@@ -2104,7 +2106,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: [true, false], [true, false])
-    func doubleClickingInWordSelectsWord(contentEditable: Bool, clickHandler: Bool) async throws {
+    func doubleTappingInWordSelectsWord(contentEditable: Bool, clickHandler: Bool) async throws {
         try await loadHTML(contentEditable: contentEditable, clickHandler: clickHandler)
 
         let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
@@ -2133,7 +2135,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: [false, true], [Duration.seconds(0.05), .seconds(0.15)])
-    func doubleClickingInWordInTextFieldSelectsWord(readOnly: Bool, secondClickDuration: Duration) async throws {
+    func doubleTappingInWordInTextFieldSelectsWord(readOnly: Bool, secondTapDuration: Duration) async throws {
         let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
 
         for attempt in 0..<3 {
@@ -2146,7 +2148,7 @@ extension AppKitGesturesTests.Basic {
             await recap.play { composer in
                 composer.humanTap(at: crazyBoundsInScreenCoordinates.center, for: .seconds(0.1))
                 composer.advanceTime(0.1)
-                composer.humanTap(at: crazyBoundsInScreenCoordinates.center, for: secondClickDuration)
+                composer.humanTap(at: crazyBoundsInScreenCoordinates.center, for: secondTapDuration)
             }
 
             await page.waitForPendingMouseEvents()
@@ -2163,13 +2165,13 @@ extension AppKitGesturesTests.Basic {
             #expect(start == crazyRange.lowerBound, "attempt \(attempt)")
             #expect(end == crazyRange.upperBound, "attempt \(attempt)")
 
-            // Keeps the next attempt's first click from continuing this attempt's click sequence.
+            // Keeps the next attempt's first tap from continuing this attempt's tap sequence.
             try await Task.sleep(for: .seconds(1))
         }
     }
 
     @Test()
-    func clickingEmptySpaceInTextAreaDismissesSelection() async throws {
+    func tappingEmptySpaceInTextAreaDismissesSelection() async throws {
         try await loadTextArea()
 
         let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
@@ -2209,19 +2211,19 @@ extension AppKitGesturesTests.Basic {
         .disabled("This test is flaky"),
         .bug("https://webkit.org/b/314804", "Triple click does not generate a line selection on PDF"),
     )
-    func tripleClickingInPDFSelectsLine() async throws {
+    func tripleTappingInPDFSelectsLine() async throws {
         let pdfURL = try #require(Bundle.testResources.url(forResource: "test", withExtension: "pdf"))
         try await page.load(pdfURL).wait()
         await page.waitForNextPresentationUpdate()
 
-        let clickPoint = screenBounds(ofPointInWindowCoordinates: .init(x: 100, y: 350))
+        let tapPoint = screenBounds(ofPointInWindowCoordinates: .init(x: 100, y: 350))
 
         await recap.play { composer in
-            composer.humanTap(at: clickPoint, for: .seconds(0.1))
+            composer.humanTap(at: tapPoint, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer.humanTap(at: clickPoint, for: .seconds(0.1))
+            composer.humanTap(at: tapPoint, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer.humanTap(at: clickPoint, for: .seconds(0.1))
+            composer.humanTap(at: tapPoint, for: .seconds(0.1))
         }
 
         await page.waitForPendingMouseEvents()
@@ -2232,7 +2234,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func clickingOnPDFHUDButtonPerformsAction() async throws {
+    func tappingPDFHUDButtonPerformsAction() async throws {
         let pdfURL = try #require(Bundle.testResources.url(forResource: "test", withExtension: "pdf"))
         try await page.load(pdfURL).wait()
         await page.waitForNextPresentationUpdate()
@@ -2255,12 +2257,12 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func clickingOnPDFShowsHUD() async throws {
+    func tappingPDFShowsHUD() async throws {
         let pdfURL = try #require(Bundle.testResources.url(forResource: "test", withExtension: "pdf"))
         try await page.load(pdfURL).wait()
         await page.waitForNextPresentationUpdate()
 
-        let clickPoint = screenBounds(ofPointInWindowCoordinates: .init(x: 100, y: 350))
+        let tapPoint = screenBounds(ofPointInWindowCoordinates: .init(x: 100, y: 350))
 
         let hud = try #require(page.pdfHUDs.first)
 
@@ -2276,7 +2278,7 @@ extension AppKitGesturesTests.Basic {
         #expect(visibleView.alphaValue == 0)
 
         await recap.play { composer in
-            composer.humanTap(at: clickPoint, for: .seconds(0.1))
+            composer.humanTap(at: tapPoint, for: .seconds(0.1))
             composer.advanceTime(0.1)
         }
 
@@ -2285,7 +2287,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: [0.1, 0.5, 0.9])
-    func clickingInWordChangesSelection(fractionOfWordToClick: Double) async throws {
+    func tappingInWordChangesSelection(fractionOfWordToTap: Double) async throws {
         try await loadHTML(contentEditable: true)
 
         let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
@@ -2293,7 +2295,7 @@ extension AppKitGesturesTests.Basic {
         let crazyBoundsInScreenCoordinates = try await screenBoundsOfText("crazy")
 
         let point = CGPoint(
-            x: crazyBoundsInScreenCoordinates.origin.x + (crazyBoundsInScreenCoordinates.size.width * fractionOfWordToClick),
+            x: crazyBoundsInScreenCoordinates.origin.x + (crazyBoundsInScreenCoordinates.size.width * fractionOfWordToTap),
             y: crazyBoundsInScreenCoordinates.midY
         )
 
@@ -2308,14 +2310,14 @@ extension AppKitGesturesTests.Basic {
         await page.waitForNextPresentationUpdate()
 
         // This is a rough approximation of the heuristic the implementation uses.
-        let offset = fractionOfWordToClick < 0.2 ? crazyRange.lowerBound : crazyRange.upperBound
+        let offset = fractionOfWordToTap < 0.2 ? crazyRange.lowerBound : crazyRange.upperBound
 
         let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
         #expect(newSelection == .collapsed(.init(in: "div", at: offset)))
     }
 
     @Test
-    func clickingChangesSelection() async throws {
+    func mouseClickChangesSelection() async throws {
         try await loadHTML(contentEditable: true)
 
         let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
@@ -2358,7 +2360,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: [Duration.seconds(0.1), .seconds(0.5), .seconds(1.0)])
-    func scrollingOnScrollBarChangesScrollPosition(tapAndWait: Duration) async throws {
+    func scrollingOnScrollBarChangesScrollPosition(holdDuration: Duration) async throws {
         let html = """
             <body style="width: 100%; height: 2000px; margin: 0; background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);">
             </body>
@@ -2371,7 +2373,7 @@ extension AppKitGesturesTests.Basic {
         let end = CGPoint(x: start.x, y: start.y + 200)
 
         await recap.play { composer in
-            composer.drag(withStart: start, end: end, duration: .seconds(0.5), tapAndWait: tapAndWait)
+            composer.drag(withStart: start, end: end, duration: .seconds(0.5), tapAndWait: holdDuration)
         }
 
         try await Task.sleep(for: .seconds(1))
@@ -2436,7 +2438,7 @@ extension AppKitGesturesTests.Basic {
         .bug("https://webkit.org/b/325063", "Cannot drag subscroller scrollbars"),
         arguments: [Duration.seconds(0.1), .seconds(0.5), .seconds(1.0)]
     )
-    func scrollingOnSubscrollerScrollBarChangesScrollPosition(tapAndWait: Duration) async throws {
+    func scrollingOnSubscrollerScrollBarChangesScrollPosition(holdDuration: Duration) async throws {
         try await loadPageWithSubscroller()
 
         let scrollerBounds = try await screenBounds(ofElementWithID: "scroller")
@@ -2444,7 +2446,7 @@ extension AppKitGesturesTests.Basic {
         let end = CGPoint(x: start.x, y: start.y + 100)
 
         await recap.play { composer in
-            composer.drag(withStart: start, end: end, duration: .seconds(0.5), tapAndWait: tapAndWait)
+            composer.drag(withStart: start, end: end, duration: .seconds(0.5), tapAndWait: holdDuration)
         }
 
         try await Task.sleep(for: .seconds(1))
@@ -2537,7 +2539,7 @@ extension AppKitGesturesTests.Basic {
 
         await page.waitForNextPresentationUpdate()
 
-        let automationLocation = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+        let touchLocation = screenBounds(ofPointInWindowCoordinates: window.frame.center)
         let trackpadLocation = window.frame.center
 
         func expectCoefficient(_ expected: CGFloat, _ message: Comment) {
@@ -2553,11 +2555,11 @@ extension AppKitGesturesTests.Basic {
 
         expectCoefficient(NSScrollingBehaviorHyperbolicCoefficientTrackpad, "after initial trackpad scroll")
 
-        // 2. Automation scroll.
+        // 2. Touch scroll.
         await recap.play { composer in
             composer.flick(
-                withStart: automationLocation,
-                end: CGPoint(x: automationLocation.x, y: automationLocation.y + 200),
+                withStart: touchLocation,
+                end: CGPoint(x: touchLocation.x, y: touchLocation.y + 200),
                 duration: .seconds(0.5)
             )
         }
@@ -2565,7 +2567,7 @@ extension AppKitGesturesTests.Basic {
         // End the scroll by programatically scrolling back to 0,0.
         try await page.callJavaScript { "window.scrollTo(0, 0);" }
 
-        expectCoefficient(NSScrollingBehaviorHyperbolicCoefficientTouch, "after automated scroll")
+        expectCoefficient(NSScrollingBehaviorHyperbolicCoefficientTouch, "after touch scroll")
 
         // 3. Trackpad scroll again.
         page.scrollWheel(at: trackpadLocation, delta: CGSize(width: 0, height: 600))
@@ -2593,7 +2595,7 @@ extension AppKitGesturesTests.Basic {
         let flickStart = screenBounds(ofPointInWindowCoordinates: window.frame.center)
         let flickEnd = CGPoint(x: flickStart.x, y: flickStart.y - 200)
 
-        let clickLocation = screenBounds(
+        let tapLocation = screenBounds(
             ofPointInWindowCoordinates: CGPoint(x: window.frame.width / 4, y: window.frame.height / 4)
         )
 
@@ -2602,7 +2604,7 @@ extension AppKitGesturesTests.Basic {
         await recap.play { composer in
             composer.flick(withStart: flickStart, end: flickEnd, duration: .seconds(0.1))
             composer.advanceTime(0.05)
-            composer.humanTap(at: clickLocation, for: .seconds(0.05))
+            composer.humanTap(at: tapLocation, for: .seconds(0.05))
         }
 
         await page.waitForPendingMouseEvents()
@@ -2615,7 +2617,7 @@ extension AppKitGesturesTests.Basic {
     @Test(
         .bug("https://webkit.org/b/324117", "Scrolling, then interrupting, sometimes follows the link below the mouse")
     )
-    func clickingAfterDeceleratingScrollSettlesFollowsLink() async throws {
+    func tappingAfterDeceleratingScrollSettlesFollowsLink() async throws {
         let html = """
             <a id="link" href="about:blank"
                style="display: block; width: 100%; height: 5000px;
@@ -2697,7 +2699,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: [true, false])
-    func clickThenDragSelectsTextUnlessItInterruptsDeceleratingScroll(interruptsScroll: Bool) async throws {
+    func holdAndDragSelectsTextUnlessItInterruptsDeceleratingScroll(interruptsScroll: Bool) async throws {
         let text = String(repeating: "\(Self.text) ", count: 2000)
         let html = """
             <div id="div" style="font-size: 30px; line-height: 1;">\(text)</div>
@@ -2730,25 +2732,25 @@ extension AppKitGesturesTests.Basic {
 
         if interruptsScroll {
             if case .range = selection {
-                Issue.record("expected click interrupting a decelerating scroll to not select text, got \(selection)")
+                Issue.record("expected a hold-and-drag interrupting a decelerating scroll to not select text, got \(selection)")
             }
         } else {
             guard case .range = selection else {
-                Issue.record("expected click to select text, got \(selection)")
+                Issue.record("expected a hold-and-drag to select text, got \(selection)")
                 return
             }
         }
     }
 
     @Test
-    func clickAfterScrollStillProducesClick() async throws {
+    func tapAfterScrollStillProducesClick() async throws {
         let html = """
             <body style="margin: 0;">
                 <div id="content"
                      onclick="window.clicks = (window.clicks || 0) + 1;"
                      style="height: 4000px; font-size: 30px;
                             background: repeating-linear-gradient(to bottom, #eee 0 40px, #fff 40px 80px);">
-                    scroll, then click
+                    scroll, then tap
                 </div>
             </body>
             """
@@ -2787,7 +2789,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func clickingOnSelectControlsKeepsMenuOpen() async throws {
+    func tappingSelectControlsKeepsMenuOpen() async throws {
         let html = """
             <select name="pets" id="select">
                 <option value="">--Please choose an option--</option>
@@ -2840,7 +2842,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func clickingOtherContentDismissesDataListDropdown() async throws {
+    func tappingOtherContentDismissesDataListDropdown() async throws {
         let html = """
             <div id="other" style="height: 200px; font-size: 30px;">other content</div>
             <input id="input" list="pets" style="font-size: 30px;">
@@ -2896,10 +2898,10 @@ extension AppKitGesturesTests.Basic {
         #expect(blurCount == 1)
     }
 
-    // MARK: - Drag Press Disambiguation Tests
+    // MARK: - Drag Disambiguation Tests
 
     @Test(arguments: [true, false])
-    func pressDragOverRangeInputChangesInputValue(useNativeWidget: Bool) async throws {
+    func holdAndDragOverRangeInputChangesInputValue(useNativeWidget: Bool) async throws {
         let maximumValue = 10
         let initialValue = maximumValue / 2
 
@@ -2922,7 +2924,7 @@ extension AppKitGesturesTests.Basic {
         arguments: [false, true],
         ["pan-y", "pan-y pinch-zoom"]
     )
-    func pressDragOverStyledRangeInputChangesInputValue(useNativeWidget: Bool, styleValue: String) async throws {
+    func holdAndDragOverStyledRangeInputChangesInputValue(useNativeWidget: Bool, styleValue: String) async throws {
         let maximumValue = 10
         let initialValue = maximumValue / 2
         let elementID = useNativeWidget ? "native-slider" : "custom-slider"
@@ -2959,13 +2961,13 @@ extension AppKitGesturesTests.Basic {
             """
         }
 
-        // A drag held back until release would jump straight from the initial value to the last one.
+        // A drag whose updates are held back until the touch lifts would jump straight from the initial value to the last one.
         #expect(eventLog == (initialValue...maximumValue).map(Double.init))
     }
 
     @Test(arguments: [true, false])
-    func pressAndHoldBeforeDraggingOverSliderDoesNotOpenContextMenu(useNativeWidget: Bool) async throws {
-        let elementID = try await dragAcrossSlider(useNativeWidget: useNativeWidget, tapAndWait: .seconds(1))
+    func touchAndHoldBeforeDraggingOverSliderDoesNotOpenContextMenu(useNativeWidget: Bool) async throws {
+        let elementID = try await dragAcrossSlider(useNativeWidget: useNativeWidget, holdDuration: .seconds(1))
 
         let contextMenuEventCount = try await page.callJavaScript(returning: Int.self) {
             "return window.contextMenuEventCount;"
@@ -2983,7 +2985,7 @@ extension AppKitGesturesTests.Basic {
         .bug("https://webkit.org/b/323157", "wikimedia.org: Cannot press-and-drag over media player controls"),
         arguments: [true, false]
     )
-    func pressDragOverRangeInputReportsHeldButton(useNativeWidget: Bool) async throws {
+    func holdAndDragOverRangeInputReportsHeldButton(useNativeWidget: Bool) async throws {
         try await dragAcrossSlider(useNativeWidget: useNativeWidget)
         let buttonsLog = try await page.callJavaScript(returning: [String].self) {
             """
@@ -2999,7 +3001,7 @@ extension AppKitGesturesTests.Basic {
         .bug("https://webkit.org/b/324696", "Synthesized mouse events always report zero movementX|Y"),
         arguments: [true, false]
     )
-    func pressDragOverRangeInputReportsMovement(useNativeWidget: Bool) async throws {
+    func holdAndDragOverRangeInputReportsMovement(useNativeWidget: Bool) async throws {
         try await dragAcrossSlider(useNativeWidget: useNativeWidget, verticalTravelFraction: 0.4)
 
         let (travelX, travelY) = try await page.callJavaScript(
@@ -3024,7 +3026,7 @@ extension AppKitGesturesTests.Basic {
         .bug("https://webkit.org/b/324040", "Cannot press and drag over some custom sliders"),
         arguments: SVGSliderVariant.dragCases
     )
-    func pressDragOverSVGSliderChangesValue(
+    func dragOverSVGSliderChangesValue(
         variant: SVGSliderVariant,
         isStyleAdjusted: Bool,
         dragStart: SVGSliderDragStart
@@ -3161,11 +3163,11 @@ extension AppKitGesturesTests.Basic {
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        let transformAfterClick = try await page.callJavaScript(returning: String.self) { "return window.zoomImageTransform();" }
-        try #require(!transformAfterClick.isEmpty)
+        let transformAfterTap = try await page.callJavaScript(returning: String.self) { "return window.zoomImageTransform();" }
+        try #require(!transformAfterTap.isEmpty)
 
-        let clickEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
-        #expect(!clickEvents.contains("click"))
+        let tapEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        #expect(!tapEvents.contains("click"))
 
         try await Task.sleep(for: .seconds(1))
         try await page.callJavaScript { "window.pageEvents = [];" }
@@ -3187,7 +3189,7 @@ extension AppKitGesturesTests.Basic {
 
         #expect(Set(events) == ["mousemove", "pointermove"])
         #expect(!transformAfterDrag.isEmpty)
-        #expect(transformAfterDrag != transformAfterClick)
+        #expect(transformAfterDrag != transformAfterTap)
         #expect(trackOffset == 0)
         #expect(scroll == .zero)
 
@@ -3202,12 +3204,12 @@ extension AppKitGesturesTests.Basic {
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        let secondClickEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
-        let transformAfterSecondClick = try await page.callJavaScript(returning: String.self) { "return window.zoomImageTransform();" }
+        let secondTapEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        let transformAfterSecondTap = try await page.callJavaScript(returning: String.self) { "return window.zoomImageTransform();" }
 
-        #expect(secondClickEvents.contains("click"))
-        #expect(secondClickEvents.contains("pointerdown-with-buttons"))
-        #expect(!transformAfterSecondClick.isEmpty)
+        #expect(secondTapEvents.contains("click"))
+        #expect(secondTapEvents.contains("pointerdown-with-buttons"))
+        #expect(!transformAfterSecondTap.isEmpty)
 
         try await Task.sleep(for: .seconds(1))
         try await page.callJavaScript { "window.pageEvents = [];" }
@@ -3226,12 +3228,12 @@ extension AppKitGesturesTests.Basic {
         let transformAfterSecondDrag = try await page.callJavaScript(returning: String.self) { "return window.zoomImageTransform();" }
 
         #expect(Set(secondEvents) == ["mousemove", "pointermove"])
-        #expect(transformAfterSecondDrag != transformAfterSecondClick)
+        #expect(transformAfterSecondDrag != transformAfterSecondTap)
         #expect(try await settledScrollPosition() == .zero)
     }
 
     @Test(arguments: [true, false])
-    func scrollAfterClickThatZoomsImageInPlacePansZoom(clickZoomsImage: Bool) async throws {
+    func scrollAfterTapThatZoomsImageInPlacePansZoom(tapZoomsImage: Bool) async throws {
         let baseURL = try #require(Bundle.testResources.resourceURL)
         let html = """
             <style>
@@ -3242,7 +3244,7 @@ extension AppKitGesturesTests.Basic {
             <body style="margin: 0; height: 4000px;">
                 <div id="wrapper"><img id="photo" src="400x400-green.png"></div>
                 <script>
-                    const zoomsImage = \(clickZoomsImage);
+                    const zoomsImage = \(tapZoomsImage);
                     const wrapper = document.getElementById("wrapper");
                     const photo = document.getElementById("photo");
                     window.pageEvents = [];
@@ -3278,8 +3280,8 @@ extension AppKitGesturesTests.Basic {
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        let clickEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
-        try #require(clickEvents.contains("click"))
+        let tapEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        try #require(tapEvents.contains("click"))
 
         try await Task.sleep(for: .seconds(1))
         try await page.callJavaScript { "window.pageEvents = [];" }
@@ -3299,7 +3301,7 @@ extension AppKitGesturesTests.Basic {
         let zoomStateAfterDrag = try await page.callJavaScript(returning: String.self) { "return window.zoomState();" }
         let scroll = try await settledScrollPosition()
 
-        if clickZoomsImage {
+        if tapZoomsImage {
             #expect(Set(events) == ["mousemove", "pointermove"])
             #expect(zoomStateAfterDrag != "closed")
             #expect(zoomStateAfterDrag != zoomStateBeforeDrag)
@@ -3314,7 +3316,7 @@ extension AppKitGesturesTests.Basic {
         .bug("https://webkit.org/b/325570", "Dragging over a zoomed product image scrolls the page instead of panning the image"),
         arguments: [true, false]
     )
-    func scrollAwayFromHoverZoomOpenedByClickScrollsPage(clickElsewhereFirst: Bool) async throws {
+    func scrollAwayFromHoverZoomOpenedByTapScrollsPage(tapElsewhereFirst: Bool) async throws {
         let html = """
             <body style="margin: 0; height: 4000px;">
                 <div id="source" style="position: absolute; left: 100px; top: 100px; width: 300px; height: 300px; background: linear-gradient(red, blue);"></div>
@@ -3358,11 +3360,11 @@ extension AppKitGesturesTests.Basic {
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        let clickEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
-        try #require(!clickEvents.contains("click"))
+        let tapEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        try #require(!tapEvents.contains("click"))
 
         let start: CGPoint
-        if clickElsewhereFirst {
+        if tapElsewhereFirst {
             try await Task.sleep(for: .seconds(1))
             await recap.play { composer in
                 composer.humanTap(at: other.center, for: .seconds(0.05))
@@ -3370,8 +3372,8 @@ extension AppKitGesturesTests.Basic {
             await page.waitForPendingMouseEvents()
             await page.waitForNextPresentationUpdate()
 
-            let otherClickEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
-            try #require(otherClickEvents.contains("click"))
+            let otherTapEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+            try #require(otherTapEvents.contains("click"))
             start = source.center
         } else {
             start = other.center
@@ -3399,7 +3401,7 @@ extension AppKitGesturesTests.Basic {
         .bug("https://webkit.org/b/325570", "Dragging over a zoomed product image scrolls the page instead of panning the image"),
         arguments: [true, false]
     )
-    func clickAndDragInsideHoverZoomOpenedByClick(pointerTracking: Bool) async throws {
+    func dragInsideHoverZoomOpenedByTapPansZoom(pointerTracking: Bool) async throws {
         page.setWebFeature("UseAppKitGesturesForPointerEvents", enabled: pointerTracking)
 
         let html = """
@@ -3444,8 +3446,8 @@ extension AppKitGesturesTests.Basic {
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        let firstClickEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
-        try #require(!firstClickEvents.contains("click"))
+        let firstTapEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        try #require(!firstTapEvents.contains("click"))
 
         func dragInsideSource(from start: CGPoint) async throws -> [String] {
             try await Task.sleep(for: .seconds(1))
@@ -3473,24 +3475,24 @@ extension AppKitGesturesTests.Basic {
         #expect(transformAfterDrag != transformBeforeDrag)
         #expect(try await settledScrollPosition() == .zero)
 
-        let secondClickLocation = CGPoint(x: bounds.minX + bounds.width * 0.75, y: bounds.minY + bounds.height * 0.75)
+        let secondTapLocation = CGPoint(x: bounds.minX + bounds.width * 0.75, y: bounds.minY + bounds.height * 0.75)
 
         try await Task.sleep(for: .seconds(1))
         try await page.callJavaScript { "window.pageEvents = [];" }
 
         await recap.play { composer in
-            composer.humanTap(at: secondClickLocation, for: .seconds(0.05))
+            composer.humanTap(at: secondTapLocation, for: .seconds(0.05))
         }
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        let secondClickEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
-        #expect(secondClickEvents.contains("click"))
-        #expect(secondClickEvents.contains("pointerdown-with-buttons"))
-        #expect(secondClickEvents.contains("pointerup"))
-        #expect(!secondClickEvents.contains("pointercancel"))
+        let secondTapEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        #expect(secondTapEvents.contains("click"))
+        #expect(secondTapEvents.contains("pointerdown-with-buttons"))
+        #expect(secondTapEvents.contains("pointerup"))
+        #expect(!secondTapEvents.contains("pointercancel"))
 
-        let secondDragEvents = try await dragInsideSource(from: secondClickLocation)
+        let secondDragEvents = try await dragInsideSource(from: secondTapLocation)
 
         #expect(Set(secondDragEvents) == ["mousemove", "pointermove"])
         #expect(try await settledScrollPosition() == .zero)
@@ -3498,9 +3500,9 @@ extension AppKitGesturesTests.Basic {
 
     @Test(
         .bug("https://webkit.org/b/325570", "Dragging over a zoomed product image scrolls the page instead of panning the image"),
-        arguments: HoverOpenedByClickScrollTarget.allCases
+        arguments: HoverOpenedByTapScrollTarget.allCases
     )
-    func scrollOverHoverOpenedByClickScrollsWhenItIsNotAZoom(target: HoverOpenedByClickScrollTarget) async throws {
+    func scrollOverHoverOpenedByTapScrollsWhenItIsNotAZoom(target: HoverOpenedByTapScrollTarget) async throws {
         let html: String
         switch target {
         case .scrollerInMenu:
@@ -3545,10 +3547,10 @@ extension AppKitGesturesTests.Basic {
         await page.waitForNextPresentationUpdate()
 
         let triggerBounds = try await screenBounds(ofElementWithID: "trigger")
-        let clickLocation = CGPoint(x: triggerBounds.minX + 50, y: triggerBounds.minY + 20)
+        let tapLocation = CGPoint(x: triggerBounds.minX + 50, y: triggerBounds.minY + 20)
 
         await recap.play { composer in
-            composer.humanTap(at: clickLocation, for: .seconds(0.05))
+            composer.humanTap(at: tapLocation, for: .seconds(0.05))
         }
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
@@ -3581,7 +3583,7 @@ extension AppKitGesturesTests.Basic {
         .bug("https://webkit.org/b/324408", "A mouse drag starting just off a thin range input slider track does not move it"),
         arguments: ThinSliderDragStart.allCases
     )
-    func mouseDragOverThinRangeInputChangesValue(dragStart: ThinSliderDragStart) async throws {
+    func dragOverThinRangeInputChangesValue(dragStart: ThinSliderDragStart) async throws {
         let html = """
             <style>
                 input[type=range] {
@@ -3635,7 +3637,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: CustomScrubberSliderPlacement.allCases)
-    func mouseDragOverCustomVideoScrubberDoesNotScroll(sliderPlacement: CustomScrubberSliderPlacement) async throws {
+    func dragOverCustomVideoScrubberDoesNotScroll(sliderPlacement: CustomScrubberSliderPlacement) async throws {
         let baseURL = try #require(Bundle.testResources.resourceURL)
 
         // Mirrors players which draw the scrubber with plain elements, handle it with mouse events
@@ -3695,7 +3697,7 @@ extension AppKitGesturesTests.Basic {
         .bug("https://webkit.org/b/323383", "<model> element in orbit stage mode does not rotate on press drag"),
         arguments: [false, true]
     )
-    func pressDragOverOrbitModelCausesRotation(adjustStyle: Bool) async throws {
+    func dragOverOrbitModelCausesRotation(adjustStyle: Bool) async throws {
         let modelHTML = try #require(Bundle.testResources.url(forResource: "orbit-model-page", withExtension: "html"))
         try await page.load(modelHTML).wait()
         try await waitForModelReady()
@@ -3733,7 +3735,7 @@ extension AppKitGesturesTests.Basic {
         .bug("rdar://176317069", "REGRESSION(312023@main): Text cannot be selected with press + drag gesture"),
         arguments: [true, false]
     )
-    func pressDragOverTextCreatesSelection(contentEditable: Bool) async throws {
+    func holdAndDragOverTextCreatesSelection(contentEditable: Bool) async throws {
         try await loadHTML(contentEditable: contentEditable)
 
         let toBounds = try await screenBoundsOfText("to")
@@ -3760,14 +3762,14 @@ extension AppKitGesturesTests.Basic {
             // than creating a range selection. Verify the caret moved away
             // from the offset 0 we set above.
             guard case .collapsed(let position) = selection else {
-                Issue.record("expected press-drag to leave a collapsed selection (caret) in editable text, got \(selection)")
+                Issue.record("expected a hold-and-drag to leave a collapsed selection (caret) in editable text, got \(selection)")
                 return
             }
             #expect(position.container == "div")
             #expect(position.offset > 0)
         } else {
             guard case .range = selection else {
-                Issue.record("expected press-drag to create a range selection in non-editable text, got \(selection)")
+                Issue.record("expected a hold-and-drag to create a range selection in non-editable text, got \(selection)")
                 return
             }
         }
@@ -3776,7 +3778,7 @@ extension AppKitGesturesTests.Basic {
     @Test(
         .bug("rdar://176317069", "REGRESSION(312023@main): Text cannot be selected with press + drag gesture")
     )
-    func pressDragOnLinkInitiatesDragAndDrop() async throws {
+    func holdAndDragOnLinkInitiatesDragAndDrop() async throws {
         let html = """
             <a id="link" href="https://webkit.org" style="font-size: 30px; display: block;">WebKit Link</a>
             """
@@ -3810,7 +3812,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func pressDragOnLinkInitiatesDragAndDropWhenContextMenuIsPrevented() async throws {
+    func holdAndDragOnLinkInitiatesDragAndDropWhenContextMenuIsPrevented() async throws {
         let html = """
             <a id="link" href="https://webkit.org" style="font-size: 30px; display: block;">WebKit Link</a>
             <script>
@@ -3839,7 +3841,7 @@ extension AppKitGesturesTests.Basic {
     @Test(
         .bug("https://webkit.org/b/324696", "Synthesized mouse events always report zero movementX|Y")
     )
-    func pressDragOnImageReportsMovement() async throws {
+    func holdAndDragOnImageReportsMovement() async throws {
         let baseURL = try #require(Bundle.testResources.resourceURL)
         let html = """
             <img id="img" src="400x400-green.png" style="display: block; margin: 50px;">
@@ -3933,7 +3935,7 @@ extension AppKitGesturesTests.Basic {
     @Test(
         .bug("https://webkit.org/b/315155", "Gesture-driven drag-and-drop does not recognize <img> elements")
     )
-    func pressDragOnImageInitiatesDragAndDrop() async throws {
+    func holdAndDragOnImageInitiatesDragAndDrop() async throws {
         let baseURL = try #require(Bundle.testResources.resourceURL)
         let html = """
             <img id="img" src="400x400-green.png" style="display: block; margin: 50px;">
@@ -3962,7 +3964,7 @@ extension AppKitGesturesTests.Basic {
     @Test(
         .bug("rdar://176317069", "REGRESSION(312023@main): Text cannot be selected with press + drag gesture")
     )
-    func pressDragOnExistingSelectionDoesNotExtendSelection() async throws {
+    func holdAndDragOnExistingSelectionDoesNotExtendSelection() async throws {
         let originalText = exchange(&Self.text, with: "This is an extra long sentence; here's to the crazy ones.")
         defer { Self.text = originalText }
 
@@ -4057,7 +4059,7 @@ extension AppKitGesturesTests.Basic {
         .bug("https://webkit.org/b/319256", "Trackpad swiping between spaces should not trigger back navigation"),
         arguments: [false, true]
     )
-    func swipingBetweenSpacesShouldNotTriggerBackNavigation(gesturesForGestureEvents: Bool) async throws {
+    func twoFingerHorizontalSwipeDoesNotTriggerBackNavigation(gesturesForGestureEvents: Bool) async throws {
         page.setWebFeature("UseAppKitGesturesForGestureEvents", enabled: gesturesForGestureEvents)
 
         // Establish a back-forward history entry so that a "swipe back" gesture would have somewhere to navigate to.
@@ -4127,7 +4129,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(arguments: [Duration.zero, .seconds(1)])
-    func longPressAndDragOnImageSelectsEntireText(delay: Duration) async throws {
+    func holdAndDragOnImageSelectsEntireText(delay: Duration) async throws {
         let baseURL = try #require(Bundle.testResources.resourceURL)
         let html = """
             <img id="img" src="love-and-coffee.jpeg" style="display: block; height: 100vh; margin: 0">
@@ -4164,7 +4166,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func pressDragOnImageWithoutTextInitiatesDragAndDrop() async throws {
+    func holdAndDragOnImageWithoutTextInitiatesDragAndDrop() async throws {
         let baseURL = try #require(Bundle.testResources.resourceURL)
         let html = """
             <img id="img" src="400x400-green.png" style="display: block; height: 100vh; margin: 0">
@@ -4195,7 +4197,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func clickThatMovesBeforeImageAnalysisBeginsInitiatesDragAndDropWhileHeld() async throws {
+    func touchThatMovesBeforeImageAnalysisBeginsInitiatesDragAndDropWhileHeld() async throws {
         let baseURL = try #require(Bundle.testResources.resourceURL)
         let html = """
             <img id="img" src="400x400-green.png" style="display: block; height: 100vh; margin: 0; touch-action: none;">
@@ -4208,7 +4210,7 @@ extension AppKitGesturesTests.Basic {
         await page.waitForNextPresentationUpdate()
 
         let start = imageScreenBounds.center
-        // Any movement before the click settles for 0.1s fails the image analysis gesture, so no analysis runs.
+        // Any movement before the touch settles for 0.1s fails the image analysis gesture, so no analysis runs.
         let nudged = CGPoint(x: start.x, y: start.y + 3)
         let dragEnd = CGPoint(x: start.x, y: imageScreenBounds.midY + 200)
 
@@ -4217,7 +4219,7 @@ extension AppKitGesturesTests.Basic {
         await withMockedImageAnalyzer(response: .success(.init(lines: [])), after: .zero) {
             gestureStateAtDragStart = await withSwizzledDraggingSession {
                 await recap.play { composer in
-                    // Click and hold past the drag gesture's minimum duration, then drag.
+                    // Touch and hold past the drag gesture's minimum duration, then drag.
                     composer.drag(
                         withStart: start,
                         end: dragEnd,
@@ -4234,7 +4236,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
-    func clickingAfterImageInEditableContentPlacesCaretAfterImage() async throws {
+    func tappingAfterImageInEditableContentPlacesCaretAfterImage() async throws {
         let html = """
             <body style="margin: 0">
             <div id="editor" contenteditable style="font-size: 30px; padding: 20px;"><img id="img" src="400x400-green.png" style="width: 150px; height: 100px;"></div>
@@ -4267,7 +4269,7 @@ extension AppKitGesturesTests.Basic {
         arguments: [false, true],
         [false, true]
     )
-    func singleClickOverAttachmentSelectsTheWholeAttachment(contentEditable: Bool, wideLayout: Bool) async throws {
+    func singleTapOverAttachmentSelectsTheWholeAttachment(contentEditable: Bool, wideLayout: Bool) async throws {
         page.setWebFeature("AttachmentElementEnabled", enabled: true)
         page.setWebFeature("AttachmentWideLayoutEnabled", enabled: wideLayout)
 
@@ -4577,7 +4579,7 @@ extension AppKitGesturesTests.Basic {
     @Test(
         .bug("https://webkit.org/b/321650", "Certain diagonal scrolls should be able to bypass directional locking")
     )
-    func diagonallySwipingBetweenSpacesScrollsBothAxes() async throws {
+    func diagonalTwoFingerSwipeScrollsBothAxes() async throws {
         page.setWebFeature("UseAppKitGesturesForGestureEvents", enabled: true)
 
         try await loadScrollableGrid()
@@ -4686,7 +4688,7 @@ extension AppKitGesturesTests.Basic {
     @Test
     func scrollEndingOnHoverTargetDoesNotActivateIt() async throws {
         try await loadFixedHoverBar(installWheelListener: true)
-        try await establishElementUnderMouse(byClickingElementWithID: "anchor")
+        try await establishElementUnderMouse(byTappingElementWithID: "anchor")
 
         let barBounds = try await screenBounds(ofElementWithID: "bar")
         let start = screenBounds(ofPointInWindowCoordinates: CGPoint(x: window.frame.midX, y: 40))
@@ -4702,7 +4704,7 @@ extension AppKitGesturesTests.Basic {
     @Test
     func scrollBeginningOnHoverTargetDoesNotActivateIt() async throws {
         try await loadFixedHoverBar(installWheelListener: false)
-        try await establishElementUnderMouse(byClickingElementWithID: "anchor")
+        try await establishElementUnderMouse(byTappingElementWithID: "anchor")
 
         let barBounds = try await screenBounds(ofElementWithID: "bar")
         let end = screenBounds(ofPointInWindowCoordinates: CGPoint(x: window.frame.midX, y: 560))
@@ -4710,7 +4712,7 @@ extension AppKitGesturesTests.Basic {
         try await observeBoundaryEvents(onElementWithID: "bar")
         try await performScroll(from: barBounds.center, to: end)
 
-        // The press that begins the scroll is reported to the bar, and canceled once it scrolls, so the bar sees the
+        // The touch that begins the scroll is reported to the bar, and canceled once it scrolls, so the bar sees the
         // pointer come and go. The mouse's hover state must not follow it there.
         let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
         #expect(actual.map(\.type) == [.pointerover, .pointerout])
@@ -4770,9 +4772,11 @@ private struct PresentedMenuItem: Sendable, Equatable {
     let isEnabled: Bool
 }
 
-/// Captures the items of the context menu that `body` presents instead of showing it. Then runs `whileMenuIsOpen`,
-/// and chooses the item titled `itemTitle`, if any, as if it were picked from the menu. When `waitingForMenu` is false,
-/// only a menu that `body` has presented by the time it returns is captured, and no items are returned if there is none.
+/// Captures the items of the context menu that `body` presents instead of showing it.
+///
+/// Then runs `whileMenuIsOpen`, and chooses the item titled `itemTitle`, if any, as if it were picked from the menu.
+/// When `waitingForMenu` is false, only a menu that `body` has presented by the time it returns is captured, and no
+/// items are returned if there is none.
 @discardableResult
 nonisolated(nonsending) private func withSwizzledContextMenu(
     waitingForMenu: Bool = true,
@@ -4944,12 +4948,12 @@ extension CGPoint {
     }
 }
 
-extension AppKitGesturesTests.Basic {
+extension MacTouchSupportTests.Basic {
     @discardableResult
     private func dragAcrossSlider(
         useNativeWidget: Bool,
         verticalTravelFraction: Double = 0,
-        tapAndWait: Duration = .seconds(0.5)
+        holdDuration: Duration = .seconds(0.5)
     ) async throws -> String {
         let elementID = useNativeWidget ? "native-slider" : "custom-slider"
 
@@ -4980,7 +4984,7 @@ extension AppKitGesturesTests.Basic {
         )
 
         await recap.play { composer in
-            composer.drag(withStart: start, end: end, duration: .seconds(1.5), tapAndWait: tapAndWait)
+            composer.drag(withStart: start, end: end, duration: .seconds(1.5), tapAndWait: holdDuration)
         }
 
         await page.waitForNextPresentationUpdate()
@@ -5003,7 +5007,7 @@ extension AppKitGesturesTests.Basic {
         }
     }
 
-    private func contextMenuEventCountAfterClickingTwice(at point: CGPoint) async throws -> Int {
+    private func contextMenuEventCountAfterTappingTwice(at point: CGPoint) async throws -> Int {
         try await page.callJavaScript {
             """
             window.contextMenuEventCount = 0;
@@ -5020,7 +5024,7 @@ extension AppKitGesturesTests.Basic {
             composer.humanTap(at: point, for: .seconds(0.05))
         }
 
-        // A click at the caret presents the context menu only once a double click is no longer possible.
+        // A tap at the caret presents the context menu only once a double tap is no longer possible.
         try await Task.sleep(for: .seconds(1))
 
         await page.waitForPendingMouseEvents()
@@ -5036,7 +5040,7 @@ extension AppKitGesturesTests.Basic {
         return CGPoint(x: bounds.maxX - 2, y: bounds.midY)
     }
 
-    private func contextMenuAfterClickingTwiceInMisspelledWord(
+    private func contextMenuAfterTappingTwiceInMisspelledWord(
         at point: CGPoint,
         spellChecker: SpellCheckerStub,
         choosingItemTitled itemTitle: String? = nil,
@@ -5051,11 +5055,11 @@ extension AppKitGesturesTests.Basic {
 
         let caretSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
         guard case .collapsed = caretSelection else {
-            Issue.record("expected the click to place the caret, got \(caretSelection)")
+            Issue.record("expected the tap to place the caret, got \(caretSelection)")
             return (caretSelection, [])
         }
 
-        // Wait until the next click can no longer complete a double click.
+        // Wait until the next tap can no longer complete a double tap.
         try await Task.sleep(for: .seconds(1))
 
         var menuItems: [PresentedMenuItem] = []
@@ -5195,7 +5199,7 @@ extension AppKitGesturesTests.Basic {
         case embedInScrolledPage
     }
 
-    enum HoverOpenedByClickScrollTarget: Sendable, CaseIterable {
+    enum HoverOpenedByTapScrollTarget: Sendable, CaseIterable {
         case scrollerInMenu
 
         case elementCoveringViewport
@@ -5485,7 +5489,7 @@ extension AppKitGesturesTests.Basic {
         await page.waitForNextPresentationUpdate()
     }
 
-    private func establishElementUnderMouse(byClickingElementWithID id: String) async throws {
+    private func establishElementUnderMouse(byTappingElementWithID id: String) async throws {
         let bounds = try await screenBounds(ofElementWithID: id)
         try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: id, for: [.mouseover]))
         await recap.play { composer in
@@ -5550,67 +5554,67 @@ extension AppKitGesturesTests.Basic {
     }
 }
 
-extension AppKitGesturesTests.Basic {
+extension MacTouchSupportTests.Basic {
     @Test(arguments: [0, 300])
-    func singleClickOnLinkShowsClickHighlight(scrollOffset: Int) async throws {
-        try await loadClickHighlightTarget(
+    func singleTapOnLinkShowsTapHighlight(scrollOffset: Int) async throws {
+        try await loadTapHighlightTarget(
             "<a id='target' href='#' style='display: block; position: absolute; left: 100px; top: \(200 + scrollOffset)px; width: 200px; height: 50px;'>Link</a>",
             scrollOffset: scrollOffset
         )
 
-        try await clickTarget()
+        try await tapTarget()
 
         let expectedRect = try await viewRect(ofElementWithID: "target").insetBy(dx: -4, dy: -4)
-        #expect(page.clickHighlightRect == expectedRect)
-        #expect((page.clickHighlightColor?.alphaComponent ?? 0) > 0)
+        #expect(page.tapHighlightRect == expectedRect)
+        #expect((page.tapHighlightColor?.alphaComponent ?? 0) > 0)
     }
 
     @Test
-    func clickHighlightFadesOutAfterClick() async throws {
-        try await loadClickHighlightTarget("<a id='target' href='#' style='display: block; width: 200px; height: 50px;'>Link</a>")
+    func tapHighlightFadesOutAfterTap() async throws {
+        try await loadTapHighlightTarget("<a id='target' href='#' style='display: block; width: 200px; height: 50px;'>Link</a>")
 
-        try await clickTarget()
+        try await tapTarget()
 
-        #expect(page.clickHighlightRect != .zero)
-        try await waitForCondition("The click highlight fades out") {
-            !page.isShowingClickHighlight
+        #expect(page.tapHighlightRect != .zero)
+        try await waitForCondition("the tap highlight to fade out") {
+            !page.isShowingTapHighlight
         }
     }
 
     @Test
-    func singleClickOnLargeClickableElementDoesNotShowClickHighlight() async throws {
-        try await loadClickHighlightTarget("<div id='target' style='width: 600px; height: 400px;'></div>")
+    func singleTapOnLargeClickableElementDoesNotShowTapHighlight() async throws {
+        try await loadTapHighlightTarget("<div id='target' style='width: 600px; height: 400px;'></div>")
 
-        try await clickTarget()
+        try await tapTarget()
 
-        #expect(page.clickHighlightRect == .zero)
+        #expect(page.tapHighlightRect == .zero)
     }
 
     @Test
-    func singleClickOnLargeButtonShowsClickHighlight() async throws {
-        try await loadClickHighlightTarget("<button id='target' style='width: 600px; height: 400px;'>Button</button>")
+    func singleTapOnLargeButtonShowsTapHighlight() async throws {
+        try await loadTapHighlightTarget("<button id='target' style='width: 600px; height: 400px;'>Button</button>")
 
-        try await clickTarget()
+        try await tapTarget()
 
         let expectedRect = try await viewRect(ofElementWithID: "target").insetBy(dx: -4, dy: -4)
-        #expect(page.clickHighlightRect == expectedRect)
+        #expect(page.tapHighlightRect == expectedRect)
     }
 
     @Test
-    func clickHighlightHonorsTransparentStyle() async throws {
-        try await loadClickHighlightTarget(
+    func tapHighlightHonorsTransparentStyle() async throws {
+        try await loadTapHighlightTarget(
             "<a id='target' href='#' style='display: block; width: 200px; height: 50px; -webkit-tap-highlight-color: transparent;'>Link</a>"
         )
 
-        try await clickTarget()
+        try await tapTarget()
 
-        #expect(page.clickHighlightRect != .zero)
-        #expect(page.clickHighlightColor?.alphaComponent == 0)
+        #expect(page.tapHighlightRect != .zero)
+        #expect(page.tapHighlightColor?.alphaComponent == 0)
     }
 
     @Test(arguments: [false, true])
-    func singleClickOnTextFieldShowsClickHighlightUnlessFocused(focused: Bool) async throws {
-        try await loadClickHighlightTarget(
+    func singleTapOnTextFieldShowsTapHighlightUnlessFocused(focused: Bool) async throws {
+        try await loadTapHighlightTarget(
             "<input id='target' style='position: absolute; left: 100px; top: 100px; width: 300px; height: 40px; font-size: 20px;'>"
         )
 
@@ -5621,17 +5625,17 @@ extension AppKitGesturesTests.Basic {
             await page.waitForNextPresentationUpdate()
         }
 
-        try await clickTarget()
+        try await tapTarget()
 
         if focused {
-            #expect(page.clickHighlightRect == .zero)
+            #expect(page.tapHighlightRect == .zero)
         } else {
             let expectedRect = try await viewRect(ofElementWithID: "target").insetBy(dx: -4, dy: -4)
-            #expect(page.clickHighlightRect == expectedRect)
+            #expect(page.tapHighlightRect == expectedRect)
         }
     }
 
-    private func loadClickHighlightTarget(_ markup: String, scrollOffset: Int = 0) async throws {
+    private func loadTapHighlightTarget(_ markup: String, scrollOffset: Int = 0) async throws {
         let html = """
             <body style="margin: 0; height: 3000px;">
             \(markup)
@@ -5649,7 +5653,7 @@ extension AppKitGesturesTests.Basic {
         await page.waitForNextPresentationUpdate()
     }
 
-    private func clickTarget() async throws {
+    private func tapTarget() async throws {
         let targetBounds = try await screenBounds(ofElementWithID: "target")
 
         await recap.play { composer in
@@ -5657,7 +5661,7 @@ extension AppKitGesturesTests.Basic {
         }
 
         await page.waitForPendingMouseEvents()
-        try await waitForCondition("The target is clicked") {
+        try await waitForCondition("the target to receive a click") {
             try await page.callJavaScript(returning: Bool.self) {
                 "return !!window.didClickTarget;"
             }

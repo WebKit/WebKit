@@ -32,10 +32,10 @@ import Testing
 @_spi(WebKitAdditions_Testing) private import TestWebKitAPILibrary
 private import Recap
 
-extension AppKitGesturesTests {
+extension MacTouchSupportTests {
     @MainActor
     @Suite(.serialized, .timeLimit(.minutes(1)))
-    final class RefreshControl: AppKitGestureTestSuite {
+    final class RefreshControl: MacTouchSupportTestSuite {
         static let text = "Here's to the crazy ones."
 
         @MainActor
@@ -72,11 +72,11 @@ extension AppKitGesturesTests {
     }
 }
 
-extension AppKitGesturesTests.RefreshControl {
+extension MacTouchSupportTests.RefreshControl {
     // MARK: - Tests
 
     @Test
-    func trackpadSwipeDownTriggersRefresh() async throws {
+    func swipeDownTriggersRefresh() async throws {
         try await loadTallPage()
         await page.waitForNextPresentationUpdate()
 
@@ -93,7 +93,7 @@ extension AppKitGesturesTests.RefreshControl {
     @Test(
         .bug("https://webkit.org/b/318442", "Pull to refresh and top scroll stretching often fail to activate")
     )
-    func trackpadSwipeDownToInterruptDeceleratingScrollTriggersRefresh() async throws {
+    func swipeDownToInterruptDeceleratingScrollTriggersRefresh() async throws {
         try await loadTallPage()
         await page.waitForNextPresentationUpdate()
 
@@ -117,7 +117,7 @@ extension AppKitGesturesTests.RefreshControl {
         .bug("https://webkit.org/b/322154", "App exposé gesture should not trigger pull to refresh"),
         arguments: [false, true]
     )
-    func trackpadAppExposeGestureDoesNotTriggerRefresh(gesturesForGestureEvents: Bool) async throws {
+    func twoFingerSwipeDownDoesNotTriggerRefresh(gesturesForGestureEvents: Bool) async throws {
         page.setWebFeature("UseAppKitGesturesForGestureEvents", enabled: gesturesForGestureEvents)
 
         try await loadTallPage()

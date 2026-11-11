@@ -35,10 +35,10 @@ import Testing
 private import Recap
 private import AppKit_Private.NSMenu_Private
 
-extension AppKitGesturesTests {
+extension MacTouchSupportTests {
     @MainActor
     @Suite(.serialized, .timeLimit(.minutes(1)))
-    final class Embedded: AppKitGestureTestSuite {
+    final class Embedded: MacTouchSupportTestSuite {
         @MainActor
         private final class ContentOffsetStorage {
             var value = CGPoint.zero
@@ -86,7 +86,7 @@ extension AppKitGesturesTests {
     }
 }
 
-extension AppKitGesturesTests.Embedded {
+extension MacTouchSupportTests.Embedded {
     @Test
     func scrollOverNonScrollableWebViewPropagatesToEnclosingScrollView() async throws {
         let html = """
@@ -124,8 +124,8 @@ extension AppKitGesturesTests.Embedded {
     }
 
     @Test
-    func pressDragOverTextInWebViewInsideEnclosingScrollViewCreatesSelection() async throws {
-        // Center the text vertically so the press-drag stays well within the visible scroll area.
+    func holdAndDragOverTextInWebViewInsideEnclosingScrollViewCreatesSelection() async throws {
+        // Center the text vertically so the hold-and-drag stays well within the visible scroll area.
         let html = """
             <body style='margin:0;'>
                 <div id="div" style="font-size: 30px; padding-top: 280px;">\(Self.text)</div>
@@ -155,7 +155,7 @@ extension AppKitGesturesTests.Embedded {
         let selection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
 
         guard case .range = selection else {
-            Issue.record("expected press-drag over text in an enclosing scroll view to create a range selection, got \(selection)")
+            Issue.record("expected a hold-and-drag over text in an enclosing scroll view to create a range selection, got \(selection)")
             return
         }
     }
@@ -173,7 +173,7 @@ extension AppKitGesturesTests.Embedded {
 
         let crazyBounds = try await screenBoundsOfText("crazy")
 
-        // A quick (non-press) drag whose touch-down is over selectable text must still hand off to the
+        // A quick (non-hold) drag whose touch-down is over selectable text must still hand off to the
         // enclosing scroll view, just like over an image.
         let dragDistance: CGFloat = 100
         let center = crazyBounds.center
@@ -194,7 +194,7 @@ extension AppKitGesturesTests.Embedded {
     }
 
     @Test
-    func doubleClickingSelectsWordWhenScrolledToTopWithObscuredContentInset() async throws {
+    func doubleTappingSelectsWordWhenScrolledToTopWithObscuredContentInset() async throws {
         let html = """
             <body style="margin: 0">
                 <h2 id="div" style="display: inline-block; margin: 0; font-size: 30px;">\(Self.text)</h2>

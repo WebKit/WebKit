@@ -801,14 +801,14 @@ endforeach ()
 webkit_target_add_swift_options(TestWebKit "-Xcc -I${CMAKE_SOURCE_DIR}/Source")
 
 list(APPEND TestWebKit_SOURCES
-    "Tests/WebKit/WebPage/AppKit Gesture Tests/AppKitGesturesTestsSupport.swift"
-    "Tests/WebKit/WebPage/AppKit Gesture Tests/BasicAppKitGesturesTests.swift"
-    "Tests/WebKit/WebPage/AppKit Gesture Tests/DoubleClickGesturesTests.swift"
-    "Tests/WebKit/WebPage/AppKit Gesture Tests/EmbeddedAppKitGesturesTests.swift"
-    "Tests/WebKit/WebPage/AppKit Gesture Tests/InactiveWindowAppKitGesturesTests.swift"
-    "Tests/WebKit/WebPage/AppKit Gesture Tests/QuirksAppKitGesturesTests.swift"
-    "Tests/WebKit/WebPage/AppKit Gesture Tests/RefreshControlGesturesTests.swift"
-    "Tests/WebKit/WebPage/AppKit Gesture Tests/SiteIsolationAppKitGesturesTests.swift"
+    "Tests/WebKit/WebPage/Mac Touch Support Tests/BasicMacTouchSupportTests.swift"
+    "Tests/WebKit/WebPage/Mac Touch Support Tests/DoubleTapMacTouchSupportTests.swift"
+    "Tests/WebKit/WebPage/Mac Touch Support Tests/EmbeddedMacTouchSupportTests.swift"
+    "Tests/WebKit/WebPage/Mac Touch Support Tests/InactiveWindowMacTouchSupportTests.swift"
+    "Tests/WebKit/WebPage/Mac Touch Support Tests/MacTouchSupportTestUtilities.swift"
+    "Tests/WebKit/WebPage/Mac Touch Support Tests/QuirksMacTouchSupportTests.swift"
+    "Tests/WebKit/WebPage/Mac Touch Support Tests/RefreshControlMacTouchSupportTests.swift"
+    "Tests/WebKit/WebPage/Mac Touch Support Tests/SiteIsolationMacTouchSupportTests.swift"
 
     Tests/WebKit/WKWebView/CodingTests.swift
     Tests/WebKit/WKWebView/ContentAutoSizing.swift

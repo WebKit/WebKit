@@ -99,7 +99,7 @@ extension RCPEventStreamComposer {
             return
         }
 
-        let pointerSender = senderProperties
+        let touchSender = senderProperties
 
         senderProperties = .keyboardSender()
         for usage in usages {
@@ -108,7 +108,7 @@ extension RCPEventStreamComposer {
 
         advanceTime(Self.modifierDelay)
 
-        senderProperties = pointerSender
+        senderProperties = touchSender
         body()
 
         advanceTime(Self.modifierDelay)
@@ -118,7 +118,7 @@ extension RCPEventStreamComposer {
             endButtonPress(withPage: Self.keyboardOrKeypadUsagePage, usage: usage)
         }
 
-        senderProperties = pointerSender
+        senderProperties = touchSender
     }
 }
 
@@ -159,7 +159,7 @@ private final class NonKeyWindow: NSWindow {
 }
 
 @MainActor
-protocol AppKitGestureTestSuite: AnyObject {
+protocol MacTouchSupportTestSuite: AnyObject {
     static var text: String { get }
 
     static var topInset: CGFloat { get }
@@ -173,7 +173,7 @@ protocol AppKitGestureTestSuite: AnyObject {
     init() async throws
 }
 
-extension AppKitGestureTestSuite {
+extension MacTouchSupportTestSuite {
     static var topInset: CGFloat {
         0
     }
@@ -184,7 +184,7 @@ extension AppKitGestureTestSuite {
 }
 
 @Suite(.serialized, .timeLimit(.minutes(1)))
-struct AppKitGesturesTests {
+struct MacTouchSupportTests {
 }
 
 @MainActor
@@ -235,7 +235,7 @@ private func convertToCoreGraphicsScreenCoordinates(rectInViewportCoordinates: D
     return inCoreGraphicsScreenCoordinates
 }
 
-extension AppKitGestureTestSuite {
+extension MacTouchSupportTestSuite {
     func screenBoundsOfText(_ text: String) async throws -> CGRect {
         let range = try #require(Self.text.utf16Range(of: text))
 
@@ -265,7 +265,7 @@ extension AppKitGestureTestSuite {
     }
 }
 
-extension AppKitGestureTestSuite {
+extension MacTouchSupportTestSuite {
     // Loads a single `#div` containing `Self.text`, optionally editable or with click/dblclick listeners attached.
     func loadHTML(contentEditable: Bool = false, clickHandler: Bool = false, dblclickHandler: Bool = false) async throws {
         let contentEditableMarkup = contentEditable ? "contenteditable" : ""

@@ -34,13 +34,13 @@ private import Recap
 
 private let manipulationSurfaceDragInset: CGFloat = 60
 
-extension AppKitGesturesTests {
+extension MacTouchSupportTests {
     // Site-specific quirks match on the URL of the page or of an embedded document, which a test cannot
     // choose for content it loads locally. `internals` is the only way to override it, so unlike the other
-    // gesture suites this one needs the injected bundle that installs `internals`.
+    // Mac Touch Support suites this one needs the injected bundle that installs `internals`.
     @MainActor
     @Suite(.serialized, .timeLimit(.minutes(1)))
-    final class Quirks: AppKitGestureTestSuite {
+    final class Quirks: MacTouchSupportTestSuite {
         static let text = "Here's to the crazy ones."
 
         let recap = Recap.shared
@@ -66,7 +66,7 @@ extension AppKitGesturesTests {
     }
 }
 
-extension AppKitGesturesTests.Quirks {
+extension MacTouchSupportTests.Quirks {
     @Test(arguments: [
         ("none", true),
         ("pan-x pan-y", true),
@@ -109,7 +109,7 @@ extension AppKitGesturesTests.Quirks {
         (topDocumentURL: "https://outlook.live.com/mail/", rowID: "outlook-row"),
         (topDocumentURL: "https://www.icloud.com/mail/", rowID: "icloud-row"),
     ])
-    func clickAndHoldOnUnselectableMailListItemFiresContextMenuEvent(topDocumentURL: String, rowID: String) async throws {
+    func touchAndHoldOnUnselectableMailListItemFiresContextMenuEvent(topDocumentURL: String, rowID: String) async throws {
         let url = try #require(Bundle.testResources.url(forResource: "unselectable-mail-list-item", withExtension: "html"))
         try await page.load(url).wait()
 
@@ -141,7 +141,7 @@ extension AppKitGesturesTests.Quirks {
     }
 }
 
-extension AppKitGesturesTests.Quirks {
+extension MacTouchSupportTests.Quirks {
     struct ManipulationSurface {
         let bounds: CGRect
 
@@ -239,7 +239,7 @@ extension AppKitGesturesTests.Quirks {
     }
 }
 
-private struct MagnificationEventCounts {
+private struct PinchEventCounts {
     var down = 0
     var up = 0
     var move = 0
@@ -249,25 +249,25 @@ private struct MagnificationEventCounts {
     var gestureChangeWhileButtonIsDown = 0
 }
 
-extension AppKitGesturesTests.Quirks {
-    private func installMagnificationEventCounters(preventingGestureEvents: Bool) async throws {
+extension MacTouchSupportTests.Quirks {
+    private func installPinchEventCounters(preventingGestureEvents: Bool) async throws {
         try await page.callJavaScript(arguments: ["frameID": "surfaceFrame", "preventingGestureEvents": preventingGestureEvents]) {
             """
             const surfaceDocument = document.getElementById(frameID).contentDocument;
-            window.magnificationEvents = { down: 0, up: 0, move: 0, wheel: 0, heldWheel: 0, gchange: 0, heldGchange: 0 };
+            window.pinchEvents = { down: 0, up: 0, move: 0, wheel: 0, heldWheel: 0, gchange: 0, heldGchange: 0 };
             let buttonIsDown = false;
-            surfaceDocument.addEventListener("mousedown", () => { buttonIsDown = true; window.magnificationEvents.down++; }, true);
-            surfaceDocument.addEventListener("mouseup", () => { buttonIsDown = false; window.magnificationEvents.up++; }, true);
-            surfaceDocument.addEventListener("mousemove", () => { window.magnificationEvents.move++; }, true);
+            surfaceDocument.addEventListener("mousedown", () => { buttonIsDown = true; window.pinchEvents.down++; }, true);
+            surfaceDocument.addEventListener("mouseup", () => { buttonIsDown = false; window.pinchEvents.up++; }, true);
+            surfaceDocument.addEventListener("mousemove", () => { window.pinchEvents.move++; }, true);
             surfaceDocument.addEventListener("wheel", () => {
-                window.magnificationEvents.wheel++;
+                window.pinchEvents.wheel++;
                 if (buttonIsDown)
-                    window.magnificationEvents.heldWheel++;
+                    window.pinchEvents.heldWheel++;
             }, true);
             surfaceDocument.addEventListener("gesturechange", () => {
-                window.magnificationEvents.gchange++;
+                window.pinchEvents.gchange++;
                 if (buttonIsDown)
-                    window.magnificationEvents.heldGchange++;
+                    window.pinchEvents.heldGchange++;
             }, true);
             for (const type of ["gesturestart", "gesturechange", "gestureend"]) {
                 surfaceDocument.addEventListener(type, event => {
@@ -279,20 +279,20 @@ extension AppKitGesturesTests.Quirks {
         }
     }
 
-    private func magnificationEventCounts() async throws -> MagnificationEventCounts {
+    private func pinchEventCounts() async throws -> PinchEventCounts {
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
         let values = try await page.callJavaScript(returning: [Double].self) {
             """
-            const e = window.magnificationEvents;
+            const e = window.pinchEvents;
             return [e.down, e.up, e.move, e.wheel, e.heldWheel, e.gchange, e.heldGchange];
             """
         }
 
         try #require(values.count == 7)
 
-        return MagnificationEventCounts(
+        return PinchEventCounts(
             down: Int(values[0]),
             up: Int(values[1]),
             move: Int(values[2]),
@@ -303,11 +303,11 @@ extension AppKitGesturesTests.Quirks {
         )
     }
 
-    private func magnifyAfterMouseTracking(over surface: ManipulationSurface) async throws {
+    private func pinchAfterMouseTracking(over surface: ManipulationSurface) async throws {
         let center = CGPoint(x: surface.bounds.midX, y: surface.bounds.midY)
 
         await recap.play { composer in
-            composer.magnify(
+            composer.pinchOpen(
                 withStart: CGPoint(x: center.x - 30, y: center.y),
                 end: CGPoint(x: center.x + 30, y: center.y),
                 spreadBy: 100,
@@ -319,13 +319,13 @@ extension AppKitGesturesTests.Quirks {
     }
 
     @Test
-    func magnificationGestureAfterMouseTrackingReleasesTheMouseButtonForContentThatDoesNotHandleIt() async throws {
+    func pinchAfterMouseTrackingReleasesTheMouseButtonForContentThatDoesNotHandleIt() async throws {
         let surface = try await loadManipulationSurface(styleValue: "none")
-        try await installMagnificationEventCounters(preventingGestureEvents: false)
+        try await installPinchEventCounters(preventingGestureEvents: false)
 
-        try await magnifyAfterMouseTracking(over: surface)
+        try await pinchAfterMouseTracking(over: surface)
 
-        let counts = try await magnificationEventCounts()
+        let counts = try await pinchEventCounts()
 
         try #require(counts.down > 0, "\(counts)")
         try #require(counts.wheel > 0, "\(counts)")
@@ -334,13 +334,13 @@ extension AppKitGesturesTests.Quirks {
     }
 
     @Test
-    func magnificationGestureAfterMouseTrackingKeepsTheMouseButtonDownForContentThatHandlesIt() async throws {
+    func pinchAfterMouseTrackingKeepsTheMouseButtonDownForContentThatHandlesIt() async throws {
         let surface = try await loadManipulationSurface(styleValue: "none")
-        try await installMagnificationEventCounters(preventingGestureEvents: true)
+        try await installPinchEventCounters(preventingGestureEvents: true)
 
-        try await magnifyAfterMouseTracking(over: surface)
+        try await pinchAfterMouseTracking(over: surface)
 
-        let counts = try await magnificationEventCounts()
+        let counts = try await pinchEventCounts()
 
         try #require(counts.gestureChange > 0, "\(counts)")
         #expect(counts.gestureChangeWhileButtonIsDown * 2 > counts.gestureChange)

@@ -36,12 +36,12 @@ private import WebKit_Private._WKFrameTreeNode
 private import Recap
 private import TestWebKitAPILibrary.Helpers.cocoa.PDFTestHelpers
 
-extension AppKitGesturesTests {
-    // Unlike the other gesture suites, this one does not require user action for the editor state to include
+extension MacTouchSupportTests {
+    // Unlike the other Mac Touch Support suites, this one does not require user action for the editor state to include
     // post-layout data, since its tests select text in the cross-site iframe by script.
     @MainActor
     @Suite(.serialized, .timeLimit(.minutes(1)))
-    final class SiteIsolation: AppKitGestureTestSuite {
+    final class SiteIsolation: MacTouchSupportTestSuite {
         static let text = "Here's to the crazy ones."
 
         let recap = Recap.shared
@@ -67,11 +67,11 @@ extension AppKitGesturesTests {
     }
 }
 
-extension AppKitGesturesTests.SiteIsolation {
+extension MacTouchSupportTests.SiteIsolation {
     @Test(
         .bug("https://webkit.org/b/325693")
     )
-    func clickingOnSelectedWordInCrossSiteIframeKeepsTextSelected() async throws {
+    func tappingSelectedWordInCrossSiteIframeKeepsTextSelected() async throws {
         let iframeHTML = "<div id='div' style='font-size: 30px;'>\(Self.text)</div>"
 
         var server = try HTTPServer(protocol: .http) {
@@ -130,7 +130,7 @@ extension AppKitGesturesTests.SiteIsolation {
     }
 
     @Test(arguments: [0, 100])
-    func singleClickOnLinkInCrossSiteIframeShowsClickHighlight(mainFrameScrollOffset: Int) async throws {
+    func singleTapOnLinkInCrossSiteIframeShowsTapHighlight(mainFrameScrollOffset: Int) async throws {
         let iframeHTML = """
             <body style="margin: 0">
             <a id="target" href="#" style="display: block; position: absolute; left: 50px; top: 40px; width: 200px; height: 50px;">Link</a>
@@ -178,7 +178,7 @@ extension AppKitGesturesTests.SiteIsolation {
             }
 
             await page.waitForPendingMouseEvents()
-            try await waitForCondition("The target is clicked") {
+            try await waitForCondition("the target to receive a click") {
                 try await page.callJavaScript(returning: Bool.self, in: iframe) {
                     "return !!window.didClickTarget;"
                 }
@@ -189,12 +189,12 @@ extension AppKitGesturesTests.SiteIsolation {
                 targetRectInIframe
                 .offsetBy(dx: iframeRect.minX, dy: iframeRect.minY + Self.topInset)
                 .insetBy(dx: -4, dy: -4)
-            #expect(page.clickHighlightRect == expectedRect)
+            #expect(page.tapHighlightRect == expectedRect)
         }
     }
 
     @Test(arguments: [false, true])
-    func clickHandledAsHoverInIframeReportsHoverActivatedByClickBounds(crossSite: Bool) async throws {
+    func tapHandledAsHoverInIframeReportsHoverActivatedByTapBounds(crossSite: Bool) async throws {
         let iframeHTML = """
             <body style="margin: 0">
             <div id="source" style="position: absolute; left: 50px; top: 40px; width: 300px; height: 200px; background: linear-gradient(red, blue);"></div>
@@ -203,9 +203,9 @@ extension AppKitGesturesTests.SiteIsolation {
             window.pageEvents = [];
             for (const type of ["mousedown", "mouseup", "click"])
                 document.addEventListener(type, event => window.pageEvents.push(event.type), true);
-            // The click is handled as hover only if the content revealed on hover is actionable.
+            // The tap is handled as hover only if the content revealed on hover is actionable.
             document.getElementById("preview").addEventListener("click", () => { });
-            // Unlike mouseenter, a mouseover listener makes #source the node responding to the click.
+            // Unlike mouseenter, a mouseover listener makes #source the node responding to the tap.
             document.getElementById("source").addEventListener("mouseover", () => {
                 document.getElementById("preview").style.display = "block";
             });
@@ -213,7 +213,7 @@ extension AppKitGesturesTests.SiteIsolation {
             </body>
             """
 
-        try await clickElementInIframeAndExpectHoverActivatedByClickBounds(
+        try await tapElementInIframeAndExpectHoverActivatedByTapBounds(
             iframeHTML: iframeHTML,
             elementID: "source",
             crossSite: crossSite,
@@ -222,7 +222,7 @@ extension AppKitGesturesTests.SiteIsolation {
     }
 
     @Test(arguments: [false, true])
-    func clickThatZoomsImageInPlaceInIframeReportsHoverActivatedByClickBounds(crossSite: Bool) async throws {
+    func tapThatZoomsImageInPlaceInIframeReportsHoverActivatedByTapBounds(crossSite: Bool) async throws {
         let iframeHTML = """
             <body style="margin: 0">
             <div id="wrapper" style="position: absolute; left: 50px; top: 40px; width: 300px; height: 300px;">
@@ -239,7 +239,7 @@ extension AppKitGesturesTests.SiteIsolation {
             </body>
             """
 
-        try await clickElementInIframeAndExpectHoverActivatedByClickBounds(
+        try await tapElementInIframeAndExpectHoverActivatedByTapBounds(
             iframeHTML: iframeHTML,
             elementID: "photo",
             crossSite: crossSite,
@@ -247,9 +247,9 @@ extension AppKitGesturesTests.SiteIsolation {
         )
     }
 
-    // Clicks the center of the element in the iframe, then expects the bounds of the element whose click was
+    // Taps the center of the element in the iframe, then expects the bounds of the element whose tap was
     // handled as hover to be the element's bounds in view coordinates, which include the position of the iframe.
-    private func clickElementInIframeAndExpectHoverActivatedByClickBounds(
+    private func tapElementInIframeAndExpectHoverActivatedByTapBounds(
         iframeHTML: String,
         elementID: String,
         crossSite: Bool,
@@ -303,12 +303,12 @@ extension AppKitGesturesTests.SiteIsolation {
             }
             try #require(events.contains("click") == expectsClick, "crossSite: \(crossSite), events in the iframe: \(events)")
 
-            try await waitForCondition("The bounds of the element whose click was handled as hover are set") {
-                page.hoverActivatedByClickBounds != .zero
+            try await waitForCondition("the bounds of the element whose tap was handled as hover to be set") {
+                page.hoverActivatedByTapBounds != .zero
             }
 
             let expectedBounds = elementRectInIframe.offsetBy(dx: iframeRect.minX, dy: iframeRect.minY + Self.topInset)
-            #expect(page.hoverActivatedByClickBounds == expectedBounds)
+            #expect(page.hoverActivatedByTapBounds == expectedBounds)
         }
     }
 
@@ -326,7 +326,7 @@ extension AppKitGesturesTests.SiteIsolation {
         .bug("https://webkit.org/b/330327"),
         arguments: [false, true]
     )
-    func draggingToExtendSelectionInPDFInIframeSelectsTextUnderPointer(crossSite: Bool) async throws {
+    func draggingToExtendSelectionInPDFInIframeSelectsTextUnderTouch(crossSite: Bool) async throws {
         let pdfData = TestPDFBuilder.pdfDataWithLink()
 
         var server = try HTTPServer(protocol: .http) {
@@ -362,7 +362,7 @@ extension AppKitGesturesTests.SiteIsolation {
             await page.waitForNextPresentationUpdate()
 
             // The PDF's only line of text, "Visit our website for details", is drawn in 24pt Helvetica starting 20pt
-            // from the page's left edge, with its baseline 100pt from the page's top and bottom edges. The press is
+            // from the page's left edge, with its baseline 100pt from the page's top and bottom edges. The touch is
             // over the "u" in "our" and the drag ends over the "o" in "for", so the selection must include "website"
             // but neither "Visit" nor "details". Were the drag's end point not converted to the iframe's coordinates,
             // it would land 100px to the right of and 150px below where it should, below the text.
@@ -373,14 +373,14 @@ extension AppKitGesturesTests.SiteIsolation {
             let textCenterY = pageOrigin.y + 100 - 6
             // The "u" in "our" spans about 65pt to 79pt from the text's left edge, and the "o" in "for" about
             // 188pt to 201pt.
-            let pressPoint = CGPoint(x: textLeft + 72, y: textCenterY)
+            let touchPoint = CGPoint(x: textLeft + 72, y: textCenterY)
             let dragEndPoint = CGPoint(x: textLeft + 195, y: textCenterY)
 
             await recap.play { composer in
-                // Click-and-hold to begin a range selection, then drag to extend it.
-                composer.humanTap(at: pressPoint, for: .seconds(0.5))
+                // Touch and hold to begin a range selection, then lift, touch the same spot again, and drag to extend it.
+                composer.humanTap(at: touchPoint, for: .seconds(0.5))
                 composer.advanceTime(0.1)
-                composer.drag(withStart: pressPoint, end: dragEndPoint, duration: .seconds(0.5), lift: false)
+                composer.drag(withStart: touchPoint, end: dragEndPoint, duration: .seconds(0.5), lift: false)
                 composer.advanceTime(0.1)
                 composer.liftUpAtAllActivePoints()
             }
