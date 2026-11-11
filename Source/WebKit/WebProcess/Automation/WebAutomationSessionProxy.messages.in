@@ -55,5 +55,6 @@ messages -> WebAutomationSessionProxy {
 
 #if ENABLE(WEBDRIVER_BIDI)
     EnsureRealmForInitialEmptyDocument(WebCore::PageIdentifier pageID)
+    CaptureBidiScreenshot(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, bool documentOrigin, std::optional<WebCore::FloatRect> clip, std::optional<double> maxWidth, std::optional<double> maxHeight, String formatType, std::optional<double> formatQuality) -> (String data, String errorType)
 #endif
 }

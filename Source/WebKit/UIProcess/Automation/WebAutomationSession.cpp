@@ -3385,6 +3385,28 @@ void WebAutomationSession::takeScreenshot(const Inspector::Protocol::Automation:
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSession::captureBidiScreenshot(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, bool documentOrigin, std::optional<WebCore::FloatRect>&& clip, std::optional<double>&& maxWidth, std::optional<double>&& maxHeight, const String& formatType, std::optional<double>&& formatQuality, CommandCallback<String>&& callback)
+{
+    auto page = webPageProxyForHandle(handle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(frameNotFound, FrameNotFound);
+
+    // The capture is painted in the process that hosts the navigable's document, so it can cover a
+    // child navigable, or the whole document, rather than only what the top-level viewport shows.
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::CaptureBidiScreenshot(page->webPageIDInProcessForFrame(frameID), frameID, documentOrigin, WTF::move(clip), WTF::move(maxWidth), WTF::move(maxHeight), formatType, WTF::move(formatQuality)), CompletionHandler<void(String&&, String&&)> { [callback = WTF::move(callback)](String&& data, String&& errorType) mutable {
+        if (!errorType.isEmpty())
+            return callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_MESSAGE(errorType)));
+
+        // An empty reply with no error means the WebContent process went away before answering.
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(data.isEmpty(), InternalError);
+
+        callback(WTF::move(data));
+    } });
+}
+
 static String logEntryLevelForMessage(const JSC::MessageType& messageType, const MessageLevel& messageLevel)
 {
     if (messageType == JSC::MessageType::Assert || messageLevel == JSC::MessageLevel::Error)

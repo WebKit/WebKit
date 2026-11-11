@@ -3145,9 +3145,6 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/capture_screenshot/clip.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288325"}}
     },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/capture_screenshot/format.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288325"}}
-    },
     "imported/w3c/webdriver/tests/bidi/browsing_context/capture_screenshot/origin.py": {
         "subtests": {
             "test_origin": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288325"}}},
