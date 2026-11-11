@@ -56,6 +56,8 @@
 - (NSString *)_uiViewTreeAsTextForViewWithLayerID:(unsigned long long)layerID;
 - (NSString *)_uiViewTreeAsTextForView:(UIView *)view;
 
+- (void)_setZoomScaleForTesting:(CGFloat)scale animated:(BOOL)animated;
+
 - (void)keyboardAccessoryBarNext;
 - (void)keyboardAccessoryBarPrevious;
 - (void)dismissFormAccessoryView;

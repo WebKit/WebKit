@@ -5,15 +5,22 @@
     <style>
         body {
             overflow: hidden;
+            height: 1000px;
         }
 
         .contents {
             width: 100%;
             height: 100%;
         }
+        
+        /* Prevent output from affecting the document size */
+        #console {
+            height: 10em;
+            overflow: clip;
+        }
     </style>
     <script src="../../../resources/ui-helper.js"></script>
-    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/js-test.js"></script>
     <script>
         jsTestIsAsync = true;
 
@@ -21,13 +28,14 @@
             if (!window.testRunner)
                 return;
 
-            await UIHelper.immediateZoomToScale(1.5);
+            await UIHelper.zoomToScale(1.5);
+            await UIHelper.renderingUpdate();
             
-            shouldBe('window.pageXOffset', '53');
-            shouldBe('window.pageYOffset', '91');
+            shouldBe('window.pageXOffset', '65');
+            shouldBe('window.pageYOffset', '133');
 
-            shouldBe('window.visualViewport.pageLeft', '53');
-            shouldBe('window.visualViewport.pageTop', '91');
+            shouldBe('window.visualViewport.pageLeft', '65');
+            shouldBe('window.visualViewport.pageTop', '133');
 
             await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensureStablePresentationUpdate()]);
 
@@ -37,11 +45,11 @@
 
             await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensureStablePresentationUpdate()]);
 
-            shouldBe('window.pageXOffset', '53');
-            shouldBe('window.pageYOffset', '91');
+            shouldBe('window.pageXOffset', '65');
+            shouldBe('window.pageYOffset', '133');
 
-            shouldBe('window.visualViewport.pageLeft', '53');
-            shouldBe('window.visualViewport.pageTop', '91');
+            shouldBe('window.visualViewport.pageLeft', '65');
+            shouldBe('window.visualViewport.pageTop', '133');
 
             finishJSTest();
         }
@@ -50,8 +58,7 @@
     </script>
 </head>
 <body>
-    <div class="contents">
-    </div>
-    <script src="../../../resources/js-test-post.js"></script>
+    <div class="contents"></div>
+    <div id="console"></div>
 </body>
 </html>
