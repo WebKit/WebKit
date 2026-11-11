@@ -31,6 +31,7 @@ namespace WebCore {
 class Image;
 struct ImageOrientation;
 enum class ImageRequestState : uint8_t;
+enum class ReferrerPolicy : uint8_t;
 
 class SVGImageElement final : public SVGGraphicsElement, public SVGURIReference {
     WTF_MAKE_TZONE_ALLOCATED(SVGImageElement);
@@ -61,6 +62,9 @@ public:
 
     void setCrossOrigin(const AtomString&);
     String crossOrigin() const;
+
+    String referrerPolicyForBindings() const;
+    ReferrerPolicy referrerPolicy() const;
 
     SVGAnimatedLength& xAnimated() { return m_x; }
     SVGAnimatedLength& yAnimated() { return m_y; }

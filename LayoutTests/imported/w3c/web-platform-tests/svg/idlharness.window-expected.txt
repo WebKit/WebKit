@@ -1247,7 +1247,7 @@ PASS SVGImageElement interface: attribute width
 PASS SVGImageElement interface: attribute height
 PASS SVGImageElement interface: attribute preserveAspectRatio
 PASS SVGImageElement interface: attribute crossOrigin
-FAIL SVGImageElement interface: attribute referrerPolicy assert_true: The prototype object must have a property "referrerPolicy" expected true got false
+PASS SVGImageElement interface: attribute referrerPolicy
 PASS SVGImageElement interface: attribute href
 PASS SVGImageElement must be primary interface of objects.image
 PASS Stringification of objects.image
@@ -1257,7 +1257,7 @@ PASS SVGImageElement interface: objects.image must inherit property "width" with
 PASS SVGImageElement interface: objects.image must inherit property "height" with the proper type
 PASS SVGImageElement interface: objects.image must inherit property "preserveAspectRatio" with the proper type
 PASS SVGImageElement interface: objects.image must inherit property "crossOrigin" with the proper type
-FAIL SVGImageElement interface: objects.image must inherit property "referrerPolicy" with the proper type assert_inherits: property "referrerPolicy" not found in prototype chain
+PASS SVGImageElement interface: objects.image must inherit property "referrerPolicy" with the proper type
 PASS SVGImageElement interface: objects.image must inherit property "href" with the proper type
 PASS SVGGraphicsElement interface: objects.image must inherit property "transform" with the proper type
 PASS SVGGraphicsElement interface: objects.image must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type
@@ -1480,13 +1480,13 @@ PASS SVGScriptElement interface: existence and properties of interface prototype
 PASS SVGScriptElement interface: existence and properties of interface prototype object's @@unscopables property
 PASS SVGScriptElement interface: attribute type
 FAIL SVGScriptElement interface: attribute crossOrigin assert_true: The prototype object must have a property "crossOrigin" expected true got false
-FAIL SVGScriptElement interface: attribute referrerPolicy assert_true: The prototype object must have a property "referrerPolicy" expected true got false
+PASS SVGScriptElement interface: attribute referrerPolicy
 PASS SVGScriptElement interface: attribute href
 PASS SVGScriptElement must be primary interface of objects.script
 PASS Stringification of objects.script
 PASS SVGScriptElement interface: objects.script must inherit property "type" with the proper type
 FAIL SVGScriptElement interface: objects.script must inherit property "crossOrigin" with the proper type assert_inherits: property "crossOrigin" not found in prototype chain
-FAIL SVGScriptElement interface: objects.script must inherit property "referrerPolicy" with the proper type assert_inherits: property "referrerPolicy" not found in prototype chain
+PASS SVGScriptElement interface: objects.script must inherit property "referrerPolicy" with the proper type
 PASS SVGScriptElement interface: objects.script must inherit property "href" with the proper type
 PASS SVGElement interface: objects.script must inherit property "className" with the proper type
 PASS SVGElement interface: objects.script must inherit property "ownerSVGElement" with the proper type

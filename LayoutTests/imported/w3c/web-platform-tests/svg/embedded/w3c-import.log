@@ -86,6 +86,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/embedded/image-preserveaspectratio-slice-svg-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/embedded/image-preserveaspectratio-slice-svg-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/embedded/image-preserveaspectratio-slice-svg.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/embedded/image-referrerpolicy-reflection.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/embedded/image-referrerpolicy.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/embedded/image-remove-href-1-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/embedded/image-remove-href-1.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/embedded/image-remove-href-2-expected.svg

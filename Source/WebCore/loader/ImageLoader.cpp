@@ -61,6 +61,8 @@
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderSVGImage.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGImageElement.h"
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
@@ -265,7 +267,8 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         options.fetchPriority = imageElement->fetchPriority();
         if (imageElement->usesSrcsetOrPicture())
             options.initiator = Initiator::Imageset;
-    }
+    } else if (RefPtr svgImageElement = dynamicDowncast<SVGImageElement>(element))
+        options.referrerPolicy = svgImageElement->referrerPolicy();
 
     auto crossOriginAttribute = element->attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
 

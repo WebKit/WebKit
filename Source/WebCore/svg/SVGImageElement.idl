@@ -33,6 +33,7 @@
     readonly attribute SVGAnimatedLength height;
     readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;
     [CEReactions=NotNeeded] attribute [AtomString] DOMString? crossOrigin;
+    [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings, ReflectSetter] attribute [AtomString] DOMString referrerPolicy;
 
     Promise<undefined> decode();
 };
