@@ -154,16 +154,30 @@ bool RenderLayerModelObject::requiresLayerForSVGIntrinsicReasons() const
     // 3D transforms require compositing, hence a layer, as do grouping effects, z-index, etc.
     auto& style = this->style();
     return createsGroupForStyleExcludingClipPathAndMask(style)
-        || style.transform().has3DOperation()
-        || style.translate().is3DOperation()
-        || style.scale().is3DOperation()
-        || style.rotate().is3DOperation()
-        || style.transformStyle3D() == TransformStyle3D::Preserve3D
-        || !style.perspective().isNone()
-        || hasHiddenBackface()
+        || hasSVGGroupingWillChangeProperty()
+        || hasSVG3DTransformRelatedProperty()
         || hasReflection()
         || !style.specifiedZIndex().isAuto()
         || style.isolation() != Isolation::Auto;
+}
+
+bool RenderLayerModelObject::hasSVG3DTransformRelatedProperty() const
+{
+    auto& style = this->style();
+    return style.has3DTransformOperation()
+        || style.transformStyle3D() == TransformStyle3D::Preserve3D
+        || !style.perspective().isNone()
+        || hasHiddenBackface();
+}
+
+bool RenderLayerModelObject::hasSVGGroupingWillChangeProperty() const
+{
+    auto& willChange = style().willChange();
+    return willChange.containsProperty(CSSPropertyID::Opacity)
+        || willChange.containsProperty(CSSPropertyID::Filter)
+        || willChange.containsProperty(CSSPropertyID::BackdropFilter)
+        || willChange.containsProperty(CSSPropertyID::WebkitBackdropFilter)
+        || willChange.containsProperty(CSSPropertyID::MixBlendMode);
 }
 
 void RenderLayerModelObject::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)

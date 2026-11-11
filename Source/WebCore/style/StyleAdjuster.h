@@ -63,6 +63,7 @@ public:
     static void adjustColumnStylesForPaginationMode(Style::ComputedStyle&, PaginationMode);
     static void propagateToDocumentElementAndInitialContainingBlock(Update&, const Document&);
     static std::unique_ptr<Style::ComputedStyle> restoreUsedDocumentElementStyleToComputed(const Style::ComputedStyle&);
+    static bool shouldTreatAutoZIndexAsZero(const Style::ComputedStyle&);
 
     struct AdjustmentForTextAutosizing {
         std::optional<float> newFontSize;

@@ -488,7 +488,7 @@ public:
     void setNeedsFullRepaintIfSVGContainerTransformChanged(const RenderLayerModelObject* repaintContainer);
     bool hasFailedFilterForSVG() const;
     NODELETE bool shouldSkipHitTestForSVG() const;
-    NODELETE void updateAncestorDependentStateForSVG();
+    void updateAncestorDependentStateForSVG();
     NODELETE bool isCompositedSVGPaintOrderChild() const;
     NODELETE bool paintsInlineInSVGContainer() const;
     bool isFlattenedByEnclosingSVGReferenceFilter() const;
@@ -897,14 +897,14 @@ public:
     inline bool hasBlendMode() const;
     BlendMode blendMode() const { return static_cast<BlendMode>(m_blendMode); }
 
-    bool isolatesCompositedBlending() const { return m_hasNotIsolatedCompositedBlendingDescendants && isCSSStackingContext(); }
+    bool isolatesCompositedBlending() const { return m_hasNotIsolatedCompositedBlendingDescendants && m_establishesBlendingIsolationGroup; }
     bool hasNotIsolatedCompositedBlendingDescendants() const { return m_hasNotIsolatedCompositedBlendingDescendants; }
     void setHasNotIsolatedCompositedBlendingDescendants(bool hasNotIsolatedCompositedBlendingDescendants)
     {
         m_hasNotIsolatedCompositedBlendingDescendants = hasNotIsolatedCompositedBlendingDescendants;
     }
 
-    bool isolatesBlending() const { return hasNotIsolatedBlendingDescendants() && isCSSStackingContext(); }
+    bool isolatesBlending() const { return hasNotIsolatedBlendingDescendants() && m_establishesBlendingIsolationGroup; }
 
     // FIXME: We should ASSERT(!m_hasNotIsolatedBlendingDescendantsStatusDirty); here but we hit the same bugs as visible content above.
     bool hasNotIsolatedBlendingDescendants() const { return m_hasNotIsolatedBlendingDescendants; }
@@ -1089,6 +1089,7 @@ private:
 
     bool shouldBeNormalFlowOnly() const;
     bool shouldBeCSSStackingContext() const;
+    bool shouldBeCSSStackingContextIgnoringZIndex() const;
     bool computeCanBeBackdropRoot() const;
 
     // Return true if changed.
@@ -1372,6 +1373,8 @@ private:
     void updateFilterPaintingStrategy();
 
     void updateAncestorChainHasBlendingDescendants();
+    bool computeEstablishesBlendingIsolationGroup() const;
+    void updateEstablishesBlendingIsolationGroup();
     NODELETE void dirtyAncestorChainHasBlendingDescendants();
 
     NODELETE void updateAncestorChainHasAlwaysIncludedInZOrderListsDescendants();
@@ -1510,6 +1513,7 @@ private:
     bool m_hasNotIsolatedCompositedBlendingDescendants : 1;
     bool m_hasNotIsolatedBlendingDescendants : 1;
     bool m_hasNotIsolatedBlendingDescendantsStatusDirty : 1;
+    bool m_establishesBlendingIsolationGroup : 1 { false };
     bool m_repaintRectsValid : 1 { false };
 
     bool m_intrinsicallyComposited : 1 { false };
