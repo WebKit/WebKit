@@ -1,0 +1,20 @@
+
+PASS pathname setter, attributes: href, href read first
+PASS search setter, attributes: href, href read first
+PASS hash setter, attributes: href, href read first
+FAIL pathname setter, attributes: href, xlink:href read first assert_equals: xlink:href attribute expected (object) null but got (string) "http://a.test/new?q=1#h1"
+FAIL search setter, attributes: href, xlink:href read first assert_equals: xlink:href attribute expected (object) null but got (string) "http://a.test/old?q=9#h1"
+FAIL hash setter, attributes: href, xlink:href read first assert_equals: xlink:href attribute expected (object) null but got (string) "http://a.test/old?q=1#h9"
+FAIL pathname setter, attributes: xlink, href read first assert_equals: href attribute expected (object) null but got (string) "http://b.test/new?q=2#h2"
+FAIL search setter, attributes: xlink, href read first assert_equals: href attribute expected (object) null but got (string) "http://b.test/xlink?q=9#h2"
+FAIL hash setter, attributes: xlink, href read first assert_equals: href attribute expected (object) null but got (string) "http://b.test/xlink?q=2#h9"
+PASS pathname setter, attributes: xlink, xlink:href read first
+PASS search setter, attributes: xlink, xlink:href read first
+PASS hash setter, attributes: xlink, xlink:href read first
+PASS pathname setter, attributes: both, href read first
+PASS search setter, attributes: both, href read first
+PASS hash setter, attributes: both, href read first
+FAIL pathname setter, attributes: both, xlink:href read first assert_equals: xlink:href attribute expected "http://b.test/xlink?q=2#h2" but got "http://a.test/new?q=1#h1"
+FAIL search setter, attributes: both, xlink:href read first assert_equals: xlink:href attribute expected "http://b.test/xlink?q=2#h2" but got "http://a.test/old?q=9#h1"
+FAIL hash setter, attributes: both, xlink:href read first assert_equals: xlink:href attribute expected "http://b.test/xlink?q=2#h2" but got "http://a.test/old?q=1#h9"
+
