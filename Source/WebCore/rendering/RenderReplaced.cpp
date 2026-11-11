@@ -357,7 +357,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
     }
 
-    if (!canHaveChildren() && paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Selection)
+    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Selection)
         return;
 
     if (!paintInfo.shouldPaintWithinRoot(*this))
@@ -415,8 +415,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
     if (paintInfo.paintBehavior.contains(PaintBehavior::ExcludeReplacedContentExceptForIFrames) && !isRenderIFrame())
         return false;
 
-    if ((!canHaveChildren() || hasDrawableContent())
-        && paintInfo.phase != PaintPhase::Foreground
+    if (paintInfo.phase != PaintPhase::Foreground
         && paintInfo.phase != PaintPhase::Outline
         && paintInfo.phase != PaintPhase::SelfOutline
         && paintInfo.phase != PaintPhase::Selection
