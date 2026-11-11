@@ -144,6 +144,28 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) NS_S
 - (BOOL)isManagedForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(isManaged(for:));
 
 /*!
+ @abstract Called when the read-only state of the bookmark or folder is needed.
+ @param context The context in which the web extension is running.
+ @return `YES` if extensions cannot change the title or URL of the bookmark or folder, move it, or remove it, `NO` otherwise.
+ @discussion Defaults to `YES` for built-in folders if not implemented. Managed bookmarks and folders are always read-only.
+ @seealso isContentsReadOnlyForWebExtensionContext:
+ @seealso isManagedForWebExtensionContext:
+ @seealso folderTypeForWebExtensionContext:
+ */
+- (BOOL)isReadOnlyForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(isReadOnly(for:));
+
+/*!
+ @abstract Called when the read-only state of the contents of the folder is needed.
+ @param context The context in which the web extension is running.
+ @return `YES` if extensions cannot add bookmarks or folders to the folder, `NO` otherwise.
+ @discussion Defaults to the result of ``isReadOnlyForWebExtensionContext:`` if that method is implemented, otherwise `NO`,
+ so extensions can add to built-in folders. Managed folders are always content read-only. Removing or changing a bookmark
+ or folder in the folder depends on its own read-only state.
+ @seealso isReadOnlyForWebExtensionContext:
+ */
+- (BOOL)isContentsReadOnlyForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(isContentsReadOnly(for:));
+
+/*!
  @abstract Called when the children of the folder are needed.
  @param context The context in which the web extension is running.
  @return The bookmarks and folders in the folder, in order, or `nil` for a bookmark.
