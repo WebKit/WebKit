@@ -1,0 +1,200 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal {
+        spatial: portal;
+        width: 300px;
+        height: 200px;
+    }
+    .child {
+        width: 100px;
+        height: 50px;
+        background-color: green;
+    }
+    .preserve-3d {
+        transform-style: preserve-3d;
+    }
+    .translate-z {
+        transform: translateZ(-10px);
+    }
+    .container {
+        width: 200px;
+        height: 100px;
+        transform: translateZ(-20px) rotateY(10deg);
+        transform-style: preserve-3d;
+    }
+    .composited {
+        width: 50px;
+        height: 30px;
+        background-color: blue;
+        will-change: transform;
+    }
+</style>
+<body>
+<script>
+'use strict';
+
+const hostedChildren = portal => internals.numberOfHostedPromotedChildrenInSpatialPortal(portal);
+
+const settle = () => new Promise(resolve => setTimeout(resolve, 1000));
+
+const appendChild = (portal, className) => {
+    const child = document.createElement("div");
+    child.className = `child ${className}`;
+    portal.appendChild(child);
+    return child;
+};
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    appendChild(portal, "preserve-3d");
+    await waitForHostedPromotedChildren(portal, 1);
+    assert_equals(hostedChildren(portal), 1);
+}, "A preserve-3d child of a portal is hosted in the portal scene");
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    appendChild(portal, "translate-z");
+    await waitForHostedPromotedChildren(portal, 1);
+    assert_equals(hostedChildren(portal), 1);
+}, "A child with a 3D transform and no preserve-3d is hosted in the portal scene");
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    for (let i = 0; i < 3; ++i)
+        appendChild(portal, "translate-z");
+    await waitForHostedPromotedChildren(portal, 3);
+    assert_equals(hostedChildren(portal), 3);
+}, "Every promoted child of a portal is hosted");
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    appendChild(portal, "");
+    appendChild(portal, "translate-z").style.transform = "translate(5px, 5px)";
+    const wrapper = document.createElement("div");
+    wrapper.appendChild(appendChild(wrapper, "translate-z"));
+    portal.appendChild(wrapper);
+    await settle();
+    assert_equals(hostedChildren(portal), 0);
+}, "Flat children and descendants that are not direct children are not hosted");
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    const child = appendChild(portal, "translate-z");
+    await waitForHostedPromotedChildren(portal, 1);
+
+    child.style.opacity = "0.5";
+    await waitForHostedPromotedChildren(portal, 0);
+
+    child.style.opacity = "";
+    await waitForHostedPromotedChildren(portal, 1);
+}, "A child is only hosted while opacity does not apply to its layer");
+
+const layersHostedInScene = () => internals.layerTreeAsText(document).split("(hostedInSpatialPortalScene 1)").length - 1;
+
+const waitForLayersHostedInScene = async (count, timeout = 5000) => {
+    const startTime = Date.now();
+    while (layersHostedInScene() !== count) {
+        if (Date.now() - startTime > timeout)
+            throw new Error(`Timeout waiting for ${count} layers to be hosted in the portal scene`);
+
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+};
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    appendChild(portal, "translate-z");
+    const child = appendChild(portal, "translate-z");
+    await waitForHostedPromotedChildren(portal, 2);
+    assert_equals(layersHostedInScene(), 2, "The layers of hosted children are hidden from compositing");
+
+    child.style.opacity = "0.5";
+    assert_equals(layersHostedInScene(), 2, "The layer stays hidden until the scene stops drawing the child");
+
+    await waitForLayersHostedInScene(1);
+    assert_equals(hostedChildren(portal), 1);
+}, "The layer of a hosted child is hidden from compositing for as long as the scene draws the child");
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    const child = appendChild(portal, "translate-z");
+    await waitForHostedPromotedChildren(portal, 1);
+
+    child.style.filter = "blur(2px)";
+    await waitForHostedPromotedChildren(portal, 0);
+
+    child.style.filter = "";
+    child.style.clipPath = "circle(40%)";
+    await waitForHostedPromotedChildren(portal, 0);
+
+    child.style.clipPath = "";
+    child.style.backfaceVisibility = "hidden";
+    await waitForHostedPromotedChildren(portal, 0);
+
+    child.style.backfaceVisibility = "";
+    await waitForHostedPromotedChildren(portal, 1);
+}, "A child with a layer effect that a hosted quad cannot reproduce stays flat");
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    const child = appendChild(portal, "translate-z");
+    await waitForHostedPromotedChildren(portal, 1);
+
+    child.style.transform = "none";
+    await waitForHostedPromotedChildren(portal, 0);
+
+    child.style.transform = "rotateY(30deg)";
+    await waitForHostedPromotedChildren(portal, 1);
+}, "A child stops being hosted when it loses its 3D transform and is hosted again when it regains one");
+
+const appendContainer = (portal, innerHTML) => {
+    const container = document.createElement("div");
+    container.className = "container";
+    container.innerHTML = innerHTML;
+    portal.appendChild(container);
+    return container;
+};
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    appendContainer(portal, `<div class="composited"></div><div class="composited" style="margin-left: 100px"></div>`);
+    await waitForHostedPromotedChildren(portal, 1);
+}, "A promoted child is hosted together with its composited descendants, even with no content of its own");
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    const container = appendContainer(portal, `<div class="composited"></div>`);
+    await waitForHostedPromotedChildren(portal, 1);
+
+    container.firstElementChild.style.opacity = "0.5";
+    await waitForHostedPromotedChildren(portal, 0);
+
+    container.firstElementChild.style.opacity = "";
+    await waitForHostedPromotedChildren(portal, 1);
+}, "A promoted child stays flat while one of its composited descendants has a layer effect");
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    appendContainer(portal, `<div style="overflow: hidden; width: 20px; height: 20px"><div class="composited"></div></div>`);
+    await settle();
+    assert_equals(hostedChildren(portal), 0);
+}, "A promoted child stays flat when one of its composited descendants is clipped");
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    const child = appendChild(portal, "translate-z");
+    await waitForHostedPromotedChildren(portal, 1);
+
+    child.remove();
+    await waitForHostedPromotedChildren(portal, 0);
+
+    portal.appendChild(child);
+    await waitForHostedPromotedChildren(portal, 1);
+}, "A child that is removed from and inserted back into a portal is hosted again");
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+
+PASS A preserve-3d child of a portal is hosted in the portal scene
+PASS A child with a 3D transform and no preserve-3d is hosted in the portal scene
+PASS Every promoted child of a portal is hosted
+PASS Flat children and descendants that are not direct children are not hosted
+PASS A child is only hosted while opacity does not apply to its layer
+PASS The layer of a hosted child is hidden from compositing for as long as the scene draws the child
+PASS A child with a layer effect that a hosted quad cannot reproduce stays flat
+PASS A child stops being hosted when it loses its 3D transform and is hosted again when it regains one
+PASS A promoted child is hosted together with its composited descendants, even with no content of its own
+PASS A promoted child stays flat while one of its composited descendants has a layer effect
+PASS A promoted child stays flat when one of its composited descendants is clipped
+PASS A child that is removed from and inserted back into a portal is hosted again
+

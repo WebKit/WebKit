@@ -1,0 +1,66 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SpatialPortalEnabled=true ] -->
+<html>
+<head>
+<style>
+    .portal {
+        spatial: portal;
+        width: 300px;
+        height: 600px;
+    }
+    .box {
+        width: 100px;
+        height: 30px;
+        background-color: green;
+    }
+    .translate-z {
+        transform: translateZ(10px);
+    }
+    .rotate-y {
+        transform: rotateY(20deg);
+    }
+    .rotate-3d {
+        rotate: 1 0 0 15deg;
+    }
+    .translate-property {
+        translate: 0 0 5px;
+    }
+    .rotate-2d {
+        transform: rotate(10deg);
+    }
+    .translate-2d {
+        transform: translate(10px, 5px);
+    }
+    .scale-property {
+        scale: 1.5;
+    }
+    .preserve-3d {
+        transform-style: preserve-3d;
+    }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.setRenderTreeDumpOptions(testRunner.RENDER_TREE_SHOW_COMPOSITED_LAYERS);
+</script>
+</head>
+<body>
+<div class="portal">
+    <div class="box translate-z"></div>
+    <div class="box rotate-y"></div>
+    <div class="box rotate-3d"></div>
+    <div class="box translate-property"></div>
+    <div class="box rotate-2d"></div>
+    <div class="box translate-2d"></div>
+    <div class="box scale-property"></div>
+    <div class="box preserve-3d rotate-2d"></div>
+    <div class="box translate-z" style="overflow: hidden"></div>
+    <div class="box translate-z" style="position: absolute"></div>
+    <div style="display: contents">
+        <div class="box translate-z"></div>
+    </div>
+    <div>
+        <div class="box translate-z"></div>
+    </div>
+</div>
+<div class="box translate-z"></div>
+</body>
+</html>

@@ -3879,6 +3879,30 @@ bool RenderLayerCompositor::isSpatialPortal(const RenderObject& renderer)
     RefPtr element = renderElement->element();
     return element && element->establishesSpatialPortal();
 }
+
+bool RenderLayerCompositor::isPromotedSpatialPortalChild(const RenderLayer& layer)
+{
+    CheckedRef renderer = layer.renderer();
+    if (!layer.preserves3D() && !(renderer->isTransformed() && renderer->style().has3DTransformOperation()))
+        return false;
+
+    CheckedPtr parent = layer.parent();
+    return parent && isSpatialPortal(parent->renderer()) && layer.ancestorLayerIsDOMParent(parent.get());
+}
+
+RenderLayer* RenderLayerCompositor::promotedSpatialPortalChildForLayer(RenderLayer& layer)
+{
+    if (!layer.renderer().settings().spatialPortalEnabled())
+        return nullptr;
+
+    for (auto* current = &layer; current; current = current->parent()) {
+        if (isPromotedSpatialPortalChild(*current))
+            return current;
+        if (isSpatialPortal(current->renderer()))
+            return nullptr;
+    }
+    return nullptr;
+}
 #endif
 
 // Return true if the given layer is a stacking context and has compositing child
@@ -4176,11 +4200,7 @@ bool RenderLayerCompositor::requiresCompositingForSpatialPortal(RenderLayerModel
 bool RenderLayerCompositor::requiresCompositingForSpatialPortalHosting(const RenderLayer& layer) const
 {
 #if ENABLE(SPATIAL_PORTAL)
-    if (!layer.preserves3D())
-        return false;
-
-    CheckedPtr parent = layer.parent();
-    return parent && isSpatialPortal(parent->renderer()) && layer.ancestorLayerIsDOMParent(parent.get());
+    return isPromotedSpatialPortalChild(layer);
 #else
     UNUSED_PARAM(layer);
     return false;

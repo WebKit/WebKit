@@ -40,6 +40,7 @@ messages -> RemoteMesh Stream {
     void UpdateTransform(struct WebModel::Float4x4 transform)
 #if ENABLE(SPATIAL_PORTAL)
     void UpdatePortalChildTransform(WebCore::NodeIdentifier nodeIdentifier, struct WebModel::Float4x4 transform)
+    void SetPortalContentSources(struct Vector<WebModel::PortalContentSource> sources) -> (bool success)
 #endif
     void SetFOV(float fovY)
     void Play(bool playing)

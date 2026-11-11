@@ -311,9 +311,14 @@ void RemoteMesh::removeModel(WebCore::NodeIdentifier nodeIdentifier)
 
 void RemoteMesh::render(uint32_t textureIndex, CompletionHandler<void(bool)>&& completionHandler)
 {
+    bool portalContentIsReady = true;
+#if ENABLE(SPATIAL_PORTAL) && HAVE(IOSURFACE)
+    portalContentIsReady = updatePortalContentTextures();
+#endif
+
     Ref workQueue = m_gpu->workQueue();
-    m_backing->render(textureIndex, [workQueue = WTF::move(workQueue), completionHandler = WTF::move(completionHandler)] (bool result) mutable {
-        protect(workQueue)->dispatch([result, completionHandler = WTF::move(completionHandler)] mutable {
+    m_backing->render(textureIndex, [workQueue = WTF::move(workQueue), portalContentIsReady, completionHandler = WTF::move(completionHandler)](bool result) mutable {
+        protect(workQueue)->dispatch([result = result && portalContentIsReady, completionHandler = WTF::move(completionHandler)] mutable {
             completionHandler(result);
         });
     });
@@ -341,6 +346,80 @@ void RemoteMesh::updatePortalChildTransform(WebCore::NodeIdentifier nodeIdentifi
 {
     m_backing->setPortalChildTransform(nodeIdentifier, transform);
 }
+
+void RemoteMesh::setPortalContentSources(Vector<WebModel::PortalContentSource>&& sources, CompletionHandler<void(bool)>&& completionHandler)
+{
+    MESSAGE_CHECK_COMPLETION_BASE(sources.size() <= WebModel::maximumPortalContentSources, m_streamConnection, completionHandler(false));
+
+    if (sources == m_portalContentSources) {
+        completionHandler(true);
+        return;
+    }
+
+    m_portalContentSources = WTF::move(sources);
+    m_portalContentTextureStates = Vector<PortalContentTextureState>(m_portalContentSources.size());
+    m_backing->clearPortalContentTextures();
+    m_backing->setPortalContentOrder(m_portalContentSources.map([](auto& source) {
+        return source.textureIdentifier;
+    }));
+    completionHandler(true);
+}
+
+#if HAVE(IOSURFACE)
+bool RemoteMesh::updatePortalContentTextures()
+{
+    if (m_portalContentSources.isEmpty())
+        return true;
+
+    constexpr size_t maximumMappedBuffersPerSource = 3;
+
+    Vector<RemoteGPU::PortalContentRequest> requests;
+    requests.reserveInitialCapacity(m_portalContentSources.size());
+    for (size_t i = 0; i < m_portalContentSources.size(); ++i)
+        requests.append({ m_portalContentSources[i].bufferSet, m_portalContentTextureStates[i].mappedBuffers });
+
+    auto surfaces = m_gpu->fetchPortalContentSurfaces(requests);
+
+    bool isReady = true;
+    for (size_t i = 0; i < m_portalContentSources.size() && i < surfaces.size(); ++i) {
+        auto& source = m_portalContentSources[i];
+        auto& state = m_portalContentTextureStates[i];
+        auto& surface = surfaces[i];
+
+        if (surface.isBusy) {
+            isReady = false;
+            continue;
+        }
+
+        if (!surface.bufferIdentifier) {
+            if (!state.boundBuffer)
+                isReady = false;
+            continue;
+        }
+
+        if (state.boundBuffer == surface.bufferIdentifier)
+            continue;
+
+        if (surface.surface && state.mappedBuffers.size() >= maximumMappedBuffersPerSource) {
+            m_backing->removePortalContentTexture(state.mappedBuffers.first());
+            state.mappedBuffers.removeAt(0);
+        }
+
+        bool didUpdateTexture = m_backing->updatePortalContentTexture(source.textureIdentifier, surface.surface.get(), source.isOpaque, surface.bufferIdentifier);
+        if (!didUpdateTexture) {
+            if (!state.boundBuffer)
+                isReady = false;
+            continue;
+        }
+
+        if (surface.surface)
+            state.mappedBuffers.append(surface.bufferIdentifier);
+        state.boundBuffer = surface.bufferIdentifier;
+    }
+
+    return isReady;
+}
+#endif
 #endif
 
 void RemoteMesh::setFOV(float fovY)

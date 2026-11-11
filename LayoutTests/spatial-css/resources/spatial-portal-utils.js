@@ -89,6 +89,23 @@ async function waitForEntityTransform(model, predicate, description, timeout = 5
     }
 }
 
+async function waitForHostedPromotedChildren(portal, count, timeout = 5000) {
+    const startTime = Date.now();
+
+    while (internals.numberOfHostedPromotedChildrenInSpatialPortal(portal) !== count) {
+        if (Date.now() - startTime > timeout)
+            throw new Error(`Timeout waiting for ${count} promoted children to be hosted in the portal`);
+
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+}
+
+async function waitForPortalSceneToDisplay() {
+    await UIHelper.ensureStablePresentationUpdate();
+    await UIHelper.ensureStablePresentationUpdate();
+    await UIHelper.renderingUpdate();
+}
+
 async function snapshotOnceModelsRender(afterReady)
 {
     window.testRunner?.waitUntilDone();

@@ -48,6 +48,7 @@ class GraphicsLayerAnimation;
 class PaintedContentsInfo;
 class RegionContext;
 class RenderLayerCompositor;
+class SpatialPortalController;
 class TiledBacking;
 class TransformationMatrix;
 
@@ -298,6 +299,10 @@ public:
 
     LayoutSize subpixelOffsetFromRenderer() const { return m_subpixelOffsetFromRenderer; }
 
+#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    void updateHostedPromotedChildren();
+#endif
+
     TransformationMatrix transformMatrixForProperty(AnimatedProperty) const final;
 
     void dumpProperties(const GraphicsLayer*, TextStream&, OptionSet<LayerTreeAsTextOptions>) const final;
@@ -434,6 +439,15 @@ private:
     void connectClippingStackLayers(LayerAncestorClippingStack&);
 
     void updateOpacity(const Style::ComputedStyle&);
+#if ENABLE(SPATIAL_PORTAL)
+    void configureSpatialPortalLayer(SpatialPortalController&);
+#endif
+#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    void updatePortalPromotedChildren(SpatialPortalController&);
+    void updateIsHostedInSpatialPortalScene();
+    SpatialPortalController* promotedChildPortalController() const;
+    SpatialPortalController* hostingSpatialPortalController() const;
+#endif
     void updateTransform(const Style::ComputedStyle&);
     void updateChildrenTransformAndAnchorPoint(const LayoutRect& primaryGraphicsLayerRect, LayoutSize offsetFromParentGraphicsLayer);
     void updateFilters(const Style::ComputedStyle&);

@@ -388,7 +388,8 @@ private func makeParameters(
     for function: (any LowLevelMaterialResource.Function)?,
     renderContext: any LowLevelRenderContext,
     textureHashesAndResources: [WKBridgeTypedResourceId: (String, LowLevelTextureResource)],
-    fallbackTexture: LowLevelTextureResource
+    fallbackTexture: LowLevelTextureResource,
+    overrideTexture: LowLevelTextureResource? = nil
 ) throws -> LowLevelArgumentTable? {
     guard let function else { return nil }
     guard let argumentTableDescriptor = function.argumentTableDescriptor else { return nil }
@@ -397,7 +398,9 @@ private func makeParameters(
     // Every slot starts out as the fallback texture, so a slot the parameter mapping doesn't cover still gets one.
     var textures: [LowLevelTextureResource] = argumentTableDescriptor.textures.map({ _ in fallbackTexture })
     for parameter in parameterMapping?.textures ?? [] {
-        if let textureHashAndResource = textureHashesAndResources.values.first(where: { $0.0 == parameter.name }) {
+        if let overrideTexture {
+            textures[parameter.textureIndex] = overrideTexture
+        } else if let textureHashAndResource = textureHashesAndResources.values.first(where: { $0.0 == parameter.name }) {
             textures[parameter.textureIndex] = textureHashAndResource.1
         } else {
             // use fallback texture if no texture if found
@@ -421,6 +424,178 @@ private func makeParameters(
         buffers: buffers,
         textures: textures
     )
+}
+
+private func makePortalChildQuadMaterial(
+    renderContext: any LowLevelRenderContext,
+    contentTextureIdentifier: WKBridgeTypedResourceId?,
+    textureHashesAndResources: [WKBridgeTypedResourceId: (String, LowLevelTextureResource)],
+    fallbackTexture: LowLevelTextureResource
+) throws -> WKBridgeReceiver.Material {
+    let surfaceShader = try renderContext.makeSimpleSurfaceShader(
+        descriptor: .init(
+            useTintColor: false,
+            useTexture: true,
+            outputChannel: .emissiveColor,
+            outputOpacity: true
+        )
+    )
+    let lightingFunction = renderContext.lighting.makeUnlitLightingFunction()
+    let geometryModifier = renderContext.makeDefaultGeometryModifier()
+
+    let materialResource = try renderContext.makeMaterialResource(
+        descriptor: .init(
+            geometry: geometryModifier,
+            surface: surfaceShader,
+            lighting: lightingFunction
+        )
+    )
+
+    let contentTexture = contentTextureIdentifier.flatMap { textureHashesAndResources[$0]?.1 }
+
+    return .init(
+        resource: materialResource,
+        geometryArguments: try makeParameters(
+            for: geometryModifier,
+            renderContext: renderContext,
+            textureHashesAndResources: [:],
+            fallbackTexture: fallbackTexture
+        ),
+        surfaceArguments: try makeParameters(
+            for: surfaceShader,
+            renderContext: renderContext,
+            textureHashesAndResources: [:],
+            fallbackTexture: fallbackTexture,
+            overrideTexture: contentTexture
+        ),
+        lightingArguments: try makeParameters(
+            for: lightingFunction,
+            renderContext: renderContext,
+            textureHashesAndResources: [:],
+            fallbackTexture: fallbackTexture
+        ),
+        contentTextureIndex: surfaceShader.parameterMapping?.textures.first?.textureIndex,
+        contentTextureIdentifier: contentTextureIdentifier,
+        blending: .transparent
+    )
+}
+
+private let portalQuadCoplanarNormalTolerance: Float = 1e-5
+private let portalQuadCoplanarDistanceTolerance: Float = 2e-6
+
+private struct PortalQuadInstance {
+    let index: Int
+    let instance: LowLevelMeshInstance
+    let contentTextureIdentifier: WKBridgeTypedResourceId
+}
+
+private func portalQuadInstances(
+    meshInstances: LowLevelMeshInstanceArray,
+    meshToMeshInstances: [WKBridgeTypedResourceId: [WKBridgeReceiver.MeshInstanceEntry]],
+    meshResourceToMaterials: [WKBridgeTypedResourceId: [WKBridgeTypedResourceId]],
+    materialsAndParams: [WKBridgeTypedResourceId: WKBridgeReceiver.Material]
+) -> [PortalQuadInstance] {
+    var indexByInstance: [ObjectIdentifier: Int] = [:]
+    for (index, instance) in meshInstances.enumerated() {
+        if let instance {
+            indexByInstance[ObjectIdentifier(instance)] = index
+        }
+    }
+
+    var portalQuads: [PortalQuadInstance] = []
+    for (identifier, entries) in meshToMeshInstances {
+        guard
+            let materialIdentifier = meshResourceToMaterials[identifier]?.first,
+            let textureIdentifier = materialsAndParams[materialIdentifier]?.contentTextureIdentifier
+        else {
+            continue
+        }
+
+        for entry in entries {
+            if let index = indexByInstance[ObjectIdentifier(entry.instance)] {
+                portalQuads.append(PortalQuadInstance(index: index, instance: entry.instance, contentTextureIdentifier: textureIdentifier))
+            }
+        }
+    }
+    return portalQuads
+}
+
+private func orderCoplanarPortalQuads(
+    _ portalQuads: [PortalQuadInstance],
+    portalContentRanks: [WKBridgeTypedResourceId: Int]
+) -> [[Int]] {
+    guard portalContentRanks.count > 1 else {
+        return []
+    }
+
+    struct PortalQuad {
+        let index: Int
+        let rank: Int
+        let normal: SIMD3<Float>
+        let distance: Float
+    }
+
+    var quads: [PortalQuad] = []
+    for portalQuad in portalQuads {
+        guard let rank = portalContentRanks[portalQuad.contentTextureIdentifier] else {
+            continue
+        }
+
+        let transform = portalQuad.instance.transform
+        let normal = simd_cross(simd_make_float3(transform.columns.0), simd_make_float3(transform.columns.1))
+        let length = simd_length(normal)
+        guard length.isFinite, length > 0 else {
+            continue
+        }
+        let unitNormal = normal / length
+        quads.append(
+            PortalQuad(
+                index: portalQuad.index,
+                rank: rank,
+                normal: unitNormal,
+                distance: simd_dot(unitNormal, simd_make_float3(transform.columns.3))
+            )
+        )
+    }
+
+    guard quads.count > 1 else {
+        return []
+    }
+
+    var parents = Array(quads.indices)
+    func root(_ quad: Int) -> Int {
+        var quad = quad
+        while parents[quad] != quad {
+            parents[quad] = parents[parents[quad]]
+            quad = parents[quad]
+        }
+        return quad
+    }
+
+    for first in quads.indices {
+        for second in (first + 1)..<quads.count {
+            let alignment = simd_dot(quads[first].normal, quads[second].normal)
+            guard abs(alignment) > 1 - portalQuadCoplanarNormalTolerance else {
+                continue
+            }
+            let secondDistance = alignment > 0 ? quads[second].distance : -quads[second].distance
+            guard abs(quads[first].distance - secondDistance) < portalQuadCoplanarDistanceTolerance else {
+                continue
+            }
+            parents[root(second)] = root(first)
+        }
+    }
+
+    var groups: [Int: [Int]] = [:]
+    for quad in quads.indices {
+        groups[root(quad), default: []].append(quad)
+    }
+
+    var orderedGroups: [[Int]] = []
+    for members in groups.values where members.count > 1 {
+        orderedGroups.append(members.sorted { quads[$0].rank < quads[$1].rank }.map { quads[$0].index })
+    }
+    return orderedGroups
 }
 
 extension Logger {
@@ -686,10 +861,16 @@ extension WKBridgeReceiver {
         let resource: LowLevelMaterialResource
         let geometryArguments: LowLevelArgumentTable?
         let surfaceArguments: LowLevelArgumentTable?
+        let lightingArguments: LowLevelArgumentTable?
+        let contentTextureIndex: Int?
+        let contentTextureIdentifier: WKBridgeTypedResourceId?
         let blending: LowLevelMaterialResource.ShaderGraphOutput.Blending
     }
     @nonobjc
     fileprivate var materialsAndParams: [WKBridgeTypedResourceId: Material] = [:]
+
+    @nonobjc
+    fileprivate var portalContentRanks: [WKBridgeTypedResourceId: Int] = [:]
 
     @nonobjc
     fileprivate var textureHashesAndResources: [WKBridgeTypedResourceId: (String, LowLevelTextureResource)] = [:]
@@ -873,8 +1054,21 @@ extension WKBridgeReceiver {
             }
         }
 
+        let portalQuads = portalQuadInstances(
+            meshInstances: meshInstancePool.meshInstances,
+            meshToMeshInstances: meshToMeshInstances,
+            meshResourceToMaterials: meshResourceToMaterials,
+            materialsAndParams: materialsAndParams
+        )
+
         do {
-            try appRenderer.render(meshInstances: meshInstancePool.meshInstances, texture: texture, commandBuffer: commandBuffer)
+            try appRenderer.render(
+                meshInstances: meshInstancePool.meshInstances,
+                texture: texture,
+                commandBuffer: commandBuffer,
+                portalQuads: Set(portalQuads.map(\.index)),
+                coplanarGroups: orderCoplanarPortalQuads(portalQuads, portalContentRanks: portalContentRanks)
+            )
         } catch {
             logError("failed to render \(error)")
         }
@@ -922,6 +1116,16 @@ extension WKBridgeReceiver {
                 let identifier = data.identifier
                 logInfo("updateMaterial \(identifier)")
 
+                if data.materialGraph?.graphName == WKBridgePortalChildQuadGraphName {
+                    materialsAndParams[identifier] = try makePortalChildQuadMaterial(
+                        renderContext: renderContext,
+                        contentTextureIdentifier: data.portalContentTextureIdentifier,
+                        textureHashesAndResources: textureHashesAndResources,
+                        fallbackTexture: self.fallbackTexture
+                    )
+                    continue
+                }
+
                 guard let shaderGraph = ShaderGraph.fromWKDescriptor(data.materialGraph) else {
                     fatalError("No materialGraph data provided for material \(identifier)")
                 }
@@ -958,11 +1162,79 @@ extension WKBridgeReceiver {
                     resource: materialResource,
                     geometryArguments: geometryArguments,
                     surfaceArguments: surfaceArguments,
+                    lightingArguments: nil,
+                    contentTextureIndex: nil,
+                    contentTextureIdentifier: nil,
                     blending: shaderGraphOutput.blending
                 )
             }
         } catch {
             logError("updateMaterial failed \(error)")
+        }
+    }
+
+    func setPortalContentOrder(_ identifiers: [WKBridgeTypedResourceId]) {
+        var ranks: [WKBridgeTypedResourceId: Int] = [:]
+        for (rank, identifier) in identifiers.enumerated() where ranks[identifier] == nil {
+            ranks[identifier] = rank
+        }
+        portalContentRanks = ranks
+    }
+
+    func updatePortalContentTexture(_ identifier: WKBridgeTypedResourceId, texture: any MTLTexture, forceOpaque: Bool) {
+        var resourceDescriptor = LowLevelTextureResource.Descriptor.from(
+            texture,
+            swizzle: MTLTextureSwizzleChannels(red: .red, green: .green, blue: .blue, alpha: .alpha)
+        )
+        resourceDescriptor.pixelFormat = .rgba16Float
+        resourceDescriptor.textureUsage = [.shaderRead, .shaderWrite]
+
+        let existingTexture = textureHashesAndResources[identifier]?.1
+        let needsNewTexture = existingTexture?.descriptor != resourceDescriptor
+
+        guard
+            let textureResource = needsNewTexture
+                ? (try? renderContext.makeTextureResource(descriptor: resourceDescriptor)) : existingTexture
+        else {
+            logError("could not create the portal content texture resource")
+            return
+        }
+
+        guard let commandBuffer = commandQueue.makeCommandBuffer() else {
+            logError("could not create the portal content command buffer")
+            return
+        }
+
+        let outTexture = textureResource.replace(commandBuffer: commandBuffer, memoryOwner: memoryOwner)
+        do {
+            try appRenderer.convertPortalContent(
+                source: texture,
+                destination: outTexture,
+                isOpaque: forceOpaque,
+                commandBuffer: commandBuffer
+            )
+        } catch {
+            logError("could not convert the portal content texture: \(error)")
+        }
+        commandBuffer.commit()
+
+        guard needsNewTexture else { return }
+
+        textureHashesAndResources[identifier] = (WKBridgePortalChildQuadGraphName, textureResource)
+
+        for (materialIdentifier, material) in materialsAndParams {
+            guard
+                material.contentTextureIdentifier == identifier,
+                let index = material.contentTextureIndex,
+                let arguments = material.surfaceArguments
+            else {
+                continue
+            }
+            do {
+                try arguments.setTexture(textureResource, at: index)
+            } catch {
+                logError("failed to bind the portal content texture for \(materialIdentifier): \(error)")
+            }
         }
     }
 
@@ -1116,7 +1388,7 @@ extension WKBridgeReceiver {
                                     pipeline: pipeline,
                                     geometryArguments: material.geometryArguments,
                                     surfaceArguments: material.surfaceArguments,
-                                    lightingArguments: lightingArguments,
+                                    lightingArguments: material.lightingArguments ?? lightingArguments,
                                     transform: instanceTransform,
                                     sortCategory: material.blending == .transparent ? .transparent : .opaque
                                 )
@@ -2696,7 +2968,8 @@ final class USDModelLoader {
                         uuid: makeUUID(from: material.id.description),
                         path: material.primPath,
                         hashValue: material.id.hashValue
-                    )
+                    ),
+                    portalContentTextureIdentifier: nil
                 )
             }
         )
@@ -3048,6 +3321,12 @@ extension WKBridgeReceiver {
 
     @objc(updateTexture:)
     func updateTexture(_ data: [WKBridgeUpdateTexture]) {
+    }
+
+    func updatePortalContentTexture(_ identifier: WKBridgeTypedResourceId, texture: any MTLTexture, forceOpaque: Bool) {
+    }
+
+    func setPortalContentOrder(_ identifiers: [WKBridgeTypedResourceId]) {
     }
 
     @objc(updateMaterial:)
