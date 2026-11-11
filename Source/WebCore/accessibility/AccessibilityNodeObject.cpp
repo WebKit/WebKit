@@ -917,6 +917,10 @@ bool AccessibilityNodeObject::canHaveChildren() const
     if (node() && !renderer() && WebCore::elementName(node()) == ElementName::HTML_noscript)
         return false;
 
+    // Alternative text replaces the generated content as a whole, so the content itself isn't exposed.
+    if (!altTextFromStyle().isNull())
+        return false;
+
     if (CheckedPtr listMarker = dynamicDowncast<RenderListOutsideMarker>(renderer()))
         return listMarker->hasContentProperty();
 
@@ -3292,13 +3296,18 @@ String AccessibilityNodeObject::textAsLabelFor(const AccessibilityObject& labele
     if (!labelAttribute.isEmpty())
         return labelAttribute;
 
-    labelAttribute = altTextFromAttributeOrStyle();
+    labelAttribute = getAttribute(altAttr);
     if (!labelAttribute.isEmpty())
         return labelAttribute;
 
     labelAttribute = getAttribute(titleAttr);
     if (!labelAttribute.isEmpty())
         return labelAttribute;
+
+    // The alt text of 'content' stands in for this element's content, so it ranks with the content
+    // (below the attributes above), and replaces the children it hides.
+    if (auto contentAlt = altTextFromContent(); !contentAlt.isEmpty())
+        return contentAlt;
 
     if (isNativeLabel()) {
         StringBuilder builder;
@@ -3469,7 +3478,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
         }
         // Images should use alt as long as the attribute is present, even if empty.
         // Otherwise, it should fallback to other methods, like the title attribute.
-        if (String alt = altTextFromAttributeOrStyle(); !alt.isNull())
+        if (String alt = altText(); !alt.isNull())
             textOrder.append(AccessibilityText(WTF::move(alt), AccessibilityTextSource::Alternative));
     }
 
@@ -3545,9 +3554,9 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
         textOrder.append(AccessibilityText(getAttribute(MathMLNames::alttextAttr), AccessibilityTextSource::Alternative));
 #endif
 
-    if (CheckedPtr style = this->style()) {
-        String altText = style->content().altText();
-        if (!altText.isEmpty())
+    // An element replaced by a 'content' image is described by that image's alt text, whatever its role.
+    if (CheckedPtr image = dynamicDowncast<RenderImage>(renderer()); image && image->isGeneratedContent()) {
+        if (String altText = image->altText(); !altText.isEmpty())
             textOrder.append(AccessibilityText(WTF::move(altText), AccessibilityTextSource::Alternative));
     }
 }
@@ -3732,7 +3741,7 @@ String AccessibilityNodeObject::description() const
     if (usesAltForTextComputation()) {
         // Images should use alt as long as the attribute is present, even if empty.
         // Otherwise, it should fallback to other methods, like the title attribute.
-        if (String alt = altTextFromAttributeOrStyle(); !alt.isNull())
+        if (String alt = altText(); !alt.isNull())
             return alt;
         // Image map elements shouldn't fallback.
         if (isImageMapLink())

@@ -1,0 +1,168 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body { counter-reset: c 3; }
+
+#multipleStrings::before { content: "a" "b" / "ALT MULTIPLE STRINGS"; }
+#counterOnly::before { content: counter(c) / "ALT COUNTER"; }
+#quoteOnly::before { content: open-quote / "ALT QUOTE"; }
+#counterAndString::before { content: counter(c) ". " / "ALT COUNTER AND STRING"; }
+#emptyAltCounter::before { content: counter(c) "." / ""; }
+#emptyString::before { content: "" / "ALT EMPTY STRING"; }
+#multipleImages::after { content: url(../../mac/resources/cake.png) url(../../mac/resources/cake.png) / "ALT MULTIPLE IMAGES"; }
+#blockBefore::before { display: block; content: "a" / "ALT BLOCK"; }
+#emptyAltImageInFigure::after { content: url(../../mac/resources/cake.png) / ""; }
+
+#multipleStringsButton::before { content: "a" "b" / "ALT MULTIPLE STRINGS"; }
+#counterAndStringButton::before { content: counter(c) ". " / "ALT COUNTER AND STRING"; }
+#emptyAltCounterButton::before { content: counter(c) "." / ""; }
+#multipleImagesButton::before { content: url(../../mac/resources/cake.png) url(../../mac/resources/cake.png) / "ALT MULTIPLE IMAGES"; }
+#emptyStringButton::before { content: "" / "ALT EMPTY STRING"; }
+
+.replacedEmptyAlt { content: url(../../mac/resources/cake.png) / ""; }
+#replacedWithAlt { content: url(../../mac/resources/cake.png) / "ALT REPLACED"; }
+#replacedButton { content: url(../../mac/resources/cake.png) / "ALT REPLACED BUTTON"; }
+#replacedImageMap { content: url(../../mac/resources/cake.png); }
+#replacedOverlay { content: url(../../resources/green-400x400.png); }
+#unusedContentAlt { content: "x" / "ALT UNUSED"; }
+#replacedLabel { content: url(../../mac/resources/cake.png) / "ALT LABEL"; }
+#replacedLabelTitled { content: url(../../mac/resources/cake.png) / "ALT LABEL TITLED"; }
+</style>
+</head>
+<body>
+
+<div id="content">
+<div id="multipleStrings" aria-expanded="true">text</div>
+<div id="counterOnly" aria-expanded="true">text</div>
+<div id="quoteOnly" aria-expanded="true">text</div>
+<div id="counterAndString" aria-expanded="true">text</div>
+<div id="emptyAltCounter" aria-expanded="true">text</div>
+<div id="emptyString" aria-expanded="true">text</div>
+<div id="multipleImages" aria-expanded="true">text</div>
+<div id="blockBefore" role="group">text</div>
+<figure><div id="emptyAltImageInFigure" aria-expanded="true">text</div></figure>
+
+<button id="multipleStringsButton"></button>
+<button id="counterAndStringButton"></button>
+<button id="emptyAltCounterButton">text</button>
+<button id="multipleImagesButton"></button>
+<button id="emptyStringButton"></button>
+
+<div id="replacedFocusable" class="replacedEmptyAlt" tabindex="0"></div>
+<figure><div id="replacedInFigure" class="replacedEmptyAlt"></div></figure>
+<div id="replacedLabeled" class="replacedEmptyAlt" aria-label="ARIA LABEL"></div>
+<div id="replacedWithAlt"></div>
+<div id="replacedButton" role="button" tabindex="0"></div>
+<img id="replacedImageMap" usemap="#map" alt="ALT IMAGE MAP">
+<map name="map"><area href="#" alt="AREA" shape="rect" coords="0,0,10,10"></map>
+<img id="replacedOverlay" alt="ALT OVERLAY">
+<div id="unusedContentAlt" role="img"></div>
+<label id="replacedLabel" for="replacedLabelInput">LABEL TEXT</label><input id="replacedLabelInput">
+<label id="replacedLabelTitled" for="replacedLabelTitledInput" title="LABEL TITLE">LABEL TEXT</label><input id="replacedLabelTitledInput">
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("This tests that the alt text of CSS content stands in for the generated content as a whole, whatever it is made of, and that it only applies where that content is used.");
+
+var overlayData = [
+    {
+        topLeft: new DOMPointReadOnly(0, 0),
+        topRight: new DOMPointReadOnly(1, 0),
+        bottomRight: new DOMPointReadOnly(1, 1),
+        bottomLeft: new DOMPointReadOnly(0, 1),
+        children: [
+            {
+                text: "overlay text",
+                topLeft: new DOMPointReadOnly(0, 0),
+                topRight: new DOMPointReadOnly(1, 0),
+                bottomRight: new DOMPointReadOnly(1, 1),
+                bottomLeft: new DOMPointReadOnly(0, 1),
+            }
+        ],
+    }
+];
+
+function outputElement(element) {
+    debug(element ? element.role : "AXRole:");
+    debug(element ? element.description : "AXDescription:");
+    debug(element ? element.title : "AXTitle:");
+    debug((element ? element.stringValue : "AXValue:") + "\n");
+}
+
+function outputChild(id, index) {
+    var parent = accessibilityController.accessibleElementById(id);
+    debug(id + " children: " + parent.childrenCount);
+    outputElement(parent.childAtIndex(index));
+}
+
+function outputTitle(id) {
+    var element = accessibilityController.accessibleElementById(id);
+    debug(id);
+    debug(element.title + "\n");
+}
+
+function outputReplaced(id) {
+    var element = accessibilityController.accessibleElementById(id);
+    debug(id + " children: " + (element ? element.childrenCount : 0));
+    outputElement(element);
+}
+
+function outputHasChildren(id) {
+    var element = accessibilityController.accessibleElementById(id);
+    debug(id + " has children: " + (element ? element.childrenCount > 0 : false));
+    debug((element ? element.role : "AXRole:") + "\n");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    addEventListener("load", () => {
+        internals.installImageOverlay(document.getElementById("replacedOverlay"), overlayData);
+
+        setTimeout(() => {
+            debug("Generated content");
+            outputChild("multipleStrings", 0);
+            outputChild("counterOnly", 0);
+            outputChild("quoteOnly", 0);
+            outputChild("counterAndString", 0);
+            outputChild("emptyAltCounter", 0);
+            outputChild("emptyString", 0);
+            outputChild("multipleImages", 1);
+            outputChild("blockBefore", 0);
+            outputChild("emptyAltImageInFigure", 0);
+
+            debug("Names from generated content");
+            outputTitle("multipleStringsButton");
+            outputTitle("counterAndStringButton");
+            outputTitle("emptyAltCounterButton");
+            outputTitle("multipleImagesButton");
+            outputTitle("emptyStringButton");
+            outputTitle("replacedLabelInput");
+            outputTitle("replacedLabelTitledInput");
+
+            debug("Elements replaced by a content image");
+            outputReplaced("replacedFocusable");
+            outputReplaced("replacedInFigure");
+            outputReplaced("replacedLabeled");
+            outputReplaced("replacedWithAlt");
+            outputReplaced("replacedButton");
+            outputHasChildren("replacedImageMap");
+            outputHasChildren("replacedOverlay");
+
+            debug("Unused content alt text");
+            outputReplaced("unusedContentAlt");
+
+            document.getElementById("content").style.visibility = "hidden";
+            finishJSTest();
+        }, 0);
+    });
+}
+</script>
+
+</body>
+</html>

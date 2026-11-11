@@ -394,14 +394,6 @@ Element* AccessibilityRenderObject::anchorElement() const
     return nullptr;
 }
 
-// Null is distinct from empty: empty asks for the content to be ignored.
-NODELETE static const String& generatedContentAltText(const RenderText* renderText)
-{
-    if (!renderText)
-        return nullString();
-    return renderText->altText();
-}
-
 String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) const
 {
     // If we are within a hidden context, we don't want to add any text for this object, instead
@@ -409,6 +401,12 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
     // AccessibilityNodeObject::textUnderElement takes care of this, so call it directly.
     if (!m_renderer || mode.isHidden())
         return AccessibilityNodeObject::textUnderElement(WTF::move(mode));
+
+    if (auto contentAlt = altTextFromStyle(); !contentAlt.isNull()) {
+        if (m_renderer->style().isListMarkerStyle() && mode.includeListMarkers == IncludeListMarkerText::No)
+            return { };
+        return contentAlt;
+    }
 
     if (CheckedPtr fileUpload = dynamicDowncast<RenderFileUploadControl>(*m_renderer))
         return fileUpload->buttonValue();
@@ -487,8 +485,6 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
 
         // Sometimes text fragments don't have Nodes associated with them (like when
         // CSS content is used to insert text or when a RenderCounter is used.)
-        if (auto& altText = generatedContentAltText(renderText.get()); !altText.isNull())
-            return altText;
         if (WeakPtr renderTextFragment = dynamicDowncast<RenderTextFragment>(renderText.get()))
             return renderTextFragment->contentString();
         if (renderText)
@@ -541,12 +537,17 @@ String AccessibilityRenderObject::stringValue() const
         return AccessibilityNodeObject::stringValue();
 
     bool isStaticText = this->isStaticText();
-    if (isStaticText && node()) {
-        // FIXME: Implement text stitching for node-less static text, like CSS generated content.
-        // This is relevant here because only AccessibilityNodeObject::stringValue() knows how to
-        // stitch text. Ideally, we would shrink this implementation into AccessibilityNodeObject,
-        // since that is intended to become the "node and or renderer having" accessibility object class.
-        return AccessibilityNodeObject::stringValue();
+    if (isStaticText) {
+        if (auto contentAlt = altTextFromStyle(); !contentAlt.isNull())
+            return contentAlt;
+
+        if (node()) {
+            // FIXME: Implement text stitching for node-less static text, like CSS generated content.
+            // This is relevant here because only AccessibilityNodeObject::stringValue() knows how to
+            // stitch text. Ideally, we would shrink this implementation into AccessibilityNodeObject,
+            // since that is intended to become the "node and or renderer having" accessibility object class.
+            return AccessibilityNodeObject::stringValue();
+        }
     }
 
     if (isStaticText || isTextControl() || isSecureField()) {
@@ -1109,6 +1110,10 @@ bool AccessibilityRenderObject::computeIsIgnored() const
     if (m_renderer->isBR())
         return true;
 
+    // The alt text may be set on generated content through CSS, which should be honored.
+    if (auto contentAlt = altTextFromStyle(); !contentAlt.isNull())
+        return objectInclusionFromAltText(contentAlt) == AccessibilityObjectInclusion::IgnoreObject;
+
     if (CheckedPtr renderText = dynamicDowncast<RenderText>(m_renderer.get())) {
         // Text elements with no rendered text, or only whitespace should not be part of the AX tree.
         if (!renderText->hasRenderedText()) {
@@ -1127,13 +1132,6 @@ bool AccessibilityRenderObject::computeIsIgnored() const
 
         if (renderText->text().containsOnly<isASCIIWhitespace>())
             return true;
-
-        // The alt text may be set on generated content through CSS, which should be honored.
-        auto altTextInclusion = objectInclusionFromAltText(generatedContentAltText(renderText.get()));
-        if (altTextInclusion == AccessibilityObjectInclusion::IgnoreObject)
-            return true;
-        if (altTextInclusion == AccessibilityObjectInclusion::IncludeObject)
-            return false;
 
         bool checkForIgnored = true;
         for (RefPtr ancestor = parentObject(); ancestor; ancestor = ancestor->parentObject()) {
@@ -1223,7 +1221,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
         if (image)
             altTextInclusion = objectInclusionFromAltText(image->altText());
         else
-            altTextInclusion = objectInclusionFromAltText(altTextFromAttributeOrStyle());
+            altTextInclusion = objectInclusionFromAltText(altText());
 
         if (altTextInclusion == AccessibilityObjectInclusion::IncludeObject)
             return false;
@@ -2443,6 +2441,18 @@ bool AccessibilityRenderObject::shouldIgnoreAttributeRole() const
     return m_ariaRole == AccessibilityRole::Document && hasContentEditableAttributeSet();
 }
 
+NODELETE static bool generatedContentIsOnlyImages(const Style::ComputedStyle& style)
+{
+    auto* contentData = style.content().tryData();
+    if (!contentData || contentData->visible.isEmpty())
+        return false;
+    for (auto& item : contentData->visible) {
+        if (!WTF::holdsAlternative<Style::Content::Image>(item))
+            return false;
+    }
+    return true;
+}
+
 AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 {
     // Handle list role determination before checking for a renderer, because we want to use the same codepath in both scenarios.
@@ -2575,6 +2585,12 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 
     if (roleFromNode != AccessibilityRole::Unknown)
         return roleFromNode;
+
+    if (!altTextFromStyle().isNull()) {
+        // FIXME: Generated content made only of images is exposed as an image, and other generated content as text.
+        // Should all generated content with alternative text be exposed as text?
+        return generatedContentIsOnlyImages(m_renderer->style()) ? AccessibilityRole::Image : AccessibilityRole::StaticText;
+    }
 
 #if !PLATFORM(COCOA)
     // This block should be deleted for all platforms, but doing so causes a lot of test failures that need to be sorted out.

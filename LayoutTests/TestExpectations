@@ -8674,3 +8674,6 @@ webkit.org/b/329235 webgl/video-formats/upload-path-vp9-p2-420-10bit-pq-videoran
 # Debug assertion in RenderLayer::recursiveUpdateLayerPositions (repaintRects mismatch on the RenderSVGRoot).
 webkit.org/b/328364 imported/w3c/web-platform-tests/svg/as-image/external-resource-data-url-import.sub.html [ Pass Crash ]
 webkit.org/b/328364 imported/w3c/web-platform-tests/svg/as-image/external-resource-data-url-sheet.sub.html [ Pass Crash ]
+
+# <button> ignores `content: url()`, so its CSS alt text describes an image that is not rendered.
+webkit.org/b/238792 accessibility/css-content-alt-text.html [ Failure ]

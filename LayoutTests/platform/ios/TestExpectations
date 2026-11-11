@@ -2615,7 +2615,7 @@ accessibility/crash-when-renderers-are-added-back-to-deferred-list.html [ Pass ]
 accessibility/crash-while-adding-text-child-with-transform.html [ Pass ]
 accessibility/crash-with-noelement-selectbox.html [ Pass ]
 accessibility/create-unconnected-node-during-layout-crash.html [ Pass ]
-accessibility/css-content-alt-text.html [ Pass Crash ] # rdar://178168847
+accessibility/css-content-alt-text.html [ Failure Crash ] # rdar://178168847 webkit.org/b/238792
 accessibility/css-speech-speak.html [ Pass ]
 accessibility/css-table-ignored.html [ Pass ]
 accessibility/custom-elements/current.html [ Pass ]
