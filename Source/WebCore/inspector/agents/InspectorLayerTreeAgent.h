@@ -29,22 +29,18 @@
 #pragma once
 
 #include "InspectorWebAgentBase.h"
+#include "LayerTreeInspectionState.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
-#include <wtf/InlineWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakHashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class IntRect;
 class Node;
 class PseudoElement;
-class RenderElement;
 class RenderLayer;
-class WeakPtrImplWithEventTargetData;
 
 class InspectorLayerTreeAgent final : public InspectorAgentBase, public Inspector::LayerTreeBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorLayerTreeAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorLayerTreeAgent);
@@ -74,29 +70,12 @@ public:
     void reset();
 
 private:
-    // RenderLayer-related methods.
-    String bind(const RenderLayer*);
-    void unbind(const RenderLayer*);
-
-    void gatherLayersUsingRenderObjectHierarchy(RenderElement&, JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>&);
-    void gatherLayersUsingRenderLayerHierarchy(RenderLayer*, JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>&);
-
-    Ref<Inspector::Protocol::LayerTree::Layer> buildObjectForLayer(RenderLayer*);
-    Ref<Inspector::Protocol::LayerTree::IntRect> buildObjectForIntRect(const IntRect&);
-
     Inspector::Protocol::DOM::NodeId idForNode(Node*);
-
-    String bindPseudoElement(PseudoElement*);
-    void unbindPseudoElement(PseudoElement*);
 
     const UniqueRef<Inspector::LayerTreeFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::LayerTreeBackendDispatcher> m_backendDispatcher;
 
-    HashMap<const RenderLayer*, Inspector::Protocol::LayerTree::LayerId> m_documentLayerToIdMap;
-    HashMap<Inspector::Protocol::LayerTree::LayerId, InlineWeakPtr<const RenderLayer>> m_idToLayer;
-
-    WeakHashMap<PseudoElement, Inspector::Protocol::LayerTree::PseudoElementId, WeakPtrImplWithEventTargetData> m_pseudoElementToIdMap;
-    HashMap<Inspector::Protocol::LayerTree::PseudoElementId, WeakPtr<PseudoElement, WeakPtrImplWithEventTargetData>> m_idToPseudoElement;
+    LayerTreeInspectionState m_state;
 
     bool m_suppressLayerChangeEvents { false };
 };

@@ -1,0 +1,202 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.LayerTree.LayersForNode.FrameTarget");
+
+        let childFrameTarget;
+        let frameDocument;
+        let initialLayerCount;
+        let compositedLayer;
+        let addedLayer;
+
+        function nodeForLayer(layer) {
+            return WI.domManager.nodeForIdInFrameTarget(layer.nodeId, childFrameTarget);
+        }
+
+        function findLayerForElementId(layers, id) {
+            return layers.find((layer) => !layer.isGeneratedContent && nodeForLayer(layer)?.getAttribute("id") === id);
+        }
+
+        async function fetchFrameLayers() {
+            let {layers} = await childFrameTarget.LayerTreeAgent.layersForNode(frameDocument.backendNodeId);
+            return layers;
+        }
+
+        async function waitForFrameLayerCount(expectedCount) {
+            // Each layersForNode re-arms layerTreeDidChange, so listen before fetching and wait for the next change until the count matches.
+            while (true) {
+                let didChangePromise = awaitLayerTreeDidChange(childFrameTarget);
+                let layers = await fetchFrameLayers();
+                if (layers.length === expectedCount)
+                    return layers;
+                await didChangePromise;
+            }
+        }
+
+        async function evaluateInChildFrame(expression) {
+            await childFrameTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+        }
+
+        function awaitLayerTreeDidChange(target) {
+            return new Promise((resolve) => {
+                let listener = WI.layerTreeManager.addEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, (event) => {
+                    if (event.data.target !== target)
+                        return;
+                    WI.layerTreeManager.removeEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, listener);
+                    resolve();
+                });
+            });
+        }
+
+        async function samplePixelAtCenter(dataURL) {
+            let image = new Image;
+            await new Promise((resolve, reject) => {
+                image.onload = resolve;
+                image.onerror = reject;
+                image.src = dataURL;
+            });
+            let canvas = document.createElement("canvas");
+            canvas.width = image.naturalWidth;
+            canvas.height = image.naturalHeight;
+            let context = canvas.getContext("2d");
+            context.drawImage(image, 0, 0);
+            return Array.from(context.getImageData(Math.floor(canvas.width / 2), Math.floor(canvas.height / 2), 1, 1).data);
+        }
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersForNode.FrameTarget.Setup",
+            description: "Find the cross-origin child frame target and load its document.",
+            async test() {
+                let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+                InspectorTest.assert(frameTargets.length === 2, "Should have exactly main and child frame targets.");
+
+                let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+                let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+                childFrameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+                InspectorTest.expectNotNull(childFrameTarget, "Should find a child frame target.");
+                InspectorTest.assert(!childFrameTarget.isProvisional, "Child frame should not be still loading.");
+                InspectorTest.expectThat(childFrameTarget.hasDomain("LayerTree"), "Child frame target should support the LayerTree domain.");
+
+                while (!(frameDocument = WI.domManager.frameTargetDocumentForTarget(childFrameTarget)))
+                    await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+                await childFrameTarget.DOMAgent.requestChildNodes(frameDocument.backendNodeId, -1);
+
+                // LayerTreeManager enables LayerTree on the child frame target once its execution context arrives.
+                await childFrameTarget.ensureTargetExecutionContext();
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersForNode.FrameTarget.LayersForDocument",
+            description: "layersForNode on the child frame target should return the cross-origin frame's own layers.",
+            async test() {
+                let layers = await fetchFrameLayers();
+                initialLayerCount = layers.length;
+                InspectorTest.expectGreaterThanOrEqual(layers.length, 3, "Should report at least the root, the composited element, and the ::before layers.");
+
+                let rootLayer = layers.find((layer) => layer.nodeId === frameDocument.backendNodeId);
+                InspectorTest.expectNotNull(rootLayer, "Should report a layer for the frame's document.");
+
+                compositedLayer = findLayerForElementId(layers, "composited");
+                InspectorTest.expectNotNull(compositedLayer, "Should report a layer for the composited element.");
+                InspectorTest.expectEqual(compositedLayer.bounds.width, 100, "Composited element layer should be 100px wide.");
+                InspectorTest.expectEqual(compositedLayer.bounds.height, 100, "Composited element layer should be 100px tall.");
+                InspectorTest.expectEqual(typeof compositedLayer.memory, "number", "Layer should report memory.");
+                InspectorTest.expectEqual(typeof compositedLayer.paintCount, "number", "Layer should report a paint count.");
+
+                let beforeLayer = layers.find((layer) => layer.isGeneratedContent && layer.pseudoElement === "before");
+                InspectorTest.expectNotNull(beforeLayer, "Should report a layer for the ::before pseudo-element.");
+                InspectorTest.expectThat(!!beforeLayer.pseudoElementId, "::before layer should have a pseudo-element id.");
+                InspectorTest.expectEqual(nodeForLayer(beforeLayer)?.getAttribute("id"), "with-before", "::before layer should map to its generating element.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersForNode.FrameTarget.ReasonsForCompositingLayer",
+            description: "reasonsForCompositingLayer should resolve layer ids issued by the child frame target.",
+            async test() {
+                let {compositingReasons} = await childFrameTarget.LayerTreeAgent.reasonsForCompositingLayer(compositedLayer.layerId);
+                InspectorTest.expectThat(compositingReasons.willChange, "Composited element should be composited because of will-change.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersForNode.FrameTarget.RequestContent",
+            description: "requestContent should snapshot the layer from the cross-origin frame's own process.",
+            async test() {
+                let {content} = await childFrameTarget.LayerTreeAgent.requestContent(compositedLayer.layerId);
+                InspectorTest.expectThat(content.startsWith("data:image/png"), "Snapshot should be a PNG data URL.");
+
+                let [red, green, blue, alpha] = await samplePixelAtCenter(content);
+                InspectorTest.expectThat(red < 30 && green > 100 && blue < 30 && alpha === 255, "Snapshot should contain the element's green background, not an empty image.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersForNode.FrameTarget.LayerTreeDidChange",
+            description: "Adding a composited element in the child frame should send layerTreeDidChange from the child frame target.",
+            async test() {
+                // The agent sends at most one layerTreeDidChange per layersForNode, so query first to re-arm it.
+                await fetchFrameLayers();
+
+                let didChangePromise = awaitLayerTreeDidChange(childFrameTarget);
+                await evaluateInChildFrame("addCompositedElement()");
+                await didChangePromise;
+                InspectorTest.pass("Should receive layerTreeDidChange from the child frame target.");
+
+                let layers = await waitForFrameLayerCount(initialLayerCount + 1);
+                InspectorTest.expectEqual(layers.length, initialLayerCount + 1, "Should report one more layer after adding a composited element.");
+
+                addedLayer = findLayerForElementId(layers, "added");
+                InspectorTest.expectNotNull(addedLayer, "Should report a layer for the added element.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersForNode.FrameTarget.RemovedLayerIsUnbound",
+            description: "A layer id should stop resolving once its element is removed.",
+            async test() {
+                await evaluateInChildFrame("removeCompositedElement()");
+
+                let layers = await waitForFrameLayerCount(initialLayerCount);
+                InspectorTest.expectEqual(layers.length, initialLayerCount, "Should report the original layer count after removing the element.");
+
+                await InspectorTest.expectException(async () => {
+                    await childFrameTarget.LayerTreeAgent.reasonsForCompositingLayer(addedLayer.layerId);
+                });
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersForNode.FrameTarget.InvalidNodeId",
+            description: "layersForNode should reject a node id the child frame target never issued.",
+            async test() {
+                await InspectorTest.expectException(async () => {
+                    await childFrameTarget.LayerTreeAgent.layersForNode(999999);
+                });
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersForNode.FrameTarget.PageTargetUnaffected",
+            description: "The page target should still report the main frame's layers, including the layer hosting the iframe.",
+            async test() {
+                let mainDocument = await WI.domManager.requestDocument();
+                let layers = await new Promise((resolve) => WI.layerTreeManager.layersForNode(mainDocument, resolve));
+                InspectorTest.expectGreaterThan(layers.length, 0, "Page target should report the main frame's layers.");
+
+                let iframeLayer = layers.find((layer) => WI.domManager.nodeForId(layer.nodeId)?.nodeName() === "IFRAME");
+                InspectorTest.expectNotNull(iframeLayer, "Page target should report the layer hosting the cross-origin iframe.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that LayerTree commands work on a cross-origin frame target under site isolation.</p>
+    <iframe src="http://localhost:8000/site-isolation/inspector/layers/resources/frame-with-composited-layers.html"></iframe>
+</body>

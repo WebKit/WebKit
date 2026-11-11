@@ -24,11 +24,14 @@
  */
 
 WI.Layer = class Layer {
-    constructor(layerId, nodeId, bounds, paintCount, memory, compositedBounds, isInShadowTree, isReflection, isGeneratedContent, isAnonymous, pseudoElementId, pseudoElement)
+    constructor(layerId, nodeId, bounds, paintCount, memory, compositedBounds, isInShadowTree, isReflection, isGeneratedContent, isAnonymous, pseudoElementId, pseudoElement, {target, backendLayerId, contentFrameRect} = {})
     {
         console.assert(typeof bounds === "object");
 
         this._layerId = layerId;
+        this._target = target || null;
+        this._backendLayerId = backendLayerId ?? layerId;
+        this._contentFrameRect = contentFrameRect || null;
         this._nodeId = nodeId;
         this._bounds = bounds;
         this._paintCount = paintCount;
@@ -48,12 +51,15 @@ WI.Layer = class Layer {
 
     // Static
 
-    static fromPayload(payload)
+    static fromPayload(payload, {target, offset} = {})
     {
+        let offsetRect = (rect) => offset && rect ? {...rect, x: rect.x + offset.x, y: rect.y + offset.y} : rect;
+        let contentFrameRect = offsetRect(payload.contentFrameRect);
+
         return new WI.Layer(
-            payload.layerId,
-            payload.nodeId,
-            payload.bounds,
+            WI.Layer.keyForLayerId(payload.layerId, target),
+            payload.nodeId ? WI.DOMManager.keyForNodeId(payload.nodeId, target) : payload.nodeId,
+            offsetRect(payload.bounds),
             payload.paintCount,
             payload.memory,
             payload.compositedBounds,
@@ -62,13 +68,24 @@ WI.Layer = class Layer {
             payload.isGeneratedContent,
             payload.isAnonymous,
             payload.pseudoElementId,
-            payload.pseudoElement
+            payload.pseudoElement,
+            {target, backendLayerId: payload.layerId, contentFrameRect}
         );
+    }
+
+    static keyForLayerId(rawLayerId, target)
+    {
+        if (target instanceof WI.FrameTarget)
+            return `${target.identifier}:${rawLayerId}`;
+        return rawLayerId;
     }
 
     // Public
 
     get layerId() { return this._layerId; }
+    get target() { return this._target; }
+    get backendLayerId() { return this._backendLayerId; }
+    get contentFrameRect() { return this._contentFrameRect; }
     get nodeId() { return this._nodeId; }
     get bounds() { return this._bounds; }
     get paintCount() { return this._paintCount; }

@@ -62,6 +62,9 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         this._raycaster = null;
         this._animationFrameRequestId = null;
         this._documentNode = null;
+        this._layersRequestIdentifier = 0;
+        this._appliedLayersRequestIdentifier = 0;
+        this._cameraNeedsReset = false;
 
         this._layerInfoElement = null;
         this._compositedDimensionsElement = null;
@@ -126,6 +129,8 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
         WI.layerTreeManager.addEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, this._layerTreeDidChange, this);
 
+        WI.domManager.addEventListener(WI.DOMManager.Event.FrameDocumentAvailable, this._layerTreeDidChange, this);
+
         if (this.didInitialLayout)
             this._animate();
 
@@ -143,6 +148,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
     detached()
     {
         WI.layerTreeManager.removeEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, this._layerTreeDidChange, this);
+        WI.domManager.removeEventListener(WI.DOMManager.Event.FrameDocumentAvailable, this._layerTreeDidChange, this);
 
         this._stopAnimation();
 
@@ -201,13 +207,23 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
             return;
 
         WI.domManager.requestDocument((node) => {
-            let documentWasUpdated = this._updateDocument(node);
+            if (this._updateDocument(node))
+                this._cameraNeedsReset = true;
 
-            WI.layerTreeManager.layersForNode(node, (layers) => {
+            let layersRequestIdentifier = ++this._layersRequestIdentifier;
+            WI.layerTreeManager.layersForNodeIncludingFrames(node, (layers) => {
+                // Fetching frame layers takes several round trips, so a newer request can start before this one
+                // settles. Only drop responses older than what is shown, or a frame that keeps changing never updates.
+                if (layersRequestIdentifier < this._appliedLayersRequestIdentifier || node !== this._documentNode)
+                    return;
+
+                this._appliedLayersRequestIdentifier = layersRequestIdentifier;
                 this._updateLayers(layers);
 
-                if (documentWasUpdated)
+                if (this._cameraNeedsReset) {
+                    this._cameraNeedsReset = false;
                     this._resetCamera();
+                }
 
                 if (this._nodeToSelect)
                     this.selectLayerForNode(this._nodeToSelect);
@@ -295,7 +311,9 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
             let previousLayer = layerGroup.userData.layer;
             layerGroup.userData.layer = layer;
 
-            if (WI.settings.experimentalLayers3DShowLayerContents.value && layer.paintCount !== previousLayer.paintCount) {
+            let boundsChanged = !Object.shallowEqual(layer.bounds, previousLayer.bounds) || !Object.shallowEqual(layer.compositedBounds, previousLayer.compositedBounds);
+            let contentsChanged = WI.settings.experimentalLayers3DShowLayerContents.value && layer.paintCount !== previousLayer.paintCount;
+            if (boundsChanged || contentsChanged) {
                 this._disposeLayerGroupChildren(layerGroup);
                 while (layerGroup.children.length > 0)
                     layerGroup.remove(layerGroup.children[0]);

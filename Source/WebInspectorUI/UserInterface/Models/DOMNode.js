@@ -229,6 +229,7 @@ WI.DOMNode = class DOMNode extends WI.Object
     get owningTarget() { return this._owningTarget || this.parentNode?.owningTarget || null; }
     get frameIdentifier() { return this._frameIdentifier; }
     get contentFrameIdentifier() { return this._contentFrameIdentifier; }
+    get contentDocument() { return this._contentDocument || null; }
     get backendNodeId() { return this._rawNodeId ?? this.id; }
     get nextSibling() { return this._nextSibling; }
     get previousSibling() { return this._previousSibling; }

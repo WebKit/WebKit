@@ -76,7 +76,7 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
             return;
 
         let domNode = this.domNode;
-        WI.layerTreeManager.layersForNode(domNode, (layers) => {
+        WI.layerTreeManager.layersForNodeIncludingFrames(domNode, (layers) => {
             if (this.domNode !== domNode)
                 return;
 
@@ -224,9 +224,11 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
             return;
 
         var layer = dataGridNode.layer;
-        if (layer.isGeneratedContent || layer.isReflection || layer.isAnonymous)
-            WI.domManager.highlightRect(layer.bounds, true);
-        else {
+        if (layer.isGeneratedContent || layer.isReflection || layer.isAnonymous) {
+            let target = this.domNode?.owningTarget || WI.assumingMainTarget();
+            let usePageCoordinates = !(target instanceof WI.FrameTarget);
+            WI.domManager.highlightRect(layer.bounds, usePageCoordinates, target);
+        } else {
             let domNode = WI.domManager.nodeForId(layer.nodeId);
             if (domNode)
                 domNode.highlight();

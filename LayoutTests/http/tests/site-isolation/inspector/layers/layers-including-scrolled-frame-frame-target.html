@@ -1,0 +1,50 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.LayerTree.LayersIncludingScrolledFrame");
+
+        function nodeForLayer(layer) {
+            return WI.domManager.nodeForId(layer.nodeId);
+        }
+
+        function layersIncludingFrames(documentNode) {
+            return new Promise((resolve) => WI.layerTreeManager.layersForNodeIncludingFrames(documentNode, resolve));
+        }
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersIncludingScrolledFrame.Placement",
+            description: "A scrolled cross-origin frame's layers should be placed where they are visible, not where they are in the frame's document.",
+            async test() {
+                let childFrameTarget = await frameTargetForURLContaining("frame-with-scrollable-composited-layer.html");
+                InspectorTest.expectNotNull(childFrameTarget, "Should find the child frame target.");
+
+                while (!WI.domManager.frameTargetDocumentForTarget(childFrameTarget))
+                    await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+
+                await childFrameTarget.RuntimeAgent.evaluate.invoke({expression: "window.scrollTo(0, 100); document.body.offsetTop", objectGroup: "test"});
+
+                // A single pass should be enough: fetching the page's layers sends the iframe element to the frontend,
+                // which splices the child frame target's document in before the layers come back.
+                let mainDocument = await WI.domManager.requestDocument();
+                let layers = await layersIncludingFrames(mainDocument);
+
+                let iframeLayer = layers.find((layer) => layer.target === WI.assumingMainTarget() && nodeForLayer(layer)?.localName() === "iframe");
+                let childCompositedLayer = layers.find((layer) => layer.target === childFrameTarget && nodeForLayer(layer)?.getAttribute("id") === "composited");
+                InspectorTest.expectNotNull(iframeLayer?.contentFrameRect, "Layer hosting the iframe should report the frame's content box.");
+                InspectorTest.expectNotNull(childCompositedLayer, "Should include the child frame's composited element.");
+
+                InspectorTest.expectEqual(childCompositedLayer.bounds.x, iframeLayer.contentFrameRect.x, "Child layer should be offset horizontally by the frame's content box.");
+                InspectorTest.expectEqual(childCompositedLayer.bounds.y, iframeLayer.contentFrameRect.y + 200 - 100, "Child layer should be offset vertically by the frame's content box, less the frame's scroll position.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that the Layers tab accounts for a cross-origin frame's scroll position under site isolation.</p>
+    <iframe style="width: 300px; height: 300px;" src="http://localhost:8000/site-isolation/inspector/layers/resources/frame-with-scrollable-composited-layer.html"></iframe>
+</body>

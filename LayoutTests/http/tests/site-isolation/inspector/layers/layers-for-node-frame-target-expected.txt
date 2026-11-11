@@ -1,0 +1,46 @@
+Test that LayerTree commands work on a cross-origin frame target under site isolation.
+
+
+
+== Running test suite: SiteIsolation.LayerTree.LayersForNode.FrameTarget
+-- Running test case: SiteIsolation.LayerTree.LayersForNode.FrameTarget.Setup
+PASS: Should find a child frame target.
+PASS: Child frame target should support the LayerTree domain.
+
+-- Running test case: SiteIsolation.LayerTree.LayersForNode.FrameTarget.LayersForDocument
+PASS: Should report at least the root, the composited element, and the ::before layers.
+PASS: Should report a layer for the frame's document.
+PASS: Should report a layer for the composited element.
+PASS: Composited element layer should be 100px wide.
+PASS: Composited element layer should be 100px tall.
+PASS: Layer should report memory.
+PASS: Layer should report a paint count.
+PASS: Should report a layer for the ::before pseudo-element.
+PASS: ::before layer should have a pseudo-element id.
+PASS: ::before layer should map to its generating element.
+
+-- Running test case: SiteIsolation.LayerTree.LayersForNode.FrameTarget.ReasonsForCompositingLayer
+PASS: Composited element should be composited because of will-change.
+
+-- Running test case: SiteIsolation.LayerTree.LayersForNode.FrameTarget.RequestContent
+PASS: Snapshot should be a PNG data URL.
+PASS: Snapshot should contain the element's green background, not an empty image.
+
+-- Running test case: SiteIsolation.LayerTree.LayersForNode.FrameTarget.LayerTreeDidChange
+PASS: Should receive layerTreeDidChange from the child frame target.
+PASS: Should report one more layer after adding a composited element.
+PASS: Should report a layer for the added element.
+
+-- Running test case: SiteIsolation.LayerTree.LayersForNode.FrameTarget.RemovedLayerIsUnbound
+PASS: Should report the original layer count after removing the element.
+PASS: Should produce an exception.
+Error: Missing render layer for given layerId
+
+-- Running test case: SiteIsolation.LayerTree.LayersForNode.FrameTarget.InvalidNodeId
+PASS: Should produce an exception.
+Error: Missing node for given nodeId
+
+-- Running test case: SiteIsolation.LayerTree.LayersForNode.FrameTarget.PageTargetUnaffected
+PASS: Page target should report the main frame's layers.
+PASS: Page target should report the layer hosting the cross-origin iframe.
+

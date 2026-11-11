@@ -38,6 +38,7 @@
 #include "FrameDOMDebuggerAgent.h"
 #include "FrameDOMStorageAgent.h"
 #include "FrameDebuggerAgent.h"
+#include "FrameLayerTreeAgent.h"
 #include "FrameRuntimeAgent.h"
 #include "FrameTimelineAgent.h"
 #include "InspectorAnimationAgent.h"

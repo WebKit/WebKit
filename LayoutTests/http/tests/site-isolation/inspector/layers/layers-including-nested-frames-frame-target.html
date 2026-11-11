@@ -1,0 +1,93 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.LayerTree.LayersIncludingNestedFrames");
+
+        let outerFrameTarget;
+        let innerFrameTarget;
+        let mergedLayers;
+        let innerCompositedLayer;
+
+        function nodeForLayer(layer) {
+            return WI.domManager.nodeForId(layer.nodeId);
+        }
+
+        function layersIncludingFrames(documentNode) {
+            return new Promise((resolve) => WI.layerTreeManager.layersForNodeIncludingFrames(documentNode, resolve));
+        }
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersIncludingNestedFrames.Setup",
+            description: "Find the cross-origin frame target and the frame target of the same-origin frame nested in it.",
+            async test() {
+                let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+                InspectorTest.assert(frameTargets.length === 3, "Should have main, outer and inner frame targets.");
+
+                outerFrameTarget = await frameTargetForURLContaining("frame-with-nested-frame.html");
+                innerFrameTarget = await frameTargetForURLContaining("frame-with-composited-layers.html");
+                InspectorTest.expectNotNull(outerFrameTarget, "Should find the outer frame target.");
+                InspectorTest.expectNotNull(innerFrameTarget, "Should find the inner frame target.");
+
+                for (let target of [outerFrameTarget, innerFrameTarget]) {
+                    while (!WI.domManager.frameTargetDocumentForTarget(target))
+                        await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+                }
+
+                // A single pass should be enough: fetching each document's layers sends its frame owner elements to
+                // the frontend, which splices the frame target's document in before the layers come back.
+                let mainDocument = await WI.domManager.requestDocument();
+                mergedLayers = await layersIncludingFrames(mainDocument);
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersIncludingNestedFrames.InnerFrameLayers",
+            description: "The inner frame's layers should come from its own target and map to its nodes.",
+            async test() {
+                let innerLayers = mergedLayers.filter((layer) => layer.target === innerFrameTarget);
+                InspectorTest.expectGreaterThanOrEqual(innerLayers.length, 3, "Should include the inner frame's layers.");
+
+                innerCompositedLayer = innerLayers.find((layer) => !layer.isGeneratedContent && nodeForLayer(layer)?.getAttribute("id") === "composited");
+                InspectorTest.expectNotNull(innerCompositedLayer, "Inner frame's composited layer should map to its element.");
+                InspectorTest.expectThat(nodeForLayer(innerCompositedLayer)?.owningTarget === innerFrameTarget, "Inner frame's composited element should belong to the inner frame target.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersIncludingNestedFrames.OuterFrameExcludesInnerFrameLayers",
+            description: "The outer frame target should only report the layers of its own frame.",
+            async test() {
+                let outerLayers = mergedLayers.filter((layer) => layer.target === outerFrameTarget);
+                InspectorTest.expectGreaterThanOrEqual(outerLayers.length, 3, "Should include the outer frame's layers.");
+                InspectorTest.expectThat(outerLayers.every((layer) => nodeForLayer(layer)?.owningTarget === outerFrameTarget), "Every outer frame layer should map to a node of the outer frame target.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersIncludingNestedFrames.Placement",
+            description: "The inner frame's layers should be placed inside its owner, which is placed inside the outer frame's owner.",
+            async test() {
+                let pageLayers = mergedLayers.filter((layer) => layer.target === WI.assumingMainTarget());
+                let outerOwnerLayer = pageLayers.find((layer) => nodeForLayer(layer)?.localName() === "iframe");
+                let innerOwnerLayer = mergedLayers.find((layer) => layer.target === outerFrameTarget && nodeForLayer(layer)?.localName() === "iframe");
+                InspectorTest.expectNotNull(outerOwnerLayer?.contentFrameRect, "Outer frame owner should report the frame's content box.");
+                InspectorTest.expectNotNull(innerOwnerLayer?.contentFrameRect, "Inner frame owner should report the frame's content box.");
+
+                InspectorTest.expectEqual(innerOwnerLayer.contentFrameRect.x, outerOwnerLayer.contentFrameRect.x, "Inner frame owner should be at the outer frame's left edge.");
+                InspectorTest.expectEqual(innerOwnerLayer.contentFrameRect.y, outerOwnerLayer.contentFrameRect.y + 100, "Inner frame owner should be below the outer frame's 100px tall composited element.");
+
+                InspectorTest.expectEqual(innerCompositedLayer.bounds.x, innerOwnerLayer.contentFrameRect.x, "Inner frame's composited layer should be offset horizontally by its owner's content box.");
+                InspectorTest.expectEqual(innerCompositedLayer.bounds.y, innerOwnerLayer.contentFrameRect.y, "Inner frame's composited layer should be offset vertically by its owner's content box.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that the Layers tab includes the layers of a same-origin frame nested in a cross-origin frame under site isolation.</p>
+    <iframe style="width: 400px; height: 400px;" src="http://localhost:8000/site-isolation/inspector/layers/resources/frame-with-nested-frame.html"></iframe>
+</body>

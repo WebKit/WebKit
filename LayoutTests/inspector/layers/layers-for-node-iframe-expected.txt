@@ -1,0 +1,13 @@
+Test that LayerTree.layersForNode includes the layers of a same-process frame.
+
+
+
+== Running test suite: LayerTree.layersForNode.IFrame
+-- Running test case: LayerTree.layersForNode.IFrame.IncludesFrameLayers
+PASS: Should report the layer hosting the iframe.
+PASS: Layer hosting the iframe should not report a content box, since the frame's layers are included.
+PASS: Should report the frame's composited element exactly once.
+PASS: Frame's composited element should belong to the frame's document.
+PASS: Frame's composited element should be at the frame's left edge.
+PASS: Frame's composited element should be at the frame's top edge.
+

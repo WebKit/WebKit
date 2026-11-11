@@ -1,7 +1,7 @@
 {
     "domain": "LayerTree",
     "debuggableTypes": ["web-page"],
-    "targetTypes": ["page"],
+    "targetTypes": ["frame", "page"],
     "types": [
         {
             "id": "LayerId",
@@ -31,7 +31,7 @@
             "properties": [
                 { "name": "layerId", "$ref": "LayerId", "description": "The unique id for this layer." },
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The id for the node associated with this layer." },
-                { "name": "bounds", "$ref": "IntRect", "description": "Bounds of the layer in absolute page coordinates." },
+                { "name": "bounds", "$ref": "IntRect", "description": "Bounds of the layer. A page target reports them in absolute coordinates of the document of the node passed to <code>layersForNode</code>, also for the layers of frames in the same process. A frame target reports them relative to its frame's viewport, so they account for the frame's scroll position." },
                 { "name": "paintCount", "type": "integer", "description": "Indicates how many time this layer has painted." },
                 { "name": "memory", "type": "integer", "description": "Estimated memory used by this layer." },
                 { "name": "compositedBounds", "$ref": "IntRect", "description": "The bounds of the composited layer." },
@@ -40,7 +40,8 @@
                 { "name": "isGeneratedContent", "type": "boolean", "optional": true, "description": "Indicates whether the layer is attached to a pseudo element that is CSS generated content." },
                 { "name": "isAnonymous", "type": "boolean", "optional": true, "description": "Indicates whether the layer was created for a CSS anonymous block or box." },
                 { "name": "pseudoElementId", "$ref": "PseudoElementId", "optional": true, "description": "The id for the pseudo element associated with this layer." },
-                { "name": "pseudoElement", "type": "string", "optional": true, "description": "The name of the CSS pseudo-element that prompted the layer to be generated." }
+                { "name": "pseudoElement", "type": "string", "optional": true, "description": "The name of the CSS pseudo-element that prompted the layer to be generated." },
+                { "name": "contentFrameRect", "$ref": "IntRect", "optional": true, "description": "For a layer that hosts a frame whose layers are not included in the result, the content box of the frame owner in the same coordinate space as <code>bounds</code>. The frame's layers are reported by the frame's own target." }
             ]
         },
         {

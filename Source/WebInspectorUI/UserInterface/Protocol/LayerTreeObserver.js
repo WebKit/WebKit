@@ -29,6 +29,6 @@ WI.LayerTreeObserver = class LayerTreeObserver extends InspectorBackend.Dispatch
 
     layerTreeDidChange()
     {
-        WI.layerTreeManager.layerTreeDidChange();
+        WI.layerTreeManager.layerTreeDidChange(this._target);
     }
 };
