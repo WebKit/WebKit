@@ -189,7 +189,7 @@ bool SVGFilterRenderer::isIdentity(SVGFilterElement& filterElement)
         return false;
 
     bool isIdentity = true;
-    graph->visit([&](SVGFilterPrimitiveStandardAttributes& primitive, unsigned) {
+    graph->visitUnique([&](SVGFilterPrimitiveStandardAttributes& primitive) {
         if (!primitive.isIdentity())
             isIdentity = false;
     });
@@ -203,41 +203,23 @@ IntOutsets SVGFilterRenderer::calculateOutsets(SVGFilterElement& filterElement, 
     if (!graph)
         return { };
 
-    Vector<std::pair<IntOutsets, unsigned>> outsetsStack;
+    // The outsets of a primitive are its own outsets expanded by the maximum outsets of its inputs.
+    HashMap<Ref<SVGFilterPrimitiveStandardAttributes>, IntOutsets> outsetsMap;
 
-    // Remove the outsets of the last level and return their maximum.
-    auto lastLevelOutsets([](auto& outsetsStack) -> IntOutsets {
-        IntOutsets lastLevelOutsets;
-        for (unsigned lastLevel = outsetsStack.last().second; lastLevel == outsetsStack.last().second; outsetsStack.takeLast())
-            lastLevelOutsets = max(lastLevelOutsets, outsetsStack.last().first);
-        return lastLevelOutsets;
-    });
+    bool result = graph->visitUnique([&](SVGFilterPrimitiveStandardAttributes& primitive) {
+        IntOutsets inputsOutsets;
+        for (auto& input : graph->getNodeInputs(primitive))
+            inputsOutsets = max(inputsOutsets, outsetsMap.get(input));
 
-    bool result = graph->visit([&](SVGFilterPrimitiveStandardAttributes& primitive, unsigned level) {
-        auto primitiveOutsets = primitive.outsets(targetBoundingBox, filterElement.primitiveUnits());
-        unsigned lastLevel = outsetsStack.isEmpty() ? 0 : outsetsStack.last().second;
-
-        // Expand the last outsets of this level with the maximum of the outsets of its children.
-        if (level < lastLevel) {
-            auto childrenOutsets = lastLevelOutsets(outsetsStack);
-            outsetsStack.last().first += childrenOutsets;
-        }
-
-        outsetsStack.append(std::make_pair(primitiveOutsets, level));
+        outsetsMap.set(primitive, primitive.outsets(targetBoundingBox, filterElement.primitiveUnits()) + inputsOutsets);
     });
 
     if (!result)
         return IntOutsets();
 
-    ASSERT(!outsetsStack.isEmpty());
-
-    // Calculate the whole filter outsets by going back to the lastNode of the graph.
-    while (outsetsStack.size() > 1) {
-        auto childrenOutsets = lastLevelOutsets(outsetsStack);
-        outsetsStack.last().first += childrenOutsets;
-    }
-
-    return outsetsStack.takeLast().first;
+    RefPtr lastNode = graph->lastNode();
+    ASSERT(lastNode);
+    return outsetsMap.get(*lastNode);
 }
 
 FloatSize SVGFilterRenderer::calculateResolvedSize(const FloatSize& size, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits)
