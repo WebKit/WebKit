@@ -46,6 +46,7 @@
 #import <map>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/MainThread.h>
 #import <wtf/MediaTime.h>
 #import <wtf/NativePromise.h>
@@ -133,7 +134,7 @@ static RetainPtr<CMSampleBufferRef> createAlphaSampleBuffer(CFArrayRef alphaData
     }
 
     CMSampleBufferRef rawSampleBuffer = nullptr;
-    if (PAL::CMSampleBufferCreateReady(kCFAllocatorDefault, blockBuffer, formatDescription, count, count, timings.span().data(), count, sizes.span().data(), &rawSampleBuffer) != noErr)
+    if (PAL::CMSampleBufferCreateReady(kCFAllocatorDefault, blockBuffer, formatDescription, count, count, borrow(timings)->span().data(), count, borrow(sizes)->span().data(), &rawSampleBuffer) != noErr)
         return nullptr;
 
     RetainPtr sampleBuffer = adoptCF(rawSampleBuffer);
@@ -849,8 +850,9 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
             return;
         }
         assertIsCurrent(protectedThis->m_dispatcher.get());
-        auto& colorResult = (*results)[0];
-        auto& alphaResult = (*results)[1];
+        Borrow borrowedResults = *results;
+        auto& colorResult = borrowedResults->at(0);
+        auto& alphaResult = borrowedResults->at(1);
 
         if (!colorResult) {
             producer.reject(colorResult.error());
@@ -886,6 +888,7 @@ Vector<RetainPtr<CMSampleBufferRef>> WebCoreDecompressionSession::compositeAlpha
     Vector<RetainPtr<CMSampleBufferRef>> output;
     output.reserveInitialCapacity(colorFrames.size());
 
+    Borrow borrowedColorFrames = colorFrames;
     for (size_t index = 0; index < colorFrames.size(); ++index) {
         auto& colorFrame = colorFrames[index];
         if (!colorFrame)
