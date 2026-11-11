@@ -2100,11 +2100,22 @@ void FrameLoader::load(DocumentLoader& newDocumentLoader, const SecurityOrigin* 
     loadWithDocumentLoader(&newDocumentLoader, type, nullptr, AllowNavigationToInvalidURL::Yes);
 }
 
+RefPtr<Frame> FrameLoader::parentFrameForResourceTiming() const
+{
+    // A provisional frame is not in the frame tree yet, so get the parent from the frame it will replace.
+    if (RefPtr parent = m_frame->tree().parent())
+        return parent;
+    if (RefPtr frameBeingReplaced = m_frame->frameBeingReplaced())
+        return frameBeingReplaced->tree().parent();
+    return nullptr;
+}
+
 void FrameLoader::updateShouldReportResourceTimingToParentFrame(const DocumentLoader& loader, FrameLoadType type)
 {
-    // FIXME: A load continuing from another process does not know who initiated the navigation, so keep
-    // reporting only the first navigation, or the first one after about:blank.
-    if (shouldTreatCurrentLoadAsContinuingLoad()) {
+    // A load continuing from another process only knows who initiated the navigation if the other process sent
+    // the requester along. Otherwise the triggering action was synthesized from this frame's own document, so
+    // keep reporting only the first navigation, or the first one after about:blank.
+    if (shouldTreatCurrentLoadAsContinuingLoad() && !loader.crossSiteRequester()) {
         if (m_shouldReportResourceTimingToParentFrame && !m_previousURL.isNull() && m_previousURL != aboutBlankURL())
             m_shouldReportResourceTimingToParentFrame = false;
         return;
@@ -2115,7 +2126,7 @@ void FrameLoader::updateShouldReportResourceTimingToParentFrame(const DocumentLo
         return;
     }
 
-    RefPtr parent = m_frame->tree().parent();
+    RefPtr parent = parentFrameForResourceTiming();
     auto& requester = loader.triggeringAction().requester();
     m_shouldReportResourceTimingToParentFrame = parent && requester && requester->frameID == parent->frameID();
 }

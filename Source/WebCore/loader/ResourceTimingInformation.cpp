@@ -34,7 +34,7 @@
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
 #include "LocalDOMWindow.h"
-#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "Performance.h"
 #include "ResourceTiming.h"
 #include "SecurityOrigin.h"
@@ -72,8 +72,9 @@ void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Docu
         return;
 
     RefPtr initiatorDocument = &document;
-    if (resource.type() == CachedResource::Type::MainResource && document.frame() && document.frame()->loader().shouldReportResourceTimingToParentFrame()) {
-        initiatorDocument = document.parentDocument();
+    if (resource.type() == CachedResource::Type::MainResource && document.frame() && protect(document.frame()->loader())->shouldReportResourceTimingToParentFrame()) {
+        RefPtr parentFrame = dynamicDowncast<LocalFrame>(protect(document.frame()->loader())->parentFrameForResourceTiming());
+        initiatorDocument = parentFrame ? parentFrame->document() : nullptr;
         if (initiatorDocument)
             resourceTiming.updateExposure(protect(initiatorDocument->securityOrigin()));
     }
@@ -100,8 +101,14 @@ void ResourceTimingInformation::storeResourceTimingInitiatorInformation(CachedRe
 {
     if (resource.type() == CachedResource::Type::MainResource) {
         ASSERT(frame);
-        if (frame->ownerElement()) {
-            InitiatorInfo info = { frame->ownerElement()->localName(), NotYetAdded };
+        // A provisional frame is not attached to its owner element yet, so use the one of the frame it will replace.
+        RefPtr ownerElement = frame->ownerElement();
+        if (!ownerElement) {
+            if (RefPtr frameBeingReplaced = frame->frameBeingReplaced())
+                ownerElement = frameBeingReplaced->ownerElement();
+        }
+        if (ownerElement) {
+            InitiatorInfo info = { ownerElement->localName(), NotYetAdded };
             m_initiatorMap.add(resource, info);
         }
     } else {

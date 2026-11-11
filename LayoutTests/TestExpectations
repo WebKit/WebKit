@@ -1518,7 +1518,6 @@ imported/w3c/web-platform-tests/resource-timing/content-type.html [ Pass Failure
 imported/w3c/web-platform-tests/resource-timing/connection-reuse.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/render-blocking-status-link.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/render-blocking-status-script.html [ Pass Failure ]
-imported/w3c/web-platform-tests/resource-timing/iframe-sequence-of-events.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/interim-response-times.html [ Skip ] # Timeout
 imported/w3c/web-platform-tests/resource-timing/interim-response-times.h2.html [ Skip ] # Timeout
 imported/w3c/web-platform-tests/resource-timing/initiator-type/link.html [ Skip ] # Timeout
