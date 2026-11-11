@@ -72,6 +72,7 @@
 #import "WebPreferences.h"
 #import "WebProcessPool.h"
 #import "_WKActivatedElementInfoInternal.h"
+#import "_WKViewportFitEdgesInternal.h"
 #import "_WKWarningView.h"
 #import <CoreGraphics/CGColor.h>
 #import <WebCore/BoxSides.h>
@@ -3924,6 +3925,8 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
     if (_avoidsUnsafeArea == avoidsUnsafeArea)
         return;
 
+    [self willChangeValueForKey:@"_viewportFitEdges"];
+
     _avoidsUnsafeArea = avoidsUnsafeArea;
 
     if ([self _updateScrollViewContentInsetsIfNecessary] && !self._shouldDeferGeometryUpdates && !_overriddenLayoutParameters)
@@ -3931,6 +3934,8 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 
     [self _updateScrollViewInsetAdjustmentBehavior];
     [self _scheduleVisibleContentRectUpdate];
+
+    [self didChangeValueForKey:@"_viewportFitEdges"];
 
     id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)[self UIDelegate];
     if ([uiDelegate respondsToSelector:@selector(_webView:didChangeSafeAreaShouldAffectObscuredInsets:)])
@@ -4730,6 +4735,15 @@ static bool isLockdownModeWarningNeeded()
     if (![self usesStandardContentView])
         return NO;
     return _avoidsUnsafeArea;
+}
+
+- (_WKViewportFitEdges *)_viewportFitEdges
+{
+    // FIXME: Report each edge separately, including _WKViewportFitEdgeExplicitCover, once
+    // viewport-fit-top and friends are parsed and sent to the UI process. For now, this only
+    // reflects viewport-fit.
+    auto fit = _avoidsUnsafeArea ? _WKViewportFitEdgeContain : _WKViewportFitEdgeImplicitCover;
+    return adoptNS([[_WKViewportFitEdges alloc] initWithTop:fit left:fit bottom:fit right:fit]).autorelease();
 }
 
 - (BOOL)_allowsTouchPanningAtPoint:(CGPoint)point

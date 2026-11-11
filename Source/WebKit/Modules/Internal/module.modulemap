@@ -441,6 +441,12 @@ module WebKit_Internal [system] {
         requires objc
     }
 
+    module _WKViewportFitEdgesInternal {
+        header "../../UIProcess/API/Cocoa/_WKViewportFitEdgesInternal.h"
+        export *
+        requires objc
+    }
+
     module WKAppKitGestureController {
         requires cplusplus20,objc
         header "../../UIProcess/mac/AppKitGestures/WKAppKitGestureController.h"

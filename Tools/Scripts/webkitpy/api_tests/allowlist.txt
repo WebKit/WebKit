@@ -6108,6 +6108,9 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.VideoPresentationMode.Standby
 [ ios ] TestWebKitAPI.Viewport.MinimumEffectiveDeviceWidthWithInitialScale
 [ ios ] TestWebKitAPI.Viewport.RespectInitialScaleExceptOnWikipediaDomain
+[ ios ] TestWebKitAPI.ViewportFitEdgesTests/edgesContainUnlessViewportFitIsCover(viewport:)
+[ ios ] TestWebKitAPI.ViewportFitEdgesTests/observersAreNotifiedWhenViewportFitChanges()
+[ ios ] TestWebKitAPI.ViewportFitEdgesTests/viewportFitCoverImplicitlyCoversEveryEdge()
 [ ios ] TestWebKitAPI.VisibilityState.InitialHiddenState
 [ ios ] TestWebKitAPI.VisibilityState.InitialVisibleState
 [ ios ] TestWebKitAPI.VisibilityState.PIPKeepsDocumentVisibleQuirk

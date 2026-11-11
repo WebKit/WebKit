@@ -164,6 +164,7 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/WebKitSwiftOverlay.swift
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKContentWorld.swift
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKRectEdge+Extras.swift
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKViewportFitEdges.swift
 
     UIProcess/Cocoa/PreferenceObserver.mm
     UIProcess/Cocoa/WKShareSheet.mm
@@ -1729,6 +1730,7 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKUserInitiatedAction.h
     UIProcess/API/Cocoa/_WKUserStyleSheet.h
     UIProcess/API/Cocoa/_WKUserVerificationRequirement.h
+    UIProcess/API/Cocoa/_WKViewportFitEdges.h
     UIProcess/API/Cocoa/_WKVisitedLinkStore.h
     UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.h
     UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h

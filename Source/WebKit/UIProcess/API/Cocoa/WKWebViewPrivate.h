@@ -163,6 +163,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @class _WKTextManipulationItem;
 @class _WKTextRun;
 @class _WKThumbnailView;
+@class _WKViewportFitEdges;
 @class _WKWebViewPrintFormatter;
 
 #if TARGET_OS_IPHONE
@@ -776,6 +777,9 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 @property (nonatomic, setter=_setUnobscuredSafeAreaInsets:) UIEdgeInsets _unobscuredSafeAreaInsets WK_API_AVAILABLE(ios(11.0));
 @property (nonatomic, readonly) BOOL _safeAreaShouldAffectObscuredInsets WK_API_AVAILABLE(ios(11.0));
 @property (nonatomic, setter=_setObscuredInsetEdgesAffectedBySafeArea:) UIRectEdge _obscuredInsetEdgesAffectedBySafeArea WK_API_AVAILABLE(ios(11.0));
+
+// The viewport-fit the main frame's document asked for at each edge. This property is key-value observable.
+@property (nonatomic, readonly) _WKViewportFitEdges *_viewportFitEdges WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 // Indicates if the page uses touch-action to disallow panning.
 // Whether or not a pan will actually occur depends on many other factors.
