@@ -55,10 +55,17 @@
             "type": "string",
             "enum": [
                 "array",
+                "bigint",
+                "boolean",
                 "date",
                 "map",
+                "null",
+                "number",
                 "object",
-                "set"
+                "regexp",
+                "set",
+                "string",
+                "undefined"
             ]
         },
         {
@@ -300,8 +307,7 @@
             "description": "Event fired when a script realm is destroyed.",
             "spec": "https://w3c.github.io/webdriver-bidi/#event-script-realmDestroyed",
             "parameters": [
-                { "name": "realm", "$ref": "BidiScript.Realm", "description": "Unique identifier of the destroyed realm." },
-                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "description": "Browsing context of the realm. Not present for worklet/worker realms." }
+                { "name": "realm", "$ref": "BidiScript.Realm", "description": "Unique identifier of the destroyed realm." }
             ]
         }
     ]
