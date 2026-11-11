@@ -5052,7 +5052,7 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
     },
     "imported/w3c/webdriver/tests/bidi/script/call_function/invalid.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}},
+        "expected": { "all": { "status": ["PASS"] }},
         "subtests": {
             "test_params_target_invalid_type[None]": {
                 "expected": { "all": { "status": ["PASS"] }}
@@ -5200,6 +5200,9 @@
             },
             "test_params_result_ownership_invalid_value[_UNKNOWN_]": {
                 "expected": {"mac": {"status": ["PASS"]}, "glib": {"status": ["PASS"]}}
+            },
+            "test_params_arguments_handle_unknown_value": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058" }}
             }
         }
     },
@@ -5566,7 +5569,7 @@
     "imported/w3c/webdriver/tests/bidi/script/get_realms/get_realms.py": {
         "subtests": {
             "test_iframes": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288061 - Iframe enumeration not in scope for window realm implementation"}}
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/283784 - Cross-origin iframe remains at its initial empty document"}}
             },
             "test_multiple_top_level_contexts[tab]": {
                 "expected": { "all": { "status": ["PASS", "FAIL"], "bug": "webkit.org/b/288061 - Passes individually, timing issues in parallel execution"}}
@@ -5586,7 +5589,11 @@
         }
     },
     "imported/w3c/webdriver/tests/bidi/script/get_realms/context.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288061 - Frame context filtering not yet supported"}}
+        "subtests": {
+            "test_context": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/283784 - Cross-origin iframe remains at its initial empty document"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/script/get_realms/sandbox.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288061 - Sandbox realm support not yet implemented"}}
