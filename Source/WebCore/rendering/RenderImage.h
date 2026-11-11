@@ -180,7 +180,7 @@ private:
     void repaintOrMarkForLayout(ImageSizeChangeType, const IntRect* = nullptr);
     void updateIntrinsicSizeIfNeeded(const LayoutSize&);
     // Update the size of the image to be rendered. Object-fit may cause this to be different from the CSS box's content rect.
-    IntSize imageContainerSize() const;
+    FloatSize imageContainerSize() const;
 
     void paintAreaElementFocusRing(PaintInfo&, const LayoutPoint& paintOffset);
 

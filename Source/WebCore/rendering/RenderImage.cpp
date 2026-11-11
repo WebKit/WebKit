@@ -374,9 +374,9 @@ void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)
     setIntrinsicSize(newSize);
 }
 
-IntSize RenderImage::imageContainerSize() const
+FloatSize RenderImage::imageContainerSize() const
 {
-    return flooredIntSize(replacedContentRect().size());
+    return replacedContentRect().size();
 }
 
 NaturalDimensions RenderImage::zoomedNaturalDimensions() const
@@ -391,12 +391,12 @@ std::optional<FloatSize> RenderImage::usedImageSize() const
 
 ConcreteObjectSize RenderImage::concreteObjectSizeForPainting() const
 {
-    return ConcreteObjectSize::fixed(FloatSize(imageContainerSize()));
+    return ConcreteObjectSize::fixed(imageContainerSize());
 }
 
 ConcreteObjectSize RenderImage::concreteObjectSizeForInteractionRegion() const
 {
-    return ConcreteObjectSize::fixed(FloatSize(imageContainerSize()));
+    return ConcreteObjectSize::fixed(imageContainerSize());
 }
 
 ConcreteObjectSize RenderImage::concreteObjectSizeForPasteboard() const
@@ -441,7 +441,7 @@ ConcreteObjectSize RenderImage::defaultConcreteObjectSize() const
 
 ConcreteObjectSize RenderImage::defaultConcreteObjectSize(NaturalDimensions naturalDimensions) const
 {
-    auto containerSize = FloatSize { imageContainerSize() };
+    auto containerSize = imageContainerSize();
     if (auto usedZoom = style().usedZoom(); usedZoom != 1)
         containerSize.scale(1 / usedZoom);
     return DefaultSizing { containerSize }.resolve(naturalDimensions);
