@@ -669,7 +669,7 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             auto cssSourceCode = cachedStyleSheet->sheetText(CachedCSSStyleSheet::MIMETypeCheckHint::Strict, CachedCSSStyleSheet::ForceUTF8Encoding::Yes);
             // We already checked MIME above, so it must not be an error.
 
-            sourceCode = CSSSourceCode { WTF::move(*cssSourceCode), sourceURL };
+            sourceCode = CSSSourceCode { WTF::move(*cssSourceCode), cachedStyleSheet->response().url() };
             break;
         }
         case ModuleType::Invalid:
