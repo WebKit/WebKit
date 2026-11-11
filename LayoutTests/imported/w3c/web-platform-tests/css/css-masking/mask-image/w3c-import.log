@@ -17,6 +17,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-good-and-bad-mask-image-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-good-and-bad-mask-image-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-good-and-bad-mask-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-mask-image-multi-layer-after-load-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-mask-image-multi-layer-after-load.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-mask-image-multi-layer-after-load.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-mask-image-multi-layer-hidden-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-mask-image-multi-layer-while-loading.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-mask-image-multi-layer-while-loading.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-mask-image-while-loading.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/bad-mask-image-svg-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/bad-mask-image-svg-2.html
@@ -121,6 +127,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cors-001-styles.sub.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cors-001.sub-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cors-001.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cross-site-iframe-offset-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cross-site-iframe-offset.sub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cross-site-iframe-offset.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-data-url-image-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-data-url-image.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-ib-split-2-expected.html
@@ -129,6 +138,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-ib-split.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-inline-sliced-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-inline-sliced-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-multi-layer-while-loading-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-multi-layer-while-loading.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-multi-layer-while-loading.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-child-will-change-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-child-will-change.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-foreignobject-zoomed-expected.html
@@ -144,6 +156,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image-hash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-local-mask-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-local-mask-mutated-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-local-mask-mutated.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-local-mask.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-remote-mask-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-remote-mask.html

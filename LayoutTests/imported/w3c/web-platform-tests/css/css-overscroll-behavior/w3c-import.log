@@ -10,11 +10,16 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overscroll-behavior/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overscroll-behavior/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overscroll-behavior/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-keyboard-scroll-child-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-keyboard-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-logical.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-root.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-single-axis-keyboard.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-single-axis.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-without-overflow.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior.html

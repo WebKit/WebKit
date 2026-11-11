@@ -6,14 +6,14 @@
 <svg>
   <filter id="test" filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB" x="0" y="0">
-    <feColorMatrix width="5" height="5"></fecolormatrix>
-    <feTile result="fill"></fetile>
+    <feColorMatrix width="5" height="5"></feColorMatrix>
+    <feTile result="fill"></feTile>
     <feColorMatrix in="SourceGraphic" values="0 0 0 0 0
                                               0 0 0 0 0
                                               0 0 0 0 0
                                               0 1 0 0 0">
-    </fecolormatrix>
-    <feComposite in="fill" operator="in"></fecomposite>
+    </feColorMatrix>
+    <feComposite in="fill" operator="in"></feComposite>
   </filter>
     <g filter="url(#test)">
     <rect fill="none" stroke="black" stroke-width="20" x="10" y="10" width="120" height="120"/>

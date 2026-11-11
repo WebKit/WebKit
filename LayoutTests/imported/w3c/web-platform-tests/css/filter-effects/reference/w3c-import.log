@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/azimuth-and-elevation-ref.html
@@ -25,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filter-inline-positioning-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filter-plus-will-change-opacity-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filter-svg-blur-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filter-svg-displacement-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filter-svg-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filters-grayscale-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/backdrop-filters-grayscale-002-ref.html
@@ -55,10 +54,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-source-alpha-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/effect-reference-source-alpha-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/empty-element-with-filter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/feDropShadow-negative-deviation-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/feGaussianBlur-negative-deviation-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/feImage-orientation-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/fecomposite-non-zero-inoffset-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/feconvolve-divisor-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/feconvolve-region-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/feconvolvematrix-order-removal-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/fedisplacementmap-non-uniform-transform-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filter-effect-remove-unattached-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filter-overflow-transformed-child-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filter-region-negative-positioned-child-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filter-region-transformed-child-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/filter-region-transformed-composited-child-001-ref.html
@@ -88,3 +93,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/svg-filter-primitive-units-user-space-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/svg-relative-urls-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/svg-relative-urls-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference/tainting-css-dropshadow-currentcolor-ref.html

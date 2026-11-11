@@ -67,7 +67,7 @@ imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-017.htm
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-different-size.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/filter-effects/svg-unknown-input-001.html [ Pass ]
-webkit.org/b/264583 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-saturate.html [ Pass ImageOnlyFailure ]
+webkit.org/b/264583 imported/w3c/web-platform-tests/css/filter-effects/animation/css-filters-animation-saturate.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/svg-unknown-input-002.html [ Pass ]
 
 imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-_blank-003.html [ Pass ]
@@ -466,7 +466,7 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?pen-n
 
 css3/scroll-snap/resnap-after-layout.html [ Skip ] # Timeout.
 
-webkit.org/b/314537 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-combined-001.html [ ImageOnlyFailure ]
+webkit.org/b/314537 imported/w3c/web-platform-tests/css/filter-effects/animation/css-filters-animation-combined-001.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 4. TESTS CRASHING

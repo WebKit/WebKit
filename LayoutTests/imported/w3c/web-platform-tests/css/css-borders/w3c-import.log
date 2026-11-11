@@ -10,12 +10,13 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-image-color-scheme-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-image-color-scheme-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-image-color-scheme.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-image-gradient-zero-size-transform-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-image-width-interpolation-math-functions.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-radius-currentcolor-expected.html

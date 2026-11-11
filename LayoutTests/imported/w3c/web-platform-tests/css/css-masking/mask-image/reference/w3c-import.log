@@ -19,3 +19,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-inline-sliced-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-svg-child-will-change-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-url-local-mask-mutated-ref.html

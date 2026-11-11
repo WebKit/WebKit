@@ -5039,3 +5039,7 @@ webkit.org/b/320901 webgl/2.0.y/conformance2/rendering/blitframebuffer-test.html
 media/media-source/media-source-real-video-layer-size-after-leaving-viewport.html [ Skip ]
 
 imported/w3c/web-platform-tests/event-timing/keydown-without-paint.tentative.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-outline-auto-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-outline-auto-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-outline-auto-003.html [ ImageOnlyFailure ]

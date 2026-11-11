@@ -79,6 +79,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-inset-50-percent-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-inset-50-percent-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-inset-50-percent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-inset-rounded-100-percent-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-inset-rounded-100-percent-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-inset-rounded-100-percent.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-missing-0-percent-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-missing-0-percent-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-missing-0-percent.html
@@ -177,6 +180,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-arc-interpolation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-arc-interpolation-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-arc-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-hittest.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-002-expected.html
@@ -185,6 +189,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-with-zoom-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-with-zoom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-transition-with-zoom-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-transition-with-zoom-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-transition-with-zoom.html

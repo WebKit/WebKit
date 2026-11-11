@@ -19,5 +19,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/support/image-with-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/support/image.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/support/mask-half-transparent-100x100.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/support/mask-image-cross-site-iframe-offset-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/support/mask.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/support/red-luminance-100x100.svg

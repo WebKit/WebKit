@@ -1661,6 +1661,12 @@
     "imported/w3c/web-platform-tests/css/css-fonts/variations/font-style-interpolation.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-keyboard-scroll-child-frame.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-keyboard-scroll.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-page/monolithic-overflow-024-print.html": [
         "slow"
     ],

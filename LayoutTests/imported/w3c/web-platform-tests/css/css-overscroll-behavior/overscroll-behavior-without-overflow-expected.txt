@@ -1,0 +1,10 @@
+
+FAIL overflow: hidden and overscroll-behavior-x: none should only prevent scroll propagation on x axis. assert_equals: expected 0 but got 120
+FAIL overflow: hidden and overscroll-behavior-y: none should only prevent scroll propagation on y axis. assert_equals: expected 0 but got 120
+FAIL overflow: auto and overscroll-behavior-x: none should only prevent scroll propagation on x axis. assert_equals: expected 0 but got 120
+FAIL overflow: auto and overscroll-behavior-y: none should only prevent scroll propagation on y axis. assert_equals: expected 0 but got 120
+FAIL overflow: hidden and overscroll-behavior-x: none should only prevent scroll propagation on x axis. (chain on y) assert_equals: expected 0 but got 120
+FAIL overflow: hidden and overscroll-behavior-y: none should only prevent scroll propagation on y axis. (chain on x) assert_equals: expected 0 but got 120
+FAIL overflow: auto and overscroll-behavior-x: none should only prevent scroll propagation on x axis. (chain on y) assert_equals: expected 0 but got 120
+FAIL overflow: auto and overscroll-behavior-y: none should only prevent scroll propagation on y axis. (chain on x) assert_equals: expected 0 but got 120
+

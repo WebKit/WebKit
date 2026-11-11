@@ -1588,8 +1588,8 @@ webkit.org/b/230411 http/tests/media/hls/video-controller-getStartDate.html [ Pa
 # HLS stream fails to become ready to play on headless bots
 http/tests/media/hls/hls-limit-play-rate.html
 
-[ x86_64 ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-opacity.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-saturate.html [ ImageOnlyFailure ]
+[ x86_64 ] imported/w3c/web-platform-tests/css/filter-effects/animation/css-filters-animation-opacity.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/animation/css-filters-animation-saturate.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-boundary.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-nested-border-radius-clip-3.html [ ImageOnlyFailure ]
 [ x86_64 ] imported/w3c/web-platform-tests/css/filter-effects/crashtests/fecomponenttransfer-tablevalues-crash.html [ Skip ]
@@ -2058,7 +2058,7 @@ webkit.org/b/269873 imported/w3c/web-platform-tests/webrtc-extensions/transfer-d
 [ Sonoma ] imported/w3c/web-platform-tests/css/css-transforms/transformed-rotateY-1.html [ ImageOnlyFailure ]
 [ Sonoma ] imported/w3c/web-platform-tests/css/css-transforms/transforms-rotateY-degree-60.html [ ImageOnlyFailure ]
 [ Sonoma ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-containing-block.html [ ImageOnlyFailure ]
-[ Sonoma ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-drop-shadow.html [ ImageOnlyFailure ]
+[ Sonoma ] imported/w3c/web-platform-tests/css/filter-effects/animation/css-filters-animation-drop-shadow.html [ ImageOnlyFailure ]
 [ Sonoma ] imported/w3c/web-platform-tests/html/canvas/element/manual/compositing/canvas_compositing_globalcompositeoperation_001.htm [ ImageOnlyFailure ]
 [ Sonoma ] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-flipped.html [ ImageOnlyFailure ]
 [ Sonoma ] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl.html [ ImageOnlyFailure ]

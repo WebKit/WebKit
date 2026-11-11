@@ -26,6 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/reference/clip-path-path-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/reference/clip-path-path-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/reference/clip-path-path-winding-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/reference/clip-path-path-with-zoom-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/reference/clip-path-path-with-zoom-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/reference/clip-path-polygon-014-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/reference/clip-path-rectangle-border-ref.html
@@ -51,6 +52,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/reference/clip-path-svg-text-css-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/reference/clip-path-transform-mutated-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/reference/clip-path-transform-mutated-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/reference/clip-path-with-transform-and-zoom-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/reference/clip-path-xywh-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/reference/green-100x100.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/reference/green-circle-100x100.html

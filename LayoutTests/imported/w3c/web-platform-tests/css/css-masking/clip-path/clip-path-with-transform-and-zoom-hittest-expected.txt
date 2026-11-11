@@ -1,0 +1,3 @@
+
+FAIL objectBoundingBox <clipPath> transform is hit-tested with zoom applied assert_equals: inside the clip, near its top right expected "target" but got ""
+

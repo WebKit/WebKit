@@ -34,6 +34,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-repeat-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-repeat-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-repeat-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-shorthand-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-size-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-size-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-size-valid.html

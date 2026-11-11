@@ -10,14 +10,15 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-background-origin-border-box-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-background-origin-border-box-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-background-origin-border-box.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-circle-extent-keywords-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-circle-extent-keywords-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-circle-extent-keywords.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-circle-hit-test-overflow-clip-margin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-circle-hit-test-overflow-clip.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-circle-hit-test-siblings.html
@@ -37,6 +38,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-dynamic-color-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-dynamic-color-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-dynamic-color.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-ellipse-corner-keywords-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-ellipse-corner-keywords.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-ellipse-corner-keywords.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-ellipse-extent-keywords-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-ellipse-extent-keywords-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-ellipse-extent-keywords.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-geometry-box-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-geometry-box-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-geometry-box.html
@@ -127,6 +134,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-circle-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-circle-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-circle.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-ellipse-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-ellipse-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-ellipse.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-inset-blur-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-inset-blur-ref.html
@@ -142,6 +152,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-transparent-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow-transparent.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shape-arc-miter-limit-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shape-arc-miter-limit-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-shape-arc-miter-limit.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-stacking-context-hit-test.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-stroke-from-border-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-stroke-from-border-ref.html

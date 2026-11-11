@@ -10504,3 +10504,11 @@ imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.an
 imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.worker.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-keyboard-scroll.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-keyboard-scroll-child-frame.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-root.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-single-axis-keyboard.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-without-overflow.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape.html?corner-shape=2.3&border-radius=40% [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape.html?corner-shape=squircle&border-radius=50% [ ImageOnlyFailure ]

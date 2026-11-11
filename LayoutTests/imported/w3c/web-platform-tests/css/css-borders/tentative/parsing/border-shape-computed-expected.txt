@@ -1,11 +1,16 @@
 
 FAIL Property border-shape value 'none' assert_true: border-shape doesn't seem to be supported in the computed style expected true got false
 FAIL Property border-shape value 'circle()' assert_true: border-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property border-shape value 'circle(closest-corner at center)' assert_true: border-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property border-shape value 'circle(closest-corner at 20px 50px)' assert_true: border-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property border-shape value 'circle(farthest-corner at center)' assert_true: border-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property border-shape value 'ellipse(closest-corner farthest-corner at 20px 50px)' assert_true: border-shape doesn't seem to be supported in the computed style expected true got false
 FAIL Property border-shape value 'polygon(10px 10px, 100px 10px, 10px 100px)' assert_true: border-shape doesn't seem to be supported in the computed style expected true got false
 FAIL Property border-shape value 'shape(from 0px 0px, hline to 100px, vline to 100px, close)' assert_true: border-shape doesn't seem to be supported in the computed style expected true got false
 FAIL Property border-shape value 'circle() circle()' assert_true: border-shape doesn't seem to be supported in the computed style expected true got false
 FAIL Property border-shape value 'circle() border-box circle() padding-box' assert_true: border-shape doesn't seem to be supported in the computed style expected true got false
 FAIL Property border-shape value 'circle() polygon(10px 10px, 100px 10px, 10px 100px)' assert_true: border-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property border-shape value 'circle(closest-corner) ellipse(farthest-corner closest-corner)' assert_true: border-shape doesn't seem to be supported in the computed style expected true got false
 FAIL Property border-shape value 'circle() content-box' assert_true: border-shape doesn't seem to be supported in the computed style expected true got false
 FAIL Property border-shape value 'circle() border-box' assert_true: border-shape doesn't seem to be supported in the computed style expected true got false
 FAIL Property border-shape value 'circle() border-box polygon(10px 10px, 100px 10px, 10px 100px) border-box' assert_true: border-shape doesn't seem to be supported in the computed style expected true got false
