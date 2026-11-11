@@ -88,6 +88,9 @@ class Response(object):
         for line in self.text.splitlines() if self.text else []:
             yield string_utils.encode(line)
 
+    def close(self) -> None:
+        pass
+
     def __enter__(self) -> Response:
         return self
 

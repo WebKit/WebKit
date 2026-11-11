@@ -23,7 +23,7 @@
 import platform
 import requests
 
-from webkitscmpy import Package, Version
+from webkitscmpy import AutoInstall, Package, Version
 
 
 class ChromeDriverPackage(Package):
@@ -32,16 +32,18 @@ class ChromeDriverPackage(Package):
     def __init__(self, version=None):
         super(ChromeDriverPackage, self).__init__('chromedriver', version=version)
 
+    @staticmethod
+    def _latest_release(response):
+        if response.status_code != 200:
+            raise IOError('Failed to retrieve the latest chromedriver release with response code {}'.format(response.status_code))
+        return Version.from_string(response.text.rstrip())
+
     def archives(self):
         if self.version is not None:
-            try:
-                response = requests.get(self.URL + 'LATEST_RELEASE')
-            except requests.RequestException:
-                return []
-
-            if response.status_code != 200:
-                return []
-            version = Version.from_string(response.text.rstrip())
+            version = AutoInstall.with_retries(
+                'retrieve the latest chromedriver release', self.URL + 'LATEST_RELEASE',
+                self._latest_release, request=lambda url: requests.get(url, timeout=AutoInstall.timeout),
+            )
         else:
             version = self.version
 
