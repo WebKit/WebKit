@@ -477,7 +477,7 @@ public:
         if (!m_track)
             return;
 
-        auto settings = m_track->settings();
+        const auto& settings = m_track->settings();
         m_configuredSize.setWidth(settings.width());
         m_configuredSize.setHeight(settings.height());
 
