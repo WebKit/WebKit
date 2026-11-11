@@ -14301,6 +14301,91 @@ TEST(SiteIsolation, WKFrameInfo_isSameFrame)
     EXPECT_FALSE([mainFrameInfo _isSameFrame:[[[frames childFrames]objectAtIndex:1] info]]);
 }
 
+TEST(SiteIsolation, WKFrameInfo_Hashable)
+{
+    HTTPServer server({
+        { "/main"_s, { "<!DOCTYPE html><iframe src='https://example.com/frameA'></iframe><iframe src='https://example.com/frameB'></iframe>"_s } },
+        { "/frameA"_s, { "hello"_s } },
+        { "/frameB"_s, { "world"_s } },
+        { "/frameC"_s, { "hello"_s } },
+        { "/frameD"_s, { "world"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block RetainPtr<_WKFrameTreeNode> frames;
+    [webView _frames:^(_WKFrameTreeNode *result) {
+        frames = result;
+    }];
+    while (!frames)
+        Util::spinRunLoop();
+
+    RetainPtr<WKFrameInfo> frameA;
+    RetainPtr<WKFrameInfo> frameB;
+    for (_WKFrameTreeNode *node in [frames childFrames]) {
+        if ([node.info.request.URL.path isEqualToString:@"/frameA"]) {
+            frameA = node.info;
+        } else if ([node.info.request.URL.path isEqualToString:@"/frameB"])
+            frameB = node.info;
+    }
+
+    EXPECT_NOT_NULL(frameA.get());
+    EXPECT_NOT_NULL(frameB.get());
+
+    EXPECT_FALSE([frameA isEqual:frameB]);
+
+    NSMutableSet<WKFrameInfo *> *frameSet = [NSMutableSet setWithObject:frameA];
+    EXPECT_TRUE([frameSet containsObject:frameA]);
+    EXPECT_FALSE([frameSet containsObject:frameB]);
+
+    [webView objectByCallingAsyncFunction:
+        @"const frame = document.querySelectorAll('iframe')[0];"
+        @"const loaded = new Promise(resolve => frame.addEventListener('load', resolve, { once: true }));"
+        @"frame.src = 'https://example.com/frameC';"
+        @"await loaded" withArguments: nil];
+
+    [webView objectByCallingAsyncFunction:
+        @"const frame = document.querySelectorAll('iframe')[1];"
+        @"const loaded = new Promise(resolve => frame.addEventListener('load', resolve, { once: true }));"
+        @"frame.src = 'https://example.com/frameD';"
+        @"await loaded" withArguments: nil];
+
+    frames = nullptr;
+    [webView _frames:^(_WKFrameTreeNode *result) {
+        frames = result;
+    }];
+    while (!frames)
+        Util::spinRunLoop();
+
+    [frameSet removeAllObjects];
+    RetainPtr<WKFrameInfo> frameC;
+    RetainPtr<WKFrameInfo> frameD;
+    for (_WKFrameTreeNode *node in [frames childFrames]) {
+        if ([node.info.request.URL.path isEqualToString:@"/frameC"]) {
+            frameC = node.info;
+            [frameSet addObject:frameC];
+        } else if ([node.info.request.URL.path isEqualToString:@"/frameD"])
+            frameD = node.info;
+    }
+
+    EXPECT_NOT_NULL(frameC.get());
+    EXPECT_NOT_NULL(frameD.get());
+
+    EXPECT_FALSE([frameC isEqual:frameD]);
+    EXPECT_TRUE([frameA isEqual:frameC]);
+    EXPECT_FALSE([[frameA _documentIdentifier] isEqual:[frameC _documentIdentifier]]);
+
+    EXPECT_TRUE([frameB isEqual:frameD]);
+    EXPECT_FALSE([[frameB _documentIdentifier] isEqual:[frameD _documentIdentifier]]);
+
+    EXPECT_TRUE([frameSet containsObject:frameA]);
+    EXPECT_FALSE([frameSet containsObject:frameB]);
+    EXPECT_TRUE([frameSet containsObject:frameC]);
+    EXPECT_FALSE([frameSet containsObject:frameD]);
+}
+
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 static bool waitForDragEnd(TestWKWebView *webView, WKFrameInfo *frame)
 {

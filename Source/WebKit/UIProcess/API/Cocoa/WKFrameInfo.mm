@@ -163,9 +163,24 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (BOOL)_isSameFrame:(WKFrameInfo *)frame
 {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return self._handle.frameID == frame._handle.frameID;
-ALLOW_DEPRECATED_DECLARATIONS_END
+    return [self isEqual:frame];
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (self == object)
+        return YES;
+
+    RetainPtr other = dynamic_objc_cast<WKFrameInfo>(object);
+    if (!other)
+        return NO;
+
+    return _frameInfo->frameInfoData().frameID == other->_frameInfo->frameInfoData().frameID;
+}
+
+- (NSUInteger)hash
+{
+    return _frameInfo->frameInfoData().frameID.toUInt64();
 }
 
 @end
