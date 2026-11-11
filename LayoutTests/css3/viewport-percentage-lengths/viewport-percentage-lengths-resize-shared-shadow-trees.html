@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<body>
+    <div id="host1"></div>
+    <div id="host2"></div>
+    <div id="host3"></div>
+    <div id="host4"></div>
+</body>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/resize-test.js"></script>
+<script>
+description("Test that viewport lengths resize with the viewport in shadow trees that share stylesheets, and so share a style resolver.");
+
+const styleText = ".width { width: 50vw; } .font-size { font-size: 5vh; } .calc { width: calc(10vw + 10vh); }";
+const sharedSheet = new CSSStyleSheet();
+sharedSheet.replaceSync(styleText);
+
+const hosts = [host1, host2, host3, host4];
+for (const [index, host] of hosts.entries()) {
+    const shadowRoot = host.attachShadow({ mode: "open" });
+    if (index < 2)
+        shadowRoot.adoptedStyleSheets = [sharedSheet];
+    else
+        shadowRoot.innerHTML = `<style>${styleText}</style>`;
+    shadowRoot.innerHTML += `<div class="width"></div><div class="font-size"></div><div class="calc"></div>`;
+}
+
+function shadowElement(index, className)
+{
+    return hosts[index].shadowRoot.querySelector("." + className);
+}
+
+standardResizeTest(function () {
+    for (let index = 0; index < hosts.length; ++index) {
+        shouldBeEqualToString(`getComputedStyle(shadowElement(${index}, "width")).width`, innerWidth / 2 + "px");
+        shouldBeEqualToString(`getComputedStyle(shadowElement(${index}, "font-size")).fontSize`, innerHeight / 20 + "px");
+        shouldBeEqualToString(`getComputedStyle(shadowElement(${index}, "calc")).width`, (innerWidth + innerHeight) / 10 + "px");
+    }
+});
+</script>

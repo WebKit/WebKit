@@ -2219,6 +2219,7 @@ webkit.org/b/178739 css3/viewport-percentage-lengths/viewport-percentage-lengths
 webkit.org/b/178739 css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Skip ]
 webkit.org/b/178739 css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Skip ]
 webkit.org/b/178739 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Skip ]
+webkit.org/b/178739 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize-shared-shadow-trees.html [ Skip ]
 
 # LayoutTests/fast tests that timeout:
 fast/events/reveal-link-when-focused.html
