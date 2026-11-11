@@ -3936,7 +3936,6 @@ void LocalFrameView::resumeVisibleImageAnimationsIncludingSubframes()
     });
 }
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void LocalFrameView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
 {
     if (CheckedPtr renderView = m_frame->contentRenderer())
@@ -3949,7 +3948,6 @@ void LocalFrameView::updatePlayStateForAllAnimationsIncludingSubframes()
         frameView.updatePlayStateForAllAnimations(visibleRect);
     });
 }
-#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 void LocalFrameView::updateLayerPositionsAfterScrolling()
 {

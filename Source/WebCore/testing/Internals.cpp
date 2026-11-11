@@ -675,11 +675,9 @@ void Internals::resetToConsistentState(Page& page)
 #if ENABLE(SERVICE_CONTROLS)
     page.servicesOverlayController().setHasRelevantSelectionServicesForTesting(std::nullopt);
 #endif
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     page.setSystemImageAnimationEnabled(true);
     if (!page.imageAnimationEnabled())
         page.setImageAnimationEnabled(true);
-#endif
 
     RefPtr localMainFrame = page.localMainFrame();
     if (!localMainFrame)
@@ -1305,7 +1303,6 @@ bool Internals::isImageAnimating(HTMLImageElement& element)
     return image && (image->isAnimating() || image->animationPending());
 }
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void Internals::setImageAnimationEnabled(bool enabled)
 {
     if (RefPtr page = contextDocument() ? contextDocument()->page() : nullptr) {
@@ -1324,7 +1321,6 @@ void Internals::pauseImageAnimation(HTMLImageElement& element)
 {
     element.setAnimationOverride(ImageAnimationOverride::Pause);
 }
-#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 #if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
 void Internals::setVideoAutoplayPreviewsEnabled(bool enabled)

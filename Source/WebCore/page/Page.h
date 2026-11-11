@@ -910,7 +910,6 @@ public:
     WEBCORE_EXPORT void resumeScriptedAnimations();
     bool scriptedAnimationsSuspended() const { return m_scriptedAnimationsSuspended; }
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     bool systemImageAnimationEnabled() const { return m_systemImageAnimationEnabled; }
     void setSystemImageAnimationEnabled(bool enabled) { m_systemImageAnimationEnabled = enabled; }
 
@@ -918,7 +917,6 @@ public:
     WEBCORE_EXPORT void setImageAnimationEnabled(bool);
     void addIndividuallyPlayingAnimationElement(HTMLImageElement&);
     void removeIndividuallyPlayingAnimationElement(HTMLImageElement&);
-#endif
     NODELETE WEBCORE_EXPORT bool imageAnimationEnabled() const;
     ImageAnimationTimeline& imageAnimationTimeline() const { return m_imageAnimationTimeline; }
 
@@ -1681,9 +1679,7 @@ private:
     JSC::Debugger* m_debugger { nullptr }; // FIXME: Use a smart pointer.
 
     bool m_canStartMedia { true };
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     bool m_systemImageAnimationEnabled { true };
-#endif
     Ref<ImageAnimationTimeline> m_imageAnimationTimeline;
     bool m_videoAutoplayPreviewsEnabled { true };
     // Elements containing animations that are individually playing (potentially overriding the page-wide imageAnimationEnabled() state).

@@ -347,9 +347,7 @@ public:
 
     WEBCORE_EXPORT void viewportContentsChanged();
     WEBCORE_EXPORT void resumeVisibleImageAnimationsIncludingSubframes();
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void updatePlayStateForAllAnimationsIncludingSubframes();
-#endif
 
     AtomString mediaType() const;
     WEBCORE_EXPORT void setMediaType(const AtomString&);
@@ -880,9 +878,7 @@ private:
 
     void applyRecursivelyWithVisibleRect(NOESCAPE const Function<void(LocalFrameView& frameView, const IntRect& visibleRect)>&);
     void resumeVisibleImageAnimations(const IntRect& visibleRect);
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void updatePlayStateForAllAnimations(const IntRect& visibleRect);
-#endif
     void updateScriptedAnimationsAndTimersThrottlingState(const IntRect& visibleRect);
 
     WEBCORE_EXPORT void adjustTiledBackingCoverage();

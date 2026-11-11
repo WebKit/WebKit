@@ -985,7 +985,6 @@ void RenderView::resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect)
     });
 }
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 NODELETE static SVGSVGElement* svgSvgElementFrom(RenderElement& renderElement)
 {
     if (auto* svgSvgElement = dynamicDowncast<SVGSVGElement>(renderElement.element()))
@@ -1050,7 +1049,6 @@ void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
         }
     }
 }
-#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator(RenderView* view)
 {

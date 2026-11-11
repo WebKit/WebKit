@@ -129,10 +129,8 @@ HTMLImageElement::~HTMLImageElement()
     Ref document = this->document();
     document->removeDynamicMediaQueryDependentImage(*this);
     setForm(nullptr);
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     if (RefPtr page = document->page())
         page->removeIndividuallyPlayingAnimationElement(*this);
-#endif
 }
 
 void HTMLImageElement::resetFormOwner()
@@ -1006,15 +1004,12 @@ void HTMLImageElement::clearImageAnimationTimeline()
     if (!timeline)
         return;
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     if (timeline->state() == ImageAnimationTimeline::State::Running) {
         if (RefPtr page = document().page())
             page->removeIndividuallyPlayingAnimationElement(*this);
     }
-#endif
 }
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void HTMLImageElement::setAnimationOverride(ImageAnimationOverride animationOverride)
 {
     if (RefPtr image = this->image()) {
@@ -1042,7 +1037,6 @@ void HTMLImageElement::setAnimationOverride(ImageAnimationOverride animationOver
         }
     }
 }
-#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 

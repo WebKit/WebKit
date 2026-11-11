@@ -193,9 +193,7 @@ public:
     NODELETE bool allowsOrientationOverride() const;
 
     bool allowsAnimation() const;
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     WEBCORE_EXPORT void setAnimationOverride(ImageAnimationOverride);
-#endif
     Ref<ImageAnimationTimeline> imageAnimationTimeline() const;
     void clearImageAnimationTimeline();
 
