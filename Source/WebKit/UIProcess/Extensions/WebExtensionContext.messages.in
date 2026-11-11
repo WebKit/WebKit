@@ -67,7 +67,7 @@ messages -> WebExtensionContext {
     [Validator=isBookmarksMessageAllowed] BookmarksSearch(std::optional<String> query, std::optional<String> url, std::optional<String> title) -> (std::expected<Vector<WebKit::WebExtensionBookmarkParameters>, WebKit::WebExtensionError> result)
     [Validator=isBookmarksMessageAllowed] BookmarksUpdate(WebKit::WebExtensionBookmarkChanges bookmark) -> (std::expected<WebKit::WebExtensionBookmarkParameters, WebKit::WebExtensionError> result)
     [Validator=isBookmarksMessageAllowed] BookmarksMove(WebKit::WebExtensionBookmarkChanges bookmark) -> (std::expected<WebKit::WebExtensionBookmarkParameters, WebKit::WebExtensionError> result)
-    [Validator=isBookmarksMessageAllowed] BookmarksRemove(String bookmarkIdentifier) -> (std::expected<void, WebKit::WebExtensionError> result)
+    [Validator=isBookmarksMessageAllowed] BookmarksRemove(Vector<String> bookmarkIdentifiers) -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isBookmarksMessageAllowed] BookmarksRemoveTree(String bookmarkIdentifier) -> (std::expected<void, WebKit::WebExtensionError> result)
 #endif // ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
 

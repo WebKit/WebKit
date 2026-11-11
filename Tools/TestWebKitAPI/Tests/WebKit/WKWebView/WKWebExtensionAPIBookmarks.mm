@@ -494,7 +494,7 @@ TEST_F(WKWebExtensionAPIBookmarks, IncorrectArguments)
         @"browser.test.assertThrows(() => browser.bookmarks.get('test', 'test'), /The 'callback' value is invalid, because a function is expected./i)",
         @"browser.test.assertThrows(() => browser.bookmarks.move(123, {}), /The 'id' value is invalid, because a string is expected./i)",
         @"browser.test.assertThrows(() => browser.bookmarks.move('someId', 'not-an-object'), /The 'destination' value is invalid, because an object is expected./i)",
-        @"browser.test.assertThrows(() => browser.bookmarks.remove(123), /The 'id' value is invalid, because a string is expected/i)",
+        @"browser.test.assertThrows(() => browser.bookmarks.remove(123), /The 'idOrIdList' value is invalid, because a string or an array of strings is expected/i)",
         @"browser.test.assertThrows(() => browser.bookmarks.search(123, 'test'), /The 'callback' value is invalid, because a function is expected./i)",
         @"browser.test.assertThrows(() => browser.bookmarks.update(123, {}), /The 'id' value is invalid, because a string is expected./i)",
         @"browser.test.notifyPass()",
@@ -752,6 +752,36 @@ TEST_F(WKWebExtensionAPIBookmarks, RemoveAndRemoveTree)
     auto resources = @{ @"background.js": Util::constructScript(script) };
 
     auto manager = getManagerFor(resources, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, RemoveMultipleBookmarks)
+{
+    auto *script = @[
+        @"let first = await browser.bookmarks.create({ title: 'First', url: 'https://webkit.org/' })",
+        @"let second = await browser.bookmarks.create({ title: 'Second', url: 'https://webkit.org/blog/' })",
+        @"let third = await browser.bookmarks.create({ title: 'Third', url: 'https://webkit.org/status/' })",
+
+        @"await browser.test.assertRejects(",
+        @"browser.bookmarks.remove([first.id, 'missing', second.id]),",
+        @"/bookmark not found/i,",
+        @"'remove with an unknown identifier in the list should fail');",
+        @"let afterFailure = (await browser.bookmarks.getTree())[0].children[0].children",
+        @"browser.test.assertEq(3, afterFailure.length, 'A failed removal should not remove any bookmark')",
+
+        @"browser.test.assertThrows(() => browser.bookmarks.remove([]), /The 'idOrIdList' value is invalid, because it must contain at least one identifier/i)",
+
+        @"await browser.bookmarks.remove([first.id, third.id])",
+        @"let remaining = (await browser.bookmarks.getTree())[0].children[0].children",
+        @"browser.test.assertEq(1, remaining.length, 'Only one bookmark should remain')",
+        @"browser.test.assertEq(second.id, remaining[0].id, 'The unlisted bookmark should remain')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
 
     configureBookmarksDelegate(manager.get());
 
@@ -1338,6 +1368,28 @@ TEST_F(WKWebExtensionAPIBookmarks, UpdateNeedsTheBookmarkToSupportTheChange)
     [manager loadAndRun];
 }
 
+TEST_F(WKWebExtensionAPIBookmarks, RemoveStopsAtTheFirstFailure)
+{
+    auto *script = @[
+        @"await browser.test.assertRejects(browser.bookmarks.remove(['first', 'policy', 'last']), /managed bookmarks cannot be modified/i)",
+        @"await browser.test.assertRejects(browser.bookmarks.get('first'), /bookmark not found/i, 'The bookmark before the failure should be removed')",
+        @"const remaining = await browser.bookmarks.get('last')",
+        @"browser.test.assertEq('Last', remaining[0].title, 'The bookmark after the failure should remain')",
+        @"browser.test.notifyPass()",
+    ];
+
+    NSMutableArray *children = [bookmarkStore topLevelBookmarks][0][@"children"];
+    [children addObject:[@{ @"id": @"first", @"title": @"First", @"url": @"https://webkit.org/" } mutableCopy]];
+    [children addObject:[@{ @"id": @"policy", @"title": @"Policy", @"url": @"https://webkit.org/status/", @"managed": @YES } mutableCopy]];
+    [children addObject:[@{ @"id": @"last", @"title": @"Last", @"url": @"https://webkit.org/blog/" } mutableCopy]];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
 TEST_F(WKWebExtensionAPIBookmarks, BookmarksWithoutAnIdentifierAreSkipped)
 {
     auto *script = @[
@@ -1510,6 +1562,28 @@ TEST_F(WKWebExtensionAPIBookmarks, UpdateRepliesWithTheChangedBookmark)
     ];
 
     [bookmarkStore setNodesAreSnapshots:YES];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+
+TEST_F(WKWebExtensionAPIBookmarks, RemoveManyBookmarks)
+{
+    auto *script = @[
+        @"const identifiers = Array.from({ length: 30000 }, (value, index) => 'bulk-' + index)",
+        @"await browser.bookmarks.remove(identifiers)",
+        @"const remaining = await browser.bookmarks.getChildren('other')",
+        @"browser.test.assertEq(0, remaining.length, 'Every bookmark in the list should be removed')",
+        @"browser.test.notifyPass()",
+    ];
+
+    NSMutableArray *children = [bookmarkStore topLevelBookmarks][0][@"children"];
+    for (NSInteger index = 0; index < 30000; ++index)
+        [children addObject:[@{ @"id": [NSString stringWithFormat:@"bulk-%ld", (long)index], @"title": @"Bulk", @"url": @"https://webkit.org/" } mutableCopy]];
 
     auto manager = getManagerFor(script, bookmarksManifest);
 
