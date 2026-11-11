@@ -30,6 +30,8 @@
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/PrivateName.h>
+#include <WebCore/BoxExtents.h>
+#include <WebCore/FloatSize.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageIdentifier.h>
@@ -126,6 +128,7 @@ private:
     void scriptRealmCreated(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&) override;
     void scriptRealmDestroyed(WebCore::FrameIdentifier) override;
     void ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier);
+    void printBidiPage(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, bool background, WebCore::FloatSize pageSizeInCentimeters, WebCore::FloatBoxExtent marginInCentimeters, double scale, bool shrinkToFit, Vector<std::pair<uint64_t, uint64_t>>&& pageRanges, CompletionHandler<void(String&&, String&&)>&&);
 #endif
 
     String m_sessionIdentifier;

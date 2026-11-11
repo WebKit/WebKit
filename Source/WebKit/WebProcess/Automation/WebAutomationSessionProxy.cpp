@@ -78,10 +78,27 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
+#include <wtf/text/Base64.h>
 
 #if ENABLE(WEBDRIVER_BIDI)
 #include <WebCore/AutomationInstrumentation.h>
 #include <WebCore/DOMWrapperWorld.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/PrintContext.h>
+#include <WebCore/Settings.h>
+#include <WebCore/SharedBuffer.h>
+#include <wtf/Scope.h>
+
+#if USE(CG)
+#include <WebCore/PDFDocumentBuffer.h>
+#elif USE(SKIA)
+#include <WebCore/GraphicsContextSkia.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkStream.h>
+#include <skia/docs/SkPDFDocument.h>
+#include <skia/docs/SkPDFJpegHelpers.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#endif
 #endif
 
 namespace WebKit {
@@ -1394,6 +1411,198 @@ void WebAutomationSessionProxy::ensureRealmForInitialEmptyDocument(WebCore::Page
     // Accessing jsWindowProxy() will create the proxy if it doesn't exist, which triggers
     // the scriptRealmCreated instrumentation in WindowProxy::createJSWindowProxy().
     protect(coreFrame->windowProxy())->jsWindowProxy(mainThreadNormalWorldSingleton());
+}
+
+// Writes each page as one page of a PDF document. drawPage paints into a context whose
+// origin is the top-left corner of the page, in points.
+// FIXME: Both writers paint into a context local to this process, so under Site Isolation a cross-origin
+// iframe, a RemoteFrame here, prints as a blank area. Painting it means building on WebPage's remote
+// snapshot path instead of these writers. https://webkit.org/b/330899
+// FIXME: Share the drawing helpers with WebPage's printing and WebPrintOperationGtk. https://webkit.org/b/330900
+static RefPtr<WebCore::SharedBuffer> createPDFDocumentForBidiPrint(const WebCore::FloatSize& pageSizeInPoints, size_t pageCount, const String& title, NOESCAPE const Function<void(WebCore::GraphicsContext&, size_t)>& drawPage)
+{
+#if USE(CG)
+    UNUSED_PARAM(title);
+    auto buffer = WebCore::PDFDocumentBuffer::create(pageSizeInPoints);
+    if (!buffer)
+        return nullptr;
+
+    auto& context = buffer->context();
+    WebCore::FloatRect pageRect { { }, pageSizeInPoints };
+    for (size_t pageIndex = 0; pageIndex < pageCount; ++pageIndex) {
+        context.beginPage(pageRect);
+        context.save();
+        // PDF contexts have their origin at the bottom-left corner of the page.
+        context.scale(WebCore::FloatSize(1, -1));
+        context.translate(0, -pageSizeInPoints.height());
+        drawPage(context, pageIndex);
+        context.restore();
+        context.endPage();
+    }
+    return buffer->takeData();
+#elif USE(SKIA)
+    SkDynamicMemoryWStream stream;
+    SkPDF::Metadata metadata;
+    metadata.jpegDecoder = SkPDF::JPEG::Decode;
+    metadata.jpegEncoder = SkPDF::JPEG::Encode;
+    auto titleUTF8 = title.utf8();
+    auto titleCharacters = byteCast<char>(titleUTF8.span());
+    metadata.fTitle = SkString(titleCharacters.data(), titleCharacters.size());
+
+    auto document = SkPDF::MakeDocument(&stream, metadata);
+    if (!document)
+        return nullptr;
+
+    for (size_t pageIndex = 0; pageIndex < pageCount; ++pageIndex) {
+        auto* canvas = document->beginPage(pageSizeInPoints.width(), pageSizeInPoints.height());
+        if (!canvas)
+            return nullptr;
+        {
+            WebCore::GraphicsContextSkia context(*canvas, WebCore::RenderingMode::Unaccelerated, WebCore::RenderingPurpose::Unspecified);
+            drawPage(context, pageIndex);
+        }
+        document->endPage();
+    }
+    document->close();
+    return WebCore::SharedBuffer::create(stream.detachAsData());
+#else
+    UNUSED_PARAM(pageSizeInPoints);
+    UNUSED_PARAM(pageCount);
+    UNUSED_PARAM(title);
+    UNUSED_PARAM(drawPage);
+    return nullptr;
+#endif
+}
+
+void WebAutomationSessionProxy::printBidiPage(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, bool background, WebCore::FloatSize pageSizeInCentimeters, WebCore::FloatBoxExtent marginInCentimeters, double scale, bool shrinkToFit, Vector<std::pair<uint64_t, uint64_t>>&& pageRanges, CompletionHandler<void(String&&, String&&)>&& completionHandler)
+{
+    // https://w3c.github.io/webdriver-bidi/#command-browsingContext-print
+    auto errorType = [](Inspector::Protocol::Automation::ErrorMessage error) {
+        return Inspector::Protocol::AutomationHelpers::getEnumConstantValue(error);
+    };
+
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    if (!page)
+        return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound));
+
+    RefPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
+    RefPtr coreFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr frameView = coreFrame ? coreFrame->view() : nullptr;
+    RefPtr document = coreFrame ? coreFrame->document() : nullptr;
+    if (!frameView || !document)
+        return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
+
+    // The PDF page is measured in points, and the document is laid out in CSS pixels.
+    static constexpr float pointsPerCentimeter = 72 / 2.54;
+    static constexpr float pixelsPerCentimeter = 96 / 2.54;
+    static constexpr float pointsPerPixel = 72. / 96.;
+
+    WebCore::FloatSize contentSizeInCentimeters {
+        pageSizeInCentimeters.width() - marginInCentimeters.left() - marginInCentimeters.right(),
+        pageSizeInCentimeters.height() - marginInCentimeters.top() - marginInCentimeters.bottom()
+    };
+    // Margins that are larger than the page cannot produce a paginated representation.
+    // https://github.com/w3c/webdriver-bidi/issues/473
+    // Margins that leave a content area of about zero, as the page minus its margins can in floating
+    // point, still print: the content area is then one CSS pixel.
+    static constexpr float contentSizeTolerance = 0.01;
+    auto contentSizeInPixels = contentSizeInCentimeters.scaled(pixelsPerCentimeter);
+    if (contentSizeInPixels.width() < -contentSizeTolerance || contentSizeInPixels.height() < -contentSizeTolerance)
+        return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::NotImplemented));
+    contentSizeInPixels = contentSizeInPixels.expandedTo({ 1, 1 });
+
+    // Laying the document out on a page 1 / scale as large zooms the content by scale once
+    // each page is drawn into the content area. A large scale can make that page smaller than
+    // a pixel, which lays out no pages, so it is at least one pixel too.
+    auto layoutSize = contentSizeInPixels.scaled(static_cast<float>(1 / scale)).expandedTo({ 1, 1 });
+
+    // A print the page started (window.print()) owns the frame's printing mode, and ending this
+    // one would take the frame out of it underneath that print.
+    if (page->hasActivePrintContext())
+        return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::NotImplemented));
+
+    frameView->updateLayoutAndStyleIfNeededRecursive();
+
+    // The setting is page-wide; it is only read while painting, so restore it once the pages are drawn.
+    Ref settings = coreFrame->settings();
+    bool shouldPrintBackgrounds = settings->shouldPrintBackgrounds();
+    settings->setShouldPrintBackgrounds(background);
+    auto restoreSettings = makeScopeExit([&] {
+        settings->setShouldPrintBackgrounds(shouldPrintBackgrounds);
+    });
+
+    // As WebPage::beginPrinting() does, keep the layer tree from updating while the document is laid out for printing.
+    page->freezeLayerTree(WebPage::LayerTreeFreezeReason::Printing);
+    auto unfreezeLayerTree = makeScopeExit([&] {
+        page->unfreezeLayerTree(WebPage::LayerTreeFreezeReason::Printing);
+    });
+
+    Ref printContext = WebCore::PrintContext::create(coreFrame.get());
+    // With shrinkToFit, content wider than the page is shrunk to fit it, by as much as other
+    // printing in WebKit allows; without it, that content is clipped at the page width.
+    printContext->begin(layoutSize, shrinkToFit ? WebCore::PrintContext::maximumShrinkFactor() : 1);
+    auto endPrinting = makeScopeExit([&] {
+        printContext->end();
+    });
+
+    // Printing laid out the document, which can run script that detaches the frame.
+    if (!coreFrame->view() || !coreFrame->document())
+        return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
+
+    float fullPageHeight;
+    printContext->computePageRects(WebCore::FloatRect({ }, layoutSize), 0, 0, 1, fullPageHeight);
+
+    // An empty document still prints as one blank page.
+    size_t totalPages = std::max<size_t>(printContext->pageCount(), 1);
+
+    // https://w3c.github.io/webdriver/#dfn-parse-a-page-range
+    Vector<size_t> pages;
+    if (pageRanges.isEmpty()) {
+        for (size_t pageIndex = 0; pageIndex < totalPages; ++pageIndex)
+            pages.append(pageIndex);
+    } else {
+        Vector<bool> selectedPages(FillWith { }, totalPages, false);
+        for (auto [lowerBound, upperBound] : pageRanges) {
+            // The maximum upper bound stands for "a-", a through the last page, which is only an
+            // inverted range once the page count is known. Pages past the last one are ignored.
+            if (upperBound == std::numeric_limits<uint64_t>::max()) {
+                upperBound = totalPages;
+                if (lowerBound > upperBound)
+                    return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::InvalidParameter));
+            }
+            upperBound = std::min<uint64_t>(upperBound, totalPages);
+            for (auto pageNumber = std::max<uint64_t>(lowerBound, 1); pageNumber <= upperBound; ++pageNumber)
+                selectedPages[pageNumber - 1] = true;
+        }
+        for (size_t pageIndex = 0; pageIndex < totalPages; ++pageIndex) {
+            if (selectedPages[pageIndex])
+                pages.append(pageIndex);
+        }
+        if (pages.isEmpty())
+            return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::InvalidParameter));
+    }
+
+    auto pageSizeInPoints = pageSizeInCentimeters.scaled(pointsPerCentimeter);
+    WebCore::FloatPoint contentOriginInPoints { marginInCentimeters.left() * pointsPerCentimeter, marginInCentimeters.top() * pointsPerCentimeter };
+    bool hasPageRects = printContext->pageCount();
+    auto pdfData = createPDFDocumentForBidiPrint(pageSizeInPoints, pages.size(), document->title(), [&](WebCore::GraphicsContext& context, size_t index) {
+        if (!hasPageRects)
+            return;
+        context.translate(toFloatSize(contentOriginInPoints));
+        context.scale(pointsPerPixel);
+        // spoolPage scales the page's rectangle, in layout units, to the given width.
+        printContext->spoolPage(context, pages[index], contentSizeInPixels.width());
+    });
+
+    if (!pdfData || pdfData->isEmpty())
+        return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::NotImplemented));
+
+    // Nothing bounds the page count, so a very long document can make a PDF too large to encode.
+    auto encodedData = WTF::base64EncodeToStringReturnNullIfOverflow(std::as_bytes(pdfData->span()));
+    if (encodedData.isNull())
+        return completionHandler({ }, errorType(Inspector::Protocol::Automation::ErrorMessage::InternalError));
+
+    completionHandler(WTF::move(encodedData), { });
 }
 #endif
 
