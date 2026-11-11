@@ -60,20 +60,30 @@ auto HTMLSelectedContentElement::insertionSteps(InsertionType insertionType, Con
     ASSERT(document().settings().htmlEnhancedSelectEnabled());
     ASSERT(!document().settings().mutationEventsEnabled());
 
-    recalculateDisabledness();
+    RefPtr select = recalculateDisabledness();
 
-    if (insertionType.connectedToDocument)
+    if (insertionType.connectedToDocument) {
+        if (!m_isDisabled && select && !select->multiple())
+            select->queueSelectedContentUpdate();
         return NeedsPostConnectionSteps::Yes;
+    }
     return NeedsPostConnectionSteps::No;
 }
 
 void HTMLSelectedContentElement::postConnectionSteps()
 {
     RefPtr select = m_owningSelect;
-    if (m_isDisabled || !select || !select->updatesSelectedContent() || select->hasPendingSelectedContentUpdate())
+    if (!select || !select->updatesSelectedContent())
         return;
 
-    select->updateSelectedContent(*this);
+    if (select->multiple()) {
+        if (!m_isDisabled)
+            select->cloneOptionsIntoSelectedContent(*this);
+        return;
+    }
+
+    if (select->hasPendingSelectedContentUpdate())
+        select->updateSelectedContent();
 }
 
 void HTMLSelectedContentElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)

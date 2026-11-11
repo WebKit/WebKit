@@ -2760,22 +2760,6 @@ void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption)
         selectedContent->updateFromOption(selectedOptionRef.get());
 }
 
-// https://html.spec.whatwg.org/#update-a-selectedcontent
-void HTMLSelectElement::updateSelectedContent(HTMLSelectedContentElement& selectedContent)
-{
-    ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
-    ASSERT(!selectedContent.isDisabled());
-
-    if (m_multiple && updatesSelectedContent()) {
-        cloneOptionsIntoSelectedContent(selectedContent);
-        return;
-    }
-
-    RefPtr selectedOption = firstSelectedOption();
-    m_selectedContentShowsOption = !!selectedOption;
-    selectedContent.updateFromOption(selectedOption.get());
-}
-
 bool HTMLSelectElement::updatesSelectedContent() const
 {
     return !m_multiple || document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled();

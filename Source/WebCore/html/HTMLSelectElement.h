@@ -206,7 +206,7 @@ public:
     bool isDevolvableWidget() const override { return true; }
 
     void updateSelectedContent(HTMLOptionElement* = nullptr);
-    void updateSelectedContent(HTMLSelectedContentElement&);
+    void cloneOptionsIntoSelectedContent(HTMLSelectedContentElement&);
     void updateSelectedContentIfEnabled(HTMLOptionElement* = nullptr);
     void queueSelectedContentUpdate();
     void queueSelectedContentUpdate(const HTMLOptionElement&);
@@ -317,7 +317,6 @@ private:
     void baseAppearanceListBoxDefaultEventHandler(Event&);
     Vector<Ref<HTMLSelectedContentElement>> selectedContentElements() const;
     void cloneOptionsIntoSelectedContent();
-    void cloneOptionsIntoSelectedContent(HTMLSelectedContentElement&);
     RefPtr<HTMLOptionElement> firstSelectedOption() const;
     String selectedOptionsText(ForAccessibility, HTMLOptionElement* selectedOption, int optionIndex) const;
     void setSizeAndMultiple(unsigned size, bool multiple);

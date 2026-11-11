@@ -7,5 +7,8 @@ PASS Inserting selectedcontent followed by an option updates selectedcontent onc
 PASS Inserting an option followed by selectedcontent updates selectedcontent once.
 PASS Inserting selectedcontent followed by an option that changes selectedness updates every selectedcontent once.
 PASS Inserting a select that already contains options updates its selectedcontent once.
+PASS Inserting an option that changes selectedness followed by selectedcontent updates every selectedcontent once.
+PASS Inserting an option followed by selectedcontent while an update is pending updates the selectedcontent once.
+
 
 
