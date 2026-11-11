@@ -31,15 +31,15 @@ namespace Style {
 
 struct PreferredSize;
 
-// <'min-width'>/<'min-height'> = auto | <length-percentage [0,∞]> | min-content | max-content | fit-content(<length-percentage [0,∞]>) | <calc-size()> | stretch | fit-content | contain
+// <'min-width'>/<'min-height'> = auto | <length-percentage [0,∞]> | stretch | contain | min-content | max-content | fit-content | stretch(<length-percentage [0,∞]>) | fit-content(<length-percentage [0,∞]>) | <calc-size()>
 //
 // What is actually implemented is:
 //
-// <'min-width'>/<'min-height'> = auto | <length-percentage [0,∞]> | min-content | max-content | fit-content | stretch | intrinsic | min-intrinsic
+// <'min-width'>/<'min-height'> = auto | <length-percentage [0,∞]> | stretch | min-content | max-content | fit-content | <calc-size()> | intrinsic | min-intrinsic
 //
 // MISSING:
+//    stretch(<length-percentage [0,∞]>)
 //    fit-content(<length-percentage [0,∞]>)
-//    <calc-size()>
 //    contain
 //
 // NON-STANDARD:
