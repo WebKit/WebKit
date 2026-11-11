@@ -42,6 +42,33 @@ class TestPullRequest(unittest.TestCase):
         self.assertEqual('PR 123 | [scoping] Bug to fix', str(PullRequest(123, title='[scoping] Bug to fix')))
         self.assertEqual('PR 1234', str(PullRequest(1234)))
 
+    def test_title_for(self):
+        self.assertEqual('[scoping] Fix the bug', program.PullRequest.title_for([
+            Commit(hash='11aa76f9fc380e9fe06157595f95c7f9', message='[scoping] Fix the bug\nhttps://bugs.webkit.org/1234\n'),
+            Commit(hash='53ea230fcedbce327eb1c45a6ab65a88', message='[scoping] Fix the test\nhttps://bugs.webkit.org/1234\n'),
+        ]))
+
+    def test_title_for_common_prefix(self):
+        self.assertEqual('[scoping] Fix the', program.PullRequest.title_for([
+            Commit(hash='11aa76f9fc380e9fe06157595f95c7f9', message='[scoping] Fix the bug\nhttps://bugs.webkit.org/1234\n'),
+            Commit(hash='53ea230fcedbce327eb1c45a6ab65a88', message='[scoping] Fix the test\nhttps://bugs.webkit.org/1234\n'),
+        ], 'common-prefix'))
+
+    def test_title_for_common_prefix_parts(self):
+        self.assertEqual('[scoping] Bug to fix', program.PullRequest.title_for([
+            Commit(hash='11aa76f9fc380e9fe06157595f95c7f9', message='[scoping] Bug to fix (Part 2)\n'),
+            Commit(hash='53ea230fcedbce327eb1c45a6ab65a88', message='[scoping] Bug to fix (Part 1)\n'),
+        ], 'common-prefix'))
+
+    def test_title_for_common_prefix_none_shared(self):
+        self.assertEqual('Fix the bug', program.PullRequest.title_for([
+            Commit(hash='11aa76f9fc380e9fe06157595f95c7f9', message='Fix the bug\n'),
+            Commit(hash='53ea230fcedbce327eb1c45a6ab65a88', message='Add a test\n'),
+        ], 'common-prefix'))
+
+    def test_title_for_no_message(self):
+        self.assertEqual('???', program.PullRequest.title_for([Commit(hash='11aa76f9fc380e9fe06157595f95c7f9')]))
+
     def test_create_body_single_linked(self):
         self.assertEqual(
             PullRequest.create_body(None, [Commit(
@@ -633,6 +660,46 @@ No pre-PR checks to run""")
                 "Updated 'PR 1 | [Testing] Creating commits'!\n"
                 "https://github.example.com/WebKit/WebKit/pull/1\n",
             )
+
+    def _pull_request_title_style(self, args=(), config=None):
+        with mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path,
+            remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, patch('webkitbugspy.Tracker._trackers', []), OutputCapture():
+            if config:
+                repo.edit_config('webkitscmpy.title-style', config)
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-i', 'pr-branch'),
+                path=self.path,
+            ))
+
+            repo.head = Commit(
+                hash='d05082bf6707252aef3472692598a587ed3fb213',
+                identifier='3.2@eng/pr-branch',
+                timestamp=repo.head.timestamp + 1,
+                author=repo.head.author,
+                message='[Testing] Creating more commits\n',
+            )
+            repo.commits['eng/pr-branch'].append(repo.head)
+            self.assertEqual(0, program.main(
+                args=('pull-request', '--no-history', *args),
+                path=self.path,
+            ))
+            return local.Git(self.path).remote().pull_requests.get(1).title
+
+    def test_github_title_style_default(self):
+        self.assertEqual(self._pull_request_title_style(), '[Testing] Creating more commits')
+
+    def test_github_title_style_config(self):
+        self.assertEqual(self._pull_request_title_style(config='common-prefix'), '[Testing] Creating')
+
+    def test_github_title_style_flag_overrides_config(self):
+        self.assertEqual(
+            self._pull_request_title_style(args=('--title-style', 'top-commit'), config='common-prefix'),
+            '[Testing] Creating more commits',
+        )
 
     def test_github_sticky_update_title_override(self):
         with mocks.remote.GitHub() as remote, mocks.local.Git(
