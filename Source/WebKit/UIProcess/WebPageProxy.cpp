@@ -16304,6 +16304,7 @@ NODELETE static bool shouldReloadAfterProcessTermination(ProcessTerminationReaso
     case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::RequestedByModelProcess:
     case ProcessTerminationReason::Crash:
+    case ProcessTerminationReason::NonMainFrameWebContentProcessCrash:
     case ProcessTerminationReason::Unresponsive:
         return true;
     case ProcessTerminationReason::ExceededProcessCountLimit:
@@ -16312,7 +16313,6 @@ NODELETE static bool shouldReloadAfterProcessTermination(ProcessTerminationReaso
     case ProcessTerminationReason::RequestedByClient:
     case ProcessTerminationReason::GPUProcessCrashedTooManyTimes:
     case ProcessTerminationReason::ModelProcessCrashedTooManyTimes:
-    case ProcessTerminationReason::NonMainFrameWebContentProcessCrash:
         break;
     }
     return false;
@@ -16373,9 +16373,6 @@ bool WebPageProxy::hasCommittedFrameInProcess(const WebProcessProxy& process) co
 
 void WebPageProxy::dispatchProcessDidTerminate(ProcessID processID, ProcessTerminationScope scope, ProcessTerminationReason reason)
 {
-    // FIXME: Other reasons, e.g. ExceededMemoryLimit, still report a subframe process kill as a
-    // termination of the page's process, and reload the page if the client doesn't handle it. Tell
-    // the client the actual reason and whether the main frame was affected.
     if (scope != ProcessTerminationScope::MainFrame && reason == ProcessTerminationReason::Crash)
         reason = ProcessTerminationReason::NonMainFrameWebContentProcessCrash;
 

@@ -130,12 +130,6 @@
         _webContentProcessDidTerminate(webView, reason);
 }
 
-- (void)_webView:(WKWebView *)webView webContentProcessDidTerminateForTesting:(_WKProcessTerminationReason)reason
-{
-    if (_webContentProcessDidTerminateForTesting)
-        _webContentProcessDidTerminateForTesting(webView, reason);
-}
-
 - (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents
 {
     if (_renderingProgressDidChange)
