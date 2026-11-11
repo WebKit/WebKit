@@ -596,8 +596,9 @@ private:
 
     OptionSet<ScrollCoordinationRole> coordinatedScrollingRolesForLayer(const RenderLayer&, const RenderLayer* compositingAncestor) const;
 
-    // Returns the ScrollingNodeID which acts as the parent for children.
-    std::optional<ScrollingNodeID> updateScrollCoordinationForLayer(RenderLayer&, const RenderLayer* compositingAncestor, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
+    // Returns the ScrollingNodeID which acts as the parent for children. If stateOutsideScrolling is non-null, it is set to the
+    // state for children which are not moved by this layer's scrolling node.
+    std::optional<ScrollingNodeID> updateScrollCoordinationForLayer(RenderLayer&, const RenderLayer* compositingAncestor, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>, struct ScrollingTreeState* stateOutsideScrolling = nullptr);
 
     // These return the ScrollingNodeID which acts as the parent for children.
     std::optional<ScrollingNodeID> updateScrollingNodeForViewportConstrainedRole(RenderLayer&, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);

@@ -776,6 +776,7 @@ void RenderLayerBacking::destroyGraphicsLayers()
     GraphicsLayer::unparentAndClear(m_childContainmentLayer);
     GraphicsLayer::unparentAndClear(m_scrollContainerLayer);
     GraphicsLayer::unparentAndClear(m_scrolledContentsLayer);
+    GraphicsLayer::unparentAndClear(m_descendantsOutsideScrollContainerLayer);
 #if USE(SYSTEM_PREVIEW) && ENABLE(MODEL_PROCESS)
     GraphicsLayer::unparentAndClear(m_systemPreviewBadgeLayer);
     GraphicsLayer::unparentAndClear(m_systemPreviewWrapperLayer);
@@ -1735,6 +1736,10 @@ LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(const RenderLayer*
     if (!ancestorRenderBox)
         return parentGraphicsLayerRect;
 
+    // Descendants parented outside the scroll container are children of the primary graphics layer, outside any clipping layer.
+    if (ancestorBacking->parentsDescendantOutsideScrollContainer(m_owningLayer))
+        return parentGraphicsLayerRect;
+
     if (ancestorBacking->hasClippingLayer()) {
         // If the compositing ancestor has a layer to clip children, we parent in that, and therefore position relative to it.
         LayoutRect clippingBox = clippingLayerBox(*ancestorRenderBox);
@@ -1742,7 +1747,7 @@ LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(const RenderLayer*
         parentGraphicsLayerRect = snappedGraphicsLayer(clippingBoxOffset, clippingBox.size(), renderer()).m_snappedRect;
     }
 
-    if (compositedAncestor->hasCompositedScrollableOverflow()) {
+    if (ancestorBacking->parentsDescendantInScrolledContents(m_owningLayer)) {
         auto* scrollableArea = compositedAncestor->scrollableArea();
         ASSERT(scrollableArea);
 
@@ -3483,6 +3488,8 @@ void RenderLayerBacking::detachFromScrollingCoordinator(OptionSet<ScrollCoordina
             m_layerForVerticalScrollbar->setScrollingNodeID(std::nullopt);
         if (m_layerForScrollCorner)
             m_layerForScrollCorner->setScrollingNodeID(std::nullopt);
+        if (m_descendantsOutsideScrollContainerLayer)
+            m_descendantsOutsideScrollContainerLayer->setScrollingNodeID(std::nullopt);
 #endif
     }
 
@@ -3534,6 +3541,8 @@ void RenderLayerBacking::setScrollingNodeIDForRole(ScrollingNodeID nodeID, Scrol
             m_layerForVerticalScrollbar->setScrollingNodeID(m_scrollingNodeID);
         if (m_layerForScrollCorner)
             m_layerForScrollCorner->setScrollingNodeID(m_scrollingNodeID);
+        if (m_descendantsOutsideScrollContainerLayer)
+            m_descendantsOutsideScrollContainerLayer->setScrollingNodeID(m_scrollingNodeID);
 #endif
         break;
     case ScrollCoordinationRole::ScrollingProxy:
@@ -4339,6 +4348,101 @@ GraphicsLayer* RenderLayerBacking::parentForSublayers() const
         return m_scrolledContentsLayer.get();
 
     return m_childContainmentLayer ? m_childContainmentLayer.get() : m_graphicsLayer.get();
+}
+
+bool RenderLayerBacking::parentsDescendantInScrolledContents(const RenderLayer& descendant) const
+{
+    return m_owningLayer.hasCompositedScrollableOverflow() && !parentsDescendantOutsideScrollContainer(descendant);
+}
+
+bool RenderLayerBacking::parentsDescendantOutsideScrollContainer(const RenderLayer& descendant) const
+{
+#if !ENABLE(SCROLLING_THREAD)
+    // UI-side hit testing finds our scroller for these descendants through the scrolling node ID on the container layer, which
+    // needs ENABLE(SCROLLING_THREAD). Elsewhere (e.g. iOS touch hit testing) keep them in the scrolled contents, so that input
+    // over them still scrolls us.
+    UNUSED_PARAM(descendant);
+    return false;
+#else
+    if (!m_owningLayer.hasCompositedScrollableOverflow())
+        return false;
+
+    // A fixed descendant whose containing block is the viewport is neither clipped nor moved by our scrolling. A fixed descendant
+    // inside a transformed (or otherwise containing) ancestor can still behave as fixed, but it is contained by that ancestor.
+    // Keep fixed descendants that scroll themselves in the scrolled contents, so that their scrolling still chains to ours.
+    auto canBeParentedOutsideScrollContainer = [](const RenderLayer& layer) {
+        return layer.renderer().isFixedPositioned() && !layer.hasFixedContainingBlockAncestor() && !layer.hasCompositedScrollableOverflow();
+    };
+
+    if (!canBeParentedOutsideScrollContainer(descendant) || hasSVGPaintOrderSegments())
+        return false;
+
+    // Descendants parented outside the scroll container paint above all of its contents, so we can only do this
+    // when nothing composited follows the descendant in paint order, other than layers that are parented outside too.
+    bool foundDescendant = false;
+    for (CheckedPtr layer : m_owningLayer.positiveZOrderLayers()) {
+        if (layer.get() == &descendant) {
+            foundDescendant = true;
+            continue;
+        }
+
+        if (!foundDescendant)
+            continue;
+
+        bool isParentedOutsideScrollContainer = layer->isComposited() && canBeParentedOutsideScrollContainer(*layer);
+        if (!isParentedOutsideScrollContainer && (layer->isComposited() || layer->hasCompositingDescendant()))
+            return false;
+    }
+
+    return foundDescendant;
+#endif
+}
+
+void RenderLayerBacking::setDescendantsOutsideScrollContainer(Vector<Ref<GraphicsLayer>>&& layers)
+{
+    if (layers.isEmpty()) {
+        if (m_descendantsOutsideScrollContainerLayer) {
+            willDestroyLayer(m_descendantsOutsideScrollContainerLayer.get());
+            GraphicsLayer::unparentAndClear(m_descendantsOutsideScrollContainerLayer);
+        }
+        return;
+    }
+
+    if (!m_descendantsOutsideScrollContainerLayer) {
+        m_descendantsOutsideScrollContainerLayer = createGraphicsLayer("descendants outside scroll container"_s);
+#if ENABLE(SCROLLING_THREAD)
+        // So that UI-side hit testing still finds our scrolling node over these descendants, as it did when they were in the scrolled contents.
+        m_descendantsOutsideScrollContainerLayer->setScrollingNodeID(m_scrollingNodeID);
+#endif
+    }
+
+    // Positive z-order descendants paint above classic overflow controls, but below overlay scrollbars. The overflow controls
+    // get re-added to m_graphicsLayer when the configuration changes, so check the order every time.
+    RefPtr<GraphicsLayer> overlayScrollbarsLayer;
+    if (CheckedPtr scrollableArea = m_owningLayer.scrollableArea(); scrollableArea && scrollableArea->hasOverlayScrollbars()) {
+        if (m_overflowControlsContainer && m_overflowControlsContainer->parent() == m_graphicsLayer.get())
+            overlayScrollbarsLayer = m_overflowControlsContainer;
+    }
+
+    auto& children = m_graphicsLayer->children();
+    auto indexOfChild = [&](const GraphicsLayer* layer) {
+        return children.findIf([&](auto& child) {
+            return child.ptr() == layer;
+        });
+    };
+
+    auto containerIndex = indexOfChild(m_descendantsOutsideScrollContainerLayer.get());
+    if (overlayScrollbarsLayer) {
+        if (containerIndex == notFound || containerIndex + 1 != indexOfChild(overlayScrollbarsLayer.get())) {
+            m_descendantsOutsideScrollContainerLayer->removeFromParent();
+            m_graphicsLayer->addChildBelow(*m_descendantsOutsideScrollContainerLayer, overlayScrollbarsLayer.get());
+        }
+    } else if (containerIndex == notFound || containerIndex != children.size() - 1) {
+        m_descendantsOutsideScrollContainerLayer->removeFromParent();
+        m_graphicsLayer->addChild(*m_descendantsOutsideScrollContainerLayer);
+    }
+
+    m_descendantsOutsideScrollContainerLayer->setChildren(WTF::move(layers));
 }
 
 GraphicsLayer* RenderLayerBacking::childForSuperlayers() const
