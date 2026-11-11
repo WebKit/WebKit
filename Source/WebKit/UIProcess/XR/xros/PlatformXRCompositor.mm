@@ -27,7 +27,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SystemTracing.h>
 
-#if PLATFORM(MAC) && USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(MAC) || PLATFORM(VISION)
 #import "WKWebXRImmersiveSpaceHost.h"
 #endif
 
@@ -47,7 +47,7 @@
 #import <pal/cocoa/ARKitSoftLink.h>
 #import <pal/cocoa/CompositorServicesSoftLink.h>
 
-#if PLATFORM(MAC) && USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(MAC) || PLATFORM(VISION)
 #import "WebKitSwiftSoftLink.h"
 #endif
 
@@ -231,6 +231,36 @@ static bool xrFrameMonitoringDisabledByDefaults()
     }();
     return disabled;
 }
+
+#if PLATFORM(MAC) || PLATFORM(VISION)
+static void configureBuiltInImmersiveSpaceLayer(cp_layer_renderer_configuration_t configuration, bool usesWebGPU)
+{
+    // WebGL renders bottom-up.
+    if (!usesWebGPU)
+        cp_layer_renderer_configuration_set_contents_inverted_vertically(configuration, true);
+
+    // CompositorCoordinator reads the layer's completion event as an MTLSharedEvent so it
+    // can hand a port to the web process. Without this the event is process-local.
+    cp_layer_renderer_configuration_set_use_shared_events(configuration, true);
+}
+#endif
+
+#if PLATFORM(VISION)
+static bool shouldPresentBuiltInImmersiveSpace(WebPageProxy& page)
+{
+    if (page.uiClient().canStartXRSession())
+        return false;
+
+    return [[UIApplication sharedApplication] supportsMultipleScenes];
+}
+
+#if ENABLE(WEBXR_HANDS) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+static bool appDeclaresHandTrackingUsage()
+{
+    return !![[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSHandsTrackingUsageDescription"];
+}
+#endif
+#endif
 
 #if HAVE(CP_REMOTE_COMPOSITOR)
 static bool shouldEnableFoveation(const PlatformXR::Device::FeatureList& requestedFeatures)
@@ -459,7 +489,7 @@ void CompositorCoordinator::startSession(WebPageProxy& page, WeakPtr<PlatformXRC
         return;
 #endif
 
-#if PLATFORM(MAC) && USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(MAC)
     // An immersive space is a SwiftUI scene on the embedding app, but nothing about presenting
     // it is browser specific, so it is hosted here rather than behind a UI-delegate method.
     //
@@ -476,7 +506,9 @@ void CompositorCoordinator::startSession(WebPageProxy& page, WeakPtr<PlatformXRC
         return;
     }
     bool usesWebGPU = requestedFeatures.contains(PlatformXR::SessionFeature::WebGPU);
-    [getWKWebXRImmersiveSpaceHostClassSingleton() startSessionWithColorFormat:toMTLPixelFormat(init ? init->colorFormat : std::nullopt) depthFormat:toMTLPixelFormat(init ? init->depthStencilFormat : std::nullopt) usesWebGPU:usesWebGPU completionHandler:makeBlockPtr([this, weakPage = WeakPtr { page }, pageIdentifier, securityOriginData, requestedFeatures](id cpLayer, id remoteDevice) mutable {
+    [getWKWebXRImmersiveSpaceHostClassSingleton() startSessionWithColorFormat:toMTLPixelFormat(init ? init->colorFormat : std::nullopt) depthFormat:toMTLPixelFormat(init ? init->depthStencilFormat : std::nullopt) usesWebGPU:usesWebGPU configureLayer:makeBlockPtr([usesWebGPU](cp_layer_renderer_configuration_t configuration) {
+        configureBuiltInImmersiveSpaceLayer(configuration, usesWebGPU);
+    }).get() completionHandler:makeBlockPtr([this, weakPage = WeakPtr { page }, pageIdentifier, securityOriginData, requestedFeatures](id cpLayer, id remoteDevice) mutable {
         ASSERT(RunLoop::isMain());
         ASSERT(!cpLayer || [cpLayer isKindOfClass:getCP_OBJECT_cp_layer_rendererClassSingleton()]);
         RefPtr strongPage = weakPage;
@@ -493,14 +525,31 @@ void CompositorCoordinator::startSession(WebPageProxy& page, WeakPtr<PlatformXRC
     return;
 #endif
 
-#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
-    // The host that presents the immersive space configures its layer with CompositorServices SPI that only
-    // the internal SDK exposes to Swift. getSupportedFeatures() offers no device in this configuration, so a
-    // page does not normally get here; if one does, the request fails like any other session that cannot be
-    // presented.
-    RELEASE_LOG_ERROR(XR, "CompositorCoordinator: Cannot present an immersive space with this SDK");
-    didCompleteSessionSetup(page, pageIdentifier, securityOriginData, requestedFeatures, nil);
-    return;
+#if PLATFORM(VISION)
+    if (!page.uiClient().canStartXRSession()) {
+        if (!getWKWebXRImmersiveSpaceHostClassSingleton()) {
+            RELEASE_LOG_ERROR(XR, "CompositorCoordinator: Cannot load the immersive space host from WebKitSwift");
+            didCompleteSessionSetup(page, pageIdentifier, securityOriginData, requestedFeatures, nil);
+            return;
+        }
+        m_isPresentingBuiltInImmersiveSpace = true;
+        bool usesWebGPU = requestedFeatures.contains(PlatformXR::SessionFeature::WebGPU);
+        [getWKWebXRImmersiveSpaceHostClassSingleton() startSessionWithColorFormat:toMTLPixelFormat(init ? init->colorFormat : std::nullopt) depthFormat:toMTLPixelFormat(init ? init->depthStencilFormat : std::nullopt) usesWebGPU:usesWebGPU configureLayer:makeBlockPtr([usesWebGPU](cp_layer_renderer_configuration_t configuration) {
+            configureBuiltInImmersiveSpaceLayer(configuration, usesWebGPU);
+        }).get() completionHandler:makeBlockPtr([this, weakPage = WeakPtr { page }, pageIdentifier, securityOriginData, requestedFeatures](cp_layer_renderer_t cpLayer, UIViewController *viewController) mutable {
+            ASSERT(RunLoop::isMain());
+            RefPtr strongPage = weakPage;
+            if (!strongPage) {
+                if (cpLayer)
+                    [getWKWebXRImmersiveSpaceHostClassSingleton() endSession];
+                return;
+            }
+
+            m_cpLayer = cpLayer;
+            didCompleteSessionSetup(*strongPage, pageIdentifier, securityOriginData, requestedFeatures, viewController);
+        }).get()];
+        return;
+    }
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -1176,10 +1225,14 @@ void CompositorCoordinator::terminateSession(WebPageProxy& page, PlatformXRSessi
 
 #if PLATFORM(MAC)
     UNUSED_PARAM(endReason);
-#if USE(APPLE_INTERNAL_SDK)
     [getWKWebXRImmersiveSpaceHostClassSingleton() endSession];
-#endif
 #else
+#if PLATFORM(VISION)
+    if (m_isPresentingBuiltInImmersiveSpace) {
+        [getWKWebXRImmersiveSpaceHostClassSingleton() endSession];
+        return;
+    }
+#endif
     page.uiClient().endXRSession(page, endReason);
 #endif
 }
@@ -1193,6 +1246,9 @@ void CompositorCoordinator::currentSessionHasEnded()
     cleanUpVisibilityPropagationViewsIfNeeded();
 #endif
 
+#if PLATFORM(VISION)
+    m_isPresentingBuiltInImmersiveSpace = false;
+#endif
     m_cpLayer = nil;
     m_sessionStartPendingPageIdentifier = std::nullopt;
     m_sessionPageIdentifier = std::nullopt;
@@ -1420,9 +1476,6 @@ void CompositorCoordinator::getSupportedFeatures(WebPageProxy& page)
         return;
 
 #if PLATFORM(MAC)
-    // The immersive space host needs CompositorServices SPI that only the internal SDK exposes to Swift, so
-    // without it no device is offered.
-#if USE(APPLE_INTERNAL_SDK)
     // The immersive space is presented by WebKit on this platform, so the set of features does
     // not depend on the embedder. This is the set the embedders used to report; hand tracking
     // is included because a page may ask for it as a required feature, even though nothing
@@ -1438,10 +1491,26 @@ void CompositorCoordinator::getSupportedFeatures(WebPageProxy& page)
         PlatformXR::SessionFeature::WebGPU,
 #endif
     };
-#endif // USE(APPLE_INTERNAL_SDK)
     UNUSED_PARAM(page);
 #else
     page.uiClient().supportedXRSessionFeatures(m_supportedVRFeatures, m_supportedARFeatures);
+
+#if PLATFORM(VISION)
+    if (m_supportedVRFeatures.isEmpty() && m_supportedARFeatures.isEmpty() && shouldPresentBuiltInImmersiveSpace(page)) {
+        m_supportedVRFeatures = {
+            PlatformXR::SessionFeature::ReferenceSpaceTypeViewer,
+            PlatformXR::SessionFeature::ReferenceSpaceTypeLocal,
+            PlatformXR::SessionFeature::ReferenceSpaceTypeLocalFloor,
+#if ENABLE(WEBXR_WEBGPU)
+            PlatformXR::SessionFeature::WebGPU,
+#endif
+        };
+#if ENABLE(WEBXR_HANDS) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+        if (page.uiClient().canRequestPermissionOnXRSessionFeatures() && appDeclaresHandTrackingUsage())
+            m_supportedVRFeatures.append(PlatformXR::SessionFeature::HandTracking);
+#endif
+    }
+#endif // PLATFORM(VISION)
 #endif
 }
 
