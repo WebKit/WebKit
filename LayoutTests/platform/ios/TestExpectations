@@ -7089,6 +7089,7 @@ imported/w3c/web-platform-tests/html/editing/focus/sequential-focus-navigation-a
 # Drag-and-drop testdriver automation is not supported on iOS.
 webkit.org/b/66547 imported/w3c/web-platform-tests/html/editing/dnd/events/dragenter-dragleave-related-target.html [ Skip ]
 imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransferitemlist-clear-read-only.html [ Skip ]
+imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransferitemlist-dragstart-after-dispatch.html [ Skip ]
 
 ######################################################
 # Test failures from turning GPU Process on by default

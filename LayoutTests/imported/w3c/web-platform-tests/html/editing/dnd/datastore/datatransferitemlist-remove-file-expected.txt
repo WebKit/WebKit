@@ -1,0 +1,5 @@
+
+PASS remove()ing a File item before accessing files
+PASS clear()ing a File item before accessing files
+PASS remove()ing a File item after accessing files
+

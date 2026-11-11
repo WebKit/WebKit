@@ -351,6 +351,8 @@ void DataTransfer::setDataFromItemList(Document& document, const String& type, c
 void DataTransfer::updateFileList(ScriptExecutionContext* context)
 {
     ASSERT(canWriteData());
+    if (!m_fileList)
+        return;
 
     m_fileList->m_files = filesFromPasteboardAndItemList(context);
 }
