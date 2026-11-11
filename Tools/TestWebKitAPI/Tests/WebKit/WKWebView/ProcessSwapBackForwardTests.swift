@@ -25,6 +25,7 @@ import Foundation
 private import TestWebKitAPILibrary
 import Testing
 import WebKit
+private import WebKit_Private.WKProcessPoolPrivate
 private import WebKit_Private.WKWebViewPrivate
 
 import struct Foundation.URL
@@ -180,6 +181,61 @@ struct ProcessSwapBackForwardTests {
             #expect(await !webView._isJITEnabled())
             #expect(try await webView.callJavaScript(returning: String.self) { "return typeof window.marker" } == "undefined")
             #expect(try await webView.callJavaScript(returning: String.self) { "return document.body.textContent" } == "shared")
+        }
+    }
+
+    // A client redirect evicts the page in the in-process back/forward cache without telling the UI process, and the
+    // process can then enter the process cache. Going back to that item must not use the cached process.
+    @Test
+    func inProcessBackForwardCacheProcessInWebProcessCache() async throws {
+        var server = try HTTPServer(protocol: .https) {
+            Route("/1.html") {
+                "one"
+            }
+
+            Route("/2.html") {
+                "two"
+            }
+
+            Route("/other.html") {
+                "three"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let processPool = WKProcessPool.processSwapping()
+            let configuration = WKWebViewConfiguration()
+            configuration.processPool = processPool
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(
+                configuration: configuration,
+                frame: CGRect(x: 0, y: 0, width: 800, height: 600)
+            )
+            let firstURL = serverConfiguration.address.appending(path: "1.html")
+
+            webView.load(URLRequest(url: firstURL))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let firstProcessIdentifier = webView._webProcessIdentifier
+
+            // A same-process navigation, which puts /1.html in the in-process back/forward cache.
+            webView.load(URLRequest(url: serverConfiguration.address.appending(path: "2.html")))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView._webProcessIdentifier == firstProcessIdentifier)
+
+            // A cross-site client redirect, which doesn't suspend /2.html, so its page in the first process closes.
+            let otherURL = serverConfiguration.localhostAddress.appending(path: "other.html")
+            webView.startEvaluatingJavaScript("location.replace('\(otherURL.absoluteString)')", withUserGesture: false)
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView._webProcessIdentifier != firstProcessIdentifier)
+
+            // The first process no longer hosts a page, so it should enter the process cache.
+            try? await waitForCondition("the first process to enter the process cache", timeout: .seconds(10)) {
+                processPool._processCacheSize() > 0
+            }
+            #expect(processPool._processCacheSize() == 1)
+
+            webView.goBack()
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView._committedURL?.absoluteString == firstURL.absoluteString)
         }
     }
 

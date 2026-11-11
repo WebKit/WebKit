@@ -2515,6 +2515,13 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
                 backForwardCacheProcess = WebProcessProxy::processForIdentifier(*processIdentifier);
             if (backForwardCacheProcess && backForwardCacheProcess->state() != AuxiliaryProcessProxy::State::Terminated && browsingContextGroup.canUseProcessForCrossOriginIsolation(*backForwardCacheProcess)) {
                 ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
+                // The cached page may since have been evicted without the entry being dropped (e.g. its WebPage
+                // closed after a client redirect), letting the process enter the WebProcessCache. Take it out
+                // before using it, like the non-site-isolation path does.
+                if (backForwardCacheProcess->isInProcessCache()) {
+                    m_webProcessCache->removeProcess(*backForwardCacheProcess, WebProcessCache::ShouldShutDownProcess::No);
+                    ASSERT(!backForwardCacheProcess->isInProcessCache());
+                }
                 prepareProcessForNavigation(backForwardCacheProcess.releaseNonNull(), page, nullptr,
                     "Using target back/forward item's process (in-process BFCache)"_s, isolatedProcessType,
                     site, mainFrameSite, navigation, lockdownMode, enhancedSecurity, loadedWebArchive,
