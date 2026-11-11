@@ -690,7 +690,7 @@ bool InlineFormattingUtils::shouldDiscardRemainingContentInBlockDirection() cons
     return lineClamp->maximumLines == inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks();
 }
 
-std::optional<BlockOverflowEllipsis> InlineFormattingUtils::blockEllipsisForLine() const
+std::optional<BlockOverflowEllipsis> InlineFormattingUtils::blockEllipsisForLine(std::optional<size_t> numberOfPrecedingLines) const
 {
     auto& inlineLayoutState = formattingContext().layoutState();
     auto lineClamp = inlineLayoutState.parentBlockLayoutState().lineClamp();
@@ -698,7 +698,7 @@ std::optional<BlockOverflowEllipsis> InlineFormattingUtils::blockEllipsisForLine
     if (!lineClamp || lineClamp->isLegacy)
         return { };
     // Clamping is eager: the line that reaches the limit gets the ellipsis even when no content follows it.
-    if (inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks() + 1 != lineClamp->maximumLines)
+    if (numberOfPrecedingLines.value_or(inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks()) + 1 != lineClamp->maximumLines)
         return { };
 
     CheckedRef root = formattingContext().root();

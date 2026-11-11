@@ -41,6 +41,8 @@ class InlineContentConstrainer {
 public:
     InlineContentConstrainer(InlineFormattingContext&, const InlineItemList&, HorizontalConstraints);
     std::optional<Vector<LayoutUnit>> computeParagraphLevelConstraints(TextWrapStyle);
+    // With line-clamp: the content fits on the clamped line without the block ellipsis.
+    bool contentFitsWithinMaximumLines() const { return m_contentFitsWithinMaximumLines; }
 
     NODELETE static bool constrainsContent(const Style::ComputedStyle&);
 
@@ -66,8 +68,9 @@ private:
     NODELETE void checkCanConstrainInlineItems();
     EntryPretty layoutSingleLineForPretty(InlineItemRange layoutRange, InlineLayoutUnit idealLineWidth, EntryPretty lastValidEntry, size_t previousBreakIndex);
 
-    std::optional<Vector<LayoutUnit>> balanceRangeWithLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth, size_t numberOfLines, bool isFirstChunk);
-    std::optional<Vector<LayoutUnit>> balanceRangeWithNoLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth, bool isFirstChunk);
+    // trailingWidth is the width that follows the content of the last line of the range on that line (i.e. the block ellipsis).
+    std::optional<Vector<LayoutUnit>> balanceRangeWithLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth, size_t numberOfLines, bool isFirstChunk, InlineLayoutUnit trailingWidth);
+    std::optional<Vector<LayoutUnit>> balanceRangeWithNoLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth, bool isFirstChunk, InlineLayoutUnit trailingWidth);
     std::optional<Vector<LayoutUnit>> prettifyRange(InlineItemRange, InlineLayoutUnit idealLineWidth, bool isFirstChunk);
 
     InlineLayoutUnit inlineItemWidth(size_t inlineItemIndex, bool useFirstLineStyle) const;
@@ -91,6 +94,9 @@ private:
     Vector<InlineLayoutUnit> m_inlineItemWidths;
     Vector<InlineLayoutUnit> m_firstLineStyleInlineItemWidths;
     size_t m_numberOfLinesInOriginalLayout { 0 };
+    // The width of the block ellipsis on the clamped line, which is the last line of the original layout when line-clamp applies.
+    InlineLayoutUnit m_clampedLineBlockEllipsisWidth { 0 };
+    bool m_contentFitsWithinMaximumLines { false };
     size_t m_numberOfInlineItems { 0 };
     bool m_cannotConstrainContent { false };
     bool m_hasSingleLineVisibleContent { false };

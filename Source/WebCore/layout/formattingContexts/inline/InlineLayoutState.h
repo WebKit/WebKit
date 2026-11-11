@@ -49,6 +49,9 @@ public:
 
     void setAvailableLineWidthOverride(AvailableLineWidthOverride&& availableLineWidthOverride) { m_availableLineWidthOverride = WTF::move(availableLineWidthOverride); }
     const AvailableLineWidthOverride& availableLineWidthOverride() const LIFETIME_BOUND { return m_availableLineWidthOverride; }
+    // The content fits within the line-clamp's maximum lines when laid out without the constrained (e.g. balanced) line widths.
+    void setContentFitsWithinMaximumLinesWithoutLineWidthOverride(bool contentFits) { m_contentFitsWithinMaximumLinesWithoutLineWidthOverride = contentFits; }
+    bool contentFitsWithinMaximumLinesWithoutLineWidthOverride() const { return m_contentFitsWithinMaximumLinesWithoutLineWidthOverride; }
 
     void setLegacyClampedLineIndex(size_t lineIndex) { m_legacyClampedLineIndex = lineIndex; }
     std::optional<size_t> legacyClampedLineIndex() const { return m_legacyClampedLineIndex; }
@@ -103,6 +106,7 @@ private:
     HashMap<CheckedRef<const ElementBox>, LayoutUnit> m_nestedListMarkerOffsets;
     Vector<AscentAndDescent> m_excludedMarkerLayoutBounds;
     AvailableLineWidthOverride m_availableLineWidthOverride;
+    bool m_contentFitsWithinMaximumLinesWithoutLineWidthOverride { false };
     bool m_contentMayHaveInkOverflow { false };
     bool m_shouldNotSynthesizeInlineBlockBaseline { false };
     bool m_inStandardsMode { false };

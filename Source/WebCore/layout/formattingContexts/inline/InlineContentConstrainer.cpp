@@ -281,7 +281,11 @@ void InlineContentConstrainer::initialize()
     auto lineIndex = 0lu;
     while (!layoutRange.isEmpty()) {
         auto lineInitialRect = InlineRect { 0.f, m_horizontalConstraints.logicalLeft, m_horizontalConstraints.logicalWidth, 0.f };
-        auto lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, lineInitialRect }, previousLine, isFirstFormattedLineCandidate);
+        // "If the element is affected by line-clamp, the clamping effect is applied first, then the remaining lines are balanced."
+        // https://drafts.csswg.org/css-text-4/#valdef-text-wrap-style-balance
+        // so the clamped line is measured with the block ellipsis, which displaces content from it, the same way as in the actual layout.
+        auto blockEllipsis = m_inlineFormattingContext.formattingUtils().blockEllipsisForLine(lineIndex);
+        auto lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, lineInitialRect, blockEllipsis }, previousLine, isFirstFormattedLineCandidate);
 
         // Record relevant geometry measurements from one line layout
         m_originalLineInlineItemRanges.append(lineLayoutResult.inlineItemRange);
@@ -292,7 +296,14 @@ void InlineContentConstrainer::initialize()
         SlidingWidth lineSlidingWidth { *this, m_inlineItemList, lineLayoutResult.inlineItemRange.startIndex(), lineLayoutResult.inlineItemRange.endIndex(), useFirstLineStyle, isFirstLineInChunk };
         auto previousLineEndsParagraph = lineIndex ? std::make_optional(m_originalLineEndsWithForcedBreak[lineIndex - 1] ? InlineFormattingUtils::PreviousLineEndsParagraph::Yes : InlineFormattingUtils::PreviousLineEndsParagraph::No) : std::nullopt;
         auto textIndent = m_inlineFormattingContext.formattingUtils().computedTextIndent(InlineFormattingUtils::IsIntrinsicWidthMode::No, isFirstFormattedLineCandidate ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, previousLineEndsParagraph, m_maximumLineWidthConstraint);
-        m_originalLineConstraints.append(computeLineWidthFromSlidingWidth(textIndent, lineSlidingWidth));
+        // The block ellipsis takes room on the clamped line just like its content, so that line is as wide as both together.
+        if (lineLayoutResult.blockEllipsis) {
+            m_clampedLineBlockEllipsisWidth = lineLayoutResult.blockEllipsis->logicalWidth;
+            // The block ellipsis is placed eagerly. Whether the content fits within the maximum number of lines without it (and so is not
+            // clamped after all) is up to this line layout: the balanced lines may push content off the clamped line that fits here.
+            m_contentFitsWithinMaximumLines = lineLayoutResult.isLastLineWithoutBlockEllipsis;
+        }
+        m_originalLineConstraints.append(computeLineWidthFromSlidingWidth(textIndent, lineSlidingWidth) + (lineLayoutResult.blockEllipsis ? lineLayoutResult.blockEllipsis->logicalWidth : 0.f));
 
         // If next line count would match (or exceed) the number of visible lines due to line-clamp, we can bail out early.
         if (numberOfVisibleLinesAllowed && (lineIndex + 1 >= numberOfVisibleLinesAllowed))
@@ -355,14 +366,16 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::computeParagraphLeve
         if (rangeToConstrain.startIndex() >= rangeToConstrain.endIndex())
             return { };
         if (wrapStyle == TextWrapStyle::Balance) {
+            // "The width of the ellipsis is taken into account when balancing": the last line of the clamped content also holds the block ellipsis.
+            auto trailingWidth = chunkStart + chunkSize == m_originalLineConstraints.size() ? m_clampedLineBlockEllipsisWidth : 0.f;
             InlineLayoutUnit totalWidth = 0.f;
             for (size_t line = 0; line < chunkSize; line++)
                 totalWidth += m_originalLineConstraints[chunkStart + line];
 
             const InlineLayoutUnit idealLineWidth = totalWidth / chunkSize;
             if (m_numberOfLinesInOriginalLayout <= maximumLinesToBalanceWithLineRequirement)
-                return balanceRangeWithLineRequirement(rangeToConstrain, idealLineWidth, chunkSize, isFirstChunk);
-            return balanceRangeWithNoLineRequirement(rangeToConstrain, idealLineWidth, isFirstChunk);
+                return balanceRangeWithLineRequirement(rangeToConstrain, idealLineWidth, chunkSize, isFirstChunk, trailingWidth);
+            return balanceRangeWithNoLineRequirement(rangeToConstrain, idealLineWidth, isFirstChunk, trailingWidth);
         }
 
         if (wrapStyle == TextWrapStyle::Pretty) {
@@ -391,7 +404,7 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::computeParagraphLeve
     return constrainedLineWidths;
 }
 
-std::optional<Vector<LayoutUnit>> InlineContentConstrainer::balanceRangeWithLineRequirement(InlineItemRange range, InlineLayoutUnit idealLineWidth, size_t numberOfLines, bool isFirstChunk)
+std::optional<Vector<LayoutUnit>> InlineContentConstrainer::balanceRangeWithLineRequirement(InlineItemRange range, InlineLayoutUnit idealLineWidth, size_t numberOfLines, bool isFirstChunk, InlineLayoutUnit trailingWidth)
 {
     ASSERT(range.startIndex() < range.endIndex());
 
@@ -406,6 +419,10 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::balanceRangeWithLine
     auto previousLineEndsParagraph = isFirstChunk ? std::nullopt : std::make_optional(InlineFormattingUtils::PreviousLineEndsParagraph::Yes);
     auto firstLineTextIndent = computedTextIndent(isFirstChunk ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, previousLineEndsParagraph);
     auto textIndent = computedTextIndent(IsFirstFormattedLine::No, { InlineFormattingUtils::PreviousLineEndsParagraph::No });
+    // The last line of the range also holds the block ellipsis (if any).
+    auto trailingWidthForLineEndingAt = [&](size_t end) {
+        return end == range.endIndex() ? trailingWidth : 0.f;
+    };
     // state[i][j] holds the optimal set of line breaks where the jth line break (1-indexed) is
     // right before m_inlineItemList[breakOpportunities[i]]. "Optimal" in this context means the
     // lowest possible accumulated cost.
@@ -418,7 +435,7 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::balanceRangeWithLine
         auto end = breakOpportunities[breakIndex];
         firstLineSlidingWidth.advanceEndTo(end);
 
-        auto firstLineCandidateWidth = computeLineWidthFromSlidingWidth(firstLineTextIndent, firstLineSlidingWidth);
+        auto firstLineCandidateWidth = computeLineWidthFromSlidingWidth(firstLineTextIndent, firstLineSlidingWidth) + trailingWidthForLineEndingAt(end);
         if (firstLineCandidateWidth > m_maximumLineWidthConstraint)
             break;
 
@@ -433,8 +450,9 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::balanceRangeWithLine
         size_t end = breakOpportunities[breakIndex];
         slidingWidth.advanceEndTo(end);
 
+        auto lineTrailingWidth = trailingWidthForLineEndingAt(end);
         // We prune our search space by limiting the possible starting positions for our candidate line.
-        while (computeLineWidthFromSlidingWidth(textIndent, slidingWidth) > m_maximumLineWidthConstraint) {
+        while (computeLineWidthFromSlidingWidth(textIndent, slidingWidth) + lineTrailingWidth > m_maximumLineWidthConstraint) {
             firstStartIndex++;
             if (firstStartIndex > breakIndex)
                 break;
@@ -447,7 +465,7 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::balanceRangeWithLine
             size_t start = breakOpportunities[startIndex];
             ASSERT(start != range.startIndex());
             innerSlidingWidth.advanceStartTo(start);
-            auto candidateLineWidth = computeLineWidthFromSlidingWidth(textIndent, innerSlidingWidth);
+            auto candidateLineWidth = computeLineWidthFromSlidingWidth(textIndent, innerSlidingWidth) + lineTrailingWidth;
             auto candidateLineCost = computeCostBalance(candidateLineWidth, idealLineWidth);
             ASSERT(candidateLineWidth <= m_maximumLineWidthConstraint);
 
@@ -478,7 +496,7 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::balanceRangeWithLine
     return computeLineWidthsFromBreaks(range, breaks, isFirstChunk);
 }
 
-std::optional<Vector<LayoutUnit>> InlineContentConstrainer::balanceRangeWithNoLineRequirement(InlineItemRange range, InlineLayoutUnit idealLineWidth, bool isFirstChunk)
+std::optional<Vector<LayoutUnit>> InlineContentConstrainer::balanceRangeWithNoLineRequirement(InlineItemRange range, InlineLayoutUnit idealLineWidth, bool isFirstChunk, InlineLayoutUnit trailingWidth)
 {
     ASSERT(range.startIndex() < range.endIndex());
 
@@ -495,6 +513,10 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::balanceRangeWithNoLi
     auto previousLineEndsParagraph = isFirstChunk ? std::nullopt : std::make_optional(InlineFormattingUtils::PreviousLineEndsParagraph::Yes);
     auto firstLineTextIndent = computedTextIndent(isFirstChunk ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, previousLineEndsParagraph);
     auto textIndent = computedTextIndent(IsFirstFormattedLine::No, { InlineFormattingUtils::PreviousLineEndsParagraph::No });
+    // The last line of the range also holds the block ellipsis (if any).
+    auto trailingWidthForLineEndingAt = [&](size_t end) {
+        return end == range.endIndex() ? trailingWidth : 0.f;
+    };
 
     // state[i] holds the optimal set of line breaks where the last line break is right
     // before m_inlineItemList[breakOpportunities[i]]. "Optimal" in this context means the
@@ -508,7 +530,7 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::balanceRangeWithNoLi
         auto end = breakOpportunities[breakIndex];
         firstLineSlidingWidth.advanceEndTo(end);
 
-        auto firstLineCandidateWidth = computeLineWidthFromSlidingWidth(firstLineTextIndent, firstLineSlidingWidth);
+        auto firstLineCandidateWidth = computeLineWidthFromSlidingWidth(firstLineTextIndent, firstLineSlidingWidth) + trailingWidthForLineEndingAt(end);
         if (firstLineCandidateWidth > m_maximumLineWidthConstraint)
             break;
 
@@ -523,8 +545,9 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::balanceRangeWithNoLi
         size_t end = breakOpportunities[breakIndex];
         slidingWidth.advanceEndTo(end);
 
+        auto lineTrailingWidth = trailingWidthForLineEndingAt(end);
         // We prune our search space by limiting the possible starting positions for our candidate line.
-        while (computeLineWidthFromSlidingWidth(textIndent, slidingWidth) > m_maximumLineWidthConstraint) {
+        while (computeLineWidthFromSlidingWidth(textIndent, slidingWidth) + lineTrailingWidth > m_maximumLineWidthConstraint) {
             firstStartIndex++;
             if (firstStartIndex > breakIndex)
                 break;
@@ -537,7 +560,7 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::balanceRangeWithNoLi
             size_t start = breakOpportunities[startIndex];
             ASSERT(start != range.startIndex());
             innerSlidingWidth.advanceStartTo(start);
-            auto candidateLineWidth = computeLineWidthFromSlidingWidth(textIndent, innerSlidingWidth);
+            auto candidateLineWidth = computeLineWidthFromSlidingWidth(textIndent, innerSlidingWidth) + lineTrailingWidth;
             auto candidateLineCost = computeCostBalance(candidateLineWidth, idealLineWidth);
             ASSERT(candidateLineWidth <= m_maximumLineWidthConstraint);
 

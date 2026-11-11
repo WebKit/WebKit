@@ -175,8 +175,10 @@ std::unique_ptr<InlineLayoutResult> InlineFormattingContext::layout(const Constr
     auto isStableTextWrap = lineClamp && lineClamp->isStableTextWrap;
     if (!isStableTextWrap && InlineContentConstrainer::constrainsContent(root().style())) {
         auto constrainer = InlineContentConstrainer { *this, inlineItemList, constraints.horizontal() };
-        if (auto constrainedLineWidths = constrainer.computeParagraphLevelConstraints(root().style().textWrapStyle()))
+        if (auto constrainedLineWidths = constrainer.computeParagraphLevelConstraints(root().style().textWrapStyle())) {
             inlineLayoutState.setAvailableLineWidthOverride({ WTF::move(*constrainedLineWidths) });
+            inlineLayoutState.setContentFitsWithinMaximumLinesWithoutLineWidthOverride(constrainer.contentFitsWithinMaximumLines());
+        }
     }
 
     if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayoutByContent(inlineItems, inlineLayoutState) && TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(root())) {
@@ -333,7 +335,7 @@ UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBu
         auto lineLayoutResult = lineBuilder.layoutInlineContent(lineInput, previousLine, isFirstFormattedLineCandidate);
         // Either this line is the clamped line (it has the block ellipsis) or we are coming back from a block (block-in-inline) that took the clamp point.
         if (lineLayoutResult.blockEllipsis || (lineLayoutResult.isBlockContent() && formattingUtils().shouldDiscardRemainingContentInBlockDirection()))
-            layoutResult->lineClamp.contentFitsWithinMaximumLines = lineLayoutResult.isLastLineWithoutBlockEllipsis;
+            layoutResult->lineClamp.contentFitsWithinMaximumLines = lineLayoutResult.isLastLineWithoutBlockEllipsis || layoutState().contentFitsWithinMaximumLinesWithoutLineWidthOverride();
         auto hasContentfulInFlowContent = lineLayoutResult.hasContentfulInFlowContent();
 
         auto canUseSimplifiedDisplayContentBuild = mayUseSimplifiedDisplayContentBuild && hasContentfulInFlowContent;
