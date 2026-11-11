@@ -30,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
+#include <cmath>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -74,7 +75,14 @@ bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, std::span<con
     if (!destinationPixelBuffer)
         return false;
 
-    auto effectADrawingRect = result.absoluteImageRectRelativeTo(input);
+    auto scale = filter.resolvedSize({ m_effect->scale(), m_effect->scale() });
+    auto absoluteScale = filter.scaledByFilterScale(scale);
+
+    auto maxDisplacement = expandedIntSize(FloatSize { std::abs(absoluteScale.width()), std::abs(absoluteScale.height()) } / 2);
+    FloatRect sourceRect = result.absoluteImageRectRelativeTo(input);
+    sourceRect.inflate(maxDisplacement);
+    sourceRect.intersect({ { }, input->absoluteImageRect().size() });
+    auto effectADrawingRect = enclosingIntRect(sourceRect);
     auto inputPixelBuffer = input->getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect);
 
     auto effectBDrawingRect = result.absoluteImageRectRelativeTo(input2);
@@ -84,21 +92,22 @@ bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, std::span<con
     if (!inputPixelBuffer || !displacementPixelBuffer)
         return false;
 
-    ASSERT(inputPixelBuffer->bytes().size() == displacementPixelBuffer->bytes().size());
+    ASSERT(destinationPixelBuffer->bytes().size() == displacementPixelBuffer->bytes().size());
 
     auto paintSize = result.absoluteImageRect().size();
-    auto scale = filter.resolvedSize({ m_effect->scale(), m_effect->scale() });
-    auto absoluteScale = filter.scaledByFilterScale(scale);
+    auto sourceSize = effectADrawingRect.size();
 
     float scaleForColorX = absoluteScale.width() / 255.0;
     float scaleForColorY = absoluteScale.height() / 255.0;
     float scaledOffsetX = 0.5 - absoluteScale.width() * 0.5;
     float scaledOffsetY = 0.5 - absoluteScale.height() * 0.5;
+    auto sourceOffset = result.absoluteImageRectRelativeTo(input).location() - effectADrawingRect.location();
     
     int displacementChannelX = xChannelIndex();
     int displacementChannelY = yChannelIndex();
 
     int rowBytes = paintSize.width() * 4;
+    int sourceRowBytes = sourceSize.width() * 4;
 
     for (int y = 0; y < paintSize.height(); ++y) {
         int lineStartOffset = y * rowBytes;
@@ -106,16 +115,16 @@ bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, std::span<con
         for (int x = 0; x < paintSize.width(); ++x) {
             int destinationIndex = lineStartOffset + x * 4;
             
-            int srcX = x + static_cast<int>(scaleForColorX * displacementPixelBuffer->item(destinationIndex + displacementChannelX) + scaledOffsetX);
-            int srcY = y + static_cast<int>(scaleForColorY * displacementPixelBuffer->item(destinationIndex + displacementChannelY) + scaledOffsetY);
+            int srcX = x + static_cast<int>(scaleForColorX * displacementPixelBuffer->item(destinationIndex + displacementChannelX) + scaledOffsetX) + sourceOffset.width();
+            int srcY = y + static_cast<int>(scaleForColorY * displacementPixelBuffer->item(destinationIndex + displacementChannelY) + scaledOffsetY) + sourceOffset.height();
 
             unsigned& destinationPixel = reinterpretCastSpanStartTo<unsigned>(destinationPixelBuffer->bytes().subspan(destinationIndex));
-            if (srcX < 0 || srcX >= paintSize.width() || srcY < 0 || srcY >= paintSize.height()) {
+            if (srcX < 0 || srcX >= sourceSize.width() || srcY < 0 || srcY >= sourceSize.height()) {
                 destinationPixel = 0;
                 continue;
             }
 
-            destinationPixel = reinterpretCastSpanStartTo<unsigned>(inputPixelBuffer->bytes().subspan(byteOffsetOfPixel(srcX, srcY, rowBytes)));
+            destinationPixel = reinterpretCastSpanStartTo<unsigned>(inputPixelBuffer->bytes().subspan(byteOffsetOfPixel(srcX, srcY, sourceRowBytes)));
         }
     }
 
