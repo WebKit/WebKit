@@ -250,6 +250,7 @@ private:
 
     void hasStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, std::optional<WebCore::FrameIdentifier>, WebPageProxyIdentifier, CompletionHandler<void(bool)>&&);
     void requestStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebPageProxyIdentifier, StorageAccessScope, CanRequestStorageAccessWithoutUserInteraction, std::optional<WebCore::OrganizationStorageAccessPromptQuirk>&&, CompletionHandler<void(RequestStorageAccessResult)>&&);
+    void didGrantPageLevelStorageAccess(WebPageProxyIdentifier, const WebCore::RegistrableDomain& topFrameDomain, const WebCore::RegistrableDomain& subFrameDomain);
     void requestStorageAccessUnderOpenerEphemeral(DomainInNeedOfStorageAccess&&, WebPageProxyIdentifier openerWebPageProxyID, OpenerDomain&&);
     void grantStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebPageProxyIdentifier, StorageAccessPromptWasShown, StorageAccessScope, CompletionHandler<void(RequestStorageAccessResult)>&&);
 

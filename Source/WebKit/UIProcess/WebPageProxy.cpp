@@ -10281,8 +10281,15 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
             m_mainFrameWebsitePolicies = websitePolicies->copy();
     }
 
-    if (frame->isMainFrame())
-        protect(protect(m_websiteDataStore)->networkProcess())->didCommitMainFrameNavigation(m_websiteDataStore->sessionID(), identifier(), RegistrableDomain { request.url() }, RegistrableDomain { frame->url() }, restoredFromBackForwardCache);
+    if (frame->isMainFrame()) {
+        RegistrableDomain committedDomain { request.url() };
+        RegistrableDomain previouslyCommittedDomain { frame->url() };
+        // Mirror NetworkStorageSession::didCommitMainFrameNavigation.
+        if (restoredFromBackForwardCache == RestoredFromBackForwardCache::No && !committedDomain.isEmpty() && committedDomain != previouslyCommittedDomain)
+            m_domainsWithPageLevelStorageAccess.remove(committedDomain);
+
+        protect(protect(m_websiteDataStore)->networkProcess())->didCommitMainFrameNavigation(m_websiteDataStore->sessionID(), identifier(), WTF::move(committedDomain), WTF::move(previouslyCommittedDomain), restoredFromBackForwardCache);
+    }
 
     if (redirectReplaceFrameState) {
         MESSAGE_CHECK_BASE(!frame->isMainFrame(), connection);
@@ -10611,6 +10618,22 @@ void WebPageProxy::forEachWebContentProcess(NOESCAPE const Function<void(WebProc
         function(remotePageProxy.process(), remotePageProxy.pageID());
     });
     function(protect(legacyMainFrameProcess()), webPageIDInMainFrameProcess());
+}
+
+void WebPageProxy::addDomainWithPageLevelStorageAccess(const RegistrableDomain& topLevelDomain, const RegistrableDomain& resourceDomain)
+{
+    m_domainsWithPageLevelStorageAccess.add(topLevelDomain, HashSet<RegistrableDomain> { }).iterator->value.add(resourceDomain);
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::AddDomainWithPageLevelStorageAccess(topLevelDomain, resourceDomain), pageID);
+    });
+}
+
+void WebPageProxy::sendPageLevelStorageAccessToProcess(WebProcessProxy& process, PageIdentifier pageID)
+{
+    for (auto& [topLevelDomain, resourceDomains] : m_domainsWithPageLevelStorageAccess) {
+        for (auto& resourceDomain : resourceDomains)
+            process.send(Messages::WebPage::AddDomainWithPageLevelStorageAccess(topLevelDomain, resourceDomain), pageID);
+    }
 }
 
 void WebPageProxy::observeAndCreateRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame, const String& frameName)

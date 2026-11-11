@@ -614,8 +614,10 @@ void WebResourceLoadStatisticsStore::requestStorageAccessUnderOpenerEphemeral(Re
     ASSERT(isEphemeral());
 
     if (CheckedPtr networkSession = m_networkSession.get()) {
-        if (CheckedPtr storageSession = networkSession->networkStorageSession())
-            storageSession->grantStorageAccess(WTF::move(domainInNeedOfStorageAccess), WTF::move(openerDomain), std::nullopt, openerWebPageProxyID);
+        if (CheckedPtr storageSession = networkSession->networkStorageSession()) {
+            storageSession->grantStorageAccess(domainInNeedOfStorageAccess, openerDomain, std::nullopt, openerWebPageProxyID);
+            didGrantPageLevelStorageAccess(openerWebPageProxyID, openerDomain, domainInNeedOfStorageAccess);
+        }
     }
 }
 
@@ -648,6 +650,14 @@ void WebResourceLoadStatisticsStore::grantStorageAccess(RegistrableDomain&& subF
     });
 }
 
+void WebResourceLoadStatisticsStore::didGrantPageLevelStorageAccess(WebPageProxyIdentifier webPageProxyID, const RegistrableDomain& topFrameDomain, const RegistrableDomain& subFrameDomain)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (CheckedPtr networkSession = m_networkSession)
+        protect(networkSession->networkProcess().parentProcessConnection())->send(Messages::NetworkProcessProxy::DidGrantPageLevelStorageAccess(webPageProxyID, topFrameDomain, subFrameDomain), 0);
+}
+
 void WebResourceLoadStatisticsStore::grantStorageAccessEphemeral(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, FrameIdentifier frameID, WebPageProxyIdentifier webPageProxyID, StorageAccessPromptWasShown promptWasShown, StorageAccessScope scope, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler)
 {
     ASSERT(isEphemeral());
@@ -672,6 +682,8 @@ StorageAccessWasGranted WebResourceLoadStatisticsStore::grantStorageAccessInStor
         if (CheckedPtr storageSession = networkSession->networkStorageSession()) {
             storageSession->grantStorageAccess(resourceDomain, firstPartyDomain, (scope == StorageAccessScope::PerFrame ? frameID : std::nullopt), webPageProxyID);
             ASSERT(storageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, webPageProxyID));
+            if (scope == StorageAccessScope::PerPage)
+                didGrantPageLevelStorageAccess(webPageProxyID, firstPartyDomain, resourceDomain);
             isStorageGranted = true;
         }
     }

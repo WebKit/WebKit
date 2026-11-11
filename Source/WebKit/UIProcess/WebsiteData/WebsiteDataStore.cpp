@@ -2135,6 +2135,8 @@ void WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses(CompletionHandl
     if (trackingPreventionEnabled()) {
         for (Ref processPool : processPools())
             processPool->sendToAllProcessesForSession(Messages::WebProcess::ClearResourceLoadStatistics(), m_sessionID);
+        for (Ref page : m_pages)
+            page->clearPageLevelStorageAccess();
     }
     callback();
 }

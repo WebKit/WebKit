@@ -87,7 +87,8 @@ void WebResourceLoadObserver::requestStorageAccessUnderOpener(const RegistrableD
         && !openerDocument.hasRequestedPageSpecificStorageAccessWithUserInteraction(domainInNeedOfStorageAccess)
         && !openerUrl.isAboutBlank()) {
         Ref { WebProcess::singleton().ensureNetworkProcessConnection().connection() }->send(Messages::NetworkConnectionToWebProcess::RequestStorageAccessUnderOpener(domainInNeedOfStorageAccess, openerPage.webPageProxyIdentifier(), openerDomain), 0);
-        
+
+        // Also update the opener's state locally so it doesn't have to wait for the round trip through the network and UI processes.
         openerPage.addDomainWithPageLevelStorageAccess(openerDomain, domainInNeedOfStorageAccess);
 
         // Remember user interaction-based requests since they don't need to be repeated.

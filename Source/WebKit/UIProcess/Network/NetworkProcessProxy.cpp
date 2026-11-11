@@ -1477,6 +1477,12 @@ void NetworkProcessProxy::setDomainsWithUserInteraction(HashSet<WebCore::Registr
         processPool->setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain> { domains });
 }
 
+void NetworkProcessProxy::didGrantPageLevelStorageAccess(WebPageProxyIdentifier pageID, WebCore::RegistrableDomain&& topFrameDomain, WebCore::RegistrableDomain&& subFrameDomain)
+{
+    if (RefPtr page = WebPageProxy::fromIdentifier(pageID))
+        page->addDomainWithPageLevelStorageAccess(topFrameDomain, subFrameDomain);
+}
+
 void NetworkProcessProxy::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, Vector<SubResourceDomain>>&& domains, CompletionHandler<void()>&& completionHandler)
 {    
     auto callbackAggregator = CallbackAggregator::create(WTF::move(completionHandler));

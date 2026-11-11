@@ -844,6 +844,9 @@ public:
     WebCore::PageIdentifier webPageIDInMainFrameProcess() const { return m_webPageID; }
     WebCore::PageIdentifier identifierInSiteIsolatedProcess() const { return webPageIDInMainFrameProcess(); }
     WebCore::PageIdentifier webPageIDInProcess(const WebProcessProxy&) const;
+    void addDomainWithPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain);
+    void sendPageLevelStorageAccessToProcess(WebProcessProxy&, WebCore::PageIdentifier);
+    void clearPageLevelStorageAccess() { m_domainsWithPageLevelStorageAccess.clear(); }
     bool hasWebPageInProcess(const WebProcessProxy&, WebCore::PageIdentifier);
 #if HAVE(IOSURFACE)
     void completeDisplayOnlyImage(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, float scale, const WebCore::ColorSpace&, CompletionHandler<void(bool)>&&);
@@ -4534,6 +4537,7 @@ private:
     unsigned m_recentCrashCount { 0 };
 
     bool m_needsFontAttributes { false };
+    HashMap<WebCore::RegistrableDomain, HashSet<WebCore::RegistrableDomain>> m_domainsWithPageLevelStorageAccess;
     bool m_mayHaveUniversalFileReadSandboxExtension { false };
     bool m_isServiceWorkerPage { false };
 

@@ -253,6 +253,7 @@ public:
     void setFirstPartyHostCNAMEDomainForTesting(PAL::SessionID, const String& firstPartyHost, const RegistrableDomain& cnameDomain, CompletionHandler<void()>&&);
     void setThirdPartyCNAMEDomainForTesting(PAL::SessionID, const WebCore::RegistrableDomain&, CompletionHandler<void()>&&);
     void setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&&);
+    void didGrantPageLevelStorageAccess(WebPageProxyIdentifier, WebCore::RegistrableDomain&& topFrameDomain, WebCore::RegistrableDomain&& subFrameDomain);
     void setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, Vector<SubResourceDomain>>&&, CompletionHandler<void()>&&);
 
     void setPrivateClickMeasurementDebugMode(PAL::SessionID, bool);

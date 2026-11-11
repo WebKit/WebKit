@@ -239,6 +239,8 @@ void RemotePageProxy::injectPageIntoNewProcess()
         ), 0
     );
 
+    page->sendPageLevelStorageAccessToProcess(m_process, m_webPageID);
+
     // frameTreeCreationParameters above contains the main frame's current frameViewportInfo.
     m_lastSentMainFrameViewportInfo = protect(page->mainFrame())->frameViewportInfo();
 

@@ -843,6 +843,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     SetNeedsDOMWindowResizeEvent()
 
     SetHasResourceLoadClient(bool has)
+    AddDomainWithPageLevelStorageAccess(WebCore::RegistrableDomain topLevelDomain, WebCore::RegistrableDomain resourceDomain)
     SetCanUseCredentialStorage(bool canUse)
 
 #if ENABLE(APP_HIGHLIGHTS)
