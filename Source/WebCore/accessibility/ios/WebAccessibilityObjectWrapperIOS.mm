@@ -1994,6 +1994,9 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     // VoiceOver can neither advance past the last iframe element nor resolve the view/window needed to draw its cursor.
     // This mirrors the macOS wrapper (handleParentAttribute / scrollViewParent).
     RefPtr parent = object->crossFrameParentObjectUnignored();
+    // A base appearance picker is listed as a sibling of its select, see _collectAccessibilityElements.
+    if (parent && is<SelectPopoverElement>(object->node()))
+        parent = parent->crossFrameParentObjectUnignored();
     if (parent)
         return parent->wrapper();
 

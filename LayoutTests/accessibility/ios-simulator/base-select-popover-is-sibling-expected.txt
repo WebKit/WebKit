@@ -5,6 +5,7 @@ PASS: select.isExpanded === true
 PASS: hasMenuChild === false
 PASS: menu != null === true
 PASS: menu.role.toLowerCase().includes('menu') === true
+PASS: menu.parentElement()?.isEqual(select.parentElement()) === true
 
 --- Menu items have MenuItem role ---
 PASS: menu.childAtIndex(0).role.toLowerCase().includes('menuitem') === true

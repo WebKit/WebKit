@@ -46,6 +46,7 @@ if (window.accessibilityController) {
         window.menu = findBaseSelectMenu(select);
         output += expect("menu != null", "true");
         output += expect("menu.role.toLowerCase().includes('menu')", "true");
+        output += expect("menu.parentElement()?.isEqual(select.parentElement())", "true");
 
         output += "\n--- Menu items have MenuItem role ---\n";
         output += expect("menu.childAtIndex(0).role.toLowerCase().includes('menuitem')", "true");
