@@ -31,6 +31,7 @@
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/PrivateName.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/HashSet.h>
@@ -126,6 +127,7 @@ private:
     void scriptRealmCreated(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&) override;
     void scriptRealmDestroyed(WebCore::FrameIdentifier) override;
     void ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier);
+    void reloadFrame(WebCore::FrameIdentifier, OptionSet<WebCore::ReloadOption>);
 #endif
 
     String m_sessionIdentifier;

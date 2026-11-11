@@ -55,5 +55,6 @@ messages -> WebAutomationSessionProxy {
 
 #if ENABLE(WEBDRIVER_BIDI)
     EnsureRealmForInitialEmptyDocument(WebCore::PageIdentifier pageID)
+    ReloadFrame(WebCore::FrameIdentifier frameID, OptionSet<WebCore::ReloadOption> reloadOptions)
 #endif
 }

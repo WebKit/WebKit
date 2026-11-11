@@ -22,7 +22,7 @@ async def test_reload(bidi_session, inline, new_tab, hash):
         wait="complete"
     )
 
-    reload_and_assert(
+    await reload_and_assert(
         bidi_session,
         new_tab,
         last_navigation=navigate_result["navigation"],
@@ -50,7 +50,7 @@ async def test_reload_special_protocols(bidi_session, new_tab, url):
         wait="complete"
     )
 
-    reload_and_assert(
+    await reload_and_assert(
         bidi_session,
         new_tab,
         last_navigation=navigate_result["navigation"],
@@ -65,9 +65,16 @@ async def test_image(bidi_session, new_tab, url):
         wait="complete"
     )
 
-    reload_and_assert(
+    await reload_and_assert(
         bidi_session,
         new_tab,
         last_navigation=navigate_result["navigation"],
-        url=url
+        url=url(PNG_BLACK_DOT)
     )
+
+
+@pytest.mark.parametrize("wait", ["none", "interactive", "complete"])
+async def test_initial_empty_document(bidi_session, new_tab, wait):
+    # The new tab has not been navigated, so it still shows its initial empty
+    # document, which is reloaded like any other document.
+    await reload_and_assert(bidi_session, new_tab, url="about:blank", wait=wait)

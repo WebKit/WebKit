@@ -60,6 +60,7 @@
 #include <WebCore/File.h>
 #include <WebCore/FileList.h>
 #include <WebCore/FocusController.h>
+#include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/HTMLDataListElement.h>
 #include <WebCore/HTMLFrameElement.h>
@@ -1394,6 +1395,19 @@ void WebAutomationSessionProxy::ensureRealmForInitialEmptyDocument(WebCore::Page
     // Accessing jsWindowProxy() will create the proxy if it doesn't exist, which triggers
     // the scriptRealmCreated instrumentation in WindowProxy::createJSWindowProxy().
     protect(coreFrame->windowProxy())->jsWindowProxy(mainThreadNormalWorldSingleton());
+}
+
+void WebAutomationSessionProxy::reloadFrame(WebCore::FrameIdentifier frameID, OptionSet<WebCore::ReloadOption> reloadOptions)
+{
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+    RefPtr coreFrame = frame->coreLocalFrame();
+    if (!coreFrame)
+        return;
+
+    bool isRequestFromClientOrUserInput = true;
+    protect(coreFrame->loader())->reload(reloadOptions, isRequestFromClientOrUserInput);
 }
 #endif
 
