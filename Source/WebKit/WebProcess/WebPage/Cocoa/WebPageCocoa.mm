@@ -3379,6 +3379,7 @@ void WebPage::handleSyntheticClick(std::optional<WebCore::FrameIdentifier> frame
             return;
         dispatchSyntheticMouseMove(*localRootFrame, location, modifiers, pointerId, m_potentialTapInputSource);
         protect(localRootFrame->document())->updateStyleIfNeeded();
+        respondingDocument->updateStyleIfNeeded();
         if (m_isClosed)
             return;
     }

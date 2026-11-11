@@ -52,6 +52,7 @@ class ContentChangeObserver;
 namespace WebCore {
 
 class Animation;
+class CSSTransition;
 class DOMTimer;
 
 enum class ContentChange : uint8_t {
@@ -77,8 +78,9 @@ public:
     void ref() const { m_document->ref(); }
     void deref() const { m_document->deref(); }
 
-    void didFinishTransition(const Element&, CSSPropertyID);
-    void didRemoveTransition(const Element&, CSSPropertyID);
+    void didAddTransition(const CSSTransition&);
+    void didFinishTransition(const CSSTransition&);
+    void didRemoveTransition(const CSSTransition&);
 
     WEBCORE_EXPORT static void didRecognizeLongPress(LocalFrame& mainFrame);
     WEBCORE_EXPORT static void didPreventDefaultForEvent(LocalFrame& mainFrame);
@@ -166,7 +168,7 @@ private:
     void registerDOMTimer(const DOMTimer&);
     void unregisterDOMTimer(const DOMTimer&);
     void clearObservedDOMTimers();
-    void clearObservedTransitions() { m_elementsWithTransition.clear(); }
+    void clearObservedTransitions() { m_observedTransitions.clear(); }
     bool containsObservedDOMTimer(const DOMTimer&) const;
 
     void styleRecalcDidStart();
@@ -185,7 +187,7 @@ private:
 
     bool hasVisibleChangeState() const { return observedContentChange() == ContentChange::Visibility; }
     bool hasObservedDOMTimer() const;
-    bool hasObservedTransition() const { return !m_elementsWithTransition.isEmptyIgnoringNullReferences(); }
+    bool hasObservedTransition() const;
 
     void setIsBetweenTouchEndAndMouseMoved(bool isBetween) { m_isBetweenTouchEndAndMouseMoved = isBetween; }
     bool isBetweenTouchEndAndMouseMoved() const { return m_isBetweenTouchEndAndMouseMoved; }
@@ -245,7 +247,7 @@ private:
     const CheckedRef<Document> m_document;
     Timer m_contentObservationTimer;
     WeakHashSet<const DOMTimer> m_DOMTimerList;
-    WeakHashSet<const Element, WeakPtrImplWithEventTargetData> m_elementsWithTransition;
+    WeakHashSet<const CSSTransition, WeakPtrImplWithEventTargetData> m_observedTransitions;
     WeakHashSet<const Element, WeakPtrImplWithEventTargetData> m_elementsWithDestroyedVisibleRenderer;
     ContentChange m_observedContentState { ContentChange::None };
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_hiddenTouchTargetElement;

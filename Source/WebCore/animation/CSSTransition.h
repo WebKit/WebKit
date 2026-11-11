@@ -58,6 +58,8 @@ public:
 
     const Style::Transition& backingStyleTransition() const LIFETIME_BOUND { return m_backingStyleTransition; }
 
+    void cancel(WebAnimation::Silently = WebAnimation::Silently::No) final;
+
 private:
     CSSTransition(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Style::Transition&, const Style::ComputedStyle& targetStyle, const Style::ComputedStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);

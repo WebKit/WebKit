@@ -27,6 +27,8 @@
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 
+#include "AnimationEffect.h"
+#include "CSSTransition.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ContainerNodeInlines.h"
@@ -56,6 +58,7 @@
 namespace WebCore {
 
 static const Seconds maximumDelayForTimers { 400_ms };
+static const Seconds maximumDelayForTransitions { 300_ms };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentChangeObserver);
 
@@ -289,7 +292,7 @@ void ContentChangeObserver::completeDurationBasedContentObservation()
     adjustObservedState(Event::EndedFixedObservationTimeWindow);
 }
 
-static bool isObservedPropertyForTransition(AnimatableCSSProperty property)
+static bool isObservedPropertyForTransition(const AnimatableCSSProperty& property)
 {
     return WTF::switchOn(property,
         [] (CSSPropertyID propertyId) {
@@ -301,13 +304,49 @@ static bool isObservedPropertyForTransition(AnimatableCSSProperty property)
     );
 }
 
-void ContentChangeObserver::didFinishTransition(const Element& element, CSSPropertyID propertyID)
+void ContentChangeObserver::didAddTransition(const CSSTransition& transition)
 {
-    if (!isObservedPropertyForTransition(propertyID))
+    if (!isContentChangeObserverEnabled())
         return;
-    if (!m_elementsWithTransition.remove(element))
+    if (hasVisibleChangeState())
         return;
-    LOG_WITH_STREAM(ContentObservation, stream << "didFinishTransition: transition finished (" << &element << ").");
+    if (!isObservingContentChanges())
+        return;
+    if (!isObservingTransitions())
+        return;
+    if (!isObservedPropertyForTransition(transition.property()))
+        return;
+    RefPtr effect = transition.effect();
+    if (!effect)
+        return;
+    auto transitionEnd = std::max(0_s, effect->specifiedDelay()) + effect->specifiedIterationDuration().value_or(0_s);
+    if (transitionEnd > maximumDelayForTransitions)
+        return;
+    auto owningElement = transition.owningElement();
+    if (!owningElement)
+        return;
+    Ref element = owningElement->element;
+    if (!isVisuallyHidden(element))
+        return;
+    if (m_observedTransitions.contains(transition))
+        return;
+    LOG_WITH_STREAM(ContentObservation, stream << "didAddTransition: transition created on " << element.ptr() << " (" << transitionEnd.milliseconds() << "ms).");
+
+    m_observedTransitions.add(transition);
+    adjustObservedState(Event::AddedTransition);
+}
+
+void ContentChangeObserver::didFinishTransition(const CSSTransition& transition)
+{
+    if (!isObservedPropertyForTransition(transition.property()))
+        return;
+    auto owningElement = transition.owningElement();
+    if (!owningElement)
+        return;
+    Ref element = owningElement->element;
+    if (!m_observedTransitions.remove(transition))
+        return;
+    LOG_WITH_STREAM(ContentObservation, stream << "didFinishTransition: transition finished (" << element.ptr() << ").");
 
     // isConsideredActionableContent may trigger style update through Node::computeEditability. Let's adjust the state in the next runloop.
     callOnMainThread([weakThis = WeakPtr { *this }, weakTargetElement = WeakPtr { element }] {
@@ -325,15 +364,24 @@ void ContentChangeObserver::didFinishTransition(const Element& element, CSSPrope
     });
 }
 
-void ContentChangeObserver::didRemoveTransition(const Element& element, CSSPropertyID propertyID)
+void ContentChangeObserver::didRemoveTransition(const CSSTransition& transition)
 {
-    if (!isObservedPropertyForTransition(propertyID))
+    if (!isObservedPropertyForTransition(transition.property()))
         return;
-    if (!m_elementsWithTransition.remove(element))
+    auto owningElement = transition.owningElement();
+    if (!owningElement)
         return;
-    LOG_WITH_STREAM(ContentObservation, stream << "didRemoveTransition: transition got interrupted (" << &element << ").");
+    Ref element = owningElement->element;
+    if (!m_observedTransitions.remove(transition))
+        return;
+    LOG_WITH_STREAM(ContentObservation, stream << "didRemoveTransition: transition got interrupted (" << element.ptr() << ").");
 
     adjustObservedState(Event::CanceledTransition);
+}
+
+bool ContentChangeObserver::hasObservedTransition() const
+{
+    return !m_observedTransitions.isEmptyIgnoringNullReferences();
 }
 
 void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds timeout, bool singleShot)

@@ -33,6 +33,10 @@
 #include "StyleResolver.h"
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+#include "ContentChangeObserver.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSTransition);
@@ -65,8 +69,25 @@ void CSSTransition::animationDidFinish()
 {
     StyleOriginatedAnimation::animationDidFinish();
 
-    if (auto owningElement = this->owningElement())
+    if (auto owningElement = this->owningElement()) {
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+        Ref document = protect(owningElement->element)->document();
+        protect(document->contentChangeObserver())->didFinishTransition(*this);
+#endif
         owningElement->removeStyleOriginatedAnimationFromListsForOwningElement(*this);
+    }
+}
+
+void CSSTransition::cancel(WebAnimation::Silently silently)
+{
+    StyleOriginatedAnimation::cancel(silently);
+
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+    if (auto owningElement = this->owningElement()) {
+        Ref document = protect(owningElement->element)->document();
+        protect(document->contentChangeObserver())->didRemoveTransition(*this);
+    }
+#endif
 }
 
 void CSSTransition::setTimingProperties(Seconds delay, Seconds duration)

@@ -65,7 +65,7 @@ public:
     ExceptionOr<void> bindingsPause() override;
 
     void setTimeline(RefPtr<AnimationTimeline>&&) final;
-    void cancel(WebAnimation::Silently = WebAnimation::Silently::No) final;
+    void cancel(WebAnimation::Silently = WebAnimation::Silently::No) override;
 
     void tick(WebAnimation::ShouldDispatchProgressEvent) override;
 

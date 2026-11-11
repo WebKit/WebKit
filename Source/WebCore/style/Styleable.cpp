@@ -63,6 +63,10 @@
 #include "WebAnimationUtilities.h"
 #include <ranges>
 
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+#include "ContentChangeObserver.h"
+#endif
+
 namespace WebCore {
 
 const std::optional<const Styleable> Styleable::fromRenderer(const RenderElement& renderer)
@@ -657,6 +661,9 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
 
     auto createCSSTransition = [&](const Style::ComputedStyle& oldStyle, Seconds delay, Seconds duration, const Style::ComputedStyle& reversingAdjustedStartStyle, double reversingShorteningFactor) {
         auto cssTransition = CSSTransition::create(styleable, property, generationTime, *matchingTransition, oldStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor);
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+        protect(document->contentChangeObserver())->didAddTransition(cssTransition);
+#endif
         newStyleOriginatedAnimations.append(cssTransition.ptr());
         styleable.ensureRunningTransitionsByProperty().set(property, WTF::move(cssTransition));
     };
