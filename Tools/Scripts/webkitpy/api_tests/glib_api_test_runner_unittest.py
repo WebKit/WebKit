@@ -38,6 +38,7 @@ sys.path.insert(0, os.path.join(tools_directory, 'glib'))
 sys.path.insert(0, os.path.join(tools_directory, 'jhbuild'))
 
 from api_test_runner import TestRunner  # noqa: E402
+from webkitpy.common.test_expectations import TestExpectations  # noqa: E402
 
 
 class StubTestRunner(TestRunner):
@@ -60,6 +61,7 @@ class ChangedTestsStubTestRunner(StubTestRunner):
         super().__init__(base_directory)
         self._source_directory_path = source_directory
         self._available_google_test_cases = set(google_test_cases)
+        self._expectations = TestExpectations('gtk', os.path.join(source_directory, 'Tools/TestWebKitAPI/glib/TestExpectations.json'))
 
     def _source_directory(self):
         return self._source_directory_path
@@ -296,6 +298,18 @@ class GLibAPITestRunnerTest(unittest.TestCase):
         changed_tests, output = self._changed_tests_and_output()
         self.assertEqual(["TestDownloads"], changed_tests)
         self.assertIn(f"    TestDownloads ({expectations})\n", output)
+
+    def test_changed_expectations_of_another_port_select_nothing(self):
+        path = "Tools/TestWebKitAPI/glib/TestExpectations.json"
+        self._create_source_repository({path: json.dumps({
+            "TestDownloads": {"subtests": {"/webkit/Downloads/fixed": {"expected": {"wpe": {"status": ["FAIL"]}}}}},
+            "TestWebKitWebView": {"expected": {"all": {"slow": True}, "wpe": {"status": ["FAIL"]}}},
+        })})
+        self._write_sources({path: json.dumps({
+            "TestWebKitWebView": {"expected": {"all": {"slow": True}}},
+        })})
+
+        self.assertEqual([], self._changed_tests())
 
     def test_deleted_test_source_selects_nothing(self):
         path = "Tools/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestDownloads.cpp"
