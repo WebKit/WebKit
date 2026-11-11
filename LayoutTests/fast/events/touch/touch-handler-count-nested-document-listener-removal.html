@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<iframe id="frame" srcdoc="<!DOCTYPE html><body></body>"></iframe>
+<script>
+description("Removing one of several touch event listeners on a node in a nested document must decrement its parent document's touch handler count.");
+jsTestIsAsync = true;
+
+onload = () => {
+    var nestedDocument = document.getElementById('frame').contentDocument;
+
+    var div = nestedDocument.createElement('div');
+    var firstListener = () => { };
+    var secondListener = () => { };
+    div.addEventListener('touchstart', firstListener);
+    div.addEventListener('touchstart', secondListener);
+    nestedDocument.body.appendChild(div);
+    shouldBe('internals.touchEventHandlerCount()', '2');
+
+    div.removeEventListener('touchstart', firstListener);
+    shouldBe('internals.touchEventHandlerCount()', '1');
+
+    div.removeEventListener('touchstart', secondListener);
+    shouldBe('internals.touchEventHandlerCount()', '0');
+    finishJSTest();
+};
+</script>

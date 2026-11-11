@@ -9889,11 +9889,22 @@ void Document::didAddTouchEventHandler(Node& handler)
 void Document::didRemoveTouchEventHandler(Node& handler, EventHandlerRemoval removalMode)
 {
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
-    if (!removeHandlerFromSet(m_touchEventTargets, handler, removalMode))
+    auto iterator = m_touchEventTargets.find(handler);
+    if (iterator == m_touchEventTargets.end())
         return;
 
-    if (RefPtr parent = parentDocument())
-        parent->didRemoveTouchEventHandler(*this, removalMode);
+    unsigned removedCount = 1;
+    if (removalMode == EventHandlerRemoval::All) {
+        removedCount = iterator->value;
+        m_touchEventTargets.removeAll(iterator);
+    } else
+        m_touchEventTargets.remove(iterator);
+
+    // The parent document counts this document once per touch event handler it contains.
+    if (RefPtr parent = parentDocument()) {
+        for (unsigned i = 0; i < removedCount; ++i)
+            parent->didRemoveTouchEventHandler(*this);
+    }
 
     if (!shouldUseTouchEventRegions())
         return;
