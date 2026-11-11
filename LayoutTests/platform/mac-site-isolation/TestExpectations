@@ -9,6 +9,7 @@ http/tests/security/referrer-policy-header-no-referrer.html [ Crash ]
 http/tests/security/referrer-policy-header-origin.html [ Crash ]
 http/tests/security/referrer-policy-header-strict-origin.html [ Crash ]
 webkit.org/b/330942 [ Debug ] imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-parser-interaction.html [ Pass Crash ]
+webkit.org/b/331032 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.width.space.worker.html [ Pass Crash ]
 
 #######################
 # Tests that time out #
