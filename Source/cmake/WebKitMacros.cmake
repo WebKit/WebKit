@@ -274,7 +274,7 @@ endmacro()
 # called at file scope.
 macro(WEBKIT_ENABLE_LANGUAGE)
     enable_language(${ARGN})
-    set(CMAKE_PCH_PROLOGUE "")
+    set(CMAKE_PCH_PROLOGUE "${WEBKIT_PCH_PROLOGUE}")
 endmacro()
 
 # Wrapper around target_precompile_headers().
