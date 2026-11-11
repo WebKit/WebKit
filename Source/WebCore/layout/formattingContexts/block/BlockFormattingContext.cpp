@@ -594,6 +594,22 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
                 intrudingFloats.append(intrudingFloat(floatItem, blockContainerState, -offsetInRoot, root().writingMode()));
         }
     }
+    // An initial letter in the content clears the ones that intrude into it from before, which the inline formatting context gets as the
+    // bottom of the lowest one from the top of the content (RenderBlockFlow::lowestInitialLetterLogicalBottom).
+    auto intrusiveInitialLetterLogicalBottom = std::optional<LayoutUnit> { };
+    if (placedFloats) {
+        for (auto& floatItem : placedFloats->list()) {
+            CheckedPtr floatBox = floatItem.layoutBox();
+            if (!floatBox || floatBox->style().pseudoElementType() != PseudoElementType::FirstLetter || floatBox->style().initialLetter().drop() <= 0)
+                continue;
+            auto marginBoxLogicalBottom = floatItem.absoluteRectWithMargin().bottom();
+            if (marginBoxLogicalBottom <= offsetInRoot.height())
+                continue;
+            auto logicalBottom = marginBoxLogicalBottom - offsetInRoot.height() - blockContainerState.borderAndPaddingBefore;
+            intrusiveInitialLetterLogicalBottom = std::max(intrusiveInitialLetterLogicalBottom.value_or(logicalBottom), logicalBottom);
+        }
+    }
+    m_blockLayoutState.setIntrusiveInitialLetterLogicalBottom(intrusiveInitialLetterLogicalBottom);
     auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(inlineContentRoot, constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.replacedElementAvailableBlockSize, orthogonalFlowAvailableInlineSpace(blockContainerState), blockContainerState.relayoutChildren || m_isLayingOutWithResolvedBorderBoxLogicalTops, m_blockLayoutState, intrudingFloats, *this, result);
     addInlineContentFloats(inlineContentLayoutResult.floats);
     // The floats of a line-clamp container are clipped to its block-end content edge, those the inline formatting context hid after the

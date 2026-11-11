@@ -588,12 +588,8 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
 
 // A float, which the inline formatting context places in inline content and the block formatting context among block-level boxes (CSS 2.2
 // §9.5.1), and its own formatting context lays out through the render tree.
-// FIXME: An initial letter, which the inline formatting context sinks into the lines after it.
 static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox& floatBox, const RenderBlockFlow& rootContainer)
 {
-    CheckedRef style = floatBox.style();
-    if (style->pseudoElementType() == PseudoElementType::FirstLetter && style->initialLetter().drop())
-        return BlockAvoidanceReason::ContentHasFloat;
     for (CheckedPtr containingBlock = floatBox.containingBlock(); containingBlock; containingBlock = containingBlock->containingBlock()) {
         // margin-trim at the block-end edge moves the boxes the margins collapse through at the end of the content, and their floats would
         // have to move with them (placeChildrenAtTrimmedBlockEnd).
