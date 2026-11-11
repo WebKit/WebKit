@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/replaced-elements/block-level-canvas-margins-affected-by-block-step-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/replaced-elements/block-level-canvas-margins-affected-by-block-step-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/replaced-elements/block-level-embed-margins-affected-by-block-step-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/replaced-elements/block-level-embed-margins-affected-by-block-step-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/replaced-elements/block-level-iframe-margins-affected-by-block-step-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/replaced-elements/block-level-iframe-margins-affected-by-block-step-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/replaced-elements/block-level-img-margins-affected-by-block-step-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/replaced-elements/block-level-img-margins-affected-by-block-step-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/replaced-elements/block-level-object-margins-affected-by-block-step-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/replaced-elements/block-level-object-margins-affected-by-block-step-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/replaced-elements/block-level-svg-margins-affected-by-block-step-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/replaced-elements/block-level-svg-margins-affected-by-block-step-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/replaced-elements/block-level-video-margins-affected-by-block-step-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/replaced-elements/block-level-video-margins-affected-by-block-step-size.html

@@ -1,0 +1,37 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-bottom-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-bottom-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-bottom-svg-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-bottom-svg.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-bottom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-center-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-center-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-center-svg-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-center-svg.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-center.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-length-percentage-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-length-percentage-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-length-percentage-svg-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-length-percentage-svg.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-length-percentage.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-sub-super-svg.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-sub-super.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-top-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-top-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-top-svg-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-top-svg.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/baseline-shift/baseline-shift-top.html

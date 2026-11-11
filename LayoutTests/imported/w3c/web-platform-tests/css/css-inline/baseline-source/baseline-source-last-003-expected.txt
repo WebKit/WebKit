@@ -41,7 +41,7 @@ offsetLeft expected 60 but got 120
 PASS .target > * 8
 FAIL .target > * 9 assert_equals:
 <span data-offset-x="90"></span>
-offsetLeft expected 90 but got 30
+offsetLeft expected 90 but got 120
 PASS .target > * 10
 FAIL .target > * 11 assert_equals:
 <span data-offset-x="60"></span>
@@ -57,7 +57,7 @@ offsetLeft expected 85 but got 15
 PASS .target > * 16
 FAIL .target > * 17 assert_equals:
 <span data-offset-x="85"></span>
-offsetLeft expected 85 but got 57
+offsetLeft expected 85 but got 58
 PASS .target > * 18
 FAIL .target > * 19 assert_equals:
 <span data-offset-x="130"></span>

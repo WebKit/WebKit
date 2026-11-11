@@ -69,6 +69,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-block-in-inline-start-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-block-in-inline-start-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-block-in-inline-start-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-both-with-bottom-aligned-box-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-both-with-bottom-aligned-box-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-both-with-bottom-aligned-box.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-dynamic-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-dynamic-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-dynamic-001.html

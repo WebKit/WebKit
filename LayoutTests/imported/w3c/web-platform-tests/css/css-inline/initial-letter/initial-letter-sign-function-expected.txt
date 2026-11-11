@@ -1,0 +1,3 @@
+
+FAIL Property initial-letter value 'calc(sign(1rem - 1px) * 1.5)' assert_true: initial-letter doesn't seem to be supported in the computed style expected true got false
+

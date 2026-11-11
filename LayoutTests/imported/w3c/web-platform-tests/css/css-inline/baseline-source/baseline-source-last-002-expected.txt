@@ -51,8 +51,17 @@ FAIL .target > * 8 assert_equals:
     <div><span></span></div>
   </div>
 offsetLeft expected 10 but got 50
-PASS .target > * 9
-PASS .target > * 10
+FAIL .target > * 9 assert_equals:
+<span data-offset-x="30"></span>
+offsetLeft expected 30 but got 10
+FAIL .target > * 10 assert_equals:
+<div class="inner" style="overflow: hidden; display: -webkit-inline-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3 no-ellipsis;" data-offset-x="10">
+    <span></span><br>
+    <span></span><br>
+    <span></span><br>
+    <span></span><br>
+  </div>
+offsetLeft expected 10 but got 20
 FAIL .target > * 11 assert_equals:
 <span data-offset-x="30"></span>
 offsetLeft expected 30 but got 45
@@ -67,7 +76,7 @@ offsetLeft expected 30 but got 100
 PASS .target > * 16
 FAIL .target > * 17 assert_equals:
 <span data-offset-x="30"></span>
-offsetLeft expected 30 but got 57
+offsetLeft expected 30 but got 58
 PASS .target > * 18
 FAIL .target > * 19 assert_equals:
 <span data-offset-x="100"></span>

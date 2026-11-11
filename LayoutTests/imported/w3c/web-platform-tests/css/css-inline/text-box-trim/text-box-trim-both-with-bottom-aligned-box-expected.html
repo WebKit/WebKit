@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<title>bottom aligned inline level box should stay bottom aligned when line box is trimmed</title>
-<link rel="help" href="https://drafts.csswg.org/css-inline-3/#text-box-trim">
-<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
-<link rel="match" href="text-box-trim-both-with-bottom-aligned-box-ref.html">
+<link rel="stylesheet" href="/fonts/ahem.css">
 
 <style>
-.trimmed {
+.container {
   font-size: 20px;
   font-family: Ahem;
-  text-box-trim: trim-both;
   color: green;
+  height: 20px;
+  /* this is how much we trimmed */
+  top: -30px;
+  position: relative;
 }
 .bottom-aligned {
   display: inline-block;
@@ -20,4 +20,4 @@
 }
 </style>
 
-<div class=trimmed>content<div class=bottom-aligned></div></div>
+<div class=container>content<div class=bottom-aligned></div></div>

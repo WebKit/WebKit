@@ -5,6 +5,8 @@ PASS Property line-height value '2'
 PASS Property line-height value '0px'
 PASS Property line-height value '10px'
 PASS Property line-height value '0%'
+FAIL Property line-height value '0.5%' assert_equals: expected "0.2px" but got "0px"
+FAIL Property line-height value '137.5%' assert_equals: expected "55px" but got "54.799999px"
 PASS Property line-height value '200%'
 PASS Property line-height value 'calc(200% + 10px)'
 PASS Property line-height value 'calc(10px - 0.5em)'

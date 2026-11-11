@@ -1311,3 +1311,6 @@ webkit.org/b/329973 [ Debug ] fullscreen/full-screen-enter-while-exiting-fully-m
 webkit.org/b/330314 [ Debug ] imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-scroll-into-view.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/330505 [ Debug ] imported/w3c/web-platform-tests/hr-time/idlharness.any.serviceworker.html [ Failure Pass ]
+
+imported/w3c/web-platform-tests/css/css-tables/table-row-group-color-inheritance-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-inline/dominant-baseline/dominant-baseline-mixed-writing-modes-002.html [ Skip ]

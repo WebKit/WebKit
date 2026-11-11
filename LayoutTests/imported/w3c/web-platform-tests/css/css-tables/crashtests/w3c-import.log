@@ -10,12 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/atomic-item-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/border-collapse-dynamic-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/caption-repaint-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/caption-with-multicol-table-cell.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/cell-contents-with-negative-outer-size.html
@@ -37,8 +36,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/negative_caption_margin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/orthogonal-cell-borders.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/orthogonal-cell-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/remove-table-column-group.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/row-size-distribution-rowspan-sorting.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/rtl-replace-cells-with-colspan-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/table-column-display-change-chrome-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/table-content-size-blending-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/textarea-intrinsic-size-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/transition-table-row-group-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/uninitialized_read_crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/vertical_percentage_crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/webkit-background-clip-on-row-crash.html

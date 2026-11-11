@@ -10,10 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/animation/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/animation/alignment-baseline-no-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/animation/baseline-shift-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/animation/dominant-baseline-no-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/animation/initial-letter-no-interpolation.html
