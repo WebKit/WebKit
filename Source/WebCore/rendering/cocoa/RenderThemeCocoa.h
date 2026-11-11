@@ -90,6 +90,7 @@ public:
     String mediaControlsFormattedStringForDuration(double) final;
     String youTubeQuirkScript() final;
     String cnnQuirkScript() final;
+    String crunchyrollQuirkScript() final;
 #endif
 
 #if ENABLE(FORM_CONTROL_REFRESH)
@@ -311,6 +312,7 @@ private:
     const RetainPtr<NSDateComponentsFormatter> m_durationFormatter;
     String m_youTubeCaptionQuirkScript;
     String m_cnnCaptionQuirkScript;
+    String m_crunchyrollCaptionQuirkScript;
 #endif // ENABLE(VIDEO)
 };
 

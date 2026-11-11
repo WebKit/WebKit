@@ -6070,6 +6070,7 @@
 		CDB7045B1F7465A1003923DF /* CDMFairPlayStreaming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDB704591F7465A1003923DF /* CDMFairPlayStreaming.cpp */; };
 		CDBA1F362F8D9FEA00D30314 /* YouTubeCaptionQuirk.js in Product Dependencies */ = {isa = PBXBuildFile; fileRef = CDBA1F352F8D9EB300D30314 /* YouTubeCaptionQuirk.js */; };
 		CDBA1F382F8D9FEA00D30314 /* CNNCaptionQuirk.js in Product Dependencies */ = {isa = PBXBuildFile; fileRef = CDBA1F372F8D9EB300D30314 /* CNNCaptionQuirk.js */; };
+		21C8EEB07AD17875790E5F3B /* CrunchyrollCaptionQuirk.js in Product Dependencies */ = {isa = PBXBuildFile; fileRef = F205611AFF3BC4F43E652C87 /* CrunchyrollCaptionQuirk.js */; };
 		CDBEAEAD19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CDBEAEAB19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.h */; };
 		CDBEEF9A2ECF843200963F77 /* CDMKeyID.h in Headers */ = {isa = PBXBuildFile; fileRef = CDBEEF992ECF843200963F77 /* CDMKeyID.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDBEEF9C2ECF966900963F77 /* CDMTypesForward.h in Headers */ = {isa = PBXBuildFile; fileRef = CDBEEF9B2ECF966900963F77 /* CDMTypesForward.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7757,6 +7758,7 @@
 			dstSubfolderSpec = 16;
 			files = (
 				CDBA1F382F8D9FEA00D30314 /* CNNCaptionQuirk.js in Product Dependencies */,
+				21C8EEB07AD17875790E5F3B /* CrunchyrollCaptionQuirk.js in Product Dependencies */,
 				DDE9931E278D0E4B00F60D26 /* libWebKitAdditions.a in Product Dependencies */,
 				CDBA1F362F8D9FEA00D30314 /* YouTubeCaptionQuirk.js in Product Dependencies */,
 			);
@@ -21478,6 +21480,7 @@
 		CDBA1F342F8C58FA00D30314 /* MediaSessionCaptionTrack.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaSessionCaptionTrack.idl; sourceTree = "<group>"; };
 		CDBA1F352F8D9EB300D30314 /* YouTubeCaptionQuirk.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = YouTubeCaptionQuirk.js; sourceTree = "<group>"; };
 		CDBA1F372F8D9EB300D30314 /* CNNCaptionQuirk.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = CNNCaptionQuirk.js; sourceTree = "<group>"; };
+		F205611AFF3BC4F43E652C87 /* CrunchyrollCaptionQuirk.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = CrunchyrollCaptionQuirk.js; sourceTree = "<group>"; };
 		CDBD3D281FE85CB80012C545 /* VideoConfiguration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoConfiguration.idl; sourceTree = "<group>"; };
 		CDBD3D291FE85CB90012C545 /* MediaConfiguration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaConfiguration.idl; sourceTree = "<group>"; };
 		CDBD3D2A1FE85CBA0012C545 /* MediaEncodingConfiguration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaEncodingConfiguration.idl; sourceTree = "<group>"; };
@@ -32009,6 +32012,7 @@
 				7199F82226FE161F00C627C2 /* close-support.js */,
 				CDBA1F372F8D9EB300D30314 /* CNNCaptionQuirk.js */,
 				710FA74C1DEE577E004C715E /* controls-visibility-support.js */,
+				F205611AFF3BC4F43E652C87 /* CrunchyrollCaptionQuirk.js */,
 				714131471DC9D6AF00336107 /* fullscreen-support.js */,
 				7177E2461DB80D2F00919A0B /* media-controller-support.js */,
 				71D02D921DB55C4E00DD5CF5 /* media-controller.js */,

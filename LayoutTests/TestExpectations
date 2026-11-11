@@ -67,6 +67,7 @@ fast/images/spatial-image-controls-rtl.html [ Skip ]
 fast/images/immersive [ Skip ]
 # Requires ENABLE(LINEAR_MEDIA_PLAYER) or the test times out.
 media/caption-mirroring-quirk-external-playback.html [ Skip ]
+media/caption-mirroring-quirk-crunchyroll.html [ Skip ]
 fast/sandbox/ios [ Skip ]
 fast/sandbox/mac [ Skip ]
 fast/text/data-detectors/ios [ Skip ]

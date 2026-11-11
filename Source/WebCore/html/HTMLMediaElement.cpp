@@ -1196,38 +1196,8 @@ void HTMLMediaElement::postConnectionSteps()
 
     configureMediaControls();
 
-    if (protect(document())->quirks().needsYouTubeCaptionsQuirk()) {
-        DocumentMediaElement::from(protect(document())).setupAndCallYouTubeQuirkJS([this](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
-            auto& vm = globalObject.vm();
-            auto scope = DECLARE_THROW_SCOPE(vm);
-
-            auto functionValue = globalObject.get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, "setupCaptionMirroring"_s));
-            if (scope.exception()) [[unlikely]]
-                return false;
-            if (functionValue.isUndefinedOrNull())
-                return false;
-
-            auto mediaJSWrapper = toJS(&lexicalGlobalObject, &globalObject, *this);
-
-            JSC::MarkedArgumentBuffer argList;
-            argList.append(mediaJSWrapper);
-            ASSERT(!argList.hasOverflowed());
-
-            auto* function = functionValue.toObject(&lexicalGlobalObject);
-            RETURN_IF_EXCEPTION(scope, false);
-            auto callData = JSC::getCallData(function);
-            if (callData.type == JSC::CallData::Type::None)
-                return false;
-
-            JSC::call(&lexicalGlobalObject, function, callData, &globalObject, argList);
-
-            RETURN_IF_EXCEPTION(scope, false);
-            return true;
-        });
-    }
-
-    if (protect(document())->quirks().needsCNNCaptionQuirk()) {
-        DocumentMediaElement::from(protect(document())).setupAndCallCNNQuirkJS([this](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
+    if (protect(document())->quirks().needsCaptionMirroringQuirk()) {
+        DocumentMediaElement::from(protect(document())).setupAndCallCaptionMirroringQuirkJS([this](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
             auto& vm = globalObject.vm();
             auto scope = DECLARE_THROW_SCOPE(vm);
 

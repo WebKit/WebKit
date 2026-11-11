@@ -597,6 +597,7 @@ imported/blink/fast/transforms/transform-update-frame-overflow.html [ Pass Image
 media/fullscreen-api-enabled-media-with-presentation-mode.html [ Pass ]
 media/picture-in-picture [ Pass ]
 media/remove-video-element-in-pip-from-document.html [ Pass ]
+media/caption-mirroring-quirk-crunchyroll.html [ Pass ]
 
 # RTL Scrollbars are enabled on Sierra WebKit2.
 webkit.org/b/179455 fast/scrolling/rtl-scrollbars.html [ Pass ImageOnlyFailure ]

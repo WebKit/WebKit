@@ -287,7 +287,10 @@
         },
         {
             "matches": ["*://*.crunchyroll.com/*"],
-            "behaviors": [{ "id": "NeedsSuppressPostLayoutBoundaryEventsQuirk" }]
+            "behaviors": [
+                { "id": "NeedsCrunchyrollCaptionQuirk", "bugs": ["https://webkit.org/b/330894"] },
+                { "id": "NeedsSuppressPostLayoutBoundaryEventsQuirk" }
+            ]
         },
         {
             "matches": ["*://*.dailymail.co.uk/*"],

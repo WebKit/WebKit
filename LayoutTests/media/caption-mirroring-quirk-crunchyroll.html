@@ -1,0 +1,147 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ NeedsSiteSpecificQuirks=true ] -->
+<html>
+<head>
+<title>Test caption mirroring for crunchyroll.com, whose player renders captions into an unlabeled list</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="media-file.js"></script>
+</head>
+<body>
+<script>
+if (window.internals)
+    internals.setTopDocumentURLForQuirks("https://www.crunchyroll.com/watch/G0000000/some-episode");
+
+// Crunchyroll's player puts the <video> in a media layer inside #player-container. Once captions
+// are enabled, its caption renderer adds a div > div > ul subtree to the media layer, with one <li>
+// per visible cue.
+function addPlayer(test)
+{
+    const playerContainer = document.createElement("div");
+    playerContainer.id = "player-container";
+    const mediaLayer = document.createElement("div");
+    const video = document.createElement("video");
+    mediaLayer.appendChild(video);
+    playerContainer.appendChild(mediaLayer);
+    document.body.appendChild(playerContainer);
+    test.add_cleanup(() => playerContainer.remove());
+    return { video, mediaLayer };
+}
+
+function addCaptionList(mediaLayer)
+{
+    const container = document.createElement("div");
+    const region = document.createElement("div");
+    const list = document.createElement("ul");
+    region.appendChild(list);
+    container.appendChild(region);
+    mediaLayer.appendChild(container);
+    return list;
+}
+
+function addCaption(list, text)
+{
+    const item = document.createElement("li");
+    item.textContent = text;
+    list.appendChild(item);
+    return item;
+}
+
+function mirrorTracks(video)
+{
+    return Array.from(video.textTracks).filter(track => track.label === "Crunchyroll Captions");
+}
+
+function mirroredText(track)
+{
+    return Array.from(track.cues).map(cue => cue.text);
+}
+
+// The quirk updates the mirror track from a MutationObserver.
+function nextTask()
+{
+    return new Promise(resolve => setTimeout(resolve, 0));
+}
+
+function nextEvent(target, type)
+{
+    return new Promise(resolve => target.addEventListener(type, resolve, { once: true }));
+}
+
+promise_test(async function(test) {
+    assert_true(!!window.internals, "This test requires window.internals");
+
+    const { video } = addPlayer(test);
+    const tracks = mirrorTracks(video);
+    assert_equals(tracks.length, 1, "the quirk should add one mirror track");
+    assert_equals(tracks[0].kind, "forced");
+    assert_equals(tracks[0].mode, "hidden", "the mirror track should not show while the video is inline");
+}, "a video in the player gets a hidden mirror track");
+
+promise_test(async function(test) {
+    const { video, mediaLayer } = addPlayer(test);
+    const track = mirrorTracks(video)[0];
+
+    const list = addCaptionList(mediaLayer);
+    const first = addCaption(list, "Right, then.");
+    await nextTask();
+    assert_array_equals(mirroredText(track), ["Right, then."]);
+
+    const second = addCaption(list, "On with our mission.");
+    await nextTask();
+    assert_array_equals(mirroredText(track), ["Right, then.\nOn with our mission."], "captions shown together should be mirrored into one cue");
+
+    first.remove();
+    second.remove();
+    await nextTask();
+    assert_array_equals(mirroredText(track), [], "the mirror track should be empty while no caption is shown");
+}, "the mirror track follows the captions the player renders");
+
+promise_test(async function(test) {
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    test.add_cleanup(() => video.remove());
+    assert_equals(mirrorTracks(video).length, 0);
+}, "a video outside the player does not get a mirror track");
+
+promise_test(async function(test) {
+    const { video, mediaLayer } = addPlayer(test);
+    const track = mirrorTracks(video)[0];
+
+    video.remove();
+    mediaLayer.appendChild(video);
+    assert_array_equals(mirrorTracks(video), [track], "re-inserting the video should reuse its mirror track");
+
+    addCaption(addCaptionList(mediaLayer), "Armin! Remember?");
+    await nextTask();
+    assert_array_equals(mirroredText(track), ["Armin! Remember?"]);
+}, "a re-inserted video keeps mirroring into the same track");
+
+promise_test(async function(test) {
+    internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+    internals.setMockVideoPresentationModeEnabled(true);
+
+    const { video, mediaLayer } = addPlayer(test);
+    const track = mirrorTracks(video)[0];
+    addCaption(addCaptionList(mediaLayer), "You're only human.");
+
+    video.src = findMediaFile("video", "content/test");
+    await nextEvent(video, "canplaythrough");
+
+    // webkitpresentationmodechanged fires when a transition starts, and webkitSetPresentationMode()
+    // is ignored until the transition finishes, so also wait for the Picture-in-Picture API events,
+    // which fire once it has.
+    let transition = Promise.all([nextEvent(video, "webkitpresentationmodechanged"), nextEvent(video, "enterpictureinpicture")]);
+    internals.withUserGesture(() => video.webkitSetPresentationMode("picture-in-picture"));
+    await transition;
+    assert_equals(video.webkitPresentationMode, "picture-in-picture");
+    assert_equals(track.mode, "showing", "the mirror track should show while the video is in picture-in-picture");
+    assert_array_equals(mirroredText(track), ["You're only human."]);
+
+    transition = Promise.all([nextEvent(video, "webkitpresentationmodechanged"), nextEvent(video, "leavepictureinpicture")]);
+    internals.withUserGesture(() => video.webkitSetPresentationMode("inline"));
+    await transition;
+    assert_equals(track.mode, "hidden", "the mirror track should stop showing once the video is back in the page");
+}, "the mirror track shows while the video is in picture-in-picture");
+</script>
+</body>
+</html>
