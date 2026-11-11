@@ -283,6 +283,7 @@ PASS padding-inline-start
 PASS padding-left
 PASS padding-right
 PASS padding-top
+PASS page
 PASS paint-order
 PASS perspective
 PASS perspective-origin

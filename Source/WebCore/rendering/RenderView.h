@@ -192,6 +192,9 @@ public:
     void incrementRenderersWithPixelMovingFilter() { ++m_renderersWithPixelMovingFilterCount; }
     void decrementRenderersWithPixelMovingFilter() { ASSERT(m_renderersWithPixelMovingFilterCount > 0); --m_renderersWithPixelMovingFilterCount; }
     bool hasRenderersWithPixelMovingFilter() const { return m_renderersWithPixelMovingFilterCount; }
+    void incrementRenderersWithNamedPage() { ++m_renderersWithNamedPageCount; }
+    void decrementRenderersWithNamedPage() { ASSERT(m_renderersWithNamedPageCount > 0); --m_renderersWithNamedPageCount; }
+    bool hasRenderersWithNamedPage() const { return m_renderersWithNamedPageCount; }
 
     ImageQualityController& imageQualityController() LIFETIME_BOUND;
 
@@ -309,6 +312,7 @@ private:
     bool m_hasCounterTreeNeedingUpdate { false };
     unsigned m_renderersWithOutlineCount { 0 };
     unsigned m_renderersWithPixelMovingFilterCount { 0 };
+    unsigned m_renderersWithNamedPageCount { 0 };
     bool m_needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly { false };
     bool m_needsEventRegionUpdateForNonCompositedFrame { false };
 

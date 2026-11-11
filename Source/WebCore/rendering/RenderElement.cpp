@@ -1118,6 +1118,15 @@ void RenderElement::styleWillChange(Style::Difference diff, const Style::Compute
             view().decrementRendersWithOutline();
     }
 
+    bool hadNamedPage = oldStyle && oldStyle->pageName().isCustomIdent();
+    bool hasNamedPage = newStyle.pageName().isCustomIdent();
+    if (hadNamedPage != hasNamedPage) {
+        if (hasNamedPage)
+            view().incrementRenderersWithNamedPage();
+        else
+            view().decrementRenderersWithNamedPage();
+    }
+
     bool hadPixelMovingFilter = oldStyle && oldStyle->filter().hasFilterThatMovesPixels();
     bool hasPixelMovingFilter = newStyle.filter().hasFilterThatMovesPixels();
     if (hadPixelMovingFilter != hasPixelMovingFilter) {
@@ -1213,6 +1222,12 @@ void RenderElement::styleDidChange(Style::Difference diff, const Style::Computed
     }
 
     setNeedsLayoutForStyleDifference(diff, oldStyle);
+
+    // Descendants with page auto use this page value, and their break points are checked when their parent lays out.
+    if (oldStyle && oldStyle->pageName() != style().pageName()) {
+        for (CheckedRef descendant : descendantsOfType<RenderBox>(*this))
+            descendant->setNeedsLayout(MarkingBehavior::OnlyThis);
+    }
 
     if (isOutOfFlowPositioned() && oldStyle && oldStyle->originalDisplay().isBlockType() != style().originalDisplay().isBlockType()) {
         if (CheckedPtr ancestor = RenderObject::containingBlockForPositionType(PositionType::Static, *this)) {
@@ -1399,6 +1414,9 @@ void RenderElement::willBeDestroyed()
 
         if (style().filter().hasFilterThatMovesPixels())
             view().decrementRenderersWithPixelMovingFilter();
+
+        if (style().pageName().isCustomIdent())
+            view().decrementRenderersWithNamedPage();
 
         if (auto* firstLineStyle = style().pseudoElementStyle({ PseudoElementType::FirstLine }))
             unregisterImages(*firstLineStyle);

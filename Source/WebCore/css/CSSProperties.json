@@ -8300,16 +8300,16 @@
             }
         },
         "page": {
-            "animation-type": "not animatable (needs triage)",
-            "animation-type-comment": "Current spec animation type is 'discrete'",
-            "initial": "0",
+            "animation-type": "discrete",
+            "initial": "auto",
             "values": [
                 "auto"
             ],
             "codegen-properties": {
-                "skip-style-builder": true,
-                "skip-style-extractor": true,
-                "skip-computed-style": true,
+                "computed-style-name-for-methods": "PageName",
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "computed-style-storage-kind": "reference",
+                "computed-style-type": "Style::PageName",
                 "parser-grammar": "auto | <custom-ident>"
             },
             "specification": {

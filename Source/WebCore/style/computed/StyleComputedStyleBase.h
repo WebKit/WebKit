@@ -323,6 +323,7 @@ struct ObjectViewBox;
 struct OutlineOffset;
 struct OverflowClipMargin;
 struct PaddingEdge;
+struct PageName;
 struct PageSize;
 struct Perspective;
 struct PortalTransform;

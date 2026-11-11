@@ -1,0 +1,9 @@
+<div style="page: a">First</div>
+<span>Text<div style="page: b">Block inside an inline</div></span>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.numberOfPages();
+document.body.textContent = "PASS if this test didn't crash.";
+</script>
