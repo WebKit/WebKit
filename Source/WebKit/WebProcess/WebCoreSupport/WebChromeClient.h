@@ -368,6 +368,8 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     bool supportsFullScreenForElement(const WebCore::Element&, bool withKeyboard) final;
+    void beginRequestFullscreen() final;
+    void endRequestFullscreen() final;
     void enterFullScreenForElement(WebCore::Element&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, CompletionHandler<void(WebCore::ExceptionOr<void>)>&&, CompletionHandler<bool(bool)>&&) final;
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     void updateImageSource(WebCore::Element&) final;

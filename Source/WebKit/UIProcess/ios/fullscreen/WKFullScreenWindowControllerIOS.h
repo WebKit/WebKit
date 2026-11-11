@@ -45,6 +45,8 @@
 
 - (id)initWithWebView:(WKWebView *)webView;
 - (void)enterFullScreen:(CGSize)mediaDimensions completionHandler:(CompletionHandler<void(bool)>&&)completionHandler;
+- (void)installPlaceholderSnapshot;
+- (void)discardPlaceholderSnapshot;
 #if ENABLE(QUICKLOOK_FULLSCREEN)
 - (void)updateImageSource;
 #endif

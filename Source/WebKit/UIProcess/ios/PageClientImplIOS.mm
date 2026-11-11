@@ -988,6 +988,17 @@ void PageClientImpl::unlockFullscreenOrientation()
     [[webView() fullScreenWindowController] resetSupportedOrientations];
 }
 
+void PageClientImpl::beginRequestFullscreen()
+{
+    [[webView() fullScreenWindowController] installPlaceholderSnapshot];
+}
+
+void PageClientImpl::endRequestFullscreen()
+{
+    if ([webView() hasFullScreenWindowController])
+        [[webView() fullScreenWindowController] discardPlaceholderSnapshot];
+}
+
 void PageClientImpl::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (![webView() fullScreenWindowController])
