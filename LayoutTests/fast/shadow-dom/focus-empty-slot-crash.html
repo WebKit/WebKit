@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<title>Focus navigation with empty shadow slot shouldn't crash</title>
+<p>This test passes if it doesn't crash/assert.</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+customElements.define('custom-empty', class extends HTMLElement {
+    constructor() {
+        super();
+        const shadow = this.attachShadow({mode: 'open'});
+        const slot = document.createElement('slot');
+        shadow.appendChild(slot);
+    }
+});
+</script>
+
+<audio onloadstart="custom1.focus()" src=""></audio>
+<iframe id="iframe"></iframe>
+<div id="wrapper">
+    <custom-empty id="custom1" tabindex="0"></custom-empty>
+</div>
+<script>
+window.addEventListener("load", _ => iframe.appendChild(wrapper));
+</script>
+
+<input id="input1" type="text">
+<custom-empty id="custom2" tabindex="0"></custom-empty>
+<script>
+input1.focus();
+window.onload = () => document.adoptNode(custom2);
+</script>
