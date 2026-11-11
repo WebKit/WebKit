@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="../../../resources/js-test.js"></script>
+    <style>
+        .test-field {
+            font-size: 20px;
+            padding: 10px;
+            margin: 10px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <p id="description"></p>
+    <div id="editable1" class="test-field" contenteditable>我们买书</div>
+    <div id="editable2" class="test-field" contenteditable>我们买书</div>
+    <div id="console"></div>
+    <script>
+        description("This test verifies that Chinese text transformations only affect the selected text, leaving unselected text unchanged.");
+
+        window.jsTestIsAsync = true;
+
+        var actualText;
+
+        function findMenuItem(items, title) {
+            for (let item of items) {
+                if (item.title === title)
+                    return item;
+            }
+            return null;
+        }
+
+        function findTransformationsSubmenu(items) {
+            return findMenuItem(items, "Transformations");
+        }
+
+        function getTransformationItems(items) {
+            let menu = findTransformationsSubmenu(items);
+            if (!menu)
+                return null;
+            return menu.children;
+        }
+
+        async function selectRangeAndContextClick(elementId, startOffset, endOffset) {
+            let element = document.getElementById(elementId);
+            element.focus();
+            let textNode = element.firstChild;
+            let range = document.createRange();
+            range.setStart(textNode, startOffset);
+            range.setEnd(textNode, endOffset);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+
+            let rangeRect = range.getBoundingClientRect();
+            eventSender.mouseMoveTo(rangeRect.left + 2, rangeRect.top + 2);
+            return eventSender.contextClick();
+        }
+
+        async function runTests() {
+            if (!window.eventSender || !window.testRunner) {
+                debug("This test requires eventSender and testRunner.");
+                finishJSTest();
+                return;
+            }
+
+            // Select only the first 2 characters (我们)
+            let items = await selectRangeAndContextClick("editable1", 0, 2);
+            let transformItems = getTransformationItems(items);
+            if (!transformItems) {
+                testFailed("Transformations submenu not found");
+            } else {
+                let menuItem = findMenuItem(transformItems, "Convert to Traditional Chinese");
+                if (!menuItem) {
+                    testFailed("Convert to Traditional Chinese menu item not found");
+                } else {
+                    menuItem.click();
+                    actualText = editable1.innerText;
+                    // Only 我们 should become 我們, the rest should remain simplified.
+                    shouldBeEqualToString("actualText", "我們买书");
+                }
+            }
+            debug("");
+
+            // Select the third character (买)
+            items = await selectRangeAndContextClick("editable2", 2, 3);
+            transformItems = getTransformationItems(items);
+            if (!transformItems) {
+                testFailed("Transformations submenu not found");
+            } else {
+                let menuItem = findMenuItem(transformItems, "Convert to Traditional Chinese");
+                if (!menuItem) {
+                    testFailed("Convert to Traditional Chinese menu item not found");
+                } else {
+                    menuItem.click();
+                    actualText = editable2.innerText;
+                    // Only 买 should become 買, the rest should remain simplified
+                    shouldBeEqualToString("actualText", "我们買书");
+                }
+            }
+
+            editable1.innerText = "";
+            editable2.innerText = "";
+            finishJSTest();
+        }
+
+        window.addEventListener("load", runTests);
+    </script>
+</body>
+</html>
