@@ -37,6 +37,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKTextInputContext.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
@@ -637,12 +638,22 @@ TEST(RequestTextInputContext, FocusingAssistedElementShouldNotScrollPage)
     EXPECT_EQ(2000, [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue]);
 }
 
+static RetainPtr<TestWKWebView> createWebViewWithCompactWidth(WKWebViewConfiguration *configuration)
+{
+    PAL::updateCurrentUserInterfaceIdiom();
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [webView traitOverrides].horizontalSizeClass = UIUserInterfaceSizeClassCompact;
+    [webView updateTraitsIfNeeded];
+    return webView;
+}
+
 TEST(RequestTextInputContext, TextInteraction_FocusingReadOnlyElementShouldScrollToReveal)
 {
     IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = createWebViewWithCompactWidth(configuration);
     [webView synchronouslyLoadHTMLString:applyStyle(@"<body style='height: 4096px'><input id='input'></body>")];
 
     NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
@@ -703,7 +714,7 @@ TEST(RequestTextInputContext, TextInteraction_FocusingElementShouldScrollToRevea
     IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = createWebViewWithCompactWidth(configuration);
     [webView synchronouslyLoadHTMLString:applyStyle(@"<body style='height: 4096px'><input id='input'></body>")];
 
     NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
@@ -732,7 +743,7 @@ TEST(RequestTextInputContext, TextInteraction_FocusingElementMultipleTimesShould
     IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = createWebViewWithCompactWidth(configuration);
     [webView synchronouslyLoadHTMLString:applyStyle(@"<body style='height: 4096px'><input id='input'></body>")];
 
     NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
@@ -802,7 +813,7 @@ TEST(RequestTextInputContext, TextInteraction_FocusDefocusFocusAgainShouldScroll
     IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = createWebViewWithCompactWidth(configuration);
     [webView synchronouslyLoadHTMLString:applyStyle(@"<body style='height: 4096px'><input id='input'></body>")];
 
     NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
@@ -872,7 +883,7 @@ TEST(RequestTextInputContext, TextInteraction_FocusingNonAssistedFocusedElementS
     IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = createWebViewWithCompactWidth(configuration);
     RetainPtr inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
     [webView _setInputDelegate:inputDelegate.get()];
     [webView synchronouslyLoadHTMLString:applyStyle(@"<body style='height: 4096px'><input id='input'></body>")];
