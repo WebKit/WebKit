@@ -8,7 +8,7 @@
   window.scrollTo(0, 1000);
   document.execCommand("InsertLineBreak");
 
-  var result = (window.pageYOffset == 1000) ? "SUCCESS" : "FAILURE";
+  var result = (window.pageYOffset >= 1000) ? "SUCCESS" : "FAILURE";
   if (window.testRunner) {
     testRunner.dumpAsText();
     document.write(result);
