@@ -176,6 +176,8 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
         WI.settings.domTreeDeemphasizesNodesThatAreNotRendered.removeEventListener(WI.Setting.Event.Changed, this._handleDOMTreeDeemphasizesNodesThatAreNotRenderedChanged, this);
 
+        WI.domManager.discardSearchResults(this);
+
         this._domTreeOutline.close();
         this._pendingBreakpointNodes.clear();
     }
@@ -298,25 +300,28 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         if (this._searchQuery === query)
             return;
 
-        let target = WI.assumingMainTarget();
-
-        if (this._searchIdentifier) {
-            target.DOMAgent.discardSearchResults(this._searchIdentifier);
-            this._hideSearchHighlights();
-        }
+        this._hideSearchHighlights();
 
         this._searchQuery = query;
-        this._searchIdentifier = null;
         this._numberOfSearchResults = null;
         this._currentSearchResultIndex = -1;
 
-        function searchResultsReady(error, searchIdentifier, resultsCount)
-        {
-            if (error)
+        this.getSearchContextNode(async (root) => {
+            if (this.isClosed || this._searchQuery !== query)
                 return;
 
-            this._searchIdentifier = searchIdentifier;
-            this._numberOfSearchResults = resultsCount;
+            let nodes = await WI.domManager.performSearch(query, {
+                caseSensitive: WI.SearchUtilities.defaultSettings.caseSensitive.value,
+                root,
+                owner: this,
+            });
+
+            // A newer search replaced this one.
+            if (!nodes || this._searchQuery !== query)
+                return;
+
+            this._searchResultNodes = nodes;
+            this._numberOfSearchResults = nodes.length;
 
             this.dispatchEventToListeners(WI.ContentView.Event.NumberOfSearchResultsDidChange);
 
@@ -324,41 +329,22 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
             if (this._automaticallyRevealFirstSearchResult)
                 this.revealNextSearchResult();
-        }
-
-        function contextNodesReady(nodeIds)
-        {
-            if (this._searchQuery !== query)
-                return;
-
-            let commandArguments = {
-                query: this._searchQuery,
-                nodeIds,
-                caseSensitive: WI.SearchUtilities.defaultSettings.caseSensitive.value,
-            };
-            target.DOMAgent.performSearch.invoke(commandArguments, searchResultsReady.bind(this));
-        }
-
-        this.getSearchContextNodes(contextNodesReady.bind(this));
+        });
     }
 
-    getSearchContextNodes(callback)
+    getSearchContextNode(callback)
     {
         // Overwrite this to limit the search to just a subtree.
-        // Passing undefined will make DOM.performSearch search through all the documents.
-        callback(undefined);
+        // Passing null will search through all the documents.
+        callback(null);
     }
 
     searchCleared()
     {
-        if (this._searchIdentifier) {
-            let target = WI.assumingMainTarget();
-            target.DOMAgent.discardSearchResults(this._searchIdentifier);
-            this._hideSearchHighlights();
-        }
+        WI.domManager.discardSearchResults(this);
+        this._hideSearchHighlights();
 
         this._searchQuery = null;
-        this._searchIdentifier = null;
         this._numberOfSearchResults = null;
         this._currentSearchResultIndex = -1;
     }
@@ -437,35 +423,17 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
     _revealSearchResult(index, changeFocus)
     {
-        console.assert(this._searchIdentifier);
+        let domNode = this._searchResultNodes?.[index];
+        if (!domNode || domNode.destroyed)
+            return;
 
-        var searchIdentifier = this._searchIdentifier;
+        // A frame document can leave the tree after the search, for example when its owner element is removed.
+        let rootDOMNode = this._domTreeOutline.rootDOMNode;
+        if (domNode !== rootDOMNode && !rootDOMNode?.isAncestor(domNode))
+            return;
 
-        function revealResult(error, nodeIdentifiers)
-        {
-            if (error)
-                return;
-
-            // Bail if the searchIdentifier changed since we started.
-            if (this._searchIdentifier !== searchIdentifier)
-                return;
-
-            console.assert(nodeIdentifiers.length === 1);
-
-            var domNode = WI.domManager.nodeForId(nodeIdentifiers[0]);
-            console.assert(domNode);
-            if (!domNode)
-                return;
-
-            this._domTreeOutline.selectDOMNode(domNode, changeFocus);
-
-            var selectedTreeElement = this._domTreeOutline.selectedTreeElement;
-            if (selectedTreeElement)
-                selectedTreeElement.emphasizeSearchHighlight();
-        }
-
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.getSearchResults(this._searchIdentifier, index, index + 1, revealResult.bind(this));
+        this._domTreeOutline.selectDOMNode(domNode, changeFocus);
+        this._domTreeOutline.selectedTreeElement?.emphasizeSearchHighlight();
     }
 
     _restoreSelectedNodeAfterUpdate(documentURL, defaultNode)
@@ -762,36 +730,8 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
     _showSearchHighlights()
     {
-        console.assert(this._searchIdentifier);
-
-        this._searchResultNodes = [];
-
-        var searchIdentifier = this._searchIdentifier;
-
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.getSearchResults(this._searchIdentifier, 0, this._numberOfSearchResults, function(error, nodeIdentifiers) {
-            if (error)
-                return;
-
-            if (this._searchIdentifier !== searchIdentifier)
-                return;
-
-            console.assert(nodeIdentifiers.length === this._numberOfSearchResults);
-
-            for (var i = 0; i < nodeIdentifiers.length; ++i) {
-                var domNode = WI.domManager.nodeForId(nodeIdentifiers[i]);
-                console.assert(domNode);
-                if (!domNode)
-                    continue;
-
-                this._searchResultNodes.push(domNode);
-
-                var treeElement = this._domTreeOutline.findTreeElement(domNode);
-                console.assert(treeElement);
-                if (treeElement)
-                    treeElement.highlightSearchResults(this._searchQuery);
-            }
-        }.bind(this));
+        for (let domNode of this._searchResultNodes)
+            this._domTreeOutline.findTreeElement(domNode)?.highlightSearchResults(this._searchQuery);
     }
 
     _hideSearchHighlights()

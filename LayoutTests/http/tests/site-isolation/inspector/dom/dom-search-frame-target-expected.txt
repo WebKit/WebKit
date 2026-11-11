@@ -1,4 +1,6 @@
-Tests that WI.DOMManager.performSearch searches cross-origin frame targets under site isolation and reports each match once.
+Tests that WI.DOMManager.performSearch searches cross-origin frame targets under site isolation and reports each match once. With a root, it reports the matches a DOM tree outline can reveal, in tree order.
+
+
 
 
 
@@ -9,16 +11,51 @@ PASS: Should find the same-origin frame target.
 PASS: Should find the cross-origin frame target.
 PASS: Should find the same-site nested frame target.
 PASS: Should find the main-site nested frame target.
+PASS: Should find the unloaded-owner frame target.
+PASS: Should find the chain outer frame target.
+PASS: Should find the chain inner frame target.
 
 -- Running test case: SiteIsolation.DOM.Search.EveryFrameOnce
 PASS: Should find every match.
+127.0.0.1/dom-search-chain-inner-frame.html via frame target
 127.0.0.1/dom-search-frame-target.html via page target
 127.0.0.1/dom-search-nested-frame.html via frame target
 127.0.0.1/dom-search-same-origin-frame.html via page target
 localhost/dom-search-cross-origin-frame.html (shadow tree) via frame target
 localhost/dom-search-cross-origin-frame.html via frame target
 localhost/dom-search-nested-frame.html via frame target
+localhost/dom-search-unloaded-owner-frame.html via frame target
 PASS: Each match should be reported once.
+
+-- Running test case: SiteIsolation.DOM.Search.Root
+PASS: The unloaded-owner frame document should not be in the page tree before the search.
+PASS: The chain outer frame document should not be in the page tree before the search.
+PASS: The chain inner frame document should not be in the page tree before the search.
+PASS: Should find every match.
+PASS: Every match should be under the root.
+PASS: The unloaded-owner frame document should be in the page tree after the search.
+PASS: The chain inner frame document should be in the page tree after the search.
+Matches in tree order:
+127.0.0.1/dom-search-frame-target.html via page target
+127.0.0.1/dom-search-same-origin-frame.html via page target
+localhost/dom-search-cross-origin-frame.html via frame target
+localhost/dom-search-cross-origin-frame.html (shadow tree) via frame target
+localhost/dom-search-nested-frame.html via frame target
+127.0.0.1/dom-search-nested-frame.html via frame target
+localhost/dom-search-unloaded-owner-frame.html via frame target
+127.0.0.1/dom-search-chain-inner-frame.html via frame target
+
+-- Running test case: SiteIsolation.DOM.Search.RootSkipsUnsplicedFrameDocument
+PASS: The frame document should be spliced after a search with a root.
+PASS: Should find every match except the one in the unspliced frame document.
+PASS: Should not report a node of the unspliced frame document.
+PASS: A search without a root should still report it.
+PASS: The frame document should be spliced again.
+
+-- Running test case: SiteIsolation.DOM.Search.IndependentOwners
+PASS: The replaced search should resolve to null.
+PASS: The search of the other owner should find every match.
+PASS: The newer search should find every match.
 
 -- Running test case: SiteIsolation.DOM.Search.CaseSensitive
 PASS: Case-sensitive search with the wrong case should find nothing.
@@ -29,10 +66,12 @@ PASS: The replaced search should resolve to null.
 PASS: The newer search should find every match.
 
 -- Running test case: SiteIsolation.DOM.Search.MatchesResolveToResources
+PASS: 127.0.0.1/dom-search-chain-inner-frame.html via frame target should resolve to a resource.
 PASS: 127.0.0.1/dom-search-frame-target.html via page target should resolve to a resource.
 PASS: 127.0.0.1/dom-search-nested-frame.html via frame target should resolve to a resource.
 PASS: 127.0.0.1/dom-search-same-origin-frame.html via page target should resolve to a resource.
 PASS: localhost/dom-search-cross-origin-frame.html (shadow tree) via frame target should resolve to a resource.
 PASS: localhost/dom-search-cross-origin-frame.html via frame target should resolve to a resource.
 PASS: localhost/dom-search-nested-frame.html via frame target should resolve to a resource.
+PASS: localhost/dom-search-unloaded-owner-frame.html via frame target should resolve to a resource.
 

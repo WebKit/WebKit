@@ -51,10 +51,12 @@ WI.FrameDOMTreeContentView = class FrameDOMTreeContentView extends WI.DOMTreeCon
         super.closed();
     }
 
-    getSearchContextNodes(callback)
+    getSearchContextNode(callback)
     {
-        this._domTree.requestRootDOMNode(function(rootDOMNode) {
-            callback([rootDOMNode.id]);
+        this._domTree.requestRootDOMNode((rootDOMNode) => {
+            // Without a root there is nothing to search, and null would mean every document.
+            if (rootDOMNode)
+                callback(rootDOMNode);
         });
     }
 

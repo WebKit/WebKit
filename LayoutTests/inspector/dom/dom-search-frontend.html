@@ -49,6 +49,36 @@ function test()
     });
 
     suite.addTestCase({
+        name: "DOM.Search.Frontend.Root",
+        description: "With the page document as the root, as for a DOM tree outline, a search should report the same matches in tree order.",
+        async test() {
+            let pageDocument = await WI.domManager.requestDocument();
+            let nodes = await WI.domManager.performSearch(needle, {root: pageDocument});
+            InspectorTest.expectEqual(nodes.length, 2, "Should find one match per document.");
+            InspectorTest.expectThat(nodes.every((node) => pageDocument.isAncestor(node)), "Every match should be under the root.");
+            for (let node of nodes)
+                InspectorTest.log(describeMatch(node));
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.Search.Frontend.IndependentOwners",
+        description: "A search should only replace an earlier search of the same owner.",
+        async test() {
+            let firstOwner = {};
+            let secondOwner = {};
+            let replacedSearch = WI.domManager.performSearch(needle, {owner: firstOwner});
+            let otherOwnerSearch = WI.domManager.performSearch(needle, {owner: secondOwner});
+            let newerSearch = WI.domManager.performSearch(needle, {owner: firstOwner});
+            InspectorTest.expectNull(await replacedSearch, "The replaced search should resolve to null.");
+            InspectorTest.expectEqual((await otherOwnerSearch)?.length, 2, "The search of the other owner should find both matches.");
+            InspectorTest.expectEqual((await newerSearch)?.length, 2, "The newer search should find both matches.");
+            WI.domManager.discardSearchResults(firstOwner);
+            WI.domManager.discardSearchResults(secondOwner);
+        }
+    });
+
+    suite.addTestCase({
         name: "DOM.Search.Frontend.Superseded",
         description: "Starting a new search should make the previous one resolve to null.",
         async test() {
