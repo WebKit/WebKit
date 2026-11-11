@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Document-customElementRegistry.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Document-importNode-cross-document.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Document-importNode.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Element-attachShadow-disabled-shadow.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Element-customElementRegistry-exceptions.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Element-customElementRegistry.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Element-innerHTML.html

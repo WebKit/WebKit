@@ -3596,8 +3596,8 @@ static bool canAttachAuthorShadowRoot(const Element& element)
     }
 
     if (auto localName = element.localName(); Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
-        if (auto* window = element.document().window()) {
-            if (window->customElementRegistry().isShadowDisabled(localName))
+        if (auto* registry = CustomElementRegistry::registryForElement(element)) {
+            if (registry->isShadowDisabled(localName))
                 return false;
         }
 
