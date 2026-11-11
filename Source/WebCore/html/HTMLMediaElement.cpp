@@ -1020,6 +1020,8 @@ void HTMLMediaElement::didMoveToNewDocument(Document& oldDocument, Document& new
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
     updateShouldAutoplay();
     visibilityStateChanged();
+
+    InspectorInstrumentation::addEventListenersToNode(*this);
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

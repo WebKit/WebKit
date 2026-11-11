@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Media Events Frame</title>
+</head>
+<body>
+    <video id="video" muted playsinline preload="auto" src="/media-resources/content/test.mp4"></video>
+    <script>
+    window.playThenPause = async function playThenPause(video) {
+        let playing = new Promise((resolve) => video.addEventListener("playing", resolve, {once: true}));
+        await video.play();
+        await playing;
+
+        let paused = new Promise((resolve) => video.addEventListener("pause", resolve, {once: true}));
+        video.pause();
+        await paused;
+
+        return true;
+    };
+
+    window.createVideo = function createVideo(id) {
+        let video = document.createElement("video");
+        video.id = id;
+        video.muted = true;
+        video.playsInline = true;
+        video.preload = "auto";
+        video.src = "/media-resources/content/test.mp4";
+        document.body.appendChild(video);
+        return video;
+    };
+    </script>
+</body>
+</html>

@@ -4453,6 +4453,7 @@
 		A5B81CA81FAA44620037D1E6 /* InspectorCanvasAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B81C911FAA44260037D1E6 /* InspectorCanvasAgent.h */; };
 		A5B81CA91FAA44620037D1E6 /* InspectorCSSAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B81CA11FAA44270037D1E6 /* InspectorCSSAgent.h */; };
 		A5B81CAB1FAA44620037D1E6 /* InspectorDOMAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B81C861FAA44260037D1E6 /* InspectorDOMAgent.h */; };
+		5E9A1C032FC0000000A1B2C3 /* InspectorMediaEventTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E9A1C012FC0000000A1B2C3 /* InspectorMediaEventTracker.h */; };
 		A5B81CAC1FAA44620037D1E6 /* InspectorDOMDebuggerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B81CA31FAA44270037D1E6 /* InspectorDOMDebuggerAgent.h */; };
 		A5B81CAD1FAA44620037D1E6 /* InspectorDOMStorageAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B81C8C1FAA44260037D1E6 /* InspectorDOMStorageAgent.h */; };
 		A5B81CAE1FAA44620037D1E6 /* InspectorIndexedDBAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B81C9E1FAA44260037D1E6 /* InspectorIndexedDBAgent.h */; };
@@ -17692,6 +17693,8 @@
 		A5B342852E77F755009BFF3F /* PlacedGridItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlacedGridItem.cpp; sourceTree = "<group>"; };
 		A5B81C851FAA44260037D1E6 /* InspectorMemoryAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InspectorMemoryAgent.cpp; path = inspector/agents/InspectorMemoryAgent.cpp; sourceTree = SOURCE_ROOT; };
 		A5B81C861FAA44260037D1E6 /* InspectorDOMAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InspectorDOMAgent.h; path = inspector/agents/InspectorDOMAgent.h; sourceTree = SOURCE_ROOT; };
+		5E9A1C022FC0000000A1B2C3 /* InspectorMediaEventTracker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = InspectorMediaEventTracker.cpp; path = inspector/agents/InspectorMediaEventTracker.cpp; sourceTree = SOURCE_ROOT; };
+		5E9A1C012FC0000000A1B2C3 /* InspectorMediaEventTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = InspectorMediaEventTracker.h; path = inspector/agents/InspectorMediaEventTracker.h; sourceTree = SOURCE_ROOT; };
 		A5B81C871FAA44260037D1E6 /* WebHeapAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebHeapAgent.cpp; path = inspector/agents/WebHeapAgent.cpp; sourceTree = SOURCE_ROOT; };
 		A5B81C881FAA44260037D1E6 /* InspectorDOMDebuggerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InspectorDOMDebuggerAgent.cpp; path = inspector/agents/InspectorDOMDebuggerAgent.cpp; sourceTree = SOURCE_ROOT; };
 		A5B81C891FAA44260037D1E6 /* InspectorPageAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InspectorPageAgent.h; path = inspector/agents/InspectorPageAgent.h; sourceTree = SOURCE_ROOT; };
@@ -34702,6 +34705,8 @@
 				A5B81C9E1FAA44260037D1E6 /* InspectorIndexedDBAgent.h */,
 				A5B81CA41FAA44270037D1E6 /* InspectorLayerTreeAgent.cpp */,
 				A5B81C8F1FAA44260037D1E6 /* InspectorLayerTreeAgent.h */,
+				5E9A1C022FC0000000A1B2C3 /* InspectorMediaEventTracker.cpp */,
+				5E9A1C012FC0000000A1B2C3 /* InspectorMediaEventTracker.h */,
 				A5B81C851FAA44260037D1E6 /* InspectorMemoryAgent.cpp */,
 				A5B81C8D1FAA44260037D1E6 /* InspectorMemoryAgent.h */,
 				A5B81C9C1FAA44260037D1E6 /* InspectorNetworkAgent.cpp */,
@@ -46571,6 +46576,7 @@
 				A5860E6D230DE30300461AAE /* InspectorInstrumentationPublic.h in Headers */,
 				A5860E6E230DE30A00461AAE /* InspectorInstrumentationWebKit.h in Headers */,
 				A5B81CAF1FAA44620037D1E6 /* InspectorLayerTreeAgent.h in Headers */,
+				5E9A1C032FC0000000A1B2C3 /* InspectorMediaEventTracker.h in Headers */,
 				A5B81CB01FAA44620037D1E6 /* InspectorMemoryAgent.h in Headers */,
 				DD14265D2F81000000C1D6A8 /* InspectorNativeFunctionParameters.json in Headers */,
 				A5B81CB11FAA44620037D1E6 /* InspectorNetworkAgent.h in Headers */,
