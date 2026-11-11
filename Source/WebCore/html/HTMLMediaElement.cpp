@@ -3479,7 +3479,9 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     if (m_seeking) {
         // 4.8.10.9, step 11
         if (wasPotentiallyPlaying && m_readyState < HAVE_FUTURE_DATA) {
-            ALWAYS_LOG(LOGIDENTIFIER, "queuing waiting event, currentTime = ", currentMediaTime());
+            ALWAYS_LOG(LOGIDENTIFIER, "queuing timeupdate and waiting events, currentTime = ", currentMediaTime());
+            // The readyState change steps queue timeupdate before waiting; 'seeking' is already queued.
+            scheduleTimeupdateEvent(false);
             scheduleEvent(eventNames().waitingEvent);
         }
     } else {
@@ -5384,9 +5386,10 @@ void HTMLMediaElement::scheduleTimeupdateEvent(bool periodicEvent)
 {
     // Per HTML spec, the periodic timeupdate is only for "the time reached through the
     // usual monotonic increase of the current playback position during normal playback".
-    // During an active seek, the seek algorithm's own events (seeking -> timeupdate ->
-    // seeked via finishSeek) are responsible for notifying the page. Suppress periodic
-    // timeupdates while seeking so they don't interleave with the seek-driven ordering.
+    // During an active seek, the page is notified by the seek algorithm (timeupdate before
+    // seeked, via finishSeek) and by the ready state change steps (timeupdate before waiting,
+    // via setReadyState). Suppress periodic timeupdates while seeking so they don't interleave
+    // with that ordering.
     if (periodicEvent && m_seeking)
         return;
 

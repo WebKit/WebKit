@@ -7,7 +7,9 @@
     <script src="../video-test.js"></script>
     <script>
     // Seeking into an unbuffered position must lower readyState to HAVE_METADATA and, if playing,
-    // fire 'waiting' while the seek waits for data to be appended. Calling play() on a paused
+    // fire 'timeupdate' then 'waiting' after 'seeking' while the seek waits for data to be appended.
+    // https://html.spec.whatwg.org/multipage/media.html#ready-states
+    // Calling play() on a paused
     // element during such a seek must fire 'waiting' rather than 'playing', and the play() promise
     // must stay pending until data is available.
     // https://w3c.github.io/media-source/#mediasource-seeking
@@ -15,6 +17,7 @@
     var sourceBuffer;
     var init;
     var waitingFired = false;
+    var seekEvents = [];
     var playingFired = false;
     var playPromiseResolved = false;
 
@@ -61,6 +64,8 @@
         consoleWrite('');
         consoleWrite('Test: seek into unbuffered range while playing');
         video.addEventListener('waiting', () => { waitingFired = true; });
+        const recordSeekEvent = event => seekEvents.push(event.type);
+        ['seeking', 'timeupdate', 'waiting'].forEach(type => video.addEventListener(type, recordSeekEvent));
 
         run('video.currentTime = 100.5');
         await waitFor(video, 'seeking');
@@ -69,6 +74,8 @@
         await testExpectedEventually('video.readyState', HTMLMediaElement.HAVE_METADATA, '<=', 250);
         await testExpectedEventually('waitingFired', true, '==', 250);
         testExpected('video.seeking', true);
+        testExpected('seekEvents.join()', 'seeking,timeupdate,waiting');
+        ['seeking', 'timeupdate', 'waiting'].forEach(type => video.removeEventListener(type, recordSeekEvent));
 
         const seeked = waitFor(video, 'seeked', true);
         run('sourceBuffer.appendBuffer(makeSegment(2, 100000, 100))');

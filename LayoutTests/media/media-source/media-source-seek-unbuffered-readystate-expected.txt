@@ -16,6 +16,7 @@ EVENT(seeking)
 EXPECTED (video.readyState <= '1') OK
 EXPECTED (waitingFired == 'true') OK
 EXPECTED (video.seeking == 'true') OK
+EXPECTED (seekEvents.join() == 'seeking,timeupdate,waiting') OK
 RUN(sourceBuffer.appendBuffer(makeSegment(2, 100000, 100)))
 EXPECTED (video.seeking == 'false') OK
 EXPECTED (video.readyState >= '3') OK
