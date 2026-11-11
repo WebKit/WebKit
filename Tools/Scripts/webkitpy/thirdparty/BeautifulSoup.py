@@ -20,10 +20,16 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import warnings
+
 import html5lib
 import bs4
 from bs4.builder import builder_registry, TreeBuilder
 from bs4.builder._htmlparser import HTMLParserTreeBuilder
+
+# The HTML parser is used on purpose, also for SVG and XHTML tests, so that
+# tag names such as html:meta are matched as written.
+warnings.filterwarnings('ignore', category=bs4.XMLParsedAsHTMLWarning)
 
 
 class BeautifulSoup(bs4.BeautifulSoup):
