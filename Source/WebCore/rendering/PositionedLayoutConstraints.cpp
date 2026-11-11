@@ -684,7 +684,7 @@ void PositionedLayoutConstraints::computeStaticPosition()
         m_insetAfter = Style::InsetEdge::Fixed { (containingSize() - staticDistance) / m_style.usedZoomForLength().value };
 }
 
-static LayoutPoint positionInContainer(const RenderBox& container, const RenderBox& child, LayoutPoint positionInChild)
+static LayoutPoint positionInContainer(const RenderBoxModelObject& container, const RenderBox& child, LayoutPoint positionInChild)
 {
     auto containerWritingMode = container.writingMode();
     auto childWritingMode = child.writingMode();
