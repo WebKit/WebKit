@@ -319,7 +319,10 @@ void RemoteImageBufferSetProxy::disconnect()
 {
     Locker locker { m_lock };
     m_prepareForDisplayIsPending = false;
-    m_remoteFrontBufferIsMissing = false;
+    // The remote buffers went away with the connection. Mark the front buffer missing so that the first
+    // prepare on the new connection repaints the whole layer, even if the dirty region from
+    // gpuProcessConnectionWasDestroyed() was already consumed by a rendering update on the old connection.
+    m_remoteFrontBufferIsMissing = true;
     m_generation++;
     m_remoteNeedsConfigurationUpdate = true;
     m_context = std::nullopt;
