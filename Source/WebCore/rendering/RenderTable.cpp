@@ -142,18 +142,9 @@ void RenderTable::styleDidChange(Style::Difference diff, const Style::ComputedSt
         if (style().isFixedTableLayout())
             m_tableLayout = makeUnique<FixedTableLayout>(this);
         else {
-            auto invalidateAllTableCellsContentLogicalWidths = [&] {
-                if (!m_tableLayout)
-                    return;
-                // Fixed table layout sets min/max preferred widths to clean without actually computing them (see FixedTableLayout::calcWidthArray).
-                for (auto& section : childrenOfType<RenderTableSection>(*this)) {
-                    for (CheckedPtr row = section.firstRow(); row; row = row->nextRow()) {
-                        for (CheckedPtr cell = row->firstCell(); cell; cell = cell->nextCell())
-                            cell->invalidateContentLogicalWidths();
-                    }
-                }
-            };
-            invalidateAllTableCellsContentLogicalWidths();
+            // Fixed table layout sets min/max preferred widths to clean without actually computing them (see FixedTableLayout::calcWidthArray).
+            if (m_tableLayout)
+                invalidateAllTableCellsContentLogicalWidths();
             m_tableLayout = makeUnique<AutoTableLayout>(this);
         }
     }
@@ -237,7 +228,7 @@ void RenderTable::invalidateCachedColumnOffsets()
 
 void RenderTable::addColumn(const RenderTableCol*)
 {
-    invalidateCachedColumns();
+    invalidateColumns();
 }
 
 void RenderTable::invalidateColumns()
@@ -247,6 +238,20 @@ void RenderTable::invalidateColumns()
     // column count and whether we have a column. Currently, we only have one
     // size-fit-all flag but we may have to consider splitting it.
     setNeedsSectionRecalc();
+
+    if (renderTreeBeingDestroyed())
+        return;
+    invalidateAllTableCellsContentLogicalWidths();
+}
+
+void RenderTable::invalidateAllTableCellsContentLogicalWidths()
+{
+    for (auto& section : childrenOfType<RenderTableSection>(*this)) {
+        for (CheckedPtr row = section.firstRow(); row; row = row->nextRow()) {
+            for (CheckedPtr cell = row->firstCell(); cell; cell = cell->nextCell())
+                cell->invalidateContentLogicalWidths();
+        }
+    }
 }
 
 void RenderTable::updateLogicalWidth()
