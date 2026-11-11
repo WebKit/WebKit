@@ -1121,11 +1121,18 @@ void WebAutomationSession::goForwardInBrowsingContext(const Inspector::Protocol:
     waitForHistoryTraversalToComplete(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback), page->goForward());
 }
 
+// The classic waits fail with WindowNotFound or FrameNotFound when the page or frame goes away before they end.
+static bool isNavigableClosedError(const String& error)
+{
+    return error.startsWith(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)) || error.startsWith(STRING_FOR_PREDEFINED_ERROR_NAME(FrameNotFound));
+}
+
 void WebAutomationSession::traverseHistoryInBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, int delta, CommandCallback<void>&& callback)
 {
     // https://w3c.github.io/webdriver-bidi/#command-browsingContext-traverseHistory
     auto page = webPageProxyForHandle(handle);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+    // https://w3c.github.io/webdriver-bidi/#get-a-navigable: a context that names no navigable is "no such frame".
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, FrameNotFound);
 
     if (!delta) {
         callback({ });
@@ -1137,7 +1144,14 @@ void WebAutomationSession::traverseHistoryInBrowsingContext(const Inspector::Pro
     RefPtr targetItem = page->backForwardListWrapper().itemAtDeltaFromCurrentIndex(delta, AllowSkippingBackForwardItems::No);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!targetItem, NoSuchHistoryEntry);
 
-    waitForHistoryTraversalToComplete(*page, defaultPageLoadStrategy, defaultPageLoadTimeout, WTF::move(callback), page->goToBackForwardItem(*targetItem));
+    // The traversal has started, so a wait that ends because the page closed is not a missing context. As for
+    // browsingContext.navigate, it is an unknown error.
+    auto completion = [callback = WTF::move(callback)](Inspector::CommandResult<void>&& result) mutable {
+        if (!result && isNavigableClosedError(result.error()))
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
+        callback(WTF::move(result));
+    };
+    waitForHistoryTraversalToComplete(*page, defaultPageLoadStrategy, defaultPageLoadTimeout, WTF::move(completion), page->goToBackForwardItem(*targetItem));
 }
 
 void WebAutomationSession::reloadBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&& optionalPageLoadStrategy, std::optional<double>&& optionalPageLoadTimeout, CommandCallback<void>&& callback)
@@ -1205,7 +1219,7 @@ void WebAutomationSession::awaitNavigationForBidi(WebPageProxy& page, WebFramePr
             // https://w3c.github.io/webdriver-bidi/#await-a-navigation: a navigation that ends because its
             // navigable closed is an unknown error, not a missing context.
             auto& error = result.error();
-            if (error.startsWith(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)) || error.startsWith(STRING_FOR_PREDEFINED_ERROR_NAME(FrameNotFound)))
+            if (isNavigableClosedError(error))
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
             callback(makeUnexpected(WTF::move(error)));
             return;
