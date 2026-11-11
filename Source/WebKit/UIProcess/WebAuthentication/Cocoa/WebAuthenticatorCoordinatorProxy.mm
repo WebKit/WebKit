@@ -701,6 +701,25 @@ void WebAuthenticatorCoordinatorProxy::performRequestWithValidatedRelyingPartyId
 #endif
 
 #if HAVE(WEB_AUTHN_AS_MODERN)
+    // A new request supersedes any request that is still in flight. The previous controller is detached
+    // from its delegate first so that a late callback cannot complete the new request instead.
+    if (m_completionHandler) {
+        RELEASE_LOG(WebAuthn, "Cancelling the pending request in favor of a new one.");
+        if (RetainPtr previousController = WTF::move(m_controller)) {
+            previousController.get().delegate = nil;
+            previousController.get().presentationContextProvider = nil;
+            [previousController cancel];
+        }
+        m_delegate.clear();
+        m_paused = false;
+        if (activeConditionalMediationProxy() == this)
+            activeConditionalMediationProxy() = nullptr;
+        auto previousCompletionHandler = WTF::move(m_completionHandler);
+        previousCompletionHandler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, "This request has been cancelled by a new request."_s });
+        if (auto cancelHandler = WTF::move(m_cancelHandler))
+            cancelHandler();
+    }
+
     m_isConditionalMediation = requestData.mediation == MediationRequirement::Conditional;
     auto controller = constructASController(requestData);
     if (!controller) {

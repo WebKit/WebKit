@@ -128,6 +128,7 @@ Tests/WebKit/WKWebView/Copying.mm @nonARC
 Tests/WebKit/WKWebView/CreateWebArchive.mm @nonARC
 Tests/WebKit/WKWebView/CustomUserAgent.mm @nonARC
 Tests/WebKit/WKWebView/DataDetection.mm @nonARC
+Tests/WebKit/WKWebView/WebAuthnOverlappingRequests.mm @nonARC
 Tests/WebKit/WKWebView/WebAuthnRelatedOriginsFetch.mm @nonARC
 Tests/WebKit/WKWebView/WebAutomationBidiEvents.mm @nonARC
 Tests/WebKit/WKWebView/WebAutomationPageZoom.mm @nonARC
