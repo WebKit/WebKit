@@ -78,6 +78,10 @@ struct ConstraintsForIndependentFormattingContext {
     // The border box inline size the parent formatting context decides (stretch-fit in a block formatting context, §10.3.3). Without it the
     // root's own formatting context sizes it.
     std::optional<LayoutUnit> borderBoxInlineSize;
+    // The block-start and block-end margins the parent formatting context decides, which the root's own formatting context reads: a quirks mode
+    // body stretches to the viewport less them (RenderBox::computeLogicalHeight).
+    LayoutUnit marginBefore;
+    LayoutUnit marginAfter;
 };
 
 struct ConstraintsForOutOfFlowContent {

@@ -190,8 +190,8 @@ static void registerOrthogonalBoxForLayout(RenderBox& box)
 
 BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegrationUtils::layoutIndependentFormattingContext(const RenderBox& root, const Layout::ConstraintsForIndependentFormattingContext& constraints)
 {
-    // Only the root and its content are written here, by the root's own formatting context, and nothing else in the block formatting context
-    // reads them.
+    // Only the root and its content are written here, by the root's own formatting context, but for the block-direction margins the block
+    // formatting context gives it, and nothing else in the block formatting context reads them.
     SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef box = const_cast<RenderBox&>(root);
     // Its parent, or the block container whose inline content it is in.
     CheckedRef containingBlock = downcast<RenderBlockFlow>(*box->containingBlock());
@@ -209,6 +209,9 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
     // block instead (RenderBox::computePercentageLogicalHeight), and takes the block size as its available inline space
     // (RenderBox::perpendicularContainingBlockLogicalHeight).
     auto containingBlockWritingMode = containingBlock->writingMode();
+    // Like RenderBlockFlow::layoutBlockChild, before the root's own layout reads them. They follow the writing mode of the containing block.
+    box->setMarginBefore(constraints.marginBefore, containingBlockWritingMode);
+    box->setMarginAfter(constraints.marginAfter, containingBlockWritingMode);
     auto isOrthogonal = box->writingMode().isOrthogonal(containingBlockWritingMode);
     box->setOverridingContainingBlockContentLogicalWidth(constraints.containingBlockInlineSize);
     if (isOrthogonal || (!percentagesResolveAgainstTableCell(containingBlock) && Layout::BlockFormattingUtils::hasPercentageBlockSize(box, box->writingMode())))

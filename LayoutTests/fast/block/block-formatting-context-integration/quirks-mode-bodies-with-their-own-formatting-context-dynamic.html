@@ -1,0 +1,42 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+iframe { width: 190px; height: 120px; border: 1px solid; margin: 0 2px 2px 0; }
+</style>
+<body>
+<!-- Quirks mode: a body with a formatting context of its own stretches to the viewport less the margins, borders and padding around it. -->
+<script>
+const colors = "html { background: green; } body { background: lightblue; font: 16px/20px serif; }";
+const documents = [
+    "body { display: flex; margin: 4px; }|margins",
+    "html { padding: 1px; } body { display: grid; margin: 4px; }|html padding",
+    "body { display: table; margin: 4px; }|percentage margin",
+    "body { display: flex; margin: 4px; }|<div id='content'>content</div>",
+    "body { display: grid; margin: 4px; }|viewport",
+];
+const iframes = documents.map(() => {
+    const iframe = document.createElement("iframe");
+    iframe.scrolling = "no";
+    return document.body.appendChild(iframe);
+});
+// The frames have their size before their documents are first laid out.
+document.body.offsetHeight;
+const frameDocuments = documents.map((description, index) => {
+    const [style, content] = description.split("|");
+    const frameDocument = iframes[index].contentDocument;
+    frameDocument.open();
+    frameDocument.write(`<style>${colors} ${style}</style>${content}`);
+    frameDocument.close();
+    return frameDocument;
+});
+for (const frameDocument of frameDocuments)
+    frameDocument.body.offsetHeight;
+frameDocuments[0].body.style.margin = "10px 4px 20px";
+frameDocuments[1].documentElement.style.padding = "9px";
+frameDocuments[2].body.style.marginBottom = "25%";
+frameDocuments[3].getElementById("content").style.height = "200px";
+iframes[4].style.height = "150px";
+// The block sizes from the layout after the changes, which a later one of the frames may not show.
+const blockSizes = document.body.appendChild(document.createElement("div"));
+for (const frameDocument of frameDocuments)
+    blockSizes.append(`${frameDocument.body.offsetHeight} ${frameDocument.documentElement.offsetHeight} `);
+</script>
