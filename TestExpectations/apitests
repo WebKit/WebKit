@@ -609,3 +609,6 @@ webkit.org/b/257892 TestWTF.SequenceLockedTest.WithoutSequenceLockedFails [ Skip
 rdar://134447305 [ mac debug ] TestWTF.SequenceLockedTest.Works [ Skip ]
 webkit.org/b/331127 TestWebKitAPI.SiteIsolation.PopupUsesWebsiteDataStoreOfOpener [ Pass Failure ]
 webkit.org/b/331127 TestWebKitAPI.SiteIsolation.PopupUsesWebsiteDataStoreOfOpenerWithoutSiteIsolation [ Pass Failure ]
+webkit.org/b/331131 TestWebKitAPI.WKWebExtensionAPITest.AssertSafeStopsTestOnFailure [ Pass Timeout ]
+webkit.org/b/331131 TestWebKitAPI.WKWebExtensionAPITest.AssertResolvesRejectsReturnedPromiseOnFailure [ Pass Timeout ]
+webkit.org/b/331131 TestWebKitAPI.WKWebExtensionAPITest.AssertRejectsRejectsReturnedPromiseOnFailure [Pass Timeout ]
