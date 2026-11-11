@@ -124,6 +124,8 @@ public:
     WebCore::IsInitialAboutBlank isInitialAboutBlank { WebCore::IsInitialAboutBlank::No };
     std::optional<WebCore::PolicyContainer> policyContainer;
     std::optional<WebCore::Site> inheritedSite;
+    // The site whose process wrote this state. The UI process sets it, see WebBackForwardListFrameItem::setWriterSite().
+    std::optional<WebCore::Site> writerSite;
 
     // FIXME: These should not be per frame.
 #if PLATFORM(IOS_FAMILY)
@@ -150,7 +152,7 @@ private:
         Vector<Ref<FrameState>>&& children, Vector<AtomString>&& documentState
     );
 
-    FrameState(const String& urlString, const String& originalURLString, const String& referrer, const AtomString& target, std::optional<WebCore::FrameIdentifier>, const std::optional<Vector<uint8_t>>& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, const std::optional<HTTPBody>&, std::optional<WebCore::BackForwardItemIdentifier>, std::optional<WebCore::BackForwardFrameItemIdentifier>, const String& title, WebCore::ShouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank, const std::optional<WebCore::PolicyContainer>&, const std::optional<WebCore::Site>& inheritedSite,
+    FrameState(const String& urlString, const String& originalURLString, const String& referrer, const AtomString& target, std::optional<WebCore::FrameIdentifier>, const std::optional<Vector<uint8_t>>& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, const std::optional<HTTPBody>&, std::optional<WebCore::BackForwardItemIdentifier>, std::optional<WebCore::BackForwardFrameItemIdentifier>, const String& title, WebCore::ShouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank, const std::optional<WebCore::PolicyContainer>&, const std::optional<WebCore::Site>& inheritedSite, const std::optional<WebCore::Site>& writerSite,
 #if PLATFORM(IOS_FAMILY)
         WebCore::FloatRect exposedContentRect, WebCore::IntRect unobscuredContentRect, WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates, WebCore::IntSize contentSize, bool scaleIsInitial, WebCore::FloatBoxExtent obscuredInsets,
 #endif

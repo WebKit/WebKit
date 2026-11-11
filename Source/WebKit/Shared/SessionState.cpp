@@ -85,7 +85,7 @@ FrameState::FrameState(String&& urlString, String&& originalURLString, String&& 
 {
 }
 
-FrameState::FrameState(const String& urlString, const String& originalURLString, const String& referrer, const AtomString& target, std::optional<WebCore::FrameIdentifier> frameID, const std::optional<Vector<uint8_t>>& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, const std::optional<HTTPBody>& httpBody, std::optional<WebCore::BackForwardItemIdentifier> itemID, std::optional<WebCore::BackForwardFrameItemIdentifier> frameItemID, const String& title, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank isInitialAboutBlank, const std::optional<WebCore::PolicyContainer>& policyContainer, const std::optional<WebCore::Site>& inheritedSite,
+FrameState::FrameState(const String& urlString, const String& originalURLString, const String& referrer, const AtomString& target, std::optional<WebCore::FrameIdentifier> frameID, const std::optional<Vector<uint8_t>>& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, const std::optional<HTTPBody>& httpBody, std::optional<WebCore::BackForwardItemIdentifier> itemID, std::optional<WebCore::BackForwardFrameItemIdentifier> frameItemID, const String& title, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank isInitialAboutBlank, const std::optional<WebCore::PolicyContainer>& policyContainer, const std::optional<WebCore::Site>& inheritedSite, const std::optional<WebCore::Site>& writerSite,
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect exposedContentRect, WebCore::IntRect unobscuredContentRect, WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates, WebCore::IntSize contentSize, bool scaleIsInitial, WebCore::FloatBoxExtent obscuredInsets,
 #endif
@@ -114,6 +114,7 @@ FrameState::FrameState(const String& urlString, const String& originalURLString,
     , isInitialAboutBlank(isInitialAboutBlank)
     , policyContainer(policyContainer)
     , inheritedSite(inheritedSite)
+    , writerSite(writerSite)
 #if PLATFORM(IOS_FAMILY)
     , exposedContentRect(exposedContentRect)
     , unobscuredContentRect(unobscuredContentRect)
@@ -153,6 +154,7 @@ Ref<FrameState> FrameState::copy()
         isInitialAboutBlank,
         policyContainer,
         inheritedSite,
+        writerSite,
 #if PLATFORM(IOS_FAMILY)
         exposedContentRect,
         unobscuredContentRect,
@@ -183,7 +185,8 @@ void FrameState::replacePayloadFrom(Ref<FrameState>&& other)
     // owned by the surrounding WebBackForwardListFrameItem and are fixed at construction.
     // children is the parallel data path of WebBackForwardListFrameItem::m_children and
     // is maintained there. Neither is affected by a payload replacement. inheritedSite is
-    // set by the UI process, so it is not part of the payload either.
+    // set by the UI process, so it is not part of the payload either. writerSite describes
+    // the payload, so it is replaced with it.
     urlString = WTF::move(other->urlString);
     originalURLString = WTF::move(other->originalURLString);
     referrer = WTF::move(other->referrer);
@@ -204,6 +207,7 @@ void FrameState::replacePayloadFrom(Ref<FrameState>&& other)
     wasRestoredFromSession = other->wasRestoredFromSession;
     isInitialAboutBlank = other->isInitialAboutBlank;
     policyContainer = WTF::move(other->policyContainer);
+    writerSite = WTF::move(other->writerSite);
 #if PLATFORM(IOS_FAMILY)
     exposedContentRect = other->exposedContentRect;
     unobscuredContentRect = other->unobscuredContentRect;

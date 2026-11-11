@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebBackForwardListFrameItem.h"
 
+#include "BrowsingContextGroup.h"
+#include "FrameProcess.h"
 #include "SessionState.h"
 #include "WebBackForwardListItem.h"
 #include "WebFrameProxy.h"
@@ -74,6 +76,38 @@ HashMap<std::pair<BackForwardFrameItemIdentifier, BackForwardItemIdentifier>, We
 WebBackForwardListFrameItem* WebBackForwardListFrameItem::itemForID(BackForwardItemIdentifier itemID, BackForwardFrameItemIdentifier frameItemID)
 {
     return allItems().get({ frameItemID, itemID });
+}
+
+static bool processHostsSite(WebProcessProxy& process, BrowsingContextGroup& browsingContextGroup, const Site& site)
+{
+    if (auto& processSite = process.site())
+        return *processSite == site;
+    if (!process.isSharedProcess())
+        return false;
+    RefPtr frameProcess = browsingContextGroup.processForSite(site);
+    return frameProcess && &frameProcess->process() == &process;
+}
+
+static std::optional<Site> writerSiteForFrameState(const FrameState& frameState, WebProcessProxy& process, BrowsingContextGroup& browsingContextGroup)
+{
+    if (auto& processSite = process.site()) {
+        if (processSite->isEmpty())
+            return std::nullopt;
+        return *processSite;
+    }
+
+    // A shared process hosts several sites. Take the one of the document the state describes, if the process hosts it.
+    Site site { URL { frameState.urlString } };
+    if (site.isEmpty() || !processHostsSite(process, browsingContextGroup, site))
+        return std::nullopt;
+    return site;
+}
+
+void WebBackForwardListFrameItem::setWriterSite(FrameState& frameState, WebProcessProxy& process, BrowsingContextGroup& browsingContextGroup)
+{
+    frameState.writerSite = writerSiteForFrameState(frameState, process, browsingContextGroup);
+    for (auto& child : borrow(frameState.children))
+        setWriterSite(child, process, browsingContextGroup);
 }
 
 std::optional<FrameIdentifier> WebBackForwardListFrameItem::frameID() const
@@ -253,7 +287,13 @@ Ref<FrameState> WebBackForwardListFrameItem::copyFrameStateWithChildrenForProces
     // A root item's frameID is optional (entries restored from session state have none) and only follows the main frame
     // once a swap commits, so a lookup by ID could miss the page's own main frame. Ask the page for it instead.
     RefPtr frame = m_parent ? WebFrameProxy::webFrame(frameID()) : page.mainFrame();
-    bool processHostsFrame = frame && frame->page() == &page && (&frame->process() == &process || &frame->provisionalLoadProcess() == &process);
+    bool processHostsFrame = [&] {
+        // A subframe's item outlives the frame when the frame is removed or its parent document is navigated away from.
+        // No process hosts it any more, so only a process for the site that wrote the state gets it back.
+        if (!frame)
+            return m_parent && m_frameState->writerSite && processHostsSite(process, protect(page.browsingContextGroup()), *m_frameState->writerSite);
+        return frame->page() == &page && (&frame->process() == &process || &frame->provisionalLoadProcess() == &process);
+    }();
 
     Ref frameState = processHostsFrame ? copyFrameState() : m_frameState->copyIdentifiersOnly();
     for (auto& child : borrow(m_children))

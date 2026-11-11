@@ -33,6 +33,7 @@
 
 namespace WebKit {
 
+class BrowsingContextGroup;
 class FrameState;
 class WebBackForwardListItem;
 class WebPageProxy;
@@ -44,6 +45,9 @@ public:
     ~WebBackForwardListFrameItem();
 
     NODELETE static WebBackForwardListFrameItem* itemForID(WebCore::BackForwardItemIdentifier, WebCore::BackForwardFrameItemIdentifier);
+
+    // Records in a FrameState tree a process sent which site wrote it, so that only a process for that site gets it back.
+    static void setWriterSite(FrameState&, WebProcessProxy&, BrowsingContextGroup&);
 
     FrameState& frameState() const LIFETIME_BOUND { return m_frameState; }
     void updateFrameStatePayload(Ref<FrameState>&&);

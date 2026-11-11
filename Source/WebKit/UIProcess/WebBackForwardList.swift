@@ -1144,6 +1144,8 @@ final class WebBackForwardList {
 
         try messageCheckItemURLs(frameState: navigatedFrameState, process: process)
 
+        WebKit.WebBackForwardListFrameItem.setWriterSite(navigatedFrameState.ptr(), process.ptr(), browsingContextGroup)
+
         let navigatedFrameID = navigatedFrameState.ptr().frameID
         let targetFrame = WebKit.WebFrameProxy.webFrame(navigatedFrameID)
 
@@ -1232,6 +1234,10 @@ final class WebBackForwardList {
             return
         }
 
+        if let page = page.get() {
+            WebKit.WebBackForwardListFrameItem.setWriterSite(frameState.ptr(), process.ptr(), page.browsingContextGroup())
+        }
+
         if let frameItem = WebKit.WebBackForwardListFrameItem.itemForID(item.identifier(), frameItemID) {
             frameItem.setChild(consuming: frameState)
         }
@@ -1288,6 +1294,7 @@ final class WebBackForwardList {
             contentsMatch(webPageProxy.identifier(), item.pageID()) && contentsMatch(itemID, item.identifier())
         }
         let oldFrameID = frameItem.frameID()
+        WebKit.WebBackForwardListFrameItem.setWriterSite(frameState.ptr(), process.ptr(), webPageProxy.browsingContextGroup())
         frameItem.updateFrameStatePayload(consuming: frameState)
         let newFrameID = frameItem.frameID()
         if let oldFrameID = Optional(fromCxx: oldFrameID) {

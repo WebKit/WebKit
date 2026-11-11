@@ -818,6 +818,8 @@ void WebBackForwardList::backForwardAddItemShared(IPC::Connection& connection, R
     if (!messageCheckItemURLs(navigatedFrameState, process))
         return;
 
+    WebBackForwardListFrameItem::setWriterSite(navigatedFrameState, process, browsingContextGroup);
+
     RefPtr targetFrame = WebFrameProxy::webFrame(navigatedFrameState->frameID);
     if (targetFrame) {
         MESSAGE_CHECK(process, targetFrame->page() == m_page.get());
@@ -859,6 +861,9 @@ void WebBackForwardList::backForwardSetChildItem(IPC::Connection& connection, Ba
     if (!item)
         return;
 
+    if (RefPtr page = m_page)
+        WebBackForwardListFrameItem::setWriterSite(frameState, process, protect(page->browsingContextGroup()));
+
     if (RefPtr frameItem = WebBackForwardListFrameItem::itemForID(item->identifier(), frameItemID))
         frameItem->setChild(WTF::move(frameState));
 }
@@ -891,6 +896,7 @@ void WebBackForwardList::backForwardUpdateItem(IPC::Connection& connection, Ref<
         MESSAGE_CHECK(process, webPageProxy->identifier() == item->pageID() && frameState->itemID == item->identifier());
 
         auto oldFrameID = frameItem->frameID();
+        WebBackForwardListFrameItem::setWriterSite(frameState, process, protect(webPageProxy->browsingContextGroup()));
         frameItem->updateFrameStatePayload(WTF::move(frameState));
         auto newFrameID = frameItem->frameID();
 
