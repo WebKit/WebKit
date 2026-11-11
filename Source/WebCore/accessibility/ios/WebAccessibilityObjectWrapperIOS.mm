@@ -497,14 +497,14 @@ struct AccessibilityElementsResult {
         // a sibling based on the reasoning above.
         if (RefPtr select = dynamicDowncast<HTMLSelectElement>(child->node()); select && select->usesBaseAppearancePicker()) {
             if (RefPtr popover = select->pickerPopoverElement()) {
-                if (shouldCollectElements) {
-                    CheckedPtr cache = downcast<AccessibilityObject>(child.get()).axObjectCache();
-                    if (RefPtr axPopover = cache ? cache->getOrCreate(*popover) : nullptr) {
-                        if (RetainPtr popoverWrapper = axPopover->wrapper())
+                CheckedPtr cache = downcast<AccessibilityObject>(child).axObjectCache();
+                if (RefPtr axPopover = cache ? cache->getOrCreate(*popover) : nullptr) {
+                    if (RetainPtr popoverWrapper = axPopover->wrapper()) {
+                        if (shouldCollectElements)
                             [result.elements addObject:popoverWrapper];
+                        result.count++;
                     }
                 }
-                result.count++;
             }
         }
     }

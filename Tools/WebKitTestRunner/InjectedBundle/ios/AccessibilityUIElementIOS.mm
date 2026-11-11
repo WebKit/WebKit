@@ -515,6 +515,8 @@ double AccessibilityUIElementIOS::numberAttributeValue(JSStringRef attribute)
         return [m_element accessibilityARIARowIndex];
     if (JSStringIsEqualToUTF8CString(attribute, "AXBlockquoteLevel"))
         return [m_element accessibilityBlockquoteLevel];
+    if (JSStringIsEqualToUTF8CString(attribute, "AXElementCount"))
+        return [m_element accessibilityElementCount];
 
     return 0;
 }
