@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 200px; border: 1px solid; margin: 0 2px 4px 0; }
+.left { float: left; width: 60px; height: 40px; background: orange; }
+.right { float: right; width: 40px; height: 30px; background: tan; }
+input { display: block; width: 50px; height: 10px; margin: 2px 0; }
+</style>
+<div class="root"><div class="left"></div><input type="checkbox"><input type="radio"></div>
+<div class="root"><div class="right"></div><input type="checkbox" style="margin-left: auto; margin-right: auto"><input type="radio" style="width: 150px"></div>
+<div class="root" style="direction: rtl"><div class="left"></div><input type="checkbox"></div>
+<div class="root"><div class="left"></div><span>inline <input type="radio"> after</span></div>
+<div class="root"><div class="left"></div><input type="checkbox" style="clear: left"><input type="checkbox" style="position: absolute; left: 300px; top: 100px"></div>

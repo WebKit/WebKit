@@ -80,7 +80,7 @@ public:
     static bool isScrollingHorizontalMarquee(const RenderBox&);
     // A text control, list box, progress bar, meter or file input: a block container whose renderer sizes it and lays out its content its own
     // way (RenderTextControlSingleLine::layout, RenderListBox::computeLogicalHeight), so its own formatting context lays it out, like a flex
-    // container.
+    // container. So does a checkbox or a radio button with display: block, which avoids floats (RenderBox::avoidsFloats).
     static bool isFormControlBlockContainer(const RenderBox&);
     // A block-level box that is not a block container, like a table or a flex container, a block container that establishes a block formatting
     // context for its content (CSS 2.2 §9.4.1), or a form control block container.
