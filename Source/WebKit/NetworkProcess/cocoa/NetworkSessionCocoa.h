@@ -184,6 +184,8 @@ public:
     void applyProxyConfigurationToSessionConfiguration(NSURLSessionConfiguration *);
     void replacedSessionDidBecomeInvalid(NSURLSession *);
 
+    void applyProxyConfigurationToNWParametersForWebTransport(nw_parameters_t);
+    bool proxyConfigurationRequiresTCPProtocols() const;
     bool isLegacyTLSAllowed() const { return m_isLegacyTLSAllowed; }
 
 private:
