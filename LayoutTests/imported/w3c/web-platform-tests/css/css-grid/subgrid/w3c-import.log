@@ -151,6 +151,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-014.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-015-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-015.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-parent-auto-repeat-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-parent-auto-repeat-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-parent-auto-repeat-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/nested-grid-subgrid-resize.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/orthogonal-writing-mode-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/orthogonal-writing-mode-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/orthogonal-writing-mode-001.html
@@ -182,6 +186,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/placement-implicit-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/placement-implicit-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/placement-implicit-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/placement-implicit-area-line-name-suffix.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/placement-invalidation-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/repeat-auto-fill-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/repeat-auto-fill-001-ref.html
@@ -205,6 +210,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/repeat-auto-fill-008-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/repeat-auto-fill-008.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/repeat-auto-fill-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/row-subgrid-intrinsic-size-transfer-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/row-subgrid-intrinsic-size-transfer-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/row-subgrid-intrinsic-size-transfer-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/row-subgrid-intrinsic-size-transfer-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/row-subgrid-intrinsic-size-transfer-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/row-subgrid-intrinsic-size-transfer-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/scrollbar-gutter-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/scrollbar-gutter-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/scrollbar-gutter-001.html
@@ -270,6 +281,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-button-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-button-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-button.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-item-aspect-ratio-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-item-block-size-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-item-block-size-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-item-block-size-001.html

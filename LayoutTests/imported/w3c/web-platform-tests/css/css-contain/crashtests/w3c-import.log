@@ -10,12 +10,18 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/change-text-node-data-ellipsis.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/change-text-node-data.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-dynamic-change-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-nested-crash-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-nested-crash-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-nested-crash-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-nested-crash-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-nested-relayout-boundary.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-style-discarded-item.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-style-first-letter-colgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-style-first-letter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/flex-item-with-inline-block-with-contain.html

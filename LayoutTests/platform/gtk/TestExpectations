@@ -1163,6 +1163,7 @@ webkit.org/b/319066 imported/w3c/web-platform-tests/css/css-view-transitions/vie
 webkit.org/b/319072 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio-loading-lazy-window-onload.html [ Pass Failure Timeout ]
 webkit.org/b/319318 http/tests/inspector/network/har/har-page-aggressive-gc.html [ Failure ]
 webkit.org/b/319319 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-replaced.html [ Failure Pass ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/crashtests/area-focus-in-hidden.html [ Skip ]
 webkit.org/b/319323 imported/w3c/web-platform-tests/css/css-scroll-snap/input/keyboard-snap-interruption.html [ Failure Pass ]
 
 webkit.org/b/320055 [ Release ] imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/update-the-rendering.html [ Failure Pass ]

@@ -10204,6 +10204,7 @@ imported/w3c/web-platform-tests/css/css-anchor-position/scroll-to-anchored-fixed
 
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/scrollIntoView-with-focus-target-with-contents-hidden.html [ Pass ImageOnlyFailure ] # rdar://178676904
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-076.html [ Pass ImageOnlyFailure ] # rdar://178676904
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-img-001.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-radio-group.html [ Pass ImageOnlyFailure ] # rdar://178676934
 

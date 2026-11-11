@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-baseline-ref.html
@@ -28,6 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-button-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-button-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-cell-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-containing-block-absolute-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-flexbox-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-grid-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-ifc-022-ref.html
@@ -36,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-ink-overflow-015-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-ink-overflow-019-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-ink-overflow-020-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-select-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-size-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-paint-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-paint-007-ref.html

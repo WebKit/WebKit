@@ -5725,6 +5725,11 @@ imported/w3c/web-platform-tests/css/css-contain/counter-scoping-004.html [ Image
 
 # Flaky css-contain test
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/animation-display-lock.html [ Failure Pass ]
+imported/w3c/web-platform-tests/css/css-contain/contain-layout-select-001.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-svg-forced-layout.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-svg-gradient.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-svg-gradient-unlock.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-svg-resources.html [ ImageOnlyFailure ]
 
 # Counter style tests that fail on some platforms because of subtle character positioning differences, presumably from subpixel rounding.
 # These failures are slightly different per-platform, but it seems unwise to move the expectations into platform-specific expectations files.

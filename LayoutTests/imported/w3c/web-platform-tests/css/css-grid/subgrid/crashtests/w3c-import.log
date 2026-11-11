@@ -14,6 +14,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/crashtests/contain-strict-nested-subgrid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/crashtests/contain-strict-subgrid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/crashtests/nested-row-subgrids-intrinsic-sizing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/crashtests/subgrid-auto-placed-overflowing-span-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/crashtests/subgrid-locked-major-axis-overflowing-span-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/crashtests/subgrid-reflow-root.html
