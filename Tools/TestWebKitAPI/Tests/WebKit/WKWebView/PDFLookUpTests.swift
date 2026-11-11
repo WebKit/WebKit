@@ -35,6 +35,21 @@ import struct Swift.String
 
 @MainActor
 struct PDFLookUpTests {
+    enum ElementKind: CaseIterable, Sendable {
+        case iframe
+        case embed
+        case object
+
+        func markup(loadingPDFFrom url: String) -> String {
+            let style = "position: absolute; left: 100px; top: 120px; width: 400px; height: 300px; border: none"
+            return switch self {
+            case .iframe: "<iframe src='\(url)' style='\(style)'></iframe>"
+            case .embed: "<embed src='\(url)' style='\(style)'>"
+            case .object: "<object type='application/pdf' data='\(url)' style='\(style)'></object>"
+            }
+        }
+    }
+
     @Test(.timeLimit(.minutes(1)), arguments: [false, true])
     func lookUpAtPointOverMainFramePDFFindsWordInPDF(siteIsolationEnabled: Bool) async throws {
         let pdfData = TestPDFBuilder.pdfDataWithLink()
@@ -63,17 +78,20 @@ struct PDFLookUpTests {
         }
     }
 
-    @Test(.timeLimit(.minutes(1)), arguments: [false, true])
-    func lookUpAtPointOverPDFInCrossOriginIframeFindsWordInPDF(siteIsolationEnabled: Bool) async throws {
+    @Test(.timeLimit(.minutes(1)), arguments: [false, true], ElementKind.allCases)
+    func lookUpAtPointOverCrossOriginPDFFindsWordInPDF(
+        siteIsolationEnabled: Bool,
+        elementKind: ElementKind
+    ) async throws {
         let pdfData = TestPDFBuilder.pdfDataWithLink()
+        let mainFrameHTML = """
+            <body style='margin: 0'>
+            \(elementKind.markup(loadingPDFFrom: "https://webkit.org/test.pdf"))
+            </body>
+            """
         var server = try HTTPServer(protocol: .httpsProxy) {
             Route("/mainframe") {
-                """
-                <body style='margin: 0'>
-                <iframe src='https://webkit.org/test.pdf'
-                    style='position: absolute; left: 100px; top: 120px; width: 400px; height: 300px; border: none'></iframe>
-                </body>
-                """
+                mainFrameHTML
             }
 
             Route("/test.pdf", headerFields: ["Content-Type": "application/pdf"]) {
@@ -92,11 +110,7 @@ struct PDFLookUpTests {
             webView.load(URLRequest(url: try #require(URL(string: "https://example.com/mainframe"))))
             try await navigationDelegate.waitForDidFinishNavigation()
 
-            let childFrame = try #require(await webView.firstChildFrame)
-            let iframeRect = try await webView.boundingClientRectOfIframe()
-            let pointOverWord = try await webView.pdfLinkRect(in: childFrame)
-                .offsetBy(dx: iframeRect.minX, dy: iframeRect.minY)
-                .center
+            let pointOverWord = try await webView.pdfLinkCenter(in: elementKind)
             let lookedUp = try await webView.lookUpWord(at: pointOverWord)
 
             #expect(lookedUp.text == "website")
@@ -123,6 +137,19 @@ extension WKWebView {
         return (try #require(lookedUpText), lookedUpRect)
     }
 
+    fileprivate func pdfLinkCenter(in elementKind: PDFLookUpTests.ElementKind) async throws -> CGPoint {
+        switch elementKind {
+        case .iframe:
+            let childFrame = try #require(await firstChildFrame)
+            let iframeRect = try await boundingClientRectOfIframe()
+            return try await pdfLinkRect(in: childFrame)
+                .offsetBy(dx: iframeRect.minX, dy: iframeRect.minY)
+                .center
+        case .embed, .object:
+            return try await pdfLinkRect(in: nil).center
+        }
+    }
+
     fileprivate func boundingClientRectOfIframe() async throws -> CGRect {
         let values = try await callJavaScript(returning: [Double].self) {
             """
@@ -139,7 +166,7 @@ extension WKWebView {
         try await waitForCondition("the PDF to lay out its link") {
             values = try await callJavaScript(returning: [Double].self, in: frame) {
                 """
-                const plugin = document.querySelector('embed');
+                const plugin = document.querySelector('embed, object');
                 const link = plugin && internals.pdfAnnotationRectsForTesting(plugin)[0];
                 if (!link)
                     return [];
