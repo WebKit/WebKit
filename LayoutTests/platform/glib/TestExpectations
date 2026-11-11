@@ -2008,6 +2008,9 @@ imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?v
 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.worker.html?h264 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.worker.html?vp9 [ Failure ]
 
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?av1 [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?av1 [ Failure ]
+
 # HEVC support
 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h265_annexb [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h265_hevc [ Pass ]

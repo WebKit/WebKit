@@ -198,6 +198,9 @@ class LibaomAv1Encoder final : public VideoEncoder {
 
   std::unique_ptr<ScalableVideoController> svc_controller_;
   std::optional<ScalabilityMode> scalability_mode_;
+#if WEBRTC_WEBKIT_BUILD
+  std::optional<ColorSpace> current_color_space_;
+#endif
   // Original scaling factors for all configured layers active and inactive.
   // `svc_params_` stores factors ignoring top inactive layers.
   std::vector<int> scaling_factors_num_;
@@ -776,6 +779,20 @@ int32_t LibaomAv1Encoder::Encode(
   bool keyframe_required =
       frame_types != nullptr &&
       absl::c_linear_search(*frame_types, VideoFrameType::kVideoFrameKey);
+
+#if WEBRTC_WEBKIT_BUILD
+  if (frame.color_space() && current_color_space_ != frame.color_space()) {
+    current_color_space_ = frame.color_space();
+    keyframe_required = true;
+
+    RTC_DCHECK(current_color_space_->matrix() != ColorSpace::MatrixID::kRGB);
+
+    SetEncoderControlParameters(AV1E_SET_COLOR_PRIMARIES, static_cast<int>(current_color_space_->primaries()));
+    SetEncoderControlParameters(AV1E_SET_TRANSFER_CHARACTERISTICS, static_cast<int>(current_color_space_->transfer()));
+    SetEncoderControlParameters(AV1E_SET_MATRIX_COEFFICIENTS, static_cast<int>(current_color_space_->matrix()));
+    SetEncoderControlParameters(AV1E_SET_COLOR_RANGE, current_color_space_->range() == ColorSpace::RangeID::kFull ? AOM_CR_FULL_RANGE : AOM_CR_STUDIO_RANGE);
+  }
+#endif
 
   std::vector<ScalableVideoController::LayerFrameConfig> layer_frames =
       svc_controller_->NextFrameConfig(keyframe_required);
