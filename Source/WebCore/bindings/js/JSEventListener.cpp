@@ -47,8 +47,11 @@
 #include <JavaScriptCore/Watchdog.h>
 #include <wtf/Ref.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSEventListener);
 using namespace JSC;
 
 JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isAttribute, CreatedFromMarkup createdFromMarkup, DOMWrapperWorld& world)

@@ -38,6 +38,7 @@
 #include <cstdint>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Variant.h>
 #include <wtf/WeakRef.h>
 
@@ -64,6 +65,7 @@ class WeakPtrImplWithEventTargetData;
 template<typename> struct InspectorCanvasArgumentProcessor;
 
 class InspectorCanvas final : public RefCountedAndCanMakeWeakPtr<InspectorCanvas> {
+    WTF_MAKE_TZONE_ALLOCATED(InspectorCanvas);
 public:
     NODELETE static Ref<InspectorCanvas> create(CanvasRenderingContext&);
     NODELETE static Ref<InspectorCanvas> create(GPUDevice&);

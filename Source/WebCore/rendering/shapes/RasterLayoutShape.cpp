@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RasterLayoutShape);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RasterShapeIntervals);
 
 class MarginIntervalGenerator {

@@ -27,6 +27,7 @@
 
 #include <WebCore/InlineDisplayBox.h>
 #include <WebCore/InlineDisplayLine.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ using Boxes = Vector<Box, 2>;
 using Lines = Vector<Line, 1>;
 
 struct Content {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Content);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(Content);
 
     void clear();
     void set(Content&& newContent);

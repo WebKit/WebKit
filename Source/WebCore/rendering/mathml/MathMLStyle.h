@@ -29,10 +29,12 @@
 
 #include "MathMLElement.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class MathMLStyle: public RefCounted<MathMLStyle> {
+    WTF_MAKE_TZONE_ALLOCATED(MathMLStyle);
 public:
     NODELETE static Ref<MathMLStyle> create();
 

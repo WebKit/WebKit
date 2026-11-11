@@ -27,10 +27,12 @@
 
 #include "ExceptionOr.h"
 #include "JSDOMGuardedObject.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class DOMAsyncIterator final : public DOMGuardedObject {
+    WTF_MAKE_TZONE_ALLOCATED(DOMAsyncIterator);
 public:
     WEBCORE_EXPORT static ExceptionOr<Ref<DOMAsyncIterator>> create(JSDOMGlobalObject&, JSC::JSValue /* iterable */);
     using Callback = Function<void(JSDOMGlobalObject*, bool, JSC::JSValue)>;

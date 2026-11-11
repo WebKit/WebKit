@@ -51,6 +51,7 @@ class GraphicsContextGL;
 template<typename> class ExceptionOr;
 
 class FakeXRView final : public RefCounted<FakeXRView> {
+    WTF_MAKE_TZONE_ALLOCATED(FakeXRView);
 public:
     static Ref<FakeXRView> create(XREye eye) { return adoptRef(*new FakeXRView(eye)); }
     using Pose = PlatformXR::FrameData::Pose;
@@ -151,6 +152,7 @@ private:
 };
 
 class WebFakeXRDevice final : public RefCounted<WebFakeXRDevice> {
+    WTF_MAKE_TZONE_ALLOCATED(WebFakeXRDevice);
 public:
     static Ref<WebFakeXRDevice> create() { return adoptRef(*new WebFakeXRDevice()); }
 

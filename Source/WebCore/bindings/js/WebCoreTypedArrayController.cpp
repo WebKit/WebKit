@@ -31,8 +31,11 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/JSArrayBuffer.h>
 #include <JavaScriptCore/JSCInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCoreTypedArrayController);
 
 WebCoreTypedArrayController::WebCoreTypedArrayController(bool allowAtomicsWait)
     : m_allowAtomicsWait(allowAtomicsWait)

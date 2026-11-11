@@ -31,9 +31,12 @@
 #include "LayoutIntegrationUtils.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextOnlySimpleLineBuilder);
 
 struct TextOnlyLineBreakResult {
     InlineContentBreaker::IsEndOfLine isEndOfLine { InlineContentBreaker::IsEndOfLine::Yes };

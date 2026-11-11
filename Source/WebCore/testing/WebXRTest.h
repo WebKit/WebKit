@@ -34,6 +34,7 @@
 #include "XRSessionMode.h"
 #include "XRSimulateUserActivationFunction.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -41,6 +42,7 @@ class Document;
 class WebXRSystem;
 
 class WebXRTest final : public RefCounted<WebXRTest> {
+    WTF_MAKE_TZONE_ALLOCATED(WebXRTest);
 public:
     struct FakeXRDeviceInit {
         bool supportsImmersive { false };

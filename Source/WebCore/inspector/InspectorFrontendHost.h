@@ -33,6 +33,7 @@
 #include <WebCore/ContextMenuProvider.h>
 #include <WebCore/InspectorFrontendClient.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -52,6 +53,7 @@ class Path2D;
 template<typename> class ExceptionOr;
 
 class InspectorFrontendHost : public RefCountedAndCanMakeWeakPtr<InspectorFrontendHost> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(InspectorFrontendHost, WEBCORE_EXPORT);
 public:
     static Ref<InspectorFrontendHost> create(InspectorFrontendClient* client, Page* frontendPage)
     {

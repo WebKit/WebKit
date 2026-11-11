@@ -28,6 +28,7 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 
@@ -44,6 +45,7 @@ class XPathResult;
 template<typename> class ExceptionOr;
 
 class XPathEvaluator : public RefCounted<XPathEvaluator> {
+    WTF_MAKE_TZONE_ALLOCATED(XPathEvaluator);
 public:
     static Ref<XPathEvaluator> create() { return adoptRef(*new XPathEvaluator); }
 

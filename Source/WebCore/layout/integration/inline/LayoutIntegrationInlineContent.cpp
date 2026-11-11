@@ -31,9 +31,12 @@
 #include "SVGTextFragment.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "TextPainter.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace LayoutIntegration {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineContent);
 
 InlineContent::InlineContent(const RenderBlockFlow& formattingContextRoot)
     : m_formattingContextRoot(&formattingContextRoot)

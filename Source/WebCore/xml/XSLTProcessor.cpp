@@ -43,9 +43,12 @@
 #include "XMLDocument.h"
 #include "markup.h"
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XSLTProcessor);
 
 static inline void transformTextStringToXHTMLDocumentString(String& text)
 {

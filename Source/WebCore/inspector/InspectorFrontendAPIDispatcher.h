@@ -29,6 +29,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -45,6 +46,7 @@ class Page;
 class InspectorFrontendAPIDispatcher final
     : public RefCounted<InspectorFrontendAPIDispatcher>
     , public CanMakeWeakPtr<InspectorFrontendAPIDispatcher> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(InspectorFrontendAPIDispatcher, WEBCORE_EXPORT);
 public:
     enum class EvaluationError { ExecutionSuspended, ContextDestroyed, InternalError };
     using ValueOrException = std::expected<JSC::JSValue, ExceptionDetails>;

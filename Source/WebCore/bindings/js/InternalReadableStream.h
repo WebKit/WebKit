@@ -28,6 +28,7 @@
 #include "ExceptionOr.h"
 #include "JSDOMGuardedObject.h"
 #include <JavaScriptCore/JSObject.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class Exception;
 template<typename> class ExceptionOr;
 
 class InternalReadableStream final : public DOMGuarded<JSC::JSObject> {
+    WTF_MAKE_TZONE_ALLOCATED(InternalReadableStream);
 public:
     static ExceptionOr<Ref<InternalReadableStream>> createFromUnderlyingSource(JSDOMGlobalObject&, JSC::JSValue underlyingSink, JSC::JSValue strategy, std::optional<double>);
     static Ref<InternalReadableStream> fromObject(JSDOMGlobalObject&, JSC::JSObject&);

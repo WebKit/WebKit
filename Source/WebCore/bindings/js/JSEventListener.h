@@ -29,6 +29,7 @@
 #include <JavaScriptCore/Weak.h>
 #include <JavaScriptCore/WeakInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
@@ -36,6 +37,7 @@
 namespace WebCore {
 
 class JSEventListener : public EventListener, public JSVMClientDataClient {
+    WTF_MAKE_TZONE_ALLOCATED(JSEventListener);
 public:
     WEBCORE_EXPORT static Ref<JSEventListener> create(JSC::JSObject& listener, JSC::JSObject& wrapper, bool isAttribute, DOMWrapperWorld&);
 

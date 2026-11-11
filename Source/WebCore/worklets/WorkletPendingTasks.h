@@ -28,6 +28,7 @@
 #include "Exception.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -39,6 +40,7 @@ using PendingTaskPromise = DOMPromiseDeferred<void>;
 
 // https://drafts.css-houdini.org/worklets/#pending-tasks-struct
 class WorkletPendingTasks : public ThreadSafeRefCounted<WorkletPendingTasks> {
+    WTF_MAKE_TZONE_ALLOCATED(WorkletPendingTasks);
 public:
     NODELETE static Ref<WorkletPendingTasks> create(Worklet&, PendingTaskPromise&&, int counter);
     ~WorkletPendingTasks();

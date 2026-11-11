@@ -29,8 +29,11 @@
 #include "Document.h"
 #include "NodeDocument.h"
 #include "SVGElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGLength);
 
 // Ensure style is up-to-date for font-relative units (e.g., ch).
 // https://www.w3.org/TR/css-values-3/#absolute-lengths

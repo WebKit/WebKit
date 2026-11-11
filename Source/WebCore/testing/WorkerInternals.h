@@ -28,6 +28,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ enum class SimulatedWebGLContextEvent : uint8_t;
 // The internals object of dedicated and shared workers. The functions that exist also in Internals
 // forward to the Internals functions.
 class WEBCORE_TESTSUPPORT_EXPORT WorkerInternals : public RefCounted<WorkerInternals> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WorkerInternals, WEBCORE_TESTSUPPORT_EXPORT);
 public:
     static Ref<WorkerInternals> create() { return adoptRef(*new WorkerInternals); }
 

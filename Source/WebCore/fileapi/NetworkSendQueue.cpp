@@ -29,8 +29,11 @@
 #include "BlobLoader.h"
 #include "ContextDestructionObserverInlines.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkSendQueue);
 
 Ref<NetworkSendQueue> NetworkSendQueue::create(ScriptExecutionContext& context, WriteString&& writeString, WriteRawData&& writeRawData, ProcessError&& processError)
 {

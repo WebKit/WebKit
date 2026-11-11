@@ -35,8 +35,11 @@
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BoxLayoutShape);
 
 static inline LayoutUnit adjustRadiusForMarginBoxShape(LayoutUnit radius, LayoutUnit margin)
 {

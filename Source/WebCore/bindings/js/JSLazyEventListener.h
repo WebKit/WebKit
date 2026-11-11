@@ -22,6 +22,7 @@
 #include "JSEventListener.h"
 #include <JavaScriptCore/SourceTaintedness.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -33,6 +34,7 @@ class LocalDOMWindow;
 class QualifiedName;
 
 class JSLazyEventListener final : public JSEventListener {
+    WTF_MAKE_TZONE_ALLOCATED(JSLazyEventListener);
 public:
     static RefPtr<JSLazyEventListener> create(Element&, const QualifiedName& attributeName, const AtomString& attributeValue);
     static RefPtr<JSLazyEventListener> create(Document&, const QualifiedName& attributeName, const AtomString& attributeValue);

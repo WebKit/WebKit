@@ -51,6 +51,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerScriptLoader::ServiceWorkerDataManager);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerScriptLoader);
 
 static Lock workerScriptLoaderControlledCallbackMapLock;

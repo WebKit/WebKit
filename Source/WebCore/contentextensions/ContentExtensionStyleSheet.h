@@ -31,6 +31,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -40,6 +41,7 @@ class Document;
 namespace ContentExtensions {
 
 class ContentExtensionStyleSheet : public RefCounted<ContentExtensionStyleSheet> {
+    WTF_MAKE_TZONE_ALLOCATED(ContentExtensionStyleSheet);
 public:
     static Ref<ContentExtensionStyleSheet> create(Document& document)
     {

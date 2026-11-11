@@ -80,7 +80,7 @@ struct InspectorOverlayHighlight {
     };
 
     struct Config {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Config);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(Config);
         Color content;
         Color contentOutline;
         Color padding;
@@ -179,7 +179,7 @@ public:
     using Highlight = InspectorOverlayHighlight;
 
     struct Grid {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Grid);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(Grid);
 
         struct Config {
             WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Config);

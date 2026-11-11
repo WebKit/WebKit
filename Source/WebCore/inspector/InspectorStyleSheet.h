@@ -155,6 +155,7 @@ struct InspectorStyleProperty {
 };
 
 class InspectorStyle final : public RefCounted<InspectorStyle> {
+    WTF_MAKE_TZONE_ALLOCATED(InspectorStyle);
 public:
     NODELETE static Ref<InspectorStyle> create(const InspectorCSSId& styleId, Ref<CSSStyleDeclaration>&&, InspectorStyleSheet* parentStyleSheet);
     ~InspectorStyle();
@@ -181,6 +182,7 @@ private:
 };
 
 class InspectorStyleSheet : public RefCountedAndCanMakeWeakPtr<InspectorStyleSheet> {
+    WTF_MAKE_TZONE_ALLOCATED(InspectorStyleSheet);
 public:
     class Listener {
     public:
@@ -266,6 +268,7 @@ private:
 };
 
 class InspectorStyleSheetForInlineStyle final : public InspectorStyleSheet {
+    WTF_MAKE_TZONE_ALLOCATED(InspectorStyleSheetForInlineStyle);
 public:
     static Ref<InspectorStyleSheetForInlineStyle> create(Inspector::IdentifierRegistry&, const String& id, Ref<StyledElement>&&, Inspector::Protocol::CSS::StyleSheetOrigin, Listener*);
 

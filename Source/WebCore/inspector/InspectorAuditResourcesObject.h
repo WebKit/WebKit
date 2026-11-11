@@ -37,6 +37,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
 
 namespace WebCore {
@@ -46,6 +47,7 @@ class Document;
 template<typename> class ExceptionOr;
 
 class InspectorAuditResourcesObject : public RefCountedAndCanMakeWeakPtr<InspectorAuditResourcesObject> {
+    WTF_MAKE_TZONE_ALLOCATED(InspectorAuditResourcesObject);
 public:
     static Ref<InspectorAuditResourcesObject> create(Inspector::InspectorAuditAgent& auditAgent)
     {

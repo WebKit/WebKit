@@ -36,11 +36,14 @@
 #include "ExceptionOr.h"
 #include "FrameDestructionObserverInlines.h"
 #include "InspectorResourceUtilities.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorAuditResourcesObject);
 
 using namespace Inspector;
 

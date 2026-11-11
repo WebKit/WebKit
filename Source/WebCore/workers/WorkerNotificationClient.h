@@ -29,6 +29,7 @@
 
 #include "NotificationClient.h"
 #include "ScriptExecutionContextIdentifier.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -37,6 +38,7 @@ class WeakPtrImplWithEventTargetData;
 class WorkerGlobalScope;
 
 class WorkerNotificationClient : public NotificationClient, public ThreadSafeRefCounted<WorkerNotificationClient> {
+    WTF_MAKE_TZONE_ALLOCATED(WorkerNotificationClient);
 public:
     NODELETE static Ref<WorkerNotificationClient> create(WorkerGlobalScope&);
 

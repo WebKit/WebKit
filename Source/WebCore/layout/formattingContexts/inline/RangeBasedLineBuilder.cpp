@@ -29,9 +29,12 @@
 #include "InlineFormattingContext.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RangeBasedLineBuilder);
 
 NODELETE static inline bool hasInlineBoxesOnly(size_t inlineBoxCount, size_t numberOfInlineItems)
 {

@@ -21,9 +21,12 @@
 
 #include "DOMPlugin.h"
 #include "Navigator.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMMimeType);
 
 Ref<DOMMimeType> DOMMimeType::create(Navigator& navigator, const MimeClassInfo& info, DOMPlugin& enabledPlugin)
 {

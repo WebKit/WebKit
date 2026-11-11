@@ -27,6 +27,7 @@
 
 #include "SVGAttributeAnimator.h"
 #include "SVGPropertyOwner.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -41,6 +42,7 @@ class WeakPtrImplWithEventTargetData;
 // Provides type-erased interface for operations that don't require concrete type information.
 // For type-safe instance animation operations, see SVGAnimatedProperty<Derived> CRTP template.
 class SVGAnimatedPropertyBase : public ThreadSafeRefCounted<SVGAnimatedPropertyBase>, public SVGPropertyOwner {
+    WTF_MAKE_TZONE_ALLOCATED(SVGAnimatedPropertyBase);
 public:
     virtual ~SVGAnimatedPropertyBase() = default;
 

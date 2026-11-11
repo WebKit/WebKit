@@ -29,9 +29,12 @@
 #include "IDLTypes.h"
 #include "JSDOMMapLike.h"
 #include <ranges>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalsMapLike);
 
 InternalsMapLike::InternalsMapLike()
 {

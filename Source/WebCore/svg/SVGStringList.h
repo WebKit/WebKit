@@ -26,10 +26,12 @@
 #pragma once
 
 #include "SVGPrimitiveList.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGStringList final : public SVGPrimitiveList<String> {
+    WTF_MAKE_TZONE_ALLOCATED(SVGStringList);
     using Base = SVGPrimitiveList<String>;
     using Base::Base;
     using Base::m_items;

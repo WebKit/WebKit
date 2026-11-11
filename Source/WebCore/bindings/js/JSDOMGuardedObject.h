@@ -29,12 +29,14 @@
 #include <JavaScriptCore/WeakInlines.h>
 #include <WebCore/ActiveDOMCallback.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class JSDOMGlobalObject;
 
 class WEBCORE_EXPORT DOMGuardedObject : public RefCounted<DOMGuardedObject>, public ActiveDOMCallback {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DOMGuardedObject, WEBCORE_EXPORT);
 public:
     ~DOMGuardedObject();
 

@@ -267,6 +267,8 @@ private:
     };
 
     struct PendingStartElementNSCallback : public PendingCallback {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(PendingStartElementNSCallback);
+    public:
         virtual ~PendingStartElementNSCallback()
         {
             xmlFree(xmlLocalName);
@@ -296,6 +298,8 @@ private:
     };
 
     struct PendingEndElementNSCallback : public PendingCallback {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(PendingEndElementNSCallback);
+    public:
         void call(XMLDocumentParser* parser) override
         {
             parser->endElementNs();
@@ -303,6 +307,8 @@ private:
     };
 
     struct PendingCharactersCallback : public PendingCallback {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(PendingCharactersCallback);
+    public:
         void call(XMLDocumentParser* parser) override
         {
             parser->characters(s.span());
@@ -312,6 +318,8 @@ private:
     };
 
     struct PendingProcessingInstructionCallback : public PendingCallback {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(PendingProcessingInstructionCallback);
+    public:
         virtual ~PendingProcessingInstructionCallback()
         {
             xmlFree(target);
@@ -328,6 +336,8 @@ private:
     };
 
     struct PendingCDATABlockCallback : public PendingCallback {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(PendingCDATABlockCallback);
+    public:
         void call(XMLDocumentParser* parser) override
         {
             parser->cdataBlock(s.span());
@@ -337,6 +347,8 @@ private:
     };
 
     struct PendingCommentCallback : public PendingCallback {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(PendingCommentCallback);
+    public:
         virtual ~PendingCommentCallback()
         {
             xmlFree(s);
@@ -351,6 +363,8 @@ private:
     };
 
     struct PendingInternalSubsetCallback : public PendingCallback {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(PendingInternalSubsetCallback);
+    public:
         virtual ~PendingInternalSubsetCallback()
         {
             xmlFree(name);
@@ -369,6 +383,8 @@ private:
     };
 
     struct PendingErrorCallback: public PendingCallback {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(PendingErrorCallback);
+    public:
         virtual ~PendingErrorCallback()
         {
             xmlFree(message);

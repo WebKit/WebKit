@@ -31,6 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,6 +41,7 @@ class WebCoreOpaqueRoot;
 struct ServiceWorkerClientData;
 
 class ServiceWorkerClients : public RefCounted<ServiceWorkerClients> {
+    WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerClients);
 public:
     static Ref<ServiceWorkerClients> create()
     {

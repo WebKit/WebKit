@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SVGAnimatedPrimitiveProperty.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,6 +40,7 @@ enum class IsHrefProperty : bool {
 using StringOrTrustedScriptURL = Variant<String, Ref<TrustedScriptURL>>;
 
 class SVGAnimatedString : public SVGAnimatedPrimitiveProperty<String> {
+    WTF_MAKE_TZONE_ALLOCATED(SVGAnimatedString);
 public:
     static Ref<SVGAnimatedString> create(SVGElement* contextElement, const IsHrefProperty& isHrefProperty = IsHrefProperty::No)
     {

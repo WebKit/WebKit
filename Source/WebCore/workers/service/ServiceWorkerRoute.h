@@ -32,6 +32,7 @@
 #include <WebCore/RouterSourceEnum.h>
 #include <WebCore/RunningStatus.h>
 #include <optional>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -58,7 +59,7 @@ struct ServiceWorkerRoutePattern {
 };
 
 struct ServiceWorkerRouteCondition {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ServiceWorkerRouteCondition);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(ServiceWorkerRouteCondition, WEBCORE_EXPORT);
 
     ServiceWorkerRouteCondition isolatedCopy() &&;
     ServiceWorkerRouteCondition isolatedCopy() const &;

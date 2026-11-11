@@ -217,6 +217,7 @@ private:
 };
 
 class EventFiredCallback final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(EventFiredCallback);
 public:
     NODELETE static Ref<EventFiredCallback> create(InspectorDOMAgent& domAgent)
     {

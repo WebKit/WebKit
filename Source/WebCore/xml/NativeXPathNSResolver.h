@@ -27,12 +27,14 @@
 
 #include "XPathNSResolver.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class Node;
 
 class NativeXPathNSResolver : public XPathNSResolver {
+    WTF_MAKE_TZONE_ALLOCATED(NativeXPathNSResolver);
 public:
     static Ref<NativeXPathNSResolver> create(Ref<Node>&& node) { return adoptRef(*new NativeXPathNSResolver(WTF::move(node))); }
     virtual ~NativeXPathNSResolver();

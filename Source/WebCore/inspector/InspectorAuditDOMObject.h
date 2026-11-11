@@ -29,6 +29,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ class VoidCallback;
 template<typename> class ExceptionOr;
 
 class InspectorAuditDOMObject : public RefCounted<InspectorAuditDOMObject> {
+    WTF_MAKE_TZONE_ALLOCATED(InspectorAuditDOMObject);
 public:
     static Ref<InspectorAuditDOMObject> create(PageAuditAgent& auditAgent)
     {

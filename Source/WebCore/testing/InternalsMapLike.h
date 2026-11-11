@@ -28,6 +28,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -35,6 +36,7 @@ namespace WebCore {
 class DOMMapAdapter;
 
 class InternalsMapLike : public RefCounted<InternalsMapLike> {
+    WTF_MAKE_TZONE_ALLOCATED(InternalsMapLike);
 public:
     static Ref<InternalsMapLike> create() { return adoptRef(*new InternalsMapLike); }
 

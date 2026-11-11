@@ -22,6 +22,7 @@
 #pragma once
 
 #include <WebCore/JSDOMGlobalObject.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -32,6 +33,7 @@ class WindowProxy;
 typedef HashMap<void*, JSC::Weak<JSC::JSObject>> DOMObjectWrapperMap;
 
 class DOMWrapperWorld : public RefCounted<DOMWrapperWorld>, public CanMakeSingleThreadWeakPtr<DOMWrapperWorld> {
+    WTF_MAKE_TZONE_ALLOCATED(DOMWrapperWorld);
 public:
     enum class Type {
         Normal,   // Main (e.g. Page)

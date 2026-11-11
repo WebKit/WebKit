@@ -29,8 +29,11 @@
 #include "RenderView.h"
 #include <stdio.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CounterNode);
 
 CounterNode::CounterNode(RenderElement& owner, OptionSet<CounterNode::Type> type, int value)
     : m_type(type)

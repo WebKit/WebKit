@@ -31,8 +31,11 @@
 #include "WebFakeXRDevice.h"
 #include "XRHandJoint.h"
 #include <ranges>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebFakeXRInputController);
 
 using InputSource = PlatformXR::FrameData::InputSource;
 using InputSourceButton = PlatformXR::FrameData::InputSourceButton;

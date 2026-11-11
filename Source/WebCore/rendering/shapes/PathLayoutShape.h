@@ -26,11 +26,13 @@
 
 #include <WebCore/FloatRect.h>
 #include <WebCore/LayoutShape.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // shape-outside from an arbitrary path, shape() or path() held as the flattened outline
 class PathLayoutShape final : public LayoutShape {
+    WTF_MAKE_TZONE_ALLOCATED(PathLayoutShape);
     WTF_MAKE_NONCOPYABLE(PathLayoutShape);
 public:
     PathLayoutShape(Vector<Vector<FloatPoint>>&& polylines, const FloatRect& bounds)
