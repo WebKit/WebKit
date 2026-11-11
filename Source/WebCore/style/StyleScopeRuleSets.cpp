@@ -162,9 +162,14 @@ void ScopeRuleSets::initializeUserStyle()
 
     // Quirk style sheets are author-level sheets, but they are cascaded in their own origin above all others.
     auto quirkStyle = RuleSet::create();
-    RuleSetBuilder quirkBuilder(quirkStyle, mediaQueryEvaluator, &m_styleResolver);
-    for (auto& sheet : extensionStyleSheets->quirkStyleSheets())
-        quirkBuilder.addRulesFromSheet(protect(sheet->contents()));
+    {
+        // The builder registers resolver-mutating rules (e.g. @keyframes) on destruction.
+        m_styleResolver.setIsCollectingQuirkRules(true);
+        RuleSetBuilder quirkBuilder(quirkStyle, mediaQueryEvaluator, &m_styleResolver);
+        for (auto& sheet : extensionStyleSheets->quirkStyleSheets())
+            quirkBuilder.addRulesFromSheet(protect(sheet->contents()));
+    }
+    m_styleResolver.setIsCollectingQuirkRules(false);
 
     if (quirkStyle->ruleCount() > 0)
         m_quirkStyle = WTF::move(quirkStyle);
