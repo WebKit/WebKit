@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../resources/js-test.js"></script>
+    <script src="../resources/accessibility-helper.js"></script>
+  </head>
+  <body>
+    <div id="content">
+      <math id="math">
+        <semantics id="semantics">
+          <mi>x</mi>
+          <annotation id="annotation">Annotation text</annotation>
+          <annotation-xml id="annotation-xml" style="display: inline-block">
+            <mi>y</mi>
+          </annotation-xml>
+        </semantics>
+      </math>
+    </div>
+    <p id="description"></p>
+    <pre id="tree"></pre>
+    <div id="console"></div>
+    <script>
+      description(
+        "Verifies accessibility roles for MathML semantics, annotation, and annotation-xml elements."
+      );
+
+      if (window.accessibilityController) {
+        debug("\nAccessibility Tree:");
+        dumpAccessibilityTree(
+          accessibilityController.accessibleElementById("math"),
+          null,
+          0,
+          false,
+          false,
+          true
+        );
+        document.getElementById("content").style.visibility = "hidden";
+      }
+    </script>
+  </body>
+</html>

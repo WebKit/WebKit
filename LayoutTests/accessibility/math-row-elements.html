@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../resources/js-test.js"></script>
+    <script src="../resources/accessibility-helper.js"></script>
+  </head>
+  <body>
+    <div id="content">
+      <math id="math">
+        <mrow id="row">
+          <mi>a</mi>
+        </mrow>
+        <mpadded id="padded" width="+10px">
+          <mi>b</mi>
+        </mpadded>
+        <mphantom id="phantom">
+          <mi>c</mi>
+        </mphantom>
+        <merror id="error">
+          <mi>d</mi>
+        </merror>
+        <mstyle id="style" mathcolor="blue">
+          <mi>e</mi>
+        </mstyle>
+        <maction id="action" actiontype="statusline">
+          <mi>f</mi>
+          <mtext>info</mtext>
+        </maction>
+      </math>
+    </div>
+    <p id="description"></p>
+    <pre id="tree"></pre>
+    <div id="console"></div>
+    <script>
+      description(
+        "Verifies that MathML row-like elements (mrow, mpadded, mphantom, merror, mstyle, maction) expose the Section role on Linux."
+      );
+
+      if (window.accessibilityController) {
+        debug("Accessibility Tree:");
+        dumpAccessibilityTree(
+          accessibilityController.accessibleElementById("math"),
+          null,
+          0,
+          false,
+          false,
+          true
+        );
+        document.getElementById("content").style.visibility = "hidden";
+      }
+    </script>
+  </body>
+</html>

@@ -322,13 +322,15 @@ String AccessibilityObject::subrolePlatformString() const
     if (ariaRoleAttribute() == AccessibilityRole::TextGroup)
         return "AXApplicationGroup"_s;
 
-    if (role == AccessibilityRole::MathElement) {
+    if (role == AccessibilityRole::MathElement || isMathElement()) {
         if (isMathFraction())
             return "AXMathFraction"_s;
         if (isMathFenced())
             return "AXMathFenced"_s;
         if (isMathSubscriptSuperscript())
             return "AXMathSubscriptSuperscript"_s;
+        if (isMathEmpty())
+            return "AXEmptyGroup"_s;
         if (isMathRow())
             return "AXMathRow"_s;
         if (isMathUnderOver())
