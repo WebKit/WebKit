@@ -892,6 +892,9 @@ private:
 
     enum class QuickTierUpCheck : bool { Apply, Ignore };
     template<QuickTierUpCheck> void optimizeAfterWarmUpImpl();
+#if ENABLE(DFG_JIT)
+    void optimizeAfterWarmUpForDeferredCompilation();
+#endif
 
     template<typename Visitor> ALWAYS_INLINE void visitChildren(Visitor&);
 
