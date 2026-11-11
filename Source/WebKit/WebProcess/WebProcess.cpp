@@ -1609,7 +1609,9 @@ RefPtr<GPUProcessConnection> WebProcess::existingGPUProcessConnectionOffMainThre
 Seconds WebProcess::gpuProcessTimeoutDuration() const
 {
     constexpr Seconds defaultTimeoutDuration = 15_s;
-    return m_childProcessDebuggabilityEnabled ? Seconds::infinity() : defaultTimeoutDuration;
+    if (m_childProcessDebuggabilityEnabled)
+        return Seconds::infinity();
+    return m_gpuProcessTimeoutForTesting > 0_s ? m_gpuProcessTimeoutForTesting : defaultTimeoutDuration;
 }
 
 void WebProcess::gpuProcessConnectionClosed()
@@ -2586,6 +2588,7 @@ void WebProcess::updateProcessPreferences(const WebPreferencesStore& store)
     DatabaseManager::singleton().setIsAvailable(store.getBoolValueForKey(WebPreferencesKey::databasesEnabledKey()));
 
     setChildProcessDebuggabilityEnabled(store.getBoolValueForKey(WebPreferencesKey::childProcessDebuggabilityEnabledKey()));
+    m_gpuProcessTimeoutForTesting = Seconds { store.getDoubleValueForKey(WebPreferencesKey::webProcessGPUProcessTimeoutForTestingKey()) };
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (auto threshold = store.getUInt32ValueForKey(WebPreferencesKey::iFrameResourceMonitorNetworkUsageThresholdForTestingKey()))

@@ -987,6 +987,7 @@ private:
 #endif
 
     bool m_childProcessDebuggabilityEnabled { false };
+    Seconds m_gpuProcessTimeoutForTesting;
 
 #if ENABLE(GPU_PROCESS)
     bool m_useGPUProcessForCanvasRendering { false };

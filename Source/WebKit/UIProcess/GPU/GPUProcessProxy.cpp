@@ -235,7 +235,12 @@ GPUProcessProxy::GPUProcessProxy()
 #endif
 
     // Initialize the GPU process.
-    sendWithAsyncReply(Messages::GPUProcess::InitializeGPUProcess(WTF::move(parameters)), [initializationActivityAndGrant = initializationActivityAndGrant()] { });
+    sendWithAsyncReply(Messages::GPUProcess::InitializeGPUProcess(WTF::move(parameters)), [weakThis = WeakPtr { *this }, initializationActivityAndGrant = initializationActivityAndGrant()](IPC::Connection* connection) {
+        if (!connection)
+            return;
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->beginResponsivenessChecks();
+    });
 
 #if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS) && ENABLE(AUDIO_COMPONENT_SERVER_REGISTRATIONS_IN_GPU_PROCESS)
     auto registrations = fetchAudioComponentServerRegistrations();
@@ -668,8 +673,6 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     if (RefPtr networkProcess = NetworkProcessProxy::defaultNetworkProcess())
         networkProcess->sendXPCEndpointToProcess(*this);
 #endif
-
-    beginResponsivenessChecks();
 
     for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->gpuProcessDidFinishLaunching(processID());

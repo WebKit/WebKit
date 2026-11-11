@@ -252,7 +252,9 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
     parameters.defaultRequestTimeoutInterval = API::URLRequest::defaultTimeoutInterval();
 
     WebProcessPool::platformInitializeNetworkProcess(parameters);
-    sendWithAsyncReply(Messages::NetworkProcess::InitializeNetworkProcess(WTF::move(parameters)), [weakThis = WeakPtr { *this }, initializationActivityAndGrant = initializationActivityAndGrant()] {
+    sendWithAsyncReply(Messages::NetworkProcess::InitializeNetworkProcess(WTF::move(parameters)), [weakThis = WeakPtr { *this }, initializationActivityAndGrant = initializationActivityAndGrant()](IPC::Connection* connection) {
+        if (!connection)
+            return;
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->beginResponsivenessChecks();
     });
