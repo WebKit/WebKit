@@ -483,7 +483,8 @@ bool BlockFormattingUtils::isScrollingHorizontalMarquee(const RenderBox& box)
 
 bool BlockFormattingUtils::isFormControlBlockContainer(const RenderBox& box)
 {
-    return box.isRenderTextControl() || box.isRenderListBox() || box.isRenderProgress() || box.isRenderMeter() || box.isRenderFileUploadControl();
+    return box.isRenderTextControl() || box.isRenderListBox() || box.isRenderProgress() || box.isRenderMeter() || box.isRenderFileUploadControl()
+        || (box.type() == RenderObject::Type::BlockFlow && is<HTMLInputElement>(box.element()));
 }
 
 bool BlockFormattingUtils::establishesIndependentFormattingContext(const RenderBox& box)
