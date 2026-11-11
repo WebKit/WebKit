@@ -39,6 +39,7 @@
 #include "PDFDisplayMode.h"
 #include "PageLoadState.h"
 #include "ProcessActivityGroup.h"
+#include "ProcessTerminationReason.h"
 #include "ProcessThrottler.h"
 #include "ScrollingAccelerationCurve.h"
 #include "TextExtractionCache.h"
@@ -68,6 +69,7 @@
 #include <WebCore/ViewportSegments.h>
 #include <pal/HysteresisActivity.h>
 #include <wtf/CallbackAggregator.h>
+#include <wtf/Markable.h>
 #include <wtf/UUID.h>
 
 #if ENABLE(APPLE_PAY)
@@ -195,6 +197,17 @@ struct TouchEventTracking {
 
 #endif
 
+struct SubframeTerminationEvent {
+    unsigned identifier { 1 };
+    ProcessTerminationReason reason { ProcessTerminationReason::Crash };
+    bool clientNotified { false };
+};
+
+struct SubframeTerminationEventMarkableTraits {
+    static bool isEmptyValue(const SubframeTerminationEvent& event) { return !event.identifier; }
+    static SubframeTerminationEvent emptyValue() { return { .identifier = 0 }; }
+};
+
 struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 #if ENABLE(APPLE_PAY)
     , WebPaymentCoordinatorProxy::Client
@@ -295,6 +308,8 @@ public:
     std::optional<PrivateClickMeasurementAndMetadata> privateClickMeasurement;
     WebCore::MediaProducerMediaStateFlags reportedMediaCaptureState;
     RunLoop::Timer resetRecentCrashCountTimer;
+    Markable<SubframeTerminationEvent, SubframeTerminationEventMarkableTraits> subframeTerminationEvent;
+    unsigned lastSubframeTerminationEventIdentifier { 0 };
     WebCore::RectEdges<bool> rubberBandableEdges { true, true, true, true };
     bool alwaysBounceVertical { true };
     bool alwaysBounceHorizontal { true };

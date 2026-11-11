@@ -1987,6 +1987,16 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
         protect(termination.page)->dispatchProcessDidTerminate(pid, termination.scope, reason);
 }
 
+bool WebProcessProxy::detectAndHandleTermination()
+{
+    if (state() != State::Running || !wasTerminated())
+        return false;
+
+    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "detectAndHandleTermination: process exited before its connection was closed");
+    processDidTerminateOrFailedToLaunch(terminationReason());
+    return true;
+}
+
 void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName, const Vector<uint32_t>& indexOfObjectFailingDecoding)
 {
     logInvalidMessage(connection, messageName);
