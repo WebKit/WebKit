@@ -3404,18 +3404,20 @@ bool MediaPlayerPrivateAVFoundationObjC::hasAudio() const
 
 bool MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless() const
 {
-    bool wirelessTarget = false;
+    RefPtr playbackTarget = m_playbackTarget;
 
-#if !PLATFORM(IOS_FAMILY) || ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
-    if (RefPtr playbackTarget = m_playbackTarget) {
-        if (playbackTarget->targetType() == MediaPlaybackTarget::Type::AVOutputContext)
-            wirelessTarget = m_avPlayer && m_avPlayer.get().externalPlaybackActive;
-        else
-            wirelessTarget = m_shouldPlayToPlaybackTarget && playbackTarget->hasActiveRoute();
+#if !PLATFORM(IOS_FAMILY)
+    if (!playbackTarget) {
+        INFO_LOG(LOGIDENTIFIER, false);
+        return false;
     }
-#else
-    wirelessTarget = m_avPlayer && m_avPlayer.get().externalPlaybackActive;
 #endif
+
+    bool wirelessTarget;
+    if (playbackTarget && playbackTarget->targetType() != MediaPlaybackTarget::Type::AVOutputContext)
+        wirelessTarget = m_shouldPlayToPlaybackTarget && playbackTarget->hasActiveRoute();
+    else
+        wirelessTarget = [m_avPlayer isExternalPlaybackActive];
 
     INFO_LOG(LOGIDENTIFIER, wirelessTarget);
 
@@ -3514,22 +3516,17 @@ String MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetName() const
     if (!m_avPlayer)
         return emptyString();
 
-    String wirelessTargetName;
+    RefPtr playbackTarget = m_playbackTarget;
 
-#if !PLATFORM(IOS_FAMILY) || ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
-    if (RefPtr playbackTarget = m_playbackTarget) {
-#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
-        if (playbackTarget->targetType() == MediaPlaybackTarget::Type::AVOutputContext)
-            wirelessTargetName = externalDeviceDisplayNameForPlayer(m_avPlayer.get()).get();
-        else
-#endif
-            wirelessTargetName = playbackTarget->deviceName();
-    }
+#if PLATFORM(IOS_FAMILY)
+    if (!playbackTarget || playbackTarget->targetType() == MediaPlaybackTarget::Type::AVOutputContext)
+        return externalDeviceDisplayNameForPlayer(m_avPlayer.get()).get();
 #else
-    wirelessTargetName = externalDeviceDisplayNameForPlayer(m_avPlayer.get()).get();
+    if (!playbackTarget)
+        return { };
 #endif
 
-    return wirelessTargetName;
+    return playbackTarget->deviceName();
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::wirelessVideoPlaybackDisabled() const
