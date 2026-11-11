@@ -230,11 +230,13 @@ public:
     WEBCORE_EXPORT void setPageZoomFactor(float);
     WEBCORE_EXPORT void setTextZoomFactor(float);
     WEBCORE_EXPORT void setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor);
+    WEBCORE_EXPORT void frameOwnerZoomDidChange();
 
     float pageZoomFactor() const { return m_pageZoomFactor; }
     // The zoom of this frame's document. Use it to convert between CSS and layout units.
-    float effectiveZoomFactor() const { return m_pageZoomFactor; }
+    float effectiveZoomFactor() const { return m_pageZoomFactor * m_frameOwnerZoomFactor; }
     float textZoomFactor() const { return m_textZoomFactor; }
+    float frameOwnerZoomFactor() const { return m_frameOwnerZoomFactor; }
 
     float frameOwnerZoomFactorForChild(const Frame&) const final;
 
@@ -437,6 +439,7 @@ private:
 
     float m_pageZoomFactor;
     float m_textZoomFactor;
+    float m_frameOwnerZoomFactor { 1 };
     ScrollbarMode m_scrollingMode { ScrollbarMode::Auto };
 
     int m_activeDOMObjectsAndAnimationsSuspendedCount { 0 };

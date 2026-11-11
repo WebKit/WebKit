@@ -376,9 +376,18 @@ void Frame::stopForBackForwardCache()
     }
 }
 
+static void updateLocalChildrenFrameOwnerZoom(Frame& frame)
+{
+    for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (RefPtr localChild = dynamicDowncast<LocalFrame>(child))
+            localChild->frameOwnerZoomDidChange();
+    }
+}
+
 void Frame::updateFrameTreeSyncData(Ref<FrameTreeSyncData>&& data)
 {
     m_frameTreeSyncData = WTF::move(data);
+    updateLocalChildrenFrameOwnerZoom(*this);
 }
 
 void Frame::updateFrameTreeSyncData(const FrameTreeSyncSerializationData& data)
@@ -413,6 +422,7 @@ void Frame::updateFrameTreeSyncData(const FrameTreeSyncSerializationData& data)
     protect(frameTreeSyncData())->update(data);
 
     invalidateChildFrameForDarkAppearanceChange(oldChildrenFrameLayoutMap, m_frameTreeSyncData->frameGeometry.childrenFrameLayoutInfo);
+    updateLocalChildrenFrameOwnerZoom(*this);
 }
 
 bool Frame::frameCanCreatePaymentSession() const
@@ -446,17 +456,8 @@ float Frame::frameScaleFactor() const
 {
     RefPtr page = this->page();
 
-    if (!page)
+    if (!page || !isMainFrame())
         return 1.0;
-
-    // https://github.com/w3c/csswg-drafts/issues/9644
-    // Check if this frame's owner element (iframe) has CSS zoom applied.
-    if (!isMainFrame()) {
-        if (RefPtr parentFrame = tree().parent())
-            return parentFrame->frameOwnerZoomFactorForChild(*this);
-
-        return 1.0;
-    }
 
     if (page->delegatesScaling())
         return 1;

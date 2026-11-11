@@ -1,0 +1,6 @@
+
+PASS Content that fits does not scroll at zoom 0.5
+PASS Content that fits does not scroll at zoom 2
+PASS Tall content scrolls exactly to its bottom at zoom 0.5
+PASS Tall content scrolls exactly to its bottom at zoom 2
+

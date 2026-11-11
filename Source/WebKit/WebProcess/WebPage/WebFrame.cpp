@@ -656,6 +656,8 @@ void WebFrame::commitProvisionalFrame()
         ownerRenderer->setWidget(localFrame->view());
 
     localFrame->setOwnerElement(ownerElement.get());
+    // Reading the owner zoom needs the parent and owner element set above.
+    localFrame->frameOwnerZoomDidChange();
     if (remoteFrame->isMainFrame())
         corePage->setMainFrame(*localFrame);
     localFrame->takeWindowProxyAndOpenerFrom(*remoteFrame);

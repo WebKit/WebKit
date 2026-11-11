@@ -1870,8 +1870,7 @@ double LocalDOMWindow::devicePixelRatio() const
         return 0.0;
 
     // Page zoom applies to all frames synchronously, so include it in devicePixelRatio
-    // for both main frame and iframes. frameScaleFactor() doesn't include page zoom
-    // since page zoom is applied globally for rendering.
+    // for both main frame and iframes, along with the owner's CSS zoom for an iframe.
     auto frameScaleRatio = frame->frameScaleFactor() * frame->effectiveZoomFactor();
     return page->deviceScaleFactor() * frameScaleRatio;
 }
