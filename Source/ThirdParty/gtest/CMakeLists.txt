@@ -35,6 +35,11 @@ endif ()
 target_include_directories(gtest PRIVATE ${GTEST_INCLUDE_DIRECTORIES})
 
 WEBKIT_ADD_TARGET_CXX_FLAGS(gtest -Wno-undef)
+# Like Xcode, build gtest with exceptions so that a test which throws (including
+# an Objective-C exception) fails instead of terminating the test runner.
+if (PORT STREQUAL "Cocoa")
+    target_compile_options(gtest PRIVATE -fexceptions)
+endif ()
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     WEBKIT_ADD_TARGET_CXX_FLAGS(gtest -Wno-stringop-truncation
                                       -Wno-suggest-attribute=format)
