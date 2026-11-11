@@ -22,6 +22,7 @@
 
 import copy
 import json
+import logging
 import os
 import re
 import shutil
@@ -32,7 +33,7 @@ from unittest.mock import patch
 
 from webkitcorepy import LoggerCapture, OutputCapture, run, testing, mocks as wkmocks
 from webkitcorepy.mocks import Time as MockTime
-from webkitscmpy import Commit, Contributor, local, mocks, remote
+from webkitscmpy import Commit, Contributor, local, log, mocks, remote
 
 
 class TestGit(testing.PathTestCase):
@@ -806,6 +807,18 @@ CommitDate: {time_c}
         with mocks.local.Git(self.path, git_svn=True), OutputCapture():
             self.assertEqual(local.Git.config()['user.name'], 'Tim Apple')
             self.assertEqual(local.Git.config()['sendemail.transferencoding'], 'base64')
+
+    def test_global_config_missing(self):
+        self.addCleanup(local.Git.config.clear)
+        with wkmocks.Subprocess(
+            wkmocks.Subprocess.Route(
+                local.Git.executable(), 'config', '-l', '--global',
+                completion=wkmocks.ProcessCompletion(returncode=128),
+            ),
+        ), OutputCapture() as captured, LoggerCapture(logger=log, level=logging.INFO) as logs:
+            self.assertEqual(local.Git.config(cached=False), {})
+            self.assertEqual(captured.stderr.getvalue(), '')
+            self.assertIn('No global git config found', logs.log.getvalue())
 
     def test_project_config(self):
         with mocks.local.Git(self.path, git_svn=True):
