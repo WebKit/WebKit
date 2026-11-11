@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.cb { position: relative; display: inline-block; vertical-align: top; width: 200px; height: 80px; border: 1px solid; margin: 0 2px 4px 0; }
+td { border: 1px solid gray; }
+</style>
+<div class="cb"><table style="position: absolute; left: 10px; top: 5px; background: lightblue"><tr><td>cell one</td><td>two</td></tr></table></div>
+<div class="cb"><table style="position: absolute; right: 0; bottom: 0; width: 50px; background: lightblue"><tr><td>wider than fifty pixels</td></tr></table></div>
+<div class="cb"><table style="position: absolute; left: 0; right: 0; background: lightblue"><tr><td>not stretched by insets</td></tr></table></div>
+<div class="cb"><table style="position: absolute; left: 20px; width: 50%; height: 50%; background: lightblue; border-collapse: collapse"><caption>cap</caption><tr><td>percent</td></tr></table></div>
+<div class="cb"><table style="position: absolute; justify-self: center; left: 0; right: 0; background: lightblue"><tr><td>centered</td></tr></table></div>
+<div class="cb">text <table style="position: absolute; background: lightblue"><tr><td>static position</td></tr></table> after</div>
+<div class="cb"><select multiple style="position: absolute; right: 5px; top: 5px"><option>one</option><option>two</option></select></div>
+<div class="cb"><textarea style="position: absolute; left: 5px; bottom: 5px; width: 100px">area</textarea></div>
+<div class="cb"><input style="position: absolute; left: 0; right: 0; top: 30px" value="stretched input"><progress style="position: absolute; top: 5px" value="0.5"></progress></div>
+<div class="cb"><input type="search" style="position: absolute; bottom: 0; right: 0" value="s"><meter style="position: absolute; left: 0; top: 0" value="0.3"></meter></div>
