@@ -402,6 +402,10 @@ http/tests/site-isolation/scrolling/latching-stays-on-cross-origin-iframe-when-m
 http/tests/site-isolation/scrolling/latching-stays-on-mainframe-when-mouse-moves-to-cross-origin-iframe.html [ Skip ]
 http/tests/site-isolation/scrolling/dynamically-add-remove-wheel-listener-in-cross-origin-iframe.html [ Skip ]
 http/tests/site-isolation/scrolling/latching-with-synchronous-wheel-listener-across-processes.html [ Skip ]
+http/tests/site-isolation/scrolling/mouse-wheel-scroll-chains-from-listbox-at-its-end-in-cross-site-iframe.html [ Skip ]
+http/tests/site-isolation/scrolling/wheel-scroll-chains-from-cross-site-iframe-with-wheel-event-listener.html [ Skip ]
+http/tests/site-isolation/scrolling/wheel-scroll-listbox-in-cross-site-iframe.html [ Skip ]
+http/tests/site-isolation/scrolling/wheel-scroll-listbox-in-multiple-root-frames.html [ Skip ]
 
 # This test requires alpha-channel video support.
 compositing/video/video-background-color.html [ WontFix ]

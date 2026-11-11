@@ -1654,6 +1654,8 @@ public:
     void didRemoveEventTargetNode(Node&);
 
     bool hasWheelEventHandlers() const { return !m_wheelEventTargets.isEmptyIgnoringNullReferences(); }
+    bool mayHaveListBoxes() const { return m_mayHaveListBoxes; }
+    void setMayHaveListBoxes() { m_mayHaveListBoxes = true; }
 
     using RegionFixedPair = std::pair<Region, bool>;
     RegionFixedPair absoluteRegionForWheelEventTargets();
@@ -2956,6 +2958,7 @@ private:
 #if ENABLE(EDITABLE_REGION)
     bool m_mayHaveEditableElements : 1 { false };
 #endif
+    bool m_mayHaveListBoxes : 1 { false };
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     bool m_isTelephoneNumberParsingAllowed : 1 { true };
 #endif

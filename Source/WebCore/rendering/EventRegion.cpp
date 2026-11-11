@@ -559,7 +559,13 @@ void EventRegion::unite(const Region& region, const RenderObject& renderer, cons
         subtractAutoFromTouchActions(region);
 #endif
 
-    uniteEventListeners(region, style.eventListenerRegionTypes());
+    auto eventListenerRegionTypes = style.eventListenerRegionTypes();
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    // A listbox scrolls on the main thread, so wheel events over it need to be handled synchronously, like those over a non-passive wheel event listener.
+    if (renderer.isRenderListBox())
+        eventListenerRegionTypes.add(EventListenerRegionType::NonPassiveWheel);
+#endif
+    uniteEventListeners(region, eventListenerRegionTypes);
 
 #if ENABLE(EDITABLE_REGION)
     if (m_editableRegion && (overrideUserModifyIsEditable || style.usedUserModify() != UserModify::ReadOnly)) {

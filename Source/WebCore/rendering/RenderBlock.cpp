@@ -1241,8 +1241,8 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         LOG_WITH_STREAM(EventRegions, stream << "  may have touch-action elements: " << document->mayHaveElementsWithNonAutoTouchAction());
 #endif
 #if ENABLE(WHEEL_EVENT_REGIONS)
-        needsTraverseDescendants |= document->hasWheelEventHandlers();
-        LOG_WITH_STREAM(EventRegions, stream << "  has wheel event handlers: " << document->hasWheelEventHandlers());
+        needsTraverseDescendants |= document->hasWheelEventHandlers() || document->mayHaveListBoxes();
+        LOG_WITH_STREAM(EventRegions, stream << "  has wheel event handlers: " << document->hasWheelEventHandlers() << " may have list boxes: " << document->mayHaveListBoxes());
 #endif
 #if ENABLE(TOUCH_EVENT_REGIONS)
         if (document->shouldUseTouchEventRegions()) {

@@ -417,7 +417,7 @@ void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventReg
     bool needsUpdateForEditableElements = false;
     bool needsUpdateForInteractionRegions = false;
 #if ENABLE(WHEEL_EVENT_REGIONS)
-    needsUpdateForWheelEventHandlers = document->hasWheelEventHandlers() || reason == InvalidateContentEventRegionsReason::EventHandlerChange;
+    needsUpdateForWheelEventHandlers = document->hasWheelEventHandlers() || document->mayHaveListBoxes() || reason == InvalidateContentEventRegionsReason::EventHandlerChange;
 #else
     UNUSED_PARAM(reason);
 #endif

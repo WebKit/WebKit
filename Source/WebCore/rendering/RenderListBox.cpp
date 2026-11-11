@@ -96,6 +96,7 @@ RenderListBox::RenderListBox(HTMLSelectElement& element, Style::ComputedStyle&& 
     : RenderBlockFlow(Type::ListBox, element, WTF::move(style))
 {
     protect(view().frameView())->addScrollableArea(this);
+    protect(document())->setMayHaveListBoxes();
 }
 
 // Do not add any code in below destructor. Add it to willBeDestroyed() instead.

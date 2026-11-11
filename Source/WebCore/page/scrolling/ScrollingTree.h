@@ -327,6 +327,7 @@ protected:
 
     NODELETE WEBCORE_EXPORT void setGestureState(std::optional<WheelScrollGestureState>);
     NODELETE WEBCORE_EXPORT std::optional<WheelScrollGestureState> gestureState();
+    WEBCORE_EXPORT RefPtr<ScrollingTreeFrameScrollingNode> hostedRootNodeForFrame(FrameIdentifier) const WTF_REQUIRES_LOCK(m_treeLock);
 
     NODELETE std::optional<FramesPerSecond> nominalFramesPerSecond();
 

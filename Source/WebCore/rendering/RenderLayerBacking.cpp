@@ -2486,7 +2486,7 @@ bool RenderLayerBacking::maintainsEventRegion() const
         return true;
 #endif
 #if ENABLE(WHEEL_EVENT_REGIONS)
-    if (renderer().document().hasWheelEventHandlers())
+    if (renderer().document().hasWheelEventHandlers() || renderer().document().mayHaveListBoxes())
         return true;
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)

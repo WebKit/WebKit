@@ -86,9 +86,9 @@ void RemoteScrollingCoordinatorProxyMac::handleWheelEvent(Ref<WebWheelEvent>&& w
     m_eventDispatcher->handleWheelEvent(WTF::move(wheelEvent), rubberBandableEdges);
 }
 
-void RemoteScrollingCoordinatorProxyMac::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, std::optional<ScrollingNodeID> scrollingNodeID, std::optional<WheelScrollGestureState> gestureState, bool wasHandled)
+void RemoteScrollingCoordinatorProxyMac::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, std::optional<FrameIdentifier> defaultHandlingFrameID, std::optional<ScrollingNodeID> scrollingNodeID, std::optional<WheelScrollGestureState> gestureState, bool wasHandled)
 {
-    m_eventDispatcher->wheelEventHandlingCompleted(wheelEvent, scrollingNodeID, gestureState, wasHandled);
+    m_eventDispatcher->wheelEventHandlingCompleted(wheelEvent, defaultHandlingFrameID, scrollingNodeID, gestureState, wasHandled);
 }
 
 RequestsScrollHandling RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeRequestsScroll(ScrollingNodeID, const RequestedScrollData&)

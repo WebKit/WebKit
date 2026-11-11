@@ -550,6 +550,18 @@ bool ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
     return commitTreeStateInternal(WTF::move(scrollingStateTree), hostingContextIdentifier);
 }
 
+RefPtr<ScrollingTreeFrameScrollingNode> ScrollingTree::hostedRootNodeForFrame(FrameIdentifier frameID) const
+{
+    for (auto& frameHostingNode : m_hostedSubtrees.values()) {
+        for (auto& child : frameHostingNode->children()) {
+            RefPtr hostedRootNode { dynamicDowncast<ScrollingTreeFrameScrollingNode>(child) };
+            if (hostedRootNode && hostedRootNode->frameIdentifier() == frameID)
+                return hostedRootNode;
+        }
+    }
+    return nullptr;
+}
+
 bool ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* stateNode, CommitTreeState& state)
 {
     if (!stateNode) {

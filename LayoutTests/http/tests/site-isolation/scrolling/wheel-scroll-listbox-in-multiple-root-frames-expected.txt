@@ -1,0 +1,13 @@
+Tests that wheel events over listboxes scroll them when the page has several root frames in one process, including a same-site frame inside a cross-site iframe.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS main frame: scrolled the listbox
+PASS same-site frame inside a cross-site iframe: scrolled the listbox
+PASS first cross-site iframe: scrolled the listbox
+PASS second cross-site iframe: scrolled the listbox
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
