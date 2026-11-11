@@ -3062,6 +3062,9 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters, Co
     if (RefPtr historyItemFrame = WebProcess::singleton().webFrame(item->frameID()); historyItemFrame && historyItemFrame->page() == this)
         targetFrame = historyItemFrame.releaseNonNull();
 
+    if (targetFrame.ptr() == m_mainFrame.ptr() && parameters.shouldRestoreFromBackForwardCache != ShouldRestoreFromBackForwardCache::No)
+        targetFrame->useCachedMainFrameAsProvisionalFrame(item->frameItemID());
+
     if (RefPtr targetLocalFrame = targetFrame->provisionalFrame() ? targetFrame->provisionalFrame() : targetFrame->coreLocalFrame()) {
         if (targetFrame.ptr() == m_mainFrame.ptr())
             targetLocalFrame->loader().setNavigationUpgradeToHTTPSBehavior(item->url().protocolIs("http"_s) ? NavigationUpgradeToHTTPSBehavior::Disabled : NavigationUpgradeToHTTPSBehavior::BasedOnPolicy);
@@ -9575,6 +9578,14 @@ void WebPage::restoreWithFrameItem(BackForwardFrameItemIdentifier identifier, st
         cachedPage = BackForwardCache::singleton().take(identifier, page);
     if (!cachedPage) {
         WEBPAGE_RELEASE_LOG_ERROR(ProcessSwapping, "restoreWithFrameItem: take failed, cache entry missing or expired");
+        m_isSuspended = false;
+        return completionHandler(false);
+    }
+
+    // FIXME: Make the cached main frame the page's main frame again when this process hosted the main
+    // frame in the meantime.
+    if (RefPtr cachedMainFrameView = cachedPage->cachedMainFrame()->view(); !cachedMainFrameView || &cachedMainFrameView->frame() != &page->mainFrame()) {
+        WEBPAGE_RELEASE_LOG_ERROR(ProcessSwapping, "restoreWithFrameItem: the cached main frame is no longer the page's main frame");
         m_isSuspended = false;
         return completionHandler(false);
     }

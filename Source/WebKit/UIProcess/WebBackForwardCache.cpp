@@ -216,6 +216,14 @@ void WebBackForwardCache::removeEntriesForPageAndProcess(WebPageProxy& page, Web
     });
 }
 
+void WebBackForwardCache::removeSuspendedPageEntriesForPageAndProcess(WebPageProxy& page, WebProcessProxy& process)
+{
+    removeEntriesMatching([pageID = page.identifier(), processIdentifier = process.coreProcessIdentifier()](auto& item) {
+        ASSERT(item.backForwardCacheEntry());
+        return item.pageID() == pageID && item.suspendedPage() && item.backForwardCacheEntry()->processIdentifier() == processIdentifier;
+    });
+}
+
 void WebBackForwardCache::removeEntriesForPageAndBrowsingContextGroup(WebPageProxy& page, BrowsingContextGroup& group)
 {
     removeEntriesMatching([pageID = page.identifier(), &group](auto& item) {

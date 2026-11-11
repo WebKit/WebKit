@@ -552,14 +552,50 @@ void WebFrame::createProvisionalFrame(ProvisionalFrameCreationParameters&& param
         commitProvisionalFrame();
 }
 
+void WebFrame::useCachedMainFrameAsProvisionalFrame(BackForwardFrameItemIdentifier mainFrameItemID)
+{
+    RefPtr remoteFrame = coreRemoteFrame();
+    if (!m_provisionalFrame || !remoteFrame || !remoteFrame->isMainFrame())
+        return;
+
+    RefPtr corePage = remoteFrame->page();
+    if (!corePage || !corePage->settings().siteIsolationInPlaceBackForwardCacheEnabled())
+        return;
+
+    RefPtr cachedMainFrame = BackForwardCache::singleton().replacedMainFrame(mainFrameItemID, *corePage);
+    if (!cachedMainFrame || cachedMainFrame->frameID() != m_frameID)
+        return;
+
+    auto frameIDBeforeProvisionalNavigation = m_frameIDBeforeProvisionalNavigation;
+    destroyProvisionalFrame();
+    m_frameIDBeforeProvisionalNavigation = frameIDBeforeProvisionalNavigation;
+
+    m_provisionalFrame = cachedMainFrame.copyRef();
+    cachedMainFrame->setFrameBeingReplaced(remoteFrame.get());
+    downcast<WebLocalFrameLoaderClient>(cachedMainFrame->loader().client()).setFrameInvalidator(makeInvalidator());
+
+    if (RefPtr page = m_page) {
+        if (RefPtr backend = page->inspector(WebPage::LazyCreationPolicy::UseExistingOnly))
+            backend->ensureInstrumentationForFrame(*cachedMainFrame);
+    }
+}
+
 void WebFrame::destroyProvisionalFrame()
 {
     if (RefPtr frame = std::exchange(m_provisionalFrame, nullptr)) {
         if (auto* client = dynamicDowncast<WebLocalFrameLoaderClient>(frame->loader().client()))
             client->takeFrameInvalidator().release();
+        m_frameIDBeforeProvisionalNavigation = std::nullopt;
+
+        if (frame->existsOnlyForCachedPages()) {
+            // The frame is detached from the page with the last of its cached pages.
+            frame->setFrameBeingReplaced(nullptr);
+            BackForwardCache::singleton().removeAllItemsForMainFrame(*frame);
+            return;
+        }
+
         frame->loader().detachFromParent();
         frame->setView(nullptr);
-        m_frameIDBeforeProvisionalNavigation = std::nullopt;
     }
 }
 
@@ -610,6 +646,10 @@ void WebFrame::commitProvisionalFrame()
         return;
     }
 
+    bool restoresCachedMainFrame = localFrame->existsOnlyForCachedPages();
+    if (restoresCachedMainFrame)
+        localFrame->willReplaceRemoteFrame();
+
     if (RefPtr frame = WebProcess::singleton().webFrame(std::exchange(m_frameIDBeforeProvisionalNavigation, { }))) {
         if (RefPtr coreFrame = frame->coreFrame())
             remoteFrame->takeWindowProxyAndOpenerFrom(*coreFrame);
@@ -626,8 +666,7 @@ void WebFrame::commitProvisionalFrame()
 
     m_coreFrame = localFrame.get();
     remoteFrame->setView(nullptr);
-    if (!shouldClearWindowNameOnReplacement(*remoteFrame, *localFrame))
-        localFrame->tree().setSpecifiedName(remoteFrame->tree().specifiedName());
+    localFrame->tree().setSpecifiedName(shouldClearWindowNameOnReplacement(*remoteFrame, *localFrame) ? nullAtom() : remoteFrame->tree().specifiedName());
 
     if (ownerRenderer)
         ownerRenderer->setWidget(localFrame->view());
@@ -636,7 +675,8 @@ void WebFrame::commitProvisionalFrame()
     if (remoteFrame->isMainFrame())
         corePage->setMainFrame(*localFrame);
     localFrame->takeWindowProxyAndOpenerFrom(*remoteFrame);
-    if (RefPtr document = localFrame->document())
+    // A cached document becomes current when FrameLoader restores it.
+    if (RefPtr document = localFrame->document(); document && !restoresCachedMainFrame)
         document->didBecomeCurrentDocumentInFrame();
 
     if (corePage->focusController().focusedFrame() == remoteFrame.get())

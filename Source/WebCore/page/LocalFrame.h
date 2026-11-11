@@ -199,6 +199,7 @@ public:
     void decrementCachedPageCount() { --m_cachedPageCount; }
     bool existsOnlyForCachedPages() const { return m_existsOnlyForCachedPages; }
     WEBCORE_EXPORT void willBeReplacedByRemoteFrame();
+    WEBCORE_EXPORT void willReplaceRemoteFrame();
 
     bool requestDOMPasteAccess(DOMPasteAccessCategory = DOMPasteAccessCategory::General);
 

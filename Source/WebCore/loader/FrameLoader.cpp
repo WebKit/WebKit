@@ -742,7 +742,10 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
     Ref frame = m_frame;
 
     RefPtr document = frame->document();
-    if (neededClear)
+    // A main frame that was replaced by a RemoteFrame still holds its cached document when that
+    // document is restored.
+    bool isRestoringCurrentDocument = document == newDocument;
+    if (neededClear && !isRestoringCurrentDocument)
         document->transferViewTransitionParams(*newDocument);
 
     if (neededClear && document->backForwardCacheState() != Document::InBackForwardCache) {
@@ -763,8 +766,10 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
     
     // Do this after detaching the document so that the unload event works.
     if (clearWindowProperties) {
-        InspectorInstrumentation::frameWindowDiscarded(frame, protect(document->window()).get());
-        protect(document->window())->resetUnlessSuspendedForDocumentSuspension();
+        if (!isRestoringCurrentDocument) {
+            InspectorInstrumentation::frameWindowDiscarded(frame, protect(document->window()).get());
+            protect(document->window())->resetUnlessSuspendedForDocumentSuspension();
+        }
         protect(frame->windowProxy())->clearJSWindowProxiesNotMatchingDOMWindow(protect(newDocument->window()).get(), frame->document()->backForwardCacheState() == Document::AboutToEnterBackForwardCache);
 
         if (shouldClearWindowName(frame, *newDocument))
@@ -773,7 +778,7 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
 
     frame->eventHandler().clear();
 
-    if (clearFrameView && frame->view())
+    if (clearFrameView && frame->view() && !isRestoringCurrentDocument)
         protect(frame->view())->clear();
 
     // Do not drop the document before the ScriptController and view are cleared
@@ -2896,7 +2901,7 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
     // JavaScript. If the script initiates a new load, we need to abandon the current load,
     // or the two will stomp each other.
     RefPtr originalProvisionalDocumentLoader = m_provisionalDocumentLoader;
-    if (m_documentLoader)
+    if (m_documentLoader && !m_frame->existsOnlyForCachedPages())
         closeURL();
     if (originalProvisionalDocumentLoader != m_provisionalDocumentLoader)
         return;
@@ -3044,7 +3049,8 @@ void FrameLoader::willRestoreFromCachedPage()
     protect(protect(m_frame)->navigationScheduler())->cancel();
 
     // We still have to close the previous part page.
-    closeURL();
+    if (!m_frame->existsOnlyForCachedPages())
+        closeURL();
 }
 
 void FrameLoader::open(CachedFrameBase& cachedFrame)
@@ -4346,7 +4352,7 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
         return true;
 
     RefPtr document = m_frame->document();
-    if (!document->bodyOrFrameset())
+    if (!document->bodyOrFrameset() || document->backForwardCacheState() == Document::InBackForwardCache)
         return true;
     
     Ref beforeUnloadEvent = BeforeUnloadEvent::create();
@@ -4585,7 +4591,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     if (isBackForwardLoadType(type)) {
         CheckedRef diagnosticLoggingClient = protect(frame->page())->diagnosticLoggingClient();
         RefPtr provisionalItem = history().provisionalItem();
-        bool hasCachedPage = provisionalItem && BackForwardCache::singleton().get(*provisionalItem, protect(frame->page()).get());
+        bool hasCachedPage = provisionalItem && BackForwardCache::singleton().get(*provisionalItem, frame);
         if (hasCachedPage && shouldRestoreFromBackForwardCache != ShouldRestoreFromBackForwardCache::No) {
             diagnosticLoggingClient->logDiagnosticMessageWithResult(DiagnosticLoggingKeys::backForwardCacheKey(), DiagnosticLoggingKeys::retrievalKey(), DiagnosticLoggingResultPass, ShouldSample::Yes);
             loadProvisionalItemFromCachedPage();
@@ -4786,7 +4792,7 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
 void FrameLoader::dispatchPageswapEvent(DocumentLoader* provisionalLoader, bool fromBackForwardCache, CompletionHandler<void()>&& proceedWithNavigation)
 {
     RefPtr document = m_frame->document();
-    if (!document) {
+    if (!document || document->backForwardCacheState() == Document::InBackForwardCache) {
         if (proceedWithNavigation)
             proceedWithNavigation();
         return;
@@ -4996,7 +5002,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
 
     SetForScope continuingLoadGuard(m_currentLoadContinuingState, shouldTreatAsContinuingLoad != ShouldTreatAsContinuingLoad::No ? LoadContinuingState::ContinuingWithHistoryItem : LoadContinuingState::NotContinuing);
 
-    if (CheckedPtr cachedPage = BackForwardCache::singleton().get(item, protect(frame->page()).get())) {
+    if (CheckedPtr cachedPage = BackForwardCache::singleton().get(item, frame)) {
         RefPtr documentLoader = cachedPage->documentLoader();
         m_client->updateCachedDocumentLoader(*documentLoader);
 
@@ -5124,7 +5130,7 @@ void FrameLoader::loadItem(HistoryItem& item, HistoryItem* fromItem, FrameLoadTy
     bool sameDocumentNavigation = currentItem && item.shouldDoSameDocumentNavigationTo(*currentItem) && shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No;
 
     // Check if Navigation API should handle this traversal
-    if (frame().document() && frame().document()->settings().navigationAPIEnabled() && shouldDispatchNavigateEventForHistoryTraversal(item, fromItem)) {
+    if (frame().document() && frame().document()->settings().navigationAPIEnabled() && frame().document()->backForwardCacheState() == Document::NotInBackForwardCache && shouldDispatchNavigateEventForHistoryTraversal(item, fromItem)) {
         if (sameDocumentNavigation) {
             // For same-document navigation, dispatch navigate event immediately.
             // https://html.spec.whatwg.org/multipage/nav-history-apis.html#fire-a-traverse-navigate-event

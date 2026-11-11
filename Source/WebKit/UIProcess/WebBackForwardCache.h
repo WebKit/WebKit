@@ -61,6 +61,7 @@ public:
     void removeEntriesForProcess(WebProcessProxy&);
     void removeEntriesForPage(WebPageProxy&);
     void removeEntriesForPageAndProcess(WebPageProxy&, WebProcessProxy&);
+    void removeSuspendedPageEntriesForPageAndProcess(WebPageProxy&, WebProcessProxy&);
     void removeEntriesForPageAndBrowsingContextGroup(WebPageProxy&, BrowsingContextGroup&);
     void removeEntriesForSession(PAL::SessionID);
 

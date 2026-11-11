@@ -104,7 +104,7 @@ public:
     virtual bool isRootFrame() const = 0;
 #if ASSERT_ENABLED
     WEBCORE_EXPORT static bool isRootFrameIdentifier(FrameIdentifier);
-    static void frameExistsOnlyForCachedPages(LocalFrame&);
+    static void setFrameExistsOnlyForCachedPages(LocalFrame&, bool);
 #endif
 
     WEBCORE_EXPORT void detachFromPage();

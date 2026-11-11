@@ -28,6 +28,7 @@
 
 #include "BrowsingContextGroup.h"
 #include "BrowsingWarning.h"
+#include "FrameProcess.h"
 #include "WebBackForwardListFrameItem.h"
 #include "WebBackForwardListItem.h"
 #include <WebCore/ResourceRequest.h>
@@ -102,6 +103,16 @@ Navigation::Navigation(WebCore::ProcessIdentifier processID, WebCore::ResourceRe
 }
 
 Navigation::~Navigation() = default;
+
+void Navigation::setBackForwardCacheMainFrameProcess(RefPtr<WebKit::FrameProcess>&& frameProcess)
+{
+    m_backForwardCacheMainFrameProcess = WTF::move(frameProcess);
+}
+
+RefPtr<WebKit::FrameProcess> Navigation::takeBackForwardCacheMainFrameProcess()
+{
+    return std::exchange(m_backForwardCacheMainFrameProcess, nullptr);
+}
 
 void Navigation::setAgentClusterAssignment(const WebCore::SecurityOriginData& origin, const WebCore::AgentClusterAssignment& assignment, RefPtr<WebKit::AgentClusterKeyingReservation>&& reservation)
 {

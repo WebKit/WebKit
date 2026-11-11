@@ -72,7 +72,8 @@ public:
 
     virtual ~WebFrameLoaderClient();
 
-    ScopeExit<Function<void()>> takeFrameInvalidator() { return WTF::move(m_frameInvalidator); }
+    ScopeExit<Function<void()>> takeFrameInvalidator();
+    void setFrameInvalidator(ScopeExit<Function<void()>>&&);
 
 protected:
     WebFrameLoaderClient(Ref<WebFrame>&&, ScopeExit<Function<void()>>&& frameInvalidator);
@@ -95,7 +96,7 @@ protected:
 #endif
 
     const Ref<WebFrame> m_frame;
-    ScopeExit<Function<void()>> m_frameInvalidator;
+    std::optional<ScopeExit<Function<void()>>> m_frameInvalidator;
 };
 
 }

@@ -85,17 +85,29 @@ public:
         }
     }
 
-    void frameExistsOnlyForCachedPages(LocalFrame& frame)
+    void setFrameExistsOnlyForCachedPages(LocalFrame& frame, bool existsOnlyForCachedPages)
     {
-        auto it = m_map.find(frame.frameID());
-        ASSERT(it != m_map.end());
-        ASSERT(it->value.first == &frame);
-        if (it->value.second)
-            it->value.first = nullptr;
-        else
-            m_map.remove(it);
+        if (existsOnlyForCachedPages) {
+            auto it = m_map.find(frame.frameID());
+            ASSERT(it != m_map.end());
+            ASSERT(it->value.first == &frame);
+            if (it->value.second)
+                it->value.first = nullptr;
+            else
+                m_map.remove(it);
 
-        m_framesExistingOnlyForCachedPages.add(frame);
+            m_framesExistingOnlyForCachedPages.add(frame);
+            return;
+        }
+
+        bool wasExistingOnlyForCachedPages = m_framesExistingOnlyForCachedPages.remove(frame);
+        ASSERT_UNUSED(wasExistingOnlyForCachedPages, wasExistingOnlyForCachedPages);
+
+        auto& pair = m_map.ensure(frame.frameID(), [] {
+            return std::pair<WeakPtr<LocalFrame>, WeakPtr<RemoteFrame>> { };
+        }).iterator->value;
+        ASSERT_WITH_MESSAGE(!pair.first, "There should never be two LocalFrames with the same ID in the same process");
+        pair.first = frame;
     }
 
     void frameDestroyed(Frame& frame)
@@ -274,9 +286,9 @@ bool Frame::isRootFrameIdentifier(FrameIdentifier identifier)
     return FrameLifetimeVerifier::singleton().isRootFrameIdentifier(identifier);
 }
 
-void Frame::frameExistsOnlyForCachedPages(LocalFrame& frame)
+void Frame::setFrameExistsOnlyForCachedPages(LocalFrame& frame, bool existsOnlyForCachedPages)
 {
-    FrameLifetimeVerifier::singleton().frameExistsOnlyForCachedPages(frame);
+    FrameLifetimeVerifier::singleton().setFrameExistsOnlyForCachedPages(frame, existsOnlyForCachedPages);
 }
 #endif
 
