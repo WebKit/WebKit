@@ -552,7 +552,8 @@ class TestImporter(object):
     def _read_environments_and_variants_for_template_test(self, filepath):
         environments = []
         variants = []
-        lines = self.filesystem.read_text_file(filepath).split('\n')
+        # Some tests are deliberately not UTF-8 (e.g. workers/semantics/encodings); only the ASCII META lines matter here.
+        lines = self.filesystem.read_text_file(filepath, errors='replace').split('\n')
         for line in lines:
             if line.startswith('//') and 'META: variant=' in line:
                 variant = line.split('META: variant=', 1)[1].strip()
