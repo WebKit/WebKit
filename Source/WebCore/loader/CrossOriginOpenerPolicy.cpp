@@ -168,6 +168,16 @@ static bool checkIfEnforcingReportOnlyCOOPWouldRequireBrowsingContextGroupSwitch
     return false;
 }
 
+// Non-initial empty documents (about:blank) should inherit their cross-origin-opener-policy from the navigation's initiator top level document,
+// if the initiator and its top level document are same-origin, or default (unsafe-none) otherwise.
+// https://github.com/whatwg/html/issues/6913
+CrossOriginOpenerPolicy crossOriginOpenerPolicyForEmptyDocument(const NavigationRequester& requester)
+{
+    if (!protect(requester.securityOrigin)->isSameOriginAs(requester.topOrigin))
+        return { };
+    return requester.policyContainer.crossOriginOpenerPolicy;
+}
+
 static std::pair<Ref<SecurityOrigin>, CrossOriginOpenerPolicy> computeResponseOriginAndCOOP(const ResourceResponse& response, const std::optional<NavigationRequester>& requester, ContentSecurityPolicy* responseCSP)
 {
     // FIXME: The flags should include the frame's, and only the sandboxed origin flag should make the origin opaque.
@@ -176,11 +186,8 @@ static std::pair<Ref<SecurityOrigin>, CrossOriginOpenerPolicy> computeResponseOr
         sandboxFlags.add(SandboxFlag::Origin);
     Ref responseOrigin = SecurityPolicy::determineOrigin(response.url(), sandboxFlags, requester ? requester->securityOrigin.ptr() : nullptr);
 
-    // Non-initial empty documents (about:blank) should inherit their cross-origin-opener-policy from the navigation's initiator top level document,
-    // if the initiator and its top level document are same-origin, or default (unsafe-none) otherwise.
-    // https://github.com/whatwg/html/issues/6913
     if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(response.url()) && requester)
-        return { WTF::move(responseOrigin), Ref { requester->securityOrigin }->isSameOriginAs(requester->topOrigin) ? requester->policyContainer.crossOriginOpenerPolicy : CrossOriginOpenerPolicy { } };
+        return { WTF::move(responseOrigin), crossOriginOpenerPolicyForEmptyDocument(*requester) };
 
     return { WTF::move(responseOrigin), obtainCrossOriginOpenerPolicy(response) };
 }

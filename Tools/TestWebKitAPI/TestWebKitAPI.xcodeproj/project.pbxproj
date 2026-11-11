@@ -607,6 +607,7 @@
 				WebKit/WebPage/WebViewTests.swift,
 				WebKit/WKWebView/CodingTests.swift,
 				WebKit/WKWebView/ContentAutoSizing.swift,
+				WebKit/WKWebView/CrossOriginOpenerPolicyAboutBlankTests.swift,
 				WebKit/WKWebView/HTTP2Server.swift,
 				WebKit/WKWebView/HTTP3Server.swift,
 				WebKit/WKWebView/PDFLookUpTests.swift,

@@ -426,6 +426,28 @@ public final class OpenedWebViewRecorder: NSObject, WKUIDelegate {
         return (window.webView, window.navigationDelegate)
     }
 
+    /// Waits for the next window to open, if one hasn't already, without waiting for a navigation in it.
+    ///
+    /// Use this for a window opened with no URL, such as with `window.open('')`, which stays on its initial
+    /// about:blank document without navigating.
+    ///
+    /// - Parameter timeout: How long to wait for the window to open.
+    /// - Returns: The web view of the window and its navigation delegate, which trusts any server certificate. The
+    ///   delegate no longer waits for the first navigation in the window, so the caller can wait for the navigations
+    ///   it starts.
+    /// - Throws: ``ConditionTimedOut`` if no window opens before the timeout.
+    public func nextOpenedWebViewWithoutNavigation(
+        timeout: Duration = .seconds(10)
+    ) async throws -> (webView: TestWKWebView, navigationDelegate: TestNavigationDelegate) {
+        try await waitForCondition("a window to open", timeout: timeout) {
+            !openedWindows.isEmpty
+        }
+        let window = openedWindows.removeFirst()
+        window.navigationDelegate.didFinishNavigation = nil
+        window.navigationDelegate.didFailProvisionalNavigation = nil
+        return (window.webView, window.navigationDelegate)
+    }
+
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func webView(
         _ webView: WKWebView,
