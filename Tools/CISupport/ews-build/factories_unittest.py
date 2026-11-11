@@ -882,6 +882,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'download-built-product',
             'extract-built-product',
+            'find-changed-api-tests',
+            'run-api-tests-in-stress-mode',
             'run-api-tests',
             'set-build-summary'
         ],
@@ -903,6 +905,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'download-built-product',
             'extract-built-product',
+            'find-changed-api-tests',
+            'run-api-tests-in-stress-mode',
             'run-api-tests',
             'set-build-summary'
         ],
