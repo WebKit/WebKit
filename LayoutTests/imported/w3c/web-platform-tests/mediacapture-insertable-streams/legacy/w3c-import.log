@@ -1,0 +1,26 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/legacy/MediaStreamTrackGenerator-audio.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/legacy/MediaStreamTrackGenerator-in-service-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/legacy/MediaStreamTrackGenerator-in-shared-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/legacy/MediaStreamTrackGenerator-in-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/legacy/MediaStreamTrackGenerator-pipes-data-in-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/legacy/MediaStreamTrackGenerator-video.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/legacy/MediaStreamTrackProcessor-backpressure.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/legacy/MediaStreamTrackProcessor-video.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/legacy/MediaStreamTrackProcessor-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/legacy/dedicated-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/legacy/service-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/legacy/shared-worker.js

@@ -1,0 +1,16 @@
+
+PASS Good integrity metadata + No header: loads.
+PASS Good integrity metadata + Good sha-256 header: loads.
+PASS Good integrity metadata + Repeated sha-256 header: loads.
+PASS Good integrity metadata + Multiple good headers (previous += sha-256): loads.
+FAIL Good integrity metadata + Bad sha-256 header: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Good integrity metadata + Repeated sha-256 header: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Good integrity metadata + Multiple bad headers (previous += sha-256): blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Good integrity metadata + Good sha-512 header: loads.
+PASS Good integrity metadata + Repeated sha-512 header: loads.
+PASS Good integrity metadata + Multiple good headers (previous += sha-512): loads.
+FAIL Good integrity metadata + Bad sha-512 header: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Good integrity metadata + Repeated sha-512 header: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Good integrity metadata + Multiple bad headers (previous += sha-512): blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Good integrity metadata + Mixed good and bad headers: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+

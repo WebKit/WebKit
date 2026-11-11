@@ -1,0 +1,7 @@
+jump to jump back
+top
+target
+
+PASS Following a hyperlink to a fragment scrolls synchronously
+PASS Hyperlink to a fragment with target equals window name is synchronous
+

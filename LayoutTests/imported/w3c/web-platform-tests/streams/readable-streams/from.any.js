@@ -1,4 +1,4 @@
-// META: global=window,worker,shadowrealm
+// META: global=window,worker
 // META: script=../resources/test-utils.js
 'use strict';
 
@@ -16,11 +16,6 @@ const iterableFactories = [
 
   ['an array iterator', () => {
     return ['a', 'b'][Symbol.iterator]();
-  }],
-
-  ['a string', () => {
-    // This iterates over the code points of the string.
-    return 'ab';
   }],
 
   ['a Set', () => {
@@ -81,6 +76,19 @@ const iterableFactories = [
     return iterable;
   }],
 
+  ['a sync iterable with a function iterator', () => {
+    const chunks = ['a', 'b'];
+    function functionIterator() {}
+    functionIterator.next = () => ({
+      done: chunks.length === 0,
+      value: chunks.shift()
+    });
+    const iterable = {
+      [Symbol.iterator]: () => functionIterator
+    };
+    return iterable;
+  }],
+
   ['an async iterable', () => {
     const chunks = ['a', 'b'];
     const asyncIterator = {
@@ -93,6 +101,19 @@ const iterableFactories = [
     };
     const asyncIterable = {
       [Symbol.asyncIterator]: () => asyncIterator
+    };
+    return asyncIterable;
+  }],
+
+  ['an async iterable with a function iterator', () => {
+    const chunks = ['a', 'b'];
+    function functionAsyncIterator() {}
+    functionAsyncIterator.next = () => Promise.resolve({
+      done: chunks.length === 0,
+      value: chunks.shift()
+    });
+    const asyncIterable = {
+      [Symbol.asyncIterator]: () => functionAsyncIterator
     };
     return asyncIterable;
   }],
@@ -144,6 +165,7 @@ const badIterables = [
   ['Object.create(null)', Object.create(null)],
   ['a function', () => 42],
   ['a symbol', Symbol()],
+  ['a string', 'ab'],
   ['an object with a non-callable @@iterator method', {
     [Symbol.iterator]: 42
   }],
@@ -398,7 +420,6 @@ promise_test(async t => {
 promise_test(async t => {
 
   let nextCalls = 0;
-  let returnCalls = 0;
 
   const iterable = {
     async next() {
@@ -406,9 +427,7 @@ promise_test(async t => {
       return { value: undefined, done: true };
     },
     throw: t.unreached_func('throw() should not be called'),
-    async return() {
-      returnCalls += 1;
-    },
+    return: t.unreached_func('return() should not be called'),
     [Symbol.asyncIterator]: () => iterable
   };
 
@@ -420,7 +439,6 @@ promise_test(async t => {
   assert_equals(nextCalls, 1, 'next() should be called once');
 
   await reader.closed;
-  assert_equals(returnCalls, 0, 'return() should not be called');
 
 }, `ReadableStream.from: return() is not called when iterator completes normally`);
 
@@ -564,7 +582,7 @@ promise_test(async () => {
 
 }, `ReadableStream.from: reader.read() inside next()`);
 
-promise_test(async () => {
+promise_test(async t => {
 
   let nextCalls = 0;
   let returnCalls = 0;
@@ -573,12 +591,12 @@ promise_test(async () => {
   const iterable = {
     async next() {
       nextCalls++;
-      await reader.cancel();
-      assert_equals(returnCalls, 1, 'return() should be called once');
+      await reader.cancel().catch(t.unreached_func('cancel() should not reject'));
       return { value: 'something else', done: false };
     },
     async return() {
       returnCalls++;
+      return { done: true };
     },
     [Symbol.asyncIterator]: () => iterable
   };
@@ -589,8 +607,10 @@ promise_test(async () => {
   const read = await reader.read();
   assert_object_equals(read, { value: undefined, done: true }, 'first read should be done');
   assert_equals(nextCalls, 1, 'next() should be called once');
+  assert_equals(returnCalls, 1, 'return() should be called once');
 
   await reader.closed;
+  await flushAsyncEvents(); // wait for next() to settle
 
 }, `ReadableStream.from: reader.cancel() inside next()`);
 

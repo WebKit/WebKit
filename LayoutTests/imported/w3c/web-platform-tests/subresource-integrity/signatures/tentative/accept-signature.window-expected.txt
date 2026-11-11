@@ -1,0 +1,9 @@
+
+FAIL ed25519-JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs= assert_equals: expected "true" but got "false"
+FAIL ed25519-JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs= malformed-thing assert_equals: expected "true" but got "false"
+FAIL ed25519-JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs= ed25519-JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs= assert_equals: expected "true" but got "false"
+FAIL ed25519-xDnP380zcL4rJ76rXYjeHlfMyPZEOqpJYjsjEppbuXE= ed25519-JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs= assert_equals: expected "true" but got "false"
+FAIL ed25519-JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs= ed25519-xDnP380zcL4rJ76rXYjeHlfMyPZEOqpJYjsjEppbuXE= assert_equals: expected "true" but got "false"
+FAIL ed25519-xDnP380zcL4rJ76rXYjeHlfMyPZEOqpJYjsjEppbuXE= malformed-thing ed25519-JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs= assert_equals: expected "true" but got "false"
+FAIL ed25519-JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs= malformed-thing ed25519-xDnP380zcL4rJ76rXYjeHlfMyPZEOqpJYjsjEppbuXE= assert_equals: expected "true" but got "false"
+

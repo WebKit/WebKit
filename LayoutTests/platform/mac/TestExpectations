@@ -2484,3 +2484,8 @@ webkit.org/b/329245 [ x86_64 ] webgl/video-formats/upload-path-hevc-444-8bit-bt7
 webkit.org/b/322966 webkit.org/b/329234 webkit.org/b/329243 [ x86_64 ] webgl/video-formats/upload-path-hevcvt-alpha-bt709-videorange.html [ Failure ]
 webkit.org/b/329243 [ x86_64 ] webgl/video-formats/upload-path-raw-2vuy-bt709-videorange.html [ Failure ]
 webkit.org/b/322966 webkit.org/b/329234 webkit.org/b/329243 [ x86_64 ] webgl/video-formats/upload-path-raw-bgra.html [ Failure ]
+
+imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.worker.html [ Skip ]

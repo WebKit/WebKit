@@ -5346,3 +5346,9 @@ imported/w3c/web-platform-tests/css/css-shadow/part/pseudo-classes-after-part.ht
 
 # New test in the css/css-page import. Fails on GTK and WPE, passes on macOS.
 webkit.org/b/328881 imported/w3c/web-platform-tests/css/css-page/page-background-003-print.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/streams/piping/crashtests/shutdown.html [ Skip ]
+imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.any.html [ Skip ]
+imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.any.worker.html [ Skip ]

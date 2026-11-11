@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/WEB_FEATURES.yml
@@ -28,9 +26,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/general.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/global.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/owning-type-message-port.any.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/owning-type-video-frame.any.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/owning-type.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/owning-type-message-port.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/owning-type-video-frame.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/owning-type.tentative.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/patched-global.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/read-task-handling.window.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/reentrant-strategies.any.js

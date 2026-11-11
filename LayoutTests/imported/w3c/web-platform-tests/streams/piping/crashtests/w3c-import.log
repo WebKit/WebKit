@@ -10,9 +10,8 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/streams/piping/crashtests/cross-piping.html
 /LayoutTests/imported/w3c/web-platform-tests/streams/piping/crashtests/cross-piping2.https.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/piping/crashtests/shutdown.html

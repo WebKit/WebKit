@@ -1,0 +1,24 @@
+
+
+PASS No `signature`, no `integrity` => executes
+PASS No `signature`, invalid `integrity` => executes
+PASS No `signature`, valid `integrity` => executes
+PASS No `signature`, multiple `integrity` => executes
+PASS invalid `signature`, no `integrity` => executes
+PASS invalid `signature`, invalid `integrity` => executes
+PASS invalid `signature`, valid `integrity` => executes
+PASS invalid `signature`, multiple `integrity` => executes
+FAIL valid `signature`, no `integrity` => blocked assert_unreached: Should be blocked. Reached unreachable code
+FAIL valid `signature`, invalid `integrity` => blocked assert_unreached: Should be blocked. Reached unreachable code
+PASS valid `signature`, valid `integrity` => executes
+PASS valid `signature`, multiple `integrity` => executes
+FAIL multiple `signature`, no `integrity` => blocked assert_unreached: Should be blocked. Reached unreachable code
+FAIL multiple `signature`, invalid `integrity` => blocked assert_unreached: Should be blocked. Reached unreachable code
+PASS multiple `signature`, valid `integrity` => executes
+PASS multiple `signature`, multiple `integrity` => executes
+PASS valid `signature`, valid `integrity`, non-ASCII => executes
+FAIL SVG valid `signature`, no `integrity` => blocked assert_unreached: Should be blocked. Reached unreachable code
+FAIL SVG valid `signature`, invalid `integrity` => blocked assert_unreached: Should be blocked. Reached unreachable code
+PASS SVG valid `signature`, valid `integrity` => executes
+PASS SVG valid `signature`, multiple `integrity` => executes
+

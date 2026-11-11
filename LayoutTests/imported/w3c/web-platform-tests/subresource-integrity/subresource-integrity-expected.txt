@@ -3,7 +3,18 @@ PASS Script: Same-origin with correct sha256 hash.
 PASS Script: Same-origin with correct sha384 hash.
 PASS Script: Same-origin with correct sha512 hash.
 PASS Script: Same-origin with empty integrity.
+PASS Script: Same-origin with non-Base64 hash.
+PASS Script: Same-origin with malformed integrity (? before -).
+PASS Script: Same-origin with malformed integrity (- at start).
+PASS Script: Same-origin with malformed integrity (no hash after -).
+PASS Script: Same-origin with malformed integrity (no -).
+PASS Script: Same-origin with malformed integrity (- only).
+PASS Script: Same-origin with malformed integrity (-? only).
 PASS Script: Same-origin with incorrect hash.
+PASS Script: Same-origin with incorrect integrity => cleared after prepare.
+PASS Script: Same-origin with incorrect integrity => set to correct hash after prepare.
+PASS Script: Same-origin with empty integrity => set to incorrect hash after prepare.
+PASS Script: Same-origin with correct integrity => set to incorrect hash after prepare.
 PASS Script: Same-origin with multiple sha256 hashes, including correct.
 PASS Script: Same-origin with multiple sha256 hashes, including unknown algorithm.
 PASS Script: Same-origin with sha256 mismatch, sha512 match
@@ -22,6 +33,13 @@ PASS Style: Same-origin with correct sha256 hash
 PASS Style: Same-origin with correct sha384 hash
 PASS Style: Same-origin with correct sha512 hash
 PASS Style: Same-origin with empty integrity
+PASS Style: Same-origin with non-Base64 integrity
+PASS Style: Same-origin with malformed integrity (? before -)
+PASS Style: Same-origin with malformed integrity (- at start)
+PASS Style: Same-origin with malformed integrity (no hash after -)
+PASS Style: Same-origin with malformed integrity (no -)
+PASS Style: Same-origin with malformed integrity (- only)
+PASS Style: Same-origin with malformed integrity (-? only)
 PASS Style: Same-origin with incorrect hash.
 PASS Style: Same-origin with multiple sha256 hashes, including correct.
 PASS Style: Same-origin with multiple sha256 hashes, including unknown algorithm.

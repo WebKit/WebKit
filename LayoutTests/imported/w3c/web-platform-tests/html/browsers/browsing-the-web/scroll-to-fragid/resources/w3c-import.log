@@ -10,8 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/resources/foreign-object-html-frame.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/resources/fragment-target.svg
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/resources/scroll-restore-on-reload-non-ascii-fragment-target.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/resources/tall-fragment-target.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/resources/tall-fragment-target.svg

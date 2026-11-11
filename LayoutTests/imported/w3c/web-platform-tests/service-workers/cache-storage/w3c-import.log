@@ -10,13 +10,15 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-abort.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-api-nested-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-api-nested-worker1.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-api-nested-worker2.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-delete.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-keys-attributes-for-service-worker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-keys.https.any.js

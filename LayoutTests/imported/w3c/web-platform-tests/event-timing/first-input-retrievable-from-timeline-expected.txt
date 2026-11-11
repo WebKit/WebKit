@@ -1,0 +1,4 @@
+Click me
+
+PASS first-input entry is available from the performance timeline
+

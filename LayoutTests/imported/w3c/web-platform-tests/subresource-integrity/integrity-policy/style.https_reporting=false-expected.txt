@@ -1,0 +1,15 @@
+
+
+FAIL Ensure that a style without integrity did not run assert_equals: Ran expected false but got true
+FAIL Ensure that a style with unknown integrity algorithm did not run assert_equals: Ran expected false but got true
+PASS Ensure that a style without integrity algorithm runs and gets reported in report-only mode
+FAIL Ensure that a no-cors style gets blocked assert_equals: Ran expected false but got true
+FAIL Ensure that ReportingObserver gets called without endpoints assert_equals: Ran expected false but got true
+PASS Ensure that a style with integrity runs
+PASS Ensure that a data URI style with no integrity runs
+PASS Ensure that a no-CORS data URI style with no integrity runs
+PASS Ensure that a blob URL style with no integrity runs
+PASS Ensure that a no-CORS blob URL style with no integrity runs
+PASS Ensure that an about:blank URL style with no integrity does not trigger a report
+PASS Ensure that a no-CORS about:blank URL style with no integrity does not trigger a report
+

@@ -12,10 +12,6 @@
   // This test verifies that scripts with valid integrity attributes that are
   // in the initial HTML (and thus may be speculatively preloaded by the HTML
   // parser's preload scanner) do NOT generate Integrity-Policy violation reports.
-  //
-  // Bug: https://bugs.webkit.org/show_bug.cgi?id=305461
-  // The issue was that the preload scanner wasn't passing the integrity attribute,
-  // causing reports to be generated even for scripts with valid SRI.
 
   const {ORIGIN} = get_host_info();
 
@@ -39,7 +35,7 @@
 
     // Wait for the iframe to load and send us results
     const resultPromise = new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => {
+      const timeout = t.step_timeout(() => {
         reject(new Error('Timeout waiting for iframe to load'));
       }, 10000);
 
@@ -61,7 +57,7 @@
     assert_true(result.ran, 'Script with valid integrity should execute');
 
     // Wait a bit for any reports to be sent
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise(r => t.step_timeout(r, 1000));
 
     // Check that no reports were sent to the reporting endpoint
     // for the ran.js script (which has valid integrity)

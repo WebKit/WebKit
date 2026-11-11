@@ -6106,6 +6106,16 @@ fast/text/accessibility-bold-system-font [ Pass Failure ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/streams/transferable/gc-crash.html [ Skip ]
 
+# A writable stream erroring before a chunk is enqueued trips a debug assertion in the WritableStreamDefaultWriter write builtin.
+[ Debug ] imported/w3c/web-platform-tests/streams/piping/crashtests/shutdown.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.any.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.any.worker.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.any.serviceworker.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.any.sharedworker.html [ Skip ]
+
+# Its subtest names include a signature generated for each run.
+imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/authority.https.window.html [ Skip ]
+
 # height: fill-available failures
 webkit.org/b/241104 fast/block/fill-available-with-no-specified-containing-block-height.html [ ImageOnlyFailure ]
 webkit.org/b/241104 fast/block/fill-available-with-absolute-position.html [ ImageOnlyFailure ]

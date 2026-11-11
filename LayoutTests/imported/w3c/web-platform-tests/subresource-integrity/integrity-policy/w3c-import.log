@@ -10,9 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/integrity-policy/parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/integrity-policy/preload-script-with-integrity.https.html
 /LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/integrity-policy/script.https.html
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/integrity-policy/style.https.html

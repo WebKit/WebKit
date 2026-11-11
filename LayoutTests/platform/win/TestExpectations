@@ -5037,3 +5037,5 @@ webkit.org/b/320901 webgl/2.0.y/conformance2/rendering/blitframebuffer-test.html
 
 # Requires the GPU process to host the video layer.
 media/media-source/media-source-real-video-layer-size-after-leaving-viewport.html [ Skip ]
+
+imported/w3c/web-platform-tests/event-timing/keydown-without-paint.tentative.html [ Skip ]

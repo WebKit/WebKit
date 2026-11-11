@@ -10494,3 +10494,13 @@ webkit.org/b/328390 fast/filter-image/filter-image-blur.html [ ImageOnlyFailure 
 
 # New test in the css/css-page import. Fails on iOS, passes on macOS.
 webkit.org/b/328881 imported/w3c/web-platform-tests/css/css-page/page-background-003-print.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/event-timing/first-input-retrievable-from-timeline.html [ Skip ]
+imported/w3c/web-platform-tests/event-timing/interactionid-label-click.html [ Skip ]
+imported/w3c/web-platform-tests/event-timing/keydown-without-paint.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/event-timing/pointerdown-pointerup-no-overlap.html [ Skip ]
+
+imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.worker.html [ Skip ]

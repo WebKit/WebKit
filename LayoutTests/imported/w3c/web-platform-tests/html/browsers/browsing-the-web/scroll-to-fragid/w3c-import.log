@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/001.html
@@ -22,10 +20,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/006.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/007.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/embedded-svg-document-fragment-does-not-scroll-parent.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/embedded-svg-document-fragment-does-not-scroll-svg-document.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/focus-changes-after-scroll-to-fragment.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/forward-triggers-hashchange.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/fragment-and-encoding-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/fragment-and-encoding.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/html-fragment-in-svg-foreign-object-scrolls-ancestors.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/navigate-helpers.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/replacement-enabled.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-frag-non-utf8-encoded-document.html
@@ -36,6 +37,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-position.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-restore-on-reload-non-ascii-fragment.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-anchor-name.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-fragid-from-link-is-synchronous.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-id-top.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-top.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/target-pseudo-after-adoption.html

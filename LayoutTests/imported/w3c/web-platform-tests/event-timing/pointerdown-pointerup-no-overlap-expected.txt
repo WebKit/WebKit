@@ -1,0 +1,4 @@
+Click me.
+
+PASS pointerdown and pointerup should not overlap when there is no pointerdown handler
+

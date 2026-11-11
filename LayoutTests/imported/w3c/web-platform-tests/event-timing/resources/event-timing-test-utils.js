@@ -1,5 +1,14 @@
 function mainThreadBusy(ms) {
-  const target = performance.now() + ms;
+  // Add 2ms to ensure we block for *at least* the requested amount of time,
+  // even in the face of two forms of timer imprecision:
+  //
+  // (1) Firefox rounds performance.now() to 1ms for privacy protection against
+  // timing attacks (e.g., Spectre), which can cause the loop to exit up to 1ms
+  // early when timestamps round unfavorably.
+  // (2) Firefox also introduces "jitter" randomness to web-exposed timestamps,
+  // an anti-fingerprinting protection that may make performance.now() lie by
+  // up to 1ms (while still increasing monotonically).
+  const target = performance.now() + ms + 2;
   while (performance.now() < target);
 }
 
@@ -70,8 +79,10 @@ function verifyEvent(entry, eventType, targetId, isFirst=false, minDuration=104,
     assert_equals(firstInput.processingEnd, entry.processingEnd);
     assert_equals(firstInput.cancelable, entry.cancelable);
   }
-  if (targetId)
-    assert_equals(entry.target, document.getElementById(targetId));
+  if (targetId) {
+    const target = document.getElementById(targetId);
+    assert_equals(entry.target, target);
+  }
 }
 
 function verifyClickEvent(entry, targetId, isFirst=false, minDuration=104, event='pointerdown') {
@@ -256,9 +267,9 @@ function testCounts(t, resolve, looseCount, eventType, expectedCount) {
 // 'target'. The test assumes that such element already exists. |looseCount| is set for
 // eventTypes for which events would occur for other interactions other than the ones being
 // specified for the target, so the counts could be larger.
-async function testEventType(t, eventType, looseCount=false) {
+async function testEventType(t, eventType, looseCount=false, targetId='target') {
   assert_implements(window.EventCounts, "Event Counts isn't supported");
-  const target = document.getElementById('target');
+  const target = document.getElementById(targetId);
   if (requiresListener(eventType)) {
     target.addEventListener(eventType, () =>{});
   }
@@ -293,7 +304,7 @@ async function testEventType(t, eventType, looseCount=false) {
         // The other events could also be considered slow. Find the one with the correct
         // target.
         eventTypeEntries.forEach(e => {
-          if (e.target === document.getElementById('target'))
+          if (e.target === document.getElementById(targetId))
             entry = e;
         });
         if (!entry)
@@ -301,7 +312,7 @@ async function testEventType(t, eventType, looseCount=false) {
       }
       verifyEvent(entry,
                   eventType,
-                  'target',
+                  targetId,
                   false /* isFirst */,
                   durationThreshold,
                   notCancelable(eventType));
@@ -377,6 +388,20 @@ async function auxPointerdown(target) {
     .pointerMove(0, 0, { origin: target })
     .pointerDown({ button: actions.ButtonType.RIGHT })
     .send();
+}
+
+async function orphanAuxPointerup(target) {
+  const actions = new test_driver.Actions();
+  await actions.addPointer("mousePointer", "mouse")
+    .pointerMove(0, 0, { origin: target })
+    .pointerUp({ button: actions.ButtonType.RIGHT })
+    .send();
+
+  // Orphan pointerup doesn't get triggered in some browsers. Sending a
+  // non-pointer related event to make sure that at least an event gets handled.
+  // If a browsers sends an orphan pointerup, it will always be before the
+  // keydown, so the test will correctly handle it.
+  await pressKey(target, 'a');
 }
 
 // The testdriver.js, testdriver-vendor.js need to be included to use this
@@ -487,7 +512,7 @@ async function textSelectionAndBlockMain(target, duration) {
     blockCapturePointerDownEventListener(target, "pointerdown", duration),
     blockNextEventListener(target, "pointermove", duration),
     blockNextEventListener(target, "scroll", duration),
-    blockNextEventListener(target, "pointerup", 10),
+    blockNextEventListener(target, "pointerup", duration),
     textSelectionInTarget(target),
     // afterNextPaint(),
   ]);

@@ -10,10 +10,7 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/tools/ed25519.py
 /LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/tools/generate_javascript.py
 /LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/tools/list_hashes.py

@@ -2,14 +2,15 @@
 PASS ReadableStream.from accepts an array of values
 PASS ReadableStream.from accepts an array of promises
 PASS ReadableStream.from accepts an array iterator
-FAIL ReadableStream.from accepts a string promise_test: Unhandled rejection with value: object "TypeError: iterable should be an object"
 PASS ReadableStream.from accepts a Set
 PASS ReadableStream.from accepts a Set iterator
 PASS ReadableStream.from accepts a sync generator
 PASS ReadableStream.from accepts an async generator
 PASS ReadableStream.from accepts a sync iterable of values
 PASS ReadableStream.from accepts a sync iterable of promises
+PASS ReadableStream.from accepts a sync iterable with a function iterator
 PASS ReadableStream.from accepts an async iterable
+PASS ReadableStream.from accepts an async iterable with a function iterator
 PASS ReadableStream.from accepts a ReadableStream
 PASS ReadableStream.from accepts a ReadableStream async iterator
 PASS ReadableStream.from throws on invalid iterables; specifically null
@@ -21,6 +22,7 @@ PASS ReadableStream.from throws on invalid iterables; specifically {}
 PASS ReadableStream.from throws on invalid iterables; specifically Object.create(null)
 PASS ReadableStream.from throws on invalid iterables; specifically a function
 PASS ReadableStream.from throws on invalid iterables; specifically a symbol
+PASS ReadableStream.from throws on invalid iterables; specifically a string
 PASS ReadableStream.from throws on invalid iterables; specifically an object with a non-callable @@iterator method
 PASS ReadableStream.from throws on invalid iterables; specifically an object with a non-callable @@asyncIterator method
 PASS ReadableStream.from throws on invalid iterables; specifically an object with an @@iterator method returning a non-object

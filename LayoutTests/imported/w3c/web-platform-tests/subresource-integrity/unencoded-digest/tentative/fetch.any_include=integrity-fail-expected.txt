@@ -1,0 +1,16 @@
+
+PASS Bad integrity metadata blocks everything, even: No header: loads.
+PASS Bad integrity metadata blocks everything, even: Good sha-256 header: loads.
+PASS Bad integrity metadata blocks everything, even: Repeated sha-256 header: loads.
+PASS Bad integrity metadata blocks everything, even: Multiple good headers (previous += sha-256): loads.
+PASS Bad integrity metadata blocks everything, even: Bad sha-256 header: blocked.
+PASS Bad integrity metadata blocks everything, even: Repeated sha-256 header: blocked.
+PASS Bad integrity metadata blocks everything, even: Multiple bad headers (previous += sha-256): blocked.
+PASS Bad integrity metadata blocks everything, even: Good sha-512 header: loads.
+PASS Bad integrity metadata blocks everything, even: Repeated sha-512 header: loads.
+PASS Bad integrity metadata blocks everything, even: Multiple good headers (previous += sha-512): loads.
+PASS Bad integrity metadata blocks everything, even: Bad sha-512 header: blocked.
+PASS Bad integrity metadata blocks everything, even: Repeated sha-512 header: blocked.
+PASS Bad integrity metadata blocks everything, even: Multiple bad headers (previous += sha-512): blocked.
+PASS Bad integrity metadata blocks everything, even: Mixed good and bad headers: blocked.
+

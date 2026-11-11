@@ -1,0 +1,12 @@
+
+PASS `fetch()`: Valid signature, same-origin: loads.
+PASS `fetch()`: Valid signature, cross-origin w/o cors, cors: blocked (because of CORS).
+PASS `fetch()`: Valid signature, same-origin w/ cors: loads.
+PASS `fetch()`: Valid signature, cross-origin w/cors, mode: cors: loads.
+FAIL `fetch()`: Invalid signature, same-origin: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL `fetch()`: Invalid signature, cross-origin w/o cors, mode: no-cors: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS `fetch()`: Invalid signature, cross-origin w/o cors, cors: blocked.
+FAIL `fetch()`: Invalid signature, same-origin w/ cors: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL `fetch()`: Invalid signature, cross-origin w/ cors, mode: no-cors: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL `fetch()`: Invalid signature, cross-origin w/ cors, mode: cors: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+

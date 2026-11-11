@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <meta charset=utf-8 />
-<title>Event Timing click.</title>
+<title>Event Timing: keydown/up gap.</title>
 <script src=/resources/testharness.js></script>
 <script src=/resources/testharnessreport.js></script>
 <script src=/resources/testdriver.js></script>
@@ -15,12 +15,22 @@
     const keyUps = []
     blockNextEventListener(window, 'keydown', 30)
     blockNextEventListener(window, 'keyup', 30)
+
+    // A pointerdown is used as an interleaving event, to make sure the keydown's
+    // timing entry had it's duration set before triggering the keyup. Using
+    // only `await afterNextPaint()` after the first event is not enough to
+    // guarantee this in all browsers. See discussion in
+    // https://github.com/web-platform-tests/wpt/pull/55577#discussion_r2466579023
+    blockNextEventListener(window, 'pointerdown', 30)
+    const {promise: interleavingEventTimingEntryObserved, resolve: resolveInterleaving } = Promise.withResolvers();
     new PerformanceObserver( (entries) => {
       entries.getEntries().forEach(  (e) => {
         if (e.name == 'keydown')
           keyDowns.push(e)
         if (e.name =='keyup')
           keyUps.push(e)
+        if (e.name == 'pointerdown')
+          resolveInterleaving()
       })
     }).observe({type: 'event', durationThreshold: 16})
     const keyDownHandled = new Promise( resolve => window.addEventListener('keydown', e => resolve(), true) )
@@ -31,6 +41,12 @@
       .send()
     await keyDownHandled
     await afterNextPaint()
+    await new test_driver.Actions()
+      .pointerMove(0, 0)
+      .pointerDown()
+      .pointerUp()
+      .send()
+    await interleavingEventTimingEntryObserved
     const waitStart = performance.now()
     await t.step_wait(() => (performance.now() - waitStart > 50))
     await new test_driver.Actions()

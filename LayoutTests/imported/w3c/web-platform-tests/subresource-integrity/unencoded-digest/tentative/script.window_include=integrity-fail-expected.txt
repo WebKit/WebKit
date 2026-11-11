@@ -1,0 +1,16 @@
+
+PASS Mismatching `integrity` attribute always blocks: No header: loads.
+PASS Mismatching `integrity` attribute always blocks: Good sha-256 header: loads.
+PASS Mismatching `integrity` attribute always blocks: Repeated sha-256 header: loads.
+PASS Mismatching `integrity` attribute always blocks: Multiple good headers (previous += sha-256): loads.
+PASS Mismatching `integrity` attribute always blocks: Bad sha-256 header: blocked.
+PASS Mismatching `integrity` attribute always blocks: Repeated sha-256 header: blocked.
+PASS Mismatching `integrity` attribute always blocks: Multiple bad headers (previous += sha-256): blocked.
+PASS Mismatching `integrity` attribute always blocks: Good sha-512 header: loads.
+PASS Mismatching `integrity` attribute always blocks: Repeated sha-512 header: loads.
+PASS Mismatching `integrity` attribute always blocks: Multiple good headers (previous += sha-512): loads.
+PASS Mismatching `integrity` attribute always blocks: Bad sha-512 header: blocked.
+PASS Mismatching `integrity` attribute always blocks: Repeated sha-512 header: blocked.
+PASS Mismatching `integrity` attribute always blocks: Multiple bad headers (previous += sha-512): blocked.
+PASS Mismatching `integrity` attribute always blocks: Mixed good and bad headers: blocked.
+

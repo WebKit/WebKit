@@ -1,0 +1,18 @@
+
+Harness Error (FAIL), message = Error: assert_unreached: This code should not execute. Reached unreachable code
+
+PASS `<script>`: No signature, no integrity check: loads.
+PASS `<script>`: No signature, malformed integrity check: loads.
+FAIL `<script>`: No signature, integrity check: blocked. assert_unreached: Script should not execute. Reached unreachable code
+PASS `<script>`: Valid signature, no integrity check: loads.
+PASS `<script>`: Valid signature, malformed integrity check: loads.
+PASS `<script>`: Valid signature, valid integrity check: loads.
+PASS `<script>`: Valid signature, one matching integrity check: loads.
+FAIL `<script>`: Valid signature, mismatched integrity check: blocked. assert_unreached: Script should not execute. Reached unreachable code
+PASS `<script>`: Valid signatures, no integrity check: loads.
+PASS `<script>`: Valid signatures, malformed integrity check: loads.
+PASS `<script>`: Valid signatures, integrity check matches one: loads.
+PASS `<script>`: Valid signatures, integrity check matches the other: loads.
+PASS `<script>`: Valid signatures, integrity check matches both: loads.
+FAIL `<script>`: Valid signatures, integrity check matches neither: blocked. assert_unreached: Script should not execute. Reached unreachable code
+
