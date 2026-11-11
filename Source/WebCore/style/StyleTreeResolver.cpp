@@ -2068,6 +2068,9 @@ void TreeResolver::collectChangedAnchorNames(const Style::ComputedStyle& newStyl
     // A changed anchor name is either a name being added, a name being removed, or a name whose interpretation changes.
     // This may change which elements get anchored to it.
 
+    if (!currentStyle && !newStyle.display().doesGenerateBox())
+        return;
+
     if (!currentStyle || currentStyle->anchorNames() != newStyle.anchorNames()) {
         // This could check which individual names differ but usually there is just one.
         auto addChanged = [&](auto& style) {
