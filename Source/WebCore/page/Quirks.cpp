@@ -173,6 +173,7 @@ NODELETE static HashMap<RegistrableDomain, String>& updatableStorageAccessUserAg
 NODELETE static inline bool shouldNotAutoUpgradeToHTTPSNavigationInternal(const URL&) { return false; }
 NODELETE static inline bool shouldDisableBlobFileAccessEnforcementInternal() { return false; }
 NODELETE static inline bool shouldExemptCookieFromITPDataRemovalInternal(const String&) { return false; }
+NODELETE static inline bool shouldExtendCookieLifetimeInternal(const String&) { return false; }
 NODELETE static inline ConsistentQueryParameterFilteringLevel needsConsistentQueryParameterFilteringInternal(const URL&, const URL&) { return ConsistentQueryParameterFilteringLevel::Disabled; }
 #if PLATFORM(COCOA)
 NODELETE static inline String standardUserAgentWithApplicationNameIncludingCompatOverridesInternal(const String&, const String&, UserAgentType) { return { }; }
@@ -897,6 +898,11 @@ bool Quirks::anyPatternMatchesCNAMETarget(const Vector<String>& patterns, const 
 bool Quirks::shouldExemptCookieFromITPDataRemoval(const String& cookieName)
 {
     return shouldExemptCookieFromITPDataRemovalInternal(cookieName);
+}
+
+bool Quirks::shouldExtendCookieLifetime(const String& cookieName)
+{
+    return shouldExtendCookieLifetimeInternal(cookieName);
 }
 
 // m365.cloud.microsoft rdar://157794706

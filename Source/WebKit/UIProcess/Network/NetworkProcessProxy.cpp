@@ -1441,6 +1441,16 @@ void NetworkProcessProxy::setFirstPartyWebsiteDataRemovalModeForTesting(PAL::Ses
     sendWithAsyncReply(Messages::NetworkProcess::SetFirstPartyWebsiteDataRemovalModeForTesting(sessionID, mode), WTF::move(completionHandler));
 }
 
+void NetworkProcessProxy::setExtendAllowlistedCookieLifetime(PAL::SessionID sessionID, bool extend, CompletionHandler<void()>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler();
+        return;
+    }
+
+    sendWithAsyncReply(Messages::NetworkProcess::SetExtendAllowlistedCookieLifetime(sessionID, extend), WTF::move(completionHandler));
+}
+
 void NetworkProcessProxy::setExemptAllowlistedCookiesFromITP(PAL::SessionID sessionID, bool exempt, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {
