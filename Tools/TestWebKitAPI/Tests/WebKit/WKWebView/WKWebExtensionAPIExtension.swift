@@ -470,6 +470,9 @@ struct WKWebExtensionAPIExtensionTests {
         try await manager.run()
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Calls testing SPI that only exists on WKProcessPool")
+    #endif
     @Test
     func handlePendingExtensionTasksWhileStopped() async throws {
         let backgroundScript = """

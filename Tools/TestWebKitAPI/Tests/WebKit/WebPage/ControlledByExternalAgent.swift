@@ -46,6 +46,9 @@ private final class SessionFixture {
     let page: WebPage
     let session: _WKAutomationSession
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Calls testing SPI that only exists on WKProcessPool")
+    #endif
     init(controlledByExternalAgent: Bool) {
         let page = WebPage()
         self.page = page

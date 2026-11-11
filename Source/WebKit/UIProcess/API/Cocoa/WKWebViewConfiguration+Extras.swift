@@ -28,6 +28,9 @@ import WebKit_Private
 import WebKit_Private.WKPreferencesPrivate
 
 extension WKWebViewConfiguration {
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Forwards the testing-only WebPage.Configuration.processPool")
+    #endif
     convenience init(_ wrapped: WebPage.Configuration) {
         self.init()
 

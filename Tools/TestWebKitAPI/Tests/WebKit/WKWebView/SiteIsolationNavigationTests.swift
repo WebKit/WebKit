@@ -119,6 +119,9 @@ struct SiteIsolationNavigationTests {
         }
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Disables the back/forward cache through process pool testing SPI")
+    #endif
     @Test
     func shutDownFrameProcessesAfterNavigation() async throws {
         var server = try HTTPServer(protocol: .httpsProxy) {
@@ -137,10 +140,8 @@ struct SiteIsolationNavigationTests {
 
         try await server.run { serverConfiguration in
             // With the back/forward cache, the iframe's process would stay alive to host the iframe in the cached page.
-            let processPoolConfiguration = _WKProcessPoolConfiguration()
-            processPoolConfiguration.pageCacheEnabled = false
             let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
-            configuration.processPool = try #require(WKProcessPool._processPool(with: processPoolConfiguration))
+            configuration.processPool = .withBackForwardCacheDisabled()
             let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: configuration)
 
             webView.load(URLRequest(url: try #require(URL(string: "https://example.com/example"))))

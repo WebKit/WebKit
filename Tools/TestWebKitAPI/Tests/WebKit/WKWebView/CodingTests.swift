@@ -28,6 +28,9 @@ private import WebKit_Private.WKPreferencesPrivate
 
 @MainActor
 struct CodingTests {
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Tests that deprecated javaScriptEnabled still round-trips through NSCoding")
+    #endif
     @Test
     func wkPreferences() throws {
         let a = WKPreferences()
@@ -47,24 +50,37 @@ struct CodingTests {
         let b = try encodeAndDecode(a)
 
         #expect(a.minimumFontSize == b.minimumFontSize)
-        #expect(a.javaScriptEnabled == b.javaScriptEnabled)
+        // Read outside #expect: @diagnose does not apply inside macro expansions.
+        let aJavaScriptEnabled = a.javaScriptEnabled
+        let bJavaScriptEnabled = b.javaScriptEnabled
+        #expect(aJavaScriptEnabled == bJavaScriptEnabled)
         #expect(a.javaScriptCanOpenWindowsAutomatically == b.javaScriptCanOpenWindowsAutomatically)
         #expect(a.shouldPrintBackgrounds == b.shouldPrintBackgrounds)
         #expect(a.tabFocusesLinks == b.tabFocusesLinks)
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Tests that deprecated WKProcessPool still round-trips through NSCoding")
+    #endif
     @Test
     func wkProcessPoolShared() throws {
-        let a = try #require(WKProcessPool._shared())
+        // Read outside #require: @diagnose does not apply inside macro expansions.
+        let shared = WKProcessPool._shared()
+        let a = try #require(shared)
         let b = try encodeAndDecode(a)
 
         #expect(a === b)
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Tests that deprecated WKProcessPool still round-trips through NSCoding")
+    #endif
     @Test
     func wkProcessPool() throws {
         let pool = try encodeAndDecode(WKProcessPool())
-        #expect(pool !== WKProcessPool._shared())
+        // Read outside #expect: @diagnose does not apply inside macro expansions.
+        let shared = WKProcessPool._shared()
+        #expect(pool !== shared)
     }
 
     @Test
@@ -148,6 +164,9 @@ struct CodingTests {
         #endif
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Tests that a shared deprecated WKProcessPool is preserved through NSCoding")
+    #endif
     @Test
     func wkWebViewSameConfiguration() throws {
         // First, encode two WKWebViews sharing the same configuration.
@@ -161,7 +180,7 @@ struct CodingTests {
         }()
 
         // Then, decode and verify that the important configuration properties are the same.
-        let array = try #require(NSKeyedUnarchiver.unarchiveObject(with: data) as? NSArray)
+        let array = try #require(try unarchiveInsecurely(data) as? NSArray)
 
         let aView = try #require(array[0] as? WKWebView)
         let bView = try #require(array[1] as? WKWebView)
@@ -169,7 +188,10 @@ struct CodingTests {
         let a = aView.configuration
         let b = bView.configuration
 
-        #expect(a.processPool === b.processPool)
+        // Read outside #expect: @diagnose does not apply inside macro expansions.
+        let aProcessPool = a.processPool
+        let bProcessPool = b.processPool
+        #expect(aProcessPool === bProcessPool)
         #expect(a.preferences === b.preferences)
         #expect(a.userContentController === b.userContentController)
         #expect(a.websiteDataStore === b.websiteDataStore)
@@ -187,5 +209,13 @@ private func encodeAndDecode<T>(_ value: T) throws -> T where T: NSCoding, T: NS
     let data = try NSKeyedArchiver.archivedData(withRootObject: value, requiringSecureCoding: false)
     // Tautologically guaranteed.
     // swift-format-ignore: NeverForceUnwrap
-    return NSKeyedUnarchiver.unarchiveObject(with: data) as! T
+    return try unarchiveInsecurely(data) as! T
+}
+
+/// Decodes the root object of an archive that was created without secure coding.
+private func unarchiveInsecurely(_ data: Data) throws -> Any? {
+    let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
+    unarchiver.requiresSecureCoding = false
+    defer { unarchiver.finishDecoding() }
+    return unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey)
 }
