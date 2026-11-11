@@ -43,6 +43,7 @@ require "filter-build-webkit";
 FilterBuildWebKit->import(qw(shouldIgnoreLine));
 
 sub description($);
+sub filteredOutput($);
 
 #
 # Test whitespace
@@ -67,6 +68,7 @@ cat WebCore/css/CSSPropertyNames.in WebCore/css/SVGCSSPropertyNames.in > CSSProp
 rm -f ./idl_files.tmp
 python JavaScriptCore/KeywordLookupGenerator.py JavaScriptCore/parser/Keywords.table > KeywordLookup.h
 sed -e s/\<WebCore/\<WebKit/ -e s/DOMDOMImplementation/DOMImplementation/ /Volumes/Data/Build/Release/WebCore.framework/PrivateHeaders/DOM.h > /Volumes/Data/Build/Release/WebKit.framework/Versions/A/Headers/DOM.h
+SwiftDriverJobDiscovery normal (in target 'bmalloc' from project 'bmalloc')
 END
 
 for my $line (@expectIgnoredLines) {
@@ -297,6 +299,44 @@ for my $i (0..scalar(@generatePrefsLines) - 1) {
     }
 }
 
+my @swiftModuleLines = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
+SwiftEmitModule normal arm64e Emitting\ module\ for\ bmalloc (in target 'bmalloc' from project 'bmalloc')
+SwiftVerifyEmittedModuleInterface normal arm64e Verifying\ emitted\ module\ interface\ bmalloc.private.swiftinterface /Users/u/Build/bmalloc.build/Release/bmalloc.build/Objects-normal/arm64e/bmalloc.private.swiftinterface (in target 'bmalloc' from project 'bmalloc')
+/Users/u/Build/bmalloc.build/Release/bmalloc.build/Objects-normal/arm64e/bmalloc.private.swiftinterface:12:5: error: cannot find type 'Foo' in scope
+SwiftDriverJobDiscovery normal arm64e Emitting\ module\ for\ bmalloc (in target 'bmalloc' from project 'bmalloc')
+END
+
+for my $line (@swiftModuleLines) {
+    if ($line =~ /^SwiftDriverJobDiscovery/) {
+        is(shouldIgnoreLine("", $line), 1, description("Ignored: " . $line));
+    } else {
+        is(shouldIgnoreLine("", $line), 0, description("Printed: " . $line));
+    }
+}
+
+my @swiftDriverLines = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
+SwiftDriver\ Interface\ Verification WebGPU normal arm64e com.apple.xcode.tools.swift.compiler (in target 'WebGPU' from project 'WebGPU')
+SwiftDriver\ GenerateModule Example\ Framework normal arm64e-ios-macabi com.apple.xcode.tools.swift.compiler (in target 'Example Framework' from project 'Example')
+SwiftDriverJobDiscovery normal arm64e Compiling WKWebView+RefreshControl.swift, WKWebView+SystemTextExtraction.swift (in target 'WebKit' from project 'WebKit')
+SwiftDriverJobDiscovery normal arm64e Verifying emitted module interface WebKit.private.swiftinterface (in target 'WebKit' from project 'WebKit')
+SwiftDriverJobDiscovery normal arm64e-ios-macabi Emitting module for Example (in target 'Example Framework' from project 'Example')
+END
+
+for my $line (@swiftDriverLines) {
+    is(shouldIgnoreLine("", $line), 1, description("Ignored: " . $line));
+}
+
+my @swiftModuleSummaries = (
+    [q{SwiftEmitModule normal arm64e-ios-macabi Emitting\ module\ for\ Example (in target 'Example Framework' from project 'Example')}, "SwiftEmitModule Example"],
+    [q{SwiftVerifyEmittedModuleInterface normal arm64e Verifying\ emitted\ module\ interface\ WebKit.private.swiftinterface /Volumes/Data/Build/WebKit.build/Debug/WebKit.build/Objects-normal/arm64e/WebKit.private.swiftinterface (in target 'WebKit' from project 'WebKit')}, "SwiftVerify WebKit.private.swiftinterface"],
+    [q{SwiftVerifyEmittedModuleInterface normal arm64e Verifying\ emitted\ module\ interface\ Example.package.swiftinterface /Volumes/Data/Build/Example.build/Debug/Example\ Framework.build/Objects-normal/arm64e/Example.package.swiftinterface (in target 'Example Framework' from project 'Example')}, "SwiftVerify Example.package.swiftinterface"],
+);
+
+for my $summary (@swiftModuleSummaries) {
+    my ($line, $expected) = @$summary;
+    is(filteredOutput($line), "$expected\n", description("Summarized: " . $line));
+}
+
 done_testing();
 
 sub description($)
@@ -311,4 +351,20 @@ sub description($)
     $description .= $ellipsis if length($line) != length($description);
 
     return $description;
+}
+
+sub filteredOutput($)
+{
+    my ($input) = @_;
+
+    my $script = File::Spec->catfile($FindBin::Bin, "..", "..", "filter-build-webkit");
+    require IPC::Open2;
+    my $pid = IPC::Open2::open2(my $outputHandle, my $inputHandle, $EXECUTABLE_NAME, $script, "--format=text");
+    print $inputHandle "$input\n";
+    close($inputHandle);
+    my $output = do { local $INPUT_RECORD_SEPARATOR; <$outputHandle> };
+    close($outputHandle);
+    waitpid($pid, 0);
+
+    return $output;
 }
