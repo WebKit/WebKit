@@ -462,6 +462,24 @@ auto TreeResolver::resolveElement(Element& element, const Style::ComputedStyle* 
     return { WTF::move(update), descendantsToResolve };
 }
 
+// View transition pseudo-elements form a tree hanging off the document element and only generate a box when
+// neither they nor any of their ancestor pseudo-elements are display: none.
+static bool isViewTransitionPseudoElementInDisplayNoneTree(const PseudoElementIdentifier& pseudoElementIdentifier, const ComputedStyle& pseudoElementStyle, const ComputedStyle& elementStyle)
+{
+    if (pseudoElementIdentifier.type != PseudoElementType::ViewTransition && !isNamedViewTransitionPseudoElement(pseudoElementIdentifier))
+        return false;
+
+    if (pseudoElementStyle.display() == DisplayType::None)
+        return true;
+
+    for (auto ancestorType = parentPseudoElement(pseudoElementIdentifier.type); ancestorType; ancestorType = parentPseudoElement(*ancestorType)) {
+        auto* ancestorStyle = elementStyle.pseudoElementStyle({ *ancestorType, *ancestorType == PseudoElementType::ViewTransition ? nullAtom() : pseudoElementIdentifier.nameOrPart });
+        if (!ancestorStyle || ancestorStyle->display() == DisplayType::None)
+            return true;
+    }
+    return false;
+}
+
 std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element, const PseudoElementIdentifier& pseudoElementIdentifier, const ElementUpdate& elementUpdate, IsInDisplayNoneTree isInDisplayNoneTree, const Style::ComputedStyle* existingStyle)
 {
     ASSERT(pseudoElementIdentifier.type != PseudoElementType::UserAgentPartFallback);
@@ -574,6 +592,9 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
 
     if (!resolvedStyle)
         return { };
+
+    if (isViewTransitionPseudoElementInDisplayNoneTree(pseudoElementIdentifier, *resolvedStyle->style, *elementUpdate.style))
+        isInDisplayNoneTree = IsInDisplayNoneTree::Yes;
 
     auto animatedUpdate = createAnimatedElementUpdate(WTF::move(*resolvedStyle), styleable, elementUpdate.changes, resolutionContext, isInDisplayNoneTree);
 
