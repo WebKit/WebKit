@@ -27,7 +27,6 @@
 #include "config.h"
 #include "StyleChangedAnimatableProperties.h"
 
-#include "Settings.h"
 #include "StyleChangedAnimatablePropertiesGenerated.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
@@ -38,7 +37,7 @@ void conservativelyCollectChangedAnimatableProperties(const Style::ComputedStyle
 {
     // Check property values on ComputedStyle for changes.
 
-    ChangedAnimatablePropertiesGenerated::conservativelyCollectChangedAnimatableProperties(a, b, changingProperties);
+    ChangedAnimatablePropertiesGenerated::conservativelyCollectChangedAnimatableProperties(a, b, changingProperties, settings);
 
     // Also, check some non-property and/or derived values on ComputedStyle for changes.
 
@@ -67,9 +66,6 @@ void conservativelyCollectChangedAnimatableProperties(const Style::ComputedStyle
         if (Style::effectiveBorderWidths(a).left() == Style::effectiveBorderWidths(b).left())
             changingProperties.m_properties.clear(std::to_underlying(CSSPropertyID::BorderLeftWidth));
     }
-
-    if (!settings.colorFilterEnabled())
-        changingProperties.m_properties.clear(std::to_underlying(CSSPropertyID::AppleColorFilter));
 }
 
 } // namespace Style

@@ -128,6 +128,11 @@ const Style::Number<>& ComputedStyleProperties::testRenderStyleStorageOneLevelRe
     return testRenderStyleStorageOneLevelReference();
 }
 
+Style::Number<> ComputedStyleProperties::testRenderStyleStorageOneLevelSettingsFlagOutOfLine() const
+{
+    return testRenderStyleStorageOneLevelSettingsFlag();
+}
+
 Style::Number<> ComputedStyleProperties::testRenderStyleStorageOneLevelValueOutOfLine() const
 {
     return testRenderStyleStorageOneLevelValue();
