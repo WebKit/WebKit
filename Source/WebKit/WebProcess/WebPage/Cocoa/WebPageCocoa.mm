@@ -3569,7 +3569,7 @@ Awaitable<std::optional<WebCore::FrameIdentifier>> WebPage::commitPotentialTap(s
                     return;
             }
         }
-#if ENABLE(FOCUS_ADJUSTMENT_IN_SYNTHETIC_CLICK)
+#if HAVE(APPKIT_GESTURES_SUPPORT)
         if (localRootFrame) {
             protect(m_page->focusController())->setFocusedElement(nullptr, localRootFrame.get(), { .trigger = FocusTrigger::Click });
 
@@ -3577,7 +3577,7 @@ Awaitable<std::optional<WebCore::FrameIdentifier>> WebPage::commitPotentialTap(s
             if (m_isClosed)
                 return;
         }
-#endif // ENABLE(FOCUS_ADJUSTMENT_IN_SYNTHETIC_CLICK)
+#endif // HAVE(APPKIT_GESTURES_SUPPORT)
         commitPotentialTapFailed();
     };
 
@@ -3664,7 +3664,7 @@ void WebPage::cancelPotentialTap()
 #endif
     cancelPotentialTapInFrame(m_mainFrame);
 
-#if ENABLE(FOCUS_ADJUSTMENT_IN_SYNTHETIC_CLICK)
+#if HAVE(APPKIT_GESTURES_SUPPORT)
     dispatchDeferredSyntheticClickIfNeeded();
 #endif
 }
