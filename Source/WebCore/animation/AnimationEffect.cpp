@@ -34,6 +34,7 @@
 #include "CommonAtomStrings.h"
 #include "FillMode.h"
 #include "JSComputedEffectTiming.h"
+#include "ScriptDisallowedScope.h"
 #include "ScriptExecutionContext.h"
 #include "ScrollTimeline.h"
 #include "StyleSingleAnimationRange.h"
@@ -437,6 +438,8 @@ void AnimationEffect::updateComputedTimingPropertiesIfNeeded()
 {
     if (!m_timingDidMutate)
         return;
+
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     m_timingDidMutate = false;
 
