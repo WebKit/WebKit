@@ -65,18 +65,16 @@ ScrollingStateTree::ScrollingStateTree(AsyncScrollingCoordinator* scrollingCoord
 {
 }
 
-ScrollingStateTree::ScrollingStateTree(ScrollingStateTree&&) = default;
-
 ScrollingStateTree::~ScrollingStateTree() = default;
 
-std::optional<ScrollingStateTree> ScrollingStateTree::createAfterReconstruction(bool hasNewRootStateNode, bool hasChangedProperties, RefPtr<ScrollingStateFrameScrollingNode>&& rootStateNode)
+std::optional<UniqueRef<ScrollingStateTree>> ScrollingStateTree::createAfterReconstruction(bool hasNewRootStateNode, bool hasChangedProperties, RefPtr<ScrollingStateFrameScrollingNode>&& rootStateNode)
 {
-    ScrollingStateTree tree(hasNewRootStateNode, hasChangedProperties, WTF::move(rootStateNode));
+    UniqueRef tree { *new ScrollingStateTree(hasNewRootStateNode, hasChangedProperties, WTF::move(rootStateNode)) };
 
     bool allIdentifiersUnique { true };
-    if (RefPtr rootStateNode = tree.m_rootStateNode) {
+    if (RefPtr rootStateNode = tree->m_rootStateNode) {
         rootStateNode->traverse([&] (auto& node) {
-            auto addResult = tree.m_stateNodeMap.add(node.scrollingNodeID(), node);
+            auto addResult = tree->m_stateNodeMap.add(node.scrollingNodeID(), node);
             if (!addResult.isNewEntry)
                 allIdentifiersUnique = false;
         });
@@ -96,10 +94,6 @@ ScrollingStateTree::ScrollingStateTree(bool hasNewRootStateNode, bool hasChanged
 
 void ScrollingStateTree::attachDeserializedNodes()
 {
-    // This needs to be done after the move constructor has been called because we deserialize
-    // into a ScrollingStateTree then move to a std::unique_ptr<ScrollingStateTree> and if we
-    // did this in the constructor, createAfterReconstruction would be setting nodes' tree pointers
-    // to the wrong ScrollingStateTree.
     if (auto* rootStateNode = m_rootStateNode.get()) {
         rootStateNode->attachAfterDeserialization(*this);
         ASSERT(rootStateNode->parentPointersAreCorrect());
@@ -361,7 +355,7 @@ std::unique_ptr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentati
     }
 
     // This function clones and resets the current state tree, but leaves the tree structure intact.
-    auto treeStateClone = makeUnique<ScrollingStateTree>();
+    std::unique_ptr<ScrollingStateTree> treeStateClone = create().moveToUniquePtr();
     treeStateClone->setPreferredLayerRepresentation(preferredLayerRepresentation);
 
     if (RefPtr rootStateNode = m_rootStateNode)

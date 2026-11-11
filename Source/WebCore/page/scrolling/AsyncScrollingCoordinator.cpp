@@ -145,7 +145,7 @@ ScrollingStateTree& AsyncScrollingCoordinator::ensureScrollingStateTreeForRootFr
 {
     ASSERT(Frame::isRootFrameIdentifier(rootFrameID));
     return m_scrollingStateTrees.ensure(rootFrameID, [&] {
-        return makeUniqueRef<ScrollingStateTree>(this);
+        return ScrollingStateTree::create(this);
     });
 }
 

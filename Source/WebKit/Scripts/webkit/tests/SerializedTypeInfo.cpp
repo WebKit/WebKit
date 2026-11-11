@@ -52,6 +52,7 @@
 #endif
 #include "SwiftTypes.h"
 #include "TemplateTest.h"
+#include <Namespace/CreateUsingUniqueRefClass.h>
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/EmptyConstructorWithIf.h>
 #if !(ENABLE(OUTER_CONDITION))
@@ -61,6 +62,7 @@
 #include <Namespace/OuterClass.h>
 #endif
 #include <Namespace/ReturnRefClass.h>
+#include <Namespace/ReturnUniqueRefClass.h>
 #if USE(APPKIT)
 #include <WebCore/AppKitControlSystemImage.h>
 #endif
@@ -189,6 +191,18 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "std::unique_ptr<int>"_s,
                 "uniqueMember"_s
+            },
+        } },
+        { "Namespace::ReturnUniqueRefClass"_s, {
+            {
+                "int"_s,
+                "member"_s
+            },
+        } },
+        { "Namespace::CreateUsingUniqueRefClass"_s, {
+            {
+                "int"_s,
+                "member"_s
             },
         } },
         { "Namespace::EmptyConstructorStruct"_s, {

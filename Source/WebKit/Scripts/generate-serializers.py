@@ -124,6 +124,7 @@ def matches_bundle(item, bundle_filter):
 # Alias - this type is not a struct or class, but a typedef.
 # Nested - this type is only serialized as a member of its parent, so work around the need for http://wg21.link/P0289 and don't forward declare it in the header.
 # RefCounted - deserializer returns a std::optional<Ref<T>> instead of a std::optional<T>.
+# UniqueRef - deserializer returns a std::optional<UniqueRef<T>> instead of a std::optional<T>, for types that must be heap allocated.
 # LegacyPopulateFromEmptyConstructor - instead of calling a constructor with the members, call the empty constructor then insert the members one at a time.
 # OptionSet - for enum classes, instead of only allowing deserialization of the exact values, allow deserialization of any bit combination of the values.
 # RValue - serializer takes an rvalue reference, instead of an lvalue.
@@ -178,6 +179,7 @@ class SerializedType(object):
         self.condition = condition
         self.encoders = ['Encoder']
         self.return_ref = False
+        self.return_unique_ref = False
         self.construct_subclass = None
         self.create_using = False
         self.populate_from_empty_constructor = False
@@ -228,6 +230,8 @@ class SerializedType(object):
                         self.nested = True
                     elif attribute == 'RefCounted':
                         self.return_ref = True
+                    elif attribute == 'UniqueRef':
+                        self.return_unique_ref = True
                     elif attribute == 'DisableMissingMemberCheck':
                         self.disableMissingMemberCheck = True
                     elif attribute == 'RValue':
@@ -686,6 +690,8 @@ def one_argument_coder_declaration(type, template_argument):
             result.append(f'    static void encode({encoder}&, const {name_with_template}&);')
     if type.return_ref:
         result.append(f'    static std::optional<Ref<{name_with_template}>> decode(Decoder&);')
+    elif type.return_unique_ref:
+        result.append(f'    static std::optional<UniqueRef<{name_with_template}>> decode(Decoder&);')
     else:
         result.append(f'    static std::optional<{name_with_template}> decode(Decoder&);')
     result.append('};')
@@ -1162,6 +1168,8 @@ def construct_type(type, specialization, indentation):
         result.append(f'{indent(indentation)}{fulltype}::{type.create_using}(')
     elif type.return_ref:
         result.append(f'{indent(indentation)}{fulltype}::create(')
+    elif type.return_unique_ref:
+        result.append(f'{indent(indentation)}makeUniqueRef<{fulltype}>(')
     else:
         result.append(f'{indent(indentation)}{fulltype} {{')
     if type.parent_class is not None:
@@ -1179,7 +1187,7 @@ def construct_type(type, specialization, indentation):
     for i in range(len(type.dictionary_members)):
         member = type.dictionary_members[i]
         result.append(f'{indent(indentation + 1)}WTF::move(*{member.type}){"," if i < len(type.dictionary_members) - 1 else ""}')
-    if type.create_using or type.return_ref:
+    if type.create_using or type.return_ref or type.return_unique_ref:
         result.append(indent(indentation) + ')')
     else:
         result.append(indent(indentation) + '}')
@@ -1257,6 +1265,8 @@ def generate_one_impl(type, template_argument, serialized_types):
         result.append(f'std::optional<RetainPtr<{name_with_template}>> ArgumentCoder<RetainPtr<{name_with_template}>>::decode(Decoder& decoder)')
     elif type.return_ref:
         result.append(f'std::optional<Ref<{name_with_template}>> ArgumentCoder<{name_with_template}>::decode(Decoder& decoder)')
+    elif type.return_unique_ref:
+        result.append(f'std::optional<UniqueRef<{name_with_template}>> ArgumentCoder<{name_with_template}>::decode(Decoder& decoder)')
     else:
         result.append(f'std::optional<{name_with_template}> ArgumentCoder<{name_with_template}>::decode(Decoder& decoder)')
     result.append('{')

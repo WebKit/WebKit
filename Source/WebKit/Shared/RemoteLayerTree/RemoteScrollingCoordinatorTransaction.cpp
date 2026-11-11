@@ -56,7 +56,7 @@ RemoteScrollingCoordinatorTransaction::RemoteScrollingCoordinatorTransaction(std
     , m_rootFrameID(frameID)
 {
     if (!m_scrollingStateTree)
-        m_scrollingStateTree = makeUnique<WebCore::ScrollingStateTree>();
+        m_scrollingStateTree = WebCore::ScrollingStateTree::create().moveToUniquePtr();
     if (fromDeserialization == FromDeserialization::Yes)
         CheckedRef { *m_scrollingStateTree }->attachDeserializedNodes();
 }

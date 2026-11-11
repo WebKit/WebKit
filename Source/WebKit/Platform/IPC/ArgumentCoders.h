@@ -321,10 +321,17 @@ template<typename T> struct ArgumentCoder<std::unique_ptr<T>> {
             return std::nullopt;
 
         if (*isEngaged) {
-            auto object = decoder.template decode<T>();
-            if (!object)
-                return std::nullopt;
-            SUPPRESS_UNCHECKED_ARG return std::make_optional<std::unique_ptr<T>>(makeUnique<T>(WTF::move(*object)));
+            if constexpr (std::is_same_v<decltype(ArgumentCoder<T>::decode(decoder)), std::optional<UniqueRef<T>>>) {
+                auto object = ArgumentCoder<T>::decode(decoder);
+                if (!object)
+                    return std::nullopt;
+                return std::make_optional<std::unique_ptr<T>>(object->moveToUniquePtr());
+            } else {
+                auto object = decoder.template decode<T>();
+                if (!object)
+                    return std::nullopt;
+                SUPPRESS_UNCHECKED_ARG return std::make_optional<std::unique_ptr<T>>(makeUnique<T>(WTF::move(*object)));
+            }
         }
         return std::make_optional<std::unique_ptr<T>>();
     }
@@ -341,10 +348,15 @@ template<typename T> struct ArgumentCoder<UniqueRef<T>> {
     template<typename Decoder>
     static std::optional<UniqueRef<T>> decode(Decoder& decoder)
     {
-        auto object = decoder.template decode<T>();
-        if (!object)
-            return std::nullopt;
-        return makeUniqueRef<T>(WTF::move(*object));
+        // Decoders of heap allocated types return std::optional<UniqueRef<T>> instead of std::optional<T>.
+        if constexpr (std::is_same_v<decltype(ArgumentCoder<T>::decode(decoder)), std::optional<UniqueRef<T>>>)
+            return ArgumentCoder<T>::decode(decoder);
+        else {
+            auto object = decoder.template decode<T>();
+            if (!object)
+                return std::nullopt;
+            return makeUniqueRef<T>(WTF::move(*object));
+        }
     }
 };
 

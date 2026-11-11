@@ -29,6 +29,14 @@ headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
     std::unique_ptr<int> uniqueMember
 }
 
+[UniqueRef] class Namespace::ReturnUniqueRefClass {
+    int member
+}
+
+[CreateUsing=create, UniqueRef] class Namespace::CreateUsingUniqueRefClass {
+    int member
+}
+
 [LegacyPopulateFromEmptyConstructor] struct Namespace::EmptyConstructorStruct {
     int m_int;
     double m_double;
