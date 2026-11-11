@@ -43,9 +43,12 @@
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 typedef struct __CVBuffer *CVImageBufferRef;
+typedef struct __CVPixelBufferPool *CVPixelBufferPoolRef;
 typedef struct OpaqueCMTaggedBufferGroup *CMTaggedBufferGroupRef;
 typedef UInt32 VTDecodeInfoFlags;
 typedef struct OpaqueVTDecompressionSession*  VTDecompressionSessionRef;
+
+OBJC_CLASS CIContext;
 
 namespace WebCore {
 
@@ -85,6 +88,8 @@ private:
     std::expected<RefPtr<VideoDecoderVTBSession>, OSStatus> ensureDecoderForSample(CMSampleBufferRef);
 
     Ref<DecodingPromise> decodeSampleInternal(CMSampleBufferRef, DecodingFlags);
+    Ref<DecodingPromise> decodeSampleWithAlpha(CMSampleBufferRef, CFArrayRef alphaDatas, DecodingFlags);
+    Vector<RetainPtr<CMSampleBufferRef>> compositeAlphaOntoColorFrames(Vector<RetainPtr<CMSampleBufferRef>>&&, const Vector<RetainPtr<CVPixelBufferRef>>& alphaPixelBuffers);
     void assignResourceOwner(CVImageBufferRef);
 
     Ref<MediaPromise> initializeVideoDecoder(FourCharCode, std::span<const uint8_t>, const std::optional<PlatformVideoColorSpace>&);
@@ -115,6 +120,13 @@ private:
     // with a capability guard because the owning thread differs per instance.
     bool m_waitingForKeyframe { true };
     RetainPtr<CMFormatDescriptionRef> m_currentImageDescription WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
+
+    // WebM alpha compositing.
+    RefPtr<WebCoreDecompressionSession> m_alphaDecompressionSession WTF_GUARDED_BY_LOCK(m_lock);
+    RetainPtr<CIContext> m_ciContext WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
+    RetainPtr<CVPixelBufferPoolRef> m_mergedPixelBufferPool WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
+    RetainPtr<CMFormatDescriptionRef> m_mergedFormatDescription WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
+    RetainPtr<CMFormatDescriptionRef> m_mergedSourceFormatDescription WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
 
     // Stereo playback support
     const bool m_stereoSupported { false };

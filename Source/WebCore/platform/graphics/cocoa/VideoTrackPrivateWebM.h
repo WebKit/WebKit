@@ -48,6 +48,7 @@ public:
     std::optional<bool> defaultEnabled() const final;
     NODELETE uint32_t width() const;
     NODELETE uint32_t height() const;
+    bool hasAlpha() const;
 
 private:
     VideoTrackPrivateWebM(webm::TrackEntry&&);

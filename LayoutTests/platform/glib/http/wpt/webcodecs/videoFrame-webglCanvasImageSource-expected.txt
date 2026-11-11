@@ -1,0 +1,8 @@
+
+PASS VideoFrame from canvas snapshots drawing at call time, context: webgl offscreen: true, premultipliedAlpha: true
+PASS VideoFrame from canvas snapshots drawing at call time, context: webgl offscreen: true, premultipliedAlpha: false
+PASS VideoFrame from canvas snapshots drawing at call time, context: 2d offscreen: true
+FAIL VideoFrame from canvas snapshots drawing at call time, context: webgl offscreen: false, premultipliedAlpha: true assert_equals: expected 8388736 but got 4194432
+PASS VideoFrame from canvas snapshots drawing at call time, context: webgl offscreen: false, premultipliedAlpha: false
+PASS VideoFrame from canvas snapshots drawing at call time, context: 2d offscreen: false
+

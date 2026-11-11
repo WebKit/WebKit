@@ -733,6 +733,7 @@ void VideoMediaSampleRenderer::initializeDecompressionSession()
 #endif
         if (!m_decompressionSession)
             m_decompressionSession = WebCoreDecompressionSession::createOpenGL(m_rendererIsThreadSafe ? dispatcher().ptr() : nullptr);
+        protect(m_decompressionSession)->setResourceOwner(m_resourceOwner);
         m_isUsingDecompressionSession = true;
     }
     if (!m_startupTime)
@@ -1234,6 +1235,8 @@ std::optional<VideoPlaybackQualityMetrics> VideoMediaSampleRenderer::videoPlayba
 void VideoMediaSampleRenderer::setResourceOwner(const ProcessIdentity& resourceOwner)
 {
     m_resourceOwner = resourceOwner;
+    if (RefPtr decompressionSession = this->decompressionSession())
+        decompressionSession->setResourceOwner(resourceOwner);
 }
 
 void VideoMediaSampleRenderer::invalidateDecompressionSession()
