@@ -440,12 +440,14 @@ builders:
     architectures: [arm64]
     workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-tahoe-aws'\").name"}}
   - name: iOS-27-Simulator-Build-EWS
-    shortname: ios-sim
+    shortname: ios-sim-cmake
     icon: buildOnly
     factory: iOSBuildFactory
     platform: ios-simulator-27
     configuration: release
     architectures: [arm64]
+    additionalArguments: [--cmake]
+    rebuild_without_change_on_builder: true
     triggers: [api-tests-ios-sim-ews, ios-27-sim-wk2-tests-ews, ios-27-sim-wpt-wk2-tests-ews]
     workernames:
       $flatten:
