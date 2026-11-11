@@ -199,12 +199,12 @@ bool SubFrameSOAuthorizationSession::shouldInterruptLoadForCSPFrameAncestorsOrXF
     }
 
     auto url = response.url();
-    ContentSecurityPolicy contentSecurityPolicy { URL { url }, nullptr, nullptr };
-    contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, navigationAction()->request().httpReferrer());
-    if (!contentSecurityPolicy.allowFrameAncestors(frameAncestorOrigins, url))
+    auto contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { url }, nullptr, nullptr);
+    contentSecurityPolicy->didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, navigationAction()->request().httpReferrer());
+    if (!contentSecurityPolicy->allowFrameAncestors(frameAncestorOrigins, url))
         return true;
 
-    if (!contentSecurityPolicy.overridesXFrameOptions()) {
+    if (!contentSecurityPolicy->overridesXFrameOptions()) {
         String xFrameOptions = response.httpHeaderField(HTTPHeaderName::XFrameOptions);
         if (!xFrameOptions.isNull() && shouldInterruptLoadForXFrameOptions(WTF::move(frameAncestorOrigins), xFrameOptions, response.url())) {
             String errorMessage = makeString("Refused to display '"_s, response.url().stringCenterEllipsizedToLength(), "' in a frame because it set 'X-Frame-Options' to '"_s, xFrameOptions, "'."_s);

@@ -885,15 +885,15 @@ bool NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptio
 #endif
 
     auto url = response.url();
-    ContentSecurityPolicy contentSecurityPolicy { URL { url }, this, this };
-    contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, originalRequest().httpReferrer());
-    if (!contentSecurityPolicy.allowFrameAncestors(m_parameters.frameAncestorOrigins, url))
+    auto contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { url }, this, this);
+    contentSecurityPolicy->didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, originalRequest().httpReferrer());
+    if (!contentSecurityPolicy->allowFrameAncestors(m_parameters.frameAncestorOrigins, url))
         return true;
 
     if (shouldInterruptNavigationForCrossOriginEmbedderPolicy(response))
         return true;
 
-    if (!contentSecurityPolicy.overridesXFrameOptions()) {
+    if (!contentSecurityPolicy->overridesXFrameOptions()) {
         String xFrameOptions = response.httpHeaderField(HTTPHeaderName::XFrameOptions);
         if (!xFrameOptions.isNull() && shouldInterruptLoadForXFrameOptions(xFrameOptions, response.url())) {
             String errorMessage = makeString("Refused to display '"_s, response.url().stringCenterEllipsizedToLength(), "' in a frame because it set 'X-Frame-Options' to '"_s, xFrameOptions, "'."_s);
@@ -1276,8 +1276,8 @@ void NetworkResourceLoader::handleEarlyHintsResponse(ResourceResponse&& response
         return;
 
     auto url = response.url();
-    ContentSecurityPolicy contentSecurityPolicy { URL { url }, this, nullptr };
-    contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, originalRequest().httpReferrer());
+    auto contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { url }, this, nullptr);
+    contentSecurityPolicy->didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, originalRequest().httpReferrer());
 
     LinkHeaderSet headerSet(headerValue);
     for (const auto& header : headerSet) {
@@ -1285,7 +1285,7 @@ void NetworkResourceLoader::handleEarlyHintsResponse(ResourceResponse&& response
             continue;
 
         if (equalLettersIgnoringASCIICase(header.rel(), "preconnect"_s))
-            startPreconnectTask(url, header, contentSecurityPolicy);
+            startPreconnectTask(url, header, *contentSecurityPolicy);
     }
 }
 

@@ -1033,14 +1033,14 @@ void DocumentLoader::responseReceived(ResourceResponse&& response, CompletionHan
         ReportingClient* reportingClient = nullptr;
         if (frame && frame->document())
             reportingClient = frame->document();
-        ContentSecurityPolicy contentSecurityPolicy(URL { url }, this, reportingClient);
-        contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_request.httpReferrer());
-        if (frame && !contentSecurityPolicy.allowFrameAncestors(*frame, url)) {
+        auto contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { url }, this, reportingClient);
+        contentSecurityPolicy->didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_request.httpReferrer());
+        if (frame && !contentSecurityPolicy->allowFrameAncestors(*frame, url)) {
             stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(identifier, response);
             return;
         }
 
-        if (frame && !contentSecurityPolicy.overridesXFrameOptions()) {
+        if (frame && !contentSecurityPolicy->overridesXFrameOptions()) {
             String frameOptions = response.httpHeaderFields().get(HTTPHeaderName::XFrameOptions);
             if (!frameOptions.isNull()) {
                 if (protect(frameLoader())->shouldInterruptLoadForXFrameOptions(frameOptions, url, identifier)) {
