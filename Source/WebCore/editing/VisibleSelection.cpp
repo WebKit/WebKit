@@ -62,7 +62,7 @@ VisibleSelection::VisibleSelection(const Position& anchor, const Position& focus
     , m_affinity(affinity)
     , m_directionality(directionality)
 {
-    validate();
+    // validate();
 }
 
 VisibleSelection::VisibleSelection(const Position& position, Affinity affinity, Directionality directionality)
