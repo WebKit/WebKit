@@ -409,6 +409,16 @@ void BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(const Rende
     mutableBlockContainer->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 }
 
+void BlockIntegrationUtils::invalidateContentInlineSizesBeforeLayout(const RenderBox& box, bool relayoutChildren)
+{
+    // Only the intrinsic sizes of the box are written, like RenderBlock::updateBlockChildDirtyBitsBeforeLayout when its containing block lays
+    // out its children again: with percentage padding, or a percentage block size that its aspect ratio transfers, they depend on that layout.
+    if (!relayoutChildren || !box.shouldInvalidateContentWidths())
+        return;
+    SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef mutableBox = const_cast<RenderBox&>(box);
+    mutableBox->invalidateContentLogicalWidths(MarkingBehavior::OnlyThis);
+}
+
 bool BlockIntegrationUtils::isAnonymousBlockWithoutContentfulFirstLine(const RenderBlockFlow& blockContainer)
 {
     if (!blockContainer.isAnonymousBlock())
