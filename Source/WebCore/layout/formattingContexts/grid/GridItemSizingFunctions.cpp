@@ -54,13 +54,13 @@ GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUti
             auto& inlineAxisSizes = gridItem.inlineAxisSizes();
             auto borderBoxSize = WTF::switchOn(inlineAxisSizes.minimumSize,
                 [&](const Style::MinimumSize::Fixed& fixed) {
-                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(fixed, gridItem.usedZoom()) }, borderAndPadding };
+                    return GridLayoutUtils::borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(fixed, gridItem.usedZoom()), borderAndPadding);
                 },
                 [&](const Style::MinimumSize::Percentage& percentage) {
-                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(percentage, 0_lu) }, borderAndPadding };
+                    return GridLayoutUtils::borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(percentage, 0_lu), borderAndPadding);
                 },
                 [&](const Style::MinimumSize::Calc& calculated) {
-                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(calculated, 0_lu, gridItem.usedZoom()) }, borderAndPadding };
+                    return GridLayoutUtils::borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(calculated, 0_lu, gridItem.usedZoom()), borderAndPadding);
                 },
                 [&](const CSS::Keyword::Auto&) {
                     auto gridAreaMaximumInlineSize = GridLayoutUtils::gridAreaMaximumSize(gridItem.columnStartLine(), gridItem.columnEndLine(), trackSizingFunctions, gapSize, axisConstraint);
@@ -98,13 +98,13 @@ GridItemSizingFunctions GridItemSizingFunctions::blockAxis(const GridFormattingC
             auto& blockAxisSizes = gridItem.blockAxisSizes();
             auto borderBoxSize = WTF::switchOn(blockAxisSizes.minimumSize,
                 [&](const Style::MinimumSize::Fixed& fixed) {
-                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(fixed, gridItem.usedZoom()) }, borderAndPadding };
+                    return GridLayoutUtils::borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(fixed, gridItem.usedZoom()), borderAndPadding);
                 },
                 [&](const Style::MinimumSize::Percentage& percentage) {
-                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(percentage, 0_lu) }, borderAndPadding };
+                    return GridLayoutUtils::borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(percentage, 0_lu), borderAndPadding);
                 },
                 [&](const Style::MinimumSize::Calc& calculated) {
-                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(calculated, 0_lu, gridItem.usedZoom()) }, borderAndPadding };
+                    return GridLayoutUtils::borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(calculated, 0_lu, gridItem.usedZoom()), borderAndPadding);
                 },
                 [&](const CSS::Keyword::Auto&) {
                     auto gridAreaMaximumBlockSize = GridLayoutUtils::gridAreaMaximumSize(gridItem.rowStartLine(), gridItem.rowEndLine(), trackSizingFunctions, gapSize, axisConstraint);

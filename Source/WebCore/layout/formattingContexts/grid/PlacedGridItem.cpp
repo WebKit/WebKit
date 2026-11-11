@@ -47,6 +47,7 @@ PlacedGridItem::PlacedGridItem(const ElementBox& gridItem, const GridAreaLines& 
     , m_inlineAxisAlignment(gridItemStyle.justifySelf().resolve(&gridContainerStyle))
     , m_blockAxisAlignment(gridItemStyle.alignSelf().resolve(&gridContainerStyle))
     , m_writingMode(gridItemStyle.writingMode())
+    , m_boxSizing(gridItemStyle.boxSizing())
     , m_usedZoom(gridItemStyle.usedZoomForLength())
     , m_gridAreaLines(gridAreaLines)
 {
