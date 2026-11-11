@@ -110,6 +110,13 @@ template<typename ColorType, typename T> constexpr ColorComponents<T, 4> clamped
     return { clampedComponent<ColorType, 0>(components), clampedComponent<ColorType, 1>(components), clampedComponent<ColorType, 2>(components), components[3] };
 }
 
+// Clamps the non-alpha components of a premultiplied color to [0, alpha].
+inline constexpr ResolvedPremultiplied<ColorComponents<float, 4>> clampedToAlpha(const ResolvedPremultiplied<ColorComponents<float, 4>>& color)
+{
+    auto [c1, c2, c3, alpha] = color;
+    return Premultiplied { resolvedColor(ColorComponents<float, 4> { std::clamp(c1, 0.0f, alpha), std::clamp(c2, 0.0f, alpha), std::clamp(c3, 0.0f, alpha), alpha }) };
+}
+
 template<typename ColorType, typename T> constexpr auto makeFromComponentsClamping(const ColorComponents<T, 4>& components)
 {
     return makeFromComponents<ColorType>(clampedComponents<ColorType>(components));

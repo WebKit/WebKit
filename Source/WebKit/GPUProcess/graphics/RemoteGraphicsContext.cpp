@@ -44,6 +44,10 @@
 #include <WebCore/SVGFilterRenderer.h>
 #include <wtf/URL.h>
 
+#if USE(METAL)
+#include <WebCore/MeshGradientRendererMetal.h>
+#endif
+
 #if USE(SYSTEM_PREVIEW)
 #include <WebCore/ARKitBadgeSystemImage.h>
 #endif
@@ -517,6 +521,11 @@ void RemoteGraphicsContext::drawMeshGradient(RemoteMeshGradientIdentifier identi
 {
     RefPtr gradient = resourceCache().cachedMeshGradient(identifier);
     MESSAGE_CHECK(gradient);
+
+#if USE(METAL)
+    if (auto* metalRenderer = MeshGradientRendererMetal::singleton(); metalRenderer && metalRenderer->draw(context(), *gradient, destination))
+        return;
+#endif
 
     context().drawMeshGradient(*gradient, destination);
 }

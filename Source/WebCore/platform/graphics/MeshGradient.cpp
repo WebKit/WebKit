@@ -90,9 +90,12 @@ static ColorComponents<float, 4> toInterpolationComponents(const ColorInterpolat
     return components;
 }
 
-static ResolvedPremultiplied<ColorComponents<float, 4>> premultipliedInColorSpace(const ExtendedSRGBA<float>& color, ColorSpaceName colorSpace)
+static ResolvedPremultiplied<ColorComponents<float, 4>> premultipliedComponents(const ColorComponents<float, 4>& components, ColorSpaceName colorSpace)
 {
-    auto [red, green, blue, alpha] = convertAndResolveColorComponents(ColorSpaceName::ExtendedSRGB, asColorComponents(color.resolved()), colorSpace);
+    // Multiplying a hue by alpha would be wrong, but the renderers only convert to RGB color spaces.
+    ASSERT_UNUSED(colorSpace, callWithColorType<float>(colorSpace, []<typename ColorType> { return UsesRGBModel<ColorType>; }));
+
+    auto [red, green, blue, alpha] = components;
     return Premultiplied { resolvedColor(ColorComponents<float, 4> { red * alpha, green * alpha, blue * alpha, alpha }) };
 }
 
@@ -113,8 +116,9 @@ static ResolvedPremultiplied<ColorComponents<float, 4>> toPremultipliedColor(con
     if (hueIndex)
         components[*hueIndex] = normalizeHue(components[*hueIndex]);
 
-    return premultipliedInColorSpace(WTF::switchOn(method.colorSpace, [&]<typename MethodColorSpace>(const MethodColorSpace&) {
-        return convertColor<ExtendedSRGBA<float>>(makeColorTypeByNormalizingComponents<typename MethodColorSpace::ColorType>(components).resolved());
+    return premultipliedComponents(WTF::switchOn(method.colorSpace, [&]<typename MethodColorSpace>(const MethodColorSpace&) {
+        using ColorType = typename MethodColorSpace::ColorType;
+        return convertAndResolveColorComponents(ColorSpaceFor<ColorType>, asColorComponents(makeColorTypeByNormalizingComponents<ColorType>(components).resolved()), colorSpace);
     }), colorSpace);
 }
 
@@ -401,7 +405,7 @@ std::optional<ColorSpaceName> MeshGradient::renderingColorSpace(const ColorSpace
 
 ResolvedPremultiplied<ColorComponents<float, 4>> MeshGradient::premultipliedBackgroundColor(ColorSpaceName colorSpace) const
 {
-    return premultipliedInColorSpace(m_backgroundColor.toColorTypeLossy<ExtendedSRGBA<float>>(), colorSpace);
+    return premultipliedComponents(m_backgroundColor.toResolvedColorComponentsInColorSpace(colorSpace), colorSpace);
 }
 
 RefPtr<NativeImage> MeshGradient::renderedImage(const IntSize& pixelSize, float scale, const ColorSpace& colorSpace) const

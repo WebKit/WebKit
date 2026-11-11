@@ -38,6 +38,10 @@
 #include <cmath>
 #include <wtf/Float16.h>
 
+#if USE(METAL)
+#include <WebCore/MeshGradientRendererMetal.h>
+#endif
+
 #if USE(CG)
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/RetainPtr.h>
@@ -416,5 +420,195 @@ TEST(MeshGradient, GeometryOnlySubdividesForCurves)
     auto curved = MeshGradient::create(srgb, 2, 2, WTF::move(points));
     EXPECT_GT(curved->triangles(2).size(), 2u);
 }
+
+#if USE(METAL)
+
+// The other Metal tests skip when there is no renderer. Fail here instead, since the usual reason is that the shaders
+// don't compile.
+TEST(MeshGradientRenderer, MetalRendererIsAvailable)
+{
+    EXPECT_NE(MeshGradientRendererMetal::singleton(), nullptr);
+}
+
+TEST(MeshGradientRenderer, MetalDeclinesTexturesLargerThanTheMaximum)
+{
+    auto* renderer = MeshGradientRendererMetal::singleton();
+    if (!renderer)
+        GTEST_SKIP() << "Metal is not available.";
+
+    IntSize size { 1, 16385 };
+    auto gradient = makeMeshGradient(srgb, size, 2, 2, { Color::red, Color::red, Color::red, Color::red });
+
+    PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() };
+    Vector<uint8_t> bytes(static_cast<size_t>(size.width()) * size.height() * 4);
+    EXPECT_FALSE(renderer->render(gradient, { format, static_cast<unsigned>(size.width()) * 4, bytes.mutableSpan() }, size, 1));
+}
+
+static void expectMetalMatchesCPU(MeshGradientRenderer& renderer, ColorInterpolationMethod method, const char* name, const PixelBufferFormat& format)
+{
+    SCOPED_TRACE(name);
+
+    IntSize size { 64, 48 };
+    auto gradient = makeMeshGradient(method, size, 3, 3, {
+        Color::red, Color::yellow, Color::green,
+        Color::blue, Color::white, Color::black,
+        Color::cyan, Color::magenta, Color::transparentBlack,
+    }, Color::white);
+
+    unsigned bytesPerRow = size.width() * PixelBuffer::bytesPerPixel(format.pixelFormat);
+    Vector<uint8_t> cpuBytes(static_cast<size_t>(bytesPerRow) * size.height());
+    Vector<uint8_t> metalBytes(static_cast<size_t>(bytesPerRow) * size.height());
+    ASSERT_TRUE(MeshGradientRendererCPU { }.render(gradient, { format, bytesPerRow, cpuBytes.mutableSpan() }, size, 1));
+    ASSERT_TRUE(renderer.render(gradient, { format, bytesPerRow, metalBytes.mutableSpan() }, size, 1));
+
+    int maximumDifference = 0;
+    for (size_t i = 0; i < cpuBytes.size(); ++i)
+        maximumDifference = std::max(maximumDifference, std::abs(cpuBytes[i] - metalBytes[i]));
+    EXPECT_LE(maximumDifference, 2);
+}
+
+template<typename MethodColorSpace> static ColorInterpolationMethod interpolationMethod(MethodColorSpace colorSpace)
+{
+    return { colorSpace, AlphaPremultiplication::Premultiplied };
+}
+
+static void expectMetalMatchesCPU(const PixelBufferFormat& format)
+{
+    auto* renderer = MeshGradientRendererMetal::singleton();
+    if (!renderer)
+        GTEST_SKIP() << "Metal is not available.";
+
+    using Method = ColorInterpolationMethod;
+    expectMetalMatchesCPU(*renderer, interpolationMethod(Method::SRGB { }), "srgb", format);
+    expectMetalMatchesCPU(*renderer, interpolationMethod(Method::SRGBLinear { }), "srgb-linear", format);
+    expectMetalMatchesCPU(*renderer, interpolationMethod(Method::DisplayP3 { }), "display-p3", format);
+    expectMetalMatchesCPU(*renderer, interpolationMethod(Method::DisplayP3Linear { }), "display-p3-linear", format);
+    expectMetalMatchesCPU(*renderer, interpolationMethod(Method::A98RGB { }), "a98-rgb", format);
+    expectMetalMatchesCPU(*renderer, interpolationMethod(Method::ProPhotoRGB { }), "prophoto-rgb", format);
+    expectMetalMatchesCPU(*renderer, interpolationMethod(Method::Rec2020 { }), "rec2020", format);
+    expectMetalMatchesCPU(*renderer, interpolationMethod(Method::Lab { }), "lab", format);
+    expectMetalMatchesCPU(*renderer, interpolationMethod(Method::OKLab { }), "oklab", format);
+    expectMetalMatchesCPU(*renderer, interpolationMethod(Method::XYZD50 { }), "xyz-d50", format);
+    expectMetalMatchesCPU(*renderer, interpolationMethod(Method::XYZD65 { }), "xyz-d65", format);
+    expectMetalMatchesCPU(*renderer, interpolationMethod(Method::LCH { HueInterpolationMethod::Shorter }), "lch", format);
+    expectMetalMatchesCPU(*renderer, interpolationMethod(Method::OKLCH { HueInterpolationMethod::Shorter }), "oklch", format);
+    expectMetalMatchesCPU(*renderer, interpolationMethod(Method::HSL { HueInterpolationMethod::Shorter }), "hsl", format);
+    expectMetalMatchesCPU(*renderer, interpolationMethod(Method::HWB { HueInterpolationMethod::Shorter }), "hwb", format);
+}
+
+TEST(MeshGradientRenderer, MetalMatchesCPUInSRGB)
+{
+    expectMetalMatchesCPU({ AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() });
+}
+
+TEST(MeshGradientRenderer, MetalMatchesCPUInDisplayP3)
+{
+    expectMetalMatchesCPU({ AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, ColorSpace::DisplayP3() });
+}
+
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+
+TEST(MeshGradientRenderer, MetalMatchesCPUInExtendedRange)
+{
+    PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA16F, ColorSpace::ExtendedSRGB() };
+
+    auto* renderer = MeshGradientRendererMetal::singleton();
+    if (!renderer)
+        GTEST_SKIP() << "Metal is not available.";
+
+    IntSize size { 8, 8 };
+    Color green { DisplayP3<float> { 0, 1, 0, 1 } };
+    auto gradient = makeMeshGradient(srgb, size, 2, 2, { green, green, green, green }, green);
+
+    Vector<uint8_t> bytes(static_cast<size_t>(size.width()) * size.height() * 8);
+    ASSERT_TRUE(renderer->render(gradient, { format, static_cast<unsigned>(size.width()) * 8, bytes.mutableSpan() }, size, 1));
+
+    auto components = spanReinterpretCast<const uint16_t>(bytes.span());
+    EXPECT_NEAR(WTF::convertFloat16ToFloat32(components[0]), -0.51f, 0.01f);
+    EXPECT_NEAR(WTF::convertFloat16ToFloat32(components[1]), 1.02f, 0.01f);
+    EXPECT_NEAR(WTF::convertFloat16ToFloat32(components[2]), -0.31f, 0.01f);
+    EXPECT_EQ(WTF::convertFloat16ToFloat32(components[3]), 1.0f);
+}
+
+#endif // ENABLE(PIXEL_FORMAT_RGBA16F)
+
+TEST(MeshGradientRenderer, MetalAntialiasesEdges)
+{
+    auto* renderer = MeshGradientRendererMetal::singleton();
+    if (!renderer)
+        GTEST_SKIP() << "Metal is not available.";
+
+    // The top edge is slanted, so pixels along it are partly covered.
+    IntSize size { 32, 32 };
+    auto points = makePoints(2, 2, { { 0, 4 }, { 32, 12 }, { 0, 32 }, { 32, 32 } }, Color::white);
+    auto gradient = MeshGradient::create(srgb, 2, 2, WTF::move(points), Color::black);
+
+    PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() };
+    unsigned bytesPerRow = size.width() * 4;
+    Vector<uint8_t> bytes(static_cast<size_t>(bytesPerRow) * size.height());
+    ASSERT_TRUE(renderer->render(gradient, { format, bytesPerRow, bytes.mutableSpan() }, size, 1));
+
+    bool foundPartialCoverage = false;
+    for (size_t i = 0; i < bytes.size(); i += 4)
+        foundPartialCoverage |= bytes[i] > 0 && bytes[i] < 255;
+    EXPECT_TRUE(foundPartialCoverage);
+}
+
+TEST(MeshGradientRenderer, MetalDeclinesUnknownColorSpace)
+{
+    auto* renderer = MeshGradientRendererMetal::singleton();
+    if (!renderer)
+        GTEST_SKIP() << "Metal is not available.";
+
+    IntSize size { 8, 8 };
+    auto gradient = makeMeshGradient(srgb, size, 2, 2, { Color::red, Color::red, Color::red, Color::red });
+
+    ColorSpace colorSpace { adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceITUR_2020_sRGBGamma)) };
+    PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, colorSpace };
+    Vector<uint8_t> bytes(static_cast<size_t>(size.width()) * size.height() * 4);
+    EXPECT_FALSE(renderer->render(gradient, { format, static_cast<unsigned>(size.width()) * 4, bytes.mutableSpan() }, size, 1));
+}
+
+#if ENABLE(PIXEL_FORMAT_RGBA16F) && ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+
+TEST(MeshGradientRenderer, MetalDrawsToColorSpaceTheShaderCannotConvertTo)
+{
+    auto* metalRenderer = MeshGradientRendererMetal::singleton();
+    if (!metalRenderer)
+        GTEST_SKIP() << "Metal is not available.";
+
+    IntSize size { 32, 32 };
+    ColorSpace colorSpace { adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceITUR_2020_sRGBGamma)) };
+
+    auto draw = [&](MeshGradientRenderer& renderer, float alpha) {
+        auto color = [&](float red, float green, float blue) {
+            return Color { SRGBA<float> { red, green, blue, alpha } };
+        };
+        auto gradient = makeMeshGradient(srgb, size, 2, 2, { color(1, 0, 0), color(0, 1, 0), color(0, 0, 1), color(1, 1, 0) });
+
+        RefPtr imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
+        EXPECT_TRUE(renderer.draw(imageBuffer->context(), gradient, FloatRect { { }, size }));
+        return imageBuffer->getPixelBuffer({ AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, colorSpace }, { { }, size });
+    };
+
+    for (float alpha : { 1.0f, 0.5f }) {
+        MeshGradientRendererCPU cpuRenderer;
+        RefPtr cpu = draw(cpuRenderer, alpha);
+        RefPtr metal = draw(*metalRenderer, alpha);
+
+        auto cpuBytes = cpu->bytes();
+        auto metalBytes = metal->bytes();
+        ASSERT_EQ(cpuBytes.size(), metalBytes.size());
+
+        int worst = 0;
+        for (size_t i = 0; i < cpuBytes.size(); ++i)
+            worst = std::max(worst, std::abs(cpuBytes[i] - metalBytes[i]));
+        EXPECT_LE(worst, 2) << "alpha " << alpha;
+    }
+}
+
+#endif // ENABLE(PIXEL_FORMAT_RGBA16F) && ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+
+#endif // USE(METAL)
 
 } // namespace TestWebKitAPI

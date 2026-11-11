@@ -36,13 +36,14 @@ class MeshGradient;
 
 struct PixelBufferConversionView;
 
-class MeshGradientRenderer {
+class WEBCORE_EXPORT MeshGradientRenderer {
 public:
     virtual ~MeshGradientRenderer() = default;
 
     virtual bool render(const MeshGradient&, const PixelBufferConversionView& destination, const IntSize&, float scale) = 0;
 
-    WEBCORE_EXPORT void draw(GraphicsContext&, const MeshGradient&, const FloatRect& destination);
+    // Returns false if this renderer couldn't draw the gradient, so that the caller can use another one.
+    bool draw(GraphicsContext&, const MeshGradient&, const FloatRect& destination);
 };
 
 } // namespace WebCore

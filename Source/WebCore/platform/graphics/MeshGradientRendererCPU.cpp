@@ -50,20 +50,16 @@ static void writePixel(const PixelBufferConversionView& destination, int x, int 
     auto bytesPerPixel = PixelBuffer::bytesPerPixel(destination.format.pixelFormat);
     auto pixel = destination.rows.subspan(static_cast<size_t>(y) * destination.bytesPerRow + static_cast<size_t>(x) * bytesPerPixel, bytesPerPixel);
 
-    auto [red, green, blue, alpha] = color;
-
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     if (destination.format.pixelFormat == PixelFormat::RGBA16F) {
+        auto [red, green, blue, alpha] = color;
         std::array components { WTF::convertFloat32ToFloat16(red), WTF::convertFloat32ToFloat16(green), WTF::convertFloat32ToFloat16(blue), WTF::convertFloat32ToFloat16(alpha) };
         memcpySpan(pixel, asByteSpan(std::span { components }));
         return;
     }
 #endif
 
-    auto clampedToAlpha = [&](float component) {
-        return std::clamp(component, 0.0f, alpha);
-    };
-    auto components = convertComponentType<uint8_t>(Premultiplied { resolvedColor(ColorComponents<float, 4> { clampedToAlpha(red), clampedToAlpha(green), clampedToAlpha(blue), alpha }) }).resolved().components;
+    auto components = convertComponentType<uint8_t>(clampedToAlpha(color)).resolved().components;
     memcpySpan(pixel, asByteSpan(std::span { components }));
 }
 
@@ -139,12 +135,15 @@ bool MeshGradientRendererCPU::render(const MeshGradient& gradient, const PixelBu
     if (destination.bytesPerRow < size.width() * PixelBuffer::bytesPerPixel(destination.format.pixelFormat) || destination.rows.size() / destination.bytesPerRow < static_cast<size_t>(size.height()))
         return false;
 
+    // Fill with the background color.
     auto background = gradient.premultipliedBackgroundColor(*colorSpace);
     for (int y = 0; y < size.height(); ++y) {
         for (int x = 0; x < size.width(); ++x)
             writePixel(destination, x, y, background);
     }
 
+    // Draw the triangles. Triangles replace what is under them, and where a patch folds over itself the last one drawn
+    // shows.
     for (auto& triangle : gradient.triangles(scale))
         drawTriangle(gradient, destination, *colorSpace, size, triangle);
 

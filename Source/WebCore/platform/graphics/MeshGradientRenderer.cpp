@@ -73,17 +73,17 @@ static const ColorSpace& imageColorSpace(const ColorSpace& contextColorSpace)
 #endif
 }
 
-void MeshGradientRenderer::draw(GraphicsContext& context, const MeshGradient& gradient, const FloatRect& destination)
+bool MeshGradientRenderer::draw(GraphicsContext& context, const MeshGradient& gradient, const FloatRect& destination)
 {
     if (context.paintingDisabled())
-        return;
+        return true;
 
     auto transform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
     float scale = std::max(std::abs(transform.xScale()), std::abs(transform.yScale()));
 
     auto pixelSize = expandedIntSize(destination.size().scaled(scale));
     if (pixelSize.isEmpty())
-        return;
+        return true;
 
     auto& colorSpace = imageColorSpace(context.colorSpace());
 
@@ -92,33 +92,34 @@ void MeshGradientRenderer::draw(GraphicsContext& context, const MeshGradient& gr
         auto format = renderingFormat(colorSpace);
         auto bufferSize = PixelBuffer::computeBufferSize(format.pixelFormat, pixelSize);
         if (bufferSize.hasOverflowed())
-            return;
+            return false;
 
         Vector<uint8_t> pixels;
         if (!pixels.tryGrow(bufferSize.value()))
-            return;
+            return false;
 
         if (!render(gradient, { format, PixelBuffer::bytesPerPixel(format.pixelFormat) * pixelSize.width(), pixels.mutableSpan() }, pixelSize, scale))
-            return;
+            return false;
 
         auto source = PixelBufferSourceView::create(format, pixelSize, pixels.span());
         if (!source)
-            return;
+            return false;
 
         RefPtr imageBuffer = context.createImageBuffer(pixelSize, 1, colorSpace, RenderingMode::Unaccelerated, std::nullopt, { imageBufferPixelFormat(colorSpace) });
         if (!imageBuffer)
-            return;
+            return false;
 
         imageBuffer->putPixelBuffer(*source, { { }, pixelSize });
 
         image = ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
         if (!image)
-            return;
+            return false;
 
         gradient.setRenderedImage(pixelSize, scale, *image);
     }
 
     context.drawNativeImage(*image, destination, FloatRect { { }, pixelSize });
+    return true;
 }
 
 } // namespace WebCore

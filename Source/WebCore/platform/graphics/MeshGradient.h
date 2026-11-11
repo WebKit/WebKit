@@ -33,6 +33,8 @@
 #include <WebCore/RectEdges.h>
 #include <WebCore/RenderingResource.h>
 #include <array>
+#include <ranges>
+#include <span>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
@@ -87,6 +89,10 @@ public:
     WEBCORE_EXPORT ResolvedPremultiplied<ColorComponents<float, 4>> premultipliedColor(uint32_t patchIndex, float u, float v, ColorSpaceName) const;
 
     WEBCORE_EXPORT Vector<Triangle> triangles(float scale) const;
+
+    // The 16 control values of each patch, in the interpolation color space. Rows run along u.
+    class ColorControlValues;
+    ColorControlValues colorControlValues() const LIFETIME_BOUND;
 
     RefPtr<NativeImage> renderedImage(const IntSize& pixelSize, float scale, const ColorSpace&) const;
     void setRenderedImage(const IntSize& pixelSize, float scale, Ref<NativeImage>&&) const;
@@ -150,6 +156,30 @@ private:
 
     mutable WeakHashSet<RenderingResourceObserver> m_observers;
 };
+
+class MeshGradient::ColorControlValues : public std::ranges::view_interface<ColorControlValues> {
+public:
+    explicit ColorControlValues(std::span<const Patch> patches)
+        : m_values { patches | std::views::transform(&controlValues) | std::views::join }
+        , m_size { patches.size() * 16 }
+    {
+    }
+
+    auto begin() const { return m_values.begin(); }
+    auto end() const { return m_values.end(); }
+    size_t size() const { return m_size; }
+
+private:
+    static const std::array<Components, 16>& controlValues(const Patch& patch) { return patch.color.controlValues; }
+
+    std::ranges::join_view<std::ranges::transform_view<std::span<const Patch>, decltype(&controlValues)>> m_values;
+    size_t m_size;
+};
+
+inline MeshGradient::ColorControlValues MeshGradient::colorControlValues() const
+{
+    return ColorControlValues { m_patches.span() };
+}
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const MeshGradient::Point&);
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const MeshGradient&);
