@@ -84,6 +84,7 @@
 #include <JavaScriptCore/SyntheticModuleRecord.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
 #include <JavaScriptCore/WebAssemblyModuleRecord.h>
+#include <wtf/MainThread.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SharedTask.h>
@@ -834,9 +835,14 @@ void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld
     });
 
     auto finalizeCount = makeUniqueWithoutFastMallocCheck<unsigned>(0);
-    auto finalizeGuard = createSharedTask<void()>([sharedResolveFunction = WTF::move(sharedResolveFunction), finalizeCount = WTF::move(finalizeCount)]() {
-        if (++(*finalizeCount) == 2)
+    auto finalizeGuard = createSharedTask<void()>([sharedResolveFunction = WTF::move(sharedResolveFunction), finalizeCount = WTF::move(finalizeCount)] mutable {
+        if (++(*finalizeCount) != 2)
+            return;
+        // Finalizers run during GC sweeping and must not touch JS objects. The completion handler can, and so can
+        // destroying what it captures, which may be the last reference to a detached frame. Call it after the GC.
+        callOnMainThread([sharedResolveFunction = WTF::move(sharedResolveFunction)] {
             sharedResolveFunction->run(makeUnexpected(ExceptionDetails { "Completion handler for function call is no longer reachable"_s }));
+        });
     });
 
     world.vm().heap.addFinalizer(fulfillHandler, [finalizeGuard](JSCell*) {
