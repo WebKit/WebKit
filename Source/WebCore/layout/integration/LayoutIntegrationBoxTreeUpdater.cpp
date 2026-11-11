@@ -62,12 +62,12 @@ BoxTreeUpdater::~BoxTreeUpdater() = default;
 
 Layout::ElementBox& BoxTreeUpdater::rootLayoutBox()
 {
-    return m_rootRenderer.layoutBox();
+    return m_rootRenderer->layoutBox();
 }
 
 void BoxTreeUpdater::tearDown()
 {
-    if (m_rootRenderer.renderTreeBeingDestroyed())
+    if (m_rootRenderer->renderTreeBeingDestroyed())
         return;
 
     for (CheckedRef layoutBox : formattingContextBoxes(rootLayoutBox())) {
@@ -81,13 +81,13 @@ void BoxTreeUpdater::tearDown()
     }
 
     if (!isInLiveFormattingContext(m_rootRenderer))
-        rootLayoutBox().clearFormattingContextData();
+        protect(rootLayoutBox())->clearFormattingContextData();
 }
 
 static bool canUseSimplifiedMeasuring(const RenderText& renderer, StringView content)
 {
     CheckedRef style = renderer.style();
-    return Layout::TextUtil::canUseSimplifiedTextMeasuring(content, style->fontCascade(), style->collapseWhiteSpace(), &renderer.firstLineStyle());
+    return Layout::TextUtil::canUseSimplifiedTextMeasuring(content, protect(style->fontCascade()), style->collapseWhiteSpace(), protect(&renderer.firstLineStyle()));
 }
 
 static bool synthesizesGlyph(const RenderText& textRenderer)
@@ -98,7 +98,7 @@ static bool synthesizesGlyph(const RenderText& textRenderer)
     // The marker is this text's parent when it is an inline box, and its grandparent when a marker box holds the text in a content container of its own.
     for (CheckedPtr marker = textRenderer.parent(); marker; marker = marker->parent()) {
         if (marker->style().isListMarkerStyle())
-            return listMarkerSynthesizesGlyph(marker->style(), protect(marker->document()));
+            return listMarkerSynthesizesGlyph(protect(marker->style()), protect(marker->document()));
         if (!marker->isAnonymous())
             return false;
     }
@@ -116,7 +116,7 @@ static std::unique_ptr<Layout::InlineTextBox::CombinedText> computeCombinedText(
 
     RefPtr fontSelector = style->fontCascade().fontSelector();
     auto fontFor = [&](const FontCascadeDescription& description) {
-        auto font = FontCascade { FontCascadeDescription { description }, style->fontCascade() };
+        auto font = FontCascade { FontCascadeDescription { description }, protect(style->fontCascade()) };
         font.update(fontSelector.copyRef());
         font.setLetterSpacing(0);
         return font;
@@ -258,7 +258,7 @@ void BoxTreeUpdater::remove(RenderObject& child)
 {
     // Only text and line breaks are removed without invalidating the whole formatting context.
     ASSERT(!is<RenderElement>(child) || !downcast<RenderElement>(child).firstChild());
-    child.layoutBox().clearFormattingContextData();
+    protect(child.layoutBox())->clearFormattingContextData();
     // The inline items are gone, so content changes that waited for them can go in.
     if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(child))
         textRenderer->updateLayoutBoxContentIfNeeded();

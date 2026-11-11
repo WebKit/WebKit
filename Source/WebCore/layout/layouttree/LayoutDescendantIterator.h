@@ -47,7 +47,7 @@ public:
     LayoutDescendantIterator<T> at(const T&);
 
 private:
-    const ElementBox& m_root;
+    const CheckedRef<const ElementBox> m_root;
 };
 
 template <typename T> LayoutDescendantIteratorAdapter<T> descendantsOfType(const Box&);
@@ -84,7 +84,7 @@ inline LayoutDescendantIteratorAdapter<T>::LayoutDescendantIteratorAdapter(const
 template <typename T>
 inline LayoutDescendantIterator<T> LayoutDescendantIteratorAdapter<T>::begin()
 {
-    return LayoutDescendantIterator<T>(m_root, Traversal::firstWithin<T>(m_root));
+    return LayoutDescendantIterator<T>(m_root, Traversal::firstWithin<T>(m_root.get()));
 }
 
 template <typename T>

@@ -49,7 +49,7 @@ FlexLayout::FlexLayout(RenderFlexibleBox& flexBox)
 void FlexLayout::prepareOutOfFlowBoxForPositionedLayout(RenderBox& outOfFlowBox)
 {
     ASSERT(outOfFlowBox.isOutOfFlowPositioned());
-    outOfFlowBox.containingBlock()->addOutOfFlowBox(outOfFlowBox);
+    protect(outOfFlowBox.containingBlock())->addOutOfFlowBox(outOfFlowBox);
     CheckedPtr layer = outOfFlowBox.layer();
     // The static position setStaticPositionForPositionedLayout computes after layout is this content-box corner plus
     // alignment offsets that need the box's size. Starting from the same corner means a box with no offset is already
@@ -356,7 +356,7 @@ FlexLayout::FlexItemsAtMaxContentWidthScope::~FlexItemsAtMaxContentWidthScope()
     // Computing a box's intrinsic widths may not mark it for layout, but the items were just laid out at their max-content widths.
     // Its layout usually follows anyway; grid and flex parents can ask a laid-out container again.
     RenderObject::SetLayoutNeededForbiddenScope allowSetNeedsLayout(m_flexLayout.flexBox(), false);
-    m_flexLayout.flexBox().setChildNeedsLayout();
+    protect(m_flexLayout.flexBox())->setChildNeedsLayout();
 }
 
 std::optional<LayoutUnit> FlexLayout::maximumContentSizeForMultilineColumn()
@@ -498,7 +498,7 @@ LayoutUnit FlexLayout::staticMainAxisPositionForPositionedFlexItem(const RenderB
     auto mainAxisContentSize = FlexFormattingUtils::isColumnFlow(flexBox()) ? flexBox().contentBoxLogicalHeight() : flexBox().contentBoxLogicalWidth();
     auto availableSpace = mainAxisContentSize - flexItemMainExtent;
     auto isReverse = utils.isColumnOrRowReverse();
-    LayoutUnit offset = FlexFormattingUtils::initialJustifyContentOffset(flexBox().style(), availableSpace, { }, isReverse);
+    LayoutUnit offset = FlexFormattingUtils::initialJustifyContentOffset(protect(flexBox().style()), availableSpace, { }, isReverse);
     if (isReverse)
         offset = availableSpace - offset;
     return offset;

@@ -120,7 +120,7 @@ bool PlacedFloats::Item::isInFormattingContextOf(const ElementBox& formattingCon
         return false;
 
     ASSERT(!is<InitialContainingBlock>(m_layoutBox));
-    for (CheckedRef containingBlock : containingBlockChain(*m_layoutBox)) {
+    for (CheckedRef containingBlock : containingBlockChain(protect(*m_layoutBox))) {
         if (containingBlock.ptr() == &formattingContextRoot)
             return true;
     }
