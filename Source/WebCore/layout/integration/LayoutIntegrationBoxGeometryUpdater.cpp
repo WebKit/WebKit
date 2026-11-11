@@ -803,6 +803,18 @@ void BoxGeometryUpdater::updateBoxGeometryAfterIntegrationLayout(const Layout::E
     integrationAdjustments();
 }
 
+void BoxGeometryUpdater::updateGridItemBoxGeometryAfterIntegrationLayout(const Layout::ElementBox& gridItem, LayoutUnit gridAreaInlineSize)
+{
+    ASSERT(gridItem.isGridItem());
+    updateBoxGeometryAfterIntegrationLayout(gridItem, gridAreaInlineSize);
+
+    CheckedRef layoutState = this->layoutState();
+    CheckedRef renderBox = downcast<RenderBox>(*gridItem.rendererForIntegration());
+    // https://drafts.csswg.org/css-grid-1/#item-margins
+    // "Percentage margins and paddings on grid items, like those on block boxes, are resolved against the inline size of their containing block, e.g. left/right/top/bottom percentages all resolve against their containing block’s width in horizontal writing modes."
+    layoutState->ensureGeometryForBox(gridItem).setPadding(logicalPadding(renderBox, gridAreaInlineSize, renderBox->parent()->writingMode()));
+}
+
 void BoxGeometryUpdater::updateBoxGeometry(const RenderElement& renderer, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
 {
     ASSERT(availableWidth || intrinsicWidthMode);

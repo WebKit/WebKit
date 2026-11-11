@@ -96,7 +96,7 @@ static void updateGridItemBoxGeometry(const Layout::ElementBox& box, LayoutUnit 
 {
     ASSERT(box.isGridItem());
     auto updater = BoxGeometryUpdater { layoutState, rootLayoutBox(box) };
-    updater.updateBoxGeometryAfterIntegrationLayout(box, gridAreaInlineSize);
+    updater.updateGridItemBoxGeometryAfterIntegrationLayout(box, gridAreaInlineSize);
 }
 
 void layoutGridItemWithFormattingContext(const Layout::ElementBox& box, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit gridAreaInlineSize, Layout::LayoutState& layoutState)
