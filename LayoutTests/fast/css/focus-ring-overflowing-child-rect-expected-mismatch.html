@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+.ring {
+    outline-style: auto;
+    position: absolute;
+    width: 200px;
+    height: 120px;
+    padding: 10px;
+    font: 10px/12px monospace;
+    color: transparent;
+}
+
+.offset {
+    outline-offset: 4px;
+}
+
+.child {
+    width: 100px;
+    height: 40px;
+}
+</style>
+</head>
+<body>
+<div class="ring" style="left: 20px; top: 20px;">
+line<br>line
+<div class="child">child line<br>child line</div>
+line<br>line
+</div>
+
+<div class="ring offset" style="left: 20px; top: 220px;">
+line<br>line
+<div class="child">child line<br>child line</div>
+line<br>line
+</div>
+</body>
+</html>

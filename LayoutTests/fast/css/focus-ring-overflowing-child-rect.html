@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel=mismatch href="focus-ring-overflowing-child-rect-expected-mismatch.html">
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+.ring {
+    outline-style: auto;
+    position: absolute;
+    width: 200px;
+    height: 120px;
+    padding: 10px;
+    font: 10px/12px monospace;
+    color: transparent;
+}
+
+.offset {
+    outline-offset: 4px;
+}
+
+.child {
+    width: 300px;
+    height: 40px;
+}
+</style>
+</head>
+<body>
+<!-- The child block overflows the border box, so the ring must go around it. The reference is the
+same markup with a child that fits inside the border box. -->
+<div class="ring" style="left: 20px; top: 20px;">
+line<br>line
+<div class="child">child line<br>child line</div>
+line<br>line
+</div>
+
+<!-- Same with outline-offset, so containment is tested on the inflated rects. -->
+<div class="ring offset" style="left: 20px; top: 220px;">
+line<br>line
+<div class="child">child line<br>child line</div>
+line<br>line
+</div>
+</body>
+</html>
