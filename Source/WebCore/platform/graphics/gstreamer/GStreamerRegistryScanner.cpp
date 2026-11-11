@@ -815,11 +815,13 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isHEVCCode
         return areCapsSupported(configuration, h265Caps, shouldCheckForHardwareUse);
     }
 
-    if (!GStreamerCodecUtilities::parseHEVCProfile(codec)) {
+    auto profile = GStreamerCodecUtilities::parseHEVCProfile(codec);
+    if (!profile) {
         GST_ERROR("HEVC codec string is invalid: %s", codec.utf8());
         return { false, nullptr };
     }
 
+    gst_caps_set_simple(h265Caps.get(), "profile", G_TYPE_STRING, profile.utf8(), nullptr);
     return areCapsSupported(configuration, h265Caps, shouldCheckForHardwareUse);
 }
 
