@@ -231,6 +231,20 @@ bool isARM64E_FPAC()
 }
 #endif // CPU(ARM64E)
 
+#if CPU(ARM64) && OS(DARWIN)
+bool isARM64_MTE()
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        uint32_t val = 0;
+        size_t valSize = sizeof(val);
+        int rc = sysctlbyname("hw.optional.arm.FEAT_MTE", &val, &valSize, nullptr, 0);
+        g_jscConfig.hasMTE = rc >= 0 && val;
+    });
+    return g_jscConfig.hasMTE;
+}
+#endif // CPU(ARM64) && OS(DARWIN)
+
 #if CPU(X86_64)
 bool isX86_64_AVX()
 {
