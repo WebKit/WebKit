@@ -44,5 +44,35 @@ class TestGetWorkerPassword(unittest.TestCase):
             getWorkerPassword('bot2', {}, is_test_mode_enabled=False),
         )
 
+    def test_regex(self):
+        passwords = {'ews3...': 'regex'}
+        self.assertEqual(getWorkerPassword('ews3000', passwords, is_test_mode_enabled=False), 'regex')
+        self.assertEqual(getWorkerPassword('ews3001', passwords, is_test_mode_enabled=False), 'regex')
+
+    def test_regex_full_match(self):
+        passwords = {'ews3...': 'regex'}
+        self.assertNotEqual(getWorkerPassword('ews4000', passwords, is_test_mode_enabled=False), 'regex')
+        self.assertNotEqual(getWorkerPassword('ews300', passwords, is_test_mode_enabled=False), 'regex')
+        self.assertNotEqual(getWorkerPassword('ews30000', passwords, is_test_mode_enabled=False), 'regex')
+
+    def test_regex_exact_match_preferred(self):
+        passwords = {'ews3...': 'regex', 'ews3000': 'exact'}
+        self.assertEqual(getWorkerPassword('ews3000', passwords, is_test_mode_enabled=False), 'exact')
+        self.assertEqual(getWorkerPassword('ews3001', passwords, is_test_mode_enabled=False), 'regex')
+
+    def test_regex_multiple_matches_raises(self):
+        passwords = {r'ews3\d{3}': 'specific', 'ews.*': 'broad'}
+        with self.assertRaises(ValueError):
+            getWorkerPassword('ews3000', passwords, is_test_mode_enabled=False)
+        self.assertEqual(getWorkerPassword('ews4000', passwords, is_test_mode_enabled=False), 'broad')
+
+    def test_invalid_regex_ignored(self):
+        passwords = {'ews3[': 'invalid', 'ews3...': 'regex'}
+        self.assertEqual(getWorkerPassword('ews3000', passwords, is_test_mode_enabled=False), 'regex')
+
+    def test_regex_empty_password(self):
+        password = getWorkerPassword('ews3000', {'ews3...': ''}, is_test_mode_enabled=False)
+        self.assertNotIn(password, ['', 'password'])
+
     def test_test_mode(self):
         self.assertEqual(getWorkerPassword('bot1', {}, is_test_mode_enabled=True), 'password')
