@@ -23,6 +23,7 @@
 
 #include "CommonAtomStrings.h"
 #include "FEConvolveMatrix.h"
+#include "FEOffset.h"
 #include "NodeDocument.h"
 #include "NodeName.h"
 #include "SVGDocumentExtensions.h"
@@ -71,53 +72,52 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         Ref { m_in1 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::orderAttr: {
-        // An absent or removed order reverts silently; one that parses but is below 1 reverts and
-        // disables the filter.
+        // An order that does not parse or is below 1 is invalid and reverts to the initial value,
+        // like an absent order. A single invalid component makes the whole attribute invalid, so
+        // both components revert.
         if (newValue.isEmpty()) {
             m_orderX->setBaseValInternal(std::nullopt);
             m_orderY->setBaseValInternal(std::nullopt);
-            m_hasInvalidOrderAttribute = false;
             break;
         }
         auto result = parseNumberOptionalNumber(newValue);
         if (!result || result->first < 1 || result->second < 1) {
             m_orderX->setBaseValInternal(std::nullopt);
             m_orderY->setBaseValInternal(std::nullopt);
-            m_hasInvalidOrderAttribute = true;
-            protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing order=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+            protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing order=\""_s, newValue, "\". Using the initial value 3."_s));
             break;
         }
         m_orderX->setBaseValInternal(result->first);
         m_orderY->setBaseValInternal(result->second);
-        m_hasInvalidOrderAttribute = false;
         break;
     }
     case AttributeNames::edgeModeAttr:
         if (!protect(m_edgeMode)->parseBaseVal<EdgeModeType>(*this, newValue) && !newValue.isNull())
-            protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing edgeMode=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+            protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing edgeMode=\""_s, newValue, "\". Using the initial value duplicate."_s));
         break;
     case AttributeNames::kernelMatrixAttr:
-        protect(protect(m_kernelMatrix)->baseVal())->parse(newValue);
+        if (!protect(protect(m_kernelMatrix)->baseVal())->parse(newValue))
+            protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing kernelMatrix=\""_s, newValue, "\". The filter primitive acts as a pass through filter."_s));
         break;
     case AttributeNames::divisorAttr: {
         auto result = parseNumber(newValue);
         m_divisor->setBaseValInternal(result);
-        if (result && !*result)
+        if (!newValue.isEmpty() && (!result || !*result))
             protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing divisor=\""_s, newValue, "\". Using the default value."_s));
         break;
     }
     case AttributeNames::biasAttr:
         m_bias->setBaseValInternal(parseNumber(newValue));
         break;
-    case AttributeNames::targetXAttr: {
-        // Parsed as unsigned so a negative value fails and reverts; the property itself is an integer.
-        auto result = parseInteger<unsigned>(newValue);
-        m_targetX->setBaseValInternal(result ? std::optional<int> { *result } : std::nullopt);
-        break;
-    }
+    case AttributeNames::targetXAttr:
     case AttributeNames::targetYAttr: {
-        auto result = parseInteger<unsigned>(newValue);
-        m_targetY->setBaseValInternal(result ? std::optional<int> { *result } : std::nullopt);
+        // Out of range values are kept, and effectiveTargetOffset() replaces them. A value that is
+        // too large depends on order, so only values that do not parse or are negative are reported.
+        auto result = parseInteger<int>(newValue);
+        Ref target = name == SVGNames::targetXAttr ? m_targetX : m_targetY;
+        target->setBaseValInternal(result);
+        if (!newValue.isEmpty() && (!result || *result < 0))
+            protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing "_s, name.localName(), "=\""_s, newValue, "\". Using the default value."_s));
         break;
     }
     case AttributeNames::kernelUnitLengthAttr: {
@@ -125,6 +125,8 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         if (!result) {
             m_kernelUnitLengthX->setBaseValInternal(std::nullopt);
             m_kernelUnitLengthY->setBaseValInternal(std::nullopt);
+            if (!newValue.isEmpty())
+                protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing kernelUnitLength=\""_s, newValue, "\". Using the default value."_s));
             break;
         }
         m_kernelUnitLengthX->setBaseValInternal(result->first);
@@ -134,12 +136,10 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         break;
     }
     case AttributeNames::preserveAlphaAttr:
-        if (newValue == trueAtom())
-            m_preserveAlpha->setBaseValInternal(true);
-        else if (newValue == falseAtom())
-            m_preserveAlpha->setBaseValInternal(false);
-        else
-            protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing preserveAlphaAttr=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+        // Any value other than "true", including an absent attribute, is the initial value false.
+        m_preserveAlpha->setBaseValInternal(newValue == trueAtom());
+        if (!newValue.isNull() && newValue != trueAtom() && newValue != falseAtom())
+            protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing preserveAlpha=\""_s, newValue, "\". Using the initial value false."_s));
         break;
     default:
         break;
@@ -150,21 +150,25 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
 
 bool SVGFEConvolveMatrixElement::setFilterEffectAttribute(FilterEffect& filterEffect, const QualifiedName& attrName)
 {
-    auto& effect = downcast<FEConvolveMatrix>(filterEffect);
+    // A pass through effect does not depend on these attributes.
+    RefPtr effect = dynamicDowncast<FEConvolveMatrix>(filterEffect);
+    if (!effect)
+        return false;
+
     switch (attrName.nodeName()) {
     case AttributeNames::edgeModeAttr:
-        return effect.setEdgeMode(edgeMode());
+        return effect->setEdgeMode(edgeMode());
     case AttributeNames::divisorAttr:
-        return effect.setDivisor(effectiveDivisor());
+        return effect->setDivisor(effectiveDivisor());
     case AttributeNames::biasAttr:
-        return effect.setBias(bias());
+        return effect->setBias(bias());
     case AttributeNames::targetXAttr:
     case AttributeNames::targetYAttr:
-        return effect.setTargetOffset(IntPoint(targetX(), targetY()));
+        return effect->setTargetOffset(effectiveTargetOffset(effect->kernelSize()));
     case AttributeNames::kernelUnitLengthAttr:
-        return effect.setKernelUnitLength(effectiveKernelUnitLength());
+        return effect->setKernelUnitLength(effectiveKernelUnitLength());
     case AttributeNames::preserveAlphaAttr:
-        return effect.setPreserveAlpha(preserveAlpha());
+        return effect->setPreserveAlpha(preserveAlpha());
     default:
         break;
     }
@@ -172,11 +176,24 @@ bool SVGFEConvolveMatrixElement::setFilterEffectAttribute(FilterEffect& filterEf
     return false;
 }
 
+IntSize SVGFEConvolveMatrixElement::effectiveOrder() const
+{
+    // The spec says the values must be integers greater than zero. Invalid values are replaced by
+    // the initial value 3. A single invalid component makes the whole attribute invalid, so both
+    // components revert.
+    auto x = orderX();
+    auto y = orderY();
+    if (x < 1 || y < 1)
+        return { initialOrderValue, initialOrderValue };
+    return { x, y };
+}
+
 float SVGFEConvolveMatrixElement::effectiveDivisor() const
 {
     // The spec says a divisor of 0 is replaced by the default value: the sum of all values in
-    // kernelMatrix, or 1 if the sum is 0.
-    if (hasAttribute(SVGNames::divisorAttr)) {
+    // kernelMatrix, or 1 if the sum is 0. A divisor that does not parse is replaced by the default
+    // value too, as if it was not specified.
+    if (m_divisor->isAnimating() || parseNumber(getAttribute(SVGNames::divisorAttr))) {
         if (auto divisor = this->divisor())
             return divisor;
     }
@@ -202,6 +219,25 @@ FloatPoint SVGFEConvolveMatrixElement::effectiveKernelUnitLength() const
     return { x, y };
 }
 
+IntPoint SVGFEConvolveMatrixElement::effectiveTargetOffset(const IntSize& order) const
+{
+    // The spec says the target must be such that 0 <= targetX < orderX, and that by default the
+    // kernel is centered: targetX = floor(orderX / 2). Likewise for targetY. A target that does not
+    // parse or is out of range is replaced by the default value, as if it was not specified.
+    auto effectiveTarget = [&](const SVGAnimatedInteger& target, const QualifiedName& attributeName, int orderValue) {
+        if (target.isAnimating() || parseInteger<int>(getAttribute(attributeName))) {
+            auto value = target.currentValue();
+            if (value >= 0 && value < orderValue)
+                return value;
+        }
+        return orderValue / 2;
+    };
+    return {
+        effectiveTarget(m_targetX.get(), SVGNames::targetXAttr, order.width()),
+        effectiveTarget(m_targetY.get(), SVGNames::targetYAttr, order.height())
+    };
+}
+
 void SVGFEConvolveMatrixElement::setOrder(float x, float y)
 {
     m_orderX->setBaseValInternal(x);
@@ -216,39 +252,21 @@ void SVGFEConvolveMatrixElement::setKernelUnitLength(float x, float y)
     updateSVGRendererForElementChange();
 }
 
-bool SVGFEConvolveMatrixElement::isValidTargetXOffset() const
-{
-    auto orderXValue = orderX();
-    auto targetXValue = hasAttribute(SVGNames::targetXAttr) ? targetX() : static_cast<int>(floorf(orderXValue / 2));
-    return targetXValue >= 0 && targetXValue < orderXValue;
-}
-
-bool SVGFEConvolveMatrixElement::isValidTargetYOffset() const
-{
-    auto orderYValue = orderY();
-    auto targetYValue = hasAttribute(SVGNames::targetYAttr) ? targetY() : static_cast<int>(floorf(orderYValue / 2));
-    return targetYValue >= 0 && targetYValue < orderYValue;
-}
-
 void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if ((attrName == SVGNames::targetXAttr || attrName == SVGNames::orderAttr) && !isValidTargetXOffset()) {
-        InstanceInvalidationGuard guard(*this);
-        markFilterEffectForRebuild();
-        return;
-    }
-
-    if ((attrName == SVGNames::targetYAttr || attrName == SVGNames::orderAttr) && !isValidTargetYOffset()) {
-        InstanceInvalidationGuard guard(*this);
-        markFilterEffectForRebuild();
-        return;
-    }
-
     switch (attrName.nodeName()) {
-    case AttributeNames::inAttr:
+    case AttributeNames::inAttr: {
+        InstanceInvalidationGuard guard(*this);
+        updateSVGRendererForElementChange();
+        break;
+    }
     case AttributeNames::orderAttr:
     case AttributeNames::kernelMatrixAttr: {
+        // The kernel size and values cannot be updated in place, and they decide between a
+        // convolution and a pass through filter. Rebuilding the effect alone does not reach CSS
+        // filter clients with the legacy SVG engine, so also update the renderers.
         InstanceInvalidationGuard guard(*this);
+        markFilterEffectForRebuild();
         updateSVGRendererForElementChange();
         break;
     }
@@ -271,36 +289,15 @@ void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrNa
 
 RefPtr<FilterEffect> SVGFEConvolveMatrixElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
-    auto filterOrder = [&] () {
-        if (m_hasInvalidOrderAttribute)
-            return IntSize();
-        return IntSize(orderX(), orderY());
-    };
-
-    auto filterTarget = [&] (const IntSize& order) {
-        // The spec says the default value is: targetX = floor ( orderX / 2 ))
-        return IntPoint(
-            hasAttribute(SVGNames::targetXAttr) ? targetX() : order.width() / 2,
-            hasAttribute(SVGNames::targetYAttr) ? targetY() : order.height() / 2
-        );
-    };
-
-    // Spec says order must be > 0. Bail if it is not.
-    auto order = filterOrder();
-    if (order.isEmpty())
-        return nullptr;
-
+    auto order = effectiveOrder();
     Ref kernelMatrix = this->kernelMatrix();
 
-    // The spec says this is a requirement, and should bail out if fails
+    // The spec says the filter primitive acts as a pass through filter if the number of entries
+    // in kernelMatrix is not orderX * orderY. The pass through output is equal to the input.
     if (order.unclampedArea() != kernelMatrix->length())
-        return nullptr;
+        return FEOffset::create(0, 0);
 
-    auto target = filterTarget(order);
-    if (!IntRect({ }, order).contains(target))
-        return nullptr;
-
-    return FEConvolveMatrix::create(order, effectiveDivisor(), bias(), target, edgeMode(), effectiveKernelUnitLength(), preserveAlpha(), kernelMatrix.get());
+    return FEConvolveMatrix::create(order, effectiveDivisor(), bias(), effectiveTargetOffset(order), edgeMode(), effectiveKernelUnitLength(), preserveAlpha(), kernelMatrix.get());
 }
 
 } // namespace WebCore

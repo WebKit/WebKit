@@ -100,6 +100,7 @@ bool FEConvolveMatrix::setBias(float bias)
 
 bool FEConvolveMatrix::setTargetOffset(const IntPoint& targetOffset)
 {
+    ASSERT(IntRect(IntPoint::zero(), m_kernelSize).contains(targetOffset));
     if (m_targetOffset == targetOffset)
         return false;
     m_targetOffset = targetOffset;

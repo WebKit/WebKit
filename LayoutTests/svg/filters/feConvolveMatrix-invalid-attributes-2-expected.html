@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.target {
+    width: 20px;
+    height: 20px;
+    margin: 4px;
+    display: inline-block;
+    background-color: green;
+    border: 5px solid black;
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position: absolute">
+    <filter id="sum-kernel">
+        <feConvolveMatrix order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="sum-kernel-preserve-alpha">
+        <feConvolveMatrix order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" preserveAlpha="true"/>
+    </filter>
+    <filter id="zero-sum-kernel">
+        <feConvolveMatrix order="3" kernelMatrix="1 0 0 0 1 0 0 0 -2"/>
+    </filter>
+    <filter id="sum-kernel-divisor-18">
+        <feConvolveMatrix order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" divisor="18"/>
+    </filter>
+    <filter id="sum-kernel-target-x-0">
+        <feConvolveMatrix order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetX="0"/>
+    </filter>
+    <filter id="sum-kernel-target-y-0">
+        <feConvolveMatrix order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetY="0"/>
+    </filter>
+    <filter id="column-kernel">
+        <feConvolveMatrix order="1 9" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="row-kernel">
+        <feConvolveMatrix order="9 1" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+</svg>
+
+<div class="target"></div>
+<div class="target"></div>
+<div class="target"></div>
+<div class="target"></div>
+<div class="target"></div>
+<div class="target"></div>
+<div class="target"></div>
+<div class="target"></div>
+<div class="target"></div>
+<div class="target"></div>
+<div class="target"></div>
+<div class="target"></div>
+<div class="target"></div>
+<div class="target"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel-preserve-alpha)"></div>
+<div class="target" style="filter: url(#sum-kernel-preserve-alpha)"></div>
+
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#zero-sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#zero-sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel-divisor-18)"></div>
+<div class="target" style="filter: url(#sum-kernel-divisor-18)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel-target-x-0)"></div>
+<div class="target" style="filter: url(#sum-kernel-target-x-0)"></div>
+<div class="target" style="filter: url(#sum-kernel-target-y-0)"></div>
+<div class="target" style="filter: url(#sum-kernel-target-y-0)"></div>
+<div class="target" style="filter: url(#column-kernel)"></div>
+<div class="target" style="filter: url(#row-kernel)"></div>
+
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#column-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+</body>
+</html>
