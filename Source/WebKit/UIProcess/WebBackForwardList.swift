@@ -1289,7 +1289,7 @@ final class WebBackForwardList {
             contentsMatch(webPageProxy.identifier(), item.pageID()) && contentsMatch(itemID, item.identifier())
         }
         let oldFrameID = frameItem.frameID()
-        frameItem.updateFrameStatePayload(consuming: frameState)
+        frameItem.updateFrameStatePayload(consuming: frameState, process.ptr().coreProcessIdentifier())
         let newFrameID = frameItem.frameID()
         if let oldFrameID = Optional(fromCxx: oldFrameID) {
             if let newFrameID = Optional(fromCxx: newFrameID) {
@@ -1313,13 +1313,14 @@ final class WebBackForwardList {
     func replaceFrameStateForChild(
         item: WebKit.WebBackForwardListItem,
         frameID: WebCore.FrameIdentifier,
-        newFrameState: WebKit.RefFrameState
+        newFrameState: WebKit.RefFrameState,
+        processIdentifier: WebCore.ProcessIdentifier
     ) {
         guard let targetFrameItem = item.mainFrameItem().childItemForFrameID(frameID) else {
             return
         }
 
-        targetFrameItem.updateFrameStatePayload(consuming: newFrameState)
+        targetFrameItem.updateFrameStatePayload(consuming: newFrameState, processIdentifier)
     }
 
     @MainActor

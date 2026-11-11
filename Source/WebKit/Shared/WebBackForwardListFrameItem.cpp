@@ -50,6 +50,7 @@ WebBackForwardListFrameItem::WebBackForwardListFrameItem(WebBackForwardListItem&
     : m_backForwardListItem(item)
     , m_identifier(*frameState->frameItemID)
     , m_frameState(WTF::move(frameState))
+    , m_documentProcessIdentifier(m_identifier.processIdentifier())
     , m_parent(parentItem)
 {
     m_frameState->itemID = item.identifier();
@@ -205,8 +206,9 @@ void WebBackForwardListFrameItem::setWasRestoredFromSession()
         child->setWasRestoredFromSession();
 }
 
-void WebBackForwardListFrameItem::updateFrameStatePayload(Ref<FrameState>&& frameState)
+void WebBackForwardListFrameItem::updateFrameStatePayload(Ref<FrameState>&& frameState, WebCore::ProcessIdentifier documentProcessIdentifier)
 {
+    m_documentProcessIdentifier = documentProcessIdentifier;
     m_frameState->replacePayloadFrom(WTF::move(frameState));
 }
 
@@ -253,7 +255,13 @@ Ref<FrameState> WebBackForwardListFrameItem::copyFrameStateWithChildrenForProces
     // A root item's frameID is optional (entries restored from session state have none) and only follows the main frame
     // once a swap commits, so a lookup by ID could miss the page's own main frame. Ask the page for it instead.
     RefPtr frame = m_parent ? WebFrameProxy::webFrame(frameID()) : page.mainFrame();
-    bool processHostsFrame = frame && frame->page() == &page && (&frame->process() == &process || &frame->provisionalLoadProcess() == &process);
+    bool processHostsFrame = [&] {
+        // A subframe's item outlives the frame when the frame is removed or its parent document is navigated away from.
+        // No process hosts it any more, so only the process whose document the state describes gets it back.
+        if (!frame)
+            return m_parent && m_documentProcessIdentifier == process.coreProcessIdentifier();
+        return frame->page() == &page && (&frame->process() == &process || &frame->provisionalLoadProcess() == &process);
+    }();
 
     Ref frameState = processHostsFrame ? copyFrameState() : m_frameState->copyIdentifiersOnly();
     for (auto& child : borrow(m_children))

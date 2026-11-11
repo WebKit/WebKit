@@ -887,7 +887,7 @@ void WebBackForwardList::backForwardUpdateItem(IPC::Connection& connection, Ref<
         MESSAGE_CHECK(process, webPageProxy->identifier() == item->pageID() && frameState->itemID == item->identifier());
 
         auto oldFrameID = frameItem->frameID();
-        frameItem->updateFrameStatePayload(WTF::move(frameState));
+        frameItem->updateFrameStatePayload(WTF::move(frameState), process->coreProcessIdentifier());
         auto newFrameID = frameItem->frameID();
 
         if (oldFrameID && newFrameID && oldFrameID != newFrameID)
@@ -903,13 +903,13 @@ void WebBackForwardList::updateFrameIdentifier(FrameIdentifier oldFrameID, Frame
         entry->updateFrameID(oldFrameID, newFrameID);
 }
 
-void WebBackForwardList::replaceFrameStateForChild(WebBackForwardListItem& item, WebCore::FrameIdentifier frameID, Ref<FrameState>&& newFrameState)
+void WebBackForwardList::replaceFrameStateForChild(WebBackForwardListItem& item, WebCore::FrameIdentifier frameID, Ref<FrameState>&& newFrameState, WebCore::ProcessIdentifier processIdentifier)
 {
     RefPtr targetFrameItem = item.mainFrameItem().childItemForFrameID(frameID);
     if (!targetFrameItem)
         return;
 
-    targetFrameItem->updateFrameStatePayload(WTF::move(newFrameState));
+    targetFrameItem->updateFrameStatePayload(WTF::move(newFrameState), processIdentifier);
 }
 
 void WebBackForwardList::backForwardGoToItem(IPC::Connection& connection, BackForwardItemIdentifier itemID)
