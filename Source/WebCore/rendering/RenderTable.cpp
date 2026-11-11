@@ -782,11 +782,18 @@ void RenderTable::recalcCollapsedBorders()
     if (m_collapsedBordersValid)
         return;
     m_collapsedBorders.clear();
+    m_maxCollapsedInnerBorderHalfFirstColumn = 0;
+    m_maxCollapsedInnerBorderHalfLastColumn = 0;
+    unsigned lastEffectiveColumn = numEffCols() - 1;
     for (auto& section : childrenOfType<RenderTableSection>(*this)) {
         for (RenderTableRow* row = section.firstRow(); row; row = row->nextRow()) {
             for (RenderTableCell* cell = row->firstCell(); cell; cell = cell->nextCell()) {
                 ASSERT(cell->table() == this);
                 cell->collectBorderValues(m_collapsedBorders);
+                if (!colToEffCol(cell->col()))
+                    m_maxCollapsedInnerBorderHalfFirstColumn = std::max(m_maxCollapsedInnerBorderHalfFirstColumn, cell->borderLeft());
+                if (colToEffCol(cell->col() + cell->colSpan() - 1) == lastEffectiveColumn)
+                    m_maxCollapsedInnerBorderHalfLastColumn = std::max(m_maxCollapsedInnerBorderHalfLastColumn, cell->borderRight());
             }
         }
     }

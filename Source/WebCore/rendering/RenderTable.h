@@ -180,6 +180,9 @@ public:
     void invalidateCollapsedBorders(RenderTableCell* cellWithStyleChange = nullptr);
     void invalidateCollapsedBordersAfterStyleChangeIfNeeded(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle, RenderTableCell* cellWithStyleChange = nullptr);
     void collapsedEmptyBorderIsPresent() { m_collapsedEmptyBorderIsPresent = true; }
+
+    LayoutUnit maxCollapsedInnerBorderHalfForFirstColumn() { recalcCollapsedBorders(); return m_maxCollapsedInnerBorderHalfFirstColumn; }
+    LayoutUnit maxCollapsedInnerBorderHalfForLastColumn() { recalcCollapsedBorders(); return m_maxCollapsedInnerBorderHalfLastColumn; }
     const CollapsedBorderValue* currentBorderValue() const LIFETIME_BOUND { return m_currentBorder; }
     void paintCollapsedBordersForRow(PaintInfo&, RenderTableRow&, const LayoutPoint& paintOffset);
     
@@ -279,6 +282,8 @@ protected:
 
     CollapsedBorderValues m_collapsedBorders;
     const CollapsedBorderValue* m_currentBorder { nullptr };
+    LayoutUnit m_maxCollapsedInnerBorderHalfFirstColumn;
+    LayoutUnit m_maxCollapsedInnerBorderHalfLastColumn;
     bool m_collapsedBordersValid : 1 { false };
     bool m_collapsedEmptyBorderIsPresent : 1 { false };
 
