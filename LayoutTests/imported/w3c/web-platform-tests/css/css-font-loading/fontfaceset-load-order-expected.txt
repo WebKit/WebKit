@@ -1,0 +1,5 @@
+
+PASS FontFaceSet.load() returns matching faces in the order of the font family list
+PASS FontFaceSet.load() returns every face of a family that covers part of the text
+PASS FontFaceSet.load() returns a face once when its family is listed with different case
+

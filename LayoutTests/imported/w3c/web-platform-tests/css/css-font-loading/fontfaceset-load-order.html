@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<title>FontFaceSet.load() resolves with faces in font family list order</title>
+<link rel="help" href="https://drafts.csswg.org/css-font-loading/#font-face-set-load">
+<link rel="help" href="https://drafts.csswg.org/css-font-loading/#find-the-matching-font-faces">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+promise_test(async t => {
+  const count = 10;
+  const families = [];
+  for (let i = 0; i < count; ++i)
+    families.push(`LoadOrder${i}`);
+
+  const insertionOrder = [3, 7, 0, 9, 5, 1, 8, 2, 6, 4];
+  const faces = insertionOrder.map(i => new FontFace(families[i], 'url(/fonts/Ahem.ttf)', {
+    unicodeRange: `U+${(0x61 + i).toString(16)}`
+  }));
+  for (const face of faces)
+    document.fonts.add(face);
+  t.add_cleanup(() => {
+    for (const face of faces)
+      document.fonts.delete(face);
+  });
+
+  let text = '';
+  for (let i = count - 1; i >= 0; --i)
+    text += String.fromCharCode(0x61 + i);
+
+  const loaded = await document.fonts.load(`16px ${families.join(', ')}`, text);
+  assert_array_equals(loaded.map(face => face.family), families);
+}, 'FontFaceSet.load() returns matching faces in the order of the font family list');
+
+promise_test(async t => {
+  const family = 'LoadOrderSameFamily';
+  const faceA = new FontFace(family, 'url(/fonts/Ahem.ttf)', { unicodeRange: 'U+61' });
+  const faceB = new FontFace(family, 'url(/fonts/Ahem.ttf)', { unicodeRange: 'U+62' });
+  document.fonts.add(faceA);
+  document.fonts.add(faceB);
+  t.add_cleanup(() => {
+    document.fonts.delete(faceA);
+    document.fonts.delete(faceB);
+  });
+
+  const loaded = await document.fonts.load(`16px ${family}`, 'ba');
+  assert_equals(loaded.length, 2);
+  assert_true(loaded.includes(faceA), 'face covering U+61 is returned');
+  assert_true(loaded.includes(faceB), 'face covering U+62 is returned');
+}, 'FontFaceSet.load() returns every face of a family that covers part of the text');
+
+promise_test(async t => {
+  const face = new FontFace('LoadOrderCase', 'url(/fonts/Ahem.ttf)');
+  document.fonts.add(face);
+  t.add_cleanup(() => { document.fonts.delete(face); });
+
+  const loaded = await document.fonts.load('16px LoadOrderCase, loadordercase', 'a');
+  assert_array_equals(loaded, [face]);
+}, 'FontFaceSet.load() returns a face once when its family is listed with different case');
+</script>
