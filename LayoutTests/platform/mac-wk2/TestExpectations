@@ -2595,7 +2595,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate Debug ] storage/websql/test-authorizer.html [ Failure ]
 [ GoldenGate ] http/tests/permissions/permission-status-onchange-event-service-worker.html [ Pass Crash ]
 [ GoldenGate ] http/tests/site-isolation/inspector/target/target.html [ Pass Crash ]
-[ GoldenGate ] http/tests/workers/service/page-caching.html [ Pass Crash ]
 [ GoldenGate ] accessibility/element-reflection-ariaowns.html [ Failure ]
 [ GoldenGate ] accessibility/isolated-tree/element-reflection-ariaowns.html [ Pass Failure ]
 [ GoldenGate arm64 ] fast/webgpu/nocrash/fuzz-291168.html [ Pass Failure ]

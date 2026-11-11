@@ -33,6 +33,7 @@
 #import "Helpers/cocoa/TestScriptMessageHandler.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import "TestURLSchemeHandler.h"
 #import "UIKitSPIForTesting.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <WebKit/WKContentWorld.h>
@@ -47,6 +48,7 @@
 #import <WebKit/WKUserScriptPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKContentWorldConfiguration.h>
@@ -1187,6 +1189,70 @@ TEST(WKUserContentController, AsyncScriptMessageHandlerBasicPost)
     }];
 
     TestWebKitAPI::Util::run(&done);
+}
+
+@interface DelayedReplyScriptMessageHandler : NSObject <WKScriptMessageHandlerWithReply>
+@property (nonatomic, copy) void (^replyHandler)(id, NSString *);
+@end
+
+@implementation DelayedReplyScriptMessageHandler
+
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message replyHandler:(void (^)(id, NSString *errorMessage))replyHandler
+{
+    self.replyHandler = replyHandler;
+}
+
+@end
+
+TEST(WKUserContentController, AsyncScriptMessageHandlerReplyAfterBackForwardCacheEviction)
+{
+    RetainPtr schemeHandler = adoptNS([TestURLSchemeHandler new]);
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        respond(task, "<p>page</p>");
+    }];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"testing"];
+    RetainPtr handler = adoptNS([[DelayedReplyScriptMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandlerWithReply:handler.get() contentWorld:WKContentWorld.pageWorld name:@"testHandler"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    __block bool webProcessTerminated = false;
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *, _WKProcessTerminationReason) {
+        webProcessTerminated = true;
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testing://host/first"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    auto firstPageProcessIdentifier = [webView _webProcessIdentifier];
+
+    [webView evaluateJavaScript:@"window.webkit.messageHandlers.testHandler.postMessage('message'); true" completionHandler:nil];
+    while (![handler replyHandler])
+        TestWebKitAPI::Util::spinRunLoop();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testing://host/second"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // The checks below only reach the current web process, so the first page has to be cached in it.
+    EXPECT_EQ([webView _webProcessIdentifier], firstPageProcessIdentifier);
+
+    __block bool done = false;
+    [webView _topDocumentURLsInBackForwardCacheAtIndexForTesting:-1 completionHandler:^(NSArray<NSURL *> *topDocumentURLs) {
+        // The first page is in the back/forward cache.
+        EXPECT_EQ(topDocumentURLs.count, 1u);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Destroy the first document while the promise returned by its postMessage() is pending.
+    [webView _clearBackForwardCache];
+    [handler replyHandler](@"reply", nil);
+    [handler setReplyHandler:nil];
+
+    EXPECT_WK_STREQ("testing://host/second", [webView stringByEvaluatingJavaScript:@"location.href"]);
+    EXPECT_FALSE(webProcessTerminated);
 }
 
 TEST(WKUserContentController, WorldLifetime)

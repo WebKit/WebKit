@@ -82,6 +82,10 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
     });
 
     if (activeDOMObjectsAreSuspended() || !ScriptDisallowedScope::isScriptAllowedInCurrentThread()) {
+        // A document that was stopped while suspended (e.g. when its back/forward cache entry is destroyed) stays suspended, and its tasks never run.
+        if (activeDOMObjectsAreSuspended() && activeDOMObjectAreStopped())
+            return;
+
         JSC::Strong<JSC::Unknown, ShouldStrongDestructorGrabLock::Yes> strongResolution(lexicalGlobalObject.vm(), resolution);
         ASSERT(!activeDOMObjectsAreSuspended() || scriptExecutionContext()->eventLoop().isSuspended());
         protect(protect(scriptExecutionContext())->eventLoop())->queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, mode, strongResolution = WTF::move(strongResolution)] mutable {
@@ -132,6 +136,10 @@ void DeferredPromise::whenSettledWithResult(Function<void(JSDOMGlobalObject*, bo
         return;
 
     if (activeDOMObjectsAreSuspended()) {
+        // As in callFunction(), a document that was stopped while suspended never runs its tasks.
+        if (activeDOMObjectAreStopped())
+            return;
+
         protect(protect(scriptExecutionContext())->eventLoop())->queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, callback = WTF::move(callback)] mutable {
             whenSettledWithResult(WTF::move(callback));
         });
