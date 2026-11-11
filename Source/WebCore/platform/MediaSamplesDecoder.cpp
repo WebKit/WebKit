@@ -473,14 +473,24 @@ Ref<MediaSamplesDecoder::DecodePromise> MediaSamplesDecoder::decodeOnQueue(Media
 
     if (block.isProtected())
         return DecodePromise::createAndReject(PlatformMediaError::ProtectedContent);
-    if (!block.isEmpty()) {
-        if (m_needsSyncSample && !block.isSync())
-            return DecodePromise::createAndReject(PlatformMediaError::InvalidState);
-        m_needsSyncSample = false;
-    }
 
     if (block.discontinuity().value_or(false))
         m_discontinuity = true;
+
+    // Items before the first sync item can't be decoded; a block without one produces no output.
+    if (m_needsSyncSample && !block.isEmpty()) {
+        auto sync = std::ranges::find_if(block, [](auto& item) {
+            return item.isSync();
+        });
+        if (sync == block.end())
+            return settleWithPendingOutput(true, m_generation);
+        if (size_t skipped = sync - block.begin()) {
+            auto samples = block.takeSamples();
+            samples.removeAt(0, skipped);
+            block.append(WTF::move(samples));
+        }
+        m_needsSyncSample = false;
+    }
 
     if (RefPtr videoDecoder = m_videoDecoder) {
         int64_t firstSequence = m_nextSequence;

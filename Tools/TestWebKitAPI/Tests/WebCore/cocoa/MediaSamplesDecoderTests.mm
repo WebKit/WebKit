@@ -493,6 +493,39 @@ TEST(MediaSamplesDecoder, DecodeFullyTrimmedIsDropped)
     EXPECT_TRUE(samples.isEmpty());
 }
 
+TEST(MediaSamplesDecoder, DecodeSkipsItemsBeforeTheFirstSyncItem)
+{
+    Ref info = makeAudioInfo(FourCC { "lpcm" }, { }, 16, 1);
+    Ref decoder = createDecoder(info);
+
+    auto item = [&](size_t index, Vector<uint8_t>&& bytes, bool isSync) {
+        return MediaSamplesBlock::MediaSampleItem {
+            .presentationTime = MediaTime(index, 48000),
+            .duration = MediaTime(1, 48000),
+            .data = SharedBuffer::create(WTF::move(bytes)),
+            .flags = isSync ? MediaSample::IsSync : MediaSample::None
+        };
+    };
+
+    // Little-endian signed 16-bit samples.
+    MediaSamplesBlock::SamplesVector withoutSync;
+    withoutSync.append(item(0, { 0x00, 0x10 }, false));
+    auto withoutSyncPromise = decoder->decode(MediaSamplesBlock { info.ptr(), WTF::move(withoutSync) });
+    auto withoutSyncResult = settle(withoutSyncPromise.get());
+    ASSERT_TRUE(withoutSyncResult);
+    EXPECT_TRUE(withoutSyncResult->isEmpty());
+
+    MediaSamplesBlock::SamplesVector items;
+    items.append(item(1, { 0x00, 0x40 }, false));
+    items.append(item(2, { 0x00, 0xC0 }, true));
+    items.append(item(3, { 0x00, 0x20 }, false));
+    auto samples = decodeToFloats(decoder, MediaSamplesBlock { info.ptr(), WTF::move(items) });
+
+    ASSERT_EQ(samples.size(), 2u);
+    EXPECT_NEAR(samples[0], -0.5f, 1e-4f);
+    EXPECT_NEAR(samples[1], 0.25f, 1e-4f);
+}
+
 TEST(MediaSamplesBlock, CMSampleBufferRoundTripKeepsTrims)
 {
     auto blocks = parseWebMAudioFile(@"test-mse-audio");
@@ -1063,7 +1096,7 @@ TEST(MediaSamplesDecoder, VideoBlockReturnsOnlyItsLastFrame)
     EXPECT_EQ(result->first().first().presentationTime, lastTime);
 }
 
-TEST(MediaSamplesDecoder, VideoFlushRequiresSyncSample)
+TEST(MediaSamplesDecoder, VideoSkipsToSyncSampleAfterFlush)
 {
     if (!isVPXDecodingAvailable())
         GTEST_SKIP() << "VPx software decoding is not available";
@@ -1072,6 +1105,9 @@ TEST(MediaSamplesDecoder, VideoFlushRequiresSyncSample)
     ASSERT_GE(blocks.size(), 2u);
     ASSERT_TRUE(blocks[0]->isSync());
     ASSERT_FALSE(blocks[1]->isSync());
+    auto more = parseWebMVideoFile(@"test-vp8", vp8ContentType);
+    ASSERT_FALSE(more.isEmpty());
+    ASSERT_TRUE(more[0]->isSync());
 
     Ref decoder = createDecoder(*blocks[0]->info());
 
@@ -1081,15 +1117,25 @@ TEST(MediaSamplesDecoder, VideoFlushRequiresSyncSample)
     auto flushPromise = decoder->flush();
     EXPECT_TRUE(settle(flushPromise.get()));
 
+    auto deltaPromise = decoder->decode(WTF::move(blocks[1].get()));
+    auto deltaResult = settle(deltaPromise.get());
+    ASSERT_TRUE(deltaResult);
+    EXPECT_TRUE(deltaResult->isEmpty());
+
+    auto countItems = [](const Vector<MediaSamplesBlock>& output) {
+        size_t count = 0;
+        for (auto& block : output)
+            count += block.size();
+        return count;
+    };
+
+    auto syncPromise = decoder->decode(WTF::move(more[0].get()));
+    auto syncResult = settle(syncPromise.get());
+    ASSERT_TRUE(syncResult);
     auto drainPromise = decoder->drain();
     auto drainResult = settle(drainPromise.get());
     ASSERT_TRUE(drainResult);
-    EXPECT_TRUE(drainResult->isEmpty());
-
-    auto deltaPromise = decoder->decode(WTF::move(blocks[1].get()));
-    auto deltaResult = settle(deltaPromise.get());
-    ASSERT_FALSE(deltaResult);
-    EXPECT_EQ(deltaResult.error(), PlatformMediaError::InvalidState);
+    EXPECT_EQ(countItems(*syncResult) + countItems(*drainResult), 1u);
 }
 
 TEST(MediaSamplesDecoder, CanContinueWithRejectsChangedVideoSize)
@@ -1471,7 +1517,7 @@ TEST(PacedMediaSamplesDecoder, VideoIsDecodedWithinTheDecodeWindow)
     EXPECT_EQ(collected->items, blockCount);
 }
 
-TEST(PacedMediaSamplesDecoder, VideoFlushCancelsPendingInputAndRequiresSyncSample)
+TEST(PacedMediaSamplesDecoder, VideoFlushCancelsPendingInputAndSkipsToSyncSample)
 {
     if (!isVPXDecodingAvailable())
         GTEST_SKIP() << "VPx software decoding is not available";
@@ -1480,6 +1526,7 @@ TEST(PacedMediaSamplesDecoder, VideoFlushCancelsPendingInputAndRequiresSyncSampl
     ASSERT_GT(blocks.size(), 10u);
     auto more = parseWebMVideoFile(@"test-vp8", vp8ContentType);
     ASSERT_GE(more.size(), 2u);
+    ASSERT_TRUE(more[0]->isSync());
     ASSERT_FALSE(more[1]->isSync());
 
     Ref clock = TestClock::create();
@@ -1508,20 +1555,17 @@ TEST(PacedMediaSamplesDecoder, VideoFlushCancelsPendingInputAndRequiresSyncSampl
 
     auto deltaPromise = decoder->decode(WTF::move(more[1].get()));
     auto deltaResult = settle(deltaPromise.get());
-    ASSERT_FALSE(deltaResult);
-    EXPECT_EQ(deltaResult.error(), PlatformMediaError::InvalidState);
+    ASSERT_TRUE(deltaResult);
+    EXPECT_TRUE(deltaResult->isEmpty());
 
-    // The error is fatal: everything after it is rejected with it.
-    ASSERT_TRUE(more[0]->isSync());
     auto syncPromise = decoder->decode(WTF::move(more[0].get()));
     auto syncResult = settle(syncPromise.get());
-    ASSERT_FALSE(syncResult);
-    EXPECT_EQ(syncResult.error(), PlatformMediaError::InvalidState);
+    ASSERT_TRUE(syncResult);
 
     auto drainPromise = decoder->drain();
     auto drainResult = settle(drainPromise.get());
-    ASSERT_FALSE(drainResult);
-    EXPECT_EQ(drainResult.error(), PlatformMediaError::InvalidState);
+    ASSERT_TRUE(drainResult);
+    EXPECT_EQ(syncResult->size() + drainResult->size(), 1u);
 }
 
 TEST(PacedMediaSamplesDecoder, VideoReadinessFollowsTheQueuedBlockCount)
