@@ -53,6 +53,7 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
+#include "WebProcessProxy.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
@@ -1179,6 +1180,10 @@ void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame
 {
     if (frame.isMainFrame()) {
         // New page loaded, clear frame handles previously cached for frame's page.
+        // FIXME: This also discards the handles of frames that still exist: the ones that the new document created while
+        // it loaded, and after a same-document navigation, all of them. Events and realms already reported those frames
+        // with the discarded handles, and the frames get new ones. Frames that go away lose their handles in
+        // didDestroyFrame() anyway. https://bugs.webkit.org/show_bug.cgi?id=330642
         HashSet<String> handlesToRemove;
         for (const auto& iter : m_handleWebFrameMap) {
             RefPtr webFrame = WebFrameProxy::webFrame(iter.value);
@@ -1241,20 +1246,16 @@ static double bidiTimestampNow()
 #endif
 
 #if ENABLE(WEBDRIVER_BIDI)
-// The browsing contexts a frame's events belong to, for matching subscriptions made with `contexts`: the top-level
-// context, whose subscriptions cover its descendants, and the frame's own context when it is a child frame.
-// Handles are only looked up, never created: a context the client has not been given a handle for cannot have been
-// subscribed to, and creating one here would leak it once the frame is gone.
+// The browsing context a frame's events belong to, for matching subscriptions made with `contexts`: the frame's
+// top-level context, because session.subscribe records the top-level context of each context it is given.
+// The handle is only looked up, never created: a context the client has not been given a handle for cannot have been
+// subscribed to.
 HashSet<String> WebAutomationSession::bidiSubscriptionScopeForFrame(const WebFrameProxy& frame) const
 {
     HashSet<String> scope;
     if (RefPtr page = frame.page()) {
         if (auto pageHandle = m_webPageHandleMap.get(page->identifier()); !pageHandle.isEmpty())
             scope.add(pageHandle);
-    }
-    if (!frame.isMainFrame()) {
-        if (auto frameHandle = m_webFrameHandleMap.get(frame.frameID()); !frameHandle.isEmpty())
-            scope.add(frameHandle);
     }
     return scope;
 }
@@ -1377,7 +1378,7 @@ void WebAutomationSession::fragmentNavigatedForFrame(const WebFrameProxy& frame,
 
 void WebAutomationSession::historyUpdatedForFrame(const WebFrameProxy& frame)
 {
-    m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::HistoryUpdated, { }, [&] {
+    m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::HistoryUpdated, bidiSubscriptionScopeForFrame(frame), [&] {
         m_bidiProcessor->browsingContextDomainNotifier().historyUpdated(effectiveHandleForWebFrameProxy(frame), bidiTimestampNow(), frame.url().string());
     });
 }
@@ -3453,11 +3454,38 @@ void WebAutomationSession::isKnownNodeReference(WebCore::FrameIdentifier frameID
     completionHandler(findResult != m_knownNodeReferences.end() && findResult->value.contains(nodeHandle));
 }
 
-void WebAutomationSession::logEntryAdded(const JSC::MessageSource& messageSource, const JSC::MessageLevel& messageLevel, const String& messageText, const JSC::MessageType& messageType, const WallTime& timestamp)
+#if ENABLE(WEBDRIVER_BIDI)
+// Every web process in the process pool reports realms and console messages, including the ones of pages that the
+// automation client doesn't control, such as pages that the browser's user opened. Only report frames of pages that
+// the session controls, and only from the process that hosts the frame or is loading a new document into it. A
+// message from another process is dropped rather than treated as a violation, because a frame can move to another
+// process while the old one's messages are on their way.
+static RefPtr<WebFrameProxy> frameControlledBySession(const WebAutomationSession& session, IPC::Connection& connection, WebCore::FrameIdentifier frameID)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return nullptr;
+
+    Ref process = WebProcessProxy::fromConnection(connection);
+    if (&frame->process() != process.ptr() && &frame->provisionalLoadProcess() != process.ptr())
+        return nullptr;
+
+    RefPtr page = frame->page();
+    if (!page || page->activeAutomationSession().get() != &session)
+        return nullptr;
+
+    return frame;
+}
+#endif
+
+void WebAutomationSession::logEntryAdded(IPC::Connection& connection, WebCore::FrameIdentifier frameID, const JSC::MessageSource& messageSource, const JSC::MessageLevel& messageLevel, const String& messageText, const JSC::MessageType& messageType, const WallTime& timestamp)
 {
 #if ENABLE(WEBDRIVER_BIDI)
-    // FIXME: log entries carry no browsing context yet, so only global subscriptions receive them. https://bugs.webkit.org/show_bug.cgi?id=282978
-    m_bidiProcessor->emitEventIfEnabled(BidiEventNames::Log::EntryAdded, { }, [&]() {
+    RefPtr frame = frameControlledBySession(*this, connection, frameID);
+    if (!frame)
+        return;
+
+    m_bidiProcessor->emitEventIfEnabled(BidiEventNames::Log::EntryAdded, bidiSubscriptionScopeForFrame(*frame), [&] {
         // FIXME Support getting source information
         // https://bugs.webkit.org/show_bug.cgi?id=282978
         String sourceString;
@@ -3472,6 +3500,8 @@ void WebAutomationSession::logEntryAdded(const JSC::MessageSource& messageSource
         m_bidiProcessor->logDomainNotifier().entryAdded(level, sourceString, messageText, milliseconds, type, method);
     });
 #else
+    UNUSED_PARAM(connection);
+    UNUSED_PARAM(frameID);
     UNUSED_PARAM(messageSource);
     UNUSED_PARAM(messageLevel);
     UNUSED_PARAM(messageText);
@@ -3481,11 +3511,11 @@ void WebAutomationSession::logEntryAdded(const JSC::MessageSource& messageSource
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
-void WebAutomationSession::scriptRealmCreated(WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin)
+void WebAutomationSession::scriptRealmCreated(IPC::Connection& connection, WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin)
 {
     // Not security sensitive because it labels a realm for the automation client which already has full control of the browser.
     auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
-    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    RefPtr frame = frameControlledBySession(*this, connection, frameID);
     if (!frame)
         return;
 
@@ -3493,7 +3523,7 @@ void WebAutomationSession::scriptRealmCreated(WebCore::FrameIdentifier frameID, 
     if (browsingContext.isEmpty())
         return;
 
-    m_bidiProcessor->scriptAgent().notifyRealmCreated(realmIdentifier, browsingContext, origin);
+    m_bidiProcessor->scriptAgent().notifyRealmCreated(realmIdentifier, browsingContext, handleForWebPageProxy(*protect(frame->page())), origin);
 }
 
 void WebAutomationSession::scriptRealmDestroyed(WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier)
@@ -3505,6 +3535,9 @@ void WebAutomationSession::scriptRealmDestroyed(WebCore::FrameIdentifier frameID
     auto it = scriptAgent.activeRealms().find(realmIdentifier);
     if (it == scriptAgent.activeRealms().end())
         return; // Realm not found or already destroyed.
+
+    // FIXME: Realm identifiers aren't unique across web processes, so any process can destroy another process's realm.
+    // https://bugs.webkit.org/show_bug.cgi?id=288061
 
     auto browsingContext = it->value.context;
     scriptAgent.notifyRealmDestroyed(realmIdentifier, browsingContext);

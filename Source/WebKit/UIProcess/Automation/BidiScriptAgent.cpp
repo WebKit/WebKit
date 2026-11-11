@@ -947,18 +947,18 @@ void BidiScriptAgent::collectExecutionReadyFrameRealms(const FrameTreeNodeData& 
     }
 }
 
-void BidiScriptAgent::sendRealmCreatedEvent(const String& realmID, const WebCore::SecurityOriginData& origin, Inspector::Protocol::BidiScript::RealmType type, Inspector::Protocol::BidiBrowsingContext::BrowsingContext context)
+void BidiScriptAgent::sendRealmCreatedEvent(const String& realmID, const RealmInfo& realmInfo)
 {
     RefPtr session = m_session.get();
     if (!session)
         return;
 
-    session->bidiProcessor().emitEventIfEnabled(BidiEventNames::Script::RealmCreated, { context }, [&]() {
-        session->bidiProcessor().scriptDomainNotifier().realmCreated(realmID, originStringFromSecurityOriginData(origin), type, context);
+    session->bidiProcessor().emitEventIfEnabled(BidiEventNames::Script::RealmCreated, { realmInfo.topLevelContext }, [&] {
+        session->bidiProcessor().scriptDomainNotifier().realmCreated(realmID, originStringFromSecurityOriginData(realmInfo.origin), realmInfo.type, realmInfo.context);
     });
 }
 
-void BidiScriptAgent::notifyRealmCreated(RealmIdentifier realmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext browsingContext, const WebCore::SecurityOriginData& origin)
+void BidiScriptAgent::notifyRealmCreated(RealmIdentifier realmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext browsingContext, Inspector::Protocol::BidiBrowsingContext::BrowsingContext topLevelContext, const WebCore::SecurityOriginData& origin)
 {
     // The WebProcess owns realm identifier creation and passes the identifier across IPC.
     String realmID = makeString("realm-"_s, realmIdentifier.loggingString());
@@ -966,10 +966,9 @@ void BidiScriptAgent::notifyRealmCreated(RealmIdentifier realmIdentifier, Inspec
     // Track the current realm for this browsing context.
     m_browsingContextToRealmId.set(browsingContext, realmIdentifier);
 
-    RealmInfo realmInfo { origin.isolatedCopy(), Inspector::Protocol::BidiScript::RealmType::Window, browsingContext };
-    m_activeRealms.set(realmIdentifier, WTF::move(realmInfo));
+    auto addResult = m_activeRealms.set(realmIdentifier, RealmInfo { origin.isolatedCopy(), Inspector::Protocol::BidiScript::RealmType::Window, browsingContext, topLevelContext });
 
-    sendRealmCreatedEvent(realmID, origin, Inspector::Protocol::BidiScript::RealmType::Window, browsingContext);
+    sendRealmCreatedEvent(realmID, addResult.iterator->value);
 }
 
 void BidiScriptAgent::notifyRealmDestroyed(RealmIdentifier realmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext browsingContext)
@@ -982,12 +981,16 @@ void BidiScriptAgent::notifyRealmDestroyed(RealmIdentifier realmIdentifier, Insp
     String realmID = makeString("realm-"_s, realmIdentifier.loggingString());
 
     // Remove the realm from active realms.
-    m_activeRealms.remove(realmIdentifier);
+    auto topLevelContext = browsingContext;
+    if (auto it = m_activeRealms.find(realmIdentifier); it != m_activeRealms.end()) {
+        topLevelContext = it->value.topLevelContext;
+        m_activeRealms.remove(it);
+    }
 
     // Remove the browsing context mapping (realm will be regenerated on next navigation).
     m_browsingContextToRealmId.remove(browsingContext);
 
-    session->bidiProcessor().emitEventIfEnabled(BidiEventNames::Script::RealmDestroyed, { browsingContext }, [&]() {
+    session->bidiProcessor().emitEventIfEnabled(BidiEventNames::Script::RealmDestroyed, { topLevelContext }, [&] {
         session->bidiProcessor().scriptDomainNotifier().realmDestroyed(realmID, browsingContext);
     });
 }
@@ -1008,11 +1011,11 @@ void BidiScriptAgent::emitEventsForActiveRealms(const HashSet<String>& contextFi
         const RealmIdentifier& realmIdentifier = entry.key;
         const RealmInfo& realmInfo = entry.value;
 
-        if (!contextFilter.isEmpty() && !contextFilter.contains(realmInfo.context))
+        if (!contextFilter.isEmpty() && !contextFilter.contains(realmInfo.topLevelContext))
             continue;
 
         String realmID = makeString("realm-"_s, realmIdentifier.loggingString());
-        sendRealmCreatedEvent(realmID, realmInfo.origin, realmInfo.type, realmInfo.context);
+        sendRealmCreatedEvent(realmID, realmInfo);
     }
 }
 

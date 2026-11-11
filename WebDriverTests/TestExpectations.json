@@ -5636,6 +5636,9 @@
             "test_navigate": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
+            "test_navigate_cross_origin": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
             "test_reload": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
@@ -5646,6 +5649,9 @@
                 "expected": {"mac": {"status": ["PASS"]},  "all": { "status": ["FAIL"], "bug": "webkit.org/b/304062"}}
             },
             "test_subscribe_to_one_context": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_subscribe_to_child_context": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
             "test_dedicated_worker_subscribe_to_one_context": {
@@ -5778,6 +5784,18 @@
             },
             "test_subscribe_to_child_context": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+            },
+            "test_subscribe_to_child_context_and_navigate_sibling_frame[same_origin]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_subscribe_to_child_context_and_navigate_sibling_frame[cross_origin]": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_subscribe_to_child_context_and_navigate_top_context": {
+                "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_subscribe_to_child_context_and_navigate_nested_frame": {
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_subscribe_to_one_context": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}

@@ -56,7 +56,7 @@ class WEBCORE_EXPORT AutomationInstrumentationClient : public AbstractRefCounted
 public:
     virtual ~AutomationInstrumentationClient() = default;
 
-    virtual void addMessageToConsole(const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) = 0;
+    virtual void addMessageToConsole(FrameIdentifier, const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) = 0;
     virtual void scriptRealmCreated(FrameIdentifier, const SecurityOriginData&) = 0;
     virtual void scriptRealmDestroyed(FrameIdentifier) = 0;
 };
@@ -67,7 +67,12 @@ public:
     NODELETE static void setClient(const AutomationInstrumentationClient&);
     NODELETE static void clearClient();
 
-    static void addMessageToConsole(const std::unique_ptr<Inspector::ConsoleMessage>&);
+    // Only for frames, on the main thread. The UI process only reports console messages of pages that are controlled by
+    // automation, so it needs the frame.
+    // FIXME: Report console messages of workers too. A dedicated worker can be attributed to its owner document's frame,
+    // but shared and service workers need another way to tell whether a page that is controlled by automation uses them.
+    // https://bugs.webkit.org/show_bug.cgi?id=330988
+    static void addMessageToConsole(FrameIdentifier, const std::unique_ptr<Inspector::ConsoleMessage>&);
     static void scriptRealmCreated(FrameIdentifier, const SecurityOriginData&, DOMWrapperWorld&);
     static void scriptRealmDestroyed(FrameIdentifier, DOMWrapperWorld&);
 };

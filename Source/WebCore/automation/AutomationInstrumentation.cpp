@@ -64,15 +64,11 @@ void AutomationInstrumentation::clearClient()
     automationClient().clear();
 }
 
-void AutomationInstrumentation::addMessageToConsole(const std::unique_ptr<ConsoleMessage>& message)
+void AutomationInstrumentation::addMessageToConsole(FrameIdentifier frameID, const std::unique_ptr<ConsoleMessage>& message)
 {
-    if (!automationClient()) [[likely]]
-        return;
-
-    WTF::ensureOnMainThread([source = message->source(), type = message->type(), level = message->level(), messageText = message->message(), timestamp = message->timestamp()] {
-        if (RefPtr client = automationClient().get())
-            client->addMessageToConsole(source, level, messageText, type, timestamp);
-    });
+    ASSERT(isMainThread());
+    if (RefPtr client = automationClient()) [[unlikely]]
+        client->addMessageToConsole(frameID, message->source(), message->level(), message->message(), message->type(), message->timestamp());
 }
 
 void AutomationInstrumentation::scriptRealmCreated(FrameIdentifier frameID, const SecurityOriginData& origin, DOMWrapperWorld& world)

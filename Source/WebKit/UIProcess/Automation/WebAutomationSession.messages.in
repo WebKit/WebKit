@@ -26,7 +26,7 @@
     ExceptionForEnabledBy
 ]
 messages -> WebAutomationSession {
-    LogEntryAdded(enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String messageText, enum:uint8_t JSC::MessageType messageType, WallTime timestamp)
+    LogEntryAdded(WebCore::FrameIdentifier frameID, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String messageText, enum:uint8_t JSC::MessageType messageType, WallTime timestamp)
 
     AddKnownNodeReference(WebCore::FrameIdentifier frameID, String nodeHandle)
     IsKnownNodeReference(WebCore::FrameIdentifier frameID, String nodeHandle) -> (bool isKnown) Synchronous
