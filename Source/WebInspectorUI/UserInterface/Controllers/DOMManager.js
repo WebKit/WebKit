@@ -96,10 +96,8 @@ WI.DOMManager = class DOMManager extends WI.Object
     {
         console.assert(target instanceof WI.FrameTarget);
 
-        // FIXME: <https://webkit.org/b/323034> The main frame has a frame target too, so this builds a
-        // second tree for it that can never splice into the page tree. Nodes resolved through that tree
-        // report an `owningTarget`, so they are treated as cross-origin frame nodes and lose highlighting,
-        // layout overlays, and revealing in the Elements tab.
+        // The main frame and frames in its process also have frame targets, whose documents are already in the
+        // page tree. Their nodes are resolved to the page tree's copy, see resolveNodeForIdInFrameTarget().
 
         let data = {document: null, target: target, attributeLoadNodeIds: {}, loadNodeAttributesTimeout: 0};
         this._frameTargetDOMData.set(target, data);
@@ -246,6 +244,76 @@ WI.DOMManager = class DOMManager extends WI.Object
     _isInPageTree(node)
     {
         return !!this._document && this._rootNodeOf(node) === this._document;
+    }
+
+    async _pageTreeNodeForFrameTargetNode(node)
+    {
+        let target = node?.owningTarget;
+        let frameDocument = target ? this.frameTargetDocumentForTarget(target) : null;
+        if (!frameDocument || frameDocument.parentNode)
+            return null;
+
+        let frameTreePath = [];
+        for (let current = node; current !== frameDocument; current = current.parentNode) {
+            if (!current.parentNode)
+                return null;
+            frameTreePath.push(current);
+        }
+
+        let pageTreeNode = await this._pageTreeDocumentForFrameDocument(frameDocument);
+        while (pageTreeNode && frameTreePath.length)
+            pageTreeNode = await this._pageTreeChildMatchingFrameTreeNode(pageTreeNode, frameTreePath.pop());
+        return pageTreeNode;
+    }
+
+    async _pageTreeDocumentForFrameDocument(frameDocument)
+    {
+        if (!frameDocument.frameIdentifier)
+            return null;
+
+        let frameKey = DOMManager._frameKey(frameDocument.frameIdentifier);
+
+        let mainFrameIdentifier = WI.networkManager.mainFrame?.id;
+        if (mainFrameIdentifier && DOMManager._frameKey(mainFrameIdentifier) === frameKey)
+            return WI.pageTarget?.hasDomain("DOM") ? this.requestDocument() : null;
+
+        // Only look at owners that already arrived, since requesting one for a frame in another process would
+        // deliver page nodes nothing asked for.
+        for (let ownerElement of this._frameOwnerElementsByFrameKey.get(frameKey) ?? []) {
+            let contentDocument = ownerElement._contentDocument;
+            if (contentDocument && !contentDocument.owningTarget && this._isInPageTree(ownerElement))
+                return contentDocument;
+        }
+
+        return null;
+    }
+
+    async _pageTreeChildMatchingFrameTreeNode(pageTreeParent, frameTreeNode)
+    {
+        let frameTreeParent = frameTreeNode.parentNode;
+
+        let pageTreeNode = null;
+        let shadowRootIndex = frameTreeParent.shadowRoots().indexOf(frameTreeNode);
+        if (shadowRootIndex !== -1)
+            pageTreeNode = pageTreeParent.shadowRoots()[shadowRootIndex];
+        else if (frameTreeNode === frameTreeParent.templateContent())
+            pageTreeNode = pageTreeParent.templateContent();
+        else if (frameTreeNode.isPseudoElement())
+            pageTreeNode = pageTreeParent.pseudoElements().get(frameTreeNode.pseudoType());
+        else if (frameTreeParent.children?.[frameTreeNode.index] === frameTreeNode) {
+            if (!pageTreeParent.children) {
+                let target = pageTreeParent.owningTarget || WI.assumingMainTarget();
+                await target.DOMAgent.requestChildNodes.invoke({nodeId: pageTreeParent.backendNodeId}).catch(() => {});
+            }
+
+            // Each tree is updated by its own agent, so one may not have seen a mutation yet.
+            if (pageTreeParent.children?.length === frameTreeParent.children.length)
+                pageTreeNode = pageTreeParent.children[frameTreeNode.index];
+        }
+
+        if (!pageTreeNode || pageTreeNode.destroyed || pageTreeNode.nodeType() !== frameTreeNode.nodeType() || pageTreeNode.nodeName() !== frameTreeNode.nodeName())
+            return null;
+        return pageTreeNode;
     }
 
     // A node inspected in a frame target can arrive before its frame document is spliced into the page tree.
@@ -461,6 +529,12 @@ WI.DOMManager = class DOMManager extends WI.Object
     nodeForIdInFrameTarget(nodeId, target)
     {
         return this._idToDOMNode[DOMManager.keyForNodeId(nodeId, target)] || null;
+    }
+
+    async resolveNodeForIdInFrameTarget(nodeId, target)
+    {
+        let node = this.nodeForIdInFrameTarget(nodeId, target);
+        return (await this._pageTreeNodeForFrameTargetNode(node)) || node;
     }
 
     _frameTargetSetChildNodes(target, parentId, payloads)
@@ -881,10 +955,19 @@ WI.DOMManager = class DOMManager extends WI.Object
         target ||= WI.assumingMainTarget();
 
         // `DOM.requestNode` answers an id in the responding agent's own id space, but callers look the
-        // node up in the manager-wide map, so hand back the scoped key instead.
+        // node up in the manager-wide map, so hand back the id of the resolved node instead.
         if (callback) {
             let clientCallback = callback;
-            callback = (rawNodeId) => clientCallback(rawNodeId ? DOMManager.keyForNodeId(rawNodeId, target) : rawNodeId);
+            callback = (rawNodeId) => {
+                if (!rawNodeId || !(target instanceof WI.FrameTarget)) {
+                    clientCallback(rawNodeId);
+                    return;
+                }
+
+                this.resolveNodeForIdInFrameTarget(rawNodeId, target).then((node) => {
+                    clientCallback(node ? node.id : DOMManager.keyForNodeId(rawNodeId, target));
+                });
+            };
         }
 
         let callbackWrapper = DOMManager.wrapClientCallback(callback);
