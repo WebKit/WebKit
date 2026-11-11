@@ -2754,7 +2754,25 @@ void WebExtensionContext::cookiesDidChange(API::HTTPCookieStore&)
 
 bool WebExtensionContext::isBackgroundPage(WebPageProxyIdentifier pageProxyIdentifier) const
 {
-    return m_backgroundWebView && m_backgroundWebView.get()._page->identifier() == pageProxyIdentifier;
+    if (!m_backgroundWebView)
+        return false;
+
+    RefPtr<WebPageProxy> page { m_backgroundWebView.get()._page };
+    return page && page->identifier() == pageProxyIdentifier;
+}
+
+bool WebExtensionContext::isOffscreenPage(WebPageProxyIdentifier pageProxyIdentifier) const
+{
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    if (!m_offscreenWebView)
+        return false;
+
+    RefPtr<WebPageProxy> page { m_offscreenWebView.get()._page };
+    return page && page->identifier() == pageProxyIdentifier;
+#else
+    UNUSED_PARAM(pageProxyIdentifier);
+    return false;
+#endif
 }
 
 bool WebExtensionContext::isExtensionPage(WebPageProxyIdentifier pageProxyIdentifier) const
@@ -2780,7 +2798,7 @@ bool WebExtensionContext::isExtensionPage(WebPageProxyIdentifier pageProxyIdenti
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
-    if (m_offscreenWebView && m_offscreenWebView.get()._page->identifier() == pageProxyIdentifier)
+    if (isOffscreenPage(pageProxyIdentifier))
         return true;
 #endif
 

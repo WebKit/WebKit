@@ -786,6 +786,7 @@ private:
 
     bool isBackgroundPage(WebCore::FrameIdentifier) const;
     bool isBackgroundPage(WebPageProxyIdentifier) const;
+    bool isOffscreenPage(WebPageProxyIdentifier) const;
     bool isExtensionPage(WebPageProxyIdentifier) const;
     NODELETE bool backgroundContentIsLoaded() const;
 
