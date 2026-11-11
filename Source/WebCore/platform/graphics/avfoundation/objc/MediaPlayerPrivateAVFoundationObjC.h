@@ -533,6 +533,7 @@ private:
     RetainPtr<id> m_videoFrameMetadataGatheringObserver;
     bool m_isGatheringVideoFrameMetadata { false };
     bool m_isAudible { false };
+    bool m_suppressesAudioRendering { false };
     bool m_isVideoPlayer { false };
     std::optional<VideoFrameMetadata> m_videoFrameMetadata;
     mutable std::optional<NSTimeInterval> m_cachedSeekableTimeRangesLastModifiedTime;

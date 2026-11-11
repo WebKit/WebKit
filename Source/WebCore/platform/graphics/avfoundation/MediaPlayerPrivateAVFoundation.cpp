@@ -350,10 +350,13 @@ void MediaPlayerPrivateAVFoundation::setNaturalSize(FloatSize size)
 
 void MediaPlayerPrivateAVFoundation::setHasVideo(bool b)
 {
-    if (m_cachedHasVideo != b) {
-        m_cachedHasVideo = b;
-        characteristicsChanged();
-    }
+    if (m_cachedHasVideo == b)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, b);
+    m_cachedHasVideo = b;
+    characteristicsChanged();
+    updateIsAudible();
 }
 
 void MediaPlayerPrivateAVFoundation::setHasAudio(bool b)
