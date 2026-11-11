@@ -67,10 +67,9 @@ class LayerTreeHost;
 class WebPage;
 struct RenderProcessInfo;
 
-class ThreadedCompositor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ThreadedCompositor>, public CanMakeThreadSafeCheckedPtr<ThreadedCompositor> {
+class ThreadedCompositor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ThreadedCompositor> {
     WTF_MAKE_TZONE_ALLOCATED(ThreadedCompositor);
     WTF_MAKE_NONCOPYABLE(ThreadedCompositor);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ThreadedCompositor);
 public:
     static Ref<ThreadedCompositor> create(WebPage&, LayerTreeHost&, CoordinatedSceneState&);
     virtual ~ThreadedCompositor();

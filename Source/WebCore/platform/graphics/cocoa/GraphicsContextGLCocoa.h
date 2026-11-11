@@ -32,7 +32,6 @@
 #include <WebCore/ProcessIdentity.h>
 #include <array>
 #include <memory>
-#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
@@ -64,9 +63,8 @@ private:
     void* m_pbuffer { nullptr };
 };
 
-class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLANGLE, public CanMakeCheckedPtr<GraphicsContextGLCocoa> {
+class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLANGLE {
     WTF_MAKE_TZONE_ALLOCATED(GraphicsContextGLCocoa);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GraphicsContextGLCocoa);
 public:
     static RefPtr<GraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
     // Returns false after the display was terminated.

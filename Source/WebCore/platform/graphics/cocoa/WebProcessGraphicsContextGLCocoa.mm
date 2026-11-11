@@ -133,7 +133,6 @@ private:
 class WebProcessGraphicsContextGLCocoa final : public GraphicsContextGLCocoa
 {
     WTF_MAKE_TZONE_ALLOCATED(WebProcessGraphicsContextGLCocoa);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebProcessGraphicsContextGLCocoa);
 public:
     ~WebProcessGraphicsContextGLCocoa();
 

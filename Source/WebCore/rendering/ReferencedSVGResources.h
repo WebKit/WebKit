@@ -58,9 +58,8 @@ struct ReferencePath;
 struct URL;
 }
 
-class ReferencedSVGResources : public CanMakeCheckedPtr<ReferencedSVGResources> {
+class ReferencedSVGResources {
     WTF_MAKE_TZONE_ALLOCATED(ReferencedSVGResources);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ReferencedSVGResources);
 public:
     ReferencedSVGResources(RenderElement&);
     ~ReferencedSVGResources();
