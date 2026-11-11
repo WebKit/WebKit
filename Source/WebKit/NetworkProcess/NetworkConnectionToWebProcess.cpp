@@ -2027,8 +2027,14 @@ void NetworkConnectionToWebProcess::postMessageToRemote(MessageWithMessagePorts&
 {
     CheckedRef registry = NetworkProcess::singleton().messagePortChannelRegistry();
     RefPtr channel = registry->existingChannelContainingPort(port);
-    if (!channel)
+    if (!channel) {
+        // The message is dropped, so the ports it carries will never be entangled. Close the ones this web process transferred.
+        for (auto& transferredPort : borrow(message.transferredPorts)) {
+            if (registry->claimPendingTransferOrigin(transferredPort.first, m_webProcessIdentifier))
+                registry->didCloseMessagePort(transferredPort.first, MessagePortStatus::Closed);
+        }
         return;
+    }
 
     // The caller must own at least one port belonging to this channel.
     auto otherPort = (channel->port1() == port) ? channel->port2() : channel->port1();
