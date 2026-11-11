@@ -232,6 +232,7 @@ public:
     void setLastFormattedLineRoots(LastFormattedLineRoots&& lastFormattedLineRoots) { m_lastFormattedLineRoots = WTF::move(lastFormattedLineRoots); }
 
     std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom() const { return m_intrusiveInitialLetterLogicalBottom; }
+    void setIntrusiveInitialLetterLogicalBottom(std::optional<LayoutUnit> logicalBottom) { m_intrusiveInitialLetterLogicalBottom = logicalBottom; }
     const std::optional<LineGrid>& lineGrid() const LIFETIME_BOUND { return m_lineGrid; }
 
     // The margins coming into the inline content; the inline formatting context carries its own copy (InlineLayoutState::marginState).

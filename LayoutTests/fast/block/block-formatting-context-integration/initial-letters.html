@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 16px/20px serif; }
+.root { display: inline-block; vertical-align: top; width: 200px; border: 1px solid; margin: 0 2px 4px 0; }
+p { margin: 0; }
+p::first-letter { -webkit-initial-letter: 3; color: green; }
+.sunk p::first-letter { -webkit-initial-letter: 3 2; }
+</style>
+<div class="root"><p>Short.</p><p>Second paragraph with its own initial letter and more text.</p></div>
+<div class="root"><p>Short.</p><p style="margin-top: 10px">Second with a margin and text that wraps.</p></div>
+<div class="root"><p>Short.</p><div>no initial letter here but text beside the first one</div></div>
+<div class="root sunk"><p>A sunk one.</p><p>Next one with more words to wrap around.</p></div>
+<div class="root"><p>One.</p><div><p>Nested paragraph with an initial letter.</p></div></div>
