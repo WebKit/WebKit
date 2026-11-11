@@ -181,10 +181,15 @@ auto LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, cons
         context->setFillPattern(*patternData->pattern);
         context->setFillRule(style.fillRule());
     } else if (resourceMode.contains(RenderSVGResourceMode::ApplyToStroke)) {
-        if (style.vectorEffect() == VectorEffect::NonScalingStroke)
-            patternData->pattern->setPatternSpaceTransform(transformOnNonScalingStroke(&renderer, patternData->transform));
+        RefPtr pattern = patternData->pattern;
+        if (style.vectorEffect() == VectorEffect::NonScalingStroke) {
+            auto strokeTransform = transformOnNonScalingStroke(&renderer, patternData->transform);
+            if (!patternData->nonScalingStrokePattern || patternData->nonScalingStrokePattern->patternSpaceTransform() != strokeTransform)
+                patternData->nonScalingStrokePattern = pattern->withPatternSpaceTransform(strokeTransform);
+            pattern = patternData->nonScalingStrokePattern;
+        }
         context->setAlpha(Style::evaluate<float>(style.strokeOpacity()));
-        context->setStrokePattern(*patternData->pattern);
+        context->setStrokePattern(pattern.releaseNonNull());
         SVGRenderSupport::applyStrokeStyleToContext(*context, style, renderer);
     }
 

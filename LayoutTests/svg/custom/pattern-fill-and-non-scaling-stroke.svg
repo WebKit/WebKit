@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400">
+  <!-- Elements filled and stroked with the same pattern and a non-scaling stroke. The fill must use the pattern transform of the fill, also when the element is painted again. -->
+  <defs>
+    <pattern id="user" patternUnits="userSpaceOnUse" width="20" height="20">
+      <rect width="10" height="20" fill="red"/>
+      <rect x="10" width="10" height="20" fill="blue"/>
+    </pattern>
+    <pattern id="bbox" patternUnits="objectBoundingBox" width="0.4" height="0.4">
+      <rect width="10" height="20" fill="red"/>
+      <rect x="10" width="10" height="20" fill="blue"/>
+    </pattern>
+  </defs>
+  <g transform="scale(3)">
+    <rect x="5" y="5" width="50" height="50" fill="url(#user)" stroke="url(#user)" stroke-width="4" vector-effect="non-scaling-stroke"/>
+    <rect x="65" y="5" width="50" height="50" fill="url(#bbox)" stroke="url(#bbox)" stroke-width="4" vector-effect="non-scaling-stroke"/>
+    <rect x="125" y="5" width="50" height="50" fill="url(#user)" stroke="url(#user)" stroke-width="4" vector-effect="non-scaling-stroke" paint-order="stroke"/>
+    <rect x="5" y="65" width="50" height="50" fill="url(#bbox)" stroke="url(#bbox)" stroke-width="4" vector-effect="non-scaling-stroke" paint-order="stroke"/>
+  </g>
+</svg>

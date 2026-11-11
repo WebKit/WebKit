@@ -87,6 +87,9 @@ public:
 
     NODELETE void setPatternSpaceTransform(const AffineTransform&);
 
+    // A new pattern with the same tile and repeat flags, and another pattern space transform.
+    Ref<Pattern> withPatternSpaceTransform(const AffineTransform&) const;
+
     const AffineTransform& patternSpaceTransform() const { return m_parameters.patternSpaceTransform; };
     bool repeatX() const { return m_parameters.repeatX; }
     bool repeatY() const { return m_parameters.repeatY; }

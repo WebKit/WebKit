@@ -50,6 +50,11 @@ void Pattern::setPatternSpaceTransform(const AffineTransform& patternSpaceTransf
     m_parameters.patternSpaceTransform = patternSpaceTransform;
 }
 
+Ref<Pattern> Pattern::withPatternSpaceTransform(const AffineTransform& patternSpaceTransform) const
+{
+    return create(SourceImage { m_tileImage }, { repeatX(), repeatY(), patternSpaceTransform });
+}
+
 const SourceImage& Pattern::tileImage() const
 {
     return m_tileImage;

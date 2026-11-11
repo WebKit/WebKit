@@ -142,7 +142,7 @@ bool RenderSVGResourcePattern::prepareStrokeOperation(GraphicsContext& context, 
     context.setAlpha(Style::evaluate<float>(style.strokeOpacity()));
     SVGRenderSupport::applyStrokeStyleToContext(context, style, targetRenderer);
     if (nonScalingStrokeTransform)
-        pattern->setPatternSpaceTransform(*nonScalingStrokeTransform * m_tileImageTransformMap.get(targetRenderer));
+        pattern = pattern->withPatternSpaceTransform(*nonScalingStrokeTransform * m_tileImageTransformMap.get(targetRenderer));
     context.setStrokePattern(*pattern);
     return true;
 }

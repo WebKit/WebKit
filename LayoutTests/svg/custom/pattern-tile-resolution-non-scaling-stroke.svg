@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">
+  <!-- Shapes painted with a pattern in a scaled group. The tile image must have the resolution of the scaled user space, whichever paint operation uses the pattern first, so the stripes have sharp edges. -->
+  <defs>
+    <pattern id="user" patternUnits="userSpaceOnUse" width="20" height="20">
+      <rect width="10" height="20" fill="red"/>
+      <rect x="10" width="10" height="20" fill="blue"/>
+    </pattern>
+    <pattern id="bbox" patternUnits="objectBoundingBox" width="0.4" height="0.4">
+      <rect width="10" height="20" fill="red"/>
+      <rect x="10" width="10" height="20" fill="blue"/>
+    </pattern>
+  </defs>
+  <g transform="scale(2)">
+    <!-- fill and non-scaling stroke, stroke painted first -->
+    <rect x="5" y="5" width="50" height="50" fill="url(#user)" stroke="url(#user)" stroke-width="4" vector-effect="non-scaling-stroke" paint-order="stroke"/>
+    <!-- fill and non-scaling stroke, fill painted first -->
+    <rect x="65" y="5" width="50" height="50" fill="url(#user)" stroke="url(#user)" stroke-width="4" vector-effect="non-scaling-stroke"/>
+    <!-- non-scaling stroke only -->
+    <rect x="125" y="5" width="50" height="50" fill="none" stroke="url(#user)" stroke-width="4" vector-effect="non-scaling-stroke"/>
+    <!-- fill only -->
+    <rect x="185" y="5" width="50" height="50" fill="url(#user)"/>
+    <!-- fill and scaling stroke, stroke painted first -->
+    <rect x="5" y="65" width="50" height="50" fill="url(#user)" stroke="url(#user)" stroke-width="4" paint-order="stroke"/>
+    <!-- fill and scaling stroke, fill painted first -->
+    <rect x="65" y="65" width="50" height="50" fill="url(#user)" stroke="url(#user)" stroke-width="4"/>
+    <!-- scaling stroke only -->
+    <rect x="125" y="65" width="50" height="50" fill="none" stroke="url(#user)" stroke-width="4"/>
+  </g>
+  <g transform="scale(2)">
+    <!-- fill and non-scaling stroke, stroke painted first -->
+    <rect x="5" y="125" width="50" height="50" fill="url(#bbox)" stroke="url(#bbox)" stroke-width="4" vector-effect="non-scaling-stroke" paint-order="stroke"/>
+    <!-- fill and non-scaling stroke, fill painted first -->
+    <rect x="65" y="125" width="50" height="50" fill="url(#bbox)" stroke="url(#bbox)" stroke-width="4" vector-effect="non-scaling-stroke"/>
+    <!-- non-scaling stroke only -->
+    <rect x="125" y="125" width="50" height="50" fill="none" stroke="url(#bbox)" stroke-width="4" vector-effect="non-scaling-stroke"/>
+    <!-- fill only -->
+    <rect x="185" y="125" width="50" height="50" fill="url(#bbox)"/>
+    <!-- fill and scaling stroke, stroke painted first -->
+    <rect x="5" y="185" width="50" height="50" fill="url(#bbox)" stroke="url(#bbox)" stroke-width="4" paint-order="stroke"/>
+    <!-- fill and scaling stroke, fill painted first -->
+    <rect x="65" y="185" width="50" height="50" fill="url(#bbox)" stroke="url(#bbox)" stroke-width="4"/>
+    <!-- scaling stroke only -->
+    <rect x="125" y="185" width="50" height="50" fill="none" stroke="url(#bbox)" stroke-width="4"/>
+  </g>
+</svg>
