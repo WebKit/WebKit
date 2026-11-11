@@ -1184,6 +1184,25 @@ Inspector::CommandResult<void> FrameDOMAgent::setAllowEditingUserAgentShadowTree
     return { };
 }
 
+Inspector::CommandResult<Ref<Inspector::Protocol::DOM::MediaStats>> FrameDOMAgent::getMediaStats(int nodeId)
+{
+#if ENABLE(VIDEO)
+    Inspector::Protocol::ErrorString errorString;
+    RefPtr element = assertElement(errorString, nodeId);
+    if (!element)
+        return makeUnexpected(errorString);
+
+    RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(element);
+    if (!mediaElement)
+        return makeUnexpected("Node for given nodeId is not a media element"_s);
+
+    return InspectorDOMAgent::buildMediaStats(*mediaElement);
+#else
+    UNUSED_PARAM(nodeId);
+    return makeUnexpected("no media support"_s);
+#endif
+}
+
 Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>> FrameDOMAgent::getEventListenersForNode(int nodeId, std::optional<bool>&& includeAncestors)
 {
     Inspector::Protocol::ErrorString errorString;

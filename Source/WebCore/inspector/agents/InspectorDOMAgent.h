@@ -119,6 +119,10 @@ public:
     static Node* scriptValueAsNode(JSC::JSValue);
     static JSC::JSValue nodeAsScriptValue(JSC::JSGlobalObject&, Node*);
 
+#if ENABLE(VIDEO)
+    static Ref<Inspector::Protocol::DOM::MediaStats> buildMediaStats(HTMLMediaElement&);
+#endif
+
     // InspectorAgentBase
     void didCreateFrontendAndBackend();
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
