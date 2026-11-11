@@ -6454,6 +6454,13 @@ static std::optional<Site> backForwardInheritedSiteForNavigation(const API::Navi
     return frameState ? frameState->inheritedSite : std::nullopt;
 }
 
+// A child frame of a document the main frame has navigated away from, for example one in the back/forward cache, is no
+// longer connected to the main frame.
+static bool isChildFrameOfDocumentMainFrameNavigatedAwayFrom(WebFrameProxy& frame, const WebFrameProxy* mainFrame)
+{
+    return !frame.isMainFrame() && frame.mainFrame() != mainFrame;
+}
+
 void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& processInitiatingNavigation, PolicyAction policyAction, API::Navigation& navigation, Ref<API::NavigationAction>&& navigationAction, ProcessSwapRequestedByClient processSwapRequestedByClient, WebFrameProxy& frame, const FrameInfoData& frameInfo, WasNavigationIntercepted wasNavigationIntercepted, std::optional<PolicyDecisionConsoleMessage>&& message, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "receivedNavigationActionPolicyDecision: frameID=%" PRIu64 ", isMainFrame=%d, navigationID=%" PRIu64 ", policyAction=%" PUBLIC_LOG_STRING, frame.frameID().toUInt64(), frame.isMainFrame(), navigation.navigationID().object().toUInt64(), toString(policyAction).characters());
@@ -6462,6 +6469,13 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
     // Allowing it would choose a process for the new site and join it to a suspended page.
     if (m_isSuspended && policyAction == PolicyAction::Use) {
         WEBPAGEPROXY_RELEASE_LOG(Loading, "receivedNavigationActionPolicyDecision: ignoring because the page is suspended");
+        policyAction = PolicyAction::Ignore;
+    }
+
+    // The client can decide the navigation of a child frame after the main frame has committed another document.
+    // Choosing a process for the frame would join that process to the group of the page's new document.
+    if (m_preferences->siteIsolationEnabled() && policyAction == PolicyAction::Use && isChildFrameOfDocumentMainFrameNavigatedAwayFrom(frame, m_mainFrame.get())) {
+        WEBPAGEPROXY_RELEASE_LOG(Loading, "receivedNavigationActionPolicyDecision: ignoring because the frame's document is no longer in the main frame");
         policyAction = PolicyAction::Ignore;
     }
 
@@ -6680,6 +6694,12 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             return;
         }
 
+        // The main frame can commit another document while the process is chosen.
+        if (isChildFrameOfDocumentMainFrameNavigatedAwayFrom(frame, m_mainFrame.get())) {
+            receivedPolicyDecision(processInitiatingNavigation, PolicyAction::Ignore, navigation.ptr(), std::nullopt, WTF::move(navigationAction), WillContinueLoadInNewProcess::No, std::nullopt, WTF::move(message), WTF::move(completionHandler));
+            return;
+        }
+
         RefPtr pageClientProtector = pageClient();
         // With site isolation, a subframe navigation may already be loading in a provisional frame in another process
         // (e.g. on a redirect). Keep using that provisional frame when the navigation stays in its process.
@@ -6769,7 +6789,8 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
                 if (protectedThis->isClosed()
                     || !protectedThis->m_mainFrame
                     || !protectedThis->m_navigationState->hasNavigation(navigation->navigationID())
-                    || (navigationAction->mainFrameIDBeforeNavigationActionDecision() && navigationAction->mainFrameIDBeforeNavigationActionDecision() != currentMainFrameID))
+                    || (navigationAction->mainFrameIDBeforeNavigationActionDecision() && navigationAction->mainFrameIDBeforeNavigationActionDecision() != currentMainFrameID)
+                    || isChildFrameOfDocumentMainFrameNavigatedAwayFrom(frame, protectedThis->m_mainFrame.get()))
                     cancelled = true;
 
                 if (cancelled) {

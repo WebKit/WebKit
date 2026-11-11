@@ -108,6 +108,182 @@ struct SiteIsolationPolicyDecisionTests {
         }
     }
 
+    // MARK: Decisions for frames of a document the page has navigated away from
+
+    /// How the main frame navigates away from the document whose iframe's navigation is waiting for a decision.
+    enum MainFrameNavigation: String, CaseIterable, Sendable, CustomTestStringConvertible {
+        /// The client loads a cross-site page, which starts a new browsing context group.
+        case crossSite
+
+        /// The main frame loads a same-site page whose Cross-Origin-Opener-Policy moves it to a new group when its
+        /// response arrives.
+        case crossOriginOpenerPolicy
+
+        var testDescription: String { rawValue }
+    }
+
+    // A decision for an iframe of the document the main frame navigated away from must not join a process to the page
+    // that replaced it, or load anything.
+    @Test(arguments: MainFrameNavigation.allCases, [true, false])
+    func childFrameDecisionAfterMainFrameNavigatesAwayFromDocumentIsIgnored(
+        mainFrameNavigation: MainFrameNavigation,
+        backForwardCacheEnabled: Bool
+    ) async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/main") {
+                "<iframe src='https://webkit.org/child'></iframe>"
+            }
+
+            Route("/child") {
+                "child"
+            }
+
+            Route("/destination") {
+                "<script>alert('destination loaded')</script>"
+            }
+
+            Route("/next") {
+                "next"
+            }
+
+            Route("/isolated", headerFields: ["Cross-Origin-Opener-Policy": "same-origin"]) {
+                "isolated"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let configuration = Self.configuration(serverConfiguration, backForwardCacheEnabled: backForwardCacheEnabled)
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: configuration)
+            let alerts = AlertRecorder()
+            webView.uiDelegate = alerts
+            let decisions = HeldNavigationActionDecisions(forPath: "/destination", of: navigationDelegate)
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/main"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            try await waitForFrameTrees(of: webView, Self.pageWithChildFrameTrees)
+            let childFrame = try #require(await webView.firstChildFrame)
+            try await webView.callJavaScript(in: childFrame) { "location.href = 'https://apple.com/destination'" }
+            let decideDestinationPolicy = try await decisions.next()
+
+            let (nextURL, nextOrigin) =
+                switch mainFrameNavigation {
+                case .crossSite: ("https://w3.org/next", "https://w3.org")
+                case .crossOriginOpenerPolicy: ("https://example.com/isolated", "https://example.com")
+                }
+            webView.load(URLRequest(url: try #require(URL(string: nextURL))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let nextFrameTrees: FrameTreesInProcesses = [.local(nextOrigin)]
+            #expect(await webView.frameTreesInProcesses() == nextFrameTrees)
+
+            // Choosing a process for the iframe's destination would take the prewarmed process.
+            let processPool = configuration.processPool
+            let prewarmedProcesses = try await stablePrewarmedProcessIdentifiers(of: processPool)
+            decideDestinationPolicy(.allow)
+
+            // A decision that chose a process or loaded the destination would do so soon after it.
+            let alert = try? await alerts.nextAlert(timeout: .seconds(1))
+            #expect(alert == nil)
+            #expect(processPool._prewarmedProcessIdentifiersForTesting() == prewarmedProcesses)
+            #expect(await webView.frameTreesInProcesses() == nextFrameTrees)
+
+            webView.goBack()
+            try await navigationDelegate.waitForDidFinishNavigation()
+            try await waitForFrameTrees(of: webView, Self.pageWithChildFrameTrees)
+            let restoredChildFrame = try #require(await webView.firstChildFrame)
+            let childFrameHost = try await webView.callJavaScript(returning: String.self, in: restoredChildFrame) {
+                "return location.host"
+            }
+            #expect(childFrameHost == "webkit.org")
+        }
+    }
+
+    // A decision for an iframe of a document the main frame navigated away from must not choose a process either when a
+    // window that shares the group keeps the group alive, and the window can still load the iframe's destination in an
+    // iframe.
+    @Test(arguments: [true, false])
+    func childFrameDecisionAfterMainFrameNavigatesAwayFromDocumentInOpenedWindow(mainFrameLeavesGroup: Bool) async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/opener") {
+                "<script>w = window.open('https://example.com/opened')</script>"
+            }
+
+            Route("/opened") {
+                "<iframe src='https://webkit.org/child'></iframe>"
+            }
+
+            Route("/child") {
+                "child"
+            }
+
+            Route("/destination") {
+                "<script>alert('destination loaded')</script>"
+            }
+
+            Route("/opener_destination") {
+                "<script>alert('opener destination loaded')</script>"
+            }
+
+            Route("/next") {
+                "next"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
+            configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
+            let (opener, openerNavigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: configuration)
+            let openedWebViews = OpenedWebViewRecorder()
+            opener.uiDelegate = openedWebViews
+            let openerAlerts = AlertRecorder()
+
+            opener.load(URLRequest(url: try #require(URL(string: "https://example.com/opener"))))
+            try await openerNavigationDelegate.waitForDidFinishNavigation()
+            let (opened, openedNavigationDelegate) = try await openedWebViews.nextOpenedWebView()
+            opener.uiDelegate = openerAlerts
+            let openedAlerts = AlertRecorder()
+            opened.uiDelegate = openedAlerts
+            try await waitForFrameTrees(of: opened, Self.pageWithChildFrameTrees)
+
+            let decisions = HeldNavigationActionDecisions(forPath: "/destination", of: openedNavigationDelegate)
+            let childFrame = try #require(await opened.firstChildFrame)
+            try await opened.callJavaScript(in: childFrame) { "location.href = 'https://apple.com/destination'" }
+            let decideDestinationPolicy = try await decisions.next()
+
+            if mainFrameLeavesGroup {
+                opened.load(URLRequest(url: try #require(URL(string: "https://w3.org/next"))))
+            } else {
+                // Without a user gesture, the navigation stays in the group that the opener shares.
+                try await opened.evaluateJavaScriptWithoutUserGesture("location.href = 'https://w3.org/next'")
+            }
+            try await openedNavigationDelegate.waitForDidFinishNavigation()
+
+            let processPool = configuration.processPool
+            let prewarmedProcesses = try await stablePrewarmedProcessIdentifiers(of: processPool)
+            decideDestinationPolicy(.allow)
+            let alert = try? await openedAlerts.nextAlert(timeout: .seconds(1))
+            #expect(alert == nil)
+            #expect(processPool._prewarmedProcessIdentifiersForTesting() == prewarmedProcesses)
+
+            let openedFrameTrees = await opened.frameTreesInProcesses()
+            #expect(openedFrameTrees.trees.count == (mainFrameLeavesGroup ? 1 : 2), "\(openedFrameTrees)")
+
+            // The opener can still load the site in an iframe.
+            try await opener.callJavaScript {
+                "document.body.appendChild(document.createElement('iframe')).src = 'https://apple.com/opener_destination'"
+            }
+            let openerAlert = try await openerAlerts.nextAlert()
+            #expect(openerAlert == "opener destination loaded")
+            try await waitForFrameTrees(
+                of: opener,
+                [
+                    .local("https://example.com", children: [.remote]),
+                    .remote(children: [.local("https://apple.com")]),
+                ],
+                ignoringProcessesWithoutLocalFrames: true
+            )
+        }
+    }
+
     // MARK: Helpers
 
     private static let pageWithChildFrameTrees: FrameTreesInProcesses = [
@@ -127,6 +303,59 @@ struct SiteIsolationPolicyDecisionTests {
         }
         return configuration
     }
+}
+
+/// Holds the client's decisions for navigations to a path, so that a test can make them later, and allows every other
+/// navigation.
+@MainActor
+private final class HeldNavigationActionDecisions {
+    private let path: String
+    private var decisionHandlers: [(WKNavigationActionPolicy) -> Void] = []
+
+    init(forPath path: String, of navigationDelegate: TestNavigationDelegate) {
+        self.path = path
+        navigationDelegate.decidePolicyForNavigationAction = { [weak self] navigationAction, decisionHandler in
+            guard let self, navigationAction.request.url?.path == path else {
+                decisionHandler(.allow)
+                return
+            }
+            decisionHandlers.append(decisionHandler)
+        }
+    }
+
+    /// Waits for the next navigation to the path to need a decision, if one doesn't already.
+    ///
+    /// - Returns: The decision handler of the navigation.
+    func next() async throws -> (WKNavigationActionPolicy) -> Void {
+        try await waitForCondition("a navigation to \(path) to need a decision") {
+            !decisionHandlers.isEmpty
+        }
+        return decisionHandlers.removeFirst()
+    }
+}
+
+/// Prewarms a process, then waits for the prewarmed processes of a process pool to finish launching and stay the same
+/// for a while.
+///
+/// A navigation that needs a new process takes a prewarmed one, so a change to them shows that a process was chosen.
+///
+/// - Parameter processPool: The process pool.
+/// - Returns: The identifiers of the prewarmed processes.
+/// - Throws: ``ConditionTimedOut`` if the process pool has no launched prewarmed process.
+@MainActor
+private func stablePrewarmedProcessIdentifiers(of processPool: WKProcessPool) async throws -> Set<NSNumber> {
+    processPool._warmInitialProcess()
+    var identifiers: Set<NSNumber> = []
+    var identifiersSince = ContinuousClock.now
+    try await waitForCondition("the prewarmed processes to launch") {
+        let currentIdentifiers = processPool._prewarmedProcessIdentifiersForTesting() ?? []
+        if currentIdentifiers != identifiers {
+            identifiers = currentIdentifiers
+            identifiersSince = .now
+        }
+        return !identifiers.isEmpty && !identifiers.contains(0) && ContinuousClock.now - identifiersSince > .milliseconds(200)
+    }
+    return identifiers
 }
 
 /// Waits for the frame trees of a web view to match, as frames in other processes appear some time after a load
