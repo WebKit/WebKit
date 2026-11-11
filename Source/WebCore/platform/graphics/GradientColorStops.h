@@ -27,6 +27,8 @@
 
 #include <WebCore/GradientColorStop.h>
 #include <algorithm>
+#include <concepts>
+#include <initializer_list>
 #include <optional>
 #include <ranges>
 #include <wtf/Forward.h>
@@ -34,52 +36,57 @@
 
 namespace WebCore {
 
+// The stops are always sorted by offset. Stops with equal offsets keep the order they were
+// specified in, which defines hard color transitions.
 class GradientColorStops {
 public:
     using StopVector = Vector<GradientColorStop, 2>;
 
-    struct Sorted {
-        StopVector stops;
-    };
+    GradientColorStops() = default;
 
-    GradientColorStops()
-        : m_isSorted { true }
-    {
-    }
-
+    // For stops of unknown order. Sorts the stops by offset, unless they are sorted already.
+    // The sort is stable: stops with equal offsets keep their order.
     GradientColorStops(StopVector stops)
         : m_stops { WTF::move(stops) }
-        , m_isSorted { false }
     {
+        if (!std::ranges::is_sorted(m_stops, { }, &GradientColorStop::offset))
+            std::ranges::stable_sort(m_stops, { }, &GradientColorStop::offset);
     }
 
-    GradientColorStops(Sorted sortedStops)
-        : m_stops { WTF::move(sortedStops.stops) }
-        , m_isSorted { true }
+    // The stops must be listed in ascending offset order. Stops with equal offsets are kept in
+    // the order they are listed in, which defines hard color transitions. The list is not
+    // sorted; debug builds assert the order.
+    GradientColorStops(std::initializer_list<GradientColorStop> stops)
+        : m_stops { stops }
     {
-        ASSERT(validateIsSorted());
+        ASSERT(isSortedByOffset(m_stops));
     }
 
+    // Stops for the colors, at offsets evenly distributed from 0 to 1: the offset of color i of
+    // n colors is i / (n - 1). A single color gets offset 0.
+    template<std::ranges::sized_range Colors> requires std::convertible_to<std::ranges::range_value_t<Colors>, Color>
+    explicit GradientColorStops(const Colors& colors)
+    {
+        size_t count = std::ranges::size(colors);
+        if (count == 1) {
+            m_stops.append(GradientColorStop { 0, *std::ranges::begin(colors) });
+            return;
+        }
+        m_stops.reserveInitialCapacity(count);
+        size_t i = 0;
+        for (auto& color : colors) {
+            float offset = i * 1.0f / (count - 1);
+            m_stops.append(GradientColorStop { offset, color });
+            ++i;
+        }
+    }
+
+    // Inserts the stop in sorted position, after the stops with offsets less than or equal to
+    // its offset.
     void addColorStop(GradientColorStop stop)
     {
-        if (!m_stops.isEmpty() && m_stops.last().offset > stop.offset)
-            m_isSorted = false;
-        m_stops.append(WTF::move(stop));
-    }
-
-    void sort()
-    {
-        if (m_isSorted)
-            return;
-
-        std::ranges::stable_sort(m_stops, { }, &GradientColorStop::offset);
-        m_isSorted = true;
-    }
-
-    const GradientColorStops& sorted() const
-    {
-        const_cast<GradientColorStops*>(this)->sort();
-        return *this;
+        auto position = std::ranges::upper_bound(m_stops, stop.offset, { }, &GradientColorStop::offset);
+        m_stops.insert(position - m_stops.begin(), WTF::move(stop));
     }
 
     size_t size() const { return m_stops.size(); }
@@ -93,29 +100,21 @@ public:
         return {
             m_stops.map<StopVector>([&] (const GradientColorStop& stop) -> GradientColorStop {
                 return { stop.offset, mapFunction(stop.color) };
-            }),
-            m_isSorted
+            })
         };
     }
 
     const StopVector& stops() const LIFETIME_BOUND { return m_stops; }
 
 private:
-    GradientColorStops(StopVector stops, bool isSorted)
-        : m_stops { WTF::move(stops) }
-        , m_isSorted { isSorted }
-    {
-    }
-
 #if ASSERT_ENABLED
-    bool validateIsSorted() const
+    static bool isSortedByOffset(const StopVector& stops)
     {
-        return std::ranges::is_sorted(m_stops, { }, &GradientColorStop::offset);
+        return std::ranges::is_sorted(stops, { }, &GradientColorStop::offset);
     }
 #endif
 
     StopVector m_stops;
-    bool m_isSorted;
 };
 
 TextStream& operator<<(TextStream&, const GradientColorStops&);

@@ -72,7 +72,7 @@ void Gradient::paint(GraphicsContext& context)
 void Gradient::paint(CGContextRef platformContext, std::optional<ColorSpace> colorSpace)
 {
     if (!m_platformRenderer || m_platformRenderer->colorSpace() != colorSpace)
-        m_platformRenderer = GradientRendererCG { m_colorInterpolationMethod, m_stops.sorted(), colorSpace };
+        m_platformRenderer = GradientRendererCG { m_colorInterpolationMethod, m_stops, colorSpace };
 
     WTF::switchOn(m_data,
         [&] (const LinearData& data) {

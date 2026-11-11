@@ -537,19 +537,14 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
         };
 
         auto makeGradient = [&] (Gradient::RadialData gradientData) {
-            auto gradient = Gradient::create(WTF::move(gradientData), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-            if (region && valueForSetting("wash"_s) && valueForSetting("clip"_s)) {
-                gradient->addColorStop({ 0.1, Color(Color::white).colorWithAlpha(0.5) });
-                gradient->addColorStop({ 1, Color(Color::white).colorWithAlpha(0.1) });
-            } else if (!valueForSetting("clip"_s) || !valueForSetting("constrain"_s)) {
-                gradient->addColorStop({ 0.1, Color(Color::white).colorWithAlpha(0.2) });
-                gradient->addColorStop({ 1, Color(Color::white).colorWithAlpha(0) });
-            } else {
-                gradient->addColorStop({ 0.1, Color(Color::white).colorWithAlpha(0.5) });
-                gradient->addColorStop({ 1, Color(Color::white).colorWithAlpha(0) });
-            }
-
-            return gradient;
+            auto stops = [&] {
+                if (region && valueForSetting("wash"_s) && valueForSetting("clip"_s))
+                    return GradientColorStops { { 0.1, colorWithOverriddenAlpha(Color::white, 0.5f) }, { 1, colorWithOverriddenAlpha(Color::white, 0.1f) } };
+                if (!valueForSetting("clip"_s) || !valueForSetting("constrain"_s))
+                    return GradientColorStops { { 0.1, colorWithOverriddenAlpha(Color::white, 0.2f) }, { 1, colorWithOverriddenAlpha(Color::white, 0.0f) } };
+                return GradientColorStops { { 0.1, colorWithOverriddenAlpha(Color::white, 0.5f) }, { 1, colorWithOverriddenAlpha(Color::white, 0.0f) } };
+            }();
+            return Gradient::create(WTF::move(gradientData), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, WTF::move(stops));
         };
         
         constexpr float defaultRadius = 50;
@@ -586,20 +581,19 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
         bool shouldUseBackdropGradient = !shouldClip || !region || (!valueForSetting("wash"_s) && valueForSetting("clip"_s));
 
         if (shouldUseBackdropGradient) {
+            auto backdropGradientStops = [] {
+                return GradientColorStops { { 0.1, colorWithOverriddenAlpha(Color::black, 0.2f) }, { 1, colorWithOverriddenAlpha(Color::black, 0.0f) } };
+            };
             if (shouldClip) {
                 for (const auto& path : clipPaths) {
                     float radius = valueForSetting("contextualSize"_s) ? 1.5 * path.boundingRect().size().minDimension() : defaultRadius;
-                    auto backdropGradient = Gradient::create(gradientData(radius * 1.5), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-                    backdropGradient->addColorStop({ 0.1, Color(Color::black).colorWithAlpha(0.2) });
-                    backdropGradient->addColorStop({ 1, Color(Color::black).colorWithAlpha(0) });
+                    auto backdropGradient = Gradient::create(gradientData(radius * 1.5), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, backdropGradientStops());
 
                     context.setFillGradient(WTF::move(backdropGradient));
                     context.fillPath(path);
                 }
             } else {
-                auto backdropGradient = Gradient::create(gradientData(defaultRadius * 2), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-                backdropGradient->addColorStop({ 0.1, Color(Color::black).colorWithAlpha(0.2) });
-                backdropGradient->addColorStop({ 1, Color(Color::black).colorWithAlpha(0) });
+                auto backdropGradient = Gradient::create(gradientData(defaultRadius * 2), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, backdropGradientStops());
 
                 context.setFillGradient(WTF::move(backdropGradient));
                 context.fillRect(dirtyRect);    

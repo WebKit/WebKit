@@ -1495,10 +1495,11 @@ RefPtr<Gradient> RenderThemeIOS::checkboxRadioBackgroundGradient(const FloatRect
         return nullptr;
 
     bool isEmpty = !states.containsAny({ ControlStyle::State::Checked, ControlStyle::State::Indeterminate });
-    auto gradient = Gradient::create(Gradient::LinearData { rect.minXMinYCorner(), rect.maxXMaxYCorner() }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-    gradient->addColorStop({ 0.0f, DisplayP3<float> { 0, 0, 0, isEmpty ? 0.05f : 0.125f }});
-    gradient->addColorStop({ 1.0f, DisplayP3<float> { 0, 0, 0, 0 }});
-    return gradient;
+    GradientColorStops stops { std::array {
+        DisplayP3<float> { 0, 0, 0, isEmpty ? 0.05f : 0.125f },
+        DisplayP3<float> { 0, 0, 0, 0 },
+    } };
+    return Gradient::create(Gradient::LinearData { rect.minXMinYCorner(), rect.maxXMaxYCorner() }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, WTF::move(stops));
 }
 
 Color RenderThemeIOS::checkboxRadioIndicatorColor(OptionSet<ControlStyle::State> states, OptionSet<StyleColorOptions> styleColorOptions)
@@ -1894,11 +1895,8 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderElement& renderer, co
         DisplayP3<float> { 0.63, 0.88, 0.03, 1 },
         DisplayP3<float> { 1, 1, 0, 1 }
     };
-    constexpr int numColorStops = std::size(colorStops);
 
-    auto gradient = Gradient::create(Gradient::ConicData { rect.center(), 0 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-    for (int i = 0; i < numColorStops; ++i)
-        gradient->addColorStop({ i * 1.0f / (numColorStops - 1), colorStops[i] });
+    auto gradient = Gradient::create(Gradient::ConicData { rect.center(), 0 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, GradientColorStops { colorStops });
 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);

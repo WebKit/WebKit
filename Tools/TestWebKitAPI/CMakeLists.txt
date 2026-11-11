@@ -307,6 +307,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/FlowModeTests.cpp
         Tests/WebCore/FontCascade.cpp
         Tests/WebCore/FontShadowTests.cpp
+        Tests/WebCore/GradientColorStopsTests.cpp
         Tests/WebCore/GridPosition.cpp
         Tests/WebCore/H264UtilitiesTests.cpp
         Tests/WebCore/HEVCUtilitiesTests.cpp

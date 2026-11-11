@@ -457,11 +457,7 @@ static void testInvalidFonts(Tester& tester, const Vector<Ref<SharedBuffer>>& we
 
 static Ref<Gradient> testGradient(Gradient::Data&& data)
 {
-    Ref gradient = Gradient::create(WTF::move(data), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-    gradient->addColorStop({ 0, Color::red });
-    gradient->addColorStop({ 0.5, Color::green });
-    gradient->addColorStop({ 1, Color::blue });
-    return gradient;
+    return Gradient::create(WTF::move(data), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, GradientColorStops { std::array { Color::red, Color::green, Color::blue } });
 }
 
 static void testGradients(Tester& tester)

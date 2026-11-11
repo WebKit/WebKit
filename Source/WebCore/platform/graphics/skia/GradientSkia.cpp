@@ -159,7 +159,7 @@ sk_sp<SkShader> Gradient::shader(float globalAlpha, const AffineTransform& gradi
             colors.append(colors.last());
         }
     };
-    fillStops(stops().sorted().stops());
+    fillStops(stops().stops());
 
     SkTileMode tileMode = SkTileMode::kClamp;
     switch (m_spreadMethod) {

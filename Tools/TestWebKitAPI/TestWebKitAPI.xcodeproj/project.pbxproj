@@ -894,6 +894,7 @@
 				WebCore/FlowModeTests.cpp,
 				WebCore/FontCascade.cpp,
 				WebCore/FontShadowTests.cpp,
+				WebCore/GradientColorStopsTests.cpp,
 				WebCore/GridPosition.cpp,
 				WebCore/H264UtilitiesTests.cpp,
 				WebCore/HEVCUtilitiesTests.cpp,

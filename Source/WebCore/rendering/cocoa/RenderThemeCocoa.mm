@@ -1670,10 +1670,11 @@ static RefPtr<Gradient> checkboxRadioBackgroundGradientForVectorBasedControls(co
         return nullptr;
 
     bool isEmpty = !states.containsAny({ ControlStyle::State::Checked, ControlStyle::State::Indeterminate });
-    auto gradient = Gradient::create(Gradient::LinearData { rect.minXMinYCorner(), rect.maxXMaxYCorner() }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-    gradient->addColorStop({ 0.0f, DisplayP3<float> { 0, 0, 0, isEmpty ? 0.05f : 0.125f } });
-    gradient->addColorStop({ 1.0f, DisplayP3<float> { 0, 0, 0, 0 } });
-    return gradient;
+    GradientColorStops stops { std::array {
+        DisplayP3<float> { 0, 0, 0, isEmpty ? 0.05f : 0.125f },
+        DisplayP3<float> { 0, 0, 0, 0 },
+    } };
+    return Gradient::create(Gradient::LinearData { rect.minXMinYCorner(), rect.maxXMaxYCorner() }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, WTF::move(stops));
 }
 
 constexpr auto checkboxCornerRadiusRatio = 5.5f / checkboxRadioSizeForVectorBasedControls;
@@ -2420,11 +2421,8 @@ bool RenderThemeCocoa::paintColorWellDecorationsForVectorBasedControls(const Ren
         DisplayP3<float> { 1.00, 0.96, 0.00, 1 },
         DisplayP3<float> { 1.00, 0.00, 0.00, 1 },
     };
-    constexpr int numColorStops = std::size(colorStops);
 
-    Ref gradient = Gradient::create(Gradient::ConicData { rect.center(), 0 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-    for (int i = 0; i < numColorStops; ++i)
-        gradient->addColorStop({ i * 1.0f / (numColorStops - 1), colorStops[i] });
+    Ref gradient = Gradient::create(Gradient::ConicData { rect.center(), 0 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, GradientColorStops { colorStops });
 
     FloatRect strokeRect = rect;
     strokeRect.inflate(-strokeThickness / 2.0f);
