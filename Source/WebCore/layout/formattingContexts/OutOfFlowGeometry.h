@@ -63,8 +63,8 @@ public:
         std::optional<LayoutUnit> fillAvailableBlockSize { };
     };
     // Where the margin box would start with position: static (CSS 2.2 §10.3.7, §10.6.4), relative to the padding box of the containing
-    // block, in its direction. The inline position is where the margin box would end when the static-position containing block has the
-    // opposite direction (css-position-3 §3.1).
+    // block, in its direction. It is where the margin box would end in an axis where the static-position containing block's start is the
+    // end of the containing block, with the opposite direction or another writing mode (css-position-3 §3.1).
     struct StaticPosition {
         // A flex container aligns the margin box in the static-position rectangle that starts at the static position, its content box, as if
         // the box were its only flex item (css-flexbox-1 §4.1), in the direction of the static-position containing block. Safe alignment
@@ -78,6 +78,7 @@ public:
         LayoutUnit inlinePosition;
         LayoutUnit blockPosition;
         bool inlinePositionIsMarginBoxEnd { false };
+        bool blockPositionIsMarginBoxEnd { false };
         std::optional<Alignment> inlineAlignment { };
         std::optional<Alignment> blockAlignment { };
     };

@@ -397,41 +397,93 @@ static std::pair<StaticPositionAlignment, StaticPositionAlignment> flexStaticPos
     return { mainAxisAlignment(), crossAxisAlignment() };
 }
 
+// A point in the border box of a box from the coordinates its children are positioned in (logicalPaddingBoxRect) to physical ones, and back.
+static LayoutPoint physicalPoint(const RenderBox& box, LayoutPoint logicalPoint)
+{
+    auto writingMode = box.writingMode();
+    auto borderBoxSize = box.borderBoxSize();
+    if (writingMode.isHorizontal())
+        return { logicalPoint.x(), writingMode.isBlockFlipped() ? borderBoxSize.height() - logicalPoint.y() : logicalPoint.y() };
+    return { writingMode.isBlockFlipped() ? borderBoxSize.width() - logicalPoint.y() : logicalPoint.y(), logicalPoint.x() };
+}
+
+static LayoutPoint logicalPoint(const RenderBox& box, LayoutPoint physicalPoint)
+{
+    auto writingMode = box.writingMode();
+    auto borderBoxSize = box.borderBoxSize();
+    if (writingMode.isHorizontal())
+        return { physicalPoint.x(), writingMode.isBlockFlipped() ? borderBoxSize.height() - physicalPoint.y() : physicalPoint.y() };
+    return { physicalPoint.y(), writingMode.isBlockFlipped() ? borderBoxSize.width() - physicalPoint.x() : physicalPoint.x() };
+}
+
+// The box aligns to the start of the static-position rectangle in the writing mode of the static-position containing block (css-position-3
+// §3.1), which is the end of the containing block's range in an axis where that start runs the other way.
+static bool startsAtEnd(WritingMode staticPositionWritingMode, FlowDirection containingBlockDirection)
+{
+    auto isHorizontal = [](FlowDirection direction) {
+        return direction == FlowDirection::LeftToRight || direction == FlowDirection::RightToLeft;
+    };
+    auto inlineDirection = staticPositionWritingMode.inlineDirection();
+    auto direction = isHorizontal(inlineDirection) == isHorizontal(containingBlockDirection) ? inlineDirection : staticPositionWritingMode.blockDirection();
+    return direction != containingBlockDirection;
+}
+
 // The static position the in-flow layout of its parent gave the box (RenderLayer::staticInlinePosition, staticBlockPosition), relative to the
-// border box of its block container, moved through the positions of the boxes in between, relative offsets included (like PositionedLayoutConstraints::computedInlineStaticDistance)
-// to the padding box of its containing block. Coverage keeps those boxes in the containing block's writing mode.
+// border box of its block container, moved through the physical positions of the boxes in between, relative offsets included (like
+// PositionedLayoutConstraints::computedInlineStaticDistance), to the padding box of its containing block, whose writing mode they need not have.
 static Layout::OutOfFlowGeometry::StaticPosition staticPosition(const RenderBox& outOfFlowBox, const RenderBlock& containingBlock)
 {
     CheckedPtr<const RenderElement> staticPositionBlock = outOfFlowBox.parent();
     while (staticPositionBlock->isInlineBox())
         staticPositionBlock = staticPositionBlock->parent();
     CheckedRef blockContainer = downcast<RenderBlock>(*staticPositionBlock);
+    auto staticPositionWritingMode = blockContainer->writingMode();
     // A flex container's is the start of its content box, which the layer has until the render tree path aligns the box there
     // (FlexLayout::setStaticPositionForPositionedLayout).
     CheckedPtr flexBox = dynamicDowncast<RenderFlexibleBox>(blockContainer);
     CheckedRef layer = *outOfFlowBox.layer();
     auto staticInlinePosition = flexBox ? flexBox->startOffsetForContent() : layer->staticInlinePosition();
     auto staticBlockPosition = flexBox ? flexBox->borderAndPaddingBefore() : layer->staticBlockPosition();
-    auto position = LayoutPoint { blockContainer->writingMode().isLogicalLeftInlineStart() ? staticInlinePosition : blockContainer->logicalWidth() - staticInlinePosition, staticBlockPosition };
-    // An out-of-flow box between them is positioned in its own containing block, which is where container() goes, from the border box of the
-    // first fragment of a positioned inline box (RenderBoxModelObject::blockStartRelativeFirstFragmentBorderBoxRect).
-    for (CheckedPtr<const RenderElement> box = blockContainer.ptr(); box != &containingBlock; box = box->container()) {
-        CheckedPtr renderBox = dynamicDowncast<RenderBox>(*box);
-        if (!renderBox)
-            continue;
-        position.move(renderBox->logicalLeft(), renderBox->logicalTop());
-        auto inFlowOffset = renderBox->offsetForInFlowPosition();
-        position.move(renderBox->isHorizontalWritingMode() ? inFlowOffset : inFlowOffset.transposedSize());
-        if (CheckedPtr inlineBox = renderBox->isOutOfFlowPositioned() ? dynamicDowncast<RenderBoxModelObject>(renderBox->container()) : nullptr; inlineBox && inlineBox->isInlineBox()) {
-            auto topLeft = inlineBox->blockStartRelativeFirstFragmentBorderBoxRect().location();
-            position.moveBy(inlineBox->writingMode().isHorizontal() ? topLeft : topLeft.transposedPoint());
+    auto position = physicalPoint(blockContainer, { staticPositionWritingMode.isLogicalLeftInlineStart() ? staticInlinePosition : blockContainer->logicalWidth() - staticInlinePosition, staticBlockPosition });
+    // Each box is positioned in the next one container() goes to, from its block-start edge (RenderBox::blockStartRelativeToPhysicalForChild),
+    // and an out-of-flow box between them from the border box of the first fragment of a positioned inline box
+    // (RenderBoxModelObject::blockStartRelativeFirstFragmentBorderBoxRect).
+    auto nextBox = [](const RenderElement& renderer) -> const RenderBox* {
+        auto* container = renderer.container();
+        while (!is<RenderBox>(*container))
+            container = container->container();
+        return downcast<RenderBox>(container);
+    };
+    for (CheckedPtr<const RenderBox> box = blockContainer.ptr(); box != &containingBlock; box = nextBox(*box)) {
+        auto location = box->location();
+        if (CheckedPtr inlineBox = box->isOutOfFlowPositioned() ? dynamicDowncast<RenderBoxModelObject>(box->container()) : nullptr; inlineBox && inlineBox->isInlineBox())
+            location.moveBy(inlineBox->blockStartRelativeFirstFragmentBorderBoxRect().location());
+        CheckedRef container = *nextBox(*box);
+        if (container->writingMode().isBlockFlipped()) {
+            if (container->isHorizontalWritingMode())
+                location.setY(container->borderBoxHeight() - box->borderBoxHeight() - location.y());
+            else
+                location.setX(container->borderBoxWidth() - box->borderBoxWidth() - location.x());
         }
+        position.moveBy(location);
+        position.move(box->offsetForInFlowPosition());
     }
+    auto writingMode = containingBlock.writingMode();
+    position = logicalPoint(containingBlock, position);
     auto paddingBox = logicalPaddingBoxRect(containingBlock);
-    auto inlinePosition = containingBlock.writingMode().isLogicalLeftInlineStart() ? position.x() - paddingBox.x() : paddingBox.maxX() - position.x();
-    auto result = Layout::OutOfFlowGeometry::StaticPosition { inlinePosition, position.y() - paddingBox.y(), blockContainer->writingMode().isLogicalLeftInlineStart() != containingBlock.writingMode().isLogicalLeftInlineStart() };
-    if (flexBox)
+    auto inlinePosition = writingMode.isLogicalLeftInlineStart() ? position.x() - paddingBox.x() : paddingBox.maxX() - position.x();
+    auto result = Layout::OutOfFlowGeometry::StaticPosition {
+        .inlinePosition = inlinePosition,
+        .blockPosition = position.y() - paddingBox.y(),
+        .inlinePositionIsMarginBoxEnd = startsAtEnd(staticPositionWritingMode, writingMode.inlineDirection()),
+        .blockPositionIsMarginBoxEnd = startsAtEnd(staticPositionWritingMode, writingMode.blockDirection())
+    };
+    if (flexBox) {
         std::tie(result.inlineAlignment, result.blockAlignment) = flexStaticPositionAlignments(*flexBox, outOfFlowBox);
+        // Its inline axis is the containing block's block axis in an orthogonal flow.
+        if (staticPositionWritingMode.isOrthogonal(writingMode))
+            std::swap(result.inlineAlignment, result.blockAlignment);
+    }
     return result;
 }
 
