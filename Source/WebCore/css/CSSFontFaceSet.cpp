@@ -318,6 +318,7 @@ void CSSFontFaceSet::clear()
     emptyCaches();
     m_constituentCSSConnections.clear();
     m_facesPartitionIndex = 0;
+    m_activeCount = 0;
     m_status = Status::Loaded;
 }
 
@@ -432,32 +433,28 @@ ExceptionOr<Vector<Ref<CSSFontFace>>> CSSFontFaceSet::matchingFacesExcludingPrei
             familyOrder.append(familyAtom);
     }
 
-    HashSet<CSSFontFace*> resultConstituents;
+    Vector<Ref<CSSFontFace>> resultConstituents;
     auto request = computeFontSelectionRequest(*font);
     auto variantCaps = font->variantCaps == CSSValueID::SmallCaps ? FontVariantCaps::Small : FontVariantCaps::Normal;
-    for (auto codePoint : codePointsFromString(string)) {
-        bool found = false;
-        for (auto& family : familyOrder) {
-            RefPtr faces = fontFace(request, variantCaps, family);
-            if (!faces)
+    auto remainingCodePoints = codePointsFromString(string);
+    for (auto& family : familyOrder) {
+        if (remainingCodePoints.isEmpty())
+            break;
+        RefPtr faces = fontFace(request, variantCaps, family);
+        if (!faces)
+            continue;
+        for (auto& constituentFace : faces->constituentFaces()) {
+            if (constituentFace->isLocalFallback())
                 continue;
-            for (auto& constituentFace : faces->constituentFaces()) {
-                if (constituentFace->isLocalFallback())
-                    continue;
-                if (constituentFace->rangesMatchCodePoint(codePoint)) {
-                    resultConstituents.add(constituentFace.ptr());
-                    found = true;
-                    break;
-                }
-            }
-            if (found)
-                break;
+            bool matched = remainingCodePoints.removeIf([&](auto codePoint) {
+                return constituentFace->rangesMatchCodePoint(codePoint);
+            });
+            if (matched)
+                resultConstituents.append(constituentFace);
         }
     }
 
-    return WTF::map(resultConstituents, [](auto* constituent) -> Ref<CSSFontFace> {
-        return *constituent;
-    });
+    return resultConstituents;
 }
 
 ExceptionOr<bool> CSSFontFaceSet::check(ScriptExecutionContext& context, const String& font, const String& text)
