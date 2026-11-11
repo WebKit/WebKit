@@ -29,6 +29,7 @@ import os.path
 import shutil
 import sys
 import tempfile
+import time
 
 from webkitcorepy import string_utils
 
@@ -197,6 +198,95 @@ class BindingsTests:
 
         return passed
 
+    def run_dependency_tests(self):
+        work_directory = tempfile.mkdtemp()
+        idl_directory = os.path.join(work_directory, 'idl')
+        output_directory = os.path.join(work_directory, 'output')
+        os.mkdir(idl_directory)
+        os.mkdir(output_directory)
+        idl_files_list = os.path.join(work_directory, 'IDLFileNamesList.txt')
+        unmodified_time = time.time() - 1000
+
+        def write_idl(name, extended_attributes, parent=None, members=''):
+            inheritance = ' : %s' % parent if parent else ''
+            with open(os.path.join(idl_directory, name + '.idl'), 'w') as idl_file:
+                idl_file.write('[\n    %s,\n] interface %s%s {\n%s};\n' % (',\n    '.join(extended_attributes), name, inheritance, members))
+
+        def bindings_contain(name, text):
+            with open(os.path.join(output_directory, 'JS%s.cpp' % name)) as bindings_file:
+                return text in bindings_file.read()
+
+        def modification_times():
+            return {name: os.stat(os.path.join(output_directory, name)).st_mtime_ns for name in os.listdir(output_directory)}
+
+        def generate(modified_names):
+            idl_files = sorted(os.path.join(idl_directory, name) for name in os.listdir(idl_directory))
+            with open(idl_files_list, 'w') as list_file:
+                list_file.write(''.join(idl_file + '\n' for idl_file in idl_files))
+            for idl_file in idl_files:
+                modification_time = time.time() + 1000 if os.path.splitext(os.path.basename(idl_file))[0] in modified_names else unmodified_time
+                os.utime(idl_file, (modification_time, modification_time))
+
+            before = modification_times()
+            cmd = ['perl',
+                   'WebCore/bindings/scripts/generate-bindings-all.pl',
+                   '--outputDir', output_directory,
+                   '--idlFilesList', idl_files_list,
+                   '--idlFileNamesList', idl_files_list,
+                   '--idlAttributesFile', 'WebCore/bindings/scripts/IDLAttributes.json',
+                   '--defines', '',
+                   '--generator', 'JS',
+                   '--generatorDependency', 'WebCore/bindings/scripts/CodeGenerator.pm',
+                   '--generatorDependency', 'WebCore/bindings/scripts/CodeGeneratorJS.pm']
+            try:
+                self.executive.run_command(cmd, env=self.generator_env)
+            except ScriptError as e:
+                print(e.output)
+                return None
+            after = modification_times()
+            return {os.path.splitext(name)[0][len('JS'):] for name in after if name.endswith('.cpp') and before.get(name) != after[name]}
+
+        passed = True
+
+        def check(description, condition):
+            nonlocal passed
+            if not condition:
+                print('FAIL: (incremental) %s' % description)
+                passed = False
+                if self.json_file_name:
+                    self.failures.append('(incremental) %s' % description)
+            elif self.verbose:
+                print('PASS: (incremental) %s' % description)
+            sys.stdout.flush()
+
+        exposed = 'Exposed=TestGlobalObject'
+        write_idl('TestParent', [exposed])
+        write_idl('TestCustomParent', ['CustomToJSObject', exposed])
+        check('Generating bindings for the first time', generate({'TestParent', 'TestCustomParent'}) == {'TestParent', 'TestCustomParent'})
+
+        write_idl('TestChild', [exposed], parent='TestParent')
+        write_idl('TestCustomChild', [exposed], parent='TestCustomParent')
+        regenerated = generate({'TestChild', 'TestCustomChild'}) or set()
+        check('Adding a child interface regenerates its parent', 'TestParent' in regenerated)
+        check('The regenerated parent converts to the added child interface', bindings_contain('TestParent', 'is<TestChild>'))
+        check("Adding a child interface doesn't regenerate a [CustomToJSObject] parent", 'TestCustomParent' not in regenerated)
+
+        write_idl('TestChild', [exposed], parent='TestParent', members='    readonly attribute long value;\n')
+        write_idl('TestCustomChild', [exposed], parent='TestCustomParent', members='    readonly attribute long value;\n')
+        regenerated = generate({'TestChild', 'TestCustomChild'}) or set()
+        check('Changing a child interface regenerates its parent', 'TestParent' in regenerated)
+        check("Changing a child interface doesn't regenerate a [CustomToJSObject] parent", 'TestCustomParent' not in regenerated)
+
+        os.remove(os.path.join(idl_directory, 'TestChild.idl'))
+        regenerated = generate(set()) or set()
+        check('Removing a child interface regenerates its parent', 'TestParent' in regenerated)
+        check("The regenerated parent doesn't convert to the removed child interface", not bindings_contain('TestParent', 'is<TestChild>'))
+
+        check('Unchanged interfaces are not regenerated', generate(set()) == set())
+
+        shutil.rmtree(work_directory)
+        return passed
+
     def main(self):
         current_scm = detect_scm_system(os.path.dirname(__file__))
         os.chdir(os.path.join(current_scm.checkout_root, 'Source'))
@@ -262,6 +352,10 @@ class BindingsTests:
             input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
             reference_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test', generator)
             if not self.run_tests(generator, input_directory, reference_directory, supplemental_dependency_file, idl_files_list):
+                all_tests_passed = False
+
+        if not self.reset_results and self.test_matches_patterns('generate-bindings-all.pl'):
+            if not self.run_dependency_tests():
                 all_tests_passed = False
 
         shutil.rmtree(work_directory)

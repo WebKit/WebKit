@@ -651,19 +651,27 @@ sub IDLFileForInterface
 sub BuildInheritanceMap
 {
     my ($object, $currentInterface) = @_;
-    return if %childrenMap;
 
     $object->IDLFileForInterface($currentInterface) unless $idlFiles;
-    foreach my $interfaceName (keys %{$idlFiles}) {
-        my $filename = $object->IDLFileForInterface($interfaceName);
-        my $fileContents = slurp($filename);
+    ChildInterfaceNamesByParent($idlFiles || { });
+}
 
-        # Extract parent interface name.
-        if ($fileContents =~ /interface\s+\Q$interfaceName\E\s*:\s*(\w+)\s*\{/) {
-            my $parent = $1;
-            push @{$childrenMap{$parent}}, $interfaceName;
+sub ChildInterfaceNamesByParent
+{
+    my $idlFilesByInterfaceName = shift;
+
+    unless (%childrenMap) {
+        foreach my $interfaceName (keys %{$idlFilesByInterfaceName}) {
+            my $fileContents = slurp($idlFilesByInterfaceName->{$interfaceName});
+
+            # Extract parent interface name.
+            if ($fileContents =~ /interface\s+\Q$interfaceName\E\s*:\s*(\w+)\s*\{/) {
+                my $parent = $1;
+                push @{$childrenMap{$parent}}, $interfaceName;
+            }
         }
     }
+    return \%childrenMap;
 }
 
 sub ForEachChildInterface
@@ -1145,7 +1153,7 @@ sub slurp
 {
     my $file = shift;
 
-    open my $fh, '<', $file or die;
+    open my $fh, '<', $file or die "Couldn't open $file: $!";
     local $/ = undef;
     my $content = <$fh>;
     close $fh;

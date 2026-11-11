@@ -133,6 +133,10 @@ if ($supplementalDependencyFile) {
 my %directoryCache;
 buildDirectoryCache();
 
+# Build the inheritance map once in the parent process so forked children inherit it.
+my %idlFilesByInterfaceName = map { (fileparse($_, '.idl'))[0] => $directoryCache{$_} } keys %directoryCache;
+my $childInterfaceNamesByParent = CodeGenerator::ChildInterfaceNamesByParent(\%idlFilesByInterfaceName);
+
 my @idlFilesToUpdate = grep &{sub {
     my $absPath = Cwd::abs_path($_) || $_;
     my $oldSupplement = $oldSupplements{$absPath};
@@ -145,6 +149,12 @@ my @idlFilesToUpdate = grep &{sub {
     my $sourceFile = File::Spec->catfile($outputDirectory, "JS$filename.cpp");
     my $headerFile = File::Spec->catfile($outputDirectory, "JS$filename.h");
     my $depFile = File::Spec->catfile($outputDirectory, "JS$filename.dep");
+    my $oldChildInterfaceNames = childInterfaceNames($depFile);
+    if (defined($oldChildInterfaceNames)
+        && join("\0", sort @$oldChildInterfaceNames) ne join("\0", sort @{$childInterfaceNamesByParent->{$filename} || []})) {
+        # Re-process the IDL file if its bindings depend on its child interfaces, and any were added or removed.
+        return 1;
+    }
     my @output = ($sourceFile, $headerFile);
     my @deps = ($_,
                 $idlAttributesFile,
@@ -270,6 +280,19 @@ sub buildDirectoryCache
         $directoryCache{$name} = $_;
     }
     close $fh;
+}
+
+sub childInterfaceNames
+{
+    my ($depFile) = @_;
+    return undef unless -f $depFile;
+    open(my $fh, '<', $depFile) or die "Cannot open $depFile";
+    my $childInterfaceNames;
+    while (my $line = <$fh>) {
+        $childInterfaceNames = [split(' ', $1)] if $line =~ /^# Child interfaces:(.*)$/;
+    }
+    close($fh) or die;
+    return $childInterfaceNames;
 }
 
 sub implicitDependencies

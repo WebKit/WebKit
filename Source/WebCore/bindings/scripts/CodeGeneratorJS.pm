@@ -61,6 +61,8 @@ my %auxImplIncludes = ();
 my $auxImplActive = 0;
 # Names of the IDL files, without .idl, whose definitions the generated code depends on.
 my %dependencies = ();
+# Names of the child interfaces the generated code depends on, or undef if it doesn't depend on its child interfaces.
+my $childInterfaceNames;
 my $hasNonTrivialFinishCreation = 0;
 my $hasNonDefaultFinishCreation = 0;
 
@@ -5814,7 +5816,11 @@ sub GenerateImplementation
 
         my $hasChildInterfaces = 0;
         unless ($interface->extendedAttributes->{IgnoreSubclassesWhenGeneratingToJSObject}) {
-            $codeGenerator->ForEachChildInterface($interface, sub { $hasChildInterfaces = 1; });
+            $childInterfaceNames = [];
+            $codeGenerator->ForEachChildInterface($interface, sub {
+                $hasChildInterfaces = 1;
+                push(@$childInterfaceNames, shift->type->name);
+            });
         }
 
         # We use a templated verifyVTable function here to force the type
@@ -8875,9 +8881,12 @@ sub WriteData
     if ($writeDependencies) {
         delete $dependencies{$name};
         my @dependencies = map { "$_.idl" } sort keys %dependencies;
-        $codeGenerator->UpdateFile($depsFileName, "JS$name.h : @dependencies\n" . join("", map { "$_ :\n" } @dependencies));
+        my $contents = "JS$name.h : @dependencies\n" . join("", map { "$_ :\n" } @dependencies);
+        $contents .= join(" ", "# Child interfaces:", @$childInterfaceNames) . "\n" if $childInterfaceNames;
+        $codeGenerator->UpdateFile($depsFileName, $contents);
     }
     %dependencies = ();
+    $childInterfaceNames = undef;
 }
 
 sub GeneratePrototypeDeclaration
