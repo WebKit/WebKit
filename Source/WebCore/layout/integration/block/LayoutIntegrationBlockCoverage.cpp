@@ -610,8 +610,8 @@ static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox&
 // A box that avoids floats (RenderBox::avoidsFloats), which the block formatting context places beside the floats before it or below them
 // (BlockFormattingContext::placeBesideFloats).
 // FIXME: One with margin-trim, which discards margins that clearance separates, a fieldset or a box with a block step, whose margins collapse
-// once laid out, justify-self, the -webkit- values of text-align, and a form control the block formatting context lays out as a block
-// container, like a checkbox with display: block.
+// once laid out, the -webkit- values of text-align, and a form control the block formatting context lays out as a block container, like a
+// checkbox with display: block.
 static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer, bool isLaidOutThroughRenderTree)
 {
     if (box.isFieldset() || !box.style().blockStepSize().isNone())
@@ -625,8 +625,6 @@ static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const Ren
         return margin.isAuto() || margin.isFixed() || margin.isPercentOrCalculated();
     };
     if (!isSupportedInlineMargin(style->marginStart(containingBlockWritingMode)) || !isSupportedInlineMargin(style->marginEnd(containingBlockWritingMode)))
-        return BlockAvoidanceReason::ContentHasFloat;
-    if (Layout::BlockFormattingUtils::isAlignedByJustifySelf(box, containingBlockStyle))
         return BlockAvoidanceReason::ContentHasFloat;
     auto textAlign = containingBlockStyle->textAlign();
     if (textAlign == Style::TextAlign::WebKitCenter || textAlign == Style::TextAlign::WebKitLeft || textAlign == Style::TextAlign::WebKitRight)
