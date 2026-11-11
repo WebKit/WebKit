@@ -4663,7 +4663,6 @@ imported/w3c/web-platform-tests/css/css-values/urls/referrer-policy/unsafe-url/u
 
 # wpt css-sizing failures
 webkit.org/b/203583 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio-affects-container-width-when-height-changes.html [ Pass Failure ]
-webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/image-fractional-height-with-wide-aspect-ratio.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/fit-content-length-percentage-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/fit-content-length-percentage-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/fit-content-length-percentage-003.html [ ImageOnlyFailure ]
@@ -8633,8 +8632,6 @@ imported/w3c/web-platform-tests/css/css-box/margin-trim/multicol-spanner-007.htm
 fast/shadow-dom/svg-multiple-references-in-multiple-shadows-pattern.html [ ImageOnlyFailure ]
 fast/shadow-dom/svg-pattern-dynamic-update-href-in-shadow-tree.html [ ImageOnlyFailure ]
 fast/shadow-dom/svg-pattern-href-in-shadow-tree.html [ ImageOnlyFailure ]
-
-imported/w3c/web-platform-tests/svg/as-image/sprite-sheet-fractional-size.html [ ImageOnlyFailure ]
 
 # Media controls context menus are only implemented on WK2 Cocoa platforms.
 http/tests/media/media-controls-context-menu-anchor-in-iframe.html [ Skip ]

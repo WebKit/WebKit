@@ -241,11 +241,6 @@ ImageDrawResult SVGImage::drawImage(GraphicsContext& context, const ImageDrawDes
     auto adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(1 / concreteObjectSize.zoom());
 
-    // Compensate for the container size rounding by adjusting the source rect.
-    auto adjustedSrcSize = adjustedSrcRect.size();
-    adjustedSrcSize.scale(containerSize.width() / concreteSize.width(), containerSize.height() / concreteSize.height());
-    adjustedSrcRect.setSize(adjustedSrcSize);
-
     GraphicsContextStateSaver stateSaver(context);
     context.setCompositeOperation(descriptor.compositeOperator, descriptor.blendMode);
     if (descriptor.rendition.interpolationQuality != InterpolationQuality::Default)
@@ -276,7 +271,7 @@ ImageDrawResult SVGImage::drawImage(GraphicsContext& context, const ImageDrawDes
 
     // Apply orientation transformation if needed.
     if (orientation != ImageOrientation::Orientation::None) {
-        auto orientationTransform = ImageOrientation(orientation).transformFromDefault(FloatSize(containerSize));
+        auto orientationTransform = ImageOrientation(orientation).transformFromDefault(containerSize);
         context.concatCTM(orientationTransform);
     }
 

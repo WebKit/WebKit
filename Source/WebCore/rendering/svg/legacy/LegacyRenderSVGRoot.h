@@ -58,8 +58,8 @@ public:
     void setNeedsBoundariesUpdate() override { m_needsBoundariesOrTransformUpdate = true; }
     void setNeedsTransformUpdate() override { m_needsBoundariesOrTransformUpdate = true; }
 
-    IntSize containerSize() const { return m_containerSize; }
-    void setContainerSize(const IntSize& containerSize) { m_containerSize = containerSize; }
+    LayoutSize containerSize() const { return m_containerSize; }
+    void setContainerSize(const LayoutSize& containerSize) { m_containerSize = containerSize; }
 
     bool hasRelativeDimensions() const override;
 
@@ -130,7 +130,7 @@ private:
     void updateCachedBoundaries();
     void buildLocalToBorderBoxTransform();
 
-    IntSize m_containerSize;
+    LayoutSize m_containerSize;
     FloatRect m_repaintBoundingBox;
     Markable<FloatRect> m_objectBoundingBox;
     mutable Markable<FloatRect> m_strokeBoundingBox;
