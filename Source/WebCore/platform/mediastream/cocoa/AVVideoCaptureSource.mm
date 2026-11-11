@@ -1429,7 +1429,7 @@ void AVVideoCaptureSource::computeVideoFrameRotation()
     if (videoFrameRotation == m_videoFrameRotation)
         return;
 
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "rotation was ", videoFrameRotation, ", is now ", m_videoFrameRotation);
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "rotation was ", m_videoFrameRotation, ", is now ", videoFrameRotation);
     m_videoFrameRotation = videoFrameRotation;
     notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
 }
