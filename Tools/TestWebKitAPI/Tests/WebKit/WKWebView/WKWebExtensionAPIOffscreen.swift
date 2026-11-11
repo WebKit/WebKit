@@ -626,6 +626,8 @@ struct WKWebExtensionAPIOffscreenTests {
 
         let backgroundScript = """
             browser.runtime.onConnectExternal.addListener((port) => {
+              browser.test.assertTrue(port.sender.tab === undefined, 'Offscreen iframe sender should not have a tab')
+
               port.onMessage.addListener((message) => {
                 browser.test.assertEq(message, 'Hello from iframe', 'Should receive the message from the iframe')
                 port.postMessage('Hello from background')
@@ -702,6 +704,7 @@ struct WKWebExtensionAPIOffscreenTests {
         // the service worker, so finding it already present means the service worker was restarted.
         let backgroundScript = """
             browser.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
+              browser.test.assertTrue(sender.tab === undefined, 'Offscreen iframe sender should not have a tab')
               browser.test.assertEq(message, 'Hello from iframe', 'Should receive the message from the iframe')
               sendResponse('Hello from background')
             })

@@ -501,8 +501,7 @@ void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, c
     }
 
     WebExtensionMessageSenderParameters completeSenderParameters = senderParameters;
-    if (tab)
-        completeSenderParameters.tabParameters = tab->parameters();
+    completeSenderParameters.tabParameters = tab ? std::optional(tab->parameters()) : std::nullopt;
     completeSenderParameters.windowIdentifier = windowIdentifierForPage(senderParameters.pageProxyIdentifier);
 
     auto url = completeSenderParameters.url;
@@ -570,8 +569,7 @@ void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebEx
     }
 
     WebExtensionMessageSenderParameters completeSenderParameters = senderParameters;
-    if (tab)
-        completeSenderParameters.tabParameters = tab->parameters();
+    completeSenderParameters.tabParameters = tab ? std::optional(tab->parameters()) : std::nullopt;
     completeSenderParameters.windowIdentifier = windowIdentifierForPage(senderParameters.pageProxyIdentifier);
 
     auto url = completeSenderParameters.url;
