@@ -285,6 +285,7 @@ std::optional<ContainingBlockState::Clearance> BlockFormattingContext::clearance
 void BlockFormattingContext::handleBlockContainerStart(const RenderBox& blockContainer)
 {
     LayoutIntegration::BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(downcast<RenderBlockFlow>(blockContainer));
+    LayoutIntegration::BlockIntegrationUtils::invalidateContentInlineSizesBeforeLayout(blockContainer, m_blockLayoutState.containingBlockStates().last().relayoutChildren);
     auto clearance = clearanceAtBlockStart(blockContainer);
     auto blockContainerState = computeContainingBlockStateAtBlockStart(blockContainer);
     blockContainerState.clearance = clearance;

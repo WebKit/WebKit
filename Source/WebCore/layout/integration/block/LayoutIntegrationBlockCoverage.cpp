@@ -739,12 +739,9 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
     // A preferred aspect ratio gives an auto block size from the inline size (BlockFormattingUtils::aspectRatioBorderBoxBlockSize), and an
     // auto inline size from a definite block size (BlockFormattingUtils::aspectRatioBorderBoxInlineSize), whose automatic minimum is the
-    // min-content size.
-    // Its own percentages resolve against the containing block, and when the render tree measures the root it does it from what the root's
-    // last layout of the box left behind. Not an out-of-flow box's, which add nothing to the intrinsic sizes of the root and resolve once its
-    // containing block has its size (outOfFlowBoxAvoidanceReason).
+    // min-content size. An out-of-flow box's are the out-of-flow checks' (outOfFlowBoxAvoidanceReason).
     if (style->aspectRatio().hasRatio() && !style->logicalHeight().isAuto() && style->logicalWidth().isAuto() && style->logicalMinWidth().isAuto() && !blockContainer->isOutOfFlowPositioned()) {
-        if (!canComputeContentInlineSizes(*blockContainer) || (Layout::BlockFormattingUtils::hasPercentageBlockSize(*blockContainer, blockContainer->writingMode()) && !resolvesPercentageBlockSizesFromStyles(*blockContainer, rootContainer)))
+        if (!canComputeContentInlineSizes(*blockContainer))
             return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
     }
     // In quirks mode a percentage block size looks past the containing blocks with an auto block size (BlockFormattingUtils::definiteContentBoxBlockSize).

@@ -166,6 +166,7 @@ public:
     // Like RenderBlockFlow::layoutBlock: the boxes laid out through the render tree that resolve a percentage block size against the block
     // container are laid out again (RenderBlockFlow::dirtyForLayoutFromPercentageHeightDescendants).
     static void markPercentageHeightDescendantsForLayout(const RenderBlockFlow&);
+    static void invalidateContentInlineSizesBeforeLayout(const RenderBox&, bool relayoutChildren);
     // An anonymous block whose first line has no content, which takes no part in the first and last formatted lines (TextBoxTrimmer).
     static bool isAnonymousBlockWithoutContentfulFirstLine(const RenderBlockFlow&);
     // A box that followed the clamp point of a line-clamp container the last time it was laid out, and which is visible again.

@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; margin: 0; }
+.grid { display: grid; width: 400px; border: 1px solid; margin-bottom: 4px; }
+.c { position: relative; height: 100%; aspect-ratio: 1.5; background: lightblue; }
+.fill { position: absolute; inset: 0; background: green; }
+</style>
+<div style="width: 0px; height: 60px; display: grid; justify-items: center; margin-left: 100px"><div style="height: 100%; background: green"><div style="height: 100%; aspect-ratio: 1"></div></div></div>
+<ul class="grid" style="grid-template-columns: 2fr 1fr; list-style: none; padding: 0"><li><figure style="margin: 0"><a style="display: block; position: relative"><div style="height: 100%"><div class="c"><div class="fill"></div></div></div></a><figcaption>caption</figcaption></figure></li><li>text</li></ul>
+<div class="grid" style="grid-template-columns: auto 1fr"><div><div class="c" style="height: 50%"></div>auto column</div><div style="height: 80px">tall sibling</div></div>
+<div style="display: flex; height: 60px; width: 400px; border: 1px solid; margin-bottom: 4px"><div><div class="c">in flex item</div></div><div>x</div></div>
+<div style="height: 60px; width: 300px; border: 1px solid; margin-bottom: 4px"><div style="height: 100%"><div class="c" style="height: 50%">definite chain</div></div></div>
+<div style="width: 300px; border: 1px solid; margin-bottom: 4px"><div><div class="c" style="height: 50%; width: 50px">indefinite chain</div></div></div>
+<div style="display: inline-block; border: 1px solid"><div style="height: 40px"><div class="c" style="height: 100%">shrink-to-fit root</div></div></div>
