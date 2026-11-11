@@ -67,6 +67,7 @@ final class HTTPServerCore {
     private(set) var receivedRequests: [(request: HTTPRequest, body: Data)] = []
     private(set) var lastRequestCookies = ""
     private(set) var sawAuthorizationHeader = false
+    private(set) var closedUnfinishedResponseCount = 0
 
     var port: UInt16 { listener.port?.rawValue ?? 0 }
     var totalConnections: Int { connections.count }
@@ -249,6 +250,19 @@ final class HTTPServerCore {
 
             case .neverSendResponse:
                 continue
+
+            case .neverFinishResponse:
+                let contentLength = (name: "Content-Length", value: "\(response.body.count + 1)")
+                let head = HTTPResponseData(
+                    statusCode: response.statusCode,
+                    headerFields: response.headerFields.filter { $0.name.lowercased() != "content-length" } + [contentLength],
+                    body: response.body
+                )
+                try await connection.send(head.serialize(includingContentLength: false))
+
+                while !(await connection.receiveBytes()).isEmpty {}
+                closedUnfinishedResponseCount += 1
+                return
             }
         }
     }
@@ -290,6 +304,9 @@ final class HTTPServerCore {
 
         case .neverSendResponse:
             break
+
+        case .neverFinishResponse:
+            preconditionFailure("HTTPServer rejects unfinished responses for this protocol")
         }
     }
 }

@@ -28,6 +28,7 @@ struct HTTPResponseData: Sendable {
         case sendResponseNormally
         case terminateConnectionAfterReceivingRequest
         case neverSendResponse
+        case neverFinishResponse
     }
 
     var statusCode: UInt = 200

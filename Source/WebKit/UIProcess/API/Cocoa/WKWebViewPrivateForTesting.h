@@ -41,6 +41,12 @@ typedef enum {
     WKWebViewAudioRoutingArbitrationStatusActive,
 } WKWebViewAudioRoutingArbitrationStatus;
 
+typedef NS_ENUM(NSInteger, _WKNavigationResponseProcessSwapDecision) {
+    _WKNavigationResponseProcessSwapDecisionSwap,
+    _WKNavigationResponseProcessSwapDecisionResumeLoad,
+    _WKNavigationResponseProcessSwapDecisionCancelLoad,
+};
+
 struct WKAppPrivacyReportTestingData {
     BOOL hasLoadedAppInitiatedRequestTesting;
     BOOL hasLoadedNonAppInitiatedRequestTesting;
@@ -286,6 +292,10 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (bool)_displayLinkWantsHighFrameRate;
 
 - (void)_lastPageLoadNetworkActivityCompletionCodeForTesting:(void(^)(NSNumber * _Nullable completionCode))completionHandler;
+
+// Runs the handler when the UI process decides whether a navigation response swaps processes.
+// The handler must call sendReply to send the decision to the network process.
+- (void)_setNavigationResponseProcessSwapReplyHandlerForTesting:(NS_SWIFT_UI_ACTOR void (^ _Nullable)(_WKNavigationResponseProcessSwapDecision decision, void (^sendReply)(void)))handler;
 
 - (void)_topDocumentURLsInBackForwardCacheAtIndexForTesting:(NSInteger)relativeIndex completionHandler:(void(^)(NSArray<NSURL *> *topDocumentURLs))completionHandler;
 

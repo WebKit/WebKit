@@ -1811,6 +1811,34 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     });
 }
 
+- (void)_setNavigationResponseProcessSwapReplyHandlerForTesting:(void (^)(_WKNavigationResponseProcessSwapDecision, void (^)(void)))handler
+{
+    RefPtr pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return;
+
+    if (!handler) {
+        pageForTesting->setNavigationResponseProcessSwapReplyHandler(nullptr);
+        return;
+    }
+
+    pageForTesting->setNavigationResponseProcessSwapReplyHandler([handler = makeBlockPtr(handler)](const WebKit::NavigationResponseProcessSwapResult& result, CompletionHandler<void()>&& sendReply) {
+        // Keeps the block alive if it clears the handler.
+        auto protectedHandler = handler;
+        auto decision = WTF::switchOn(result,
+            [](WebCore::ProcessIdentifier) {
+                return _WKNavigationResponseProcessSwapDecisionSwap;
+            }, [](WebKit::NavigationResponseWithoutProcessSwap withoutProcessSwap) {
+                return withoutProcessSwap == WebKit::NavigationResponseWithoutProcessSwap::ResumeLoad ? _WKNavigationResponseProcessSwapDecisionResumeLoad : _WKNavigationResponseProcessSwapDecisionCancelLoad;
+            }
+        );
+        protectedHandler(decision, makeBlockPtr([sendReply = WTF::move(sendReply)] mutable {
+            if (sendReply)
+                sendReply();
+        }).get());
+    });
+}
+
 - (void)_topDocumentURLsInBackForwardCacheAtIndexForTesting:(NSInteger)relativeIndex completionHandler:(void(^)(NSArray<NSURL *> *))completionHandler
 {
     _page->getBackForwardCacheEntryTopDocumentURLsForTesting(static_cast<int>(relativeIndex), [completionHandler = makeBlockPtr(completionHandler)] (Vector<URL>&& topDocumentURLs) {

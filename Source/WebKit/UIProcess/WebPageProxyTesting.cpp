@@ -290,6 +290,21 @@ void WebPageProxyTesting::resetStateBetweenTests()
 #endif
 }
 
+CompletionHandler<void(NavigationResponseProcessSwapResult&&)> WebPageProxyTesting::holdNavigationResponseProcessSwapReply(CompletionHandler<void(NavigationResponseProcessSwapResult&&)>&& completionHandler)
+{
+    if (!m_navigationResponseProcessSwapReplyHandler)
+        return WTF::move(completionHandler);
+
+    return [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NavigationResponseProcessSwapResult&& result) mutable {
+        if (!protectedThis->m_navigationResponseProcessSwapReplyHandler)
+            return completionHandler(WTF::move(result));
+        auto resultForHandler = result;
+        protectedThis->m_navigationResponseProcessSwapReplyHandler(WTF::move(resultForHandler), [completionHandler = WTF::move(completionHandler), result = WTF::move(result)] mutable {
+            completionHandler(WTF::move(result));
+        });
+    };
+}
+
 void WebPageProxyTesting::clearBackForwardList(CompletionHandler<void()>&& completionHandler)
 {
     Ref page = m_page.get();
