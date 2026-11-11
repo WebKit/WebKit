@@ -503,7 +503,6 @@ private:
     bool m_hasTouchEventHandler : 1 { false };
 #endif
     bool m_isSpellcheckDisabledExceptTextReplacement : 1 { false };
-    bool m_hasPendingUserAgentShadowTreeUpdate : 1 { false };
     bool m_hasSwitchAttribute : 1 { false };
     bool m_hasEverBeenPasswordField : 1 { false };
     RefPtr<InputType> m_inputType;

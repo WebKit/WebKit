@@ -2928,8 +2928,14 @@ void Document::resolveStyle(ResolveStyleType type)
     // the time this comment was originally written caused several tests to crash.
 
     // FIXME: Do this user agent shadow tree update per tree scope.
-    for (auto& element : copyToVectorOf<Ref<Element>>(m_elementsWithPendingUserAgentShadowTreeUpdates))
-        element->updateUserAgentShadowTree();
+    if (!m_elementsWithPendingUserAgentShadowTreeUpdates.isEmpty()) {
+        m_pendingUserAgentShadowTreeUpdatesCompactionThreshold = minimumPendingUserAgentShadowTreeUpdatesCompactionThreshold;
+        for (auto& weakElement : std::exchange(m_elementsWithPendingUserAgentShadowTreeUpdates, { })) {
+            RefPtr element = weakElement;
+            if (element && hasElementWithPendingUserAgentShadowTreeUpdate(*element))
+                element->updateUserAgentShadowTree();
+        }
+    }
 
     styleScope().flushPendingUpdate();
     frameView->willRecalcStyle();
@@ -12537,20 +12543,41 @@ const NetworkLoadPolicy& Document::networkLoadPolicy() const
 void Document::addElementWithPendingUserAgentShadowTreeUpdate(Element& element)
 {
     ASSERT(&element.document() == this);
-    auto result = m_elementsWithPendingUserAgentShadowTreeUpdates.add(element);
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(result.isNewEntry);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!element.hasPendingUserAgentShadowTreeUpdate());
+    if (m_elementsWithPendingUserAgentShadowTreeUpdates.size() >= m_pendingUserAgentShadowTreeUpdatesCompactionThreshold)
+        compactElementsWithPendingUserAgentShadowTreeUpdates();
+    element.setHasPendingUserAgentShadowTreeUpdate();
+    m_elementsWithPendingUserAgentShadowTreeUpdates.append(element);
 }
 
 void Document::removeElementWithPendingUserAgentShadowTreeUpdate(Element& element)
 {
     ASSERT(&element.document() == this);
-    m_elementsWithPendingUserAgentShadowTreeUpdates.remove(element);
-    // FIXME: Assert that element was in m_elementsWithPendingUserAgentShadowTreeUpdates once re-entrancy to update style and layout have been removed.
+    element.clearHasPendingUserAgentShadowTreeUpdate();
+    // FIXME: Assert that element had a pending update once re-entrancy to update style and layout have been removed.
+}
+
+void Document::compactElementsWithPendingUserAgentShadowTreeUpdates()
+{
+    // To find duplicates without a separate set, clear each kept element's flag as a "seen" mark so its later entries
+    // look stale; the loop below restores the flags.
+    m_elementsWithPendingUserAgentShadowTreeUpdates.removeAllMatching([&](auto& weakElement) {
+        RefPtr element = weakElement;
+        if (!element || !hasElementWithPendingUserAgentShadowTreeUpdate(*element))
+            return true;
+        element->clearHasPendingUserAgentShadowTreeUpdate();
+        return false;
+    });
+    for (auto& weakElement : m_elementsWithPendingUserAgentShadowTreeUpdates) {
+        ASSERT(weakElement);
+        weakElement->setHasPendingUserAgentShadowTreeUpdate();
+    }
+    m_pendingUserAgentShadowTreeUpdatesCompactionThreshold = std::max(minimumPendingUserAgentShadowTreeUpdatesCompactionThreshold, 2 * m_elementsWithPendingUserAgentShadowTreeUpdates.size());
 }
 
 bool Document::hasElementWithPendingUserAgentShadowTreeUpdate(Element& element) const
 {
-    return m_elementsWithPendingUserAgentShadowTreeUpdates.contains(element);
+    return element.hasPendingUserAgentShadowTreeUpdate() && &element.document() == this;
 }
 
 bool Document::isSameSiteForCookies(const URL& url) const
