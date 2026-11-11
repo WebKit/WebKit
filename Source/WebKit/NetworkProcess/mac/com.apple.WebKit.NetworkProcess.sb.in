@@ -332,6 +332,9 @@
 
 (deny mach-lookup (xpc-service-name-prefix ""))
 
+;; Used for parental controls URL filtering. FIXME: Only allow when parental controls is enabled, requires rdar://159207397 to land
+(allow mach-lookup (xpc-service-name "com.apple.BrowserEngineKit.Intermediary"))
+
 ;; Remove when <rdar://problem/29646094> is fixed.
 (define (HEX-pattern-match-generator pattern-descriptor)
     (letrec ((pattern-string ""))
