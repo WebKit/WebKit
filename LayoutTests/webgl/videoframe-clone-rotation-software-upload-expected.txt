@@ -1,0 +1,7 @@
+
+PASS Software WebGL upload of a decoded frame cloned with rotation 0
+PASS Software WebGL upload of a decoded frame cloned with rotation 90
+PASS Software WebGL upload of a decoded frame cloned with rotation 180
+PASS Software WebGL upload of a decoded frame cloned with rotation 270
+PASS Software WebGL upload of a decoded frame cloned with rotation 90 and flip
+

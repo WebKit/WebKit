@@ -142,9 +142,10 @@ void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVid
     RefPtr<VideoFrame> frame;
     Ref connection = m_connection;
 
-    if (std::holds_alternative<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer))
-        frame = get(WTF::move(std::get<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer)));
-    else
+    if (std::holds_alternative<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer)) {
+        if (RefPtr heapFrame = get(WTF::move(std::get<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer))))
+            frame = heapFrame->updateOrientation(sharedVideoFrame.rotation, sharedVideoFrame.mirrored, VideoFrame::ShouldClone::Yes);
+    } else
         frame = m_sharedVideoFrameReader.read(WTF::move(sharedVideoFrame));
 
     if (!frame) {
