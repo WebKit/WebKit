@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.stf { display: inline-block; vertical-align: top; border: 1px solid; margin: 0 2px 4px 0; background: #eee; }
+.cb { position: relative; display: inline-block; vertical-align: top; width: 200px; height: 60px; border: 1px solid; margin: 0 2px 4px 0; }
+.abs { position: absolute; background: lightblue; }
+</style>
+<div class="stf"><a href="#">link <svg id="svg" style="display: block" width="40" height="20"><rect width="100%" height="20" fill="green"/></svg> after</a></div>
+<div class="stf"><span>text <div style="background: lightgreen"><span id="text">short</span></div> end</span></div>
+<div class="cb"><div class="abs" style="left: 10px"><a>icon <img id="img" style="display: block; width: 30px; height: 15px; background: green"></a></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("svg").setAttribute("width", "120");
+document.getElementById("text").firstChild.data = "a much longer line of text in the block";
+document.getElementById("img").style.width = "90px";
+</script>

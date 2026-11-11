@@ -355,10 +355,6 @@ static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
             descendant = descendant->nextInPreOrderAfterChildren(&box);
             continue;
         }
-        // FIXME: A block-level box in inline content, which the inline formatting context measures through the render tree
-        // (LineBuilder::handleBlockContent).
-        if (CheckedPtr element = dynamicDowncast<RenderElement>(*descendant); element && element != &box && element->isBlockLevelBox() && element->parent()->isInlineBox())
-            return false;
         auto isBlockLevelFloat = [&] {
             CheckedPtr parentBlockContainer = dynamicDowncast<RenderBlockFlow>(descendant->parent());
             return descendant->isFloating() && parentBlockContainer && !parentBlockContainer->childrenInline();

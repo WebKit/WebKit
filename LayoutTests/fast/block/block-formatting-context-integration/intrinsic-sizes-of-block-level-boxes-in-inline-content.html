@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.stf { display: inline-block; vertical-align: top; border: 1px solid; margin: 0 2px 4px 0; background: #eee; }
+.cb { position: relative; display: inline-block; vertical-align: top; width: 200px; height: 60px; border: 1px solid; margin: 0 2px 4px 0; }
+.abs { position: absolute; background: lightblue; }
+</style>
+<div class="stf"><a href="#">link <svg style="display: block" width="40" height="20"><rect width="40" height="20" fill="green"/></svg> after</a></div>
+<div class="stf"><span>text <img style="display: block; width: 60px; height: 10px; background: green"> more text that is long</span></div>
+<div class="cb"><div class="abs" style="left: 10px"><a>icon <svg style="display: block" width="30" height="15"><rect width="30" height="15" fill="green"/></svg></a></div></div>
+<div class="cb"><div class="abs" style="right: 0"><span><div>block in inline with text</div></span>tail</div></div>
+<div class="stf"><span><div style="width: 50%; background: lightgreen">percent</div>words go here</span></div>
+<div style="float: left; border: 1px solid"><span>float <div style="padding: 0 5px; background: lightgreen">block</div> end</span></div>
+<div style="display: flex"><div style="border: 1px solid"><span>flex item <div style="background: lightgreen">inner block</div></span></div><div>sibling</div></div>
