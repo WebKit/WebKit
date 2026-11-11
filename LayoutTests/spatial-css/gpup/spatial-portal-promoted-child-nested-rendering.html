@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ] -->
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-300">
+<style>
+    body {
+        margin: 0;
+    }
+    .portal {
+        spatial: portal;
+        position: relative;
+        width: 400px;
+        height: 200px;
+        background-color: #ddd;
+    }
+    model {
+        width: 400px;
+        height: 200px;
+    }
+    .depth {
+        position: absolute;
+        inset: 0;
+        transform: translateZ(-80px) rotate3d(0, 1, 0, 20deg);
+        transform-style: preserve-3d;
+    }
+    .label {
+        position: absolute;
+        top: 70px;
+        left: 0;
+        height: 60px;
+        font: 900 48px/60px sans-serif;
+        color: rgb(70, 70, 140);
+        white-space: nowrap;
+        animation: marquee 10s linear infinite alternate;
+    }
+    @keyframes marquee {
+        from { transform: translateX(160px); }
+        to { transform: translateX(-160px); }
+    }
+</style>
+</head>
+<body>
+<div class="portal">
+    <div class="depth"><span class="label">Configurator</span></div>
+    <model><source src="../../model-element/resources/2x2x2-center.usdz"></model>
+</div>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../resources/spatial-portal-utils.js"></script>
+<script>
+window.testRunner?.waitUntilDone();
+window.internals?.disableModelLoadDelaysForTesting();
+
+window.onload = async () => {
+    await document.querySelector("model").ready;
+
+    const animation = document.querySelector(".label").getAnimations()[0];
+    animation.pause();
+    animation.currentTime = 2500;
+
+    await waitForHostedPromotedChildren(document.querySelector(".portal"), 1);
+    await waitForPortalSceneToDisplay();
+    window.testRunner?.notifyDone();
+};
+</script>
+</body>
+</html>

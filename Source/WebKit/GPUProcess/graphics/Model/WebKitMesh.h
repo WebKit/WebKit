@@ -27,10 +27,15 @@
 
 #import <WebCore/NodeIdentifier.h>
 #import <simd/simd.h>
+#import <wtf/HashMap.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/TZoneMalloc.h>
+
+#if ENABLE(SPATIAL_PORTAL)
+#import <IOSurface/IOSurfaceRef.h>
+#endif
 
 OBJC_CLASS NSMutableArray;
 OBJC_CLASS NSUUID;
@@ -69,6 +74,12 @@ public:
     void updateMesh(WebCore::NodeIdentifier, Vector<WebModel::UpdateMeshDescriptor>&&);
     void removeNode(WebCore::NodeIdentifier);
     NODELETE void updateTexture(Vector<WebModel::UpdateTextureDescriptor>&&);
+#if ENABLE(SPATIAL_PORTAL)
+    bool updatePortalContentTexture(const WebModel::TypedResourceId&, IOSurfaceRef, bool isOpaque, uint64_t bufferIdentifier);
+    void removePortalContentTexture(uint64_t bufferIdentifier);
+    void clearPortalContentTextures();
+    void setPortalContentOrder(Vector<WebModel::TypedResourceId>&&);
+#endif
     NODELETE void updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&&);
     NODELETE void setTransform(const simd_float4x4&);
     void setTransform(WebCore::NodeIdentifier, const simd_float4x4&);
@@ -91,6 +102,10 @@ private:
     const RetainPtr<NSUUID> m_meshIdentifier;
     mutable bool m_meshDataExists { false };
     std::optional<simd_float4x4> m_transform;
+#if ENABLE(SPATIAL_PORTAL)
+    RetainPtr<id> m_device;
+    HashMap<uint64_t, RetainPtr<id>> m_portalContentTextures;
+#endif
 #endif
 };
 

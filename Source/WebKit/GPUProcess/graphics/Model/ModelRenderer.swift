@@ -52,6 +52,150 @@ final class Renderer {
 
     private var colorAdjustTilePipelineStates: [ColorAdjustTilePipelineKey: any MTLRenderPipelineState] = [:]
 
+    private var portalContentConversionPipelineState: (any MTLComputePipelineState)?
+
+    private lazy var portalQuadDepthStencilState: any MTLDepthStencilState = {
+        let descriptor = MTLDepthStencilDescriptor()
+        descriptor.label = "Portal Quad Depth Stencil"
+        descriptor.depthCompareFunction = .greaterEqual
+        descriptor.isDepthWriteEnabled = false
+        guard let depthStencilState = device.makeDepthStencilState(descriptor: descriptor) else {
+            fatalError("Failed to make the portal quad depth stencil state")
+        }
+        return depthStencilState
+    }()
+
+    private static let portalContentConversionShaderSource = """
+        #include <metal_stdlib>
+        using namespace metal;
+
+        struct FilmicSegment {
+            float offsX, offsY, scaleX, scaleY, lnA, B;
+        };
+
+        constant float kWhitePoint = 2.01402664;
+        constant float kScaleY = 0.778939604;
+        constant float kY0 = 0.0420799 * kScaleY;
+        constant float kY1 = 0.3294559 * kScaleY;
+        constant float kHDRGain = 1.5032214035;
+
+        constant FilmicSegment kSegments[3] = {
+            { 0.0,           0.0,        1.0,  kScaleY,  1.60599995,  1.33333337 },
+            { 0.00696447864, 0.0,        1.0,  kScaleY,  0.700136005, 1.0        },
+            { 3.0,           1.16840935, -1.0, -kScaleY, -4.90600586, 4.86833191 }
+        };
+
+        static float decodeSRGB(float v)
+        {
+            return v <= 0.04045 ? v / 12.92 : pow((v + 0.055) / 1.055, 2.4);
+        }
+
+        static float encodeSRGB(float v)
+        {
+            return v <= 0.0031308 ? v * 12.92 : 1.055 * pow(v, 1.0 / 2.4) - 0.055;
+        }
+
+        static float inverseFilmic(float y)
+        {
+            y = clamp(y, 0.0, 1.1683);
+            int index = (y >= kY0 ? 1 : 0) + (y >= kY1 ? 1 : 0);
+            FilmicSegment segment = kSegments[index];
+            float normalized = (y - segment.offsY) / segment.scaleY;
+            if (normalized <= 0.0)
+                return 0.0;
+            float x0 = exp((log(normalized) - segment.lnA) / segment.B);
+            return (x0 / segment.scaleX + segment.offsX) * kWhitePoint;
+        }
+
+        struct Parameters {
+            uint isHDR;
+            uint isOpaque;
+        };
+
+        kernel void convertPortalContent(texture2d<float, access::read> source [[texture(0)]],
+                                         texture2d<float, access::write> destination [[texture(1)]],
+                                         constant Parameters &parameters [[buffer(0)]],
+                                         uint2 position [[thread_position_in_grid]])
+        {
+            float4 pixel = source.read(position);
+            float alpha = parameters.isOpaque ? 1.0 : pixel.a;
+            if (alpha <= 0.0) {
+                destination.write(float4(0.0), position);
+                return;
+            }
+
+            float3 straight = saturate(pixel.rgb / alpha);
+            float3 srgb = float3(decodeSRGB(straight.r), decodeSRGB(straight.g), decodeSRGB(straight.b));
+            float3 target = float3(dot(srgb, float3(0.8224621, 0.1775380, 0.0)),
+                                   dot(srgb, float3(0.0331941, 0.9668058, 0.0)),
+                                   dot(srgb, float3(0.0170827, 0.0723974, 0.9105199)));
+            float3 scene;
+            if (parameters.isHDR) {
+                float3 premultiplied = target * alpha / kHDRGain;
+                scene = float3(inverseFilmic(premultiplied.r), inverseFilmic(premultiplied.g), inverseFilmic(premultiplied.b)) / alpha;
+            } else {
+                float3 premultiplied = alpha * float3(encodeSRGB(target.r), encodeSRGB(target.g), encodeSRGB(target.b));
+                float3 linear = float3(decodeSRGB(premultiplied.r), decodeSRGB(premultiplied.g), decodeSRGB(premultiplied.b)) / (alpha * alpha);
+                scene = float3(inverseFilmic(linear.r), inverseFilmic(linear.g), inverseFilmic(linear.b));
+            }
+            destination.write(float4(scene, alpha), position);
+        }
+        """
+
+    private var portalContentConversionParameterBuffers: [UInt32: any MTLBuffer] = [:]
+
+    private func portalContentConversionParameterBuffer(isOpaque: Bool) -> any MTLBuffer {
+        let isHDR: UInt32 = tonemapEnabled ? 0 : 1
+        let key = isHDR << 1 | (isOpaque ? 1 : 0)
+        if let buffer = portalContentConversionParameterBuffers[key] {
+            return buffer
+        }
+        let values: [UInt32] = [isHDR, isOpaque ? 1 : 0]
+        let buffer = device.makeBuffer(
+            fromSpan: values.span,
+            length: MemoryLayout<UInt32>.stride * values.count,
+            memoryOwner: memoryOwner
+        )
+        portalContentConversionParameterBuffers[key] = buffer
+        return buffer
+    }
+
+    private func portalContentConversionPipeline() throws -> any MTLComputePipelineState {
+        if let portalContentConversionPipelineState {
+            return portalContentConversionPipelineState
+        }
+        let library = try device.makeLibrary(source: Self.portalContentConversionShaderSource, options: nil)
+        guard let function = library.makeFunction(name: "convertPortalContent") else {
+            fatalError("Failed to find convertPortalContent compute function")
+        }
+        let pipelineState = try device.makeComputePipelineState(function: function)
+        portalContentConversionPipelineState = pipelineState
+        return pipelineState
+    }
+
+    func convertPortalContent(
+        source: any MTLTexture,
+        destination: any MTLTexture,
+        isOpaque: Bool,
+        commandBuffer: any MTLCommandBuffer
+    ) throws {
+        let pipelineState = try portalContentConversionPipeline()
+        guard let encoder = commandBuffer.makeComputeCommandEncoder() else {
+            fatalError("Failed to make compute command encoder")
+        }
+
+        encoder.label = "Convert Portal Content"
+        encoder.setComputePipelineState(pipelineState)
+        encoder.setTexture(source, index: 0)
+        encoder.setTexture(destination, index: 1)
+        encoder.setBuffer(portalContentConversionParameterBuffer(isOpaque: isOpaque), offset: 0, index: 0)
+        encoder.dispatchThreads(
+            MTLSize(width: destination.width, height: destination.height, depth: 1),
+            threadsPerThreadgroup: MTLSize(width: 8, height: 8, depth: 1)
+        )
+        encoder.endEncoding()
+    }
+
     private static let colorAdjustTileShaderSource = """
         #include <metal_stdlib>
         using namespace metal;
@@ -178,7 +322,9 @@ final class Renderer {
     func render(
         meshInstances: LowLevelMeshInstanceArray,
         texture: any MTLTexture,
-        commandBuffer: any MTLCommandBuffer
+        commandBuffer: any MTLCommandBuffer,
+        portalQuads: Set<Int> = [],
+        coplanarGroups: [[Int]] = []
     ) throws {
         guard let renderer else {
             commandBuffer.commit()
@@ -215,10 +361,21 @@ final class Renderer {
             indices: &span,
             configuration: .init(cameraPosition: renderer.cameras[0].position)
         )
+        Self.applyPaintOrder(of: coplanarGroups, to: &indices)
         let tilePipelineState: (any MTLRenderPipelineState)? =
             tonemapEnabled ? nil : try colorAdjustTilePipelineState(for: texture.pixelFormat, rasterSampleCount: rasterSampleCount)
+        let portalQuadDepthStencil = portalQuads.isEmpty ? nil : portalQuadDepthStencilState
         renderer.render(using: commandBuffer) { state in
+            var drawsPortalQuads = false
             for index in indices {
+                if let portalQuadDepthStencil, portalQuads.contains(index) != drawsPortalQuads {
+                    drawsPortalQuads.toggle()
+                    if drawsPortalQuads {
+                        state.encoder.setDepthStencilState(portalQuadDepthStencil)
+                    } else {
+                        state.reset()
+                    }
+                }
                 state.render(meshInstancesArrayIndex: 0, meshInstanceIndex: index)
             }
             if let tilePipelineState {
@@ -254,6 +411,34 @@ final class Renderer {
 
     func setFOV(_ fovYRadians: Float) {
         fovY = fovYRadians
+    }
+
+    private static func applyPaintOrder(of coplanarGroups: [[Int]], to indices: inout [Int]) {
+        guard !coplanarGroups.isEmpty else {
+            return
+        }
+
+        var groupForIndex: [Int: Int] = [:]
+        for (group, members) in coplanarGroups.enumerated() {
+            for member in members {
+                groupForIndex[member] = group
+            }
+        }
+
+        var positions = Array(repeating: [Int](), count: coplanarGroups.count)
+        for (position, index) in indices.enumerated() {
+            if let group = groupForIndex[index] {
+                positions[group].append(position)
+            }
+        }
+
+        for (group, members) in coplanarGroups.enumerated() where positions[group].count > 1 {
+            let present = Set(positions[group].map { indices[$0] })
+            let ordered = members.filter { present.contains($0) }
+            for (position, member) in zip(positions[group], ordered) {
+                indices[position] = member
+            }
+        }
     }
 }
 

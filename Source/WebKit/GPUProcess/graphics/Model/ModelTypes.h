@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA)
 
 #ifdef __cplusplus
+#include "ImageBufferSetIdentifier.h"
 #include <WebCore/SharedMemory.h>
 #include <WebCore/WebGPUCppAPI.h>
 #include <WebKit/Float3.h>
@@ -44,6 +45,8 @@
 typedef struct __IOSurface *IOSurfaceRef;
 
 static const long WKBridgeMaximumTextureDimension = 16384;
+
+#define WKBridgePortalChildQuadGraphName "WKPortalChildQuad"
 
 #ifdef __OBJC__
 
@@ -433,9 +436,10 @@ NS_SWIFT_SENDABLE
 
 @property (nonatomic, strong, readonly, nullable) WKBridgeMaterialGraph *materialGraph;
 @property (nonatomic, strong, readonly) WKBridgeTypedResourceId *identifier;
+@property (nonatomic, strong, readonly, nullable) WKBridgeTypedResourceId *portalContentTextureIdentifier;
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithMaterialGraph:(nullable WKBridgeMaterialGraph *)materialGraph identifier:(WKBridgeTypedResourceId *)identifier NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithMaterialGraph:(nullable WKBridgeMaterialGraph *)materialGraph identifier:(WKBridgeTypedResourceId *)identifier portalContentTextureIdentifier:(nullable WKBridgeTypedResourceId *)portalContentTextureIdentifier NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -501,6 +505,8 @@ NS_SWIFT_SENDABLE
 - (void)updateMesh:(NSArray<WKBridgeUpdateMesh *> *)descriptor forNode:(uint64_t)node;
 - (void)removeNode:(uint64_t)node;
 - (void)updateTexture:(NSArray<WKBridgeUpdateTexture *> *)descriptor;
+- (void)updatePortalContentTexture:(WKBridgeTypedResourceId *)identifier texture:(id<MTLTexture>)texture forceOpaque:(BOOL)forceOpaque;
+- (void)setPortalContentOrder:(NSArray<WKBridgeTypedResourceId *> *)identifiers;
 - (void)updateMaterial:(NSArray<WKBridgeUpdateMaterial *> *)descriptor;
 - (BOOL)processRemovals:(NSArray<WKBridgeTypedResourceId *> *)meshRemovals materialRemovals:(NSArray<WKBridgeTypedResourceId *> *)materialRemovals  textureRemovals:(NSArray<WKBridgeTypedResourceId *> *)textureRemovals;
 - (void)setTransform:(simd_float4x4)transform;
@@ -773,11 +779,28 @@ struct TypedResourceId {
     String value;
     String path;
     int64_t hashValue;
+
+    bool operator==(const TypedResourceId&) const = default;
 };
+
+#if ENABLE(SPATIAL_PORTAL)
+inline constexpr size_t maximumPortalContentSources = 256;
+
+struct PortalContentSource {
+    WebKit::ImageBufferSetIdentifier bufferSet;
+    TypedResourceId textureIdentifier;
+    bool isOpaque { false };
+
+    bool operator==(const PortalContentSource&) const = default;
+};
+#endif
 
 struct UpdateMaterialDescriptor {
     MaterialGraph materialGraph;
     TypedResourceId identifier;
+#if ENABLE(SPATIAL_PORTAL)
+    std::optional<TypedResourceId> portalContentTextureIdentifier;
+#endif
 };
 
 struct TextureLevelInfo {

@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ] -->
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-5; totalPixels=0-40000">
+<style>
+    body {
+        margin: 0;
+    }
+    .portal {
+        spatial: portal;
+        width: 400px;
+        height: 200px;
+        background-color: #ddd;
+    }
+    .child {
+        display: flex;
+        width: 360px;
+        height: 100px;
+        margin: 20px 0 0 20px;
+        transform-style: preserve-3d;
+    }
+    .child > div {
+        flex: 1;
+    }
+</style>
+</head>
+<body>
+<div class="portal">
+    <div class="child">
+        <div style="background-color: rgba(60, 140, 70, 0.5)"></div>
+        <div style="background-color: rgba(70, 70, 140, 0.25)"></div>
+        <div style="background-color: rgba(200, 120, 90, 0.3)"></div>
+        <div style="background-color: rgba(128, 128, 128, 0.75)"></div>
+        <div style="background-color: rgba(255, 255, 255, 0.5)"></div>
+        <div style="background-color: rgba(120, 90, 160, 0.9)"></div>
+    </div>
+</div>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../resources/spatial-portal-utils.js"></script>
+<script>
+window.testRunner?.waitUntilDone();
+
+window.onload = async () => {
+    await waitForHostedPromotedChildren(document.querySelector(".portal"), 1);
+    await waitForPortalSceneToDisplay();
+    window.testRunner?.notifyDone();
+};
+</script>
+</body>
+</html>

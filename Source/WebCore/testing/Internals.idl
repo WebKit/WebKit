@@ -1671,6 +1671,7 @@ enum LayerType {
     [Conditional=MODEL_PROCESS] Promise<DOMString> modelSceneGraphAsText(Element element, optional ModelSceneGraphAsTextOptions options = {});
 
     [Conditional=SPATIAL_PORTAL] unsigned long numberOfHostedModelsInSpatialPortal(Element element);
+    [Conditional=SPATIAL_PORTAL] unsigned long numberOfHostedPromotedChildrenInSpatialPortal(Element element);
     [Conditional=SPATIAL_PORTAL] boolean establishesSpatialPortal(Element element);
     [Conditional=SPATIAL_PORTAL] Element? spatialPortalAnchorForModel(HTMLModelElement model);
     [Conditional=SPATIAL_PORTAL] sequence<unrestricted double>? spatialPortalResolvedTransform(Element element);

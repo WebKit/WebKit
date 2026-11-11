@@ -40,6 +40,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -64,6 +65,8 @@ class PlaceholderModelPlayer;
 class PortalModelPlayerClient;
 class PortalVisibilityChangeClient;
 class RenderBox;
+class RenderLayer;
+class RenderLayerModelObject;
 class ResourceError;
 class SharedBuffer;
 class SpatialPortalEventListener;
@@ -112,6 +115,14 @@ public:
     const std::optional<TransformationMatrix>& resolvedPortalTransform() const { return m_resolvedPortalTransform; }
 
     void setPortalAction(PortalActionKind);
+
+    bool hasPortalContent() const { return !m_hostedModels.isEmpty() || !m_promotedChildren.isEmpty(); }
+    WEBCORE_EXPORT unsigned numberOfHostedPromotedChildren() const;
+    void updatePromotedChildren(Vector<PortalPromotedChild>&&);
+    bool hostsPromotedChild(NodeIdentifier) const;
+    void promotedChildDidPaint();
+    static std::optional<TransformationMatrix> transformForHostedLayer(RenderLayer&, RenderLayer& promotedChild, bool* isAnimating = nullptr);
+    static bool canHostPromotedChild(RenderLayerModelObject&);
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     void environmentMapStyleDidChange();
@@ -186,9 +197,14 @@ private:
     void observePortalVisibility();
     void stopObservingPortalVisibility();
     LayoutSize portalContentSize() const;
+    static TransformationMatrix transformForPromotedChild(RenderLayerModelObject&, bool* isAnimating = nullptr);
     void updateGestureHandling();
     void handleGestureEvent(Event&);
     void cancelGesture();
+    void pushPromotedChildrenToPlayer();
+    bool refreshPromotedChildTransforms();
+    void hostedPromotedChildrenDidChange();
+    Vector<NodeIdentifier> promotedChildRoots() const;
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
 
@@ -206,6 +222,7 @@ private:
     const WeakPtr<Element, WeakPtrImplWithEventTargetData> m_portalElement;
 
     HashMap<NodeIdentifier, HostedModel> m_hostedModels;
+    Vector<PortalPromotedChild> m_promotedChildren;
 
     WeakPtr<ModelPlayerProvider> m_modelPlayerProvider;
 #if ENABLE(MODEL_PROCESS)

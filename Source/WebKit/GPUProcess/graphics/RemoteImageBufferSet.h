@@ -37,7 +37,11 @@
 #include "StreamConnectionWorkQueue.h"
 #include "StreamMessageReceiver.h"
 #include <WebCore/ImageBuffer.h>
+#include <wtf/RetainPtr.h>
 
+#if HAVE(IOSURFACE)
+#include <IOSurface/IOSurfaceRef.h>
+#endif
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 #include <WebCore/DynamicContentScalingDisplayList.h>
 #endif
@@ -65,6 +69,15 @@ public:
     bool makeBuffersVolatile(OptionSet<BufferInSetType> requestedBuffers, OptionSet<BufferInSetType>& volatileBuffers, bool forcePurge);
 
     bool isPreparingForDisplay() const { return m_context.get(); }
+
+#if HAVE(IOSURFACE)
+    struct ExternalReadResult {
+        RetainPtr<IOSurfaceRef> surface;
+        uint64_t bufferIdentifier { 0 };
+        bool isBusy { false };
+    };
+    ExternalReadResult frontBufferSurfaceForExternalRead(const Vector<uint64_t>& alreadyMappedBuffers);
+#endif
 
 private:
     RemoteImageBufferSet(ImageBufferSetIdentifier, RemoteGraphicsContextIdentifier, RemoteRenderingBackend&);

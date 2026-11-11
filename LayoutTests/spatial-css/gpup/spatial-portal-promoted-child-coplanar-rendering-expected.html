@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ] -->
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+    }
+    .portal {
+        spatial: portal;
+        width: 400px;
+        height: 300px;
+        background-color: #ddd;
+    }
+    .card {
+        display: flex;
+        justify-content: space-between;
+        box-sizing: border-box;
+        width: 300px;
+        height: 200px;
+        margin: 50px 0 0 50px;
+        padding: 20px;
+        background-color: rgb(60, 140, 70);
+        transform: rotateY(25deg);
+        transform-style: preserve-3d;
+    }
+    .badge {
+        box-sizing: border-box;
+        width: 72px;
+        height: 72px;
+        border: 6px solid rgb(70, 70, 140);
+        background-color: rgb(200, 120, 90);
+    }
+</style>
+</head>
+<body>
+<div class="portal">
+    <div class="card"><div class="badge"></div><div class="badge"></div></div>
+</div>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../resources/spatial-portal-utils.js"></script>
+<script>
+window.testRunner?.waitUntilDone();
+
+window.onload = async () => {
+    await waitForHostedPromotedChildren(document.querySelector(".portal"), 1);
+    await waitForPortalSceneToDisplay();
+    window.testRunner?.notifyDone();
+};
+</script>
+</body>
+</html>

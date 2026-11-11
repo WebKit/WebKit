@@ -1,0 +1,67 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SpatialPortalEnabled=true ] -->
+<html>
+<head>
+<style>
+    .portal {
+        spatial: portal;
+    }
+    .container {
+        width: 300px;
+        height: 100px;
+    }
+    .box {
+        width: 100px;
+        height: 50px;
+        background-color: green;
+    }
+    .translate-z {
+        transform: translateZ(10px);
+    }
+    .rotate-2d {
+        transform: rotate(5deg);
+    }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.setRenderTreeDumpOptions(testRunner.RENDER_TREE_SHOW_COMPOSITED_LAYERS);
+        testRunner.waitUntilDone();
+    }
+
+    function renderingUpdate()
+    {
+        return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    }
+
+    window.onload = async () => {
+        await renderingUpdate();
+
+        document.getElementById("gains-3d-transform").classList.replace("rotate-2d", "translate-z");
+        document.getElementById("loses-3d-transform").classList.remove("translate-z");
+        document.getElementById("moved-into-wrapper").appendChild(document.getElementById("wrapped"));
+        await renderingUpdate();
+
+        document.getElementById("gains-portal").classList.add("portal");
+        document.getElementById("loses-portal").classList.remove("portal");
+        await renderingUpdate();
+
+        window.testRunner?.notifyDone();
+    };
+</script>
+</head>
+<body>
+<div class="portal container">
+    <div id="gains-3d-transform" class="box rotate-2d"></div>
+    <div id="loses-3d-transform" class="box translate-z"></div>
+</div>
+<div class="portal container">
+    <div id="wrapped" class="box translate-z"></div>
+    <div id="moved-into-wrapper"></div>
+</div>
+<div id="gains-portal" class="container">
+    <div class="box translate-z"></div>
+</div>
+<div id="loses-portal" class="portal container">
+    <div class="box translate-z"></div>
+</div>
+</body>
+</html>
