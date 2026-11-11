@@ -48,8 +48,6 @@ public:
     Path path() const;
     size_t approximateMemoryCost() const final { return m_path->approximateMemoryCost(); }
 
-    void pathDidChange();
-
     static void clearCache();
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPathElement, SVGGeometryElement>;
@@ -64,11 +62,6 @@ private:
     bool supportsMarkers() const final { return true; }
 
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
-
-    Node::NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
-    void removingSteps(RemovalType, ContainerNode&) final;
-
-    void invalidatePathDependencies();
 
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
     void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;

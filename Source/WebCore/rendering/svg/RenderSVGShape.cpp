@@ -44,6 +44,7 @@
 #include "RenderSVGShapeInlines.h"
 #include "RenderView.h"
 #include "SVGContainerLayout.h"
+#include "SVGGeometryElement.h"
 #include "SVGPaintServerHandlingInlines.h"
 #include "SVGPathFromElement.h"
 #include "SVGTransformComputation.h"
@@ -484,6 +485,16 @@ void RenderSVGShape::styleWillChange(Style::Difference diff, const Style::Comput
     }
 
     RenderSVGModelObject::styleWillChange(diff, newStyle);
+}
+
+void RenderSVGShape::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+{
+    RenderSVGModelObject::styleDidChange(diff, oldStyle);
+
+    if (!oldStyle || diff == Style::DifferenceResult::Layout) {
+        if (RefPtr geometryElement = dynamicDowncast<SVGGeometryElement>(graphicsElement()))
+            geometryElement->invalidatePathDependenciesForStyleChange();
+    }
 }
 
 bool RenderSVGShape::needsHasSVGTransformFlags() const
