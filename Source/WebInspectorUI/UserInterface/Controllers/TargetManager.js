@@ -58,6 +58,12 @@ WI.TargetManager = class TargetManager extends WI.Object
         return this.targets.filter((target) => target.type === WI.TargetType.Worker);
     }
 
+    // Under site isolation the page target's debugger never attaches, so it can never pause.
+    isDebuggerThreadTarget(target)
+    {
+        return target !== WI.pageTarget || !this.targets.some((target) => target instanceof WI.FrameTarget);
+    }
+
     get allTargets()
     {
         return Array.from(this._targets.values());

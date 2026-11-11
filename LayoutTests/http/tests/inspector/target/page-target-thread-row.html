@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=false ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Target.PageTargetThreadRow");
+
+    suite.addTestCase({
+        name: "Target.PageTargetThreadRow.ShownWithoutSiteIsolation",
+        description: "The page target is a debugger thread target when there are no frame targets, so the call stack sidebar shows a thread row for it.",
+        timeout: 30000,
+        async test() {
+            InspectorTest.expectThat(WI.targetManager.isDebuggerThreadTarget(WI.pageTarget), "The page target should be a debugger thread target.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that the page target stays a debugger thread target without site isolation, so the call stack sidebar keeps its thread row.</p>
+</body>
+</html>

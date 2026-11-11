@@ -1,0 +1,11 @@
+Tests that the page target is not a debugger thread target under site isolation, so the call stack sidebar omits its thread row.
+
+
+
+== Running test suite: SiteIsolation.Target.PageTargetThreadRow
+-- Running test case: SiteIsolation.Target.PageTargetThreadRow.HiddenUnderSiteIsolation
+PASS: Should find the cross-site frame's target.
+PASS: The page target should not be a debugger thread target.
+PASS: The main frame's frame target should be a debugger thread target.
+PASS: The cross-site frame's target should be a debugger thread target.
+

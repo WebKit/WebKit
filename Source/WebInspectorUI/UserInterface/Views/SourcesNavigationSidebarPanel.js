@@ -1140,6 +1140,19 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _addTarget(target)
     {
+        if (!WI.targetManager.isDebuggerThreadTarget(target))
+            return;
+
+        // The page target's row is added before the first frame target reveals site isolation.
+        if (target instanceof WI.FrameTarget && WI.pageTarget) {
+            let pageTargetTreeElement = this._findCallStackTargetTreeElement(WI.pageTarget);
+            if (pageTargetTreeElement) {
+                this._callStackTreeOutline.removeChild(pageTargetTreeElement);
+                if (this._mainTargetTreeElement === pageTargetTreeElement)
+                    this._mainTargetTreeElement = null;
+            }
+        }
+
         let treeElement = new WI.ThreadTreeElement(target);
         this._callStackTreeOutline.appendChild(treeElement);
 
