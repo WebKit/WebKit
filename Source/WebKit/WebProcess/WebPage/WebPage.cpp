@@ -2536,6 +2536,10 @@ void WebPage::close(CompletionHandler<void()>&& completionHandler)
     m_printContext = nullptr;
     if (RefPtr localFrame = m_mainFrame->coreLocalFrame())
         localFrame->loader().detachFromParent();
+    else {
+        for (Ref rootFrame : copyToVectorOf<Ref<LocalFrame>>(m_page->rootFrames()))
+            rootFrame->loader().detachFromParent();
+    }
 
     if (RefPtr provisionalFrame = m_mainFrame->provisionalFrame())
         provisionalFrame->loader().detachFromParent();
