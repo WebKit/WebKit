@@ -1,0 +1,68 @@
+Tests that DOM.highlightSelector highlights every match in a cross-site frame through its frame target.
+
+
+
+== Running test suite: SiteIsolation.DOM.HighlightSelectorFrameTarget
+-- Running test case: Setup
+PASS: Should find the cross-site frame target.
+PASS: Should find the same-site frame target.
+PASS: The two frames should be distinct targets.
+PASS: The cross-site frame should not be the page target.
+PASS: Should resolve a grid cell in the cross-site frame.
+PASS: The cross-site grid cell should belong to the cross-site frame target.
+PASS: Should resolve a grid cell in the same-site frame.
+PASS: The same-site grid cell should belong to the page target.
+PASS: Should resolve a grid cell in the main frame.
+
+-- Running test case: HookObservesFrameOverlay
+PASS: The cross-site frame should highlight one node.
+PASS: The page should not highlight anything.
+
+-- Running test case: HighlightsEveryMatch
+PASS: DOM.highlightSelector should be accepted by the frame target.
+PASS: The cross-site frame should highlight its six grid cells.
+PASS: The page should not highlight its own grid.
+
+-- Running test case: MatchesPseudoElements
+PASS: DOM.highlightSelector should be accepted by the frame target.
+PASS: The cross-site frame should highlight its one ::before pseudo-element.
+
+-- Running test case: AcceptsOwnFrameId
+PASS: DOM.highlightSelector should accept the frame target's own frameId.
+PASS: The cross-site frame should highlight its six grid cells.
+
+-- Running test case: RejectsOtherFrameIds
+PASS: Should reject the main frame's frameId.
+PASS: Should reject a malformed frameId.
+PASS: The cross-site frame should not highlight anything.
+
+-- Running test case: IgnoresInvalidSelector
+PASS: DOM.highlightSelector should accept a selector that does not parse.
+PASS: The cross-site frame should not highlight anything.
+
+-- Running test case: SameSiteControlUsesPageTarget
+PASS: DOM.highlightSelector should be accepted by the page target.
+PASS: The page should highlight the same-site frame's six grid cells.
+
+-- Running test case: StylesHoverRoutesToOwningTarget
+PASS: The cross-site frame should highlight its six grid cells.
+PASS: The page should not highlight anything.
+
+-- Running test case: StylesHoverClearsOtherTargets
+PASS: The page should highlight its grid cell.
+PASS: The page should clear its highlight.
+PASS: The cross-site frame should highlight its six grid cells.
+
+-- Running test case: SameSiteStylesHoverUsesPageTarget
+PASS: The page should highlight the same-site frame's six grid cells.
+PASS: The same-site frame's own overlay should not highlight anything.
+
+-- Running test case: NestedStylesHoverUsesOwnFrameTarget
+PASS: Should find the cross-site middle frame target.
+PASS: Should find the nested frame target.
+PASS: The nested frame should have its own target.
+PASS: The nested frame's list item should belong to the nested frame target.
+PASS: The nested frame should highlight its two list items.
+PASS: The middle frame should not highlight anything.
+PASS: The page should not highlight anything.
+
