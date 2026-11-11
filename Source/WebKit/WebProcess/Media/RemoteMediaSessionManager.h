@@ -96,6 +96,7 @@ private:
     void removeSession(WebCore::PlatformMediaSessionInterface&) final;
     void setCurrentSession(WebCore::PlatformMediaSessionInterface&) final;
     void sessionDidCompleteAdmission(WebCore::PlatformMediaSessionInterface&) final;
+    void sessionCanProduceAudioChangedWhilePlaying(WebCore::PlatformMediaSessionInterface&) final;
     void updateSessionState() final;
     void sessionStateChanged(WebCore::PlatformMediaSessionInterface&) final;
 
@@ -119,6 +120,7 @@ private:
     WeakPtr<WebPage> m_webPage;
     WebCore::PageIdentifier m_webPageID;
     HashMap<WebCore::MediaSessionIdentifier, UniqueRef<RemoteMediaSessionState>> m_cachedSessionState;
+    HashMap<WebCore::MediaSessionIdentifier, WebCore::PlatformMediaSessionMediaType> m_mediaTypeNotifiedToUIProcess;
 };
 
 #if !RELEASE_LOG_DISABLED

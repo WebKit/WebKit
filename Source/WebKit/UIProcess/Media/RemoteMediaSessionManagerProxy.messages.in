@@ -41,6 +41,8 @@ messages -> RemoteMediaSessionManagerProxy {
 
     void MediaSessionWillBeginPlayback(struct WebKit::RemoteMediaSessionState session)
 
+    void EnforceConcurrentPlaybackRestriction(struct WebKit::RemoteMediaSessionState session)
+
 #if PLATFORM(COCOA)
     void RemoteAudioHardwareDidBecomeActive();
     void RemoteAudioHardwareDidBecomeInactive();

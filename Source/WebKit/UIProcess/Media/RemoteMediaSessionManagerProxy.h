@@ -110,6 +110,7 @@ private:
     void updateMediaSessionStates(IPC::Connection&, WebCore::PageIdentifier, Vector<RemoteMediaSessionState>&&, uint64_t audioCaptureSourceCount);
     void mediaSessionStateChanged(IPC::Connection&, WebKit::RemoteMediaSessionState&&);
     void mediaSessionWillBeginPlayback(IPC::Connection&, RemoteMediaSessionState&&);
+    void enforceConcurrentPlaybackRestriction(IPC::Connection&, RemoteMediaSessionState&&);
 
     // The audio session category is computed by each content process for its own sessions; the GPU
     // process reconciles them. Nothing is computed here.

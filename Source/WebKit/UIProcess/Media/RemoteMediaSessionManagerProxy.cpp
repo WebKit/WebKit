@@ -282,6 +282,12 @@ void RemoteMediaSessionManagerProxy::mediaSessionWillBeginPlayback(IPC::Connecti
         REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionWillBeginPlayback(*session);
 }
 
+void RemoteMediaSessionManagerProxy::enforceConcurrentPlaybackRestriction(IPC::Connection& connection, RemoteMediaSessionState&& state)
+{
+    if (RefPtr session = findAndUpdateSession(connection, state))
+        REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::enforceConcurrentPlaybackRestriction(*session);
+}
+
 void RemoteMediaSessionManagerProxy::addMediaSessionRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)
 {
     REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::addRestriction(type, restrictions);

@@ -94,6 +94,8 @@ void RemoteMediaSessionManager::removeSession(WebCore::PlatformMediaSessionInter
 {
     REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::removeSession(session);
 
+    m_mediaTypeNotifiedToUIProcess.remove(session.mediaSessionIdentifier());
+
     if (!m_cachedSessionState.contains(session.mediaSessionIdentifier()))
         return;
 
@@ -119,7 +121,21 @@ void RemoteMediaSessionManager::sessionDidCompleteAdmission(WebCore::PlatformMed
     // the concurrent playback restriction across every process's sessions. The snapshot is taken now,
     // after commitPlaybackAdmission() has already run, so it carries State::Playing and
     // preparingToPlay() == false.
+    m_mediaTypeNotifiedToUIProcess.set(session.mediaSessionIdentifier(), session.mediaType());
     send(Messages::RemoteMediaSessionManagerProxy::MediaSessionWillBeginPlayback(currentSessionState(session)));
+}
+
+void RemoteMediaSessionManager::sessionCanProduceAudioChangedWhilePlaying(WebCore::PlatformMediaSessionInterface& session)
+{
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionCanProduceAudioChangedWhilePlaying(session);
+
+    auto mediaType = session.mediaType();
+    auto previousMediaType = m_mediaTypeNotifiedToUIProcess.getOptional(session.mediaSessionIdentifier());
+    m_mediaTypeNotifiedToUIProcess.set(session.mediaSessionIdentifier(), mediaType);
+    if (previousMediaType == mediaType || !restrictions(mediaType).contains(WebCore::MediaSessionRestriction::ConcurrentPlaybackNotPermitted))
+        return;
+
+    send(Messages::RemoteMediaSessionManagerProxy::EnforceConcurrentPlaybackRestriction(currentSessionState(session)));
 }
 
 void RemoteMediaSessionManager::addRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)

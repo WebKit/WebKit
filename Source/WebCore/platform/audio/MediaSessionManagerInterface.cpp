@@ -637,6 +637,11 @@ void MediaSessionManagerInterface::enforceConcurrentPlaybackRestriction(Platform
 #endif
 }
 
+void MediaSessionManagerInterface::sessionCanProduceAudioChangedWhilePlaying(PlatformMediaSessionInterface& session)
+{
+    enforceConcurrentPlaybackRestriction(session);
+}
+
 void MediaSessionManagerInterface::sessionWillEndPlayback(PlatformMediaSessionInterface& pausingSession, DelayCallingUpdateNowPlaying)
 {
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)

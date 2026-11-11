@@ -75,7 +75,6 @@ webkit.org/b/326129 [ ios ] TestWebKitAPI.ResourceLoadStatistics.UserGestureLogs
 webkit.org/b/322663 [ ios ] TestWebKitAPI.SafeBrowsing.DeferredModalsClearedOnNavigation [ Pass Failure ]
 webkit.org/b/326131 [ ios ] TestWebKitAPI.UnifiedPDF.BackgroundAdaptsToColorScheme [ Pass Failure ]
 webkit.org/b/269885 [ ios release ] TestWebKitAPI.WebAuthenticationPanel.LAError [ Pass Timeout ]
-webkit.org/b/326122 [ ios release siteisolation ] TestWebKitAPI.WebKit.InterruptionBetweenSameProcessPages [ Pass Failure ]
 webkit.org/b/328304 [ ios ] TestWebKitAPI.WebKit.SystemPreviewCanonicalWebPageURLIsPageURL [ Failure ]
 
 # webkit.org/b/318742 [ iOS DEBUG ] 3x TestWebKitAPI.WKWebExtensionAPICookies.* (api-tests) are constant crashes/timeout.

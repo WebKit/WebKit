@@ -142,6 +142,8 @@ public:
     // restricted mediaType (e.g., Video → VideoAudio after audio metadata loads).
     void enforceConcurrentPlaybackRestriction(PlatformMediaSessionInterface& newSession);
 
+    virtual void sessionCanProduceAudioChangedWhilePlaying(PlatformMediaSessionInterface&);
+
     virtual void configureWirelessTargetMonitoring() { }
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
     virtual void ensureMediaDeviceRouteControllerMonitoring() { }
