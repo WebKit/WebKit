@@ -1131,19 +1131,48 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
     auto contentBlockSize = std::optional<LayoutUnit> { };
     auto legendMarginBefore = LayoutUnit { };
     auto isLaidOut = false;
+    auto* placedFloats = m_blockLayoutState.placedFloats();
+    auto isAfterFloats = placedFloats && !placedFloats->isEmpty();
     if (!collapsesMarginsOnceLaidOut) {
         auto marginsBeforeLogicalBottom = m_blockLayoutState.marginCollapse().collapsedLogicalBottomAtContent();
         m_blockLayoutState.marginCollapse().startBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last(), rootState.geometry.marginBefore());
-        if (auto* placedFloats = m_blockLayoutState.placedFloats(); placedFloats && !placedFloats->isEmpty()) {
+        if (isAfterFloats) {
             contentBlockSize = placeBesideFloats(box, rootState, marginsBeforeLogicalBottom, layoutContent);
             isLaidOut = true;
         }
         resolveBorderBoxLogicalTops(rootState);
+    } else if (isAfterFloats) {
+        // Like RenderBlockFlow::layoutBlockChild, it is laid out beside the floats where the margins of its style put it first, then its margins
+        // take what that layout adds to them and it goes beside the floats from where they put it, laid out again for the space there.
+        auto initialBlockLayoutState = m_blockLayoutState;
+        auto initialRootState = rootState;
+        auto layoutContentKeepingLegendMargin = [&](ContainingBlockState& state, std::optional<LayoutUnit> borderBoxInlineSize) {
+            auto contentLayoutResult = layoutContent(state, borderBoxInlineSize);
+            legendMarginBefore = contentLayoutResult.second;
+            return contentLayoutResult;
+        };
+        m_blockLayoutState.marginCollapse().startBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last(), rootState.geometry.marginBefore());
+        placeBesideFloats(box, rootState, m_blockLayoutState.marginCollapse().collapsedLogicalBottomAtContent(), layoutContentKeepingLegendMargin);
+        auto marginBefore = initialRootState.geometry.marginBefore();
+        auto marginAfter = initialRootState.geometry.marginAfter();
+        if (stepSize) {
+            auto halfExtraSpace = BlockStepSizing::computeExtraSpace(*stepSize, marginBefore + rootState.geometry.borderBoxHeight() + marginAfter) / 2;
+            marginBefore += halfExtraSpace;
+            marginAfter += halfExtraSpace;
+        }
+        m_blockLayoutState = WTF::move(initialBlockLayoutState);
+        rootState = WTF::move(initialRootState);
+        auto marginsBeforeLogicalBottom = m_blockLayoutState.marginCollapse().collapsedLogicalBottomAtContent();
+        m_blockLayoutState.marginCollapse().startBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last(), marginBefore + legendMarginBefore);
+        contentBlockSize = placeBesideFloats(box, rootState, marginsBeforeLogicalBottom, layoutContent);
+        rootState.geometry.setVerticalMargin({ marginBefore, marginAfter });
+        resolveBorderBoxLogicalTops(rootState);
+        isLaidOut = true;
     }
     if (!isLaidOut)
         std::tie(contentBlockSize, legendMarginBefore) = layoutContent(rootState, { });
 
-    if (stepSize) {
+    if (stepSize && !isAfterFloats) {
         auto& geometry = rootState.geometry;
         if (!rootState.isLaidOutThroughRenderTree)
             computeBlockSize(box, contentBlockSize.value_or(0_lu), m_blockLayoutState.containingBlockStates().last(), geometry);
@@ -1151,7 +1180,7 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
         geometry.setVerticalMargin({ geometry.marginBefore() + halfExtraSpace, geometry.marginAfter() + halfExtraSpace });
         m_blockLayoutState.marginCollapse().startBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last(), geometry.marginBefore());
         resolveBorderBoxLogicalTops(rootState);
-    } else if (collapsesMarginsOnceLaidOut) {
+    } else if (collapsesMarginsOnceLaidOut && !isAfterFloats) {
         m_blockLayoutState.marginCollapse().startBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last(), rootState.geometry.marginBefore() + legendMarginBefore);
         resolveBorderBoxLogicalTops(rootState);
     }

@@ -603,13 +603,10 @@ static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox&
 
 // A box that avoids floats (RenderBox::avoidsFloats), which the block formatting context places beside the floats before it or below them
 // (BlockFormattingContext::placeBesideFloats).
-// FIXME: One with margin-trim, which discards margins that clearance separates, a fieldset or a box with a block step, whose margins collapse
-// once laid out, the -webkit- values of text-align, and a form control the block formatting context lays out as a block container, like a
-// checkbox with display: block.
+// FIXME: One with margin-trim, which discards margins that clearance separates, the -webkit- values of text-align, and a form control the block
+// formatting context lays out as a block container, like an output with display: block.
 static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer, bool isLaidOutThroughRenderTree)
 {
-    if (box.isFieldset() || !box.style().blockStepSize().isNone())
-        return BlockAvoidanceReason::ContentHasFloat;
     if (!isLaidOutThroughRenderTree && !Layout::BlockFormattingUtils::establishesIndependentFormattingContext(box))
         return BlockAvoidanceReason::ContentHasFloat;
     CheckedRef style = box.style();

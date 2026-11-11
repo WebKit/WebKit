@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 220px; border: 1px solid; margin: 0 2px 4px 0; }
+.left { float: left; width: 60px; height: 50px; background: orange; }
+</style>
+<div class="root"><div class="left"></div><fieldset><legend id="legend">short</legend>fieldset content</fieldset></div>
+<div class="root"><div class="left" id="float"></div><div style="block-step-size: 30px; overflow: hidden; background: lightblue"><span id="text">step</span></div><div>after</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("legend").style.fontSize = "20px";
+document.getElementById("float").style.width = "120px";
+document.getElementById("text").firstChild.data = "step box text that now wraps onto more lines";
+</script>
