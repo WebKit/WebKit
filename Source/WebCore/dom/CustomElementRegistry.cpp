@@ -220,7 +220,6 @@ ExceptionOr<void> CustomElementRegistry::initialize(Node& root)
         document->clearUsesNullCustomElementRegistry();
         document->setCustomElementRegistry(*this);
     } else if (RefPtr shadowRoot = dynamicDowncast<ShadowRoot>(*containerRoot); shadowRoot && shadowRoot->usesNullCustomElementRegistry()) {
-        ASSERT(shadowRoot->hasScopedCustomElementRegistry());
         shadowRoot->clearUsesNullCustomElementRegistry();
         shadowRoot->setCustomElementRegistry(*this);
         if (shadowRoot->isConnected())

@@ -2196,18 +2196,18 @@ NODELETE static ALWAYS_INLINE bool isDocumentEligibleForFastAdoption(Document& o
         && oldDocument.inQuirksMode() == newDocument.inQuirksMode();
 }
 
-static ALWAYS_INLINE void adoptCustomElementRegistryIfNotExplicitlySet(ShadowRoot& shadowRoot, Document& newDocument)
+static ALWAYS_INLINE void adoptCustomElementRegistryIfNotKeptNull(ShadowRoot& shadowRoot, Document& newDocument)
 {
-    if (shadowRoot.hasScopedCustomElementRegistry() || !shadowRoot.usesNullCustomElementRegistry() || newDocument.usesNullCustomElementRegistry()) [[likely]]
+    if (shadowRoot.keepsCustomElementRegistryNull() || !shadowRoot.usesNullCustomElementRegistry() || !newDocument.effectiveGlobalCustomElementRegistry()) [[likely]]
         return;
     shadowRoot.clearUsesNullCustomElementRegistry();
-    shadowRoot.setCustomElementRegistry(newDocument.customElementRegistry());
+    shadowRoot.setCustomElementRegistry(newDocument.effectiveGlobalCustomElementRegistry());
 }
 
 inline unsigned Node::moveShadowTreeToNewDocumentFastCase(ShadowRoot& shadowRoot, Document& oldDocument, Document& newDocument)
 {
     ASSERT(isDocumentEligibleForFastAdoption(oldDocument, newDocument));
-    adoptCustomElementRegistryIfNotExplicitlySet(shadowRoot, newDocument);
+    adoptCustomElementRegistryIfNotKeptNull(shadowRoot, newDocument);
     return traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) -> unsigned {
         if (&node.treeScope() != static_cast<TreeScope*>(&shadowRoot)) {
             RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.document() == &newDocument);
@@ -2224,7 +2224,7 @@ inline unsigned Node::moveShadowTreeToNewDocumentFastCase(ShadowRoot& shadowRoot
 
 inline void Node::moveShadowTreeToNewDocumentSlowCase(ShadowRoot& shadowRoot, Document& oldDocument, Document& newDocument)
 {
-    adoptCustomElementRegistryIfNotExplicitlySet(shadowRoot, newDocument);
+    adoptCustomElementRegistryIfNotKeptNull(shadowRoot, newDocument);
     traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) -> unsigned {
         if (&node.treeScope() != static_cast<TreeScope*>(&shadowRoot)) {
             RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.document() == &newDocument);
@@ -2329,7 +2329,7 @@ void Node::moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDoc
 
     ensureWrapperForAdoptedNodeWithForeignGlobalObjectIfNeeded(*this, oldDocument, newDocument);
 
-    if (usesNullCustomElementRegistry() && !newDocument.usesNullCustomElementRegistry()) [[unlikely]]
+    if (usesNullCustomElementRegistry() && !newDocument.usesNullCustomElementRegistry() && !isShadowRoot()) [[unlikely]]
         clearUsesNullCustomElementRegistry();
 
     if (auto* newRegistry = newDocument.customElementRegistry(); newRegistry && newRegistry->isScoped()) [[unlikely]]
@@ -2353,7 +2353,7 @@ void Node::moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDoc
     newDocument.incrementReferencingNodeCount();
     oldDocument.decrementReferencingNodeCount();
 
-    if (usesNullCustomElementRegistry() && !newDocument.usesNullCustomElementRegistry()) [[unlikely]]
+    if (usesNullCustomElementRegistry() && !newDocument.usesNullCustomElementRegistry() && !isShadowRoot()) [[unlikely]]
         clearUsesNullCustomElementRegistry();
 
     if (auto* newRegistry = newDocument.customElementRegistry(); newRegistry && newRegistry->isScoped()) [[unlikely]]

@@ -760,9 +760,13 @@ void Element::cloneShadowTreeIfPossible(Element& newHost) const
         if (RefPtr registry = oldShadowRoot->customElementRegistry()) {
             if (!registry->isScoped())
                 registry = newHost.document().effectiveGlobalCustomElementRegistry();
-            clonedShadowRoot->setCustomElementRegistry(WTF::move(registry));
+            if (registry)
+                clonedShadowRoot->setCustomElementRegistry(WTF::move(registry));
+            else
+                clonedShadowRoot->setUsesNullCustomElementRegistry();
         }
     }
+    clonedShadowRoot->setKeepsCustomElementRegistryNull(oldShadowRoot->keepsCustomElementRegistryNull());
     newHost.addShadowRoot(clonedShadowRoot.copyRef());
     oldShadowRoot->cloneChildNodes(protect(newHost.document()), nullptr, clonedShadowRoot);
 }
@@ -3674,6 +3678,7 @@ ExceptionOr<ShadowRoot&> Element::attachDeclarativeShadow(ShadowRootMode mode, S
     Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
     shadowRoot->setIsDeclarativeShadowRoot(true);
     shadowRoot->setIsAvailableToElementInternals(true);
+    shadowRoot->setKeepsCustomElementRegistryNull(registryKind == CustomElementRegistryKind::Null);
     return shadowRoot.get();
 }
 

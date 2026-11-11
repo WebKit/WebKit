@@ -104,6 +104,8 @@ public:
     void setHost(WeakPtr<Element, WeakPtrImplWithEventTargetData>&& host) { m_host = WTF::move(host); }
 
     bool hasScopedCustomElementRegistry() const { return m_hasScopedCustomElementRegistry; }
+    bool keepsCustomElementRegistryNull() const { return m_keepsCustomElementRegistryNull; }
+    void setKeepsCustomElementRegistryNull(bool flag) { m_keepsCustomElementRegistryNull = flag; }
     CustomElementRegistry* registryForBindings() const;
 
     ExceptionOr<void> setHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&&);
@@ -179,6 +181,7 @@ private:
     bool m_availableToElementInternals : 1 { false };
     bool m_isDeclarativeShadowRoot : 1 { false };
     bool m_hasScopedCustomElementRegistry : 1 { false };
+    bool m_keepsCustomElementRegistryNull : 1 { false };
     ShadowRootMode m_mode { ShadowRootMode::UserAgent };
     SlotAssignmentMode m_slotAssignmentMode { SlotAssignmentMode::Named };
 

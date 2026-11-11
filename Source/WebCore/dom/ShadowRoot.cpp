@@ -60,7 +60,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ShadowRoot);
 
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
-    uint8_t flagsAndModes[3];
+    uint8_t flagsAndModes[4];
     WeakPtr<Element, WeakPtrImplWithEventTargetData> host;
     void* styleSheetList;
     void* styleScope;
@@ -207,8 +207,11 @@ void ShadowRoot::moveShadowRootToNewDocument(Document& oldDocument, Document& ne
     m_styleScope = makeUnique<Style::Scope>(*this);
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&m_styleScope->document() == &newDocument);
 
-    if (customElementRegistry() && !customElementRegistry()->isScoped())
+    if (customElementRegistry() && !customElementRegistry()->isScoped()) {
         setCustomElementRegistry(newDocument.effectiveGlobalCustomElementRegistry());
+        if (!customElementRegistry())
+            setUsesNullCustomElementRegistry();
+    }
 }
 
 StyleSheetList& ShadowRoot::styleSheets()
