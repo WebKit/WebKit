@@ -106,7 +106,7 @@ private:
 
     Expected<PageCount, GrowFailReason> growShared(VM&, PageCount);
 
-    Ref<BufferMemoryHandle> m_handle;
+    const Ref<BufferMemoryHandle> m_handle;
     RefPtr<SharedArrayBufferContents> m_shared;
     WTF::Function<void(GrowSuccess, PageCount, PageCount)> m_growSuccessCallback;
     AddressType m_addressType;

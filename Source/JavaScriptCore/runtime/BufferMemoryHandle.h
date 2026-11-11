@@ -163,9 +163,10 @@ public:
 
 #if ENABLE(WEBASSEMBLY)
     const ThreadSafeWeakHashSet<Wasm::InstanceAnchor>& anchors(const AbstractLocker&) const LIFETIME_BOUND { return m_anchors; }
-    void transferAnchors(BufferMemoryHandle& newHandle);
     void registerInstance(JSWebAssemblyInstance&);
 #endif
+
+    void replaceAllocatedMemory(void* newMemory, size_t newSize);
 
 private:
     using CagedMemory = CagedPtr<Gigacage::Primitive, void>;

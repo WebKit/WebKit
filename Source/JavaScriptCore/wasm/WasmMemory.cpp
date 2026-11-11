@@ -345,13 +345,13 @@ Expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
         RELEASE_ASSERT(maximum().bytes() != 0);
 
         void* newMemory = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, desiredSize);
-        if (!newMemory)
+        if (!newMemory) {
+            BufferMemoryManager::singleton().freePhysicalBytes(desiredSize);
             return makeUnexpected(GrowFailReason::OutOfMemory);
+        }
 
         memcpy(newMemory, basePointer(), size());
-        auto newHandle = adoptRef(*new BufferMemoryHandle(newMemory, desiredSize, desiredSize, initial(), maximum(), sharingMode(), MemoryMode::BoundsChecking));
-        m_handle->transferAnchors(newHandle.get());
-        m_handle = WTF::move(newHandle);
+        m_handle->replaceAllocatedMemory(newMemory, desiredSize);
 
         ASSERT(basePointer() == newMemory);
         return success();

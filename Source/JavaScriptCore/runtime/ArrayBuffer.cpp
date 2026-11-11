@@ -444,12 +444,12 @@ void ArrayBuffer::makeWasmMemory()
     ASSERT(!isDetachable());
 }
 
-void ArrayBuffer::refreshAfterWasmMemoryGrow(Wasm::Memory* memory)
+void ArrayBuffer::refreshAfterWasmMemoryGrow()
 {
     ASSERT(isWasmMemory());
 
     void* oldData = m_contents.data();
-    m_contents.refreshAfterWasmMemoryGrow(memory);
+    m_contents.refreshAfterWasmMemoryGrow();
     void* newData = m_contents.data();
     if (newData == oldData)
         return;
@@ -742,17 +742,12 @@ std::optional<ArrayBufferContents> ArrayBufferContents::fromSpan(std::span<const
     return ArrayBufferContents { buffer, data.size_bytes(), std::nullopt, ArrayBuffer::primitiveGigacageDestructor() };
 }
 
-void ArrayBufferContents::refreshAfterWasmMemoryGrow(Wasm::Memory* memory)
+void ArrayBufferContents::refreshAfterWasmMemoryGrow()
 {
-#if ENABLE(WEBASSEMBLY)
     ASSERT(isResizableNonShared());
-    // If the memory is BoundChecking, the memory's handle is replaced with a different one when it grows.
-    m_memoryHandle = memory->handle();
-    m_data = memory->basePointer();
+    // A BoundsChecking memory handle's allocated memory block is replaced on grow.
+    m_data = m_memoryHandle->memory();
     m_sizeInBytes = m_memoryHandle->size();
-#else
-    UNUSED_PARAM(memory);
-#endif
 }
 
 

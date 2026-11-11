@@ -241,6 +241,13 @@ void* BufferMemoryHandle::nullBasePointer()
     return result;
 }
 
+static void freeVirtualPagesUnlessNullBasePointer(void* memory, size_t size)
+{
+    if (!size && memory == BufferMemoryHandle::nullBasePointer())
+        return;
+    Gigacage::freeVirtualPages(Gigacage::Primitive, memory, size);
+}
+
 BufferMemoryHandle::~BufferMemoryHandle()
 {
     if (m_memory) {
@@ -258,9 +265,7 @@ BufferMemoryHandle::~BufferMemoryHandle()
         case MemoryMode::BoundsChecking: {
             switch (m_sharingMode) {
             case MemorySharingMode::Default: {
-                if (memory == nullBasePointer() && !m_size)
-                    return;
-                Gigacage::freeVirtualPages(Gigacage::Primitive, memory, m_size);
+                freeVirtualPagesUnlessNullBasePointer(memory, m_size);
                 break;
             }
             case MemorySharingMode::Shared: {
@@ -281,6 +286,24 @@ BufferMemoryHandle::~BufferMemoryHandle()
     }
 }
 
+void BufferMemoryHandle::replaceAllocatedMemory(void* newMemory, size_t newSize)
+{
+    RELEASE_ASSERT(m_sharingMode == MemorySharingMode::Default);
+    RELEASE_ASSERT(m_mode == MemoryMode::BoundsChecking);
+    ASSERT(newMemory);
+
+    void* oldMemory = memory();
+    size_t oldSize = size();
+    ASSERT(newSize >= oldSize);
+
+    m_memory = CagedMemory(newMemory);
+    m_mappedCapacity = newSize;
+    updateSize(newSize);
+
+    BufferMemoryManager::singleton().freePhysicalBytes(oldSize);
+    freeVirtualPagesUnlessNullBasePointer(oldMemory, oldSize);
+}
+
 // FIXME: ARM64E clang has a bug and inlining this function makes optimizer run forever.
 // For now, putting NEVER_INLINE to suppress inlining of this.
 NEVER_INLINE void* BufferMemoryHandle::memory() const
@@ -290,13 +313,6 @@ NEVER_INLINE void* BufferMemoryHandle::memory() const
 }
 
 #if ENABLE(WEBASSEMBLY)
-void BufferMemoryHandle::transferAnchors(BufferMemoryHandle& newHandle)
-{
-    RELEASE_ASSERT(sharingMode() == MemorySharingMode::Default); // This function should be usable only when this handle is not shared with the other thread.
-    std::scoped_lock locker(m_lock, newHandle.m_lock); // Locks are automatically ordered.
-    newHandle.m_anchors = std::exchange(m_anchors, { });
-}
-
 void BufferMemoryHandle::registerInstance(JSWebAssemblyInstance& instance)
 {
     Locker locker { m_lock };
