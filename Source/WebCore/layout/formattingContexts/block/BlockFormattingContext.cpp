@@ -176,7 +176,8 @@ void BlockFormattingContext::layoutBlockItems(const BlockItemList& blockItems, B
     for (size_t index = 0; index < blockItems.size(); ++index) {
         auto& blockItem = blockItems[index];
         CheckedRef box = blockItem.renderer();
-        auto isBlockLevelBoxStart = blockItem.type() == BlockItem::Type::BlockContainerStart || blockItem.type() == BlockItem::Type::IndependentFormattingContextRoot;
+        // So are the floats among them, which the inline formatting context hides in inline content.
+        auto isBlockLevelBoxStart = blockItem.type() == BlockItem::Type::BlockContainerStart || blockItem.type() == BlockItem::Type::IndependentFormattingContextRoot || blockItem.type() == BlockItem::Type::Float;
         if (isBlockLevelBoxStart && isAfterClampPoint()) {
             // Neither it nor anything in it is laid out (LineClampUpdater::skipLayoutForForcedHidden).
             result.invisibleBoxes.append(box);
@@ -595,6 +596,14 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
     }
     auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(inlineContentRoot, constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.replacedElementAvailableBlockSize, orthogonalFlowAvailableInlineSpace(blockContainerState), blockContainerState.relayoutChildren || m_isLayingOutWithResolvedBorderBoxLogicalTops, m_blockLayoutState, intrudingFloats, *this, result);
     addInlineContentFloats(inlineContentLayoutResult.floats);
+    // The floats of a line-clamp container are clipped to its block-end content edge, those the inline formatting context hid after the
+    // clamp point included.
+    if (auto lineClamp = m_blockLayoutState.lineClamp(); lineClamp && lineClamp->shouldDiscardOverflow) {
+        for (auto& floatItem : inlineContentLayoutResult.floats) {
+            if (CheckedPtr floatBox = floatItem.layoutBox())
+                LayoutIntegration::BlockIntegrationUtils::setFloatClippedByLineClamp(downcast<RenderBox>(*floatBox->rendererForIntegration()), true);
+        }
+    }
     // The content takes its lines off the line-clamp budget (LineClampUpdater).
     if (auto lineClamp = m_blockLayoutState.lineClamp()) {
         lineClamp->maximumLines -= std::min(lineClamp->maximumLines, inlineContentLayoutResult.lineCount);
@@ -1193,6 +1202,9 @@ LayoutUnit BlockFormattingContext::layoutIndependentFormattingContextThroughRend
 void BlockFormattingContext::handleFloat(const RenderBox& box, BlockLayoutResult& result)
 {
     ASSERT(m_blockLayoutState.containingBlockStates().last().blockContainer.ptr() == box.parent());
+    // A float before the clamp point of a line-clamp container is clipped to its block-end content edge (css-overflow-4 §5.3.1).
+    auto lineClamp = m_blockLayoutState.lineClamp();
+    LayoutIntegration::BlockIntegrationUtils::setFloatClippedByLineClamp(box, lineClamp && lineClamp->shouldDiscardOverflow);
     // Its own formatting context lays it out at its shrink-to-fit inline size (CSS 2.2 §10.3.5).
     auto boxState = containingBlockStateAtBlockStart(box);
     layoutIndependentFormattingContextThroughRenderTree(box, boxState);

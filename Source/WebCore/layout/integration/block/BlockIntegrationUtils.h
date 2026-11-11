@@ -171,6 +171,7 @@ public:
     static bool isAnonymousBlockWithoutContentfulFirstLine(const RenderBlockFlow&);
     // A box that followed the clamp point of a line-clamp container the last time it was laid out, and which is visible again.
     static void showBoxHiddenByLineClamp(const RenderBox&);
+    static void setFloatClippedByLineClamp(const RenderBox&, bool);
     // A table, a flex or grid container, or a block formatting context root whose content the block formatting context cannot lay out (canUseForNestedBlockLayout).
     static bool laysOutThroughRenderTree(const RenderBox&);
 
