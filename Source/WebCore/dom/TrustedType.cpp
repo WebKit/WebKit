@@ -33,13 +33,10 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSTrustedScript.h"
 #include "LocalDOMWindow.h"
-#include "MathMLNames.h"
-#include "SVGNames.h"
 #include "TrustedTypePolicy.h"
 #include "TrustedTypePolicyFactory.h"
 #include "WindowOrWorkerGlobalScopeTrustedTypes.h"
 #include "WorkerGlobalScope.h"
-#include "XLinkNames.h"
 #include <JavaScriptCore/ArgList.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
@@ -235,32 +232,42 @@ ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExe
 
 AttributeTypeAndSink trustedTypeForAttribute(const String& elementName, const String& attributeName, const String& elementNamespace, const String& attributeNamespace)
 {
+    // TrustedTypePolicyFactory is Exposed=(Window,Worker), so this runs on worker threads too. It
+    // must therefore not use AtomStrings, QualifiedNames or the HTMLNames / SVGNames / MathMLNames
+    // globals: atom string tables and qualified name caches are per-thread and compare by pointer
+    // identity, and the generated name globals are main-thread-only. Compare by content instead.
+    static constexpr auto xhtmlNamespace = "http://www.w3.org/1999/xhtml"_s;
+    static constexpr auto svgNamespace = "http://www.w3.org/2000/svg"_s;
+    static constexpr auto mathmlNamespace = "http://www.w3.org/1998/Math/MathML"_s;
+    static constexpr auto xlinkNamespace = "http://www.w3.org/1999/xlink"_s;
+
     AttributeTypeAndSink returnValues;
     auto localName = elementName.convertToASCIILowercase();
 
-    AtomString elementNS = elementNamespace.isEmpty() ? HTMLNames::xhtmlNamespaceURI : AtomString(elementNamespace);
-    AtomString attributeNS = attributeNamespace.isEmpty() ? nullAtom() : AtomString(attributeNamespace);
+    StringView elementNS = elementNamespace.isEmpty() ? xhtmlNamespace : StringView(elementNamespace);
+    bool hasNoAttributeNamespace = attributeNamespace.isEmpty();
 
-    QualifiedName element(nullAtom(), AtomString(localName), elementNS);
-    QualifiedName attribute(nullAtom(), AtomString(attributeName), attributeNS);
-
-    if (attributeNS.isNull() && !attributeName.isNull() && (elementNS == HTMLNames::xhtmlNamespaceURI || elementNS == SVGNames::svgNamespaceURI || elementNS == MathMLNames::mathmlNamespaceURI)) {
-        if (isEventHandlerAttribute(attribute)) {
+    if (hasNoAttributeNamespace && !attributeName.isNull() && (elementNS == xhtmlNamespace || elementNS == svgNamespace || elementNS == mathmlNamespace)) {
+        if (attributeName.startsWith("on"_s) && isEventHandlerAttributeName(attributeName)) {
             returnValues.sink = makeString("Element "_s, attributeName);
             returnValues.attributeType = trustedTypeToString(TrustedType::TrustedScript);
             return returnValues;
         }
     }
 
-    if (element.matches(HTMLNames::iframeTag) && attribute.matches(HTMLNames::srcdocAttr)) {
-        returnValues.sink = "HTMLIFrameElement srcdoc"_s;
-        returnValues.attributeType = trustedTypeToString(TrustedType::TrustedHTML);
+    if (elementNS == xhtmlNamespace && hasNoAttributeNamespace) {
+        if (localName == "iframe"_s && attributeName == "srcdoc"_s) {
+            returnValues.sink = "HTMLIFrameElement srcdoc"_s;
+            returnValues.attributeType = trustedTypeToString(TrustedType::TrustedHTML);
+        }
+        if (localName == "script"_s && attributeName == "src"_s) {
+            returnValues.sink = "HTMLScriptElement src"_s;
+            returnValues.attributeType = trustedTypeToString(TrustedType::TrustedScriptURL);
+        }
     }
-    if (element.matches(HTMLNames::scriptTag) && attribute.matches(HTMLNames::srcAttr)) {
-        returnValues.sink = "HTMLScriptElement src"_s;
-        returnValues.attributeType = trustedTypeToString(TrustedType::TrustedScriptURL);
-    }
-    if (element.matches(SVGNames::scriptTag) && (attribute.matches(SVGNames::hrefAttr) || attribute.matches(XLinkNames::hrefAttr))) {
+
+    if (elementNS == svgNamespace && localName == "script"_s && attributeName == "href"_s
+        && (hasNoAttributeNamespace || attributeNamespace == xlinkNamespace)) {
         returnValues.sink = "SVGScriptElement href"_s;
         returnValues.attributeType = trustedTypeToString(TrustedType::TrustedScriptURL);
     }
@@ -360,11 +367,8 @@ bool isEventHandlerAttribute(const QualifiedName& attributeName)
     // Fast early return for names that don't start with "on".
     if (!attributeName.localName().startsWith("on"_s))
         return false;
-    static const NeverDestroyed<WTF::HashSet<AtomString>> eventHandlerNames([] {
-        return eventNames().allEventHandlerNames();
-    }());
 
-    return eventHandlerNames->contains(attributeName.localName());
+    return isEventHandlerAttributeName(attributeName.localName());
 }
 
 ExceptionOr<AtomString> trustedTypesCompliantAttributeValue(ScriptExecutionContext& scriptExecutionContext, const String& attributeType, const TrustedTypeOrString& value, const String& sink)

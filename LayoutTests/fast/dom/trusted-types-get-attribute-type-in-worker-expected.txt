@@ -1,0 +1,27 @@
+trustedTypes.getAttributeType() should return the same answers on a worker as on the window, and querying it from a worker first should not affect later answers on the window.
+
+PASS worker: div/onclick is TrustedScript
+PASS worker: div/onwebkitanimationend is TrustedScript
+PASS worker: div/title is null
+PASS worker: iframe/srcdoc is TrustedHTML
+PASS worker: IFRAME/srcdoc is TrustedHTML
+PASS worker: iframe/srcdoc in http://www.w3.org/1999/xhtml is TrustedHTML
+PASS worker: iframe/srcdoc with attribute namespace http://www.w3.org/1999/xlink is null
+PASS worker: script/src is TrustedScriptURL
+PASS worker: script/src in http://www.w3.org/2000/svg is null
+PASS worker: script/href in http://www.w3.org/2000/svg is TrustedScriptURL
+PASS worker: script/href in http://www.w3.org/2000/svg with attribute namespace http://www.w3.org/1999/xlink is TrustedScriptURL
+PASS worker: script/onclick in http://www.w3.org/2000/svg is TrustedScript
+PASS window: div/onclick is TrustedScript
+PASS window: div/onwebkitanimationend is TrustedScript
+PASS window: div/title is null
+PASS window: iframe/srcdoc is TrustedHTML
+PASS window: IFRAME/srcdoc is TrustedHTML
+PASS window: iframe/srcdoc in http://www.w3.org/1999/xhtml is TrustedHTML
+PASS window: iframe/srcdoc with attribute namespace http://www.w3.org/1999/xlink is null
+PASS window: script/src is TrustedScriptURL
+PASS window: script/src in http://www.w3.org/2000/svg is null
+PASS window: script/href in http://www.w3.org/2000/svg is TrustedScriptURL
+PASS window: script/href in http://www.w3.org/2000/svg with attribute namespace http://www.w3.org/1999/xlink is TrustedScriptURL
+PASS window: script/onclick in http://www.w3.org/2000/svg is TrustedScript
+

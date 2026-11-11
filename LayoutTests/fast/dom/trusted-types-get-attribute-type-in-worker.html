@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!-- webkit-test-runner [ TrustedTypesEnabled=true ] -->
+<html>
+<body>
+<p>trustedTypes.getAttributeType() should return the same answers on a worker as on the window, and
+querying it from a worker first should not affect later answers on the window.</p>
+<pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("log").textContent += message + "\n";
+}
+
+const xhtmlNS = "http://www.w3.org/1999/xhtml";
+const svgNS = "http://www.w3.org/2000/svg";
+const xlinkNS = "http://www.w3.org/1999/xlink";
+
+const cases = [
+    { tag: "div", attribute: "onclick", elementNS: "", attributeNS: "", expected: "TrustedScript" },
+    { tag: "div", attribute: "onwebkitanimationend", elementNS: "", attributeNS: "", expected: "TrustedScript" },
+    { tag: "div", attribute: "title", elementNS: "", attributeNS: "", expected: null },
+    { tag: "iframe", attribute: "srcdoc", elementNS: "", attributeNS: "", expected: "TrustedHTML" },
+    { tag: "IFRAME", attribute: "srcdoc", elementNS: "", attributeNS: "", expected: "TrustedHTML" },
+    { tag: "iframe", attribute: "srcdoc", elementNS: xhtmlNS, attributeNS: "", expected: "TrustedHTML" },
+    { tag: "iframe", attribute: "srcdoc", elementNS: "", attributeNS: xlinkNS, expected: null },
+    { tag: "script", attribute: "src", elementNS: "", attributeNS: "", expected: "TrustedScriptURL" },
+    { tag: "script", attribute: "src", elementNS: svgNS, attributeNS: "", expected: null },
+    { tag: "script", attribute: "href", elementNS: svgNS, attributeNS: "", expected: "TrustedScriptURL" },
+    { tag: "script", attribute: "href", elementNS: svgNS, attributeNS: xlinkNS, expected: "TrustedScriptURL" },
+    { tag: "script", attribute: "onclick", elementNS: svgNS, attributeNS: "", expected: "TrustedScript" },
+];
+
+function queryAll()
+{
+    return cases.map(testCase => trustedTypes.getAttributeType(testCase.tag, testCase.attribute, testCase.elementNS, testCase.attributeNS));
+}
+
+function describe(testCase)
+{
+    let name = `${testCase.tag}/${testCase.attribute}`;
+    if (testCase.elementNS)
+        name += ` in ${testCase.elementNS}`;
+    if (testCase.attributeNS)
+        name += ` with attribute namespace ${testCase.attributeNS}`;
+    return name;
+}
+
+function check(context, results)
+{
+    cases.forEach((testCase, index) => {
+        const actual = results[index];
+        if (actual === testCase.expected)
+            log(`PASS ${context}: ${describe(testCase)} is ${testCase.expected}`);
+        else
+            log(`FAIL ${context}: ${describe(testCase)} is ${actual}, expected ${testCase.expected}`);
+    });
+}
+
+const workerSource = `
+${queryAll}
+const cases = ${JSON.stringify(cases)};
+onmessage = () => {
+    try {
+        postMessage({ results: queryAll() });
+    } catch (error) {
+        postMessage({ error: String(error) });
+    }
+};
+`;
+
+const worker = new Worker(URL.createObjectURL(new Blob([workerSource], { type: "text/javascript" })));
+
+worker.onmessage = (event) => {
+    if (event.data.error)
+        log(`FAIL worker threw: ${event.data.error}`);
+    else
+        check("worker", event.data.results);
+
+    // The worker queried first, so this also covers the window being affected by it.
+    check("window", queryAll());
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+
+worker.postMessage("go");
+</script>
+</body>
+</html>
