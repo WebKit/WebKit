@@ -37,7 +37,6 @@ inline constexpr auto onAmazonMagnifierLens = "#magnifierLens, :has(+ #magnifier
 inline constexpr auto onSoundCloudSceneLayer = ".sceneLayer"_s;
 inline constexpr auto onCrosswordID = "[id*=crossword]"_s;
 inline constexpr auto onEANetworkNav = "ea-network-nav"_s;
-inline constexpr auto onExpediaOpeningMenu = ".uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open"_s;
 inline constexpr auto onAviaButton = "avia-button"_s;
 inline constexpr auto onBoxRegionAnnotationCreator = ".ba-RegionCreation-creator"_s;
 inline constexpr auto onGoogleDocsMLPromotion = ".docs-ml-promotion-action-container, .docs-ml-promotion-action-container > *, .docs-ml-promotion-action-container > * > *"_s;

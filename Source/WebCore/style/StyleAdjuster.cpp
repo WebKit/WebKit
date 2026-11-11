@@ -1104,33 +1104,6 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
             style.setVisibility(Visibility::Visible);
     }
 
-    if (documentQuirks.needsWebExScrollabilityQuirk()) {
-        // Ignore overflow: hidden on the body and #wrapper so the page remains
-        // scrollable, and drop the width constraints on #wrapper so the desktop
-        // layout fits the viewport.
-        static MainThreadNeverDestroyed<const AtomString> wrapperID("wrapper"_s);
-        bool isWrapper = m_element->idForStyleResolution() == wrapperID;
-        if (m_element->hasTagName(bodyTag) || isWrapper) {
-            if (style.overflowX() == Overflow::Hidden)
-                style.setOverflowX(Overflow::Auto);
-            if (style.overflowY() == Overflow::Hidden)
-                style.setOverflowY(Overflow::Auto);
-        }
-        if (isWrapper) {
-            style.setMinWidth(CSS::Keyword::Auto { });
-            style.setMaxWidth(CSS::Keyword::None { });
-        }
-    }
-
-    // yahoo.com rdar://170502516
-    if (documentQuirks.needsYahooVolumeSliderQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> className("vjs-volume-control"_s);
-        if (is<HTMLDivElement>(*m_element) && m_element->hasClassName(className)) {
-            style.setMinHeight(100_css_percentage);
-            style.setAlignItems(Style::AlignItems { CSS::Keyword::Center { } });
-        }
-    }
-
 #if HAVE(APPKIT_GESTURES_SUPPORT)
     // google.com/maps/embed rdar://184166392
     if (documentQuirks.needsGoogleMapsEmbedManipulationSurfaceQuirk()) {
@@ -1149,32 +1122,9 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
         if (is<HTMLBodyElement>(*m_element) && m_element->hasClassName(className))
             style.setUsedTouchAction(CSS::Keyword::Auto { });
     }
-    // netflix.com rdar://178545839
-    if (documentQuirks.needsNetflixVolumeSliderQuirk()) {
-        static MainThreadNeverDestroyed<const QualifiedName> dataUiaAttr(nullAtom(), "data-uia"_s, nullAtom());
-        static MainThreadNeverDestroyed<const AtomString> scrubberValue("scrubber"_s);
-        static MainThreadNeverDestroyed<const AtomString> verticalValue("vertical"_s);
-        if (is<HTMLDivElement>(*m_element)
-            && m_element->attributeWithoutSynchronization(dataUiaAttr) == scrubberValue
-            && m_element->attributeWithoutSynchronization(HTMLNames::aria_orientationAttr) == verticalValue)
-            style.setUsedTouchAction(CSS::Keyword::None { });
-    }
     if (documentQuirks.needsFacebookStoriesCreationFormQuirk(*m_element, style))
         style.setDisplayMaintainingOriginalDisplay(DisplayType::BlockFlex);
 #endif // PLATFORM(IOS_FAMILY)
-
-    if (documentQuirks.needsFacebookRemoveNotSupportedQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> className("xnw9j1v"_s);
-        if (is<HTMLDivElement>(*m_element) && m_element->hasClassName(className))
-            style.setDisplayMaintainingOriginalDisplay(DisplayType::None);
-    }
-
-    // airindiaexpress.com https://webkit.org/b/317375
-    if (documentQuirks.needsAirIndiaExpressLayeringQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> className("new-trip-type-and-guest-selection-container"_s);
-        if (m_element->hasClassName(className))
-            style.setUsedZIndex(2);
-    }
 
     if (auto tikTokOverflowingContentQuery = documentQuirks.needsTikTokOverflowingContentQuirk(protect(*m_element), m_parentStyle)) {
         if (*tikTokOverflowingContentQuery == Quirks::TikTokOverflowingContentQuirkType::CommentsSectionQuirk)  {
@@ -1212,27 +1162,6 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
     }
 #endif
 #endif
-
-    if (documentQuirks.needsExpediaGroupAnimationQuirk(protect(*m_element))) {
-        // We need to reset animation styles that are mistakenly overridden:
-        //     animation-delay: 0s, 0.06s;
-        //     animation-duration: 0.18s, 0.06s;
-        //     animation-fill-mode: none, both;
-        //     animation-name: menu-grow-left, menu-fade-in;
-        auto menuGrowLeftAnimation = Style::Animation { { ScopedName { "menu-grow-left"_s } } };
-        menuGrowLeftAnimation.setDelay(0_css_s);
-        menuGrowLeftAnimation.setDuration(.18_css_s);
-        menuGrowLeftAnimation.setFillMode(AnimationFillMode::None);
-
-        auto menuFadeInAnimation = Style::Animation { { ScopedName { "menu-fade-in"_s } } };
-        menuFadeInAnimation.setDelay(.06_css_s);
-        menuFadeInAnimation.setDuration(.06_css_s);
-        menuFadeInAnimation.setFillMode(AnimationFillMode::Both);
-
-        auto& animations = style.ensureAnimations();
-        animations = Style::Animations { WTF::move(menuGrowLeftAnimation), WTF::move(menuFadeInAnimation) };
-        animations.prepareForUse();
-    }
 
 #if PLATFORM(IOS_FAMILY)
     if (documentQuirks.needsClaudeSidebarViewportUnitQuirk(protect(*m_element), style))

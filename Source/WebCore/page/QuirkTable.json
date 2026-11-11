@@ -8,6 +8,9 @@
             "safari": {
                 "v18_6Mac": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
             }
+        },
+        "styleSheets": {
+            "expediaGroupMenuAnimation": ".uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open { animation: menu-grow-left 0.18s 0s, menu-fade-in 0.06s 0.06s both; }"
         }
     },
     "quirks": [
@@ -30,7 +33,7 @@
         {
             "bugs": ["https://webkit.org/b/317375"],
             "matches": ["*://*.airindiaexpress.com/*"],
-            "behaviors": [{ "id": "NeedsAirIndiaExpressLayeringQuirk" }]
+            "behaviors": [{ "id": "NeedsStyleSheetInjectedQuirk", "styleSheet": ".new-trip-type-and-guest-selection-container { z-index: 2; }" }]
         },
         {
             "bugs": ["rdar://49124313"],
@@ -434,8 +437,9 @@
             ],
             "behaviors": [
                 {
-                    "id": "NeedsExpediaGroupAnimationQuirk",
-                    "elementSelector": ".uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open"
+                    "id": "NeedsStyleSheetInjectedQuirk",
+                    "comment": "Reset animation styles that are mistakenly overridden.",
+                    "styleSheet": { "constant": "styleSheets.expediaGroupMenuAnimation" }
                 }
             ]
         },
@@ -444,8 +448,9 @@
             "matches": ["*://*.ebookers.*/*"],
             "behaviors": [
                 {
-                    "id": "NeedsExpediaGroupAnimationQuirk",
-                    "elementSelector": ".uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open"
+                    "id": "NeedsStyleSheetInjectedQuirk",
+                    "comment": "Reset animation styles that are mistakenly overridden.",
+                    "styleSheet": { "constant": "styleSheets.expediaGroupMenuAnimation" }
                 }
             ]
         },
@@ -454,8 +459,9 @@
             "matches": ["*://*.expedia.*/*"],
             "behaviors": [
                 {
-                    "id": "NeedsExpediaGroupAnimationQuirk",
-                    "elementSelector": ".uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open"
+                    "id": "NeedsStyleSheetInjectedQuirk",
+                    "comment": "Reset animation styles that are mistakenly overridden.",
+                    "styleSheet": { "constant": "styleSheets.expediaGroupMenuAnimation" }
                 }
             ]
         },
@@ -468,7 +474,11 @@
         {
             "matches": ["*://*.facebook.com/*"],
             "behaviors": [
-                { "id": "NeedsFacebookRemoveNotSupportedQuirk", "bugs": ["rdar://100871402"] },
+                {
+                    "id": "NeedsStyleSheetInjectedQuirk",
+                    "bugs": ["rdar://100871402", "https://webkit.org/b/295071"],
+                    "styleSheet": "div.xnw9j1v { display: none; }"
+                },
                 {
                     "id": "ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk",
                     "elementSelector": "[role=slider]",
@@ -1007,7 +1017,6 @@
             "matches": ["*://*.netflix.com/*"],
             "behaviors": [
                 { "id": "NeedsSeekingSupportDisabledQuirk", "bugs": ["https://webkit.org/b/173030"] },
-                { "id": "NeedsNetflixVolumeSliderQuirk", "bugs": ["rdar://178545839"] },
                 {
                     "id": "ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick",
                     "bugs": ["https://webkit.org/b/304608"]
@@ -1019,6 +1028,17 @@
             "matches": ["*://*.netflix.com/*"],
             "available": "vision",
             "behaviors": [{ "id": "NeedsNowPlayingFullscreenSwapQuirk" }]
+        },
+        {
+            "bugs": ["rdar://178545839"],
+            "matches": ["*://*.netflix.com/*"],
+            "available": "iOS || vision",
+            "behaviors": [
+                {
+                    "id": "NeedsStyleSheetInjectedQuirk",
+                    "styleSheet": "div[data-uia=\"scrubber\"][aria-orientation=\"vertical\"] { touch-action: none; }"
+                }
+            ]
         },
         {
             "matches": ["*://*.nfl.com/*"],
@@ -1355,7 +1375,12 @@
                     "script": "Object.defineProperty(window, 'Touch', { get: () => undefined });",
                     "secondaryURL": ["*://*/pushdownload.*", "*://*/*/pushdownload.*"]
                 },
-                { "id": "NeedsWebExScrollabilityQuirk", "bugs": ["rdar://143715630"] }
+                {
+                    "id": "NeedsStyleSheetInjectedQuirk",
+                    "bugs": ["rdar://143715630"],
+                    "comment": "Keep the page scrollable and drop the width constraints on #wrapper so the desktop layout fits the viewport.",
+                    "styleSheet": "body, #wrapper { overflow: auto; } #wrapper { min-width: auto; max-width: none; }"
+                }
             ]
         },
         {
@@ -1425,7 +1450,11 @@
         {
             "matches": ["*://*.yahoo.*/*"],
             "behaviors": [
-                { "id": "NeedsYahooVolumeSliderQuirk", "bugs": ["rdar://170502516"] },
+                {
+                    "id": "NeedsStyleSheetInjectedQuirk",
+                    "bugs": ["rdar://170502516"],
+                    "styleSheet": "div.vjs-volume-control { min-height: 100%; align-items: center; }"
+                },
                 { "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor", "bugs": ["rdar://136767005"] }
             ]
         },

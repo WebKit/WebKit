@@ -1424,6 +1424,7 @@ void Quirks::setTopDocumentURLForTesting(URL&& url)
 {
     m_topDocumentURLForTesting = WTF::move(url);
     determineRelevantQuirks();
+    updateInjectedStyleSheets();
 }
 
 void Quirks::determineRelevantQuirks()
