@@ -84,6 +84,9 @@ static unsigned incrementingTouchIdentifier = 1;
     _activeTouchesByIdentifier = NSMapTable.strongToWeakObjectsMapTable;
     _contentView = view;
 
+    // Web content needs to receive stylus and finger touches simultaneously.
+    self.requiresExclusiveTouchType = NO;
+
     [self reset];
 
     return self;

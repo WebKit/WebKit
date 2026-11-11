@@ -831,6 +831,7 @@ private:
     unsigned m_firstTouchID { InvalidTouchIdentifier };
     unsigned touchIdentifierForMouseEvents { 0 };
     unsigned m_touchIdentifierForPrimaryTouch { 0 };
+    unsigned m_touchIdentifierForPrimaryStylusTouch { 0 };
 
     TouchArray m_touches;
     RefPtr<Frame> m_touchEventTargetSubframe;

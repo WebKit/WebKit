@@ -403,18 +403,45 @@ static InterpolationType interpolationFromString(NSString *string)
         if ([touchInfo[HIDEventPressureKey] floatValue])
             childEventMask |= kIOHIDDigitizerEventAttribute;
 
-        auto subEvent = adoptCF(IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, machTime,
-            [touchInfo[HIDEventTouchIDKey] intValue],               // index
-            2,                                                      // identifier (which finger we think it is). FIXME: this should come from the data.
-            childEventMask,
-            [touchInfo[HIDEventXKey] floatValue],
-            [touchInfo[HIDEventYKey] floatValue],
-            0, // z
-            [touchInfo[HIDEventPressureKey] floatValue],
-            [touchInfo[HIDEventTwistKey] floatValue],
-            touch,                                                  // range
-            touch,                                                  // touch
-            kIOHIDEventOptionNone));
+        RetainPtr<IOHIDEventRef> subEvent;
+        if ([touchInfo[HIDEventInputType] isEqualToString:HIDEventInputTypeStylus]) {
+            // Stylus touches may be mixed with finger touches in the same event, to simulate using Apple Pencil while touching the screen.
+            IOHIDDigitizerEventMask stylusEventMask = childEventMask;
+            if (phase == UITouchPhaseBegan)
+                stylusEventMask |= kIOHIDDigitizerEventEstimatedAltitude | kIOHIDDigitizerEventEstimatedAzimuth | kIOHIDDigitizerEventEstimatedPressure;
+
+            bool isTouching = phase == UITouchPhaseBegan || phase == UITouchPhaseMoved || phase == UITouchPhaseStationary;
+            float pressure = [touchInfo[HIDEventPressureKey] floatValue];
+            subEvent = adoptCF(IOHIDEventCreateDigitizerStylusEventWithPolarOrientation(kCFAllocatorDefault, machTime,
+                [touchInfo[HIDEventTouchIDKey] intValue],           // index
+                [touchInfo[HIDEventTouchIDKey] intValue],           // identifier
+                stylusEventMask,
+                0,                                                  // button mask
+                [touchInfo[HIDEventXKey] floatValue],
+                [touchInfo[HIDEventYKey] floatValue],
+                0,                                                  // z
+                pressure,                                           // tip pressure
+                pressure,                                           // barrel pressure
+                0,                                                  // twist
+                piOverTwoDouble,                                    // altitude
+                0,                                                  // azimuth
+                1,                                                  // range
+                0,                                                  // invert
+                isTouching ? kIOHIDTransducerTouch : 0));
+        } else {
+            subEvent = adoptCF(IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, machTime,
+                [touchInfo[HIDEventTouchIDKey] intValue],           // index
+                2,                                                  // identifier (which finger we think it is). FIXME: this should come from the data.
+                childEventMask,
+                [touchInfo[HIDEventXKey] floatValue],
+                [touchInfo[HIDEventYKey] floatValue],
+                0, // z
+                [touchInfo[HIDEventPressureKey] floatValue],
+                [touchInfo[HIDEventTwistKey] floatValue],
+                touch,                                              // range
+                touch,                                              // touch
+                kIOHIDEventOptionNone));
+        }
 
         IOHIDEventSetFloatValue(subEvent.get(), kIOHIDEventFieldDigitizerMajorRadius, [touchInfo[HIDEventMajorRadiusKey] floatValue]);
         IOHIDEventSetFloatValue(subEvent.get(), kIOHIDEventFieldDigitizerMinorRadius, [touchInfo[HIDEventMinorRadiusKey] floatValue]);
