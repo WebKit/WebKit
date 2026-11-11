@@ -894,12 +894,6 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WebPage/WebViewTests.swift
 )
 
-# FIXME: Needs the Swift overlay in WKUserContentController.swift, which the iOS
-# WebKit module can't build yet: it needs the C++ interop the macOS build uses.
-if (NOT WEBKIT_PLATFORM_MAC)
-    list(REMOVE_ITEM TestWebKit_SOURCES Tests/WebKit/WebPage/UserContentControllerTests.swift)
-endif ()
-
 # Tests importing both WebKit and SwiftUI load the _WebKit_SwiftUI cross-import
 # overlay; ensure it builds first.
 list(APPEND TestWebKit_FRAMEWORKS _WebKit_SwiftUI)

@@ -133,6 +133,8 @@ list(APPEND WebKit_SOURCES
 
     Platform/IPC/cocoa/SharedFileHandleCocoa.cpp
 
+    Platform/cocoa/FloatRectCG.swift
+    Platform/cocoa/IntRectCG.swift
     Platform/cocoa/WKMaterialHostingSupport.swift
 
     Shared/API/Cocoa/WKMain.mm
@@ -163,6 +165,10 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/ObjectiveCBlockConversions.swift
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/WebKitSwiftOverlay.swift
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKContentWorld.swift
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKContextMenuElementInfoAdapter.swift
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKUserContentController.swift
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKWebsiteDataStore+SwiftOverlay.swift
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKWebView+RefreshControl.swift
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKRectEdge+Extras.swift
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKViewportFitEdges.swift
 
@@ -170,10 +176,12 @@ list(APPEND WebKit_SOURCES
     UIProcess/Cocoa/WKShareSheet.mm
     UIProcess/Cocoa/WKStorageAccessAlert.mm
     UIProcess/Cocoa/WebInspectorPreferenceObserver.mm
+    ${WEBKIT_DIR}/UIProcess/Cocoa/TextExtraction/WKWebView+TextExtraction.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/WKDeferringGestureRecognizer.swift
     ${WEBKIT_DIR}/UIProcess/PhoneNumberPossession/Cocoa/MockPhoneNumberPossessionManager.swift
     ${WEBKIT_DIR}/UIProcess/PhoneNumberPossession/Cocoa/PhoneNumberPossessionController.swift
     ${WEBKIT_DIR}/UIProcess/PhoneNumberPossession/Cocoa/PhoneNumberPossessionManaging.swift
+    ${WEBKIT_DIR}/UIProcess/WebPageProxy.swift
 
     UIProcess/PDF/WKPDFPageNumberIndicator.mm
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKTextExtraction.swift
@@ -586,9 +594,6 @@ if (WEBKIT_SDK_IS_MACOS)
 list(APPEND WebKit_SOURCES
     NetworkProcess/mac/NetworkConnectionToWebProcessMac.mm
 
-    ${WEBKIT_DIR}/Platform/cocoa/FloatRectCG.swift
-    ${WEBKIT_DIR}/Platform/cocoa/IntRectCG.swift
-    ${WEBKIT_DIR}/UIProcess/WebPageProxy.swift
     ${WEBKIT_DIR}/UIProcess/mac/_WKCaptionStyleMenuControllerAVKitMac.mm
     ${WEBKIT_DIR}/UIProcess/mac/_WKCaptionStyleMenuControllerMac.mm
     ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKAppKitGestureController.swift
@@ -604,12 +609,8 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/UIProcess/PDF/WKAlternatePDFHUDView.swift
     ${WEBKIT_DIR}/UIProcess/PDF/WKDefaultPDFHUDView.swift
 
-    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKContextMenuElementInfoAdapter.swift
-    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKUserContentController.swift
-    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKWebView+RefreshControl.swift
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKWebViewConfiguration+Extras.swift
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKWebpagePreferences+Extras.swift
-    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKWebsiteDataStore+SwiftOverlay.swift
     ${WEBKIT_DIR}/UIProcess/API/Swift/URLSchemeHandler.swift
     ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage.swift
     ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+BackForwardList.swift
@@ -623,7 +624,6 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+NavigationPreferences.swift
     ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+SPI.swift
     ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+Transferable.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/TextExtraction/WKWebView+TextExtraction.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/WKNavigationDelegateAdapter.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/WKScrollGeometryAdapter.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/WKUIDelegateAdapter.swift
