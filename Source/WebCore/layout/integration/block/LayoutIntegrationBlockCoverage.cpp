@@ -506,14 +506,14 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
 // The render tree lays out the content of a leaf (an atomic inline-level box or a box laid out through the render tree), and registers the
 // out-of-flow boxes it finds on their containing block (RenderBlock::addOutOfFlowBox). The block formatting context lays out the ones whose
 // containing block it lays out, outside the leaf, from their static position (on their layer, or a flex container's), which it moves out of
-// the leaf through the boxes in between (BlockLayout::layoutOutOfFlowBoxes): inline boxes, which add nothing to it, and in-flow boxes with
-// the block flow direction of the containing block, whose positions are in its coordinates, outside fragmented flows.
+// the leaf through the boxes in between (BlockLayout::layoutOutOfFlowBoxes): inline boxes, which add nothing to it, and in-flow boxes, in any
+// writing mode, outside fragmented flows.
 static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(const RenderBox& leaf, const RenderBlockFlow& rootContainer)
 {
-    auto isSupportedBoxInBetween = [](const RenderElement& box, const RenderBlock& containingBlock) {
+    auto isSupportedBoxInBetween = [](const RenderElement& box) {
         if (box.isInlineBox())
             return true;
-        return is<RenderBox>(box) && !box.isOutOfFlowPositioned() && box.writingMode().blockDirection() == containingBlock.writingMode().blockDirection() && !box.isRenderFragmentedFlow();
+        return is<RenderBox>(box) && !box.isOutOfFlowPositioned() && !box.isRenderFragmentedFlow();
     };
     for (CheckedRef descendant : descendantsOfType<RenderBox>(leaf)) {
         if (!descendant->isOutOfFlowPositioned())
@@ -538,7 +538,7 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(c
         if (!hasSupportedStaticPosition)
             return BlockAvoidanceReason::ContentHasOutOfFlowBox;
         for (CheckedPtr box = staticPositionBlock; box != containingBlock; box = box->parent()) {
-            if (!isSupportedBoxInBetween(*box, *containingBlock))
+            if (!isSupportedBoxInBetween(*box))
                 return BlockAvoidanceReason::ContentHasOutOfFlowBox;
         }
     }

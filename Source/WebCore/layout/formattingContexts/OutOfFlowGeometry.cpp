@@ -308,7 +308,7 @@ auto OutOfFlowGeometry::axisValues(Axis axis) const -> AxisValues
         inset(style->insetBefore(writingMode)), inset(style->insetAfter(writingMode)),
         margin(style->marginBefore(writingMode)), margin(style->marginAfter(writingMode)),
         containingBlockStart, containingBlockEnd - containingBlockStart, borderAndPadding,
-        m_staticPosition.blockPosition, false, m_staticPosition.blockAlignment,
+        m_staticPosition.blockPosition, m_staticPosition.blockPositionIsMarginBoxEnd, m_staticPosition.blockAlignment,
         selfAlignment(Axis::Block, usesStaticPosition), defaultAnchor
     };
 }
