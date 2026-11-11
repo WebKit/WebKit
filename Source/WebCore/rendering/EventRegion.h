@@ -40,6 +40,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -133,7 +134,7 @@ public:
 #endif
     );
 
-    EventRegionContext makeContext() { return EventRegionContext(*this); }
+    UniqueRef<EventRegionContext> makeContext() { return makeUniqueRef<EventRegionContext>(*this); }
 
     bool isEmpty() const { return m_region.isEmpty(); }
 

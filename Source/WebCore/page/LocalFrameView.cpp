@@ -5836,8 +5836,8 @@ void LocalFrameView::updateAccessibilityObjectRegions()
         return;
 
     NullGraphicsContext graphicsContext;
-    AccessibilityRegionContext accessibilityRegionContext;
-    paint(graphicsContext, frameRect(), SecurityOriginPaintPolicy::AnyOrigin, &accessibilityRegionContext);
+    auto accessibilityRegionContext = makeUniqueRef<AccessibilityRegionContext>();
+    paint(graphicsContext, frameRect(), SecurityOriginPaintPolicy::AnyOrigin, accessibilityRegionContext.ptr());
 #endif
 }
 

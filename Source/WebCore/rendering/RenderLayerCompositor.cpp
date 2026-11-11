@@ -2940,9 +2940,9 @@ void RenderLayerCompositor::updateScrollLayerClipping()
     if (layerForClipping == m_clipLayer) {
         EventRegion eventRegion;
         auto eventRegionContext = eventRegion.makeContext();
-        eventRegionContext.unite(FloatRoundedRect(FloatRect({ }, layerRect.size())), m_renderView, Style::ComputedStyle::defaultStyleSingleton());
+        eventRegionContext->unite(FloatRoundedRect(FloatRect({ }, layerRect.size())), m_renderView, Style::ComputedStyle::defaultStyleSingleton());
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        eventRegionContext.copyInteractionRegionsToEventRegion(m_renderView.settings().interactionRegionMinimumCornerRadius());
+        eventRegionContext->copyInteractionRegionsToEventRegion(m_renderView.settings().interactionRegionMinimumCornerRadius());
 #endif
         RefPtr { m_clipLayer }->setEventRegion(WTF::move(eventRegion));
     }
