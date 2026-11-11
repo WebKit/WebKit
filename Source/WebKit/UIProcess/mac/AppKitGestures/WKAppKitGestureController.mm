@@ -1205,6 +1205,14 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     switch (gesture.state) {
     case NSGestureRecognizerStateBegan:
         _mouseTrackingIsSuppressedForTransformGesture = false;
+        // AppKit may send this action before the previously active gesture's Cancelled action,
+        // which is then ignored below, so hand off from that gesture here.
+        if (RetainPtr previousGesture = _activeMouseTrackingGestureRecognizer.get(); previousGesture && previousGesture != mouseTrackingGesture) {
+            if (!std::exchange(_mouseTrackingSendsMouseMoves, false) && _mouseTrackingHasSentMouseDown) {
+                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Handing off mouse tracking from a gesture that has not ended");
+                _mouseTrackingStartLocationInWindow = [previousGesture mouseLocationInWindow];
+            }
+        }
         _activeMouseTrackingGestureRecognizer = mouseTrackingGesture.get();
         if (_mouseTrackingHasSentMouseDown)
             [mouseTrackingGesture beginTrackingMouseInheritedFromWindowLocation:_mouseTrackingStartLocationInWindow];
