@@ -2877,6 +2877,14 @@
 // WebGPU error BufferOffset (5242862) is not a multiple of 4.
 496503799 WGPU : BufferDataTest.UnalignedVertexAttribPointer/* = SKIP
 
+// Shader compilation fails with "struct cannot have more than 1023 members" at 4096 uniform vectors.
+0 WGPU : GLSLTest.VerifyMaxVertexUniformVectors/* = SKIP
+0 WGPU : GLSLTest.VerifyMaxFragmentUniformVectors/* = SKIP
+// WebGPU reports "Values to drawIndexed are invalid" during this test.
+0 WGPU : WebGLCompatibilityTest.LargeIndexRange/* = SKIP
+// Pixel (32, 32) reads Black after a GL_TRIANGLE_FAN draw, and WebGPU reports "setVertexBuffer: size overflowed".
+0 WGPU : VertexAttributeTest.OutOfBoundsOffsetNoFormatConversion/* = SKIP
+
 405286904 SWIFTSHADER : TextureBufferTestES31.UseAsXFBThenAsTextureBuffer/* = SKIP
 
 // EGLSurfaceTest.Resize* failures
