@@ -58,14 +58,12 @@ class CanBorrow {
 public:
     ~CanBorrow()
     {
-        // FIXME: Make this a RELEASE_ASSERT once we've proven it's stable.
-        ASSERT(!m_isBorrowed);
+        RELEASE_ASSERT(!m_isBorrowed);
     }
 
     void crashIfBorrowed()
     {
-        // FIXME: Make this a RELEASE_ASSERT once we've proven it's stable.
-        ASSERT(!m_isBorrowed);
+        RELEASE_ASSERT(!m_isBorrowed);
     }
 
 private:
