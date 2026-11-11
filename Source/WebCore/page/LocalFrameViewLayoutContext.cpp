@@ -1122,6 +1122,21 @@ bool LocalFrameViewLayoutContext::removeRootWithFloatsPlacedByBlockFormattingCon
     return m_rootsWithFloatsPlacedByBlockFormattingContext.remove(root);
 }
 
+auto LocalFrameViewLayoutContext::containingBlockBlockSizes(const RenderBox& box) const -> std::optional<ContainingBlockBlockSizes>
+{
+    return m_containingBlockBlockSizes.getOptional(box);
+}
+
+void LocalFrameViewLayoutContext::setContainingBlockBlockSizes(const RenderBox& box, const ContainingBlockBlockSizes& sizes)
+{
+    m_containingBlockBlockSizes.set(box, ContainingBlockBlockSizes { sizes });
+}
+
+void LocalFrameViewLayoutContext::clearContainingBlockBlockSizes(const RenderBox& box)
+{
+    m_containingBlockBlockSizes.remove(box);
+}
+
 #ifndef NDEBUG
 void LocalFrameViewLayoutContext::checkLayoutState()
 {

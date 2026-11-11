@@ -120,6 +120,21 @@ public:
     void addRootWithFloatsPlacedByBlockFormattingContext(const RenderBlockFlow&);
     bool removeRootWithFloatsPlacedByBlockFormattingContext(const RenderBlockFlow&);
 
+    // The block sizes of the containing block of a box that the block formatting context lays out through the render tree, which the content of
+    // the box reads where it looks past the box: the block formatting context writes the geometry of the containing block once all of it is
+    // laid out (LayoutIntegration::BlockIntegrationUtils::layoutIndependentFormattingContext).
+    struct ContainingBlockBlockSizes {
+        // What percentage block sizes that look past the box, which has an auto block size in quirks mode, resolve against; none is an
+        // indefinite one (RenderBox::computePercentageLogicalHeight).
+        std::optional<LayoutUnit> percentageBasis;
+        // RenderBox::availableLogicalHeight of the containing block, without and with its margins, borders and padding.
+        LayoutUnit availableBlockSize;
+        LayoutUnit availableBlockSizeIncludingMarginBorderPadding;
+    };
+    std::optional<ContainingBlockBlockSizes> containingBlockBlockSizes(const RenderBox&) const;
+    void setContainingBlockBlockSizes(const RenderBox&, const ContainingBlockBlockSizes&);
+    void clearContainingBlockBlockSizes(const RenderBox&);
+
     struct TextBoxTrim {
         bool trimFirstFormattedLine { false };
         SingleThreadWeakPtr<const RenderBlockFlow> lastFormattedLineRoot;
@@ -308,6 +323,7 @@ private:
     SingleThreadWeakHashSet<RenderBox> m_boxesInOrthogonalIntrinsicContributionLayout;
     SingleThreadWeakHashSet<RenderBox> m_intrinsicLogicalWidthComputationList;
     SingleThreadWeakHashSet<RenderBlockFlow> m_rootsWithFloatsPlacedByBlockFormattingContext;
+    SingleThreadWeakHashMap<RenderBox, ContainingBlockBlockSizes> m_containingBlockBlockSizes;
     Vector<AnchorScrollAdjuster> m_anchorScrollAdjusters;
     std::optional<TextBoxTrim> m_textBoxTrim;
     std::optional<SubtreeScrollbarChangesState> m_subtreeScrollbarChangesState;

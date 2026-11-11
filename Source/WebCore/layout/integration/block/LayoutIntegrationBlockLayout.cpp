@@ -89,10 +89,18 @@ static std::optional<LayoutUnit> contentBoxBlockSizeForPercentages(const RenderB
     CheckedPtr<const RenderBox> containingBlockChild = &rootRenderer;
     CheckedPtr<const RenderBlock> containingBlock = &rootRenderer;
     auto skippedMarginsBordersAndPadding = 0_lu;
+    CheckedRef layoutContext = rootRenderer.view().frameView().layoutContext();
     while (containingBlock && !is<RenderView>(*containingBlock) && rootRenderer.skipContainingBlockForPercentHeightCalculation(*containingBlock, isPerpendicular(*containingBlock))) {
         if (containingBlock->isBody() || containingBlock->isDocumentElementRenderer()) {
             auto writingMode = containingBlock->writingMode();
             skippedMarginsBordersAndPadding += containingBlock->marginBefore(writingMode) + containingBlock->marginAfter(writingMode) + containingBlock->borderAndPaddingLogicalHeight();
+        }
+        // Past a box that a block formatting context lays out through the render tree, what it gives the box's content
+        // (LocalFrameViewLayoutContext::ContainingBlockBlockSizes).
+        if (auto containingBlockBlockSizes = layoutContext->containingBlockBlockSizes(*containingBlock)) {
+            return containingBlockBlockSizes->percentageBasis.transform([&](auto blockSize) {
+                return std::max(0_lu, blockSize - skippedMarginsBordersAndPadding);
+            });
         }
         containingBlockChild = containingBlock;
         containingBlock = containingBlock->containingBlock();
@@ -713,17 +721,23 @@ bool BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
         renderer->setLocation(physicalLocation);
     }
 
-    // What RenderBox::computePercentageLogicalHeight does for a box whose percentage block sizes resolve against a table cell: the cell registers
-    // it, which makes the table lay the cell out again once the row has its height (RenderTableSection::relayoutCellIfFlexed).
+    // What RenderBox::computePercentageLogicalHeight does for a box whose percentage block size resolves against a table cell, or looks past the
+    // root: the containing block it resolves against registers it, which makes the table lay the cell out again once the row has its height
+    // (RenderTableSection::relayoutCellIfFlexed), and lays it out again when that containing block lays out
+    // (RenderBlockFlow::dirtyForLayoutFromPercentageHeightDescendantsIfBasisChanged). The block formatting context lays the others out
+    // whenever the root lays out.
     for (auto& box : result.boxes) {
         CheckedRef renderer = mutableRenderer(box.renderer);
         if (box.isLaidOutThroughRenderTree || !Layout::BlockFormattingUtils::hasPercentageBlockSize(renderer, renderer->writingMode()))
             continue;
+        auto looksPastRoot = false;
         CheckedPtr containingBlock = renderer->containingBlock();
-        while (containingBlock && renderer->skipContainingBlockForPercentHeightCalculation(*containingBlock, renderer->isHorizontalWritingMode() != containingBlock->isHorizontalWritingMode()))
+        while (containingBlock && renderer->skipContainingBlockForPercentHeightCalculation(*containingBlock, renderer->isHorizontalWritingMode() != containingBlock->isHorizontalWritingMode())) {
+            looksPastRoot |= containingBlock == &rootRenderer();
             containingBlock = containingBlock->containingBlock();
-        if (CheckedPtr tableCell = dynamicDowncast<RenderTableCell>(containingBlock))
-            tableCell->addPercentHeightDescendant(renderer);
+        }
+        if (containingBlock && (looksPastRoot || is<RenderTableCell>(*containingBlock)))
+            containingBlock->addPercentHeightDescendant(renderer);
     }
 
     // What RenderBlockFlow::adjustOutOfFlowBlock and layoutBlockChildren do for an out-of-flow child: its layer keeps the static position, and its

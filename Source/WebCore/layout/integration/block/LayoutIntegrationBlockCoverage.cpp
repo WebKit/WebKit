@@ -186,43 +186,13 @@ static bool hasStretchBlockSize(const RenderBox& box)
 }
 
 // In quirks mode a percentage block size looks past the containing blocks with an auto block size (RenderBox::computePercentageLogicalHeight).
-// The block formatting context gives a leaf the block size its own percentages resolve against (BlockIntegrationUtils::layoutIndependentFormattingContext),
-// but the render tree resolves the ones inside it, which reach past the leaf when every containing block up to and including the leaf has an
-// auto block size, to containing blocks whose geometry the block formatting context writes once all of its content is laid out. Those of
-// out-of-flow boxes resolve against their containing block (PositionedLayoutConstraints).
+// The block formatting context gives a leaf the block size its own percentages resolve against, and its content what the ones that look past
+// the leaf resolve against (BlockIntegrationUtils::layoutIndependentFormattingContext).
 // FIXME: The stretch block sizes in quirks mode.
 static bool hasPercentageBlockSizeInQuirksMode(const RenderBox& leaf, const RenderBlockFlow& rootContainer)
 {
     if (!leaf.document().inQuirksMode())
         return false;
-    auto isInsideLeaf = [&](const RenderBox& containingBlock) {
-        return &containingBlock == &leaf || containingBlock.isDescendantOf(&leaf);
-    };
-    // A replaced element gives the boxes of its shadow content its content box size as their fixed size, like the controls of a media element
-    // (RenderReplaced::layoutShadowContent).
-    auto isShadowContentOfReplacedElement = [](const RenderBox& box) {
-        return is<RenderReplaced>(box.parent());
-    };
-    auto resolvesOutsideLeaf = [&](const RenderBox& box) {
-        auto isHorizontalWritingMode = box.isHorizontalWritingMode();
-        for (CheckedPtr containingBlock = box.containingBlock(); containingBlock && isInsideLeaf(*containingBlock); containingBlock = containingBlock->containingBlock()) {
-            if (isShadowContentOfReplacedElement(*containingBlock) || !box.skipContainingBlockForPercentHeightCalculation(*containingBlock, isHorizontalWritingMode != containingBlock->isHorizontalWritingMode()))
-                return false;
-        }
-        return true;
-    };
-    // A replaced element resolves one against the available block size of its containing block instead, which looks past the ones with an
-    // auto block size too (RenderBox::availableLogicalHeightUsing), unless that is a flex container (RenderBox::hasAutoHeightOrContainingBlockWithAutoHeight).
-    auto replacedElementResolvesOutsideLeaf = [&](const RenderBox& replaced) {
-        for (CheckedPtr containingBlock = replaced.containingBlock(); containingBlock && isInsideLeaf(*containingBlock); containingBlock = containingBlock->containingBlock()) {
-            CheckedRef style = containingBlock->style();
-            if (!style->logicalHeight().isAuto() || isShadowContentOfReplacedElement(*containingBlock) || containingBlock->isRenderTableCell() || containingBlock->isOutOfFlowPositioned() || style->aspectRatio().hasRatio())
-                return false;
-            if (containingBlock == replaced.containingBlock() && containingBlock->isFlexibleBoxIncludingDeprecated())
-                return false;
-        }
-        return true;
-    };
     if (hasStretchBlockSize(leaf))
         return true;
     // The block formatting context gives a replaced leaf the available block size of its containing block (ContainingBlockState::replacedElementAvailableBlockSize).
@@ -233,15 +203,6 @@ static bool hasPercentageBlockSizeInQuirksMode(const RenderBox& leaf, const Rend
             if (ancestor->isOutOfFlowPositioned() || ancestor->style().aspectRatio().hasRatio())
                 return true;
         }
-    }
-    for (CheckedRef descendant : descendantsOfType<RenderBox>(leaf)) {
-        if (descendant->isOutOfFlowPositioned() || !Layout::BlockFormattingUtils::hasPercentageBlockSize(descendant, descendant->writingMode()))
-            continue;
-        // The percentage block size of a table row or cell is a share of the table's (RenderTableSection::distributeExtraLogicalHeightToPercentRows).
-        if (isShadowContentOfReplacedElement(descendant) || descendant->isRenderTableRow() || descendant->isRenderTableCell())
-            continue;
-        if (hasStretchBlockSize(descendant) || (descendant->isRenderReplaced() ? replacedElementResolvesOutsideLeaf(descendant) : resolvesOutsideLeaf(descendant)))
-            return true;
     }
     return false;
 }
