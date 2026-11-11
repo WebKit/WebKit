@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<link rel="help" href="https://drafts.csswg.org/css-break/#widows-orphans">
+<link rel="match" href="tall-line-last-with-widows-expected.html">
+<meta name="assert" content="Here's a multicol container with three lines and a widows requirement of 2. The widows requirement cannot be honored, because the last line alone is too tall to fit in a column. The tall line should be pushed to the second column, while the two other lines stay in the first column.">
+<style>
+  .multicol {
+      columns: 3;
+      column-fill: auto;
+      column-gap: 10px;
+      width: 320px;
+      height: 200px;
+      orphans: 1;
+      widows: 2;
+      line-height: 20px;
+  }
+  .ibk {
+      display: inline-block;
+      width: 70px;
+  }
+</style>
+<div class="multicol">
+  <div class="ibk" style="height: 50px; background: black"></div><br>
+  <div class="ibk" style="height: 50px; background: yellow"></div><br>
+  <div class="ibk" style="height: 285px; background: cyan"></div><br>
+</div>

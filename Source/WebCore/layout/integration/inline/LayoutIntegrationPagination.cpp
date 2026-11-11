@@ -116,7 +116,7 @@ std::pair<Vector<LineAdjustment>, std::optional<LayoutRestartLine>> computeAdjus
                 remainingLines--;
 
             // See if there are enough lines left to meet the widow requirement.
-            if (remainingLines < widows && allowLayoutRestart && !layoutRestartLine) {
+            if (!adjustment.isOversizedLine && remainingLines < widows && allowLayoutRestart && !layoutRestartLine) {
                 auto previousPageLineCount = lineIndex - previousPageBreakIndex.value_or(0);
                 auto neededLines = widows - remainingLines;
                 auto availableLines = previousPageLineCount > orphans ? previousPageLineCount - orphans : 0;

@@ -2348,10 +2348,20 @@ RenderBlockFlow::LinePaginationAdjustment RenderBlockFlow::computeLineAdjustment
         // top of the page.
         // FIXME: We are still honoring gigantic margins, which does leave open the possibility of blank pages caused by this heuristic. It remains to be seen whether or not
         // this will be a real-world issue. For now we don't try to deal with this problem.
+        auto originalLogicalOffset = logicalOffset;
+        auto originalLineHeight = lineHeight;
         std::tie(logicalOffset, logicalBottom) = computeLeafBoxTopAndBottom();
         lineHeight = logicalBottom - logicalOffset;
         if (logicalOffset == LayoutUnit::max() || lineHeight > pageLogicalHeight) {
-            // Give up. We're genuinely too big even after excluding blank space and overflow.
+            // We're genuinely too big even after excluding blank space and overflow. If we are not at the top of the page,
+            // start the line on the next page (it will overflow there) instead of overflowing from the middle of this one.
+            auto remainingAtOriginalOffset = pageRemainingLogicalHeightForOffset(originalLogicalOffset, ExcludePageBoundary);
+            if (!lineBox->isFirst() && remainingAtOriginalOffset < pageLogicalHeight) {
+                clearShouldBreakAtLineToAvoidWidowIfNeeded(*this);
+                setPageBreak(originalLogicalOffset, originalLineHeight - remainingAtOriginalOffset);
+                return { remainingAtOriginalOffset, true, true };
+            }
+            // Give up.
             clearShouldBreakAtLineToAvoidWidowIfNeeded(*this);
             return { };
         }
