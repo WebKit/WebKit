@@ -103,7 +103,7 @@ private:
     String m_inputDeviceId;
     unsigned m_numberOfInputChannels;
     float m_remoteSampleRate;
-    size_t m_audioUnitLatency;
+    size_t m_audioUnitLatency { 0 };
 #if PLATFORM(IOS_FAMILY)
     String m_sceneIdentifier;
 #endif

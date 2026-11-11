@@ -134,7 +134,7 @@ private:
     unsigned m_numberOfFontCustomPlatformDatasUsedInCurrentRenderingUpdate { 0 };
 
     const CheckedRef<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
-    uint64_t m_renderingUpdateID;
+    uint64_t m_renderingUpdateID { 0 };
 };
 
 } // namespace WebKit
