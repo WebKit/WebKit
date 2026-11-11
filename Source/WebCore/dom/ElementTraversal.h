@@ -33,56 +33,56 @@ template <typename ElementType>
 class Traversal {
 public:
     // First or last ElementType child of the node.
-    static ElementType* firstChild(const Node&);
-    static ElementType* firstChild(const ContainerNode&);
-    static ElementType* lastChild(const Node&);
-    static ElementType* lastChild(const ContainerNode&);
+    static ElementType* NODELETE firstChild(const Node&);
+    static ElementType* NODELETE firstChild(const ContainerNode&);
+    static ElementType* NODELETE lastChild(const Node&);
+    static ElementType* NODELETE lastChild(const ContainerNode&);
 
     // First or last ElementType descendant of the node. For Elements firstWithin is always the same as first child.
-    static ElementType* firstWithin(const Node&);
-    static ElementType* firstWithin(const ContainerNode&);
-    static ElementType* lastWithin(const Node&);
-    static ElementType* lastWithin(const ContainerNode&);
-    static ElementType* inclusiveFirstWithin(Node&);
-    static ElementType* inclusiveFirstWithin(ContainerNode&);
-    static ElementType* inclusiveLastWithin(Node&);
-    static ElementType* inclusiveLastWithin(ContainerNode&);
+    static ElementType* NODELETE firstWithin(const Node&);
+    static ElementType* NODELETE firstWithin(const ContainerNode&);
+    static ElementType* NODELETE lastWithin(const Node&);
+    static ElementType* NODELETE lastWithin(const ContainerNode&);
+    static ElementType* NODELETE inclusiveFirstWithin(Node&);
+    static ElementType* NODELETE inclusiveFirstWithin(ContainerNode&);
+    static ElementType* NODELETE inclusiveLastWithin(Node&);
+    static ElementType* NODELETE inclusiveLastWithin(ContainerNode&);
 
     // Pre-order traversal skipping non-ElementType nodes.
-    static ElementType* next(const Node&);
-    static ElementType* next(const Node&, const Node* stayWithin);
-    static ElementType* next(const ContainerNode&);
-    static ElementType* next(const ContainerNode&, const Node* stayWithin);
-    static ElementType* previous(const Node&);
-    static ElementType* previous(const Node&, const Node* stayWithin);
+    static ElementType* NODELETE next(const Node&);
+    static ElementType* NODELETE next(const Node&, const Node* stayWithin);
+    static ElementType* NODELETE next(const ContainerNode&);
+    static ElementType* NODELETE next(const ContainerNode&, const Node* stayWithin);
+    static ElementType* NODELETE previous(const Node&);
+    static ElementType* NODELETE previous(const Node&, const Node* stayWithin);
 
     // Next or previous ElementType sibling if there is one.
-    static ElementType* nextSibling(const Node&);
-    static ElementType* previousSibling(const Node&);
+    static ElementType* NODELETE nextSibling(const Node&);
+    static ElementType* NODELETE previousSibling(const Node&);
 
     // Like next, but skips children.
-    static ElementType* nextSkippingChildren(const Node&);
-    static ElementType* nextSkippingChildren(const Node&, const Node* stayWithin);
+    static ElementType* NODELETE nextSkippingChildren(const Node&);
+    static ElementType* NODELETE nextSkippingChildren(const Node&, const Node* stayWithin);
 
 private:
-    template <typename CurrentType> static ElementType* firstChildTemplate(CurrentType&);
-    template <typename CurrentType> static ElementType* lastChildTemplate(CurrentType&);
-    template <typename CurrentType> static ElementType* firstWithinTemplate(CurrentType&);
-    template <typename CurrentType> static ElementType* lastWithinTemplate(CurrentType&);
-    template <typename CurrentType> static ElementType* nextTemplate(CurrentType&);
-    template <typename CurrentType> static ElementType* nextTemplate(CurrentType&, const Node* stayWithin);
+    template <typename CurrentType> static ElementType* NODELETE firstChildTemplate(CurrentType&);
+    template <typename CurrentType> static ElementType* NODELETE lastChildTemplate(CurrentType&);
+    template <typename CurrentType> static ElementType* NODELETE firstWithinTemplate(CurrentType&);
+    template <typename CurrentType> static ElementType* NODELETE lastWithinTemplate(CurrentType&);
+    template <typename CurrentType> static ElementType* NODELETE nextTemplate(CurrentType&);
+    template <typename CurrentType> static ElementType* NODELETE nextTemplate(CurrentType&, const Node* stayWithin);
 };
 
 class ElementTraversal : public Traversal<Element> {
 public:
     // FIXME: These should go somewhere else.
     // Pre-order traversal including the pseudo-elements.
-    static Element* previousIncludingPseudo(const Node&, const Node* = nullptr);
-    static Element* nextIncludingPseudo(const Node&, const Node* = nullptr);
-    static Element* nextIncludingPseudoSkippingChildren(const Node&, const Node* = nullptr);
+    static Element* NODELETE previousIncludingPseudo(const Node&, const Node* = nullptr);
+    static Element* NODELETE nextIncludingPseudo(const Node&, const Node* = nullptr);
+    static Element* NODELETE nextIncludingPseudoSkippingChildren(const Node&, const Node* = nullptr);
 
     // Utility function to traverse only the element and pseudo-element siblings of a node.
-    static Element* pseudoAwarePreviousSibling(const Node&);
+    static Element* NODELETE pseudoAwarePreviousSibling(const Node&);
 };
 
 // Specialized for pure Element to exploit the fact that Elements parent is always either another Element or the root.
@@ -97,7 +97,7 @@ template <>
 template <typename CurrentType>
 inline Element* Traversal<Element>::nextTemplate(CurrentType& current)
 {
-    for (SUPPRESS_UNCHECKED_LOCAL auto* node = NodeTraversal::next(current); node; node = NodeTraversal::nextSkippingChildren(*node)) {
+    for (auto* node = NodeTraversal::next(current); node; node = NodeTraversal::nextSkippingChildren(*node)) {
         if (auto* element = dynamicDowncast<Element>(*node))
             return element;
     }
@@ -108,7 +108,7 @@ template <>
 template <typename CurrentType>
 inline Element* Traversal<Element>::nextTemplate(CurrentType& current, const Node* stayWithin)
 {
-    for (SUPPRESS_UNCHECKED_LOCAL auto* node = NodeTraversal::next(current, stayWithin); node; node = NodeTraversal::nextSkippingChildren(*node, stayWithin)) {
+    for (auto* node = NodeTraversal::next(current, stayWithin); node; node = NodeTraversal::nextSkippingChildren(*node, stayWithin)) {
         if (auto* element = dynamicDowncast<Element>(*node))
             return element;
     }
@@ -120,7 +120,7 @@ template <typename ElementType>
 template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::firstChildTemplate(CurrentType& current)
 {
-    for (SUPPRESS_UNCHECKED_LOCAL auto* node = current.firstChild(); node; node = node->nextSibling()) {
+    for (auto* node = current.firstChild(); node; node = node->nextSibling()) {
         if (auto* element = dynamicDowncast<ElementType>(*node))
             return element;
     }
@@ -131,7 +131,7 @@ template <typename ElementType>
 template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::lastChildTemplate(CurrentType& current)
 {
-    for (SUPPRESS_UNCHECKED_LOCAL auto* node = current.lastChild(); node; node = node->previousSibling()) {
+    for (auto* node = current.lastChild(); node; node = node->previousSibling()) {
         if (auto* element = dynamicDowncast<ElementType>(*node))
             return element;
     }
@@ -142,7 +142,7 @@ template <typename ElementType>
 template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::firstWithinTemplate(CurrentType& current)
 {
-    for (SUPPRESS_UNCHECKED_LOCAL auto* node = current.firstChild(); node; node = NodeTraversal::next(*node, &current)) {
+    for (auto* node = current.firstChild(); node; node = NodeTraversal::next(*node, &current)) {
         if (auto* element = dynamicDowncast<ElementType>(*node))
             return element;
     }
@@ -153,7 +153,7 @@ template <typename ElementType>
 template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::lastWithinTemplate(CurrentType& current)
 {
-    for (SUPPRESS_UNCHECKED_LOCAL auto* node = NodeTraversal::last(current); node; node = NodeTraversal::previous(*node, &current)) {
+    for (auto* node = NodeTraversal::last(current); node; node = NodeTraversal::previous(*node, &current)) {
         if (auto* element = dynamicDowncast<ElementType>(*node))
             return element;
     }
@@ -164,7 +164,7 @@ template <typename ElementType>
 template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::nextTemplate(CurrentType& current)
 {
-    for (SUPPRESS_UNCHECKED_LOCAL auto* node = NodeTraversal::next(current); node; node = NodeTraversal::next(*node)) {
+    for (auto* node = NodeTraversal::next(current); node; node = NodeTraversal::next(*node)) {
         if (auto* element = dynamicDowncast<ElementType>(*node))
             return element;
     }
@@ -175,7 +175,7 @@ template <typename ElementType>
 template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::nextTemplate(CurrentType& current, const Node* stayWithin)
 {
-    for (SUPPRESS_UNCHECKED_LOCAL auto* node = NodeTraversal::next(current, stayWithin); node; node = NodeTraversal::next(*node, stayWithin)) {
+    for (auto* node = NodeTraversal::next(current, stayWithin); node; node = NodeTraversal::next(*node, stayWithin)) {
         if (auto* element = dynamicDowncast<ElementType>(*node))
             return element;
     }
@@ -185,7 +185,7 @@ inline ElementType* Traversal<ElementType>::nextTemplate(CurrentType& current, c
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::previous(const Node& current)
 {
-    for (SUPPRESS_UNCOUNTED_LOCAL auto* node = NodeTraversal::previous(current); node; node = NodeTraversal::previous(*node)) {
+    for (auto* node = NodeTraversal::previous(current); node; node = NodeTraversal::previous(*node)) {
         if (auto* element = dynamicDowncast<ElementType>(*node))
             return element;
     }
@@ -195,7 +195,7 @@ inline ElementType* Traversal<ElementType>::previous(const Node& current)
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::previous(const Node& current, const Node* stayWithin)
 {
-    for (SUPPRESS_UNCOUNTED_LOCAL auto* node = NodeTraversal::previous(current, stayWithin); node; node = NodeTraversal::previous(*node, stayWithin)) {
+    for (auto* node = NodeTraversal::previous(current, stayWithin); node; node = NodeTraversal::previous(*node, stayWithin)) {
         if (auto* element = dynamicDowncast<ElementType>(*node))
             return element;
     }
@@ -205,7 +205,7 @@ inline ElementType* Traversal<ElementType>::previous(const Node& current, const 
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::nextSibling(const Node& current)
 {
-    for (SUPPRESS_UNCOUNTED_LOCAL auto* node = current.nextSibling(); node; node = node->nextSibling()) {
+    for (auto* node = current.nextSibling(); node; node = node->nextSibling()) {
         if (auto* element = dynamicDowncast<ElementType>(*node))
             return element;
     }
@@ -215,7 +215,7 @@ inline ElementType* Traversal<ElementType>::nextSibling(const Node& current)
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::previousSibling(const Node& current)
 {
-    for (SUPPRESS_UNCOUNTED_LOCAL auto* node = current.previousSibling(); node; node = node->previousSibling()) {
+    for (auto* node = current.previousSibling(); node; node = node->previousSibling()) {
         if (auto* element = dynamicDowncast<ElementType>(*node))
             return element;
     }
@@ -225,7 +225,7 @@ inline ElementType* Traversal<ElementType>::previousSibling(const Node& current)
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::nextSkippingChildren(const Node& current)
 {
-    for (SUPPRESS_UNCOUNTED_LOCAL auto* node = NodeTraversal::nextSkippingChildren(current); node; node = NodeTraversal::nextSkippingChildren(*node)) {
+    for (auto* node = NodeTraversal::nextSkippingChildren(current); node; node = NodeTraversal::nextSkippingChildren(*node)) {
         if (auto* element = dynamicDowncast<ElementType>(*node))
             return element;
     }
@@ -235,7 +235,7 @@ inline ElementType* Traversal<ElementType>::nextSkippingChildren(const Node& cur
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::nextSkippingChildren(const Node& current, const Node* stayWithin)
 {
-    for (SUPPRESS_UNCOUNTED_LOCAL auto* node = NodeTraversal::nextSkippingChildren(current, stayWithin); node; node = NodeTraversal::nextSkippingChildren(*node, stayWithin)) {
+    for (auto* node = NodeTraversal::nextSkippingChildren(current, stayWithin); node; node = NodeTraversal::nextSkippingChildren(*node, stayWithin)) {
         if (auto* element = dynamicDowncast<ElementType>(*node))
             return element;
     }
@@ -306,7 +306,7 @@ inline ElementType* Traversal<ElementType>::next(const Node& current, const Node
 // FIXME: These should go somewhere else.
 inline Element* ElementTraversal::previousIncludingPseudo(const Node& current, const Node* stayWithin)
 {
-    for (SUPPRESS_UNCOUNTED_LOCAL auto* node = NodeTraversal::previousIncludingPseudo(current, stayWithin); node; node = NodeTraversal::previousIncludingPseudo(*node, stayWithin)) {
+    for (auto* node = NodeTraversal::previousIncludingPseudo(current, stayWithin); node; node = NodeTraversal::previousIncludingPseudo(*node, stayWithin)) {
         if (auto* element = dynamicDowncast<Element>(*node))
             return element;
     }
@@ -315,7 +315,7 @@ inline Element* ElementTraversal::previousIncludingPseudo(const Node& current, c
 
 inline Element* ElementTraversal::nextIncludingPseudo(const Node& current, const Node* stayWithin)
 {
-    for (SUPPRESS_UNCOUNTED_LOCAL auto* node = NodeTraversal::nextIncludingPseudo(current, stayWithin); node; node = NodeTraversal::nextIncludingPseudo(*node, stayWithin)) {
+    for (auto* node = NodeTraversal::nextIncludingPseudo(current, stayWithin); node; node = NodeTraversal::nextIncludingPseudo(*node, stayWithin)) {
         if (auto* element = dynamicDowncast<Element>(*node))
             return element;
     }
@@ -324,7 +324,7 @@ inline Element* ElementTraversal::nextIncludingPseudo(const Node& current, const
 
 inline Element* ElementTraversal::nextIncludingPseudoSkippingChildren(const Node& current, const Node* stayWithin)
 {
-    for (SUPPRESS_UNCOUNTED_LOCAL auto* node = NodeTraversal::nextIncludingPseudoSkippingChildren(current, stayWithin); node; node = NodeTraversal::nextIncludingPseudoSkippingChildren(*node, stayWithin)) {
+    for (auto* node = NodeTraversal::nextIncludingPseudoSkippingChildren(current, stayWithin); node; node = NodeTraversal::nextIncludingPseudoSkippingChildren(*node, stayWithin)) {
         if (auto* element = dynamicDowncast<Element>(*node))
             return element;
     }
@@ -333,7 +333,7 @@ inline Element* ElementTraversal::nextIncludingPseudoSkippingChildren(const Node
 
 inline Element* ElementTraversal::pseudoAwarePreviousSibling(const Node& current)
 {
-    for (SUPPRESS_UNCOUNTED_LOCAL auto* node = current.pseudoAwarePreviousSibling(); node; node = node->pseudoAwarePreviousSibling()) {
+    for (auto* node = current.pseudoAwarePreviousSibling(); node; node = node->pseudoAwarePreviousSibling()) {
         if (auto* element = dynamicDowncast<Element>(*node))
             return element;
     }
