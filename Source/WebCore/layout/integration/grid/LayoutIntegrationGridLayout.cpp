@@ -53,7 +53,7 @@ GridLayout::GridLayout(RenderGrid& renderGrid)
 
 GridLayout::~GridLayout()
 {
-    BoxTreeUpdater { protect(gridBoxRenderer()) }.tearDown();
+    BoxTreeUpdater::tearDown(protect(gridBoxRenderer()));
     gridBox().setIsGridIntegrationRoot(false);
 }
 

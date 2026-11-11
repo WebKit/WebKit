@@ -40,42 +40,33 @@ class InlineContent;
 
 // The box tree is the render tree, and the boxes get their data from their renderers. The root state is set and cleared
 // by the root's own LineLayout or GridLayout. This clears what a formatting context stored on its boxes.
-class BoxTreeUpdater {
-public:
-    BoxTreeUpdater(RenderBlock&);
-    NODELETE ~BoxTreeUpdater();
+namespace BoxTreeUpdater {
 
-    // Clears what the formatting context stored on its boxes. Text content that waited for the inline items goes in.
-    void tearDown();
+// Clears what the formatting context stored on its boxes. Text content that waited for the inline items goes in.
+void tearDown(RenderBlock& rootRenderer);
 
-    // Partial removal in an inline formatting context.
-    void remove(RenderObject& child);
+// Partial removal in an inline formatting context.
+void remove(RenderObject& child);
 
-    // The renderer is content of a formatting context whose root has a live LineLayout or GridLayout. Constant time, except
-    // for content of inline boxes, which walks up to the block container.
-    static bool isInLiveFormattingContext(const RenderObject&);
-    // The same, or the renderer is such a root.
-    static bool isLaidOutByIntegration(const RenderObject&);
+// The renderer is content of a formatting context whose root has a live LineLayout or GridLayout. Constant time, except
+// for content of inline boxes, which walks up to the block container.
+inline bool isInLiveFormattingContext(const RenderObject&);
+// The same, or the renderer is such a root.
+inline bool isLaidOutByIntegration(const RenderObject&);
 
-    // The text content of the box and the flags derived from it.
-    static void updateContent(RenderText&);
-    // Simplified measuring also depends on the style.
-    static void updateSimplifiedMeasuring(RenderText&);
-    // So does the text-combine-upright font. Returns whether the text became combined or stopped being combined.
-    static bool updateCombinedText(RenderText&);
+// The text content of the box and the flags derived from it.
+void updateContent(RenderText&);
+// Simplified measuring also depends on the style.
+void updateSimplifiedMeasuring(RenderText&);
+// So does the text-combine-upright font. Returns whether the text became combined or stopped being combined.
+bool updateCombinedText(RenderText&);
 
-    // From the renderer type, which is set up before the layout box.
-    static Layout::Box::ElementAttributes elementAttributes(const RenderObject&);
-    // Whether the box may have a first-line style. Changes with the style, and for anonymous blocks, with the parent.
-    static void updateFirstLineStyleState(RenderElement&);
+// From the renderer type, which is set up before the layout box.
+Layout::Box::ElementAttributes elementAttributes(const RenderObject&);
+// Whether the box may have a first-line style. Changes with the style, and for anonymous blocks, with the parent.
+void updateFirstLineStyleState(RenderElement&);
 
-private:
-    Layout::ElementBox& rootLayoutBox();
-
-    const CheckedRef<RenderBlock> m_rootRenderer;
-};
-
-inline bool BoxTreeUpdater::isInLiveFormattingContext(const RenderObject& renderer)
+inline bool isInLiveFormattingContext(const RenderObject& renderer)
 {
     SUPPRESS_UNCHECKED_LOCAL auto* parent = renderer.parent();
     if (!parent)
@@ -96,9 +87,11 @@ inline bool BoxTreeUpdater::isInLiveFormattingContext(const RenderObject& render
     return parent->layoutBox().isInlineIntegrationRoot();
 }
 
-inline bool BoxTreeUpdater::isLaidOutByIntegration(const RenderObject& renderer)
+inline bool isLaidOutByIntegration(const RenderObject& renderer)
 {
     return renderer.layoutBox().isIntegrationRoot() || isInLiveFormattingContext(renderer);
+}
+
 }
 
 #if ENABLE(TREE_DEBUGGING)

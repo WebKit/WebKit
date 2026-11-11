@@ -256,7 +256,7 @@ LineLayout::~LineLayout()
     m_boxGeometryUpdater.clear();
     m_lineDamage = { };
 
-    BoxTreeUpdater { rootRenderer }.tearDown();
+    BoxTreeUpdater::tearDown(rootRenderer);
     rootLayoutBox().setIsAnonymousTextIndentCandidateForIntegration(false);
     rootLayoutBox().setIsInlineIntegrationRoot(false);
     m_rootLayoutBox = nullptr;
@@ -1786,7 +1786,7 @@ void LineLayout::removeLayoutBox(RenderObject& child)
         InlineContentBuilder { flow() }.truncateDisplayContent(*m_inlineContent, *m_lineDamage);
     releaseContentRebuiltFromDamage();
 
-    BoxTreeUpdater { protect(flow()) }.remove(child);
+    BoxTreeUpdater::remove(child);
 }
 
 void LineLayout::releaseContentRebuiltFromDamage()
