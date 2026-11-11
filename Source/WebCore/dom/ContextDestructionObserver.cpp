@@ -43,14 +43,14 @@ ContextDestructionObserver::~ContextDestructionObserver()
 
 void ContextDestructionObserver::observeContext(ScriptExecutionContext* scriptExecutionContext)
 {
-    if (RefPtr context = m_scriptExecutionContext.get()) {
+    if (auto* context = m_scriptExecutionContext.get()) {
         ASSERT(context->isContextThread());
         context->willDestroyDestructionObserver(*this);
     }
 
     m_scriptExecutionContext = WeakPtr { scriptExecutionContext, EnableWeakPtrThreadingAssertions::No };
 
-    if (RefPtr context = m_scriptExecutionContext.get()) {
+    if (auto* context = m_scriptExecutionContext.get()) {
         ASSERT(context->isContextThread());
         context->didCreateDestructionObserver(*this);
     }

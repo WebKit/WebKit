@@ -507,13 +507,13 @@ void ScriptExecutionContext::willDestroyActiveDOMObject(ActiveDOMObject& activeD
     m_activeDOMObjects.remove(activeDOMObject);
 }
 
-void ScriptExecutionContext::didCreateDestructionObserver(ContextDestructionObserver& observer)
+SUPPRESS_NODELETE void ScriptExecutionContext::didCreateDestructionObserver(ContextDestructionObserver& observer)
 {
     ASSERT(!m_inScriptExecutionContextDestructor);
     m_destructionObservers.add(observer);
 }
 
-void ScriptExecutionContext::willDestroyDestructionObserver(ContextDestructionObserver& observer)
+SUPPRESS_NODELETE void ScriptExecutionContext::willDestroyDestructionObserver(ContextDestructionObserver& observer)
 {
     m_destructionObservers.remove(observer);
 }

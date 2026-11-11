@@ -41,9 +41,9 @@ public:
     inline ScriptExecutionContext* scriptExecutionContext() const; // Defined in ContextDestructionObserverInlines.h.
 
 protected:
-    WEBCORE_EXPORT explicit ContextDestructionObserver(ScriptExecutionContext*);
+    NODELETE WEBCORE_EXPORT explicit ContextDestructionObserver(ScriptExecutionContext*);
     WEBCORE_EXPORT virtual ~ContextDestructionObserver();
-    void observeContext(ScriptExecutionContext*);
+    NODELETE void observeContext(ScriptExecutionContext*);
 
 private:
     WeakPtr<ScriptExecutionContext> m_scriptExecutionContext;

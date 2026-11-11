@@ -227,8 +227,8 @@ public:
     // Called after the construction of an ActiveDOMObject to synchronize suspend state.
     void suspendActiveDOMObjectIfNeeded(ActiveDOMObject&);
 
-    void didCreateDestructionObserver(ContextDestructionObserver&);
-    void willDestroyDestructionObserver(ContextDestructionObserver&);
+    NODELETE void didCreateDestructionObserver(ContextDestructionObserver&);
+    NODELETE void willDestroyDestructionObserver(ContextDestructionObserver&);
 
     // MessagePort is conceptually a kind of ActiveDOMObject, but it needs to be tracked separately for message dispatch.
     void resumeAllMessagePortsSoon();
