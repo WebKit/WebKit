@@ -435,6 +435,14 @@ void BlockIntegrationUtils::showBoxHiddenByLineClamp(const RenderBox& box)
     LineClampUpdater::setIsForcedHidden(mutableBox, false);
 }
 
+void BlockIntegrationUtils::setFloatClippedByLineClamp(const RenderBox& floatBox, bool isClipped)
+{
+    // Only the float is written, which paints clipped to the block-end content edge of its line-clamp container (LineClampUpdater::blockEndClipRect),
+    // like RenderBlockFlow::layoutBlockChildren sets it.
+    SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef mutableFloatBox = const_cast<RenderBox&>(floatBox);
+    mutableFloatBox->setIsClippedByLineClamp(isClipped);
+}
+
 bool BlockIntegrationUtils::laysOutThroughRenderTree(const RenderBox& box)
 {
     // FIXME: A block formatting context root whose content the block formatting context cannot lay out yet runs render tree block layout

@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.clamp { display: inline-block; vertical-align: top; width: 150px; line-clamp: 2; border: 1px solid; margin: 0 2px 4px 0; padding: 2px; background: lightyellow; }
+.float { float: left; width: 30px; height: 40px; background: skyblue; margin-right: 4px; }
+</style>
+<div class="clamp" id="clamp"><div>line 1</div><div class="float"></div><div>line 2</div><div>line 3</div></div>
+<div class="clamp"><div>line 1</div><div id="first"><span id="text">line 2</span></div><div class="float"></div><div>line 3</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("clamp").style.lineClamp = "3";
+document.getElementById("text").firstChild.data = "line 2 now wraps onto a third line here";
+</script>
