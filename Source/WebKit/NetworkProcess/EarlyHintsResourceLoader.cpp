@@ -165,7 +165,7 @@ void EarlyHintsResourceLoader::startPreconnectTask(const URL& baseURL, const Lin
     parameters.allowPrivacyProxy = loaderParameters.allowPrivacyProxy;
     parameters.hadMainFrameMainResourcePrivateRelayed = loaderParameters.hadMainFrameMainResourcePrivateRelayed;
 
-    startPreconnectTaskAfterContentRuleListCheck(WTF::move(parameters), originalRequest.url());
+    startPreconnectTaskAfterContentRuleListCheck(WTF::move(parameters), baseURL);
 #else
     UNUSED_PARAM(baseURL);
     UNUSED_PARAM(header);
