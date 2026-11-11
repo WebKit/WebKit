@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls></video>
+<div id="host"></div>
+<script type="text/javascript">
+
+description("Testing that <code>MediaController</code> asks each supporting object whether it should be enabled, rather than tying every one of them to the controls being available.");
+
+window.jsTestIsAsync = true;
+
+const container = document.querySelector("div#host");
+const media = document.querySelector("video");
+const mediaController = createControls(container, media, null);
+const controls = mediaController.controls;
+
+function makeSupportingObject(shouldBeEnabled)
+{
+    return {
+        shouldBeEnabled,
+        enabled: false,
+        enable() { this.enabled = true; },
+        disable() { this.enabled = false; },
+        controlsUserVisibilityDidChange() { },
+    };
+}
+
+// Stands in for a control, which is only useful while the controls are on screen.
+const chrome = makeSupportingObject(controlsAvailable => controlsAvailable);
+// Stands in for SpatialVideoSupport, which presents the video itself.
+const presentation = makeSupportingObject(() => true);
+mediaController._supportingObjects = [chrome, presentation];
+
+media.addEventListener("loadedmetadata", () => {
+    debug("With the controls attribute present, both are enabled:");
+    mediaController._updateControlsAvailability();
+    shouldBeTrue("controls.visible");
+    shouldBeTrue("chrome.enabled");
+    shouldBeTrue("presentation.enabled");
+
+    debug("");
+    debug("Without it the controls are unavailable, and only the one that asked for them is disabled:");
+    media.removeAttribute("controls");
+    mediaController._updateControlsAvailability();
+    shouldBeFalse("controls.visible");
+    shouldBeFalse("chrome.enabled");
+    shouldBeTrue("presentation.enabled");
+
+    container.remove();
+    media.remove();
+    finishJSTest();
+}, { once: true });
+
+</script>
+</body>

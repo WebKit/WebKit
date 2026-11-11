@@ -61,6 +61,9 @@
 #include "Settings.h"
 #include "ShareableBitmap.h"
 #include "VideoFrameMetadata.h"
+#include "VideoTrack.h"
+#include "VideoTrackConfiguration.h"
+#include "VideoTrackList.h"
 #include <wtf/NativePromise.h>
 #include <wtf/ReducedResolutionSeconds.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -242,8 +245,10 @@ void HTMLVideoElement::attributeChanged(const QualifiedName& name, const AtomStr
     } else {
         HTMLMediaElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-        if (name == projectionAttr && oldValue != newValue && document().settings().spatialVideoRenderingEnabled())
+        if (name == projectionAttr && oldValue != newValue && document().settings().spatialVideoRenderingEnabled()) {
+            configureMediaControls();
             scheduleEvent(eventNames().webkitprojectionchangedEvent);
+        }
 
         if ((name == fieldofviewAttr || name == yawAttr || name == pitchAttr) && document().settings().spatialVideoRenderingEnabled())
             scheduleEvent(eventNames().webkitcameraviewchangedEvent);
@@ -265,6 +270,25 @@ void HTMLVideoElement::spatialCameraDidMove(double yaw, double pitch, double fie
     m_cameraFieldOfView = fieldOfView;
 
     scheduleEvent(eventNames().webkitcameramovedEvent);
+}
+
+bool HTMLVideoElement::hasSpatialVideoProjection() const
+{
+    if (!document().settings().spatialVideoRenderingEnabled())
+        return false;
+
+    auto declared = attributeWithoutSynchronization(projectionAttr).string().trim(isASCIIWhitespace<char16_t>);
+    if (!declared.isEmpty())
+        return !equalLettersIgnoringASCIICase(declared, "none"_s);
+
+    RefPtr videoTracks = this->videoTracks();
+    if (!videoTracks)
+        return false;
+    RefPtr selectedTrack = videoTracks->selectedItem();
+    if (!selectedTrack)
+        return false;
+    Ref configuration = selectedTrack->configuration();
+    return !!configuration->immersiveVideoMetadata();
 }
 
 double HTMLVideoElement::defaultYaw() const

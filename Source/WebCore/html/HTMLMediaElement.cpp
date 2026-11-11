@@ -2904,6 +2904,8 @@ void HTMLMediaElement::videoTrackConfigurationChanged(VideoTrack& track)
 {
     UNUSED_PARAM(track);
     ALWAYS_LOG(LOGIDENTIFIER, MediaElementSession::descriptionForTrack(track));
+
+    configureMediaControls();
 }
 
 void HTMLMediaElement::videoTrackKindChanged(VideoTrack& track)
@@ -8645,6 +8647,11 @@ void HTMLMediaElement::configureMediaControls()
 
     // Always create controls when in full screen mode.
     if (isFullscreen() && videoUsesElementFullscreen())
+        forceControls = true;
+
+    // The spatial video renderer lives alongside the controls in the shadow tree, so a projected
+    // video needs them to exist even when they are never shown.
+    if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(*this); videoElement && videoElement->hasSpatialVideoProjection())
         forceControls = true;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
