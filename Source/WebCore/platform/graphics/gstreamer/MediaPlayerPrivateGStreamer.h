@@ -365,6 +365,7 @@ protected:
 
     virtual void didEnd();
     void tearDown(bool clearMediaPlayer);
+    virtual void willSetPipelineToNull() { }
 
     URL m_url;
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
