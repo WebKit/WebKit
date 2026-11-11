@@ -1599,10 +1599,11 @@ void NetworkStorageManager::getOriginDirectory(WebCore::ClientOrigin&& origin, W
     ASSERT(!m_closed);
 
     workQueue().dispatch([this, protectedThis = Ref { *this }, type, origin = crossThreadCopy(WTF::move(origin)), completionHandler = WTF::move(completionHandler)]() mutable {
-        RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler), directory = crossThreadCopy(originStorageManager(origin)->resolvedPath(type))]() mutable {
+        auto directory = crossThreadCopy(originStorageManager(origin)->resolvedPath(type));
+        removeOriginStorageManagerIfPossible(origin);
+        RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler), directory = WTF::move(directory)] mutable {
             completionHandler(WTF::move(directory));
         });
-        removeOriginStorageManagerIfPossible(origin);
     });
 }
 
