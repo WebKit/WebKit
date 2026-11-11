@@ -610,6 +610,7 @@
 				WebKit/WKWebView/CrossOriginOpenerPolicyAboutBlankTests.swift,
 				WebKit/WKWebView/HTTP2Server.swift,
 				WebKit/WKWebView/HTTP3Server.swift,
+				WebKit/WKWebView/NavigationResponseProcessSwapTests.swift,
 				WebKit/WKWebView/PDFLookUpTests.swift,
 				WebKit/WKWebView/ProcessSwapStaleNavigationTests.swift,
 				WebKit/WKWebView/ProcessSwapBackForwardTests.swift,

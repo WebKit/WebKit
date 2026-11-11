@@ -356,6 +356,15 @@ extension HTTPServer {
             Foundation.URL(string: "https://127.0.0.1:\(port)/")
         }
 
+        /// The number of requests the server has received so far.
+        ///
+        /// Unlike ``HTTPServer/totalRequests``, this can be read while the server runs, such as to check how many
+        /// requests one step of a test makes.
+        @MainActor
+        public var totalRequests: Int {
+            storage.totalRequests
+        }
+
         /// Replaces the responses for paths the server already has, so that later requests for them get the new
         /// responses.
         ///

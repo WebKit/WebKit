@@ -815,6 +815,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/CrossOriginOpenerPolicyAboutBlankTests.swift
     Tests/WebKit/WKWebView/HTTP2Server.swift
     Tests/WebKit/WKWebView/HTTP3Server.swift
+    Tests/WebKit/WKWebView/NavigationResponseProcessSwapTests.swift
     Tests/WebKit/WKWebView/PDFLookUpTests.swift
     Tests/WebKit/WKWebView/ProcessSwapBackForwardTests.swift
     Tests/WebKit/WKWebView/ProcessSwapStaleNavigationTests.swift
