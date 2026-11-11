@@ -48,3 +48,52 @@ bool waitForProcessExitWithoutSpinningRunLoop(pid_t pid)
 }
 
 } // namespace TestWebKitAPI
+
+@interface TestNavigationDelegate (ProcessTerminationTestUtilities)
+- (void)_webView:(WKWebView *)webView webContentProcessDidTerminateWithReason:(_WKProcessTerminationReason)reason;
+@end
+
+@implementation CrashCountingNavigationDelegate {
+    BOOL _hasCrashHandler;
+}
+
+- (instancetype)initWithCrashHandler:(BOOL)hasCrashHandler
+{
+    if (!(self = [super init]))
+        return nil;
+    _hasCrashHandler = hasCrashHandler;
+    return self;
+}
+
+- (instancetype)init
+{
+    return [self initWithCrashHandler:YES];
+}
+
+- (BOOL)respondsToSelector:(SEL)selector
+{
+    if (!_hasCrashHandler && selector == @selector(_webView:webContentProcessDidTerminateWithReason:))
+        return NO;
+    return [super respondsToSelector:selector];
+}
+
+- (void)_webView:(WKWebView *)webView webContentProcessDidTerminateWithReason:(_WKProcessTerminationReason)reason
+{
+    ++_crashCount;
+    _lastCrashReason = reason;
+    [super _webView:webView webContentProcessDidTerminateWithReason:reason];
+}
+
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
+{
+    ++_didStartProvisionalNavigationCount;
+    [super webView:webView didStartProvisionalNavigation:navigation];
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    ++_didFinishNavigationCount;
+    [super webView:webView didFinishNavigation:navigation];
+}
+
+@end

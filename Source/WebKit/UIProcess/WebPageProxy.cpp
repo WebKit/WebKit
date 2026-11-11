@@ -3932,16 +3932,8 @@ void WebPageProxy::activityStateDidChange(OptionSet<ActivityState> mayHaveChange
     m_activityStateChangeWantsSynchronousReply = m_activityStateChangeWantsSynchronousReply || replyMode == ActivityStateChangeReplyMode::Synchronous;
 
     // We need to do this here instead of inside dispatchActivityStateChange() or viewIsBecomingVisible() because these don't run when the view doesn't
-    // have a running WebProcess. For the same reason, we need to rely on PageClient::isViewVisible() instead of WebPageProxy::isViewVisible().
-    if (internals().potentiallyChangedActivityStateFlags & ActivityState::IsVisible && m_shouldReloadDueToCrashWhenVisible && pageClient->isMainViewVisible()) {
-        RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
-            RefPtr protectedThis = weakThis.get();
-            if (protectedThis && std::exchange(protectedThis->m_shouldReloadDueToCrashWhenVisible, false)) {
-                WEBPAGEPROXY_RELEASE_LOG_WITH_THIS(ViewState, protectedThis, "activityStateDidChange: view is becoming visible after a crash, attempt a reload");
-                protectedThis->tryReloadAfterProcessTermination();
-            }
-        });
-    }
+    // have a running WebProcess.
+    maybeReloadAfterCrashWhenVisible();
 
     if (m_suppressVisibilityUpdates && dispatchMode != ActivityStateChangeDispatchMode::Immediate) {
         WEBPAGEPROXY_RELEASE_LOG(ViewState, "activityStateDidChange: Returning early due to m_suppressVisibilityUpdates");
@@ -6461,6 +6453,26 @@ static bool isChildFrameOfDocumentMainFrameNavigatedAwayFrom(WebFrameProxy& fram
     return !frame.isMainFrame() && frame.mainFrame() != mainFrame;
 }
 
+static bool isFragmentOnlyNavigation(const WebFrameProxy& frame, const URL& requestURL, WebCore::NavigationType navigationType)
+{
+    if (navigationType == WebCore::NavigationType::BackForward)
+        return false;
+    return requestURL.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(requestURL, frame.url());
+}
+
+static bool clientLoadNavigatesToAnotherDocument(const WebFrameProxy* mainFrame, const API::Navigation& navigation)
+{
+    // If there is no current main frame, the client load will load a document into a new main frame.
+    if (!mainFrame)
+        return true;
+
+    // Reloads, loads of substitute data, and back/forward traversals replace the document.
+    if (navigation.reloadItem() || navigation.substituteData() || navigation.targetItem())
+        return true;
+
+    return !isFragmentOnlyNavigation(*mainFrame, navigation.currentRequest().url(), WebCore::NavigationType::Other);
+}
+
 void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& processInitiatingNavigation, PolicyAction policyAction, API::Navigation& navigation, Ref<API::NavigationAction>&& navigationAction, ProcessSwapRequestedByClient processSwapRequestedByClient, WebFrameProxy& frame, const FrameInfoData& frameInfo, WasNavigationIntercepted wasNavigationIntercepted, std::optional<PolicyDecisionConsoleMessage>&& message, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "receivedNavigationActionPolicyDecision: frameID=%" PRIu64 ", isMainFrame=%d, navigationID=%" PRIu64 ", policyAction=%" PUBLIC_LOG_STRING, frame.frameID().toUInt64(), frame.isMainFrame(), navigation.navigationID().object().toUInt64(), toString(policyAction).characters());
@@ -6633,15 +6645,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
 
     Ref browsingContextGroup = browsingContextGroupForNavigation(frame, navigation, websiteDataStore, processSwapRequestedByClient);
 
-    bool isFragmentOnlyMainFrameNavigation = [&] {
-        if (!frame.isMainFrame())
-            return false;
-        auto& lastNavigationAction = navigation.lastNavigationAction();
-        if (lastNavigationAction && lastNavigationAction->navigationType == WebCore::NavigationType::BackForward)
-            return false;
-        auto& requestURL = navigation.currentRequest().url();
-        return requestURL.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(requestURL, frame.url());
-    }();
+    bool isFragmentOnlyMainFrameNavigation = frame.isMainFrame() && isFragmentOnlyNavigation(frame, navigation.currentRequest().url(), navigationAction->navigationType());
 
     if (frame.isMainFrame() && shouldUseEnhancedSecurityHeuristics(preferences) && !isFragmentOnlyMainFrameNavigation)
         internals().enhancedSecurityTracker.trackNavigation(navigation, hasOpenedPage(), internals().pageLoadState.httpFallbackInProgress());
@@ -10344,6 +10348,7 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (frame->isMainFrame()) {
         process->didCommitMainFrameLoad(request.url());
 
+        m_shouldReloadDueToCrashWhenVisible = false;
         m_hasUpdatedRenderingAfterDidCommitLoad = false;
 #if HAVE(APPKIT_GESTURES_SUPPORT)
         m_hoverActivatedByClickBounds = std::nullopt;
@@ -11701,6 +11706,10 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         hitTestJSHandle = navigation->lastNavigationActionHitTestJSHandle();
         navigationActionData.canHandleRequest = canHandleRequest;
     }
+
+    // Navigating to another document replaces the crashed page, even if the navigation doesn't commit.
+    if (frame.isMainFrame() && !isFragmentOnlyNavigation(frame, request.url(), navigationActionData.navigationType))
+        m_shouldReloadDueToCrashWhenVisible = false;
 
     if (!navigation) {
         // The WebProcess reports the end of a navigation it started under the identifier it minted.
@@ -16198,14 +16207,61 @@ void WebPageProxy::dispatchProcessDidTerminate(WebProcessProxy& process, Process
         handledByClient = m_navigationClient->processDidTerminate(*this, reason);
 
     if (!handledByClient && shouldReloadAfterProcessTermination(reason)) {
-        // We delay the view reload until it becomes visible.
-        if (isViewVisible())
+        if (&process != &siteIsolatedProcess() && hasMainFrameNavigationInFlight()) {
+            WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "dispatchProcessDidTerminate: Not reloading the page because a main frame navigation is in progress");
+            return;
+        }
+
+        // Check the page client directly, as ActivityState::IsVisible may be awaiting a deferred update.
+        RefPtr pageClient = this->pageClient();
+        if (pageClient && pageClient->isMainViewVisible())
             tryReloadAfterProcessTermination();
         else {
             WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "dispatchProcessDidTerminate: Not eagerly reloading the view because it is not currently visible");
             m_shouldReloadDueToCrashWhenVisible = true;
         }
     }
+}
+
+void WebPageProxy::maybeReloadAfterCrashWhenVisible()
+{
+    RefPtr pageClient = this->pageClient();
+    if (!m_shouldReloadDueToCrashWhenVisible || !pageClient || !pageClient->isMainViewVisible())
+        return;
+
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis || !protectedThis->m_shouldReloadDueToCrashWhenVisible)
+            return;
+
+        // Defer while a main frame navigation is in flight (e.g. an API load that hasn't requested policy yet).
+        RefPtr pageClient = protectedThis->pageClient();
+        if (!pageClient || !pageClient->isMainViewVisible() || protectedThis->hasMainFrameNavigationInFlight())
+            return;
+
+        protectedThis->m_shouldReloadDueToCrashWhenVisible = false;
+        WEBPAGEPROXY_RELEASE_LOG_WITH_THIS(ViewState, protectedThis, "maybeReloadAfterCrashWhenVisible: view is visible after a crash, attempt a reload");
+        protectedThis->tryReloadAfterProcessTermination();
+    });
+}
+
+bool WebPageProxy::hasMainFrameNavigationInFlight() const
+{
+    if (m_provisionalPage || pageLoadState().isProvisional())
+        return true;
+
+    if (m_mainFrame && m_mainFrame->hasActiveNavigationPolicyListener())
+        return true;
+
+    // pendingAPIRequest is not cleared when a load becomes a download, so also check m_navigationState.
+    auto navigationID = pageLoadState().pendingAPIRequest().navigationID;
+    if (!navigationID)
+        return false;
+    RefPtr navigation = m_navigationState->navigation(*navigationID);
+    if (!navigation)
+        return false;
+    RefPtr mainFrame = m_mainFrame;
+    return clientLoadNavigatesToAnotherDocument(mainFrame.get(), *navigation);
 }
 
 void WebPageProxy::tryReloadAfterProcessTermination()

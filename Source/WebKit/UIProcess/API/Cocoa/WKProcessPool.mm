@@ -188,6 +188,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
 
+static BOOL requestWebProcessTermination(WebKit::WebProcessPool& processPool, pid_t pid, WebKit::ProcessTerminationReason reason)
+{
+    for (Ref process : borrow(processPool.processes()).get()) {
+        if (process->processID() == pid) {
+            process->requestTermination(reason);
+            return YES;
+        }
+    }
+    return NO;
+}
+
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 @implementation WKProcessPool (WKPrivate)
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
@@ -446,13 +457,28 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (BOOL)_requestWebProcessTermination:(pid_t)pid
 {
-    for (Ref process : borrow(_processPool->processes()).get()) {
-        if (process->processID() == pid) {
-            process->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
-            return YES;
+    return requestWebProcessTermination(protect(*_processPool), pid, WebKit::ProcessTerminationReason::RequestedByClient);
+}
+
+- (BOOL)_requestWebProcessTerminationForTesting:(pid_t)pid reason:(_WKProcessTerminationReason)reason
+{
+    auto terminationReason = [&] {
+        switch (reason) {
+        case _WKProcessTerminationReasonExceededMemoryLimit:
+            return WebKit::ProcessTerminationReason::ExceededMemoryLimit;
+        case _WKProcessTerminationReasonExceededCPULimit:
+            return WebKit::ProcessTerminationReason::ExceededCPULimit;
+        case _WKProcessTerminationReasonRequestedByClient:
+            return WebKit::ProcessTerminationReason::RequestedByClient;
+        case _WKProcessTerminationReasonCrash:
+            return WebKit::ProcessTerminationReason::Crash;
+        case _WKProcessTerminationReasonExceededSharedProcessCrashLimit:
+            return WebKit::ProcessTerminationReason::GPUProcessCrashedTooManyTimes;
         }
-    }
-    return NO;
+        ASSERT_NOT_REACHED();
+        return WebKit::ProcessTerminationReason::Crash;
+    }();
+    return requestWebProcessTermination(protect(*_processPool), pid, terminationReason);
 }
 
 - (BOOL)_isWebProcessSuspended:(pid_t)pid

@@ -24,6 +24,7 @@
  */
 
 #import <WebKit/WKBase.h>
+#import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKProcessPool.h>
 #import <WebKit/WKSecurityOrigin.h>
 
@@ -167,6 +168,7 @@ WK_CLASS_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2))
 - (pid_t)_gpuProcessIdentifier WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (BOOL)_hasAudibleMediaActivity WK_API_AVAILABLE(macos(13.0), ios(16.0));
 - (BOOL)_requestWebProcessTermination:(pid_t)pid WK_API_AVAILABLE(macos(12.0), ios(15.0));
+- (BOOL)_requestWebProcessTerminationForTesting:(pid_t)pid reason:(_WKProcessTerminationReason)reason WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 - (BOOL)_isWebProcessSuspended:(pid_t)pid;
 
 // Test only. Returns web processes running web pages (does not include web processes running service workers)

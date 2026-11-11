@@ -3787,6 +3787,8 @@ private:
 #endif
 
     void tryReloadAfterProcessTermination();
+    void maybeReloadAfterCrashWhenVisible();
+    bool hasMainFrameNavigationInFlight() const;
     void resetRecentCrashCountSoon();
     NODELETE void resetRecentCrashCount();
 

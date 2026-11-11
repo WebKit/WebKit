@@ -226,6 +226,7 @@ public:
     // A frame has at most one navigation check outstanding, so a new one displaces the previous. A check that
     // does not navigate it, for a new window or a download attribute activation, is independent instead.
     enum class NavigatesThisFrame : bool { No, Yes };
+    bool hasActiveNavigationPolicyListener() const { return !!m_activeListener; }
     WebFramePolicyListenerProxy& setUpPolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, std::optional<NavigatingToAppBoundDomain>, WasNavigationIntercepted)>&&, ShouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData, ShouldWaitForSiteHasStorageCheck, ShouldWaitForEnhancedSecurityLinkCheck, NavigatesThisFrame);
 
 #if ENABLE(CONTENT_FILTERING)

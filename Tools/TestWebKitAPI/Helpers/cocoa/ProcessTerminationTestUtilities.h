@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import <sys/types.h>
 
 namespace TestWebKitAPI {
@@ -33,3 +34,22 @@ bool processStillRunning(pid_t);
 bool waitForProcessExitWithoutSpinningRunLoop(pid_t);
 
 } // namespace TestWebKitAPI
+
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
+// When hasCrashHandler is NO, does not respond to the termination selector so WebKit uses its
+// default crash handling.
+NS_SWIFT_UI_ACTOR
+@interface CrashCountingNavigationDelegate : TestNavigationDelegate
+
+- (instancetype)initWithCrashHandler:(BOOL)hasCrashHandler;
+- (instancetype)init;
+
+@property (nonatomic, readonly) NSUInteger crashCount;
+@property (nonatomic, readonly) _WKProcessTerminationReason lastCrashReason;
+@property (nonatomic, readonly) NSUInteger didStartProvisionalNavigationCount;
+@property (nonatomic, readonly) NSUInteger didFinishNavigationCount;
+
+@end
+
+NS_HEADER_AUDIT_END(nullability, sendability)

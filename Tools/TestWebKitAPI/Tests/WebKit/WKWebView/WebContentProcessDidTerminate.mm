@@ -26,9 +26,11 @@
 #import "config.h"
 
 #import "Helpers/DeprecatedGlobalValues.h"
-#import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/ProcessTerminationTestUtilities.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKNavigationDelegatePrivate.h>
@@ -215,9 +217,13 @@ TEST(WKNavigation, AutomaticVisibleViewReloadAfterWebProcessCrash)
     EXPECT_FALSE(startedLoad);
 }
 
-TEST(WKNavigation, AutomaticHiddenViewDelayedReloadAfterWebProcessCrash)
+enum class SiteIsolation : bool { Disabled, Enabled };
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<BasicNavigationDelegateWithoutCrashHandler>> hiddenWebViewWithoutCrashHandler(SiteIsolation siteIsolation)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    if (siteIsolation == SiteIsolation::Enabled)
+        TestWebKitAPI::enableSiteIsolation(configuration.get());
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
 
     RetainPtr delegate = adoptNS([[BasicNavigationDelegateWithoutCrashHandler alloc] init]);
@@ -234,6 +240,12 @@ TEST(WKNavigation, AutomaticHiddenViewDelayedReloadAfterWebProcessCrash)
 
     startedLoad = false;
     finishedLoad = false;
+    return { WTF::move(webView), WTF::move(delegate) };
+}
+
+static void runAutomaticHiddenViewDelayedReloadAfterWebProcessCrashTest(SiteIsolation siteIsolation)
+{
+    auto [webView, delegate] = hiddenWebViewWithoutCrashHandler(siteIsolation);
 
     // Simulate crash.
     [webView _killWebContentProcess];
@@ -250,6 +262,83 @@ TEST(WKNavigation, AutomaticHiddenViewDelayedReloadAfterWebProcessCrash)
 
     // WebKit should have triggered a reload when the view became visible.
     TestWebKitAPI::Util::run(&finishedLoad);
+}
+
+TEST(WKNavigation, AutomaticHiddenViewDelayedReloadAfterWebProcessCrash)
+{
+    runAutomaticHiddenViewDelayedReloadAfterWebProcessCrashTest(SiteIsolation::Disabled);
+}
+
+TEST(WKNavigation, AutomaticHiddenViewDelayedReloadAfterWebProcessCrashWithSiteIsolation)
+{
+    runAutomaticHiddenViewDelayedReloadAfterWebProcessCrashTest(SiteIsolation::Enabled);
+}
+
+#if PLATFORM(MAC)
+TEST(WKNavigation, HiddenViewBecomingVisibleWhileCrashIsProcessedStillReloads)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
+    RetainPtr delegate = adoptNS([[BasicNavigationDelegateWithoutCrashHandler alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    // Unlike adding the view to a window, unhiding it doesn't update the page's activity state immediately.
+    [webView setHidden:YES];
+
+    startedLoad = false;
+    finishedLoad = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"rich-and-plain-text" withExtension:@"html"]]];
+    TestWebKitAPI::Util::run(&finishedLoad);
+    startedLoad = false;
+    finishedLoad = false;
+
+    pid_t webProcessIdentifier = [webView _webProcessIdentifier];
+    kill(webProcessIdentifier, SIGKILL);
+    EXPECT_TRUE(TestWebKitAPI::waitForProcessExitWithoutSpinningRunLoop(webProcessIdentifier));
+    // Give the connection time to notice the exit, so that its handling is queued before the activity state update below.
+    WTF::sleep(500_ms);
+
+    [webView setHidden:NO];
+
+    TestWebKitAPI::Util::run(&finishedLoad);
+}
+#endif
+
+TEST(WKNavigation, HiddenViewHiddenAgainBeforeCrashReloadReloadsWhenVisible)
+{
+    auto [webView, delegate] = hiddenWebViewWithoutCrashHandler(SiteIsolation::Disabled);
+
+    [webView _killWebContentProcess];
+    TestWebKitAPI::Util::runFor(0.1_s);
+    EXPECT_FALSE(startedLoad);
+
+    [webView addToTestWindow];
+    [webView removeFromSuperview];
+    TestWebKitAPI::Util::runFor(0.5_s);
+    EXPECT_FALSE(startedLoad);
+
+    [webView addToTestWindow];
+    TestWebKitAPI::Util::run(&finishedLoad);
+}
+
+TEST(WKNavigation, CrashWhileHiddenThenNavigateDoesNotReloadWhenVisible)
+{
+    auto [webView, delegate] = hiddenWebViewWithoutCrashHandler(SiteIsolation::Disabled);
+
+    [webView _killWebContentProcess];
+    TestWebKitAPI::Util::runFor(0.1_s);
+    EXPECT_FALSE(startedLoad);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
+    TestWebKitAPI::Util::run(&finishedLoad);
+    EXPECT_WK_STREQ([webView URL].lastPathComponent, "simple.html");
+
+    startedLoad = false;
+    finishedLoad = false;
+    [webView addToTestWindow];
+    TestWebKitAPI::Util::runFor(0.5_s);
+    EXPECT_FALSE(startedLoad);
+    EXPECT_WK_STREQ([webView URL].lastPathComponent, "simple.html");
 }
 
 TEST(WKNavigation, ProcessCrashDuringCallback)
