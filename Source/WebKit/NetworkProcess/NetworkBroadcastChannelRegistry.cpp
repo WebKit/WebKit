@@ -49,9 +49,7 @@ bool NetworkBroadcastChannelRegistry::isOriginAllowedForConnection(IPC::Connecti
         return false;
 
     WebCore::RegistrableDomain registrableDomain { origin.topOrigin };
-    auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(webProcessConnection->webProcessIdentifier(), registrableDomain);
-
-    return allowCookieAccess == NetworkProcess::AllowCookieAccess::Allow;
+    return m_networkProcess->allowsFirstPartyForCookies(webProcessConnection->webProcessIdentifier(), registrableDomain);
 }
 
 static bool isValidClientOrigin(const WebCore::ClientOrigin& clientOrigin)

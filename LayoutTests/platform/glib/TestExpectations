@@ -1443,6 +1443,15 @@ http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.
 http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ]
 http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
 
+# Cookie blocking for an empty firstPartyForCookies domain is only implemented for Cocoa.
+webkit.org/b/331011 http/tests/security/cookies-from-empty-origin-and-detached-opener-fetch.html [ Failure ]
+webkit.org/b/331011 http/tests/security/cookies-from-empty-origin-and-detached-opener-redirect.html [ Failure ]
+webkit.org/b/331011 http/tests/security/cookies-from-empty-origin-and-detached-opener-syncxhr.html [ Failure ]
+webkit.org/b/331011 http/tests/security/cookies-from-empty-origin-and-detached-opener-websocket-with-blocked-third-party-cookies.html [ Failure ]
+webkit.org/b/331011 http/tests/security/cookies-from-empty-origin-and-detached-opener-websocket.html [ Failure ]
+webkit.org/b/331011 http/tests/security/ipc-cookie-access-from-file-url.html [ Failure ]
+webkit.org/b/331011 http/tests/security/redirect-to-allow-cookies-request.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Cookie-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

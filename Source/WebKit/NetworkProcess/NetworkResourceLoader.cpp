@@ -1051,7 +1051,8 @@ void NetworkResourceLoader::checkLocalNetworkAccess(const ResourceRequest& reque
     if (isLessPublicThan(clientAddressSpace, recordedAddressSpace))
         clientAddressSpace = recordedAddressSpace;
 
-    bool topOriginIsAllowed = !topOrigin.isOpaque() && NetworkProcess::singleton().allowsFirstPartyForCookies(connection->webProcessIdentifier(), RegistrableDomain::uncheckedCreateFromHost(topOrigin.host())) == NetworkProcess::AllowCookieAccess::Allow;
+    auto topOriginDomain = RegistrableDomain::uncheckedCreateFromHost(topOrigin.host());
+    bool topOriginIsAllowed = !topOrigin.isOpaque() && !topOriginDomain.isEmpty() && NetworkProcess::singleton().allowsFirstPartyForCookies(connection->webProcessIdentifier(), topOriginDomain);
     clientIsSecureContext = clientIsSecureContext && topOriginIsAllowed && shouldTreatAsPotentiallyTrustworthy(sourceOrigin.toURL());
 
     auto clientOrigin = ClientOrigin { topOrigin, sourceOrigin };
@@ -2138,8 +2139,7 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& 
             return completionHandler({ });
 
         if (newRequest.firstPartyForCookies() != firstPartyForCookiesFromRedirectRequest) {
-            auto allowCookieAccess = NetworkProcess::singleton().allowsFirstPartyForCookies(connection->webProcessIdentifier(), newRequest.firstPartyForCookies());
-            MESSAGE_CHECK_COMPLETION_BASE(allowCookieAccess == NetworkProcess::AllowCookieAccess::Allow, connection->connection(), completionHandler({ }));
+            MESSAGE_CHECK_COMPLETION_BASE(NetworkProcess::singleton().allowsFirstPartyForCookies(connection->webProcessIdentifier(), newRequest.firstPartyForCookies()), connection->connection(), completionHandler({ }));
 
             if (RegistrableDomain { newRequest.firstPartyForCookies() } != RegistrableDomain { firstPartyForCookiesFromRedirectRequest })
                 protectedThis->m_shouldRestartLoad = true;

@@ -247,7 +247,7 @@ void NetworkConnectionToWebProcess::loadImageForDecoding(WebCore::ResourceReques
     MESSAGE_CHECK_COMPLETION(url.isValid() && url.protocolIsInHTTPFamily(), completionHandler(makeUnexpected<WebCore::ResourceError>({ })));
 
     if (request.firstPartyForCookies().isValid())
-        MESSAGE_CHECK_COMPLETION(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, request.firstPartyForCookies()) == NetworkProcess::AllowCookieAccess::Allow, completionHandler(makeUnexpected<WebCore::ResourceError>({ })));
+        MESSAGE_CHECK_COMPLETION(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, request.firstPartyForCookies()), completionHandler(makeUnexpected<WebCore::ResourceError>({ })));
     else
         request.setAllowCookies(false);
     CheckedPtr networkSession = this->networkSession();
@@ -543,13 +543,12 @@ void NetworkConnectionToWebProcess::queryLocalNetworkAccessPermission(std::optio
 void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByWorker isInitiatedByWorker)
 {
     MESSAGE_CHECK(request.url().isValid());
-    auto allowCookieAccess = NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, request.firstPartyForCookies());
-    MESSAGE_CHECK(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate);
+    MESSAGE_CHECK(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, request.firstPartyForCookies()));
     if (!NetworkProcess::singleton().allowsWebPageProxyIdentifier(m_webProcessIdentifier, webPageProxyID)) {
         RELEASE_LOG_ERROR(IPC, "createSocketChannel: dropping request from process %" PRIu64 " for pageID not in allow-list", m_webProcessIdentifier.toUInt64());
         return;
     }
-    if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow) {
+    if (RegistrableDomain(request.firstPartyForCookies()).isEmpty()) {
         CONNECTION_RELEASE_LOG(Loading, "createSocketChannel: forcing EphemeralStateless because Web process is not allowed to use firstPartyForCookies %" SENSITIVE_LOG_STRING " for url %" SENSITIVE_LOG_STRING, request.firstPartyForCookies().string().utf8(), request.url().string().utf8());
         storedCredentialsPolicy = WebCore::StoredCredentialsPolicy::EphemeralStateless;
     }
@@ -605,11 +604,11 @@ RefPtr<ServiceWorkerFetchTask> NetworkConnectionToWebProcess::createFetchTask(Ne
 
 void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadParameters&& loadParameters, std::optional<NetworkResourceLoadIdentifier> existingLoaderToResume)
 {
-    auto allowCookieAccess = NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, loadParameters.request.firstPartyForCookies());
-    if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow) [[unlikely]]
+    bool allowCookieAccess = NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, loadParameters.request.firstPartyForCookies());
+    if (!allowCookieAccess) [[unlikely]]
         RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Web process does not have cookie access to url %" SENSITIVE_LOG_STRING " for request %" SENSITIVE_LOG_STRING, loadParameters.request.firstPartyForCookies().string().utf8(), loadParameters.request.url().string().utf8());
 
-    MESSAGE_CHECK(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate);
+    MESSAGE_CHECK(allowCookieAccess);
     if (!NetworkProcess::singleton().allowsWebPageProxyIdentifier(m_webProcessIdentifier, loadParameters.webPageProxyID)) {
         RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: dropping load from process %" PRIu64 " for pageID not in allow-list", m_webProcessIdentifier.toUInt64());
         return;
@@ -697,7 +696,7 @@ void NetworkConnectionToWebProcess::terminateForInvalidLoaderResumeClaim()
 
 void NetworkConnectionToWebProcess::performSynchronousLoad(NetworkResourceLoadParameters&& loadParameters, CompletionHandler<void(const ResourceError&, const ResourceResponse, Vector<uint8_t>&&)>&& reply)
 {
-    MESSAGE_CHECK(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, loadParameters.request.firstPartyForCookies()) == NetworkProcess::AllowCookieAccess::Allow);
+    MESSAGE_CHECK(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, loadParameters.request.firstPartyForCookies()));
     if (!NetworkProcess::singleton().allowsWebPageProxyIdentifier(m_webProcessIdentifier, loadParameters.webPageProxyID)) {
         RELEASE_LOG_ERROR(Loading, "performSynchronousLoad: dropping load from process %" PRIu64 " for pageID not in allow-list", m_webProcessIdentifier.toUInt64());
         return reply({ }, { }, { });
@@ -898,7 +897,7 @@ void NetworkConnectionToWebProcess::startDownload(DownloadID downloadID, const R
         return;
 
     if (!request.firstPartyForCookies().isEmpty())
-        MESSAGE_CHECK(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, request.firstPartyForCookies()) == NetworkProcess::AllowCookieAccess::Allow);
+        MESSAGE_CHECK(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, request.firstPartyForCookies()));
 
     protect(NetworkProcess::singleton().downloadManager())->startDownload(m_sessionID, downloadID, request, topOrigin, isNavigatingToAppBoundDomain, advancedPrivacyProtections, suggestedName, fromDownloadAttribute, frameID, pageID, webProcessIdentifier());
 }
@@ -916,7 +915,7 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(std::optio
         return;
 
     if (!request.firstPartyForCookies().isEmpty())
-        MESSAGE_CHECK(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, request.firstPartyForCookies()) == NetworkProcess::AllowCookieAccess::Allow);
+        MESSAGE_CHECK(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, request.firstPartyForCookies()));
 
     if (!mainResourceLoadIdentifier) {
         protect(NetworkProcess::singleton().downloadManager())->startDownload(m_sessionID, downloadID, request, topOrigin, isNavigatingToAppBoundDomain, { });
@@ -957,10 +956,19 @@ bool NetworkConnectionToWebProcess::hostsDomain(const RegistrableDomain& domain)
     return !m_hostedDomains || domain.isEmpty() || m_hostedDomains->contains(domain);
 }
 
+// An empty first party domain (such as about:blank) is acceptable at the IPC layer but does not permit cookie use,
+// unless it is a file URL accessing cookies for another URL without a registrable domain.
+static bool allowsCookieAccess(const URL& firstParty, const URL& url)
+{
+    if (!RegistrableDomain(firstParty).isEmpty())
+        return true;
+
+    return firstParty.protocolIsFile() && RegistrableDomain(url).isEmpty();
+}
+
 auto NetworkConnectionToWebProcess::validateCookieAccess(ASCIILiteral messageName, const URL& firstParty, const URL& url, const SameSiteInfo* sameSiteInfo, std::optional<WebPageProxyIdentifier> webPageProxyID, AllowUnhostedURL allowUnhostedURL) -> CookieAccess
 {
-    auto allowCookieAccess = NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
-    if (allowCookieAccess == NetworkProcess::AllowCookieAccess::Terminate)
+    if (!NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty))
         return CookieAccess::Terminate;
 
     // Deliberately not a MESSAGE_CHECK: a process can legitimately send a stale page identifier during page
@@ -970,7 +978,7 @@ auto NetworkConnectionToWebProcess::validateCookieAccess(ASCIILiteral messageNam
         return CookieAccess::Disallow;
     }
 
-    if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
+    if (!allowsCookieAccess(firstParty, url))
         return CookieAccess::Disallow;
 
     // firstParty is not enough: under site isolation, a cross-site iframe's process is allowed its embedder as a
@@ -1166,7 +1174,7 @@ void NetworkConnectionToWebProcess::domCookiesForHost(const URL& url, Completion
     MESSAGE_CHECK_COMPLETION(HashSet<String>::isValidValue(url.host().toString()), completionHandler(std::nullopt));
     auto access = validateCookieAccess("domCookiesForHost"_s, url, url, nullptr, std::nullopt);
     MESSAGE_CHECK_COMPLETION(access != CookieAccess::Terminate, completionHandler(std::nullopt));
-    if (access != CookieAccess::Allow)
+    if (access != CookieAccess::Allow || RegistrableDomain(url).isEmpty())
         return completionHandler(std::nullopt);
 
     CheckedPtr networkStorageSession = storageSession();
@@ -1501,7 +1509,7 @@ void NetworkConnectionToWebProcess::removeStorageAccessForFrame(FrameIdentifier 
 
 void NetworkConnectionToWebProcess::logUserInteraction(RegistrableDomain&& domain)
 {
-    if (NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, domain) != NetworkProcess::AllowCookieAccess::Allow) {
+    if (!NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, domain)) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -1617,7 +1625,7 @@ void NetworkConnectionToWebProcess::storageAccessQuirkForTopFrameDomain(URL&& to
 
 void NetworkConnectionToWebProcess::requestStorageAccessUnderOpener(WebCore::RegistrableDomain&& domainInNeedOfStorageAccess, WebPageProxyIdentifier openerWebPageProxyID, WebCore::RegistrableDomain&& openerDomain)
 {
-    MESSAGE_CHECK(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, domainInNeedOfStorageAccess) == NetworkProcess::AllowCookieAccess::Allow);
+    MESSAGE_CHECK(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, domainInNeedOfStorageAccess));
 
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics())
@@ -1763,8 +1771,7 @@ void NetworkConnectionToWebProcess::establishSharedWorkerContextConnection(WebPa
 {
     CONNECTION_RELEASE_LOG(SharedWorker, "establishSharedWorkerContextConnection:");
     if (CheckedPtr session = networkSession()) {
-        auto allowCookieAccess = session->networkProcess().allowsFirstPartyForCookies(webProcessIdentifier(), site.domain());
-        MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler());
+        MESSAGE_CHECK_COMPLETION(session->networkProcess().allowsFirstPartyForCookies(webProcessIdentifier(), site.domain()), completionHandler());
         if (CheckedPtr swServer = session->sharedWorkerServer())
             m_sharedWorkerContextConnection = WebSharedWorkerServerToContextConnection::create(*this, WTF::move(site), *swServer, crossOriginEmbedderPolicy);
     }
@@ -1847,8 +1854,7 @@ void NetworkConnectionToWebProcess::establishSWContextConnection(WebPageProxyIde
 
     if (session) {
         Ref swServer = session->ensureSWServer();
-        auto allowCookieAccess = session->networkProcess().allowsFirstPartyForCookies(webProcessIdentifier(), site.domain());
-        MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler());
+        MESSAGE_CHECK_COMPLETION(session->networkProcess().allowsFirstPartyForCookies(webProcessIdentifier(), site.domain()), completionHandler());
 
         // FIXME: We should MESSAGE_CHECK m_swContextConnection.
 

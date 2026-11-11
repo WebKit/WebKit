@@ -256,6 +256,9 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         applyBasicAuthorizationHeader(request, m_initialCredential);
     }
 
+    if (WebCore::RegistrableDomain(request.firstPartyForCookies()).isEmpty())
+        request.setAllowCookies(false);
+
     auto thirdPartyCookieBlockingDecision = requestThirdPartyCookieBlockingDecision(request);
     restrictRequestReferrerToOriginIfNeeded(request);
 
@@ -584,6 +587,8 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
                 protectedThis->restrictRequestReferrerToOriginIfNeeded(request);
                 updateTaskWithFirstPartyForSameSiteCookies(protectedThis->m_task.get(), request);
                 protectedThis->updateCompressionDictionaryForRedirect(request);
+                if (WebCore::RegistrableDomain(request.firstPartyForCookies()).isEmpty())
+                    request.setAllowCookies(false);
             }
             protectedThis->m_previousRequest = request;
             completionHandler(WTF::move(request));

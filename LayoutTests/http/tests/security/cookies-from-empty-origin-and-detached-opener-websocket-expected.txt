@@ -1,0 +1,2 @@
+ALERT: PASS
+click to run test outside of WebKitTestRunner

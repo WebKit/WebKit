@@ -1092,7 +1092,7 @@ bool WebSWServerConnection::checkTopOrigin(const WebCore::SecurityOriginData& or
         return false;
 
     Ref networkProcess = NetworkProcess::singleton();
-    MESSAGE_CHECK_WITH_RETURN_VALUE(networkProcess->allowsFirstPartyForCookies(networkConnectionToWebProcess->webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(origin.host())) != NetworkProcess::AllowCookieAccess::Terminate, false);
+    MESSAGE_CHECK_WITH_RETURN_VALUE(networkProcess->allowsFirstPartyForCookies(networkConnectionToWebProcess->webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(origin.host())), false);
     return true;
 }
 

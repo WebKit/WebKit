@@ -533,47 +533,39 @@ void NetworkProcess::addAllowedFirstPartyDomainForCookies(WebCore::ProcessIdenti
     completionHandler();
 }
 
-auto NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty) -> AllowCookieAccess
+bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty)
 {
-    auto allowCookieAccess = allowsFirstPartyForCookies(processIdentifier, RegistrableDomain { firstParty });
-    if (allowCookieAccess == NetworkProcess::AllowCookieAccess::Terminate) {
-        // FIXME: This should probably not be necessary. If about:blank is the first party for cookies,
-        // we should set it to be the inherited origin then remove this exception.
-        if (firstParty.isAboutBlank())
-            return AllowCookieAccess::Disallow;
-
-        if (firstParty.isNull())
-            return AllowCookieAccess::Disallow; // FIXME: This shouldn't be allowed.
-    }
-
-    return allowCookieAccess;
+    return allowsFirstPartyForCookies(processIdentifier, RegistrableDomain { firstParty });
 }
 
-auto NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& firstPartyDomain) -> AllowCookieAccess
+// This returns false only if the web process is not permitted to use the domain, which is a security violation.
+// An empty domain (such as about:blank) is permitted, but cookie use with it is disallowed.
+bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& firstPartyDomain)
 {
-    // FIXME: This shouldn't be needed but it is hit sometimes at least with PDFs.
-    auto terminateOrDisallow = firstPartyDomain.isEmpty() ? AllowCookieAccess::Disallow : AllowCookieAccess::Terminate;
+    if (firstPartyDomain.isEmpty())
+        return true;
+
     if (!decltype(m_allowedFirstPartiesForCookies)::isValidKey(processIdentifier)) {
         ASSERT_NOT_REACHED();
-        return terminateOrDisallow;
+        return false;
     }
 
     auto iterator = m_allowedFirstPartiesForCookies.find(processIdentifier);
     if (iterator == m_allowedFirstPartiesForCookies.end()) {
         ASSERT_NOT_REACHED();
-        return terminateOrDisallow;
+        return false;
     }
 
     if (iterator->value.loadedWebArchive == LoadedWebArchive::Yes)
-        return AllowCookieAccess::Allow;
+        return true;
 
     auto& set = iterator->value.domains;
     if (!std::remove_reference_t<decltype(set)>::isValidValue(firstPartyDomain)) {
         ASSERT_NOT_REACHED();
-        return terminateOrDisallow;
+        return false;
     }
 
-    return set.contains(firstPartyDomain) ? AllowCookieAccess::Allow : terminateOrDisallow;
+    return set.contains(firstPartyDomain);
 }
 
 // Dropped when the connection does not exist yet: NetworkProcessConnectionParameters carries the current value.
