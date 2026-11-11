@@ -269,9 +269,9 @@ RetainPtr<ASAuthorizationController> WebAuthenticatorCoordinatorProxy::construct
 {
     RetainPtr<NSArray> requests;
     WTF::switchOn(requestData.options, [&](const PublicKeyCredentialCreationOptions &options) {
-        requests = requestsForRegistration(options, requestData.frameInfo ? requestData.frameInfo->securityOrigin : WebCore::SecurityOriginData { });
+        requests = requestsForRegistration(options, requestData.callerOrigin());
     }, [&](const PublicKeyCredentialRequestOptions &options) {
-        requests = requestsForAssertion(options, requestData.frameInfo ? requestData.frameInfo->securityOrigin : WebCore::SecurityOriginData { }, requestData.parentOrigin);
+        requests = requestsForAssertion(options, requestData.callerOrigin(), requestData.parentOrigin);
     });
     if (!requests || ![requests count])
         return nullptr;
@@ -625,7 +625,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
         return;
     }
 
-    auto callerOrigin = requestData.frameInfo->securityOrigin;
+    auto callerOrigin = requestData.callerOrigin();
 
     std::optional<SecurityOriginData> fallbackOrigin;
     if (auto* requestOptions = std::get_if<PublicKeyCredentialRequestOptions>(&requestData.options)) {
@@ -1208,9 +1208,9 @@ RetainPtr<ASCCredentialRequestContext> WebAuthenticatorCoordinatorProxy::context
 {
     RetainPtr<ASCCredentialRequestContext> result;
     WTF::switchOn(requestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
-        result = configureRegistrationRequestContext(options, requestData.globalFrameID, requestData.mediation, requestData.frameInfo ? requestData.frameInfo->securityOrigin : WebCore::SecurityOriginData { });
+        result = configureRegistrationRequestContext(options, requestData.globalFrameID, requestData.mediation, requestData.callerOrigin());
     }, [&](const PublicKeyCredentialRequestOptions& options) {
-        result = configurationAssertionRequestContext(options, requestData.mediation, requestData.globalFrameID, requestData.parentOrigin, requestData.frameInfo ? requestData.frameInfo->securityOrigin : WebCore::SecurityOriginData { });
+        result = configurationAssertionRequestContext(options, requestData.mediation, requestData.globalFrameID, requestData.parentOrigin, requestData.callerOrigin());
     });
     return result;
 }
