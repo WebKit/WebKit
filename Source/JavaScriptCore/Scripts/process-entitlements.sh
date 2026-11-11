@@ -30,6 +30,7 @@ function mac_process_jsc_entitlements()
         if [[ -z "${SKIP_ROSETTA_BREAKING_ENTITLEMENTS}" ]]
         then
             plistbuddy Add :com.apple.private.verified-jit bool YES
+            plistbuddy Add :com.apple.private.verified-jit-mode integer 1
             plistbuddy Add :com.apple.security.cs.single-jit bool YES
         fi
 

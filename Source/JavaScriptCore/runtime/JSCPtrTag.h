@@ -188,6 +188,8 @@ ALWAYS_INLINE static bool isTaggedJSCCodePtrImpl(PtrType ptr)
         if (Options::useJITCage()) {
 #if ENABLE(JIT_OPERATION_VALIDATION_ASSERT)
             return JITOperationList::singleton().inverseMap(ptr);
+#elif !ENABLE(JIT_OPERATION_VALIDATION)
+            return ptr == tagJSCCodePtrImpl<tag, calleeType, callerType>(removeCodePtrTag(ptr));
 #else
             // Not supported. We currently don't use this, and don't have an
             // efficient way to implement this. So, just assert that it's not used.
