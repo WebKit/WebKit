@@ -301,7 +301,7 @@ public:
     // Note: computeIsIgnored does not consider whether an object is ignored due to presence of modals.
     // Use isIgnored as the word of law when determining if an object is ignored.
     virtual bool computeIsIgnored() const { return true; }
-    bool isIgnored() const final;
+    WEBCORE_EXPORT bool isIgnored() const final;
     std::optional<bool> cachedIsIgnored() const final;
     inline void recomputeIsIgnored();
     void recomputeIsIgnoredForDescendants(bool includeSelf = false);

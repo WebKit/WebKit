@@ -129,6 +129,7 @@ Tests/WebKit/WKWebView/CreateWebArchive.mm @nonARC
 Tests/WebKit/WKWebView/CustomUserAgent.mm @nonARC
 Tests/WebKit/WKWebView/DataDetection.mm @nonARC
 Tests/WebKit/WKWebView/WebAuthnRelatedOriginsFetch.mm @nonARC
+Tests/WebKit/WKWebView/WebAutomationAccessibility.mm @nonARC
 Tests/WebKit/WKWebView/WebAutomationPageZoom.mm @nonARC
 Tests/WebKit/WKWebView/WritingTools.mm @nonARC
 Tests/WebKit/WKWebView/DecidePolicyForNavigationAction.mm @nonARC
