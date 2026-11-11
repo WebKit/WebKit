@@ -123,6 +123,11 @@ UsedMargins usedMarginsForAxis(const PlacedGridItem& gridItem, const ComputedSiz
         if (axisSizes.marginStart.isKnownZero())
             return { };
 
+        // https://drafts.csswg.org/css-grid-1/#auto-margins
+        // "During calculations of grid track sizes, auto margins are treated as 0."
+        if (axisSizes.marginStart.isAuto())
+            return { };
+
         ASSERT_NOT_IMPLEMENTED_YET();
         return { };
     };
@@ -134,11 +139,22 @@ UsedMargins usedMarginsForAxis(const PlacedGridItem& gridItem, const ComputedSiz
         if (axisSizes.marginEnd.isKnownZero())
             return { };
 
+        // https://drafts.csswg.org/css-grid-1/#auto-margins
+        // "During calculations of grid track sizes, auto margins are treated as 0."
+        if (axisSizes.marginEnd.isAuto())
+            return { };
+
         ASSERT_NOT_IMPLEMENTED_YET();
         return { };
     };
 
     return UsedMargins { marginStart(), marginEnd() };
+}
+
+// https://drafts.csswg.org/css-grid-1/#auto-margins
+bool hasAutoMarginsForAxis(const ComputedSizes& axisSizes)
+{
+    return axisSizes.marginStart.isAuto() || axisSizes.marginEnd.isAuto();
 }
 
 // https://drafts.csswg.org/css-sizing-4/#aspect-ratio
@@ -213,7 +229,7 @@ static bool isStretchedForAutomaticSize(const PlacedGridItem& placedGridItem, co
 {
     ASSERT(axisSizes.preferredSize.isAuto());
 
-    if (axisSizes.marginStart.isAuto() || axisSizes.marginEnd.isAuto())
+    if (hasAutoMarginsForAxis(axisSizes))
         return false;
 
     auto alignmentPosition = axisAlignment.position();
@@ -575,8 +591,7 @@ LayoutUnit inlinePreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit 
         // Otherwise, a grid item with a preferred aspect ratio and normal self-alignment is sized
         // consistent with the size calculation rules for block-level elements, so its automatic
         // inline size fills the grid area. Its block size is then transferred through the ratio.
-        auto hasAutoMargin = inlineAxisSizes.marginStart.isAuto() || inlineAxisSizes.marginEnd.isAuto();
-        if (!placedGridItem.isReplacedElement() && preferredAspectRatio(placedGridItem.layoutBox()) && !hasAutoMargin
+        if (!placedGridItem.isReplacedElement() && preferredAspectRatio(placedGridItem.layoutBox()) && !hasAutoMarginsForAxis(inlineAxisSizes)
             && placedGridItem.inlineAxisAlignment().position() == ItemPosition::Normal) {
             // Only when the block size is automatic too. Otherwise the inline size is transferred
             // from the block size instead; see usedSizesForAspectRatioItem().
@@ -1136,6 +1151,13 @@ Vector<BaselineSharingGroup> baselineSharingGroups(const PlacedGridItems& gridIt
         auto& alignment = alignmentAxis == LogicalBoxAxis::Inline ? gridItem.inlineAxisAlignment() : gridItem.blockAxisAlignment();
         auto position = alignment.position();
         if (position != ItemPosition::Baseline && position != ItemPosition::LastBaseline)
+            continue;
+
+        // https://drafts.csswg.org/css-align-3/#justify-self-property
+        // "Note: auto margins, because they effectively adjust the size of the margin area, take precedence over justify-self."
+        // https://drafts.csswg.org/css-align-3/#align-self-property
+        // "Note: auto margins, because they effectively adjust the size of the margin area, take precedence over align-self."
+        if (hasAutoMarginsForAxis(alignmentAxis == LogicalBoxAxis::Inline ? gridItem.inlineAxisSizes() : gridItem.blockAxisSizes()))
             continue;
 
         // FIXME: Items whose size depends on an intrinsically-sized track do not participate in

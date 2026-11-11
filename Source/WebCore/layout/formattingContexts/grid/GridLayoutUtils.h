@@ -75,6 +75,7 @@ std::optional<LayoutUnit> gridAreaMaximumSize(size_t startLine, size_t endLine, 
 Style::GridTrackSize trackSizeWithPercentagesConvertedToAuto(const Style::GridTrackSize&);
 
 UsedMargins usedMarginsForAxis(const PlacedGridItem&, const ComputedSizes&);
+bool hasAutoMarginsForAxis(const ComputedSizes&);
 
 LayoutUnit inlinePreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&, const UsedMargins&);
 LayoutUnit blockPreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit rowsSize, const GridFormattingContext&, LayoutUnit gridAreaInlineSize, const UsedMargins&);
