@@ -1980,7 +1980,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         _private->textIndicatorData = adoptNS([[WebUITextIndicatorData alloc] initWithImage:image scale:_private->page->deviceScaleFactor()]);
     _private->draggedLinkURL = dragItem.url.isEmpty() ? RetainPtr<NSURL>() : dragItem.url.createNSURL();
     _private->draggedLinkTitle = dragItem.title.isEmpty() ? nil : dragItem.title.createNSString().get();
-    _private->dragPreviewFrameInRootViewCoordinates = dragItem.dragPreviewFrameInRootViewCoordinates;
+    _private->dragPreviewFrameInMainFrameViewCoordinates = dragItem.dragPreviewFrameInMainFrameViewCoordinates;
     _private->dragSourceAction = kit(dragItem.sourceAction);
 }
 
@@ -2015,7 +2015,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 - (CGRect)_draggedElementBounds
 {
-    return _private->dragPreviewFrameInRootViewCoordinates;
+    return _private->dragPreviewFrameInMainFrameViewCoordinates;
 }
 
 - (WebUITextIndicatorData *)_getDataInteractionData
@@ -2094,7 +2094,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     WebThreadLock();
     _private->page->dragController().dragEnded();
     _private->dataOperationTextIndicator = nullptr;
-    _private->dragPreviewFrameInRootViewCoordinates = CGRectNull;
+    _private->dragPreviewFrameInMainFrameViewCoordinates = CGRectNull;
     _private->dragSourceAction = WebDragSourceActionNone;
     _private->draggedLinkTitle = nil;
     _private->draggedLinkURL = nil;
