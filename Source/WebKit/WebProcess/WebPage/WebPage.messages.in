@@ -680,8 +680,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     GetSamplingProfilerOutput() -> (String string)
     
-    TakeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, OptionSet<WebKit::SnapshotOption> options) -> (std::optional<WebKit::ImageBufferBackendHandle> image, struct WebCore::Headroom headroom)
-    TakeRemoteSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, OptionSet<WebKit::SnapshotOption> options, WebKit::RemoteSnapshotIdentifier snapshotIdentifier) -> (bool success)
+    TakeSnapshot(std::optional<WebCore::FrameIdentifier> rootFrameID, WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, OptionSet<WebKit::SnapshotOption> options) -> (std::optional<WebKit::ImageBufferBackendHandle> image, struct WebCore::Headroom headroom)
+    TakeRemoteSnapshot(std::optional<WebCore::FrameIdentifier> rootFrameID, WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, OptionSet<WebKit::SnapshotOption> options, WebKit::RemoteSnapshotIdentifier snapshotIdentifier) -> (bool success)
 
 #if PLATFORM(MAC)
     PerformImmediateActionHitTestAtLocation(WebCore::FrameIdentifier frameID, WebCore::FloatPoint location) -> (Variant<WebKit::WebHitTestResultData, WebCore::RemoteUserInputEventData> result, bool contentPreventsDefault, WebKit::UserData userData) ReplyCanDispatchOutOfOrder

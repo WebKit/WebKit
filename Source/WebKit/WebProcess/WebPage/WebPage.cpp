@@ -3846,13 +3846,14 @@ RefPtr<ShareableBitmap> WebPage::shareableBitmapForNodeIncludingOffscreen(Node& 
     return bitmap;
 }
 
-void WebPage::takeRemoteSnapshot(IntRect snapshotRect, IntSize bitmapSize, SnapshotOptions snapshotOptions, RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::takeRemoteSnapshot(std::optional<FrameIdentifier> rootFrameID, IntRect snapshotRect, IntSize bitmapSize, SnapshotOptions snapshotOptions, RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if ENABLE(GPU_PROCESS)
     ASSERT(m_page->settings().remoteSnapshottingEnabled());
     completionHandler = failRemoteSnapshotIfRootFails(snapshotIdentifier, WTF::move(completionHandler));
 
-    RefPtr coreFrame = m_mainFrame->coreLocalFrame();
+    RefPtr rootFrame = rootFrameID ? WebProcess::singleton().webFrame(*rootFrameID) : m_mainFrame.ptr();
+    RefPtr coreFrame = rootFrame && rootFrame->page() == this ? rootFrame->coreLocalFrame() : nullptr;
     if (!coreFrame) {
         completionHandler(false);
         return;
@@ -3883,6 +3884,7 @@ void WebPage::takeRemoteSnapshot(IntRect snapshotRect, IntSize bitmapSize, Snaps
     postSnapshotTakedown(originalPaintBehavior, paintBehavior, originalLayoutViewportOverrideRect, *frameView);
 
 #else
+    UNUSED_PARAM(rootFrameID);
     UNUSED_PARAM(snapshotRect);
     UNUSED_PARAM(bitmapSize);
     UNUSED_PARAM(snapshotOptions);
@@ -3928,10 +3930,11 @@ void WebPage::postSnapshotTakedown(OptionSet<PaintBehavior> originalPaintBehavio
     }
 }
 
-void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, SnapshotOptions snapshotOptions, CompletionHandler<void(std::optional<ImageBufferBackendHandle>&&, Headroom)>&& completionHandler)
+void WebPage::takeSnapshot(std::optional<FrameIdentifier> rootFrameID, IntRect snapshotRect, IntSize bitmapSize, SnapshotOptions snapshotOptions, CompletionHandler<void(std::optional<ImageBufferBackendHandle>&&, Headroom)>&& completionHandler)
 {
     std::optional<ImageBufferBackendHandle> handle;
-    RefPtr coreFrame = m_mainFrame->coreLocalFrame();
+    RefPtr rootFrame = rootFrameID ? WebProcess::singleton().webFrame(*rootFrameID) : m_mainFrame.ptr();
+    RefPtr coreFrame = rootFrame && rootFrame->page() == this ? rootFrame->coreLocalFrame() : nullptr;
     if (!coreFrame) {
         completionHandler(WTF::move(handle), Headroom::None);
         return;

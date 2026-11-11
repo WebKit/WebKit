@@ -3385,6 +3385,49 @@ void WebAutomationSession::takeScreenshot(const Inspector::Protocol::Automation:
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSession::captureBidiScreenshot(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, bool documentOrigin, std::optional<WebCore::FloatRect>&& clip, std::optional<double>&& maxWidth, std::optional<double>&& maxHeight, CommandCallback<String>&& callback)
+{
+    // https://w3c.github.io/webdriver-bidi/#get-a-navigable fails with "no such frame".
+    auto page = webPageProxyForHandle(handle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, FrameNotFound);
+
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(frameNotFound, FrameNotFound);
+
+    // The process that hosts the navigable's document computes the rect, in its frame view's contents coordinates, and the
+    // bitmap size. WebPageProxy::takeSnapshot() then paints the navigable's own document, rather than what the top-level page
+    // shows of it, and with Site Isolation, it has the frames hosted by other processes drawn too. As with classic screenshots,
+    // the two steps aren't atomic, so the page can scroll or navigate in between.
+    CompletionHandler<void(std::optional<String>&&, WebCore::IntRect&&, WebCore::IntSize&&)> completionHandler = [page = protect(*page), frameID, callback = WTF::move(callback)](std::optional<String>&& optionalError, WebCore::IntRect&& rect, WebCore::IntSize&& bitmapSize) mutable {
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF_SET(optionalError);
+
+        // An empty reply with no error means the WebContent process went away before answering.
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(rect.isEmpty() || bitmapSize.isEmpty(), InternalError);
+
+#if PLATFORM(COCOA)
+        page->takeSnapshot(frameID, rect, bitmapSize, SnapshotOption::Shareable, [callback = WTF::move(callback)](CGImageRef image) mutable {
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!image, ScreenshotError);
+
+            std::optional<String> base64EncodedData = platformGetBase64EncodedPNGData(image);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!base64EncodedData, ScreenshotError);
+
+            callback(base64EncodedData.value());
+        });
+#else
+        page->takeSnapshotLegacy(frameID, rect, bitmapSize, SnapshotOption::Shareable, [callback = WTF::move(callback)](std::optional<ShareableBitmap::Handle>&& imageDataHandle) mutable {
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!imageDataHandle, ScreenshotError);
+
+            std::optional<String> base64EncodedData = platformGetBase64EncodedPNGData(WTF::move(*imageDataHandle));
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!base64EncodedData, ScreenshotError);
+
+            callback(base64EncodedData.value());
+        });
+#endif
+    };
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::RectForBidiScreenshot(page->webPageIDInProcessForFrame(frameID), frameID, documentOrigin, WTF::move(clip), WTF::move(maxWidth), WTF::move(maxHeight)), WTF::move(completionHandler));
+}
+
 static String logEntryLevelForMessage(const JSC::MessageType& messageType, const MessageLevel& messageLevel)
 {
     if (messageType == JSC::MessageType::Assert || messageLevel == JSC::MessageLevel::Error)
