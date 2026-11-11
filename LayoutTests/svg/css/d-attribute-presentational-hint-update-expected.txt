@@ -1,0 +1,9 @@
+
+PASS The d attribute and the other presentation attributes have their initial values
+PASS Changing the d attribute updates d and preserves the other presentation attributes
+PASS Changing the d attribute twice before resolving style uses the last value
+PASS Changing another presentation attribute alongside d updates both
+PASS Removing the d attribute matches a full presentational hint rebuild
+PASS Setting the d attribute again after removing it updates d
+PASS The d property overrides the d attribute as the attribute changes
+
