@@ -46,6 +46,18 @@ RenderSVGResourcePattern::RenderSVGResourcePattern(SVGElement& element, Style::C
 
 RenderSVGResourcePattern::~RenderSVGResourcePattern() = default;
 
+void RenderSVGResourcePattern::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+{
+    RenderSVGResourcePaintServer::styleDidChange(diff, oldStyle);
+
+    if (!oldStyle)
+        return;
+
+    CheckedRef newStyle = style();
+    if (SVGRenderSupport::paintServerTransformStyleChanged(*oldStyle, newStyle))
+        invalidatePattern();
+}
+
 void RenderSVGResourcePattern::collectPatternAttributesIfNeeded()
 {
     if (m_attributes.has_value())

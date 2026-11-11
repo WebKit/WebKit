@@ -7926,10 +7926,6 @@ imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-002.svg [ Im
 imported/w3c/web-platform-tests/svg/painting/svg-with-outline.html [ Pass Failure ]
 imported/w3c/web-platform-tests/svg/painting/color-interpolation-001.svg [ Pass Failure ]
 
-# web-platform-tests/svg/pservers failures
-imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-03.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-03.svg [ ImageOnlyFailure ]
-
 # re-import css/css-align WPT failure
 webkit.org/b/271692 imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-020.html [ ImageOnlyFailure ]
 

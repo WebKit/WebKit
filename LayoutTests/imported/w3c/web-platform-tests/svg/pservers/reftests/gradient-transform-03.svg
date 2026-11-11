@@ -2,9 +2,15 @@
   <title>Gradient with 'transform' property added dynamically</title>
   <h:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/single-page.html#pservers-LinearGradientElementGradientTransformAttribute"/>
   <h:link rel="help" href="https://drafts.csswg.org/css-transforms/#transform-attribute-specificity"/>
-  <h:link rel="match" href="reference/green-100x100.svg"/>
+  <h:link rel="match" href="reference/gradient-transform-03-ref.svg"/>
   <h:script src="/common/reftest-wait.js"/>
   <h:script src="/common/rendering-utils.js"/>
+
+  <!-- The reference draws the same gradient with gradientTransform="scale(2)",
+       not a solid green fill. Rendering engines may dither gradients, so a
+       gradient is not always identical to a solid fill of its stop colour,
+       even where it only shows one colour. Drawn the same way twice, it is.
+       If the transform property is ignored, the square shows the fade to red. -->
 
   <linearGradient id="lg">
     <stop offset="0" stop-color="green"/>

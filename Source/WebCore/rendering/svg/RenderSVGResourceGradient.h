@@ -46,6 +46,8 @@ public:
 protected:
     RenderSVGResourceGradient(Type, SVGElement&, Style::ComputedStyle&&);
 
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
+
     virtual void collectGradientAttributesIfNeeded() = 0;
     virtual RefPtr<Gradient> createGradient(const Style::ComputedStyle&) = 0;
 

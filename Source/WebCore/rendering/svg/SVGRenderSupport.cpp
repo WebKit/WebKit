@@ -48,6 +48,7 @@
 #include "RenderDescendantIterator.h"
 #include "RenderElement.h"
 #include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderGeometryMap.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
@@ -64,8 +65,10 @@
 #include "SVGSVGElement.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleTransformResolver.h"
 #include "TransformOperationData.h"
 #include "TransformState.h"
+#include "TransformationMatrix.h"
 #include "VisibleRectContext.h"
 #include <numbers>
 
@@ -293,6 +296,28 @@ bool SVGRenderSupport::transformToRootChanged(RenderElement* ancestor)
     }
 
     return false;
+}
+
+std::optional<AffineTransform> SVGRenderSupport::paintServerTransformFromStyle(const RenderElement& renderer)
+{
+    auto& style = renderer.style();
+    if (!style.affectsTransform())
+        return std::nullopt;
+
+    // Same resolution as SVGGraphicsElement::animatedLocalTransform().
+    auto transform = Style::TransformResolver::computeTransform(style, TransformOperationData(renderer.transformReferenceBoxRect(style), &renderer));
+    return transform.toAffineTransform();
+}
+
+bool SVGRenderSupport::paintServerTransformStyleChanged(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+{
+    return oldStyle.transform() != newStyle.transform()
+        || oldStyle.translate() != newStyle.translate()
+        || oldStyle.rotate() != newStyle.rotate()
+        || oldStyle.scale() != newStyle.scale()
+        || oldStyle.offsetPath() != newStyle.offsetPath()
+        || oldStyle.transformOrigin() != newStyle.transformOrigin()
+        || oldStyle.transformBox() != newStyle.transformBox();
 }
 
 void SVGRenderSupport::layoutDifferentRootIfNeeded(const RenderElement& renderer)

@@ -215,8 +215,14 @@ void SVGPatternElement::collectOwnPatternAttributes(PatternAttributes& attribute
     if (!attributes.hasPatternContentUnits() && hasAttribute(SVGNames::patternContentUnitsAttr))
         attributes.setPatternContentUnits(patternContentUnits());
 
+    // CSS transform wins over patternTransform; with neither, the template provides it.
     if (!attributes.hasPatternTransform()) {
-        if (auto transform = patternTransform().concatenate())
+        std::optional<AffineTransform> transform;
+        if (CheckedPtr renderer = this->renderer())
+            transform = SVGRenderSupport::paintServerTransformFromStyle(*renderer);
+        if (!transform)
+            transform = patternTransform().concatenate();
+        if (transform)
             attributes.setPatternTransform(*transform);
     }
 

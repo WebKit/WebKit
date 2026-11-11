@@ -53,6 +53,7 @@ public:
 
 private:
     bool requiresLayer() const final { return true; }
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
 
 protected:
     RefPtr<Pattern> buildPattern(GraphicsContext&, const RenderLayerModelObject&, const std::optional<AffineTransform>& nonScalingStrokeTransform = std::nullopt);
