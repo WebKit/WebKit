@@ -313,6 +313,17 @@ static const HashMap<uint32_t, Vector<YUVPlaneInfo>>& yuvFormatPlaneInfo()
     return yuvFormatsMap;
 }
 
+Vector<uint32_t, 4> DMABufBuffer::allPlaneFormats(uint32_t fourcc)
+{
+    const auto& iter = yuvFormatPlaneInfo().find(fourcc);
+    if (iter == yuvFormatPlaneInfo().end())
+        return { fourcc };
+
+    return iter->value.map<Vector<uint32_t, 4>>([](const YUVPlaneInfo& plane) {
+        return plane.fourcc;
+    });
+}
+
 bool DMABufBuffer::importIfNeeded()
 {
     if (!m_importedTextures.isEmpty())
