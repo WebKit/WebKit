@@ -196,7 +196,7 @@ transition-delay: 0s
 transition-duration: 0s
 transition-property: all
 transition-timing-function: ease
-unicode-bidi: normal
+unicode-bidi: isolate
 vector-effect: none
 vertical-align: baseline
 visibility: visible
