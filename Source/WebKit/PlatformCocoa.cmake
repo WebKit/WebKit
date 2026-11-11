@@ -1055,6 +1055,27 @@ WEBKIT_RAISE_SWIFT_NINJA_PRIORITY(WebKitSwift)
 
 unset(_wks_dir)
 
+# Xcode compiles the model into TextExtractionFilter.mlmodelc in the framework's
+# resources; <platform> is coremlc's --platform.
+function(WEBKIT_COMPILE_TEXT_EXTRACTION_FILTER_MODEL _resources_dir _platform)
+    set(_text_extraction_filter_model_outputs
+        ${_resources_dir}/TextExtractionFilter.mlmodelc/analytics/coremldata.bin
+        ${_resources_dir}/TextExtractionFilter.mlmodelc/coremldata.bin
+        ${_resources_dir}/TextExtractionFilter.mlmodelc/metadata.json
+    )
+    WEBKIT_XCRUN(_coremlc -f coremlc)
+    add_custom_command(OUTPUT ${_text_extraction_filter_model_outputs}
+        COMMAND ${_coremlc} compile ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel ${_resources_dir}
+            --deployment-target ${CMAKE_OSX_DEPLOYMENT_TARGET} --sdkroot ${CMAKE_OSX_SYSROOT} --platform ${_platform}
+            --container bundle-resources
+        DEPENDS ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel
+        COMMENT "Compiling TextExtractionFilter.mlmodel"
+        VERBATIM)
+    add_custom_target(WebKitTextExtractionFilterModel ALL DEPENDS
+        ${_text_extraction_filter_model_outputs})
+    add_dependencies(WebKit WebKitTextExtractionFilterModel)
+endfunction()
+
 # Defines the auxiliary process targets, along with the framework content that
 # only exists to support them.
 function(WEBKIT_DEFINE_AUXILIARY_PROCESSES)
@@ -2130,20 +2151,17 @@ function(WEBKIT_DEFINE_IOS_RESOURCES)
         endforeach ()
     endif ()
 
+    WEBKIT_COMPILE_TEXT_EXTRACTION_FILTER_MODEL(${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework ${WEBKIT_SDK_MODULE_OS})
+
     add_custom_command(TARGET WebKit POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/en.lproj
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${WEBKIT_DIR}/en.lproj/InfoPlist.strings
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/en.lproj/InfoPlist.strings
-        # FIXME: Use the coremlc command to produce the compiled model, same as
-        # macOS.
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${WEBKIT_DIR}/Resources/ResourceLoadStatistics/corePrediction_model
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/corePrediction_model
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel
-            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/TextExtractionFilter.mlmodel
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${WEBKIT_DIR}/WebKitSwift/RealityKit/studio_lighting_objectmode_v3.reibl
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/studio_lighting_objectmode_v3.reibl
@@ -2638,22 +2656,7 @@ function(WEBKIT_DEFINE_MACOS_RESOURCES)
     add_custom_target(WebKit_Assets DEPENDS ${WebKit_RESOURCES_DIR}/Assets.car)
     add_dependencies(WebKit WebKit_Assets)
 
-    set(_text_extraction_filter_model_outputs
-        ${WebKit_RESOURCES_DIR}/TextExtractionFilter.mlmodelc/analytics/coremldata.bin
-        ${WebKit_RESOURCES_DIR}/TextExtractionFilter.mlmodelc/coremldata.bin
-        ${WebKit_RESOURCES_DIR}/TextExtractionFilter.mlmodelc/metadata.json
-    )
-    WEBKIT_XCRUN(_coremlc -f coremlc)
-    add_custom_command(OUTPUT ${_text_extraction_filter_model_outputs}
-        COMMAND ${_coremlc} compile ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel ${WebKit_RESOURCES_DIR}
-            --deployment-target ${CMAKE_OSX_DEPLOYMENT_TARGET} --sdkroot ${CMAKE_OSX_SYSROOT} --platform macos
-            --container bundle-resources
-        DEPENDS ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel
-        COMMENT "Compiling TextExtractionFilter.mlmodel"
-        VERBATIM)
-    add_custom_target(WebKitTextExtractionFilterModel ALL DEPENDS
-        ${_text_extraction_filter_model_outputs})
-    add_dependencies(WebKit WebKitTextExtractionFilterModel)
+    WEBKIT_COMPILE_TEXT_EXTRACTION_FILTER_MODEL(${WebKit_RESOURCES_DIR} macos)
 
     add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/corePrediction_model COMMAND
         ${CMAKE_COMMAND} -E copy_if_different ${WEBKIT_DIR}/Resources/ResourceLoadStatistics/corePrediction_model ${WebKit_RESOURCES_DIR}/corePrediction_model
