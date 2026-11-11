@@ -610,7 +610,7 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
         }
     }
     m_blockLayoutState.setIntrusiveInitialLetterLogicalBottom(intrusiveInitialLetterLogicalBottom);
-    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(inlineContentRoot, constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.replacedElementAvailableBlockSize, orthogonalFlowAvailableInlineSpace(blockContainerState), blockContainerState.relayoutChildren || m_isLayingOutWithResolvedBorderBoxLogicalTops, m_blockLayoutState, intrudingFloats, *this, result);
+    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(inlineContentRoot, constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.fillAvailableBlockSize, blockContainerState.replacedElementAvailableBlockSize, orthogonalFlowAvailableInlineSpace(blockContainerState), blockContainerState.relayoutChildren || m_isLayingOutWithResolvedBorderBoxLogicalTops, m_blockLayoutState, intrudingFloats, *this, result);
     addInlineContentFloats(inlineContentLayoutResult.floats);
     // The floats of a line-clamp container are clipped to its block-end content edge, those the inline formatting context hid after the
     // clamp point included.
@@ -1229,7 +1229,11 @@ LayoutUnit BlockFormattingContext::layoutIndependentFormattingContextThroughRend
         .relayoutChildren = containingBlockState.relayoutChildren,
         .borderBoxInlineSize = decidesItsOwnInlineSize(box, root().writingMode()) ? borderBoxInlineSize : std::optional { geometry.borderBoxWidth() },
         .marginBefore = geometry.marginBefore(),
-        .marginAfter = geometry.marginAfter()
+        .marginAfter = geometry.marginAfter(),
+        // Percentages that look past the box to a table cell behave as auto (RenderBox::computePercentageLogicalHeight).
+        .contentPercentageBasis = containingBlockIsTableCell(containingBlockState) == BlockFormattingUtils::ContainingBlockIsTableCell::Yes ? std::nullopt : containingBlockState.contentBoxBlockSize,
+        .containingBlockAvailableBlockSize = containingBlockState.fillAvailableBlockSize,
+        .containingBlockAvailableBlockSizeIncludingMarginBorderPadding = containingBlockState.replacedElementAvailableBlockSize
     };
     auto layoutResult = integrationUtils().layoutIndependentFormattingContext(box, constraints);
 

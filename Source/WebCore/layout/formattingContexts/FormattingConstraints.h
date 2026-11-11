@@ -82,6 +82,12 @@ struct ConstraintsForIndependentFormattingContext {
     // body stretches to the viewport less them (RenderBox::computeLogicalHeight).
     LayoutUnit marginBefore;
     LayoutUnit marginAfter;
+    // What the content of the root reads where it looks past the root: the block size percentage block sizes resolve against through an auto
+    // block size in quirks mode, and the available block sizes of the containing block, without and with its margins, borders and padding
+    // (RenderBox::availableLogicalHeight).
+    std::optional<LayoutUnit> contentPercentageBasis;
+    LayoutUnit containingBlockAvailableBlockSize;
+    LayoutUnit containingBlockAvailableBlockSizeIncludingMarginBorderPadding;
 };
 
 struct ConstraintsForOutOfFlowContent {

@@ -115,11 +115,12 @@ public:
         // The floats in the content, in the logical coordinates of the block container's border box.
         Layout::PlacedFloats::List floats { };
     };
-    // The content box block size is the percentage basis of the atomic inline-level boxes in it. Relayout children lays the lines out from
+    // The content box block size is the percentage basis of the atomic inline-level boxes in it, and with the available block sizes what their
+    // content reads past them (LocalFrameViewLayoutContext::ContainingBlockBlockSizes). Relayout children lays the lines out from
     // scratch, like when the inline size, border or padding of the block container changed. The block formatting context lays out the
     // block-level boxes in the content when the inline formatting context reaches them, and adds them to the result it is building.
     // The floats that intrude into the content are in the logical coordinates of the block container's border box.
-    InlineContentLayoutResult layoutInlineContent(const RenderBlockFlow&, const Layout::ConstraintsForInlineContent&, const Layout::BoxGeometry&, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit replacedElementAvailableBlockSize, LayoutUnit orthogonalFlowAvailableInlineSpace, bool relayoutChildren, const Layout::BlockLayoutState&, const Layout::PlacedFloats::List& intrudingFloats, Layout::BlockFormattingContext&, Layout::BlockLayoutResult&);
+    InlineContentLayoutResult layoutInlineContent(const RenderBlockFlow&, const Layout::ConstraintsForInlineContent&, const Layout::BoxGeometry&, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit fillAvailableBlockSize, LayoutUnit replacedElementAvailableBlockSize, LayoutUnit orthogonalFlowAvailableInlineSpace, bool relayoutChildren, const Layout::BlockLayoutState&, const Layout::PlacedFloats::List& intrudingFloats, Layout::BlockFormattingContext&, Layout::BlockLayoutResult&);
     // Whether the inline content of a block container has floats, outside of the boxes in it that establish formatting contexts.
     static bool inlineContentHasFloats(const RenderBlockFlow&);
     // Whether the inline content of a block container makes line boxes before its first block-level box, which separate its block-start margin

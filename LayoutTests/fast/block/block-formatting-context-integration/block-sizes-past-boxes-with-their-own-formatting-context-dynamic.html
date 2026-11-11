@@ -1,0 +1,50 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+iframe { width: 190px; height: 120px; border: 1px solid; margin: 0 2px 2px 0; }
+</style>
+<body>
+<!-- Quirks mode: percentage block sizes inside a box with a formatting context of its own follow the boxes past it they look at. -->
+<script>
+const colors = "html { background: lightblue; } body { font: 16px/20px serif; } .f { float: left; background: yellow; } #t { width: 20px; background: green; }";
+const documents = [
+    "body { margin: 4px; }|<div class='f'><div id='t' style='height: 50%'></div></div>",
+    "body { margin: 4px; }|<div class='f'><div id='t' style='height: 50%'></div></div>",
+    "|<div id='container' style='height: 80px'><div><div class='f'><div id='t' style='height: 50%'></div></div></div></div>",
+    "body { margin: 4px; }|<div class='f'><div><div id='t' style='height: 50%'></div></div></div>",
+    "body { margin: 4px; }|<span style='display: inline-block'><div id='t' style='height: 40%'></div></span>",
+    "body { margin: 4px; }|<div class='f'><div class='f'><div id='t' style='height: 30%'></div></div></div>",
+    "body { margin: 4px; }|<div class='f'><div id='t' style='height: 50%'></div></div><div>block</div>",
+    "body { margin: 4px; }|<fieldset style='border: 0; margin: 0; padding: 0'><div id='t' style='height: 50%'></div></fieldset>",
+    "|<div id='container' style='height: 80px'><div><div class='f'><li>x</li><div id='t' style='height: 50%'></div></div></div></div>",
+];
+const iframes = documents.map(() => {
+    const iframe = document.createElement("iframe");
+    iframe.scrolling = "no";
+    return document.body.appendChild(iframe);
+});
+// The frames have their size before their documents are first laid out.
+document.body.offsetHeight;
+const frameDocuments = documents.map((description, index) => {
+    const [style, content] = description.split("|");
+    const frameDocument = iframes[index].contentDocument;
+    frameDocument.open();
+    frameDocument.write(`<style>${colors} ${style}</style>${content}`);
+    frameDocument.close();
+    return frameDocument;
+});
+for (const frameDocument of frameDocuments)
+    frameDocument.body.offsetHeight;
+frameDocuments[0].body.style.margin = "10px 4px 20px";
+frameDocuments[1].documentElement.style.padding = "9px";
+frameDocuments[2].getElementById("container").style.height = "40px";
+iframes[3].style.height = "60px";
+frameDocuments[4].body.style.paddingTop = "15px";
+frameDocuments[5].body.style.borderBottom = "12px solid";
+frameDocuments[6].body.style.margin = "10px 4px 20px";
+frameDocuments[7].documentElement.style.padding = "9px";
+frameDocuments[8].getElementById("container").style.height = "40px";
+// The block sizes from the layout after the changes, which a later one of the frames may not show.
+const blockSizes = document.body.appendChild(document.createElement("div"));
+for (const frameDocument of frameDocuments)
+    blockSizes.append(`${frameDocument.getElementById("t").offsetHeight} `);
+</script>

@@ -221,11 +221,23 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
     CheckedPtr drawableContent = drawableContentBlock(box);
     if (drawableContent)
         drawableContent->setOverridingContainingBlockContentLogicalWidth(constraints.containingBlockInlineSize);
+    CheckedRef layoutContext = box->view().frameView().layoutContext();
+    // Its content looks past an orthogonal box to the inline size of the containing block instead (RenderBox::computePercentageLogicalHeight).
+    if (!isOrthogonal) {
+        auto containingBlockBlockSizes = LocalFrameViewLayoutContext::ContainingBlockBlockSizes { constraints.contentPercentageBasis, constraints.containingBlockAvailableBlockSize, constraints.containingBlockAvailableBlockSizeIncludingMarginBorderPadding };
+        layoutContext->setContainingBlockBlockSizes(box, containingBlockBlockSizes);
+        if (drawableContent)
+            layoutContext->setContainingBlockBlockSizes(*drawableContent, containingBlockBlockSizes);
+    }
     {
         // The layout state has the paint offset of the block formatting context root only, not of the boxes inside.
-        CheckedRef layoutContext = box->view().frameView().layoutContext();
         auto layoutStateDisabler = LayoutStateDisabler { layoutContext.get() };
         box->layoutIfNeeded();
+    }
+    if (!isOrthogonal) {
+        layoutContext->clearContainingBlockBlockSizes(box);
+        if (drawableContent)
+            layoutContext->clearContainingBlockBlockSizes(*drawableContent);
     }
     // Like BoxGeometryUpdater for a float in inline content: the shape the lines beside it wrap around, whose shape-margin percentage needs the
     // inline size of the containing block (ShapeOutsideInfo).
@@ -495,7 +507,7 @@ bool BlockIntegrationUtils::inlineContentMakesLineBoxesBeforeBlockLevelBoxes(con
     return false;
 }
 
-BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit replacedElementAvailableBlockSize, LayoutUnit orthogonalFlowAvailableInlineSpace, bool relayoutChildren, const Layout::BlockLayoutState& blockLayoutState, const Layout::PlacedFloats::List& intrudingFloats, Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult)
+BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit fillAvailableBlockSize, LayoutUnit replacedElementAvailableBlockSize, LayoutUnit orthogonalFlowAvailableInlineSpace, bool relayoutChildren, const Layout::BlockLayoutState& blockLayoutState, const Layout::PlacedFloats::List& intrudingFloats, Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult)
 {
     // Only the line layout of this block container and its inline content are written here, and nothing else in the block formatting
     // context reads them.
@@ -545,6 +557,9 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
     // block, this block container, which the block formatting context writes once all of it is laid out. Like a leaf, only a box with a
     // percentage block size gets its block size (layoutIndependentFormattingContext).
     auto atomicInlineLevelBoxes = Vector<CheckedRef<RenderBox>> { };
+    CheckedRef layoutContext = inlineContentRoot.view().frameView().layoutContext();
+    // Percentages that look past a box to a table cell behave as auto (RenderBox::computePercentageLogicalHeight).
+    auto containingBlockBlockSizes = LocalFrameViewLayoutContext::ContainingBlockBlockSizes { percentagesResolveAgainstTableCell(inlineContentRoot) ? std::nullopt : contentBoxBlockSize, fillAvailableBlockSize, replacedElementAvailableBlockSize };
     for (CheckedPtr<RenderObject> descendant = inlineContentRoot.firstChild(); descendant;) {
         CheckedPtr box = dynamicDowncast<RenderBox>(*descendant);
         if (!box) {
@@ -557,19 +572,25 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
             continue;
         }
         box->setOverridingContainingBlockContentLogicalWidth(constraints.horizontal().logicalWidth);
-        if (box->writingMode().isOrthogonal(inlineContentRoot.writingMode())) {
+        // Like layoutIndependentFormattingContext. The content of an out-of-flow box looks past it to its own containing block.
+        auto isOrthogonal = box->writingMode().isOrthogonal(inlineContentRoot.writingMode());
+        if (isOrthogonal) {
             box->setOverridingContainingBlockContentLogicalHeight(orthogonalFlowAvailableInlineSpace);
             registerOrthogonalBoxForLayout(*box);
         } else if (!percentagesResolveAgainstTableCell(inlineContentRoot) && Layout::BlockFormattingUtils::hasPercentageBlockSize(*box, box->writingMode()))
             box->setOverridingContainingBlockContentLogicalHeight(box->isRenderReplaced() && box->document().inQuirksMode() ? std::optional { replacedElementAvailableBlockSize } : contentBoxBlockSize);
+        if (!isOrthogonal && !box->isOutOfFlowPositioned())
+            layoutContext->setContainingBlockBlockSizes(*box, containingBlockBlockSizes);
         atomicInlineLevelBoxes.append(*box);
-        if (CheckedPtr drawableContent = drawableContentBlock(*box))
+        if (CheckedPtr drawableContent = drawableContentBlock(*box)) {
             drawableContent->setOverridingContainingBlockContentLogicalWidth(constraints.horizontal().logicalWidth);
+            if (!isOrthogonal)
+                layoutContext->setContainingBlockBlockSizes(*drawableContent, containingBlockBlockSizes);
+        }
         descendant = descendant->nextInPreOrderAfterChildren(&inlineContentRoot);
     }
     {
         // The layout state has the paint offset of the block formatting context root only, not of the boxes inside.
-        CheckedRef layoutContext = inlineContentRoot.view().frameView().layoutContext();
         auto layoutStateDisabler = LayoutStateDisabler { layoutContext.get() };
         // The block formatting context needs the margins of every block-level box in the content, so it lays out all the lines again
         // (like RenderBlockFlow::layoutInlineContent when one of them is dirty).
@@ -581,8 +602,11 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
     }
     for (auto& box : atomicInlineLevelBoxes) {
         box->clearOverridingContainingBlockContentSize();
-        if (CheckedPtr drawableContent = drawableContentBlock(box))
+        layoutContext->clearContainingBlockBlockSizes(box);
+        if (CheckedPtr drawableContent = drawableContentBlock(box)) {
             drawableContent->clearOverridingContainingBlockContentSize();
+            layoutContext->clearContainingBlockBlockSizes(*drawableContent);
+        }
     }
     auto result = inlineContentLayoutResult(lineLayout.get());
     result.floats = lineLayout->floatsInContent();

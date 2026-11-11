@@ -3982,18 +3982,25 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computePercenta
     // A formatting context that gives the box the content block size of its containing block has taken the margins, borders and padding
     // of the body and the root element off already (BlockFormattingUtils::definiteContentBoxBlockSize).
     auto hasContainingBlockContentBlockSize = overridingContainingBlockContentLogicalHeight().has_value();
+    // The block formatting context gives the content of a box it lays out through the render tree what the percentages that look past the box
+    // resolve against, which takes the margins, borders and padding of the body and the root element off too (LocalFrameViewLayoutContext::ContainingBlockBlockSizes).
+    auto percentageBasisPastBox = std::optional<std::optional<LayoutUnit>> { };
     while (containingBlock && !is<RenderView>(*containingBlock) && skipContainingBlockForPercentHeightCalculation(*containingBlock, isHorizontal != containingBlock->isHorizontalWritingMode())) {
-        if (!hasContainingBlockContentBlockSize && (containingBlock->isBody() || containingBlock->isDocumentElementRenderer()))
+        if (!hasContainingBlockContentBlockSize && !percentageBasisPastBox && (containingBlock->isBody() || containingBlock->isDocumentElementRenderer()))
             rootMarginBorderPaddingHeight += containingBlock->marginBefore(containingBlock->writingMode()) + containingBlock->marginAfter(containingBlock->writingMode()) + containingBlock->borderAndPaddingLogicalHeight();
         skippedAutoHeightContainingBlock = true;
         containingBlockChild = containingBlock;
+        if (!hasContainingBlockContentBlockSize && !percentageBasisPastBox) {
+            if (auto containingBlockBlockSizes = layoutContext().containingBlockBlockSizes(*containingBlockChild))
+                percentageBasisPastBox = containingBlockBlockSizes->percentageBasis;
+        }
         containingBlock = containingBlock->containingBlock();
     }
     if (updateDescendants == UpdatePercentageHeightDescendants::Yes) {
         containingBlock->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
     }
 
-    if (is<RenderView>(containingBlock) && view().frameView().isAutoSizeEnabled()) {
+    if (is<RenderView>(containingBlock) && view().frameView().isAutoSizeEnabled() && !percentageBasisPastBox) {
         // Dynamic height units like percentage don't play well with autosizing when we don't have a definite viewport size. Let's treat percentage as auto instead.
         return { };
     }
@@ -4003,12 +4010,19 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computePercenta
 
     auto isOrthogonal = isHorizontal != containingBlock->isHorizontalWritingMode();
     auto overridingAvailableSize = std::optional<LayoutUnit> { };
-    if (auto containingBlockContentSize = isOrthogonal ? overridingContainingBlockContentLogicalWidth() : overridingContainingBlockContentLogicalHeight()) {
+    if (percentageBasisPastBox) {
+        if (!*percentageBasisPastBox)
+            return { };
+        overridingAvailableSize = *percentageBasisPastBox;
+    }
+    // The overriding sizes are those of the box's own containing block, past which the walk may have gone.
+    auto isOrthogonalToContainingBlock = isHorizontal != this->containingBlock()->isHorizontalWritingMode();
+    if (auto containingBlockContentSize = isOrthogonalToContainingBlock ? overridingContainingBlockContentLogicalWidth() : overridingContainingBlockContentLogicalHeight()) {
         if (!*containingBlockContentSize)
             return { };
         overridingAvailableSize = *containingBlockContentSize;
     }
-    if (CheckedPtr tableCell = dynamicDowncast<RenderTableCell>(*containingBlock); tableCell && !isOrthogonal) {
+    if (CheckedPtr tableCell = dynamicDowncast<RenderTableCell>(*containingBlock); tableCell && !isOrthogonal && !percentageBasisPastBox) {
         if (skippedAutoHeightContainingBlock)
             return { };
         // Table cells violate what the CSS spec says to do with heights. Basically we
@@ -4246,7 +4260,15 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Style::PreferredSize& lo
         return computedValues.extent - block->borderAndPaddingLogicalHeight() - block->scrollbarLogicalHeight();
     }
 
-    LayoutUnit availableHeight = isOrthogonal(*this, *containingBlock()) ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(heightType);
+    auto availableHeight = [&] {
+        if (isOrthogonal(*this, *containingBlock()))
+            return containingBlockLogicalWidthForContent();
+        // The block formatting context gives the content of a box it lays out through the render tree the available block size of its containing
+        // block (LocalFrameViewLayoutContext::ContainingBlockBlockSizes).
+        if (auto containingBlockBlockSizes = layoutContext().containingBlockBlockSizes(*this))
+            return heightType == AvailableLogicalHeightType::ExcludeMarginBorderPadding ? containingBlockBlockSizes->availableBlockSize : containingBlockBlockSizes->availableBlockSizeIncludingMarginBorderPadding;
+        return containingBlockLogicalHeightForContent(heightType);
+    }();
     if (heightType == AvailableLogicalHeightType::ExcludeMarginBorderPadding) {
         // FIXME: Margin collapsing hasn't happened yet, so this incorrectly removes collapsed margins.
         availableHeight -= marginBefore(writingMode()) + marginAfter(writingMode()) + borderAndPaddingLogicalHeight();
