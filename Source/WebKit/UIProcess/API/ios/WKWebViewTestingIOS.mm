@@ -520,6 +520,16 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
     _page->setDeviceOrientationUserPermissionHandlerForTesting(WTF::move(handlerWrapper));
 }
 
+- (void)_setViewportFoldRectsForTesting:(NSArray<NSValue *> *)foldRects
+{
+#if HAVE(UIVIEW_RESERVED_REGION)
+    RetainPtr<NSMutableArray<NSValue *>> foldRectsInContentView = [NSMutableArray arrayWithCapacity:foldRects.count];
+    for (NSValue *foldRect in foldRects)
+        [foldRectsInContentView addObject:[NSValue valueWithCGRect:[self convertRect:foldRect.CGRectValue toView:_contentView.get()]]];
+    [_contentView _setViewportFoldRectsForTesting:foldRectsInContentView.get()];
+#endif
+}
+
 - (void)_resetObscuredInsetsForTesting
 {
     if (self._haveSetObscuredInsets)

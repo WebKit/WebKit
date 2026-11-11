@@ -845,6 +845,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/SiteIsolationTextPreviewTests.swift
     Tests/WebKit/WKWebView/SiteIsolationUIDelegateTests.swift
     Tests/WebKit/WKWebView/SiteIsolationUserAgentTests.swift
+    Tests/WebKit/WKWebView/SiteIsolationViewportSegmentsTests.swift
     Tests/WebKit/WKWebView/SiteIsolationWebExtensionTests.swift
     Tests/WebKit/WKWebView/TextExtractionTests.swift
     Tests/WebKit/WKWebView/TextFragments.swift

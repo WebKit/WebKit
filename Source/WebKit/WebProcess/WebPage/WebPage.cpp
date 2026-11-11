@@ -1858,6 +1858,7 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
     setMinimumSizeForAutoLayout(parameters.minimumSizeForAutoLayout);
     setSizeToContentAutoSizeMaximumSize(parameters.sizeToContentAutoSizeMaximumSize);
+    setViewportSegments(parameters.viewportSegments);
 
     setObscuredContentInsets(parameters.obscuredContentInsets);
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
