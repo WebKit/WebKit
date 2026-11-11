@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>An SVG userSpaceOnUse filter referenced from a layout-offset HTML element resolves coordinates against the element's box</title>
+<link rel="help" href="https://drafts.csswg.org/filter-effects-1/#FilterEffectsRegion">
+<link rel="help" href="https://drafts.fxtf.org/filter-effects/#FilterProperty">
+<link rel="help" href="https://drafts.csswg.org/css-transforms-1/#local-coordinate-system">
+<link rel="match" href="reference/green-100x100.html">
+<meta name="assert" content="The element is offset from the canvas origin by layout (the UA default body margin, not a transform). Its userSpaceOnUse SVG filter floods green at x=0,y=0,width=100,height=100. userSpaceOnUse (0,0) must map to the element's border-box top-left, so the green flood covers the element rather than landing at the document origin.">
+<style>
+  #target {
+    width: 100px;
+    height: 100px;
+    background: red;
+    filter: url(#f);
+  }
+</style>
+</head>
+<body>
+  <div id="target"></div>
+  <svg width="0" height="0" aria-hidden="true">
+    <filter id="f" filterUnits="userSpaceOnUse" x="0" y="0" width="100" height="100" primitiveUnits="userSpaceOnUse">
+      <feFlood flood-color="green" x="0" y="0" width="100" height="100"/>
+    </filter>
+  </svg>
+</body>
+</html>
