@@ -1,0 +1,60 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CSS Container Queries Test: container-name set by :host applies to nested shadow trees</title>
+<link rel="help" href="https://drafts.csswg.org/css-conditional-5/#query-container">
+<link rel="help" href="https://drafts.csswg.org/css-shadow-1/#shadow-names">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<div id="nested">
+  <template shadowrootmode="open">
+    <style>
+      :host { container: --host-container / inline-size; }
+    </style>
+    <div id="inner">
+      <template shadowrootmode="open">
+        <style>
+          #t1 { color: red; }
+          @container --host-container (width >= 0px) {
+            #t1 { color: green; }
+          }
+        </style>
+        <div id="t1"></div>
+      </template>
+    </div>
+  </template>
+</div>
+
+<div id="slotted">
+  <template shadowrootmode="open">
+    <style>
+      :host { container: --host-container / inline-size; }
+    </style>
+    <slot></slot>
+  </template>
+  <div>
+    <template shadowrootmode="open">
+      <style>
+        #t2 { color: red; }
+        @container --host-container (width >= 0px) {
+          #t2 { color: green; }
+        }
+      </style>
+      <div id="t2"></div>
+    </template>
+  </div>
+</div>
+
+<script>
+  const green = "rgb(0, 128, 0)";
+
+  test(() => {
+    const t1 = nested.shadowRoot.getElementById("inner").shadowRoot.getElementById("t1");
+    assert_equals(getComputedStyle(t1).color, green);
+  }, "Query in a nested shadow tree matches name set by :host of an outer host");
+
+  test(() => {
+    const t2 = document.querySelector("#slotted > div").shadowRoot.getElementById("t2");
+    assert_equals(getComputedStyle(t2).color, green);
+  }, "Query in the shadow tree of a slotted element matches name set by :host of the slot's host");
+</script>
