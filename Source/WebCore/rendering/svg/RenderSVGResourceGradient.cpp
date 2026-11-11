@@ -39,6 +39,18 @@ RenderSVGResourceGradient::RenderSVGResourceGradient(Type type, SVGElement& elem
 
 RenderSVGResourceGradient::~RenderSVGResourceGradient() = default;
 
+void RenderSVGResourceGradient::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+{
+    RenderSVGResourcePaintServer::styleDidChange(diff, oldStyle);
+
+    if (!oldStyle)
+        return;
+
+    CheckedRef newStyle = style();
+    if (SVGRenderSupport::paintServerTransformStyleChanged(*oldStyle, newStyle))
+        invalidateGradient();
+}
+
 GradientColorStops RenderSVGResourceGradient::stopsByApplyingColorFilter(const GradientColorStops& stops, const Style::ComputedStyle& style) const
 {
     if (style.appleColorFilter().isNone())

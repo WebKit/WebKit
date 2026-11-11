@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:html="http://www.w3.org/1999/xhtml" width="300" height="100">
+  <title>SVG Paint Servers: the CSS transform property applies to gradients and wins over gradientTransform.</title>
+  <metadata>
+    <html:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/pservers.html#LinearGradientElementGradientTransformAttribute"/>
+    <html:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/styling.html#PresentationAttributes"/>
+    <html:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/pservers.html#PaintServerTemplates"/>
+    <html:link rel="help" href="https://drafts.csswg.org/css-transforms-1/#transform-attribute-specificity"/>
+    <html:link rel="match" href="reference/green-300x100.svg"/>
+    <html:meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-30000"/>
+    <!-- A gradient can be one unit per channel off a solid fill. A wrong
+         transform shows red. -->
+  </metadata>
+  <!-- The gradients are green up to the middle, then fade to red.
+       scale(2) stretches the green half over the whole square, as in
+       gradient-transform-03.svg. translate(-1, 0) shifts the gradient one
+       bounding-box width to the left, so the whole square sees the last
+       stop (red).
+
+       First square: the style sheet sets transform on a gradient that has no
+       gradientTransform attribute.
+       Second square: gradientTransform is a presentation attribute for
+       transform, so the style sheet declaration wins over it.
+       Third square: the referencing gradient specifies transform through the
+       style sheet, so the gradientTransform of its template is not used. -->
+  <style>
+    #lg-css, #lg-css-over-attr, #lg-css-over-template {
+      transform: scale(2);
+    }
+  </style>
+  <defs>
+    <linearGradient id="lg-css">
+      <stop offset="0" stop-color="green"/>
+      <stop offset="0.5" stop-color="green"/>
+      <stop offset="1" stop-color="red"/>
+    </linearGradient>
+    <linearGradient id="lg-css-over-attr" gradientTransform="translate(-1, 0)">
+      <stop offset="0" stop-color="green"/>
+      <stop offset="0.5" stop-color="green"/>
+      <stop offset="1" stop-color="red"/>
+    </linearGradient>
+    <linearGradient id="lg-template" gradientTransform="translate(-1, 0)">
+      <stop offset="0" stop-color="green"/>
+      <stop offset="0.5" stop-color="green"/>
+      <stop offset="1" stop-color="red"/>
+    </linearGradient>
+    <linearGradient id="lg-css-over-template" href="#lg-template"/>
+  </defs>
+  <rect x="0" width="100" height="100" fill="url(#lg-css)"/>
+  <rect x="100" width="100" height="100" fill="url(#lg-css-over-attr)"/>
+  <rect x="200" width="100" height="100" fill="url(#lg-css-over-template)"/>
+</svg>

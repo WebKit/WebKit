@@ -34,6 +34,7 @@
 #include "NodeName.h"
 #include "RenderSVGResourceGradient.h"
 #include "SVGElementTypeHelpers.h"
+#include "SVGRenderSupport.h"
 #include "SVGStopElement.h"
 #include "Settings.h"
 #include "StyleResolver.h"
@@ -128,8 +129,14 @@ void SVGGradientElement::collectCommonGradientAttributes(GradientAttributes& att
     if (!attributes.hasGradientUnits() && hasAttribute(SVGNames::gradientUnitsAttr))
         attributes.setGradientUnits(gradientUnits());
 
+    // CSS transform wins over gradientTransform; with neither, the template provides it.
     if (!attributes.hasGradientTransform()) {
-        if (auto transform = gradientTransform().concatenate())
+        std::optional<AffineTransform> transform;
+        if (CheckedPtr renderer = this->renderer())
+            transform = SVGRenderSupport::paintServerTransformFromStyle(*renderer);
+        if (!transform)
+            transform = gradientTransform().concatenate();
+        if (transform)
             attributes.setGradientTransform(*transform);
     }
 
