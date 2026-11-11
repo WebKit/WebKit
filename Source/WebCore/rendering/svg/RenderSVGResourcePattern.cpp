@@ -58,7 +58,7 @@ void RenderSVGResourcePattern::collectPatternAttributesIfNeeded()
         m_attributes = WTF::move(attributes);
 }
 
-RefPtr<Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& context, const RenderLayerModelObject& renderer)
+RefPtr<Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& context, const RenderLayerModelObject& renderer, const std::optional<AffineTransform>& nonScalingStrokeTransform)
 {
     RefPtr tileImage = m_imageMap.get(renderer);
     if (!tileImage) {
@@ -81,6 +81,10 @@ RefPtr<Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& context,
 
         // Ignore 2D rotation, as it doesn't affect the size of the tile.
         auto absoluteTransformIgnoringRotation = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+        // The tile is cached for all paint operations of the renderer, so render it at the scale of the renderer's
+        // user space. A non-scaling stroke paints in a context without the transform to the SVG root.
+        if (nonScalingStrokeTransform)
+            absoluteTransformIgnoringRotation.multiply(*nonScalingStrokeTransform);
 
         FloatSize tileScale(absoluteTransformIgnoringRotation.xScale(), absoluteTransformIgnoringRotation.yScale());
 
@@ -125,16 +129,20 @@ bool RenderSVGResourcePattern::prepareFillOperation(GraphicsContext& context, co
 
 bool RenderSVGResourcePattern::prepareStrokeOperation(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const Style::ComputedStyle& style)
 {
-    auto pattern = buildPattern(context, targetRenderer);
+    std::optional<AffineTransform> nonScalingStrokeTransform;
+    if (style.vectorEffect() == VectorEffect::NonScalingStroke) {
+        if (CheckedPtr shape = dynamicDowncast<RenderSVGShape>(targetRenderer))
+            nonScalingStrokeTransform = shape->computeNonScalingStrokeTransform();
+    }
+
+    auto pattern = buildPattern(context, targetRenderer, nonScalingStrokeTransform);
     if (!pattern)
         return false;
 
     context.setAlpha(Style::evaluate<float>(style.strokeOpacity()));
     SVGRenderSupport::applyStrokeStyleToContext(context, style, targetRenderer);
-    if (style.vectorEffect() == VectorEffect::NonScalingStroke) {
-        if (CheckedPtr shape = dynamicDowncast<RenderSVGShape>(targetRenderer))
-            pattern->setPatternSpaceTransform(shape->computeNonScalingStrokeTransform().multiply(m_tileImageTransformMap.get(targetRenderer)));
-    }
+    if (nonScalingStrokeTransform)
+        pattern->setPatternSpaceTransform(*nonScalingStrokeTransform * m_tileImageTransformMap.get(targetRenderer));
     context.setStrokePattern(*pattern);
     return true;
 }
