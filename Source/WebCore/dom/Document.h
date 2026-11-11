@@ -605,7 +605,6 @@ public:
 
     WEBCORE_EXPORT Ref<Element> createElement(const QualifiedName&, bool createdByParser, CustomElementRegistry* = nullptr);
 
-    RefPtr<CustomElementRegistry> customElementRegistryForBindings();
     NODELETE CustomElementRegistry* effectiveGlobalCustomElementRegistry();
     static CustomElementNameValidationStatus validateCustomElementName(const AtomString&);
     CustomElementRegistry* activeCustomElementConstructorRegistry(JSC::JSObject* constructor);

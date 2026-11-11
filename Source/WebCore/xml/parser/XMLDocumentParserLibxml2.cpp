@@ -879,10 +879,8 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
 
     bool willConstructCustomElement = false;
     if (!m_parsingFragment) {
-        if (RefPtr window = document->window()) {
-            if (RefPtr registry = window->customElementRegistry(); registry) [[unlikely]]
-                willConstructCustomElement = registry->findInterface(qName);
-        }
+        if (RefPtr window = document->window())
+            willConstructCustomElement = protect(window->customElementRegistry())->findInterface(qName);
     }
 
     std::optional<ThrowOnDynamicMarkupInsertionCountIncrementer> markupInsertionCountIncrementer;

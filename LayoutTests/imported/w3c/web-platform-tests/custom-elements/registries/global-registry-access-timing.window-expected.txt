@@ -1,0 +1,18 @@
+
+PASS Shadow root attached before customElements is accessed
+PASS Declarative shadow root attached before customElements is accessed
+PASS Shadow root cloned before customElements is accessed
+PASS Shadow root imported into a document before its customElements is accessed
+PASS Template contents imported before customElements is accessed
+PASS Element appended to a shadow root with a null registry before customElements is accessed
+PASS Shadow root attached after customElements is accessed
+PASS Declarative shadow root attached after customElements is accessed
+PASS Shadow root cloned after customElements is accessed
+PASS Shadow root imported into a document after its customElements is accessed
+PASS Template contents imported after customElements is accessed
+PASS Element appended to a shadow root with a null registry after customElements is accessed
+PASS Shadow root adopted before either document's customElements is accessed
+PASS Shadow root adopted after only the old document's customElements is accessed
+PASS Shadow root adopted after only the new document's customElements is accessed
+PASS Shadow root adopted after both documents' customElements are accessed
+

@@ -1898,13 +1898,6 @@ NODELETE static inline bool operator<(char32_t a, const UnicodeCodePointRange& b
     return a < b.minimum;
 }
 
-RefPtr<CustomElementRegistry> Document::customElementRegistryForBindings()
-{
-    if (RefPtr window = document().window())
-        return &window->ensureCustomElementRegistry();
-    return customElementRegistry();
-}
-
 CustomElementRegistry* Document::effectiveGlobalCustomElementRegistry()
 {
     if (!customElementRegistry() || customElementRegistry()->isScoped())

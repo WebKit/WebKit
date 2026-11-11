@@ -130,7 +130,6 @@
 #include "ResourceLoadObserver.h"
 #include "ScheduledAction.h"
 #include "Screen.h"
-#include "ScriptDisallowedScope.h"
 #include "ScrollAnimator.h"
 #include "ScrollToOptions.h"
 #include "SecurityOrigin.h"
@@ -452,9 +451,11 @@ void LocalDOMWindow::setCanShowModalDialogOverride(bool allow)
 LocalDOMWindow::LocalDOMWindow(Document& document)
     : DOMWindow(GlobalWindowIdentifier { Process::identifier(), WindowIdentifier::generate() }, DOMWindowType::Local)
     , ContextDestructionObserver(&document)
+    , m_customElementRegistry(CustomElementRegistry::create(document, *this))
 {
     ASSERT(frame());
     addLanguageChangeObserver(this, &languagesChangedCallback);
+    document.setCustomElementRegistry(m_customElementRegistry.copyRef());
 }
 
 ScriptExecutionContext* LocalDOMWindow::scriptExecutionContext() const
@@ -487,7 +488,8 @@ void LocalDOMWindow::didSecureTransitionTo(Document& document)
     m_crypto = nullptr;
     m_navigator = nullptr;
     m_performance = nullptr;
-    m_customElementRegistry = nullptr;
+    m_customElementRegistry = CustomElementRegistry::create(document, *this);
+    document.setCustomElementRegistry(m_customElementRegistry.copyRef());
 }
 
 void LocalDOMWindow::prewarmLocalStorageIfNecessary()
@@ -667,22 +669,6 @@ void LocalDOMWindow::resumeFromBackForwardCache()
     m_suspendedForDocumentSuspension = false;
 }
 
-CustomElementRegistry& LocalDOMWindow::ensureCustomElementRegistry()
-{
-    if (!m_customElementRegistry) {
-        m_customElementRegistry = CustomElementRegistry::create(protect(*scriptExecutionContext()), *this);
-        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-        for (Ref shadowRoot : document()->inDocumentShadowRoots()) {
-            if (shadowRoot->mode() == ShadowRootMode::UserAgent || shadowRoot->hasScopedCustomElementRegistry())
-                continue;
-            const_cast<ShadowRoot&>(shadowRoot.get()).setCustomElementRegistry(*m_customElementRegistry);
-        }
-        protect(document())->setCustomElementRegistry(*m_customElementRegistry);
-    }
-    ASSERT(!m_customElementRegistry->isScoped());
-    ASSERT(m_customElementRegistry->scriptExecutionContext() == document());
-    return *m_customElementRegistry;
-}
 
 static ExceptionOr<SelectorQuery&> selectorQueryInFrame(LocalFrame* frame, const String& selectors)
 {

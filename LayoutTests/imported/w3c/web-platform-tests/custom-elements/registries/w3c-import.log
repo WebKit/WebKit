@@ -38,6 +38,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/define.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/element-mutation-null-registry-removal.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/element-mutation.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/global-registry-access-timing.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/global.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/initial-about-blank.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/per-document.html

@@ -142,7 +142,7 @@ public:
     ExceptionOr<void> setStatus(const String&);
     ExceptionOr<Document*> document() const;
     ExceptionOr<History&> history();
-    ExceptionOr<CustomElementRegistry&> ensureCustomElementRegistry();
+    ExceptionOr<CustomElementRegistry&> customElements();
     ExceptionOr<BarProp&> locationbar();
     ExceptionOr<BarProp&> menubar();
     ExceptionOr<BarProp&> personalbar();

@@ -275,12 +275,12 @@ ExceptionOr<History&> DOMWindow::history()
     return localThis->history();
 }
 
-ExceptionOr<CustomElementRegistry&> DOMWindow::ensureCustomElementRegistry()
+ExceptionOr<CustomElementRegistry&> DOMWindow::customElements()
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
         return Exception { ExceptionCode::SecurityError };
-    return localThis->ensureCustomElementRegistry();
+    return localThis->customElementRegistry();
 }
 
 ExceptionOr<BarProp&> DOMWindow::locationbar()

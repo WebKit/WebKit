@@ -3245,6 +3245,8 @@ static void preserveCustomElementRegistryAfterLeavingTreeScope(Element& element,
 
 static void preserveCustomElementRegistryAfterEnteringTreeScope(Element& element)
 {
+    if (element.isInUserAgentShadowTree())
+        return;
     if (element.usesScopedCustomElementRegistryMap()) {
         if (CustomElementRegistry::registryForElement(element) == element.treeScope().customElementRegistry())
             CustomElementRegistry::removeFromScopedCustomElementRegistryMap(element);
@@ -3253,7 +3255,7 @@ static void preserveCustomElementRegistryAfterEnteringTreeScope(Element& element
             // This element was moved into a shadow tree with a scoped custom element registry.
             // Keep using the document's non-scoped custom element registry.
             if (RefPtr window = element.document().window())
-                CustomElementRegistry::addToScopedCustomElementRegistryMap(element, protect(window->ensureCustomElementRegistry()));
+                CustomElementRegistry::addToScopedCustomElementRegistryMap(element, protect(window->customElementRegistry()));
         }
     }
 }
@@ -3595,8 +3597,7 @@ static bool canAttachAuthorShadowRoot(const Element& element)
 
     if (auto localName = element.localName(); Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
         if (auto* window = element.document().window()) {
-            auto* registry = window->customElementRegistry();
-            if (registry && registry->isShadowDisabled(localName))
+            if (window->customElementRegistry().isShadowDisabled(localName))
                 return false;
         }
 
@@ -3825,8 +3826,6 @@ CustomElementReactionQueue* Element::reactionQueue() const
 
 CustomElementRegistry* Element::customElementRegistry() const
 {
-    if (RefPtr window = document().window())
-        window->ensureCustomElementRegistry(); // Create the global registry before querying since registryForElement doesn't ensure it.
     return CustomElementRegistry::registryForElement(*this);
 }
 
