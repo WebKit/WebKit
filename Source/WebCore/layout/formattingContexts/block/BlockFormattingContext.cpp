@@ -1227,7 +1227,9 @@ LayoutUnit BlockFormattingContext::layoutIndependentFormattingContextThroughRend
         .containingBlockInlineSize = containingBlockInlineSize,
         .containingBlockBlockSize = containingBlockBlockSize(),
         .relayoutChildren = containingBlockState.relayoutChildren,
-        .borderBoxInlineSize = decidesItsOwnInlineSize(box, root().writingMode()) ? borderBoxInlineSize : std::optional { geometry.borderBoxWidth() }
+        .borderBoxInlineSize = decidesItsOwnInlineSize(box, root().writingMode()) ? borderBoxInlineSize : std::optional { geometry.borderBoxWidth() },
+        .marginBefore = geometry.marginBefore(),
+        .marginAfter = geometry.marginAfter()
     };
     auto layoutResult = integrationUtils().layoutIndependentFormattingContext(box, constraints);
 

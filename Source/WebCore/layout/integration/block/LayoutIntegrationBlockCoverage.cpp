@@ -68,7 +68,6 @@ enum class BlockAvoidanceReason : uint8_t {
     ContentHasOutOfFlowBox,
     ContentHasOutOfFlowNonBlockContainer,
     ContentHasListMarker,
-    ContentHasStretchedQuirksModeBody,
     ContentHasUnsupportedRenderer,
     ContentHasFormattingContextRoot,
     ContentHasInlineBoxContainingBlock,
@@ -557,10 +556,6 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
         return BlockAvoidanceReason::ContentHasBlockInInline;
     if (hasPercentageBlockSizeInQuirksMode(box, rootContainer))
         return BlockAvoidanceReason::ContentHasQuirksModePercentageHeight;
-    // Quirks mode: a body laid out through the render tree stretches to the viewport from the size of its renderer's ancestors
-    // (RenderBox::computeLogicalHeight), which the block formatting context has not committed yet.
-    if (box.stretchesToViewport())
-        return BlockAvoidanceReason::ContentHasStretchedQuirksModeBody;
     CheckedRef style = box.style();
     auto writingMode = box.writingMode();
     // The block formatting context decides the inline size from lengths, percentages, calc() and stretch, the stretch-fit inline size
@@ -864,8 +859,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "out-of-flow table or other renderer"_s;
     case BlockAvoidanceReason::ContentHasListMarker:
         return "list item with a marker"_s;
-    case BlockAvoidanceReason::ContentHasStretchedQuirksModeBody:
-        return "quirks mode body leaf"_s;
     case BlockAvoidanceReason::ContentHasUnsupportedRenderer:
         return "other renderer"_s;
     case BlockAvoidanceReason::ContentHasFormattingContextRoot:
