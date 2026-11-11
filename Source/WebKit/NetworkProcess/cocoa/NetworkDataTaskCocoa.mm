@@ -224,6 +224,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     , m_webPageProxyID(parameters.webPageProxyID)
     , m_isForMainResourceNavigationForAnyFrame(!!parameters.mainResourceNavigationDataForAnyFrame)
     , m_navigationLosesFrameSpecificStorageAccess(parameters.navigationLosesFrameSpecificStorageAccess)
+    , m_siteIsolationEnabled(parameters.siteIsolationEnabled)
     , m_sourceOrigin(parameters.sourceOrigin)
     , m_requiredCookiesVersion(parameters.requiredCookiesVersion)
     , m_advancedPrivacyProtections(parameters.advancedPrivacyProtections)
@@ -558,7 +559,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 
     if (isTopLevelNavigation())
         request.setFirstPartyForCookies(request.url());
-    else {
+    else if (!m_siteIsolationEnabled) {
         WebCore::RegistrableDomain firstPartyDomain { request.firstPartyForCookies() };
         if (CheckedPtr storageSession = session->networkStorageSession()) {
             bool didPreviousRequestHaveStorageAccess = storageSession->hasStorageAccess(WebCore::RegistrableDomain { redirectResponse.url() }, firstPartyDomain, m_frameID, m_webPageProxyID);

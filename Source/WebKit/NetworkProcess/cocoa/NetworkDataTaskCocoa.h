@@ -127,6 +127,7 @@ private:
 
     bool m_isForMainResourceNavigationForAnyFrame { false };
     bool m_navigationLosesFrameSpecificStorageAccess { false };
+    bool m_siteIsolationEnabled { false };
     const RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
     uint64_t m_requiredCookiesVersion { 0 };
     const OptionSet<WebCore::AdvancedPrivacyProtections> m_advancedPrivacyProtections;

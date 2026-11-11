@@ -88,6 +88,8 @@ struct NetworkLoadParameters {
     // revoking the frame's storage from JS until the navigation load commits.
     bool navigationLosesFrameSpecificStorageAccess { false };
 
+    bool siteIsolationEnabled { false };
+
     std::optional<CompressionDictionaryParameters> compressionDictionary { };
 };
 

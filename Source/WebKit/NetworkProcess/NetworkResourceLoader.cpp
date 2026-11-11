@@ -476,6 +476,8 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     if (parameters.storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use && m_networkLoadChecker)
         parameters.storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy();
 
+    parameters.siteIsolationEnabled = connectionToWebProcess().sharedPreferencesForWebProcess()->siteIsolationEnabled;
+
     CheckedPtr networkSession = protect(connectionToWebProcess())->networkSession();
     if (!networkSession) {
         WTFLogAlways("Attempted to create a NetworkLoad with a session (id=%" PRIu64 ") that does not exist.", sessionID().toUInt64());
