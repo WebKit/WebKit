@@ -312,6 +312,7 @@ void ScopeRuleSets::collectFeatures() const
 
     m_idInvalidationRuleSets.clear();
     m_classInvalidationRuleSets.clear();
+    m_classPrefixInvalidationRuleSets.clear();
     m_attributeInvalidationRuleSets.clear();
     m_pseudoClassInvalidationRuleSets.clear();
     m_hasPseudoClassInvalidationRuleSets.clear();
@@ -457,6 +458,11 @@ const Vector<InvalidationRuleSet>* ScopeRuleSets::idInvalidationRuleSets(const A
 const Vector<InvalidationRuleSet>* ScopeRuleSets::classInvalidationRuleSets(const AtomString& className) const
 {
     return ensureInvalidationRuleSets(className, m_classInvalidationRuleSets, m_features.classRules);
+}
+
+const Vector<InvalidationRuleSet>* ScopeRuleSets::classPrefixInvalidationRuleSets(const AtomString& prefix) const
+{
+    return ensureInvalidationRuleSets(prefix, m_classPrefixInvalidationRuleSets, m_features.classPrefixRules);
 }
 
 const Vector<InvalidationRuleSet>* ScopeRuleSets::attributeInvalidationRuleSets(const AtomString& attributeName) const

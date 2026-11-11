@@ -1,0 +1,49 @@
+<meta charset="utf-8">
+<title>CSS Selectors: class prefix selector invalidation in quirks mode</title>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://drafts.csswg.org/selectors-5/#class-prefix">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  #lowercase-prefix.foo-* { color: rgb(1, 2, 3); }
+  #uppercase-prefix.FOO-* { color: rgb(4, 5, 6); }
+</style>
+<div id="lowercase-prefix"></div>
+<div id="uppercase-prefix"></div>
+<script>
+const black = 'rgb(0, 0, 0)';
+
+function color(element) {
+  return getComputedStyle(element).color;
+}
+
+test(() => {
+  assert_equals(document.compatMode, 'BackCompat');
+}, 'this test runs in quirks mode');
+
+test(() => {
+  const element = document.getElementById('lowercase-prefix');
+
+  element.classList.add('FOO-bar');
+  assert_equals(color(element), 'rgb(1, 2, 3)');
+
+  element.classList.remove('FOO-bar');
+  assert_equals(color(element), black);
+
+  element.classList.add('foo-bar');
+  assert_equals(color(element), 'rgb(1, 2, 3)');
+
+  element.classList.remove('foo-bar');
+  assert_equals(color(element), black);
+}, '.foo-* is invalidated when a class matching it case-insensitively is added or removed in quirks mode');
+
+test(() => {
+  const element = document.getElementById('uppercase-prefix');
+
+  element.classList.add('FOO-bar');
+  assert_equals(color(element), black);
+
+  element.classList.remove('FOO-bar');
+  assert_equals(color(element), black);
+}, '.FOO-* never starts matching after a class change in quirks mode');
+</script>

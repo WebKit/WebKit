@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Selectors: class prefix selector inside logical and nth pseudo-classes invalidates style correctly</title>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://drafts.csswg.org/selectors-5/#class-prefix">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  #not-subject:not(.foo-*) { color: rgb(1, 2, 3); }
+  #not-ancestor:not(.foo-*) #not-descendant { color: rgb(4, 5, 6); }
+  #is-ref:is(.foo-*, .unrelated) + #is-sibling { color: rgb(7, 8, 9); }
+  #nth-child-container > :nth-child(2 of .foo-*) { color: rgb(10, 11, 12); }
+  #nth-last-child-container > :nth-last-child(1 of .foo-*) { color: rgb(13, 14, 15); }
+  #nth-child-not-container > :nth-child(1 of :not(.foo-*)) { color: rgb(16, 17, 18); }
+</style>
+<div id="not-subject"></div>
+<div id="not-ancestor"><div id="not-descendant"></div></div>
+<div id="is-ref"></div>
+<div id="is-sibling"></div>
+<div id="nth-child-container">
+  <div id="nth-child-a" class="foo-a"></div>
+  <div id="nth-child-b"></div>
+  <div id="nth-child-c" class="foo-c"></div>
+</div>
+<div id="nth-last-child-container">
+  <div id="nth-last-child-a" class="foo-a"></div>
+  <div id="nth-last-child-b"></div>
+</div>
+<div id="nth-child-not-container">
+  <div id="nth-child-not-a"></div>
+  <div id="nth-child-not-b"></div>
+</div>
+<script>
+const black = 'rgb(0, 0, 0)';
+
+function color(id) {
+  return getComputedStyle(document.getElementById(id)).color;
+}
+
+test(() => {
+  const subject = document.getElementById('not-subject');
+  assert_equals(color('not-subject'), 'rgb(1, 2, 3)');
+
+  subject.classList.add('foo-x');
+  assert_equals(color('not-subject'), black);
+
+  subject.classList.add('foo-y');
+  assert_equals(color('not-subject'), black);
+
+  subject.classList.remove('foo-x');
+  assert_equals(color('not-subject'), black, 'still matches .foo-* via "foo-y"');
+
+  subject.classList.remove('foo-y');
+  assert_equals(color('not-subject'), 'rgb(1, 2, 3)');
+}, ':not(.foo-*) in subject position is invalidated when the element gains/loses a matching class');
+
+test(() => {
+  const ancestor = document.getElementById('not-ancestor');
+  assert_equals(color('not-descendant'), 'rgb(4, 5, 6)');
+
+  ancestor.classList.add('foo-x');
+  assert_equals(color('not-descendant'), black);
+
+  ancestor.classList.remove('foo-x');
+  assert_equals(color('not-descendant'), 'rgb(4, 5, 6)');
+}, ':not(.foo-*) on an ancestor invalidates descendants when the ancestor gains/loses a matching class');
+
+test(() => {
+  const ref = document.getElementById('is-ref');
+  assert_equals(color('is-sibling'), black);
+
+  ref.classList.add('foo-x');
+  assert_equals(color('is-sibling'), 'rgb(7, 8, 9)');
+
+  ref.classList.remove('foo-x');
+  assert_equals(color('is-sibling'), black);
+}, ':is(.foo-*) on a preceding sibling invalidates the following sibling');
+
+test(() => {
+  const a = document.getElementById('nth-child-a');
+  const b = document.getElementById('nth-child-b');
+  assert_equals(color('nth-child-a'), black);
+  assert_equals(color('nth-child-b'), black);
+  assert_equals(color('nth-child-c'), 'rgb(10, 11, 12)');
+
+  b.classList.add('foo-b');
+  assert_equals(color('nth-child-b'), 'rgb(10, 11, 12)', 'b became the second .foo-* child');
+  assert_equals(color('nth-child-c'), black, 'c is now the third .foo-* child');
+
+  a.classList.remove('foo-a');
+  assert_equals(color('nth-child-b'), black, 'b is now the first .foo-* child');
+  assert_equals(color('nth-child-c'), 'rgb(10, 11, 12)', 'c is the second .foo-* child again');
+
+  a.classList.add('foo-a');
+  b.classList.remove('foo-b');
+  assert_equals(color('nth-child-b'), black);
+  assert_equals(color('nth-child-c'), 'rgb(10, 11, 12)');
+}, ':nth-child(2 of .foo-*) is invalidated on siblings when an earlier sibling gains/loses a matching class');
+
+test(() => {
+  const a = document.getElementById('nth-last-child-a');
+  const b = document.getElementById('nth-last-child-b');
+  assert_equals(color('nth-last-child-a'), 'rgb(13, 14, 15)');
+
+  b.classList.add('foo-b');
+  assert_equals(color('nth-last-child-a'), black, 'a is no longer the last .foo-* child');
+  assert_equals(color('nth-last-child-b'), 'rgb(13, 14, 15)');
+
+  b.classList.remove('foo-b');
+  assert_equals(color('nth-last-child-a'), 'rgb(13, 14, 15)');
+  assert_equals(color('nth-last-child-b'), black);
+}, ':nth-last-child(1 of .foo-*) is invalidated on siblings when a later sibling gains/loses a matching class');
+
+test(() => {
+  const a = document.getElementById('nth-child-not-a');
+  assert_equals(color('nth-child-not-a'), 'rgb(16, 17, 18)');
+  assert_equals(color('nth-child-not-b'), black);
+
+  a.classList.add('foo-a');
+  assert_equals(color('nth-child-not-a'), black);
+  assert_equals(color('nth-child-not-b'), 'rgb(16, 17, 18)', 'b is now the first child not matching .foo-*');
+
+  a.classList.remove('foo-a');
+  assert_equals(color('nth-child-not-a'), 'rgb(16, 17, 18)');
+  assert_equals(color('nth-child-not-b'), black);
+}, ':nth-child(1 of :not(.foo-*)) is invalidated on siblings when an earlier sibling gains/loses a matching class');
+</script>

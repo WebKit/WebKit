@@ -1,0 +1,6 @@
+
+PASS :host(.foo-*) is invalidated when the host gains/loses a matching class
+PASS :host(:not(.bar-*)) is invalidated when the host gains/loses a matching class
+PASS :host(.baz-*) #inner is invalidated in the shadow tree when the host gains/loses a matching class
+PASS ::slotted(.foo-*) is invalidated when a slotted element gains/loses a matching class
+

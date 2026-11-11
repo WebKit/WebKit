@@ -400,6 +400,8 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
                 selectorFeatures.ids.append({ selector, matchElement, context.isNegation, scopeSourcesForFeature() });
         } else if (selector->match() == CSSSelector::Match::Class || selector->isEquivalentToClassSelector())
             selectorFeatures.classes.append({ selector, matchElement, context.isNegation, scopeSourcesForFeature() });
+        else if (selector->match() == CSSSelector::Match::ClassPrefix)
+            selectorFeatures.classPrefixes.append({ selector, matchElement, context.isNegation, scopeSourcesForFeature() });
         else if (selector->isAttributeSelector()) {
             attributeLowercaseLocalNamesInRules.add(selector->attribute().localNameLowercase());
             attributeLocalNamesInRules.add(selector->attribute().localName());
@@ -583,6 +585,7 @@ void RuleFeatureSet::collectFeatures(CollectionContext& collectionContext, const
 
     addToMap(idRules, selectorFeatures.ids, nullptr);
     addToMap(classRules, selectorFeatures.classes, &classesAffectingHost);
+    addToMap(classPrefixRules, selectorFeatures.classPrefixes, &classPrefixesAffectingHost);
 
     for (auto& entry : selectorFeatures.attributes) {
         auto& [selector, matchElement, isNegation, scopeSources] = entry;
@@ -687,6 +690,9 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
     addMap(classRules, other.classRules);
     classesAffectingHost.addAll(other.classesAffectingHost);
 
+    addMap(classPrefixRules, other.classPrefixRules);
+    classPrefixesAffectingHost.addAll(other.classPrefixesAffectingHost);
+
     addMap(attributeRules, other.attributeRules);
     attributesAffectingHost.addAll(other.attributesAffectingHost);
 
@@ -717,6 +723,8 @@ void RuleFeatureSet::clear()
     classRules.clear();
     hasPseudoClassRules.clear();
     classesAffectingHost.clear();
+    classPrefixRules.clear();
+    classPrefixesAffectingHost.clear();
     attributeRules.clear();
     attributesAffectingHost.clear();
     pseudoClassRules.clear();
@@ -732,6 +740,8 @@ void RuleFeatureSet::shrinkToFit()
     for (auto& rules : idRules.values())
         rules->shrinkToFit();
     for (auto& rules : classRules.values())
+        rules->shrinkToFit();
+    for (auto& rules : classPrefixRules.values())
         rules->shrinkToFit();
     for (auto& rules : attributeRules.values())
         rules->shrinkToFit();

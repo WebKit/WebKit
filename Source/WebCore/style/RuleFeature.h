@@ -186,11 +186,14 @@ struct RuleFeatureSet {
 
     HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> idRules;
     HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> classRules;
+    // Keyed by the prefix, including its trailing hyphens (".foo-*" is keyed by "foo-").
+    HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> classPrefixRules;
     HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> attributeRules;
     HashMap<PseudoClassInvalidationKey, std::unique_ptr<RuleFeatureVector>> pseudoClassRules;
     HashMap<PseudoClassInvalidationKey, std::unique_ptr<RuleFeatureVector>> hasPseudoClassRules;
 
     HashSet<AtomString> classesAffectingHost;
+    HashSet<AtomString> classPrefixesAffectingHost;
     HashSet<AtomString> attributesAffectingHost;
     HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>> pseudoClassesAffectingHost;
     HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>> pseudoClasses;
@@ -208,6 +211,7 @@ private:
 
         Vector<InvalidationFeature> ids;
         Vector<InvalidationFeature> classes;
+        Vector<InvalidationFeature> classPrefixes;
         Vector<InvalidationFeature> attributes;
         Vector<InvalidationFeature> pseudoClasses;
         Vector<InvalidationFeature> hasPseudoClasses;

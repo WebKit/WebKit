@@ -88,9 +88,58 @@ static ClassChangeVector computeClassChanges(const SpaceSplitString& oldClasses,
     return changedClasses;
 }
 
+struct ClassPrefixChange {
+    AtomString prefix;
+    ClassChangeType type;
+};
+
+using ClassPrefixChangeVector = Vector<ClassPrefixChange, classChangeVectorInlineCapacity>;
+
+// A class prefix selector (".foo-*") can only change state when a class it matches is added or removed.
+// The prefixes a class name can match are its leading substrings that end in a hyphen and are followed by
+// a non-hyphen character ("foo-bar-baz" matches "foo-" and "foo-bar-"), so enumerate those for each changed
+// class and keep the ones whose match state differs between the old and new class lists.
+static ClassPrefixChangeVector computeClassPrefixChanges(const ClassChangeVector& classChanges, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
+{
+    ClassPrefixChangeVector prefixChanges;
+    Vector<AtomStringImpl*, classChangeVectorInlineCapacity> checkedPrefixes;
+
+    for (auto& classChange : classChanges) {
+        StringView className { classChange.className };
+        for (unsigned i = 0; i + 1 < className.length(); ++i) {
+            if (className[i] != '-' || className[i + 1] == '-')
+                continue;
+
+            auto prefixCharacters = className.left(i + 1);
+            // A prefix that isn't an atom can't be the value of any selector.
+            auto prefix = prefixCharacters.toExistingAtomString();
+            if (prefix.isNull() || checkedPrefixes.contains(prefix.impl()))
+                continue;
+            checkedPrefixes.append(prefix.impl());
+
+            ASSERT(CSSSelector::classNameMatchesPrefix(className, prefixCharacters));
+            bool oldMatches = CSSSelector::hasClassNameMatchingPrefix(oldClasses, prefixCharacters);
+            bool newMatches = CSSSelector::hasClassNameMatchingPrefix(newClasses, prefixCharacters);
+            if (oldMatches != newMatches)
+                prefixChanges.append({ WTF::move(prefix), newMatches ? ClassChangeType::Add : ClassChangeType::Remove });
+        }
+    }
+
+    return prefixChanges;
+}
+
 void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
 {
     auto classChanges = computeClassChanges(oldClasses, newClasses);
+
+    std::optional<ClassPrefixChangeVector> classPrefixChanges;
+    auto classPrefixChangesIfNeeded = [&](const RuleFeatureSet& features) -> std::span<const ClassPrefixChange> {
+        if (features.classPrefixRules.isEmpty())
+            return { };
+        if (!classPrefixChanges)
+            classPrefixChanges = computeClassPrefixChanges(classChanges, oldClasses, newClasses);
+        return classPrefixChanges->span();
+    };
 
     bool shouldInvalidateCurrent = false;
     bool mayAffectStyleInShadowTree = false;
@@ -100,6 +149,12 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
             if (mayAffectShadowTree && features.classRules.contains(classChange.className))
                 mayAffectStyleInShadowTree = true;
             if (features.classesAffectingHost.contains(classChange.className))
+                shouldInvalidateCurrent = true;
+        }
+        for (auto& prefixChange : classPrefixChangesIfNeeded(features)) {
+            if (mayAffectShadowTree && features.classPrefixRules.contains(prefixChange.prefix))
+                mayAffectStyleInShadowTree = true;
+            if (features.classPrefixesAffectingHost.contains(prefixChange.prefix))
                 shouldInvalidateCurrent = true;
         }
     });
@@ -146,19 +201,25 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
     };
 
     auto collect = [&](auto& ruleSets, std::optional<MatchElement::Relation> onlyRelation = { }) {
-        for (auto& classChange : classChanges) {
-            if (auto* invalidationRuleSets = ruleSets.classInvalidationRuleSets(classChange.className)) {
-                for (auto& invalidationRuleSet : *invalidationRuleSets) {
-                    if (onlyRelation && invalidationRuleSet.matchElement.relation != onlyRelation)
-                        continue;
+        auto collectInvalidationRuleSets = [&](const Vector<InvalidationRuleSet>* invalidationRuleSets, ClassChangeType type) {
+            if (!invalidationRuleSets)
+                return;
+            for (auto& invalidationRuleSet : *invalidationRuleSets) {
+                if (onlyRelation && invalidationRuleSet.matchElement.relation != onlyRelation)
+                    continue;
 
-                    if (invalidateBeforeChange(classChange.type, invalidationRuleSet.isNegation, invalidationRuleSet))
-                        Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
-                    if (invalidateAfterChange(classChange.type, invalidationRuleSet.isNegation, invalidationRuleSet))
-                        Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
-                }
+                if (invalidateBeforeChange(type, invalidationRuleSet.isNegation, invalidationRuleSet))
+                    Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
+                if (invalidateAfterChange(type, invalidationRuleSet.isNegation, invalidationRuleSet))
+                    Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
             }
-        }
+        };
+
+        for (auto& classChange : classChanges)
+            collectInvalidationRuleSets(ruleSets.classInvalidationRuleSets(classChange.className), classChange.type);
+
+        for (auto& prefixChange : classPrefixChangesIfNeeded(ruleSets.features()))
+            collectInvalidationRuleSets(ruleSets.classPrefixInvalidationRuleSets(prefixChange.prefix), prefixChange.type);
     };
 
     collect(m_element->styleResolver().ruleSets());
