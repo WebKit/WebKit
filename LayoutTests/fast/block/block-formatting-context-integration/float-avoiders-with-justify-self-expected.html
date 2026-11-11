@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 200px; border: 1px solid; margin: 0 2px 4px 0; }
+.left { float: left; width: 50px; height: 30px; background: orange; }
+.right { float: right; width: 40px; height: 40px; background: tan; }
+.av { overflow: hidden; background: lightblue; }
+.fx { display: flex; background: lightgreen; }
+</style>
+<div class="root"><div class="left"></div><div class="fx" style="justify-self: flex-start; position: relative"><span>flex start</span><span>b</span></div></div>
+<div class="root"><div class="left"></div><div class="av" style="justify-self: center">centered</div></div>
+<div class="root"><div class="left"></div><div class="av" style="justify-self: end">end</div></div>
+<div class="root"><div class="right"></div><div class="av" style="justify-self: start">start beside right</div></div>
+<div class="root"><div class="right"></div><div class="av" style="justify-self: end; width: 60px">fixed end</div></div>
+<div class="root"><div class="left"></div><div class="av" style="justify-self: safe end; width: 180px">too wide safe end</div></div>
+<div class="root"><div class="left"></div><div class="av" style="justify-self: right; margin-left: 10px">right with margin</div></div>
+<div class="root" style="direction: rtl"><div class="left"></div><div class="av" style="justify-self: start">rtl start</div></div>
+<div class="root"><div class="left"></div><table style="justify-self: center; background: lightgreen"><tr><td>table</td></tr></table></div>
+<div class="root"><div class="left"></div><div class="av" style="justify-self: center; margin: 0 auto; width: 60px">auto margins win</div></div>
+<div class="root"><div class="left"></div><div class="av" style="justify-self: flex-end">long text that wraps in the space beside the float</div></div>

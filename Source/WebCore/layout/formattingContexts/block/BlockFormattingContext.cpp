@@ -1029,7 +1029,8 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
             return std::max(contentBoxStart + geometry.marginStart(), placement.spaceStart);
         return contentBoxStart + geometry.marginStart();
     }();
-    geometry.setLeft(borderBoxStart);
+    // justify-self moves it from there by the free space in the containing block, not in the space beside the floats.
+    geometry.setLeft(borderBoxStart + BlockFormattingUtils::justifySelfOffset(box, geometry.borderBoxWidth(), geometry.marginStart(), geometry.marginEnd(), containingBlockState.inlineRange.size(), containingBlockStyle));
     // Below the hypothetical position the floats put it, as clearance would (resolveBorderBoxLogicalTops).
     if (borderBoxLogicalTop > hypotheticalBorderBoxLogicalTop) {
         if (pendingFloats.isEmpty())
