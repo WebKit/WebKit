@@ -265,10 +265,11 @@ Vector<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoints() con
             auto overflows = !parentFits && childLogicalTop + child->logicalHeight() > blockSizeLimit;
             if (overflows) {
                 // A block keeps its set height whatever its content, and its min-height keeps it at least that tall, so no clamp point inside it fits either.
+                // A height that behaves as auto (e.g. an indefinite percentage, or min-content) is not a set height: it is the height of the content.
                 CheckedRef childStyle = child->style();
                 auto fixedMinimumHeight = childStyle->logicalMinHeight().tryFixed();
                 auto minimumHeightOverflows = fixedMinimumHeight && childLogicalTop + LayoutUnit { fixedMinimumHeight->resolveZoom(childStyle->usedZoomForLength()) } > blockSizeLimit;
-                if (!childStyle->logicalHeight().isAuto() || minimumHeightOverflows)
+                if (!child->logicalHeightBehavesAsAuto() || minimumHeightOverflows)
                     return { };
             }
             if (CheckedPtr childBlock = dynamicDowncast<RenderBlockFlow>(*child); childBlock && !childBlock->childrenInline() && !childBlock->establishesIndependentFormattingContext()) {
