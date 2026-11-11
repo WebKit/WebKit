@@ -455,7 +455,25 @@ static RetainPtr<CMTaggedBufferGroupRef> createTaggedBufferGroupWithRequiredVide
     return adoptCF(refinedTaggedBufferGroup);
 }
 
-std::expected<RefPtr<VideoDecoderVTBSession>, OSStatus> WebCoreDecompressionSession::ensureDecoderForSample(CMSampleBufferRef cmSample)
+// The codecs MediaSamplesDecoder can decode in software.
+static bool canDecodeInSoftware(CMFormatDescriptionRef description)
+{
+    switch (PAL::CMFormatDescriptionGetMediaSubType(description)) {
+    case 'vp08':
+    case kCMVideoCodecType_VP9:
+    case kCMVideoCodecType_AV1:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool requiresHardwareDecoder(CMFormatDescriptionRef description, WebCoreDecompressionSession::DecodingFlags flags)
+{
+    return flags.contains(WebCoreDecompressionSession::DecodingFlag::HardwareOnly) && canDecodeInSoftware(description);
+}
+
+std::expected<RefPtr<VideoDecoderVTBSession>, OSStatus> WebCoreDecompressionSession::ensureDecoderForSample(CMSampleBufferRef cmSample, DecodingFlags flags)
 {
     if (m_waitingForKeyframe) {
         if (!isCMSampleBufferRandomAccess(cmSample))
@@ -497,7 +515,8 @@ std::expected<RefPtr<VideoDecoderVTBSession>, OSStatus> WebCoreDecompressionSess
         RetainPtr attributes = m_pixelBufferAttributes;
         if (m_isAlphaDecoder == IsAlphaDecoder::No && (hasSeparateAlphaStream(videoFormatDescription) || compressedAlphaData(cmSample)))
             attributes = colorDecoderPixelBufferAttributesWithAlpha(videoFormatDescription);
-        m_videoDecoderVTB = VideoDecoderVTBSession::create(videoFormatDescription, bridge_cast(WTF::move(attributes)));
+        bool requiresHardware = requiresHardwareDecoder(videoFormatDescription.get(), flags);
+        m_videoDecoderVTB = VideoDecoderVTBSession::create(videoFormatDescription, bridge_cast(WTF::move(attributes)), requiresHardware ? VideoDecoderVTBSession::HardwareDecoder::Required : VideoDecoderVTBSession::HardwareDecoder::Enabled);
         if (m_dispatcher->isCurrent()) {
             assertIsCurrent(m_dispatcher.get());
 
@@ -637,13 +656,18 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
     m_lastDecodedSamples = { };
     m_lastDecodedSamples.reserveInitialCapacity(numberOfSamples);
 
-    auto result = ensureDecoderForSample(sample);
+    auto result = ensureDecoderForSample(sample, flags);
     if (!result)
         return DecodingPromise::createAndReject(result.error());
     RefPtr videoDecoderVTB = WTF::move(*result);
 
     if (m_waitingForKeyframe)
         return DecodingPromise::createAndResolve(Vector<RetainPtr<CMSampleBufferRef>> { });
+
+    if (!videoDecoderVTB && requiresHardwareDecoder(RetainPtr { PAL::CMSampleBufferGetFormatDescription(sample) }.get(), flags)) {
+        RELEASE_LOG_ERROR(Media, "Couldn't create a hardware VTDecompressionSession");
+        return DecodingPromise::createAndReject(kVTCouldNotFindVideoDecoderErr);
+    }
 
     if (!videoDecoderVTB && !m_videoDecoderCreationFailed) {
         RefPtr<MediaPromise> initPromise;
@@ -930,7 +954,7 @@ std::expected<Vector<RetainPtr<CMSampleBufferRef>>, OSStatus> WebCoreDecompressi
 
 RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::decodeSampleSync(CMSampleBufferRef sample)
 {
-    auto result = ensureDecoderForSample(sample);
+    auto result = ensureDecoderForSample(sample, { });
     if (!result || !*result)
         return nullptr;
 

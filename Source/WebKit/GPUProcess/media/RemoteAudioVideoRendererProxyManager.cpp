@@ -155,6 +155,11 @@ void RemoteAudioVideoRendererProxyManager::createManager(RemoteAudioVideoRendere
         .playerIdentifier = playerIdentifier,
     };
 
+    if (isVideoSoftwareDecodingInContentProcessEnabled()) {
+        context.preferences.add(VideoRendererPreference::RequiresHardwareDecoder);
+        context.renderer->setPreferences(context.preferences);
+    }
+
     context.renderer->notifyWhenErrorOccurs([weakThis = ThreadSafeWeakPtr { *this }, identifier](PlatformMediaError error) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::ErrorOccurred(error));
@@ -250,10 +255,16 @@ RemoteAudioVideoRendererProxyManager::RendererContext& RemoteAudioVideoRendererP
 
 void RemoteAudioVideoRendererProxyManager::setPreferences(RemoteAudioVideoRendererIdentifier identifier, WebCore::VideoRendererPreferences preferences)
 {
+    preferences.set(VideoRendererPreference::RequiresHardwareDecoder, isVideoSoftwareDecodingInContentProcessEnabled());
     if (RefPtr renderer = rendererFor(identifier)) {
         renderer->setPreferences(preferences);
         contextFor(identifier).preferences = preferences;
     }
+}
+
+bool RemoteAudioVideoRendererProxyManager::isVideoSoftwareDecodingInContentProcessEnabled() const
+{
+    return m_gpuConnectionToWebProcess.get()->sharedPreferencesForWebProcessValue().videoSoftwareDecodingInContentProcessEnabled;
 }
 
 void RemoteAudioVideoRendererProxyManager::setHasProtectedVideoContent(RemoteAudioVideoRendererIdentifier identifier, bool hasProtected)
