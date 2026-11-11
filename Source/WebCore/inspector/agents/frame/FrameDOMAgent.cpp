@@ -86,6 +86,7 @@
 #include <JavaScriptCore/TopExceptionScope.h>
 #include <pal/crypto/CryptoDigest.h>
 #include <pal/text/TextEncoding.h>
+#include <wtf/Stopwatch.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
@@ -176,6 +177,9 @@ FrameDOMAgent::FrameDOMAgent(FrameAgentContext& context, InspectorOverlay& overl
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_destroyedNodesTimer(*this, &FrameDOMAgent::destroyedNodesTimerFired)
     , m_focusNodeTimer(*this, &FrameDOMAgent::focusNode)
+#if ENABLE(VIDEO)
+    , m_mediaEventTracker(makeUniqueRef<InspectorMediaEventTracker>(*this))
+#endif
 {
 }
 
@@ -189,6 +193,17 @@ void FrameDOMAgent::didCreateFrontendAndBackend()
     Ref { m_instrumentingAgents.get() }->setPersistentFrameDOMAgent(this);
 
     m_document = protect(m_inspectedFrame)->document();
+
+#if ENABLE(VIDEO)
+    if (RefPtr document = m_document)
+        addEventListenersToNode(*document);
+
+    for (auto& weakMediaElement : HTMLMediaElement::allMediaElements()) {
+        Ref mediaElement = weakMediaElement;
+        if (mediaElement->document().frame() == m_inspectedFrame.ptr())
+            addEventListenersToNode(mediaElement.get());
+    }
+#endif // ENABLE(VIDEO)
 
     // Force a layout so that we can collect additional information from the layout process, as
     // InspectorDOMAgent does. The flex line-start cache is only populated by layouts that run while a
@@ -211,8 +226,14 @@ void FrameDOMAgent::relayoutDocument()
 // Deliberately does not touch the overlay. InspectorDOMAgent does `Ref overlay = m_overlay.get()` here,
 // which on the frame path would ref a LocalFrame whose refcount has already reached zero -- the frame
 // destructor is what calls into this controller.
-void FrameDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
+void FrameDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason reason)
 {
+#if ENABLE(VIDEO)
+    m_mediaEventTracker->reset(reason == Inspector::DisconnectReason::InspectedTargetDestroyed ? InspectorMediaEventTracker::RemoveEventListeners::No : InspectorMediaEventTracker::RemoveEventListeners::Yes);
+#else
+    UNUSED_PARAM(reason);
+#endif
+
     m_domEditor.reset();
     m_history.reset();
 
@@ -724,6 +745,54 @@ Inspector::CommandResult<Ref<JSON::ArrayOf<int>>> FrameDOMAgent::requestAssigned
 }
 
 // MARK: - InspectorInstrumentation Hooks
+
+void FrameDOMAgent::addEventListenersToNode(Node& node)
+{
+#if ENABLE(VIDEO)
+    if (pageDOMAgentReportsMediaEvents(node))
+        return;
+    m_mediaEventTracker->addEventListenersToNode(node);
+#else
+    UNUSED_PARAM(node);
+#endif
+}
+
+void FrameDOMAgent::eventDidResetAfterDispatch(const Event& event)
+{
+#if ENABLE(VIDEO)
+    m_mediaEventTracker->eventDidResetAfterDispatch(event);
+#else
+    UNUSED_PARAM(event);
+#endif
+}
+
+#if ENABLE(VIDEO)
+// FIXME: <https://webkit.org/b/323034> Revisit once the main frame's tree comes from its frame target.
+bool FrameDOMAgent::pageDOMAgentReportsMediaEvents(Node& node) const
+{
+    return Ref { m_instrumentingAgents }->persistentDOMAgent() && InspectorMediaEventTracker::isInLocalFrameTree(node);
+}
+
+Inspector::Protocol::DOM::NodeId FrameDOMAgent::pushNodePathForMediaEvent(Node& node)
+{
+    // The node may have been adopted into another frame's document after its listeners were added.
+    if (node.document().frame() != m_inspectedFrame.ptr() || pageDOMAgentReportsMediaEvents(node))
+        return 0;
+    return pushNodePathToFrontend(&node);
+}
+
+void FrameDOMAgent::mediaEventDidFire(Inspector::Protocol::DOM::NodeId nodeId, const String& eventName, RefPtr<JSON::Object>&& data)
+{
+    auto timestamp = protect(protect(environment())->executionStopwatch())->elapsedTime().seconds();
+    m_frontendDispatcher->didFireEvent(nodeId, eventName, timestamp, WTF::move(data));
+}
+
+void FrameDOMAgent::powerEfficientPlaybackStateDidChange(Inspector::Protocol::DOM::NodeId nodeId, bool isPowerEfficient)
+{
+    auto timestamp = protect(protect(environment())->executionStopwatch())->elapsedTime().seconds();
+    m_frontendDispatcher->powerEfficientPlaybackStateChanged(nodeId, timestamp, isPowerEfficient);
+}
+#endif // ENABLE(VIDEO)
 
 void FrameDOMAgent::didInsertDOMNode(Node& node)
 {
