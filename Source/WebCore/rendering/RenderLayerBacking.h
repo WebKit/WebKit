@@ -440,6 +440,7 @@ private:
     void updateBackdropFilters(const Style::ComputedStyle&);
     void updateBackdropFiltersGeometry();
     bool updateBackdropRoot();
+    void updateScreenCaptureProtection();
     void updateBlendMode(const Style::ComputedStyle&);
 #if ENABLE(VIDEO)
     void updateVideoGravity(const Style::ComputedStyle&);

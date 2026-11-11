@@ -530,6 +530,18 @@ RenderTextControlInnerBlock::RenderTextControlInnerBlock(Element& element, Style
 
 RenderTextControlInnerBlock::~RenderTextControlInnerBlock() = default;
 
+bool RenderTextControlInnerBlock::requiresLayerForScreenCaptureProtection() const
+{
+    RefPtr input = dynamicDowncast<HTMLInputElement>(element()->shadowHost());
+    return input && input->requiresLayerForScreenCaptureProtection();
+}
+
+bool RenderTextControlInnerBlock::shouldHideFromScreenCapture() const
+{
+    RefPtr input = dynamicDowncast<HTMLInputElement>(element()->shadowHost());
+    return input && input->shouldHideFromScreenCapture();
+}
+
 bool RenderTextControlInnerBlock::canBeProgramaticallyScrolled() const
 {
     if (auto* shadowHost = dynamicDowncast<HTMLInputElement>(element()->shadowHost()))

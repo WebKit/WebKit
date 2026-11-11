@@ -4842,6 +4842,14 @@ PasswordEchoEnabled:
       default: false
     WebCore: false
 
+PasswordFieldScreenCaptureProtectionEnabled:
+  type: bool
+  status: unstable
+  category: html
+  humanReadableName: "Password field screen capture protection"
+  humanReadableDescription: "Hide password fields from screenshots, screen sharing and screen recording"
+  defaultValue: false
+
 PeerConnectionEnabled:
   type: bool
   status: embedder

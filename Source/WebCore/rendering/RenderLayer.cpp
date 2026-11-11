@@ -140,6 +140,7 @@
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
 #include "RenderText.h"
+#include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "RenderTreeAsText.h"
 #include "RenderTreeMutationDisallowedScope.h"
@@ -6210,7 +6211,14 @@ bool RenderLayer::shouldBeSelfPaintingLayer() const
         || renderer().isRenderVideo()
         || renderer().isRenderEmbeddedObject()
         || renderer().isRenderIFrame()
-        || renderer().isRenderFragmentedFlow();
+        || renderer().isRenderFragmentedFlow()
+        || isScreenCaptureProtectionLayer();
+}
+
+bool RenderLayer::isScreenCaptureProtectionLayer() const
+{
+    CheckedPtr innerBlock = dynamicDowncast<RenderTextControlInnerBlock>(renderer());
+    return innerBlock && innerBlock->requiresLayerForScreenCaptureProtection();
 }
 
 void RenderLayer::updateSelfPaintingLayer()

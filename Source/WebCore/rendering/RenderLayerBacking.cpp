@@ -93,6 +93,7 @@
 #include "RenderModel.h"
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGModelObject.h"
+#include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
@@ -709,6 +710,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     updateAppleVisualEffect(style);
 #endif
     updateBackdropRoot();
+    updateScreenCaptureProtection();
     updateBlendMode(style);
 #if ENABLE(VIDEO)
     updateVideoGravity(style);
@@ -1087,6 +1089,12 @@ bool RenderLayerBacking::updateBackdropRoot()
     return true;
 }
 
+void RenderLayerBacking::updateScreenCaptureProtection()
+{
+    CheckedPtr innerBlock = dynamicDowncast<RenderTextControlInnerBlock>(renderer());
+    m_graphicsLayer->setHidesFromScreenCapture(innerBlock && innerBlock->shouldHideFromScreenCapture());
+}
+
 void RenderLayerBacking::updateBlendMode(const Style::ComputedStyle& style)
 {
     // FIXME: where is the blend mode updated when m_ancestorClippingStacks come and go?
@@ -1370,6 +1378,7 @@ void RenderLayerBacking::updateConfigurationAfterStyleChange()
     updateAppleVisualEffect(style);
 #endif
     updateBackdropRoot();
+    updateScreenCaptureProtection();
     updateBlendMode(style);
     updateContentsScalingFilters(style);
 
@@ -1585,6 +1594,8 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     if (updateBackdropRoot())
         layerConfigChanged = true;
 
+    updateScreenCaptureProtection();
+
     if (layerConfigChanged)
         updatePaintingPhases();
 
@@ -1796,6 +1807,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     updateAppleVisualEffect(style);
 #endif
     updateBackdropRoot();
+    updateScreenCaptureProtection();
     updateBlendMode(style);
     updateContentsScalingFilters(style);
 

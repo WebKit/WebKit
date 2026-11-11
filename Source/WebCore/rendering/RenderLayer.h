@@ -1339,6 +1339,8 @@ private:
 
     bool shouldBeSelfPaintingLayer() const;
 
+    bool isScreenCaptureProtectionLayer() const;
+
     NODELETE void dirtyAncestorChainVisibleDescendantStatus();
     
     bool computeHasVisibleContent() const;

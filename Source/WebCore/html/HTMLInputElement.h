@@ -238,6 +238,9 @@ public:
 
     void didBlur();
 
+    bool requiresLayerForScreenCaptureProtection() const;
+    bool shouldHideFromScreenCapture() const;
+
     int maxResults() const { return m_maxResults; }
 
     Vector<String> acceptMIMETypes() const;
@@ -466,6 +469,13 @@ private:
     void minLengthAttributeChanged(const AtomString& newValue);
     void updateValueIfNeeded();
 
+    ValueOrReference<String> valueWithoutScriptTrackingPrivacyProtection() const;
+
+    bool isScreenCaptureProtectionEnabled() const;
+    void updateScreenCaptureProtectionIfNeeded();
+    void invalidateScreenCaptureProtectionOnFocusChangeIfNeeded();
+    void invalidateScreenCaptureProtection();
+
     void addToRadioButtonGroup();
     void removeFromRadioButtonGroup();
 
@@ -506,6 +516,7 @@ private:
     bool m_hasPendingUserAgentShadowTreeUpdate : 1 { false };
     bool m_hasSwitchAttribute : 1 { false };
     bool m_hasEverBeenPasswordField : 1 { false };
+    bool m_isHiddenFromScreenCapture : 1 { false };
     RefPtr<InputType> m_inputType;
     TaskCancellationGroup m_dataListMayHaveChangedTaskCancellationGroup;
     // The ImageLoader must be owned by this element because the loader code assumes

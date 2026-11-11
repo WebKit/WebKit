@@ -494,6 +494,7 @@ void HTMLInputElement::handleFocusEvent(Node* oldFocusedNode, FocusDirection dir
     protect(m_inputType)->handleFocusEvent(oldFocusedNode, direction);
 
     invalidateStyleOnFocusChangeIfNeeded();
+    invalidateScreenCaptureProtectionOnFocusChangeIfNeeded();
 }
 
 void HTMLInputElement::handleBlurEvent()
@@ -501,6 +502,44 @@ void HTMLInputElement::handleBlurEvent()
     protect(m_inputType)->handleBlurEvent();
 
     invalidateStyleOnFocusChangeIfNeeded();
+    invalidateScreenCaptureProtectionOnFocusChangeIfNeeded();
+}
+
+bool HTMLInputElement::isScreenCaptureProtectionEnabled() const
+{
+    return m_hasEverBeenPasswordField && document().settings().passwordFieldScreenCaptureProtectionEnabled();
+}
+
+bool HTMLInputElement::requiresLayerForScreenCaptureProtection() const
+{
+    return isScreenCaptureProtectionEnabled() && (focused() || !valueWithoutScriptTrackingPrivacyProtection()->isEmpty());
+}
+
+bool HTMLInputElement::shouldHideFromScreenCapture() const
+{
+    return isScreenCaptureProtectionEnabled() && !valueWithoutScriptTrackingPrivacyProtection()->isEmpty();
+}
+
+void HTMLInputElement::updateScreenCaptureProtectionIfNeeded()
+{
+    bool shouldHide = shouldHideFromScreenCapture();
+    if (shouldHide == m_isHiddenFromScreenCapture)
+        return;
+
+    m_isHiddenFromScreenCapture = shouldHide;
+    invalidateScreenCaptureProtection();
+}
+
+void HTMLInputElement::invalidateScreenCaptureProtectionOnFocusChangeIfNeeded()
+{
+    if (isScreenCaptureProtectionEnabled() && valueWithoutScriptTrackingPrivacyProtection()->isEmpty())
+        invalidateScreenCaptureProtection();
+}
+
+void HTMLInputElement::invalidateScreenCaptureProtection()
+{
+    if (RefPtr innerText = innerTextElement())
+        innerText->invalidateStyleAndLayerComposition();
 }
 
 void HTMLInputElement::resignStrongPasswordAppearance()
@@ -617,6 +656,7 @@ void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
 
     updateValidity();
     updatePlaceholderVisibility();
+    updateScreenCaptureProtectionIfNeeded();
 }
 
 inline void HTMLInputElement::runPostTypeUpdateTasks()
@@ -763,6 +803,7 @@ void HTMLInputElement::initializeInputTypeAfterParsingOrCloning()
     registerForSuspensionCallbackIfNeeded();
     runPostTypeUpdateTasks();
     updateWillValidateAndValidity();
+    updateScreenCaptureProtectionIfNeeded();
 }
 
 void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -795,6 +836,7 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
             updatePlaceholderVisibility();
             invalidateStyleForSubtree();
             setFormControlValueMatchesRenderer(false);
+            updateScreenCaptureProtectionIfNeeded();
         }
         updateValidity();
         if (selfOrPrecedingNodesAffectDirAuto())
@@ -1145,12 +1187,18 @@ void HTMLInputElement::copyNonAttributePropertiesFromElement(const Element& sour
     setFormControlValueMatchesRenderer(false);
     if (m_inputType->hasCreatedShadowSubtree())
         protect(m_inputType)->updateInnerTextValue();
+    updateScreenCaptureProtectionIfNeeded();
 }
 
 ValueOrReference<String> HTMLInputElement::value() const
 {
     if (shouldApplyScriptTrackingPrivacyProtection())
         return protect(m_inputType)->defaultValue();
+    return valueWithoutScriptTrackingPrivacyProtection();
+}
+
+ValueOrReference<String> HTMLInputElement::valueWithoutScriptTrackingPrivacyProtection() const
+{
     if (RefPtr fileInput = dynamicDowncast<FileInputType>(*m_inputType))
         return fileInput->firstElementPathForInputValue();
 
@@ -1189,8 +1237,12 @@ ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEvent
     if (selfOrPrecedingNodesAffectDirAuto())
         updateEffectiveTextDirection();
 
-    if (valueChanged && eventBehavior == DispatchNoEvent)
-        setTextAsOfLastFormControlChangeEvent(String(sanitizedValue));
+    if (valueChanged) {
+        updateScreenCaptureProtectionIfNeeded();
+
+        if (eventBehavior == DispatchNoEvent)
+            setTextAsOfLastFormControlChangeEvent(String(sanitizedValue));
+    }
 
     bool wasModifiedProgrammatically = eventBehavior == DispatchNoEvent;
     if (wasModifiedProgrammatically) {
@@ -1272,6 +1324,7 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
         dispatchInputEvent();
 
     updateValidity();
+    updateScreenCaptureProtectionIfNeeded();
 
     // We clear certain AutoFill flags here because this catches user edits.
     setAutofilled(false);

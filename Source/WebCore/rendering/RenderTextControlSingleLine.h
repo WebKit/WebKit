@@ -96,6 +96,9 @@ public:
     RenderTextControlInnerBlock(Element&, Style::ComputedStyle&&);
     virtual ~RenderTextControlInnerBlock();
 
+    bool requiresLayerForScreenCaptureProtection() const;
+    bool shouldHideFromScreenCapture() const;
+
 private:
     bool hasLineIfEmpty() const override { return true; }
     bool canBeProgramaticallyScrolled() const override;
