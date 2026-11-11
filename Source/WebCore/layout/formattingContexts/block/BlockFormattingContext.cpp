@@ -1284,16 +1284,17 @@ void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayou
     result.outOfFlowBoxes.append({ box, staticInlinePosition(), staticBlockPosition });
 }
 
-// A replaced element, a flex container, a WebVTT cue box or a block container whose content the block formatting context does not lay out as a
-// nested root, whose own formatting context lays it out through the render tree; the block formatting context places it, and sizes it when
-// it is not replaced (css-position-3 §4.3), from its content when its block size is auto.
+// A replaced element, a table, a flex container, a WebVTT cue box, a form control or a block container whose content the block formatting
+// context does not lay out as a nested root, whose own formatting context lays it out through the render tree; the block formatting context
+// places it, and sizes it when it is neither replaced nor a table (css-position-3 §4.3), from its content when its block size is auto.
 BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext(const RenderBox& root, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition, const std::optional<OutOfFlowGeometry::DefaultAnchor>& defaultAnchor)
 {
     auto geometry = computeBorderAndPadding(root, containingBlock.inlineSize);
     auto outOfFlowGeometry = OutOfFlowGeometry { root, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.writingMode, containingBlock.isScrollContainer, containingBlock.scrollableContainingBlock, containingBlock.fillAvailableBlockSize }, staticPosition, defaultAnchor, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
     auto [inlineAxis, blockAxis] = [&] -> std::pair<OutOfFlowGeometry::AxisGeometry, OutOfFlowGeometry::AxisGeometry> {
-        if (root.isRenderReplaced() || root.isRenderOrLegacyRenderSVGRoot()) {
-            // From its natural size and aspect ratio (CSS 2.2 §10.3.8, §10.6.5).
+        // A replaced element from its natural size and aspect ratio (CSS 2.2 §10.3.8, §10.6.5), and a table from its columns, which do not
+        // stretch it (css-position-3 §4.3, RenderTable::updateLogicalWidth).
+        if (root.isRenderReplaced() || root.isRenderOrLegacyRenderSVGRoot() || is<RenderTable>(root)) {
             auto borderBoxSize = integrationUtils().layoutOutOfFlowIndependentFormattingContext(root);
             return { outOfFlowGeometry.computeReplacedInlineAxisGeometry(borderBoxSize.width()), outOfFlowGeometry.computeReplacedBlockAxisGeometry(borderBoxSize.height()) };
         }

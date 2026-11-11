@@ -401,9 +401,9 @@ static bool isLaidOutByBlockFormattingContext(const RenderElement& outOfFlowBox,
     return containingBlock == &rootContainer || containingBlock->isDescendantOf(&rootContainer);
 }
 
-// An out-of-flow flex container, buttons, range inputs and selects included, grid container, -webkit-box or WebVTT cue box, whose own
-// formatting context lays it out (BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext), and its content like that of a leaf.
-// Not a fieldset, whose legend sits in its border.
+// An out-of-flow flex container, buttons, range inputs and selects included, grid container, -webkit-box, WebVTT cue box, table or form control
+// block container, whose own formatting context lays it out (BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext), and its
+// content like that of a leaf. Not a fieldset, whose legend sits in its border.
 static bool isOutOfFlowLeafContainer(const RenderElement& outOfFlowBox)
 {
     switch (outOfFlowBox.type()) {
@@ -415,6 +415,14 @@ static bool isOutOfFlowLeafContainer(const RenderElement& outOfFlowBox)
     case RenderObject::Type::DeprecatedFlexibleBox:
         return !outOfFlowBox.isFieldset();
     case RenderObject::Type::VTTCue:
+    case RenderObject::Type::Table:
+    case RenderObject::Type::ListBox:
+    case RenderObject::Type::TextControlSingleLine:
+    case RenderObject::Type::TextControlMultiLine:
+    case RenderObject::Type::SearchField:
+    case RenderObject::Type::Progress:
+    case RenderObject::Type::Meter:
+    case RenderObject::Type::FileUploadControl:
         return true;
     default:
         return false;
