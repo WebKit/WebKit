@@ -1036,6 +1036,14 @@ foreach (_feat ENABLE_TOUCH_EVENTS ENABLE_IOS_GESTURE_EVENTS)
     endif ()
 endforeach ()
 
+# Migrating runs unifdef once per header, which is a few seconds on every
+# configure. A migrated header only depends on its source, the unifdef
+# arguments and the rules below. Each header gets a stamp holding a hash of those
+# once it is migrated, and is skipped while the stamp matches and is newer than
+# its source.
+file(SHA256 "${CMAKE_CURRENT_LIST_FILE}" _wkl_migrate_key)
+string(SHA256 _wkl_migrate_key "${_wkl_migrate_key};${UNIFDEF_EXECUTABLE};${_wkl_unifdef_args}")
+
 foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
     get_filename_component(_name "${_file}" NAME)
     if (_name IN_LIST _wkl_excluded_for_ios)
@@ -1046,6 +1054,14 @@ foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
         set(_src_path "${_file}")
     else ()
         set(_src_path "${CMAKE_CURRENT_SOURCE_DIR}/${_file}")
+    endif ()
+    set(_stamp "${_wkl_migrate_tmp_dir}/${_name}.stamp")
+    # IS_NEWER_THAN is also true for equal timestamps and missing files.
+    if (EXISTS "${_stamp}" AND EXISTS "${_target_filename}" AND NOT "${_src_path}" IS_NEWER_THAN "${_stamp}")
+        file(READ "${_stamp}" _stamp_key)
+        if (_stamp_key STREQUAL _wkl_migrate_key)
+            continue ()
+        endif ()
     endif ()
     # Stage 1 -- migrate-header-rule:
     #   sed -E -e 's/<WebCore\//<WebKitLegacy\//' -e 's/(^ *)WEBCORE_EXPORT /\1/'
@@ -1097,7 +1113,9 @@ foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
         file(REMOVE "${_target_filename}")
         file(WRITE "${_target_filename}" "${_migrated}")
     endif ()
+    file(WRITE "${_stamp}" "${_wkl_migrate_key}")
 endforeach ()
+unset(_wkl_migrate_key)
 
 set(_wkl_fw "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKitLegacy.framework")
 if (WEBKIT_SDK_IS_MACOS)
