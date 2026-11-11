@@ -26,14 +26,7 @@
 // shared SourcesCocoa.txt would require coordinated bundle-count and pbxproj
 // updates. https://bugs.webkit.org/show_bug.cgi?id=TBD
 //
-// Registered Mac-only for now (see PlatformCocoa.cmake). When iOS adopts,
-// the entries below that PlatformIOS.cmake does not currently compile —
-// CorrectionPanel.mm, PopupMenuMac.mm, SearchPopupMenuMac.mm,
-// WebInspectorClient.mm, WebDynamicScrollBarsView.mm, WebIconDatabase.mm,
-// WebNSPasteboardExtras.mm, WebStringTruncator.mm,
-// WebTextCompletionController.mm, WebVideoFullscreenController.mm,
-// WebWindowAnimation.mm — will need #if PLATFORM(MAC) self-guards or a
-// separate Mac-only list.
+// Sources the Xcode build excludes on the iOS family are in SourcesCMakeMac.txt.
 
 Storage/InProcessIDBServer.cpp
 Storage/StorageAreaImpl.cpp
@@ -66,7 +59,6 @@ mac/Misc/WebCache.mm @nonARC
 mac/Misc/WebCoreStatistics.mm @nonARC
 mac/Misc/WebDownload.mm @nonARC
 mac/Misc/WebElementDictionary.mm @nonARC
-mac/Misc/WebIconDatabase.mm @nonARC
 mac/Misc/WebKitLogInitialization.mm @nonARC
 mac/Misc/WebKitNSStringExtras.mm @nonARC
 mac/Misc/WebKitVersionChecks.mm @nonARC
@@ -77,12 +69,10 @@ mac/Misc/WebNSDataExtras.mm @nonARC
 mac/Misc/WebNSFileManagerExtras.mm @nonARC
 mac/Misc/WebNSImageExtras.mm @nonARC
 mac/Misc/WebNSObjectExtras.mm @nonARC
-mac/Misc/WebNSPasteboardExtras.mm @nonARC
 mac/Misc/WebNSPrintOperationExtras.m
 mac/Misc/WebNSURLExtras.mm @nonARC
 mac/Misc/WebNSUserDefaultsExtras.mm @nonARC
 mac/Misc/WebNSViewExtras.mm @nonARC
-mac/Misc/WebStringTruncator.mm @nonARC
 mac/Misc/WebUserContentURLPattern.mm @nonARC
 
 mac/Panels/WebAuthenticationPanel.mm @nonARC
@@ -98,8 +88,6 @@ mac/Storage/WebStorageTrackerClient.mm @nonARC
 
 mac/WebCoreSupport/CorrectionPanel.mm @nonARC
 mac/WebCoreSupport/LegacyHistoryItemClient.mm @nonARC
-mac/WebCoreSupport/PopupMenuMac.mm @nonARC
-mac/WebCoreSupport/SearchPopupMenuMac.mm @nonARC
 mac/WebCoreSupport/WebAlternativeTextClient.mm @nonARC
 mac/WebCoreSupport/WebChromeClient.mm @nonARC
 mac/WebCoreSupport/WebContextMenuClient.mm @nonARC
@@ -107,7 +95,6 @@ mac/WebCoreSupport/WebDragClient.mm @nonARC
 mac/WebCoreSupport/WebEditorClient.mm @nonARC
 mac/WebCoreSupport/WebFrameNetworkingContext.mm @nonARC
 mac/WebCoreSupport/WebGeolocationClient.mm @nonARC
-mac/WebCoreSupport/WebInspectorClient.mm @nonARC
 mac/WebCoreSupport/WebKitFullScreenListener.mm @nonARC
 mac/WebCoreSupport/WebMediaKeySystemClient.mm @nonARC
 mac/WebCoreSupport/WebNotificationClient.mm @nonARC
@@ -131,7 +118,6 @@ mac/WebView/WebDelegateImplementationCaching.mm @nonARC
 mac/WebView/WebDeviceOrientation.mm @nonARC
 mac/WebView/WebDeviceOrientationProviderMock.mm @nonARC
 mac/WebView/WebDocumentLoaderMac.mm @nonARC
-mac/WebView/WebDynamicScrollBarsView.mm @nonARC
 mac/WebView/WebGeolocationPosition.mm @nonARC
 mac/WebView/WebHTMLRepresentation.mm @nonARC
 mac/WebView/WebIndicateLayer.mm @nonARC
@@ -143,7 +129,6 @@ mac/WebView/WebPolicyDelegate.mm @nonARC
 mac/WebView/WebPreferences.mm @nonARC
 mac/WebView/WebPreferencesDefaultValues.mm @nonARC
 mac/WebView/WebResource.mm @nonARC
-mac/WebView/WebTextCompletionController.mm @nonARC
 mac/WebView/WebTextIterator.mm @nonARC
 mac/WebView/WebVideoFullscreenController.mm @nonARC
 mac/WebView/WebViewData.mm @nonARC
