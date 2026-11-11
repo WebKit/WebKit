@@ -137,10 +137,15 @@ public:
     LayoutUnit maximumContentSizeForMultilineColumn(FlexLayoutItems&, const SizeList& flexItemsMaxContentWidths);
 
 private:
+    struct MinMaxMainSizes {
+        std::optional<LayoutUnit> minimum;
+        LayoutUnit maximum;
+    };
+
     struct FlexBaseAndHypotheticalMainSize {
         LayoutUnit flexBase;
         LayoutUnit hypotheticalMainSize;
-        std::pair<LayoutUnit, LayoutUnit> minMaxMainSizes;
+        MinMaxMainSizes minMaxMainSizes;
     };
 
     using FlexBaseAndHypotheticalMainSizeList = Vector<FlexBaseAndHypotheticalMainSize, 4>;
@@ -170,9 +175,9 @@ private:
     using BaselineSharingGroups = Vector<BaselineSharingGroup, 1>;
 
     FlexLines computeFlexLines(const FlexLayoutItems& flexItems, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList);
-    SizeList computeMainSizeForFlexItems(FlexLayoutItems& flexItems, const FlexLines&, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList);
-    void resolveFlexibleLengthsForLineItems(std::span<FlexLayoutItem> lineItems, std::span<const FlexBaseAndHypotheticalMainSize> lineFlexBaseAndHypotheticalMainSizeList, std::span<LayoutUnit> flexItemsMainSizeList, LayoutUnit flexContainerInnerMainSize);
-    void distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(const FlexLines&, FlexLayoutItems&, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList, SizeList& flexItemsMainSizeList, PositionList& flexItemsPositionList, const LinesCrossPositionList& flexLinesCrossPositionList, LayoutUnit containerMainBlockContentExtent);
+    SizeList computeMainSizeForFlexItems(FlexLayoutItems& flexItems, const FlexLines&, std::span<FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList);
+    void resolveFlexibleLengthsForLineItems(std::span<FlexLayoutItem> lineItems, std::span<FlexBaseAndHypotheticalMainSize> lineFlexBaseAndHypotheticalMainSizeList, std::span<LayoutUnit> flexItemsMainSizeList, LayoutUnit flexContainerInnerMainSize);
+    void distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(const FlexLines&, FlexLayoutItems&, std::span<FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList, SizeList& flexItemsMainSizeList, PositionList& flexItemsPositionList, const LinesCrossPositionList& flexLinesCrossPositionList, LayoutUnit containerMainBlockContentExtent);
     LayoutUnit availableSpaceExcludingGaps(LayoutUnit availableSpace, size_t numberOfItemsOrLines, FlexFormattingUtils::GapType) const;
     LayoutUnit remainingFreeSpaceForLine(std::span<const FlexLayoutItem> lineItems, std::span<const LayoutUnit> lineFlexItemsMainSizeList, LayoutUnit containerMainInnerSize) const;
     void layoutFlexItems(FlexLayoutItems&, std::span<const LayoutUnit> flexItemsMainSizeList);
@@ -195,10 +200,11 @@ private:
     LayoutUnit flexBaseSizeForFlexItem(const FlexLayoutItem&);
     LayoutUnit computeFlexBaseSize(const FlexLayoutItem&, const Style::FlexBasis&);
     std::optional<LayoutUnit> ensureBlockAxisContentSizeForFlexItemIfNeeded(const FlexLayoutItem&);
-    std::pair<LayoutUnit, LayoutUnit> minMaxMainSizesForFlexItem(const FlexLayoutItem&);
-    std::optional<LayoutUnit> computeUsedMaxMainSize(const FlexLayoutItem&);
+    MinMaxMainSizes minMaxMainSizesForFlexItem(const FlexLayoutItem&, LayoutUnit flexBase);
+    bool contentBasedMinMainSizeIsBoundedByFlexBase(const FlexLayoutItem&, LayoutUnit flexBase, LayoutUnit maxExtent);
+    LayoutUnit computeUsedMaxMainSize(const FlexLayoutItem&);
     LayoutUnit computeUsedNonAutoMinMainSize(const FlexLayoutItem&, const Style::MinimumSize&);
-    LayoutUnit computeContentBasedMinMainSize(const FlexLayoutItem&, std::optional<LayoutUnit> maxExtent);
+    LayoutUnit computeContentBasedMinMainSize(const FlexLayoutItem&, LayoutUnit maxExtent);
     template<typename SizeType> LayoutUnit computeMainSizeFromAspectRatioUsing(const FlexLayoutItem&, const SizeType& crossSizeLength) const;
     LayoutUnit adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(const FlexLayoutItem&, LayoutUnit flexItemSize);
     template<typename SizeType> bool flexItemCrossSizeIsDefinite(const FlexLayoutItem&, const SizeType&);
