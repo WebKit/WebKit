@@ -29,6 +29,7 @@
 #import <wtf/Forward.h>
 #import <wtf/IterationStatus.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Seconds.h>
 #import <wtf/text/WTFString.h>
 #endif
 
@@ -79,6 +80,8 @@ struct AutocorrectionContext {
     String markedText;
     NSRange selectedRangeInMarkedText;
 };
+
+RetainPtr<NSString> webProcessTerminationReasonAfterMemoryPressureEvent(WKProcessPool *, pid_t, Seconds timeout = 10_s);
 
 } // namespace TestWebKitAPI
 

@@ -385,6 +385,9 @@ public:
     void setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds);
 
     void releaseMemory(CompletionHandler<void()>&&);
+#if PLATFORM(COCOA)
+    void simulateMemoryPressureForTesting(bool isCritical);
+#endif
     void prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&&);
     void processDidResume();
 
