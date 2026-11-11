@@ -890,7 +890,7 @@ Vector<RetainPtr<CMSampleBufferRef>> WebCoreDecompressionSession::compositeAlpha
 
     Borrow borrowedColorFrames = colorFrames;
     for (size_t index = 0; index < colorFrames.size(); ++index) {
-        auto& colorFrame = colorFrames[index];
+        auto& colorFrame = borrowedColorFrames->at(index);
         if (!colorFrame)
             continue;
 
