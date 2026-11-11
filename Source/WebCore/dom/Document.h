@@ -561,6 +561,7 @@ public:
     void addResultForSelector(ContainerNode&, const String&, Element*, const AtomString& classNameToMatch);
     void invalidateQuerySelectorResults(Node&);
     void invalidateQuerySelectorResultsForClassAttributeChange(Node&, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses);
+    void removeQuerySelectorResults(Node&);
     void clearQuerySelectorResults();
 
     ExceptionOr<SelectorQuery&> selectorQueryForString(const String&);

@@ -1458,6 +1458,13 @@ void Document::invalidateQuerySelectorResultsForClassAttributeChange(Node& start
     }
 }
 
+void Document::removeQuerySelectorResults(Node& node)
+{
+    ASSERT(m_querySelectorResults.contains(node));
+    m_querySelectorResults.remove(node);
+    node.setHasValidQuerySelectorResults(false);
+}
+
 void Document::clearQuerySelectorResults()
 {
     // The map holds only weak references, so its keyed nodes outlive this clear. Reset their per-node flag too, or a
