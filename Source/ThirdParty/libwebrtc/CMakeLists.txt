@@ -2233,6 +2233,12 @@ if (APPLE)
     )
 endif ()
 
+if (APPLE AND WTF_CPU_ARM64)
+    # Each generated file is #if-guarded for one OS and CPU the others assemble to nothing.
+    list(FILTER BCM_SOURCES_ASM INCLUDE REGEX "armv8.*-apple\\.S$")
+    list(FILTER CRYPTO_SOURCES_ASM INCLUDE REGEX "armv8.*-apple\\.S$")
+endif ()
+
 # TODO: _NASM support for platforms that require it.
 list(APPEND webrtc_SOURCES ${BCM_SOURCES_ASM})
 list(APPEND webrtc_SOURCES ${CRYPTO_SOURCES_ASM})
@@ -2411,30 +2417,11 @@ if (APPLE)
     )
 
     set(webm_SOURCES
-        Source/third_party/libwebm/m2ts/vpxpes_parser.cc
-        Source/third_party/libwebm/m2ts/webm2pes_main.cc
-        Source/third_party/libwebm/m2ts/webm2pes.cc
-        Source/third_party/libwebm/m2ts/vpxpes2ts.cc
-        Source/third_party/libwebm/m2ts/vpxpes2ts_main.cc
-        Source/third_party/libwebm/sample_muxer_metadata.cc
         Source/third_party/libwebm/mkvmuxer/mkvmuxerutil.cc
         Source/third_party/libwebm/mkvmuxer/mkvmuxer.cc
         Source/third_party/libwebm/mkvmuxer/mkvwriter.cc
-        Source/third_party/libwebm/vttdemux.cc
-        Source/third_party/libwebm/webvtt/webvttparser.cc
-        Source/third_party/libwebm/webvtt/vttreader.cc
-        Source/third_party/libwebm/mkvparser_sample.cc
-        Source/third_party/libwebm/common/libwebm_util.cc
-        Source/third_party/libwebm/common/vp9_level_stats.cc
-        Source/third_party/libwebm/common/hdr_util.cc
         Source/third_party/libwebm/common/vp9_header_parser.cc
-        Source/third_party/libwebm/common/indent.cc
-        Source/third_party/libwebm/common/file_util.cc
         Source/third_party/libwebm/common/video_frame.cc
-        Source/third_party/libwebm/common/webm_endian.cc
-        Source/third_party/libwebm/mkvparser/mkvreader.cc
-        Source/third_party/libwebm/mkvparser/mkvparser.cc
-        Source/third_party/libwebm/webm_parser/demo/demo.cc
         Source/third_party/libwebm/webm_parser/src/date_parser.cc
         Source/third_party/libwebm/webm_parser/src/bit_utils.cc
         Source/third_party/libwebm/webm_parser/src/skip_parser.cc
@@ -2457,8 +2444,6 @@ if (APPLE)
         Source/third_party/libwebm/webm_parser/src/var_int_parser.cc
         Source/third_party/libwebm/webm_parser/src/istream_reader.cc
         Source/third_party/libwebm/webm_parser/src/id_parser.cc
-        Source/third_party/libwebm/dumpvtt.cc
-        Source/third_party/libwebm/webm_info.cc
     )
     add_library(webm STATIC ${webm_SOURCES})
     set(webm_INCLUDE_DIRECTORIES
@@ -2755,6 +2740,10 @@ endif ()
 
 set_source_files_properties(Source/third_party/libyuv/util/color.cc PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 set_source_files_properties(Source/webrtc/rtc_base/logging.cc PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
+set_source_files_properties(
+    Source/third_party/boringssl/src/crypto/bio/connect.cc
+    Source/third_party/boringssl/src/crypto/bio/socket.cc
+    PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 if (LIBPULSE_FOUND)
     target_include_directories(webrtc PRIVATE ${LibPulse_INCLUDE_DIRS})
     target_compile_options(webrtc PRIVATE ${LibPulse_COMPILE_OPTIONS})
@@ -2838,7 +2827,6 @@ if (APPLE)
         Source/third_party/opus/src/celt/entdec.c
         Source/third_party/opus/src/celt/entcode.c
         Source/third_party/opus/src/celt/bands.c
-        Source/third_party/opus/src/celt/opus_custom_demo.c
         Source/third_party/opus/src/celt/celt.c
         Source/third_party/opus/src/silk/decode_parameters.c
         Source/third_party/opus/src/silk/gain_quant.c
@@ -2968,14 +2956,10 @@ if (APPLE)
         Source/third_party/opus/src/silk/inner_prod_aligned.c
         Source/third_party/opus/src/silk/init_decoder.c
         Source/third_party/opus/src/silk/sum_sqr_shift.c
-        Source/third_party/opus/src/doc/trivial_example.c
-        Source/third_party/opus/src/src/opus_demo.c
         Source/third_party/opus/src/src/mlp.c
         Source/third_party/opus/src/src/opus_decoder.c
-        Source/third_party/opus/src/src/repacketizer_demo.c
         Source/third_party/opus/src/src/analysis.c
         Source/third_party/opus/src/src/opus_multistream_encoder.c
-        Source/third_party/opus/src/src/opus_compare.c
         Source/third_party/opus/src/src/opus_multistream_decoder.c
         Source/third_party/opus/src/src/repacketizer.c
         Source/third_party/opus/src/src/opus.c
@@ -3069,86 +3053,89 @@ if (APPLE)
         Source/third_party/libyuv/include
     )
 
-    add_executable(yasm
-        Source/third_party/yasm/x86cpu.c
-        Source/third_party/yasm/nasm-version.c
-        Source/third_party/yasm/plugins/x86/init_plugin.c
-        Source/third_party/yasm/frontends/yasm/yasm.c
-        Source/third_party/yasm/frontends/yasm/yasm-options.c
-        Source/third_party/yasm/frontends/yasm/yasm-plugin.c
-        Source/third_party/yasm/module.c
-        Source/third_party/yasm/license.c
-        Source/third_party/yasm/nasm-macros.c
-        Source/third_party/yasm/nasm-token.c
-        Source/third_party/yasm/modules/parsers/gas/gas-parse-intel.c
-        Source/third_party/yasm/modules/parsers/gas/gas-parse.c
-        Source/third_party/yasm/modules/parsers/gas/gas-parser.c
-        Source/third_party/yasm/modules/parsers/nasm/nasm-parser.c
-        Source/third_party/yasm/modules/parsers/nasm/nasm-parse.c
-        Source/third_party/yasm/modules/objfmts/bin/bin-objfmt.c
-        Source/third_party/yasm/modules/objfmts/macho/macho-objfmt.c
-        Source/third_party/yasm/modules/objfmts/rdf/rdf-objfmt.c
-        Source/third_party/yasm/modules/objfmts/xdf/xdf-objfmt.c
-        Source/third_party/yasm/modules/arch/x86/x86arch.c
-        Source/third_party/yasm/modules/arch/x86/x86expr.c
-        Source/third_party/yasm/modules/arch/x86/x86bc.c
-        Source/third_party/yasm/modules/arch/x86/x86id.c
-        Source/third_party/yasm/modules/preprocs/gas/gas-preproc.c
-        Source/third_party/yasm/modules/preprocs/gas/gas-eval.c
-        Source/third_party/yasm/modules/preprocs/nasm/nasm-eval.c
-        Source/third_party/yasm/modules/preprocs/nasm/nasmlib.c
-        Source/third_party/yasm/modules/preprocs/nasm/nasm-pp.c
-        Source/third_party/yasm/modules/preprocs/nasm/nasm-preproc.c
-        Source/third_party/yasm/modules/preprocs/raw/raw-preproc.c
-        Source/third_party/yasm/modules/listfmts/nasm/nasm-listfmt.c
-        Source/third_party/yasm/modules/dbgfmts/dwarf2/dwarf2-info.c
-        Source/third_party/yasm/modules/dbgfmts/dwarf2/dwarf2-aranges.c
-        Source/third_party/yasm/modules/dbgfmts/dwarf2/dwarf2-line.c
-        Source/third_party/yasm/modules/dbgfmts/dwarf2/dwarf2-dbgfmt.c
-        Source/third_party/yasm/modules/dbgfmts/null/null-dbgfmt.c
-        Source/third_party/yasm/modules/dbgfmts/stabs/stabs-dbgfmt.c
-        Source/third_party/yasm/modules/dbgfmts/codeview/cv-type.c
-        Source/third_party/yasm/modules/dbgfmts/codeview/cv-dbgfmt.c
-        Source/third_party/yasm/modules/dbgfmts/codeview/cv-symline.c
-        Source/third_party/yasm/libyasm/bytecode.c
-        Source/third_party/yasm/libyasm/inttree.c
-        Source/third_party/yasm/libyasm/bc-incbin.c
-        Source/third_party/yasm/libyasm/phash.c
-        Source/third_party/yasm/libyasm/symrec.c
-        Source/third_party/yasm/libyasm/strsep.c
-        Source/third_party/yasm/libyasm/strcasecmp.c
-        Source/third_party/yasm/libyasm/insn.c
-        Source/third_party/yasm/libyasm/linemap.c
-        Source/third_party/yasm/libyasm/assocdat.c
-        Source/third_party/yasm/libyasm/hamt.c
-        Source/third_party/yasm/libyasm/xstrdup.c
-        Source/third_party/yasm/libyasm/intnum.c
-        Source/third_party/yasm/libyasm/floatnum.c
-        Source/third_party/yasm/libyasm/valparam.c
-        Source/third_party/yasm/libyasm/xmalloc.c
-        Source/third_party/yasm/libyasm/bc-align.c
-        Source/third_party/yasm/libyasm/bc-org.c
-        Source/third_party/yasm/libyasm/md5.c
-        Source/third_party/yasm/libyasm/errwarn.c
-        Source/third_party/yasm/libyasm/file.c
-        Source/third_party/yasm/libyasm/bitvect.c
-        Source/third_party/yasm/libyasm/mergesort.c
-        Source/third_party/yasm/libyasm/value.c
-        Source/third_party/yasm/libyasm/bc-data.c
-        Source/third_party/yasm/libyasm/expr.c
-        Source/third_party/yasm/libyasm/section.c
-        Source/third_party/yasm/libyasm/bc-reserve.c
-        Source/third_party/yasm/gas-token.c
-        Source/third_party/yasm/x86regtmod.c
-    )
-    target_include_directories(yasm PRIVATE
-        Source/third_party/yasm
-    )
-    target_compile_definitions(yasm PRIVATE
-        PACKAGE_STRING="yasm 1.3.0"
-    )
-    # yasm is a build tool, so it needs to target the host system.
-    set_target_properties(yasm PROPERTIES OSX_ARCHITECTURES "${CMAKE_HOST_SYSTEM_PROCESSOR}")
+    # yasm only assembles the x86 libvpx sources below.
+    if (WTF_CPU_X86_64)
+        add_executable(yasm
+            Source/third_party/yasm/x86cpu.c
+            Source/third_party/yasm/nasm-version.c
+            Source/third_party/yasm/plugins/x86/init_plugin.c
+            Source/third_party/yasm/frontends/yasm/yasm.c
+            Source/third_party/yasm/frontends/yasm/yasm-options.c
+            Source/third_party/yasm/frontends/yasm/yasm-plugin.c
+            Source/third_party/yasm/module.c
+            Source/third_party/yasm/license.c
+            Source/third_party/yasm/nasm-macros.c
+            Source/third_party/yasm/nasm-token.c
+            Source/third_party/yasm/modules/parsers/gas/gas-parse-intel.c
+            Source/third_party/yasm/modules/parsers/gas/gas-parse.c
+            Source/third_party/yasm/modules/parsers/gas/gas-parser.c
+            Source/third_party/yasm/modules/parsers/nasm/nasm-parser.c
+            Source/third_party/yasm/modules/parsers/nasm/nasm-parse.c
+            Source/third_party/yasm/modules/objfmts/bin/bin-objfmt.c
+            Source/third_party/yasm/modules/objfmts/macho/macho-objfmt.c
+            Source/third_party/yasm/modules/objfmts/rdf/rdf-objfmt.c
+            Source/third_party/yasm/modules/objfmts/xdf/xdf-objfmt.c
+            Source/third_party/yasm/modules/arch/x86/x86arch.c
+            Source/third_party/yasm/modules/arch/x86/x86expr.c
+            Source/third_party/yasm/modules/arch/x86/x86bc.c
+            Source/third_party/yasm/modules/arch/x86/x86id.c
+            Source/third_party/yasm/modules/preprocs/gas/gas-preproc.c
+            Source/third_party/yasm/modules/preprocs/gas/gas-eval.c
+            Source/third_party/yasm/modules/preprocs/nasm/nasm-eval.c
+            Source/third_party/yasm/modules/preprocs/nasm/nasmlib.c
+            Source/third_party/yasm/modules/preprocs/nasm/nasm-pp.c
+            Source/third_party/yasm/modules/preprocs/nasm/nasm-preproc.c
+            Source/third_party/yasm/modules/preprocs/raw/raw-preproc.c
+            Source/third_party/yasm/modules/listfmts/nasm/nasm-listfmt.c
+            Source/third_party/yasm/modules/dbgfmts/dwarf2/dwarf2-info.c
+            Source/third_party/yasm/modules/dbgfmts/dwarf2/dwarf2-aranges.c
+            Source/third_party/yasm/modules/dbgfmts/dwarf2/dwarf2-line.c
+            Source/third_party/yasm/modules/dbgfmts/dwarf2/dwarf2-dbgfmt.c
+            Source/third_party/yasm/modules/dbgfmts/null/null-dbgfmt.c
+            Source/third_party/yasm/modules/dbgfmts/stabs/stabs-dbgfmt.c
+            Source/third_party/yasm/modules/dbgfmts/codeview/cv-type.c
+            Source/third_party/yasm/modules/dbgfmts/codeview/cv-dbgfmt.c
+            Source/third_party/yasm/modules/dbgfmts/codeview/cv-symline.c
+            Source/third_party/yasm/libyasm/bytecode.c
+            Source/third_party/yasm/libyasm/inttree.c
+            Source/third_party/yasm/libyasm/bc-incbin.c
+            Source/third_party/yasm/libyasm/phash.c
+            Source/third_party/yasm/libyasm/symrec.c
+            Source/third_party/yasm/libyasm/strsep.c
+            Source/third_party/yasm/libyasm/strcasecmp.c
+            Source/third_party/yasm/libyasm/insn.c
+            Source/third_party/yasm/libyasm/linemap.c
+            Source/third_party/yasm/libyasm/assocdat.c
+            Source/third_party/yasm/libyasm/hamt.c
+            Source/third_party/yasm/libyasm/xstrdup.c
+            Source/third_party/yasm/libyasm/intnum.c
+            Source/third_party/yasm/libyasm/floatnum.c
+            Source/third_party/yasm/libyasm/valparam.c
+            Source/third_party/yasm/libyasm/xmalloc.c
+            Source/third_party/yasm/libyasm/bc-align.c
+            Source/third_party/yasm/libyasm/bc-org.c
+            Source/third_party/yasm/libyasm/md5.c
+            Source/third_party/yasm/libyasm/errwarn.c
+            Source/third_party/yasm/libyasm/file.c
+            Source/third_party/yasm/libyasm/bitvect.c
+            Source/third_party/yasm/libyasm/mergesort.c
+            Source/third_party/yasm/libyasm/value.c
+            Source/third_party/yasm/libyasm/bc-data.c
+            Source/third_party/yasm/libyasm/expr.c
+            Source/third_party/yasm/libyasm/section.c
+            Source/third_party/yasm/libyasm/bc-reserve.c
+            Source/third_party/yasm/gas-token.c
+            Source/third_party/yasm/x86regtmod.c
+        )
+        target_include_directories(yasm PRIVATE
+            Source/third_party/yasm
+        )
+        target_compile_definitions(yasm PRIVATE
+            PACKAGE_STRING="yasm 1.3.0"
+        )
+        # yasm is a build tool, so it needs to target the host system.
+        set_target_properties(yasm PROPERTIES OSX_ARCHITECTURES "${CMAKE_HOST_SYSTEM_PROCESSOR}")
+    endif ()
 endif ()
 
 set(vpx_SOURCES
