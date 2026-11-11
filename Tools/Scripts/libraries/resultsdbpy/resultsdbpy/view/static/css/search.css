@@ -102,6 +102,21 @@
     margin-right: 7px;
 }
 
+.condensed-view .dot.wrapped {
+    margin-left: 11px;
+}
+
+.condensed-view .runs:not(:empty)::before {
+    content: "";
+    display: inline-block;
+    width: var(--smallSize);
+    height: var(--smallSize);
+    margin: 1px;
+    vertical-align: middle;
+    background-color: currentColor;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'><path d='M5 3 V9 H16 M13 6 L16 9 L13 12' fill='none' stroke='black' stroke-width='1.25' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / contain no-repeat;
+}
+
 .condensed-view .dot.line-before::before, .condensed-view .dot.line-after::before {
     inset: -3px auto -3px -6px;
     width: 4px;
@@ -116,11 +131,27 @@
     max-width: 300px;
 }
 
-.condensed-view .input>input[type="range"] {
-    height: var(--tinySize);
-    background:
-        linear-gradient(var(--inverseColor), var(--inverseColor)) center / 100% 2px no-repeat,
-        linear-gradient(to right, var(--inverseColor) 1px, transparent 1px) calc(var(--tinySize) / 2) center / calc((100% - var(--tinySize)) / (var(--notches) - 1)) calc(var(--tinySize) / 2) repeat-x;
+.condensed-view .input>input[type="number"] {
+    background: none;
+    width: 3em;
+    border: 1px solid var(--greyLight);
+    border-width: 1px 0;
+    font-size: inherit;
+    text-align: center;
+    padding: 3px;
+}
+
+.condensed-view .input>label+.button {
+    margin-left: var(--colPaddingSize);
+    border-radius: 4px 0 0 4px;
+}
+
+.condensed-view .input>input[type="number"]+.button {
+    border-radius: 0 4px 4px 0;
+}
+
+.condensed-view .input>.button[disabled], .condensed-view .input>.button[disabled]:hover {
+    border-color: var(--greyLight);
 }
 
 .table>thead>tr>th {
@@ -136,5 +167,8 @@
     }
     .condensed-view {
         --selectedColor: rgb(51, 160, 255);
+    }
+    .condensed-view .input>input[type="number"] {
+        color: var(--white);
     }
 }
