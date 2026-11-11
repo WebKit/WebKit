@@ -65,28 +65,12 @@ NODELETE bool defaultCaptionDisplaySettingsEnabled()
 
 #if PLATFORM(MAC)
 
-NODELETE bool defaultUseAppKitGestures()
-{
-    return false;
-}
-
 NODELETE bool defaultTextInputClientSelectionUpdatesEnabled()
 {
     return false;
 }
 
 #endif // PLATFORM(MAC)
-
-#if ENABLE(CONTENT_CHANGE_OBSERVER)
-bool defaultContentChangeObserverEnabled()
-{
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-    return true;
-#else
-    return false;
-#endif
-}
-#endif
 
 #if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
 NODELETE bool defaultWebContentRestrictionsAskToEnabled()
@@ -121,6 +105,30 @@ NODELETE void setLiquidGlassEnabled(bool isLiquidGlassEnabled)
     cachedIsLiqudGlassEnabled() = isLiquidGlassEnabled;
 }
 #endif // HAVE(LIQUID_GLASS)
+
+#if PLATFORM(MAC)
+NODELETE bool defaultUseAppKitGestures()
+{
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+bool defaultContentChangeObserverEnabled()
+{
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+    return true;
+#elif HAVE(APPKIT_GESTURES_SUPPORT)
+    return defaultUseAppKitGestures();
+#else
+    return false;
+#endif
+}
+#endif
 
 #if PLATFORM(MAC)
 bool defaultScrollAnimatorEnabled()
