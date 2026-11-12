@@ -1827,6 +1827,7 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
     [WebView _setUsesTestModeFocusRingColor:YES];
 #endif
     [WebView _resetOriginAccessAllowLists];
+    [NSObject setAllowsScriptsFullAccess:NO];
 
     [[MockGeolocationProvider shared] stopTimer];
     [[MockWebNotificationProvider shared] reset];

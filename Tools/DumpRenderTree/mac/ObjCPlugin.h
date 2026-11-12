@@ -25,6 +25,13 @@
 
 #import <Foundation/Foundation.h>
 
+@interface NSObject (ObjCScriptAccess)
+
++ (void)setAllowsScriptsFullAccess:(BOOL)value;
++ (BOOL)allowsScriptsFullAccess;
+
+@end
+
 @interface ObjCPlugin : NSObject
 {
     BOOL throwOnDealloc;

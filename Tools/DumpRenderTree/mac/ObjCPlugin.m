@@ -40,13 +40,6 @@
 
 static BOOL _allowsScriptsFullAccess = NO;
 
-@interface NSObject (ObjCScriptAccess)
-
-+ (void)setAllowsScriptsFullAccess:(BOOL)value;
-+ (BOOL)allowsScriptsFullAccess;
-
-@end
-
 @implementation NSObject (ObjCScriptAccess)
 
 + (void)setAllowsScriptsFullAccess:(BOOL)value
