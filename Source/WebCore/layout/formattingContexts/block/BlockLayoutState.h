@@ -134,6 +134,18 @@ struct ContainingBlockState {
     // The last in-flow children are boxes whose margins collapse through them, one of them with clearance: the margins after them do not
     // collapse with the block container's block-end margin (CSS 2.2 §8.3.1).
     bool endsWithClearedBoxCollapsedThrough { false };
+    // The line grid its content snaps to (-webkit-line-grid): the block container that establishes it, and, when that one is outside the root,
+    // where its border box is from the root's (from the logical left of the root's border box) and its border and padding before. The root
+    // and the block containers in it are in the containing block states.
+    struct LineGrid {
+        struct OutsideRoot {
+            LayoutSize borderBoxOffset;
+            LayoutUnit borderAndPaddingBefore;
+        };
+        CheckedRef<const RenderBlockFlow> blockContainer;
+        std::optional<OutsideRoot> outsideRoot;
+    };
+    std::optional<LineGrid> lineGrid { };
 
     LayoutUnit contentBoxLogicalTop() const { return *borderBoxLogicalTop + borderAndPaddingBefore; }
 };
@@ -234,6 +246,8 @@ public:
     std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom() const { return m_intrusiveInitialLetterLogicalBottom; }
     void setIntrusiveInitialLetterLogicalBottom(std::optional<LayoutUnit> logicalBottom) { m_intrusiveInitialLetterLogicalBottom = logicalBottom; }
     const std::optional<LineGrid>& lineGrid() const LIFETIME_BOUND { return m_lineGrid; }
+    // The line grid of the inline content laid out next.
+    void setLineGrid(std::optional<LineGrid> lineGrid) { m_lineGrid = WTF::move(lineGrid); }
 
     // The margins coming into the inline content; the inline formatting context carries its own copy (InlineLayoutState::marginState).
     const MarginState& marginState() const LIFETIME_BOUND { return m_marginState; }

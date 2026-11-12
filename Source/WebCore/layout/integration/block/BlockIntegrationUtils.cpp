@@ -522,6 +522,50 @@ std::optional<size_t> BlockIntegrationUtils::legacyLineClampMaximumLines(const R
     return legacyLineClamp->maximumLineCount - legacyLineClamp->currentLineCount;
 }
 
+// From the left of the root's border box, in the root's logical coordinates, which are the ones of the line grid around it: a writing mode
+// root cannot be split across pages, and the line grid around it does not reach its content (RenderBox::isUnsplittableForPagination).
+static LayoutSize lineGridOffsetFromRoot(const RenderLayoutState& rootLayoutState, LayoutSize lineGridOffset, const RenderBlockFlow& root)
+{
+    auto offset = lineGridOffset - rootLayoutState.layoutOffset();
+    return root.writingMode().isHorizontal() ? offset : offset.transposedSize();
+}
+
+std::optional<Layout::ContainingBlockState::LineGrid> BlockIntegrationUtils::lineGridForRoot(const RenderBlockFlow& root)
+{
+    // The root pushes a layout state of its own when there is a line grid around it or it has a -webkit-line-grid name
+    // (LocalFrameViewLayoutContext::pushLayoutState).
+    auto* layoutState = root.view().frameView().layoutContext().layoutState();
+    if (!layoutState || !layoutState->lineGrid())
+        return { };
+    ASSERT(layoutState->renderer() == &root);
+    CheckedRef gridContainer = *layoutState->lineGrid();
+    if (gridContainer.ptr() == &root)
+        return Layout::ContainingBlockState::LineGrid { gridContainer.get(), { } };
+    return Layout::ContainingBlockState::LineGrid { gridContainer.get(), Layout::ContainingBlockState::LineGrid::OutsideRoot { lineGridOffsetFromRoot(*layoutState, layoutState->lineGridOffset(), root), gridContainer->borderAndPaddingBefore() } };
+}
+
+// Like RenderLayoutState::establishLineGrid, through the line grids in the layout states of the boxes around the root, past the one of the root.
+// FIXME: The ones around the containing block of an out-of-flow box whose content the block formatting context lays out, which has no layout
+// state of its own.
+std::optional<Layout::ContainingBlockState::LineGrid> BlockIntegrationUtils::lineGridOutsideRoot(const RenderBlockFlow& root, const Style::WebkitLineGrid& name, const RenderBlockFlow& rootGridContainer)
+{
+    auto& layoutStateStack = root.view().frameView().layoutContext().layoutStateStack();
+    if (layoutStateStack.isEmpty() || layoutStateStack.last()->lineGrid() != &rootGridContainer)
+        return { };
+    auto& rootLayoutState = *layoutStateStack.last();
+    CheckedPtr<const RenderBlockFlow> currentGridContainer = &rootGridContainer;
+    for (auto& layoutState : layoutStateStack | std::views::reverse) {
+        if (layoutState->lineGrid() == currentGridContainer.get())
+            continue;
+        currentGridContainer = layoutState->lineGrid();
+        if (!currentGridContainer)
+            return { };
+        if (currentGridContainer->style().lineGrid() == name)
+            return Layout::ContainingBlockState::LineGrid { *currentGridContainer, Layout::ContainingBlockState::LineGrid::OutsideRoot { lineGridOffsetFromRoot(rootLayoutState, layoutState->lineGridOffset(), root), currentGridContainer->borderAndPaddingBefore() } };
+    }
+    return { };
+}
+
 std::optional<RenderLayoutState::LegacyLineClamp> BlockIntegrationUtils::legacyLineClamp(const RenderBox& box)
 {
     auto* layoutState = box.view().frameView().layoutContext().layoutState();
@@ -627,9 +671,12 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
     // lays its content out again when its width changed: otherwise the lines stay as they are. A block whose content only needs its overflow
     // recomputed or its out-of-flow boxes laid out keeps them too (RenderBlock::canPerformSimplifiedLayout). Content takes its lines off the
     // line-clamp budget as it gets laid out, and what the content before it left of the budget may have changed: RenderBlockFlow::layoutInFlowChildren
-    // lays out all the content of a line-clamp container's formatting context again.
+    // lays out all the content of a line-clamp container's formatting context again. Lines that snap to a line grid go where the block container
+    // is now, unlike on the render tree path, which keeps them where they were (RenderBlock::adjustLogicalLeftOffsetForLine).
     auto isInLineClampContext = !!blockLayoutState.lineClamp();
-    auto contentNeedsLayout = relayoutChildren || isInLineClampContext || inlineContentRoot.selfNeedsLayout() || inlineContentRoot.normalChildNeedsLayout() || inlineContentRoot.outOfFlowChildNeedsStaticPositionLayout();
+    CheckedRef style = inlineContentRoot.style();
+    auto snapsToLineGrid = blockLayoutState.lineGrid() && (style->lineSnap() != LineSnap::None || style->lineAlign() != LineAlign::None);
+    auto contentNeedsLayout = relayoutChildren || isInLineClampContext || snapsToLineGrid || inlineContentRoot.selfNeedsLayout() || inlineContentRoot.normalChildNeedsLayout() || inlineContentRoot.outOfFlowChildNeedsStaticPositionLayout();
     if (CheckedPtr lineLayout = inlineContentRoot.inlineLayout(); lineLayout && !contentNeedsLayout && lineLayout->hasContent() && !inlineContentConstraintsChanged(*lineLayout, constraints) && !intrudingFloatsChanged(*lineLayout, intrudingFloats)) {
         auto keptContentLayoutResult = lineLayout->hasBlocks() ? keptInlineContentWithBlockLevelBoxesLayoutResult(inlineContentRoot, *lineLayout) : std::optional { inlineContentLayoutResult(*lineLayout) };
         if (keptContentLayoutResult) {
@@ -642,7 +689,7 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
 
     // Like RenderBlockFlow::layoutInlineContent, which lays the content out from scratch when the box's width changed (RenderBlock::recomputeLogicalWidth).
     // The renderer of the root has its new geometry already, and RenderBlock::recomputeLogicalWidth told its layout about the change.
-    auto invalidateChildren = relayoutChildren || isInLineClampContext || inlineContentRoot.logicalWidth() != geometry.borderBoxWidth() || inlineContentRoot.hasBorderOrPaddingLogicalWidthChanged();
+    auto invalidateChildren = relayoutChildren || isInLineClampContext || snapsToLineGrid || inlineContentRoot.logicalWidth() != geometry.borderBoxWidth() || inlineContentRoot.hasBorderOrPaddingLogicalWidthChanged();
     auto inlineContentStatus = inlineContentRoot.markInlineContentDirtyForLayout(invalidateChildren ? RelayoutChildren::Yes : RelayoutChildren::No);
     if (inlineContentStatus.hasSimpleOutOfFlowContentOnly) {
         // Like RenderBlockFlow::layoutInlineContent: content of out-of-flow boxes only has no lines, and the static position of the boxes is

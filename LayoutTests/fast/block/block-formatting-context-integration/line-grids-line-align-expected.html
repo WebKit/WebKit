@@ -1,0 +1,48 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 9px/11px sans-serif; margin: 4px; }
+.grid { -webkit-line-grid: grid; -webkit-line-align: edges; font-size: 14px; line-height: 17px; padding: 3px 5px; border-left: 2px solid; margin: 0 0 4px 7px; width: 220px; }
+.small { font-size: 9px; }
+</style>
+<div class=grid>
+  text in the grid
+  <div class=small style="margin-left: 9px; border-left: 3px solid; padding-left: 2px;">nested text with an offset that wraps onto a second line</div>
+  <div class=small style="margin: 0 17px 0 5px; text-align: right;">right aligned text that wraps onto a second line</div>
+  <div class=small style="text-align: center; margin-left: 4px;">centered text</div>
+  <div style="margin-left: 6px;"><div class=small style="margin-left: 5px;">two levels in</div></div>
+  <div class=small style="display: flow-root; margin-left: 11px;">a flow-root<div style="margin-left: 3px;">inside it</div></div>
+</div>
+<div style="display: flow-root;">
+  <div class=grid style="padding: 0 0 0 5px; border: none; margin-left: 0;">
+    <div style="float: left; width: 9px; height: 9px; margin-left: 2px; background: green; overflow: auto;"></div>
+    <div style="height: 5px;"></div>
+  </div>
+</div>
+<div class=grid style="direction: rtl; display: flow-root;">
+  <div class=small style="margin-right: 9px;">right to left text that wraps onto a second line</div>
+  <div class=small style="direction: ltr; margin-left: 13px;">left to right inside it</div>
+</div>
+<div style="display: flex; gap: 4px; align-items: start;">
+  <div class=grid style="writing-mode: vertical-rl; width: auto; height: 110px;">
+    <div class=small style="margin-top: 9px;">vertical-rl text that wraps</div>
+  </div>
+  <div class=grid style="writing-mode: vertical-lr; width: auto; height: 110px;">
+    <div class=small style="margin-top: 9px;">vertical-lr text that wraps</div>
+  </div>
+  <div class=grid style="width: 150px;">
+    <div class=small style="-webkit-line-grid: other; font-size: 11px; margin-left: 3px;">own grid
+      <div class=small style="margin-left: 7px;">nested in it</div>
+    </div>
+  </div>
+</div>
+<script>
+// The render tree lays out a block before it places it in the inline direction (RenderBlockFlow::layoutBlockChild), so its lines align to
+// the grid from where it was before: they are laid out again once the blocks are where they go.
+document.body.offsetHeight;
+for (const element of document.querySelectorAll("div")) {
+    element.style.wordSpacing = "1px";
+    document.body.offsetHeight;
+    element.style.wordSpacing = "";
+    document.body.offsetHeight;
+}
+</script>

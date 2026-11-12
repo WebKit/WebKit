@@ -123,7 +123,10 @@ public:
     BlockFormattingContext(const RenderBlockFlow& root, LayoutIntegration::BlockIntegrationUtils&, BlockLayoutState&);
 
     // The root's geometry is the one the formatting context it is in gave it.
-    BlockLayoutResult layout(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry);
+    // The line grid the root's content snaps to, which a box laid out by the block formatting context it is in gets from there, and whether
+    // the render tree layout state is the root's, with the line grids around the root.
+    enum class LineGridsAroundRoot : bool { Unknown, InLayoutState };
+    BlockLayoutResult layout(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry, std::optional<ContainingBlockState::LineGrid> rootLineGrid, LineGridsAroundRoot);
     // A block-level box in the inline content of the innermost block container being laid out, on the line the inline formatting context
     // reached it on, below lineCount lines with content, of which lineCountForLineClamp count towards the line-clamp budget with the lines of
     // the block-level boxes before it. It and its content join the result. The floats the inline formatting context placed so far, in the
@@ -159,6 +162,11 @@ private:
 
     ContainingBlockState containingBlockStateForRoot(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry) const;
     ContainingBlockState containingBlockStateFor(const RenderBox& blockContainer, const BoxGeometry&, const ContainingBlockState& parentState) const;
+    std::optional<ContainingBlockState::LineGrid> lineGridFor(const RenderBox& blockContainer, const ContainingBlockState& parentState) const;
+    std::optional<BlockLayoutState::LineGrid> lineGridForInlineContent(const ContainingBlockState&);
+    std::optional<ContainingBlockState::LineGrid> lineGridForNestedRoot(const ContainingBlockState& rootState);
+    std::pair<LayoutSize, LayoutUnit> lineGridBorderBoxOffsetAndBorderAndPaddingBefore(const ContainingBlockState::LineGrid&);
+    LayoutSize borderBoxLogicalLeftAndTopInRoot(const ContainingBlockState&);
 
     BoxGeometry computeBorderAndPadding(const RenderBox&, LayoutUnit containingBlockInlineSize) const;
     LayoutUnit scrollbarInlineStartSpace(const RenderBox&, const BoxGeometry&) const;
@@ -206,6 +214,8 @@ private:
     Vector<std::pair<CheckedRef<const RenderBox>, LayoutUnit>> m_resolvedBorderBoxLogicalTops;
     bool m_needsLayoutWithResolvedBorderBoxLogicalTops { false };
     bool m_isLayingOutWithResolvedBorderBoxLogicalTops { false };
+    std::optional<ContainingBlockState::LineGrid> m_rootLineGrid;
+    LineGridsAroundRoot m_lineGridsAroundRoot { LineGridsAroundRoot::Unknown };
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const BlockLayoutResult&);

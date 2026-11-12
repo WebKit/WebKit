@@ -1,0 +1,73 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 9px/11px sans-serif; margin: 4px; }
+.grid { -webkit-line-grid: grid; -webkit-line-snap: baseline; font-size: 14px; line-height: 19px; }
+.section { width: 250px; margin-bottom: 4px; }
+.small { font-size: 9px; }
+</style>
+<div class="section grid" style="padding: 3px; border: 2px solid;">
+  <div class=small>first<br>second</div>
+  <div class=small style="margin-top: 5px; border-top: 3px solid green; padding-top: 2px;">after a border<br>two</div>
+  <div style="-webkit-line-snap: contain; font-size: 20px;">contain</div>
+  <div style="margin: 3px 0;"><div class=small style="margin-top: 7px;">margins collapse through</div></div>
+  <div class=small style="-webkit-line-snap: none;">not snapped<br>two</div>
+  <span class=small>inline <div style="margin-top: 2px;">block in inline</div> after</span>
+</div>
+<div class="section grid" style="padding-top: 2px;">
+  <div class=small style="line-height: 11px;">snapped</div>
+  <div class=small style="contain: size; height: 24px; margin-top: 5px; line-height: 11px;">size containment<br>has a grid of its own</div>
+</div>
+<div class="section grid" style="-webkit-line-grid: a; padding-top: 3px; line-height: 23px;">
+  <div class=small>on a</div>
+  <div style="-webkit-line-grid: b; line-height: 15px; margin-top: 3px; padding-top: 1px;">
+    <div class=small>on b<br>b</div>
+    <div class=small style="-webkit-line-grid: a; margin-top: 2px;">back on a<br>a</div>
+    <div class=small style="-webkit-line-grid: c; line-height: 13px;">own grid c<br>c</div>
+  </div>
+</div>
+<div style="position: absolute; left: 275px; top: 4px; width: 250px;">
+<div class="section grid" style="padding-top: 2px;">
+  <div class=small>snapped</div>
+  <div class=small style="overflow: auto; height: 42px; margin-top: 3px;">a scroll container<br>has a grid of its own</div>
+  <div class=small>text <span style="display: inline-block; margin-top: 2px;">an inline-block<br>too</span></div>
+  <div class=small style="display: flow-root; margin-top: 3px;">a flow-root<br>is in the grid</div>
+  <div class=small style="overflow: hidden; margin-top: 2px; border-top: 1px solid;">so is overflow: hidden</div>
+  <div class=small style="position: absolute; left: 150px; top: 20px; overflow: auto;">out-of-flow<br>scroll container</div>
+</div>
+<div class=section style="display: flow-root;">
+  <div class=grid style="margin-left: 5px; padding: 2px;">
+    <div class=small>before a table</div>
+    <div style="-webkit-line-grid: b; line-height: 13px; margin-top: 3px;"><table><tr><td class=small style="padding: 2px;">cell on b<br>two<div style="-webkit-line-grid: grid; margin-top: 2px;">back on the grid<br>two</div></td></tr></table></div>
+  </div>
+</div>
+<div class=section>
+  <div style="float: left; width: 20px; height: 25px; background: green;"></div>
+  <div class=grid style="-webkit-line-grid: cleared;"><div class=small style="clear: left;">below the float<br>two</div></div>
+</div>
+<div class=section style="display: flow-root;">
+  <div class=grid style="padding: 2px;">
+    <div class=small>text<div style="float: left; margin-top: 3px;">a float<br>two</div>beside</div>
+    <div class=small style="position: absolute; left: 150px; margin-top: 2px;">out-of-flow<br>two</div>
+  </div>
+</div>
+</div>
+<div class="grid" style="position: absolute; left: 545px; top: 4px; width: 200px; line-height: 21px; padding: 2px;">positioned<div class=small style="margin-top: 1px;">inner<br>two</div></div>
+<div style="position: absolute; left: 545px; top: 90px; display: flex; flex-direction: column; align-items: start; gap: 5px;">
+  <div class=grid style="writing-mode: vertical-rl; height: 100px; padding: 3px;">
+    <div class=small style="margin-right: 3px;">vertical-rl<br>two</div>
+    <div class=small style="border-right: 2px solid;">after a border</div>
+    <table class=small style="margin-right: 2px;"><tr><td style="padding: 1px;">cell<br>two</td></tr></table>
+  </div>
+  <div class=grid style="writing-mode: vertical-lr; height: 100px; padding: 3px;">
+    <div class=small style="margin-left: 3px;">vertical-lr<br>two</div>
+    <div class=small style="border-left: 2px solid;">after a border</div>
+  </div>
+  <div class=grid style="direction: rtl; width: 120px; padding: 3px;">
+    <div class=small style="margin-top: 3px;">right to left<br>two</div>
+  </div>
+</div>
+<div class=section style="display: flow-root; position: absolute; left: 545px; top: 400px; width: 200px;">
+  <div class=grid style="padding: 2px;">
+    <div class=small style="-webkit-line-grid: none;">no name<br>still snaps<div style="display: flow-root; margin-top: 1px;">flow-root</div><div style="float: left; margin-top: 3px;">float<br>two</div></div>
+  </div>
+</div>

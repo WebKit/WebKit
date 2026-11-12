@@ -27,6 +27,7 @@
 
 #include "RenderLayoutState.h"
 #include <WebCore/AdjoiningMargins.h>
+#include <WebCore/BlockLayoutState.h>
 #include <WebCore/LayoutBoxGeometry.h>
 #include <WebCore/LayoutRect.h>
 #include <WebCore/LayoutUnit.h>
@@ -39,6 +40,10 @@ namespace WebCore {
 
 class RenderBlockFlow;
 class RenderBox;
+
+namespace Style {
+struct WebkitLineGrid;
+}
 
 namespace Layout {
 class BlockFormattingContext;
@@ -183,6 +188,10 @@ public:
     // Content laid out again starts from the count it started from the first time.
     static std::optional<RenderLayoutState::LegacyLineClamp> legacyLineClamp(const RenderBox&);
     static void restoreLegacyLineClamp(const RenderBox&, const std::optional<RenderLayoutState::LegacyLineClamp>&);
+    // The line grid around the root, which the render tree layout state of the root has (RenderLayoutState::lineGrid), and the nearest one
+    // with a name around it, past the line grid a box in its content snaps to.
+    static std::optional<Layout::ContainingBlockState::LineGrid> lineGridForRoot(const RenderBlockFlow& root);
+    static std::optional<Layout::ContainingBlockState::LineGrid> lineGridOutsideRoot(const RenderBlockFlow& root, const Style::WebkitLineGrid& name, const RenderBlockFlow& rootGridContainer);
     // A table, a flex or grid container, or a block formatting context root whose content the block formatting context cannot lay out (canUseForNestedBlockLayout).
     static bool laysOutThroughRenderTree(const RenderBox&);
 
