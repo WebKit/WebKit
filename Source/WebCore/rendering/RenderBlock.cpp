@@ -3022,7 +3022,9 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
                 return !style.flexBasis().isAuto() && FlexFormattingUtils::isHorizontalFlow(flexContainer) != isHorizontalWritingMode();
             };
             if (!flexBasisOverridesHeight()) {
-                auto contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { fixedLogicalHeight->resolveZoom(style.usedZoomForLength()) });
+                auto resolvedLogicalHeight = LayoutUnit { fixedLogicalHeight->resolveZoom(style.usedZoomForLength()) };
+                // FIXME: Support stretch() on out-of-flow boxes (https://bugs.webkit.org/show_bug.cgi?id=330815).
+                auto contentBoxHeight = isOutOfFlowPositioned() ? adjustContentBoxLogicalHeightForBoxSizing(resolvedLogicalHeight) : adjustContentBoxLogicalHeightForBoxSizing(style.logicalHeight(), resolvedLogicalHeight, containingBlockLogicalWidthForContent());
                 return std::max(0_lu, constrainContentBoxLogicalHeightByMinMax(contentBoxHeight - scrollbarLogicalHeight(), { }));
             }
         }
@@ -3057,7 +3059,7 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
 
         if (style.logicalHeight().isPercentOrCalculated()) {
             if (auto heightWithScrollbar = computePercentageLogicalHeight(style.logicalHeight())) {
-                auto contentBoxHeightWithScrollbar = adjustContentBoxLogicalHeightForBoxSizing(*heightWithScrollbar);
+                auto contentBoxHeightWithScrollbar = adjustContentBoxLogicalHeightForBoxSizing(style.logicalHeight(), *heightWithScrollbar, containingBlockLogicalWidthForContent());
                 // We need to adjust for min/max height because this method does not handle the min/max of the current block, its caller does.
                 // So the return value from the recursive call will not have been adjusted yet.
                 return std::max(0_lu, constrainContentBoxLogicalHeightByMinMax(contentBoxHeightWithScrollbar - scrollbarLogicalHeight(), { }));

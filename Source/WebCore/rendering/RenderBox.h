@@ -413,6 +413,8 @@ public:
     virtual LayoutUnit adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height) const;
     virtual LayoutUnit adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit> height) const;
     virtual LayoutUnit adjustIntrinsicLogicalHeightForBoxSizing(LayoutUnit height) const;
+    template<typename SizeType> LayoutUnit adjustBorderBoxLogicalHeightForBoxSizing(const SizeType& logicalHeight, LayoutUnit computedLogicalHeight, std::optional<LayoutUnit> containingBlockLogicalWidth) const;
+    template<typename SizeType> LayoutUnit adjustContentBoxLogicalHeightForBoxSizing(const SizeType& logicalHeight, LayoutUnit computedLogicalHeight, std::optional<LayoutUnit> containingBlockLogicalWidth) const;
 
     NODELETE std::optional<LayoutUnit> overridingBorderBoxLogicalWidth() const;
     NODELETE std::optional<LayoutUnit> overridingBorderBoxLogicalHeight() const;

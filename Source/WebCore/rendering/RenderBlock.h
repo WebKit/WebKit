@@ -165,6 +165,7 @@ public:
 
     LayoutUnit marginBefore(WritingMode) const override;
 
+    using RenderBox::adjustContentBoxLogicalHeightForBoxSizing;
     LayoutUnit adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height) const override;
     LayoutUnit adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit> height) const override;
     LayoutUnit adjustIntrinsicLogicalHeightForBoxSizing(LayoutUnit height) const override;
