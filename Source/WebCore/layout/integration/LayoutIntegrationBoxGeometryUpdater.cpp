@@ -27,6 +27,7 @@
 #include "config.h"
 #include "LayoutIntegrationBoxGeometryUpdater.h"
 
+#include "BaselineAlignment.h"
 #include "FontCascadeInlines.h"
 #include "FormattingConstraints.h"
 #include "InlineWalker.h"
@@ -564,31 +565,33 @@ static inline void setIntegrationBaseline(const RenderBox& renderBox, Layout::Bo
         return hasAppearance || !blockFlow->childrenInline() || blockFlow->hasContentfulInlineOrBlockLine() || blockFlow->hasLineIfEmpty();
     };
 
-    if (hasNonSyntheticBaseline()) {
-        auto baselinePosition = [&]() -> LayoutUnit {
-            auto rootWritingMode = renderBox.containingBlock()->writingMode();
-            auto marginBefore = renderBox.writingMode().isHorizontal() ? renderBox.marginTop() : renderBox.marginRight();
+    if (!hasNonSyntheticBaseline())
+        return;
 
-            if (auto baseline = baselineForBox(renderBox)) {
-                *baseline = rootWritingMode.isLineInverted() ? renderBox.logicalHeight() - *baseline : *baseline;
-                return marginBefore + *baseline;
-            }
+    auto rootWritingMode = renderBox.containingBlock()->writingMode();
+    auto marginBefore = renderBox.writingMode().isHorizontal() ? renderBox.marginTop() : renderBox.marginRight();
 
-            auto marginBoxLogicalHeight = renderBox.marginBoxLogicalHeight(rootWritingMode);
-            auto isWritingModeRoot = rootWritingMode.computedWritingMode() != renderBox.writingMode().computedWritingMode();
-
-            if (renderBox.isFieldset())
-                return marginBoxLogicalHeight;
-
-            if (is<RenderButton>(renderBox)) {
-                auto contentBoxBottom = rootWritingMode.isHorizontal() ? renderBox.borderTop() + renderBox.paddingTop() + renderBox.contentBoxHeight() : renderBox.borderRight() + renderBox.paddingRight() + renderBox.contentBoxWidth();
-                return marginBefore + contentBoxBottom;
-            }
-
-            return rootWritingMode.prefersCentralBaseline() && !isWritingModeRoot ? marginBoxLogicalHeight / 2 : marginBoxLogicalHeight;
-        };
-        boxGeometry.setBaseline(baselinePosition());
+    if (auto baseline = baselineForBox(renderBox)) {
+        *baseline = rootWritingMode.isLineInverted() ? renderBox.logicalHeight() - *baseline : *baseline;
+        boxGeometry.setBaseline(marginBefore + *baseline);
+        return;
     }
+
+    if (is<RenderButton>(renderBox)) {
+        auto contentBoxBottom = rootWritingMode.isHorizontal() ? renderBox.borderTop() + renderBox.paddingTop() + renderBox.contentBoxHeight() : renderBox.borderRight() + renderBox.paddingRight() + renderBox.contentBoxWidth();
+        boxGeometry.setBaseline(marginBefore + contentBoxBottom);
+        return;
+    }
+
+    auto marginBoxLogicalHeight = renderBox.marginBoxLogicalHeight(rootWritingMode);
+    if (renderBox.isFieldset()) {
+        boxGeometry.setSynthesizedBaseline(marginBoxLogicalHeight);
+        return;
+    }
+
+    auto isWritingModeRoot = rootWritingMode.computedWritingMode() != renderBox.writingMode().computedWritingMode();
+    auto baseline = rootWritingMode.prefersCentralBaseline() && !isWritingModeRoot ? AlignmentBaseline::Central : AlignmentBaseline::Alphabetic;
+    boxGeometry.setSynthesizedBaseline(BaselineAlignment::synthesizedBaselineOffsetFromLineOverEdge(baseline, marginBoxLogicalHeight));
 }
 
 void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)

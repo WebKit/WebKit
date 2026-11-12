@@ -44,6 +44,9 @@ struct BaselineAlignment {
     NODELETE static FontBaseline dominantBaseline(WritingMode);
     static WritingMode usedWritingModeForBaselineAlignment(LogicalBoxAxis alignmentContextAxis, WritingMode alignmentContainerWritingMode, WritingMode alignmentSubjectWritingMode);
     static LayoutUnit synthesizedBaseline(const RenderBox&, FontBaseline baselineType, WritingMode writingModeForSynthesis, BoxAxis lineDirection, BaselineSynthesisEdge);
+    // How far below its line-over edge a box without baselines of its own has the given baseline.
+    // https://drafts.csswg.org/css-inline-3/#baseline-synthesis-box
+    template<typename SizeType> static SizeType synthesizedBaselineOffsetFromLineOverEdge(AlignmentBaseline, SizeType boxSize);
     // How far the baseline sits above the font's alphabetic baseline. The font's baseline table isn't read, so the hanging,
     // ideographic, central and mathematical baselines are estimated from its ascent and descent.
     NODELETE static float baselineOffsetFromAlphabeticBaseline(AlignmentBaseline, const FontMetrics&);
@@ -109,5 +112,29 @@ private:
     WritingMode m_alignmentContainerWritingMode;
     LogicalBoxAxis m_alignmentContextAxis;
 };
+
+template<typename SizeType> SizeType BaselineAlignment::synthesizedBaselineOffsetFromLineOverEdge(AlignmentBaseline baseline, SizeType boxSize)
+{
+    switch (baseline) {
+    case AlignmentBaseline::Hanging:
+    case AlignmentBaseline::TextTop:
+    case AlignmentBaseline::TextBeforeEdge:
+    case AlignmentBaseline::BeforeEdge:
+        return { };
+    case AlignmentBaseline::Middle:
+    case AlignmentBaseline::Central:
+    case AlignmentBaseline::Mathematical:
+        return boxSize / 2;
+    case AlignmentBaseline::Baseline:
+    case AlignmentBaseline::Alphabetic:
+    case AlignmentBaseline::Ideographic:
+    case AlignmentBaseline::TextBottom:
+    case AlignmentBaseline::TextAfterEdge:
+    case AlignmentBaseline::AfterEdge:
+        return boxSize;
+    }
+    ASSERT_NOT_REACHED();
+    return boxSize;
+}
 
 } // namespace WebCore
