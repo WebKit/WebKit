@@ -1,0 +1,17 @@
+Test that GPUDevice.destroy() cancels pending GPUBuffer.mapAsync() with AbortError and unmaps mappedAtCreation buffers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS buffer.mapState is "pending"
+PASS mappedAtCreationBuffer.mapState is "mapped"
+PASS buffer.mapState is "unmapped"
+PASS mappedAtCreationBuffer.mapState is "unmapped"
+PASS mapResult is "AbortError"
+PASS buffer.mapState is "unmapped"
+PASS buffer.getMappedRange() threw exception OperationError: not mapped or destroyed.
+PASS mappedAtCreationBuffer.getMappedRange() threw exception OperationError: not mapped or destroyed.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
