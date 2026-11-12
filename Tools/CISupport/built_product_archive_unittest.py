@@ -26,7 +26,7 @@ import importlib.util
 import os
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import call, patch
 
 
 SCRIPT_PATH = os.path.join(os.path.dirname(__file__), 'built-product-archive')
@@ -157,6 +157,44 @@ class ArchiveBuiltProductTest(unittest.TestCase):
 
         self.assertIsNone(result)
         copyRuntime.assert_not_called()
+
+
+class IsCMakeCocoaBuildDirectoryTest(unittest.TestCase):
+    def setUp(self):
+        self.oldTopLevelBuildDirectory = built_product_archive._topLevelBuildDirectory
+        self.oldConfigurationBuildDirectory = built_product_archive._configurationBuildDirectory
+        self.temporaryDirectory = tempfile.TemporaryDirectory()
+        built_product_archive._topLevelBuildDirectory = self.temporaryDirectory.name
+        built_product_archive._configurationBuildDirectory = os.path.join(self.temporaryDirectory.name, 'Debug')
+
+    def tearDown(self):
+        built_product_archive._topLevelBuildDirectory = self.oldTopLevelBuildDirectory
+        built_product_archive._configurationBuildDirectory = self.oldConfigurationBuildDirectory
+        self.temporaryDirectory.cleanup()
+
+    def writeBuildSystem(self, buildSystem):
+        with open(os.path.join(self.temporaryDirectory.name, 'BuildSystem'), 'w') as file:
+            file.write(buildSystem + '\n')
+
+    def test_cmake(self):
+        self.writeBuildSystem('CMake')
+        self.assertTrue(built_product_archive.isCMakeCocoaBuildDirectory())
+
+    def test_xcode(self):
+        self.writeBuildSystem('Xcode')
+        self.assertFalse(built_product_archive.isCMakeCocoaBuildDirectory())
+
+    def test_no_build_system_recorded(self):
+        self.assertFalse(built_product_archive.isCMakeCocoaBuildDirectory())
+
+    def test_cmake_without_cmake_cache_uses_cmake_exclusions(self):
+        # A merged universal tree has no CMakeCache.txt.
+        self.writeBuildSystem('CMake')
+        self.assertIn('CMakeFiles', built_product_archive.excludedPatternsForBuildDirectory(minify=False))
+
+    def test_xcode_does_not_use_cmake_exclusions(self):
+        self.writeBuildSystem('Xcode')
+        self.assertNotIn('CMakeFiles', built_product_archive.excludedPatternsForBuildDirectory(minify=False))
 
 
 if __name__ == '__main__':
