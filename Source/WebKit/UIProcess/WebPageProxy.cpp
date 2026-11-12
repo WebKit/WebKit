@@ -1952,6 +1952,7 @@ RefPtr<API::Navigation> WebPageProxy::launchProcessForReload()
     }
 
     Ref navigation = m_navigationState->createReloadNavigation(legacyMainFrameProcess().coreProcessIdentifier(), backForwardList().currentItem());
+    m_navigationState->markNavigationsAsReplaced(navigation);
 
     String url = currentURL();
     if (!url.isEmpty()) {
@@ -2465,6 +2466,7 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(WebCore::ResourceRequest&& req
         launchProcess(Site { request.url() }, ProcessLaunchReason::InitialProcess);
 
     Ref navigation = m_navigationState->createLoadRequestNavigation(legacyMainFrameProcess().coreProcessIdentifier(), ResourceRequest(request), backForwardList().currentItem());
+    m_navigationState->markNavigationsAsReplaced(navigation);
 
     if (lastNavigationAction)
         navigation->setLastNavigationAction(*lastNavigationAction);
@@ -2637,6 +2639,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     }
 
     Ref navigation = m_navigationState->createLoadRequestNavigation(legacyMainFrameProcess().coreProcessIdentifier(), ResourceRequest(URL { fileURL }), backForwardList().currentItem());
+    m_navigationState->markNavigationsAsReplaced(navigation);
 
     navigation->markRequestAsFromClientInput();
 
@@ -2704,6 +2707,7 @@ RefPtr<API::Navigation> WebPageProxy::loadData(Ref<WebCore::SharedBuffer>&& data
         launchProcess(Site(URL(baseURL)), ProcessLaunchReason::InitialProcess);
 
     Ref navigation = m_navigationState->createLoadDataNavigation(legacyMainFrameProcess().coreProcessIdentifier(), makeUnique<API::SubstituteData>(Vector(data->span()), type, encoding, baseURL, userData));
+    m_navigationState->markNavigationsAsReplaced(navigation);
     navigation->markAsFromLoadData();
 
     if (shouldForceForegroundPriorityForClientNavigation())
@@ -2782,6 +2786,7 @@ RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequ
         launchProcess(Site { simulatedRequest.url() }, ProcessLaunchReason::InitialProcess);
 
     Ref navigation = m_navigationState->createSimulatedLoadWithDataNavigation(legacyMainFrameProcess().coreProcessIdentifier(), ResourceRequest(simulatedRequest), makeUnique<API::SubstituteData>(Vector(data->span()), ResourceResponse(simulatedResponse), WebCore::SubstituteData::SessionHistoryVisibility::Visible), backForwardList().currentItem());
+    m_navigationState->markNavigationsAsReplaced(navigation);
 
     if (shouldForceForegroundPriorityForClientNavigation())
         setClientNavigationActivity(navigation);
@@ -2920,6 +2925,7 @@ void WebPageProxy::stopLoading()
     drainDeferredModalsForNewNavigation();
 #endif
 
+    m_navigationState->markAllNavigationsAsStopped();
     forEachWebContentProcess([&](auto& process, auto pageID) {
         process.send(Messages::WebPage::StopLoading(), pageID);
         process.startResponsivenessTimer();
@@ -2952,6 +2958,7 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
         return launchProcessForReload();
 
     Ref navigation = m_navigationState->createReloadNavigation(legacyMainFrameProcess().coreProcessIdentifier(), backForwardList().currentItem());
+    m_navigationState->markNavigationsAsReplaced(navigation);
 
     String url = currentURL();
     if (!url.isEmpty()) {
@@ -3144,6 +3151,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
     if (!fromItem)
         fromItem = backForwardList().currentItem();
     Ref navigation = m_navigationState->createBackForwardNavigation(process->coreProcessIdentifier(), frameItem, RefPtr { fromItem }, frameLoadType);
+    m_navigationState->markNavigationsAsReplaced(navigation);
     if (takenBackForwardCacheMainFrameProcessIdentifier)
         navigation->setBackForwardCacheMainFrameProcessIdentifier(*takenBackForwardCacheMainFrameProcessIdentifier);
     if (pendingIframeRestore)
@@ -12534,8 +12542,25 @@ static Ref<WebsiteDataStore> websiteDataStoreOfLoad(WebProcessProxy& processLoad
     return pageDataStore;
 }
 
+bool WebPageProxy::wasReplacedByNewerNavigation(const API::Navigation& navigation)
+{
+    if (navigation.wasReplaced())
+        return true;
+
+    auto pendingAPINavigationID = pageLoadState().pendingAPIRequest().navigationID;
+    if (!pendingAPINavigationID || *pendingAPINavigationID == navigation.navigationID())
+        return false;
+    RefPtr pendingAPINavigation = m_navigationState->navigation(*pendingAPINavigationID);
+    return pendingAPINavigation && pendingAPINavigation->changesMainFrameDocument();
+}
+
 RefPtr<WebProcessProxy> WebPageProxy::processLoadingNavigation(const API::Navigation& navigation, WebFrameProxy& frame, WebCore::ProcessIdentifier loadingWebProcess)
 {
+    if (navigation.wasStopped() || (frame.isMainFrame() && wasReplacedByNewerNavigation(navigation))) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "processLoadingNavigation: navigation %" PRIu64 " was stopped or replaced", navigation.navigationID().object().toUInt64());
+        return nullptr;
+    }
+
     RefPtr<WebProcessProxy> process;
     if (frame.isMainFrame()) {
         RefPtr provisionalPage = m_provisionalPage;

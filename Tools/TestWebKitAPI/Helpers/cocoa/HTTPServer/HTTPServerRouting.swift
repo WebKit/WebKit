@@ -35,6 +35,7 @@ struct HTTPResponseData: Sendable {
     var headerFields: [(name: String, value: String)] = []
     var body = Data()
     var behavior: Behavior = .sendResponseNormally
+    var heldResponse: HeldResponse?
     var shouldRespondWith304ToConditionalRequests = false
     var headerFieldsFor304: [String: String] = [:]
 }

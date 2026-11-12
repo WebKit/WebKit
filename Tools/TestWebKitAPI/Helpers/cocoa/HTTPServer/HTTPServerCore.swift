@@ -144,6 +144,10 @@ final class HTTPServerCore {
         listener.stateUpdateHandler = nil
         listener.newConnectionHandler = nil
 
+        for response in responses.values {
+            response.heldResponse?.abandon()
+        }
+
         await terminateAllConnections()
     }
 
@@ -246,6 +250,9 @@ final class HTTPServerCore {
                 return
 
             case .sendResponseNormally:
+                if let heldResponse = response.heldResponse, !(await heldResponse.waitUntilSent()) {
+                    return
+                }
                 try await connection.send(response.serialize())
 
             case .neverSendResponse:
@@ -300,6 +307,9 @@ final class HTTPServerCore {
             await terminateIfNeeded(connection)
 
         case .sendResponseNormally:
+            if let heldResponse = response.heldResponse, !(await heldResponse.waitUntilSent()) {
+                return
+            }
             try await connection.sendHTTPMessagingResponse(response)
 
         case .neverSendResponse:
