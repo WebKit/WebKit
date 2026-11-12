@@ -299,6 +299,12 @@ void layoutWithBlockFormattingContextForBlockInInline(Layout::BlockFormattingCon
     // which size the line. The box's own inline content, as the root of its inline formatting context, gets the geometry the block formatting
     // context gave it, with the used ones (LineLayout::updateFormattingContextGeometries).
     auto inlineMargins = layoutState.geometryForBox(block).horizontalMargin();
+    // -webkit-line-clamp counts the lines of the box in the layout state, like the render tree path above.
+    auto lineClamp = inlineLayoutState.parentBlockLayoutState().lineClamp();
+    auto isLegacyLineClamp = lineClamp && lineClamp->isLegacy;
+    auto& renderTreeLayoutState = *blockRenderer->view().frameView().layoutContext().layoutState();
+    if (isLegacyLineClamp)
+        updateRenderTreeLineClampBeforeLayout(inlineLayoutState, renderTreeLayoutState);
     auto box = blockFormattingContext.layoutBlockLevelBoxInInlineContent(blockRenderer, lineLogicalTop, inlineLayoutState.lineCount(), inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks(), inlineLayoutState.placedFloats(), blockLayoutResult);
 
     // Like the render tree path above: the line of the box ends where the content after it starts, and the box sits in it at its border box
@@ -310,7 +316,10 @@ void layoutWithBlockFormattingContextForBlockInInline(Layout::BlockFormattingCon
     blockGeometry.setTopLeft({ blockGeometry.marginStart(), Layout::BoxGeometry::borderBoxTop(box.geometry) - lineLogicalTop });
     inlineLayoutState.marginState() = box.marginState;
     // Like updateIFCLineClampAfterLayout: the lines of the box count towards the line-clamp budget for the lines that follow it.
-    inlineLayoutState.setLineCountWithInlineContentIncludingNestedBlocks(inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks() + box.lineCount);
+    if (isLegacyLineClamp)
+        updateIFCLineClampAfterLayout(inlineLayoutState, renderTreeLayoutState);
+    else
+        inlineLayoutState.setLineCountWithInlineContentIncludingNestedBlocks(inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks() + box.lineCount);
 }
 
 LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& box, LogicalWidthType logicalWidthType)

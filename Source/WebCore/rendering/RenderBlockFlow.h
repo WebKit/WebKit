@@ -533,7 +533,6 @@ private:
     bool layoutSimpleBlockContentInInline(MarginInfo&);
     void repaintInlineContentAfterLayout(LayoutUnit repaintLogicalTop, LayoutUnit repaintLogicalBottom);
     void updateRepaintTopAndBottomAfterLayout(RelayoutChildren, std::optional<LayoutRect> partialRepaintRect, std::pair<float, float> oldContentTopAndBottomIncludingInkOverflow, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
-    std::optional<LayoutUnit> updateLineClampStateAndLogicalHeightAfterLayout();
     void setStaticPositionsForSimpleOutOfFlowContent();
 
     void adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;

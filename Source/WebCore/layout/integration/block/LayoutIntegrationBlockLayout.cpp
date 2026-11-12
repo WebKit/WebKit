@@ -183,6 +183,9 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintL
     auto renderTreeLineClamp = renderTreeLayoutState ? renderTreeLayoutState->lineClamp() : std::nullopt;
     if (renderTreeLineClamp)
         renderTreeLayoutState->setLineClamp({ });
+    // -webkit-line-clamp keeps its count of lines in the layout state, where the content adds its lines as it gets laid out, every time
+    // (BlockIntegrationUtils::legacyLineClampMaximumLines).
+    auto renderTreeLegacyLineClamp = renderTreeLayoutState ? renderTreeLayoutState->legacyLineClamp() : std::nullopt;
     // The text-box-trim the root's TextBoxTrimmer sets up for its content, which does not reach into the independent formatting contexts in it
     // either.
     CheckedRef layoutContext = rootRenderer().view().frameView().layoutContext();
@@ -192,7 +195,10 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintL
     auto hasAutoScrollbarChanges = false;
     auto layoutContent = [&](Layout::BlockLayoutState::LastFormattedLineRoots&& lastFormattedLineRoots) {
         auto blockLayoutState = Layout::BlockLayoutState { { } };
-        if (renderTreeLineClamp) {
+        if (renderTreeLegacyLineClamp) {
+            renderTreeLayoutState->setLegacyLineClamp(renderTreeLegacyLineClamp);
+            blockLayoutState.setLineClamp(Layout::BlockLayoutState::LineClamp { *BlockIntegrationUtils::legacyLineClampMaximumLines(rootRenderer()), false, true });
+        } else if (renderTreeLineClamp) {
             blockLayoutState.setLineClamp(Layout::BlockLayoutState::LineClamp { renderTreeLineClamp->maximumLines, renderTreeLineClamp->shouldDiscardOverflow, false, renderTreeLineClamp->isStableTextWrap, renderTreeLineClamp->hasConstrainedTextWrapContent });
             blockLayoutState.setClampAfterBox(renderTreeLineClamp->clampAfterBox.get());
         }
@@ -211,13 +217,17 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintL
             auto borderBoxBlockSize = rootRenderer().computeLogicalHeight(intrinsicBorderBoxBlockSize, rootRenderer().logicalTop()).extent;
             if (auto shift = Layout::BlockFormattingUtils::alignContentShift(rootRenderer(), borderBoxBlockSize - intrinsicBorderBoxBlockSize)) {
                 blockLayoutState = WTF::move(initialBlockLayoutState);
+                if (renderTreeLegacyLineClamp)
+                    renderTreeLayoutState->setLegacyLineClamp(renderTreeLegacyLineClamp);
                 auto shiftedConstraints = Layout::ConstraintsForBlockContent { { constraints.horizontal(), constraints.logicalTop() + shift }, constraints.contentBoxBlockSize(), constraints.fillAvailableBlockSize(), constraints.replacedElementAvailableBlockSize(), constraints.relayoutChildren() };
                 result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layout(shiftedConstraints, BlockIntegrationUtils::rootGeometry(rootRenderer()));
             }
         }
         LOG_WITH_STREAM(Layout, stream << "BlockLayout for root (" << &rootRenderer() << "): " << result);
-        if (auto lineClamp = blockLayoutState.lineClamp())
+        if (auto lineClamp = blockLayoutState.lineClamp(); lineClamp && !lineClamp->isLegacy)
             renderTreeLayoutState->setLineClamp(RenderLayoutState::LineClamp { lineClamp->maximumLines, lineClamp->shouldDiscardOverflow, blockLayoutState.clampAfterBox(), lineClamp->isStableTextWrap, lineClamp->hasConstrainedTextWrapContent });
+        else if (renderTreeLineClamp)
+            renderTreeLayoutState->setLineClamp(renderTreeLineClamp);
         hasAutoScrollbarChanges |= updateRenderers(result, paintInvalidation);
         rootRenderer().m_floatingObjects = nullptr;
         if (blockLayoutState.placedFloats())
@@ -607,7 +617,14 @@ void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, Paint
         if (CheckedRef style = outOfFlowBox->style(); style->logicalHeight().isFillAvailable() || style->logicalMinHeight().isFillAvailable() || style->logicalMaxHeight().isFillAvailable())
             outOfFlowContainingBlock.fillAvailableBlockSize = containingBlock.availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
         auto layoutOutOfFlowBox = [&] {
+            // Like LineClampUpdater, which keeps -webkit-line-clamp out of an out-of-flow block container.
+            auto* renderTreeLayoutState = outOfFlowBox->view().frameView().layoutContext().layoutState();
+            auto legacyLineClamp = renderTreeLayoutState && is<RenderBlockFlow>(outOfFlowBox) ? renderTreeLayoutState->legacyLineClamp() : std::nullopt;
+            if (legacyLineClamp)
+                renderTreeLayoutState->setLegacyLineClamp({ });
             auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layoutOutOfFlowBox(outOfFlowBox, outOfFlowContainingBlock, boxStaticPosition, boxDefaultAnchor);
+            if (legacyLineClamp)
+                renderTreeLayoutState->setLegacyLineClamp(legacyLineClamp);
             LOG_WITH_STREAM(Layout, stream << "BlockLayout for out-of-flow box (" << outOfFlowBox.ptr() << "): " << result);
             auto hasAutoScrollbarChanges = updateRenderers(result, paintInvalidation);
             return std::pair { hasAutoScrollbarChanges, WTF::move(result) };

@@ -1,0 +1,34 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.clamp { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; width: 120px; border: 1px solid; margin: 2px; float: left; }
+p { margin: 2px 0; background: lightblue; }
+.float { float: left; width: 40px; background: yellow; }
+.tall { float: left; width: 40px; height: 30px; background: green; }
+</style>
+<div class="clamp">inline content only that wraps onto more lines than the clamp lets through</div>
+<div class="clamp"><div><p>exactly two lines of text</p></div></div>
+<div class="clamp"><div>one</div><div>two two two two two two two</div><div>after the clamp point</div></div>
+<div class="clamp"><div style="padding: 3px; border: 2px solid blue"><div style="margin: 4px 0">one</div><div style="padding: 2px">two</div><div>three</div></div></div>
+<div class="clamp" style="-webkit-line-clamp: 3"><div><table><tr><td>cell cell cell cell</td></tr></table>after a table cell</div></div>
+<div class="clamp">start <span style="display: inline-block; width: 40px">in in in in in in</span> and more text after it</div>
+<div class="clamp" style="-webkit-line-clamp: 3"><div><div style="display: flex"><div>flex flex flex flex</div></div>after a flex item</div></div>
+<div class="clamp" style="-webkit-line-clamp: 3"><div><div style="overflow: hidden">hidden hidden hidden hidden</div>after the overflow</div></div>
+<div class="clamp"><div><div class="float">float float float</div>text beside a float that wraps</div></div>
+<div class="clamp" style="-webkit-line-clamp: 3"><div>before <span>inline <div>block block block</div> after after after</span> end end</div></div>
+<div class="clamp" style="-webkit-line-clamp: 4"><div><div>lead</div>text <span><div>b1 b1 b1 b1 b1</div><div>b2</div></span> tail tail tail tail</div></div>
+<div class="clamp" style="position: relative"><div>text <div style="position: absolute; top: 0; left: 60px; width: 50px">abs abs abs abs</div> word word word word</div></div>
+<div class="clamp"><div style="text-box-trim: trim-both"><div>one</div><div>two</div><div>three</div></div></div>
+<div class="clamp"><div><div style="display: flow-root; align-content: end; height: 50px"><div>one</div><div>two</div><div>three</div></div></div></div>
+<div class="clamp" style="-webkit-line-clamp: 3"><div><div class="float">float</div><table style="width: 90%"><tr><td>cell cell cell cell</td></tr></table>after</div></div>
+<div class="clamp" style="-webkit-line-clamp: 3"><div><div class="float">float float</div><div style="display: flow-root">beside beside beside beside</div>after</div></div>
+<div class="clamp"><div style="align-content: center; height: 40px"><div>one</div><div>two</div><div>three</div></div></div>
+<div class="clamp"><div>first</div><div><div><div>second</div></div></div></div>
+<div class="clamp"><div><div>one</div><div>two</div></div></div>
+<div class="clamp" style="-webkit-line-clamp: 1"><div><div style="margin: 5px 0">m m m m m m m m m m m m</div></div><div>after</div></div>
+<div class="clamp"><div>one line<div style="position: relative"><div style="position: absolute; left: 0; width: 100px"><table><tr><td>abs cell abs cell abs cell</td></tr></table></div></div></div></div>
+<div class="clamp"><div><div class="float">float</div><div>beside a float, two lines</div></div></div>
+<div class="clamp" style="-webkit-line-clamp: 3"><div><div class="float" style="height: 30px">float</div><div style="display: flow-root; block-step-size: 20px">step step step step</div>after</div></div>
+<div class="clamp" style="-webkit-line-clamp: 3"><div><div class="float" style="height: 14px">float</div><table style="width: 100px"><tr><td>cell cell cell cell cell cell</td></tr></table>after</div></div>
+<div class="clamp" style="-webkit-line-clamp: 3"><div><div style="margin: 0"><span class="tall" style="height: 40px"></span>text</div><div><div><span class="tall"></span></div><div style="margin-top: 30px">the float goes down past the one before</div></div>after</div></div>
+<div class="clamp" style="overflow: hidden; padding: 4px"><div>one two three four five six seven eight nine</div></div>

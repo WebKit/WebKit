@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "RenderLayoutState.h"
 #include <WebCore/AdjoiningMargins.h>
 #include <WebCore/LayoutBoxGeometry.h>
 #include <WebCore/LayoutRect.h>
@@ -173,6 +174,15 @@ public:
     // A box that followed the clamp point of a line-clamp container the last time it was laid out, and which is visible again.
     static void showBoxHiddenByLineClamp(const RenderBox&);
     static void setFloatClippedByLineClamp(const RenderBox&, bool);
+    // -webkit-line-clamp: the -webkit-box counts the lines of its content in the layout state (LegacyLineClampUpdater), where the boxes the
+    // render tree lays out in it count theirs too. The inline content of a block container gets the lines left of the count, and once laid out
+    // adds its own lines. The block container whose lines reach the count is the one the -webkit-box clamps at, and its content box ends at
+    // the clamp point.
+    static std::optional<size_t> legacyLineClampMaximumLines(const RenderBlockFlow&);
+    static std::optional<LayoutUnit> updateLegacyLineClampAfterInlineContent(const RenderBlockFlow&);
+    // Content laid out again starts from the count it started from the first time.
+    static std::optional<RenderLayoutState::LegacyLineClamp> legacyLineClamp(const RenderBox&);
+    static void restoreLegacyLineClamp(const RenderBox&, const std::optional<RenderLayoutState::LegacyLineClamp>&);
     // A table, a flex or grid container, or a block formatting context root whose content the block formatting context cannot lay out (canUseForNestedBlockLayout).
     static bool laysOutThroughRenderTree(const RenderBox&);
 

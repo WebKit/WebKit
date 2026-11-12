@@ -113,12 +113,14 @@ BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockConten
     // container: the content is laid out again with those tops, like the render tree path lays out a block that moved while its floats were
     // placed again (RenderBlockFlow::layoutBlockChild).
     auto initialBlockLayoutState = m_blockLayoutState;
+    auto initialLegacyLineClamp = LayoutIntegration::BlockIntegrationUtils::legacyLineClamp(root());
     auto result = layoutContent(constraints, rootGeometry);
     if (!m_needsLayoutWithResolvedBorderBoxLogicalTops)
         return result;
     m_needsLayoutWithResolvedBorderBoxLogicalTops = false;
     m_isLayingOutWithResolvedBorderBoxLogicalTops = true;
     m_blockLayoutState = WTF::move(initialBlockLayoutState);
+    LayoutIntegration::BlockIntegrationUtils::restoreLegacyLineClamp(root(), initialLegacyLineClamp);
     return layoutContent(constraints, rootGeometry);
 }
 
@@ -610,6 +612,13 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
         }
     }
     m_blockLayoutState.setIntrusiveInitialLetterLogicalBottom(intrusiveInitialLetterLogicalBottom);
+    // -webkit-line-clamp gives the content what is left of the count of lines in the -webkit-box, which the boxes the render tree lays out
+    // add to as well (BlockIntegrationUtils::legacyLineClampMaximumLines).
+    auto isInLegacyLineClampContext = m_blockLayoutState.lineClamp() && m_blockLayoutState.lineClamp()->isLegacy;
+    if (isInLegacyLineClampContext) {
+        if (auto maximumLines = LayoutIntegration::BlockIntegrationUtils::legacyLineClampMaximumLines(inlineContentRoot))
+            m_blockLayoutState.setLineClamp(BlockLayoutState::LineClamp { *maximumLines, false, true });
+    }
     auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(inlineContentRoot, constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.fillAvailableBlockSize, blockContainerState.replacedElementAvailableBlockSize, orthogonalFlowAvailableInlineSpace(blockContainerState), blockContainerState.relayoutChildren || m_isLayingOutWithResolvedBorderBoxLogicalTops, m_blockLayoutState, intrudingFloats, *this, result);
     addInlineContentFloats(inlineContentLayoutResult.floats);
     // The floats of a line-clamp container are clipped to its block-end content edge, those the inline formatting context hid after the
@@ -620,8 +629,11 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
                 LayoutIntegration::BlockIntegrationUtils::setFloatClippedByLineClamp(downcast<RenderBox>(*floatBox->rendererForIntegration()), true);
         }
     }
-    // The content takes its lines off the line-clamp budget (LineClampUpdater).
-    if (auto lineClamp = m_blockLayoutState.lineClamp()) {
+    if (isInLegacyLineClampContext) {
+        if (auto clampedContentBlockSize = LayoutIntegration::BlockIntegrationUtils::updateLegacyLineClampAfterInlineContent(inlineContentRoot))
+            inlineContentLayoutResult.contentBlockSize = *clampedContentBlockSize;
+    } else if (auto lineClamp = m_blockLayoutState.lineClamp()) {
+        // The content takes its lines off the line-clamp budget (LineClampUpdater).
         lineClamp->maximumLines -= std::min(lineClamp->maximumLines, inlineContentLayoutResult.lineCount);
         m_blockLayoutState.setLineClamp(lineClamp);
     }
@@ -1098,6 +1110,9 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
             // lines of the boxes with trim-end in it.
             auto blockLayoutState = BlockLayoutState { { } };
             blockLayoutState.setLastFormattedLineRoots(Vector { m_blockLayoutState.lastFormattedLineRoots() });
+            // -webkit-line-clamp counts the lines in it too, unlike line-clamp (LineClampUpdater).
+            if (auto lineClamp = m_blockLayoutState.lineClamp(); lineClamp && lineClamp->isLegacy)
+                blockLayoutState.setLineClamp(lineClamp);
             if (root->style().textBoxTrim() != TextBoxTrim::None) {
                 auto textBoxTrimState = m_blockLayoutState.textBoxTrimState();
                 if (textBoxTrimState.trimsFirstFormattedLine && state.geometry.borderAndPaddingBefore()) {
@@ -1108,6 +1123,8 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
             }
             auto horizontalConstraints = HorizontalConstraints { state.inlineRange.min(), state.inlineRange.size() };
             auto initialBlockLayoutState = blockLayoutState;
+            // The render tree path shifts the content instead of laying it out again, which would count its lines again.
+            auto initialLegacyLineClamp = LayoutIntegration::BlockIntegrationUtils::legacyLineClamp(box);
             auto layoutRootContent = [&](LayoutUnit shift) {
                 return BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, state.borderAndPaddingBefore + shift }, state.contentBoxBlockSize, state.fillAvailableBlockSize, state.replacedElementAvailableBlockSize, state.relayoutChildren }, state.geometry);
             };
@@ -1118,6 +1135,7 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
                 computeBlockSize(box, rootResult.intrinsicContentBlockSize, m_blockLayoutState.containingBlockStates().last(), geometry);
                 if (auto shift = BlockFormattingUtils::alignContentShift(box, geometry.contentBoxHeight() - rootResult.intrinsicContentBlockSize)) {
                     blockLayoutState = WTF::move(initialBlockLayoutState);
+                    LayoutIntegration::BlockIntegrationUtils::restoreLegacyLineClamp(box, initialLegacyLineClamp);
                     rootResult = layoutRootContent(shift);
                 }
             }
@@ -1511,7 +1529,8 @@ ContainingBlockState BlockFormattingContext::containingBlockStateFor(const Rende
         .replacedElementAvailableBlockSize = BlockFormattingUtils::availableBlockSize(blockContainer, geometry, contentBoxBlockSize, parentState.contentBoxBlockSize, parentState.replacedElementAvailableBlockSize, stretchFitBorderBoxBlockSize(blockContainer, geometry, parentState), root().writingMode(), AvailableLogicalHeightType::IncludeMarginBorderPadding),
         .margins = { },
         .isLaidOutThroughRenderTree = false,
-        .relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(blockContainer, geometry.contentBoxWidth()),
+        // -webkit-line-clamp counts the lines of everything in it again (RenderBlockFlow::layoutBlock).
+        .relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(blockContainer, geometry.contentBoxWidth()) || (m_blockLayoutState.lineClamp() && m_blockLayoutState.lineClamp()->isLegacy),
         .lineCountThroughLastBlockLevelBox = 0,
         .blockEndChildren = { { }, { }, geometry.borderAndPaddingBefore() }
     };

@@ -27,6 +27,7 @@
 
 #include "AXObjectCache.h"
 #include "BlockFormattingUtils.h"
+#include "BlockIntegrationUtils.h"
 #include "BlockStepSizing.h"
 #include "DocumentView.h"
 #include "Editor.h"
@@ -4615,41 +4616,6 @@ RenderBlockFlow::InlineContentStatus RenderBlockFlow::markInlineContentDirtyForL
     return { hasSimpleOutOfFlowContentOnly, hasDirtyInFlowBlockLevelElement, hasInFlowBlockLevelElement ? contentNeedsNormalChildLayoutOnly : std::nullopt };
 }
 
-std::optional<LayoutUnit> RenderBlockFlow::updateLineClampStateAndLogicalHeightAfterLayout()
-{
-    auto& layoutState = *view().frameView().layoutContext().layoutState();
-    auto& inlineLayout = *this->inlineLayout();
-
-    auto legacyLineClamp = layoutState.legacyLineClamp();
-    if (!legacyLineClamp || isFloatingOrOutOfFlowPositioned())
-        return { };
-
-    legacyLineClamp->currentLineCount += inlineLayout.lineCount();
-    if (legacyLineClamp->clampedRenderer) {
-        // We've already clamped this flex container at a previous flex item.
-        layoutState.setLegacyLineClamp(*legacyLineClamp);
-        return { };
-    }
-
-    auto clampedContentHeight = [&]() -> std::optional<LayoutUnit> {
-        if (auto clampedHeight = inlineLayout.clampedContentLogicalHeight())
-            return clampedHeight;
-        if (legacyLineClamp->currentLineCount == legacyLineClamp->maximumLineCount) {
-            // Even if we did not truncate the content, this might be our clamping position.
-            return LayoutUnit { inlineLayout.contentLogicalHeight() };
-        }
-        return { };
-    };
-    if (auto logicalHeight = clampedContentHeight()) {
-        legacyLineClamp->clampedContentLogicalHeight = logicalHeight;
-        legacyLineClamp->clampedRenderer = this;
-        layoutState.setLegacyLineClamp(*legacyLineClamp);
-        return logicalHeight;
-    }
-    layoutState.setLegacyLineClamp(*legacyLineClamp);
-    return { };
-}
-
 void RenderBlockFlow::updateRepaintTopAndBottomAfterLayout(RelayoutChildren relayoutChildren, std::optional<LayoutRect> partialRepaintRect, std::pair<float, float> oldContentTopAndBottomIncludingInkOverflow, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
     auto isFullLayout = selfNeedsLayout() || relayoutChildren == RelayoutChildren::Yes;
@@ -4686,8 +4652,8 @@ void RenderBlockFlow::updateRepaintTopAndBottomAfterLayout(RelayoutChildren rela
 NODELETE static inline std::optional<Layout::BlockLayoutState::LineClamp> lineClamp(const RenderBlockFlow& rootRenderer)
 {
     auto& layoutState = *rootRenderer.view().frameView().layoutContext().layoutState();
-    if (auto legacyLineClamp = layoutState.legacyLineClamp())
-        return Layout::BlockLayoutState::LineClamp { std::max(legacyLineClamp->maximumLineCount - legacyLineClamp->currentLineCount, static_cast<size_t>(0)), false, true };
+    if (auto maximumLines = LayoutIntegration::BlockIntegrationUtils::legacyLineClampMaximumLines(rootRenderer))
+        return Layout::BlockLayoutState::LineClamp { *maximumLines, false, true };
     if (auto lineClamp = layoutState.lineClamp())
         return Layout::BlockLayoutState::LineClamp { lineClamp->maximumLines, lineClamp->shouldDiscardOverflow, false, lineClamp->isStableTextWrap };
     return { };
@@ -4806,7 +4772,7 @@ void RenderBlockFlow::layoutInlineContent(RelayoutChildren relayoutChildren, Lay
     auto partialRepaintRect = layoutResult.repaintRect;
 
     auto contentBoxHeight = [&]() -> LayoutUnit {
-        if (auto clampedContentHeight = updateLineClampStateAndLogicalHeightAfterLayout())
+        if (auto clampedContentHeight = LayoutIntegration::BlockIntegrationUtils::updateLegacyLineClampAfterInlineContent(*this))
             return *clampedContentHeight;
         if (hasContentfulInlineOrBlockLine())
             return inlineLayout.contentLogicalHeight();

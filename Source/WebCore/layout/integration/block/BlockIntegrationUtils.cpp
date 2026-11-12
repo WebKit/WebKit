@@ -458,6 +458,57 @@ void BlockIntegrationUtils::setFloatClippedByLineClamp(const RenderBox& floatBox
     mutableFloatBox->setIsClippedByLineClamp(isClipped);
 }
 
+std::optional<size_t> BlockIntegrationUtils::legacyLineClampMaximumLines(const RenderBlockFlow& blockContainer)
+{
+    auto legacyLineClamp = BlockIntegrationUtils::legacyLineClamp(blockContainer);
+    if (!legacyLineClamp)
+        return { };
+    // Past the count, the lines left wrap around to more than any content has, so the content after the clamp point is not truncated.
+    return legacyLineClamp->maximumLineCount - legacyLineClamp->currentLineCount;
+}
+
+std::optional<RenderLayoutState::LegacyLineClamp> BlockIntegrationUtils::legacyLineClamp(const RenderBox& box)
+{
+    auto* layoutState = box.view().frameView().layoutContext().layoutState();
+    return layoutState ? layoutState->legacyLineClamp() : std::nullopt;
+}
+
+void BlockIntegrationUtils::restoreLegacyLineClamp(const RenderBox& box, const std::optional<RenderLayoutState::LegacyLineClamp>& legacyLineClamp)
+{
+    if (legacyLineClamp)
+        box.view().frameView().layoutContext().layoutState()->setLegacyLineClamp(legacyLineClamp);
+}
+
+std::optional<LayoutUnit> BlockIntegrationUtils::updateLegacyLineClampAfterInlineContent(const RenderBlockFlow& blockContainer)
+{
+    auto& layoutState = *blockContainer.view().frameView().layoutContext().layoutState();
+    CheckedPtr inlineLayout = blockContainer.inlineLayout();
+    auto legacyLineClamp = layoutState.legacyLineClamp();
+    if (!legacyLineClamp || !inlineLayout || blockContainer.isFloatingOrOutOfFlowPositioned())
+        return { };
+
+    legacyLineClamp->currentLineCount += inlineLayout->lineCount();
+    // The -webkit-box clamps at the first one only.
+    if (legacyLineClamp->clampedRenderer) {
+        layoutState.setLegacyLineClamp(*legacyLineClamp);
+        return { };
+    }
+    auto clampedContentBlockSize = [&] -> std::optional<LayoutUnit> {
+        if (auto clampedContentBlockSize = inlineLayout->clampedContentLogicalHeight())
+            return clampedContentBlockSize;
+        // The content may end right at the clamp point.
+        if (legacyLineClamp->currentLineCount == legacyLineClamp->maximumLineCount)
+            return LayoutUnit { inlineLayout->contentLogicalHeight() };
+        return { };
+    }();
+    if (clampedContentBlockSize) {
+        legacyLineClamp->clampedContentLogicalHeight = clampedContentBlockSize;
+        legacyLineClamp->clampedRenderer = &blockContainer;
+    }
+    layoutState.setLegacyLineClamp(*legacyLineClamp);
+    return clampedContentBlockSize;
+}
+
 bool BlockIntegrationUtils::laysOutThroughRenderTree(const RenderBox& box)
 {
     // FIXME: A block formatting context root whose content the block formatting context cannot lay out yet runs render tree block layout

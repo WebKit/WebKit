@@ -61,7 +61,6 @@ enum class BlockAvoidanceReason : uint8_t {
     RootHasUnsupportedRenderer,
     RootHasUnsupportedWritingMode,
     RootIsPaginated,
-    RootIsInLegacyLineClampContext,
     RootIsInLineGridContext,
     RootHasColumns,
     ContentHasFloat,
@@ -136,9 +135,6 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     if (auto* layoutState = layoutContext->layoutState()) {
         if (layoutState->isPaginated())
             return BlockAvoidanceReason::RootIsPaginated;
-        // FIXME: -webkit-line-clamp, which clamps the content of a -webkit-box at its clamp point (LegacyLineClampUpdater).
-        if (layoutState->legacyLineClamp())
-            return BlockAvoidanceReason::RootIsInLegacyLineClampContext;
         // The layout state has no entry for the boxes inside the block formatting context, so their inline content would see the
         // root's line grid at the wrong offset.
         if (layoutState->lineGrid())
@@ -834,8 +830,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "root: horizontal-bt writing mode"_s;
     case BlockAvoidanceReason::RootIsPaginated:
         return "root: paginated"_s;
-    case BlockAvoidanceReason::RootIsInLegacyLineClampContext:
-        return "root: in -webkit-line-clamp"_s;
     case BlockAvoidanceReason::RootIsInLineGridContext:
         return "root: in line grid"_s;
     case BlockAvoidanceReason::RootHasColumns:
