@@ -1,0 +1,92 @@
+Accname computation tests for <area>
+
+HTML-AAM computation steps
+
+area expecting name from 2 aria-labelledby refs
+
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+
+<h2>area expecting name from 2 aria-labelledby refs</h2>
+<p id="el-1-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-1-label-2">aria-labelledby ref element #2 text contents</p>
+<div>
+<map name="map-1">
+<area id="el-1" class="ex-label" data-testname="area expecting name from 2 aria-labelledby refs" href="#" alt="alt attribute value" shape="rect" coords="0,0,20,20" aria-labelledby="el-1-label-1 el-1-label-2" aria-label="area aria-label attribute value" title="area title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+</map>
+<img usemap="#map-1" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</div>
+area expecting name from 1 aria-labelledby ref
+
+aria-labelledby ref element #1 text contents
+
+
+<h2>area expecting name from 1 aria-labelledby ref</h2>
+<p id="el-2-label-1">aria-labelledby ref element #1 text contents</p>
+<div>
+<map name="map-2">
+<area id="el-2" class="ex-label" data-testname="area expecting name from 1 aria-labelledby ref" href="#" alt="alt attribute value" shape="rect" coords="0,0,20,20" aria-labelledby="el-2-label-1" aria-label="area aria-label attribute value" title="area title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+</map>
+<img usemap="#map-2" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</div>
+area expecting name from aria-label
+
+
+<h2>area expecting name from aria-label</h2>
+<div>
+<map name="map-3">
+<area id="el-3" class="ex-label" data-testname="area expecting name from aria-label" href="#" alt="alt attribute value" shape="rect" coords="0,0,20,20" aria-label="area aria-label attribute value" title="area title attribute value" data-expectedlabel="area aria-label attribute value">
+</map>
+<img usemap="#map-3" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</div>
+area expecting name from alt
+
+
+<h2>area expecting name from alt</h2>
+<div>
+<map name="map-4">
+<area id="el-4" class="ex-label" data-testname="area expecting name from alt" href="#" alt="alt attribute value" shape="rect" coords="0,0,20,20" title="area title attribute value" data-expectedlabel="alt attribute value">
+</map>
+<img usemap="#map-4" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</div>
+area expecting name from empty alt
+
+
+<h2>area expecting name from empty alt</h2>
+<div>
+<map name="map-5">
+<area id="el-5" class="ex-label" data-testname="area expecting name from empty alt" href="#" alt="" shape="rect" coords="0,0,20,20" title="area title attribute value" data-expectedlabel="">
+</map>
+<img usemap="#map-5" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</div>
+area expecting name from title
+
+
+<h2>area expecting name from title</h2>
+<div>
+<map name="map-6">
+<area id="el-6" class="ex-label" data-testname="area expecting name from title" href="#" alt="Mapped image alt attribute value" shape="rect" coords="0,0,20,20" title="area title attribute value" data-expectedlabel="area title attribute value">
+</map>
+<img usemap="#map-6" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</div>
+area expecting name to be empty
+
+
+<h2>area expecting name to be empty</h2>
+<div>
+<map name="map-7">
+<area id="el-7" class="ex-label" data-testname="area expecting name to be empty" href="#" alt="Mapped image alt attribute value" shape="rect" coords="0,0,20,20" data-expectedlabel="">
+</map>
+<img usemap="#map-7" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</div>
+
+PASS area expecting name from 2 aria-labelledby refs
+PASS area expecting name from 1 aria-labelledby ref
+PASS area expecting name from aria-label
+PASS area expecting name from alt
+FAIL area expecting name from empty alt assert_equals: <area id="el-5" class="ex-label" data-testname="area expecting name from empty alt" href="#" alt="" shape="rect" coords="0,0,20,20" title="area title attribute value" data-expectedlabel=""> expected "" but got "area title attribute value"
+FAIL area expecting name from title assert_equals: <area id="el-6" class="ex-label" data-testname="area expecting name from title" href="#" alt="Mapped image alt attribute value" shape="rect" coords="0,0,20,20" title="area title attribute value" data-expectedlabel="area title attribute value"> expected "area title attribute value" but got "Mapped image alt attribute value"
+FAIL area expecting name to be empty assert_equals: <area id="el-7" class="ex-label" data-testname="area expecting name to be empty" href="#" alt="Mapped image alt attribute value" shape="rect" coords="0,0,20,20" data-expectedlabel=""> expected "" but got "Mapped image alt attribute value"
+
