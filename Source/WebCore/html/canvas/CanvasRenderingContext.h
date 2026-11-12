@@ -141,7 +141,7 @@ public:
     virtual std::optional<RenderingMode> renderingModeForTesting() const { return std::nullopt; }
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-    bool isHDR() const { return pixelFormat() == PixelFormat::RGBA16F; }
+    virtual bool isHDR() const { return allowExtendedColorSpace(pixelFormat()) == AllowExtendedColorSpace::Yes; }
     virtual void setDynamicRangeLimit(PlatformDynamicRangeLimit) { };
     virtual RasterDrawingOptions drawingOptionsForDisplay() const { return { }; }
 #endif

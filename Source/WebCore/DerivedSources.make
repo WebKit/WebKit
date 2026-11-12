@@ -1475,6 +1475,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/CanvasText.idl \
     $(WebCore)/html/canvas/CanvasTextAlign.idl \
     $(WebCore)/html/canvas/CanvasTextBaseline.idl \
+    $(WebCore)/html/canvas/CanvasToneMapping.idl \
+    $(WebCore)/html/canvas/CanvasToneMappingMode.idl \
     $(WebCore)/html/canvas/CanvasTextDrawingStyles.idl \
     $(WebCore)/html/canvas/CanvasTextRendering.idl \
     $(WebCore)/html/canvas/CanvasTransform.idl \

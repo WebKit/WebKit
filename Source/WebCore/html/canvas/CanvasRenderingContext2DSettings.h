@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CanvasToneMapping.h"
 #include "PredefinedColorSpace.h"
 #include "RenderingMode.h"
 #include <optional>
@@ -35,6 +36,7 @@ struct CanvasRenderingContext2DSettings {
     bool desynchronized { false };
     bool willReadFrequently { false };
     PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
+    CanvasToneMapping toneMapping;
     enum class ColorType : bool {
         Unorm8,
 #if ENABLE(PIXEL_FORMAT_RGBA16F)

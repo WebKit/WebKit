@@ -94,6 +94,7 @@
 #include "RenderTheme.h"
 #include "SVGImageElement.h"
 #include "ScriptDisallowedScope.h"
+#include "ScriptExecutionContext.h"
 #include "ScriptTrackingPrivacyCategory.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -277,6 +278,9 @@ CanvasRenderingContext2DBase::CanvasRenderingContext2DBase(CanvasBase& canvas, C
     , m_settings(WTF::move(settings))
 {
     ASSERT(is2dBase());
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    m_isHDR = computeIsHDR();
+#endif
 }
 
 CanvasRenderingContext2DBase::~CanvasRenderingContext2DBase()
@@ -2029,7 +2033,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
     RasterDrawingOptions options = {
         internalFrame->orientation(),
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-        (isHDR() && usesITUR2100TF(internalFrame->colorSpace())) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
+        (canStoreHDRContent() && usesITUR2100TF(internalFrame->colorSpace())) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
 #endif
         compositeOperator,
         state().globalBlend
@@ -2124,7 +2128,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Im
         InvertContent::No,
 #endif
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-        (isHDR() && !firstFrame && sourceImage.hasHDRContent()) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
+        (canStoreHDRContent() && !firstFrame && sourceImage.hasHDRContent()) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
         document.settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,
 #endif
     };
@@ -3758,6 +3762,23 @@ ColorSpace CanvasRenderingContext2DBase::colorSpace() const
     return toColorSpace(m_settings.colorSpace, allowExtendedColorSpace(m_settings.colorType));
 }
 
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+
+bool CanvasRenderingContext2DBase::canStoreHDRContent() const
+{
+    return allowExtendedColorSpace(pixelFormat()) == AllowExtendedColorSpace::Yes;
+}
+
+bool CanvasRenderingContext2DBase::computeIsHDR() const
+{
+    if (!canStoreHDRContent())
+        return false;
+
+    return m_settings.toneMapping.mode != CanvasToneMappingMode::Standard;
+}
+
+#endif
+
 bool CanvasRenderingContext2DBase::willReadFrequently() const
 {
     return m_settings.willReadFrequently;
@@ -3796,14 +3817,18 @@ std::optional<double> CanvasRenderingContext2DBase::getEffectiveDynamicRangeLimi
 
 RasterDrawingOptions CanvasRenderingContext2DBase::drawingOptionsForDisplay() const
 {
-    if (!isHDR() || m_dynamicRangeLimit == PlatformDynamicRangeLimit::noLimit())
+    if (!canStoreHDRContent())
+        return { };
+
+    auto dynamicRangeLimit = isHDR() ? m_dynamicRangeLimit : PlatformDynamicRangeLimit::standard();
+    if (dynamicRangeLimit == PlatformDynamicRangeLimit::noLimit())
         return { };
 
     auto display = displayEDRState(protect(canvasBase()));
 
     return {
-        Headroom(headroomForDynamicRangeLimit(m_dynamicRangeLimit, display.headroom, display.suppressEDR)),
-        m_dynamicRangeLimit,
+        Headroom(headroomForDynamicRangeLimit(dynamicRangeLimit, display.headroom, display.suppressEDR)),
+        dynamicRangeLimit,
         DrawsHDRContent::Yes
     };
 }

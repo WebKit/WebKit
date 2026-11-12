@@ -41,6 +41,7 @@ enum CanvasColorType {
     boolean desynchronized = false;
     boolean willReadFrequently = false;
     [EnabledBySetting=CanvasColorSpaceEnabled] PredefinedColorSpace colorSpace = "srgb";
+    [EnabledBySetting=CanvasColorTypeEnabled] CanvasToneMapping toneMapping = {};
     [EnabledBySetting=CanvasColorTypeEnabled] CanvasColorType colorType = "unorm8";
     [EnabledBySetting=DOMTestingAPIsEnabled] RenderingMode renderingModeForTesting;
 };

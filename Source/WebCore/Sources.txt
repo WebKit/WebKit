@@ -4133,6 +4133,8 @@ JSCanvasState.cpp
 JSCanvasText.cpp
 JSCanvasTextAlign.cpp
 JSCanvasTextBaseline.cpp
+JSCanvasToneMapping.cpp
+JSCanvasToneMappingMode.cpp
 JSCanvasTextDrawingStyles.cpp
 JSCanvasTextRendering.cpp
 JSCanvasTransform.cpp

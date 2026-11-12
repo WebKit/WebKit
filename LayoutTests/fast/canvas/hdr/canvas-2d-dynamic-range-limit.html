@@ -31,7 +31,7 @@ const hdrGreen = 2.5;
 
 function fillWithHDRGreen(canvas)
 {
-    const context = canvas.getContext("2d", { colorType: "float16" });
+    const context = canvas.getContext("2d", { colorType: "float16", toneMapping: { mode: "extended" } });
     const imageData = context.createImageData(canvas.width, canvas.height, { pixelFormat: "rgba-float16" });
     for (let component = 0; component < imageData.data.length; component += 4) {
         imageData.data[component + 1] = hdrGreen;

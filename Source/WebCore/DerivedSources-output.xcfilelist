@@ -629,6 +629,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTextAlign.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTextAlign.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTextBaseline.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTextBaseline.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasToneMapping.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasToneMapping.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasToneMappingMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasToneMappingMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTextDrawingStyles.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTextDrawingStyles.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTextRendering.cpp

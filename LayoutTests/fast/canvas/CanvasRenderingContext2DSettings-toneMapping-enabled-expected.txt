@@ -1,0 +1,15 @@
+Test that the toneMapping member of CanvasRenderingContext2DSettings is supported when CanvasColorTypeEnabled=true.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testSettings.toneMapping.mode is "standard"
+PASS testSettings.toneMapping.mode is "standard"
+PASS testSettings.toneMapping.mode is "standard"
+PASS testSettings.toneMapping.mode is "standard"
+PASS testSettings.toneMapping.mode is "extended"
+PASS document.createElement("canvas").getContext("2d", { toneMapping: { mode: "foo" } }) threw exception TypeError: Type error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

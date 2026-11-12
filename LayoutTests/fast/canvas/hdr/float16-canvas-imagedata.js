@@ -4,7 +4,7 @@ debug(`canvas.width: ${canvas.width}`)
 debug(`canvas.height: ${canvas.height}`)
 debug(`canvas.dataset.colorSpace: ${canvas.dataset.colorSpace}`)
 
-const context = canvas.getContext("2d", { colorSpace: canvas.dataset.colorSpace, colorType: "float16" });
+const context = canvas.getContext("2d", { colorSpace: canvas.dataset.colorSpace, colorType: "float16", toneMapping: { mode: "extended" } });
 shouldBe('context.getContextAttributes().colorSpace', 'canvas.dataset.colorSpace');
 shouldBe('context.getContextAttributes().colorType', '"float16"');
 

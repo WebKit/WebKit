@@ -1,0 +1,42 @@
+<!-- webkit-test-runner [ CanvasColorTypeEnabled=true ] -->
+<style>
+    canvas {
+        border: 1px solid black;
+    }
+</style>
+<body>
+    <pre id="layers">Layer tree goes here in DRT</pre>
+    <div style="position: fixed; top: 0px;">
+        <canvas id="defaultCanvas"></canvas>
+    </div>
+    <div style="position: fixed; top: 192px;">
+        <canvas id="standardCanvas"></canvas>
+    </div>
+    <div style="position: fixed; top: 192px; left: 315px">
+        <canvas id="extendedCanvas"></canvas>
+    </div>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        if (window.internals)
+            internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+
+        let defaultCanvas = document.getElementById("defaultCanvas");
+        let defaultContext = defaultCanvas.getContext("2d", { colorType: "float16" });
+        defaultContext.fillStyle = "green";
+        defaultContext.fillRect(0, 0, 100, 100);
+
+        let standardCanvas = document.getElementById("standardCanvas");
+        let standardContext = standardCanvas.getContext("2d", { colorType: "float16", toneMapping: { mode: "standard" } });
+        standardContext.fillStyle = "green";
+        standardContext.fillRect(0, 0, 100, 100);
+
+        let extendedCanvas = document.getElementById("extendedCanvas");
+        let extendedContext = extendedCanvas.getContext("2d", { colorType: "float16", toneMapping: { mode: "extended" } });
+        extendedContext.fillStyle = "green";
+        extendedContext.fillRect(0, 0, 100, 100);
+
+        document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+    </script>
+</body>

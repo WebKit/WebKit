@@ -1819,6 +1819,8 @@ $(PROJECT_DIR)/html/canvas/CanvasState.idl
 $(PROJECT_DIR)/html/canvas/CanvasText.idl
 $(PROJECT_DIR)/html/canvas/CanvasTextAlign.idl
 $(PROJECT_DIR)/html/canvas/CanvasTextBaseline.idl
+$(PROJECT_DIR)/html/canvas/CanvasToneMapping.idl
+$(PROJECT_DIR)/html/canvas/CanvasToneMappingMode.idl
 $(PROJECT_DIR)/html/canvas/CanvasTextDrawingStyles.idl
 $(PROJECT_DIR)/html/canvas/CanvasTextRendering.idl
 $(PROJECT_DIR)/html/canvas/CanvasTransform.idl

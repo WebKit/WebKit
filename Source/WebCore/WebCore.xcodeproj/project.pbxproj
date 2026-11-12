@@ -14385,6 +14385,10 @@
 		7224293C301ABB3600856621 /* CanvasElementImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasElementImage.cpp; sourceTree = "<group>"; };
 		7224293D301ACFD400856621 /* GPUDrawElementImageDestination.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUDrawElementImageDestination.idl; sourceTree = "<group>"; };
 		7224293E301ACFD400856621 /* GPUDrawElementImageSource.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUDrawElementImageSource.idl; sourceTree = "<group>"; };
+		7224293D301ABB3600856621 /* CanvasToneMapping.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanvasToneMapping.h; sourceTree = "<group>"; };
+		7224293E301ABB3600856621 /* CanvasToneMapping.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CanvasToneMapping.idl; sourceTree = "<group>"; };
+		7224293F301ABB3600856621 /* CanvasToneMappingMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanvasToneMappingMode.h; sourceTree = "<group>"; };
+		72242940301ABB3600856621 /* CanvasToneMappingMode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CanvasToneMappingMode.idl; sourceTree = "<group>"; };
 		72242943301ADA9800856621 /* WebGLCopyElementImageConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGLCopyElementImageConfig.h; sourceTree = "<group>"; };
 		7224ABCF2C0174EE00D85362 /* BitmapImageDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BitmapImageDescriptor.h; sourceTree = "<group>"; };
 		7225E8062A3E298C00947EBF /* RotationDirection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RotationDirection.cpp; sourceTree = "<group>"; };
@@ -28395,6 +28399,10 @@
 				7C193BA91F5E0EB00088F3E6 /* CanvasTextDrawingStyles.idl */,
 				1122BD67258C35412D4C6D79 /* CanvasTextRendering.h */,
 				D9B38DDDE3AFC8883410E7B5 /* CanvasTextRendering.idl */,
+				7224293D301ABB3600856621 /* CanvasToneMapping.h */,
+				7224293E301ABB3600856621 /* CanvasToneMapping.idl */,
+				7224293F301ABB3600856621 /* CanvasToneMappingMode.h */,
+				72242940301ABB3600856621 /* CanvasToneMappingMode.idl */,
 				7C193BB51F5E0EB80088F3E6 /* CanvasTransform.idl */,
 				7C193BB81F5E0EBA0088F3E6 /* CanvasUserInterface.idl */,
 				724ED3291A3A7E5400F5F13C /* EXTBlendMinMax.cpp */,

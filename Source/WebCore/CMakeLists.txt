@@ -1400,6 +1400,8 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/CanvasRenderingContext2DSettings.idl
     html/canvas/CanvasTextAlign.idl
     html/canvas/CanvasTextBaseline.idl
+    html/canvas/CanvasToneMapping.idl
+    html/canvas/CanvasToneMappingMode.idl
     html/canvas/ImageBitmapRenderingContext.idl
     html/canvas/ImageBitmapRenderingContextSettings.idl
     html/canvas/ImageSmoothingQuality.idl

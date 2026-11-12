@@ -482,6 +482,11 @@ private:
     PixelFormat pixelFormat() const final;
     ColorSpace colorSpace() const final;
     bool willReadFrequently() const final;
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    bool canStoreHDRContent() const;
+    bool computeIsHDR() const;
+    bool isHDR() const final { return m_isHDR; }
+#endif
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     void setDynamicRangeLimit(PlatformDynamicRangeLimit) final;
@@ -584,6 +589,7 @@ private:
     mutable bool m_hasCreatedImageBuffer { false };
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     PlatformDynamicRangeLimit m_dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
+    bool m_isHDR { false };
 #endif
 };
 
