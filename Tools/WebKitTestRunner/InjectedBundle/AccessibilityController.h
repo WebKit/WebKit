@@ -33,12 +33,14 @@
 #include <wtf/Condition.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Platform.h>
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 #endif
 #include <wtf/RunLoop.h>
 #include <wtf/Threading.h>
+#include <wtf/text/StringHash.h>
 
 namespace WTR {
 
@@ -114,6 +116,9 @@ public:
 #endif
 
     void resetToConsistentState();
+#if PLATFORM(MAC)
+    void resetInjectedAccessibilityPreferences();
+#endif
 
     void overrideClient(JSStringRef clientType);
 
@@ -131,6 +136,8 @@ private:
 
     uint64_t m_nextClientAccessibilityRequestID { 1 };
     HashMap<uint64_t, WKRetainPtr<WKTypeRef>> m_clientAccessibilityReplies;
+
+    HashSet<std::pair<String, String>> m_injectedAccessibilityPreferences;
 #endif
 
 #if PLATFORM(COCOA)

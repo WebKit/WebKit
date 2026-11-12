@@ -266,6 +266,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
                 m_testRunner->removeAllWebNotificationPermissions();
             m_testRunner = nullptr;
 
+#if PLATFORM(MAC)
+            if (m_accessibilityController)
+                m_accessibilityController->resetInjectedAccessibilityPreferences();
+#endif
+
             InjectedBundle::page()->resetAfterTest();
         }
         return;
