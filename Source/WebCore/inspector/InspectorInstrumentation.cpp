@@ -528,6 +528,8 @@ void InspectorInstrumentation::didScrollImpl(InstrumentingAgents& instrumentingA
 {
     if (CheckedPtr pageAgent = instrumentingAgents.enabledPageAgent())
         pageAgent->didScroll();
+    if (CheckedPtr pageProxy { instrumentingAgents.enabledPageProxy() })
+        pageProxy->didScroll();
 }
 
 bool InspectorInstrumentation::handleTouchEventImpl(Node& node)
@@ -822,6 +824,8 @@ void InspectorInstrumentation::didLayoutImpl(InstrumentingAgents& instrumentingA
     });
     if (CheckedPtr pageAgent = instrumentingAgents.enabledPageAgent())
         pageAgent->didLayout();
+    if (CheckedPtr pageProxy { instrumentingAgents.enabledPageProxy() })
+        pageProxy->didLayout();
 }
 
 void InspectorInstrumentation::willCompositeImpl(InstrumentingAgents& instrumentingAgents)
@@ -891,6 +895,10 @@ void InspectorInstrumentation::didRecalculateStyleImpl(InstrumentingAgents& inst
         networkAgent->didRecalculateStyle();
     if (CheckedPtr pageAgent = instrumentingAgents.enabledPageAgent())
         pageAgent->didRecalculateStyle();
+    if (RefPtr frame { document.frame() }) {
+        if (CheckedPtr pageProxy { frame->inspectorController().instrumentingAgents().enabledPageProxy() })
+            pageProxy->didRecalculateStyle();
+    }
 }
 
 void InspectorInstrumentation::didScheduleStyleRecalculationImpl(InstrumentingAgents& instrumentingAgents, Document& document)

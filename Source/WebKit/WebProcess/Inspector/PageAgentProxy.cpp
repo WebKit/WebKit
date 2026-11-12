@@ -269,14 +269,23 @@ void PageAgentProxy::didPaint(RenderObject& renderer, const LayoutRect& rect)
 
 void PageAgentProxy::didLayout()
 {
+    setFrameHighlightsNeedDisplay();
 }
 
 void PageAgentProxy::didScroll()
 {
+    setFrameHighlightsNeedDisplay();
 }
 
 void PageAgentProxy::didRecalculateStyle()
 {
+    setFrameHighlightsNeedDisplay();
+}
+
+void PageAgentProxy::setFrameHighlightsNeedDisplay()
+{
+    if (auto* client { m_inspectedPage->inspectorController().inspectorBackendClient() })
+        client->setFrameHighlightsNeedDisplay();
 }
 
 } // namespace WebKit
