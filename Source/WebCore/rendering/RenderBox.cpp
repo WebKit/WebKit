@@ -1759,6 +1759,8 @@ template<typename SizeType> LayoutUnit RenderBox::adjustContentBoxLogicalWidthFo
 }
 
 template LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing<Style::PreferredSize>(const Style::PreferredSize&, LayoutUnit, std::optional<LayoutUnit>) const;
+template LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing<Style::MinimumSize>(const Style::MinimumSize&, LayoutUnit, std::optional<LayoutUnit>) const;
+template LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing<Style::MaximumSize>(const Style::MaximumSize&, LayoutUnit, std::optional<LayoutUnit>) const;
 
 LayoutUnit RenderBox::adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit> height) const
 {
@@ -1797,6 +1799,8 @@ template<typename SizeType> LayoutUnit RenderBox::adjustContentBoxLogicalHeightF
 }
 
 template LayoutUnit RenderBox::adjustContentBoxLogicalHeightForBoxSizing<Style::PreferredSize>(const Style::PreferredSize&, LayoutUnit, std::optional<LayoutUnit>) const;
+template LayoutUnit RenderBox::adjustContentBoxLogicalHeightForBoxSizing<Style::MinimumSize>(const Style::MinimumSize&, LayoutUnit, std::optional<LayoutUnit>) const;
+template LayoutUnit RenderBox::adjustContentBoxLogicalHeightForBoxSizing<Style::MaximumSize>(const Style::MaximumSize&, LayoutUnit, std::optional<LayoutUnit>) const;
 
 // Hit Testing
 bool RenderBox::hitTestVisualOverflow(const HitTestLocation& hitTestLocation, const LayoutPoint& accumulatedOffset) const
