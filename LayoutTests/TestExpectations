@@ -7973,6 +7973,7 @@ imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCEncodedFrame-copy-co
 
 # https://bugs.webkit.org/show_bug.cgi?id=266843 flakey tests with racey promise console.logs
 imported/w3c/web-platform-tests/dom/observable/tentative/observable-from.any.html [ Skip ]
+imported/w3c/web-platform-tests/dom/observable/ [ Skip ]
 
 # Dump `rendertree` rather than proper test expectation as `testharness` test
 imported/w3c/web-platform-tests/webidl/ecmascript-binding/global-mutable-prototype.any.html [ Skip ]
