@@ -45,6 +45,12 @@ MediaStreamAudioSource::MediaStreamAudioSource(float sampleRate)
 
 MediaStreamAudioSource::~MediaStreamAudioSource() = default;
 
+void MediaStreamAudioSource::audioSampleObserversChanged()
+{
+    if (m_audioSampleObserversChangedCallback)
+        m_audioSampleObserversChangedCallback();
+}
+
 const RealtimeMediaSourceCapabilities& MediaStreamAudioSource::capabilities()
 {
     // FIXME: implement this.

@@ -60,17 +60,42 @@ MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode(BaseAudioContex
     , m_source(MediaStreamAudioSource::create(context.sampleRate()))
     , m_stream(MediaStream::create(*protect(context.document()), MediaStreamPrivate::create(protect(context.document())->logger(), m_source.copyRef())))
 {
+    m_source->setAudioSampleObserversChangedCallback([checkedThis = CheckedPtr { this }] {
+        Locker locker { checkedThis->context().graphLock() };
+        checkedThis->updatePullStatus();
+    });
     initialize();
 }
 
 MediaStreamAudioDestinationNode::~MediaStreamAudioDestinationNode()
 {
+    m_source->setAudioSampleObserversChangedCallback({ });
     uninitialize();
 }
 
 void MediaStreamAudioDestinationNode::process(size_t numberOfFrames)
 {
-    m_source->consumeAudio(protect(input(0)->bus()), numberOfFrames);
+    Ref<AudioBus> bus = input(0)->bus();
+    auto channels = bus->numberOfChannels();
+    if (channels != 1 && channels != 2)
+        return;
+    m_source->setNumberOfChannels(channels);
+    m_source->consumeAudio(bus, numberOfFrames);
+}
+
+void MediaStreamAudioDestinationNode::updatePullStatus()
+{
+    ASSERT(context().isGraphOwner());
+
+    bool shouldPull = input(0)->numberOfRenderingConnections() || m_source->hasAudioSampleObservers();
+    Ref context = this->context();
+    if (shouldPull && !m_needAutomaticPull) {
+        context->addAutomaticPullNode(*this);
+        m_needAutomaticPull = true;
+    } else if (!shouldPull && m_needAutomaticPull) {
+        context->removeAutomaticPullNode(*this);
+        m_needAutomaticPull = false;
+    }
 }
 
 void MediaStreamAudioDestinationNode::checkNumberOfChannelsForInput(AudioNodeInput* input)

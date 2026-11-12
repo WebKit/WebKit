@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "RealtimeMediaSource.h"
+#include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
 #include <wtf/Vector.h>
@@ -58,14 +59,17 @@ public:
 
     void consumeAudio(AudioBus&, size_t numberOfFrames);
     void setNumberOfChannels(unsigned);
+    void setAudioSampleObserversChangedCallback(Function<void()>&& callback) { m_audioSampleObserversChangedCallback = WTF::move(callback); }
 
 private:
     explicit MediaStreamAudioSource(float sampleRate);
+    void audioSampleObserversChanged() final;
 
     bool isCaptureSource() const final { return false; }
 
     String m_deviceId;
     RealtimeMediaSourceSettings m_currentSettings;
+    Function<void()> m_audioSampleObserversChangedCallback;
     std::unique_ptr<PlatformAudioData> m_audioBuffer;
 #if USE(AVFOUNDATION) || USE(GSTREAMER)
     size_t m_numberOfFrames { 0 };
