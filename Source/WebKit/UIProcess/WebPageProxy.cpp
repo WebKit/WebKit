@@ -11748,6 +11748,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         auto redirectResponse = WTF::move(navigationActionData.redirectResponse);
         navigationActionData = *navigation->lastNavigationAction();
         navigationActionData.redirectResponse = WTF::move(redirectResponse);
+        navigationActionData.pendingNavigateEventID = std::nullopt;
         hitTestJSHandle = navigation->lastNavigationActionHitTestJSHandle();
         navigationActionData.canHandleRequest = canHandleRequest;
     }
