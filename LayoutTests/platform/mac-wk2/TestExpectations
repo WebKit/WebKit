@@ -2700,3 +2700,5 @@ webkit.org/b/329010 [ Tahoe+ ] compositing/filters/filter-fractional-translation
 webkit.org/b/329900 [ Sequoia+ Debug arm64 ] http/tests/site-isolation/inspector/debugger/pause-holds-cross-process-frames-until-paused-frame-goes-away.html [ Pass Timeout ]
 
 webkit.org/b/329901 [ Sequoia+ Debug arm64 ] http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml [ Pass Failure Timeout ]
+
+webkit.org/b/331276 [ Debug arm64 ] http/tests/security/contentSecurityPolicy/blob-url-inherits-multiple-csp-policies.html [ Pass Failure ]
