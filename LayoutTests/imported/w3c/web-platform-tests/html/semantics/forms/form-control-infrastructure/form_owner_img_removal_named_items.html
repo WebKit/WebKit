@@ -1,0 +1,14 @@
+<!doctype html>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<div id=log></div>
+<table><form><tr><td><img name=pic></table>
+<script>
+test(() => {
+  const img = document.querySelector("img"),
+        form = document.querySelector("form");
+  assert_equals(form.pic, img);
+  img.remove();
+  assert_equals(form.pic, undefined);
+}, "Removing an img associated with a form that isn't its ancestor removes it from the form's named items");
+</script>

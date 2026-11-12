@@ -678,6 +678,9 @@ void HTMLFormElement::unregisterImgElement(HTMLImageElement& element)
     removeFromPastNamesMap(element);
     bool removed = m_imageElements.removeFirst(&element);
     ASSERT_UNUSED(removed, removed);
+
+    if (auto* nodeLists = this->nodeLists())
+        nodeLists->invalidateCaches();
 }
 
 Ref<HTMLFormControlsCollection> HTMLFormElement::elements()

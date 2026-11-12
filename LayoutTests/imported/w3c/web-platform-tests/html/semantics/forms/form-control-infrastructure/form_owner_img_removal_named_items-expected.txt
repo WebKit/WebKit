@@ -1,0 +1,3 @@
+
+PASS Removing an img associated with a form that isn't its ancestor removes it from the form's named items
+
