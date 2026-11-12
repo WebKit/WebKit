@@ -199,8 +199,11 @@ static bool hasValidEndForSpanStart(const Style::GridPosition& end)
     );
 }
 
+// A stretch() answers to its fixed argument, which GFC would size as the box selected by box-sizing rather than the margin box.
 static bool gridItemHasValidWidth(const Style::PreferredSize& width)
 {
+    if (width.isStretchFunction())
+        return false;
     return WTF::switchOn(width,
         [&](const CSS::Keyword::Auto&) {
             return true;
@@ -227,6 +230,8 @@ static bool canComputeAutomaticSize(const RenderBox& gridItem)
 
 static bool gridItemHasValidHeight(const Style::PreferredSize& height)
 {
+    if (height.isStretchFunction())
+        return false;
     return WTF::switchOn(height,
         [](const CSS::Keyword::Auto&) {
             return true;
@@ -354,17 +359,18 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
     if (!renderGridStyle->alignContent().isNormal())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedAlignContent, reasons, reasonCollectionMode);
 
-    // GFC cannot yet resolve intrinsic (min-content/max-content/fit-content) sizing on the grid container itself.
-    if (renderGridStyle->minWidth().isIntrinsic())
+    // GFC cannot yet resolve intrinsic (min-content/max-content/fit-content) sizing on the grid container itself,
+    // and would size a stretch() as the box selected by box-sizing rather than the margin box.
+    if (renderGridStyle->minWidth().isIntrinsic() || renderGridStyle->minWidth().isStretchFunction())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedMinWidth, reasons, reasonCollectionMode);
 
-    if (renderGridStyle->maxWidth().isIntrinsic())
+    if (renderGridStyle->maxWidth().isIntrinsic() || renderGridStyle->maxWidth().isStretchFunction())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedMaxWidth, reasons, reasonCollectionMode);
 
-    if (renderGridStyle->minHeight().isIntrinsic())
+    if (renderGridStyle->minHeight().isIntrinsic() || renderGridStyle->minHeight().isStretchFunction())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedMinHeight, reasons, reasonCollectionMode);
 
-    if (renderGridStyle->maxHeight().isIntrinsic())
+    if (renderGridStyle->maxHeight().isIntrinsic() || renderGridStyle->maxHeight().isStretchFunction())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedMaxHeight, reasons, reasonCollectionMode);
 
     // If the contianer has an indefinite (e.g. auto) height and a row with a percentage,
@@ -431,19 +437,19 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedAutomaticBlockSizing, reasons, reasonCollectionMode);
 
         auto& minWidth = gridItemStyle->minWidth();
-        if (!minWidth.isFixed() && !minWidth.isAuto())
+        if ((!minWidth.isFixed() || minWidth.isStretchFunction()) && !minWidth.isAuto())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedMinWidth, reasons, reasonCollectionMode);
 
         auto& maxWidth = gridItemStyle->maxWidth();
-        if (!maxWidth.isFixed() && !maxWidth.isNone())
+        if ((!maxWidth.isFixed() || maxWidth.isStretchFunction()) && !maxWidth.isNone())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedMaxWidth, reasons, reasonCollectionMode);
 
         auto& minHeight = gridItemStyle->minHeight();
-        if (!minHeight.isFixed() && !minHeight.isAuto())
+        if ((!minHeight.isFixed() || minHeight.isStretchFunction()) && !minHeight.isAuto())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedMinHeight, reasons, reasonCollectionMode);
 
         auto& maxHeight = gridItemStyle->maxHeight();
-        if (!maxHeight.isFixed() && !maxHeight.isNone())
+        if ((!maxHeight.isFixed() || maxHeight.isStretchFunction()) && !maxHeight.isNone())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedMaxHeight, reasons, reasonCollectionMode);
 
         // These are the margin edges GridLayoutUtils::usedMarginsForAxis() can resolve.
