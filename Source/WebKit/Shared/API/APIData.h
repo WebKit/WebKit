@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include <wtf/Borrow.h>
 #include <wtf/Function.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -68,7 +69,7 @@ public:
     
     static Ref<Data> create(const Vector<unsigned char>& buffer)
     {
-        return create(buffer.span());
+        return create(borrow(buffer)->span());
     }
 
     static Ref<Data> create(Vector<unsigned char>&& vector)

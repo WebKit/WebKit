@@ -193,6 +193,7 @@
 #import <WebCore/WebEvent.h>
 #import <WebCore/WritingSuggestionData.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
+#import <wtf/Borrow.h>
 #import <wtf/CoroutineUtilities.h>
 #import <wtf/MathExtras.h>
 #import <wtf/RuntimeApplicationChecks.h>
@@ -336,13 +337,13 @@ bool WebPage::requiresPostLayoutDataForEditorState(const LocalFrame& frame) cons
 
 static void convertContentToRootView(const LocalFrameView& view, Vector<SelectionGeometry>& geometries)
 {
-    for (auto& geometry : geometries)
+    for (auto& geometry : borrow(geometries))
         geometry.setQuad(view.contentsToRootView(geometry.quad()));
 }
 
 static void convertContentToMainFrameView(const LocalFrameView& view, Vector<SelectionGeometry>& geometries)
 {
-    for (auto& geometry : geometries)
+    for (auto& geometry : borrow(geometries))
         geometry.setQuad(view.contentsToMainFrameView(geometry.quad()));
 }
 
@@ -516,7 +517,7 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
             rect = roundedIntRect(localRootView->convertToRootViewAcrossIsolatedFrames(FloatRect { rect }));
         };
         auto convertGeometries = [&](Vector<SelectionGeometry>& geometries) {
-            for (auto& geometry : geometries)
+            for (auto& geometry : borrow(geometries))
                 geometry.setQuad(localRootView->convertToRootViewAcrossIsolatedFrames(geometry.quad()));
         };
         convertRect(visualData.selectionClipRect);
@@ -1777,7 +1778,7 @@ void WebPage::extendSelectionForReplacement(CompletionHandler<void()>&& completi
     });
 
     std::optional<SimpleRange> rangeToSelect;
-    for (auto& markerRange : markerRanges) {
+    for (auto& markerRange : borrow(markerRanges)) {
         if (contains(makeVisiblePositionRange(markerRange), position)) {
             // In practice, dictation markers should only span a single text node, so it's sufficient to
             // grab the first matching range (instead of taking the union of all intersecting ranges).
@@ -2012,7 +2013,7 @@ void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vec
         { selectionBoundsInRootViewCoordinates.maxX() + marginForHitTestingSurroundingNodes, centerOfTargetBounds.y() }
     };
 
-    for (auto& location : exclusionHitTestLocations) {
+    for (auto& location : borrow(exclusionHitTestLocations)) {
         if (RefPtr nodeToExclude = clickableNonEditableNode(location))
             hitTestedNodes.remove(*nodeToExclude);
     }
@@ -2658,7 +2659,7 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
 
 void WebPage::performActionOnElements(uint32_t action, const Vector<WebCore::ElementContext>& elements)
 {
-    for (const auto& elementContext : elements) {
+    for (const auto& elementContext : borrow(elements)) {
         if (RefPtr element = elementForContext(elementContext))
             handleAnimationActions(*element, action);
     }
@@ -2786,7 +2787,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformationWitho
                 if (RefPtr label = dynamicDowncast<Element>(labels->item(index)); label && label->renderer())
                     associatedLabels.append(*label);
             }
-            for (auto& labelElement : associatedLabels) {
+            for (auto& labelElement : borrow(associatedLabels)) {
                 auto text = labelElement->innerText();
                 if (!text.isEmpty()) {
                     information.label = WTF::move(text);
@@ -3703,7 +3704,7 @@ void WebPage::updateLayoutViewportHeightExpansionTimerFired()
 
                 ancestorsForHitTestedNode.append(*parent);
             }
-            for (auto& ancestor : ancestorsForHitTestedNode)
+            for (auto& ancestor : borrow(ancestorsForHitTestedNode))
                 elementsOutsideOfAnyLargeViewportConstrainedContainers.add(ancestor);
         }
         return false;
@@ -4415,7 +4416,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& requ
                     absoluteRects.append({ });
             }
 
-            for (auto& absoluteRect : absoluteRects)
+            for (auto& absoluteRect : borrow(absoluteRects))
                 rects.append({ protect(iterator.range().start.document().view())->contentsToMainFrameView(absoluteRect), { offsetSoFar++, 1 } });
 
             lastTextRange = iterator.range();

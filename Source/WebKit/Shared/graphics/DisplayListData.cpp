@@ -30,6 +30,7 @@
 
 #include "SharedFont.h"
 #include <WebCore/DisplayListRecorderImpl.h>
+#include <wtf/Borrow.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
@@ -174,7 +175,7 @@ static std::optional<Vector<Ref<const FontBase>>> createFonts(const Vector<FontC
     }
 
     Vector<Ref<const FontBase>> fonts(ReserveCapacityTag { }, fontData.size());
-    for (auto& data : fontData) {
+    for (auto& data : borrow(fontData)) {
         RefPtr<FontCustomPlatformData> customFont;
         if (data.customFontIndex) {
             if (*data.customFontIndex >= customFonts.size())
@@ -206,16 +207,16 @@ RefPtr<const DisplayList::DisplayList> DisplayListData::createDisplayList(bool s
         return nullptr;
 
     Vector<Ref<const DisplayList::DisplayList>> displayLists(ReserveCapacityTag { }, m_bottomUpDisplayLists.size());
-    for (auto& dataItems : m_bottomUpDisplayLists) {
+    for (auto& dataItems : borrow(m_bottomUpDisplayLists)) {
         Vector<DisplayList::Item> items(ReserveCapacityTag { }, dataItems.size());
-        for (auto& dataItem : dataItems) {
+        for (auto& dataItem : borrow(dataItems)) {
             if (auto* item = std::get_if<DisplayList::DrawFilteredImageBuffer>(&dataItem); item && !item->filter().effectsOfType(FilterFunction::Type::FEImage).isEmpty())
                 return nullptr;
             WTF::switchOn(dataItem, [&](auto& item) {
                 items.constructAndAppend(WTF::InPlaceType<std::decay_t<decltype(item)>>, WTF::move(item));
             });
         }
-        RefPtr displayList = DisplayList::DisplayList::createResolvingResources(WTF::move(items), fonts->span(), displayLists.span());
+        RefPtr displayList = DisplayList::DisplayList::createResolvingResources(WTF::move(items), borrow(*fonts)->span(), borrow(displayLists)->span());
         if (!displayList)
             return nullptr;
         displayLists.append(displayList.releaseNonNull());

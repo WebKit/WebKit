@@ -68,7 +68,7 @@ std::optional<::WebGPU::VertexState> ConvertFromBackingContext::convertFromBacki
     for (size_t i = 0; i < buffers->size(); ++i) {
         auto& backingBuffer = buffers[i];
         if (backingBuffer) {
-            auto buffer = convertFromBacking(*backingBuffer, storage.vertexAttributes[i]);
+            auto buffer = convertFromBacking(*backingBuffer, borrow(storage.vertexAttributes)[i]);
             if (!buffer)
                 return std::nullopt;
             storage.vertexBuffers.append(WTF::move(*buffer));

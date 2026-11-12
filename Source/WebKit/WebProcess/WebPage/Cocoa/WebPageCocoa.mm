@@ -3847,7 +3847,7 @@ void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID
         auto highlightColor = Color::transparentBlack;
 #endif
         if (RefPtr view = updatedNode->document().frame()->view()) {
-            for (auto& quad : quads)
+            for (auto& quad : borrow(quads))
                 quad = view->contentsToMainFrameView(quad);
         }
 

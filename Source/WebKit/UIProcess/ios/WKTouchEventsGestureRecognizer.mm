@@ -35,6 +35,7 @@
 #import <numbers>
 #import <objc/message.h>
 #import <objc/runtime.h>
+#import <wtf/Borrow.h>
 #import <wtf/RetainPtr.h>
 
 static constexpr CGFloat singleTapMovementThreshold = 45;
@@ -101,7 +102,7 @@ static unsigned incrementingTouchIdentifier = 1;
 {
     if (_wasExplicitlyCancelled && (_lastTouchEvent.type == WebKit::WKTouchEventType::Begin || _lastTouchEvent.type == WebKit::WKTouchEventType::Change)) {
         _lastTouchEvent.type = WebKit::WKTouchEventType::Cancel;
-        for (auto& touchPoint : _lastTouchEvent.touchPoints)
+        for (auto& touchPoint : borrow(_lastTouchEvent.touchPoints))
             touchPoint.phase = UITouchPhaseCancelled;
         [self performAction];
     }

@@ -492,9 +492,9 @@ static bool canWrapInspectedView(NSView *view)
 static void reactivateConstraintsPlacingView(NSView *view)
 {
     auto constraints = constraintsPlacingView(view);
-    for (auto& constraint : constraints)
+    for (auto& constraint : borrow(constraints))
         [constraint setActive:NO];
-    for (auto& constraint : constraints)
+    for (auto& constraint : borrow(constraints))
         [constraint setActive:YES];
 }
 
@@ -509,7 +509,7 @@ static void restoreAutoLayout(NSView *view, NSAutoresizingMaskOptions autoresizi
 static void restoreAutoLayoutElsewhere(NSView *view, NSAutoresizingMaskOptions autoresizingMask, const Vector<SavedConstraint>& originalConstraints)
 {
     restoreAutoLayout(view, autoresizingMask);
-    for (auto& savedConstraint : originalConstraints) {
+    for (auto& savedConstraint : borrow(originalConstraints)) {
         if (savedConstraint.appChangedActivation)
             continue;
         if (savedConstraint.firstItem.get().get() == view && (isSingleItemConstraint(savedConstraint) || savedConstraint.secondItem.get().get() == view))
@@ -565,14 +565,14 @@ static void restoreAutoLayoutElsewhere(NSView *view, NSAutoresizingMaskOptions a
     if (arrangedSubviewPosition)
         insertIntoArrangedSubviews(self, superview.get(), *arrangedSubviewPosition);
 
-    for (auto& savedConstraint : _inspectedViewConstraints)
+    for (auto& savedConstraint : borrow(_inspectedViewConstraints))
         [savedConstraint.constraint setActive:NO];
     [self _startObservingInspectedViewConstraints];
     inspectedView.translatesAutoresizingMaskIntoConstraints = YES;
     inspectedView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
     inspectedView.frame = self.bounds;
     [self addSubview:inspectedView];
-    for (auto& constraint : _containerConstraints)
+    for (auto& constraint : borrow(_containerConstraints))
         [constraint setActive:YES];
 
     return self;
@@ -594,7 +594,7 @@ static void restoreAutoLayoutElsewhere(NSView *view, NSAutoresizingMaskOptions a
 // value stays the same.
 - (void)_startObservingInspectedViewConstraints
 {
-    for (auto& savedConstraint : _inspectedViewConstraints)
+    for (auto& savedConstraint : borrow(_inspectedViewConstraints))
         [savedConstraint.constraint addObserver:self forKeyPath:@"active" options:0 context:kSavedConstraintActivationObserverContext];
     _isObservingInspectedViewConstraints = YES;
 }
@@ -603,7 +603,7 @@ static void restoreAutoLayoutElsewhere(NSView *view, NSAutoresizingMaskOptions a
 {
     if (!std::exchange(_isObservingInspectedViewConstraints, NO))
         return;
-    for (auto& savedConstraint : _inspectedViewConstraints)
+    for (auto& savedConstraint : borrow(_inspectedViewConstraints))
         [savedConstraint.constraint removeObserver:self forKeyPath:@"active" context:kSavedConstraintActivationObserverContext];
 }
 
@@ -614,7 +614,7 @@ static void restoreAutoLayoutElsewhere(NSView *view, NSAutoresizingMaskOptions a
         return;
     }
 
-    for (auto& savedConstraint : _inspectedViewConstraints) {
+    for (auto& savedConstraint : borrow(_inspectedViewConstraints)) {
         if (savedConstraint.constraint.get() == object)
             savedConstraint.appChangedActivation = true;
     }
@@ -641,17 +641,17 @@ static void restoreAutoLayoutElsewhere(NSView *view, NSAutoresizingMaskOptions a
         if ([constraint isMemberOfClass:NSLayoutConstraint.class])
             appConstraints.append(constraint);
     }
-    for (auto& constraint : appConstraints)
+    for (auto& constraint : borrow(appConstraints))
         [constraint setActive:NO];
 
     RetainPtr<NSView> previousView = self;
-    for (auto& subview : appSubviews) {
+    for (auto& subview : borrow(appSubviews)) {
         [subview setFrame:[self convertRect:[subview frame] toView:superview]];
         [superview addSubview:subview.get() positioned:NSWindowAbove relativeTo:previousView.get()];
         previousView = subview;
     }
 
-    for (auto& constraint : appConstraints) {
+    for (auto& constraint : borrow(appConstraints)) {
         RetainPtr firstItem = [constraint firstItem];
         RetainPtr secondItem = [constraint secondItem];
         if (firstItem.get() == self || secondItem.get() == self)
@@ -701,7 +701,7 @@ static void restoreAutoLayoutElsewhere(NSView *view, NSAutoresizingMaskOptions a
         insertIntoArrangedSubviews(inspectedView.get(), superview.get(), *arrangedSubviewPosition);
 
     reactivateConstraintsPlacingView(inspectedView.get());
-    for (auto& savedConstraint : inspectedViewConstraints) {
+    for (auto& savedConstraint : borrow(inspectedViewConstraints)) {
         // The app may have removed or released a view that the constraint refers to while the inspector was attached.
         if (!savedConstraint.appChangedActivation && canActivateConstraint(savedConstraint))
             [savedConstraint.constraint setActive:YES];

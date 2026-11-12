@@ -32,6 +32,7 @@
 #include "MessageLog.h"
 #include "StreamConnectionWorkQueue.h"
 #include <mutex>
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace IPC {
@@ -371,7 +372,7 @@ bool StreamServerConnection::dispatchStreamMessage(Decoder& message, StreamMessa
 
 void StreamServerConnection::dispatchDidReceiveInvalidMessage(Decoder& message)
 {
-    CheckedPtr { m_client }->didReceiveInvalidMessage(*this, message.messageName(), message.indicesOfObjectsFailingDecoding());
+    CheckedPtr { m_client }->didReceiveInvalidMessage(*this, message.messageName(), borrow(message)->indicesOfObjectsFailingDecoding());
     invalidate();
 }
 

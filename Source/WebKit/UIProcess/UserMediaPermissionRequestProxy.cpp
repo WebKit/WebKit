@@ -32,6 +32,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebKit {
@@ -110,9 +111,9 @@ void UserMediaPermissionRequestProxy::applyDeviceSelection(const String& audioDe
     m_selectedDeviceUIDs = { audioDeviceUID, videoDeviceUID };
     m_deviceSelectionWasExplicit = true;
 
-    if (!audioDeviceUID.isEmpty() && !moveDeviceToFront(m_eligibleAudioDevices.mutableSpan(), hasPersistentID(audioDeviceUID)))
+    if (!audioDeviceUID.isEmpty() && !moveDeviceToFront(borrow(m_eligibleAudioDevices)->mutableSpan(), hasPersistentID(audioDeviceUID)))
         RELEASE_LOG(WebRTC, "UserMediaPermissionRequestProxy::applyDeviceSelection: the chosen microphone is not eligible");
-    if (!videoDeviceUID.isEmpty() && !moveDeviceToFront(m_eligibleVideoDevices.mutableSpan(), hasPersistentID(videoDeviceUID)))
+    if (!videoDeviceUID.isEmpty() && !moveDeviceToFront(borrow(m_eligibleVideoDevices)->mutableSpan(), hasPersistentID(videoDeviceUID)))
         RELEASE_LOG(WebRTC, "UserMediaPermissionRequestProxy::applyDeviceSelection: the chosen camera is not eligible");
 #else
     UNUSED_PARAM(audioDeviceUID);
@@ -132,8 +133,8 @@ void UserMediaPermissionRequestProxy::preferDevices(const DeviceUIDs& deviceUIDs
     m_selectedDeviceUIDs = deviceUIDs;
     m_deviceSelectionWasExplicit = false;
 
-    moveDeviceToFront(m_eligibleAudioDevices.mutableSpan().first(std::min<size_t>(bestMatchingCounts.audio, m_eligibleAudioDevices.size())), hasPersistentID(deviceUIDs.audioDeviceUID));
-    moveDeviceToFront(m_eligibleVideoDevices.mutableSpan().first(std::min<size_t>(bestMatchingCounts.video, m_eligibleVideoDevices.size())), hasPersistentID(deviceUIDs.videoDeviceUID));
+    moveDeviceToFront(borrow(m_eligibleAudioDevices)->mutableSpan().first(std::min<size_t>(bestMatchingCounts.audio, m_eligibleAudioDevices.size())), hasPersistentID(deviceUIDs.audioDeviceUID));
+    moveDeviceToFront(borrow(m_eligibleVideoDevices)->mutableSpan().first(std::min<size_t>(bestMatchingCounts.video, m_eligibleVideoDevices.size())), hasPersistentID(deviceUIDs.videoDeviceUID));
 }
 
 void UserMediaPermissionRequestProxy::reapplyDeviceSelection(BestMatchingDeviceCounts bestMatchingCounts)
@@ -143,8 +144,8 @@ void UserMediaPermissionRequestProxy::reapplyDeviceSelection(BestMatchingDeviceC
         return;
     }
 
-    moveDeviceToFront(m_eligibleAudioDevices.mutableSpan(), hasPersistentID(m_selectedDeviceUIDs.audioDeviceUID));
-    moveDeviceToFront(m_eligibleVideoDevices.mutableSpan(), hasPersistentID(m_selectedDeviceUIDs.videoDeviceUID));
+    moveDeviceToFront(borrow(m_eligibleAudioDevices)->mutableSpan(), hasPersistentID(m_selectedDeviceUIDs.audioDeviceUID));
+    moveDeviceToFront(borrow(m_eligibleVideoDevices)->mutableSpan(), hasPersistentID(m_selectedDeviceUIDs.videoDeviceUID));
 }
 #endif
 

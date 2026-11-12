@@ -1570,7 +1570,7 @@ void NetworkSessionCocoa::invalidateAndCancel()
     for (auto& sessionSet : m_perPageSessionSets.values())
         invalidateAndCancelSessionSet(sessionSet.get());
 
-    for (auto& sessionWrapper : m_replacedSessionWrappers) {
+    for (auto& sessionWrapper : borrow(m_replacedSessionWrappers)) {
         [sessionWrapper->session invalidateAndCancel];
         [sessionWrapper->delegate sessionInvalidated];
     }
@@ -2177,7 +2177,7 @@ bool NetworkSessionCocoa::proxyConfigurationRequiresTCPProtocols() const
 void NetworkSessionCocoa::applyProxyConfigurationToNWParametersForWebTransport(nw_parameters_t parameters)
 {
     if (!m_nwProxyConfigs.isEmpty()) {
-        for (auto& proxyConfig : m_nwProxyConfigs) {
+        for (auto& proxyConfig : borrow(m_nwProxyConfigs)) {
             if (!isProxyTypeTCPOnly(proxyConfig.get()))
                 nw_parameters_add_custom_proxy_config(parameters, proxyConfig.get());
         }

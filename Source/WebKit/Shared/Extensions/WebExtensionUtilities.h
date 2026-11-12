@@ -34,6 +34,7 @@
 #else
 #include <JavaScriptCore/JavaScript.h>
 #endif
+#include <wtf/Borrow.h>
 #include <wtf/Function.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Markable.h>
@@ -95,14 +96,14 @@ JSObjectRef toWebAPI(JSContextRef context, const Vector<T>& data)
 
     auto globalContext = JSContextGetGlobalContext(context);
     Vector<Protected<JSValueRef>> convertedData;
-    for (auto& value : data)
+    for (auto& value : borrow(data))
         convertedData.append(Protected(globalContext, toWebAPI(context, value)));
 
     auto rawData = convertedData.map([](const Protected<JSValueRef>& ptr) {
         return ptr.get();
     });
 
-    JSObjectRef array = JSObjectMakeArray(context, rawData.size(), rawData.span().data(), nullptr);
+    JSObjectRef array = JSObjectMakeArray(context, rawData.size(), borrow(rawData)->span().data(), nullptr);
     return array;
 }
 

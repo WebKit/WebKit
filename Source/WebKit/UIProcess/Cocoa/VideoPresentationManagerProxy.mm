@@ -1780,7 +1780,7 @@ RefPtr<PlatformVideoPresentationInterface> VideoPresentationManagerProxy::bestVi
     RefPtr<WebCore::PlatformVideoPresentationInterface> largestVisibleVideo;
     constexpr auto minimumViewportRatioForLargestMediaElement = 0.25;
     float minimumAreaForLargestElement = minimumViewportRatioForLargestMediaElement * unobscuredArea;
-    for (auto& candidate : candidates) {
+    for (auto& candidate : borrow(candidates)) {
         RetainPtr candidateLayer = candidate->playerLayer();
         if (!candidateLayer)
             continue;

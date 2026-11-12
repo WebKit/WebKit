@@ -37,6 +37,7 @@
 #import <algorithm>
 #import <cmath>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
@@ -376,7 +377,7 @@ static void pinToWidthOfStack(NSView *view, NSStackView *stack)
     // devices can have the same label.
     auto& devices = _model.devices(type);
     RetainPtr menu = adoptNS([[NSMenu alloc] init]);
-    for (auto& device : devices) {
+    for (auto& device : borrow(devices)) {
         RetainPtr title = device.label().createNSString();
         RetainPtr item = adoptNS([[NSMenuItem alloc] initWithTitle:title.get() action:nil keyEquivalent:@""]);
         [item setToolTip:title.get()];

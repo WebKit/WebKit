@@ -85,7 +85,7 @@ void WebExtensionAPIStorageArea::get(WebPageProxyIdentifier webPageProxyIdentifi
             return;
         }
 
-        for (const auto& key : keysWithDefaultValues->keys())
+        for (const auto& key : borrow(keysWithDefaultValues->keys()))
             keysVector.append(key);
     }
 

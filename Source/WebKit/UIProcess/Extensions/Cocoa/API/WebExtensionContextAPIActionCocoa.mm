@@ -37,6 +37,8 @@
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionUtilities.h"
 
+#import <wtf/Borrow.h>
+
 namespace WebKit {
 
 static std::optional<String> invalidIconPathMessage(WebExtensionContext& context, const String& path)
@@ -166,7 +168,7 @@ void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifi
         }
     }
 
-    for (auto& iconPath : iconPaths) {
+    for (auto& iconPath : borrow(iconPaths)) {
         if (auto message = invalidIconPathMessage(*this, iconPath)) {
             completionHandler(toWebExtensionError(apiName, @"path", message.value()));
             return;

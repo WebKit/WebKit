@@ -31,6 +31,7 @@
 #import <WebCore/CocoaBezierPath.h>
 #import <WebCore/Path.h>
 #import <WebCore/PathUtilities.h>
+#import <wtf/Borrow.h>
 #import <wtf/RetainPtr.h>
 
 static void setNeedsDisplay(CocoaView *view)
@@ -146,7 +147,7 @@ static void addLineToPoint(CocoaBezierPath *path, const WebCore::FloatPoint& poi
     [super setFrame:viewFrame];
 
     _innerFrames = WTF::move(frames);
-    for (auto& frame : _innerFrames)
+    for (auto& frame : borrow(_innerFrames))
         frame.moveBy(-viewFrame.location());
 
     setNeedsDisplay(self);
@@ -183,7 +184,7 @@ static void addLineToPoint(CocoaBezierPath *path, const WebCore::FloatPoint& poi
     [super setFrame:viewFrame];
 
     _innerQuads = WTF::move(quads);
-    for (auto& quad : _innerQuads)
+    for (auto& quad : borrow(_innerQuads))
         quad.move(-viewFrame.x(), -viewFrame.y());
 
     setNeedsDisplay(self);
@@ -210,7 +211,7 @@ static void addLineToPoint(CocoaBezierPath *path, const WebCore::FloatPoint& poi
         auto corePath = WebCore::PathUtilities::pathWithShrinkWrappedRects(_innerFrames, _cornerRadii);
         appendPath(path, [CocoaBezierPath bezierPathWithCGPath:protect(corePath.platformPath())]);
     } else {
-        for (auto& quad : _innerQuads) {
+        for (auto& quad : borrow(_innerQuads)) {
             RetainPtr subpath = [CocoaBezierPath bezierPath];
             [subpath moveToPoint:quad.p1()];
             addLineToPoint(subpath, quad.p2());

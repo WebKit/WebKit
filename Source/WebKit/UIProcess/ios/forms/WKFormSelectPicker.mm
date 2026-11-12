@@ -41,6 +41,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <numbers>
 #import <pal/system/ios/UserInterfaceIdiom.h>
+#import <wtf/Borrow.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -579,7 +580,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     NSInteger optionIndex = 0;
     RetainPtr view = _view.get();
-    for (auto& option : [view focusedSelectElementOptions]) {
+    for (auto& option : borrow([view focusedSelectElementOptions])) {
         if (option.isGroup)
             continue;
 
@@ -983,7 +984,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     _collapsedSections = adoptNS([[NSMutableSet alloc] init]);
 
     _numberOfSections = 1;
-    for (auto& option : protect(_contentView).get().focusedSelectElementOptions) {
+    for (auto& option : borrow([protect(_contentView) focusedSelectElementOptions])) {
         if (option.isGroup)
             _numberOfSections++;
     }
@@ -1013,7 +1014,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 - (NSInteger)numberOfRowsInGroup:(NSInteger)groupID
 {
     NSInteger rowCount = 0;
-    for (auto& option : [protect(_contentView) focusedSelectElementOptions]) {
+    for (auto& option : borrow([protect(_contentView) focusedSelectElementOptions])) {
         if (option.isGroup)
             continue;
 
@@ -1065,7 +1066,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
         return nil;
 
     NSInteger groupCount = 0;
-    for (auto& option : [protect(_contentView) focusedSelectElementOptions]) {
+    for (auto& option : borrow([protect(_contentView) focusedSelectElementOptions])) {
         if (!option.isGroup)
             continue;
 
@@ -1127,7 +1128,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     int optionIndex = 0;
     int rowIndex = 0;
 
-    for (auto& option : [protect(_contentView) focusedSelectElementOptions]) {
+    for (auto& option : borrow([protect(_contentView) focusedSelectElementOptions])) {
         if (option.isGroup) {
             rowIndex = 0;
             continue;
@@ -1146,7 +1147,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 - (OptionItem *)optionItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger index = 0;
-    for (auto& option : [protect(_contentView) focusedSelectElementOptions]) {
+    for (auto& option : borrow([protect(_contentView) focusedSelectElementOptions])) {
         if (option.isGroup || option.parentGroupID != indexPath.section)
             continue;
 
@@ -1355,7 +1356,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSInteger currentRow = 0;
     NSInteger totalRows = 0;
 
-    for (auto& option : [_view.get() focusedSelectElementOptions]) {
+    for (auto& option : borrow([_view.get() focusedSelectElementOptions])) {
         if (option.isGroup) {
             currentSection++;
             currentRow = 0;

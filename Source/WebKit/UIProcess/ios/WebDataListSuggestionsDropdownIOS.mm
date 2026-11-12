@@ -36,6 +36,7 @@
 #import "WKWebViewPrivateForTesting.h"
 #import "WebPageProxy.h"
 #import <pal/system/ios/UserInterfaceIdiom.h>
+#import <wtf/Borrow.h>
 
 static const CGFloat maxVisibleSuggestions = 5;
 static const CGFloat suggestionsPopoverCellHeight = 44;
@@ -197,7 +198,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 {
     NSMutableArray *suggestions = [NSMutableArray array];
 
-    for (const auto& suggestion : _suggestions) {
+    for (const auto& suggestion : borrow(_suggestions)) {
         [suggestions addObject:[WKDataListTextSuggestion textSuggestionWithInputText:suggestion.value.createNSString().get()]];
         if (suggestions.count == 3)
             break;

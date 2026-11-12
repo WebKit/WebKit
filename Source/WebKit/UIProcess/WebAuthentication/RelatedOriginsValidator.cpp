@@ -62,7 +62,7 @@ void RelatedOriginsValidation::validate(WebPageProxy& page, Vector<WebCore::Secu
         Borrow borrowedBody = result.body;
         auto origins = WebCore::parseOriginsFromWellKnownList(borrowedBody->span(), webAuthnOriginsMember);
         bool allFound = !originsToCheck.isEmpty();
-        for (auto& originToCheck : originsToCheck) {
+        for (auto& originToCheck : borrow(originsToCheck)) {
             auto found = WebCore::findOriginInWellKnownList(originToCheck, borrowedBody->span(), webAuthnOriginsMember);
             if (found == WebCore::WellKnownOriginListResult::Malformed)
                 RELEASE_LOG_ERROR(WebAuthn, "Related origins: well-known resource is malformed.");

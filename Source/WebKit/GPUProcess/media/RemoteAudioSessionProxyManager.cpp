@@ -36,6 +36,7 @@
 #include <WebCore/AudioSession.h>
 #include <WebCore/CoreAudioCaptureSource.h>
 #include <WebCore/PlatformMediaSessionManager.h>
+#include <wtf/Borrow.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -328,7 +329,7 @@ void RemoteAudioSessionProxyManager::endCapturePreview()
     if (!hasActiveProxy())
         AudioSession::singleton().tryToSetActive(false)->whenSettled(RunLoop::mainSingleton(), [](auto&&) { });
 
-    for (auto& handler : activationHandlers)
+    for (auto& handler : borrow(activationHandlers))
         handler();
 }
 #endif

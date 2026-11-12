@@ -33,6 +33,7 @@
 #include <utility>
 #include <variant>
 #include <wtf/ArgumentCoder.h>
+#include <wtf/Borrow.h>
 #include <wtf/Box.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Forward.h>
@@ -516,7 +517,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     template<typename Encoder>
     static void encode(Encoder& encoder, const Vector<T, inlineCapacity, OverflowHandler, minCapacity>& vector)
     {
-        encoder << vector.span();
+        encoder << borrow(vector)->span();
     }
 
     template<typename Decoder>

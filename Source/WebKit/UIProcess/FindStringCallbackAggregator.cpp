@@ -33,6 +33,8 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
+#include <wtf/Borrow.h>
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -53,7 +55,7 @@ void FindStringCallbackAggregator::foundString(std::optional<FrameIdentifier> fr
 
 void FindStringCallbackAggregator::foundMatchCountsByFrame(Vector<std::pair<FrameIdentifier, uint32_t>>&& counts)
 {
-    for (auto& [frameID, count] : counts)
+    for (auto& [frameID, count] : borrow(counts))
         m_matchCountsByFrame.set(frameID, count);
 }
 

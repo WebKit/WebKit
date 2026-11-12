@@ -31,6 +31,7 @@
 #import "UIKitSPI.h"
 #import <WebCore/ElementContext.h>
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
@@ -45,7 +46,7 @@ static inline NSRange toNSRange(DocumentEditingContext::Range range)
 template <typename ContextType>
 void setOptionalEditingContextProperties(const DocumentEditingContext& context, ContextType *platformContext, OptionSet<DocumentEditingContextRequest::Options> options)
 {
-    for (auto& rect : context.textRects)
+    for (auto& rect : borrow(context.textRects))
         [platformContext addTextRect:rect.rect forCharacterRange:toNSRange(rect.range)];
 
     [platformContext setAnnotatedText:context.annotatedText.nsAttributedString().get()];

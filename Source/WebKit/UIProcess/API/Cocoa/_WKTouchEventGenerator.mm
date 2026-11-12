@@ -33,6 +33,7 @@
 #import <numbers>
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/Assertions.h>
+#import <wtf/Borrow.h>
 #import <wtf/IndexedRange.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
@@ -288,7 +289,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 - (void)touchDown:(CGPoint)location touchCount:(NSUInteger)touchCount window:(UIWindow *)window
 {
     Vector<CGPoint, HIDMaxTouchCount> locations(FillWith { }, std::min(touchCount, HIDMaxTouchCount), location);
-    [self touchDownAtPoints:locations.mutableSpan().data() touchCount:locations.size() window:window];
+    [self touchDownAtPoints:borrow(locations)->mutableSpan().data() touchCount:locations.size() window:window];
 }
 
 - (void)liftUpAtPoints:(CGPoint*)rawLocations touchCount:(NSUInteger)touchCount window:(UIWindow *)window
@@ -312,7 +313,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 - (void)liftUp:(CGPoint)location touchCount:(NSUInteger)touchCount window:(UIWindow *)window
 {
     Vector<CGPoint, HIDMaxTouchCount> locations(FillWith { }, std::min(touchCount, HIDMaxTouchCount), location);
-    [self liftUpAtPoints:locations.mutableSpan().data() touchCount:locations.size() window:window];
+    [self liftUpAtPoints:borrow(locations)->mutableSpan().data() touchCount:locations.size() window:window];
 }
 
 - (void)moveToPoints:(CGPoint*)rawNewLocations touchCount:(NSUInteger)touchCount duration:(NSTimeInterval)seconds window:(UIWindow *)window
@@ -337,7 +338,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
             nextLocations[i] = calculateNextCurveLocation(startLocations[i], newLocations[i], interval);
         }
-        [self _updateTouchPoints:nextLocations window:window];
+        [self _updateTouchPoints:borrow(nextLocations)->mutableSpan() window:window];
 
         delayBetweenMove(eventIndex++, elapsed);
     }

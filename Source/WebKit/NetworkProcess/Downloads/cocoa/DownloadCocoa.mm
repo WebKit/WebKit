@@ -34,6 +34,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSProgressSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/FileSystem.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -186,7 +187,7 @@ void Download::platformCancelNetworkLoad(CompletionHandler<void(std::span<const 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
             updatedResumeData = updateResumeDataWithPlaceholderURL(placeholderURL.get(), updatedResumeData.span());
 #endif
-            completionHandler(updatedResumeData.span());
+            completionHandler(borrow(updatedResumeData)->span());
         });
     }).get()];
 }

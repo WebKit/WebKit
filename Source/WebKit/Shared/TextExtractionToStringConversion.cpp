@@ -1295,7 +1295,7 @@ static std::optional<std::pair<String, String>> recognizedDataAttributeForItem(c
     if (!itemLacksLabelingAttributes(item))
         return std::nullopt;
 
-    if (item.children.size() != 1 || !isUninformativeImage(item.children[0], item, nullptr, aggregator))
+    if (item.children.size() != 1 || !isUninformativeImage(borrow(item.children)[0], item, nullptr, aggregator))
         return std::nullopt;
 
 #if PLATFORM(COCOA)
@@ -1303,7 +1303,7 @@ static std::optional<std::pair<String, String>> recognizedDataAttributeForItem(c
 
     std::optional<std::pair<String, String>> bestCandidate;
     double bestFraction = 0.5;
-    for (auto& candidate : item.dataAttributeCandidates) {
+    for (auto& candidate : borrow(item.dataAttributeCandidates)) {
         auto fraction = tokenizer.recognizedFraction(candidate.second);
         if (!fraction || *fraction <= bestFraction)
             continue;
@@ -2350,7 +2350,7 @@ static TextExtraction::Item mergeTextItems(std::span<const TextExtraction::Item>
             return CharacterRange { location + mergedContent.length(), range.length };
         };
 
-        for (auto& [url, range] : textData.links)
+        for (auto& [url, range] : borrow(textData.links))
             mergedData.links.append({ url, shiftedRange(range) });
 
         if (!mergedData.selectedRange && textData.selectedRange)

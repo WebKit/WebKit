@@ -34,6 +34,7 @@
 #import <WebCore/DragItem.h>
 #import <WebCore/LocalCurrentTraitCollection.h>
 #import <WebCore/NativeImage.h>
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
@@ -182,7 +183,7 @@ std::optional<DragSourceState> DragDropInteractionState::activeDragSourceForItem
         return std::nullopt;
 
     auto identifier = [(NSNumber *)item.privateLocalContext integerValue];
-    for (auto& source : m_activeDragSources) {
+    for (auto& source : borrow(m_activeDragSources)) {
         if (source.itemIdentifier == identifier)
             return source;
     }
@@ -411,7 +412,7 @@ void DragDropInteractionState::setElementIdentifier(const std::optional<NodeIden
 void DragDropInteractionState::dragAndDropSessionsDidBecomeInactive()
 {
     auto previewViewsToRemove = takePreviewViewsForDragCancel();
-    for (auto& previewView : previewViewsToRemove)
+    for (auto& previewView : borrow(previewViewsToRemove))
         [previewView removeFromSuperview];
 
     // If any of UIKit's completion blocks are still in-flight when the drag interaction ends, we need to ensure that they are still invoked
@@ -425,7 +426,7 @@ void DragDropInteractionState::dragAndDropSessionsDidBecomeInactive()
 
 void DragDropInteractionState::updatePreviewsForActiveDragSources()
 {
-    for (auto& source : m_activeDragSources) {
+    for (auto& source : borrow(m_activeDragSources)) {
         if (!canUpdatePreviewForActiveDragSource(source))
             continue;
 

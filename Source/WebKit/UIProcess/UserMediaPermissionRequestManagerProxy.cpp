@@ -1112,7 +1112,7 @@ static void moveDeviceWithCapabilitiesToFrontOfKind(Vector<CaptureDeviceWithCapa
     if (index == notFound || index <= firstOfKindIndex)
         return;
 
-    auto device = WTF::move(devices[index]);
+    auto device = WTF::move(borrow(devices)[index]);
     devices.removeAt(index);
     devices.insert(firstOfKindIndex, WTF::move(device));
 }

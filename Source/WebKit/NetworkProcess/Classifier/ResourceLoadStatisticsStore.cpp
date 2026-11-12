@@ -1335,7 +1335,7 @@ void ResourceLoadStatisticsStore::insertDomainRelationshipList(const String& sta
     }
 
     for (size_t i = 0; i < ensuredDomains.size(); ++i) {
-        if (insertRelationshipStatement->bindText(domainBindStart + static_cast<int>(i), ensuredDomains[i].string()) != SQLITE_OK) {
+        if (insertRelationshipStatement->bindText(domainBindStart + static_cast<int>(i), borrow(ensuredDomains)[i].string()) != SQLITE_OK) {
             ITP_RELEASE_LOG_DATABASE_ERROR("insertDomainRelationshipList: failed to bind domain");
             return;
         }

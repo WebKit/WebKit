@@ -345,7 +345,7 @@ static void forEachLocalOrProvisionalFrame(Page& page, NOESCAPE const Function<v
             frames.append(localFrame.releaseNonNull());
     }
 
-    for (auto& frame : frames)
+    for (auto& frame : borrow(frames))
         function(frame);
 }
 

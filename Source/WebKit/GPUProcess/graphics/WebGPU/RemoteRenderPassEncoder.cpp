@@ -32,6 +32,7 @@
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUCppAPI.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -203,7 +204,7 @@ void RemoteRenderPassEncoder::executeBundles(Vector<WebGPUIdentifier>&& renderBu
             return;
         convertedBundles.append(protect(*convertedBundle));
     }
-    protect(m_backing)->executeBundles(convertedBundles.span());
+    protect(m_backing)->executeBundles(borrow(convertedBundles)->span());
 }
 
 void RemoteRenderPassEncoder::end()

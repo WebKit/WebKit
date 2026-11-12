@@ -48,6 +48,7 @@
 #include <WebCore/SVGFilterRenderer.h>
 #include <WebCore/SVGUnitTypes.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/Borrow.h>
 #include <wtf/text/MakeString.h>
 
 #if ENABLE(APPLE_PAY)
@@ -183,7 +184,7 @@ static void testValueItems(Tester& tester)
     items.append(DisplayList::DrawFocusRingPath { testPath(), 2, Color::blue, 1.5 });
     items.append(DisplayList::DrawFocusRingRects { Vector<FloatRect> { rect, { 5, 6, 7, 8 } }, 3, Color::red, 2 });
     items.append(DisplayList::DrawLine { { 1, 2 }, { 3, 4 } });
-    items.append(DisplayList::DrawLinesForText { { 1, 2 }, lineSegments.span(), 3, true, true, StrokeStyle::DashedStroke });
+    items.append(DisplayList::DrawLinesForText { { 1, 2 }, borrow(lineSegments)->span(), 3, true, true, StrokeStyle::DashedStroke });
     items.append(DisplayList::DrawPath { testPath() });
     items.append(DisplayList::DrawRect { rect, 3 });
     items.constructAndAppend(WTF::InPlaceType<DisplayList::EndTransparencyLayer>);
@@ -314,10 +315,10 @@ static DisplayList::DrawGlyphs drawGlyphs(const FontBase& font, const String& te
     auto characters = upconvertedCharacters.span();
     RetainPtr ctFont = font.ctFont();
     Vector<GlyphBufferGlyph> glyphs(FillWith { }, characters.size(), 0);
-    CTFontGetGlyphsForCharacters(ctFont.get(), reinterpret_cast<const UniChar*>(characters.data()), glyphs.mutableSpan().data(), glyphs.size());
+    CTFontGetGlyphsForCharacters(ctFont.get(), reinterpret_cast<const UniChar*>(characters.data()), borrow(glyphs)->mutableSpan().data(), glyphs.size());
     glyphs.removeAll(0);
     Vector<GlyphBufferAdvance> advances(FillWith { }, glyphs.size(), makeGlyphBufferAdvance());
-    CTFontGetAdvancesForGlyphs(ctFont.get(), kCTFontOrientationHorizontal, glyphs.span().data(), advances.mutableSpan().data(), glyphs.size());
+    CTFontGetAdvancesForGlyphs(ctFont.get(), kCTFontOrientationHorizontal, borrow(glyphs)->span().data(), borrow(advances)->mutableSpan().data(), glyphs.size());
     return DisplayList::DrawGlyphs { Ref { font }, WTF::move(glyphs), WTF::move(advances), localAnchor, FontSmoothingMode::Antialiased };
 }
 
@@ -389,7 +390,7 @@ static Ref<SharedFont> createWebFont(FontCustomPlatformData& customFont, float s
 static void testWebFonts(Tester& tester, const Vector<Ref<SharedBuffer>>& webFonts)
 {
     tester.expect(!webFonts.isEmpty(), "Web fonts are given"_s);
-    for (auto& webFont : webFonts) {
+    for (auto& webFont : borrow(webFonts)) {
         RefPtr customFont = createCustomFont(webFont);
         tester.expect(!!customFont, "Web fonts are created"_s);
         if (!customFont)

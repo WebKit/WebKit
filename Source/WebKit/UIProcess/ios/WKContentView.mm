@@ -82,6 +82,7 @@
 #import <WebCore/ViewportSegments.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/Condition.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/UUID.h>
@@ -460,7 +461,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     [self _setupVisibilityPropagationForWebProcess:mainFrameProcess contextID:page->contextIDForVisibilityPropagationInWebProcess()];
 
     auto remotePages = mainFrameProcess->remotePages();
-    for (auto& remotePage : remotePages)
+    for (auto& remotePage : borrow(remotePages))
         [self _setupVisibilityPropagationForWebProcess:remotePage->process() contextID:remotePage->contextIDForVisibilityPropagationInWebProcess()];
 }
 
@@ -514,7 +515,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     [self _removeVisibilityPropagationForWebProcess:mainFrameProcess];
 
     auto remotePages = mainFrameProcess->remotePages();
-    for (auto& remotePage : remotePages)
+    for (auto& remotePage : borrow(remotePages))
         [self _removeVisibilityPropagationForWebProcess:remotePage->process()];
 }
 
@@ -595,7 +596,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
         ASSERT(!RunLoop::isMain());
         auto manager = adoptNS([[NSFileManager alloc] init]);
         auto coordinator = adoptNS([[NSFileCoordinator alloc] init]);
-        for (auto& url : urls) {
+        for (auto& url : borrow(urls)) {
             if (![manager fileExistsAtPath:[url path]])
                 continue;
             NSError *error = nil;

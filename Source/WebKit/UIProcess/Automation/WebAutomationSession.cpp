@@ -644,7 +644,7 @@ void WebAutomationSession::closeBrowsingContext(const Inspector::Protocol::Autom
         if (callbacks.isEmpty())
             return;
         RELEASE_LOG(Automation, "[s:%s] closeBrowsingContext completed after %.0f s although the client did not close page %" PRIu64, protectedThis->sessionIdentifier().utf8(), closeBrowsingContextTimeout.seconds(), pageID.toUInt64());
-        for (auto& callback : callbacks)
+        for (auto& callback : borrow(callbacks))
             callback({ });
     });
 }
@@ -1163,7 +1163,7 @@ bool WebAutomationSession::BidiPendingNavigation::matches(const WebFrameProxy& f
 // to the oldest command on the frame that does not have one yet.
 void WebAutomationSession::recordNavigationIDForPendingBidiNavigation(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
 {
-    for (auto& pending : m_bidiPendingNavigations) {
+    for (auto& pending : borrow(m_bidiPendingNavigations)) {
         if (!pending->navigationID && pending->matches(frame)) {
             pending->navigationID = navigationID;
             return;
@@ -1322,7 +1322,7 @@ void WebAutomationSession::completeBidiCommitWaits(NOESCAPE const Function<bool(
     // A callback removes its command's record, so the callbacks are taken before any of them runs. Every record is
     // offered to the predicate in order, so that it can tell which records come before a given one.
     Vector<Inspector::CommandCallback<void>> callbacks;
-    for (auto& pending : m_bidiPendingNavigations) {
+    for (auto& pending : borrow(m_bidiPendingNavigations)) {
         if (shouldComplete(pending.get()) && pending->commitCallback)
             callbacks.append(std::exchange(pending->commitCallback, nullptr));
     }
@@ -1332,7 +1332,7 @@ void WebAutomationSession::completeBidiCommitWaits(NOESCAPE const Function<bool(
     // FIXME https://webkit.org/b/323980 Support separate timers, one for each callback
     if (!hasPendingNavigationCallbacks())
         m_loadTimer.stop();
-    for (auto& callback : callbacks)
+    for (auto& callback : borrow(callbacks))
         callback(Inspector::CommandResult<void> { result });
 }
 
@@ -1589,7 +1589,7 @@ void WebAutomationSession::navigationCommittedForFrame(const WebFrameProxy& fram
     // A command waiting on the frame completes when its navigation commits, and so does every command on the frame
     // requested before it, whose navigation it aborted.
     RefPtr<BidiPendingNavigation> committed;
-    for (auto& pending : m_bidiPendingNavigations) {
+    for (auto& pending : borrow(m_bidiPendingNavigations)) {
         if (navigationID && pending->navigationID == navigationID && pending->matches(frame))
             committed = pending.ptr();
     }
@@ -1609,7 +1609,7 @@ void WebAutomationSession::navigationFailedForFrame(const WebFrameProxy& frame, 
     // A failure belongs to the command whose navigation has its id. A child frame command learns its id from
     // navigationStarted, so a failure with an id it does not have yet is another load's, e.g. an earlier one that
     // is still failing. A failure without an id is taken to be the oldest command's on the frame.
-    for (auto& pending : m_bidiPendingNavigations) {
+    for (auto& pending : borrow(m_bidiPendingNavigations)) {
         if (!pending->matches(frame))
             continue;
         if (!navigationID) {
@@ -1689,7 +1689,7 @@ bool WebAutomationSession::reportSameDocumentNavigationForFrame(const WebFramePr
         // https://w3c.github.io/webdriver-bidi/#await-a-navigation: the event carries the navigation id of the navigate
         // command that caused it, which WebCore does not know for a main frame command (see above).
         auto reportedNavigationID = navigationID;
-        for (auto& pending : m_bidiPendingNavigations) {
+        for (auto& pending : borrow(m_bidiPendingNavigations)) {
             if (pending->isFragmentNavigation && pending->navigationID && pending->matches(frame)) {
                 reportedNavigationID = pending->navigationID;
                 break;

@@ -31,6 +31,7 @@
 #import "AuthenticatorManager.h"
 #import "WKASCAuthorizationPresenterDelegate.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
@@ -222,7 +223,7 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
         auto loginChoices = adoptNS([[NSMutableArray alloc] init]);
 
         m_credentials.clear();
-        for (auto& response : responses) {
+        for (auto& response : borrow(responses)) {
             if (!response->name())
                 continue;
 
@@ -242,7 +243,7 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
 
     if (source == WebAuthenticationSource::Local) {
         m_credentials.clear();
-        for (auto& response : responses) {
+        for (auto& response : borrow(responses)) {
             RetainPtr<NSData> userHandle;
             if (response->userHandle())
                 userHandle = toNSData(response->userHandle()->span());

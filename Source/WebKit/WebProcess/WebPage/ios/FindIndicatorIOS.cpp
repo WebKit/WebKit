@@ -46,6 +46,7 @@
 #include <WebCore/PathUtilities.h>
 #include <WebCore/Settings.h>
 #include <WebCore/TextIndicator.h>
+#include <wtf/Borrow.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -88,7 +89,7 @@ void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsConte
     Vector<Path> paths = PathUtilities::pathsWithShrinkWrappedRects(textRectsInBoundingRectCoordinates, findIndicatorRadius);
 
     context.setFillColor(highlightColor);
-    for (const auto& path : paths)
+    for (const auto& path : borrow(paths))
         context.fillPath(path);
 
     context.drawNativeImage(*indicatorImage, overlay.bounds());

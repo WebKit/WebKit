@@ -84,7 +84,7 @@ class Connection::DeferredMainRunLoopDispatcher final : public FunctionDispatche
 public:
     ~DeferredMainRunLoopDispatcher()
     {
-        for (auto& function : m_functions)
+        for (auto& function : borrow(m_functions))
             RunLoop::mainSingleton().dispatch(WTF::move(function));
     }
 

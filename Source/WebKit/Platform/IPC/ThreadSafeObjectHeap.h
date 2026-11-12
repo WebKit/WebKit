@@ -31,6 +31,7 @@
 #include "StreamServerConnection.h"
 #include "Timeout.h"
 #include <optional>
+#include <wtf/Borrow.h>
 #include <wtf/Condition.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -144,7 +145,7 @@ bool ThreadSafeObjectHeap<Identifier, HeldType>::add(const Reference& ref, HeldT
         m_objectsCondition.notifyAll();
         streamWaiters = m_streamWaiters.take(ref);
     }
-    for (auto& weakWorkQueue : streamWaiters) {
+    for (auto& weakWorkQueue : borrow(streamWaiters)) {
         if (RefPtr workQueue = weakWorkQueue)
             workQueue->wakeUp();
     }
@@ -305,7 +306,7 @@ void ThreadSafeObjectHeap<Identifier, HeldType>::clear()
     }
     // The waiting messages check again. They keep waiting, since the objects are not added any more.
     for (auto& waiters : streamWaiters.values()) {
-        for (auto& weakWorkQueue : waiters) {
+        for (auto& weakWorkQueue : borrow(waiters)) {
             if (RefPtr workQueue = weakWorkQueue)
                 workQueue->wakeUp();
         }

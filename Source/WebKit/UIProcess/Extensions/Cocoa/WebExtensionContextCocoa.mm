@@ -2199,7 +2199,7 @@ void WebExtensionContext::resetCommands()
 WebExtensionCommand* WebExtensionContext::commandMatchingKeyCommand(UIKeyCommand *keyCommand)
 {
     ASSERT(keyCommand);
-    for (auto& command : commands()) {
+    for (auto& command : borrow(commands())) {
         if (command->matchesKeyCommand(keyCommand))
             return command.ptr();
     }

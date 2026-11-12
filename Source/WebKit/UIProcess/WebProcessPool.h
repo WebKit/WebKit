@@ -42,6 +42,7 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <pal/SessionID.h>
 #include <wtf/ApproximateTime.h>
+#include <wtf/Borrow.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -1118,7 +1119,7 @@ private:
 template<typename T>
 void WebProcessPool::sendToAllProcesses(const T& message)
 {
-    for (auto& process : m_processes) {
+    for (auto& process : borrow(m_processes)) {
         if (process->canSendMessage())
             process->send(T(message), 0);
     }

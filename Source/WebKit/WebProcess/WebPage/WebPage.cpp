@@ -1426,7 +1426,7 @@ void WebPage::frameGeometryChangedInAnotherProcess(Vector<FrameGeometryUpdate>&&
     ASSERT(m_page->settings().siteIsolationEnabled());
 
     bool didApplyUpdate = false;
-    for (auto& update : updates) {
+    for (auto& update : borrow(updates)) {
         RefPtr frame = webFrameInPage(*this, update.frameID);
         RefPtr coreFrame = frame ? frame->coreFrame() : nullptr;
         if (!coreFrame)

@@ -621,7 +621,7 @@ void WebPageProxy::startDrag(IPC::Connection& connection, const DragItem& dragIt
 #if ENABLE(ATTACHMENT_ELEMENT)
     MESSAGE_CHECK(promisedAttachmentInfo.attachmentIdentifier.isEmpty() || protect(preferences())->attachmentElementEnabled(), connection);
 #endif
-    for (auto& [type, data] : promisedAttachmentInfo.additionalTypesAndData) {
+    for (auto& [type, data] : borrow(promisedAttachmentInfo.additionalTypesAndData)) {
         // These are written to the platform drag pasteboard verbatim, so hold them to the same
         // standard as any other pasteboard write coming from the web process: it must never be able
         // to plant a file reference on the drag pasteboard. Editor::getPasteboardTypesAndDataForAttachment

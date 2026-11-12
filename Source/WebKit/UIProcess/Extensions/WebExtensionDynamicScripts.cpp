@@ -31,6 +31,8 @@
 #include "WebExtensionContext.h"
 #include "WebExtensionScriptInjectionParameters.h"
 
+#include <wtf/Borrow.h>
+
 namespace WebKit {
 
 namespace WebExtensionDynamicScripts {
@@ -125,7 +127,7 @@ void WebExtensionRegisteredScript::removeUserScripts(const String& identifier)
     auto userScripts = m_userScriptsMap.take(identifier);
     auto allUserContentControllers = m_extensionContext->extensionController()->allUserContentControllers();
 
-    for (auto& userScript : userScripts) {
+    for (auto& userScript : borrow(userScripts)) {
         for (Ref userContentController : allUserContentControllers)
             userContentController->removeUserScript(userScript);
     }
@@ -136,7 +138,7 @@ void WebExtensionRegisteredScript::removeUserStyleSheets(const String& identifie
     auto userStyleSheets = m_userStyleSheetsMap.take(identifier);
     auto allUserContentControllers = m_extensionContext->extensionController()->allUserContentControllers();
 
-    for (auto& userStyleSheet : userStyleSheets) {
+    for (auto& userStyleSheet : borrow(userStyleSheets)) {
         for (Ref userContentController : allUserContentControllers)
             userContentController->removeUserStyleSheet(userStyleSheet);
     }

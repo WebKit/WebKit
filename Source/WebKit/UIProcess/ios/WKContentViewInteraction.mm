@@ -171,6 +171,7 @@
 #import <ranges>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/Scope.h>
@@ -3305,14 +3306,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto updatedPositionInformation = _positionInformation;
 
     for (size_t index = 0; index < _pendingPositionInformationHandlers.size(); ++index) {
-        auto requestAndHandler = _pendingPositionInformationHandlers[index];
+        auto requestAndHandler = borrow(_pendingPositionInformationHandlers)[index];
         if (!requestAndHandler)
             continue;
 
         if (![self _currentPositionInformationIsValidForRequest:requestAndHandler->first])
             continue;
 
-        _pendingPositionInformationHandlers[index] = std::nullopt;
+        borrow(_pendingPositionInformationHandlers)[index] = std::nullopt;
 
         if (requestAndHandler->second)
             requestAndHandler->second(updatedPositionInformation);
@@ -3372,7 +3373,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (BOOL)_pointIsInsideSelectionRect:(CGPoint)point outBoundingRect:(WebCore::FloatRect *)outBoundingRect
 {
     BOOL pointIsInSelectionRect = NO;
-    for (auto& rectInfo : _lastSelectionDrawingInfo.selectionGeometries) {
+    for (auto& rectInfo : borrow(_lastSelectionDrawingInfo.selectionGeometries)) {
         auto rect = rectInfo.rect();
         if (rect.isEmpty())
             continue;
@@ -6690,7 +6691,7 @@ static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedStrin
     if (!underlines.isEmpty())
         mergedUnderlines.append({ underlines.first().startOffset, underlines.last().endOffset, WebCore::CompositionUnderlineColor::GivenColor, WebCore::Color::black, false });
 
-    for (auto& underline : underlines) {
+    for (auto& underline : borrow(underlines)) {
         if (underline.thick)
             mergedUnderlines.append(underline);
     }
@@ -6720,7 +6721,7 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
     std::ranges::sort(highlights);
 
     Vector<WebCore::CompositionHighlight> mergedHighlights(ReserveCapacityTag { }, highlights.size());
-    for (auto& highlight : highlights) {
+    for (auto& highlight : borrow(highlights)) {
         if (mergedHighlights.isEmpty() || mergedHighlights.last().backgroundColor != highlight.backgroundColor || mergedHighlights.last().foregroundColor != highlight.foregroundColor)
             mergedHighlights.append(highlight);
         else
@@ -11433,19 +11434,19 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     _isAnimatingDragCancel = YES;
     RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator");
     auto previewViews = _dragDropInteractionState.takePreviewViewsForDragCancel();
-    for (auto& previewView : previewViews)
+    for (auto& previewView : borrow(previewViews))
         [previewView setAlpha:0];
 
     auto frameID = _dragDropInteractionState.dragSourceFrameIDForItem(item);
     [animator addCompletion:[protectedSelf = retainPtr(self), previewViews = WTF::move(previewViews), page = _page, frameID] (UIViewAnimatingPosition finalPosition) mutable {
         RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator (animation completion block fired)");
-        for (auto& previewView : previewViews)
+        for (auto& previewView : borrow(previewViews))
             [previewView setAlpha:1];
 
         page->dragCancelled(frameID);
 
         page->callAfterNextPresentationUpdate([previewViews = WTF::move(previewViews), protectedSelf = WTF::move(protectedSelf)] {
-            for (auto& previewView : previewViews)
+            for (auto& previewView : borrow(previewViews))
                 [previewView removeFromSuperview];
 
             protectedSelf->_isAnimatingDragCancel = NO;

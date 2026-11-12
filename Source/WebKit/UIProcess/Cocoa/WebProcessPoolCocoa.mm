@@ -750,7 +750,7 @@ void WebProcessPool::remoteWebInspectorEnabledCallback(CFNotificationCenterRef, 
     auto pool = extractWebProcessPool(observer);
     if (!pool)
         return;
-    for (auto& process : pool->m_processes)
+    for (auto& process : borrow(pool->m_processes))
         process->enableRemoteInspectorIfNeeded();
 }
 #endif
@@ -788,7 +788,7 @@ void WebProcessPool::hardwareKeyboardAvailabilityChanged()
 {
     for (Ref process : borrow(this->processes())) {
         auto pages = process->mainPages();
-        for (auto& page : pages)
+        for (auto& page : borrow(pages))
             page->hardwareKeyboardAvailabilityChanged(cachedHardwareKeyboardState());
     }
 }
@@ -1008,7 +1008,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     lazyInitialize(m_accessibilityEnabledObserver, RetainPtr<NSObject> { [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge NSString *)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
         if (!_AXSApplicationAccessibilityEnabled())
             return;
-        for (auto& process : m_processes)
+        for (auto& process : borrow(m_processes))
             process->unblockAccessibilityServerIfNeeded();
     }] });
 #if PLATFORM(IOS) || PLATFORM(VISION)
@@ -1381,7 +1381,7 @@ void WebProcessPool::setProcessesShouldSuspend(bool shouldSuspend)
         return;
 
     m_processesShouldSuspend = shouldSuspend;
-    for (auto& process : m_processes) {
+    for (auto& process : borrow(m_processes)) {
         protect(process->throttler())->setAllowsActivities(!m_processesShouldSuspend);
 
 #if ENABLE(WEBXR) && !USE(OPENXR)

@@ -27,6 +27,7 @@
 
 #include "ArgumentCoders.h"
 #include <optional>
+#include <wtf/Borrow.h>
 #include <wtf/Forward.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
@@ -73,7 +74,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     {
         encoder << static_cast<uint64_t>(vector.size());
         for (size_t i = 0; i < vector.size(); ++i)
-            encoder << vector[i];
+            encoder << borrow(vector)[i];
     }
     template<typename Decoder> static std::optional<Vector<T, inlineCapacity, OverflowHandler, minCapacity>> decode(Decoder& decoder)
     {

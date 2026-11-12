@@ -1,52 +1,11 @@
-GPUProcess/GPUProcess.cpp
-GPUProcess/graphics/DisplayListDataTester.cpp
-GPUProcess/media/RemoteAudioSessionProxyManager.cpp
-NetworkProcess/cocoa/NetworkSessionCocoa.mm
-NetworkProcess/storage/CacheStorageCache.cpp
 Platform/IPC/ArgumentCoders.cpp
 Platform/IPC/ArgumentCoders.h
-Platform/IPC/Connection.cpp
 Platform/IPC/SwiftCoding.h
-Platform/IPC/ThreadSafeObjectHeap.h
-[ iOS ] Shared/DocumentEditingContext.mm
-Shared/Extensions/WebExtensionUtilities.h
-Shared/TextExtractionToStringConversion.cpp
-Shared/graphics/DisplayListData.cpp
-UIProcess/Automation/WebAutomationSession.cpp
-[ iOS ] UIProcess/Cocoa/ExtensionCapabilityGranter.mm
 UIProcess/Cocoa/MediaPermissionUtilities.mm
-[ iOS ] UIProcess/Cocoa/VideoPresentationManagerProxy.mm
-[ iOS ] UIProcess/Cocoa/WKClickHighlightView.mm
-UIProcess/Cocoa/WebPageProxyCocoa.mm
 [ iOS ] UIProcess/Cocoa/WebPasteboardProxyCocoa.mm
-[ iOS ] UIProcess/Cocoa/WebProcessPoolCocoa.mm
-UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIActionCocoa.mm
-[ iOS ] UIProcess/Extensions/Cocoa/WebExtensionContextCocoa.mm
-UIProcess/Extensions/WebExtensionDynamicScripts.cpp
-UIProcess/FindStringCallbackAggregator.cpp
-[ macOS ] UIProcess/Inspector/mac/WebInspectorUIProxyMac.mm
-UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm
-[ iOS ] UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm
-UIProcess/WebAuthentication/RelatedOriginsValidator.cpp
-UIProcess/WebPageProxy.cpp
-UIProcess/WebProcessPool.h
 [ iOS ] UIProcess/ios/DragDropInteractionState.mm
-[ iOS ] UIProcess/ios/WKActionSheetAssistant.mm
-[ iOS ] UIProcess/ios/WKCapturePreviewViewController.mm
-[ iOS ] UIProcess/ios/WKContentView.mm
-[ iOS ] UIProcess/ios/WKContentViewInteraction.mm
 [ iOS ] UIProcess/ios/WKTouchEventsGestureRecognizer.mm
-[ iOS ] UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm
-[ iOS ] UIProcess/ios/_WKCaptionStyleMenuControllerIOS.mm
 [ iOS ] UIProcess/ios/forms/WKFormSelectControl.mm
 [ iOS ] UIProcess/ios/forms/WKFormSelectPicker.mm
 [ iOS ] UIProcess/ios/forms/WKFormSelectPopover.mm
-[ macOS ] UIProcess/mac/WKCapturePreviewPrompt.mm
-WebProcess/Extensions/API/WebExtensionAPIStorageArea.cpp
-WebProcess/Inspector/WebInspectorBackend.cpp
 WebProcess/Plugins/PDF/UnifiedPDF/PDFPageCoverage.h
-[ iOS ] WebProcess/WebPage/Cocoa/WebPageCocoa.mm
-WebProcess/WebPage/WebPage.cpp
-[ iOS ] WebProcess/WebPage/ios/FindIndicatorIOS.cpp
-[ iOS ] WebProcess/WebPage/ios/WebPageIOS.mm
-[ iOS ] webpushd/PushService.mm

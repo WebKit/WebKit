@@ -46,6 +46,7 @@
 #import <WebCore/SecurityOriginData.h>
 #import <mutex>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/Function.h>
 #import <wtf/Markable.h>
 #import <wtf/NativePromise.h>
@@ -435,7 +436,7 @@ void alertForPermission(WebPageProxy& page, PermissionPromptRequest&& request, C
 
     [alert addAction:allowAction.get()];
 
-    for (auto& action : request.customization.additionalActions) {
+    for (auto& action : borrow(request.customization.additionalActions)) {
         bool granted = action.decision == MediaPermissionPromptAdditionalAction::Decision::Allow;
         [alert addAction:[UIAlertAction actionWithTitle:action.title.createNSString().get() style:UIAlertActionStyleDefault handler:[completionBlock, source = action.source, granted](UIAlertAction *) {
             completionBlock({ .granted = granted, .wasAnswered = true, .chosenAction = source });
@@ -711,7 +712,7 @@ CapturePreviewPromptHandles alertForPermissionForTesting(WebPageProxy& page, Cap
     PermissionPromptRequest textRequest { .reason = request.reason, .origin = request.origin, .customization = request.customization };
     Vector<String> buttonTitles;
     buttonTitles.append(promptAllowButtonText(textRequest).get());
-    for (auto& action : request.customization.additionalActions)
+    for (auto& action : borrow(request.customization.additionalActions))
         buttonTitles.append(action.title);
     buttonTitles.append(promptDenyButtonText(textRequest).get());
 

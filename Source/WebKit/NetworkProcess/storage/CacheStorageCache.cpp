@@ -232,7 +232,7 @@ void CacheStorageCache::retrieveRecords(const Vector<CacheStorageRecordInformati
 
         // The cross-origin resource policy check of https://w3c.github.io/ServiceWorker/#cache-matchall. The caller reports.
         Vector<WebCore::DOMCacheEngine::CORPViolation> corpViolations;
-        for (auto& record : result) {
+        for (auto& record : borrow(result)) {
             if (record.response.type != WebCore::ResourceResponse::Type::Opaque)
                 continue;
 

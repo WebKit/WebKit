@@ -32,6 +32,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/GraphicsContextCG.h>
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @implementation WKInspectorHighlightView
@@ -263,7 +264,7 @@ static void layerPath(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad)
     for (NSUInteger i = 0; i < numLayers; ++i) {
         CAShapeLayer *layer = [_layers objectAtIndex:i];
         layer.fillColor = contentColor.get();
-        layerPath(layer, highlight.quads[i]);
+        layerPath(layer, borrow(highlight.quads)[i]);
     }
 }
 

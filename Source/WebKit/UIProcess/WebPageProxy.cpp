@@ -9236,7 +9236,7 @@ void WebPageProxy::saveResources(WebFrameProxy* frame, const Vector<WebCore::Mar
             if (!result)
                 error = result.error();
             else if (!originalURLsFileName.isEmpty() && !saveOriginalURLsToDisk(*archive, directory, originalURLsFileName)) {
-                for (auto& filePath : *result)
+                for (auto& filePath : borrow(*result))
                     FileSystem::deleteFile(filePath);
                 error = WebCore::ArchiveError::FileSystemError;
             }
@@ -10942,7 +10942,7 @@ void WebPageProxy::handleFrameGeometryUpdates(IPC::Connection& connection, const
 
     Vector<std::pair<Ref<WebFrameProxy>, WebCore::FrameGeometryUpdate>> updatesToRelay;
     std::optional<WebCore::FrameGeometryUpdate> mainFrameUpdateToRelay;
-    for (auto& update : updates) {
+    for (auto& update : borrow(updates)) {
         RefPtr frame = WebFrameProxy::webFrame(update.frameID);
         if (!frame || frame->page() != this || &frame->process() != process.ptr())
             continue;
@@ -10965,7 +10965,7 @@ void WebPageProxy::handleFrameGeometryUpdates(IPC::Connection& connection, const
             return;
 
         Vector<WebCore::FrameGeometryUpdate> updatesForProcess;
-        for (auto& [frame, update] : updatesToRelay) {
+        for (auto& [frame, update] : borrow(updatesToRelay)) {
             std::optional<WebCore::FrameGeometrySyncData> geometry;
             if (update.geometry && processHostsDescendantOfFrame(webProcess, frame))
                 geometry = update.geometry;
@@ -15405,7 +15405,7 @@ void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vect
         if (!protectedThis)
             return;
         if (RefPtr process = openPanelResultListener->process()) {
-            for (auto& fileURL : fileURLs)
+            for (auto& fileURL : borrow(fileURLs))
                 process->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(fileURL));
 #if ENABLE(SANDBOX_EXTENSIONS)
             auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon"_s, fileURLs);
@@ -19928,7 +19928,7 @@ void WebPageProxy::getLoadDecisionForIcons(IPC::Connection& connection, const Ve
         MESSAGE_CHECK_BASE(loadIdentifiers.add(icon.first).isNewEntry, connection);
 
 #if PLATFORM(COCOA)
-    for (const auto& [loadIdentifier, icon] : icons) {
+    for (const auto& [loadIdentifier, icon] : borrow(icons)) {
         m_iconLoadingClient->getLoadDecisionForIcon(icon, [this, protectedThis = Ref { *this }, loadIdentifier] (CompletionHandler<void(API::Data*)>&& callback) {
             if (!hasRunningProcess()) {
                 if (callback)
@@ -22303,7 +22303,7 @@ void WebPageProxy::requestAllTextAndRects(CompletionHandler<void(Vector<Ref<API:
 
         Vector<Ref<API::TextRun>> textRuns;
         for (auto& textAndRects : *textAndRectsByProcess) {
-            for (auto& [text, rect] : textAndRects)
+            for (auto& [text, rect] : borrow(textAndRects))
                 textRuns.append(API::TextRun::create(*protectedThis, WTF::move(text), WTF::move(rect)));
         }
         completion(WTF::move(textRuns));
@@ -22362,7 +22362,7 @@ void WebPageProxy::completeTargetedElementRequest(Vector<WebCore::TargetedElemen
 void WebPageProxy::mergeContentFromRemoteFrames(Vector<WebCore::TargetedElementInfo>&& elements, CompletionHandler<void(Vector<WebCore::TargetedElementInfo>&&)>&& completion)
 {
     HashSet<WebCore::FrameIdentifier> remoteFrameIDs;
-    for (auto& element : elements)
+    for (auto& element : borrow(elements))
         remoteFrameIDs.addAll(element.remoteFrameIdentifiers);
 
     if (remoteFrameIDs.isEmpty())
@@ -22370,7 +22370,7 @@ void WebPageProxy::mergeContentFromRemoteFrames(Vector<WebCore::TargetedElementI
 
     auto contentByFrame = Box<HashMap<WebCore::FrameIdentifier, WebCore::TargetedFrameContent>>::create();
     Ref aggregator = CallbackAggregator::create([elements = WTF::move(elements), contentByFrame, completion = WTF::move(completion)] mutable {
-        for (auto& element : elements) {
+        for (auto& element : borrow(elements)) {
             for (auto frameID : element.remoteFrameIdentifiers) {
                 if (auto iterator = contentByFrame->find(frameID); iterator != contentByFrame->end())
                     WebCore::mergeRemoteFrameContent(element, iterator->value);

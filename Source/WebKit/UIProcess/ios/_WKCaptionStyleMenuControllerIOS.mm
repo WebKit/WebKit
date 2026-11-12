@@ -33,6 +33,7 @@
 #import <WebCore/CaptionUserPreferencesMediaAF.h>
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
@@ -92,7 +93,7 @@ static const UIMenuIdentifier WKCaptionStyleMenuSystemSettingsIdentifier = @"WKC
     }
 
     NSMutableArray<UIMenuElement *> *profileElements = [NSMutableArray array];
-    for (const auto& profileID : profileIDs) {
+    for (const auto& profileID : borrow(profileIDs)) {
         auto title = CaptionUserPreferencesMediaAF::nameForProfileID(profileID);
 
         auto profileSelectedHandler = makeBlockPtr([weakSelf = WeakObjCPtr<WKCaptionStyleMenuController>(self), profileID = profileID] (UIAction *) {

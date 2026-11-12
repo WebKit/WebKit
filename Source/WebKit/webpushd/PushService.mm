@@ -779,7 +779,7 @@ void PushService::updateSubscriptionSetState(const String& allowedBundleIdentifi
 
         HashSet<PushSubscriptionSetIdentifier> identifiersToRemove;
 
-        for (const auto& record : records) {
+        for (const auto& record : borrow(records)) {
             auto bundleIdentifier = record.identifier.bundleIdentifier;
             auto webClipIdentifier = record.identifier.pushPartition;
             if (bundleIdentifier != allowedBundleIdentifier || !installedWebClipIdentifiers.contains(webClipIdentifier))
@@ -809,7 +809,7 @@ void PushService::updateSubscriptionSetState(const String& allowedBundleIdentifi
                     return;
 
                 Ref connection = protectedThis->connection();
-                for (auto& record : records) {
+                for (auto& record : borrow(records)) {
                     connection->unsubscribe(record.topic, record.serverVAPIDPublicKey, [topic = record.topic](bool unsubscribed, NSError* error) {
                         RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "couldn't remove subscription for topic %{sensitive}s: %{public}s code: %lld)", topic.utf8(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
                     });
