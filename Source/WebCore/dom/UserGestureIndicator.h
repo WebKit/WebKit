@@ -84,7 +84,7 @@ public:
 
     static constexpr Seconds maximumIntervalForUserGestureForwarding { 1_s }; // One second matches Gecko.
     NODELETE static const Seconds& maximumIntervalForUserGestureForwardingForFetch();
-    NODELETE WEBCORE_EXPORT static void setMaximumIntervalForUserGestureForwardingForFetchForTesting(Seconds);
+    NODELETE WEBCORE_EXPORT static void setMaximumIntervalForUserGestureForwardingForFetchForTesting(std::optional<Seconds>);
 
     static Ref<UserGestureToken> create(IsProcessingUserGesture, UserGestureType, Document*, std::optional<WTF::UUID> authorizationToken, CanRequestDOMPaste, MonotonicTime, DOMPasteAccessPolicy, GestureScope, RemoveTransientActivation);
 

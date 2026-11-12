@@ -663,6 +663,7 @@ void Internals::resetToConsistentState(Page& page)
     page.setUserInterfaceLayoutDirection(WebCore::UserInterfaceLayoutDirection::LTR);
 
     CachedMatchFinder::setMaximumRunCountForTesting(std::nullopt);
+    UserGestureToken::setMaximumIntervalForUserGestureForwardingForFetchForTesting(std::nullopt);
 
     if (auto enabled = std::exchange(trackingPreventionEnabledBeforeTest(), std::nullopt))
         DeprecatedGlobalSettings::setTrackingPreventionEnabled(*enabled);

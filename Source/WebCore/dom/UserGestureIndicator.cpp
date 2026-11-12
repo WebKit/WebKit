@@ -160,15 +160,16 @@ void UserGestureToken::didGrantForcedActivationInOtherProcesses(LocalFrame& fram
     m_frameWithForcedActivationInOtherProcesses = frame;
 }
 
-static Seconds maxIntervalForUserGestureForwardingForFetch { 10 };
+static constexpr Seconds defaultMaxIntervalForUserGestureForwardingForFetch { 10_s };
+static Seconds maxIntervalForUserGestureForwardingForFetch { defaultMaxIntervalForUserGestureForwardingForFetch };
 const Seconds& UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()
 {
     return maxIntervalForUserGestureForwardingForFetch;
 }
 
-void UserGestureToken::setMaximumIntervalForUserGestureForwardingForFetchForTesting(Seconds value)
+void UserGestureToken::setMaximumIntervalForUserGestureForwardingForFetchForTesting(std::optional<Seconds> value)
 {
-    maxIntervalForUserGestureForwardingForFetch = WTF::move(value);
+    maxIntervalForUserGestureForwardingForFetch = value.value_or(defaultMaxIntervalForUserGestureForwardingForFetch);
 }
 
 bool UserGestureToken::isValidForDocument(const Document& document) const
