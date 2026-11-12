@@ -13,7 +13,7 @@ const canvasSize = 4;
 // path; the cases that do want that path draw over the whole canvas instead.
 const drawSize = canvasSize / 2;
 
-const hdrImageURL = "../../images/resources/gainmap-red-green-1920x1920.jpg";
+const hdrImageURL = "../../images/resources/gainmap-red-green-gray-stripes-64x64.jpg";
 const sdrImageURL = "../../images/resources/green-400x400.png";
 const animatedImageURL = "../../images/resources/animated-red-green-blue-400x400.gif";
 
