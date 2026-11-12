@@ -27,8 +27,11 @@
 #include "WebSQLiteDatabaseTracker.h"
 
 #include <WebCore/SQLiteDatabaseTracker.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSQLiteDatabaseTracker);
 using namespace WebCore;
 
 Ref<WebSQLiteDatabaseTracker> WebSQLiteDatabaseTracker::create(IsHoldingLockedFilesHandler&& isHoldingLockedFilesHandler)

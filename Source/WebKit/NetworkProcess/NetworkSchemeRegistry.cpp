@@ -27,8 +27,11 @@
 #include "NetworkSchemeRegistry.h"
 
 #include "Logging.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkSchemeRegistry);
 
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
 

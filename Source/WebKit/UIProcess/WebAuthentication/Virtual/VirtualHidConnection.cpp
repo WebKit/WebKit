@@ -38,9 +38,12 @@
 #include <wtf/Borrow.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/darwin/DispatchExtras.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VirtualHidConnection);
 using namespace cbor;
 using namespace fido;
 using namespace WebCore;

@@ -29,6 +29,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -45,6 +46,7 @@ enum class LoadedWebArchive : bool;
 // meantime keep using the same process, and WebBackForwardCacheEntry, which keeps the process
 // that holds a document cached in place in the browsing context group.
 class FrameProcess : public RefCountedAndCanMakeWeakPtr<FrameProcess> {
+    WTF_MAKE_TZONE_ALLOCATED(FrameProcess);
 public:
     ~FrameProcess();
 

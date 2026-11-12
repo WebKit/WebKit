@@ -33,6 +33,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/HexNumber.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/StringBuilder.h>
@@ -52,6 +53,7 @@ inline String createDeviceIdHashSaltString(std::span<const uint64_t> randomData)
 }
 
 class DeviceIdHashSaltStorage : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DeviceIdHashSaltStorage, WTF::DestructionThread::MainRunLoop> {
+    WTF_MAKE_TZONE_ALLOCATED(DeviceIdHashSaltStorage);
 public:
     static Ref<DeviceIdHashSaltStorage> create(const String& deviceIdHashSaltStorageDirectory);
     ~DeviceIdHashSaltStorage();

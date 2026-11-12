@@ -27,7 +27,11 @@
 #include "config.h"
 #include "WebColorPicker.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebColorPicker);
 
 WebColorPicker::WebColorPicker(Client* client, std::optional<WebCore::FrameIdentifier> frameID)
     : m_client(client)

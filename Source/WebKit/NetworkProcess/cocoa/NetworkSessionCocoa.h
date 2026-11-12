@@ -60,7 +60,7 @@ class LegacyCustomProtocolManager;
 class NetworkSessionCocoa;
 
 struct SessionWrapper : public CanMakeWeakPtr<SessionWrapper>, public CanMakeCheckedPtr<SessionWrapper> {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SessionWrapper);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(SessionWrapper);
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(SessionWrapper);
 
     SessionWrapper() = default;
@@ -94,6 +94,7 @@ public:
 };
 
 struct SessionSet : public RefCountedAndCanMakeWeakPtr<SessionSet> {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(SessionSet);
 public:
     static Ref<SessionSet> create()
     {

@@ -35,10 +35,13 @@
 #include <array>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 using namespace WebCore;
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StorageAreaSync);
 
 // If the StorageArea undergoes rapid changes, don't sync each change to disk.
 // Instead, queue up a batch of items to sync and actually do the sync at the following interval.

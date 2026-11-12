@@ -31,6 +31,7 @@
 #include "RemoteGraphicsContext.h"
 #include "RemoteSnapshotRecorderIdentifier.h"
 #include <WebCore/DisplayListRecorderImpl.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 class RemoteSnapshot;
@@ -39,6 +40,7 @@ class RemoteSnapshot;
 // its own draw item. In other words, RemoteSnapshotRecorder has the right to source snapshot subframe
 // renderings.
 class RemoteSnapshotRecorder final : public RemoteGraphicsContext {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteSnapshotRecorder);
 public:
     static Ref<RemoteSnapshotRecorder> create(RemoteSnapshotRecorderIdentifier, RemoteSnapshot&, RemoteRenderingBackend&);
     ~RemoteSnapshotRecorder();

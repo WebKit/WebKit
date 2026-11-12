@@ -33,6 +33,7 @@
 #include "RemoteCDMInstanceIdentifier.h"
 #include <WebCore/CDMPrivate.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -51,6 +52,7 @@ struct RemoteCDMConfiguration;
 struct SharedPreferencesForWebProcess;
 
 class RemoteCDMProxy : public RefCounted<RemoteCDMProxy>, public IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteCDMProxy);
 public:
     static Ref<RemoteCDMProxy> create(RemoteCDMFactoryProxy&, UniqueRef<WebCore::CDMPrivate>&&);
     ~RemoteCDMProxy();

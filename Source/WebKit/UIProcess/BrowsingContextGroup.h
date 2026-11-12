@@ -38,6 +38,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/SwiftBridging.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakListHashSet.h>
@@ -67,6 +68,7 @@ enum class IsMainFrame : bool;
 enum class BrowsingContextGroupUpdate : uint8_t { None, AddProcess, AddProcessAndInjectBrowsingContext };
 
 class BrowsingContextGroup : public RefCountedAndCanMakeWeakPtr<BrowsingContextGroup> {
+    WTF_MAKE_TZONE_ALLOCATED(BrowsingContextGroup);
 public:
     static Ref<BrowsingContextGroup> create(WebCore::CrossOriginMode crossOriginMode, WebsiteDataStore& websiteDataStore, EnhancedSecurity enhancedSecurity) { return adoptRef(*new BrowsingContextGroup(crossOriginMode, websiteDataStore, enhancedSecurity)); }
     ~BrowsingContextGroup();

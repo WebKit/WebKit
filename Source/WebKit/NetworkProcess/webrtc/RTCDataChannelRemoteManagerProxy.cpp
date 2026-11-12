@@ -30,8 +30,11 @@
 #include "NetworkConnectionToWebProcess.h"
 #include "RTCDataChannelRemoteManagerMessages.h"
 #include "RTCDataChannelRemoteManagerProxyMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDataChannelRemoteManagerProxy);
 
 RTCDataChannelRemoteManagerProxy::RTCDataChannelRemoteManagerProxy(NetworkProcess& networkProcess)
     : m_queue(WorkQueue::create("RTCDataChannelRemoteManagerProxy"_s))

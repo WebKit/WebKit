@@ -36,12 +36,15 @@
 #include <WebCore/U2fCommandConstructor.h>
 #include <WebCore/U2fResponseConverter.h>
 #include <wtf/Borrow.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
 
 #define U2F_RELEASE_LOG(fmt, ...) RELEASE_LOG(WebAuthn, "%p [transport=%s] - U2fAuthenticator::" fmt, this, transportForDebugging().utf8(), ##__VA_ARGS__)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(U2fAuthenticator);
 using namespace WebCore;
 using namespace apdu;
 using namespace fido;

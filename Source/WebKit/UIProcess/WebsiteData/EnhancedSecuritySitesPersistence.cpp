@@ -34,12 +34,15 @@
 #include <wtf/MainThread.h>
 #include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/MakeString.h>
 
 #define ENHANCEDSECURITY_RELEASE_LOG(fmt, ...) RELEASE_LOG(EnhancedSecurity, "EnhancedSecuritySitesPersistence::" fmt, ##__VA_ARGS__)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EnhancedSecuritySitesPersistence);
 
 static constexpr auto sitesTableName = "sites"_s;
 static constexpr auto enhancedSecurityStateIndexName = "idx_sites_enhanced_security_state"_s;

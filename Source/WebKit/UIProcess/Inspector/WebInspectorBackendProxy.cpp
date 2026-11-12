@@ -28,8 +28,11 @@
 #include "WebInspectorBackendProxy.h"
 
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebInspectorBackendProxy);
 
 WebInspectorBackendProxy::~WebInspectorBackendProxy() = default;
 

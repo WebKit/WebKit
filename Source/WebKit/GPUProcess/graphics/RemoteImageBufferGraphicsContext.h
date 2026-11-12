@@ -28,12 +28,14 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteGraphicsContext.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 // RemoteGraphicsContext playing back the IPC GraphicsContext drawing commands to a GraphicsContext of an ImageBuffer.
 // Used to create renderings to the ImageBuffer.
 class RemoteImageBufferGraphicsContext final : public RemoteGraphicsContext {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteImageBufferGraphicsContext);
 public:
     static Ref<RemoteImageBufferGraphicsContext> create(WebCore::ImageBuffer&, RemoteGraphicsContextIdentifier, RemoteRenderingBackend&);
     ~RemoteImageBufferGraphicsContext();

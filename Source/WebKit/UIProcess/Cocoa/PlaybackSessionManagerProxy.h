@@ -257,6 +257,7 @@ class PlaybackSessionManagerProxy
     : public RefCounted<PlaybackSessionManagerProxy>
     , public CanMakeWeakPtr<PlaybackSessionManagerProxy>
     , private IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(PlaybackSessionManagerProxy);
 public:
     USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<PlaybackSessionManagerProxy>);
 

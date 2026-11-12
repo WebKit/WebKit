@@ -39,8 +39,11 @@
 #include <WebCore/NotImplemented.h>
 #include <pal/SessionID.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DownloadManager);
 using namespace WebCore;
 
 DownloadManager::DownloadManager(Client& client)

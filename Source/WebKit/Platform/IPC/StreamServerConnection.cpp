@@ -33,8 +33,11 @@
 #include "StreamConnectionWorkQueue.h"
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace IPC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StreamServerConnection);
 
 RefPtr<StreamServerConnection> StreamServerConnection::tryCreate(Handle&& handle, const StreamServerConnectionParameters& params)
 {

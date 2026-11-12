@@ -32,6 +32,7 @@
 #include "MessageReceiver.h"
 #include <optional>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
@@ -41,7 +42,7 @@ namespace WebKit {
 
 // Interface to test various IPC::Connection related activities.
 class IPCConnectionTester final : public RefCounted<IPCConnectionTester>, private IPC::Connection::Client {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(IPCConnectionTester);
+    WTF_MAKE_TZONE_ALLOCATED(IPCConnectionTester);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IPCConnectionTester);
 public:
     ~IPCConnectionTester();

@@ -31,8 +31,11 @@
 #include "WebPageProxy.h"
 #include <wtf/Borrow.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FindTextMatchCallbackAggregator);
 
 Ref<FindTextMatchCallbackAggregator> FindTextMatchCallbackAggregator::create(WebPageProxy& page, CompletionHandler<void(Vector<WebFoundTextRange>&&)>&& completionHandler)
 {

@@ -37,12 +37,15 @@
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/NullImageBufferBackend.h>
 #include <wtf/Borrow.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(GPU_PROCESS)
 
 #define MESSAGE_CHECK(assertion, message) MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, &m_renderingBackend->streamConnection(), message)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageBufferSet);
 
 Ref<RemoteImageBufferSet> RemoteImageBufferSet::create(ImageBufferSetIdentifier identifier, RemoteGraphicsContextIdentifier contextIdentifier, RemoteRenderingBackend& renderingBackend)
 {

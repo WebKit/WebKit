@@ -30,6 +30,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/SwiftBridging.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -39,6 +40,7 @@ class WebPageProxy;
 class WebProcessProxy;
 
 class WebBackForwardListFrameItem : public RefCountedAndCanMakeWeakPtr<WebBackForwardListFrameItem> {
+    WTF_MAKE_TZONE_ALLOCATED(WebBackForwardListFrameItem);
 public:
     static Ref<WebBackForwardListFrameItem> create(WebBackForwardListItem&, WebBackForwardListFrameItem* parentItem, Ref<FrameState>&&);
     ~WebBackForwardListFrameItem();

@@ -29,6 +29,7 @@
 #include "GeolocationIdentifier.h"
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -37,6 +38,7 @@ class GeolocationPermissionRequestManagerProxy;
 class WebProcessProxy;
 
 class GeolocationPermissionRequestProxy : public RefCounted<GeolocationPermissionRequestProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(GeolocationPermissionRequestProxy);
 public:
     static Ref<GeolocationPermissionRequestProxy> create(GeolocationPermissionRequestManagerProxy& manager, GeolocationIdentifier geolocationID, WebProcessProxy& process, WebCore::RegistrableDomain&& registrableDomain)
     {

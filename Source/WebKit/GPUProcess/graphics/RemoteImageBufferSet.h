@@ -37,6 +37,7 @@
 #include "StreamConnectionWorkQueue.h"
 #include "StreamMessageReceiver.h"
 #include <WebCore/ImageBuffer.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 #include <WebCore/DynamicContentScalingDisplayList.h>
@@ -48,6 +49,7 @@ class RemoteImageBufferGraphicsContext;
 class RemoteRenderingBackend;
 
 class RemoteImageBufferSet : public IPC::StreamMessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteImageBufferSet);
 public:
     static Ref<RemoteImageBufferSet> create(ImageBufferSetIdentifier, RemoteGraphicsContextIdentifier, RemoteRenderingBackend&);
     ~RemoteImageBufferSet();

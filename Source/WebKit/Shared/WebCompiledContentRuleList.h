@@ -30,10 +30,12 @@
 #include "WebCompiledContentRuleListData.h"
 #include <WebCore/CompiledContentExtension.h>
 #include <WebCore/ContentExtensionCompiler.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebCompiledContentRuleList final : public WebCore::ContentExtensions::CompiledContentExtension {
+    WTF_MAKE_TZONE_ALLOCATED(WebCompiledContentRuleList);
 public:
     static RefPtr<WebCompiledContentRuleList> create(WebCompiledContentRuleListData&&);
     virtual ~WebCompiledContentRuleList();

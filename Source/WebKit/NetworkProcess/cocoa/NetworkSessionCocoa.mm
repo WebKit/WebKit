@@ -1045,6 +1045,10 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
 
 namespace WebKit {
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(SessionWrapper);
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(SessionSet);
+
 #if ASSERT_ENABLED
 static bool sessionsCreated = false;
 #endif

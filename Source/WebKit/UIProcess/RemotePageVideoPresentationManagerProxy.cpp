@@ -32,8 +32,11 @@
 #include "VideoPresentationManagerProxyMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePageVideoPresentationManagerProxy);
 
 Ref<RemotePageVideoPresentationManagerProxy> RemotePageVideoPresentationManagerProxy::create(WebCore::PageIdentifier pageID, WebProcessProxy& process, VideoPresentationManagerProxy* manager)
 {

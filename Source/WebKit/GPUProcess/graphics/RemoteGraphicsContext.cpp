@@ -42,6 +42,7 @@
 #include <WebCore/FilterResults.h>
 #include <WebCore/MeshGradient.h>
 #include <WebCore/SVGFilterRenderer.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 #if USE(METAL)
@@ -60,6 +61,8 @@
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_renderingBackend->streamConnection());
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteGraphicsContext);
 using namespace WebCore;
 
 RemoteGraphicsContext::RemoteGraphicsContext(GraphicsContext& context, RemoteRenderingBackend& renderingBackend)

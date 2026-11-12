@@ -30,6 +30,7 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/Timer.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -41,7 +42,7 @@ class NetworkSession;
 struct NetworkResourceLoadParameters;
 
 class QualifiedServerTrustFetch final : public RefCounted<QualifiedServerTrustFetch>, public NetworkLoadClient {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(QualifiedServerTrustFetch);
+    WTF_MAKE_TZONE_ALLOCATED(QualifiedServerTrustFetch);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(QualifiedServerTrustFetch);
 public:
     template <typename... Args> static void create(Args&&... args)

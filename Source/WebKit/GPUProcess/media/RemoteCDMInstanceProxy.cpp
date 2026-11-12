@@ -33,8 +33,11 @@
 #include "RemoteCDMInstanceMessages.h"
 #include "RemoteCDMInstanceSessionProxy.h"
 #include <WebCore/CDMInstance.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCDMInstanceProxy);
 
 using namespace WebCore;
 

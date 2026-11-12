@@ -26,7 +26,11 @@
 #include "config.h"
 #include "ResponsivenessTimer.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResponsivenessTimer);
 
 Ref<ResponsivenessTimer> ResponsivenessTimer::create(ResponsivenessTimer::Client& client, Seconds responsivenessTimeout)
 {

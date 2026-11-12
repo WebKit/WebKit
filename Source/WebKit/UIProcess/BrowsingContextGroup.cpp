@@ -42,10 +42,13 @@
 #include "WebsiteDataStore.h"
 #include <WebCore/IPAddressSpace.h>
 #include <WebCore/SecurityOrigin.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #define BROWSINGCONTEXTGROUP_RELEASE_LOG(fmt, ...) RELEASE_LOG(SiteIsolation, "%p - BrowsingContextGroup::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BrowsingContextGroup);
 
 using namespace WebCore;
 
