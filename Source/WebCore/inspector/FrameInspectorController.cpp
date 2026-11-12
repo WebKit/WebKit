@@ -254,6 +254,12 @@ void FrameInspectorController::inspect(Node& node)
     m_pendingNodeToInspect = WeakPtr<Node, WeakPtrImplWithEventTargetData> { node };
 }
 
+RefPtr<Node> FrameInspectorController::nodeForId(int nodeId) const
+{
+    CheckedPtr domAgent = m_domAgent;
+    return domAgent ? domAgent->nodeForId(nodeId) : nullptr;
+}
+
 void FrameInspectorController::disconnectFrontend(Inspector::FrontendChannel& frontendChannel)
 {
     m_frontendRouter->disconnectFrontend(frontendChannel);

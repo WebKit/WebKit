@@ -28,6 +28,7 @@
 #include "BackendResourceDataStore.h"
 #include "Connection.h"
 #include "MessageReceiver.h"
+#include "RemoteSnapshotIdentifier.h"
 #include <WebCore/DebuggerPauseSessionIdentifier.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/HTTPHeaderMap.h>
@@ -126,6 +127,9 @@ public:
     void searchInRequest(WebCore::ResourceLoaderIdentifier, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, String errorString)>&&);
     void searchInFrameResource(WebCore::FrameIdentifier, const String& url, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchMatch>&&, String errorString)>&&);
     void searchInFramesAndRequests(Vector<WebCore::FrameIdentifier>&& frameIDs, const String& query, bool caseSensitive, bool isRegex, CompletionHandler<void(Vector<Inspector::SearchResult>&&)>&&);
+
+    void snapshotNode(std::optional<WebCore::FrameIdentifier>, int nodeId, CompletionHandler<void(std::expected<String, String>&&)>&&);
+    void snapshotNodeToRemoteSnapshot(std::optional<WebCore::FrameIdentifier>, int nodeId, RemoteSnapshotIdentifier, CompletionHandler<void(std::expected<void, String>&&)>&&);
 
     // Fan the paint-rects toggle and the bootstrap script out to every per-frame PageAgentProxy this process hosts.
     void setShowPaintRects(bool);
