@@ -101,6 +101,28 @@ void AutomationInstrumentation::scriptRealmDestroyed(FrameIdentifier frameID, DO
     });
 }
 
+void AutomationInstrumentation::scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier, const SecurityOriginData& origin)
+{
+    if (!automationClient()) [[likely]]
+        return;
+
+    WTF::ensureOnMainThread([workerIdentifier = workerIdentifier.isolatedCopy(), ownerFrameIdentifier, ownerDocumentIdentifier, origin = origin.isolatedCopy()] {
+        if (RefPtr client = automationClient())
+            client->scriptDedicatedWorkerRealmCreated(workerIdentifier, ownerFrameIdentifier, ownerDocumentIdentifier, origin);
+    });
+}
+
+void AutomationInstrumentation::scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier)
+{
+    if (!automationClient()) [[likely]]
+        return;
+
+    WTF::ensureOnMainThread([workerIdentifier = workerIdentifier.isolatedCopy(), ownerFrameIdentifier, ownerDocumentIdentifier] {
+        if (RefPtr client = automationClient())
+            client->scriptDedicatedWorkerRealmDestroyed(workerIdentifier, ownerFrameIdentifier, ownerDocumentIdentifier);
+    });
+}
+
 } // namespace WebCore
 
 #endif

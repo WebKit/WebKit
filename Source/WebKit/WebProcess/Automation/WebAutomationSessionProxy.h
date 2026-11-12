@@ -44,6 +44,7 @@
 #include "IdentifierTypes.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <WebCore/AutomationInstrumentation.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #endif
 
 namespace WebCore {
@@ -126,6 +127,8 @@ private:
     void addMessageToConsole(WebCore::FrameIdentifier, const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) override;
     void scriptRealmCreated(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&) override;
     void scriptRealmDestroyed(WebCore::FrameIdentifier) override;
+    void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::ScriptExecutionContextIdentifier ownerDocumentIdentifier, const WebCore::SecurityOriginData&) override;
+    void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::ScriptExecutionContextIdentifier ownerDocumentIdentifier) override;
     void ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier);
     void reloadFrame(WebCore::FrameIdentifier, OptionSet<WebCore::ReloadOption>);
 #endif
@@ -146,7 +149,16 @@ private:
     // the UI-process copy.
     HashMap<WebCore::FrameIdentifier, ListHashSet<String>> m_knownReferences;
 #if ENABLE(WEBDRIVER_BIDI)
+    struct DedicatedWorkerRealmInfo {
+        RealmIdentifier realmIdentifier { WTF::HashTraits<RealmIdentifier>::emptyValue() };
+        RealmIdentifier ownerRealmIdentifier { WTF::HashTraits<RealmIdentifier>::emptyValue() };
+        WebCore::ScriptExecutionContextIdentifier ownerDocumentIdentifier { WTF::HashTraits<WebCore::ScriptExecutionContextIdentifier>::emptyValue() };
+    };
+
+    using DedicatedWorkerRealmKey = std::pair<WebCore::FrameIdentifier, String>;
+
     HashMap<WebCore::FrameIdentifier, RealmIdentifier> m_frameToRealmIdentifier;
+    HashMap<DedicatedWorkerRealmKey, DedicatedWorkerRealmInfo> m_dedicatedWorkerRealmInfo;
 #endif
 };
 
