@@ -47,13 +47,7 @@
 // at an allocation site, taking both the pointer variable (which may be modified) and the
 // size of the allocation in bytes.
 
-#if __has_include(<WebKitAdditions/AllocationCountsAdditions.h>)
-// FIXME: Properly support using WKA in modules.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
-#include <WebKitAdditions/AllocationCountsAdditions.h>
-#pragma clang diagnostic pop
-#elif __has_include(<AllocationCountsAdditions.h>)
+#if __has_include(<AllocationCountsAdditions.h>)
 #include <AllocationCountsAdditions.h>
 #endif
 
