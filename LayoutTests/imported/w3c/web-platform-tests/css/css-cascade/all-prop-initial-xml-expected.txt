@@ -75,6 +75,7 @@ PASS border-left-width
 PASS border-right-color
 PASS border-right-style
 PASS border-right-width
+PASS border-shape
 PASS border-start-end-radius
 PASS border-start-start-radius
 PASS border-top-color
