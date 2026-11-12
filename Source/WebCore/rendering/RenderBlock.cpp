@@ -2216,7 +2216,8 @@ std::optional<LayoutUnit> RenderBlock::fixedLogicalWidthContribution(const Style
     // deprecated flex item still flexes, so its 0 is not a usable fixed width either.
     if (isRenderTableCell() || (isDeprecatedFlexItem() && !static_cast<int>(fixedLogicalWidth->resolveZoom(style().usedZoomForLength()))))
         return { };
-    return adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
+    // A stretch() takes its margins off, resolved against zero as intrinsicLogicalMarginStartAndEnd() resolves them when adding them back.
+    return adjustContentBoxLogicalWidthForBoxSizing(logicalWidth, LayoutUnit { fixedLogicalWidth->resolveZoom(style().usedZoomForLength()) }, 0_lu);
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderBlock::logicalWidthContributionsForSize(const Style::PreferredSize& logicalWidth, LayoutUnit minContentLogicalWidth, LayoutUnit maxContentLogicalWidth) const

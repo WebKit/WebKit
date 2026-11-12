@@ -1751,6 +1751,15 @@ LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing(LayoutUnit comput
     return std::max(0_lu, computedLogicalWidth - borderAndPaddingLogicalWidth());
 }
 
+template<typename SizeType> LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing(const SizeType& logicalWidth, LayoutUnit computedLogicalWidth, std::optional<LayoutUnit> containingBlockLogicalWidth) const
+{
+    if (!logicalWidth.isStretchFunction())
+        return adjustContentBoxLogicalWidthForBoxSizing(computedLogicalWidth);
+    return adjustBorderBoxLogicalWidthForBoxSizing(logicalWidth, computedLogicalWidth, containingBlockLogicalWidth) - borderAndPaddingLogicalWidth();
+}
+
+template LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing<Style::PreferredSize>(const Style::PreferredSize&, LayoutUnit, std::optional<LayoutUnit>) const;
+
 LayoutUnit RenderBox::adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit> height) const
 {
     if (!height)
@@ -4201,10 +4210,11 @@ void RenderBox::constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit& 
 
     // Otherwise a keyword bound is the box's own min-content/max-content size, which includes the min/max sizes transferred
     // through the aspect ratio: an indefinite maximum doesn't cap those (CSS Sizing 4 section 5.3).
+    // A stretch() bound takes its margins off, resolved against zero as the contributions resolve them.
     auto usedMaxLogicalWidth = [&] {
         // FIXME: We should be able to handle other values for the max logical width here.
         if (auto fixedMaxLogicalWidth = maxLogicalWidth.tryFixed())
-            return adjustContentBoxLogicalWidthForBoxSizing(*fixedMaxLogicalWidth);
+            return adjustContentBoxLogicalWidthForBoxSizing(maxLogicalWidth, LayoutUnit { fixedMaxLogicalWidth->resolveZoom(style().usedZoomForLength()) }, 0_lu);
 
         if (maxLogicalWidth.isMinContent() || maxLogicalWidth.isMaxContent()) {
             auto keywordLogicalWidth = [&] {
@@ -4224,7 +4234,7 @@ void RenderBox::constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit& 
     auto usedMinLogicalWidth = [&]() -> LayoutUnit {
         // FIXME: We should be able to handle other values for the min logical width here.
         if (auto fixedMinLogicalWidth = minLogicalWidth.tryFixed(); fixedMinLogicalWidth && fixedMinLogicalWidth->isPositive())
-            return adjustContentBoxLogicalWidthForBoxSizing(*fixedMinLogicalWidth);
+            return adjustContentBoxLogicalWidthForBoxSizing(minLogicalWidth, LayoutUnit { fixedMinLogicalWidth->resolveZoom(style().usedZoomForLength()) }, 0_lu);
 
         // A min-content minimum floors the contribution at the box's own min-content size,
         // so a smaller max-width cannot clamp it below that (min wins over max).
