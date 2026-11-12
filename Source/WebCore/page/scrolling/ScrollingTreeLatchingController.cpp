@@ -88,6 +88,12 @@ std::optional<ScrollingTreeLatchingController::ScrollingNodeAndProcessingSteps> 
     return m_latchedNodeAndSteps;
 }
 
+bool ScrollingTreeLatchingController::isLatchedToUnscrollableRoot() const
+{
+    Locker locker { m_latchedNodeLock };
+    return m_latchedNodeAndSteps && m_latchedNodeAndSteps->latchedToUnscrollableRoot == LatchedToUnscrollableRoot::Yes;
+}
+
 void ScrollingTreeLatchingController::nodeDidHandleEvent(ScrollingNodeID scrollingNodeID, OptionSet<WheelEventProcessingSteps> processingSteps, const PlatformWheelEvent& wheelEvent, bool allowLatching)
 {
     if (!allowLatching)
@@ -96,7 +102,7 @@ void ScrollingTreeLatchingController::nodeDidHandleEvent(ScrollingNodeID scrolli
     Locker locker { m_latchedNodeLock };
 
     if (wheelEvent.useLatchedEventElement() && m_latchedNodeAndSteps && m_latchedNodeAndSteps->scrollingNodeID == scrollingNodeID) {
-        if (wheelEvent.isEndOfMomentumScroll())
+        if (wheelEvent.isEndOfMomentumScroll() || m_latchedNodeAndSteps->latchedToUnscrollableRoot == LatchedToUnscrollableRoot::Yes)
             m_lastLatchedNodeInterationTime = { };
         else
             m_lastLatchedNodeInterationTime = MonotonicTime::now();
@@ -128,6 +134,20 @@ void ScrollingTreeLatchingController::nodeDidHandleEvent(ScrollingNodeID scrolli
     LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTreeLatchingController " << this << " nodeDidHandleEvent: latching to " << scrollingNodeID);
     m_latchedNodeAndSteps = ScrollingNodeAndProcessingSteps { scrollingNodeID, processingSteps };
     m_lastLatchedNodeInterationTime = MonotonicTime::now();
+}
+
+void ScrollingTreeLatchingController::latchToUnscrollableRoot(ScrollingNodeID rootNodeID, OptionSet<WheelEventProcessingSteps> processingSteps, bool allowLatching)
+{
+    if (!allowLatching)
+        return;
+
+    Locker locker { m_latchedNodeLock };
+    if (m_latchedNodeAndSteps)
+        return;
+
+    LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTreeLatchingController " << this << " latchToUnscrollableRoot: latching to " << rootNodeID);
+    m_latchedNodeAndSteps = ScrollingNodeAndProcessingSteps { rootNodeID, processingSteps, LatchedToUnscrollableRoot::Yes };
+    m_lastLatchedNodeInterationTime = { };
 }
 
 void ScrollingTreeLatchingController::nodeWasRemoved(ScrollingNodeID nodeID)

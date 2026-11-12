@@ -193,6 +193,9 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
                 if (result.wasHandled) {
                     m_latchingController.nodeDidHandleEvent(latchedNodeAndSteps->scrollingNodeID, processingSteps, wheelEvent, m_allowLatching);
                     m_gestureState.nodeDidHandleEvent(latchedNodeAndSteps->scrollingNodeID, wheelEvent);
+                } else if (latchedNodeAndSteps->latchedToUnscrollableRoot == LatchedToUnscrollableRoot::Yes) {
+                    // Nothing scrolls, but the wheel event test monitor still needs to see that the gesture is being processed.
+                    auto deferrer = ScrollingTreeWheelEventTestMonitorCompletionDeferrer { *this, node->scrollingNodeID(), WheelEventTestMonitor::DeferReason::None };
                 }
                 return result;
             }
@@ -207,7 +210,15 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
 
         LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : std::optional<ScrollingNodeID> { }) << " for point " << position);
 
-        return handleWheelEventWithNode(wheelEvent, processingSteps, node.get());
+        auto result = handleWheelEventWithNode(wheelEvent, processingSteps, node.get());
+#if PLATFORM(MAC)
+        auto canLatchToUnscrollableRoot = [&] {
+            return wheelEvent.isGestureStart() && !wheelEvent.delta().isZero() && !result.needsMainThreadProcessing() && node == rootNode;
+        };
+        if (!result.wasHandled && isUnscrollableRoot(*rootNode) && canLatchToUnscrollableRoot())
+            m_latchingController.latchToUnscrollableRoot(rootNode->scrollingNodeID(), processingSteps, m_allowLatching);
+#endif
+        return result;
     }();
 
     static constexpr OptionSet<WheelEventProcessingSteps> mainThreadSteps = { WheelEventProcessingSteps::NonBlockingDOMEventDispatch, WheelEventProcessingSteps::BlockingDOMEventDispatch };
@@ -255,6 +266,14 @@ WheelEventHandlingResult ScrollingTree::handleWheelEventWithNode(const PlatformW
         node = node->parent();
     }
     return WheelEventHandlingResult::unhandled();
+}
+
+bool ScrollingTree::isUnscrollableRoot(const ScrollingTreeScrollingNode& rootNode)
+{
+    if (rootNode.allowsHorizontalScrolling() || rootNode.allowsVerticalScrolling())
+        return false;
+
+    return !rootNode.horizontalOverscrollBehaviorPreventsPropagation() && !rootNode.verticalOverscrollBehaviorPreventsPropagation();
 }
 
 #if PLATFORM(MAC)
@@ -733,6 +752,11 @@ void ScrollingTree::notifyRelatedNodesRecursive(ScrollingTreeNode& node)
 std::optional<ScrollingNodeID> ScrollingTree::latchedNodeID() const
 {
     return m_latchingController.latchedNodeID();
+}
+
+bool ScrollingTree::isLatchedToUnscrollableRoot() const
+{
+    return m_latchingController.isLatchedToUnscrollableRoot();
 }
 
 void ScrollingTree::clearLatchedNode()
