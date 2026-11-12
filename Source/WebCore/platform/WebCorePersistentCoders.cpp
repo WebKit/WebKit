@@ -675,6 +675,7 @@ std::optional<WebCore::SecurityOriginData> Coder<WebCore::SecurityOriginData>::d
 
 void Coder<WebCore::ResourceResponse>::encodeForPersistence(Encoder& encoder, const WebCore::ResourceResponse& instance)
 {
+    // Changing this encoding requires bumping NetworkCache::Storage::version and backgroundFetchCurrentVersion, or existing entries become unreadable.
     encoder << instance.m_isNull;
     if (instance.m_isNull)
         return;

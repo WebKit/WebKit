@@ -46,7 +46,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetch);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetch::Record);
 
-static const unsigned backgroundFetchCurrentVersion = 1;
+static const unsigned backgroundFetchCurrentVersion = 2;
 
 BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, const String& identifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
     : m_identifier(identifier)

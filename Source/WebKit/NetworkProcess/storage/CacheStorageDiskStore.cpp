@@ -39,6 +39,7 @@
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
 
@@ -47,7 +48,7 @@ static constexpr auto versionDirectoryPrefix = "Version "_s;
 static constexpr auto recordsDirectoryName = "Records"_s;
 static constexpr auto blobsDirectoryName = "Blobs"_s;
 static constexpr auto blobSuffix = "-blob"_s;
-static const unsigned currentVersion = 16;
+static const unsigned currentVersion = 17;
 
 std::span<const uint8_t> CacheStorageDiskStore::SafeFileData::span() const
 {
@@ -391,9 +392,21 @@ std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(
     return CacheStorageRecord { storedInfo->info, storedInfo->header.requestHeadersGuard, storedInfo->header.request, storedInfo->header.options, storedInfo->header.referrer, storedInfo->header.responseHeadersGuard, WTF::move(storedInfo->header.responseData), storedInfo->header.responseBodySize, WTF::move(*responseBody) };
 }
 
+static void deleteOldVersionDirectories(const String& path)
+{
+    for (auto& name : FileSystem::listDirectory(path)) {
+        if (!name.startsWith(versionDirectoryPrefix))
+            continue;
+        auto version = parseInteger<unsigned>(StringView { name }.substring(versionDirectoryPrefix.length()));
+        if (version && *version < currentVersion)
+            FileSystem::deleteNonEmptyDirectory(FileSystem::pathByAppendingComponent(path, name));
+    }
+}
+
 void CacheStorageDiskStore::readAllRecordInfosInternal(ReadAllRecordInfosCallback&& callback)
 {
-    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordsDirectory = recordsDirectoryPath().isolatedCopy(), cacheName = m_cacheName.isolatedCopy(), salt = m_salt, callback = WTF::move(callback)]() mutable {
+    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, path = m_path.isolatedCopy(), recordsDirectory = recordsDirectoryPath().isolatedCopy(), cacheName = m_cacheName.isolatedCopy(), salt = m_salt, callback = WTF::move(callback)] mutable {
+        deleteOldVersionDirectories(path);
         Vector<CacheStorageRecordInformation> recordInfos;
         const auto partitionNames = FileSystem::listDirectory(recordsDirectory);
         for (auto& partitionName : partitionNames) {

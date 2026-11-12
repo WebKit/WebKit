@@ -953,6 +953,7 @@ namespace WTF::Persistence {
 
 void Coder<WebCore::ResourceResponseData>::encodeForPersistence(Encoder& encoder, const WebCore::ResourceResponseData& data)
 {
+    // Changing this encoding requires bumping currentVersion in CacheStorageDiskStore.cpp, or existing records become unreadable.
     encoder << data.url;
     encoder << data.mimeType;
     encoder << static_cast<int64_t>(data.expectedContentLength);
