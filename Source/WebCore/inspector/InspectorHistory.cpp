@@ -49,11 +49,14 @@ private:
     bool isUndoableStateMark() const final { return true; }
 };
 
-ExceptionOr<void> InspectorHistory::perform(std::unique_ptr<Action> action)
+ExceptionOr<void> InspectorHistory::perform(std::unique_ptr<Action> action, NOESCAPE const Function<void()>& didPerform)
 {
     auto performResult = action->perform();
     if (performResult.hasException())
         return performResult.releaseException();
+
+    if (didPerform)
+        didPerform();
 
     if (!action->mergeId().isEmpty() && m_afterLastActionIndex > 0 && action->mergeId() == m_history[m_afterLastActionIndex - 1]->mergeId())
         m_history[m_afterLastActionIndex - 1]->merge(WTF::move(action));

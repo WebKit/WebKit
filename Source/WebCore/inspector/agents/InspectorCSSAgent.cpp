@@ -717,11 +717,14 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> Inspe
 
     auto action = makeUnique<AddRuleAction>(inspectorStyleSheet, selector);
     auto& rawAction = *action;
-    auto performResult = domAgent->history()->perform(WTF::move(action));
+    InspectorCSSId newRuleId;
+    auto performResult = domAgent->history()->perform(WTF::move(action), [&] {
+        newRuleId = rawAction.newRuleId();
+    });
     if (performResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(performResult.releaseException()));
 
-    auto rule = inspectorStyleSheet->buildObjectForRule(protect(inspectorStyleSheet->ruleForId(rawAction.newRuleId())));
+    auto rule = inspectorStyleSheet->buildObjectForRule(protect(inspectorStyleSheet->ruleForId(newRuleId)));
     if (!rule)
         return makeUnexpected("Internal error: missing style sheet"_s);
 
