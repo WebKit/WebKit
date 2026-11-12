@@ -120,7 +120,7 @@ public:
     void setLabel(String&&) final;
 
     NODELETE bool isValid() const final;
-    void replayCommands(RenderPassEncoder&);
+    void replayCommands(RenderPassEncoder&, float minDepth, float maxDepth);
     void releaseDestroyedResources();
 
     static constexpr auto startIndexForFragmentDynamicOffsets = 3;
@@ -226,6 +226,8 @@ private:
     bool m_requiresCommandReplay { false };
     bool m_finished { false };
     uint32_t m_sampleMask { defaultSampleMask };
+    float m_minDepth { 0.f };
+    float m_maxDepth { 1.f };
     bool m_makeSubmitInvalid { false };
 };
 

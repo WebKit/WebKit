@@ -1,0 +1,175 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("A render bundle draw has to use the dynamic offsets of every bound group, including the groups " +
+           "set before an earlier draw. Each draw is one point: its vertex-stage uniform names the pixel it " +
+           "lands on and its fragment-stage uniform names its color. Slot 0 of both uniform buffers is a trap " +
+           "(pixel 7, red), so a draw that reads a dynamic offset of 0 instead of the one it was given shows up " +
+           "there. Each row is 8 pixels: G is green, B is blue, R is red and k is the black clear color.");
+
+const width = 8;
+const format = 'rgba8unorm';
+
+async function main() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    let module = device.createShaderModule({ code: `
+        struct Position { x: f32, };
+        struct Color { c: vec4f, };
+        @group(0) @binding(0) var<uniform> position: Position;
+        @group(1) @binding(0) var<uniform> color: Color;
+        @vertex fn vs() -> @builtin(position) vec4f { return vec4f(position.x, 0, 0.5, 1); }
+        @fragment fn fs() -> @location(0) vec4f { return color.c; }
+    ` });
+
+    // Position slot 0 is pixel 7, slot s > 0 is pixel s - 1. Color slot 0 is red, 1 green, 2 blue.
+    let positionBuffer = device.createBuffer({ size: 256 * (width + 1), usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    for (let slot = 0; slot <= width; ++slot) {
+        let pixel = slot ? slot - 1 : width - 1;
+        device.queue.writeBuffer(positionBuffer, 256 * slot, new Float32Array([(pixel + 0.5) / width * 2 - 1, 0, 0, 0]));
+    }
+    let colorBuffer = device.createBuffer({ size: 256 * 3, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(colorBuffer, 0, new Float32Array([1, 0, 0, 1]));
+    device.queue.writeBuffer(colorBuffer, 256, new Float32Array([0, 1, 0, 1]));
+    device.queue.writeBuffer(colorBuffer, 512, new Float32Array([0, 0, 1, 1]));
+    const pixelOffset = pixel => 256 * (pixel + 1);
+    const green = 256;
+    const blue = 512;
+
+    let positionLayout = device.createBindGroupLayout({
+        entries: [{ binding: 0, visibility: GPUShaderStage.VERTEX, buffer: { type: 'uniform', hasDynamicOffset: true } }],
+    });
+    let colorLayout = device.createBindGroupLayout({
+        entries: [{ binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'uniform', hasDynamicOffset: true } }],
+    });
+    let positionGroup = device.createBindGroup({ layout: positionLayout, entries: [{ binding: 0, resource: { buffer: positionBuffer, size: 16 } }] });
+    let colorGroup = device.createBindGroup({ layout: colorLayout, entries: [{ binding: 0, resource: { buffer: colorBuffer, size: 16 } }] });
+    let layout = device.createPipelineLayout({ bindGroupLayouts: [positionLayout, colorLayout] });
+
+    function createPipeline(primitive, multisample) {
+        return device.createRenderPipeline({
+            layout,
+            vertex: { module, entryPoint: 'vs' },
+            fragment: { module, entryPoint: 'fs', targets: [{ format }] },
+            primitive: { topology: 'point-list', ...primitive },
+            multisample,
+        });
+    }
+    let pipeline = createPipeline({ cullMode: 'none' });
+    // A different cull mode makes the bundle start a new indirect command buffer at the pipeline change.
+    let cullingPipeline = createPipeline({ cullMode: 'back' });
+    // A sample mask makes the bundle replay its commands at executeBundles() time instead of using an indirect command buffer.
+    let maskedPipeline = createPipeline({ cullMode: 'none' }, { count: 1, mask: 0x7fffffff });
+
+    let indexBuffer = device.createBuffer({ size: 8, usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(indexBuffer, 0, new Uint16Array([0, 0, 0, 0]));
+
+    let texture = device.createTexture({ size: [width, 1], format, usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC });
+    let readback = device.createBuffer({ size: 256, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+    async function executeAndReadRow(bundle) {
+        let commandEncoder = device.createCommandEncoder();
+        let pass = commandEncoder.beginRenderPass({
+            colorAttachments: [{ view: texture.createView(), loadOp: 'clear', storeOp: 'store', clearValue: { r: 0, g: 0, b: 0, a: 1 } }],
+        });
+        pass.executeBundles([bundle]);
+        pass.end();
+        commandEncoder.copyTextureToBuffer({ texture }, { buffer: readback, bytesPerRow: 256 }, [width, 1]);
+        device.queue.submit([commandEncoder.finish()]);
+        await readback.mapAsync(GPUMapMode.READ);
+        let bytes = new Uint8Array(readback.getMappedRange(0, width * 4));
+        let row = '';
+        for (let i = 0; i < width; ++i) {
+            let [r, g, b] = bytes.subarray(i * 4, i * 4 + 3);
+            row += r > 128 ? 'R' : g > 128 ? 'G' : b > 128 ? 'B' : 'k';
+        }
+        readback.unmap();
+        return row;
+    }
+
+    function encodeBundle(encode) {
+        let encoder = device.createRenderBundleEncoder({ colorFormats: [format] });
+        encode(encoder);
+        return encoder.finish();
+    }
+
+    window.fragmentGroupSetOnce = await executeAndReadRow(encodeBundle(encoder => {
+        encoder.setPipeline(pipeline);
+        encoder.setBindGroup(1, colorGroup, [green]);
+        for (let pixel = 0; pixel < 4; ++pixel) {
+            encoder.setBindGroup(0, positionGroup, [pixelOffset(pixel)]);
+            encoder.draw(1);
+        }
+    }));
+    shouldBeEqualToString('fragmentGroupSetOnce', 'GGGGkkkk');
+
+    window.vertexGroupSetOnce = await executeAndReadRow(encodeBundle(encoder => {
+        encoder.setPipeline(pipeline);
+        encoder.setBindGroup(0, positionGroup, [pixelOffset(0)]);
+        encoder.setBindGroup(1, colorGroup, [blue]);
+        encoder.draw(1);
+        encoder.setBindGroup(1, colorGroup, [green]);
+        encoder.draw(1);
+    }));
+    shouldBeEqualToString('vertexGroupSetOnce', 'Gkkkkkkk');
+
+    window.bothGroupsSetOnce = await executeAndReadRow(encodeBundle(encoder => {
+        encoder.setPipeline(pipeline);
+        encoder.setBindGroup(0, positionGroup, [pixelOffset(2)]);
+        encoder.setBindGroup(1, colorGroup, [green]);
+        encoder.draw(1);
+        encoder.draw(1);
+    }));
+    shouldBeEqualToString('bothGroupsSetOnce', 'kkGkkkkk');
+
+    window.drawIndexed = await executeAndReadRow(encodeBundle(encoder => {
+        encoder.setPipeline(pipeline);
+        encoder.setIndexBuffer(indexBuffer, 'uint16');
+        encoder.setBindGroup(1, colorGroup, [green]);
+        for (let pixel = 0; pixel < 3; ++pixel) {
+            encoder.setBindGroup(0, positionGroup, [pixelOffset(pixel)]);
+            encoder.drawIndexed(1);
+        }
+    }));
+    shouldBeEqualToString('drawIndexed', 'GGGkkkkk');
+
+    window.pipelineChange = await executeAndReadRow(encodeBundle(encoder => {
+        encoder.setPipeline(pipeline);
+        encoder.setBindGroup(1, colorGroup, [green]);
+        encoder.setBindGroup(0, positionGroup, [pixelOffset(0)]);
+        encoder.draw(1);
+        encoder.setPipeline(cullingPipeline);
+        encoder.setBindGroup(0, positionGroup, [pixelOffset(1)]);
+        encoder.draw(1);
+    }));
+    shouldBeEqualToString('pipelineChange', 'GGkkkkkk');
+
+    let replayedBundle = encodeBundle(encoder => {
+        encoder.setPipeline(maskedPipeline);
+        encoder.setBindGroup(1, colorGroup, [green]);
+        for (let pixel = 0; pixel < 3; ++pixel) {
+            encoder.setBindGroup(0, positionGroup, [pixelOffset(pixel)]);
+            encoder.draw(1);
+        }
+    });
+    window.commandReplay = await executeAndReadRow(replayedBundle);
+    shouldBeEqualToString('commandReplay', 'GGGkkkkk');
+    window.commandReplayAgain = await executeAndReadRow(replayedBundle);
+    shouldBeEqualToString('commandReplayAgain', 'GGGkkkkk');
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>

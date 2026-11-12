@@ -82,7 +82,7 @@ public:
     Device& device() const { return m_device; }
     NSArray<RenderBundleICBWithResources*> *renderBundlesResources() const { return m_renderBundlesResources; }
 
-    void replayCommands(RenderPassEncoder&) const;
+    void replayCommands(RenderPassEncoder&, float minDepth, float maxDepth) const;
     void updateMinMaxDepths(float minDepth, float maxDepth);
     bool validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const Vector<TextureOrTextureView>&, const std::optional<TextureOrTextureView>&) const;
     NODELETE bool validatePipeline(const RenderPipeline*);

@@ -307,13 +307,13 @@ static std::span<T> makeSpanFromBuffer(id<MTLBuffer> buffer, size_t byteOffset =
     return unsafeMakeSpan(static_cast<T*>(buffer.contents), (bufferLength - byteOffset) / sizeof(T));
 }
 
-static void initializeFragmentDynamicOffsetsHeader(id<MTLBuffer> buffer, size_t index, uint32_t sampleMask)
+static void initializeFragmentDynamicOffsetsHeader(id<MTLBuffer> buffer, size_t index, float minDepth, float maxDepth, uint32_t sampleMask)
 {
     static_assert(sizeof(float) == sizeof(uint32_t));
     auto floats = makeSpanFromBuffer<float>(buffer).subspan(index, RenderBundleEncoder::startIndexForFragmentDynamicOffsets);
     auto words = makeSpanFromBuffer<uint32_t>(buffer).subspan(index, RenderBundleEncoder::startIndexForFragmentDynamicOffsets);
-    floats[0] = 0.f;
-    floats[1] = 1.f;
+    floats[0] = minDepth;
+    floats[1] = maxDepth;
     words[2] = sampleMask;
 }
 
@@ -440,11 +440,14 @@ bool RenderBundleEncoder::executePreDrawCommands(bool needsValidationLayerWorkar
     }
 
     if (m_dynamicOffsetsFragmentBuffer && fragmentDynamicOffsetCount) {
-        initializeFragmentDynamicOffsetsHeader(m_dynamicOffsetsFragmentBuffer, fragmentDynamicOffset / sizeof(uint32_t), m_sampleMask);
+        initializeFragmentDynamicOffsetsHeader(m_dynamicOffsetsFragmentBuffer, fragmentDynamicOffset / sizeof(uint32_t), m_minDepth, m_maxDepth, m_sampleMask);
+        // updateMinMaxDepths always patches offset 0, and replaying into a pass never hands this list to an ICB to be cleared.
         if (fragmentDynamicOffset && !renderPassEncoder)
             m_fragmentDynamicOffsetsHeaderOffsets.append(fragmentDynamicOffset);
     }
 
+    // Each draw has its own slice of the dynamic offset buffers, so write the offsets of every bound
+    // group, not only of the groups set since the previous draw.
     if (m_bindGroupDynamicOffsets) {
         auto vertexDynamicOffsetInElements = vertexDynamicOffset / sizeof(uint32_t);
         auto fragmentDynamicOffsetInElements = fragmentDynamicOffset / sizeof(uint32_t);
@@ -477,11 +480,19 @@ bool RenderBundleEncoder::executePreDrawCommands(bool needsValidationLayerWorkar
 
     if (m_dynamicOffsetsFragmentBuffer && fragmentDynamicOffset < m_dynamicOffsetsFragmentBuffer.length) {
         RELEASE_ASSERT(m_fragmentBuffers.size());
-        [icbCommand setFragmentBuffer:m_dynamicOffsetsFragmentBuffer offset:fragmentDynamicOffset atIndex:m_fragmentBuffers.size() - 1];
+        auto fragmentDynamicOffsetsBufferIndex = m_fragmentBuffers.size() - 1;
+        if (renderPassEncoder) {
+            // A replayed draw copies what it reads rather than binding the buffer, which is written again after the draw:
+            // setPipeline() rewrites the sample mask in the header at offset 0, which every draw without fragment dynamic
+            // offsets shares and the first draw with them owns.
+            std::array<uint32_t, startIndexForFragmentDynamicOffsets> header { std::bit_cast<uint32_t>(m_minDepth), std::bit_cast<uint32_t>(m_maxDepth), m_sampleMask };
+            std::span<const uint8_t> bytes = fragmentDynamicOffsetCount
+                ? makeSpanFromBuffer<uint8_t>(m_dynamicOffsetsFragmentBuffer).subspan(fragmentDynamicOffset, sizeof(uint32_t) * (startIndexForFragmentDynamicOffsets + fragmentDynamicOffsetCount))
+                : asByteSpan(std::span { header });
+            [renderPassEncoder->renderCommandEncoder() setFragmentBytes:bytes.data() length:bytes.size() atIndex:fragmentDynamicOffsetsBufferIndex];
+        } else
+            [icbCommand setFragmentBuffer:m_dynamicOffsetsFragmentBuffer offset:fragmentDynamicOffset atIndex:fragmentDynamicOffsetsBufferIndex];
     }
-
-    if (m_bindGroupDynamicOffsets)
-        m_bindGroupDynamicOffsets->clear();
 
     return true;
 }
@@ -1046,7 +1057,7 @@ void RenderBundleEncoder::endCurrentICB()
     if (!m_dynamicOffsetsFragmentBuffer) {
         m_dynamicOffsetsFragmentBuffer = device->safeCreateBuffer(std::max<uint64_t>(m_fragmentDynamicOffset, RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float)));
         RELEASE_ASSERT(makeSpanFromBuffer<float>(m_dynamicOffsetsFragmentBuffer).size());
-        initializeFragmentDynamicOffsetsHeader(m_dynamicOffsetsFragmentBuffer, 0, m_sampleMask);
+        initializeFragmentDynamicOffsetsHeader(m_dynamicOffsetsFragmentBuffer, 0, m_minDepth, m_maxDepth, m_sampleMask);
         if (!addResource(m_resources, m_dynamicOffsetsFragmentBuffer, MTLRenderStageFragment))
             return;
     }
@@ -1188,14 +1199,18 @@ bool RenderBundleEncoder::isValid() const
     return !!m_icbDescriptor;
 }
 
-void RenderBundleEncoder::replayCommands(RenderPassEncoder& renderPassEncoder)
+void RenderBundleEncoder::replayCommands(RenderPassEncoder& renderPassEncoder, float minDepth, float maxDepth)
 {
     if (!renderPassEncoder.renderCommandEncoder() || !isValid() || !m_device->isValid())
         return;
 
     m_renderPassEncoder = renderPassEncoder;
+    m_minDepth = minDepth;
+    m_maxDepth = maxDepth;
     endCurrentICB();
     m_renderPassEncoder = nullptr;
+    m_minDepth = 0.f;
+    m_maxDepth = 1.f;
     m_currentPipelineState = nil;
     m_depthStencilState = nil;
     m_bindGroupDynamicOffsets = BindGroupDynamicOffsetsContainer();
@@ -1307,13 +1322,19 @@ void RenderBundleEncoder::setBindGroupWithOwnedDynamicOffsets(uint32_t groupInde
 
     if (!groupPtr) {
         m_bindGroups.remove(groupIndex);
+        if (m_bindGroupDynamicOffsets)
+            m_bindGroupDynamicOffsets->remove(groupIndex);
         return;
     }
 
     auto& group = *groupPtr;
     uint32_t dynamicOffsetCount = dynamicOffsets ? dynamicOffsets->size() : 0;
-    if (dynamicOffsetCount && m_bindGroupDynamicOffsets)
-        m_bindGroupDynamicOffsets->set(groupIndex, WTF::move(*dynamicOffsets));
+    if (m_bindGroupDynamicOffsets) {
+        if (dynamicOffsetCount)
+            m_bindGroupDynamicOffsets->set(groupIndex, WTF::move(*dynamicOffsets));
+        else
+            m_bindGroupDynamicOffsets->remove(groupIndex);
+    }
 
     for (const auto& resource : group.resources()) {
         ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());

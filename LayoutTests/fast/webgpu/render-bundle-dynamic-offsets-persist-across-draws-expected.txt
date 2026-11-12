@@ -1,0 +1,16 @@
+A render bundle draw has to use the dynamic offsets of every bound group, including the groups set before an earlier draw. Each draw is one point: its vertex-stage uniform names the pixel it lands on and its fragment-stage uniform names its color. Slot 0 of both uniform buffers is a trap (pixel 7, red), so a draw that reads a dynamic offset of 0 instead of the one it was given shows up there. Each row is 8 pixels: G is green, B is blue, R is red and k is the black clear color.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS fragmentGroupSetOnce is "GGGGkkkk"
+PASS vertexGroupSetOnce is "Gkkkkkkk"
+PASS bothGroupsSetOnce is "kkGkkkkk"
+PASS drawIndexed is "GGGkkkkk"
+PASS pipelineChange is "GGkkkkkk"
+PASS commandReplay is "GGGkkkkk"
+PASS commandReplayAgain is "GGGkkkkk"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

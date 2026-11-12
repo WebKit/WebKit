@@ -1779,7 +1779,7 @@ void RenderPassEncoder::executeBundles(std::span<const Ref<WebGPU::RenderBundle>
         }
 
         m_ignoreBufferCache = true;
-        bundle->replayCommands(*this);
+        bundle->replayCommands(*this, minDepth, maxDepth);
         m_ignoreBufferCache = false;
     }
 

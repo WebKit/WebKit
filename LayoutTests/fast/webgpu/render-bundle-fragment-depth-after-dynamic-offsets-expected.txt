@@ -7,7 +7,9 @@ PASS results.twoOffsets is "255,255,255"
 PASS results.noOffsetsAfterTwo is "255,255,255"
 PASS results.oneOffset is "255,255,255"
 PASS results.viewportDepthRange is "255,255,255"
+PASS results.viewportDepthRangeSplitByCullMode is "255,255,255"
 PASS results.replayedCommands is "255,255,255"
+PASS results.replayedViewportDepthRange is "255,255,255"
 PASS successfullyParsed is true
 
 TEST COMPLETE
