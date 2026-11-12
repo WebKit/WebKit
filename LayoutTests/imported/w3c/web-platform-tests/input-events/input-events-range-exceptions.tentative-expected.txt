@@ -1,6 +1,6 @@
 hello world
 
-FAIL valid target ranges in Element don't throw exceptions assert_equals: expected 1 but got 0
+FAIL valid target ranges in Element don't throw exceptions assert_equals: expected 1 but got 3
 FAIL InputEvent constructor throws with invalid range in Element assert_throws_dom: function "() => {
       // This should throw:
       let ev = new InputEvent("input",
@@ -18,8 +18,8 @@ FAIL InputEvent constructor throws with invalid range in Element assert_throws_d
                               });
       // Run this in case it doesn't throw, to make sure it doesn't crash:
       ev.getTargetRanges()[0].endOffset;
-    }" threw object "TypeError: undefined is not an object (evaluating 'ev.getTargetRanges()[0].endOffset')" that is not a DOMException IndexSizeError: property "code" is equal to undefined, expected 1
-FAIL valid target ranges in Text don't throw exceptions assert_equals: expected 1 but got 0
+    }" did not throw
+FAIL valid target ranges in Text don't throw exceptions assert_equals: expected 5 but got 3
 FAIL InputEvent constructor throws with invalid range in Text assert_throws_dom: function "() => {
       // This should throw:
       let ev = new InputEvent("input",
@@ -37,5 +37,5 @@ FAIL InputEvent constructor throws with invalid range in Text assert_throws_dom:
                               });
       // Run this in case it doesn't throw, to make sure it doesn't crash:
       ev.getTargetRanges()[0].endOffset;
-    }" threw object "TypeError: undefined is not an object (evaluating 'ev.getTargetRanges()[0].endOffset')" that is not a DOMException IndexSizeError: property "code" is equal to undefined, expected 1
+    }" did not throw
 

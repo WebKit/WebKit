@@ -27,4 +27,16 @@ test(() => {
   const event = new InputEvent("type", { inputType: "insertText" });
   assert_equals(event.inputType, "insertText", ".inputType");
 }, "InputEvent constructor with an explicit inputType");
+
+test(() => {
+  const event = new InputEvent("type", { targetRanges: [] });
+  assert_array_equals(event.getTargetRanges(), [], ".getTargetRanges()");
+}, "InputEvent constructor with InputEventInit where targetRanges is empty");
+
+test(() => {
+  const text = document.createTextNode("example");
+  const range = new StaticRange({ startContainer: text, startOffset: 0, endContainer: text, endOffset: 1 });
+  const event = new InputEvent("type", { targetRanges: [range] });
+  assert_array_equals(event.getTargetRanges(), [range], ".getTargetRanges()");
+}, "InputEvent constructor with InputEventInit where targetRanges has one item");
 </script>

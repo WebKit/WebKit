@@ -4,4 +4,6 @@ PASS InputEvent construtor with InputEventInit where data is null
 PASS InputEvent construtor with InputEventInit where data is empty string
 PASS InputEvent construtor with InputEventInit where data is non empty string
 PASS InputEvent constructor with an explicit inputType
+PASS InputEvent constructor with InputEventInit where targetRanges is empty
+PASS InputEvent constructor with InputEventInit where targetRanges has one item
 
