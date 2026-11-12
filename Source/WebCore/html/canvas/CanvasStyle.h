@@ -73,6 +73,7 @@ private:
 };
 
 Color parseColor(const String& colorString, CanvasBase&);
+Color parseColorGeneral(const String& colorString, CanvasBase&);
 Color parseColor(const String& colorString, ScriptExecutionContext&);
 
 inline CanvasStyle::CanvasStyle(Color color)
