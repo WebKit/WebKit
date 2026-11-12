@@ -84,6 +84,13 @@ void GeolocationProviderMock::setPositionUnavailableError(WKStringRef errorMessa
     sendErrorIfNeeded();
 }
 
+void GeolocationProviderMock::reset()
+{
+    m_position.clear();
+    m_hasError = false;
+    m_errorMessage.clear();
+}
+
 void GeolocationProviderMock::startUpdating(WKGeolocationManagerRef geolocationManager)
 {
     ASSERT_UNUSED(geolocationManager, geolocationManager == m_geolocationManager);

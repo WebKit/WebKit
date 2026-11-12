@@ -1647,6 +1647,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     m_isGeolocationPermissionSet = false;
     m_isGeolocationPermissionAllowed = false;
     m_geolocationPermissionQueryOrigins.clear();
+    m_geolocationProvider->reset();
 
     // Reset Screen Wake Lock permission.
     m_screenWakeLockPermission = std::nullopt;

@@ -39,6 +39,7 @@ public:
 
     void setPosition(double latitude, double longitude, double accuracy, std::optional<double> altitude, std::optional<double> altitudeAccuracy, std::optional<double> heading, std::optional<double> speed, std::optional<double> floorLevel);
     void setPositionUnavailableError(WKStringRef errorMessage);
+    void reset();
 
     void startUpdating(WKGeolocationManagerRef);
     void stopUpdating(WKGeolocationManagerRef);
