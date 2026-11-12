@@ -7247,7 +7247,7 @@ public:
         TrustedImm32 mask16(static_cast<int16_t>(mask.m_value));
         TrustedImmPtr addr(reinterpret_cast<void*>(address.offset));
         move(addr, scratchRegister());
-        return branchTest16(cond, BaseIndex(scratchRegister(), address.base, TimesOne), mask16);
+        return branchTest16(cond, BaseIndex(scratchRegister(), address.base, TimesTwo), mask16);
     }
 
     Jump branchTest16(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
