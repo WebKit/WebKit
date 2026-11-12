@@ -105,9 +105,9 @@ int GridPosition::min()
     return -max();
 }
 
-void GridPosition::setMaxPositionForTesting(unsigned maxPosition)
+void GridPosition::setMaxPositionForTesting(std::optional<int> maxPosition)
 {
-    maxPositionForTesting = static_cast<int>(maxPosition);
+    maxPositionForTesting = maxPosition;
 }
 
 // MARK: - Conversion
