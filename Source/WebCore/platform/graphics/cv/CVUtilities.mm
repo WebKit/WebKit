@@ -184,6 +184,39 @@ CGImageAlphaInfo alphaInfoForCVPixelBuffer(CVPixelBufferRef buffer)
     return kCGImageAlphaFirst;
 }
 
+void setAlphaInfoForCVPixelBuffer(CVPixelBufferRef pixelBuffer, CGImageAlphaInfo alphaInfo)
+{
+    CFStringRef alphaMode = nullptr;
+    bool isOpaque = false;
+    switch (alphaInfo) {
+    case kCGImageAlphaFirst:
+    case kCGImageAlphaLast:
+        alphaMode = kCVImageBufferAlphaChannelMode_StraightAlpha;
+        break;
+    case kCGImageAlphaPremultipliedFirst:
+    case kCGImageAlphaPremultipliedLast:
+        alphaMode = kCVImageBufferAlphaChannelMode_PremultipliedAlpha;
+        break;
+    case kCGImageAlphaNone:
+    case kCGImageAlphaNoneSkipFirst:
+    case kCGImageAlphaNoneSkipLast:
+        isOpaque = true;
+        break;
+    case kCGImageAlphaOnly:
+        break;
+    }
+
+    if (alphaMode)
+        CVBufferSetAttachment(pixelBuffer, kCVImageBufferAlphaChannelModeKey, alphaMode, kCVAttachmentMode_ShouldPropagate);
+    else
+        CVBufferRemoveAttachment(pixelBuffer, kCVImageBufferAlphaChannelModeKey);
+
+    if (isOpaque)
+        CVBufferSetAttachment(pixelBuffer, kCVImageBufferAlphaChannelIsOpaque, kCFBooleanTrue, kCVAttachmentMode_ShouldPropagate);
+    else
+        CVBufferRemoveAttachment(pixelBuffer, kCVImageBufferAlphaChannelIsOpaque);
+}
+
 RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height, bool shouldUseIOSurface)
 {
     OSType format = preferedPixelBufferFormat();

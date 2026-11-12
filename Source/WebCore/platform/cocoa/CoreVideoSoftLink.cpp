@@ -76,6 +76,8 @@ SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVPixelBufferPoolMinimumBuffe
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVPixelBufferPoolAllocationThresholdKey, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferAlphaChannelModeKey, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferAlphaChannelMode_PremultipliedAlpha, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferAlphaChannelMode_StraightAlpha, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferAlphaChannelIsOpaque, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferYCbCrMatrixKey, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferYCbCrMatrix_ITU_R_709_2, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVImageBufferYCbCrMatrix_ITU_R_601_4, CFStringRef)

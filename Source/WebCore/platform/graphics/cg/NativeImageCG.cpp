@@ -29,6 +29,7 @@
 #if USE(CG)
 
 #include "CGSubimageCacheWithTimer.h"
+#include "CVUtilities.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContextCG.h"
 #include "ImageBuffer.h"
@@ -158,10 +159,10 @@ RefPtr<NativeImage> NativeImage::create(RetainPtr<CVPixelBufferRef> pixelBuffer,
     if (size.isEmpty() || !colorSpace)
         return nullptr;
 
-    // Currently CA uses the IOSurface if there is one, but is not able to draw with unpremultiplied correctly.
     RetainPtr surface = CVPixelBufferGetIOSurface(pixelBuffer.get());
-    bool contentsArePremultiplied = alphaInfo != kCGImageAlphaFirst && alphaInfo != kCGImageAlphaLast;
-    const void* callbacks = surface && contentsArePremultiplied ? static_cast<const void*>(&surfaceCallbacks) : static_cast<const void*>(&blockSetOnlyCallbacks);
+    if (surface)
+        setAlphaInfoForCVPixelBuffer(pixelBuffer.get(), alphaInfo);
+    const void* callbacks = surface ? static_cast<const void*>(&surfaceCallbacks) : static_cast<const void*>(&blockSetOnlyCallbacks);
 
     auto bitmapInfo = static_cast<int32_t>(static_cast<CGBitmapInfo>(alphaInfo) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little));
     RetainPtr bitmapInfoNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &bitmapInfo));
@@ -180,7 +181,7 @@ RefPtr<NativeImage> NativeImage::create(RetainPtr<CVPixelBufferRef> pixelBuffer,
         return nullptr;
     // CoreAnimation draws the surface directly when the image describes it, instead of
     // reading the contents back and uploading them to a texture of its own.
-    if (surface && contentsArePremultiplied)
+    if (surface)
         CGImageSetProperty(image.get(), kCGImagePropertyIOSurface, surface.get());
     // For historical reasons, CoreAnimation will adjust certain video color spaces when
     // displaying the video. If the image is drawn to an accelerated image buffer, e.g. for a
