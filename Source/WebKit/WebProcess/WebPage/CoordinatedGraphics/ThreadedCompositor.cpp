@@ -435,7 +435,7 @@ TargetContents ThreadedCompositor::paintToCurrentGLContext(const TransformationM
     return TargetContents::Valid;
 }
 
-#if HAVE(OS_SIGNPOST) || USE(SYSPROF_CAPTURE)
+#if HAVE(OS_SIGNPOST) || USE(SYSPROF_CAPTURE) || USE(ATRACE_CAPTURE)
 static String reasonsToString(const OptionSet<CompositionReason>& reasons)
 {
     StringBuilder builder;
@@ -670,6 +670,8 @@ void ThreadedCompositor::updateFPSCounter()
     if (!m_fpsCounter.exposesFPS
 #if USE(SYSPROF_CAPTURE)
         && !SysprofAnnotator::singletonIfCreated()
+#elif USE(ATRACE_CAPTURE)
+        && !ATraceAnnotator::isEnabled()
 #endif
     )
         return;
