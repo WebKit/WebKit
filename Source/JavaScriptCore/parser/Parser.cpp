@@ -3456,6 +3456,8 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseClassFie
             DefineFieldNode::Type type = DefineFieldNode::Type::Name;
             if (definition.kind == Kind::FieldWithComputedPropertyKey)
                 type = DefineFieldNode::Type::ComputedName;
+            else if (definition.kind == Kind::StaticFieldWithComputedPropertyKey)
+                type = DefineFieldNode::Type::StaticComputedName;
             else if (definition.kind == Kind::FieldWithPrivatePropertyKey) {
                 type = DefineFieldNode::Type::PrivateName;
                 currentScope()->useVariable(definition.ident.impl(), false);
