@@ -33,6 +33,7 @@
 #import <WebCore/BackForwardCache.h>
 #import <WebCore/Page.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/Borrow.h>
 #import <wtf/NeverDestroyed.h>
 
 
@@ -90,7 +91,7 @@ void WebVisitedLinkStore::addVisitedLink(NSString *urlString)
     }
 
     Vector<UniChar, 512> buffer(length);
-    [urlString getCharacters:buffer.mutableSpan().data()];
+    [urlString getCharacters:borrow(buffer)->mutableSpan().data()];
 
     addVisitedLinkHash(WebCore::computeSharedStringHash(spanReinterpretCast<const char16_t>(buffer.span())));
 }

@@ -57,6 +57,7 @@
 #import <WebCore/Settings.h>
 #import <WebKitLegacy/DOMExtensions.h>
 #import <algorithm>
+#import <wtf/Borrow.h>
 #import <wtf/NakedPtr.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/text/Base64.h>
@@ -434,7 +435,7 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
             auto decodedData = base64Decode(contentCopy, { Base64DecodeOption::ValidatePadding });
             if (!decodedData)
                 return;
-            RetainPtr dataContent = toNSData(decodedData->span());
+            RetainPtr dataContent = toNSData(borrow(*decodedData)->span());
             [dataContent writeToURL:actualURL atomically:YES];
         } else
             [contentCopy.createNSString() writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];

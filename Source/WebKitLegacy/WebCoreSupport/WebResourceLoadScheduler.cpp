@@ -38,6 +38,7 @@
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SubresourceLoader.h>
+#include <wtf/Borrow.h>
 #include <wtf/MainThread.h>
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -257,7 +258,7 @@ void WebResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimum
     auto hosts = WTF::map(m_hosts.values(), [](auto&& host) {
         return WeakPtr { host.get() };
     });
-    for (auto&& host : WTF::move(hosts)) {
+    for (auto&& host : borrow(hosts)) {
         if (!host)
             continue;
         if (host->hasRequests())

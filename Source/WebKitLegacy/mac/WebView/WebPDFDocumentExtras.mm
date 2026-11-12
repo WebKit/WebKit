@@ -27,6 +27,7 @@
 
 #import <JavaScriptCore/RegularExpression.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/OptionSet.h>
 #import <wtf/Vector.h>
@@ -103,7 +104,7 @@ bool pdfDocumentContainsPrintScript(CGPDFDocumentRef pdfDocument)
 
     for (size_t i = 0; i < objectCount; ++i) {
         CGPDFDictionaryRef javaScriptAction;
-        if (!CGPDFObjectGetValue(reinterpret_cast<CGPDFObjectRef>(objects[i]), kCGPDFObjectTypeDictionary, &javaScriptAction))
+        if (!CGPDFObjectGetValue(reinterpret_cast<CGPDFObjectRef>(borrow(objects)[i]), kCGPDFObjectTypeDictionary, &javaScriptAction))
             continue;
 
         // A JavaScript action must have an action type of "JavaScript".

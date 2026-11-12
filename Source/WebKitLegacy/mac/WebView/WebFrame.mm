@@ -133,6 +133,7 @@
 #import <WebCore/markup.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/text/TextEncoding.h>
+#import <wtf/Borrow.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -919,7 +920,7 @@ static RetainPtr<NSURL> createUniqueWebDataURL();
 
     auto fragment = document->createDocumentFragment();
 
-    for (auto& node : nodesVector) {
+    for (auto& node : borrow(nodesVector)) {
         auto element = createDefaultParagraphElement(*document);
         element->appendChild(*node);
         fragment->appendChild(element);
@@ -1740,7 +1741,7 @@ NODELETE static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frame
 
     for (RefPtr<WebCore::Node> node = root; node; node = WebCore::NodeTraversal::next(*node)) {
         auto markers = protect(document->markers())->markersFor(*node, WebCore::DocumentMarkerType::DictationResult);
-        for (auto& marker : markers) {
+        for (auto& marker : borrow(markers)) {
             RetainPtr<id> metadata = std::get<RetainPtr<id>>(marker->data());
 
             // All result markers should have metadata.
@@ -1786,7 +1787,7 @@ NODELETE static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frame
     if (markers.size() == 0)
         return nil;
 
-    return std::get<RetainPtr<id>>(markers[0]->data()).get();
+    return std::get<RetainPtr<id>>(borrow(markers)[0]->data()).get();
 }
 
 - (void)recursiveSetUpdateAppearanceEnabled:(BOOL)enabled

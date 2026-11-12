@@ -27,6 +27,7 @@
 
 #include <WebCore/BroadcastChannel.h>
 #include <WebCore/SerializedScriptValue.h>
+#include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -87,7 +88,7 @@ void WebBroadcastChannelRegistry::postMessage(const WebCore::PartitionedSecurity
             ++numberOfMessagesNeeded;
     }
 
-    for (auto& channelIdentifier : channelsForNameIterator->value) {
+    for (auto& channelIdentifier : borrow(channelsForNameIterator->value)) {
         if (channelIdentifier == source)
             continue;
         // SerializedScriptValue::deserialize() is destructive, so each recipient needs its own copy.

@@ -36,6 +36,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <sys/param.h>
 #import <unicode/uchar.h>
+#import <wtf/Borrow.h>
 
 NSString * const WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 NSString *WebKitResourceLoadStatisticsDirectoryDefaultsKey = @"WebKitResourceLoadStatisticsDirectory";
@@ -64,11 +65,11 @@ static bool canUseFastRenderer(std::span<const UniChar> buffer)
 
     unsigned length = [self length];
     Vector<UniChar, 2048> buffer(length);
-    [self getCharacters:buffer.mutableSpan().data()];
+    [self getCharacters:borrow(buffer)->mutableSpan().data()];
 
-    if (canUseFastRenderer(buffer)) {
+    if (canUseFastRenderer(borrow(buffer)->span())) {
         WebCore::FontCascade webCoreFont(WebCore::FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
-        WebCore::TextRun run(StringView(spanReinterpretCast<const char16_t>(std::span { buffer })));
+        WebCore::TextRun run(StringView(spanReinterpretCast<const char16_t>(borrow(buffer)->span())));
 
         // The following is a half-assed attempt to match AppKit's rounding rules for drawAtPoint.
         // If you change it, be sure to test all the text drawn this way in Safari, including
@@ -110,11 +111,11 @@ static bool canUseFastRenderer(std::span<const UniChar> buffer)
 {
     unsigned length = [self length];
     Vector<UniChar, 2048> buffer(length);
-    [self getCharacters:buffer.mutableSpan().data()];
+    [self getCharacters:borrow(buffer)->mutableSpan().data()];
 
-    if (canUseFastRenderer(buffer)) {
+    if (canUseFastRenderer(borrow(buffer)->span())) {
         WebCore::FontCascade webCoreFont(WebCore::FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
-        WebCore::TextRun run(StringView(spanReinterpretCast<const char16_t>(std::span { buffer })));
+        WebCore::TextRun run(StringView(spanReinterpretCast<const char16_t>(borrow(buffer)->span())));
         return webCoreFont.width(run);
     }
 

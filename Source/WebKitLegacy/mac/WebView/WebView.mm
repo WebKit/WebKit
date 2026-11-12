@@ -278,6 +278,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/Atomics.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/FileSystem.h>
 #import <wtf/HashTraits.h>
 #import <wtf/Language.h>
@@ -9069,7 +9070,7 @@ FORWARD(toggleUnderline)
 
 - (void)_getWebCoreDictationAlternatives:(Vector<WebCore::DictationAlternative>&)alternatives fromTextAlternatives:(const Vector<WebCore::TextAlternativeWithRange>&)alternativesWithRange
 {
-    for (auto& alternativeWithRange : alternativesWithRange) {
+    for (auto& alternativeWithRange : borrow(alternativesWithRange)) {
         if (auto dictationContext = _private->m_alternativeTextUIController->addAlternatives(alternativeWithRange.alternatives.get()))
             alternatives.append({ alternativeWithRange.range, *dictationContext });
     }

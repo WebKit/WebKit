@@ -27,6 +27,7 @@
 
 #import "WebHistoryItemInternal.h"
 #import <WebCore/HistoryItem.h>
+#import <wtf/Borrow.h>
 #import <wtf/cf/VectorCF.h>
 
 
@@ -124,7 +125,7 @@ void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream&
         size_t size = redirectURLs->size();
         ASSERT(size);
         for (size_t i = 0; i < size; ++i)
-            stream.writeUniqueString(redirectURLs->at(i));
+            stream.writeUniqueString(borrow(*redirectURLs)->at(i));
         stream.writeArrayEnd(redirectArrayStart);
     }
 

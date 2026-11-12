@@ -69,6 +69,7 @@
 #import <WebCore/TextResourceDecoder.h>
 #import <WebKitLegacy/DOMHTMLInputElement.h>
 #import <wtf/Assertions.h>
+#import <wtf/Borrow.h>
 #import <wtf/FixedVector.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
@@ -292,7 +293,7 @@ static RefPtr<WebCore::HTMLFormElement> formElementFromDOMElement(DOMElement *el
 
     WebCore::ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     AtomString targetName = name;
-    for (auto& weakElement : formElement->unsafeListedElements()) {
+    for (auto& weakElement : borrow(formElement->unsafeListedElements())) {
         RefPtr element { weakElement.get() };
         if (element && protect(element->asFormListedElement())->name() == targetName)
             return kit(element.get());

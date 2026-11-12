@@ -55,6 +55,7 @@
 #include <WebCore/UserContentProvider.h>
 #include <WebCore/WebSocketChannelClient.h>
 #include <WebCore/WebSocketHandshake.h>
+#include <wtf/Borrow.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
@@ -455,7 +456,7 @@ bool WebSocketChannel::processBuffer()
     Ref<WebSocketChannel> protectedThis(*this); // The client can close the channel, potentially removing the last reference.
 
     if (m_handshake->mode() == WebSocketHandshake::Incomplete) {
-        int headerLength = m_handshake->readServerHandshake(m_buffer.span());
+        int headerLength = m_handshake->readServerHandshake(borrow(m_buffer)->span());
         if (headerLength <= 0)
             return false;
         if (m_handshake->mode() == WebSocketHandshake::Connected) {
@@ -516,7 +517,7 @@ void WebSocketChannel::startClosingHandshake(int code, const String& reason)
         auto reasonUTF8 = reason.utf8();
         buf.append(reasonUTF8.span());
     }
-    enqueueRawFrame(WebSocketFrame::OpCodeClose, buf.span());
+    enqueueRawFrame(WebSocketFrame::OpCodeClose, borrow(buf)->span());
     Ref<WebSocketChannel> protectedThis(*this); // An attempt to send closing handshake may fail, which will get the channel closed and dereferenced.
     processOutgoingFrameQueue();
 
@@ -545,7 +546,7 @@ bool WebSocketChannel::processFrame()
     WebSocketFrame frame;
     const uint8_t* frameEnd;
     String errorString;
-    WebSocketFrame::ParseFrameResult result = WebSocketFrame::parseFrame(m_buffer.mutableSpan(), frame, frameEnd, errorString);
+    WebSocketFrame::ParseFrameResult result = WebSocketFrame::parseFrame(borrow(m_buffer)->mutableSpan(), frame, frameEnd, errorString);
     if (result == WebSocketFrame::FrameIncomplete)
         return false;
     if (result == WebSocketFrame::FrameError) {
@@ -619,7 +620,7 @@ bool WebSocketChannel::processFrame()
             if (m_continuousFrameOpCode == WebSocketFrame::OpCodeText) {
                 String message;
                 if (continuousFrameData.size())
-                    message = String::fromUTF8(continuousFrameData.span());
+                    message = String::fromUTF8(borrow(continuousFrameData)->span());
                 else
                     message = emptyString();
                 if (message.isNull())
@@ -769,7 +770,7 @@ void WebSocketChannel::processOutgoingFrameQueue()
         }
 
         case QueuedFrameTypeVector:
-            sendFrame(frame->opCode, frame->vectorData.span(), [this, protectedThis = Ref { *this }] (bool success) {
+            sendFrame(frame->opCode, borrow(frame->vectorData)->span(), [this, protectedThis = Ref { *this }](bool success) {
                 if (!success)
                     fail("Failed to send WebSocket frame."_s);
             });
@@ -846,7 +847,7 @@ void WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, std::span<const 
     Vector<uint8_t> frameData;
     frame.makeFrameData(frameData);
 
-    protect(m_handle)->sendData(frameData.span(), WTF::move(completionHandler));
+    protect(m_handle)->sendData(borrow(frameData)->span(), WTF::move(completionHandler));
 }
 
 ResourceRequest WebSocketChannel::clientHandshakeRequest(const CookieGetter& cookieRequestHeaderFieldValue) const

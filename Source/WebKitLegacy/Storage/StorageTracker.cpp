@@ -33,6 +33,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <pal/text/TextEncoding.h>
+#include <wtf/Borrow.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
@@ -254,7 +255,7 @@ void StorageTracker::syncFileSystemAndTrackerDatabase()
     OriginSet foundOrigins;
     String fileExtension = ".localstorage"_s;
 
-    for (auto& fileName : fileNames) {
+    for (auto& fileName : borrow(fileNames)) {
         if (fileName.length() <= fileExtension.length() || !fileName.endsWith(fileExtension))
             continue;
 

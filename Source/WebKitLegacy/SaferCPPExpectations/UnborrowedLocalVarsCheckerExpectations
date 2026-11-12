@@ -1,8 +1,0 @@
-Storage/StorageTracker.cpp
-WebCoreSupport/WebBroadcastChannelRegistry.cpp
-WebCoreSupport/WebResourceLoadScheduler.cpp
-mac/Plugins/WebBasePluginPackage.mm
-mac/WebCoreSupport/WebFrameLoaderClient.mm
-mac/WebView/WebFrame.mm
-mac/WebView/WebHTMLRepresentation.mm
-mac/WebView/WebView.mm

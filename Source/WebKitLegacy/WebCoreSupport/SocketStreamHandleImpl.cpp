@@ -31,6 +31,7 @@
 #include <WebCore/CookieRequestHeaderFieldProxy.h>
 #include <WebCore/CookieStorageSession.h>
 #include <WebCore/StorageSessionProvider.h>
+#include <wtf/Borrow.h>
 #include <wtf/Function.h>
 
 namespace WebCore {
@@ -117,7 +118,7 @@ void SocketStreamHandleImpl::platformSendHandshake(std::span<const uint8_t> data
             return completionHandler(false, secureCookiesAccessed);
         }
         m_buffer.append(data);
-        m_buffer.append(cookieData.span());
+        m_buffer.append(borrow(cookieData)->span());
         m_client.didUpdateBufferedAmount(*this, bufferedAmount());
         return completionHandler(true, secureCookiesAccessed);
     }
@@ -128,7 +129,7 @@ void SocketStreamHandleImpl::platformSendHandshake(std::span<const uint8_t> data
         sendData.append(data);
         sendData.appendVector(cookieData);
 
-        if (auto result = platformSendInternal(sendData.span()))
+        if (auto result = platformSendInternal(borrow(sendData)->span()))
             bytesWritten = result.value();
         else
             return completionHandler(false, secureCookiesAccessed);
@@ -143,7 +144,7 @@ void SocketStreamHandleImpl::platformSendHandshake(std::span<const uint8_t> data
             m_buffer.append(data.subspan(bytesWritten));
         else
             cookieBytesWritten = bytesWritten - data.size();
-        m_buffer.append(cookieData.subspan(cookieBytesWritten));
+        m_buffer.append(borrow(cookieData)->subspan(cookieBytesWritten));
         m_client.didUpdateBufferedAmount(static_cast<SocketStreamHandle&>(*this), bufferedAmount());
     }
     return completionHandler(true, secureCookiesAccessed);

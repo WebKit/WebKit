@@ -39,6 +39,7 @@
 #import <mach-o/fat.h>
 #import <mach-o/loader.h>
 #import <wtf/Assertions.h>
+#import <wtf/Borrow.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
 #import <wtf/StdLibExtras.h>
@@ -209,7 +210,7 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
 {
     ASSERT(extension.convertToASCIILowercase() == extension);
     
-    for (auto& entry : pluginInfo.mimes) {
+    for (auto& entry : borrow(pluginInfo.mimes)) {
         if (entry.extensions.contains(extension))
             return YES;
     }
@@ -221,7 +222,7 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
 {
     ASSERT(mimeType.convertToASCIILowercase() == mimeType);
     
-    for (auto& entry : pluginInfo.mimes) {
+    for (auto& entry : borrow(pluginInfo.mimes)) {
         if (entry.type == mimeType)
             return YES;
     }
@@ -233,7 +234,7 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
 {
     ASSERT(extension.convertToASCIILowercase() == extension);
     
-    for (auto& entry : pluginInfo.mimes) {
+    for (auto& entry : borrow(pluginInfo.mimes)) {
         if (entry.extensions.contains(extension))
             return entry.type.createNSString().autorelease();
     }

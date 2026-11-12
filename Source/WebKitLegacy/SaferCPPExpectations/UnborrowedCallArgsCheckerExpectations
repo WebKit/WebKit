@@ -1,9 +1,0 @@
-WebCoreSupport/SocketStreamHandleImpl.cpp
-WebCoreSupport/WebSocketChannel.cpp
-mac/History/HistoryPropertyList.mm
-[ macOS ] mac/Misc/WebKitNSStringExtras.mm
-[ macOS ] mac/WebCoreSupport/WebInspectorClient.mm
-mac/WebCoreSupport/WebVisitedLinkStore.mm
-[ iOS ] mac/WebInspector/WebNodeHighlightView.mm
-[ iOS ] mac/WebView/WebFrame.mm
-mac/WebView/WebPDFDocumentExtras.mm
