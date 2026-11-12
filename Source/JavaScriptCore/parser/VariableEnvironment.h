@@ -142,7 +142,7 @@ struct PrivateNameEntryHashTraits : HashTraits<PrivateNameEntry> {
     static constexpr bool needsDestruction = false;
 };
 
-typedef UncheckedKeyHashMap<PackedRefPtr<UniquedStringImpl>, PrivateNameEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, PrivateNameEntryHashTraits> PrivateNameEnvironment;
+typedef UncheckedKeyHashMap<PackedRefPtr<UniquedStringImpl>, PrivateNameEntry, IdentifierRepHash, HashTraits<PackedRefPtr<UniquedStringImpl>>, PrivateNameEntryHashTraits> PrivateNameEnvironment;
 
 class VariableEnvironment {
     WTF_MAKE_TZONE_ALLOCATED(VariableEnvironment);
@@ -151,7 +151,7 @@ public:
     static constexpr unsigned inlineMapCapacity = 9;
 
 private:
-    typedef InlineMap<PackedRefPtr<UniquedStringImpl>, VariableEnvironmentEntry, inlineMapCapacity, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, VariableEnvironmentEntryHashTraits> Map;
+    typedef InlineMap<PackedRefPtr<UniquedStringImpl>, VariableEnvironmentEntry, inlineMapCapacity, IdentifierRepHash, HashTraits<PackedRefPtr<UniquedStringImpl>>, VariableEnvironmentEntryHashTraits> Map;
 
 public:
 
@@ -163,6 +163,7 @@ public:
         , m_rareData(WTF::move(other.m_rareData))
     {
     }
+    VariableEnvironment& operator=(VariableEnvironment&&) = default;
     // Defined in VariableEnvironmentInlines.h.
     VariableEnvironment(const VariableEnvironment& other);
     VariableEnvironment& operator=(const VariableEnvironment& other);
