@@ -6883,43 +6883,43 @@
     "imported/w3c/webdriver/tests/bidi/script/call_function/csp_tentative.py": {
         "subtests": {
             "test_default_src_unsafe_inline[async eval from preload script]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "note": "Undecided in https://github.com/w3c/webdriver-bidi/issues/1024"}}
             },
             "test_default_src_unsafe_inline[async eval]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "note": "Undecided in https://github.com/w3c/webdriver-bidi/issues/1024"}}
             },
             "test_default_src_unsafe_inline[default]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/313658"}}
             },
             "test_default_src_unsafe_inline[eval from event handler]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "note": "Undecided in https://github.com/w3c/webdriver-bidi/issues/1024"}}
             },
             "test_default_src_unsafe_inline[eval from inline script]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "note": "Undecided in https://github.com/w3c/webdriver-bidi/issues/1024"}}
             },
             "test_default_src_unsafe_inline[eval from preload script]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "note": "Undecided in https://github.com/w3c/webdriver-bidi/issues/1024"}}
             },
             "test_default_src_unsafe_inline[eval nested in new Function]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
             },
             "test_default_src_unsafe_inline[eval]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
             },
             "test_default_src_unsafe_inline[nested eval]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
             },
             "test_default_src_unsafe_inline[nested new Function]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
             },
             "test_default_src_unsafe_inline[new Function nested in eval]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
             },
             "test_default_src_unsafe_inline[new Function]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
             },
             "test_default_src_unsafe_inline[promise eval]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Undecided in https://github.com/w3c/webdriver-bidi/issues/1024"}}
             }
         }
     },
@@ -6927,43 +6927,43 @@
     "imported/w3c/webdriver/tests/bidi/script/evaluate/csp_tentative.py": {
         "subtests": {
             "test_default_src_unsafe_inline[async eval from preload script]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "note": "Undecided in https://github.com/w3c/webdriver-bidi/issues/1024"}}
             },
             "test_default_src_unsafe_inline[async eval]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "note": "Undecided in https://github.com/w3c/webdriver-bidi/issues/1024"}}
             },
             "test_default_src_unsafe_inline[default]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/331287"}}
             },
             "test_default_src_unsafe_inline[eval from event handler]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "note": "Undecided in https://github.com/w3c/webdriver-bidi/issues/1024"}}
             },
             "test_default_src_unsafe_inline[eval from inline script]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "note": "Undecided in https://github.com/w3c/webdriver-bidi/issues/1024"}}
             },
             "test_default_src_unsafe_inline[eval from preload script]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "note": "Undecided in https://github.com/w3c/webdriver-bidi/issues/1024"}}
             },
             "test_default_src_unsafe_inline[eval nested in new Function]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
             },
             "test_default_src_unsafe_inline[eval]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
             },
             "test_default_src_unsafe_inline[nested eval]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
             },
             "test_default_src_unsafe_inline[nested new Function]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
             },
             "test_default_src_unsafe_inline[new Function nested in eval]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
             },
             "test_default_src_unsafe_inline[new Function]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
             },
             "test_default_src_unsafe_inline[promise eval]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Script evaluation is subject to the page's Content Security Policy"}}
+                "expected": {"mac": {"status": ["FAIL"], "note": "Undecided in https://github.com/w3c/webdriver-bidi/issues/1024"}}
             }
         }
     },
