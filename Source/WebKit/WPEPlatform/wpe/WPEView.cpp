@@ -1086,6 +1086,27 @@ guint wpe_view_compute_press_count(WPEView* view, gdouble x, gdouble y, guint bu
 }
 
 /**
+ * wpe_view_compute_release_count:
+ * @view: a #WPEView
+ * @button: the button number of a button release event
+ *
+ * Compute the number of releases for a button release event.
+ *
+ * Returns: the number of button releasees
+ */
+guint wpe_view_compute_release_count(WPEView* view, guint button)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), 0);
+
+    auto* priv = view->priv;
+    unsigned releaseCount = 0;
+    if (priv->lastButtonPress.pressCount && button == priv->lastButtonPress.button)
+        releaseCount = priv->lastButtonPress.pressCount;
+
+    return releaseCount;
+}
+
+/**
  * wpe_view_focus_in:
  * @view: a #WPEView
  *

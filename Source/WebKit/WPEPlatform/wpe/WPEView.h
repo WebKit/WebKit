@@ -160,6 +160,8 @@ WPE_API guint                 wpe_view_compute_press_count          (WPEView    
                                                                      gdouble             y,
                                                                      guint               button,
                                                                      guint32             time);
+WPE_API guint                 wpe_view_compute_release_count        (WPEView            *view,
+                                                                     guint               button);
 WPE_API void                  wpe_view_focus_in                     (WPEView            *view);
 WPE_API void                  wpe_view_focus_out                    (WPEView            *view);
 WPE_API gboolean              wpe_view_get_has_focus                (WPEView            *view);
