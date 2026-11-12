@@ -661,6 +661,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'delete-WebKitBuild-directory',
             'delete-stale-build-files',
+            'install-cmake',
+            'install-ninja',
             'compile-webkit',
             'trigger'
         ],
