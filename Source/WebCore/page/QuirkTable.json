@@ -115,11 +115,6 @@
             ]
         },
         {
-            "bugs": ["rdar://162447105"],
-            "matches": ["*://*.bbc.co.uk/*", "*://*.bbc.com/*"],
-            "behaviors": [{ "id": "NeedsDarkAppearanceWithoutColorSchemeQuirk" }]
-        },
-        {
             "bugs": ["rdar://136235936"],
             "matches": ["*://*.bestbuy.com/*"],
             "behaviors": [
