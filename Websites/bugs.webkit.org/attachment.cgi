@@ -586,7 +586,8 @@ sub insert {
     $comment = '' unless defined $comment;
     $bug->add_comment($comment, { isprivate => $attachment->isprivate,
                                   type => CMT_ATTACHMENT_CREATED,
-                                  extra_data => $attachment->id });
+                                  extra_data => $attachment->id,
+                                  is_markdown => $user->wants_markdown });
 
     # Assign the bug to the user, if they are allowed to take it
     my $owner = "";
@@ -736,7 +737,8 @@ sub update {
     if (defined $comment && trim($comment) ne '') {
         $bug->add_comment($comment, { isprivate => $attachment->isprivate,
                                       type => CMT_ATTACHMENT_UPDATED,
-                                      extra_data => $attachment->id });
+                                      extra_data => $attachment->id,
+                                      is_markdown => $user->wants_markdown });
     }
 
     $bug->add_cc($user) if $cgi->param('addselfcc');
