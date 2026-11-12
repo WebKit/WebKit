@@ -136,6 +136,7 @@
 		5CABDBEA2735C9BD00B88BCB /* UnifiedSource37-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBBD2735C9BD00B88BCB /* UnifiedSource37-nonARC.mm */; };
 		5CABDBEB2735C9BD00B88BCB /* UnifiedSource32-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBBE2735C9BD00B88BCB /* UnifiedSource32-nonARC.mm */; };
 		7A1C4E2F2E8B9D0100A1B2D1 /* QuirkTable.json in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A1C4E2F2E8B9D0100A1B2D0 /* QuirkTable.json */; };
+		7A1C4E2F2E8B9D0100A1B2E3 /* QuirkScripts in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A1C4E2F2E8B9D0100A1B2E2 /* QuirkScripts */; };
 		7B6FF89728C22D9400CA76B0 /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 2B648DBA28C1C1F700791F2B /* WebKit.framework */; };
 		7B9FC3AA28A26137007570E7 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0331D0A5F2700FEBCF3 /* libicucore.dylib */; };
 		7B9FC3AD28A26137007570E7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
@@ -388,6 +389,7 @@
 			dstPath = "";
 			dstSubfolder = Resources;
 			files = (
+				7A1C4E2F2E8B9D0100A1B2E3 /* QuirkScripts in Copy Resources */,
 				7A1C4E2F2E8B9D0100A1B2D1 /* QuirkTable.json in Copy Resources */,
 			);
 			name = "Copy Resources";
@@ -514,6 +516,7 @@
 		7A010BCA1D877C0500EDE72A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		7A010BCC1D877C0D00EDE72A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		7A1C4E2F2E8B9D0100A1B2D0 /* QuirkTable.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = QuirkTable.json; path = ../../Source/WebCore/page/QuirkTable.json; sourceTree = SOURCE_ROOT; };
+		7A1C4E2F2E8B9D0100A1B2E2 /* QuirkScripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = QuirkScripts; path = ../../Source/WebCore/page/QuirkScripts; sourceTree = SOURCE_ROOT; };
 		7B9FC57E28A26137007570E7 /* TestIPC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestIPC; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B9FC5A928A38F2E007570E7 /* libWebKitIPC.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitIPC.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B9FC5B028A5221B007570E7 /* CryptoTokenKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoTokenKit.framework; path = System/Library/Frameworks/CryptoTokenKit.framework; sourceTree = SDKROOT; };
@@ -2137,6 +2140,7 @@
 			isa = PBXGroup;
 			children = (
 				2C4F7A1E2FB1C0D000A1B201 /* JSBasics.cpp */,
+				7A1C4E2F2E8B9D0100A1B2E2 /* QuirkScripts */,
 				7A1C4E2F2E8B9D0100A1B2D0 /* QuirkTable.json */,
 				2B7E14D63A5F60718293C1A1 /* SyntheticNSEvent.h */,
 				2B7E14D63A5F60718293C1A2 /* SyntheticNSEvent.mm */,

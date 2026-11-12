@@ -41,7 +41,8 @@ class QuirkTableValidator(object):
     PARAMETER_FIELDS = {'script': 'Script', 'userAgent': 'UserAgent', 'chromeCompatibilityVersion': 'ChromeCompatibilityVersion', 'cookieNames': 'CookieNames', 'styleSheet': 'StyleSheet'}
     CONDITION_FIELDS = {'elementSelector': 'ElementSelector', 'secondaryURL': 'SecondaryURL', 'documentSelector': 'DocumentSelector'}
     LIST_FIELDS = ('cookieNames', 'secondaryURL')
-    BEHAVIOR_FIELDS = ('id',) + tuple(PARAMETER_FIELDS) + tuple(CONDITION_FIELDS) + ('bugs', 'comment')
+    BEHAVIOR_FIELDS = ('id', 'scriptFile') + tuple(PARAMETER_FIELDS) + tuple(CONDITION_FIELDS) + ('bugs', 'comment')
+    SCRIPTS_DIRECTORY = 'QuirkScripts'
     BUG_LINK = re.compile(r'^(rdar://\d+|https://webkit\.org/b/\d+)$')
     AVAILABLE_TOKEN = re.compile(r' *(\|\||&&|!|\(|\)|[A-Za-z0-9_]+)')
     MAXIMUM_AVAILABLE_NESTING_DEPTH = 32
@@ -283,7 +284,10 @@ class QuirkTableValidator(object):
             if not (self._is_non_empty_string_list(entry[field]) if is_list else self._is_non_empty_string(entry[field])):
                 self._error('%s: "%s" must be a non-empty %s.' % (location, field, 'array of strings' if is_list else 'string'))
 
+        self._check_script_file(entry, behavior, location)
         for field, parameter in self.PARAMETER_FIELDS.items():
+            if field == 'script':
+                continue
             if parameter in behavior['parameters'] and field not in entry:
                 self._error('%s: needs "%s".' % (location, field))
             elif parameter not in behavior['parameters'] and field in entry:
@@ -294,6 +298,37 @@ class QuirkTableValidator(object):
                 self._error('%s: does not take "%s".' % (location, field))
             elif field not in entry and behavior['conditionsRequired'] and condition in behavior['conditions']:
                 self._error('%s: needs "%s".' % (location, field))
+
+    def _check_script_file(self, entry, behavior, location):
+        if 'Script' not in behavior['parameters']:
+            for field in ('script', 'scriptFile'):
+                if field in entry:
+                    self._error('%s: does not take "%s".' % (location, field))
+            return
+        if 'script' in entry and 'scriptFile' in entry:
+            self._error('%s: takes "script" or "scriptFile", not both.' % location)
+            return
+        if 'script' not in entry and 'scriptFile' not in entry:
+            self._error('%s: needs "script".' % location)
+            return
+        if 'scriptFile' not in entry:
+            return
+
+        file_name = entry['scriptFile']
+        if not self._is_non_empty_string(file_name):
+            self._error('%s: "scriptFile" must be a non-empty string.' % location)
+            return
+        if not self._is_valid_script_file_name(file_name):
+            self._error('%s: "scriptFile" %s must name a .js file directly inside %s/.' % (location, json.dumps(file_name), self.SCRIPTS_DIRECTORY))
+            return
+        path = os.path.join(self._directory, self.SCRIPTS_DIRECTORY, file_name)
+        if not os.path.isfile(path) or not os.path.getsize(path):
+            self._error('%s: %s/%s could not be loaded or is empty.' % (location, self.SCRIPTS_DIRECTORY, file_name))
+
+    @staticmethod
+    def _is_valid_script_file_name(file_name):
+        # Must accept exactly the names isValidScriptFileName() in QuirkTable.cpp accepts.
+        return bool(re.fullmatch(r'[A-Za-z0-9_-]+\.js', file_name))
 
 
 def main(argv):

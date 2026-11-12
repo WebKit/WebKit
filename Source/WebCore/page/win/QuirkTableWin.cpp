@@ -31,9 +31,8 @@
 
 namespace WebCore {
 
-String loadQuirkTableJSON()
+static String loadQuirksResource(const String& path)
 {
-    auto path = webKitBundlePath("QuirkTable"_s, "json"_s, "quirks"_s);
     if (path.isNull())
         return { };
 
@@ -42,6 +41,16 @@ String loadQuirkTableJSON()
         return { };
 
     return String::fromUTF8(contents->span());
+}
+
+String loadQuirkTableJSON()
+{
+    return loadQuirksResource(webKitBundlePath("QuirkTable"_s, "json"_s, "quirks"_s));
+}
+
+String loadQuirkScript(StringView fileName)
+{
+    return loadQuirksResource(webKitBundlePath({ "quirks"_s, "QuirkScripts"_s, fileName }));
 }
 
 } // namespace WebCore

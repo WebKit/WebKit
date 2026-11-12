@@ -1748,6 +1748,11 @@ WEBKIT_COPY_FILES(WebCore_CopyAudioResources
     FLATTENED NO_SYMLINK)
 add_dependencies(WebCore WebCore_CopyAudioResources)
 
+WEBKIT_COPY_DIRECTORY(WebCore_CopyQuirkScripts
+    SOURCE "${WEBCORE_DIR}/page/QuirkScripts"
+    DESTINATION "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework/Versions/A/Resources/QuirkScripts")
+add_dependencies(WebCore WebCore_CopyQuirkScripts)
+
 # Stage the in-tree WebCore module maps into the framework bundle so the Swift
 # Clang importer finds them as real modules via -F (as JavaScriptCore does, and
 # as iOS does below). -import-underlying-module needs the public one.
@@ -1906,6 +1911,9 @@ add_custom_command(TARGET WebCore POST_BUILD
         "${WEBCORE_DIR}/Resources/textAreaResizeCorner@2x.png"
         "${WEBCORE_DIR}/page/QuirkTable.json"
         "${_wc_fw}/"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${WEBCORE_DIR}/page/QuirkScripts"
+        "${_wc_fw}/QuirkScripts"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${_wc_fw}/audio"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${WEBCORE_DIR}/platform/audio/resources/Composite.wav"

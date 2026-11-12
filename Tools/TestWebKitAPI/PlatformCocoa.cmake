@@ -1175,9 +1175,13 @@ add_custom_command(OUTPUT "${_resources_dir}/QuirkTable.json"
     MAIN_DEPENDENCY "${WEBCORE_DIR}/page/QuirkTable.json"
     VERBATIM
 )
+WEBKIT_COPY_DIRECTORY(TestWebKitAPI_CopyQuirkScripts
+    SOURCE "${WEBCORE_DIR}/page/QuirkScripts"
+    DESTINATION "${_resources_dir}/QuirkScripts"
+)
 
 add_custom_target(TestWebKitAPIResources ALL DEPENDS "${_resources_dir}/QuirkTable.json")
-add_dependencies(TestWebKitAPIResources TestWebKitAPI_CopyResources TestWebKitAPI_CopyCocoaResources)
+add_dependencies(TestWebKitAPIResources TestWebKitAPI_CopyResources TestWebKitAPI_CopyCocoaResources TestWebKitAPI_CopyQuirkScripts)
 # Ensure all test targets depend on the resources bundle.
 foreach (_test_target TestWTF TestJavaScriptCore TestWebCore TestWebKitLegacy TestWebKit TestIPC TestWGSL)
     if (TARGET ${_test_target})

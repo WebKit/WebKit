@@ -174,6 +174,14 @@ set(iconFiles
 file(COPY ${iconFiles} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/icons)
 
 configure_file(page/QuirkTable.json ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/quirks/QuirkTable.json COPYONLY)
+set(quirkScriptFiles
+    ceac-beforeunload-fix.js
+    nba-seek-fix.js
+    x-google-sign-in-button-fix.js
+)
+foreach (quirkScriptName IN LISTS quirkScriptFiles)
+    configure_file(page/QuirkScripts/${quirkScriptName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/quirks/QuirkScripts/${quirkScriptName} COPYONLY)
+endforeach ()
 
 file(COPY ${ModernMediaControlsImageFiles}
     DESTINATION

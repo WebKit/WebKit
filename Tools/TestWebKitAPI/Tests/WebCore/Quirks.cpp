@@ -57,7 +57,7 @@ namespace TestWebKitAPI {
 
 using namespace WebCore::QuirkSelectors;
 
-static String shippedQuirkTableJSON();
+static std::optional<WebCore::QuirkTableParseResult> parseShippedQuirkTable();
 
 class QuirksTest : public testing::Test {
 public:
@@ -65,7 +65,10 @@ public:
     {
         WTF::initializeMainThread();
 
-        WebCore::setQuirkTable(WebCore::parseQuirkTable(shippedQuirkTableJSON()).table);
+        if (auto result = parseShippedQuirkTable())
+            WebCore::setQuirkTable(WTF::move(result->table));
+        else
+            WebCore::setQuirkTable({ });
     }
 };
 
@@ -191,12 +194,19 @@ TEST_F(QuirksTest, CNAMECloakingCookieCapIsSkippedOnlyBetweenDomainsOfOneOwner)
 }
 #endif
 
-static String shippedQuirkTableJSON()
+static String readFileAsUTF8(const String& path)
+{
+    auto contents = FileSystem::readEntireFile(path);
+    if (!contents)
+        return { };
+    return String::fromUTF8(contents->span());
+}
+
+static String shippedQuirkTablePath()
 {
 #if PLATFORM(PLAYSTATION)
     return { };
-#else
-#if PLATFORM(COCOA)
+#elif PLATFORM(COCOA)
     RetainPtr resourcesBundleURL = adoptCF(CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("TestWebKitAPIResources"), CFSTR("bundle"), nullptr));
     if (!resourcesBundleURL)
         return { };
@@ -204,27 +214,34 @@ static String shippedQuirkTableJSON()
     RetainPtr url = adoptCF(CFBundleCopyResourceURL(resourcesBundle.get(), CFSTR("QuirkTable"), CFSTR("json"), nullptr));
     if (!url)
         return { };
-    String path = adoptCF(CFURLCopyFileSystemPath(url.get(), kCFURLPOSIXPathStyle)).get();
+    return adoptCF(CFURLCopyFileSystemPath(url.get(), kCFURLPOSIXPathStyle)).get();
 #else
-    auto path = FileSystem::pathByAppendingComponents(StringView::fromLatin1(WEBKIT_SRC_DIR), std::array<StringView, 4> { "Source"_s, "WebCore"_s, "page"_s, "QuirkTable.json"_s });
+    return FileSystem::pathByAppendingComponents(StringView::fromLatin1(WEBKIT_SRC_DIR), std::array<StringView, 4> { "Source"_s, "WebCore"_s, "page"_s, "QuirkTable.json"_s });
 #endif
-    auto contents = FileSystem::readEntireFile(path);
-    if (!contents)
-        return { };
-    return String::fromUTF8(contents->span());
-#endif
+}
+
+static std::optional<WebCore::QuirkTableParseResult> parseShippedQuirkTable()
+{
+    auto path = shippedQuirkTablePath();
+    auto json = path.isNull() ? String { } : readFileAsUTF8(path);
+    if (json.isNull())
+        return std::nullopt;
+
+    auto scriptsDirectory = FileSystem::pathByAppendingComponent(FileSystem::parentPath(path), "QuirkScripts"_s);
+    return WebCore::parseQuirkTable(json, [&](StringView fileName) {
+        return readFileAsUTF8(FileSystem::pathByAppendingComponent(scriptsDirectory, fileName));
+    });
 }
 
 TEST_F(QuirksTest, ShippedQuirkTableParsesWithoutErrors)
 {
-    auto json = shippedQuirkTableJSON();
-    if (json.isNull())
+    auto result = parseShippedQuirkTable();
+    if (!result)
         GTEST_SKIP() << "The shipped quirk table is unavailable on this platform";
 
-    auto result = WebCore::parseQuirkTable(json);
-    for (auto& error : result.errors)
+    for (auto& error : result->errors)
         ADD_FAILURE() << error.description();
-    EXPECT_FALSE(result.table.quirks.isEmpty());
+    EXPECT_FALSE(result->table.quirks.isEmpty());
 }
 
 static WebCore::QuirkTableParseResult parseRow(ASCIILiteral rowJSON)
@@ -311,6 +328,57 @@ TEST_F(QuirksTest, RowsWithBehaviorErrorsAreRejected)
     expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsMediaRewriteRangeRequestQuirk" }] })"_s, MissingField, "secondaryURL"_s);
     expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsUserAgentStringOverrideQuirk", "userAgent": "" }] })"_s, InvalidString, "userAgent"_s);
     expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "script": "x", "secondaryURL": ["nope"] }] })"_s, InvalidMatchPattern, "secondaryURL"_s, "nope"_s);
+}
+
+static WebCore::QuirkTableParseResult parseRowWithScriptFiles(ASCIILiteral rowJSON)
+{
+    return WebCore::parseQuirkTable(makeString("{ \"quirks\": ["_s, rowJSON, "] }"_s), [](StringView fileName) -> String {
+        if (fileName == "fix.js"_s)
+            return "window.fixed = true;"_s;
+        if (fileName == "empty.js"_s)
+            return emptyString();
+        return { };
+    });
+}
+
+static void expectScriptFileRejected(ASCIILiteral rowJSON, WebCore::QuirkTableParseErrorKind kind, ASCIILiteral field = { })
+{
+    auto result = parseRowWithScriptFiles(rowJSON);
+    EXPECT_TRUE(result.table.quirks.isEmpty()) << rowJSON.characters();
+    EXPECT_TRUE(std::ranges::any_of(result.errors, [&](auto& error) {
+        return error.kind == kind && (field.isNull() || error.field == field);
+    })) << rowJSON.characters() << ": expected a " << WTF::enumName(kind).characters() << " error, got: " << describeErrors(result.errors);
+}
+
+TEST_F(QuirksTest, ScriptsCanBeLoadedFromScriptFiles)
+{
+    using enum WebCore::QuirkTableParseErrorKind;
+
+    auto result = parseRowWithScriptFiles(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "scriptFile": "fix.js", "secondaryURL": ["*://*/a.js"] }] })"_s);
+    EXPECT_TRUE(result.errors.isEmpty()) << describeErrors(result.errors);
+    ASSERT_EQ(result.table.quirks.size(), 1u);
+    ASSERT_EQ(result.table.quirks[0].behaviors.size(), 1u);
+    EXPECT_EQ(result.table.quirks[0].behaviors[0].script, "window.fixed = true;"_s);
+
+    expectScriptFileRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "script": "x", "scriptFile": "fix.js", "secondaryURL": ["*://*/a.js"] }] })"_s, ScriptAndScriptFile);
+    expectScriptFileRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "secondaryURL": ["*://*/a.js"] }] })"_s, MissingField, "script"_s);
+    expectScriptFileRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsAirIndiaExpressLayeringQuirk", "scriptFile": "fix.js" }] })"_s, DisallowedField, "scriptFile"_s);
+    expectScriptFileRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "scriptFile": "", "secondaryURL": ["*://*/a.js"] }] })"_s, InvalidString, "scriptFile"_s);
+    expectScriptFileRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "scriptFile": "missing.js", "secondaryURL": ["*://*/a.js"] }] })"_s, UnloadableScriptFile, "scriptFile"_s);
+    expectScriptFileRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "scriptFile": "empty.js", "secondaryURL": ["*://*/a.js"] }] })"_s, UnloadableScriptFile, "scriptFile"_s);
+    for (auto row : {
+        R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "scriptFile": "../fix.js", "secondaryURL": ["*://*/a.js"] }] })"_s,
+        R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "scriptFile": "sub/fix.js", "secondaryURL": ["*://*/a.js"] }] })"_s,
+        R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "scriptFile": "/fix.js", "secondaryURL": ["*://*/a.js"] }] })"_s,
+        R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "scriptFile": "fix.txt", "secondaryURL": ["*://*/a.js"] }] })"_s,
+        R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "scriptFile": ".js", "secondaryURL": ["*://*/a.js"] }] })"_s,
+    })
+        expectScriptFileRejected(row, InvalidScriptFile, "scriptFile"_s);
+
+    auto withoutLoader = parseRow(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "scriptFile": "fix.js", "secondaryURL": ["*://*/a.js"] }] })"_s);
+    EXPECT_TRUE(withoutLoader.table.quirks.isEmpty());
+    ASSERT_EQ(withoutLoader.errors.size(), 1u) << describeErrors(withoutLoader.errors);
+    EXPECT_EQ(withoutLoader.errors[0].kind, UnloadableScriptFile);
 }
 
 TEST_F(QuirksTest, ParseErrorsDescribeWhereTheyAre)
