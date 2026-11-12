@@ -124,7 +124,13 @@ public:
     WTF_EXPORT_PRIVATE void suspendFunctionDispatchForCurrentCycle();
 
     enum class CycleResult { Continue, Stop };
-    WTF_EXPORT_PRIVATE CycleResult static cycle(RunLoopMode = DefaultRunLoopMode);
+#if USE(COCOA_EVENT_LOOP)
+    static constexpr Seconds defaultCycleMaximumWait = 50_ms;
+#else
+    static constexpr Seconds defaultCycleMaximumWait = 0_s;
+#endif
+    // If no work is pending, waits up to maximumWait
+    WTF_EXPORT_PRIVATE CycleResult static cycle(RunLoopMode = DefaultRunLoopMode, Seconds maximumWait = defaultCycleMaximumWait);
 
     WTF_EXPORT_PRIVATE void threadWillExit();
 
@@ -370,8 +376,7 @@ private:
 
     void runGLibMainLoop();
 
-    enum class MayBlock { Yes, No };
-    void runGLibMainLoopIteration(MayBlock);
+    void runGLibMainLoopIteration(Seconds maximumWait = Seconds::infinity());
 
     friend class ActivityObserver;
     WTF_EXPORT_PRIVATE void observeActivity(const Ref<ActivityObserver>&);
@@ -408,8 +413,8 @@ private:
         Clear,
         Stopping,
     };
-    void runImpl(RunMode);
-    bool populateTasks(RunMode, Status&, Deque<Ref<TimerBase::ScheduledTask>>&);
+    void runImpl(RunMode, Seconds maximumWait = 0_s);
+    bool populateTasks(RunMode, Seconds maximumWait, Status&, Deque<Ref<TimerBase::ScheduledTask>>&);
 
     friend class TimerBase;
 

@@ -29,21 +29,9 @@
 namespace TestWebKitAPI {
 namespace Util {
 
-void run(bool* done)
+void cycleRunLoop()
 {
-    while (!*done)
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
-}
-
-bool runFor(bool* done, Seconds duration)
-{
-    auto timeoutDate = [NSDate dateWithTimeIntervalSinceNow:duration.seconds()];
-    while (!*done) {
-        if ([timeoutDate compare:[NSDate date]] != NSOrderedDescending)
-            return false;
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
-    }
-    return true;
+    [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:runLoopWaitInterval.seconds()]];
 }
 
 void spinRunLoop(uint64_t count)
