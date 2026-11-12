@@ -226,6 +226,7 @@ struct WebPageCreationParameters {
     WebCore::FloatSize overrideAvailableScreenSize { };
     float textAutosizingWidth { 0 };
     WebCore::IntDegrees deviceOrientation { 0 };
+    WebCore::FloatBoxExtent unobscuredSafeAreaInsets { };
     HardwareKeyboardState hardwareKeyboardState { };
     bool canShowWhileLocked { false };
     bool isCapturingScreen { false };

@@ -632,6 +632,7 @@
 				WebKit/WKWebView/SiteIsolationPolicyDecisionTests.swift,
 				WebKit/WKWebView/SiteIsolationPositionInformationTests.swift,
 				WebKit/WKWebView/SiteIsolationProvisionalPageTests.swift,
+				WebKit/WKWebView/SiteIsolationSafeAreaInsetsTests.swift,
 				WebKit/WKWebView/SiteIsolationServiceWorkerTests.swift,
 				WebKit/WKWebView/SiteIsolationSessionStateTests.swift,
 				WebKit/WKWebView/SiteIsolationSnapshotTests.swift,

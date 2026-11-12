@@ -2545,6 +2545,9 @@ void WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo&
         return;
 
     internals().lastVisibleContentRectUpdate = visibleContentRectUpdate;
+#if PLATFORM(IOS_FAMILY)
+    updateUnobscuredSafeAreaInsets(visibleContentRectUpdate.unobscuredSafeAreaInsets());
+#endif
 
     if (!hasRunningProcess())
         return;

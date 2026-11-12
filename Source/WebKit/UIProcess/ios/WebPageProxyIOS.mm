@@ -224,7 +224,23 @@ void WebPageProxy::dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate& ta
     internals().minimumUnobscuredSize = target.minimumUnobscuredSize;
     internals().maximumUnobscuredSize = target.maximumUnobscuredSize;
     protect(m_legacyMainFrameProcess)->send(Messages::WebPage::DynamicViewportSizeUpdate(target), webPageIDInMainFrameProcess());
+    updateUnobscuredSafeAreaInsets(target.unobscuredSafeAreaInsets);
     setDeviceOrientation(target.deviceOrientation);
+}
+
+void WebPageProxy::updateUnobscuredSafeAreaInsets(const FloatBoxExtent& insets)
+{
+    if (internals().unobscuredSafeAreaInsets == insets)
+        return;
+
+    internals().unobscuredSafeAreaInsets = insets;
+
+    if (!hasRunningProcess())
+        return;
+
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetUnobscuredSafeAreaInsets(insets), pageID);
+    });
 }
 
 void WebPageProxy::setViewportConfigurationViewLayoutSize(const WebCore::FloatSize& size, double layoutSizeScaleFactorFromClient, double minimumEffectiveDeviceWidth)
