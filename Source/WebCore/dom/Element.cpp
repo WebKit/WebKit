@@ -828,6 +828,9 @@ bool Element::removeAttribute(const QualifiedName& name)
     if (!elementData())
         return false;
 
+    // Flush a pending lazy attribute value first so it is removed rather than re-created later.
+    synchronizeAttribute(name);
+
     unsigned index = elementData()->findAttributeIndexByName(name);
     if (index == ElementData::attributeNotFound)
         return false;
@@ -4229,17 +4232,11 @@ bool Element::removeAttribute(const AtomString& qualifiedName)
         return false;
 
     AtomString caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
+    synchronizeAttribute(caseAdjustedQualifiedName);
+
     unsigned index = elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false);
-    if (index == ElementData::attributeNotFound) {
-        // FIXME: Should this be a hasTagName(styleAttr) check to also enforce the namespace?
-        if (styleAttr->hasLocalName(caseAdjustedQualifiedName)) [[unlikely]] {
-            if (elementData()->styleAttributeIsDirty()) {
-                if (auto* styledElement = dynamicDowncast<StyledElement>(*this))
-                    styledElement->removeAllInlineStyleProperties();
-            }
-        }
+    if (index == ElementData::attributeNotFound)
         return false;
-    }
 
     removeAttributeInternal(index, InSynchronizationOfLazyAttribute::No);
     return true;

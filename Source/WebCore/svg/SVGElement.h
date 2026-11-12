@@ -231,6 +231,8 @@ protected:
 private:
     virtual void clearTarget() { }
 
+    const QualifiedName& attributeNameForSynchronization(const QualifiedName&) const;
+
     void invalidateLayerRequirementForFEImageReference(const SVGElement& referencingElement);
     void buildPendingResourcesIfNeeded();
     bool accessKeyAction(bool sendMouseEvents) override;

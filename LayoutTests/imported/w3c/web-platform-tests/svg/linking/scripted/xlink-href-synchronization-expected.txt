@@ -1,0 +1,22 @@
+
+PASS XLink 'href' attribute synchronization with href.baseVal, getAttributeNames() after baseVal setter with no attributes.
+PASS XLink 'href' attribute synchronization with href.baseVal, attributes after baseVal setter with no attributes.
+PASS XLink 'href' attribute synchronization with href.baseVal, cloneNode() after baseVal setter with no attributes.
+PASS XLink 'href' attribute synchronization with href.baseVal, XMLSerializer after baseVal setter with no attributes.
+PASS XLink 'href' attribute synchronization with href.baseVal, attributes after baseVal setter with "href".
+PASS XLink 'href' attribute synchronization with href.baseVal, attributes after baseVal setter with "xlink:href".
+PASS XLink 'href' attribute synchronization with href.baseVal, cloneNode() after baseVal setter with "xlink:href".
+PASS XLink 'href' attribute synchronization with href.baseVal, empty baseVal with "xlink:href" updates "xlink:href".
+PASS XLink 'href' attribute synchronization with href.baseVal, empty baseVal with "href" updates "href".
+PASS XLink 'href' attribute synchronization with href.baseVal, empty "href" takes precedence over "xlink:href".
+PASS XLink 'href' attribute synchronization with href.baseVal, removeAttribute(href) after baseVal setter with "href".
+PASS XLink 'href' attribute synchronization with href.baseVal, removeAttribute(href) after baseVal setter with "href" and "xlink:href".
+PASS XLink 'href' attribute synchronization with href.baseVal, removeAttribute(xlink:href) after baseVal setter with "xlink:href".
+PASS XLink 'href' attribute synchronization with href.baseVal, removeAttribute(href) after baseVal setter with no attributes.
+PASS XLink 'href' attribute synchronization with href.baseVal, removeAttributeNode(href) after baseVal setter with "href".
+PASS XLink 'href' attribute synchronization with href.baseVal, removeAttributeNode(xlink:href) after baseVal setter with "xlink:href".
+PASS XLink 'href' attribute synchronization with href.baseVal, setAttribute(xlink:href) after baseVal setter keeps "href".
+PASS XLink 'href' attribute synchronization with href.baseVal, mutation record for removeAttribute(href) after baseVal setter with "href".
+PASS XLink 'href' attribute synchronization with href.baseVal, mutation record for removeAttribute(href) after baseVal setter with no attributes.
+PASS XLink 'href' attribute synchronization with href.baseVal, mutation record for removeAttribute(xlink:href) after baseVal setter with "xlink:href".
+
