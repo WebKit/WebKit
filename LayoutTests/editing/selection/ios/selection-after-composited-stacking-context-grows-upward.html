@@ -1,0 +1,94 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true SelectionHonorsOverflowScrolling=true useHardwareKeyboardMode=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 16px;
+    font-family: system-ui;
+    margin: 0;
+    height: 100%;
+}
+
+.bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100px;
+    z-index: 10;
+}
+
+.background {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: #f7f7f7;
+    transform: translateZ(0);
+}
+
+#above {
+    display: none;
+    height: 60px;
+    background-color: gold;
+}
+
+#above.visible {
+    display: block;
+}
+
+textarea {
+    display: block;
+    width: 100%;
+    height: 40px;
+    box-sizing: border-box;
+    font-size: 16px;
+    resize: none;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the caret stays in place when content is inserted above an editable field, inside a bottom-anchored stacking context that has a composited negative z-index child. To test manually, focus the field and press Escape; the caret should not move.");
+
+    field = document.querySelector("textarea");
+    field.addEventListener("keydown", () => document.getElementById("above").classList.add("visible"));
+
+    // The field's offsetTop is relative to the bar, so compute the tap location from its client rect.
+    const fieldRect = field.getBoundingClientRect();
+    await UIHelper.activateAndWaitForInputSessionAt(fieldRect.left + fieldRect.width / 2, fieldRect.top + fieldRect.height / 2);
+    field.setSelectionRange(5, 5);
+    await UIHelper.ensurePresentationUpdate();
+
+    caretRectBeforeInsertion = await UIHelper.getUICaretViewRect();
+
+    await UIHelper.keyDown("escape");
+    await UIHelper.ensurePresentationUpdate();
+
+    // The caret view rect is clipped to the field, so a stale caret drawn above the field reports a null rect.
+    caretRectAfterInsertion = await UIHelper.getUICaretViewRect();
+
+    shouldBe("caretRectBeforeInsertion.top", "caretRectAfterInsertion.top");
+    shouldBe("caretRectBeforeInsertion.left", "caretRectAfterInsertion.left");
+    shouldBe("caretRectBeforeInsertion.width", "caretRectAfterInsertion.width");
+    shouldBe("caretRectBeforeInsertion.height", "caretRectAfterInsertion.height");
+
+    field.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div id="description"></div>
+    <div id="console"></div>
+    <div class="bar">
+        <div class="background"></div>
+        <div id="above"></div>
+        <textarea>hello there</textarea>
+    </div>
+</body>
+</html>
