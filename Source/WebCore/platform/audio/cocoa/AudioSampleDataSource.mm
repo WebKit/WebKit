@@ -208,16 +208,20 @@ bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCo
     }
 
     uint64_t seekTo = m_seekTo.exchange(NoSeek);
-    if (seekTo != NoSeek)
+    if (seekTo != NoSeek) {
         m_readCount = seekTo;
+        m_lastReadFrame = seekTo;
+    }
 
     auto [startFrame, endFrame, writeAhead] = m_ringBuffer->getFetchTimeBounds();
     startFrame = std::max(m_readCount, startFrame);
 
     ASSERT(m_waitToStartForPushCount);
 
-    uint64_t buffered = endFrame - startFrame;
     if (m_shouldComputeOutputSampleOffset) {
+        // The ring still holds frames that were already pulled.
+        uint64_t unreadStart = std::max(startFrame, m_lastReadFrame);
+        uint64_t buffered = endFrame > unreadStart ? endFrame - unreadStart : 0;
         auto minimumBuffer = std::max<size_t>(m_waitToStartForPushCount * m_lastPushedSampleCount, m_converter.regularBufferSize());
         if (buffered < minimumBuffer) {
             // We wait for one chunk of value before starting to play.
@@ -246,7 +250,11 @@ bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCo
     }
 
     m_lastBufferedAmount = endFrame - timeStamp - sampleCount;
-    return pullSamplesInternal(buffer, sampleCount, timeStamp, mode);
+    if (!pullSamplesInternal(buffer, sampleCount, timeStamp, mode))
+        return false;
+
+    m_lastReadFrame = timeStamp + sampleCount;
+    return true;
 }
 
 bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t sampleCount, uint64_t timeStamp, PullMode mode)
