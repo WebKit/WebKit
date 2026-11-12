@@ -42,6 +42,7 @@ webkitTopAbsPath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..',
 _configurationBuildDirectory = None
 _topLevelBuildDirectory = None
 _hostBuildDirectory = None
+_xcodeConfigurationBuildDirectory = None
 
 PATH_TO_LAUNCHER = './Tools/WebKitArchiveSupport/run-webkit-archive'
 PATH_TO_README = './Tools/WebKitArchiveSupport/README'
@@ -87,7 +88,7 @@ def main():
         return extractBuiltProduct(options.configuration, genericPlatform)
 
 
-def webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform='', returnTopLevelDirectory=False, crossTarget=None):
+def webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform='', returnTopLevelDirectory=False, crossTarget=None, xcode=False):
     if 'simulator' in fullPlatform:
         platform = platform + '-simulator'
     elif platform in ['ios', 'tvos', 'visionos', 'watchos']:
@@ -99,6 +100,8 @@ def webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, ful
         command += ['--configuration']
     if crossTarget:
         command += ['--cross-target=%s' % crossTarget]
+    if xcode:
+        command += ['--xcode']
     return subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].strip().decode('utf-8')
 
 
@@ -106,12 +109,16 @@ def determineWebKitBuildDirectories(platform, fullPlatform, configuration, cross
     global _configurationBuildDirectory
     global _topLevelBuildDirectory
     global _hostBuildDirectory
+    global _xcodeConfigurationBuildDirectory
     _configurationBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform, crossTarget=cross_target)
     _topLevelBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform, returnTopLevelDirectory=True, crossTarget=cross_target)
     if platform in ['ios', 'tvos', 'visionos', 'watchos']:
         _hostBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, 'mac')
     else:
         _hostBuildDirectory = _configurationBuildDirectory
+    if platform in ['mac', 'ios', 'tvos', 'visionos', 'watchos']:
+        # Where Xcode would put the products. Archives of CMake builds are laid out the same way.
+        _xcodeConfigurationBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform, xcode=True)
     
     return _topLevelBuildDirectory
 
@@ -213,6 +220,29 @@ def addFilesToArchive(archiveFile, pathToLauncher, pathToReadme):
     command = ['/usr/bin/zip', '-j', archiveFile, pathToLauncher, pathToReadme]
     return subprocess.call(command)
 
+def createBom(directory, bomFile, excludePatterns):
+    mkbom = subprocess.Popen(('mkbom', '-s', '-i-', bomFile), stdin=subprocess.PIPE, text=True)
+    for root, dirs, files in os.walk(directory):
+        relativePath = root.replace(directory, '.', 1)
+        mkbom.stdin.write(relativePath + '\n')
+        for name in files:
+            archiveMemberName = os.path.join(relativePath, name)
+            if any(fnmatch.fnmatch(name, pattern) for pattern in excludePatterns):
+                print('Ignoring:', archiveMemberName)
+            else:
+                mkbom.stdin.write(archiveMemberName + '\n')
+        dirsToIgnore = {name for pattern in excludePatterns for name in fnmatch.filter(dirs, pattern)}
+        for name in reversed(dirs):
+            if name in dirsToIgnore:
+                print('Ignoring:', os.path.join(relativePath, name))
+                dirs.remove(name)
+            else:
+                if os.path.islink(os.path.join(root, name)):
+                    archiveMemberName = os.path.join(relativePath, name)
+                    mkbom.stdin.write(archiveMemberName + '\n')
+    mkbom.stdin.close()
+    return mkbom.wait()
+
 def createZip(directoryToZip, configuration, excludePatterns=None, embedParentDirectoryNameOnDarwin=False):
     archiveDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild"))
     archiveFile = os.path.join(archiveDir, configuration + ".zip")
@@ -229,27 +259,7 @@ def createZip(directoryToZip, configuration, excludePatterns=None, embedParentDi
             command += ['--keepParent']
         if excludePatterns:
             bomFile = os.path.join(archiveDir, configuration + '.bom')
-            mkbom = subprocess.Popen(('mkbom', '-s', '-i-', bomFile), stdin=subprocess.PIPE, text=True)
-            for root, dirs, files in os.walk(directoryToZip):
-                relativePath = root.replace(directoryToZip, '.', 1)
-                mkbom.stdin.write(relativePath + '\n')
-                for name in files:
-                    archiveMemberName = os.path.join(relativePath, name)
-                    if any(fnmatch.fnmatch(name, pattern) for pattern in excludePatterns):
-                        print('Ignoring:', archiveMemberName)
-                    else:
-                        mkbom.stdin.write(archiveMemberName + '\n')
-                dirsToIgnore = {name for pattern in excludePatterns for name in fnmatch.filter(dirs, pattern)}
-                for name in reversed(dirs):
-                    if name in dirsToIgnore:
-                        print('Ignoring:', os.path.join(relativePath, name))
-                        dirs.remove(name)
-                    else:
-                        if os.path.islink(os.path.join(root, name)):
-                            archiveMemberName = os.path.join(relativePath, name)
-                            mkbom.stdin.write(archiveMemberName + '\n')
-            mkbom.stdin.close()
-            if mkbom.wait():
+            if createBom(directoryToZip, bomFile, excludePatterns):
                 return 1
             command += ['--bom', bomFile]
         command += [directoryToZip, archiveFile]
@@ -297,9 +307,18 @@ CMAKE_EXCLUDED_PATTERNS = (
 )
 
 
+def isCMakeCocoaBuildDirectory():
+    # Read the state left by build-webkit.
+    try:
+        with open(os.path.join(_topLevelBuildDirectory, 'BuildSystem')) as buildSystemFile:
+            return buildSystemFile.read().strip() == 'CMake'
+    except OSError:
+        return False
+
+
 def excludedPatternsForBuildDirectory(minify):
     patterns = MINIFIED_EXCLUDED_PATTERNS if minify else ALWAYS_EXCLUDED_PATTERNS
-    if os.path.isfile(os.path.join(_configurationBuildDirectory, 'CMakeCache.txt')):
+    if isCMakeCocoaBuildDirectory():
         patterns = (*patterns, *CMAKE_EXCLUDED_PATTERNS)
     return patterns
 
@@ -314,10 +333,21 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
         combinedDirectory = os.path.join(_topLevelBuildDirectory, 'combined-mac-and-{}'.format(platform))
         removeDirectoryIfExists(combinedDirectory, platform)
         os.makedirs(combinedDirectory)
-        if subprocess.call(['/bin/cp', '-pR', _configurationBuildDirectory, combinedDirectory]):
-            return 1
-        if subprocess.call(['/bin/cp', '-pR', _hostBuildDirectory, combinedDirectory]):
-            return 1
+        if isCMakeCocoaBuildDirectory():
+            # CMake builds only produce a combined directory (host tools like ImageDiff are in the same tree). The
+            # directory also includes intermediates, so create the filtering BOM up front to avoid copying content that
+            # would be immediately excluded.
+            bomFile = combinedDirectory + '.bom'
+            if createBom(_configurationBuildDirectory, bomFile, excludedPatternsForBuildDirectory(minify)):
+                return 1
+            if subprocess.call(['ditto', '--bom', bomFile, _configurationBuildDirectory,
+                                os.path.join(combinedDirectory, os.path.basename(_xcodeConfigurationBuildDirectory))]):
+                return 1
+        else:
+            if subprocess.call(['/bin/cp', '-pR', _configurationBuildDirectory, combinedDirectory]):
+                return 1
+            if subprocess.call(['/bin/cp', '-pR', _hostBuildDirectory, combinedDirectory]):
+                return 1
         if minify:
             return createZip(combinedDirectory, 'minified-' + configuration, excludePatterns=excludedPatternsForBuildDirectory(minify))
         else:

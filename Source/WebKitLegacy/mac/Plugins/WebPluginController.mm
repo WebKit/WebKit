@@ -70,6 +70,7 @@
 #import "DOMElementInternal.h"
 #import "WebUIKitDelegate.h"
 #import <WebCore/AudioSession.h>
+#import <WebCore/DocumentView.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/WebCoreThreadRun.h>
