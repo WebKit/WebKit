@@ -369,6 +369,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
 
     m_pixelResult.clear();
     m_repaintRects.clear();
+    m_audioResult.clear();
 
     setAllowedHosts(settings);
 
