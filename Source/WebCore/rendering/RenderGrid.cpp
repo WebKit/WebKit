@@ -1133,6 +1133,9 @@ std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepea
     if (autoRepeatType(direction) != AutoRepeatType::Fit)
         return nullptr;
 
+    if (style().display().isGridLanesBox() && !isStackingAxis(direction))
+        return computeEmptyTracksForGridLanesAutoFit(direction);
+
     std::unique_ptr<OrderedTrackIndexSet> emptyTrackIndexes;
     auto autoRepeatTracksRange = this->autoRepeatTracksRange(direction);
 
@@ -1149,6 +1152,43 @@ std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepea
                 emptyTrackIndexes->add(trackIndex);
             }
         }
+    }
+    return emptyTrackIndexes;
+}
+
+std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForGridLanesAutoFit(Style::GridTrackSizingDirection direction) const
+{
+    auto& grid = currentGrid();
+    auto autoRepeatTracksRange = this->autoRepeatTracksRange(direction);
+    Vector<bool> isOccupiedTrack(std::max<size_t>(grid.numTracks(direction), autoRepeatTracksRange.end()), [](size_t) {
+        return false;
+    });
+    unsigned autoPlacedItemsSpanSum = 0;
+    for (CheckedRef gridItem : grid.orderIterator().gridItems()) {
+        if (Style::GridPositionsResolver::resolveGridPositionsFromStyle(*this, gridItem, direction).isIndefinite()) {
+            autoPlacedItemsSpanSum += Style::GridPositionsResolver::spanSizeForAutoPlacedItem(gridItem, direction);
+            continue;
+        }
+        for (auto trackIndex : grid.gridItemSpan(gridItem, direction))
+            isOccupiedTrack[trackIndex] = true;
+    }
+
+    for (auto& isOccupied : isOccupiedTrack) {
+        if (!autoPlacedItemsSpanSum)
+            break;
+        if (isOccupied)
+            continue;
+        isOccupied = true;
+        --autoPlacedItemsSpanSum;
+    }
+
+    std::unique_ptr<OrderedTrackIndexSet> emptyTrackIndexes;
+    for (auto trackIndex : std::views::iota(autoRepeatTracksRange.begin(), autoRepeatTracksRange.end())) {
+        if (isOccupiedTrack[trackIndex])
+            continue;
+        if (!emptyTrackIndexes)
+            emptyTrackIndexes = makeUnique<OrderedTrackIndexSet>();
+        emptyTrackIndexes->add(trackIndex);
     }
     return emptyTrackIndexes;
 }
@@ -1215,21 +1255,9 @@ bool RenderGrid::isStackingAxis(Style::GridTrackSizingDirection direction) const
     return (direction == Style::GridTrackSizingDirection::Columns) == style().gridAutoFlow().isColumn();
 }
 
-// Grid Lanes Spec Section 3.3.1 repeat(auto-fit)
-// https://drafts.csswg.org/css-grid-3/#repeat-auto-fit
-// In a grid lanes container placement happens after track sizing, so the spec has
-// auto-fit collapse only those tracks an occupancy heuristic proves to be empty.
-// We do not implement that heuristic and therefore never collapse, so report the
-// repetition as an auto-fill instead of an auto-fit.
-// FIXME: Implement the occupancy heuristic so auto-fit can collapse empty tracks.
 AutoRepeatType RenderGrid::autoRepeatType(Style::GridTrackSizingDirection direction) const
 {
-    auto autoRepeatType = style().gridTemplateList(direction).autoRepeatType;
-
-    if (isStackingAxis(orthogonalDirection(direction)) && autoRepeatType == AutoRepeatType::Fit)
-        return AutoRepeatType::Fill;
-
-    return autoRepeatType;
+    return style().gridTemplateList(direction).autoRepeatType;
 }
 
 // FIXME: We shouldn't have to pass the available logical width as argument. The problem is that

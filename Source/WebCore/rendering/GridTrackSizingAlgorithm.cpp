@@ -697,12 +697,22 @@ void GridTrackSizingAlgorithm::convertIndefiniteItemsToDefiniteGridLanes(const S
 {
     auto& allTracks = tracks(m_direction);
 
+    auto spanCrossesCollapsedTrack = [this](const GridSpan& itemSpan) {
+        if (!m_grid.hasAutoRepeatEmptyTracks(m_direction))
+            return false;
+        for (auto line : itemSpan) {
+            if (m_grid.isEmptyAutoRepeatTrack(m_direction, line))
+                return true;
+        }
+        return false;
+    };
+
     for (auto& indefiniteItem : indefiniteSpanSizes) {
         for (size_t trackIndex = 0; trackIndex < allTracks.size(); trackIndex++) {
             auto endLine = trackIndex + indefiniteItem.first;
             auto itemSpan = GridSpan::translatedDefiniteGridSpan(trackIndex, endLine);
 
-            if (endLine > allTracks.size())
+            if (endLine > allTracks.size() || spanCrossesCollapsedTrack(itemSpan))
                 continue;
 
             // The spec requires items with a span of 1 to be handled earlier.
