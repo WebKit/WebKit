@@ -287,9 +287,9 @@ RenderMathMLBlock::SizeAppliedToMathContent RenderMathMLBlock::sizeAppliedToMath
     if (phase == LayoutPhase::Layout) {
         // FIXME: Resolve percentages and sizing keywords.
         if (auto fixedLogicalMinWidth = style->logicalMinWidth().tryFixed())
-            sizes.logicalMinWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalMinWidth);
+            sizes.logicalMinWidth = adjustContentBoxLogicalWidthForBoxSizing(style->logicalMinWidth(), LayoutUnit { fixedLogicalMinWidth->resolveZoom(usedZoom) }, containingBlockLogicalWidthForBoxSizing(style->logicalMinWidth()));
         if (auto fixedLogicalMaxWidth = style->logicalMaxWidth().tryFixed())
-            sizes.logicalMaxWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalMaxWidth);
+            sizes.logicalMaxWidth = adjustContentBoxLogicalWidthForBoxSizing(style->logicalMaxWidth(), LayoutUnit { fixedLogicalMaxWidth->resolveZoom(usedZoom) }, containingBlockLogicalWidthForBoxSizing(style->logicalMaxWidth()));
     }
 
     // Handle size containment with contain-intrinsic-inline-size

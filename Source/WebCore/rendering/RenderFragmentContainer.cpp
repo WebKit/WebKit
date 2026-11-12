@@ -392,7 +392,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderFragmentContainer::computeIntrinsicLogic
     // FIXME: Currently, the code handles only the <length> case for min-width/max-width.
     // It should also support other values, like percentage, calc or viewport relative.
     if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositive()) {
-        auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
+        auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style().logicalWidth(), LayoutUnit { fixedLogicalWidth->resolveZoom(style().usedZoomForLength()) }, 0_lu);
         return { logicalWidth, logicalWidth };
     }
     return computeIntrinsicLogicalWidths();

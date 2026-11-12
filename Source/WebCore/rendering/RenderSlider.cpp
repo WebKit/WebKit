@@ -91,7 +91,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderSlider::computeIntrinsicLogicalWidths() 
 std::pair<LayoutUnit, LayoutUnit> RenderSlider::computeIntrinsicLogicalWidthContributions()
 {
     if (auto fixedLogicalWidth = style().logicalWidth().tryFixed()) {
-        auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
+        auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style().logicalWidth(), LayoutUnit { fixedLogicalWidth->resolveZoom(style().usedZoomForLength()) }, 0_lu);
         return { logicalWidth, logicalWidth };
     }
     return computeIntrinsicLogicalWidths();

@@ -269,7 +269,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderDeprecatedFlexibleBox::computeIntrinsicL
     ASSERT(hasInvalidContentLogicalWidths());
 
     if (auto fixedWidth = style().width().tryFixed(); fixedWidth && fixedWidth->isPositive()) {
-        auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedWidth);
+        auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style().width(), LayoutUnit { fixedWidth->resolveZoom(style().usedZoomForLength()) }, 0_lu);
         return { logicalWidth, logicalWidth };
     }
     return computeIntrinsicLogicalWidths();
