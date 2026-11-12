@@ -181,10 +181,14 @@ GridLanesLayout::StackingAxisPlacement GridLanesLayout::updateRunningPositions(c
     for (auto line : gridAxisSpan)
         previousRunningPosition = std::max(previousRunningPosition, m_runningPositions[line]);
 
-    auto marginBoxEnd = previousRunningPosition + stackingAxisMarginBoxForItem(gridItem);
+    auto marginBoxSize = stackingAxisMarginBoxForItem(gridItem);
+    auto marginBoxEnd = previousRunningPosition + marginBoxSize;
 
+    // "Set the running position of the spanned grid axis tracks to max_pos + outer size + grid-gap.
+    // For this purpose, the outer sizes of the box are floored at zero."
+    auto runningPosition = previousRunningPosition + std::max(0_lu, marginBoxSize) + m_stackingAxisGridGap;
     for (auto span : gridAxisSpan)
-        m_runningPositions[span] = marginBoxEnd + m_stackingAxisGridGap;
+        m_runningPositions[span] = runningPosition;
 
     return { previousRunningPosition, marginBoxEnd };
 }
