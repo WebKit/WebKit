@@ -95,14 +95,14 @@ WebCore::CachedImage* MultiImage::cachedImage() const
 {
     if (!m_selectedImage)
         return nullptr;
-    return protect(m_selectedImage)->cachedImage();
+    return m_selectedImage->cachedImage();
 }
 
 WrappedImagePtr MultiImage::data() const
 {
     if (!m_selectedImage)
         return nullptr;
-    return protect(m_selectedImage)->data();
+    return m_selectedImage->data();
 }
 
 bool MultiImage::canRender(const RenderElement* renderer) const
@@ -117,7 +117,7 @@ bool MultiImage::isLoaded(const RenderElement* renderer) const
 
 bool MultiImage::errorOccurred() const
 {
-    return m_selectedImage && protect(m_selectedImage)->errorOccurred();
+    return m_selectedImage && m_selectedImage->errorOccurred();
 }
 
 bool MultiImage::hasDecodedImage() const

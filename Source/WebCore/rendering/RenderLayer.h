@@ -269,7 +269,7 @@ public:
 
     NODELETE void setNeedsPositionUpdate();
     void setSelfAndChildrenNeedPositionUpdate();
-    void setSelfAndDescendantsNeedPositionUpdate();
+    NODELETE void setSelfAndDescendantsNeedPositionUpdate();
 
 private:
     enum class LayerPositionUpdates : uint8_t {
@@ -937,7 +937,7 @@ public:
     bool hasCompositedScrollingAncestor() const { return m_hasCompositedScrollingAncestor; }
     void setHasCompositedScrollingAncestor(bool hasCompositedScrollingAncestor) { m_hasCompositedScrollingAncestor = hasCompositedScrollingAncestor; }
 
-    bool usesCompositedScrolling() const;
+    NODELETE bool usesCompositedScrolling() const;
 
     // Layers with the same ScrollingScope are scrolled by some common ancestor scroller. Used for async scrolling.
     std::optional<ScrollingScope> boxScrollingScope() const { return m_boxScrollingScope; }

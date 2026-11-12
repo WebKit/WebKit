@@ -135,7 +135,7 @@ NODELETE static inline IntRect roundedIntRect(const LayoutRect& rect)
 
 bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
 {
-    IntRect clipRect = roundedIntRect(enclosingLayer()->childrenClipRect());
+    IntRect clipRect = roundedIntRect(protect(enclosingLayer())->childrenClipRect());
     IntRect newFrameRect = roundedIntRect(frame);
     IntRect oldFrameRect = protect(m_widget)->frameRect();
     bool clipChanged = m_clipRect != clipRect;
@@ -159,7 +159,7 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
     // An embedded SVG document can also move within the content box, which moves its composited layers.
     bool sizeChanged = oldFrameRect.size() != newFrameRect.size();
     if (sizeChanged || (boundsChanged && embeddedSVGRoot()))
-        view().compositor().widgetDidChangeSize(*this);
+        protect(protect(view())->compositor())->widgetDidChangeSize(*this);
 
     return sizeChanged;
 }
@@ -202,19 +202,20 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
     if (is<RemoteFrameView>(m_widget) != is<RemoteFrameView>(widget))
         protect(frameOwnerElement())->scheduleInvalidateStyleAndLayerComposition();
 
+    Ref frameView = view().frameView();
     if (RefPtr oldWidget = m_widget) {
         moveWidgetToParentSoon(*oldWidget, nullptr);
-        view().frameView().willRemoveWidgetFromRenderTree(*oldWidget);
+        frameView->willRemoveWidgetFromRenderTree(*oldWidget);
         widgetRendererMap().remove(*oldWidget);
         m_widget = nullptr;
     }
     m_widget = widget;
     if (widget) {
         widgetRendererMap().add(*widget, *this);
-        view().frameView().didAddWidgetToRenderTree(*m_widget);
+        frameView->didAddWidgetToRenderTree(*widget);
         // The content's style may have been resolved without this owner's zoom.
-        if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget); frameView && hasInitializedStyle())
-            protect(frameView->frame())->frameOwnerZoomDidChange();
+        if (RefPtr localFrameView = dynamicDowncast<LocalFrameView>(m_widget); localFrameView && hasInitializedStyle())
+            protect(localFrameView->frame())->frameOwnerZoomDidChange();
         // If we've already received a layout, apply the calculated space to the
         // widget immediately, but we have to have really been fully constructed.
         if (hasInitializedStyle()) {
@@ -234,7 +235,7 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
             if (CheckedPtr cache = document().existingAXObjectCache())
                 cache->onWidgetVisibilityChanged(*this);
         }
-        moveWidgetToParentSoon(*widget, &view().frameView());
+        moveWidgetToParentSoon(*widget, frameView.ptr());
     }
 
     if (CheckedPtr cache = document().existingAXObjectCache())
@@ -440,7 +441,7 @@ RenderWidget::ChildWidgetState RenderWidget::updateWidgetPosition()
         if ((widgetSizeChanged || frameView->needsLayout())
             && localFrame->page()
             && localFrame->document())
-            frameView->layoutContext().layout();
+            protect(frameView->layoutContext())->layout();
     }
     return ChildWidgetState::Valid;
 }

@@ -91,7 +91,7 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
         if (auto* marker = listItemRenderer.markerBox())
             m_builder.destroy(*marker);
         else if (auto* inlineMarker = listItemRenderer.markerRenderer())
-            m_builder.destroyAndCleanUpAnonymousWrappers(*inlineMarker, { });
+            m_builder.destroyAndCleanUpAnonymousWrappers(*inlineMarker, nullptr);
     };
 
     if (listItemRenderer.element() && listItemRenderer.element()->hasTagName(HTMLNames::fieldsetTag)) {
@@ -129,11 +129,12 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
             m_builder.addListItemNeedingMarkerUpdate(listItemRenderer);
             return;
         }
-        m_builder.destroyAndCleanUpAnonymousWrappers(*inlineMarker, { });
+        // The renderer is destroyed by this call, so it cannot be protected.
+        SUPPRESS_UNCHECKED_ARG m_builder.destroyAndCleanUpAnonymousWrappers(*inlineMarker, nullptr);
     }
 
     if (auto* markerRenderer = listItemRenderer.markerBox(); markerRenderer && markerRenderer->style().listStylePosition() != newStyle.listStylePosition())
-        m_builder.destroyAndCleanUpAnonymousWrappers(*markerRenderer, { });
+        m_builder.destroyAndCleanUpAnonymousWrappers(*markerRenderer, nullptr);
 
     if (auto* markerRenderer = listItemRenderer.markerBox()) {
         auto contentChanged = markerRenderer->style().content() != newStyle.content() || markerRenderer->style().unicodeBidi() != newStyle.unicodeBidi()

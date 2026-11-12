@@ -65,7 +65,7 @@ public:
 
     NODELETE WebCore::CachedImage* cachedImage() const final;
 
-    WrappedImagePtr data() const final { return m_cachedImage.get(); }
+    NODELETE WrappedImagePtr data() const final { return m_cachedImage.get(); }
 
     Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
     Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
@@ -74,7 +74,7 @@ public:
     bool isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     bool isLoaded(const RenderElement*) const final;
-    bool errorOccurred() const final;
+    NODELETE bool errorOccurred() const final;
     NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const final;
     ImageRenditionOptions renditionOptionsForRenderer(const RenderElement&, ImageRenditionOptions) const final;
     void addClient(RenderElement&) final;

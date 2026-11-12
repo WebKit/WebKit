@@ -55,7 +55,8 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
 {
     auto destroyPseudoElementTreeIfNeeded = [&]() {
         if (WeakPtr viewTransitionContainingBlock = m_updater.renderView().viewTransitionContainingBlock())
-            m_updater.destroyAndCancelAnimationsForSubtree(*viewTransitionContainingBlock);
+            // The renderer is destroyed by this call, so it cannot be protected.
+            SUPPRESS_UNCHECKED_ARG m_updater.destroyAndCancelAnimationsForSubtree(*viewTransitionContainingBlock);
     };
 
     if (!documentElementRenderer) {
@@ -136,7 +137,8 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
 
     for (auto& descendant : descendantsToDelete) {
         if (descendant)
-            m_updater.destroyAndCancelAnimationsForSubtree(*descendant);
+            // The renderer is destroyed by this call, so it cannot be protected.
+            SUPPRESS_UNCHECKED_ARG m_updater.destroyAndCancelAnimationsForSubtree(*descendant);
     }
 }
 
@@ -221,7 +223,8 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const Style::Co
         ASSERT(imagePair->style().pseudoElementType() == PseudoElementType::ViewTransitionImagePair);
         auto shouldDeleteRenderer = updateRenderer(*imagePair);
         if (shouldDeleteRenderer == ShouldDeleteRenderer::Yes) {
-            m_updater.destroyAndCancelAnimationsForSubtree(*imagePair);
+            // The renderer is destroyed by this call, so it cannot be protected.
+            SUPPRESS_UNCHECKED_ARG m_updater.destroyAndCancelAnimationsForSubtree(*imagePair);
             return;
         }
     } else if (auto newImagePair = createRendererIfNeeded(documentElementRenderer, name, PseudoElementType::ViewTransitionImagePair)) {
@@ -266,12 +269,14 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const Style::Co
         shouldDeleteViewTransitionNew = updateRenderer(*viewTransitionNew);
 
     if (shouldDeleteViewTransitionNew == ShouldDeleteRenderer::Yes)
-        m_updater.destroyAndCancelAnimationsForSubtree(*viewTransitionNew);
+        // The renderer is destroyed by this call, so it cannot be protected.
+        SUPPRESS_UNCHECKED_ARG m_updater.destroyAndCancelAnimationsForSubtree(*viewTransitionNew);
     else if (newViewTransitionNew)
         m_updater.m_builder.attach(*imagePair, WTF::move(newViewTransitionNew));
 
     if (shouldDeleteViewTransitionOld == ShouldDeleteRenderer::Yes)
-        m_updater.destroyAndCancelAnimationsForSubtree(*viewTransitionOld);
+        // The renderer is destroyed by this call, so it cannot be protected.
+        SUPPRESS_UNCHECKED_ARG m_updater.destroyAndCancelAnimationsForSubtree(*viewTransitionOld);
     else if (newViewTransitionOld)
         m_updater.m_builder.attach(*imagePair, WTF::move(newViewTransitionOld), viewTransitionNew.get());
 }

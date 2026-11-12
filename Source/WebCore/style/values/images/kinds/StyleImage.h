@@ -74,13 +74,13 @@ public:
     virtual Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const = 0;
 
     // Opaque representation.
-    virtual WrappedImagePtr data() const = 0;
+    NODELETE virtual WrappedImagePtr data() const = 0;
 
     // Loading.
     virtual bool isPending() const = 0;
     virtual void load(CachedResourceLoader&, const ResourceLoaderOptions&) = 0;
     virtual bool isLoaded(const RenderElement*) const { return true; }
-    virtual bool errorOccurred() const { return false; }
+    NODELETE virtual bool errorOccurred() const { return false; }
     virtual bool usesDataProtocol() const { return false; }
     virtual bool hasImage() const { return false; }
     virtual bool hasDecodedImage() const { return true; }
@@ -99,7 +99,7 @@ public:
     ConcreteObjectSize negotiate(const RenderElement&, const ImageSizingContext&) const;
 
     // Platform Image.
-    virtual WebCore::CachedImage* cachedImage() const { return nullptr; }
+    NODELETE virtual WebCore::CachedImage* cachedImage() const { return nullptr; }
     virtual bool currentFrameIsComplete(const RenderElement*) const { return true; }
     virtual std::optional<IntPoint> hotSpot() const { return std::nullopt; }
 

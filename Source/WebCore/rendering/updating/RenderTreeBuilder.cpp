@@ -992,7 +992,8 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
 
     if (destroyRoot) {
         auto anonymousDestroyRoot = SetForScope { m_anonymousDestroyRoot, destroyRoot.get() != &rendererToDestroy ? destroyRoot : nullptr };
-        destroy(*destroyRoot);
+        // The renderer is destroyed by this call, so it cannot be protected.
+        SUPPRESS_UNCHECKED_ARG destroy(*destroyRoot);
     }
 
     if (!destroyRootParent)
@@ -1003,7 +1004,8 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
 
     // Anonymous parent might have become empty, try to delete it too.
     if (isAnonymousAndSafeToDelete(*destroyRootParent) && !destroyRootParent->firstChild())
-        destroyAndCleanUpAnonymousWrappers(*destroyRootParent, destroyRootParent.get());
+        // Both arguments refer to the renderer this call destroys, so it cannot be protected.
+        SUPPRESS_UNCHECKED_ARG destroyAndCleanUpAnonymousWrappers(*destroyRootParent, destroyRootParent.get());
     // WARNING: rendererToDestroy is deleted here.
 }
 

@@ -59,16 +59,16 @@ protected:
     bool equals(const MultiImage& other) const;
 
     virtual ImageWithResolution selectBestFitImage(const Document&) = 0;
-    WebCore::CachedImage* cachedImage() const final;
+    NODELETE WebCore::CachedImage* cachedImage() const final;
 
 private:
-    WrappedImagePtr data() const final;
+    NODELETE WrappedImagePtr data() const final;
 
     bool canRender(const RenderElement*) const final;
     bool isPending() const final { return m_isPending; }
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     bool isLoaded(const RenderElement*) const final;
-    bool errorOccurred() const final;
+    NODELETE bool errorOccurred() const final;
     bool hasDecodedImage() const final;
     NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const final;
     ImageRenditionOptions renditionOptionsForRenderer(const RenderElement&, ImageRenditionOptions) const override;

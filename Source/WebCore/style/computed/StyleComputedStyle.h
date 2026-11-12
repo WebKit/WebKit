@@ -154,7 +154,7 @@ public:
     inline PointerEvents usedPointerEvents() const;
     inline UserModify usedUserModify() const;
     NODELETE WEBCORE_EXPORT UserSelect usedUserSelect() const;
-    Style::Contain usedContain() const;
+    NODELETE Style::Contain usedContain() const;
     inline TransformStyle3D usedTransformStyle3D() const;
     WebCore::Color usedScrollbarThumbColor() const;
     WebCore::Color usedScrollbarTrackColor() const;

@@ -185,7 +185,7 @@ public:
     NODELETE GraphicsLayer* layerForVerticalScrollbar() const final;
     NODELETE GraphicsLayer* layerForScrollCorner() const final;
 
-    bool usesCompositedScrolling() const final;
+    NODELETE bool usesCompositedScrolling() const final;
     bool usesAsyncScrolling() const final;
 
     NODELETE bool shouldPlaceVerticalScrollbarOnLeft() const final;

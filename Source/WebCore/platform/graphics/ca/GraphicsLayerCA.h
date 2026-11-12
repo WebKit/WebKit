@@ -70,7 +70,7 @@ public:
     WEBCORE_EXPORT void setName(const String&) override;
     WEBCORE_EXPORT String debugName() const override;
 
-    WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> primaryLayerID() const override;
+    NODELETE WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> primaryLayerID() const override;
     WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> backdropLayerID() const override;
     WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> layerIDIgnoringStructuralLayer() const final;
 

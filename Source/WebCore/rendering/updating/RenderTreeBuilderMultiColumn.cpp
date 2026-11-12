@@ -469,7 +469,8 @@ void RenderTreeBuilder::MultiColumn::handleSpannerRemoval(RenderMultiColumnFlow&
 {
     // The placeholder may already have been removed, but if it hasn't, do so now.
     if (auto placeholder = flow.spannerMap().take(downcast<RenderBox>(spanner)))
-        m_builder.destroy(*placeholder, canCollapseAnonymousBlock);
+        // The renderer is destroyed by this call, so it cannot be protected.
+        SUPPRESS_UNCHECKED_ARG m_builder.destroy(*placeholder, canCollapseAnonymousBlock);
 
     if (auto* next = spanner.nextSibling()) {
         if (auto* previous = spanner.previousSibling()) {

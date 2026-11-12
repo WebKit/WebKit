@@ -957,8 +957,10 @@ void RenderTreeUpdater::tearDownRenderersInternal(Element& root, TeardownType te
                     }
                 }
                 if (auto backdropRenderer = renderer->pseudoElementRenderer(PseudoElementType::Backdrop))
-                    builder.destroyAndCleanUpAnonymousWrappers(*backdropRenderer, { });
-                builder.destroyAndCleanUpAnonymousWrappers(*renderer, root.renderer());
+                    // The renderer is destroyed by this call, so it cannot be protected.
+                    SUPPRESS_UNCHECKED_ARG builder.destroyAndCleanUpAnonymousWrappers(*backdropRenderer, nullptr);
+                // The root's renderer may be the renderer this call destroys, so it cannot be protected.
+                SUPPRESS_UNCHECKED_ARG builder.destroyAndCleanUpAnonymousWrappers(*renderer, root.renderer());
                 element->setRenderer(nullptr);
             }
 

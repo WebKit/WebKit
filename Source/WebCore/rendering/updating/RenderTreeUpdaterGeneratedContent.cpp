@@ -757,7 +757,8 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
 {
     auto destroyBackdropIfNeeded = [&renderer, this]() {
         if (WeakPtr backdropRenderer = renderer.pseudoElementRenderer(PseudoElementType::Backdrop))
-            m_updater.m_builder.destroy(*backdropRenderer);
+            // The renderer is destroyed by this call, so it cannot be protected.
+            SUPPRESS_UNCHECKED_ARG m_updater.m_builder.destroy(*backdropRenderer);
     };
 
     // Intentionally bail out early here to avoid computing the style.
@@ -821,7 +822,8 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         Ref editor = renderer.element()->document().editor();
 
         if (WeakPtr writingSuggestionsRenderer = editor->writingSuggestionRenderer())
-            m_updater.m_builder.destroy(*writingSuggestionsRenderer);
+            // The renderer is destroyed by this call, so it cannot be protected.
+            SUPPRESS_UNCHECKED_ARG m_updater.m_builder.destroy(*writingSuggestionsRenderer);
     };
 
     if (!renderer.canHaveChildren())

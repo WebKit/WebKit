@@ -654,7 +654,7 @@ private:
 
     void updateCompositingForLayerTreeAsTextDump();
 
-    RenderView& m_renderView;
+    const CheckedRef<RenderView> m_renderView;
     Timer m_updateCompositingLayersTimer;
     Timer m_updateRenderingTimer;
 

@@ -96,7 +96,7 @@ public:
     ExceptionOr<void> clearElementGeometry(const CanvasElementImageSource&);
     ExceptionOr<Ref<DOMMatrix>> getElementTransform(const Element&);
 
-    CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
+    NODELETE CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
     ExceptionOr<std::optional<RenderingContext>> getContext(JSC::JSGlobalObject&, const String& contextId, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
 
     RefPtr<CanvasRenderingContext> getContext(const String&);

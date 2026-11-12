@@ -88,9 +88,11 @@ void RenderTextFragment::setTextInternal(const String& newText, bool force)
     if (!m_firstLetter)
         return;
     if (RenderTreeBuilder::current())
-        RenderTreeBuilder::current()->destroy(*m_firstLetter);
+        // The renderer is destroyed by this call, so it cannot be protected.
+        SUPPRESS_UNCHECKED_ARG RenderTreeBuilder::current()->destroy(*m_firstLetter);
     else
-        RenderTreeBuilder(*document().renderView()).destroy(*m_firstLetter);
+        // The renderer is destroyed by this call, so it cannot be protected.
+        SUPPRESS_UNCHECKED_ARG RenderTreeBuilder(*document().renderView()).destroy(*m_firstLetter);
     ASSERT(!m_firstLetter);
     ASSERT(!textNode() || textNode()->renderer() == this);
 }
@@ -101,7 +103,8 @@ void RenderTextFragment::setTextWithOffset(const String& newText, unsigned offse
     // The base class skips the update when the fragment text matches the new
     // content, but the split is stale and the tree builder needs to recreate it.
     if (m_firstLetter && offset < m_start)
-        RenderTreeBuilder::current() ? RenderTreeBuilder::current()->destroy(*m_firstLetter) : RenderTreeBuilder(*document().renderView()).destroy(*m_firstLetter);
+        // The renderer is destroyed by this call, so it cannot be protected.
+        SUPPRESS_UNCHECKED_ARG RenderTreeBuilder::current() ? RenderTreeBuilder::current()->destroy(*m_firstLetter) : RenderTreeBuilder(*document().renderView()).destroy(*m_firstLetter);
     RenderText::setTextWithOffset(newText, offset);
 }
 

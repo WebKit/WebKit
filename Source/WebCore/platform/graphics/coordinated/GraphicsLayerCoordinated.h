@@ -56,7 +56,7 @@ public:
 private:
     bool isGraphicsLayerCoordinated() const override { return true; }
 
-    std::optional<PlatformLayerIdentifier> primaryLayerID() const override;
+    NODELETE std::optional<PlatformLayerIdentifier> primaryLayerID() const override;
 
     void setPosition(const FloatPoint&) override;
     void syncPosition(const FloatPoint&) override;

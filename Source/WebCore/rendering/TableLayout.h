@@ -52,7 +52,7 @@ protected:
     // Until then though, using nearlyMax causes overflow in some tests, so we just pick a large number.
     static constexpr int tableMaxWidth = 1000000;
 
-    CheckedPtr<RenderTable> m_table;
+    const CheckedPtr<RenderTable> m_table;
 };
 
 } // namespace WebCore

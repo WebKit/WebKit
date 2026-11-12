@@ -34,6 +34,7 @@
 #include "StyleGridTrackSize.h"
 #include "StyleGridTrackSizingDirection.h"
 #include "StyleZoomResolvable.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/StdMap.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -314,7 +315,7 @@ private:
 
     Grid& m_grid;
 
-    const RenderGrid* m_renderGrid;
+    const CheckedPtr<const RenderGrid> m_renderGrid;
     std::unique_ptr<GridTrackSizingAlgorithmStrategy> m_strategy;
 
     // The track sizing algorithm is used for both layout and intrinsic size

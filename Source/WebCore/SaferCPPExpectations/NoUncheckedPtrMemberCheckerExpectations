@@ -3,7 +3,6 @@ dom/Node.cpp
 dom/Node.h
 rendering/BackgroundPainter.h
 rendering/GlyphDisplayListCache.cpp
-rendering/GridTrackSizingAlgorithm.h
 rendering/InlineBoxPainter.h
 rendering/LayoutRepainter.h
 rendering/LogicalSelectionOffsetCaches.h
@@ -19,7 +18,6 @@ rendering/RenderLayer.h
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h
 rendering/RenderLayerCompositor.cpp
-rendering/RenderLayerCompositor.h
 rendering/RenderLayerScrollableArea.h
 rendering/RenderLayoutState.h
 rendering/RenderSelectionGeometry.h

@@ -140,7 +140,7 @@ public:
 
     virtual void initialize(Type) { }
 
-    virtual std::optional<PlatformLayerIdentifier> primaryLayerID() const { return std::nullopt; }
+    NODELETE virtual std::optional<PlatformLayerIdentifier> primaryLayerID() const { return std::nullopt; }
     virtual std::optional<PlatformLayerIdentifier> backdropLayerID() const { return std::nullopt; }
     virtual std::optional<PlatformLayerIdentifier> layerIDIgnoringStructuralLayer() const { return primaryLayerID(); }
 
@@ -468,7 +468,7 @@ public:
 
     virtual FloatSize pixelAlignmentOffset() const { return FloatSize(); }
     
-    virtual void setAppliesPageScale(bool appliesScale = true) { m_appliesPageScale = appliesScale; }
+    NODELETE virtual void setAppliesPageScale(bool appliesScale = true) { m_appliesPageScale = appliesScale; }
     virtual bool appliesPageScale() const { return m_appliesPageScale; }
 
     void setAppliesDeviceScale(bool appliesScale = true) { m_appliesDeviceScale = appliesScale; }

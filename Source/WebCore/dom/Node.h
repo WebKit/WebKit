@@ -137,7 +137,7 @@ public:
 
     // DOM methods & attributes for Node
 
-    bool hasTagName(const HTMLQualifiedName&) const;
+    NODELETE bool hasTagName(const HTMLQualifiedName&) const;
     bool hasTagName(const MathMLQualifiedName&) const;
     inline bool hasTagName(const SVGQualifiedName&) const;
     virtual String nodeName() const = 0;

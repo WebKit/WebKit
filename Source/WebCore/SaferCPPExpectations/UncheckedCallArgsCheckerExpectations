@@ -14,7 +14,6 @@ rendering/CaretRectComputation.cpp
 rendering/ContentfulPaintChecker.cpp
 rendering/CounterNode.cpp
 rendering/EllipsisBoxPainter.cpp
-rendering/FixedTableLayout.cpp
 rendering/FloatingObjects.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/HitTestResult.cpp
@@ -71,7 +70,6 @@ rendering/RenderTextControl.cpp
 rendering/RenderTextControlMultiLine.cpp
 rendering/RenderTextControlSingleLine.cpp
 rendering/RenderTextControlSingleLine.h
-rendering/RenderTextFragment.cpp
 rendering/RenderView.cpp
 rendering/RenderViewTransitionCapture.cpp
 rendering/RenderWidget.cpp

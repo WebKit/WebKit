@@ -46,7 +46,7 @@ protected:
     explicit GeneratedImage(Image::Type);
     virtual ~GeneratedImage();
 
-    WrappedImagePtr data() const final { return this; }
+    NODELETE WrappedImagePtr data() const final { return this; }
 
     NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const override;
 

@@ -123,7 +123,8 @@ void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type
 
     if (!shouldHavePseudoElementRenderer()) {
         if (existingPseudoElement)
-            m_builder.destroy(*existingPseudoElement);
+            // The renderer is destroyed by this call, so it cannot be protected.
+            SUPPRESS_UNCHECKED_ARG m_builder.destroy(*existingPseudoElement);
         return;
     }
 
@@ -135,7 +136,8 @@ void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type
     }
 
     if (existingPseudoElement) {
-        m_builder.destroy(*existingPseudoElement);
+        // The renderer is destroyed by this call, so it cannot be protected.
+        SUPPRESS_UNCHECKED_ARG m_builder.destroy(*existingPseudoElement);
     }
 
     if (!renderer.canHaveChildren())

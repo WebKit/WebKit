@@ -180,7 +180,7 @@ public:
     void resetScript();
     NODELETE FrameView* virtualView() const final;
 
-    bool isRootFrame() const final { return m_rootFrame.get() == this; }
+    NODELETE bool isRootFrame() const final { return m_rootFrame.get() == this; }
     const LocalFrame& rootFrame() const { return *m_rootFrame; }
     LocalFrame& rootFrame() { return *m_rootFrame; }
 

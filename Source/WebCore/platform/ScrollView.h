@@ -116,8 +116,8 @@ public:
 
     // If the scroll view does not use a native widget, then it will have cross-platform Scrollbars. These functions
     // can be used to obtain those scrollbars.
-    Scrollbar* horizontalScrollbar() const final { return m_horizontalScrollbar.get(); }
-    Scrollbar* verticalScrollbar() const final { return m_verticalScrollbar.get(); }
+    NODELETE Scrollbar* horizontalScrollbar() const final { return m_horizontalScrollbar.get(); }
+    NODELETE Scrollbar* verticalScrollbar() const final { return m_verticalScrollbar.get(); }
     bool isScrollViewScrollbar(const Widget* child) const { return horizontalScrollbar() == child || verticalScrollbar() == child; }
 
     void positionScrollbarLayers();

@@ -129,9 +129,11 @@ void RenderButton::setText(const String& str)
         return;
     }
     if (RenderTreeBuilder::current())
-        RenderTreeBuilder::current()->destroy(*m_buttonText);
+        // The renderer is destroyed by this call, so it cannot be protected.
+        SUPPRESS_UNCHECKED_ARG RenderTreeBuilder::current()->destroy(*m_buttonText);
     else
-        RenderTreeBuilder(*document().renderView()).destroy(*m_buttonText);
+        // The renderer is destroyed by this call, so it cannot be protected.
+        SUPPRESS_UNCHECKED_ARG RenderTreeBuilder(*document().renderView()).destroy(*m_buttonText);
 }
 
 String RenderButton::text() const

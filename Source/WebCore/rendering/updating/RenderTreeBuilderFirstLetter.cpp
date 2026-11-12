@@ -284,7 +284,8 @@ void RenderTreeBuilder::FirstLetter::cleanupOnDestroy(RenderTextFragment& textFr
 {
     if (!textFragment.firstLetter())
         return;
-    m_builder.destroy(*textFragment.firstLetter(), CanCollapseAnonymousBlock::No);
+    // The renderer is destroyed by this call, so it cannot be protected.
+    SUPPRESS_UNCHECKED_ARG m_builder.destroy(*textFragment.firstLetter(), CanCollapseAnonymousBlock::No);
 }
 
 void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, RenderObject& currentChild)
