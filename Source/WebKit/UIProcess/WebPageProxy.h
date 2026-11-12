@@ -3974,6 +3974,7 @@ private:
     void didEvictBackForwardItem(WebCore::BackForwardItemIdentifier);
     void didTakeBackForwardItemForRestoration(WebCore::BackForwardItemIdentifier);
     void restoreOrCancelPendingBackForwardIframes(const PendingBackForwardIframeRestore&, WebCore::RestoredFromBackForwardCache);
+    void takeBackForwardCacheEntryForAllowedNavigation(API::Navigation&, WebProcessProxy& mainFrameProcess);
 
     Vector<Ref<WebProcessProxy>> activeRemoteFrameProcesses() const;
     void discardBackForwardCacheEntry(WebCore::BackForwardItemIdentifier);
