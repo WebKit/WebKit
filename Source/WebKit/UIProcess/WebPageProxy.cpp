@@ -7108,9 +7108,9 @@ static SandboxFlags sandboxFlagsFromContentSecurityPolicy(const ResourceResponse
 {
     if (response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicy).isNull())
         return { };
-    ContentSecurityPolicy contentSecurityPolicy { URL { response.url() }, nullptr, nullptr };
-    contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, String { }, ContentSecurityPolicy::ReportParsingErrors::No);
-    return contentSecurityPolicy.sandboxFlags();
+    auto contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { response.url() }, nullptr, nullptr);
+    contentSecurityPolicy->didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, String { }, ContentSecurityPolicy::ReportParsingErrors::No);
+    return contentSecurityPolicy->sandboxFlags();
 }
 
 void WebPageProxy::receivedNavigationResponsePolicyDecision(WebProcessProxy& processReceivingPolicyDecision, WebCore::PolicyAction action, API::Navigation* navigation, const WebCore::ResourceRequest& request, Ref<API::NavigationResponse>&& navigationResponse, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
