@@ -670,6 +670,17 @@ RefPtr<const RemoteAnimationStack> RemoteLayerTreeHost::animationStackForNodeWit
 }
 #endif
 
+void RemoteLayerTreeHost::removeLayersFromProcess(WebCore::ProcessIdentifier processIdentifier)
+{
+    Vector<WebCore::PlatformLayerIdentifier> layerIDs;
+    for (auto layerID : m_nodes.keys()) {
+        if (layerID.processIdentifier() == processIdentifier)
+            layerIDs.append(layerID);
+    }
+    for (auto layerID : layerIDs)
+        layerWillBeRemoved(processIdentifier, layerID);
+}
+
 void RemoteLayerTreeHost::remotePageProcessDidTerminate(WebCore::ProcessIdentifier processIdentifier)
 {
     for (auto layerID : m_hostedLayersInProcess.take(processIdentifier))
