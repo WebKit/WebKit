@@ -82,6 +82,9 @@ struct ConstraintsForIndependentFormattingContext {
     // body stretches to the viewport less them (RenderBox::computeLogicalHeight).
     LayoutUnit marginBefore;
     LayoutUnit marginAfter;
+    // Those of its containing block, which a quirks mode body stretches to the viewport less too, from the root element.
+    LayoutUnit containingBlockMarginBefore;
+    LayoutUnit containingBlockMarginAfter;
     // What the content of the root reads where it looks past the root: the block size percentage block sizes resolve against through an auto
     // block size in quirks mode, and the available block sizes of the containing block, without and with its margins, borders and padding
     // (RenderBox::availableLogicalHeight).

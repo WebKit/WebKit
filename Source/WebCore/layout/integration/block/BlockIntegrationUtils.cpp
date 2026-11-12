@@ -237,7 +237,7 @@ static void registerOrthogonalBoxForLayout(RenderBox& box)
 BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegrationUtils::layoutIndependentFormattingContext(const RenderBox& root, const Layout::ConstraintsForIndependentFormattingContext& constraints)
 {
     // Only the root and its content are written here, by the root's own formatting context, but for the block-direction margins the block
-    // formatting context gives it, and nothing else in the block formatting context reads them.
+    // formatting context gives it, and to a quirks mode body those of the root element, which nothing else in the block formatting context reads.
     SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef box = const_cast<RenderBox&>(root);
     // Its parent, or the block container whose inline content it is in.
     CheckedRef containingBlock = downcast<RenderBlockFlow>(*box->containingBlock());
@@ -258,6 +258,12 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
     // Like RenderBlockFlow::layoutBlockChild, before the root's own layout reads them. They follow the writing mode of the containing block.
     box->setMarginBefore(constraints.marginBefore, containingBlockWritingMode);
     box->setMarginAfter(constraints.marginAfter, containingBlockWritingMode);
+    // A quirks mode body stretches to the viewport less the margins of the root element too, which it reads from the root element's renderer
+    // (RenderBox::computeLogicalHeight), before the block formatting context that lays out the root element gives them to it.
+    if (box->stretchesToViewport() && box->isBody()) {
+        containingBlock->setMarginBefore(constraints.containingBlockMarginBefore, containingBlockWritingMode);
+        containingBlock->setMarginAfter(constraints.containingBlockMarginAfter, containingBlockWritingMode);
+    }
     auto isOrthogonal = box->writingMode().isOrthogonal(containingBlockWritingMode);
     box->setOverridingContainingBlockContentLogicalWidth(constraints.containingBlockInlineSize);
     if (isOrthogonal || (!percentagesResolveAgainstTableCell(containingBlock) && Layout::BlockFormattingUtils::hasPercentageBlockSize(box, box->writingMode())))

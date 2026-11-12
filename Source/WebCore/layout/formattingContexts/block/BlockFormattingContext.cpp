@@ -1248,6 +1248,8 @@ LayoutUnit BlockFormattingContext::layoutIndependentFormattingContextThroughRend
         .borderBoxInlineSize = decidesItsOwnInlineSize(box, root().writingMode()) ? borderBoxInlineSize : std::optional { geometry.borderBoxWidth() },
         .marginBefore = geometry.marginBefore(),
         .marginAfter = geometry.marginAfter(),
+        .containingBlockMarginBefore = containingBlockState.geometry.marginBefore(),
+        .containingBlockMarginAfter = containingBlockState.geometry.marginAfter(),
         // Percentages that look past the box to a table cell behave as auto (RenderBox::computePercentageLogicalHeight).
         .contentPercentageBasis = containingBlockIsTableCell(containingBlockState) == BlockFormattingUtils::ContainingBlockIsTableCell::Yes ? std::nullopt : containingBlockState.contentBoxBlockSize,
         .containingBlockAvailableBlockSize = containingBlockState.fillAvailableBlockSize,

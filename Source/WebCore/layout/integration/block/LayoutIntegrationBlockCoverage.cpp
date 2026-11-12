@@ -148,14 +148,14 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     return { };
 }
 
-// Only display: flow-root, overflow other than visible, align-content and out-of-flow boxes. The other ways to establish a block formatting
-// context also contain or fragment the content. Not a form control, which lays out its content its own way.
+// Only the root element, display: flow-root, overflow other than visible, align-content and out-of-flow boxes. The other ways to establish a
+// block formatting context also contain or fragment the content. Not a form control, which lays out its content its own way.
 static bool isSupportedBlockFormattingContextRoot(const RenderBlockFlow& blockContainer)
 {
     if (Layout::BlockFormattingUtils::isFormControlBlockContainer(blockContainer))
         return false;
     CheckedRef style = blockContainer.style();
-    auto isSupportedRoot = blockContainer.hasNonVisibleOverflow() || style->display() == Style::DisplayType::BlockFlowRoot || !style->alignContent().isNormal() || blockContainer.isOutOfFlowPositioned();
+    auto isSupportedRoot = blockContainer.isDocumentElementRenderer() || blockContainer.hasNonVisibleOverflow() || style->display() == Style::DisplayType::BlockFlowRoot || !style->alignContent().isNormal() || blockContainer.isOutOfFlowPositioned();
     // FIXME: A root whose content content-visibility skips (RenderBlockFlow::layoutBlock leaves it as it is).
     // An out-of-flow box sizes itself in its own writing mode (OutOfFlowGeometry).
     auto isSupportedWritingMode = !blockContainer.isWritingModeRoot() || (blockContainer.isOutOfFlowPositioned() && !(blockContainer.writingMode().isHorizontal() && blockContainer.writingMode().isBlockFlipped()));

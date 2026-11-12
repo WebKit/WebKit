@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; margin: 4px; }
+iframe { width: 180px; height: 120px; border: 1px solid; margin: 2px; vertical-align: top; }
+</style>
+<iframe srcdoc="<html style='width: 60%; margin: 6px auto; padding: 5%; border: 2px solid; min-height: 50%; background: lightgray'><body style='margin: 7px; height: 50%; background: lightblue; font: 10px/12px monospace'><div style='height: 50%; background: green'>half</div>"></iframe>
+<iframe src="data:text/html,<html style='margin: 5px; padding: 3px; border: 2px solid; background: lightgray'><body style='margin: 10px; background: lightblue; font: 10px/12px monospace'><div style='height: 50%; background: green'>quirks half</div>"></iframe>
+<iframe srcdoc="<html style='height: 100%; box-sizing: border-box; padding: 10px; border: 3px solid; background: lightgray'><body style='height: 100%; margin: 0; background: lightblue; font: 10px/12px monospace'><div style='height: 150px; width: 50px; background: green'>tall</div>"></iframe>
+<iframe srcdoc="<html style='background: lightgray; padding: 4px'><body style='margin: 4px; font: 10px/12px monospace'><div style='float: left; width: 40px; height: 40px; background: orange'></div>text beside a float that wraps around it<div style='clear: left; background: lightblue'>cleared</div>"></iframe>
+<iframe srcdoc="<html style='writing-mode: vertical-rl; width: 50%; margin: 5px; border: 2px solid; background: lightgray'><body style='margin: 4px; font: 10px/12px monospace'><div style='width: 30px; background: lightblue'>vertical</div>text"></iframe>
+<iframe srcdoc="<html dir=rtl style='width: 120px; margin: 4px; border: 2px solid; background: lightgray'><body style='margin: 4px; font: 10px/12px monospace'><div style='width: 60px; background: lightblue'>rtl</div>text"></iframe>
+<iframe srcdoc="<html style='max-width: 100px; margin-left: auto; margin-top: 20px; border: 2px solid; background: lightgray'><body style='margin: 0; font: 10px/12px monospace'><div style='margin-top: 10px; background: lightblue'>margins</div>"></iframe>
+<iframe src="data:text/html,<html style='height: 50%; background: lightgray'><body style='margin: 3px; height: 50%; background: lightblue; font: 10px/12px monospace'><div style='height: 50%; background: green'>quirks heights</div>"></iframe>
+<iframe srcdoc="<html style='margin: 0; background: lightgray'><body style='margin: 0; font: 10px/12px monospace'><div style='margin-top: 15px; background: lightblue'>body margins</div><div style='margin-bottom: 15px; background: lightblue'>end</div>"></iframe>
+<iframe src="data:text/html,<html style='margin: 3px 6px 9px 12px; background: lightgray'><body style='display: flex; margin: 7px 11px 14px 23px; background: lightblue; font: 10px/12px monospace'>flex body"></iframe>
