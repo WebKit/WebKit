@@ -28,6 +28,7 @@
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKHTTPCookieStorePrivate.h>
@@ -35,6 +36,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/MakeString.h>
@@ -187,4 +189,36 @@ TEST(WebKit, CookieAccessFromPDFInAboutBlank)
 
     while (!server.totalRequests())
         TestWebKitAPI::Util::spinRunLoop();
+}
+
+TEST(WebKit, CookieSetBeforeSwitchingWebsiteDataStoreDoesNotDelayLoad)
+{
+    TestWebKitAPI::HTTPServer server({ { "/"_s, { "hi"_s } } });
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    __block bool done = false;
+    RetainPtr cookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieName: @"name",
+        NSHTTPCookieValue: @"value",
+        NSHTTPCookieDomain: @"127.0.0.1",
+    }];
+    [[configuration websiteDataStore].httpCookieStore setCookie:cookie.get() completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    RetainPtr otherDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences._websiteDataStore = otherDataStore.get();
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:server.request()];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.cookie"], "");
 }

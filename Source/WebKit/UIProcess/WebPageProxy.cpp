@@ -2552,7 +2552,8 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     loadParameters.hasCrossOriginRedirect = navigation.hasCrossOriginRedirect();
     loadParameters.navigationUpgradeToHTTPSBehavior = navigationUpgradeToHTTPSBehavior;
     loadParameters.isHandledByAboutSchemeHandler = m_aboutSchemeHandler->canHandleURL(url);
-    loadParameters.requiredCookiesVersion = websiteDataStore().cookiesVersion();
+    if (RefPtr dataStore = process->websiteDataStore())
+        loadParameters.requiredCookiesVersion = dataStore->cookiesVersion();
     loadParameters.originatingFrame = navigation.lastNavigationAction() ? std::optional(navigation.lastNavigationAction()->originatingFrameInfoData) : std::nullopt;
     if (auto& action = navigation.lastNavigationAction()) {
         loadParameters.hadUserGesture = action->userGestureTokenIdentifier.has_value();
