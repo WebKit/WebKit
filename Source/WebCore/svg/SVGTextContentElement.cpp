@@ -55,7 +55,7 @@ SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Docum
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
-        PropertyRegistry::registerProperty<SVGNames::textLengthAttr, &SVGTextContentElement::m_textLength>();
+        PropertyRegistry::registerProperty<SVGNames::textLengthAttr, &SVGTextContentElement::m_textLength>(SVGLengthMode::Other, SVGLengthNegativeValuesMode::Forbid);
         PropertyRegistry::registerProperty<SVGNames::lengthAdjustAttr, SVGLengthAdjustType, &SVGTextContentElement::m_lengthAdjust>();
     }
 }

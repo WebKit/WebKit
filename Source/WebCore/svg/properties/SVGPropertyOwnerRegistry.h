@@ -97,9 +97,9 @@ public:
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedLength> OwnerType::*property>
-    static void registerProperty()
+    static void registerProperty(SVGLengthMode lengthMode, SVGLengthNegativeValuesMode negativeValuesMode = SVGLengthNegativeValuesMode::Allow, ASCIILiteral initialValue = { })
     {
-        registerProperty(attributeName, SVGAnimatedLengthAccessor<OwnerType>::template singleton<property>());
+        registerProperty(attributeName, SVGAnimatedLengthAccessor<OwnerType>::template singleton<property>(lengthMode, negativeValuesMode, initialValue));
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedLengthList> OwnerType::*property>
@@ -345,6 +345,15 @@ public:
             return false;
         });
         ASSERT_UNUSED(found, found);
+    }
+
+    // Looked up by name, like setAnimatedPropertyDirty(), so the check and the reset share one lookup.
+    void resetAnimatedPropertyBaseValIfOutOfRange(const SVGElement& element, const QualifiedName& attributeName) const override
+    {
+        lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
+            if (accessor.isBaseValOutOfRange(owner(element)))
+                accessor.resetBaseVal(owner(element));
+        });
     }
 
     // Detach all the properties recursively from their OwnerTypes.

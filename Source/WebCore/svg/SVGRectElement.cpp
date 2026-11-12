@@ -47,12 +47,12 @@ inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document& do
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
-        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGRectElement::m_x>();
-        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGRectElement::m_y>();
-        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGRectElement::m_width>();
-        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGRectElement::m_height>();
-        PropertyRegistry::registerProperty<SVGNames::rxAttr, &SVGRectElement::m_rx>();
-        PropertyRegistry::registerProperty<SVGNames::ryAttr, &SVGRectElement::m_ry>();
+        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGRectElement::m_x>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGRectElement::m_y>(SVGLengthMode::Height);
+        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGRectElement::m_width>(SVGLengthMode::Width, SVGLengthNegativeValuesMode::Forbid);
+        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGRectElement::m_height>(SVGLengthMode::Height, SVGLengthNegativeValuesMode::Forbid);
+        PropertyRegistry::registerProperty<SVGNames::rxAttr, &SVGRectElement::m_rx>(SVGLengthMode::Width, SVGLengthNegativeValuesMode::Forbid);
+        PropertyRegistry::registerProperty<SVGNames::ryAttr, &SVGRectElement::m_ry>(SVGLengthMode::Height, SVGLengthNegativeValuesMode::Forbid);
     }
 }
 

@@ -52,6 +52,11 @@ public:
     // https://w3c.github.io/svgwg/svg2-draft/types.html#syntax
     virtual void resetAnimatedPropertyBaseVal(const SVGElement&, const SVGAnimatedPropertyBase&) const = 0;
 
+    // Resets the property as markup would when a script wrote a value that the attribute refuses
+    // in markup. Called by SVGElement::commitPropertyChange() after the attribute is written.
+    // https://w3c.github.io/svgwg/svg2-draft/types.html#InvalidValues
+    virtual void resetAnimatedPropertyBaseValIfOutOfRange(const SVGElement&, const QualifiedName&) const = 0;
+
     virtual bool isAnimatedPropertyAttribute(const SVGElement&, const QualifiedName&) const = 0;
     virtual bool isAnimatedStylePropertyAttribute(const QualifiedName&) const = 0;
     virtual RefPtr<SVGAttributeAnimator> createAnimator(SVGElement&, const QualifiedName&, AnimationMode, CalcMode, bool isAccumulated, bool isAdditive) const = 0;

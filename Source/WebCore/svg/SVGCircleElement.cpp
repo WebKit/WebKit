@@ -45,9 +45,9 @@ inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
-        PropertyRegistry::registerProperty<SVGNames::cxAttr, &SVGCircleElement::m_cx>();
-        PropertyRegistry::registerProperty<SVGNames::cyAttr, &SVGCircleElement::m_cy>();
-        PropertyRegistry::registerProperty<SVGNames::rAttr, &SVGCircleElement::m_r>();
+        PropertyRegistry::registerProperty<SVGNames::cxAttr, &SVGCircleElement::m_cx>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::cyAttr, &SVGCircleElement::m_cy>(SVGLengthMode::Height);
+        PropertyRegistry::registerProperty<SVGNames::rAttr, &SVGCircleElement::m_r>(SVGLengthMode::Other, SVGLengthNegativeValuesMode::Forbid);
     }
 }
 

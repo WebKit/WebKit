@@ -67,8 +67,8 @@ protected:
     NODELETE SVGPropertyOwner* owner() const override;
     void commitPropertyChange(SVGProperty*) override;
 
-    // Out of line because it reaches the owner's property registry, and SVGElement is incomplete
-    // here. Same reason as commitPropertyChange() above.
+    // Defined in the .cpp file because it calls into SVGElement, which this header only
+    // forward-declares. Same for commitPropertyChange() above.
     void resetBaseValToInitialValue();
 
     WeakPtr<SVGElement, WeakPtrImplWithEventTargetData> m_contextElement;
