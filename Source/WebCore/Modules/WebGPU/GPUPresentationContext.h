@@ -53,7 +53,8 @@ public:
     void unconfigure();
 
     RefPtr<GPUTexture> getCurrentTexture(uint32_t);
-    void present(uint32_t frameIndex, bool presentBacking = false);
+    void present();
+    void renderBufferWasReplaced(uint32_t frameIndex);
 
     ::WebGPU::PresentationContext& backing() { return m_backing; }
     const ::WebGPU::PresentationContext& backing() const { return m_backing; }

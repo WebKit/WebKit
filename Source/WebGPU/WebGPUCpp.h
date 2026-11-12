@@ -879,10 +879,11 @@ struct InstanceDescriptor {
 // A canvas surface, backed by the render buffers of a compositor.
 struct PresentationContextDescriptor {
     // Called once, with the functions that the compositor calls back: one with the IOSurfaces of the
-    // render buffers each time it recreates them, and one with a completion handler to call once the
-    // work submitted so far has been scheduled. The IOSurfaces are borrowed for the call. The
+    // render buffers each time it recreates them, one with a completion handler to call once the
+    // work submitted so far has been scheduled, and one with the index and the new IOSurface of a
+    // render buffer it replaces. The IOSurfaces are borrowed for the call. The
     // signatures have no RetainPtr, which is a different type in ARC and non-ARC code.
-    Function<void(Function<void(std::span<const IOSurfaceRef>)>&&, Function<void(CompletionHandler<void()>&&)>&&)> registerCompositorIntegration;
+    Function<void(Function<void(std::span<const IOSurfaceRef>)>&&, Function<void(CompletionHandler<void()>&&)>&&, Function<void(uint32_t, IOSurfaceRef)>&&)> registerCompositorIntegration;
 };
 #endif
 
@@ -1527,6 +1528,7 @@ public:
     virtual void unconfigure() = 0;
     virtual void present(uint32_t frameIndex) = 0;
     virtual RefPtr<Texture> getCurrentTexture(uint32_t frameIndex) = 0;
+    virtual void renderBufferWasReplaced(uint32_t frameIndex) = 0;
     // The GPU time of the last frame that finished.
     virtual Seconds lastFrameGPUCost() const = 0;
     // The time the last present waited for an in-flight frame to finish.

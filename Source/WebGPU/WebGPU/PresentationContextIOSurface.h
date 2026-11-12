@@ -61,6 +61,8 @@ private:
     explicit PresentationContextIOSurface(const Instance&);
 
     void renderBuffersWereRecreated(NSArray<IOSurface *> *renderBuffers);
+    void replaceRenderBuffer(uint32_t index, IOSurface *);
+    void setOwnershipIdentity(IOSurface *);
     void onSubmittedWorkScheduled(Function<void()>&&);
     RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat) final;
     void copyTextureToTexture(id<MTLTexture> destination, id<MTLTexture> source, id<MTLCommandBuffer>);
@@ -75,6 +77,7 @@ private:
     };
     Vector<RenderBuffer> m_renderBuffers;
     Vector<RenderBuffer> m_existingRenderBuffers;
+    Vector<WebGPU::TextureFormat> m_textureViewFormats;
     RefPtr<Device> m_device;
     RefPtr<Texture> m_invalidTexture;
     id<MTLFunction> m_luminanceClampFunction;

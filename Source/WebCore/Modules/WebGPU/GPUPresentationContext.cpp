@@ -80,11 +80,14 @@ RefPtr<GPUTexture> GPUPresentationContext::getCurrentTexture(uint32_t index)
     return m_currentTexture;
 }
 
-void GPUPresentationContext::present(uint32_t frameIndex, bool presentBacking)
+void GPUPresentationContext::present()
 {
     m_currentTexture = nullptr;
-    if (presentBacking)
-        m_backing->present(frameIndex);
+}
+
+void GPUPresentationContext::renderBufferWasReplaced(uint32_t frameIndex)
+{
+    m_backing->renderBufferWasReplaced(frameIndex);
 }
 
 } // namespace WebCore

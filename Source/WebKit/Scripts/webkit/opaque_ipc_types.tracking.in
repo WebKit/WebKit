@@ -339,6 +339,7 @@
     [Legacy] StructureParam WTF::MachSendRightAnnotated.sendRight
 
     [NotSentFromWebContent] MessageParam WebPage.SetObscuredContentInsetsFenced machSendRight
+    [NotSentFromWebContent] MessageParamReply RemoteCompositorIntegration.PrepareForDisplay displayBuffer
     [NotSentFromWebContent] MessageParamReply RemoteGraphicsContextGL.PrepareForDisplay displayBuffer
     [NotSentFromWebContent] MessageParamReply RemoteImageBuffer.PrepareForDisplay displayBuffer
 
@@ -348,7 +349,6 @@
 [UnsafeWrapper] Vector<MachSendRight> {
     [Legacy] StructureParam WebCore::DynamicContentScalingDisplayList.takeSurfaces()
 
-    [NotSentFromWebContent] MessageParamReply RemoteCompositorIntegration.RecreateRenderBuffers renderBuffers
     [NotSentFromWebContent] MessageParamReply RemoteGPU.CreateModelBacking renderBuffers
     [NotSentFromWebContent] MessageParamReply RemoteMesh.UpdateRenderBuffers renderBuffers
 }

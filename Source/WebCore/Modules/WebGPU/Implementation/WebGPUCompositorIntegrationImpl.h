@@ -65,12 +65,14 @@ public:
         lazyInitialize(m_presentationContext, Ref { presentationContext });
     }
 
-    void registerCallbacks(WTF::Function<void(std::span<const IOSurfaceRef>)>&& renderBuffersWereRecreatedCallback, WTF::Function<void(CompletionHandler<void()>&&)>&& onSubmittedWorkScheduledCallback)
+    void registerCallbacks(WTF::Function<void(std::span<const IOSurfaceRef>)>&& renderBuffersWereRecreatedCallback, WTF::Function<void(CompletionHandler<void()>&&)>&& onSubmittedWorkScheduledCallback, WTF::Function<void(uint32_t, IOSurfaceRef)>&& renderBufferWasReplacedCallback)
     {
         ASSERT(!m_renderBuffersWereRecreatedCallback);
         m_renderBuffersWereRecreatedCallback = WTF::move(renderBuffersWereRecreatedCallback);
         ASSERT(!m_onSubmittedWorkScheduledCallback);
         m_onSubmittedWorkScheduledCallback = WTF::move(onSubmittedWorkScheduledCallback);
+        ASSERT(!m_renderBufferWasReplacedCallback);
+        m_renderBufferWasReplacedCallback = WTF::move(renderBufferWasReplacedCallback);
     }
 
     void withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage*)>) final;
@@ -87,18 +89,37 @@ private:
 
     bool isWebGPUCompositorIntegrationImpl() const final { return true; }
 
-    void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&&) override;
     void updateContentsHeadroom(float) override;
 
     Seconds lastFrameGPUCost() const override;
     Seconds lastFramePresentStall() const override;
 
 #if PLATFORM(COCOA)
-    Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, ::WebGPU::TextureFormat, unsigned bufferCount, ::WebGPU::Device&) override;
+    uint32_t recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, ::WebGPU::TextureFormat, ::WebGPU::Device&) override;
+    void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(MachSendRight&&, std::optional<uint32_t>)>&&) override;
+
+    bool replaceRenderBufferIfInUse(uint32_t index);
+    std::unique_ptr<WebCore::IOSurface> takeSpareRenderBuffer();
+    void updateSpareRenderBuffers();
+
+    struct SpareRenderBuffer {
+        UniqueRef<WebCore::IOSurface> surface;
+        bool isVolatile { false };
+    };
+
+    static constexpr size_t maxSpareRenderBuffers { 5 };
 
     Vector<UniqueRef<WebCore::IOSurface>> m_renderBuffers;
+    Vector<SpareRenderBuffer> m_spareRenderBuffers;
+    WebCore::IntSize m_renderBufferSize;
+    WebCore::ColorSpace m_renderBufferColorSpace { WebCore::ColorSpace::SRGB() };
+    WebCore::IOSurface::Format m_renderBufferFormat { WebCore::IOSurface::Format::BGRA };
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    std::optional<float> m_contentsHeadroom;
+#endif
     WebCore::AlphaPremultiplication m_alphaMode { WebCore::AlphaPremultiplication::Premultiplied };
     WTF::Function<void(std::span<const IOSurfaceRef>)> m_renderBuffersWereRecreatedCallback;
+    WTF::Function<void(uint32_t, IOSurfaceRef)> m_renderBufferWasReplacedCallback;
 #endif
 
     WTF::Function<void(CompletionHandler<void()>&&)> m_onSubmittedWorkScheduledCallback;

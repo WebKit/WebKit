@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<head>
+<meta charset="utf-8">
+<title>An OffscreenCanvas in a worker does not show an uncommitted pass in its placeholder</title>
+<style>
+  body { margin: 0; }
+  canvas { position: absolute; top: 0; left: 0; }
+</style>
+</head>
+<body>
+  <canvas id="canvas" width="100" height="100"></canvas>
+  <script id="worker" type="text/plain">
+    let device;
+    let context;
+
+    function clearPass(view, color) {
+      const encoder = device.createCommandEncoder();
+      const pass = encoder.beginRenderPass({
+        colorAttachments: [{
+          view,
+          clearValue: color,
+          loadOp: "clear",
+          storeOp: "store",
+        }],
+      });
+      pass.end();
+      device.queue.submit([encoder.finish()]);
+    }
+
+    onmessage = async event => {
+      const { canvas, step, sab } = event.data;
+      if (canvas) {
+        const adapter = navigator.gpu && await navigator.gpu.requestAdapter();
+        if (!adapter) {
+          postMessage("done");
+          return;
+        }
+        device = await adapter.requestDevice();
+        context = canvas.getContext("webgpu");
+        context.configure({
+          device,
+          format: "bgra8unorm",
+          alphaMode: "opaque",
+        });
+
+        // Frame 1: clear to red first, then green, and let the frame commit to the placeholder.
+        const view1 = context.getCurrentTexture().createView();
+        clearPass(view1, { r: 1, g: 0, b: 0, a: 1 });
+        clearPass(view1, { r: 0, g: 1, b: 0, a: 1 });
+        await device.queue.onSubmittedWorkDone();
+        await new Promise(resolve => setTimeout(resolve, 0));
+        postMessage("frame1");
+        return;
+      }
+
+      if (step === "frame2") {
+        // Frame 2 starts in a new task: it clears the new current texture to red before drawing
+        // green at the end of the task. While this task is still running, the placeholder must
+        // keep showing Frame 1 (green), not the uncommitted red pass of Frame 2.
+        const view2 = context.getCurrentTexture().createView();
+        clearPass(view2, { r: 1, g: 0, b: 0, a: 1 });
+        postMessage("mid-frame2");
+        const start = performance.now();
+        while (performance.now() - start < 200) { }
+        clearPass(view2, { r: 0, g: 1, b: 0, a: 1 });
+      }
+    };
+  </script>
+  <script>
+    function done() {
+      document.documentElement.classList.remove("reftest-wait");
+    }
+
+    const blob = new Blob([document.getElementById("worker").textContent], { type: "text/javascript" });
+    const worker = new Worker(URL.createObjectURL(blob));
+    worker.onmessage = event => {
+      if (event.data === "frame1") {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          worker.postMessage({ step: "frame2" });
+        }));
+        return;
+      }
+      if (event.data === "mid-frame2") {
+        setTimeout(() => {
+          requestAnimationFrame(done);
+        }, 50);
+        return;
+      }
+      done();
+    };
+    worker.onerror = done;
+
+    const offscreen = document.getElementById("canvas").transferControlToOffscreen();
+    worker.postMessage({ canvas: offscreen }, [offscreen]);
+  </script>
+</body>
+</html>

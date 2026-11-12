@@ -84,10 +84,15 @@ RefPtr<::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTexture(uint
     return m_currentTexture[frameIndex];
 }
 
-void RemotePresentationContextProxy::present(uint32_t frameIndex)
+void RemotePresentationContextProxy::renderBufferWasReplaced(uint32_t frameIndex)
 {
-    auto sendResult = send(Messages::RemotePresentationContext::Present(frameIndex));
-    UNUSED_VARIABLE(sendResult);
+    if (frameIndex < textureCount)
+        m_currentTexture[frameIndex] = nullptr;
+}
+
+void RemotePresentationContextProxy::present(uint32_t)
+{
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 Seconds RemotePresentationContextProxy::lastFrameGPUCost() const

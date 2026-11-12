@@ -460,6 +460,8 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
     RefPtr context = m_context.get();
     if (!context)
         return;
+    if (!context->hasFrameForPlaceholder())
+        return;
     if (context->compositingResultsNeedUpdating())
         context->prepareForDisplay();
     if (context->commitToPlaceholder(*protect(m_placeholderSource)))

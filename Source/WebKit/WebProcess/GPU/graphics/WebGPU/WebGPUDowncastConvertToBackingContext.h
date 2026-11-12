@@ -48,7 +48,6 @@ public:
     WebGPUIdentifier convertToBacking(const ::WebGPU::Buffer&) final;
     WebGPUIdentifier convertToBacking(const ::WebGPU::CommandBuffer&) final;
     WebGPUIdentifier convertToBacking(const ::WebGPU::CommandEncoder&) final;
-    RemoteCompositorIntegrationProxy& convertToRawBacking(WebCore::WebGPUCompositorIntegration&) final;
     WebGPUIdentifier convertToBacking(const WebCore::WebGPUCompositorIntegration&) final;
     WebGPUIdentifier convertToBacking(const ::WebGPU::ComputePassEncoder&) final;
     WebGPUIdentifier convertToBacking(const ::WebGPU::ComputePipeline&) final;

@@ -77,21 +77,21 @@ void RemoteCompositorIntegration::stopListeningForIPC()
 }
 
 #if PLATFORM(COCOA)
-void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, WebCore::ColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, ::WebGPU::TextureFormat textureFormat, unsigned bufferCount, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
+void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, WebCore::ColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, ::WebGPU::TextureFormat textureFormat, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(uint32_t)>&& callback)
 {
     auto convertedDevice = protect(m_objectHeap)->convertDeviceFromBacking(deviceIdentifier);
-    MESSAGE_CHECK_COMPLETION(convertedDevice, callback({ }));
+    MESSAGE_CHECK_COMPLETION(convertedDevice, callback(0));
 
-    callback(protect(m_backing)->recreateRenderBuffers(width, height, WTF::move(destinationColorSpace), alphaMode, textureFormat, bufferCount, protect(*convertedDevice)));
+    callback(protect(m_backing)->recreateRenderBuffers(width, height, WTF::move(destinationColorSpace), alphaMode, textureFormat, protect(*convertedDevice)));
 }
-#endif
 
-void RemoteCompositorIntegration::prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(Seconds, Seconds)>&& completionHandler)
+void RemoteCompositorIntegration::prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(Seconds, Seconds, MachSendRight&&, std::optional<uint32_t>)>&& completionHandler)
 {
-    protect(m_backing)->prepareForDisplay(frameIndex, [completionHandler = WTF::move(completionHandler), backing = protect(m_backing)]() mutable {
-        completionHandler(backing->lastFrameGPUCost(), backing->lastFramePresentStall());
+    protect(m_backing)->prepareForDisplay(frameIndex, [completionHandler = WTF::move(completionHandler), backing = protect(m_backing)](MachSendRight&& displayBuffer, std::optional<uint32_t> replacedRenderBufferIndex) mutable {
+        completionHandler(backing->lastFrameGPUCost(), backing->lastFramePresentStall(), WTF::move(displayBuffer), replacedRenderBufferIndex);
     });
 }
+#endif
 
 void RemoteCompositorIntegration::updateContentsHeadroom(float headroom)
 {

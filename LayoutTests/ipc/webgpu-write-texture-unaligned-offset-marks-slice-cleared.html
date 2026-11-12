@@ -36,10 +36,6 @@ async function run()
         renderingBackendIdentifier: renderingBackend,
         connectionHandle: renderingBackendStream,
     });
-    const didInitialize = renderingBackendStream.connection.waitForMessage(renderingBackend, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 5);
-    if (!didInitialize)
-        return 'FAIL: no RemoteRenderingBackendProxy::DidInitialize';
-    renderingBackendStream.connection.setSemaphores(didInitialize[0].value, didInitialize[1].value);
 
     const gpu = freshId();
     const gpuStream = CoreIPC.newStreamConnection();
@@ -49,14 +45,13 @@ async function run()
         serverConnection: gpuStream,
     });
     const wasCreated = gpuStream.connection.waitForMessage(gpu, IPC.messages.RemoteGPUProxy_WasCreated.name, 5);
-    if (!wasCreated)
-        return 'FAIL: no RemoteGPUProxy::WasCreated';
-    gpuStream.connection.setSemaphores(wasCreated[1].value, wasCreated[2].value);
+    if (!wasCreated?.[0]?.value)
+        return 'FAIL: RemoteGPUProxy::WasCreated did not report success';
 
     const adapter = freshId();
     let gotAdapter = false;
     gpuStream.newInterface('RemoteGPU', gpu).RequestAdapter({
-        options: { powerPreference: {}, forceFallbackAdapter: false, xrCompatible: false },
+        options: { alias: { powerPreference: {}, forceFallbackAdapter: false, xrCompatible: false } },
         identifier: adapter,
     }, () => { gotAdapter = true; });
     if (!gotAdapter)
@@ -125,21 +120,13 @@ async function run()
         descriptor: { label: '', compositorIntegration },
         identifier: presentationContext,
     });
-    try {
-        iface('RemoteCompositorIntegration', compositorIntegration).RecreateRenderBuffers({
-            width: SIZE, height: SIZE,
-            destinationColorSpace: { serializableColorSpace: { alias: { optionalValue: { m_cgColorSpace: { alias: { variantIndex: 0, variant: 19 /* ColorSpace::SRGB */ } } } } } },
-            alphaMode: 0, // AlphaPremultiplication::Premultiplied
-            textureFormat: 21, // TextureFormat::Rgba8unorm
-            bufferCount: 2,
-            deviceIdentifier: device,
-        }, () => { });
-    } catch (error) {
-        // The reply carries MachSendRights, which the reply parser cannot rebuild; the message
-        // itself was sent and handled.
-        if (error?.name === 'SerializationError')
-            return `FAIL: RecreateRenderBuffers: ${error.message}`;
-    }
+    iface('RemoteCompositorIntegration', compositorIntegration).RecreateRenderBuffers({
+        width: SIZE, height: SIZE,
+        destinationColorSpace: { serializableColorSpace: { alias: { optionalValue: { m_cgColorSpace: { alias: { variantIndex: 0, variant: 19 /* ColorSpace::SRGB */ } } } } } },
+        alphaMode: 0, // AlphaPremultiplication::Premultiplied
+        textureFormat: 21, // TextureFormat::Rgba8unorm
+        deviceIdentifier: device,
+    });
     iface('RemotePresentationContext', presentationContext).Configure({ configuration: {
         device,
         format: 21, // TextureFormat::Rgba8unorm
@@ -158,7 +145,7 @@ async function run()
     iface('RemotePresentationContext', presentationContext).GetCurrentTexture({ identifier: poisonedTexture, frameIndex: 0 });
     writeTextureWithCopy(wholeTexture(poisonedTexture), new Uint8Array(IMAGE_SIZE).fill(POISON), wholeImage(0), extent3D(SIZE, SIZE, 1));
     await awaitReply(queue, 'OnSubmittedWorkDone', {});
-    iface('RemotePresentationContext', presentationContext).Present({ frameIndex: 0 });
+    iface('RemoteCompositorIntegration', compositorIntegration).PrepareForDisplay({ frameIndex: 0 });
     await awaitReply(queue, 'OnSubmittedWorkDone', {});
 
     const texture = freshId();

@@ -69,8 +69,8 @@ RefPtr<WebGPU::PresentationContext> WebGPUIntegrationImpl::createPresentationCon
     Ref compositorIntegration = downcast<WebGPUCompositorIntegrationImpl>(presentationContextDescriptor.compositorIntegration);
 
     RefPtr result = m_backing->createPresentationContext({
-        .registerCompositorIntegration = [&](auto&& renderBuffersWereRecreated, auto&& onSubmittedWorkScheduled) {
-            compositorIntegration->registerCallbacks(WTF::move(renderBuffersWereRecreated), WTF::move(onSubmittedWorkScheduled));
+        .registerCompositorIntegration = [&](auto&& renderBuffersWereRecreated, auto&& onSubmittedWorkScheduled, auto&& renderBufferWasReplaced) {
+            compositorIntegration->registerCallbacks(WTF::move(renderBuffersWereRecreated), WTF::move(onSubmittedWorkScheduled), WTF::move(renderBufferWasReplaced));
         },
     });
     if (result)

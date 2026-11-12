@@ -59,6 +59,7 @@ public:
     void unconfigure() final;
     void present(uint32_t frameIndex) final;
     RefPtr<::WebGPU::Texture> getCurrentTexture(uint32_t) final;
+    void renderBufferWasReplaced(uint32_t frameIndex) final;
     Seconds lastFrameGPUCost() const final;
     Seconds lastFramePresentStall() const final;
 #if PLATFORM(COCOA)

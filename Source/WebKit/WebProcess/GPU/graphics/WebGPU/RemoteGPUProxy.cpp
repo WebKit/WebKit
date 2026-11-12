@@ -215,10 +215,6 @@ RefPtr<::WebGPU::PresentationContext> RemoteGPUProxy::createPresentationContext(
 {
     // FIXME: Should we be consulting m_lost?
 
-    // FIXME: This is super yucky. We should solve this a better way. (For both WK1 and WK2.)
-    // Maybe PresentationContext needs a present() function?
-    Ref compositorIntegration = m_convertToBackingContext->convertToRawBacking(protect(descriptor.compositorIntegration).get());
-
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     if (!convertedDescriptor)
         return nullptr;
@@ -228,9 +224,7 @@ RefPtr<::WebGPU::PresentationContext> RemoteGPUProxy::createPresentationContext(
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    Ref result = WebGPU::RemotePresentationContextProxy::create(*this, m_convertToBackingContext, identifier);
-    compositorIntegration->setPresentationContext(result);
-    return result;
+    return WebGPU::RemotePresentationContextProxy::create(*this, m_convertToBackingContext, identifier);
 }
 
 RefPtr<WebCore::WebGPUCompositorIntegration> RemoteGPUProxy::createCompositorIntegration()

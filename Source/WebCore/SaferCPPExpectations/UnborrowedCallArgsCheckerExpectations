@@ -184,7 +184,6 @@ html/HTMLTextAreaElement.cpp
 html/ImageBitmap.cpp
 html/InputType.cpp
 html/canvas/CanvasRenderingContext2DBase.cpp
-html/canvas/GPUCanvasContextCocoa.mm
 html/canvas/WebGL2RenderingContext.cpp
 html/canvas/WebGLFramebuffer.cpp
 html/canvas/WebGLProgram.cpp

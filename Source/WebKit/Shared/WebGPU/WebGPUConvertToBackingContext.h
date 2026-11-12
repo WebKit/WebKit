@@ -78,7 +78,6 @@ struct PipelineLayoutDescriptor;
 struct PresentationContextDescriptor;
 struct CanvasConfiguration;
 struct ProgrammableStage;
-class RemoteCompositorIntegrationProxy;
 struct RenderBundleEncoderDescriptor;
 struct RenderPassColorAttachment;
 struct RenderPassDepthStencilAttachment;
@@ -133,7 +132,6 @@ public:
     virtual WebGPUIdentifier convertToBacking(const ::WebGPU::Buffer&) = 0;
     virtual WebGPUIdentifier convertToBacking(const ::WebGPU::CommandBuffer&) = 0;
     virtual WebGPUIdentifier convertToBacking(const ::WebGPU::CommandEncoder&) = 0;
-    virtual RemoteCompositorIntegrationProxy& convertToRawBacking(WebCore::WebGPUCompositorIntegration&) = 0;
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPUCompositorIntegration&) = 0;
     virtual WebGPUIdentifier convertToBacking(const ::WebGPU::ComputePassEncoder&) = 0;
     virtual WebGPUIdentifier convertToBacking(const ::WebGPU::ComputePipeline&) = 0;

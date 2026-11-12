@@ -46,10 +46,9 @@ public:
     }
 
 #if PLATFORM(COCOA)
-    Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, ::WebGPU::TextureFormat, unsigned bufferCount, ::WebGPU::Device&) const;
+    uint32_t recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, ::WebGPU::TextureFormat, ::WebGPU::Device&) const;
+    void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(MachSendRight&& displayBuffer, std::optional<uint32_t> replacedRenderBufferIndex)>&&);
 #endif
-
-    void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&&);
 
     Seconds lastFrameGPUCost() const { return m_backing->lastFrameGPUCost(); }
     Seconds lastFramePresentStall() const { return m_backing->lastFramePresentStall(); }

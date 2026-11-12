@@ -63,6 +63,7 @@ public:
     // The texture is owned by the presentation context.
     virtual Texture* currentTexture(uint32_t);
     RefPtr<WebGPU::Texture> getCurrentTexture(uint32_t) final;
+    void renderBufferWasReplaced(uint32_t) final { }
     virtual TextureView* getCurrentTextureView(); // FIXME: This should return a TextureView&.
 
     Seconds lastFrameGPUCost() const override { return 0_s; }

@@ -54,28 +54,24 @@ RemoteCompositorIntegrationProxy::~RemoteCompositorIntegrationProxy()
 }
 
 #if PLATFORM(COCOA)
-Vector<MachSendRight> RemoteCompositorIntegrationProxy::recreateRenderBuffers(int width, int height, WebCore::ColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, ::WebGPU::TextureFormat textureFormat, unsigned bufferCount, ::WebGPU::Device& device)
+uint32_t RemoteCompositorIntegrationProxy::recreateRenderBuffers(int width, int height, WebCore::ColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, ::WebGPU::TextureFormat textureFormat, ::WebGPU::Device& device)
 {
     auto& proxyDevice = downcast<RemoteDeviceProxy>(device);
-    auto sendResult = sendSync(Messages::RemoteCompositorIntegration::RecreateRenderBuffers(width, height, WTF::move(destinationColorSpace), alphaMode, textureFormat, bufferCount, proxyDevice.backing()));
-    if (!sendResult.succeeded())
-        return { };
-
-    auto [renderBuffers] = sendResult.takeReply();
-    return WTF::move(renderBuffers);
+    auto sendResult = sendSync(Messages::RemoteCompositorIntegration::RecreateRenderBuffers(width, height, WTF::move(destinationColorSpace), alphaMode, textureFormat, proxyDevice.backing()));
+    auto [renderBufferCount] = sendResult.takeReplyOr(0u);
+    return renderBufferCount;
 }
-#endif
 
-void RemoteCompositorIntegrationProxy::prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&& completionHandler)
+void RemoteCompositorIntegrationProxy::prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(MachSendRight&&, std::optional<uint32_t>)>&& completionHandler)
 {
     auto sendResult = sendSync(Messages::RemoteCompositorIntegration::PrepareForDisplay(frameIndex));
-    auto [gpuFrameCost, presentStall] = sendResult.takeReplyOr(Seconds { 0 }, Seconds { 0 });
+    auto [gpuFrameCost, presentStall, displayBuffer, replacedRenderBufferIndex] = sendResult.takeReplyOr(Seconds { 0 }, Seconds { 0 }, MachSendRight { }, std::nullopt);
     m_lastFrameGPUCost = gpuFrameCost;
     m_lastFramePresentStall = presentStall;
-    protect(m_presentationContext)->present(frameIndex);
 
-    completionHandler();
+    completionHandler(WTF::move(displayBuffer), replacedRenderBufferIndex);
 }
+#endif
 
 void RemoteCompositorIntegrationProxy::paintCompositedResultsToCanvas(WebCore::ImageBuffer& buffer, uint32_t bufferIndex)
 {

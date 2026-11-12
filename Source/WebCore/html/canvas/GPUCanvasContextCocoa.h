@@ -59,6 +59,7 @@ public:
 
     ColorSpace colorSpace() const override;
     bool compositingResultsNeedUpdating() const override { return m_compositingResultsNeedsUpdating; }
+    bool hasFrameForPlaceholder() const override;
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
     bool needsPreparationForDisplay() const override { return true; }
     void prepareForDisplay() override;
@@ -120,9 +121,10 @@ private:
         PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
         GPUCanvasToneMapping toneMapping;
         GPUCanvasAlphaMode compositingAlphaMode { GPUCanvasAlphaMode::Opaque };
-        Vector<MachSendRight> renderBuffers;
+        uint32_t renderBufferCount { 0 };
         unsigned frameCount { 0 };
         std::optional<unsigned> lastPresentedFrameIndex;
+        MachSendRight lastPresentedDisplayBuffer;
     };
     std::optional<Configuration> m_configuration;
 

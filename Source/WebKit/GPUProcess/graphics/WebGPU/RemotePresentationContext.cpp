@@ -74,11 +74,6 @@ void RemotePresentationContext::unconfigure()
     protect(m_backing)->unconfigure();
 }
 
-void RemotePresentationContext::present(uint32_t frameIndex)
-{
-    protect(m_backing)->present(frameIndex);
-}
-
 void RemotePresentationContext::getCurrentTexture(WebGPUIdentifier identifier, uint32_t frameIndex)
 {
     auto texture = protect(m_backing)->getCurrentTexture(frameIndex);

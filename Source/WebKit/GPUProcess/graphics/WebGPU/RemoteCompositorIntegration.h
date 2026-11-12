@@ -94,10 +94,10 @@ private:
     void paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier, uint32_t, CompletionHandler<void()>&&);
 
 #if PLATFORM(COCOA)
-    void recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, ::WebGPU::TextureFormat, unsigned bufferCount, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
+    void recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, ::WebGPU::TextureFormat, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(uint32_t)>&&);
+    void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(Seconds, Seconds, MachSendRight&&, std::optional<uint32_t>)>&&);
 #endif
 
-    void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(Seconds, Seconds)>&&);
     void updateContentsHeadroom(float);
 
     const Ref<WebCore::WebGPUCompositorIntegration> m_backing;

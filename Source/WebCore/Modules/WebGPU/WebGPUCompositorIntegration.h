@@ -56,10 +56,10 @@ public:
     virtual ~WebGPUCompositorIntegration() = default;
 
 #if PLATFORM(COCOA)
-    virtual Vector<MachSendRight> recreateRenderBuffers(int width, int height, ColorSpace&&, AlphaPremultiplication, ::WebGPU::TextureFormat, unsigned bufferCount, ::WebGPU::Device&) = 0;
+    virtual uint32_t recreateRenderBuffers(int width, int height, ColorSpace&&, AlphaPremultiplication, ::WebGPU::TextureFormat, ::WebGPU::Device&) = 0;
+    virtual void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(MachSendRight&& displayBuffer, std::optional<uint32_t> replacedRenderBufferIndex)>&&) = 0;
 #endif
 
-    virtual void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&&) = 0;
     virtual Seconds lastFrameGPUCost() const { return 0_s; }
     virtual Seconds lastFramePresentStall() const { return 0_s; }
     virtual void withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(NativeImage*)>) = 0;

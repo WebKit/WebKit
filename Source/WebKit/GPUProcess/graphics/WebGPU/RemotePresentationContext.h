@@ -79,7 +79,6 @@ private:
 
     void configure(const WebGPU::CanvasConfiguration&);
     void unconfigure();
-    void present(uint32_t frameIndex);
 
     void getCurrentTexture(WebGPUIdentifier, uint32_t frameIndex);
 

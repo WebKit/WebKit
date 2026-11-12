@@ -54,6 +54,8 @@ Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const Web
         presentationContext->onSubmittedWorkScheduled([completionHandler = WTF::move(completionHandler)] mutable {
             completionHandler();
         });
+    }, [presentationContext = presentationContextIOSurface.copyRef()](uint32_t index, IOSurfaceRef ioSurface) {
+        presentationContext->replaceRenderBuffer(index, (__bridge IOSurface *)ioSurface);
     });
 
     return presentationContextIOSurface;
@@ -75,16 +77,60 @@ void PresentationContextIOSurface::renderBuffersWereRecreated(NSArray<IOSurface 
 {
     m_existingRenderBuffers = WTF::move(m_renderBuffers);
     m_ioSurfaces = ioSurfaces;
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
-    if (m_webProcessID) {
-        mach_port_t webProcessID = m_webProcessID->sendRight();
-        if (webProcessID) {
-            for (IOSurface *surface in ioSurfaces)
-                IOSurfaceSetOwnershipIdentity(bridge_cast(surface), webProcessID, kIOSurfaceMemoryLedgerTagGraphics, 0);
-        }
-    }
-#endif
+    for (IOSurface *surface in ioSurfaces)
+        setOwnershipIdentity(surface);
     m_renderBuffers.clear();
+}
+
+void PresentationContextIOSurface::replaceRenderBuffer(uint32_t index, IOSurface *ioSurface)
+{
+    if (index >= m_ioSurfaces.count)
+        return;
+
+    RetainPtr ioSurfaces = adoptNS([m_ioSurfaces mutableCopy]);
+    [ioSurfaces replaceObjectAtIndex:index withObject:ioSurface];
+    m_ioSurfaces = ioSurfaces.get();
+    setOwnershipIdentity(ioSurface);
+
+    RefPtr device = m_device;
+    if (!device || index >= m_renderBuffers.size())
+        return;
+
+    Ref previousTexture = m_renderBuffers[index].texture;
+    id<MTLTexture> previousMTLTexture = previousTexture->texture();
+    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:previousMTLTexture.pixelFormat width:previousMTLTexture.width height:previousMTLTexture.height mipmapped:NO];
+    textureDescriptor.usage = previousMTLTexture.usage;
+    textureDescriptor.storageMode = previousMTLTexture.storageMode;
+    WebGPU::TextureDescriptor apiTextureDescriptor {
+        .label = { },
+        .usage = previousTexture->usage(),
+        .dimension = previousTexture->dimension(),
+        .size = {
+            .width = previousTexture->width(),
+            .height = previousTexture->height(),
+            .depthOrArrayLayers = previousTexture->depthOrArrayLayers(),
+        },
+        .format = previousTexture->format(),
+        .mipLevelCount = previousTexture->mipLevelCount(),
+        .sampleCount = previousTexture->sampleCount(),
+        .viewFormats = m_textureViewFormats.span(),
+    };
+    auto viewFormats = m_textureViewFormats;
+    Ref texture = Texture::create(device->newTextureWithDescriptor(textureDescriptor, bridge_cast(ioSurface)), apiTextureDescriptor, WTF::move(viewFormats), *device);
+    texture->makeCanvasBacking();
+    m_renderBuffers[index].texture = WTF::move(texture);
+}
+
+void PresentationContextIOSurface::setOwnershipIdentity(IOSurface *surface)
+{
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
+    if (!m_webProcessID)
+        return;
+    if (mach_port_t webProcessID = m_webProcessID->sendRight())
+        IOSurfaceSetOwnershipIdentity(bridge_cast(surface), webProcessID, kIOSurfaceMemoryLedgerTagGraphics, 0);
+#else
+    UNUSED_PARAM(surface);
+#endif
 }
 
 void PresentationContextIOSurface::onSubmittedWorkScheduled(Function<void()>&& completionHandler)
@@ -322,6 +368,7 @@ void PresentationContextIOSurface::configure(const WebGPU::CanvasConfiguration& 
 
     // The textures allow views only in the formats that the configuration lists.
     Vector<WebGPU::TextureFormat> textureViewFormats { configuration.viewFormats };
+    m_textureViewFormats = textureViewFormats;
 
     if (format == WebGPU::TextureFormat::Bgra8unorm && configuration.usage.contains(WebGPU::TextureUsage::StorageBinding) && !device->hasFeature(WebGPU::FeatureName::Bgra8unormStorage)) {
         generateAValidationError(device, @"Requested storage format but BGRA8UnormStorage is not enabled", reportValidationErrors);
