@@ -2263,6 +2263,8 @@ private:
     void createRenderTree();
     void detachParser();
 
+    void compactElementsWithPendingUserAgentShadowTreeUpdates();
+
     // Recomputes the safe area opt-in from the current viewport arguments and, if it changed, pushes
     // the new answer through the quirks and into the already-created bindings.
     void updateSafeAreaInsetOptIn();
@@ -2766,7 +2768,9 @@ private:
 
     Vector<Function<void()>> m_whenIsVisibleHandlers;
 
-    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_elementsWithPendingUserAgentShadowTreeUpdates;
+    Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> m_elementsWithPendingUserAgentShadowTreeUpdates;
+    static constexpr size_t minimumPendingUserAgentShadowTreeUpdatesCompactionThreshold { 64 };
+    size_t m_pendingUserAgentShadowTreeUpdatesCompactionThreshold { minimumPendingUserAgentShadowTreeUpdatesCompactionThreshold };
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_renderBlockingElements;
 

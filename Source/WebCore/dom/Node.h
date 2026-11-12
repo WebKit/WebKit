@@ -680,7 +680,8 @@ protected:
         DescendantNeedsStyleResolution = 1 << 24,
         DirectChildNeedsStyleResolution = 1 << 25,
         IsInSelectOrDataListSubtree = 1 << 26, // Only used on Element.
-        // 5 bits free.
+        HasPendingUserAgentShadowTreeUpdate = 1 << 27, // Only used on Element.
+        // 4 bits free.
     };
 
     enum class TabIndexState : uint8_t {
