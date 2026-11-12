@@ -1601,6 +1601,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     resetMockMediaDevices();
     WKPageSetMediaCaptureReportingDelayForTesting(m_mainWebView->page(), 0);
 
+    WKPageSetVirtualWalletBehaviorForTesting(m_mainWebView->page(), toWK("clear").get(), nullptr, nullptr);
+
     WKWebsiteDataStoreResetResourceMonitorThrottler(websiteDataStore(), nullptr, nullptr);
 
     WKURLRequestSetDefaultTimeoutInterval((60_s).value());
