@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<style>
+@keyframes slide { from { transform: translateX(0px); } to { transform: translateX(200px); } }
+.animated { width: 50px; height: 50px; background: green; animation: slide 100s linear; }
+</style>
+<div id="host"><div id="animated" class="animated" slot="first"></div></div>
+<pre id="log"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+host.attachShadow({ mode: "open" }).innerHTML = '<slot name="first"></slot><slot name="second"></slot>';
+document.body.offsetTop;
+const originalAnimation = animated.getAnimations()[0];
+originalAnimation.currentTime = 50000;
+animated.slot = "second";
+document.body.offsetTop;
+const animationAfterSlotChange = animated.getAnimations()[0];
+log.textContent = `Moving an animated element to another slot keeps its animation.\n`
+    + `same animation: ${animationAfterSlotChange === originalAnimation}\n`
+    + `original playState: ${originalAnimation.playState}\n`
+    + `currentTime after slot change: ${animationAfterSlotChange?.currentTime}\n`;
+</script>

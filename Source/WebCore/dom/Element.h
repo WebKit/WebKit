@@ -859,6 +859,8 @@ public:
     // custom (not style based) renderers. This is expensive and should be avoided.
     // Elements newly added to the tree are also in this state.
     void invalidateStyleAndRenderersForSubtree();
+    // As above, for an element that moved to a different slot while staying in the tree.
+    void invalidateStyleAndRenderersAfterSlotReassignment();
     void invalidateRenderer();
 
     void invalidateStyleForAnimation();

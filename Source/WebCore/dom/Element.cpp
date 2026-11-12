@@ -2905,6 +2905,12 @@ void Element::invalidateStyleAndRenderersForSubtree()
     Node::invalidateStyle(Style::Validity::SubtreeInvalid, Style::InvalidationMode::RebuildRenderer);
 }
 
+void Element::invalidateStyleAndRenderersAfterSlotReassignment()
+{
+    // The ancestors on the new composed tree path need marking even if the element is already invalid.
+    Node::invalidateStyle(Style::Validity::SubtreeInvalid, Style::InvalidationMode::InsertedIntoAncestor);
+}
+
 void Element::invalidateRenderer()
 {
     Node::invalidateStyle(Style::Validity::Valid, Style::InvalidationMode::RebuildRenderer);
@@ -3887,7 +3893,7 @@ void Element::childrenChanged(const ChildChange& change)
         case ChildChange::Type::TextChanged:
         case ChildChange::Type::TextMovedFrom:
         case ChildChange::Type::TextMovedInto:
-            shadowRoot->didMutateTextNodesOfShadowHost();
+            shadowRoot->didMutateTextNodesOfShadowHost(change.type);
             break;
         case ChildChange::Type::NonContentsChildInserted:
         case ChildChange::Type::NonContentsChildRemoved:

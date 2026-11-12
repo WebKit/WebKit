@@ -1,0 +1,3 @@
+Tests that adding and removing a child of a rendered shadow host takes constant time regardless of the number of children.
+PASS
+

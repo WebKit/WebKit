@@ -56,6 +56,7 @@ public:
     static void tearDownRenderers(Element&);
     static void tearDownRenderersForShadowRootInsertion(Element&);
     static void tearDownRenderersAfterSlotChange(Element& host);
+    static void tearDownRenderersAfterSlotReassignment(Element&);
     static void tearDownRenderer(Text&);
 
 private:

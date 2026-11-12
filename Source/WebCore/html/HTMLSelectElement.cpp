@@ -133,6 +133,8 @@ NODELETE static bool isFirstElementChildButton(const Node& child)
 class SelectSlotAssignment final : public NamedSlotAssignment {
 private:
     void hostChildElementDidChange(const Element&, ShadowRoot&) final;
+    // The assignment doesn't depend on the slot attribute.
+    void hostChildElementDidChangeSlotAttribute(Element&, const AtomString&, const AtomString&, ShadowRoot&) final { }
     void didChangeSlotNamesOfShadowHostChildren(ShadowRoot&) final;
     NODELETE const AtomString& slotNameForHostChild(const Node&) const final;
 };
@@ -145,12 +147,43 @@ NODELETE SUPPRESS_NODELETE static const AtomString& optionSlotName(const Node* h
 
 void SelectSlotAssignment::hostChildElementDidChange(const Element& childElement, ShadowRoot& shadowRoot)
 {
-    if (is<HTMLButtonElement>(childElement)) {
-        // Don't check whether this is the first button element
-        // since we don't know the answer when this function is called inside Element::removedFrom.
-        didChangeSlot(buttonSlotName(), shadowRoot);
-    } else
-        didChangeSlot(optionSlotName(shadowRoot.host()), shadowRoot);
+    Ref host = *shadowRoot.host();
+    bool isInserted = childElement.parentNode() == host.ptr();
+
+    auto previousButton = firstAssignedNodeBeforeChange(buttonSlotName());
+
+    // Don't check whether this is the first button element
+    // since we don't know the answer when this function is called inside Element::removedFrom.
+    didChangeSlot(is<HTMLButtonElement>(childElement) ? buttonSlotName() : optionSlotName(host.ptr()), shadowRoot, RenderTreeUpdate::ByCaller);
+
+    if (isInserted)
+        didInsertSlottable(slotNameForHostChild(childElement), shadowRoot);
+    else {
+        didRemoveSlottable(buttonSlotName(), shadowRoot);
+        didRemoveSlottable(optionSlotName(host.ptr()), shadowRoot);
+    }
+
+    // A first element child button is assigned to the button slot. Rebuild the buttons the change moved between the slots.
+    // The changed element itself is rebuilt by the insertion or removal.
+    auto reassign = [&](RefPtr<Element> button, const AtomString& oldSlotName) {
+        if (button && button != &childElement && button->parentNode() == host.ptr())
+            didReassignSlottable(*button, oldSlotName, shadowRoot);
+    };
+    RefPtr firstElementChild = host->firstElementChild();
+    RefPtr button = firstElementChild && is<HTMLButtonElement>(*firstElementChild) ? firstElementChild : nullptr;
+    if (previousButton) {
+        if (previousButton->get() != button.get()) {
+            reassign(dynamicDowncast<Element>(previousButton->get()), buttonSlotName());
+            reassign(button, optionSlotName(host.ptr()));
+        }
+    } else {
+        // The previous button is not known so rebuild both candidates.
+        reassign(button, optionSlotName(host.ptr()));
+        if (firstElementChild == &childElement) {
+            if (RefPtr next = firstElementChild->nextElementSibling(); next && is<HTMLButtonElement>(*next))
+                reassign(WTF::move(next), buttonSlotName());
+        }
+    }
 }
 
 void SelectSlotAssignment::didChangeSlotNamesOfShadowHostChildren(ShadowRoot& shadowRoot)

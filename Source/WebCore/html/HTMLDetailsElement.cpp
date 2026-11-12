@@ -64,22 +64,59 @@ static const AtomString& summarySlotName()
 class DetailsSlotAssignment final : public NamedSlotAssignment {
 private:
     void hostChildElementDidChange(const Element&, ShadowRoot&) override;
+    // The assignment doesn't depend on the slot attribute.
+    void hostChildElementDidChangeSlotAttribute(Element&, const AtomString&, const AtomString&, ShadowRoot&) final { }
     NODELETE const AtomString& slotNameForHostChild(const Node&) const override;
 };
 
 void DetailsSlotAssignment::hostChildElementDidChange(const Element& childElement, ShadowRoot& shadowRoot)
 {
-    if (is<HTMLSummaryElement>(childElement)) {
-        // Don't check whether this is the first summary element
-        // since we don't know the answer when this function is called inside Element::removedFrom.
-        didChangeSlot(summarySlotName(), shadowRoot);
+    Ref details = downcast<HTMLDetailsElement>(*shadowRoot.host());
+    bool isInserted = childElement.parentNode() == details.ptr();
 
-        if (RefPtr associatedDetails = dynamicDowncast<HTMLDetailsElement>(shadowRoot.host())) {
-            if (CheckedPtr cache = protect(associatedDetails->document())->existingAXObjectCache())
-                cache->onDetailsSummarySlotChange(*associatedDetails);
+    if (!is<HTMLSummaryElement>(childElement)) {
+        didChangeSlot(NamedSlotAssignment::defaultSlotName(), shadowRoot, RenderTreeUpdate::ByCaller);
+        if (isInserted)
+            didInsertSlottable(NamedSlotAssignment::defaultSlotName(), shadowRoot);
+        else
+            didRemoveSlottable(NamedSlotAssignment::defaultSlotName(), shadowRoot);
+        return;
+    }
+
+    auto previousFirstSummary = firstAssignedNodeBeforeChange(summarySlotName());
+
+    // Don't check whether this is the first summary element
+    // since we don't know the answer when this function is called inside Element::removedFrom.
+    didChangeSlot(summarySlotName(), shadowRoot, RenderTreeUpdate::ByCaller);
+
+    if (isInserted)
+        didInsertSlottable(slotNameForHostChild(childElement), shadowRoot);
+    else {
+        didRemoveSlottable(summarySlotName(), shadowRoot);
+        didRemoveSlottable(NamedSlotAssignment::defaultSlotName(), shadowRoot);
+    }
+
+    // The first summary is assigned to the summary slot. Rebuild the summaries the change moved between the slots.
+    // The changed summary itself is rebuilt by the insertion or removal.
+    auto reassign = [&](RefPtr<Element> summary, const AtomString& oldSlotName) {
+        if (summary && summary != &childElement && summary->parentNode() == details.ptr())
+            didReassignSlottable(*summary, oldSlotName, shadowRoot);
+    };
+    RefPtr firstSummary = childrenOfType<HTMLSummaryElement>(details).first();
+    if (previousFirstSummary) {
+        if (previousFirstSummary->get() != firstSummary.get()) {
+            reassign(dynamicDowncast<Element>(previousFirstSummary->get()), summarySlotName());
+            reassign(firstSummary, NamedSlotAssignment::defaultSlotName());
         }
-    } else
-        didChangeSlot(NamedSlotAssignment::defaultSlotName(), shadowRoot);
+    } else {
+        // The previous first summary is not known so rebuild both candidates.
+        reassign(firstSummary, NamedSlotAssignment::defaultSlotName());
+        if (firstSummary == &childElement)
+            reassign(Traversal<HTMLSummaryElement>::nextSibling(*firstSummary), summarySlotName());
+    }
+
+    if (CheckedPtr cache = protect(details->document())->existingAXObjectCache())
+        cache->onDetailsSummarySlotChange(details);
 }
 
 NODELETE SUPPRESS_NODELETE const AtomString& DetailsSlotAssignment::slotNameForHostChild(const Node& child) const

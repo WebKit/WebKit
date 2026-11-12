@@ -1,0 +1,5 @@
+Moving an animated element to another slot keeps its animation.
+same animation: true
+original playState: running
+currentTime after slot change: 50000
+

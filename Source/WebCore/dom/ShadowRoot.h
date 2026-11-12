@@ -138,7 +138,7 @@ public:
     inline void willRemoveAssignedNode(Node&); // Defined in SlotAssignment.h
 
     inline void didRemoveAllChildrenOfShadowHost(); // Defined in SlotAssignment.h
-    inline void didMutateTextNodesOfShadowHost(); // Defined in SlotAssignment.h
+    inline void didMutateTextNodesOfShadowHost(ChildChange::Type); // Defined in SlotAssignment.h
     inline void didChangeSlotNamesOfShadowHostChildren(); // Defined in SlotAssignment.h
     inline void hostChildElementDidChange(const Element&); // Defined in SlotAssignment.h
     inline void hostChildElementDidChangeSlotAttribute(Element&, const AtomString& oldValue, const AtomString& newValue); // Defined in SlotAssignment.h

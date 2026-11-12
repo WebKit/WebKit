@@ -760,6 +760,11 @@ void RenderTreeUpdater::tearDownRenderersAfterSlotChange(Element& host)
     }
 }
 
+void RenderTreeUpdater::tearDownRenderersAfterSlotReassignment(Element& element)
+{
+    tearDownRenderers(element, TeardownType::RendererUpdate);
+}
+
 void RenderTreeUpdater::tearDownRenderer(Text& text)
 {
     auto* view = text.document().renderView();

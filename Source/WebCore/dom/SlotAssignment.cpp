@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SlotAssignment.h"
 
+#include "ContainerNodeInlines.h"
 #include "ElementInlines.h"
 #include "HTMLSlotElement.h"
 #include "InspectorInstrumentation.h"
@@ -303,7 +304,7 @@ void NamedSlotAssignment::slotFallbackDidChange(HTMLSlotElement& slotElement, Sh
         slotElement.enqueueSlotChangeEvent();
 }
 
-void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowRoot& shadowRoot)
+void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowRoot& shadowRoot, RenderTreeUpdate renderTreeUpdate)
 {
     auto& slotName = slotNameFromAttributeValue(slotAttrValue);
     auto* slot = m_slots.get(slotName);
@@ -311,9 +312,11 @@ void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowR
         return;
 
     ASSERT(shadowRoot.host());
-    Ref shadowRootHost = *shadowRoot.host();
-    RenderTreeUpdater::tearDownRenderersAfterSlotChange(shadowRootHost);
-    shadowRootHost->invalidateStyleForSubtree();
+    if (renderTreeUpdate == RenderTreeUpdate::TearDownHost) {
+        Ref shadowRootHost = *shadowRoot.host();
+        RenderTreeUpdater::tearDownRenderersAfterSlotChange(shadowRootHost);
+        shadowRootHost->invalidateStyleForSubtree();
+    }
 
     auto assignedNodes = std::exchange(slot->assignedNodes, { });
     m_slotAssignmentsIsValid = false;
@@ -336,26 +339,137 @@ void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowR
     }
 }
 
+void NamedSlotAssignment::didInsertSlottable(const AtomString& slotName, ShadowRoot&)
+{
+    auto* slot = m_slots.get(slotName);
+    if (!slot)
+        return;
+    RefPtr slotElement = findFirstSlotElement(*slot);
+    if (!slotElement)
+        return;
+
+    // The slot now has assigned nodes so its fallback content is no longer in the composed tree.
+    for (RefPtr child = slotElement->firstChild(); child; child = child->nextSibling()) {
+        if (RefPtr element = dynamicDowncast<Element>(*child))
+            RenderTreeUpdater::tearDownRenderers(*element);
+        else if (RefPtr text = dynamicDowncast<Text>(*child))
+            RenderTreeUpdater::tearDownRenderer(*text);
+    }
+}
+
+void NamedSlotAssignment::didRemoveSlottable(const AtomString& slotName, ShadowRoot& shadowRoot)
+{
+    auto* slot = m_slots.get(slotName);
+    if (!slot)
+        return;
+    // Only the first slot element of the name gets assigned nodes. Without fallback content there is nothing to render.
+    RefPtr slotElement = findFirstSlotElement(*slot);
+    if (!slotElement || !slotElement->hasChildNodes())
+        return;
+
+    // Without a rendered host the fallback content gets its renderers when the host does.
+    RefPtr host = shadowRoot.host();
+    if (!host->renderer() && !host->hasDisplayContents())
+        return;
+
+    // The fallback content stays hidden while any host child is still assigned to the slot.
+    for (RefPtr child = host->firstChild(); child; child = child->nextSibling()) {
+        if ((is<Text>(*child) || is<Element>(*child)) && slotNameForHostChild(*child) == slotName)
+            return;
+    }
+
+    // The slot became empty so the fallback content needs style and renderers.
+    slotElement->invalidateStyleAndRenderersForSubtree();
+}
+
+void NamedSlotAssignment::didReassignSlottable(Element& element, const AtomString& oldSlotName, ShadowRoot& shadowRoot)
+{
+    ASSERT(element.parentNode() == shadowRoot.host());
+
+    RenderTreeUpdater::tearDownRenderersAfterSlotReassignment(element);
+    element.invalidateStyleAndRenderersAfterSlotReassignment();
+
+    updateWhitespaceRendererAfterSlottable(element, oldSlotName, shadowRoot);
+    didRemoveSlottable(oldSlotName, shadowRoot);
+    didInsertSlottable(slotNameForHostChild(element), shadowRoot);
+}
+
+std::optional<RefPtr<Node>> NamedSlotAssignment::firstAssignedNodeBeforeChange(const AtomString& slotName) const
+{
+    if (!m_slotAssignmentsIsValid)
+        return { };
+    auto* slot = m_slots.get(slotName);
+    if (!slot || slot->assignedNodes.isEmpty())
+        return RefPtr<Node> { };
+    return RefPtr { slot->assignedNodes.first() };
+}
+
+void NamedSlotAssignment::updateWhitespaceRendererAfterSlottable(const Node& slottable, const AtomString& slotName, ShadowRoot& shadowRoot)
+{
+    RefPtr host = shadowRoot.host();
+    if (!host->renderer() && !host->hasDisplayContents())
+        return;
+
+    // Whether a whitespace-only text node gets a renderer depends on the preceding renderer in the slot.
+    for (RefPtr sibling = slottable.nextSibling(); sibling; sibling = sibling->nextSibling()) {
+        if (!is<Text>(*sibling) && !is<Element>(*sibling))
+            continue;
+        if (slotNameForHostChild(*sibling) != slotName)
+            continue;
+        if (RefPtr text = dynamicDowncast<Text>(*sibling); text && text->containsOnlyASCIIWhitespace())
+            protect(text->document())->updateTextRenderer(*text, 0, 0);
+        return;
+    }
+}
+
 void NamedSlotAssignment::didRemoveAllChildrenOfShadowHost(ShadowRoot& shadowRoot)
 {
     didChangeSlot(nullAtom(), shadowRoot); // FIXME: This is incorrect when there were no elements or text nodes removed.
 }
 
-void NamedSlotAssignment::didMutateTextNodesOfShadowHost(ShadowRoot& shadowRoot)
+void NamedSlotAssignment::didMutateTextNodesOfShadowHost(ShadowRoot& shadowRoot, ContainerNode::ChildChange::Type type)
 {
-    didChangeSlot(nullAtom(), shadowRoot);
+    didChangeSlot(nullAtom(), shadowRoot, RenderTreeUpdate::ByCaller);
+
+    switch (type) {
+    case ContainerNode::ChildChange::Type::ElementAndTextInserted:
+    case ContainerNode::ChildChange::Type::TextInserted:
+    case ContainerNode::ChildChange::Type::TextMovedInto:
+        didInsertSlottable(defaultSlotName(), shadowRoot);
+        return;
+    case ContainerNode::ChildChange::Type::TextRemoved:
+    case ContainerNode::ChildChange::Type::TextMovedFrom:
+        didRemoveSlottable(defaultSlotName(), shadowRoot);
+        return;
+    case ContainerNode::ChildChange::Type::TextChanged:
+        return;
+    default:
+        ASSERT_NOT_REACHED();
+        return;
+    }
 }
 
 void NamedSlotAssignment::hostChildElementDidChange(const Element& childElement, ShadowRoot& shadowRoot)
 {
-    didChangeSlot(childElement.attributeWithoutSynchronization(slotAttr), shadowRoot);
+    auto& slotAttrValue = childElement.attributeWithoutSynchronization(slotAttr);
+    didChangeSlot(slotAttrValue, shadowRoot, RenderTreeUpdate::ByCaller);
+
+    auto& slotName = slotNameFromAttributeValue(slotAttrValue);
+    if (childElement.parentNode() == shadowRoot.host())
+        didInsertSlottable(slotName, shadowRoot);
+    else
+        didRemoveSlottable(slotName, shadowRoot);
 }
 
 void NamedSlotAssignment::hostChildElementDidChangeSlotAttribute(Element& element, const AtomString& oldValue, const AtomString& newValue, ShadowRoot& shadowRoot)
 {
-    didChangeSlot(oldValue, shadowRoot);
-    didChangeSlot(newValue, shadowRoot);
-    RenderTreeUpdater::tearDownRenderers(element);
+    didChangeSlot(oldValue, shadowRoot, RenderTreeUpdate::ByCaller);
+    didChangeSlot(newValue, shadowRoot, RenderTreeUpdate::ByCaller);
+
+    // An element that left the composed tree is torn down like a removed one.
+    if (!findAssignedSlot(element))
+        RenderTreeUpdater::tearDownRenderers(element);
+    didReassignSlottable(element, slotNameFromAttributeValue(oldValue), shadowRoot);
 }
 
 const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* NamedSlotAssignment::assignedNodesForSlot(const HTMLSlotElement& slotElement, ShadowRoot& shadowRoot)
@@ -382,12 +496,14 @@ const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* NamedSlotAssignment
     return &slot->assignedNodes;
 }
 
-void NamedSlotAssignment::willRemoveAssignedNode(Node& node, ShadowRoot&)
+void NamedSlotAssignment::willRemoveAssignedNode(Node& node, ShadowRoot& shadowRoot)
 {
-    if (!m_slotAssignmentsIsValid)
+    if (!is<Text>(node) && !is<Element>(node))
         return;
 
-    if (!is<Text>(node) && !is<Element>(node))
+    updateWhitespaceRendererAfterSlottable(node, slotNameForHostChild(node), shadowRoot);
+
+    if (!m_slotAssignmentsIsValid)
         return;
 
     auto* slot = m_slots.get(slotNameForHostChild(node));
@@ -625,7 +741,7 @@ void ManualSlotAssignment::didRemoveAllChildrenOfShadowHost(ShadowRoot&)
     ++m_slottableVersion;
 }
 
-void ManualSlotAssignment::didMutateTextNodesOfShadowHost(ShadowRoot&)
+void ManualSlotAssignment::didMutateTextNodesOfShadowHost(ShadowRoot&, ContainerNode::ChildChange::Type)
 {
     ++m_slottableVersion;
 }
