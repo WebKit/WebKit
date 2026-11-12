@@ -55,6 +55,7 @@
 #import <WebCore/IntRect.h>
 #import <WebCore/SQLiteDatabase.h>
 #import <WebCore/SQLiteStatement.h>
+#import <WebKit/WKBackForwardListPrivate.h>
 #import <WebKit/WKContentWorldPrivate.h>
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKMediaKeySystemPermissionCallback.h>
@@ -7837,6 +7838,52 @@ TEST(SiteIsolation, CancelledChildAsyncBackForwardNotifiesParent)
 
     [webView goBack];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "page0-loaded");
+}
+
+TEST(SiteIsolation, CrossSiteIframeReplaceKeepsItemURLBeforeCommit)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/a'></iframe><iframe src='https://example.com/b'></iframe>"_s } },
+        { "/a"_s, { "a"_s } },
+        { "/b"_s, { "b"_s } },
+        { "/c"_s, { HTTPResponse::Behavior::NeverSendResponse } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr webKitFrame = [webView firstChildFrame];
+
+    __block bool startedProvisionalLoad = false;
+    navigationDelegate.get().didStartProvisionalLoadWithRequestInFrame = ^(WKWebView *, NSURLRequest *request, WKFrameInfo *) {
+        if ([request.URL.path isEqualToString:@"/c"])
+            startedProvisionalLoad = true;
+    };
+    [webView evaluateJavaScript:@"frames[1].location.replace('https://webkit.org/c')" completionHandler:nil];
+    Util::run(&startedProvisionalLoad);
+
+    __block BlockPtr<void()> dismissAlert;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *, WKFrameInfo *, void (^completionHandler)(void)) {
+        dismissAlert = makeBlockPtr(completionHandler);
+    };
+    [webView setUIDelegate:uiDelegate.get()];
+
+    // Hiding the view makes both processes save state to the frame's history item. Hold the webkit.org process in
+    // an alert so it does so after the example.com process, which still has the frame's document.
+    [webView evaluateJavaScript:@"alert()" inFrame:webKitFrame.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+    while (!dismissAlert)
+        Util::spinRunLoop();
+    [webView setHidden:YES];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.visibilityState"] isEqualToString:@"hidden"];
+    }));
+    dismissAlert();
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.visibilityState" inFrame:webKitFrame.get()] isEqualToString:@"hidden"];
+    }));
+
+    EXPECT_TRUE([[[webView backForwardList] _loggingStringForTesting] containsString:@"URL:https://example.com/b,"]);
 }
 
 TEST(SiteIsolation, ValidateSessionRestoreWithoutNavigating)
