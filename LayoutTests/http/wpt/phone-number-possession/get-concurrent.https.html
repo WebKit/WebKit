@@ -1,0 +1,37 @@
+<!DOCTYPE html><!-- webkit-test-runner [ PhoneNumberPossessionEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>Phone Number Possession: concurrent requests</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="./resources/util.js"></script>
+<body>
+<script>
+promise_test(async (t) => {
+    setMockConfiguration({ outcome: "no-response" });
+    const controller = new AbortController();
+    await test_driver.bless("request phone number possession");
+    const pendingPromise = navigator.credentials.get({
+        ...makeOptions(),
+        signal: controller.signal,
+    });
+
+    await test_driver.bless("request phone number possession");
+    await navigator.credentials
+        .get(makeOptions())
+        .then(t.unreached_func("get() should reject."), (error) => {
+            assert_throws_dom("NotAllowedError", () => {
+                throw error;
+            });
+            assert_equals(
+                error.message,
+                "A phone number possession request is already in progress.",
+            );
+        });
+
+    controller.abort();
+    await promise_rejects_dom(t, "AbortError", pendingPromise);
+}, "Only one request can be pending at a time.");
+</script>
+</body>

@@ -354,6 +354,7 @@ namespace WebCore {
     macro(PaymentRequestUpdateEvent) \
     macro(PaymentResponse) \
     macro(PerformanceNavigationTiming) \
+    macro(PhoneNumberPossessionCredential) \
     macro(PictureInPictureEvent) \
     macro(PictureInPictureWindow) \
     macro(PaintWorkletGlobalScope) \

@@ -120,7 +120,7 @@ void PhoneNumberPossessionCoordinator::discoverFromExternalSource(const Document
         return;
     }
 
-    if (request.relyingPartyIdentifier.isEmpty())
+    if (request.relyingPartyIdentifier.isNull())
         request.relyingPartyIdentifier = callerOrigin->domain();
     else
         request.relyingPartyIdentifier = request.relyingPartyIdentifier.convertToASCIILowercase();

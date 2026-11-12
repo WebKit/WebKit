@@ -1,0 +1,5 @@
+
+PASS isAvailable() resolves with true when the platform can provide a phone number possession.
+PASS isAvailable() resolves with false when the platform can't provide a phone number possession.
+PASS isConditionalMediationAvailable() resolves with false.
+

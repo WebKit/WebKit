@@ -24168,6 +24168,9 @@
 		E0BA4176CB20FD04A40E4570 /* ImageRenditionOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageRenditionOptions.cpp; sourceTree = "<group>"; };
 		61D2ED4C387044AEAE6FA67C /* PageAnimationAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageAnimationAgent.h; sourceTree = "<group>"; };
 		9829198B5E944BBE98399502 /* PageAnimationAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageAnimationAgent.cpp; sourceTree = "<group>"; };
+		5A7412589C2DEB7ECD1E4602 /* PhoneNumberPossessionCredential.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PhoneNumberPossessionCredential.idl; sourceTree = "<group>"; };
+		4C6BB275821A2CA61EB618CC /* PhoneNumberPossessionRequestOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PhoneNumberPossessionRequestOptions.idl; sourceTree = "<group>"; };
+		559364CAA330B1AA490DE2CC /* PhoneNumberPossessionResponseType.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PhoneNumberPossessionResponseType.idl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44143,10 +44146,13 @@
 				9B5E23EE1515E7CBFCAF1C81 /* PhoneNumberPossessionCoordinatorClient.h */,
 				5730C2E5A2794FD7C14E0734 /* PhoneNumberPossessionCredential.cpp */,
 				F6EF1185B9BFEAED5D815C1E /* PhoneNumberPossessionCredential.h */,
+				5A7412589C2DEB7ECD1E4602 /* PhoneNumberPossessionCredential.idl */,
 				72F9298930D273388DAE57C3 /* PhoneNumberPossessionRequest.cpp */,
 				79387C77602AF736321E16F6 /* PhoneNumberPossessionRequest.h */,
+				4C6BB275821A2CA61EB618CC /* PhoneNumberPossessionRequestOptions.idl */,
 				02235505DADB0D826D6C1822 /* PhoneNumberPossessionResponse.h */,
 				FA9AC1967DFE9A22161E6BD4 /* PhoneNumberPossessionResponseType.h */,
+				559364CAA330B1AA490DE2CC /* PhoneNumberPossessionResponseType.idl */,
 			);
 			name = phonenumberpossession;
 			path = Modules/phonenumberpossession;
