@@ -1,0 +1,117 @@
+
+audio: removing the whole buffered range, buffered start rounds up
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+EXPECTED (sourceBuffer.buffered.length == '0') OK
+audio: removing the whole buffered range, buffered start is exact
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.128') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.81066666666667') OK
+EXPECTED (sourceBuffer.buffered.length == '0') OK
+audio: removing the whole buffered range, buffered start rounds down
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.14933333333333') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.832') OK
+EXPECTED (sourceBuffer.buffered.length == '0') OK
+audio: removing from frame 3 to the buffered end, start rounds up
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.17066666666667') OK
+audio: removing from frame 4 to the buffered end, start is exact
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.192') OK
+audio: removing from frame 5 to the buffered end, start rounds down
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.21333333333333') OK
+audio: removing from the buffered start to frame 3, end rounds up
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.17066666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+audio: removing from the buffered start to frame 4, end is exact
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.192') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+audio: removing from the buffered start to frame 5, end rounds down
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.21333333333333') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+video: removing the whole buffered range, buffered start rounds up
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+EXPECTED (sourceBuffer.buffered.length == '0') OK
+video: removing the whole buffered range, buffered start is exact
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.128') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.81066666666667') OK
+EXPECTED (sourceBuffer.buffered.length == '0') OK
+video: removing the whole buffered range, buffered start rounds down
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.14933333333333') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.832') OK
+EXPECTED (sourceBuffer.buffered.length == '0') OK
+video: removing from frame 3 to the buffered end, start rounds up
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.17066666666667') OK
+video: removing from frame 4 to the buffered end, start is exact
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.192') OK
+video: removing from frame 5 to the buffered end, start rounds down
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.21333333333333') OK
+video: removing from the buffered start to frame 3, end rounds up
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.17066666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+video: removing from the buffered start to frame 4, end is exact
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.192') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+video: removing from the buffered start to frame 5, end rounds down
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.10666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '40.21333333333333') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '40.78933333333333') OK
+END OF TEST
+

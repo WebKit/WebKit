@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SourceBuffer.remove() with boundaries that are not exactly representable as doubles</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Frame boundaries are (BASE + FRAME * k) / TIMESCALE. Converting the closest double back to
+    // a nanosecond MediaTime lands 1/3 ns after the boundary for k % 3 == 0, exactly on it for
+    // k % 3 == 1 and 1/3 ns before it for k % 3 == 2.
+    // Audio frames are bundled into divisible samples; video frames are all sync and are not
+    // divisible.
+    const TIMESCALE = 48000;
+    const FRAME = 1024;
+    const BASE = 1925120;
+    const FRAME_COUNT = 32;
+    const ROUNDING = ['rounds up', 'is exact', 'rounds down'];
+
+    let source;
+    let sourceBuffer;
+    let mediaSegment;
+
+    function boundary(k) {
+        return (BASE + FRAME * k) / TIMESCALE;
+    }
+
+    function segmentStartingAt(type, firstFrame) {
+        return MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type, baseDecodeTime: BASE + FRAME * firstFrame,
+                samples: Array.from({length: FRAME_COUNT}, () => ({
+                    duration: FRAME, compositionTimeOffset: 0, isSync: true,
+                })),
+            }],
+        });
+    }
+
+    async function appendStartingAt(type, firstFrame) {
+        if (sourceBuffer.buffered.length) {
+            sourceBuffer.remove(0, Infinity);
+            await waitFor(sourceBuffer, 'updateend', true);
+        }
+        sourceBuffer.appendBuffer(segmentStartingAt(type, firstFrame));
+        await waitFor(sourceBuffer, 'updateend', true);
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpected('sourceBuffer.buffered.start(0)', boundary(firstFrame));
+        testExpected('sourceBuffer.buffered.end(0)', boundary(firstFrame + FRAME_COUNT));
+    }
+
+    async function remove(start, end) {
+        sourceBuffer.remove(start, end);
+        await waitFor(sourceBuffer, 'updateend', true);
+    }
+
+    async function runTestsForType(type, mimeType) {
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen', true);
+        sourceBuffer = source.addSourceBuffer(mimeType);
+        sourceBuffer.appendBuffer(MP4.initSegment({
+            timescale: TIMESCALE,
+            tracks: [{ id: 1, type, timescale: TIMESCALE }],
+        }));
+        await waitFor(sourceBuffer, 'updateend', true);
+
+        for (let firstFrame = 0; firstFrame < 3; ++firstFrame) {
+            consoleWrite(`${type}: removing the whole buffered range, buffered start ${ROUNDING[firstFrame]}`);
+            await appendStartingAt(type, firstFrame);
+            await remove(sourceBuffer.buffered.start(0), sourceBuffer.buffered.end(0));
+            testExpected('sourceBuffer.buffered.length', 0);
+        }
+
+        for (let k = 3; k < 6; ++k) {
+            consoleWrite(`${type}: removing from frame ${k} to the buffered end, start ${ROUNDING[k % 3]}`);
+            await appendStartingAt(type, 0);
+            await remove(boundary(k), sourceBuffer.buffered.end(0));
+            testExpected('sourceBuffer.buffered.length', 1);
+            testExpected('sourceBuffer.buffered.start(0)', boundary(0));
+            testExpected('sourceBuffer.buffered.end(0)', boundary(k));
+        }
+
+        for (let k = 3; k < 6; ++k) {
+            consoleWrite(`${type}: removing from the buffered start to frame ${k}, end ${ROUNDING[k % 3]}`);
+            await appendStartingAt(type, 0);
+            await remove(sourceBuffer.buffered.start(0), boundary(k));
+            testExpected('sourceBuffer.buffered.length', 1);
+            testExpected('sourceBuffer.buffered.start(0)', boundary(k));
+            testExpected('sourceBuffer.buffered.end(0)', boundary(FRAME_COUNT));
+        }
+    }
+
+    async function runTest() {
+        findMediaElement();
+        if (!MediaSource.isTypeSupported(MP4.AUDIO_TYPE) || !MediaSource.isTypeSupported(MP4.VIDEO_TYPE)) {
+            failTest('Required MP4 types not supported');
+            return;
+        }
+        await runTestsForType('audio', MP4.AUDIO_TYPE);
+        await runTestsForType('video', MP4.VIDEO_TYPE);
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest().catch(failTest)">
+    <video></video>
+</body>
+</html>

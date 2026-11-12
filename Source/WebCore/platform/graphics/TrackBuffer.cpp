@@ -487,9 +487,20 @@ PlatformTimeRanges TrackBuffer::removeSamples(const DecodeOrderSampleMap::MapTyp
     return Ref { a.second }->decodeTime() < Ref { b.second }->decodeTime();
 };
 
-int64_t TrackBuffer::removeCodedFrames(const MediaTime& startIn, const MediaTime& end, const MediaTime& currentTime)
+// If a sample starts less than a microsecond before `time`, return that sample's start time; otherwise return `time`.
+static MediaTime roundToSampleStartingJustBefore(PresentationOrderSampleMap& presentationOrder, const MediaTime& time)
+{
+    auto iterator = presentationOrder.reverseFindSampleBeforePresentationTime(time);
+    if (iterator == presentationOrder.rend())
+        return time;
+    MediaTime microsecond(1, 1000000);
+    return time - iterator->first < microsecond ? iterator->first : time;
+}
+
+int64_t TrackBuffer::removeCodedFrames(const MediaTime& startIn, const MediaTime& endIn, const MediaTime& currentTime)
 {
     MediaTime start = startIn;
+    MediaTime end = endIn;
     ASSERT(start.isValid());
     ASSERT(end.isValid());
     // 3.5.9 Coded Frame Removal Algorithm
@@ -506,10 +517,6 @@ int64_t TrackBuffer::removeCodedFrames(const MediaTime& startIn, const MediaTime
     // NOTE: To handle MediaSamples which may be an amalgamation of multiple shorter samples, find samples whose presentation
     // interval straddles the start and end times, and divide them if possible:
     // Per spec 3.5.9 step 3.3, only samples with starting PTS >= start should be removed.
-    // If the sample whose range contains `start` was successfully split, the "after" piece is the
-    // first sample to erase — find it by its actual PTS (which may differ slightly from `start`
-    // due to timescale rounding, in either direction). Otherwise the original sample (with PTS <
-    // start) must be retained per spec; use findSampleStartingOnOrAfter to skip it.
     auto splitAtStart = tryDivideSampleAtTime(start, ApplyDivide::No);
     if (splitAtStart.afterSplitPresentationTime.isValid()) {
         // NOTE: When the sample at `start` is divisible, `tryDivideSampleAtTime()` snaps the
@@ -522,8 +529,13 @@ int64_t TrackBuffer::removeCodedFrames(const MediaTime& startIn, const MediaTime
             return 0;
     }
 
-    splitAtStart = tryDivideSampleAtTime(start, ApplyDivide::Yes);
+    tryDivideSampleAtTime(start, ApplyDivide::Yes);
     tryDivideSampleAtTime(end, ApplyDivide::Yes);
+    // `start` and `end` come from JS doubles, so a value read back from `buffered` can be a fraction of a
+    // nanosecond later than the sample time it came from. Without this, that sample would be treated as
+    // starting before `start` (and kept) or before `end` (and removed).
+    start = roundToSampleStartingJustBefore(m_samples.presentationOrder(), start);
+    end = roundToSampleStartingJustBefore(m_samples.presentationOrder(), end);
     auto removePresentationStart = m_samples.presentationOrder().findSampleStartingOnOrAfterPresentationTime(start);
     auto removePresentationEnd = m_samples.presentationOrder().findSampleStartingOnOrAfterPresentationTime(end);
     if (removePresentationStart == m_samples.presentationOrder().end() || removePresentationStart == removePresentationEnd)
@@ -562,12 +574,13 @@ int64_t TrackBuffer::removeCodedFrames(const MediaTime& startIn, const MediaTime
     return framesSizeBefore - samples().sizeInBytes();
 }
 
-int64_t TrackBuffer::codedFramesIntervalSize(const MediaTime& startIn, const MediaTime& end)
+int64_t TrackBuffer::codedFramesIntervalSize(const MediaTime& startIn, const MediaTime& endIn)
 {
     ASSERT(startIn.isValid());
-    ASSERT(end.isValid());
+    ASSERT(endIn.isValid());
 
     MediaTime start = startIn;
+    MediaTime end = endIn;
 
     // Mirror removeCodedFrames' iterator selection. Compute split sizes without mutating the
     // sample map (ApplyDivide::No).
@@ -580,6 +593,8 @@ int64_t TrackBuffer::codedFramesIntervalSize(const MediaTime& startIn, const Med
     }
 
     auto splitAtEnd = tryDivideSampleAtTime(end, ApplyDivide::No);
+    start = roundToSampleStartingJustBefore(m_samples.presentationOrder(), start);
+    end = roundToSampleStartingJustBefore(m_samples.presentationOrder(), end);
     auto removePresentationStart = m_samples.presentationOrder().findSampleStartingOnOrAfterPresentationTime(start);
     auto removePresentationEnd = m_samples.presentationOrder().findSampleStartingOnOrAfterPresentationTime(end);
     if (removePresentationStart == m_samples.presentationOrder().end() || removePresentationStart == removePresentationEnd)
