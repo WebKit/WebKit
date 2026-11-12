@@ -109,7 +109,10 @@
         {
             "bugs": ["rdar://126494734", "rdar://157499149"],
             "matches": ["*://*.bbc.co.uk/*", "*://*.bbc.com/*"],
-            "behaviors": [{ "id": "ReturnNullPictureInPictureElementDuringFullscreenChangeQuirk" }]
+            "behaviors": [
+                { "id": "ReturnNullPictureInPictureElementDuringFullscreenChangeQuirk" },
+                { "id": "NeedsPerDocumentAutoplayBehaviorQuirk" }
+            ]
         },
         {
             "bugs": ["rdar://162447105"],
