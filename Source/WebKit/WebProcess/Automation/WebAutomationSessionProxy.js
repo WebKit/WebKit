@@ -112,6 +112,11 @@ let AutomationSessionProxy = class AutomationSessionProxy
         return this._nodeForIdentifier(identifier);
     }
 
+    nodeForSharedId(identifier)
+    {
+        return this._nodeForIdentifier(identifier);
+    }
+
     // Private
 
     _execute(functionString, argumentStrings, expectsImplicitCallbackArgument, callbackTimeout)

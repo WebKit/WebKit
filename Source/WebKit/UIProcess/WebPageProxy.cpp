@@ -15401,6 +15401,23 @@ void WebPageProxy::processContextMenuCallbacks()
 
 #endif // ENABLE(CONTEXT_MENU_EVENT)
 
+void WebPageProxy::allowFilesAccessFromWebProcess(WebProcessProxy& process, const Vector<String>& paths, CompletionHandler<void()>&& completionHandler)
+{
+    protect(protect(websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(process.coreProcessIdentifier(), paths), WTF::move(completionHandler));
+}
+
+void WebPageProxy::grantReadAccessToFiles(WebProcessProxy& process, const Vector<String>& paths, ASCIILiteral logLabel)
+{
+    for (auto& path : borrow(paths))
+        process.addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(path));
+#if ENABLE(SANDBOX_EXTENSIONS)
+    auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles(logLabel, paths);
+    process.send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTF::move(sandboxExtensionHandles)), webPageIDInProcess(process));
+#else
+    UNUSED_PARAM(logLabel);
+#endif
+}
+
 #if PLATFORM(IOS_FAMILY)
 void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>& fileURLs, const String& displayString, const API::Data* iconData)
 {
@@ -15419,18 +15436,13 @@ void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vect
         if (!protectedThis)
             return;
         if (RefPtr process = openPanelResultListener->process()) {
-            for (auto& fileURL : fileURLs)
-                process->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(fileURL));
-#if ENABLE(SANDBOX_EXTENSIONS)
-            auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon"_s, fileURLs);
-            process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTF::move(sandboxExtensionHandles)), protectedThis->webPageIDInProcess(*process));
-#endif
+            protectedThis->grantReadAccessToFiles(*process, fileURLs, "WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon"_s);
             process->send(Messages::WebPage::DidChooseFilesForOpenPanelWithDisplayStringAndIcon(fileURLs, displayString, iconData ? iconData->span() : std::span<const uint8_t>()), protectedThis->webPageIDInProcess(*process));
         }
 
         openPanelResultListener->invalidate();
     };
-    protect(protect(websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(process->coreProcessIdentifier(), fileURLs), WTF::move(completionHandler));
+    allowFilesAccessFromWebProcess(*process, fileURLs, WTF::move(completionHandler));
 }
 #endif
 
@@ -15520,13 +15532,7 @@ void WebPageProxy::transcodeChosenFiles(IPC::Connection& connection, Vector<Stri
             return completionHandler(WTF::move(replacementPaths));
         }
 
-        for (auto& path : transcodedPaths)
-            process->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(path));
-
-#if ENABLE(SANDBOX_EXTENSIONS)
-        auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::transcodeChosenFiles"_s, transcodedPaths);
-        process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTF::move(sandboxExtensionHandles)), protectedThis->webPageIDInProcess(process.get()));
-#endif
+        protectedThis->grantReadAccessToFiles(process, transcodedPaths, "WebPageProxy::transcodeChosenFiles"_s);
 
         protect(protect(protectedThis->websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(process->coreProcessIdentifier(), transcodedPaths), [replacementPaths = WTF::move(replacementPaths), completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(WTF::move(replacementPaths));
@@ -15559,19 +15565,14 @@ void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs, co
             return;
         if (RefPtr process = openPanelResultListener->process()) {
             if (!protectedThis->didChooseFilesForOpenPanelWithImageTranscoding(*process, fileURLs, allowedMIMETypes)) {
-                for (auto& fileURL : borrow(fileURLs))
-                    process->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(fileURL));
-#if ENABLE(SANDBOX_EXTENSIONS)
-                auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, fileURLs);
-                process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTF::move(sandboxExtensionHandles)), protectedThis->webPageIDInProcess(*process));
-#endif
+                protectedThis->grantReadAccessToFiles(*process, fileURLs, "WebPageProxy::didChooseFilesForOpenPanel"_s);
                 process->send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs, { }), protectedThis->webPageIDInProcess(*process));
             }
         }
 
         openPanelResultListener->invalidate();
     };
-    protect(protect(websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(process->coreProcessIdentifier(), fileURLs), WTF::move(completionHandler));
+    allowFilesAccessFromWebProcess(*process, fileURLs, WTF::move(completionHandler));
 }
 
 void WebPageProxy::didCancelForOpenPanel()
@@ -22021,6 +22022,7 @@ INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATIO
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID(WebAutomationSessionProxy::ResolveChildFrameWithName);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID(WebAutomationSessionProxy::SnapshotRectForScreenshot);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID(WebAutomationSessionProxy::SetFilesForInputFileUpload);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID(WebAutomationSessionProxy::SetFilesForBidi);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID(WebAutomationSessionProxy::ResolveChildFrameWithOrdinal);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID(WebAutomationSessionProxy::ResolveChildFrameWithNodeHandle);
 #undef INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID
