@@ -1896,6 +1896,23 @@ void GridTrackSizingAlgorithm::aggregateGridItemsForIntrinsicSizing(Vector<GridI
     });
 }
 
+static std::optional<GridSpan> gridLanesPlacementRangeForGridItem(const RenderGrid& gridLanesContainer, Style::GridTrackSizingDirection direction, unsigned trackCount, const RenderBox& gridItem)
+{
+    CheckedRef parentGrid = downcast<RenderGrid>(*gridItem.parent());
+    auto parentDirection = GridLayoutFunctions::flowAwareDirectionForGridItem(gridLanesContainer, parentGrid, direction);
+    bool hasAutomaticPosition = Style::GridPositionsResolver::resolveGridPositionsFromStyle(parentGrid, gridItem, parentDirection).isIndefinite();
+    if (parentGrid.ptr() == &gridLanesContainer) {
+        if (!hasAutomaticPosition)
+            return std::nullopt;
+        return GridSpan::translatedDefiniteGridSpan(0, trackCount);
+    }
+    if (auto parentPlacementRange = gridLanesPlacementRangeForGridItem(gridLanesContainer, direction, trackCount, parentGrid))
+        return parentPlacementRange;
+    if (hasAutomaticPosition && parentGrid->isGridLanes())
+        return gridLanesContainer.gridSpanForGridItem(parentGrid, direction);
+    return std::nullopt;
+}
+
 void GridTrackSizingAlgorithm::computeDefiniteAndIndefiniteItemsForGridLanes(StdMap<SpanLength, GridLanesMinMaxTrackSize>& indefiniteSpanSizes, StdMap<SpanLength, Vector<GridLanesMinMaxTrackSizeWithGridSpan>>& definiteItemSizes, Vector<GridLanesMinMaxTrackSizeWithGridSpan>& definiteItemSizesSpanFlexTrack, RenderGridLayoutState& gridLayoutState)
 {
     auto& allTracks = tracks(m_direction);
@@ -1933,10 +1950,29 @@ void GridTrackSizingAlgorithm::computeDefiniteAndIndefiniteItemsForGridLanes(Std
         trackSize.minSize = std::max(trackSize.minSize, m_strategy->minContributionForGridItem(gridItem, gridLayoutState));
     };
 
-    auto isTrackContentSized = [&](unsigned trackIndex) {
-        return std::ranges::any_of(m_contentSizedTracksIndex, [trackIndex](auto index) {
-            return index == trackIndex;
+    auto spansContentSizedTracks = [&](const GridSpan& gridSpan) {
+        return std::ranges::any_of(m_contentSizedTracksIndex, [startLine = gridSpan.startLine(), endLine = gridSpan.endLine()](auto trackIndex) {
+            return trackIndex >= startLine && trackIndex < endLine;
         });
+    };
+
+    auto addItemAtEveryStartLine = [&](RenderBox& gridItem, unsigned spanLength, const GridSpan& placementRange) {
+        auto contribution = GridLanesMinMaxTrackSize {
+            m_strategy->minContentContributionForGridItem(gridItem, gridLayoutState),
+            m_strategy->maxContentContributionForGridItem(gridItem, gridLayoutState),
+            m_strategy->minContributionForGridItem(gridItem, gridLayoutState)
+        };
+        for (auto startLine = placementRange.startLine(); startLine + spanLength <= placementRange.endLine(); ++startLine) {
+            auto itemSpan = GridSpan::translatedDefiniteGridSpan(startLine, startLine + spanLength);
+            if (!spansContentSizedTracks(itemSpan))
+                continue;
+            if (spanningItemCrossesFlexibleSizedTracks(itemSpan))
+                definiteItemSizesSpanFlexTrack.append(GridLanesMinMaxTrackSizeWithGridSpan { contribution, itemSpan });
+            else if (spanLength == 1)
+                sizeTrackToFitSingleSpanGridLanesGroup(itemSpan, contribution, allTracks[startLine]);
+            else
+                definiteItemSizes[spanLength].append(GridLanesMinMaxTrackSizeWithGridSpan { contribution, itemSpan });
+        }
     };
 
     traverseSubgridTreeForIntrinsicSizing([&](RenderBox& gridItem, GridSpan gridItemSpan) {
@@ -1954,29 +1990,18 @@ void GridTrackSizingAlgorithm::computeDefiniteAndIndefiniteItemsForGridLanes(Std
         bool isIndefinite = parentGrid->isGridLanes() && Style::GridPositionsResolver::resolveGridPositionsFromStyle(parentGrid, gridItem, parentDirection).isIndefinite();
         bool isDirectChildOfGridLanesContainer = parentGrid.ptr() == m_renderGrid;
 
-        if (isIndefinite && !isDirectChildOfGridLanesContainer) {
-            // Items inside a grid-lanes subgrid with indefinite placement could land in any
-            // track the subgrid spans. Apply their contribution as a definite single-span
-            // item to each content-sized track in the subgrid's span.
-            auto subgridSpan = m_renderGrid->gridSpanForGridItem(parentGrid, m_direction);
-            for (auto trackIndex : subgridSpan) {
-                if (!isTrackContentSized(trackIndex))
-                    continue;
-                addDefiniteItem(GridSpan::translatedDefiniteGridSpan(trackIndex, trackIndex + 1), gridItem);
+        if (!isDirectChildOfGridLanesContainer) {
+            if (auto placementRange = gridLanesPlacementRangeForGridItem(*m_renderGrid, m_direction, trackCount, gridItem)) {
+                addItemAtEveryStartLine(gridItem, gridItemSpan.integerSpan(), *placementRange);
+                return;
             }
-            return;
         }
 
         // Definite items must overlap at least one content-sized track to contribute.
         // Indefinite items contribute to all content-sized tracks (aggregated by span
         // length), so they skip this check.
-        if (!isIndefinite) {
-            bool spansContentSizedTracks = std::ranges::any_of(m_contentSizedTracksIndex, [startLine = gridItemSpan.startLine(), endLine = gridItemSpan.endLine()](auto trackIndex) {
-                return trackIndex >= startLine && trackIndex < endLine;
-            });
-            if (!spansContentSizedTracks)
-                return;
-        }
+        if (!isIndefinite && !spansContentSizedTracks(gridItemSpan))
+            return;
 
         auto spanLength = gridItemSpan.integerSpan();
         if (!isIndefinite)
