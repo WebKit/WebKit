@@ -28,6 +28,7 @@
 
 #include "WPEClipboardWaylandPrivate.h"
 #include "WPEDRMDevicePrivate.h"
+#include "WPEDisplayPrivate.h"
 #include "WPEDisplayWaylandPrivate.h"
 #include "WPEEGLError.h"
 #include "WPEExtensions.h"
@@ -259,6 +260,9 @@ static void wpeDisplayWaylandDispose(GObject* object)
     g_clear_pointer(&priv->xdgWMBase, xdg_wm_base_destroy);
     g_clear_pointer(&priv->wlCompositor, wl_compositor_destroy);
     g_clear_pointer(&priv->wlRegistry, wl_registry_destroy);
+
+    // The EGL display uses the Wayland display, so it must be terminated before disconnecting.
+    wpeDisplayTerminateEGL(WPE_DISPLAY(object));
     g_clear_pointer(&priv->wlDisplay, wl_display_disconnect);
 
     G_OBJECT_CLASS(wpe_display_wayland_parent_class)->dispose(object);
@@ -401,11 +405,9 @@ static const struct zwp_linux_dmabuf_v1_listener linuxDMABufListener = {
 static void wpeDisplayWaylandInitializeDRMDeviceFromEGL(WPEDisplayWayland* display)
 {
     auto* priv = display->priv;
-    auto* eglDisplay = eglGetDisplay(priv->wlDisplay);
+    // Use the display EGL display, so that it's terminated when the display is disposed.
+    auto* eglDisplay = wpe_display_get_egl_display(WPE_DISPLAY(display), nullptr);
     if (!eglDisplay)
-        return;
-
-    if (!eglInitialize(eglDisplay, nullptr, nullptr))
         return;
 
     if (!epoxy_has_egl_extension(eglDisplay, "EGL_EXT_device_query")) {

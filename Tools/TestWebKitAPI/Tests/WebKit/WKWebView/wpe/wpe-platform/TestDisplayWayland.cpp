@@ -77,6 +77,19 @@ static void testDisplayWaylandConnect(WPEWaylandPlatformTest* test, gconstpointe
     g_assert_nonnull(wpe_display_wayland_get_wl_display(WPE_DISPLAY_WAYLAND(display.get())));
 }
 
+static void testDisplayWaylandEGLDisplay(WPEWaylandPlatformTest* test, gconstpointer)
+{
+    connectOrSkipIfNotUnderWayland();
+
+    // The EGL display must be terminated before the Wayland display is disconnected.
+    GRefPtr<WPEDisplay> display = adoptGRef(wpe_display_wayland_new());
+    GUniqueOutPtr<GError> error;
+    g_assert_true(wpe_display_wayland_connect(WPE_DISPLAY_WAYLAND(display.get()), nullptr, &error.outPtr()));
+    g_assert_no_error(error.get());
+    if (!wpe_display_get_egl_display(display.get(), &error.outPtr()))
+        g_test_skip("EGL is not available");
+}
+
 static void testDisplayWaylandKeymap(WPEWaylandPlatformTest* test, gconstpointer)
 {
     connectOrSkipIfNotUnderWayland();
@@ -143,6 +156,7 @@ static void testDisplayWaylandCreateView(WPEWaylandPlatformTest* test, gconstpoi
 void beforeAll()
 {
     WPEWaylandPlatformTest::add("DisplayWayland", "connect", testDisplayWaylandConnect);
+    WPEWaylandPlatformTest::add("DisplayWayland", "egl-display", testDisplayWaylandEGLDisplay);
     WPEWaylandPlatformTest::add("DisplayWayland", "keymap", testDisplayWaylandKeymap);
     WPEWaylandPlatformTest::add("DisplayWayland", "screens", testDisplayWaylandScreens);
     WPEWaylandPlatformTest::add("DisplayWayland", "available-input-devices", testDisplayWaylandAvailableInputDevices);

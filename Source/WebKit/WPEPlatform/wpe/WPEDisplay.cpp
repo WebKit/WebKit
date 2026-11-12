@@ -132,12 +132,7 @@ static void wpeDisplayConstructed(GObject* object)
 
 static void wpeDisplayDispose(GObject* object)
 {
-    auto* priv = WPE_DISPLAY(object)->priv;
-
-    if (priv->eglDisplay) {
-        eglTerminate(priv->eglDisplay);
-        priv->eglDisplay = nullptr;
-    }
+    wpeDisplayTerminateEGL(WPE_DISPLAY(object));
 
     G_OBJECT_CLASS(wpe_display_parent_class)->dispose(object);
 }
@@ -252,6 +247,12 @@ WPEView* wpeDisplayCreateView(WPEDisplay* display)
             wpe_view_set_toplevel(view, toplevel.get());
     }
     return view;
+}
+
+void wpeDisplayTerminateEGL(WPEDisplay* display)
+{
+    if (auto* eglDisplay = std::exchange(display->priv->eglDisplay, nullptr))
+        eglTerminate(eglDisplay);
 }
 
 bool wpeDisplayCheckEGLExtension(WPEDisplay* display, ASCIILiteral extensionName)
