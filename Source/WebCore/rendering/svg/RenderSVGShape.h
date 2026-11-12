@@ -34,6 +34,7 @@
 #include "SVGMarkerData.h"
 #include "SVGPaintServerCache.h"
 #include <memory>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -149,7 +150,7 @@ private:
     void strokeShape(const Style::ComputedStyle&, GraphicsContext&);
     void fillStrokeMarkers(PaintInfo&);
 
-    SVGPaintServerCache* svgPaintServerCache() const final { return &m_svgPaintServerCache; }
+    SVGPaintServerCache* svgPaintServerCache() const final { return m_svgPaintServerCache.ptr(); }
 
     virtual void drawMarkers(PaintInfo&) { }
 
@@ -169,7 +170,7 @@ protected:
     ShapeType m_shapeType : 3 { ShapeType::Empty };
 private:
     std::unique_ptr<Path> m_path;
-    mutable SVGPaintServerCache m_svgPaintServerCache;
+    const UniqueRef<SVGPaintServerCache> m_svgPaintServerCache { makeUniqueRef<SVGPaintServerCache>() };
 };
 
 } // namespace WebCore

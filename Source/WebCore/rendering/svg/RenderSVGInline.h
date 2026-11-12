@@ -24,6 +24,8 @@
 #include "RenderBoxModelObject.h"
 #include "SVGPaintServerCache.h"
 
+#include <wtf/UniqueRef.h>
+
 namespace WebCore {
 
 class SVGGraphicsElement;
@@ -81,9 +83,9 @@ private:
     void willBeDestroyed() final;
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
 
-    SVGPaintServerCache* svgPaintServerCache() const final { return &m_svgPaintServerCache; }
+    SVGPaintServerCache* svgPaintServerCache() const final { return m_svgPaintServerCache.ptr(); }
 
-    mutable SVGPaintServerCache m_svgPaintServerCache;
+    const UniqueRef<SVGPaintServerCache> m_svgPaintServerCache { makeUniqueRef<SVGPaintServerCache>() };
 };
 
 } // namespace WebCore

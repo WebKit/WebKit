@@ -39,7 +39,7 @@ enum class SVGPaintType : bool { Fill, Stroke };
 // (shapes and SVG text). The weak pointer clears itself if the paint server dies, so a live pointer
 // is a hit and a null one re-resolves. invalidateSVGPaintServerCache() drops it when the fill or
 // stroke style changes, and when the referenced paint server changes.
-class SVGPaintServerCache final : public CanMakeCheckedPtr<SVGPaintServerCache, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
+class SVGPaintServerCache final : public CanMakeCheckedPtr<SVGPaintServerCache> {
     WTF_MAKE_TZONE_ALLOCATED(SVGPaintServerCache);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGPaintServerCache);
 public:
