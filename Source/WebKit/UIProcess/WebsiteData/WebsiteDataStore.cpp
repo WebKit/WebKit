@@ -2538,6 +2538,15 @@ void WebsiteDataStore::setMockWebAuthenticationConfiguration(WebCore::MockWebAut
         m_authenticatorManager = MockAuthenticatorManager::create(WTF::move(configuration));
 }
 
+void WebsiteDataStore::resetMockWebAuthenticationConfiguration()
+{
+    RefPtr manager = dynamicDowncast<MockAuthenticatorManager>(m_authenticatorManager);
+    if (!manager)
+        return;
+    manager->cancel();
+    m_authenticatorManager = AuthenticatorManager::create();
+}
+
 VirtualAuthenticatorManager& WebsiteDataStore::virtualAuthenticatorManager()
 {
     if (!is<VirtualAuthenticatorManager>(m_authenticatorManager.get()))

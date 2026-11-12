@@ -373,6 +373,7 @@ public:
 #if ENABLE(WEB_AUTHN)
     AuthenticatorManager& authenticatorManager() { return m_authenticatorManager.get(); }
     void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
+    void resetMockWebAuthenticationConfiguration();
     VirtualAuthenticatorManager& virtualAuthenticatorManager();
 #endif
 
