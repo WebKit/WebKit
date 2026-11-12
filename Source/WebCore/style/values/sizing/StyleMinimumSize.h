@@ -35,7 +35,7 @@ struct PreferredSize;
 //
 // What is actually implemented is:
 //
-// <'min-width'>/<'min-height'> = auto | <length-percentage [0,∞]> | stretch | min-content | max-content | fit-content | <calc-size()> | intrinsic | min-intrinsic
+// <'min-width'>/<'min-height'> = auto | <length-percentage [0,∞]> | stretch | min-content | max-content | fit-content | stretch(<length-percentage [0,∞]>) | <calc-size()> | intrinsic | min-intrinsic
 //
 // MISSING:
 //    stretch(<length-percentage [0,∞]>)

@@ -30,9 +30,9 @@
 namespace WebCore {
 namespace Style {
 
-// Base for the sizing properties, which accept `calc-size()` in addition to a <length-percentage>
-// and their keywords. Being a distinct base keeps the calc-size() handling off the other
-// <length-percentage>-or-keyword types.
+// Base for the sizing properties, which accept `calc-size()` and `stretch()` in addition to a
+// <length-percentage> and their keywords. Being a distinct base keeps the handling of those off the
+// other <length-percentage>-or-keyword types.
 template<CSS::SpecificKeyword... Ks>
 struct SizeOrKeyword : PrimitiveNumericOrKeywordOrOptionalCalcSize<LengthPercentage<CSS::NonnegativeLayoutUnitClamped>, CalcSizeSupport::Yes, Ks...> {
     using NumericOrKeyword = PrimitiveNumericOrKeywordOrOptionalCalcSize<LengthPercentage<CSS::NonnegativeLayoutUnitClamped>, CalcSizeSupport::Yes, Ks...>;
@@ -42,6 +42,10 @@ struct SizeOrKeyword : PrimitiveNumericOrKeywordOrOptionalCalcSize<LengthPercent
 
     ALWAYS_INLINE bool isCalcSize() const { return this->template holdsAlternative<typename NumericOrKeyword::CalcSize>(); }
     ALWAYS_INLINE UnevaluatedCalcSize calcSize() const { return this->template get<typename NumericOrKeyword::CalcSize>(); }
+
+    // A stretch() is its argument with the bit that it sizes the margin box rather than the box selected by box-sizing,
+    // so it answers to its argument as well (isSpecified(), isFixed() and so on): only resolving the size tells them apart.
+    ALWAYS_INLINE bool isStretchFunction() const { return this->template holdsAlternative<typename NumericOrKeyword::StretchFunction>(); }
 
     // Specified because a calc-size() resolves to a length, unless its basis is a keyword, in which
     // case it behaves as that keyword.

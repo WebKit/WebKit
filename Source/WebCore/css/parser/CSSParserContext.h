@@ -82,6 +82,7 @@ struct CSSParserContext {
     bool cssRubyDisplayTypesEnabled : 1 { false };
     bool cssTreeCountingFunctionsEnabled : 1 { false };
     bool cssCalcSizeFunctionEnabled : 1 { false };
+    bool cssStretchFunctionEnabled : 1 { false };
     bool cssURLModifiersEnabled : 1 { false };
     bool cssURLIntegrityModifierEnabled : 1 { false };
     bool cssLinkParametersEnabled : 1 { false };

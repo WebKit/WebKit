@@ -1242,6 +1242,14 @@ CSSSizeShorthandEnabled:
   humanReadableDescription: "Enable the size, min-size and max-size shorthands for the width, height, min-width, min-height, max-width and max-height properties"
   defaultValue: true
 
+CSSStretchFunctionEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS stretch() sizing function"
+  humanReadableDescription: "Enable support for CSS stretch() in the sizing properties"
+  defaultValue: false
+
 CSSSymbolsFunctionEnabled:
   type: bool
   status: stable

@@ -1,0 +1,19 @@
+
+PASS e.style['flex-basis'] = "stretch(10px)" should set the property value
+PASS e.style['flex-basis'] = "stretch(10%)" should set the property value
+PASS e.style['flex-basis'] = "stretch(calc(10% - 0.5em))" should set the property value
+PASS e.style['flex-basis'] = "stretch(-10px)" should not set the property value
+PASS e.style['flex-basis'] = "stretch(auto)" should not set the property value
+PASS e.style['flex-basis'] = "stretch()" should not set the property value
+PASS Property flex-basis value 'stretch(10px)'
+PASS Property flex-basis value 'stretch(20%)'
+PASS Property flex-basis value 'stretch(calc(10px + 0.5em))'
+PASS e.style['flex'] = "1 stretch(10px)" should set flex-basis
+PASS e.style['flex'] = "1 stretch(10px)" should set flex-grow
+PASS e.style['flex'] = "1 stretch(10px)" should set flex-shrink
+PASS e.style['flex'] = "1 stretch(10px)" should not set unrelated longhands
+PASS e.style['flex'] = "stretch(10%) 2 3" should set flex-basis
+PASS e.style['flex'] = "stretch(10%) 2 3" should set flex-grow
+PASS e.style['flex'] = "stretch(10%) 2 3" should set flex-shrink
+PASS e.style['flex'] = "stretch(10%) 2 3" should not set unrelated longhands
+

@@ -36,7 +36,7 @@ namespace Style {
 
 // MARK: - Blending
 
-// Extends NumericOrKeywordBlending with calc-size() blending.
+// Extends NumericOrKeywordBlending with calc-size() and stretch() blending.
 // https://drafts.csswg.org/css-values-5/#interpolate-calc-size
 template<SizeOrKeywordDerived StyleType> struct Blending<StyleType> : NumericOrKeywordBlending<StyleType> {
     using Base = NumericOrKeywordBlending<StyleType>;
@@ -48,6 +48,8 @@ template<SizeOrKeywordDerived StyleType> struct Blending<StyleType> : NumericOrK
     // where the non-animation value should be.
     auto canBlend(const StyleType& a, const StyleType& b, const ComputedStyle&, const ComputedStyle& toStyle) -> bool
     {
+        if (a.isStretchFunction() || b.isStretchFunction())
+            return a.isStretchFunction() && b.isStretchFunction();
         if (interpolatesUsingCalcSize(a, b, toStyle.interpolateSize()))
             return !!preparePair(a, b);
         return Base::canBlend(a, b);
@@ -64,6 +66,12 @@ template<SizeOrKeywordDerived StyleType> struct Blending<StyleType> : NumericOrK
     }
     auto blend(const StyleType& a, const StyleType& b, const ComputedStyle&, const ComputedStyle& toStyle, const BlendingContext& context) -> StyleType
     {
+        // Two stretch() interpolate their arguments. A stretch() and anything else size different boxes, so they don't.
+        if (a.isStretchFunction() || b.isStretchFunction()) {
+            if (a.isStretchFunction() && b.isStretchFunction())
+                return StyleType { typename StyleType::StretchFunction { Style::blend(get<Numeric>(a), get<Numeric>(b), context) } };
+            return context.progress < 0.5 ? a : b;
+        }
         if (interpolatesUsingCalcSize(a, b, toStyle.interpolateSize())) {
             if (auto result = blendCalcSize(a, b, context))
                 return *result;
@@ -94,6 +102,10 @@ private:
     // <size-keyword> as calc-size(keyword, size).
     static std::optional<PreparedCalcSize> prepare(const StyleType& value)
     {
+        // A stretch() answers to its argument, but calc-size(any, argument) would size a different box.
+        if (value.isStretchFunction())
+            return { };
+
         if (WTF::holdsAlternative<CalcSize>(value))
             return prepareForInterpolation(protect(get<CalcSize>(value).calcSize()));
 

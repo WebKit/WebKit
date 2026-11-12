@@ -647,6 +647,8 @@ inline bool PropertyParserCustom::consumeFlexShorthand(CSSParserTokenRange& rang
                 if (isFlexBasisIdent(range.peek().id()))
                     flexBasis = consumeIdent(range);
                 if (!flexBasis)
+                    flexBasis = CSSPropertyParsing::consumeStretchSize(range, state);
+                if (!flexBasis)
                     flexBasis = CSSPrimitiveValueResolver<LengthPercentage<Nonnegative>>::consumeAndResolve(range, state);
                 if (index == 2 && !range.atEnd())
                     return false;

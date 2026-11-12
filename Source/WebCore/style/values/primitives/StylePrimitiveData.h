@@ -82,6 +82,17 @@ struct PrimitiveData {
     uint8_t type() const { return m_opaqueType; }
     bool hasQuirk() const { return m_hasQuirk; }
 
+    // Set on the argument of a stretch(), whose length sizes the margin box rather than the box selected by box-sizing.
+    // Only the sizing types read it. A LengthPercentage copied out of one keeps it, so that converting between the
+    // sizing types preserves it; anywhere else it only makes the length compare unequal to the same length without it.
+    bool sizesMarginBox() const { return m_sizesMarginBox; }
+    PrimitiveData withSizesMarginBox(bool sizesMarginBox) const
+    {
+        auto copy = *this;
+        copy.m_sizesMarginBox = sizesMarginBox;
+        return copy;
+    }
+
     float value() const { ASSERT(!usesHandle()); return m_floatValue; }
     NODELETE Calculation::Value& calculationValue() const;
     NODELETE CalcSizeValue& calcSizeValue() const;
@@ -122,6 +133,7 @@ private:
     uint8_t m_opaqueType { 0 };
     PrimitiveDataKind m_kind;
     bool m_hasQuirk { false };
+    bool m_sizesMarginBox { false };
 };
 
 inline PrimitiveData::PrimitiveData(uint8_t opaqueType)
@@ -188,6 +200,7 @@ inline void PrimitiveData::initialize(const PrimitiveData& other)
 {
     m_opaqueType = other.m_opaqueType;
     m_hasQuirk = other.m_hasQuirk;
+    m_sizesMarginBox = other.m_sizesMarginBox;
     m_kind = other.m_kind;
 
     switch (m_kind) {
@@ -209,6 +222,7 @@ inline void PrimitiveData::initialize(PrimitiveData&& other)
 {
     m_opaqueType = other.m_opaqueType;
     m_hasQuirk = other.m_hasQuirk;
+    m_sizesMarginBox = other.m_sizesMarginBox;
     m_kind = other.m_kind;
 
     switch (m_kind) {
@@ -235,7 +249,7 @@ inline PrimitiveData::~PrimitiveData()
 
 inline bool PrimitiveData::operator==(const PrimitiveData& other) const
 {
-    if (type() != other.type() || hasQuirk() != other.hasQuirk())
+    if (type() != other.type() || hasQuirk() != other.hasQuirk() || sizesMarginBox() != other.sizesMarginBox())
         return false;
     if (m_kind == PrimitiveDataKind::Calculation)
         return isCalculatedEqual(other);

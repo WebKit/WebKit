@@ -36,8 +36,8 @@ namespace Style {
 
 // FIXME: Add support for non-LengthPercentage<> and non-float ResolveValueType numeric types.
 
-// Adds a calc-size() alternative, which only the sizing properties accept. Off by default so the
-// other types pay nothing for it.
+// Adds the calc-size() and stretch() alternatives, which only the sizing properties accept. Off by
+// default so the other types pay nothing for them.
 enum class CalcSizeSupport : bool { No, Yes };
 
 template<Numeric N, CalcSizeSupport calcSizeSupport, CSS::SpecificKeyword... Ks>
@@ -60,6 +60,7 @@ public:
     using Calc = typename Numeric::Calc;
     using CalcSize = UnevaluatedCalcSize;
     static_assert(!hasCalcSize || CalcSize::range == Calc::range, "calc-size() clamps to the property's range");
+    using StretchFunction = FunctionNotation<CSSValueID::Stretch, Numeric>;
     using Dimension = typename Numeric::Dimension;
     using Percentage = typename Numeric::Percentage;
 
@@ -103,6 +104,11 @@ public:
 
     PrimitiveNumericOrKeywordOrOptionalCalcSize(const CalcSize& calcSize) requires (hasCalcSize)
         : m_value(indexForCalcSize, CalcSize { calcSize })
+    {
+    }
+
+    PrimitiveNumericOrKeywordOrOptionalCalcSize(const StretchFunction& stretch) requires (hasCalcSize)
+        : m_value(toRepresentation(stretch.parameters).withSizesMarginBox(true))
     {
     }
 
@@ -169,8 +175,11 @@ public:
 
     template<typename T> bool holdsAlternative() const
     {
+        // A stretch() is its argument with the bit that it sizes the margin box, so it answers to the <length-percentage> alternatives too.
         if constexpr (std::same_as<T, Numeric>)
             return m_value.type() == indexForType<Dimension>() || m_value.type() == indexForType<Percentage>() || m_value.type() == indexForType<Calc>();
+        else if constexpr (hasCalcSize && std::same_as<T, StretchFunction>)
+            return m_value.sizesMarginBox();
         else if constexpr (hasCalcSize && WebCore::CSS::ValidKeywordForList<T, Keywords>) {
             // A calc-size() with this keyword as its basis answers to the keyword as well, matching
             // how switchOn() hands it to the keyword visitor.
@@ -290,6 +299,8 @@ public:
             SUPPRESS_FORWARD_DECL_ARG return T { m_value.calculationValue() };
         else if constexpr (hasCalcSize && std::same_as<T, CalcSize>)
             SUPPRESS_FORWARD_DECL_ARG return T { m_value.calcSizeValue() };
+        else if constexpr (hasCalcSize && std::same_as<T, StretchFunction>)
+            return T { Numeric { m_value.withSizesMarginBox(false) } };
         else if constexpr (std::same_as<T, Numeric>) {
             // Due to following static assertion, the underlying Representation can be directly copied for conversion to Numeric.
             static_assert(hasSameIndicesAsNumeric());
@@ -312,6 +323,8 @@ public:
             SUPPRESS_FORWARD_DECL_ARG return std::optional<T>(std::in_place, m_value.calculationValue());
         else if constexpr (hasCalcSize && std::same_as<T, CalcSize>)
             SUPPRESS_FORWARD_DECL_ARG return std::optional<T>(std::in_place, m_value.calcSizeValue());
+        else if constexpr (hasCalcSize && std::same_as<T, StretchFunction>)
+            return std::optional<T>(T { Numeric { m_value.withSizesMarginBox(false) } });
         else if constexpr (std::same_as<T, Numeric>) {
             // Due to following static assertion, the underlying Representation can be directly copied for conversion to Numeric.
             static_assert(hasSameIndicesAsNumeric());

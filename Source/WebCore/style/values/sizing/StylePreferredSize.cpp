@@ -35,6 +35,9 @@ MinimumSize PreferredSize::asMinimumSize() const
 {
     if (isCalcSize())
         return MinimumSize { calcSize() };
+    // Copying the numeric value whole keeps its stretch() and quirk bits, which switchOn() doesn't hand over.
+    if (auto numeric = tryNumeric())
+        return MinimumSize { WTF::move(*numeric) };
 
     return WTF::switchOn(*this,
         [&](const auto& value) {
@@ -47,6 +50,9 @@ FlexBasis PreferredSize::asFlexBasis() const
 {
     if (isCalcSize())
         return FlexBasis { calcSize() };
+    // Copying the numeric value whole keeps its stretch() and quirk bits, which switchOn() doesn't hand over.
+    if (auto numeric = tryNumeric())
+        return FlexBasis { WTF::move(*numeric) };
 
     return WTF::switchOn(*this,
         [&](const auto& value) {

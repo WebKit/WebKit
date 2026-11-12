@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSStretchFunctionEnabled=false ] -->
+<title>stretch(&lt;length-percentage&gt;) in the sizing properties is behind a setting</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+test(() => {
+    for (const property of ["width", "height", "min-width", "max-height", "inline-size", "max-block-size"])
+        assert_false(CSS.supports(property, "stretch(10px)"), property);
+    assert_true(CSS.supports("width", "stretch"));
+}, "stretch() is not a sizing value when CSSStretchFunctionEnabled is off");
+</script>
