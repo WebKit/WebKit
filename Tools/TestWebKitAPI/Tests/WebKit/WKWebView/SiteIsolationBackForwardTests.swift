@@ -21,15 +21,15 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_IPC_TESTING_API
-
 private import TestWebKitAPILibrary
 import Testing
 import WebKit
+private import WebKit_Private.WKFrameInfoPrivate
 
 import struct Foundation.URL
 import struct Swift.String
 
+#if ENABLE_IPC_TESTING_API
 private let findSecretsFunction = """
     function findSecrets(buffer, secrets) {
         const bytes = new Uint8Array(buffer);
@@ -41,9 +41,76 @@ private let findSecretsFunction = """
         return secrets.filter(secret => texts.some(text => text.includes(secret)));
     }
     """
+#endif
 
 @MainActor
 struct SiteIsolationBackForwardTests {
+    @Test
+    func goingBackPastSameSiteDocumentKeepsItsChildFrameCached() async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/first") {
+                "<iframe src='https://webkit.org/frame'></iframe>"
+            }
+
+            Route("/second") {
+                "<iframe src='https://apple.com/frame'></iframe>"
+            }
+
+            Route("/frame") {
+                "frame"
+            }
+
+            Route("/next") {
+                "next"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
+            configuration.setFeature("MultiProcessBackForwardCacheEnabled", enabled: true)
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: configuration)
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/first"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/second"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let childFrame = try #require(await webView.firstChildFrame)
+            try await webView.callJavaScript { "window.marker = 'cached'" }
+            try await webView.callJavaScript(in: childFrame) { "window.marker = 'cached'" }
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://w3.org/next"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+
+            webView.go(to: try #require(webView.backForwardList.item(at: -2)))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView.url?.absoluteString == "https://example.com/first")
+            let childFrameHosts = await childFrameHosts(in: webView)
+            #expect(!childFrameHosts.contains("apple.com"), "The first document has the child frame of the second one")
+
+            webView.goForward()
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView.url?.absoluteString == "https://example.com/second")
+            let mainFrameMarker = try await windowMarker(in: webView)
+            #expect(mainFrameMarker == "cached")
+
+            let restoredChildFrame = try #require(await webView.firstChildFrame, "The restored document has no child frame")
+            let childFrameMarker = try await windowMarker(in: webView, frame: restoredChildFrame)
+            #expect(childFrameMarker == "cached")
+            #expect(restoredChildFrame._processIdentifier == childFrame._processIdentifier)
+        }
+    }
+
+    private func windowMarker(in webView: WKWebView, frame: WKFrameInfo? = nil) async throws -> String {
+        try await webView.callJavaScript(returning: String.self, in: frame) { "return window.marker ?? 'reloaded'" }
+    }
+
+    private func childFrameHosts(in webView: WKWebView) async -> [String] {
+        let mainFrame: _WKFrameTreeNode? = await webView._frames()
+        return (mainFrame?.childFrames ?? []).map { $0.info.securityOrigin.host }
+    }
+
+    #if ENABLE_IPC_TESTING_API
     enum BackForwardMessage: CaseIterable {
         case allItems
         case itemAtIndex
@@ -237,6 +304,5 @@ struct SiteIsolationBackForwardTests {
             """
         }
     }
+    #endif // ENABLE_IPC_TESTING_API
 }
-
-#endif // ENABLE_IPC_TESTING_API
