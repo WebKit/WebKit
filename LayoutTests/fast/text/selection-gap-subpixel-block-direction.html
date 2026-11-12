@@ -1,0 +1,8 @@
+<!DOCTYPE html><!-- webkit-test-runner [ deviceScaleFactor=3 ] -->
+<title>Selection has no unselected line between a line-end gap and the text of the following line at a subpixel line position</title>
+<style>
+#container { position: absolute; top: 20px; left: 20px; width: 200px; font: 8px/10.171875px Ahem; }
+::selection { background-color: blue; color: transparent; }
+</style>
+<div id="container">XX<br>XXXXXXXXXXXXXXXX</div>
+<script>getSelection().selectAllChildren(container);</script>

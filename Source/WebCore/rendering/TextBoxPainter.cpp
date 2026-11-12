@@ -611,11 +611,37 @@ void TextBoxPainter::paintBackgroundFill()
 
 LayoutRect TextBoxPainter::backgroundRectForRange(unsigned startOffset, unsigned endOffset, float logicalTop, float logicalBottom) const
 {
+    float boxWidth = m_logicalRect.width();
+    float textSpaceStart = 0;
+    float textSpaceEnd = boxWidth;
+
+    bool rangeReachesVisualLeft = m_paintTextRun.ltr() ? !startOffset : endOffset == m_paintTextRun.length();
+    bool rangeReachesVisualRight = m_paintTextRun.ltr() ? endOffset == m_paintTextRun.length() : !startOffset;
+    if (!rangeReachesVisualLeft || !rangeReachesVisualRight) {
+        auto runLeft = LayoutUnit { m_paintRect.x() };
+        auto measuredRect = measuredSelectionRectForRange(startOffset, endOffset);
+        if (!rangeReachesVisualLeft)
+            textSpaceStart = (measuredRect.x() - runLeft).toFloat();
+        if (!rangeReachesVisualRight)
+            textSpaceEnd = (measuredRect.maxX() - runLeft).toFloat();
+    }
+
+    float inlineStart = m_logicalRect.x() + textSpaceStart;
+    float inlineEnd = m_logicalRect.x() + textSpaceEnd;
+    if (!textBox().isHorizontal() && textBox().writingMode().isLineOverLeft()) {
+        inlineStart = m_logicalRect.x() + boxWidth - textSpaceEnd;
+        inlineEnd = m_logicalRect.x() + boxWidth - textSpaceStart;
+    }
+
+    auto logicalRect = LineSelection::logicalRectForPainting({ FloatPoint { inlineStart, logicalTop }, FloatPoint { inlineEnd, logicalBottom } });
+    return textBox().formattingContextRoot().logicalRectToPhysicalRect(m_paintOffset, logicalRect);
+}
+
+LayoutRect TextBoxPainter::measuredSelectionRectForRange(unsigned startOffset, unsigned endOffset) const
+{
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own highlight.
-    auto deltaY = LayoutUnit { writingMode().isLineInverted() ? logicalBottom - m_logicalRect.maxY() : m_logicalRect.y() - logicalTop };
-    auto logicalHeight = LayoutUnit { std::max(0.f, logicalBottom - logicalTop) };
-    auto rect = LayoutRect { LayoutUnit(m_paintRect.x()), LayoutUnit(m_paintRect.y() - deltaY), LayoutUnit(m_logicalRect.width()), logicalHeight };
+    auto rect = LayoutRect { LayoutUnit(m_paintRect.x()), LayoutUnit(m_paintRect.y()), LayoutUnit(m_logicalRect.width()), LayoutUnit(m_logicalRect.height()) };
 
     if (isInsideShapedContent()) {
         auto shapedContent = ShapedContent { };
@@ -648,21 +674,11 @@ void TextBoxPainter::paintBackgroundFillForRange(unsigned startOffset, unsigned 
     GraphicsContextStateSaver stateSaver { context };
     updateGraphicsContext(context, TextPaintStyle { color }); // Don't draw text at all!
 
-    auto rect = backgroundRectForRange(startOffset, endOffset, logicalTop, logicalBottom);
-
-    if (m_paintTextRun.length() == endOffset - startOffset) {
-        // FIXME: We should reconsider re-measuring the content when non-whitespace runs are joined together (see webkit.org/b/251318).
-        auto unAdjustedRectMaxX = LayoutUnit { m_paintRect.x() + m_logicalRect.width() };
-        auto visualRight = std::max(rect.maxX(), unAdjustedRectMaxX);
-        rect.shiftMaxXEdgeTo(visualRight);
-    }
-
-    // FIXME: Support painting combined text. See <https://bugs.webkit.org/show_bug.cgi?id=180993>.
-    auto backgroundRect = snapRectToDevicePixels(rect, m_document->deviceScaleFactor());
-    if (!writingMode().isHorizontal()) {
-        auto ctm = context.getCTM();
-        if (auto inverseCTM = ctm.inverse())
-            backgroundRect = inverseCTM->mapRect(snapRectToDevicePixels(LayoutRect { ctm.mapRect(FloatRect { rect }) }, 1));
+    auto backgroundRect = snapRectToDevicePixels(backgroundRectForRange(startOffset, endOffset, logicalTop, logicalBottom), m_document->deviceScaleFactor());
+    if (!textBox().isHorizontal() && !m_isCombinedText) {
+        auto glyphRotation = textBox().writingMode().isLineOverLeft() ? RotationDirection::Counterclockwise : RotationDirection::Clockwise;
+        if (auto inverseRotation = rotation(m_paintRect, glyphRotation).inverse())
+            backgroundRect = inverseRotation->mapRect(backgroundRect);
     }
     if (backgroundStyle == BackgroundStyle::Rounded) {
         backgroundRect.expand(-1, -1);

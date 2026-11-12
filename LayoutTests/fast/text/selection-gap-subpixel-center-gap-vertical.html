@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ deviceScaleFactor=3 ] -->
+<title>Selection gaps between inline boxes in vertical text meet the selected text at subpixel positions</title>
+<style>
+#container { position: absolute; left: 20px; top: 20px; height: 150.3px; writing-mode: vertical-lr; font: 5.3px/8px Ahem; }
+::selection { background-color: rgba(0, 0, 255, 0.4); color: transparent; }
+</style>
+<!-- Fractional margins put the edges of the gaps between the text boxes at subpixel positions. The selection starts at the beginning of the first line and ends at the beginning of the last one, so every line in between is fully selected and has to be filled exactly once. -->
+<div id="container"><div style="text-align: left; color: transparent">X</div></div>
+<script>
+for (let i = 0; i < 20; ++i) {
+    const row = document.createElement("div");
+    row.style.paddingTop = (i * 0.29) + "px";
+    row.append("XX");
+    const span = document.createElement("span");
+    span.style.marginTop = (1 + i * 0.13) + "px";
+    span.textContent = "XX";
+    row.append(span);
+    container.append(row);
+}
+const end = document.createElement("div");
+end.style.textAlign = "left";
+end.style.color = "transparent";
+end.textContent = "X";
+container.append(end);
+getSelection().setBaseAndExtent(container.firstChild.firstChild, 0, end.firstChild, 0);
+</script>

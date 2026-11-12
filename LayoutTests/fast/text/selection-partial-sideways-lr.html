@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<title>Partial selection in sideways-lr is painted at the start of the run, which is the bottom of the box</title>
+<style>
+#target { position: absolute; left: 20px; top: 20px; writing-mode: sideways-lr; font: 40px/50px Ahem; color: transparent; }
+::selection { background-color: rgba(0, 0, 255, 0.4); color: transparent; }
+</style>
+<div id="target">ABCDEFGH</div>
+<script>
+getSelection().setBaseAndExtent(target.firstChild, 0, target.firstChild, 3);
+</script>

@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ deviceScaleFactor=3 ] -->
+<title>Selection gaps clipped out around a positioned box meet the box's own selection without overlapping it at subpixel positions</title>
+<style>
+#container { position: absolute; top: 20.3px; left: 20.3px; width: 100.4px; font: 10px/10px Ahem; }
+#wrapper { display: inline-block; position: relative; vertical-align: top; margin-left: 30.3px; width: 40.4px; height: 20.4px; }
+#overlay { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; }
+::selection { background-color: rgba(0, 0, 255, 0.5); color: transparent; }
+</style>
+<!-- The wrapper is a selection root with no selectable content of its own, so its selection gap fills its box, minus
+     the positioned overlay, which paints its own selection. Painting both where they meet shows up darker. -->
+<div id="container">X<br><span id="wrapper"><span id="overlay">X</span></span><br>X</div>
+<script>
+const container = document.getElementById("container");
+getSelection().setBaseAndExtent(container.firstChild, 0, container.lastChild, 1);
+</script>
