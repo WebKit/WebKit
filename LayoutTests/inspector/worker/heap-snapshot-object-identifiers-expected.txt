@@ -1,0 +1,21 @@
+Tests that heap snapshot object identifiers of a Worker are not reused when Heap is disabled on the page or on the Worker.
+
+
+== Running test suite: Worker.Heap.ObjectIdentifiers
+-- Running test case: Worker.Heap.ObjectIdentifiers.Setup
+PASS: Should have a Worker target.
+PASS: Snapshot should have one PageMarker instance.
+
+-- Running test case: Worker.Heap.ObjectIdentifiers.PageDisableDoesNotReuseWorkerIdentifiers
+PASS: Snapshot should have one WorkerMarkerA instance.
+PASS: Snapshot should have one WorkerMarkerB instance.
+PASS: WorkerMarkerA and WorkerMarkerB should have different identifiers.
+PASS: Second snapshot should still include WorkerMarkerA.
+PASS: Second snapshot should have no duplicate identifiers.
+PASS: Preview of the first identifier should still describe WorkerMarkerA.
+
+-- Running test case: Worker.Heap.ObjectIdentifiers.WorkerDisableDoesNotReuseIdentifiers
+PASS: Snapshot should have one WorkerMarkerA instance.
+PASS: Snapshot should have one WorkerMarkerA instance.
+PASS: Snapshot after clearing should only have new identifiers.
+
