@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<input id="first" maxlength="1"><input id="second" maxlength="1">
+<pre id="log"></pre>
+<script>
+let observed = [];
+for (const type of ["compositionstart", "compositionupdate", "compositionend"]) {
+    document.addEventListener(type, event => {
+        observed.push({ type: event.type, data: event.data, target: event.target.id });
+    }, true);
+}
+
+first.addEventListener("input", () => second.focus());
+
+test(() => {
+    assert_own_property(window, "textInputController", "this test needs textInputController to start a composition");
+
+    first.focus();
+    textInputController.setMarkedText("1", 1, 0);
+
+    log.textContent = observed.map(event => `${event.type} target=${event.target} data=${JSON.stringify(event.data)}`).join("\n")
+        + `\nactiveElement=${document.activeElement.id}`
+        + `\nfirst.value=${JSON.stringify(first.value)}`
+        + `\nsecond.value=${JSON.stringify(second.value)}`;
+
+    assert_equals(document.activeElement, second, "the input event handler should move focus to the second field");
+    assert_equals(first.value, "1", "the first field should keep the composed text");
+
+    let compositionEndEvents = observed.filter(event => event.type === "compositionend");
+    assert_equals(compositionEndEvents.length, 1, "the composition should end when the input event handler moves focus");
+    assert_equals(compositionEndEvents[0].target, "first", "compositionend should target the field the composition started in");
+    assert_equals(compositionEndEvents[0].data, "1", "compositionend data should be the composed text");
+}, "A composition ends in its own field when the input event handler moves focus to another field");
+</script>
+</body>
+</html>

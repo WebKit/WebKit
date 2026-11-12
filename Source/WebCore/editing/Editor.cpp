@@ -2720,6 +2720,11 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             unsigned end = std::min(std::max(start, baseOffset + selectionEnd), extentOffset);
             auto range = SimpleRange { { *baseTextNode, start }, { *baseTextNode, end } };
             document->selection().setSelectedRange(range, Affinity::Downstream, FrameSelection::ShouldCloseTyping::No);
+        } else if (target && document->focusedElement() != target) {
+            // An input event handler moved focus to another element. The text stays where it was inserted,
+            // so end the composition there.
+            target->dispatchEvent(CompositionEvent::create(eventNames().compositionendEvent, document->windowProxy(), text));
+            TypingCommand::closeTyping(document);
         }
     }
 
