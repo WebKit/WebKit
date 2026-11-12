@@ -197,7 +197,8 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
         return;
     }
 
-    if (RefPtr page = frame->page(); page && !request.didFilterLinkDecoration()) {
+    // Filter only if top-level navigation and the URL was not previously filtered.
+    if (RefPtr page = frame->page(); page && !frameOwnerElement && !request.didFilterLinkDecoration()) {
         auto [filteredURL, didFilter] = page->chrome().client().applyLinkDecorationFilteringWithResult(request.url(), LinkDecorationFilteringTrigger::Navigation);
         request.setURL(WTF::move(filteredURL), didFilter == DidFilterLinkDecoration::Yes);
     }
