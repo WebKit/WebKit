@@ -118,8 +118,7 @@ RefPtr<CSSValue> consumeKeyframesName(CSSParserTokenRange& range, CSS::PropertyP
         if (token.value().isEmpty())
             return nullptr;
 
-        auto valueId = cssValueKeywordID(token.value());
-        if (isValidCustomIdentifier(valueId) && valueId != CSSValueID::None)
+        if (isValidCustomIdentifierForKeyframeName(cssValueKeywordID(token.value())))
             return CSSCustomIdentValue::create(CSS::CustomIdent { token.value().toAtomString() });
         return CSSStringValue::create(CSS::String { token.value().toString() });
     }

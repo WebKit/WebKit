@@ -29,6 +29,8 @@
 #include "CSSKeyframeRule.h"
 #include "CSSMarkup.h"
 #include "CSSParser.h"
+#include "CSSParserIdioms.h"
+#include "CSSPropertyParser.h"
 #include "CSSPropertyParserConsumer+Animations.h"
 #include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
@@ -168,7 +170,12 @@ String CSSKeyframesRule::cssText() const
     StringBuilder result;
 
     result.append("@keyframes "_s);
-    serializeIdentifier(result, name());
+
+    auto& name = this->name();
+    if (!isValidCustomIdentifierForKeyframeName(cssValueKeywordID(name)))
+        serializeString(result, name);
+    else
+        serializeIdentifier(result, name);
     result.append(" { \n"_s);
 
     for (unsigned i = 0, size = length(); i < size; ++i)

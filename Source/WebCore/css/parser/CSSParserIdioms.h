@@ -108,4 +108,10 @@ inline bool isValidContainerNameIdentifier(CSSValueID valueID)
     }
 }
 
+// https://drafts.csswg.org/css-animations/#typedef-keyframes-name
+inline bool isValidCustomIdentifierForKeyframeName(CSSValueID valueID)
+{
+    return isValidCustomIdentifier(valueID) && valueID != CSSValueID::None;
+}
+
 } // namespace WebCore

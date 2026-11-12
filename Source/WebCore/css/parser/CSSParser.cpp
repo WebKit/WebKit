@@ -1028,7 +1028,7 @@ RefPtr<StyleRuleKeyframes> CSSParser::consumeKeyframesRule(CSSParserTokenRange p
         // According to the CSS Values specification, identifier-based keyframe names
         // are not allowed to be CSS wide keywords or "default". And CSS Animations
         // additionally excludes the "none" keyword.
-        if (!isValidCustomIdentifier(nameToken.id()) || nameToken.id() == CSSValueID::None)
+        if (!isValidCustomIdentifierForKeyframeName(nameToken.id()))
             return nullptr;
     } else if (nameToken.type() != StringToken)
         return nullptr; // Parse error; expected ident token or string in @keyframes header
