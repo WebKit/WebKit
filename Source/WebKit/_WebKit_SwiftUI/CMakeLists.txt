@@ -27,7 +27,13 @@ set(WebKit_SWIFTUI_SOURCES
 # not hashed, are listed here. Flags Xcode sets for every Swift target
 # (-swift-version, InternalImportsByDefault, -disable-sandbox) come from
 # WebKitSwiftFlags.cmake.
+# FIXME: _WebKit_SwiftUI shouldn't use this function, as it doesn't build with
+# c++ interop.
 _WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS(_swiftui_shared_cc_flags)
+# Strip the UCHAR_TYPE define, which is only relevant for C++ and otherwise
+# breaks icu's module.
+list(FILTER _swiftui_shared_cc_flags EXCLUDE REGEX "^-DUCHAR_TYPE=")
+
 set(WebKit_SWIFTUI_SWIFT_FLAGS "")
 foreach (_flag IN LISTS _swiftui_shared_cc_flags)
     list(APPEND WebKit_SWIFTUI_SWIFT_FLAGS "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc ${_flag}>")

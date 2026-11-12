@@ -114,7 +114,6 @@ if (SWIFT_REQUIRED AND APPLE)
         "-library-level spi"
         "-Xcc -I${PAL_FRAMEWORK_HEADERS_DIR}"
         "-Xcc -I${WTF_FRAMEWORK_HEADERS_DIR}"
-        "-Xcc -I${CMAKE_BINARY_DIR}/ICU/Headers"
         "-Xcc -I${bmalloc_FRAMEWORK_HEADERS_DIR}"
         "-Xcc -I${CMAKE_BINARY_DIR}"
         "-Xcc -I${PAL_DERIVED_SOURCES_DIR}"

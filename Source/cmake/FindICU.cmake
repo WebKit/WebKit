@@ -3,7 +3,9 @@ if (APPLE)
     if (USE_APPLE_INTERNAL_SDK)
         set(ICU_INCLUDE_DIRS ${CMAKE_OSX_SYSROOT}/usr/local/include)
     else ()
-        set(ICU_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/ICU/Headers)
+        # WTF copies a vendored unicode library into the build
+        # directory.
+        set(ICU_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/usr/local/include)
     endif ()
     # Apple just has a single tbd/dylib for ICU.
     find_library(ICU_I18N_LIBRARY icucore)
