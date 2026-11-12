@@ -636,6 +636,14 @@ static void overrideDefaults()
     Options::worklistDFGLoadWeight() = 5;
     // Set the FTL load weight equal to the load-factor so that a new thread is started for each FTL plan
     Options::worklistFTLLoadWeight() = 20;
+
+#if PLATFORM(MAC)
+    unsigned fastCores = numberOfSuperAndPerformanceCores();
+    if (fastCores >= 3 && fastCores <= 4 && hwNumberOfCores(CoreCategory::Efficiency) >= 4 && kernTCSMAwareNumberOfProcessorCores() >= 8) {
+        Options::maxNumberOfWorklistThreads() = 6;
+        Options::numberOfDFGCompilerThreads() = 6;
+    }
+#endif
 #endif
 
 #if PLATFORM(MAC) && CPU(ARM64)
