@@ -451,11 +451,9 @@ void LocalDOMWindow::setCanShowModalDialogOverride(bool allow)
 LocalDOMWindow::LocalDOMWindow(Document& document)
     : DOMWindow(GlobalWindowIdentifier { Process::identifier(), WindowIdentifier::generate() }, DOMWindowType::Local)
     , ContextDestructionObserver(&document)
-    , m_customElementRegistry(CustomElementRegistry::create(document, *this))
 {
     ASSERT(frame());
     addLanguageChangeObserver(this, &languagesChangedCallback);
-    document.setCustomElementRegistry(m_customElementRegistry.copyRef());
 }
 
 ScriptExecutionContext* LocalDOMWindow::scriptExecutionContext() const
@@ -488,8 +486,6 @@ void LocalDOMWindow::didSecureTransitionTo(Document& document)
     m_crypto = nullptr;
     m_navigator = nullptr;
     m_performance = nullptr;
-    m_customElementRegistry = CustomElementRegistry::create(document, *this);
-    document.setCustomElementRegistry(m_customElementRegistry.copyRef());
 }
 
 void LocalDOMWindow::prewarmLocalStorageIfNecessary()
@@ -669,6 +665,10 @@ void LocalDOMWindow::resumeFromBackForwardCache()
     m_suspendedForDocumentSuspension = false;
 }
 
+CustomElementRegistry& LocalDOMWindow::customElementRegistry()
+{
+    return *document()->customElementRegistry();
+}
 
 static ExceptionOr<SelectorQuery&> selectorQueryInFrame(LocalFrame* frame, const String& selectors)
 {

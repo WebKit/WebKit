@@ -310,7 +310,7 @@ public:
     Storage* optionalSessionStorage() const { return m_sessionStorage.get(); }
     Storage* optionalLocalStorage() const { return m_localStorage.get(); }
 
-    CustomElementRegistry& customElementRegistry() { return m_customElementRegistry; }
+    NODELETE CustomElementRegistry& customElementRegistry();
 
     ExceptionOr<Ref<NodeList>> collectMatchingElementsInFlatTree(Node&, const String& selectors);
     ExceptionOr<RefPtr<Element>> matchingElementInFlatTree(Node&, const String& selectors);
@@ -503,8 +503,6 @@ private:
 
     mutable RefPtr<Storage> m_sessionStorage;
     mutable RefPtr<Storage> m_localStorage;
-
-    Ref<CustomElementRegistry> m_customElementRegistry;
 
     mutable RefPtr<Performance> m_performance;
 

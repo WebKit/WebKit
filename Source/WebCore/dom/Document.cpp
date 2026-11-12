@@ -7359,6 +7359,7 @@ void Document::createDOMWindow()
     ASSERT(!m_domWindow);
 
     m_domWindow = LocalDOMWindow::create(*this);
+    setCustomElementRegistry(CustomElementRegistry::createGlobal(*this));
 
     ASSERT(m_domWindow->document() == this);
     ASSERT(m_domWindow->frame() == m_frame);
@@ -7374,6 +7375,7 @@ void Document::takeDOMWindowFrom(Document& document)
 
     m_domWindow = WTF::move(document.m_domWindow);
     protect(window())->didSecureTransitionTo(*this);
+    setCustomElementRegistry(CustomElementRegistry::createGlobal(*this));
 
     ASSERT(m_domWindow->document() == this);
     ASSERT(m_domWindow->frame() == m_frame);

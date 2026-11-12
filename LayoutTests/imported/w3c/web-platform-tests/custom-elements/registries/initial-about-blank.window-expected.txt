@@ -1,3 +1,6 @@
 
 FAIL Each navigable document has its own registry assert_not_equals: got disallowed value undefined
+PASS The initial about:blank document keeps its registry when its window is reused
+PASS define() on the initial about:blank document's registry after its window is reused upgrades nothing
+PASS A removed iframe's window keeps its document's registry after garbage collection
 
