@@ -83,10 +83,10 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document& docu
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
-        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGSVGElement::m_x>();
-        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGSVGElement::m_y>();
-        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGSVGElement::m_width>();
-        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGSVGElement::m_height>();
+        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGSVGElement::m_x>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGSVGElement::m_y>(SVGLengthMode::Height);
+        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGSVGElement::m_width>(SVGLengthMode::Width, SVGLengthNegativeValuesMode::Forbid, "100%"_s);
+        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGSVGElement::m_height>(SVGLengthMode::Height, SVGLengthNegativeValuesMode::Forbid, "100%"_s);
     }
 }
 

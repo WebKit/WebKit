@@ -49,10 +49,10 @@ inline SVGForeignObjectElement::SVGForeignObjectElement(const QualifiedName& tag
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
-        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGForeignObjectElement::m_x>();
-        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGForeignObjectElement::m_y>();
-        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGForeignObjectElement::m_width>();
-        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGForeignObjectElement::m_height>();
+        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGForeignObjectElement::m_x>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGForeignObjectElement::m_y>(SVGLengthMode::Height);
+        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGForeignObjectElement::m_width>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGForeignObjectElement::m_height>(SVGLengthMode::Height);
     }
 }
 

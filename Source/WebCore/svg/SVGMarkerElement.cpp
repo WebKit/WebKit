@@ -49,10 +49,10 @@ inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
-        PropertyRegistry::registerProperty<SVGNames::refXAttr, &SVGMarkerElement::m_refX>();
-        PropertyRegistry::registerProperty<SVGNames::refYAttr, &SVGMarkerElement::m_refY>();
-        PropertyRegistry::registerProperty<SVGNames::markerWidthAttr, &SVGMarkerElement::m_markerWidth>();
-        PropertyRegistry::registerProperty<SVGNames::markerHeightAttr, &SVGMarkerElement::m_markerHeight>();
+        PropertyRegistry::registerProperty<SVGNames::refXAttr, &SVGMarkerElement::m_refX>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::refYAttr, &SVGMarkerElement::m_refY>(SVGLengthMode::Height);
+        PropertyRegistry::registerProperty<SVGNames::markerWidthAttr, &SVGMarkerElement::m_markerWidth>(SVGLengthMode::Width);
+        PropertyRegistry::registerProperty<SVGNames::markerHeightAttr, &SVGMarkerElement::m_markerHeight>(SVGLengthMode::Height);
         PropertyRegistry::registerProperty<SVGNames::markerUnitsAttr, SVGMarkerUnitsType, &SVGMarkerElement::m_markerUnits>();
         PropertyRegistry::registerProperty<SVGNames::orientAttr, &SVGMarkerElement::m_orientAngle, &SVGMarkerElement::m_orientType>();
     }
