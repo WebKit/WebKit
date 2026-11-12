@@ -27,8 +27,11 @@
 #include "CSSParamValue.h"
 
 #include "CSSVariableData.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSParamValue);
 
 CSSParamValue::CSSParamValue(CSS::ParamFunction&& parameter)
     : CSSValue { ClassType::Param }

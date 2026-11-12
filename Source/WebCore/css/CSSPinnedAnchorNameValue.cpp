@@ -28,9 +28,12 @@
 #if ENABLE(SPATIAL_PORTAL)
 
 #include <wtf/Hasher.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSPinnedAnchorNameValue);
 
 Ref<CSSPinnedAnchorNameValue> CSSPinnedAnchorNameValue::create(CSS::CustomIdent name, CSS::CustomIdent attachment)
 {

@@ -27,8 +27,11 @@
 #include "CSSBorderImageWidthValue.h"
 
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSBorderImageWidthValue);
 
 CSSBorderImageWidthValue::CSSBorderImageWidthValue(CSS::BorderImageWidth&& widths)
     : CSSValue(ClassType::BorderImageWidth)

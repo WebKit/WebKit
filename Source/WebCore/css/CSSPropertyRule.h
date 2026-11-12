@@ -26,12 +26,14 @@
 #pragma once
 
 #include "CSSRule.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class StyleRuleProperty;
 
 class CSSPropertyRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSPropertyRule);
 public:
     NODELETE static Ref<CSSPropertyRule> create(StyleRuleProperty&, CSSStyleSheet* parent);
     virtual ~CSSPropertyRule();

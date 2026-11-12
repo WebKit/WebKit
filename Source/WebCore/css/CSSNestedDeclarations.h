@@ -20,6 +20,7 @@
 #pragma once
 
 #include "CSSRule.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -31,6 +32,7 @@ class StyleRuleCSSStyleProperties;
 class StyleRuleNestedDeclarations;
 
 class CSSNestedDeclarations final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSNestedDeclarations);
 public:
     static Ref<CSSNestedDeclarations> create(StyleRuleNestedDeclarations& rule, CSSStyleSheet* sheet) { return adoptRef(* new CSSNestedDeclarations(rule, sheet)); };
 

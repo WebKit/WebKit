@@ -32,6 +32,7 @@
 #include <WebCore/StyleRuleType.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/Hasher.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -40,7 +41,7 @@ class Document;
 class Settings;
 
 struct CSSParserContext {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CSSParserContext);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(CSSParserContext);
 
     URL baseURL;
     ASCIILiteral charset;

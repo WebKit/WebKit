@@ -27,10 +27,12 @@
 
 #include "CSSBorderImageOutset.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSBorderImageOutsetValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSBorderImageOutsetValue);
 public:
     static Ref<CSSBorderImageOutsetValue> create(CSS::BorderImageOutset&&);
     ~CSSBorderImageOutsetValue();

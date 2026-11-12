@@ -28,6 +28,7 @@
 #include <WebCore/CSSValueTypes.h>
 #include <WebCore/Color.h>
 #include <WebCore/ColorTypes.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace CSS {
@@ -35,7 +36,7 @@ namespace CSS {
 struct PlatformColorResolutionState;
 
 struct HexColor {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(HexColor);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(HexColor);
 
     SRGBA<uint8_t> value;
 

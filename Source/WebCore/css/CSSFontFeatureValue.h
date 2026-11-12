@@ -29,10 +29,12 @@
 #include "CSSPrimitiveNumericTypes.h"
 #include "CSSValue.h"
 #include "FontTaggedSettings.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSFontFeatureValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontFeatureValue);
 public:
     static Ref<CSSFontFeatureValue> create(FontTag&& tag, CSS::Integer<CSS::Nonnegative>&& value)
     {

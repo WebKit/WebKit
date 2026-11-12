@@ -26,10 +26,12 @@
 
 #include <WebCore/CSSGridTemplateList.h>
 #include <WebCore/CSSValue.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSGridTemplateListValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSGridTemplateListValue);
 public:
     static Ref<CSSGridTemplateListValue> create(CSS::GridTemplateList);
 

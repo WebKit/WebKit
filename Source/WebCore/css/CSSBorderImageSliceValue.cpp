@@ -27,8 +27,11 @@
 #include "CSSBorderImageSliceValue.h"
 
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSBorderImageSliceValue);
 
 CSSBorderImageSliceValue::CSSBorderImageSliceValue(CSS::BorderImageSlice&& slices)
     : CSSValue(ClassType::BorderImageSlice)

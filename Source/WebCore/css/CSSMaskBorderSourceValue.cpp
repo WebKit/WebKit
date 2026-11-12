@@ -29,8 +29,11 @@
 
 #include "CSSValuePool.h"
 #include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSMaskBorderSourceValue);
 
 CSSMaskBorderSourceValue::CSSMaskBorderSourceValue(CSS::MaskBorderSource&& source)
     : CSSValue(ClassType::MaskBorderSource)

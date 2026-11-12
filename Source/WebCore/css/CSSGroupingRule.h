@@ -24,6 +24,7 @@
 
 #include <WebCore/CSSRule.h>
 #include <memory>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -32,6 +33,7 @@ class CSSRuleList;
 class StyleRuleGroup;
 
 class CSSGroupingRule : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSGroupingRule);
 public:
     virtual ~CSSGroupingRule();
 

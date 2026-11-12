@@ -27,9 +27,12 @@
 #include "config.h"
 #include "CSSFontVariationValue.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFontVariationValue);
 
 CSSFontVariationValue::CSSFontVariationValue(FontTag tag, Ref<CSSValue>&& value)
     : CSSValue(ClassType::FontVariation)

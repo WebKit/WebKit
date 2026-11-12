@@ -28,11 +28,13 @@
 
 #include "LocalDOMWindowProperty.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class StyleMedia final : public RefCounted<StyleMedia>, public LocalDOMWindowProperty {
+    WTF_MAKE_TZONE_ALLOCATED(StyleMedia);
 public:
     static Ref<StyleMedia> create(LocalDOMWindow& window) { return adoptRef(*new StyleMedia(window)); }
 

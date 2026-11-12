@@ -27,8 +27,11 @@
 #include "CSSBorderImageOutsetValue.h"
 
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSBorderImageOutsetValue);
 
 CSSBorderImageOutsetValue::CSSBorderImageOutsetValue(CSS::BorderImageOutset&& outsets)
     : CSSValue(ClassType::BorderImageOutset)

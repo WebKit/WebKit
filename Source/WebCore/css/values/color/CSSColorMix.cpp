@@ -34,9 +34,12 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "ColorSerialization.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace CSS {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ColorMix);
 
 using namespace CSS::Literals;
 

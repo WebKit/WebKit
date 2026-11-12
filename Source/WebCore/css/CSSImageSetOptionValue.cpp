@@ -29,8 +29,11 @@
 #include "CSSImageValue.h"
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSImageSetOptionValue);
 
 CSSImageSetOptionValue::CSSImageSetOptionValue(Ref<CSSValue>&& image, std::optional<CSS::Resolution<>>&& resolution, std::optional<FunctionNotation<CSSValueID::Type, CSS::String>>&& mimeType)
     : CSSValue(ClassType::ImageSetOption)

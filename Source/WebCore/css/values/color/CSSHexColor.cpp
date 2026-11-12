@@ -27,9 +27,12 @@
 #include "CSSHexColor.h"
 
 #include "ColorSerialization.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace CSS {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(HexColor);
 
 // MARK: - Serialize
 

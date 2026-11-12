@@ -41,10 +41,13 @@
 #include "MutableStyleProperties.h"
 #include "Settings.h"
 #include "StyleProperties.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMCSSNamespace);
 
 bool DOMCSSNamespace::supports(Document& document, const String& property, const String& value)
 {

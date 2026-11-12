@@ -27,10 +27,12 @@
 
 #include "CSSFontPalette.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSFontPaletteValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontPaletteValue);
 public:
     NODELETE static Ref<CSSFontPaletteValue> create(CSS::FontPalette&&);
 

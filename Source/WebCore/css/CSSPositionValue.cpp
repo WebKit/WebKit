@@ -28,8 +28,15 @@
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSPositionValue);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSPositionXValue);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSPositionYValue);
 
 Ref<CSSPositionValue> CSSPositionValue::create(CSS::Position&& position)
 {

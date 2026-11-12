@@ -31,12 +31,14 @@
 #include "CSSRayFunction.h"
 #include "CSSValue.h"
 #include "RenderStyleConstants.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // Class containing the value of a ray() function, as used in offset-path:
 // https://drafts.fxtf.org/motion-1/#funcdef-offset-path-ray.
 class CSSRayValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSRayValue);
 public:
     static Ref<CSSRayValue> create(CSS::RayFunction ray, CSSBoxType coordinateBox = CSSBoxType::BoxMissing)
     {

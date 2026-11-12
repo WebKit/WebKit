@@ -27,8 +27,11 @@
 
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSEasingFunctionValue);
 
 Ref<CSSEasingFunctionValue> CSSEasingFunctionValue::create(CSS::EasingFunction easingFunction)
 {

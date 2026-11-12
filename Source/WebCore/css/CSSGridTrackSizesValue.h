@@ -26,10 +26,12 @@
 
 #include "CSSGridTrackSizes.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSGridTrackSizesValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSGridTrackSizesValue);
 public:
     static Ref<CSSGridTrackSizesValue> create(CSS::GridTrackSizes);
 

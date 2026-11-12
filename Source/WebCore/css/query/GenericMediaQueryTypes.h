@@ -34,6 +34,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Variant.h>
 #include <wtf/text/AtomString.h>
 
@@ -150,7 +151,8 @@ struct FeatureEvaluationContext {
 };
 
 struct FeatureSchema {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FeatureSchema);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FeatureSchema);
+public:
 
     enum class Type : uint8_t { Discrete, Range };
     enum class ValueType : uint8_t { Integer, Number, Length, Ratio, Resolution, Identifier, CustomProperty };
