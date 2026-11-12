@@ -1,4 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-  <text x="20" y="20">Test PASSES if it does not crash and has no red rectangle.</text>
+  <filter id="f1">
+    <feConvolveMatrix order="3" divisor="5" kernelMatrix="0 1 0   1 1 1   0 1 0"/>
+  </filter>
+  <text x="20" y="20">A divisor of 0 is replaced by the default, the sum of the kernel matrix values.</text>
+  <g filter="url(#f1)">
+    <rect x="20" y="40" width="50" height="50" fill="green"/>
+  </g>
 </svg>
-

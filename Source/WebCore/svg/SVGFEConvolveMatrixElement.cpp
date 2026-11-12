@@ -102,8 +102,8 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
     case AttributeNames::divisorAttr: {
         auto result = parseNumber(newValue);
         m_divisor->setBaseValInternal(result);
-        if (result && *result <= 0)
-            protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing divisor=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+        if (result && !*result)
+            protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing divisor=\""_s, newValue, "\". Using the default value."_s));
         break;
     }
     case AttributeNames::biasAttr:
@@ -129,8 +129,8 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         }
         m_kernelUnitLengthX->setBaseValInternal(result->first);
         m_kernelUnitLengthY->setBaseValInternal(result->second);
-        if (result->first < 0 || result->second < 0)
-            protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing kernelUnitLength=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+        if (result->first <= 0 || result->second <= 0)
+            protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing kernelUnitLength=\""_s, newValue, "\". Using the default value."_s));
         break;
     }
     case AttributeNames::preserveAlphaAttr:
@@ -155,14 +155,14 @@ bool SVGFEConvolveMatrixElement::setFilterEffectAttribute(FilterEffect& filterEf
     case AttributeNames::edgeModeAttr:
         return effect.setEdgeMode(edgeMode());
     case AttributeNames::divisorAttr:
-        return effect.setDivisor(divisor());
+        return effect.setDivisor(effectiveDivisor());
     case AttributeNames::biasAttr:
         return effect.setBias(bias());
     case AttributeNames::targetXAttr:
     case AttributeNames::targetYAttr:
         return effect.setTargetOffset(IntPoint(targetX(), targetY()));
     case AttributeNames::kernelUnitLengthAttr:
-        return effect.setKernelUnitLength(FloatPoint(kernelUnitLengthX(), kernelUnitLengthY()));
+        return effect.setKernelUnitLength(effectiveKernelUnitLength());
     case AttributeNames::preserveAlphaAttr:
         return effect.setPreserveAlpha(preserveAlpha());
     default:
@@ -170,6 +170,36 @@ bool SVGFEConvolveMatrixElement::setFilterEffectAttribute(FilterEffect& filterEf
     }
     ASSERT_NOT_REACHED();
     return false;
+}
+
+float SVGFEConvolveMatrixElement::effectiveDivisor() const
+{
+    // The spec says a divisor of 0 is replaced by the default value: the sum of all values in
+    // kernelMatrix, or 1 if the sum is 0.
+    if (hasAttribute(SVGNames::divisorAttr)) {
+        if (auto divisor = this->divisor())
+            return divisor;
+    }
+
+    Ref kernelMatrix = this->kernelMatrix();
+    float sum = 0;
+    for (auto& item : kernelMatrix->items())
+        sum += item->value();
+    return sum ? sum : initialDivisorValue;
+}
+
+FloatPoint SVGFEConvolveMatrixElement::effectiveKernelUnitLength() const
+{
+    // The spec says a negative or zero kernelUnitLength is replaced by the default value of one
+    // pixel. A single non-positive component makes the whole attribute invalid, so both
+    // components revert.
+    if (!hasAttribute(SVGNames::kernelUnitLengthAttr))
+        return { 1, 1 };
+    auto x = kernelUnitLengthX();
+    auto y = kernelUnitLengthY();
+    if (x <= 0 || y <= 0)
+        return { 1, 1 };
+    return { x, y };
 }
 
 void SVGFEConvolveMatrixElement::setOrder(float x, float y)
@@ -247,33 +277,12 @@ RefPtr<FilterEffect> SVGFEConvolveMatrixElement::createFilterEffect(const Filter
         return IntSize(orderX(), orderY());
     };
 
-    auto filterDivisor = [&] (const SVGNumberList& kernelMatrix) {
-        if (hasAttribute(SVGNames::divisorAttr))
-            return divisor();
-
-        float filterDivisor = 0;
-
-        // The spec says the default value is the sum of all values in kernelMatrix.
-        for (auto& item : kernelMatrix.items())
-            filterDivisor += item->value();
-
-        // The spec says if the sum is zero, then the divisor is set to the initial value.
-        return filterDivisor ? filterDivisor : initialDivisorValue;
-    };
-
     auto filterTarget = [&] (const IntSize& order) {
         // The spec says the default value is: targetX = floor ( orderX / 2 ))
         return IntPoint(
             hasAttribute(SVGNames::targetXAttr) ? targetX() : order.width() / 2,
             hasAttribute(SVGNames::targetYAttr) ? targetY() : order.height() / 2
         );
-    };
-
-    auto filterKernelUnitLength = [&] () {
-        // Spec says default kernelUnitLength is 1.0.
-        if (!hasAttribute(SVGNames::kernelUnitLengthAttr))
-            return FloatSize(1, 1);
-        return FloatSize(kernelUnitLengthX(), kernelUnitLengthY());
     };
 
     // Spec says order must be > 0. Bail if it is not.
@@ -287,21 +296,11 @@ RefPtr<FilterEffect> SVGFEConvolveMatrixElement::createFilterEffect(const Filter
     if (order.unclampedArea() != kernelMatrix->length())
         return nullptr;
 
-    // Spec says the specified divisor cannot be 0.
-    auto divisor = filterDivisor(kernelMatrix.get());
-    if (!divisor)
-        return nullptr;
-
     auto target = filterTarget(order);
     if (!IntRect({ }, order).contains(target))
         return nullptr;
 
-    // Spec says the specified kernelUnitLength cannot be negative or zero.
-    auto kernelUnitLength = filterKernelUnitLength();
-    if (kernelUnitLength.isEmpty())
-        return nullptr;
-
-    return FEConvolveMatrix::create(order, divisor, bias(), target, edgeMode(), FloatPoint(kernelUnitLength), preserveAlpha(), kernelMatrix.get());
+    return FEConvolveMatrix::create(order, effectiveDivisor(), bias(), target, edgeMode(), effectiveKernelUnitLength(), preserveAlpha(), kernelMatrix.get());
 }
 
 } // namespace WebCore
