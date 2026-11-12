@@ -2453,7 +2453,7 @@ bool RenderThemeCocoa::adjustInnerSpinButtonStyleForVectorBasedControls(Style::C
     // change according to the height of the inner container.
 
     const auto logicalWidthEm = style.writingMode().isVertical() ? 1.5f : 1.f;
-    const auto pixelsPerEm = Style::emToPx<float>(logicalWidthEm, style);
+    const auto pixelsPerEm = Style::emToPx<float>(logicalWidthEm, style, protect(element->document()));
 
     style.setLogicalWidth(Style::PreferredSize::Fixed { pixelsPerEm });
     style.setLogicalHeight(CSS::Keyword::Auto { });
@@ -4294,7 +4294,7 @@ bool RenderThemeCocoa::adjustSearchFieldCancelButtonStyleForVectorBasedControls(
     if (!formControlRefreshEnabled(element))
         return false;
 
-    auto pixelsPerEm = Style::emToPx<float>(1, style);
+    auto pixelsPerEm = Style::emToPx<float>(1, style, protect(element->document()));
     style.setWidth(Style::PreferredSize::Fixed { searchFieldDecorationEmSize * pixelsPerEm });
     style.setHeight(Style::PreferredSize::Fixed { searchFieldDecorationEmSize * pixelsPerEm });
     return true;
@@ -4387,7 +4387,7 @@ bool RenderThemeCocoa::adjustSearchFieldDecorationPartStyleForVectorBasedControl
     if (!formControlRefreshEnabled(element))
         return false;
 
-    auto pixelsPerEm = Style::emToPx<float>(1, style);
+    auto pixelsPerEm = Style::emToPx<float>(1, style, protect(element->document()));
 
 #if PLATFORM(MAC)
     RefPtr input = dynamicDowncast<HTMLInputElement>(element->shadowHost());

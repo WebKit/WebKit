@@ -1,0 +1,13 @@
+Tests that em-sized search field parts include a percentage -webkit-text-size-adjust.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS part('searchAdjusted', '-webkit-search-decoration').width is part('searchControl', '-webkit-search-decoration').width
+PASS part('searchAdjusted', '-webkit-search-cancel-button').width is part('searchControl', '-webkit-search-cancel-button').width
+PASS part('searchControl', '-webkit-search-decoration').width is 26
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

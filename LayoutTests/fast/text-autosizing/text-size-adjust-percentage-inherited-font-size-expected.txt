@@ -1,0 +1,31 @@
+Tests that a percentage -webkit-text-size-adjust is applied once, and not again to the inherited font size of descendants.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS fontSize('depth1') is "18px"
+PASS fontSize('depth2') is "18px"
+PASS fontSize('depth3') is "18px"
+PASS fontSize('parent') is "26px"
+PASS fontSize('weight') is "26px"
+PASS fontSize('nestedWeight') is "26px"
+PASS fontSize('em') is "26px"
+PASS fontSize('inherit') is "26px"
+PASS fontSize('italic') is "26px"
+PASS fontSize('letterSpacing') is "26px"
+PASS fontSize('medium') is "24px"
+PASS fontSize('codeMedium') is "19.5px"
+PASS fontSize('codePercent') is "29.25px"
+PASS width('nestedWeight') is width('control700')
+PASS width('em') is width('control600')
+PASS width('emWidth') is 260
+PASS successfullyParsed is true
+
+TEST COMPLETE
+depth 1
+depth 2
+depth 3
+XXXXXXX
+xx
+x
+XX

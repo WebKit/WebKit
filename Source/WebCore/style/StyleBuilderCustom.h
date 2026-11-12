@@ -317,10 +317,12 @@ inline void BuilderCustom::applyInitialLineHeight(BuilderState& builderState)
 static inline float computeBaseComputedFontSize(const Document& document, const ComputedStyle& style)
 {
     float result = style.fontSize();
-    auto* frame = document.frame();
+    RefPtr frame = document.frame();
     if (frame && style.textZoom() != TextZoom::Reset)
         result *= frame->textZoomFactor();
     result *= style.usedZoom();
+    if (auto multiplier = style.textSizeAdjust().usedFontSizeMultiplier(document))
+        result *= *multiplier;
     return result;
 }
 

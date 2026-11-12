@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals) {
+    internals.settings.setTextAutosizingEnabled(true);
+    internals.settings.setTextAutosizingUsesIdempotentMode(true);
+    internals.settings.setIdempotentModeAutosizingOnlyHonorsPercentages(true);
+}
+</script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.adjust, .adjust * { -webkit-text-size-adjust: 150%; }
+.adjust { font-size: 12px; }
+.adjust span, .adjust em { display: block; }
+.body-adjust { -webkit-text-size-adjust: 130%; }
+.parent { font-size: 20px; font-weight: 400; }
+.ahem { font-family: Ahem; }
+#emWidth { display: block; width: 10em; }
+</style>
+</head>
+<body>
+<div class="adjust">
+    <span id="depth1">depth 1
+        <span id="depth2">depth 2
+            <em id="depth3">depth 3</em>
+        </span>
+    </span>
+</div>
+<div class="body-adjust">
+    <div class="parent ahem" id="parent">X<span id="weight" style="font-weight: 600">X<span id="nestedWeight" style="font-weight: 700">X</span></span><span id="em" style="font-weight: 600; font-size: 1em">X</span><span id="inherit" style="font-weight: 600; font-size: inherit">X</span><span id="italic" style="font-style: italic">X</span><span id="letterSpacing" style="letter-spacing: 2px">X</span><span id="emWidth"></span></div>
+</div>
+<div style="-webkit-text-size-adjust: 150%"><span id="medium">x</span><code id="codeMedium">x</code><div style="font-size: 150%"><code id="codePercent">x</code></div></div>
+<div class="ahem" style="font-size: 26px; -webkit-text-size-adjust: none"><span id="control700" style="font-weight: 700">X</span><span id="control600" style="font-weight: 600">X</span></div>
+<script>
+description("Tests that a percentage -webkit-text-size-adjust is applied once, and not again to the inherited font size of descendants, in idempotent mode when only percentages are honored.");
+
+function fontSize(id) { return getComputedStyle(document.getElementById(id)).fontSize; }
+
+shouldBeEqualToString("fontSize('depth1')", "18px");
+shouldBeEqualToString("fontSize('depth2')", "18px");
+shouldBeEqualToString("fontSize('depth3')", "18px");
+
+shouldBeEqualToString("fontSize('parent')", "26px");
+shouldBeEqualToString("fontSize('weight')", "26px");
+shouldBeEqualToString("fontSize('nestedWeight')", "26px");
+shouldBeEqualToString("fontSize('em')", "26px");
+shouldBeEqualToString("fontSize('inherit')", "26px");
+shouldBeEqualToString("fontSize('italic')", "26px");
+shouldBeEqualToString("fontSize('letterSpacing')", "26px");
+
+shouldBeEqualToString("fontSize('medium')", "24px");
+shouldBeEqualToString("fontSize('codeMedium')", "19.5px");
+shouldBeEqualToString("fontSize('codePercent')", "29.25px");
+
+function width(id) { return document.getElementById(id).getBoundingClientRect().width; }
+
+shouldBe("width('nestedWeight')", "width('control700')");
+shouldBe("width('em')", "width('control600')");
+shouldBe("width('emWidth')", "260");
+</script>
+</body>
+</html>

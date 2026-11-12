@@ -24,6 +24,9 @@
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
 namespace WebCore {
+
+class Document;
+
 namespace Style {
 
 // <'-webkit-text-size-adjust'> = auto | none | <percentage [0,∞]>
@@ -53,6 +56,9 @@ struct TextSizeAdjust {
     constexpr bool isPercentage() const { return m_value >= 0; }
 
     constexpr std::optional<float> tryPercentage() const { return isPercentage() ? std::optional { percentage() } : std::nullopt; }
+
+    // The multiplier text autosizing applies to the used font size, if any.
+    std::optional<float> usedFontSizeMultiplier(const Document&) const;
 
     template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {

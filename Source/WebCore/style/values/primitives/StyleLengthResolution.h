@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class CSSToLengthConversionData;
+class Document;
 class FontCascade;
 class RenderView;
 
@@ -70,15 +71,15 @@ bool equalForLengthResolution(const ComputedStyle&, const ComputedStyle&);
 
 // Utilities for common conversions.
 
-NODELETE double emToPxDouble(double value, const ComputedStyle&);
+double emToPxDouble(double value, const ComputedStyle&, const Document&);
 NODELETE double emToPxDoubleZoomed(double value, const ComputedStyle&);
 
-template<typename T> inline T emToPx(double value, const ComputedStyle& style)
+template<typename T> inline T emToPx(double value, const ComputedStyle& style, const Document& document)
 {
     if constexpr (std::floating_point<T>)
-        return static_cast<T>(emToPxDouble(value, style));
+        return static_cast<T>(emToPxDouble(value, style, document));
     else if constexpr (std::integral<T>)
-        return roundForImpreciseConversion<T>(emToPxDouble(value, style));
+        return roundForImpreciseConversion<T>(emToPxDouble(value, style, document));
 }
 
 template<typename T> inline T emToPxZoomed(double value, const ComputedStyle& style)

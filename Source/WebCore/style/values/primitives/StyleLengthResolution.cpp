@@ -344,19 +344,51 @@ struct CSSToLengthConversionDataAdaptor {
         return value;
     }
 
+    const Document* document() const
+    {
+        if (CheckedPtr builderState = conversionData.styleBuilderState())
+            return &builderState->document();
+        if (auto* renderView = conversionData.renderView())
+            return &renderView->document();
+        return nullptr;
+    }
+
     float textZoomFactor(const ComputedStyle& style) const
     {
         if (style.textZoom() == TextZoom::Reset)
             return 1.0f;
 
-        RefPtr frame = [&] -> LocalFrame* {
-            if (CheckedPtr builderState = conversionData.styleBuilderState())
-                return builderState->document().frame();
-            if (auto* renderView = conversionData.renderView())
-                return renderView->document().frame();
-            return nullptr;
-        }();
+        RefPtr document = this->document();
+        RefPtr frame = document ? document->frame() : nullptr;
         return frame ? frame->textZoomFactor() : 1.0f;
+    }
+
+    float textSizeAdjustMultiplier(const ComputedStyle& style) const
+    {
+        RefPtr document = this->document();
+        if (!document)
+            return 1.0f;
+        return style.textSizeAdjust().usedFontSizeMultiplier(*document).value_or(1.0f);
+    }
+
+    // Text autosizing adjusts the used font size only. Font properties compute against the unadjusted size
+    // so the adjustment isn't inherited, while font-relative lengths in other properties include it.
+    float textSizeAdjustMultiplierForFontUnits() const
+    {
+        if (computingFontProperty())
+            return 1.0f;
+        return textSizeAdjustMultiplier(conversionData.style());
+    }
+
+    float textSizeAdjustMultiplierForRootFontUnits() const
+    {
+        if (computingFontProperty())
+            return 1.0f;
+        if (CheckedPtr rootStyle = conversionData.rootStyle())
+            return textSizeAdjustMultiplier(*rootStyle);
+
+        // FIXME: This should fallback to the initial style, not the element style. To fix this, we will need to make the initial style (Document::initialStyle()) available to CSSToLengthConversionData.
+        return textSizeAdjustMultiplierForFontUnits();
     }
 
     NODELETE const FontCascade& fontCascadeForFontUnits() const
@@ -448,6 +480,16 @@ struct DirectDataAdaptor {
         return 1.0f;
     }
 
+    float textSizeAdjustMultiplierForFontUnits() const
+    {
+        return 1.0f;
+    }
+
+    float textSizeAdjustMultiplierForRootFontUnits() const
+    {
+        return 1.0f;
+    }
+
     NODELETE const FontCascade& fontCascadeForFontUnits() const
     {
         return fontCascadeForUnit;
@@ -518,7 +560,7 @@ static double resolveLengthWithoutTextZoom(double value, CSS::LengthUnit lengthU
 
     case Em:
     case QuirkyEm:
-        return value * resolveEm(adaptor.fontCascadeForFontUnits());
+        return value * resolveEm(adaptor.fontCascadeForFontUnits()) * adaptor.textSizeAdjustMultiplierForFontUnits();
     case Ex:
         return value * resolveEx(adaptor.fontCascadeForFontUnits());
     case Cap:
@@ -535,7 +577,7 @@ static double resolveLengthWithoutTextZoom(double value, CSS::LengthUnit lengthU
     // MARK: "root font dependent" resolution
 
     case Rem:
-        return value * resolveEm(adaptor.fontCascadeForRootFontUnits());
+        return value * resolveEm(adaptor.fontCascadeForRootFontUnits()) * adaptor.textSizeAdjustMultiplierForRootFontUnits();
     case Rcap:
         return value * resolveCap(adaptor.fontCascadeForRootFontUnits());
     case Rch:
@@ -788,15 +830,17 @@ bool equalForLengthResolution(const ComputedStyle& styleA, const ComputedStyle& 
         return false;
     if (styleA.zoom() != styleB.zoom())
         return false;
+    if (styleA.textSizeAdjust() != styleB.textSizeAdjust())
+        return false;
 
     return true;
 }
 
 // MARK: - em-to-px utility functions
 
-double emToPxDouble(double value, const ComputedStyle& style)
+double emToPxDouble(double value, const ComputedStyle& style, const Document& document)
 {
-    return value * style.fontCascade().fontDescription().computedSize();
+    return value * style.fontCascade().fontDescription().computedSize() * style.textSizeAdjust().usedFontSizeMultiplier(document).value_or(1.0f);
 }
 
 double emToPxDoubleZoomed(double value, const ComputedStyle& style)

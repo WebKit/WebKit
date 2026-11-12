@@ -1,0 +1,12 @@
+Tests that the em-sized number input spin button includes a percentage -webkit-text-size-adjust.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS part('numberAdjusted', '-webkit-inner-spin-button').width is part('numberControl', '-webkit-inner-spin-button').width
+PASS part('numberControl', '-webkit-inner-spin-button').width is 26
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

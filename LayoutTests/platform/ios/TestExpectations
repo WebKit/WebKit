@@ -8348,6 +8348,9 @@ fast/forms/form-control-refresh/progress-window-inactive-state-light-mode.html [
 fast/forms/form-control-refresh/spinbutton-window-inactive-state-dark-mode.html [ Skip ]
 fast/forms/form-control-refresh/spinbutton-window-inactive-state-light-mode.html [ Skip ]
 
+# Number inputs have no spin button on iOS.
+fast/forms/form-control-refresh/text-size-adjust-percentage-number-spin-button.html [ Skip ]
+
 # rdar://155348715 (REGRESSION (Liquid Glass): [ iOS 26 ] 72 WPT/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-*.html tests are constantly failing (IMAGE).)
 # Explicit pass expectations for many of these tests are set above. Uncomment that block once this is resolved.
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-background-attachment-001.html [ ImageOnlyFailure ]
