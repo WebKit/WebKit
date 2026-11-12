@@ -495,8 +495,13 @@ bool CSSStyleSheet::isLoading() const
     return m_contents->isLoading();
 }
 
-MediaList* CSSStyleSheet::media() const 
+MediaList* CSSStyleSheet::media() const
 {
+    // https://drafts.csswg.org/cssom/#dom-cssimportrule-media
+    // An imported style sheet shares its MediaList with the owner @import rule.
+    if (RefPtr ownerRule = m_ownerRule)
+        return &ownerRule->media();
+
     if (!m_mediaCSSOMWrapper) {
         m_mediaCSSOMWrapper = MediaList::create(const_cast<CSSStyleSheet*>(this));
     }
