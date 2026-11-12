@@ -1809,7 +1809,12 @@ void WebPageProxy::swapToProvisionalPage(Ref<ProvisionalPageProxy>&& provisional
     setDrawingArea(provisionalPage->takeDrawingArea());
 
     // The group was chosen in browsingContextGroupForNavigation(); adopt whatever the provisional page carries.
+    bool isBrowsingContextGroupSwitch = provisionalPage->browsingContextGroup().identifier() != m_browsingContextGroup->identifier();
     setBrowsingContextGroup(provisionalPage->browsingContextGroup());
+    if (isBrowsingContextGroupSwitch) {
+        m_openedMainFrameName = { };
+        m_openedByScriptDomain = { };
+    }
 
     protect(legacyMainFrameProcess())->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::No);
     addAllMessageReceivers();
@@ -12264,15 +12269,15 @@ void WebPageProxy::decidePolicyForNewWindowAction(IPC::Connection& connection, N
         m_navigationClient->decidePolicyForNavigationAction(*this, navigationAction.get(), WTF::move(listener));
 }
 
-void WebPageProxy::decidePolicyForResponse(IPC::Connection& connection, FrameInfoData&& frameInfo, std::optional<WebCore::NavigationIdentifier> navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, String&& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
+void WebPageProxy::decidePolicyForResponse(IPC::Connection& connection, FrameInfoData&& frameInfo, std::optional<WebCore::NavigationIdentifier> navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, String&& downloadAttribute, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     if (!frame)
         return completionHandler({ });
-    decidePolicyForResponseShared(WebProcessProxy::fromConnection(connection), m_webPageID, WTF::move(frameInfo), navigationID, response, request, canShowMIMEType, WTF::move(downloadAttribute), isShowingInitialAboutBlank, activeDocumentCOOPValue, WTF::move(completionHandler));
+    decidePolicyForResponseShared(WebProcessProxy::fromConnection(connection), m_webPageID, WTF::move(frameInfo), navigationID, response, request, canShowMIMEType, WTF::move(downloadAttribute), WTF::move(completionHandler));
 }
 
-void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameInfoData&& frameInfo, std::optional<WebCore::NavigationIdentifier> navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, String&& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
+void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameInfoData&& frameInfo, std::optional<WebCore::NavigationIdentifier> navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, String&& downloadAttribute, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
     RefPtr protectedPageClient { pageClient() };
 
@@ -12282,13 +12287,6 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
     MESSAGE_CHECK_URL_COMPLETION(process, request.url(), completionHandler({ }));
     MESSAGE_CHECK_URL_COMPLETION(process, response.url(), completionHandler({ }));
     RefPtr navigation = navigationID ? m_navigationState->navigation(*navigationID) : nullptr;
-
-    // COOP only applies to top-level browsing contexts.
-    if (frame->isMainFrame() && coopValuesRequireBrowsingContextGroupSwitch(isShowingInitialAboutBlank ? WebCore::IsInitialAboutBlank::Yes : WebCore::IsInitialAboutBlank::No, activeDocumentCOOPValue, frame->documentSecurityOriginData().securityOrigin().get(), obtainCrossOriginOpenerPolicy(response).value, SecurityOrigin::create(response.url()).get())) {
-        mainFrame()->disownOpener();
-        m_openedMainFrameName = { };
-        m_openedByScriptDomain = { };
-    }
 
     Ref navigationResponse = API::NavigationResponse::create(API::FrameInfo::create(FrameInfoData { frameInfo }).get(), request, response, canShowMIMEType, WTF::move(downloadAttribute), navigation.get());
 
@@ -12633,9 +12631,6 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::Navig
 
     // Adopted in swapToProvisionalPage(), so a navigation that does not commit leaves the page's group alone.
     Ref browsingContextGroupForSwap = BrowsingContextGroup::create(crossOriginMode, dataStore);
-
-    m_openedMainFrameName = { };
-    m_openedByScriptDomain = { };
 
     RefPtr provisionalPage = m_provisionalPage;
     auto lockdownMode = processLoadingNavigation->lockdownMode();
