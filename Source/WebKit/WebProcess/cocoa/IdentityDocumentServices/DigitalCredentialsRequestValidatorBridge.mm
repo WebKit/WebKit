@@ -43,6 +43,7 @@
 #import <WebCore/X509SubjectKeyIdentifier.h>
 #import <WebKit/WKIdentityDocumentPresentmentMobileDocumentRequest.h>
 #import <WebKit/WKIdentityDocumentPresentmentOpenID4VPRequest.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import "WebKitSwiftSoftLink.h"
@@ -368,6 +369,19 @@ Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>> DigitalCredent
 {
     RetainPtr convertedTopOrigin = topOrigin.toURL().createNSURL().get();
     RetainPtr validator = adoptNS([WebKit::allocWKIdentityDocumentRawRequestValidatorInstance() init]);
+
+    if (!validator) {
+        RELEASE_ASSERT_WITH_MESSAGE(isInBaseSystem(), "WKIdentityDocumentRawRequestValidator is unavailable, probably because libWebKitSwift failed to load. WebKit requires it outside the base system.");
+        RELEASE_LOG_ERROR(DigitalCredentials, "DigitalCredentials::validateRequests: WKIdentityDocumentRawRequestValidator is unavailable, libWebKitSwift may have failed to load");
+        const_cast<Document &>(document).addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(
+            MessageSource::JS,
+            MessageType::Log,
+            MessageLevel::Error,
+            "Digital credential requests cannot be validated because a required WebKit component failed to load. The requests will be ignored."_s));
+        return unvalidatedRequests.map([](auto&) -> std::optional<WebCore::ValidatedDigitalCredentialRequest> {
+            return std::nullopt;
+        });
+    }
 
     auto validatedRequests = unvalidatedRequests.map([&](auto& unvalidatedRequest) {
         return validateRequest(validator.get(), convertedTopOrigin.get(), document, unvalidatedRequest);

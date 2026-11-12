@@ -64,6 +64,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -479,6 +480,13 @@ static RetainPtr<WKIdentityDocumentPresentmentOpenID4VPRequest> mapOpenID4VPRequ
 
 - (void)performRequest:(const WebCore::DigitalCredentialsRequestData &)requestData
 {
+    if (!_presentmentController) {
+        RELEASE_ASSERT_WITH_MESSAGE(isInBaseSystem(), "WKIdentityDocumentPresentmentController is unavailable, probably because libWebKitSwift failed to load. WebKit requires it outside the base system.");
+        RELEASE_LOG_ERROR(DigitalCredentials, "WKDigitalCredentialsPicker: WKIdentityDocumentPresentmentController is unavailable, libWebKitSwift may have failed to load");
+        [self completeWith:makeUnexpected(WebCore::ExceptionData { ExceptionCode::TypeError, "The Digital Credentials picker is not available."_s })];
+        return;
+    }
+
     bool hasNonOpenID4VPProtocol = requestData.requests.containsIf([](auto& request) {
         auto* openID4VPRequest = std::get_if<WebCore::ValidatedOpenID4VPRequest>(&request);
         return openID4VPRequest && !WebCore::isOpenID4VPPresentationProtocol(openID4VPRequest->protocol);
