@@ -110,9 +110,10 @@ NODELETE static bool mayUseContentWidthBetweenLineBreaksAsMaximumSize(const Elem
     return true;
 }
 
-IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineFormattingContext, const InlineContentCache::InlineItems& inlineItems)
+IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineFormattingContext, const InlineContentCache::InlineItems& inlineItems, std::span<const float> shapingAdjustments)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_inlineItems(inlineItems)
+    , m_shapingAdjustments(shapingAdjustments)
 {
     auto initializeRangeAndTextOnlyBuilderEligibility = [&] {
         m_inlineItemRange = { 0, inlineItems.content().size() };
@@ -178,7 +179,8 @@ std::optional<InlineLayoutUnit> IntrinsicWidthHandler::minimumContentSizeForBrea
         return true;
     };
 
-    if (!isEligibleForBreakSpacesFastPath())
+    // Each unbreakable piece starts a line, where the kerning with the previous piece would have to be trimmed.
+    if (!isEligibleForBreakSpacesFastPath() || m_inlineItems.hasShapingAdjustments())
         return { };
 
     auto& inlineItemList = this->inlineItemList();
@@ -225,11 +227,11 @@ std::optional<InlineLayoutUnit> IntrinsicWidthHandler::minimumContentSizeForBrea
 InlineLayoutUnit IntrinsicWidthHandler::lineBuilderMinimumContentSize()
 {
     if (m_mayUseSimplifiedTextOnlyInlineLayoutInRange) {
-        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilderRoot(), { }, inlineItemList() };
+        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilderRoot(), { }, inlineItemList(), m_shapingAdjustments };
         return computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Minimum, simplifiedLineBuilder, MayCacheLayoutResult::No);
     }
 
-    auto lineBuilder = LineBuilder { formattingContext(), { }, inlineItemList() };
+    auto lineBuilder = LineBuilder { formattingContext(), { }, inlineItemList(), { }, m_shapingAdjustments };
     return computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Minimum, lineBuilder, MayCacheLayoutResult::No);
 }
 
@@ -270,15 +272,15 @@ InlineLayoutUnit IntrinsicWidthHandler::maximumContentSize()
         if (m_maximumContentWidthBetweenLineBreaks && mayUseContentWidthBetweenLineBreaksAsMaximumSize(formattingContextRoot(), inlineItemList())) {
             maximumContentSize = *m_maximumContentWidthBetweenLineBreaks;
 #ifndef NDEBUG
-            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilderRoot(), { }, inlineItemList() };
+            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilderRoot(), { }, inlineItemList(), m_shapingAdjustments };
             ASSERT(std::abs(maximumContentSize - computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, MayCacheLayoutResult::No)) < 1);
 #endif
         } else {
-            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilderRoot(), { }, inlineItemList() };
+            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilderRoot(), { }, inlineItemList(), m_shapingAdjustments };
             maximumContentSize = computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, mayCacheLayoutResult);
         }
     } else {
-        auto lineBuilder = LineBuilder { formattingContext(), { }, inlineItemList() };
+        auto lineBuilder = LineBuilder { formattingContext(), { }, inlineItemList(), { }, m_shapingAdjustments };
         maximumContentSize = computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum, lineBuilder, mayCacheLayoutResult);
     }
 

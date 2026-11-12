@@ -94,9 +94,18 @@ static inline bool consumeTrailingLineBreakIfApplicable(const TextOnlyLineBreakR
     return true;
 }
 
-TextOnlySimpleLineBuilder::TextOnlySimpleLineBuilder(InlineFormattingContext& inlineFormattingContext, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList)
+TextOnlySimpleLineBuilder::TextOnlySimpleLineBuilder(InlineFormattingContext& inlineFormattingContext, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList, std::span<const float> shapingAdjustments)
     : AbstractLineBuilder(inlineFormattingContext, rootBox, rootHorizontalConstraints, inlineItemList)
+    , m_shapingAdjustments(shapingAdjustments)
 {
+}
+
+InlineLayoutUnit TextOnlySimpleLineBuilder::leadingShapingAdjustmentForLineStart(const InlineTextItem& inlineTextItem) const
+{
+    // The kerning with the previous item's text does not apply at the start of a line.
+    if (!m_lineStartItemIndex || *m_lineStartItemIndex >= m_shapingAdjustments.size() || &inlineTextItem != &m_inlineItemList[*m_lineStartItemIndex])
+        return { };
+    return m_shapingAdjustments[*m_lineStartItemIndex];
 }
 
 LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine, bool isFirstFormattedLineCandidate)
@@ -108,7 +117,11 @@ LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput&
 
     initialize(lineInput.needsLayoutRange, lineInput.initialLogicalRect, previousLine, isFirstFormattedLineCandidate);
     CheckedRef rootStyle = this->rootStyle();
-    auto placedContentEnd = TextUtil::isWrappingAllowed(rootStyle) ? placeInlineTextContent(rootStyle, lineInput.needsLayoutRange) : placeNonWrappingInlineTextContent(rootStyle, lineInput.needsLayoutRange);
+    auto placedContentEnd = [&] {
+        if (TextUtil::isWrappingAllowed(rootStyle))
+            return m_shapingAdjustments.empty() ? placeInlineTextContent<false>(rootStyle, lineInput.needsLayoutRange) : placeInlineTextContent<true>(rootStyle, lineInput.needsLayoutRange);
+        return m_shapingAdjustments.empty() ? placeNonWrappingInlineTextContent<false>(rootStyle, lineInput.needsLayoutRange) : placeNonWrappingInlineTextContent<true>(rootStyle, lineInput.needsLayoutRange);
+    }();
     auto result = m_line.close();
 
     auto isLastInlineContent = isLastLineWithInlineContent(placedContentEnd, lineInput.needsLayoutRange.endIndex());
@@ -155,6 +168,8 @@ void TextOnlySimpleLineBuilder::initialize(const InlineItemRange& layoutRange, c
     };
     m_isFirstFormattedLineCandidate = isFirstFormattedLineCandidate;
     m_partialLeadingTextItem = partialLeadingTextItem();
+    if (!m_shapingAdjustments.empty())
+        m_lineStartItemIndex = !m_partialLeadingTextItem && !layoutRange.isEmpty() ? std::make_optional(layoutRange.startIndex()) : std::nullopt;
     m_line.initialize({ }, isFirstFormattedLineCandidate);
     m_previousLine = previousLine;
     m_lineLogicalRect = initialLogicalRect;
@@ -213,6 +228,7 @@ bool TextOnlySimpleLineBuilder::isAtSoftWrapOpportunityOrContentEnd(const Inline
     return &inlineTextItem.inlineTextBox() == &nextInlineTextItem.inlineTextBox() || TextUtil::mayBreakInBetween(inlineTextItem, nextInlineTextItem);
 }
 
+template<bool hasShapingAdjustments>
 InlineItemPosition TextOnlySimpleLineBuilder::placeInlineTextContent(const Style::ComputedStyle& rootStyle, const InlineItemRange& layoutRange)
 {
     size_t placedInlineItemCount = 0;
@@ -222,7 +238,7 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeInlineTextContent(const Style
 
     auto nextItemIndex = layoutRange.startIndex();
     auto processCandidateContent = [&] {
-        result = commitCandidateContent(rootStyle, candidateContent, layoutRange);
+        result = commitCandidateContent<hasShapingAdjustments>(rootStyle, candidateContent, layoutRange);
         placedInlineItemCount = !result.isRevert ? placedInlineItemCount + result.committedCount : result.committedCount;
         candidateContent = { candidateContent.endIndex, candidateContent.endIndex, { } };
         return result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes;
@@ -244,7 +260,7 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeInlineTextContent(const Style
         if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
             auto contentWidth = [&] {
                 if (auto logicalWidth = inlineTextItem->width())
-                    return *logicalWidth;
+                    return textItemWidth<hasShapingAdjustments>(*inlineTextItem, *logicalWidth);
                 return measuredInlineTextItem(*inlineTextItem, rootStyle, m_line.contentLogicalRight() + candidateContent.logicalWidth);
             };
             candidateContent.append(contentWidth());
@@ -267,6 +283,7 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeInlineTextContent(const Style
     return placedContentEnd;
 }
 
+template<bool hasShapingAdjustments>
 InlineItemPosition TextOnlySimpleLineBuilder::placeNonWrappingInlineTextContent(const Style::ComputedStyle& rootStyle, const InlineItemRange& layoutRange)
 {
     ASSERT(!TextUtil::isWrappingAllowed(rootStyle));
@@ -282,7 +299,7 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeNonWrappingInlineTextContent(
         if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
             auto contentWidth = [&] {
                 if (auto logicalWidth = inlineTextItem->width())
-                    return *logicalWidth;
+                    return textItemWidth<hasShapingAdjustments>(*inlineTextItem, *logicalWidth);
                 return measuredInlineTextItem(*inlineTextItem, rootStyle, candidateContent.logicalWidth);
             };
             candidateContent.append(contentWidth());
@@ -301,7 +318,7 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeNonWrappingInlineTextContent(
         return { *trailingLineBreakIndex + 1, { } };
     }
 
-    auto result = commitCandidateContent(rootStyle, candidateContent, layoutRange);
+    auto result = commitCandidateContent<hasShapingAdjustments>(rootStyle, candidateContent, layoutRange);
     nextItemIndex = layoutRange.startIndex() + result.committedCount;
     if (consumeTrailingLineBreakIfApplicable(result, nextItemIndex, layoutRange.endIndex(), m_line, m_inlineItemList))
         ++nextItemIndex;
@@ -312,12 +329,13 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeNonWrappingInlineTextContent(
     return placedContentEnd;
 }
 
+template<bool hasShapingAdjustments>
 TextOnlyLineBreakResult TextOnlySimpleLineBuilder::commitCandidateContent(const Style::ComputedStyle& rootStyle, const CandidateTextContent& candidateContent, const InlineItemRange& layoutRange)
 {
     auto hasLeadingPartiaContent = m_partialLeadingTextItem && candidateContent.startIndex == layoutRange.startIndex();
     auto contentWidth = [&] (auto& inlineTextItem, InlineLayoutUnit contentOffset) {
         if (auto logicalWidth = inlineTextItem.width())
-            return *logicalWidth;
+            return textItemWidth<hasShapingAdjustments>(inlineTextItem, *logicalWidth);
         return measuredInlineTextItem(inlineTextItem, rootStyle, m_line.contentLogicalRight() + contentOffset);
     };
 
@@ -446,7 +464,7 @@ size_t TextOnlySimpleLineBuilder::revertToTrailingItem(const Style::ComputedStyl
     size_t numberOfInlineItemsOnLine = 0;
 
     auto appendTextInlineItem = [&] (auto& inlineTextItem) {
-        auto logicalWidth = inlineTextItem.width() ? *inlineTextItem.width() : measuredInlineTextItem(inlineTextItem, rootStyle, m_line.contentLogicalRight());
+        auto logicalWidth = inlineTextItem.width() ? *inlineTextItem.width() - leadingShapingAdjustment(inlineTextItem) : measuredInlineTextItem(inlineTextItem, rootStyle, m_line.contentLogicalRight());
         m_line.appendTextFast(inlineTextItem, rootStyle, logicalWidth);
         ++numberOfInlineItemsOnLine;
         return &inlineTextItem == &trailingInlineItem;
