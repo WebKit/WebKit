@@ -403,10 +403,7 @@ bool ContentSecurityPolicy::allPoliciesAllow(NOESCAPE const ViolatedDirectiveCal
 static Vector<ResourceCryptographicDigest> parseSubResourceIntegrityIntoDigests(const String& subResourceIntegrity)
 {
     auto encodedDigests = parseIntegrityMetadata(subResourceIntegrity);
-    if (!encodedDigests)
-        return { };
-
-    return WTF::compactMap(*encodedDigests, [](auto& encodedDigest) {
+    return WTF::compactMap(encodedDigests, [](auto& encodedDigest) {
         return decodeEncodedResourceCryptographicDigest(encodedDigest);
     });
 }

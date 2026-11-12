@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<title>Request URL Modifiers: integrity() negative test for a same-origin background-image</title>
+<link rel="author" title="Sam Weinig" href="mailto:sam@webkit.org">
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#typedef-request-url-modifier-integrity-modifier">
+<link rel="match" href="/css/reference/ref-filled-green-100px-square.xht">
+<meta name="assert" content="A same-origin url with a non-matching integrity() modifier should not load the image.">
+<style>
+.test {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+  background-image: url("/css/support/1x1-red.png" integrity("sha256-ojYhORbdML13GiM6odZjgeq/M1v4iFMEt1pOLjcNaM4="));
+}
+</style>
+<p>Test passes if there is a filled green square and <strong>no red</strong>.</p>
+<div class="test"></div>

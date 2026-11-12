@@ -70,9 +70,6 @@ struct EncodedResourceCryptographicDigest {
 std::optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsingBuffer<char16_t>&);
 std::optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsingBuffer<Latin1Character>&);
 
-std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<char16_t>&);
-std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<Latin1Character>&);
-
 std::optional<ResourceCryptographicDigest> decodeEncodedResourceCryptographicDigest(const EncodedResourceCryptographicDigest&);
 
 ResourceCryptographicDigest cryptographicDigestForSharedBuffer(ResourceCryptographicDigest::Algorithm, const FragmentedSharedBuffer*);

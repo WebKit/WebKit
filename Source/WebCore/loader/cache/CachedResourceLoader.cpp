@@ -91,6 +91,7 @@
 #include "ServiceWorker.h"
 #include "Settings.h"
 #include "StyleSheetContents.h"
+#include "SubresourceIntegrity.h"
 #include "SubresourceLoader.h"
 #include "UserContentController.h"
 #include "UserStyleSheet.h"
@@ -1201,6 +1202,13 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
 
     request.setDestinationIfNotSet(destinationForType(type, frame));
 
+    // The loader checks integrity metadata against the fully read body (step 23 of https://fetch.spec.whatwg.org/#main-fetch).
+    if (!request.options().integrity.isEmpty() && request.options().dataBufferingPolicy == DataBufferingPolicy::DoNotBufferData) {
+        auto options = request.options();
+        options.dataBufferingPolicy = DataBufferingPolicy::BufferData;
+        request.setOptions(options);
+    }
+
     // Entry point to https://fetch.spec.whatwg.org/#main-fetch.
     std::unique_ptr<ResourceRequest> originalRequest;
     if (CachedResource::shouldUsePingLoad(type) || request.options().destination == FetchOptions::Destination::EmptyString) {
@@ -1628,6 +1636,15 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
 
     if (!existingResource->varyHeaderValuesMatch(request))
         return Reload;
+
+    // A resource is only checked against the integrity metadata of the request that loaded it, so reusing it
+    // for a request with other metadata needs its bytes to match that metadata too.
+    if (auto& integrity = cachedResourceRequest.options().integrity; !integrity.isEmpty() && integrity != existingResource->options().integrity) {
+        if (existingResource->isLoading() || !matchIntegrityMetadataWithoutReportingHashes(*existingResource, integrity)) {
+            LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to integrity metadata mismatch.");
+            return Reload;
+        }
+    }
 
     RefPtr textDecoder = existingResource->textResourceDecoder();
     if (textDecoder && textDecoder->charsetWouldChangeEncoding(cachedResourceRequest.charset())) {

@@ -161,7 +161,6 @@ private:
 
     String m_type;
     String m_media;
-    String m_integrityMetadataForPendingSheetRequest;
     URL m_url;
     const std::unique_ptr<DOMTokenList> m_sizes;
     const std::unique_ptr<DOMTokenList> m_relList;

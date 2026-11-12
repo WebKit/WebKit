@@ -88,7 +88,10 @@ bool LoadableNonModuleScriptBase::wasCanceled() const
 void LoadableNonModuleScriptBase::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     ASSERT(m_cachedScript);
-    if (resource.resourceError().isAccessControl()) {
+    if (isIntegrityMismatchError(resource.resourceError())) {
+        // The loader has already reported the mismatch to the console.
+        m_error = Error { ErrorType::FailedIntegrityCheck, std::nullopt, { } };
+    } else if (resource.resourceError().isAccessControl()) {
         static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Cross-origin script load denied by Cross-Origin Resource Sharing policy."));
         m_error = Error {
             ErrorType::CrossOriginLoad,
@@ -126,13 +129,8 @@ void LoadableNonModuleScriptBase::notifyFinished(CachedResource& resource, const
         };
     }
 
-    if (!m_error && !resource.errorOccurred() && !matchIntegrityMetadata(resource, m_integrity)) {
-        m_error = Error {
-            ErrorType::FailedIntegrityCheck,
-            ConsoleMessage { MessageSource::Security, MessageLevel::Error, makeString("Cannot load script "_s, integrityMismatchDescription(resource, m_integrity)) },
-            { }
-        };
-    }
+    if (!m_error && !resource.errorOccurred())
+        reportHashesIfNeeded(resource);
 
     notifyClientFinished();
 }

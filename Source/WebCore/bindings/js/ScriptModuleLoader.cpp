@@ -556,6 +556,11 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         auto& loader = downcast<CachedModuleScriptLoader>(moduleScriptLoader);
         Ref cachedResource = *loader.cachedResource();
 
+        if (isIntegrityMismatchError(cachedResource->resourceError())) {
+            rejectWithFetchError(m_context, WTF::move(promise), ExceptionCode::TypeError, "Cannot load script due to integrity mismatch"_s);
+            return;
+        }
+
         if (cachedResource->resourceError().isAccessControl()) {
             rejectToPropagateNetworkError(m_context, WTF::move(promise), ModuleFetchFailureKind::WasPropagatedError, "Cross-origin script load denied by Cross-Origin Resource Sharing policy."_s);
             return;
@@ -628,13 +633,8 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         if (auto* parameters = loader.parameters())
             integrity = parameters->integrity();
 
-        if (!integrity.isEmpty()) {
-            if (!matchIntegrityMetadata(cachedResource, integrity)) {
-                m_context->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load script "_s, integrityMismatchDescription(cachedResource, integrity)));
-                rejectWithFetchError(m_context, WTF::move(promise), ExceptionCode::TypeError, "Cannot load script due to integrity mismatch"_s);
-                return;
-            }
-        }
+        if (!integrity.isEmpty())
+            reportHashesIfNeeded(cachedResource);
 
         URL responseURL = canonicalizeAndRegisterResponseURL(cachedResource->response().url(), cachedResource->hasRedirections(), cachedResource->response().source());
         m_requestURLToResponseURLMap.add(sourceURL.string(), WTF::move(responseURL));

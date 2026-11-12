@@ -90,39 +90,6 @@ std::optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsin
     return parseCryptographicDigestImpl(buffer);
 }
 
-template<typename CharacterType> static std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigestImpl(StringParsingBuffer<CharacterType>& buffer)
-{
-    if (buffer.atEnd())
-        return std::nullopt;
-
-    auto algorithm = parseHashAlgorithmAdvancingPosition(buffer);
-    if (!algorithm)
-        return std::nullopt;
-
-    if (!skipExactly(buffer, '-'))
-        return std::nullopt;
-
-    auto beginHashValue = buffer.span();
-    skipWhile<isBase64OrBase64URLCharacter>(buffer);
-    skipExactly(buffer, '=');
-    skipExactly(buffer, '=');
-
-    if (buffer.position() == beginHashValue.data())
-        return std::nullopt;
-
-    return EncodedResourceCryptographicDigest { *algorithm, beginHashValue.first(buffer.position() - beginHashValue.data()) };
-}
-
-std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<char16_t>& buffer)
-{
-    return parseEncodedCryptographicDigestImpl(buffer);
-}
-
-std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<Latin1Character>& buffer)
-{
-    return parseEncodedCryptographicDigestImpl(buffer);
-}
-
 std::optional<ResourceCryptographicDigest> decodeEncodedResourceCryptographicDigest(const EncodedResourceCryptographicDigest& encodedDigest)
 {
     if (auto digest = base64Decode(encodedDigest.digest))

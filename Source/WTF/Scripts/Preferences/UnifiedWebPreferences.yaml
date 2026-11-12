@@ -1371,11 +1371,11 @@ CSSTypedOMColorEnabled:
 
 CSSURLIntegrityModifierEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS URL Modifiers: integrity()"
   humanReadableDescription: "Enable support for CSS Values and Units Module Level 5 URL integrity() modifier"
-  defaultValue: false
+  defaultValue: true
 
 CSSURLModifiersEnabled:
   type: bool

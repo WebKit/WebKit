@@ -4655,7 +4655,6 @@ imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-import-cros
 imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-import-cross-origin-use-credentials.sub.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-svg-filter-cross-origin-anonymous.sub.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-svg-filter-cross-origin-use-credentials.sub.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-image-integrity.sub.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-import-integrity.sub.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-svg-filter-integrity.sub.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/urls/referrer-policy/no-referrer/url-svg-filter-referrer-policy.sub.html [ ImageOnlyFailure ]

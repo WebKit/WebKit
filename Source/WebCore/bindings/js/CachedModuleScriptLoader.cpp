@@ -30,6 +30,7 @@
 #include "CachedScript.h"
 #include "CachedScriptFetcher.h"
 #include "DOMWrapperWorld.h"
+#include "Document.h"
 #include "JSDOMBinding.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrame.h"
@@ -38,6 +39,7 @@
 #include "ScriptController.h"
 #include "ScriptModuleLoader.h"
 #include "ScriptSourceCode.h"
+#include <JavaScriptCore/ImportMap.h>
 
 namespace WebCore {
 
@@ -63,7 +65,12 @@ bool CachedModuleScriptLoader::load(Document& document, URL&& sourceURL, std::op
 {
     ASSERT(m_promise);
     ASSERT(!m_cachedResource);
-    String integrity = m_parameters ? m_parameters->integrity() : String { };
+    // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-imported-module-script
+    String integrity;
+    if (m_parameters)
+        integrity = m_parameters->integrity();
+    else if (auto* globalObject = document.globalObject())
+        integrity = protect(globalObject->importMap())->integrityForURL(sourceURL);
     auto destination = FetchOptionsDestination::Script;
     if (m_parameters) {
         switch (m_parameters->type()) {

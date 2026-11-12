@@ -29,6 +29,8 @@ PASS Script: Cross-origin, not CORS request, with hash mismatch
 PASS Script: Cross-origin, empty integrity
 PASS Script: Same-origin with correct hash, options.
 PASS Script: Same-origin with unknown algorithm only.
+PASS Script: Same-origin with correct hash, uppercase algorithm.
+PASS Script: Cross-origin, not CORS request, with unknown algorithm only.
 PASS Style: Same-origin with correct sha256 hash
 PASS Style: Same-origin with correct sha384 hash
 PASS Style: Same-origin with correct sha512 hash

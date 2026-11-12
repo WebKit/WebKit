@@ -252,6 +252,20 @@
         "foo666-U9WYDtBWkcHx13+9UKk/3Q5eoqDc4YGxYb07EPWzb9E="
     ).execute();
 
+    new SRIScriptTest(
+        true,
+        "Same-origin with correct hash, uppercase algorithm.",
+        `${same_origin_prefix}script.js?${token()}`,
+        "SHA256-Bu681KMnQ15RYHFvsYdWumweeFAw0hJDTFt9seErghA="
+    ).execute();
+
+    new SRIScriptTest(
+        true,
+        "Cross-origin, not CORS request, with unknown algorithm only.",
+        `${xorigin_prefix}script.js?${token()}`,
+        "foo666-Bu681KMnQ15RYHFvsYdWumweeFAw0hJDTFt9seErghA="
+    ).execute();
+
     // Style tests
     new SRIStyleTest(
         style_tests,

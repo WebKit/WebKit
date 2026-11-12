@@ -27,9 +27,11 @@
 #include "IntegrityPolicy.h"
 
 #include "Document.h"
+#include "FormData.h"
 #include "IntegrityPolicyViolationReportBody.h"
 #include "RFC8941.h"
 #include "Report.h"
+#include "ResourceLoaderOptions.h"
 #include "ResourceResponse.h"
 #include "SecurityContext.h"
 #include "SubresourceIntegrity.h"
@@ -113,8 +115,10 @@ bool shouldRequestBeBlockedByIntegrityPolicy(ScriptExecutionContext& context, co
     // 2. Let parsedMetadata be the result of calling parse metadata with request’s integrity metadata.
     auto parsedMetadata = parseIntegrityMetadata(options.integrity);
     // 3. If parsedMetadata is not the empty set and request’s mode is either "cors" or "same-origin", return "Allowed".
+    if (!parsedMetadata.isEmpty() && (options.mode == FetchOptions::Mode::Cors || options.mode == FetchOptions::Mode::SameOrigin))
+        return false;
     // 4. If request’s url is local, return "Allowed".
-    if ((parsedMetadata && parsedMetadata->size() && options.mode != FetchOptions::Mode::NoCors) || url.hasLocalScheme())
+    if (url.hasLocalScheme())
         return false;
     // 7. If both policy and reportPolicy are empty integrity policy structs, return "Allowed".
     if (!integrityPolicy && !integrityPolicyReportOnly)
