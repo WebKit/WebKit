@@ -103,6 +103,9 @@ public:
     virtual bool isRemoteGPUProxy() const { return false; }
     virtual bool isWebGPUIntegrationImpl() const { return false; }
 
+    // A lost integration, such as one whose GPU process has exited, cannot create anything again.
+    virtual bool isLost() const { return false; }
+
 protected:
     WebGPUIntegration() = default;
 

@@ -99,6 +99,7 @@ private:
     RemoteGPUProxy& operator=(RemoteGPUProxy&&) = delete;
 
     bool isRemoteGPUProxy() const final { return true; }
+    bool isLost() const final { return m_lost; }
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

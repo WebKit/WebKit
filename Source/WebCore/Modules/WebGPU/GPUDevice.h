@@ -156,6 +156,8 @@ public:
 
     ::WebGPU::Device& backing() { return m_backing; }
     const ::WebGPU::Device& backing() const { return m_backing; }
+    // The integration that created the device, which the canvas presenting it has to use too.
+    WebGPUIntegration& integration() const { return m_gpu; }
     // Stand-ins for the objects that cannot be created, or are no longer valid, made invalid on
     // purpose. The empty bind group layout stands in for a missing pipeline layout slot.
     Ref<::WebGPU::CommandEncoder> invalidCommandEncoder() const { return *m_invalidCommandEncoder; }

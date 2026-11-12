@@ -1,0 +1,128 @@
+<!DOCTYPE html><!-- webkit-test-runner [ runSingly=true ] -->
+<script src="../../resources/js-test.js"></script>
+<canvas id="canvas" width="4" height="4"></canvas>
+<canvas id="freshCanvas" width="4" height="4"></canvas>
+<script>
+
+jsTestIsAsync = true;
+
+description("After the GPU process exits, navigator.gpu has to provide adapters again, in the page and in a worker, a new canvas has to get a WebGPU context before any adapter is requested, and canvases have to work with a device from the new adapter, including one that was configured with a lost device.");
+
+const workerSource = `
+    onmessage = async () => {
+        const adapter = await navigator.gpu.requestAdapter();
+        if (!adapter) {
+            postMessage('no adapter');
+            return;
+        }
+        const device = await adapter.requestDevice();
+        const buffer = device.createBuffer({ size: 4, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+        device.queue.writeBuffer(buffer, 0, new Uint32Array([42]));
+        await buffer.mapAsync(GPUMapMode.READ);
+        postMessage(new Uint32Array(buffer.getMappedRange())[0]);
+    };
+`;
+
+function askWorker(worker) {
+    return new Promise(resolve => {
+        worker.onmessage = event => resolve(event.data);
+        worker.postMessage('requestAdapter');
+    });
+}
+
+function clear(device, view, color) {
+    const encoder = device.createCommandEncoder();
+    encoder.beginRenderPass({ colorAttachments: [{ view, loadOp: 'clear', storeOp: 'store', clearValue: color }] }).end();
+    device.queue.submit([encoder.finish()]);
+}
+
+async function readFirstPixel(device, texture) {
+    const buffer = device.createBuffer({ size: 256, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    const encoder = device.createCommandEncoder();
+    encoder.copyTextureToBuffer({ texture }, { buffer, bytesPerRow: 256 }, [1, 1]);
+    device.queue.submit([encoder.finish()]);
+    await buffer.mapAsync(GPUMapMode.READ);
+    const pixel = [...new Uint8Array(buffer.getMappedRange(0, 4))];
+    buffer.unmap();
+    return pixel;
+}
+
+// Reads what the canvas composited, which goes through its compositor integration rather than
+// through the texture the page drew into.
+async function readCompositedPixel(webGPUCanvas) {
+    await new Promise(requestAnimationFrame);
+    const canvas2D = document.createElement('canvas');
+    canvas2D.width = canvas2D.height = 1;
+    const context2D = canvas2D.getContext('2d');
+    context2D.drawImage(webGPUCanvas, 0, 0);
+    return [...context2D.getImageData(0, 0, 1, 1).data];
+}
+
+async function main() {
+    if (!window.testRunner || !testRunner.terminateGPUProcess) {
+        testFailed("This test needs testRunner.terminateGPUProcess().");
+        return;
+    }
+
+    const worker = new Worker(URL.createObjectURL(new Blob([workerSource], { type: 'text/javascript' })));
+    window.workerResult = await askWorker(worker);
+    shouldBe('workerResult', '42');
+
+    const format = navigator.gpu.getPreferredCanvasFormat();
+    const usage = GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC;
+    const context = canvas.getContext('webgpu');
+    let device = await (await navigator.gpu.requestAdapter()).requestDevice();
+    context.configure({ device, format, usage });
+    clear(device, context.getCurrentTexture().createView(), { r: 1, g: 0, b: 0, a: 1 });
+    await device.queue.onSubmittedWorkDone();
+
+    testRunner.terminateGPUProcess();
+    await device.lost;
+    testPassed("The device was lost when the GPU process exited.");
+
+    // Pages commonly make a new canvas and get its context before they ask for an adapter again.
+    window.freshContext = freshCanvas.getContext('webgpu');
+    shouldBeNonNull('freshContext');
+
+    window.adapter = await navigator.gpu.requestAdapter();
+    shouldBeNonNull('adapter');
+    if (!adapter)
+        return;
+    device = await adapter.requestDevice();
+    device.pushErrorScope('validation');
+
+    const texture = device.createTexture({ size: [1, 1], format: 'rgba8unorm', usage });
+    clear(device, texture.createView(), { r: 0, g: 1, b: 0, a: 1 });
+    window.texturePixel = await readFirstPixel(device, texture);
+    shouldBeEqualToString('texturePixel.join()', '0,255,0,255');
+
+    context.configure({ device, format, usage });
+    const canvasTexture = context.getCurrentTexture();
+    clear(device, canvasTexture.createView(), { r: 0, g: 1, b: 0, a: 1 });
+    window.canvasPixel = await readFirstPixel(device, canvasTexture);
+    shouldBeEqualToString('canvasPixel.join()', '0,255,0,255');
+    window.compositedPixel = await readCompositedPixel(canvas);
+    shouldBeEqualToString('compositedPixel.join()', '0,255,0,255');
+
+    if (freshContext) {
+        freshContext.configure({ device, format, usage });
+        clear(device, freshContext.getCurrentTexture().createView(), { r: 0, g: 1, b: 0, a: 1 });
+        window.freshCompositedPixel = await readCompositedPixel(freshCanvas);
+        shouldBeEqualToString('freshCompositedPixel.join()', '0,255,0,255');
+    }
+
+    const error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+
+    window.workerResult = await askWorker(worker);
+    shouldBe('workerResult', '42');
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>

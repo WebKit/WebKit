@@ -90,7 +90,7 @@ public:
 #endif
 
 private:
-    explicit GPUCanvasContextCocoa(CanvasBase&, Ref<GPUCompositorIntegration>&&, Ref<GPUPresentationContext>&&, Document*);
+    explicit GPUCanvasContextCocoa(CanvasBase&, Ref<WebGPUIntegration>&&, Ref<GPUCompositorIntegration>&&, Ref<GPUPresentationContext>&&, Document*);
 
     void willUpdateDisplayBufferContents();
 
@@ -129,8 +129,10 @@ private:
     std::optional<Configuration> m_configuration;
 
     const Ref<GPUDisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
-    const Ref<GPUCompositorIntegration> m_compositorIntegration;
-    const Ref<GPUPresentationContext> m_presentationContext;
+    // The integration that m_compositorIntegration and m_presentationContext came from.
+    Ref<WebGPUIntegration> m_integration;
+    Ref<GPUCompositorIntegration> m_compositorIntegration;
+    Ref<GPUPresentationContext> m_presentationContext;
     RefPtr<GPUTexture> m_currentTexture;
     WebGPUFramePacer m_framePacer;
     std::optional<FramesPerSecond> m_lastPreferredFrameRate;
