@@ -43,6 +43,7 @@
 #include <unicode/ubidi.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Scope.h>
+#include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -609,6 +610,12 @@ void GraphicsContext::drawDisplayList(const DisplayList::DisplayList& displayLis
 
 void GraphicsContext::drawDisplayList(const DisplayList::DisplayList& displayList, ControlFactory& controlFactory)
 {
+    static constexpr unsigned maxDisplayListReplayDepth = 64;
+    static thread_local unsigned displayListReplayDepth = 0;
+    if (displayListReplayDepth >= maxDisplayListReplayDepth)
+        return;
+    SetForScope replayDepthScope(displayListReplayDepth, displayListReplayDepth + 1);
+
     AffineTransform baseTransform = getCTM();
 
     // FIXME: ControlFactory should be property of the context and not passed this way here.
