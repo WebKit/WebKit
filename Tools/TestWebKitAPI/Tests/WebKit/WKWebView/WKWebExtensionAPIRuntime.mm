@@ -2784,6 +2784,33 @@ TEST(WKWebExtensionAPIRuntime, ConnectNative)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIRuntime, ConnectNativeWithMessageSentBeforeDelegateCompletes)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const port = browser.runtime?.connectNative('test')",
+
+        @"port?.onMessage.addListener((response) => {",
+        @"  browser.test.assertEq(response, 'Launched', 'Should get the message sent while the native port was connecting')",
+        @"  browser.test.notifyPass()",
+        @"})"
+    ]);
+
+    auto manager = Util::loadExtension(runtimeManifest, @{ @"background.js": backgroundScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionNativeMessaging];
+
+    manager.get().internalDelegate.connectUsingMessagePort = ^(WKWebExtensionMessagePort *messagePort) {
+        // Let the background page register its onMessage listener before the delegate sends.
+        Util::runFor(0.5_s);
+
+        [messagePort sendMessage:@"Launched" completionHandler:^(NSError *error) {
+            EXPECT_NULL(error);
+        }];
+    };
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIRuntime, PortMutateListenersDuringDispatch)
 {
     auto *backgroundScript = Util::constructScript(@[

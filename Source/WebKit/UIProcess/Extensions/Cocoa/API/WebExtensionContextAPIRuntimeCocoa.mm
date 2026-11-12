@@ -476,8 +476,10 @@ void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebE
         completionHandler({ });
 
         sendQueuedNativePortMessagesIfNeeded(channelIdentifier);
+        fireQueuedPortMessageEventsIfNeeded(sourceContentWorldType, channelIdentifier);
         firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
         clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+        clearQueuedPortMessages(sourceContentWorldType, channelIdentifier);
     }).get()];
 }
 
