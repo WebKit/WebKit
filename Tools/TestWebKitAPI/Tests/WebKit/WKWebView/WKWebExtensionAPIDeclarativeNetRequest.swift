@@ -394,6 +394,74 @@ struct WKWebExtensionAPIDeclarativeNetRequestTests {
     }
 
     @Test
+    func updatedEnabledRulesetsPersistWithDefaultEnabledRulesets() async throws {
+        let backgroundScript = """
+            const enabledRulesets = (await browser.declarativeNetRequest.getEnabledRulesets()).sort()
+
+            if (enabledRulesets.length == 1) {
+              browser.test.assertEq(enabledRulesets[0], 'blockFrame', 'blockFrame should be enabled by default')
+
+              // Only turn on `blockFrame2`, leaving `blockFrame` at its default.
+              await browser.declarativeNetRequest.updateEnabledRulesets({ enableRulesetIds: ['blockFrame2'] })
+
+              browser.test.sendMessage('Unload extension')
+            } else {
+              browser.test.assertEq(enabledRulesets.length, 2, 'Both rulesets should be enabled after relaunch')
+              browser.test.assertEq(enabledRulesets[0], 'blockFrame', 'blockFrame should still be enabled')
+              browser.test.assertEq(enabledRulesets[1], 'blockFrame2', 'blockFrame2 should still be enabled')
+
+              browser.test.notifyPass()
+            }
+            """
+
+        let declarativeNetRequestManifest: [String: Any] = [
+            "manifest_version": 3,
+            "permissions": ["declarativeNetRequest"],
+            "background": [
+                "scripts": ["background.js"],
+                "type": "module",
+                "persistent": false,
+            ],
+            "declarative_net_request": [
+                "rule_resources": [
+                    [
+                        "id": "blockFrame",
+                        "enabled": true,
+                        "path": "rules.json",
+                    ],
+                    [
+                        "id": "blockFrame2",
+                        "enabled": false,
+                        "path": "rules.json",
+                    ],
+                ]
+            ],
+        ]
+
+        let rules =
+            "[ { \"id\" : 1, \"priority\": 1, \"action\" : { \"type\" : \"block\" }, \"condition\" : { \"urlFilter\" : \"frame\" } } ]"
+
+        let manager = parseWebExtension(
+            manifest: declarativeNetRequestManifest,
+            resources: ["background.js": backgroundScript, "rules.json": rules],
+            configuration: ._temporary()
+        )
+        let context = try #require(manager.context)
+
+        // Give the extension a unique identifier so it opts into saving data in the temporary configuration.
+        context.uniqueIdentifier = "org.webkit.test.extension (5E0B6A31)"
+
+        // Grant the declarativeNetRequest permission.
+        context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.declarativeNetRequest)
+
+        manager.load()
+        try await manager.waitForTestMessage("Unload extension")
+
+        manager.unload()
+        try await manager.loadAndRun()
+    }
+
+    @Test
     func updateEnabledRulesetsPerformsCompilation() async throws {
         var server = try HTTPServer(protocol: .http) {
             Route("/", headerFields: ["Content-Type": "text/html"]) {

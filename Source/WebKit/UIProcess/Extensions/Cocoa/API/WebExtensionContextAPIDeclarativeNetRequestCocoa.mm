@@ -49,18 +49,15 @@ void WebExtensionContext::loadDeclarativeNetRequestRulesetStateFromStorage()
 {
     m_enabledStaticRulesetIDs.clear();
 
-    auto *savedRulesetState = objectForKey<NSDictionary>(m_state, declarativeNetRequestRulesetStateKey);
-    if (!savedRulesetState.count) {
-        // Populate with the default enabled state.
-        for (auto& ruleset : borrow(protect(extension())->declarativeNetRequestRulesets())) {
-            if (ruleset.enabled)
-                m_enabledStaticRulesetIDs.add(ruleset.rulesetID);
-        }
+    RefPtr extension = m_extension;
 
-        return;
+    // The saved state only holds rulesets that were toggled, so start from the default enabled state.
+    for (auto& ruleset : borrow(extension->declarativeNetRequestRulesets())) {
+        if (ruleset.enabled)
+            m_enabledStaticRulesetIDs.add(ruleset.rulesetID);
     }
 
-    RefPtr extension = m_extension;
+    auto *savedRulesetState = objectForKey<NSDictionary>(m_state, declarativeNetRequestRulesetStateKey);
     for (NSString *savedIdentifier in savedRulesetState) {
         auto ruleset = extension->declarativeNetRequestRuleset(savedIdentifier);
         if (!ruleset)
