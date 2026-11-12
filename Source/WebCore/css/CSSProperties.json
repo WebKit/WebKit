@@ -1772,19 +1772,13 @@
             "initial": "baseline",
             "values": [
                 "baseline",
-                {
-                    "value": "text-bottom",
-                    "status": "unimplemented"
-                },
+                "text-bottom",
                 "alphabetic",
                 "ideographic",
                 "middle",
                 "central",
                 "mathematical",
-                {
-                    "value": "text-top",
-                    "status": "unimplemented"
-                },
+                "text-top",
                 {
                     "value": "after-edge",
                     "status": "deprecated"
@@ -1792,7 +1786,7 @@
                 {
                     "value": "text-after-edge",
                     "status": "deprecated",
-                    "comment": "Should alias to 'text-bottom' once it is implemented."
+                    "comment": "Legacy SVG alias for 'text-bottom'."
                 },
                 {
                     "value": "hanging",
@@ -1805,7 +1799,7 @@
                 {
                     "value": "text-before-edge",
                     "status": "deprecated",
-                    "comment": "Should alias to 'text-top' once it is implemented."
+                    "comment": "Legacy SVG alias for 'text-top'."
                 }
             ],
             "codegen-properties": {
