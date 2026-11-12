@@ -144,7 +144,8 @@ std::optional<InlineRect> InlineQuirks::adjustedRectForLineGridLineAlign(const I
     // This implement the legacy -webkit-line-align property.
     // It snaps line edges to a grid defined by an ancestor box.
     auto& lineGrid = *parentBlockLayoutState.lineGrid();
-    auto offset = InlineLayoutUnit { lineGrid.layoutOffset.width() + lineGrid.gridOffset.width() };
+    // From the border box of the box that establishes the line grid (RenderBlock::adjustLogicalLeftOffsetForLine).
+    auto offset = InlineLayoutUnit { lineGrid.layoutOffset.width() - lineGrid.gridOffset.width() };
     auto columnWidth = lineGrid.columnWidth;
     auto leftShift = fmodf(columnWidth - fmodf(rect.left() + offset, columnWidth), columnWidth);
     auto rightShift = -fmodf(rect.right() + offset, columnWidth);

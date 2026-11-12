@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<style>
+body { font: 14px/17px sans-serif; }
+.grid { -webkit-line-grid: grid; -webkit-line-align: edges; width: 200px; }
+</style>
+<div class=grid style="margin-left: 7px;">The line grid starts at the box itself.</div>
+<div style="margin-left: 11px;"><div class=grid style="margin-left: 13px;">So does this one, further in.</div></div>
+<script>
+// The lines align to the grid from where the box is, which it has once it is laid out (RenderBlockFlow::layoutBlockChild).
+document.body.offsetHeight;
+for (const grid of document.querySelectorAll(".grid")) {
+    grid.style.wordSpacing = "1px";
+    document.body.offsetHeight;
+    grid.style.wordSpacing = "";
+    document.body.offsetHeight;
+}
+</script>
