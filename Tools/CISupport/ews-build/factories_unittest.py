@@ -961,7 +961,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'canonicalize-commit',
             'push-pull-request-branch',
-            'update-pull-request',
             'push-commit-to-webkit-repo',
             'set-build-summary'
         ],
@@ -990,7 +989,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'canonicalize-commit',
             'validate-change',
             'push-pull-request-branch',
-            'update-pull-request',
             'push-commit-to-webkit-repo',
             'set-build-summary'
         ],
