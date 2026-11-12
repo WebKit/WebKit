@@ -1169,22 +1169,10 @@ unsigned RenderGrid::clampAutoRepeatTracks(Style::GridTrackSizingDirection direc
 void RenderGrid::placeItems()
 {
     updateLogicalWidth();
+    currentGrid().setNeedsItemsPlacement(true);
 
     LayoutUnit availableSpaceForColumns = contentBoxLogicalWidth();
     placeItemsOnGrid(availableSpaceForColumns);
-}
-
-static GridArea insertIntoGrid(Grid& grid, RenderBox& gridItem, const GridArea& area)
-{
-    GridArea clamped = grid.insert(gridItem, area);
-
-    CheckedPtr renderGrid = dynamicDowncast<RenderGrid>(gridItem);
-    if (!renderGrid)
-        return clamped;
-
-    if (renderGrid->isSubgridRows() || renderGrid->isSubgridColumns())
-        renderGrid->placeItems();
-    return clamped;
 }
 
 bool RenderGrid::isGridLanes() const
@@ -1205,7 +1193,7 @@ bool RenderGrid::isStackingAxis(Style::GridTrackSizingDirection direction) const
     // isSubgrid will return false if the stacking axis matches. Need to check style if we are a subgrid
     auto& tracks = style().gridTemplateList(direction);
     if (auto* parentGrid = dynamicDowncast<RenderGrid>(parent()); parentGrid && tracks.subgrid)
-        return parentGrid->isStackingAxis(direction);
+        return parentGrid->isStackingAxis(GridLayoutFunctions::flowAwareDirectionForParent(*this, *parentGrid, direction));
     if (style().display() != Style::DisplayType::BlockGridLanes && style().display() != Style::DisplayType::InlineGridLanes)
         return false;
     return (direction == Style::GridTrackSizingDirection::Columns) == style().gridAutoFlow().isColumn();
@@ -1285,7 +1273,7 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
                 specifiedMajorAxisAutoGridItems.append(gridItem.ptr());
             continue;
         }
-        insertIntoGrid(currentGrid(), gridItem, { area.rows, area.columns });
+        currentGrid().insert(gridItem, { area.rows, area.columns });
     }
 
 #if ASSERT_ENABLED
@@ -1306,6 +1294,11 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
     };
 
     performAutoPlacement();
+
+    for (CheckedRef gridItem : currentGrid().orderIterator().gridItems()) {
+        if (CheckedPtr subgrid = dynamicDowncast<RenderGrid>(gridItem); subgrid && (subgrid->isSubgridRows() || subgrid->isSubgridColumns()))
+            subgrid->placeItems();
+    }
 
 #if ASSERT_ENABLED
     for (CheckedRef gridItem : currentGrid().orderIterator().gridItems()) {
@@ -1450,7 +1443,7 @@ void RenderGrid::placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>& au
         if (!emptyGridArea)
             emptyGridArea = createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(*autoGridItem, autoPlacementMajorAxisDirection(), majorAxisPositions);
 
-        emptyGridArea = insertIntoGrid(currentGrid(), *autoGridItem, *emptyGridArea);
+        emptyGridArea = currentGrid().insert(*autoGridItem, *emptyGridArea);
 
         if (!isGridAutoFlowDense)
             minorAxisCursors.set(majorAxisInitialPosition, isForColumns ? emptyGridArea->rows.startLine() : emptyGridArea->columns.startLine());
@@ -1522,7 +1515,7 @@ void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox& gridItem, AutoPlacement
             emptyGridArea = createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(gridItem, autoPlacementMinorAxisDirection(), GridSpan::translatedDefiniteGridSpan(0, minorAxisSpanSize));
     }
 
-    emptyGridArea = insertIntoGrid(currentGrid(), gridItem, *emptyGridArea);
+    emptyGridArea = currentGrid().insert(gridItem, *emptyGridArea);
     autoPlacementCursor.first = emptyGridArea->rows.startLine();
     autoPlacementCursor.second = emptyGridArea->columns.startLine();
 }
@@ -2280,7 +2273,7 @@ bool RenderGrid::isSubgrid(Style::GridTrackSizingDirection direction) const
     auto* renderGrid = dynamicDowncast<RenderGrid>(parent());
     if (!renderGrid)
         return false;
-    return !renderGrid->isStackingAxis(direction);
+    return !renderGrid->isStackingAxis(GridLayoutFunctions::flowAwareDirectionForParent(*this, *renderGrid, direction));
 }
 
 bool RenderGrid::isSubgridInParentDirection(Style::GridTrackSizingDirection parentDirection) const
