@@ -1661,6 +1661,12 @@ void RenderBox::clearOverridingContainingBlockContentSize()
     m_overridingSizes->overridingContainingBlockContentLogicalHeight = std::nullopt;
 }
 
+void RenderBox::clearOverridingContainingBlockContentLogicalWidth()
+{
+    if (m_overridingSizes)
+        m_overridingSizes->overridingContainingBlockContentLogicalWidth = std::nullopt;
+}
+
 void RenderBox::clearOverridingContainingBlockContentLogicalHeight()
 {
     if (m_overridingSizes)

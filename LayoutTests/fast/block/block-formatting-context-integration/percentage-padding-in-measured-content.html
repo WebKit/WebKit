@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: flow-root; margin: 2px; border: 1px solid; float: left; clear: left; }
+.f { float: left; background: yellow; }
+.ib { display: inline-block; background: pink; }
+.c { background: lightblue; }
+.grid { display: grid; grid: auto / repeat(auto-fill, 30px); max-width: 150px; padding: 0 10%; background: lightblue; }
+</style>
+<div class="root"><div class="f"><div class="c" style="padding-left: 50%">float with a padded child</div></div></div>
+<div class="root" style="position: relative; height: 30px; width: 300px"><div style="position: absolute; background: yellow"><div class="c" style="padding-left: 30%">absolute</div></div></div>
+<div class="root"><span class="ib"><div class="c" style="padding: 10%">inline-block</div></span></div>
+<div class="root"><div class="f"><table class="c" style="padding-left: 20%"><tr><td>table cell</td></tr></table></div></div>
+<div class="root"><div class="f">text <span class="ib c" style="padding-right: 30%">atomic</span> text</div></div>
+<div class="root"><div style="width: max-content; background: yellow"><div class="c" style="padding: 0 calc(10% + 4px)">max-content</div></div></div>
+<div class="root"><div class="f"><div class="f c" style="padding: 0 25%">inner float</div><div>after</div></div></div>
+<div class="root"><div style="width: fit-content; background: yellow"><div class="c" style="padding-left: 40%">fit-content</div></div></div>
+<div class="root"><div class="f"><div><div class="c" style="padding-left: 40%">nested</div></div></div></div>
+<div class="root"><div class="f"><div class="c" style="width: 80px; box-sizing: border-box; padding-left: 20%">border-box</div></div></div>
+<div class="root"><div class="f"><div class="c" style="display: flex; padding-right: 30%"><div>flex</div></div></div></div>
+<div class="root" style="width: 300px"><div class="grid"><div>a</div><div>b</div></div></div>
+<div class="root"><div style="width: 200px"><div class="grid" style="padding: 0 calc(5% + 3px)"><div>c</div></div></div></div>

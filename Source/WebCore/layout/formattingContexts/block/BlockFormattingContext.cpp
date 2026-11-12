@@ -1682,8 +1682,8 @@ IntrinsicWidthConstraints BlockFormattingContext::computeContentIntrinsicInlineS
 
     auto writingMode = root().writingMode();
     // The outer size: the inline size, clamped by the min and max inline sizes, plus border, padding and margins, where auto margins and
-    // percentages, which are cyclic here, count as zero and percentage inline sizes as auto (§5.2.1). Coverage keeps out percentage padding,
-    // which the render tree path resolves against the containing block's current inline size.
+    // percentages, which are cyclic here, count as zero and percentage inline sizes as auto (§5.2.1). The render tree path resolves percentage
+    // padding against the inline size its containing block got from the last layout instead, so the box grows every time it measures it again.
     auto inlineMargins = [&](const RenderBox& box) {
         CheckedRef style = box.style();
         auto margin = [&](auto& margin) {

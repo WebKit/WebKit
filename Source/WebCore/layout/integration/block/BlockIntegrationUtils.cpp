@@ -158,8 +158,54 @@ static bool inlineContentConstraintsChanged(const LineLayout& lineLayout, const 
         || previousConstraints->formattingRootBorderBoxSize() != constraints.formattingRootBorderBoxSize();
 }
 
+// The percentages in the inline padding of a box laid out through the render tree, in content whose intrinsic sizes the block formatting
+// context computes, are cyclic and resolve against zero (css-sizing-3 §5.2.1), like those of the block containers it measures itself: the
+// box's own formatting context measures it as if its containing block had no inline size, then again for its layout. The render tree path
+// resolves them against the inline size its containing block got from the last layout, which makes the content wider each time it measures it.
+class CyclicPercentagePaddingScope {
+public:
+    void add(const RenderBox& box)
+    {
+        CheckedRef style = box.style();
+        auto writingMode = box.writingMode();
+        if (!style->paddingStart(writingMode).isPercentOrCalculated() && !style->paddingEnd(writingMode).isPercentOrCalculated())
+            return;
+        // Only the box is written, which is measured again from its style when it is laid out.
+        SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef mutableBox = const_cast<RenderBox&>(box);
+        m_boxes.append({ mutableBox, box.overridingContainingBlockContentLogicalWidth() });
+        mutableBox->setOverridingContainingBlockContentLogicalWidth(0_lu);
+        mutableBox->invalidateContentLogicalWidths(MarkingBehavior::OnlyThis);
+    }
+
+    ~CyclicPercentagePaddingScope()
+    {
+        for (auto& [box, overridingContainingBlockContentLogicalWidth] : m_boxes) {
+            if (overridingContainingBlockContentLogicalWidth)
+                box->setOverridingContainingBlockContentLogicalWidth(*overridingContainingBlockContentLogicalWidth);
+            else
+                box->clearOverridingContainingBlockContentLogicalWidth();
+            box->invalidateContentLogicalWidths(MarkingBehavior::OnlyThis);
+        }
+    }
+
+private:
+    Vector<std::pair<CheckedRef<RenderBox>, std::optional<RenderBox::ContainingBlockContentSize>>> m_boxes;
+};
+
 Layout::IntrinsicWidthConstraints BlockIntegrationUtils::inlineContentIntrinsicInlineSizes(const RenderBlockFlow& blockContainer)
 {
+    // The inline formatting context measures the atomic inline-level boxes and the floats in the content through the render tree.
+    auto cyclicPercentagePaddingScope = CyclicPercentagePaddingScope { };
+    for (CheckedPtr<const RenderObject> descendant = blockContainer.firstChild(); descendant;) {
+        CheckedPtr box = dynamicDowncast<RenderBox>(*descendant);
+        if (!box) {
+            descendant = descendant->nextInPreOrder(&blockContainer);
+            continue;
+        }
+        if (!box->isOutOfFlowPositioned())
+            cyclicPercentagePaddingScope.add(*box);
+        descendant = descendant->nextInPreOrderAfterChildren(&blockContainer);
+    }
     auto [minimum, maximum] = blockContainer.computeInlineIntrinsicLogicalWidths();
     return { minimum, maximum };
 }
@@ -331,6 +377,8 @@ Layout::IntrinsicWidthConstraints BlockIntegrationUtils::independentFormattingCo
         auto blockSize = mutableBox->computeIntrinsicLogicalHeight();
         return { blockSize, blockSize };
     }
+    auto cyclicPercentagePaddingScope = CyclicPercentagePaddingScope { };
+    cyclicPercentagePaddingScope.add(box);
     // Like RenderBlock::computeChildIntrinsicLogicalWidths: a min-content or max-content inline size of a block makes both contributions
     // that size (css-sizing-3 §5.2.1).
     auto contributions = Layout::IntrinsicWidthConstraints { box.minContentLogicalWidthContribution(), box.maxContentLogicalWidthContribution() };

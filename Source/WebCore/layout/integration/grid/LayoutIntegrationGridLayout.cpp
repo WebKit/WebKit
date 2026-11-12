@@ -60,9 +60,9 @@ GridLayout::~GridLayout()
 void GridLayout::updateFormattingContextGeometries()
 {
     auto boxGeometryUpdater = BoxGeometryUpdater { protect(layoutState()), gridBox() };
-    CheckedPtr gridBoxContainingBlock = CheckedRef { gridBoxRenderer() }->containingBlock();
-
-    boxGeometryUpdater.setFormattingContextRootGeometry(gridBoxContainingBlock->contentBoxLogicalWidth());
+    // Like the renderer's own padding and margins (UsedStyle), from the inline size the formatting context it is in gives its containing block,
+    // which the block formatting context writes to the containing block's renderer only once all of its content is laid out.
+    boxGeometryUpdater.setFormattingContextRootGeometry(CheckedRef { gridBoxRenderer() }->containingBlockLogicalWidthForContent());
     boxGeometryUpdater.setFormattingContextContentGeometry(CheckedRef { layoutState() }->geometryForBox(gridBox()).contentBoxWidth(), { });
 }
 

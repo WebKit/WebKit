@@ -435,6 +435,7 @@ public:
     void setOverridingContainingBlockContentLogicalWidth(ContainingBlockContentSize);
     void setOverridingContainingBlockContentLogicalHeight(ContainingBlockContentSize);
     NODELETE void clearOverridingContainingBlockContentSize();
+    NODELETE void clearOverridingContainingBlockContentLogicalWidth();
     NODELETE void clearOverridingContainingBlockContentLogicalHeight();
 
     // These are currently only used by Flexbox code. In some cases we must layout flex items with a different main size
