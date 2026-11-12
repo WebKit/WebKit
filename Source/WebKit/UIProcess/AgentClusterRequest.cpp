@@ -30,6 +30,7 @@
 #include <WebCore/OriginAgentClusterPolicy.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityPolicy.h>
 
 namespace WebKit {
 
@@ -38,9 +39,9 @@ AgentClusterRequest AgentClusterRequest::forNavigationAction(const URL& url, con
     return { isSubstituteData == IsSubstituteData::Yes ? Source::SubstituteData : Source::NavigationAction, WebCore::SecurityOrigin::create(url)->data(), topLevelCreationURL };
 }
 
-static WebCore::IsSecureContext isSecureContextForNavigationResponse(const WebCore::SecurityOrigin& origin, WebCore::IsSecureContext topLevelIsSecureContext)
+static WebCore::IsSecureContext isSecureContextForNavigationResponse(const URL& url, WebCore::IsSecureContext topLevelIsSecureContext)
 {
-    return origin.isPotentiallyTrustworthy() && topLevelIsSecureContext == WebCore::IsSecureContext::Yes ? WebCore::IsSecureContext::Yes : WebCore::IsSecureContext::No;
+    return WebCore::isURLPotentiallyTrustworthy(url) && topLevelIsSecureContext == WebCore::IsSecureContext::Yes ? WebCore::IsSecureContext::Yes : WebCore::IsSecureContext::No;
 }
 
 WebCore::DocumentIsolationPolicyValue documentIsolationPolicyForNavigationResponse(const URL& url, WebCore::DocumentIsolationPolicyValue headerPolicy, WebCore::IsSecureContext topLevelIsSecureContext, const WebPreferences& preferences)
@@ -50,16 +51,15 @@ WebCore::DocumentIsolationPolicyValue documentIsolationPolicyForNavigationRespon
         return WebCore::DocumentIsolationPolicyValue::None;
     WebCore::DocumentIsolationPolicy policy;
     policy.value = headerPolicy;
-    return WebCore::obtainDocumentIsolationPolicy(url, WTF::move(policy), isSecureContextForNavigationResponse(WebCore::SecurityOrigin::create(url), topLevelIsSecureContext)).value;
+    return WebCore::obtainDocumentIsolationPolicy(url, WTF::move(policy), isSecureContextForNavigationResponse(url, topLevelIsSecureContext)).value;
 }
 
-AgentClusterRequest AgentClusterRequest::forNavigationResponse(const WebCore::ResourceResponse& response, const URL& topLevelCreationURL, WebCore::IsSecureContext topLevelIsSecureContext, const WebPreferences& preferences)
+AgentClusterRequest AgentClusterRequest::forNavigationResponse(const WebCore::ResourceResponse& response, WebCore::SandboxFlags sandboxFlags, const URL& topLevelCreationURL, WebCore::IsSecureContext topLevelIsSecureContext, const WebPreferences& preferences)
 {
-    Ref origin = WebCore::SecurityOrigin::create(response.url());
-    AgentClusterRequest request { Source::NavigationResponse, origin->data(), topLevelCreationURL };
+    AgentClusterRequest request { Source::NavigationResponse, WebCore::SecurityPolicy::determineOrigin(response.url(), sandboxFlags, nullptr)->data(), topLevelCreationURL };
     request.documentIsolationPolicy = documentIsolationPolicyForNavigationResponse(response.url(), WebCore::parseDocumentIsolationPolicy(response).value, topLevelIsSecureContext, preferences);
     if (preferences.originAgentClusterEnabled())
-        request.requestedKeying = response.url().protocolIsInHTTPFamilyOrBlob() ? WebCore::obtainOriginAgentClusterPolicy(response, isSecureContextForNavigationResponse(origin, topLevelIsSecureContext), nullptr) : WebCore::OriginKeyed::No;
+        request.requestedKeying = response.url().protocolIsInHTTPFamilyOrBlob() ? WebCore::obtainOriginAgentClusterPolicy(response, isSecureContextForNavigationResponse(response.url(), topLevelIsSecureContext), nullptr) : WebCore::OriginKeyed::No;
     return request;
 }
 

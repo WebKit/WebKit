@@ -390,7 +390,7 @@ void WebFrameProxy::didFailProvisionalLoad()
         m_navigateCallback({ }, { });
 }
 
-void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPluginDocument, DocumentSecurityPolicy&& documentSecurityPolicy, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, std::optional<WebCore::SecurityOriginData>&& webArchiveMainFrameOrigin, std::optional<WebCore::ProcessQualified<WebCore::OpaqueOriginIdentifier>>&& reportedOpaqueOriginIdentifier)
+void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPluginDocument, DocumentSecurityPolicy&& documentSecurityPolicy, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, std::optional<WebCore::SecurityOriginData>&& webArchiveMainFrameOrigin, std::optional<WebCore::ProcessQualified<WebCore::OpaqueOriginIdentifier>>&& reportedOpaqueOriginIdentifier, WebCore::SandboxFlags responseSandboxFlags)
 {
     m_frameLoadState.didCommitLoad();
 
@@ -407,7 +407,7 @@ void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPlugin
     m_cspOriginsThatUpgradeInsecureNavigations = WTF::move(cspOriginsThatUpgradeInsecureNavigations);
     m_lastActivationTimestamp = -MonotonicTime::infinity();
 
-    updateDocumentSecurityOrigin();
+    updateDocumentSecurityOrigin(responseSandboxFlags);
 
     // The UI process cannot derive the origin of a web archive's main resource from its URL,
     // so the caller has vouched that this is a web archive load and we use the reported origin.
@@ -1358,26 +1358,16 @@ ProvisionalFrameCreationParameters WebFrameProxy::provisionalFrameCreationParame
     };
 }
 
-void WebFrameProxy::updateDocumentSecurityOrigin()
+void WebFrameProxy::updateDocumentSecurityOrigin(WebCore::SandboxFlags responseSandboxFlags)
 {
-    if (m_effectiveSandboxFlags.contains(SandboxFlag::Origin)) {
-        m_documentSecurityOrigin = WebCore::SecurityOrigin::opaqueOrigin();
-        return;
-    }
-
-    if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(url())) {
-        // Match Document::initSecurityContext(), which can only inherit from a parent or opener in its own process.
-        RefPtr owner = parentFrame();
-        if (!owner || &owner->process() != &process())
-            owner = opener();
-        if (owner && &owner->process() == &process())
-            m_documentSecurityOrigin = owner->securityOrigin().ptr();
-        else
-            m_documentSecurityOrigin = WebCore::SecurityOrigin::opaqueOrigin();
-        return;
-    }
-
-    m_documentSecurityOrigin = SecurityOrigin::create(url());
+    // Match Document::initSecurityContext(), which can only inherit from a parent or opener in its own process.
+    RefPtr owner = parentFrame();
+    if (!owner || &owner->process() != &process())
+        owner = opener();
+    if (owner && &owner->process() != &process())
+        owner = nullptr;
+    RefPtr ownerOrigin = owner ? owner->securityOrigin().ptr() : nullptr;
+    m_documentSecurityOrigin = SecurityPolicy::determineOrigin(url(), m_effectiveSandboxFlags | responseSandboxFlags, ownerOrigin.get());
 }
 
 WebCore::CertificateInfo WebFrameProxy::provisionalCertificateInfoFromNetworkProcess(const URL& url) const

@@ -28,6 +28,7 @@
 #include <WebCore/DocumentIsolationPolicy.h>
 #include <WebCore/IsSecureContext.h>
 #include <WebCore/OriginKeyed.h>
+#include <WebCore/SandboxFlags.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/URL.h>
 
@@ -45,7 +46,7 @@ struct AgentClusterRequest {
     enum class Source : uint8_t { NavigationAction, SubstituteData, NavigationResponse };
 
     static AgentClusterRequest forNavigationAction(const URL&, const URL& topLevelCreationURL, IsSubstituteData);
-    static AgentClusterRequest forNavigationResponse(const WebCore::ResourceResponse&, const URL& topLevelCreationURL, WebCore::IsSecureContext topLevelIsSecureContext, const WebPreferences&);
+    static AgentClusterRequest forNavigationResponse(const WebCore::ResourceResponse&, WebCore::SandboxFlags, const URL& topLevelCreationURL, WebCore::IsSecureContext topLevelIsSecureContext, const WebPreferences&);
 
     Source source;
     WebCore::SecurityOriginData origin;

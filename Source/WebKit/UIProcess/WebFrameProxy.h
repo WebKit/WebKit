@@ -217,7 +217,7 @@ public:
     void didExplicitOpen(URL&&, String&& mimeType, ShouldClearProvisionalURL);
     void didReceiveServerRedirectForProvisionalLoad(URL&&);
     void didFailProvisionalLoad();
-    void didCommitLoad(const String& contentType, bool containsPluginDocument, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, std::optional<WebCore::SecurityOriginData>&& webArchiveMainFrameOrigin, std::optional<WebCore::ProcessQualified<WebCore::OpaqueOriginIdentifier>>&& reportedOpaqueOriginIdentifier);
+    void didCommitLoad(const String& contentType, bool containsPluginDocument, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, std::optional<WebCore::SecurityOriginData>&& webArchiveMainFrameOrigin, std::optional<WebCore::ProcessQualified<WebCore::OpaqueOriginIdentifier>>&& reportedOpaqueOriginIdentifier, WebCore::SandboxFlags responseSandboxFlags);
     void didFinishLoad();
     void didFailLoad();
     void didSameDocumentNavigation(URL&&); // eg. anchor navigation, session state change.
@@ -371,7 +371,7 @@ private:
 
     NODELETE std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
-    void updateDocumentSecurityOrigin();
+    void updateDocumentSecurityOrigin(WebCore::SandboxFlags responseSandboxFlags = { });
     WebCore::SecurityOriginData committedDocumentSecurityOriginData() const;
 
     RefPtr<WebFrameProxy> deepLastChild();

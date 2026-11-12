@@ -57,7 +57,7 @@ public:
 
     WEBCORE_EXPORT static bool shouldInheritSecurityOriginFromOwner(const URL&);
 
-    static Ref<SecurityOrigin> determineOrigin(const URL&, SandboxFlags, SecurityOrigin* sourceOrigin);
+    WEBCORE_EXPORT static Ref<SecurityOrigin> determineOrigin(const URL&, SandboxFlags, SecurityOrigin* sourceOrigin);
 
     static bool isBaseURLSchemeAllowed(const URL&);
 

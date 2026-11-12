@@ -232,6 +232,8 @@
 #include <WebCore/ChromeClient.h>
 #include <WebCore/CompositionHighlight.h>
 #include <WebCore/ContentFilter.h>
+#include <WebCore/ContentSecurityPolicy.h>
+#include <WebCore/ContentSecurityPolicyResponseHeaders.h>
 #include <WebCore/CrossOriginOpenerPolicy.h>
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/CryptoKey.h>
@@ -7100,6 +7102,17 @@ void WebPageProxy::receivedPolicyDecision(WebProcessProxy& processReceivingPolic
     completionHandler(PolicyDecision { isNavigatingToAppBoundDomain(), action, navigation ? std::optional { navigation->navigationID() } : std::nullopt, std::nullopt, WTF::move(websitePoliciesData), WTF::move(sandboxExtensionHandle), WTF::move(consoleMessage), isSafeBrowsingCheckOngoing, nullptr, agentClusterAssignment, WTF::move(unpartitionedStorageSite) });
 }
 
+// FIXME: This trusts the response the web process reports, like Origin-Agent-Cluster and
+// Document-Isolation-Policy, until navigation moves to the UI process.
+static SandboxFlags sandboxFlagsFromContentSecurityPolicy(const ResourceResponse& response)
+{
+    if (response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicy).isNull())
+        return { };
+    ContentSecurityPolicy contentSecurityPolicy { URL { response.url() }, nullptr, nullptr };
+    contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, String { }, ContentSecurityPolicy::ReportParsingErrors::No);
+    return contentSecurityPolicy.sandboxFlags();
+}
+
 void WebPageProxy::receivedNavigationResponsePolicyDecision(WebProcessProxy& processReceivingPolicyDecision, WebCore::PolicyAction action, API::Navigation* navigation, const WebCore::ResourceRequest& request, Ref<API::NavigationResponse>&& navigationResponse, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
     if (!hasRunningProcess())
@@ -7151,7 +7164,14 @@ void WebPageProxy::receivedNavigationResponsePolicyDecision(WebProcessProxy& pro
         auto& response = navigationResponse->response();
         bool isMainFrame = navigationResponse->frame().isMainFrame();
         auto topLevelSecureContext = topLevelIsSecureContext(response.url(), isMainFrame) ? IsSecureContext::Yes : IsSecureContext::No;
-        auto request = AgentClusterRequest::forNavigationResponse(response, topLevelCreationURL(response.url(), isMainFrame), topLevelSecureContext, protect(preferences()));
+        // https://html.spec.whatwg.org/multipage/browsing-the-web.html#create-navigation-params-by-fetching
+        auto frameID = navigationResponse->frame().frameInfoData().frameID;
+        auto sandboxFlags = sandboxFlagsFromContentSecurityPolicy(response);
+        if (navigation)
+            navigation->setResponseSandboxFlags(frameID, sandboxFlags);
+        if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+            sandboxFlags.add(frame->effectiveSandboxFlags());
+        auto request = AgentClusterRequest::forNavigationResponse(response, sandboxFlags, topLevelCreationURL(response.url(), isMainFrame), topLevelSecureContext, protect(preferences()));
         // Without a navigation, no commit records the keying, so it is recorded now.
         auto [assignment, reservation] = browsingContextGroupForCommittingNavigation(navigation)->assignAgentCluster(request, navigation ? AgentClusterKeyingRecording::OnCommit : AgentClusterKeyingRecording::Now);
         agentClusterAssignment = assignment;
@@ -10407,7 +10427,8 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
             reportedOpaqueOriginIdentifier = identifier;
     }
     frame->commitCertificateInfo(request.url(), hasCertificateInfo);
-    frame->didCommitLoad(mimeType, containsPluginDocument, WTF::move(documentSecurityPolicy), WTF::move(cspOriginsThatUpgradeInsecureNavigations), WTF::move(webArchiveMainFrameOrigin), WTF::move(reportedOpaqueOriginIdentifier));
+    RefPtr committedNavigation = navigationID ? m_navigationState->navigation(*navigationID) : nullptr;
+    frame->didCommitLoad(mimeType, containsPluginDocument, WTF::move(documentSecurityPolicy), WTF::move(cspOriginsThatUpgradeInsecureNavigations), WTF::move(webArchiveMainFrameOrigin), WTF::move(reportedOpaqueOriginIdentifier), committedNavigation ? committedNavigation->responseSandboxFlags(frameID) : SandboxFlags { });
 
     if (frame->isMainFrame()) {
         protectedPageLoadState->didCommitLoad(transaction, frame->certificateInfo(), markPageInsecure, usedLegacyTLS, wasPrivateRelayed, WTF::move(proxyName), source, frame->documentSecurityOriginData());
