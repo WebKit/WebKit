@@ -1,0 +1,32 @@
+<head>
+<script src="../resources/js-test.js"></script>
+<body>
+<script>
+description("Tests GamepadButton.type for standard and non-standard buttons.");
+jsTestIsAsync = true;
+
+if (window.internals)
+    internals.settings.setGamepadButtonTypeEnabled(true);
+
+function runTest()
+{
+    addEventListener("gamepadconnected", event => {
+        gamepad = event.gamepad;
+
+        shouldBe("gamepad.buttons.length", "18");
+        shouldBeEqualToString("gamepad.buttons[0].type", "standard");
+        shouldBeEqualToString("gamepad.buttons[16].type", "standard");
+        shouldBeEqualToString("gamepad.buttons[17].type", "non-standard");
+        shouldBeTrue("gamepad.buttons.every(button => button.type === 'standard' || button.type === 'non-standard')");
+
+        finishJSTest();
+    }, { once: true });
+
+    const supportsDualRumble = false;
+    testRunner.setMockGamepadDetails(0, "Test Gamepad", "standard", 4, 18, supportsDualRumble);
+    testRunner.connectMockGamepad(0);
+}
+
+onload = runTest;
+</script>
+</body>
