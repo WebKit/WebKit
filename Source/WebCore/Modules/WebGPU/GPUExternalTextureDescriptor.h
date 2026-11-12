@@ -82,14 +82,14 @@ struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
 #if ENABLE(WEB_CODECS)
         return WTF::switchOn(videoSource,
             [&](const Ref<HTMLVideoElement>& videoElement) {
-                return IntSize { static_cast<int>(videoElement->videoWidth()), static_cast<int>(videoElement->videoHeight()) };
+                return IntSize { clampTo<int>(videoElement->videoWidth()), clampTo<int>(videoElement->videoHeight()) };
             },
             [&](const Ref<WebCodecsVideoFrame>& videoFrame) {
-                return IntSize { static_cast<int>(videoFrame->displayWidth()), static_cast<int>(videoFrame->displayHeight()) };
+                return IntSize { clampTo<int>(videoFrame->displayWidth()), clampTo<int>(videoFrame->displayHeight()) };
             }
         );
 #else
-        return IntSize { static_cast<int>(videoSource->videoWidth()), static_cast<int>(videoSource->videoHeight()) };
+        return IntSize { clampTo<int>(videoSource->videoWidth()), clampTo<int>(videoSource->videoHeight()) };
 #endif
     }
 

@@ -1815,18 +1815,20 @@ struct WebKitCopyExternalImageVertexOut {
     uint sourceY = (args.flags & webKitCopyExternalImageFlipY) ? (args.copyHeight - 1 - copyPosition.y) : copyPosition.y;
     // Clamped because a caller-supplied rectangle reaching past the end of the source must read the
     // edge rather than whatever the surface's padding holds.
-    uint2 sourcePosition = min(uint2(args.sourceOriginX + copyPosition.x, args.sourceOriginY + sourceY), uint2(args.sourceMaxX, args.sourceMaxY));
+    uint2 sourcePosition = uint2(args.sourceOriginX, args.sourceOriginY) + min(uint2(copyPosition.x, sourceY), uint2(args.sourceMaxX - args.sourceOriginX, args.sourceMaxY - args.sourceOriginY));
     float4 color;
     if (args.flags & webKitCopyExternalImageSourceIsVideoFrame) {
         // A decoded frame's two planes, sampled the way textureSampleBaseClampToEdge samples an
         // external texture: the frame's own crop applied to normalized coordinates, then out of its
         // YCbCr space. A single-plane frame arrives as a swizzled view of the first plane paired with
         // the identity matrix, so both kinds of frame take this one path.
-        float2 frameCoordinates = (float2(sourcePosition) + 0.5f) / float2(args.sourceMaxX + 1, args.sourceMaxY + 1);
+        float2 frameCoordinates = clamp((float2(sourcePosition) + 0.5f) / (float2(args.sourceMaxX, args.sourceMaxY) + 1.f), 0.f, 1.f);
         float2 croppedCoordinates = float2(
             args.uvRemapMatrix[0] * frameCoordinates.x + args.uvRemapMatrix[2] * frameCoordinates.y + args.uvRemapMatrix[4],
             args.uvRemapMatrix[1] * frameCoordinates.x + args.uvRemapMatrix[3] * frameCoordinates.y + args.uvRemapMatrix[5]);
-        float3 ycbcr = float3(source.sample(webKitCopyExternalImageFrameSampler, croppedCoordinates).r, sourceSecondPlane.sample(webKitCopyExternalImageFrameSampler, croppedCoordinates).rg);
+        float2 lumaBounds = 0.5f / float2(source.get_width(), source.get_height());
+        float2 chromaBounds = 0.5f / float2(sourceSecondPlane.get_width(), sourceSecondPlane.get_height());
+        float3 ycbcr = float3(source.sample(webKitCopyExternalImageFrameSampler, clamp(croppedCoordinates, lumaBounds, 1.f - lumaBounds)).r, sourceSecondPlane.sample(webKitCopyExternalImageFrameSampler, clamp(croppedCoordinates, chromaBounds, 1.f - chromaBounds)).rg);
         // Column-major, matching how the host flattened it, and affine: the fourth column is added.
         color = float4(
             args.ycbcrMatrix[0] * ycbcr.x + args.ycbcrMatrix[3] * ycbcr.y + args.ycbcrMatrix[6] * ycbcr.z + args.ycbcrMatrix[9],
@@ -2048,15 +2050,24 @@ void Queue::copyExternalImageToTexture(const WebGPU::ImageCopyExternalImage& sou
         if (!sourceTexture || !sourceSecondPlaneTexture)
             return;
 
-        // The frame's clean aperture, which is both the extent script sees and the extent the crop
-        // matrix normalizes against, rather than the larger extent the planes may be coded at.
-        auto cleanSize = CVImageBufferGetCleanRect(pixelBuffer.get()).size;
-        sourceWidth = static_cast<uint32_t>(cleanSize.width);
-        sourceHeight = static_cast<uint32_t>(cleanSize.height);
-        // A quarter turn presents the frame's extent transposed, and both the copy's coordinates and
-        // the origin script asked to copy from are in the presented image.
-        if (source.pixelBufferRotation == WebGPU::VideoFrameRotation::Right || source.pixelBufferRotation == WebGPU::VideoFrameRotation::Left)
-            std::swap(sourceWidth, sourceHeight);
+        // The size the source presents the frame at, which is the extent script sees and which the
+        // pixel buffer does not carry when a pixel aspect ratio or display size scales it. Unlike the
+        // IOSurface path below, which indexes the surface directly in texels, fsCopyExternalImage divides
+        // sourcePosition by this extent to produce normalized [0, 1] UV coordinates and clamps the mapped
+        // coordinates to each plane's bounds, so a presented size larger than the clean aperture rescales
+        // sampling across the frame rather than reading past the pixel buffer's planes. Fall back to the
+        // frame's clean aperture when the caller did not supply one.
+        sourceWidth = source.sourceSize.width;
+        sourceHeight = source.sourceSize.height;
+        if (!sourceWidth || !sourceHeight) {
+            auto cleanSize = CVImageBufferGetCleanRect(pixelBuffer.get()).size;
+            sourceWidth = static_cast<uint32_t>(cleanSize.width);
+            sourceHeight = static_cast<uint32_t>(cleanSize.height);
+            // A quarter turn presents the frame's extent transposed, and both the copy's coordinates and
+            // the origin script asked to copy from are in the presented image.
+            if (source.pixelBufferRotation == WebGPU::VideoFrameRotation::Right || source.pixelBufferRotation == WebGPU::VideoFrameRotation::Left)
+                std::swap(sourceWidth, sourceHeight);
+        }
         if (!sourceWidth || !sourceHeight)
             return;
 
@@ -2190,8 +2201,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     setEncoderForBuffer(commandBuffer, renderCommandEncoder);
 
     CopyExternalImageArguments arguments {
-        .sourceOriginX = source.origin.x,
-        .sourceOriginY = source.origin.y,
+        .sourceOriginX = std::min(source.origin.x, sourceWidth - 1),
+        .sourceOriginY = std::min(source.origin.y, sourceHeight - 1),
         .destinationOriginX = destination.origin.x,
         .destinationOriginY = destination.origin.y,
         .copyWidth = widthForMetal,

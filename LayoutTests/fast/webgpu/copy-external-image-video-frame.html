@@ -28,20 +28,19 @@ async function videoFrameWithQuadrants()
     return new VideoFrame(await createImageBitmap(canvas), { timestamp: 0 });
 }
 
-async function copiedTexels(device, frame, flipY)
+async function copiedTexels(device, source, width, height, flipY)
 {
     const texture = device.createTexture({
-        size: [size, size],
+        size: [width, height],
         format: 'rgba8unorm',
         usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
     });
-    device.queue.copyExternalImageToTexture({ source: frame, flipY }, { texture }, [size, size]);
+    device.queue.copyExternalImageToTexture({ source, flipY }, { texture }, [width, height]);
 
-    // 64 texels of rgba8unorm is exactly the 256-byte row alignment copyTextureToBuffer requires.
-    const bytesPerRow = size * 4;
-    const buffer = device.createBuffer({ size: bytesPerRow * size, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    const bytesPerRow = Math.ceil(width * 4 / 256) * 256;
+    const buffer = device.createBuffer({ size: bytesPerRow * height, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
     const encoder = device.createCommandEncoder();
-    encoder.copyTextureToBuffer({ texture }, { buffer, bytesPerRow }, [size, size]);
+    encoder.copyTextureToBuffer({ texture }, { buffer, bytesPerRow }, [width, height]);
     device.queue.submit([encoder.finish()]);
 
     await buffer.mapAsync(GPUMapMode.READ);
@@ -63,23 +62,104 @@ function check(label, texels, bytesPerRow, x, y, expected)
     log(withinTolerance ? `PASS ${label}` : `FAIL ${label}: got ${actual.join(',')}, expected ${expected.join(',')},255`);
 }
 
+async function checkNonSquarePixelVideo(device)
+{
+    const video = document.createElement('video');
+    video.muted = true;
+    video.src = '../../media/content/720x576i-anamorphic.mov';
+    await new Promise((resolve, reject) => {
+        video.onloadeddata = resolve;
+        video.onerror = () => reject(new Error('Failed to load video'));
+    });
+
+    const width = video.videoWidth;
+    const height = video.videoHeight;
+    const copied = await copiedTexels(device, video, width, height, false);
+
+    const glCanvas = document.createElement('canvas');
+    glCanvas.width = width;
+    glCanvas.height = height;
+    const gl = glCanvas.getContext('webgl2');
+    const vs = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vs, `#version 300 es
+        out vec2 v_texCoord;
+        void main() {
+            vec2 pos[3] = vec2[3](vec2(-1.0, -1.0), vec2(3.0, -1.0), vec2(-1.0, 3.0));
+            vec2 xy = pos[gl_VertexID];
+            v_texCoord = xy * vec2(0.5, -0.5) + vec2(0.5);
+            gl_Position = vec4(xy, 0.0, 1.0);
+        }`);
+    gl.compileShader(vs);
+    const fs = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fs, `#version 300 es
+        precision highp float;
+        uniform sampler2D u_video;
+        in vec2 v_texCoord;
+        out vec4 fragColor;
+        void main() { fragColor = texture(u_video, v_texCoord); }`);
+    gl.compileShader(fs);
+    const program = gl.createProgram();
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+    gl.useProgram(program);
+
+    const glTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, glTexture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+    gl.viewport(0, 0, width, height);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    const glPixels = new Uint8Array(width * height * 4);
+    gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, glPixels);
+
+    // Sample across the full width (including x > 720, which would be clamped to the 720th column if
+    // the coded width were used instead of videoWidth = 1024).
+    for (const x of [64, 320, 640, 800, 960]) {
+        const y = 288;
+        const glOffset = (height - 1 - y) * width * 4 + x * 4;
+        const expected = [glPixels[glOffset], glPixels[glOffset + 1], glPixels[glOffset + 2]];
+        const offset = y * copied.bytesPerRow + x * 4;
+        const actual = [copied.texels[offset], copied.texels[offset + 1], copied.texels[offset + 2]];
+        const tolerance = 8;
+        const withinTolerance = expected.every((v, i) => Math.abs(actual[i] - v) <= tolerance);
+        log(withinTolerance ? `PASS anamorphic video at x=${x}` : `FAIL anamorphic video at x=${x}: got ${actual.join(',')}, expected ${expected.join(',')}`);
+    }
+}
+
 onload = async () => {
     try {
         const adapter = await navigator.gpu.requestAdapter();
         const device = await adapter.requestDevice();
         const frame = await videoFrameWithQuadrants();
 
-        const upright = await copiedTexels(device, frame, false);
+        const upright = await copiedTexels(device, frame, size, size, false);
         for (const quadrant of quadrants)
             check(`${quadrant.name} without flipY`, upright.texels, upright.bytesPerRow, quadrant.x, quadrant.y, quadrant.color);
 
         // flipY reads the frame bottom-up, so each quadrant's colour lands in the one across the
         // horizontal midline from it.
-        const flipped = await copiedTexels(device, frame, true);
+        const flipped = await copiedTexels(device, frame, size, size, true);
         for (const quadrant of quadrants)
             check(`${quadrant.name} with flipY`, flipped.texels, flipped.bytesPerRow, quadrant.x, size - 1 - quadrant.y, quadrant.color);
 
+        // A VideoFrame whose display size scales its coded size must map [0, displaySize] across the
+        // whole frame rather than clamping at codedSize.
+        const scaledWidth = size * 2;
+        const scaledHeight = size * 2;
+        const scaledFrame = new VideoFrame(frame, { displayWidth: scaledWidth, displayHeight: scaledHeight });
+        const scaled = await copiedTexels(device, scaledFrame, scaledWidth, scaledHeight, false);
+        for (const quadrant of quadrants)
+            check(`${quadrant.name} with scaled displaySize`, scaled.texels, scaled.bytesPerRow, quadrant.x * 2, quadrant.y * 2, quadrant.color);
+        scaledFrame.close();
+
         frame.close();
+
+        await checkNonSquarePixelVideo(device);
     } catch (error) {
         log(`FAIL threw ${error}`);
     }

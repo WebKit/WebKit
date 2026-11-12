@@ -235,6 +235,8 @@ void RemoteQueue::copyExternalImageFromVideoFrameToTexture(
     const WebGPU::ImageCopyTextureTagged& destination,
     const WebGPU::Extent3D& copySize)
 {
+    MESSAGE_CHECK(source.sourceSize.width() >= 0 && source.sourceSize.height() >= 0);
+
     // Resolved the same way RemoteDevice resolves an external texture's frame: a shared frame is read
     // out of the shared video frame memory, and a media player identifier is asked for the frame it is
     // showing right now.
@@ -257,6 +259,8 @@ void RemoteQueue::copyExternalImageFromVideoFrameToTexture(
             connection->performWithMediaPlayerOnMainThread(*source.mediaIdentifier, [&](auto& player) mutable {
                 if (auto videoFrame = player.videoFrameForCurrentTime())
                     takeFrame(*videoFrame);
+                auto naturalSize = player.naturalSize();
+                source.sourceSize = { clampTo<int>(clampToUnsigned(naturalSize.width())), clampTo<int>(clampToUnsigned(naturalSize.height())) };
             });
         }
     }
