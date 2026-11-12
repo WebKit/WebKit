@@ -71,6 +71,21 @@ WebFrameLoaderClient::WebFrameLoaderClient(Ref<WebFrame>&& frame, ScopeExit<Func
 
 WebFrameLoaderClient::~WebFrameLoaderClient() = default;
 
+ScopeExit<Function<void()>> WebFrameLoaderClient::takeFrameInvalidator()
+{
+    if (!m_frameInvalidator)
+        return makeScopeExit<Function<void()>>([] { });
+    auto frameInvalidator = WTF::move(*m_frameInvalidator);
+    m_frameInvalidator = std::nullopt;
+    return frameInvalidator;
+}
+
+void WebFrameLoaderClient::setFrameInvalidator(ScopeExit<Function<void()>>&& frameInvalidator)
+{
+    ASSERT(!m_frameInvalidator);
+    m_frameInvalidator.emplace(WTF::move(frameInvalidator));
+}
+
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 std::optional<JSHandleInfo> WebFrameLoaderClient::jsHandleInfoForHitTestResult(const std::optional<HitTestResult>& hitTestResult)
 {

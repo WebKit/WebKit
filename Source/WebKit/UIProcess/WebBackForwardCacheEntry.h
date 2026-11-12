@@ -70,6 +70,7 @@ public:
     void setCachedChildren(Vector<Ref<WebFrameProxy>>&&);
 
     bool isCachedInPlace() const { return !!m_mainFrameProcess; }
+    FrameProcess* mainFrameProcess() const { return m_mainFrameProcess.get(); }
     void setMainFrameProcess(FrameProcess&);
 
     std::pair<Vector<Ref<WebFrameProxy>>, Vector<Ref<WebProcessProxy>>> takeForRestoration();

@@ -1839,9 +1839,17 @@ void WebLocalFrameLoaderClient::didRestoreFromBackForwardCache()
 {
     m_frameCameFromBackForwardCache = true;
 
+    RefPtr webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    if (m_frame->isMainFrame()) {
+        if (RefPtr view = m_localFrame->view(); view && view->size() != webPage->size())
+            view->resize(webPage->size());
+    }
+
     // Schedule a full editor state update in case the secure input state needs to be updated.
-    if (RefPtr webPage = m_frame->page())
-        webPage->scheduleFullEditorStateUpdate();
+    webPage->scheduleFullEditorStateUpdate();
 }
 
 void WebLocalFrameLoaderClient::didCacheBackForwardItem(BackForwardItemIdentifier itemID, BackForwardFrameItemIdentifier frameItemID)

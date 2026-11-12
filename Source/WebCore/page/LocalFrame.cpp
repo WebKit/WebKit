@@ -943,8 +943,22 @@ void LocalFrame::willBeReplacedByRemoteFrame()
     }
 
 #if ASSERT_ENABLED
-    frameExistsOnlyForCachedPages(*this);
+    setFrameExistsOnlyForCachedPages(*this, true);
 #endif
+}
+
+void LocalFrame::willReplaceRemoteFrame()
+{
+    ASSERT(isMainFrame());
+    ASSERT(m_existsOnlyForCachedPages);
+    m_existsOnlyForCachedPages = false;
+
+#if ASSERT_ENABLED
+    setFrameExistsOnlyForCachedPages(*this, false);
+#endif
+
+    if (RefPtr page = this->page())
+        page->addRootFrame(*this);
 }
 
 String LocalFrame::displayStringModifiedByEncoding(const String& str) const

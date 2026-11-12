@@ -64,8 +64,9 @@ public:
     enum class ShouldNotifyClient : bool { No, Yes };
     WEBCORE_EXPORT void remove(BackForwardFrameItemIdentifier, ShouldNotifyClient = ShouldNotifyClient::Yes);
     WEBCORE_EXPORT void remove(HistoryItem&);
-    CachedPage* get(HistoryItem&, Page*);
+    CachedPage* get(HistoryItem&, LocalFrame& loadingFrame);
     WEBCORE_EXPORT CachedPage* get(BackForwardFrameItemIdentifier);
+    WEBCORE_EXPORT RefPtr<LocalFrame> replacedMainFrame(BackForwardFrameItemIdentifier, Page&);
     std::unique_ptr<CachedPage> take(HistoryItem&, Page*);
     WEBCORE_EXPORT std::unique_ptr<CachedPage> take(BackForwardFrameItemIdentifier, Page*);
 

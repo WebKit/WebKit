@@ -147,6 +147,7 @@ public:
     NODELETE WebCore::Frame* coreFrame() const;
 
     void createProvisionalFrame(ProvisionalFrameCreationParameters&&);
+    void useCachedMainFrameAsProvisionalFrame(WebCore::BackForwardFrameItemIdentifier);
     void commitProvisionalFrame();
     void destroyProvisionalFrame();
     void stopLoadingDueToProcessSwap(WebCore::NavigationIdentifier);

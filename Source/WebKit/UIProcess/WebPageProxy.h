@@ -599,6 +599,7 @@ class VisitedLinkStore;
 class WebAuthenticatorCoordinatorProxy;
 class WebAutomationSession;
 class WebBackForwardCache;
+class WebBackForwardCacheEntry;
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
 class WebBackForwardListWrapper;
 #else
@@ -3338,6 +3339,7 @@ private:
     bool suspendCurrentPageIfPossible(API::Navigation&, const ProvisionalPageProxy&, RefPtr<WebFrameProxy>&& mainFrame);
     RefPtr<WebBackForwardListItem> backForwardItemForCachingOutgoingDocument(API::Navigation&);
     std::optional<BackForwardItemIdentifiers> cacheOutgoingDocumentInPlaceIfPossible(API::Navigation&, const ProvisionalPageProxy&, WebFrameProxy& mainFrame, FrameProcess& previousMainFrameProcess);
+    RefPtr<FrameProcess> frameProcessForRestoringDocumentCachedInPlace(const WebBackForwardCacheEntry&, const WebBackForwardListItem&);
 
     enum class ResetStateReason : uint8_t {
         PageInvalidated,
@@ -3861,7 +3863,7 @@ private:
     void continueNavigationInNewProcess(API::Navigation&, WebFrameProxy&, RefPtr<SuspendedPageProxy>&&, BrowsingContextGroup&, Ref<WebProcessProxy>&&, ProcessSwapRequestedByClient, WebCore::ShouldTreatAsContinuingLoad, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume, LoadedWebArchive, WebCore::NavigationUpgradeToHTTPSBehavior, WebCore::ProcessSwapDisposition, WebsiteDataStore* replacedDataStoreForWebArchiveLoad, MonotonicTime originalNavigationStartTime, const std::optional<WebCore::Site>& backForwardInheritedSite);
     RefPtr<WebProcessProxy> processLoadingNavigation(const API::Navigation&, WebFrameProxy&, WebCore::ProcessIdentifier loadingWebProcess);
     void performProcessSwapForNavigationResponse(API::Navigation&, Ref<BrowsingContextGroup>&&, Ref<WebProcessProxy>&&, WebCore::ProcessSwapDisposition, WebCore::ProcessIdentifier loadingWebProcess, NetworkResourceLoadIdentifier, MonotonicTime originalNavigationStartTime, CompletionHandler<void(NavigationResponseProcessSwapResult&&)>&&);
-    void removeSuspendedPagesBeforeNavigation(WebProcessProxy&);
+    void removeSuspendedPagesBeforeNavigation(WebProcessProxy&, const BrowsingContextGroup&);
 
     void setNeedsFontAttributes(bool);
     void updateFontAttributesAfterEditorStateChange();

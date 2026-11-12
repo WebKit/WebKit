@@ -59,6 +59,7 @@ class ResourceResponse;
 namespace WebKit {
 class AgentClusterKeyingReservation;
 class BrowsingWarning;
+class FrameProcess;
 class WebBackForwardListFrameItem;
 }
 
@@ -253,6 +254,9 @@ public:
     std::optional<WebCore::ProcessIdentifier> backForwardCacheMainFrameProcessIdentifier() const { return m_backForwardCacheMainFrameProcessIdentifier; }
     void setBackForwardCacheMainFrameProcessIdentifier(WebCore::ProcessIdentifier identifier) { m_backForwardCacheMainFrameProcessIdentifier = identifier; }
 
+    void setBackForwardCacheMainFrameProcess(RefPtr<WebKit::FrameProcess>&&);
+    RefPtr<WebKit::FrameProcess> takeBackForwardCacheMainFrameProcess();
+
     static constexpr Seconds navigationActivityTimeout { 30_s };
 
     unsigned processActivityGroupSizeForTesting() const;
@@ -310,6 +314,7 @@ private:
     Vector<Function<void()>> m_safeBrowsingCheckCompletionCallbacks;
     RefPtr<WebKit::FrameState> m_backForwardFrameState;
     std::optional<WebCore::ProcessIdentifier> m_backForwardCacheMainFrameProcessIdentifier;
+    RefPtr<WebKit::FrameProcess> m_backForwardCacheMainFrameProcess;
 };
 
 } // namespace API

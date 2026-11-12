@@ -8249,10 +8249,13 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> si
 static HTTPServer serverForInPlaceBackForwardCache()
 {
     return HTTPServer({
-        { "/main"_s, { "<script>window.token = Math.random()</script>main"_s } },
+        { "/main"_s, { "<script>window.token = Math.random(); addEventListener('pageshow', event => window.persisted = event.persisted)</script>main"_s } },
         { "/main2"_s, { "<script>window.token = Math.random()</script>main2"_s } },
         { "/page"_s, { "page"_s } },
         { "/frame"_s, { "<script>alert('loaded')</script>"_s } },
+        { "/withsamesiteframe"_s, { "<script>window.token = Math.random()</script><iframe src='https://a.com/tokenframe'></iframe>"_s } },
+        { "/withcrosssiteframe"_s, { "<script>window.token = Math.random()</script><iframe src='https://c.com/tokenframe'></iframe>"_s } },
+        { "/tokenframe"_s, { "<script>window.token = Math.random()</script>frame"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 }
 
@@ -8279,9 +8282,134 @@ TEST(SiteIsolation, InPlaceBackForwardCacheKeepsDocumentLeftForCrossSiteNavigati
     checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -1, 1, @"https://b.com/page");
     EXPECT_EQ(countWebPages(webView), 2u);
 
-    // FIXME: Restore documents cached in place.
     [webView goBack];
     [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([webView _webProcessIdentifier], mainProcess);
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.body.textContent"], "main");
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"String(window.token)"], token.get());
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"String(window.persisted)"], "true");
+    checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), 1, 1, @"https://a.com/main");
+    EXPECT_EQ(countWebPages(webView), 2u);
+
+    [webView _clearBackForwardCache];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return countWebPages(webView) == 1;
+    }));
+}
+
+TEST(SiteIsolation, InPlaceBackForwardCacheRestoresDocumentsInBothDirections)
+{
+    auto server = serverForInPlaceBackForwardCache();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithInPlaceBackForwardCache(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t aProcess = [webView _webProcessIdentifier];
+    RetainPtr aToken = [webView objectByEvaluatingJavaScript:@"String(window.token)"];
+
+    navigateFromPage(webView.get(), navigationDelegate.get(), @"https://b.com/main");
+    pid_t bProcess = [webView _webProcessIdentifier];
+    EXPECT_NE(bProcess, aProcess);
+    RetainPtr bToken = [webView objectByEvaluatingJavaScript:@"String(window.token)"];
+
+    for (unsigned i = 0; i < 2; ++i) {
+        [webView goBack];
+        [navigationDelegate waitForDidFinishNavigation];
+        EXPECT_EQ([webView _webProcessIdentifier], aProcess);
+        EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"String(window.token)"], aToken.get());
+        EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"String(window.persisted)"], "true");
+
+        [webView goForward];
+        [navigationDelegate waitForDidFinishNavigation];
+        EXPECT_EQ([webView _webProcessIdentifier], bProcess);
+        EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"String(window.token)"], bToken.get());
+        EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"String(window.persisted)"], "true");
+    }
+    EXPECT_EQ(countWebPages(webView), 2u);
+}
+
+TEST(SiteIsolation, InPlaceBackForwardCacheRestoresSameSiteFrame)
+{
+    auto server = serverForInPlaceBackForwardCache();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithInPlaceBackForwardCache(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/withsamesiteframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainProcess = [webView _webProcessIdentifier];
+    RetainPtr frameToken = [webView objectByEvaluatingJavaScript:@"String(window.token)" inFrame:[webView firstChildFrame]];
+
+    navigateFromPage(webView.get(), navigationDelegate.get(), @"https://b.com/page");
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([webView _webProcessIdentifier], mainProcess);
+    EXPECT_EQ([webView firstChildFrame]._processIdentifier, mainProcess);
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"String(window.token)" inFrame:[webView firstChildFrame]], frameToken.get());
+}
+
+TEST(SiteIsolation, InPlaceBackForwardCacheRestoresCrossSiteFrame)
+{
+    auto server = serverForInPlaceBackForwardCache();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithInPlaceBackForwardCache(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/withcrosssiteframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainProcess = [webView _webProcessIdentifier];
+    RetainPtr token = [webView objectByEvaluatingJavaScript:@"String(window.token)"];
+    pid_t iframeProcess = [webView firstChildFrame]._processIdentifier;
+    EXPECT_NE(iframeProcess, mainProcess);
+    RetainPtr frameToken = [webView objectByEvaluatingJavaScript:@"String(window.token)" inFrame:[webView firstChildFrame]];
+
+    navigateFromPage(webView.get(), navigationDelegate.get(), @"https://b.com/page");
+    checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -1, 2, @"https://b.com/page");
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([webView _webProcessIdentifier], mainProcess);
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"String(window.token)"], token.get());
+    EXPECT_EQ([webView firstChildFrame]._processIdentifier, iframeProcess);
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"String(window.token)" inFrame:[webView firstChildFrame]], frameToken.get());
+}
+
+TEST(SiteIsolation, InPlaceBackForwardCacheNotRestoredWhenProcessHostsFrameOfCurrentDocument)
+{
+    auto server = serverForInPlaceBackForwardCache();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithInPlaceBackForwardCache(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainProcess = [webView _webProcessIdentifier];
+    RetainPtr token = [webView objectByEvaluatingJavaScript:@"String(window.token)"];
+
+    navigateFromPage(webView.get(), navigationDelegate.get(), @"https://b.com/page");
+    [webView evaluateJavaScript:@"document.body.appendChild(document.createElement('iframe')).src = 'https://a.com/frame'" completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded");
+    EXPECT_EQ([webView firstChildFrame]._processIdentifier, mainProcess);
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([webView _webProcessIdentifier], mainProcess);
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.body.textContent"], "main");
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"String(window.token)"] isEqualToString:token.get()]);
+}
+
+TEST(SiteIsolation, InPlaceBackForwardCacheNotRestoredInLaterMainFrameOfSameProcess)
+{
+    auto server = serverForInPlaceBackForwardCache();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithInPlaceBackForwardCache(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainProcess = [webView _webProcessIdentifier];
+    RetainPtr token = [webView objectByEvaluatingJavaScript:@"String(window.token)"];
+
+    navigateFromPage(webView.get(), navigationDelegate.get(), @"https://b.com/page");
+    navigateFromPage(webView.get(), navigationDelegate.get(), @"https://a.com/main2");
+    EXPECT_EQ([webView _webProcessIdentifier], mainProcess);
+
+    [webView goToBackForwardListItem:[webView backForwardList].backList.firstObject];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([webView _webProcessIdentifier], mainProcess);
     EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.body.textContent"], "main");
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"String(window.token)"] isEqualToString:token.get()]);
 }
@@ -8359,6 +8487,7 @@ TEST(SiteIsolation, InPlaceBackForwardCacheEarlierDocumentSharingCachedMainFrame
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/main2"]]];
     [navigationDelegate waitForDidFinishNavigation];
     EXPECT_EQ([webView _webProcessIdentifier], mainProcess);
+    RetainPtr token2 = [webView objectByEvaluatingJavaScript:@"String(window.token)"];
 
     navigateFromPage(webView.get(), navigationDelegate.get(), @"https://b.com/page");
     checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -1, 1, @"https://b.com/page");
@@ -8368,7 +8497,13 @@ TEST(SiteIsolation, InPlaceBackForwardCacheEarlierDocumentSharingCachedMainFrame
     [navigationDelegate waitForDidFinishNavigation];
     EXPECT_EQ([webView _webProcessIdentifier], mainProcess);
     EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.body.textContent"], "main");
-    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"String(window.token)"] isEqualToString:token.get()]);
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"String(window.token)"], token.get());
+
+    [webView goForward];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([webView _webProcessIdentifier], mainProcess);
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.body.textContent"], "main2");
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"String(window.token)"], token2.get());
 }
 
 TEST(SiteIsolation, InPlaceBackForwardCacheCrossSiteNavigationClearsWindowName)

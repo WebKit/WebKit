@@ -35,6 +35,7 @@
 #include "DiagnosticLoggingResultType.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "DocumentPage.h"
 #include "DocumentQuirks.h"
 #include "DocumentSecurityOrigin.h"
 #include "DocumentView.h"
@@ -672,8 +673,9 @@ void BackForwardCache::removeAllItemsForMainFrame(LocalFrame& frame)
     });
 }
 
-CachedPage* BackForwardCache::get(HistoryItem& item, Page* page)
+CachedPage* BackForwardCache::get(HistoryItem& item, LocalFrame& loadingFrame)
 {
+    RefPtr page = loadingFrame.page();
     auto it = m_cachedPageMap.find(item.frameItemID());
     if (it == m_cachedPageMap.end())
         return nullptr;
@@ -681,20 +683,19 @@ CachedPage* BackForwardCache::get(HistoryItem& item, Page* page)
     return switchOn(it->value, [&](const PruningReason& pruningReason) -> CachedPage* {
         ASSERT(!m_items.contains(it->key));
         if (pruningReason != PruningReason::None)
-            logBackForwardCacheFailureDiagnosticMessage(page, pruningReasonToDiagnosticLoggingKey(pruningReason));
+            logBackForwardCacheFailureDiagnosticMessage(page.get(), pruningReasonToDiagnosticLoggingKey(pruningReason));
         return nullptr;
     }, [&](UniqueRef<CachedPage>& cachedPage) -> CachedPage* {
         if (page && &cachedPage->page() != page)
             return nullptr;
         if (cachedPage->hasExpired() || (page && page->isResourceCachingDisabledByWebInspector())) {
             LOG(BackForwardCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item.url().string().utf8());
-            logBackForwardCacheFailureDiagnosticMessage(page, DiagnosticLoggingKeys::expiredKey());
+            logBackForwardCacheFailureDiagnosticMessage(page.get(), DiagnosticLoggingKeys::expiredKey());
             remove(item);
             return nullptr;
         }
-        // FIXME: Make the cached main frame the page's main frame again to restore the page.
-        if (RefPtr localMainFrame = cachedLocalMainFrame(cachedPage.get()); localMainFrame && localMainFrame->existsOnlyForCachedPages()) {
-            RELEASE_LOG(BackForwardCache, "BackForwardCache::get evicting item %s whose main frame is no longer the page's main frame", item.frameItemID().toString().utf8());
+        if (RefPtr localMainFrame = cachedLocalMainFrame(cachedPage.get()); localMainFrame && localMainFrame->existsOnlyForCachedPages() && localMainFrame != &loadingFrame) {
+            RELEASE_LOG(BackForwardCache, "BackForwardCache::get evicting item %s whose main frame is not the frame loading it", item.frameItemID().toString().utf8());
             remove(item);
             return nullptr;
         }
@@ -711,6 +712,17 @@ CachedPage* BackForwardCache::get(BackForwardFrameItemIdentifier identifier)
     if (!cachedPage || (*cachedPage)->hasExpired())
         return nullptr;
     return cachedPage->ptr();
+}
+
+RefPtr<LocalFrame> BackForwardCache::replacedMainFrame(BackForwardFrameItemIdentifier identifier, Page& page)
+{
+    CheckedPtr cachedPage = get(identifier);
+    if (!cachedPage || &cachedPage->page() != &page)
+        return nullptr;
+    RefPtr localMainFrame = cachedLocalMainFrame(*cachedPage);
+    if (!localMainFrame || !localMainFrame->existsOnlyForCachedPages())
+        return nullptr;
+    return localMainFrame;
 }
 
 // Notify the LocalFrameLoaderClient before tearing down so the WebKit layer
