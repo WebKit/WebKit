@@ -362,6 +362,17 @@ void FrameConsoleClient::recordEnd(JSC::JSGlobalObject* lexicalGlobalObject, Ref
     }
 }
 
+// With Site Isolation, the main frame can be remote. Use the top frame of this process instead, so
+// snapshots contain only frames this process may paint.
+// FIXME: Frames of other processes stay blank. Filling them in needs the image to reach the frontend
+// without passing through this process.
+static RefPtr<LocalFrame> localMainOrRootFrame(LocalFrame& frame)
+{
+    if (RefPtr localMainFrame = frame.localMainFrame())
+        return localMainFrame;
+    return &frame.rootFrame();
+}
+
 void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref<ScriptArguments>&& arguments)
 {
     JSC::VM& vm = lexicalGlobalObject->vm();
@@ -419,8 +430,12 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
                 if (dataURL.isEmpty()) {
                     if (!snapshot) {
                         Ref frame = m_frame.get();
-                        if (RefPtr localMainFrame = frame->localMainFrame())
-                            snapshot = WebCore::snapshotNode(*localMainFrame, *node, { { }, PixelFormat::BGRA8, ColorSpace::SRGB() });
+                        // With Site Isolation, the main frame can be remote. Snapshot the node's own frame instead.
+                        RefPtr snapshotFrame = frame->localMainFrame();
+                        if (!snapshotFrame)
+                            snapshotFrame = node->document().frame();
+                        if (snapshotFrame)
+                            snapshot = WebCore::snapshotNode(*snapshotFrame, *node, { { }, PixelFormat::BGRA8, ColorSpace::SRGB() });
                     }
 
                     if (snapshot)
@@ -451,8 +466,9 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
             target = possibleTarget;
             if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
                 Ref frame = m_frame.get();
-                if (RefPtr localMainFrame = frame->localMainFrame()) {
-                    if (RefPtr snapshot = WebCore::snapshotFrameRect(*localMainFrame, enclosingIntRect(rect->toFloatRect()), { { }, PixelFormat::BGRA8, ColorSpace::SRGB() }))
+                // The rect is in the document coordinates of the snapshotted frame.
+                if (RefPtr snapshotFrame = localMainOrRootFrame(frame)) {
+                    if (RefPtr snapshot = WebCore::snapshotFrameRect(*snapshotFrame, enclosingIntRect(rect->toFloatRect()), { { }, PixelFormat::BGRA8, ColorSpace::SRGB() }))
                         dataURL = encodeDataURL(WTF::move(snapshot), "image/png"_s);
                 }
             }
@@ -468,10 +484,10 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
     if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
         if (!target) {
             Ref frame = m_frame.get();
-            if (RefPtr localMainFrame = frame->localMainFrame()) {
+            if (RefPtr snapshotFrame = localMainOrRootFrame(frame)) {
                 // If no target is provided, capture an image of the viewport.
-                auto viewportRect = protect(localMainFrame->view())->unobscuredContentRect();
-                if (RefPtr snapshot = WebCore::snapshotFrameRect(*localMainFrame, viewportRect, { { }, PixelFormat::BGRA8, ColorSpace::SRGB() }))
+                auto viewportRect = protect(snapshotFrame->view())->unobscuredContentRect();
+                if (RefPtr snapshot = WebCore::snapshotFrameRect(*snapshotFrame, viewportRect, { { }, PixelFormat::BGRA8, ColorSpace::SRGB() }))
                     dataURL = encodeDataURL(WTF::move(snapshot), "image/png"_s);
             }
         }
