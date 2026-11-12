@@ -68,13 +68,14 @@ enum class BrowsingContextGroupUpdate : uint8_t { None, AddProcess, AddProcessAn
 
 class BrowsingContextGroup : public RefCountedAndCanMakeWeakPtr<BrowsingContextGroup> {
 public:
-    static Ref<BrowsingContextGroup> create(WebCore::CrossOriginMode crossOriginMode, WebsiteDataStore& websiteDataStore) { return adoptRef(*new BrowsingContextGroup(crossOriginMode, websiteDataStore)); }
+    static Ref<BrowsingContextGroup> create(WebCore::CrossOriginMode crossOriginMode, WebsiteDataStore& websiteDataStore, EnhancedSecurity enhancedSecurity) { return adoptRef(*new BrowsingContextGroup(crossOriginMode, websiteDataStore, enhancedSecurity)); }
     ~BrowsingContextGroup();
 
     WebCore::BrowsingContextGroupIdentifier identifier() const { return m_identifier; }
 
     WebCore::CrossOriginMode crossOriginMode() const { return m_crossOriginMode; }
     WebsiteDataStore* websiteDataStore() const { return m_websiteDataStore.get(); }
+    EnhancedSecurity enhancedSecurity() const { return m_enhancedSecurity; }
     NODELETE bool canUseProcessForCrossOriginIsolation(const WebProcessProxy&) const;
 
     void sharedProcessForSite(WebsiteDataStore&, API::WebsitePolicies*, const WebPreferences&, const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy::LockdownMode, EnhancedSecurity, API::PageConfiguration&, IsMainFrame, CompletionHandler<void(FrameProcess*)>&&);
@@ -92,6 +93,7 @@ public:
     void removePage(WebPageProxy&, ShouldSendCloseMessage = ShouldSendCloseMessage::Yes);
     void closeRemotePagesForPage(WebPageProxy&, ShouldSendCloseMessage = ShouldSendCloseMessage::Yes);
     bool hasMultiplePages() const;
+    bool hasPageOtherThan(const WebPageProxy&) const;
     void forEachPage(NOESCAPE const Function<void(WebPageProxy&)>&);
     bool hasVisiblePage() const;
     void forEachRemotePage(const WebPageProxy&, NOESCAPE const Function<void(RemotePageProxy&)>&);
@@ -117,7 +119,7 @@ private:
     void removeAgentClusterKeyingReservation(const AgentClusterKeyingReservation&);
     WebCore::AgentClusterIdentifier agentClusterIdentifier(const WebCore::SecurityOriginData&, WebCore::OriginKeyed, const std::optional<WebCore::SecurityOriginData>& crossOriginIsolationKey);
 
-    BrowsingContextGroup(WebCore::CrossOriginMode, WebsiteDataStore&);
+    BrowsingContextGroup(WebCore::CrossOriginMode, WebsiteDataStore&, EnhancedSecurity);
 
     RefPtr<FrameProcess> liveSharedProcess();
     void clearSharedProcess();
@@ -125,6 +127,7 @@ private:
     WebCore::BrowsingContextGroupIdentifier m_identifier { WebCore::BrowsingContextGroupIdentifier::generate() };
     const WebCore::CrossOriginMode m_crossOriginMode;
     const WeakPtr<WebsiteDataStore> m_websiteDataStore;
+    const EnhancedSecurity m_enhancedSecurity;
 
     WeakPtr<FrameProcess> m_sharedProcess;
     HashSet<WebCore::Site> m_sharedProcessSites;

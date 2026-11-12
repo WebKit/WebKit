@@ -556,7 +556,7 @@ static void runHttpToHttpsRedirectNoEnhancedSecurityProcess(bool useSiteIsolatio
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpToHttpsRedirectNoEnhancedSecurityProcess)
 
-static void runIframeKeepsSiteOutOfEnhancedSecurityProcess(bool useSiteIsolation)
+static void runIframeDoesNotKeepSiteOutOfEnhancedSecurityProcess(bool useSiteIsolation)
 {
     HTTPServer plaintextServer({
         { "http://insecure.example.internal/iframe"_s, { "<script>alert('iframe-in-page')</script>"_s } },
@@ -572,23 +572,24 @@ static void runIframeKeepsSiteOutOfEnhancedSecurityProcess(bool useSiteIsolation
         { "iframe-in-page"_s, ExpectedEnhancedSecurity::Disabled }
     });
 
+    auto pidWithIframeAlive = [webView _webProcessIdentifier];
+
+    // The navigation shares a process with the iframe until its response moves it to a new browsing context group.
     loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/first", {
-        { "with-iframe-alive"_s, ExpectedEnhancedSecurity::Disabled }
+        { "with-iframe-alive"_s, ExpectedEnhancedSecurity::Enabled }
     });
 
     EXPECT_WK_STREQ([webView URL].absoluteString, @"http://insecure.example.internal/first");
-
-    auto pidWithoutEnhancedSecurity = [webView _webProcessIdentifier];
+    EXPECT_NE([webView _webProcessIdentifier], pidWithIframeAlive);
 
     loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/second", {
         { "after-iframe-gone"_s, ExpectedEnhancedSecurity::Enabled }
     });
 
     EXPECT_WK_STREQ([webView URL].absoluteString, @"http://insecure.example.internal/second");
-    EXPECT_NE([webView _webProcessIdentifier], pidWithoutEnhancedSecurity);
     EXPECT_EQ(plaintextServer.totalRequests(), 3u);
 }
-TEST_WITH_SITE_ISOLATION(IframeKeepsSiteOutOfEnhancedSecurityProcess)
+TEST_WITH_SITE_ISOLATION(IframeDoesNotKeepSiteOutOfEnhancedSecurityProcess)
 
 TEST(EnhancedSecurityPolicies, IframeInSharedProcessDoesNotKeepSiteOutOfEnhancedSecurityProcess)
 {
@@ -878,6 +879,41 @@ static void runHttpsOpeningHttp(bool useSiteIsolation)
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpsOpeningHttp)
 
+static void runExplicitEnhancedSecurityInPopupStartsNewBrowsingContextGroup(bool useSiteIsolation)
+{
+    HTTPServer secureServer({
+        { "/"_s, { "<script>window.onload = function() { window.open('https://secure.different.internal/popup'); }</script>"_s } },
+        { "/popup"_s, { "<script>alert('popup'); alert(!!window.opener)</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(nullptr, &secureServer, useSiteIsolation);
+
+    // The popup's own navigation asks for Enhanced Security, which its opener's browsing context group doesn't have.
+    RetainPtr popupNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [popupNavigationDelegate allowAnyTLSCertificate];
+    popupNavigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    __block RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    __block RetainPtr<TestWKWebView> popup;
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        popup = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        popup.get().UIDelegate = uiDelegate.get();
+        popup.get().navigationDelegate = popupNavigationDelegate.get();
+        return popup.get();
+    };
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://secure.example.internal/"]]];
+    testAlertWithEnhancedSecurity(uiDelegate, "popup"_s, true, std::source_location::current());
+    testAlertWithEnhancedSecurity(uiDelegate, "false"_s, true, std::source_location::current());
+
+    [webView setUIDelegate:nil];
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(ExplicitEnhancedSecurityInPopupStartsNewBrowsingContextGroup)
+
 static void runOpenerMultipleNavigations(bool useSiteIsolation)
 {
     HTTPServer plaintextServer({
@@ -981,6 +1017,42 @@ static void runOpenerNavigatedWhileSelfNavigationIsProvisional(bool useSiteIsola
 }
 
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(OpenerNavigatedWhileSelfNavigationIsProvisional)
+
+static void runInsecureLoadInOpenerDoesNotEnableEnhancedSecurity(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://insecure.example.internal/"_s, { "<script>alert('opener-page');</script>"_s } }
+    });
+
+    HTTPServer secureServer({
+        { "/"_s, { "<script>window.onload = function() { window.open('https://secure.different.internal/popup'); }</script>"_s } },
+        { "/popup"_s, { "<script>alert('popup'); window.opener.location = 'http://insecure.example.internal/';</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
+    RetainPtr navigationDelegate = static_cast<TestNavigationDelegate *>([webView navigationDelegate]);
+
+    __block RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    __block RetainPtr<TestWKWebView> popup;
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        popup = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        popup.get().UIDelegate = uiDelegate.get();
+        popup.get().navigationDelegate = navigationDelegate.get();
+        return popup.get();
+    };
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://secure.example.internal/"]]];
+    testAlertWithEnhancedSecurity(uiDelegate, "popup"_s, false, std::source_location::current());
+    testAlertWithEnhancedSecurity(uiDelegate, "opener-page"_s, false, std::source_location::current());
+
+    // Enhanced Security would need a new browsing context group, which would cut the opener off from its popup.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://insecure.example.internal/"]]];
+    testAlertWithEnhancedSecurity(uiDelegate, "opener-page"_s, false, std::source_location::current());
+
+    [webView setUIDelegate:nil];
+}
+TEST_WITH_SITE_ISOLATION(InsecureLoadInOpenerDoesNotEnableEnhancedSecurity)
 
 static void runHttpOpeningHttpsNoOpener(bool useSiteIsolation)
 {
@@ -1277,15 +1349,16 @@ static void runWebViewSameSiteMainFrameNavigation(bool useSiteIsolation)
         { "tainted-page"_s, ExpectedEnhancedSecurity::Enabled }
     });
 
+    // The page is alone in its browsing context group, so the navigation leaves it for its own Enhanced Security.
     loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://secure.example.internal/", {
-        { "secure-page"_s, ExpectedEnhancedSecurity::Enabled }
+        { "secure-page"_s, ExpectedEnhancedSecurity::Disabled }
     });
 
     loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://secure.different.internal/", {
         { "secure-page"_s, ExpectedEnhancedSecurity::Disabled }
     });
 }
-TEST_WITH_SITE_ISOLATION(WebViewSameSiteMainFrameNavigation)
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(WebViewSameSiteMainFrameNavigation)
 
 // MARK: - Cookies / Local Storage / Meaningful Site Checks
 

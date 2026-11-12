@@ -168,17 +168,10 @@ TEST(EnhancedSecurity, PSONToEnhancedSecurity)
     [webView loadRequest:[NSURLRequest requestWithURL:url2]];
     TestWebKitAPI::Util::run(&finishedNavigation);
 
-    // Under Site Isolation, navigation has to reuse existing site process in BCG,
-    // so navigation inherits enhanced security state of that process.
-    if (isSiteIsolationEnabled(webView.get())) {
-        EXPECT_FALSE(isEnhancedSecurityEnabled(webView.get()));
-        EXPECT_STREQ("standard", [webView _webContentProcessVariantForFrame:nil].UTF8String);
-        EXPECT_EQ(pid1, [webView _webProcessIdentifier]);
-    } else {
-        EXPECT_TRUE(isEnhancedSecurityEnabled(webView.get()));
-        EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
-        EXPECT_NE(pid1, [webView _webProcessIdentifier]);
-    }
+    // The explicit request starts a new browsing context group, also with site isolation.
+    EXPECT_TRUE(isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+    EXPECT_NE(pid1, [webView _webProcessIdentifier]);
 }
 
 TEST(EnhancedSecurity, PSONToEnhancedSecuritySamePage)
@@ -214,17 +207,10 @@ TEST(EnhancedSecurity, PSONToEnhancedSecuritySamePage)
     [webView loadRequest:[NSURLRequest requestWithURL:url2]];
     TestWebKitAPI::Util::run(&finishedNavigation);
 
-    // Under Site Isolation, navigation has to reuse existing site process in BCG,
-    // so navigation inherits enhanced security state of that process.
-    if (isSiteIsolationEnabled(webView.get())) {
-        EXPECT_FALSE(isEnhancedSecurityEnabled(webView.get()));
-        EXPECT_STREQ("standard", [webView _webContentProcessVariantForFrame:nil].UTF8String);
-        EXPECT_EQ(pid1, [webView _webProcessIdentifier]);
-    } else {
-        EXPECT_TRUE(isEnhancedSecurityEnabled(webView.get()));
-        EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
-        EXPECT_NE(pid1, [webView _webProcessIdentifier]);
-    }
+    // The explicit request starts a new browsing context group, also with site isolation.
+    EXPECT_TRUE(isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+    EXPECT_NE(pid1, [webView _webProcessIdentifier]);
 }
 
 static RetainPtr<_WKProcessPoolConfiguration> psonProcessPoolConfiguration()

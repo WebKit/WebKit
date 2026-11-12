@@ -49,9 +49,10 @@ namespace WebKit {
 
 using namespace WebCore;
 
-BrowsingContextGroup::BrowsingContextGroup(CrossOriginMode crossOriginMode, WebsiteDataStore& websiteDataStore)
+BrowsingContextGroup::BrowsingContextGroup(CrossOriginMode crossOriginMode, WebsiteDataStore& websiteDataStore, EnhancedSecurity enhancedSecurity)
     : m_crossOriginMode(crossOriginMode)
     , m_websiteDataStore(websiteDataStore)
+    , m_enhancedSecurity(enhancedSecurity)
 {
 }
 
@@ -143,6 +144,7 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, c
 {
     ASSERT(process.isDummyProcessProxy() || canUseProcessForCrossOriginIsolation(process));
     ASSERT(process.isDummyProcessProxy() || process.websiteDataStore() == m_websiteDataStore.get());
+    ASSERT(process.isDummyProcessProxy() || enhancedSecurityStatesAreConsistent(process.enhancedSecurity(), m_enhancedSecurity));
 
     if (preferences.siteIsolationEnabled()) {
         RefPtr sharedProcess = liveSharedProcess();
@@ -299,8 +301,8 @@ void BrowsingContextGroup::addFrameProcessAndInjectPageContextIf(FrameProcess& p
 // never represented a unique site-to-process binding; replacing them is benign.
 // Otherwise the previous FrameProcess must be used by at most the one frame the navigation causing
 // this replacement is replacing, so it is destroyed when that navigation commits. Navigations that
-// would move a site away from a FrameProcess other frames still need are declined before they get
-// this far (see canMoveSiteToEnhancedSecurityProcess in WebPageProxy.cpp).
+// would move a site away from a FrameProcess other frames still need get a new browsing context group
+// or are declined (see triggerProcessSwapForEnhancedSecurity in WebPageProxy.cpp).
 static bool canReplaceFrameProcessInProcessMap(const WebCore::Site& site, const FrameProcess& existing)
 {
     if (existing.process().wasTerminated())
@@ -416,6 +418,15 @@ void BrowsingContextGroup::closeRemotePagesForPage(WebPageProxy& page, ShouldSen
 bool BrowsingContextGroup::hasMultiplePages() const
 {
     return m_pages.computeSize() > 1;
+}
+
+bool BrowsingContextGroup::hasPageOtherThan(const WebPageProxy& page) const
+{
+    for (Ref otherPage : m_pages) {
+        if (otherPage.ptr() != &page)
+            return true;
+    }
+    return false;
 }
 
 bool BrowsingContextGroup::hasVisiblePage() const

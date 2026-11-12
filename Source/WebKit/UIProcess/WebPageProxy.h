@@ -4052,7 +4052,8 @@ private:
     void beginSiteHasStorageCheck(const URL&, API::Navigation&, WebFramePolicyListenerProxy&);
     void beginEnhancedSecurityLinkCheck(const URL&, API::Navigation&, WebFramePolicyListenerProxy&);
 
-    Ref<BrowsingContextGroup> browsingContextGroupForNavigation(WebFrameProxy&, API::Navigation&, WebsiteDataStore&, ProcessSwapRequestedByClient);
+    enum class IsEnhancedSecurityExplicitlySet : bool { No, Yes };
+    Ref<BrowsingContextGroup> browsingContextGroupForNavigation(WebFrameProxy&, API::Navigation&, WebsiteDataStore&, EnhancedSecurity, IsEnhancedSecurityExplicitlySet, ProcessSwapRequestedByClient);
     Ref<BrowsingContextGroup> browsingContextGroupForCommittingNavigation(const API::Navigation*) const;
 
     WebProcessProxy& processForTheFrameItem(WebBackForwardListFrameItem&) const;
