@@ -897,7 +897,7 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
         return nullptr;
 
     // FIXME: Set color space.
-    return VideoFrame::createFromPixelBuffer(pixelBuffer.releaseNonNull());
+    return VideoFrame::createFromPixelBuffer(pixelBuffer.releaseNonNull(), { });
 #else
     return nullptr;
 #endif
