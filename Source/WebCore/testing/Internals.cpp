@@ -660,6 +660,7 @@ void Internals::resetToConsistentState(Page& page)
     page.setPageScaleFactor(1, IntPoint(0, 0));
     LayoutIntegration::LineLayout::setCollectsLayoutInfoForTesting(false);
     page.setPagination(Pagination());
+    page.setUserInterfaceLayoutDirection(WebCore::UserInterfaceLayoutDirection::LTR);
 
     CachedMatchFinder::setMaximumRunCountForTesting(std::nullopt);
 
