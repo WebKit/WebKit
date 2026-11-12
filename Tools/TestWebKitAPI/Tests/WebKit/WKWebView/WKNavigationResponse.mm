@@ -250,7 +250,6 @@ TEST(WebKit, SkipDecidePolicyForResponse)
         { "/4"_s, { 404, { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
         { "/5"_s, { 503, { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
         { "/6"_s, { { { "Content-Type"_s, "text/html"_s }, { "Content-Disposition"_s, "attachment ; other stuff"_s } }, "hi"_s } },
-        { "/7"_s, { { { "Content-Type"_s, "text/html"_s }, { "Content-Security-Policy"_s, "sandbox allow-scripts"_s } }, "hi"_s } },
     });
 
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"SkipDecidePolicyForResponsePlugIn"];
@@ -272,7 +271,7 @@ TEST(WebKit, SkipDecidePolicyForResponse)
     [delegate waitForDidFinishNavigation];
     EXPECT_TRUE(std::exchange(responseDelegateCalled, false));
 
-    for (auto& path : Vector { "/2"_s, "/3"_s, "/4"_s, "/5"_s, "/6"_s, "/7"_s }) {
+    for (auto& path : Vector { "/2"_s, "/3"_s, "/4"_s, "/5"_s, "/6"_s }) {
         [webView loadRequest:server.request(path)];
         [delegate waitForDidFinishNavigation];
         EXPECT_TRUE(std::exchange(responseDelegateCalled, false));
@@ -301,30 +300,5 @@ TEST(WebKit, SkipDecidePolicyForResponseForOpaqueOriginSubframe)
     [webView loadRequest:server.request("/main"_s)];
     [delegate waitForDidFinishNavigation];
     EXPECT_EQ(responseDelegateCalls, 0u);
-}
-#endif
-
-#if WK_HAVE_C_SPI
-TEST(WebKit, SkipDecidePolicyForResponseForSandboxedSubframe)
-{
-    TestWebKitAPI::HTTPServer server({
-        { "/main"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe sandbox='allow-scripts' src='/frame'></iframe>"_s } },
-        { "/frame"_s, { { { "Content-Type"_s, "text/html"_s } }, "hi"_s } },
-    });
-
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"SkipDecidePolicyForResponsePlugIn"];
-    configuration.preferences.fraudulentWebsiteWarningEnabled = NO;
-    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
-    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
-    __block unsigned responseDelegateCalls { 0 };
-    delegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^completionHandler)(WKNavigationResponsePolicy)) {
-        ++responseDelegateCalls;
-        completionHandler(WKNavigationResponsePolicyAllow);
-    };
-    webView.get().navigationDelegate = delegate.get();
-
-    [webView loadRequest:server.request("/main"_s)];
-    [delegate waitForDidFinishNavigation];
-    EXPECT_EQ(responseDelegateCalls, 1u);
 }
 #endif

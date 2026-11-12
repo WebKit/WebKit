@@ -73,7 +73,6 @@
 #include <WebCore/CachedFrame.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/Chrome.h>
-#include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/DocumentPage.h>
@@ -1014,12 +1013,9 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRe
 
     RefPtr policyDocumentLoader = m_localFrame->loader().provisionalDocumentLoader();
 
-    // Without an assignment from the UI process, only this decision assigns the document's agent cluster. It also
-    // assigns one to a sandboxed document, whose origin isn't its URL's.
+    // Without an assignment from the UI process, only this decision assigns the document's agent cluster.
     // FIXME: Once the UI process assigns agent clusters to opaque origins, they will need this decision too.
-    CheckedPtr contentSecurityPolicy = policyDocumentLoader ? policyDocumentLoader->contentSecurityPolicy() : nullptr;
-    bool isOriginSandboxed = m_localFrame->sandboxFlagsFromSandboxAttributeNotCSP().contains(SandboxFlag::Origin) || (contentSecurityPolicy && contentSecurityPolicy->sandboxFlags().contains(SandboxFlag::Origin));
-    bool needsAgentClusterAssignment = isOriginSandboxed || (!(policyDocumentLoader && policyDocumentLoader->agentClusterAssignment().identifier) && !SecurityOrigin::create(response.url())->isOpaque());
+    bool needsAgentClusterAssignment = !(policyDocumentLoader && policyDocumentLoader->agentClusterAssignment().identifier) && !SecurityOrigin::create(response.url())->isOpaque();
     if (!needsAgentClusterAssignment && (!m_frame->isMainFrame() || m_frame->isSafeBrowsingCheckOngoing() == SafeBrowsingCheckOngoing::No) && webPage->shouldSkipDecidePolicyForResponse(response)) {
         WebLocalFrameLoaderClient_RELEASE_LOG(Network, "dispatchDecidePolicyForResponse: continuing because injected bundle says so");
         function(PolicyAction::Use);

@@ -1,3 +1,0 @@
-
-PASS A1 -> C1 (sandbox in its CSP) -> B1 -> C2
-

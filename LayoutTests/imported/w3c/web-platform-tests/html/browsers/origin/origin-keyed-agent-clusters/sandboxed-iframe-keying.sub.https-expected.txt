@@ -1,5 +1,0 @@
-
-PASS child1: originAgentCluster must equal true
-PASS child2: originAgentCluster must equal false
-PASS Parent to child2: setting document.domain must give sync access
-
