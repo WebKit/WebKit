@@ -90,7 +90,7 @@
 #import <wtf/text/cf/StringConcatenateCF.h>
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
-#import <WebKitAdditions/AppKitUtilities.h>
+#import "AppKitUtilities.h"
 #endif
 
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)

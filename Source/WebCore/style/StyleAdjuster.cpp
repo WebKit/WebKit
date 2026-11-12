@@ -78,6 +78,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleSelfAlignmentData.h"
 #include "StyleTextDecorationLine.h"
+#include "StyleTouchAction.h"
 #include "StyleUpdate.h"
 #include "Styleable.h"
 #include "Text.h"
@@ -99,13 +100,6 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/StyleAdjusterAdditions.cpp>
-#else
-namespace WebCore {
-namespace Style {
-NODELETE static inline void adjustForManipulationSurfaceQuirk(ComputedStyle&) { }
-NODELETE static inline void adjustForBoxAnnotationQuirk(ComputedStyle&) { }
-} // namespace Style
-} // namespace WebCore
 #endif
 
 namespace WebCore {
@@ -1074,6 +1068,22 @@ void Adjuster::adjustThemeStyle(Style::ComputedStyle& style, const Style::Comput
         }
     }
 }
+
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+static inline void adjustForManipulationSurfaceQuirk(ComputedStyle& style)
+{
+    if (toPlatform(style.usedTouchAction()) == OptionSet { WebCore::TouchAction::PanX, WebCore::TouchAction::PanY })
+        style.setUsedTouchAction(CSS::Keyword::None { });
+}
+
+static inline void adjustForBoxAnnotationQuirk(ComputedStyle& style)
+{
+    style.setUsedTouchAction(CSS::Keyword::Auto { });
+}
+#else
+NODELETE static inline void adjustForManipulationSurfaceQuirk(ComputedStyle&) { }
+NODELETE static inline void adjustForBoxAnnotationQuirk(ComputedStyle&) { }
+#endif
 
 void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
 {

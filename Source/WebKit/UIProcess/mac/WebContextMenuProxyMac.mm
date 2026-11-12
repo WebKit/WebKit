@@ -64,7 +64,7 @@
 #endif
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
-#import <WebKitAdditions/AppKitUtilities.h>
+#import "AppKitUtilities.h"
 #endif
 
 @interface WKUserDataWrapper : NSObject {

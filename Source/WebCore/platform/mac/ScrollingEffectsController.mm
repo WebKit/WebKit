@@ -38,10 +38,6 @@
 #import <wtf/SystemTracing.h>
 #import <wtf/text/TextStream.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/ScrollingEffectsControllerAdditions.mm>
-#endif
-
 #if PLATFORM(MAC)
 
 namespace WebCore {
@@ -153,6 +149,11 @@ static FloatSize hyperbolicReboundDeltaForElasticDelta(IntSize stretchAmount, fl
     const auto width = _NSHyperbolicReboundDeltaForElasticDelta(stretchAmount.width(), rubberbandHyperbolicCoefficient, viewportSize.width());
     const auto height = _NSHyperbolicReboundDeltaForElasticDelta(stretchAmount.height(), rubberbandHyperbolicCoefficient, viewportSize.height());
     return { static_cast<float>(width), static_cast<float>(height) };
+}
+
+static float rubberBandHyperbolicCoefficient(const PlatformWheelEvent& wheelEvent)
+{
+    return wheelEvent.inputSource() == MouseEventInputSource::Automation ? NSScrollingBehaviorHyperbolicCoefficientTouch : NSScrollingBehaviorHyperbolicCoefficientTrackpad;
 }
 #endif
 

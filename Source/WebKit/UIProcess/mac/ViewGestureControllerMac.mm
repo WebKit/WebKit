@@ -62,7 +62,7 @@
 #import <wtf/Borrow.h>
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
-#import <WebKitAdditions/AppKitUtilities.h>
+#import "AppKitUtilities.h"
 #endif
 
 static const double zoomOutBoost = 1.6;

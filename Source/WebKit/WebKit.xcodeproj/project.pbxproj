@@ -136,6 +136,7 @@
 		0269BED42C8FDDEA00DC2FEC /* WebProcessActivityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0269BED32C8FDDCB00DC2FEC /* WebProcessActivityState.h */; };
 		028648C62C3F5A3A00E474D4 /* WebExtensionAPISidePanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 028648C52C3F5A2E00E474D4 /* WebExtensionAPISidePanel.h */; };
 		028D30772C616E8A004F4FC6 /* WebExtensionSidebar.h in Headers */ = {isa = PBXBuildFile; fileRef = 028D30762C616E8A004F4FC6 /* WebExtensionSidebar.h */; };
+		2AB326AA4E686648AA702B27 /* AppKitUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = F5DA98D018788F02833ADDF4 /* AppKitUtilities.h */; };
 		CAFE0C0E2E8B1D0100A1B2C3 /* MediaPermissionPromptCustomization.h in Headers */ = {isa = PBXBuildFile; fileRef = CAFE0C0A2E8B1D0100A1B2C3 /* MediaPermissionPromptCustomization.h */; };
 		CAFE0C0F2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = CAFE0C0B2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CAFE0C102E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfigurationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = CAFE0C0D2E8B1D0100A1B2C3 /* _WKMediaCapturePermissionPromptConfigurationInternal.h */; };
@@ -3638,7 +3639,7 @@
 		079D1D9926960CD300883577 /* SystemStatusSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemStatusSPI.h; sourceTree = "<group>"; };
 		079D1D9C2698DBD000883577 /* cocoa */ = {isa = PBXFileReference; lastKnownFileType = folder; path = cocoa; sourceTree = "<group>"; };
 		079DD3022FAC583900592E03 /* WKDeferringGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKDeferringGestureRecognizer.swift; sourceTree = "<group>"; };
-		079DD3042FAC583A00592E03 /* AppKitGesturesExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppKitGesturesExtras.swift; path = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AppKitGesturesExtras.swift"; sourceTree = "<group>"; };
+		079DD3042FAC583A00592E03 /* AppKitGesturesExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppKitGesturesExtras.swift; sourceTree = "<group>"; };
 		07A33C992D67BE2200F30A05 /* WKScrollGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKScrollGeometry.h; sourceTree = "<group>"; };
 		07A33C9B2D67BF3000F30A05 /* WKScrollGeometry.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKScrollGeometry.mm; sourceTree = "<group>"; };
 		07A33C9E2D67EEF600F30A05 /* ViewModifierContexts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifierContexts.swift; sourceTree = "<group>"; };
@@ -9295,6 +9296,7 @@
 		F4FE87B42E2F25030065A3F5 /* _WKTextExtraction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextExtraction.h; sourceTree = "<group>"; };
 		F4FE87B52E2F25030065A3F5 /* _WKTextExtraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _WKTextExtraction.swift; sourceTree = "<group>"; };
 		F4FE87B62E2F25030065A3F5 /* _WKTextExtractionInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextExtractionInternal.h; sourceTree = "<group>"; };
+		F5DA98D018788F02833ADDF4 /* AppKitUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKitUtilities.h; sourceTree = "<group>"; };
 		F6113E24126CE1820057D0A7 /* APIUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIUserContentURLPattern.h; sourceTree = "<group>"; };
 		F6113E26126CE19B0057D0A7 /* WKUserContentURLPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserContentURLPattern.cpp; sourceTree = "<group>"; };
 		F6113E27126CE19B0057D0A7 /* WKUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentURLPattern.h; sourceTree = "<group>"; };
@@ -9779,6 +9781,8 @@
 		078074F53029A77E005492F5 /* AppKitGestures */ = {
 			isa = PBXGroup;
 			children = (
+				079DD3042FAC583A00592E03 /* AppKitGesturesExtras.swift */,
+				F5DA98D018788F02833ADDF4 /* AppKitUtilities.h */,
 				336E07462EBCC1C100B4D635 /* WKAppKitGestureController.h */,
 				336E07472EBCC1C100B4D635 /* WKAppKitGestureController.mm */,
 				073B19992FEFB66B00BD5D69 /* WKAppKitGestureController.swift */,
@@ -11051,7 +11055,6 @@
 				5CA26D80217ABBB600F97A35 /* _WKWarningView.h */,
 				5CA26D7F217ABBB600F97A35 /* _WKWarningView.mm */,
 				EB517B7A2D7BC03B0019E451 /* AboutSchemeHandlerCocoa.mm */,
-				079DD3042FAC583A00592E03 /* AppKitGesturesExtras.swift */,
 				F404455A2D5CFB56000E587E /* AppKitSoftLink.h */,
 				F404455B2D5CFB56000E587E /* AppKitSoftLink.mm */,
 				99C81D551C20DFBE005C4C82 /* AutomationClient.h */,
@@ -18502,6 +18505,7 @@
 				1A6563E51B7A8C50009CF787 /* APIWindowFeatures.h in Headers */,
 				F404455C2D5CFB56000E587E /* AppKitSoftLink.h in Headers */,
 				F48D2A8521583A7E00C6752B /* AppKitSPI.h in Headers */,
+				2AB326AA4E686648AA702B27 /* AppKitUtilities.h in Headers */,
 				9565083926D87A2B00E15CB7 /* AppleMediaServicesSPI.h in Headers */,
 				9565083A26D87A2B00E15CB7 /* AppleMediaServicesUISPI.h in Headers */,
 				EBA8D3B427A5E33F00CB7900 /* ApplePushServiceConnection.h in Headers */,

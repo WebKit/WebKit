@@ -71,10 +71,6 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/AppKitSPIAdditions.h>
-#endif
-
 OBJC_CLASS CAShapeLayer;
 OBJC_CLASS NSAccessibilityRemoteUIElement;
 OBJC_CLASS NSImmediateActionGestureRecognizer;

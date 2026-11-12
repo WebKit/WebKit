@@ -596,6 +596,7 @@ list(APPEND WebKit_SOURCES
 
     ${WEBKIT_DIR}/UIProcess/mac/_WKCaptionStyleMenuControllerAVKitMac.mm
     ${WEBKIT_DIR}/UIProcess/mac/_WKCaptionStyleMenuControllerMac.mm
+    ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/AppKitGesturesExtras.swift
     ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKAppKitGestureController.swift
     ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKDOMDoubleClickGestureRecognizer.swift
     ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKDirectionalScrollLockTracker.swift
@@ -890,9 +891,9 @@ set_target_properties(WebKitSwift PROPERTIES
 # declarations they implement compile but have no implementation at runtime.
 if (USE_APPLE_INTERNAL_SDK)
     set(_additions_swift_sources
-        AppKitGesturesExtras
         UIWindowScene+Extras
-        WKWebView+SystemTextExtraction)
+        WKWebView+SystemTextExtraction
+    )
 
     # WebKitAdditions may predate DigitalCredentialsExtras.swift.in; its call sites are behind
     # HAVE(DIGITAL_CREDENTIALS_OPENID4VP), which the same WebKitAdditions defines.
@@ -918,7 +919,6 @@ if (USE_APPLE_INTERNAL_SDK)
     endforeach ()
 
     list(APPEND WebKit_SOURCES
-        ${WebKit_DERIVED_SOURCES_DIR}/AppKitGesturesExtras.swift
         ${WebKit_DERIVED_SOURCES_DIR}/UIWindowScene+Extras.swift
         ${WebKit_DERIVED_SOURCES_DIR}/WKWebView+SystemTextExtraction.swift
     )
@@ -1625,6 +1625,7 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     UIProcess/API/C/cocoa/WKPagePrivateMac.h
     UIProcess/API/C/cocoa/WKProtectionSpaceNS.h
     UIProcess/API/C/cocoa/WKWebsiteDataStoreRefPrivateMac.h
+
     UIProcess/API/C/mac/WKInspectorPrivateMac.h
 
     UIProcess/API/Cocoa/NSAttributedStringPrivate.h
@@ -1832,6 +1833,7 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
 
     WebProcess/InjectedBundle/API/c/cocoa/WKBundleMac.h
     WebProcess/InjectedBundle/API/c/cocoa/WKBundlePageMac.h
+
     WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.h
 )
 
