@@ -30,6 +30,7 @@
     Exposed=Window
 ] interface SVGScriptElement : SVGElement {
     [Reflect] attribute DOMString type;
+    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString? crossOrigin;
     [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings, ReflectSetter] attribute [AtomString] DOMString referrerPolicy;
     [ReflectSetter] attribute boolean async;
 };

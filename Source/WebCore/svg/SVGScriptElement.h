@@ -37,6 +37,8 @@ public:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGScriptElement, SVGElement, SVGURIReference>;
 
+    String crossOrigin() const;
+
     String referrerPolicyForBindings() const;
 
     // ActiveDOMObject

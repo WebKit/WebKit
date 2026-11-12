@@ -30,6 +30,7 @@ clipPathUnits
 color
 color-interpolation
 color-interpolation-filters
+crossorigin
 cursor
 cx
 cy
