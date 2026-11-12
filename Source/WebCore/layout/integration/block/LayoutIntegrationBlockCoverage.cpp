@@ -229,7 +229,7 @@ static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const Re
 }
 
 // BlockFormattingContext::computeIntrinsicInlineSizes measures inline content with the inline formatting context and the block-level boxes
-// between them itself, without percentage padding, which RenderBox resolves against the containing block's current inline size.
+// between them itself.
 // A block-level independent formatting context root the block formatting context lays out through the render tree
 // (BlockIntegrationUtils::layoutIndependentFormattingContext): a replaced element, a table, a button, a flex (-webkit-box included) or grid
 // container, selects, range inputs and the text control's one around its inner text and decorations included, a form control block
@@ -321,15 +321,10 @@ static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
         // block size, which an aspect ratio turns into an inline size, resolves against the block size of the containing block from its style
         // there too (RenderBox::computePercentageLogicalHeight), and so does the available inline space of an orthogonal box when it is fixed,
         // or indefinite in standards mode, which leaves the size of the initial containing block (RenderBox::perpendicularContainingBlockLogicalHeight).
-        // FIXME: Percentage padding, which resolves against its inline size, which the block formatting context writes once all of it is laid
-        // out, and the other block sizes of the containing block of an orthogonal box, which come from the last layout of the render tree.
+        // FIXME: The other block sizes of the containing block of an orthogonal box, which come from the last layout of the render tree.
         if (descendant != &box && (isLaidOutThroughRenderTree(*descendant) || isAtomicInlineLevelBox(*descendant) || isBlockLevelFloat())) {
             CheckedRef leaf = downcast<RenderBox>(*descendant);
-            CheckedRef style = leaf->style();
-            auto writingMode = leaf->writingMode();
-            if (style->paddingStart(writingMode).isPercentOrCalculated() || style->paddingEnd(writingMode).isPercentOrCalculated())
-                return false;
-            if (writingMode.isOrthogonal(leaf->parent()->writingMode()) && !hasAvailableInlineSpaceFromStyle(leaf))
+            if (leaf->writingMode().isOrthogonal(leaf->parent()->writingMode()) && !hasAvailableInlineSpaceFromStyle(leaf))
                 return false;
             descendant = descendant->nextInPreOrderAfterChildren(&box);
             continue;
@@ -338,8 +333,6 @@ static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
         if (CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(*descendant); blockContainer && blockContainer != &box && !blockContainer->isInline()) {
             CheckedRef style = blockContainer->style();
             auto writingMode = blockContainer->writingMode();
-            if (style->paddingStart(writingMode).isPercentOrCalculated() || style->paddingEnd(writingMode).isPercentOrCalculated())
-                return false;
             // A preferred aspect ratio gives an inline size from the block size and transfers the min and max block sizes, which can be
             // percentages of the block size of the containing block.
             if (style->aspectRatio().hasRatio() && Layout::BlockFormattingUtils::hasPercentageBlockSize(*blockContainer, writingMode) && !resolvesPercentageBlockSizesFromStyles(*blockContainer, box))
