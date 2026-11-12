@@ -28,6 +28,7 @@ private import TestWebKitAPILibrary
 private import TestWebKitAPILibrary.Helpers.cocoa.TestWKWebView
 import Testing
 import WebKit
+private import WebKit_Private.WKUIDelegatePrivate
 private import WebKit_Private.WKWebViewPrivate
 private import WebKit_Private._WKViewportFitEdges
 
@@ -37,6 +38,16 @@ private let edgeNames = ["top", "left", "bottom", "right"]
 
 private func fits(_ edges: _WKViewportFitEdges) -> [_WKViewportFitEdge] {
     [edges.top, edges.left, edges.bottom, edges.right]
+}
+
+@MainActor
+private final class SafeAreaUIDelegate: NSObject, WKUIDelegatePrivate {
+    private(set) var safeAreaShouldAffectObscuredInsetsChanges: [Bool] = []
+
+    // swift-format-ignore: NoLeadingUnderscores
+    func _webView(_ webView: WKWebView, didChangeSafeAreaShouldAffectObscuredInsets safeAreaShouldAffectObscuredInsets: Bool) {
+        safeAreaShouldAffectObscuredInsetsChanges.append(safeAreaShouldAffectObscuredInsets)
+    }
 }
 
 @MainActor
@@ -178,6 +189,45 @@ struct ViewportFitEdgesTests {
             [.explicitCover, .implicitCover, .implicitCover, .implicitCover],
         ]
         #expect(changes == expectedChanges)
+    }
+
+    @Test(arguments: [
+        "width=device-width",
+        "width=device-width, viewport-fit-top=cover",
+        "width=device-width, viewport-fit=cover, viewport-fit-bottom=contain",
+    ])
+    func safeAreaAffectsObscuredInsetsUnlessEveryEdgeIsCovered(viewport: String) async throws {
+        enablePerEdgeViewportFit()
+        try await load(viewport: viewport)
+
+        #expect(webView._safeAreaShouldAffectObscuredInsets)
+    }
+
+    @Test(arguments: [
+        "width=device-width, viewport-fit=cover",
+        "width=device-width, viewport-fit=cover, viewport-fit-top=cover",
+        "width=device-width, viewport-fit-top=cover, viewport-fit-left=cover, viewport-fit-bottom=cover, viewport-fit-right=cover",
+    ])
+    func safeAreaDoesNotAffectObscuredInsetsWhenEveryEdgeIsCovered(viewport: String) async throws {
+        enablePerEdgeViewportFit()
+        try await load(viewport: viewport)
+
+        #expect(!webView._safeAreaShouldAffectObscuredInsets)
+    }
+
+    @Test
+    func uiDelegateIsNotifiedWhenSafeAreaShouldAffectObscuredInsetsChanges() async throws {
+        enablePerEdgeViewportFit()
+        try await load(viewport: "width=device-width, viewport-fit-top=cover")
+
+        let uiDelegate = SafeAreaUIDelegate()
+        webView.uiDelegate = uiDelegate
+
+        try await setViewport("width=device-width, viewport-fit-top=cover, viewport-fit-left=cover")
+        try await setViewport("width=device-width, viewport-fit=cover")
+        try await setViewport("width=device-width, viewport-fit=cover, viewport-fit-bottom=contain")
+
+        #expect(uiDelegate.safeAreaShouldAffectObscuredInsetsChanges == [false, true])
     }
 }
 

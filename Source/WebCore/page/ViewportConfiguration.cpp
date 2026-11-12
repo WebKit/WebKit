@@ -574,7 +574,6 @@ void ViewportConfiguration::updateConfiguration()
             m_configuration.width /= effectiveLayoutScale;
     }
 
-    m_configuration.avoidsUnsafeArea = m_viewportArguments.viewportFit != ViewportFit::Cover;
     m_configuration.viewportFitEdges = {
         viewportFitEdge(m_viewportArguments.viewportFitTop, m_viewportArguments.viewportFit),
         viewportFitEdge(m_viewportArguments.viewportFitLeft, m_viewportArguments.viewportFit),
@@ -741,7 +740,6 @@ TextStream& operator<<(TextStream& ts, const ViewportConfiguration::Parameters& 
     ts.dumpProperty("maximumScale"_s, parameters.maximumScale);
     ts.dumpProperty("allowsUserScaling"_s, parameters.allowsUserScaling);
     ts.dumpProperty("allowsShrinkToFit"_s, parameters.allowsShrinkToFit);
-    ts.dumpProperty("avoidsUnsafeArea"_s, parameters.avoidsUnsafeArea);
     ts.dumpProperty("viewportFitEdges"_s, parameters.viewportFitEdges);
     ts.dumpProperty("ignoreInitialScaleForLayoutWidth"_s, parameters.ignoreInitialScaleForLayoutWidth);
     ts.dumpProperty("shouldHonorMinimumEffectiveDeviceWidthFromClient"_s, parameters.shouldHonorMinimumEffectiveDeviceWidthFromClient);
@@ -785,7 +783,6 @@ String ViewportConfiguration::description() const
     ts.dumpProperty("computed layout size"_s, layoutSize());
     ts.dumpProperty("ignoring horizontal scaling constraints"_s, shouldIgnoreHorizontalScalingConstraints() ? "true"_s : "false"_s);
     ts.dumpProperty("ignoring vertical scaling constraints"_s, shouldIgnoreVerticalScalingConstraints() ? "true"_s : "false"_s);
-    ts.dumpProperty("avoids unsafe area"_s, avoidsUnsafeArea() ? "true"_s : "false"_s);
     ts.dumpProperty("viewport-fit edges"_s, viewportFitEdges());
     ts.dumpProperty("minimum effective device width (for view)"_s, m_minimumEffectiveDeviceWidthForView);
     ts.dumpProperty("minimum effective device width (for shrink-to-fit)"_s, m_minimumEffectiveDeviceWidthForShrinkToFit);

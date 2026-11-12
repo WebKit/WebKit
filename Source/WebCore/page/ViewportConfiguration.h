@@ -53,7 +53,6 @@ public:
         double maximumScale { 0 };
         bool allowsUserScaling { false };
         bool allowsShrinkToFit { false };
-        bool avoidsUnsafeArea { true };
         ViewportFitEdges viewportFitEdges;
 
         bool widthIsSet { false };
@@ -146,7 +145,6 @@ public:
     double maximumScaleIgnoringAlwaysScalable() const { return m_configuration.maximumScale; }
     WEBCORE_EXPORT bool allowsUserScaling() const;
     WEBCORE_EXPORT bool allowsUserScalingIgnoringAlwaysScalable() const;
-    bool avoidsUnsafeArea() const { return m_configuration.avoidsUnsafeArea; }
     const ViewportFitEdges& viewportFitEdges() const LIFETIME_BOUND { return m_configuration.viewportFitEdges; }
 
     // Matches a width=device-width, initial-scale=1 viewport.

@@ -75,7 +75,6 @@ String MainFrameData::description() const
     ts.dumpProperty("viewportMetaTagWidthWasExplicit"_s, viewportMetaTagWidthWasExplicit);
     ts.dumpProperty("viewportMetaTagCameFromImageDocument"_s, viewportMetaTagCameFromImageDocument);
     ts.dumpProperty("allowsUserScaling"_s, allowsUserScaling);
-    ts.dumpProperty("avoidsUnsafeArea"_s, avoidsUnsafeArea);
     ts.dumpProperty("viewportFitEdges"_s, viewportFitEdges);
     ts.dumpProperty("isInStableState"_s, isInStableState);
 

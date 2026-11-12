@@ -87,7 +87,6 @@ struct MainFrameData {
     OptionSet<WebCore::LayoutMilestone> newlyReachedPaintingMilestones;
     bool scaleWasSetByUIProcess { false };
     bool allowsUserScaling { false };
-    bool avoidsUnsafeArea { true };
     bool viewportMetaTagWidthWasExplicit { false };
     bool viewportMetaTagCameFromImageDocument { false };
     bool isInStableState { false };
