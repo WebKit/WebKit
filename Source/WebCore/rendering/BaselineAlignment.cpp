@@ -27,6 +27,7 @@
 #include "BaselineAlignment.h"
 
 #include "BaselineAlignmentInlines.h"
+#include "FontMetrics.h"
 #include "RenderBox.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -89,6 +90,38 @@ size_t BaselineAlignmentState::sharedGroupIndex(WritingMode alignmentSubjectWrit
 {
     ASSERT(isBaselinePosition(preference));
     return const_cast<BaselineAlignmentState*>(this)->findCompatibleSharedGroup(alignmentSubjectWritingMode, preference);
+}
+
+float BaselineAlignment::baselineOffsetFromAlphabeticBaseline(AlignmentBaseline baseline, const FontMetrics& fontMetrics)
+{
+    auto ascent = fontMetrics.ascent();
+    auto descent = fontMetrics.descent();
+
+    // Note: http://wiki.apache.org/xmlgraphics-fop/LineLayout/AlignmentHandling
+    switch (baseline) {
+    case AlignmentBaseline::BeforeEdge:
+    case AlignmentBaseline::TextBeforeEdge:
+    case AlignmentBaseline::TextTop:
+        return ascent;
+    case AlignmentBaseline::Middle:
+        return fontMetrics.xHeight().value_or(0.f) / 2;
+    case AlignmentBaseline::Central:
+        return (ascent - descent) / 2;
+    case AlignmentBaseline::AfterEdge:
+    case AlignmentBaseline::TextAfterEdge:
+    case AlignmentBaseline::TextBottom:
+    case AlignmentBaseline::Ideographic:
+        return -descent;
+    case AlignmentBaseline::Baseline:
+    case AlignmentBaseline::Alphabetic:
+        return 0;
+    case AlignmentBaseline::Hanging:
+        return ascent * 8 / 10.f;
+    case AlignmentBaseline::Mathematical:
+        return ascent / 2;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 FontBaseline BaselineAlignment::dominantBaseline(WritingMode writingMode)
