@@ -32,6 +32,8 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
         this._target = target;
 
         this._idleTreeElement = new WI.IdleTreeElement;
+
+        target.addEventListener(WI.Target.Event.NameChanged, this._handleNameChanged, this);
     }
 
     // Public
@@ -90,6 +92,11 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
     }
 
     // Private
+
+    _handleNameChanged(event)
+    {
+        this.mainTitle = this._target.displayName;
+    }
 
     _updateStatus()
     {

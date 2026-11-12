@@ -30,6 +30,8 @@ WI.FrameTarget = class FrameTarget extends WI.Target
         super(parentTarget, targetId, name, WI.TargetType.Frame, connection, options);
 
         this._executionContextList = new WI.ExecutionContextList;
+
+        WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, this._handleFrameWasAdded, this);
     }
 
     // Public
@@ -44,6 +46,13 @@ WI.FrameTarget = class FrameTarget extends WI.Target
         return this._executionContext;
     }
 
+    // Computed at read time: the WI.Frame for the frame id can be replaced when the resource tree
+    // is rebuilt, so a stored name goes stale.
+    get displayName()
+    {
+        return this._executionContext?.frame?.url || this.name;
+    }
+
     addExecutionContext(context)
     {
         // On navigation, a new Normal context replaces all prior contexts.
@@ -55,16 +64,19 @@ WI.FrameTarget = class FrameTarget extends WI.Target
         if (!this._executionContextList.add(context))
             return;
 
-        if (context.type === WI.ExecutionContext.Type.Normal)
+        if (context.type === WI.ExecutionContext.Type.Normal) {
             this._executionContext = context;
+            this._setNameSourceFrame(context.frame);
+            this.dispatchEventToListeners(WI.Target.Event.NameChanged);
+        }
 
         this.dispatchEventToListeners(WI.FrameTarget.Event.ExecutionContextAdded, {context});
     }
 
     ensureTargetExecutionContext()
     {
-        this._targetExecutionContextPromise ||= this.executionContext 
-            ? Promise.resolve() 
+        this._targetExecutionContextPromise ||= this.executionContext
+            ? Promise.resolve()
             : this.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded);
         return this._targetExecutionContextPromise;
     }
@@ -74,6 +86,61 @@ WI.FrameTarget = class FrameTarget extends WI.Target
         this._executionContextList.clear();
         this._executionContext = null;
         this._targetExecutionContextPromise = null;
+        this._setNameSourceFrame(null);
+    }
+
+    destroy()
+    {
+        WI.networkManager.removeEventListener(WI.NetworkManager.Event.FrameWasAdded, this._handleFrameWasAdded, this);
+        this._setNameSourceFrame(null);
+
+        super.destroy();
+    }
+
+    // Private
+
+    _handleFrameWasAdded(event)
+    {
+        let frame = event.data.frame;
+        if (!this._executionContext || frame.id !== this._executionContext.frameId)
+            return;
+
+        this._setNameSourceFrame(frame);
+        this.dispatchEventToListeners(WI.Target.Event.NameChanged);
+    }
+
+    _handleNameSourceMainResourceDidChange(event)
+    {
+        this._setNameSourceResource(this._nameSourceFrame.mainResource);
+        this.dispatchEventToListeners(WI.Target.Event.NameChanged);
+    }
+
+    _handleNameSourceResourceURLDidChange(event)
+    {
+        this.dispatchEventToListeners(WI.Target.Event.NameChanged);
+    }
+
+    _setNameSourceFrame(frame)
+    {
+        if (this._nameSourceFrame === frame)
+            return;
+        this._nameSourceFrame?.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._handleNameSourceMainResourceDidChange, this);
+        this._setNameSourceResource(null);
+        this._nameSourceFrame = frame;
+        if (this._nameSourceFrame) {
+            this._nameSourceFrame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleNameSourceMainResourceDidChange, this);
+            this._setNameSourceResource(this._nameSourceFrame.mainResource);
+        }
+    }
+
+    // A placeholder main resource's URL is corrected in place, without a MainResourceDidChange.
+    _setNameSourceResource(resource)
+    {
+        if (this._nameSourceResource === resource)
+            return;
+        this._nameSourceResource?.removeEventListener(WI.Resource.Event.URLDidChange, this._handleNameSourceResourceURLDidChange, this);
+        this._nameSourceResource = resource;
+        this._nameSourceResource?.addEventListener(WI.Resource.Event.URLDidChange, this._handleNameSourceResourceURLDidChange, this);
     }
 };
 

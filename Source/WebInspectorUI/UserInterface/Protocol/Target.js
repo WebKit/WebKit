@@ -204,7 +204,13 @@ WI.Target = class Target extends WI.Object
     set identifier(identifier) { this._identifier = identifier; }
 
     get name() { return this._name; }
-    set name(name) { this._name = name; }
+    set name(name)
+    {
+        if (this._name === name)
+            return;
+        this._name = name;
+        this.dispatchEventToListeners(WI.Target.Event.NameChanged);
+    }
 
     get type() { return this._type; }
     get connection() { return this._connection; }
@@ -296,6 +302,7 @@ WI.Target = class Target extends WI.Object
 
 WI.Target.Event = {
     MainResourceAdded: "target-main-resource-added",
+    NameChanged: "target-name-changed",
     ResourceAdded: "target-resource-added",
     ScriptAdded: "target-script-added",
 };
