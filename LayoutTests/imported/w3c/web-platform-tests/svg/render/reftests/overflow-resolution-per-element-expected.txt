@@ -1,0 +1,27 @@
+text
+
+PASS overflow:scroll resolves to hidden on <text>
+PASS overflow:auto resolves to visible on <text>
+PASS overflow:hidden stays hidden on <text>
+PASS overflow:visible stays visible on <text>
+PASS overflow:scroll resolves to hidden on <pattern>
+PASS overflow:auto resolves to visible on <pattern>
+PASS overflow:hidden stays hidden on <pattern>
+PASS overflow:visible stays visible on <pattern>
+PASS overflow:scroll resolves to hidden on <marker>
+PASS overflow:auto resolves to visible on <marker>
+PASS overflow:hidden stays hidden on <marker>
+PASS overflow:visible stays visible on <marker>
+PASS overflow:scroll resolves to hidden on <symbol>
+PASS overflow:auto resolves to visible on <symbol>
+PASS overflow:hidden stays hidden on <symbol>
+PASS overflow:visible stays visible on <symbol>
+PASS overflow:scroll resolves to hidden on <image>
+PASS overflow:auto resolves to visible on <image>
+PASS overflow:hidden stays hidden on <image>
+PASS overflow:visible stays visible on <image>
+PASS overflow:scroll stays scroll on <inner svg>
+PASS overflow:auto stays auto on <inner svg>
+PASS overflow:scroll stays scroll on <foreignObject>
+PASS overflow:auto stays auto on <foreignObject>
+

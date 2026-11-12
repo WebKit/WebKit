@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<title>SVG overflow property resolution per element type</title>
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/render.html#OverflowAndClipProperties">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<svg id="root" width="200" height="200" style="overflow: visible">
+  <defs>
+    <pattern id="pat" width="10" height="10"/>
+    <marker id="mark"/>
+    <symbol id="sym"/>
+  </defs>
+  <svg id="inner" width="100" height="100"/>
+  <image id="img" width="10" height="10"/>
+  <text id="txt">text</text>
+  <foreignObject id="fo" width="10" height="10"/>
+</svg>
+<script>
+// Per https://w3c.github.io/svgwg/svg2-draft/render.html#OverflowAndClipProperties
+//
+// Element          | auto    | visible | hidden | scroll
+// -----------------+---------+---------+--------+-------
+// document root svg| vis/scr | visible | hidden | scroll
+// other svg        | vis/scr | visible | hidden | scroll
+// text             | visible | visible | hidden | hidden
+// pattern          | visible | visible | hidden | hidden
+// marker           | visible | visible | hidden | hidden
+// symbol           | visible | visible | hidden | hidden
+// image            | visible | visible | hidden | hidden
+// foreignObject    | vis/scr | visible | hidden | scroll
+
+// Elements where scroll resolves to hidden and auto resolves to visible.
+const clampedElements = [
+    { id: "txt", name: "text" },
+    { id: "pat", name: "pattern" },
+    { id: "mark", name: "marker" },
+    { id: "sym", name: "symbol" },
+    { id: "img", name: "image" },
+];
+
+for (const { id, name } of clampedElements) {
+    const el = document.getElementById(id);
+
+    test(() => {
+        el.style.overflow = "scroll";
+        assert_equals(getComputedStyle(el).overflowX, "hidden");
+        assert_equals(getComputedStyle(el).overflowY, "hidden");
+        el.style.overflow = "";
+    }, `overflow:scroll resolves to hidden on <${name}>`);
+
+    test(() => {
+        el.style.overflow = "auto";
+        assert_equals(getComputedStyle(el).overflowX, "visible");
+        assert_equals(getComputedStyle(el).overflowY, "visible");
+        el.style.overflow = "";
+    }, `overflow:auto resolves to visible on <${name}>`);
+
+    test(() => {
+        el.style.overflow = "hidden";
+        assert_equals(getComputedStyle(el).overflowX, "hidden");
+        assert_equals(getComputedStyle(el).overflowY, "hidden");
+        el.style.overflow = "";
+    }, `overflow:hidden stays hidden on <${name}>`);
+
+    test(() => {
+        el.style.overflow = "visible";
+        assert_equals(getComputedStyle(el).overflowX, "visible");
+        assert_equals(getComputedStyle(el).overflowY, "visible");
+        el.style.overflow = "";
+    }, `overflow:visible stays visible on <${name}>`);
+}
+
+// Elements where scroll and auto keep their values.
+const scrollableElements = [
+    { id: "inner", name: "inner svg" },
+    { id: "fo", name: "foreignObject" },
+];
+
+for (const { id, name } of scrollableElements) {
+    const el = document.getElementById(id);
+
+    test(() => {
+        el.style.overflow = "scroll";
+        assert_equals(getComputedStyle(el).overflowX, "scroll");
+        assert_equals(getComputedStyle(el).overflowY, "scroll");
+        el.style.overflow = "";
+    }, `overflow:scroll stays scroll on <${name}>`);
+
+    test(() => {
+        el.style.overflow = "auto";
+        assert_equals(getComputedStyle(el).overflowX, "auto");
+        assert_equals(getComputedStyle(el).overflowY, "auto");
+        el.style.overflow = "";
+    }, `overflow:auto stays auto on <${name}>`);
+}
+</script>
