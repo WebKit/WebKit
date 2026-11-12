@@ -125,7 +125,7 @@ private:
     VideoFrameGStreamer(const GRefPtr<GstSample>&, const CreateOptions&, PlatformVideoColorSpace&&);
 
     bool isGStreamer() const final { return true; }
-    Ref<VideoFrame> clone() final;
+    Ref<VideoFrame> clone(CloneOverrides) final;
 
     void setMemoryTypeFromCaps();
 

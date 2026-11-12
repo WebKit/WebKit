@@ -171,7 +171,7 @@ static RefPtr<ImageGStreamer> convertSampleToImage(const GRefPtr<GstSample>& sam
     return ImageGStreamer::create(WTF::move(convertedSample));
 }
 
-RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
+RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image, Init&& init)
 {
     if (!ensureGStreamerInitialized()) [[unlikely]]
         return nullptr;
@@ -233,7 +233,11 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
     GRefPtr caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, gst_video_format_to_string(format), "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr));
     auto info = VideoFrameGStreamer::infoFromCaps(caps);
     GRefPtr sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-    return VideoFrameGStreamer::create(WTF::move(sample), { { width, height }, WTF::move(info) });
+    VideoFrameGStreamer::CreateOptions options { { width, height }, WTF::move(info) };
+    options.rotation = init.rotation;
+    options.isMirrored = init.isMirrored;
+    options.presentationTime = init.presentationTime;
+    return VideoFrameGStreamer::create(WTF::move(sample), options);
 }
 
 static void copyToGstBufferPlane(std::span<uint8_t> destination, const GstVideoInfo& info, size_t planeIndex, std::span<const uint8_t> source, size_t height, uint32_t bytesPerRowSource)
@@ -827,12 +831,13 @@ RefPtr<ImageGStreamer> VideoFrameGStreamer::convertToImage()
     return convertSampleToImage(m_sample, m_info.info);
 }
 
-Ref<VideoFrame> VideoFrameGStreamer::clone()
+Ref<VideoFrame> VideoFrameGStreamer::clone(CloneOverrides overrides)
 {
     CreateOptions options;
     options.info = m_info;
     options.presentationTime = presentationTime();
-    options.rotation = rotation();
+    options.rotation = overrides.rotation ? *overrides.rotation : rotation();
+    options.isMirrored = overrides.isMirrored ? *overrides.isMirrored : isMirrored();
     return createWrappedSample(m_sample, options);
 }
 

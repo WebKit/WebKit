@@ -63,7 +63,7 @@ private:
     friend struct IPC::ArgumentCoder<VideoFrameCV>;
     VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&, PlatformVideoColorSpace&&, ShouldIgnoreAlpha);
 
-    Ref<VideoFrame> clone() final;
+    Ref<VideoFrame> clone(CloneOverrides) final;
     void setShouldIgnoreAlpha(bool shouldIgnoreAlpha) final { m_shouldIgnoreAlpha = shouldIgnoreAlpha; }
 
     const RetainPtr<CVPixelBufferRef> m_pixelBuffer;

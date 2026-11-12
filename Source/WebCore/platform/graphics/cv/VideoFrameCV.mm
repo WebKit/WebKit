@@ -59,11 +59,11 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
+RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image, Init&& init)
 {
     // FIXME: Set VideoFrame colorSpace.
     auto transferSession = ImageTransferSessionVT::create(kCVPixelFormatType_32ARGB, false);
-    return transferSession->createVideoFrame(image.platformImage().get(), { }, image.size(), image.hasAlpha() ? ImageTransferSessionVT::ShouldPreserveAlpha::Yes : ImageTransferSessionVT::ShouldPreserveAlpha::No);
+    return transferSession->createVideoFrame(image.platformImage().get(), init.presentationTime, image.size(), init.rotation, init.isMirrored, image.hasAlpha() ? ImageTransferSessionVT::ShouldPreserveAlpha::Yes : ImageTransferSessionVT::ShouldPreserveAlpha::No);
 }
 
 static std::span<const uint8_t> copyToCVPixelBufferPlane(CVPixelBufferRef pixelBuffer, size_t planeIndex, std::span<const uint8_t> source, size_t height, uint32_t bytesPerRowSource)
@@ -689,9 +689,9 @@ void VideoFrameCV::setOwnershipIdentity(const ProcessIdentity& resourceOwner)
     setOwnershipIdentityForCVPixelBuffer(buffer.get(), resourceOwner);
 }
 
-Ref<VideoFrame> VideoFrameCV::clone()
+Ref<VideoFrame> VideoFrameCV::clone(CloneOverrides overrides)
 {
-    return adoptRef(*new VideoFrameCV(presentationTime(), isMirrored(), rotation(), pixelBuffer(), PlatformVideoColorSpace { colorSpace() }, shouldIgnoreAlpha() ? ShouldIgnoreAlpha::Yes : ShouldIgnoreAlpha::No));
+    return adoptRef(*new VideoFrameCV(presentationTime(), overrides.isMirrored ? *overrides.isMirrored : isMirrored(), overrides.rotation ? *overrides.rotation : rotation(), pixelBuffer(), PlatformVideoColorSpace { colorSpace() }, shouldIgnoreAlpha() ? ShouldIgnoreAlpha::Yes : ShouldIgnoreAlpha::No));
 }
 
 }

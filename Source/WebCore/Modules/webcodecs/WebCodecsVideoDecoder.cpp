@@ -149,11 +149,15 @@ static VideoDecoder::Config createVideoDecoderConfig(const WebCodecsVideoDecoder
             description = data;
     }
 
+    auto colorSpace = config.colorSpace;
+    if (colorSpace && *colorSpace == PlatformVideoColorSpace { })
+        colorSpace = std::nullopt;
+
     return {
         .description = description,
         .width = config.codedWidth.value_or(0),
         .height = config.codedHeight.value_or(0),
-        .colorSpace = config.colorSpace,
+        .colorSpace = WTF::move(colorSpace),
         .decoding = config.hardwareAcceleration == HardwareAcceleration::PreferSoftware ? VideoDecoder::HardwareAcceleration::No : VideoDecoder::HardwareAcceleration::Yes,
         .rotation = parseVideoFrameRotation(config.rotation),
         .isMirrored = config.flip
@@ -201,7 +205,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
                 auto decodedResult = WTF::move(result).value();
                 Ref frame = WTF::move(decodedResult.frame);
                 // Decoders should create frames with the orientation of the configuration, we override for decoders that do not know about orientation.
-                frame = frame->updateOrientation(rotation, isMirrored, VideoFrame::ShouldClone::No);
+                frame = frame->updateOrientation(rotation, isMirrored);
                 auto presentationSize = frame->presentationSize();
                 WebCodecsVideoFrame::BufferInit init {
                     .format = convertVideoFramePixelFormat(frame->pixelFormat()),

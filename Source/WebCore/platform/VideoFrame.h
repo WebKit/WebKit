@@ -80,6 +80,11 @@ inline bool is90DegreeRotation(VideoFrameRotation rotation)
     return rotation == VideoFrameRotation::Left || rotation == VideoFrameRotation::Right;
 }
 
+struct VideoFrameCloneOverrides {
+    std::optional<VideoFrameRotation> rotation;
+    std::optional<bool> isMirrored;
+};
+
 // A class representing a video frame from a decoder, capture source, or similar.
 class VideoFrame : public ThreadSafeRefCounted<VideoFrame> {
 public:
@@ -94,7 +99,7 @@ public:
         PlatformVideoColorSpace colorSpace;
     };
 
-    static RefPtr<VideoFrame> fromNativeImage(NativeImage&);
+    static RefPtr<VideoFrame> fromNativeImage(NativeImage&, Init&&);
     static RefPtr<VideoFrame> createFromPixelBuffer(Ref<PixelBuffer>&&, Init&&);
     static RefPtr<VideoFrame> createNV12(std::span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, const ComputedPlaneLayout&, Init&&);
     static RefPtr<VideoFrame> createRGBA(std::span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, Init&&);
@@ -123,8 +128,9 @@ public:
     enum class ShouldClone : bool { No, Yes };
     // updateTimestamp, updateOrientation and updateShouldIgnoreAlpha should be called before being used by VideoFrame consumers.
     Ref<VideoFrame> updateTimestamp(MediaTime, ShouldClone);
-    WEBCORE_EXPORT Ref<VideoFrame> updateOrientation(Rotation, bool isMirrored, ShouldClone);
     Ref<VideoFrame> updateShouldIgnoreAlpha(bool, ShouldClone);
+
+    WEBCORE_EXPORT Ref<VideoFrame> updateOrientation(Rotation, bool isMirrored);
 
     using CopyCallback = CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>;
     void copyTo(std::span<uint8_t>, VideoPixelFormat, ColorSpace, Vector<ComputedPlaneLayout>&&, CopyCallback&&);
@@ -159,13 +165,15 @@ public:
 
     WEBCORE_EXPORT bool is10bits() const;
 
+    using CloneOverrides = VideoFrameCloneOverrides;
+    virtual Ref<VideoFrame> clone(CloneOverrides = { }) = 0;
+
 protected:
     WEBCORE_EXPORT VideoFrame(MediaTime presentationTime, bool isMirrored, Rotation, PlatformVideoColorSpace&& = { });
 
     void initializePresentationTime(MediaTime);
 
 private:
-    virtual Ref<VideoFrame> clone() = 0;
     // Called by updateShouldIgnoreAlpha on a frame that is not shared.
     virtual void setShouldIgnoreAlpha(bool) { }
 

@@ -82,10 +82,10 @@ CVPixelBufferRef VideoFrameLibWebRTC::pixelBuffer() const
     return m_pixelBuffer.get();
 }
 
-Ref<VideoFrame> VideoFrameLibWebRTC::clone()
+Ref<VideoFrame> VideoFrameLibWebRTC::clone(CloneOverrides overrides)
 {
     Locker locker { m_pixelBufferLock };
-    Ref clone = adoptRef(*new VideoFrameLibWebRTC(presentationTime(), isMirrored(), rotation(), PlatformVideoColorSpace { colorSpace() }, m_buffer.get(), ConversionCallback { m_conversionCallback }));
+    Ref clone = adoptRef(*new VideoFrameLibWebRTC(presentationTime(), overrides.isMirrored ? *overrides.isMirrored : isMirrored(), overrides.rotation ? *overrides.rotation : rotation(), PlatformVideoColorSpace { colorSpace() }, m_buffer.get(), ConversionCallback { m_conversionCallback }));
 
     Locker cloneLocker { clone->m_pixelBufferLock };
     clone->m_pixelBuffer = m_pixelBuffer;

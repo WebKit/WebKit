@@ -1840,6 +1840,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::WritingTools::TextSuggestionState': ['<WebCore/WritingToolsTypes.h>'],
         'WebCore::UsedLegacyTLS': ['<WebCore/ResourceResponseBase.h>'],
         'WebCore::UsedPortalTransform': ['<WebCore/PortalTransform.h>'],
+        'WebCore::VideoFrameCloneOverrides': ['<WebCore/VideoFrame.h>'],
         'WebCore::VideoFrameRotation': ['<WebCore/VideoFrame.h>'],
         'WebCore::GPUVideoEncoderFrameInfo': ['<WebCore/GPUVideoEncoder.h>'],
         'WebCore::VideoPlaybackQualityMetrics': ['<WebCore/VideoPlaybackQualityMetrics.h>'],

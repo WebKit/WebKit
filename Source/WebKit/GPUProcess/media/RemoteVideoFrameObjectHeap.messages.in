@@ -33,6 +33,7 @@ messages -> RemoteVideoFrameObjectHeap {
     SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore)
     SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle)
     ConvertFrameBuffer(struct WebKit::SharedVideoFrame frame, bool shouldApplyRotation) -> (WebCore::ColorSpace space) Synchronous
+    Clone(WebKit::RemoteVideoFrameReference cloneReference, WebKit::RemoteVideoFrameReadReference clonedFrameReference, struct WebCore::VideoFrameCloneOverrides cloneOverrides)
 #endif
     ReleaseVideoFrame(WebKit::RemoteVideoFrameWriteReference write) AllowedWhenWaitingForSyncReply
 }
