@@ -116,7 +116,7 @@ TrackSizes GridSizer::sizeColumnTracks(const PlacedGridItems& placedGridItems, c
         auto usedInlineBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), { }).first;
         auto gridAreaBlockSize = gridAreaBlockSizeForFirstIterationColumnSizing(gridItem, definiteRowSizesForFirstColumnSizing, layoutState.usedRowGap);
         auto gridAreaMaximumBlockSize = GridLayoutUtils::gridAreaMaximumSize(gridItem.rowStartLine(), gridItem.rowEndLine(), rowTrackSizingFunctionsList, layoutState.usedRowGap, layoutConstraints.blockAxis);
-        return { gridItem, gridItem.inlineAxisSizes(), usedInlineBorderAndPadding, GridLayoutUtils::usedMarginsForAxis(gridItem, gridItem.inlineAxisSizes()),
+        return { gridItem, gridItem.inlineAxisSizes(), usedInlineBorderAndPadding, GridLayoutUtils::usedMarginsForTrackSizing(gridItem, gridItem.inlineAxisSizes()),
             { gridItem.columnStartLine(), gridItem.columnEndLine() }, gridAreaBlockSize, gridAreaMaximumBlockSize };
     });
 
@@ -136,7 +136,7 @@ TrackSizes GridSizer::sizeRowTracks(const PlacedGridItems& placedGridItems, cons
         auto gridAreaInlineSize = GridLayoutUtils::gridAreaDimensionSize(gridItem.columnStartLine(), gridItem.columnEndLine(), columnSizes, layoutState.usedColumnGap);
         auto gridAreaMaximumInlineSize = GridLayoutUtils::gridAreaMaximumSize(gridItem.columnStartLine(), gridItem.columnEndLine(), columnTrackSizingFunctionsList, layoutState.usedColumnGap, layoutState.gridLayoutConstraints.inlineAxis);
         auto usedBlockBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), gridAreaInlineSize).second;
-        return { gridItem, gridItem.blockAxisSizes(), usedBlockBorderAndPadding, GridLayoutUtils::usedMarginsForAxis(gridItem, gridItem.blockAxisSizes()),
+        return { gridItem, gridItem.blockAxisSizes(), usedBlockBorderAndPadding, GridLayoutUtils::usedMarginsForTrackSizing(gridItem, gridItem.blockAxisSizes()),
             { gridItem.rowStartLine(), gridItem.rowEndLine() }, gridAreaInlineSize, gridAreaMaximumInlineSize };
     });
 
