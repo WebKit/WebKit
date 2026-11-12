@@ -1716,6 +1716,18 @@ LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit compute
     return std::max(computedLogicalWidth, bordersAndPadding);
 }
 
+template<typename SizeType> LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(const SizeType& logicalWidth, LayoutUnit computedLogicalWidth, std::optional<LayoutUnit> containingBlockLogicalWidth) const
+{
+    if (!logicalWidth.isStretchFunction())
+        return adjustBorderBoxLogicalWidthForBoxSizing(computedLogicalWidth);
+    // stretch(): "Fit the margin box to the size specified by the argument"
+    // Margin percentages always resolve against the containing block's inline size.
+    auto zoom = style().usedZoomForLength();
+    ASSERT(containingBlockLogicalWidth);
+    auto margins = Style::evaluateMinimum<LayoutUnit>(style().marginStart(), *containingBlockLogicalWidth, zoom) + Style::evaluateMinimum<LayoutUnit>(style().marginEnd(), *containingBlockLogicalWidth, zoom);
+    return std::max(computedLogicalWidth - margins, borderAndPaddingLogicalWidth());
+}
+
 LayoutUnit RenderBox::adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height) const
 {
     LayoutUnit bordersPlusPadding = borderAndPaddingLogicalHeight();
@@ -3074,7 +3086,7 @@ template<typename SizeType> LayoutUnit RenderBox::computeLogicalWidthUsingGeneri
 
     if (logicalWidth.isSpecified()) {
         // FIXME: If the containing block flow is perpendicular to our direction we need to use the available logical height instead.
-        return adjustBorderBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(logicalWidth, availableLogicalWidth, style().usedZoomForLength()));
+        return adjustBorderBoxLogicalWidthForBoxSizing(logicalWidth, Style::evaluate<LayoutUnit>(logicalWidth, availableLogicalWidth, style().usedZoomForLength()), containingBlockLogicalWidthForContent());
     }
 
     if (logicalWidth.isStretch())
