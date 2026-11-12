@@ -109,10 +109,12 @@
 }
 #endif
 
-- (void)stopTimer
+- (void)reset
 {
     [_timer invalidate];
     _timer = 0;
+    _lastPosition.clear();
+    [self resetError];
 }
 
 - (BOOL)isActive

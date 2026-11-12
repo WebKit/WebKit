@@ -1828,7 +1828,7 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
 #endif
     [WebView _resetOriginAccessAllowLists];
 
-    [[MockGeolocationProvider shared] stopTimer];
+    [[MockGeolocationProvider shared] reset];
     [[MockWebNotificationProvider shared] reset];
 
 #if !PLATFORM(IOS_FAMILY)

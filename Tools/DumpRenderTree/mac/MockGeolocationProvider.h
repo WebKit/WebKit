@@ -40,7 +40,7 @@
 - (void)setPosition:(WebGeolocationPosition *)position;
 - (void)setPositionUnavailableErrorWithMessage:(NSString *)errorMessage;
 
-- (void)stopTimer;
+- (void)reset;
 - (BOOL)isActive;
 
 @end
