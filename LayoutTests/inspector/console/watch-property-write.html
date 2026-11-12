@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/watch-utilities.js"></script>
+<script>
+let setterEntryCount = 0;
+let rejectedWriteThrew = false;
+
+class PropertyWriter {
+    constructor()
+    {
+        this.value = 0;
+    }
+
+    write(value)
+    {
+        this.value = value;
+    }
+}
+
+class SetterWriterBase {
+    constructor()
+    {
+        this._value = 0;
+    }
+
+    set value(value)
+    {
+        ++setterEntryCount;
+        this._value = value;
+    }
+
+    set ignored(value)
+    {
+        ++setterEntryCount;
+    }
+}
+
+class SetterWriter extends SetterWriterBase {
+    write(value)
+    {
+        super.value = value;
+    }
+}
+
+let Objects = {
+    plain: {value: 0},
+    nullPrototype: Object.assign(Object.create(null), {value: 0}),
+    instance: new PropertyWriter,
+    setter: new SetterWriter,
+    superSetter: new SetterWriter,
+    internal: {value: 0},
+    nonExtensible: Object.preventExtensions({value: 0}),
+    readOnly: Object.defineProperty({}, "value", {value: 0}),
+    reentrantDescriptor: {value: 0, storedValue: 0},
+};
+
+function writeNamed(object, value)
+{
+    object.value = value;
+}
+
+function addNamed(object, value)
+{
+    object.added = value;
+}
+
+function writeReadOnly()
+{
+    "use strict";
+    Objects.readOnly.value = 1;
+}
+
+function test()
+{
+    WI.debuggerManager.createWatchedObjectBreakpoint();
+
+    let suite = InspectorTest.createAsyncSuite("CommandLineAPI.watch.PropertyWrite");
+    let {expectNoPause, expectPause, watchObject} = InspectorTest.WatchObject;
+
+    async function expectSinglePause(options)
+    {
+        let pauseCount = 0;
+        let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, () => ++pauseCount);
+        try {
+            await expectPause(options);
+        } finally {
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        }
+        InspectorTest.expectEqual(pauseCount, 1, "Should pause exactly once for the property write.");
+    }
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.PropertyWrite.PlainObject",
+        async test() {
+            await watchObject("Objects.plain");
+            await expectSinglePause({
+                expression: "writeNamed(Objects.plain, 1)",
+                beforeExpression: "Objects.plain.value === 0",
+                afterExpression: "Objects.plain.value === 1",
+                description: "replacing a plain object's named data property",
+            });
+            await expectSinglePause({
+                expression: "addNamed(Objects.plain, 2)",
+                beforeExpression: "!Object.hasOwn(Objects.plain, 'added')",
+                afterExpression: "Objects.plain.added === 2",
+                description: "adding a plain object's named data property",
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.PropertyWrite.NullPrototype",
+        async test() {
+            await watchObject("Objects.nullPrototype");
+            await expectSinglePause({
+                expression: "writeNamed(Objects.nullPrototype, 1)",
+                beforeExpression: "Objects.nullPrototype.value === 0",
+                afterExpression: "Objects.nullPrototype.value === 1",
+                description: "writing a null-prototype object's named data property",
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.PropertyWrite.ClassInstance",
+        async test() {
+            await watchObject("Objects.instance");
+            await expectSinglePause({
+                expression: "Objects.instance.write(1)",
+                beforeExpression: "this === Objects.instance && this.value === 0 && value === 1",
+                afterExpression: "Objects.instance.value === 1",
+                description: "writing a class instance's named data property",
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.PropertyWrite.Setter",
+        async test() {
+            await watchObject("Objects.setter");
+            await expectNoPause("Objects.setter.ignored = 1", "Should not pause when a setter does not modify the watched object.");
+            InspectorTest.expectEqual(await InspectorTest.evaluateInPage("setterEntryCount"), 1, "The non-mutating setter should still run.");
+
+            await InspectorTest.evaluateInPage("setterEntryCount = 0");
+            await expectSinglePause({
+                expression: "Objects.setter.value = 1",
+                beforeExpression: "this === Objects.setter && this._value === 0 && value === 1 && setterEntryCount === 1",
+                afterExpression: "Objects.setter._value === 1",
+                description: "a backing-field write inside a setter",
+            });
+
+            await InspectorTest.evaluateInPage("setterEntryCount = 0");
+            await expectSinglePause({
+                expression: "Object.assign(Objects.setter, {value: 2})",
+                beforeExpression: "this === Objects.setter && this._value === 1 && value === 2 && setterEntryCount === 1",
+                afterExpression: "Objects.setter._value === 2",
+                description: "a backing-field write inside a setter called by Object.assign",
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.PropertyWrite.SuperSetter",
+        async test() {
+            await watchObject("Objects.superSetter");
+            await InspectorTest.evaluateInPage("setterEntryCount = 0");
+            await expectSinglePause({
+                expression: "Objects.superSetter.write(1)",
+                beforeExpression: "this === Objects.superSetter && this._value === 0 && value === 1 && setterEntryCount === 1",
+                afterExpression: "Objects.superSetter._value === 1",
+                description: "a backing-field write inside a superclass setter",
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.PropertyWrite.InternalWrites",
+        async test() {
+            await watchObject("Objects.internal");
+            await expectNoPause("Object.assign(Objects.internal, {value: 1})", "Should not pause for Object.assign's internal data-property write.");
+            await expectNoPause("Reflect.set(Objects.internal, 'value', 2)", "Should not pause for Reflect.set's internal data-property write.");
+            await expectNoPause("Object.defineProperty(Objects.internal, 'value', {value: 3})", "Should not pause for Object.defineProperty's internal data-property write.");
+            InspectorTest.expectEqual(await InspectorTest.evaluateInPage("Objects.internal.value"), 3, "Internal data-property writes should still complete.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.PropertyWrite.RejectedWrites",
+        async test() {
+            await watchObject("Objects.readOnly");
+            await expectNoPause("try { writeReadOnly(); } catch (error) { rejectedWriteThrew = error instanceof TypeError; }", "Should not pause for a rejected read-only property write.");
+            InspectorTest.expectTrue(await InspectorTest.evaluateInPage("rejectedWriteThrew && Objects.readOnly.value === 0"), "A rejected strict write should still throw TypeError without changing the property.");
+
+            await watchObject("Objects.nonExtensible");
+            await expectNoPause("addNamed(Objects.nonExtensible, 1)", "Should not pause for a rejected property addition.");
+            InspectorTest.expectFalse(await InspectorTest.evaluateInPage("Object.hasOwn(Objects.nonExtensible, 'added')"), "The rejected property addition should leave the object unchanged.");
+            await expectSinglePause({
+                expression: "writeNamed(Objects.nonExtensible, 1)",
+                beforeExpression: "Objects.nonExtensible.value === 0",
+                afterExpression: "Objects.nonExtensible.value === 1",
+                description: "replacing a non-extensible object's writable data property",
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.PropertyWrite.ReentrantDescriptor",
+        async test() {
+            await watchObject("Objects.reentrantDescriptor");
+            await expectSinglePause({
+                expression: "writeNamed(Objects.reentrantDescriptor, 1)",
+                beforeExpression: "Objects.reentrantDescriptor.value === 0",
+                whilePausedExpression: "unwatch(Objects.reentrantDescriptor); Object.defineProperty(Objects.reentrantDescriptor, 'value', {set(value) { this.storedValue = value; }, configurable: true})",
+                afterExpression: "Objects.reentrantDescriptor.storedValue === 1",
+                description: "a write whose property becomes a setter while paused",
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests watching named data-property writes without pausing at setter entry.</p>
+</body>
+</html>
