@@ -31,7 +31,6 @@
 #import "Helpers/Test.h"
 #import "Helpers/TestNotificationProvider.h"
 #import "Helpers/cocoa/TestNSBundleExtras.h"
-#import "TestURLSchemeHandler.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKNotificationProvider.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -45,6 +44,7 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
 #import <wtf/HexNumber.h>
+#import <wtf/text/MakeString.h>
 
 static constexpr auto simpleMainBytes = R"SWRESOURCE(
 Hello World!
@@ -97,12 +97,15 @@ return "DONE";
 @property (readwrite, copy) NSURL *serverURL;
 @property (readwrite) BOOL shouldAllowOriginViolations;
 @property (readonly) int originViolationCount;
+@property (readonly) BOOL wasCalled;
 @end
 
 @implementation BadgeDelegate
 
 - (void)updatedAppBadge:(NSNumber *)badge fromOrigin:(WKSecurityOrigin *)origin
 {
+    _wasCalled = YES;
+
     id innerBadge = badge;
     if (!innerBadge)
         innerBadge = [NSNull null];
@@ -118,10 +121,11 @@ return "DONE";
     }
 
     if (_serverURL) {
-        if (!_shouldAllowOriginViolations)
+        if (_shouldAllowOriginViolations) {
+            if (![origin isSameSiteAsURL:_serverURL])
+                ++_originViolationCount;
+        } else
             EXPECT_TRUE([origin isSameSiteAsURL:_serverURL]);
-        else
-            ++_originViolationCount;
     }
 }
 
@@ -449,14 +453,16 @@ TEST(Badging, ServiceWorker)
     EXPECT_EQ(badgeDelegate.get().appBadgeIndex, 2);
 }
 
-static constexpr auto originMainFrameBytes = R"SWRESOURCE(
-<iframe src="origintest2://main.com/iframe.html"></iframe>
+static String originMainFrameBytes(const String& iframeURL)
+{
+    return makeString("<iframe src=\""_s, iframeURL, "\"></iframe>"_s, R"SWRESOURCE(
 <script>
 window.onmessage = (event) => {
     window.webkit.messageHandlers.testHandler.postMessage(event.data);
 }
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE"_s);
+}
 
 static constexpr auto originIFrameBytes = R"SWRESOURCE(
 <script type="module">
@@ -469,21 +475,21 @@ try {
 </script>
 )SWRESOURCE"_s;
 
-static void runOriginTest(NSString *mainURL, NSString *expectedMessage)
+enum class IFrameOrigin : bool { SameAsMainFrame, DifferentFromMainFrame };
+
+static void runOriginTest(IFrameOrigin iframeOrigin)
 {
+    bool iframeIsSameOriginAsMainFrame = iframeOrigin == IFrameOrigin::SameAsMainFrame;
+
+    TestWebKitAPI::HTTPServer server({
+        { "/iframe.html"_s, { originIFrameBytes } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    NSURL *mainFrameURL = server.request("/index.html"_s).URL;
+    NSURL *iframeURL = iframeIsSameOriginAsMainFrame ? server.request("/iframe.html"_s).URL : server.requestWithLocalhost("/iframe.html"_s).URL;
+    server.addResponse("/index.html"_s, { originMainFrameBytes(iframeURL.absoluteString) });
+
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-
-    RetainPtr handler = adoptNS([[TestURLSchemeHandler alloc] init]);
-    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
-        if ([task.request.URL.path hasSuffix:@"index.html"])
-            return respond(task, originMainFrameBytes);
-        if ([task.request.URL.path hasSuffix:@"iframe.html"])
-            return respond(task, originIFrameBytes);
-
-        ASSERT_NOT_REACHED();
-    };
-    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"origintest1"];
-    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"origintest2"];
     configuration.get().preferences._appBadgeEnabled = YES;
 
     RetainPtr testMessageHandler = adoptNS([[TestMessageHandler alloc] init]);
@@ -501,29 +507,34 @@ static void runOriginTest(NSString *mainURL, NSString *expectedMessage)
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
     RetainPtr badgeDelegate = adoptNS([BadgeDelegate new]);
 
-    NSURL *url = [NSURL URLWithString:mainURL];
-    badgeDelegate.get().serverURL = url;
+    badgeDelegate.get().serverURL = mainFrameURL;
     badgeDelegate.get().shouldAllowOriginViolations = YES;
     badgeDelegate.get().expectedAppBadgeSequence = @[@10];
     webView.get().UIDelegate = badgeDelegate.get();
 
-    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:mainFrameURL]];
     TestWebKitAPI::Util::run(&gotMessage);
+
+    NSString *expectedMessage = iframeIsSameOriginAsMainFrame ? @"BadgeSucceeded" : @"BadgeFailed: SecurityError: The operation is insecure.";
+    EXPECT_TRUE([storedMessage.get() isEqualToString:expectedMessage]);
+
+    // The badge IPC is sent before the iframe posts its result to the main frame,
+    // so by now the delegate has been called if it is going to be.
+    EXPECT_EQ(badgeDelegate.get().wasCalled, iframeIsSameOriginAsMainFrame);
 
     // For the purposes of this test suite, no origin violations should ever
     // escape the web content process and reach the UI process delegate.
     EXPECT_EQ(badgeDelegate.get().originViolationCount, 0);
-    EXPECT_TRUE([storedMessage.get() isEqualToString:expectedMessage]);
 }
 
 TEST(Badging, CrossOrigin)
 {
-    runOriginTest(@"origintest1://webkit.org/index.html", @"BadgeFailed: SecurityError: The operation is insecure.");
+    runOriginTest(IFrameOrigin::DifferentFromMainFrame);
 }
 
 TEST(Badging, SameOrigin)
 {
-    runOriginTest(@"origintest2://main.com/index.html", @"BadgeSucceeded");
+    runOriginTest(IFrameOrigin::SameAsMainFrame);
 }
 
 TEST(Badging, ServiceWorkerOverride)
