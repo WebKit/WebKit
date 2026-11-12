@@ -222,6 +222,9 @@ void WebPageInspectorController::debuggerPauseSessionDidChange(WebCore::Debugger
 
 void WebPageInspectorController::sendMessageToInspectorFrontend(const String& targetId, const String& message)
 {
+    if (!decltype(m_targets)::isValidKey(targetId))
+        return;
+
     if (!m_targets.contains(targetId)) {
         // FIXME <https://webkit.org/b/308182>: This assertion is currently relaxed under site isolation.
         // More fine-tuning is needed around reporting provisional frame targets' destruction.
