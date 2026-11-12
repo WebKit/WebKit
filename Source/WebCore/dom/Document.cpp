@@ -165,6 +165,8 @@
 #include "HashChangeEvent.h"
 #include "HighlightRegistry.h"
 #include "History.h"
+#include "HistoryController.h"
+#include "HistoryItem.h"
 #include "HitTestResult.h"
 #include "IDBConnectionProxy.h"
 #include "IDBOpenDBRequest.h"
@@ -8848,12 +8850,33 @@ void Document::initSecurityContext()
     if (!ownerFrame)
         ownerFrame = openerFrame;
 
-    if (!ownerFrame) {
+    // The client can decide the origin about:blank inherits, see AgentClusterAssignment::inheritedOrigin. Inherit the rest
+    // from a document in this process that has that origin. Without one, inherit only the origin.
+    auto inheritedOrigin = inheritedOriginFromNavigation();
+    RefPtr<Document> ownerDocument;
+    if (inheritedOrigin) {
+        auto hasInheritedOrigin = [&](Document* document) {
+            return document && document->securityOrigin().data() == *inheritedOrigin;
+        };
+        RefPtr documentLoader = m_frame->loader().documentLoader();
+        if (auto& requester = documentLoader ? documentLoader->triggeringAction().requester() : std::nullopt; requester) {
+            if (RefPtr requesterDocument = allDocumentsMap().get(requester->documentIdentifier); hasInheritedOrigin(requesterDocument.get()))
+                ownerDocument = WTF::move(requesterDocument);
+        }
+        if (!ownerDocument && ownerFrame && hasInheritedOrigin(ownerFrame->document()))
+            ownerDocument = ownerFrame->document();
+        if (!ownerDocument) {
+            initSecurityContextFromInheritedOrigin(*inheritedOrigin, openerFrame.get());
+            return;
+        }
+    } else if (ownerFrame)
+        ownerDocument = ownerFrame->document();
+
+    if (!ownerDocument) {
         didFailToInitializeSecurityOrigin();
         return;
     }
 
-    RefPtr ownerDocument = ownerFrame->document();
     m_aboutBaseURL = ownerDocument->baseURL();
     updateBaseURL();
 
@@ -8864,7 +8887,8 @@ void Document::initSecurityContext()
     setCrossOriginEmbedderPolicy(ownerDocument->crossOriginEmbedderPolicy());
     setDocumentIsolationPolicy(ownerDocument->documentIsolationPolicy());
     setIsOriginKeyed(ownerDocument->isOriginKeyed());
-    m_isSecureContext = ownerDocument->m_isSecureContext;
+    if (ownerFrame && ownerDocument == ownerFrame->document())
+        m_isSecureContext = ownerDocument->m_isSecureContext;
     setAgentClusterIdentifier(ownerDocument->agentClusterIdentifier());
 
     // https://html.spec.whatwg.org/multipage/browsers.html#creating-a-new-browsing-context (Step 12)
@@ -8894,6 +8918,43 @@ void Document::initSecurityContext()
     // We alias the SecurityOrigins to match Firefox, see Bug 15313
     // https://bugs.webkit.org/show_bug.cgi?id=15313
     setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityPolicy::determineOrigin(m_url, sandboxFlags(), &ownerDocument->securityOrigin())));
+    if (!ownerFrame || ownerDocument != ownerFrame->document())
+        m_isSecureContext = computeIsSecureContext();
+}
+
+// A traversal the UI process could not map to this frame carries the origin in the history item instead.
+std::optional<SecurityOriginData> Document::inheritedOriginFromNavigation() const
+{
+    if (m_isSrcdocDocument || !url().isAboutBlank())
+        return std::nullopt;
+    RefPtr documentLoader = m_frame->loader().documentLoader();
+    if (!documentLoader)
+        return std::nullopt;
+    if (auto& inheritedOrigin = documentLoader->agentClusterAssignment().inheritedOrigin)
+        return inheritedOrigin;
+    if (documentLoader->triggeringAction().type() == NavigationType::BackForward) {
+        if (RefPtr currentItem = m_frame->loader().history().currentItem())
+            return currentItem->inheritedOrigin();
+    }
+    return std::nullopt;
+}
+
+// No document in this process has the inherited origin, as on a traversal after the initiator is gone. The parent's
+// or opener's cookie URL and base URL belong to another origin, so only the origin is inherited.
+void Document::initSecurityContextFromInheritedOrigin(const SecurityOriginData& inheritedOrigin, LocalFrame* openerFrame)
+{
+    RefPtr openerDocument = openerFrame ? openerFrame->document() : nullptr;
+    if (m_frame->isMainFrame() && openerDocument && openerDocument->isSameOriginAsTopDocument())
+        setCrossOriginOpenerPolicy(openerDocument->crossOriginOpenerPolicy());
+    if (openerDocument)
+        protect(contentSecurityPolicy())->inheritInsecureNavigationRequestsToUpgradeFromOpener(*protect(openerDocument->contentSecurityPolicy()));
+
+    if (isSandboxed(SandboxFlag::Origin))
+        return;
+
+    setSecurityOriginPolicy(SecurityOriginPolicy::create(inheritedOrigin.securityOrigin()));
+    protect(contentSecurityPolicy())->updateSourceSelf(protect(securityOrigin()));
+    m_isSecureContext = computeIsSecureContext();
 }
 
 void Document::initContentSecurityPolicy()

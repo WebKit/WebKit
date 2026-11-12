@@ -188,6 +188,8 @@ static void applyFrameState(HistoryItemClient& client, HistoryItem& historyItem,
     historyItem.setIsInitialAboutBlank(frameState.isInitialAboutBlank);
     if (auto policyContainer = frameState.policyContainer)
         historyItem.setPolicyContainer(*policyContainer);
+    if (auto inheritedOrigin = frameState.inheritedOrigin)
+        historyItem.setInheritedOrigin(*inheritedOrigin);
 
 #if PLATFORM(IOS_FAMILY)
     historyItem.setExposedContentRect(frameState.exposedContentRect);

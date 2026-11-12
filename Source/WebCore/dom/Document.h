@@ -2362,6 +2362,8 @@ private:
     bool shouldEnforceHTTP09Sandbox() const;
 
     bool computeIsSecureContext() const;
+    std::optional<SecurityOriginData> inheritedOriginFromNavigation() const;
+    void initSecurityContextFromInheritedOrigin(const SecurityOriginData&, LocalFrame* openerFrame);
 
     NODELETE void platformSuspendOrStopActiveDOMObjects();
 

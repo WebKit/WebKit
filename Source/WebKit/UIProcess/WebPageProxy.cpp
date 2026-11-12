@@ -6503,6 +6503,43 @@ Ref<BrowsingContextGroup> WebPageProxy::browsingContextGroupForCommittingNavigat
     return m_browsingContextGroup;
 }
 
+// The initiator's origin is the one its web process reports, so only a process that hosts the origin's site may give it
+// to a document. Any other process gives the document an opaque origin instead.
+static std::optional<SecurityOriginData> inheritedOriginForProcess(std::optional<SecurityOriginData>&& origin, const WebPreferences& preferences, BrowsingContextGroup& group, WebProcessProxy& process)
+{
+    if (!origin || !preferences.siteIsolationEnabled())
+        return WTF::move(origin);
+    Site site { *origin };
+    if (site.isEmpty())
+        return WTF::move(origin);
+    if (RefPtr frameProcess = group.processForSite(site, process.crossOriginIsolation()); frameProcess && &frameProcess->process() == &process)
+        return WTF::move(origin);
+    return SecurityOrigin::createOpaque()->data();
+}
+
+// about:blank inherits the origin of the document that started the navigation, or for a reload or traversal its history
+// entry's, so that whoever starts those cannot give the document their own origin.
+std::optional<SecurityOriginData> WebPageProxy::inheritedOriginForNavigation(const API::Navigation& navigation, const URL& url, FrameIdentifier frameID, BrowsingContextGroup& group, WebProcessProxy& process)
+{
+    if (!url.isAboutBlank())
+        return std::nullopt;
+
+    auto origin = [&] -> std::optional<SecurityOriginData> {
+        auto& action = navigation.lastNavigationAction();
+        auto navigationType = action ? action->navigationType : NavigationType::Other;
+        if (navigationType != NavigationType::BackForward && navigationType != NavigationType::Reload && !navigation.backForwardFrameLoadType())
+            return navigation.originatingFrameInfo() ? std::optional { navigation.originatingFrameSecurityOrigin() } : std::nullopt;
+        if (RefPtr frameState = navigation.backForwardFrameState())
+            return frameState->inheritedOrigin;
+        RefPtr<WebBackForwardListItem> item = navigation.targetItem();
+        if (navigationType == NavigationType::Reload)
+            item = navigation.reloadItem() ? RefPtr { navigation.reloadItem() } : backForwardList().currentItem();
+        RefPtr frameItem = item ? item->mainFrameItem().childItemForFrameID(frameID) : nullptr;
+        return frameItem ? frameItem->frameState().inheritedOrigin : std::nullopt;
+    }();
+    return inheritedOriginForProcess(WTF::move(origin), protect(preferences()), group, process);
+}
+
 static std::optional<Site> backForwardInheritedSiteForNavigation(const API::Navigation& navigation, const WebFrameProxy& frame)
 {
     auto& url = navigation.currentRequest().url();
@@ -6928,7 +6965,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             if (navigation->currentRequestIsRedirect())
                 loadParameters.originalRequest = navigation->originalRequest();
             loadParameters.unpartitionedStorageSite = navigation->unpartitionedStorageSite();
-            updateAgentClusterAssignmentForContinuingLoad(navigation, browsingContextGroup, frame->isMainFrame());
+            updateAgentClusterAssignmentForContinuingLoad(navigation, browsingContextGroup, frame, processNavigatingTo);
             loadParameters.agentClusterAssignment = navigation->agentClusterAssignment();
 
             processNavigatingTo->send(Messages::WebPage::LoadRequest(WTF::move(loadParameters)), webPageIDInProcess(processNavigatingTo));
@@ -7088,12 +7125,15 @@ void WebPageProxy::recordAgentClusterKeying(const API::Navigation& navigation)
 }
 
 // A load that continues in another process skips the navigation action decision there.
-void WebPageProxy::updateAgentClusterAssignmentForContinuingLoad(API::Navigation& navigation, BrowsingContextGroup& group, bool isMainFrame)
+void WebPageProxy::updateAgentClusterAssignmentForContinuingLoad(API::Navigation& navigation, BrowsingContextGroup& group, WebFrameProxy& frame, WebProcessProxy& process)
 {
     auto& substituteData = navigation.substituteData();
     URL url = substituteData ? (substituteData->baseURL.isEmpty() ? aboutBlankURL() : URL { substituteData->baseURL }) : navigation.currentRequest().url();
-    auto request = AgentClusterRequest::forNavigationAction(url, topLevelCreationURL(url, isMainFrame), substituteData ? IsSubstituteData::Yes : IsSubstituteData::No);
+    auto request = AgentClusterRequest::forNavigationAction(url, topLevelCreationURL(url, frame.isMainFrame()), substituteData ? IsSubstituteData::Yes : IsSubstituteData::No);
+    auto inheritedOrigin = substituteData ? std::nullopt : inheritedOriginForNavigation(navigation, url, frame.frameID(), group, process);
+    navigation.setInheritedOrigin(inheritedOrigin);
     auto [assignment, reservation] = group.assignAgentCluster(request, AgentClusterKeyingRecording::OnCommit);
+    assignment.inheritedOrigin = WTF::move(inheritedOrigin);
     navigation.setAgentClusterAssignment(request.origin, assignment, WTF::move(reservation));
 }
 
@@ -7165,8 +7205,16 @@ void WebPageProxy::receivedPolicyDecision(WebProcessProxy& processReceivingPolic
         RefPtr targetFrame = navigationAction->targetFrame();
         auto& url = navigationAction->request().url();
         auto request = AgentClusterRequest::forNavigationAction(url, topLevelCreationURL(url, !targetFrame || targetFrame->isMainFrame()), navigation && navigation->substituteData() ? IsSubstituteData::Yes : IsSubstituteData::No);
+        Ref group = browsingContextGroupForCommittingNavigation(navigation);
+        // A load that continues in another process gets its origin in updateAgentClusterAssignmentForContinuingLoad().
+        std::optional<SecurityOriginData> inheritedOrigin;
+        if (navigation && targetFrame && !navigation->substituteData() && willContinueLoadInNewProcess == WillContinueLoadInNewProcess::No) {
+            inheritedOrigin = inheritedOriginForNavigation(*navigation, url, targetFrame->frameInfoData().frameID, group, processReceivingPolicyDecision);
+            navigation->setInheritedOrigin(inheritedOrigin);
+        }
         // Without a navigation, no commit records the keying, so it is recorded now.
-        auto [assignment, reservation] = browsingContextGroupForCommittingNavigation(navigation)->assignAgentCluster(request, navigation ? AgentClusterKeyingRecording::OnCommit : AgentClusterKeyingRecording::Now);
+        auto [assignment, reservation] = group->assignAgentCluster(request, navigation ? AgentClusterKeyingRecording::OnCommit : AgentClusterKeyingRecording::Now);
+        assignment.inheritedOrigin = WTF::move(inheritedOrigin);
         agentClusterAssignment = assignment;
         if (navigation)
             navigation->setAgentClusterAssignment(request.origin, assignment, WTF::move(reservation));
@@ -7401,7 +7449,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         return;
     }
     navigation.setProcessID(newProcess->coreProcessIdentifier());
-    updateAgentClusterAssignmentForContinuingLoad(navigation, browsingContextGroup, frame.isMainFrame());
+    updateAgentClusterAssignmentForContinuingLoad(navigation, browsingContextGroup, frame, newProcess);
 
     auto& currentRequestURL = navigation.currentRequest().url();
     if (currentRequestURL.protocolIsFile())
@@ -10391,6 +10439,7 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     }
 
     if (redirectReplaceFrameState) {
+        redirectReplaceFrameState->clearInheritedState();
         MESSAGE_CHECK_BASE(!frame->isMainFrame(), connection);
         MESSAGE_CHECK_BASE(redirectReplaceFrameState->children.isEmpty(), connection);
         if (RefPtr currentItem = backForwardList().currentItem())
@@ -10509,7 +10558,26 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     }
     frame->commitCertificateInfo(request.url(), hasCertificateInfo);
     RefPtr committedNavigation = navigationID ? m_navigationState->navigation(*navigationID) : nullptr;
-    frame->didCommitLoad(mimeType, containsPluginDocument, WTF::move(documentSecurityPolicy), WTF::move(cspOriginsThatUpgradeInsecureNavigations), WTF::move(webArchiveMainFrameOrigin), WTF::move(reportedOpaqueOriginIdentifier), committedNavigation ? committedNavigation->responseSandboxFlags(frameID) : SandboxFlags { });
+    std::optional<SecurityOriginData> inheritedOrigin;
+    if (committedNavigation && request.url().isAboutBlank()) {
+        inheritedOrigin = committedNavigation->inheritedOrigin();
+        // A reload or traversal the UI process could not map to this frame when deciding it restores the committed entry's origin.
+        if (!inheritedOrigin && (isBackForwardLoadType(frameLoadType) || isReload(frameLoadType))) {
+            if (RefPtr currentItem = backForwardList().currentItem()) {
+                if (RefPtr frameItem = currentItem->mainFrameItem().childItemForFrameID(frameID))
+                    inheritedOrigin = inheritedOriginForProcess(std::optional { frameItem->frameState().inheritedOrigin }, preferences, browsingContextGroupForCommittingNavigation(committedNavigation.get()), process);
+            }
+        }
+    }
+    frame->didCommitLoad(mimeType, containsPluginDocument, WTF::move(documentSecurityPolicy), WTF::move(cspOriginsThatUpgradeInsecureNavigations), WTF::move(webArchiveMainFrameOrigin), WTF::move(reportedOpaqueOriginIdentifier), committedNavigation ? committedNavigation->responseSandboxFlags(frameID) : SandboxFlags { }, inheritedOrigin);
+
+    // The entry keeps the origin for a reload or traversal, see inheritedOriginForNavigation().
+    if (inheritedOrigin && !isBackForwardLoadType(frameLoadType) && !isReload(frameLoadType)) {
+        if (RefPtr currentItem = backForwardList().currentItem()) {
+            if (RefPtr frameItem = currentItem->mainFrameItem().childItemForFrameID(frameID))
+                frameItem->frameState().inheritedOrigin = inheritedOrigin;
+        }
+    }
 
     if (frame->isMainFrame()) {
         protectedPageLoadState->didCommitLoad(transaction, frame->certificateInfo(), markPageInsecure, usedLegacyTLS, wasPrivateRelayed, WTF::move(proxyName), source, frame->documentSecurityOriginData());

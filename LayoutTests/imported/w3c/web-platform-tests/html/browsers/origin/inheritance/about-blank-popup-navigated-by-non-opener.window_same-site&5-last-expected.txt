@@ -1,5 +1,5 @@
 
-FAIL about:blank gets the initiator's origin again after traversal assert_equals: The initiator can script the document expected (undefined) undefined but got (string) "SecurityError"
-FAIL about:blank gets the initiator's origin again after reload assert_equals: The initiator can reload the document expected (undefined) undefined but got (string) "SecurityError"
-FAIL about:blank in a popup that escaped the sandbox gets the initiator's origin, not its opener's opaque one assert_equals: The sandboxed opener can't script the document expected "SecurityError" but got "about:blank"
+PASS about:blank gets the initiator's origin again after traversal
+PASS about:blank gets the initiator's origin again after reload
+PASS about:blank in a popup that escaped the sandbox gets the initiator's origin, not its opener's opaque one
 

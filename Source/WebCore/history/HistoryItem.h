@@ -34,6 +34,7 @@
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PolicyContainer.h>
+#include <WebCore/SecurityOriginData.h>
 #include <memory>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Platform.h>
@@ -239,6 +240,10 @@ public:
     const std::optional<PolicyContainer>& policyContainer() const LIFETIME_BOUND { return m_policyContainer; }
     void setPolicyContainer(const PolicyContainer& policyContainer) { m_policyContainer = policyContainer; }
 
+    // The origin an about:blank document inherited, which a reload or traversal restores. Only the client sets it.
+    const std::optional<SecurityOriginData>& inheritedOrigin() const LIFETIME_BOUND { return m_inheritedOrigin; }
+    void setInheritedOrigin(const SecurityOriginData& inheritedOrigin) { m_inheritedOrigin = inheritedOrigin; }
+
 private:
     WEBCORE_EXPORT HistoryItem(Client&, const String& urlString, const String& title, const String& alternateTitle, std::optional<BackForwardItemIdentifier>, std::optional<BackForwardFrameItemIdentifier>);
 
@@ -309,6 +314,7 @@ private:
     BackForwardItemIdentifier m_itemID;
     BackForwardFrameItemIdentifier m_frameItemID;
     std::optional<PolicyContainer> m_policyContainer;
+    std::optional<SecurityOriginData> m_inheritedOrigin;
     const Ref<Client> m_client;
 };
 

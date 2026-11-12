@@ -818,6 +818,11 @@ void WebBackForwardList::backForwardAddItemShared(IPC::Connection& connection, R
     if (!messageCheckItemURLs(navigatedFrameState, process))
         return;
 
+    if (RefPtr currentItem = this->currentItem())
+        currentItem->updateInheritedStateOf(navigatedFrameState);
+    else
+        navigatedFrameState->clearInheritedState();
+
     if (RefPtr targetFrame = WebFrameProxy::webFrame(navigatedFrameState->frameID)) {
         MESSAGE_CHECK(process, targetFrame->page() == m_page.get());
         if (targetFrame->isPendingInitialHistoryItem()) {
@@ -855,6 +860,7 @@ void WebBackForwardList::backForwardSetChildItem(IPC::Connection& connection, Ba
     if (!item)
         return;
 
+    item->updateInheritedStateOf(frameState);
     if (RefPtr frameItem = WebBackForwardListFrameItem::itemForID(item->identifier(), frameItemID))
         frameItem->setChild(WTF::move(frameState));
 }

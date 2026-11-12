@@ -170,6 +170,20 @@ Ref<FrameState> WebBackForwardListItem::copyMainFrameState() const
     return m_mainFrameItem->copyFrameState();
 }
 
+void WebBackForwardListItem::updateInheritedStateOf(FrameState& frameState) const
+{
+    frameState.inheritedSite = std::nullopt;
+    frameState.inheritedOrigin = std::nullopt;
+    if (frameState.frameID) {
+        if (RefPtr frameItem = mainFrameItem().childItemForFrameID(*frameState.frameID); frameItem && frameItem->frameState().documentSequenceNumber == frameState.documentSequenceNumber) {
+            frameState.inheritedSite = frameItem->frameState().inheritedSite;
+            frameState.inheritedOrigin = frameItem->frameState().inheritedOrigin;
+        }
+    }
+    for (Ref child : frameState.children)
+        updateInheritedStateOf(child);
+}
+
 Ref<FrameState> WebBackForwardListItem::copyMainFrameStateWithChildren() const
 {
     return m_mainFrameItem->copyFrameStateWithChildren();

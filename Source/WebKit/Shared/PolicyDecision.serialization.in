@@ -28,6 +28,7 @@ struct WebCore::AgentClusterAssignment {
     std::optional<WebCore::AgentClusterIdentifier> identifier;
     WebCore::OriginKeyed isOriginKeyed;
     WebCore::DocumentIsolationPolicyValue documentIsolationPolicy;
+    std::optional<WebCore::SecurityOriginData> inheritedOrigin;
 };
 
 [RValue] struct WebKit::PolicyDecision {

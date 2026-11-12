@@ -1147,6 +1147,12 @@ final class WebBackForwardList {
 
         try messageCheckItemURLs(frameState: navigatedFrameState, process: process)
 
+        if let currentItem = currentEntry() {
+            currentItem.updateInheritedStateOf(navigatedFrameState.ptr())
+        } else {
+            navigatedFrameState.ptr().clearInheritedState()
+        }
+
         let navigatedFrameID = navigatedFrameState.ptr().frameID
         let targetFrame = WebKit.WebFrameProxy.webFrame(navigatedFrameID)
 
@@ -1233,6 +1239,7 @@ final class WebBackForwardList {
             return
         }
 
+        item.updateInheritedStateOf(frameState.ptr())
         if let frameItem = WebKit.WebBackForwardListFrameItem.itemForID(item.identifier(), frameItemID) {
             frameItem.setChild(consuming: frameState)
         }
