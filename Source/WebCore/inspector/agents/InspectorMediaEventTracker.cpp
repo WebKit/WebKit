@@ -40,6 +40,7 @@
 #include "LocalFrame.h"
 #include "Node.h"
 #include "VideoPlaybackQuality.h"
+#include <wtf/Borrow.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -194,7 +195,7 @@ void InspectorMediaEventTracker::mediaMetricsTimerFired()
         return;
     }
 
-    for (auto& mediaElement : mediaElements) {
+    for (auto& mediaElement : borrow(mediaElements).get()) {
         if (!is<HTMLVideoElement>(mediaElement) || !mediaElement->isPlaying())
             continue;
 

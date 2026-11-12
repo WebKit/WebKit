@@ -974,7 +974,7 @@ BidiScriptAgent::ParsedStackTrace BidiScriptAgent::parseStackTrace(const String&
     };
 
     auto lines = stackTraceString.split(u'\n');
-    for (auto& line : lines) {
+    for (auto& line : borrow(lines).get()) {
         String trimmed = line.trim(deprecatedIsSpaceOrNewline);
         if (trimmed.isEmpty())
             continue;
