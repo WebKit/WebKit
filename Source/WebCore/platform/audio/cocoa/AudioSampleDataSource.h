@@ -29,6 +29,7 @@
 #include <WebCore/AudioSampleDataConverter.h>
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
+#include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RefPtr.h>
@@ -72,8 +73,8 @@ public:
     void setMuted(bool muted) { m_muted = muted; }
     bool muted() const { return m_muted; }
 
-    const CAAudioStreamDescription* inputDescription() const { return m_inputDescription ? &m_inputDescription.value() : nullptr; }
-    const CAAudioStreamDescription* outputDescription() const { return m_outputDescription ? &m_outputDescription.value() : nullptr; }
+    std::optional<CAAudioStreamDescription> inputDescription() const;
+    std::optional<CAAudioStreamDescription> outputDescription() const;
 
     void recomputeSampleOffset() { m_shouldComputeOutputSampleOffset = true; }
 
@@ -88,13 +89,13 @@ public:
 private:
     AudioSampleDataSource(size_t, LoggerHelper&, size_t waitToStartForPushCount);
 
-    OSStatus setupConverter();
+    OSStatus setupConverter() WTF_REQUIRES_LOCK(m_ringBufferLock);
 
-    void pushSamplesInternal(const AudioBufferList&, const MediaTime&, size_t frameCount, NeedsFlush);
-    bool pullSamplesInternal(AudioBufferList&, size_t sampleCount, uint64_t timeStamp, PullMode);
+    void pushSamplesInternal(const AudioBufferList&, const MediaTime&, size_t frameCount, NeedsFlush) WTF_REQUIRES_LOCK(m_ringBufferLock);
+    bool pullSamplesInternal(AudioBufferList&, size_t sampleCount, uint64_t timeStamp, PullMode) WTF_REQUIRES_LOCK(m_ringBufferLock);
 
-    std::optional<CAAudioStreamDescription> m_inputDescription;
-    std::optional<CAAudioStreamDescription> m_outputDescription;
+    std::optional<CAAudioStreamDescription> m_inputDescription WTF_GUARDED_BY_LOCK(m_ringBufferLock);
+    std::optional<CAAudioStreamDescription> m_outputDescription WTF_GUARDED_BY_LOCK(m_ringBufferLock);
 
     MediaTime hostTime() const;
 
@@ -114,9 +115,10 @@ private:
 
     AudioSampleDataConverter m_converter;
 
-    RefPtr<AudioSampleBufferList> m_scratchBuffer;
-
-    std::unique_ptr<InProcessCARingBuffer> m_ringBuffer;
+    mutable Lock m_ringBufferLock;
+    RefPtr<AudioSampleBufferList> m_scratchBuffer WTF_GUARDED_BY_LOCK(m_ringBufferLock);
+    std::unique_ptr<InProcessCARingBuffer> m_ringBuffer WTF_GUARDED_BY_LOCK(m_ringBufferLock);
+    uint64_t m_ringBufferGenerationCount WTF_GUARDED_BY_LOCK(m_ringBufferLock) { 0 };
     size_t m_maximumSampleCount { 0 };
 
     float m_volume { 1.0 };

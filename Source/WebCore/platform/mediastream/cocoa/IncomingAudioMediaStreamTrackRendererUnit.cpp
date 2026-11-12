@@ -90,10 +90,11 @@ void IncomingAudioMediaStreamTrackRendererUnit::addSource(const String& identifi
             lazyInitialize(m_logger, Ref { source->logger() });
 #endif
 
-    ASSERT(source->outputDescription());
-    if (!source->outputDescription())
+    auto sourceOutputDescription = source->outputDescription();
+    ASSERT(sourceOutputDescription);
+    if (!sourceOutputDescription)
         return;
-    auto outputDescription = *source->outputDescription();
+    auto outputDescription = *sourceOutputDescription;
 
     auto result = addSourceToMixer(deviceID, WTF::move(source));
     bool shouldStart = result.first;
