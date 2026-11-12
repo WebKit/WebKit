@@ -3023,9 +3023,7 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
                 return !style.flexBasis().isAuto() && FlexFormattingUtils::isHorizontalFlow(flexContainer) != isHorizontalWritingMode();
             };
             if (!flexBasisOverridesHeight()) {
-                auto resolvedLogicalHeight = LayoutUnit { fixedLogicalHeight->resolveZoom(style.usedZoomForLength()) };
-                // FIXME: Support stretch() on out-of-flow boxes (https://bugs.webkit.org/show_bug.cgi?id=330815).
-                auto contentBoxHeight = isOutOfFlowPositioned() ? adjustContentBoxLogicalHeightForBoxSizing(resolvedLogicalHeight) : adjustContentBoxLogicalHeightForBoxSizing(style.logicalHeight(), resolvedLogicalHeight, containingBlockLogicalWidthForContent());
+                auto contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing(style.logicalHeight(), LayoutUnit { fixedLogicalHeight->resolveZoom(style.usedZoomForLength()) }, containingBlockLogicalWidthForBoxSizing(style.logicalHeight()));
                 return std::max(0_lu, constrainContentBoxLogicalHeightByMinMax(contentBoxHeight - scrollbarLogicalHeight(), { }));
             }
         }

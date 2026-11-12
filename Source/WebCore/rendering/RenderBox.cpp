@@ -2640,11 +2640,7 @@ LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
     // FIXME: For now just support fixed heights.  Eventually should support percentage heights as well.
     if (auto fixedLogicalHeight = logicalHeight.tryFixed()) {
         // Use the content box logical height as specified by the style.
-        auto resolvedLogicalHeight = LayoutUnit { fixedLogicalHeight->resolveZoom(containingBlockStyle.usedZoomForLength()) };
-        // FIXME: Support stretch() on out-of-flow boxes (https://bugs.webkit.org/show_bug.cgi?id=330815).
-        if (containingBlock->isOutOfFlowPositioned())
-            return containingBlock->adjustContentBoxLogicalHeightForBoxSizing(resolvedLogicalHeight);
-        return containingBlock->adjustContentBoxLogicalHeightForBoxSizing(logicalHeight, resolvedLogicalHeight, containingBlock->containingBlockLogicalWidthForContent());
+        return containingBlock->adjustContentBoxLogicalHeightForBoxSizing(logicalHeight, LayoutUnit { fixedLogicalHeight->resolveZoom(containingBlockStyle.usedZoomForLength()) }, containingBlock->containingBlockLogicalWidthForBoxSizing(logicalHeight));
     }
 
     LayoutUnit fillFallbackExtent = containingBlockStyle.writingMode().isHorizontal()
@@ -3120,7 +3116,7 @@ template<typename SizeType> LayoutUnit RenderBox::computeLogicalWidthUsingGeneri
 
     if (logicalWidth.isSpecified()) {
         // FIXME: If the containing block flow is perpendicular to our direction we need to use the available logical height instead.
-        return adjustBorderBoxLogicalWidthForBoxSizing(logicalWidth, Style::evaluate<LayoutUnit>(logicalWidth, availableLogicalWidth, style().usedZoomForLength()), containingBlockLogicalWidthForContent());
+        return adjustBorderBoxLogicalWidthForBoxSizing(logicalWidth, Style::evaluate<LayoutUnit>(logicalWidth, availableLogicalWidth, style().usedZoomForLength()), containingBlockLogicalWidthForBoxSizing(logicalWidth));
     }
 
     if (logicalWidth.isStretch())
@@ -3680,12 +3676,8 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeLogicalH
         return intrinsicContentHeight;
     }();
 
-    if (auto computedContentAndScrollbarLogicalHeight = computeContentAndScrollbarLogicalHeightUsing(logicalHeight, contentHeightForAutoBasis)) {
-        // FIXME: Support stretch() on out-of-flow boxes (https://bugs.webkit.org/show_bug.cgi?id=330815).
-        if (isOutOfFlowPositioned())
-            return adjustBorderBoxLogicalHeightForBoxSizing(*computedContentAndScrollbarLogicalHeight);
-        return adjustBorderBoxLogicalHeightForBoxSizing(logicalHeight, *computedContentAndScrollbarLogicalHeight, containingBlockLogicalWidthForContent());
-    }
+    if (auto computedContentAndScrollbarLogicalHeight = computeContentAndScrollbarLogicalHeightUsing(logicalHeight, contentHeightForAutoBasis))
+        return adjustBorderBoxLogicalHeightForBoxSizing(logicalHeight, *computedContentAndScrollbarLogicalHeight, containingBlockLogicalWidthForBoxSizing(logicalHeight));
     return { };
 }
 
@@ -3706,11 +3698,8 @@ std::optional<LayoutUnit> RenderBox::computeLogicalHeightUsing(const Style::Maxi
 
 template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeContentLogicalHeightGeneric(const SizeType& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const
 {
-    if (auto computedContentAndScrollbarLogicalHeight = computeContentAndScrollbarLogicalHeightUsing(logicalHeight, intrinsicContentHeight)) {
-        // FIXME: Support stretch() on out-of-flow boxes (https://bugs.webkit.org/show_bug.cgi?id=330815).
-        auto contentAndScrollbarLogicalHeight = isOutOfFlowPositioned() ? adjustContentBoxLogicalHeightForBoxSizing(*computedContentAndScrollbarLogicalHeight) : adjustContentBoxLogicalHeightForBoxSizing(logicalHeight, *computedContentAndScrollbarLogicalHeight, containingBlockLogicalWidthForContent());
-        return std::max<LayoutUnit>(0, contentAndScrollbarLogicalHeight - scrollbarLogicalHeight());
-    }
+    if (auto computedContentAndScrollbarLogicalHeight = computeContentAndScrollbarLogicalHeightUsing(logicalHeight, intrinsicContentHeight))
+        return std::max<LayoutUnit>(0, adjustContentBoxLogicalHeightForBoxSizing(logicalHeight, *computedContentAndScrollbarLogicalHeight, containingBlockLogicalWidthForBoxSizing(logicalHeight)) - scrollbarLogicalHeight());
     return std::nullopt;
 }
 
@@ -4292,14 +4281,11 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Style::PreferredSize& lo
 
     if (logicalHeight.isPercentOrCalculated() && isOutOfFlowPositioned() && !isRenderFragmentedFlow()) {
         PositionedLayoutConstraints constraints(*this, LogicalBoxAxis::Block);
-        return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate<LayoutUnit>(logicalHeight, constraints.containingSize(), style().usedZoomForLength()));
+        return adjustContentBoxLogicalHeightForBoxSizing(logicalHeight, Style::evaluate<LayoutUnit>(logicalHeight, constraints.containingSize(), style().usedZoomForLength()), constraints.containingInlineSize());
     }
 
-    if (auto computedContentAndScrollbarLogicalHeight = computeContentAndScrollbarLogicalHeightUsing(logicalHeight, std::nullopt)) {
-        // FIXME: Support stretch() on out-of-flow boxes (https://bugs.webkit.org/show_bug.cgi?id=330815).
-        auto contentAndScrollbarLogicalHeight = isOutOfFlowPositioned() ? adjustContentBoxLogicalHeightForBoxSizing(*computedContentAndScrollbarLogicalHeight) : adjustContentBoxLogicalHeightForBoxSizing(logicalHeight, *computedContentAndScrollbarLogicalHeight, containingBlockLogicalWidthForContent());
-        return std::max<LayoutUnit>(0, contentAndScrollbarLogicalHeight - scrollbarLogicalHeight());
-    }
+    if (auto computedContentAndScrollbarLogicalHeight = computeContentAndScrollbarLogicalHeightUsing(logicalHeight, std::nullopt))
+        return std::max<LayoutUnit>(0, adjustContentBoxLogicalHeightForBoxSizing(logicalHeight, *computedContentAndScrollbarLogicalHeight, containingBlockLogicalWidthForBoxSizing(logicalHeight)) - scrollbarLogicalHeight());
 
     // Height of absolutely positioned, non-replaced elements section 5.3 rule 5
     // https://www.w3.org/TR/css-position-3/#abs-non-replaced-height
@@ -4530,13 +4516,13 @@ template<typename SizeType> LayoutUnit RenderBox::computeOutOfFlowPositionedLogi
 
     auto keywordLogicalWidth = WTF::switchOn(logicalWidth,
         [&](const typename SizeType::Fixed& fixedLogicalWidth) -> LayoutUnit {
-            return adjustContentBoxLogicalWidthForBoxSizing(fixedLogicalWidth);
+            return adjustContentBoxLogicalWidthForBoxSizing(logicalWidth, LayoutUnit { fixedLogicalWidth.resolveZoom(style().usedZoomForLength()) }, inlineConstraints.containingInlineSize());
         },
         [&](const typename SizeType::Percentage& percentageLogicalWidth) -> LayoutUnit {
-            return adjustContentBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(percentageLogicalWidth, inlineConstraints.containingSize()));
+            return adjustContentBoxLogicalWidthForBoxSizing(logicalWidth, Style::evaluate<LayoutUnit>(percentageLogicalWidth, inlineConstraints.containingSize()), inlineConstraints.containingInlineSize());
         },
         [&](const typename SizeType::Calc& calculatedLogicalWidth) -> LayoutUnit {
-            return adjustContentBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(calculatedLogicalWidth, inlineConstraints.containingSize(), style().usedZoomForLength()));
+            return adjustContentBoxLogicalWidthForBoxSizing(logicalWidth, Style::evaluate<LayoutUnit>(calculatedLogicalWidth, inlineConstraints.containingSize(), style().usedZoomForLength()), inlineConstraints.containingInlineSize());
         },
         [&](const typename SizeType::CalcSize& calcSizeLogicalWidth) -> LayoutUnit {
             return adjustContentBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(calcSizeLogicalWidth, inlineConstraints.containingSize(), style().usedZoomForLength()));
@@ -4682,7 +4668,7 @@ LayoutUnit RenderBox::computeOutOfFlowPositionedLogicalHeightUsing(const Style::
         }
         if (logicalHeight.isIntrinsic())
             return adjustContentBoxLogicalHeightForBoxSizing(computeSizingKeywordLogicalContentHeightUsing(logicalHeight, contentLogicalHeight, blockConstraints.bordersPlusPadding()).value_or(0_lu));
-        return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate<LayoutUnit>(logicalHeight, blockConstraints.containingSize(), style().usedZoomForLength()));
+        return adjustContentBoxLogicalHeightForBoxSizing(logicalHeight, Style::evaluate<LayoutUnit>(logicalHeight, blockConstraints.containingSize(), style().usedZoomForLength()), blockConstraints.containingInlineSize());
     }
 
     bool shrinkToFit = blockConstraints.insetFitsContent() || !blockConstraints.alignmentAppliesStretch(ItemPosition::Stretch);
@@ -4709,7 +4695,7 @@ LayoutUnit RenderBox::computeOutOfFlowPositionedLogicalHeightUsing(const Style::
         return adjustContentBoxLogicalHeightForBoxSizing(computeSizingKeywordLogicalContentHeightUsing(logicalHeight, contentLogicalHeight, blockConstraints.bordersPlusPadding()).value_or(0_lu));
     if (logicalHeight.isStretch())
         return blockConstraints.availableContentSpace();
-    return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate<LayoutUnit>(logicalHeight, blockConstraints.containingSize(), style().usedZoomForLength()));
+    return adjustContentBoxLogicalHeightForBoxSizing(logicalHeight, Style::evaluate<LayoutUnit>(logicalHeight, blockConstraints.containingSize(), style().usedZoomForLength()), blockConstraints.containingInlineSize());
 }
 
 LayoutUnit RenderBox::computeOutOfFlowPositionedLogicalHeightUsing(const Style::MaximumSize& logicalHeight, LayoutUnit computedHeight, const PositionedLayoutConstraints& blockConstraints) const
@@ -4720,7 +4706,7 @@ LayoutUnit RenderBox::computeOutOfFlowPositionedLogicalHeightUsing(const Style::
         return adjustContentBoxLogicalHeightForBoxSizing(computeSizingKeywordLogicalContentHeightUsing(logicalHeight, contentLogicalHeight, blockConstraints.bordersPlusPadding()).value_or(0_lu));
     if (logicalHeight.isStretch())
         return blockConstraints.availableContentSpace();
-    return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate<LayoutUnit>(logicalHeight, blockConstraints.containingSize(), style().usedZoomForLength()));
+    return adjustContentBoxLogicalHeightForBoxSizing(logicalHeight, Style::evaluate<LayoutUnit>(logicalHeight, blockConstraints.containingSize(), style().usedZoomForLength()), blockConstraints.containingInlineSize());
 }
 
 PositionWithAffinity RenderBox::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)

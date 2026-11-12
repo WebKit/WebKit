@@ -278,6 +278,15 @@ inline void RenderBox::markShapeOutsideDependentsForLayout()
         removeFloatingOrOutOfFlowChildFromBlockLists();
 }
 
+// The box-sizing conversions only use the containing block width to resolve the margins of a stretch(), so it is only
+// looked up for one. An out-of-flow box finds it through PositionedLayoutConstraints.
+template<typename SizeType> inline std::optional<LayoutUnit> RenderBox::containingBlockLogicalWidthForBoxSizing(const SizeType& size) const
+{
+    if (!size.isStretchFunction())
+        return std::nullopt;
+    return containingBlockLogicalWidthForContent();
+}
+
 inline LayoutUnit resolveHeightForRatio(LayoutUnit borderAndPaddingLogicalWidth, LayoutUnit borderAndPaddingLogicalHeight, LayoutUnit logicalWidth, double aspectRatio, BoxSizing boxSizing)
 {
     if (boxSizing == BoxSizing::BorderBox)
