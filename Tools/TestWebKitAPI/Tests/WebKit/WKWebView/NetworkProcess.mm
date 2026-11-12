@@ -28,6 +28,7 @@
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestNSBundleExtras.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestProtocol.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
@@ -38,6 +39,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKScriptMessageHandler.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKDataTask.h>
@@ -55,6 +57,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/UUID.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
@@ -701,6 +704,110 @@ TEST(_WKDataTask, Cookies)
     Util::run(&done);
 
     RetainPtr echoedCookies = adoptNS([[NSString alloc] initWithData:receivedData.get() encoding:NSUTF8StringEncoding]);
+    EXPECT_WK_STREQ(echoedCookies.get(), "testkey=testvalue");
+    EXPECT_TRUE(contains(receivedRequest.span(), "Cookie: testkey=testvalue\r\n"_span));
+}
+
+TEST(NetworkProcess, CookiesSentFromFileURLWithUniversalAccess)
+{
+    auto runTest = [](bool testApplicationWithNewSDK) {
+        using namespace TestWebKitAPI;
+        Vector<char> receivedRequest;
+        HTTPServer server([&](Connection connection) {
+            connection.receiveHTTPRequest([&, connection](Vector<char>&& request) {
+                auto cookies = HTTPServer::parseCookies(request);
+                receivedRequest = WTF::move(request);
+                connection.send(HTTPResponse(cookies).serialize());
+            });
+        });
+
+        RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+        RetainPtr cookie = [NSHTTPCookie cookieWithProperties:@{
+            NSHTTPCookiePath: @"/",
+            NSHTTPCookieName: @"testkey",
+            NSHTTPCookieValue: @"testvalue",
+            NSHTTPCookieDomain: @"127.0.0.1",
+        }];
+        __block bool setCookieDone = false;
+        [dataStore.get().httpCookieStore setCookie:cookie.get() completionHandler:^{
+            setCookieDone = true;
+        }];
+        Util::run(&setCookieDone);
+
+        RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+        [configuration setWebsiteDataStore:dataStore.get()];
+        [configuration _setAllowUniversalAccessFromFileURLs:YES];
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+        NSURL *fileURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+        [webView loadFileURL:fileURL allowingReadAccessToURL:fileURL.URLByDeletingLastPathComponent];
+        [webView _test_waitForDidFinishNavigation];
+        EXPECT_TRUE([[webView URL] isFileURL]);
+
+        NSError *error = nil;
+        RetainPtr echoedCookies = dynamic_objc_cast<NSString>([webView objectByCallingAsyncFunction:@"const response = await fetch(url); return await response.text();" withArguments:@{ @"url": server.request().URL.absoluteString } error:&error]);
+        EXPECT_NULL(error);
+
+        if (testApplicationWithNewSDK) {
+            EXPECT_WK_STREQ(echoedCookies.get(), "");
+            EXPECT_FALSE(contains(receivedRequest.span(), "Cookie: testkey=testvalue\r\n"_span));
+        } else {
+            EXPECT_WK_STREQ(echoedCookies.get(), "testkey=testvalue");
+            EXPECT_TRUE(contains(receivedRequest.span(), "Cookie: testkey=testvalue\r\n"_span));
+        }
+
+        // SDK-aligned behaviors are sent to the network process at launch, so it must be relaunched to pick up the change.
+        [dataStore _terminateNetworkProcess];
+    };
+
+    WTF::enableAllSDKAlignedBehaviors();
+    runTest(true);
+    WTF::disableAllSDKAlignedBehaviors();
+    runTest(false);
+}
+
+TEST(NetworkProcess, CookiesSentFromURLSchemeHandlerPage)
+{
+    using namespace TestWebKitAPI;
+    Vector<char> receivedRequest;
+    HTTPServer server([&](Connection connection) {
+        connection.receiveHTTPRequest([&, connection](Vector<char>&& request) {
+            auto cookies = HTTPServer::parseCookies(request);
+            receivedRequest = WTF::move(request);
+            connection.send(HTTPResponse({ { "Access-Control-Allow-Origin"_s, "app://localhost"_s }, { "Access-Control-Allow-Credentials"_s, "true"_s } }, cookies).serialize());
+        });
+    });
+
+    RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    RetainPtr cookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieName: @"testkey",
+        NSHTTPCookieValue: @"testvalue",
+        NSHTTPCookieDomain: @"127.0.0.1",
+    }];
+    __block bool setCookieDone = false;
+    [dataStore.get().httpCookieStore setCookie:cookie.get() completionHandler:^{
+        setCookieDone = true;
+    }];
+    Util::run(&setCookieDone);
+
+    RetainPtr handler = adoptNS([TestURLSchemeHandler new]);
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        respond(task, "<html></html>");
+    }];
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"app"];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"app://localhost/index.html"]]];
+    EXPECT_WK_STREQ([[webView URL] absoluteString], "app://localhost/index.html");
+
+    NSError *error = nil;
+    RetainPtr echoedCookies = dynamic_objc_cast<NSString>([webView objectByCallingAsyncFunction:@"const response = await fetch(url, { credentials: 'include' }); return await response.text();" withArguments:@{ @"url": server.request().URL.absoluteString } error:&error]);
+    EXPECT_NULL(error);
+
     EXPECT_WK_STREQ(echoedCookies.get(), "testkey=testvalue");
     EXPECT_TRUE(contains(receivedRequest.span(), "Cookie: testkey=testvalue\r\n"_span));
 }

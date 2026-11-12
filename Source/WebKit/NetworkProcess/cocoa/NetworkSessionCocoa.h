@@ -188,6 +188,8 @@ public:
     bool proxyConfigurationRequiresTCPProtocols() const;
     bool isLegacyTLSAllowed() const { return m_isLegacyTLSAllowed; }
 
+    static bool allowsLegacyCookieAccessFromFileURL(const WebCore::ResourceRequest&);
+
 private:
     void invalidateAndCancel() override;
     HashSet<WebCore::SecurityOriginData> originsWithCredentials() final;

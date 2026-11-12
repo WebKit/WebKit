@@ -290,6 +290,9 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
         disableBehavior(SDKAlignedBehavior::NoMediaLayerTeardownOnPageVisibilityChangeQuirk);
     }
 
+    if (linkedBefore(dyld_2026_SU_B_os_versions, DYLD_IOS_VERSION_27_2, DYLD_MACOSX_VERSION_27_2))
+        disableBehavior(SDKAlignedBehavior::ForbidCookieUseFromFileURLs);
+
     disableAdditionalSDKAlignedBehaviors(behaviors);
 
     return behaviors;

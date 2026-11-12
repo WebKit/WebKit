@@ -256,7 +256,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         applyBasicAuthorizationHeader(request, m_initialCredential);
     }
 
-    if (WebCore::RegistrableDomain(request.firstPartyForCookies()).isEmpty())
+    if (WebCore::RegistrableDomain(request.firstPartyForCookies()).isEmpty() && !NetworkSessionCocoa::allowsLegacyCookieAccessFromFileURL(request))
         request.setAllowCookies(false);
 
     auto thirdPartyCookieBlockingDecision = requestThirdPartyCookieBlockingDecision(request);
@@ -587,7 +587,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
                 protectedThis->restrictRequestReferrerToOriginIfNeeded(request);
                 updateTaskWithFirstPartyForSameSiteCookies(protectedThis->m_task.get(), request);
                 protectedThis->updateCompressionDictionaryForRedirect(request);
-                if (WebCore::RegistrableDomain(request.firstPartyForCookies()).isEmpty())
+                if (WebCore::RegistrableDomain(request.firstPartyForCookies()).isEmpty() && !NetworkSessionCocoa::allowsLegacyCookieAccessFromFileURL(request))
                     request.setAllowCookies(false);
             }
             protectedThis->m_previousRequest = request;

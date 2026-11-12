@@ -1715,10 +1715,17 @@ DMFWebsitePolicyMonitor *NetworkSessionCocoa::deviceManagementPolicyMonitor()
 #endif
 }
 
+bool NetworkSessionCocoa::allowsLegacyCookieAccessFromFileURL(const WebCore::ResourceRequest& request)
+{
+    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ForbidCookieUseFromFileURLs))
+        return false;
+    return request.firstPartyForCookies().protocolIsFile();
+}
+
 RefPtr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, NetworkSocketChannel& channel, const WebCore::ResourceRequest& originalRequest, const String& protocol, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByWorker isInitiatedByWorker)
 {
     auto request = originalRequest;
-    if (WebCore::RegistrableDomain(request.firstPartyForCookies()).isEmpty())
+    if (WebCore::RegistrableDomain(request.firstPartyForCookies()).isEmpty() && !allowsLegacyCookieAccessFromFileURL(request))
         request.setAllowCookies(false);
 
     ASSERT(!request.hasHTTPHeaderField(WebCore::HTTPHeaderName::SecWebSocketProtocol));
