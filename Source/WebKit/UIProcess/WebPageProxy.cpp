@@ -13010,7 +13010,7 @@ void WebPageProxy::triggerProcessSwapForDocumentIsolationPolicy(WebCore::Navigat
     if (!processForNavigation) {
         auto isolatedProcessType = frame->isMainFrame() ? WebProcessProxy::IsolatedProcessType::MainFrame : WebProcessProxy::IsolatedProcessType::SubFrame;
         auto mainFrameSite = frame->isMainFrame() ? responseSite : Site { protect(mainFrame())->url() };
-        processForNavigation = protect(m_configuration->processPool())->processForSite(dataStore, isolatedProcessType, responseSite, mainFrameSite, processLoadingNavigation->lockdownMode(), processLoadingNavigation->enhancedSecurity(), m_configuration, crossOriginIsolation);
+        processForNavigation = protect(m_configuration->processPool())->processForSite(dataStore, isolatedProcessType, responseSite, mainFrameSite, processLoadingNavigation->lockdownMode(), processLoadingNavigation->enhancedSecurity(), m_configuration, crossOriginIsolation, std::nullopt, nullptr, std::nullopt, frame->isMainFrame() ? nullptr : this);
     }
 
     if (frame->isMainFrame())
