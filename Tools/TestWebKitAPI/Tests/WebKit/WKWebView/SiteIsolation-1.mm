@@ -1622,6 +1622,35 @@ TEST(SiteIsolation, AddAppHighlightWithoutSelectionDoesNotCrashWhenWebProcessesE
     EXPECT_EQ(0U, [delegate storedHighlights].count);
 }
 
+TEST(SiteIsolation, RestoreAppHighlightInFocusedCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr<_WKAppHighlight> highlight;
+    {
+        auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+        RetainPtr delegate = adoptNS([SiteIsolationAppHighlightDelegate new]);
+        [webView _setAppHighlightDelegate:delegate.get()];
+        setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().selectAllChildren(document.body)", _WKSelectionAttributeIsRange);
+        [webView _addAppHighlight];
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [delegate storedHighlights].count == 1;
+        }));
+        highlight = [delegate storedHighlights].firstObject;
+    }
+    ASSERT_NOT_NULL(highlight);
+    EXPECT_WK_STREQ("subframe text", [highlight text]);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server, configurationWithInternals(server).get());
+    [webView _restoreAppHighlights:@[ [highlight highlight] ]];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"internals.numberOfAppHighlights()" inFrame:childFrame.get()] unsignedIntegerValue] == 1;
+    }));
+}
+
 #if PLATFORM(MAC)
 TEST(SiteIsolation, ContextMenuQuickNoteInCrossOriginIframe)
 {

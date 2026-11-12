@@ -1129,7 +1129,7 @@ void WebPageProxy::restoreAppHighlightsAndScrollToIndex(const Vector<Ref<SharedM
     
     setUpHighlightsObserver();
 
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::RestoreAppHighlightsAndScrollToIndex(WTF::move(memoryHandles), index), webPageIDInMainFrameProcess());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::RestoreAppHighlightsAndScrollToIndex(WTF::move(memoryHandles), index));
 }
 
 void WebPageProxy::setAppHighlightsVisibility(WebCore::HighlightVisibility appHighlightsVisibility)

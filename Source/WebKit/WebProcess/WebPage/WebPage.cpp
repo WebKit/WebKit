@@ -10895,6 +10895,8 @@ void WebPage::restoreAppHighlightsAndScrollToIndex(Vector<SharedMemory::Handle>&
     if (!focusedOrMainFrame)
         return;
     RefPtr document = focusedOrMainFrame->document();
+    if (!document)
+        return;
 
     unsigned i = 0;
     for (auto&& handle : borrow(memoryHandles)) {
