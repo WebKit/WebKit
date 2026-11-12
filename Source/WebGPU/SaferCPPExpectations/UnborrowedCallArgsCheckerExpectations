@@ -1,13 +1,1 @@
 Buffer.mm
-ComputePassEncoder.mm
-Instance.mm
-RenderBundleEncoder.mm
-RenderPassEncoder.mm
-WGSL/AliasAnalysis.cpp
-WGSL/Lexer.cpp
-WGSL/Overload.cpp
-WGSL/Parser.cpp
-WGSL/ParserPrivate.h
-WGSL/TypeCheck.cpp
-WGSL/UniformityAnalysis.cpp
-WGSL/WGSLShaderModule.h

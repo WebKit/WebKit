@@ -27,6 +27,7 @@
 #include "Overload.h"
 
 #include "Types.h"
+#include <wtf/Borrow.h>
 #include <wtf/DataLog.h>
 
 namespace WGSL {
@@ -236,7 +237,7 @@ FixedVector<std::optional<ViableOverload>> OverloadResolver::considerCandidates(
 {
     FixedVector<std::optional<ViableOverload>> candidates(m_candidates.size());
     for (unsigned i = 0; i < m_candidates.size(); ++i)
-        candidates[i] = considerCandidate(m_candidates[i]);
+        candidates[i] = considerCandidate(borrow(m_candidates)[i]);
     return candidates;
 }
 
@@ -252,7 +253,7 @@ std::optional<ViableOverload> OverloadResolver::considerCandidate(const Overload
     m_valueSubstitutions.fill(std::nullopt);
 
     for (unsigned i = 0; i < m_typeArguments.size(); ++i) {
-        if (!assign(candidate.typeVariables[i], m_typeArguments[i]))
+        if (!assign(candidate.typeVariables[i], borrow(m_typeArguments)[i]))
             return std::nullopt;
     }
 
@@ -266,7 +267,7 @@ std::optional<ViableOverload> OverloadResolver::considerCandidate(const Overload
     };
     for (unsigned i = 0; i < m_valueArguments.size(); ++i) {
         auto& parameter = candidate.parameters[i];
-        auto* argument = m_valueArguments[i];
+        auto* argument = borrow(m_valueArguments)[i];
         logLn("matching parameter #", i, " '", parameter, "' with argument '", *argument, "'");
         if (!unify(parameter, argument)) {
             logLn("rejected on parameter #", i);
@@ -275,7 +276,7 @@ std::optional<ViableOverload> OverloadResolver::considerCandidate(const Overload
     }
     for (unsigned i = 0; i < m_valueArguments.size(); ++i) {
         auto& parameter = candidate.parameters[i];
-        auto* argument = m_valueArguments[i];
+        auto* argument = borrow(m_valueArguments)[i];
         auto rank = calculateRank(parameter, argument);
         ASSERT(!!rank);
         viableOverload.ranks[i] = *rank;
@@ -289,7 +290,7 @@ std::optional<ViableOverload> OverloadResolver::considerCandidate(const Overload
     if (shouldDumpOverloadDebugInformation) {
         log("found a viable candidate '", candidate, "' materialized as '(");
         bool first = true;
-        for (auto& parameter : candidate.parameters) {
+        for (auto& parameter : borrow(candidate.parameters)) {
             if (!first)
                 dataLog(", ");
             first = false;
@@ -673,13 +674,13 @@ void printInternal(PrintStream& out, const WGSL::OverloadCandidate& candidate)
     if (candidate.typeVariables.size() || candidate.valueVariables.size()) {
         bool first = true;
         out.print("<");
-        for (auto& typeVariable : candidate.typeVariables) {
+        for (auto& typeVariable : borrow(candidate.typeVariables)) {
             if (!first)
                 out.print(", ");
             first = false;
             printInternal(out, typeVariable);
         }
-        for (auto& valueVariable : candidate.valueVariables) {
+        for (auto& valueVariable : borrow(candidate.valueVariables)) {
             if (!first)
                 out.print(", ");
             first = false;
@@ -689,7 +690,7 @@ void printInternal(PrintStream& out, const WGSL::OverloadCandidate& candidate)
     }
     out.print("(");
     bool first = true;
-    for (auto& parameter : candidate.parameters) {
+    for (auto& parameter : borrow(candidate.parameters)) {
         if (!first)
             out.print(", ");
         first = false;

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTStringDumper.h"
+#include <wtf/Borrow.h>
 #include <wtf/DataLog.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
@@ -76,7 +77,7 @@ static inline void logPhaseTimes(PhaseTimes& phaseTimes)
     if (!dumpPhaseTimes) [[likely]]
         return;
 
-    for (auto& entry : phaseTimes)
+    for (auto& entry : borrow(phaseTimes))
         dataLogLn(entry.first, ": ", entry.second.milliseconds(), " ms");
 }
 

@@ -28,6 +28,7 @@
 
 #import "APIConversions.h"
 #import "Instance.h"
+#import <wtf/Borrow.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU::Metal {
@@ -79,7 +80,7 @@ void CommandBuffer::releasePriorCommandBuffers()
 {
     auto commandBuffers = takePriorCommandBuffers();
     Ref queue = m_device->getQueue();
-    for (auto& commandBuffer : commandBuffers)
+    for (auto& commandBuffer : borrow(commandBuffers))
         queue->removeMTLCommandBuffer(commandBuffer.get());
 }
 

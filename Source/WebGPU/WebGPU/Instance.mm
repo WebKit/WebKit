@@ -35,6 +35,7 @@
 #import <cstring>
 #import <dlfcn.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -77,12 +78,12 @@ void Instance::waitForCommandBufferCompletions()
 {
     auto retainedCommandBuffers { std::exchange(m_retainedCommandBufferInstances, { }) };
     auto retainedDevices { std::exchange(retainedDeviceInstances, { }) };
-    for (const auto& [_, weakCommandBuffer] : retainedCommandBuffers) {
+    for (const auto& [_, weakCommandBuffer] : borrow(retainedCommandBuffers)) {
         if (id<MTLCommandBuffer> commandBuffer = weakCommandBuffer.get().get(); commandBuffer.status >= MTLCommandBufferStatusCommitted)
             [commandBuffer waitUntilCompleted];
     }
     for (const auto& container : retainedDevices.values()) {
-        for (const auto& weakCommandBuffer : container) {
+        for (const auto& weakCommandBuffer : borrow(container)) {
             if (id<MTLCommandBuffer> commandBuffer = weakCommandBuffer.get().get(); commandBuffer.status >= MTLCommandBufferStatusCommitted)
                 [commandBuffer waitUntilCompleted];
         }
@@ -370,7 +371,7 @@ WGPUWaitStatus wgpuInstanceWaitAny(WGPUInstance instance, size_t futureCount, WG
             return waitInfo.future.id;
         });
         auto timeout = timeoutNS == UINT64_MAX ? Seconds::infinity() : Seconds::fromNanoseconds(timeoutNS);
-        bool completed = protect(WebGPU::Metal::fromAPI(instance))->waitForAnyFuture(futureIDs.span(), timeout, [&](size_t index) {
+        bool completed = protect(WebGPU::Metal::fromAPI(instance))->waitForAnyFuture(borrow(futureIDs)->span(), timeout, [&](size_t index) {
             waitInfos[index].completed = true;
         });
         return completed ? WGPUWaitStatus_Success : WGPUWaitStatus_TimedOut;

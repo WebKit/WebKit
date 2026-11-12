@@ -30,6 +30,7 @@
 #import <WebGPU/WebGPUCpp.h>
 #import <optional>
 #import <type_traits>
+#import <wtf/Borrow.h>
 #import <wtf/IndexedRange.h>
 #import <wtf/OptionSet.h>
 #import <wtf/StdLibExtras.h>
@@ -2193,7 +2194,7 @@ inline std::optional<WebGPU::ShaderModuleDescriptor> fromAPI(const WGPUShaderMod
 inline Vector<WGPUCompilationMessage> toAPI(const WebGPU::CompilationInfo& compilationInfo, Vector<UTF8CString>& messageStorage LIFETIME_BOUND)
 {
     messageStorage.clear();
-    for (auto& message : compilationInfo.messages)
+    for (auto& message : borrow(compilationInfo.messages))
         messageStorage.append(message.message.utf8());
     Vector<WGPUCompilationMessage> result(ReserveCapacityTag { }, compilationInfo.messages.size());
     for (auto [i, message] : indexedRange(compilationInfo.messages)) {

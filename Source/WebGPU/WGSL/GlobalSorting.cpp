@@ -31,6 +31,7 @@
 #include "ASTVariableStatement.h"
 #include "ContextProviderInlines.h"
 #include "WGSLShaderModule.h"
+#include <wtf/Borrow.h>
 #include <wtf/DataLog.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -275,7 +276,7 @@ static std::optional<FailedCheck> reorder(AST::Declaration::List& list)
         graphNodeList.append(graphNode);
     }
 
-    for (auto* graphNode : graphNodeList) {
+    for (auto* graphNode : borrow(graphNodeList)) {
         auto result = GraphBuilder::visit(graph, *graphNode);
         if (!result)
             return FailedCheck { Vector<Error> { result.error() }, { } };

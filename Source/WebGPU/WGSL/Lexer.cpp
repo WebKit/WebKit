@@ -29,6 +29,7 @@
 #include "ConstantValue.h"
 #include "Token.h"
 #include <charconv>
+#include <wtf/Borrow.h>
 #include <wtf/FastFloat.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/dtoa.h>
@@ -1088,7 +1089,7 @@ Token Lexer<T>::lexNumber()
         buffer[i] = start[i];
     buffer[length] = '\0';
     size_t parsedLength;
-    auto maybeResult = stringToDouble(buffer.span(), parsedLength);
+    auto maybeResult = stringToDouble(borrow(buffer)->span(), parsedLength);
     if (!maybeResult || parsedLength != length)
         return makeToken(TokenType::Invalid);
     return convert(*maybeResult);

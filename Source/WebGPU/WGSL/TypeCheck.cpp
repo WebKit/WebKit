@@ -36,6 +36,7 @@
 #include "TypeStore.h"
 #include "Types.h"
 #include "WGSLShaderModule.h"
+#include <wtf/Borrow.h>
 #include <wtf/DataLog.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
@@ -806,7 +807,7 @@ Result<void> TypeChecker::visit(AST::Function& function)
     {
         ContextScope functionContext(this);
         for (unsigned i = 0; i < parameters.size(); ++i)
-            CHECK(introduceValue(function.parameters()[i].name(), parameters[i]));
+            CHECK(introduceValue(function.parameters()[i].name(), borrow(parameters)[i]));
         // We visit the statements here instead of the compound statement since
         // we don't want to introduce an extra context scope
         CHECK(visitStatements(function.body().statements()));
@@ -1645,7 +1646,7 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
 
             for (unsigned i = 0; i < numberOfArguments; ++i) {
                 auto& argument = call.arguments()[i];
-                auto* parameterType = functionType.parameters[i];
+                auto* parameterType = borrow(functionType.parameters)[i];
                 UNWRAP(argumentType, infer(argument, m_maxEvaluation));
                 if (!unify(parameterType, argumentType)) [[unlikely]]
                     TYPE_ERROR(argument.span(), "type in function call does not match parameter type: expected '"_s, *parameterType, "', found '"_s, *argumentType, '\'');
@@ -1891,7 +1892,7 @@ Result<void> TypeChecker::bitcast(AST::CallExpression& call, const Vector<const 
         TYPE_ERROR(call.span(), "cannot discard the result of bitcast"_s);
 
     auto& argument = call.arguments()[0];
-    auto* destinationType = typeArguments[0];
+    auto* destinationType = borrow(typeArguments)[0];
     UNWRAP(sourceType, infer(argument, m_maxEvaluation));
 
     if (auto* reference = std::get_if<Types::Reference>(sourceType))
@@ -2322,7 +2323,7 @@ Result<const Type*> TypeChecker::chooseOverload(ASCIILiteral kind, const SourceS
 
     StringPrintStream valueArgumentsStream;
     bool first = true;
-    for (auto* argument : valueArguments) {
+    for (auto* argument : borrow(valueArguments)) {
         if (!first)
             valueArgumentsStream.print(", ");
         first = false;
@@ -2332,7 +2333,7 @@ Result<const Type*> TypeChecker::chooseOverload(ASCIILiteral kind, const SourceS
     first = true;
     if (typeArguments.size()) {
         typeArgumentsStream.print("<");
-        for (auto* typeArgument : typeArguments) {
+        for (auto* typeArgument : borrow(typeArguments)) {
             if (!first)
                 typeArgumentsStream.print(", ");
             first = false;
@@ -2424,7 +2425,7 @@ Result<Behaviors> TypeChecker::analyze(AST::Statement& statement)
                     auto& continueStatement = downcast<AST::ContinueStatement>(statement);
                     continueStatement.setIsFromSwitchToContinuing();
                     for (size_t j = i + 1; j < m_breakTargetStack.size(); ++j) {
-                        auto* switchStatement = std::get<AST::SwitchStatement*>(m_breakTargetStack[j]);
+                        auto* switchStatement = std::get<AST::SwitchStatement*>(borrow(m_breakTargetStack)[j]);
                         if (j == static_cast<size_t>(i + 1))
                             switchStatement->setIsInsideLoop();
                         else

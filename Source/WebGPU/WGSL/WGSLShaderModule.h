@@ -36,6 +36,7 @@
 #include "WGSL.h"
 #include "WGSLEnums.h"
 
+#include <wtf/Borrow.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/text/StringHash.h>
@@ -276,7 +277,7 @@ public:
         if (m_replacements.size() == limit)
             return;
         for (size_t i = m_replacements.size() - 1; i >= limit; --i)
-            m_replacements[i]();
+            borrow(m_replacements)[i]();
         m_replacements.shrinkCapacity(limit);
     }
 

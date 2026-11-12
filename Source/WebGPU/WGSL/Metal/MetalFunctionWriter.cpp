@@ -37,6 +37,7 @@
 #include "WGSLShaderModule.h"
 #include <limits>
 #include <numbers>
+#include <wtf/Borrow.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/SetForScope.h>
@@ -1104,7 +1105,7 @@ void FunctionDefinitionWriter::collectCallSiteInfo(AST::Function& function)
 
     for (auto& callee : m_shaderModule.callGraph().callees(function)) {
         auto& callSiteInfo = m_callSiteInfo.add(callee.target, CallSiteInfo { }).iterator->value;
-        for (auto& callSite : callee.callSites) {
+        for (auto& callSite : borrow(callee.callSites)) {
             auto& arguments = std::get<1>(callSite)->arguments();
             if (callSiteInfo.argumentKinds.size() < arguments.size())
                 callSiteInfo.argumentKinds.grow(arguments.size());

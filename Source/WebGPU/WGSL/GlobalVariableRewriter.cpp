@@ -33,6 +33,7 @@
 #include "WGSL.h"
 #include "WGSLShaderModule.h"
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/DataLog.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
@@ -251,7 +252,7 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
     const auto& updateCallSites = [&] {
         for (auto& read : m_reads) {
             dataLogLnIf(shouldLogGlobalVariableRewriting, ">> Updating call site to pass global read: ", read);
-            for (auto& [_, call] : callee.callSites) {
+            for (auto& [_, call] : borrow(callee.callSites)) {
                 auto it = m_globals.find(read);
                 RELEASE_ASSERT(it != m_globals.end());
                 auto& global = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
@@ -281,7 +282,7 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
                         break;
                     ++index;
                 }
-                for (auto& [caller, call] : callee.callSites) {
+                for (auto& [caller, call] : borrow(callee.callSites)) {
                     dataLogLnIf(shouldLogGlobalVariableRewriting, ">> Updating call site ("_s, caller->name(), ") to pass array length: ", lengthName);
                     auto& argument = call->arguments()[index];
                     unsigned arrayOffset = 0;
@@ -315,7 +316,7 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
                 }
             }
 
-            for (auto&  [caller, lengthParameter] : pendingLengthParameters) {
+            for (auto&  [caller, lengthParameter] : borrow(pendingLengthParameters)) {
                 auto result = m_lengthParameters.add(caller, ListHashSet<String> { });
                 result.iterator->value.add(lengthParameter);
             }
@@ -394,7 +395,7 @@ void RewriteGlobalVariables::visit(AST::CompoundStatement& statement)
     }
 
     unsigned offset = 0;
-    for (auto& insertion : m_pendingInsertions) {
+    for (auto& insertion : borrow(m_pendingInsertions)) {
         m_shaderModule.insert(statement.statements(), insertion.index + offset, AST::Statement::Ref(*insertion.statement));
         ++offset;
     }
@@ -457,7 +458,7 @@ void RewriteGlobalVariables::addOverrideValidation(ShaderModule::OverrideValidat
     }
 
     m_shaderModule.addOverrideValidation([&shaderModule = m_shaderModule, operators = m_shortCircuitedOperators, validator = WTF::move(validator)](const auto& overrideValues) -> std::optional<Error> {
-        for (auto* operation : operators) {
+        for (auto* operation : borrow(operators)) {
             if (skipsRightHandSide(shaderModule, *operation, overrideValues))
                 return std::nullopt;
         }
@@ -894,7 +895,7 @@ std::optional<Error> RewriteGlobalVariables::collectGlobals()
     });
 
     if (!bufferLengths.isEmpty()) {
-        for (const auto& [variable, group, webBinding] : bufferLengths) {
+        for (const auto& [variable, group, webBinding] : borrow(bufferLengths)) {
             auto name = AST::Identifier::make(makeString("__"_s, variable->name(), "_ArrayLength"_s));
             auto& lengthVariable = m_shaderModule.astBuilder().construct<AST::Variable>(
                 SourceSpan::empty(),
@@ -1227,7 +1228,7 @@ std::optional<Error> RewriteGlobalVariables::visitEntryPoint(const CallGraph::En
     insertLocalDefinitions(entryPoint.function, usedGlobals.privateGlobals);
     validateUsedGlobals(usedGlobals);
 
-    for (auto* global : usedGlobals.privateGlobals) {
+    for (auto* global : borrow(usedGlobals.privateGlobals)) {
         if (!global || !global->declaration)
             continue;
         auto* variable = global->declaration;
@@ -1253,7 +1254,7 @@ void RewriteGlobalVariables::validateUsedGlobals(const UsedGlobals& usedGlobals)
         }
     };
 
-    for (const auto* global : usedGlobals.privateGlobals)
+    for (const auto* global : borrow(usedGlobals.privateGlobals))
         validateGlobal(global);
 
     for (const auto& [_, bindings] : usedGlobals.resources) {
@@ -1265,8 +1266,8 @@ void RewriteGlobalVariables::validateUsedGlobals(const UsedGlobals& usedGlobals)
 void RewriteGlobalVariables::collectDynamicOffsetGlobals(const PipelineLayout& pipelineLayout)
 {
     unsigned group = 0;
-    for (const auto& bindGroupLayout : pipelineLayout.bindGroupLayouts) {
-        for (const auto& entry : bindGroupLayout.entries) {
+    for (const auto& bindGroupLayout : borrow(pipelineLayout.bindGroupLayouts)) {
+        for (const auto& entry : borrow(bindGroupLayout.entries)) {
             if (!entry.visibility.contains(m_stage))
                 continue;
 
@@ -1527,7 +1528,7 @@ auto RewriteGlobalVariables::determineUsedGlobals(const CallGraph::EntryPoint& e
 
     m_shaderModule.addOverrideValidation([span = function.span(), variables = WTF::move(workgroupVariables), maximumCombinedWorkgroupVariablesSize](auto&) -> std::optional<Error> {
         CheckedUint32 combinedWorkgroupVariablesSize = 0;
-        for (const Type* type : variables)
+        for (const Type* type : borrow(variables))
             combinedWorkgroupVariablesSize += type->size();
         if (combinedWorkgroupVariablesSize.hasOverflowed() || combinedWorkgroupVariablesSize.value() > maximumCombinedWorkgroupVariablesSize) [[unlikely]]
             return { Error(makeString("The combined byte size of all variables in the workgroup address space exceeds "_s, String::number(maximumCombinedWorkgroupVariablesSize), " bytes"_s), span) };
@@ -1535,7 +1536,7 @@ auto RewriteGlobalVariables::determineUsedGlobals(const CallGraph::EntryPoint& e
     });
     m_shaderModule.addOverrideValidation([span = function.span(), variables = WTF::move(privateVariables)](auto&) -> std::optional<Error> {
         CheckedUint32 combinedPrivateVariablesSize = 0;
-        for (const Type* type : variables)
+        for (const Type* type : borrow(variables))
             combinedPrivateVariablesSize += type->size();
         if (combinedPrivateVariablesSize.hasOverflowed() || combinedPrivateVariablesSize.value() > maximumCombinedPrivateVariablesSize) [[unlikely]]
             return { Error(makeString("The combined byte size of all variables in the private address space exceeds "_s, String::number(maximumCombinedPrivateVariablesSize), " bytes"_s), span) };
@@ -1806,7 +1807,7 @@ void RewriteGlobalVariables::finalizeArgumentBufferStruct(unsigned group, Vector
     std::ranges::sort(entries, { }, &std::pair<unsigned, AST::StructureMember*>::first);
 
     AST::StructureMember::List structMembers;
-    for (auto& [_, member] : entries)
+    for (auto& [_, member] : borrow(entries))
         structMembers.append(*member);
 
     auto& argumentBufferStruct = m_shaderModule.astBuilder().construct<AST::Structure>(
@@ -2210,7 +2211,7 @@ std::optional<Error> RewriteGlobalVariables::errorValidatingTextureSamplerPairs(
         return nullptr;
     };
 
-    for (const auto& pair : entryPoint.textureSamplerPairs) {
+    for (const auto& pair : borrow(entryPoint.textureSamplerPairs)) {
         const auto* samplerEntry = findEntry(pair.sampler);
         if (!samplerEntry)
             continue;
@@ -2238,10 +2239,10 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(PipelineLayout& l
     Vector<unsigned> groups;
     unsigned group = 0;
     HashMap<AST::Variable*, BindGroupLayoutEntry*> serializedVariables;
-    for (auto& bindGroupLayout : layout.bindGroupLayouts) {
+    for (auto& bindGroupLayout : borrow(layout.bindGroupLayouts)) {
         Vector<std::pair<unsigned, AST::StructureMember*>> entries;
         Vector<std::pair<unsigned, AST::Variable*>> bufferLengths;
-        for (auto& entry : bindGroupLayout.entries) {
+        for (auto& entry : borrow(bindGroupLayout.entries)) {
             if (!entry.visibility.contains(m_stage))
                 continue;
 
@@ -2540,7 +2541,7 @@ void RewriteGlobalVariables::insertMaterializations(AST::Function& function, con
 void RewriteGlobalVariables::insertLocalDefinitions(AST::Function& function, const UsedPrivateGlobals& usedPrivateGlobals)
 {
     auto initialBodySize = function.body().statements().size();
-    for (auto* global : usedPrivateGlobals) {
+    for (auto* global : borrow(usedPrivateGlobals)) {
         auto& variableStatement = m_shaderModule.astBuilder().construct<AST::VariableStatement>(SourceSpan::empty(), *global->declaration);
         m_shaderModule.insert(function.body().statements(), 0, std::reference_wrapper<AST::Statement>(variableStatement));
     }
@@ -2646,7 +2647,7 @@ AST::Identifier& RewriteGlobalVariables::findOrInsertLocalInvocationIndex(AST::F
 AST::Statement::List RewriteGlobalVariables::storeInitialValue(const UsedPrivateGlobals& globals)
 {
     AST::Statement::List statements;
-    for (auto* global : globals) {
+    for (auto* global : borrow(globals)) {
         auto& variable = *global->declaration;
 
         if (auto addressSpace = variable.addressSpace(); !addressSpace.has_value() || *addressSpace != AddressSpace::Workgroup)

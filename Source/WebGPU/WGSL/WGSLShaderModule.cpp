@@ -29,6 +29,7 @@
 #include "AST.h"
 #include "ConstantFunctions.h"
 #include "WGSL.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WGSL {
@@ -45,7 +46,7 @@ Result<ConstantValue> ShaderModule::ensureOverrideValue(const AST::Expression& e
 
 std::optional<Error> ShaderModule::validateOverrides(const PrepareResult& prepareResult, HashMap<String, ConstantValue>& overrideValues)
 {
-    for (auto* variable : m_overrides) {
+    for (auto* variable : borrow(m_overrides)) {
         String name = variable->id().has_value() ? String::number(*variable->id()) : variable->originalName();
         auto userDefinedValue = overrideValues.find(name);
         if (userDefinedValue != overrideValues.end()) {
@@ -80,7 +81,7 @@ std::optional<Error> ShaderModule::validateOverrides(const PrepareResult& prepar
         overrideValues.add(variable->name(), *maybeValue);
     }
 
-    for (const auto& validator : m_overrideValidations) {
+    for (const auto& validator : borrow(m_overrideValidations)) {
         if (auto maybeError = validator(overrideValues))
             return maybeError;
     }
@@ -90,7 +91,7 @@ std::optional<Error> ShaderModule::validateOverrides(const PrepareResult& prepar
 
 bool ShaderModule::containsOverride(const String& key) const
 {
-    for (auto* variable : m_overrides) {
+    for (auto* variable : borrow(m_overrides)) {
         String name = variable->id().has_value() ? String::number(*variable->id()) : variable->originalName();
         if (name == key)
             return true;

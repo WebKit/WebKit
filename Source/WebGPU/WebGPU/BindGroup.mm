@@ -36,6 +36,7 @@
 #import "Sampler.h"
 #import "TextureView.h"
 #import <ranges>
+#import <wtf/Borrow.h>
 #import <wtf/EnumeratedArray.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/spi/cocoa/IOSurfaceSPI.h>
@@ -1344,8 +1345,8 @@ static void addResourceHolder(const BindGroupEntryUsageData::Resource& resource,
 template<typename Holder>
 static void registerResourceHolderImpl(const Vector<BindableResources>& resources, const Holder& holder)
 {
-    for (const auto& bindableResources : resources) {
-        for (const auto& resourceUsage : bindableResources.resourceUsages)
+    for (const auto& bindableResources : borrow(resources)) {
+        for (const auto& resourceUsage : borrow(bindableResources.resourceUsages))
             addResourceHolder(resourceUsage.resource, holder);
     }
 }
@@ -1380,7 +1381,7 @@ id<MTLResource> placeholderForDestroyedResource(const BindGroupEntryUsageData::R
 bool replaceDestroyedResourcesWithPlaceholders(Vector<BindableResources>& resources)
 {
     bool replacedAnything = false;
-    for (auto& bindableResources : resources) {
+    for (auto& bindableResources : borrow(resources)) {
         auto resourceCount = std::min(bindableResources.mtlResources.size(), bindableResources.resourceUsages.size());
         for (size_t i = 0; i < resourceCount; ++i) {
             id<MTLResource> placeholder = placeholderForDestroyedResource(bindableResources.resourceUsages[i].resource);
@@ -1824,8 +1825,8 @@ bool BindGroup::updateExternalTextures(WebGPU::ExternalTexture& apiExternalTextu
         return false;
 
     bool foundBoundExternalTexture = false;
-    for (auto& resource : m_resources) {
-        for (auto& resourceUsage : resource.resourceUsages) {
+    for (auto& resource : borrow(m_resources)) {
+        for (auto& resourceUsage : borrow(resource.resourceUsages)) {
             auto* boundExternalTexture = std::get_if<RefPtr<const ExternalTexture>>(&resourceUsage.resource);
             if (!boundExternalTexture || !*boundExternalTexture)
                 continue;

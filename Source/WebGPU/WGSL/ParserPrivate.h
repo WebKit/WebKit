@@ -39,6 +39,7 @@
 #include "Lexer.h"
 #include "Token.h"
 #include "WGSLShaderModule.h"
+#include <wtf/Borrow.h>
 #include <wtf/Ref.h>
 
 namespace WGSL {
@@ -53,7 +54,7 @@ public:
         , m_builder(shaderModule.astBuilder())
         , m_lexer(lexer)
         , m_tokens(m_lexer.lex())
-        , m_current(m_tokens[0])
+        , m_current(borrow(m_tokens)[0])
         , m_currentPosition({ m_current.span.line, m_current.span.lineOffset, m_current.span.offset })
     {
     }

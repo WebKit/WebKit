@@ -34,6 +34,7 @@
 #import "IsValidToUseWith.h"
 #import "RenderBundle.h"
 #import "RenderPipeline.h"
+#import <wtf/Borrow.h>
 #import <wtf/IndexedRange.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -1302,7 +1303,7 @@ void RenderBundleEncoder::setBindGroupWithOwnedDynamicOffsets(uint32_t groupInde
                     return;
                 }
                 uint32_t maxDynamicOffset = 0;
-                if (NSString* error = bindGroupLayout->errorValidatingDynamicOffsets(dynamicOffsets->span(), group, maxDynamicOffset)) {
+                if (NSString* error = bindGroupLayout->errorValidatingDynamicOffsets(borrow(*dynamicOffsets)->span(), group, maxDynamicOffset)) {
                     makeInvalid([NSString stringWithFormat:@"GPURenderBundleEncoder.setBindGroup: %@", error]);
                     return;
                 }

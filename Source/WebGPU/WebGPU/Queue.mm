@@ -549,7 +549,7 @@ void Queue::submit(Vector<Ref<WebGPU::Metal::CommandBuffer>>&& commands)
         // filled buffers here. They hold the commands encoded before this one, so they have to be
         // committed first; sequential commits on the same MTLCommandQueue execute in order.
         auto priorCommandBuffers = apiCommandBuffer->takePriorCommandBuffers();
-        for (auto& priorCommandBuffer : priorCommandBuffers)
+        for (auto& priorCommandBuffer : borrow(priorCommandBuffers))
             commitMTLCommandBuffer(priorCommandBuffer.get());
         commitMTLCommandBuffer(commandBuffer);
         apiCommandBuffer->postCommitHandler();
@@ -2340,7 +2340,7 @@ void Queue::resolveProvisionalTextureClears(std::optional<uint64_t> committingCo
 
     auto provisionalClears = std::exchange(m_provisionalTextureClears, { });
 
-    for (auto& provisionalClear : provisionalClears) {
+    for (auto& provisionalClear : borrow(provisionalClears)) {
         RefPtr texture = provisionalClear.texture.get();
         if (!texture)
             continue;
@@ -2358,7 +2358,7 @@ void Queue::resolveProvisionalTextureClears(std::optional<uint64_t> committingCo
         return;
 
     bool encodedAnyClear = false;
-    for (auto& provisionalClear : provisionalClears) {
+    for (auto& provisionalClear : borrow(provisionalClears)) {
         if (committingCommandEncoderId && provisionalClear.commandEncoderId == *committingCommandEncoderId)
             continue;
         RefPtr texture = provisionalClear.texture.get();

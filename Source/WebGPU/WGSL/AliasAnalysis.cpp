@@ -33,6 +33,7 @@
 #include "CallGraph.h"
 #include "WGSL.h"
 #include "WGSLShaderModule.h"
+#include <wtf/Borrow.h>
 #include <wtf/DataLog.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
@@ -238,7 +239,7 @@ std::optional<Error> AliasAnalysis::run()
     for (auto& declaration : m_shaderModule.declarations()) {
         if (auto* globalVar = dynamicDowncast<AST::Variable>(declaration)) {
             m_globals.append(MemoryLocation::global(m_globalID++));
-            introduceVariable(globalVar->name(), m_globals.last());
+            introduceVariable(globalVar->name(), borrow(m_globals)->last());
         } else if (auto* function = dynamicDowncast<AST::Function>(declaration)) {
             visit(*function);
             if (hasError()) [[unlikely]]

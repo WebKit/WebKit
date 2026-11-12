@@ -32,6 +32,7 @@
 #include "Types.h"
 #include "WGSL.h"
 #include "WGSLShaderModule.h"
+#include <wtf/Borrow.h>
 #include <wtf/text/MakeString.h>
 
 namespace WGSL {
@@ -204,7 +205,7 @@ void EntryPointRewriter::constructInputStruct()
 {
     // insert `var ${parameter.name()} = ${structName}.${parameter.name()}`
     AST::StructureMember::List structMembers;
-    for (auto& parameter : m_parameters) {
+    for (auto& parameter : borrow(m_parameters)) {
         structMembers.append(m_shaderModule.astBuilder().construct<AST::StructureMember>(
             SourceSpan::empty(),
             WTF::move(parameter.name),
@@ -345,7 +346,7 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
 
 void EntryPointRewriter::appendBuiltins()
 {
-    for (auto& data : m_builtins) {
+    for (auto& data : borrow(m_builtins)) {
         auto& parameter = m_shaderModule.astBuilder().construct<AST::Parameter>(
             SourceSpan::empty(),
             AST::Identifier::make(data.name),

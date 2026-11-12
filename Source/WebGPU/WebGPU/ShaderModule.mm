@@ -38,6 +38,7 @@
 
 #import <WebGPU/WebGPU.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/DataLog.h>
 #import <wtf/StringPrintStream.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -228,7 +229,7 @@ static Ref<ShaderModule> handleShaderSuccessOrFailure(WebGPU::Metal::Device &obj
     auto& failedCheck = std::get<WGSL::FailedCheck>(checkResult);
     StringPrintStream message;
     message.print(String::number(failedCheck.errors.size()), " error", failedCheck.errors.size() != 1 ? "s" : "", " generated while compiling the shader:"_s);
-    for (const auto& error : failedCheck.errors)
+    for (const auto& error : borrow(failedCheck.errors))
         message.print("\n"_s, error);
 
     object.generateAValidationError(message.toString());
@@ -814,7 +815,7 @@ struct Messages {
 
 static void appendMessages(Vector<WebGPU::CompilationMessage>& result, const Messages& messages)
 {
-    for (const auto& compilationMessage : messages.messages) {
+    for (const auto& compilationMessage : borrow(messages.messages)) {
         result.append({
             .message = compilationMessage.message(),
             .type = messages.type,

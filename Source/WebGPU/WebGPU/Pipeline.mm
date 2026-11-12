@@ -32,6 +32,7 @@
 #import "WGSLShaderModule.h"
 #import <memory>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/Scope.h>
 
 #if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
@@ -334,7 +335,7 @@ NSString* errorValidatingBindGroup(const BindGroup& bindGroup, const BufferBindi
 
     auto& bindGroupLayoutEntries = bindGroupLayout->entries();
     for (const auto& resourceVector : bindGroup.resources()) {
-        for (const auto& resource : resourceVector.resourceUsages) {
+        for (const auto& resource : borrow(resourceVector.resourceUsages)) {
             auto bindingIndex = resource.binding;
             auto* buffer = get_if<RefPtr<Buffer>>(&resource.resource);
             if (!buffer)

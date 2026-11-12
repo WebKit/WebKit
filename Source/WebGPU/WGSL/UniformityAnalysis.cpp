@@ -30,6 +30,7 @@
 #include "ASTIdentifier.h"
 #include "WGSL.h"
 #include "WGSLShaderModule.h"
+#include <wtf/Borrow.h>
 #include <wtf/DataLog.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -166,7 +167,7 @@ struct FunctionInfo {
     void setVariable(const String& name, Node* node)
     {
         ASSERT(!scopes.isEmpty());
-        scopes.last().set(name, node);
+        borrow(scopes)->last().set(name, node);
     }
 
     NODELETE void resetVisited()
@@ -185,7 +186,7 @@ static void traverse(Node* source, HashSet<Node*>* reachable = nullptr)
 
     while (!stack.isEmpty()) {
         auto* node = stack.takeLast();
-        for (auto* to : node->edges) {
+        for (auto* to : borrow(node->edges)) {
             if (!to->visitedFrom) {
                 to->visitedFrom = node;
                 if (reachable)
@@ -451,7 +452,7 @@ std::optional<Error> UniformityGraph::processFunction(AST::Function& function)
     if (pushedFunctionSubgroupSeverity)
         m_subgroupSeverityStack.removeLast();
 
-    for (auto& paramInfo : info.parameters) {
+    for (auto& paramInfo : borrow(info.parameters)) {
         if (paramInfo.ptrOutputContents) {
             auto* currentVal = info.getVariable(paramInfo.name);
             if (currentVal)
@@ -488,7 +489,7 @@ std::optional<Error> UniformityGraph::processFunction(AST::Function& function)
             if (reachable.contains(info.mayBeNonUniform)) {
                 String callName;
                 const AST::Node* callAst = nullptr;
-                for (auto* edge : sentinel->edges) {
+                for (auto* edge : borrow(sentinel->edges)) {
                     if (!edge->ast)
                         continue;
                     if (auto* callExpr = dynamicDowncast<AST::CallExpression>(*edge->ast)) {
@@ -1039,7 +1040,7 @@ Node* UniformityGraph::processStatement(Node* cf, AST::Statement& statement)
 
     case AST::NodeKind::BreakStatement: {
         if (!m_loopSwitchStack.isEmpty()) {
-            auto* loopSwitchInfoPtr = m_loopSwitchStack.last();
+            auto* loopSwitchInfoPtr = borrow(m_loopSwitchStack)->last();
             for (auto& varName : info.localVarDecls) {
                 auto exitIt = loopSwitchInfoPtr->varExitNodes.find(varName);
                 Node* exitNode;
@@ -1059,7 +1060,7 @@ Node* UniformityGraph::processStatement(Node* cf, AST::Statement& statement)
 
     case AST::NodeKind::ContinueStatement: {
         for (int i = m_loopSwitchStack.size() - 1; i >= 0; --i) {
-            auto* loopSwitchInfoPtr = m_loopSwitchStack[i];
+            auto* loopSwitchInfoPtr = borrow(m_loopSwitchStack)[i];
             if (!loopSwitchInfoPtr->varInNodes.isEmpty()) {
                 for (auto& entry : loopSwitchInfoPtr->varInNodes) {
                     auto* inNode = entry.value;
@@ -1081,7 +1082,7 @@ Node* UniformityGraph::processStatement(Node* cf, AST::Statement& statement)
             cf = cfR;
         }
 
-        for (auto& paramInfo : info.parameters) {
+        for (auto& paramInfo : borrow(info.parameters)) {
             if (paramInfo.ptrOutputContents) {
                 auto* currentVal = info.getVariable(paramInfo.name);
                 if (currentVal)
@@ -1466,12 +1467,12 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
             switch (paramInfo.tagDirect.tag) {
             case ParameterTag::ValueRequiredToBeUniform:
                 if (auto* node = info.requiredToBeUniformForSeverity(paramInfo.tagDirect.severity))
-                    node->addEdge(args[i]);
+                    node->addEdge(borrow(args)[i]);
                 break;
             case ParameterTag::ContentsRequiredToBeUniform:
                 if (ptrArgContents[i]) {
                     if (auto* node = info.requiredToBeUniformForSeverity(paramInfo.tagDirect.severity))
-                        node->addEdge(ptrArgContents[i]);
+                        node->addEdge(borrow(ptrArgContents)[i]);
                 }
                 break;
             case ParameterTag::NoRestriction:
@@ -1480,11 +1481,11 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
 
             switch (paramInfo.tagRetval) {
             case ParameterTag::ValueRequiredToBeUniform:
-                result->addEdge(args[i]);
+                result->addEdge(borrow(args)[i]);
                 break;
             case ParameterTag::ContentsRequiredToBeUniform:
                 if (ptrArgContents[i])
-                    result->addEdge(ptrArgContents[i]);
+                    result->addEdge(borrow(ptrArgContents)[i]);
                 break;
             case ParameterTag::NoRestriction:
                 break;
@@ -1499,10 +1500,10 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
                 else {
                     ptrResult->addEdge(callNode);
                     for (auto j : paramInfo.ptrOutputSourceParamValues)
-                        ptrResult->addEdge(args[j]);
+                        ptrResult->addEdge(borrow(args)[j]);
                     for (auto j : paramInfo.ptrOutputSourceParamContents) {
                         if (ptrArgContents[j])
-                            ptrResult->addEdge(ptrArgContents[j]);
+                            ptrResult->addEdge(borrow(ptrArgContents)[j]);
                     }
                 }
 
@@ -1519,7 +1520,7 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
                 // getParamTag to incorrectly tag as ContentsRequiredToBeUniform.
                 // Use paramInfo.value instead to get ValueRequiredToBeUniform.
                 // This is a workgroup concern, so it does not apply at subgroup scope.
-                auto* ptrValueNode = args[i];
+                auto* ptrValueNode = borrow(args)[i];
                 auto* rootId = rootIdentifier(call.arguments()[i]);
                 if (rootId) {
                     for (auto& paramInfo : info.parameters) {
@@ -1536,11 +1537,11 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
                 // result regardless of whether its inputs are uniform, so its result
                 // must not inherit argument non-uniformity.
                 if (!resultIsUniformRegardlessOfArgs)
-                    result->addEdge(args[i]);
+                    result->addEdge(borrow(args)[i]);
                 // subgroupShuffleUp/Down `delta` and subgroupShuffleXor `mask` must be uniform.
                 if (subgroupUniformArgIndex && *subgroupUniformArgIndex == i) {
                     if (auto* node = info.requiredToBeUniformForSeverity(callSiteSeverity))
-                        node->addEdge(args[i]);
+                        node->addEdge(borrow(args)[i]);
                 }
             }
         }

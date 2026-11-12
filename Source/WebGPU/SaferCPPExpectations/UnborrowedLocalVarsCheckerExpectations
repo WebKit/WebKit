@@ -1,9 +1,5 @@
-BindGroup.mm
-BindGroupLayout.mm
 CommandBuffer.mm
-CommandEncoder.mm
 ComputePassEncoder.mm
-Instance.mm
 Pipeline.mm
 PipelineLayout.mm
 PresentationContextIOSurface.mm
@@ -13,17 +9,10 @@ RenderBundleEncoder.mm
 RenderPassEncoder.mm
 RenderPipeline.mm
 ShaderModule.mm
-WGSL/EntryPointRewriter.cpp
-WGSL/GlobalSorting.cpp
-WGSL/GlobalVariableRewriter.cpp
-WGSL/IOValidator.cpp
 WGSL/Metal/MetalFunctionWriter.cpp
 WGSL/Overload.cpp
 WGSL/Parser.cpp
-WGSL/PhaseTimer.h
 WGSL/TypeCheck.cpp
-WGSL/Types.cpp
 WGSL/UniformityAnalysis.cpp
-WGSL/WGSLShaderModule.cpp
 WGSL/WGSLShaderModule.h
 WebGPUCppConversions.h

@@ -42,6 +42,7 @@
 #import <WebGPU/WebGPU.h>
 #import "WebGPUSwift-Generated.h"
 #endif
+#import <wtf/Borrow.h>
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/IndexedRange.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -141,7 +142,7 @@ CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, Device& devic
                 continue;
             apiBuffer->removeSkippedValidationCommandEncoder(commandEncoder.uniqueId());
             if (apiBuffer->mustTakeSlowIndexValidationPath()) {
-                for (auto& keyValuePair : skippedDrawIndexedValidationKeys) {
+                for (auto& keyValuePair : borrow(skippedDrawIndexedValidationKeys)) {
                     auto& key = keyValuePair.first;
                     auto& value = keyValuePair.second;
                     apiBuffer->takeSlowIndexValidationPath(commandBuffer, key.firstIndex, key.indexCount, key.indexType(), key.primitiveOffset(), value);
@@ -156,7 +157,7 @@ CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, Device& devic
             RefPtr apiBuffer = commandBuffer.device().lookupBuffer(bufferIdentifier);
             if (!apiBuffer)
                 continue;
-            for (auto& draw : reusedIndirectIndexedDraws) {
+            for (auto& draw : borrow(reusedIndirectIndexedDraws)) {
                 if (draw.indexGeneration == apiBuffer->indexContentsGeneration())
                     continue;
                 apiBuffer->takeSlowBundleIndirectDrawValidationPath(commandBuffer, draw);
@@ -199,7 +200,7 @@ void CommandEncoder::releasePriorCommandBuffers()
 {
     auto priorCommandBuffers = std::exchange(m_priorCommandBuffers, { });
     Ref queue = m_device->getQueue();
-    for (auto& commandBuffer : priorCommandBuffers)
+    for (auto& commandBuffer : borrow(priorCommandBuffers))
         queue->removeMTLCommandBuffer(commandBuffer.get());
 }
 
@@ -1608,7 +1609,7 @@ bool CommandEncoder::waitForCommandBufferCompletion()
 
 void CommandEncoder::recordGPUExecutionWindowOnCanvasTextures(double startTime, double endTime) const
 {
-    for (auto& texture : m_trackedTextures) {
+    for (auto& texture : borrow(m_trackedTextures)) {
         if (texture->isCanvasBacking())
             texture->recordGPUExecutionWindow(startTime, endTime);
     }
@@ -2316,7 +2317,7 @@ RefPtr<WebGPU::CommandBuffer> CommandEncoder::finish(const WebGPU::CommandBuffer
     m_existingCommandEncoder = nil;
 
     commandBuffer.label = descriptor.label.createNSString().get();
-    for (auto& priorCommandBuffer : m_priorCommandBuffers)
+    for (auto& priorCommandBuffer : borrow(m_priorCommandBuffers))
         [priorCommandBuffer.get() setLabel:commandBuffer.label];
 
 #if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
@@ -2529,15 +2530,15 @@ size_t CommandEncoder::computeSize(TrackedResourceContainer& container, const De
 void CommandEncoder::clearTracking()
 {
     auto identifier = uniqueId();
-    for (auto& resource : m_trackedBuffers)
+    for (auto& resource : borrow(m_trackedBuffers))
         resource->removeEncoder(identifier);
-    for (auto& resource : m_trackedTextures)
+    for (auto& resource : borrow(m_trackedTextures))
         resource->removeEncoder(identifier);
-    for (auto& resource : m_trackedTextureViews)
+    for (auto& resource : borrow(m_trackedTextureViews))
         resource->removeEncoder(identifier);
-    for (auto& resource : m_trackedExternalTextures)
+    for (auto& resource : borrow(m_trackedExternalTextures))
         resource->removeEncoder(identifier);
-    for (auto& resource : m_trackedQuerySets)
+    for (auto& resource : borrow(m_trackedQuerySets))
         resource->removeEncoder(identifier);
 
     m_trackedBuffers.clear();

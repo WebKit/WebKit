@@ -35,6 +35,7 @@
 #import "IsValidToUseWith.h"
 #import "Pipeline.h"
 #import "QuerySet.h"
+#import <wtf/Borrow.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU::Metal {
@@ -229,7 +230,7 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
             continue;
 
         Ref bindGroupLayout = pipelineLayout->bindGroupLayout(bindGroupIndex);
-        for (auto* bindGroupResources : kvp.value) {
+        for (auto* bindGroupResources : borrow(kvp.value)) {
             for (size_t i = 0, sz = bindGroupResources->mtlResources.size(); i < sz; ++i) {
                 auto& usageData = bindGroupResources->resourceUsages[i];
                 constexpr ShaderStage shaderStages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute, ShaderStage::Undefined };
@@ -258,14 +259,14 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
     for (auto& kvp : m_bindGroupDynamicOffsets) {
         Ref pipelineLayout = pipeline->pipelineLayout();
         auto bindGroupIndex = kvp.key;
-        if (!pipelineLayout->updateComputeOffsets(bindGroupIndex, kvp.value, m_computeDynamicOffsets)) {
+        if (!pipelineLayout->updateComputeOffsets(bindGroupIndex, kvp.value, borrow(m_computeDynamicOffsets)->mutableSpan())) {
             makeInvalid(@"Invalid offset calculation");
             return;
         }
     }
 
     if (m_computeDynamicOffsets != m_priorComputeDynamicOffsets) {
-        [computeCommandEncoder() setBytes:&m_computeDynamicOffsets[0] length:m_computeDynamicOffsets.size() * sizeof(m_computeDynamicOffsets[0]) atIndex:m_device->maxBuffersForComputeStage()];
+        [computeCommandEncoder() setBytes:&borrow(m_computeDynamicOffsets)[0] length:m_computeDynamicOffsets.size() * sizeof(m_computeDynamicOffsets[0]) atIndex:m_device->maxBuffersForComputeStage()];
         m_priorComputeDynamicOffsets = m_computeDynamicOffsets;
     }
 }
@@ -523,7 +524,7 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* grou
         makeInvalid(@"GPUComputePassEncoder.setBindGroup: bind group is nil");
         return;
     }
-    if (NSString* error = bindGroupLayout->errorValidatingDynamicOffsets(dynamicOffsets ? dynamicOffsets->span() : std::span<const uint32_t> { }, group, m_maxDynamicOffsetAtIndex[groupIndex])) {
+    if (NSString* error = bindGroupLayout->errorValidatingDynamicOffsets(dynamicOffsets ? borrow(*dynamicOffsets)->span() : std::span<const uint32_t> { }, group, m_maxDynamicOffsetAtIndex[groupIndex])) {
         makeInvalid([NSString stringWithFormat:@"GPUComputePassEncoder.setBindGroup: %@", error]);
         return;
     }
@@ -537,7 +538,7 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* grou
     Vector<const BindableResources*> resourceList;
     for (const auto& resource : group.resources()) {
         if (resource.renderStages == BindGroup::MTLRenderStageCompute && resource.mtlResources.size())
-            [computeCommandEncoder() useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage];
+            [computeCommandEncoder() useResources:&borrow(resource.mtlResources)[0] count:resource.mtlResources.size() usage:resource.usage];
 
         ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
         resourceList.append(&resource);

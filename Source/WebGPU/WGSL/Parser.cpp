@@ -30,6 +30,7 @@
 #include "Lexer.h"
 #include "ParserPrivate.h"
 #include "WGSLShaderModule.h"
+#include <wtf/Borrow.h>
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
 #include <wtf/SetForScope.h>
@@ -377,7 +378,7 @@ template<typename Lexer>
 void Parser<Lexer>::consume()
 {
     do {
-        m_current = m_tokens[++m_currentTokenIndex];
+        m_current = borrow(m_tokens)[++m_currentTokenIndex];
         m_currentPosition = SourcePosition { m_current.span.line, m_current.span.lineOffset, m_current.span.offset };
     } while (m_current.type == TokenType::Placeholder);
 }
