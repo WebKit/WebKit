@@ -973,7 +973,7 @@ BidiScriptAgent::ParsedStackTrace BidiScriptAgent::parseStackTrace(const String&
         return ParsedLocation { location.left(secondLastColon), *parsedLine - 1, *parsedCol - 1 };
     };
 
-    auto lines = stackTraceString.split(u'\n');
+    const auto lines = stackTraceString.split(u'\n');
     for (auto& line : lines) {
         String trimmed = line.trim(deprecatedIsSpaceOrNewline);
         if (trimmed.isEmpty())

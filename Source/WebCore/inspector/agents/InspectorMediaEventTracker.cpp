@@ -40,6 +40,7 @@
 #include "LocalFrame.h"
 #include "Node.h"
 #include "VideoPlaybackQuality.h"
+#include <wtf/Borrow.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -182,11 +183,15 @@ void InspectorMediaEventTracker::handleEvent(Event& event)
 
 void InspectorMediaEventTracker::mediaMetricsTimerFired()
 {
-    Vector<Ref<HTMLMediaElement>> mediaElements;
-    for (Ref node : m_instrumentedNodes) {
-        if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(node))
-            mediaElements.append(mediaElement.releaseNonNull());
-    }
+    const Vector<Ref<HTMLMediaElement>> mediaElements = [&] {
+        Vector<Ref<HTMLMediaElement>> mediaElements;
+        for (Ref node : m_instrumentedNodes) {
+            if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(node))
+                mediaElements.append(mediaElement.releaseNonNull());
+        }
+        return mediaElements;
+    }();
+
 
     if (mediaElements.isEmpty()) {
         m_mediaMetricsTimer.stop();
