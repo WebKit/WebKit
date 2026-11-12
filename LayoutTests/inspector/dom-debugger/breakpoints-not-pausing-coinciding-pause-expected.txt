@@ -1,0 +1,38 @@
+Tests that a step or a pause that coincides with a breakpoint that matches but does not pause is not reported with the reason of that breakpoint.
+
+
+== Running test suite: DOMDebugger.BreakpointsNotPausingCoincidingPause
+-- Running test case: DOMDebugger.BreakpointsNotPausingCoincidingPause.Listener.StepInto
+Adding "listener:click" Event Breakpoint...
+Stepping over debugger statement...
+Stepping into click...
+PASS: Should pause in triggerBreakpoint.
+PASS: Pause reason should be other.
+PASS: Pause should not have data.
+-- Running test teardown.
+
+-- Running test case: DOMDebugger.BreakpointsNotPausingCoincidingPause.Listener.PauseOnNextStatement
+Adding "listener:click" Event Breakpoint...
+Pausing and firing "click" on body from an internal world...
+PASS: Should pause in triggerBreakpoint.
+PASS: Pause reason should be pause-on-next-statement.
+PASS: Pause should not have data.
+-- Running test teardown.
+
+-- Running test case: DOMDebugger.BreakpointsNotPausingCoincidingPause.Listener.StepOverAwait
+Adding "listener:click" Event Breakpoint...
+Stepping over debugger statement...
+Stepping over click...
+Stepping over await...
+PASS: Pause reason should be debugger-statement.
+PASS: Pause should not have data.
+-- Running test teardown.
+
+-- Running test case: DOMDebugger.BreakpointsNotPausingCoincidingPause.URL.InternalProgram
+Adding "text:dataDOM" URL Breakpoint...
+Pausing and requesting "resources/dataDOM.json" from a program of an internal world...
+PASS: Should pause in pageMessage.
+PASS: Pause reason should be pause-on-next-statement.
+PASS: Pause should not have data.
+-- Running test teardown.
+
