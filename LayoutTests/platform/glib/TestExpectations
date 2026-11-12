@@ -2239,6 +2239,7 @@ webkit.org/b/330949 http/tests/IndexedDB/transaction-commit-pending-requests-sto
 
 webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-002.html [ Failure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-1.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/transform.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/212080 mathml/presentation/href-enter.html [ ImageOnlyFailure ]
 webkit.org/b/212080 mathml/presentation/href-style.html [ ImageOnlyFailure ]
@@ -3839,6 +3840,7 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/grouped
 
 # Customizable select feature.
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-unfocusable.html [ Skip ]
+webkit.org/b/331267 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/border-rendering.html [ ImageOnlyFailure Pass ]
 
 
 # Crashes with STDERR: SHOULD NEVER BE REACHED in UIScriptContext/UIScriptController.h

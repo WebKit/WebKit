@@ -1225,3 +1225,5 @@ webkit.org/b/329972 [ arm64 ] media/modern-media-controls/scrubber-support/scrub
 webkit.org/b/310411 [ arm64 ] fast/events/site-isolation/event-timing-back-forward-cache-duration.html [ Pass Failure ]
 webkit.org/b/330312 [ arm64 ] accessibility/accessible-name-chain-depth-no-crash.html [ Timeout Pass ]
 webkit.org/b/330315 [ arm64 ] imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html [ Crash Pass ]
+
+webkit.org/b/331268 [ arm64 ] http/tests/workers/service/fetch-timeout-after-cancel.html [ Pass Timeout ]
