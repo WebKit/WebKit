@@ -2090,6 +2090,9 @@ public:
     void didChooseFilesForOpenPanel(const Vector<String>& fileURLs, const Vector<String>& allowedMIMETypes);
     void didCancelForOpenPanel();
 
+    void allowFilesAccessFromWebProcess(WebProcessProxy&, const Vector<String>& paths, CompletionHandler<void()>&&);
+    void grantReadAccessToFiles(WebProcessProxy&, const Vector<String>& paths, ASCIILiteral logLabel);
+
     WebPageCreationParameters creationParameters(WebProcessProxy&, DrawingAreaProxy&, WebCore::FrameIdentifier mainFrameIdentifier, std::optional<RemotePageParameters>&&, bool isProcessSwap = false);
     WebPageCreationParameters creationParametersForProvisionalPage(WebProcessProxy&, DrawingAreaProxy&, WebCore::FrameIdentifier mainFrameIdentifier);
     WebPageCreationParameters creationParametersForRemotePage(WebProcessProxy&, DrawingAreaProxy&, RemotePageParameters&&);

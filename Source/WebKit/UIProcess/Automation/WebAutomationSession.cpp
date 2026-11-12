@@ -525,6 +525,20 @@ bool WebAutomationSession::isValidUserContext(const String& userContextID) const
 {
     return m_bidiProcessor->browserAgent().isValidUserContext(userContextID);
 }
+
+std::expected<String, AutomationCommandError> WebAutomationSession::nodeHandleForSharedReference(const JSON::Object& sharedReference) const
+{
+    // https://w3c.github.io/webdriver-bidi/#type-script-SharedReference
+    RefPtr sharedId = sharedReference.getValue("sharedId"_s);
+    if (!sharedId || sharedId->type() != JSON::Value::Type::String)
+        return makeUnexpected(AUTOMATION_COMMAND_ERROR_WITH_NAME_AND_MESSAGE(InvalidParameter, "The 'sharedId' parameter must be a string"_s));
+
+    RefPtr handle = sharedReference.getValue("handle"_s);
+    if (handle && handle->type() != JSON::Value::Type::String)
+        return makeUnexpected(AUTOMATION_COMMAND_ERROR_WITH_NAME_AND_MESSAGE(InvalidParameter, "The 'handle' parameter must be a string"_s));
+
+    return sharedId->asString();
+}
 #endif
 
 // Platform-independent Commands.
@@ -2508,6 +2522,46 @@ void WebAutomationSession::setFilesForInputFileUpload(const Inspector::Protocol:
 
     page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::SetFilesForInputFileUpload(page->webPageIDInProcessForFrame(frameID), frameID, nodeHandle, WTF::move(newFileList)), WTF::move(completionHandler));
 }
+
+#if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSession::setFilesForBidi(const String& pageHandle, const String& frameHandle, const String& nodeHandle, Vector<String>&& paths, AutomationCompletionHandler&& callback)
+{
+    RefPtr page = webPageProxyForHandle(pageHandle);
+    if (!page) {
+        callback(AUTOMATION_COMMAND_ERROR_WITH_NAME(FrameNotFound));
+        return;
+    }
+
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    if (frameNotFound) {
+        callback(AUTOMATION_COMMAND_ERROR_WITH_NAME(FrameNotFound));
+        return;
+    }
+
+    Ref process = page->processContainingFrame(frameID);
+    page->allowFilesAccessFromWebProcess(process, paths, [weakPage = WeakPtr { *page }, process, frameID, nodeHandle, paths, callback = WTF::move(callback)] mutable {
+        RefPtr page = weakPage;
+        if (!page || page->isClosed()) {
+            callback(AUTOMATION_COMMAND_ERROR_WITH_NAME(FrameNotFound));
+            return;
+        }
+
+        page->grantReadAccessToFiles(process, paths, "WebAutomationSession::setFilesForBidi"_s);
+
+        CompletionHandler<void(std::optional<String>&&)> completionHandler = [callback = WTF::move(callback)](std::optional<String>&& optionalError) mutable {
+            if (optionalError) {
+                callback(AUTOMATION_COMMAND_ERROR_WITH_MESSAGE(*optionalError));
+                return;
+            }
+
+            callback(std::nullopt);
+        };
+
+        page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::SetFilesForBidi(page->webPageIDInProcessForFrame(frameID), frameID, nodeHandle, WTF::move(paths)), WTF::move(completionHandler));
+    });
+}
+#endif
 
 NODELETE static inline Inspector::Protocol::Automation::CookieSameSitePolicy toProtocolSameSitePolicy(WebCore::Cookie::SameSitePolicy policy)
 {

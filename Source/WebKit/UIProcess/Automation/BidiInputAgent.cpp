@@ -980,10 +980,32 @@ void BidiInputAgent::releaseActions(const String& context, CommandCallback<void>
 #endif
 }
 
-void BidiInputAgent::setFiles(const String&, Ref<JSON::Object>&&, Ref<JSON::Array>&&, CommandCallback<void>&& callback)
+void BidiInputAgent::setFiles(const String& context, Ref<JSON::Object>&& element, Ref<JSON::Array>&& files, CommandCallback<void>&& callback)
 {
-    // FIXME: Implement input.setFiles (https://webkit.org/b/287926).
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
+    RefPtr session = m_session;
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
+
+    auto handles = session->extractBrowsingContextHandles(context);
+    ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
+    auto& [pageHandle, frameHandle] = handles.value();
+
+    auto nodeHandle = session->nodeHandleForSharedReference(element.get());
+    ASYNC_FAIL_IF_UNEXPECTED_RESULT(nodeHandle);
+
+    Vector<String> paths;
+    for (auto& value : files.get()) {
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(value->type() != JSON::Value::Type::String, InvalidParameter, "'files' must be an array of strings"_s);
+        auto path = value->asString();
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(path.isEmpty(), NotImplemented, "'files' must not contain an empty path"_s);
+        paths.append(WTF::move(path));
+    }
+
+    session->setFilesForBidi(pageHandle, frameHandle, *nodeHandle, WTF::move(paths), [callback = WTF::move(callback)](std::optional<AutomationCommandError> error) mutable {
+        if (error)
+            callback(makeUnexpected(error->toProtocolString()));
+        else
+            callback({ });
+    });
 }
 
 } // namespace WebKit

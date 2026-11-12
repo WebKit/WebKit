@@ -497,6 +497,33 @@ std::expected<Ref<WebCore::Element>, String> WebAutomationSessionProxy::elementF
     return Ref { elementWrapper->wrapped() };
 }
 
+RefPtr<WebCore::Node> WebAutomationSessionProxy::nodeForNodeHandle(WebFrame& frame, const String& nodeHandle)
+{
+    JSGlobalContextRef context = frame.jsContext();
+    auto* scriptObject = this->scriptObject(context);
+    if (!scriptObject)
+        return nullptr;
+
+    JSValueRef functionArguments[] = {
+        toJSValue(context, nodeHandle)
+    };
+    JSValueRef exception = nullptr;
+
+    JSValueRef result = callPropertyFunction(context, scriptObject, "nodeForSharedId"_s, std::size(functionArguments), functionArguments, &exception);
+    if (exception)
+        return nullptr;
+
+    JSObjectRef object = JSValueToObject(context, result, nullptr);
+    if (!object)
+        return nullptr;
+
+    auto nodeWrapper = dynamicDowncast<WebCore::JSNode>(toJS(object));
+    if (!nodeWrapper)
+        return nullptr;
+
+    return &nodeWrapper->wrapped();
+}
+
 WebCore::AccessibilityObject* WebAutomationSessionProxy::getAccessibilityObjectForNode(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, String& errorType)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);
@@ -1225,6 +1252,45 @@ void WebAutomationSessionProxy::setFilesForInputFileUpload(WebCore::PageIdentifi
             fileObjects.appendVector(files->files());
     }
     fileObjects.appendContainerWithMapping(filenames, [&](auto& path) {
+        return WebCore::File::create(protect(inputElement->document()).ptr(), path);
+    });
+    inputElement->setFiles(WebCore::FileList::create(WTF::move(fileObjects)));
+
+    completionHandler(std::nullopt);
+}
+
+void WebAutomationSessionProxy::setFilesForBidi(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, Vector<String>&& paths, CompletionHandler<void(std::optional<String>)>&& completionHandler)
+{
+    // https://w3c.github.io/webdriver-bidi/#command-input-setFiles
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    if (!page) {
+        completionHandler(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
+        return;
+    }
+
+    RefPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
+    RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
+    if (!coreLocalFrame || !coreLocalFrame->view()) {
+        completionHandler(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
+        return;
+    }
+
+    RefPtr node = nodeForNodeHandle(*frame, nodeHandle);
+    if (!node) {
+        completionHandler(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound));
+        return;
+    }
+    if (!is<WebCore::Element>(*node)) {
+        completionHandler(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeIsNotAnElement));
+        return;
+    }
+    RefPtr inputElement = dynamicDowncast<WebCore::HTMLInputElement>(*node);
+    if (!inputElement || !inputElement->isFileUpload() || inputElement->isDisabledFormControl() || (paths.size() > 1 && !inputElement->multiple())) {
+        completionHandler(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::UnableToSetFileInput));
+        return;
+    }
+
+    Vector<Ref<WebCore::File>> fileObjects = paths.map([&](auto& path) {
         return WebCore::File::create(protect(inputElement->document()).ptr(), path);
     });
     inputElement->setFiles(WebCore::FileList::create(WTF::move(fileObjects)));
