@@ -61,6 +61,9 @@ public:
         // The border box block size -webkit-fill-available gives the box: the available block size of the containing block
         // (RenderBox::availableLogicalHeight), not the size of the inset-modified containing block.
         std::optional<LayoutUnit> fillAvailableBlockSize { };
+        // Where a fixed positioned box with a default anchor that overflows the layout viewport, its containing block in the view, can stay
+        // instead, relative to it: as far as scrolling the view reaches (PositionedLayoutConstraints::resolveAlignmentShift).
+        std::optional<LayoutRect> fixedPositionOverflowArea { };
     };
     // Where the margin box would start with position: static (CSS 2.2 §10.3.7, §10.6.4), relative to the padding box of the containing
     // block, in its direction. It is where the margin box would end in an axis where the static-position containing block's start is the

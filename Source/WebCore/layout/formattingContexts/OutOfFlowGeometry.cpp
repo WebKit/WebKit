@@ -185,8 +185,8 @@ bool OutOfFlowGeometry::alignmentAppliesStretch(Axis axis) const
 
 // Where self-alignment puts the margin box in the inset-modified containing block. anchor-center centers it on the default anchor, inside the
 // inset-modified containing block unless that overflows. Unless the alignment is unsafe, a margin box that overflows the inset-modified
-// containing block stays inside the containing block where it can, at the start side last, except past the end sides of a scroll container
-// (css-align-3 §4.4, css-anchor-position-1 §3.3, PositionedLayoutConstraints::resolveAlignmentShift).
+// containing block stays inside the containing block where it can, or inside the area a fixed positioned box can scroll to, at the start side
+// last, except past the end sides of a scroll container (css-align-3 §4.4, css-anchor-position-1 §3.3, PositionedLayoutConstraints::resolveAlignmentShift).
 LayoutUnit OutOfFlowGeometry::alignmentOffset(Axis axis, const AxisValues& values, LayoutUnit rangeStart, LayoutUnit rangeEnd, LayoutUnit freeSpace) const
 {
     auto& alignment = values.selfAlignment;
@@ -204,11 +204,16 @@ LayoutUnit OutOfFlowGeometry::alignmentOffset(Axis axis, const AxisValues& value
     }();
     if (freeSpace >= 0 || alignment.isNormal() || alignment.overflow() == OverflowAlignment::Unsafe)
         return offset;
-    auto containingBlockSize = axis == Axis::Inline ? m_containingBlock.inlineSize : m_containingBlock.blockSize;
-    auto spaceAtEnd = std::max(0_lu, containingBlockSize - rangeEnd) + freeSpace - offset;
+    auto areaStart = 0_lu;
+    auto areaEnd = axis == Axis::Inline ? m_containingBlock.inlineSize : m_containingBlock.blockSize;
+    if (auto& overflowArea = m_containingBlock.fixedPositionOverflowArea; overflowArea && m_defaultAnchor && alignment.overflow() == OverflowAlignment::Default) {
+        areaStart = axis == Axis::Inline ? overflowArea->x() : overflowArea->y();
+        areaEnd = axis == Axis::Inline ? overflowArea->maxX() : overflowArea->maxY();
+    }
+    auto spaceAtEnd = std::max(0_lu, areaEnd - rangeEnd) + freeSpace - offset;
     if (spaceAtEnd < 0 && !m_containingBlock.isScrollContainer)
         offset += spaceAtEnd;
-    auto spaceAtStart = std::max(0_lu, rangeStart) + offset;
+    auto spaceAtStart = std::max(0_lu, rangeStart - areaStart) + offset;
     if (spaceAtStart < 0)
         offset -= spaceAtStart;
     return offset;

@@ -400,7 +400,8 @@ Layout::BoxGeometry BlockIntegrationUtils::rootGeometry(const RenderBlockFlow& r
     // line-over side (BoxGeometryUpdater::verticalLogicalMargin).
     CheckedRef style = root.style();
     auto writingMode = root.writingMode();
-    auto containingBlockInlineSize = root.containingBlockLogicalWidthForContent();
+    // The view has no containing block, nor margins.
+    auto containingBlockInlineSize = root.isRenderView() ? 0_lu : root.containingBlockLogicalWidthForContent();
     auto margin = [&](auto& margin) {
         return margin.isAuto() ? 0_lu : Style::evaluateMinimum<LayoutUnit>(margin, containingBlockInlineSize, style->usedZoomForLength());
     };

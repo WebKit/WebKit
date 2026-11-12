@@ -84,6 +84,9 @@ static std::optional<LayoutUnit> contentBoxBlockSizeForPercentages(const RenderB
     auto isPerpendicular = [&](const RenderBlock& containingBlock) {
         return rootRenderer.isHorizontalWritingMode() != containingBlock.isHorizontalWritingMode();
     };
+    // An auto-sized view has no definite block size: its percentages behave as auto (RenderBox::computePercentageLogicalHeight).
+    if (is<RenderView>(rootRenderer) && rootRenderer.view().frameView().isAutoSizeEnabled())
+        return { };
     if (!rootRenderer.skipContainingBlockForPercentHeightCalculation(rootRenderer, false))
         return rootRenderer.availableLogicalHeightForPercentageComputation();
     CheckedPtr<const RenderBox> containingBlockChild = &rootRenderer;
@@ -550,6 +553,22 @@ static std::optional<LayoutRect> scrollableContainingBlock(const RenderBlock& co
     return LayoutRect { inlineStart, rect.y() - paddingBox.y(), rect.width(), rect.height() };
 }
 
+// The layout viewport and the scrollable overflow of the view, moved by how far the view is scrolled (PositionedLayoutConstraints::expandToScrollableArea),
+// relative to the layout viewport.
+static LayoutRect fixedPositionOverflowArea(const RenderView& renderView, const Layout::OutOfFlowContainingBlock& layoutViewport)
+{
+    auto writingMode = renderView.writingMode();
+    auto area = renderView.scrollablePaddingAreaOverflowRect();
+    area.uniteEvenIfEmpty(writingMode.isHorizontal() ? LayoutRect { 0_lu, 0_lu, layoutViewport.inlineSize, layoutViewport.blockSize } : LayoutRect { 0_lu, 0_lu, layoutViewport.blockSize, layoutViewport.inlineSize });
+    CheckedRef frameView = renderView.frameView();
+    area.moveBy(-frameView->constrainedScrollPosition(ScrollPosition(frameView->scrollPositionRespectingCustomFixedPosition())));
+    if (!writingMode.isHorizontal())
+        area = area.transposedRect();
+    if (!writingMode.isLogicalLeftInlineStart())
+        area.setX(layoutViewport.inlineSize - area.maxX());
+    return area;
+}
+
 // Like RenderBlock::layoutOutOfFlowBoxes once the containing block has its size: the out-of-flow boxes BlockLayout::updateRenderers registered
 // on it (RenderBlock::outOfFlowBoxes()).
 void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, PaintInvalidation& paintInvalidation)
@@ -595,8 +614,10 @@ void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, Paint
     for (CheckedRef outOfFlowBox : *outOfFlowBoxes) {
         // Like RenderElement::layoutIfNeeded, which captures how far scrolling between an anchor-positioned box and its default anchor moves
         // it when it lays the box out. Capturing again compares with the previous capture, which tells style resolution to resolve anchor()
-        // and position-visibility again.
-        auto capturesScrollSnapshots = outOfFlowBox->needsLayout() && Style::AnchorPositionEvaluator::isAnchorPositioned(outOfFlowBox->style());
+        // and position-visibility again. The block formatting context places a box that position-area or anchor-center positions again also
+        // when it does not need layout, from where its default anchor is now, which the capture has to follow.
+        CheckedRef outOfFlowBoxStyle = outOfFlowBox->style();
+        auto capturesScrollSnapshots = Style::AnchorPositionEvaluator::isAnchorPositioned(outOfFlowBoxStyle) && (outOfFlowBox->needsLayout() || Style::AnchorPositionEvaluator::isLayoutTimeAnchorPositioned(outOfFlowBoxStyle));
         auto outOfFlowContainingBlock = paddingBoxContainingBlock;
         auto boxStaticPosition = staticPosition(outOfFlowBox, containingBlock);
         auto boxDefaultAnchor = defaultAnchor(outOfFlowBox, containingBlock);
@@ -611,6 +632,24 @@ void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, Paint
                 boxDefaultAnchor->inlineStart -= inlineOffset;
                 boxDefaultAnchor->blockStart -= blockOffset;
             }
+        }
+        // The view is the initial containing block of the absolutely positioned boxes it contains, which can overflow it where it scrolls
+        // (PositionedLayoutConstraints::containerAllowsInfiniteOverflow), and gives the fixed positioned ones the layout viewport
+        // (RenderBox::containingBlockRangeForPositioned), from its left (top in vertical writing modes).
+        if (CheckedPtr renderView = dynamicDowncast<RenderView>(containingBlock)) {
+            if (outOfFlowBox->isFixedPositioned()) {
+                outOfFlowContainingBlock.inlineSize = renderView->clientLogicalWidthForFixedPosition();
+                outOfFlowContainingBlock.blockSize = renderView->clientLogicalHeightForFixedPosition();
+                if (!writingMode.isLogicalLeftInlineStart()) {
+                    outOfFlowContainingBlock.inlineStart = renderView->logicalWidth() - outOfFlowContainingBlock.inlineSize;
+                    boxStaticPosition.inlinePosition -= outOfFlowContainingBlock.inlineStart;
+                    if (boxDefaultAnchor)
+                        boxDefaultAnchor->inlineStart -= outOfFlowContainingBlock.inlineStart;
+                }
+                if (boxDefaultAnchor && renderView->hasRenderOverflow())
+                    outOfFlowContainingBlock.fixedPositionOverflowArea = fixedPositionOverflowArea(*renderView, outOfFlowContainingBlock);
+            } else
+                outOfFlowContainingBlock.isScrollContainer = true;
         }
         // What -webkit-fill-available resolves to in the block axis: the available block size of the containing block, which is not the
         // inset-modified containing block (RenderBox::computeSizingKeywordLogicalContentHeightUsing).

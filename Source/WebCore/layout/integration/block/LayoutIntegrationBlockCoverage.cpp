@@ -55,7 +55,6 @@ namespace LayoutIntegration {
 enum class BlockAvoidanceReason : uint8_t {
     BlockFormattingContextIntegrationDisabled,
     NotABlockFormattingContextRoot,
-    RootIsRenderView,
     RootHasListMarker,
     RootIsMultiColumnFlow,
     RootHasUnsupportedRenderer,
@@ -97,12 +96,10 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
 {
     if (!rootContainer.document().settings().blockFormattingContextIntegrationEnabled())
         return BlockAvoidanceReason::BlockFormattingContextIntegrationDisabled;
-    if (!rootContainer.createsNewFormattingContext())
+    // The view is the initial containing block, which the root element and the out-of-flow boxes it contains are laid out in (CSS 2.2 §10.1).
+    if (!rootContainer.createsNewFormattingContext() && !rootContainer.isRenderView())
         return BlockAvoidanceReason::NotABlockFormattingContextRoot;
-    // Not RenderView, list items with a marker, table captions, multi-column flows or form controls, which lay out their content their
-    // own way.
-    if (rootContainer.isRenderView())
-        return BlockAvoidanceReason::RootIsRenderView;
+    // Not list items with a marker or multi-column flows, which lay out their content their own way.
     if (hasListMarker(rootContainer))
         return BlockAvoidanceReason::RootHasListMarker;
     if (rootContainer.isRenderMultiColumnFlow())
@@ -112,6 +109,7 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     // caption, a file input and an SVG foreignObject only size and place themselves their own way.
     auto isSupportedRenderer = [&] {
         switch (rootContainer.type()) {
+        case RenderObject::Type::View:
         case RenderObject::Type::BlockFlow:
         case RenderObject::Type::ListItem:
         case RenderObject::Type::TableCell:
@@ -787,7 +785,7 @@ CheckedPtr<RenderBlockFlow> coveredBlockFormattingContextRoot(RenderBlock& block
         CheckedPtr ancestorBlockContainer = dynamicDowncast<RenderBlockFlow>(*ancestor);
         if (!ancestorBlockContainer)
             return nullptr;
-        if (!ancestorBlockContainer->createsNewFormattingContext())
+        if (!ancestorBlockContainer->createsNewFormattingContext() && !ancestorBlockContainer->isRenderView())
             continue;
         if (canUseForBlockLayout(*ancestorBlockContainer))
             return ancestorBlockContainer;
@@ -811,8 +809,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "disabled"_s;
     case BlockAvoidanceReason::NotABlockFormattingContextRoot:
         return "not a root"_s;
-    case BlockAvoidanceReason::RootIsRenderView:
-        return "root: render view"_s;
     case BlockAvoidanceReason::RootHasListMarker:
         return "root: list item with a marker"_s;
     case BlockAvoidanceReason::RootIsMultiColumnFlow:
@@ -902,8 +898,7 @@ BlockLayoutCoverage computeBlockLayoutCoverage(const RenderView& renderView)
         auto [renderer, blockFormattingContext] = renderersToVisit.takeLast();
         auto& avoidanceReason = blockFormattingContext.avoidanceReason;
         for (CheckedRef child : childrenOfType<RenderElement>(renderer)) {
-            // The view places the document element itself (RenderView::layout), in no block formatting context.
-            if (is<RenderBlockFlow>(renderer) && !is<RenderView>(renderer) && is<RenderBox>(child) && !child->isInline()) {
+            if (is<RenderBlockFlow>(renderer) && is<RenderBox>(child) && !child->isInline()) {
                 ++coverage.boxes;
                 if (!avoidanceReason)
                     ++coverage.coveredBoxes;

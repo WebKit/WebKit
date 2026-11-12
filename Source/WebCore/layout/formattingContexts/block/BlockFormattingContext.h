@@ -99,6 +99,7 @@ struct OutOfFlowContainingBlock {
     LayoutUnit blockSize;
     std::optional<LayoutRect> scrollableContainingBlock { };
     std::optional<LayoutUnit> fillAvailableBlockSize { };
+    std::optional<LayoutRect> fixedPositionOverflowArea { };
 };
 
 // A block-level box in the inline content of a block container (CSS 2.2 §9.2.1.1), which the block formatting context lays out when the
@@ -169,7 +170,7 @@ private:
     std::optional<LayoutUnit> stretchFitBorderBoxBlockSize(const RenderBox&, const BoxGeometry&, const ContainingBlockState&) const;
     LayoutUnit orthogonalFlowAvailableInlineSpace(const ContainingBlockState&) const;
     void computeBlockSize(const RenderBox&, LayoutUnit intrinsicContentBlockSize, const ContainingBlockState&, BoxGeometry&) const;
-    LayoutUnit viewportStretchedBorderBoxBlockSize(LayoutUnit collapsedMarginBefore, LayoutUnit collapsedMarginAfter) const;
+    LayoutUnit viewportStretchedBorderBoxBlockSize(LayoutUnit collapsedMarginBefore, LayoutUnit collapsedMarginAfter, const ContainingBlockState&) const;
     void placeInContainingBlock(const RenderBox&, ContainingBlockState&& blockContainerState, BlockLayoutResult&);
     BlockLayoutResult layoutContent(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry);
     struct BorderBoxLogicalTops {

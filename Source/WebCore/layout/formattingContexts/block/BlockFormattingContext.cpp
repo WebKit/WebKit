@@ -387,7 +387,7 @@ void BlockFormattingContext::handleBlockContainerEnd(const RenderBox& blockConta
             // Quirks mode: an empty body still stretches to the viewport (RenderBlock::isSelfCollapsingBlock checks the height it gets).
             auto margins = m_blockLayoutState.marginCollapse().adjoiningMargins();
             margins.add(blockContainerState.geometry.marginAfter());
-            if (viewportStretchedBorderBoxBlockSize(blockContainerState.margins.collapsedMarginsBefore().collapsedValue(), margins.collapsedValue()) > 0)
+            if (viewportStretchedBorderBoxBlockSize(blockContainerState.margins.collapsedMarginsBefore().collapsedValue(), margins.collapsedValue(), containingBlockState) > 0)
                 return false;
         }
         return BlockMarginCollapse::marginsCollapseThrough(blockContainer, blockContainerState.geometry, percentageBasis(blockContainer, containingBlockState), stretchFitBorderBoxBlockSize(blockContainer, blockContainerState.geometry, containingBlockState), root().writingMode());
@@ -1371,7 +1371,7 @@ void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayou
 BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext(const RenderBox& root, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition, const std::optional<OutOfFlowGeometry::DefaultAnchor>& defaultAnchor)
 {
     auto geometry = computeBorderAndPadding(root, containingBlock.inlineSize);
-    auto outOfFlowGeometry = OutOfFlowGeometry { root, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.writingMode, containingBlock.isScrollContainer, containingBlock.scrollableContainingBlock, containingBlock.fillAvailableBlockSize }, staticPosition, defaultAnchor, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
+    auto outOfFlowGeometry = OutOfFlowGeometry { root, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.writingMode, containingBlock.isScrollContainer, containingBlock.scrollableContainingBlock, containingBlock.fillAvailableBlockSize, containingBlock.fixedPositionOverflowArea }, staticPosition, defaultAnchor, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
     auto [inlineAxis, blockAxis] = [&] -> std::pair<OutOfFlowGeometry::AxisGeometry, OutOfFlowGeometry::AxisGeometry> {
         // A replaced element from its natural size and aspect ratio (CSS 2.2 §10.3.8, §10.6.5), and a table from its columns, which do not
         // stretch it (css-position-3 §4.3, RenderTable::updateLogicalWidth).
@@ -1426,7 +1426,7 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
     CheckedRef box = downcast<RenderBlockFlow>(outOfFlowBox);
     // In the box's own writing mode, which its content is laid out in.
     auto geometry = computeBorderAndPadding(box, containingBlock.inlineSize);
-    auto outOfFlowGeometry = OutOfFlowGeometry { box, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.writingMode, containingBlock.isScrollContainer, containingBlock.scrollableContainingBlock, containingBlock.fillAvailableBlockSize }, staticPosition, defaultAnchor, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
+    auto outOfFlowGeometry = OutOfFlowGeometry { box, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.writingMode, containingBlock.isScrollContainer, containingBlock.scrollableContainingBlock, containingBlock.fillAvailableBlockSize, containingBlock.fixedPositionOverflowArea }, staticPosition, defaultAnchor, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
 
     // The box establishes an independent formatting context for its content, a block formatting context with a block layout state of its own,
     // in the box's writing mode, with the last formatted lines of the boxes with trim-end in it.
@@ -2007,11 +2007,14 @@ LayoutUnit BlockFormattingContext::orthogonalFlowAvailableInlineSpace(const Cont
     return std::min(availableBlockSize, initialContainingBlockSize);
 }
 
-LayoutUnit BlockFormattingContext::viewportStretchedBorderBoxBlockSize(LayoutUnit collapsedMarginBefore, LayoutUnit collapsedMarginAfter) const
+// Quirks mode: the root element and the body stretch to the viewport less their margins and the margins, borders and padding of their containing
+// block, the view, which has none, or the root element (RenderBox::computeLogicalHeight). Those of the root element are in its geometry before
+// its renderer has them.
+LayoutUnit BlockFormattingContext::viewportStretchedBorderBoxBlockSize(LayoutUnit collapsedMarginBefore, LayoutUnit collapsedMarginAfter, const ContainingBlockState& containingBlockState) const
 {
-    auto& html = root();
-    auto spaceAround = collapsedMarginBefore + collapsedMarginAfter + html.marginBefore(html.writingMode()) + html.marginAfter(html.writingMode()) + html.borderAndPaddingLogicalHeight();
-    CheckedRef view = html.view();
+    auto& containingBlock = containingBlockState.geometry;
+    auto spaceAround = collapsedMarginBefore + collapsedMarginAfter + containingBlock.marginBefore() + containingBlock.marginAfter() + containingBlock.verticalBorderAndPadding();
+    CheckedRef view = root().view();
     return view->pageOrViewLogicalHeight() - spaceAround;
 }
 
@@ -2123,7 +2126,7 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
             margins.add(geometry.marginAfter());
             collapsedMarginAfter = margins.collapsedValue();
         }
-        geometry.setContentBoxHeight(std::max(geometry.contentBoxHeight(), viewportStretchedBorderBoxBlockSize(collapsedMarginsBefore.collapsedValue(), collapsedMarginAfter) - geometry.verticalBorderAndPadding()));
+        geometry.setContentBoxHeight(std::max(geometry.contentBoxHeight(), viewportStretchedBorderBoxBlockSize(collapsedMarginsBefore.collapsedValue(), collapsedMarginAfter, containingBlockState) - geometry.verticalBorderAndPadding()));
     }
 
     // WebKit compatibility (RenderBlockFlow::layoutBlock): the block-end margin still collapses with the last child's when min-height is
