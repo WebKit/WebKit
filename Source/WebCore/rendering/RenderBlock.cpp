@@ -2079,21 +2079,6 @@ NODELETE static inline bool isChildHitTestCandidate(const RenderBox& box, HitTes
     return box.borderBoxHeight() && isVisible && !box.isOutOfFlowPositioned() && !box.isRenderFragmentedFlow();
 }
 
-// Valid candidates in a FragmentedFlow must be rendered by the fragment.
-static inline bool isChildHitTestCandidate(const RenderBox& box, const RenderFragmentContainer* fragment, const LayoutPoint& point, HitTestSource source)
-{
-    if (!isChildHitTestCandidate(box, source))
-        return false;
-    if (!fragment)
-        return true;
-    auto& block = [&]() -> const RenderBlock& {
-        if (auto* block = dynamicDowncast<RenderBlock>(box))
-            return *block;
-        return *box.containingBlock();
-    }();
-    return block.fragmentAtBlockOffset(point.y()) == fragment;
-}
-
 PositionWithAffinity RenderBlock::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)
 {
     if (isRenderTable())
@@ -2149,10 +2134,22 @@ PositionWithAffinity RenderBlock::positionForPoint(const LayoutPoint& point, Hit
 
     RenderBox* lastCandidateBox = lastChildBox();
 
+    CheckedPtr fragmentAtPoint = fragmentAtBlockOffset(pointInLogicalContents.y());
     if (!fragment)
-        fragment = fragmentAtBlockOffset(pointInLogicalContents.y());
+        fragment = fragmentAtPoint.get();
 
-    while (lastCandidateBox && !isChildHitTestCandidate(*lastCandidateBox, fragment, pointInLogicalContents, source))
+    // Valid candidates in a FragmentedFlow must be rendered by the fragment.
+    auto isChildHitTestCandidateInFragment = [&](const RenderBox& box) {
+        if (!isChildHitTestCandidate(box, source))
+            return false;
+        if (!fragment)
+            return true;
+        if (auto* block = dynamicDowncast<RenderBlock>(box))
+            return block->fragmentAtBlockOffset(pointInLogicalContents.y()) == fragment;
+        return fragmentAtPoint == fragment;
+    };
+
+    while (lastCandidateBox && !isChildHitTestCandidateInFragment(*lastCandidateBox))
         lastCandidateBox = lastCandidateBox->previousSiblingBox();
 
     // Hit testing includes a box's physical top and left edges, which are its block-end edges in vertical-rl and horizontal-bt.
@@ -2163,7 +2160,7 @@ PositionWithAffinity RenderBlock::positionForPoint(const LayoutPoint& point, Hit
             return positionForPointRespectingEditingBoundaries(*this, *lastCandidateBox, pointInContents, source);
 
         for (auto& childBox : childrenOfType<RenderBox>(*this)) {
-            if (!isChildHitTestCandidate(childBox, fragment, pointInLogicalContents, source))
+            if (!isChildHitTestCandidateInFragment(childBox))
                 continue;
             auto childLogicalBottom = logicalTopForChild(childBox) + logicalHeightForChild(childBox);
             if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(childBox))
