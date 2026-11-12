@@ -698,8 +698,8 @@ Error Connection::sendMessageImpl(UniqueRef<Encoder>&& encoder, OptionSet<SendOp
     else if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply))
         encoder->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC);
 
-    auto message = platformCreateOutgoingMessage(WTF::move(encoder));
-    if (!message)
+    auto messages = platformCreateOutgoingMessage(WTF::move(encoder));
+    if (messages.isEmpty())
         return Error::FailedToEncodeMessageArguments;
 
     bool shouldDispatchMessageSend;
@@ -711,13 +711,23 @@ Error Connection::sendMessageImpl(UniqueRef<Encoder>&& encoder, OptionSet<SendOp
     {
         Locker locker { m_sendLock };
 #if PLATFORM(COCOA)
-        if (canSendOnCallingThread(qos) && trySendOnCallingThread(*message))
-            return Error::NoError;
+        // A single message can be sent directly on the calling thread. A burst (a message whose port
+        // descriptors overflowed into preceding continuation messages) must be queued as a unit, so the
+        // receiver sees the continuation messages contiguously before the message they belong to.
+        // Move the lone message out of the vector so trySendOnCallingThread() does not borrow an element,
+        // and put it back for the queued path if it was not sent.
+        if (messages.size() == 1 && canSendOnCallingThread(qos)) {
+            auto message = messages.takeLast();
+            if (trySendOnCallingThread(message))
+                return Error::NoError;
+            messages.append(WTF::move(message));
+        }
 #endif
         if (m_receiverIsGone)
             return Error::InvalidConnection;
         shouldDispatchMessageSend = m_outgoingMessages.isEmpty();
-        m_outgoingMessages.append(WTF::move(*message));
+        for (auto& message : messages)
+            m_outgoingMessages.append(WTF::move(message));
         outgoingMessagesCount = m_outgoingMessages.size();
         shouldNotifyOfQueueGrowingLarge = m_outgoingMessageQueueIsGrowingLargeCallback && outgoingMessagesCount > largeOutgoingMessageQueueCountThreshold && (MonotonicTime::now() - m_lastOutgoingMessageQueueIsGrowingLargeCallbackCallTime) >= largeOutgoingMessageQueueTimeThreshold;
         if (shouldNotifyOfQueueGrowingLarge) {
@@ -1318,6 +1328,11 @@ void Connection::connectionDidClose()
     // The connection is now invalid.
     m_isValid = false;
     platformInvalidate();
+
+#if OS(DARWIN)
+    // Drop any ports from an incomplete continuation-message burst, releasing their send rights.
+    m_bufferedContinuationAttachments.clear();
+#endif
 
     bool hasPendingWaiters = false;
     {

@@ -27,6 +27,7 @@
 
 #if OS(DARWIN)
 
+#include "Attachment.h"
 #include "Encoder.h"
 #include "Timeout.h"
 #include <expected>
@@ -58,10 +59,22 @@ class MachMessage {
 public:
     static constexpr size_t maxAttachmentCount = 16383;
 
+    // The Mach IPC layer restricts how many inline port descriptors a single message from certain
+    // callers may carry (see IPC_KMSG_INLINE_PORT_DESCRIPTOR_LIMIT in XNU). We keep every message
+    // strictly below that limit and split a larger attachment set across preceding continuation
+    // messages. See createPortDescriptorContinuation() and Connection::platformCreateOutgoingMessage().
+    static constexpr size_t maxInlinePortDescriptorsPerMessage = 127;
+
     using SendResult = MachMessageSendResult;
 
     // Returns nullptr if the encoder has more than maxAttachmentCount attachments.
     static std::unique_ptr<MachMessage> create(UniqueRef<Encoder>&&);
+
+    // Builds a bodyless "continuation" message carrying only `attachments` as inline port descriptors
+    // (at most maxInlinePortDescriptorsPerMessage of them). It is sent before the message whose
+    // attachments overflowed the per-message limit; the receiver accumulates these ports and merges
+    // them back in when the following message arrives. Returns nullptr on failure.
+    static std::unique_ptr<MachMessage> createPortDescriptorContinuation(Vector<Attachment>&&);
 
     ~MachMessage();
 
@@ -75,8 +88,17 @@ public:
         Notification,
         InvalidMessage,
         OutOfMemory, // The message could not be received, so it is still in the queue.
+        PortDescriptorContinuation, // A continuation message: its ports were appended to the buffer, call again.
     };
 
+    // Receives one message. A continuation message's ports are appended to `bufferedContinuationAttachments`
+    // and ReceiveResult::PortDescriptorContinuation is returned; the ports buffered so far are merged into
+    // the next ordinary message's Decoder.
+    static std::expected<UniqueRef<Decoder>, ReceiveResult> receiveDecoder(mach_port_t, Vector<Attachment>& bufferedContinuationAttachments, Timeout = Timeout::now());
+
+    // Convenience overload for callers that do not participate in port-descriptor-continuation reassembly
+    // (e.g. unit tests receiving a single message). A continuation message is not expected on such a
+    // caller; if one is received, its ports are dropped.
     static std::expected<UniqueRef<Decoder>, ReceiveResult> receiveDecoder(mach_port_t, Timeout = Timeout::now());
 
     ReceiverName messageReceiverName() const { return receiverName(messageName()); }

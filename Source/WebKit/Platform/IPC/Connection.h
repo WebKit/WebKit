@@ -711,7 +711,7 @@ private:
         ReceiverIsGone, // Receiver is gone; queued messages are dropped and the connection closes.
     };
 
-    static std::optional<OutgoingMessage> platformCreateOutgoingMessage(UniqueRef<Encoder>&&);
+    static Vector<OutgoingMessage> platformCreateOutgoingMessage(UniqueRef<Encoder>&&);
 #if PLATFORM(COCOA)
     PlatformSendResult platformSendOutgoingMessage(OutgoingMessage&) WTF_REQUIRES_LOCK(m_sendLock);
     PlatformSendResult didSendMachMessage(MachMessageSendResult) WTF_REQUIRES_LOCK(m_sendLock);
@@ -947,6 +947,12 @@ private:
 
     mach_port_t m_receivePort { MACH_PORT_NULL };
     OSObjectPtr<dispatch_source_t> m_receiveSource;
+
+    // Ports received in continuation messages (sent when a message's inline port descriptors exceed the
+    // per-message limit), accumulated until the message they belong to arrives. Used only on the
+    // connection queue, in receiveSourceEventHandler(). Cleared in connectionDidClose() so that an
+    // incomplete burst does not leak its send rights.
+    Vector<Attachment> m_bufferedContinuationAttachments;
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
     std::atomic<bool> m_didRequestProcessTermination { false };

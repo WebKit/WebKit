@@ -233,15 +233,58 @@ bool Connection::platformHasMessageInFlight() const
     return false;
 }
 
-auto Connection::platformCreateOutgoingMessage(UniqueRef<Encoder>&& encoder) -> std::optional<OutgoingMessage>
+auto Connection::platformCreateOutgoingMessage(UniqueRef<Encoder>&& encoder) -> Vector<OutgoingMessage>
 {
     auto messageName = encoder->messageName();
+
+    Vector<OutgoingMessage> messages;
+
+    // Reject an over-large attachment set up front, before splitting. MachMessage::create() enforces
+    // this for a single message, but the continuation split below would otherwise only hand it the
+    // (<= per-message limit) remainder, so without this check a sender could expand an arbitrarily
+    // large attachment vector into many continuation messages pushed at the receiver instead of having
+    // the whole message dropped here.
+    if (encoder->attachmentCount() > MachMessage::maxAttachmentCount) {
+        RELEASE_LOG_ERROR(IPC, "platformCreateOutgoingMessage: Dropping message '%" PUBLIC_LOG_STRING "' with more attachments than a mach message can carry", description(messageName).characters());
+        return { };
+    }
+
+    // XNU restricts how many inline port descriptors a single message from certain callers may carry.
+    // If the encoder has more attachments than fit, peel off batches into continuation messages that
+    // are sent first; the remaining attachments (at most the per-message limit) ride on the original
+    // message. The receiving Connection reassembles them in receiveSourceEventHandler().
+    if (encoder->attachmentCount() > MachMessage::maxInlinePortDescriptorsPerMessage) {
+        auto attachments = encoder->releaseAttachments();
+        // SaferCpp borrow checking: indexing the vector (attachments[i]) and passing the element to
+        // append()/addAttachment() is an unguarded loan on a CanBorrow type and is rejected. Instead we
+        // reverse once and consume from the back with takeLast(), which returns by value and so never
+        // hands out a reference into the vector. Reversing first means takeLast() still yields the
+        // attachments in encoding (front-to-back) order, so the batching and ordering are unchanged.
+        attachments.reverse();
+        while (attachments.size() > MachMessage::maxInlinePortDescriptorsPerMessage) {
+            Vector<Attachment> batch;
+            batch.reserveInitialCapacity(MachMessage::maxInlinePortDescriptorsPerMessage);
+            for (size_t i = 0; i < MachMessage::maxInlinePortDescriptorsPerMessage; ++i)
+                batch.append(attachments.takeLast());
+
+            auto continuation = MachMessage::createPortDescriptorContinuation(WTF::move(batch));
+            if (!continuation) {
+                RELEASE_LOG_ERROR(IPC, "platformCreateOutgoingMessage: Dropping message '%" PUBLIC_LOG_STRING "' whose port descriptor continuation could not be built", description(messageName).characters());
+                return { };
+            }
+            messages.append(makeUniqueRefFromNonNullUniquePtr(WTF::move(continuation)));
+        }
+        while (!attachments.isEmpty())
+            encoder->addAttachment(attachments.takeLast());
+    }
+
     auto message = MachMessage::create(WTF::move(encoder));
     if (!message) {
         RELEASE_LOG_ERROR(IPC, "platformCreateOutgoingMessage: Dropping message '%" PUBLIC_LOG_STRING "' with more attachments than a mach message can carry", description(messageName).characters());
-        return std::nullopt;
+        return { };
     }
-    return makeUniqueRefFromNonNullUniquePtr(WTF::move(message));
+    messages.append(makeUniqueRefFromNonNullUniquePtr(WTF::move(message)));
+    return messages;
 }
 
 auto Connection::platformSendOutgoingMessage(OutgoingMessage& message) -> PlatformSendResult
@@ -336,10 +379,11 @@ static bool shouldLogIncomingMessageHandling()
 void Connection::receiveSourceEventHandler()
 {
     ASSERT(MACH_PORT_VALID(m_receivePort));
-    auto received = MachMessage::receiveDecoder(m_receivePort);
+    auto received = MachMessage::receiveDecoder(m_receivePort, m_bufferedContinuationAttachments);
     if (!received) {
         if (received.error() == MachMessage::ReceiveResult::NoSenders)
             connectionDidClose();
+        // A continuation message's ports were buffered; wait for the next message to arrive.
         return;
     }
     UniqueRef<Decoder> decoder = WTF::move(received.value());

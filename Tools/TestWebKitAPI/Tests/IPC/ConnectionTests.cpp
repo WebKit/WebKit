@@ -417,6 +417,102 @@ TEST_P(ConnectionTestABBA, SendMessagesAroundEncoderBufferSizes)
     mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_RECEIVE, -1);
 }
 
+// A message whose inline port descriptor count exceeds MachMessage::maxInlinePortDescriptorsPerMessage
+// is split into continuation messages on send and reassembled on receive. The counts below straddle the
+// 127 boundary and its multiples. Verify every attachment arrives, and in the order it was encoded.
+TEST_P(ConnectionTestABBA, SendMessageWithManyPortDescriptors)
+{
+    ASSERT_TRUE(openBoth());
+
+    Vector<size_t> attachmentCounts { 0, 1, 126, 127, 128, 254, 255, 300, 1000 };
+
+    // Built fully up front so the receive handler, which runs on another thread, only reads it.
+    Vector<mach_port_t> allPorts;
+    Vector<Vector<mach_port_t>> expectedPortsByIndex;
+    Vector<Vector<IPC::Attachment>> attachmentsByIndex;
+    for (auto count : attachmentCounts) {
+        Vector<mach_port_t> names;
+        Vector<IPC::Attachment> attachments;
+        names.reserveInitialCapacity(count);
+        attachments.reserveInitialCapacity(count);
+        for (size_t i = 0; i < count; ++i) {
+            mach_port_t port = MACH_PORT_NULL;
+            ASSERT_EQ(mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &port), KERN_SUCCESS);
+            allPorts.append(port);
+            names.append(port);
+            attachments.append(MachSendRight::createFromReceiveRight(port));
+        }
+        expectedPortsByIndex.append(WTF::move(names));
+        attachmentsByIndex.append(WTF::move(attachments));
+    }
+
+    bClient().setAsyncMessageHandler([&](IPC::Connection&, IPC::Decoder& decoder) -> bool {
+        auto index = decoder.destinationID();
+        if (index >= attachmentCounts.size())
+            return false;
+        SCOPED_TRACE(attachmentCounts[index]);
+        auto data = decoder.decode<std::span<const uint8_t>>();
+        auto attachmentCount = decoder.decode<uint64_t>();
+        EXPECT_TRUE(data && attachmentCount);
+        if (!data || !attachmentCount)
+            return false;
+        EXPECT_EQ(*attachmentCount, attachmentCounts[index]);
+        auto& expected = expectedPortsByIndex[index];
+        for (uint64_t i = 0; i < *attachmentCount; ++i) {
+            auto attachment = decoder.decode<IPC::Attachment>();
+            EXPECT_TRUE(attachment);
+            if (!attachment)
+                return false;
+            EXPECT_EQ(attachment->sendRight(), expected[i]) << "port received out of order at index " << i;
+        }
+        return false; // Record the message.
+    });
+
+    Vector<uint8_t> emptyData;
+    for (size_t i = 0; i < attachmentCounts.size(); ++i) {
+        auto result = a()->send(MockTestMessageWithDataAndAttachments { emptyData.span(), WTF::move(attachmentsByIndex[i]) }, i);
+        EXPECT_TRUE(result == IPC::Error::NoError);
+    }
+    for (size_t i = 0; i < attachmentCounts.size(); ++i) {
+        auto message = bClient().waitForMessage(kDefaultWaitForTimeout);
+        EXPECT_EQ(message.messageName, MockTestMessageWithDataAndAttachments::name());
+        EXPECT_EQ(message.destinationID, i);
+    }
+
+    for (auto port : allPorts)
+        mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_RECEIVE, -1);
+}
+
+// A message requiring continuation messages, followed by an ordinary small message, must not disturb
+// the small message: the receiver's continuation buffer is fully consumed by the first message.
+TEST_P(ConnectionTestABBA, PortDescriptorContinuationFollowedBySmallMessage)
+{
+    ASSERT_TRUE(openBoth());
+
+    constexpr size_t attachmentCount = 200; // > maxInlinePortDescriptorsPerMessage
+    Vector<mach_port_t> ports;
+    Vector<IPC::Attachment> attachments;
+    attachments.reserveInitialCapacity(attachmentCount);
+    for (size_t i = 0; i < attachmentCount; ++i) {
+        mach_port_t port = MACH_PORT_NULL;
+        ASSERT_EQ(mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &port), KERN_SUCCESS);
+        ports.append(port);
+        attachments.append(MachSendRight::createFromReceiveRight(port));
+    }
+
+    Vector<uint8_t> emptyData;
+    EXPECT_TRUE(a()->send(MockTestMessageWithDataAndAttachments { emptyData.span(), WTF::move(attachments) }, 0) == IPC::Error::NoError);
+    EXPECT_EQ(bClient().waitForMessage(kDefaultWaitForTimeout).messageName, MockTestMessageWithDataAndAttachments::name());
+
+    a()->send(MockTestMessage1 { }, 42);
+    auto message = bClient().waitForMessage(kDefaultWaitForTimeout);
+    EXPECT_EQ(message.messageName, MockTestMessage1::name());
+    EXPECT_EQ(message.destinationID, 42u);
+
+    for (auto port : ports)
+        mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_RECEIVE, -1);
+}
+
 // Sends one message at a time while B doesn't receive, until a message can't be sent because B's port is full. That
 // message is parked while the outgoing queue is empty. flushSentMessages() must keep waiting until it has been sent.
 TEST_P(ConnectionTestABBA, FlushSentMessagesWaitsForParkedMessage)
