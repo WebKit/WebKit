@@ -7355,6 +7355,8 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
                 if (RefPtr provisionalMainFrame = provisionalPage->mainFrame())
                     certificateInfo = provisionalMainFrame->provisionalCertificateInfoFromNetworkProcess(currentRequestURL);
             }
+            if (siteIsolationEnabled && &provisionalPage->process() != newProcess.ptr())
+                provisionalPage->navigationWillContinueInAnotherProcess();
         } else
             provisionalPage->cancel(ProvisionalLoadIsReplaced::Yes);
         m_provisionalPage = nullptr;
