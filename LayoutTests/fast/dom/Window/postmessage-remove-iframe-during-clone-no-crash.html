@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests that removing an iframe during postMessage structured cloning does not crash. The structured clone algorithm runs JS getters, which can remove the target iframe mid-serialization.");
+
+jsTestIsAsync = true;
+
+var testQueue = [];
+
+function queueTest(name, fn) {
+    testQueue.push({ name: name, fn: fn });
+}
+
+function runNextTest() {
+    if (!testQueue.length) {
+        finishJSTest();
+        return;
+    }
+    var test = testQueue.shift();
+    debug("");
+    debug("Testing: " + test.name);
+    test.fn(function() {
+        testPassed(test.name + " did not crash.");
+        setTimeout(runNextTest, 0);
+    });
+}
+
+function createIframe(callback) {
+    var iframe = document.createElement("iframe");
+    iframe.onload = function() { callback(iframe); };
+    document.body.appendChild(iframe);
+}
+
+// Approach 1: Object getter removes the target iframe during serialization.
+queueTest("object getter removes iframe", function(done) {
+    createIframe(function(iframe) {
+        var obj = {
+            get a() {
+                iframe.remove();
+                return 1;
+            }
+        };
+        try {
+            iframe.contentWindow.postMessage(obj, "*");
+        } catch(e) { }
+        done();
+    });
+});
+
+// Approach 2: Proxy traps remove the target iframe during serialization.
+queueTest("proxy ownKeys removes iframe", function(done) {
+    createIframe(function(iframe) {
+        var malicious = new Proxy({}, {
+            ownKeys: function() {
+                iframe.remove();
+                return ["a"];
+            },
+            getOwnPropertyDescriptor: function(target, prop) {
+                return { value: "x", writable: true, enumerable: true, configurable: true };
+            }
+        });
+        try {
+            iframe.contentWindow.postMessage(malicious, "*");
+        } catch(e) { }
+        done();
+    });
+});
+
+// Approach 3: Nested object with a deep getter removes the iframe.
+queueTest("nested object deep getter removes iframe", function(done) {
+    createIframe(function(iframe) {
+        var nested = {
+            level1: {
+                get level2() {
+                    iframe.remove();
+                    return { data: "payload" };
+                }
+            }
+        };
+        try {
+            iframe.contentWindow.postMessage(nested, "*");
+        } catch(e) { }
+        done();
+    });
+});
+
+// Approach 4: Rapid-fire postMessage calls where a getter removes the iframe.
+queueTest("rapid-fire postMessage with getter", function(done) {
+    createIframe(function(iframe) {
+        var removed = false;
+        for (var i = 0; i < 100; i++) {
+            var obj = {};
+            Object.defineProperty(obj, "prop", {
+                get: function() {
+                    if (!removed) {
+                        removed = true;
+                        iframe.remove();
+                    }
+                    return 1;
+                },
+                enumerable: true
+            });
+            try {
+                iframe.contentWindow.postMessage(obj, "*");
+            } catch(e) {
+                break;
+            }
+        }
+        done();
+    });
+});
+
+runNextTest();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
