@@ -33,12 +33,14 @@
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameInlines.h"
 #include "FrameTree.h"
 #include "HTMLMediaElement.h"
 #include "HTMLVideoElement.h"
 #include "LocalFrame.h"
 #include "Node.h"
+#include "NodeDocument.h"
 #include "VideoPlaybackQuality.h"
 #include <wtf/Borrow.h>
 #include <wtf/Function.h>
