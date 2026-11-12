@@ -1928,7 +1928,8 @@ public:
     URL topLevelCreationURL(const URL&, bool isMainFrame) const;
     bool topLevelIsSecureContext(const URL&, bool isMainFrame) const;
     void recordAgentClusterKeying(const API::Navigation&);
-    void updateAgentClusterAssignmentForContinuingLoad(API::Navigation&, BrowsingContextGroup&, bool isMainFrame);
+    void updateAgentClusterAssignmentForContinuingLoad(API::Navigation&, BrowsingContextGroup&, WebFrameProxy&, WebProcessProxy&);
+    std::optional<WebCore::SecurityOriginData> inheritedOriginForNavigation(const API::Navigation&, const URL&, WebCore::FrameIdentifier, BrowsingContextGroup&, WebProcessProxy&);
     void receivedNavigationActionPolicyDecision(WebProcessProxy&, WebCore::PolicyAction, API::Navigation&, Ref<API::NavigationAction>&&, ProcessSwapRequestedByClient, WebFrameProxy&, const FrameInfoData&, WasNavigationIntercepted, std::optional<PolicyDecisionConsoleMessage>&&, CompletionHandler<void(PolicyDecision&&)>&&);
 
     void authorizeDownloadForProcess(WebProcessProxy&, DownloadID, CompletionHandler<void()>&&);

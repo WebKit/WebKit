@@ -223,6 +223,8 @@ public:
     void clearAgentClusterKeyingReservation();
     const WebCore::SecurityOriginData& agentClusterOrigin() const LIFETIME_BOUND { return m_agentClusterOrigin; }
     const std::optional<WebCore::AgentClusterAssignment>& agentClusterAssignment() const LIFETIME_BOUND { return m_agentClusterAssignment; }
+    const std::optional<WebCore::SecurityOriginData>& inheritedOrigin() const LIFETIME_BOUND { return m_inheritedOrigin; }
+    void setInheritedOrigin(const std::optional<WebCore::SecurityOriginData>& inheritedOrigin) { m_inheritedOrigin = inheritedOrigin; }
 
     void setResponseSandboxFlags(WebCore::FrameIdentifier frameID, WebCore::SandboxFlags sandboxFlags) { m_responseSandboxFlags.set(frameID, sandboxFlags); }
     WebCore::SandboxFlags responseSandboxFlags(WebCore::FrameIdentifier frameID) const { return m_responseSandboxFlags.getOptional(frameID).value_or(WebCore::SandboxFlags { }); }
@@ -301,6 +303,7 @@ private:
     WebCore::BrowsingContextGroupSwitchDecision m_browsingContextGroupSwitchDecisionForEmptyDocument { WebCore::BrowsingContextGroupSwitchDecision::StayInGroup };
     WebCore::SecurityOriginData m_agentClusterOrigin;
     std::optional<WebCore::AgentClusterAssignment> m_agentClusterAssignment;
+    std::optional<WebCore::SecurityOriginData> m_inheritedOrigin;
     RefPtr<WebKit::AgentClusterKeyingReservation> m_agentClusterKeyingReservation;
     bool m_canHoldAgentClusterKeyingReservation { true };
     HashMap<WebCore::FrameIdentifier, WebCore::SandboxFlags> m_responseSandboxFlags;

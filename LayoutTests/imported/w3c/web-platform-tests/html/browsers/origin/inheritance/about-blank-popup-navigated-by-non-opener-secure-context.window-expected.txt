@@ -1,0 +1,3 @@
+
+PASS about:blank in a popup is a secure context when the initiator's origin is potentially trustworthy, even if its opener isn't one
+

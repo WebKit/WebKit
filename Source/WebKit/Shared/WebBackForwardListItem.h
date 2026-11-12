@@ -64,6 +64,9 @@ public:
     NODELETE const FrameState& mainFrameState() const;
     Ref<FrameState> copyMainFrameState() const;
     Ref<FrameState> copyMainFrameStateWithChildren() const;
+    // The web process sets neither FrameState::inheritedSite nor inheritedOrigin. A frame state for a document this entry
+    // already has, such as one history.pushState() adds, shares that document's state, so it takes both from this entry.
+    void updateInheritedStateOf(FrameState&) const;
 
     NODELETE const String& originalURL() const LIFETIME_BOUND;
     NODELETE const String& url() const LIFETIME_BOUND;

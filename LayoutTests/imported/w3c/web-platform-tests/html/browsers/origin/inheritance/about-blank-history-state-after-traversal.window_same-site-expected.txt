@@ -1,4 +1,4 @@
 
-FAIL history.state of an about:blank document stays with the initiator's origin after traversal assert_equals: The initiator can add a session history entry with state expected (undefined) undefined but got (string) "SecurityError"
-FAIL Navigation API state of an about:blank document stays with the initiator's origin after traversal assert_equals: The initiator can store state in the session history entry expected (undefined) undefined but got (string) "SecurityError"
+PASS history.state of an about:blank document stays with the initiator's origin after traversal
+FAIL Navigation API state of an about:blank document stays with the initiator's origin after traversal assert_equals: The initiator can read the state expected (string) "initiator's" but got (undefined) undefined
 

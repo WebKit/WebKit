@@ -28,6 +28,7 @@
 #include <WebCore/AgentClusterIdentifier.h>
 #include <WebCore/DocumentIsolationPolicy.h>
 #include <WebCore/OriginKeyed.h>
+#include <WebCore/SecurityOriginData.h>
 
 namespace WebCore {
 
@@ -36,6 +37,8 @@ struct AgentClusterAssignment {
     std::optional<AgentClusterIdentifier> identifier;
     OriginKeyed isOriginKeyed { OriginKeyed::No };
     DocumentIsolationPolicyValue documentIsolationPolicy { DocumentIsolationPolicyValue::None };
+    // The origin an about:blank document inherits: its initiator's, or its history entry's.
+    std::optional<SecurityOriginData> inheritedOrigin;
 };
 
 } // namespace WebCore
