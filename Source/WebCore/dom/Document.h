@@ -608,9 +608,6 @@ public:
 
     NODELETE CustomElementRegistry* effectiveGlobalCustomElementRegistry();
     static CustomElementNameValidationStatus validateCustomElementName(const AtomString&);
-    CustomElementRegistry* activeCustomElementConstructorRegistry(JSC::JSObject* constructor);
-    void addToActiveCustomElementConstructorMap(JSC::JSObject* constructor, CustomElementRegistry&);
-    void removeFromActiveCustomElementConstructorMap(JSC::JSObject* constructor);
     void addCustomElementUpgradeCandidateLocalName(const AtomString& localName) { m_customElementUpgradeCandidateLocalNames.add(localName); }
     void removeCustomElementUpgradeCandidateLocalName(const AtomString& localName) { m_customElementUpgradeCandidateLocalNames.remove(localName); }
     bool mayHaveCustomElementUpgradeCandidate(const AtomString& localName) const { return m_customElementUpgradeCandidateLocalNames.contains(localName); }
@@ -2676,7 +2673,6 @@ private:
 
     WeakListHashSet<ShadowRoot, WeakPtrImplWithEventTargetData> m_inDocumentShadowRoots;
 
-    HashMap<uintptr_t, RefPtr<CustomElementRegistry>> m_activeCustomElementConstructorMap;
     HashSet<AtomString> m_customElementUpgradeCandidateLocalNames;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

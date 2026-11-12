@@ -125,19 +125,18 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
     if (!m_constructor)
         return nullptr;
 
-    RefPtr contextDocument = downcast<Document>(scriptExecutionContext());
     auto* lexicalGlobalObject = protect(scriptExecutionContext())->globalObject();
     ASSERT(lexicalGlobalObject);
     if (!lexicalGlobalObject)
         return nullptr;
     auto* constructor = m_constructor.get();
-    RefPtr previousRegistry = contextDocument->activeCustomElementConstructorRegistry(constructor);
-    contextDocument->addToActiveCustomElementConstructorMap(constructor, registry);
+    RefPtr previousRegistry = CustomElementRegistry::activeCustomElementConstructorRegistry(constructor);
+    CustomElementRegistry::addToActiveCustomElementConstructorMap(constructor, registry);
     RefPtr element = constructCustomElementSynchronously(document, vm, *lexicalGlobalObject, constructor, localName, parserConstructElementWithEmptyStack);
     if (previousRegistry)
-        contextDocument->addToActiveCustomElementConstructorMap(constructor, *previousRegistry);
+        CustomElementRegistry::addToActiveCustomElementConstructorMap(constructor, *previousRegistry);
     else
-        contextDocument->removeFromActiveCustomElementConstructorMap(constructor);
+        CustomElementRegistry::removeFromActiveCustomElementConstructorMap(constructor);
     EXCEPTION_ASSERT(!!scope.exception() == !element);
     if (!element) {
         auto* exception = scope.exception();
@@ -234,7 +233,6 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     JSGlobalObject* lexicalGlobalObject = globalObject;
 
     RefPtr registry = CustomElementRegistry::registryForElement(element);
-    Ref document = downcast<Document>(*context);
     auto constructData = JSC::getConstructData(m_constructor.get());
     if (constructData.type == CallData::Type::None) {
         ASSERT_NOT_REACHED();
@@ -259,11 +257,11 @@ void JSCustomElementInterface::upgradeElement(Element& element)
         downcast<HTMLMaybeFormAssociatedCustomElement>(element).willUpgradeFormAssociated();
 
     auto* constructor = m_constructor.get();
-    RefPtr previousRegistry = document->activeCustomElementConstructorRegistry(constructor);
+    RefPtr previousRegistry = CustomElementRegistry::activeCustomElementConstructorRegistry(constructor);
     if (registry)
-        document->addToActiveCustomElementConstructorMap(constructor, *registry);
+        CustomElementRegistry::addToActiveCustomElementConstructorMap(constructor, *registry);
     else
-        document->removeFromActiveCustomElementConstructorMap(constructor);
+        CustomElementRegistry::removeFromActiveCustomElementConstructorMap(constructor);
 
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());
@@ -272,9 +270,9 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     InspectorInstrumentation::didCallFunction(context.get());
 
     if (previousRegistry)
-        document->addToActiveCustomElementConstructorMap(constructor, *previousRegistry);
+        CustomElementRegistry::addToActiveCustomElementConstructorMap(constructor, *previousRegistry);
     else
-        document->removeFromActiveCustomElementConstructorMap(constructor);
+        CustomElementRegistry::removeFromActiveCustomElementConstructorMap(constructor);
 
     m_constructionStack.removeLast();
 

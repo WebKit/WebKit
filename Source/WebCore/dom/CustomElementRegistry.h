@@ -93,6 +93,10 @@ public:
     static void addToScopedCustomElementRegistryMap(Element&, CustomElementRegistry&);
     static void removeFromScopedCustomElementRegistryMap(Element&);
 
+    static CustomElementRegistry* activeCustomElementConstructorRegistry(JSC::JSObject* constructor);
+    static void addToActiveCustomElementConstructorMap(JSC::JSObject* constructor, CustomElementRegistry&);
+    static void removeFromActiveCustomElementConstructorMap(JSC::JSObject* constructor);
+
     void didAssociateWithDocument(Document&);
 
     RefPtr<DeferredPromise> addElementDefinition(Ref<JSCustomElementInterface>&&);
@@ -120,6 +124,7 @@ private:
     CustomElementRegistry(ScriptExecutionContext&, IsScoped);
 
     NODELETE static WeakHashMap<Element, Ref<CustomElementRegistry>, WeakPtrImplWithEventTargetData>& scopedCustomElementRegistryMap();
+    NODELETE static HashMap<uintptr_t, RefPtr<CustomElementRegistry>>& activeCustomElementConstructorMap();
 
     HashMap<AtomString, Ref<JSCustomElementInterface>> m_nameMap;
     HashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap WTF_GUARDED_BY_LOCK(m_constructorMapLock);

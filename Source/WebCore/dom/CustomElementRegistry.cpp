@@ -272,6 +272,29 @@ WeakHashMap<Element, Ref<CustomElementRegistry>, WeakPtrImplWithEventTargetData>
     return map.get();
 }
 
+// HTML has one map per similar-origin window agent. Entries only last while a constructor runs, so one map for the main thread is equivalent.
+HashMap<uintptr_t, RefPtr<CustomElementRegistry>>& CustomElementRegistry::activeCustomElementConstructorMap()
+{
+    ASSERT(isMainThread());
+    static NeverDestroyed<HashMap<uintptr_t, RefPtr<CustomElementRegistry>>> map;
+    return map.get();
+}
+
+CustomElementRegistry* CustomElementRegistry::activeCustomElementConstructorRegistry(JSC::JSObject* constructor)
+{
+    return activeCustomElementConstructorMap().get(reinterpret_cast<uintptr_t>(constructor));
+}
+
+void CustomElementRegistry::addToActiveCustomElementConstructorMap(JSC::JSObject* constructor, CustomElementRegistry& registry)
+{
+    activeCustomElementConstructorMap().set(reinterpret_cast<uintptr_t>(constructor), registry);
+}
+
+void CustomElementRegistry::removeFromActiveCustomElementConstructorMap(JSC::JSObject* constructor)
+{
+    activeCustomElementConstructorMap().remove(reinterpret_cast<uintptr_t>(constructor));
+}
+
 template<typename Visitor>
 void CustomElementRegistry::visitJSCustomElementInterfacesInGCThread(Visitor& visitor) const
 {

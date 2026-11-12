@@ -34,6 +34,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/adoption-null-registry-shadow-root.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/adoption.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/constructor-direct-call-fallback-registry.window.js
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/constructor-from-another-window.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/constructor-reentry-createElement.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/constructor-reentry-with-different-definition.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/define-customized-builtins.html

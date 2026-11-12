@@ -1,0 +1,5 @@
+
+PASS Upgrade with another window's global registry and a constructor from this window
+PASS Upgrade with a scoped registry and a constructor from another window
+PASS Constructing directly uses the registry of the HTMLElement constructor's window
+
