@@ -397,7 +397,6 @@ public:
     virtual bool executeSavedCommandBySelector(const String& selector) = 0;
     virtual void updateSecureInputState() = 0;
     virtual void resetSecureInputState() = 0;
-    virtual void notifyInputContextAboutDiscardedComposition() = 0;
     virtual void makeFirstResponder() = 0;
     virtual void assistiveTechnologyMakeFirstResponder() = 0;
     virtual void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*) = 0;
@@ -414,6 +413,7 @@ public:
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     virtual void selectionDidChange() = 0;
+    virtual void notifyInputContextAboutDiscardedComposition() = 0;
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)

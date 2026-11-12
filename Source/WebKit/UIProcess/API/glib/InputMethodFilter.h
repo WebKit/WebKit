@@ -22,6 +22,7 @@
 #include "InputMethodState.h"
 #include <WebCore/CompositionUnderline.h>
 #include <WebCore/IntRect.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
@@ -78,6 +79,7 @@ public:
     void notifySurrounding(const String&, uint64_t, uint64_t);
 
     void cancelComposition();
+    void discardComposition();
 
 private:
     static void preeditStartedCallback(InputMethodFilter*);
@@ -94,6 +96,7 @@ private:
 
     bool isEnabled() const { return !!m_state; }
     bool isViewFocused() const;
+    bool isIgnoringNonKeyInput() const;
 
     void notifyContentType();
 
@@ -118,6 +121,7 @@ private:
     } m_filteringContext;
 
     String m_compositionResult;
+    MonotonicTime m_ignoreNonKeyInputUntil;
     WebCore::IntRect m_cursorRect;
 
     struct {

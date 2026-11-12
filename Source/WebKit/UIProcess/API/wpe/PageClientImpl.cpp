@@ -604,6 +604,11 @@ void PageClientImpl::selectionDidChange()
     m_view.selectionDidChange();
 }
 
+void PageClientImpl::notifyInputContextAboutDiscardedComposition()
+{
+    m_view.discardComposition();
+}
+
 WebKitWebResourceLoadManager* PageClientImpl::webResourceLoadManager()
 {
     return m_view.webResourceLoadManager();

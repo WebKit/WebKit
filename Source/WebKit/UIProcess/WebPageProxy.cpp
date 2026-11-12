@@ -14809,7 +14809,7 @@ void WebPageProxy::backForwardGoToItemShared(IPC::Connection& connection, BackFo
 
 void WebPageProxy::compositionWasCanceled()
 {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     if (RefPtr pageClient = this->pageClient())
         pageClient->notifyInputContextAboutDiscardedComposition();
 #endif
