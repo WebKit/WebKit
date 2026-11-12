@@ -6446,7 +6446,9 @@ static std::optional<Site> backForwardInheritedSiteForNavigation(const API::Navi
         }
         return navigation.backForwardFrameState();
     }();
-    return frameState ? frameState->inheritedSite : std::nullopt;
+    if (!frameState || !frameState->inheritedOrigin)
+        return std::nullopt;
+    return Site { *frameState->inheritedOrigin };
 }
 
 // A child frame of a document the main frame has navigated away from, for example one in the back/forward cache, is no
@@ -10325,28 +10327,23 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (protect(preferences())->siteIsolationEnabled() && !isBackForwardLoadType(frameLoadType) && !isReload(frameLoadType)) {
         RefPtr currentItem = backForwardList().currentItem();
         if (RefPtr frameItem = currentItem ? currentItem->mainFrameItem().childItemForFrameID(frameID) : nullptr) {
-            frameItem->frameState().inheritedSite = [&] -> std::optional<Site> {
+            frameItem->frameState().inheritedOrigin = [&] -> std::optional<SecurityOriginData> {
                 if (!request.url().isAboutBlank() && !request.url().isAboutSrcDoc())
                     return std::nullopt;
-
-                Ref frameProcess = frame->frameProcess();
-                if (!frameProcess->isSharedProcess()) {
-                    if (frameProcess->site()->isEmpty())
-                        return std::nullopt;
-                    return frameProcess->site();
-                }
 
                 RefPtr committedNavigation = navigationID ? m_navigationState->navigation(*navigationID) : nullptr;
                 if (!committedNavigation || !committedNavigation->originatingFrameInfo())
                     return std::nullopt;
 
-                // The shared process has no site of its own. Only accept an initiator site that it hosts, so that a web
-                // process cannot steer a later traversal into a process the document was not already in.
-                Site initiatorSite { committedNavigation->originatingFrameSecurityOrigin() };
+                // Only record an initiator origin whose site the document's process hosts, so that a traversal returns
+                // the document to that process.
+                auto initiatorOrigin = committedNavigation->originatingFrameSecurityOrigin();
+                Site initiatorSite { initiatorOrigin };
+                Ref frameProcess = frame->frameProcess();
                 RefPtr browsingContextGroup = frameProcess->browsingContextGroup();
-                if (initiatorSite.isEmpty() || !browsingContextGroup || browsingContextGroup->processForSite(initiatorSite) != frameProcess.ptr())
+                if (initiatorSite.isEmpty() || !browsingContextGroup || browsingContextGroup->processForSite(initiatorSite, frameProcess->process().crossOriginIsolation()) != frameProcess.ptr())
                     return std::nullopt;
-                return initiatorSite;
+                return initiatorOrigin;
             }();
         }
     }
