@@ -176,6 +176,7 @@ private:
     Lock m_receiversLock;
     using ReceiversMap = HashMap<std::pair<uint8_t, uint64_t>, Ref<StreamMessageReceiver>>;
     ReceiversMap m_receivers WTF_GUARDED_BY_LOCK(m_receiversLock);
+    bool m_didInvalidateReceivers WTF_GUARDED_BY_LOCK(m_receiversLock) { false };
     uint64_t m_currentDestinationID { 0 };
     // Signalled to release the client from ring buffer backpressure.
     Signal m_clientWaitSignal;

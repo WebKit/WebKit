@@ -83,6 +83,14 @@ void StreamServerConnection::open(Client& client, StreamConnectionWorkQueue& wor
 
 void StreamServerConnection::invalidate()
 {
+    ReceiversMap receivers;
+    {
+        Locker locker { m_receiversLock };
+        m_didInvalidateReceivers = true;
+        receivers = std::exchange(m_receivers, { });
+    }
+    receivers.clear();
+
     Ref connection = m_connection;
     if (!m_workQueue) {
         connection->invalidate();
@@ -101,6 +109,8 @@ void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& recei
 {
     auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
     Locker locker { m_receiversLock };
+    if (m_didInvalidateReceivers)
+        return;
     auto result = m_receivers.add(key, receiver);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
@@ -110,7 +120,7 @@ void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName, ui
     auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
     Locker locker { m_receiversLock };
     bool didRemove = m_receivers.remove(key);
-    ASSERT_UNUSED(didRemove, didRemove);
+    ASSERT_UNUSED(didRemove, didRemove || m_didInvalidateReceivers);
 }
 
 void StreamServerConnection::enqueueMessage(Connection&, UniqueRef<Decoder>&& message)
