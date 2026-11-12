@@ -1,1 +1,1 @@
-(display-mode) (display-mode: standalone)
+(display-mode) (display-mode: application) (display-mode: application) and (display-mode: standalone) (display-mode: standalone)

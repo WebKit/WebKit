@@ -7,6 +7,9 @@ div { display: none; }
 @media (display-mode) {
     .display-mode-null { display: inline; }
 }
+@media (display-mode: application) {
+    .display-mode-application { display: inline; }
+}
 @media (display-mode: browser) {
     .display-mode-browser { display: inline; }
 }
@@ -24,6 +27,7 @@ div { display: none; }
 }
 </style>
 <div class="display-mode-null">(display-mode)</div>
+<div class="display-mode-application">(display-mode: application)</div>
 <div class="display-mode-browser">(display-mode: browser)</div>
 <div class="display-mode-minimal-ui">(display-mode: minimal-ui)</div>
 <div class="display-mode-standalone">(display-mode: standalone)</div>
