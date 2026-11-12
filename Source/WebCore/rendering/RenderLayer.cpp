@@ -3856,6 +3856,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         static constexpr OptionSet flagsToCopy {
             PaintBehavior::FlattenCompositingLayers,
             PaintBehavior::Snapshotting,
+            PaintBehavior::DontShowVisitedLinks,
             PaintBehavior::ExcludeSelection,
             PaintBehavior::ExcludeReplacedContentExceptForIFrames,
             PaintBehavior::ExcludeText,
@@ -3957,9 +3958,10 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         GraphicsContext& currentContext = filterContext ? *filterContext : context;
 
-        if (filterContext)
+        if (filterContext) {
             localPaintingInfo.paintBehavior.add(PaintBehavior::DontShowVisitedLinks);
-        else if (hasFailedFilterForSVG) {
+            paintBehavior.add(PaintBehavior::DontShowVisitedLinks);
+        } else if (hasFailedFilterForSVG) {
             shouldPaintContent = false;
             isPaintingCompositedForeground = false;
         }
@@ -4029,10 +4031,10 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         if (shouldPaintNegativeZIndexChildren) {
             if (m_svgData)
-                paintNegativeZOrderChildrenForSVG(currentContext, paintingInfo, localPaintFlags);
+                paintNegativeZOrderChildrenForSVG(currentContext, localPaintingInfo, localPaintFlags);
             else {
                 // Now walk the sorted list of children with negative z-indices.
-                paintList(negativeZOrderLayers(), currentContext, paintingInfo, localPaintFlags);
+                paintList(negativeZOrderLayers(), currentContext, localPaintingInfo, localPaintFlags);
             }
         }
 
@@ -4447,6 +4449,7 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
     static constexpr OptionSet flagsToCopy {
         PaintBehavior::ExcludeSelection,
         PaintBehavior::Snapshotting,
+        PaintBehavior::DontShowVisitedLinks,
         PaintBehavior::DefaultAsynchronousImageDecode,
         PaintBehavior::CompositedOverflowScrollContent,
         PaintBehavior::ForceSynchronousImageDecode,
