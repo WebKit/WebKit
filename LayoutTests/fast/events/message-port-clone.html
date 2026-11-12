@@ -37,9 +37,9 @@ try {
 
 try {
     channel.port1.postMessage("msg", [channel.port2]);
-    log("FAIL: Posting port to entangled pair should throw an exception.");
+    log("SUCCESS: Posting entangled port did not throw.");
 } catch (ex) {
-    log("SUCCESS: Posting entangled port: " + ex);
+    log("FAIL: Posting entangled port should not throw: " + ex);
 }
 
 channel = new MessageChannel;

@@ -9,6 +9,7 @@ var channel = new MessageChannel();
 var channel2 = new MessageChannel();
 var channel3 = new MessageChannel();
 var channel4 = new MessageChannel();
+var channel5 = new MessageChannel();
 
 channel.port1.postMessage("noport");
 channel.port1.postMessage("zero ports", []);
@@ -16,7 +17,7 @@ channel.port1.postMessage("two ports", [channel2.port1, channel2.port2]);
 
 // Now test various failure cases
 shouldThrow('channel.port1.postMessage("same port", [channel.port1])');
-shouldThrow('channel.port1.postMessage("entangled port", [channel.port2])');
+shouldNotThrow('channel5.port1.postMessage("entangled port", [channel5.port2])');
 shouldThrow('channel.port1.postMessage("null port", [channel3.port1, null, channel3.port2])');
 shouldThrow('channel.port1.postMessage("notAPort", [channel3.port1, {}, channel3.port2])');
 shouldThrow('channel.port1.postMessage("duplicate port", [channel3.port1, channel3.port1])');

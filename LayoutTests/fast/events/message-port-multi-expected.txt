@@ -1,10 +1,11 @@
+CONSOLE MESSAGE: MessagePort was posted to itself, causing the communication channel to be lost.
 This test checks the various use cases around sending multiple ports through MessagePort.postMessage
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 PASS channel.port1.postMessage("same port", [channel.port1]) threw exception DataCloneError: The object can not be cloned..
-PASS channel.port1.postMessage("entangled port", [channel.port2]) threw exception DataCloneError: The object can not be cloned..
+PASS channel5.port1.postMessage("entangled port", [channel5.port2]) did not throw exception.
 PASS channel.port1.postMessage("null port", [channel3.port1, null, channel3.port2]) threw exception TypeError: Type error.
 PASS channel.port1.postMessage("notAPort", [channel3.port1, {}, channel3.port2]) threw exception DataCloneError: The object can not be cloned..
 PASS channel.port1.postMessage("duplicate port", [channel3.port1, channel3.port1]) threw exception DataCloneError: Duplicate transferable for structured clone.

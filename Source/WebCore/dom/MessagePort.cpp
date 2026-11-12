@@ -32,6 +32,7 @@
 #include "EventNames.h"
 #include "ExceptionOr.h"
 #include "JSDOMGlobalObject.h"
+#include "JSMessagePort.h"
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "MessagePortChannelProvider.h"
@@ -184,6 +185,17 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& globalObject, JS
 {
     LOG_WITH_STREAM(MessagePorts, stream << "Attempting to post message to port "_s << m_identifier.logString() << " (to be received by port "_s << m_remoteIdentifier.logString() << ")"_s);
 
+    bool isDoomed = false;
+    for (auto& transferable : options.transfer) {
+        RefPtr port = JSMessagePort::toWrapped(globalObject.vm(), transferable.get());
+        if (!port)
+            continue;
+        if (port->identifier() == m_identifier)
+            return Exception { ExceptionCode::DataCloneError };
+        if (port->identifier() == m_remoteIdentifier)
+            isDoomed = true;
+    }
+
     Vector<Ref<MessagePort>> ports;
     auto messageData = SerializedScriptValue::create(globalObject, messageValue, WTF::move(options.transfer), ports, SerializationForStorage::No);
     if (messageData.hasException())
@@ -194,17 +206,20 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& globalObject, JS
     ASSERT(scriptExecutionContext());
 
     Vector<TransferredMessagePort> transferredPorts;
-    // Make sure we aren't connected to any of the passed-in ports.
     if (!ports.isEmpty()) {
-        for (auto& port : ports) {
-            if (port->identifier() == m_identifier || port->identifier() == m_remoteIdentifier)
-                return Exception { ExceptionCode::DataCloneError };
-        }
-
         auto disentangleResult = MessagePort::disentanglePorts(WTF::move(ports));
         if (disentangleResult.hasException())
             return disentangleResult.releaseException();
         transferredPorts = disentangleResult.releaseReturnValue();
+    }
+
+    if (isDoomed) {
+        protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "MessagePort was posted to itself, causing the communication channel to be lost."_s);
+        ensureOnMainThread([transferredPorts = WTF::move(transferredPorts)] {
+            for (auto& port : transferredPorts)
+                MessagePortChannelProvider::singleton().messagePortClosed(port.first);
+        });
+        return { };
     }
 
     MessageWithMessagePorts message { messageData.releaseReturnValue(), WTF::move(transferredPorts) };
