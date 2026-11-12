@@ -41,8 +41,8 @@ class StatusBubble(View):
     # These queue names are from shortname in https://github.com/webkit/webkit/blob/main/Tools/CISupport/ews-build/config-template.yaml
     # FIXME: Auto-generate this list https://bugs.webkit.org/show_bug.cgi?id=195640
     # Note: This list is sorted in the order of which bubbles appear in bugzilla.
-    ALL_QUEUES = ['style', 'ios', 'ios-sim', 'mac', 'mac-cmake-debug', 'vision', 'vision-sim', 'tv', 'tv-sim', 'watch', 'watch-sim', 'gtk', 'wpe', 'gtk3-gcc', 'playstation', 'win', 'win-tests',
-                  'ios-wk2', 'ios-wk2-wpt', 'mac-wk2', 'mac-wk2-stress', 'mac-intel-wk2', 'mac-cmake-debug-wk2', 'mac-safer-cpp', 'mac-site-isolation', 'mac-webdriver', 'ios-safer-cpp', 'vision-wk2', 'gtk-wk2', 'wpe-wk2', 'api-ios', 'api-mac',
+    ALL_QUEUES = ['style', 'ios', 'ios-sim-cmake', 'mac', 'mac-cmake-debug', 'vision', 'vision-sim', 'tv', 'tv-sim', 'watch', 'watch-sim', 'gtk', 'wpe', 'gtk3-gcc', 'playstation', 'win', 'win-tests',
+                  'ios-cmake-wk2', 'ios-cmake-wk2-wpt', 'mac-wk2', 'mac-wk2-stress', 'mac-intel-wk2', 'mac-cmake-debug-wk2', 'mac-safer-cpp', 'mac-site-isolation', 'mac-webdriver', 'ios-safer-cpp', 'vision-wk2', 'gtk-wk2', 'wpe-wk2', 'api-ios-cmake', 'api-mac',
                   'api-mac-cmake-debug', 'api-gtk', 'api-wpe', 'bindings', 'jsc-x86-64', 'jsc-debug-arm64', 'jsc-wpe', 'webkitperl', 'webkitpy', 'services']
 
     DAYS_TO_HIDE_BUBBLE = 7

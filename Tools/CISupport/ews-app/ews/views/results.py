@@ -107,7 +107,7 @@ class Results(View):
                               state_string=data['state_string'], started_at=data['started_at'], complete_at=data['complete_at'], pr_number=pr_number, pr_project=pr_project)
         if rc == SUCCESS and pr_number and pr_number != -1:
             # For PR builds leave comment on PR
-            allow_new_comment = (data['status'] == 'started' and data['builder_display_name'] in ['services', 'ios-wk2'])
+            allow_new_comment = (data['status'] == 'started' and data['builder_display_name'] in ['services', 'ios-cmake-wk2'])
             GitHubEWS.add_or_update_comment_for_change_id(change_id, pr_number, pr_project, pr_author, allow_new_comment)
         return HttpResponse('Saved data for change: {}.\n'.format(change_id))
 

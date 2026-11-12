@@ -117,6 +117,19 @@ class MockRequestsGet:
 
 
 class ResultsFetcherTest(unittest.TestCase):
+    def test_platform_name_for_bot(self):
+        for bot_name, platform_name in [
+            ("mac-wk2", "mac-wk2"),
+            ("mac-cmake-debug-wk2", "mac-wk2"),
+            ("mac-cmake-debug", "mac-wk1"),
+            ("ios-cmake-wk2", "ios-wk2"),
+            ("ios-cmake-wk2-wpt", "ios"),
+            ("ios-wk2", "ios-wk2"),
+            ("ios-wk2-wpt", "ios"),
+            ("win", "win"),
+        ]:
+            self.assertEqual(results_fetcher._platform_name_for_bot(bot_name), platform_name, bot_name)
+
     def test_is_relevant_results(self):
         # Incomplete.
         self.assertFalse(

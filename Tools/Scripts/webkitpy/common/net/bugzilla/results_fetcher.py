@@ -62,6 +62,9 @@ def _platform_name_for_bot(bot_name):
         return "mac-wk1"
     if "simulator" in name and name.startswith("ios"):
         return "ios"
+    if name.startswith("ios") and name.endswith("-wk2"):
+        # The queue's name is also the name of its LayoutTests platform directory.
+        return "ios-wk2"
     if "win-future" in name:
         return "win"
     if "gtk" in name:

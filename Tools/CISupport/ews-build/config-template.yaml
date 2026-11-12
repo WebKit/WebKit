@@ -440,19 +440,21 @@ builders:
     architectures: [arm64]
     workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-tahoe-aws'\").name"}}
   - name: iOS-27-Simulator-Build-EWS
-    shortname: ios-sim
+    shortname: ios-sim-cmake
     icon: buildOnly
     factory: iOSBuildFactory
     platform: ios-simulator-27
     configuration: release
     architectures: [arm64]
+    additionalArguments: [--cmake]
+    rebuild_without_change_on_builder: true
     triggers: [api-tests-ios-sim-ews, ios-27-sim-wk2-tests-ews, ios-27-sim-wpt-wk2-tests-ews]
     workernames:
       $flatten:
         - {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m1'\").name"}}
         - {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
   - name: iOS-27-Simulator-WK2-Tests-EWS
-    shortname: ios-wk2
+    shortname: ios-cmake-wk2
     icon: testOnly
     factory: iOSTestsFactory
     platform: ios-simulator-27
@@ -461,7 +463,7 @@ builders:
     additionalArguments: [--child-processes=5, --exclude-tests, imported/w3c/web-platform-tests]
     workernames: {$map: {$eval: "range(0, 8)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m2pro'\").name"}}
   - name: iOS-27-Simulator-WPT-WK2-Tests-EWS
-    shortname: ios-wk2-wpt
+    shortname: ios-cmake-wk2-wpt
     icon: testOnly
     factory: iOSTestsFactory
     platform: ios-simulator-27
@@ -720,7 +722,7 @@ builders:
     runTests: 'true'
     workernames: {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m2pro'\").name"}}
   - name: API-Tests-iOS-Simulator-EWS
-    shortname: api-ios
+    shortname: api-ios-cmake
     icon: testOnly
     factory: APITestsFactory
     platform: '*'
