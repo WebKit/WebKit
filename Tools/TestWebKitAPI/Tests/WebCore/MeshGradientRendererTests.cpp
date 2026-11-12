@@ -36,6 +36,7 @@
 #include <WebCore/PixelBufferConversion.h>
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <wtf/Float16.h>
 
 #if USE(METAL)
@@ -409,6 +410,75 @@ TEST(MeshGradientRenderer, DrawInDestinationTheImageBufferConvertsTo)
 
 #endif // ENABLE(PIXEL_FORMAT_RGBA16F) && ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB) && ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
 
+static Ref<MeshGradient> makeGradientMissingRed(IntSize size)
+{
+    Color missingRed { SRGBA<float> { std::numeric_limits<float>::quiet_NaN(), 1, 0, 1 } };
+    return makeMeshGradient(srgb, size, 2, 2, { missingRed, Color { SRGBA<uint8_t> { 255, 255, 0 } }, Color { SRGBA<uint8_t> { 0, 255, 0 } }, Color { SRGBA<uint8_t> { 128, 0, 255 } } });
+}
+
+static Ref<MeshGradient> makeGradientMissingAlpha(IntSize size)
+{
+    Color red { SRGBA<float> { 1, 0, 0, std::numeric_limits<float>::quiet_NaN() } };
+    Color blue { SRGBA<float> { 0, 0, 1, 0.5 } };
+    return makeMeshGradient(srgb, size, 2, 2, { red, blue, red, blue });
+}
+
+static Ref<MeshGradient> makeGradientMissingHue(IntSize size)
+{
+    ColorInterpolationMethod oklch { ColorInterpolationMethod::OKLCH { HueInterpolationMethod::Shorter }, AlphaPremultiplication::Premultiplied };
+    Color missingHue { OKLCHA<float> { 0.7f, 0.1f, std::numeric_limits<float>::quiet_NaN(), 1 } };
+    Color orange { OKLCHA<float> { 0.7f, 0.1f, 50, 1 } };
+    return makeMeshGradient(oklch, size, 2, 2, { missingHue, orange, orange, orange });
+}
+
+TEST(MeshGradientRenderer, CPUMissingComponent)
+{
+    // The top left point has no red. Along the top edge it takes the red of the top right point, and along the left
+    // edge it takes the red of the bottom left point, as interpolating each pair of colors would.
+    IntSize size { 100, 100 };
+    auto pixels = render(makeGradientMissingRed(size), size);
+    ASSERT_TRUE(pixels);
+
+    // Pixel centers are half a pixel inside the edges, so they pick up a little of the other points.
+    for (int x : { 20, 50, 80 })
+        EXPECT_NEAR(pixelAt(*pixels, x, 0)[0], 255, 6);
+    for (int y : { 20, 50, 80 })
+        EXPECT_NEAR(pixelAt(*pixels, 0, y)[0], 0, 6);
+}
+
+TEST(MeshGradientRenderer, CPUMissingAlpha)
+{
+    // The points on the left have no alpha, so they are premultiplied by the alpha of the points on the right. The
+    // alpha is the same everywhere.
+    IntSize size { 100, 10 };
+    auto pixels = render(makeGradientMissingAlpha(size), size);
+    ASSERT_TRUE(pixels);
+
+    for (int x = 0; x < size.width(); x += 10) {
+        float t = (x + 0.5f) / size.width();
+        float s = 3 * t * t - 2 * t * t * t;
+        auto pixel = pixelAt(*pixels, x, size.height() / 2);
+        EXPECT_NEAR(pixel[0], std::lround(0.5f * (1 - s) * 255), 2);
+        EXPECT_NEAR(pixel[2], std::lround(0.5f * s * 255), 2);
+        EXPECT_NEAR(pixel[3], 128, 1);
+    }
+}
+
+TEST(MeshGradientRenderer, CPUMissingHue)
+{
+    // The top left point has no hue, so it takes the hue of the others, and the mesh is a solid color.
+    IntSize size { 20, 20 };
+    auto pixels = render(makeGradientMissingHue(size), size);
+    ASSERT_TRUE(pixels);
+
+    auto expected = pixelAt(*pixels, 19, 19);
+    for (auto [x, y] : { std::pair { 0, 0 }, { 10, 10 } }) {
+        auto pixel = pixelAt(*pixels, x, y);
+        for (size_t i = 0; i < 4; ++i)
+            EXPECT_NEAR(pixel[i], expected[i], 1);
+    }
+}
+
 TEST(MeshGradient, GeometryOnlySubdividesForCurves)
 {
     auto rectangle = makeMeshGradient(srgb, { 400, 300 }, 2, 2, { Color::red, Color::blue, Color::green, Color::white });
@@ -531,6 +601,30 @@ TEST(MeshGradientRenderer, MetalMatchesCPUInExtendedRange)
 }
 
 #endif // ENABLE(PIXEL_FORMAT_RGBA16F)
+
+TEST(MeshGradientRenderer, MetalMatchesCPUWithMissingComponents)
+{
+    auto* renderer = MeshGradientRendererMetal::singleton();
+    if (!renderer)
+        GTEST_SKIP() << "Metal is not available.";
+
+    IntSize size { 64, 48 };
+    PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() };
+    for (auto [name, gradient] : { std::pair { "red", makeGradientMissingRed(size) }, { "alpha", makeGradientMissingAlpha(size) }, { "hue", makeGradientMissingHue(size) } }) {
+        SCOPED_TRACE(name);
+
+        unsigned bytesPerRow = size.width() * 4;
+        Vector<uint8_t> cpuBytes(static_cast<size_t>(bytesPerRow) * size.height());
+        Vector<uint8_t> metalBytes(static_cast<size_t>(bytesPerRow) * size.height());
+        ASSERT_TRUE(MeshGradientRendererCPU { }.render(gradient, { format, bytesPerRow, cpuBytes.mutableSpan() }, size, 1));
+        ASSERT_TRUE(renderer->render(gradient, { format, bytesPerRow, metalBytes.mutableSpan() }, size, 1));
+
+        int maximumDifference = 0;
+        for (size_t i = 0; i < cpuBytes.size(); ++i)
+            maximumDifference = std::max(maximumDifference, std::abs(cpuBytes[i] - metalBytes[i]));
+        EXPECT_LE(maximumDifference, 2);
+    }
+}
 
 TEST(MeshGradientRenderer, MetalAntialiasesEdges)
 {

@@ -90,7 +90,7 @@ public:
 
     WEBCORE_EXPORT Vector<Triangle> triangles(float scale) const;
 
-    // The 16 control values of each patch, in the interpolation color space. Rows run along u.
+    // The 16 control values of each patch, as the terms of a weighted mean in the interpolation color space. Rows run along u.
     class ColorControlValues;
     ColorControlValues colorControlValues() const LIFETIME_BOUND;
 
@@ -104,6 +104,38 @@ public:
 
 private:
     using Components = ColorComponents<float, 4>;
+
+    // The colors between points are a weighted mean of the colors of the points, one component at a time. Each point
+    // adds its value times its weight, and its weight, to two sums. Those are interpolated separately and then divided.
+    //
+    // A point has no weight for a component it is missing. With premultiplied alpha, its weight for every component
+    // except alpha and hue is its alpha. A point missing its alpha has to be premultiplied by the interpolated alpha,
+    // which isn't known until the mesh is evaluated, so its terms are kept apart until then.
+    //
+    // Between two points this gives the same colors as interpolateColorComponents().
+    //
+    // CSS Color Module Level 4, Interpolating with Missing Components
+    // https://drafts.csswg.org/css-color-4/#interpolation-missing
+    struct WeightedColor {
+        Components weightedValues;
+        Components weights;
+        Components weightedValuesMissingAlpha;
+        Components weightsMissingAlpha;
+
+        WeightedColor& operator+=(const WeightedColor& other)
+        {
+            weightedValues += other.weightedValues;
+            weights += other.weights;
+            weightedValuesMissingAlpha += other.weightedValuesMissingAlpha;
+            weightsMissingAlpha += other.weightsMissingAlpha;
+            return *this;
+        }
+
+        friend WeightedColor weighted(const WeightedColor& color, float weight)
+        {
+            return { color.weightedValues * weight, color.weights * weight, color.weightedValuesMissingAlpha * weight, color.weightsMissingAlpha * weight };
+        }
+    };
 
     // The value at (u, v) is the sum of `controlValue(i, j) * B_i(v) * B_j(u)`, where B are the cubic Bernstein
     // polynomials. Rows run along u. The first row is the top edge (v = 0), and the last is the bottom edge (v = 1).
@@ -124,7 +156,7 @@ private:
     };
 
     using PositionPatch = BicubicBezierPatch<FloatPoint>;
-    using ColorPatch = BicubicBezierPatch<Components>;
+    using ColorPatch = BicubicBezierPatch<WeightedColor>;
 
     struct Patch {
         PositionPatch position;
@@ -136,7 +168,10 @@ private:
     unsigned index(unsigned row, unsigned column) const { return row * m_columns + column; }
 
     PositionPatch makePositionPatch(unsigned row, unsigned column) const;
-    ColorPatch makeColorPatch(unsigned row, unsigned column, const Vector<Components>&) const;
+    ColorPatch makeColorPatch(unsigned row, unsigned column, const Vector<WeightedColor>&) const;
+
+    static std::pair<Components, Components> weightedMean(const Patch&, float u, float v);
+    static Components interpolatedColor(const Patch&, float u, float v);
 
     unsigned subdivisions(const Patch&, float scale) const;
 
@@ -170,7 +205,7 @@ public:
     size_t size() const { return m_size; }
 
 private:
-    static const std::array<Components, 16>& controlValues(const Patch& patch) { return patch.color.controlValues; }
+    static const std::array<WeightedColor, 16>& controlValues(const Patch& patch) { return patch.color.controlValues; }
 
     std::ranges::join_view<std::ranges::transform_view<std::span<const Patch>, decltype(&controlValues)>> m_values;
     size_t m_size;
