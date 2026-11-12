@@ -672,7 +672,7 @@ auto Document::allDocuments() -> DocumentsMap::ValuesIteratorRange
     return allDocumentsMap().values();
 }
 
-NODELETE static inline IntDegrees currentOrientation(LocalFrame* frame)
+static inline IntDegrees currentOrientation(LocalFrame* frame)
 {
 #if ENABLE(ORIENTATION_EVENTS)
     if (frame)
@@ -835,8 +835,8 @@ Document::~Document()
         m_logger->removeObserver(*this);
 
     if (m_intersectionObserverData) {
-        for (const auto& observer : m_intersectionObserverData->observers) {
-            if (observer)
+        for (const auto& weakObserver : m_intersectionObserverData->observers) {
+            if (RefPtr observer = weakObserver)
                 observer->rootDestroyed();
         }
         m_intersectionObserverData->observers.clear();
@@ -2225,7 +2225,7 @@ void Document::removeVisualUpdatePreventedReasons(OptionSet<VisualUpdatesPrevent
             if (frame()->isMainFrame()) {
                 frameView->addPaintPendingMilestones(LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering);
                 if (page->requestedLayoutMilestones() & LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering)
-                    frame()->loader().didReachLayoutMilestone(LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering);
+                    protect(frame()->loader())->didReachLayoutMilestone(LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering);
             }
         }
         m_visualUpdatesAllowedChangeRequiresLayoutMilestones = false;
@@ -2918,7 +2918,7 @@ void Document::resolveStyle(ResolveStyleType type)
 
     TraceScope tracingScope(StyleRecalcStart, StyleRecalcEnd);
 
-    RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
+    RenderView::RepaintRegionAccumulator repaintRegionAccumulator(protect(renderView()));
 
     // FIXME: We should update style on our ancestor chain before proceeding, however doing so at
     // the time this comment was originally written caused several tests to crash.
@@ -3156,13 +3156,13 @@ auto Document::updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> lay
     return updateLayout(layoutOptions, context);
 }
 
-static RenderElement* rootForSkippedLayout(RenderElement& rootCandidate)
+static CheckedPtr<RenderElement> rootForSkippedLayout(RenderElement& rootCandidate)
 {
-    auto skippedSubtreeRoot = [&] (auto& skippedRootOrSkippedContent) -> RenderElement* {
+    auto skippedSubtreeRoot = [&](RenderElement& skippedRootOrSkippedContent) -> CheckedPtr<RenderElement> {
         if (auto* renderBox = dynamicDowncast<RenderBox>(skippedRootOrSkippedContent); renderBox && isSkippedContentRoot(*renderBox))
             return renderBox;
-        for (RenderBoxModelObject* ancestor = skippedRootOrSkippedContent.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
-            if (auto* renderBox = dynamicDowncast<RenderBox>(*ancestor); renderBox && isSkippedContentRoot(*renderBox))
+        for (CheckedPtr<RenderBoxModelObject> ancestor = skippedRootOrSkippedContent.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+            if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*ancestor); renderBox && isSkippedContentRoot(*renderBox))
                 return renderBox;
         }
         return &skippedRootOrSkippedContent.view();
@@ -4097,7 +4097,7 @@ void Document::collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>
                 continue;
             highlightRanges.append(highlightRange.get());
             // This range's positions are about to be updated, which can change the renderers it highlights.
-            highlight.value->invalidateHighlightRangesForRenderer();
+            protect(highlight.value)->invalidateHighlightRangesForRenderer();
         }
     }
 
@@ -4240,7 +4240,7 @@ ExceptionOr<void> Document::open(Document* entryDocument)
             frame->loader().policyChecker().stopCheck();
         // Null-checking m_frame again as `policyChecker().stopCheck()` may have cleared it.
         if (isNavigating && m_frame)
-            this->frame()->loader().stopAllLoaders();
+            protect(this->frame()->loader())->stopAllLoaders();
     }
 
     removeAllEventListeners();
@@ -5296,7 +5296,7 @@ bool Document::canNavigateInternal(Frame& targetFrame)
         return true;
 
     // The user gesture only relaxes permissions for the purpose of navigating if its impacts the current document.
-    bool isProcessingUserGestureForDocument = UserGestureIndicator::processingUserGesture(m_frame->document());
+    bool isProcessingUserGestureForDocument = UserGestureIndicator::processingUserGesture(protect(m_frame->document()));
 
     // ii. A frame can navigate its top ancestor when its 'allow-top-navigation-by-user-activation' flag is set and navigation is triggered by user activation.
     if (!isSandboxed(SandboxFlag::TopNavigationByUserActivation) && isProcessingUserGestureForDocument && &targetFrame == &m_frame->tree().top())
@@ -5649,7 +5649,7 @@ void Document::updateSafeAreaInsetOptIn()
     if (m_quirks)
         m_quirks->determineRelevantQuirks();
     if (RefPtr frame = this->frame())
-        frame->script().reevaluateQuirkDependentProperties();
+        protect(frame->script())->reevaluateQuirkDependentProperties();
 }
 
 void Document::metaElementThemeColorChanged(HTMLMetaElement& metaElement)
@@ -5668,7 +5668,7 @@ void Document::metaElementThemeColorChanged(HTMLMetaElement& metaElement)
     themeColorChanged();
 }
 
-WeakPtr<HTMLMetaElement, WeakPtrImplWithEventTargetData> Document::determineActiveThemeColorMetaElement()
+RefPtr<HTMLMetaElement> Document::determineActiveThemeColorMetaElement()
 {
     if (!m_metaThemeColorElements) {
         Vector<WeakPtr<HTMLMetaElement, WeakPtrImplWithEventTargetData>> metaThemeColorElements;
@@ -5679,8 +5679,8 @@ WeakPtr<HTMLMetaElement, WeakPtrImplWithEventTargetData> Document::determineActi
         m_metaThemeColorElements = WTF::move(metaThemeColorElements);
     }
 
-    for (auto& metaElement : *m_metaThemeColorElements) {
-        if (metaElement && metaElement->contentColor().isValid() && metaElement->mediaAttributeMatches())
+    for (auto& weakMetaElement : *m_metaThemeColorElements) {
+        if (RefPtr metaElement = weakMetaElement; metaElement && metaElement->contentColor().isValid() && metaElement->mediaAttributeMatches())
             return metaElement;
     }
     return nullptr;
@@ -6303,13 +6303,13 @@ void Document::runScrollSteps()
                 return frameView->scrollableAreaForNode(target);
             }();
 
-            if (targetScrollableArea)
-                targetScrollableArea->willDispatchScrollEvent();
+            if (CheckedPtr scrollableArea = targetScrollableArea)
+                scrollableArea->willDispatchScrollEvent();
 
             target->dispatchEvent(Event::create(eventName, bubbles, Event::IsCancelable::No));
 
-            if (targetScrollableArea)
-                targetScrollableArea->didDispatchScrollEvent();
+            if (CheckedPtr scrollableArea = targetScrollableArea)
+                scrollableArea->didDispatchScrollEvent();
         }
     }
     if (m_needsVisualViewportScrollEvent) {
@@ -7699,7 +7699,7 @@ ExceptionOr<String> Document::cookie()
         return String();
 
     if (!isDOMCookieCacheValid() && page())
-        setCachedDOMCookies(page()->cookieJar().cookies(*this, cookieURL));
+        setCachedDOMCookies(protect(page()->cookieJar())->cookies(*this, cookieURL));
 
     return String { cachedDOMCookies() };
 }
@@ -7730,7 +7730,7 @@ String Document::referrer()
     if (!m_referrerOverride.isEmpty())
         return m_referrerOverride;
     if (DeprecatedGlobalSettings::trackingPreventionEnabled() && frame()) {
-        auto referrerStr = frame()->loader().referrer();
+        auto referrerStr = protect(frame()->loader())->referrer();
         if (!referrerStr.isEmpty()) {
             URL referrerURL { referrerStr };
             RegistrableDomain referrerRegistrableDomain { referrerURL };
@@ -7741,7 +7741,7 @@ String Document::referrer()
         }
     }
     if (frame())
-        return frame()->loader().referrer();
+        return protect(frame()->loader())->referrer();
     return String();
 }
 
@@ -7749,7 +7749,7 @@ String Document::referrerForBindings()
 {
     bool shouldHideFromBindings = [&] {
         RefPtr loader = this->loader();
-        if (!loader || RegistrableDomain { URL { frame()->loader().referrer() } }.matches(securityOrigin().data()))
+        if (!loader || RegistrableDomain { URL { protect(frame()->loader())->referrer() } }.matches(securityOrigin().data()))
             return false;
 
         auto policies = loader->navigationalAdvancedPrivacyProtections();
@@ -8797,7 +8797,7 @@ void Document::initSecurityContext()
     setSecurityOriginPolicy(SecurityOriginPolicy::create(isOpaqueResponse ? SecurityOrigin::createOpaque() : SecurityPolicy::determineOrigin(m_url, sandboxFlags(), nullptr)));
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
 
-    String overrideContentSecurityPolicy = m_frame->loader().client().overrideContentSecurityPolicy();
+    String overrideContentSecurityPolicy = protect(m_frame->loader().client())->overrideContentSecurityPolicy();
     if (!overrideContentSecurityPolicy.isNull())
         protect(contentSecurityPolicy())->didReceiveHeader(overrideContentSecurityPolicy, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::API, referrer(), documentLoader ? documentLoader->response().httpStatusCode() : 0);
 
@@ -8819,7 +8819,7 @@ void Document::initSecurityContext()
         // harnesses for web sites.
         securityOrigin().grantUniversalAccess();
     } else if (securityOrigin().isLocal()) {
-        if (settings().allowUniversalAccessFromFileURLs() || m_frame->loader().client().shouldForceUniversalAccessFromLocalURL(m_url)) {
+        if (settings().allowUniversalAccessFromFileURLs() || protect(m_frame->loader().client())->shouldForceUniversalAccessFromLocalURL(m_url)) {
             // Some clients want local URLs to have universal access, but that setting is dangerous for other clients.
             securityOrigin().grantUniversalAccess();
         } else if (!settings().allowFileAccessFromFileURLs()) {
@@ -8831,7 +8831,7 @@ void Document::initSecurityContext()
     }
 
     RefPtr parentDocument = ownerElement() ? &ownerElement()->document() : nullptr;
-    if (parentDocument && m_frame->loader().shouldTreatURLAsSrcdocDocument(url()))
+    if (parentDocument && protect(m_frame->loader())->shouldTreatURLAsSrcdocDocument(url()))
         m_isSrcdocDocument = true;
 
     m_isSecureContext = computeIsSecureContext();
@@ -8893,7 +8893,7 @@ void Document::initSecurityContext()
     setCookieURL(ownerDocument->cookieURL());
     // We alias the SecurityOrigins to match Firefox, see Bug 15313
     // https://bugs.webkit.org/show_bug.cgi?id=15313
-    setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityPolicy::determineOrigin(m_url, sandboxFlags(), &ownerDocument->securityOrigin())));
+    setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityPolicy::determineOrigin(m_url, sandboxFlags(), protect(ownerDocument->securityOrigin()).ptr())));
 }
 
 void Document::initContentSecurityPolicy()
@@ -8976,7 +8976,7 @@ bool Document::computeIsSecureContext() const
     // A provisional frame is not in the frame tree yet.
     RefPtr parentFrame = m_frame->tree().parent();
     if (!parentFrame)
-        parentFrame = m_frame->loader().client().provisionalParentFrame();
+        parentFrame = protect(m_frame->loader().client())->provisionalParentFrame();
     if (!parentFrame)
         return !url().protocolIsData() && isDocumentSecure(*this);
 
@@ -9327,16 +9327,16 @@ void Document::serviceRequestVideoFrameCallbacks()
 
 void Document::windowScreenDidChange(PlatformDisplayID displayID)
 {
-    for (auto& observer : copyToVector(m_displayChangedObservers)) {
-        if (observer)
+    for (auto& weakObserver : copyToVector(m_displayChangedObservers)) {
+        if (RefPtr observer = weakObserver)
             (*observer)(displayID);
     }
 }
 
 void Document::screenPropertiesDidChange(PlatformDisplayID displayID)
 {
-    for (auto& observer : copyToVector(m_screenPropertiesChangedObservers)) {
-        if (observer)
+    for (auto& weakObserver : copyToVector(m_screenPropertiesChangedObservers)) {
+        if (RefPtr observer = weakObserver)
             (*observer)(displayID);
     }
 }
@@ -10123,7 +10123,7 @@ bool Document::allowsContentJavaScript() const
         return !contextDocument || contextDocument->allowsContentJavaScript();
     }
 
-    return frame()->loader().client().allowsContentJavaScriptFromMostRecentNavigation() == AllowsContentJavaScript::Yes;
+    return protect(frame()->loader().client())->allowsContentJavaScriptFromMostRecentNavigation() == AllowsContentJavaScript::Yes;
 }
 
 Element* eventTargetElementForDocument(Document* document)
@@ -11227,7 +11227,7 @@ void Document::orientationChanged(IntDegrees orientation)
 OrientationNotifier& Document::orientationNotifier()
 {
     if (!m_orientationNotifier)
-        lazyInitialize(m_orientationNotifier, makeUnique<OrientationNotifier>(currentOrientation(frame())));
+        lazyInitialize(m_orientationNotifier, makeUnique<OrientationNotifier>(currentOrientation(protect(frame()))));
     return *m_orientationNotifier;
 }
 
@@ -12097,12 +12097,13 @@ void Document::navigateFromServiceWorker(const URL& url, CompletionHandler<void(
         return;
     }
     eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr<Document, WeakPtrImplWithEventTargetData> { *this }, url, callback = WTF::move(callback)]() mutable {
-        RefPtr frame = weakThis ? weakThis->frame() : nullptr;
+        RefPtr document = weakThis;
+        RefPtr frame = document ? document->frame() : nullptr;
         if (!frame) {
             callback(ScheduleLocationChangeResult::Stopped);
             return;
         }
-        protect(frame->navigationScheduler())->scheduleLocationChange(*weakThis, protect(weakThis->securityOrigin()), url, frame->loader().outgoingReferrer(), LockHistory::Yes, LockBackForwardList::No, NavigationHistoryBehavior::Auto, ReplaceIfNotCompletelyLoaded::No, [callback = WTF::move(callback)](auto result) mutable {
+        protect(frame->navigationScheduler())->scheduleLocationChange(*document, protect(document->securityOrigin()), url, frame->loader().outgoingReferrer(), LockHistory::Yes, LockBackForwardList::No, NavigationHistoryBehavior::Auto, ReplaceIfNotCompletelyLoaded::No, [callback = WTF::move(callback)](auto result) mutable {
             callback(result);
         });
     });

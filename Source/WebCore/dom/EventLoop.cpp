@@ -147,11 +147,11 @@ private:
         if (!m_task)
             return;
         WeakPtr group = m_task->group();
-        if (group)
-            group->didFireTimer();
+        if (CheckedPtr checkedGroup = group)
+            checkedGroup->didFireTimer();
         m_task->execute();
-        if (group && m_type == Type::OneShot)
-            group->removeScheduledTimer(*this);
+        if (CheckedPtr checkedGroup = group; checkedGroup && m_type == Type::OneShot)
+            checkedGroup->removeScheduledTimer(*this);
     }
 
     std::unique_ptr<EventLoopTask> m_task;

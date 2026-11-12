@@ -106,7 +106,7 @@ void Range::updateAssociatedSelection()
     OptionSet<FrameSelection::SetSelectionOption> options;
     if (m_ownerDocument->quirks().shouldNotMoveFocusWhenMutatingSelectionRange())
         options.add(FrameSelection::SetSelectionOption::DoNotSetFocus);
-    m_ownerDocument->selection().updateFromAssociatedLiveRange(options);
+    protect(m_ownerDocument->selection())->updateFromAssociatedLiveRange(options);
 }
 
 void Range::updateAssociatedHighlight()

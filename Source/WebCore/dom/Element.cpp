@@ -1303,12 +1303,12 @@ void Element::scrollIntoView(Variant<bool, ScrollIntoViewOptions>&& arg)
 
     document->updateLayoutIgnorePendingStylesheets(LayoutOptions::UpdateCompositingLayers);
 
-    SingleThreadWeakPtr<RenderElement> renderer;
+    CheckedPtr<RenderElement> renderer;
     bool insideFixed = false;
     LayoutRect absoluteBounds;
 
     if (auto listBoxScrollResult = listBoxElementScrollIntoView(*this)) {
-        renderer = WTF::move(listBoxScrollResult->first);
+        renderer = listBoxScrollResult->first.get();
         absoluteBounds = listBoxScrollResult->second;
 
         auto listBoxAbsoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed).marginRect;
@@ -3072,10 +3072,11 @@ void Element::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
         CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(*this, oldDocument, newDocument);
 
     if (auto* observerData = intersectionObserverDataIfExists()) {
-        for (const auto& observer : observerData->observers) {
+        for (const auto& weakObserver : observerData->observers) {
+            Ref observer = *weakObserver;
             if (observer->hasObservationTargets()) {
-                oldDocument.removeIntersectionObserver(*observer);
-                newDocument.addIntersectionObserver(*observer);
+                oldDocument.removeIntersectionObserver(observer);
+                newDocument.addIntersectionObserver(observer);
             }
         }
     }
@@ -4515,7 +4516,7 @@ void Element::blur()
 {
     if (treeScope().focusedElementInScope() == this) {
         if (RefPtr frame = document().frame())
-            frame->page()->focusController().setFocusedElement(nullptr, frame.get());
+            protect(frame->page()->focusController())->setFocusedElement(nullptr, frame.get());
         else
             protect(document())->setFocusedElement(nullptr);
     }
@@ -5493,8 +5494,8 @@ void Element::disconnectFromIntersectionObserversSlow(IntersectionObserverData& 
     }
     observerData.registrations.clear();
 
-    for (const auto& observer : observerData.observers) {
-        if (observer)
+    for (const auto& weakObserver : observerData.observers) {
+        if (RefPtr observer = weakObserver)
             observer->rootDestroyed();
     }
     observerData.observers.clear();
@@ -5679,8 +5680,9 @@ bool Element::hasPendingKeyframesUpdate(const std::optional<Style::PseudoElement
     return data && data->hasPendingKeyframesUpdate();
 }
 
-void Element::disconnectFromResizeObserversSlow(ResizeObserverData& observerData)
+void Element::disconnectFromResizeObserversSlow()
 {
+    auto& observerData = *resizeObserverDataIfExists();
     for (RefPtr observer : observerData.observers)
         observer->targetDestroyed(*this);
     observerData.observers.clear();

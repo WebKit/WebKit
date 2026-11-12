@@ -683,15 +683,18 @@ static bool rendererIsFragmented(const RenderLayerModelObject& renderer)
 // https://drafts.csswg.org/css-view-transitions/#capture-old-state-algorithm
 ExceptionOr<void> ViewTransition::captureOldState()
 {
-    if (!document())
+    RefPtr document = this->document();
+    if (!document)
         return { };
     OrderedHashSet<AtomString> usedTransitionNames;
     Vector<CheckedRef<RenderLayerModelObject>> captureRenderers;
 
     // Ensure style & layout are up-to-date.
-    protect(document())->updateLayoutIgnorePendingStylesheets();
+    document->updateLayoutIgnorePendingStylesheets();
 
-    if (CheckedPtr view = document()->renderView()) {
+    CheckedRef styleScope = document->styleScope();
+
+    if (CheckedPtr view = document->renderView()) {
         Ref frame = view->frameView().frame();
         m_initialLargeViewportSize = view->sizeForCSSLargeViewportUnits();
         m_initialPageZoom = frame->pageZoomFactor() * frame->frameScaleFactor();
@@ -704,7 +707,7 @@ ExceptionOr<void> ViewTransition::captureOldState()
             if (rendererIsFragmented(renderer))
                 return { };
 
-            if (auto name = effectiveViewTransitionName(renderer, protect(styleable->element), document()->styleScope(), isCrossDocument()); !name.isNull()) {
+            if (auto name = effectiveViewTransitionName(renderer, protect(styleable->element), styleScope, isCrossDocument()); !name.isNull()) {
                 if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
                     return check.releaseException();
 
@@ -724,7 +727,7 @@ ExceptionOr<void> ViewTransition::captureOldState()
         CapturedElement capture;
 
         copyElementBaseProperties(renderer.get(), capture.oldState);
-        if (RefPtr frame = document()->frame()) {
+        if (RefPtr frame = document->frame()) {
             if (subtreeContainsRemoteFrame(*frame, renderer.get()))
                 capture.pendingCapture = recordElementVisualOverflowClippedToViewport(*frame, renderer.get(), capture.oldState.overflowRect, capture.oldState.subpixelOffset);
             if (capture.pendingCapture)
@@ -736,9 +739,9 @@ ExceptionOr<void> ViewTransition::captureOldState()
         auto styleable = Styleable::fromRenderer(renderer);
         ASSERT(styleable);
         Ref element = styleable->element;
-        capture.classList = effectiveViewTransitionClassList(renderer, element, document()->styleScope());
+        capture.classList = effectiveViewTransitionClassList(renderer, element, styleScope);
 
-        auto transitionName = effectiveViewTransitionName(renderer, element, document()->styleScope(), isCrossDocument());
+        auto transitionName = effectiveViewTransitionName(renderer, element, styleScope, isCrossDocument());
         m_namedElements.add(transitionName, capture);
     }
 
@@ -762,7 +765,7 @@ bool ViewTransition::updatePropertiesForGroupPseudo(CapturedElement& capturedEle
         // group styles rule
         if (!capturedElement.groupStyleProperties) {
             capturedElement.groupStyleProperties = properties;
-            protect(document()->styleScope().resolver())->setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionGroup, name, *properties);
+            protect(protect(document()->styleScope())->resolver())->setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionGroup, name, *properties);
             return true;
         }
         return protect(*capturedElement.groupStyleProperties)->mergeAndOverrideOnConflict(*properties);
@@ -773,10 +776,12 @@ bool ViewTransition::updatePropertiesForGroupPseudo(CapturedElement& capturedEle
 // https://drafts.csswg.org/css-view-transitions/#capture-new-state-algorithm
 ExceptionOr<void> ViewTransition::captureNewState()
 {
-    if (!document())
+    RefPtr document = this->document();
+    if (!document)
         return { };
+    CheckedRef styleScope = document->styleScope();
     OrderedHashSet<AtomString> usedTransitionNames;
-    if (CheckedPtr view = document()->renderView()) {
+    if (CheckedPtr view = document->renderView()) {
         auto result = forEachRendererInPaintOrder([&](RenderLayerModelObject& renderer) -> ExceptionOr<void> {
             auto styleable = Styleable::fromRenderer(renderer);
             if (!styleable)
@@ -786,7 +791,7 @@ ExceptionOr<void> ViewTransition::captureNewState()
                 return { };
 
             Ref element = styleable->element;
-            if (auto name = effectiveViewTransitionName(renderer, element, document()->styleScope(), isCrossDocument()); !name.isNull()) {
+            if (auto name = effectiveViewTransitionName(renderer, element, styleScope, isCrossDocument()); !name.isNull()) {
                 if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
                     return check.releaseException();
 
@@ -795,7 +800,7 @@ ExceptionOr<void> ViewTransition::captureNewState()
                     m_namedElements.add(name, capturedElement);
                 }
                 auto namedElement = m_namedElements.find(name);
-                namedElement->classList = effectiveViewTransitionClassList(renderer, element, document()->styleScope());
+                namedElement->classList = effectiveViewTransitionClassList(renderer, element, styleScope);
                 namedElement->newElement = *styleable;
 
                 // Do the work on updatePseudoElementStylesRead now
@@ -813,7 +818,9 @@ ExceptionOr<void> ViewTransition::captureNewState()
 
 void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const CapturedElement& capturedElement)
 {
-    Ref resolver = document()->styleScope().resolver();
+    Ref document = *this->document();
+    CheckedRef styleScope = document->styleScope();
+    Ref resolver = styleScope->resolver();
 
     // image animation name rule
     if (capturedElement.oldImage) {
@@ -879,7 +886,7 @@ void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const Captur
     // Register through the document scope so the keyframes are re-established if the resolver
     // is recreated (e.g. by a stylesheet mutation) during the transition. The keyframes are
     // discarded when the transition ends and the view transition styles are cleared.
-    document()->styleScope().addViewTransitionKeyframes(WTF::move(keyframes));
+    styleScope->addViewTransitionKeyframes(WTF::move(keyframes));
 }
 
 // https://drafts.csswg.org/css-view-transitions/#setup-transition-pseudo-elements
@@ -1129,7 +1136,7 @@ void ViewTransition::copyElementBaseProperties(RenderLayerModelObject& renderer,
 {
     std::optional<const Styleable> styleable = Styleable::fromRenderer(renderer);
     ASSERT(styleable);
-    Style::Extractor styleExtractor { &styleable->element, false, styleable->pseudoElementIdentifier };
+    Style::Extractor styleExtractor { protect(styleable->element).ptr(), false, styleable->pseudoElementIdentifier };
 
     static constexpr auto transitionProperties = WTF::toArray<CSSPropertyID>({
         CSSPropertyID::WritingMode,

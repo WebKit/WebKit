@@ -857,8 +857,13 @@ public:
 
     const NetworkLoadPolicy& networkLoadPolicy() const final;
 
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
+    void suspendDeviceMotionAndOrientationUpdates();
+    void resumeDeviceMotionAndOrientationUpdates();
+#else
     NODELETE void suspendDeviceMotionAndOrientationUpdates();
     NODELETE void resumeDeviceMotionAndOrientationUpdates();
+#endif
 
     void suspendFontLoading();
 
@@ -1467,7 +1472,11 @@ public:
     void updateAXCustomColorModeTextBackdrops();
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    void invalidateRenderingDependentRegions();
+#else
     NODELETE void invalidateRenderingDependentRegions();
+#endif
     void invalidateEventRegionsForFrame(HTMLFrameOwnerElement&);
 
     void invalidateEventListenerRegions();
@@ -1645,8 +1654,13 @@ public:
     bool mayHaveRenderedSVGForeignObjects() const { return m_mayHaveRenderedSVGForeignObjects; }
     void setMayHaveRenderedSVGForeignObjects() { m_mayHaveRenderedSVGForeignObjects = true; }
 
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
+    void didAddTouchEventHandler(Node&);
+    void didRemoveTouchEventHandler(Node&, EventHandlerRemoval = EventHandlerRemoval::One);
+#else
     NODELETE void didAddTouchEventHandler(Node&);
     NODELETE void didRemoveTouchEventHandler(Node&, EventHandlerRemoval = EventHandlerRemoval::One);
+#endif
 
     void didRemoveEventTargetNode(Node&);
 
@@ -2295,7 +2309,7 @@ private:
     void updateTitle(const StringWithDirection&);
     void updateBaseURL();
 
-    WeakPtr<HTMLMetaElement, WeakPtrImplWithEventTargetData> determineActiveThemeColorMetaElement();
+    RefPtr<HTMLMetaElement> determineActiveThemeColorMetaElement();
     void themeColorChanged();
 
     void invalidateAccessKeyCacheSlowCase();
@@ -2363,7 +2377,11 @@ private:
 
     bool computeIsSecureContext() const;
 
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+    void platformSuspendOrStopActiveDOMObjects();
+#else
     NODELETE void platformSuspendOrStopActiveDOMObjects();
+#endif
 
     void collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>>&, const HighlightRegistry&);
 

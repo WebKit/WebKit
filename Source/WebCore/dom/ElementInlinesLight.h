@@ -103,10 +103,9 @@ inline void Element::disconnectFromIntersectionObservers()
 
 inline void Element::disconnectFromResizeObservers()
 {
-    auto* observerData = resizeObserverDataIfExists();
-    if (!observerData) [[likely]]
+    if (!resizeObserverDataIfExists()) [[likely]]
         return;
-    disconnectFromResizeObserversSlow(*observerData);
+    disconnectFromResizeObserversSlow();
 }
 
 } // namespace WebCore

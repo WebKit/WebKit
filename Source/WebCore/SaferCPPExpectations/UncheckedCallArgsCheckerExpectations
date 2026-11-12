@@ -3,13 +3,9 @@ dom/Attr.cpp
 dom/ComposedTreeIterator.h
 dom/Document.cpp
 dom/Element.cpp
-dom/EventLoop.cpp
-dom/InlineStyleSheetOwner.cpp
 dom/MutationObserver.cpp
 dom/PendingScript.cpp
-dom/Range.cpp
 dom/ShadowRoot.cpp
-dom/ViewTransition.cpp
 [ macOS ] rendering/AccessibilityRegionContext.cpp
 rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp

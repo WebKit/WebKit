@@ -1053,7 +1053,7 @@ private:
     void disconnectFromIntersectionObserversSlow(IntersectionObserverData&);
 
     void disconnectFromResizeObservers();
-    void disconnectFromResizeObserversSlow(ResizeObserverData&);
+    void disconnectFromResizeObserversSlow();
 
     // The cloneNode function is private so that non-virtual cloneElementWith/WithoutChildren are used instead.
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;

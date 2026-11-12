@@ -2519,7 +2519,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
     if (typeInfo.isInCategory(EventCategory::MouseMoveRelated)) {
-        if (WeakPtr observer = document->contentChangeObserverIfExists())
+        if (RefPtr observer = document->contentChangeObserverIfExists())
             observer->didAddMouseMoveRelatedEventListener(eventType, *targetNode);
     }
 #endif

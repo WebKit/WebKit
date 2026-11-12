@@ -67,7 +67,7 @@ class CheckedPtr {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CheckedPtr);
 public:
 
-    constexpr CheckedPtr()
+    NODELETE constexpr CheckedPtr()
         : m_ptr(nullptr)
     { }
 

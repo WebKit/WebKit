@@ -1,4 +1,3 @@
-dom/Document.cpp
 dom/Position.cpp
 rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp

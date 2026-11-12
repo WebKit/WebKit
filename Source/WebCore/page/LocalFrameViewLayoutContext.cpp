@@ -102,7 +102,8 @@ public :
         checkAndReportNeedsLayoutError(m_renderView);
 
         // Style-interleaved layout doesn't lay out the content of query containers with unresolved descendants (see RenderBlock::layout()).
-        CheckedRef styleScope = m_renderView.document().styleScope();
+        Ref document = m_renderView.document();
+        CheckedRef styleScope = document->styleScope();
         for (auto* descendant = m_renderView.firstChild(); descendant;) {
             checkAndReportNeedsLayoutError(*descendant);
             if (styleScope->isQueryContainerWithUnresolvedDescendants(dynamicDowncast<Element>(descendant->node()))) {

@@ -296,7 +296,8 @@ void ProcessingInstruction::removingSteps(RemovalType removalType, ContainerNode
     if (!removalType.disconnectedFromDocument)
         return;
     
-    CheckedRef styleScope = document().styleScope();
+    Ref document = this->document();
+    CheckedRef styleScope = document->styleScope();
     styleScope->removeStyleSheetCandidateNode(*this);
 
     setSheet(nullptr);

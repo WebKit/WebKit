@@ -300,7 +300,7 @@ EventPath::EventPath(std::span<EventTarget* const> targets)
     m_path = WTF::map(targets, [&](auto* target) {
         ASSERT(target);
         ASSERT(!is<Node>(target));
-        return EventContext { EventContext::Type::Normal, nullptr, target, *targets.begin(), 0 };
+        return EventContext { EventContext::Type::Normal, nullptr, target, protect(*targets.begin()), 0 };
     });
 }
 

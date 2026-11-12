@@ -722,7 +722,7 @@ protected:
     void setIsParsingChildrenFinished() { clearStateFlag(StateFlag::IsParsingChildren); }
     void clearIsParsingChildrenFinished() { setStateFlag(StateFlag::IsParsingChildren); }
 
-    Node(Document&, NodeType, OptionSet<TypeFlag>);
+    NODELETE Node(Document&, NodeType, OptionSet<TypeFlag>);
 
     static constexpr uint32_t s_refCountIncrement = 2;
     static constexpr uint32_t s_refCountMask = ~static_cast<uint32_t>(1);
@@ -792,7 +792,7 @@ protected:
     ExceptionOr<NodeVector> convertNodesOrStringsIntoNodeVector(FixedVector<NodeOrString>&&);
 
 private:
-    Node(ClangVTableWorkaroundTag, Document&);
+    NODELETE Node(ClangVTableWorkaroundTag, Document&);
 
     WEBCORE_EXPORT void removedLastRef();
 

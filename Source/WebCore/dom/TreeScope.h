@@ -78,8 +78,8 @@ public:
 
     uint32_t checkedPtrCount() const;
     uint32_t checkedPtrCountWithoutThreadCheck() const;
-    void incrementCheckedPtrCount() const;
-    void decrementCheckedPtrCount() const;
+    NODELETE void incrementCheckedPtrCount() const;
+    NODELETE void decrementCheckedPtrCount() const;
     void setDidBeginCheckedPtrDeletion();
 
     NODELETE Element* focusedElementInScope();
