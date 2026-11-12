@@ -147,6 +147,111 @@ TEST_P(StreamConnectionBufferTest, ClientWritesFullVisibleInServer)
     expectFilled(*serverSpan);
 }
 
+TEST_P(StreamConnectionBufferTest, ServerDoesNotReadPastReleaseAll)
+{
+    ASSERT_TRUE(isValid());
+    {
+        auto span = client().tryAcquire(0_s);
+        ASSERT_TRUE(span.has_value());
+        fill(span->first(3 * minimumSize));
+        client().release(3 * minimumSize);
+    }
+    {
+        auto span = server().tryAcquire();
+        ASSERT_TRUE(span.has_value());
+        EXPECT_EQ(span->size(), 3 * minimumSize);
+        server().release(minimumSize);
+        server().releaseAll();
+    }
+    EXPECT_FALSE(server().tryAcquire().has_value());
+
+    auto replySpan = client().tryAcquireAll(0_s);
+    ASSERT_TRUE(replySpan.has_value());
+    {
+        auto span = client().tryAcquire(0_s);
+        ASSERT_TRUE(span.has_value());
+        EXPECT_EQ(span->size(), client().dataSize() - 1);
+        fill(span->first(minimumSize));
+        EXPECT_EQ(client().release(minimumSize), IPC::StreamClientConnectionBuffer::WakeUpServer::Yes);
+    }
+    auto span = server().tryAcquire();
+    ASSERT_TRUE(span.has_value());
+    EXPECT_EQ(span->size(), minimumSize);
+    expectFilled(*span);
+}
+
+TEST_P(StreamConnectionBufferTest, ClientSeesSpaceFreedAfterItsKnownSpaceRunsOut)
+{
+    ASSERT_TRUE(isValid());
+    size_t half = client().dataSize() / 2;
+    {
+        auto span = client().tryAcquire(0_s);
+        ASSERT_TRUE(span.has_value());
+        fill(span->first(half));
+        client().release(half);
+    }
+    {
+        auto span = client().acquireNoWait();
+        ASSERT_TRUE(span.has_value());
+        EXPECT_EQ(span->size(), half - 1);
+        client().release(span->size());
+    }
+    EXPECT_FALSE(client().acquireNoWait().has_value());
+    {
+        auto span = server().tryAcquire();
+        ASSERT_TRUE(span.has_value());
+        EXPECT_EQ(span->size(), client().dataSize() - 1);
+        expectFilled(span->first(half));
+        server().release(half);
+    }
+    auto span = client().acquireNoWait();
+    ASSERT_TRUE(span.has_value());
+    EXPECT_EQ(span->size(), half - 1);
+}
+
+TEST_P(StreamConnectionBufferTest, ClientAcquireLargerNoWaitRereadsServerOffset)
+{
+    ASSERT_TRUE(isValid());
+    size_t quarter = client().dataSize() / 4;
+    {
+        auto span = client().tryAcquire(0_s);
+        ASSERT_TRUE(span.has_value());
+        EXPECT_EQ(span->size(), client().dataSize() - 1);
+        fill(*span);
+        client().release(span->size());
+    }
+    {
+        auto span = server().tryAcquire();
+        ASSERT_TRUE(span.has_value());
+        EXPECT_EQ(span->size(), client().dataSize() - 1);
+        expectFilled(*span);
+        server().release(2 * quarter);
+    }
+    // The client wraps to offset 0 and reads the server offset, 2 * quarter.
+    {
+        auto span = client().acquireNoWait();
+        ASSERT_TRUE(span.has_value());
+        EXPECT_EQ(span->size(), 2 * quarter - 1);
+    }
+    // The server frees another quarter. The client does not read the server offset again while its known span holds a message.
+    server().release(quarter);
+    {
+        auto span = client().acquireNoWait();
+        ASSERT_TRUE(span.has_value());
+        EXPECT_EQ(span->size(), 2 * quarter - 1);
+    }
+    // A message larger than the known span: reading the server offset again shows the space the server freed.
+    {
+        auto span = client().acquireLargerNoWait(2 * quarter - 1);
+        ASSERT_TRUE(span.has_value());
+        EXPECT_EQ(span->size(), 3 * quarter - 1);
+    }
+    EXPECT_FALSE(client().acquireLargerNoWait(3 * quarter - 1).has_value());
+    auto span = client().acquireNoWait();
+    ASSERT_TRUE(span.has_value());
+    EXPECT_EQ(span->size(), 3 * quarter - 1);
+}
+
 INSTANTIATE_TEST_SUITE_P(StreamConnectionBufferSizedTests,
     StreamConnectionBufferTest,
     testing::Values(6, 9, 14),

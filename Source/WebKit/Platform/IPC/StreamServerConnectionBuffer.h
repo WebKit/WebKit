@@ -55,6 +55,8 @@ private:
     size_t clampedLimit(ServerLimit) const;
 
     size_t m_serverOffset { 0 };
+    // The last clientOffset read from the shared header, clamped. Reset with m_serverOffset in releaseAll().
+    size_t m_cachedServerLimit { 0 };
 };
 
 inline std::optional<StreamServerConnectionBuffer> StreamServerConnectionBuffer::map(Handle&& handle)
@@ -67,14 +69,22 @@ inline std::optional<StreamServerConnectionBuffer> StreamServerConnectionBuffer:
 
 inline std::optional<std::span<uint8_t>> StreamServerConnectionBuffer::tryAcquire()
 {
+    // The client only moves clientOffset forward and never past serverOffset, so the bytes up to a stale
+    // value are still written and unread. This avoids reading the shared offset for every message.
+    auto result = alignedMutableSpan(m_serverOffset, m_cachedServerLimit);
+    if (result.size() >= minimumMessageSize)
+        return result;
+
     ServerLimit serverLimit = sharedServerLimit().load<MemoryOrder::Acquire>();
     if (serverLimit == ServerLimit::serverIsSleepingTag)
         return std::nullopt;
 
-    auto result = alignedMutableSpan(m_serverOffset, clampedLimit(serverLimit));
+    m_cachedServerLimit = clampedLimit(serverLimit);
+    result = alignedMutableSpan(m_serverOffset, m_cachedServerLimit);
     if (result.size() < minimumMessageSize) {
         serverLimit = sharedServerLimit().compareExchangeStrong<MemoryOrder::AcquireRelease, MemoryOrder::Acquire>(serverLimit, ServerLimit::serverIsSleepingTag);
-        result = alignedMutableSpan(m_serverOffset, clampedLimit(serverLimit));
+        m_cachedServerLimit = clampedLimit(serverLimit);
+        result = alignedMutableSpan(m_serverOffset, m_cachedServerLimit);
     }
 
     if (result.size() < minimumMessageSize)
@@ -117,6 +127,7 @@ inline StreamServerConnectionBuffer::WakeUpClient StreamServerConnectionBuffer::
     else
         ASSERT(!(oldServerOffset & ServerOffset::clientIsWaitingTag));
     m_serverOffset = 0;
+    m_cachedServerLimit = 0;
     return wakeUpClient;
 }
 

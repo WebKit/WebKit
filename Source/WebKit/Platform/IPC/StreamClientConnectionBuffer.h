@@ -30,6 +30,7 @@
 #include "StreamConnectionBuffer.h"
 #include "StreamConnectionEncoder.h"
 #include <atomic>
+#include <limits>
 
 namespace IPC {
 
@@ -40,6 +41,8 @@ public:
     StreamClientConnectionBuffer& operator=(StreamClientConnectionBuffer&&);
 
     std::optional<std::span<uint8_t>> acquireNoWait();
+    // Re-reads the server offset. Returns a span only if it is larger than previousSpanSize.
+    std::optional<std::span<uint8_t>> acquireLargerNoWait(size_t previousSpanSize);
     std::optional<std::span<uint8_t>> tryAcquire(Timeout);
     std::optional<std::span<uint8_t>> tryAcquireAll(Timeout);
 
@@ -55,8 +58,10 @@ public:
 private:
     static constexpr size_t minimumMessageSize = StreamConnectionEncoder::minimumMessageSize;
     static constexpr size_t messageAlignment = StreamConnectionEncoder::messageAlignment;
+    static constexpr size_t invalidCachedClientLimit = std::numeric_limits<size_t>::max();
     StreamClientConnectionBuffer(Ref<WebCore::SharedMemory>, Event&& clientWait);
 
+    std::optional<std::span<uint8_t>> acquireFromSharedLimitNoWait(size_t minimumSize);
     size_t size(size_t offset, size_t limit) const;
     size_t alignOffset(size_t offset) const { return StreamConnectionBuffer::alignOffset<messageAlignment>(offset, minimumMessageSize); }
     Atomic<ClientOffset>& sharedClientOffset() { return clientOffset(); }
@@ -65,6 +70,8 @@ private:
     size_t toLimit(ClientLimit) const;
 
     size_t m_clientOffset { 0 };
+    // The last serverOffset read from the shared header, or invalidCachedClientLimit when it has to be read again.
+    size_t m_cachedClientLimit { invalidCachedClientLimit };
     // Waited on for ring buffer backpressure. The client owns this end from the start, so senders can
     // always wait, even before the server has opened its end of the connection. The matching Signal
     // travels to the server in StreamServerConnectionHandle, so the wait is also interrupted if the
@@ -81,6 +88,7 @@ private:
 inline StreamClientConnectionBuffer::StreamClientConnectionBuffer(StreamClientConnectionBuffer&& other)
     : StreamConnectionBuffer(WTF::move(other))
     , m_clientOffset(other.m_clientOffset)
+    , m_cachedClientLimit(other.m_cachedClientLimit)
     , m_clientWait(WTF::move(other.m_clientWait))
     , m_wakeUp(WTF::move(other.m_wakeUp))
     , m_hasWakeUpSemaphore(other.m_hasWakeUpSemaphore.load(std::memory_order_relaxed))
@@ -92,6 +100,7 @@ inline StreamClientConnectionBuffer& StreamClientConnectionBuffer::operator=(Str
 {
     StreamConnectionBuffer::operator=(WTF::move(other));
     m_clientOffset = other.m_clientOffset;
+    m_cachedClientLimit = other.m_cachedClientLimit;
     m_clientWait = WTF::move(other.m_clientWait);
     m_wakeUp = WTF::move(other.m_wakeUp);
     m_hasWakeUpSemaphore.store(other.m_hasWakeUpSemaphore.load(std::memory_order_relaxed), std::memory_order_relaxed);
@@ -131,6 +140,24 @@ inline StreamClientConnectionBuffer::StreamClientConnectionBuffer(Ref<WebCore::S
 
 inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::acquireNoWait()
 {
+    // The server only moves serverOffset forward and never past clientOffset, so the space up to a stale
+    // value is still free. This avoids reading the shared offset for every message.
+    if (m_cachedClientLimit != invalidCachedClientLimit) {
+        auto result = alignedMutableSpan(m_clientOffset, m_cachedClientLimit);
+        if (result.size() >= minimumMessageSize)
+            return result;
+    }
+
+    return acquireFromSharedLimitNoWait(minimumMessageSize);
+}
+
+inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::acquireLargerNoWait(size_t previousSpanSize)
+{
+    return acquireFromSharedLimitNoWait(std::max(previousSpanSize + 1, minimumMessageSize));
+}
+
+inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::acquireFromSharedLimitNoWait(size_t minimumSize)
+{
     ClientLimit clientLimit = sharedClientLimit().load<MemoryOrder::Acquire>();
     // This would mean we try to send messages after a timeout. It is a programming error.
     // Since the value is trusted, we only assert.
@@ -138,8 +165,9 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::acquireNo
 
     if (clientLimit == ClientLimit::clientIsWaitingTag)
         return std::nullopt;
-    auto result = alignedMutableSpan(m_clientOffset, toLimit(clientLimit));
-    if (result.size() >= minimumMessageSize)
+    m_cachedClientLimit = toLimit(clientLimit);
+    auto result = alignedMutableSpan(m_clientOffset, m_cachedClientLimit);
+    if (result.size() >= minimumSize)
         return result;
     return std::nullopt;
 }
@@ -153,7 +181,8 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
 
     for (;;) {
         if (clientLimit != ClientLimit::clientIsWaitingTag) {
-            auto result = alignedMutableSpan(m_clientOffset, toLimit(clientLimit));
+            m_cachedClientLimit = toLimit(clientLimit);
+            auto result = alignedMutableSpan(m_clientOffset, m_cachedClientLimit);
             if (result.size() >= minimumMessageSize)
                 return result;
         }
@@ -161,8 +190,11 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
             break;
         ClientLimit oldClientLimit = sharedClientLimit().compareExchangeStrong<MemoryOrder::AcquireRelease, MemoryOrder::Acquire>(clientLimit, ClientLimit::clientIsWaitingTag);
         if (clientLimit == oldClientLimit) {
-            if (!m_clientWait.waitFor(timeout))
+            if (!m_clientWait.waitFor(timeout)) {
+                // serverOffset may still hold clientIsWaitingTag: read it again before writing.
+                m_cachedClientLimit = invalidCachedClientLimit;
                 return std::nullopt;
+            }
             clientLimit = sharedClientLimit().load<MemoryOrder::Acquire>();
         } else
             clientLimit = oldClientLimit;
@@ -201,6 +233,7 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
     // In case the transaction was cancelled, undo the transaction marker.
     sharedClientLimit().store<MemoryOrder::Release>(static_cast<ClientLimit>(0));
     m_clientOffset = 0;
+    m_cachedClientLimit = invalidCachedClientLimit;
     return alignedMutableSpan(m_clientOffset, 0);
 }
 
@@ -221,6 +254,7 @@ inline void StreamClientConnectionBuffer::resetClientOffset()
 {
     // For synchronous send protocols with replies out-of-band.
     m_clientOffset = 0;
+    m_cachedClientLimit = invalidCachedClientLimit;
 }
 
 inline std::span<uint8_t> StreamClientConnectionBuffer::alignedMutableSpan(size_t offset, size_t limit)

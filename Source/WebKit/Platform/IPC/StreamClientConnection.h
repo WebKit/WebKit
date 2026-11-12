@@ -138,6 +138,19 @@ private:
     bool trySendAsyncWithReplyStream(std::span<uint8_t>, T& message, AsyncReplyID);
     template<typename T>
     std::optional<SendSyncResult<T>> trySendSyncStream(T& message, Timeout, std::span<uint8_t>);
+    // The span may end at a server offset that was read some messages ago, so if the message does not fit, reads it
+    // again and retries with a larger span before the caller sends out of stream. Updates span to the last one acquired.
+    template<typename TrySend>
+    auto trySendStreamWithLargerSpanRetry(std::optional<std::span<uint8_t>>& span, NOESCAPE TrySend&& trySend) -> decltype(trySend(*span))
+    {
+        if (auto result = trySend(*span))
+            return result;
+        auto largerSpan = m_buffer.acquireLargerNoWait(span->size());
+        if (!largerSpan)
+            return { };
+        span = largerSpan;
+        return trySend(*span);
+    }
     Error trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout);
     std::optional<std::span<uint8_t>> tryAcquire(Timeout);
     void sendProcessOutOfStreamMessage(std::span<uint8_t>);
@@ -211,7 +224,7 @@ Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V> de
     }
 
     if constexpr (T::isStreamEncodable) {
-        if (trySendStream(*span, message))
+        if (trySendStreamWithLargerSpanRetry(span, [&](auto streamSpan) { return trySendStream(streamSpan, message); }))
             return Error::NoError;
     }
     sendProcessOutOfStreamMessage(WTF::move(*span));
@@ -254,7 +267,7 @@ std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::send
     connection->addAsyncReplyHandler(WTF::move(handler));
 
     if constexpr (T::isStreamEncodable) {
-        if (trySendAsyncWithReplyStream(*span, message, replyID))
+        if (trySendStreamWithLargerSpanRetry(span, [&](auto streamSpan) { return trySendAsyncWithReplyStream(streamSpan, message, replyID); }))
             return replyID;
     }
 
@@ -315,7 +328,7 @@ std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::send
     connection->addAsyncReplyHandlerWithDispatcher(WTF::move(handler));
 
     if constexpr(T::isStreamEncodable) {
-        if (trySendAsyncWithReplyStream(*span, message, replyID))
+        if (trySendStreamWithLargerSpanRetry(span, [&](auto streamSpan) { return trySendAsyncWithReplyStream(streamSpan, message, replyID); }))
             return replyID;
     }
 
@@ -396,9 +409,8 @@ StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& m
         return { Error::FailedToAcquireBufferSpan };
 
     if constexpr (T::isStreamEncodable) {
-        auto maybeSendResult = trySendSyncStream(message, timeout, *span);
-        if (maybeSendResult)
-            return WTF::move(*maybeSendResult);
+        if (auto sendResult = trySendStreamWithLargerSpanRetry(span, [&](auto streamSpan) { return trySendSyncStream(message, timeout, streamSpan); }))
+            return WTF::move(*sendResult);
     }
     sendProcessOutOfStreamMessage(WTF::move(*span));
     return m_connection->sendSync(std::forward<T>(message), destinationID.toUInt64(), timeout);
