@@ -471,6 +471,25 @@ void InlineContentBuilder::computeOverflowFromBoxes(InlineContent& inlineContent
             lineInkOverflowRect.inflate(leadingOverflow, { }, trailingOverflow, { });
         }
 
+        if (line.hasEllipsis()) {
+            // "If any part of the block overflow ellipsis overflows, it is treated as scrollable overflow"
+            // https://drafts.csswg.org/css-overflow-4/#block-ellipsis
+            if (auto ellipsis = inlineContent.displayContent().lineEllipsis(lineIndex); ellipsis && ellipsis->type == InlineDisplay::Line::Ellipsis::Type::Block) {
+                // Like text, the ellipsis overflows the line only in the inline direction: its rect is as tall as the root inline box, which
+                // can be taller than the line (e.g. with a small line-height).
+                auto ellipsisScrollableOverflowRect = ellipsis->visualRect;
+                if (line.isHorizontal()) {
+                    ellipsisScrollableOverflowRect.setY(lineScrollableOverflowRect.y());
+                    ellipsisScrollableOverflowRect.setHeight(lineScrollableOverflowRect.height());
+                } else {
+                    ellipsisScrollableOverflowRect.setX(lineScrollableOverflowRect.x());
+                    ellipsisScrollableOverflowRect.setWidth(lineScrollableOverflowRect.width());
+                }
+                lineScrollableOverflowRect.unite(ellipsisScrollableOverflowRect);
+                lineInkOverflowRect.unite(ellipsis->visualRect);
+            }
+        }
+
         line.setScrollableOverflow(lineScrollableOverflowRect);
         line.setInkOverflow(lineInkOverflowRect);
         line.setFirstBoxIndex(firstBoxIndex);
