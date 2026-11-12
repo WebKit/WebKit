@@ -44,6 +44,7 @@
 #import "InstanceMethodSwizzler.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/Color.h>
+#import <WebKit/WKContentWorldPrivate.h>
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKHitTestResult.h>
 #import <WebKit/WKJSHandle.h>
@@ -57,6 +58,7 @@
 #import <WebKit/_WKAppHighlight.h>
 #import <WebKit/_WKAppHighlightDelegate.h>
 #import <WebKit/_WKAttachment.h>
+#import <WebKit/_WKContentWorldConfiguration.h>
 #import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKOverlayScrollbarStyle.h>
 #import <WebKit/_WKResourceLoadInfo.h>
@@ -3083,6 +3085,44 @@ TEST(SiteIsolation, TakeSnapshotOfCrossOriginIframeElement)
     EXPECT_EQ(CGImageGetHeight(snapshot.get()), 302U);
     CGImagePixelReader reader { snapshot.get() };
     EXPECT_EQ(reader.at(reader.width() / 2, reader.height() / 2), WebCore::Color::green);
+}
+
+TEST(SiteIsolation, TakeSnapshotOfNodeInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<div id='box' style='width: 100px; height: 100px; background: rgb(255, 0, 0);'></div>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE([webView mainFrame].info._processIdentifier, [childFrame _processIdentifier]);
+
+    RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
+    [worldConfiguration setAllowJSHandleCreation:YES];
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:worldConfiguration.get()];
+    RetainPtr<_WKJSHandle> box;
+    EXPECT_TRUE(Util::waitFor([&] {
+        box = [webView querySelector:@"#box" frame:childFrame.get() world:world.get()];
+        return !!box;
+    }));
+
+    __block RetainPtr<CGImageRef> image;
+    __block RetainPtr<NSError> snapshotError;
+    __block bool done = false;
+    [webView _takeSnapshotOfNode:box.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
+        if (snapshotImage)
+            image = Util::convertToCGImage(snapshotImage);
+        snapshotError = error;
+        done = true;
+    }];
+    Util::run(&done);
+    EXPECT_NULL(snapshotError.get());
+    ASSERT_NOT_NULL(image.get());
+    CGImagePixelReader reader { image.get() };
+    EXPECT_WK_STREQ("rgb(255, 0, 0)", reader.cssColorAt(reader.width() / 2, reader.height() / 2));
 }
 
 static RetainPtr<_WKTargetedElementInfo> targetedElementInfoForIframe(TestWKWebView *webView)

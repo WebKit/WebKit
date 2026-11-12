@@ -4114,11 +4114,7 @@ RefPtr<WebImage> WebPage::cssPageBoxesSnapshotForTesting(const IntSize& defaultP
 
 RefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions options, unsigned maximumPixelCount)
 {
-    RefPtr coreFrame = m_mainFrame->coreLocalFrame();
-    if (!coreFrame)
-        return nullptr;
-
-    RefPtr frameView = coreFrame->view();
+    RefPtr frameView = protect(node.document())->view();
     if (!frameView)
         return nullptr;
 
