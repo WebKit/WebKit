@@ -78,7 +78,7 @@ CustomEffect::CustomEffect(Ref<CustomEffectCallback>&& callback)
 {
 }
 
-void CustomEffect::animationDidTick()
+void CustomEffect::triggerCallback()
 {
     auto computedTiming = getComputedTiming();
     if (!computedTiming.progress)

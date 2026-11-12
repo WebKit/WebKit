@@ -30,6 +30,7 @@
 #include "CSSAnimation.h"
 #include "CSSTransition.h"
 #include "ContainerNodeInlines.h"
+#include "CustomEffect.h"
 #include "DocumentEventLoop.h"
 #include "DocumentPage.h"
 #include "DocumentTimeline.h"
@@ -138,6 +139,7 @@ void AnimationTimelinesController::updateAnimationsAndSendEvents(ReducedResoluti
     Vector<Ref<AnimationTimeline>> timelinesToUpdate;
     Vector<Ref<WebAnimation>> animationsToRemove;
     Vector<Ref<CSSTransition>> completedTransitions;
+    Vector<Ref<CustomEffect>> customEffects;
     for (auto& timeline : protectedTimelines) {
         auto shouldUpdateAnimationsAndSendEvents = timeline->documentWillUpdateAnimationsAndSendEvents();
         if (shouldUpdateAnimationsAndSendEvents == AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::No)
@@ -179,6 +181,9 @@ void AnimationTimelinesController::updateAnimationsAndSendEvents(ReducedResoluti
             // schedule invalidation if required for this animation.
             animation->tick(shouldDispatchProgressEvents);
 
+            if (RefPtr customEffect = dynamicDowncast<CustomEffect>(animation->effect()))
+                customEffects.append(customEffect.releaseNonNull());
+
             if (!animation->isRelevant() && !animation->needsTick() && !isPendingTimelineAttachment(animation))
                 animationsToRemove.append(animation);
 
@@ -214,6 +219,11 @@ void AnimationTimelinesController::updateAnimationsAndSendEvents(ReducedResoluti
         if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(timeline))
             documentTimeline->removeReplacedAnimations();
     }
+
+    // Unnumbered. Trigger all callbacks for custom effects associated to an animation
+    // updated as timelines were updated in step 1.
+    for (Ref customEffect : customEffects)
+        customEffect->triggerCallback();
 
     // 3. Perform a microtask checkpoint.
     protect(document->eventLoop())->performMicrotaskCheckpoint(document->vm());
