@@ -8,7 +8,7 @@ PASS Test that decodingInfo rejects if the video configuration has a framerate s
 PASS Test that decodingInfo rejects if the video configuration has a framerate set to Infinity
 PASS Test that decodingInfo rejects if the video configuration contentType doesn't parse
 PASS Test that decodingInfo rejects if the video configuration contentType isn't of type video
-FAIL Test that decodingInfo rejects if the video configuration contentType has more than one parameter assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Test that decodingInfo rejects if the video configuration contentType has more than one parameter
 PASS Test that decodingInfo rejects if the video configuration contentType has one parameter that isn't codecs
 PASS Test that decodingInfo() rejects framerate in the form of x/y
 PASS Test that decodingInfo() rejects framerate in the form of x/0
@@ -19,7 +19,7 @@ PASS Test that decodingInfo() rejects framerate in the form of x/
 PASS Test that decodingInfo() rejects framerate with trailing unallowed characters
 PASS Test that decodingInfo rejects if the audio configuration contenType doesn't parse
 PASS Test that decodingInfo rejects if the audio configuration contentType isn't of type audio
-FAIL Test that decodingInfo rejects if the audio configuration contentType has more than one parameters assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Test that decodingInfo rejects if the audio configuration contentType has more than one parameters
 PASS Test that decodingInfo rejects if the audio configuration contentType has one parameter that isn't codecs
 FAIL Test that decodingInfo returns a valid MediaCapabilitiesInfo objects assert_equals: expected "object" but got "undefined"
 PASS Test that decodingInfo rejects if the MediaConfiguration does not have a valid type

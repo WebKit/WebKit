@@ -91,9 +91,19 @@ static bool isValidMediaMIMEType(const ContentType& contentType)
 
     auto codecs = contentType.codecs();
 
-    // FIXME: The spec requires that the "codecs" parameter is the only parameter present.
+    // Count total parameters by counting semicolons in the raw type string.
+    // The spec requires that for bucket MIME types, "codecs" is the only parameter.
+    size_t parameterCount = 0;
+    for (auto codePoint : StringView(contentType.raw()).codePoints()) {
+        if (codePoint == ';')
+            ++parameterCount;
+    }
+
     if (bucketMIMETypes.contains(contentType.containerType()))
-        return codecs.size() == 1;
+        return parameterCount == 1 && codecs.size() == 1;
+    // FIXME: The spec says non-bucket types must have no parameters, but WebRTC
+    // content types use non-codecs parameters (e.g. profile-level-id). See
+    // https://github.com/w3c/media-capabilities/issues/238
     return !codecs.size();
 }
 
