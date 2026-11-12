@@ -44,9 +44,10 @@
 
 namespace WebCore {
 
-NODELETE static LayoutUnit constrainSizeByMinMax(LayoutUnit size, std::pair<LayoutUnit, LayoutUnit> minMaxSizes)
+NODELETE static LayoutUnit constrainSizeByMinMax(LayoutUnit size, std::optional<LayoutUnit> minimum, LayoutUnit maximum)
 {
-    return std::max(minMaxSizes.first, std::min(size, minMaxSizes.second));
+    auto constrainedSize = std::min(size, maximum);
+    return minimum ? std::max(*minimum, constrainedSize) : constrainedSize;
 }
 
 FlexFormattingContext::FlexFormattingContext(RenderFlexibleBox& flexBox, LayoutIntegration::FlexIntegrationUtils& integrationUtils, const FlexLayoutConstraints& constraints, FlexLayoutState& layoutState)
@@ -81,7 +82,7 @@ FlexFormattingContext::Result FlexFormattingContext::layout(FlexLayoutItems& fle
         for (auto lineRange : flexLines.ranges)
             InspectorInstrumentation::flexibleBoxRendererWrappedToNextLine(m_flexBox, lineRange.end());
         // 9.3. (#6) Resolve the flexible lengths to find the used main size of each item.
-        flexItemsMainSizeList = computeMainSizeForFlexItems(flexItems, flexLines, flexBaseAndHypotheticalMainSizeList.span());
+        flexItemsMainSizeList = computeMainSizeForFlexItems(flexItems, flexLines, flexBaseAndHypotheticalMainSizeList.mutableSpan());
         layoutFlexItems(flexItems, flexItemsMainSizeList.span());
         // 9.4. (#7) Determine the hypothetical cross size of each item.
         auto flexItemsHypotheticalCrossSizeList = hypotheticalCrossSizeForFlexItems(flexItems);
@@ -109,7 +110,7 @@ FlexFormattingContext::Result FlexFormattingContext::layout(FlexLayoutItems& fle
         // apply the empty-line minimum, then resolve it against the container's own specified/min/max height and box-sizing.
         flexContainerUsedExtents = integrationUtils().updateFlexContainerLogicalHeight(m_constraints.isColumnFlow ? columnMainContentExtent : flexContentBlockExtent);
         // Multi-line column flex only knows its main size now, so re-resolve the flexible lengths of any lines that were left short.
-        distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(flexLines, flexItems, flexBaseAndHypotheticalMainSizeList.span(), flexItemsMainSizeList, flexItemsPositionList, flexLinesCrossPositionList, flexContainerUsedExtents.blockContentBox);
+        distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(flexLines, flexItems, flexBaseAndHypotheticalMainSizeList.mutableSpan(), flexItemsMainSizeList, flexItemsPositionList, flexLinesCrossPositionList, flexContainerUsedExtents.blockContentBox);
         // Cross-Axis Alignment: with the container's cross size now final, run the remaining cross-axis steps
         // (§9.4 #9 and #11, §9.6 #13, #14 and #16) here rather than in spec-number order.
         // If we have a single line flexbox, the line height is all the available space. For flex-direction: row,
@@ -195,9 +196,9 @@ FlexFormattingContext::FlexBaseAndHypotheticalMainSizeList FlexFormattingContext
     for (size_t index = 0; index < flexItems.size(); ++index) {
         auto& flexItem = flexItems[index];
         auto flexBase = flexBaseSizeForFlexItem(flexItem);
-        auto minMaxMainSizes = minMaxMainSizesForFlexItem(flexItem);
+        auto minMaxMainSizes = minMaxMainSizesForFlexItem(flexItem, flexBase);
         // The hypothetical main size is the item's flex base size clamped according to its used min and max main sizes.
-        flexBaseAndHypotheticalMainSizeList[index] = { flexBase, constrainSizeByMinMax(flexBase, minMaxMainSizes), minMaxMainSizes };
+        flexBaseAndHypotheticalMainSizeList[index] = { flexBase, constrainSizeByMinMax(flexBase, minMaxMainSizes.minimum, minMaxMainSizes.maximum), minMaxMainSizes };
     }
     return flexBaseAndHypotheticalMainSizeList;
 }
@@ -243,7 +244,7 @@ FlexFormattingContext::FlexLines FlexFormattingContext::computeFlexLines(const F
     return flexLines;
 }
 
-FlexFormattingContext::SizeList FlexFormattingContext::computeMainSizeForFlexItems(FlexLayoutItems& flexItems, const FlexLines& flexLines, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList)
+FlexFormattingContext::SizeList FlexFormattingContext::computeMainSizeForFlexItems(FlexLayoutItems& flexItems, const FlexLines& flexLines, std::span<FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList)
 {
     layoutState().setPhase(LayoutPhase::ResolvingFlexibleLengths);
 
@@ -259,7 +260,7 @@ FlexFormattingContext::SizeList FlexFormattingContext::computeMainSizeForFlexIte
     return flexItemsMainSizeList;
 }
 
-void FlexFormattingContext::resolveFlexibleLengthsForLineItems(std::span<FlexLayoutItem> lineItems, std::span<const FlexBaseAndHypotheticalMainSize> lineFlexBaseAndHypotheticalMainSizeList, std::span<LayoutUnit> flexItemsMainSizeList, LayoutUnit flexContainerInnerMainSize)
+void FlexFormattingContext::resolveFlexibleLengthsForLineItems(std::span<FlexLayoutItem> lineItems, std::span<FlexBaseAndHypotheticalMainSize> lineFlexBaseAndHypotheticalMainSizeList, std::span<LayoutUnit> flexItemsMainSizeList, LayoutUnit flexContainerInnerMainSize)
 {
     auto nonFrozenSet = OrderedHashSet<size_t> { };
     auto availableMainSpaceForLineContent = availableSpaceExcludingGaps(flexContainerInnerMainSize, lineItems.size(), FlexFormattingUtils::GapType::BetweenItems);
@@ -359,7 +360,10 @@ void FlexFormattingContext::resolveFlexibleLengthsForLineItems(std::span<FlexLay
         maximumViolationList.shrink(0);
         for (auto index : nonFrozenSet) {
             auto unclampedMainSize = flexItemsMainSizeList[index];
-            auto clampedMainSize = constrainSizeByMinMax(unclampedMainSize, lineFlexBaseAndHypotheticalMainSizeList[index].minMaxMainSizes);
+            auto& sizing = lineFlexBaseAndHypotheticalMainSizeList[index];
+            if (!sizing.minMaxMainSizes.minimum && unclampedMainSize < sizing.hypotheticalMainSize)
+                sizing.minMaxMainSizes.minimum = computeContentBasedMinMainSize(lineItems[index], sizing.minMaxMainSizes.maximum);
+            auto clampedMainSize = constrainSizeByMinMax(unclampedMainSize, sizing.minMaxMainSizes.minimum, sizing.minMaxMainSizes.maximum);
             ASSERT(clampedMainSize >= 0);
             totalViolation += clampedMainSize - unclampedMainSize;
             if (clampedMainSize < unclampedMainSize)
@@ -398,7 +402,7 @@ LayoutUnit FlexFormattingContext::remainingFreeSpaceForLine(std::span<const Flex
     return remainingFreeSpace;
 }
 
-void FlexFormattingContext::distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(const FlexLines& flexLines, FlexLayoutItems& flexItems, std::span<const FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList, SizeList& flexItemsMainSizeList, PositionList& flexItemsPositionList, const LinesCrossPositionList& flexLinesCrossPositionList, LayoutUnit containerMainBlockContentExtent)
+void FlexFormattingContext::distributeMainAxisFreeSpaceForMultilineColumnIfNeeded(const FlexLines& flexLines, FlexLayoutItems& flexItems, std::span<FlexBaseAndHypotheticalMainSize> flexBaseAndHypotheticalMainSizeList, SizeList& flexItemsMainSizeList, PositionList& flexItemsPositionList, const LinesCrossPositionList& flexLinesCrossPositionList, LayoutUnit containerMainBlockContentExtent)
 {
     // In multi-line column flex, the container's main size (height) is only known
     // after all lines are laid out. Lines whose items had flex-grow may not have
@@ -918,34 +922,57 @@ std::optional<LayoutUnit> FlexFormattingContext::ensureBlockAxisContentSizeForFl
     return { };
 }
 
-std::pair<LayoutUnit, LayoutUnit> FlexFormattingContext::minMaxMainSizesForFlexItem(const FlexLayoutItem& flexLayoutItem)
+FlexFormattingContext::MinMaxMainSizes FlexFormattingContext::minMaxMainSizesForFlexItem(const FlexLayoutItem& flexLayoutItem, LayoutUnit flexBase)
 {
     auto maxExtent = computeUsedMaxMainSize(flexLayoutItem);
-    auto resolvedMax = maxExtent.value_or(LayoutUnit::max());
 
-    // min:auto with non-scrollable overflow resolves to the content-based minimum size (§ 4.5).
     auto& minSize = flexFormattingUtils().minMainSizeLengthForFlexItem(flexLayoutItem);
-    if (flexFormattingUtils().useContentBasedMinimumSize(flexLayoutItem)) {
-        auto contentBasedMinMainSize = computeContentBasedMinMainSize(flexLayoutItem, maxExtent);
-        // The automatic minimum is what an auto basis on the minimum size stands for.
-        if (minSize.isCalcSize())
-            contentBasedMinMainSize = integrationUtils().resolveCalcSizeMainAxisExtentForFlexItem(flexLayoutItem, minSize.calcSize(), contentBasedMinMainSize, m_constraints.mainAxisSizeForLengthResolution);
-        return { contentBasedMinMainSize, resolvedMax };
-    }
-
     if (!minSize.isAuto())
-        return { computeUsedNonAutoMinMainSize(flexLayoutItem, minSize), resolvedMax };
+        return { computeUsedNonAutoMinMainSize(flexLayoutItem, minSize), maxExtent };
 
     // min:auto on a scroll container — spec says the automatic minimum size is zero.
-    return { 0_lu, resolvedMax };
+    if (!flexFormattingUtils().useContentBasedMinimumSize(flexLayoutItem))
+        return { 0_lu, maxExtent };
+
+    // min:auto with non-scrollable overflow resolves to the content-based minimum size (§ 4.5).
+    if (!minSize.isCalcSize() && contentBasedMinMainSizeIsBoundedByFlexBase(flexLayoutItem, flexBase, maxExtent))
+        return { std::nullopt, maxExtent };
+
+    auto contentBasedMinMainSize = computeContentBasedMinMainSize(flexLayoutItem, maxExtent);
+    // The automatic minimum is what an auto basis on the minimum size stands for.
+    if (minSize.isCalcSize())
+        contentBasedMinMainSize = integrationUtils().resolveCalcSizeMainAxisExtentForFlexItem(flexLayoutItem, minSize.calcSize(), contentBasedMinMainSize, m_constraints.mainAxisSizeForLengthResolution);
+    return { contentBasedMinMainSize, maxExtent };
 }
 
-std::optional<LayoutUnit> FlexFormattingContext::computeUsedMaxMainSize(const FlexLayoutItem& flexLayoutItem)
+bool FlexFormattingContext::contentBasedMinMainSizeIsBoundedByFlexBase(const FlexLayoutItem& flexLayoutItem, LayoutUnit flexBase, LayoutUnit maxExtent)
+{
+    if (m_constraints.isColumnFlow || !flexLayoutItem.mainAxisIsInlineAxis || flexLayoutItem.isReplaced())
+        return false;
+
+    auto& flexBasis = flexLayoutItem.style().flexBasis();
+    bool hasAutoFlexBasis = flexBasis.isAuto() && !flexBasis.isCalcSize();
+
+    auto& mainSize = flexFormattingUtils().preferredMainSizeLengthForFlexItem(flexLayoutItem);
+    if (mainSize.isAuto() && !mainSize.isCalcSize())
+        return hasAutoFlexBasis && flexBase >= 0_lu && !FlexFormattingUtils::flexItemHasAspectRatio(flexLayoutItem);
+
+    if (!mainSize.isSpecified() || mainSize.isCalcSize() || FlexFormattingUtils::flexItemHasAspectRatio(flexLayoutItem))
+        return false;
+
+    if (hasAutoFlexBasis)
+        return true;
+
+    auto resolvedMainSize = integrationUtils().computeMainAxisExtentForFlexItem(flexLayoutItem, mainSize, m_constraints.mainAxisSizeForLengthResolution).value_or(0);
+    return flexBase >= std::min(resolvedMainSize, maxExtent);
+}
+
+LayoutUnit FlexFormattingContext::computeUsedMaxMainSize(const FlexLayoutItem& flexLayoutItem)
 {
     auto& max = flexFormattingUtils().maxMainSizeLengthForFlexItem(flexLayoutItem);
     if (max.isSpecified() || max.isIntrinsicOrStretch())
-        return integrationUtils().computeMainAxisExtentForFlexItem(flexLayoutItem, max, m_constraints.mainAxisSizeForLengthResolution);
-    return { };
+        return integrationUtils().computeMainAxisExtentForFlexItem(flexLayoutItem, max, m_constraints.mainAxisSizeForLengthResolution).value_or(LayoutUnit::max());
+    return LayoutUnit::max();
 }
 
 LayoutUnit FlexFormattingContext::computeUsedNonAutoMinMainSize(const FlexLayoutItem& flexLayoutItem, const Style::MinimumSize& min)
@@ -964,52 +991,42 @@ LayoutUnit FlexFormattingContext::computeUsedNonAutoMinMainSize(const FlexLayout
     return minExtent;
 }
 
-LayoutUnit FlexFormattingContext::computeContentBasedMinMainSize(const FlexLayoutItem& flexLayoutItem, std::optional<LayoutUnit> maxExtent)
+LayoutUnit FlexFormattingContext::computeContentBasedMinMainSize(const FlexLayoutItem& flexLayoutItem, LayoutUnit maxExtent)
 {
     // The content-based minimum size (https://drafts.csswg.org/css-flexbox/#min-size-auto): for a non-replaced item
     // the larger, and for a replaced item the smaller, of the content size suggestion and the transferred size
     // suggestion, capped by the specified size suggestion, and clamped by the definite maximum main size.
     // FIXME: If the min value is expected to be valid here, we need to come up with a non optional version of computeMainAxisExtentForFlexItem and
     // ensure it's valid through the virtual calls of computeSizingKeywordLogicalContentHeightUsing.
+    // Specified size suggestion: if the item's preferred main size is definite, cap the result by that size.
+    auto& mainSize = flexFormattingUtils().preferredMainSizeLengthForFlexItem(flexLayoutItem);
+    if (!mainSize.isAuto() && integrationUtils().flexItemMainSizeIsDefinite(flexLayoutItem, mainSize)) {
+        auto resolvedMainSize = integrationUtils().computeMainAxisExtentForFlexItem(flexLayoutItem, mainSize, m_constraints.mainAxisSizeForLengthResolution).value_or(0);
+        ASSERT(resolvedMainSize >= 0);
+        maxExtent = std::min(maxExtent, resolvedMainSize);
+    }
+    if (maxExtent <= 0_lu)
+        return 0_lu;
+
     LayoutUnit contentSize;
-    auto& flexItemCrossSizeLength = flexFormattingUtils().preferredCrossSizeLengthForFlexItem(flexLayoutItem);
 
     // Content size suggestion: the min-content size in the main axis, clamped (when the item has a preferred
     // aspect ratio) through the aspect ratio. With a definite cross size, including a stretched one, a replaced
     // item's min-content size is that cross size converted through the aspect ratio.
-    bool canComputeSizeThroughAspectRatio = flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(flexLayoutItem);
+    bool hasAspectRatio = FlexFormattingUtils::flexItemHasAspectRatio(flexLayoutItem);
+    bool canComputeSizeThroughAspectRatio = hasAspectRatio && flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(flexLayoutItem);
     if (canComputeSizeThroughAspectRatio)
-        contentSize = computeMainSizeFromAspectRatioUsing(flexLayoutItem, flexItemCrossSizeLength);
+        contentSize = computeMainSizeFromAspectRatioUsing(flexLayoutItem, flexFormattingUtils().preferredCrossSizeLengthForFlexItem(flexLayoutItem));
 
     if (!canComputeSizeThroughAspectRatio || !flexLayoutItem.isReplaced()) {
         auto minContentSize = integrationUtils().computeMainAxisExtentForFlexItem(flexLayoutItem, Style::MinimumSize { CSS::Keyword::MinContent { } }, m_constraints.mainAxisSizeForLengthResolution).value_or(0_lu);
         contentSize = std::max(contentSize, minContentSize);
     }
 
-    if (FlexFormattingUtils::flexItemHasAspectRatio(flexLayoutItem))
+    if (hasAspectRatio)
         contentSize = adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(flexLayoutItem, contentSize);
 
-    contentSize = std::max(0_lu, contentSize);
-    ASSERT(contentSize >= 0);
-    contentSize = std::min(contentSize, maxExtent.value_or(contentSize));
-
-    // Specified size suggestion: if the item's preferred main size is definite, cap the result by that size.
-    auto& mainSize = flexFormattingUtils().preferredMainSizeLengthForFlexItem(flexLayoutItem);
-    if (integrationUtils().flexItemMainSizeIsDefinite(flexLayoutItem, mainSize)) {
-        auto resolvedMainSize = integrationUtils().computeMainAxisExtentForFlexItem(flexLayoutItem, mainSize, m_constraints.mainAxisSizeForLengthResolution).value_or(0);
-        ASSERT(resolvedMainSize >= 0);
-        auto specifiedSize = std::min(resolvedMainSize, maxExtent.value_or(resolvedMainSize));
-        return std::min(specifiedSize, contentSize);
-    }
-
-    // Transferred size suggestion: a replaced item's definite cross size converted through its aspect ratio.
-    if (flexLayoutItem.isReplaced() && flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(flexLayoutItem)) {
-        auto transferredSize = computeMainSizeFromAspectRatioUsing(flexLayoutItem, flexItemCrossSizeLength);
-        transferredSize = adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(flexLayoutItem, transferredSize);
-        return std::min(transferredSize, contentSize);
-    }
-
-    return contentSize;
+    return std::min(std::max(0_lu, contentSize), maxExtent);
 }
 
 // FIXME: computeMainSizeFromAspectRatioUsing may need to return an std::optional<LayoutUnit> in the future
