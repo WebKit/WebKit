@@ -44,6 +44,17 @@
 @interface WKTestingTouch : UITouch
 @end
 
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+
+@interface WKMouseDeviceObserver
++ (WKMouseDeviceObserver *)sharedInstance;
+- (void)start;
+- (void)stop;
+- (void)_setHasMouseDeviceForTesting:(BOOL)hasMouseDevice;
+@end
+
+#endif
+
 namespace TestWebKitAPI {
 
 class MouseEventTestHarness {

@@ -30,6 +30,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import "Helpers/ios/IOSMouseEventTestHarness.h"
 #import "UIKitSPIForTesting.h"
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKit.h>
@@ -51,6 +52,11 @@ static WKStylusDeviceObserver *getStylusDeviceObserver()
 enum class HasStylusDevice : bool { No, Yes };
 static RetainPtr<TestWKWebView> createWebView(HasStylusDevice hasStylusDevice)
 {
+    // A connected mouse also makes `any-pointer: fine` match, so make sure there isn't one.
+    WKMouseDeviceObserver *mouseDeviceObserver = [NSClassFromString(@"WKMouseDeviceObserver") sharedInstance];
+    [mouseDeviceObserver start];
+    [mouseDeviceObserver _setHasMouseDeviceForTesting:NO];
+
     WKStylusDeviceObserver *stylusDeviceObserver = getStylusDeviceObserver();
     [stylusDeviceObserver start];
     stylusDeviceObserver.hasStylusDevice = hasStylusDevice == HasStylusDevice::Yes;

@@ -51,16 +51,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
-#if HAVE(MOUSE_DEVICE_OBSERVATION)
-
-@interface WKMouseDeviceObserver
-+ (WKMouseDeviceObserver *)sharedInstance;
-- (void)start;
-- (void)_setHasMouseDeviceForTesting:(BOOL)hasMouseDevice;
-@end
-
-#endif
-
 #if HAVE(UI_POINTER_INTERACTION)
 
 @interface TestPointerRegionRequest : UIPointerRegionRequest

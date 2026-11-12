@@ -1690,17 +1690,6 @@ TEST(WebKit, DidNotHandleWheelEvent)
 
 @end
 
-#if HAVE(MOUSE_DEVICE_OBSERVATION)
-
-@interface WKMouseDeviceObserver
-+ (WKMouseDeviceObserver *)sharedInstance;
-- (void)start;
-- (void)stop;
-- (void)_setHasMouseDeviceForTesting:(BOOL)hasMouseDevice;
-@end
-
-#endif
-
 class PointerLockTests : public testing::Test {
 public:
     void SetUp() final

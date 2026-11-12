@@ -37,10 +37,17 @@ extension WKMouseDeviceObserver {
     @nonobjc
     private var disconnectionObservationTask: Task<Void, Never>? = nil
 
+    @nonobjc
+    private var hasMouseDeviceForTesting: Bool? = nil
+
     private var startCount = 0
     private var connectedDeviceCount = 0 {
         didSet {
             precondition(connectedDeviceCount >= 0)
+
+            guard hasMouseDeviceForTesting == nil else {
+                return
+            }
 
             if oldValue == 0 && connectedDeviceCount > 0 {
                 mousePointerDevicesDidChange(true)
@@ -54,7 +61,7 @@ extension WKMouseDeviceObserver {
     }
 
     var hasMouseDevice: Bool {
-        connectedDeviceCount > 0
+        hasMouseDeviceForTesting ?? (connectedDeviceCount > 0)
     }
 
     override init() {
@@ -108,7 +115,12 @@ extension WKMouseDeviceObserver {
 
     // swift-format-ignore: NoLeadingUnderscores
     func _setHasMouseDevice(forTesting hasMouseDevice: Bool) {
-        connectedDeviceCount = hasMouseDevice ? 1 : 0
+        let hadMouseDevice = self.hasMouseDevice
+        hasMouseDeviceForTesting = hasMouseDevice
+
+        if hadMouseDevice != hasMouseDevice {
+            mousePointerDevicesDidChange(hasMouseDevice)
+        }
     }
 }
 
