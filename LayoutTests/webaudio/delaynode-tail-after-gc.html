@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tail processing after a connection breaks</title>
+    <script src="../imported/w3c/web-platform-tests/resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+    <script src="resources/audit.js"></script>
+  </head>
+  <body>
+    <script id="layout-test-code">
+      let audit = Audit.createTaskRunner();
+
+      const sampleRate = 48000;
+      const renderSeconds = 1;
+      const bufferSeconds = 0.5;
+      const delaySeconds = 0.25;
+      const disconnectAt = 0.4;
+
+      function constantBuffer(context) {
+        let buffer = context.createBuffer(1, sampleRate * bufferSeconds, sampleRate);
+        buffer.getChannelData(0).fill(1);
+        return buffer;
+      }
+
+      function renderAfterDisconnect(context, node, buffer) {
+        let source = context.createBufferSource();
+        source.buffer = buffer;
+        source.connect(node);
+        node.connect(context.destination);
+        source.start();
+
+        let disconnected = context.suspend(disconnectAt).then(() => {
+          node = null;
+          return new Promise(resolve => setTimeout(resolve, 0));
+        }).then(() => {
+          GCController.collect();
+          source.disconnect();
+          source = null;
+          return context.resume();
+        });
+        return Promise.all([context.startRendering(), disconnected]).then(results => results[0]);
+      }
+
+      audit.define({
+        label: 'delay-tail-after-disconnect',
+        description: 'DelayNode plays its tail after its input disconnects'
+      }, (task, should) => {
+        let context = new OfflineAudioContext(1, sampleRate * renderSeconds, sampleRate);
+        let delay = context.createDelay(1);
+        delay.delayTime.value = delaySeconds;
+        let delayFrames = delaySeconds * sampleRate;
+        let disconnectFrame = disconnectAt * sampleRate;
+
+        return renderAfterDisconnect(context, delay, constantBuffer(context)).then(rendered => {
+          let output = rendered.getChannelData(0);
+          should(output.slice(0, delayFrames), 'output[0:delay)').beConstantValueOf(0);
+          should(output.slice(delayFrames, disconnectFrame), 'output[delay:disconnect)').beConstantValueOf(1);
+          should(output.slice(disconnectFrame, disconnectFrame + delayFrames), 'output[disconnect:disconnect+delay)').beConstantValueOf(1);
+          should(output.slice(disconnectFrame + delayFrames), 'output[disconnect+delay:)').beConstantValueOf(0);
+        });
+      });
+
+      audit.define({
+        label: 'biquad-tail-after-disconnect',
+        description: 'BiquadFilterNode keeps its tail after its input disconnects'
+      }, (task, should) => {
+        let context = new OfflineAudioContext(1, sampleRate * renderSeconds, sampleRate);
+        let filter = context.createBiquadFilter();
+        let disconnectFrame = disconnectAt * sampleRate;
+
+        return renderAfterDisconnect(context, filter, constantBuffer(context)).then(rendered => {
+          let output = rendered.getChannelData(0);
+          should(Math.abs(output[disconnectFrame + 64]), 'biquad sample magnitude after disconnect').beGreaterThan(0.05);
+        });
+      });
+
+      audit.define({
+        label: 'never-connected-delay',
+        description: 'A DelayNode that was never connected can be collected'
+      }, (task, should) => {
+        let context = new OfflineAudioContext(1, 128, sampleRate);
+        let collected = context.suspend(0).then(() => {
+          let delay = context.createDelay();
+          let wrapper = new WeakRef(delay);
+          delay = null;
+          return new Promise(resolve => setTimeout(resolve, 0)).then(() => {
+            GCController.collect();
+            should(wrapper.deref(), 'never-connected DelayNode wrapper').beEqualTo(undefined);
+            return context.resume();
+          });
+        });
+        return Promise.all([context.startRendering(), collected]);
+      });
+
+      audit.run();
+    </script>
+  </body>
+</html>
