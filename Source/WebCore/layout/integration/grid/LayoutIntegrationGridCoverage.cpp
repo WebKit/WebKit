@@ -373,16 +373,16 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
     // the grid container," portion of the spec fully before "Given the resulting grid
     // container size, run the Grid Sizing Algorithm to size the grid." so that the
     // grid has a height to resolve the percentages again in the second step.
-    auto gridBlockSizeIsIndefinite = renderGridStyle->height().isAuto() || renderGridStyle->height().isIntrinsic();
     // Check the expanded track sizes so tracks inside repeat() are included. Style keeps the
-    // auto-repeated tracks apart from the rest, so check those too.
+    // auto-repeated tracks apart from the rest, so check those too, as well as any implicit tracks.
     auto hasPercentageRowTrack = [&] {
         auto isPercentageTrack = [](auto& trackSize) {
             return trackSize.minTrackBreadth().isPercentOrCalculated() || trackSize.maxTrackBreadth().isPercentOrCalculated();
         };
-        return gridTemplateRows.sizes.containsIf(isPercentageTrack) || gridTemplateRows.autoRepeatSizes.containsIf(isPercentageTrack);
+        return gridTemplateRows.sizes.containsIf(isPercentageTrack) || gridTemplateRows.autoRepeatSizes.containsIf(isPercentageTrack)
+            || renderGridStyle->gridAutoRows().containsIf(isPercentageTrack);
     };
-    if (gridBlockSizeIsIndefinite && hasPercentageRowTrack())
+    if (!renderGrid.hasDefiniteLogicalHeight() && hasPercentageRowTrack())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasPercentageRowsWithIndefiniteHeight, reasons, reasonCollectionMode);
 
     for (CheckedRef gridItem : childrenOfType<RenderBox>(renderGrid)) {

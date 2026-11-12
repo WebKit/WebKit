@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<title>CSS Grid Layout Test: Percentage row in a grid whose percentage height behaves as auto</title>
+<link rel="author" title="Yulun Wu" href="mailto:yulun_wu@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#valdef-grid-template-columns-length-percentage-0">
+<link rel="help" href="https://drafts.csswg.org/css-sizing-3/#behave-as-auto">
+<link rel="match" href="grid-percentage-row-percentage-height-001-ref.html">
+<meta name="assert" content="Checks that a percentage row resolves against the height of a grid container whose percentage height behaves as auto.">
+<style>
+.grid {
+  display: grid;
+  height: 50%;
+  grid-template-columns: 100px;
+  grid-template-rows: 50%;
+}
+.item {
+  grid-area: 1 / 1;
+  background-color: red;
+}
+.content {
+  height: 200px;
+}
+.cover {
+  grid-area: 1 / 1;
+  height: 100px;
+  background-color: green;
+}
+</style>
+<p>Test passes if there is a filled green square and <strong>no red</strong>.</p>
+<div class="grid">
+  <div class="item"><div class="content"></div></div>
+  <div class="cover"></div>
+</div>
