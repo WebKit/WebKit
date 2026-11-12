@@ -54,6 +54,7 @@
 #include "StyleFilter.h"
 #include "Timer.h"
 #include "TypedArrayPixelBuffer.h"
+#include <array>
 #include <wtf/ScopedLambda.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -492,6 +493,8 @@ private:
     void realizeSavesLoop();
     void setStrokeColorImpl(Color&& color, String&& unparsedColor = { });
     void setFillColorImpl(Color&& color, String&& unparsedColor = { });
+    std::optional<SRGBA<uint8_t>> cachedStyleColor(const String&) const;
+    Color parseStyleColor(const String&);
 
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(Image&, ConcreteObjectSize, bool originClean, bool repeatX, bool repeatY);
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLImageElement&, bool repeatX, bool repeatY);
@@ -574,6 +577,17 @@ private:
     // order (top in stack/last in vector first, bottom in stack/first in vector last),
     // then m_buffer can be freed after.
     Vector<State, 1> m_stateStack;
+
+    // Results of the context-independent simple color fast path (hex, rgb()/rgba(), named colors)
+    // for recently assigned strokeStyle/fillStyle strings, keyed by StringImpl identity.
+    // Never holds currentcolor, system colors or anything else that depends on style.
+    struct StyleColorCacheEntry {
+        RefPtr<StringImpl> string;
+        SRGBA<uint8_t> color;
+    };
+    static constexpr unsigned StyleColorCacheSize = 8;
+    std::array<StyleColorCacheEntry, StyleColorCacheSize> m_styleColorCache;
+    unsigned m_styleColorCacheNextIndex { 0 };
 
     FloatRect m_dirtyRect;
     unsigned m_unrealizedSaveCount { 0 };

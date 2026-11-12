@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Checks that strokeStyle and fillStyle give the right color when color strings are assigned again, including the same string object, equal strings, more than a few distinct strings, and colors that depend on the canvas element's style.");
+
+const canvas = document.createElement("canvas");
+canvas.width = 1;
+canvas.height = 1;
+const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+function pixelOf(kind) {
+    ctx.clearRect(0, 0, 1, 1);
+    if (kind == "fill")
+        ctx.fillRect(0, 0, 1, 1);
+    else {
+        ctx.lineWidth = 10;
+        ctx.beginPath();
+        ctx.moveTo(-5, 0.5);
+        ctx.lineTo(6, 0.5);
+        ctx.stroke();
+    }
+    return Array.from(ctx.getImageData(0, 0, 1, 1).data).join(",");
+}
+
+function expectedPixel(serialization) {
+    const hex = serialization.substring(1);
+    return [0, 2, 4].map(i => parseInt(hex.substr(i, 2), 16)).join(",") + ",255";
+}
+
+function check(label, kind, expected) {
+    const style = kind == "fill" ? ctx.fillStyle : ctx.strokeStyle;
+    const pixel = pixelOf(kind);
+    if (style == expected && pixel == expectedPixel(expected))
+        testPassed(label);
+    else
+        testFailed(label + ": got " + style + " (pixel " + pixel + "), expected " + expected + " (pixel " + expectedPixel(expected) + ")");
+}
+
+function assign(kind, value) {
+    if (kind == "fill")
+        ctx.fillStyle = value;
+    else
+        ctx.strokeStyle = value;
+}
+
+// Returns a string with the same text as the argument but a different string object.
+function freshString(string) {
+    return string.split("").join("");
+}
+
+const red = "#ff0000";
+const blue = "blue";
+
+for (const kind of ["fill", "stroke"]) {
+    debug("");
+    debug(kind + "Style:");
+
+    assign(kind, red);
+    check("first string", kind, "#ff0000");
+    assign(kind, blue);
+    check("other string", kind, "#0000ff");
+    assign(kind, red);
+    check("first string object after another one", kind, "#ff0000");
+    assign(kind, red);
+    check("same string object twice in a row", kind, "#ff0000");
+
+    assign(kind, freshString(red));
+    check("different string object with the same text as the current one", kind, "#ff0000");
+    assign(kind, blue);
+    assign(kind, freshString(red));
+    check("different string object with the same text as an earlier one", kind, "#ff0000");
+
+    assign(kind, "rgb(255, 0, 0)");
+    check("different text for the current color", kind, "#ff0000");
+    assign(kind, "#f00");
+    check("short hex for the current color", kind, "#ff0000");
+
+    assign(kind, "rgba(0, 0, 255, 0.5)");
+    if ((kind == "fill" ? ctx.fillStyle : ctx.strokeStyle) == "rgba(0, 0, 255, 0.5)")
+        testPassed("color with alpha");
+    else
+        testFailed("color with alpha: got " + (kind == "fill" ? ctx.fillStyle : ctx.strokeStyle));
+    assign(kind, red);
+    check("string object after a color with alpha", kind, "#ff0000");
+
+    assign(kind, "not a color");
+    check("invalid string is ignored", kind, "#ff0000");
+    const invalid = "#12345";
+    assign(kind, blue);
+    assign(kind, invalid);
+    assign(kind, invalid);
+    check("invalid string object assigned twice is ignored", kind, "#0000ff");
+
+    const colors = [
+        ["#010203", "#010203"], ["#abc", "#aabbcc"], ["rgb(4, 5, 6)", "#040506"], ["teal", "#008080"],
+        ["#070809", "#070809"], ["rgba(10, 11, 12, 1)", "#0a0b0c"], ["navy", "#000080"], ["#0d0e0f", "#0d0e0f"],
+        ["RGB(16, 17, 18)", "#101112"], ["#131415", "#131415"], ["Olive", "#808000"], ["#161718", "#161718"],
+    ];
+    let allMatch = true;
+    for (let pass = 0; pass < 3; ++pass) {
+        const order = pass == 1 ? colors.slice().reverse() : colors;
+        for (const [string, expected] of order) {
+            assign(kind, string);
+            const style = kind == "fill" ? ctx.fillStyle : ctx.strokeStyle;
+            const pixel = pixelOf(kind);
+            if (style != expected || pixel != expectedPixel(expected)) {
+                allMatch = false;
+                testFailed("pass " + pass + ", " + string + ": got " + style + " (pixel " + pixel + "), expected " + expected);
+            }
+        }
+    }
+    if (allMatch)
+        testPassed("twelve distinct strings assigned three times");
+
+    const evicted = "#203040";
+    assign(kind, evicted);
+    for (const [string] of colors.slice(0, 9))
+        assign(kind, string);
+    assign(kind, evicted);
+    check("string object reused after its cache entry was replaced", kind, "#203040");
+
+    assign(kind, red);
+    ctx.save();
+    assign(kind, blue);
+    check("after save", kind, "#0000ff");
+    ctx.restore();
+    check("after restore", kind, "#ff0000");
+    assign(kind, red);
+    check("same string object after restore", kind, "#ff0000");
+    assign(kind, blue);
+    check("other string object after restore", kind, "#0000ff");
+
+    assign(kind, red);
+    const gradient = ctx.createLinearGradient(0, 0, 1, 0);
+    gradient.addColorStop(0, "lime");
+    gradient.addColorStop(1, "lime");
+    assign(kind, gradient);
+    if (pixelOf(kind) == "0,255,0,255")
+        testPassed("gradient");
+    else
+        testFailed("gradient: got pixel " + pixelOf(kind));
+    assign(kind, red);
+    check("same string object after a gradient", kind, "#ff0000");
+
+    if (kind == "fill")
+        ctx.setFillColor(0, 0, 1, 1);
+    else
+        ctx.setStrokeColor(0, 0, 1, 1);
+    check("legacy color setter", kind, "#0000ff");
+    assign(kind, red);
+    check("same string object after the legacy color setter", kind, "#ff0000");
+}
+
+debug("");
+debug("fillStyle and strokeStyle sharing strings:");
+const green = "#008000";
+ctx.fillStyle = green;
+ctx.strokeStyle = green;
+check("string object first assigned to fillStyle, strokeStyle", "stroke", "#008000");
+check("string object first assigned to fillStyle, fillStyle", "fill", "#008000");
+
+debug("");
+debug("currentcolor:");
+document.body.appendChild(canvas);
+const currentColor = "currentcolor";
+canvas.style.color = "#123456";
+ctx.fillStyle = currentColor;
+check("currentcolor", "fill", "#123456");
+ctx.fillStyle = red;
+canvas.style.color = "#654321";
+ctx.fillStyle = currentColor;
+check("same currentcolor string object after the element's color changed", "fill", "#654321");
+ctx.strokeStyle = currentColor;
+check("same currentcolor string object assigned to strokeStyle", "stroke", "#654321");
+canvas.style.color = "#0a0b0c";
+ctx.strokeStyle = blue;
+ctx.strokeStyle = currentColor;
+check("same currentcolor string object assigned to strokeStyle after the element's color changed", "stroke", "#0a0b0c");
+canvas.remove();
+ctx.fillStyle = red;
+ctx.fillStyle = currentColor;
+check("same currentcolor string object after the canvas left the document", "fill", "#000000");
+
+const offscreenSequence = `
+    function pixelOf(ctx) {
+        ctx.clearRect(0, 0, 1, 1);
+        ctx.fillRect(0, 0, 1, 1);
+        return Array.from(ctx.getImageData(0, 0, 1, 1).data).join(",");
+    }
+    function runSequence() {
+        const ctx = new OffscreenCanvas(1, 1).getContext("2d", { willReadFrequently: true });
+        const red = "#ff0000", blue = "blue", currentColor = "currentcolor";
+        const results = [];
+        function record(label, expectedStyle, expectedPixel) {
+            results.push([label, ctx.fillStyle, pixelOf(ctx), expectedStyle, expectedPixel]);
+        }
+        ctx.fillStyle = red;
+        record("first string", "#ff0000", "255,0,0,255");
+        ctx.fillStyle = blue;
+        ctx.fillStyle = red;
+        record("first string object after another one", "#ff0000", "255,0,0,255");
+        ctx.fillStyle = red.split("").join("");
+        record("different string object with the same text", "#ff0000", "255,0,0,255");
+        for (let i = 0; i < 9; ++i)
+            ctx.fillStyle = "rgb(" + i + ", 1, 2)";
+        ctx.fillStyle = red;
+        record("string object reused after its cache entry was replaced", "#ff0000", "255,0,0,255");
+        ctx.fillStyle = currentColor;
+        record("currentcolor", "#000000", "0,0,0,255");
+        ctx.fillStyle = red;
+        ctx.fillStyle = currentColor;
+        record("same currentcolor string object again", "#000000", "0,0,0,255");
+        return results;
+    }
+`;
+
+function reportOffscreen(results) {
+    for (const [label, style, pixel, expectedStyle, expectedPixel] of results) {
+        if (style == expectedStyle && pixel == expectedPixel)
+            testPassed(label);
+        else
+            testFailed(label + ": got " + style + " (pixel " + pixel + "), expected " + expectedStyle + " (pixel " + expectedPixel + ")");
+    }
+}
+
+debug("");
+debug("OffscreenCanvas:");
+eval(offscreenSequence);
+reportOffscreen(runSequence());
+
+jsTestIsAsync = true;
+const worker = new Worker(URL.createObjectURL(new Blob([offscreenSequence + "postMessage(runSequence());"], { type: "text/javascript" })));
+worker.onmessage = event => {
+    debug("");
+    debug("OffscreenCanvas in a worker:");
+    reportOffscreen(event.data);
+    finishJSTest();
+};
+worker.onerror = event => {
+    testFailed("worker error: " + event.message);
+    finishJSTest();
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+Checks that strokeStyle and fillStyle give the right color when color strings are assigned again, including the same string object, equal strings, more than a few distinct strings, and colors that depend on the canvas element's style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+fillStyle:
+PASS first string
+PASS other string
+PASS first string object after another one
+PASS same string object twice in a row
+PASS different string object with the same text as the current one
+PASS different string object with the same text as an earlier one
+PASS different text for the current color
+PASS short hex for the current color
+PASS color with alpha
+PASS string object after a color with alpha
+PASS invalid string is ignored
+PASS invalid string object assigned twice is ignored
+PASS twelve distinct strings assigned three times
+PASS string object reused after its cache entry was replaced
+PASS after save
+PASS after restore
+PASS same string object after restore
+PASS other string object after restore
+PASS gradient
+PASS same string object after a gradient
+PASS legacy color setter
+PASS same string object after the legacy color setter
+
+strokeStyle:
+PASS first string
+PASS other string
+PASS first string object after another one
+PASS same string object twice in a row
+PASS different string object with the same text as the current one
+PASS different string object with the same text as an earlier one
+PASS different text for the current color
+PASS short hex for the current color
+PASS color with alpha
+PASS string object after a color with alpha
+PASS invalid string is ignored
+PASS invalid string object assigned twice is ignored
+PASS twelve distinct strings assigned three times
+PASS string object reused after its cache entry was replaced
+PASS after save
+PASS after restore
+PASS same string object after restore
+PASS other string object after restore
+PASS gradient
+PASS same string object after a gradient
+PASS legacy color setter
+PASS same string object after the legacy color setter
+
+fillStyle and strokeStyle sharing strings:
+PASS string object first assigned to fillStyle, strokeStyle
+PASS string object first assigned to fillStyle, fillStyle
+
+currentcolor:
+PASS currentcolor
+PASS same currentcolor string object after the element's color changed
+PASS same currentcolor string object assigned to strokeStyle
+PASS same currentcolor string object assigned to strokeStyle after the element's color changed
+PASS same currentcolor string object after the canvas left the document
+
+OffscreenCanvas:
+PASS first string
+PASS first string object after another one
+PASS different string object with the same text
+PASS string object reused after its cache entry was replaced
+PASS currentcolor
+PASS same currentcolor string object again
+
+OffscreenCanvas in a worker:
+PASS first string
+PASS first string object after another one
+PASS different string object with the same text
+PASS string object reused after its cache entry was replaced
+PASS currentcolor
+PASS same currentcolor string object again
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
