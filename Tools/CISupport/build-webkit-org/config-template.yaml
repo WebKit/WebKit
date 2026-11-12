@@ -391,8 +391,7 @@
                   },
                   {
                     "name": "Apple-iOS-27-Simulator-Debug-Build", "factory": "BuildFactory",
-                    "platform": "ios-simulator-27", "configuration": "debug", "architectures": ["arm64"],
-                    "additionalArguments": ["--cmake"],
+                    "platform": "ios-simulator-27", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                     "triggers": ["ios-simulator-27-debug-tests-wk2", "ipados-simulator-27-debug-tests-wk2"],
                     "workernames": ["bot307", "bot308"]
                   },
@@ -409,7 +408,7 @@
                   },
                   {
                     "name": "Apple-iOS-27-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "ios-simulator-27", "configuration": "debug", "architectures": ["arm64"], "device_model": "iphone",
+                    "platform": "ios-simulator-27", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
                     "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=6"],
                     "workernames": ["bot653"]
                   },
@@ -421,7 +420,7 @@
                   },
                   {
                     "name": "Apple-iPadOS-27-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "ios-simulator-27", "configuration": "debug", "architectures": ["arm64"], "device_model": "ipad",
+                    "platform": "ios-simulator-27", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
                     "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=6"],
                     "workernames": ["bot664"]
                   },
