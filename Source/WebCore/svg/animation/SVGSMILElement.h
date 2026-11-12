@@ -150,6 +150,7 @@ private:
     SMILTime resolveActiveEnd(SMILTime resolvedBegin, SMILTime resolvedEnd) const;
     SMILTime repeatingDuration() const;
     void checkRestart(SMILTime elapsed);
+    void listChanged(BeginOrEnd, SMILTime eventTime);
     void beginListChanged(SMILTime eventTime);
     void endListChanged(SMILTime eventTime);
 
