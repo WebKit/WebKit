@@ -168,17 +168,19 @@ void AccessibilityRegionContext::onPaint(const ScrollView& scrollView)
     }
 
     auto relativeFrame = frameView->frameRectShrunkByInset();
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    // frameScreenPosition accounts for the frame's position in its parent, so remove it, preserving any inset offset
+    // (matching AccessibilityScrollView::elementRect()). Don't key this off ownerElement(): the frame rect of a
+    // site-isolated iframe still holds its position in the parent, but its owner element is in another process.
+    auto frameOrigin = frameView->frameRect().location();
+    relativeFrame.move(-frameOrigin.x(), -frameOrigin.y());
+#else
     // Only normalize the rect to the root view if this scrollview isn't already associated with the root view (i.e. it has a frame owner).
     if (RefPtr frameOwnerElement = frameView->frame().ownerElement()) {
-        if (RefPtr ownerDocumentFrameView = frameOwnerElement->document().view()) {
-#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
-            // Zero out the iframe position since frameScreenPosition accounts for it.
-            relativeFrame.setLocation(IntPoint());
-#else
+        if (RefPtr ownerDocumentFrameView = frameOwnerElement->document().view())
             relativeFrame = ownerDocumentFrameView->contentsToRootView(relativeFrame);
-#endif
-        }
     }
+#endif
 
     if (CheckedPtr cache = frameView->axObjectCache())
         cache->onPaint(*frameView, WTF::move(relativeFrame));

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; }
+#marker { position: absolute; left: 200px; top: 200px; width: 50px; height: 50px; }
+</style>
+</head>
+<body>
+<h1>Iframe Heading</h1>
+<script>
+// The flag that makes isolated objects serve their painted frames instead of asking the main thread
+// is per-process, so this cross-site frame's process needs it set too.
+if (window.accessibilityController)
+    accessibilityController.setForceInitialFrameCaching(true);
+
+// Adds an element whose frame is only known once it's painted. Rendering updates are rare in the test runner,
+// so force one each time (the accessibility paint is throttled, so the parent keeps asking until it shows up).
+window.addEventListener("message", () => {
+    if (window.testRunner)
+        testRunner.display();
+    if (document.getElementById("marker"))
+        return;
+    let marker = document.createElement("div");
+    marker.id = "marker";
+    marker.setAttribute("role", "button");
+    marker.setAttribute("aria-label", "Marker");
+    document.body.appendChild(marker);
+});
+</script>
+</body>
+</html>

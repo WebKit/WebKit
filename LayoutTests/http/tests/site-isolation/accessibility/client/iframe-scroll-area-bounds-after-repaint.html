@@ -1,0 +1,97 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#iframe {
+    position: absolute;
+    left: 100px;
+    top: 50px;
+    width: 400px;
+    height: 300px;
+    border: none;
+}
+</style>
+</head>
+<body>
+
+<iframe id="iframe" src="http://localhost:8000/site-isolation/accessibility/resources/iframe-adds-marker-on-message.html"></iframe>
+
+<script>
+var output = "Tests that the scroll area of a cross-site iframe has the iframe's screen bounds once the iframe has been painted.\n";
+output += "VoiceOver clips its cursor to every scroll area above an element, so a scroll area offset by the iframe's\n";
+output += "position a second time hid the cursor for elements reached by search (e.g. navigating by heading).\n\n";
+
+function findDescendant(element, predicate, depth = 0) {
+    if (!element || depth > 10)
+        return null;
+    if (predicate(element))
+        return element;
+    for (let i = 0; i < element.childrenCount; i++) {
+        let found = findDescendant(element.childAtIndex(i), predicate, depth + 1);
+        if (found)
+            return found;
+    }
+    return null;
+}
+
+// Polls slowly, since each check is a series of synchronous calls into the web content processes,
+// and polling continuously starves the iframe's process of rendering updates.
+async function waitSlowlyFor(condition) {
+    for (let i = 0; i < 50; i++) {
+        if (condition())
+            return true;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    return false;
+}
+
+var webArea, iframeWebArea, iframeScrollArea, marker;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setForceInitialFrameCaching(true);
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        await waitSlowlyFor(() => {
+            webArea = accessibilityController.rootElement.childAtIndex(0);
+            // The iframe's web area is the one whose first child is the heading.
+            iframeWebArea = findDescendant(webArea, (element) => element.role.includes("WebArea") && element.childrenCount && element.childAtIndex(0).role.includes("Heading"));
+            iframeScrollArea = iframeWebArea && iframeWebArea.parentElement();
+            return iframeWebArea && iframeWebArea.x - webArea.x == 100 && iframeWebArea.y - webArea.y == 50;
+        });
+        if (!iframeScrollArea) {
+            output += "FAIL: couldn't find the iframe's scroll area.\n";
+            debug(output);
+            finishJSTest();
+            return;
+        }
+
+        // The iframe's first accessibility paint can happen before it knows where it is in the page, so add an
+        // element and wait for its painted frame to show up.
+        let iframeWindow = document.getElementById("iframe").contentWindow;
+        iframeWindow.postMessage("addMarker", "*");
+        let intervalID = setInterval(() => iframeWindow.postMessage("addMarker", "*"), 300);
+        await waitSlowlyFor(() => {
+            marker = findDescendant(iframeWebArea, (element) => element.description.includes("Marker"));
+            return marker && marker.x - iframeWebArea.x == 200 && marker.y - iframeWebArea.y == 200;
+        });
+        clearInterval(intervalID);
+        output += expect("marker.x - iframeWebArea.x", "200");
+        output += expect("marker.y - iframeWebArea.y", "200");
+
+        output += expect("iframeScrollArea.role", "'AXRole: AXScrollArea'");
+        output += expect("iframeScrollArea.x - webArea.x", "100");
+        output += expect("iframeScrollArea.y - webArea.y", "50");
+        output += expect("iframeScrollArea.width", "400");
+        output += expect("iframeScrollArea.height", "300");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

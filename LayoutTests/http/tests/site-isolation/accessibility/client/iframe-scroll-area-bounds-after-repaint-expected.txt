@@ -1,0 +1,16 @@
+Tests that the scroll area of a cross-site iframe has the iframe's screen bounds once the iframe has been painted.
+VoiceOver clips its cursor to every scroll area above an element, so a scroll area offset by the iframe's
+position a second time hid the cursor for elements reached by search (e.g. navigating by heading).
+
+PASS: marker.x - iframeWebArea.x === 200
+PASS: marker.y - iframeWebArea.y === 200
+PASS: iframeScrollArea.role === 'AXRole: AXScrollArea'
+PASS: iframeScrollArea.x - webArea.x === 100
+PASS: iframeScrollArea.y - webArea.y === 50
+PASS: iframeScrollArea.width === 400
+PASS: iframeScrollArea.height === 300
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
