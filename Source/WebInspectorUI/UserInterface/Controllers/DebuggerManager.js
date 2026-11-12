@@ -788,6 +788,18 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         return this.dataForTarget(target).continueUntilNextRunLoop();
     }
 
+    resumeThread(target)
+    {
+        let targetData = this.dataForTarget(target);
+
+        // A frame target pauses independently of everything else, so resuming one is a full resume.
+        // Other targets live in the page's process, so keep the bounded advance (bug 164305): resuming
+        // fully would let the target run free while the rest of the process is still paused.
+        if (target instanceof WI.FrameTarget)
+            return targetData.resumeIfNeeded();
+        return targetData.continueUntilNextRunLoop();
+    }
+
     continueToLocation(script, lineNumber, columnNumber)
     {
         return script.target.DebuggerAgent.continueToLocation({scriptId: script.id, lineNumber, columnNumber});

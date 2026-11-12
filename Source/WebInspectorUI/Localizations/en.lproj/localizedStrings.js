@@ -1494,6 +1494,7 @@ localizedStrings["Result"] = "Result";
 localizedStrings["Result Data"] = "Result Data";
 localizedStrings["Result Levels"] = "Result Levels";
 localizedStrings["Results"] = "Results";
+localizedStrings["Resume Frame"] = "Resume Frame";
 localizedStrings["Resume Processing"] = "Resume Processing";
 localizedStrings["Resume Thread"] = "Resume Thread";
 localizedStrings["Retained Size"] = "Retained Size";

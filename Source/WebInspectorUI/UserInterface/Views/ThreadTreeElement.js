@@ -84,8 +84,8 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
     {
         let targetData = WI.debuggerManager.dataForTarget(this._target);
         if (targetData)
-            contextMenu.appendItem(WI.UIString("Resume Thread"), () => {
-                WI.debuggerManager.continueUntilNextRunLoop(this._target);
+            contextMenu.appendItem(this._resumeLabel(), () => {
+                WI.debuggerManager.resumeThread(this._target);
             }, !targetData.paused);
 
         super.populateContextMenu(contextMenu, event);
@@ -96,6 +96,11 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
     _handleNameChanged(event)
     {
         this.mainTitle = this._target.displayName;
+    }
+
+    _resumeLabel()
+    {
+        return this._target instanceof WI.FrameTarget ? WI.UIString("Resume Frame") : WI.UIString("Resume Thread");
     }
 
     _updateStatus()
@@ -110,10 +115,10 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
             return;
 
         if (!this._statusButton) {
-            let tooltip = WI.UIString("Resume Thread");
+            let tooltip = this._resumeLabel();
             this._statusButton = new WI.TreeElementStatusButton(WI.ImageUtilities.useSVGSymbol("Images/Resume.svg", "resume", tooltip));
             this._statusButton.addEventListener(WI.TreeElementStatusButton.Event.Clicked, function(event) {
-                WI.debuggerManager.continueUntilNextRunLoop(this._target);
+                WI.debuggerManager.resumeThread(this._target);
             }, this);
             this._statusButton.element.addEventListener("mousedown", (event) => {
                 // Prevent tree element from being selected.

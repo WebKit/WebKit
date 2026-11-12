@@ -1,0 +1,19 @@
+Tests that a per-target resume of a paused frame target does not re-pause at the next opportunity, while resuming a worker target does.
+
+
+
+== Running test suite: SiteIsolation.Debugger.FrameTargetResumeDoesNotRepause
+-- Running test case: SiteIsolation.Debugger.FrameTargetResumeDoesNotRepause.ResumeThread.FrameTarget
+PASS: Should find the cross-site frame's target.
+PASS: The frame target should pause at the debugger statement.
+PASS: The paused evaluation should complete after the per-target resume.
+PASS: The frame target should be resumed.
+PASS: The frame target must not pause again at the next opportunity.
+PASS: The frame should keep running after the resume.
+
+-- Running test case: SiteIsolation.Debugger.FrameTargetResumeDoesNotRepause.ResumeThread.WorkerTarget
+PASS: The worker script should be loaded.
+PASS: The worker target should pause at the debugger statement.
+PASS: The paused evaluation should complete after the bounded resume.
+PASS: The worker target should pause again at the next opportunity.
+
