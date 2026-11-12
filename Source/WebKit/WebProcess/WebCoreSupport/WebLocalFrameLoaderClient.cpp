@@ -1652,8 +1652,14 @@ void WebLocalFrameLoaderClient::restoreViewState()
     // A scale factor of 0 means the history item has the default scale factor, thus we do not need to update it.
     // Session state supplied by the client can also hold values the UI process would reject.
     RefPtr page = m_frame->page();
-    if (page && isValidScaleFactor(scaleFactor))
-        page->send(Messages::WebPageProxy::DidSetPageScaleFactor(scaleFactor));
+    if (page && isValidScaleFactor(scaleFactor)) {
+        RefPtr corePage = page->corePage();
+        RefPtr view = m_localFrame->view();
+        if (m_frame->isMainFrame() && corePage && corePage->delegatesScaling() && view && !view->wasScrolledByUser() && scaleFactor != page->pageScaleFactor())
+            page->scalePage(scaleFactor, view->scrollPosition());
+        else
+            page->send(Messages::WebPageProxy::DidSetPageScaleFactor(scaleFactor));
+    }
 
     // FIXME: This should not be necessary. WebCore should be correctly invalidating
     // the view on restores from the back/forward cache.

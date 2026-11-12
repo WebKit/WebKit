@@ -1,0 +1,5 @@
+A fixed overlay over a scroll locked page:
+  Before zooming: PASS (the overlay covers the view)
+  Held zoom out at scale 0.81: PASS (the overlay covers the view)
+  While the release eases back: PASS (the overlay covered the view in every snapshot)
+  After release at scale 1.00: PASS (the overlay covers the view)

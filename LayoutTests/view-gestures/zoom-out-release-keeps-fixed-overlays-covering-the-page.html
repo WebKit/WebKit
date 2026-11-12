@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Releasing a delegated zoom out keeps a fixed overlay covering the page while the scale eases back</title>
+    <style>
+        html, body {
+            margin: 0;
+        }
+
+        html {
+            overflow: hidden;
+        }
+
+        body {
+            width: 3000px;
+            height: 3000px;
+            background-color: white;
+            background-image: linear-gradient(45deg, orange 25%, transparent 25%, transparent 75%, orange 75%);
+            background-size: 100px 100px;
+        }
+
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgb(0, 0, 128);
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        const overlayColor = [0, 0, 128];
+
+        async function snapshotPixels()
+        {
+            const dataURL = await new Promise(resolve => testRunner.takeViewPortSnapshot(resolve));
+            const image = new Image;
+            await new Promise((resolve, reject) => {
+                image.onload = resolve;
+                image.onerror = reject;
+                image.src = dataURL;
+            });
+
+            const canvas = document.createElement('canvas');
+            canvas.width = image.width;
+            canvas.height = image.height;
+            const context = canvas.getContext('2d');
+            context.drawImage(image, 0, 0);
+            return context.getImageData(0, 0, canvas.width, canvas.height);
+        }
+
+        async function uncoveredRect()
+        {
+            const { width, height, data } = await snapshotPixels();
+
+            const margin = Math.ceil(2 * window.devicePixelRatio);
+            let rect = null;
+            for (let y = margin; y < height - margin; ++y) {
+                for (let x = margin; x < width - margin; ++x) {
+                    const index = (y * width + x) * 4;
+                    if (overlayColor.every((component, offset) => Math.abs(data[index + offset] - component) <= 16))
+                        continue;
+
+                    if (!rect)
+                        rect = { left: x, top: y, right: x + 1, bottom: y + 1 };
+                    rect.left = Math.min(rect.left, x);
+                    rect.top = Math.min(rect.top, y);
+                    rect.right = Math.max(rect.right, x + 1);
+                    rect.bottom = Math.max(rect.bottom, y + 1);
+                }
+            }
+            return rect;
+        }
+
+        function coverageResult(description, rect)
+        {
+            if (!rect)
+                return `  ${description}: PASS (the overlay covers the view)`;
+
+            return `  ${description}: FAIL (the page shows through between (${rect.left}, ${rect.top}) and (${rect.right}, ${rect.bottom}))`;
+        }
+
+        async function isSettled()
+        {
+            return await UIHelper.zoomScale() == 1 && await UIHelper.delegatedZoomOverrideAsText() == '';
+        }
+
+        async function doTest()
+        {
+            const output = ['A fixed overlay over a scroll locked page:'];
+
+            window.scrollTo(1000, 1000);
+            await UIHelper.ensurePresentationUpdate();
+            output.push(coverageResult('Before zooming', await uncoveredRect()));
+
+            await UIHelper.beginMagnifyGestureAt(400, 300, -0.9);
+            await UIHelper.continueMagnifyGesture(-0.9);
+            await UIHelper.continueMagnifyGesture(-0.9);
+            for (let i = 0; i < 4; ++i)
+                await UIHelper.ensurePresentationUpdate();
+            const heldScale = await UIHelper.zoomScale();
+            output.push(coverageResult(`Held zoom out at scale ${heldScale.toFixed(2)}`, await uncoveredRect()));
+
+            eventSender.scaleGestureEnd(0);
+            let firstUncoveredRect = null;
+            for (let snapshot = 0; snapshot < 4 || (snapshot < 60 && !await isSettled()); ++snapshot) {
+                const rect = await uncoveredRect();
+                firstUncoveredRect ??= rect;
+            }
+            output.push(firstUncoveredRect ? coverageResult('While the release eases back', firstUncoveredRect) : '  While the release eases back: PASS (the overlay covered the view in every snapshot)');
+
+            await UIHelper.waitForZoomScaleToSettle();
+            for (let i = 0; i < 4; ++i)
+                await UIHelper.ensurePresentationUpdate();
+            const releasedScale = await UIHelper.zoomScale();
+            output.push(coverageResult(`After release at scale ${releasedScale.toFixed(2)}`, await uncoveredRect()));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="overlay"></div>
+    <pre id="output"></pre>
+</body>
+</html>

@@ -7909,6 +7909,9 @@ void WebPageProxy::scalePage(double scale, const IntPoint& origin, CompletionHan
         return;
     }
 
+    if (RefPtr drawingArea = m_drawingArea)
+        drawingArea->pageScaleWillChangeOutsideOfZoomGesture();
+
     m_pageScaleFactor = scale;
     pageScaleFactorDidChange();
 
@@ -7932,6 +7935,9 @@ void WebPageProxy::scalePageInViewCoordinates(double scale, const IntPoint& cent
         WEBPAGEPROXY_RELEASE_LOG_ERROR(ViewState, "scalePageInViewCoordinates: ignoring out-of-range scale factor %f", scale);
         return;
     }
+
+    if (RefPtr drawingArea = m_drawingArea)
+        drawingArea->pageScaleWillChangeOutsideOfZoomGesture();
 
     m_pageScaleFactor = scale;
     pageScaleFactorDidChange();
@@ -10459,6 +10465,8 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
             internals().firstLayerTreeTransactionIdAfterDidCommitLoad = drawingAreaProxy->nextMainFrameLayerTreeTransactionID();
         resetFixedContainerEdgeSamplingForMainFrameLoad();
 #endif
+        if (RefPtr drawingArea = m_drawingArea)
+            drawingArea->pageScaleWillChangeOutsideOfZoomGesture();
         internals().pageAllowedToRunInTheBackgroundActivityDueToTitleChanges = nullptr;
         internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications = nullptr;
         internals().didCommitLoadForMainFrameTimestamp = MonotonicTime::now();

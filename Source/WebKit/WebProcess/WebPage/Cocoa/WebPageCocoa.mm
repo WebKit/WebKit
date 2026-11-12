@@ -2481,6 +2481,12 @@ void WebPage::willCommitMainFrameData(MainFrameData& data, const TransactionID& 
         m_lastTransactionPageScaleFactor = data.pageScaleFactor;
         m_internals->lastTransactionIDWithScaleChange = transactionID;
     }
+#elif ENABLE(UI_SIDE_COMPOSITING)
+    if (m_lastTransactionPageScaleFactor != data.pageScaleFactor) {
+        m_lastTransactionPageScaleFactor = data.pageScaleFactor;
+        if (!m_scaleWasSetByUIProcess)
+            m_internals->lastTransactionIDWithScaleChange = transactionID;
+    }
 #endif
 }
 
@@ -4285,6 +4291,22 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
         return;
     RefPtr frameView = *localMainFrame->view();
 
+#if PLATFORM(MAC)
+    // The frame view keeps its old scroll position until applyScrollUpdate() below gives it this update's, and by then
+    // the new scale and viewport size are already in. If ScrollView::updateScrollbars() clamped the old position
+    // against those, the clamped scroll would go back to the UI process as a programmatic scroll, land after this
+    // update, and undo its scroll position.
+    std::optional<ScrollClamping> scrollClampingBeforeUpdate;
+    if (m_page->delegatesScaling() && m_isInStableState) {
+        scrollClampingBeforeUpdate = frameView->scrollClamping();
+        frameView->setScrollClamping(ScrollClamping::Unclamped);
+    }
+    auto restoreScrollClamping = makeScopeExit([frameView, scrollClampingBeforeUpdate] {
+        if (scrollClampingBeforeUpdate)
+            frameView->setScrollClamping(*scrollClampingBeforeUpdate);
+    });
+#endif
+
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
     auto updatePluginTransformsIfStable = makeScopeExit([this, protectedThis = Ref { *this }] {
         if (!m_isInStableState)
@@ -4324,6 +4346,11 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     auto layoutViewportRectLocation = layoutViewportRect.location();
     if (std::abs(unobscuredContentRectLocation.x() - layoutViewportRectLocation.x()) <= epsilonX && std::abs(unobscuredContentRectLocation.y() - layoutViewportRectLocation.y()) <= epsilonY)
         layoutViewportRect.setLocation(scrollPosition);
+
+#if PLATFORM(MAC)
+    if (m_page->delegatesScaling())
+        frameView->setUnobscuredContentSize(unobscuredContentRect.size());
+#endif
 
     bool pageHasBeenScaledSinceLastLayerTreeCommitThatChangedPageScale = ([&] {
         if (!m_internals->lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage)

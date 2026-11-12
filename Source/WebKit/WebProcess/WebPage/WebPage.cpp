@@ -3323,10 +3323,12 @@ void WebPage::didScalePage(double scale, const IntPoint& origin)
             platformDidScalePage();
     });
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(UI_SIDE_COMPOSITING)
     if (willChangeScaleFactor) {
+#if PLATFORM(IOS_FAMILY)
         if (!m_inDynamicSizeUpdate)
             m_internals->dynamicSizeUpdateHistory.clear();
+#endif
         m_scaleWasSetByUIProcess = false;
     }
 #endif
@@ -3340,6 +3342,22 @@ void WebPage::didScalePage(double scale, const IntPoint& origin)
             page->setPageScaleFactor(1, origin);
         pluginView->setPageScaleFactor(totalScale, { origin });
         return;
+    }
+#endif
+
+#if PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)
+    if (willChangeScaleFactor && page->delegatesScaling()) {
+        if (RefPtr frameView = localMainFrameView()) {
+            if (m_hasReceivedVisibleContentRectsAfterDidCommitLoad) {
+                auto unobscuredContentSize = frameView->unobscuredContentSize();
+                if (!unobscuredContentSize.isEmpty()) {
+                    unobscuredContentSize.scale(totalScaleFactor() / totalScale);
+                    frameView->setUnobscuredContentSize(unobscuredContentSize);
+                }
+            }
+            frameView->setVisualViewportOverrideRect(std::nullopt);
+            frameView->setLayoutViewportOverrideRect(std::nullopt, LocalFrameView::TriggerLayoutOrNot::No);
+        }
     }
 #endif
 

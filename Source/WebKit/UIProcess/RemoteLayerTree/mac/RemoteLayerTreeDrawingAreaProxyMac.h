@@ -79,6 +79,7 @@ private:
     void adjustTransientZoom(double, WebCore::FloatPoint originInLayerForPageScale, WebCore::FloatPoint originInVisibleRect) override;
     void commitTransientZoom(double, WebCore::FloatPoint, std::optional<WebCore::FloatPoint>) override;
     std::optional<double> committedTransientZoomScale() const override { return m_committedTransientZoomScale; }
+    void pageScaleWillChangeOutsideOfZoomGesture() final;
 
     void sendCommitTransientZoom(double, WebCore::FloatPoint, std::optional<WebCore::ScrollingNodeID>);
 
@@ -98,6 +99,9 @@ private:
     void animateDelegatedZoomSnapBack(double fromScale, WebCore::FloatPoint fromLayerPosition, double toScale, WebCore::FloatPoint originInVisibleRect);
     void didFinishDelegatedZoomSnapBack();
     bool hasDelegatedZoomSnapAnimation() const;
+    void sendVisibleContentRectUpdateAfterSnapBack();
+    void dropVisibleContentRectUpdateAfterSnapBack();
+    void cancelDelegatedZoomCommit();
     void reassertDelegatedZoom(double scaleToApply);
     void removeDelegatedZoomFromLayer();
     void commitDelegatedZoom(double scale, WebCore::FloatPoint originInVisibleRect);
@@ -205,6 +209,14 @@ private:
     // In case the presentation update callback never arrives. Deliberately generous, since releasing the scale
     // too early is the bug we're guarding against.
     static constexpr unsigned maxCommitsToHoldDelegatedZoomScale { 60 };
+
+    struct VisibleContentRectUpdateAfterSnapBack {
+        double scale { 1 };
+        WebCore::FloatPoint scrollPosition;
+        WebCore::FloatPoint treeScrollPositionWhenCommitted;
+        std::optional<WebCore::ScrollingNodeID> rootScrollingNodeID;
+    };
+    std::optional<VisibleContentRectUpdateAfterSnapBack> m_visibleContentRectUpdateAfterSnapBack;
 };
 
 } // namespace WebKit

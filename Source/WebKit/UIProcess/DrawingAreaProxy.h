@@ -104,6 +104,7 @@ public:
     // (see RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom()).
     virtual void commitTransientZoom(double, WebCore::FloatPoint /* originInLayerForPageScale */, std::optional<WebCore::FloatPoint> /* targetScrollPosition */) { }
     virtual std::optional<double> committedTransientZoomScale() const { return std::nullopt; }
+    virtual void pageScaleWillChangeOutsideOfZoomGesture() { }
 
     virtual void viewIsBecomingVisible() { }
     virtual void viewIsBecomingInvisible() { }

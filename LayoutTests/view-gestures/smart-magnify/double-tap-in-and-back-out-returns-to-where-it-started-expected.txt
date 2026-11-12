@@ -1,0 +1,4 @@
+
+Zoomed in with the page scrolled sideways: PASS
+Double tapping the same spot zoomed back out: PASS
+The zoom out returned to where the zoom in started: PASS

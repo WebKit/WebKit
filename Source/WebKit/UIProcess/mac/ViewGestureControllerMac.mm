@@ -278,7 +278,7 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
     // Where centering the target rect leaves the scroll position, for drawing areas that apply the page scale in
     // the UI process: those can't take a destination as a layer translation, since their transform is a pure scale.
     // This is the same conversion they make of `targetOrigin` in the other direction when the web process owns the
-    // scale, and `visibleContentRect` is in unscaled content coordinates here (FrameView::visibleContentScaleFactor()).
+    // scale, and `visibleContentRect` is in scaled content coordinates here (scaled by `currentScaleFactor` above).
     auto targetScrollPosition = visibleContentRect.location();
     targetScrollPosition.moveBy(-targetOrigin);
     targetScrollPosition.scale(1. / targetMagnification);
