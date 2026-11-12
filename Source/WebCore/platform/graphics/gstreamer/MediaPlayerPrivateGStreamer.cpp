@@ -1853,6 +1853,23 @@ void MediaPlayerPrivateGStreamer::playbin3SendSelectStreamsIfAppropriate()
     g_list_free_full(streams, reinterpret_cast<GDestroyNotify>(g_free));
 }
 
+#if ENABLE(MEDIA_STREAM)
+void MediaPlayerPrivateGStreamer::removeMediaStreamAudioTrack(const AudioTrackPrivateGStreamer& trackToRemove)
+{
+    RefPtr player = m_player;
+    if (!player)
+        return;
+
+    m_audioTracks.removeIf([&](auto& keyValue) -> bool {
+        if (keyValue.value != trackToRemove)
+            return false;
+
+        player->removeAudioTrack(keyValue.value);
+        return true;
+    });
+}
+#endif
+
 void MediaPlayerPrivateGStreamer::updateTracks([[maybe_unused]] const GRefPtr<GstObject>& collectionOwner, const GRefPtr<GstStreamCollection>& streamCollection)
 {
     ASSERT(!m_isLegacyPlaybin);
@@ -1985,7 +2002,7 @@ void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* mess
     // WebKitMediaSrc) parsebin and decodebin3 emit their own stream-collection messages, but late,
     // and sometimes with duplicated streams. Let's only listen for stream-collection messages from
     // the source to avoid these issues.
-    bool sourceIsStreamAware = isMediaSource() || isMediaStreamPlayer();
+    bool sourceIsStreamAware = isMediaSource();
     if (sourceIsStreamAware && GST_MESSAGE_SRC(message) != GST_OBJECT(m_source.get())) {
         GST_DEBUG_OBJECT(pipeline(), "Ignoring redundant STREAM_COLLECTION from %" GST_PTR_FORMAT, message->src);
         return;

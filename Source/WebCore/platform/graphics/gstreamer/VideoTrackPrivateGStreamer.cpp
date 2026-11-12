@@ -165,9 +165,11 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
 
 VideoTrackPrivate::Kind VideoTrackPrivateGStreamer::kind() const
 {
-    if (m_data->m_stream && gst_stream_get_stream_flags(m_data->m_stream.get()) & GST_STREAM_FLAG_SELECT)
+    auto state = trackStateFromStreamTags();
+    if (state == MediaStreamTrackState::Unknown)
+        return VideoTrackPrivate::kind();
+    if (state == MediaStreamTrackState::Enabled)
         return VideoTrackPrivate::Kind::Main;
-
     return VideoTrackPrivate::kind();
 }
 

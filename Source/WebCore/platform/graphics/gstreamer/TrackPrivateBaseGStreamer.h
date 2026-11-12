@@ -155,6 +155,8 @@ private:
     TrackPrivateBaseGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, GStreamerTrackType, TrackPrivateBase*, unsigned index, GRefPtr<GstStream>&&);
     ~TrackPrivateBaseGStreamer();
 
+    MediaStreamTrackState trackStateFromStreamTags() const;
+
     const Ref<TrackDataHolder> m_data;
 };
 
