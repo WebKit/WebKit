@@ -41,6 +41,8 @@
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/ObjectConstructor.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -88,6 +90,7 @@ static ExceptionOr<void> packAndPostMessageHandlingError(JSDOMGlobalObject& glob
 }
 
 class CrossRealmReadableStreamSource final : public ReadableStreamSource, public RefCountedAndCanMakeWeakPtr<CrossRealmReadableStreamSource> {
+    WTF_MAKE_TZONE_ALLOCATED(CrossRealmReadableStreamSource);
 public:
     static Ref<CrossRealmReadableStreamSource> create(Ref<MessagePort>&& port)
     {
@@ -211,12 +214,15 @@ private:
     const Ref<MessagePort> m_port;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CrossRealmReadableStreamSource);
+
 ExceptionOr<Ref<ReadableStream>> setupCrossRealmTransformReadable(JSDOMGlobalObject& globalObject, MessagePort& port)
 {
     return ReadableStream::create(globalObject, CrossRealmReadableStreamSource::create(port), 0);
 }
 
 class CrossRealmWritableStreamSink final : public WritableStreamSink, public CanMakeWeakPtr<CrossRealmWritableStreamSink> {
+    WTF_MAKE_TZONE_ALLOCATED(CrossRealmWritableStreamSink);
 public:
     static Ref<CrossRealmWritableStreamSink> create(Ref<MessagePort>&& port, Ref<DeferredPromise>&& backpressurePromise)
     {
@@ -357,6 +363,8 @@ private:
     const Ref<MessagePort> m_port;
     RefPtr<DeferredPromise> m_backpressurePromise;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CrossRealmWritableStreamSink);
 
 ExceptionOr<Ref<WritableStream>> setupCrossRealmTransformWritable(JSDOMGlobalObject& globalObject, MessagePort& port)
 {

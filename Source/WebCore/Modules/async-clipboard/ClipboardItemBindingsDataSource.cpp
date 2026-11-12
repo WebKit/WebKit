@@ -57,6 +57,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ClipboardItemBindingsDataSource::ClipboardItemTypeLoader);
+
 NODELETE static Document* documentFromClipboard(const Clipboard* clipboard)
 {
     if (!clipboard)

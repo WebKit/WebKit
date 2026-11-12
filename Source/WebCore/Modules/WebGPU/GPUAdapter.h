@@ -37,11 +37,13 @@
 #include <optional>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class GPUAdapter : public RefCounted<GPUAdapter> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUAdapter);
 public:
     static Ref<GPUAdapter> create(Ref<::WebGPU::Adapter>&& backing, Ref<WebGPUIntegration>&& gpu)
     {

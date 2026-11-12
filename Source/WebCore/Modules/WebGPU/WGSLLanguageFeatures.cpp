@@ -27,8 +27,11 @@
 #include "WGSLLanguageFeatures.h"
 
 #include "IDLTypes.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WGSLLanguageFeatures);
 
 void WGSLLanguageFeatures::initializeSetLike(DOMSetAdapter& set) const
 {

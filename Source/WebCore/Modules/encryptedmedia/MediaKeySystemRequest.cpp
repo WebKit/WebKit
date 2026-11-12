@@ -38,8 +38,11 @@
 #include "PlatformMediaSessionManager.h"
 #include "Settings.h"
 #include "WindowEventLoop.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaKeySystemRequest);
 
 Ref<MediaKeySystemRequest> MediaKeySystemRequest::create(Document& document, const String& keySystem, RefPtr<DeferredPromise>&& promise)
 {

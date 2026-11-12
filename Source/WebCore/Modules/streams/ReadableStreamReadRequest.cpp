@@ -32,10 +32,13 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSReadableStreamReadResult.h"
 #include <JavaScriptCore/TopExceptionScope.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class ReadableStreamDefaultReadRequest : public ReadableStreamReadRequest {
+    WTF_MAKE_TZONE_ALLOCATED(ReadableStreamDefaultReadRequest);
 public:
     NODELETE static Ref<ReadableStreamDefaultReadRequest> create(Ref<DeferredPromise>&& promise) { return adoptRef(*new ReadableStreamDefaultReadRequest(WTF::move(promise))); }
 
@@ -75,7 +78,10 @@ private:
     const Ref<DeferredPromise> m_promise;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReadableStreamDefaultReadRequest);
+
 class ReadableStreamDefaultReadIntoRequest : public ReadableStreamReadIntoRequest {
+    WTF_MAKE_TZONE_ALLOCATED(ReadableStreamDefaultReadIntoRequest);
 public:
     NODELETE static Ref<ReadableStreamDefaultReadIntoRequest> create(Ref<DeferredPromise>&& promise) { return adoptRef(*new ReadableStreamDefaultReadIntoRequest(WTF::move(promise))); }
 
@@ -114,6 +120,8 @@ private:
 
     const Ref<DeferredPromise> m_promise;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReadableStreamDefaultReadIntoRequest);
 
 void ReadableStreamReadRequestBase::runErrorSteps(Exception&& exception)
 {

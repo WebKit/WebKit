@@ -26,7 +26,11 @@
 #include "config.h"
 #include "GPUCompositorIntegration.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUCompositorIntegration);
 
 #if PLATFORM(COCOA)
 uint32_t GPUCompositorIntegration::recreateRenderBuffers(int width, int height, WebCore::ColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, WebGPU::TextureFormat textureFormat, WebGPU::Device& device) const

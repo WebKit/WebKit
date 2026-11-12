@@ -49,9 +49,12 @@
 #include "Settings.h"
 #include "UnknownCredentialOptions.h"
 #include "WebAuthenticationUtils.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PublicKeyCredential);
 
 Ref<PublicKeyCredential> PublicKeyCredential::create(Ref<AuthenticatorResponse>&& response)
 {

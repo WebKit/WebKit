@@ -36,6 +36,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -52,6 +53,7 @@ class GPURenderPipeline;
 template<typename> class ExceptionOr;
 
 class GPURenderPassEncoder : public RefCountedAndCanMakeWeakPtr<GPURenderPassEncoder> {
+    WTF_MAKE_TZONE_ALLOCATED(GPURenderPassEncoder);
 public:
     static Ref<GPURenderPassEncoder> create(Ref<::WebGPU::RenderPassEncoder>&& backing, String&& label, GPUCommandEncoder& commandEncoder, uint8_t canvasColorAttachmentMask)
     {

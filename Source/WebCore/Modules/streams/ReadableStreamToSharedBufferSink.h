@@ -33,6 +33,7 @@
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -43,6 +44,7 @@ class SinkReadRequest;
 template<typename> class ExceptionOr;
 
 class ReadableStreamToSharedBufferSink final : public RefCountedAndCanMakeWeakPtr<ReadableStreamToSharedBufferSink> {
+    WTF_MAKE_TZONE_ALLOCATED(ReadableStreamToSharedBufferSink);
 public:
     using Result = Variant<std::nullptr_t, std::span<const uint8_t>, JSC::JSValue, Exception>;
     using Callback = Function<void(Result&&)>;

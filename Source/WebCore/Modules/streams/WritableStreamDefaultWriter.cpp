@@ -31,8 +31,11 @@
 #include "JSWritableStreamDefaultWriter.h"
 #include "WritableStream.h"
 #include <JavaScriptCore/CallFrameInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WritableStreamDefaultWriter);
 
 ExceptionOr<Ref<WritableStreamDefaultWriter>> WritableStreamDefaultWriter::create(JSDOMGlobalObject& globalObject, WritableStream& stream)
 {

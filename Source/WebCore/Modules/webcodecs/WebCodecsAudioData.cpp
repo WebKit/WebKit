@@ -37,8 +37,11 @@
 #include "SharedBuffer.h"
 #include "WebCodecsAudioDataAlgorithms.h"
 #include "WebCodecsBufferTransfer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCodecsAudioData);
 
 // https://www.w3.org/TR/webcodecs/#dom-audiodata-audiodata
 ExceptionOr<Ref<WebCodecsAudioData>> WebCodecsAudioData::create(ScriptExecutionContext& context, Init&& init)

@@ -26,12 +26,14 @@
 #pragma once
 
 #include "ReadableStreamSource.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WebTransportBidirectionalStream;
 
 class WebTransportBidirectionalStreamSource : public RefCountedReadableStreamSource {
+    WTF_MAKE_TZONE_ALLOCATED(WebTransportBidirectionalStreamSource);
 public:
     static Ref<WebTransportBidirectionalStreamSource> create() { return adoptRef(*new WebTransportBidirectionalStreamSource()); }
     bool receiveIncomingStream(JSC::JSGlobalObject&, Ref<WebTransportBidirectionalStream>&);

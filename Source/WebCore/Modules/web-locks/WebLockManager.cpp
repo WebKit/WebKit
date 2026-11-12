@@ -48,9 +48,12 @@
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebLockManager);
 
 static std::optional<ClientOrigin> clientOriginFromContext(ScriptExecutionContext* context)
 {

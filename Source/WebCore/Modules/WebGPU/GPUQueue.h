@@ -40,6 +40,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -53,6 +54,7 @@ struct GPUDrawElementImageDestination;
 struct GPUDrawElementImageSource;
 
 class GPUQueue : public RefCountedAndCanMakeWeakPtr<GPUQueue> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUQueue);
 public:
     static Ref<GPUQueue> create(Ref<::WebGPU::Queue>&& backing, Ref<WebGPUIntegration>&& gpu, GPUDevice& device)
     {

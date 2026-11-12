@@ -46,8 +46,11 @@
 #include "Page.h"
 #include "PhoneNumberPossessionCredential.h"
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CredentialsContainer);
 
 CredentialsContainer::CredentialsContainer(WeakPtr<Document, WeakPtrImplWithEventTargetData>&& document)
     : m_document(WTF::move(document))

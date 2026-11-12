@@ -33,8 +33,11 @@
 #include "WebTransportDatagramsWritable.h"
 #include "WebTransportSession.h"
 #include "WritableStream.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebTransportDatagramDuplexStream);
 
 Ref<WebTransportDatagramDuplexStream> WebTransportDatagramDuplexStream::create(Ref<ReadableStream>&& readable)
 {

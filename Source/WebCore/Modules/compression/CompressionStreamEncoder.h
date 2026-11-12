@@ -32,11 +32,13 @@
 #include <JavaScriptCore/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class CompressionStreamEncoder : public RefCounted<CompressionStreamEncoder> {
+    WTF_MAKE_TZONE_ALLOCATED(CompressionStreamEncoder);
 public:
     static ExceptionOr<Ref<CompressionStreamEncoder>> create(unsigned char formatChar)
     {

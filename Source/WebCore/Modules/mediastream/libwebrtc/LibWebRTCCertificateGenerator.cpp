@@ -33,6 +33,8 @@
 #include "LibWebRTCProvider.h"
 #include "LibWebRTCUtils.h"
 #include "RTCCertificate.h"
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
@@ -47,6 +49,7 @@ namespace WebCore {
 namespace LibWebRTCCertificateGenerator {
 
 class RTCCertificateGeneratorCallbackWrapper : public ThreadSafeRefCounted<RTCCertificateGeneratorCallbackWrapper, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED(RTCCertificateGeneratorCallbackWrapper);
 public:
     static Ref<RTCCertificateGeneratorCallbackWrapper> create(Ref<SecurityOrigin>&& origin, Function<void(ExceptionOr<Ref<RTCCertificate>>&&)>&& resultCallback)
     {
@@ -85,6 +88,8 @@ private:
     RefPtr<SecurityOrigin> m_origin;
     Function<void(ExceptionOr<Ref<RTCCertificate>>&&)> m_resultCallback;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCCertificateGeneratorCallbackWrapper);
 
 static inline webrtc::KeyParams keyParamsFromCertificateType(const PeerConnectionBackend::CertificateInformation& info)
 {

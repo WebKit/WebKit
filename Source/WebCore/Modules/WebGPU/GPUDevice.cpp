@@ -88,6 +88,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RAMSize.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -513,6 +514,7 @@ GPUExternalTexture* GPUDevice::externalTextureForDescriptor(const GPUExternalTex
 }
 
 class GPUDeviceVideoFrameRequestCallback final : public VideoFrameRequestCallback {
+    WTF_MAKE_TZONE_ALLOCATED(GPUDeviceVideoFrameRequestCallback);
 public:
     static Ref<GPUDeviceVideoFrameRequestCallback> create(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, GPUDevice& gpuDevice, ScriptExecutionContext* scriptExecutionContext)
     {
@@ -557,6 +559,8 @@ private:
     const WeakPtr<HTMLVideoElement> m_videoElement;
     const WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_gpuDevice;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUDeviceVideoFrameRequestCallback);
 #endif
 
 ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExternalTextureDescriptor&& externalTextureDescriptor)

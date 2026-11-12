@@ -30,8 +30,11 @@
 #include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUCompilationInfo.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUShaderModule);
 
 GPUShaderModule::GPUShaderModule(Ref<WebGPU::ShaderModule>&& backing, WebGPUShaderModuleDescriptor&& descriptor, GPUDevice& device)
     : m_backing(WTF::move(backing))

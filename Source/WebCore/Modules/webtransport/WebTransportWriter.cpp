@@ -30,8 +30,11 @@
 #include "JSDOMGlobalObject.h"
 #include "JSDOMPromiseDeferred.h"
 #include "WritableStream.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebTransportWriter);
 
 ExceptionOr<Ref<WebTransportWriter>> WebTransportWriter::create(JSDOMGlobalObject& globalObject, WritableStream& stream)
 {
