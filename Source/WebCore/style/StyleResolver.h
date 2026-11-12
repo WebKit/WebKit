@@ -151,6 +151,8 @@ public:
     NODELETE static KeyframesRuleMap& userAgentKeyframes();
     static void addUserAgentKeyframeStyle(Ref<StyleRuleKeyframes>&&);
     void addKeyframeStyle(Ref<StyleRuleKeyframes>&&);
+    // While set, @keyframes rules are registered as quirk keyframes, which take precedence over author keyframes of the same name.
+    void setIsCollectingQuirkRules(bool value) { m_isCollectingQuirkRules = value; }
     RefPtr<StyleRuleKeyframes> keyframesRuleForName(const AtomString&) const;
     Vector<Ref<StyleRuleKeyframe>> keyframeRulesForName(const AtomString&, const TimingFunction*) const;
 
@@ -189,6 +191,8 @@ private:
     ScopeRuleSets m_ruleSets;
 
     KeyframesRuleMap m_keyframesRuleMap;
+    KeyframesRuleMap m_quirkKeyframesRuleMap;
+    bool m_isCollectingQuirkRules { false };
 
     const std::unique_ptr<Style::CustomFunctionRegistry> m_customFunctionRegistry;
 
