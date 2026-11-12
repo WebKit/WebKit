@@ -27,6 +27,7 @@
 #include "testb3.h"
 
 #include <wtf/Int128.h>
+#include <wtf/SetForScope.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -1068,6 +1069,1219 @@ void testWasmAddressDoesNotCSE()
     }
 
     delete[] memory;
+}
+
+static void runReduceStrengthInitial(Procedure& proc)
+{
+    if (!proc.heaps().rangeTree())
+        proc.heaps().computeRangesAndDecorateInstructions();
+    proc.resetReachability();
+    if (shouldBeVerbose(proc)) {
+        dataLog("IR before reduceStrength:\n");
+        dataLog(proc);
+    }
+    reduceStrength(proc, ReduceStrengthPass::Initial);
+    if (shouldBeVerbose(proc)) {
+        dataLog("IR after reduceStrength:\n");
+        dataLog(proc);
+    }
+}
+
+static PatchpointValue* appendPinnedWrite(Procedure& proc, BasicBlock* block)
+{
+    PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(proc, Void, Origin());
+    patchpoint->effects = Effects::none();
+    patchpoint->effects.writesPinned = true;
+    return patchpoint;
+}
+
+static PatchpointValue* appendWrite(Procedure& proc, BasicBlock* block, HeapRange writes)
+{
+    PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(proc, Void, Origin());
+    patchpoint->effects = Effects::none();
+    patchpoint->effects.writes = writes;
+    return patchpoint;
+}
+
+void testReduceStrengthWasmAddressReuse()
+{
+    Procedure proc;
+    if (proc.optLevel() < 2)
+        return;
+    GPRReg pinnedGPR = GPRInfo::argumentGPR0;
+    proc.pinRegister(pinnedGPR);
+
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* address1 = root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR);
+    Value* load1 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address1, 0);
+    Value* address2 = root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR);
+    MemoryValue* load2 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address2, 4);
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, Add, Origin(), load1, load2));
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(valueCount(proc, WasmAddress), 1u);
+    CHECK_EQ(load2->lastChild(), address1);
+}
+
+static void testReduceStrengthWasmArrayLengthIgnoresTrapsImpl(bool firstTraps)
+{
+    Procedure proc;
+    if (proc.optLevel() < 2)
+        return;
+
+    BasicBlock* root = proc.addBlock();
+    Value* array = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Kind trappingKind = trapping(WasmArrayLength);
+    Value* length1 = root->appendNew<WasmArrayLengthValue>(proc, firstTraps ? trappingKind : Kind(WasmArrayLength), Int32, Origin(), array);
+    Value* length2 = root->appendNew<WasmArrayLengthValue>(proc, firstTraps ? Kind(WasmArrayLength) : trappingKind, Int32, Origin(), array);
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, Add, Origin(), length1, length2));
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(length1->opcode(), WasmArrayLength);
+    CHECK_EQ(length1->traps(), firstTraps);
+    CHECK_EQ(length2->opcode(), Identity);
+    CHECK_EQ(length2->child(0), length1);
+}
+
+void testReduceStrengthWasmArrayLengthIgnoresTraps()
+{
+    testReduceStrengthWasmArrayLengthIgnoresTrapsImpl(true);
+    testReduceStrengthWasmArrayLengthIgnoresTrapsImpl(false);
+}
+
+void testReduceStrengthWasmAddressAcrossDiamond()
+{
+    Procedure proc;
+    if (proc.optLevel() < 2)
+        return;
+    GPRReg pinnedGPR = GPRInfo::argumentGPR0;
+    proc.pinRegister(pinnedGPR);
+
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* other = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* condition = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR3));
+    Value* address1 = root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR);
+    Value* load1 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address1, 0);
+    root->setSuccessors(FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+    root->appendNew<Value>(proc, Branch, Origin(), condition);
+
+    thenCase->appendNew<MemoryValue>(proc, Store, Origin(), thenCase->appendNew<Const32Value>(proc, Origin(), 1), other, 0);
+    thenCase->setSuccessors(FrequentedBlock(join));
+    thenCase->appendNew<Value>(proc, Jump, Origin());
+    elseCase->appendNew<MemoryValue>(proc, Store, Origin(), elseCase->appendNew<Const32Value>(proc, Origin(), 2), other, 0);
+    elseCase->setSuccessors(FrequentedBlock(join));
+    elseCase->appendNew<Value>(proc, Jump, Origin());
+
+    Value* address2 = join->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR);
+    MemoryValue* load2 = join->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address2, 4);
+    join->clearSuccessors();
+    join->appendNew<Value>(proc, Return, Origin(), join->appendNew<Value>(proc, Add, Origin(), load1, load2));
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(valueCount(proc, WasmAddress), 1u);
+    CHECK_EQ(load2->lastChild(), address1);
+}
+
+void testReduceStrengthWasmAddressKilledByPinnedWrite()
+{
+    Procedure proc;
+    if (proc.optLevel() < 2)
+        return;
+    GPRReg pinnedGPR = GPRInfo::argumentGPR0;
+    proc.pinRegister(pinnedGPR);
+
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* other = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* condition = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR3));
+    Value* address1 = root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR);
+    Value* load1 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address1, 0);
+    root->setSuccessors(FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+    root->appendNew<Value>(proc, Branch, Origin(), condition);
+
+    thenCase->appendNew<MemoryValue>(proc, Store, Origin(), thenCase->appendNew<Const32Value>(proc, Origin(), 1), other, 0);
+    thenCase->setSuccessors(FrequentedBlock(join));
+    thenCase->appendNew<Value>(proc, Jump, Origin());
+    appendPinnedWrite(proc, elseCase);
+    elseCase->setSuccessors(FrequentedBlock(join));
+    elseCase->appendNew<Value>(proc, Jump, Origin());
+
+    Value* address2 = join->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR);
+    MemoryValue* load2 = join->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address2, 4);
+    join->clearSuccessors();
+    join->appendNew<Value>(proc, Return, Origin(), join->appendNew<Value>(proc, Add, Origin(), load1, load2));
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(valueCount(proc, WasmAddress), 2u);
+    CHECK_EQ(load2->lastChild(), address2);
+}
+
+static void testReduceStrengthWasmAddressLoopImpl(bool bodyWritesPinned)
+{
+    Procedure proc;
+    if (proc.optLevel() < 2)
+        return;
+    GPRReg pinnedGPR = GPRInfo::argumentGPR0;
+    proc.pinRegister(pinnedGPR);
+
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* body = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* other = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* condition = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR3));
+    Value* address1 = root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR);
+    Value* load1 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address1, 0);
+    root->setSuccessors(FrequentedBlock(header));
+    root->appendNew<Value>(proc, Jump, Origin());
+
+    Value* address2 = header->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR);
+    MemoryValue* load2 = header->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address2, 4);
+    header->setSuccessors(FrequentedBlock(body), FrequentedBlock(exit));
+    header->appendNew<Value>(proc, Branch, Origin(), condition);
+
+    if (bodyWritesPinned)
+        appendPinnedWrite(proc, body);
+    else
+        body->appendNew<MemoryValue>(proc, Store, Origin(), body->appendNew<Const32Value>(proc, Origin(), 1), other, 0);
+    body->setSuccessors(FrequentedBlock(header));
+    body->appendNew<Value>(proc, Jump, Origin());
+
+    exit->clearSuccessors();
+    exit->appendNew<Value>(proc, Return, Origin(), exit->appendNew<Value>(proc, Add, Origin(), load1, load2));
+
+    runReduceStrengthInitial(proc);
+
+    if (bodyWritesPinned) {
+        CHECK_EQ(valueCount(proc, WasmAddress), 2u);
+        CHECK_EQ(load2->lastChild(), address2);
+    } else {
+        CHECK_EQ(valueCount(proc, WasmAddress), 1u);
+        CHECK_EQ(load2->lastChild(), address1);
+    }
+}
+
+void testReduceStrengthWasmAddressLoop()
+{
+    testReduceStrengthWasmAddressLoopImpl(true);
+    testReduceStrengthWasmAddressLoopImpl(false);
+}
+
+void testReduceStrengthWasmAddressDifferentPinnedGPR()
+{
+    Procedure proc;
+    if (proc.optLevel() < 2)
+        return;
+    GPRReg pinnedGPR1 = GPRInfo::argumentGPR0;
+    GPRReg pinnedGPR2 = GPRInfo::argumentGPR3;
+    proc.pinRegister(pinnedGPR1);
+    proc.pinRegister(pinnedGPR2);
+
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* address1 = root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR1);
+    Value* load1 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address1, 0);
+    Value* address2 = root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR2);
+    MemoryValue* load2 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address2, 4);
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, Add, Origin(), load1, load2));
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(valueCount(proc, WasmAddress), 2u);
+    CHECK_EQ(load2->lastChild(), address2);
+}
+
+// Heaps for the memory tests, under the root of the procedure's repository:
+//   outer
+//     before
+//     inner
+//       innerChild
+//       innerOther
+//     after
+//   other
+//   sink
+//   fence
+//   unaccessed
+// Constructing them computes the repository's ranges, so a test does it before it reads a range.
+struct TestHeaps {
+    WTF_MAKE_NONCOPYABLE(TestHeaps);
+public:
+    explicit TestHeaps(Procedure& proc)
+        : outer(&proc.heaps().root, "outer")
+        , before(&outer, "before")
+        , inner(&outer, "inner")
+        , innerChild(&inner, "innerChild")
+        , innerOther(&inner, "innerOther")
+        , after(&outer, "after")
+        , other(&proc.heaps().root, "other")
+        , sink(&proc.heaps().root, "sink")
+        , fence(&proc.heaps().root, "fence")
+        , unaccessed(&proc.heaps().root, "unaccessed")
+    {
+        proc.heaps().computeRangesAndDecorateInstructions();
+    }
+
+    AbstractHeap outer;
+    AbstractHeap before;
+    AbstractHeap inner;
+    AbstractHeap innerChild;
+    AbstractHeap innerOther;
+    AbstractHeap after;
+    AbstractHeap other;
+    AbstractHeap sink;
+    AbstractHeap fence;
+    AbstractHeap unaccessed;
+};
+
+using TestHeap = AbstractHeap TestHeaps::*;
+
+static MemoryValue* appendLoadWithRange(Procedure& proc, BasicBlock* block, Kind kind, Type type, Value* pointer, HeapRange range, int32_t offset = 0)
+{
+    MemoryValue* load = block->appendNew<MemoryValue>(proc, kind, type, Origin(), pointer, offset);
+    load->setRange(range);
+    return load;
+}
+
+static MemoryValue* appendStoreWithRange(Procedure& proc, BasicBlock* block, Kind kind, Value* value, Value* pointer, HeapRange range, int32_t offset = 0)
+{
+    return block->appendNew<MemoryValue>(proc, kind, Origin(), value, pointer, offset, range);
+}
+
+// Keeps `value` alive through a store to a heap that no test loads.
+static void appendSink(Procedure& proc, const TestHeaps& heaps, BasicBlock* block, Value* sink, Value* value, int32_t offset = 0)
+{
+    appendStoreWithRange(proc, block, Store, value, sink, heaps.sink.range(), offset);
+}
+
+static Value* returnedValue(BasicBlock* block)
+{
+    CHECK_EQ(block->last()->opcode(), Return);
+    return block->last()->child(0);
+}
+
+// Loads p twice through `loaded`, with `between` appended in the middle, and returns whether the
+// second load was replaced by the first.
+template<typename Between>
+static bool secondLoadReusesFirst(TestHeap loaded, const Between& between)
+{
+    Procedure proc;
+    TestHeaps heaps(proc);
+    HeapRange range = (heaps.*loaded).range();
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* other = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* sink = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    MemoryValue* load1 = appendLoadWithRange(proc, root, Load, Int32, pointer, range);
+    appendSink(proc, heaps, root, sink, load1);
+    between(proc, heaps, root, other);
+    MemoryValue* load2 = appendLoadWithRange(proc, root, Load, Int32, pointer, range);
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), load2);
+
+    runReduceStrengthInitial(proc);
+
+    Value* result = returnedValue(root);
+    CHECK(result == load1 || result == load2);
+    return result == load1;
+}
+
+void testReduceStrengthLoadLoadSameBlock()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+    CHECK(secondLoadReusesFirst(&TestHeaps::inner, [](Procedure&, const TestHeaps&, BasicBlock*, Value*) { }));
+}
+
+void testReduceStrengthLoadLoadAcrossDiamond()
+{
+    Procedure proc;
+    TestHeaps heaps(proc);
+    if (proc.optLevel() < 2)
+        return;
+
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* sink = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* condition = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR3));
+    MemoryValue* load1 = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+    appendSink(proc, heaps, root, sink, load1);
+    root->setSuccessors(FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+    root->appendNew<Value>(proc, Branch, Origin(), condition);
+
+    appendSink(proc, heaps, thenCase, sink, thenCase->appendNew<Const32Value>(proc, Origin(), 1), 4);
+    thenCase->setSuccessors(FrequentedBlock(join));
+    thenCase->appendNew<Value>(proc, Jump, Origin());
+    appendSink(proc, heaps, elseCase, sink, elseCase->appendNew<Const32Value>(proc, Origin(), 2), 4);
+    elseCase->setSuccessors(FrequentedBlock(join));
+    elseCase->appendNew<Value>(proc, Jump, Origin());
+
+    MemoryValue* load2 = appendLoadWithRange(proc, join, Load, Int32, pointer, heaps.inner.range());
+    join->clearSuccessors();
+    join->appendNew<Value>(proc, Return, Origin(), load2);
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(returnedValue(join), load1);
+}
+
+void testReduceStrengthLoadKilledOnOneArm()
+{
+    Procedure proc;
+    TestHeaps heaps(proc);
+    if (proc.optLevel() < 2)
+        return;
+
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* other = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* sink = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* condition = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR3));
+    MemoryValue* load1 = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+    appendSink(proc, heaps, root, sink, load1);
+    root->setSuccessors(FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+    root->appendNew<Value>(proc, Branch, Origin(), condition);
+
+    appendStoreWithRange(proc, thenCase, Store, thenCase->appendNew<Const32Value>(proc, Origin(), 1), other, heaps.innerChild.range());
+    thenCase->setSuccessors(FrequentedBlock(join));
+    thenCase->appendNew<Value>(proc, Jump, Origin());
+    appendSink(proc, heaps, elseCase, sink, elseCase->appendNew<Const32Value>(proc, Origin(), 2), 4);
+    elseCase->setSuccessors(FrequentedBlock(join));
+    elseCase->appendNew<Value>(proc, Jump, Origin());
+
+    MemoryValue* load2 = appendLoadWithRange(proc, join, Load, Int32, pointer, heaps.inner.range());
+    join->clearSuccessors();
+    join->appendNew<Value>(proc, Return, Origin(), load2);
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(returnedValue(join), load2);
+}
+
+void testReduceStrengthLoadKilledByNestedWrite()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto storeTo = [](TestHeap stored) {
+        return [=](Procedure& proc, const TestHeaps& heaps, BasicBlock* block, Value* other) {
+            appendStoreWithRange(proc, block, Store, block->appendNew<Const32Value>(proc, Origin(), 1), other, (heaps.*stored).range());
+        };
+    };
+
+    CHECK(!secondLoadReusesFirst(&TestHeaps::outer, storeTo(&TestHeaps::inner)));
+    CHECK(!secondLoadReusesFirst(&TestHeaps::inner, storeTo(&TestHeaps::outer)));
+}
+
+void testReduceStrengthLoadSurvivesDisjointWrite()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto storeToSiblings = [](Procedure& proc, const TestHeaps& heaps, BasicBlock* block, Value* other) {
+        appendSink(proc, heaps, block, other, appendLoadWithRange(proc, block, Load, Int32, other, heaps.outer.range()), 8);
+        appendStoreWithRange(proc, block, Store, block->appendNew<Const32Value>(proc, Origin(), 1), other, heaps.after.range());
+        appendStoreWithRange(proc, block, Store, block->appendNew<Const32Value>(proc, Origin(), 2), other, heaps.before.range());
+    };
+    CHECK(secondLoadReusesFirst(&TestHeaps::inner, storeToSiblings));
+
+    auto writeOutsideEveryAccess = [](Procedure& proc, const TestHeaps& heaps, BasicBlock* block, Value*) {
+        appendWrite(proc, block, heaps.unaccessed.range());
+    };
+    CHECK(secondLoadReusesFirst(&TestHeaps::inner, writeOutsideEveryAccess));
+}
+
+void testReduceStrengthLoadFromStoreOfDifferentRange()
+{
+    Procedure proc;
+    TestHeaps heaps(proc);
+    if (proc.optLevel() < 2)
+        return;
+
+    // The store and the load name the same address through different nodes, so their epochs are
+    // sums over different counters and can coincide even though a write overlaps the load.
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* other = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* stored = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+    appendStoreWithRange(proc, root, Store, stored, pointer, heaps.outer.range());
+    appendStoreWithRange(proc, root, Store, root->appendNew<Const32Value>(proc, Origin(), 1), other, heaps.innerChild.range());
+    MemoryValue* load = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), load);
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(returnedValue(root), load);
+}
+
+// Stores the argument through `storeKind` and loads it back through `loadKind`, checking that the
+// load becomes `expectedOpcode` applied to the stored value and that the compiled code agrees.
+static void testStoreToLoadFixup(Kind storeKind, Kind loadKind, Type loadType, int64_t input, int64_t expected, B3::Opcode expectedOpcode, int32_t expectedMask)
+{
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* stored = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    if (storeKind.opcode() != Store)
+        stored = root->appendNew<Value>(proc, Trunc, Origin(), stored);
+    MemoryValue* store = appendStoreWithRange(proc, root, storeKind, stored, pointer, heaps.inner.range());
+    MemoryValue* load = appendLoadWithRange(proc, root, loadKind, loadType, pointer, heaps.inner.range());
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), load);
+
+    runReduceStrengthInitial(proc);
+
+    Value* result = returnedValue(root);
+    CHECK_EQ(result->opcode(), expectedOpcode);
+    CHECK_EQ(result->child(0), store->child(0));
+    if (expectedOpcode == BitAnd)
+        CHECK(result->child(1)->isInt32(expectedMask));
+
+    int64_t storage = 0;
+    CHECK_EQ(static_cast<int64_t>(invoke<int32_t>(*compileProc(proc), &storage, input)), expected);
+}
+
+void testReduceStrengthStoreToLoadFixups()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    testStoreToLoadFixup(Store8, Load8Z, Int32, 0x12345680, 0x80, BitAnd, 0xff);
+    testStoreToLoadFixup(Store8, Load8S, Int32, 0x12345680, -0x80, SExt8, 0);
+    testStoreToLoadFixup(Store16, Load16Z, Int32, 0x12348765, 0x8765, BitAnd, 0xffff);
+    testStoreToLoadFixup(Store16, Load16S, Int32, 0x12348765, static_cast<int16_t>(0x8765), SExt16, 0);
+    testStoreToLoadFixup(Store, Load, Int32, 0x1234567887654321, static_cast<int32_t>(0x87654321), Trunc, 0);
+
+    // An Int64 load followed by an Int32 load of the same location.
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* sink = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    MemoryValue* wide = appendLoadWithRange(proc, root, Load, Int64, pointer, heaps.inner.range());
+    appendSink(proc, heaps, root, sink, wide);
+    MemoryValue* narrow = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), narrow);
+
+    runReduceStrengthInitial(proc);
+
+    Value* result = returnedValue(root);
+    CHECK_EQ(result->opcode(), Trunc);
+    CHECK_EQ(result->child(0), wide);
+
+    int64_t storage = 0x1234567887654321;
+    int64_t sinkStorage = 0;
+    CHECK_EQ(invoke<int32_t>(*compileProc(proc), &storage, &sinkStorage), static_cast<int32_t>(0x87654321));
+    CHECK_EQ(sinkStorage, storage);
+}
+
+void testReduceStrengthRedundantStore()
+{
+    Procedure proc;
+    TestHeaps heaps(proc);
+    if (proc.optLevel() < 2)
+        return;
+
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* stored = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* otherPointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    appendStoreWithRange(proc, root, Store, stored, pointer, heaps.inner.range());
+    appendStoreWithRange(proc, root, Store, stored, pointer, heaps.inner.range());
+    MemoryValue* loaded = appendLoadWithRange(proc, root, Load, Int64, otherPointer, heaps.other.range());
+    appendStoreWithRange(proc, root, Store, loaded, otherPointer, heaps.other.range());
+    appendStoreWithRange(proc, root, trapping(Store), stored, pointer, heaps.inner.range());
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin());
+
+    runReduceStrengthInitial(proc);
+
+    unsigned stores = 0;
+    unsigned trappingStores = 0;
+    for (Value* value : *root) {
+        if (value->opcode() != Store)
+            continue;
+        ++stores;
+        if (value->traps())
+            ++trappingStores;
+    }
+    CHECK_EQ(stores, 2u);
+    CHECK_EQ(trappingStores, 1u);
+}
+
+void testReduceStrengthImmutableLoadKeptAcrossCall()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* sink = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    MemoryValue* load1 = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+    load1->setReadsMutability(Mutability::Immutable);
+    appendSink(proc, heaps, root, sink, load1);
+    PatchpointValue* call = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    call->effects = Effects::forCall();
+    MemoryValue* load2 = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+    load2->setReadsMutability(Mutability::Immutable);
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), load2);
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(returnedValue(root), load2);
+}
+
+void testReduceStrengthImmutableLoadNotFromMutableAcrossStore()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* stored = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* sink = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    MemoryValue* load1 = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+    appendSink(proc, heaps, root, sink, load1);
+    appendStoreWithRange(proc, root, Store, stored, pointer, heaps.inner.range());
+    MemoryValue* load2 = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+    load2->setReadsMutability(Mutability::Immutable);
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), load2);
+
+    runReduceStrengthInitial(proc);
+
+    CHECK(returnedValue(root) != load1);
+
+    int32_t storage = 1;
+    int32_t sinkStorage = 0;
+    CHECK_EQ(invoke<int32_t>(*compileProc(proc), &storage, 2, &sinkStorage), 2);
+    CHECK_EQ(sinkStorage, 1);
+}
+
+void testReduceStrengthMutableLoadNotFromImmutableAcrossCall()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* sink = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    MemoryValue* load1 = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+    load1->setReadsMutability(Mutability::Immutable);
+    appendSink(proc, heaps, root, sink, load1);
+    PatchpointValue* call = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    call->effects = Effects::forCall();
+    MemoryValue* load2 = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), load2);
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(returnedValue(root), load2);
+}
+
+void testReduceStrengthLoadsAcrossLoweredMemoryFill()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* sink = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    MemoryValue* load1 = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+    appendSink(proc, heaps, root, sink, load1);
+    BulkMemoryValue* fill = root->appendNew<BulkMemoryValue>(proc, MemoryFill, Origin(), pointer, root->appendNew<Const32Value>(proc, Origin(), 0xab), root->appendIntConstant(proc, Origin(), pointerType(), 4));
+    fill->setWriteRange(heaps.inner.range());
+    MemoryValue* load2 = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), load2);
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(valueCount(proc, MemoryFill), 0u);
+    CHECK(returnedValue(root) != load1);
+
+    int32_t storage = 5;
+    int32_t sinkStorage = 0;
+    CHECK_EQ(invoke<int32_t>(*compileProc(proc), &storage, &sinkStorage), static_cast<int32_t>(0xabababab));
+    CHECK_EQ(sinkStorage, 5);
+    CHECK_EQ(storage, static_cast<int32_t>(0xabababab));
+}
+
+// Counts down from the argument, loading p in the loop header and storing to p (or to a disjoint
+// range of another pointer) in the body. Returns the header load minus the load before the loop.
+static void testReduceStrengthLoadLoopHeaderImpl(bool bodyWritesLoadedRange)
+{
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* body = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* other = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* tripCount = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+    MemoryValue* before = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+    UpsilonValue* initialCounter = root->appendNew<UpsilonValue>(proc, Origin(), tripCount);
+    root->setSuccessors(FrequentedBlock(header));
+    root->appendNew<Value>(proc, Jump, Origin());
+
+    Value* counter = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    initialCounter->setPhi(counter);
+    MemoryValue* inLoop = appendLoadWithRange(proc, header, Load, Int32, pointer, heaps.inner.range());
+    header->setSuccessors(FrequentedBlock(body), FrequentedBlock(exit));
+    header->appendNew<Value>(proc, Branch, Origin(), counter);
+
+    Value* incremented = body->appendNew<Value>(proc, Add, Origin(), inLoop, body->appendNew<Const32Value>(proc, Origin(), 1));
+    if (bodyWritesLoadedRange)
+        appendStoreWithRange(proc, body, Store, incremented, pointer, heaps.inner.range());
+    else
+        appendStoreWithRange(proc, body, Store, incremented, other, heaps.after.range());
+    Value* nextCounter = body->appendNew<Value>(proc, Sub, Origin(), counter, body->appendNew<Const32Value>(proc, Origin(), 1));
+    body->appendNew<UpsilonValue>(proc, Origin(), nextCounter)->setPhi(counter);
+    body->setSuccessors(FrequentedBlock(header));
+    body->appendNew<Value>(proc, Jump, Origin());
+
+    exit->clearSuccessors();
+    exit->appendNew<Value>(proc, Return, Origin(), exit->appendNew<Value>(proc, Sub, Origin(), inLoop, before));
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(valueCount(proc, Load), (bodyWritesLoadedRange ? 2u : 1u));
+
+    int32_t storage = 100;
+    int32_t otherStorage = 0;
+    int32_t result = invoke<int32_t>(*compileProc(proc), &storage, &otherStorage, 5);
+    if (bodyWritesLoadedRange) {
+        CHECK_EQ(result, 5);
+        CHECK_EQ(storage, 105);
+    } else {
+        CHECK_EQ(result, 0);
+        CHECK_EQ(otherStorage, 101);
+    }
+}
+
+void testReduceStrengthLoadLoopHeader()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+    testReduceStrengthLoadLoopHeaderImpl(true);
+    testReduceStrengthLoadLoopHeaderImpl(false);
+}
+
+void testReduceStrengthFencedLoadNotForwarded()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    for (bool fenceFirst : { false, true }) {
+        Procedure proc;
+        TestHeaps heaps(proc);
+        BasicBlock* root = proc.addBlock();
+        Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* sink = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+        HeapRange range = heaps.inner.range();
+        HeapRange fence = heaps.fence.range();
+        MemoryValue* load1 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), pointer, 0, range, fenceFirst ? fence : HeapRange());
+        appendSink(proc, heaps, root, sink, load1);
+        MemoryValue* load2 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), pointer, 0, range, fenceFirst ? HeapRange() : fence);
+        root->clearSuccessors();
+        root->appendNew<Value>(proc, Return, Origin(), load2);
+
+        runReduceStrengthInitial(proc);
+
+        CHECK_EQ(returnedValue(root), load2);
+    }
+}
+
+void testReduceStrengthLoadIrreducibleEntry()
+{
+    Procedure proc;
+    TestHeaps heaps(proc);
+    if (proc.optLevel() < 2)
+        return;
+
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* first = proc.addBlock();
+    BasicBlock* second = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* other = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* sink = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* condition = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR3));
+    MemoryValue* before = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+    appendSink(proc, heaps, root, sink, before);
+    root->setSuccessors(FrequentedBlock(first), FrequentedBlock(second));
+    root->appendNew<Value>(proc, Branch, Origin(), condition);
+
+    MemoryValue* inFirst = appendLoadWithRange(proc, first, Load, Int32, pointer, heaps.inner.range());
+    MemoryValue* sinkFirst = appendStoreWithRange(proc, first, Store, inFirst, sink, heaps.sink.range(), 4);
+    first->setSuccessors(FrequentedBlock(second), FrequentedBlock(exit));
+    first->appendNew<Value>(proc, Branch, Origin(), condition);
+
+    MemoryValue* inSecond = appendLoadWithRange(proc, second, Load, Int32, pointer, heaps.inner.range());
+    MemoryValue* sinkSecond = appendStoreWithRange(proc, second, Store, inSecond, sink, heaps.sink.range(), 8);
+    appendStoreWithRange(proc, second, Store, second->appendNew<Const32Value>(proc, Origin(), 1), other, heaps.inner.range());
+    second->setSuccessors(FrequentedBlock(first));
+    second->appendNew<Value>(proc, Jump, Origin());
+
+    exit->clearSuccessors();
+    exit->appendNew<Value>(proc, Return, Origin());
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(sinkFirst->child(0), inFirst);
+    CHECK_EQ(sinkSecond->child(0), inSecond);
+}
+
+void testReduceStrengthLoadThroughReusedWasmAddress()
+{
+    Procedure proc;
+    TestHeaps heaps(proc);
+    if (proc.optLevel() < 2)
+        return;
+    GPRReg pinnedGPR = GPRInfo::argumentGPR0;
+    proc.pinRegister(pinnedGPR);
+
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* sink = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* address1 = root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR);
+    MemoryValue* load1 = appendLoadWithRange(proc, root, Load, Int32, address1, heaps.inner.range());
+    appendSink(proc, heaps, root, sink, load1);
+    Value* address2 = root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR);
+    MemoryValue* load2 = appendLoadWithRange(proc, root, Load, Int32, address2, heaps.inner.range());
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), load2);
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(returnedValue(root), load1);
+}
+
+// The branch folds while the walk is in progress, which leaves the arm it no longer takes
+// unreachable. What that arm writes must not keep the join from forwarding, and what the taken
+// arm writes must keep the join from reusing the load before the branch.
+static void testReduceStrengthLoadForwardingAfterCFGFoldImpl(bool takeStoringArm)
+{
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* storing = proc.addBlock();
+    BasicBlock* notStoring = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* sink = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    MemoryValue* before = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+    appendSink(proc, heaps, root, sink, before);
+    root->setSuccessors(FrequentedBlock(storing), FrequentedBlock(notStoring));
+    root->appendNew<Value>(proc, Branch, Origin(), root->appendNew<Const32Value>(proc, Origin(), takeStoringArm));
+
+    appendStoreWithRange(proc, storing, Store, storing->appendNew<Const32Value>(proc, Origin(), 42), pointer, heaps.inner.range());
+    storing->setSuccessors(FrequentedBlock(join));
+    storing->appendNew<Value>(proc, Jump, Origin());
+    appendSink(proc, heaps, notStoring, sink, notStoring->appendNew<Const32Value>(proc, Origin(), 1), 4);
+    notStoring->setSuccessors(FrequentedBlock(join));
+    notStoring->appendNew<Value>(proc, Jump, Origin());
+
+    MemoryValue* after = appendLoadWithRange(proc, join, Load, Int32, pointer, heaps.inner.range());
+    join->clearSuccessors();
+    join->appendNew<Value>(proc, Return, Origin(), after);
+
+    runReduceStrengthInitial(proc);
+
+    Value* result = returnedValue(root);
+    if (takeStoringArm)
+        CHECK(result->isInt32(42) || result == after);
+    else
+        CHECK_EQ(result, before);
+}
+
+void testReduceStrengthLoadForwardingAfterCFGFold()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+    testReduceStrengthLoadForwardingAfterCFGFoldImpl(true);
+    testReduceStrengthLoadForwardingAfterCFGFoldImpl(false);
+}
+
+static Vector<Value*> valuesStoredThrough(Procedure& proc, Value* pointer)
+{
+    Vector<Value*> result;
+    for (BasicBlock* block : proc) {
+        for (Value* value : *block) {
+            if (MemoryValue* memory = value->as<MemoryValue>(); memory && memory->isStore() && memory->lastChild() == pointer)
+                result.append(memory->child(0));
+        }
+    }
+    return result;
+}
+
+// Stores a and then b to p, with `between` appended in the middle, and returns how many stores to
+// p remain after reduction.
+template<typename Between>
+static size_t deadStoreSurvivors(Kind firstKind, Kind secondKind, const Between& between)
+{
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* other = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* a = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* b = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR3);
+    appendStoreWithRange(proc, root, firstKind, a, pointer, heaps.inner.range());
+    between(proc, heaps, root, other);
+    appendStoreWithRange(proc, root, secondKind, b, pointer, heaps.inner.range());
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin());
+
+    runReduceStrengthInitial(proc);
+
+    return valuesStoredThrough(proc, pointer).size();
+}
+
+static auto nothingBetween = [](Procedure&, const TestHeaps&, BasicBlock*, Value*) { };
+
+void testReduceStrengthDeadStoreSameBlock()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    CHECK_EQ(deadStoreSurvivors(Store, Store, nothingBetween), 1u);
+
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* a = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* b = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    appendStoreWithRange(proc, root, Store, a, pointer, heaps.inner.range());
+    appendStoreWithRange(proc, root, Store, b, pointer, heaps.inner.range());
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin());
+
+    runReduceStrengthInitial(proc);
+
+    Vector<Value*> survivors = valuesStoredThrough(proc, pointer);
+    CHECK_EQ(survivors.size(), 1u);
+    CHECK_EQ(survivors[0], b);
+
+    int64_t storage = 0;
+    invoke<void>(*compileProc(proc), &storage, static_cast<int64_t>(1), static_cast<int64_t>(2));
+    CHECK_EQ(storage, 2);
+}
+
+void testReduceStrengthDeadStoreThenLoadForwardsKiller()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* a = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* b = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    appendStoreWithRange(proc, root, Store, a, pointer, heaps.inner.range());
+    appendStoreWithRange(proc, root, Store, b, pointer, heaps.inner.range());
+    MemoryValue* load = appendLoadWithRange(proc, root, Load, Int64, pointer, heaps.inner.range());
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), load);
+
+    runReduceStrengthInitial(proc);
+
+    Vector<Value*> survivors = valuesStoredThrough(proc, pointer);
+    CHECK_EQ(survivors.size(), 1u);
+    CHECK_EQ(survivors[0], b);
+    CHECK_EQ(returnedValue(root), b);
+
+    int64_t storage = 0;
+    CHECK_EQ(invoke<int64_t>(*compileProc(proc), &storage, static_cast<int64_t>(1), static_cast<int64_t>(2)), 2);
+    CHECK_EQ(storage, 2);
+}
+
+void testReduceStrengthDeadStoreKeptAcrossFence()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto fence = [](Procedure& proc, const TestHeaps& heaps, BasicBlock* block, Value*) {
+        block->appendNew<FenceValue>(proc, Origin(), heaps.fence.range(), heaps.fence.range());
+    };
+    CHECK_EQ(deadStoreSurvivors(Store, Store, fence), 2u);
+
+    auto fencedLoad = [](Procedure& proc, const TestHeaps& heaps, BasicBlock* block, Value* other) {
+        MemoryValue* load = block->appendNew<MemoryValue>(proc, Load, Int32, Origin(), other, 0, heaps.other.range(), heaps.fence.range());
+        appendSink(proc, heaps, block, other, load, 8);
+    };
+    CHECK_EQ(deadStoreSurvivors(Store, Store, fencedLoad), 2u);
+}
+
+void testReduceStrengthDeadStoreKeptAcrossLoad()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto loadOther = [](Procedure& proc, const TestHeaps& heaps, BasicBlock* block, Value* other) {
+        appendSink(proc, heaps, block, other, appendLoadWithRange(proc, block, Load, Int64, other, heaps.innerChild.range()), 8);
+    };
+    CHECK_EQ(deadStoreSurvivors(Store, Store, loadOther), 2u);
+
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* other = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* a = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* b = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR3);
+    appendStoreWithRange(proc, root, Store, a, pointer, heaps.inner.range());
+    MemoryValue* load = appendLoadWithRange(proc, root, Load, Int64, other, heaps.inner.range());
+    appendStoreWithRange(proc, root, Store, b, pointer, heaps.inner.range());
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), load);
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(valuesStoredThrough(proc, pointer).size(), 2u);
+
+    int64_t storage = 0;
+    CHECK_EQ(invoke<int64_t>(*compileProc(proc), &storage, &storage, static_cast<int64_t>(1), static_cast<int64_t>(2)), 1);
+    CHECK_EQ(storage, 2);
+}
+
+void testReduceStrengthDeadStoreKeptAcrossCheck()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto check = [](Procedure& proc, const TestHeaps& heaps, BasicBlock* block, Value* other) {
+        CheckValue* check = block->appendNew<CheckValue>(proc, Check, Origin(), block->appendNew<Value>(proc, Trunc, Origin(), other));
+        check->setGenerator([](CCallHelpers& jit, const StackmapGenerationParams&) {
+            jit.breakpoint();
+        });
+    };
+    CHECK_EQ(deadStoreSurvivors(Store, Store, check), 2u);
+}
+
+void testReduceStrengthDeadStoreKeptWhenNarrower()
+{
+    Procedure proc;
+    TestHeaps heaps(proc);
+    if (proc.optLevel() < 2)
+        return;
+
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* a = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* b = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+    appendStoreWithRange(proc, root, Store, a, pointer, heaps.inner.range());
+    appendStoreWithRange(proc, root, Store8, b, pointer, heaps.inner.range());
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin());
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(valuesStoredThrough(proc, pointer).size(), 2u);
+}
+
+void testReduceStrengthDeadStoreKeptWhenTrapping()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+    CHECK_EQ(deadStoreSurvivors(trapping(Store), Store, nothingBetween), 2u);
+}
+
+void testReduceStrengthDeadStoreKeptWhenKillerTraps()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+    CHECK_EQ(deadStoreSurvivors(Store, trapping(Store), nothingBetween), 2u);
+}
+
+void testReduceStrengthDeadStoreDisjointBetween()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto storeOther = [](Procedure& proc, const TestHeaps& heaps, BasicBlock* block, Value* other) {
+        appendStoreWithRange(proc, block, Store, block->appendNew<Const32Value>(proc, Origin(), 1), other, heaps.other.range());
+    };
+    CHECK_EQ(deadStoreSurvivors(Store, Store, storeOther), 1u);
+}
+
+// Stores a to p and branches; the taken arm runs `between` and then stores b to p with
+// `killerKind`, the other arm stores c to p only if `otherArmStores`. Checks that the compiled code
+// leaves p as the source says, and returns how many stores to p remain after reduction.
+template<typename Between>
+static size_t crossBlockDeadStoreSurvivors(Kind killerKind, bool otherArmStores, const Between& between)
+{
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* taken = proc.addBlock();
+    BasicBlock* notTaken = proc.addBlock();
+
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* other = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* a = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* b = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR3);
+    Value* c = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR4);
+    Value* condition = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR5));
+    appendStoreWithRange(proc, root, Store, a, pointer, heaps.inner.range());
+    root->setSuccessors(FrequentedBlock(taken), FrequentedBlock(notTaken));
+    root->appendNew<Value>(proc, Branch, Origin(), condition);
+
+    between(proc, heaps, taken, other);
+    appendStoreWithRange(proc, taken, killerKind, b, pointer, heaps.inner.range());
+    taken->clearSuccessors();
+    taken->appendNew<Value>(proc, Return, Origin());
+
+    if (otherArmStores)
+        appendStoreWithRange(proc, notTaken, Store, c, pointer, heaps.inner.range());
+    notTaken->clearSuccessors();
+    notTaken->appendNew<Value>(proc, Return, Origin());
+
+    runReduceStrengthInitial(proc);
+    size_t survivors = valuesStoredThrough(proc, pointer).size();
+
+    auto code = compileProc(proc);
+    int64_t storage = 0;
+    int64_t otherStorage[2] = { };
+    invoke<void>(*code, &storage, otherStorage, static_cast<int64_t>(1), static_cast<int64_t>(2), static_cast<int64_t>(3), static_cast<int64_t>(1));
+    CHECK_EQ(storage, 2);
+    storage = 0;
+    invoke<void>(*code, &storage, otherStorage, static_cast<int64_t>(1), static_cast<int64_t>(2), static_cast<int64_t>(3), static_cast<int64_t>(0));
+    CHECK_EQ(storage, otherArmStores ? 3 : 1);
+    return survivors;
+}
+
+void testReduceStrengthDeadStoreAcrossBlocks()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    CHECK_EQ(crossBlockDeadStoreSurvivors(Store, true, nothingBetween), 2u);
+}
+
+void testReduceStrengthDeadStoreAcrossBlocksKeptOnPathToExit()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    CHECK_EQ(crossBlockDeadStoreSurvivors(Store, false, nothingBetween), 2u);
+}
+
+void testReduceStrengthDeadStoreAcrossBlocksKeptAcrossLoad()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto loadOther = [](Procedure& proc, const TestHeaps& heaps, BasicBlock* block, Value* other) {
+        appendSink(proc, heaps, block, other, appendLoadWithRange(proc, block, Load, Int64, other, heaps.innerChild.range()), 8);
+    };
+    CHECK_EQ(crossBlockDeadStoreSurvivors(Store, true, loadOther), 3u);
+}
+
+void testReduceStrengthDeadStoreAcrossBlocksKeptAcrossCheck()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto check = [](Procedure& proc, const TestHeaps& heaps, BasicBlock* block, Value* other) {
+        CheckValue* check = block->appendNew<CheckValue>(proc, Check, Origin(), block->appendNew<Value>(proc, Equal, Origin(), other, block->appendNew<Const64Value>(proc, Origin(), 0)));
+        check->setGenerator([](CCallHelpers& jit, const StackmapGenerationParams&) {
+            jit.breakpoint();
+        });
+    };
+    CHECK_EQ(crossBlockDeadStoreSurvivors(Store, true, check), 3u);
+}
+
+void testReduceStrengthDeadStoreAcrossBlocksKeptWhenKillerTraps()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+    CHECK_EQ(crossBlockDeadStoreSurvivors(trapping(Store), true, nothingBetween), 3u);
+}
+
+// The loop body reads p before storing to it, so the store from the previous iteration is live.
+void testReduceStrengthDeadStoreAcrossBlocksKeptInLoop()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* loop = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* count = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    UpsilonValue* initial = root->appendNew<UpsilonValue>(proc, Origin(), count);
+    root->setSuccessors(FrequentedBlock(loop));
+    root->appendNew<Value>(proc, Jump, Origin());
+
+    Value* remaining = loop->appendNew<Value>(proc, Phi, Int32, Origin());
+    initial->setPhi(remaining);
+    MemoryValue* previous = appendLoadWithRange(proc, loop, Load, Int32, pointer, heaps.inner.range());
+    Value* next = loop->appendNew<Value>(proc, Add, Origin(), previous, loop->appendNew<Const32Value>(proc, Origin(), 1));
+    appendStoreWithRange(proc, loop, Store, next, pointer, heaps.inner.range());
+    Value* decremented = loop->appendNew<Value>(proc, Sub, Origin(), remaining, loop->appendNew<Const32Value>(proc, Origin(), 1));
+    loop->appendNew<UpsilonValue>(proc, Origin(), decremented, remaining);
+    loop->setSuccessors(FrequentedBlock(loop), FrequentedBlock(exit));
+    loop->appendNew<Value>(proc, Branch, Origin(), decremented);
+
+    appendStoreWithRange(proc, exit, Store, exit->appendNew<Const32Value>(proc, Origin(), 100), pointer, heaps.inner.range());
+    exit->clearSuccessors();
+    exit->appendNew<Value>(proc, Return, Origin());
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(valuesStoredThrough(proc, pointer).size(), 2u);
+
+    int32_t storage = 0;
+    invoke<void>(*compileProc(proc), &storage, static_cast<int64_t>(3));
+    CHECK_EQ(storage, 100);
 }
 
 void testStoreAfterClobberExitsSideways()
@@ -3291,6 +4505,498 @@ void testFCCmpNegatedAndDouble(double a, double b, double c, double d)
 
     int32_t expected = !(a < b && c < d) ? 1 : 0;
     CHECK_EQ(compileAndRun<int32_t>(proc, a, b, c, d), expected);
+}
+
+// A hierarchy for the HeapRangeTree tests:
+//   top
+//     a
+//       a1
+//         a11
+//         a12
+//       a2
+//     b
+//       b1
+//       b2
+//       b3
+//     c
+struct TreeTestHeaps {
+    WTF_MAKE_NONCOPYABLE(TreeTestHeaps);
+public:
+    TreeTestHeaps()
+    {
+        top.compute();
+    }
+
+    AbstractHeap top { nullptr, "top" };
+    AbstractHeap a { &top, "a" };
+    AbstractHeap a1 { &a, "a1" };
+    AbstractHeap a11 { &a1, "a11" };
+    AbstractHeap a12 { &a1, "a12" };
+    AbstractHeap a2 { &a, "a2" };
+    AbstractHeap b { &top, "b" };
+    AbstractHeap b1 { &b, "b1" };
+    AbstractHeap b2 { &b, "b2" };
+    AbstractHeap b3 { &b, "b3" };
+    AbstractHeap c { &top, "c" };
+};
+
+void testHeapRangeTreeNested()
+{
+    TreeTestHeaps heaps;
+    HeapRangeTree tree(heaps.top);
+
+    CHECK_EQ(tree.size(), 11u);
+    CHECK(tree.range(tree.nodeFor(heaps.a12.range())) == heaps.a12.range());
+    CHECK_EQ(tree.parent(tree.nodeFor(heaps.a12.range())), tree.nodeFor(heaps.a1.range()));
+    CHECK_EQ(tree.parent(tree.nodeFor(heaps.b.range())), HeapRangeTree::root);
+    CHECK_EQ(tree.parent(tree.parent(tree.nodeFor(heaps.a11.range()))), tree.nodeFor(heaps.a.range()));
+    CHECK_EQ(tree.nodeFor(heaps.top.range()), HeapRangeTree::root);
+    CHECK_EQ(tree.nodeFor(HeapRange::top()), HeapRangeTree::root);
+    // A range that is no heap's resolves to the smallest heap holding it.
+    CHECK_EQ(tree.nodeFor(HeapRange(heaps.b1.range().begin(), heaps.b2.range().end())), tree.nodeFor(heaps.b.range()));
+    CHECK_EQ(tree.nodeFor(HeapRange(heaps.a2.range().begin(), heaps.b1.range().end())), HeapRangeTree::root);
+}
+
+void testHeapRangeTreeSingleChild()
+{
+    AbstractHeap top(nullptr, "top");
+    AbstractHeap only(&top, "only");
+    AbstractHeap leaf(&only, "leaf");
+    AbstractHeap other(&top, "other");
+    top.compute();
+    HeapRangeTree tree(top);
+
+    CHECK(only.range() == leaf.range());
+    CHECK_EQ(tree.nodeFor(leaf.range()), tree.nodeFor(only.range()));
+    CHECK_EQ(tree.size(), 3u);
+}
+
+void testHeapRangeTreeOverlapImpliesAncestry()
+{
+    TreeTestHeaps heaps;
+    HeapRangeTree tree(heaps.top);
+
+    Vector<HeapRange> queries;
+    for (const AbstractHeap* heap : { &heaps.top, &heaps.a, &heaps.a1, &heaps.a11, &heaps.a12, &heaps.a2, &heaps.b, &heaps.b1, &heaps.b2, &heaps.b3, &heaps.c })
+        queries.append(heap->range());
+    queries.append(HeapRange(heaps.a12.range().begin(), heaps.a2.range().end()));
+    queries.append(HeapRange(heaps.a2.range().begin(), heaps.b1.range().end()));
+    queries.append(HeapRange(heaps.b1.range().begin(), heaps.b2.range().end()));
+    queries.append(HeapRange(heaps.b3.range().begin(), heaps.c.range().end()));
+    queries.append(HeapRange::top());
+
+    auto isAncestorOrSelf = [&](HeapRangeTree::NodeID ancestor, HeapRangeTree::NodeID node) {
+        for (HeapRangeTree::NodeID current = node; ; current = tree.parent(current)) {
+            if (current == ancestor)
+                return true;
+            if (current == HeapRangeTree::root)
+                return false;
+        }
+    };
+
+    for (auto& x : queries) {
+        HeapRangeTree::NodeID nodeX = tree.nodeFor(x);
+        HeapRange rangeX = tree.range(nodeX);
+        CHECK(nodeX == HeapRangeTree::root || (rangeX.begin() <= x.begin() && x.end() <= rangeX.end()));
+    }
+
+    for (auto& x : queries) {
+        for (auto& y : queries) {
+            if (!x.overlaps(y))
+                continue;
+
+            HeapRangeTree::NodeID nodeX = tree.nodeFor(x);
+            HeapRangeTree::NodeID nodeY = tree.nodeFor(y);
+            CHECK(isAncestorOrSelf(nodeX, nodeY) || isAncestorOrSelf(nodeY, nodeX));
+        }
+    }
+}
+
+// Every heap is a node of the repository's tree, below the node of its parent heap.
+void testHeapRangeTreeFromAbstractHeaps()
+{
+    Procedure proc;
+    AbstractHeapRepository& heaps = proc.heaps();
+    CHECK(!heaps.rangeTree());
+    const AbstractHeap& element = heaps.indexedContiguousProperties.at(3);
+    heaps.computeRangesAndDecorateInstructions();
+
+    CHECK(heaps.rangeTree());
+    const HeapRangeTree* tree = &*heaps.rangeTree();
+    auto checkNode = [&](const AbstractHeap& heap, const AbstractHeap& parentHeap) {
+        HeapRangeTree::NodeID node = tree->nodeFor(heap.range());
+        CHECK(tree->range(node) == heap.range());
+        if (heap.range() != parentHeap.range())
+            CHECK(tree->range(tree->parent(node)) == parentHeap.range());
+    };
+    checkNode(heaps.JSCell_header, heaps.JSCellHeaderAndNamedProperties);
+    checkNode(heaps.JSCell_structureID, heaps.JSCell_header);
+    checkNode(heaps.JSCell_cellState, heaps.JSCell_usefulBytes);
+    checkNode(element, heaps.indexedContiguousProperties.atAnyIndex());
+    checkNode(heaps.JSCellHeaderAndNamedProperties, heaps.root);
+    CHECK_EQ(tree->nodeFor(heaps.root.range()), HeapRangeTree::root);
+}
+
+// The header stores through the pointer of the iteration it starts, so it never overwrites what
+// the body stored through the previous iteration's pointer.
+void testReduceStrengthDeadStoreAcrossBlocksKeptWhenBaseAdvances()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* body = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+
+    Value* start = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* end = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    UpsilonValue* initial = root->appendNew<UpsilonValue>(proc, Origin(), start);
+    root->setSuccessors(FrequentedBlock(header));
+    root->appendNew<Value>(proc, Jump, Origin());
+
+    Value* pointer = header->appendNew<Value>(proc, Phi, pointerType(), Origin());
+    initial->setPhi(pointer);
+    appendStoreWithRange(proc, header, Store, header->appendNew<Const32Value>(proc, Origin(), 1), pointer, heaps.inner.range());
+    header->setSuccessors(FrequentedBlock(exit), FrequentedBlock(body));
+    header->appendNew<Value>(proc, Branch, Origin(), header->appendNew<Value>(proc, Equal, Origin(), pointer, end));
+
+    appendStoreWithRange(proc, body, Store, body->appendNew<Const32Value>(proc, Origin(), 2), pointer, heaps.inner.range());
+    Value* next = body->appendNew<Value>(proc, Add, Origin(), pointer, body->appendNew<ConstPtrValue>(proc, Origin(), sizeof(int32_t)));
+    body->appendNew<UpsilonValue>(proc, Origin(), next, pointer);
+    body->setSuccessors(FrequentedBlock(header));
+    body->appendNew<Value>(proc, Jump, Origin());
+
+    exit->clearSuccessors();
+    exit->appendNew<Value>(proc, Return, Origin());
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(valuesStoredThrough(proc, pointer).size(), 2u);
+
+    int32_t storage[4] = { };
+    invoke<void>(*compileProc(proc), storage, storage + 3);
+    CHECK_EQ(storage[0], 2);
+    CHECK_EQ(storage[1], 2);
+    CHECK_EQ(storage[2], 2);
+    CHECK_EQ(storage[3], 1);
+}
+
+// Forwarding the root block's load inserts a masking BitAnd into the root. A successor that peels
+// an Identity down to that BitAnd must not leave it using a constant defined after it.
+void testReduceStrengthIdentityReplacementKeepsRootOrder()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* stored = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* condition = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+    appendStoreWithRange(proc, root, Store8, stored, pointer, heaps.inner.range());
+    MemoryValue* loaded = appendLoadWithRange(proc, root, Load8Z, Int32, pointer, heaps.inner.range());
+    root->setSuccessors(FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+    root->appendNew<Value>(proc, Branch, Origin(), condition);
+
+    thenCase->appendNew<Value>(proc, Return, Origin(), thenCase->appendNew<Value>(proc, BitOr, Origin(), loaded, thenCase->appendNew<Const32Value>(proc, Origin(), 0)));
+    elseCase->appendNew<Value>(proc, Return, Origin(), loaded);
+
+    runReduceStrengthInitial(proc);
+    validate(proc);
+
+    auto code = compileProc(proc);
+    int64_t storage = 0;
+    CHECK_EQ(invoke<int32_t>(*code, &storage, static_cast<int64_t>(0x1234), static_cast<int64_t>(1)), 0x34);
+    CHECK_EQ(invoke<int32_t>(*code, &storage, static_cast<int64_t>(0x1256), static_cast<int64_t>(0)), 0x56);
+}
+
+// With ranges from the AbstractHeapRepository, a store to one heap leaves a load of a sibling heap
+// forwardable but invalidates a load of a heap that contains it.
+void testReduceStrengthAbstractHeapRanges()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    Procedure proc;
+    AbstractHeapRepository& heaps = proc.heaps();
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    auto appendLoad = [&](const AbstractHeap& heap, int32_t offset) {
+        MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), pointer, offset);
+        heaps.decorateMemory(&heap, load);
+        return load;
+    };
+
+    MemoryValue* siblingLoad1 = appendLoad(heaps.JSCell_structureID, 0);
+    MemoryValue* parentLoad1 = appendLoad(heaps.JSCell_header, 8);
+    Value* sum1 = root->appendNew<Value>(proc, Add, Origin(), siblingLoad1, parentLoad1);
+    MemoryValue* store = root->appendNew<MemoryValue>(proc, Store, Origin(), sum1, pointer, 16);
+    heaps.decorateMemory(&heaps.JSCell_cellState, store);
+    MemoryValue* siblingLoad2 = appendLoad(heaps.JSCell_structureID, 0);
+    MemoryValue* parentLoad2 = appendLoad(heaps.JSCell_header, 8);
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, Add, Origin(), siblingLoad2, parentLoad2));
+    heaps.computeRangesAndDecorateInstructions();
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(siblingLoad2->opcode(), Identity);
+    CHECK_EQ(siblingLoad2->child(0), siblingLoad1);
+    CHECK_EQ(parentLoad2->opcode(), Load);
+    validate(proc);
+}
+
+void testReduceStrengthLoadFromOffsetConstantAddress()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    int32_t storage[4] = { 1, 2, 3, 4 };
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    Value* sink = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* address = root->appendNew<ConstPtrValue>(proc, Origin(), storage);
+    MemoryValue* load1 = appendLoadWithRange(proc, root, Load, Int32, address, heaps.inner.range(), 8);
+    appendSink(proc, heaps, root, sink, load1);
+    MemoryValue* load2 = appendLoadWithRange(proc, root, Load, Int32, address, heaps.inner.range(), 8);
+    root->appendNew<Value>(proc, Return, Origin(), load2);
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(returnedValue(root), load1);
+}
+
+// The BitAnd that forwarding gives the first load is value-numbered, so the second load forwarded
+// from the same store reuses it.
+void testReduceStrengthStoreToLoadFixupNumbered()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* middle = proc.addBlock();
+    BasicBlock* last = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* stored = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* sink = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* condition = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR3));
+    appendStoreWithRange(proc, root, Store8, stored, pointer, heaps.inner.range());
+    root->setSuccessors(FrequentedBlock(middle), FrequentedBlock(exit));
+    root->appendNew<Value>(proc, Branch, Origin(), condition);
+
+    MemoryValue* load1 = appendLoadWithRange(proc, middle, Load8Z, Int32, pointer, heaps.inner.range());
+    appendSink(proc, heaps, middle, sink, load1);
+    middle->setSuccessors(FrequentedBlock(last), FrequentedBlock(exit));
+    middle->appendNew<Value>(proc, Branch, Origin(), condition);
+
+    MemoryValue* load2 = appendLoadWithRange(proc, last, Load8Z, Int32, pointer, heaps.inner.range());
+    last->appendNew<Value>(proc, Return, Origin(), load2);
+
+    exit->appendNew<Value>(proc, Return, Origin(), exit->appendNew<Const32Value>(proc, Origin(), 0));
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(load1->opcode(), Identity);
+    CHECK_EQ(load1->child(0)->opcode(), BitAnd);
+    CHECK_EQ(returnedValue(last), load1->child(0));
+}
+
+// Two loads in different arms of a loop body are both hoisted into the pre-header, where nothing
+// between them writes, so one serves both.
+void testHoistLoopInvariantValuesMergesHoistedLoads()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    Procedure proc;
+    TestHeaps heaps(proc);
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* latch = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* sink = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* condition = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+    root->setSuccessors(FrequentedBlock(header));
+    root->appendNew<Value>(proc, Jump, Origin());
+
+    header->setSuccessors(FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+    header->appendNew<Value>(proc, Branch, Origin(), condition);
+
+    auto appendArm = [&](BasicBlock* block, int32_t sinkOffset) {
+        MemoryValue* load = appendLoadWithRange(proc, block, Load, Int32, pointer, heaps.inner.range(), 4);
+        load->setControlDependent(false);
+        appendSink(proc, heaps, block, sink, load, sinkOffset);
+        block->setSuccessors(FrequentedBlock(latch));
+        block->appendNew<Value>(proc, Jump, Origin());
+        return load;
+    };
+    MemoryValue* load1 = appendArm(thenCase, 0);
+    MemoryValue* load2 = appendArm(elseCase, 4);
+
+    latch->setSuccessors(FrequentedBlock(header), FrequentedBlock(exit));
+    latch->appendNew<Value>(proc, Branch, Origin(), condition);
+
+    exit->appendNew<Value>(proc, Return, Origin());
+
+    proc.resetReachability();
+    hoistLoopInvariantValues(proc);
+
+    CHECK((load1->opcode() == Identity) != (load2->opcode() == Identity));
+    MemoryValue* kept = load1->opcode() == Identity ? load2 : load1;
+    Value* merged = load1->opcode() == Identity ? load1 : load2;
+    CHECK_EQ(merged->child(0), kept);
+    CHECK(!proc.naturalLoops().innerMostLoopOf(kept->owner));
+    validate(proc);
+}
+
+// Writes thousands of distinct children of one heap, then reloads after a chain of blocks. Each
+// heap keeps its own write counter however many are written, so the reload of the one unwritten
+// child is still forwarded, as is the reload of a heap outside the parent.
+static void testReduceStrengthManyWrittenHeapsImpl(unsigned branchBlocks)
+{
+    constexpr unsigned writtenChildren = 4096;
+
+    Procedure proc;
+    AbstractHeap parentHeap(&proc.heaps().root, "parent");
+    Vector<std::unique_ptr<AbstractHeap>> childHeaps;
+    for (unsigned i = 0; i <= writtenChildren; ++i)
+        childHeaps.append(makeUnique<AbstractHeap>(&parentHeap, "child"));
+    AbstractHeap outsideHeap(&proc.heaps().root, "outside");
+    AbstractHeap sinkHeap(&proc.heaps().root, "sink");
+    proc.heaps().computeRangesAndDecorateInstructions();
+    HeapRange parent = parentHeap.range();
+    HeapRange firstChild = childHeaps[0]->range();
+    HeapRange outside = outsideHeap.range();
+
+    BasicBlock* root = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* other = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+
+    MemoryValue* childLoad1 = appendLoadWithRange(proc, root, Load, Int32, pointer, firstChild);
+    MemoryValue* outsideLoad1 = appendLoadWithRange(proc, root, Load, Int32, pointer, outside, 4);
+    MemoryValue* parentLoad = appendLoadWithRange(proc, root, Load, Int32, pointer, parent, 8);
+    appendStoreWithRange(proc, root, Store, root->appendNew<Value>(proc, Add, Origin(), root->appendNew<Value>(proc, Add, Origin(), childLoad1, outsideLoad1), parentLoad), other, sinkHeap.range());
+    Value* one = root->appendNew<Const32Value>(proc, Origin(), 1);
+    for (unsigned i = 1; i <= writtenChildren; ++i)
+        appendStoreWithRange(proc, root, Store, one, other, childHeaps[i]->range(), i * sizeof(int32_t));
+
+    BasicBlock* exit = proc.addBlock();
+    exit->appendNew<Value>(proc, Return, Origin(), exit->appendNew<Const32Value>(proc, Origin(), 0));
+
+    BasicBlock* previous = root;
+    for (unsigned i = 0; i < branchBlocks; ++i) {
+        BasicBlock* next = proc.addBlock();
+        Value* condition = previous->appendNew<Value>(proc, Equal, Origin(), argument, previous->appendNew<Const64Value>(proc, Origin(), i));
+        previous->setSuccessors(FrequentedBlock(exit), FrequentedBlock(next));
+        previous->appendNew<Value>(proc, Branch, Origin(), condition);
+        previous = next;
+    }
+
+    MemoryValue* childLoad2 = appendLoadWithRange(proc, previous, Load, Int32, pointer, firstChild);
+    MemoryValue* outsideLoad2 = appendLoadWithRange(proc, previous, Load, Int32, pointer, outside, 4);
+    previous->appendNew<Value>(proc, Return, Origin(), previous->appendNew<Value>(proc, Add, Origin(), childLoad2, outsideLoad2));
+
+    runReduceStrengthInitial(proc);
+
+    CHECK_EQ(outsideLoad2->opcode(), Identity);
+    CHECK_EQ(childLoad2->opcode(), Identity);
+    validate(proc);
+}
+
+// A Sparse merge that would walk too many recorded changes gives up and invalidates everything, so
+// the join cannot reuse a load that only a long chain of unrelated stores separates it from.
+static void testReduceStrengthSparseMergeGivesUp(bool sparse)
+{
+    Procedure proc;
+    TestHeaps heaps(proc);
+
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+    Value* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* other = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* condition = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+    MemoryValue* load1 = appendLoadWithRange(proc, root, Load, Int32, pointer, heaps.inner.range());
+
+    // Each block of the chain also branches to the join, so that CFG simplification keeps them apart.
+    constexpr unsigned chainLength = 512;
+    BasicBlock* previous = root;
+    for (unsigned i = 0; i < chainLength; ++i) {
+        BasicBlock* next = proc.addBlock();
+        Value* exits = previous->appendNew<Value>(proc, Equal, Origin(), condition, previous->appendNew<Const32Value>(proc, Origin(), i));
+        previous->setSuccessors(FrequentedBlock(join), FrequentedBlock(next));
+        previous->appendNew<Value>(proc, Branch, Origin(), exits);
+        appendStoreWithRange(proc, next, Store, next->appendNew<Const32Value>(proc, Origin(), i), other, heaps.other.range());
+        previous = next;
+    }
+    previous->setSuccessors(FrequentedBlock(join));
+    previous->appendNew<Value>(proc, Jump, Origin());
+
+    MemoryValue* load2 = appendLoadWithRange(proc, join, Load, Int32, pointer, heaps.inner.range());
+    join->appendNew<Value>(proc, Return, Origin(), join->appendNew<Value>(proc, Add, Origin(), load1, load2));
+
+    {
+        SetForScope budget(Options::maxB3MemoryEpochSnapshotEntries(), sparse ? 0 : std::numeric_limits<unsigned>::max());
+        runReduceStrengthInitial(proc);
+    }
+
+    CHECK_EQ(load2->opcode() == Identity, !sparse);
+    validate(proc);
+}
+
+// Past the snapshot budget, the walk records only the counters each block changes, which must give
+// exactly the counters a copy of every block's tail would.
+void testReduceStrengthSparseMemoryEpochs()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+    // 4096 written children make about 8200 slots, which the default budget allows for 127 blocks.
+    testReduceStrengthManyWrittenHeapsImpl(4);
+    testReduceStrengthManyWrittenHeapsImpl(200);
+
+    testReduceStrengthSparseMergeGivesUp(false);
+    testReduceStrengthSparseMergeGivesUp(true);
+
+    SetForScope budget(Options::maxB3MemoryEpochSnapshotEntries(), 0);
+    testReduceStrengthLoadLoadAcrossDiamond();
+    testReduceStrengthLoadKilledOnOneArm();
+    testReduceStrengthLoadKilledByNestedWrite();
+    testReduceStrengthLoadLoopHeader();
+    testReduceStrengthLoadIrreducibleEntry();
+    testReduceStrengthLoadForwardingAfterCFGFold();
+    testReduceStrengthDeadStoreAcrossBlocks();
+    testReduceStrengthDeadStoreAcrossBlocksKeptInLoop();
+    testReduceStrengthWasmAddressAcrossDiamond();
+    testReduceStrengthWasmAddressLoop();
+    testReduceStrengthAbstractHeapRanges();
+}
+
+void testReduceStrengthDeadStoreAcrossBlocksPastDisjointAccesses()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    // Reads on both sides of the dead store's heap, which a single enclosing range would cover.
+    auto loadAround = [](Procedure& proc, const TestHeaps& heaps, BasicBlock* block, Value* other) {
+        appendSink(proc, heaps, block, other, appendLoadWithRange(proc, block, Load, Int64, other, heaps.before.range()), 8);
+        appendSink(proc, heaps, block, other, appendLoadWithRange(proc, block, Load, Int64, other, heaps.after.range()), 8);
+    };
+    CHECK_EQ(crossBlockDeadStoreSurvivors(Store, true, loadAround), 2u);
 }
 
 #endif // ENABLE(B3_JIT)

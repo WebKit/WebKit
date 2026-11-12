@@ -1427,6 +1427,7 @@
 				WTF/PlainGregorianDateTime.cpp,
 				WTF/PreciseSum.cpp,
 				WTF/PriorityQueue.cpp,
+				WTF/Range.cpp,
 				WTF/RapidHash.cpp,
 				WTF/ReadWriteLock.cpp,
 				WTF/RedBlackTree.cpp,

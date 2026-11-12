@@ -31,9 +31,9 @@ namespace JSC { namespace B3 {
 
 class Procedure;
 
-// Removes non-escaping wasm-GC struct allocations. CSE runs before this and forwards
-// WasmStructGet loads to the stored values, so a struct whose reference never escapes
-// is left with only writes into itself.
+// Removes non-escaping wasm-GC struct allocations. ReduceStrength runs before this and
+// forwards WasmStructGet loads to the stored values, so a struct whose reference never
+// escapes is left with only writes into itself.
 bool eliminateWasmGCAllocations(Procedure&);
 
 } } // namespace JSC::B3
