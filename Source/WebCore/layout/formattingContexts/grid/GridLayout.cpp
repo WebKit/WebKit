@@ -52,6 +52,17 @@ struct GridAreaSizes {
     Vector<LayoutUnit> blockSizes;
 };
 
+struct GridItemAutoMargins {
+    size_t gridItemIndex;
+    bool marginStartIsAuto;
+    bool marginEndIsAuto;
+};
+
+struct ResolvedAutoMargins {
+    Vector<UsedMargins> usedMargins;
+    BitVector gridItemsWithAbsorbedPositiveFreeSpace;
+};
+
 GridLayout::GridLayout(const GridFormattingContext& gridFormattingContext)
     : m_gridFormattingContext(gridFormattingContext)
 {
@@ -97,6 +108,64 @@ static GridAreaSizes computeGridAreaSizes(const PlacedGridItems& gridItems, cons
         gridAreaSizes.blockSizes.append(rowsSize);
     }
     return gridAreaSizes;
+}
+
+// https://drafts.csswg.org/css-grid-1/#auto-margins
+// Auto margins on grid items have an effect very similar to auto margins in block layout:
+//
+// During calculations of grid track sizes, auto margins are treated as 0.
+// As defined for the inline axis of block layout (see CSS2§10.3.3), auto margins in either axis absorb positive free space prior to alignment via the box alignment properties, thereby disabling the effects of any self-alignment properties in that axis.
+// Overflowing grid items resolve their auto margins to zero and overflow as specified by their box alignment properties.
+static ResolvedAutoMargins resolveAutoMargins(const Vector<GridItemAutoMargins>& gridItemsWithAutoMargins, const Vector<UsedMargins>& usedMargins, const Vector<LayoutUnit>& borderBoxSizes, const Vector<LayoutUnit>& gridAreaSizes)
+{
+    ResolvedAutoMargins resolvedAutoMargins { usedMargins, BitVector(usedMargins.size()) };
+    for (auto [gridItemIndex, marginStartIsAuto, marginEndIsAuto] : gridItemsWithAutoMargins) {
+        auto& [marginStart, marginEnd] = resolvedAutoMargins.usedMargins[gridItemIndex];
+        // https://drafts.csswg.org/css-grid-1/#grid-area-concept
+        // "A grid item’s grid area forms the containing block into which it is laid out."
+        // https://www.w3.org/TR/CSS2/visudet.html#blockwidth
+        // "'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width'
+        // + 'margin-right' = width of containing block"
+        auto freeSpace = gridAreaSizes[gridItemIndex] - borderBoxSizes[gridItemIndex] - (marginStartIsAuto ? 0_lu : marginStart) - (marginEndIsAuto ? 0_lu : marginEnd);
+
+        auto isOverflowing = freeSpace < 0;
+        auto resolveAutoMarginsToZero = [&] {
+            if (marginStartIsAuto)
+                marginStart = 0_lu;
+            if (marginEndIsAuto)
+                marginEnd = 0_lu;
+        };
+        // https://drafts.csswg.org/css-grid-1/#auto-margins
+        // "Overflowing grid items resolve their auto margins to zero..."
+        if (isOverflowing) {
+            resolveAutoMarginsToZero();
+            continue;
+        }
+
+        // https://www.w3.org/TR/CSS2/visudet.html#blockwidth
+        auto absorbFreeSpace = [&] {
+            // "If both 'margin-left' and 'margin-right' are 'auto', their used values are equal."
+            if (marginStartIsAuto && marginEndIsAuto) {
+                marginStart = freeSpace / 2;
+                marginEnd = freeSpace / 2;
+                return;
+            }
+
+            // "If there is exactly one value specified as 'auto', its used value follows from the equality."
+            if (marginStartIsAuto)
+                marginStart = freeSpace;
+            else
+                marginEnd = freeSpace;
+        };
+        absorbFreeSpace();
+
+        auto hasPositiveFreeSpace = freeSpace > 0;
+        // https://drafts.csswg.org/css-grid-1/#auto-margins
+        // "...auto margins in either axis absorb positive free space prior to alignment via the box alignment properties..."
+        if (hasPositiveFreeSpace)
+            resolvedAutoMargins.gridItemsWithAbsorbedPositiveFreeSpace.quickSet(gridItemIndex);
+    }
+    return resolvedAutoMargins;
 }
 
 // https://drafts.csswg.org/css-align-3/#align-by-baseline
@@ -170,8 +239,17 @@ GridItemRects GridLayout::layout(const PlacedGridItems& placedGridItems, const T
     auto [ usedInlineSizes, usedBlockSizes ] = layoutGridItems(placedGridItems, gridAreaSizes, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList);
 
     // https://drafts.csswg.org/css-grid-1/#alignment
-    auto usedInlineMargins = computeInlineMargins(placedGridItems);
-    auto usedBlockMargins = computeBlockMargins(placedGridItems);
+    auto gridItemsWithAutoMargins = [&](LogicalBoxAxis axis) {
+        Vector<GridItemAutoMargins> gridItemsWithAutoMargins;
+        for (auto [gridItemIndex, gridItem] : WTF::indexedRange(placedGridItems)) {
+            auto& axisSizes = axis == LogicalBoxAxis::Inline ? gridItem.inlineAxisSizes() : gridItem.blockAxisSizes();
+            if (GridLayoutUtils::hasAutoMarginsForAxis(axisSizes))
+                gridItemsWithAutoMargins.append({ gridItemIndex, axisSizes.marginStart.isAuto(), axisSizes.marginEnd.isAuto() });
+        }
+        return gridItemsWithAutoMargins;
+    };
+    auto [ usedInlineMargins, inlineAxisGridItemsWithAbsorbedPositiveFreeSpace ] = resolveAutoMargins(gridItemsWithAutoMargins(LogicalBoxAxis::Inline), computeInlineMargins(placedGridItems), usedInlineSizes, gridAreaSizes.inlineSizes);
+    auto [ usedBlockMargins, blockAxisGridItemsWithAbsorbedPositiveFreeSpace ] = resolveAutoMargins(gridItemsWithAutoMargins(LogicalBoxAxis::Block), computeBlockMargins(placedGridItems), usedBlockSizes, gridAreaSizes.blockSizes);
 
     // https://drafts.csswg.org/css-grid-1/#alignment
     // After a grid container’s grid tracks have been sized, and the dimensions of all grid items
@@ -181,14 +259,15 @@ GridItemRects GridLayout::layout(const PlacedGridItems& placedGridItems, const T
     auto blockAxisBaselineAlignedMarginBoxPositions = computeBaselineAlignedMarginBoxPositions(placedGridItems, LogicalBoxAxis::Block, usedBlockMargins, usedBlockSizes,
         gridAreaSizes.blockSizes, usedTrackSizes.rowSizes, gridLayoutState.collapsedRowTracksList, gridLayoutState.usedRowGap, formattingContext.integrationUtils());
 
-    auto inlineAxisPositions = performInlineAxisSelfAlignment(placedGridItems, usedInlineMargins, usedInlineSizes, gridAreaSizes.inlineSizes, inlineAxisBaselineAlignedMarginBoxPositions);
-    auto blockAxisPositions = performBlockAxisSelfAlignment(placedGridItems, usedBlockMargins, usedBlockSizes, gridAreaSizes.blockSizes, blockAxisBaselineAlignedMarginBoxPositions);
+    auto inlineAxisPositions = performInlineAxisSelfAlignment(placedGridItems, usedInlineMargins, usedInlineSizes, gridAreaSizes.inlineSizes, inlineAxisBaselineAlignedMarginBoxPositions, inlineAxisGridItemsWithAbsorbedPositiveFreeSpace);
+    auto blockAxisPositions = performBlockAxisSelfAlignment(placedGridItems, usedBlockMargins, usedBlockSizes, gridAreaSizes.blockSizes, blockAxisBaselineAlignedMarginBoxPositions, blockAxisGridItemsWithAbsorbedPositiveFreeSpace);
 
     return computeGridItemRects(placedGridItems, inlineAxisPositions, blockAxisPositions, usedInlineSizes, usedBlockSizes, usedInlineMargins, usedBlockMargins);
 }
 
 BorderBoxPositions GridLayout::performInlineAxisSelfAlignment(const PlacedGridItems& placedGridItems, const Vector<UsedMargins>& inlineMargins, const UsedInlineSizes& borderBoxSizes,
-    const Vector<LayoutUnit>& gridAreasInlineSizeList, const Vector<std::optional<LayoutUnit>>& baselineAlignedMarginBoxPositions)
+    const Vector<LayoutUnit>& gridAreasInlineSizeList, const Vector<std::optional<LayoutUnit>>& baselineAlignedMarginBoxPositions,
+    const BitVector& gridItemsWithAbsorbedPositiveFreeSpace)
 {
     BorderBoxPositions borderBoxPositions(ReserveCapacityTag { }, placedGridItems.size());
 
@@ -197,6 +276,14 @@ BorderBoxPositions GridLayout::performInlineAxisSelfAlignment(const PlacedGridIt
         auto& gridItem = placedGridItems[gridItemIndex];
 
         auto& [marginStart, marginEnd] = inlineMargins[gridItemIndex];
+
+        // https://drafts.csswg.org/css-grid-1/#auto-margins
+        // "...thereby disabling the effects of any self-alignment properties in that axis."
+        if (gridItemsWithAbsorbedPositiveFreeSpace.quickGet(gridItemIndex)) {
+            borderBoxPositions.append(marginStart);
+            continue;
+        }
+
         auto marginBoxSize = marginStart + borderBoxSizes[gridItemIndex] + marginEnd;
         auto remainingSpace = gridAreasInlineSizeList[gridItemIndex] - marginBoxSize;
 
@@ -224,7 +311,8 @@ BorderBoxPositions GridLayout::performInlineAxisSelfAlignment(const PlacedGridIt
 }
 
 BorderBoxPositions GridLayout::performBlockAxisSelfAlignment(const PlacedGridItems& placedGridItems, const Vector<UsedMargins>& blockMargins, const UsedBlockSizes& borderBoxSizes,
-    const Vector<LayoutUnit>& gridAreasBlockSizeList, const Vector<std::optional<LayoutUnit>>& baselineAlignedMarginBoxPositions)
+    const Vector<LayoutUnit>& gridAreasBlockSizeList, const Vector<std::optional<LayoutUnit>>& baselineAlignedMarginBoxPositions,
+    const BitVector& gridItemsWithAbsorbedPositiveFreeSpace)
 {
     BorderBoxPositions borderBoxPositions(ReserveCapacityTag { }, placedGridItems.size());
 
@@ -233,6 +321,14 @@ BorderBoxPositions GridLayout::performBlockAxisSelfAlignment(const PlacedGridIte
         auto& gridItem = placedGridItems[gridItemIndex];
 
         auto& [marginStart, marginEnd] = blockMargins[gridItemIndex];
+
+        // https://drafts.csswg.org/css-grid-1/#auto-margins
+        // "...thereby disabling the effects of any self-alignment properties in that axis."
+        if (gridItemsWithAbsorbedPositiveFreeSpace.quickGet(gridItemIndex)) {
+            borderBoxPositions.append(marginStart);
+            continue;
+        }
+
         auto marginBoxSize = marginStart + borderBoxSizes[gridItemIndex] + marginEnd;
         auto remainingSpace = gridAreasBlockSizeList[gridItemIndex] - marginBoxSize;
 
