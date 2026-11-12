@@ -95,6 +95,7 @@ public:
     };
 
     NODELETE static std::optional<Inspector::Protocol::CSS::PseudoId> protocolValueForPseudoElementType(PseudoElementType);
+    static Ref<JSON::ArrayOf<String>> systemFontFamilyNames();
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend();

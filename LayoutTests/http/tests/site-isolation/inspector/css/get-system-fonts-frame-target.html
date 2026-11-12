@@ -1,0 +1,35 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.CSS.GetSystemFonts.FrameTarget");
+
+        let childFrameTarget;
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.GetSystemFonts.FrameTarget.Setup",
+            description: "Find the child frame target.",
+            async test() {
+                childFrameTarget = await frameTargetForURLContaining("frame-with-stylesheet.html");
+                InspectorTest.expectNotNull(childFrameTarget, "Should find a child frame target.");
+                InspectorTest.expectThat(childFrameTarget.hasCommand("CSS.getSupportedSystemFontFamilyNames"), "Child frame target should support CSS.getSupportedSystemFontFamilyNames.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.GetSystemFonts.FrameTarget.GetSupportedSystemFontFamilyNames",
+            description: "getSupportedSystemFontFamilyNames should return the system font families on a frame target.",
+            async test() {
+                let { fontFamilyNames } = await childFrameTarget.CSSAgent.getSupportedSystemFontFamilyNames();
+                InspectorTest.expectGreaterThanOrEqual(fontFamilyNames.length, 5, "Should have at least 5 font families.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that CSS.getSupportedSystemFontFamilyNames works on frame targets under site isolation.</p>
+    <iframe src="http://localhost:8000/site-isolation/inspector/css/resources/frame-with-stylesheet.html"></iframe>
+</body>

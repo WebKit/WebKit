@@ -485,7 +485,7 @@
         {
             "name": "getSupportedSystemFontFamilyNames",
             "description": "Returns all supported system font family names.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "returns": [
                 { "name": "fontFamilyNames", "type": "array", "items": { "type": "string" }, "description": "Supported system font families." }
             ]

@@ -798,7 +798,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::C
     return cssProperties;
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent::getSupportedSystemFontFamilyNames()
+Ref<JSON::ArrayOf<String>> InspectorCSSAgent::systemFontFamilyNames()
 {
     auto fontFamilyNames = JSON::ArrayOf<String>::create();
 
@@ -807,6 +807,11 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent
         fontFamilyNames->addItem(familyName);
 
     return fontFamilyNames;
+}
+
+Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent::getSupportedSystemFontFamilyNames()
+{
+    return systemFontFamilyNames();
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Inspector::Protocol::DOM::NodeId nodeId, Ref<JSON::Array>&& forcedPseudoClasses)

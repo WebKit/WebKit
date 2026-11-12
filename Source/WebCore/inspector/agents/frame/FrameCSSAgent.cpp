@@ -616,8 +616,7 @@ Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSProperty
 
 Inspector::CommandResult<Ref<JSON::ArrayOf<String>>> FrameCSSAgent::getSupportedSystemFontFamilyNames()
 {
-    // FIXME: <https://webkit.org/b/316844>: Consider how to deal with global CSS commands.
-    return makeUnexpected("Not supported on frame targets"_s);
+    return InspectorCSSAgent::systemFontFamilyNames();
 }
 
 Inspector::CommandResult<void> FrameCSSAgent::forcePseudoState(Inspector::Protocol::DOM::NodeId nodeId, Ref<JSON::Array>&& forcedPseudoClasses)

@@ -1,0 +1,12 @@
+Test that CSS.getSupportedSystemFontFamilyNames works on frame targets under site isolation.
+
+
+
+== Running test suite: SiteIsolation.CSS.GetSystemFonts.FrameTarget
+-- Running test case: SiteIsolation.CSS.GetSystemFonts.FrameTarget.Setup
+PASS: Should find a child frame target.
+PASS: Child frame target should support CSS.getSupportedSystemFontFamilyNames.
+
+-- Running test case: SiteIsolation.CSS.GetSystemFonts.FrameTarget.GetSupportedSystemFontFamilyNames
+PASS: Should have at least 5 font families.
+
