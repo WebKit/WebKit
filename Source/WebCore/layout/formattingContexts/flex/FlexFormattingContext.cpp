@@ -1021,20 +1021,39 @@ LayoutUnit FlexFormattingContext::computeMainSizeFromAspectRatioUsing(const Flex
     ASSERT(FlexFormattingUtils::flexItemHasAspectRatio(flexLayoutItem));
     auto flexItemCrossAxisBorderAndPadding = flexLayoutItem.crossAxisBorderAndPadding;
 
+    // A stretch() is the size of the margin box, so its margins come off rather than box-sizing applying.
+    auto stretchFunctionCrossSize = [&](std::optional<LayoutUnit> marginBoxCrossSize) -> std::optional<LayoutUnit> {
+        if (!marginBoxCrossSize)
+            return { };
+        return integrationUtils().adjustBorderBoxCrossSizeForBoxSizing(flexLayoutItem, crossSizeLength, *marginBoxCrossSize);
+    };
+
     // All paths return border-box cross size.
     auto crossSizeOptional = WTF::switchOn(crossSizeLength,
         [&](const SizeType::Fixed& fixedCrossSizeLength) -> std::optional<LayoutUnit> {
             auto value = LayoutUnit { fixedCrossSizeLength.resolveZoom(style->usedZoomForLength()) };
+            if (crossSizeLength.isStretchFunction())
+                return stretchFunctionCrossSize(value);
             if (style->boxSizing() == BoxSizing::ContentBox)
                 value += flexItemCrossAxisBorderAndPadding;
             return value;
         },
         [&](const SizeType::Percentage& percentageCrossSizeLength) -> std::optional<LayoutUnit> {
+            if (crossSizeLength.isStretchFunction()) {
+                return stretchFunctionCrossSize(flexLayoutItem.mainAxisIsInlineAxis
+                    ? integrationUtils().computePercentageLogicalHeightForFlexItem(flexLayoutItem, crossSizeLength)
+                    : std::optional { Style::evaluate<LayoutUnit>(percentageCrossSizeLength, m_constraints.crossAxisSizeForLengthResolution) });
+            }
             return flexLayoutItem.mainAxisIsInlineAxis
                 ? integrationUtils().computePercentageLogicalHeightForFlexItem(flexLayoutItem, SizeType { percentageCrossSizeLength })
                 : integrationUtils().adjustBorderBoxLogicalWidthForBoxSizing(flexLayoutItem, Style::evaluate<LayoutUnit>(percentageCrossSizeLength, m_constraints.crossAxisSizeForLengthResolution));
         },
         [&](const SizeType::Calc& calcCrossSizeLength) -> std::optional<LayoutUnit> {
+            if (crossSizeLength.isStretchFunction()) {
+                return stretchFunctionCrossSize(flexLayoutItem.mainAxisIsInlineAxis
+                    ? integrationUtils().computePercentageLogicalHeightForFlexItem(flexLayoutItem, crossSizeLength)
+                    : std::optional { Style::evaluate<LayoutUnit>(calcCrossSizeLength, m_constraints.crossAxisSizeForLengthResolution, style->usedZoomForLength()) });
+            }
             return flexLayoutItem.mainAxisIsInlineAxis
                 ? integrationUtils().computePercentageLogicalHeightForFlexItem(flexLayoutItem, SizeType { calcCrossSizeLength })
                 : integrationUtils().adjustBorderBoxLogicalWidthForBoxSizing(flexLayoutItem, Style::evaluate<LayoutUnit>(calcCrossSizeLength, m_constraints.crossAxisSizeForLengthResolution, style->usedZoomForLength()));

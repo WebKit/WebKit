@@ -433,7 +433,7 @@ LayoutUnit FlexFormattingUtils::innerCrossSizeForFlexItem(const RenderBox& flexI
         auto size = isHorizontal ? flexBox->style().height() : flexBox->style().width();
         auto innerCrossSize = LayoutUnit { };
         if (auto fixedSize = size.tryFixed())
-            innerCrossSize = flexBox->adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { fixedSize->resolveZoom(flexBox->style().usedZoomForLength()) });
+            innerCrossSize = flexBox->adjustContentBoxLogicalHeightForBoxSizing(size, LayoutUnit { fixedSize->resolveZoom(flexBox->style().usedZoomForLength()) }, flexBox->containingBlockLogicalWidthForBoxSizing(size));
         else if (size.isPercent())
             innerCrossSize = flexBox->availableLogicalHeightForPercentageComputation().value_or(0_lu);
         else if (canResolveFullyConstrainedLogicalHeight(flexBox) || hasDefiniteLogicalWidthForAspectRatioCrossSize(flexBox))
@@ -445,11 +445,11 @@ LayoutUnit FlexFormattingUtils::innerCrossSizeForFlexItem(const RenderBox& flexI
 
         auto maximumSize = isHorizontal ? flexBox->style().maxHeight() : flexBox->style().maxWidth();
         if (auto fixedMaximumSize = maximumSize.tryFixed())
-            innerCrossSize = std::min(innerCrossSize, flexBox->adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { fixedMaximumSize->resolveZoom(flexBox->style().usedZoomForLength()) }));
+            innerCrossSize = std::min(innerCrossSize, flexBox->adjustContentBoxLogicalHeightForBoxSizing(maximumSize, LayoutUnit { fixedMaximumSize->resolveZoom(flexBox->style().usedZoomForLength()) }, flexBox->containingBlockLogicalWidthForBoxSizing(maximumSize)));
 
         auto minimumSize = isHorizontal ? flexBox->style().minHeight() : flexBox->style().minWidth();
         if (auto fixedMinimumSize = minimumSize.tryFixed())
-            innerCrossSize = std::max(innerCrossSize, flexBox->adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { fixedMinimumSize->resolveZoom(flexBox->style().usedZoomForLength()) }));
+            innerCrossSize = std::max(innerCrossSize, flexBox->adjustContentBoxLogicalHeightForBoxSizing(minimumSize, LayoutUnit { fixedMinimumSize->resolveZoom(flexBox->style().usedZoomForLength()) }, flexBox->containingBlockLogicalWidthForBoxSizing(minimumSize)));
 
         return innerCrossSize;
     };

@@ -294,6 +294,19 @@ LayoutUnit FlexIntegrationUtils::adjustBorderBoxLogicalWidthForBoxSizing(const F
     return flexItem->adjustBorderBoxLogicalWidthForBoxSizing(computedLogicalWidth);
 }
 
+template<typename SizeType> LayoutUnit FlexIntegrationUtils::adjustBorderBoxCrossSizeForBoxSizing(const FlexLayoutItem& flexLayoutItem, const SizeType& crossSize, LayoutUnit computedCrossSize) const
+{
+    CheckedRef flexItem = flexLayoutItem.renderer;
+    auto containingBlockLogicalWidth = flexItem->containingBlockLogicalWidthForBoxSizing(crossSize);
+    if (flexLayoutItem.mainAxisIsInlineAxis)
+        return flexItem->adjustBorderBoxLogicalHeightForBoxSizing(crossSize, computedCrossSize, containingBlockLogicalWidth);
+    return flexItem->adjustBorderBoxLogicalWidthForBoxSizing(crossSize, computedCrossSize, containingBlockLogicalWidth);
+}
+
+template LayoutUnit FlexIntegrationUtils::adjustBorderBoxCrossSizeForBoxSizing<Style::PreferredSize>(const FlexLayoutItem&, const Style::PreferredSize&, LayoutUnit) const;
+template LayoutUnit FlexIntegrationUtils::adjustBorderBoxCrossSizeForBoxSizing<Style::MinimumSize>(const FlexLayoutItem&, const Style::MinimumSize&, LayoutUnit) const;
+template LayoutUnit FlexIntegrationUtils::adjustBorderBoxCrossSizeForBoxSizing<Style::MaximumSize>(const FlexLayoutItem&, const Style::MaximumSize&, LayoutUnit) const;
+
 void FlexIntegrationUtils::dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem)
 {
     // In quirks mode, the percentage height walk may register descendants on the

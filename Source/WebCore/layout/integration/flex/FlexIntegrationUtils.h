@@ -67,6 +67,7 @@ public:
     void setFlexItemOverridingBorderBoxLogicalHeight(const FlexLayoutItem&, LayoutUnit);
 
     LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(const FlexLayoutItem&, LayoutUnit computedLogicalWidth) const;
+    template<typename SizeType> LayoutUnit adjustBorderBoxCrossSizeForBoxSizing(const FlexLayoutItem&, const SizeType& crossSize, LayoutUnit computedCrossSize) const;
 
     bool flexItemHasPercentHeightDescendants(const RenderBox&) const;
     bool flexItemHasPercentHeightDescendants(const FlexLayoutItem&) const;
