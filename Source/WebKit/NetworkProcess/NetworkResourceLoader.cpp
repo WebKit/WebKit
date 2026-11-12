@@ -2024,11 +2024,6 @@ void NetworkResourceLoader::continueWillSendRedirectedRequestAfterLocalNetworkAc
             protect(m_cache)->storeRedirect(request, redirectResponse, redirectRequest, maxAgeCap);
     }
 
-    if (isMainResource() && shouldInterruptNavigationForCrossOriginEmbedderPolicy(redirectResponse)) {
-        this->didFailLoading(ResourceError { errorDomainWebKitInternal, 0, redirectRequest.url(), "Redirection was blocked by Cross-Origin-Embedder-Policy"_s, ResourceError::Type::AccessControl });
-        return completionHandler({ });
-    }
-
     if (auto error = doCrossOriginOpenerHandlingOfResponse(redirectResponse)) {
         didFailLoading(*error);
         return completionHandler({ });

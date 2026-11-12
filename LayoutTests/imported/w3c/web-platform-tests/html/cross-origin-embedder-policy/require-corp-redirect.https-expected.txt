@@ -1,0 +1,3 @@
+
+PASS A frame loads through a same-origin redirect without a policy to a document with "require-corp"
+
