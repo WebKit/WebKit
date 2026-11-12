@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<title>Tracking the repaint cost of an element filtered with a long chain of feComponentTransfer primitives</title>
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+    }
+    #filtered {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 800px;
+        height: 600px;
+        filter: url(#componentTransfer);
+        background-image: linear-gradient(to right, hsl(var(--hue) 90% 50%), hsla(calc(var(--hue) + 180) 60% 40% / 0.6)), linear-gradient(to bottom, white, black);
+        background-blend-mode: multiply;
+    }
+</style>
+</head>
+<body>
+<pre id="log"></pre>
+<svg width="0" height="0" style="position: absolute">
+    <filter id="componentTransfer" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"></filter>
+</svg>
+<div id="filtered"></div>
+<script>
+// Each primitive's input and output stay in software pixel buffers, so a long chain makes the
+// per-primitive lookup-table pass dominate over painting the source and compositing the result.
+const primitiveCount = 64;
+
+const transferFunctions = [
+    [["table", "0 0.2 0.9 1"], ["discrete", "0 0.25 0.5 0.75 1"], ["gamma", "1.1 0.6 0.02"], ["linear", "0.9 0.1"]],
+    [["gamma", "0.95 1.4 0.01"], ["linear", "1.1 -0.05"], ["table", "1 0.6 0.3 0"], ["discrete", "0.5 0.75 1"]],
+    [["discrete", "0.1 0.4 0.7 1"], ["gamma", "1 0.8 0"], ["linear", "0.8 0.15"], ["table", "0.3 1"]],
+    [["linear", "1.2 -0.1"], ["table", "0 0.6 0.4 1"], ["discrete", "0 0.33 0.66 1"], ["gamma", "1 1.2 0"]],
+];
+
+let filteredElement;
+let isDone = false;
+let startTime;
+let hue = 0;
+
+function createTransferFunction(channel, type, values)
+{
+    const transferFunction = document.createElementNS("http://www.w3.org/2000/svg", "feFunc" + channel);
+    transferFunction.setAttribute("type", type);
+    const numbers = values.split(" ");
+    if (type == "table" || type == "discrete")
+        transferFunction.setAttribute("tableValues", values);
+    else if (type == "linear") {
+        transferFunction.setAttribute("slope", numbers[0]);
+        transferFunction.setAttribute("intercept", numbers[1]);
+    } else {
+        transferFunction.setAttribute("amplitude", numbers[0]);
+        transferFunction.setAttribute("exponent", numbers[1]);
+        transferFunction.setAttribute("offset", numbers[2]);
+    }
+    return transferFunction;
+}
+
+function buildFilter()
+{
+    const filter = document.getElementById("componentTransfer");
+    for (let i = 0; i < primitiveCount; ++i) {
+        const primitive = document.createElementNS("http://www.w3.org/2000/svg", "feComponentTransfer");
+        const functions = transferFunctions[i % transferFunctions.length];
+        ["R", "G", "B", "A"].forEach((channel, index) => {
+            primitive.appendChild(createTransferFunction(channel, functions[index][0], functions[index][1]));
+        });
+        filter.appendChild(primitive);
+    }
+}
+
+function setupTest()
+{
+    buildFilter();
+    filteredElement = document.getElementById("filtered");
+    filteredElement.style.setProperty("--hue", 0);
+
+    PerfTestRunner.prepareToMeasureValuesAsync({ done: done, unit: "ms" });
+    requestAnimationFrame(runTest);
+}
+
+function done()
+{
+    isDone = true;
+    filteredElement.remove();
+}
+
+function runTest()
+{
+    if (startTime)
+        PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime);
+
+    if (isDone)
+        return;
+
+    startTime = PerfTestRunner.now();
+
+    // Change the filter input every frame so that the filter must be re-applied.
+    hue = (hue + 7) % 360;
+    filteredElement.style.setProperty("--hue", hue);
+
+    requestAnimationFrame(runTest);
+}
+
+onload = setupTest;
+</script>
+</body>
+</html>
