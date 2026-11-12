@@ -56,9 +56,6 @@ public:
     WPEQtView(QQuickItem* parent = nullptr);
     virtual ~WPEQtView();
 
-    void triggerUpdateScene() { QMetaObject::invokeMethod(this, "update", Qt::QueuedConnection); };
-    void triggerDidUpdateScene() { QMetaObject::invokeMethod(this, "didUpdateScene", Qt::QueuedConnection); };
-
     QUrl url() const;
     void setUrl(const QUrl&);
     int loadProgress() const;
@@ -111,7 +108,6 @@ protected:
 private Q_SLOTS:
     void configureWindow();
     void createWebView();
-    void didUpdateScene();
     void invalidateSceneGraph();
     void updateWpeToplevelState();
 
