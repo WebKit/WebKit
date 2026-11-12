@@ -1,0 +1,18 @@
+<script>
+onload = () => {
+    parent.postMessage(location.href, "*");
+};
+onhashchange = () => {
+    parent.postMessage(location.href, "*");
+};
+onmessage = (event) => {
+    if (event.data === "report")
+        parent.postMessage(location.href, "*");
+    else if (event.data === "go-back")
+        history.go(-1);
+    else if (event.data.startsWith("navigate-hash:"))
+        location.hash = event.data.substring("navigate-hash:".length);
+    else if (event.data.startsWith("pushstate:"))
+        history.pushState({}, "", event.data.substring("pushstate:".length));
+};
+</script>
