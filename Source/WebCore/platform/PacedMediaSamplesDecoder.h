@@ -52,6 +52,7 @@ public:
         MediaTime time;
         double rate { 0 }; // 0 when paused.
     };
+    static constexpr PlaybackPosition invalidPlaybackPosition { MediaTime { -1, 1, 0 }, 0 };
     // Called on the dispatcher given to create().
     using CurrentTimeProvider = Function<PlaybackPosition()>;
 

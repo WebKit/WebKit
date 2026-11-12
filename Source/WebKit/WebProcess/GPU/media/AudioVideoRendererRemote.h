@@ -37,11 +37,14 @@
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/MediaSampleConverter.h>
+#include <WebCore/PacedMediaSamplesDecoder.h>
 #include <WebCore/SharedTimebase.h>
 #include <WebCore/VideoPlaybackQualityMetrics.h>
+#include <wtf/CanBorrow.h>
 #include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
@@ -171,6 +174,7 @@ private:
     bool timeIsProgressing() const final;
     void notifyEffectiveRateChanged(Function<void(double)>&&) final;
     MediaTime currentTime() const final;
+    WebCore::PacedMediaSamplesDecoder::PlaybackPosition playbackPosition() const;
     Ref<WebCore::MediaTimePromise> notifyTimeReachedAndStall(const MediaTime&) final;
     void cancelTimeReachedAction() final;
     void performTaskAtTime(const MediaTime&, Function<void(const MediaTime&)>&&) final;
@@ -218,7 +222,9 @@ private:
 
     void setState(RemoteAudioVideoRendererState);
 
-    void ensureOnDispatcher(Function<void()>&&);
+    // Runs the function on the queue as long as the renderer is alive.
+    void ensureWeakOnDispatcher(Function<void(AudioVideoRendererRemote&)>&&);
+    static void ensureOnDispatcher(Function<void()>&&);
     void ensureOnDispatcherSync(NOESCAPE Function<void()>&&);
     void ensureOnDispatcherWithConnection(Function<void(AudioVideoRendererRemote&, IPC::Connection&)>&&);
     static WorkQueue& queueSingleton();
@@ -226,20 +232,80 @@ private:
 
     void updateCacheState(const RemoteAudioVideoRendererState&);
     void updateVideoPlaybackMetricsUpdateInterval(const Seconds&);
+    // Pending samples are those accepted from the caller that neither the GPU process nor the decoder has consumed yet.
     class ReadyForMoreDataState {
     public:
-        static constexpr size_t kMaxPendingSample = 20;
-        bool isReadyForMoreData() const { return m_pendingSamples < kMaxPendingSample && m_remoteReadyForMoreData; }
+        static constexpr size_t kMaxPendingSamples = 20;
+        bool isReadyForMoreData() const { return m_pendingSampleCount < kMaxPendingSamples && m_remoteReadyForMoreData && m_decoderReadyForMoreData; }
         void setRemoteReadyForMoreData(bool ready) { m_remoteReadyForMoreData = ready; }
-        void sampleEnqueued() { m_pendingSamples++; }
-        void sampleReceived() { m_pendingSamples--; }
-        size_t pendingSamples() const { return m_pendingSamples; }
+        void setDecoderReadyForMoreData(bool ready) { m_decoderReadyForMoreData = ready; }
+        void addPendingSample() { m_pendingSampleCount++; }
+        void removePendingSamples(size_t count = 1) { m_pendingSampleCount -= count; }
+        size_t pendingSampleCount() const { return m_pendingSampleCount; }
     private:
-        size_t m_pendingSamples { 0 };
+        size_t m_pendingSampleCount { 0 };
         bool m_remoteReadyForMoreData { true };
+        bool m_decoderReadyForMoreData { true };
     };
     ReadyForMoreDataState& readyForMoreDataState(TrackIdentifier);
     void resolveRequestMediaDataWhenReadyIfNeeded(TrackIdentifier);
+
+    struct PendingSample {
+        WebCore::MediaSamplesBlock sample;
+        std::optional<MediaTime> expectedMinimum;
+    };
+    // A track's state for one format. A format change or a flush replaces it.
+    struct TrackState : CanBorrow {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(TrackState);
+        enum class Mode : uint8_t { Compressed, Creating, Decoding, Draining, Failed };
+        TrackState(Ref<const WebCore::TrackInfo>&& info, bool isProtected, uint64_t generation, Mode mode, RefPtr<WebCore::PacedMediaSamplesDecoder>&& decoder = nullptr)
+            : info(WTF::move(info))
+            , isProtected(isProtected)
+            , generation(generation)
+            , mode(mode)
+            , decoder(WTF::move(decoder))
+        {
+        }
+        bool matches(const WebCore::TrackInfo& otherInfo, bool otherIsProtected) const { return info.ptr() == &otherInfo && isProtected == otherIsProtected; }
+
+        const Ref<const WebCore::TrackInfo> info;
+        const bool isProtected;
+        // Decoder callbacks are ignored unless their generation is the current state's.
+        const uint64_t generation;
+        Mode mode;
+        RefPtr<WebCore::PacedMediaSamplesDecoder> decoder;
+        // Samples received while the decoder is created or drained.
+        Vector<PendingSample> waiting;
+        // The decoder whose requestMediaDataWhenReady() promise is outstanding.
+        ThreadSafeWeakPtr<WebCore::PacedMediaSamplesDecoder> decoderAwaitingReadiness;
+    };
+    TrackState* trackStateIfExists(TrackIdentifier) LIFETIME_BOUND;
+    TrackState* trackStateIfCurrent(TrackIdentifier, uint64_t generation) LIFETIME_BOUND;
+    TrackState& setTrackState(TrackIdentifier, UniqueRef<TrackState>&&) LIFETIME_BOUND;
+    TrackState& trackStateForFormat(TrackIdentifier, Ref<const WebCore::TrackInfo>&&, bool isProtected) LIFETIME_BOUND;
+    TrackState& createTrackState(TrackIdentifier, Ref<const WebCore::TrackInfo>&&, bool isProtected) LIFETIME_BOUND;
+    TrackState& replaceDecodingTrackState(TrackIdentifier, Ref<const WebCore::TrackInfo>&&, bool isProtected, uint64_t generation) LIFETIME_BOUND;
+    bool shouldDecodeInContentProcess(const WebCore::TrackInfo&, bool isProtected) const;
+    static void releaseDecoder(TrackState&);
+    RefPtr<GPUProcessConnection> activeConnection();
+    void processSample(TrackIdentifier, Ref<WebCore::MediaSample>&&, std::optional<MediaTime>);
+    void dispatchSample(TrackIdentifier, PendingSample&&);
+    void drainDecoder(TrackIdentifier, TrackState&, bool isProtected);
+    void didCreateDecoder(TrackIdentifier, Ref<WebCore::PacedMediaSamplesDecoder>&&);
+    void didDrainDecoder(TrackIdentifier, Vector<WebCore::MediaSamplesBlock>&&);
+    void resumeWaitingSamples(TrackIdentifier);
+    void dropWaitingSamples(TrackIdentifier);
+    void decoderFailed(TrackIdentifier, WebCore::PlatformMediaError);
+    void failTrack(TrackIdentifier, Ref<const WebCore::TrackInfo>&&, bool isProtected, WebCore::PlatformMediaError, size_t droppedSamples);
+    void removePendingSamples(TrackIdentifier, size_t count = 1);
+    void sendSample(TrackIdentifier, WebCore::MediaSamplesBlock&&, std::optional<MediaTime>);
+    void sendDecodedSamples(TrackIdentifier, Vector<WebCore::MediaSamplesBlock>&&);
+    void willFlushTrack(TrackIdentifier);
+    void sendFlushTrack(TrackIdentifier);
+    void releaseTrackState(TrackIdentifier);
+    void releaseAllDecoders();
+    void notifyDecodersOfTimeChange();
+    void updateDecoderReadiness(TrackIdentifier);
 
     void cancelPendingSeek();
 
@@ -283,6 +349,11 @@ private:
     HashMap<TrackIdentifier, std::unique_ptr<RequestPromise::AutoRejectProducer>> m_requestMediaDataWhenReadyDataPromises WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     HashMap<TrackIdentifier, Function<void(TrackIdentifier, const MediaTime&)>> m_trackNeedsReenqueuingCallbacks WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     HashMap<TrackIdentifier, WebCore::MediaSampleConverter> m_mediaSampleConverters WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    HashMap<TrackIdentifier, UniqueRef<TrackState>> m_trackStates WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    uint64_t m_nextTrackStateGeneration WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { 0 };
+    // The format last sent to the GPU process for each track.
+    HashMap<TrackIdentifier, Ref<const WebCore::TrackInfo>> m_lastSentInfos WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    const bool m_audioDecodingInContentProcess;
 
     WebCore::HostingContext m_layerHostingContext WTF_GUARDED_BY_LOCK(m_lock);
     WebCore::FloatSize m_naturalSize WTF_GUARDED_BY_LOCK(m_lock);

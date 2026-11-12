@@ -647,6 +647,15 @@ AudioControlsScaleWithPageZoom:
     "PLATFORM(IOS_FAMILY)": false
     default: true
 
+AudioDecodingInContentProcessEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "Audio decoding in content process"
+  humanReadableDescription: "Decode audio in software in the content process and send the decoded samples to the GPU process"
+  defaultValue: false
+  sharedPreferenceForWebProcess: true
+
 AudioDescriptionsEnabled:
   type: bool
   status: stable
