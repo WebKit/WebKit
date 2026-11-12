@@ -21,15 +21,17 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_IPC_TESTING_API
-
 private import TestWebKitAPILibrary
 import Testing
 import WebKit
+private import WebKit_Private.WKFrameInfoPrivate
+private import WebKit_Private.WKWebViewPrivate
+private import WebKit_Private._WKFrameTreeNode
 
 import struct Foundation.URL
 import struct Swift.String
 
+#if ENABLE_IPC_TESTING_API
 private let findSecretsFunction = """
     function findSecrets(buffer, secrets) {
         const bytes = new Uint8Array(buffer);
@@ -41,9 +43,98 @@ private let findSecretsFunction = """
         return secrets.filter(secret => texts.some(text => text.includes(secret)));
     }
     """
+#endif
 
 @MainActor
 struct SiteIsolationBackForwardTests {
+    enum GoingBack: String, CaseIterable, Sendable, CustomTestStringConvertible {
+        case pastSameSiteDocument
+        case throughSameSiteDocumentControl
+
+        var testDescription: String { rawValue }
+    }
+
+    @Test(arguments: GoingBack.allCases)
+    func goingBackToDocumentBeforeSameSiteNavigationRestoresChildFrame(goingBack: GoingBack) async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/first") {
+                "<iframe src='https://webkit.org/frame'></iframe>"
+            }
+
+            Route("/frame") {
+                "frame"
+            }
+
+            Route("/second") {
+                "second"
+            }
+
+            Route("/next") {
+                "next"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
+            configuration.setFeature("MultiProcessBackForwardCacheEnabled", enabled: true)
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: configuration)
+
+            let childFrame = try #require(await Self.loadAndMark("https://example.com/first", in: webView, navigationDelegate))
+            try await Self.loadAndMark("https://example.com/second", in: webView, navigationDelegate)
+            try await Self.loadAndMark("https://w3.org/next", in: webView, navigationDelegate)
+
+            switch goingBack {
+            case .pastSameSiteDocument:
+                webView.go(to: try #require(webView.backForwardList.item(at: -2)))
+                try await navigationDelegate.waitForDidFinishNavigation()
+
+            case .throughSameSiteDocumentControl:
+                webView.goBack()
+                try await navigationDelegate.waitForDidFinishNavigation()
+                webView.goBack()
+                try await navigationDelegate.waitForDidFinishNavigation()
+            }
+
+            #expect(webView.url?.absoluteString == "https://example.com/first")
+            let mainFrameMarker = try await Self.windowMarker(in: webView)
+            #expect(mainFrameMarker == "cached")
+
+            let mainFrame: _WKFrameTreeNode? = await webView._frames()
+            let restoredChildFrames = (mainFrame?.childFrames ?? []).map { node -> WKFrameInfo in node.info }
+            try #require(restoredChildFrames.map { $0.request.url?.absoluteString } == ["https://webkit.org/frame"])
+            let restoredChildFrame = restoredChildFrames[0]
+            let childFrameMarker = try await Self.windowMarker(in: webView, frame: restoredChildFrame)
+            #expect(childFrameMarker == "cached")
+            #expect(restoredChildFrame._processIdentifier == childFrame._processIdentifier)
+
+            let cookieAfterFirstPartyCheck = try await webView.callJavaScript(returning: String.self, in: restoredChildFrame) {
+                "document.cookie = 'restored=1'; return document.cookie"
+            }
+            #expect(cookieAfterFirstPartyCheck == "restored=1")
+        }
+    }
+
+    @discardableResult
+    private static func loadAndMark(
+        _ url: String,
+        in webView: WKWebView,
+        _ navigationDelegate: TestNavigationDelegate
+    ) async throws -> WKFrameInfo? {
+        webView.load(URLRequest(url: try #require(URL(string: url))))
+        try await navigationDelegate.waitForDidFinishNavigation()
+        try await webView.callJavaScript { "window.marker = 'cached'" }
+        let childFrame = await webView.firstChildFrame
+        if let childFrame {
+            try await webView.callJavaScript(in: childFrame) { "window.marker = 'cached'" }
+        }
+        return childFrame
+    }
+
+    private static func windowMarker(in webView: WKWebView, frame: WKFrameInfo? = nil) async throws -> String {
+        try await webView.callJavaScript(returning: String.self, in: frame) { "return window.marker ?? 'reloaded'" }
+    }
+
+    #if ENABLE_IPC_TESTING_API
     enum BackForwardMessage: CaseIterable {
         case allItems
         case itemAtIndex
@@ -237,6 +328,5 @@ struct SiteIsolationBackForwardTests {
             """
         }
     }
+    #endif // ENABLE_IPC_TESTING_API
 }
-
-#endif // ENABLE_IPC_TESTING_API

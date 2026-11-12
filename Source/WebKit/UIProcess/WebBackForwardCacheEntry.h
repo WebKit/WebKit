@@ -29,6 +29,7 @@
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -37,6 +38,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/SwiftBridging.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -69,6 +71,9 @@ public:
     bool hasCachedChildren() const { return !m_cachedChildren.isEmpty(); }
     void setCachedChildren(Vector<Ref<WebFrameProxy>>&&);
 
+    const std::optional<std::pair<URL, WebCore::SecurityOriginData>>& mainFrameURLAndOrigin() const { return m_mainFrameURLAndOrigin; }
+    void setMainFrameURLAndOrigin(URL&& url, WebCore::SecurityOriginData&& origin) { m_mainFrameURLAndOrigin = { { WTF::move(url), WTF::move(origin) } }; }
+
     bool isCachedInPlace() const { return !!m_mainFrameProcess; }
     void setMainFrameProcess(FrameProcess&);
 
@@ -92,6 +97,7 @@ private:
     RefPtr<SuspendedPageProxy> m_suspendedPage;
     RefPtr<FrameProcess> m_mainFrameProcess;
     Vector<Ref<WebFrameProxy>> m_cachedChildren;
+    std::optional<std::pair<URL, WebCore::SecurityOriginData>> m_mainFrameURLAndOrigin;
     RunLoop::Timer m_expirationTimer;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebBackForwardCacheEntry, derefWebBackForwardCacheEntry);
 
