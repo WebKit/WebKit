@@ -35,7 +35,6 @@
     vertical-align: middle;
     fill: hsla(0, 0%, var(--foreground-lightness), 0.5);
     stroke: none;
-    display: none;
 }
 
 .tree-outline > .item.thread .status-button.resume:active {
@@ -44,11 +43,6 @@
 
 body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within > .item.thread.selected .status-button.resume {
     fill: var(--selected-foreground-color);
-}
-
-.tree-outline > .item.thread.selected .status-button.resume,
-.tree-outline > .item.thread:hover .status-button.resume {
-    display: inline-block;
 }
 
 @media (prefers-color-scheme: dark) {
