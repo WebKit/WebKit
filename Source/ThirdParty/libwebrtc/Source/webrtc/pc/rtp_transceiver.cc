@@ -485,6 +485,14 @@ void RtpTransceiver::CreateChannel(
   if (!signaling_thread_safety_) {
     // This code path is hit during rollback.
     signaling_thread_safety_ = PendingTaskSafetyFlag::Create();
+    network_thread_safety_ = PendingTaskSafetyFlag::CreateAttachedToTaskQueue(
+        /*alive=*/true, context()->network_thread());
+    context()->network_thread()->PostTask(
+        SafeTask(network_thread_safety_, [this, receptive = receptive_]() {
+          RTC_DCHECK_RUN_ON(context()->network_thread());
+          receptive_n_ = receptive;
+          packet_notified_after_receptive_ = false;
+        }));
   } else {
     // Newly constructed.
     RTC_DCHECK(!signaling_thread_safety_->alive());
