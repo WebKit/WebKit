@@ -1,0 +1,13 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "delay-tail-after-collection"
+PASS Audit report
+PASS > [delay-tail-after-collection] DelayNode plays its tail after the source node is collected
+PASS   AudioBufferSourceNode wrapper is equal to undefined.
+PASS   DelayNode wrapper is equal to undefined.
+PASS   output[0:delay) contains only the constant 0.
+PASS   output[delay:delay+source) contains only the constant 1.
+PASS   output[delay+source:) contains only the constant 0.
+PASS < [delay-tail-after-collection] All assertions passed. (total 5 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
+
