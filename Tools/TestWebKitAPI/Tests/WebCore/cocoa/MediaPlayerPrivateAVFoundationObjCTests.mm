@@ -215,4 +215,37 @@ TEST_F(MediaPlayerPrivateAVFoundationObjCTest, IsAudibleWhilePlaying)
     EXPECT_EQ(playerPrivate->isAudible(), true);
 }
 
+TEST_F(MediaPlayerPrivateAVFoundationObjCTest, IsAudibleIgnoresAudioTrackLossWhileLoading)
+{
+    mediaPlayer->setPreload(WebCore::MediaPlayer::Preload::MetaData);
+    mediaPlayer->load(videoWithAudioURL(), { });
+    waitForReadyStateGreaterThan(WebCore::MediaPlayerReadyState::HaveNothing);
+
+    RefPtr playerPrivate = this->playerPrivate();
+    ASSERT_NE(playerPrivate.get(), nullptr);
+    EXPECT_LT(mediaPlayer->readyState(), WebCore::MediaPlayerReadyState::HaveFutureData);
+
+    mediaPlayer->setMuted(false);
+    mediaPlayer->setVolume(1);
+    EXPECT_EQ(playerPrivate->isAudible(), true);
+
+    playerPrivate->setHasAudioForTesting(false);
+    EXPECT_EQ(playerPrivate->isAudible(), true);
+
+    playerPrivate->setHasAudioForTesting(true);
+    EXPECT_EQ(playerPrivate->isAudible(), true);
+
+    mediaPlayer->setMuted(true);
+    EXPECT_EQ(playerPrivate->isAudible(), false);
+
+    mediaPlayer->setMuted(false);
+    EXPECT_EQ(playerPrivate->isAudible(), true);
+
+    mediaPlayer->prepareToPlay();
+    waitForReadyStateGreaterThan(WebCore::MediaPlayerReadyState::HaveCurrentData);
+
+    playerPrivate->setHasAudioForTesting(false);
+    EXPECT_EQ(playerPrivate->isAudible(), false);
+}
+
 }

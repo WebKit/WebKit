@@ -399,6 +399,8 @@ void MediaPlayerPrivateAVFoundation::setReadyState(MediaPlayer::ReadyState state
     if (player)
         player->readyStateChanged();
 
+    updateIsAudible();
+
     if (oldState >= MediaPlayer::ReadyState::HaveMetadata)
         return;
 

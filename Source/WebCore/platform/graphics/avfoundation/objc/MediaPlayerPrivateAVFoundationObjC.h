@@ -136,6 +136,7 @@ public:
     Ref<WebCoreAVFResourceLoader> ensureAVFResourceLoader(AVAssetResourceLoadingRequest *);
 
     bool isAudible() const { return m_isAudible; }
+    void setHasAudioForTesting(bool);
 
 private:
 #if ENABLE(ENCRYPTED_MEDIA)

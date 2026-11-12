@@ -2334,6 +2334,18 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity(ShouldAnimate s
 
 void MediaPlayerPrivateAVFoundationObjC::updateIsAudible()
 {
+    // HLS can recreate its tracks while loading, briefly reporting that it
+    // does not have audio. Suppressing audio rendering (or disconnecting from
+    // system audio) in response perturbs AVFoundation's timebase, causing it
+    // to seek into a still-unbuffered range. This leads to AVFoundation
+    // restarting the loading process, recreating its tracks again and causing
+    // a cycle. Break this cycle by waiting for HaveFutureData before
+    // suppressing or disconnecting audio. This ensures that any timebase
+    // perturbation in response to audio suppression occurs within a buffered
+    // range.
+    if (!hasAudio() && readyState() < MediaPlayer::ReadyState::HaveFutureData)
+        return;
+
     bool isAudible = hasAudio() && !m_muted && m_volume;
     bool isAudibleChanged = m_isAudible != isAudible;
 
@@ -2367,6 +2379,11 @@ void MediaPlayerPrivateAVFoundationObjC::updateIsAudible()
     if (isAudibleChanged)
         [m_avPlayer setDisconnectedFromSystemAudio:!m_isAudible completionHandler:nil];
 #endif
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setHasAudioForTesting(bool hasAudio)
+{
+    setHasAudio(hasAudio);
 }
 
 void MediaPlayerPrivateAVFoundationObjC::metadataLoaded()
