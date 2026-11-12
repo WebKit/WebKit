@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "Logging.h"
 #include <wtf/FileSystem.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/posix/POSIXExtras.h>
@@ -53,6 +54,8 @@ void* WebKitSwiftLibrary(bool isOptional)
 
         if (!isOptional)
             RELEASE_ASSERT_WITH_MESSAGE(library, "%s", dlerror());
+        else
+            RELEASE_LOG_ERROR(Process, "Failed to load libWebKitSwift.dylib: %s", dlerror());
         return library;
     }();
     return library;
