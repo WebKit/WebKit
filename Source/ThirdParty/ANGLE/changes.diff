@@ -1109,7 +1109,7 @@ index 41f3fd99e9796b453bc4d76f3fc62a041ea88cf9..4c53482ea7b25f5be810f25ec01362d7
  gles_requestable_extensions = [
 diff --git a/src/common/MemoryTagging.h b/src/common/MemoryTagging.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..87637fadc067fc7eb2443e61f49c6248ded08687
+index 0000000000000000000000000000000000000000..4e209d53ee02d926108d3f2ee7102d286c55677c
 --- /dev/null
 +++ b/src/common/MemoryTagging.h
 @@ -0,0 +1,160 @@
@@ -1139,7 +1139,7 @@ index 0000000000000000000000000000000000000000..87637fadc067fc7eb2443e61f49c6248
 +#    if defined(__arm64e__)
 +#        if __has_include(<CoreFoundation/CFPriv.h>) // Matches USE_APPLE_INTERNAL_SDK in WTF.
 +#            include <AppleFeatures/AppleFeatures.h>
-+#            if defined(APPLE_FEATURE_MTE) && APPLE_FEATURE_MTE
++#            if defined(APPLE_FEATURE_MTE) && APPLE_FEATURE_MTE && !defined(ANGLE_WITH_SANITIZER)
 +#                define ANGLE_ENABLE_MEMORY_TAGGING
 +#            endif
 +#        endif
