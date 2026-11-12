@@ -73,7 +73,6 @@ enum class GridAvoidanceReason : uint8_t {
     GridItemHasUnsupportedMaxWidth,
     GridItemHasUnsupportedMaxHeight,
     GridItemHasUnsupportedMargin,
-    GridItemHasBorderBoxSizing,
     GridItemHasUnsupportedWritingMode,
     GridItemHasRTLDirection,
     GridItemHasAspectRatio,
@@ -456,9 +455,6 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         if (gridItemHasUnsupportedMargins())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedMargin, reasons, reasonCollectionMode);
 
-        if (gridItemStyle->boxSizing() == BoxSizing::BorderBox)
-            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasBorderBoxSizing, reasons, reasonCollectionMode);
-
         auto& columnStart = gridItemStyle->gridItemColumnStart();
         auto columnPositioningAvoidanceReason = WTF::switchOn(columnStart,
             [&](const CSS::Keyword::Auto&) -> std::optional<GridAvoidanceReason> {
@@ -687,9 +683,6 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridItemHasUnsupportedMargin:
         stream << "grid item has unsupported margin";
-        break;
-    case GridAvoidanceReason::GridItemHasBorderBoxSizing:
-        stream << "grid item has border-box box-sizing";
         break;
     case GridAvoidanceReason::GridItemHasUnsupportedWritingMode:
         stream << "grid item has unsupported writing mode";
