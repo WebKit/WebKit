@@ -720,30 +720,26 @@ static URL urlForElement(const Element& element)
 
 static void collectMediaAndLinkURLsRecursive(const Element& element, HashSet<URL>& urls)
 {
-    auto addURLForElement = [&urls](const Element& element) {
+    auto collectForElement = [&urls](const Element& element) {
         if (auto url = urlForElement(element); !url.isEmpty() && !url.protocolIsData() && !url.protocolIsBlob())
             urls.add(WTF::move(url));
-    };
 
-    addURLForElement(element);
-
-    for (Ref descendant : descendantsOfType<Element>(element)) {
-        addURLForElement(descendant);
-
-        RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(descendant.ptr());
+        RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(element);
         if (!frameOwner)
-            continue;
+            return;
 
         RefPtr contentDocument = frameOwner->contentDocument();
         if (!contentDocument)
-            continue;
+            return;
 
-        RefPtr documentElement = contentDocument->documentElement();
-        if (!documentElement)
-            continue;
+        if (RefPtr documentElement = contentDocument->documentElement())
+            collectMediaAndLinkURLsRecursive(*documentElement, urls);
+    };
 
-        collectMediaAndLinkURLsRecursive(*documentElement, urls);
-    }
+    collectForElement(element);
+
+    for (Ref descendant : descendantsOfType<Element>(element))
+        collectForElement(descendant);
 }
 
 static HashSet<URL> collectMediaAndLinkURLs(const Element& element)
@@ -1219,6 +1215,7 @@ static TargetedFrameContent targetedFrameContent(Document& document)
     return {
         .hasAudibleMedia = documentElement && hasAudibleMedia(*documentElement),
         .largestReplacedContentSizes = TextExtraction::extractLargestReplacedContentSizes(document),
+        .mediaAndLinkURLs = documentElement ? collectMediaAndLinkURLs(*documentElement) : HashSet<URL> { },
     };
 }
 

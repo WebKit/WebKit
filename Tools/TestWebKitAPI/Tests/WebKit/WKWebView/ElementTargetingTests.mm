@@ -617,6 +617,20 @@ TEST(ElementTargeting, TargetedElementWithInvalidURLShouldNotCrash)
     EXPECT_EQ([[targetFromHitTest mediaAndLinkURLs] count], 0U);
 }
 
+TEST(ElementTargeting, TargetedIframeIncludesMediaAndLinkURLsFromContentDocument)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<p>main frame text</p><iframe id='frame' srcdoc=\"<a href='https://webkit.org/destination'>link</a><img src='400x400-green.png'>\"></iframe>"];
+
+    RetainPtr targets = [webView targetedElementInfoWithSelectors:@[ [NSSet setWithObject:@"#frame"] ]];
+    EXPECT_EQ(1U, [targets count]);
+    RetainPtr target = [targets firstObject];
+    EXPECT_TRUE([[target mediaAndLinkURLs] containsObject:[NSURL URLWithString:@"https://webkit.org/destination"]]);
+
+    RetainPtr imageURL = [NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"];
+    EXPECT_TRUE([[target mediaAndLinkURLs] containsObject:imageURL.get()]);
+}
+
 TEST(ElementTargeting, AdjustVisibilityAfterRecreatingElement)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);

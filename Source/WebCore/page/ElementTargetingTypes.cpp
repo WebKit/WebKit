@@ -92,6 +92,7 @@ std::optional<TargetedElementSelectors> deserializeTargetedElementSelectors(std:
 void mergeRemoteFrameContent(TargetedElementInfo& info, const TargetedFrameContent& content)
 {
     info.hasAudibleMedia |= content.hasAudibleMedia;
+    info.mediaAndLinkURLs.addAll(content.mediaAndLinkURLs);
 
     if (!info.hasLargeReplacedDescendant) {
         info.hasLargeReplacedDescendant = std::ranges::any_of(content.largestReplacedContentSizes, [&](auto& size) {

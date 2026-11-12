@@ -528,6 +528,7 @@ header: <WebCore/ElementTargetingTypes.h>
 [CustomHeader] struct WebCore::TargetedFrameContent {
     bool hasAudibleMedia
     Vector<WebCore::IntSize> largestReplacedContentSizes
+    HashSet<URL> mediaAndLinkURLs
 };
 
 header: <WebCore/RenderStyleConstants.h>
