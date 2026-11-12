@@ -9037,11 +9037,6 @@ webkit.org/b/319784 editing/selection/ios/bidi-visually-contiguous-selection-mul
 
 webkit.org/b/256299 imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-get.https.html [ Pass Failure ]
 
-webkit.org/b/318157 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.sharedworker.html [ Pass Failure ] # rdar://178158917
-webkit.org/b/318157 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.worker.html [ Pass Failure ] # rdar://178158917
-webkit.org/b/318157 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.any.serviceworker.html [ Pass Failure ] # rdar://178158917
-webkit.org/b/318157 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.any.sharedworker.html [ Pass Failure ] # rdar://178158917
-
 webkit.org/b/318375 imported/w3c/web-platform-tests/css/css-anchor-position/scroll-to-anchored-fixed-001.html [ Pass ImageOnlyFailure ]
 
 # rdar://179251021
