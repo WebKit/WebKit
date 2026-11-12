@@ -987,7 +987,7 @@
         {
             "name": "didFireEvent",
             "description": "Called when an event is fired on a node.",
-            "targetTypes": ["frame", "page"],
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId" },
                 { "name": "eventName", "type": "string" },
@@ -999,7 +999,7 @@
             "name": "powerEfficientPlaybackStateChanged",
             "description": "Called when an element enters/exits a power efficient playback state.",
             "condition": "defined(ENABLE_VIDEO) && ENABLE_VIDEO",
-            "targetTypes": ["frame", "page"],
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId" },
                 { "name": "timestamp", "$ref": "Network.Timestamp" },

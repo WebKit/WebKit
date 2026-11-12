@@ -26,7 +26,6 @@
 #pragma once
 
 #include "EventTarget.h"
-#include "InspectorMediaEventTracker.h"
 #include "InspectorOverlay.h"
 #include "InspectorWebAgentBase.h"
 #include "Timer.h"
@@ -46,7 +45,6 @@ class CharacterData;
 class DOMEditor;
 class Document;
 class Element;
-class Event;
 class EventListener;
 class EventTarget;
 class HTMLFrameOwnerElement;
@@ -62,11 +60,7 @@ class ShadowRoot;
 enum class PlatformEventModifier : uint8_t;
 
 // FrameDOMAgent is the per-frame DOM agent for Site Isolation.
-class FrameDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler
-#if ENABLE(VIDEO)
-    , public InspectorMediaEventTracker::Client
-#endif
-    , public CanMakeCheckedPtr<FrameDOMAgent> {
+class FrameDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler, public CanMakeCheckedPtr<FrameDOMAgent> {
     WTF_MAKE_NONCOPYABLE(FrameDOMAgent);
     WTF_MAKE_TZONE_ALLOCATED(FrameDOMAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameDOMAgent);
@@ -147,8 +141,6 @@ public:
     Inspector::CommandResult<Ref<Inspector::Protocol::DOM::MediaStats>> getMediaStats(int nodeId) override;
 
     // InspectorInstrumentation hooks
-    void addEventListenersToNode(Node&);
-    void eventDidResetAfterDispatch(const Event&);
     void didInsertDOMNode(Node&);
     void didRemoveDOMNode(Node&);
     void frameOwnerContentFrameChanged(HTMLFrameOwnerElement&);
@@ -184,15 +176,6 @@ public:
     bool ownsElementSelection() const;
 
 private:
-#if ENABLE(VIDEO)
-    // InspectorMediaEventTracker::Client
-    Inspector::Protocol::DOM::NodeId pushNodePathForMediaEvent(Node&) final;
-    void mediaEventDidFire(Inspector::Protocol::DOM::NodeId, const String& eventName, RefPtr<JSON::Object>&& data) final;
-    void powerEfficientPlaybackStateDidChange(Inspector::Protocol::DOM::NodeId, bool isPowerEfficient) final;
-
-    bool pageDOMAgentReportsMediaEvents(Node&) const;
-#endif
-
     Inspector::Protocol::DOM::NodeId bind(Node&);
     void unbind(Node&);
     void discardBindings();
@@ -301,10 +284,6 @@ private:
 
     std::unique_ptr<InspectorHistory> m_history;
     std::unique_ptr<DOMEditor> m_domEditor;
-
-#if ENABLE(VIDEO)
-    InspectorMediaEventTracker m_mediaEventTracker;
-#endif
 
     bool m_suppressAttributeModifiedEvent { false };
     bool m_documentRequested { false };

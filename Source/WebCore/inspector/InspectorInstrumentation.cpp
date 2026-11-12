@@ -180,10 +180,6 @@ void InspectorInstrumentation::addEventListenersToNodeImpl(InstrumentingAgents& 
 {
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->addEventListenersToNode(node);
-    if (RefPtr frame = node.document().frame()) {
-        if (CheckedPtr frameDOMAgent = frame->inspectorController().instrumentingAgents().persistentFrameDOMAgent())
-            frameDOMAgent->addEventListenersToNode(node);
-    }
 }
 
 void InspectorInstrumentation::willInsertDOMNodeImpl(InstrumentingAgents& instrumentingAgents, Node& parent)
@@ -743,8 +739,6 @@ void InspectorInstrumentation::eventDidResetAfterDispatchImpl(InstrumentingAgent
 {
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->eventDidResetAfterDispatch(event);
-    if (CheckedPtr frameDOMAgent = instrumentingAgents.persistentFrameDOMAgent())
-        frameDOMAgent->eventDidResetAfterDispatch(event);
 }
 
 void InspectorInstrumentation::willEvaluateScriptImpl(InstrumentingAgents& instrumentingAgents, const String& url, int lineNumber, int columnNumber)
