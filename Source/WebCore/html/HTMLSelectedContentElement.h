@@ -49,7 +49,7 @@ private:
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void postConnectionSteps() final;
     void removingSteps(RemovalType, ContainerNode&) final;
-    void movingSteps(MovingType, ContainerNode&) final;
+    void movingSteps(MovingType, ContainerNode&, Node&) final;
 
     RefPtr<HTMLSelectElement> recalculateDisabledness();
 

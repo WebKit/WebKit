@@ -357,7 +357,7 @@ void ValidatedFormListedElement::insertionSteps(Node::InsertionType insertionTyp
     FormListedElement::elementInsertedIntoAncestor(protect(asHTMLElement()), insertionType);
 
     if (!insertionType.connectedToDocument)
-        resetFormOwner();
+        resetFormOwner(FallbackToCurrentForm::Yes);
     // Need to wait for postConnectionSteps to reset form when this element is inserted into a document
     // because we rely on TreeScope::getElementById to return the right element.
 }
@@ -476,7 +476,7 @@ void ValidatedFormListedElement::updateWillValidateAndValidity()
 
 void ValidatedFormListedElement::postConnectionSteps()
 {
-    resetFormOwner();
+    resetFormOwner(FallbackToCurrentForm::Yes);
 }
 
 void ValidatedFormListedElement::setCustomValidity(const String& error)

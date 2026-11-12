@@ -477,6 +477,7 @@ static ALWAYS_INLINE void executeNodeInsertionWithScriptAssertion(ContainerNode&
     ASSERT(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(containerNode));
     for (auto& target : postInsertionNotificationTargets)
         target->postConnectionSteps();
+    // runPostConnectionSteps(postInsertionNotificationTargets);
 
     if (source == ContainerNode::ChildChange::Source::API) {
         for (auto& child : children)
@@ -1505,19 +1506,19 @@ void ContainerNode::replaceChildrenWithoutValidityCheck(NodeVector&& newChildren
     dispatchSubtreeModifiedEvent();
 }
 
-static void runMovingStepsForShadowIncludingInclusiveDescendants(Node& root, Node& movedNode, ContainerNode& oldParent, bool newParentIsConnected, Node::MovingType movingType)
+static void runMovingStepsForShadowIncludingInclusiveDescendants(Node& root, ContainerNode& oldParent, Node& subtreeRoot, bool newParentIsConnected, Node::MovingType movingType)
 {
     for (RefPtr inclusiveDescendant = &root; inclusiveDescendant; inclusiveDescendant = NodeTraversal::next(*inclusiveDescendant, &root)) {
-        movingType.isSubtreeRoot = inclusiveDescendant == &movedNode;
-        inclusiveDescendant->movingSteps(movingType, oldParent);
+        movingType.isSubtreeRoot = inclusiveDescendant == &subtreeRoot;
 
         if (newParentIsConnected) {
             if (RefPtr element = dynamicDowncast<Element>(*inclusiveDescendant); element && element->isDefinedCustomElement())
                 CustomElementReactionQueue::enqueueConnectedMoveCallbackIfNeeded(*element);
         }
+        inclusiveDescendant->movingSteps(movingType, oldParent, subtreeRoot);
 
         if (RefPtr shadowRoot = inclusiveDescendant->shadowRoot())
-            runMovingStepsForShadowIncludingInclusiveDescendants(*shadowRoot, movedNode, oldParent, newParentIsConnected, { });
+            runMovingStepsForShadowIncludingInclusiveDescendants(*shadowRoot, oldParent, subtreeRoot, newParentIsConnected, { });
     }
 }
 
@@ -1631,7 +1632,7 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
 
     auto newParentIsConnected = isConnected();
 
-    runMovingStepsForShadowIncludingInclusiveDescendants(node, node, *oldParent, newParentIsConnected, { .didRemoveFromOldTreeScope = oldParent->isInTreeScope(), .didInsertIntoNewTreeScope = isInTreeScope() });
+    runMovingStepsForShadowIncludingInclusiveDescendants(node, *oldParent, node, newParentIsConnected, { .didRemoveFromOldTreeScope = oldParent->isInTreeScope(), .didInsertIntoNewTreeScope = isInTreeScope() });
 
     if (!renderTreeUpdateCanReachMovedNode(node))
         destroyRenderTreeIfNeeded(node);

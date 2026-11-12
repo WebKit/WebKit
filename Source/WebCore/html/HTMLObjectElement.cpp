@@ -246,7 +246,7 @@ Node::NeedsPostConnectionSteps HTMLObjectElement::insertionSteps(InsertionType i
 
 void HTMLObjectElement::postConnectionSteps()
 {
-    resetFormOwner();
+    resetFormOwner(FallbackToCurrentForm::Yes);
 }
 
 void HTMLObjectElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)

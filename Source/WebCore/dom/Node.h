@@ -522,7 +522,7 @@ public:
         bool didInsertIntoNewTreeScope { false };
     };
     // https://dom.spec.whatwg.org/#concept-node-move-ext
-    virtual void movingSteps(MovingType, ContainerNode& oldParent);
+    virtual void movingSteps(MovingType, ContainerNode& oldParent, Node& subtreeRoot);
 
     NODELETE void updateShadowIncludingRootForSubtree();
 

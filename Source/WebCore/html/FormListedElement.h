@@ -62,9 +62,10 @@ public:
 
     void formWillBeDestroyed() override;
 
-    void resetFormOwner() final;
+    void resetFormOwner(FallbackToCurrentForm) final;
 
     void formOwnerRemovedFromTree(const Node&);
+    void formAttributeTreeScopeChanged();
 
     // ValidityState attribute implementations
     bool badInput() const { return hasBadInput(); }

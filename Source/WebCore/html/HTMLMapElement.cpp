@@ -133,9 +133,9 @@ void HTMLMapElement::removingSteps(RemovalType removalType, ContainerNode& oldPa
     HTMLElement::removingSteps(removalType, oldParentOfRemovedTree);
 }
 
-void HTMLMapElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+void HTMLMapElement::movingSteps(MovingType movingType, ContainerNode& oldParent, Node& subtreeRoot)
 {
-    HTMLElement::movingSteps(movingType, oldParent);
+    HTMLElement::movingSteps(movingType, oldParent, subtreeRoot);
     if (movingType.didRemoveFromOldTreeScope)
         protect(oldParent.treeScope())->removeImageMap(*this, m_name, m_registeredId);
     if (movingType.didInsertIntoNewTreeScope) {

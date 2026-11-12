@@ -62,7 +62,7 @@ void FormAssociatedElement::elementRemovedFromAncestor(Element& element, Node::R
     // Do not rely on rootNode() because m_form's IsInTreeScope can be outdated.
     if (m_form && &element.traverseToRootNode() != &m_form->traverseToRootNode()) {
         setForm(nullptr);
-        resetFormOwner();
+        resetFormOwner(FallbackToCurrentForm::Yes);
     }
 }
 

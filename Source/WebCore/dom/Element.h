@@ -953,7 +953,7 @@ protected:
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
     void removingSteps(RemovalType, ContainerNode&) override;
-    void movingSteps(MovingType, ContainerNode&) override;
+    void movingSteps(MovingType, ContainerNode&, Node& subtreeRoot) override;
     void childrenChanged(const ChildChange&) override;
     virtual void descendantsChanged() { }
     void setIsInSelectOrDataListSubtree() { setStateFlag(StateFlag::IsInSelectOrDataListSubtree); }

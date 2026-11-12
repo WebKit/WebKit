@@ -87,9 +87,9 @@ void HTMLHRElement::removingSteps(RemovalType removalType, ContainerNode& oldPar
         select->setRecalcListItems();
 }
 
-void HTMLHRElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+void HTMLHRElement::movingSteps(MovingType movingType, ContainerNode& oldParent, Node& subtreeRoot)
 {
-    HTMLElement::movingSteps(movingType, oldParent);
+    HTMLElement::movingSteps(movingType, oldParent, subtreeRoot);
 
     RefPtr oldSelect = m_ownerSelect;
     RefPtr newSelect = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::Yes);
