@@ -255,7 +255,8 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
                 runPostLayoutTasks();
 
             updateStyleForLayout();
-        }
+        } else
+            protect(document())->styleScope().evaluateMediaQueriesForViewportChange();
 
         if (view().hasOneRef())
             return;
