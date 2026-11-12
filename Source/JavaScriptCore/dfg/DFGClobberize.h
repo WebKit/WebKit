@@ -878,6 +878,7 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
     case ObjectGetOwnPropertyNames:
     case ObjectGetOwnPropertySymbols:
     case ObjectToString:
+    case ObjectIsExtensible:
     case ReflectOwnKeys:
         clobberTop();
         return;
