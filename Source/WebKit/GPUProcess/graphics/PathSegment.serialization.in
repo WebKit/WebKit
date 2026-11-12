@@ -54,6 +54,16 @@ header: <WebCore/PathSegmentData.h>
     WebCore::RotationDirection direction;
 };
 
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathArcColorThickness {
+    WebCore::FloatPoint center;
+    float radius;
+    float startAngle;
+    float endAngle;
+    WebCore::PackedColor::RGBA color;
+    float thickness;
+    uint32_t isClockwise;
+};
+
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathClosedArc {
     WebCore::PathArc arc;
 };

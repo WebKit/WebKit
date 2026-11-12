@@ -166,6 +166,27 @@ struct PathArc {
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathArc&);
 
+// A stroked arc with its stroke color and thickness, for batched arc strokes over
+// IPC. Every field is a 32-bit value with no padding and no invalid bit patterns,
+// so a span of these can be sent as raw bytes.
+struct PathArcColorThickness {
+    FloatPoint center;
+    float radius;
+    float startAngle;
+    float endAngle;
+    PackedColor::RGBA color;
+    float thickness;
+    uint32_t isClockwise; // Non-zero for RotationDirection::Clockwise.
+
+    PathArc arc() const { return { center, radius, startAngle, endAngle, isClockwise ? RotationDirection::Clockwise : RotationDirection::Counterclockwise }; }
+
+    bool operator==(const PathArcColorThickness&) const = default;
+};
+
+static_assert(sizeof(PathArcColorThickness) == 8 * sizeof(float));
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathArcColorThickness&);
+
 struct PathClosedArc {
     PathArc arc;
 

@@ -464,6 +464,14 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const PathArc& data)
     return ts;
 }
 
+WTF::TextStream& operator<<(WTF::TextStream& ts, const PathArcColorThickness& data)
+{
+    ts << data.arc();
+    ts << " #"_s << hex(data.color.value, 8);
+    ts << ' ' << data.thickness;
+    return ts;
+}
+
 FloatPoint PathClosedArc::calculateEndPoint(const FloatPoint&, FloatPoint& lastMoveToPoint) const
 {
     lastMoveToPoint = arc.center + FloatSize { arc.radius * cos(arc.startAngle), - arc.radius * sin(arc.startAngle) };

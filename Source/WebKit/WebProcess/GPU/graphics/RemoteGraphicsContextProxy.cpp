@@ -88,6 +88,7 @@ ALWAYS_INLINE void RemoteGraphicsContextProxy::send(T&& message)
     // here (see its declaration). This catches a missed call site: the buffer
     // must be empty unless we are sending the batch message itself.
     ASSERT(m_pendingLineStrokes.isEmpty() || (std::is_same_v<std::decay_t<T>, Messages::RemoteGraphicsContext::StrokeLinesWithColorAndThickness>));
+    ASSERT(m_pendingArcStrokes.isEmpty() || (std::is_same_v<std::decay_t<T>, Messages::RemoteGraphicsContext::StrokeArcsWithColorAndThickness>));
     RefPtr connection = m_connection;
     if (!connection) [[unlikely]] {
         if (RefPtr backend = m_renderingBackend.get())
@@ -649,6 +650,16 @@ void RemoteGraphicsContextProxy::strokePath(const Path& path)
             send(Messages::RemoteGraphicsContext::StrokeLine(*line));
             return;
         }
+        if (const auto* arc = std::get_if<PathArc>(&segment->data())) {
+            if (auto inlineStroke = inlineStrokeStateIfBatchable()) {
+                bufferArc(*arc, *inlineStroke);
+                return;
+            }
+            sendPendingDrawsIfNecessary();
+            appendStateChangeItemIfNecessary();
+            send(Messages::RemoteGraphicsContext::StrokeArc(*arc));
+            return;
+        }
         sendPendingDrawsIfNecessary();
         appendStateChangeItemIfNecessary();
         WTF::switchOn(segment->data(),
@@ -693,6 +704,9 @@ void RemoteGraphicsContextProxy::strokeEllipse(const FloatRect& rect)
 
 void RemoteGraphicsContextProxy::bufferLine(const PathDataLine& line, const InlineStrokeData& strokeData)
 {
+    if (!m_pendingArcStrokes.isEmpty())
+        sendPendingDraws();
+
     if (!m_pendingLineStrokes.capacity())
         m_pendingLineStrokes.reserveInitialCapacity(maxPendingLineStrokes);
 
@@ -702,14 +716,33 @@ void RemoteGraphicsContextProxy::bufferLine(const PathDataLine& line, const Inli
         sendPendingDraws();
 }
 
+void RemoteGraphicsContextProxy::bufferArc(const PathArc& arc, const InlineStrokeData& strokeData)
+{
+    if (!m_pendingLineStrokes.isEmpty())
+        sendPendingDraws();
+
+    if (!m_pendingArcStrokes.capacity())
+        m_pendingArcStrokes.reserveInitialCapacity(maxPendingArcStrokes);
+
+    m_pendingArcStrokes.append({ arc.center, arc.radius, arc.startAngle, arc.endAngle, strokeData.color, strokeData.thickness, arc.direction == RotationDirection::Clockwise ? 1u : 0u });
+
+    if (m_pendingArcStrokes.size() >= maxPendingArcStrokes)
+        sendPendingDraws();
+}
+
 void RemoteGraphicsContextProxy::sendPendingDraws()
 {
-    if (m_pendingLineStrokes.isEmpty())
-        return;
+    ASSERT(m_pendingLineStrokes.isEmpty() || m_pendingArcStrokes.isEmpty());
 
-    send(Messages::RemoteGraphicsContext::StrokeLinesWithColorAndThickness(m_pendingLineStrokes.span()));
+    if (!m_pendingLineStrokes.isEmpty()) {
+        send(Messages::RemoteGraphicsContext::StrokeLinesWithColorAndThickness(m_pendingLineStrokes.span()));
+        m_pendingLineStrokes.shrink(0);
+    }
 
-    m_pendingLineStrokes.shrink(0);
+    if (!m_pendingArcStrokes.isEmpty()) {
+        send(Messages::RemoteGraphicsContext::StrokeArcsWithColorAndThickness(m_pendingArcStrokes.span()));
+        m_pendingArcStrokes.shrink(0);
+    }
 }
 
 void RemoteGraphicsContextProxy::clearRect(const FloatRect& rect)

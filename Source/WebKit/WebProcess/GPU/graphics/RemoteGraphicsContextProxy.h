@@ -69,7 +69,7 @@ public:
     // Returns true if there has been potential draws since last call.
     bool consumeHasDrawn();
 
-    // Single-line strokes are coalesced into a batch message that is written
+    // Single-line and single-arc strokes are coalesced into a batch message that is written
     // into the IPC stream lazily, so the buffered strokes sit *in front of* the
     // stream. They must be sent into the stream before any other command is
     // written to it (otherwise they would be reordered behind it) and before
@@ -79,7 +79,7 @@ public:
     // read-backs) call it explicitly.
     void sendPendingDrawsIfNecessary()
     {
-        if (!m_pendingLineStrokes.isEmpty()) [[unlikely]]
+        if (!m_pendingLineStrokes.isEmpty() || !m_pendingArcStrokes.isEmpty()) [[unlikely]]
             sendPendingDraws();
     }
 
@@ -191,10 +191,15 @@ private:
     std::optional<InlineStrokeData> inlineStrokeStateIfBatchable();
 
     void bufferLine(const WebCore::PathDataLine&, const InlineStrokeData&);
+    void bufferArc(const WebCore::PathArc&, const InlineStrokeData&);
     void sendPendingDraws();
 
     static constexpr size_t maxPendingLineStrokes = 64;
     Vector<WebCore::PathDataLineColorThickness> m_pendingLineStrokes;
+    // At most one of m_pendingLineStrokes and m_pendingArcStrokes is non-empty:
+    // buffering one kind sends the other first, so draw order is preserved.
+    static constexpr size_t maxPendingArcStrokes = 64;
+    Vector<WebCore::PathArcColorThickness> m_pendingArcStrokes;
 
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, float resolutionScale, const WebCore::ColorSpace&, std::optional<WebCore::RenderingMode>, std::optional<WebCore::RenderingMethod>, WebCore::ImageBufferFormat) const final;
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatSize&, const WebCore::ColorSpace&, std::optional<WebCore::RenderingMethod>) const final;

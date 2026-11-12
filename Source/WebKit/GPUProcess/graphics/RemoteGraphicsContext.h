@@ -146,6 +146,7 @@ public:
     void strokeLine(const WebCore::PathDataLine&);
     void strokeLinesWithColorAndThickness(std::span<const WebCore::PathDataLineColorThickness>);
     void strokeArc(const WebCore::PathArc&);
+    void strokeArcsWithColorAndThickness(std::span<const WebCore::PathArcColorThickness>);
     void strokeClosedArc(const WebCore::PathClosedArc&);
     void strokeQuadCurve(const WebCore::PathDataQuadCurve&);
     void strokeBezierCurve(const WebCore::PathDataBezierCurve&);

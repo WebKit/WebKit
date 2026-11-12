@@ -696,6 +696,23 @@ void RemoteGraphicsContext::strokeArc(const PathArc& arc)
     context().strokeArc(arc);
 }
 
+void RemoteGraphicsContext::strokeArcsWithColorAndThickness(std::span<const PathArcColorThickness> arcs)
+{
+    std::optional<PackedColor::RGBA> lastColor;
+    std::optional<float> lastThickness;
+    for (const auto& entry : arcs) {
+        if (lastColor != entry.color) {
+            setStrokePackedColor(entry.color);
+            lastColor = entry.color;
+        }
+        if (lastThickness != entry.thickness) {
+            setStrokeThickness(std::max(entry.thickness, 0.f));
+            lastThickness = entry.thickness;
+        }
+        context().strokeArc(entry.arc());
+    }
+}
+
 void RemoteGraphicsContext::strokeClosedArc(const PathClosedArc& closedArc)
 {
     context().strokePath(Path({ PathSegment { closedArc } }));
