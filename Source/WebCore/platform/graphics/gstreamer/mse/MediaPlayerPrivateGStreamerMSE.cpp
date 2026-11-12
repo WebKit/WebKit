@@ -455,7 +455,11 @@ void MediaPlayerPrivateGStreamerMSE::didPreroll()
 
 void MediaPlayerPrivateGStreamerMSE::didEnd()
 {
+    bool wasSeeking = m_isSeeking;
     MediaPlayerPrivateGStreamer::didEnd();
+    // A seek sent just before EOS, or the loop seek sent from within didEnd(), still needs this pipeline.
+    if (wasSeeking || m_isSeeking)
+        return;
     tearDown(false);
 }
 
