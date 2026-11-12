@@ -617,27 +617,32 @@ TEST_P(ConnectionSendOnCallingThreadTest, MessagesAreQueuedWhenSendOnCallingThre
     EXPECT_EQ(received[0], 1u);
 }
 
-TEST_P(ConnectionSendOnCallingThreadTest, LargeMessagesAreSentOnCallingThread)
+// A message whose body is out-of-line is queued for the connection queue to send. A message sent
+// after it is queued too, so that it doesn't overtake it.
+TEST_P(ConnectionSendOnCallingThreadTest, MessagesWithOutOfLineBodiesAreQueued)
 {
     ASSERT_TRUE(openBoth());
     ASSERT_TRUE(waitUntilAIsConnected());
 
     auto data = testDataOfSize(64 * 1024);
     bClient().setAsyncMessageHandler([&](IPC::Connection&, IPC::Decoder& decoder) -> bool {
-        auto receivedData = decoder.decode<std::span<const uint8_t>>();
-        EXPECT_TRUE(receivedData && equalSpans(*receivedData, data.span()));
+        if (!decoder.destinationID()) {
+            auto receivedData = decoder.decode<std::span<const uint8_t>>();
+            EXPECT_TRUE(receivedData && equalSpans(*receivedData, data.span()));
+        }
         return false; // Record the message.
     });
 
-    // Bodies that are sent inline and out of line.
-    constexpr uint64_t messageCount = 10;
-    ConnectionQueueBlocker blocker { *a() };
-    for (uint64_t i = 0; i < messageCount; ++i)
-        a()->send(MockTestMessageWithDataAndAttachments { data.span(), { } }, i);
-    auto received = receiveFromA(messageCount, kDefaultWaitForTimeout);
-    ASSERT_EQ(received.size(), messageCount);
-    for (uint64_t i = 0; i < messageCount; ++i)
-        EXPECT_EQ(received[i], i);
+    {
+        ConnectionQueueBlocker blocker { *a() };
+        a()->send(MockTestMessageWithDataAndAttachments { data.span(), { } }, 0);
+        a()->send(MockTestMessage1 { }, 1);
+        EXPECT_TRUE(receiveFromA(1, kWaitForAbsenceTimeout).isEmpty());
+    }
+    auto received = receiveFromA(2, kDefaultWaitForTimeout);
+    ASSERT_EQ(received.size(), 2u);
+    EXPECT_EQ(received[0], 0u);
+    EXPECT_EQ(received[1], 1u);
 }
 
 TEST_P(ConnectionSendOnCallingThreadTest, MessagesWithAttachmentsAreSentOnCallingThread)

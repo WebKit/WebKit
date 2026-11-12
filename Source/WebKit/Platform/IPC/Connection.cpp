@@ -711,7 +711,7 @@ Error Connection::sendMessageImpl(UniqueRef<Encoder>&& encoder, OptionSet<SendOp
     {
         Locker locker { m_sendLock };
 #if PLATFORM(COCOA)
-        if (canSendOnCallingThread(qos) && trySendOnCallingThread(*message))
+        if (canSendOnCallingThread(*message, qos) && trySendOnCallingThread(*message))
             return Error::NoError;
 #endif
         if (m_receiverIsGone)
@@ -1356,9 +1356,14 @@ void Connection::connectionDidClose()
 
 #if PLATFORM(COCOA)
 
-bool Connection::canSendOnCallingThread(std::optional<Thread::QOS> qos) const
+bool Connection::canSendOnCallingThread(const OutgoingMessage& message, std::optional<Thread::QOS> qos) const
 {
     if (!sendOnCallingThreadEnabled())
+        return false;
+
+    // Sending an out-of-line body copies it into the kernel and unmaps it afterwards. Leave that work
+    // to the connection queue.
+    if (message->hasOutOfLineBody())
         return false;
 
     // Never send at a lower QoS than the connection queue or the requested one, or from a thread without a QoS class.
