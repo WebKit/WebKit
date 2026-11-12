@@ -35,6 +35,7 @@
 #import "WKFrameInfoInternal.h"
 #import "WKGeolocationManager.h"
 #import "WKProcessPoolInternal.h"
+#import "WKSecurityOriginInternal.h"
 #import "WKSharedAPICast.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebGeolocationPolicyDecider.h"
@@ -198,6 +199,19 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     };
 
     id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([request.view UIDelegate]);
+    if ([uiDelegate respondsToSelector:@selector(_webView:requestGeolocationAuthorizationForOrigin:initiatedByFrame:decisionHandler:)]) {
+        RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(WTF::move(request.frameInfo)));
+        RetainPtr<WKSecurityOrigin> topOrigin = wrapper(API::SecurityOrigin::create(request.topOrigin));
+        auto checker = WebKit::CompletionHandlerCallChecker::create(uiDelegate, @selector(_webView:requestGeolocationAuthorizationForOrigin:initiatedByFrame:decisionHandler:));
+        [uiDelegate _webView:request.view.get() requestGeolocationAuthorizationForOrigin:topOrigin.get() initiatedByFrame:frameInfo.get() decisionHandler:makeBlockPtr([decisionHandler = WTF::move(decisionHandler), checker = WTF::move(checker)](BOOL authorized) {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
+            decisionHandler(!!authorized);
+        }).get()];
+        return;
+    }
+
     if ([uiDelegate respondsToSelector:@selector(_webView:requestGeolocationAuthorizationForURL:frame:decisionHandler:)]) {
         RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(WTF::move(request.frameInfo)));
         auto checker = WebKit::CompletionHandlerCallChecker::create(uiDelegate, @selector(_webView:requestGeolocationAuthorizationForURL:frame:decisionHandler:));
