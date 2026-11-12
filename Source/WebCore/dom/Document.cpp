@@ -2386,6 +2386,12 @@ std::optional<BoundaryPoint> Document::caretPositionFromPoint(const LayoutPoint&
     if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*renderer); renderBox && isSkippedContentRoot(*renderBox))
         return { { *node, 0 } };
 
+#if ENABLE(VIDEO)
+    // A hit in built media controls is retargeted to the media element at offset 0, so deferred controls must resolve the same way.
+    if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(*node); mediaElement && mediaElement->hasDeferredMediaControls())
+        return { { *node, 0 } };
+#endif
+
     auto rangeCompliantPosition = renderer->positionForPoint(localPoint, source).parentAnchoredEquivalent();
     if (rangeCompliantPosition.isNull())
         return std::nullopt;
@@ -2429,6 +2435,11 @@ RefPtr<CaretPosition> Document::caretPositionFromPoint(double x, double y, Caret
     }
 
     bool adjustPosition = false;
+#if ENABLE(VIDEO)
+    // A media element with deferred controls has no shadow content to climb out of, but should resolve like one with built controls.
+    if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(anchorNode))
+        adjustPosition = mediaElement->hasDeferredMediaControls();
+#endif
     while (anchorNode->isInShadowTree() && !(options.shadowRoots.size() && options.shadowRoots.contains(Ref(anchorNode->treeScope().rootNode())))) {
         anchorNode = anchorNode->shadowHost();
         adjustPosition = true;

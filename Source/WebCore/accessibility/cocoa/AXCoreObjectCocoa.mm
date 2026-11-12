@@ -521,6 +521,10 @@ bool AXCoreObject::isEmptyGroup()
     if (isRemoteFrame()) [[unlikely]]
         return false;
 
+    // An audio element's controls may not be built yet, which must not make it an empty group.
+    if (role() == AccessibilityRole::Audio)
+        return false;
+
     return [rolePlatformString().createNSString() isEqual:NSAccessibilityGroupRole]
         && !hasUnignoredChild()
         && ![protect(renderWidgetChildren(*this)) count];

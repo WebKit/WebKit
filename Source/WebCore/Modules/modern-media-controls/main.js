@@ -38,11 +38,6 @@ if (!window.utils) {
 // This is called from HTMLMediaElement::ensureMediaControls().
 function createControls(shadowRoot, media, host)
 {
-    if (host) {
-        for (let styleSheet of host.shadowRootStyleSheets)
-            shadowRoot.appendChild(document.createElement("style")).textContent = styleSheet;
-    }
-
     controller = new MediaController(shadowRoot, media, host);
     if (host)
         host.controller = controller;

@@ -125,7 +125,7 @@ public:
 
     virtual String extraDefaultStyleSheet() { return String(); }
 #if ENABLE(VIDEO)
-    virtual Vector<String, 2> mediaControlsStyleSheets(const HTMLMediaElement&) { return { }; }
+    virtual Vector<String, 4> mediaControlsStyleSheets(const HTMLMediaElement&) { return { }; }
     virtual Vector<String, 2> mediaControlsScripts() { return { }; }
     virtual RefPtr<FragmentedSharedBuffer> mediaControlsImageDataForIconNameAndType(const String&, const String&) { return nullptr; }
     virtual String mediaControlsBase64StringForIconNameAndType(const String&, const String&) { return String(); }

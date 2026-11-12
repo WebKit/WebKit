@@ -604,6 +604,7 @@ enum LayerType {
 
     Node ensureUserAgentShadowRoot(Element host);
     Node? shadowRoot(Element host);
+    undefined scheduleDeferredMediaControlsBuild(Element host);
 
     DOMString shadowRootType(Node root);
     DOMString userAgentPart(Element element);

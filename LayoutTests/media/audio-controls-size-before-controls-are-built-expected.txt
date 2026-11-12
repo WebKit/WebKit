@@ -1,0 +1,5 @@
+
+
+
+PASS An off-screen audio element with controls reports the same size as an on-screen one
+

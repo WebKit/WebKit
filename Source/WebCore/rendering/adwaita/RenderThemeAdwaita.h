@@ -48,7 +48,7 @@ public:
     String extraDefaultStyleSheet() final;
 #if ENABLE(VIDEO)
     Vector<String, 2> mediaControlsScripts() final;
-    Vector<String, 2> mediaControlsStyleSheets(const HTMLMediaElement&) final;
+    Vector<String, 4> mediaControlsStyleSheets(const HTMLMediaElement&) final;
 #endif
 
 #if ENABLE(VIDEO)

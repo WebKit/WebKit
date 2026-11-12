@@ -642,10 +642,14 @@ public:
     bool isIntersectingViewport() const { return m_isIntersectingViewport; }
 
     // <video> tracks viewport intersection for its whole lifetime to drive accelerated
-    // rendering teardown (311380@main). <audio> is observed only while a lazy load is parked,
-    // and detaches once that load resumes.
+    // rendering teardown (311380@main). <audio> is observed only while a lazy load is parked
+    // or its controls are deferred, and detaches once neither is pending.
     virtual bool tracksViewportIntersection() const { return false; }
     WEBCORE_EXPORT ViewportVisibility viewportVisibility() const;
+
+    bool hasDeferredMediaControls() const { return m_controlsState == ControlsState::Deferred; }
+    WEBCORE_EXPORT void scheduleEnsureDeferredMediaControls();
+
     NODELETE bool hasEverNotifiedAboutPlaying() const;
     void setShouldDelayLoadEvent(bool);
 
@@ -878,6 +882,7 @@ private:
 #endif
 
     bool supportsFocus() const override;
+    void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions&) final;
     bool rendererIsNeeded(const Style::ComputedStyle&) override;
     bool childShouldCreateRenderer(const Node&) const override;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
@@ -1015,7 +1020,7 @@ private:
     bool shouldLazyLoadMediaResource() const;
     bool deferMediaResourceLoadIfNeeded();
     bool isMediaResourceLoadDeferred() const { return m_lazyLoadState == LazyLoadState::Deferred; }
-    bool shouldObserveViewportIntersection() const { return tracksViewportIntersection() || isMediaResourceLoadDeferred(); }
+    bool shouldObserveViewportIntersection() const { return tracksViewportIntersection() || isMediaResourceLoadDeferred() || hasDeferredMediaControls(); }
     void clearLazyLoadState();
     void resumeDeferredMediaResourceLoad();
     void queueLoadMediaResourceTask();
@@ -1104,6 +1109,10 @@ private:
     NODELETE void invalidateOfficialPlaybackPosition();
 
     void configureMediaControls();
+    bool deferMediaControlsIfNeeded();
+    void cancelDeferredMediaControls();
+    void ensureMediaControlsStyleSheets();
+    WEBCORE_EXPORT void ensureDeferredMediaControls();
 
     void prepareMediaFragmentURI();
     void applyMediaFragmentURI();
@@ -1289,6 +1298,7 @@ private:
     TaskCancellationGroup m_asyncEventsCancellationGroup;
     TaskCancellationGroup m_periodicTimeupdateCancellationGroup;
     TaskCancellationGroup m_volumeRevertTaskCancellationGroup;
+    TaskCancellationGroup m_ensureDeferredMediaControlsTaskCancellationGroup;
 
     const Ref<NativePromiseRequest> m_beginPlaybackRequest;
     PlayPromiseVector m_pendingPlayPromises;
@@ -1341,6 +1351,7 @@ private:
     LazyLoadState m_lazyLoadState { LazyLoadState::NotDeferred };
 
     bool m_isIntersectingViewport { false };
+    bool m_hasMediaControlsStyleSheets { false };
     RefPtr<HTMLSourceElement> m_currentSourceNode;
     RefPtr<HTMLSourceElement> m_nextChildNodeToConsider;
 
@@ -1447,7 +1458,7 @@ private:
 
     IntRect m_textTrackRepresentationBounds;
 
-    enum class ControlsState : uint8_t { None, Initializing, Ready, PartiallyDeinitialized };
+    enum class ControlsState : uint8_t { None, Initializing, Ready, PartiallyDeinitialized, Deferred };
     friend String convertEnumerationToString(HTMLMediaElement::ControlsState enumerationValue);
     ControlsState m_controlsState { ControlsState::None };
 

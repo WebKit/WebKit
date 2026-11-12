@@ -1263,12 +1263,12 @@ static const String& macOSFullscreenMediaControlsStyleSheet()
 }
 #endif // HAVE(MATERIAL_HOSTING)
 
-Vector<String, 2> RenderThemeCocoa::mediaControlsStyleSheets(const HTMLMediaElement& mediaElement)
+Vector<String, 4> RenderThemeCocoa::mediaControlsStyleSheets(const HTMLMediaElement& mediaElement)
 {
     if (m_mediaControlsStyleSheet.isEmpty())
         m_mediaControlsStyleSheet = StringImpl::createWithoutCopying(ModernMediaControlsUserAgentStyleSheet);
 
-    auto mediaControlsStyleSheets = Vector<String, 2>::from(m_mediaControlsStyleSheet);
+    auto mediaControlsStyleSheets = Vector<String, 4>::from(m_mediaControlsStyleSheet);
 
 #if HAVE(MATERIAL_HOSTING)
     // FIXME (153018199): Glass material styles can be added directly to ModernMediaControlsUserAgentStyleSheet

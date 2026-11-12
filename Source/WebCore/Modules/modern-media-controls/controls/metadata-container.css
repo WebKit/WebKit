@@ -23,21 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.media-controls.fullscreen.tvos > .metadata-container {
-    .title-label, .artist-label {
-        mix-blend-mode: plus-lighter;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
+/* Do not use CSS nesting: see MODERN_MEDIA_CONTROLS_STYLE_SHEETS in DerivedSources.make. */
 
-    .title-label {
-        color: var(--primary-glyph-color);
-        font-size: larger;
-        font-weight: 500;
-    }
+.media-controls.fullscreen.tvos > .metadata-container .title-label,
+.media-controls.fullscreen.tvos > .metadata-container .artist-label {
+    mix-blend-mode: plus-lighter;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
-    .artist-label {
-        color: var(--secondary-glyph-color);
-    }
+.media-controls.fullscreen.tvos > .metadata-container .title-label {
+    color: var(--primary-glyph-color);
+    font-size: larger;
+    font-weight: 500;
+}
+
+.media-controls.fullscreen.tvos > .metadata-container .artist-label {
+    color: var(--secondary-glyph-color);
 }

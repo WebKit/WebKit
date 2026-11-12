@@ -490,11 +490,6 @@ String MediaControlsHost::generateUUID()
     return createVersion4UUIDString();
 }
 
-Vector<String, 2> MediaControlsHost::shadowRootStyleSheets() const
-{
-    return RenderTheme::singleton().mediaControlsStyleSheets(protect(m_mediaElement));
-}
-
 String MediaControlsHost::base64StringForIconNameAndType(const String& iconName, const String& iconType)
 {
     return RenderTheme::singleton().mediaControlsBase64StringForIconNameAndType(iconName, iconType);

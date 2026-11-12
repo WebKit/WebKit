@@ -2965,6 +2965,13 @@ void AccessibilityRenderObject::addChildren()
         AccessibilityNodeObject::addChildren();
         return;
     }
+
+#if ENABLE(VIDEO)
+    // Building the controls runs script, which must not happen while children are being computed.
+    if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(node()))
+        mediaElement->scheduleEnsureDeferredMediaControls();
+#endif
+
     // If the need to add more children in addition to existing children arises,
     // childrenChanged should have been called, leaving the object with no children.
     AX_ASSERT(!m_childrenInitialized);

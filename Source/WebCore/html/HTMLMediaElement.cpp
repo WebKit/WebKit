@@ -71,6 +71,7 @@
 #include "HTMLAudioElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSourceElement.h"
+#include "HTMLStyleElement.h"
 #include "HTMLTrackElement.h"
 #include "HTMLVideoElement.h"
 #include "HostingContext.h"
@@ -383,17 +384,19 @@ String convertEnumerationToString(HTMLMediaElement::SpeechSynthesisState enumera
 
 String convertEnumerationToString(HTMLMediaElement::ControlsState enumerationValue)
 {
-    // None, Initializing, Ready, PartiallyDeinitialized
-    static const std::array<NeverDestroyed<String>, 4> values {
+    // None, Initializing, Ready, PartiallyDeinitialized, Deferred
+    static const std::array<NeverDestroyed<String>, 5> values {
         MAKE_STATIC_STRING_IMPL("None"),
         MAKE_STATIC_STRING_IMPL("Initializing"),
         MAKE_STATIC_STRING_IMPL("Ready"),
         MAKE_STATIC_STRING_IMPL("PartiallyDeinitialized"),
+        MAKE_STATIC_STRING_IMPL("Deferred"),
     };
     static_assert(!static_cast<size_t>(HTMLMediaElement::ControlsState::None), "HTMLMediaElement::None is not 0 as expected");
     static_assert(static_cast<size_t>(HTMLMediaElement::ControlsState::Initializing) == 1, "HTMLMediaElement::Initializing is not 1 as expected");
     static_assert(static_cast<size_t>(HTMLMediaElement::ControlsState::Ready) == 2, "HTMLMediaElement::Ready is not 2 as expected");
     static_assert(static_cast<size_t>(HTMLMediaElement::ControlsState::PartiallyDeinitialized) == 3, "HTMLMediaElement::PartiallyDeinitialized is not 3 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElement::ControlsState::Deferred) == 4, "HTMLMediaElement::Deferred is not 4 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
@@ -1048,6 +1051,12 @@ bool HTMLMediaElement::supportsFocus() const
     return controls() ||  HTMLElement::supportsFocus();
 }
 
+void HTMLMediaElement::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions& options)
+{
+    ensureDeferredMediaControls();
+    HTMLElement::dispatchFocusEvent(WTF::move(oldFocusedElement), options);
+}
+
 bool HTMLMediaElement::isInteractiveContent() const
 {
     return controls();
@@ -1678,10 +1687,11 @@ bool HTMLMediaElement::deferMediaResourceLoadIfNeeded()
 
 void HTMLMediaElement::clearLazyLoadState()
 {
-    if (isMediaResourceLoadDeferred() && !tracksViewportIntersection())
-        LazyLoadElementObserver::unobserve(*this, protect(document()));
-
+    bool wasDeferred = isMediaResourceLoadDeferred();
     m_lazyLoadState = LazyLoadState::NotDeferred;
+
+    if (wasDeferred && !shouldObserveViewportIntersection())
+        LazyLoadElementObserver::unobserve(*this, protect(document()));
 }
 
 void HTMLMediaElement::resumeDeferredMediaResourceLoad()
@@ -1691,8 +1701,8 @@ void HTMLMediaElement::resumeDeferredMediaResourceLoad()
 
     m_lazyLoadState = LazyLoadState::ResumedFromDeferred;
 
-    // An <audio> is observed only to trigger this resumption, so release it now that the load has
-    // restarted. A <video> keeps tracking intersection for accelerated rendering.
+    // An <audio> is observed only to trigger this resumption or build deferred controls, so release it
+    // once neither is pending. A <video> keeps tracking intersection for accelerated rendering.
     if (!shouldObserveViewportIntersection())
         LazyLoadElementObserver::unobserve(*this, protect(document()));
 
@@ -1706,10 +1716,12 @@ void HTMLMediaElement::runLazyLoadResumptionSteps()
 
 void HTMLMediaElement::lazyLoadIntersectionCallbackInvoked(bool isIntersecting)
 {
-    if (isIntersecting)
+    if (isIntersecting) {
         runLazyLoadResumptionSteps();
+        ensureDeferredMediaControls();
+    }
 
-    // Only <video> tracks intersection. <audio> is observed solely to unpark a lazy load,
+    // Only <video> tracks intersection. <audio> is observed solely to unpark a lazy load or build deferred controls,
     // so it keeps reporting not-intersecting just as it did before being observed.
     if (!tracksViewportIntersection() || m_isIntersectingViewport == isIntersecting)
         return;
@@ -7375,6 +7387,7 @@ void HTMLMediaElement::closeTaskQueues()
     cancelPendingTasks();
     m_resourceSelectionTaskCancellationGroup.cancel();
     m_asyncEventsCancellationGroup.cancel();
+    m_ensureDeferredMediaControlsTaskCancellationGroup.cancel();
 }
 
 void HTMLMediaElement::contextDestroyed()
@@ -8451,6 +8464,10 @@ void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType ch
 
 void HTMLMediaElement::updateTextTrackDisplay()
 {
+    // Only audio defers its controls, and an audio element has no text track display to update.
+    if (hasDeferredMediaControls())
+        return;
+
     if (ensureMediaControls())
         m_mediaControlsHost->updateTextTrackContainer();
 }
@@ -8619,28 +8636,117 @@ bool HTMLMediaElement::shouldForceControlsDisplay() const
 
 void HTMLMediaElement::configureMediaControls()
 {
-    bool requireControls = controls();
+    bool forceControls = false;
 
     // Create controls for a video in fullscreen when fullscreen playback is required.
     if (isVideo() && isFullscreen() && protect(mediaSession())->requiresFullscreenForVideoPlayback())
-        requireControls = true;
+        forceControls = true;
 
     if (shouldForceControlsDisplay())
-        requireControls = true;
+        forceControls = true;
 
     // Always create controls when in full screen mode.
     if (isFullscreen() && videoUsesElementFullscreen())
-        requireControls = true;
+        forceControls = true;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (m_isPlayingToWirelessTarget)
-        requireControls = true;
+        forceControls = true;
 #endif
 
-    if (!requireControls || !isConnected() || !inActiveDocument())
+    if (!forceControls && !controls()) {
+        cancelDeferredMediaControls();
+        return;
+    }
+
+    if (!isConnected() || !inActiveDocument())
+        return;
+
+    if (!forceControls && deferMediaControlsIfNeeded())
         return;
 
     ensureMediaControls();
+}
+
+bool HTMLMediaElement::deferMediaControlsIfNeeded()
+{
+    if (m_controlsState != ControlsState::None && m_controlsState != ControlsState::Deferred)
+        return false;
+
+    // Assistive technology reaches controls regardless of scroll position.
+    if (isVideo() || AXObjectCache::accessibilityEnabled())
+        return false;
+
+    // The first build in a document starts loading the icon images that later builds share, so it happens at once.
+    if (!DocumentMediaElement::from(protect(document())).hasBuiltMediaControls())
+        return false;
+
+    if (m_controlsState == ControlsState::None) {
+        // Without controls script there is nothing to build later.
+        if (RenderTheme::singleton().mediaControlsScripts().isEmpty())
+            return false;
+
+        INFO_LOG(LOGIDENTIFIER, "deferring media controls");
+        m_controlsState = ControlsState::Deferred;
+        // The controls style sheets size the host, so they must apply before the controls are built.
+        ensureMediaControlsStyleSheets();
+    }
+
+    // Observing is idempotent, and re-inserting a deferred element must leave it observed.
+    LazyLoadElementObserver::observe(*this);
+    return true;
+}
+
+void HTMLMediaElement::cancelDeferredMediaControls()
+{
+    if (m_controlsState != ControlsState::Deferred)
+        return;
+
+    INFO_LOG(LOGIDENTIFIER);
+
+    m_controlsState = ControlsState::None;
+    if (!shouldObserveViewportIntersection())
+        LazyLoadElementObserver::unobserve(*this, protect(document()));
+}
+
+void HTMLMediaElement::ensureMediaControlsStyleSheets()
+{
+    if (std::exchange(m_hasMediaControlsStyleSheets, true))
+        return;
+
+    auto styleSheets = RenderTheme::singleton().mediaControlsStyleSheets(*this);
+    if (styleSheets.isEmpty())
+        return;
+
+    Ref shadowRoot = ensureUserAgentShadowRoot();
+    for (auto& styleSheet : styleSheets) {
+        Ref style = HTMLStyleElement::create(protect(document()));
+        style->setTextContent(WTF::move(styleSheet));
+        shadowRoot->appendChild(style);
+        // Every media element must share one parsed copy of these sheets. There is no sheet yet if the host is not connected.
+        ASSERT(!style->sheet() || style->sheet()->contents().isCacheableWithNoBaseURLDependency());
+    }
+}
+
+void HTMLMediaElement::ensureDeferredMediaControls()
+{
+    // A failed build leaves the controls deferred and observed, so a later request retries.
+    if (m_controlsState != ControlsState::Deferred || !isConnected() || !inActiveDocument())
+        return;
+
+    INFO_LOG(LOGIDENTIFIER, "building deferred media controls");
+    ensureMediaControls();
+}
+
+void HTMLMediaElement::scheduleEnsureDeferredMediaControls()
+{
+    // A task that is dropped without running releases the group, so a later request can schedule again.
+    if (m_controlsState != ControlsState::Deferred || m_ensureDeferredMediaControlsTaskCancellationGroup.hasPendingTask())
+        return;
+
+    queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, m_ensureDeferredMediaControlsTaskCancellationGroup, [](auto& element) {
+        element.ensureDeferredMediaControls();
+    });
 }
 
 void HTMLMediaElement::captionPreferencesChanged()
@@ -9535,7 +9641,8 @@ bool HTMLMediaElement::ensureMediaControls()
     m_controlsState = ControlsState::Initializing;
 
     auto controlsReady = false;
-    if (oldControlsState == ControlsState::None) {
+    if (oldControlsState == ControlsState::None || oldControlsState == ControlsState::Deferred) {
+        ensureMediaControlsStyleSheets();
         controlsReady = DocumentMediaElement::from(protect(document())).setupAndCallMediaControlsJS([this, mediaControlsScripts = WTF::move(mediaControlsScripts)](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
             auto& vm = globalObject.vm();
             auto scope = DECLARE_THROW_SCOPE(vm);
@@ -9628,10 +9735,22 @@ bool HTMLMediaElement::ensureMediaControls()
 
             return resultValue.toBoolean(&lexicalGlobalObject);
         });
-    } else
+    } else {
         ASSERT_NOT_REACHED();
+        m_controlsState = oldControlsState;
+        return false;
+    }
 
     m_controlsState = controlsReady ? ControlsState::Ready : oldControlsState;
+    if (controlsReady)
+        DocumentMediaElement::from(protect(document())).didBuildMediaControls();
+
+    if (oldControlsState == ControlsState::Deferred) {
+        if (!controlsReady)
+            LazyLoadElementObserver::observe(*this); // The build may have run script that moved the element between documents.
+        else if (!shouldObserveViewportIntersection())
+            LazyLoadElementObserver::unobserve(*this, protect(document()));
+    }
     return controlsReady;
 }
 

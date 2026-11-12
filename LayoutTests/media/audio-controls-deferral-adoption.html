@@ -1,0 +1,77 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>A deferred audio element moved to another document is observed only by the new document</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/media-controls-deferral.js"></script>
+<body>
+<script>
+function hasBuiltControls(audio) {
+    // Unlike internals.shadowRoot(), this does not build deferred controls.
+    return !!internals.ensureUserAgentShadowRoot(audio).querySelector(".media-controls");
+}
+
+function animationFrames(count) {
+    return new Promise(resolve => {
+        const step = () => count-- > 0 ? requestAnimationFrame(step) : resolve();
+        step();
+    });
+}
+
+async function waitUntilBuilt(audio) {
+    while (!hasBuiltControls(audio))
+        await animationFrames(1);
+}
+
+// Long enough for the first intersection observation of a far-away element to have been delivered.
+const framesToSettle = 3;
+
+async function createFrameWithOffscreenAudio(t) {
+    const frame = document.body.appendChild(document.createElement("iframe"));
+    t.add_cleanup(() => frame.remove());
+    buildFirstMediaControls(frame.contentDocument);
+    frame.contentDocument.body.innerHTML = "<div style='height: 20000px'></div><audio controls></audio>";
+    return { frame, audio: frame.contentDocument.querySelector("audio") };
+}
+
+// Each document's lazy-load observer has the main document as its implicit root, so it is counted there while it observes anything.
+function numberOfObservingDocuments() {
+    return internals.numberOfIntersectionObservers(document);
+}
+
+async function testMove(t, move) {
+    const baseline = numberOfObservingDocuments();
+    const oldFrame = await createFrameWithOffscreenAudio(t);
+    // The new document also observes a deferred element of its own, so moving the first one cannot leave the count unchanged by accident.
+    const newFrame = await createFrameWithOffscreenAudio(t);
+    const audio = oldFrame.audio;
+    await animationFrames(framesToSettle);
+    assert_false(hasBuiltControls(audio), "deferred while offscreen");
+    assert_equals(numberOfObservingDocuments(), baseline + 2, "both documents observe a deferred element");
+
+    const newDocument = newFrame.frame.contentDocument;
+    move(audio, newDocument);
+    assert_equals(audio.ownerDocument, newDocument, "moved");
+    assert_equals(numberOfObservingDocuments(), baseline + 1, "the old document no longer observes the moved element");
+    if (!audio.isConnected)
+        newDocument.body.appendChild(audio);
+    await animationFrames(framesToSettle);
+    assert_false(hasBuiltControls(audio), "still deferred after moving to the other document");
+
+    newFrame.frame.contentWindow.scrollTo(0, 19900);
+    await waitUntilBuilt(audio);
+}
+
+promise_test(async t => {
+    await testMove(t, (audio, newDocument) => newDocument.body.appendChild(newDocument.adoptNode(audio)));
+}, "A deferred audio element moved with adoptNode() is observed by the new document and builds its controls there");
+
+promise_test(async t => {
+    await testMove(t, (audio, newDocument) => newDocument.body.appendChild(audio));
+}, "A deferred audio element inserted into another frame's document is observed by the new document and builds its controls there");
+
+promise_test(async t => {
+    await testMove(t, (audio, newDocument) => newDocument.adoptNode(audio));
+}, "A deferred audio element adopted before being inserted is observed by the new document and builds its controls there");
+</script>
+</body>

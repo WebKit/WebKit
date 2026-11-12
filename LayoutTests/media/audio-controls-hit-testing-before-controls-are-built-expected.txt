@@ -1,0 +1,4 @@
+text beforetext after
+
+PASS An audio element whose controls are not built yet hit-tests like one whose controls are built
+

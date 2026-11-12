@@ -2686,6 +2686,9 @@ if (ENABLE_WEBXR)
     )
 endif ()
 
+# The style sheets below are concatenated into one sheet that every media element shares through
+# the style sheet contents cache. Do not use CSS nesting in them: one nested rule makes the whole
+# sheet uncacheable, and each media element would parse its own copy.
 set(MODERN_MEDIA_CONTROLS_STYLE_SHEETS
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/activity-indicator.css"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/airplay-button.css"

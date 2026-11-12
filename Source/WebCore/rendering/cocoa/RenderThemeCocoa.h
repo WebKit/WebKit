@@ -83,7 +83,7 @@ public:
     };
 
 #if ENABLE(VIDEO)
-    Vector<String, 2> mediaControlsStyleSheets(const HTMLMediaElement&) final;
+    Vector<String, 4> mediaControlsStyleSheets(const HTMLMediaElement&) final;
     String mediaControlsBase64StringForIconNameAndType(const String&, const String&) final;
     Vector<String, 2> mediaControlsScripts() final;
     RefPtr<FragmentedSharedBuffer> mediaControlsImageDataForIconNameAndType(const String&, const String&) final;

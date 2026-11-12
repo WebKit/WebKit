@@ -329,6 +329,7 @@ public:
 
     Node& ensureUserAgentShadowRoot(Element& host);
     Node* shadowRoot(Element& host);
+    void scheduleDeferredMediaControlsBuild(Element& host);
     ExceptionOr<String> shadowRootType(const Node&) const;
     NODELETE const AtomString& userAgentPart(Element&);
     void setUserAgentPart(Element&, const AtomString&);
