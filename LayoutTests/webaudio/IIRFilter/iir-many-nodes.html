@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Creating many IIRFilterNodes leaves a later filter able to render.");
+jsTestIsAsync = true;
+
+let sampleRate = 16384;
+let context = new OfflineAudioContext(2, sampleRate / 2, sampleRate);
+let options = { feedforward: [1], feedback: [1, -0.5] };
+
+for (let i = 0; i < 8; ++i) {
+    let discarded = new IIRFilterNode(context, options);
+    discarded.channelCount = 2;
+    discarded.channelCountMode = "explicit";
+}
+
+let buffer = context.createBuffer(1, context.length, sampleRate);
+buffer.getChannelData(0)[0] = 1;
+let source = new AudioBufferSourceNode(context, { buffer });
+let filter = new IIRFilterNode(context, options);
+filter.channelCount = 2;
+filter.channelCountMode = "explicit";
+source.connect(filter).connect(context.destination);
+source.start();
+
+context.startRendering().then(rendered => {
+    let audio = rendered.getChannelData(0);
+    if (audio[0] !== 1)
+        testFailed("first sample was " + audio[0]);
+    else
+        testPassed("first sample is 1");
+
+    if (audio[1] !== 0.5)
+        testFailed("second sample was " + audio[1]);
+    else
+        testPassed("second sample is 0.5");
+
+    let silentTail = true;
+    for (let i = 256; i < audio.length; ++i) {
+        if (audio[i] !== 0) {
+            silentTail = false;
+            break;
+        }
+    }
+    if (silentTail)
+        testPassed("output after the decay is silent");
+    else
+        testFailed("output after the decay is not silent");
+    finishJSTest();
+}).catch(error => {
+    testFailed(String(error));
+    finishJSTest();
+});
+</script>
+</body>
+</html>

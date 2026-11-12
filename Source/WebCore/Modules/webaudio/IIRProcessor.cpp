@@ -29,6 +29,7 @@
 #include "IIRProcessor.h"
 
 #include "IIRDSPKernel.h"
+#include "IIRFilter.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -70,6 +71,9 @@ IIRProcessor::IIRProcessor(float sampleRate, unsigned numberOfChannels, const Ve
         // The IIRFilter checks to make sure this coefficient is 1, so make it so.
         m_feedback[0] = 1;
     }
+
+    IIRFilter tailFilter(m_feedforward, m_feedback);
+    m_tailTime = tailFilter.tailTime(sampleRate, m_isFilterStable);
 
     lazyInitialize(m_responseKernel, makeUnique<IIRDSPKernel>(*this));
 }
